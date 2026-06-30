@@ -114,10 +114,12 @@ const {useState,useEffect,useMemo,useRef} = React;
 
 /* ============================ CONFIG ============================ */
 const PROFILES = {
-  wassima:{naam:'Wassima', niveau:'2 havo', emoji:'🌱', kleur:'linear-gradient(135deg,#5EA03A,#48792c)', vakken:['wiskunde','natuurkunde']},
-  amaani: {naam:'Amaani',  niveau:'4 vwo',  emoji:'🚀', kleur:'linear-gradient(135deg,#3a6ea0,#2c5680)', vakken:['wiskundeA','natuurkunde']},
+  wassima:{naam:'Wassima', niveau:'2 havo', emoji:'🌱', kleur:'linear-gradient(135deg,#5EA03A,#48792c)', vakken:['wiskunde','natuurkunde','nederlands','engels','frans','duits','biologie','aardrijkskunde','geschiedenis','economie']},
+  amaani: {naam:'Amaani',  niveau:'4 vwo',  emoji:'🚀', kleur:'linear-gradient(135deg,#3a6ea0,#2c5680)', vakken:['wiskundeA','natuurkunde','scheikunde','nederlands','engels','frans','biologie','aardrijkskunde','geschiedenis','economie']},
 };
-const VAKNAAM = {wiskunde:'Wiskunde', natuurkunde:'Natuurkunde', wiskundeA:'Wiskunde A'};
+const VAKNAAM = {wiskunde:'Wiskunde', natuurkunde:'Natuurkunde', wiskundeA:'Wiskunde A', geschiedenis:'Geschiedenis',
+  nederlands:'Nederlands', engels:'Engels', frans:'Frans', duits:'Duits', biologie:'Biologie',
+  aardrijkskunde:'Aardrijkskunde', economie:'Economie', scheikunde:'Scheikunde'};
 const TOPICICON = {
   'Procenten':'％','Vergelijkingen':'⚖️','Lineaire formules':'📈','Oppervlakte & omtrek':'⬛',
   'Pythagoras':'📐','Hoeken':'📐','Inhoud':'🧊','Snelheid':'🚴','Dichtheid':'⚗️',
@@ -125,11 +127,44 @@ const TOPICICON = {
   'Differentiëren':'📉','Kansrekening':'🎲','Bewegingsvergelijkingen':'🏎️',
   'Kinematica':'🏃','Krachten (Newton)':'💪','Arbeid & energie':'⚡','Vermogen':'🔌','Elektriciteit':'🔋',
   'Rendement':'♻️','Warmte':'🔥',
+  'Kracht & zwaartekracht':'🏋️','Veerkracht':'🪀','Stroom & spanning':'🔌','Energie & vermogen':'⚡','Geluid':'🔊','Druk':'🎈',
+  'Tijd & eeuwen':'⏳','Opstand tegen Spanje':'⚔️','Gouden Eeuw & Republiek':'🚢','Handel & slavernij':'🌍','Verlichting':'🕯️','Franse Revolutie':'🇫🇷',
+  // talen & zaakvakken
+  'Werkwoordspelling':'✏️','Woordsoorten':'🔤','Spelling':'📝','Woordenschat':'💬','Onregelmatige werkwoorden':'🔁','Grammatica':'🔡','Grammatica (tenses)':'⏱️',
+  'Lidwoorden (le/la)':'🇫🇷','Lidwoorden (der/die/das)':'🇩🇪','Getallen':'🔢','Argumentatie':'🗣️','Stijlfiguren':'🎭','Spelling & stijl':'🖋️',
+  'De cel':'🔬','Het menselijk lichaam':'🫀','Planten':'🌿','Cel & DNA':'🧬','Erfelijkheid':'🧬','Ecologie':'🌳',
+  'Topografie':'🗺️','Klimaat & weer':'🌦️','Water & landschap':'🏞️','Aarde & klimaat':'🌋','Bevolking & globalisering':'🌐',
+  'Geld & rekenen':'💶','Begrippen':'📖','Markt':'📈','Symbolen & atomen':'⚛️','Moleculen':'🧪','Zuur & base':'🧫',
+  'Industriële revolutie':'🏭','Wereldoorlogen':'🎖️',
 };
 
 /* ============================ OEFENINGEN (startvoorraad) ============================ */
 /* veld: p=profiel, v=vak, t=onderwerp, lvl=niveau, q=vraag, a=antwoord, alt=alternatieven, u=eenheid, h=hints[], s=uitwerking */
 const SEED = [
+  // ---- Wassima · wiskunde · FUNDAMENT (trapsgewijs, met uitleg & beeld) ----
+  {p:'wassima',v:'wiskunde',t:'Rekenvolgorde',lvl:1,q:'Reken uit: 3 + 4 × 2',a:'11',h:['Keer en delen gaan vóór plus en min.','Doe dus eerst 4 × 2.'],s:'Eerst 4 × 2 = 8.\nDan 3 + 8 = 11.'},
+  {p:'wassima',v:'wiskunde',t:'Rekenvolgorde',lvl:2,q:'Reken uit: (3 + 4) × 2',a:'14',h:['Wat tussen haakjes staat, doe je eerst.'],s:'(3 + 4) = 7.\n7 × 2 = 14.'},
+  {p:'wassima',v:'wiskunde',t:'Rekenvolgorde',lvl:2,q:'Reken uit: 20 − 2 × 3 + 4',a:'18',h:['Eerst × , daarna van links naar rechts + en −.'],s:'2 × 3 = 6.\n20 − 6 + 4 = 18.'},
+  {p:'wassima',v:'wiskunde',t:'Negatieve getallen',lvl:1,ill:{type:'getallenlijn',van:-6,tot:6,punt:2},q:'Reken uit: −3 + 5',a:'2',h:['Start op de getallenlijn bij −3.','Plus 5 = 5 stappen naar rechts.'],s:'Vanaf −3 ga je 5 naar rechts: −3 + 5 = 2.'},
+  {p:'wassima',v:'wiskunde',t:'Negatieve getallen',lvl:1,ill:{type:'getallenlijn',van:-6,tot:6,punt:-3},q:'Reken uit: 2 − 5',a:'-3',alt:['−3'],h:['Start bij 2, ga 5 stappen naar links.'],s:'Vanaf 2 ga je 5 naar links: 2 − 5 = −3.'},
+  {p:'wassima',v:'wiskunde',t:'Negatieve getallen',lvl:2,q:'Reken uit: −4 − 3',a:'-7',alt:['−7'],h:['Min en dan nog eens min: verder naar links.'],s:'−4 − 3 = −7.'},
+  {p:'wassima',v:'wiskunde',t:'Negatieve getallen',lvl:2,q:'Reken uit: −2 × 3',a:'-6',alt:['−6'],h:['min × plus = min.'],s:'−2 × 3 = −6 (min keer plus geeft min).'},
+  {p:'wassima',v:'wiskunde',t:'Negatieve getallen',lvl:3,q:'Reken uit: −12 ÷ −4',a:'3',h:['min ÷ min = plus.'],s:'−12 ÷ −4 = 3 (min gedeeld door min geeft plus).'},
+  {p:'wassima',v:'wiskunde',t:'Breuken',lvl:1,ill:{type:'breukstrook',delen:4,gevuld:3},q:'Welk deel is gekleurd? Schrijf als breuk (bijv. 3/4).',a:'3/4',alt:['0.75'],h:['gekleurde delen / totaal aantal delen.'],s:'3 van de 4 delen zijn gekleurd → 3/4.'},
+  {p:'wassima',v:'wiskunde',t:'Breuken',lvl:1,q:'Wat is 1/2 van 30?',a:'15',h:['1/2 betekent de helft.'],s:'30 ÷ 2 = 15.'},
+  {p:'wassima',v:'wiskunde',t:'Breuken',lvl:2,q:'Wat is 3/4 van 20?',a:'15',h:['Eerst ÷ 4 (één deel), dan × 3.'],s:'20 ÷ 4 = 5, en 5 × 3 = 15.'},
+  {p:'wassima',v:'wiskunde',t:'Breuken',lvl:2,q:'Reken uit: 1/4 + 2/4',a:'3/4',alt:['0.75'],h:['Gelijke noemers (onder de streep): tel alleen de tellers op.'],s:'1/4 + 2/4 = 3/4.'},
+  {p:'wassima',v:'wiskunde',t:'Machten & wortels',lvl:1,q:'Reken uit: 5²',a:'25',h:['5² = 5 × 5.'],s:'5 × 5 = 25.'},
+  {p:'wassima',v:'wiskunde',t:'Machten & wortels',lvl:2,q:'Reken uit: 2³',a:'8',h:['2³ = 2 × 2 × 2.'],s:'2 × 2 × 2 = 8.'},
+  {p:'wassima',v:'wiskunde',t:'Machten & wortels',lvl:2,q:'Reken uit: √49',a:'7',h:['Welk getal × zichzelf = 49?'],s:'7 × 7 = 49, dus √49 = 7.'},
+  {p:'wassima',v:'wiskunde',t:'Verhoudingen & schaal',lvl:1,q:'3 appels kosten € 1,50. Wat kosten 6 appels?',a:'3',u:'€',h:['6 appels is 2× zoveel → 2× de prijs.'],s:'6 = 2 × 3 appels, dus 2 × € 1,50 = € 3,00.'},
+  {p:'wassima',v:'wiskunde',t:'Verhoudingen & schaal',lvl:3,q:'Op een kaart met schaal 1 : 100 000 is een weg 3 cm. Hoeveel km is dat in het echt?',a:'3',u:'km',h:['1 cm op de kaart = 100 000 cm echt = 1 km.','Vermenigvuldig met 3.'],s:'3 cm × 100 000 = 300 000 cm = 3000 m = 3 km.'},
+  {p:'wassima',v:'wiskunde',t:'Statistiek',lvl:1,q:'Bereken het gemiddelde van 4, 6 en 8.',a:'6',h:['gemiddelde = som ÷ aantal.'],s:'(4 + 6 + 8) ÷ 3 = 18 ÷ 3 = 6.'},
+  {p:'wassima',v:'wiskunde',t:'Statistiek',lvl:2,q:'Wat is de mediaan van 3, 9 en 5?',a:'5',h:['Zet op volgorde en pak de middelste.'],s:'Op volgorde: 3, 5, 9. De middelste is 5.'},
+  {p:'wassima',v:'wiskunde',t:'Statistiek',lvl:2,q:'Wat is de modus van 2, 4, 4 en 7?',a:'4',h:['De modus komt het vaakst voor.'],s:'4 komt twee keer voor → modus = 4.'},
+  {p:'wassima',v:'wiskunde',t:'Haakjes & herleiden',lvl:1,q:'Herleid: 2x + 3x',a:'5x',h:['Tel gelijke termen (allebei "x") op.'],s:'2x + 3x = 5x.'},
+  {p:'wassima',v:'wiskunde',t:'Haakjes & herleiden',lvl:2,q:'Werk de haakjes weg: 3(x + 2). Schrijf als ax + b.',a:'3x+6',alt:['3x + 6'],h:['Vermenigvuldig de 3 met allebei in de haakjes.'],s:'3 × x + 3 × 2 = 3x + 6.'},
+  {p:'wassima',v:'wiskunde',t:'Haakjes & herleiden',lvl:3,q:'Herleid: 5x + 2 − 2x + 4',a:'3x+6',alt:['3x + 6'],h:['Tel de x-en samen en de gewone getallen samen.'],s:'5x − 2x = 3x, en 2 + 4 = 6 → 3x + 6.'},
   // ---- Wassima · wiskunde ----
   {p:'wassima',v:'wiskunde',t:'Procenten',lvl:1,q:'Een trui van € 40 krijgt 25% korting. Hoeveel kost de trui nu?',a:'30',u:'€',h:['25% korting betekent dat je 75% van de prijs betaalt.','Groeifactor = 1 − 25/100 = 0,75. Vermenigvuldig de oude prijs hiermee.'],s:'Gegeven: prijs € 40, korting 25%.\nFormule: nieuw = oud × groeifactor; groeifactor = 0,75.\n40 × 0,75 = € 30.'},
   {p:'wassima',v:'wiskunde',t:'Procenten',lvl:1,q:'In een klas van 30 leerlingen zijn 18 meisjes. Hoeveel procent is dat?',a:'60',u:'%',h:['Gebruik: % = (deel ÷ geheel) × 100.'],s:'(18 ÷ 30) × 100 = 0,6 × 100 = 60%.'},
@@ -151,11 +186,60 @@ const SEED = [
   {p:'wassima',v:'wiskunde',t:'Hoeken',lvl:2,ill:{type:'vierhoek',h:[90,100,85,'?']},q:'In een vierhoek zijn drie hoeken 90°, 100° en 85°. Hoe groot is de vierde hoek?',a:'85',u:'°',h:['De hoeken van een vierhoek zijn samen 360°.'],s:'360 − 90 − 100 − 85 = 85°.'},
   {p:'wassima',v:'wiskunde',t:'Inhoud',lvl:1,ill:{type:'balk',l:10,b:4,h:3},q:'Een balk is 10 cm × 4 cm × 3 cm. Bereken de inhoud.',a:'120',u:'cm³',h:['inhoud = lengte × breedte × hoogte.'],s:'10 × 4 × 3 = 120 cm³.'},
   {p:'wassima',v:'wiskunde',t:'Inhoud',lvl:2,ill:{type:'kubus',z:5},q:'Een kubus heeft ribben van 5 cm. Bereken de inhoud.',a:'125',u:'cm³',h:['inhoud = z × z × z = z³.'],s:'5 × 5 × 5 = 125 cm³.'},
+  // ---- Wassima · natuurkunde · FUNDAMENT (eenheden eerst) ----
+  {p:'wassima',v:'natuurkunde',t:'Grootheden & eenheden',lvl:1,q:'Hoeveel meter is 3 km?',a:'3000',u:'m',h:['1 km = 1000 m.'],s:'3 × 1000 = 3000 m.'},
+  {p:'wassima',v:'natuurkunde',t:'Grootheden & eenheden',lvl:1,q:'Hoeveel gram is 2 kg?',a:'2000',u:'g',h:['1 kg = 1000 g.'],s:'2 × 1000 = 2000 g.'},
+  {p:'wassima',v:'natuurkunde',t:'Grootheden & eenheden',lvl:2,q:'Hoeveel seconden is 5 minuten?',a:'300',u:'s',h:['1 minuut = 60 s.'],s:'5 × 60 = 300 s.'},
+  {p:'wassima',v:'natuurkunde',t:'Grootheden & eenheden',lvl:2,q:'Hoeveel cm is 1,5 m?',a:'150',u:'cm',h:['1 m = 100 cm.'],s:'1,5 × 100 = 150 cm.'},
+  {p:'wassima',v:'natuurkunde',t:'Temperatuur & warmte',lvl:1,q:'Bij welke temperatuur bevriest water? (in °C)',a:'0',u:'°C',h:['Het vriespunt van water.'],s:'Water bevriest bij 0 °C.'},
+  {p:'wassima',v:'natuurkunde',t:'Temperatuur & warmte',lvl:1,q:'Bij welke temperatuur kookt water? (in °C, op zeeniveau)',a:'100',u:'°C',h:['Het kookpunt van water.'],s:'Water kookt bij 100 °C.'},
+  {p:'wassima',v:'natuurkunde',t:'Temperatuur & warmte',lvl:1,q:'Met welk instrument meet je temperatuur?',a:'thermometer',alt:['de thermometer','een thermometer'],h:['Je leest er graden Celsius op af.'],s:'Een thermometer meet de temperatuur in °C.'},
+  {p:'wassima',v:'natuurkunde',t:'Licht',lvl:1,q:'Kaatst licht terug als het op een spiegel valt? (ja/nee)',a:'ja',h:['Daarom kun je jezelf zien.'],s:'Ja: een spiegel weerkaatst (reflecteert) het licht.'},
+  {p:'wassima',v:'natuurkunde',t:'Licht',lvl:2,q:'Hoe heet het terugkaatsen van licht op een glad oppervlak?',a:'weerkaatsing',alt:['reflectie','terugkaatsing'],h:['Een woord dat begint met "weer..." of "re...".'],s:'Weerkaatsing (reflectie) van licht.'},
+  {p:'wassima',v:'natuurkunde',t:'Magnetisme',lvl:1,q:'Een magneet heeft twee polen: de noordpool en de ...?',a:'zuidpool',alt:['zuid','zuid pool'],h:['Tegenovergestelde van noord.'],s:'Een magneet heeft een noordpool en een zuidpool.'},
+  {p:'wassima',v:'natuurkunde',t:'Magnetisme',lvl:2,q:'Twee noordpolen bij elkaar: stoten ze elkaar af of trekken ze aan?',a:'afstoten',alt:['stoten af','af','afstoot'],h:['Gelijke polen doen iets anders dan ongelijke.'],s:'Gelijke polen stoten elkaar af; ongelijke polen trekken elkaar aan.'},
+  {p:'wassima',v:'natuurkunde',t:'Elektrische schakelingen',lvl:1,q:'Moet een stroomkring open of dicht (gesloten) zijn om een lampje te laten branden?',a:'dicht',alt:['gesloten','dicht (gesloten)'],h:['De stroom moet rond kunnen lopen.'],s:'De kring moet gesloten (dicht) zijn, anders loopt er geen stroom.'},
+  {p:'wassima',v:'natuurkunde',t:'Elektrische schakelingen',lvl:2,q:'In een serieschakeling gaat één lampje stuk. Branden de andere lampjes nog? (ja/nee)',a:'nee',h:['Bij serie is er maar één pad voor de stroom.'],s:'Nee — bij een serieschakeling valt alles uit als er één lampje kapotgaat.'},
+  {p:'wassima',v:'natuurkunde',t:'Beweging (afstand-tijd)',lvl:1,q:'Een auto rijdt 60 km in 1 uur. Wat is de snelheid in km/u?',a:'60',u:'km/u',h:['snelheid = afstand ÷ tijd.'],s:'60 km ÷ 1 uur = 60 km/u.'},
+  {p:'wassima',v:'natuurkunde',t:'Beweging (afstand-tijd)',lvl:2,q:'Een wandelaar loopt 5 km/u. Hoe ver komt hij in 3 uur?',a:'15',u:'km',h:['afstand = snelheid × tijd.'],s:'5 × 3 = 15 km.'},
   // ---- Wassima · natuurkunde ----
   {p:'wassima',v:'natuurkunde',t:'Snelheid',lvl:1,q:'Een fietser legt 6000 m af in 1500 s. Bereken de snelheid.',a:'4',u:'m/s',h:['v = s ÷ t (verhuisdriehoekje: dek v af → s boven t).'],s:'v = 6000 ÷ 1500 = 4 m/s.'},
   {p:'wassima',v:'natuurkunde',t:'Snelheid',lvl:2,q:'Een auto rijdt 90 km/u. Hoeveel m/s is dat?',a:'25',u:'m/s',h:['Van km/u naar m/s: delen door 3,6.'],s:'90 ÷ 3,6 = 25 m/s.'},
   {p:'wassima',v:'natuurkunde',t:'Dichtheid',lvl:2,q:'Een blok heeft massa 600 g en volume 75 cm³. Bereken de dichtheid.',a:'8',u:'g/cm³',h:['ρ = m ÷ V.'],s:'ρ = 600 ÷ 75 = 8 g/cm³ (ongeveer ijzer).'},
   {p:'wassima',v:'natuurkunde',t:'Dichtheid',lvl:3,q:'Een stuk hout heeft massa 200 g en volume 250 cm³. Bereken de dichtheid.',a:'0.8',alt:['0,8'],u:'g/cm³',h:['ρ = m ÷ V. Lager dan 1 → het drijft op water.'],s:'ρ = 200 ÷ 250 = 0,8 g/cm³. Lichter dan water (1 g/cm³), dus het drijft.'},
+  // ---- Wassima · natuurkunde · einde 2 havo (extra) ----
+  {p:'wassima',v:'natuurkunde',t:'Kracht & zwaartekracht',lvl:1,q:'Bereken de zwaartekracht op een voorwerp van 5 kg. (in de onderbouw rekenen we met g = 10 N/kg)',a:'50',u:'N',alt:['49','49.05'],h:['Zwaartekracht: Fz = m × g.','m = 5 kg en g = 10 N/kg.'],s:'Fz = m × g = 5 × 10 = 50 N. (Met de nauwkeurige g = 9,8 N/kg zou je 49 N krijgen.)'},
+  {p:'wassima',v:'natuurkunde',t:'Kracht & zwaartekracht',lvl:2,q:'De zwaartekracht op een tas is 80 N. Wat is de massa? (g = 10 N/kg)',a:'8',u:'kg',h:['Fz = m × g, dus m = Fz ÷ g.'],s:'m = Fz ÷ g = 80 ÷ 10 = 8 kg.'},
+  {p:'wassima',v:'natuurkunde',t:'Kracht & zwaartekracht',lvl:2,q:'Op een doos werkt de zwaartekracht (30 N omlaag). Een touw trekt met 30 N omhoog. Hoe groot is de nettokracht?',a:'0',u:'N',h:['Even grote krachten in tegengestelde richting heffen elkaar op.'],s:'30 N omhoog − 30 N omlaag = 0 N. De doos is in evenwicht (blijft hangen).'},
+  {p:'wassima',v:'natuurkunde',t:'Veerkracht',lvl:1,q:'Een veer rekt 2 cm uit per 1 N die je eraan hangt. Hoeveel rekt hij uit bij 5 N?',a:'10',u:'cm',h:['Reken per newton: 2 cm × het aantal newton.'],s:'5 N × 2 cm = 10 cm uitrekking.'},
+  {p:'wassima',v:'natuurkunde',t:'Veerkracht',lvl:2,q:'Een veer heeft veerconstante C = 20 N/m en wordt 0,1 m uitgerekt. Bereken de veerkracht. (Fveer = C × u)',a:'2',u:'N',h:['Fveer = C × u.','u = 0,1 m.'],s:'Fveer = C × u = 20 × 0,1 = 2 N.'},
+  {p:'wassima',v:'natuurkunde',t:'Stroom & spanning',lvl:1,q:'Door een weerstand van 4 Ω loopt een stroom van 2 A. Bereken de spanning. (wet van Ohm: U = I × R)',a:'8',u:'V',h:['U = I × R.'],s:'U = I × R = 2 × 4 = 8 V.'},
+  {p:'wassima',v:'natuurkunde',t:'Stroom & spanning',lvl:2,q:'Over een weerstand van 10 Ω staat 6 V. Hoe groot is de stroom? (I = U ÷ R)',a:'0.6',u:'A',alt:['0,6'],h:['Uit U = I × R volgt I = U ÷ R.'],s:'I = U ÷ R = 6 ÷ 10 = 0,6 A.'},
+  {p:'wassima',v:'natuurkunde',t:'Stroom & spanning',lvl:2,q:'Een lampje van 3 V trekt 0,2 A. Bereken het vermogen. (P = U × I)',a:'0.6',u:'W',alt:['0,6'],h:['P = U × I.'],s:'P = U × I = 3 × 0,2 = 0,6 W.'},
+  {p:'wassima',v:'natuurkunde',t:'Energie & vermogen',lvl:1,q:'Een lamp van 20 W brandt 30 s. Hoeveel energie gebruikt hij? (E = P × t)',a:'600',u:'J',h:['E = P × t.'],s:'E = P × t = 20 × 30 = 600 J.'},
+  {p:'wassima',v:'natuurkunde',t:'Energie & vermogen',lvl:2,q:'Een apparaat gebruikt 1500 J in 30 s. Bereken het vermogen. (P = E ÷ t)',a:'50',u:'W',h:['P = E ÷ t.'],s:'P = E ÷ t = 1500 ÷ 30 = 50 W.'},
+  {p:'wassima',v:'natuurkunde',t:'Geluid',lvl:1,q:'Geluid gaat ongeveer 340 m/s. Hoe ver komt het in 2 s?',a:'680',u:'m',h:['afstand = snelheid × tijd.'],s:'s = v × t = 340 × 2 = 680 m.'},
+  {p:'wassima',v:'natuurkunde',t:'Geluid',lvl:2,q:'Je roept naar een muur en hoort de echo na 2 s. Geluid gaat 340 m/s. Hoe ver staat de muur?',a:'340',u:'m',h:['In 2 s legt geluid 340 × 2 = 680 m af.','Maar dat is heen én terug, dus deel door 2.'],s:'Heen en terug: 340 × 2 = 680 m. De muur staat 680 ÷ 2 = 340 m ver.'},
+  {p:'wassima',v:'natuurkunde',t:'Druk',lvl:2,q:'Een kracht van 200 N drukt op een vlak van 4 m². Bereken de druk. (p = F ÷ A, druk in pascal)',a:'50',u:'Pa',h:['p = F ÷ A. 1 Pa = 1 N/m².'],s:'p = F ÷ A = 200 ÷ 4 = 50 Pa.'},
+  {p:'wassima',v:'natuurkunde',t:'Druk',lvl:3,q:'Iemand van 600 N staat op één voet met oppervlakte 0,02 m². Bereken de druk.',a:'30000',u:'Pa',alt:['30.000'],h:['p = F ÷ A.','Delen door een klein getal geeft een grote druk.'],s:'p = 600 ÷ 0,02 = 30 000 Pa. Op één voet sta je dus met veel meer druk dan op twee.'},
+
+  // ---- Wassima · geschiedenis · einde 2 havo ----
+  {p:'wassima',v:'geschiedenis',t:'Tijd & eeuwen',lvl:1,q:'In welke eeuw valt het jaartal 1602? (schrijf bijv. 17e)',a:'17e',alt:['17','17de','17ste','zeventiende','zeventiende eeuw','17e eeuw'],h:['Neem de eerste twee cijfers (16) en tel er 1 bij op.'],s:'1602 → 16 + 1 = de 17e eeuw. De jaren 1601 t/m 1700 horen bij de 17e eeuw.'},
+  {p:'wassima',v:'geschiedenis',t:'Tijd & eeuwen',lvl:1,q:'In welke eeuw valt het jaartal 1789?',a:'18e',alt:['18','18de','18ste','achttiende','achttiende eeuw','18e eeuw'],h:['Eerste twee cijfers (17) + 1.'],s:'1789 → 17 + 1 = de 18e eeuw.'},
+  {p:'wassima',v:'geschiedenis',t:'Tijd & eeuwen',lvl:2,q:'Hoeveel jaar duurde de Tachtigjarige Oorlog?',a:'80',u:'jaar',h:['De naam verklapt het antwoord.'],s:'De Tachtigjarige Oorlog duurde 80 jaar (van 1568 tot 1648).'},
+  {p:'wassima',v:'geschiedenis',t:'Opstand tegen Spanje',lvl:1,q:'In welk jaar begon de Opstand tegen Spanje (het begin van de Tachtigjarige Oorlog)?',a:'1568',h:['Eind jaren 60 van de 16e eeuw.'],s:'De Opstand begon in 1568 en duurde tot 1648.'},
+  {p:'wassima',v:'geschiedenis',t:'Opstand tegen Spanje',lvl:1,q:'Wie was de leider van de Opstand tegen de Spaanse koning? (voor- en achternaam)',a:'Willem van Oranje',alt:['willem van oranje','willem van oranje-nassau','willem van oranje nassau','prins willem'],h:['Hij wordt de "Vader des Vaderlands" genoemd.'],s:'Willem van Oranje leidde de Opstand. Hij heet ook wel de Vader des Vaderlands.'},
+  {p:'wassima',v:'geschiedenis',t:'Opstand tegen Spanje',lvl:2,q:'Met welke vrede eindigde in 1648 de Tachtigjarige Oorlog? Vrede van … (plaatsnaam)',a:'Münster',alt:['munster','vrede van munster','vrede van münster'],h:['Een Duitse stad; de naam begint met een M.'],s:'De Vrede van Münster (1648). Spanje erkende de Republiek als onafhankelijk land.'},
+  {p:'wassima',v:'geschiedenis',t:'Gouden Eeuw & Republiek',lvl:1,q:'In welk jaar werd de VOC opgericht?',a:'1602',h:['Begin van de 17e eeuw.'],s:'De VOC werd in 1602 opgericht — het eerste bedrijf ter wereld met aandelen.'},
+  {p:'wassima',v:'geschiedenis',t:'Gouden Eeuw & Republiek',lvl:1,q:'Hoe heet de bloeitijd van de Republiek in de 17e eeuw? (… Eeuw)',a:'Gouden Eeuw',alt:['de gouden eeuw','goudeneeuw','gouden'],h:['Een edelmetaal + een tijdsperiode.'],s:'De 17e eeuw heet de Gouden Eeuw: veel handel, kunst en welvaart.'},
+  {p:'wassima',v:'geschiedenis',t:'Gouden Eeuw & Republiek',lvl:2,q:'Uit hoeveel gewesten bestond de Republiek der Verenigde Nederlanden?',a:'7',alt:['zeven'],h:['Het zit in de volledige naam: Republiek der … Verenigde Nederlanden.'],s:'Zeven gewesten — daarom: de Republiek der Zeven Verenigde Nederlanden.'},
+  {p:'wassima',v:'geschiedenis',t:'Handel & slavernij',lvl:2,q:'Hoe heet de handel tussen Europa, Afrika en Amerika waarbij tot slaaf gemaakte mensen werden verhandeld?',a:'driehoekshandel',alt:['de driehoekshandel','trans-atlantische handel','driehoek handel'],h:['Denk aan een figuur met drie hoeken.'],s:'De driehoekshandel: Europa → Afrika (ruilgoederen) → Amerika (tot slaaf gemaakte mensen) → Europa (suiker, katoen).'},
+  {p:'wassima',v:'geschiedenis',t:'Handel & slavernij',lvl:2,q:'Welke compagnie handelde voor de Republiek op Amerika en West-Afrika? (afkorting)',a:'WIC',alt:['w.i.c.','west-indische compagnie','de wic'],h:['Hetzelfde idee als de VOC, maar dan voor het westen.'],s:'De WIC: de West-Indische Compagnie.'},
+  {p:'wassima',v:'geschiedenis',t:'Verlichting',lvl:2,q:'Hoe heet de stroming uit de 18e eeuw waarin denkers de rede (het verstand) centraal stelden?',a:'Verlichting',alt:['de verlichting'],h:['Het tegenovergestelde van duisternis en onwetendheid.'],s:'De Verlichting: zelf nadenken met je verstand (de rede), in plaats van alles aannemen van kerk of koning.'},
+  {p:'wassima',v:'geschiedenis',t:'Verlichting',lvl:2,q:'Hoe noem je een koning die in zijn eentje alle macht heeft?',a:'absolute vorst',alt:['absolute vorst','absolutisme','absolute koning','absoluut vorst'],h:['"… vorst": hij hoeft met niemand te overleggen.'],s:'Een absolute vorst heeft alle macht alleen (absolutisme). Verlichtingsdenkers wilden die macht juist verdelen.'},
+  {p:'wassima',v:'geschiedenis',t:'Franse Revolutie',lvl:1,q:'In welk jaar begon de Franse Revolutie?',a:'1789',h:['Eind 18e eeuw.'],s:'De Franse Revolutie begon in 1789 met de bestorming van de Bastille.'},
+  {p:'wassima',v:'geschiedenis',t:'Franse Revolutie',lvl:2,q:'Welke gevangenis bestormde het volk in Parijs in 1789? (de …)',a:'Bastille',alt:['de bastille'],h:['Begint met een B en is het symbool van de macht van de koning.'],s:'De Bastille — een gevangenis en symbool van de macht van de koning.'},
+  {p:'wassima',v:'geschiedenis',t:'Franse Revolutie',lvl:3,q:'Wat was de leuze van de Franse Revolutie? (drie woorden)',a:'vrijheid gelijkheid broederschap',alt:['vrijheid, gelijkheid, broederschap','vrijheid gelijkheid en broederschap','vrijheid gelijkheid en broederschap'],h:['Vrij­heid, ge­lijk­heid en …'],s:'"Vrijheid, gelijkheid, broederschap" — iedereen even vrij en gelijk.'},
 
   // ---- Amaani · wiskunde A ----
   {p:'amaani',v:'wiskundeA',t:'Groeifactoren',lvl:1,q:'Een bedrag daalt met 8%. Wat is de groeifactor?',a:'0.92',alt:['0,92'],h:['Afname met p%: groeifactor = 1 − p/100.'],s:'1 − 8/100 = 0,92.'},
@@ -202,20 +286,268 @@ const SEED = [
   {p:'amaani',v:'natuurkunde',t:'Arbeid & energie',lvl:3,q:'Een veer met veerconstante C = 200 N/m wordt 0,1 m uitgerekt. Bereken de veerenergie.',a:'1',u:'J',h:['Ev = ½ × C × u².','u² = 0,01.'],s:'Ev = ½ × 200 × 0,1² = ½ × 200 × 0,01 = 1 J.'},
   {p:'amaani',v:'natuurkunde',t:'Elektriciteit',lvl:2,q:'Twee weerstanden in serie: 4 Ω en 6 Ω. Bereken de vervangingsweerstand.',a:'10',u:'Ω',h:['In serie tel je de weerstanden op.'],s:'Rv = 4 + 6 = 10 Ω.'},
   {p:'amaani',v:'natuurkunde',t:'Elektriciteit',lvl:3,q:'Een apparaat van 2000 W staat 3 uur aan. De stroomprijs is € 0,30 per kWh. Wat kost dat?',a:'1.80',alt:['1,80','1.8'],u:'€',h:['Eerst kWh: 2000 W = 2 kW; E = 2 × 3 = 6 kWh.','Kosten = kWh × prijs.'],s:'E = 2 kW × 3 uur = 6 kWh → 6 × € 0,30 = € 1,80.'},
+
+  /* ============ WASSIMA · NEDERLANDS (eind 2 havo) ============ */
+  {p:'wassima',v:'nederlands',t:'Werkwoordspelling',lvl:1,q:'Vul in (tegenwoordige tijd): Hij ... elke dag naar school. (lopen) → hij',a:'loopt',h:['Hij/zij-vorm = ik-vorm (stam) + t.','stam van lopen = loop.'],s:'stam loop + t = loopt.'},
+  {p:'wassima',v:'nederlands',t:'Werkwoordspelling',lvl:2,q:'Vul in (verleden tijd): Gisteren ... hij naar school. (fietsen) → hij',a:'fietste',h:["'t kofschip: eindigt de stam op t,k,f,s,ch,p → +te, anders +de.",'stam fiets eindigt op s.'],s:"fiets eindigt op s (in 't kofschip) → fietste."},
+  {p:'wassima',v:'nederlands',t:'Werkwoordspelling',lvl:2,q:'Vul in (verleden tijd): Zij ... haar oma op. (bellen) → zij',a:'belde',h:["Stam bel eindigt op l → niet in 't kofschip → +de."],s:"bel eindigt op l (niet in 't kofschip) → belde."},
+  {p:'wassima',v:'nederlands',t:'Werkwoordspelling',lvl:2,q:'Voltooid deelwoord: Hij heeft de taart ... (maken). → ge...',a:'gemaakt',alt:['maakt'],h:['ge + stam + t/d. maak eindigt op k → t.'],s:'ge + maak + t = gemaakt.'},
+  {p:'wassima',v:'nederlands',t:'Woordsoorten',lvl:1,q:'Welke woordsoort is "lopen"?',a:'werkwoord',alt:['ww','het werkwoord'],h:['Het is iets dat je doet.'],s:'"lopen" is een werkwoord (ww): een woord voor een handeling.'},
+  {p:'wassima',v:'nederlands',t:'Woordsoorten',lvl:2,q:'Welke woordsoort is "snel" in "de snelle auto"?',a:'bijvoeglijk naamwoord',alt:['bn','adjectief'],h:['Het zegt iets over een zelfstandig naamwoord (de auto).'],s:'"snel(le)" beschrijft de auto → bijvoeglijk naamwoord (bn).'},
+  {p:'wassima',v:'nederlands',t:'Woordsoorten',lvl:1,q:'Welke woordsoort is "huis"?',a:'zelfstandig naamwoord',alt:['zn','znw','znw.'],h:['Een ding waar je "het" of "de" voor kunt zetten.'],s:'"huis" is een zelfstandig naamwoord (zn): een naam voor een ding.'},
+  {p:'wassima',v:'nederlands',t:'Spelling',lvl:1,q:'Wat is het meervoud van "kat"?',a:'katten',h:['Korte klank → medeklinker verdubbelen.'],s:'Korte a-klank → verdubbel de t: katten.'},
+  {p:'wassima',v:'nederlands',t:'Spelling',lvl:2,q:'Wat is het meervoud van "auto"?',a:"auto's",alt:['autos'],h:['Klinker aan het eind → meervoud met apostrof-s.'],s:"auto eindigt op een klinker → auto's."},
+
+  /* ============ WASSIMA · ENGELS (eind 2 havo) ============ */
+  {p:'wassima',v:'engels',t:'Woordenschat',lvl:1,q:'Vertaal naar het Engels: "hond".',a:'dog',h:['Een huisdier dat blaft.'],s:'hond = dog.'},
+  {p:'wassima',v:'engels',t:'Woordenschat',lvl:1,q:'Vertaal naar het Nederlands: "house".',a:'huis',alt:['het huis'],h:['Daar woon je.'],s:'house = huis.'},
+  {p:'wassima',v:'engels',t:'Woordenschat',lvl:2,q:'Vertaal naar het Engels: "altijd".',a:'always',h:['Begint met "al...".'],s:'altijd = always.'},
+  {p:'wassima',v:'engels',t:'Onregelmatige werkwoorden',lvl:2,q:'Past simple (verleden tijd) van "go".',a:'went',h:['Heel onregelmatig — niet "goed".'],s:'go – went – gone. Verleden tijd: went.'},
+  {p:'wassima',v:'engels',t:'Onregelmatige werkwoorden',lvl:2,q:'Past simple van "have".',a:'had',h:['Ook in het Nederlands lijkt het: had.'],s:'have – had – had.'},
+  {p:'wassima',v:'engels',t:'Onregelmatige werkwoorden',lvl:3,q:'Past participle (voltooid deelwoord) van "eat".',a:'eaten',h:['eat – ate – ...'],s:'eat – ate – eaten.'},
+  {p:'wassima',v:'engels',t:'Grammatica',lvl:1,q:'a of an? "... apple"',a:'an',h:['Voor een klinkerklank (a, e, i, o, u) komt "an".'],s:'apple begint met een klinker → an apple.'},
+  {p:'wassima',v:'engels',t:'Grammatica',lvl:2,q:'Meervoud van "child" (onregelmatig).',a:'children',h:['Niet "childs".'],s:'child → children.'},
+
+  /* ============ WASSIMA · FRANS (eind 2 havo) ============ */
+  {p:'wassima',v:'frans',t:'Woordenschat',lvl:1,q:'Vertaal naar het Frans: "het huis".',a:'la maison',alt:['maison'],h:['Vrouwelijk woord: la ...'],s:'het huis = la maison.'},
+  {p:'wassima',v:'frans',t:'Woordenschat',lvl:1,q:'Vertaal naar het Nederlands: "le livre".',a:'het boek',alt:['boek'],h:['Daar lees je uit.'],s:'le livre = het boek.'},
+  {p:'wassima',v:'frans',t:'Lidwoorden (le/la)',lvl:1,q:'le of la? "... maison" (vrouwelijk)',a:'la',h:['Vrouwelijk → la.'],s:'maison is vrouwelijk → la maison.'},
+  {p:'wassima',v:'frans',t:'Lidwoorden (le/la)',lvl:1,q:'le of la? "... livre" (mannelijk)',a:'le',h:['Mannelijk → le.'],s:'livre is mannelijk → le livre.'},
+  {p:'wassima',v:'frans',t:'Getallen',lvl:1,q:'Welk cijfer is "trois"?',a:'3',alt:['drie'],h:['Tussen deux en quatre.'],s:'trois = 3.'},
+  {p:'wassima',v:'frans',t:'Getallen',lvl:2,q:'Hoe schrijf je "10" in het Frans?',a:'dix',h:['Klinkt als "diis".'],s:'10 = dix.'},
+
+  /* ============ WASSIMA · DUITS (eind 2 havo) ============ */
+  {p:'wassima',v:'duits',t:'Woordenschat',lvl:1,q:'Vertaal naar het Duits: "het boek".',a:'das Buch',alt:['buch','das buch'],h:['Onzijdig woord: das ...'],s:'het boek = das Buch.'},
+  {p:'wassima',v:'duits',t:'Woordenschat',lvl:1,q:'Vertaal naar het Nederlands: "die Schule".',a:'de school',alt:['school'],h:['Daar leer je.'],s:'die Schule = de school.'},
+  {p:'wassima',v:'duits',t:'Lidwoorden (der/die/das)',lvl:1,q:'der, die of das? "... Hund" (mannelijk)',a:'der',h:['Mannelijk → der.'],s:'Hund is mannelijk → der Hund.'},
+  {p:'wassima',v:'duits',t:'Lidwoorden (der/die/das)',lvl:1,q:'der, die of das? "... Schule" (vrouwelijk)',a:'die',h:['Vrouwelijk → die.'],s:'Schule is vrouwelijk → die Schule.'},
+  {p:'wassima',v:'duits',t:'Getallen',lvl:1,q:'Schrijf "4" in het Duits.',a:'vier',h:['Lijkt op het Nederlands.'],s:'4 = vier.'},
+  {p:'wassima',v:'duits',t:'Getallen',lvl:2,q:'Wat is "zehn" in cijfers?',a:'10',alt:['tien'],h:['Klinkt als "tseen".'],s:'zehn = 10.'},
+
+  /* ============ WASSIMA · BIOLOGIE (eind 2 havo) ============ */
+  {p:'wassima',v:'biologie',t:'De cel',lvl:1,q:'Hoe heet het "controlecentrum" van de cel, waar het DNA ligt?',a:'celkern',alt:['kern','de celkern'],h:['Het regelt wat de cel doet.'],s:'De celkern bevat het DNA en stuurt de cel aan.'},
+  {p:'wassima',v:'biologie',t:'De cel',lvl:2,q:'Welk celonderdeel hebben plantencellen wél en dierlijke cellen niet (geeft stevigheid)?',a:'celwand',alt:['de celwand'],h:['Een stevige laag óm de cel.'],s:'Plantencellen hebben een celwand; dierlijke cellen niet.'},
+  {p:'wassima',v:'biologie',t:'De cel',lvl:2,q:'In welke groene celonderdelen vindt fotosynthese plaats?',a:'bladgroenkorrels',alt:['bladgroenkorrel','chloroplast','chloroplasten'],h:['Ze maken het blad groen.'],s:'In de bladgroenkorrels (chloroplasten) vindt fotosynthese plaats.'},
+  {p:'wassima',v:'biologie',t:'Het menselijk lichaam',lvl:1,q:'Welk orgaan pompt het bloed door je lichaam?',a:'hart',alt:['het hart'],h:['Het klopt in je borst.'],s:'Het hart pompt bloed rond.'},
+  {p:'wassima',v:'biologie',t:'Het menselijk lichaam',lvl:1,q:'In welk orgaan neem je zuurstof op uit de lucht?',a:'longen',alt:['de longen','long'],h:['Je gebruikt ze bij ademhalen.'],s:'In de longen wordt zuurstof opgenomen.'},
+  {p:'wassima',v:'biologie',t:'Planten',lvl:1,q:'Welk deel van de plant neemt water op uit de grond?',a:'wortels',alt:['wortel','de wortels'],h:['Ze zitten onder de grond.'],s:'De wortels nemen water (en mineralen) op.'},
+  {p:'wassima',v:'biologie',t:'Planten',lvl:2,q:'Bij fotosynthese maakt de plant glucose en een gas dat wij inademen. Welk gas?',a:'zuurstof',alt:['o2','zuurstof (o2)'],h:['Wij ademen het in om te leven.'],s:'Fotosynthese: CO₂ + water + licht → glucose + zuurstof.'},
+
+  /* ============ WASSIMA · AARDRIJKSKUNDE (eind 2 havo) ============ */
+  {p:'wassima',v:'aardrijkskunde',t:'Topografie',lvl:1,q:'Wat is de hoofdstad van Nederland?',a:'Amsterdam',h:['Stad met grachten.'],s:'De hoofdstad van Nederland is Amsterdam.'},
+  {p:'wassima',v:'aardrijkskunde',t:'Topografie',lvl:1,q:'Wat is de hoofdstad van Frankrijk?',a:'Parijs',alt:['paris'],h:['Stad met de Eiffeltoren.'],s:'De hoofdstad van Frankrijk is Parijs.'},
+  {p:'wassima',v:'aardrijkskunde',t:'Topografie',lvl:2,q:'In welke provincie ligt Rotterdam?',a:'Zuid-Holland',alt:['zuidholland'],h:['Een provincie aan de kust, in het westen.'],s:'Rotterdam ligt in Zuid-Holland.'},
+  {p:'wassima',v:'aardrijkskunde',t:'Klimaat & weer',lvl:1,q:'Hoe heet de gemiddelde toestand van het weer over een lange periode (30 jaar)?',a:'klimaat',alt:['het klimaat'],h:['Niet "het weer van vandaag", maar gemiddeld.'],s:'Het klimaat = het gemiddelde weer over ±30 jaar.'},
+  {p:'wassima',v:'aardrijkskunde',t:'Water & landschap',lvl:2,q:'Hoe noem je laaggelegen land dat door mensen op het water is gewonnen en omringd is door dijken?',a:'polder',alt:['een polder','polders'],h:['Typisch Nederlands landschap.'],s:'Een polder is drooggelegd land achter dijken.'},
+  {p:'wassima',v:'aardrijkskunde',t:'Water & landschap',lvl:2,q:'Hoe heet een door mensen gegraven waterweg die rivieren of zeeën verbindt?',a:'kanaal',alt:['een kanaal','het kanaal'],h:['Recht, door mensen gemaakt — geen rivier.'],s:'Een kanaal is een gegraven waterweg.'},
+
+  /* ============ WASSIMA · ECONOMIE (eind 2 havo) ============ */
+  {p:'wassima',v:'economie',t:'Geld & rekenen',lvl:1,q:'Je koopt iets voor € 12 en betaalt met € 20. Hoeveel krijg je terug?',a:'8',u:'€',h:['Wisselgeld = betaald − prijs.'],s:'20 − 12 = € 8 terug.'},
+  {p:'wassima',v:'economie',t:'Geld & rekenen',lvl:2,q:'Een spel kost € 50. Je krijgt 10% korting. Hoeveel betaal je?',a:'45',u:'€',h:['10% van 50 = 5; trek dat eraf.'],s:'Korting = 10% × 50 = € 5. Je betaalt 50 − 5 = € 45.'},
+  {p:'wassima',v:'economie',t:'Begrippen',lvl:1,q:'Hoe heet iemand die producten koopt en gebruikt?',a:'consument',alt:['de consument','klant'],h:['Het tegenovergestelde van producent.'],s:'Een consument koopt en gebruikt producten.'},
+  {p:'wassima',v:'economie',t:'Begrippen',lvl:2,q:'Hoe heet de belasting die je betaalt over producten (in Nederland meestal 21%)?',a:'btw',alt:['b.t.w.','omzetbelasting'],h:['Drie letters.'],s:'btw = belasting toegevoegde waarde.'},
 ];
 SEED.forEach((e,i)=> e.id = 'seed_'+i);
 
+/* ============================ SJABLONEN met WISSELENDE GETALLEN ============================ */
+/* Elke sjabloon-som krijgt bij elke beurt nieuwe getallen, zodat de méthode geoefend wordt
+   en niet het antwoord uit het hoofd geleerd wordt. gen() levert {q,a,alt?,u?,h,s,ill?}. */
+function ri(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function pick(a){return a[Math.floor(Math.random()*a.length)];}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function rnd(x,d){const f=Math.pow(10,d===undefined?2:d);return Math.round(x*f)/f;}
+function nl(x){return String(rnd(x,3)).replace('.',',');}      // Nederlandse komma voor weergave
+function pm(b){return b>=0?'+ '+b:'− '+(-b);}                  // teken voor in formules
+const EXP={1:'',2:'²',3:'³',4:'⁴'};
+
+const TEMPLATES=[
+  /* ----- Wassima · wiskunde ----- */
+  {id:'tpl_proc_korting',p:'wassima',v:'wiskunde',t:'Procenten',lvl:2,gen:()=>{
+    const prijs=20*ri(1,6), k=pick([10,25,50,75]), f=(100-k)/100, n=prijs*f;
+    return {q:`Een ${pick(['trui','jas','spel','boek','tas'])} van € ${prijs} krijgt ${k}% korting. Hoeveel kost hij nu?`,
+      a:String(n),u:'€',h:[`${k}% korting → je betaalt ${100-k}% van de prijs.`,`Groeifactor = ${nl(f)}. Vermenigvuldig de oude prijs hiermee.`],
+      s:`Groeifactor = ${nl(f)}.\n${prijs} × ${nl(f)} = € ${n}.`};
+  }},
+  {id:'tpl_proc_deel',p:'wassima',v:'wiskunde',t:'Procenten',lvl:1,gen:()=>{
+    const aantal=10*ri(2,5), pct=pick([10,20,30,40,50,60,70,80]), deel=aantal*pct/100;
+    return {q:`In een groep van ${aantal} leerlingen zijn er ${deel} meisjes. Hoeveel procent is dat?`,
+      a:String(pct),u:'%',h:['% = (deel ÷ geheel) × 100.'],s:`(${deel} ÷ ${aantal}) × 100 = ${pct}%.`};
+  }},
+  {id:'tpl_verg_lin',p:'wassima',v:'wiskunde',t:'Vergelijkingen',lvl:2,gen:()=>{
+    const a=ri(2,6), x=ri(2,9), b=ri(1,9), c=a*x+b;
+    return {q:`Los op: ${a}x + ${b} = ${c}. Wat is x?`,a:String(x),
+      h:[`Werk eerst de + ${b} weg, daarna de × ${a}.`],
+      s:`${a}x + ${b} = ${c} → − ${b} → ${a}x = ${c-b} → ÷ ${a} → x = ${x}.`};
+  }},
+  {id:'tpl_lin_invul',p:'wassima',v:'wiskunde',t:'Lineaire formules',lvl:1,gen:()=>{
+    const a=pick([-4,-3,-2,2,3,4,5]), b=ri(-5,9), x=ri(2,7), y=a*x+b;
+    return {q:`Gegeven y = ${a}x ${pm(b)}. Bereken y als x = ${x}.`,a:String(y),
+      h:[`Vul x = ${x} in de formule in.`],s:`y = ${a} × ${x} ${pm(b)} = ${a*x} ${pm(b)} = ${y}.`};
+  }},
+  {id:'tpl_opp_recht',p:'wassima',v:'wiskunde',t:'Oppervlakte & omtrek',lvl:1,gen:()=>{
+    const l=ri(5,15), b=ri(3,12);
+    return {q:`Een rechthoek is ${l} cm lang en ${b} cm breed. Bereken de oppervlakte.`,a:String(l*b),u:'cm²',
+      ill:{type:'rechthoek',l,b},h:['oppervlakte = lengte × breedte.'],s:`opp = ${l} × ${b} = ${l*b} cm².`};
+  }},
+  {id:'tpl_omtrek_recht',p:'wassima',v:'wiskunde',t:'Oppervlakte & omtrek',lvl:1,gen:()=>{
+    const l=ri(5,15), b=ri(3,12);
+    return {q:`Een rechthoek is ${l} cm lang en ${b} cm breed. Bereken de omtrek.`,a:String(2*(l+b)),u:'cm',
+      ill:{type:'rechthoek',l,b},h:['omtrek = 2 × (lengte + breedte).'],s:`omtrek = 2 × (${l} + ${b}) = 2 × ${l+b} = ${2*(l+b)} cm.`};
+  }},
+  {id:'tpl_pyth',p:'wassima',v:'wiskunde',t:'Pythagoras',lvl:2,gen:()=>{
+    const tr=pick([[3,4,5],[6,8,10],[5,12,13],[8,15,17],[9,12,15],[7,24,25],[20,21,29]]);
+    const a=tr[0], b=tr[1], c=tr[2];
+    return {q:`Rechthoekige driehoek met rechthoekszijden ${a} cm en ${b} cm. Bereken de schuine zijde.`,a:String(c),u:'cm',
+      ill:{type:'pyth',a,b,c:'?'},h:['a² + b² = c², met c de schuine zijde.',`c = √(${a*a} + ${b*b}) = √${a*a+b*b}.`],
+      s:`c = √(${a}² + ${b}²) = √(${a*a} + ${b*b}) = √${a*a+b*b} = ${c} cm.`};
+  }},
+  {id:'tpl_inhoud_balk',p:'wassima',v:'wiskunde',t:'Inhoud',lvl:1,gen:()=>{
+    const l=ri(3,10), b=ri(2,8), h=ri(2,6);
+    return {q:`Een balk is ${l} cm × ${b} cm × ${h} cm. Bereken de inhoud.`,a:String(l*b*h),u:'cm³',
+      ill:{type:'balk',l,b,h},h:['inhoud = lengte × breedte × hoogte.'],s:`${l} × ${b} × ${h} = ${l*b*h} cm³.`};
+  }},
+  /* ----- Wassima · natuurkunde ----- */
+  {id:'tpl_snelheid',p:'wassima',v:'natuurkunde',t:'Snelheid',lvl:1,gen:()=>{
+    const v=ri(2,12), t=pick([5,10,15,20,25,30]), s=v*t;
+    return {q:`Iemand legt ${s} m af in ${t} s. Bereken de snelheid.`,a:String(v),u:'m/s',
+      h:['v = s ÷ t.'],s:`v = ${s} ÷ ${t} = ${v} m/s.`};
+  }},
+  {id:'tpl_kmu',p:'wassima',v:'natuurkunde',t:'Snelheid',lvl:2,gen:()=>{
+    const ms=pick([5,10,15,20,25,30]), kmu=ms*3.6;
+    return {q:`Een voertuig rijdt ${nl(kmu)} km/u. Hoeveel m/s is dat?`,a:String(ms),u:'m/s',
+      h:['Van km/u naar m/s: delen door 3,6.'],s:`${nl(kmu)} ÷ 3,6 = ${ms} m/s.`};
+  }},
+  {id:'tpl_dichtheid',p:'wassima',v:'natuurkunde',t:'Dichtheid',lvl:2,gen:()=>{
+    const rho=ri(2,9), V=pick([10,20,25,50,100]), m=rho*V;
+    return {q:`Een blok heeft massa ${m} g en volume ${V} cm³. Bereken de dichtheid.`,a:String(rho),u:'g/cm³',
+      h:['ρ = m ÷ V.'],s:`ρ = ${m} ÷ ${V} = ${rho} g/cm³.`};
+  }},
+  {id:'tpl_zwaarte',p:'wassima',v:'natuurkunde',t:'Kracht & zwaartekracht',lvl:1,gen:()=>{
+    const m=ri(2,20);
+    return {q:`Bereken de zwaartekracht op ${m} kg. (g = 10 N/kg)`,a:String(m*10),u:'N',
+      h:['Fz = m × g.'],s:`Fz = m × g = ${m} × 10 = ${m*10} N.`};
+  }},
+  /* ----- Amaani · wiskunde A ----- */
+  {id:'tpl_groeifactor',p:'amaani',v:'wiskundeA',t:'Groeifactoren',lvl:1,gen:()=>{
+    const p=pick([2,3,4,5,8,10,12,20,25]), up=pick([true,false]), gf=rnd(up?1+p/100:1-p/100,2);
+    return {q:`Een bedrag ${up?'stijgt':'daalt'} met ${p}%. Wat is de groeifactor?`,a:String(gf),
+      h:[`${up?'Toename':'Afname'} met p%: groeifactor = ${up?'1 + p/100':'1 − p/100'}.`],
+      s:`${up?'1 +':'1 −'} ${p}/100 = ${nl(gf)}.`};
+  }},
+  {id:'tpl_exp',p:'amaani',v:'wiskundeA',t:'Exponentieel verband',lvl:2,gen:()=>{
+    const b=pick([100,200,500,1000]), g=pick([1.1,1.2,1.5,2]), t=ri(2,3), N=rnd(b*Math.pow(g,t),2);
+    return {q:`Gegeven N = ${b} × ${nl(g)}^t. Bereken N bij t = ${t}.`,a:String(N),
+      h:[`Reken eerst ${nl(g)}^${t} uit.`,`${nl(g)}^${t} = ${nl(rnd(Math.pow(g,t),4))}.`],
+      s:`N = ${b} × ${nl(g)}^${t} = ${b} × ${nl(rnd(Math.pow(g,t),4))} = ${nl(N)}.`};
+  }},
+  {id:'tpl_diff',p:'amaani',v:'wiskundeA',t:'Differentiëren',lvl:2,gen:()=>{
+    const n=pick([2,3,4]), x=ri(2,5), fp=n*Math.pow(x,n-1);
+    return {q:`Gegeven f(x) = x${EXP[n]}, met afgeleide f′(x) = ${n}x${EXP[n-1]}. Bereken f′(${x}).`,a:String(fp),
+      h:[`Vul x = ${x} in de afgeleide ${n}x${EXP[n-1]} in.`],
+      s:`f′(${x}) = ${n} × ${x}${EXP[n-1]} = ${n} × ${Math.pow(x,n-1)} = ${fp}.`};
+  }},
+  {id:'tpl_gemiddelde',p:'amaani',v:'wiskundeA',t:'Statistiek',lvl:1,gen:()=>{
+    const m=ri(4,9), nums=shuffle([m-2,m-1,m,m+1,m+2]);
+    return {q:`Bereken het gemiddelde van ${nums.join(', ')}.`,a:String(m),
+      h:['gemiddelde = som ÷ aantal.'],s:`(${nums.join(' + ')}) ÷ 5 = ${5*m} ÷ 5 = ${m}.`};
+  }},
+  /* ----- Amaani · natuurkunde ----- */
+  {id:'tpl_newton',p:'amaani',v:'natuurkunde',t:'Krachten (Newton)',lvl:2,gen:()=>{
+    const m=pick([500,800,1000,1200,1500,2000]), a=ri(2,6);
+    return {q:`Een voorwerp van ${m} kg versnelt met ${a} m/s². Bereken de nettokracht.`,a:String(m*a),u:'N',
+      h:['Tweede wet van Newton: F = m × a.'],s:`F = ${m} × ${a} = ${m*a} N.`};
+  }},
+  {id:'tpl_arbeid',p:'amaani',v:'natuurkunde',t:'Arbeid & energie',lvl:2,gen:()=>{
+    const F=pick([20,30,40,50,60,80,100]), s=ri(2,12);
+    return {q:`Een kracht van ${F} N verplaatst een voorwerp ${s} m. Bereken de arbeid.`,a:String(F*s),u:'J',
+      h:['W = F × s.'],s:`W = ${F} × ${s} = ${F*s} J.`};
+  }},
+  {id:'tpl_vermogen',p:'amaani',v:'natuurkunde',t:'Vermogen',lvl:2,gen:()=>{
+    const P=pick([10,20,50,100]), t=pick([5,10,15,20,30,60]), E=P*t;
+    return {q:`Een apparaat levert ${E} J in ${t} s. Bereken het vermogen.`,a:String(P),u:'W',
+      h:['P = E ÷ t.'],s:`P = ${E} ÷ ${t} = ${P} W.`};
+  }},
+  /* ----- Wassima · fundament-drills (wisselende getallen) ----- */
+  {id:'tpl_rekenvolgorde',p:'wassima',v:'wiskunde',t:'Rekenvolgorde',lvl:1,gen:()=>{
+    const a=ri(2,9), b=ri(2,9), c=ri(2,5);
+    return {q:`Reken uit: ${a} + ${b} × ${c}`,a:String(a+b*c),
+      h:['Keer gaat vóór plus: doe eerst de × .'],s:`${b} × ${c} = ${b*c}; ${a} + ${b*c} = ${a+b*c}.`};
+  }},
+  {id:'tpl_neg_optel',p:'wassima',v:'wiskunde',t:'Negatieve getallen',lvl:1,gen:()=>{
+    const a=ri(-5,5), b=ri(-5,5), ans=a+b;
+    return {q:`Reken uit: ${a} ${pm(b)}`,a:String(ans),ill:{type:'getallenlijn',van:-10,tot:10,punt:ans},
+      h:['Gebruik de getallenlijn: plus = naar rechts, min = naar links.'],s:`${a} ${pm(b)} = ${ans}.`};
+  }},
+  {id:'tpl_kwadraat',p:'wassima',v:'wiskunde',t:'Machten & wortels',lvl:1,gen:()=>{
+    const n=ri(2,15);
+    return {q:`Reken uit: ${n}²`,a:String(n*n),h:[`${n}² = ${n} × ${n}.`],s:`${n} × ${n} = ${n*n}.`};
+  }},
+  {id:'tpl_breuk_van',p:'wassima',v:'wiskunde',t:'Breuken',lvl:2,gen:()=>{
+    const noemer=pick([2,3,4,5,10]), teller=ri(1,noemer-1), getal=noemer*ri(2,12), deel=getal/noemer*teller;
+    return {q:`Wat is ${teller}/${noemer} van ${getal}?`,a:String(deel),
+      h:[`Eerst ÷ ${noemer} (één deel), dan × ${teller}.`],s:`${getal} ÷ ${noemer} = ${getal/noemer}, en × ${teller} = ${deel}.`};
+  }},
+  {id:'tpl_eenheden',p:'wassima',v:'natuurkunde',t:'Grootheden & eenheden',lvl:1,gen:()=>{
+    const o=pick([['km',1000,'m'],['m',100,'cm'],['kg',1000,'g'],['minuten',60,'seconden']]), val=ri(2,12);
+    return {q:`Hoeveel ${o[2]} is ${val} ${o[0]}?`,a:String(val*o[1]),
+      h:[`1 ${o[0]} = ${o[1]} ${o[2]}.`],s:`${val} × ${o[1]} = ${val*o[1]} ${o[2]}.`};
+  }},
+  {id:'tpl_haakjes',p:'wassima',v:'wiskunde',t:'Haakjes & herleiden',lvl:2,gen:()=>{
+    const a=ri(2,6), b=ri(1,9);
+    return {q:`Werk de haakjes weg: ${a}(x + ${b}). Schrijf als ax + b.`,a:`${a}x+${a*b}`,alt:[`${a}x + ${a*b}`],
+      h:[`Vermenigvuldig de ${a} met x én met ${b}.`],s:`${a} × x + ${a} × ${b} = ${a}x + ${a*b}.`};
+  }},
+];
+
 /* ============================ STORE (localStorage) ============================ */
 const KEY='oefenapp_v1';
-function loadStore(){
-  try{const r=JSON.parse(localStorage.getItem(KEY)); if(r) return r;}catch(e){}
-  return {custom:[], pin:'1234', prog:{wassima:blankProg(), amaani:blankProg()}};
+function blankProg(){return {punten:0, solved:{}, cards:{}, streak:0, dagstreak:0, lastDay:null, badges:[], goal:10, todayCount:0, foutLog:[]};}
+function normalizeProg(p){
+  const np={...blankProg(), ...(p||{})};
+  np.solved=(p&&p.solved)||{}; np.cards=(p&&p.cards)||{};
+  np.badges=(p&&p.badges)||[]; np.foutLog=(p&&p.foutLog)||[];
+  if(typeof np.goal!=='number') np.goal=10;
+  if(typeof np.todayCount!=='number') np.todayCount=0;
+  // eenmalige migratie: oude 'solved' → Leitner-kaarten
+  if(Object.keys(np.cards).length===0 && Object.keys(np.solved).length>0){
+    for(const id of Object.keys(np.solved)){
+      const ok=(np.solved[id]||{}).ok||0;
+      np.cards[id]={box:Math.min(5,1+ok), ok, wrong:0, last:0};
+    }
+  }
+  return np;
 }
-function blankProg(){return {punten:0, solved:{}, streak:0, dagstreak:0, lastDay:null, badges:[]};}
+function loadStore(){
+  let r=null; try{r=JSON.parse(localStorage.getItem(KEY));}catch(e){}
+  const s=r||{}; s.custom=s.custom||[]; s.pin=s.pin||'1234'; s.prog=s.prog||{};
+  for(const pid of Object.keys(PROFILES)) s.prog[pid]=normalizeProg(s.prog[pid]);
+  return s;
+}
 function saveStore(s){localStorage.setItem(KEY, JSON.stringify(s));}
 
+/* ----- Leitner: slim herhalen ----- */
+const BOX_DAGEN=[0,0,1,3,7,16];                                  // wachttijd per doosje (dagen)
+function cardInfo(prog,id){return (prog.cards||{})[id]||{box:0,ok:0,wrong:0,last:0};}
+function dueTime(c){return (c.last||0) + (BOX_DAGEN[c.box]||0)*86400000;}
+function isMastered(prog,id){return cardInfo(prog,id).box>=4;}
+function puntenVoor(prog,id,usedHint){return isMastered(prog,id)?3:(usedHint?5:10);}
+function instOf(card){return card.gen ? {...card.gen(), id:card.id} : card;}
+// kies de volgende kaart: eerst 'due'/onbekend, laagste doosje, makkelijkste, langst niet gezien
+function pickNext(pool, prog, excludeId){
+  if(!pool||pool.length===0) return null;
+  const now=Date.now();
+  let cands=pool.map(card=>{const c=cardInfo(prog,card.id);return {card,c,due:c.box===0?0:dueTime(c),isDue:c.box===0||now>=dueTime(c)};});
+  let pickFrom=cands.filter(s=>s.card.id!==excludeId);
+  if(pickFrom.length===0) pickFrom=cands;
+  const due=pickFrom.filter(s=>s.isDue);
+  const set=due.length?due:pickFrom;
+  set.sort((a,b)=> (a.c.box-b.c.box) || ((a.card.lvl||1)-(b.card.lvl||1)) || (a.c.last-b.c.last) || (a.due-b.due));
+  const top=set.filter(s=>s.c.box===set[0].c.box && (s.card.lvl||1)===(set[0].card.lvl||1)).slice(0,3);
+  return pick(top).card;
+}
+
 /* ============================ HULP ============================ */
-function norm(x){return String(x==null?'':x).toLowerCase().trim().replace(/\s+/g,'').replace(/€|%/g,'').replace(/,/g,'.');}
+function norm(x){return String(x==null?'':x).toLowerCase().trim().replace(/[−–—]/g,'-').replace(/\s+/g,'').replace(/€|%/g,'').replace(/,/g,'.');}
 function checkAnswer(ex,val){
   const cand=[ex.a,...(ex.alt||[])];
   const nv=norm(val); if(nv==='') return false;
@@ -223,6 +555,7 @@ function checkAnswer(ex,val){
   for(const c of cand){
     const nc=norm(c);
     if(nc===nv) return true;
+    if(nc.indexOf('/')>=0 || nv.indexOf('/')>=0) continue;   // breuken: alleen exacte match, geen getalsvergelijking
     const numC=parseFloat(nc);
     if(!isNaN(numC)&&!isNaN(numV)&&Math.abs(numC-numV)<=Math.max(0.01,Math.abs(numC)*0.005)) return true;
   }
@@ -249,43 +582,54 @@ function App(){
 
   const persist=(updater)=>setStore(prev=>{const next=typeof updater==='function'?updater(prev):updater; saveStore(next); return next;});
 
-  const allEx=useMemo(()=>[...SEED, ...store.custom],[store.custom]);
+  const allEx=useMemo(()=>[...SEED, ...TEMPLATES, ...store.custom],[store.custom]);
 
-  // dagstreak bijwerken bij kiezen profiel
+  // dagstreak + dagdoel bijwerken bij kiezen profiel
   function openProfile(pid){
     persist(prev=>{
-      const pr={...(prev.prog[pid]||blankProg())};
+      const pr=normalizeProg(prev.prog[pid]);
       const today=todayStr();
       if(pr.lastDay!==today){
         pr.dagstreak = (pr.lastDay===yesterdayStr())? (pr.dagstreak||0)+1 : 1;
-        pr.lastDay=today;
+        pr.lastDay=today; pr.todayCount=0;        // nieuwe dag → dagdoel-teller reset
       }
       return {...prev, prog:{...prev.prog,[pid]:pr}};
     });
     setProfile(pid); setVak(PROFILES[pid].vakken[0]); setView('hub');
   }
 
-  function recordResult(pid, ex, correct, usedHint){
+  function setGoal(pid, g){
+    persist(prev=>{const pr=normalizeProg(prev.prog[pid]); pr.goal=g; return {...prev, prog:{...prev.prog,[pid]:pr}};});
+  }
+
+  // resultaat verwerken: punten + Leitner-doosje + dagdoel + foutenschrift
+  function recordResult(pid, card, inst, correct, usedHint){
     persist(prev=>{
-      const pr={...(prev.prog[pid]||blankProg())};
-      pr.solved={...pr.solved};
+      const pr=normalizeProg(prev.prog[pid]);
+      pr.cards={...pr.cards}; pr.solved={...pr.solved}; pr.foutLog=[...(pr.foutLog||[])];
+      const wasMastered=isMastered(pr,card.id);
+      const c={...(pr.cards[card.id]||{box:0,ok:0,wrong:0,last:0})};
       if(correct){
-        const gain=usedHint?5:10;
-        pr.punten=(pr.punten||0)+gain;
+        pr.punten=(pr.punten||0)+(wasMastered?3:(usedHint?5:10));
         pr.streak=(pr.streak||0)+1;
-        const cur=pr.solved[ex.id]||{ok:0};
-        pr.solved[ex.id]={ok:cur.ok+1};
+        pr.todayCount=(pr.todayCount||0)+1;
+        c.ok=(c.ok||0)+1; c.box=Math.min(5,(c.box||0)+1);
+        pr.solved[card.id]={ok:((pr.solved[card.id]||{}).ok||0)+1};
+        if(c.box>=4) pr.foutLog=pr.foutLog.filter(f=>f.id!==card.id);   // beheerst → uit foutenschrift
       }else{
-        pr.streak=0;
+        pr.streak=0; c.wrong=(c.wrong||0)+1; c.box=1;
+        const entry={id:card.id,t:card.t,v:card.v,q:inst.q,a:inst.a,u:inst.u||'',when:Date.now()};
+        pr.foutLog=[entry, ...pr.foutLog.filter(f=>f.id!==card.id)].slice(0,40);
       }
-      // badges
+      c.last=Date.now(); pr.cards[card.id]=c;
       pr.badges=[...(pr.badges||[])];
       BADGES.forEach(b=>{if(!pr.badges.includes(b.id)&&b.test(pr)) pr.badges.push(b.id);});
       return {...prev, prog:{...prev.prog,[pid]:pr}};
     });
   }
 
-  const prog = profile? (store.prog[profile]||blankProg()) : null;
+  const prog = profile? normalizeProg(store.prog[profile]) : null;
+  const goTopic=(t)=>{setTopic(t);setView('practice');};
 
   return (
     <div>
@@ -293,9 +637,9 @@ function App(){
       {view==='formules' && <FormulesView onBack={()=>setView('home')}/>}
       {view==='leertips' && <LeertipsView onBack={()=>setView('home')}/>}
       {view==='hub' && <Hub profile={profile} prog={prog} vak={vak} setVak={setVak} allEx={allEx}
-        onBack={()=>setView('home')} onTopic={(t)=>{setTopic(t);setView('practice');}}/>}
+        onBack={()=>setView('home')} onTopic={goTopic} onSetGoal={(g)=>setGoal(profile,g)}/>}
       {view==='practice' && <Practice profile={profile} vak={vak} topic={topic} allEx={allEx}
-        onBack={()=>setView('hub')} onResult={recordResult} prog={prog}/>}
+        onBack={()=>setView('hub')} onResult={recordResult} prog={prog} onTopic={goTopic}/>}
       {view==='author' && <Author store={store} persist={persist} onBack={()=>setView('home')}/>}
     </div>
   );
@@ -342,17 +686,21 @@ function Home({onPick,store,onAuthor,onFormules,onLeertips}){
 }
 
 /* ---------- HUB (vak + onderwerpen) ---------- */
-function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic}){
+function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal}){
   const P=PROFILES[profile];
   const topics=useMemo(()=>{
     const list=allEx.filter(e=>e.p===profile&&e.v===vak);
     const map={};
     list.forEach(e=>{(map[e.t]=map[e.t]||[]).push(e);});
     return Object.entries(map).map(([t,exs])=>{
-      const solved=exs.filter(e=>(prog.solved[e.id]||{}).ok>0).length;
-      return {t, total:exs.length, solved};
+      const beheerst=exs.filter(e=>isMastered(prog,e.id)).length;
+      const begonnen=exs.filter(e=>cardInfo(prog,e.id).box>0).length;
+      return {t, total:exs.length, beheerst, begonnen};
     });
   },[allEx,profile,vak,prog]);
+
+  const goal=prog.goal||10, done=Math.min(prog.todayCount||0,goal), goalPct=Math.round(done/goal*100);
+  const foutAantal=(prog.foutLog||[]).length;
 
   return (
     <div>
@@ -365,21 +713,43 @@ function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic}){
         </div>
       </div>
       <h1 style={{fontSize:26}}>{P.emoji} {P.naam}</h1>
-      <div className="wrap" style={{margin:'12px 0 18px'}}>
+
+      {/* dagdoel */}
+      <div className="card" style={{marginTop:12,background:done>=goal?'#eaf7e2':'#fff'}}>
+        <div className="row" style={{justifyContent:'space-between'}}>
+          <b>🎯 Dagdoel{done>=goal?' — gehaald! 🎉':''}</b>
+          <span className="muted" style={{fontSize:13}}>{prog.todayCount||0} / {goal} sommen</span>
+        </div>
+        <div className="pbar" style={{marginTop:8}}><i style={{width:goalPct+'%'}}></i></div>
+        <div className="wrap" style={{marginTop:10,alignItems:'center'}}>
+          <span className="muted" style={{fontSize:13}}>Doel aanpassen:</span>
+          <button className="btn ghost sm" onClick={()=>onSetGoal(Math.max(5,goal-5))}>−</button>
+          <span style={{fontWeight:700,minWidth:24,textAlign:'center'}}>{goal}</span>
+          <button className="btn ghost sm" onClick={()=>onSetGoal(Math.min(40,goal+5))}>+</button>
+        </div>
+      </div>
+
+      <div className="wrap" style={{margin:'14px 0 16px'}}>
         {P.vakken.map(v=>(
           <button key={v} className={'btn sm '+(v===vak?'':'ghost')} onClick={()=>setVak(v)}>{VAKNAAM[v]}</button>
         ))}
       </div>
 
-      {topics.map(({t,total,solved})=>{
-        const pct=total?Math.round(solved/total*100):0;
-        const sterren=pct>=100?'⭐⭐⭐':pct>=60?'⭐⭐':pct>0?'⭐':'☆☆☆';
+      {/* mix + foutenschrift */}
+      <div className="wrap" style={{marginBottom:14}}>
+        <button className="btn" onClick={()=>onTopic('__mix__')}>🎲 Mix-oefening (door elkaar)</button>
+        {foutAantal>0 && <button className="btn accent" onClick={()=>onTopic('__fouten__')}>📕 Mijn fouten oefenen ({foutAantal})</button>}
+      </div>
+
+      {topics.map(({t,total,beheerst,begonnen})=>{
+        const pct=total?Math.round(beheerst/total*100):0;
+        const sterren=pct>=100?'⭐⭐⭐':pct>=60?'⭐⭐':beheerst>0?'⭐':'☆☆☆';
         return (
           <div key={t} className="topic" onClick={()=>onTopic(t)}>
             <div className="ico">{TOPICICON[t]||'📘'}</div>
             <div className="grow">
               <div className="tt">{t}</div>
-              <div className="muted" style={{fontSize:13}}>{solved} / {total} gedaan · <span className="stars">{sterren}</span></div>
+              <div className="muted" style={{fontSize:13}}>{beheerst} / {total} beheerst · <span className="stars">{sterren}</span></div>
               <div className="pbar"><i style={{width:pct+'%'}}></i></div>
             </div>
             <div>›</div>
@@ -395,50 +765,109 @@ function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic}){
           ))}
         </div>
       </div>
+      <p className="muted center" style={{marginTop:14,fontSize:13}}>
+        Een som is <b>beheerst</b> als je hem een paar keer achter elkaar goed hebt. Foute sommen komen vaker terug. 🌱
+      </p>
     </div>
   );
 }
 
-/* ---------- PRACTICE ---------- */
-function Practice({profile,vak,topic,allEx,onBack,onResult,prog}){
-  const pool=useMemo(()=>{
-    return allEx.filter(e=>e.p===profile&&e.v===vak&&e.t===topic)
-      .sort((a,b)=>(a.lvl||1)-(b.lvl||1));
-  },[allEx,profile,vak,topic]);
-
-  const [idx,setIdx]=useState(0);
+/* ---------- PRACTICE (slim herhalen + mix + fouten + samenvatting) ---------- */
+function Practice({profile,vak,topic,allEx,onBack,onResult,prog,onTopic}){
+  const [pool,setPool]=useState([]);
+  const [card,setCard]=useState(null);
+  const [inst,setInst]=useState(null);
   const [val,setVal]=useState('');
   const [hintN,setHintN]=useState(0);
   const [state,setState]=useState('open');   // open | goed | fout
   const [showSol,setShowSol]=useState(false);
   const [tries,setTries]=useState(0);
+  const [earned,setEarned]=useState(10);
   const [celebrate,setCelebrate]=useState(false);
   const [showUitleg,setShowUitleg]=useState(true);
+  const [session,setSession]=useState({good:0,wrong:0});
+  const [finished,setFinished]=useState(false);
   const inputRef=useRef(null);
 
-  const ex=pool[idx];
-  useEffect(()=>{setVal('');setHintN(0);setState('open');setShowSol(false);setTries(0);
-    setTimeout(()=>inputRef.current&&inputRef.current.focus(),50);},[idx,topic]);
-  useEffect(()=>{setShowUitleg(true);},[topic]);
+  const isMix=topic==='__mix__', isFout=topic==='__fouten__';
+  const uitlegKey=(!isMix&&!isFout&&UITLEG[topic])?topic:null;
+  const topicLabel=isMix?'🎲 Mix':isFout?'📕 Fouten herhalen':topic;
 
-  if(!ex) return (<div><button className="back" onClick={onBack}>← terug</button><p className="muted">Nog geen opgaven hier.</p></div>);
+  function showCard(c){
+    setCard(c); setInst(instOf(c));
+    setVal(''); setHintN(0); setState('open'); setShowSol(false); setTries(0);
+    setTimeout(()=>inputRef.current&&inputRef.current.focus(),60);
+  }
+  useEffect(()=>{
+    let p;
+    if(isMix) p=allEx.filter(e=>e.p===profile&&e.v===vak);
+    else if(isFout){const ids=new Set((prog.foutLog||[]).map(f=>f.id)); p=allEx.filter(e=>ids.has(e.id));}
+    else p=allEx.filter(e=>e.p===profile&&e.v===vak&&e.t===topic);
+    setPool(p); setSession({good:0,wrong:0}); setFinished(false); setShowUitleg(true);
+    const first=pickNext(p,prog,null);
+    if(first) showCard(first); else {setCard(null); setInst(null);}
+  },[topic,vak,profile]);
 
   function controleer(){
-    if(state==='goed') return;
-    const ok=checkAnswer(ex,val);
+    if(state==='goed'||!inst) return;
+    const ok=checkAnswer(inst,val);
     setTries(t=>t+1);
     if(ok){
+      setEarned(puntenVoor(prog,card.id,hintN>0));
       setState('goed');
-      onResult(profile,ex,true,hintN>0);
+      onResult(profile,card,inst,true,hintN>0);
+      setSession(s=>({good:s.good+1,wrong:s.wrong}));
       setCelebrate(true); setTimeout(()=>setCelebrate(false),1100);
     }else{
       setState('fout');
-      onResult(profile,ex,false,false);
+      onResult(profile,card,inst,false,false);
+      setSession(s=>({good:s.good,wrong:s.wrong+1}));
     }
   }
-  function volgende(){ if(idx+1<pool.length) setIdx(idx+1); else setIdx(0); }
+  function volgende(){ const n=pickNext(pool,prog,card?card.id:null); if(n) showCard(n); }
 
-  const isLast=idx+1>=pool.length;
+  if(!card||!inst){
+    return (<div>
+      <div className="topbar"><button className="back" onClick={onBack}>← terug</button><span className="pill">{topicLabel}</span></div>
+      <div className="card center" style={{marginTop:20}}>
+        <div style={{fontSize:40}}>✅</div>
+        <p style={{fontSize:18}}>{isFout?'Geen fouten om te herhalen — top!':'Nog geen opgaven hier.'}</p>
+        <button className="btn ghost" onClick={onBack} style={{marginTop:10}}>Terug naar overzicht</button>
+      </div>
+    </div>);
+  }
+
+  if(finished){
+    const fout=prog.foutLog||[], goal=prog.goal||10;
+    return (<div>
+      <div className="topbar"><button className="back" onClick={onBack}>← overzicht</button><span className="pill">Samenvatting</span></div>
+      <div className="card center">
+        <div style={{fontSize:46}}>{(prog.todayCount||0)>=goal?'🏆':'🌟'}</div>
+        <h2>Goed bezig, {PROFILES[profile].naam}!</h2>
+        <p style={{fontSize:18,margin:'6px 0'}}>Deze sessie: <b>{session.good}</b> {session.good===1?'som':'sommen'} goed.</p>
+        <p className="muted">Vandaag totaal: {prog.todayCount||0} / {goal} 🎯 {(prog.todayCount||0)>=goal?'— dagdoel gehaald!':''}</p>
+      </div>
+      {fout.length>0 ? (
+        <div className="card" style={{marginTop:12}}>
+          <b>📕 Nog even herhalen ({fout.length})</b>
+          <p className="muted" style={{fontSize:13,marginTop:4}}>Deze gingen mis. Pak ze nog een keer — daar leer je het meest van. 💪</p>
+          <div style={{marginTop:8}}>
+            {fout.slice(0,8).map((f,i)=>(
+              <div key={i} style={{padding:'7px 0',borderTop:'1px solid var(--line)',fontSize:14}}>
+                <span className="tag">{f.t}</span> {f.q} <span className="muted">→ {f.a} {f.u}</span>
+              </div>
+            ))}
+          </div>
+          <div style={{marginTop:12}}><button className="btn accent" onClick={()=>onTopic('__fouten__')}>📕 Oefen je fouten</button></div>
+        </div>
+      ) : (
+        <div className="card center" style={{marginTop:12}}>Geen openstaande fouten meer — helemaal top! ✅</div>
+      )}
+      <div className="center" style={{marginTop:16}}><button className="btn ghost" onClick={onBack}>Terug naar overzicht</button></div>
+    </div>);
+  }
+
+  const goal=prog.goal||10, done=prog.todayCount||0;
 
   return (
     <div>
@@ -450,43 +879,46 @@ function Practice({profile,vak,topic,allEx,onBack,onResult,prog}){
           <span className="s">🔥 {prog.streak||0}</span>
         </div>
       </div>
-      <div className="row" style={{justifyContent:'space-between',marginBottom:10}}>
-        <span className="pill">{topic}</span>
-        <span className="muted" style={{fontSize:13}}>vraag {idx+1} / {pool.length} · niveau {ex.lvl||1}</span>
+      <div className="row" style={{justifyContent:'space-between',marginBottom:6}}>
+        <span className="pill">{topicLabel}{isMix?' · '+VAKNAAM[vak]:''}</span>
+        <span className="muted" style={{fontSize:13}}>som {session.good+1} · niveau {inst.lvl||card.lvl||1}{isMastered(prog,card.id)?' · ✓ beheerst':''}</span>
       </div>
+      <div className="pbar" style={{marginBottom:12}}><i style={{width:Math.min(100,Math.round(done/goal*100))+'%'}}></i></div>
 
-      {UITLEG[topic] && <UitlegPaneel data={UITLEG[topic]} open={showUitleg} onToggle={()=>setShowUitleg(!showUitleg)}/>}
+      {uitlegKey && <UitlegPaneel data={UITLEG[uitlegKey]} open={showUitleg} onToggle={()=>setShowUitleg(!showUitleg)}/>}
       <div className="card">
-        {ex.ill && <div style={{textAlign:'center',marginBottom:10}}><Figure ill={ex.ill}/></div>}
-        <div className="qbox">{ex.q}</div>
+        {inst.ill && <div style={{textAlign:'center',marginBottom:10}}><Figure ill={inst.ill}/></div>}
+        <div className="qbox">{inst.q}</div>
         <div className="answerrow">
-          <input ref={inputRef} className="" value={val} placeholder="jouw antwoord"
+          <input ref={inputRef} value={val} placeholder="jouw antwoord"
             onChange={e=>{setVal(e.target.value); if(state==='fout') setState('open');}}
             onKeyDown={e=>{if(e.key==='Enter') controleer();}}
             disabled={state==='goed'} inputMode="text"/>
-          {ex.u && <div className="unit">{ex.u}</div>}
+          {inst.u && <div className="unit">{inst.u}</div>}
         </div>
 
-        {state==='goed' && <div className="feedback ok celebrate">✅ Goed gedaan! +{hintN>0?5:10} punten</div>}
+        {state==='goed' && <div className="feedback ok celebrate">✅ Goed gedaan! +{earned} punten</div>}
         {state==='fout' && <div className="feedback no">Nog niet — kijk nog eens, of open een hint. Je kunt het! 💪</div>}
 
-        {hintN>0 && ex.h && ex.h.slice(0,hintN).map((h,i)=>(
+        {hintN>0 && inst.h && inst.h.slice(0,hintN).map((h,i)=>(
           <div key={i} className="hint"><b>Hint {i+1}:</b> {h}</div>
         ))}
-
-        {showSol && <div className="solution"><b>Uitwerking</b>{"\n"}{ex.s}</div>}
+        {showSol && <div className="solution"><b>Uitwerking</b>{"\n"}{inst.s}</div>}
 
         <div className="wrap" style={{marginTop:16}}>
           {state!=='goed' && <button className="btn" onClick={controleer}>Nakijken</button>}
-          {state!=='goed' && ex.h && hintN<ex.h.length && <button className="btn gold sm" onClick={()=>setHintN(hintN+1)}>💡 Hint</button>}
+          {state!=='goed' && inst.h && hintN<inst.h.length && <button className="btn gold sm" onClick={()=>setHintN(hintN+1)}>💡 Hint</button>}
           {state!=='goed' && (tries>=1) && !showSol && <button className="btn ghost sm" onClick={()=>setShowSol(true)}>Toon uitwerking</button>}
-          {state==='goed' && <button className="btn" onClick={volgende}>{isLast?'Opnieuw vanaf 1 →':'Volgende →'}</button>}
+          {state==='goed' && <button className="btn" onClick={volgende}>Volgende →</button>}
           {state==='goed' && !showSol && <button className="btn ghost sm" onClick={()=>setShowSol(true)}>Bekijk uitwerking</button>}
         </div>
       </div>
 
-      <p className="muted center" style={{marginTop:16,fontSize:13}}>
-        Eerst zelf proberen = 10 punten · met hint = 5 punten 🌟
+      <div className="center" style={{marginTop:14}}>
+        <button className="btn ghost sm" onClick={()=>setFinished(true)}>⏹ Stoppen — toon samenvatting</button>
+      </div>
+      <p className="muted center" style={{marginTop:10,fontSize:13}}>
+        Eerst zelf proberen = 10 punten · met hint = 5 · al beheerst = 3 🌟
       </p>
     </div>
   );
@@ -809,6 +1241,29 @@ function Figure({ill}){
         <polygon points="100,58 126,34 126,84 100,108" fill="#c9dec0" stroke={G} strokeWidth="2.5"/>
         <text x="70" y="124" fontSize="12" textAnchor="middle" fill={M}>z {ill.z} cm</text>
       </svg>);
+    case 'getallenlijn': {
+      const van=ill.van, tot=ill.tot, n=tot-van, W=290, pad=18, span=W-2*pad, step=span/n;
+      const x=i=>pad+(i-van)*step, ticks=[];
+      for(let i=van;i<=tot;i++) ticks.push(i);
+      return (
+        <svg width={W} height="58" viewBox={'0 0 '+W+' 58'} role="img" aria-label="getallenlijn">
+          <line x1={pad} y1="28" x2={W-pad} y2="28" stroke={M} strokeWidth="2"/>
+          <line x1={x(0)} y1="20" x2={x(0)} y2="36" stroke={M} strokeWidth="2.5"/>
+          {ticks.map(i=>(<g key={i}>
+            <line x1={x(i)} y1="23" x2={x(i)} y2="33" stroke={M} strokeWidth="1.4"/>
+            <text x={x(i)} y="50" fontSize="11" textAnchor="middle" fill={i===0?'#222':M}>{i}</text>
+          </g>))}
+          {ill.punt!==undefined && <circle cx={x(ill.punt)} cy="28" r="5.5" fill={A}/>}
+        </svg>);
+    }
+    case 'breukstrook': {
+      const d=ill.delen, g=ill.gevuld, W=240, hh=42, w=W/d, rc=[];
+      for(let i=0;i<d;i++) rc.push(i);
+      return (
+        <svg width={W} height={hh+8} viewBox={'0 0 '+W+' '+(hh+8)} role="img" aria-label="breuk">
+          {rc.map(i=>(<rect key={i} x={i*w} y="4" width={w} height={hh} fill={i<g?G:F} stroke={M} strokeWidth="1.5"/>))}
+        </svg>);
+    }
     default: return null;
   }
 }
@@ -822,6 +1277,32 @@ const UITLEG={
   'Lineaire formules':{tekst:'Een rechte lijn schrijf je als y = a·x + b. De a vertelt hoe schuin de lijn loopt (hoeveel omhoog per stap naar rechts). De b is waar de lijn de verticale as kruist.'},
   'Snelheid':{tekst:'Snelheid is afstand gedeeld door tijd: v = s ÷ t. Tip: teken een driehoekje met s bovenaan en v en t eronder. Dek af wat je zoekt, dan zie je wat je moet doen.'},
   'Dichtheid':{tekst:'Dichtheid zegt hoe zwaar iets is voor zijn grootte: ρ = m ÷ V (massa gedeeld door volume). Is het lichter dan water (1 g/cm³), dan drijft het.'},
+  'Kracht & zwaartekracht':{tekst:'Een kracht meet je in newton (N). De zwaartekracht trekt alles naar de aarde: Fz = m × g. In de onderbouw reken je met g = 10 N/kg. Werken twee even grote krachten tegen elkaar in, dan is de nettokracht 0 en is het voorwerp in evenwicht.'},
+  'Veerkracht':{tekst:'Hoe verder je een veer uitrekt, hoe groter de kracht die hij terug geeft: Fveer = C × u. Hierin is C de veerconstante (N/m) en u de uitrekking (m).'},
+  'Stroom & spanning':{tekst:'Spanning (U, in volt) is de "duw", stroom (I, in ampère) is hoeveel er stroomt en weerstand (R, in ohm) remt af. De wet van Ohm verbindt ze: U = I × R. Het vermogen is P = U × I.'},
+  'Energie & vermogen':{tekst:'Energie meet je in joule (J), vermogen in watt (W). Vermogen is energie per seconde: P = E ÷ t. Andersom: E = P × t.'},
+  'Geluid':{tekst:'Geluid gaat in lucht ongeveer 340 m/s. Afstand reken je met s = v × t. Bij een echo gaat het geluid heen én terug, dus deel de totale afstand door 2.'},
+  'Druk':{tekst:'Druk is kracht verdeeld over een oppervlak: p = F ÷ A, in pascal (Pa = N/m²). Dezelfde kracht op een klein oppervlak geeft een grote druk (denk aan een scherpe punaise).'},
+  'Tijd & eeuwen':{tekst:'Een eeuw is 100 jaar. Om de eeuw te vinden: neem de eerste twee cijfers van het jaartal en tel er 1 bij op. Voorbeeld: 1602 → 16 + 1 = de 17e eeuw. (De jaren 1601–1700 horen bij de 17e eeuw.)'},
+  'Opstand tegen Spanje':{tekst:'In 1568 kwamen de Nederlanden in opstand tegen de Spaanse koning. Dit werd de Tachtigjarige Oorlog (1568–1648), met Willem van Oranje als leider. In 1648 (Vrede van Münster) werd de Republiek onafhankelijk.'},
+  'Gouden Eeuw & Republiek':{tekst:'In de 17e eeuw — de Gouden Eeuw — was de Republiek der Zeven Verenigde Nederlanden rijk door handel. De VOC (1602) handelde in Azië, de WIC op Amerika en West-Afrika.'},
+  'Handel & slavernij':{tekst:'Bij de driehoekshandel voeren schepen van Europa naar Afrika (ruilgoederen), van Afrika naar Amerika (tot slaaf gemaakte mensen) en van Amerika terug naar Europa (suiker, katoen). De WIC speelde hierin een grote rol.'},
+  'Verlichting':{tekst:'De Verlichting (18e eeuw) was een stroming waarin denkers het verstand (de rede) centraal stelden. Ze vonden dat niet één koning alle macht moest hebben (geen absolute vorst) en pleitten voor vrijheid en gelijkheid.'},
+  'Franse Revolutie':{tekst:'In 1789 kwam het Franse volk in opstand tegen de koning. Met de bestorming van de Bastille begon de Franse Revolutie. De leuze: vrijheid, gelijkheid, broederschap.'},
+  // exacte fundament-onderwerpen voor Wassima (extra uitleg + beeld)
+  'Rekenvolgorde':{tekst:'Volgorde van rekenen: 1) haakjes, 2) machten/wortels, 3) keer en delen, 4) plus en min (van links naar rechts). Ezelsbruggetje: "Meneer Van Dale Wacht Op Antwoord". Dus 3 + 4 × 2 = 3 + 8 = 11, niet 14.'},
+  'Negatieve getallen':{ill:{type:'getallenlijn',van:-6,tot:6,punt:0}, tekst:'Gebruik de getallenlijn: plus = naar rechts, min = naar links. Twee keer hetzelfde teken (min × min of min ÷ min) geeft plus; verschillende tekens geven min.'},
+  'Breuken':{ill:{type:'breukstrook',delen:4,gevuld:3}, tekst:'Een breuk is een deel van een geheel: bovenaan staat de teller (hoeveel delen), onderaan de noemer (in hoeveel delen verdeeld). "3/4 van een getal" = eerst ÷ 4 (één deel), dan × 3.'},
+  'Machten & wortels':{tekst:'Een macht is herhaald vermenigvuldigen: 5² = 5 × 5 = 25 en 2³ = 2 × 2 × 2 = 8. De wortel is het omgekeerde: √49 = 7, want 7 × 7 = 49.'},
+  'Verhoudingen & schaal':{tekst:'Bij een verhouding gaat alles met dezelfde factor mee: 2× zoveel appels → 2× de prijs. Een verhoudingstabel helpt. Schaal 1 : 100 000 betekent: 1 cm op de kaart is 100 000 cm (= 1 km) in het echt.'},
+  'Statistiek':{tekst:'Gemiddelde = som ÷ aantal. Mediaan = het middelste getal (eerst op volgorde zetten). Modus = het getal dat het vaakst voorkomt.'},
+  'Haakjes & herleiden':{tekst:'Herleiden = korter schrijven. Gelijke termen tel je op: 2x + 3x = 5x. Haakjes wegwerken: vermenigvuldig het getal vóór de haakjes met álles erbinnen: 3(x + 2) = 3x + 6.'},
+  'Grootheden & eenheden':{tekst:'Reken in de natuurkunde altijd eerst om naar standaardeenheden. Onthoud: 1 km = 1000 m · 1 m = 100 cm · 1 kg = 1000 g · 1 minuut = 60 s · 1 uur = 3600 s. De meeste fouten zitten in de eenheden, niet in de formule.'},
+  'Temperatuur & warmte':{tekst:'Temperatuur meet je in graden Celsius (°C) met een thermometer. Water bevriest bij 0 °C en kookt bij 100 °C. Warmte stroomt altijd van warm naar koud.'},
+  'Licht':{tekst:'Licht beweegt in rechte lijnen. Op een glad oppervlak (spiegel) kaatst het netjes terug: dat heet weerkaatsing of reflectie. Daardoor kun je jezelf in de spiegel zien.'},
+  'Magnetisme':{tekst:'Een magneet heeft een noordpool en een zuidpool. Gelijke polen (noord-noord of zuid-zuid) stoten elkaar af; ongelijke polen (noord-zuid) trekken elkaar aan.'},
+  'Elektrische schakelingen':{tekst:'Stroom loopt alleen door een gesloten (dichte) kring. In een serieschakeling is er één pad: gaat één lampje stuk, dan gaat alles uit. In een parallelschakeling blijven de andere branden.'},
+  'Beweging (afstand-tijd)':{tekst:'Snelheid = afstand ÷ tijd. Let op de eenheid: km in een uur geeft km/u, meter in een seconde geeft m/s. Afstand = snelheid × tijd; tijd = afstand ÷ snelheid.'},
 };
 function UitlegPaneel({data,open,onToggle}){
   return (
