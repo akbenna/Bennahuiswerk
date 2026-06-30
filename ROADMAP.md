@@ -3,7 +3,7 @@
 _Bijgewerkt: juni 2026. Drie profielen: Amine (groep 7/8), Wassima (2 havo), Amaani (4 vwo). Elk vak heeft nu oefenstof — geen lege vakken meer._
 
 ## Omvang nu
-- **437 vaste opgaven + 40 sjablonen** (de sjablonen geven oneindig veel scommen door wisselende getallen), waarvan ± 19 meerkeuze.
+- **489 vaste opgaven + 40 sjablonen** (de sjablonen geven oneindig veel scommen door wisselende getallen), waarvan ± 21 meerkeuze.
 - **Amine** (groep 7/8): Rekenen, Taal, Begrijpend lezen, Studievaardigheden, Engels.
 - **Wassima** (2 havo): 10 vakken — exact ruim; Engels/Biologie/Aardrijkskunde verdiept.
 - **Amaani** (4 vwo): 10 vakken — exact ruim; Engels/Biologie/Aardrijkskunde verdiept.
