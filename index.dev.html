@@ -160,7 +160,7 @@ const TOPICICON = {
   // volgend jaar
   'Kwadratische vergelijkingen':'🟰','Stelsels':'🔢','Goniometrie':'📐','Krachten (resultante)':'➡️','Normale verdeling':'🔔','Binomiale verdeling':'🎲',
   'Logaritmen (gevorderd)':'🔟','Energiebehoud':'⚡','Gaswet':'🌡️','Concentratie':'🧪','Formules met x':'🔤','Coördinaten':'📈',
-  'Reactiesnelheid':'⏱️',
+  'Reactiesnelheid':'⏱️','Tijdlijn':'📜',
 };
 
 /* ============================ OEFENINGEN (startvoorraad) ============================ */
@@ -881,6 +881,32 @@ const SEED = [
   {p:'amaani',v:'natuurkunde',jaar:'next',t:'Energiebehoud',lvl:3,q:'Een voorwerp valt van 5 m. Bereken de snelheid vlak voor de grond. v = √(2gh), g = 9,81.',a:'9.9',alt:['9,9','10','9.90'],u:'m/s',h:['2 × 9,81 × 5 = 98,1.'],s:'v = √98,1 ≈ 9,9 m/s.'},
   {p:'amaani',v:'scheikunde',jaar:'next',t:'Concentratie',lvl:2,q:'2 mol stof opgelost in 4 liter. Bereken de concentratie (mol/L).',a:'0.5',alt:['0,5'],u:'mol/L',h:['c = n ÷ V.'],s:'c = 2 ÷ 4 = 0,5 mol/L.'},
   {p:'amaani',v:'scheikunde',jaar:'next',t:'Reactiesnelheid',lvl:1,q:'Een hogere temperatuur maakt een reactie meestal sneller of langzamer?',a:'sneller',h:['Deeltjes botsen vaker en harder.'],s:'Hogere temperatuur → snellere reactie.'},
+
+  /* ============ AMINE · studievaardigheden (IEP informatieverwerking) ============ */
+  {p:'amine',v:'studievaardigheden',t:'Grafieken & tabellen lezen',lvl:1,ill:{type:'staaf',data:[['jan',4],['feb',7],['mrt',2],['apr',5]]},q:'In welke maand viel de minste regen? (lees de grafiek)',a:'mrt',opties:['jan','feb','mrt'],h:['Welke staaf is het laagst?'],s:'De staaf van mrt is het laagst (2).'},
+  {p:'amine',v:'studievaardigheden',t:'Grafieken & tabellen lezen',lvl:2,q:'In een tabel: rekenen 8, taal 6. Welk vak maakte Sam beter?',a:'rekenen',opties:['rekenen','taal','allebei gelijk'],h:['Welk getal is hoger?'],s:'8 > 6, dus rekenen ging beter.'},
+  {p:'amine',v:'studievaardigheden',t:'Kaart & schaal',lvl:2,q:'Op een kaart met schaal 1 : 100 is 1 cm in het echt ... cm.',a:'100',u:'cm',h:['1 cm op de kaart = 100 cm echt.'],s:'1 × 100 = 100 cm in het echt.'},
+  {p:'amine',v:'studievaardigheden',t:'Kaart & schaal',lvl:1,q:'Welke kleur is op een kaart meestal water?',a:'blauw',opties:['blauw','groen','bruin'],h:['Denk aan de zee.'],s:'Water is meestal blauw op een kaart.'},
+  {p:'amine',v:'studievaardigheden',t:'Alfabetiseren',lvl:2,q:'Welk woord komt eerst in het woordenboek: "maan" of "maart"?',a:'maan',h:['maa-n vs maa-r: n komt vóór r.'],s:'Beide beginnen met "maa"; daarna n vs r → "maan" eerst.'},
+  {p:'amine',v:'studievaardigheden',t:'Woordenboek & informatie',lvl:2,q:'Achterin een boek staat een lijst met woorden en de paginanummers waar ze staan. Hoe heet die lijst?',a:'register',alt:['index','trefwoordenregister','het register'],h:['Begint met een R.'],s:'Dat is het register (index).'},
+  {p:'amine',v:'studievaardigheden',t:'Tijdlijn',lvl:1,q:'Op een tijdlijn: welk jaartal staat het meest links (gebeurde het eerst): 1900 of 1950?',a:'1900',h:['Vroeger = meer naar links.'],s:'1900 was eerder dan 1950, dus staat links.'},
+
+  /* ============ AMINE · begrijpend lezen extra (IEP) ============ */
+  {p:'amine',v:'lezen',t:'Tekst begrijpen',lvl:2,q:'Lees: "Het is buiten maar 2 graden. Pak een warme jas mee." Waarom moet je een jas meenemen?',a:'het is koud',opties:['het is koud','het regent','het is warm'],h:['Wat zegt de temperatuur?'],s:'2 graden is koud → daarom een warme jas.'},
+  {p:'amine',v:'lezen',t:'Tekst begrijpen',lvl:3,q:'Lees: "De trein had vertraging. Daardoor kwam Sara te laat op school." Waarom kwam Sara te laat?',a:'de trein had vertraging',opties:['de trein had vertraging','ze sliep uit','de bus reed niet'],h:['Let op het woord "daardoor".'],s:'Door de vertraging van de trein kwam Sara te laat.'},
+  {p:'amine',v:'lezen',t:'Signaalwoorden',lvl:2,q:'Lees: "Eerst kook je het water. Daarna doe je de pasta erin." Wat doe je het eerst?',a:'water koken',opties:['water koken','pasta erin doen','afgieten'],h:['Let op "eerst".'],s:'Eerst het water koken.'},
+
+  /* ============ WASSIMA · exact (kwaliteit, dit jaar) ============ */
+  {p:'wassima',v:'wiskunde',t:'Vergelijkingen',lvl:3,q:'Los op: 2(x + 3) = 16. Wat is x?',a:'5',h:['Werk eerst de haakjes weg of deel door 2.'],s:'2(x+3)=16 → x+3=8 → x=5.'},
+  {p:'wassima',v:'wiskunde',t:'Procenten',lvl:2,q:'Van de 250 leerlingen is 40% jongen. Hoeveel jongens zijn dat?',a:'100',h:['40% van 250.'],s:'0,40 × 250 = 100 jongens.'},
+  {p:'wassima',v:'wiskunde',t:'Lineaire formules',lvl:2,q:'Gegeven y = −3x + 12. Bereken y als x = 4.',a:'0',h:['Vul x = 4 in.'],s:'y = −3 × 4 + 12 = −12 + 12 = 0.'},
+  {p:'wassima',v:'natuurkunde',t:'Snelheid',lvl:3,q:'Een auto rijdt 100 km in 1,25 uur. Bereken de snelheid in km/u.',a:'80',u:'km/u',h:['v = afstand ÷ tijd.'],s:'100 ÷ 1,25 = 80 km/u.'},
+  {p:'wassima',v:'natuurkunde',t:'Grootheden & eenheden',lvl:2,q:'Hoeveel seconden is een kwartier?',a:'900',u:'s',h:['Een kwartier = 15 minuten; 1 minuut = 60 s.'],s:'15 × 60 = 900 s.'},
+
+  /* ============ AMAANI · examen (kwaliteit, dit jaar) ============ */
+  {p:'amaani',v:'wiskundeA',t:'Differentiëren',lvl:3,q:'Gegeven f(x) = x² − 6x, met f′(x) = 2x − 6. Bij welke x ligt de top (helling 0)?',a:'3',h:['Stel 2x − 6 = 0.'],s:'2x − 6 = 0 → x = 3.'},
+  {p:'amaani',v:'natuurkunde',t:'Arbeid & energie',lvl:3,q:'Bereken de zwaarte-energie van 3 kg op 4 m hoogte. (g = 9,81)',a:'117.72',alt:['117,72','118','120'],u:'J',h:['Ez = m × g × h.'],s:'Ez = 3 × 9,81 × 4 = 117,72 J.'},
+  {p:'amaani',v:'scheikunde',t:'Moleculen',lvl:2,q:'Hoeveel zuurstofatomen zitten er in totaal in 2 H2O?',a:'2',h:['Elk H₂O heeft 1 zuurstofatoom; 2 moleculen.'],s:'2 × 1 = 2 zuurstofatomen.'},
 ];
 SEED.forEach((e,i)=> e.id = 'seed_'+i);
 
