@@ -136,6 +136,11 @@ const TOPICICON = {
   'Topografie':'🗺️','Klimaat & weer':'🌦️','Water & landschap':'🏞️','Aarde & klimaat':'🌋','Bevolking & globalisering':'🌐',
   'Geld & rekenen':'💶','Begrippen':'📖','Markt':'📈','Symbolen & atomen':'⚛️','Moleculen':'🧪','Zuur & base':'🧫',
   'Industriële revolutie':'🏭','Wereldoorlogen':'🎖️',
+  // exacte fundamenten (Wassima) + bovenbouw (Amaani)
+  'Rekenvolgorde':'🧮','Negatieve getallen':'➖','Breuken':'🍕','Machten & wortels':'🔢','Verhoudingen & schaal':'📐','Haakjes & herleiden':'🔠',
+  'Grootheden & eenheden':'📏','Temperatuur & warmte':'🌡️','Licht':'💡','Magnetisme':'🧲','Elektrische schakelingen':'🔌','Beweging (afstand-tijd)':'🏃',
+  'Kwadratische functies':'📈','Vergelijkingen oplossen':'🟰','Machten & exponenten':'🔢','Procentuele groei':'📊','Logaritmen':'🔟','Rijen':'🔢',
+  'Krachten & evenwicht':'⚖️','Golven & trillingen':'🌊','Schakelingen':'🔌','Radioactiviteit':'☢️',
 };
 
 /* ============================ OEFENINGEN (startvoorraad) ============================ */
@@ -286,6 +291,54 @@ const SEED = [
   {p:'amaani',v:'natuurkunde',t:'Arbeid & energie',lvl:3,q:'Een veer met veerconstante C = 200 N/m wordt 0,1 m uitgerekt. Bereken de veerenergie.',a:'1',u:'J',h:['Ev = ½ × C × u².','u² = 0,01.'],s:'Ev = ½ × 200 × 0,1² = ½ × 200 × 0,01 = 1 J.'},
   {p:'amaani',v:'natuurkunde',t:'Elektriciteit',lvl:2,q:'Twee weerstanden in serie: 4 Ω en 6 Ω. Bereken de vervangingsweerstand.',a:'10',u:'Ω',h:['In serie tel je de weerstanden op.'],s:'Rv = 4 + 6 = 10 Ω.'},
   {p:'amaani',v:'natuurkunde',t:'Elektriciteit',lvl:3,q:'Een apparaat van 2000 W staat 3 uur aan. De stroomprijs is € 0,30 per kWh. Wat kost dat?',a:'1.80',alt:['1,80','1.8'],u:'€',h:['Eerst kWh: 2000 W = 2 kW; E = 2 × 3 = 6 kWh.','Kosten = kWh × prijs.'],s:'E = 2 kW × 3 uur = 6 kWh → 6 × € 0,30 = € 1,80.'},
+
+  /* ============ AMAANI · WISKUNDE A (eind 4 vwo, uitgebreid) ============ */
+  {p:'amaani',v:'wiskundeA',t:'Kwadratische functies',lvl:2,q:'Gegeven f(x) = x² − 4x + 3. Bereken f(0).',a:'3',h:['Vul x = 0 in.'],s:'f(0) = 0² − 4·0 + 3 = 3.'},
+  {p:'amaani',v:'wiskundeA',t:'Kwadratische functies',lvl:2,q:'Gegeven f(x) = x² − 4x + 3. Bereken f(2).',a:'-1',alt:['−1'],h:['Vul x = 2 in.'],s:'f(2) = 4 − 8 + 3 = −1.'},
+  {p:'amaani',v:'wiskundeA',t:'Kwadratische functies',lvl:3,q:'De parabool y = x² − 6x + 5 heeft nulpunten x = 1 en x = 5. Wat is de x-coördinaat van de top?',a:'3',h:['De top ligt precies midden tussen de nulpunten.'],s:'(1 + 5) ÷ 2 = 3.'},
+  {p:'amaani',v:'wiskundeA',t:'Kwadratische functies',lvl:2,q:'Opent de parabool y = x² naar boven of naar beneden?',a:'boven',alt:['naar boven','omhoog'],h:['Kijk naar het teken vóór x².'],s:'De coëfficiënt van x² is +1 > 0 → de parabool opent naar boven (dalparabool).'},
+  {p:'amaani',v:'wiskundeA',t:'Vergelijkingen oplossen',lvl:2,q:'Los op: 2x² = 50 (geef de positieve oplossing).',a:'5',h:['Deel eerst door 2, dan worteltrekken.'],s:'x² = 25 → x = 5.'},
+  {p:'amaani',v:'wiskundeA',t:'Vergelijkingen oplossen',lvl:2,q:'Los op: 3(x − 4) = 18.',a:'10',h:['Deel beide kanten door 3.'],s:'x − 4 = 6 → x = 10.'},
+  {p:'amaani',v:'wiskundeA',t:'Vergelijkingen oplossen',lvl:3,q:'Bereken de discriminant van x² + 2x − 3. (D = b² − 4ac, met a = 1, b = 2, c = −3)',a:'16',h:['Vul in: D = 2² − 4·1·(−3).'],s:'D = 4 − (−12) = 4 + 12 = 16.'},
+  {p:'amaani',v:'wiskundeA',t:'Vergelijkingen oplossen',lvl:3,q:'Los op: (x − 2)(x + 5) = 0. Geef de kleinste oplossing.',a:'-5',alt:['−5'],h:['Een product is 0 als één van de factoren 0 is.'],s:'x − 2 = 0 of x + 5 = 0 → x = 2 of x = −5. De kleinste is −5.'},
+  {p:'amaani',v:'wiskundeA',t:'Machten & exponenten',lvl:2,q:'Reken uit: 2³ × 2².',a:'32',h:['Bij vermenigvuldigen tel je de exponenten op: 2^(3+2).'],s:'2³ × 2² = 2⁵ = 32.'},
+  {p:'amaani',v:'wiskundeA',t:'Machten & exponenten',lvl:2,q:'Reken uit: 5⁰.',a:'1',h:['Elk getal (behalve 0) tot de macht 0 is 1.'],s:'5⁰ = 1.'},
+  {p:'amaani',v:'wiskundeA',t:'Machten & exponenten',lvl:3,q:'Reken uit: 2⁻¹ (geef als decimaal).',a:'0.5',alt:['0,5','1/2'],h:['Een negatieve exponent betekent 1 gedeeld door: 2⁻¹ = 1/2.'],s:'2⁻¹ = 1/2 = 0,5.'},
+  {p:'amaani',v:'wiskundeA',t:'Procentuele groei',lvl:2,q:'Iets groeit met 4% per jaar. Wat is de groeifactor?',a:'1.04',alt:['1,04'],h:['1 + p/100.'],s:'1 + 4/100 = 1,04.'},
+  {p:'amaani',v:'wiskundeA',t:'Procentuele groei',lvl:2,q:'Beginwaarde 1000, groeifactor 0,9 per jaar. Wat is de waarde na 3 jaar?',a:'729',h:['× 0,9 per jaar → × 0,9³.'],s:'1000 × 0,9³ = 1000 × 0,729 = 729.'},
+  {p:'amaani',v:'wiskundeA',t:'Procentuele groei',lvl:3,q:'De groeifactor per jaar is 1,21. Wat is de groeifactor per half jaar?',a:'1.1',alt:['1,1'],h:['Half jaar → wortel uit de jaarfactor: √1,21.'],s:'√1,21 = 1,1.'},
+  {p:'amaani',v:'wiskundeA',t:'Procentuele groei',lvl:3,q:'Een bacterie verdubbelt elk uur (groeifactor 2). Na hoeveel uur is het aantal 8× zo groot?',a:'3',u:'uur',h:['Zoek de macht: 2^? = 8.'],s:'2³ = 8, dus na 3 uur.'},
+  {p:'amaani',v:'wiskundeA',t:'Logaritmen',lvl:2,q:'Los op: 10^x = 1000. Wat is x?',a:'3',h:['Schrijf 1000 als macht van 10.'],s:'1000 = 10³ → x = 3.'},
+  {p:'amaani',v:'wiskundeA',t:'Logaritmen',lvl:2,q:'Bereken: log(100). (grondtal 10)',a:'2',h:['10 tot welke macht is 100?'],s:'log(100) = 2, want 10² = 100.'},
+  {p:'amaani',v:'wiskundeA',t:'Logaritmen',lvl:2,q:'Bereken: log(1).',a:'0',h:['10 tot welke macht is 1?'],s:'log(1) = 0, want 10⁰ = 1.'},
+  {p:'amaani',v:'wiskundeA',t:'Rijen',lvl:1,q:'Rekenkundige rij: 3, 7, 11, ... Wat is het volgende getal?',a:'15',h:['Er komt steeds hetzelfde bij: +4.'],s:'11 + 4 = 15.'},
+  {p:'amaani',v:'wiskundeA',t:'Rijen',lvl:2,q:'Meetkundige rij: 2, 6, 18, ... Wat is het volgende getal?',a:'54',h:['Er wordt steeds met dezelfde factor vermenigvuldigd: ×3.'],s:'18 × 3 = 54.'},
+  {p:'amaani',v:'wiskundeA',t:'Rijen',lvl:3,q:'Rekenkundige rij begint bij 5, verschil 3. Wat is de 10e term? (uₙ = a + (n−1)·v)',a:'32',h:['u₁₀ = 5 + (10−1)·3.'],s:'5 + 9 × 3 = 5 + 27 = 32.'},
+  {p:'amaani',v:'wiskundeA',t:'Differentiëren',lvl:2,q:'Gegeven f(x) = x² − 4x, met f′(x) = 2x − 4. Voor welke x is de helling 0 (de top)?',a:'2',h:['Stel 2x − 4 = 0.'],s:'2x − 4 = 0 → 2x = 4 → x = 2.'},
+  {p:'amaani',v:'wiskundeA',t:'Differentiëren',lvl:2,q:'Gegeven f(x) = 2x², met f′(x) = 4x. Bereken de helling in x = 3.',a:'12',h:['Vul x = 3 in 4x.'],s:'f′(3) = 4 × 3 = 12.'},
+  {p:'amaani',v:'wiskundeA',t:'Statistiek',lvl:2,q:'In een boxplot is Q1 = 4 en Q3 = 10. Bereken de kwartielafstand (IQR).',a:'6',h:['IQR = Q3 − Q1.'],s:'10 − 4 = 6.'},
+  {p:'amaani',v:'wiskundeA',t:'Statistiek',lvl:2,q:'Bereken de mediaan van 2, 5, 7, 9.',a:'6',h:['Even aantal getallen: neem het gemiddelde van de twee middelste.'],s:'(5 + 7) ÷ 2 = 6.'},
+  {p:'amaani',v:'wiskundeA',t:'Statistiek',lvl:3,q:'Wat is de standaardafwijking van 10, 10, 10?',a:'0',h:['Alle waarden zijn gelijk.'],s:'Geen spreiding → standaardafwijking = 0.'},
+  {p:'amaani',v:'wiskundeA',t:'Kansrekening',lvl:2,q:'Kans op kop bij een munt is 1/2. Kans op twee keer kop achter elkaar?',a:'1/4',alt:['0.25','0,25'],h:['Onafhankelijke kansen vermenigvuldig je: ½ × ½.'],s:'½ × ½ = 1/4.'},
+  {p:'amaani',v:'wiskundeA',t:'Kansrekening',lvl:2,q:'Op hoeveel manieren kies je 2 personen uit 4 (volgorde maakt niet uit)?',a:'6',h:['Combinaties: 4! ÷ (2!·2!).'],s:'C(4,2) = 6.'},
+  {p:'amaani',v:'wiskundeA',t:'Kansrekening',lvl:2,q:'De kans op een 6 met een dobbelsteen is 1/6. Wat is de kans op géén 6? (geef als breuk)',a:'5/6',h:['Complementregel: 1 − 1/6.'],s:'1 − 1/6 = 5/6.'},
+
+  /* ============ AMAANI · NATUURKUNDE (eind 4 vwo, uitgebreid) ============ */
+  {p:'amaani',v:'natuurkunde',t:'Krachten & evenwicht',lvl:2,q:'Twee krachten van 30 N en 40 N werken in dezelfde richting. Bereken de resultante.',a:'70',u:'N',h:['Zelfde richting → optellen.'],s:'30 + 40 = 70 N.'},
+  {p:'amaani',v:'natuurkunde',t:'Krachten & evenwicht',lvl:2,q:'Een kracht van 50 N naar rechts en 50 N naar links. Bereken de resultante.',a:'0',u:'N',h:['Tegengesteld en even groot heffen elkaar op.'],s:'50 − 50 = 0 N (evenwicht).'},
+  {p:'amaani',v:'natuurkunde',t:'Krachten & evenwicht',lvl:2,q:'Een veer met veerconstante C = 250 N/m wordt 0,2 m uitgerekt. Bereken de veerkracht. (F = C·u)',a:'50',u:'N',h:['F = C × u.'],s:'F = 250 × 0,2 = 50 N.'},
+  {p:'amaani',v:'natuurkunde',t:'Krachten & evenwicht',lvl:3,q:'Een blok van 2 kg hangt stil aan een touw. Hoe groot is de spankracht? (g = 9,81 N/kg)',a:'19.62',alt:['19,62','19.6','20'],u:'N',h:['Stilhangen = evenwicht: spankracht = zwaartekracht = m·g.'],s:'Fspan = m × g = 2 × 9,81 = 19,62 N.'},
+  {p:'amaani',v:'natuurkunde',t:'Golven & trillingen',lvl:1,q:'Een trilling heeft frequentie 2 Hz. Bereken de trillingstijd T. (T = 1/f)',a:'0.5',alt:['0,5'],u:'s',h:['T = 1 ÷ f.'],s:'T = 1 ÷ 2 = 0,5 s.'},
+  {p:'amaani',v:'natuurkunde',t:'Golven & trillingen',lvl:2,q:'Een golf heeft frequentie 5 Hz en golflengte 2 m. Bereken de golfsnelheid. (v = f·λ)',a:'10',u:'m/s',h:['v = f × λ.'],s:'v = 5 × 2 = 10 m/s.'},
+  {p:'amaani',v:'natuurkunde',t:'Golven & trillingen',lvl:2,q:'De trillingstijd is 0,25 s. Bereken de frequentie. (f = 1/T)',a:'4',u:'Hz',h:['f = 1 ÷ T.'],s:'f = 1 ÷ 0,25 = 4 Hz.'},
+  {p:'amaani',v:'natuurkunde',t:'Schakelingen',lvl:2,q:'In serie staan weerstanden van 3 Ω en 7 Ω. Bereken de vervangingsweerstand.',a:'10',u:'Ω',h:['In serie tel je op.'],s:'Rv = 3 + 7 = 10 Ω.'},
+  {p:'amaani',v:'natuurkunde',t:'Schakelingen',lvl:3,q:'Twee gelijke weerstanden van 6 Ω staan parallel. Bereken de vervangingsweerstand.',a:'3',u:'Ω',h:['1/Rv = 1/6 + 1/6.'],s:'1/Rv = 2/6 = 1/3 → Rv = 3 Ω.'},
+  {p:'amaani',v:'natuurkunde',t:'Schakelingen',lvl:2,q:'Over een weerstand van 2 Ω loopt 3 A. Bereken de spanning. (U = I·R)',a:'6',u:'V',h:['U = I × R.'],s:'U = 3 × 2 = 6 V.'},
+  {p:'amaani',v:'natuurkunde',t:'Druk',lvl:2,q:'Een kracht van 600 N drukt op een vlak van 0,5 m². Bereken de druk. (p = F/A)',a:'1200',u:'Pa',h:['p = F ÷ A.'],s:'p = 600 ÷ 0,5 = 1200 Pa.'},
+  {p:'amaani',v:'natuurkunde',t:'Druk',lvl:3,q:'De druk is 2000 Pa op een oppervlak van 0,3 m². Bereken de kracht. (F = p·A)',a:'600',u:'N',h:['F = p × A.'],s:'F = 2000 × 0,3 = 600 N.'},
+  {p:'amaani',v:'natuurkunde',t:'Radioactiviteit',lvl:2,q:'De halveringstijd is 3 uur. Je begint met 800 atomen. Hoeveel zijn er na 6 uur?',a:'200',h:['6 uur = 2 halveringstijden: elke keer de helft.'],s:'800 → 400 (na 3 u) → 200 (na 6 u).'},
+  {p:'amaani',v:'natuurkunde',t:'Radioactiviteit',lvl:2,q:'Na 2 halveringstijden is nog welk deel van de stof over? (geef als breuk)',a:'1/4',alt:['0.25'],h:['Elke halveringstijd: × ½.'],s:'½ × ½ = 1/4.'},
+  {p:'amaani',v:'natuurkunde',t:'Kinematica',lvl:2,q:'Een voorwerp legt bij eenparige beweging 150 m af in 30 s. Bereken de snelheid.',a:'5',u:'m/s',h:['v = s ÷ t.'],s:'v = 150 ÷ 30 = 5 m/s.'},
 
   /* ============ WASSIMA · NEDERLANDS (eind 2 havo) ============ */
   {p:'wassima',v:'nederlands',t:'Werkwoordspelling',lvl:1,q:'Vul in (tegenwoordige tijd): Hij ... elke dag naar school. (lopen) → hij',a:'loopt',h:['Hij/zij-vorm = ik-vorm (stam) + t.','stam van lopen = loop.'],s:'stam loop + t = loopt.'},
@@ -496,6 +549,32 @@ const TEMPLATES=[
     const a=ri(2,6), b=ri(1,9);
     return {q:`Werk de haakjes weg: ${a}(x + ${b}). Schrijf als ax + b.`,a:`${a}x+${a*b}`,alt:[`${a}x + ${a*b}`],
       h:[`Vermenigvuldig de ${a} met x én met ${b}.`],s:`${a} × x + ${a} × ${b} = ${a}x + ${a*b}.`};
+  }},
+  /* ----- Amaani · drills (wisselende getallen) ----- */
+  {id:'tpl_golfsnelheid',p:'amaani',v:'natuurkunde',t:'Golven & trillingen',lvl:2,gen:()=>{
+    const f=ri(2,8), lam=ri(2,6);
+    return {q:`Een golf heeft frequentie ${f} Hz en golflengte ${lam} m. Bereken de golfsnelheid. (v = f·λ)`,a:String(f*lam),u:'m/s',
+      h:['v = f × λ.'],s:`v = ${f} × ${lam} = ${f*lam} m/s.`};
+  }},
+  {id:'tpl_trillingstijd',p:'amaani',v:'natuurkunde',t:'Golven & trillingen',lvl:1,gen:()=>{
+    const f=pick([2,4,5,8,10,20]), T=rnd(1/f,4);
+    return {q:`Een trilling heeft frequentie ${f} Hz. Bereken de trillingstijd T. (T = 1/f)`,a:String(T),alt:[nl(T)],u:'s',
+      h:['T = 1 ÷ f.'],s:`T = 1 ÷ ${f} = ${nl(T)} s.`};
+  }},
+  {id:'tpl_resultante',p:'amaani',v:'natuurkunde',t:'Krachten & evenwicht',lvl:1,gen:()=>{
+    const a=ri(10,90), b=ri(10,90);
+    return {q:`Twee krachten van ${a} N en ${b} N werken in dezelfde richting. Bereken de resultante.`,a:String(a+b),u:'N',
+      h:['Zelfde richting → optellen.'],s:`${a} + ${b} = ${a+b} N.`};
+  }},
+  {id:'tpl_fveer',p:'amaani',v:'natuurkunde',t:'Krachten & evenwicht',lvl:2,gen:()=>{
+    const C=pick([100,150,200,250,300]), u=pick([0.1,0.2,0.3,0.5]), F=rnd(C*u,2);
+    return {q:`Een veer met veerconstante C = ${C} N/m wordt ${nl(u)} m uitgerekt. Bereken de veerkracht. (F = C·u)`,a:String(F),u:'N',
+      h:['F = C × u.'],s:`F = ${C} × ${nl(u)} = ${nl(F)} N.`};
+  }},
+  {id:'tpl_funceval',p:'amaani',v:'wiskundeA',t:'Kwadratische functies',lvl:2,gen:()=>{
+    const b=ri(-5,5), c=ri(-5,9), x=ri(-3,5), val=x*x+b*x+c;
+    return {q:`Gegeven f(x) = x² ${pm(b)}x ${pm(c)}. Bereken f(${x}).`,a:String(val),
+      h:[`Vul x = ${x} in en let op de tekens.`],s:`f(${x}) = (${x})² ${pm(b)}·${x} ${pm(c)} = ${x*x} ${pm(b*x)} ${pm(c)} = ${val}.`};
   }},
 ];
 
@@ -1303,6 +1382,14 @@ const UITLEG={
   'Magnetisme':{tekst:'Een magneet heeft een noordpool en een zuidpool. Gelijke polen (noord-noord of zuid-zuid) stoten elkaar af; ongelijke polen (noord-zuid) trekken elkaar aan.'},
   'Elektrische schakelingen':{tekst:'Stroom loopt alleen door een gesloten (dichte) kring. In een serieschakeling is er één pad: gaat één lampje stuk, dan gaat alles uit. In een parallelschakeling blijven de andere branden.'},
   'Beweging (afstand-tijd)':{tekst:'Snelheid = afstand ÷ tijd. Let op de eenheid: km in een uur geeft km/u, meter in een seconde geeft m/s. Afstand = snelheid × tijd; tijd = afstand ÷ snelheid.'},
+  // Amaani · bovenbouw
+  'Kwadratische functies':{tekst:'Een kwadratische functie f(x) = ax² + bx + c geeft een parabool. Is a > 0 dan opent hij naar boven (dal), is a < 0 dan naar beneden (berg). De top ligt precies midden tussen de twee nulpunten. Functiewaarde berekenen = x invullen.'},
+  'Vergelijkingen oplossen':{tekst:'Werk stap voor stap naar x toe (doe links en rechts hetzelfde). Bij x² = a → worteltrekken. Bij een product = 0 is elke factor afzonderlijk 0. De discriminant D = b² − 4ac vertelt hoeveel oplossingen er zijn (D>0: twee, D=0: één, D<0: geen).'},
+  'Procentuele groei':{tekst:'Groeifactor = 1 + p/100 (toename) of 1 − p/100 (afname). Per n perioden: vermenigvuldig met de groeifactor tot de macht n. Andersom: de factor per halve periode is de wortel uit de factor per hele periode.'},
+  'Logaritmen':{tekst:'De logaritme is de omgekeerde van een macht. log(x) (grondtal 10) beantwoordt: "10 tot welke macht is x?". Dus log(1000) = 3 want 10³ = 1000, en 10^x = 1000 geeft x = 3.'},
+  'Krachten & evenwicht':{tekst:'Krachten in dezelfde richting tel je op, in tegengestelde richting trek je af. De resultante (nettokracht) is hun som met richting. Is de resultante 0, dan is er evenwicht. Veerkracht: F = C × u.'},
+  'Golven & trillingen':{tekst:'Frequentie f (in hertz) is het aantal trillingen per seconde; trillingstijd T is de duur van één trilling: T = 1/f en f = 1/T. Voor een golf geldt v = f × λ (golfsnelheid = frequentie × golflengte).'},
+  'Radioactiviteit':{tekst:'Na elke halveringstijd is nog de helft van de radioactieve stof over. Na n halveringstijden is dus (½)ⁿ over. Reken in stappen: elke halveringstijd × ½.'},
 };
 function UitlegPaneel({data,open,onToggle}){
   return (
