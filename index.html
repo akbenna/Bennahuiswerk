@@ -803,13 +803,16 @@ const TEMPLATES=[
 
 /* ============================ STORE (localStorage) ============================ */
 const KEY='oefenapp_v1';
-function blankProg(){return {punten:0, solved:{}, cards:{}, streak:0, dagstreak:0, lastDay:null, badges:[], goal:10, todayCount:0, foutLog:[]};}
+function blankProg(){return {punten:0, solved:{}, cards:{}, streak:0, dagstreak:0, lastDay:null, badges:[], goal:10, todayCount:0, foutLog:[], niveau:'auto', autoLvl:1, correctRun:0};}
 function normalizeProg(p){
   const np={...blankProg(), ...(p||{})};
   np.solved=(p&&p.solved)||{}; np.cards=(p&&p.cards)||{};
   np.badges=(p&&p.badges)||[]; np.foutLog=(p&&p.foutLog)||[];
   if(typeof np.goal!=='number') np.goal=10;
   if(typeof np.todayCount!=='number') np.todayCount=0;
+  if(np.niveau!=='auto' && ![1,2,3].includes(np.niveau)) np.niveau='auto';   // 'auto' | 1 | 2 | 3
+  if(![1,2,3].includes(np.autoLvl)) np.autoLvl=1;
+  if(typeof np.correctRun!=='number') np.correctRun=0;
   // eenmalige migratie: oude 'solved' → Leitner-kaarten
   if(Object.keys(np.cards).length===0 && Object.keys(np.solved).length>0){
     for(const id of Object.keys(np.solved)){
@@ -834,17 +837,20 @@ function dueTime(c){return (c.last||0) + (BOX_DAGEN[c.box]||0)*86400000;}
 function isMastered(prog,id){return cardInfo(prog,id).box>=4;}
 function puntenVoor(prog,id,usedHint){return isMastered(prog,id)?3:(usedHint?5:10);}
 function instOf(card){return card.gen ? {...card.gen(), id:card.id} : card;}
-// kies de volgende kaart: eerst 'due'/onbekend, laagste doosje, makkelijkste, langst niet gezien
+// huidig doelniveau van een kind: vaste keuze (1/2/3) of automatisch (groeit/daalt mee)
+function doelNiveau(prog){return (prog&&[1,2,3].includes(prog.niveau)) ? prog.niveau : (prog&&prog.autoLvl)||1;}
+// kies de volgende kaart: eerst 'due'/onbekend, laagste doosje, dichtst bij het doelniveau, langst niet gezien
 function pickNext(pool, prog, excludeId){
   if(!pool||pool.length===0) return null;
-  const now=Date.now();
+  const now=Date.now(), tgt=doelNiveau(prog);
+  const near=card=>Math.abs((card.lvl||1)-tgt);
   let cands=pool.map(card=>{const c=cardInfo(prog,card.id);return {card,c,due:c.box===0?0:dueTime(c),isDue:c.box===0||now>=dueTime(c)};});
   let pickFrom=cands.filter(s=>s.card.id!==excludeId);
   if(pickFrom.length===0) pickFrom=cands;
   const due=pickFrom.filter(s=>s.isDue);
   const set=due.length?due:pickFrom;
-  set.sort((a,b)=> (a.c.box-b.c.box) || ((a.card.lvl||1)-(b.card.lvl||1)) || (a.c.last-b.c.last) || (a.due-b.due));
-  const top=set.filter(s=>s.c.box===set[0].c.box && (s.card.lvl||1)===(set[0].card.lvl||1)).slice(0,3);
+  set.sort((a,b)=> (a.c.box-b.c.box) || (near(a.card)-near(b.card)) || ((a.card.lvl||1)-(b.card.lvl||1)) || (a.c.last-b.c.last) || (a.due-b.due));
+  const top=set.filter(s=>s.c.box===set[0].c.box && near(s.card)===near(set[0].card)).slice(0,3);
   return pick(top).card;
 }
 
@@ -916,6 +922,9 @@ function App(){
   function setGoal(pid, g){
     persist(prev=>{const pr=normalizeProg(prev.prog[pid]); pr.goal=g; return {...prev, prog:{...prev.prog,[pid]:pr}};});
   }
+  function setNiveau(pid, n){
+    persist(prev=>{const pr=normalizeProg(prev.prog[pid]); pr.niveau=n; if(n!=='auto'){pr.autoLvl=n;} pr.correctRun=0; return {...prev, prog:{...prev.prog,[pid]:pr}};});
+  }
 
   // resultaat verwerken: punten + Leitner-doosje + dagdoel + foutenschrift
   function recordResult(pid, card, inst, correct, usedHint){
@@ -936,6 +945,9 @@ function App(){
         const entry={id:card.id,t:card.t,v:card.v,q:inst.q,a:inst.a,u:inst.u||'',when:Date.now()};
         pr.foutLog=[entry, ...pr.foutLog.filter(f=>f.id!==card.id)].slice(0,40);
       }
+      // automatisch niveau: 3 goed op rij → een tikje moeilijker; fout → een tikje makkelijker
+      if(correct){ pr.correctRun=(pr.correctRun||0)+1; if(pr.correctRun>=3 && (pr.autoLvl||1)<3){pr.autoLvl=(pr.autoLvl||1)+1; pr.correctRun=0;} }
+      else { pr.correctRun=0; if((pr.autoLvl||1)>1) pr.autoLvl=(pr.autoLvl||1)-1; }
       c.last=Date.now(); pr.cards[card.id]=c;
       pr.badges=[...(pr.badges||[])];
       BADGES.forEach(b=>{if(!pr.badges.includes(b.id)&&b.test(pr)) pr.badges.push(b.id);});
@@ -952,7 +964,7 @@ function App(){
       {view==='formules' && <FormulesView onBack={()=>setView('home')}/>}
       {view==='leertips' && <LeertipsView onBack={()=>setView('home')}/>}
       {view==='hub' && <Hub profile={profile} prog={prog} vak={vak} setVak={setVak} allEx={allEx}
-        onBack={()=>setView('home')} onTopic={goTopic} onSetGoal={(g)=>setGoal(profile,g)}/>}
+        onBack={()=>setView('home')} onTopic={goTopic} onSetGoal={(g)=>setGoal(profile,g)} onSetNiveau={(n)=>setNiveau(profile,n)}/>}
       {view==='practice' && <Practice profile={profile} vak={vak} topic={topic} allEx={allEx}
         onBack={()=>setView('hub')} onResult={recordResult} prog={prog} onTopic={goTopic}/>}
       {view==='author' && <Author store={store} persist={persist} onBack={()=>setView('home')}/>}
@@ -1001,7 +1013,7 @@ function Home({onPick,store,onAuthor,onFormules,onLeertips}){
 }
 
 /* ---------- HUB (vak + onderwerpen) ---------- */
-function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal}){
+function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal,onSetNiveau}){
   const P=PROFILES[profile];
   const topics=useMemo(()=>{
     const list=allEx.filter(e=>e.p===profile&&e.v===vak);
@@ -1042,6 +1054,24 @@ function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal}){
           <span style={{fontWeight:700,minWidth:24,textAlign:'center'}}>{goal}</span>
           <button className="btn ghost sm" onClick={()=>onSetGoal(Math.min(40,goal+5))}>+</button>
         </div>
+      </div>
+
+      {/* moeilijkheidsniveau */}
+      <div className="card" style={{marginTop:12}}>
+        <div className="row" style={{justifyContent:'space-between'}}>
+          <b>📈 Niveau</b>
+          <span className="muted" style={{fontSize:13}}>{prog.niveau==='auto'?'Automatisch (nu niveau '+(prog.autoLvl||1)+')':'Vast op niveau '+prog.niveau}</span>
+        </div>
+        <div className="wrap" style={{marginTop:10}}>
+          {[['auto','Auto'],[1,'1 · makkelijk'],[2,'2 · middel'],[3,'3 · moeilijk']].map(([v,label])=>(
+            <button key={String(v)} className={'btn sm '+(prog.niveau===v?'':'ghost')} onClick={()=>onSetNiveau(v)}>{label}</button>
+          ))}
+        </div>
+        <p className="muted" style={{fontSize:12,marginTop:8}}>
+          {prog.niveau==='auto'
+            ? 'Bij Auto wordt het vanzelf een tikje moeilijker als het goed gaat, en makkelijker als het even niet lukt.'
+            : 'Bij een vast niveau krijg je vooral oefeningen van dat niveau.'}
+        </p>
       </div>
 
       <div className="wrap" style={{margin:'14px 0 16px'}}>
@@ -1128,6 +1158,11 @@ function Practice({profile,vak,topic,allEx,onBack,onResult,prog,onTopic}){
     if(isMix||isToets) p=allEx.filter(e=>e.p===profile&&e.v===vak);
     else if(isFout){const ids=new Set((prog.foutLog||[]).map(f=>f.id)); p=allEx.filter(e=>ids.has(e.id));}
     else p=allEx.filter(e=>e.p===profile&&e.v===vak&&e.t===topic);
+    // bij een vast niveau: filter op dat niveau (val terug op alles als er niets is)
+    if(!isFout && [1,2,3].includes(prog.niveau)){
+      const f=p.filter(e=>(e.lvl||1)===prog.niveau);
+      if(f.length) p=f;
+    }
     setPool(p); setSession({good:0,wrong:0}); setToets({n:0,fout:[]}); setFinished(false); setShowUitleg(true);
     const first=pickNext(p,prog,null);
     if(first) showCard(first); else {setCard(null); setInst(null);}
@@ -1321,7 +1356,7 @@ function OuderDashboard({store}){
         return (
           <div key={pid} style={{marginTop:10,paddingTop:10,borderTop:'1px solid var(--line)'}}>
             <div style={{fontWeight:700}}>{P.emoji} {P.naam}
-              <span className="muted" style={{fontWeight:400,fontSize:13}}> · ⭐ {prog.punten||0} · 🔥 {prog.streak||0} · 📅 {prog.dagstreak||0} · vandaag {prog.todayCount||0}/{prog.goal||10}</span></div>
+              <span className="muted" style={{fontWeight:400,fontSize:13}}> · ⭐ {prog.punten||0} · 🔥 {prog.streak||0} · 📅 {prog.dagstreak||0} · vandaag {prog.todayCount||0}/{prog.goal||10} · niveau {prog.niveau==='auto'?'auto ('+(prog.autoLvl||1)+')':prog.niveau}</span></div>
             <div className="wrap" style={{marginTop:6}}>
               {vakRijen.map(r=>(<span key={r.v} className="tag">{VAKNAAM[r.v]}: {r.beheerst}/{r.total}</span>))}
             </div>
