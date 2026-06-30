@@ -18,7 +18,7 @@ _Bijgewerkt: juni 2026. Drie profielen: Amine (groep 7/8), Wassima (2 havo), Ama
 De exacte vakken staan er stevig op; de talen en zaakvakken hebben een goede basis die verder verdiept kan worden.
 
 ## Didactiek die actief is
-Instelbaar moeilijkheidsniveau per kind (**Auto / 1 / 2 / 3**; Auto wordt vanzelf moeilijker bij succes en makkelijker bij fouten) · **leerjaar-schakelaar (dit jaar / volgend jaar)** · wisselende getallen · slim herhalen (Leitner) · mix-oefening (interleaving) · **oefentoets-modus (10 vragen, eindscore)** · **meerkeuzevragen** · dagdoel + sessiesamenvatting · automatisch foutenschrift · gerichte foutfeedback · uitlegpanelen met beeld (getallenlijn, breukstrook, **getekende klok**, figuren) · ouder-dashboard met aandachtspunten per kind.
+Instelbaar moeilijkheidsniveau per kind (**Auto / 1 / 2 / 3**; Auto wordt vanzelf moeilijker bij succes en makkelijker bij fouten) · **leerjaar-schakelaar (dit jaar / volgend jaar)** · **proeftoets over alle vakken (20 vragen, IEP-/examenstijl)** · **snel laden: voorgecompileerd, geen Babel in de browser** · wisselende getallen · slim herhalen (Leitner) · mix-oefening (interleaving) · **oefentoets-modus (10 vragen, eindscore)** · **meerkeuzevragen** · dagdoel + sessiesamenvatting · automatisch foutenschrift · gerichte foutfeedback · uitlegpanelen met beeld (getallenlijn, breukstrook, **getekende klok**, figuren) · ouder-dashboard met aandachtspunten per kind.
 
 ## To-do — verder uitbreiden (geprioriteerd)
 1. **Talen verdiepen** (alle kinderen): woordenschat per thema, meer werkwoordstijden, langere zinnen.
