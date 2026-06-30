@@ -3,7 +3,8 @@
 _Bijgewerkt: juni 2026. Drie profielen: Amine (groep 7/8), Wassima (2 havo), Amaani (4 vwo). Elk vak heeft nu oefenstof — geen lege vakken meer._
 
 ## Omvang nu
-- **519 vaste opgaven + 40 sjablonen** (de sjablonen geven oneindig veel scommen door wisselende getallen), waarvan ± 24 meerkeuze.
+- **546 vaste opgaven + 40 sjablonen** (de sjablonen geven oneindig veel scommen door wisselende getallen), waarvan ± 27 meerkeuze.
+- **Volgend leerjaar (vooruitkijken):** per kind een schakelaar "Dit jaar / Volgend jaar" met alvast stof van het volgende niveau (Wassima → 3 havo, Amaani → 5 vwo, Amine → brugklas).
 - **Amine** (groep 7/8): Rekenen, Taal, Begrijpend lezen, Studievaardigheden, Engels.
 - **Wassima** (2 havo): 10 vakken — exact ruim; Engels/Biologie/Aardrijkskunde verdiept.
 - **Amaani** (4 vwo): 10 vakken — exact ruim; Engels/Biologie/Aardrijkskunde verdiept.
@@ -16,7 +17,7 @@ _Bijgewerkt: juni 2026. Drie profielen: Amine (groep 7/8), Wassima (2 havo), Ama
 De exacte vakken staan er stevig op; de talen en zaakvakken hebben een goede basis die verder verdiept kan worden.
 
 ## Didactiek die actief is
-Instelbaar moeilijkheidsniveau per kind (**Auto / 1 / 2 / 3**; Auto wordt vanzelf moeilijker bij succes en makkelijker bij fouten) · wisselende getallen · slim herhalen (Leitner) · mix-oefening (interleaving) · **oefentoets-modus (10 vragen, eindscore)** · **meerkeuzevragen** · dagdoel + sessiesamenvatting · automatisch foutenschrift · gerichte foutfeedback · uitlegpanelen met beeld (getallenlijn, breukstrook, **getekende klok**, figuren) · ouder-dashboard met aandachtspunten per kind.
+Instelbaar moeilijkheidsniveau per kind (**Auto / 1 / 2 / 3**; Auto wordt vanzelf moeilijker bij succes en makkelijker bij fouten) · **leerjaar-schakelaar (dit jaar / volgend jaar)** · wisselende getallen · slim herhalen (Leitner) · mix-oefening (interleaving) · **oefentoets-modus (10 vragen, eindscore)** · **meerkeuzevragen** · dagdoel + sessiesamenvatting · automatisch foutenschrift · gerichte foutfeedback · uitlegpanelen met beeld (getallenlijn, breukstrook, **getekende klok**, figuren) · ouder-dashboard met aandachtspunten per kind.
 
 ## To-do — verder uitbreiden (geprioriteerd)
 1. **Talen verdiepen** (alle kinderen): woordenschat per thema, meer werkwoordstijden, langere zinnen.

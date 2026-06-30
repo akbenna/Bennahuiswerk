@@ -120,9 +120,9 @@ const {useState,useEffect,useMemo,useRef} = React;
 
 /* ============================ CONFIG ============================ */
 const PROFILES = {
-  wassima:{naam:'Wassima', niveau:'2 havo', emoji:'🌱', kleur:'linear-gradient(135deg,#5EA03A,#48792c)', vakken:['wiskunde','natuurkunde','nederlands','engels','frans','duits','biologie','aardrijkskunde','geschiedenis','economie']},
-  amaani: {naam:'Amaani',  niveau:'4 vwo',  emoji:'🚀', kleur:'linear-gradient(135deg,#3a6ea0,#2c5680)', vakken:['wiskundeA','natuurkunde','scheikunde','nederlands','engels','frans','biologie','aardrijkskunde','geschiedenis','economie']},
-  amine:  {naam:'Amine',   niveau:'groep 7/8', emoji:'🦉', kleur:'linear-gradient(135deg,#e0a23a,#c2782d)', vakken:['rekenen','taal','lezen','studievaardigheden','engels']},
+  wassima:{naam:'Wassima', niveau:'2 havo', volgend:'3 havo', emoji:'🌱', kleur:'linear-gradient(135deg,#5EA03A,#48792c)', vakken:['wiskunde','natuurkunde','nederlands','engels','frans','duits','biologie','aardrijkskunde','geschiedenis','economie']},
+  amaani: {naam:'Amaani',  niveau:'4 vwo',  volgend:'5 vwo',  emoji:'🚀', kleur:'linear-gradient(135deg,#3a6ea0,#2c5680)', vakken:['wiskundeA','natuurkunde','scheikunde','nederlands','engels','frans','biologie','aardrijkskunde','geschiedenis','economie']},
+  amine:  {naam:'Amine',   niveau:'groep 7/8', volgend:'brugklas', emoji:'🦉', kleur:'linear-gradient(135deg,#e0a23a,#c2782d)', vakken:['rekenen','taal','lezen','studievaardigheden','engels']},
 };
 const VAKNAAM = {wiskunde:'Wiskunde', natuurkunde:'Natuurkunde', wiskundeA:'Wiskunde A', geschiedenis:'Geschiedenis',
   nederlands:'Nederlands', engels:'Engels', frans:'Frans', duits:'Duits', biologie:'Biologie',
@@ -157,6 +157,9 @@ const TOPICICON = {
   'Atoombouw':'⚛️','Reactievergelijkingen':'⚗️','Rekenen (mol)':'🧮',
   'Tekstverbanden':'🔗','Tenses':'⏱️','Staatsvormen':'🏛️','Werkwoorden (être/avoir)':'🇫🇷',
   'Werkwoorden':'🔤','Ontdekkingsreizen':'🧭','Koude Oorlog':'❄️','Dekolonisatie':'🌍','Conjunctuur':'📉','Spreekwoorden':'🗣️',
+  // volgend jaar
+  'Kwadratische vergelijkingen':'🟰','Stelsels':'🔢','Goniometrie':'📐','Krachten (resultante)':'➡️','Normale verdeling':'🔔','Binomiale verdeling':'🎲',
+  'Logaritmen (gevorderd)':'🔟','Energiebehoud':'⚡','Gaswet':'🌡️','Concentratie':'🧪','Formules met x':'🔤','Coördinaten':'📈','Grammatica (brugklas)':'🔡','Zinsontleden (brugklas)':'🧩',
 };
 
 /* ============================ OEFENINGEN (startvoorraad) ============================ */
@@ -790,6 +793,39 @@ const SEED = [
   {p:'wassima',v:'nederlands',t:'Spreekwoorden',lvl:2,q:'Wat betekent "in de wolken zijn"?',a:'heel blij',opties:['heel blij','heel boos','heel moe'],h:['Een fijn gevoel.'],s:'"in de wolken zijn" = heel blij zijn.'},
   {p:'amine',v:'taal',t:'Woordenschat & spreekwoorden',lvl:2,q:'Wat betekent "in de wolken zijn"?',a:'heel blij',opties:['heel blij','heel boos','heel moe'],h:['Een fijn gevoel.'],s:'"in de wolken zijn" = heel blij zijn.'},
   {p:'amine',v:'taal',t:'Woordenschat & spreekwoorden',lvl:2,q:'Wat betekent "een appeltje voor de dorst"?',a:'iets bewaren voor later',opties:['iets bewaren voor later','heel veel honger','snel rennen'],h:['Het gaat over sparen.'],s:'Iets bewaren/sparen voor later.'},
+
+  /* ============ VOLGEND JAAR · WASSIMA (3 havo) ============ */
+  {p:'wassima',v:'wiskunde',jaar:'next',t:'Kwadratische vergelijkingen',lvl:1,q:'Los op: x² = 36. Geef de positieve oplossing.',a:'6',h:['Worteltrekken: x = √36.'],s:'x² = 36 → x = 6 (of −6).'},
+  {p:'wassima',v:'wiskunde',jaar:'next',t:'Kwadratische vergelijkingen',lvl:2,q:'Ontbind: x² + 5x. Schrijf als x(...).',a:'x+5',alt:['(x+5)','x + 5'],h:['Haal de gemeenschappelijke factor x buiten haakjes.'],s:'x² + 5x = x(x + 5).'},
+  {p:'wassima',v:'wiskunde',jaar:'next',t:'Kwadratische vergelijkingen',lvl:3,q:'Los op: (x − 3)(x + 2) = 0. Geef de kleinste oplossing.',a:'-2',alt:['−2'],h:['Een product is 0 als één factor 0 is.'],s:'x = 3 of x = −2. Kleinste: −2.'},
+  {p:'wassima',v:'wiskunde',jaar:'next',t:'Stelsels',lvl:2,q:'Gegeven x + y = 10 en x − y = 2. Bereken x.',a:'6',h:['Tel de twee vergelijkingen op: 2x = 12.'],s:'(x+y)+(x−y) = 10+2 → 2x = 12 → x = 6.'},
+  {p:'wassima',v:'wiskunde',jaar:'next',t:'Stelsels',lvl:2,q:'Gegeven x + y = 10 en x − y = 2. Bereken y.',a:'4',h:['x = 6, vul in x + y = 10.'],s:'6 + y = 10 → y = 4.'},
+  {p:'wassima',v:'wiskunde',jaar:'next',t:'Goniometrie',lvl:2,q:'In een rechthoekige driehoek is de overstaande zijde 3 en de aanliggende zijde 4. Bereken tan(hoek).',a:'0.75',alt:['0,75','3/4'],h:['tan = overstaande ÷ aanliggende.'],s:'tan = 3 ÷ 4 = 0,75.'},
+  {p:'wassima',v:'wiskunde',jaar:'next',t:'Goniometrie',lvl:1,q:'Welke verhouding hoort bij de sinus (sin)?',a:'overstaande/schuine',opties:['overstaande/schuine','aanliggende/schuine','overstaande/aanliggende'],h:['SOS: Sinus = Overstaande / Schuine.'],s:'sin = overstaande ÷ schuine zijde.'},
+  {p:'wassima',v:'natuurkunde',jaar:'next',t:'Krachten (resultante)',lvl:2,q:'Een kracht van 6 N en een kracht van 8 N werken in dezelfde richting. Bereken de resultante.',a:'14',u:'N',h:['Zelfde richting → optellen.'],s:'6 + 8 = 14 N.'},
+  {p:'wassima',v:'natuurkunde',jaar:'next',t:'Krachten (resultante)',lvl:2,q:'Tweede wet van Newton: F = m × a. Een voorwerp van 4 kg versnelt met 3 m/s². Bereken F.',a:'12',u:'N',h:['F = m × a.'],s:'F = 4 × 3 = 12 N.'},
+  {p:'wassima',v:'natuurkunde',jaar:'next',t:'Arbeid & energie',lvl:2,q:'Bereken de kinetische energie van 2 kg bij 3 m/s. (Ek = ½mv²)',a:'9',u:'J',h:['v² = 9.'],s:'Ek = ½ × 2 × 9 = 9 J.'},
+
+  /* ============ VOLGEND JAAR · AMAANI (5 vwo) ============ */
+  {p:'amaani',v:'wiskundeA',jaar:'next',t:'Normale verdeling',lvl:2,q:'Bij een normale verdeling ligt ongeveer welk percentage binnen 1 standaardafwijking van het gemiddelde?',a:'68%',alt:['68'],opties:['68%','95%','50%'],h:['De bekende vuistregel 68-95-99,7.'],s:'≈ 68% binnen 1 standaardafwijking.'},
+  {p:'amaani',v:'wiskundeA',jaar:'next',t:'Normale verdeling',lvl:2,q:'Bij een normale verdeling ligt ongeveer welk percentage binnen 2 standaardafwijkingen?',a:'95%',alt:['95'],opties:['68%','95%','99%'],h:['Vuistregel 68-95-99,7.'],s:'≈ 95% binnen 2 standaardafwijkingen.'},
+  {p:'amaani',v:'wiskundeA',jaar:'next',t:'Binomiale verdeling',lvl:2,q:'Verwachtingswaarde E = n·p. Bij n = 10 en p = 0,5: bereken E.',a:'5',h:['10 × 0,5.'],s:'E = 10 × 0,5 = 5.'},
+  {p:'amaani',v:'wiskundeA',jaar:'next',t:'Binomiale verdeling',lvl:3,q:'Bij n = 20 en p = 0,1: bereken de verwachtingswaarde (E = n·p).',a:'2',h:['20 × 0,1.'],s:'E = 20 × 0,1 = 2.'},
+  {p:'amaani',v:'wiskundeA',jaar:'next',t:'Logaritmen (gevorderd)',lvl:3,q:'Los op: 5 · 2^x = 40. Wat is x?',a:'3',h:['Deel eerst door 5: 2^x = 8.'],s:'2^x = 8 = 2³ → x = 3.'},
+  {p:'amaani',v:'natuurkunde',jaar:'next',t:'Energiebehoud',lvl:3,q:'Een steen valt van 20 m. Bereken de snelheid vlak voor de grond. v = √(2gh), g = 9,81.',a:'19.8',alt:['19,8','20','19.81','19.80'],u:'m/s',h:['2 × 9,81 × 20 = 392,4; dan de wortel.'],s:'v = √(2 × 9,81 × 20) = √392,4 ≈ 19,8 m/s.'},
+  {p:'amaani',v:'natuurkunde',jaar:'next',t:'Gaswet',lvl:2,q:'Bij gelijk volume: als de temperatuur van een gas stijgt, stijgt of daalt de druk?',a:'stijgt',h:['Warmere deeltjes botsen harder.'],s:'Bij constant volume stijgt de druk als de temperatuur stijgt.'},
+  {p:'amaani',v:'scheikunde',jaar:'next',t:'Concentratie',lvl:2,q:'0,5 mol stof is opgelost in 2 liter water. Bereken de concentratie. (c = n ÷ V, in mol/L)',a:'0.25',alt:['0,25'],u:'mol/L',h:['c = aantal mol ÷ volume.'],s:'c = 0,5 ÷ 2 = 0,25 mol/L.'},
+  {p:'amaani',v:'scheikunde',jaar:'next',t:'Concentratie',lvl:3,q:'Hoeveel mol zit er in 0,5 L van een oplossing met concentratie 2 mol/L?',a:'1',u:'mol',h:['n = c × V.'],s:'n = 2 × 0,5 = 1 mol.'},
+
+  /* ============ VOLGEND JAAR · AMINE (brugklas) ============ */
+  {p:'amine',v:'rekenen',jaar:'next',t:'Negatieve getallen',lvl:1,ill:{type:'getallenlijn',van:-8,tot:8,punt:2},q:'Reken uit: −4 + 6',a:'2',h:['Start bij −4 en ga 6 naar rechts.'],s:'−4 + 6 = 2.'},
+  {p:'amine',v:'rekenen',jaar:'next',t:'Negatieve getallen',lvl:2,q:'Reken uit: 3 − 7',a:'-4',alt:['−4'],h:['Ga 7 naar links vanaf 3.'],s:'3 − 7 = −4.'},
+  {p:'amine',v:'rekenen',jaar:'next',t:'Formules met x',lvl:1,q:'Gegeven y = 2x + 1. Bereken y als x = 3.',a:'7',h:['Vul x = 3 in.'],s:'y = 2 × 3 + 1 = 7.'},
+  {p:'amine',v:'rekenen',jaar:'next',t:'Formules met x',lvl:2,q:'Los op: x + 5 = 12. Wat is x?',a:'7',h:['Haal 5 van beide kanten af.'],s:'x = 12 − 5 = 7.'},
+  {p:'amine',v:'rekenen',jaar:'next',t:'Coördinaten',lvl:1,q:'Op welke as ligt het punt (3, 0)? (x-as of y-as)',a:'x-as',alt:['x','de x-as','x as'],h:['De tweede waarde (y) is 0.'],s:'Bij (3, 0) is y = 0 → het punt ligt op de x-as.'},
+  {p:'amine',v:'engels',jaar:'next',t:'Grammatica (brugklas)',lvl:2,q:'Vul in: "He ... happy." (to be)',a:'is',h:['he/she/it → is.'],s:'He is happy.'},
+  {p:'amine',v:'engels',jaar:'next',t:'Grammatica (brugklas)',lvl:2,q:'Wat is het meervoud van "box" (Engels)?',a:'boxes',h:['Na -x komt -es.'],s:'box → boxes.'},
+  {p:'amine',v:'taal',jaar:'next',t:'Zinsontleden (brugklas)',lvl:2,q:'Wat is de persoonsvorm in "De kat slaapt"?',a:'slaapt',h:['Zet de zin in de verleden tijd; wat verandert, is de persoonsvorm.'],s:'In de verleden tijd: "sliep". De persoonsvorm is slaapt.'},
 ];
 SEED.forEach((e,i)=> e.id = 'seed_'+i);
 
@@ -1112,6 +1148,7 @@ function App(){
   const [profile,setProfile]=useState(null);
   const [vak,setVak]=useState(null);
   const [topic,setTopic]=useState(null);
+  const [jaar,setJaar]=useState('nu');         // 'nu' | 'next' (volgend leerjaar)
 
   const persist=(updater)=>setStore(prev=>{const next=typeof updater==='function'?updater(prev):updater; saveStore(next); return next;});
 
@@ -1168,7 +1205,7 @@ function App(){
   }
 
   const prog = profile? normalizeProg(store.prog[profile]) : null;
-  const goTopic=(t)=>{setTopic(t);setView('practice');};
+  const goTopic=(t,jr)=>{setTopic(t);setJaar(jr||'nu');setView('practice');};
 
   return (
     <div>
@@ -1177,7 +1214,7 @@ function App(){
       {view==='leertips' && <LeertipsView onBack={()=>setView('home')}/>}
       {view==='hub' && <Hub profile={profile} prog={prog} vak={vak} setVak={setVak} allEx={allEx}
         onBack={()=>setView('home')} onTopic={goTopic} onSetGoal={(g)=>setGoal(profile,g)} onSetNiveau={(n)=>setNiveau(profile,n)}/>}
-      {view==='practice' && <Practice profile={profile} vak={vak} topic={topic} allEx={allEx}
+      {view==='practice' && <Practice profile={profile} vak={vak} topic={topic} jaar={jaar} allEx={allEx}
         onBack={()=>setView('hub')} onResult={recordResult} prog={prog} onTopic={goTopic}/>}
       {view==='author' && <Author store={store} persist={persist} onBack={()=>setView('home')}/>}
     </div>
@@ -1227,8 +1264,10 @@ function Home({onPick,store,onAuthor,onFormules,onLeertips}){
 /* ---------- HUB (vak + onderwerpen) ---------- */
 function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal,onSetNiveau}){
   const P=PROFILES[profile];
+  const [jaar,setJaar]=useState('nu');     // 'nu' | 'next'
+  const heeftVolgend=useMemo(()=>allEx.some(e=>e.p===profile&&(e.jaar||'nu')==='next'),[allEx,profile]);
   const topics=useMemo(()=>{
-    const list=allEx.filter(e=>e.p===profile&&e.v===vak);
+    const list=allEx.filter(e=>e.p===profile&&e.v===vak&&(e.jaar||'nu')===jaar);
     const map={};
     list.forEach(e=>{(map[e.t]=map[e.t]||[]).push(e);});
     return Object.entries(map).map(([t,exs])=>{
@@ -1236,7 +1275,7 @@ function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal,onSetNiveau
       const begonnen=exs.filter(e=>cardInfo(prog,e.id).box>0).length;
       return {t, total:exs.length, beheerst, begonnen};
     });
-  },[allEx,profile,vak,prog]);
+  },[allEx,profile,vak,prog,jaar]);
 
   const goal=prog.goal||10, done=Math.min(prog.todayCount||0,goal), goalPct=Math.round(done/goal*100);
   const foutAantal=(prog.foutLog||[]).length;
@@ -1286,6 +1325,13 @@ function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal,onSetNiveau
         </p>
       </div>
 
+      {/* leerjaar: dit jaar / volgend jaar (vooruitkijken) */}
+      {heeftVolgend && <div className="wrap" style={{margin:'14px 0 0',alignItems:'center'}}>
+        <span className="muted" style={{fontSize:13}}>📅 Leerjaar:</span>
+        <button className={'btn sm '+(jaar==='nu'?'':'ghost')} onClick={()=>setJaar('nu')}>Dit jaar ({P.niveau})</button>
+        <button className={'btn sm '+(jaar==='next'?'gold':'ghost')} onClick={()=>setJaar('next')}>🔭 Volgend jaar ({P.volgend})</button>
+      </div>}
+
       <div className="wrap" style={{margin:'14px 0 16px'}}>
         {P.vakken.map(v=>(
           <button key={v} className={'btn sm '+(v===vak?'':'ghost')} onClick={()=>setVak(v)}>{VAKNAAM[v]}</button>
@@ -1294,22 +1340,22 @@ function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal,onSetNiveau
 
       {/* mix + foutenschrift */}
       {topics.length>0 && <div className="wrap" style={{marginBottom:14}}>
-        <button className="btn" onClick={()=>onTopic('__mix__')}>🎲 Mix-oefening (door elkaar)</button>
-        <button className="btn gold" onClick={()=>onTopic('__toets__')}>📝 Oefentoets (10 vragen)</button>
+        <button className="btn" onClick={()=>onTopic('__mix__',jaar)}>🎲 Mix-oefening (door elkaar)</button>
+        <button className="btn gold" onClick={()=>onTopic('__toets__',jaar)}>📝 Oefentoets (10 vragen)</button>
         {foutAantal>0 && <button className="btn accent" onClick={()=>onTopic('__fouten__')}>📕 Mijn fouten oefenen ({foutAantal})</button>}
       </div>}
 
       {topics.length===0 && <div className="card center" style={{marginBottom:14}}>
-        <div style={{fontSize:32}}>🌱</div>
-        <p style={{fontSize:16}}>Voor dit vak staan nog geen opgaven klaar.</p>
-        <p className="muted" style={{fontSize:13}}>Een ouder kan opgaven toevoegen via de ouder-modus op het beginscherm.</p>
+        <div style={{fontSize:32}}>{jaar==='next'?'🔭':'🌱'}</div>
+        <p style={{fontSize:16}}>{jaar==='next'?'Voor dit vak is er nog geen stof van volgend jaar.':'Voor dit vak staan nog geen opgaven klaar.'}</p>
+        <p className="muted" style={{fontSize:13}}>{jaar==='next'?'Kies een ander vak of ga terug naar "Dit jaar".':'Een ouder kan opgaven toevoegen via de ouder-modus op het beginscherm.'}</p>
       </div>}
 
       {topics.map(({t,total,beheerst,begonnen})=>{
         const pct=total?Math.round(beheerst/total*100):0;
         const sterren=pct>=100?'⭐⭐⭐':pct>=60?'⭐⭐':beheerst>0?'⭐':'☆☆☆';
         return (
-          <div key={t} className="topic" onClick={()=>onTopic(t)}>
+          <div key={t} className="topic" onClick={()=>onTopic(t,jaar)}>
             <div className="ico">{TOPICICON[t]||'📘'}</div>
             <div className="grow">
               <div className="tt">{t}</div>
@@ -1337,7 +1383,8 @@ function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal,onSetNiveau
 }
 
 /* ---------- PRACTICE (slim herhalen + mix + fouten + samenvatting) ---------- */
-function Practice({profile,vak,topic,allEx,onBack,onResult,prog,onTopic}){
+function Practice({profile,vak,topic,jaar,allEx,onBack,onResult,prog,onTopic}){
+  const jr=jaar||'nu';
   const [pool,setPool]=useState([]);
   const [card,setCard]=useState(null);
   const [inst,setInst]=useState(null);
@@ -1358,7 +1405,7 @@ function Practice({profile,vak,topic,allEx,onBack,onResult,prog,onTopic}){
   const TOETS_LEN=10;
   const isMix=topic==='__mix__', isFout=topic==='__fouten__', isToets=topic==='__toets__';
   const uitlegKey=(!isMix&&!isFout&&!isToets&&UITLEG[topic])?topic:null;
-  const topicLabel=isMix?'🎲 Mix':isFout?'📕 Fouten herhalen':isToets?'📝 Oefentoets':topic;
+  const topicLabel=(isMix?'🎲 Mix':isFout?'📕 Fouten herhalen':isToets?'📝 Oefentoets':topic)+(jr==='next'?' 🔭 volgend jaar':'');
 
   function showCard(c){
     setCard(c); setInst(instOf(c));
@@ -1367,9 +1414,9 @@ function Practice({profile,vak,topic,allEx,onBack,onResult,prog,onTopic}){
   }
   useEffect(()=>{
     let p;
-    if(isMix||isToets) p=allEx.filter(e=>e.p===profile&&e.v===vak);
+    if(isMix||isToets) p=allEx.filter(e=>e.p===profile&&e.v===vak&&(e.jaar||'nu')===jr);
     else if(isFout){const ids=new Set((prog.foutLog||[]).map(f=>f.id)); p=allEx.filter(e=>ids.has(e.id));}
-    else p=allEx.filter(e=>e.p===profile&&e.v===vak&&e.t===topic);
+    else p=allEx.filter(e=>e.p===profile&&e.v===vak&&e.t===topic&&(e.jaar||'nu')===jr);
     // bij een vast niveau: filter op dat niveau (val terug op alles als er niets is)
     if(!isFout && [1,2,3].includes(prog.niveau)){
       const f=p.filter(e=>(e.lvl||1)===prog.niveau);
@@ -1378,7 +1425,7 @@ function Practice({profile,vak,topic,allEx,onBack,onResult,prog,onTopic}){
     setPool(p); setSession({good:0,wrong:0}); setToets({n:0,fout:[]}); setFinished(false); setShowUitleg(true);
     const first=pickNext(p,prog,null);
     if(first) showCard(first); else {setCard(null); setInst(null);}
-  },[topic,vak,profile]);
+  },[topic,vak,profile,jr]);
 
   function controleer(){
     if(state==='goed'||!inst) return;
