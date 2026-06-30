@@ -156,6 +156,7 @@ const TOPICICON = {
   'Verhoudingen':'⚖️','Afronden & schatten':'🎯','Synoniemen & antoniemen':'🔁','Hoofdgedachte':'💡','Verwijswoorden':'🔗','Woordenboek & informatie':'📚','Roosters & tabellen':'🗓️','Zinnen & vragen':'💬',
   'Atoombouw':'⚛️','Reactievergelijkingen':'⚗️','Rekenen (mol)':'🧮',
   'Tekstverbanden':'🔗','Tenses':'⏱️','Staatsvormen':'🏛️','Werkwoorden (être/avoir)':'🇫🇷',
+  'Werkwoorden':'🔤','Ontdekkingsreizen':'🧭','Koude Oorlog':'❄️','Dekolonisatie':'🌍','Conjunctuur':'📉',
 };
 
 /* ============================ OEFENINGEN (startvoorraad) ============================ */
@@ -681,6 +682,76 @@ const SEED = [
   {p:'amine',v:'rekenen',t:'Kommagetallen',lvl:1,q:'Reken uit: 2,5 + 1,5',a:'4',h:['Tel de halven samen.'],s:'2,5 + 1,5 = 4.'},
   {p:'amine',v:'taal',t:'Spelling',lvl:2,q:'Wat is goed: "hij wordt" of "hij word"?',a:'hij wordt',alt:['wordt'],h:['Bij "hij": stam + t.'],s:'stam word + t = "hij wordt".'},
   {p:'amine',v:'taal',t:'Leestekens & hoofdletters',lvl:1,q:'Eindigt een gewone mededeling (geen vraag) met een punt of een vraagteken?',a:'punt',alt:['een punt','.'],h:['Een vraag krijgt een vraagteken.'],s:'Een mededelende zin eindigt met een punt.'},
+
+  /* ============ FRANS verdiept ============ */
+  // Wassima (2 havo)
+  {p:'wassima',v:'frans',t:'Woordenschat',lvl:1,q:'Vertaal naar het Nederlands: "bonjour".',a:'goedendag',alt:['hallo','goeiedag','goedemorgen','dag'],h:['Een begroeting overdag.'],s:'bonjour = goedendag.'},
+  {p:'wassima',v:'frans',t:'Woordenschat',lvl:1,q:'Vertaal naar het Nederlands: "merci".',a:'dankjewel',alt:['bedankt','dank je','dank u','dankje'],h:['Zeg je als je iets krijgt.'],s:'merci = dankjewel.'},
+  {p:'wassima',v:'frans',t:'Woordenschat',lvl:1,q:'Vertaal naar het Nederlands: "le chat".',a:'de kat',alt:['kat','poes'],h:['Een huisdier.'],s:'le chat = de kat.'},
+  {p:'wassima',v:'frans',t:'Woordenschat',lvl:2,q:'Vertaal naar het Nederlands: "petit".',a:'klein',h:['Tegenovergestelde van grand.'],s:'petit = klein.'},
+  {p:'wassima',v:'frans',t:'Lidwoorden (le/la)',lvl:1,q:'le of la? "... soleil" (de zon, mannelijk)',a:'le',h:['Mannelijk → le.'],s:'le soleil.'},
+  {p:'wassima',v:'frans',t:'Lidwoorden (le/la)',lvl:1,q:'le of la? "... voiture" (de auto, vrouwelijk)',a:'la',h:['Vrouwelijk → la.'],s:'la voiture.'},
+  {p:'wassima',v:'frans',t:'Lidwoorden (le/la)',lvl:2,q:'Wat is het lidwoord in het meervoud in het Frans (de/het meervoud)?',a:'les',h:['Geldt voor mannelijk én vrouwelijk meervoud.'],s:'In het meervoud: les.'},
+  {p:'wassima',v:'frans',t:'Getallen',lvl:1,q:'Welk getal is "cinq"?',a:'5',alt:['vijf'],h:['Tussen quatre en six.'],s:'cinq = 5.'},
+  {p:'wassima',v:'frans',t:'Getallen',lvl:2,q:'Welk getal is "huit"?',a:'8',alt:['acht'],h:['Tussen sept en neuf.'],s:'huit = 8.'},
+  {p:'wassima',v:'frans',t:'Getallen',lvl:2,q:'Hoe schrijf je "20" in het Frans?',a:'vingt',h:['Klinkt als "vęn".'],s:'20 = vingt.'},
+  {p:'wassima',v:'frans',t:'Werkwoorden',lvl:1,q:'Wat betekent het Franse werkwoord "manger"?',a:'eten',h:['Doe je bij het avondeten.'],s:'manger = eten.'},
+  {p:'wassima',v:'frans',t:'Werkwoorden',lvl:1,q:'Wat betekent het Franse werkwoord "aller"?',a:'gaan',h:['Je naar ergens begeven.'],s:'aller = gaan.'},
+  // Amaani (4 vwo)
+  {p:'amaani',v:'frans',t:'Woordenschat',lvl:2,q:'Vertaal naar het Nederlands: "pourtant".',a:'toch',alt:['echter','niettemin'],h:['Geeft een tegenstelling aan.'],s:'pourtant = toch / echter.'},
+  {p:'amaani',v:'frans',t:'Woordenschat',lvl:2,q:'Vertaal naar het Nederlands: "le travail".',a:'het werk',alt:['werk','de baan'],h:['Wat je doet voor geld.'],s:'le travail = het werk.'},
+  {p:'amaani',v:'frans',t:'Werkwoorden (être/avoir)',lvl:2,q:'"nous avons" betekent in het Nederlands:',a:'wij hebben',alt:['we hebben','wij hebben'],h:['avoir = hebben.'],s:'nous avons = wij hebben.'},
+  {p:'amaani',v:'frans',t:'Werkwoorden (être/avoir)',lvl:2,q:'"vous êtes" betekent in het Nederlands:',a:'jullie zijn',alt:['u bent'],h:['être = zijn.'],s:'vous êtes = jullie zijn / u bent.'},
+
+  /* ============ DUITS verdiept (Wassima) ============ */
+  {p:'wassima',v:'duits',t:'Woordenschat',lvl:1,q:'Vertaal naar het Nederlands: "die Stadt".',a:'de stad',alt:['stad'],h:['Een grote plaats.'],s:'die Stadt = de stad.'},
+  {p:'wassima',v:'duits',t:'Woordenschat',lvl:1,q:'Vertaal naar het Nederlands: "das Kind".',a:'het kind',alt:['kind'],h:['Een jong mens.'],s:'das Kind = het kind.'},
+  {p:'wassima',v:'duits',t:'Woordenschat',lvl:2,q:'Vertaal naar het Duits: "de man".',a:'der Mann',alt:['mann','der mann'],h:['Mannelijk woord: der ...'],s:'de man = der Mann.'},
+  {p:'wassima',v:'duits',t:'Woordenschat',lvl:1,q:'Vertaal naar het Nederlands: "gut".',a:'goed',h:['Tegenovergestelde van schlecht.'],s:'gut = goed.'},
+  {p:'wassima',v:'duits',t:'Lidwoorden (der/die/das)',lvl:2,q:'der, die of das? "... Mädchen" (het meisje, onzijdig)',a:'das',h:['Onzijdig → das (ook al is het een meisje!).'],s:'das Mädchen (onzijdig in het Duits).'},
+  {p:'wassima',v:'duits',t:'Lidwoorden (der/die/das)',lvl:1,q:'der, die of das? "... Frau" (de vrouw, vrouwelijk)',a:'die',h:['Vrouwelijk → die.'],s:'die Frau.'},
+  {p:'wassima',v:'duits',t:'Getallen',lvl:1,q:'Welk getal is "sieben"?',a:'7',alt:['zeven'],h:['Tussen sechs en acht.'],s:'sieben = 7.'},
+  {p:'wassima',v:'duits',t:'Getallen',lvl:2,q:'Welk getal is "zwanzig"?',a:'20',alt:['twintig'],h:['Twee tientallen.'],s:'zwanzig = 20.'},
+  {p:'wassima',v:'duits',t:'Getallen',lvl:1,q:'Hoe schrijf je "3" in het Duits?',a:'drei',h:['Lijkt op "drie".'],s:'3 = drei.'},
+
+  /* ============ GESCHIEDENIS verdiept ============ */
+  // Wassima
+  {p:'wassima',v:'geschiedenis',t:'Tijd & eeuwen',lvl:2,q:'In welke eeuw valt het jaartal 1492 (ontdekking van Amerika)?',a:'15e',alt:['15','vijftiende','15de','15e eeuw'],h:['14 + 1.'],s:'1492 → 14 + 1 = de 15e eeuw.'},
+  {p:'wassima',v:'geschiedenis',t:'Ontdekkingsreizen',lvl:1,q:'Wie kwam in 1492 (in dienst van Spanje) per ongeluk in Amerika terecht?',a:'Columbus',alt:['christoffel columbus','colombus'],h:['Hij zocht een zeeroute naar Azië.'],s:'Christoffel Columbus, in 1492.'},
+  {p:'wassima',v:'geschiedenis',t:'Ontdekkingsreizen',lvl:2,q:'Naar welk werelddeel zochten ontdekkingsreizigers een zeeroute voor specerijen?',a:'Azië',alt:['azie','indie','india','indië'],h:['Daar groeiden peper en kruidnagel.'],s:'Men zocht een route naar Azië (de "Indiën").'},
+  {p:'wassima',v:'geschiedenis',t:'Ontdekkingsreizen',lvl:2,q:'Welke twee landen waren de eerste grote ontdekkingsreizigers? Noem er één.',a:'Spanje',alt:['portugal','spanje of portugal'],h:['Twee landen op het Iberisch schiereiland.'],s:'Spanje en Portugal.'},
+  // Amaani
+  {p:'amaani',v:'geschiedenis',t:'Wereldoorlogen',lvl:2,q:'In welk jaar viel Duitsland Polen binnen (begin WO II)?',a:'1939',h:['Twee jaar voor 1941.'],s:'1 september 1939.'},
+  {p:'amaani',v:'geschiedenis',t:'Wereldoorlogen',lvl:2,q:'Hoe heet de systematische massamoord op de Joden in WO II?',a:'Holocaust',alt:['de holocaust','shoah'],h:['Ook wel Shoah genoemd.'],s:'De Holocaust (Shoah).'},
+  {p:'amaani',v:'geschiedenis',t:'Koude Oorlog',lvl:2,q:'Tussen welke grootmacht en de VS speelde de Koude Oorlog?',a:'Sovjet-Unie',alt:['sovjetunie','sovjet unie','ussr','rusland'],h:['Communistische grootmacht.'],s:'De VS tegenover de Sovjet-Unie.'},
+  {p:'amaani',v:'geschiedenis',t:'Koude Oorlog',lvl:1,q:'Welke muur viel in 1989, als symbool van het einde van de Koude Oorlog?',a:'Berlijnse Muur',alt:['de berlijnse muur','berlijnse muur','muur van berlijn'],h:['In de hoofdstad van Duitsland.'],s:'De Berlijnse Muur viel in 1989.'},
+  {p:'amaani',v:'geschiedenis',t:'Dekolonisatie',lvl:2,q:'Welke grote kolonie van Nederland werd na WO II onafhankelijk (1945/1949)?',a:'Indonesië',alt:['indonesie','nederlands-indie','nederlands indie','nederlands-indië'],h:['Voorheen Nederlands-Indië.'],s:'Indonesië (het vroegere Nederlands-Indië).'},
+
+  /* ============ ECONOMIE verdiept ============ */
+  // Wassima
+  {p:'wassima',v:'economie',t:'Begrippen',lvl:1,q:'Iemand die producten maakt, heet een ...?',a:'producent',alt:['de producent'],h:['Tegenovergestelde van consument.'],s:'Een producent maakt producten.'},
+  {p:'wassima',v:'economie',t:'Begrippen',lvl:2,q:'Geld dat je leent en later terugbetaalt, heet een ...?',a:'lening',alt:['krediet','schuld','de lening'],h:['Bij de bank.'],s:'Dat is een lening (krediet).'},
+  {p:'wassima',v:'economie',t:'Geld & rekenen',lvl:1,q:'Je spaart € 5 per week. Hoeveel heb je na 8 weken?',a:'40',u:'€',h:['5 × 8.'],s:'5 × 8 = € 40.'},
+  {p:'wassima',v:'economie',t:'Geld & rekenen',lvl:2,q:'Iets kost € 80 met 25% korting. Hoeveel betaal je?',a:'60',u:'€',h:['25% van 80 = 20.'],s:'80 − 20 = € 60.'},
+  // Amaani
+  {p:'amaani',v:'economie',t:'Conjunctuur',lvl:2,q:'Hoe heet een periode van economische krimp (negatieve groei)?',a:'recessie',alt:['de recessie','crisis'],h:['Het tegenovergestelde van hoogconjunctuur.'],s:'Een recessie is een periode van krimp.'},
+  {p:'amaani',v:'economie',t:'Conjunctuur',lvl:2,q:'Hoe heet de op- en neergang van de economie in golven?',a:'conjunctuur',alt:['de conjunctuur','conjunctuurgolf'],h:['Hoog- en laagconjunctuur.'],s:'Dat heet de conjunctuur.'},
+  {p:'amaani',v:'economie',t:'Markt',lvl:2,q:'Als de prijs stijgt, wat gebeurt er meestal met de gevraagde hoeveelheid? (stijgt / daalt)',a:'daalt',h:['Duurder → mensen kopen minder.'],s:'De gevraagde hoeveelheid daalt (wet van de vraag).'},
+  {p:'amaani',v:'economie',t:'Geld & rekenen',lvl:2,q:'Je leent € 1000 tegen 4% rente per jaar. Hoeveel rente betaal je na 1 jaar?',a:'40',u:'€',h:['4% van 1000.'],s:'0,04 × 1000 = € 40.'},
+
+  /* ============ AMAANI · examenstof niveau 3 ============ */
+  {p:'amaani',v:'wiskundeA',t:'Logaritmen',lvl:3,q:'Los op: 2^x = 8. Wat is x?',a:'3',h:['Schrijf 8 als macht van 2.'],s:'8 = 2³ → x = 3.'},
+  {p:'amaani',v:'wiskundeA',t:'Exponentieel verband',lvl:3,q:'Een bedrag groeit met groeifactor 1,5 per jaar. Na hoeveel hele jaren is het meer dan verdubbeld?',a:'2',u:'jaar',h:['Reken 1,5¹ en 1,5² uit.','1,5² = 2,25 > 2.'],s:'1,5² = 2,25 (meer dan 2×) → na 2 jaar.'},
+  {p:'amaani',v:'natuurkunde',t:'Arbeid & energie',lvl:3,q:'Een voorwerp van 2 kg valt van 10 m hoogte. Bereken de zwaarte-energie bovenaan. (g = 9,81)',a:'196.2',alt:['196,2','200','196'],u:'J',h:['Ez = m × g × h.'],s:'Ez = 2 × 9,81 × 10 = 196,2 J.'},
+  {p:'amaani',v:'natuurkunde',t:'Schakelingen',lvl:3,q:'Drie weerstanden van 2 Ω staan in serie. Bereken de vervangingsweerstand.',a:'6',u:'Ω',h:['In serie optellen.'],s:'2 + 2 + 2 = 6 Ω.'},
+  {p:'amaani',v:'scheikunde',t:'Reactievergelijkingen',lvl:3,q:'Maak kloppend: __ H2 + O2 → 2 H2O. Welk getal hoort er vóór H2?',a:'2',h:['Rechts staan 4 waterstofatomen (2 × H₂O). Links moet dat ook.'],s:'2 H₂ + O₂ → 2 H₂O (links 4 H, rechts 4 H).'},
+  {p:'amaani',v:'scheikunde',t:'Rekenen (mol)',lvl:3,q:'Hoeveel gram is 0,5 mol CO2? (molaire massa CO₂ = 44 g/mol)',a:'22',u:'g',h:['massa = mol × molaire massa.'],s:'0,5 × 44 = 22 g.'},
+  {p:'amaani',v:'scheikunde',t:'Atoombouw',lvl:2,q:'Hoeveel elektronen heeft een neutraal koolstofatoom (atoomnummer 6)?',a:'6',h:['Neutraal: evenveel elektronen als protonen.'],s:'Atoomnummer 6 → 6 protonen → 6 elektronen.'},
+
+  /* ============ AMINE · extra begrijpend lezen (meerkeuze) ============ */
+  {p:'amine',v:'lezen',t:'Tekst begrijpen',lvl:2,q:'Lees: "Mila heeft 12 knikkers. Ze geeft er 4 weg." Hoeveel houdt ze over?',a:'8',opties:['6','8','16'],h:['12 − 4.'],s:'12 − 4 = 8 knikkers.'},
+  {p:'amine',v:'lezen',t:'Hoofdgedachte',lvl:2,q:'Een tekst beschrijft zon, regen, wind en wolken. Waar gaat de tekst vooral over?',a:'het weer',opties:['het weer','dieren','sport'],h:['Wat hebben die woorden gemeen?'],s:'De tekst gaat over het weer.'},
+  {p:'amine',v:'lezen',t:'Verwijswoorden',lvl:2,q:'Lees: "Tom en Sam spelen buiten. Zij hebben plezier." Wie zijn "zij"?',a:'Tom en Sam',alt:['tom en sam','tom en sam.'],h:['Wie spelen er buiten?'],s:'"Zij" verwijst naar Tom en Sam.'},
 ];
 SEED.forEach((e,i)=> e.id = 'seed_'+i);
 
