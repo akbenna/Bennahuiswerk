@@ -122,7 +122,9 @@ const TOPICICON = {
   'Procenten':'％','Vergelijkingen':'⚖️','Lineaire formules':'📈','Oppervlakte & omtrek':'⬛',
   'Pythagoras':'📐','Hoeken':'📐','Inhoud':'🧊','Snelheid':'🚴','Dichtheid':'⚗️',
   'Groeifactoren':'📊','Exponentieel verband':'📈','Formules herleiden':'🔤','Statistiek':'📊',
+  'Differentiëren':'📉','Kansrekening':'🎲','Bewegingsvergelijkingen':'🏎️',
   'Kinematica':'🏃','Krachten (Newton)':'💪','Arbeid & energie':'⚡','Vermogen':'🔌','Elektriciteit':'🔋',
+  'Rendement':'♻️','Warmte':'🔥',
 };
 
 /* ============================ OEFENINGEN (startvoorraad) ============================ */
@@ -139,16 +141,16 @@ const SEED = [
   {p:'wassima',v:'wiskunde',t:'Lineaire formules',lvl:1,q:'Gegeven y = 2x + 3. Bereken y als x = 4.',a:'11',h:['Vul x = 4 in de formule in.'],s:'y = 2 × 4 + 3 = 8 + 3 = 11.'},
   {p:'wassima',v:'wiskunde',t:'Lineaire formules',lvl:1,q:'Wat is het hellingsgetal van y = −5x + 8?',a:'-5',alt:['−5'],h:['In y = ax + b is a het hellingsgetal.'],s:'a = −5 (dalende lijn). Het startgetal is 8.'},
   {p:'wassima',v:'wiskunde',t:'Lineaire formules',lvl:3,q:'Een lijn gaat door (1, 4) en (3, 10). Bereken het hellingsgetal.',a:'3',h:['a = (y₂ − y₁) ÷ (x₂ − x₁).'],s:'a = (10 − 4) ÷ (3 − 1) = 6 ÷ 2 = 3.'},
-  {p:'wassima',v:'wiskunde',t:'Oppervlakte & omtrek',lvl:1,q:'Een rechthoek is 8 cm lang en 5 cm breed. Bereken de oppervlakte.',a:'40',u:'cm²',h:['oppervlakte = lengte × breedte.'],s:'opp = 8 × 5 = 40 cm².'},
-  {p:'wassima',v:'wiskunde',t:'Oppervlakte & omtrek',lvl:1,q:'Een rechthoek is 8 cm lang en 5 cm breed. Bereken de omtrek.',a:'26',u:'cm',h:['omtrek = 2 × (lengte + breedte).'],s:'omtrek = 2 × (8 + 5) = 2 × 13 = 26 cm.'},
-  {p:'wassima',v:'wiskunde',t:'Oppervlakte & omtrek',lvl:2,q:'Een driehoek heeft basis 12 cm en hoogte 6 cm. Bereken de oppervlakte.',a:'36',u:'cm²',h:['opp = ½ × basis × hoogte.'],s:'opp = ½ × 12 × 6 = 36 cm².'},
-  {p:'wassima',v:'wiskunde',t:'Oppervlakte & omtrek',lvl:3,q:'Een cirkel heeft straal 7 cm. Bereken de oppervlakte (π ≈ 3,14).',a:'153.86',alt:['154','153,86'],u:'cm²',h:['opp = π × r².','r² = 7 × 7 = 49.'],s:'opp = 3,14 × 7² = 3,14 × 49 = 153,86 cm² ≈ 154 cm².'},
-  {p:'wassima',v:'wiskunde',t:'Pythagoras',lvl:1,q:'Rechthoekige driehoek met rechthoekszijden 3 cm en 4 cm. Bereken de schuine zijde.',a:'5',u:'cm',h:['a² + b² = c², met c de schuine zijde.','c = √(9 + 16) = √25.'],s:'c = √(3² + 4²) = √(9 + 16) = √25 = 5 cm.'},
-  {p:'wassima',v:'wiskunde',t:'Pythagoras',lvl:3,q:'Een ladder van 5 m staat 3 m van de muur. Hoe hoog reikt hij tegen de muur?',a:'4',u:'m',h:['De ladder is de schuine zijde.','b = √(c² − a²) = √(25 − 9).'],s:'b = √(5² − 3²) = √(25 − 9) = √16 = 4 m.'},
-  {p:'wassima',v:'wiskunde',t:'Hoeken',lvl:1,q:'In een driehoek zijn twee hoeken 50° en 70°. Hoe groot is de derde hoek?',a:'60',u:'°',h:['De hoeken van een driehoek zijn samen 180°.'],s:'180 − 50 − 70 = 60°.'},
-  {p:'wassima',v:'wiskunde',t:'Hoeken',lvl:2,q:'In een vierhoek zijn drie hoeken 90°, 100° en 85°. Hoe groot is de vierde hoek?',a:'85',u:'°',h:['De hoeken van een vierhoek zijn samen 360°.'],s:'360 − 90 − 100 − 85 = 85°.'},
-  {p:'wassima',v:'wiskunde',t:'Inhoud',lvl:1,q:'Een balk is 10 cm × 4 cm × 3 cm. Bereken de inhoud.',a:'120',u:'cm³',h:['inhoud = lengte × breedte × hoogte.'],s:'10 × 4 × 3 = 120 cm³.'},
-  {p:'wassima',v:'wiskunde',t:'Inhoud',lvl:2,q:'Een kubus heeft ribben van 5 cm. Bereken de inhoud.',a:'125',u:'cm³',h:['inhoud = z × z × z = z³.'],s:'5 × 5 × 5 = 125 cm³.'},
+  {p:'wassima',v:'wiskunde',t:'Oppervlakte & omtrek',lvl:1,ill:{type:'rechthoek',l:8,b:5},q:'Een rechthoek is 8 cm lang en 5 cm breed. Bereken de oppervlakte.',a:'40',u:'cm²',h:['oppervlakte = lengte × breedte.'],s:'opp = 8 × 5 = 40 cm².'},
+  {p:'wassima',v:'wiskunde',t:'Oppervlakte & omtrek',lvl:1,ill:{type:'rechthoek',l:8,b:5},q:'Een rechthoek is 8 cm lang en 5 cm breed. Bereken de omtrek.',a:'26',u:'cm',h:['omtrek = 2 × (lengte + breedte).'],s:'omtrek = 2 × (8 + 5) = 2 × 13 = 26 cm.'},
+  {p:'wassima',v:'wiskunde',t:'Oppervlakte & omtrek',lvl:2,ill:{type:'driehoek',basis:12,hoogte:6},q:'Een driehoek heeft basis 12 cm en hoogte 6 cm. Bereken de oppervlakte.',a:'36',u:'cm²',h:['opp = ½ × basis × hoogte.'],s:'opp = ½ × 12 × 6 = 36 cm².'},
+  {p:'wassima',v:'wiskunde',t:'Oppervlakte & omtrek',lvl:3,ill:{type:'cirkel',r:7},q:'Een cirkel heeft straal 7 cm. Bereken de oppervlakte (π ≈ 3,14).',a:'153.86',alt:['154','153,86'],u:'cm²',h:['opp = π × r².','r² = 7 × 7 = 49.'],s:'opp = 3,14 × 7² = 3,14 × 49 = 153,86 cm² ≈ 154 cm².'},
+  {p:'wassima',v:'wiskunde',t:'Pythagoras',lvl:1,ill:{type:'pyth',a:3,b:4,c:'?'},q:'Rechthoekige driehoek met rechthoekszijden 3 cm en 4 cm. Bereken de schuine zijde.',a:'5',u:'cm',h:['a² + b² = c², met c de schuine zijde.','c = √(9 + 16) = √25.'],s:'c = √(3² + 4²) = √(9 + 16) = √25 = 5 cm.'},
+  {p:'wassima',v:'wiskunde',t:'Pythagoras',lvl:3,ill:{type:'pyth',a:3,b:'?',c:5},q:'Een ladder van 5 m staat 3 m van de muur. Hoe hoog reikt hij tegen de muur?',a:'4',u:'m',h:['De ladder is de schuine zijde.','b = √(c² − a²) = √(25 − 9).'],s:'b = √(5² − 3²) = √(25 − 9) = √16 = 4 m.'},
+  {p:'wassima',v:'wiskunde',t:'Hoeken',lvl:1,ill:{type:'hoeken',h:[50,70,'?']},q:'In een driehoek zijn twee hoeken 50° en 70°. Hoe groot is de derde hoek?',a:'60',u:'°',h:['De hoeken van een driehoek zijn samen 180°.'],s:'180 − 50 − 70 = 60°.'},
+  {p:'wassima',v:'wiskunde',t:'Hoeken',lvl:2,ill:{type:'vierhoek',h:[90,100,85,'?']},q:'In een vierhoek zijn drie hoeken 90°, 100° en 85°. Hoe groot is de vierde hoek?',a:'85',u:'°',h:['De hoeken van een vierhoek zijn samen 360°.'],s:'360 − 90 − 100 − 85 = 85°.'},
+  {p:'wassima',v:'wiskunde',t:'Inhoud',lvl:1,ill:{type:'balk',l:10,b:4,h:3},q:'Een balk is 10 cm × 4 cm × 3 cm. Bereken de inhoud.',a:'120',u:'cm³',h:['inhoud = lengte × breedte × hoogte.'],s:'10 × 4 × 3 = 120 cm³.'},
+  {p:'wassima',v:'wiskunde',t:'Inhoud',lvl:2,ill:{type:'kubus',z:5},q:'Een kubus heeft ribben van 5 cm. Bereken de inhoud.',a:'125',u:'cm³',h:['inhoud = z × z × z = z³.'],s:'5 × 5 × 5 = 125 cm³.'},
   // ---- Wassima · natuurkunde ----
   {p:'wassima',v:'natuurkunde',t:'Snelheid',lvl:1,q:'Een fietser legt 6000 m af in 1500 s. Bereken de snelheid.',a:'4',u:'m/s',h:['v = s ÷ t (verhuisdriehoekje: dek v af → s boven t).'],s:'v = 6000 ÷ 1500 = 4 m/s.'},
   {p:'wassima',v:'natuurkunde',t:'Snelheid',lvl:2,q:'Een auto rijdt 90 km/u. Hoeveel m/s is dat?',a:'25',u:'m/s',h:['Van km/u naar m/s: delen door 3,6.'],s:'90 ÷ 3,6 = 25 m/s.'},
@@ -173,6 +175,33 @@ const SEED = [
   {p:'amaani',v:'natuurkunde',t:'Vermogen',lvl:2,q:'Een apparaat levert 600 J in 30 s. Bereken het vermogen.',a:'20',u:'W',h:['P = E ÷ t.'],s:'P = 600 ÷ 30 = 20 W.'},
   {p:'amaani',v:'natuurkunde',t:'Elektriciteit',lvl:1,q:'Door een weerstand van 5 Ω loopt 2 A. Bereken de spanning (wet van Ohm).',a:'10',u:'V',h:['U = I × R.'],s:'U = 2 × 5 = 10 V.'},
   {p:'amaani',v:'natuurkunde',t:'Elektriciteit',lvl:2,q:'Een lamp op 230 V trekt 0,5 A. Bereken het vermogen.',a:'115',u:'W',h:['P = U × I.'],s:'P = 230 × 0,5 = 115 W.'},
+  {p:'amaani',v:'natuurkunde',t:'Kinematica',lvl:3,q:'Een auto rijdt 108 km/u. Hoeveel m/s is dat?',a:'30',u:'m/s',h:['Van km/u naar m/s: delen door 3,6.'],s:'108 ÷ 3,6 = 30 m/s.'},
+  {p:'amaani',v:'natuurkunde',t:'Kinematica',lvl:3,q:'Een fietser versnelt eenparig met 1,5 m/s² gedurende 6 s vanuit stilstand. Wat is de eindsnelheid?',a:'9',u:'m/s',h:['Bij start vanuit stilstand: v = a × t.'],s:'v = a × t = 1,5 × 6 = 9 m/s.'},
+  {p:'amaani',v:'natuurkunde',t:'Krachten (Newton)',lvl:3,q:'Op een kist werken naar rechts 80 N en naar links 30 N. Bereken de nettokracht (naar rechts positief).',a:'50',u:'N',h:['Tel krachten met richting op: rechts − links.'],s:'Fnetto = 80 − 30 = 50 N naar rechts.'},
+  {p:'amaani',v:'natuurkunde',t:'Arbeid & energie',lvl:3,q:'Hoeveel zwaarte-energie heeft 5 kg op 8 m hoogte? (g = 9,81 N/kg)',a:'392.4',alt:['392,4','400','392'],u:'J',h:['Ez = m × g × h.'],s:'Ez = 5 × 9,81 × 8 = 392,4 J (met g ≈ 10: 400 J).'},
+  {p:'amaani',v:'natuurkunde',t:'Rendement',lvl:2,q:'Een motor krijgt 800 J en levert 600 J nuttige energie. Bereken het rendement in %.',a:'75',u:'%',h:['η = (nuttige energie ÷ toegevoerde energie) × 100%.'],s:'η = (600 ÷ 800) × 100 = 75%.'},
+  {p:'amaani',v:'natuurkunde',t:'Rendement',lvl:3,q:'Een lamp gebruikt 60 W en zet daarvan 9 W om in licht. Bereken het rendement.',a:'15',u:'%',h:['η = (nuttig vermogen ÷ totaal vermogen) × 100%.'],s:'η = (9 ÷ 60) × 100 = 15%.'},
+  {p:'amaani',v:'natuurkunde',t:'Warmte',lvl:2,q:'Hoeveel warmte is nodig om 2 kg water 10 °C op te warmen? (c = 4180 J/kg·°C)',a:'83600',alt:['83.600','83600'],u:'J',h:['Q = c × m × ΔT.'],s:'Q = 4180 × 2 × 10 = 83 600 J.'},
+  {p:'amaani',v:'natuurkunde',t:'Elektriciteit',lvl:2,q:'Een apparaat van 1500 W staat 2 uur aan. Hoeveel kWh verbruikt het?',a:'3',u:'kWh',h:['Energie (kWh) = vermogen (kW) × tijd (uur). 1500 W = 1,5 kW.'],s:'E = 1,5 kW × 2 uur = 3 kWh.'},
+  {p:'amaani',v:'natuurkunde',t:'Elektriciteit',lvl:3,q:'Door een draad loopt 3 A gedurende 10 s. Hoeveel lading is dat?',a:'30',u:'C',h:['Q = I × t (lading in coulomb).'],s:'Q = 3 × 10 = 30 C.'},
+  // --- Amaani · wiskunde A · laatste half jaar ---
+  {p:'amaani',v:'wiskundeA',t:'Differentiëren',lvl:1,q:'Gegeven f(x) = x². De afgeleide is f′(x) = 2x. Bereken f′(3).',a:'6',h:['Vul x = 3 in de afgeleide 2x in.'],s:'f′(x) = 2x → f′(3) = 2 × 3 = 6.'},
+  {p:'amaani',v:'wiskundeA',t:'Differentiëren',lvl:2,q:'Gegeven f(x) = x³. De afgeleide is f′(x) = 3x². Bereken f′(2).',a:'12',h:['f′(x) = 3x². Vul x = 2 in.'],s:'f′(2) = 3 × 2² = 3 × 4 = 12.'},
+  {p:'amaani',v:'wiskundeA',t:'Differentiëren',lvl:2,q:'Gegeven f(x) = 4x² − 3x. De afgeleide is f′(x) = 8x − 3. Bereken f′(2).',a:'13',h:['Per term: 4x² → 8x, −3x → −3.'],s:'f′(x) = 8x − 3 → f′(2) = 8 × 2 − 3 = 16 − 3 = 13.'},
+  {p:'amaani',v:'wiskundeA',t:'Differentiëren',lvl:3,q:'Gegeven f(x) = x². Bereken het differentiequotiënt op het interval [2, 5].',a:'7',h:['differentiequotiënt = (f(5) − f(2)) ÷ (5 − 2).','f(5) = 25, f(2) = 4.'],s:'(25 − 4) ÷ (5 − 2) = 21 ÷ 3 = 7.'},
+  {p:'amaani',v:'wiskundeA',t:'Exponentieel verband',lvl:2,q:'Iets groeit met 3% per maand. Wat is de groeifactor per maand?',a:'1.03',alt:['1,03'],h:['Toename met p%: groeifactor = 1 + p/100.'],s:'1 + 3/100 = 1,03.'},
+  {p:'amaani',v:'wiskundeA',t:'Exponentieel verband',lvl:3,q:'De groeifactor per maand is 1,03. Wat is de groeifactor per jaar (12 maanden)? Rond af op 2 decimalen.',a:'1.43',alt:['1,43','1.4258','1.426'],h:['Per jaar = (per maand)^12.','1,03^12 ≈ 1,4258.'],s:'1,03^12 = 1,4258… ≈ 1,43.'},
+  {p:'amaani',v:'wiskundeA',t:'Exponentieel verband',lvl:3,q:'De jaarlijkse groeifactor is 1,08. Met hoeveel procent groeit het per jaar?',a:'8',u:'%',h:['percentage = (groeifactor − 1) × 100.'],s:'(1,08 − 1) × 100 = 8%.'},
+  {p:'amaani',v:'wiskundeA',t:'Kansrekening',lvl:1,q:'Je gooit met een dobbelsteen. Hoeveel procent kans op een even getal?',a:'50',u:'%',h:['Even getallen: 2, 4, 6 → 3 van de 6.'],s:'3 ÷ 6 = 0,5 = 50%.'},
+  {p:'amaani',v:'wiskundeA',t:'Kansrekening',lvl:2,q:'Op hoeveel verschillende volgordes kun je 4 boeken op een plank zetten? (4!)',a:'24',h:['4! = 4 × 3 × 2 × 1.'],s:'4! = 4 × 3 × 2 × 1 = 24.'},
+  {p:'amaani',v:'wiskundeA',t:'Kansrekening',lvl:3,q:'Bij een spel win je met kans 0,2 een bedrag van € 10, anders niets. Wat is de verwachte winst?',a:'2',u:'€',h:['Verwachtingswaarde = kans × waarde.'],s:'0,2 × 10 = € 2.'},
+  // --- Amaani · natuurkunde · laatste half jaar ---
+  {p:'amaani',v:'natuurkunde',t:'Bewegingsvergelijkingen',lvl:3,q:'Eenparig versnelde beweging vanuit stilstand: a = 2 m/s², t = 5 s. Bereken de afgelegde afstand.',a:'25',u:'m',h:['Vanuit stilstand: s = ½ × a × t².','t² = 25.'],s:'s = ½ × 2 × 5² = ½ × 2 × 25 = 25 m.'},
+  {p:'amaani',v:'natuurkunde',t:'Bewegingsvergelijkingen',lvl:3,q:'Een voorwerp heeft beginsnelheid 4 m/s en versnelt met 2 m/s² gedurende 3 s. Bereken de eindsnelheid.',a:'10',u:'m/s',h:['v = v₀ + a × t.'],s:'v = 4 + 2 × 3 = 4 + 6 = 10 m/s.'},
+  {p:'amaani',v:'natuurkunde',t:'Arbeid & energie',lvl:3,q:'Een steen valt van 5 m hoogte. Wat is de snelheid vlak voor de grond? (g = 9,81, wrijving verwaarloosd)',a:'9.9',alt:['9,9','10','9.90'],u:'m/s',h:['Energiebehoud: ½mv² = mgh → v = √(2gh).','2 × 9,81 × 5 = 98,1.'],s:'v = √(2 × 9,81 × 5) = √98,1 ≈ 9,9 m/s.'},
+  {p:'amaani',v:'natuurkunde',t:'Arbeid & energie',lvl:3,q:'Een veer met veerconstante C = 200 N/m wordt 0,1 m uitgerekt. Bereken de veerenergie.',a:'1',u:'J',h:['Ev = ½ × C × u².','u² = 0,01.'],s:'Ev = ½ × 200 × 0,1² = ½ × 200 × 0,01 = 1 J.'},
+  {p:'amaani',v:'natuurkunde',t:'Elektriciteit',lvl:2,q:'Twee weerstanden in serie: 4 Ω en 6 Ω. Bereken de vervangingsweerstand.',a:'10',u:'Ω',h:['In serie tel je de weerstanden op.'],s:'Rv = 4 + 6 = 10 Ω.'},
+  {p:'amaani',v:'natuurkunde',t:'Elektriciteit',lvl:3,q:'Een apparaat van 2000 W staat 3 uur aan. De stroomprijs is € 0,30 per kWh. Wat kost dat?',a:'1.80',alt:['1,80','1.8'],u:'€',h:['Eerst kWh: 2000 W = 2 kW; E = 2 × 3 = 6 kWh.','Kosten = kWh × prijs.'],s:'E = 2 kW × 3 uur = 6 kWh → 6 × € 0,30 = € 1,80.'},
 ];
 SEED.forEach((e,i)=> e.id = 'seed_'+i);
 
@@ -260,8 +289,9 @@ function App(){
 
   return (
     <div>
-      {view==='home' && <Home onPick={openProfile} store={store} onAuthor={()=>setView('author')} onFormules={()=>setView('formules')}/>}
+      {view==='home' && <Home onPick={openProfile} store={store} onAuthor={()=>setView('author')} onFormules={()=>setView('formules')} onLeertips={()=>setView('leertips')}/>}
       {view==='formules' && <FormulesView onBack={()=>setView('home')}/>}
+      {view==='leertips' && <LeertipsView onBack={()=>setView('home')}/>}
       {view==='hub' && <Hub profile={profile} prog={prog} vak={vak} setVak={setVak} allEx={allEx}
         onBack={()=>setView('home')} onTopic={(t)=>{setTopic(t);setView('practice');}}/>}
       {view==='practice' && <Practice profile={profile} vak={vak} topic={topic} allEx={allEx}
@@ -272,13 +302,15 @@ function App(){
 }
 
 /* ---------- HOME ---------- */
-function Home({onPick,store,onAuthor,onFormules}){
+function Home({onPick,store,onAuthor,onFormules,onLeertips}){
+  const tip = TIP_VAN_DE_DAG[Math.floor(Date.now()/86400000) % TIP_VAN_DE_DAG.length];
   return (
     <div>
-      <div className="center" style={{margin:'18px 0 22px'}}>
+      <div className="center" style={{margin:'18px 0 18px'}}>
         <h1 style={{fontSize:30}}>Oefenen 💪</h1>
         <p className="muted">Kies wie er gaat oefenen</p>
       </div>
+      <div className="hint" style={{marginBottom:18}}><b>Tip van de dag:</b> {tip}</div>
       <div className="wrap">
         {Object.entries(PROFILES).map(([id,p])=>{
           const pr=store.prog[id]||blankProg();
@@ -295,6 +327,9 @@ function Home({onPick,store,onAuthor,onFormules}){
       </div>
       <div className="center" style={{marginTop:24}}>
         <button className="btn ghost sm" onClick={onFormules}>📐 Formules &amp; uitleg bekijken</button>
+      </div>
+      <div className="center" style={{marginTop:10}}>
+        <button className="btn gold sm" onClick={onLeertips}>💡 Leertips</button>
       </div>
       <div className="center" style={{marginTop:10}}>
         <button className="btn ghost sm" onClick={onAuthor}>👨‍⚕️ Ouder-modus — opdrachten toevoegen</button>
@@ -378,11 +413,13 @@ function Practice({profile,vak,topic,allEx,onBack,onResult,prog}){
   const [showSol,setShowSol]=useState(false);
   const [tries,setTries]=useState(0);
   const [celebrate,setCelebrate]=useState(false);
+  const [showUitleg,setShowUitleg]=useState(true);
   const inputRef=useRef(null);
 
   const ex=pool[idx];
   useEffect(()=>{setVal('');setHintN(0);setState('open');setShowSol(false);setTries(0);
     setTimeout(()=>inputRef.current&&inputRef.current.focus(),50);},[idx,topic]);
+  useEffect(()=>{setShowUitleg(true);},[topic]);
 
   if(!ex) return (<div><button className="back" onClick={onBack}>← terug</button><p className="muted">Nog geen opgaven hier.</p></div>);
 
@@ -418,7 +455,9 @@ function Practice({profile,vak,topic,allEx,onBack,onResult,prog}){
         <span className="muted" style={{fontSize:13}}>vraag {idx+1} / {pool.length} · niveau {ex.lvl||1}</span>
       </div>
 
+      {UITLEG[topic] && <UitlegPaneel data={UITLEG[topic]} open={showUitleg} onToggle={()=>setShowUitleg(!showUitleg)}/>}
       <div className="card">
+        {ex.ill && <div style={{textAlign:'center',marginBottom:10}}><Figure ill={ex.ill}/></div>}
         <div className="qbox">{ex.q}</div>
         <div className="answerrow">
           <input ref={inputRef} className="" value={val} placeholder="jouw antwoord"
@@ -629,13 +668,42 @@ const FORMULEBLOKKEN=[
     ['Exponentieel','N = beginwaarde × groeifactorᵗ'],
     ['Statistiek','gemiddelde = som ÷ aantal · mediaan = middelste · modus = meest voorkomend'],
   ]},
-  {kop:'Natuurkunde', items:[
+  {kop:'Wiskunde A — verandering & afgeleide', items:[
+    ['Differentiequotiënt','(f(b) − f(a)) ÷ (b − a)   (gemiddelde verandering op [a,b])'],
+    ['Afgeleide van xⁿ','f(x) = xⁿ  →  f′(x) = n·xⁿ⁻¹'],
+    ['Helling in een punt','de helling van de grafiek in x is f′(x)'],
+    ['Exponentiële groei','per n perioden: groeifactor = gⁿ   ·   procent = (g − 1) × 100%'],
+  ]},
+  {kop:'Wiskunde A — kans & statistiek', items:[
+    ['Kans','P = aantal gunstig ÷ aantal mogelijk'],
+    ['Faculteit','n! = n × (n−1) × … × 2 × 1   (aantal volgordes)'],
+    ['Verwachtingswaarde','E = som van (kans × waarde)'],
+    ['Centrummaten','gemiddelde = som ÷ aantal · mediaan = middelste · modus = vaakst'],
+  ]},
+  {kop:'Natuurkunde — beweging & kracht', items:[
     ['Snelheid','v = s / t   (km/u → m/s: ÷ 3,6)'],
+    ['Versnelling','a = Δv / t'],
+    ['Eenparig versneld','v = v₀ + a·t   ·   vanuit stilstand: s = ½·a·t²'],
     ['Dichtheid','ρ = m / V'],
-    ['Kracht (Newton)','F = m × a   ·   zwaartekracht Fz = m × g  (g ≈ 9,81)'],
-    ['Arbeid & energie','W = F × s   ·   Ek = ½ × m × v²   ·   Ez = m × g × h'],
+    ['Kracht (Newton)','F = m × a'],
+    ['Zwaartekracht','Fz = m × g   (g ≈ 9,81 N/kg)'],
+    ['Nettokracht','tel krachten met richting op (rechts − links)'],
+  ]},
+  {kop:'Natuurkunde — energie & warmte', items:[
+    ['Arbeid','W = F × s'],
+    ['Kinetische energie','Ek = ½ × m × v²'],
+    ['Zwaarte-energie','Ez = m × g × h'],
+    ['Veerenergie','Ev = ½ × C × u²'],
+    ['Energiebehoud (vrije val)','½mv² = mgh  →  v = √(2gh)'],
     ['Vermogen','P = E / t'],
-    ['Elektriciteit','U = I × R (Ohm)   ·   P = U × I'],
+    ['Rendement','η = (nuttig ÷ toegevoerd) × 100%'],
+    ['Warmte','Q = c × m × ΔT'],
+  ]},
+  {kop:'Natuurkunde — elektriciteit', items:[
+    ['Wet van Ohm','U = I × R'],
+    ['Elektrisch vermogen','P = U × I'],
+    ['Lading','Q = I × t   (in coulomb)'],
+    ['Energieverbruik','E = P × t   (kWh = kW × uur)'],
   ]},
 ];
 function FormulesView({onBack}){
@@ -670,6 +738,177 @@ function FormulesView({onBack}){
 
       <p className="muted center" style={{marginTop:16,fontSize:13}}>
         Tip: leer formules niet uit je hoofd door staren — schrijf ze één keer over en hoor jezelf elke dag 5 minuten één blokje over. 🌟
+      </p>
+    </div>
+  );
+}
+
+/* ---------- ILLUSTRATIES & BASIS-UITLEG (vooral voor Wassima) ---------- */
+function Figure({ill}){
+  const G='#5EA03A', A='#C23728', M='#5b6157', F='#eaf3e2';
+  const cm=x=>x==='?'?'? cm':x+' cm';
+  const deg=x=>x==='?'?'?':x+'°';
+  switch(ill.type){
+    case 'rechthoek': return (
+      <svg width="190" height="118" viewBox="0 0 190 118" role="img" aria-label="rechthoek">
+        <rect x="22" y="26" width="130" height="66" fill={F} stroke={G} strokeWidth="2.5"/>
+        <text x="87" y="18" fontSize="13" textAnchor="middle" fill={M}>{cm(ill.l)}</text>
+        <text x="14" y="59" fontSize="13" textAnchor="middle" fill={M} transform="rotate(-90 14 59)">{cm(ill.b)}</text>
+      </svg>);
+    case 'driehoek': return (
+      <svg width="190" height="132" viewBox="0 0 190 132" role="img" aria-label="driehoek">
+        <polygon points="28,104 162,104 86,30" fill={F} stroke={G} strokeWidth="2.5"/>
+        <line x1="86" y1="30" x2="86" y2="104" stroke={A} strokeWidth="1.6" strokeDasharray="4 4"/>
+        <rect x="86" y="94" width="10" height="10" fill="none" stroke={A} strokeWidth="1"/>
+        <text x="95" y="122" fontSize="13" textAnchor="middle" fill={M}>basis {cm(ill.basis)}</text>
+        <text x="98" y="70" fontSize="12" fill={A}>h {cm(ill.hoogte)}</text>
+      </svg>);
+    case 'cirkel': return (
+      <svg width="170" height="150" viewBox="0 0 170 150" role="img" aria-label="cirkel">
+        <circle cx="85" cy="72" r="54" fill={F} stroke={G} strokeWidth="2.5"/>
+        <circle cx="85" cy="72" r="2.6" fill="#222"/>
+        <line x1="85" y1="72" x2="139" y2="72" stroke={A} strokeWidth="2"/>
+        <text x="104" y="66" fontSize="13" fill={A}>r = {ill.r} cm</text>
+      </svg>);
+    case 'pyth': return (
+      <svg width="200" height="140" viewBox="0 0 200 140" role="img" aria-label="rechthoekige driehoek">
+        <polygon points="32,112 162,112 32,30" fill={F} stroke={G} strokeWidth="2.5"/>
+        <rect x="32" y="100" width="12" height="12" fill="none" stroke={A} strokeWidth="1.2"/>
+        <text x="97" y="130" fontSize="13" textAnchor="middle" fill={M}>{cm(ill.a)}</text>
+        <text x="14" y="74" fontSize="13" fill={M}>{cm(ill.b)}</text>
+        <text x="104" y="64" fontSize="13" fill={A} fontWeight="bold">{cm(ill.c)}</text>
+      </svg>);
+    case 'hoeken': return (
+      <svg width="190" height="118" viewBox="0 0 190 118" role="img" aria-label="driehoek met hoeken">
+        <polygon points="22,96 168,96 74,26" fill={F} stroke={G} strokeWidth="2.5"/>
+        <text x="40" y="89" fontSize="13" fill={A}>{deg(ill.h[0])}</text>
+        <text x="150" y="89" fontSize="13" textAnchor="end" fill={A}>{deg(ill.h[1])}</text>
+        <text x="74" y="46" fontSize="13" textAnchor="middle" fill={A}>{deg(ill.h[2])}</text>
+      </svg>);
+    case 'vierhoek': return (
+      <svg width="190" height="120" viewBox="0 0 190 120" role="img" aria-label="vierhoek met hoeken">
+        <polygon points="26,96 152,102 166,30 44,22" fill={F} stroke={G} strokeWidth="2.5"/>
+        <text x="40" y="88" fontSize="12" fill={A}>{deg(ill.h[0])}</text>
+        <text x="146" y="92" fontSize="12" textAnchor="end" fill={A}>{deg(ill.h[1])}</text>
+        <text x="158" y="44" fontSize="12" textAnchor="end" fill={A}>{deg(ill.h[2])}</text>
+        <text x="50" y="38" fontSize="12" fill={A}>{deg(ill.h[3])}</text>
+      </svg>);
+    case 'balk': return (
+      <svg width="190" height="132" viewBox="0 0 190 132" role="img" aria-label="balk">
+        <polygon points="34,58 116,58 116,108 34,108" fill={F} stroke={G} strokeWidth="2.5"/>
+        <polygon points="34,58 64,32 146,32 116,58" fill="#d9ead0" stroke={G} strokeWidth="2.5"/>
+        <polygon points="116,58 146,32 146,82 116,108" fill="#c9dec0" stroke={G} strokeWidth="2.5"/>
+        <text x="75" y="124" fontSize="12" textAnchor="middle" fill={M}>l {ill.l}</text>
+        <text x="150" y="78" fontSize="12" fill={M}>b {ill.b}</text>
+        <text x="20" y="86" fontSize="12" fill={M}>h {ill.h}</text>
+      </svg>);
+    case 'kubus': return (
+      <svg width="170" height="132" viewBox="0 0 170 132" role="img" aria-label="kubus">
+        <polygon points="40,58 100,58 100,108 40,108" fill={F} stroke={G} strokeWidth="2.5"/>
+        <polygon points="40,58 66,34 126,34 100,58" fill="#d9ead0" stroke={G} strokeWidth="2.5"/>
+        <polygon points="100,58 126,34 126,84 100,108" fill="#c9dec0" stroke={G} strokeWidth="2.5"/>
+        <text x="70" y="124" fontSize="12" textAnchor="middle" fill={M}>z {ill.z} cm</text>
+      </svg>);
+    default: return null;
+  }
+}
+const UITLEG={
+  'Oppervlakte & omtrek':{ill:{type:'rechthoek',l:8,b:5}, tekst:'De omtrek is het lint eromheen: tel alle zijden op. De oppervlakte is de ruimte erbinnen. Bij een rechthoek: omtrek = 2 × (lengte + breedte), oppervlakte = lengte × breedte. Let op: omtrek in cm, oppervlakte in cm².'},
+  'Pythagoras':{ill:{type:'pyth',a:3,b:4,c:'?'}, tekst:'Dit gebruik je alleen bij een rechthoekige driehoek (met een hoek van 90°). De langste zijde, tegenover de rechte hoek, heet de schuine zijde. Er geldt: a² + b² = c², met c de schuine zijde.'},
+  'Hoeken':{ill:{type:'hoeken',h:[50,70,'?']}, tekst:'De drie hoeken van een driehoek zijn samen altijd 180°. Bij een vierhoek samen 360°. Weet je er een paar, dan reken je de laatste uit door af te trekken.'},
+  'Inhoud':{ill:{type:'balk',l:10,b:4,h:3}, tekst:'Inhoud is hoeveel er ín past. Bij een balk: lengte × breedte × hoogte. Bij een kubus zijn alle ribben even lang: z × z × z. Inhoud reken je in kubieke centimeters (cm³).'},
+  'Procenten':{tekst:'Procent betekent “per honderd”. Wil je weten hoeveel procent iets is: deel ÷ geheel × 100. Bij korting reken je met een groeifactor: 20% korting betekent × 0,80.'},
+  'Vergelijkingen':{tekst:'Een vergelijking is een weegschaal die in evenwicht is. Wat je links doet, doe je ook rechts. Zo houd je de balans en krijg je x in zijn eentje aan één kant.'},
+  'Lineaire formules':{tekst:'Een rechte lijn schrijf je als y = a·x + b. De a vertelt hoe schuin de lijn loopt (hoeveel omhoog per stap naar rechts). De b is waar de lijn de verticale as kruist.'},
+  'Snelheid':{tekst:'Snelheid is afstand gedeeld door tijd: v = s ÷ t. Tip: teken een driehoekje met s bovenaan en v en t eronder. Dek af wat je zoekt, dan zie je wat je moet doen.'},
+  'Dichtheid':{tekst:'Dichtheid zegt hoe zwaar iets is voor zijn grootte: ρ = m ÷ V (massa gedeeld door volume). Is het lichter dan water (1 g/cm³), dan drijft het.'},
+};
+function UitlegPaneel({data,open,onToggle}){
+  return (
+    <div className="card" style={{marginBottom:12,background:'#f0f6ea',borderLeftColor:'#5EA03A'}}>
+      <div className="row" style={{justifyContent:'space-between',cursor:'pointer'}} onClick={onToggle}>
+        <b>📖 Eerst even uitleg</b><span>{open?'▲':'▼'}</span>
+      </div>
+      {open && <div style={{marginTop:10}}>
+        {data.ill && <div style={{textAlign:'center',marginBottom:8}}><Figure ill={data.ill}/></div>}
+        <div style={{fontSize:15}}>{data.tekst}</div>
+      </div>}
+    </div>
+  );
+}
+
+/* ---------- LEERTIPS ---------- */
+const TIP_VAN_DE_DAG=[
+  'Schrijf je formules vandaag één keer met de hand over. Schrijven plakt beter dan staren. ✍️',
+  'Overhoor jezelf 5 minuten: dek het antwoord af en zeg het hardop. 🧠',
+  'Bij elke som: eerst opschrijven wat je weet, mét eenheid. 📝',
+  'Vastgelopen? Maak een tekening — de helft lost zichzelf op. ✏️',
+  'Controleer je antwoord: is het logisch? Een auto van 4000 km/u klopt niet. 🤔',
+  'Een fout is geen falen. Het is “nog niet”. Daar leer je het meest van. 💪',
+  'Leg een som uit aan iemand anders. Snappen zij het? Dan ken jij het echt. 🗣️',
+  'Liever elke dag 5 minuten dan 1 uur de avond voor de toets. ⏱️',
+  'Werk 25 minuten, pauzeer 5. Je brein leert in blokjes. 🍅',
+  'Begin een week vóór de toets, niet de avond ervoor. 📅',
+  'Bij natuurkunde: reken eerst alles om naar standaardeenheden (m, s, kg). ⚖️',
+  'Vergelijk jezelf met jezelf van gisteren, niet met de klas. 🌱',
+];
+const TIPS_CATS=[
+  {kop:'Beter onthouden', emoji:'🧠', tips:[
+    ['Schrijf over, staar niet','Met de hand overschrijven zet stof veel beter vast dan herlezen.'],
+    ['Klein en vaak','Elke dag 5 minuten werkt beter dan één lange avond stampen.'],
+    ['Overhoor jezelf','Dek het antwoord af en zeg het hardop. Jezelf testen is de sterkste manier van leren.'],
+    ['Koppel aan een beeld','Oppervlakte = het binnenste vullen; omtrek = het lint eromheen. Een plaatje blijft hangen.'],
+    ['Leg het uit aan iemand','Kun je het uitleggen aan je ouder of broer/zus, dan ken je het echt.'],
+  ]},
+  {kop:'Sommen maken', emoji:'✍️', tips:[
+    ['Altijd de 4 stappen','Gegeven → Gevraagd → Formule → Uitwerking. Ook bij makkelijke sommen — dan wordt het een gewoonte.'],
+    ['Schrijf eerst op wat je weet','Met eenheid erbij. Dat haalt de paniek weg en laat zien wat je al hebt.'],
+    ['Formule eerst leeg opschrijven','Dan pas invullen. Voorkomt slordigheidsfouten.'],
+    ['Is dit logisch?','Eén controlevraag aan het eind vangt heel veel fouten.'],
+    ['Teken het','Vooral bij meetkunde en natuurkunde: een schets lost de helft op.'],
+  ]},
+  {kop:'Toets voorbereiden', emoji:'📅', tips:[
+    ['Begin een week eerder','Verdeel de stof over dagen. Cramming werkt slecht.'],
+    ['Houd een foutenschrift bij','Schrijf elke fout + de verbetering op. Lees vlak voor de toets alleen dat.'],
+    ['Maak oefentoetsen','Oefenen onder toets-omstandigheden went je aan de tijdsdruk.'],
+    ['Slaap goed','Een uitgerust hoofd rekent beter dan een vermoeid hoofd dat extra blokte.'],
+    ['Lees eerst de hele toets','Begin met de sommen die je zeker weet — dat geeft punten én rust.'],
+  ]},
+  {kop:'Volhouden & zelfvertrouwen', emoji:'💪', tips:[
+    ['Fout = nog niet','Een fout is informatie, geen falen. Zo word je beter.'],
+    ['Vier kleine stappen','Elke goede som is winst. Daarom geeft de app punten.'],
+    ['Pauzeer slim','25 minuten werken, 5 minuten pauze. Korte blokjes werken beter dan uren door.'],
+    ['Geen knobbel nodig','Je hebt geen wiskundeknobbel nodig — wel een vaste routine. Die leert iedereen.'],
+  ]},
+  {kop:'Speciaal voor natuurkunde', emoji:'🔬', tips:[
+    ['Eerst eenheden omrekenen','De meeste fouten zitten in de eenheden, niet in de formule. Zet alles om naar m, s, kg vóór je invult.'],
+    ['Snelheid omrekenen','km/u → m/s: delen door 3,6. m/s → km/u: keer 3,6.'],
+    ['Gebruik het verhuisdriehoekje','Voor v = s/t, ρ = m/V en p = F/A: dek af wat je zoekt en lees de formule af — zonder algebra.'],
+    ['Schrijf grootheid + eenheid','Niet “20”, maar “v = 20 m/s”. Zo weet je altijd waar een getal voor staat.'],
+    ['Controleer de eenheid van je antwoord','Arbeid in joule (J), kracht in newton (N), vermogen in watt (W). Klopt de eenheid, dan klopt vaak de aanpak.'],
+  ]},
+];
+function LeertipsView({onBack}){
+  return (
+    <div>
+      <div className="topbar"><button className="back" onClick={onBack}>← terug</button><span className="pill">Leertips</span></div>
+      <h1 style={{fontSize:24}}>💡 Leertips</h1>
+      <p className="muted" style={{marginTop:4}}>Kleine gewoontes, groot verschil. Lees er af en toe één — niet alles tegelijk.</p>
+      {TIPS_CATS.map(cat=>(
+        <div key={cat.kop} className="card" style={{marginTop:12}}>
+          <b>{cat.emoji} {cat.kop}</b>
+          <div style={{marginTop:8}}>
+            {cat.tips.map(([t,u])=>(
+              <div key={t} style={{padding:'8px 0',borderTop:'1px solid var(--line)'}}>
+                <div style={{fontWeight:600}}>{t}</div>
+                <div className="muted" style={{fontSize:14}}>{u}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+      <p className="muted center" style={{marginTop:16,fontSize:13}}>
+        De beste tip? Begin gewoon. Eén som is altijd beter dan geen som. 🌟
       </p>
     </div>
   );
