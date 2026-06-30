@@ -122,7 +122,7 @@ const {useState,useEffect,useMemo,useRef} = React;
 const PROFILES = {
   wassima:{naam:'Wassima', niveau:'2 havo', volgend:'3 havo', emoji:'🌱', kleur:'linear-gradient(135deg,#5EA03A,#48792c)', vakken:['wiskunde','natuurkunde','nederlands','engels','frans','duits','biologie','aardrijkskunde','geschiedenis','economie']},
   amaani: {naam:'Amaani',  niveau:'4 vwo',  volgend:'5 vwo',  emoji:'🚀', kleur:'linear-gradient(135deg,#3a6ea0,#2c5680)', vakken:['wiskundeA','natuurkunde','scheikunde','nederlands','engels','frans','biologie','aardrijkskunde','geschiedenis','economie']},
-  amine:  {naam:'Amine',   niveau:'groep 7/8', volgend:'brugklas', emoji:'🦉', kleur:'linear-gradient(135deg,#e0a23a,#c2782d)', vakken:['rekenen','taal','lezen','studievaardigheden','engels']},
+  amine:  {naam:'Amine',   niveau:'groep 7', volgend:'groep 8', emoji:'🦉', kleur:'linear-gradient(135deg,#e0a23a,#c2782d)', vakken:['rekenen','taal','lezen','studievaardigheden','engels']},
 };
 const VAKNAAM = {wiskunde:'Wiskunde', natuurkunde:'Natuurkunde', wiskundeA:'Wiskunde A', geschiedenis:'Geschiedenis',
   nederlands:'Nederlands', engels:'Engels', frans:'Frans', duits:'Duits', biologie:'Biologie',
@@ -159,7 +159,8 @@ const TOPICICON = {
   'Werkwoorden':'🔤','Ontdekkingsreizen':'🧭','Koude Oorlog':'❄️','Dekolonisatie':'🌍','Conjunctuur':'📉','Spreekwoorden':'🗣️',
   // volgend jaar
   'Kwadratische vergelijkingen':'🟰','Stelsels':'🔢','Goniometrie':'📐','Krachten (resultante)':'➡️','Normale verdeling':'🔔','Binomiale verdeling':'🎲',
-  'Logaritmen (gevorderd)':'🔟','Energiebehoud':'⚡','Gaswet':'🌡️','Concentratie':'🧪','Formules met x':'🔤','Coördinaten':'📈','Grammatica (brugklas)':'🔡','Zinsontleden (brugklas)':'🧩',
+  'Logaritmen (gevorderd)':'🔟','Energiebehoud':'⚡','Gaswet':'🌡️','Concentratie':'🧪','Formules met x':'🔤','Coördinaten':'📈',
+  'Reactiesnelheid':'⏱️',
 };
 
 /* ============================ OEFENINGEN (startvoorraad) ============================ */
@@ -823,9 +824,63 @@ const SEED = [
   {p:'amine',v:'rekenen',jaar:'next',t:'Formules met x',lvl:1,q:'Gegeven y = 2x + 1. Bereken y als x = 3.',a:'7',h:['Vul x = 3 in.'],s:'y = 2 × 3 + 1 = 7.'},
   {p:'amine',v:'rekenen',jaar:'next',t:'Formules met x',lvl:2,q:'Los op: x + 5 = 12. Wat is x?',a:'7',h:['Haal 5 van beide kanten af.'],s:'x = 12 − 5 = 7.'},
   {p:'amine',v:'rekenen',jaar:'next',t:'Coördinaten',lvl:1,q:'Op welke as ligt het punt (3, 0)? (x-as of y-as)',a:'x-as',alt:['x','de x-as','x as'],h:['De tweede waarde (y) is 0.'],s:'Bij (3, 0) is y = 0 → het punt ligt op de x-as.'},
-  {p:'amine',v:'engels',jaar:'next',t:'Grammatica (brugklas)',lvl:2,q:'Vul in: "He ... happy." (to be)',a:'is',h:['he/she/it → is.'],s:'He is happy.'},
-  {p:'amine',v:'engels',jaar:'next',t:'Grammatica (brugklas)',lvl:2,q:'Wat is het meervoud van "box" (Engels)?',a:'boxes',h:['Na -x komt -es.'],s:'box → boxes.'},
-  {p:'amine',v:'taal',jaar:'next',t:'Zinsontleden (brugklas)',lvl:2,q:'Wat is de persoonsvorm in "De kat slaapt"?',a:'slaapt',h:['Zet de zin in de verleden tijd; wat verandert, is de persoonsvorm.'],s:'In de verleden tijd: "sliep". De persoonsvorm is slaapt.'},
+  {p:'amine',v:'engels',jaar:'next',t:'Grammatica',lvl:2,q:'Vul in: "He ... happy." (to be)',a:'is',h:['he/she/it → is.'],s:'He is happy.'},
+  {p:'amine',v:'engels',jaar:'next',t:'Grammatica',lvl:2,q:'Wat is het meervoud van "box" (Engels)?',a:'boxes',h:['Na -x komt -es.'],s:'box → boxes.'},
+  {p:'amine',v:'taal',jaar:'next',t:'Zinsontleden',lvl:2,q:'Wat is de persoonsvorm in "De kat slaapt"?',a:'slaapt',h:['Zet de zin in de verleden tijd; wat verandert, is de persoonsvorm.'],s:'In de verleden tijd: "sliep". De persoonsvorm is slaapt.'},
+
+  /* ============ AMINE · IEP-eindtoets (groep 7) ============ */
+  // rekenen — domein Getallen
+  {p:'amine',v:'rekenen',t:'Procenten',lvl:2,q:'Hoeveel procent is 15 van de 60?',a:'25',u:'%',h:['(deel ÷ geheel) × 100.'],s:'(15 ÷ 60) × 100 = 25%.'},
+  {p:'amine',v:'rekenen',t:'Kommagetallen',lvl:2,q:'Rond 3,67 af op tienden (1 cijfer achter de komma).',a:'3.7',alt:['3,7'],h:['Kijk naar het tweede cijfer achter de komma: 7 → naar boven.'],s:'3,67 → 3,7.'},
+  {p:'amine',v:'rekenen',t:'Breuken',lvl:2,q:'Vereenvoudig de breuk 4/8 tot de eenvoudigste vorm.',a:'1/2',alt:['0.5'],h:['Deel teller en noemer allebei door 4.'],s:'4/8 = 1/2.'},
+  {p:'amine',v:'rekenen',t:'Negatieve getallen',lvl:1,q:'Het is −3 °C en het wordt 5 graden warmer. Wat is de nieuwe temperatuur?',a:'2',u:'°C',h:['Tel 5 op bij −3.'],s:'−3 + 5 = 2 °C.'},
+  {p:'amine',v:'rekenen',t:'Negatieve getallen',lvl:2,q:'De temperatuur daalt van 4 °C naar −2 °C. Met hoeveel graden is het gedaald?',a:'6',u:'°C',h:['Van 4 naar 0 is 4, en van 0 naar −2 is 2.'],s:'4 + 2 = 6 graden gedaald.'},
+  // rekenen — domein Verhoudingen
+  {p:'amine',v:'rekenen',t:'Verhoudingen',lvl:2,q:'3 broden kosten samen € 6. Wat kosten 7 broden?',a:'14',u:'€',h:['Eerst de prijs per brood: 6 ÷ 3 = € 2.'],s:'Per brood € 2; 7 × 2 = € 14.'},
+  {p:'amine',v:'rekenen',t:'Verhoudingen',lvl:3,q:'Een recept voor 4 personen gebruikt 200 g pasta. Hoeveel gram pasta voor 6 personen?',a:'300',u:'g',h:['Per persoon: 200 ÷ 4 = 50 g.'],s:'50 g per persoon; 6 × 50 = 300 g.'},
+  // rekenen — domein Meten & meetkunde
+  {p:'amine',v:'rekenen',t:'Inhoud',lvl:2,q:'Een balk is 5 × 3 × 2 cm. Bereken de inhoud.',a:'30',u:'cm³',ill:{type:'balk',l:5,b:3,h:2},h:['inhoud = lengte × breedte × hoogte.'],s:'5 × 3 × 2 = 30 cm³.'},
+  {p:'amine',v:'rekenen',t:'Hoeken',lvl:1,q:'Hoeveel graden is een rechte hoek?',a:'90',u:'°',h:['De hoek van een vierkant.'],s:'Een rechte hoek is 90°.'},
+  {p:'amine',v:'rekenen',t:'Hoeken',lvl:2,q:'Hoe heet een hoek van precies 90°?',a:'rechte hoek',opties:['rechte hoek','scherpe hoek','stompe hoek'],h:['Zoals de hoek van een boek.'],s:'90° = een rechte hoek.'},
+  // taal — Taalverzorging
+  {p:'amine',v:'taal',t:'Werkwoordspelling',lvl:2,q:'Voltooid deelwoord: hij heeft hard ... (werken). → ge...',a:'gewerkt',h:['ge + werk + t.'],s:'ge + werk + t = gewerkt.'},
+  {p:'amine',v:'taal',t:'Werkwoordspelling',lvl:3,q:'d of t? "Hij ... het leuk." (vinden) → hij',a:'vindt',h:['Stam vind + t = vindt (d én t).'],s:'vind + t = vindt.'},
+  {p:'amine',v:'taal',t:'Spelling',lvl:2,q:'Wat is het verkleinwoord van "boom"?',a:'boompje',h:['+ pje na een m.'],s:'boom → boompje.'},
+  {p:'amine',v:'taal',t:'Spelling',lvl:2,q:'Wat is het meervoud van "kind"?',a:'kinderen',h:['Onregelmatig meervoud.'],s:'kind → kinderen.'},
+  {p:'amine',v:'taal',t:'Leestekens & hoofdletters',lvl:2,q:'Welk leesteken gebruik je in een opsomming, bijvoorbeeld tussen "appels" en "peren"?',a:'komma',alt:['de komma',','],h:['Een klein teken met een staartje.'],s:'In een opsomming gebruik je komma\'s.'},
+  // begrijpend lezen (IEP)
+  {p:'amine',v:'lezen',t:'Tekst begrijpen',lvl:2,q:'Lees: "De juf zei dat de toets op vrijdag is, niet op donderdag." Wanneer is de toets?',a:'vrijdag',opties:['donderdag','vrijdag','maandag'],h:['Let op het woord "niet".'],s:'De toets is op vrijdag.'},
+  {p:'amine',v:'lezen',t:'Tekst begrijpen',lvl:3,q:'Lees: "Tim is ouder dan Bo. Bo is ouder dan An." Wie is het jongst?',a:'An',opties:['Tim','Bo','An'],h:['Zet ze op volgorde van oud naar jong.'],s:'Tim > Bo > An, dus An is het jongst.'},
+  {p:'amine',v:'lezen',t:'Tekst begrijpen',lvl:2,q:'Lees: "In de klas zitten 25 kinderen. Vandaag zijn er 5 ziek." Hoeveel kinderen zijn aanwezig?',a:'20',h:['25 − 5.'],s:'25 − 5 = 20 aanwezig.'},
+  {p:'amine',v:'lezen',t:'Hoofdgedachte',lvl:2,q:'Een tekst legt stap voor stap uit hoe je een lekke fietsband plakt. Waar gaat de tekst vooral over?',a:'een band plakken',opties:['een band plakken','koken','voetbal'],h:['Wat doe je in alle stappen?'],s:'De tekst gaat over een fietsband plakken.'},
+  {p:'amine',v:'lezen',t:'Verwijswoorden',lvl:2,q:'Lees: "De hond rent achter de bal. Hij is heel snel." Naar wie verwijst "hij"?',a:'de hond',alt:['hond'],h:['Wie rent er?'],s:'"Hij" verwijst naar de hond.'},
+
+  /* ============ AMINE · vooruitblik groep 8 (jaar next, IEP-niveau) ============ */
+  {p:'amine',v:'rekenen',jaar:'next',t:'Procenten',lvl:3,q:'Een jas van € 60 krijgt 25% korting. Hoeveel betaal je?',a:'45',u:'€',h:['25% van 60 = 15.'],s:'60 − 15 = € 45.'},
+  {p:'amine',v:'rekenen',jaar:'next',t:'Breuken',lvl:2,q:'Reken uit: 1/2 + 1/4',a:'3/4',alt:['0.75'],h:['Maak gelijke noemers: 1/2 = 2/4.'],s:'2/4 + 1/4 = 3/4.'},
+  {p:'amine',v:'rekenen',jaar:'next',t:'Meten & maten',lvl:2,q:'Hoeveel mm is 3 cm?',a:'30',u:'mm',h:['1 cm = 10 mm.'],s:'3 × 10 = 30 mm.'},
+  {p:'amine',v:'rekenen',jaar:'next',t:'Verhoudingen',lvl:3,q:'5 potloden kosten € 4. Wat kosten 15 potloden?',a:'12',u:'€',h:['15 is 3× zoveel als 5.'],s:'3 × € 4 = € 12.'},
+  {p:'amine',v:'taal',jaar:'next',t:'Werkwoordspelling',lvl:3,q:'Verleden tijd: gisteren ... hij netjes. (antwoorden) → hij',a:'antwoordde',h:['Stam antwoord eindigt op d → +de.'],s:'antwoord + de = antwoordde.'},
+  {p:'amine',v:'taal',jaar:'next',t:'Spelling',lvl:2,q:'ei of ij? Schrijf goed: het is b__na tijd. (bijna)',a:'bijna',h:['De lange ij.'],s:'Het woord is bijna.'},
+  {p:'amine',v:'lezen',jaar:'next',t:'Tekst begrijpen',lvl:3,q:'Lees: "De winkel opent om 8:00 en sluit om 18:00." Hoeveel uur is de winkel open?',a:'10',u:'uur',h:['Van 8 tot 18 uur.'],s:'18 − 8 = 10 uur.'},
+
+  /* ============ VOLGEND JAAR · Wassima (3 havo) verdieping ============ */
+  {p:'wassima',v:'wiskunde',jaar:'next',t:'Kwadratische vergelijkingen',lvl:1,q:'Los op: x² = 64. Geef de positieve oplossing.',a:'8',h:['x = √64.'],s:'x² = 64 → x = 8.'},
+  {p:'wassima',v:'wiskunde',jaar:'next',t:'Kwadratische vergelijkingen',lvl:3,q:'Ontbind: x² − 9. Schrijf als (x − 3)(...).',a:'x+3',alt:['(x+3)','x + 3'],h:['Merkwaardig product: a² − b² = (a − b)(a + b).'],s:'x² − 9 = (x − 3)(x + 3).'},
+  {p:'wassima',v:'wiskunde',jaar:'next',t:'Goniometrie',lvl:2,q:'In een rechthoekige driehoek is de overstaande zijde 3 en de schuine zijde 5. Bereken sin(hoek).',a:'0.6',alt:['0,6','3/5'],h:['sin = overstaande ÷ schuine.'],s:'sin = 3 ÷ 5 = 0,6.'},
+  {p:'wassima',v:'wiskunde',jaar:'next',t:'Machten & wortels',lvl:2,q:'Reken uit: 3⁴',a:'81',h:['3 × 3 × 3 × 3.'],s:'3⁴ = 81.'},
+  {p:'wassima',v:'wiskunde',jaar:'next',t:'Machten & wortels',lvl:2,q:'Reken uit: √169',a:'13',h:['Welk getal × zichzelf = 169?'],s:'13 × 13 = 169 → √169 = 13.'},
+  {p:'wassima',v:'natuurkunde',jaar:'next',t:'Krachten (resultante)',lvl:2,q:'Een kracht van 10 N naar rechts en 4 N naar links. Bereken de resultante (naar rechts positief).',a:'6',u:'N',h:['Rechts − links.'],s:'10 − 4 = 6 N naar rechts.'},
+  {p:'wassima',v:'natuurkunde',jaar:'next',t:'Stroom & spanning',lvl:2,q:'Bereken de spanning: I = 2 A en R = 5 Ω. (U = I × R)',a:'10',u:'V',h:['U = I × R.'],s:'U = 2 × 5 = 10 V.'},
+
+  /* ============ VOLGEND JAAR · Amaani (5 vwo) verdieping ============ */
+  {p:'amaani',v:'wiskundeA',jaar:'next',t:'Normale verdeling',lvl:2,q:'Bij een normale verdeling ligt ongeveer 99,7% binnen hoeveel standaardafwijkingen van het gemiddelde?',a:'3',h:['Vuistregel 68-95-99,7.'],s:'≈ 99,7% ligt binnen 3 standaardafwijkingen.'},
+  {p:'amaani',v:'wiskundeA',jaar:'next',t:'Binomiale verdeling',lvl:3,q:'Bij n = 100 en p = 0,2: bereken de verwachtingswaarde (E = n·p).',a:'20',h:['100 × 0,2.'],s:'E = 100 × 0,2 = 20.'},
+  {p:'amaani',v:'wiskundeA',jaar:'next',t:'Differentiëren',lvl:2,q:'Gegeven f(x) = x², met f′(x) = 2x. Bereken de helling in x = 4.',a:'8',h:['Vul x = 4 in 2x.'],s:'f′(4) = 2 × 4 = 8.'},
+  {p:'amaani',v:'wiskundeA',jaar:'next',t:'Exponentieel verband',lvl:2,q:'Los op: 10^x = 10000. Wat is x?',a:'4',h:['10000 = 10⁴.'],s:'10⁴ = 10000 → x = 4.'},
+  {p:'amaani',v:'natuurkunde',jaar:'next',t:'Energiebehoud',lvl:3,q:'Een voorwerp valt van 5 m. Bereken de snelheid vlak voor de grond. v = √(2gh), g = 9,81.',a:'9.9',alt:['9,9','10','9.90'],u:'m/s',h:['2 × 9,81 × 5 = 98,1.'],s:'v = √98,1 ≈ 9,9 m/s.'},
+  {p:'amaani',v:'scheikunde',jaar:'next',t:'Concentratie',lvl:2,q:'2 mol stof opgelost in 4 liter. Bereken de concentratie (mol/L).',a:'0.5',alt:['0,5'],u:'mol/L',h:['c = n ÷ V.'],s:'c = 2 ÷ 4 = 0,5 mol/L.'},
+  {p:'amaani',v:'scheikunde',jaar:'next',t:'Reactiesnelheid',lvl:1,q:'Een hogere temperatuur maakt een reactie meestal sneller of langzamer?',a:'sneller',h:['Deeltjes botsen vaker en harder.'],s:'Hogere temperatuur → snellere reactie.'},
 ];
 SEED.forEach((e,i)=> e.id = 'seed_'+i);
 
