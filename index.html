@@ -315,7 +315,9 @@ const TOPICICON = {
   'Reactiesnelheid': '⏱️',
   'Tijdlijn': '📜',
   'Feit of mening': '💭',
-  'Soorten teksten': '📰'
+  'Soorten teksten': '📰',
+  'Woordbetekenis': '📖',
+  'Conclusie': '🔍'
 };
 
 /* ============================ OEFENINGEN (startvoorraad) ============================ */
@@ -6633,6 +6635,157 @@ const SEED = [
   u: 'W',
   h: ['P = W ÷ t.'],
   s: 'P = 6000 ÷ 30 = 200 W.'
+}, /* ============ AMINE · lezen & taalverzorging (IEP, extra) ============ */
+{
+  p: 'amine',
+  v: 'lezen',
+  t: 'Tekst begrijpen',
+  lvl: 2,
+  q: 'Lees: "Bram heeft € 5. Hij koopt een ijsje van € 2 en een drankje van € 1." Hoeveel houdt hij over?',
+  a: '2',
+  u: '€',
+  h: ['Trek de aankopen af van € 5.'],
+  s: '5 − 2 − 1 = € 2.'
+}, {
+  p: 'amine',
+  v: 'lezen',
+  t: 'Tekst begrijpen',
+  lvl: 2,
+  q: 'Lees: "De dierentuin is open van dinsdag tot en met zondag." Op welke dag is de dierentuin dicht?',
+  a: 'maandag',
+  opties: ['maandag', 'zaterdag', 'zondag'],
+  h: ['Welke dag staat er NIET bij?'],
+  s: 'Dinsdag t/m zondag is open → maandag is dicht.'
+}, {
+  p: 'amine',
+  v: 'lezen',
+  t: 'Woordbetekenis',
+  lvl: 2,
+  q: 'Lees: "De reus was reusachtig groot." Wat betekent "reusachtig"?',
+  a: 'heel groot',
+  opties: ['heel groot', 'heel klein', 'heel snel'],
+  h: ['Denk aan het woord "reus".'],
+  s: 'Reusachtig = heel groot.'
+}, {
+  p: 'amine',
+  v: 'lezen',
+  t: 'Woordbetekenis',
+  lvl: 2,
+  q: 'Lees: "Het was een geweldige dag, alles ging perfect." Wat betekent "geweldig" hier?',
+  a: 'heel goed',
+  opties: ['heel goed', 'heel saai', 'heel kort'],
+  h: ['Alles ging perfect → positief.'],
+  s: 'Geweldig = heel goed / fantastisch.'
+}, {
+  p: 'amine',
+  v: 'lezen',
+  t: 'Conclusie',
+  lvl: 3,
+  q: 'Lees: "De straat is nat en de mensen lopen met paraplu’s." Wat kun je concluderen?',
+  a: 'het regent',
+  opties: ['het regent', 'het sneeuwt', 'het is droog'],
+  h: ['Nat + paraplu’s wijzen op...'],
+  s: 'Natte straat en paraplu’s → het regent.'
+}, {
+  p: 'amine',
+  v: 'taal',
+  t: 'Werkwoordspelling',
+  lvl: 2,
+  q: 'Voltooid deelwoord: de bal is ... (gooien). → ge...',
+  a: 'gegooid',
+  h: ['ge + gooi + d.'],
+  s: 'ge + gooi + d = gegooid.'
+}, {
+  p: 'amine',
+  v: 'taal',
+  t: 'Werkwoordspelling',
+  lvl: 2,
+  q: 'Verleden tijd (meervoud): gisteren ... wij hard. (werken) → wij',
+  a: 'werkten',
+  h: ["Stam werk eindigt op k ('t kofschip) → +ten in het meervoud."],
+  s: 'werk + ten = werkten.'
+}, {
+  p: 'amine',
+  v: 'taal',
+  t: 'Spelling',
+  lvl: 2,
+  q: 'Schrijf goed (samengesteld woord): is het "voetbal" of "voet bal"?',
+  a: 'voetbal',
+  h: ['Het is één woord.'],
+  s: 'Voet + bal = voetbal (aan elkaar).'
+}, {
+  p: 'amine',
+  v: 'taal',
+  t: 'Spelling',
+  lvl: 2,
+  q: 'Wat is het meervoud van "ei"?',
+  a: 'eieren',
+  h: ['Onregelmatig meervoud.'],
+  s: 'ei → eieren.'
+}, /* ============ VOLGEND JAAR · verdieping ============ */
+{
+  p: 'wassima',
+  v: 'wiskunde',
+  jaar: 'next',
+  t: 'Goniometrie',
+  lvl: 2,
+  q: 'In een rechthoekige driehoek is de aanliggende zijde 4 en de schuine zijde 5. Bereken cos(hoek).',
+  a: '0.8',
+  alt: ['0,8', '4/5'],
+  h: ['cos = aanliggende ÷ schuine.'],
+  s: 'cos = 4 ÷ 5 = 0,8.'
+}, {
+  p: 'wassima',
+  v: 'wiskunde',
+  jaar: 'next',
+  t: 'Kwadratische vergelijkingen',
+  lvl: 2,
+  q: 'Los op: x² − 5x = 0. Geef de grootste oplossing.',
+  a: '5',
+  h: ['Ontbind: x(x − 5) = 0.'],
+  s: 'x = 0 of x = 5. Grootste: 5.'
+}, {
+  p: 'wassima',
+  v: 'natuurkunde',
+  jaar: 'next',
+  t: 'Arbeid & energie',
+  lvl: 2,
+  q: 'Bereken de zwaarte-energie van 5 kg op 2 m hoogte. (g = 10 N/kg)',
+  a: '100',
+  u: 'J',
+  h: ['Ez = m × g × h.'],
+  s: 'Ez = 5 × 10 × 2 = 100 J.'
+}, {
+  p: 'amaani',
+  v: 'wiskundeA',
+  jaar: 'next',
+  t: 'Logaritmen (gevorderd)',
+  lvl: 2,
+  q: 'Bereken: log(10000). (grondtal 10)',
+  a: '4',
+  h: ['10000 = 10⁴.'],
+  s: 'log(10000) = 4.'
+}, {
+  p: 'amaani',
+  v: 'natuurkunde',
+  jaar: 'next',
+  t: 'Gaswet',
+  lvl: 3,
+  q: 'Bij gelijke temperatuur: je halveert het volume van een gas. Wat doet de druk? (verdubbelt / halveert)',
+  a: 'verdubbelt',
+  h: ['Wet van Boyle: druk × volume blijft gelijk.'],
+  s: 'Volume × ½ → druk × 2 (verdubbelt).'
+}, {
+  p: 'amaani',
+  v: 'scheikunde',
+  jaar: 'next',
+  t: 'Concentratie',
+  lvl: 2,
+  q: 'Hoeveel mol zit er in 2 L van een 0,5 mol/L oplossing?',
+  a: '1',
+  u: 'mol',
+  h: ['n = c × V.'],
+  s: 'n = 0,5 × 2 = 1 mol.'
 }];
 SEED.forEach((e, i) => e.id = 'seed_' + i);
 
