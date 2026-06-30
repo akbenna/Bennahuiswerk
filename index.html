@@ -114,10 +114,12 @@ const {useState,useEffect,useMemo,useRef} = React;
 
 /* ============================ CONFIG ============================ */
 const PROFILES = {
-  wassima:{naam:'Wassima', niveau:'2 havo', emoji:'🌱', kleur:'linear-gradient(135deg,#5EA03A,#48792c)', vakken:['wiskunde','natuurkunde','geschiedenis']},
-  amaani: {naam:'Amaani',  niveau:'4 vwo',  emoji:'🚀', kleur:'linear-gradient(135deg,#3a6ea0,#2c5680)', vakken:['wiskundeA','natuurkunde']},
+  wassima:{naam:'Wassima', niveau:'2 havo', emoji:'🌱', kleur:'linear-gradient(135deg,#5EA03A,#48792c)', vakken:['wiskunde','natuurkunde','nederlands','engels','frans','duits','biologie','aardrijkskunde','geschiedenis','economie']},
+  amaani: {naam:'Amaani',  niveau:'4 vwo',  emoji:'🚀', kleur:'linear-gradient(135deg,#3a6ea0,#2c5680)', vakken:['wiskundeA','natuurkunde','scheikunde','nederlands','engels','frans','biologie','aardrijkskunde','geschiedenis','economie']},
 };
-const VAKNAAM = {wiskunde:'Wiskunde', natuurkunde:'Natuurkunde', wiskundeA:'Wiskunde A', geschiedenis:'Geschiedenis'};
+const VAKNAAM = {wiskunde:'Wiskunde', natuurkunde:'Natuurkunde', wiskundeA:'Wiskunde A', geschiedenis:'Geschiedenis',
+  nederlands:'Nederlands', engels:'Engels', frans:'Frans', duits:'Duits', biologie:'Biologie',
+  aardrijkskunde:'Aardrijkskunde', economie:'Economie', scheikunde:'Scheikunde'};
 const TOPICICON = {
   'Procenten':'％','Vergelijkingen':'⚖️','Lineaire formules':'📈','Oppervlakte & omtrek':'⬛',
   'Pythagoras':'📐','Hoeken':'📐','Inhoud':'🧊','Snelheid':'🚴','Dichtheid':'⚗️',
@@ -127,11 +129,42 @@ const TOPICICON = {
   'Rendement':'♻️','Warmte':'🔥',
   'Kracht & zwaartekracht':'🏋️','Veerkracht':'🪀','Stroom & spanning':'🔌','Energie & vermogen':'⚡','Geluid':'🔊','Druk':'🎈',
   'Tijd & eeuwen':'⏳','Opstand tegen Spanje':'⚔️','Gouden Eeuw & Republiek':'🚢','Handel & slavernij':'🌍','Verlichting':'🕯️','Franse Revolutie':'🇫🇷',
+  // talen & zaakvakken
+  'Werkwoordspelling':'✏️','Woordsoorten':'🔤','Spelling':'📝','Woordenschat':'💬','Onregelmatige werkwoorden':'🔁','Grammatica':'🔡','Grammatica (tenses)':'⏱️',
+  'Lidwoorden (le/la)':'🇫🇷','Lidwoorden (der/die/das)':'🇩🇪','Getallen':'🔢','Argumentatie':'🗣️','Stijlfiguren':'🎭','Spelling & stijl':'🖋️',
+  'De cel':'🔬','Het menselijk lichaam':'🫀','Planten':'🌿','Cel & DNA':'🧬','Erfelijkheid':'🧬','Ecologie':'🌳',
+  'Topografie':'🗺️','Klimaat & weer':'🌦️','Water & landschap':'🏞️','Aarde & klimaat':'🌋','Bevolking & globalisering':'🌐',
+  'Geld & rekenen':'💶','Begrippen':'📖','Markt':'📈','Symbolen & atomen':'⚛️','Moleculen':'🧪','Zuur & base':'🧫',
+  'Industriële revolutie':'🏭','Wereldoorlogen':'🎖️',
 };
 
 /* ============================ OEFENINGEN (startvoorraad) ============================ */
 /* veld: p=profiel, v=vak, t=onderwerp, lvl=niveau, q=vraag, a=antwoord, alt=alternatieven, u=eenheid, h=hints[], s=uitwerking */
 const SEED = [
+  // ---- Wassima · wiskunde · FUNDAMENT (trapsgewijs, met uitleg & beeld) ----
+  {p:'wassima',v:'wiskunde',t:'Rekenvolgorde',lvl:1,q:'Reken uit: 3 + 4 × 2',a:'11',h:['Keer en delen gaan vóór plus en min.','Doe dus eerst 4 × 2.'],s:'Eerst 4 × 2 = 8.\nDan 3 + 8 = 11.'},
+  {p:'wassima',v:'wiskunde',t:'Rekenvolgorde',lvl:2,q:'Reken uit: (3 + 4) × 2',a:'14',h:['Wat tussen haakjes staat, doe je eerst.'],s:'(3 + 4) = 7.\n7 × 2 = 14.'},
+  {p:'wassima',v:'wiskunde',t:'Rekenvolgorde',lvl:2,q:'Reken uit: 20 − 2 × 3 + 4',a:'18',h:['Eerst × , daarna van links naar rechts + en −.'],s:'2 × 3 = 6.\n20 − 6 + 4 = 18.'},
+  {p:'wassima',v:'wiskunde',t:'Negatieve getallen',lvl:1,ill:{type:'getallenlijn',van:-6,tot:6,punt:2},q:'Reken uit: −3 + 5',a:'2',h:['Start op de getallenlijn bij −3.','Plus 5 = 5 stappen naar rechts.'],s:'Vanaf −3 ga je 5 naar rechts: −3 + 5 = 2.'},
+  {p:'wassima',v:'wiskunde',t:'Negatieve getallen',lvl:1,ill:{type:'getallenlijn',van:-6,tot:6,punt:-3},q:'Reken uit: 2 − 5',a:'-3',alt:['−3'],h:['Start bij 2, ga 5 stappen naar links.'],s:'Vanaf 2 ga je 5 naar links: 2 − 5 = −3.'},
+  {p:'wassima',v:'wiskunde',t:'Negatieve getallen',lvl:2,q:'Reken uit: −4 − 3',a:'-7',alt:['−7'],h:['Min en dan nog eens min: verder naar links.'],s:'−4 − 3 = −7.'},
+  {p:'wassima',v:'wiskunde',t:'Negatieve getallen',lvl:2,q:'Reken uit: −2 × 3',a:'-6',alt:['−6'],h:['min × plus = min.'],s:'−2 × 3 = −6 (min keer plus geeft min).'},
+  {p:'wassima',v:'wiskunde',t:'Negatieve getallen',lvl:3,q:'Reken uit: −12 ÷ −4',a:'3',h:['min ÷ min = plus.'],s:'−12 ÷ −4 = 3 (min gedeeld door min geeft plus).'},
+  {p:'wassima',v:'wiskunde',t:'Breuken',lvl:1,ill:{type:'breukstrook',delen:4,gevuld:3},q:'Welk deel is gekleurd? Schrijf als breuk (bijv. 3/4).',a:'3/4',alt:['0.75'],h:['gekleurde delen / totaal aantal delen.'],s:'3 van de 4 delen zijn gekleurd → 3/4.'},
+  {p:'wassima',v:'wiskunde',t:'Breuken',lvl:1,q:'Wat is 1/2 van 30?',a:'15',h:['1/2 betekent de helft.'],s:'30 ÷ 2 = 15.'},
+  {p:'wassima',v:'wiskunde',t:'Breuken',lvl:2,q:'Wat is 3/4 van 20?',a:'15',h:['Eerst ÷ 4 (één deel), dan × 3.'],s:'20 ÷ 4 = 5, en 5 × 3 = 15.'},
+  {p:'wassima',v:'wiskunde',t:'Breuken',lvl:2,q:'Reken uit: 1/4 + 2/4',a:'3/4',alt:['0.75'],h:['Gelijke noemers (onder de streep): tel alleen de tellers op.'],s:'1/4 + 2/4 = 3/4.'},
+  {p:'wassima',v:'wiskunde',t:'Machten & wortels',lvl:1,q:'Reken uit: 5²',a:'25',h:['5² = 5 × 5.'],s:'5 × 5 = 25.'},
+  {p:'wassima',v:'wiskunde',t:'Machten & wortels',lvl:2,q:'Reken uit: 2³',a:'8',h:['2³ = 2 × 2 × 2.'],s:'2 × 2 × 2 = 8.'},
+  {p:'wassima',v:'wiskunde',t:'Machten & wortels',lvl:2,q:'Reken uit: √49',a:'7',h:['Welk getal × zichzelf = 49?'],s:'7 × 7 = 49, dus √49 = 7.'},
+  {p:'wassima',v:'wiskunde',t:'Verhoudingen & schaal',lvl:1,q:'3 appels kosten € 1,50. Wat kosten 6 appels?',a:'3',u:'€',h:['6 appels is 2× zoveel → 2× de prijs.'],s:'6 = 2 × 3 appels, dus 2 × € 1,50 = € 3,00.'},
+  {p:'wassima',v:'wiskunde',t:'Verhoudingen & schaal',lvl:3,q:'Op een kaart met schaal 1 : 100 000 is een weg 3 cm. Hoeveel km is dat in het echt?',a:'3',u:'km',h:['1 cm op de kaart = 100 000 cm echt = 1 km.','Vermenigvuldig met 3.'],s:'3 cm × 100 000 = 300 000 cm = 3000 m = 3 km.'},
+  {p:'wassima',v:'wiskunde',t:'Statistiek',lvl:1,q:'Bereken het gemiddelde van 4, 6 en 8.',a:'6',h:['gemiddelde = som ÷ aantal.'],s:'(4 + 6 + 8) ÷ 3 = 18 ÷ 3 = 6.'},
+  {p:'wassima',v:'wiskunde',t:'Statistiek',lvl:2,q:'Wat is de mediaan van 3, 9 en 5?',a:'5',h:['Zet op volgorde en pak de middelste.'],s:'Op volgorde: 3, 5, 9. De middelste is 5.'},
+  {p:'wassima',v:'wiskunde',t:'Statistiek',lvl:2,q:'Wat is de modus van 2, 4, 4 en 7?',a:'4',h:['De modus komt het vaakst voor.'],s:'4 komt twee keer voor → modus = 4.'},
+  {p:'wassima',v:'wiskunde',t:'Haakjes & herleiden',lvl:1,q:'Herleid: 2x + 3x',a:'5x',h:['Tel gelijke termen (allebei "x") op.'],s:'2x + 3x = 5x.'},
+  {p:'wassima',v:'wiskunde',t:'Haakjes & herleiden',lvl:2,q:'Werk de haakjes weg: 3(x + 2). Schrijf als ax + b.',a:'3x+6',alt:['3x + 6'],h:['Vermenigvuldig de 3 met allebei in de haakjes.'],s:'3 × x + 3 × 2 = 3x + 6.'},
+  {p:'wassima',v:'wiskunde',t:'Haakjes & herleiden',lvl:3,q:'Herleid: 5x + 2 − 2x + 4',a:'3x+6',alt:['3x + 6'],h:['Tel de x-en samen en de gewone getallen samen.'],s:'5x − 2x = 3x, en 2 + 4 = 6 → 3x + 6.'},
   // ---- Wassima · wiskunde ----
   {p:'wassima',v:'wiskunde',t:'Procenten',lvl:1,q:'Een trui van € 40 krijgt 25% korting. Hoeveel kost de trui nu?',a:'30',u:'€',h:['25% korting betekent dat je 75% van de prijs betaalt.','Groeifactor = 1 − 25/100 = 0,75. Vermenigvuldig de oude prijs hiermee.'],s:'Gegeven: prijs € 40, korting 25%.\nFormule: nieuw = oud × groeifactor; groeifactor = 0,75.\n40 × 0,75 = € 30.'},
   {p:'wassima',v:'wiskunde',t:'Procenten',lvl:1,q:'In een klas van 30 leerlingen zijn 18 meisjes. Hoeveel procent is dat?',a:'60',u:'%',h:['Gebruik: % = (deel ÷ geheel) × 100.'],s:'(18 ÷ 30) × 100 = 0,6 × 100 = 60%.'},
@@ -153,6 +186,22 @@ const SEED = [
   {p:'wassima',v:'wiskunde',t:'Hoeken',lvl:2,ill:{type:'vierhoek',h:[90,100,85,'?']},q:'In een vierhoek zijn drie hoeken 90°, 100° en 85°. Hoe groot is de vierde hoek?',a:'85',u:'°',h:['De hoeken van een vierhoek zijn samen 360°.'],s:'360 − 90 − 100 − 85 = 85°.'},
   {p:'wassima',v:'wiskunde',t:'Inhoud',lvl:1,ill:{type:'balk',l:10,b:4,h:3},q:'Een balk is 10 cm × 4 cm × 3 cm. Bereken de inhoud.',a:'120',u:'cm³',h:['inhoud = lengte × breedte × hoogte.'],s:'10 × 4 × 3 = 120 cm³.'},
   {p:'wassima',v:'wiskunde',t:'Inhoud',lvl:2,ill:{type:'kubus',z:5},q:'Een kubus heeft ribben van 5 cm. Bereken de inhoud.',a:'125',u:'cm³',h:['inhoud = z × z × z = z³.'],s:'5 × 5 × 5 = 125 cm³.'},
+  // ---- Wassima · natuurkunde · FUNDAMENT (eenheden eerst) ----
+  {p:'wassima',v:'natuurkunde',t:'Grootheden & eenheden',lvl:1,q:'Hoeveel meter is 3 km?',a:'3000',u:'m',h:['1 km = 1000 m.'],s:'3 × 1000 = 3000 m.'},
+  {p:'wassima',v:'natuurkunde',t:'Grootheden & eenheden',lvl:1,q:'Hoeveel gram is 2 kg?',a:'2000',u:'g',h:['1 kg = 1000 g.'],s:'2 × 1000 = 2000 g.'},
+  {p:'wassima',v:'natuurkunde',t:'Grootheden & eenheden',lvl:2,q:'Hoeveel seconden is 5 minuten?',a:'300',u:'s',h:['1 minuut = 60 s.'],s:'5 × 60 = 300 s.'},
+  {p:'wassima',v:'natuurkunde',t:'Grootheden & eenheden',lvl:2,q:'Hoeveel cm is 1,5 m?',a:'150',u:'cm',h:['1 m = 100 cm.'],s:'1,5 × 100 = 150 cm.'},
+  {p:'wassima',v:'natuurkunde',t:'Temperatuur & warmte',lvl:1,q:'Bij welke temperatuur bevriest water? (in °C)',a:'0',u:'°C',h:['Het vriespunt van water.'],s:'Water bevriest bij 0 °C.'},
+  {p:'wassima',v:'natuurkunde',t:'Temperatuur & warmte',lvl:1,q:'Bij welke temperatuur kookt water? (in °C, op zeeniveau)',a:'100',u:'°C',h:['Het kookpunt van water.'],s:'Water kookt bij 100 °C.'},
+  {p:'wassima',v:'natuurkunde',t:'Temperatuur & warmte',lvl:1,q:'Met welk instrument meet je temperatuur?',a:'thermometer',alt:['de thermometer','een thermometer'],h:['Je leest er graden Celsius op af.'],s:'Een thermometer meet de temperatuur in °C.'},
+  {p:'wassima',v:'natuurkunde',t:'Licht',lvl:1,q:'Kaatst licht terug als het op een spiegel valt? (ja/nee)',a:'ja',h:['Daarom kun je jezelf zien.'],s:'Ja: een spiegel weerkaatst (reflecteert) het licht.'},
+  {p:'wassima',v:'natuurkunde',t:'Licht',lvl:2,q:'Hoe heet het terugkaatsen van licht op een glad oppervlak?',a:'weerkaatsing',alt:['reflectie','terugkaatsing'],h:['Een woord dat begint met "weer..." of "re...".'],s:'Weerkaatsing (reflectie) van licht.'},
+  {p:'wassima',v:'natuurkunde',t:'Magnetisme',lvl:1,q:'Een magneet heeft twee polen: de noordpool en de ...?',a:'zuidpool',alt:['zuid','zuid pool'],h:['Tegenovergestelde van noord.'],s:'Een magneet heeft een noordpool en een zuidpool.'},
+  {p:'wassima',v:'natuurkunde',t:'Magnetisme',lvl:2,q:'Twee noordpolen bij elkaar: stoten ze elkaar af of trekken ze aan?',a:'afstoten',alt:['stoten af','af','afstoot'],h:['Gelijke polen doen iets anders dan ongelijke.'],s:'Gelijke polen stoten elkaar af; ongelijke polen trekken elkaar aan.'},
+  {p:'wassima',v:'natuurkunde',t:'Elektrische schakelingen',lvl:1,q:'Moet een stroomkring open of dicht (gesloten) zijn om een lampje te laten branden?',a:'dicht',alt:['gesloten','dicht (gesloten)'],h:['De stroom moet rond kunnen lopen.'],s:'De kring moet gesloten (dicht) zijn, anders loopt er geen stroom.'},
+  {p:'wassima',v:'natuurkunde',t:'Elektrische schakelingen',lvl:2,q:'In een serieschakeling gaat één lampje stuk. Branden de andere lampjes nog? (ja/nee)',a:'nee',h:['Bij serie is er maar één pad voor de stroom.'],s:'Nee — bij een serieschakeling valt alles uit als er één lampje kapotgaat.'},
+  {p:'wassima',v:'natuurkunde',t:'Beweging (afstand-tijd)',lvl:1,q:'Een auto rijdt 60 km in 1 uur. Wat is de snelheid in km/u?',a:'60',u:'km/u',h:['snelheid = afstand ÷ tijd.'],s:'60 km ÷ 1 uur = 60 km/u.'},
+  {p:'wassima',v:'natuurkunde',t:'Beweging (afstand-tijd)',lvl:2,q:'Een wandelaar loopt 5 km/u. Hoe ver komt hij in 3 uur?',a:'15',u:'km',h:['afstand = snelheid × tijd.'],s:'5 × 3 = 15 km.'},
   // ---- Wassima · natuurkunde ----
   {p:'wassima',v:'natuurkunde',t:'Snelheid',lvl:1,q:'Een fietser legt 6000 m af in 1500 s. Bereken de snelheid.',a:'4',u:'m/s',h:['v = s ÷ t (verhuisdriehoekje: dek v af → s boven t).'],s:'v = 6000 ÷ 1500 = 4 m/s.'},
   {p:'wassima',v:'natuurkunde',t:'Snelheid',lvl:2,q:'Een auto rijdt 90 km/u. Hoeveel m/s is dat?',a:'25',u:'m/s',h:['Van km/u naar m/s: delen door 3,6.'],s:'90 ÷ 3,6 = 25 m/s.'},
@@ -237,6 +286,66 @@ const SEED = [
   {p:'amaani',v:'natuurkunde',t:'Arbeid & energie',lvl:3,q:'Een veer met veerconstante C = 200 N/m wordt 0,1 m uitgerekt. Bereken de veerenergie.',a:'1',u:'J',h:['Ev = ½ × C × u².','u² = 0,01.'],s:'Ev = ½ × 200 × 0,1² = ½ × 200 × 0,01 = 1 J.'},
   {p:'amaani',v:'natuurkunde',t:'Elektriciteit',lvl:2,q:'Twee weerstanden in serie: 4 Ω en 6 Ω. Bereken de vervangingsweerstand.',a:'10',u:'Ω',h:['In serie tel je de weerstanden op.'],s:'Rv = 4 + 6 = 10 Ω.'},
   {p:'amaani',v:'natuurkunde',t:'Elektriciteit',lvl:3,q:'Een apparaat van 2000 W staat 3 uur aan. De stroomprijs is € 0,30 per kWh. Wat kost dat?',a:'1.80',alt:['1,80','1.8'],u:'€',h:['Eerst kWh: 2000 W = 2 kW; E = 2 × 3 = 6 kWh.','Kosten = kWh × prijs.'],s:'E = 2 kW × 3 uur = 6 kWh → 6 × € 0,30 = € 1,80.'},
+
+  /* ============ WASSIMA · NEDERLANDS (eind 2 havo) ============ */
+  {p:'wassima',v:'nederlands',t:'Werkwoordspelling',lvl:1,q:'Vul in (tegenwoordige tijd): Hij ... elke dag naar school. (lopen) → hij',a:'loopt',h:['Hij/zij-vorm = ik-vorm (stam) + t.','stam van lopen = loop.'],s:'stam loop + t = loopt.'},
+  {p:'wassima',v:'nederlands',t:'Werkwoordspelling',lvl:2,q:'Vul in (verleden tijd): Gisteren ... hij naar school. (fietsen) → hij',a:'fietste',h:["'t kofschip: eindigt de stam op t,k,f,s,ch,p → +te, anders +de.",'stam fiets eindigt op s.'],s:"fiets eindigt op s (in 't kofschip) → fietste."},
+  {p:'wassima',v:'nederlands',t:'Werkwoordspelling',lvl:2,q:'Vul in (verleden tijd): Zij ... haar oma op. (bellen) → zij',a:'belde',h:["Stam bel eindigt op l → niet in 't kofschip → +de."],s:"bel eindigt op l (niet in 't kofschip) → belde."},
+  {p:'wassima',v:'nederlands',t:'Werkwoordspelling',lvl:2,q:'Voltooid deelwoord: Hij heeft de taart ... (maken). → ge...',a:'gemaakt',alt:['maakt'],h:['ge + stam + t/d. maak eindigt op k → t.'],s:'ge + maak + t = gemaakt.'},
+  {p:'wassima',v:'nederlands',t:'Woordsoorten',lvl:1,q:'Welke woordsoort is "lopen"?',a:'werkwoord',alt:['ww','het werkwoord'],h:['Het is iets dat je doet.'],s:'"lopen" is een werkwoord (ww): een woord voor een handeling.'},
+  {p:'wassima',v:'nederlands',t:'Woordsoorten',lvl:2,q:'Welke woordsoort is "snel" in "de snelle auto"?',a:'bijvoeglijk naamwoord',alt:['bn','adjectief'],h:['Het zegt iets over een zelfstandig naamwoord (de auto).'],s:'"snel(le)" beschrijft de auto → bijvoeglijk naamwoord (bn).'},
+  {p:'wassima',v:'nederlands',t:'Woordsoorten',lvl:1,q:'Welke woordsoort is "huis"?',a:'zelfstandig naamwoord',alt:['zn','znw','znw.'],h:['Een ding waar je "het" of "de" voor kunt zetten.'],s:'"huis" is een zelfstandig naamwoord (zn): een naam voor een ding.'},
+  {p:'wassima',v:'nederlands',t:'Spelling',lvl:1,q:'Wat is het meervoud van "kat"?',a:'katten',h:['Korte klank → medeklinker verdubbelen.'],s:'Korte a-klank → verdubbel de t: katten.'},
+  {p:'wassima',v:'nederlands',t:'Spelling',lvl:2,q:'Wat is het meervoud van "auto"?',a:"auto's",alt:['autos'],h:['Klinker aan het eind → meervoud met apostrof-s.'],s:"auto eindigt op een klinker → auto's."},
+
+  /* ============ WASSIMA · ENGELS (eind 2 havo) ============ */
+  {p:'wassima',v:'engels',t:'Woordenschat',lvl:1,q:'Vertaal naar het Engels: "hond".',a:'dog',h:['Een huisdier dat blaft.'],s:'hond = dog.'},
+  {p:'wassima',v:'engels',t:'Woordenschat',lvl:1,q:'Vertaal naar het Nederlands: "house".',a:'huis',alt:['het huis'],h:['Daar woon je.'],s:'house = huis.'},
+  {p:'wassima',v:'engels',t:'Woordenschat',lvl:2,q:'Vertaal naar het Engels: "altijd".',a:'always',h:['Begint met "al...".'],s:'altijd = always.'},
+  {p:'wassima',v:'engels',t:'Onregelmatige werkwoorden',lvl:2,q:'Past simple (verleden tijd) van "go".',a:'went',h:['Heel onregelmatig — niet "goed".'],s:'go – went – gone. Verleden tijd: went.'},
+  {p:'wassima',v:'engels',t:'Onregelmatige werkwoorden',lvl:2,q:'Past simple van "have".',a:'had',h:['Ook in het Nederlands lijkt het: had.'],s:'have – had – had.'},
+  {p:'wassima',v:'engels',t:'Onregelmatige werkwoorden',lvl:3,q:'Past participle (voltooid deelwoord) van "eat".',a:'eaten',h:['eat – ate – ...'],s:'eat – ate – eaten.'},
+  {p:'wassima',v:'engels',t:'Grammatica',lvl:1,q:'a of an? "... apple"',a:'an',h:['Voor een klinkerklank (a, e, i, o, u) komt "an".'],s:'apple begint met een klinker → an apple.'},
+  {p:'wassima',v:'engels',t:'Grammatica',lvl:2,q:'Meervoud van "child" (onregelmatig).',a:'children',h:['Niet "childs".'],s:'child → children.'},
+
+  /* ============ WASSIMA · FRANS (eind 2 havo) ============ */
+  {p:'wassima',v:'frans',t:'Woordenschat',lvl:1,q:'Vertaal naar het Frans: "het huis".',a:'la maison',alt:['maison'],h:['Vrouwelijk woord: la ...'],s:'het huis = la maison.'},
+  {p:'wassima',v:'frans',t:'Woordenschat',lvl:1,q:'Vertaal naar het Nederlands: "le livre".',a:'het boek',alt:['boek'],h:['Daar lees je uit.'],s:'le livre = het boek.'},
+  {p:'wassima',v:'frans',t:'Lidwoorden (le/la)',lvl:1,q:'le of la? "... maison" (vrouwelijk)',a:'la',h:['Vrouwelijk → la.'],s:'maison is vrouwelijk → la maison.'},
+  {p:'wassima',v:'frans',t:'Lidwoorden (le/la)',lvl:1,q:'le of la? "... livre" (mannelijk)',a:'le',h:['Mannelijk → le.'],s:'livre is mannelijk → le livre.'},
+  {p:'wassima',v:'frans',t:'Getallen',lvl:1,q:'Welk cijfer is "trois"?',a:'3',alt:['drie'],h:['Tussen deux en quatre.'],s:'trois = 3.'},
+  {p:'wassima',v:'frans',t:'Getallen',lvl:2,q:'Hoe schrijf je "10" in het Frans?',a:'dix',h:['Klinkt als "diis".'],s:'10 = dix.'},
+
+  /* ============ WASSIMA · DUITS (eind 2 havo) ============ */
+  {p:'wassima',v:'duits',t:'Woordenschat',lvl:1,q:'Vertaal naar het Duits: "het boek".',a:'das Buch',alt:['buch','das buch'],h:['Onzijdig woord: das ...'],s:'het boek = das Buch.'},
+  {p:'wassima',v:'duits',t:'Woordenschat',lvl:1,q:'Vertaal naar het Nederlands: "die Schule".',a:'de school',alt:['school'],h:['Daar leer je.'],s:'die Schule = de school.'},
+  {p:'wassima',v:'duits',t:'Lidwoorden (der/die/das)',lvl:1,q:'der, die of das? "... Hund" (mannelijk)',a:'der',h:['Mannelijk → der.'],s:'Hund is mannelijk → der Hund.'},
+  {p:'wassima',v:'duits',t:'Lidwoorden (der/die/das)',lvl:1,q:'der, die of das? "... Schule" (vrouwelijk)',a:'die',h:['Vrouwelijk → die.'],s:'Schule is vrouwelijk → die Schule.'},
+  {p:'wassima',v:'duits',t:'Getallen',lvl:1,q:'Schrijf "4" in het Duits.',a:'vier',h:['Lijkt op het Nederlands.'],s:'4 = vier.'},
+  {p:'wassima',v:'duits',t:'Getallen',lvl:2,q:'Wat is "zehn" in cijfers?',a:'10',alt:['tien'],h:['Klinkt als "tseen".'],s:'zehn = 10.'},
+
+  /* ============ WASSIMA · BIOLOGIE (eind 2 havo) ============ */
+  {p:'wassima',v:'biologie',t:'De cel',lvl:1,q:'Hoe heet het "controlecentrum" van de cel, waar het DNA ligt?',a:'celkern',alt:['kern','de celkern'],h:['Het regelt wat de cel doet.'],s:'De celkern bevat het DNA en stuurt de cel aan.'},
+  {p:'wassima',v:'biologie',t:'De cel',lvl:2,q:'Welk celonderdeel hebben plantencellen wél en dierlijke cellen niet (geeft stevigheid)?',a:'celwand',alt:['de celwand'],h:['Een stevige laag óm de cel.'],s:'Plantencellen hebben een celwand; dierlijke cellen niet.'},
+  {p:'wassima',v:'biologie',t:'De cel',lvl:2,q:'In welke groene celonderdelen vindt fotosynthese plaats?',a:'bladgroenkorrels',alt:['bladgroenkorrel','chloroplast','chloroplasten'],h:['Ze maken het blad groen.'],s:'In de bladgroenkorrels (chloroplasten) vindt fotosynthese plaats.'},
+  {p:'wassima',v:'biologie',t:'Het menselijk lichaam',lvl:1,q:'Welk orgaan pompt het bloed door je lichaam?',a:'hart',alt:['het hart'],h:['Het klopt in je borst.'],s:'Het hart pompt bloed rond.'},
+  {p:'wassima',v:'biologie',t:'Het menselijk lichaam',lvl:1,q:'In welk orgaan neem je zuurstof op uit de lucht?',a:'longen',alt:['de longen','long'],h:['Je gebruikt ze bij ademhalen.'],s:'In de longen wordt zuurstof opgenomen.'},
+  {p:'wassima',v:'biologie',t:'Planten',lvl:1,q:'Welk deel van de plant neemt water op uit de grond?',a:'wortels',alt:['wortel','de wortels'],h:['Ze zitten onder de grond.'],s:'De wortels nemen water (en mineralen) op.'},
+  {p:'wassima',v:'biologie',t:'Planten',lvl:2,q:'Bij fotosynthese maakt de plant glucose en een gas dat wij inademen. Welk gas?',a:'zuurstof',alt:['o2','zuurstof (o2)'],h:['Wij ademen het in om te leven.'],s:'Fotosynthese: CO₂ + water + licht → glucose + zuurstof.'},
+
+  /* ============ WASSIMA · AARDRIJKSKUNDE (eind 2 havo) ============ */
+  {p:'wassima',v:'aardrijkskunde',t:'Topografie',lvl:1,q:'Wat is de hoofdstad van Nederland?',a:'Amsterdam',h:['Stad met grachten.'],s:'De hoofdstad van Nederland is Amsterdam.'},
+  {p:'wassima',v:'aardrijkskunde',t:'Topografie',lvl:1,q:'Wat is de hoofdstad van Frankrijk?',a:'Parijs',alt:['paris'],h:['Stad met de Eiffeltoren.'],s:'De hoofdstad van Frankrijk is Parijs.'},
+  {p:'wassima',v:'aardrijkskunde',t:'Topografie',lvl:2,q:'In welke provincie ligt Rotterdam?',a:'Zuid-Holland',alt:['zuidholland'],h:['Een provincie aan de kust, in het westen.'],s:'Rotterdam ligt in Zuid-Holland.'},
+  {p:'wassima',v:'aardrijkskunde',t:'Klimaat & weer',lvl:1,q:'Hoe heet de gemiddelde toestand van het weer over een lange periode (30 jaar)?',a:'klimaat',alt:['het klimaat'],h:['Niet "het weer van vandaag", maar gemiddeld.'],s:'Het klimaat = het gemiddelde weer over ±30 jaar.'},
+  {p:'wassima',v:'aardrijkskunde',t:'Water & landschap',lvl:2,q:'Hoe noem je laaggelegen land dat door mensen op het water is gewonnen en omringd is door dijken?',a:'polder',alt:['een polder','polders'],h:['Typisch Nederlands landschap.'],s:'Een polder is drooggelegd land achter dijken.'},
+  {p:'wassima',v:'aardrijkskunde',t:'Water & landschap',lvl:2,q:'Hoe heet een door mensen gegraven waterweg die rivieren of zeeën verbindt?',a:'kanaal',alt:['een kanaal','het kanaal'],h:['Recht, door mensen gemaakt — geen rivier.'],s:'Een kanaal is een gegraven waterweg.'},
+
+  /* ============ WASSIMA · ECONOMIE (eind 2 havo) ============ */
+  {p:'wassima',v:'economie',t:'Geld & rekenen',lvl:1,q:'Je koopt iets voor € 12 en betaalt met € 20. Hoeveel krijg je terug?',a:'8',u:'€',h:['Wisselgeld = betaald − prijs.'],s:'20 − 12 = € 8 terug.'},
+  {p:'wassima',v:'economie',t:'Geld & rekenen',lvl:2,q:'Een spel kost € 50. Je krijgt 10% korting. Hoeveel betaal je?',a:'45',u:'€',h:['10% van 50 = 5; trek dat eraf.'],s:'Korting = 10% × 50 = € 5. Je betaalt 50 − 5 = € 45.'},
+  {p:'wassima',v:'economie',t:'Begrippen',lvl:1,q:'Hoe heet iemand die producten koopt en gebruikt?',a:'consument',alt:['de consument','klant'],h:['Het tegenovergestelde van producent.'],s:'Een consument koopt en gebruikt producten.'},
+  {p:'wassima',v:'economie',t:'Begrippen',lvl:2,q:'Hoe heet de belasting die je betaalt over producten (in Nederland meestal 21%)?',a:'btw',alt:['b.t.w.','omzetbelasting'],h:['Drie letters.'],s:'btw = belasting toegevoegde waarde.'},
 ];
 SEED.forEach((e,i)=> e.id = 'seed_'+i);
 
@@ -358,6 +467,36 @@ const TEMPLATES=[
     return {q:`Een apparaat levert ${E} J in ${t} s. Bereken het vermogen.`,a:String(P),u:'W',
       h:['P = E ÷ t.'],s:`P = ${E} ÷ ${t} = ${P} W.`};
   }},
+  /* ----- Wassima · fundament-drills (wisselende getallen) ----- */
+  {id:'tpl_rekenvolgorde',p:'wassima',v:'wiskunde',t:'Rekenvolgorde',lvl:1,gen:()=>{
+    const a=ri(2,9), b=ri(2,9), c=ri(2,5);
+    return {q:`Reken uit: ${a} + ${b} × ${c}`,a:String(a+b*c),
+      h:['Keer gaat vóór plus: doe eerst de × .'],s:`${b} × ${c} = ${b*c}; ${a} + ${b*c} = ${a+b*c}.`};
+  }},
+  {id:'tpl_neg_optel',p:'wassima',v:'wiskunde',t:'Negatieve getallen',lvl:1,gen:()=>{
+    const a=ri(-5,5), b=ri(-5,5), ans=a+b;
+    return {q:`Reken uit: ${a} ${pm(b)}`,a:String(ans),ill:{type:'getallenlijn',van:-10,tot:10,punt:ans},
+      h:['Gebruik de getallenlijn: plus = naar rechts, min = naar links.'],s:`${a} ${pm(b)} = ${ans}.`};
+  }},
+  {id:'tpl_kwadraat',p:'wassima',v:'wiskunde',t:'Machten & wortels',lvl:1,gen:()=>{
+    const n=ri(2,15);
+    return {q:`Reken uit: ${n}²`,a:String(n*n),h:[`${n}² = ${n} × ${n}.`],s:`${n} × ${n} = ${n*n}.`};
+  }},
+  {id:'tpl_breuk_van',p:'wassima',v:'wiskunde',t:'Breuken',lvl:2,gen:()=>{
+    const noemer=pick([2,3,4,5,10]), teller=ri(1,noemer-1), getal=noemer*ri(2,12), deel=getal/noemer*teller;
+    return {q:`Wat is ${teller}/${noemer} van ${getal}?`,a:String(deel),
+      h:[`Eerst ÷ ${noemer} (één deel), dan × ${teller}.`],s:`${getal} ÷ ${noemer} = ${getal/noemer}, en × ${teller} = ${deel}.`};
+  }},
+  {id:'tpl_eenheden',p:'wassima',v:'natuurkunde',t:'Grootheden & eenheden',lvl:1,gen:()=>{
+    const o=pick([['km',1000,'m'],['m',100,'cm'],['kg',1000,'g'],['minuten',60,'seconden']]), val=ri(2,12);
+    return {q:`Hoeveel ${o[2]} is ${val} ${o[0]}?`,a:String(val*o[1]),
+      h:[`1 ${o[0]} = ${o[1]} ${o[2]}.`],s:`${val} × ${o[1]} = ${val*o[1]} ${o[2]}.`};
+  }},
+  {id:'tpl_haakjes',p:'wassima',v:'wiskunde',t:'Haakjes & herleiden',lvl:2,gen:()=>{
+    const a=ri(2,6), b=ri(1,9);
+    return {q:`Werk de haakjes weg: ${a}(x + ${b}). Schrijf als ax + b.`,a:`${a}x+${a*b}`,alt:[`${a}x + ${a*b}`],
+      h:[`Vermenigvuldig de ${a} met x én met ${b}.`],s:`${a} × x + ${a} × ${b} = ${a}x + ${a*b}.`};
+  }},
 ];
 
 /* ============================ STORE (localStorage) ============================ */
@@ -416,6 +555,7 @@ function checkAnswer(ex,val){
   for(const c of cand){
     const nc=norm(c);
     if(nc===nv) return true;
+    if(nc.indexOf('/')>=0 || nv.indexOf('/')>=0) continue;   // breuken: alleen exacte match, geen getalsvergelijking
     const numC=parseFloat(nc);
     if(!isNaN(numC)&&!isNaN(numV)&&Math.abs(numC-numV)<=Math.max(0.01,Math.abs(numC)*0.005)) return true;
   }
@@ -1101,6 +1241,29 @@ function Figure({ill}){
         <polygon points="100,58 126,34 126,84 100,108" fill="#c9dec0" stroke={G} strokeWidth="2.5"/>
         <text x="70" y="124" fontSize="12" textAnchor="middle" fill={M}>z {ill.z} cm</text>
       </svg>);
+    case 'getallenlijn': {
+      const van=ill.van, tot=ill.tot, n=tot-van, W=290, pad=18, span=W-2*pad, step=span/n;
+      const x=i=>pad+(i-van)*step, ticks=[];
+      for(let i=van;i<=tot;i++) ticks.push(i);
+      return (
+        <svg width={W} height="58" viewBox={'0 0 '+W+' 58'} role="img" aria-label="getallenlijn">
+          <line x1={pad} y1="28" x2={W-pad} y2="28" stroke={M} strokeWidth="2"/>
+          <line x1={x(0)} y1="20" x2={x(0)} y2="36" stroke={M} strokeWidth="2.5"/>
+          {ticks.map(i=>(<g key={i}>
+            <line x1={x(i)} y1="23" x2={x(i)} y2="33" stroke={M} strokeWidth="1.4"/>
+            <text x={x(i)} y="50" fontSize="11" textAnchor="middle" fill={i===0?'#222':M}>{i}</text>
+          </g>))}
+          {ill.punt!==undefined && <circle cx={x(ill.punt)} cy="28" r="5.5" fill={A}/>}
+        </svg>);
+    }
+    case 'breukstrook': {
+      const d=ill.delen, g=ill.gevuld, W=240, hh=42, w=W/d, rc=[];
+      for(let i=0;i<d;i++) rc.push(i);
+      return (
+        <svg width={W} height={hh+8} viewBox={'0 0 '+W+' '+(hh+8)} role="img" aria-label="breuk">
+          {rc.map(i=>(<rect key={i} x={i*w} y="4" width={w} height={hh} fill={i<g?G:F} stroke={M} strokeWidth="1.5"/>))}
+        </svg>);
+    }
     default: return null;
   }
 }
@@ -1126,6 +1289,20 @@ const UITLEG={
   'Handel & slavernij':{tekst:'Bij de driehoekshandel voeren schepen van Europa naar Afrika (ruilgoederen), van Afrika naar Amerika (tot slaaf gemaakte mensen) en van Amerika terug naar Europa (suiker, katoen). De WIC speelde hierin een grote rol.'},
   'Verlichting':{tekst:'De Verlichting (18e eeuw) was een stroming waarin denkers het verstand (de rede) centraal stelden. Ze vonden dat niet één koning alle macht moest hebben (geen absolute vorst) en pleitten voor vrijheid en gelijkheid.'},
   'Franse Revolutie':{tekst:'In 1789 kwam het Franse volk in opstand tegen de koning. Met de bestorming van de Bastille begon de Franse Revolutie. De leuze: vrijheid, gelijkheid, broederschap.'},
+  // exacte fundament-onderwerpen voor Wassima (extra uitleg + beeld)
+  'Rekenvolgorde':{tekst:'Volgorde van rekenen: 1) haakjes, 2) machten/wortels, 3) keer en delen, 4) plus en min (van links naar rechts). Ezelsbruggetje: "Meneer Van Dale Wacht Op Antwoord". Dus 3 + 4 × 2 = 3 + 8 = 11, niet 14.'},
+  'Negatieve getallen':{ill:{type:'getallenlijn',van:-6,tot:6,punt:0}, tekst:'Gebruik de getallenlijn: plus = naar rechts, min = naar links. Twee keer hetzelfde teken (min × min of min ÷ min) geeft plus; verschillende tekens geven min.'},
+  'Breuken':{ill:{type:'breukstrook',delen:4,gevuld:3}, tekst:'Een breuk is een deel van een geheel: bovenaan staat de teller (hoeveel delen), onderaan de noemer (in hoeveel delen verdeeld). "3/4 van een getal" = eerst ÷ 4 (één deel), dan × 3.'},
+  'Machten & wortels':{tekst:'Een macht is herhaald vermenigvuldigen: 5² = 5 × 5 = 25 en 2³ = 2 × 2 × 2 = 8. De wortel is het omgekeerde: √49 = 7, want 7 × 7 = 49.'},
+  'Verhoudingen & schaal':{tekst:'Bij een verhouding gaat alles met dezelfde factor mee: 2× zoveel appels → 2× de prijs. Een verhoudingstabel helpt. Schaal 1 : 100 000 betekent: 1 cm op de kaart is 100 000 cm (= 1 km) in het echt.'},
+  'Statistiek':{tekst:'Gemiddelde = som ÷ aantal. Mediaan = het middelste getal (eerst op volgorde zetten). Modus = het getal dat het vaakst voorkomt.'},
+  'Haakjes & herleiden':{tekst:'Herleiden = korter schrijven. Gelijke termen tel je op: 2x + 3x = 5x. Haakjes wegwerken: vermenigvuldig het getal vóór de haakjes met álles erbinnen: 3(x + 2) = 3x + 6.'},
+  'Grootheden & eenheden':{tekst:'Reken in de natuurkunde altijd eerst om naar standaardeenheden. Onthoud: 1 km = 1000 m · 1 m = 100 cm · 1 kg = 1000 g · 1 minuut = 60 s · 1 uur = 3600 s. De meeste fouten zitten in de eenheden, niet in de formule.'},
+  'Temperatuur & warmte':{tekst:'Temperatuur meet je in graden Celsius (°C) met een thermometer. Water bevriest bij 0 °C en kookt bij 100 °C. Warmte stroomt altijd van warm naar koud.'},
+  'Licht':{tekst:'Licht beweegt in rechte lijnen. Op een glad oppervlak (spiegel) kaatst het netjes terug: dat heet weerkaatsing of reflectie. Daardoor kun je jezelf in de spiegel zien.'},
+  'Magnetisme':{tekst:'Een magneet heeft een noordpool en een zuidpool. Gelijke polen (noord-noord of zuid-zuid) stoten elkaar af; ongelijke polen (noord-zuid) trekken elkaar aan.'},
+  'Elektrische schakelingen':{tekst:'Stroom loopt alleen door een gesloten (dichte) kring. In een serieschakeling is er één pad: gaat één lampje stuk, dan gaat alles uit. In een parallelschakeling blijven de andere branden.'},
+  'Beweging (afstand-tijd)':{tekst:'Snelheid = afstand ÷ tijd. Let op de eenheid: km in een uur geeft km/u, meter in een seconde geeft m/s. Afstand = snelheid × tijd; tijd = afstand ÷ snelheid.'},
 };
 function UitlegPaneel({data,open,onToggle}){
   return (
