@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Oefenapp — Wassima &amp; Amaani</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  :root{
+    --primary:#5EA03A; --primary-dark:#48792c; --accent:#C23728;
+    --blue:#3a6ea0; --blue-dark:#2c5680;
+    --ink:#23271f; --muted:#6b7163; --line:#e6eade; --bg:#f4f7ef; --card:#fff;
+    --gold:#e0a23a; --radius:16px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'DM Sans',-apple-system,Segoe UI,Roboto,sans-serif;
+    color:var(--ink); background:var(--bg);
+    min-height:100vh; line-height:1.5;
+  }
+  #root{max-width:760px;margin:0 auto;padding:16px 16px 60px;}
+  h1,h2,h3{font-family:'Playfair Display',Georgia,serif;margin:0;}
+  button{font-family:inherit;cursor:pointer;border:none;}
+  .btn{
+    background:var(--primary);color:#fff;border-radius:999px;
+    padding:12px 22px;font-size:16px;font-weight:700;transition:transform .08s, filter .15s;
+  }
+  .btn:active{transform:scale(.97);}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+  .btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line);}
+  .btn.accent{background:var(--accent);}
+  .btn.gold{background:var(--gold);}
+  .btn.sm{padding:8px 16px;font-size:14px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;}
+  .row{display:flex;gap:10px;align-items:center;}
+  .wrap{display:flex;flex-wrap:wrap;gap:10px;}
+  .pill{background:#eef4e7;color:var(--primary-dark);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:600;}
+  .muted{color:var(--muted);}
+  .center{text-align:center;}
+  /* top bar */
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:8px;}
+  .back{background:none;color:var(--muted);font-size:15px;font-weight:600;padding:6px 4px;}
+  .scorechip{display:flex;gap:10px;align-items:center;}
+  .scorechip .s{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-weight:700;font-size:14px;}
+  /* profile cards */
+  .profcard{
+    flex:1;min-width:220px;border-radius:var(--radius);padding:22px;color:#fff;cursor:pointer;
+    transition:transform .1s; position:relative;overflow:hidden;
+  }
+  .profcard:active{transform:scale(.98);}
+  .profcard .emoji{font-size:46px;}
+  .profcard h2{color:#fff;font-size:26px;margin:6px 0 2px;}
+  .profcard .niv{opacity:.92;font-weight:600;}
+  .profcard .vakken{margin-top:10px;font-size:13px;opacity:.92;}
+  /* topic */
+  .topic{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--radius);background:#fff;margin-bottom:10px;cursor:pointer;transition:transform .08s,border-color .15s;}
+  .topic:active{transform:scale(.99);}
+  .topic .ico{font-size:26px;width:34px;text-align:center;}
+  .topic .grow{flex:1;min-width:0;}
+  .topic .tt{font-weight:700;}
+  .stars{letter-spacing:2px;font-size:14px;}
+  .pbar{height:8px;background:#eef1ea;border-radius:999px;overflow:hidden;margin-top:6px;}
+  .pbar > i{display:block;height:100%;background:var(--primary);border-radius:999px;transition:width .4s;}
+  /* practice */
+  .qbox{font-size:20px;font-weight:500;line-height:1.5;}
+  .answerrow{display:flex;gap:10px;margin-top:18px;align-items:stretch;}
+  .answerrow input{
+    flex:1;font-family:inherit;font-size:20px;padding:14px 16px;border:2px solid var(--line);
+    border-radius:14px;outline:none;min-width:0;
+  }
+  .answerrow input:focus{border-color:var(--primary);}
+  .unit{display:flex;align-items:center;padding:0 14px;background:#eef4e7;border-radius:14px;font-weight:700;color:var(--primary-dark);}
+  .hint{background:#fff7e8;border:1px solid #f0d9a8;border-left:4px solid var(--gold);border-radius:12px;padding:12px 14px;margin-top:12px;font-size:15px;}
+  .hint b{color:#a9741a;}
+  .feedback{border-radius:12px;padding:14px 16px;margin-top:14px;font-weight:600;font-size:16px;}
+  .feedback.ok{background:#eaf7e2;border:1px solid #b9e3a0;color:#2f6d18;}
+  .feedback.no{background:#fdecea;border:1px solid #f3c2bd;color:#9c2b20;}
+  .solution{background:#f4f7ef;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-top:12px;font-size:15px;white-space:pre-wrap;}
+  .formule{font-family:'Cambria Math',Georgia,serif;font-weight:700;color:var(--primary-dark);background:#eef4e7;border-radius:8px;padding:2px 7px;display:inline-block;}
+  /* celebrate */
+  @keyframes pop{0%{transform:scale(.4);opacity:0}50%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+  .celebrate{animation:pop .4s ease-out;font-size:56px;text-align:center;}
+  @keyframes floatup{0%{transform:translateY(0);opacity:1}100%{transform:translateY(-120px);opacity:0}}
+  .confetti{position:fixed;top:40%;left:0;right:0;pointer-events:none;text-align:center;z-index:50;}
+  .confetti span{display:inline-block;font-size:30px;margin:0 6px;animation:floatup 1.1s ease-out forwards;}
+  /* badges */
+  .badge{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;}
+  .badge.locked{opacity:.4;}
+  /* author */
+  label.fld{display:block;margin:12px 0 4px;font-weight:600;font-size:14px;}
+  input.f,select.f,textarea.f{
+    width:100%;font-family:inherit;font-size:15px;padding:10px 12px;border:1.5px solid var(--line);
+    border-radius:10px;outline:none;background:#fff;
+  }
+  input.f:focus,select.f:focus,textarea.f:focus{border-color:var(--primary);}
+  textarea.f{min-height:70px;resize:vertical;}
+  .pinpad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:260px;margin:16px auto;}
+  .pinpad button{font-size:22px;padding:16px;border-radius:14px;background:#fff;border:1.5px solid var(--line);font-weight:700;}
+  .pindots{font-size:30px;letter-spacing:10px;text-align:center;height:34px;}
+  .exrow{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;font-size:14px;}
+  .tag{font-size:11px;background:#eef1ea;border-radius:6px;padding:2px 6px;font-weight:600;color:var(--muted);}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const {useState,useEffect,useMemo,useRef} = React;
+
+/* ============================ CONFIG ============================ */
+const PROFILES = {
+  wassima:{naam:'Wassima', niveau:'2 havo', emoji:'🌱', kleur:'linear-gradient(135deg,#5EA03A,#48792c)', vakken:['wiskunde','natuurkunde']},
+  amaani: {naam:'Amaani',  niveau:'4 vwo',  emoji:'🚀', kleur:'linear-gradient(135deg,#3a6ea0,#2c5680)', vakken:['wiskundeA','natuurkunde']},
+};
+const VAKNAAM = {wiskunde:'Wiskunde', natuurkunde:'Natuurkunde', wiskundeA:'Wiskunde A'};
+const TOPICICON = {
+  'Procenten':'％','Vergelijkingen':'⚖️','Lineaire formules':'📈','Oppervlakte & omtrek':'⬛',
+  'Pythagoras':'📐','Hoeken':'📐','Inhoud':'🧊','Snelheid':'🚴','Dichtheid':'⚗️',
+  'Groeifactoren':'📊','Exponentieel verband':'📈','Formules herleiden':'🔤','Statistiek':'📊',
+  'Kinematica':'🏃','Krachten (Newton)':'💪','Arbeid & energie':'⚡','Vermogen':'🔌','Elektriciteit':'🔋',
+};
+
+/* ============================ OEFENINGEN (startvoorraad) ============================ */
+/* veld: p=profiel, v=vak, t=onderwerp, lvl=niveau, q=vraag, a=antwoord, alt=alternatieven, u=eenheid, h=hints[], s=uitwerking */
+const SEED = [
+  // ---- Wassima · wiskunde ----
+  {p:'wassima',v:'wiskunde',t:'Procenten',lvl:1,q:'Een trui van € 40 krijgt 25% korting. Hoeveel kost de trui nu?',a:'30',u:'€',h:['25% korting betekent dat je 75% van de prijs betaalt.','Groeifactor = 1 − 25/100 = 0,75. Vermenigvuldig de oude prijs hiermee.'],s:'Gegeven: prijs € 40, korting 25%.\nFormule: nieuw = oud × groeifactor; groeifactor = 0,75.\n40 × 0,75 = € 30.'},
+  {p:'wassima',v:'wiskunde',t:'Procenten',lvl:1,q:'In een klas van 30 leerlingen zijn 18 meisjes. Hoeveel procent is dat?',a:'60',u:'%',h:['Gebruik: % = (deel ÷ geheel) × 100.'],s:'(18 ÷ 30) × 100 = 0,6 × 100 = 60%.'},
+  {p:'wassima',v:'wiskunde',t:'Procenten',lvl:2,q:'Een telefoon kostte € 200 en kost nu € 260. Met hoeveel procent is de prijs gestegen?',a:'30',u:'%',h:['Reken eerst het verschil uit.','% = (verschil ÷ oude prijs) × 100.'],s:'Verschil = 260 − 200 = 60.\n(60 ÷ 200) × 100 = 30% erbij.'},
+  {p:'wassima',v:'wiskunde',t:'Vergelijkingen',lvl:1,q:'Los op: x + 7 = 19. Wat is x?',a:'12',h:['Doe aan beide kanten hetzelfde, zodat x alleen overblijft.'],s:'x + 7 = 19 → beide kanten − 7 → x = 12.'},
+  {p:'wassima',v:'wiskunde',t:'Vergelijkingen',lvl:1,q:'Los op: 3x = 21. Wat is x?',a:'7',h:['Deel beide kanten door 3.'],s:'3x = 21 → ÷ 3 → x = 7.'},
+  {p:'wassima',v:'wiskunde',t:'Vergelijkingen',lvl:2,q:'Los op: 4x + 5 = 25. Wat is x?',a:'5',h:['Werk eerst de + 5 weg, daarna de × 4.'],s:'4x + 5 = 25 → − 5 → 4x = 20 → ÷ 4 → x = 5.'},
+  {p:'wassima',v:'wiskunde',t:'Vergelijkingen',lvl:2,q:'Los op: 2x − 3 = 11. Wat is x?',a:'7',h:['Eerst + 3 aan beide kanten.'],s:'2x − 3 = 11 → + 3 → 2x = 14 → ÷ 2 → x = 7.'},
+  {p:'wassima',v:'wiskunde',t:'Lineaire formules',lvl:1,q:'Gegeven y = 2x + 3. Bereken y als x = 4.',a:'11',h:['Vul x = 4 in de formule in.'],s:'y = 2 × 4 + 3 = 8 + 3 = 11.'},
+  {p:'wassima',v:'wiskunde',t:'Lineaire formules',lvl:1,q:'Wat is het hellingsgetal van y = −5x + 8?',a:'-5',alt:['−5'],h:['In y = ax + b is a het hellingsgetal.'],s:'a = −5 (dalende lijn). Het startgetal is 8.'},
+  {p:'wassima',v:'wiskunde',t:'Lineaire formules',lvl:3,q:'Een lijn gaat door (1, 4) en (3, 10). Bereken het hellingsgetal.',a:'3',h:['a = (y₂ − y₁) ÷ (x₂ − x₁).'],s:'a = (10 − 4) ÷ (3 − 1) = 6 ÷ 2 = 3.'},
+  {p:'wassima',v:'wiskunde',t:'Oppervlakte & omtrek',lvl:1,q:'Een rechthoek is 8 cm lang en 5 cm breed. Bereken de oppervlakte.',a:'40',u:'cm²',h:['oppervlakte = lengte × breedte.'],s:'opp = 8 × 5 = 40 cm².'},
+  {p:'wassima',v:'wiskunde',t:'Oppervlakte & omtrek',lvl:1,q:'Een rechthoek is 8 cm lang en 5 cm breed. Bereken de omtrek.',a:'26',u:'cm',h:['omtrek = 2 × (lengte + breedte).'],s:'omtrek = 2 × (8 + 5) = 2 × 13 = 26 cm.'},
+  {p:'wassima',v:'wiskunde',t:'Oppervlakte & omtrek',lvl:2,q:'Een driehoek heeft basis 12 cm en hoogte 6 cm. Bereken de oppervlakte.',a:'36',u:'cm²',h:['opp = ½ × basis × hoogte.'],s:'opp = ½ × 12 × 6 = 36 cm².'},
+  {p:'wassima',v:'wiskunde',t:'Oppervlakte & omtrek',lvl:3,q:'Een cirkel heeft straal 7 cm. Bereken de oppervlakte (π ≈ 3,14).',a:'153.86',alt:['154','153,86'],u:'cm²',h:['opp = π × r².','r² = 7 × 7 = 49.'],s:'opp = 3,14 × 7² = 3,14 × 49 = 153,86 cm² ≈ 154 cm².'},
+  {p:'wassima',v:'wiskunde',t:'Pythagoras',lvl:1,q:'Rechthoekige driehoek met rechthoekszijden 3 cm en 4 cm. Bereken de schuine zijde.',a:'5',u:'cm',h:['a² + b² = c², met c de schuine zijde.','c = √(9 + 16) = √25.'],s:'c = √(3² + 4²) = √(9 + 16) = √25 = 5 cm.'},
+  {p:'wassima',v:'wiskunde',t:'Pythagoras',lvl:3,q:'Een ladder van 5 m staat 3 m van de muur. Hoe hoog reikt hij tegen de muur?',a:'4',u:'m',h:['De ladder is de schuine zijde.','b = √(c² − a²) = √(25 − 9).'],s:'b = √(5² − 3²) = √(25 − 9) = √16 = 4 m.'},
+  {p:'wassima',v:'wiskunde',t:'Hoeken',lvl:1,q:'In een driehoek zijn twee hoeken 50° en 70°. Hoe groot is de derde hoek?',a:'60',u:'°',h:['De hoeken van een driehoek zijn samen 180°.'],s:'180 − 50 − 70 = 60°.'},
+  {p:'wassima',v:'wiskunde',t:'Hoeken',lvl:2,q:'In een vierhoek zijn drie hoeken 90°, 100° en 85°. Hoe groot is de vierde hoek?',a:'85',u:'°',h:['De hoeken van een vierhoek zijn samen 360°.'],s:'360 − 90 − 100 − 85 = 85°.'},
+  {p:'wassima',v:'wiskunde',t:'Inhoud',lvl:1,q:'Een balk is 10 cm × 4 cm × 3 cm. Bereken de inhoud.',a:'120',u:'cm³',h:['inhoud = lengte × breedte × hoogte.'],s:'10 × 4 × 3 = 120 cm³.'},
+  {p:'wassima',v:'wiskunde',t:'Inhoud',lvl:2,q:'Een kubus heeft ribben van 5 cm. Bereken de inhoud.',a:'125',u:'cm³',h:['inhoud = z × z × z = z³.'],s:'5 × 5 × 5 = 125 cm³.'},
+  // ---- Wassima · natuurkunde ----
+  {p:'wassima',v:'natuurkunde',t:'Snelheid',lvl:1,q:'Een fietser legt 6000 m af in 1500 s. Bereken de snelheid.',a:'4',u:'m/s',h:['v = s ÷ t (verhuisdriehoekje: dek v af → s boven t).'],s:'v = 6000 ÷ 1500 = 4 m/s.'},
+  {p:'wassima',v:'natuurkunde',t:'Snelheid',lvl:2,q:'Een auto rijdt 90 km/u. Hoeveel m/s is dat?',a:'25',u:'m/s',h:['Van km/u naar m/s: delen door 3,6.'],s:'90 ÷ 3,6 = 25 m/s.'},
+  {p:'wassima',v:'natuurkunde',t:'Dichtheid',lvl:2,q:'Een blok heeft massa 600 g en volume 75 cm³. Bereken de dichtheid.',a:'8',u:'g/cm³',h:['ρ = m ÷ V.'],s:'ρ = 600 ÷ 75 = 8 g/cm³ (ongeveer ijzer).'},
+  {p:'wassima',v:'natuurkunde',t:'Dichtheid',lvl:3,q:'Een stuk hout heeft massa 200 g en volume 250 cm³. Bereken de dichtheid.',a:'0.8',alt:['0,8'],u:'g/cm³',h:['ρ = m ÷ V. Lager dan 1 → het drijft op water.'],s:'ρ = 200 ÷ 250 = 0,8 g/cm³. Lichter dan water (1 g/cm³), dus het drijft.'},
+
+  // ---- Amaani · wiskunde A ----
+  {p:'amaani',v:'wiskundeA',t:'Groeifactoren',lvl:1,q:'Een bedrag daalt met 8%. Wat is de groeifactor?',a:'0.92',alt:['0,92'],h:['Afname met p%: groeifactor = 1 − p/100.'],s:'1 − 8/100 = 0,92.'},
+  {p:'amaani',v:'wiskundeA',t:'Groeifactoren',lvl:2,q:'Een prijs van € 100 stijgt 3 jaar achter elkaar met 5% per jaar. Wat is de eindprijs?',a:'115.76',alt:['115,76','115.7625','115.76'],u:'€',h:['Per jaar × 1,05. Drie jaar → × 1,05³.','1,05³ = 1,157625.'],s:'100 × 1,05³ = 100 × 1,157625 = € 115,76.'},
+  {p:'amaani',v:'wiskundeA',t:'Groeifactoren',lvl:2,q:'Iets groeit van 200 naar 250. Wat is de totale groeifactor?',a:'1.25',alt:['1,25'],h:['groeifactor = nieuw ÷ oud.'],s:'250 ÷ 200 = 1,25 (een toename van 25%).'},
+  {p:'amaani',v:'wiskundeA',t:'Exponentieel verband',lvl:2,q:'Gegeven N = 100 × 1,2ᵗ. Bereken N bij t = 3.',a:'172.8',alt:['172,8'],h:['Reken eerst 1,2³ uit.','1,2³ = 1,728.'],s:'N = 100 × 1,2³ = 100 × 1,728 = 172,8.'},
+  {p:'amaani',v:'wiskundeA',t:'Formules herleiden',lvl:2,q:'Gegeven y = 3x − 7. Bereken x als y = 8.',a:'5',h:['Vul y = 8 in en los op naar x.'],s:'8 = 3x − 7 → + 7 → 15 = 3x → ÷ 3 → x = 5.'},
+  {p:'amaani',v:'wiskundeA',t:'Statistiek',lvl:1,q:'Bereken het gemiddelde van 4, 7, 9, 4, 6.',a:'6',h:['gemiddelde = som ÷ aantal.'],s:'(4+7+9+4+6) ÷ 5 = 30 ÷ 5 = 6.'},
+  {p:'amaani',v:'wiskundeA',t:'Statistiek',lvl:2,q:'Bereken de mediaan van 3, 8, 5, 2, 9.',a:'5',h:['Zet eerst op volgorde, pak dan de middelste.'],s:'Op volgorde: 2, 3, 5, 8, 9. De middelste is 5.'},
+  // ---- Amaani · natuurkunde ----
+  {p:'amaani',v:'natuurkunde',t:'Kinematica',lvl:1,q:'Een voorwerp legt bij eenparige beweging 240 m af in 12 s. Bereken de snelheid.',a:'20',u:'m/s',h:['v = s ÷ t.'],s:'v = 240 ÷ 12 = 20 m/s.'},
+  {p:'amaani',v:'natuurkunde',t:'Kinematica',lvl:2,q:'Een auto versnelt van 0 naar 20 m/s in 4 s. Bereken de versnelling.',a:'5',u:'m/s²',h:['a = Δv ÷ t.'],s:'a = (20 − 0) ÷ 4 = 5 m/s².'},
+  {p:'amaani',v:'natuurkunde',t:'Krachten (Newton)',lvl:2,q:'Een auto van 1500 kg versnelt met 2 m/s². Bereken de nettokracht.',a:'3000',u:'N',h:['Tweede wet van Newton: F = m × a.'],s:'F = 1500 × 2 = 3000 N.'},
+  {p:'amaani',v:'natuurkunde',t:'Krachten (Newton)',lvl:2,q:'Bereken de zwaartekracht op 60 kg (g = 9,81 N/kg).',a:'588.6',alt:['588,6','600','589'],u:'N',h:['Fz = m × g.'],s:'Fz = 60 × 9,81 = 588,6 N (met g ≈ 10 zou je 600 N krijgen).'},
+  {p:'amaani',v:'natuurkunde',t:'Arbeid & energie',lvl:2,q:'Een kracht van 50 N verplaatst een voorwerp 8 m. Bereken de arbeid.',a:'400',u:'J',h:['W = F × s.'],s:'W = 50 × 8 = 400 J.'},
+  {p:'amaani',v:'natuurkunde',t:'Arbeid & energie',lvl:3,q:'Bereken de kinetische energie van 4 kg bij 3 m/s.',a:'18',u:'J',h:['Ek = ½ × m × v².','v² = 9.'],s:'Ek = ½ × 4 × 3² = ½ × 4 × 9 = 18 J.'},
+  {p:'amaani',v:'natuurkunde',t:'Vermogen',lvl:2,q:'Een apparaat levert 600 J in 30 s. Bereken het vermogen.',a:'20',u:'W',h:['P = E ÷ t.'],s:'P = 600 ÷ 30 = 20 W.'},
+  {p:'amaani',v:'natuurkunde',t:'Elektriciteit',lvl:1,q:'Door een weerstand van 5 Ω loopt 2 A. Bereken de spanning (wet van Ohm).',a:'10',u:'V',h:['U = I × R.'],s:'U = 2 × 5 = 10 V.'},
+  {p:'amaani',v:'natuurkunde',t:'Elektriciteit',lvl:2,q:'Een lamp op 230 V trekt 0,5 A. Bereken het vermogen.',a:'115',u:'W',h:['P = U × I.'],s:'P = 230 × 0,5 = 115 W.'},
+];
+SEED.forEach((e,i)=> e.id = 'seed_'+i);
+
+/* ============================ STORE (localStorage) ============================ */
+const KEY='oefenapp_v1';
+function loadStore(){
+  try{const r=JSON.parse(localStorage.getItem(KEY)); if(r) return r;}catch(e){}
+  return {custom:[], pin:'1234', prog:{wassima:blankProg(), amaani:blankProg()}};
+}
+function blankProg(){return {punten:0, solved:{}, streak:0, dagstreak:0, lastDay:null, badges:[]};}
+function saveStore(s){localStorage.setItem(KEY, JSON.stringify(s));}
+
+/* ============================ HULP ============================ */
+function norm(x){return String(x==null?'':x).toLowerCase().trim().replace(/\s+/g,'').replace(/€|%/g,'').replace(/,/g,'.');}
+function checkAnswer(ex,val){
+  const cand=[ex.a,...(ex.alt||[])];
+  const nv=norm(val); if(nv==='') return false;
+  const numV=parseFloat(nv);
+  for(const c of cand){
+    const nc=norm(c);
+    if(nc===nv) return true;
+    const numC=parseFloat(nc);
+    if(!isNaN(numC)&&!isNaN(numV)&&Math.abs(numC-numV)<=Math.max(0.01,Math.abs(numC)*0.005)) return true;
+  }
+  return false;
+}
+function todayStr(){const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
+function yesterdayStr(){const d=new Date();d.setDate(d.getDate()-1);return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
+
+const BADGES=[
+  {id:'p50', emoji:'⭐', naam:'50 punten', test:p=>p.punten>=50},
+  {id:'p150',emoji:'🌟', naam:'150 punten',test:p=>p.punten>=150},
+  {id:'p300',emoji:'🏆', naam:'300 punten',test:p=>p.punten>=300},
+  {id:'s5',  emoji:'🔥', naam:'5 op rij goed',test:p=>p.streak>=5},
+  {id:'d3',  emoji:'📅', naam:'3 dagen op rij',test:p=>p.dagstreak>=3},
+];
+
+/* ============================ APP ============================ */
+function App(){
+  const [store,setStore]=useState(loadStore);
+  const [view,setView]=useState('home');      // home | hub | practice | author
+  const [profile,setProfile]=useState(null);
+  const [vak,setVak]=useState(null);
+  const [topic,setTopic]=useState(null);
+
+  const persist=(updater)=>setStore(prev=>{const next=typeof updater==='function'?updater(prev):updater; saveStore(next); return next;});
+
+  const allEx=useMemo(()=>[...SEED, ...store.custom],[store.custom]);
+
+  // dagstreak bijwerken bij kiezen profiel
+  function openProfile(pid){
+    persist(prev=>{
+      const pr={...(prev.prog[pid]||blankProg())};
+      const today=todayStr();
+      if(pr.lastDay!==today){
+        pr.dagstreak = (pr.lastDay===yesterdayStr())? (pr.dagstreak||0)+1 : 1;
+        pr.lastDay=today;
+      }
+      return {...prev, prog:{...prev.prog,[pid]:pr}};
+    });
+    setProfile(pid); setVak(PROFILES[pid].vakken[0]); setView('hub');
+  }
+
+  function recordResult(pid, ex, correct, usedHint){
+    persist(prev=>{
+      const pr={...(prev.prog[pid]||blankProg())};
+      pr.solved={...pr.solved};
+      if(correct){
+        const gain=usedHint?5:10;
+        pr.punten=(pr.punten||0)+gain;
+        pr.streak=(pr.streak||0)+1;
+        const cur=pr.solved[ex.id]||{ok:0};
+        pr.solved[ex.id]={ok:cur.ok+1};
+      }else{
+        pr.streak=0;
+      }
+      // badges
+      pr.badges=[...(pr.badges||[])];
+      BADGES.forEach(b=>{if(!pr.badges.includes(b.id)&&b.test(pr)) pr.badges.push(b.id);});
+      return {...prev, prog:{...prev.prog,[pid]:pr}};
+    });
+  }
+
+  const prog = profile? (store.prog[profile]||blankProg()) : null;
+
+  return (
+    <div>
+      {view==='home' && <Home onPick={openProfile} store={store} onAuthor={()=>setView('author')} onFormules={()=>setView('formules')}/>}
+      {view==='formules' && <FormulesView onBack={()=>setView('home')}/>}
+      {view==='hub' && <Hub profile={profile} prog={prog} vak={vak} setVak={setVak} allEx={allEx}
+        onBack={()=>setView('home')} onTopic={(t)=>{setTopic(t);setView('practice');}}/>}
+      {view==='practice' && <Practice profile={profile} vak={vak} topic={topic} allEx={allEx}
+        onBack={()=>setView('hub')} onResult={recordResult} prog={prog}/>}
+      {view==='author' && <Author store={store} persist={persist} onBack={()=>setView('home')}/>}
+    </div>
+  );
+}
+
+/* ---------- HOME ---------- */
+function Home({onPick,store,onAuthor,onFormules}){
+  return (
+    <div>
+      <div className="center" style={{margin:'18px 0 22px'}}>
+        <h1 style={{fontSize:30}}>Oefenen 💪</h1>
+        <p className="muted">Kies wie er gaat oefenen</p>
+      </div>
+      <div className="wrap">
+        {Object.entries(PROFILES).map(([id,p])=>{
+          const pr=store.prog[id]||blankProg();
+          return (
+            <div key={id} className="profcard" style={{background:p.kleur}} onClick={()=>onPick(id)}>
+              <div className="emoji">{p.emoji}</div>
+              <h2>{p.naam}</h2>
+              <div className="niv">{p.niveau}</div>
+              <div className="vakken">{p.vakken.map(v=>VAKNAAM[v]).join(' · ')}</div>
+              <div style={{marginTop:14,fontSize:14,fontWeight:700}}>⭐ {pr.punten||0} punten · 📅 {pr.dagstreak||0} dagen</div>
+            </div>
+          );
+        })}
+      </div>
+      <div className="center" style={{marginTop:24}}>
+        <button className="btn ghost sm" onClick={onFormules}>📐 Formules &amp; uitleg bekijken</button>
+      </div>
+      <div className="center" style={{marginTop:10}}>
+        <button className="btn ghost sm" onClick={onAuthor}>👨‍⚕️ Ouder-modus — opdrachten toevoegen</button>
+      </div>
+      <p className="muted center" style={{marginTop:20,fontSize:13}}>
+        Tip: eerst zelf proberen, dan een hint openen. Elke som verdient punten 🌟
+      </p>
+    </div>
+  );
+}
+
+/* ---------- HUB (vak + onderwerpen) ---------- */
+function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic}){
+  const P=PROFILES[profile];
+  const topics=useMemo(()=>{
+    const list=allEx.filter(e=>e.p===profile&&e.v===vak);
+    const map={};
+    list.forEach(e=>{(map[e.t]=map[e.t]||[]).push(e);});
+    return Object.entries(map).map(([t,exs])=>{
+      const solved=exs.filter(e=>(prog.solved[e.id]||{}).ok>0).length;
+      return {t, total:exs.length, solved};
+    });
+  },[allEx,profile,vak,prog]);
+
+  return (
+    <div>
+      <div className="topbar">
+        <button className="back" onClick={onBack}>← terug</button>
+        <div className="scorechip">
+          <span className="s">⭐ {prog.punten||0}</span>
+          <span className="s">🔥 {prog.streak||0}</span>
+          <span className="s">📅 {prog.dagstreak||0}</span>
+        </div>
+      </div>
+      <h1 style={{fontSize:26}}>{P.emoji} {P.naam}</h1>
+      <div className="wrap" style={{margin:'12px 0 18px'}}>
+        {P.vakken.map(v=>(
+          <button key={v} className={'btn sm '+(v===vak?'':'ghost')} onClick={()=>setVak(v)}>{VAKNAAM[v]}</button>
+        ))}
+      </div>
+
+      {topics.map(({t,total,solved})=>{
+        const pct=total?Math.round(solved/total*100):0;
+        const sterren=pct>=100?'⭐⭐⭐':pct>=60?'⭐⭐':pct>0?'⭐':'☆☆☆';
+        return (
+          <div key={t} className="topic" onClick={()=>onTopic(t)}>
+            <div className="ico">{TOPICICON[t]||'📘'}</div>
+            <div className="grow">
+              <div className="tt">{t}</div>
+              <div className="muted" style={{fontSize:13}}>{solved} / {total} gedaan · <span className="stars">{sterren}</span></div>
+              <div className="pbar"><i style={{width:pct+'%'}}></i></div>
+            </div>
+            <div>›</div>
+          </div>
+        );
+      })}
+
+      <div className="card" style={{marginTop:18}}>
+        <b>Badges</b>
+        <div className="wrap" style={{marginTop:10}}>
+          {BADGES.map(b=>(
+            <span key={b.id} className={'badge '+(prog.badges.includes(b.id)?'':'locked')}>{b.emoji} {b.naam}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- PRACTICE ---------- */
+function Practice({profile,vak,topic,allEx,onBack,onResult,prog}){
+  const pool=useMemo(()=>{
+    return allEx.filter(e=>e.p===profile&&e.v===vak&&e.t===topic)
+      .sort((a,b)=>(a.lvl||1)-(b.lvl||1));
+  },[allEx,profile,vak,topic]);
+
+  const [idx,setIdx]=useState(0);
+  const [val,setVal]=useState('');
+  const [hintN,setHintN]=useState(0);
+  const [state,setState]=useState('open');   // open | goed | fout
+  const [showSol,setShowSol]=useState(false);
+  const [tries,setTries]=useState(0);
+  const [celebrate,setCelebrate]=useState(false);
+  const inputRef=useRef(null);
+
+  const ex=pool[idx];
+  useEffect(()=>{setVal('');setHintN(0);setState('open');setShowSol(false);setTries(0);
+    setTimeout(()=>inputRef.current&&inputRef.current.focus(),50);},[idx,topic]);
+
+  if(!ex) return (<div><button className="back" onClick={onBack}>← terug</button><p className="muted">Nog geen opgaven hier.</p></div>);
+
+  function controleer(){
+    if(state==='goed') return;
+    const ok=checkAnswer(ex,val);
+    setTries(t=>t+1);
+    if(ok){
+      setState('goed');
+      onResult(profile,ex,true,hintN>0);
+      setCelebrate(true); setTimeout(()=>setCelebrate(false),1100);
+    }else{
+      setState('fout');
+      onResult(profile,ex,false,false);
+    }
+  }
+  function volgende(){ if(idx+1<pool.length) setIdx(idx+1); else setIdx(0); }
+
+  const isLast=idx+1>=pool.length;
+
+  return (
+    <div>
+      {celebrate && <div className="confetti"><span>🎉</span><span>⭐</span><span>🎊</span><span>✨</span><span>👏</span></div>}
+      <div className="topbar">
+        <button className="back" onClick={onBack}>← terug</button>
+        <div className="scorechip">
+          <span className="s">⭐ {prog.punten||0}</span>
+          <span className="s">🔥 {prog.streak||0}</span>
+        </div>
+      </div>
+      <div className="row" style={{justifyContent:'space-between',marginBottom:10}}>
+        <span className="pill">{topic}</span>
+        <span className="muted" style={{fontSize:13}}>vraag {idx+1} / {pool.length} · niveau {ex.lvl||1}</span>
+      </div>
+
+      <div className="card">
+        <div className="qbox">{ex.q}</div>
+        <div className="answerrow">
+          <input ref={inputRef} className="" value={val} placeholder="jouw antwoord"
+            onChange={e=>{setVal(e.target.value); if(state==='fout') setState('open');}}
+            onKeyDown={e=>{if(e.key==='Enter') controleer();}}
+            disabled={state==='goed'} inputMode="text"/>
+          {ex.u && <div className="unit">{ex.u}</div>}
+        </div>
+
+        {state==='goed' && <div className="feedback ok celebrate">✅ Goed gedaan! +{hintN>0?5:10} punten</div>}
+        {state==='fout' && <div className="feedback no">Nog niet — kijk nog eens, of open een hint. Je kunt het! 💪</div>}
+
+        {hintN>0 && ex.h && ex.h.slice(0,hintN).map((h,i)=>(
+          <div key={i} className="hint"><b>Hint {i+1}:</b> {h}</div>
+        ))}
+
+        {showSol && <div className="solution"><b>Uitwerking</b>{"\n"}{ex.s}</div>}
+
+        <div className="wrap" style={{marginTop:16}}>
+          {state!=='goed' && <button className="btn" onClick={controleer}>Nakijken</button>}
+          {state!=='goed' && ex.h && hintN<ex.h.length && <button className="btn gold sm" onClick={()=>setHintN(hintN+1)}>💡 Hint</button>}
+          {state!=='goed' && (tries>=1) && !showSol && <button className="btn ghost sm" onClick={()=>setShowSol(true)}>Toon uitwerking</button>}
+          {state==='goed' && <button className="btn" onClick={volgende}>{isLast?'Opnieuw vanaf 1 →':'Volgende →'}</button>}
+          {state==='goed' && !showSol && <button className="btn ghost sm" onClick={()=>setShowSol(true)}>Bekijk uitwerking</button>}
+        </div>
+      </div>
+
+      <p className="muted center" style={{marginTop:16,fontSize:13}}>
+        Eerst zelf proberen = 10 punten · met hint = 5 punten 🌟
+      </p>
+    </div>
+  );
+}
+
+/* ---------- AUTHOR (ouder-modus, PIN) ---------- */
+function Author({store,persist,onBack}){
+  const [unlocked,setUnlocked]=useState(false);
+  const [pin,setPin]=useState('');
+  const [form,setForm]=useState({p:'wassima',v:'wiskunde',t:'',lvl:'1',q:'',a:'',u:'',h1:'',h2:'',s:''});
+  const [msg,setMsg]=useState('');
+  const [impText,setImpText]=useState('');
+
+  function tryPin(p){
+    const np=(pin+p).slice(0,4); setPin(np);
+    if(np.length===4){ if(np===store.pin){setUnlocked(true);} else {setMsg('Onjuiste PIN'); setTimeout(()=>{setPin('');setMsg('');},700);} }
+  }
+
+  if(!unlocked){
+    return (
+      <div>
+        <button className="back" onClick={onBack}>← terug</button>
+        <div className="center" style={{marginTop:30}}>
+          <h2>Ouder-modus</h2>
+          <p className="muted">Voer de PIN in (standaard 1234)</p>
+          <div className="pindots">{'●'.repeat(pin.length)}{'○'.repeat(4-pin.length)}</div>
+          {msg && <div style={{color:'var(--accent)',fontWeight:600}}>{msg}</div>}
+          <div className="pinpad">
+            {['1','2','3','4','5','6','7','8','9'].map(n=><button key={n} onClick={()=>tryPin(n)}>{n}</button>)}
+            <button onClick={()=>setPin('')}>C</button>
+            <button onClick={()=>tryPin('0')}>0</button>
+            <button onClick={()=>setPin(pin.slice(0,-1))}>⌫</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const vakkenVoor = PROFILES[form.p].vakken;
+  const bestaandeTopics = [...new Set([...SEED,...store.custom].filter(e=>e.p===form.p&&e.v===form.v).map(e=>e.t))];
+
+  function voegToe(){
+    if(!form.q.trim()||!form.a.trim()||!form.t.trim()){setMsg('Vul minstens onderwerp, vraag en antwoord in.');return;}
+    const ex={id:'cust_'+Date.now(), p:form.p, v:form.v, t:form.t.trim(), lvl:Number(form.lvl)||1,
+      q:form.q.trim(), a:form.a.trim(), u:form.u.trim()||undefined,
+      h:[form.h1.trim(),form.h2.trim()].filter(Boolean), s:form.s.trim()||'(geen uitwerking toegevoegd)'};
+    persist(prev=>({...prev, custom:[...prev.custom, ex]}));
+    setForm({...form,t:form.t,q:'',a:'',u:'',h1:'',h2:'',s:''});
+    setMsg('✅ Opgave toegevoegd — staat meteen klaar voor '+PROFILES[form.p].naam+'.');
+    setTimeout(()=>setMsg(''),2500);
+  }
+  function verwijder(id){persist(prev=>({...prev, custom:prev.custom.filter(e=>e.id!==id)}));}
+  function exporteer(){
+    const blob=new Blob([JSON.stringify(store.custom,null,2)],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    a.download='oefeningen-export.json'; a.click();
+  }
+  function importeer(){
+    try{const arr=JSON.parse(impText); if(!Array.isArray(arr)) throw 0;
+      persist(prev=>({...prev, custom:[...prev.custom, ...arr]}));
+      setImpText(''); setMsg('✅ '+arr.length+' opgaven geïmporteerd.'); setTimeout(()=>setMsg(''),2500);
+    }catch(e){setMsg('Kon JSON niet lezen.');}
+  }
+
+  return (
+    <div>
+      <div className="topbar"><button className="back" onClick={onBack}>← terug</button><span className="pill">Ouder-modus</span></div>
+      <h2>Nieuwe opdracht toevoegen</h2>
+
+      <div className="card" style={{marginTop:12}}>
+        <div className="row" style={{gap:10}}>
+          <div style={{flex:1}}>
+            <label className="fld">Voor wie</label>
+            <select className="f" value={form.p} onChange={e=>{const p=e.target.value;setForm({...form,p,v:PROFILES[p].vakken[0]});}}>
+              {Object.entries(PROFILES).map(([id,p])=><option key={id} value={id}>{p.naam} ({p.niveau})</option>)}
+            </select>
+          </div>
+          <div style={{flex:1}}>
+            <label className="fld">Vak</label>
+            <select className="f" value={form.v} onChange={e=>setForm({...form,v:e.target.value})}>
+              {vakkenVoor.map(v=><option key={v} value={v}>{VAKNAAM[v]}</option>)}
+            </select>
+          </div>
+        </div>
+        <div className="row" style={{gap:10}}>
+          <div style={{flex:2}}>
+            <label className="fld">Onderwerp</label>
+            <input className="f" list="tlist" value={form.t} onChange={e=>setForm({...form,t:e.target.value})} placeholder="bijv. Procenten"/>
+            <datalist id="tlist">{bestaandeTopics.map(t=><option key={t} value={t}/>)}</datalist>
+          </div>
+          <div style={{flex:1}}>
+            <label className="fld">Niveau</label>
+            <select className="f" value={form.lvl} onChange={e=>setForm({...form,lvl:e.target.value})}>
+              <option value="1">1 (makkelijk)</option><option value="2">2 (middel)</option><option value="3">3 (moeilijk)</option>
+            </select>
+          </div>
+        </div>
+        <label className="fld">Vraag</label>
+        <textarea className="f" value={form.q} onChange={e=>setForm({...form,q:e.target.value})} placeholder="Typ hier de opgave…"/>
+        <div className="row" style={{gap:10}}>
+          <div style={{flex:2}}>
+            <label className="fld">Antwoord</label>
+            <input className="f" value={form.a} onChange={e=>setForm({...form,a:e.target.value})} placeholder="bijv. 30"/>
+          </div>
+          <div style={{flex:1}}>
+            <label className="fld">Eenheid (optioneel)</label>
+            <input className="f" value={form.u} onChange={e=>setForm({...form,u:e.target.value})} placeholder="bijv. cm²"/>
+          </div>
+        </div>
+        <label className="fld">Hint 1 (optioneel)</label>
+        <input className="f" value={form.h1} onChange={e=>setForm({...form,h1:e.target.value})}/>
+        <label className="fld">Hint 2 (optioneel)</label>
+        <input className="f" value={form.h2} onChange={e=>setForm({...form,h2:e.target.value})}/>
+        <label className="fld">Uitwerking (stap voor stap)</label>
+        <textarea className="f" value={form.s} onChange={e=>setForm({...form,s:e.target.value})} placeholder="Laat de tussenstappen zien…"/>
+        {msg && <div style={{marginTop:12,fontWeight:600,color:'var(--primary-dark)'}}>{msg}</div>}
+        <div style={{marginTop:14}}><button className="btn" onClick={voegToe}>+ Opgave toevoegen</button></div>
+      </div>
+
+      <h3 style={{marginTop:24}}>Mijn toegevoegde opgaven ({store.custom.length})</h3>
+      <div style={{marginTop:10}}>
+        {store.custom.length===0 && <p className="muted">Nog niets toegevoegd.</p>}
+        {store.custom.map(e=>(
+          <div key={e.id} className="exrow">
+            <div className="grow" style={{flex:1}}>
+              <span className="tag">{PROFILES[e.p].naam}</span> <span className="tag">{VAKNAAM[e.v]}</span> <span className="tag">{e.t}</span>
+              <div style={{marginTop:4}}>{e.q}</div>
+              <div className="muted" style={{fontSize:13}}>antwoord: {e.a} {e.u||''}</div>
+            </div>
+            <button className="btn accent sm" onClick={()=>verwijder(e.id)}>verwijder</button>
+          </div>
+        ))}
+      </div>
+
+      <div className="card" style={{marginTop:20}}>
+        <b>Opslaan &amp; delen (back-up)</b>
+        <p className="muted" style={{fontSize:13,marginTop:6}}>De opgaven staan in deze browser. Exporteer ze om te bewaren of op het apparaat van je dochter te zetten.</p>
+        <div className="wrap" style={{marginTop:8}}>
+          <button className="btn ghost sm" onClick={exporteer}>⬇️ Exporteer naar bestand</button>
+        </div>
+        <label className="fld">Importeren — plak hier een eerder geëxporteerde JSON</label>
+        <textarea className="f" value={impText} onChange={e=>setImpText(e.target.value)} placeholder='[ {"p":"wassima", ...} ]'/>
+        <div style={{marginTop:8}}><button className="btn ghost sm" onClick={importeer} disabled={!impText.trim()}>⬆️ Importeren</button></div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- FORMULES & UITLEG ---------- */
+const FORMULEBLOKKEN=[
+  {kop:'Oppervlakte & omtrek', items:[
+    ['Rechthoek','opp = l × b   ·   omtrek = 2 × (l + b)'],
+    ['Vierkant','opp = z²   ·   omtrek = 4 × z'],
+    ['Driehoek','opp = ½ × basis × hoogte'],
+    ['Parallellogram','opp = basis × hoogte'],
+    ['Trapezium','opp = ½ × (a + c) × hoogte'],
+    ['Cirkel','opp = π × r²   ·   omtrek = 2 × π × r   (π ≈ 3,14)'],
+  ]},
+  {kop:'Pythagoras (rechthoekige driehoek)', items:[
+    ['Schuine zijde c','a² + b² = c²  →  c = √(a² + b²)'],
+    ['Rechthoekszijde','a = √(c² − b²)'],
+  ]},
+  {kop:'Hoeken', items:[
+    ['Driehoek','som van de hoeken = 180°'],
+    ['Vierhoek','som van de hoeken = 360°'],
+    ['Bij evenwijdige lijnen','F-hoeken gelijk · Z-hoeken gelijk · overstaande hoeken gelijk'],
+  ]},
+  {kop:'Inhoud (ruimtefiguren)', items:[
+    ['Balk','inhoud = l × b × h'],
+    ['Kubus','inhoud = z³'],
+    ['Prisma / cilinder','inhoud = oppervlakte grondvlak × hoogte'],
+    ['Cilinder','inhoud = π × r² × h'],
+  ]},
+  {kop:'Rekenen & verbanden', items:[
+    ['Procent','% = (deel ÷ geheel) × 100'],
+    ['Groeifactor','erbij p%: 1 + p/100   ·   eraf p%: 1 − p/100   ·   nieuw = oud × factor'],
+    ['Rechte lijn','y = a·x + b   (a = hellingsgetal, b = startgetal)'],
+    ['Hellingsgetal','a = (y₂ − y₁) ÷ (x₂ − x₁)'],
+    ['Exponentieel','N = beginwaarde × groeifactorᵗ'],
+    ['Statistiek','gemiddelde = som ÷ aantal · mediaan = middelste · modus = meest voorkomend'],
+  ]},
+  {kop:'Natuurkunde', items:[
+    ['Snelheid','v = s / t   (km/u → m/s: ÷ 3,6)'],
+    ['Dichtheid','ρ = m / V'],
+    ['Kracht (Newton)','F = m × a   ·   zwaartekracht Fz = m × g  (g ≈ 9,81)'],
+    ['Arbeid & energie','W = F × s   ·   Ek = ½ × m × v²   ·   Ez = m × g × h'],
+    ['Vermogen','P = E / t'],
+    ['Elektriciteit','U = I × R (Ohm)   ·   P = U × I'],
+  ]},
+];
+function FormulesView({onBack}){
+  return (
+    <div>
+      <div className="topbar"><button className="back" onClick={onBack}>← terug</button><span className="pill">Formules &amp; uitleg</span></div>
+      <h1 style={{fontSize:24}}>📐 Formules</h1>
+
+      <div className="card" style={{marginTop:12,borderLeft:'4px solid var(--accent)'}}>
+        <b style={{color:'var(--accent)'}}>Bij elke som: het 4-stappenplan (GGFU)</b>
+        <div style={{marginTop:8,fontSize:15,lineHeight:1.7}}>
+          <b>1. Gegeven</b> — schrijf op wat je weet, mét eenheid.<br/>
+          <b>2. Gevraagd</b> — wat moet je uitrekenen?<br/>
+          <b>3. Formule</b> — kies de formule, schrijf hem eerst leeg op.<br/>
+          <b>4. Uitwerking</b> — invullen, uitrekenen, eenheid erachter, en vraag: <i>“is dit logisch?”</i>
+        </div>
+      </div>
+
+      {FORMULEBLOKKEN.map(blok=>(
+        <div key={blok.kop} className="card" style={{marginTop:12}}>
+          <b>{blok.kop}</b>
+          <div style={{marginTop:8}}>
+            {blok.items.map(([naam,f])=>(
+              <div key={naam} style={{display:'flex',gap:10,alignItems:'baseline',padding:'5px 0',borderTop:'1px solid var(--line)'}}>
+                <div style={{flex:'0 0 38%',fontWeight:600,fontSize:14}}>{naam}</div>
+                <div className="formule" style={{flex:1,fontSize:14}}>{f}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      <p className="muted center" style={{marginTop:16,fontSize:13}}>
+        Tip: leer formules niet uit je hoofd door staren — schrijf ze één keer over en hoor jezelf elke dag 5 minuten één blokje over. 🌟
+      </p>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
