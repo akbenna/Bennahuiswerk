@@ -156,7 +156,7 @@ const TOPICICON = {
   'Verhoudingen':'⚖️','Afronden & schatten':'🎯','Synoniemen & antoniemen':'🔁','Hoofdgedachte':'💡','Verwijswoorden':'🔗','Woordenboek & informatie':'📚','Roosters & tabellen':'🗓️','Zinnen & vragen':'💬',
   'Atoombouw':'⚛️','Reactievergelijkingen':'⚗️','Rekenen (mol)':'🧮',
   'Tekstverbanden':'🔗','Tenses':'⏱️','Staatsvormen':'🏛️','Werkwoorden (être/avoir)':'🇫🇷',
-  'Werkwoorden':'🔤','Ontdekkingsreizen':'🧭','Koude Oorlog':'❄️','Dekolonisatie':'🌍','Conjunctuur':'📉',
+  'Werkwoorden':'🔤','Ontdekkingsreizen':'🧭','Koude Oorlog':'❄️','Dekolonisatie':'🌍','Conjunctuur':'📉','Spreekwoorden':'🗣️',
 };
 
 /* ============================ OEFENINGEN (startvoorraad) ============================ */
@@ -752,6 +752,44 @@ const SEED = [
   {p:'amine',v:'lezen',t:'Tekst begrijpen',lvl:2,q:'Lees: "Mila heeft 12 knikkers. Ze geeft er 4 weg." Hoeveel houdt ze over?',a:'8',opties:['6','8','16'],h:['12 − 4.'],s:'12 − 4 = 8 knikkers.'},
   {p:'amine',v:'lezen',t:'Hoofdgedachte',lvl:2,q:'Een tekst beschrijft zon, regen, wind en wolken. Waar gaat de tekst vooral over?',a:'het weer',opties:['het weer','dieren','sport'],h:['Wat hebben die woorden gemeen?'],s:'De tekst gaat over het weer.'},
   {p:'amine',v:'lezen',t:'Verwijswoorden',lvl:2,q:'Lees: "Tom en Sam spelen buiten. Zij hebben plezier." Wie zijn "zij"?',a:'Tom en Sam',alt:['tom en sam','tom en sam.'],h:['Wie spelen er buiten?'],s:'"Zij" verwijst naar Tom en Sam.'},
+
+  /* ============ AMAANI · wiskunde A & natuurkunde (examenniveau) ============ */
+  {p:'amaani',v:'wiskundeA',t:'Differentiëren',lvl:3,q:'Gegeven f(x) = x³ − 3x, met f′(x) = 3x² − 3. Bereken f′(2).',a:'9',h:['Vul x = 2 in 3x² − 3.'],s:'f′(2) = 3·4 − 3 = 12 − 3 = 9.'},
+  {p:'amaani',v:'wiskundeA',t:'Differentiëren',lvl:2,q:'Gegeven f(x) = 5x² + 2x. Geef de afgeleide f′(x). (vorm ax + b)',a:'10x+2',alt:['10x + 2'],h:['Per term: 5x² → 10x, 2x → 2.'],s:'f′(x) = 10x + 2.'},
+  {p:'amaani',v:'wiskundeA',t:'Logaritmen',lvl:3,q:'Los op: 3^x = 81. Wat is x?',a:'4',h:['Schrijf 81 als macht van 3.'],s:'81 = 3⁴ → x = 4.'},
+  {p:'amaani',v:'wiskundeA',t:'Procentuele groei',lvl:2,q:'Een prijs stijgt van € 200 naar € 260. Met hoeveel procent is dat?',a:'30',u:'%',h:['(verschil ÷ oude prijs) × 100.'],s:'60 ÷ 200 × 100 = 30%.'},
+  {p:'amaani',v:'wiskundeA',t:'Kansrekening',lvl:3,q:'Je gooit met 2 dobbelstenen. Wat is de kans op twee zessen? (geef als breuk)',a:'1/36',h:['1/6 × 1/6.'],s:'1/6 × 1/6 = 1/36.'},
+  {p:'amaani',v:'wiskundeA',t:'Kansrekening',lvl:2,q:'Hoeveel mogelijke uitkomsten zijn er bij het gooien van 2 dobbelstenen (volgorde telt)?',a:'36',h:['6 × 6.'],s:'6 × 6 = 36.'},
+  {p:'amaani',v:'natuurkunde',t:'Kinematica',lvl:3,q:'Een auto versnelt van 10 naar 30 m/s in 5 s. Bereken de versnelling.',a:'4',u:'m/s²',h:['a = Δv ÷ t = (30 − 10) ÷ 5.'],s:'a = 20 ÷ 5 = 4 m/s².'},
+  {p:'amaani',v:'natuurkunde',t:'Arbeid & energie',lvl:3,q:'Bereken de kinetische energie van 1000 kg bij 20 m/s.',a:'200000',alt:['200.000','2e5'],u:'J',h:['Ek = ½ × m × v²; v² = 400.'],s:'Ek = ½ × 1000 × 400 = 200 000 J.'},
+  {p:'amaani',v:'natuurkunde',t:'Elektriciteit',lvl:3,q:'Een apparaat van 1000 W staat een half uur aan. Hoeveel kWh verbruikt het?',a:'0.5',alt:['0,5'],u:'kWh',h:['1000 W = 1 kW; 1 × 0,5 uur.'],s:'1 kW × 0,5 uur = 0,5 kWh.'},
+  {p:'amaani',v:'natuurkunde',t:'Schakelingen',lvl:3,q:'Twee weerstanden van 3 Ω en 6 Ω staan parallel. Bereken de vervangingsweerstand.',a:'2',u:'Ω',h:['1/Rv = 1/3 + 1/6 = 1/2.'],s:'1/Rv = 1/2 → Rv = 2 Ω.'},
+
+  /* ============ WASSIMA · wiskunde & natuurkunde (niveau 3 + redactie) ============ */
+  {p:'wassima',v:'wiskunde',t:'Vergelijkingen',lvl:3,q:'Los op: 5x − 3 = 2x + 9. Wat is x?',a:'4',h:['Breng de x-en naar één kant en de getallen naar de andere.'],s:'5x − 2x = 9 + 3 → 3x = 12 → x = 4.'},
+  {p:'wassima',v:'wiskunde',t:'Oppervlakte & omtrek',lvl:3,q:'Een vierkant heeft een oppervlakte van 49 cm². Hoe lang is één zijde?',a:'7',u:'cm',h:['zijde = √oppervlakte.'],s:'√49 = 7 cm.'},
+  {p:'wassima',v:'wiskunde',t:'Lineaire formules',lvl:2,q:'Een taxi rekent € 3 instaptarief plus € 2 per km. Wat kost een rit van 5 km?',a:'13',u:'€',h:['prijs = 3 + 2 × aantal km.'],s:'3 + 2 × 5 = 3 + 10 = € 13.'},
+  {p:'wassima',v:'wiskunde',t:'Pythagoras',lvl:3,q:'Een rechthoekige driehoek heeft schuine zijde 10 cm en één rechthoekszijde 6 cm. Bereken de andere rechthoekszijde.',a:'8',u:'cm',ill:{type:'pyth',a:6,b:'?',c:10},h:['b = √(c² − a²) = √(100 − 36).'],s:'b = √(100 − 36) = √64 = 8 cm.'},
+  {p:'wassima',v:'natuurkunde',t:'Dichtheid',lvl:3,q:'Een blok ijzer met dichtheid 8 g/cm³ heeft een volume van 5 cm³. Bereken de massa.',a:'40',u:'g',h:['Uit ρ = m ÷ V volgt m = ρ × V.'],s:'m = 8 × 5 = 40 g.'},
+  {p:'wassima',v:'natuurkunde',t:'Energie & vermogen',lvl:3,q:'Een lamp van 60 W brandt 5 minuten. Hoeveel energie (in J) gebruikt hij?',a:'18000',alt:['18.000'],u:'J',h:['E = P × t; 5 minuten = 300 s.'],s:'E = 60 × 300 = 18 000 J.'},
+
+  /* ============ AMINE · rekenen (toetsdomeinen) ============ */
+  {p:'amine',v:'rekenen',t:'Meten & maten',lvl:1,q:'Hoeveel cm is 2,5 meter?',a:'250',u:'cm',h:['1 m = 100 cm.'],s:'2,5 × 100 = 250 cm.'},
+  {p:'amine',v:'rekenen',t:'Meten & maten',lvl:2,q:'Hoeveel ml is 1,5 liter?',a:'1500',u:'ml',h:['1 liter = 1000 ml.'],s:'1,5 × 1000 = 1500 ml.'},
+  {p:'amine',v:'rekenen',t:'Meetkunde',lvl:1,q:'Een vierkant heeft zijden van 7 cm. Bereken de oppervlakte.',a:'49',u:'cm²',h:['oppervlakte = zijde × zijde.'],s:'7 × 7 = 49 cm².'},
+  {p:'amine',v:'rekenen',t:'Meetkunde',lvl:1,q:'Een vierkant heeft zijden van 7 cm. Bereken de omtrek.',a:'28',u:'cm',h:['omtrek = 4 × zijde.'],s:'4 × 7 = 28 cm.'},
+  {p:'amine',v:'rekenen',t:'Verhoudingen',lvl:2,q:'4 appels kosten € 2. Wat kosten 10 appels?',a:'5',u:'€',h:['Eerst de prijs per appel: 2 ÷ 4 = € 0,50.'],s:'Per appel € 0,50; 10 × 0,50 = € 5.'},
+  {p:'amine',v:'rekenen',t:'Geld & rekenen',lvl:2,q:'Je hebt € 50 en koopt iets van € 32,50. Hoeveel krijg je terug?',a:'17.50',alt:['17,50','17.5'],u:'€',h:['50 − 32,50.'],s:'50 − 32,50 = € 17,50.'},
+  {p:'amine',v:'rekenen',t:'Tafels & keer',lvl:2,q:'Reken uit: 9 × 9',a:'81',h:['Tafel van 9.'],s:'9 × 9 = 81.'},
+  {p:'amine',v:'rekenen',t:'Breuken',lvl:1,ill:{type:'breukstrook',delen:3,gevuld:1},q:'Welk deel is gekleurd? Schrijf als breuk (bijv. 1/3).',a:'1/3',alt:['0.33','0.333'],h:['1 van de 3 delen.'],s:'1 van 3 → 1/3.'},
+
+  /* ============ NEDERLANDS verdiept ============ */
+  {p:'wassima',v:'nederlands',t:'Woordsoorten',lvl:1,q:'Welke woordsoort is "mooi"?',a:'bijvoeglijk naamwoord',alt:['bn','adjectief'],h:['Het zegt iets over een zelfstandig naamwoord.'],s:'"mooi" is een bijvoeglijk naamwoord (bn).'},
+  {p:'wassima',v:'nederlands',t:'Werkwoordspelling',lvl:3,q:'Verleden tijd: gisteren ... hij netjes. (antwoorden) → hij',a:'antwoordde',h:['Stam "antwoord" eindigt op d → +de.'],s:'antwoord + de = antwoordde (dubbele d).'},
+  {p:'wassima',v:'nederlands',t:'Spreekwoorden',lvl:2,q:'Wat betekent "iets onder de knie hebben"?',a:'beheersen',alt:['kunnen','goed kunnen','het kunnen','beheers'],h:['Het gaat niet over je knie.'],s:'Het betekent: iets goed kunnen / beheersen.'},
+  {p:'wassima',v:'nederlands',t:'Spreekwoorden',lvl:2,q:'Wat betekent "in de wolken zijn"?',a:'heel blij',opties:['heel blij','heel boos','heel moe'],h:['Een fijn gevoel.'],s:'"in de wolken zijn" = heel blij zijn.'},
+  {p:'amine',v:'taal',t:'Woordenschat & spreekwoorden',lvl:2,q:'Wat betekent "in de wolken zijn"?',a:'heel blij',opties:['heel blij','heel boos','heel moe'],h:['Een fijn gevoel.'],s:'"in de wolken zijn" = heel blij zijn.'},
+  {p:'amine',v:'taal',t:'Woordenschat & spreekwoorden',lvl:2,q:'Wat betekent "een appeltje voor de dorst"?',a:'iets bewaren voor later',opties:['iets bewaren voor later','heel veel honger','snel rennen'],h:['Het gaat over sparen.'],s:'Iets bewaren/sparen voor later.'},
 ];
 SEED.forEach((e,i)=> e.id = 'seed_'+i);
 
