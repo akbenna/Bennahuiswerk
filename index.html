@@ -612,6 +612,75 @@ const SEED = [
   {p:'amine',v:'lezen',t:'Tekst begrijpen',lvl:2,q:'Lees: "Sam spaart elke week € 2. Hij spaart nu al 4 weken." Hoeveel euro heeft Sam gespaard?',a:'8',opties:['6','8','10'],u:'€',h:['€ 2 per week × 4 weken.'],s:'2 × 4 = € 8.'},
   {p:'amine',v:'lezen',t:'Tekst begrijpen',lvl:3,q:'Lees: "De film begint om 19:00 en duurt 90 minuten." Hoe laat is de film afgelopen?',a:'20:30',opties:['20:00','20:30','21:00'],h:['90 minuten = 1,5 uur na 19:00.'],s:'19:00 + 1,5 uur = 20:30.'},
   {p:'amine',v:'lezen',t:'Signaalwoorden',lvl:2,q:'"Het regende, dáárom bleven we binnen." Welk soort verband geeft "daarom" aan?',a:'gevolg',opties:['gevolg','tegenstelling','opsomming'],h:['Er volgt het resultaat.'],s:'"daarom" geeft een gevolg aan.'},
+
+  /* ============ KWALITEIT & INHOUD: ENGELS verdiept ============ */
+  // Wassima (2 havo)
+  {p:'wassima',v:'engels',t:'Woordenschat',lvl:1,q:'Vertaal naar het Engels: "gisteren".',a:'yesterday',h:['Tegenovergestelde van "tomorrow".'],s:'gisteren = yesterday.'},
+  {p:'wassima',v:'engels',t:'Woordenschat',lvl:2,q:'Vertaal naar het Engels: "omdat".',a:'because',h:['Geeft een reden.'],s:'omdat = because.'},
+  {p:'wassima',v:'engels',t:'Woordenschat',lvl:2,q:'Vertaal naar het Nederlands: "difficult".',a:'moeilijk',h:['Tegenovergestelde van "easy".'],s:'difficult = moeilijk.'},
+  {p:'wassima',v:'engels',t:'Woordenschat',lvl:2,q:'Vertaal naar het Nederlands: "beautiful".',a:'mooi',alt:['prachtig'],h:['Een compliment.'],s:'beautiful = mooi/prachtig.'},
+  {p:'wassima',v:'engels',t:'Onregelmatige werkwoorden',lvl:2,q:'Past simple van "to make".',a:'made',h:['make – ... – made.'],s:'make – made – made.'},
+  {p:'wassima',v:'engels',t:'Onregelmatige werkwoorden',lvl:2,q:'Past simple van "to take".',a:'took',h:['take – ... – taken.'],s:'take – took – taken.'},
+  {p:'wassima',v:'engels',t:'Onregelmatige werkwoorden',lvl:3,q:'Past participle van "to write".',a:'written',h:['write – wrote – ...'],s:'write – wrote – written.'},
+  {p:'wassima',v:'engels',t:'Grammatica',lvl:2,q:'Vergrotende trap van "big" (Engels).',a:'bigger',h:['Korte bijvoeglijke naamwoorden: + er (medeklinker verdubbelen).'],s:'big → bigger.'},
+  {p:'wassima',v:'engels',t:'Grammatica',lvl:3,q:'Overtreffende trap van "small" (Engels).',a:'smallest',h:['+ est.'],s:'small → smallest.'},
+  {p:'wassima',v:'engels',t:'Grammatica',lvl:2,q:'this of these? "... books" (meervoud)',a:'these',h:['Meervoud → these.'],s:'these books.'},
+  {p:'wassima',v:'engels',t:'Grammatica',lvl:1,q:'Vul in: "I ... reading a book." (to be)',a:'am',h:['I + vorm van to be.'],s:'I am reading.'},
+  // Amaani (4 vwo)
+  {p:'amaani',v:'engels',t:'Tenses',lvl:2,q:'Vul in (future): "I ... help you tomorrow." (will + ...)',a:'will help',alt:['will'],h:['will + hele werkwoord.'],s:'I will help you.'},
+  {p:'amaani',v:'engels',t:'Tenses',lvl:2,q:'Present continuous: "She is ... (to run)."',a:'running',h:['+ ing, medeklinker verdubbelen.'],s:'run → running.'},
+  {p:'amaani',v:'engels',t:'Tenses',lvl:3,q:'Past perfect: "I had ... (to finish) my work."',a:'finished',h:['had + voltooid deelwoord.'],s:'I had finished.'},
+  {p:'amaani',v:'engels',t:'Woordenschat',lvl:2,q:'Vertaal naar het Nederlands: "to achieve".',a:'bereiken',alt:['behalen'],h:['Een doel ...'],s:'to achieve = bereiken/behalen.'},
+  {p:'amaani',v:'engels',t:'Woordenschat',lvl:3,q:'Vertaal naar het Nederlands: "consequence".',a:'gevolg',alt:['consequentie'],h:['Het resultaat van iets.'],s:'consequence = gevolg.'},
+  {p:'amaani',v:'engels',t:'Onregelmatige werkwoorden',lvl:2,q:'Past simple van "to teach".',a:'taught',h:['teach – ... – taught.'],s:'teach – taught – taught.'},
+  {p:'amaani',v:'engels',t:'Onregelmatige werkwoorden',lvl:3,q:'Past participle van "to break".',a:'broken',h:['break – broke – ...'],s:'break – broke – broken.'},
+  // Amine (groep 7/8)
+  {p:'amine',v:'engels',t:'Woordenschat',lvl:1,q:'Vertaal naar het Engels: "geel".',a:'yellow',h:['Een kleur, zoals de zon.'],s:'geel = yellow.'},
+  {p:'amine',v:'engels',t:'Woordenschat',lvl:1,q:'Vertaal naar het Nederlands: "green".',a:'groen',h:['De kleur van gras.'],s:'green = groen.'},
+  {p:'amine',v:'engels',t:'Woordenschat',lvl:2,q:'Vertaal naar het Nederlands: "sister".',a:'zus',alt:['zusje'],h:['Familie.'],s:'sister = zus.'},
+  {p:'amine',v:'engels',t:'Woordenschat',lvl:1,q:'What is "rood" in English?',a:'red',opties:['red','blue','green'],h:['De kleur van een tomaat.'],s:'rood = red.'},
+  {p:'amine',v:'engels',t:'Getallen',lvl:2,q:'What number is "twelve"?',a:'12',alt:['twaalf'],h:['Tussen eleven en thirteen.'],s:'twelve = 12.'},
+  {p:'amine',v:'engels',t:'Zinnen & vragen',lvl:1,q:'Wat betekent "Good night"?',a:'goedenacht',alt:['welterusten','goede nacht'],h:['Zeg je voor het slapen.'],s:'Good night = goedenacht / welterusten.'},
+
+  /* ============ KWALITEIT & INHOUD: BIOLOGIE verdiept ============ */
+  // Wassima
+  {p:'wassima',v:'biologie',t:'Het menselijk lichaam',lvl:2,q:'Welk orgaan zuivert het bloed en maakt urine?',a:'nieren',alt:['nier','de nieren'],h:['Je hebt er twee, in je rug.'],s:'De nieren zuiveren het bloed en maken urine.'},
+  {p:'wassima',v:'biologie',t:'Het menselijk lichaam',lvl:1,q:'Hoe heet het orgaan dat je gedachten en bewegingen aanstuurt?',a:'hersenen',alt:['de hersenen','brein'],h:['Zit in je hoofd.'],s:'De hersenen sturen je lichaam aan.'},
+  {p:'wassima',v:'biologie',t:'Het menselijk lichaam',lvl:1,q:'Hoeveel zintuigen heeft de mens volgens de klassieke indeling?',a:'5',alt:['vijf'],h:['Zien, horen, ruiken, proeven, voelen.'],s:'Vijf zintuigen.'},
+  {p:'wassima',v:'biologie',t:'De cel',lvl:2,q:'Hoe heet het dunne laagje rondom de cel dat bepaalt wat erin en eruit gaat?',a:'celmembraan',alt:['membraan','het celmembraan'],h:['Een soort "huid" om de cel.'],s:'Het celmembraan regelt het transport van stoffen.'},
+  {p:'wassima',v:'biologie',t:'Planten',lvl:2,q:'Welk gas neemt een plant op uit de lucht bij fotosynthese?',a:'koolstofdioxide',alt:['co2','co₂','koolzuurgas'],h:['Het gas dat wij juist uitademen.'],s:'Planten nemen koolstofdioxide (CO₂) op.'},
+  {p:'wassima',v:'biologie',t:'Voortplanting',lvl:1,q:'Hoe heet de vrouwelijke geslachtscel?',a:'eicel',alt:['de eicel'],h:['Wordt bevrucht door een zaadcel.'],s:'De vrouwelijke geslachtscel is de eicel.'},
+  // Amaani
+  {p:'amaani',v:'biologie',t:'Stofwisseling',lvl:2,q:'Bij welk proces in de cel komt energie vrij uit glucose en zuurstof?',a:'verbranding',alt:['celademhaling','dissimilatie'],h:['Het "verbranden" van voedsel.'],s:'Bij de verbranding (celademhaling) komt energie vrij.'},
+  {p:'amaani',v:'biologie',t:'Stofwisseling',lvl:2,q:'Welk orgaan maakt gal en ontgift het bloed?',a:'lever',alt:['de lever'],h:['Het grootste inwendige orgaan.'],s:'De lever maakt gal en ontgift het bloed.'},
+  {p:'amaani',v:'biologie',t:'Cel & DNA',lvl:3,q:'Hoe heet de bouwsteen waaruit eiwitten zijn opgebouwd?',a:'aminozuur',alt:['aminozuren'],h:['Eiwit = ketens van deze bouwstenen.'],s:'Eiwitten bestaan uit aminozuren.'},
+  {p:'amaani',v:'biologie',t:'Erfelijkheid',lvl:2,q:'Hoeveel chromosomen heeft een gewone menselijke lichaamscel?',a:'46',h:['23 paren.'],s:'46 chromosomen (23 paren).'},
+  {p:'amaani',v:'biologie',t:'Erfelijkheid',lvl:2,q:'Welke geslachtschromosomen heeft een man? (XX of XY)',a:'XY',alt:['xy'],h:['Een vrouw heeft XX.'],s:'Een man heeft XY, een vrouw XX.'},
+
+  /* ============ KWALITEIT & INHOUD: AARDRIJKSKUNDE / TOPOGRAFIE ============ */
+  // Wassima
+  {p:'wassima',v:'aardrijkskunde',t:'Topografie',lvl:1,q:'Wat is de hoofdstad van België?',a:'Brussel',alt:['brussels'],h:['Hoofdstad van de EU.'],s:'De hoofdstad van België is Brussel.'},
+  {p:'wassima',v:'aardrijkskunde',t:'Topografie',lvl:1,q:'Wat is de hoofdstad van Italië?',a:'Rome',h:['Stad met het Colosseum.'],s:'De hoofdstad van Italië is Rome.'},
+  {p:'wassima',v:'aardrijkskunde',t:'Topografie',lvl:2,q:'Wat is de hoofdstad van Spanje?',a:'Madrid',h:['In het midden van het land.'],s:'De hoofdstad van Spanje is Madrid.'},
+  {p:'wassima',v:'aardrijkskunde',t:'Topografie',lvl:2,q:'Hoeveel provincies heeft Nederland?',a:'12',alt:['twaalf'],h:['Van Groningen tot Limburg.'],s:'Nederland heeft 12 provincies.'},
+  {p:'wassima',v:'aardrijkskunde',t:'Topografie',lvl:2,q:'Welk land grenst NIET aan Nederland?',a:'Frankrijk',opties:['Duitsland','België','Frankrijk'],h:['Nederland grenst aan twee landen.'],s:'Nederland grenst aan Duitsland en België, niet aan Frankrijk.'},
+  // Amaani
+  {p:'amaani',v:'aardrijkskunde',t:'Topografie',lvl:2,q:'Wat is de hoofdstad van de Verenigde Staten?',a:'Washington',alt:['washington dc','washington d.c.'],h:['Niet New York.'],s:'De hoofdstad is Washington D.C.'},
+  {p:'amaani',v:'aardrijkskunde',t:'Topografie',lvl:1,q:'Op welk continent ligt Egypte?',a:'Afrika',h:['Land met de piramides.'],s:'Egypte ligt in Afrika.'},
+  {p:'amaani',v:'aardrijkskunde',t:'Topografie',lvl:2,q:'Welke oceaan ligt tussen Europa en Amerika?',a:'Atlantische Oceaan',alt:['atlantische oceaan','atlantisch','atlantische'],h:['Genoemd naar Atlas.'],s:'De Atlantische Oceaan.'},
+  {p:'amaani',v:'aardrijkskunde',t:'Aarde & klimaat',lvl:1,q:'Hoe heet de denkbeeldige lijn rond de aarde op 0° breedte?',a:'evenaar',alt:['de evenaar','equator'],h:['Verdeelt de aarde in noord en zuid.'],s:'De evenaar (equator) ligt op 0° breedte.'},
+
+  /* ============ KWALITEIT: WASSIMA exact (niveau 3 + concept) ============ */
+  {p:'wassima',v:'wiskunde',t:'Procenten',lvl:3,q:'Een jas kost na 20% korting € 48. Wat was de oude prijs?',a:'60',u:'€',h:['€ 48 is 80% van de oude prijs.','Oude prijs = 48 ÷ 0,80.'],s:'48 ÷ 0,80 = € 60.'},
+  {p:'wassima',v:'wiskunde',t:'Statistiek',lvl:1,q:'Welke maat geeft het middelste getal van een rij?',a:'mediaan',opties:['gemiddelde','mediaan','modus'],h:['Eerst op volgorde zetten.'],s:'De mediaan is het middelste getal.'},
+  {p:'wassima',v:'natuurkunde',t:'Snelheid',lvl:3,q:'Een trein rijdt 2 uur lang met 120 km/u. Hoeveel km legt hij af?',a:'240',u:'km',h:['afstand = snelheid × tijd.'],s:'120 × 2 = 240 km.'},
+  {p:'wassima',v:'natuurkunde',t:'Kracht & zwaartekracht',lvl:1,q:'In welke eenheid meet je een kracht?',a:'newton',opties:['newton','watt','joule'],h:['Genoemd naar een beroemde natuurkundige.'],s:'Kracht meet je in newton (N).'},
+
+  /* ============ KWALITEIT: AMINE top-up ============ */
+  {p:'amine',v:'rekenen',t:'Delen',lvl:3,q:'Hoeveel is 26 ÷ 4? Geef het hele getal (de rest laat je weg).',a:'6',h:['4 × 6 = 24; je houdt 2 over.'],s:'26 ÷ 4 = 6 rest 2 → het hele getal is 6.'},
+  {p:'amine',v:'rekenen',t:'Kommagetallen',lvl:1,q:'Reken uit: 2,5 + 1,5',a:'4',h:['Tel de halven samen.'],s:'2,5 + 1,5 = 4.'},
+  {p:'amine',v:'taal',t:'Spelling',lvl:2,q:'Wat is goed: "hij wordt" of "hij word"?',a:'hij wordt',alt:['wordt'],h:['Bij "hij": stam + t.'],s:'stam word + t = "hij wordt".'},
+  {p:'amine',v:'taal',t:'Leestekens & hoofdletters',lvl:1,q:'Eindigt een gewone mededeling (geen vraag) met een punt of een vraagteken?',a:'punt',alt:['een punt','.'],h:['Een vraag krijgt een vraagteken.'],s:'Een mededelende zin eindigt met een punt.'},
 ];
 SEED.forEach((e,i)=> e.id = 'seed_'+i);
 
