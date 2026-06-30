@@ -75,6 +75,12 @@
   }
   .answerrow input:focus{border-color:var(--primary);}
   .unit{display:flex;align-items:center;padding:0 14px;background:#eef4e7;border-radius:14px;font-weight:700;color:var(--primary-dark);}
+  /* meerkeuze */
+  .optiegrid{display:flex;flex-direction:column;gap:9px;margin-top:16px;}
+  .optiebtn{text-align:left;padding:13px 16px;border:2px solid var(--line);border-radius:13px;background:#fff;font-size:17px;font-weight:500;transition:transform .06s,border-color .15s;}
+  .optiebtn:active{transform:scale(.99);}
+  .optiebtn.sel{border-color:var(--primary);background:#eef4e7;font-weight:700;}
+  .optiebtn:disabled{opacity:.6;cursor:not-allowed;}
   .hint{background:#fff7e8;border:1px solid #f0d9a8;border-left:4px solid var(--gold);border-radius:12px;padding:12px 14px;margin-top:12px;font-size:15px;}
   .hint b{color:#a9741a;}
   .feedback{border-radius:12px;padding:14px 16px;margin-top:14px;font-weight:600;font-size:16px;}
@@ -578,6 +584,21 @@ const SEED = [
   {p:'amaani',v:'economie',t:'Geld & rekenen',lvl:2,q:'Een product kost € 80 exclusief 21% btw. Hoeveel btw komt erbij?',a:'16.80',alt:['16,80','16.8'],u:'€',h:['21% van 80.'],s:'0,21 × 80 = € 16,80.'},
   {p:'amaani',v:'economie',t:'Geld & rekenen',lvl:2,q:'Je zet € 200 op de bank tegen 5% rente per jaar. Hoeveel rente krijg je na 1 jaar?',a:'10',u:'€',h:['5% van 200.'],s:'0,05 × 200 = € 10.'},
   {p:'amaani',v:'economie',t:'Begrippen',lvl:2,q:'Hoe heet een aanhoudende stijging van het algemene prijspeil?',a:'inflatie',alt:['de inflatie'],h:['Geld wordt minder waard.'],s:'Dat heet inflatie.'},
+
+  /* ============ MEERKEUZE & KLOK (Amine) ============ */
+  {p:'amine',v:'rekenen',t:'Tijd & klok',lvl:1,ill:{type:'klok',uur:3,min:0},q:'Hoe laat is het op de klok? (kies)',a:'3:00',opties:['3:00','12:15','6:00'],h:['De korte wijzer staat op de 3, de lange op de 12.'],s:'Korte wijzer op 3, lange op 12 → 3:00 (3 uur).'},
+  {p:'amine',v:'rekenen',t:'Tijd & klok',lvl:2,ill:{type:'klok',uur:6,min:30},q:'Hoe laat is het op de klok? (kies)',a:'6:30',opties:['6:30','7:30','6:00'],h:['De lange wijzer op de 6 betekent "half".','De korte wijzer staat tussen 6 en 7.'],s:'Lange wijzer op 6 (= half), korte net voorbij 6 → 6:30 (half 7).'},
+  {p:'amine',v:'rekenen',t:'Tijd & klok',lvl:2,ill:{type:'klok',uur:9,min:15},q:'Hoe laat is het op de klok? (kies)',a:'9:15',opties:['9:15','3:45','9:00'],h:['De lange wijzer op de 3 betekent "kwart over".'],s:'Korte wijzer net voorbij 9, lange op 3 → 9:15 (kwart over 9).'},
+  {p:'amine',v:'lezen',t:'Tekst begrijpen',lvl:2,q:'Lees: "Noor gaat zwemmen op woensdag en vrijdag." Op hoeveel dagen per week zwemt Noor?',a:'2',opties:['1','2','3'],h:['Tel de genoemde dagen.'],s:'Woensdag en vrijdag = 2 dagen.'},
+  {p:'amine',v:'lezen',t:'Tekst begrijpen',lvl:2,q:'Lees: "De bibliotheek is dicht op maandag. De andere dagen is hij open." Is de bibliotheek op dinsdag open?',a:'ja',opties:['ja','nee','soms'],h:['Alleen maandag dicht.'],s:'Dinsdag hoort bij "de andere dagen" → open. Antwoord: ja.'},
+  {p:'amine',v:'lezen',t:'Hoofdgedachte',lvl:2,q:'Een tekst beschrijft hoe bijen honing maken en waarom ze belangrijk zijn. Waar gaat de tekst vooral over?',a:'bijen',opties:['bijen','de zee','voetbal'],h:['Wat is het onderwerp van álle zinnen?'],s:'De tekst gaat over bijen.'},
+  {p:'amine',v:'taal',t:'Woordsoorten',lvl:1,q:'Welk woord is een werkwoord?',a:'springen',opties:['springen','tafel','blauw'],h:['Een werkwoord is iets dat je doet.'],s:'"springen" is een werkwoord; "tafel" een zelfstandig naamwoord; "blauw" een bijvoeglijk naamwoord.'},
+  {p:'amine',v:'engels',t:'Woordenschat',lvl:1,q:'Wat betekent "apple" in het Nederlands?',a:'appel',opties:['appel','banaan','peer'],h:['Klinkt bijna hetzelfde.'],s:'apple = appel.'},
+
+  /* ============ MEERKEUZE (concept, overige) ============ */
+  {p:'wassima',v:'biologie',t:'Het menselijk lichaam',lvl:1,q:'Welk orgaan pompt het bloed rond?',a:'hart',opties:['hart','longen','maag'],h:['Het klopt in je borst.'],s:'Het hart pompt bloed rond.'},
+  {p:'amaani',v:'scheikunde',t:'Zuur & base',lvl:1,q:'Een oplossing met pH 2 is...',a:'zuur',opties:['zuur','neutraal','basisch'],h:['Lager dan 7.'],s:'pH 2 < 7 → zuur.'},
+  {p:'amaani',v:'natuurkunde',t:'Golven & trillingen',lvl:1,q:'In welke eenheid meet je frequentie?',a:'hertz',opties:['hertz','meter','newton'],h:['Genoemd naar een natuurkundige.'],s:'Frequentie meet je in hertz (Hz).'},
 ];
 SEED.forEach((e,i)=> e.id = 'seed_'+i);
 
@@ -863,7 +884,7 @@ function checkAnswer(ex,val){
   for(const c of cand){
     const nc=norm(c);
     if(nc===nv) return true;
-    if(nc.indexOf('/')>=0 || nv.indexOf('/')>=0) continue;   // breuken: alleen exacte match, geen getalsvergelijking
+    if(/[\/:]/.test(nc) || /[\/:]/.test(nv)) continue;   // breuken (3/4) en tijden (3:00): alleen exacte match
     const numC=parseFloat(nc);
     if(!isNaN(numC)&&!isNaN(numV)&&Math.abs(numC-numV)<=Math.max(0.01,Math.abs(numC)*0.005)) return true;
   }
@@ -1293,13 +1314,23 @@ function Practice({profile,vak,topic,allEx,onBack,onResult,prog,onTopic}){
       <div className="card">
         {inst.ill && <div style={{textAlign:'center',marginBottom:10}}><Figure ill={inst.ill}/></div>}
         <div className="qbox">{inst.q}</div>
-        <div className="answerrow">
-          <input ref={inputRef} value={val} placeholder="jouw antwoord"
-            onChange={e=>{setVal(e.target.value); if(!isToets && state==='fout') setState('open');}}
-            onKeyDown={e=>{if(e.key==='Enter') controleer();}}
-            disabled={state==='goed' || (isToets && state!=='open')} inputMode="text"/>
-          {inst.u && <div className="unit">{inst.u}</div>}
-        </div>
+        {inst.opties ? (
+          <div className="optiegrid">
+            {inst.opties.map((opt,i)=>{
+              const locked = state==='goed' || (isToets && state!=='open');
+              return (<button key={i} className={'optiebtn'+(norm(val)===norm(opt)?' sel':'')} disabled={locked}
+                onClick={()=>{ if(!locked){ setVal(opt); if(!isToets && state==='fout') setState('open'); } }}>{opt}</button>);
+            })}
+          </div>
+        ) : (
+          <div className="answerrow">
+            <input ref={inputRef} value={val} placeholder="jouw antwoord"
+              onChange={e=>{setVal(e.target.value); if(!isToets && state==='fout') setState('open');}}
+              onKeyDown={e=>{if(e.key==='Enter') controleer();}}
+              disabled={state==='goed' || (isToets && state!=='open')} inputMode="text"/>
+            {inst.u && <div className="unit">{inst.u}</div>}
+          </div>
+        )}
 
         {state==='goed' && <div className="feedback ok celebrate">{isToets?'✅ Goed!':'✅ Goed gedaan! +'+earned+' punten'}</div>}
         {state==='fout' && isToets && <div className="feedback no">❌ Helaas. Het goede antwoord is: <b>{inst.a} {inst.u}</b></div>}
@@ -1700,6 +1731,20 @@ function Figure({ill}){
             <text x={x(i)} y="50" fontSize="11" textAnchor="middle" fill={i===0?'#222':M}>{i}</text>
           </g>))}
           {ill.punt!==undefined && <circle cx={x(ill.punt)} cy="28" r="5.5" fill={A}/>}
+        </svg>);
+    }
+    case 'klok': {
+      const u=((ill.uur||0)%12), m=ill.min||0, cx=70, cy=70;
+      const ma=(m/60)*2*Math.PI - Math.PI/2, ha=((u+m/60)/12)*2*Math.PI - Math.PI/2;
+      const hx=cx+Math.cos(ha)*30, hy=cy+Math.sin(ha)*30, mx=cx+Math.cos(ma)*46, my=cy+Math.sin(ma)*46;
+      const ticks=[]; for(let i=0;i<12;i++){const a=i/12*2*Math.PI-Math.PI/2; ticks.push([cx+Math.cos(a)*52,cy+Math.sin(a)*52,cx+Math.cos(a)*58,cy+Math.sin(a)*58]);}
+      return (
+        <svg width="140" height="140" viewBox="0 0 140 140" role="img" aria-label="klok">
+          <circle cx={cx} cy={cy} r="60" fill="#fff" stroke={G} strokeWidth="3"/>
+          {ticks.map((t,i)=><line key={i} x1={t[0]} y1={t[1]} x2={t[2]} y2={t[3]} stroke={M} strokeWidth="2"/>)}
+          <line x1={cx} y1={cy} x2={hx} y2={hy} stroke="#222" strokeWidth="4.5" strokeLinecap="round"/>
+          <line x1={cx} y1={cy} x2={mx} y2={my} stroke={A} strokeWidth="3" strokeLinecap="round"/>
+          <circle cx={cx} cy={cy} r="3.5" fill="#222"/>
         </svg>);
     }
     case 'breukstrook': {
