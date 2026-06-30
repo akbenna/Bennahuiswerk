@@ -147,6 +147,9 @@ const TOPICICON = {
   'Optellen & aftrekken':'➕','Tafels & keer':'✖️','Delen':'➗','Kommagetallen':'🔢','Meten & maten':'📏','Meetkunde':'⬛',
   'Grafieken & tabellen':'📊','Tijd & klok':'🕐','Redactiesommen':'🧩','Zinsontleden':'🧩','Woordenschat & spreekwoorden':'💬',
   'Leestekens & hoofdletters':'🔡','Tekst begrijpen':'📖','Signaalwoorden':'🔗','Alfabetiseren':'🔠','Kaart & schaal':'🗺️','Grafieken & tabellen lezen':'📊',
+  'Verhoudingen':'⚖️','Afronden & schatten':'🎯','Synoniemen & antoniemen':'🔁','Hoofdgedachte':'💡','Verwijswoorden':'🔗','Woordenboek & informatie':'📚','Roosters & tabellen':'🗓️','Zinnen & vragen':'💬',
+  'Atoombouw':'⚛️','Reactievergelijkingen':'⚗️','Rekenen (mol)':'🧮',
+  'Tekstverbanden':'🔗','Tenses':'⏱️','Staatsvormen':'🏛️','Werkwoorden (être/avoir)':'🇫🇷',
 };
 
 /* ============================ OEFENINGEN (startvoorraad) ============================ */
@@ -474,6 +477,107 @@ const SEED = [
   {p:'amine',v:'engels',t:'Woordenschat',lvl:2,q:'Vertaal naar het Engels: "school".',a:'school',h:['Lijkt op het Nederlands.'],s:'school = school.'},
   {p:'amine',v:'engels',t:'Getallen',lvl:1,q:'Welk getal is "seven"?',a:'7',alt:['zeven'],h:['Tussen six en eight.'],s:'seven = 7.'},
   {p:'amine',v:'engels',t:'Getallen',lvl:1,q:'Hoe schrijf je "5" in het Engels?',a:'five',h:['Klinkt als "faiv".'],s:'5 = five.'},
+
+  /* ============ AMINE · uitbreiding (compleet + meer oefenstof) ============ */
+  {p:'amine',v:'rekenen',t:'Verhoudingen',lvl:1,q:'2 pennen kosten samen € 3. Wat kosten 4 pennen?',a:'6',u:'€',h:['4 pennen = 2× zoveel → 2× de prijs.'],s:'4 = 2 × 2 pennen → 2 × € 3 = € 6.'},
+  {p:'amine',v:'rekenen',t:'Verhoudingen',lvl:2,q:'In een recept voor 2 personen heb je 4 eieren nodig. Hoeveel eieren voor 6 personen?',a:'12',h:['6 personen = 3× zoveel als 2.'],s:'6 ÷ 2 = 3, en 4 × 3 = 12 eieren.'},
+  {p:'amine',v:'rekenen',t:'Verhoudingen',lvl:3,q:'De verhouding jongens : meisjes is 2 : 3. Er zijn 8 jongens. Hoeveel meisjes?',a:'12',h:['2 staat voor 8, dus 1 deel = 4. Meisjes = 3 delen.'],s:'8 ÷ 2 = 4 per deel; meisjes = 3 × 4 = 12.'},
+  {p:'amine',v:'rekenen',t:'Afronden & schatten',lvl:1,q:'Rond af op tientallen: 47',a:'50',h:['7 is 5 of meer → naar boven.'],s:'47 → 50 (afgerond op tientallen).'},
+  {p:'amine',v:'rekenen',t:'Afronden & schatten',lvl:2,q:'Rond af op honderdtallen: 320',a:'300',h:['2 is minder dan 5 → naar beneden.'],s:'320 → 300.'},
+  {p:'amine',v:'rekenen',t:'Afronden & schatten',lvl:2,q:'Schat: 19 × 21 ligt het dichtst bij 4, 40, 400 of 4000?',a:'400',h:['Rond af: ongeveer 20 × 20.'],s:'≈ 20 × 20 = 400.'},
+  {p:'amine',v:'taal',t:'Synoniemen & antoniemen',lvl:1,q:'Geef een synoniem (woord met dezelfde betekenis) van "blij".',a:'vrolijk',alt:['gelukkig','tevreden','opgewekt'],h:['Hoe voel je je op je verjaardag?'],s:'Synoniem van blij: vrolijk / gelukkig.'},
+  {p:'amine',v:'taal',t:'Synoniemen & antoniemen',lvl:1,q:'Wat is het tegenovergestelde (antoniem) van "groot"?',a:'klein',h:['Het andere uiterste.'],s:'Tegenovergestelde van groot: klein.'},
+  {p:'amine',v:'taal',t:'Synoniemen & antoniemen',lvl:2,q:'Wat is het tegenovergestelde van "snel"?',a:'langzaam',alt:['traag'],h:['Een slak is...'],s:'Tegenovergestelde van snel: langzaam.'},
+  {p:'amine',v:'lezen',t:'Tekst begrijpen',lvl:1,q:'Lees: "Tom heeft 3 katten en 2 honden." Hoeveel huisdieren heeft Tom in totaal?',a:'5',h:['Tel de katten en honden op.'],s:'3 + 2 = 5 huisdieren.'},
+  {p:'amine',v:'lezen',t:'Tekst begrijpen',lvl:3,q:'Lees: "De trein vertrekt om 8:15 en doet er 45 minuten over." Hoe laat komt de trein aan? (bijv. 9:00)',a:'9:00',alt:['09:00','9.00'],h:['8:15 + 45 minuten.'],s:'8:15 + 45 min = 9:00.'},
+  {p:'amine',v:'lezen',t:'Hoofdgedachte',lvl:2,q:'Een tekst geeft tips over groente, fruit en bewegen. Waar gaat de tekst vóóral over? (gezond leven / vakantie) Geef twee woorden.',a:'gezond leven',alt:['gezond eten','gezondheid'],h:['Wat hebben alle tips gemeen?'],s:'De hoofdgedachte: gezond leven.'},
+  {p:'amine',v:'lezen',t:'Verwijswoorden',lvl:2,q:'Lees: "Lisa pakt haar jas. Die is blauw." Waar verwijst "die" naar?',a:'jas',alt:['de jas','haar jas'],h:['Welk ding is blauw?'],s:'"Die" verwijst naar de jas.'},
+  {p:'amine',v:'studievaardigheden',t:'Woordenboek & informatie',lvl:1,q:'In welk naslagwerk zoek je de betekenis van een woord op?',a:'woordenboek',alt:['het woordenboek','een woordenboek'],h:['Boek vol woorden op alfabet.'],s:'In een woordenboek staan woordbetekenissen.'},
+  {p:'amine',v:'studievaardigheden',t:'Woordenboek & informatie',lvl:2,q:'Waar in een boek zie je op welke bladzijde een hoofdstuk begint?',a:'inhoudsopgave',alt:['de inhoudsopgave','inhoud'],h:['Vooraan in het boek.'],s:'In de inhoudsopgave staan de hoofdstukken met paginanummers.'},
+  {p:'amine',v:'studievaardigheden',t:'Roosters & tabellen',lvl:2,q:'Een bus vertrekt elk half uur. De vorige ging om 9:00. Hoe laat vertrekt de volgende?',a:'9:30',alt:['09:30','9.30'],h:['Half uur = 30 minuten erbij.'],s:'9:00 + 30 min = 9:30.'},
+  {p:'amine',v:'engels',t:'Woordenschat',lvl:1,q:'Vertaal naar het Nederlands: "blue".',a:'blauw',h:['Een kleur, zoals de lucht.'],s:'blue = blauw.'},
+  {p:'amine',v:'engels',t:'Woordenschat',lvl:1,q:'Vertaal naar het Engels: "hond".',a:'dog',h:['Blaft.'],s:'hond = dog.'},
+  {p:'amine',v:'engels',t:'Woordenschat',lvl:2,q:'Vertaal naar het Engels: "maandag".',a:'monday',h:['De eerste schooldag van de week.'],s:'maandag = Monday.'},
+  {p:'amine',v:'engels',t:'Zinnen & vragen',lvl:1,q:'Vertaal naar het Nederlands: "name".',a:'naam',h:['"What is your name?"'],s:'name = naam.'},
+  {p:'amine',v:'engels',t:'Zinnen & vragen',lvl:2,q:'Iemand zegt: "I am ten years old." Hoe oud is hij? (getal)',a:'10',alt:['tien'],h:['ten = ...'],s:'ten = 10 jaar oud.'},
+
+  /* ============ AMAANI · SCHEIKUNDE (eind 4 vwo) ============ */
+  {p:'amaani',v:'scheikunde',t:'Atoombouw',lvl:1,q:'Hoe heten de positief geladen deeltjes in de kern van een atoom?',a:'protonen',alt:['proton','het proton'],h:['Positief geladen kerndeeltjes.'],s:'In de kern zitten protonen (+) en neutronen (neutraal).'},
+  {p:'amaani',v:'scheikunde',t:'Atoombouw',lvl:1,q:'Hoe heten de negatief geladen deeltjes die om de kern bewegen?',a:'elektronen',alt:['elektron','electronen'],h:['Negatief geladen, buiten de kern.'],s:'Elektronen (−) bewegen om de kern.'},
+  {p:'amaani',v:'scheikunde',t:'Atoombouw',lvl:2,q:'Het atoomnummer is gelijk aan het aantal ... in de kern.',a:'protonen',alt:['proton'],h:['Het deeltje dat het element bepaalt.'],s:'Atoomnummer = aantal protonen.'},
+  {p:'amaani',v:'scheikunde',t:'Atoombouw',lvl:2,q:'Koolstof heeft atoomnummer 6. Hoeveel protonen heeft een koolstofatoom?',a:'6',h:['Atoomnummer = aantal protonen.'],s:'Atoomnummer 6 → 6 protonen.'},
+  {p:'amaani',v:'scheikunde',t:'Symbolen & atomen',lvl:1,q:'Wat is het symbool van zuurstof?',a:'O',h:['Eerste letter van oxygenium.'],s:'Zuurstof = O.'},
+  {p:'amaani',v:'scheikunde',t:'Symbolen & atomen',lvl:1,q:'Wat is het symbool van waterstof?',a:'H',h:['Eerste letter van hydrogenium.'],s:'Waterstof = H.'},
+  {p:'amaani',v:'scheikunde',t:'Symbolen & atomen',lvl:1,q:'Wat is het symbool van koolstof?',a:'C',h:['Eerste letter van carbon.'],s:'Koolstof = C.'},
+  {p:'amaani',v:'scheikunde',t:'Symbolen & atomen',lvl:2,q:'Wat is het symbool van natrium?',a:'Na',h:['Twee letters, van het Latijnse natrium.'],s:'Natrium = Na.'},
+  {p:'amaani',v:'scheikunde',t:'Symbolen & atomen',lvl:2,q:'Wat is het symbool van ijzer?',a:'Fe',h:['Van het Latijnse ferrum.'],s:'IJzer = Fe.'},
+  {p:'amaani',v:'scheikunde',t:'Moleculen',lvl:1,q:'Wat is de chemische formule van water?',a:'H2O',alt:['h₂o'],h:['Twee waterstof, één zuurstof.'],s:'Water = H₂O.'},
+  {p:'amaani',v:'scheikunde',t:'Moleculen',lvl:1,q:'Wat is de formule van koolstofdioxide?',a:'CO2',alt:['co₂'],h:['Eén koolstof, twee zuurstof.'],s:'Koolstofdioxide = CO₂.'},
+  {p:'amaani',v:'scheikunde',t:'Moleculen',lvl:2,q:'Hoeveel waterstofatomen zitten er in één molecuul H2O?',a:'2',h:['Het kleine getal achter de H.'],s:'H₂O bevat 2 waterstofatomen.'},
+  {p:'amaani',v:'scheikunde',t:'Moleculen',lvl:2,q:'Hoeveel atomen zitten er in totaal in één molecuul CO2?',a:'3',h:['1 koolstof + 2 zuurstof.'],s:'CO₂: 1 C + 2 O = 3 atomen.'},
+  {p:'amaani',v:'scheikunde',t:'Reactievergelijkingen',lvl:2,q:'Gegeven de reactie 2 H2 + O2 → 2 H2O. Hoeveel moleculen water ontstaan er?',a:'2',h:['Kijk naar het getal vóór H2O.'],s:'De coëfficiënt vóór H₂O is 2 → 2 moleculen water.'},
+  {p:'amaani',v:'scheikunde',t:'Reactievergelijkingen',lvl:2,q:'Bij de verbranding van koolstof: C + O2 → ... Wat ontstaat er? (formule)',a:'CO2',alt:['co₂'],h:['Koolstof + zuurstof.'],s:'C + O₂ → CO₂.'},
+  {p:'amaani',v:'scheikunde',t:'Reactievergelijkingen',lvl:3,q:'In 2 H2 + O2 → 2 H2O: hoeveel zuurstofatomen zitten links (in O2)?',a:'2',h:['O₂ bevat 2 zuurstofatomen.'],s:'O₂ = 2 zuurstofatomen.'},
+  {p:'amaani',v:'scheikunde',t:'Zuur & base',lvl:1,q:'Wat is de pH van een neutrale oplossing, zoals zuiver water?',a:'7',h:['Precies tussen zuur en basisch.'],s:'Neutraal = pH 7.'},
+  {p:'amaani',v:'scheikunde',t:'Zuur & base',lvl:2,q:'Een oplossing met pH 3 is zuur, neutraal of basisch?',a:'zuur',h:['Lager dan 7.'],s:'pH < 7 → zuur.'},
+  {p:'amaani',v:'scheikunde',t:'Zuur & base',lvl:2,q:'Een oplossing met pH 10 is zuur, neutraal of basisch?',a:'basisch',alt:['base'],h:['Hoger dan 7.'],s:'pH > 7 → basisch.'},
+  {p:'amaani',v:'scheikunde',t:'Rekenen (mol)',lvl:2,q:'1 mol bevat ongeveer 6 × 10^? deeltjes (getal van Avogadro). Geef de exponent.',a:'23',h:['Avogadro: 6,02 × 10²³.'],s:'Het getal van Avogadro is 6,02 × 10²³.'},
+  {p:'amaani',v:'scheikunde',t:'Rekenen (mol)',lvl:2,q:'De molaire massa van water is 18 g/mol. Hoeveel gram is 2 mol water?',a:'36',u:'g',h:['massa = aantal mol × molaire massa.'],s:'2 × 18 = 36 g.'},
+  {p:'amaani',v:'scheikunde',t:'Rekenen (mol)',lvl:3,q:'Hoeveel mol is 36 g water? (molaire massa 18 g/mol)',a:'2',u:'mol',h:['mol = massa ÷ molaire massa.'],s:'36 ÷ 18 = 2 mol.'},
+
+  /* ============ AMAANI · NEDERLANDS (4 vwo) ============ */
+  {p:'amaani',v:'nederlands',t:'Argumentatie',lvl:1,q:'Hoe heet een reden die een standpunt ondersteunt?',a:'argument',alt:['een argument'],h:['Je gebruikt het om iemand te overtuigen.'],s:'Een argument ondersteunt een standpunt.'},
+  {p:'amaani',v:'nederlands',t:'Argumentatie',lvl:2,q:'Hoe heet een denkfout / zwakke redenering in een betoog?',a:'drogreden',alt:['drogredenering','een drogreden'],h:['"Droge" reden die niet klopt.'],s:'Een drogreden lijkt logisch maar klopt niet.'},
+  {p:'amaani',v:'nederlands',t:'Argumentatie',lvl:1,q:'Een tekst die de lezer wil overtuigen, is een ...?',a:'betoog',alt:['een betoog'],h:['Tekstsoort met een mening.'],s:'Een betoog wil overtuigen.'},
+  {p:'amaani',v:'nederlands',t:'Tekstverbanden',lvl:2,q:'Welk verband geeft het woord "doordat" aan?',a:'oorzaak-gevolg',alt:['oorzaak','gevolg','oorzakelijk'],h:['Er gebeurt iets dóór iets anders.'],s:'"doordat" geeft een oorzaak-gevolgverband aan.'},
+  {p:'amaani',v:'nederlands',t:'Tekstverbanden',lvl:2,q:'Welk verband geeft het woord "hoewel" aan?',a:'tegenstelling',alt:['toegeving'],h:['Er volgt iets onverwachts/tegengestelds.'],s:'"hoewel" geeft een tegenstelling (toegeving) aan.'},
+  {p:'amaani',v:'nederlands',t:'Stijlfiguren',lvl:2,q:'Hoe heet de stijlfiguur die overdrijft (bijv. "ik heb je duizend keer gebeld")?',a:'hyperbool',alt:['overdrijving'],h:['Bewuste overdrijving.'],s:'Een hyperbool is een overdrijving.'},
+  {p:'amaani',v:'nederlands',t:'Stijlfiguren',lvl:2,q:'"Het zwarte goud" voor olie is een voorbeeld van een ...?',a:'metafoor',alt:['beeldspraak'],h:['Een beeld zonder "als".'],s:'Dat is een metafoor (beeldspraak).'},
+
+  /* ============ AMAANI · ENGELS (4 vwo) ============ */
+  {p:'amaani',v:'engels',t:'Tenses',lvl:2,q:'Present perfect van "to see": I ...',a:'have seen',h:['have + voltooid deelwoord.'],s:'see – saw – seen → I have seen.'},
+  {p:'amaani',v:'engels',t:'Tenses',lvl:2,q:'Past simple van "to buy":',a:'bought',h:['Onregelmatig.'],s:'buy – bought – bought.'},
+  {p:'amaani',v:'engels',t:'Tenses',lvl:3,q:'Past simple van "to think":',a:'thought',h:['Onregelmatig.'],s:'think – thought – thought.'},
+  {p:'amaani',v:'engels',t:'Woordenschat',lvl:2,q:'Vertaal naar het Nederlands: "although".',a:'hoewel',h:['Tegenstelling-woord.'],s:'although = hoewel.'},
+  {p:'amaani',v:'engels',t:'Woordenschat',lvl:2,q:'Vertaal naar het Nederlands: "environment".',a:'milieu',alt:['omgeving'],h:['Denk aan natuur/klimaat.'],s:'environment = milieu/omgeving.'},
+  {p:'amaani',v:'engels',t:'Woordenschat',lvl:3,q:'Vertaal naar het Nederlands: "to increase".',a:'toenemen',alt:['stijgen','vergroten'],h:['Meer worden.'],s:'to increase = toenemen/stijgen.'},
+
+  /* ============ AMAANI · FRANS (4 vwo) ============ */
+  {p:'amaani',v:'frans',t:'Woordenschat',lvl:1,q:'Vertaal naar het Nederlands: "toujours".',a:'altijd',h:['Frequentie-woord.'],s:'toujours = altijd.'},
+  {p:'amaani',v:'frans',t:'Woordenschat',lvl:2,q:'Vertaal naar het Nederlands: "parce que".',a:'omdat',alt:['want'],h:['Geeft een reden.'],s:'parce que = omdat.'},
+  {p:'amaani',v:'frans',t:'Woordenschat',lvl:1,q:'Vertaal naar het Nederlands: "la ville".',a:'de stad',alt:['stad'],h:['Een grote plaats.'],s:'la ville = de stad.'},
+  {p:'amaani',v:'frans',t:'Werkwoorden (être/avoir)',lvl:1,q:'Wat betekent het Franse werkwoord "avoir"?',a:'hebben',h:['"j’ai" = ik heb.'],s:'avoir = hebben.'},
+  {p:'amaani',v:'frans',t:'Werkwoorden (être/avoir)',lvl:1,q:'Wat betekent het Franse werkwoord "être"?',a:'zijn',h:['"je suis" = ik ben.'],s:'être = zijn.'},
+  {p:'amaani',v:'frans',t:'Werkwoorden (être/avoir)',lvl:2,q:'"je suis" betekent in het Nederlands:',a:'ik ben',alt:['ben'],h:['Van het werkwoord être.'],s:'je suis = ik ben.'},
+
+  /* ============ AMAANI · BIOLOGIE (4 vwo) ============ */
+  {p:'amaani',v:'biologie',t:'Cel & DNA',lvl:2,q:'In welk celorganel wordt energie vrijgemaakt (verbranding)?',a:'mitochondrion',alt:['mitochondriën','mitochondria','mitochondrium'],h:['De "energiecentrale" van de cel.'],s:'In de mitochondriën vindt de verbranding plaats.'},
+  {p:'amaani',v:'biologie',t:'Cel & DNA',lvl:1,q:'Waar in de cel ligt het DNA opgeslagen?',a:'celkern',alt:['kern','de celkern'],h:['Het centrum van de cel.'],s:'Het DNA ligt in de celkern.'},
+  {p:'amaani',v:'biologie',t:'Erfelijkheid',lvl:2,q:'Een eigenschap die zich altijd uit (ook met maar één variant) heet ...?',a:'dominant',h:['Tegenovergestelde van recessief.'],s:'Een dominante eigenschap overheerst.'},
+  {p:'amaani',v:'biologie',t:'Erfelijkheid',lvl:2,q:'Hoe heet de mannelijke geslachtscel?',a:'zaadcel',alt:['spermacel','sperma'],h:['Bevrucht de eicel.'],s:'De mannelijke geslachtscel is de zaadcel.'},
+  {p:'amaani',v:'biologie',t:'Ecologie',lvl:1,q:'Organismen die zelf voedsel maken (planten) heten ...?',a:'producenten',alt:['producent'],h:['Zij "produceren" met fotosynthese.'],s:'Planten zijn producenten.'},
+  {p:'amaani',v:'biologie',t:'Ecologie',lvl:2,q:'Het geheel van organismen samen met hun omgeving heet een ...?',a:'ecosysteem',alt:['een ecosysteem'],h:['Bijv. een bos of sloot.'],s:'Dat heet een ecosysteem.'},
+
+  /* ============ AMAANI · AARDRIJKSKUNDE (4 vwo) ============ */
+  {p:'amaani',v:'aardrijkskunde',t:'Aarde & klimaat',lvl:1,q:'Hoe heet de opwarming van de aarde door broeikasgassen?',a:'broeikaseffect',alt:['het broeikaseffect','klimaatverandering','opwarming'],h:['Gassen houden warmte vast.'],s:'Het (versterkte) broeikaseffect.'},
+  {p:'amaani',v:'aardrijkskunde',t:'Aarde & klimaat',lvl:2,q:'Hoe heet de beweging van de grote platen van de aardkorst?',a:'platentektoniek',alt:['plaattektoniek'],h:['Platen + beweging.'],s:'Dat heet platentektoniek.'},
+  {p:'amaani',v:'aardrijkskunde',t:'Bevolking & globalisering',lvl:1,q:'Hoe heet het aantal inwoners per km²?',a:'bevolkingsdichtheid',alt:['dichtheid'],h:['Hoe dicht mensen op elkaar wonen.'],s:'De bevolkingsdichtheid.'},
+  {p:'amaani',v:'aardrijkskunde',t:'Bevolking & globalisering',lvl:2,q:'Hoe heet het verschijnsel dat de wereld steeds meer met elkaar verbonden raakt?',a:'globalisering',alt:['mondialisering'],h:['Wereldwijde verwevenheid.'],s:'Dat heet globalisering.'},
+
+  /* ============ AMAANI · GESCHIEDENIS (4 vwo) ============ */
+  {p:'amaani',v:'geschiedenis',t:'Industriële revolutie',lvl:2,q:'In welke eeuw begon de Industriële Revolutie in Engeland? (18e/19e)',a:'18e',alt:['18','achttiende','18de','18e eeuw'],h:['Rond 1750–1800.'],s:'In de 18e eeuw (rond 1750) in Engeland.'},
+  {p:'amaani',v:'geschiedenis',t:'Industriële revolutie',lvl:1,q:'Welke brandstof dreef de stoommachine aan?',a:'steenkool',alt:['kolen','steenkolen'],h:['Zwart en uit de grond.'],s:'Steenkool.'},
+  {p:'amaani',v:'geschiedenis',t:'Wereldoorlogen',lvl:1,q:'In welk jaar begon de Eerste Wereldoorlog?',a:'1914',h:['Tweede decennium 20e eeuw.'],s:'WO I begon in 1914.'},
+  {p:'amaani',v:'geschiedenis',t:'Wereldoorlogen',lvl:1,q:'In welk jaar eindigde de Tweede Wereldoorlog?',a:'1945',h:['Midden jaren 40.'],s:'WO II eindigde in 1945.'},
+  {p:'amaani',v:'geschiedenis',t:'Staatsvormen',lvl:2,q:'Een staat met één partij en een dictator noem je een ...?',a:'dictatuur',alt:['totalitaire staat'],h:['Geen vrije verkiezingen.'],s:'Dat is een dictatuur.'},
+  {p:'amaani',v:'geschiedenis',t:'Staatsvormen',lvl:1,q:'Een bestuursvorm waarbij het volk kiest, heet een ...?',a:'democratie',alt:['de democratie'],h:['Volk = demos.'],s:'Dat is een democratie.'},
+
+  /* ============ AMAANI · ECONOMIE (4 vwo) ============ */
+  {p:'amaani',v:'economie',t:'Markt',lvl:1,q:'Hoe heet de hoeveelheid die consumenten willen kopen?',a:'vraag',alt:['de vraag'],h:['Tegenovergestelde van aanbod.'],s:'Dat is de vraag.'},
+  {p:'amaani',v:'economie',t:'Markt',lvl:2,q:'Waar vraag en aanbod elkaar kruisen, ontstaat de ... prijs?',a:'evenwichtsprijs',alt:['evenwicht','marktprijs'],h:['In evenwicht.'],s:'De evenwichtsprijs.'},
+  {p:'amaani',v:'economie',t:'Geld & rekenen',lvl:2,q:'Een product kost € 80 exclusief 21% btw. Hoeveel btw komt erbij?',a:'16.80',alt:['16,80','16.8'],u:'€',h:['21% van 80.'],s:'0,21 × 80 = € 16,80.'},
+  {p:'amaani',v:'economie',t:'Geld & rekenen',lvl:2,q:'Je zet € 200 op de bank tegen 5% rente per jaar. Hoeveel rente krijg je na 1 jaar?',a:'10',u:'€',h:['5% van 200.'],s:'0,05 × 200 = € 10.'},
+  {p:'amaani',v:'economie',t:'Begrippen',lvl:2,q:'Hoe heet een aanhoudende stijging van het algemene prijspeil?',a:'inflatie',alt:['de inflatie'],h:['Geld wordt minder waard.'],s:'Dat heet inflatie.'},
 ];
 SEED.forEach((e,i)=> e.id = 'seed_'+i);
 
@@ -685,6 +789,15 @@ const TEMPLATES=[
   {id:'tpl_am_maten',p:'amine',v:'rekenen',t:'Meten & maten',lvl:1,gen:()=>{
     const o=pick([['meter',100,'cm'],['kilogram',1000,'gram'],['liter',1000,'ml'],['uur',60,'minuten']]), val=ri(2,9);
     return {q:`Hoeveel ${o[2]} is ${val} ${o[0]}?`,a:String(val*o[1]),h:[`1 ${o[0]} = ${o[1]} ${o[2]}.`],s:`${val} × ${o[1]} = ${val*o[1]} ${o[2]}.`};
+  }},
+  {id:'tpl_am_verhouding',p:'amine',v:'rekenen',t:'Verhoudingen',lvl:2,gen:()=>{
+    const per=ri(2,6), a=ri(2,4), k=pick([2,3,4]), b=a*k;
+    return {q:`${a} ${pick(['pennen','appels','stickers','knikkers'])} kosten samen € ${a*per}. Wat kosten ${b} stuks?`,a:String(b*per),u:'€',
+      h:[`${b} is ${k}× zoveel als ${a}.`],s:`Per stuk: ${a*per} ÷ ${a} = € ${per}; ${b} × ${per} = € ${b*per}.`};
+  }},
+  {id:'tpl_am_afronden',p:'amine',v:'rekenen',t:'Afronden & schatten',lvl:1,gen:()=>{
+    const n=ri(11,989), r=Math.round(n/10)*10;
+    return {q:`Rond af op tientallen: ${n}`,a:String(r),h:['Kijk naar het laatste cijfer: 5 of meer → naar boven.'],s:`${n} → ${r}.`};
   }},
 ];
 
@@ -940,6 +1053,7 @@ function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal}){
       {/* mix + foutenschrift */}
       {topics.length>0 && <div className="wrap" style={{marginBottom:14}}>
         <button className="btn" onClick={()=>onTopic('__mix__')}>🎲 Mix-oefening (door elkaar)</button>
+        <button className="btn gold" onClick={()=>onTopic('__toets__')}>📝 Oefentoets (10 vragen)</button>
         {foutAantal>0 && <button className="btn accent" onClick={()=>onTopic('__fouten__')}>📕 Mijn fouten oefenen ({foutAantal})</button>}
       </div>}
 
@@ -996,11 +1110,13 @@ function Practice({profile,vak,topic,allEx,onBack,onResult,prog,onTopic}){
   const [session,setSession]=useState({good:0,wrong:0});
   const [finished,setFinished]=useState(false);
   const [foutTip,setFoutTip]=useState(null);
+  const [toets,setToets]=useState({n:0,fout:[]});
   const inputRef=useRef(null);
 
-  const isMix=topic==='__mix__', isFout=topic==='__fouten__';
-  const uitlegKey=(!isMix&&!isFout&&UITLEG[topic])?topic:null;
-  const topicLabel=isMix?'🎲 Mix':isFout?'📕 Fouten herhalen':topic;
+  const TOETS_LEN=10;
+  const isMix=topic==='__mix__', isFout=topic==='__fouten__', isToets=topic==='__toets__';
+  const uitlegKey=(!isMix&&!isFout&&!isToets&&UITLEG[topic])?topic:null;
+  const topicLabel=isMix?'🎲 Mix':isFout?'📕 Fouten herhalen':isToets?'📝 Oefentoets':topic;
 
   function showCard(c){
     setCard(c); setInst(instOf(c));
@@ -1009,10 +1125,10 @@ function Practice({profile,vak,topic,allEx,onBack,onResult,prog,onTopic}){
   }
   useEffect(()=>{
     let p;
-    if(isMix) p=allEx.filter(e=>e.p===profile&&e.v===vak);
+    if(isMix||isToets) p=allEx.filter(e=>e.p===profile&&e.v===vak);
     else if(isFout){const ids=new Set((prog.foutLog||[]).map(f=>f.id)); p=allEx.filter(e=>ids.has(e.id));}
     else p=allEx.filter(e=>e.p===profile&&e.v===vak&&e.t===topic);
-    setPool(p); setSession({good:0,wrong:0}); setFinished(false); setShowUitleg(true);
+    setPool(p); setSession({good:0,wrong:0}); setToets({n:0,fout:[]}); setFinished(false); setShowUitleg(true);
     const first=pickNext(p,prog,null);
     if(first) showCard(first); else {setCard(null); setInst(null);}
   },[topic,vak,profile]);
@@ -1020,6 +1136,14 @@ function Practice({profile,vak,topic,allEx,onBack,onResult,prog,onTopic}){
   function controleer(){
     if(state==='goed'||!inst) return;
     const ok=checkAnswer(inst,val);
+    if(isToets){
+      if(state!=='open') return;                 // in de toets: één poging per vraag
+      onResult(profile,card,inst,ok,false);
+      setState(ok?'goed':'fout');
+      setToets(t=>({n:t.n+1, fout: ok?t.fout:[...t.fout,{t:card.t,q:inst.q,a:inst.a,u:inst.u||''}]}));
+      if(ok){setCelebrate(true); setTimeout(()=>setCelebrate(false),900);}
+      return;
+    }
     setTries(t=>t+1);
     if(ok){
       setEarned(puntenVoor(prog,card.id,hintN>0));
@@ -1033,7 +1157,10 @@ function Practice({profile,vak,topic,allEx,onBack,onResult,prog,onTopic}){
       setSession(s=>({good:s.good,wrong:s.wrong+1}));
     }
   }
-  function volgende(){ const n=pickNext(pool,prog,card?card.id:null); if(n) showCard(n); }
+  function volgende(){
+    if(isToets && toets.n>=TOETS_LEN){ setFinished(true); return; }
+    const n=pickNext(pool,prog,card?card.id:null); if(n) showCard(n);
+  }
 
   if(!card||!inst){
     return (<div>
@@ -1046,6 +1173,37 @@ function Practice({profile,vak,topic,allEx,onBack,onResult,prog,onTopic}){
     </div>);
   }
 
+  if(finished && isToets){
+    const goed=TOETS_LEN - toets.fout.length, pct=Math.round(goed/TOETS_LEN*100);
+    const emoji=pct>=80?'🏆':pct>=50?'🌟':'💪';
+    const oordeel=pct>=80?'Knap gedaan!':pct>=50?'Goed bezig — nog even oefenen.':'Blijf oefenen, je komt er!';
+    return (<div>
+      <div className="topbar"><button className="back" onClick={onBack}>← overzicht</button><span className="pill">📝 Toetsuitslag</span></div>
+      <div className="card center">
+        <div style={{fontSize:46}}>{emoji}</div>
+        <h2>{goed} / {TOETS_LEN} goed</h2>
+        <div className="pbar" style={{margin:'10px 0'}}><i style={{width:pct+'%'}}></i></div>
+        <p className="muted">{oordeel}</p>
+      </div>
+      {toets.fout.length>0 && (
+        <div className="card" style={{marginTop:12}}>
+          <b>Nakijken — deze gingen mis ({toets.fout.length}):</b>
+          <div style={{marginTop:8}}>
+            {toets.fout.map((f,i)=>(
+              <div key={i} style={{padding:'7px 0',borderTop:'1px solid var(--line)',fontSize:14}}>
+                <span className="tag">{f.t}</span> {f.q} <span className="muted">→ {f.a} {f.u}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      <div className="wrap center" style={{marginTop:16,justifyContent:'center'}}>
+        <button className="btn" onClick={()=>onTopic('__toets__')}>📝 Nieuwe toets</button>
+        {toets.fout.length>0 && <button className="btn accent" onClick={()=>onTopic('__fouten__')}>📕 Oefen je fouten</button>}
+        <button className="btn ghost" onClick={onBack}>Terug</button>
+      </div>
+    </div>);
+  }
   if(finished){
     const fout=prog.foutLog||[], goal=prog.goal||10;
     return (<div>
@@ -1089,10 +1247,12 @@ function Practice({profile,vak,topic,allEx,onBack,onResult,prog,onTopic}){
         </div>
       </div>
       <div className="row" style={{justifyContent:'space-between',marginBottom:6}}>
-        <span className="pill">{topicLabel}{isMix?' · '+VAKNAAM[vak]:''}</span>
-        <span className="muted" style={{fontSize:13}}>som {session.good+1} · niveau {inst.lvl||card.lvl||1}{isMastered(prog,card.id)?' · ✓ beheerst':''}</span>
+        <span className="pill">{topicLabel}{(isMix||isToets)?' · '+VAKNAAM[vak]:''}</span>
+        <span className="muted" style={{fontSize:13}}>{isToets
+          ? 'vraag '+(state==='open'?toets.n+1:toets.n)+' / '+TOETS_LEN
+          : 'som '+(session.good+1)+' · niveau '+(inst.lvl||card.lvl||1)+(isMastered(prog,card.id)?' · ✓ beheerst':'')}</span>
       </div>
-      <div className="pbar" style={{marginBottom:12}}><i style={{width:Math.min(100,Math.round(done/goal*100))+'%'}}></i></div>
+      <div className="pbar" style={{marginBottom:12}}><i style={{width:(isToets?Math.round(toets.n/TOETS_LEN*100):Math.min(100,Math.round(done/goal*100)))+'%'}}></i></div>
 
       {uitlegKey && <UitlegPaneel data={UITLEG[uitlegKey]} open={showUitleg} onToggle={()=>setShowUitleg(!showUitleg)}/>}
       <div className="card">
@@ -1100,34 +1260,40 @@ function Practice({profile,vak,topic,allEx,onBack,onResult,prog,onTopic}){
         <div className="qbox">{inst.q}</div>
         <div className="answerrow">
           <input ref={inputRef} value={val} placeholder="jouw antwoord"
-            onChange={e=>{setVal(e.target.value); if(state==='fout') setState('open');}}
+            onChange={e=>{setVal(e.target.value); if(!isToets && state==='fout') setState('open');}}
             onKeyDown={e=>{if(e.key==='Enter') controleer();}}
-            disabled={state==='goed'} inputMode="text"/>
+            disabled={state==='goed' || (isToets && state!=='open')} inputMode="text"/>
           {inst.u && <div className="unit">{inst.u}</div>}
         </div>
 
-        {state==='goed' && <div className="feedback ok celebrate">✅ Goed gedaan! +{earned} punten</div>}
-        {state==='fout' && <div className="feedback no">Nog niet — kijk nog eens, of open een hint. Je kunt het! 💪{foutTip && <div style={{marginTop:8,fontWeight:600}}>💡 {foutTip}</div>}</div>}
+        {state==='goed' && <div className="feedback ok celebrate">{isToets?'✅ Goed!':'✅ Goed gedaan! +'+earned+' punten'}</div>}
+        {state==='fout' && isToets && <div className="feedback no">❌ Helaas. Het goede antwoord is: <b>{inst.a} {inst.u}</b></div>}
+        {state==='fout' && !isToets && <div className="feedback no">Nog niet — kijk nog eens, of open een hint. Je kunt het! 💪{foutTip && <div style={{marginTop:8,fontWeight:600}}>💡 {foutTip}</div>}</div>}
 
-        {hintN>0 && inst.h && inst.h.slice(0,hintN).map((h,i)=>(
+        {!isToets && hintN>0 && inst.h && inst.h.slice(0,hintN).map((h,i)=>(
           <div key={i} className="hint"><b>Hint {i+1}:</b> {h}</div>
         ))}
-        {showSol && <div className="solution"><b>Uitwerking</b>{"\n"}{inst.s}</div>}
+        {!isToets && showSol && <div className="solution"><b>Uitwerking</b>{"\n"}{inst.s}</div>}
 
         <div className="wrap" style={{marginTop:16}}>
-          {state!=='goed' && <button className="btn" onClick={controleer}>Nakijken</button>}
-          {state!=='goed' && inst.h && hintN<inst.h.length && <button className="btn gold sm" onClick={()=>setHintN(hintN+1)}>💡 Hint</button>}
-          {state!=='goed' && (tries>=1) && !showSol && <button className="btn ghost sm" onClick={()=>setShowSol(true)}>Toon uitwerking</button>}
-          {state==='goed' && <button className="btn" onClick={volgende}>Volgende →</button>}
-          {state==='goed' && !showSol && <button className="btn ghost sm" onClick={()=>setShowSol(true)}>Bekijk uitwerking</button>}
+          {isToets ? (<>
+            {state==='open' && <button className="btn" onClick={controleer}>Nakijken</button>}
+            {state!=='open' && <button className="btn" onClick={volgende}>{toets.n>=TOETS_LEN?'Bekijk score →':'Volgende →'}</button>}
+          </>) : (<>
+            {state!=='goed' && <button className="btn" onClick={controleer}>Nakijken</button>}
+            {state!=='goed' && inst.h && hintN<inst.h.length && <button className="btn gold sm" onClick={()=>setHintN(hintN+1)}>💡 Hint</button>}
+            {state!=='goed' && (tries>=1) && !showSol && <button className="btn ghost sm" onClick={()=>setShowSol(true)}>Toon uitwerking</button>}
+            {state==='goed' && <button className="btn" onClick={volgende}>Volgende →</button>}
+            {state==='goed' && !showSol && <button className="btn ghost sm" onClick={()=>setShowSol(true)}>Bekijk uitwerking</button>}
+          </>)}
         </div>
       </div>
 
-      <div className="center" style={{marginTop:14}}>
+      {!isToets && <div className="center" style={{marginTop:14}}>
         <button className="btn ghost sm" onClick={()=>setFinished(true)}>⏹ Stoppen — toon samenvatting</button>
-      </div>
+      </div>}
       <p className="muted center" style={{marginTop:10,fontSize:13}}>
-        Eerst zelf proberen = 10 punten · met hint = 5 · al beheerst = 3 🌟
+        {isToets?'Oefentoets: '+TOETS_LEN+' vragen, geen hints. Veel succes! 🍀':'Eerst zelf proberen = 10 punten · met hint = 5 · al beheerst = 3 🌟'}
       </p>
     </div>
   );
@@ -1564,6 +1730,15 @@ const UITLEG={
   'Zinsontleden':{tekst:'De persoonsvorm vind je door de zin in een andere tijd te zetten: het werkwoord dat verandert, is de persoonsvorm. Het onderwerp vind je met de vraag "wie of wat + persoonsvorm?".'},
   'Signaalwoorden':{tekst:'Signaalwoorden verraden het verband in een tekst: "omdat/want" = reden, "maar/echter" = tegenstelling, "daardoor/dus" = gevolg, "eerst/daarna" = volgorde.'},
   'Alfabetiseren':{tekst:'In een woordenboek staan woorden op alfabet. Begint het met dezelfde letter? Kijk dan naar de tweede letter, dan de derde, enzovoort.'},
+  'Verhoudingen':{tekst:'Bij een verhouding gaat alles met dezelfde factor mee. Maak een verhoudingstabel: weet je dat 2 stuks € 3 kosten, dan kosten 4 stuks (×2) € 6. Bij "2 : 3" reken je eerst uit hoeveel één "deel" is.'},
+  'Afronden & schatten':{tekst:'Afronden: kijk naar het cijfer rechts van de plek waar je afrondt. Is dat 5 of meer → naar boven, anders naar beneden. Schatten doe je door eerst af te ronden en dan makkelijk te rekenen.'},
+  // Scheikunde (Amaani)
+  'Atoombouw':{tekst:'Een atoom heeft een kern met protonen (+) en neutronen (neutraal); daaromheen bewegen elektronen (−). Het atoomnummer = het aantal protonen, en dat bepaalt welk element het is.'},
+  'Symbolen & atomen':{tekst:'Elk element heeft een symbool van één of twee letters (de eerste is een hoofdletter): waterstof H, zuurstof O, koolstof C, natrium Na, ijzer Fe. Je vindt ze in het periodiek systeem.'},
+  'Moleculen':{tekst:'Een molecuulformule vertelt welke en hoeveel atomen er in zitten. Het kleine getal (index) hoort bij het atoom ervóór: H₂O = 2 waterstof + 1 zuurstof = 3 atomen.'},
+  'Reactievergelijkingen':{tekst:'In een reactie blijven atomen behouden: links en rechts evenveel van elke soort. De grote getallen vóór een stof (coëfficiënten) zorgen voor die balans, bijv. 2 H₂ + O₂ → 2 H₂O.'},
+  'Zuur & base':{tekst:'De pH-schaal loopt van 0 tot 14. pH 7 is neutraal (zuiver water), lager dan 7 is zuur, hoger dan 7 is basisch.'},
+  'Rekenen (mol)':{tekst:'1 mol = 6,02 × 10²³ deeltjes (getal van Avogadro). Massa = aantal mol × molaire massa (g/mol), en aantal mol = massa ÷ molaire massa.'},
 };
 function UitlegPaneel({data,open,onToggle}){
   return (
