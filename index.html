@@ -116,10 +116,12 @@ const {useState,useEffect,useMemo,useRef} = React;
 const PROFILES = {
   wassima:{naam:'Wassima', niveau:'2 havo', emoji:'🌱', kleur:'linear-gradient(135deg,#5EA03A,#48792c)', vakken:['wiskunde','natuurkunde','nederlands','engels','frans','duits','biologie','aardrijkskunde','geschiedenis','economie']},
   amaani: {naam:'Amaani',  niveau:'4 vwo',  emoji:'🚀', kleur:'linear-gradient(135deg,#3a6ea0,#2c5680)', vakken:['wiskundeA','natuurkunde','scheikunde','nederlands','engels','frans','biologie','aardrijkskunde','geschiedenis','economie']},
+  amine:  {naam:'Amine',   niveau:'groep 7/8', emoji:'🦉', kleur:'linear-gradient(135deg,#e0a23a,#c2782d)', vakken:['rekenen','taal','lezen','studievaardigheden','engels']},
 };
 const VAKNAAM = {wiskunde:'Wiskunde', natuurkunde:'Natuurkunde', wiskundeA:'Wiskunde A', geschiedenis:'Geschiedenis',
   nederlands:'Nederlands', engels:'Engels', frans:'Frans', duits:'Duits', biologie:'Biologie',
-  aardrijkskunde:'Aardrijkskunde', economie:'Economie', scheikunde:'Scheikunde'};
+  aardrijkskunde:'Aardrijkskunde', economie:'Economie', scheikunde:'Scheikunde',
+  rekenen:'Rekenen', taal:'Taal', lezen:'Begrijpend lezen', studievaardigheden:'Studievaardigheden'};
 const TOPICICON = {
   'Procenten':'％','Vergelijkingen':'⚖️','Lineaire formules':'📈','Oppervlakte & omtrek':'⬛',
   'Pythagoras':'📐','Hoeken':'📐','Inhoud':'🧊','Snelheid':'🚴','Dichtheid':'⚗️',
@@ -141,6 +143,10 @@ const TOPICICON = {
   'Grootheden & eenheden':'📏','Temperatuur & warmte':'🌡️','Licht':'💡','Magnetisme':'🧲','Elektrische schakelingen':'🔌','Beweging (afstand-tijd)':'🏃',
   'Kwadratische functies':'📈','Vergelijkingen oplossen':'🟰','Machten & exponenten':'🔢','Procentuele groei':'📊','Logaritmen':'🔟','Rijen':'🔢',
   'Krachten & evenwicht':'⚖️','Golven & trillingen':'🌊','Schakelingen':'🔌','Radioactiviteit':'☢️',
+  // Amine (groep 7/8)
+  'Optellen & aftrekken':'➕','Tafels & keer':'✖️','Delen':'➗','Kommagetallen':'🔢','Meten & maten':'📏','Meetkunde':'⬛',
+  'Grafieken & tabellen':'📊','Tijd & klok':'🕐','Redactiesommen':'🧩','Zinsontleden':'🧩','Woordenschat & spreekwoorden':'💬',
+  'Leestekens & hoofdletters':'🔡','Tekst begrijpen':'📖','Signaalwoorden':'🔗','Alfabetiseren':'🔠','Kaart & schaal':'🗺️','Grafieken & tabellen lezen':'📊',
 };
 
 /* ============================ OEFENINGEN (startvoorraad) ============================ */
@@ -399,6 +405,75 @@ const SEED = [
   {p:'wassima',v:'economie',t:'Geld & rekenen',lvl:2,q:'Een spel kost € 50. Je krijgt 10% korting. Hoeveel betaal je?',a:'45',u:'€',h:['10% van 50 = 5; trek dat eraf.'],s:'Korting = 10% × 50 = € 5. Je betaalt 50 − 5 = € 45.'},
   {p:'wassima',v:'economie',t:'Begrippen',lvl:1,q:'Hoe heet iemand die producten koopt en gebruikt?',a:'consument',alt:['de consument','klant'],h:['Het tegenovergestelde van producent.'],s:'Een consument koopt en gebruikt producten.'},
   {p:'wassima',v:'economie',t:'Begrippen',lvl:2,q:'Hoe heet de belasting die je betaalt over producten (in Nederland meestal 21%)?',a:'btw',alt:['b.t.w.','omzetbelasting'],h:['Drie letters.'],s:'btw = belasting toegevoegde waarde.'},
+
+  /* ============ AMINE · REKENEN (groep 7/8, doorstroomtoets) ============ */
+  {p:'amine',v:'rekenen',t:'Optellen & aftrekken',lvl:1,q:'Reken uit: 345 + 128',a:'473',h:['Eerst de honderdtallen, dan tientallen, dan eenheden.'],s:'345 + 128 = 473.'},
+  {p:'amine',v:'rekenen',t:'Optellen & aftrekken',lvl:2,q:'Reken uit: 1000 − 376',a:'624',h:['Tel op vanaf 376 naar 1000, of leen van links.'],s:'1000 − 376 = 624.'},
+  {p:'amine',v:'rekenen',t:'Tafels & keer',lvl:1,q:'Reken uit: 7 × 8',a:'56',h:['Tafel van 8.'],s:'7 × 8 = 56.'},
+  {p:'amine',v:'rekenen',t:'Tafels & keer',lvl:2,q:'Reken uit: 12 × 6',a:'72',h:['12 × 6 = 10 × 6 + 2 × 6.'],s:'60 + 12 = 72.'},
+  {p:'amine',v:'rekenen',t:'Delen',lvl:1,q:'Reken uit: 56 ÷ 7',a:'8',h:['Welk getal × 7 = 56?'],s:'7 × 8 = 56 → 56 ÷ 7 = 8.'},
+  {p:'amine',v:'rekenen',t:'Delen',lvl:2,q:'Reken uit: 81 ÷ 9',a:'9',h:['Tafel van 9.'],s:'9 × 9 = 81 → 81 ÷ 9 = 9.'},
+  {p:'amine',v:'rekenen',t:'Breuken',lvl:1,ill:{type:'breukstrook',delen:4,gevuld:3},q:'Welk deel is gekleurd? Schrijf als breuk (bijv. 3/4).',a:'3/4',alt:['0.75'],h:['gekleurde delen / totaal aantal delen.'],s:'3 van de 4 delen → 3/4.'},
+  {p:'amine',v:'rekenen',t:'Breuken',lvl:1,q:'Hoeveel is 1/2 van 60?',a:'30',h:['1/2 is de helft.'],s:'60 ÷ 2 = 30.'},
+  {p:'amine',v:'rekenen',t:'Breuken',lvl:2,q:'Hoeveel is 3/4 van 40?',a:'30',h:['Eerst ÷ 4, dan × 3.'],s:'40 ÷ 4 = 10, × 3 = 30.'},
+  {p:'amine',v:'rekenen',t:'Breuken',lvl:2,q:'Reken uit: 1/4 + 1/4',a:'1/2',alt:['2/4','0.5'],h:['Gelijke noemers: tel de tellers op.'],s:'1/4 + 1/4 = 2/4 = 1/2.'},
+  {p:'amine',v:'rekenen',t:'Procenten',lvl:1,q:'Hoeveel is 10% van 200?',a:'20',h:['10% = ÷ 10.'],s:'200 ÷ 10 = 20.'},
+  {p:'amine',v:'rekenen',t:'Procenten',lvl:1,q:'Hoeveel is 50% van 80?',a:'40',h:['50% = de helft.'],s:'80 ÷ 2 = 40.'},
+  {p:'amine',v:'rekenen',t:'Procenten',lvl:2,q:'Een spel van € 20 krijgt 10% korting. Hoeveel betaal je?',a:'18',u:'€',h:['10% van 20 = 2; trek dat eraf.'],s:'20 − 2 = € 18.'},
+  {p:'amine',v:'rekenen',t:'Kommagetallen',lvl:1,q:'Reken uit: 0,5 + 0,5',a:'1',h:['Twee halven samen.'],s:'0,5 + 0,5 = 1.'},
+  {p:'amine',v:'rekenen',t:'Kommagetallen',lvl:2,q:'Reken uit: 3,2 × 10',a:'32',h:['× 10 → komma één plaats naar rechts.'],s:'3,2 × 10 = 32.'},
+  {p:'amine',v:'rekenen',t:'Kommagetallen',lvl:2,q:'Reken uit: 1,25 + 0,75',a:'2',h:['Zet de komma onder elkaar.'],s:'1,25 + 0,75 = 2,00 = 2.'},
+  {p:'amine',v:'rekenen',t:'Meten & maten',lvl:1,q:'1 meter is hoeveel cm?',a:'100',u:'cm',h:['1 m = 100 cm.'],s:'1 meter = 100 cm.'},
+  {p:'amine',v:'rekenen',t:'Meten & maten',lvl:1,q:'1 kilogram is hoeveel gram?',a:'1000',u:'g',h:['1 kg = 1000 g.'],s:'1 kg = 1000 gram.'},
+  {p:'amine',v:'rekenen',t:'Meten & maten',lvl:2,q:'2 uur is hoeveel minuten?',a:'120',u:'min',h:['1 uur = 60 minuten.'],s:'2 × 60 = 120 minuten.'},
+  {p:'amine',v:'rekenen',t:'Meetkunde',lvl:1,ill:{type:'rechthoek',l:6,b:4},q:'Een rechthoek is 6 cm lang en 4 cm breed. Bereken de oppervlakte.',a:'24',u:'cm²',h:['oppervlakte = lengte × breedte.'],s:'6 × 4 = 24 cm².'},
+  {p:'amine',v:'rekenen',t:'Meetkunde',lvl:2,ill:{type:'rechthoek',l:6,b:4},q:'Een rechthoek is 6 cm lang en 4 cm breed. Bereken de omtrek.',a:'20',u:'cm',h:['omtrek = 2 × (lengte + breedte).'],s:'2 × (6 + 4) = 20 cm.'},
+  {p:'amine',v:'rekenen',t:'Tijd & klok',lvl:1,q:'Hoe laat is het 30 minuten na 14:45? (bijv. 15:15)',a:'15:15',alt:['15.15','kwart over 3'],h:['45 + 30 = 75 minuten → 1 uur en 15 minuten.'],s:'14:45 + 30 min = 15:15.'},
+  {p:'amine',v:'rekenen',t:'Tijd & klok',lvl:2,q:'Van 9:00 tot 11:30: hoeveel uur duurt dat? (bijv. 2,5)',a:'2.5',alt:['2,5','2 en een half'],h:['Van 9:00 tot 11:00 = 2 uur, plus een half uur.'],s:'2 uur + 30 min = 2,5 uur.'},
+  {p:'amine',v:'rekenen',t:'Geld & rekenen',lvl:1,q:'Je koopt voor € 13 en betaalt met € 20. Hoeveel krijg je terug?',a:'7',u:'€',h:['20 − 13.'],s:'20 − 13 = € 7.'},
+  {p:'amine',v:'rekenen',t:'Geld & rekenen',lvl:2,q:'3 broodjes kosten samen € 6. Wat kost 1 broodje?',a:'2',u:'€',h:['Deel door 3.'],s:'6 ÷ 3 = € 2.'},
+  {p:'amine',v:'rekenen',t:'Grafieken & tabellen',lvl:1,q:'In een tabel: maandag 5 ijsjes, dinsdag 8 ijsjes. Hoeveel meer op dinsdag?',a:'3',h:['8 − 5.'],s:'8 − 5 = 3 ijsjes meer.'},
+  {p:'amine',v:'rekenen',t:'Grafieken & tabellen',lvl:2,q:'Een staafdiagram toont week 1 = 10, week 2 = 15, week 3 = 5. Wat is het totaal?',a:'30',h:['Tel alle staven op.'],s:'10 + 15 + 5 = 30.'},
+  {p:'amine',v:'rekenen',t:'Redactiesommen',lvl:2,q:'In een klas zitten 28 kinderen. 12 zijn jongens. Hoeveel meisjes?',a:'16',h:['28 − 12.'],s:'28 − 12 = 16 meisjes.'},
+  {p:'amine',v:'rekenen',t:'Redactiesommen',lvl:2,q:'Een pak met 24 koekjes wordt eerlijk over 6 kinderen verdeeld. Hoeveel per kind?',a:'4',h:['24 ÷ 6.'],s:'24 ÷ 6 = 4 koekjes.'},
+  {p:'amine',v:'rekenen',t:'Redactiesommen',lvl:3,q:'Een fietser rijdt 15 km per uur. Hoe ver komt hij in 3 uur?',a:'45',u:'km',h:['afstand = snelheid × tijd.'],s:'15 × 3 = 45 km.'},
+
+  /* ============ AMINE · TAAL ============ */
+  {p:'amine',v:'taal',t:'Werkwoordspelling',lvl:1,q:'Vul in: ik ... naar huis. (lopen) → ik',a:'loop',h:['De ik-vorm is de stam (zonder uitgang).'],s:'ik loop.'},
+  {p:'amine',v:'taal',t:'Werkwoordspelling',lvl:1,q:'Vul in: hij ... hard. (rennen) → hij',a:'rent',h:['Hij-vorm = stam + t.'],s:'stam ren + t = rent.'},
+  {p:'amine',v:'taal',t:'Werkwoordspelling',lvl:2,q:'Verleden tijd: gisteren ... hij hard. (werken) → hij',a:'werkte',h:["Stam werk eindigt op k (in 't kofschip) → +te."],s:"werk + te = werkte."},
+  {p:'amine',v:'taal',t:'Werkwoordspelling',lvl:2,q:'Verleden tijd: zij ... buiten. (spelen) → zij',a:'speelde',h:['Stam speel eindigt op l → +de.'],s:'speel + de = speelde.'},
+  {p:'amine',v:'taal',t:'Spelling',lvl:1,q:'ei of ij? Schrijf het hele woord: een tr__n (rijdt op het spoor).',a:'trein',h:['Het is de "korte ei".'],s:'Het woord is trein.'},
+  {p:'amine',v:'taal',t:'Spelling',lvl:1,q:'au of ou? Schrijf het hele woord: het is k__d (niet warm).',a:'koud',h:['De "ou" zoals in fout.'],s:'Het woord is koud.'},
+  {p:'amine',v:'taal',t:'Spelling',lvl:2,q:'Wat is het meervoud van "boom"?',a:'bomen',h:['Lange oo-klank, maar in een open lettergreep schrijf je één o.'],s:'boom → bomen.'},
+  {p:'amine',v:'taal',t:'Spelling',lvl:2,q:'Wat is het meervoud van "bal"?',a:'ballen',h:['Korte a-klank → medeklinker verdubbelen.'],s:'bal → ballen.'},
+  {p:'amine',v:'taal',t:'Woordsoorten',lvl:1,q:'Welke woordsoort is "hond"?',a:'zelfstandig naamwoord',alt:['zn','znw'],h:['Een naam voor een ding of dier.'],s:'"hond" is een zelfstandig naamwoord.'},
+  {p:'amine',v:'taal',t:'Woordsoorten',lvl:1,q:'Welke woordsoort is "rennen"?',a:'werkwoord',alt:['ww'],h:['Iets dat je doet.'],s:'"rennen" is een werkwoord.'},
+  {p:'amine',v:'taal',t:'Woordsoorten',lvl:2,q:'Welke woordsoort zijn "de" en "het"?',a:'lidwoord',alt:['lidwoorden','het lidwoord'],h:['Korte woordjes vóór een zelfstandig naamwoord.'],s:'"de", "het" en "een" zijn lidwoorden.'},
+  {p:'amine',v:'taal',t:'Zinsontleden',lvl:2,q:'Wat is de persoonsvorm in "De hond blaft hard"?',a:'blaft',h:['Zet de zin in de verleden tijd; het woord dat verandert is de persoonsvorm.'],s:'In de verleden tijd: "blafte". De persoonsvorm is blaft.'},
+  {p:'amine',v:'taal',t:'Zinsontleden',lvl:2,q:'Wat is het onderwerp in "De hond blaft hard"?',a:'de hond',alt:['hond'],h:['Stel de vraag: wie of wat blaft?'],s:'Wie blaft? De hond → dat is het onderwerp.'},
+  {p:'amine',v:'taal',t:'Woordenschat & spreekwoorden',lvl:2,q:'Wat betekent "ergens geen kaas van gegeten hebben"? (er niets van weten / honger hebben) Geef het in één woord: ...weten',a:'niets weten',alt:['niets','er niets van weten','onwetend'],h:['Het gaat niet over eten.'],s:'Het betekent: er niets van weten / er geen verstand van hebben.'},
+  {p:'amine',v:'taal',t:'Leestekens & hoofdletters',lvl:1,q:'Welk leesteken komt aan het eind van een vraag?',a:'vraagteken',alt:['?','het vraagteken'],h:['Het staat ook in "Hoe heet je?"'],s:'Een vraag eindigt met een vraagteken (?).'},
+  {p:'amine',v:'taal',t:'Leestekens & hoofdletters',lvl:1,q:'Schrijf je een plaatsnaam zoals amsterdam met een hoofdletter of een kleine letter?',a:'hoofdletter',alt:['met een hoofdletter','groot','hoofdletters'],h:['Namen van personen, plaatsen en landen.'],s:'Eigennamen (zoals Amsterdam) krijgen een hoofdletter.'},
+
+  /* ============ AMINE · BEGRIJPEND LEZEN ============ */
+  {p:'amine',v:'lezen',t:'Tekst begrijpen',lvl:2,q:'Lees: "Sara fietst elke dag naar school. Het is 3 km en ze doet er 15 minuten over." Hoeveel km fietst Sara naar school?',a:'3',u:'km',h:['Het antwoord staat letterlijk in de tekst.'],s:'In de tekst: "Het is 3 km" → 3 km.'},
+  {p:'amine',v:'lezen',t:'Tekst begrijpen',lvl:2,q:'Lees: "De winkel is elke dag open van 9 tot 5, behalve op zondag." Is de winkel op zondag open? (ja/nee)',a:'nee',h:['Let op het woord "behalve".'],s:'"behalve op zondag" → op zondag dicht. Antwoord: nee.'},
+  {p:'amine',v:'lezen',t:'Signaalwoorden',lvl:2,q:'Het woord "omdat" geeft een ... aan. (reden / tegenstelling) Geef één woord.',a:'reden',alt:['oorzaak'],h:['"Ik ben blij omdat..." → er volgt een...'],s:'"omdat" geeft een reden of oorzaak aan.'},
+  {p:'amine',v:'lezen',t:'Signaalwoorden',lvl:2,q:'Het woord "maar" geeft een ... aan. (reden / tegenstelling) Geef één woord.',a:'tegenstelling',h:['"Ik wil wel, maar..." → er komt iets tegengestelds.'],s:'"maar" geeft een tegenstelling aan.'},
+
+  /* ============ AMINE · STUDIEVAARDIGHEDEN ============ */
+  {p:'amine',v:'studievaardigheden',t:'Alfabetiseren',lvl:1,q:'Welk woord komt eerst in het woordenboek: "appel" of "banaan"?',a:'appel',h:['a komt vóór b.'],s:'"appel" begint met a, "banaan" met b → appel eerst.'},
+  {p:'amine',v:'studievaardigheden',t:'Alfabetiseren',lvl:2,q:'Welk woord komt eerst: "schoen" of "school"? (let op de 4e letter)',a:'schoen',h:['scho-e... vs scho-o...: e komt vóór o.'],s:'Beide beginnen met "scho"; daarna e vs o → "schoen" eerst.'},
+  {p:'amine',v:'studievaardigheden',t:'Kaart & schaal',lvl:1,q:'Welke kant is meestal het noorden op een kaart? (boven / onder)',a:'boven',alt:['bovenaan','omhoog'],h:['Standaard op (bijna) elke kaart.'],s:'Het noorden is meestal bovenaan de kaart.'},
+  {p:'amine',v:'studievaardigheden',t:'Grafieken & tabellen lezen',lvl:2,q:'In een tabel staat: appels 8, peren 5. Hoeveel stuks fruit samen?',a:'13',h:['Tel de getallen op.'],s:'8 + 5 = 13 stuks fruit.'},
+
+  /* ============ AMINE · ENGELS (basis) ============ */
+  {p:'amine',v:'engels',t:'Woordenschat',lvl:1,q:'Vertaal naar het Nederlands: "cat".',a:'kat',alt:['de kat','poes'],h:['Een huisdier dat miauwt.'],s:'cat = kat.'},
+  {p:'amine',v:'engels',t:'Woordenschat',lvl:1,q:'Vertaal naar het Engels: "rood".',a:'red',h:['Een kleur.'],s:'rood = red.'},
+  {p:'amine',v:'engels',t:'Woordenschat',lvl:2,q:'Vertaal naar het Engels: "school".',a:'school',h:['Lijkt op het Nederlands.'],s:'school = school.'},
+  {p:'amine',v:'engels',t:'Getallen',lvl:1,q:'Welk getal is "seven"?',a:'7',alt:['zeven'],h:['Tussen six en eight.'],s:'seven = 7.'},
+  {p:'amine',v:'engels',t:'Getallen',lvl:1,q:'Hoe schrijf je "5" in het Engels?',a:'five',h:['Klinkt als "faiv".'],s:'5 = five.'},
 ];
 SEED.forEach((e,i)=> e.id = 'seed_'+i);
 
@@ -576,6 +651,41 @@ const TEMPLATES=[
     return {q:`Gegeven f(x) = x² ${pm(b)}x ${pm(c)}. Bereken f(${x}).`,a:String(val),
       h:[`Vul x = ${x} in en let op de tekens.`],s:`f(${x}) = (${x})² ${pm(b)}·${x} ${pm(c)} = ${x*x} ${pm(b*x)} ${pm(c)} = ${val}.`};
   }},
+  /* ----- Amine · reken-drills (wisselende getallen) ----- */
+  {id:'tpl_am_optel',p:'amine',v:'rekenen',t:'Optellen & aftrekken',lvl:1,gen:()=>{
+    const a=ri(120,899), b=ri(50,500);
+    return {q:`Reken uit: ${a} + ${b}`,a:String(a+b),h:['Tel honderdtallen, tientallen en eenheden apart op.'],s:`${a} + ${b} = ${a+b}.`};
+  }},
+  {id:'tpl_am_aftrek',p:'amine',v:'rekenen',t:'Optellen & aftrekken',lvl:2,gen:()=>{
+    const a=ri(400,999), b=ri(50,a-50);
+    return {q:`Reken uit: ${a} − ${b}`,a:String(a-b),h:['Tel op vanaf het kleine getal naar het grote.'],s:`${a} − ${b} = ${a-b}.`};
+  }},
+  {id:'tpl_am_tafel',p:'amine',v:'rekenen',t:'Tafels & keer',lvl:1,gen:()=>{
+    const a=ri(2,12), b=ri(2,12);
+    return {q:`Reken uit: ${a} × ${b}`,a:String(a*b),h:[`Tafel van ${b}.`],s:`${a} × ${b} = ${a*b}.`};
+  }},
+  {id:'tpl_am_deel',p:'amine',v:'rekenen',t:'Delen',lvl:2,gen:()=>{
+    const b=ri(2,12), q=ri(2,12), a=b*q;
+    return {q:`Reken uit: ${a} ÷ ${b}`,a:String(q),h:[`Welk getal × ${b} = ${a}?`],s:`${b} × ${q} = ${a} → ${a} ÷ ${b} = ${q}.`};
+  }},
+  {id:'tpl_am_procent',p:'amine',v:'rekenen',t:'Procenten',lvl:2,gen:()=>{
+    const pct=pick([10,25,50]), getal=pick([20,40,60,80,100,200]), ans=getal*pct/100;
+    return {q:`Hoeveel is ${pct}% van ${getal}?`,a:String(ans),
+      h:[pct===50?'50% = de helft.':pct===10?'10% = ÷ 10.':'25% = ÷ 4.'],s:`${pct}% van ${getal} = ${ans}.`};
+  }},
+  {id:'tpl_am_keer10',p:'amine',v:'rekenen',t:'Kommagetallen',lvl:2,gen:()=>{
+    const x=pick([1.5,2.3,0.7,3.2,12.5,4.6]);
+    return {q:`Reken uit: ${nl(x)} × 10`,a:String(rnd(x*10,2)),h:['× 10 → de komma één plaats naar rechts.'],s:`${nl(x)} × 10 = ${nl(x*10)}.`};
+  }},
+  {id:'tpl_am_wisselgeld',p:'amine',v:'rekenen',t:'Geld & rekenen',lvl:1,gen:()=>{
+    const prijs=ri(1,19);
+    return {q:`Je koopt voor € ${prijs} en betaalt met € 20. Hoeveel krijg je terug?`,a:String(20-prijs),u:'€',
+      h:['Wisselgeld = betaald − prijs.'],s:`20 − ${prijs} = € ${20-prijs}.`};
+  }},
+  {id:'tpl_am_maten',p:'amine',v:'rekenen',t:'Meten & maten',lvl:1,gen:()=>{
+    const o=pick([['meter',100,'cm'],['kilogram',1000,'gram'],['liter',1000,'ml'],['uur',60,'minuten']]), val=ri(2,9);
+    return {q:`Hoeveel ${o[2]} is ${val} ${o[0]}?`,a:String(val*o[1]),h:[`1 ${o[0]} = ${o[1]} ${o[2]}.`],s:`${val} × ${o[1]} = ${val*o[1]} ${o[2]}.`};
+  }},
 ];
 
 /* ============================ STORE (localStorage) ============================ */
@@ -639,6 +749,19 @@ function checkAnswer(ex,val){
     if(!isNaN(numC)&&!isNaN(numV)&&Math.abs(numC-numV)<=Math.max(0.01,Math.abs(numC)*0.005)) return true;
   }
   return false;
+}
+// Gerichte foutfeedback: herkent veelgemaakte fouten en geeft een gerichte tip.
+function diagnoseFout(inst,val){
+  const nv=norm(val); if(nv==='') return null;
+  const numV=parseFloat(nv), numA=parseFloat(norm(inst.a));
+  if(isNaN(numV)||isNaN(numA)||numA===0||numV===0) return null;
+  if(numV===-numA) return 'Let op het minteken — je antwoord heeft het verkeerde teken (+ of −).';
+  const r=numV/numA;
+  if(Math.abs(r-3.6)<1e-6 || Math.abs(r-1/3.6)<1e-6) return 'Bijna! Denk aan km/u ↔ m/s: dat is delen (of juist vermenigvuldigen) met 3,6.';
+  for(const f of [1000,100,10,0.1,0.01,0.001]) if(Math.abs(r-f)<1e-9)
+    return 'Je hebt het juiste getal, maar een factor '+(f>=1?f:'1/'+Math.round(1/f))+' ernaast — controleer de eenheid of de plaats van de komma.';
+  if(Math.abs(numV-numA)<=Math.abs(numA)*0.1) return 'Je zit er heel dichtbij — kijk je rekenwerk of afronding nog even na.';
+  return null;
 }
 function todayStr(){const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
 function yesterdayStr(){const d=new Date();d.setDate(d.getDate()-1);return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
@@ -815,10 +938,16 @@ function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal}){
       </div>
 
       {/* mix + foutenschrift */}
-      <div className="wrap" style={{marginBottom:14}}>
+      {topics.length>0 && <div className="wrap" style={{marginBottom:14}}>
         <button className="btn" onClick={()=>onTopic('__mix__')}>🎲 Mix-oefening (door elkaar)</button>
         {foutAantal>0 && <button className="btn accent" onClick={()=>onTopic('__fouten__')}>📕 Mijn fouten oefenen ({foutAantal})</button>}
-      </div>
+      </div>}
+
+      {topics.length===0 && <div className="card center" style={{marginBottom:14}}>
+        <div style={{fontSize:32}}>🌱</div>
+        <p style={{fontSize:16}}>Voor dit vak staan nog geen opgaven klaar.</p>
+        <p className="muted" style={{fontSize:13}}>Een ouder kan opgaven toevoegen via de ouder-modus op het beginscherm.</p>
+      </div>}
 
       {topics.map(({t,total,beheerst,begonnen})=>{
         const pct=total?Math.round(beheerst/total*100):0;
@@ -866,6 +995,7 @@ function Practice({profile,vak,topic,allEx,onBack,onResult,prog,onTopic}){
   const [showUitleg,setShowUitleg]=useState(true);
   const [session,setSession]=useState({good:0,wrong:0});
   const [finished,setFinished]=useState(false);
+  const [foutTip,setFoutTip]=useState(null);
   const inputRef=useRef(null);
 
   const isMix=topic==='__mix__', isFout=topic==='__fouten__';
@@ -874,7 +1004,7 @@ function Practice({profile,vak,topic,allEx,onBack,onResult,prog,onTopic}){
 
   function showCard(c){
     setCard(c); setInst(instOf(c));
-    setVal(''); setHintN(0); setState('open'); setShowSol(false); setTries(0);
+    setVal(''); setHintN(0); setState('open'); setShowSol(false); setTries(0); setFoutTip(null);
     setTimeout(()=>inputRef.current&&inputRef.current.focus(),60);
   }
   useEffect(()=>{
@@ -893,12 +1023,12 @@ function Practice({profile,vak,topic,allEx,onBack,onResult,prog,onTopic}){
     setTries(t=>t+1);
     if(ok){
       setEarned(puntenVoor(prog,card.id,hintN>0));
-      setState('goed');
+      setState('goed'); setFoutTip(null);
       onResult(profile,card,inst,true,hintN>0);
       setSession(s=>({good:s.good+1,wrong:s.wrong}));
       setCelebrate(true); setTimeout(()=>setCelebrate(false),1100);
     }else{
-      setState('fout');
+      setState('fout'); setFoutTip(diagnoseFout(inst,val));
       onResult(profile,card,inst,false,false);
       setSession(s=>({good:s.good,wrong:s.wrong+1}));
     }
@@ -977,7 +1107,7 @@ function Practice({profile,vak,topic,allEx,onBack,onResult,prog,onTopic}){
         </div>
 
         {state==='goed' && <div className="feedback ok celebrate">✅ Goed gedaan! +{earned} punten</div>}
-        {state==='fout' && <div className="feedback no">Nog niet — kijk nog eens, of open een hint. Je kunt het! 💪</div>}
+        {state==='fout' && <div className="feedback no">Nog niet — kijk nog eens, of open een hint. Je kunt het! 💪{foutTip && <div style={{marginTop:8,fontWeight:600}}>💡 {foutTip}</div>}</div>}
 
         {hintN>0 && inst.h && inst.h.slice(0,hintN).map((h,i)=>(
           <div key={i} className="hint"><b>Hint {i+1}:</b> {h}</div>
@@ -1004,6 +1134,41 @@ function Practice({profile,vak,topic,allEx,onBack,onResult,prog,onTopic}){
 }
 
 /* ---------- AUTHOR (ouder-modus, PIN) ---------- */
+/* ---------- OUDER-DASHBOARD (voortgang & aandachtspunten) ---------- */
+function OuderDashboard({store}){
+  const allEx=[...SEED,...TEMPLATES,...store.custom];
+  return (
+    <div className="card" style={{marginBottom:16,background:'#f0f6ea',borderLeftColor:'#5EA03A'}}>
+      <b>📊 Voortgang per kind</b>
+      {Object.entries(PROFILES).map(([pid,P])=>{
+        const prog=normalizeProg(store.prog[pid]);
+        const vakRijen=P.vakken.map(v=>{
+          const cards=allEx.filter(e=>e.p===pid&&e.v===v);
+          return {v, total:cards.length, beheerst:cards.filter(e=>isMastered(prog,e.id)).length};
+        });
+        const perTopic={};
+        allEx.filter(e=>e.p===pid).forEach(e=>{const c=cardInfo(prog,e.id); const k=e.v+'|'+e.t;
+          (perTopic[k]=perTopic[k]||{v:e.v,t:e.t,boxes:[]}).boxes.push(c.box);});
+        const zwak=Object.values(perTopic).map(o=>{const beg=o.boxes.filter(b=>b>0);
+          return {v:o.v,t:o.t,beg:beg.length,avg:beg.length?beg.reduce((a,b)=>a+b,0)/beg.length:0};})
+          .filter(o=>o.beg>0&&o.avg<4).sort((a,b)=>a.avg-b.avg).slice(0,4);
+        return (
+          <div key={pid} style={{marginTop:10,paddingTop:10,borderTop:'1px solid var(--line)'}}>
+            <div style={{fontWeight:700}}>{P.emoji} {P.naam}
+              <span className="muted" style={{fontWeight:400,fontSize:13}}> · ⭐ {prog.punten||0} · 🔥 {prog.streak||0} · 📅 {prog.dagstreak||0} · vandaag {prog.todayCount||0}/{prog.goal||10}</span></div>
+            <div className="wrap" style={{marginTop:6}}>
+              {vakRijen.map(r=>(<span key={r.v} className="tag">{VAKNAAM[r.v]}: {r.beheerst}/{r.total}</span>))}
+            </div>
+            {zwak.length>0
+              ? <div style={{marginTop:6,fontSize:13}}>⚠️ <b>Aandacht nodig:</b> {zwak.map(o=>VAKNAAM[o.v]+' – '+o.t).join(' · ')}</div>
+              : <div className="muted" style={{marginTop:6,fontSize:13}}>Nog te weinig geoefend om zwakke punten te bepalen.</div>}
+            {(prog.foutLog||[]).length>0 && <div className="muted" style={{fontSize:13,marginTop:2}}>📕 Foutenschrift: {(prog.foutLog||[]).length} open</div>}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 function Author({store,persist,onBack}){
   const [unlocked,setUnlocked]=useState(false);
   const [pin,setPin]=useState('');
@@ -1065,6 +1230,7 @@ function Author({store,persist,onBack}){
   return (
     <div>
       <div className="topbar"><button className="back" onClick={onBack}>← terug</button><span className="pill">Ouder-modus</span></div>
+      <OuderDashboard store={store}/>
       <h2>Nieuwe opdracht toevoegen</h2>
 
       <div className="card" style={{marginTop:12}}>
@@ -1390,6 +1556,14 @@ const UITLEG={
   'Krachten & evenwicht':{tekst:'Krachten in dezelfde richting tel je op, in tegengestelde richting trek je af. De resultante (nettokracht) is hun som met richting. Is de resultante 0, dan is er evenwicht. Veerkracht: F = C × u.'},
   'Golven & trillingen':{tekst:'Frequentie f (in hertz) is het aantal trillingen per seconde; trillingstijd T is de duur van één trilling: T = 1/f en f = 1/T. Voor een golf geldt v = f × λ (golfsnelheid = frequentie × golflengte).'},
   'Radioactiviteit':{tekst:'Na elke halveringstijd is nog de helft van de radioactieve stof over. Na n halveringstijden is dus (½)ⁿ over. Reken in stappen: elke halveringstijd × ½.'},
+  // Amine (groep 7/8)
+  'Tafels & keer':{tekst:'Ken de tafels van 1 t/m 12 uit je hoofd — dat scheelt enorm bij grote sommen. Tip: 12 × 6 = 10 × 6 + 2 × 6 = 60 + 12 = 72.'},
+  'Meten & maten':{tekst:'Onthoud de "trappetjes": 1 km = 1000 m · 1 m = 100 cm · 1 cm = 10 mm · 1 kg = 1000 g · 1 liter = 1000 ml. Naar een kleinere eenheid → keer; naar een grotere → delen.'},
+  'Tijd & klok':{tekst:'1 uur = 60 minuten. Reken duur uit door eerst hele uren te tellen en dan de losse minuten. Een half uur = 30 minuten = 0,5 uur.'},
+  'Kommagetallen':{tekst:'Zet bij + en − de komma netjes onder elkaar. Bij × 10 gaat de komma één plaats naar rechts, bij × 100 twee plaatsen. Bij ÷ 10 juist naar links.'},
+  'Zinsontleden':{tekst:'De persoonsvorm vind je door de zin in een andere tijd te zetten: het werkwoord dat verandert, is de persoonsvorm. Het onderwerp vind je met de vraag "wie of wat + persoonsvorm?".'},
+  'Signaalwoorden':{tekst:'Signaalwoorden verraden het verband in een tekst: "omdat/want" = reden, "maar/echter" = tegenstelling, "daardoor/dus" = gevolg, "eerst/daarna" = volgorde.'},
+  'Alfabetiseren':{tekst:'In een woordenboek staan woorden op alfabet. Begint het met dezelfde letter? Kijk dan naar de tweede letter, dan de derde, enzovoort.'},
 };
 function UitlegPaneel({data,open,onToggle}){
   return (
