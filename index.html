@@ -313,7 +313,9 @@ const TOPICICON = {
   'Formules met x': '🔤',
   'Coördinaten': '📈',
   'Reactiesnelheid': '⏱️',
-  'Tijdlijn': '📜'
+  'Tijdlijn': '📜',
+  'Feit of mening': '💭',
+  'Soorten teksten': '📰'
 };
 
 /* ============================ OEFENINGEN (startvoorraad) ============================ */
@@ -6467,6 +6469,170 @@ const SEED = [
   a: '2',
   h: ['Elk H₂O heeft 1 zuurstofatoom; 2 moleculen.'],
   s: '2 × 1 = 2 zuurstofatomen.'
+}, /* ============ AMINE · begrijpend lezen verbreed (IEP) ============ */
+{
+  p: 'amine',
+  v: 'lezen',
+  t: 'Tekst begrijpen',
+  lvl: 2,
+  q: 'Lees: "De bibliotheek heeft 1200 boeken. Daarvan zijn 300 strips." Hoeveel boeken zijn géén strip?',
+  a: '900',
+  h: ['1200 − 300.'],
+  s: '1200 − 300 = 900 boeken.'
+}, {
+  p: 'amine',
+  v: 'lezen',
+  t: 'Tekst begrijpen',
+  lvl: 3,
+  q: 'Lees: "Anna spaart € 3 per week voor een spel van € 24." Na hoeveel weken kan ze het kopen?',
+  a: '8',
+  u: 'weken',
+  h: ['24 ÷ 3.'],
+  s: '24 ÷ 3 = 8 weken.'
+}, {
+  p: 'amine',
+  v: 'lezen',
+  t: 'Feit of mening',
+  lvl: 1,
+  q: '"Het regent vandaag." Is dit een feit of een mening?',
+  a: 'feit',
+  opties: ['feit', 'mening'],
+  h: ['Kun je het controleren? Dan is het een feit.'],
+  s: 'Of het regent kun je nakijken → feit.'
+}, {
+  p: 'amine',
+  v: 'lezen',
+  t: 'Feit of mening',
+  lvl: 2,
+  q: '"Voetbal is de leukste sport die er is." Is dit een feit of een mening?',
+  a: 'mening',
+  opties: ['feit', 'mening'],
+  h: ['"Het leukst" verschilt per persoon.'],
+  s: 'Dit is wat iemand vindt → mening.'
+}, {
+  p: 'amine',
+  v: 'lezen',
+  t: 'Soorten teksten',
+  lvl: 2,
+  q: 'Een tekst die stap voor stap uitlegt hoe je een taart bakt, is een ...?',
+  a: 'instructie',
+  opties: ['instructie', 'verhaal', 'gedicht'],
+  h: ['Het legt uit hoe je iets doet.'],
+  s: 'Een stap-voor-stap-uitleg is een instructie(tekst).'
+}, {
+  p: 'amine',
+  v: 'lezen',
+  t: 'Soorten teksten',
+  lvl: 2,
+  q: 'Een tekst met feiten over olifanten, om iets te leren, is vooral een ...?',
+  a: 'informatieve tekst',
+  alt: ['informatief', 'informatie', 'weettekst'],
+  h: ['Hij geeft informatie/feiten.'],
+  s: 'Dat is een informatieve tekst.'
+}, /* ============ AMINE · redactiesommen (context) ============ */
+{
+  p: 'amine',
+  v: 'rekenen',
+  t: 'Redactiesommen',
+  lvl: 1,
+  q: 'Een pak melk kost € 1,20. Hoeveel kosten 5 pakken?',
+  a: '6',
+  u: '€',
+  h: ['1,20 × 5.'],
+  s: '1,20 × 5 = € 6,00.'
+}, {
+  p: 'amine',
+  v: 'rekenen',
+  t: 'Redactiesommen',
+  lvl: 2,
+  q: 'In een doos zitten 6 rijen van 8 koekjes. Hoeveel koekjes zijn dat in totaal?',
+  a: '48',
+  h: ['6 × 8.'],
+  s: '6 × 8 = 48 koekjes.'
+}, {
+  p: 'amine',
+  v: 'rekenen',
+  t: 'Redactiesommen',
+  lvl: 3,
+  q: 'Een film begint om 19:15 en duurt 90 minuten. Hoe laat is hij afgelopen?',
+  a: '20:45',
+  alt: ['20.45'],
+  h: ['90 minuten = 1,5 uur.'],
+  s: '19:15 + 1 uur 30 = 20:45.'
+}, {
+  p: 'amine',
+  v: 'rekenen',
+  t: 'Redactiesommen',
+  lvl: 2,
+  q: 'Een trein vertrekt om 14:00 en rijdt 3 uur. Hoe laat komt hij aan?',
+  a: '17:00',
+  alt: ['17.00'],
+  h: ['14 + 3.'],
+  s: '14:00 + 3 uur = 17:00.'
+}, /* ============ WASSIMA · redactie/context ============ */
+{
+  p: 'wassima',
+  v: 'wiskunde',
+  t: 'Procenten',
+  lvl: 2,
+  q: 'Een trui kostte € 50 en kost nu € 35. Hoeveel procent korting is dat?',
+  a: '30',
+  u: '%',
+  h: ['Verschil ÷ oude prijs × 100.'],
+  s: '(50 − 35) ÷ 50 × 100 = 30%.'
+}, {
+  p: 'wassima',
+  v: 'wiskunde',
+  t: 'Oppervlakte & omtrek',
+  lvl: 2,
+  q: 'Een tuin is 12 m lang en 8 m breed. Hoeveel m² gras heb je nodig om hem te bedekken?',
+  a: '96',
+  u: 'm²',
+  h: ['oppervlakte = lengte × breedte.'],
+  s: '12 × 8 = 96 m².'
+}, {
+  p: 'wassima',
+  v: 'natuurkunde',
+  t: 'Energie & vermogen',
+  lvl: 3,
+  q: 'Een föhn van 2000 W staat 6 minuten aan. Hoeveel energie gebruikt hij? (in kJ)',
+  a: '720',
+  u: 'kJ',
+  h: ['E = P × t; 6 min = 360 s; deel J door 1000 voor kJ.'],
+  s: 'E = 2000 × 360 = 720 000 J = 720 kJ.'
+}, {
+  p: 'wassima',
+  v: 'natuurkunde',
+  t: 'Dichtheid',
+  lvl: 3,
+  q: 'Een gouden ring weegt 38,6 g en heeft een volume van 2 cm³. Bereken de dichtheid.',
+  a: '19.3',
+  alt: ['19,3'],
+  u: 'g/cm³',
+  h: ['ρ = m ÷ V.'],
+  s: 'ρ = 38,6 ÷ 2 = 19,3 g/cm³ (de dichtheid van goud).'
+}, /* ============ AMAANI · context ============ */
+{
+  p: 'amaani',
+  v: 'wiskundeA',
+  t: 'Procentuele groei',
+  lvl: 3,
+  q: 'Je zet € 1000 op de bank, 4 jaar lang 5% rente per jaar. Wat is het eindbedrag? (rond af op hele euro)',
+  a: '1216',
+  alt: ['1215.51', '1215,51', '1215'],
+  u: '€',
+  h: ['1000 × 1,05⁴.'],
+  s: '1000 × 1,05⁴ = 1215,5… ≈ € 1216.'
+}, {
+  p: 'amaani',
+  v: 'natuurkunde',
+  t: 'Vermogen',
+  lvl: 3,
+  q: 'Een motor verricht 6000 J arbeid in 30 s. Bereken het vermogen.',
+  a: '200',
+  u: 'W',
+  h: ['P = W ÷ t.'],
+  s: 'P = 6000 ÷ 30 = 200 W.'
 }];
 SEED.forEach((e, i) => e.id = 'seed_' + i);
 
