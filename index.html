@@ -599,6 +599,19 @@ const SEED = [
   {p:'wassima',v:'biologie',t:'Het menselijk lichaam',lvl:1,q:'Welk orgaan pompt het bloed rond?',a:'hart',opties:['hart','longen','maag'],h:['Het klopt in je borst.'],s:'Het hart pompt bloed rond.'},
   {p:'amaani',v:'scheikunde',t:'Zuur & base',lvl:1,q:'Een oplossing met pH 2 is...',a:'zuur',opties:['zuur','neutraal','basisch'],h:['Lager dan 7.'],s:'pH 2 < 7 → zuur.'},
   {p:'amaani',v:'natuurkunde',t:'Golven & trillingen',lvl:1,q:'In welke eenheid meet je frequentie?',a:'hertz',opties:['hertz','meter','newton'],h:['Genoemd naar een natuurkundige.'],s:'Frequentie meet je in hertz (Hz).'},
+
+  /* ============ GRAFIEKEN LEZEN (staafdiagram) ============ */
+  {p:'amine',v:'rekenen',t:'Grafieken & tabellen',lvl:1,ill:{type:'staaf',data:[['ma',5],['di',8],['wo',3],['do',6]]},q:'Hoeveel ijsjes werden er op dinsdag (di) verkocht? (lees de grafiek)',a:'8',h:['Kijk hoe hoog de staaf van di is.'],s:'De staaf van di staat op 8.'},
+  {p:'amine',v:'rekenen',t:'Grafieken & tabellen',lvl:2,ill:{type:'staaf',data:[['ma',5],['di',8],['wo',3],['do',6]]},q:'Hoeveel ijsjes meer op di dan op wo? (lees de grafiek)',a:'5',h:['di = 8, wo = 3. Trek af.'],s:'8 − 3 = 5.'},
+  {p:'amine',v:'rekenen',t:'Grafieken & tabellen',lvl:2,ill:{type:'staaf',data:[['ma',5],['di',8],['wo',3],['do',6]]},q:'Hoeveel ijsjes in totaal in deze 4 dagen? (lees de grafiek)',a:'22',h:['Tel alle staven op: 5 + 8 + 3 + 6.'],s:'5 + 8 + 3 + 6 = 22.'},
+  {p:'amine',v:'rekenen',t:'Grafieken & tabellen',lvl:1,ill:{type:'staaf',data:[['ma',5],['di',8],['wo',3],['do',6]]},q:'Op welke dag werden de meeste ijsjes verkocht? (lees de grafiek)',a:'di',opties:['ma','di','wo'],h:['Welke staaf is het hoogst?'],s:'De staaf van di is het hoogst (8).'},
+  {p:'wassima',v:'wiskunde',t:'Statistiek',lvl:2,ill:{type:'staaf',data:[['A',4],['B',6],['C',8],['D',2]]},q:'Lees de grafiek af. Wat is het gemiddelde van A, B, C en D?',a:'5',h:['Tel op (4+6+8+2) en deel door 4.'],s:'(4+6+8+2) ÷ 4 = 20 ÷ 4 = 5.'},
+  {p:'amaani',v:'wiskundeA',t:'Statistiek',lvl:2,ill:{type:'staaf',data:[['A',4],['B',6],['C',8],['D',2]]},q:'Lees de grafiek af. Wat is het bereik (hoogste − laagste)?',a:'6',h:['Hoogste = 8, laagste = 2.'],s:'8 − 2 = 6.'},
+
+  /* ============ EXTRA MEERKEUZE BEGRIJPEND LEZEN (Amine) ============ */
+  {p:'amine',v:'lezen',t:'Tekst begrijpen',lvl:2,q:'Lees: "Sam spaart elke week € 2. Hij spaart nu al 4 weken." Hoeveel euro heeft Sam gespaard?',a:'8',opties:['6','8','10'],u:'€',h:['€ 2 per week × 4 weken.'],s:'2 × 4 = € 8.'},
+  {p:'amine',v:'lezen',t:'Tekst begrijpen',lvl:3,q:'Lees: "De film begint om 19:00 en duurt 90 minuten." Hoe laat is de film afgelopen?',a:'20:30',opties:['20:00','20:30','21:00'],h:['90 minuten = 1,5 uur na 19:00.'],s:'19:00 + 1,5 uur = 20:30.'},
+  {p:'amine',v:'lezen',t:'Signaalwoorden',lvl:2,q:'"Het regende, dáárom bleven we binnen." Welk soort verband geeft "daarom" aan?',a:'gevolg',opties:['gevolg','tegenstelling','opsomming'],h:['Er volgt het resultaat.'],s:'"daarom" geeft een gevolg aan.'},
 ];
 SEED.forEach((e,i)=> e.id = 'seed_'+i);
 
@@ -1367,11 +1380,36 @@ function Practice({profile,vak,topic,allEx,onBack,onResult,prog,onTopic}){
 
 /* ---------- AUTHOR (ouder-modus, PIN) ---------- */
 /* ---------- OUDER-DASHBOARD (voortgang & aandachtspunten) ---------- */
+function rapportTekst(store){
+  const allEx=[...SEED,...TEMPLATES,...store.custom];
+  const L=['Voortgangsrapport — Oefenapp','==============================',''];
+  for(const [pid,P] of Object.entries(PROFILES)){
+    const prog=normalizeProg(store.prog[pid]);
+    L.push(P.naam+' ('+P.niveau+')');
+    L.push('  Punten: '+(prog.punten||0)+'  ·  Dagreeks: '+(prog.dagstreak||0)+' dagen  ·  Niveau: '+(prog.niveau==='auto'?'automatisch (nu '+(prog.autoLvl||1)+')':prog.niveau));
+    for(const v of P.vakken){
+      const cards=allEx.filter(e=>e.p===pid&&e.v===v);
+      const beh=cards.filter(e=>isMastered(prog,e.id)).length;
+      const beg=cards.filter(e=>cardInfo(prog,e.id).box>0).length;
+      L.push('  - '+VAKNAAM[v]+': '+beh+'/'+cards.length+' beheerst ('+beg+' begonnen)');
+    }
+    if((prog.foutLog||[]).length) L.push('  Nog te herhalen (foutenschrift): '+prog.foutLog.length);
+    L.push('');
+  }
+  return L.join('\n');
+}
+function downloadRapport(store){
+  const blob=new Blob([rapportTekst(store)],{type:'text/plain'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='voortgangsrapport.txt'; a.click();
+}
 function OuderDashboard({store}){
   const allEx=[...SEED,...TEMPLATES,...store.custom];
   return (
     <div className="card" style={{marginBottom:16,background:'#f0f6ea',borderLeftColor:'#5EA03A'}}>
-      <b>📊 Voortgang per kind</b>
+      <div className="row" style={{justifyContent:'space-between'}}>
+        <b>📊 Voortgang per kind</b>
+        <button className="btn ghost sm" onClick={()=>downloadRapport(store)}>⬇️ Rapport</button>
+      </div>
       {Object.entries(PROFILES).map(([pid,P])=>{
         const prog=normalizeProg(store.prog[pid]);
         const vakRijen=P.vakken.map(v=>{
@@ -1753,6 +1791,19 @@ function Figure({ill}){
       return (
         <svg width={W} height={hh+8} viewBox={'0 0 '+W+' '+(hh+8)} role="img" aria-label="breuk">
           {rc.map(i=>(<rect key={i} x={i*w} y="4" width={w} height={hh} fill={i<g?G:F} stroke={M} strokeWidth="1.5"/>))}
+        </svg>);
+    }
+    case 'staaf': {
+      const data=ill.data, n=data.length, max=Math.max.apply(null,data.map(d=>d[1]).concat([1]));
+      const pad=22, bw=30, gap=22, baseY=120, top=16, chartH=baseY-top, W=pad*2 + n*bw + (n-1)*gap;
+      return (
+        <svg width={W} height="150" viewBox={'0 0 '+W+' 150'} role="img" aria-label="staafdiagram">
+          <line x1={pad-6} y1={baseY} x2={W-pad+6} y2={baseY} stroke={M} strokeWidth="2"/>
+          {data.map((d,i)=>{const h=d[1]/max*chartH, x=pad+i*(bw+gap), y=baseY-h; return (<g key={i}>
+            <rect x={x} y={y} width={bw} height={h} fill={F} stroke={G} strokeWidth="2"/>
+            <text x={x+bw/2} y={y-4} fontSize="12" textAnchor="middle" fill={M} fontWeight="bold">{d[1]}</text>
+            <text x={x+bw/2} y={baseY+15} fontSize="12" textAnchor="middle" fill={M}>{d[0]}</text>
+          </g>);})}
         </svg>);
     }
     default: return null;

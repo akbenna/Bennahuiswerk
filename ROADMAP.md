@@ -24,6 +24,6 @@ Instelbaar moeilijkheidsniveau per kind (**Auto / 1 / 2 / 3**; Auto wordt vanzel
 3. **Amaani exact uitdiepen:** Scheikunde (rekenen aan reacties, molverhoudingen), Wiskunde A (logaritmen/exponentieel verdiepen), Natuurkunde (samengestelde vraagstukken).
 4. **Amine verdiepen:** langere begrijpend-leesteksten, breuken/verhoudingstabellen gevorderd, meer studievaardigheden.
 5. **Begrijpend lezen** verder uitbouwen met meer (meerkeuze-)teksten en signaalwoorden.
-6. **Engine-ideeën:** extra visuals (staafdiagram, breukcirkel, geodriehoek), exporteerbaar voortgangsrapport voor ouders, geluid/beloning bij goed antwoord.
+6. **Engine-ideeën:** extra visuals (breukcirkel, geodriehoek, lijngrafiek), geluid/beloning bij goed antwoord, timer bij de oefentoets.
 
-_Gereed (engine):_ meerkeuze-vraagtype ✓ · getekende klok bij Tijd ✓.
+_Gereed (engine):_ meerkeuze-vraagtype ✓ · getekende klok ✓ · staafdiagram ✓ · voortgangsrapport exporteren ✓.
