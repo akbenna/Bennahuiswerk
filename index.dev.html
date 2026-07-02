@@ -160,7 +160,7 @@ const TOPICICON = {
   // volgend jaar
   'Kwadratische vergelijkingen':'🟰','Stelsels':'🔢','Goniometrie':'📐','Krachten (resultante)':'➡️','Normale verdeling':'🔔','Binomiale verdeling':'🎲',
   'Logaritmen (gevorderd)':'🔟','Energiebehoud':'⚡','Gaswet':'🌡️','Concentratie':'🧪','Formules met x':'🔤','Coördinaten':'📈',
-  'Reactiesnelheid':'⏱️','Tijdlijn':'📜','Feit of mening':'💭','Soorten teksten':'📰','Woordbetekenis':'📖','Conclusie':'🔍',
+  'Reactiesnelheid':'⏱️','Tijdlijn':'📜','Feit of mening':'💭','Soorten teksten':'📰','Woordbetekenis':'📖','Conclusie':'🔍','Samenvatten':'🗒️','Opzoeken':'🔎',
 };
 
 /* ============================ OEFENINGEN (startvoorraad) ============================ */
@@ -971,6 +971,45 @@ const SEED = [
   {p:'amine',v:'rekenen',t:'Meten & maten',lvl:1,q:'Hoeveel gram is 0,5 kg?',a:'500',u:'g',h:['1 kg = 1000 g; pak de helft.'],s:'0,5 × 1000 = 500 g.'},
   {p:'amine',v:'rekenen',t:'Procenten',lvl:3,q:'Hoeveel is 75% van 80?',a:'60',h:['75% = 3/4.'],s:'3/4 × 80 = 60.'},
   {p:'amine',v:'rekenen',t:'Grafieken & tabellen',lvl:2,ill:{type:'staaf',data:[['A',6],['B',9],['C',3]]},q:'Hoeveel meer punten haalde B dan C? (lees de grafiek)',a:'6',h:['B = 9, C = 3.'],s:'9 − 3 = 6.'},
+
+  /* ============ AMINE · IEP-rapport: SAMENVATTEN (was 0%) ============ */
+  {p:'amine',v:'lezen',t:'Samenvatten',lvl:2,q:'Lees: "Honden zijn trouwe dieren. Ze helpen blinde mensen en waarschuwen bij gevaar." Welke zin vat de tekst het best samen?',a:'Honden zijn nuttige, trouwe dieren.',opties:['Honden zijn nuttige, trouwe dieren.','Honden blaffen heel veel.','Blinde mensen wonen alleen.'],h:['Wat is de kern van álle zinnen?'],s:'De tekst gaat over hoe nuttig en trouw honden zijn.'},
+  {p:'amine',v:'lezen',t:'Samenvatten',lvl:2,q:'Lees: "Planten hebben water, licht en lucht nodig om te groeien." Wat is de kern (samenvatting)?',a:'Wat planten nodig hebben om te groeien',opties:['Wat planten nodig hebben om te groeien','Hoe je een taart bakt','Waarom honden blaffen'],h:['Waar gaat de zin over?'],s:'De kern: wat planten nodig hebben om te groeien.'},
+  {p:'amine',v:'lezen',t:'Samenvatten',lvl:2,q:'Welke titel past het best bij een tekst die uitlegt hoe bijen honing maken?',a:'Hoe bijen honing maken',opties:['Hoe bijen honing maken','Mijn zomervakantie','De regels van voetbal'],h:['De titel geeft de hoofdgedachte.'],s:'Een goede titel vat de tekst samen: "Hoe bijen honing maken".'},
+  {p:'amine',v:'lezen',t:'Samenvatten',lvl:3,q:'Lees: "Eerst regende het hard. Daarna kwam de zon en verscheen er een regenboog." Waar gaat de tekst vooral over?',a:'het weer die dag',opties:['het weer die dag','een verjaardagsfeest','een voetbalwedstrijd'],h:['Alle zinnen gaan over hetzelfde onderwerp.'],s:'De tekst gaat over het weer die dag.'},
+
+  /* ============ AMINE · IEP-rapport: WOORDENSCHAT / TECHNIEK (was 50%) ============ */
+  {p:'amine',v:'lezen',t:'Woordbetekenis',lvl:2,q:'Lees: "De weg was glibberig door het ijs." Wat betekent "glibberig"?',a:'glad',opties:['glad','warm','droog'],h:['Door ijs wordt een weg...'],s:'Glibberig = glad.'},
+  {p:'amine',v:'lezen',t:'Woordbetekenis',lvl:2,q:'Lees: "Na de wedstrijd was hij helemaal uitgeput." Wat betekent "uitgeput"?',a:'heel moe',opties:['heel moe','heel blij','heel snel'],h:['Na een zware wedstrijd voel je je...'],s:'Uitgeput = heel moe.'},
+  {p:'amine',v:'lezen',t:'Woordbetekenis',lvl:2,q:'Wat betekent het woord "enorm"?',a:'heel groot',opties:['heel groot','heel klein','een beetje'],h:['Een enorme berg is...'],s:'Enorm = heel groot.'},
+  {p:'amine',v:'lezen',t:'Woordbetekenis',lvl:2,q:'Wat betekent "zelden"?',a:'bijna nooit',opties:['bijna nooit','heel vaak','altijd'],h:['Iets wat zelden gebeurt, gebeurt...'],s:'Zelden = bijna nooit.'},
+  {p:'amine',v:'lezen',t:'Woordbetekenis',lvl:1,q:'Wat is een ander woord voor "beginnen"?',a:'starten',alt:['aanvangen','opstarten','start'],h:['Het tegenovergestelde van stoppen.'],s:'Beginnen = starten.'},
+
+  /* ============ AMINE · IEP-rapport: OPZOEKEN (was 67%) ============ */
+  {p:'amine',v:'studievaardigheden',t:'Opzoeken',lvl:1,q:'Je wilt weten wat een moeilijk woord betekent. In welk boek zoek je dat op?',a:'woordenboek',alt:['het woordenboek','een woordenboek'],h:['Vol met woorden op alfabet.'],s:'In een woordenboek zoek je woordbetekenissen op.'},
+  {p:'amine',v:'studievaardigheden',t:'Opzoeken',lvl:2,q:'Waar kijk je om te zien op welke bladzijde hoofdstuk 3 begint?',a:'inhoudsopgave',alt:['de inhoudsopgave','inhoud'],h:['Staat vooraan in het boek.'],s:'In de inhoudsopgave.'},
+  {p:'amine',v:'studievaardigheden',t:'Opzoeken',lvl:2,q:'Achter in een informatieboek staat een lijst met moeilijke woorden en hun uitleg. Hoe heet die lijst?',a:'begrippenlijst',alt:['woordenlijst','verklarende woordenlijst','register'],h:['Een lijst met begrippen.'],s:'Dat is een begrippenlijst (of register).'},
+  {p:'amine',v:'studievaardigheden',t:'Opzoeken',lvl:2,q:'Op een kaart hoort bij elke kleur en elk teken een uitleg in een kadertje. Hoe heet dat kadertje?',a:'legenda',alt:['de legenda'],h:['Begint met een L.'],s:'Dat is de legenda.'},
+  {p:'amine',v:'studievaardigheden',t:'Opzoeken',lvl:1,q:'Welk woord staat eerst in het woordenboek: "tafel" of "stoel"?',a:'stoel',h:['s komt vóór t.'],s:'"stoel" (s) komt vóór "tafel" (t).'},
+
+  /* ============ AMINE · IEP-rapport: INTERPRETEREN (was 79%) ============ */
+  {p:'amine',v:'lezen',t:'Conclusie',lvl:2,q:'Lees: "Sara pakt haar zwembroek en een handdoek." Waar gaat Sara waarschijnlijk naartoe?',a:'zwembad',opties:['zwembad','school','bed'],h:['Wat doe je met een zwembroek?'],s:'Met zwembroek en handdoek ga je naar het zwembad.'},
+  {p:'amine',v:'lezen',t:'Conclusie',lvl:2,q:'Lees: "De hond kwispelt en springt op als zijn baasje thuiskomt." Hoe voelt de hond zich?',a:'blij',opties:['blij','boos','bang'],h:['Kwispelen betekent...'],s:'Kwispelen en opspringen → de hond is blij.'},
+  {p:'amine',v:'lezen',t:'Conclusie',lvl:3,q:'Lees: "Tom pakt zijn paraplu voordat hij naar buiten gaat." Wat is waarschijnlijk waar?',a:'het regent',opties:['het regent','de zon schijnt fel','het is midden in de nacht'],h:['Waarom pak je een paraplu?'],s:'Een paraplu → het regent (waarschijnlijk).'},
+
+  /* ============ AMINE · IEP-rapport: WERKWOORDSPELLING (zwakste, 64→83%) ============ */
+  {p:'amine',v:'taal',t:'Werkwoordspelling',lvl:2,q:'Tegenwoordige tijd: "jij ... het antwoord." (vinden) → jij',a:'vindt',h:['jij + stam + t; vind + t = vindt.'],s:'jij vindt (vind + t).'},
+  {p:'amine',v:'taal',t:'Werkwoordspelling',lvl:2,q:'Verleden tijd: "gisteren ... hij naar school." (fietsen) → hij',a:'fietste',h:["Stam fiets eindigt op s ('t kofschip) → +te."],s:'fiets + te = fietste.'},
+  {p:'amine',v:'taal',t:'Werkwoordspelling',lvl:2,q:'Voltooid deelwoord: "zij heeft haar oma ... ." (bellen) → ge...',a:'gebeld',h:['ge + bel + d.'],s:'ge + bel + d = gebeld.'},
+  {p:'amine',v:'taal',t:'Werkwoordspelling',lvl:3,q:'d of t? "De hond ... hard." (rennen) → hij',a:'rent',h:['stam ren + t = rent.'],s:'ren + t = rent.'},
+  {p:'amine',v:'taal',t:'Werkwoordspelling',lvl:3,q:'d of t? "Hij ... steeds groter." (worden) → hij',a:'wordt',h:['stam word + t = wordt (d én t).'],s:'word + t = wordt.'},
+
+  /* ============ AMINE · IEP-rapport: NIET-WERKWOORDSPELLING (71→83%) ============ */
+  {p:'amine',v:'taal',t:'Spelling',lvl:2,q:'Wat is het meervoud van "huis"?',a:'huizen',h:['s wordt z in het meervoud.'],s:'huis → huizen.'},
+  {p:'amine',v:'taal',t:'Spelling',lvl:2,q:'Wat is het meervoud van "glas"?',a:'glazen',h:['s wordt z; korte a wordt lange aa.'],s:'glas → glazen.'},
+  {p:'amine',v:'taal',t:'Spelling',lvl:2,q:'Wat is het verkleinwoord van "kop"?',a:'kopje',h:['+ je.'],s:'kop → kopje.'},
+  {p:'amine',v:'taal',t:'Spelling',lvl:1,q:'ei of ij? Schrijf het hele woord: het tegenovergestelde van groot is kl__n.',a:'klein',h:['De "korte ei".'],s:'Het woord is klein.'},
+  {p:'amine',v:'taal',t:'Spelling',lvl:2,q:'Schrijf goed (samengesteld woord): "boekenkast" of "boeken kast"?',a:'boekenkast',h:['Het is één woord.'],s:'boeken + kast = boekenkast.'},
 ];
 SEED.forEach((e,i)=> e.id = 'seed_'+i);
 
