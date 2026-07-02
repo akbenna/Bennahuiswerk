@@ -115,7 +115,6 @@
 <div id="root"></div>
 
 <script>
-/* Vooraf gecompileerd uit index.dev.html — geen Babel nodig in de browser (sneller laden) */
 const {
   useState,
   useEffect,
@@ -131,7 +130,8 @@ const PROFILES = {
     volgend: '3 havo',
     emoji: '🌱',
     kleur: 'linear-gradient(135deg,#5EA03A,#48792c)',
-    vakken: ['wiskunde', 'natuurkunde', 'nederlands', 'engels', 'frans', 'duits', 'biologie', 'aardrijkskunde', 'geschiedenis', 'economie']
+    vakken: ['wiskunde', 'natuurkunde', 'nederlands', 'engels', 'frans', 'duits', 'biologie', 'aardrijkskunde', 'geschiedenis', 'economie'],
+    beloning: true
   },
   amaani: {
     naam: 'Amaani',
@@ -139,17 +139,128 @@ const PROFILES = {
     volgend: '5 vwo',
     emoji: '🚀',
     kleur: 'linear-gradient(135deg,#3a6ea0,#2c5680)',
-    vakken: ['wiskundeA', 'natuurkunde', 'scheikunde', 'nederlands', 'engels', 'frans', 'biologie', 'aardrijkskunde', 'geschiedenis', 'economie']
+    vakken: ['wiskundeA', 'natuurkunde', 'scheikunde', 'nederlands', 'engels', 'frans', 'biologie', 'aardrijkskunde', 'geschiedenis', 'economie'],
+    beloning: true
   },
   amine: {
     naam: 'Amine',
     niveau: 'groep 7',
     volgend: 'groep 8',
-    emoji: '🦉',
-    kleur: 'linear-gradient(135deg,#e0a23a,#c2782d)',
-    vakken: ['rekenen', 'taal', 'lezen', 'studievaardigheden', 'engels']
+    emoji: '⚽',
+    kleur: 'linear-gradient(135deg,#2e8b57,#1f6e43)',
+    vakken: ['rekenen', 'taal', 'lezen', 'studievaardigheden', 'engels'],
+    thema: 'voetbal'
   }
 };
+
+/* ============================ THEMA'S (motivatie) ============================ */
+/* Per profiel een thema. Amine = voetbal/game: XP, rangen, doelpunten, voetbal-feedback. */
+const THEMES = {
+  standaard: {
+    xp: 'punten',
+    doel: 'sommen',
+    goal: '✅ Goed gedaan!',
+    feest: ['🎉', '⭐', '🎊', '✨', '👏'],
+    rangen: [[0, 'Starter', '🌱'], [100, 'Op dreef', '⭐'], [250, 'Kanjer', '🌟'], [500, 'Uitblinker', '🏅'], [900, 'Ster', '💫'], [1400, 'Meester', '🎓'], [2000, 'Kampioen', '🏆'], [3000, 'Legende', '👑']]
+  },
+  voetbal: {
+    xp: 'XP',
+    doel: 'doelpunten',
+    goal: '⚽ GOAL!',
+    feest: ['⚽', '🥅', '🎉', '🔥', '👟'],
+    rangen: [[0, 'Pupil', '⚽'], [100, 'Talent', '🌟'], [250, 'Basisspeler', '👕'], [500, 'Uitblinker', '⭐'], [900, 'Aanvoerder', '🎽'], [1400, 'Topscorer', '🥅'], [2000, 'Kampioen', '🏆'], [3000, 'Legende', '👑']]
+  }
+};
+function themaVan(pid) {
+  return THEMES[PROFILES[pid] && PROFILES[pid].thema || 'standaard'] || THEMES.standaard;
+}
+function rangVoor(thema, punten) {
+  const r = thema.rangen;
+  let i = 0;
+  for (let k = 0; k < r.length; k++) {
+    if (punten >= r[k][0]) i = k;
+  }
+  const huidig = r[i],
+    volgende = r[i + 1] || null;
+  const naar = volgende ? volgende[0] - punten : 0;
+  const basis = huidig[0],
+    top = volgende ? volgende[0] : huidig[0];
+  const pct = volgende ? Math.round((punten - basis) / (top - basis) * 100) : 100;
+  return {
+    naam: huidig[1],
+    emoji: huidig[2],
+    volgendeNaam: volgende ? volgende[1] : null,
+    naar,
+    pct
+  };
+}
+
+/* ==================== EERLIJKE BELONING (zakgeld, alleen meiden) ====================
+   De app rekent zélf uit wat een sessie eerlijk waard is; de ouder betaalt pas uit.
+   Alleen ÉCHT bewezen prestatie telt:
+   - alleen 'sterk goed' = eerste keer, zónder hint, op een som die nog niet beheerst was;
+   - een nauwkeurigheidspoort tegen gok-/haastwerk (te veel fouten → geen of half tarief);
+   - een bonus als een oefentoets/proeftoets écht gehaald is (klaar voor de toets);
+   - een dagplafond (standaard € 20) zodat het eerlijk en begrensd blijft.               */
+const BELONING = {
+  dagMax: 20,
+  tarief: 0.40,
+  werkMax: 12,
+  drempel: 12,
+  oefenBonus: 4,
+  proefBonus: 8,
+  hoog: 0.85,
+  mid: 0.70
+};
+function euro(n) {
+  return '€ ' + (Math.round(n * 2) / 2).toFixed(2).replace('.', ',');
+}
+function berekenBeloning(pr) {
+  const d = pr.dag || {},
+    t = pr.toetsDag || {};
+  const goed = d.goed || 0,
+    fout = d.fout || 0,
+    sterk = d.sterk || 0;
+  const pogingen = goed + fout;
+  const nauw = pogingen ? goed / pogingen : 0;
+  const genoeg = pogingen >= BELONING.drempel;
+  let factor = 0,
+    poort = '';
+  if (!genoeg) {
+    poort = 'Doe eerst minstens ' + BELONING.drempel + ' sommen om mee te tellen.';
+  } else if (nauw >= BELONING.hoog) {
+    factor = 1;
+    poort = 'Top nauwkeurig 💯 — vol tarief';
+  } else if (nauw >= BELONING.mid) {
+    factor = 0.5;
+    poort = 'Redelijk — half tarief. Werk nog wat rustiger.';
+  } else {
+    factor = 0;
+    poort = 'Te veel fouten — dit telt nog niet. Rustig en goed = beloning.';
+  }
+  const werkEuro = Math.min(BELONING.werkMax, sterk * BELONING.tarief) * factor;
+  const proef = t.proef || 0,
+    oefen = t.oefen || 0;
+  const toetsEuro = proef >= 80 ? BELONING.proefBonus : oefen >= 80 ? BELONING.oefenBonus : 0;
+  const bedrag = Math.min(BELONING.dagMax, Math.round((werkEuro + toetsEuro) * 2) / 2);
+  const betaald = pr.betaaldOp === todayStr();
+  return {
+    bedrag,
+    nauw,
+    genoeg,
+    factor,
+    poort,
+    sterk,
+    goed,
+    fout,
+    pogingen,
+    werkEuro: Math.round(werkEuro * 2) / 2,
+    toetsEuro,
+    proef,
+    oefen,
+    betaald
+  };
+}
 const VAKNAAM = {
   wiskunde: 'Wiskunde',
   natuurkunde: 'Natuurkunde',
@@ -7990,7 +8101,19 @@ function blankProg() {
     foutLog: [],
     niveau: 'auto',
     autoLvl: 1,
-    correctRun: 0
+    correctRun: 0,
+    dag: {
+      d: null,
+      goed: 0,
+      sterk: 0,
+      fout: 0
+    },
+    toetsDag: {
+      d: null,
+      oefen: 0,
+      proef: 0
+    },
+    betaaldOp: null
   };
 }
 function normalizeProg(p) {
@@ -8007,6 +8130,17 @@ function normalizeProg(p) {
   if (np.niveau !== 'auto' && ![1, 2, 3].includes(np.niveau)) np.niveau = 'auto'; // 'auto' | 1 | 2 | 3
   if (![1, 2, 3].includes(np.autoLvl)) np.autoLvl = 1;
   if (typeof np.correctRun !== 'number') np.correctRun = 0;
+  if (!np.dag || typeof np.dag !== 'object') np.dag = {
+    d: null,
+    goed: 0,
+    sterk: 0,
+    fout: 0
+  };
+  if (!np.toetsDag || typeof np.toetsDag !== 'object') np.toetsDag = {
+    d: null,
+    oefen: 0,
+    proef: 0
+  };
   // eenmalige migratie: oude 'solved' → Leitner-kaarten
   if (Object.keys(np.cards).length === 0 && Object.keys(np.solved).length > 0) {
     for (const id of Object.keys(np.solved)) {
@@ -8247,10 +8381,22 @@ function App() {
           last: 0
         })
       };
+      // eerlijke dagteller (voor zakgeld): reset bij nieuwe dag
+      const vandaag = todayStr();
+      if (!pr.dag || pr.dag.d !== vandaag) pr.dag = {
+        d: vandaag,
+        goed: 0,
+        sterk: 0,
+        fout: 0
+      };else pr.dag = {
+        ...pr.dag
+      };
       if (correct) {
         pr.punten = (pr.punten || 0) + (wasMastered ? 3 : usedHint ? 5 : 10);
         pr.streak = (pr.streak || 0) + 1;
         pr.todayCount = (pr.todayCount || 0) + 1;
+        pr.dag.goed++;
+        if (!wasMastered && !usedHint) pr.dag.sterk++; // écht bewezen: 1e keer, zonder hint
         c.ok = (c.ok || 0) + 1;
         c.box = Math.min(5, (c.box || 0) + 1);
         pr.solved[card.id] = {
@@ -8261,6 +8407,7 @@ function App() {
         pr.streak = 0;
         c.wrong = (c.wrong || 0) + 1;
         c.box = 1;
+        pr.dag.fout++;
         const entry = {
           id: card.id,
           t: card.t,
@@ -8289,6 +8436,30 @@ function App() {
       BADGES.forEach(b => {
         if (!pr.badges.includes(b.id) && b.test(pr)) pr.badges.push(b.id);
       });
+      return {
+        ...prev,
+        prog: {
+          ...prev.prog,
+          [pid]: pr
+        }
+      };
+    });
+  }
+
+  // toets-uitslag bewaren (voor 'klaar voor toets'-bonus bij de beloning)
+  function recordToets(pid, isProef, pct) {
+    persist(prev => {
+      const pr = normalizeProg(prev.prog[pid]);
+      const vandaag = todayStr();
+      const td = pr.toetsDag && pr.toetsDag.d === vandaag ? {
+        ...pr.toetsDag
+      } : {
+        d: vandaag,
+        oefen: 0,
+        proef: 0
+      };
+      if (isProef) td.proef = Math.max(td.proef || 0, pct);else td.oefen = Math.max(td.oefen || 0, pct);
+      pr.toetsDag = td;
       return {
         ...prev,
         prog: {
@@ -8332,6 +8503,7 @@ function App() {
     allEx: allEx,
     onBack: () => setView('hub'),
     onResult: recordResult,
+    onToets: recordToets,
     prog: prog,
     onTopic: goTopic
   }), view === 'author' && /*#__PURE__*/React.createElement(Author, {
@@ -8370,6 +8542,8 @@ function Home({
     className: "wrap"
   }, Object.entries(PROFILES).map(([id, p]) => {
     const pr = store.prog[id] || blankProg();
+    const th = themaVan(id),
+      rang = rangVoor(th, pr.punten || 0);
     return /*#__PURE__*/React.createElement("div", {
       key: id,
       className: "profcard",
@@ -8389,7 +8563,7 @@ function Home({
         fontSize: 14,
         fontWeight: 700
       }
-    }, "⭐ ", pr.punten || 0, " punten · 📅 ", pr.dagstreak || 0, " dagen"));
+    }, rang.emoji, " ", rang.naam, " · ", pr.punten || 0, " ", th.xp, " · 📅 ", pr.dagstreak || 0, " dagen"));
   })), /*#__PURE__*/React.createElement("div", {
     className: "center",
     style: {
@@ -8459,6 +8633,8 @@ function Hub({
     done = Math.min(prog.todayCount || 0, goal),
     goalPct = Math.round(done / goal * 100);
   const foutAantal = (prog.foutLog || []).length;
+  const th = themaVan(profile),
+    rang = rangVoor(th, prog.punten || 0);
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "topbar"
   }, /*#__PURE__*/React.createElement("button", {
@@ -8468,7 +8644,7 @@ function Hub({
     className: "scorechip"
   }, /*#__PURE__*/React.createElement("span", {
     className: "s"
-  }, "⭐ ", prog.punten || 0), /*#__PURE__*/React.createElement("span", {
+  }, rang.emoji, " ", prog.punten || 0, " ", th.xp), /*#__PURE__*/React.createElement("span", {
     className: "s"
   }, "🔥 ", prog.streak || 0), /*#__PURE__*/React.createElement("span", {
     className: "s"
@@ -8479,6 +8655,30 @@ function Hub({
   }, P.emoji, " ", P.naam), /*#__PURE__*/React.createElement("div", {
     className: "card",
     style: {
+      marginTop: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "row",
+    style: {
+      justifyContent: 'space-between'
+    }
+  }, /*#__PURE__*/React.createElement("b", null, rang.emoji, " ", rang.naam), /*#__PURE__*/React.createElement("span", {
+    className: "muted",
+    style: {
+      fontSize: 13
+    }
+  }, rang.volgendeNaam ? 'Nog ' + rang.naar + ' ' + th.xp + ' → ' + rang.volgendeNaam : 'Hoogste rang! 👑')), /*#__PURE__*/React.createElement("div", {
+    className: "pbar",
+    style: {
+      marginTop: 8
+    }
+  }, /*#__PURE__*/React.createElement("i", {
+    style: {
+      width: rang.pct + '%'
+    }
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "card",
+    style: {
       marginTop: 12,
       background: done >= goal ? '#eaf7e2' : '#fff'
     }
@@ -8487,12 +8687,12 @@ function Hub({
     style: {
       justifyContent: 'space-between'
     }
-  }, /*#__PURE__*/React.createElement("b", null, "🎯 Dagdoel", done >= goal ? ' — gehaald! 🎉' : ''), /*#__PURE__*/React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("b", null, "🎯 Dagdoel", done >= goal ? th.doel === 'doelpunten' ? ' — gehaald! ⚽' : ' — gehaald! 🎉' : ''), /*#__PURE__*/React.createElement("span", {
     className: "muted",
     style: {
       fontSize: 13
     }
-  }, prog.todayCount || 0, " / ", goal, " sommen")), /*#__PURE__*/React.createElement("div", {
+  }, prog.todayCount || 0, " / ", goal, " ", th.doel)), /*#__PURE__*/React.createElement("div", {
     className: "pbar",
     style: {
       marginTop: 8
@@ -8524,7 +8724,52 @@ function Hub({
   }, goal), /*#__PURE__*/React.createElement("button", {
     className: "btn ghost sm",
     onClick: () => onSetGoal(Math.min(40, goal + 5))
-  }, "+"))), /*#__PURE__*/React.createElement("div", {
+  }, "+"))), P.beloning && (() => {
+    const b = berekenBeloning(prog);
+    const pct = Math.round(b.bedrag / BELONING.dagMax * 100);
+    return /*#__PURE__*/React.createElement("div", {
+      className: "card",
+      style: {
+        marginTop: 12,
+        background: 'linear-gradient(135deg,#fff9e6,#fff4d1)',
+        border: '1px solid #f0d67a'
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "row",
+      style: {
+        justifyContent: 'space-between'
+      }
+    }, /*#__PURE__*/React.createElement("b", null, "💶 Verdiend vandaag"), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontWeight: 800,
+        fontSize: 18,
+        color: '#a8730a'
+      }
+    }, b.betaald ? 'uitbetaald ✓' : euro(b.bedrag))), /*#__PURE__*/React.createElement("div", {
+      className: "pbar",
+      style: {
+        marginTop: 8
+      }
+    }, /*#__PURE__*/React.createElement("i", {
+      style: {
+        width: pct + '%'
+      }
+    })), /*#__PURE__*/React.createElement("div", {
+      className: "muted",
+      style: {
+        fontSize: 13,
+        marginTop: 8,
+        lineHeight: 1.5
+      }
+    }, b.poort, /*#__PURE__*/React.createElement("br", null), "🎯 Sterk goed (1e keer, zonder hint): ", /*#__PURE__*/React.createElement("b", null, b.sterk), " · nauwkeurigheid ", /*#__PURE__*/React.createElement("b", null, b.pogingen ? Math.round(b.nauw * 100) : 0, "%"), /*#__PURE__*/React.createElement("br", null), b.toetsEuro > 0 ? /*#__PURE__*/React.createElement("span", null, "✅ Toets gehaald (", b.proef >= 80 ? 'proeftoets ' + b.proef + '%' : 'oefentoets ' + b.oefen + '%', ") → bonus ", euro(b.toetsEuro)) : /*#__PURE__*/React.createElement("span", null, "💡 Haal een oefentoets (≥ 80%) voor een bonus — of een proeftoets voor de topbonus.")), /*#__PURE__*/React.createElement("div", {
+      className: "muted",
+      style: {
+        fontSize: 12,
+        marginTop: 8,
+        fontStyle: 'italic'
+      }
+    }, "Eerlijk & begrensd: max ", euro(BELONING.dagMax), " per dag. Papa/mama betaalt uit via de ouder-modus."));
+  })(), /*#__PURE__*/React.createElement("div", {
     className: "card",
     style: {
       marginTop: 12
@@ -8683,10 +8928,12 @@ function Practice({
   allEx,
   onBack,
   onResult,
+  onToets,
   prog,
   onTopic
 }) {
   const jr = jaar || 'nu';
+  const th = themaVan(profile);
   const [pool, setPool] = useState([]);
   const [card, setCard] = useState(null);
   const [inst, setInst] = useState(null);
@@ -8803,6 +9050,8 @@ function Practice({
   }
   function volgende() {
     if (isExam && toets.n >= TOETS_LEN) {
+      const pct = Math.round((TOETS_LEN - toets.fout.length) / TOETS_LEN * 100);
+      if (onToets) onToets(profile, isProef, pct);
       setFinished(true);
       return;
     }
@@ -8920,12 +9169,12 @@ function Practice({
       style: {
         fontSize: 46
       }
-    }, (prog.todayCount || 0) >= goal ? '🏆' : '🌟'), /*#__PURE__*/React.createElement("h2", null, "Goed bezig, ", PROFILES[profile].naam, "!"), /*#__PURE__*/React.createElement("p", {
+    }, (prog.todayCount || 0) >= goal ? '🏆' : th.doel === 'doelpunten' ? '⚽' : '🌟'), /*#__PURE__*/React.createElement("h2", null, "Goed bezig, ", PROFILES[profile].naam, "!"), /*#__PURE__*/React.createElement("p", {
       style: {
         fontSize: 18,
         margin: '6px 0'
       }
-    }, "Deze sessie: ", /*#__PURE__*/React.createElement("b", null, session.good), " ", session.good === 1 ? 'som' : 'sommen', " goed."), /*#__PURE__*/React.createElement("p", {
+    }, "Deze sessie: ", /*#__PURE__*/React.createElement("b", null, session.good), " ", th.doel === 'doelpunten' ? session.good === 1 ? 'doelpunt' : 'doelpunten' : session.good === 1 ? 'som' : 'sommen', " goed."), /*#__PURE__*/React.createElement("p", {
       className: "muted"
     }, "Vandaag totaal: ", prog.todayCount || 0, " / ", goal, " 🎯 ", (prog.todayCount || 0) >= goal ? '— dagdoel gehaald!' : '')), fout.length > 0 ? /*#__PURE__*/React.createElement("div", {
       className: "card",
@@ -8979,7 +9228,9 @@ function Practice({
     done = prog.todayCount || 0;
   return /*#__PURE__*/React.createElement("div", null, celebrate && /*#__PURE__*/React.createElement("div", {
     className: "confetti"
-  }, /*#__PURE__*/React.createElement("span", null, "🎉"), /*#__PURE__*/React.createElement("span", null, "⭐"), /*#__PURE__*/React.createElement("span", null, "🎊"), /*#__PURE__*/React.createElement("span", null, "✨"), /*#__PURE__*/React.createElement("span", null, "👏")), /*#__PURE__*/React.createElement("div", {
+  }, th.feest.map((e, i) => /*#__PURE__*/React.createElement("span", {
+    key: i
+  }, e))), /*#__PURE__*/React.createElement("div", {
     className: "topbar"
   }, /*#__PURE__*/React.createElement("button", {
     className: "back",
@@ -8988,7 +9239,7 @@ function Practice({
     className: "scorechip"
   }, /*#__PURE__*/React.createElement("span", {
     className: "s"
-  }, "⭐ ", prog.punten || 0), /*#__PURE__*/React.createElement("span", {
+  }, th.xp === 'XP' ? '⚽' : '⭐', " ", prog.punten || 0), /*#__PURE__*/React.createElement("span", {
     className: "s"
   }, "🔥 ", prog.streak || 0))), /*#__PURE__*/React.createElement("div", {
     className: "row",
@@ -9061,7 +9312,7 @@ function Practice({
     className: "unit"
   }, inst.u)), state === 'goed' && /*#__PURE__*/React.createElement("div", {
     className: "feedback ok celebrate"
-  }, isExam ? '✅ Goed!' : '✅ Goed gedaan! +' + earned + ' punten'), state === 'fout' && isExam && /*#__PURE__*/React.createElement("div", {
+  }, isExam ? th.doel === 'doelpunten' ? '⚽ GOAL!' : '✅ Goed!' : th.goal + ' +' + earned + ' ' + th.xp), state === 'fout' && isExam && /*#__PURE__*/React.createElement("div", {
     className: "feedback no"
   }, "❌ Helaas. Het goede antwoord is: ", /*#__PURE__*/React.createElement("b", null, inst.a, " ", inst.u)), state === 'fout' && !isExam && /*#__PURE__*/React.createElement("div", {
     className: "feedback no"
@@ -9148,9 +9399,21 @@ function downloadRapport(store) {
   a.click();
 }
 function OuderDashboard({
-  store
+  store,
+  persist
 }) {
   const allEx = [...SEED, ...TEMPLATES, ...store.custom];
+  const betaal = pid => persist && persist(prev => {
+    const pr = normalizeProg(prev.prog[pid]);
+    pr.betaaldOp = todayStr();
+    return {
+      ...prev,
+      prog: {
+        ...prev.prog,
+        [pid]: pr
+      }
+    };
+  });
   return /*#__PURE__*/React.createElement("div", {
     className: "card",
     style: {
@@ -9237,8 +9500,46 @@ function OuderDashboard({
         fontSize: 13,
         marginTop: 2
       }
-    }, "📕 Foutenschrift: ", (prog.foutLog || []).length, " open"));
-  }));
+    }, "📕 Foutenschrift: ", (prog.foutLog || []).length, " open"), P.beloning && (() => {
+      const b = berekenBeloning(prog);
+      return /*#__PURE__*/React.createElement("div", {
+        className: "row",
+        style: {
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginTop: 6,
+          padding: '6px 10px',
+          background: '#fff9e6',
+          border: '1px solid #f0d67a',
+          borderRadius: 10
+        }
+      }, /*#__PURE__*/React.createElement("span", {
+        style: {
+          fontSize: 13
+        }
+      }, "💶 ", /*#__PURE__*/React.createElement("b", null, "Eerlijk verdiend vandaag: ", euro(b.bedrag)), /*#__PURE__*/React.createElement("span", {
+        className: "muted"
+      }, " (sterk ", b.sterk, " · nauwk. ", b.pogingen ? Math.round(b.nauw * 100) : 0, "%", b.toetsEuro > 0 ? ' · toetsbonus ' + euro(b.toetsEuro) : '', ")")), b.betaald ? /*#__PURE__*/React.createElement("span", {
+        className: "tag",
+        style: {
+          background: '#eaf7e2'
+        }
+      }, "uitbetaald ✓") : /*#__PURE__*/React.createElement("button", {
+        className: "btn sm",
+        disabled: b.bedrag <= 0,
+        onClick: () => betaal(pid)
+      }, "Markeer betaald"));
+    })());
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "muted",
+    style: {
+      fontSize: 12,
+      marginTop: 12,
+      lineHeight: 1.5,
+      paddingTop: 8,
+      borderTop: '1px solid var(--line)'
+    }
+  }, "💶 ", /*#__PURE__*/React.createElement("b", null, "Eerlijke beloning"), " (Wassima & Amaani): alleen écht bewezen werk telt — 1e keer goed zónder hint (€ ", String(BELONING.tarief).replace('.', ','), " p/st, max ", euro(BELONING.werkMax), "), met een nauwkeurigheidspoort (≥ 85% vol tarief, ≥ 70% half, daaronder niets) tegen gok-/haastwerk. Een gehaalde oefentoets geeft ", euro(BELONING.oefenBonus), " bonus, een proeftoets ", euro(BELONING.proefBonus), " (\"klaar voor de toets\"). Dagplafond ", euro(BELONING.dagMax), "."));
 }
 function Author({
   store,
@@ -9381,7 +9682,8 @@ function Author({
   }, "← terug"), /*#__PURE__*/React.createElement("span", {
     className: "pill"
   }, "Ouder-modus")), /*#__PURE__*/React.createElement(OuderDashboard, {
-    store: store
+    store: store,
+    persist: persist
   }), /*#__PURE__*/React.createElement("h2", null, "Nieuwe opdracht toevoegen"), /*#__PURE__*/React.createElement("div", {
     className: "card",
     style: {
