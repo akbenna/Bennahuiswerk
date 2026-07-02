@@ -460,7 +460,8 @@ const TOPICICON = {
   'Leesteksten': '📚',
   'ng of nk': '🔤',
   'cht-woorden': '📝',
-  'Samenstellingen': '🔗'
+  'Samenstellingen': '🔗',
+  'Verhoudingstabellen': '⚖️'
 };
 
 /* ============================ OEFENINGEN (startvoorraad) ============================ */
@@ -8691,6 +8692,128 @@ const SEED = [
   opties: ['verdrietig', 'vrolijk', 'snel'],
   h: ['Welk woord betekent het omgekeerde van blij?'],
   s: 'Het tegenovergestelde van blij is verdrietig.'
+}, /* ---- Rekenen · verhoudingstabellen (groep 5) ---- */
+{
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Verhoudingstabellen',
+  lvl: 1,
+  q: '3 appels kosten samen € 1. Wat kosten 6 appels?',
+  a: '2',
+  u: '€',
+  h: ['6 is 2× zoveel als 3.'],
+  s: '6 appels = 2 × 3, dus 2 × € 1 = € 2.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Verhoudingstabellen',
+  lvl: 1,
+  q: 'In 1 uur loopt Sara 4 km. Hoeveel km loopt ze in 3 uur?',
+  a: '12',
+  u: 'km',
+  h: ['3 × zoveel uur = 3 × zoveel km.'],
+  s: '3 × 4 = 12 km.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Verhoudingstabellen',
+  lvl: 2,
+  q: '2 kaartjes kosten samen € 9. Wat kost 1 kaartje?',
+  a: '4.5',
+  alt: ['4,50', '4.50'],
+  u: '€',
+  h: ['Deel door 2.'],
+  s: '€ 9 ÷ 2 = € 4,50.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Verhoudingstabellen',
+  lvl: 2,
+  q: '5 knikkers wegen samen 100 gram. Hoeveel weegt 1 knikker?',
+  a: '20',
+  u: 'gram',
+  h: ['Deel door 5.'],
+  s: '100 ÷ 5 = 20 gram.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Verhoudingstabellen',
+  lvl: 2,
+  q: 'Voor 4 personen heb je 8 eieren nodig. Hoeveel eieren voor 8 personen?',
+  a: '16',
+  u: 'eieren',
+  h: ['8 personen is 2× zoveel als 4.'],
+  s: '2 × 8 = 16 eieren.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Verhoudingstabellen',
+  lvl: 3,
+  q: '6 broodjes kosten € 3. Wat kosten 10 broodjes?',
+  a: '5',
+  u: '€',
+  h: ['Reken eerst uit wat 1 broodje kost: € 3 ÷ 6.'],
+  s: '1 broodje = € 0,50; 10 × 0,50 = € 5.'
+}, /* ---- Rekenen · kommagetallen (intro via geld en meten) ---- */
+{
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Kommagetallen',
+  lvl: 1,
+  q: 'Schrijf als kommagetal in euro: 3 euro en 50 cent (bijv. 3,50).',
+  a: '3.5',
+  alt: ['3,50', '3.50', '3,5'],
+  u: '€',
+  h: ['50 cent = een halve euro = ,50.'],
+  s: '3 euro en 50 cent = € 3,50.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Kommagetallen',
+  lvl: 1,
+  q: 'Reken uit: 2,5 + 1,5',
+  a: '4',
+  h: ['Tel de hele delen en de halve delen apart.'],
+  s: '2,5 + 1,5 = 4.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Kommagetallen',
+  lvl: 1,
+  q: 'Reken uit: 0,5 + 0,5',
+  a: '1',
+  h: ['Twee halven maken een hele.'],
+  s: '0,5 + 0,5 = 1.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Kommagetallen',
+  lvl: 2,
+  q: 'Reken uit: € 1,20 + € 0,80',
+  a: '2',
+  u: '€',
+  h: ['20 cent + 80 cent = 100 cent = € 1.'],
+  s: '€ 1,20 + € 0,80 = € 2,00.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Kommagetallen',
+  lvl: 2,
+  q: 'Welk kommagetal is groter: 3,4 of 3,04? Schrijf de grootste. (kies)',
+  a: '3,4',
+  opties: ['3,4', '3,04'],
+  h: ['Kijk eerst naar het cijfer vlak achter de komma.'],
+  s: '3,4 = 3,40 en dat is meer dan 3,04.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Kommagetallen',
+  lvl: 2,
+  q: 'Rond af op hele euro\'s: € 3,60',
+  a: '4',
+  u: '€',
+  h: ['60 cent is meer dan een halve euro → naar boven.'],
+  s: '€ 3,60 → € 4.'
 }, /* ---- Selma · VOLGEND JAAR (groep 6) — vooruitkijken ---- */
 {
   p: 'selma',
@@ -9641,6 +9764,42 @@ const TEMPLATES = [/* ----- Wassima · wiskunde ----- */
       a: String(r),
       h: ['Kijk naar het laatste cijfer: 5 of meer → naar boven.'],
       s: `${n} → ${r}.`
+    };
+  }
+}, {
+  id: 'tpl_se_verhouding',
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Verhoudingstabellen',
+  lvl: 2,
+  gen: () => {
+    const per = ri(2, 6),
+      a = ri(2, 4),
+      k = pick([2, 3, 4]),
+      b = a * k;
+    return {
+      q: `${a} ${pick(['appels', 'stickers', 'knikkers', 'broodjes'])} kosten samen € ${a * per}. Wat kosten ${b} stuks?`,
+      a: String(b * per),
+      u: '€',
+      h: [`${b} is ${k}× zoveel als ${a}.`],
+      s: `Per stuk: ${a * per} ÷ ${a} = € ${per}; ${b} × ${per} = € ${b * per}.`
+    };
+  }
+}, {
+  id: 'tpl_se_kommageld',
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Kommagetallen',
+  lvl: 2,
+  gen: () => {
+    const c1 = ri(1, 8) + 0.5,
+      c2 = ri(1, 8) + 0.5;
+    return {
+      q: `Reken uit: € ${nl(c1)} + € ${nl(c2)}`,
+      a: String(c1 + c2),
+      u: '€',
+      h: ['Tel de hele euro\'s en de halve euro\'s apart op.'],
+      s: `€ ${nl(c1)} + € ${nl(c2)} = € ${nl(c1 + c2)}.`
     };
   }
 }];
