@@ -20,6 +20,15 @@ De exacte vakken staan er stevig op; de talen en zaakvakken hebben een goede bas
 ## Didactiek die actief is
 Instelbaar moeilijkheidsniveau per kind (**Auto / 1 / 2 / 3**; Auto wordt vanzelf moeilijker bij succes en makkelijker bij fouten) · **leerjaar-schakelaar (dit jaar / volgend jaar)** · **proeftoets over alle vakken (20 vragen, IEP-/examenstijl)** · **snel laden: voorgecompileerd, geen Babel in de browser** · wisselende getallen · slim herhalen (Leitner) · mix-oefening (interleaving) · **oefentoets-modus (10 vragen, eindscore)** · **meerkeuzevragen** · dagdoel + sessiesamenvatting · automatisch foutenschrift · gerichte foutfeedback · uitlegpanelen met beeld (getallenlijn, breukstrook, **getekende klok**, figuren) · ouder-dashboard met aandachtspunten per kind.
 
+## Motivatie & adherence (per kind afgestemd)
+- **Amine — voetbal/game-thema:** eigen taal en beleving (XP i.p.v. punten, **doelpunten** i.p.v. sommen, "⚽ GOAL!" bij goed antwoord, voetbal-confetti) en een **rangen-ladder** (Pupil → Talent → Basisspeler → … → Kampioen → Legende) met een voortgangsbalk naar de volgende rang. Sluit aan bij wat hem motiveert (spelen, voetbal) zodat hij blijft oefenen.
+- **Wassima & Amaani — eerlijke beloning (zakgeld):** de app rekent per dag uit wat een sessie **eerlijk** waard is; papa/mama betaalt pas uit via de ouder-modus. Alleen **écht bewezen** werk telt:
+  - alleen "sterk goed" = de **eerste** keer goed, **zónder hint**, op een som die nog niet beheerst was (€ 0,40 per stuk, tot € 12);
+  - een **nauwkeurigheidspoort** tegen gok-/haastwerk: ≥ 85% vol tarief, ≥ 70% half, daaronder telt het niet;
+  - een **"klaar voor de toets"-bonus**: een gehaalde oefentoets (≥ 80%) geeft € 4, een proeftoets € 8;
+  - een **dagplafond van € 20**. Zo is belonen leuk, eerlijk én begrensd, en loont zorgvuldig werk meer dan veel-klikken.
+  De ouder-modus toont per meisje het eerlijk verdiende bedrag met een knop **"Markeer betaald"**.
+
 ## To-do — verder uitbreiden (geprioriteerd)
 1. **Talen verdiepen** (alle kinderen): woordenschat per thema, meer werkwoordstijden, langere zinnen.
 2. **Zaakvakken verdiepen** (Wassima & Amaani): Biologie, Aardrijkskunde, Geschiedenis, Economie — meer onderwerpen en niveau-3 vragen.

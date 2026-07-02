@@ -120,10 +120,58 @@ const {useState,useEffect,useMemo,useRef} = React;
 
 /* ============================ CONFIG ============================ */
 const PROFILES = {
-  wassima:{naam:'Wassima', niveau:'2 havo', volgend:'3 havo', emoji:'🌱', kleur:'linear-gradient(135deg,#5EA03A,#48792c)', vakken:['wiskunde','natuurkunde','nederlands','engels','frans','duits','biologie','aardrijkskunde','geschiedenis','economie']},
-  amaani: {naam:'Amaani',  niveau:'4 vwo',  volgend:'5 vwo',  emoji:'🚀', kleur:'linear-gradient(135deg,#3a6ea0,#2c5680)', vakken:['wiskundeA','natuurkunde','scheikunde','nederlands','engels','frans','biologie','aardrijkskunde','geschiedenis','economie']},
-  amine:  {naam:'Amine',   niveau:'groep 7', volgend:'groep 8', emoji:'🦉', kleur:'linear-gradient(135deg,#e0a23a,#c2782d)', vakken:['rekenen','taal','lezen','studievaardigheden','engels']},
+  wassima:{naam:'Wassima', niveau:'2 havo', volgend:'3 havo', emoji:'🌱', kleur:'linear-gradient(135deg,#5EA03A,#48792c)', vakken:['wiskunde','natuurkunde','nederlands','engels','frans','duits','biologie','aardrijkskunde','geschiedenis','economie'], beloning:true},
+  amaani: {naam:'Amaani',  niveau:'4 vwo',  volgend:'5 vwo',  emoji:'🚀', kleur:'linear-gradient(135deg,#3a6ea0,#2c5680)', vakken:['wiskundeA','natuurkunde','scheikunde','nederlands','engels','frans','biologie','aardrijkskunde','geschiedenis','economie'], beloning:true},
+  amine:  {naam:'Amine',   niveau:'groep 7', volgend:'groep 8', emoji:'⚽', kleur:'linear-gradient(135deg,#2e8b57,#1f6e43)', vakken:['rekenen','taal','lezen','studievaardigheden','engels'], thema:'voetbal'},
 };
+
+/* ============================ THEMA'S (motivatie) ============================ */
+/* Per profiel een thema. Amine = voetbal/game: XP, rangen, doelpunten, voetbal-feedback. */
+const THEMES = {
+  standaard:{ xp:'punten', doel:'sommen', goal:'✅ Goed gedaan!', feest:['🎉','⭐','🎊','✨','👏'],
+    rangen:[[0,'Starter','🌱'],[100,'Op dreef','⭐'],[250,'Kanjer','🌟'],[500,'Uitblinker','🏅'],[900,'Ster','💫'],[1400,'Meester','🎓'],[2000,'Kampioen','🏆'],[3000,'Legende','👑']] },
+  voetbal:{ xp:'XP', doel:'doelpunten', goal:'⚽ GOAL!', feest:['⚽','🥅','🎉','🔥','👟'],
+    rangen:[[0,'Pupil','⚽'],[100,'Talent','🌟'],[250,'Basisspeler','👕'],[500,'Uitblinker','⭐'],[900,'Aanvoerder','🎽'],[1400,'Topscorer','🥅'],[2000,'Kampioen','🏆'],[3000,'Legende','👑']] },
+};
+function themaVan(pid){return THEMES[(PROFILES[pid]&&PROFILES[pid].thema)||'standaard']||THEMES.standaard;}
+function rangVoor(thema, punten){
+  const r=thema.rangen; let i=0;
+  for(let k=0;k<r.length;k++){ if(punten>=r[k][0]) i=k; }
+  const huidig=r[i], volgende=r[i+1]||null;
+  const naar = volgende ? volgende[0]-punten : 0;
+  const basis = huidig[0], top = volgende? volgende[0] : huidig[0];
+  const pct = volgende ? Math.round((punten-basis)/(top-basis)*100) : 100;
+  return {naam:huidig[1], emoji:huidig[2], volgendeNaam:volgende?volgende[1]:null, naar, pct};
+}
+
+/* ==================== EERLIJKE BELONING (zakgeld, alleen meiden) ====================
+   De app rekent zélf uit wat een sessie eerlijk waard is; de ouder betaalt pas uit.
+   Alleen ÉCHT bewezen prestatie telt:
+   - alleen 'sterk goed' = eerste keer, zónder hint, op een som die nog niet beheerst was;
+   - een nauwkeurigheidspoort tegen gok-/haastwerk (te veel fouten → geen of half tarief);
+   - een bonus als een oefentoets/proeftoets écht gehaald is (klaar voor de toets);
+   - een dagplafond (standaard € 20) zodat het eerlijk en begrensd blijft.               */
+const BELONING = { dagMax:20, tarief:0.40, werkMax:12, drempel:12, oefenBonus:4, proefBonus:8, hoog:0.85, mid:0.70 };
+function euro(n){ return '€ '+(Math.round(n*2)/2).toFixed(2).replace('.',','); }
+function berekenBeloning(pr){
+  const d=pr.dag||{}, t=pr.toetsDag||{};
+  const goed=(d.goed||0), fout=(d.fout||0), sterk=(d.sterk||0);
+  const pogingen=goed+fout;
+  const nauw = pogingen? goed/pogingen : 0;
+  const genoeg = pogingen>=BELONING.drempel;
+  let factor=0, poort='';
+  if(!genoeg){ poort='Doe eerst minstens '+BELONING.drempel+' sommen om mee te tellen.'; }
+  else if(nauw>=BELONING.hoog){ factor=1;   poort='Top nauwkeurig 💯 — vol tarief'; }
+  else if(nauw>=BELONING.mid){  factor=0.5; poort='Redelijk — half tarief. Werk nog wat rustiger.'; }
+  else {                        factor=0;   poort='Te veel fouten — dit telt nog niet. Rustig en goed = beloning.'; }
+  const werkEuro = Math.min(BELONING.werkMax, sterk*BELONING.tarief) * factor;
+  const proef=t.proef||0, oefen=t.oefen||0;
+  const toetsEuro = proef>=80 ? BELONING.proefBonus : (oefen>=80 ? BELONING.oefenBonus : 0);
+  const bedrag = Math.min(BELONING.dagMax, Math.round((werkEuro+toetsEuro)*2)/2);
+  const betaald = pr.betaaldOp===todayStr();
+  return {bedrag, nauw, genoeg, factor, poort, sterk, goed, fout, pogingen,
+    werkEuro:Math.round(werkEuro*2)/2, toetsEuro, proef, oefen, betaald};
+}
 const VAKNAAM = {wiskunde:'Wiskunde', natuurkunde:'Natuurkunde', wiskundeA:'Wiskunde A', geschiedenis:'Geschiedenis',
   nederlands:'Nederlands', engels:'Engels', frans:'Frans', duits:'Duits', biologie:'Biologie',
   aardrijkskunde:'Aardrijkskunde', economie:'Economie', scheikunde:'Scheikunde',
@@ -1235,7 +1283,7 @@ const TEMPLATES=[
 
 /* ============================ STORE (localStorage) ============================ */
 const KEY='oefenapp_v1';
-function blankProg(){return {punten:0, solved:{}, cards:{}, streak:0, dagstreak:0, lastDay:null, badges:[], goal:10, todayCount:0, foutLog:[], niveau:'auto', autoLvl:1, correctRun:0};}
+function blankProg(){return {punten:0, solved:{}, cards:{}, streak:0, dagstreak:0, lastDay:null, badges:[], goal:10, todayCount:0, foutLog:[], niveau:'auto', autoLvl:1, correctRun:0, dag:{d:null,goed:0,sterk:0,fout:0}, toetsDag:{d:null,oefen:0,proef:0}, betaaldOp:null};}
 function normalizeProg(p){
   const np={...blankProg(), ...(p||{})};
   np.solved=(p&&p.solved)||{}; np.cards=(p&&p.cards)||{};
@@ -1245,6 +1293,8 @@ function normalizeProg(p){
   if(np.niveau!=='auto' && ![1,2,3].includes(np.niveau)) np.niveau='auto';   // 'auto' | 1 | 2 | 3
   if(![1,2,3].includes(np.autoLvl)) np.autoLvl=1;
   if(typeof np.correctRun!=='number') np.correctRun=0;
+  if(!np.dag||typeof np.dag!=='object') np.dag={d:null,goed:0,sterk:0,fout:0};
+  if(!np.toetsDag||typeof np.toetsDag!=='object') np.toetsDag={d:null,oefen:0,proef:0};
   // eenmalige migratie: oude 'solved' → Leitner-kaarten
   if(Object.keys(np.cards).length===0 && Object.keys(np.solved).length>0){
     for(const id of Object.keys(np.solved)){
@@ -1366,15 +1416,20 @@ function App(){
       pr.cards={...pr.cards}; pr.solved={...pr.solved}; pr.foutLog=[...(pr.foutLog||[])];
       const wasMastered=isMastered(pr,card.id);
       const c={...(pr.cards[card.id]||{box:0,ok:0,wrong:0,last:0})};
+      // eerlijke dagteller (voor zakgeld): reset bij nieuwe dag
+      const vandaag=todayStr();
+      if(!pr.dag||pr.dag.d!==vandaag) pr.dag={d:vandaag,goed:0,sterk:0,fout:0}; else pr.dag={...pr.dag};
       if(correct){
         pr.punten=(pr.punten||0)+(wasMastered?3:(usedHint?5:10));
         pr.streak=(pr.streak||0)+1;
         pr.todayCount=(pr.todayCount||0)+1;
+        pr.dag.goed++;
+        if(!wasMastered && !usedHint) pr.dag.sterk++;    // écht bewezen: 1e keer, zonder hint
         c.ok=(c.ok||0)+1; c.box=Math.min(5,(c.box||0)+1);
         pr.solved[card.id]={ok:((pr.solved[card.id]||{}).ok||0)+1};
         if(c.box>=4) pr.foutLog=pr.foutLog.filter(f=>f.id!==card.id);   // beheerst → uit foutenschrift
       }else{
-        pr.streak=0; c.wrong=(c.wrong||0)+1; c.box=1;
+        pr.streak=0; c.wrong=(c.wrong||0)+1; c.box=1; pr.dag.fout++;
         const entry={id:card.id,t:card.t,v:card.v,q:inst.q,a:inst.a,u:inst.u||'',when:Date.now()};
         pr.foutLog=[entry, ...pr.foutLog.filter(f=>f.id!==card.id)].slice(0,40);
       }
@@ -1388,6 +1443,16 @@ function App(){
     });
   }
 
+  // toets-uitslag bewaren (voor 'klaar voor toets'-bonus bij de beloning)
+  function recordToets(pid, isProef, pct){
+    persist(prev=>{
+      const pr=normalizeProg(prev.prog[pid]); const vandaag=todayStr();
+      const td=(pr.toetsDag&&pr.toetsDag.d===vandaag)?{...pr.toetsDag}:{d:vandaag,oefen:0,proef:0};
+      if(isProef) td.proef=Math.max(td.proef||0,pct); else td.oefen=Math.max(td.oefen||0,pct);
+      pr.toetsDag=td;
+      return {...prev, prog:{...prev.prog,[pid]:pr}};
+    });
+  }
   const prog = profile? normalizeProg(store.prog[profile]) : null;
   const goTopic=(t,jr)=>{setTopic(t);setJaar(jr||'nu');setView('practice');};
 
@@ -1399,7 +1464,7 @@ function App(){
       {view==='hub' && <Hub profile={profile} prog={prog} vak={vak} setVak={setVak} allEx={allEx}
         onBack={()=>setView('home')} onTopic={goTopic} onSetGoal={(g)=>setGoal(profile,g)} onSetNiveau={(n)=>setNiveau(profile,n)}/>}
       {view==='practice' && <Practice profile={profile} vak={vak} topic={topic} jaar={jaar} allEx={allEx}
-        onBack={()=>setView('hub')} onResult={recordResult} prog={prog} onTopic={goTopic}/>}
+        onBack={()=>setView('hub')} onResult={recordResult} onToets={recordToets} prog={prog} onTopic={goTopic}/>}
       {view==='author' && <Author store={store} persist={persist} onBack={()=>setView('home')}/>}
     </div>
   );
@@ -1418,13 +1483,14 @@ function Home({onPick,store,onAuthor,onFormules,onLeertips}){
       <div className="wrap">
         {Object.entries(PROFILES).map(([id,p])=>{
           const pr=store.prog[id]||blankProg();
+          const th=themaVan(id), rang=rangVoor(th, pr.punten||0);
           return (
             <div key={id} className="profcard" style={{background:p.kleur}} onClick={()=>onPick(id)}>
               <div className="emoji">{p.emoji}</div>
               <h2>{p.naam}</h2>
               <div className="niv">{p.niveau}</div>
               <div className="vakken">{p.vakken.map(v=>VAKNAAM[v]).join(' · ')}</div>
-              <div style={{marginTop:14,fontSize:14,fontWeight:700}}>⭐ {pr.punten||0} punten · 📅 {pr.dagstreak||0} dagen</div>
+              <div style={{marginTop:14,fontSize:14,fontWeight:700}}>{rang.emoji} {rang.naam} · {pr.punten||0} {th.xp} · 📅 {pr.dagstreak||0} dagen</div>
             </div>
           );
         })}
@@ -1463,24 +1529,34 @@ function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal,onSetNiveau
 
   const goal=prog.goal||10, done=Math.min(prog.todayCount||0,goal), goalPct=Math.round(done/goal*100);
   const foutAantal=(prog.foutLog||[]).length;
+  const th=themaVan(profile), rang=rangVoor(th, prog.punten||0);
 
   return (
     <div>
       <div className="topbar">
         <button className="back" onClick={onBack}>← terug</button>
         <div className="scorechip">
-          <span className="s">⭐ {prog.punten||0}</span>
+          <span className="s">{rang.emoji} {prog.punten||0} {th.xp}</span>
           <span className="s">🔥 {prog.streak||0}</span>
           <span className="s">📅 {prog.dagstreak||0}</span>
         </div>
       </div>
       <h1 style={{fontSize:26}}>{P.emoji} {P.naam}</h1>
 
+      {/* rang / niveau-voortgang */}
+      <div className="card" style={{marginTop:12}}>
+        <div className="row" style={{justifyContent:'space-between'}}>
+          <b>{rang.emoji} {rang.naam}</b>
+          <span className="muted" style={{fontSize:13}}>{rang.volgendeNaam? ('Nog '+rang.naar+' '+th.xp+' → '+rang.volgendeNaam) : 'Hoogste rang! 👑'}</span>
+        </div>
+        <div className="pbar" style={{marginTop:8}}><i style={{width:rang.pct+'%'}}></i></div>
+      </div>
+
       {/* dagdoel */}
       <div className="card" style={{marginTop:12,background:done>=goal?'#eaf7e2':'#fff'}}>
         <div className="row" style={{justifyContent:'space-between'}}>
-          <b>🎯 Dagdoel{done>=goal?' — gehaald! 🎉':''}</b>
-          <span className="muted" style={{fontSize:13}}>{prog.todayCount||0} / {goal} sommen</span>
+          <b>🎯 Dagdoel{done>=goal?(th.doel==='doelpunten'?' — gehaald! ⚽':' — gehaald! 🎉'):''}</b>
+          <span className="muted" style={{fontSize:13}}>{prog.todayCount||0} / {goal} {th.doel}</span>
         </div>
         <div className="pbar" style={{marginTop:8}}><i style={{width:goalPct+'%'}}></i></div>
         <div className="wrap" style={{marginTop:10,alignItems:'center'}}>
@@ -1490,6 +1566,24 @@ function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal,onSetNiveau
           <button className="btn ghost sm" onClick={()=>onSetGoal(Math.min(40,goal+5))}>+</button>
         </div>
       </div>
+
+      {/* eerlijke beloning (zakgeld) — alleen bij profielen met beloning */}
+      {P.beloning && (()=>{ const b=berekenBeloning(prog); const pct=Math.round(b.bedrag/BELONING.dagMax*100); return (
+        <div className="card" style={{marginTop:12,background:'linear-gradient(135deg,#fff9e6,#fff4d1)',border:'1px solid #f0d67a'}}>
+          <div className="row" style={{justifyContent:'space-between'}}>
+            <b>💶 Verdiend vandaag</b>
+            <span style={{fontWeight:800,fontSize:18,color:'#a8730a'}}>{b.betaald?'uitbetaald ✓':euro(b.bedrag)}</span>
+          </div>
+          <div className="pbar" style={{marginTop:8}}><i style={{width:pct+'%'}}></i></div>
+          <div className="muted" style={{fontSize:13,marginTop:8,lineHeight:1.5}}>
+            {b.poort}<br/>
+            🎯 Sterk goed (1e keer, zonder hint): <b>{b.sterk}</b> · nauwkeurigheid <b>{b.pogingen?Math.round(b.nauw*100):0}%</b><br/>
+            {b.toetsEuro>0 ? <span>✅ Toets gehaald ({b.proef>=80?'proeftoets '+b.proef+'%':'oefentoets '+b.oefen+'%'}) → bonus {euro(b.toetsEuro)}</span>
+                           : <span>💡 Haal een oefentoets (≥ 80%) voor een bonus — of een proeftoets voor de topbonus.</span>}
+          </div>
+          <div className="muted" style={{fontSize:12,marginTop:8,fontStyle:'italic'}}>Eerlijk & begrensd: max {euro(BELONING.dagMax)} per dag. Papa/mama betaalt uit via de ouder-modus.</div>
+        </div>
+      );})()}
 
       {/* moeilijkheidsniveau */}
       <div className="card" style={{marginTop:12}}>
@@ -1572,8 +1666,9 @@ function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal,onSetNiveau
 }
 
 /* ---------- PRACTICE (slim herhalen + mix + fouten + samenvatting) ---------- */
-function Practice({profile,vak,topic,jaar,allEx,onBack,onResult,prog,onTopic}){
+function Practice({profile,vak,topic,jaar,allEx,onBack,onResult,onToets,prog,onTopic}){
   const jr=jaar||'nu';
+  const th=themaVan(profile);
   const [pool,setPool]=useState([]);
   const [card,setCard]=useState(null);
   const [inst,setInst]=useState(null);
@@ -1643,7 +1738,11 @@ function Practice({profile,vak,topic,jaar,allEx,onBack,onResult,prog,onTopic}){
     }
   }
   function volgende(){
-    if(isExam && toets.n>=TOETS_LEN){ setFinished(true); return; }
+    if(isExam && toets.n>=TOETS_LEN){
+      const pct=Math.round((TOETS_LEN - toets.fout.length)/TOETS_LEN*100);
+      if(onToets) onToets(profile, isProef, pct);
+      setFinished(true); return;
+    }
     const n=pickNext(pool,prog,card?card.id:null); if(n) showCard(n);
   }
 
@@ -1694,9 +1793,9 @@ function Practice({profile,vak,topic,jaar,allEx,onBack,onResult,prog,onTopic}){
     return (<div>
       <div className="topbar"><button className="back" onClick={onBack}>← overzicht</button><span className="pill">Samenvatting</span></div>
       <div className="card center">
-        <div style={{fontSize:46}}>{(prog.todayCount||0)>=goal?'🏆':'🌟'}</div>
+        <div style={{fontSize:46}}>{(prog.todayCount||0)>=goal?'🏆':(th.doel==='doelpunten'?'⚽':'🌟')}</div>
         <h2>Goed bezig, {PROFILES[profile].naam}!</h2>
-        <p style={{fontSize:18,margin:'6px 0'}}>Deze sessie: <b>{session.good}</b> {session.good===1?'som':'sommen'} goed.</p>
+        <p style={{fontSize:18,margin:'6px 0'}}>Deze sessie: <b>{session.good}</b> {th.doel==='doelpunten'?(session.good===1?'doelpunt':'doelpunten'):(session.good===1?'som':'sommen')} goed.</p>
         <p className="muted">Vandaag totaal: {prog.todayCount||0} / {goal} 🎯 {(prog.todayCount||0)>=goal?'— dagdoel gehaald!':''}</p>
       </div>
       {fout.length>0 ? (
@@ -1723,11 +1822,11 @@ function Practice({profile,vak,topic,jaar,allEx,onBack,onResult,prog,onTopic}){
 
   return (
     <div>
-      {celebrate && <div className="confetti"><span>🎉</span><span>⭐</span><span>🎊</span><span>✨</span><span>👏</span></div>}
+      {celebrate && <div className="confetti">{th.feest.map((e,i)=><span key={i}>{e}</span>)}</div>}
       <div className="topbar">
         <button className="back" onClick={onBack}>← terug</button>
         <div className="scorechip">
-          <span className="s">⭐ {prog.punten||0}</span>
+          <span className="s">{th.xp==='XP'?'⚽':'⭐'} {prog.punten||0}</span>
           <span className="s">🔥 {prog.streak||0}</span>
         </div>
       </div>
@@ -1761,7 +1860,7 @@ function Practice({profile,vak,topic,jaar,allEx,onBack,onResult,prog,onTopic}){
           </div>
         )}
 
-        {state==='goed' && <div className="feedback ok celebrate">{isExam?'✅ Goed!':'✅ Goed gedaan! +'+earned+' punten'}</div>}
+        {state==='goed' && <div className="feedback ok celebrate">{isExam?(th.doel==='doelpunten'?'⚽ GOAL!':'✅ Goed!'):th.goal+' +'+earned+' '+th.xp}</div>}
         {state==='fout' && isExam && <div className="feedback no">❌ Helaas. Het goede antwoord is: <b>{inst.a} {inst.u}</b></div>}
         {state==='fout' && !isExam && <div className="feedback no">Nog niet — kijk nog eens, of open een hint. Je kunt het! 💪{foutTip && <div style={{marginTop:8,fontWeight:600}}>💡 {foutTip}</div>}</div>}
 
@@ -1818,8 +1917,9 @@ function downloadRapport(store){
   const blob=new Blob([rapportTekst(store)],{type:'text/plain'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='voortgangsrapport.txt'; a.click();
 }
-function OuderDashboard({store}){
+function OuderDashboard({store,persist}){
   const allEx=[...SEED,...TEMPLATES,...store.custom];
+  const betaal=(pid)=>persist&&persist(prev=>{const pr=normalizeProg(prev.prog[pid]); pr.betaaldOp=todayStr(); return {...prev, prog:{...prev.prog,[pid]:pr}};});
   return (
     <div className="card" style={{marginBottom:16,background:'#f0f6ea',borderLeftColor:'#5EA03A'}}>
       <div className="row" style={{justifyContent:'space-between'}}>
@@ -1849,9 +1949,23 @@ function OuderDashboard({store}){
               ? <div style={{marginTop:6,fontSize:13}}>⚠️ <b>Aandacht nodig:</b> {zwak.map(o=>VAKNAAM[o.v]+' – '+o.t).join(' · ')}</div>
               : <div className="muted" style={{marginTop:6,fontSize:13}}>Nog te weinig geoefend om zwakke punten te bepalen.</div>}
             {(prog.foutLog||[]).length>0 && <div className="muted" style={{fontSize:13,marginTop:2}}>📕 Foutenschrift: {(prog.foutLog||[]).length} open</div>}
+            {P.beloning && (()=>{ const b=berekenBeloning(prog); return (
+              <div className="row" style={{justifyContent:'space-between',alignItems:'center',marginTop:6,padding:'6px 10px',background:'#fff9e6',border:'1px solid #f0d67a',borderRadius:10}}>
+                <span style={{fontSize:13}}>💶 <b>Eerlijk verdiend vandaag: {euro(b.bedrag)}</b>
+                  <span className="muted"> (sterk {b.sterk} · nauwk. {b.pogingen?Math.round(b.nauw*100):0}%{b.toetsEuro>0?' · toetsbonus '+euro(b.toetsEuro):''})</span></span>
+                {b.betaald
+                  ? <span className="tag" style={{background:'#eaf7e2'}}>uitbetaald ✓</span>
+                  : <button className="btn sm" disabled={b.bedrag<=0} onClick={()=>betaal(pid)}>Markeer betaald</button>}
+              </div>
+            );})()}
           </div>
         );
       })}
+      <div className="muted" style={{fontSize:12,marginTop:12,lineHeight:1.5,paddingTop:8,borderTop:'1px solid var(--line)'}}>
+        💶 <b>Eerlijke beloning</b> (Wassima & Amaani): alleen écht bewezen werk telt — 1e keer goed zónder hint (€ {String(BELONING.tarief).replace('.',',')} p/st, max {euro(BELONING.werkMax)}),
+        met een nauwkeurigheidspoort (≥ 85% vol tarief, ≥ 70% half, daaronder niets) tegen gok-/haastwerk.
+        Een gehaalde oefentoets geeft {euro(BELONING.oefenBonus)} bonus, een proeftoets {euro(BELONING.proefBonus)} ("klaar voor de toets"). Dagplafond {euro(BELONING.dagMax)}.
+      </div>
     </div>
   );
 }
@@ -1916,7 +2030,7 @@ function Author({store,persist,onBack}){
   return (
     <div>
       <div className="topbar"><button className="back" onClick={onBack}>← terug</button><span className="pill">Ouder-modus</span></div>
-      <OuderDashboard store={store}/>
+      <OuderDashboard store={store} persist={persist}/>
       <h2>Nieuwe opdracht toevoegen</h2>
 
       <div className="card" style={{marginTop:12}}>
