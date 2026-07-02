@@ -20,7 +20,7 @@ _Bijgewerkt: juli 2026. Vier profielen: Selma (groep 5), Amine (groep 7), Wassim
 De exacte vakken staan er stevig op; de talen en zaakvakken hebben een goede basis die verder verdiept kan worden.
 
 ## Didactiek die actief is
-Instelbaar moeilijkheidsniveau per kind (**Auto / 1 / 2 / 3**; Auto wordt vanzelf moeilijker bij succes en makkelijker bij fouten) · **leerjaar-schakelaar (dit jaar / volgend jaar)** · **proeftoets over alle vakken (20 vragen, IEP-/examenstijl)** · **snel laden: voorgecompileerd, geen Babel in de browser** · wisselende getallen · slim herhalen (Leitner) · mix-oefening (interleaving) · **oefentoets-modus (10 vragen, eindscore)** · **meerkeuzevragen** · dagdoel + sessiesamenvatting · automatisch foutenschrift · gerichte foutfeedback · uitlegpanelen met beeld (getallenlijn, breukstrook, **getekende klok**, figuren) · ouder-dashboard met aandachtspunten per kind.
+Instelbaar moeilijkheidsniveau per kind (**Auto / 1 / 2 / 3**; Auto wordt vanzelf moeilijker bij succes en makkelijker bij fouten) · **leerjaar-schakelaar (dit jaar / volgend jaar)** · **proeftoets over alle vakken (20 vragen, IEP-/examenstijl)** · **snel laden: voorgecompileerd, geen Babel in de browser** · wisselende getallen · slim herhalen (Leitner) · mix-oefening (interleaving) · **oefentoets-modus (10 vragen, eindscore, met timer)** · **meerkeuzevragen** · **geluid bij goed/fout antwoord (uitschakelbaar)** · dagdoel + sessiesamenvatting · automatisch foutenschrift · gerichte foutfeedback · uitlegpanelen met beeld (getallenlijn, breukstrook, **getekende klok**, figuren) · ouder-dashboard met aandachtspunten per kind.
 
 ## Motivatie & adherence (per kind afgestemd)
 - **Amine — voetbal/game-thema:** eigen taal en beleving (XP i.p.v. punten, **doelpunten** i.p.v. sommen, "⚽ GOAL!" bij goed antwoord, voetbal-confetti) en een **rangen-ladder** (Pupil → Talent → Basisspeler → … → Kampioen → Legende) met een voortgangsbalk naar de volgende rang. Sluit aan bij wat hem motiveert (spelen, voetbal) zodat hij blijft oefenen.
@@ -37,6 +37,6 @@ Instelbaar moeilijkheidsniveau per kind (**Auto / 1 / 2 / 3**; Auto wordt vanzel
 3. **Amaani exact uitdiepen:** Scheikunde (rekenen aan reacties, molverhoudingen), Wiskunde A (logaritmen/exponentieel verdiepen), Natuurkunde (samengestelde vraagstukken).
 4. **Amine verdiepen:** langere begrijpend-leesteksten, breuken/verhoudingstabellen gevorderd, meer studievaardigheden.
 5. **Begrijpend lezen** verder uitbouwen met meer (meerkeuze-)teksten en signaalwoorden.
-6. **Engine-ideeën:** extra visuals (breukcirkel, geodriehoek, lijngrafiek), geluid/beloning bij goed antwoord, timer bij de oefentoets.
+6. **Engine-ideeën:** extra visuals (breukcirkel, geodriehoek, lijngrafiek).
 
-_Gereed (engine):_ meerkeuze-vraagtype ✓ · getekende klok ✓ · staafdiagram ✓ · voortgangsrapport exporteren ✓.
+_Gereed (engine):_ meerkeuze-vraagtype ✓ · getekende klok ✓ · staafdiagram ✓ · voortgangsrapport exporteren ✓ · **geluid bij goed/fout antwoord (aan/uit-knop) ✓** · **timer bij de oefentoets (+ gemiddelde tijd per vraag) ✓**.

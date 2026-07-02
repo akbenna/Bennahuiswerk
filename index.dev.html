@@ -154,6 +154,29 @@ function rangVoor(thema, punten){
    - een dagplafond (standaard € 20) zodat het eerlijk en begrensd blijft.               */
 const BELONING = { dagMax:20, tarief:0.40, werkMax:12, drempel:12, oefenBonus:4, proefBonus:8, hoog:0.85, mid:0.70 };
 function euro(n){ return '€ '+(Math.round(n*2)/2).toFixed(2).replace('.',','); }
+
+/* ---- Geluid: korte, zelfgemaakte tonen (Web Audio, geen bestanden, werkt offline) ---- */
+let _actx=null;
+function speel(kind, aan){
+  if(!aan) return;
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return;
+    _actx=_actx||new AC(); const ac=_actx, t0=ac.currentTime;
+    if(ac.state==='suspended') ac.resume();
+    const noten = kind==='goed' ? [[660,0],[990,0.10]] : [[220,0]];
+    noten.forEach(([f,dt])=>{
+      const o=ac.createOscillator(), g=ac.createGain();
+      o.type = kind==='goed'?'sine':'square'; o.frequency.value=f;
+      const dur = kind==='goed'?0.18:0.26;
+      g.gain.setValueAtTime(0.0001, t0+dt);
+      g.gain.exponentialRampToValueAtTime(0.14, t0+dt+0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0+dt+dur);
+      o.connect(g); g.connect(ac.destination);
+      o.start(t0+dt); o.stop(t0+dt+dur+0.02);
+    });
+  }catch(e){}
+}
+function mmss(sec){const m=Math.floor(sec/60), s=sec%60; return m+':'+(s<10?'0':'')+s;}
 function berekenBeloning(pr){
   const d=pr.dag||{}, t=pr.toetsDag||{};
   const goed=(d.goed||0), fout=(d.fout||0), sterk=(d.sterk||0);
@@ -1717,6 +1740,7 @@ function normalizeProg(p){
 function loadStore(){
   let r=null; try{r=JSON.parse(localStorage.getItem(KEY));}catch(e){}
   const s=r||{}; s.custom=s.custom||[]; s.pin=s.pin||'1234'; s.prog=s.prog||{};
+  if(typeof s.geluid!=='boolean') s.geluid=true;   // geluid standaard aan
   for(const pid of Object.keys(PROFILES)) s.prog[pid]=normalizeProg(s.prog[pid]);
   return s;
 }
@@ -1818,6 +1842,8 @@ function App(){
   function setNiveau(pid, n){
     persist(prev=>{const pr=normalizeProg(prev.prog[pid]); pr.niveau=n; if(n!=='auto'){pr.autoLvl=n;} pr.correctRun=0; return {...prev, prog:{...prev.prog,[pid]:pr}};});
   }
+  const geluid = store.geluid!==false;
+  function toggleGeluid(){ persist(prev=>({...prev, geluid: !(prev.geluid!==false)})); }
 
   // resultaat verwerken: punten + Leitner-doosje + dagdoel + foutenschrift
   function recordResult(pid, card, inst, correct, usedHint){
@@ -1868,20 +1894,20 @@ function App(){
 
   return (
     <div>
-      {view==='home' && <Home onPick={openProfile} store={store} onAuthor={()=>setView('author')} onFormules={()=>setView('formules')} onLeertips={()=>setView('leertips')}/>}
+      {view==='home' && <Home onPick={openProfile} store={store} onAuthor={()=>setView('author')} onFormules={()=>setView('formules')} onLeertips={()=>setView('leertips')} geluid={geluid} onToggleGeluid={toggleGeluid}/>}
       {view==='formules' && <FormulesView onBack={()=>setView('home')}/>}
       {view==='leertips' && <LeertipsView onBack={()=>setView('home')}/>}
       {view==='hub' && <Hub profile={profile} prog={prog} vak={vak} setVak={setVak} allEx={allEx}
         onBack={()=>setView('home')} onTopic={goTopic} onSetGoal={(g)=>setGoal(profile,g)} onSetNiveau={(n)=>setNiveau(profile,n)}/>}
       {view==='practice' && <Practice profile={profile} vak={vak} topic={topic} jaar={jaar} allEx={allEx}
-        onBack={()=>setView('hub')} onResult={recordResult} onToets={recordToets} prog={prog} onTopic={goTopic}/>}
+        onBack={()=>setView('hub')} onResult={recordResult} onToets={recordToets} prog={prog} onTopic={goTopic} geluid={geluid}/>}
       {view==='author' && <Author store={store} persist={persist} onBack={()=>setView('home')}/>}
     </div>
   );
 }
 
 /* ---------- HOME ---------- */
-function Home({onPick,store,onAuthor,onFormules,onLeertips}){
+function Home({onPick,store,onAuthor,onFormules,onLeertips,geluid,onToggleGeluid}){
   const tip = TIP_VAN_DE_DAG[Math.floor(Date.now()/86400000) % TIP_VAN_DE_DAG.length];
   return (
     <div>
@@ -1910,6 +1936,7 @@ function Home({onPick,store,onAuthor,onFormules,onLeertips}){
       </div>
       <div className="center" style={{marginTop:10}}>
         <button className="btn gold sm" onClick={onLeertips}>💡 Leertips</button>
+        <button className="btn ghost sm" onClick={onToggleGeluid} title="Geluid bij goed/fout antwoord aan of uit">{geluid?'🔊 Geluid aan':'🔇 Geluid uit'}</button>
       </div>
       <div className="center" style={{marginTop:10}}>
         <button className="btn ghost sm" onClick={onAuthor}>👨‍⚕️ Ouder-modus — opdrachten toevoegen</button>
@@ -2076,7 +2103,7 @@ function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal,onSetNiveau
 }
 
 /* ---------- PRACTICE (slim herhalen + mix + fouten + samenvatting) ---------- */
-function Practice({profile,vak,topic,jaar,allEx,onBack,onResult,onToets,prog,onTopic}){
+function Practice({profile,vak,topic,jaar,allEx,onBack,onResult,onToets,prog,onTopic,geluid}){
   const jr=jaar||'nu';
   const th=themaVan(profile);
   const [pool,setPool]=useState([]);
@@ -2094,6 +2121,8 @@ function Practice({profile,vak,topic,jaar,allEx,onBack,onResult,onToets,prog,onT
   const [finished,setFinished]=useState(false);
   const [foutTip,setFoutTip]=useState(null);
   const [toets,setToets]=useState({n:0,fout:[]});
+  const [examStart,setExamStart]=useState(0);   // starttijd oefentoets (ms)
+  const [examSecs,setExamSecs]=useState(0);      // verstreken seconden
   const inputRef=useRef(null);
 
   const isMix=topic==='__mix__', isFout=topic==='__fouten__', isToets=topic==='__toets__', isProef=topic==='__proeftoets__';
@@ -2119,9 +2148,17 @@ function Practice({profile,vak,topic,jaar,allEx,onBack,onResult,onToets,prog,onT
       if(f.length) p=f;
     }
     setPool(p); setSession({good:0,wrong:0}); setToets({n:0,fout:[]}); setFinished(false); setShowUitleg(true);
+    setExamStart(isExam?Date.now():0); setExamSecs(0);
     const first=pickNext(p,prog,null);
     if(first) showCard(first); else {setCard(null); setInst(null);}
   },[topic,vak,profile,jr]);
+
+  // timer voor de oefentoets: tikt elke seconde tot de toets klaar is
+  useEffect(()=>{
+    if(!isExam || !examStart || finished) return;
+    const id=setInterval(()=>setExamSecs(Math.round((Date.now()-examStart)/1000)),1000);
+    return ()=>clearInterval(id);
+  },[isExam,examStart,finished]);
 
   function controleer(){
     if(state==='goed'||!inst) return;
@@ -2130,6 +2167,7 @@ function Practice({profile,vak,topic,jaar,allEx,onBack,onResult,onToets,prog,onT
       if(state!=='open') return;                 // in de toets: één poging per vraag
       onResult(profile,card,inst,ok,false);
       setState(ok?'goed':'fout');
+      speel(ok?'goed':'fout', geluid);
       setToets(t=>({n:t.n+1, fout: ok?t.fout:[...t.fout,{t:card.t,q:inst.q,a:inst.a,u:inst.u||''}]}));
       if(ok){setCelebrate(true); setTimeout(()=>setCelebrate(false),900);}
       return;
@@ -2138,11 +2176,13 @@ function Practice({profile,vak,topic,jaar,allEx,onBack,onResult,onToets,prog,onT
     if(ok){
       setEarned(puntenVoor(prog,card.id,hintN>0));
       setState('goed'); setFoutTip(null);
+      speel('goed', geluid);
       onResult(profile,card,inst,true,hintN>0);
       setSession(s=>({good:s.good+1,wrong:s.wrong}));
       setCelebrate(true); setTimeout(()=>setCelebrate(false),1100);
     }else{
       setState('fout'); setFoutTip(diagnoseFout(inst,val));
+      speel('fout', geluid);
       onResult(profile,card,inst,false,false);
       setSession(s=>({good:s.good,wrong:s.wrong+1}));
     }
@@ -2150,6 +2190,7 @@ function Practice({profile,vak,topic,jaar,allEx,onBack,onResult,onToets,prog,onT
   function volgende(){
     if(isExam && toets.n>=TOETS_LEN){
       const pct=Math.round((TOETS_LEN - toets.fout.length)/TOETS_LEN*100);
+      if(examStart) setExamSecs(Math.round((Date.now()-examStart)/1000));
       if(onToets) onToets(profile, isProef, pct);
       setFinished(true); return;
     }
@@ -2178,6 +2219,7 @@ function Practice({profile,vak,topic,jaar,allEx,onBack,onResult,onToets,prog,onT
         <h2>{goed} / {TOETS_LEN} goed</h2>
         <div className="pbar" style={{margin:'10px 0'}}><i style={{width:pct+'%'}}></i></div>
         <p className="muted">{oordeel}</p>
+        <p className="muted" style={{fontSize:14,marginTop:4}}>⏱ Tijd: {mmss(examSecs)} · gemiddeld {mmss(Math.round(examSecs/TOETS_LEN))} per vraag</p>
       </div>
       {toets.fout.length>0 && (
         <div className="card" style={{marginTop:12}}>
@@ -2243,7 +2285,7 @@ function Practice({profile,vak,topic,jaar,allEx,onBack,onResult,onToets,prog,onT
       <div className="row" style={{justifyContent:'space-between',marginBottom:6}}>
         <span className="pill">{topicLabel}{(isMix||isToets)?' · '+VAKNAAM[vak]:''}</span>
         <span className="muted" style={{fontSize:13}}>{isExam
-          ? 'vraag '+(state==='open'?toets.n+1:toets.n)+' / '+TOETS_LEN
+          ? '⏱ '+mmss(examSecs)+' · vraag '+(state==='open'?toets.n+1:toets.n)+' / '+TOETS_LEN
           : 'som '+(session.good+1)+' · niveau '+(inst.lvl||card.lvl||1)+(isMastered(prog,card.id)?' · ✓ beheerst':'')}</span>
       </div>
       <div className="pbar" style={{marginBottom:12}}><i style={{width:(isExam?Math.round(toets.n/TOETS_LEN*100):Math.min(100,Math.round(done/goal*100)))+'%'}}></i></div>

@@ -224,6 +224,40 @@ const BELONING = {
 function euro(n) {
   return '€ ' + (Math.round(n * 2) / 2).toFixed(2).replace('.', ',');
 }
+
+/* ---- Geluid: korte, zelfgemaakte tonen (Web Audio, geen bestanden, werkt offline) ---- */
+let _actx = null;
+function speel(kind, aan) {
+  if (!aan) return;
+  try {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    _actx = _actx || new AC();
+    const ac = _actx,
+      t0 = ac.currentTime;
+    if (ac.state === 'suspended') ac.resume();
+    const noten = kind === 'goed' ? [[660, 0], [990, 0.10]] : [[220, 0]];
+    noten.forEach(([f, dt]) => {
+      const o = ac.createOscillator(),
+        g = ac.createGain();
+      o.type = kind === 'goed' ? 'sine' : 'square';
+      o.frequency.value = f;
+      const dur = kind === 'goed' ? 0.18 : 0.26;
+      g.gain.setValueAtTime(0.0001, t0 + dt);
+      g.gain.exponentialRampToValueAtTime(0.14, t0 + dt + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dt + dur);
+      o.connect(g);
+      g.connect(ac.destination);
+      o.start(t0 + dt);
+      o.stop(t0 + dt + dur + 0.02);
+    });
+  } catch (e) {}
+}
+function mmss(sec) {
+  const m = Math.floor(sec / 60),
+    s = sec % 60;
+  return m + ':' + (s < 10 ? '0' : '') + s;
+}
 function berekenBeloning(pr) {
   const d = pr.dag || {},
     t = pr.toetsDag || {};
@@ -11071,6 +11105,7 @@ function loadStore() {
   s.custom = s.custom || [];
   s.pin = s.pin || '1234';
   s.prog = s.prog || {};
+  if (typeof s.geluid !== 'boolean') s.geluid = true; // geluid standaard aan
   for (const pid of Object.keys(PROFILES)) s.prog[pid] = normalizeProg(s.prog[pid]);
   return s;
 }
@@ -11267,6 +11302,13 @@ function App() {
       };
     });
   }
+  const geluid = store.geluid !== false;
+  function toggleGeluid() {
+    persist(prev => ({
+      ...prev,
+      geluid: !(prev.geluid !== false)
+    }));
+  }
 
   // resultaat verwerken: punten + Leitner-doosje + dagdoel + foutenschrift
   function recordResult(pid, card, inst, correct, usedHint) {
@@ -11387,7 +11429,9 @@ function App() {
     store: store,
     onAuthor: () => setView('author'),
     onFormules: () => setView('formules'),
-    onLeertips: () => setView('leertips')
+    onLeertips: () => setView('leertips'),
+    geluid: geluid,
+    onToggleGeluid: toggleGeluid
   }), view === 'formules' && /*#__PURE__*/React.createElement(FormulesView, {
     onBack: () => setView('home')
   }), view === 'leertips' && /*#__PURE__*/React.createElement(LeertipsView, {
@@ -11412,7 +11456,8 @@ function App() {
     onResult: recordResult,
     onToets: recordToets,
     prog: prog,
-    onTopic: goTopic
+    onTopic: goTopic,
+    geluid: geluid
   }), view === 'author' && /*#__PURE__*/React.createElement(Author, {
     store: store,
     persist: persist,
@@ -11426,7 +11471,9 @@ function Home({
   store,
   onAuthor,
   onFormules,
-  onLeertips
+  onLeertips,
+  geluid,
+  onToggleGeluid
 }) {
   const tip = TIP_VAN_DE_DAG[Math.floor(Date.now() / 86400000) % TIP_VAN_DE_DAG.length];
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
@@ -11487,7 +11534,11 @@ function Home({
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn gold sm",
     onClick: onLeertips
-  }, "💡 Leertips")), /*#__PURE__*/React.createElement("div", {
+  }, "💡 Leertips"), /*#__PURE__*/React.createElement("button", {
+    className: "btn ghost sm",
+    onClick: onToggleGeluid,
+    title: "Geluid bij goed/fout antwoord aan of uit"
+  }, geluid ? '🔊 Geluid aan' : '🔇 Geluid uit')), /*#__PURE__*/React.createElement("div", {
     className: "center",
     style: {
       marginTop: 10
@@ -11837,7 +11888,8 @@ function Practice({
   onResult,
   onToets,
   prog,
-  onTopic
+  onTopic,
+  geluid
 }) {
   const jr = jaar || 'nu';
   const th = themaVan(profile);
@@ -11862,6 +11914,8 @@ function Practice({
     n: 0,
     fout: []
   });
+  const [examStart, setExamStart] = useState(0); // starttijd oefentoets (ms)
+  const [examSecs, setExamSecs] = useState(0); // verstreken seconden
   const inputRef = useRef(null);
   const isMix = topic === '__mix__',
     isFout = topic === '__fouten__',
@@ -11905,12 +11959,21 @@ function Practice({
     });
     setFinished(false);
     setShowUitleg(true);
+    setExamStart(isExam ? Date.now() : 0);
+    setExamSecs(0);
     const first = pickNext(p, prog, null);
     if (first) showCard(first);else {
       setCard(null);
       setInst(null);
     }
   }, [topic, vak, profile, jr]);
+
+  // timer voor de oefentoets: tikt elke seconde tot de toets klaar is
+  useEffect(() => {
+    if (!isExam || !examStart || finished) return;
+    const id = setInterval(() => setExamSecs(Math.round((Date.now() - examStart) / 1000)), 1000);
+    return () => clearInterval(id);
+  }, [isExam, examStart, finished]);
   function controleer() {
     if (state === 'goed' || !inst) return;
     const ok = checkAnswer(inst, val);
@@ -11918,6 +11981,7 @@ function Practice({
       if (state !== 'open') return; // in de toets: één poging per vraag
       onResult(profile, card, inst, ok, false);
       setState(ok ? 'goed' : 'fout');
+      speel(ok ? 'goed' : 'fout', geluid);
       setToets(t => ({
         n: t.n + 1,
         fout: ok ? t.fout : [...t.fout, {
@@ -11938,6 +12002,7 @@ function Practice({
       setEarned(puntenVoor(prog, card.id, hintN > 0));
       setState('goed');
       setFoutTip(null);
+      speel('goed', geluid);
       onResult(profile, card, inst, true, hintN > 0);
       setSession(s => ({
         good: s.good + 1,
@@ -11948,6 +12013,7 @@ function Practice({
     } else {
       setState('fout');
       setFoutTip(diagnoseFout(inst, val));
+      speel('fout', geluid);
       onResult(profile, card, inst, false, false);
       setSession(s => ({
         good: s.good,
@@ -11958,6 +12024,7 @@ function Practice({
   function volgende() {
     if (isExam && toets.n >= TOETS_LEN) {
       const pct = Math.round((TOETS_LEN - toets.fout.length) / TOETS_LEN * 100);
+      if (examStart) setExamSecs(Math.round((Date.now() - examStart) / 1000));
       if (onToets) onToets(profile, isProef, pct);
       setFinished(true);
       return;
@@ -12023,7 +12090,13 @@ function Practice({
       }
     })), /*#__PURE__*/React.createElement("p", {
       className: "muted"
-    }, oordeel)), toets.fout.length > 0 && /*#__PURE__*/React.createElement("div", {
+    }, oordeel), /*#__PURE__*/React.createElement("p", {
+      className: "muted",
+      style: {
+        fontSize: 14,
+        marginTop: 4
+      }
+    }, "⏱ Tijd: ", mmss(examSecs), " · gemiddeld ", mmss(Math.round(examSecs / TOETS_LEN)), " per vraag")), toets.fout.length > 0 && /*#__PURE__*/React.createElement("div", {
       className: "card",
       style: {
         marginTop: 12
@@ -12161,7 +12234,7 @@ function Practice({
     style: {
       fontSize: 13
     }
-  }, isExam ? 'vraag ' + (state === 'open' ? toets.n + 1 : toets.n) + ' / ' + TOETS_LEN : 'som ' + (session.good + 1) + ' · niveau ' + (inst.lvl || card.lvl || 1) + (isMastered(prog, card.id) ? ' · ✓ beheerst' : ''))), /*#__PURE__*/React.createElement("div", {
+  }, isExam ? '⏱ ' + mmss(examSecs) + ' · vraag ' + (state === 'open' ? toets.n + 1 : toets.n) + ' / ' + TOETS_LEN : 'som ' + (session.good + 1) + ' · niveau ' + (inst.lvl || card.lvl || 1) + (isMastered(prog, card.id) ? ' · ✓ beheerst' : ''))), /*#__PURE__*/React.createElement("div", {
     className: "pbar",
     style: {
       marginBottom: 12
