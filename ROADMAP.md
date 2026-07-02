@@ -3,8 +3,8 @@
 _Bijgewerkt: juni 2026. Drie profielen: Amine (groep 7), Wassima (2 havo), Amaani (4 vwo). Elk vak heeft nu oefenstof — geen lege vakken meer._
 
 ## Omvang nu
-- **651 vaste opgaven + 40 sjablonen** (de sjablonen geven oneindig veel scommen door wisselende getallen), waarvan ± 44 meerkeuze.
-- **Amine (groep 7 → groep 8):** gericht op de **IEP-eindtoets** — alle rekendomeinen (getallen, verhoudingen, meten & meetkunde, verbanden), taalverzorging en begrijpend lezen (± 153 items).
+- **678 vaste opgaven + 40 sjablonen** (de sjablonen geven oneindig veel scommen door wisselende getallen), waarvan ± 55 meerkeuze.
+- **Amine (groep 7 → groep 8):** gericht op de **IEP-eindtoets** — rekendomeinen, taalverzorging (werkwoord- en niet-werkwoordspelling, leestekens) en lezen met álle IEP-categorieën: begrijpen, interpreteren, woordenschat, opzoeken, evalueren en samenvatten. Afgestemd op zijn detailrapport (zwakke punten: samenvatten, woordenschat, opzoeken, werkwoordspelling).
 - **Volgend leerjaar (vooruitkijken):** per kind een schakelaar "Dit jaar / Volgend jaar" met alvast stof van het volgende niveau (Wassima → 3 havo, Amaani → 5 vwo, Amine → groep 8).
 - **Amine** (groep 7): Rekenen, Taal, Begrijpend lezen, Studievaardigheden, Engels.
 - **Wassima** (2 havo): 10 vakken — exact ruim; Engels/Biologie/Aardrijkskunde verdiept.
