@@ -3,7 +3,7 @@
 _Bijgewerkt: juli 2026. Vier profielen: Selma (groep 5), Amine (groep 7), Wassima (2 havo), Amaani (4 vwo). Elk vak heeft nu oefenstof — geen lege vakken meer._
 
 ## Omvang nu
-- **862 vaste opgaven + 52 sjablonen** (de sjablonen geven oneindig veel sommen door wisselende getallen), waarvan ± 85 meerkeuze.
+- **879 vaste opgaven + 54 sjablonen** (de sjablonen geven oneindig veel sommen door wisselende getallen), waarvan ± 85 meerkeuze.
 - **Selma (groep 5, net klaar met groep 4):** een compleet groep-5-blok — rekenen (getallen tot 1000, optellen/aftrekken tot 1000, tafels & delen, klokkijken met getekende klok, geld, meten & maten, breuken, verhoudingstabellen, kommagetallen (intro), verhaaltjessommen, tabellen & grafieken), taal (korte/lange klank, meervoud, ei/ij, au/ou, verkleinwoorden, hakwoorden, d/t aan het eind, ng/nk, cht-woorden, samenstellingen, werkwoorden tegenwoordige tijd, woordenschat, hoofdletters & leestekens) en begrijpend lezen (wie/wat/waar/waarom, hoofdgedachte, volgorde, woordbetekenis, verwijswoorden) — inclusief **langere leesteksten** (complete verhalen/informatieve teksten met meerdere vragen). Met een vooruitblik naar groep 6.
 - **Amine (groep 7 → groep 8):** gericht op de **IEP-eindtoets** — rekendomeinen, taalverzorging (werkwoord- en niet-werkwoordspelling, leestekens) en lezen met álle IEP-categorieën: begrijpen, interpreteren, woordenschat, opzoeken, evalueren en samenvatten. Afgestemd op zijn detailrapport (zwakke punten: samenvatten, woordenschat, opzoeken, werkwoordspelling).
 - **Volgend leerjaar (vooruitkijken):** per kind een schakelaar "Dit jaar / Volgend jaar" met alvast stof van het volgende niveau (Selma → groep 6, Wassima → 3 havo, Amaani → 5 vwo, Amine → groep 8).
@@ -15,7 +15,7 @@ _Bijgewerkt: juli 2026. Vier profielen: Selma (groep 5), Amine (groep 7), Wassim
 ## Grove dekkingsschatting (toetsbaar, kort-antwoord deel)
 - **Amine — doorstroomtoets:** rekenen ± 65 %, taal ± 55 %, lezen/studievaardigheden ± 35 %. Samen ± **50–60 %**.
 - **Wassima — exact (2 havo):** wiskunde ± 65 %, natuurkunde ± 60 %; Engels ± 35 %, overige talen/zaakvakken ± 25 %.
-- **Amaani — exact (4 vwo):** wiskunde A ± 60 %, natuurkunde ± 60 %, scheikunde ± 50 % (molverhoudingen/stoichiometrie, kloppende reactievergelijkingen, molaire massa & massa↔mol toegevoegd); Engels/biologie/aardrijkskunde ± 30 %, overige ± 20 %.
+- **Amaani — exact (4 vwo):** wiskunde A ± 65 % (statistiek: modus/relatieve frequentie/spreiding; kansrekening: en-/of-regel, met/zonder terugleggen, verwachtingswaarde), natuurkunde ± 65 % (samengestelde vraagstukken: snelheid, versnelling, energieverbruik/kosten, druk), scheikunde ± 50 %; Engels/biologie/aardrijkskunde ± 30 %, overige ± 20 %.
 
 De exacte vakken staan er stevig op; de talen en zaakvakken hebben een goede basis die verder verdiept kan worden.
 
