@@ -214,6 +214,7 @@ const TOPICICON = {
   'Getallen tot 1000':'🔢','Optellen tot 1000':'➕','Aftrekken tot 1000':'➖','Geld':'💶','Verhaaltjessommen':'🧩','Tabellen & grafieken':'📊',
   'Korte en lange klank':'🔤','ei of ij':'✏️','au of ou':'✏️','Verkleinwoorden':'🧸','Hakwoorden & klankgroepen':'🔨','d of t aan het eind':'📝','Meervoud':'🔁','Werkwoorden (nu)':'🏃','Wie, wat, waar, waarom':'❓','Volgorde':'🔢',
   'Leesteksten':'📚','ng of nk':'🔤','cht-woorden':'📝','Samenstellingen':'🔗','Verhoudingstabellen':'⚖️',
+  'Molverhoudingen':'🧮',
 };
 
 /* ============================ OEFENINGEN (startvoorraad) ============================ */
@@ -1258,6 +1259,44 @@ const SEED = [
   {p:'selma',v:'rekenen',t:'Breuken',lvl:2,jaar:'next',q:'Welke breuk is groter: 1/2 of 1/3? Schrijf de grootste (bijv. 1/2).',a:'1/2',h:['Hoe groter de noemer, hoe kleiner de stukjes.'],s:'1/2 is groter dan 1/3.'},
   {p:'selma',v:'taal',t:'Werkwoorden (nu)',lvl:2,jaar:'next',q:'Verleden tijd (lopen): gisteren ___ hij naar school.',a:'liep',h:['Onregelmatig werkwoord.'],s:'lopen → liep.'},
   {p:'selma',v:'lezen',t:'Hoofdgedachte',lvl:2,jaar:'next',q:'Lees: "Bijen maken honing en bestuiven bloemen. Zonder bijen groeit er minder fruit." Wat is de hoofdgedachte? (kies)',a:'bijen zijn heel belangrijk',opties:['bijen zijn heel belangrijk','honing is zoet','bloemen zijn mooi'],h:['Wat is de belangrijkste boodschap?'],s:'Bijen zijn heel belangrijk (voor honing én fruit).'},
+
+  /* ================= AMAANI · exact verdieping richting examen (4 vwo) ================= */
+  /* ---- Scheikunde · molverhoudingen (stoichiometrie) ---- */
+  {p:'amaani',v:'scheikunde',t:'Molverhoudingen',lvl:2,q:'Reactie: 2 H2 + O2 → 2 H2O. Hoeveel mol water ontstaat er uit 4 mol H2?',a:'4',u:'mol',h:['Verhouding H₂ : H₂O = 2 : 2 = 1 : 1.'],s:'4 mol H₂ → 4 mol H₂O.'},
+  {p:'amaani',v:'scheikunde',t:'Molverhoudingen',lvl:2,q:'Reactie: 2 H2 + O2 → 2 H2O. Hoeveel mol O2 heb je nodig voor 4 mol H2?',a:'2',u:'mol',h:['Verhouding H₂ : O₂ = 2 : 1.'],s:'4 mol H₂ heeft 2 mol O₂ nodig.'},
+  {p:'amaani',v:'scheikunde',t:'Molverhoudingen',lvl:2,q:'Reactie: N2 + 3 H2 → 2 NH3. Hoeveel mol H2 is nodig voor 1 mol N2?',a:'3',u:'mol',h:['Kijk naar de coëfficiënt vóór H₂.'],s:'Per 1 mol N₂ is 3 mol H₂ nodig.'},
+  {p:'amaani',v:'scheikunde',t:'Molverhoudingen',lvl:3,q:'Reactie: N2 + 3 H2 → 2 NH3. Hoeveel mol NH3 ontstaat er uit 6 mol H2?',a:'4',u:'mol',h:['Verhouding H₂ : NH₃ = 3 : 2.'],s:'6 mol H₂ × (2/3) = 4 mol NH₃.'},
+  {p:'amaani',v:'scheikunde',t:'Molverhoudingen',lvl:3,q:'Verbranding: CH4 + 2 O2 → CO2 + 2 H2O. Hoeveel mol O2 nodig voor 3 mol CH4?',a:'6',u:'mol',h:['Verhouding CH₄ : O₂ = 1 : 2.'],s:'3 mol CH₄ × 2 = 6 mol O₂.'},
+  {p:'amaani',v:'scheikunde',t:'Molverhoudingen',lvl:3,q:'Reactie: 2 C + O2 → 2 CO. Hoeveel mol CO ontstaat er uit 5 mol C?',a:'5',u:'mol',h:['Verhouding C : CO = 2 : 2 = 1 : 1.'],s:'5 mol C → 5 mol CO.'},
+  /* ---- Scheikunde · reactievergelijkingen kloppend maken ---- */
+  {p:'amaani',v:'scheikunde',t:'Reactievergelijkingen',lvl:3,q:'Maak kloppend: N2 + __ H2 → 2 NH3. Welk getal hoort er vóór H2?',a:'3',h:['Rechts staan 6 H-atomen (2 × NH₃ = 2 × 3 H).'],s:'N₂ + 3 H₂ → 2 NH₃ (rechts 6 H, links 6 H).'},
+  {p:'amaani',v:'scheikunde',t:'Reactievergelijkingen',lvl:3,q:'Maak kloppend: __ Na + Cl2 → 2 NaCl. Welk getal hoort er vóór Na?',a:'2',h:['Rechts staan 2 Na-atomen.'],s:'2 Na + Cl₂ → 2 NaCl.'},
+  {p:'amaani',v:'scheikunde',t:'Reactievergelijkingen',lvl:2,q:'Maak kloppend: 2 Mg + O2 → __ MgO. Welk getal hoort er vóór MgO?',a:'2',h:['Links staan 2 Mg en 2 O; verdeel over MgO.'],s:'2 Mg + O₂ → 2 MgO.'},
+  {p:'amaani',v:'scheikunde',t:'Reactievergelijkingen',lvl:3,q:'Maak kloppend: CH4 + 2 O2 → CO2 + __ H2O. Welk getal hoort er vóór H2O?',a:'2',h:['Links zitten 4 H-atomen (CH₄).'],s:'CH₄ + 2 O₂ → CO₂ + 2 H₂O.'},
+  /* ---- Scheikunde · rekenen aan reacties (molaire massa, massa ↔ mol) ---- */
+  {p:'amaani',v:'scheikunde',t:'Rekenen (mol)',lvl:2,q:'Bereken de molaire massa van CO2. (C = 12, O = 16 g/mol)',a:'44',u:'g/mol',h:['12 + 2 × 16.'],s:'M(CO₂) = 12 + 32 = 44 g/mol.'},
+  {p:'amaani',v:'scheikunde',t:'Rekenen (mol)',lvl:2,q:'Bereken de molaire massa van CH4. (C = 12, H = 1 g/mol)',a:'16',u:'g/mol',h:['12 + 4 × 1.'],s:'M(CH₄) = 12 + 4 = 16 g/mol.'},
+  {p:'amaani',v:'scheikunde',t:'Rekenen (mol)',lvl:2,q:'Bereken de molaire massa van O2. (O = 16 g/mol)',a:'32',u:'g/mol',h:['2 × 16.'],s:'M(O₂) = 32 g/mol.'},
+  {p:'amaani',v:'scheikunde',t:'Rekenen (mol)',lvl:3,q:'Hoeveel gram is 3 mol CO2? (M = 44 g/mol)',a:'132',u:'g',h:['massa = mol × molaire massa.'],s:'3 × 44 = 132 g.'},
+  {p:'amaani',v:'scheikunde',t:'Rekenen (mol)',lvl:3,q:'Hoeveel mol is 8 g CH4? (M = 16 g/mol)',a:'0.5',alt:['0,5'],u:'mol',h:['mol = massa ÷ molaire massa.'],s:'8 ÷ 16 = 0,5 mol.'},
+  /* ---- Wiskunde A · logaritmen ---- */
+  {p:'amaani',v:'wiskundeA',t:'Logaritmen',lvl:2,q:'Bereken: log(100)',a:'2',h:['log = ¹⁰log: 10 tot de macht ? = 100.'],s:'10² = 100, dus log(100) = 2.'},
+  {p:'amaani',v:'wiskundeA',t:'Logaritmen',lvl:2,q:'Bereken: log(1000)',a:'3',h:['10 tot de macht ? = 1000.'],s:'10³ = 1000, dus log(1000) = 3.'},
+  {p:'amaani',v:'wiskundeA',t:'Logaritmen',lvl:3,q:'Los op: 10^x = 10000. x = ?',a:'4',h:['Hoeveel nullen?'],s:'10⁴ = 10000, dus x = 4.'},
+  {p:'amaani',v:'wiskundeA',t:'Logaritmen',lvl:3,q:'Bereken de tweemachtslog: ²log(32)',a:'5',h:['2 tot de macht ? = 32.'],s:'2⁵ = 32, dus ²log(32) = 5.'},
+  {p:'amaani',v:'wiskundeA',t:'Logaritmen',lvl:3,q:'Los op: 2^x = 64. x = ?',a:'6',h:['2, 4, 8, 16, 32, 64 …'],s:'2⁶ = 64, dus x = 6.'},
+  /* ---- Wiskunde A · exponentiële groei richting examen ---- */
+  {p:'amaani',v:'wiskundeA',t:'Exponentieel verband',lvl:2,q:'Een populatie groeit met groeifactor 1,2 per jaar. Met hoeveel procent groeit ze per jaar?',a:'20',u:'%',h:['Groeifactor 1 + p/100.'],s:'1,2 = 1 + 0,20 → 20% groei.'},
+  {p:'amaani',v:'wiskundeA',t:'Exponentieel verband',lvl:3,q:'Beginwaarde 200, groeifactor 1,5 per jaar. Wat is de waarde na 2 jaar?',a:'450',h:['200 × 1,5 × 1,5.'],s:'200 × 1,5² = 200 × 2,25 = 450.'},
+  {p:'amaani',v:'wiskundeA',t:'Exponentieel verband',lvl:3,q:'Iets halveert elk uur (groeifactor 0,5). Van 80 mg, hoeveel na 3 uur?',a:'10',u:'mg',h:['80 × 0,5³.'],s:'80 × 0,5 × 0,5 × 0,5 = 10 mg.'},
+  {p:'amaani',v:'wiskundeA',t:'Groeifactoren',lvl:3,q:'De groeifactor per jaar is 1,08. Wat is de groeifactor per 2 jaar? (2 decimalen)',a:'1.17',alt:['1,17'],h:['g² = 1,08².'],s:'1,08² = 1,1664 ≈ 1,17.'},
+  /* ---- Natuurkunde · energie & elektriciteit richting examen ---- */
+  {p:'amaani',v:'natuurkunde',t:'Arbeid & energie',lvl:2,q:'Zwaarte-energie: Ez = m·g·h, met g = 9,8. Bereken Ez van 2 kg op 5 m hoogte.',a:'98',u:'J',h:['2 × 9,8 × 5.'],s:'Ez = 2 × 9,8 × 5 = 98 J.'},
+  {p:'amaani',v:'natuurkunde',t:'Arbeid & energie',lvl:3,q:'Kinetische energie: Ek = ½·m·v². Bereken Ek van 4 kg bij v = 3 m/s.',a:'18',u:'J',h:['½ × 4 × 3².'],s:'Ek = 0,5 × 4 × 9 = 18 J.'},
+  {p:'amaani',v:'natuurkunde',t:'Elektriciteit',lvl:2,q:'Vermogen P = U·I. Bereken P bij U = 230 V en I = 2 A.',a:'460',u:'W',h:['P = U × I.'],s:'P = 230 × 2 = 460 W.'},
+  {p:'amaani',v:'natuurkunde',t:'Elektriciteit',lvl:2,q:'Wet van Ohm: U = I·R. Bereken U bij I = 3 A en R = 4 Ω.',a:'12',u:'V',h:['U = I × R.'],s:'U = 3 × 4 = 12 V.'},
+  {p:'amaani',v:'natuurkunde',t:'Arbeid & energie',lvl:3,q:'Energie E = P·t. Hoeveel joule levert 100 W in 60 s?',a:'6000',u:'J',h:['E = P × t.'],s:'E = 100 × 60 = 6000 J.'},
+  {p:'amaani',v:'natuurkunde',t:'Rendement',lvl:3,q:'Rendement = (nuttig ÷ toegevoerd) × 100%. Nuttig 300 J, toegevoerd 500 J. Bereken het rendement.',a:'60',u:'%',h:['300 ÷ 500 × 100%.'],s:'300/500 × 100% = 60%.'},
 ];
 SEED.forEach((e,i)=> e.id = 'seed_'+i);
 
@@ -1522,6 +1561,17 @@ const TEMPLATES=[
     const c1=ri(1,8)+0.5, c2=ri(1,8)+0.5;
     return {q:`Reken uit: € ${nl(c1)} + € ${nl(c2)}`,a:String(c1+c2),u:'€',
       h:['Tel de hele euro\'s en de halve euro\'s apart op.'],s:`€ ${nl(c1)} + € ${nl(c2)} = € ${nl(c1+c2)}.`};
+  }},
+  /* ----- Amaani · exact (oneindig oefenen) ----- */
+  {id:'tpl_am_massa',p:'amaani',v:'scheikunde',t:'Rekenen (mol)',lvl:2,gen:()=>{
+    const stof=pick([['H2O',18],['CO2',44],['CH4',16],['O2',32],['NaCl',58]]), n=pick([2,3,4,0.5,5]);
+    return {q:`Hoeveel gram is ${nl(n)} mol ${stof[0]}? (molaire massa ${stof[1]} g/mol)`,a:String(rnd(n*stof[1],2)),u:'g',
+      h:['massa = aantal mol × molaire massa.'],s:`${nl(n)} × ${stof[1]} = ${nl(n*stof[1])} g.`};
+  }},
+  {id:'tpl_am_pui',p:'amaani',v:'natuurkunde',t:'Elektriciteit',lvl:2,gen:()=>{
+    const U=pick([12,24,230]), I=ri(2,8);
+    return {q:`Vermogen P = U·I. Bereken P bij U = ${U} V en I = ${I} A.`,a:String(U*I),u:'W',
+      h:['P = U × I.'],s:`P = ${U} × ${I} = ${U*I} W.`};
   }},
 ];
 
