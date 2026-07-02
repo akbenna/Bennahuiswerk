@@ -1,11 +1,13 @@
 # Oefenapp — dekking & uitbreidingslijst
 
-_Bijgewerkt: juni 2026. Drie profielen: Amine (groep 7), Wassima (2 havo), Amaani (4 vwo). Elk vak heeft nu oefenstof — geen lege vakken meer._
+_Bijgewerkt: juli 2026. Vier profielen: Selma (groep 5), Amine (groep 7), Wassima (2 havo), Amaani (4 vwo). Elk vak heeft nu oefenstof — geen lege vakken meer._
 
 ## Omvang nu
-- **678 vaste opgaven + 40 sjablonen** (de sjablonen geven oneindig veel scommen door wisselende getallen), waarvan ± 55 meerkeuze.
+- **788 vaste opgaven + 48 sjablonen** (de sjablonen geven oneindig veel sommen door wisselende getallen), waarvan ± 70 meerkeuze.
+- **Selma (groep 5, net klaar met groep 4):** een compleet groep-5-blok — rekenen (getallen tot 1000, optellen/aftrekken tot 1000, tafels & delen, klokkijken met getekende klok, geld, meten & maten, breuken, verhaaltjessommen, tabellen & grafieken), taal (korte/lange klank, meervoud, ei/ij, au/ou, verkleinwoorden, hakwoorden, d/t aan het eind, werkwoorden tegenwoordige tijd, hoofdletters & leestekens) en begrijpend lezen (wie/wat/waar/waarom, hoofdgedachte, volgorde, woordbetekenis, verwijswoorden). Met een vooruitblik naar groep 6.
 - **Amine (groep 7 → groep 8):** gericht op de **IEP-eindtoets** — rekendomeinen, taalverzorging (werkwoord- en niet-werkwoordspelling, leestekens) en lezen met álle IEP-categorieën: begrijpen, interpreteren, woordenschat, opzoeken, evalueren en samenvatten. Afgestemd op zijn detailrapport (zwakke punten: samenvatten, woordenschat, opzoeken, werkwoordspelling).
-- **Volgend leerjaar (vooruitkijken):** per kind een schakelaar "Dit jaar / Volgend jaar" met alvast stof van het volgende niveau (Wassima → 3 havo, Amaani → 5 vwo, Amine → groep 8).
+- **Volgend leerjaar (vooruitkijken):** per kind een schakelaar "Dit jaar / Volgend jaar" met alvast stof van het volgende niveau (Selma → groep 6, Wassima → 3 havo, Amaani → 5 vwo, Amine → groep 8).
+- **Selma** (groep 5): Rekenen, Taal, Begrijpend lezen.
 - **Amine** (groep 7): Rekenen, Taal, Begrijpend lezen, Studievaardigheden, Engels.
 - **Wassima** (2 havo): 10 vakken — exact ruim; Engels/Biologie/Aardrijkskunde verdiept.
 - **Amaani** (4 vwo): 10 vakken — exact ruim; Engels/Biologie/Aardrijkskunde verdiept.
@@ -22,7 +24,7 @@ Instelbaar moeilijkheidsniveau per kind (**Auto / 1 / 2 / 3**; Auto wordt vanzel
 
 ## Motivatie & adherence (per kind afgestemd)
 - **Amine — voetbal/game-thema:** eigen taal en beleving (XP i.p.v. punten, **doelpunten** i.p.v. sommen, "⚽ GOAL!" bij goed antwoord, voetbal-confetti) en een **rangen-ladder** (Pupil → Talent → Basisspeler → … → Kampioen → Legende) met een voortgangsbalk naar de volgende rang. Sluit aan bij wat hem motiveert (spelen, voetbal) zodat hij blijft oefenen.
-- **Wassima & Amaani — eerlijke beloning (zakgeld):** de app rekent per dag uit wat een sessie **eerlijk** waard is; papa/mama betaalt pas uit via de ouder-modus. Alleen **écht bewezen** werk telt:
+- **Selma, Wassima & Amaani — eerlijke beloning (zakgeld):** de app rekent per dag uit wat een sessie **eerlijk** waard is; papa/mama betaalt pas uit via de ouder-modus. Alleen **écht bewezen** werk telt:
   - alleen "sterk goed" = de **eerste** keer goed, **zónder hint**, op een som die nog niet beheerst was (€ 0,40 per stuk, tot € 12);
   - een **nauwkeurigheidspoort** tegen gok-/haastwerk: ≥ 85% vol tarief, ≥ 70% half, daaronder telt het niet;
   - een **"klaar voor de toets"-bonus**: een gehaalde oefentoets (≥ 80%) geeft € 4, een proeftoets € 8;

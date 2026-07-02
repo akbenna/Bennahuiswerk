@@ -123,6 +123,7 @@ const PROFILES = {
   wassima:{naam:'Wassima', niveau:'2 havo', volgend:'3 havo', emoji:'🌱', kleur:'linear-gradient(135deg,#5EA03A,#48792c)', vakken:['wiskunde','natuurkunde','nederlands','engels','frans','duits','biologie','aardrijkskunde','geschiedenis','economie'], beloning:true},
   amaani: {naam:'Amaani',  niveau:'4 vwo',  volgend:'5 vwo',  emoji:'🚀', kleur:'linear-gradient(135deg,#3a6ea0,#2c5680)', vakken:['wiskundeA','natuurkunde','scheikunde','nederlands','engels','frans','biologie','aardrijkskunde','geschiedenis','economie'], beloning:true},
   amine:  {naam:'Amine',   niveau:'groep 7', volgend:'groep 8', emoji:'⚽', kleur:'linear-gradient(135deg,#2e8b57,#1f6e43)', vakken:['rekenen','taal','lezen','studievaardigheden','engels'], thema:'voetbal'},
+  selma:  {naam:'Selma',   niveau:'groep 5', volgend:'groep 6', emoji:'🌸', kleur:'linear-gradient(135deg,#d95b9a,#b34584)', vakken:['rekenen','taal','lezen'], beloning:true},
 };
 
 /* ============================ THEMA'S (motivatie) ============================ */
@@ -209,6 +210,9 @@ const TOPICICON = {
   'Kwadratische vergelijkingen':'🟰','Stelsels':'🔢','Goniometrie':'📐','Krachten (resultante)':'➡️','Normale verdeling':'🔔','Binomiale verdeling':'🎲',
   'Logaritmen (gevorderd)':'🔟','Energiebehoud':'⚡','Gaswet':'🌡️','Concentratie':'🧪','Formules met x':'🔤','Coördinaten':'📈',
   'Reactiesnelheid':'⏱️','Tijdlijn':'📜','Feit of mening':'💭','Soorten teksten':'📰','Woordbetekenis':'📖','Conclusie':'🔍','Samenvatten':'🗒️','Opzoeken':'🔎',
+  // Selma (groep 5)
+  'Getallen tot 1000':'🔢','Optellen tot 1000':'➕','Aftrekken tot 1000':'➖','Geld':'💶','Verhaaltjessommen':'🧩','Tabellen & grafieken':'📊',
+  'Korte en lange klank':'🔤','ei of ij':'✏️','au of ou':'✏️','Verkleinwoorden':'🧸','Hakwoorden & klankgroepen':'🔨','d of t aan het eind':'📝','Meervoud':'🔁','Werkwoorden (nu)':'🏃','Wie, wat, waar, waarom':'❓','Volgorde':'🔢',
 };
 
 /* ============================ OEFENINGEN (startvoorraad) ============================ */
@@ -1058,6 +1062,144 @@ const SEED = [
   {p:'amine',v:'taal',t:'Spelling',lvl:2,q:'Wat is het verkleinwoord van "kop"?',a:'kopje',h:['+ je.'],s:'kop → kopje.'},
   {p:'amine',v:'taal',t:'Spelling',lvl:1,q:'ei of ij? Schrijf het hele woord: het tegenovergestelde van groot is kl__n.',a:'klein',h:['De "korte ei".'],s:'Het woord is klein.'},
   {p:'amine',v:'taal',t:'Spelling',lvl:2,q:'Schrijf goed (samengesteld woord): "boekenkast" of "boeken kast"?',a:'boekenkast',h:['Het is één woord.'],s:'boeken + kast = boekenkast.'},
+
+  /* ================= SELMA · groep 5 (net klaar met groep 4) ================= */
+  /* ---- Rekenen · getallen tot 1000 ---- */
+  {p:'selma',v:'rekenen',t:'Getallen tot 1000',lvl:1,q:'Welk getal is dit: 4 honderdtallen, 3 tientallen en 7 eenheden?',a:'437',h:['Honderdtallen vooraan, dan tientallen, dan eenheden.'],s:'4 honderd + 3 tien + 7 = 437.'},
+  {p:'selma',v:'rekenen',t:'Getallen tot 1000',lvl:1,q:'Hoeveel tientallen zitten er in 260?',a:'26',h:['Elke 10 is één tiental.'],s:'260 ÷ 10 = 26 tientallen.'},
+  {p:'selma',v:'rekenen',t:'Getallen tot 1000',lvl:1,q:'Welk getal komt na 599?',a:'600',h:['Eén meer.'],s:'599 + 1 = 600.'},
+  {p:'selma',v:'rekenen',t:'Getallen tot 1000',lvl:1,q:'Welk getal komt vlak vóór 700?',a:'699',h:['Eén minder.'],s:'700 − 1 = 699.'},
+  {p:'selma',v:'rekenen',t:'Getallen tot 1000',lvl:1,q:'Welk getal is het grootst? (kies)',a:'487',opties:['478','487','448'],h:['Kijk eerst naar de tientallen.'],s:'478, 487, 448 → 487 is het grootst.'},
+  {p:'selma',v:'rekenen',t:'Getallen tot 1000',lvl:2,q:'Rond af op honderdtallen: 347',a:'300',h:['Kijk naar het tiental: 4 is minder dan 5 → naar beneden.'],s:'347 ligt dichter bij 300 dan bij 400 → 300.'},
+  {p:'selma',v:'rekenen',t:'Getallen tot 1000',lvl:2,q:'Rond af op honderdtallen: 682',a:'700',h:['8 tientallen is meer dan 5 → naar boven.'],s:'682 ligt dichter bij 700 → 700.'},
+  /* ---- Rekenen · optellen tot 1000 ---- */
+  {p:'selma',v:'rekenen',t:'Optellen tot 1000',lvl:1,q:'Reken uit: 340 + 250',a:'590',h:['Tel eerst de honderdtallen: 300 + 200 = 500.'],s:'340 + 250 = 590.'},
+  {p:'selma',v:'rekenen',t:'Optellen tot 1000',lvl:1,q:'Reken uit: 125 + 60',a:'185',h:['Tel de tientallen erbij.'],s:'125 + 60 = 185.'},
+  {p:'selma',v:'rekenen',t:'Optellen tot 1000',lvl:1,q:'Reken uit: 400 + 250 + 30',a:'680',h:['Van links naar rechts optellen.'],s:'400 + 250 = 650, + 30 = 680.'},
+  {p:'selma',v:'rekenen',t:'Optellen tot 1000',lvl:2,q:'Reken uit: 268 + 147',a:'415',h:['268 + 100 = 368, + 40 = 408, + 7 = 415.'],s:'268 + 147 = 415.'},
+  {p:'selma',v:'rekenen',t:'Optellen tot 1000',lvl:2,q:'Reken uit: 399 + 156',a:'555',h:['Doe eerst 399 + 1 = 400, dan + 155.'],s:'399 + 156 = 555.'},
+  /* ---- Rekenen · aftrekken tot 1000 ---- */
+  {p:'selma',v:'rekenen',t:'Aftrekken tot 1000',lvl:1,q:'Reken uit: 580 − 200',a:'380',h:['Haal de honderdtallen eraf.'],s:'580 − 200 = 380.'},
+  {p:'selma',v:'rekenen',t:'Aftrekken tot 1000',lvl:1,q:'Reken uit: 650 − 40',a:'610',h:['Haal 4 tientallen eraf.'],s:'650 − 40 = 610.'},
+  {p:'selma',v:'rekenen',t:'Aftrekken tot 1000',lvl:2,q:'Reken uit: 512 − 148',a:'364',h:['512 − 100 = 412, − 40 = 372, − 8 = 364.'],s:'512 − 148 = 364.'},
+  {p:'selma',v:'rekenen',t:'Aftrekken tot 1000',lvl:2,q:'Reken uit: 700 − 265',a:'435',h:['Tel op van 265 naar 700.'],s:'700 − 265 = 435.'},
+  {p:'selma',v:'rekenen',t:'Aftrekken tot 1000',lvl:3,q:'Reken uit: 834 − 219',a:'615',h:['834 − 200 = 634, − 19 = 615.'],s:'834 − 219 = 615.'},
+  /* ---- Rekenen · tafels & delen ---- */
+  {p:'selma',v:'rekenen',t:'Tafels & keer',lvl:1,q:'Reken uit: 6 × 7',a:'42',h:['Tafel van 7.'],s:'6 × 7 = 42.'},
+  {p:'selma',v:'rekenen',t:'Tafels & keer',lvl:1,q:'Reken uit: 8 × 4',a:'32',h:['Tafel van 4.'],s:'8 × 4 = 32.'},
+  {p:'selma',v:'rekenen',t:'Tafels & keer',lvl:1,q:'Reken uit: 9 × 6',a:'54',h:['Tafel van 6.'],s:'9 × 6 = 54.'},
+  {p:'selma',v:'rekenen',t:'Tafels & keer',lvl:1,q:'Reken uit: 7 × 8',a:'56',h:['Tafel van 8.'],s:'7 × 8 = 56.'},
+  {p:'selma',v:'rekenen',t:'Tafels & keer',lvl:2,q:'Reken uit: 4 × 25',a:'100',h:['4 keer 25 (kwartjes).'],s:'4 × 25 = 100.'},
+  {p:'selma',v:'rekenen',t:'Tafels & keer',lvl:2,q:'3 × 8 = 24. Hoeveel is 30 × 8?',a:'240',h:['30 is 10× zoveel als 3.'],s:'30 × 8 = 240.'},
+  {p:'selma',v:'rekenen',t:'Delen',lvl:1,q:'Reken uit: 42 ÷ 6',a:'7',h:['Welk getal × 6 = 42?'],s:'6 × 7 = 42 → 42 ÷ 6 = 7.'},
+  {p:'selma',v:'rekenen',t:'Delen',lvl:1,q:'Reken uit: 56 ÷ 8',a:'7',h:['Welk getal × 8 = 56?'],s:'8 × 7 = 56 → 56 ÷ 8 = 7.'},
+  {p:'selma',v:'rekenen',t:'Delen',lvl:2,q:'Reken uit: 72 ÷ 9',a:'8',h:['Welk getal × 9 = 72?'],s:'9 × 8 = 72 → 72 ÷ 9 = 8.'},
+  {p:'selma',v:'rekenen',t:'Delen',lvl:2,q:'36 knikkers eerlijk verdeeld over 4 kinderen. Hoeveel per kind?',a:'9',h:['36 ÷ 4.'],s:'36 ÷ 4 = 9 knikkers per kind.'},
+  /* ---- Rekenen · tijd & klok ---- */
+  {p:'selma',v:'rekenen',t:'Tijd & klok',lvl:1,ill:{type:'klok',uur:2,min:0},q:'Hoe laat is het op de klok? (kies)',a:'2:00',opties:['2:00','4:00','2:30'],h:['Korte wijzer op 2, lange op 12.'],s:'Korte wijzer op 2, lange op 12 → 2:00.'},
+  {p:'selma',v:'rekenen',t:'Tijd & klok',lvl:1,ill:{type:'klok',uur:7,min:30},q:'Hoe laat is het op de klok? (kies)',a:'7:30',opties:['7:30','6:30','7:00'],h:['Lange wijzer op de 6 = "half".'],s:'Lange wijzer op 6, korte tussen 7 en 8 → 7:30 (half 8).'},
+  {p:'selma',v:'rekenen',t:'Tijd & klok',lvl:2,ill:{type:'klok',uur:4,min:15},q:'Hoe laat is het op de klok? (kies)',a:'4:15',opties:['4:15','3:15','4:45'],h:['Lange wijzer op de 3 = "kwart over".'],s:'Korte net voorbij 4, lange op 3 → 4:15.'},
+  {p:'selma',v:'rekenen',t:'Tijd & klok',lvl:1,q:'Hoeveel minuten zijn er in 1 uur?',a:'60',h:['1 uur = 60 minuten.'],s:'1 uur = 60 minuten.'},
+  {p:'selma',v:'rekenen',t:'Tijd & klok',lvl:2,q:'De film begint om 15:00 en duurt 1 uur en 30 minuten. Hoe laat is hij afgelopen? (bijv. 16:30)',a:'16:30',alt:['16.30'],h:['15:00 + 1 uur = 16:00, + 30 min.'],s:'15:00 + 1.30 = 16:30.'},
+  {p:'selma',v:'rekenen',t:'Tijd & klok',lvl:2,q:'Hoe schrijf je "kwart voor 8" digitaal? (bijv. 7:45)',a:'7:45',alt:['7.45'],h:['Kwart voor = 15 minuten vóór het hele uur.'],s:'Kwart voor 8 = 7:45.'},
+  /* ---- Rekenen · geld ---- */
+  {p:'selma',v:'rekenen',t:'Geld',lvl:1,q:'Je koopt iets van € 3,50 en betaalt met € 5. Hoeveel krijg je terug?',a:'1.5',alt:['1,50','1.50'],u:'€',h:['5,00 − 3,50.'],s:'€ 5,00 − € 3,50 = € 1,50.'},
+  {p:'selma',v:'rekenen',t:'Geld',lvl:1,q:'Hoeveel cent is € 2,45?',a:'245',u:'cent',h:['€ 1 = 100 cent.'],s:'€ 2,45 = 245 cent.'},
+  {p:'selma',v:'rekenen',t:'Geld',lvl:2,q:'Een pen kost € 1,25. Wat kosten 4 pennen samen?',a:'5',u:'€',h:['4 × 1,25.'],s:'4 × € 1,25 = € 5,00.'},
+  {p:'selma',v:'rekenen',t:'Geld',lvl:2,q:'Je hebt € 10 en koopt voor € 6,75. Hoeveel houd je over?',a:'3.25',alt:['3,25'],u:'€',h:['10,00 − 6,75.'],s:'€ 10,00 − € 6,75 = € 3,25.'},
+  /* ---- Rekenen · meten & maten ---- */
+  {p:'selma',v:'rekenen',t:'Meten & maten',lvl:1,q:'Hoeveel cm is 3 meter?',a:'300',u:'cm',h:['1 meter = 100 cm.'],s:'3 × 100 = 300 cm.'},
+  {p:'selma',v:'rekenen',t:'Meten & maten',lvl:1,q:'Hoeveel gram is 2 kilogram?',a:'2000',u:'gram',h:['1 kg = 1000 gram.'],s:'2 × 1000 = 2000 gram.'},
+  {p:'selma',v:'rekenen',t:'Meten & maten',lvl:1,q:'Wat weegt meer: 1 kg veren of 900 gram steen? (veren/steen)',a:'veren',h:['1 kg = 1000 gram.'],s:'1000 gram > 900 gram, dus de veren.'},
+  {p:'selma',v:'rekenen',t:'Meten & maten',lvl:2,q:'Een touw is 250 cm lang. Hoeveel meter is dat? (bijv. 2,5)',a:'2.5',alt:['2,5'],u:'m',h:['100 cm = 1 meter.'],s:'250 ÷ 100 = 2,5 meter.'},
+  {p:'selma',v:'rekenen',t:'Meten & maten',lvl:2,q:'Hoeveel ml is een halve liter?',a:'500',u:'ml',h:['1 liter = 1000 ml.'],s:'De helft van 1000 = 500 ml.'},
+  /* ---- Rekenen · breuken ---- */
+  {p:'selma',v:'rekenen',t:'Breuken',lvl:1,ill:{type:'breukstrook',delen:2,gevuld:1},q:'Welk deel is gekleurd? Schrijf als breuk (bijv. 1/2).',a:'1/2',alt:['0.5'],h:['gekleurde delen / totaal.'],s:'1 van 2 delen → 1/2.'},
+  {p:'selma',v:'rekenen',t:'Breuken',lvl:1,ill:{type:'breukstrook',delen:4,gevuld:1},q:'Welk deel is gekleurd? Schrijf als breuk (bijv. 1/4).',a:'1/4',alt:['0.25'],h:['1 van 4 delen.'],s:'1 van 4 → 1/4.'},
+  {p:'selma',v:'rekenen',t:'Breuken',lvl:2,q:'Wat is de helft van 30?',a:'15',h:['Deel door 2.'],s:'30 ÷ 2 = 15.'},
+  {p:'selma',v:'rekenen',t:'Breuken',lvl:2,q:'Wat is een kwart van 20?',a:'5',h:['Een kwart = ÷ 4.'],s:'20 ÷ 4 = 5.'},
+  {p:'selma',v:'rekenen',t:'Breuken',lvl:2,q:'Hoeveel is 1/3 van 18?',a:'6',h:['Deel door 3.'],s:'18 ÷ 3 = 6.'},
+  /* ---- Rekenen · verhaaltjessommen ---- */
+  {p:'selma',v:'rekenen',t:'Verhaaltjessommen',lvl:2,q:'In de klas zitten 28 kinderen. 12 zijn jongens. Hoeveel meisjes zijn er?',a:'16',h:['28 − 12.'],s:'28 − 12 = 16 meisjes.'},
+  {p:'selma',v:'rekenen',t:'Verhaaltjessommen',lvl:2,q:'Een pak heeft 24 koekjes. Je eet er 6. Hoeveel blijven er over?',a:'18',h:['24 − 6.'],s:'24 − 6 = 18 koekjes.'},
+  {p:'selma',v:'rekenen',t:'Verhaaltjessommen',lvl:2,q:'3 dozen met elk 8 appels. Hoeveel appels samen?',a:'24',h:['3 × 8.'],s:'3 × 8 = 24 appels.'},
+  {p:'selma',v:'rekenen',t:'Verhaaltjessommen',lvl:2,q:'Je spaart € 5 per week. Hoeveel heb je na 6 weken?',a:'30',u:'€',h:['6 × 5.'],s:'6 × € 5 = € 30.'},
+  {p:'selma',v:'rekenen',t:'Verhaaltjessommen',lvl:3,q:'Een bus heeft 40 plaatsen. Er zitten 27 mensen in. Bij de halte stappen er 8 in. Hoeveel plaatsen zijn nog vrij?',a:'5',h:['Eerst 27 + 8, dan 40 − dat.'],s:'27 + 8 = 35; 40 − 35 = 5 vrij.'},
+  {p:'selma',v:'rekenen',t:'Verhaaltjessommen',lvl:3,q:'Sanne heeft 3 zakjes met elk 15 snoepjes. Ze geeft er 10 weg. Hoeveel houdt ze?',a:'35',h:['Eerst 3 × 15, dan − 10.'],s:'3 × 15 = 45; 45 − 10 = 35.'},
+  /* ---- Rekenen · tabellen & grafieken ---- */
+  {p:'selma',v:'rekenen',t:'Tabellen & grafieken',lvl:1,q:'In een staafdiagram: maandag 4, dinsdag 7, woensdag 3. Hoeveel samen?',a:'14',h:['Tel alle staven op.'],s:'4 + 7 + 3 = 14.'},
+  {p:'selma',v:'rekenen',t:'Tabellen & grafieken',lvl:2,q:'In de tabel: appels 8, peren 5, bananen 11. Waarvan zijn er de meeste? (kies)',a:'bananen',opties:['appels','peren','bananen'],h:['Zoek het hoogste getal.'],s:'11 is het grootst → bananen.'},
+  {p:'selma',v:'rekenen',t:'Tabellen & grafieken',lvl:2,q:'Groep 5 telt 12 jongens en 13 meisjes. Hoeveel leerlingen in totaal?',a:'25',h:['12 + 13.'],s:'12 + 13 = 25.'},
+
+  /* ---- Taal · korte en lange klank / meervoud ---- */
+  {p:'selma',v:'taal',t:'Korte en lange klank',lvl:1,q:'Meervoud van "maan"? (denk aan de lange aa)',a:'manen',h:['Eén klank aa: de aa blijft.'],s:'maan → manen.'},
+  {p:'selma',v:'taal',t:'Korte en lange klank',lvl:1,q:'Meervoud van "boom"?',a:'bomen',h:['Lange oo → één o in het meervoud.'],s:'boom → bomen.'},
+  {p:'selma',v:'taal',t:'Korte en lange klank',lvl:2,q:'Meervoud van "bal"? (korte a: letter verdubbelt)',a:'ballen',h:['Korte klank → medeklinker verdubbelen.'],s:'bal → ballen.'},
+  {p:'selma',v:'taal',t:'Korte en lange klank',lvl:2,q:'Meervoud van "pop"?',a:'poppen',h:['Korte o → p verdubbelen.'],s:'pop → poppen.'},
+  {p:'selma',v:'taal',t:'Meervoud',lvl:1,q:'Meervoud van "huis"? (s wordt z)',a:'huizen',h:['s → z in het meervoud.'],s:'huis → huizen.'},
+  {p:'selma',v:'taal',t:'Meervoud',lvl:1,q:'Meervoud van "kind"?',a:'kinderen',h:['Een bijzonder meervoud.'],s:'kind → kinderen.'},
+  {p:'selma',v:'taal',t:'Meervoud',lvl:1,q:'Meervoud van "ei"?',a:'eieren',h:['Een bijzonder meervoud.'],s:'ei → eieren.'},
+  {p:'selma',v:'taal',t:'Meervoud',lvl:2,q:'Meervoud van "auto"?',a:"auto's",h:["Klinker aan het eind → 's."],s:"auto → auto's."},
+  {p:'selma',v:'taal',t:'Meervoud',lvl:3,q:'Meervoud van "stad"?',a:'steden',h:['Een bijzonder meervoud.'],s:'stad → steden.'},
+  /* ---- Taal · ei/ij en au/ou ---- */
+  {p:'selma',v:'taal',t:'ei of ij',lvl:1,q:'ei of ij? Schrijf het hele woord: het tegenovergestelde van groot is kl__n.',a:'klein',h:['De "korte ei".'],s:'Het woord is klein.'},
+  {p:'selma',v:'taal',t:'ei of ij',lvl:1,q:'ei of ij? Schrijf het woord: dit rijdt op rails: tr__n.',a:'trein',h:['De "korte ei".'],s:'Het woord is trein.'},
+  {p:'selma',v:'taal',t:'ei of ij',lvl:2,q:'ei of ij? Schrijf het woord: de klok geeft de t__d aan.',a:'tijd',h:['De "lange ij".'],s:'Het woord is tijd.'},
+  {p:'selma',v:'taal',t:'ei of ij',lvl:2,q:'ei of ij? Schrijf het woord: niet gevangen maar vr__.',a:'vrij',h:['De "lange ij".'],s:'Het woord is vrij.'},
+  {p:'selma',v:'taal',t:'au of ou',lvl:1,q:'au of ou? Schrijf het woord: niet warm maar k__d.',a:'koud',h:['De "ou".'],s:'Het woord is koud.'},
+  {p:'selma',v:'taal',t:'au of ou',lvl:1,q:'au of ou? Schrijf het woord: de kleur van de lucht is bl__w.',a:'blauw',h:['De "au".'],s:'Het woord is blauw.'},
+  {p:'selma',v:'taal',t:'au of ou',lvl:2,q:'au of ou? Schrijf het woord: een geel, kostbaar metaal is g__d.',a:'goud',h:['De "ou".'],s:'Het woord is goud.'},
+  {p:'selma',v:'taal',t:'au of ou',lvl:2,q:'au of ou? Schrijf het woord: even stoppen is p__ze.',a:'pauze',h:['De "au".'],s:'Het woord is pauze.'},
+  /* ---- Taal · verkleinwoorden ---- */
+  {p:'selma',v:'taal',t:'Verkleinwoorden',lvl:1,q:'Verkleinwoord van "boom"?',a:'boompje',h:['+ pje.'],s:'boom → boompje.'},
+  {p:'selma',v:'taal',t:'Verkleinwoorden',lvl:1,q:'Verkleinwoord van "kat"?',a:'katje',h:['+ je.'],s:'kat → katje.'},
+  {p:'selma',v:'taal',t:'Verkleinwoorden',lvl:1,q:'Verkleinwoord van "huis"?',a:'huisje',h:['+ je.'],s:'huis → huisje.'},
+  {p:'selma',v:'taal',t:'Verkleinwoorden',lvl:2,q:'Verkleinwoord van "bloem"?',a:'bloempje',h:['+ pje.'],s:'bloem → bloempje.'},
+  {p:'selma',v:'taal',t:'Verkleinwoorden',lvl:2,q:'Verkleinwoord van "stoel"?',a:'stoeltje',h:['+ tje.'],s:'stoel → stoeltje.'},
+  /* ---- Taal · hakwoorden ---- */
+  {p:'selma',v:'taal',t:'Hakwoorden & klankgroepen',lvl:1,q:'In hoeveel klankgroepen hak je "tomaat"? (to-maat)',a:'2',h:['Klap mee: to-maat.'],s:'to-maat = 2 klankgroepen.'},
+  {p:'selma',v:'taal',t:'Hakwoorden & klankgroepen',lvl:1,q:'In hoeveel klankgroepen hak je "banaan"? (ba-naan)',a:'2',h:['ba-naan.'],s:'ba-naan = 2 klankgroepen.'},
+  {p:'selma',v:'taal',t:'Hakwoorden & klankgroepen',lvl:2,q:'Hoeveel klankgroepen in "olifant"? (o-li-fant)',a:'3',h:['o-li-fant.'],s:'o-li-fant = 3 klankgroepen.'},
+  {p:'selma',v:'taal',t:'Hakwoorden & klankgroepen',lvl:2,q:'Hoeveel lettergrepen in "vakantie"? (va-kan-tie)',a:'3',h:['va-kan-tie.'],s:'va-kan-tie = 3 lettergrepen.'},
+  /* ---- Taal · d of t aan het eind ---- */
+  {p:'selma',v:'taal',t:'d of t aan het eind',lvl:1,q:'d of t aan het eind? Verleng "hon__" (honden). Schrijf het woord.',a:'hond',h:['Meervoud honden → je hoort een d.'],s:'honden → dus hond.'},
+  {p:'selma',v:'taal',t:'d of t aan het eind',lvl:2,q:'d of t aan het eind? Verleng "kran__" (kranten). Schrijf het woord.',a:'krant',h:['Meervoud kranten → je hoort een t.'],s:'kranten → dus krant.'},
+  {p:'selma',v:'taal',t:'d of t aan het eind',lvl:2,q:'d of t aan het eind? Verleng "hoe__" (hoeden). Schrijf het woord.',a:'hoed',h:['Meervoud hoeden → je hoort een d.'],s:'hoeden → dus hoed.'},
+  /* ---- Taal · werkwoorden (tegenwoordige tijd) ---- */
+  {p:'selma',v:'taal',t:'Werkwoorden (nu)',lvl:1,q:'Vul in (lopen): ik ___ naar school.',a:'loop',h:['ik + stam.'],s:'ik loop.'},
+  {p:'selma',v:'taal',t:'Werkwoorden (nu)',lvl:1,q:'Vul in (lopen): hij ___ hard.',a:'loopt',h:['hij + stam + t.'],s:'hij loopt.'},
+  {p:'selma',v:'taal',t:'Werkwoorden (nu)',lvl:1,q:'Vul in (blaffen): de hond ___ hard.',a:'blaft',h:['stam blaf + t.'],s:'de hond blaft.'},
+  {p:'selma',v:'taal',t:'Werkwoorden (nu)',lvl:2,q:'Vul in (spelen): hij ___ graag buiten.',a:'speelt',h:['stam speel + t.'],s:'hij speelt.'},
+  {p:'selma',v:'taal',t:'Werkwoorden (nu)',lvl:2,q:'Vul in (gaan): wij ___ naar huis.',a:'gaan',h:['wij + heel werkwoord.'],s:'wij gaan.'},
+  /* ---- Taal · hoofdletters & leestekens ---- */
+  {p:'selma',v:'taal',t:'Leestekens & hoofdletters',lvl:1,q:'Welk leesteken hoort achter een vraag? (. of ?)',a:'?',h:['Een vraag eindigt met een vraagteken.'],s:'Achter een vraag komt een ?.'},
+  {p:'selma',v:'taal',t:'Leestekens & hoofdletters',lvl:1,q:'Begint een zin met een hoofdletter of een kleine letter?',a:'hoofdletter',h:['Aan het begin van de zin.'],s:'Een zin begint met een hoofdletter.'},
+  {p:'selma',v:'taal',t:'Leestekens & hoofdletters',lvl:1,q:'Welk woord in de zin "we gaan naar parijs" moet een hoofdletter? (kies)',a:'parijs',opties:['we','gaan','parijs'],h:['Namen van steden krijgen een hoofdletter.'],s:'Parijs is een stad → hoofdletter: "We gaan naar Parijs."'},
+  {p:'selma',v:'taal',t:'Leestekens & hoofdletters',lvl:2,q:'Welk woord krijgt altijd een hoofdletter? (kies)',a:'amsterdam',opties:['maandag','amsterdam','tafel'],h:['Namen van plaatsen en landen.'],s:'Amsterdam is een plaatsnaam → hoofdletter.'},
+
+  /* ---- Lezen · wie/wat/waar/waarom ---- */
+  {p:'selma',v:'lezen',t:'Wie, wat, waar, waarom',lvl:1,q:'Lees: "Tom gaat met zijn hond naar het park. Daar gooit hij een bal." Met wie gaat Tom? (kies)',a:'zijn hond',opties:['zijn hond','zijn zus','de juf'],h:['Lees de eerste zin.'],s:'Tom gaat met zijn hond.'},
+  {p:'selma',v:'lezen',t:'Wie, wat, waar, waarom',lvl:1,q:'Lees dezelfde tekst. Waar gaat Tom naartoe? (kies)',a:'het park',opties:['het park','school','de winkel'],h:['Waar gooit hij de bal?'],s:'Tom gaat naar het park.'},
+  {p:'selma',v:'lezen',t:'Wie, wat, waar, waarom',lvl:2,q:'Lees: "Omdat het regent, neemt Lisa haar paraplu mee." Waarom neemt Lisa haar paraplu mee? (kies)',a:'omdat het regent',opties:['omdat het regent','omdat het koud is','omdat het donker is'],h:['Zoek het woord "omdat".'],s:'Omdat het regent.'},
+  /* ---- Lezen · hoofdgedachte ---- */
+  {p:'selma',v:'lezen',t:'Hoofdgedachte',lvl:2,q:'Lees: "De egel eet slakken, wormen en insecten. Zo helpt hij de tuinman." Waar gaat de tekst vooral over? (kies)',a:'de egel is nuttig in de tuin',opties:['de egel is nuttig in de tuin','egels slapen veel','egels zijn gevaarlijk'],h:['Wat is de belangrijkste boodschap?'],s:'De egel is nuttig in de tuin.'},
+  /* ---- Lezen · volgorde ---- */
+  {p:'selma',v:'lezen',t:'Volgorde',lvl:1,q:'Eerst doe je je jas aan, dan ga je naar buiten. Wat doe je eerst? (kies)',a:'je jas aan',opties:['je jas aan','naar buiten'],h:['Zoek het woord "eerst".'],s:'Eerst je jas aan.'},
+  {p:'selma',v:'lezen',t:'Volgorde',lvl:2,q:'Recept: 1) kook water, 2) doe de pasta erin, 3) giet af. Wat doe je als tweede? (kies)',a:'pasta erin doen',opties:['pasta erin doen','water koken','afgieten'],h:['Stap 2.'],s:'Stap 2: de pasta erin doen.'},
+  /* ---- Lezen · woordbetekenis ---- */
+  {p:'selma',v:'lezen',t:'Woordbetekenis',lvl:2,q:'Lees: "De reus was enorm groot." Wat betekent "enorm"? (kies)',a:'heel erg',opties:['heel erg','een beetje','klein'],h:['Past bij een reus.'],s:'"enorm" betekent heel erg.'},
+  {p:'selma',v:'lezen',t:'Woordbetekenis',lvl:2,q:'Lees: "Het was een prachtige dag." Wat betekent "prachtig"? (kies)',a:'heel mooi',opties:['heel mooi','saai','nat'],h:['Iets positiefs.'],s:'"prachtig" betekent heel mooi.'},
+  /* ---- Lezen · verwijswoorden ---- */
+  {p:'selma',v:'lezen',t:'Verwijswoorden',lvl:2,q:'Lees: "Sara heeft een fiets. Zij rijdt er elke dag op." Naar wie verwijst "zij"? (kies)',a:'Sara',opties:['Sara','de fiets','de dag'],h:['Wie rijdt er op?'],s:'"zij" verwijst naar Sara.'},
+  {p:'selma',v:'lezen',t:'Verwijswoorden',lvl:3,q:'Lees: "De jongens spelen buiten. Ze hebben veel plezier." Naar wie verwijst "ze"? (kies)',a:'de jongens',opties:['de jongens','buiten','het plezier'],h:['Wie hebben er plezier?'],s:'"ze" verwijst naar de jongens.'},
+
+  /* ---- Selma · VOLGEND JAAR (groep 6) — vooruitkijken ---- */
+  {p:'selma',v:'rekenen',t:'Optellen tot 1000',lvl:2,jaar:'next',q:'Reken uit: 1.250 + 640',a:'1890',h:['Getallen tot 10.000: honderdtallen apart.'],s:'1250 + 640 = 1890.'},
+  {p:'selma',v:'rekenen',t:'Tafels & keer',lvl:2,jaar:'next',q:'Reken uit: 123 × 3',a:'369',h:['3 × 100, 3 × 20, 3 × 3 en optellen.'],s:'300 + 60 + 9 = 369.'},
+  {p:'selma',v:'rekenen',t:'Breuken',lvl:2,jaar:'next',q:'Reken uit met kommagetallen: 2,5 + 1,3',a:'3.8',alt:['3,8'],h:['Tel de gehele delen en de kommadelen apart.'],s:'2,5 + 1,3 = 3,8.'},
+  {p:'selma',v:'rekenen',t:'Breuken',lvl:2,jaar:'next',q:'Welke breuk is groter: 1/2 of 1/3? Schrijf de grootste (bijv. 1/2).',a:'1/2',h:['Hoe groter de noemer, hoe kleiner de stukjes.'],s:'1/2 is groter dan 1/3.'},
+  {p:'selma',v:'taal',t:'Werkwoorden (nu)',lvl:2,jaar:'next',q:'Verleden tijd (lopen): gisteren ___ hij naar school.',a:'liep',h:['Onregelmatig werkwoord.'],s:'lopen → liep.'},
+  {p:'selma',v:'lezen',t:'Hoofdgedachte',lvl:2,jaar:'next',q:'Lees: "Bijen maken honing en bestuiven bloemen. Zonder bijen groeit er minder fruit." Wat is de hoofdgedachte? (kies)',a:'bijen zijn heel belangrijk',opties:['bijen zijn heel belangrijk','honing is zoet','bloemen zijn mooi'],h:['Wat is de belangrijkste boodschap?'],s:'Bijen zijn heel belangrijk (voor honing én fruit).'},
 ];
 SEED.forEach((e,i)=> e.id = 'seed_'+i);
 
@@ -1277,6 +1419,40 @@ const TEMPLATES=[
   }},
   {id:'tpl_am_afronden',p:'amine',v:'rekenen',t:'Afronden & schatten',lvl:1,gen:()=>{
     const n=ri(11,989), r=Math.round(n/10)*10;
+    return {q:`Rond af op tientallen: ${n}`,a:String(r),h:['Kijk naar het laatste cijfer: 5 of meer → naar boven.'],s:`${n} → ${r}.`};
+  }},
+  /* ----- Selma · groep 5 (oneindig oefenen) ----- */
+  {id:'tpl_se_tafel',p:'selma',v:'rekenen',t:'Tafels & keer',lvl:1,gen:()=>{
+    const a=ri(2,10), b=ri(2,10);
+    return {q:`Reken uit: ${a} × ${b}`,a:String(a*b),h:[`Tafel van ${b}.`],s:`${a} × ${b} = ${a*b}.`};
+  }},
+  {id:'tpl_se_deel',p:'selma',v:'rekenen',t:'Delen',lvl:2,gen:()=>{
+    const b=ri(2,10), q=ri(2,10), a=b*q;
+    return {q:`Reken uit: ${a} ÷ ${b}`,a:String(q),h:[`Welk getal × ${b} = ${a}?`],s:`${b} × ${q} = ${a} → ${a} ÷ ${b} = ${q}.`};
+  }},
+  {id:'tpl_se_plus',p:'selma',v:'rekenen',t:'Optellen tot 1000',lvl:1,gen:()=>{
+    const a=ri(120,700), b=ri(50,290);
+    return {q:`Reken uit: ${a} + ${b}`,a:String(a+b),h:['Tel honderdtallen, tientallen en eenheden apart op.'],s:`${a} + ${b} = ${a+b}.`};
+  }},
+  {id:'tpl_se_min',p:'selma',v:'rekenen',t:'Aftrekken tot 1000',lvl:2,gen:()=>{
+    const a=ri(300,999), b=ri(50,a-50);
+    return {q:`Reken uit: ${a} − ${b}`,a:String(a-b),h:['Tel op vanaf het kleine getal naar het grote.'],s:`${a} − ${b} = ${a-b}.`};
+  }},
+  {id:'tpl_se_geld',p:'selma',v:'rekenen',t:'Geld',lvl:1,gen:()=>{
+    const prijs=ri(1,9);
+    return {q:`Je koopt voor € ${prijs} en betaalt met € 10. Hoeveel krijg je terug?`,a:String(10-prijs),u:'€',
+      h:['Wisselgeld = betaald − prijs.'],s:`10 − ${prijs} = € ${10-prijs}.`};
+  }},
+  {id:'tpl_se_maten',p:'selma',v:'rekenen',t:'Meten & maten',lvl:1,gen:()=>{
+    const o=pick([['meter',100,'cm'],['kilogram',1000,'gram'],['liter',1000,'ml']]), val=ri(2,9);
+    return {q:`Hoeveel ${o[2]} is ${val} ${o[0]}?`,a:String(val*o[1]),u:o[2],h:[`1 ${o[0]} = ${o[1]} ${o[2]}.`],s:`${val} × ${o[1]} = ${val*o[1]} ${o[2]}.`};
+  }},
+  {id:'tpl_se_helft',p:'selma',v:'rekenen',t:'Breuken',lvl:1,gen:()=>{
+    const h=ri(3,25), n=h*2;
+    return {q:`Wat is de helft van ${n}?`,a:String(h),h:['De helft = ÷ 2.'],s:`${n} ÷ 2 = ${h}.`};
+  }},
+  {id:'tpl_se_afronden',p:'selma',v:'rekenen',t:'Getallen tot 1000',lvl:2,gen:()=>{
+    const n=ri(110,890), r=Math.round(n/10)*10;
     return {q:`Rond af op tientallen: ${n}`,a:String(r),h:['Kijk naar het laatste cijfer: 5 of meer → naar boven.'],s:`${n} → ${r}.`};
   }},
 ];
