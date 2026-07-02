@@ -66,7 +66,7 @@
   .pbar{height:8px;background:#eef1ea;border-radius:999px;overflow:hidden;margin-top:6px;}
   .pbar > i{display:block;height:100%;background:var(--primary);border-radius:999px;transition:width .4s;}
   /* practice */
-  .qbox{font-size:20px;font-weight:500;line-height:1.5;}
+  .qbox{font-size:20px;font-weight:500;line-height:1.5;white-space:pre-wrap;}
   .answerrow{display:flex;gap:10px;margin-top:18px;align-items:stretch;}
   .answerrow input{
     flex:1;font-family:inherit;font-size:20px;padding:14px 16px;border:2px solid var(--line);
@@ -456,7 +456,11 @@ const TOPICICON = {
   'Meervoud': '🔁',
   'Werkwoorden (nu)': '🏃',
   'Wie, wat, waar, waarom': '❓',
-  'Volgorde': '🔢'
+  'Volgorde': '🔢',
+  'Leesteksten': '📚',
+  'ng of nk': '🔤',
+  'cht-woorden': '📝',
+  'Samenstellingen': '🔗'
 };
 
 /* ============================ OEFENINGEN (startvoorraad) ============================ */
@@ -8368,6 +8372,325 @@ const SEED = [
   opties: ['de jongens', 'buiten', 'het plezier'],
   h: ['Wie hebben er plezier?'],
   s: '"ze" verwijst naar de jongens.'
+}, /* ---- Lezen · LANGERE LEESTEKSTEN (elk verhaal staat compleet in de vraag) ---- */
+/* Tekst A — informatief: bijen */
+{
+  p: 'selma',
+  v: 'lezen',
+  t: 'Leesteksten',
+  lvl: 2,
+  q: 'Lees:\n"Bijen wonen samen in een korf. De werkbijen vliegen van bloem naar bloem en verzamelen nectar. Daarvan maken ze honing. De koningin legt alle eitjes, zo blijft het volk groot."\n\nWie legt de eitjes? (kies)',
+  a: 'de koningin',
+  opties: ['de koningin', 'de werkbij', 'de tuinman'],
+  h: ['Zoek de zin over de eitjes.'],
+  s: 'De koningin legt alle eitjes.'
+}, {
+  p: 'selma',
+  v: 'lezen',
+  t: 'Leesteksten',
+  lvl: 2,
+  q: 'Lees:\n"Bijen wonen samen in een korf. De werkbijen vliegen van bloem naar bloem en verzamelen nectar. Daarvan maken ze honing. De koningin legt alle eitjes, zo blijft het volk groot."\n\nWaarvan maken de bijen honing? (kies)',
+  a: 'nectar',
+  opties: ['nectar', 'water', 'zand'],
+  h: ['Wat verzamelen de werkbijen?'],
+  s: 'Van nectar maken ze honing.'
+}, {
+  p: 'selma',
+  v: 'lezen',
+  t: 'Leesteksten',
+  lvl: 3,
+  q: 'Lees:\n"Bijen wonen samen in een korf. De werkbijen vliegen van bloem naar bloem en verzamelen nectar. Daarvan maken ze honing. De koningin legt alle eitjes, zo blijft het volk groot."\n\nWaar gaat de tekst vooral over? (kies)',
+  a: 'hoe bijen samenleven en honing maken',
+  opties: ['hoe bijen samenleven en honing maken', 'welke kleur bloemen hebben', 'hoe je een korf bouwt'],
+  h: ['Wat is de belangrijkste boodschap van het hele stukje?'],
+  s: 'De tekst gaat over hoe bijen samenleven en honing maken.'
+}, /* Tekst B — verhaal: Noor en de storm */
+{
+  p: 'selma',
+  v: 'lezen',
+  t: 'Leesteksten',
+  lvl: 2,
+  q: 'Lees:\n"Het stormde hard. Noor kon niet slapen door de wind. Ze kroop bij haar grote broer in bed. Samen luisterden ze naar de regen. Al snel viel Noor toch in slaap."\n\nWaarom kon Noor niet slapen? (kies)',
+  a: 'door de wind',
+  opties: ['door de wind', 'omdat ze honger had', 'omdat het licht aan was'],
+  h: ['Zoek het woord "door".'],
+  s: 'Ze kon niet slapen door de wind.'
+}, {
+  p: 'selma',
+  v: 'lezen',
+  t: 'Leesteksten',
+  lvl: 2,
+  q: 'Lees:\n"Het stormde hard. Noor kon niet slapen door de wind. Ze kroop bij haar grote broer in bed. Samen luisterden ze naar de regen. Al snel viel Noor toch in slaap."\n\nWat deed Noor toen ze niet kon slapen? (kies)',
+  a: 'ze kroop bij haar broer',
+  opties: ['ze kroop bij haar broer', 'ze ging tv-kijken', 'ze ging naar buiten'],
+  h: ['Wat gebeurt er in de derde zin?'],
+  s: 'Ze kroop bij haar grote broer in bed.'
+}, {
+  p: 'selma',
+  v: 'lezen',
+  t: 'Leesteksten',
+  lvl: 3,
+  q: 'Lees:\n"Het stormde hard. Noor kon niet slapen door de wind. Ze kroop bij haar grote broer in bed. Samen luisterden ze naar de regen. Al snel viel Noor toch in slaap."\n\nHoe voelde Noor zich waarschijnlijk bij haar broer? (kies)',
+  a: 'veilig',
+  opties: ['veilig', 'bang', 'boos'],
+  h: ['Ze viel al snel in slaap — dat zegt iets over hoe ze zich voelde.'],
+  s: 'Bij haar broer voelde ze zich veilig; daarom viel ze in slaap.'
+}, /* Tekst C — informatief: de woestijn */
+{
+  p: 'selma',
+  v: 'lezen',
+  t: 'Leesteksten',
+  lvl: 2,
+  q: 'Lees:\n"In de woestijn is het overdag heel heet en \'s nachts juist koud. Er valt bijna nooit regen. Toch leven er dieren, zoals de kameel. Een kameel kan lang zonder water. Daarom noemen ze hem het schip van de woestijn."\n\nHoe is het \'s nachts in de woestijn? (kies)',
+  a: 'koud',
+  opties: ['koud', 'heet', 'nat'],
+  h: ['Overdag heet, \'s nachts juist ...'],
+  s: '\'s Nachts is het juist koud.'
+}, {
+  p: 'selma',
+  v: 'lezen',
+  t: 'Leesteksten',
+  lvl: 3,
+  q: 'Lees:\n"In de woestijn is het overdag heel heet en \'s nachts juist koud. Er valt bijna nooit regen. Toch leven er dieren, zoals de kameel. Een kameel kan lang zonder water. Daarom noemen ze hem het schip van de woestijn."\n\nWaarom kan een kameel goed in de woestijn leven? (kies)',
+  a: 'hij kan lang zonder water',
+  opties: ['hij kan lang zonder water', 'hij houdt van regen', 'hij eet zand'],
+  h: ['Er valt bijna nooit regen — wat kan de kameel dan goed?'],
+  s: 'Een kameel kan lang zonder water.'
+}, /* Tekst D — verhaal: de finale (voetbal) */
+{
+  p: 'selma',
+  v: 'lezen',
+  t: 'Leesteksten',
+  lvl: 2,
+  q: 'Lees:\n"Sam en Bo spelen in hetzelfde voetbalteam. Vandaag is de finale. Het staat 1-1. Vlak voor het einde geeft Bo de bal aan Sam. Sam schiet en scoort! Het team wint de beker."\n\nWie geeft de bal aan Sam? (kies)',
+  a: 'Bo',
+  opties: ['Bo', 'de keeper', 'de scheidsrechter'],
+  h: ['Lees de zin vlak voor het doelpunt.'],
+  s: 'Bo geeft de bal aan Sam.'
+}, {
+  p: 'selma',
+  v: 'lezen',
+  t: 'Leesteksten',
+  lvl: 2,
+  q: 'Lees:\n"Sam en Bo spelen in hetzelfde voetbalteam. Vandaag is de finale. Het staat 1-1. Vlak voor het einde geeft Bo de bal aan Sam. Sam schiet en scoort! Het team wint de beker."\n\nWat gebeurt er als láátste? (kies)',
+  a: 'het team wint de beker',
+  opties: ['het team wint de beker', 'Bo geeft de bal', 'het staat 1-1'],
+  h: ['Welke gebeurtenis komt aan het einde van het verhaal?'],
+  s: 'Als laatste wint het team de beker.'
+}, {
+  p: 'selma',
+  v: 'lezen',
+  t: 'Leesteksten',
+  lvl: 3,
+  q: 'Lees:\n"Sam en Bo spelen in hetzelfde voetbalteam. Vandaag is de finale. Het staat 1-1. Vlak voor het einde geeft Bo de bal aan Sam. Sam schiet en scoort! Het team wint de beker."\n\nWat was de eindstand na het doelpunt van Sam? (kies)',
+  a: '2-1',
+  opties: ['2-1', '1-1', '0-0'],
+  h: ['Het stond 1-1 en Sam scoort er nog één bij.'],
+  s: '1-1 plus het doelpunt van Sam = 2-1.'
+}, /* ---- Rekenen · extra ---- */
+{
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Getallen tot 1000',
+  lvl: 1,
+  q: 'Hoeveel honderdtallen zitten er in 800?',
+  a: '8',
+  h: ['Elke 100 is één honderdtal.'],
+  s: '800 ÷ 100 = 8 honderdtallen.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Optellen tot 1000',
+  lvl: 2,
+  q: 'Reken handig uit: 298 + 45',
+  a: '343',
+  h: ['Maak er eerst 300 van: 298 + 2 = 300, dan + 43.'],
+  s: '298 + 45 = 343.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Aftrekken tot 1000',
+  lvl: 3,
+  q: 'Reken handig uit: 403 − 198',
+  a: '205',
+  h: ['Haal er eerst 200 af en tel er 2 bij: 403 − 200 = 203, + 2.'],
+  s: '403 − 198 = 205.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Tafels & keer',
+  lvl: 2,
+  q: 'Reken uit: 12 × 8',
+  a: '96',
+  h: ['10 × 8 = 80, plus 2 × 8 = 16.'],
+  s: '12 × 8 = 96.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Delen',
+  lvl: 3,
+  q: 'Je verdeelt 37 snoepjes eerlijk over 5 kinderen. Hoeveel snoepjes blijven er over?',
+  a: '2',
+  h: ['5 × 7 = 35, dus er blijven er over.'],
+  s: '37 − 35 = 2 snoepjes over (rest 2).'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Tijd & klok',
+  lvl: 2,
+  q: 'Hoeveel minuten duurt het van 8:10 tot 8:45?',
+  a: '35',
+  u: 'min',
+  h: ['Tel de minuten: van 10 naar 45.'],
+  s: '45 − 10 = 35 minuten.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Tijd & klok',
+  lvl: 2,
+  ill: {
+    type: 'klok',
+    uur: 3,
+    min: 20
+  },
+  q: 'Hoe laat is het op de klok? (kies)',
+  a: '3:20',
+  opties: ['3:20', '4:20', '3:40'],
+  h: ['De lange wijzer staat op de 4 (= 20 minuten).'],
+  s: 'Korte net voorbij 3, lange op 4 → 3:20.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Geld',
+  lvl: 2,
+  q: '3 ijsjes van € 1,50. Hoeveel kosten ze samen?',
+  a: '4.5',
+  alt: ['4,50', '4.50'],
+  u: '€',
+  h: ['3 × 1,50.'],
+  s: '3 × € 1,50 = € 4,50.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Meten & maten',
+  lvl: 2,
+  q: 'Hoeveel meter is 350 cm? (bijv. 3,5)',
+  a: '3.5',
+  alt: ['3,5'],
+  u: 'm',
+  h: ['100 cm = 1 meter.'],
+  s: '350 ÷ 100 = 3,5 meter.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Verhaaltjessommen',
+  lvl: 2,
+  q: 'Een boek heeft 120 bladzijden. Je hebt er 45 gelezen. Hoeveel moet je er nog?',
+  a: '75',
+  h: ['120 − 45.'],
+  s: '120 − 45 = 75 bladzijden.'
+}, /* ---- Taal · extra ---- */
+{
+  p: 'selma',
+  v: 'taal',
+  t: 'ng of nk',
+  lvl: 1,
+  q: 'ng of nk? Schrijf het woord: je geld bewaar je bij de ba__.',
+  a: 'bank',
+  h: ['Je hoort de "nk".'],
+  s: 'Het woord is bank.'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'ng of nk',
+  lvl: 2,
+  q: 'ng of nk? Schrijf het woord: aan je vinger draag je een ri__.',
+  a: 'ring',
+  h: ['Je hoort de "ng".'],
+  s: 'Het woord is ring.'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'cht-woorden',
+  lvl: 1,
+  q: 'Bijna alle "cht"-woorden schrijf je met cht. Schrijf het woord: als het donker is, is het ... (na__).',
+  a: 'nacht',
+  h: ['-cht aan het eind.'],
+  s: 'Het woord is nacht.'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'cht-woorden',
+  lvl: 2,
+  q: 'Schrijf het "cht"-woord: niet hard maar ... (za__).',
+  a: 'zacht',
+  h: ['-cht aan het eind.'],
+  s: 'Het woord is zacht.'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'Samenstellingen',
+  lvl: 1,
+  q: 'Schrijf als één woord: "voetbal" of "voet bal"?',
+  a: 'voetbal',
+  h: ['Een samenstelling is één woord.'],
+  s: 'voet + bal = voetbal.'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'Samenstellingen',
+  lvl: 2,
+  q: 'Schrijf als één woord: "verjaardag" of "ver jaar dag"?',
+  a: 'verjaardag',
+  h: ['Een samenstelling is één woord.'],
+  s: 'Het is één woord: verjaardag.'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'Werkwoorden (nu)',
+  lvl: 2,
+  q: 'Vul in (fietsen): zij ___ naar school.',
+  a: 'fietst',
+  h: ['stam fiets + t.'],
+  s: 'zij fietst.'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'Werkwoorden (nu)',
+  lvl: 1,
+  q: 'Vul in (hebben): hij ___ een hond.',
+  a: 'heeft',
+  h: ['Onregelmatig werkwoord.'],
+  s: 'hij heeft.'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'Werkwoorden (nu)',
+  lvl: 1,
+  q: 'Wat is de stam van "werken"?',
+  a: 'werk',
+  h: ['Heel werkwoord min -en.'],
+  s: 'werken − en = werk.'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'Woordenschat',
+  lvl: 1,
+  q: 'Wat is het tegenovergestelde van "groot"? (kies)',
+  a: 'klein',
+  opties: ['klein', 'hoog', 'dik'],
+  h: ['Denk aan het omgekeerde.'],
+  s: 'Het tegenovergestelde van groot is klein.'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'Woordenschat',
+  lvl: 2,
+  q: 'Wat is het tegenovergestelde van "blij"? (kies)',
+  a: 'verdrietig',
+  opties: ['verdrietig', 'vrolijk', 'snel'],
+  h: ['Welk woord betekent het omgekeerde van blij?'],
+  s: 'Het tegenovergestelde van blij is verdrietig.'
 }, /* ---- Selma · VOLGEND JAAR (groep 6) — vooruitkijken ---- */
 {
   p: 'selma',
