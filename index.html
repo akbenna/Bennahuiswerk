@@ -212,12 +212,12 @@ function rangVoor(thema, punten) {
    - een bonus als een oefentoets/proeftoets écht gehaald is (klaar voor de toets);
    - een dagplafond (standaard € 20) zodat het eerlijk en begrensd blijft.               */
 const BELONING = {
-  dagMax: 20,
-  tarief: 0.40,
-  werkMax: 12,
+  dagMax: 12,
+  tarief: 0.20,
+  werkMax: 8,
   drempel: 12,
-  oefenBonus: 4,
-  proefBonus: 8,
+  oefenBonus: 3,
+  proefBonus: 5,
   hoog: 0.85,
   mid: 0.70
 };
@@ -11224,7 +11224,8 @@ function blankProg() {
       d: null,
       goed: 0,
       sterk: 0,
-      fout: 0
+      fout: 0,
+      sterkIds: []
     },
     toetsDag: {
       d: null,
@@ -11252,8 +11253,10 @@ function normalizeProg(p) {
     d: null,
     goed: 0,
     sterk: 0,
-    fout: 0
+    fout: 0,
+    sterkIds: []
   };
+  if (!Array.isArray(np.dag.sterkIds)) np.dag.sterkIds = [];
   if (!np.toetsDag || typeof np.toetsDag !== 'object') np.toetsDag = {
     d: null,
     oefen: 0,
@@ -11320,12 +11323,12 @@ function doelNiveau(prog) {
   return prog && [1, 2, 3].includes(prog.niveau) ? prog.niveau : prog && prog.autoLvl || 1;
 }
 // kies de volgende kaart: eerst 'due'/onbekend, laagste doosje, dichtst bij het doelniveau, langst niet gezien
-function pickNext(pool, prog, excludeId) {
+function pickNext(pool, prog, exclude) {
   if (!pool || pool.length === 0) return null;
   const now = Date.now(),
     tgt = doelNiveau(prog);
   const near = card => Math.abs((card.lvl || 1) - tgt);
-  let cands = pool.map(card => {
+  const cands = pool.map(card => {
     const c = cardInfo(prog, card.id);
     return {
       card,
@@ -11334,8 +11337,19 @@ function pickNext(pool, prog, excludeId) {
       isDue: c.box === 0 || now >= dueTime(c)
     };
   });
-  let pickFrom = cands.filter(s => s.card.id !== excludeId);
-  if (pickFrom.length === 0) pickFrom = cands;
+  // 'exclude' mag een id of een lijst met recent getoonde id's zijn (oud → nieuw).
+  // We sluiten zo veel mogelijk recente kaarten uit, en laten de oudste weer toe
+  // zodra er anders niets overblijft. Zo herhaalt dezelfde vraag niet snel.
+  const recent = exclude == null ? [] : Array.isArray(exclude) ? exclude.slice() : [exclude];
+  let pickFrom = cands;
+  for (let drop = 0; drop <= recent.length; drop++) {
+    const blok = new Set(recent.slice(drop)); // laat de oudste 'drop' weer toe
+    const f = cands.filter(s => !blok.has(s.card.id));
+    if (f.length) {
+      pickFrom = f;
+      break;
+    }
+  }
   const due = pickFrom.filter(s => s.isDue);
   const set = due.length ? due : pickFrom;
   set.sort((a, b) => a.c.box - b.c.box || near(a.card) - near(b.card) || (a.card.lvl || 1) - (b.card.lvl || 1) || a.c.last - b.c.last || a.due - b.due);
@@ -11513,16 +11527,22 @@ function App() {
         d: vandaag,
         goed: 0,
         sterk: 0,
-        fout: 0
+        fout: 0,
+        sterkIds: []
       };else pr.dag = {
-        ...pr.dag
+        ...pr.dag,
+        sterkIds: [...(pr.dag.sterkIds || [])]
       };
       if (correct) {
         pr.punten = (pr.punten || 0) + (wasMastered ? 3 : usedHint ? 5 : 10);
         pr.streak = (pr.streak || 0) + 1;
         pr.todayCount = (pr.todayCount || 0) + 1;
         pr.dag.goed++;
-        if (!wasMastered && !usedHint) pr.dag.sterk++; // écht bewezen: 1e keer, zonder hint
+        // 'sterk' telt maar één keer per kaart per dag: herhaling van dezelfde vraag verhoogt de beloning niet
+        if (!wasMastered && !usedHint && !pr.dag.sterkIds.includes(card.id)) {
+          pr.dag.sterk++;
+          pr.dag.sterkIds.push(card.id);
+        }
         c.ok = (c.ok || 0) + 1;
         c.box = Math.min(5, (c.box || 0) + 1);
         pr.solved[card.id] = {
@@ -12094,6 +12114,8 @@ function Practice({
   const [examStart, setExamStart] = useState(0); // starttijd oefentoets (ms)
   const [examSecs, setExamSecs] = useState(0); // verstreken seconden
   const inputRef = useRef(null);
+  const recentRef = useRef([]); // laatst getoonde kaart-id's (tegen herhaling)
+
   const isMix = topic === '__mix__',
     isFout = topic === '__fouten__',
     isToets = topic === '__toets__',
@@ -12103,6 +12125,9 @@ function Practice({
   const uitlegKey = !isMix && !isFout && !isExam && UITLEG[topic] ? topic : null;
   const topicLabel = (isMix ? '🎲 Mix' : isFout ? '📕 Fouten herhalen' : isProef ? '📝 Proeftoets (alle vakken)' : isToets ? '📝 Oefentoets' : topic) + (jr === 'next' ? ' 🔭 volgend jaar' : '');
   function showCard(c) {
+    // onthoud de laatste kaarten zodat pickNext niet snel dezelfde vraag herhaalt
+    const hist = [...recentRef.current.filter(id => id !== c.id), c.id];
+    recentRef.current = hist.slice(-8);
     setCard(c);
     setInst(instOf(c));
     setVal('');
@@ -12138,6 +12163,7 @@ function Practice({
     setShowUitleg(true);
     setExamStart(isExam ? Date.now() : 0);
     setExamSecs(0);
+    recentRef.current = [];
     const first = pickNext(p, prog, null);
     if (first) showCard(first);else {
       setCard(null);
@@ -12206,7 +12232,7 @@ function Practice({
       setFinished(true);
       return;
     }
-    const n = pickNext(pool, prog, card ? card.id : null);
+    const n = pickNext(pool, prog, recentRef.current);
     if (n) showCard(n);
   }
   if (!card || !inst) {
