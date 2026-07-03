@@ -24,7 +24,7 @@ Instelbaar moeilijkheidsniveau per kind (**Auto / 1 / 2 / 3**; Auto wordt vanzel
 
 ## Motivatie & adherence (per kind afgestemd)
 - **Amine — voetbal/game-thema:** eigen taal en beleving (XP i.p.v. punten, **doelpunten** i.p.v. sommen, "⚽ GOAL!" bij goed antwoord, voetbal-confetti) en een **rangen-ladder** (Pupil → Talent → Basisspeler → … → Kampioen → Legende) met een voortgangsbalk naar de volgende rang. Sluit aan bij wat hem motiveert (spelen, voetbal) zodat hij blijft oefenen.
-- **Selma, Wassima & Amaani — eerlijke beloning (zakgeld):** de app rekent per dag uit wat een sessie **eerlijk** waard is; papa/mama betaalt pas uit via de ouder-modus. Alleen **écht bewezen** werk telt:
+- **Alle kinderen — eerlijke beloning (zakgeld):** de app rekent per dag uit wat een sessie **eerlijk** waard is; papa/mama betaalt pas uit via de ouder-modus. Bij Amine loopt dit naast zijn voetbal/game-thema (XP en rangen blijven). Alleen **écht bewezen** werk telt:
   - alleen "sterk goed" = de **eerste** keer goed, **zónder hint**, op een som die nog niet beheerst was (€ 0,20 per stuk, tot € 8) — en elke som telt **maar één keer per dag** mee, zodat dezelfde vraag herhalen de beloning niet opdrijft;
   - een **nauwkeurigheidspoort** tegen gok-/haastwerk: ≥ 85% vol tarief, ≥ 70% half, daaronder telt het niet;
   - een **"klaar voor de toets"-bonus**: een gehaalde oefentoets (≥ 80%) geeft € 3, een proeftoets € 5;
