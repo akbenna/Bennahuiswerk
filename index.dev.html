@@ -1712,6 +1712,42 @@ const SEED = [
   {p:'amaani',v:'scheikunde',t:'Molrekenen',lvl:3,q:'Hoeveel mol is 44 g CO₂? (molaire massa 44 g/mol)',a:'1',u:'mol',s:'44 ÷ 44 = 1 mol.'},
   {p:'amaani',v:'natuurkunde',t:'Kracht & versnelling',lvl:3,q:'Een kracht van 30 N werkt op 6 kg. Bereken de versnelling (a = F/m).',a:'5',u:'m/s²',s:'30 ÷ 6 = 5 m/s².'},
   {p:'amaani',v:'natuurkunde',t:'Energie & vermogen',lvl:3,q:'Een lamp van 60 W brandt 10 uur. Hoeveel Wh verbruikt hij?',a:'600',u:'Wh',s:'60 × 10 = 600 Wh.'},
+
+  /* ═══════════════ CURRICULUM-AANSLUITING · LAAG 3 (juli 2026) ═══════════════ */
+
+  /* ---------- AMAANI · 5 vwo · scheikunde examenbreed ---------- */
+  {p:'amaani',v:'scheikunde',t:'Atoombouw',lvl:2,q:'Hoeveel protonen heeft een koolstofatoom (C, atoomnummer 6)?',a:'6',h:['Atoomnummer = aantal protonen.'],s:'Atoomnummer 6 → 6 protonen.'},
+  {p:'amaani',v:'scheikunde',t:'Atoombouw',lvl:2,q:'Een neutraal atoom heeft 11 protonen. Hoeveel elektronen?',a:'11',h:['Neutraal → evenveel elektronen als protonen.'],s:'11 protonen → 11 elektronen.'},
+  {p:'amaani',v:'scheikunde',t:'Rekenen aan reacties',lvl:3,q:'2 H₂ + O₂ → 2 H₂O. Hoeveel mol O₂ is nodig voor 8 mol H₂?',a:'4',u:'mol',h:['H₂ : O₂ = 2 : 1.'],s:'8 × 1/2 = 4 mol O₂.'},
+  {p:'amaani',v:'scheikunde',t:'Molmassa',lvl:2,q:'Molaire massa van O₂ (O = 16 g/mol)?',a:'32',u:'g/mol',s:'2 × 16 = 32 g/mol.'},
+  {p:'amaani',v:'scheikunde',t:'Concentratie',lvl:3,q:'0,5 mol stof opgelost in 2 L. Concentratie in mol/L? (c = n/V)',a:'0.25',alt:['0,25'],u:'mol/L',s:'0,5 ÷ 2 = 0,25 mol/L.'},
+  {p:'amaani',v:'scheikunde',t:'Zuren en basen',lvl:2,q:'Een oplossing met pH 3: zuur, neutraal of basisch?',a:'zuur',h:['pH < 7 → zuur.'],s:'pH 3 < 7, dus zuur.'},
+  /* ---------- AMAANI · 5 vwo · natuurkunde examenbreed ---------- */
+  {p:'amaani',v:'natuurkunde',t:'Snelheid',lvl:3,q:'Een auto rijdt 108 km/h. Hoeveel m/s is dat? (÷ 3,6)',a:'30',u:'m/s',s:'108 ÷ 3,6 = 30 m/s.'},
+  {p:'amaani',v:'natuurkunde',t:'Arbeid & energie',lvl:3,q:'Arbeid W = F × s. Met F = 50 N over s = 4 m. Bereken W.',a:'200',u:'J',s:'50 × 4 = 200 J.'},
+  {p:'amaani',v:'natuurkunde',t:'Elektriciteit',lvl:2,q:'Wet van Ohm: U = I × R. Met I = 2 A en R = 5 Ω. Bereken U.',a:'10',u:'V',s:'2 × 5 = 10 V.'},
+  {p:'amaani',v:'natuurkunde',t:'Elektriciteit',lvl:3,q:'P = U × I. Met U = 230 V en I = 0,5 A. Bereken het vermogen.',a:'115',u:'W',s:'230 × 0,5 = 115 W.'},
+  {p:'amaani',v:'natuurkunde',t:'Zwaartekracht',lvl:2,q:'Fz = m × g, met g = 10 N/kg. Met m = 7 kg. Bereken Fz.',a:'70',u:'N',s:'7 × 10 = 70 N.'},
+  /* ---------- AMAANI · zaakvakken ---------- */
+  {p:'amaani',v:'biologie',t:'Fotosynthese',lvl:2,q:'Welke gassoort nemen planten op bij de fotosynthese?',a:'koolstofdioxide',alt:['co2','co₂','koolstofdioxide (CO2)','kooldioxide'],s:'Planten nemen CO₂ op en geven O₂ af.'},
+  {p:'amaani',v:'economie',t:'Inflatie',lvl:2,q:'Hoe noem je een algehele stijging van het prijspeil?',a:'inflatie',alt:['de inflatie'],s:'Inflatie = stijging van het prijspeil.'},
+
+  /* ---------- WASSIMA · Frans, Duits, geschiedenis, economie ---------- */
+  {p:'wassima',v:'frans',t:'Woordenschat',lvl:1,q:'Wat betekent “bonjour”?',a:'goedendag',alt:['hallo','dag','goeiedag'],s:'bonjour = goedendag/hallo.'},
+  {p:'wassima',v:'frans',t:'Woordenschat',lvl:1,q:'Wat betekent “merci”?',a:'dank je',alt:['dankjewel','bedankt','dank u'],s:'merci = dank je.'},
+  {p:'wassima',v:'frans',t:'Werkwoorden',lvl:2,q:'Vervoeg “être” (zijn) voor “je”: Je ...',a:'suis',s:'je suis = ik ben.'},
+  {p:'wassima',v:'frans',t:'Getallen',lvl:1,q:'Welk getal is “trois”?',a:'3',alt:['drie'],s:'trois = drie.'},
+  {p:'wassima',v:'duits',t:'Woordenschat',lvl:1,q:'Wat betekent “danke”?',a:'dank je',alt:['dankjewel','bedankt','dank u'],s:'danke = dank je.'},
+  {p:'wassima',v:'duits',t:'Woordenschat',lvl:1,q:'Wat betekent “Haus”?',a:'huis',alt:['het huis'],s:'Haus = huis.'},
+  {p:'wassima',v:'duits',t:'Werkwoorden',lvl:2,q:'Vervoeg “sein” (zijn) voor “ich”: Ich ...',a:'bin',s:'ich bin = ik ben.'},
+  {p:'wassima',v:'duits',t:'Naamvallen',lvl:2,q:'Vul in (nominatief, mannelijk, bepaald lidwoord): ... Mann ist groß.',a:'der',s:'der Mann (nominatief mannelijk).'},
+  {p:'wassima',v:'geschiedenis',t:'Industriële revolutie',lvl:2,q:'In welk land begon de Industriële Revolutie? (kies)',a:'Engeland',opties:['Engeland','Nederland','Amerika'],s:'De Industriële Revolutie begon in Engeland.'},
+  {p:'wassima',v:'geschiedenis',t:'Wereldoorlogen',lvl:1,q:'In welk jaar eindigde de Tweede Wereldoorlog?',a:'1945',s:'De Tweede Wereldoorlog eindigde in 1945.'},
+  {p:'wassima',v:'economie',t:'Sparen & rente',lvl:2,q:'Je zet € 100 op een spaarrekening met 2% rente per jaar. Hoeveel rente na 1 jaar?',a:'2',u:'€',s:'2% van € 100 = € 2.'},
+
+  /* ---------- AMAANI · Frans ---------- */
+  {p:'amaani',v:'frans',t:'Woordenschat',lvl:2,q:'Wat betekent “jamais”?',a:'nooit',s:'jamais = nooit.'},
+  {p:'amaani',v:'frans',t:'Werkwoorden',lvl:2,q:'Vervoeg “avoir” (hebben) voor “j’”: J’...',a:'ai',s:'j’ai = ik heb.'},
 ];
 SEED.forEach((e,i)=> e.id = 'seed_'+i);
 
@@ -2041,6 +2077,7 @@ function loadStore(){
   if(typeof s.wedstrijdAan!=='boolean') s.wedstrijdAan=true;   // vriend uitdagen toegestaan
   if(!s.zomer||typeof s.zomer!=='object') s.zomer={aan:false, start:null, weken:7, doel:50, bonus:15};   // zomer-challenge
   if(typeof s.spelNaDoel!=='boolean') s.spelNaDoel=false;   // spelletjes pas na het dagdoel
+  if(!s.weektaak||typeof s.weektaak!=='object') s.weektaak={};   // per kind een weektaak: {items:['vak|onderwerp',...], set:'YYYY-MM-DD'}
   for(const pid of Object.keys(PROFILES)) s.prog[pid]=normalizeProg(s.prog[pid]);
   return s;
 }
@@ -2467,7 +2504,8 @@ function App(){
       {view==='hub' && <Hub profile={profile} prog={prog} vak={vak} setVak={setVak} allEx={allEx}
         onBack={()=>setView('home')} onTopic={goTopic} onSetGoal={(g)=>setGoal(profile,g)} onSetNiveau={(n)=>setNiveau(profile,n)}
         wedstrijdAan={store.wedstrijdAan!==false} onWedstrijd={()=>setView('wedstrijd-maak')}
-        onSpellen={()=>setView('spellen')} spelNaDoel={store.spelNaDoel===true}/>}
+        onSpellen={()=>setView('spellen')} spelNaDoel={store.spelNaDoel===true}
+        weektaakItems={(store.weektaak&&store.weektaak[profile]&&store.weektaak[profile].items)||[]}/>}
       {view==='practice' && <Practice profile={profile} vak={vak} topic={topic} jaar={jaar} allEx={allEx}
         onBack={()=>setView('hub')} onResult={recordResult} onToets={recordToets} prog={prog} onTopic={goTopic} geluid={geluid} voorlezen={voorlezen}/>}
       {view==='author' && <Author store={store} persist={persist} onBack={()=>setView('home')}
@@ -3145,7 +3183,71 @@ function WedstrijdSpelen({code, onBack, geluid}){
 }
 
 /* ---------- HUB (vak + onderwerpen) ---------- */
-function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal,onSetNiveau,wedstrijdAan,onWedstrijd,onSpellen,spelNaDoel}){
+/* ---- Weektaak: het kind ziet de door de ouder klaargezette onderwerpen met voortgang ---- */
+function WeektaakKaart({profile,prog,allEx,items,onKies}){
+  if(!items||!items.length) return null;
+  const rows=items.map(key=>{ const sp=key.split('|'); const v=sp[0], t=sp.slice(1).join('|');
+      const exs=allEx.filter(e=>e.p===profile&&e.v===v&&e.t===t);
+      const beheerst=exs.filter(e=>isMastered(prog,e.id)).length;
+      return {v,t,total:exs.length,beheerst}; }).filter(r=>r.total>0);
+  if(!rows.length) return null;
+  const totB=rows.reduce((s,r)=>s+r.beheerst,0), totT=rows.reduce((s,r)=>s+r.total,0);
+  const pct=totT?Math.round(totB/totT*100):0;
+  return (
+    <div className="card" style={{marginTop:12,background:'#eef6ff',borderLeftColor:'#3a6ea0'}}>
+      <div className="row" style={{justifyContent:'space-between',alignItems:'center'}}>
+        <b>📌 Jouw weektaak</b>
+        <span className="muted" style={{fontSize:13}}>{pct}% beheerst</span>
+      </div>
+      <div className="pbar" style={{marginTop:8}}><i style={{width:pct+'%'}}></i></div>
+      <div className="wrap" style={{marginTop:10}}>
+        {rows.map((r,i)=>(
+          <button key={i} className={'btn sm '+(r.beheerst>=r.total?'ghost':'')} onClick={()=>onKies(r.v,r.t)} title={'Oefen '+r.t}>
+            {r.beheerst>=r.total?'✅ ':'▶️ '}{r.t} <span className="muted" style={{fontSize:12}}>({r.beheerst}/{r.total})</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+/* ---- Weektaak beheren (ouder-modus): per kind onderwerpen voor de week aanvinken ---- */
+function WeektaakBeheer({store,persist}){
+  const [open,setOpen]=useState(false);
+  const [sel,setSel]=useState(()=>{ const o={}; for(const pid of Object.keys(PROFILES)){ const w=store.weektaak&&store.weektaak[pid]; o[pid]=(w&&Array.isArray(w.items))?w.items.slice():[]; } return o; });
+  const [msg,setMsg]=useState('');
+  const allEx=[...SEED,...store.custom];
+  function toggle(pid,key){ setSel(s=>{ const arr=(s[pid]||[]).slice(); const i=arr.indexOf(key); if(i>=0)arr.splice(i,1); else arr.push(key); return {...s,[pid]:arr}; }); }
+  function bewaar(){ persist(prev=>{ const wt={...(prev.weektaak||{})}; for(const pid of Object.keys(sel)){ wt[pid]={items:sel[pid]||[],set:todayStr()}; } return {...prev, weektaak:wt}; }); setMsg('✅ Weektaken opgeslagen — de kinderen zien ze meteen.'); setTimeout(()=>setMsg(''),3500); }
+  return (
+    <div className="card" style={{marginBottom:16,background:'#eef6ff',borderLeftColor:'#3a6ea0'}}>
+      <div className="row" style={{justifyContent:'space-between',alignItems:'center',cursor:'pointer'}} onClick={()=>setOpen(!open)}>
+        <b>📌 Weektaak klaarzetten</b>
+        <span className="muted" style={{fontSize:13}}>{open?'▲ inklappen':'▼ kies per kind de onderwerpen van de week'}</span>
+      </div>
+      {open && <div className="muted" style={{fontSize:12,marginTop:4}}>Vink onderwerpen aan; het kind ziet ze als “Jouw weektaak” bovenaan, met voortgang. Tip: 2 tot 4 per kind.</div>}
+      {open && Object.entries(PROFILES).map(([pid,P])=>{
+        const perVak={}; allEx.filter(e=>e.p===pid).forEach(e=>{ (perVak[e.v]=perVak[e.v]||{})[e.t]=1; });
+        const gekozen=sel[pid]||[];
+        return (
+          <div key={pid} style={{marginTop:12,paddingTop:12,borderTop:'1px solid var(--line)'}}>
+            <div style={{fontWeight:700}}>{P.emoji} {P.naam} <span className="muted" style={{fontWeight:400,fontSize:13}}>· {gekozen.length} gekozen</span></div>
+            {Object.keys(perVak).map(v=>(
+              <div key={v} style={{marginTop:6}}>
+                <div className="muted" style={{fontSize:12}}>{VAKNAAM[v]||v}</div>
+                <div className="wrap" style={{marginTop:4}}>
+                  {Object.keys(perVak[v]).map(t=>{ const key=v+'|'+t; const aan=gekozen.indexOf(key)>=0;
+                    return <button key={key} className={'btn sm '+(aan?'gold':'ghost')} onClick={()=>toggle(pid,key)}>{aan?'✓ ':''}{t}</button>; })}
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+      })}
+      {open && <div style={{marginTop:12}}><button className="btn" onClick={bewaar}>💾 Weektaken opslaan</button>{msg && <span style={{color:'#2c7a2c',fontWeight:600,marginLeft:10,fontSize:13}}>{msg}</span>}</div>}
+    </div>
+  );
+}
+function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal,onSetNiveau,wedstrijdAan,onWedstrijd,onSpellen,spelNaDoel,weektaakItems}){
   const P=PROFILES[profile];
   const [jaar,setJaar]=useState('nu');     // 'nu' | 'next'
   const heeftVolgend=useMemo(()=>allEx.some(e=>e.p===profile&&(e.jaar||'nu')==='next'),[allEx,profile]);
@@ -3184,6 +3286,9 @@ function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal,onSetNiveau
         </div>
         <div className="pbar" style={{marginTop:8}}><i style={{width:rang.pct+'%'}}></i></div>
       </div>
+
+      <WeektaakKaart profile={profile} prog={prog} allEx={allEx} items={weektaakItems}
+        onKies={(v,t)=>{ setVak(v); const hasNu=allEx.some(e=>e.p===profile&&e.v===v&&e.t===t&&(e.jaar||'nu')==='nu'); onTopic(t, hasNu?'nu':'next'); }}/>
 
       {/* dagmissie: 3 sterren + missie-streak */}
       {(()=>{ const m=dagMissie(prog); return (
@@ -3666,6 +3771,57 @@ function KindAccountPaneel({store,accApi}){
     </div>
   );
 }
+/* ---- Leerlijn-overzicht: rekenen/wiskunde uitgesplitst naar de landelijke domeinen ---- */
+const DOMEIN_KEYWORDS=[
+  ['Getallen', ['getal','optel','aftrek','tafel','delen','deel','vermenigvuldig','kommagetal','negatiev','macht','wortel','rekenvolgorde','getalbegrip','rest','automatiseren']],
+  ['Verhoudingen', ['breuk','verhouding','procent','schaal','groeifactor']],
+  ['Meten & meetkunde', ['meten','maten','oppervlak','omtrek','inhoud','klok','tijd','geld','hoek','pythagoras','meetkunde','figuur','cirkel','driehoek','rechthoek','balk','kubus','hokjes']],
+  ['Verbanden', ['tabel','grafiek','diagram','gemiddelde','statistiek','formule','lineair','kwadrat','verband','kans','tellen','combinat','exponent','logaritme','vergelijking','stelsel','haakjes','herleiden','wetenschappelijke']],
+];
+const DOMEIN_VOLGORDE=['Getallen','Verhoudingen','Meten & meetkunde','Verbanden','Overig'];
+const REKENVAKKEN={rekenen:1,wiskunde:1,wiskundeA:1};
+function domeinVan(t){ const s=(t||'').toLowerCase();
+  for(const [dom,keys] of DOMEIN_KEYWORDS){ if(keys.some(k=>s.includes(k))) return dom; } return 'Overig'; }
+function LeerlijnPaneel({store}){
+  const [open,setOpen]=useState(false);
+  const allEx=[...SEED,...store.custom];   // vaste opgaven (sjablonen zijn parametrisch, niet per stuk 'beheerst')
+  return (
+    <div className="card" style={{marginBottom:16,background:'#f4f1fb',borderLeftColor:'#7a5ea0'}}>
+      <div className="row" style={{justifyContent:'space-between',alignItems:'center',cursor:'pointer'}} onClick={()=>setOpen(!open)}>
+        <b>🎯 Leerlijn-overzicht per domein</b>
+        <span className="muted" style={{fontSize:13}}>{open?'▲ inklappen':'▼ bekijk voortgang per curriculum-domein'}</span>
+      </div>
+      {open && <div className="muted" style={{fontSize:12,marginTop:4}}>Beheersing per officieel leerlijndomein (referentieniveaus / examenprogramma), berekend uit de vaste opgaven.</div>}
+      {open && Object.entries(PROFILES).map(([pid,P])=>{
+        const prog=normalizeProg(store.prog[pid]);
+        const eigen=allEx.filter(e=>e.p===pid);
+        const rekenEx=eigen.filter(e=>REKENVAKKEN[e.v]);
+        const domGroepen={}; rekenEx.forEach(e=>{const d=domeinVan(e.t); (domGroepen[d]=domGroepen[d]||[]).push(e);});
+        const overige={}; eigen.filter(e=>!REKENVAKKEN[e.v]).forEach(e=>{(overige[e.v]=overige[e.v]||[]).push(e);});
+        return (
+          <div key={pid} style={{marginTop:12,paddingTop:12,borderTop:'1px solid var(--line)'}}>
+            <div style={{fontWeight:700}}>{P.emoji} {P.naam} <span className="muted" style={{fontWeight:400,fontSize:13}}>· {P.niveau}</span></div>
+            {rekenEx.length>0 && <div className="muted" style={{fontSize:12,marginTop:4}}>Rekenen/wiskunde — landelijke domeinen</div>}
+            {DOMEIN_VOLGORDE.filter(d=>domGroepen[d]).map(d=>{
+              const arr=domGroepen[d]; const beheerst=arr.filter(e=>isMastered(prog,e.id)).length;
+              const pct=arr.length?Math.round(beheerst/arr.length*100):0;
+              return (
+                <div key={d} style={{marginTop:6}}>
+                  <div className="row" style={{justifyContent:'space-between',fontSize:13}}><span>{d}</span><span className="muted">{beheerst}/{arr.length} · {pct}%</span></div>
+                  <div className="pbar"><i style={{width:pct+'%'}}></i></div>
+                </div>
+              );
+            })}
+            {Object.keys(overige).length>0 && <div className="wrap" style={{marginTop:8}}>
+              {Object.entries(overige).map(([v,arr])=>{ const beheerst=arr.filter(e=>isMastered(prog,e.id)).length;
+                return <span key={v} className="tag">{(VAKNAAM[v]||v)}: {beheerst}/{arr.length}</span>; })}
+            </div>}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 function OuderDashboard({store,persist,onSetWeekbudget,onMarkeerBetaald,cloud,onSetKidPw,accApi,onReset}){
   const allEx=[...SEED,...TEMPLATES,...store.custom];
   const [resetMsg,setResetMsg]=useState('');
@@ -3690,6 +3846,8 @@ function OuderDashboard({store,persist,onSetWeekbudget,onMarkeerBetaald,cloud,on
   return (
     <div>
       <KindAccountPaneel store={store} accApi={accApi}/>
+      <LeerlijnPaneel store={store}/>
+      <WeektaakBeheer store={store} persist={persist}/>
       {onReset && <div className="card" style={{marginBottom:16,background:'#fdeeee',borderLeftColor:'#C23728'}}>
         <div className="row" style={{justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:8}}>
           <span>🗑️ <b>Alles resetten naar 0</b><div className="muted" style={{fontSize:12}}>Wist alle punten, voortgang, betalingen en spel-records — iedereen begint schoon (accounts &amp; instellingen blijven).</div></span>
@@ -4257,6 +4415,65 @@ const UITLEG={
   'Reactievergelijkingen':{tekst:'In een reactie blijven atomen behouden: links en rechts evenveel van elke soort. De grote getallen vóór een stof (coëfficiënten) zorgen voor die balans, bijv. 2 H₂ + O₂ → 2 H₂O.'},
   'Zuur & base':{tekst:'De pH-schaal loopt van 0 tot 14. pH 7 is neutraal (zuiver water), lager dan 7 is zuur, hoger dan 7 is basisch.'},
   'Rekenen (mol)':{tekst:'1 mol = 6,02 × 10²³ deeltjes (getal van Avogadro). Massa = aantal mol × molaire massa (g/mol), en aantal mol = massa ÷ molaire massa.'},
+  /* ---- Leerkaarten voor de curriculum-aansluiting (juli 2026) ---- */
+  // Selma & Amine · rekenen
+  'Getallen tot 100.000':{tekst:'Kijk naar de plaats van elk cijfer: eenheden, tientallen, honderdtallen, duizendtallen, tienduizendtallen. Zo lees en schrijf je grote getallen. Afronden op duizendtallen? Kijk naar het honderdtal: 5 of meer → naar boven, anders naar beneden.'},
+  'Delen met rest':{tekst:'Soms past de deler niet precies. Zoek het grootste product dat er nog ín past; wat overblijft is de rest. 17 ÷ 5: 5 × 3 = 15 past, en 17 − 15 = 2, dus rest 2.'},
+  'Vermenigvuldigen (groter)':{tekst:'Splits het grote getal: 12 × 8 = (10 × 8) + (2 × 8) = 80 + 16 = 96. Bij ronde tientallen los je het op via de tafel: 6 × 40 = 6 × 4 × 10 = 240.'},
+  'Oppervlakte (hokjes)':{tekst:'Oppervlakte is hoeveel vierkante hokjes erin passen. Bij een rechthoek: lengte × breedte. 5 hokjes lang en 3 breed → 5 × 3 = 15 hokjes.'},
+  'Verhoudingstabel':{tekst:'In een verhoudingstabel gaat alles met dezelfde factor mee. Weet je dat 2 stuks € 1 kosten, dan kosten 6 stuks (× 3) → € 3. Zoek eerst de factor tussen de kolommen.'},
+  'Tabellen & grafieken':{tekst:'Lees eerst af wat er op de assen of in de kolommen staat. Bij een staafdiagram is de hoogte van de staaf de waarde. Optellen, vergelijken of het grootste zoeken doe je daarna.'},
+  'Meten & meetkunde':{tekst:'Reken met de juiste eenheid: 1 m = 100 cm, 1 kg = 1000 g. Oppervlakte = lengte × breedte (in cm²), omtrek = alle zijden samen (in cm).'},
+  'Verbanden':{tekst:'Een verband laat zien hoe twee dingen samenhangen — in een tabel, grafiek of formule. Het gemiddelde reken je uit met som ÷ aantal.'},
+  // Selma & Amine · taal
+  'Werkwoordspelling':{tekst:"Tegenwoordige tijd: ik = de stam (zonder t); hij/zij/het = stam + t. Verleden tijd en voltooid deelwoord: eindigt de stam op een letter uit 't kofschip (t, k, f, s, ch, p)? Dan +te / +t, anders +de / +d."},
+  'Niet-werkwoordspelling':{tekst:'Luister goed: lange ij (fiets) of korte ei (eiland)? au (auto) of ou (koud)? Twijfel je over d of t aan het eind, verleng het woord: koud → koude, dus met een d.'},
+  'Leestekens & hoofdletters':{tekst:'Een zin begint met een hoofdletter en eindigt met . ? of !. Namen van personen, landen en steden krijgen een hoofdletter; dagen en maanden niet. De dubbele punt (:) staat vóór een opsomming of uitleg.'},
+  'Hoofdletters & leestekens':{tekst:'Een zin begint met een hoofdletter en eindigt met . ? of !. Namen van personen, landen en steden krijgen een hoofdletter; dagen en maanden niet.'},
+  'Samenstellingen':{tekst:'Een samenstelling is één woord van twee woorden: voetbal + veld = voetbalveld. Soms komt er een tussen-n of tussen-s bij, zoals pannenkoek en stationsplein.'},
+  'Verkleinwoorden':{tekst:'Een verkleinwoord maak je met -je, -tje, -pje of -etje: boom → boompje, stoel → stoeltje, bloem → bloemetje.'},
+  'Open en gesloten lettergreep':{tekst:'Lange klank in een open lettergreep: één klinker (bomen). Korte klank: verdubbel de medeklinker (ballen). Zo blijft de klank goed bij het meervoud.'},
+  'au/ou':{tekst:'Dezelfde klank, twee spellingen. Veel woorden ken je uit je hoofd: kou, koud, hout, vrouw (ou) tegenover auto, blauw, dauw (au).'},
+  'ei/ij':{tekst:'De korte ei (eiland) en de lange ij (fiets) klinken hetzelfde. Woorden leer je uit je hoofd: trein, klein (ei) tegenover wijn, fijn (ij).'},
+  // Amine · lezen & studievaardigheden
+  'Woordenschat':{tekst:'Snap je een woord niet? Kijk naar de zin eromheen (de context) voor een hint, let op bekende delen (mono = één), en bedenk een synoniem dat je wél kent.'},
+  'Samenvatten':{tekst:'Zoek per alinea de kernzin: de zin met de hoofdgedachte. Laat voorbeelden en details weg. Een goede samenvatting bevat alleen de hoofdzaken, in je eigen woorden.'},
+  'Feit of mening':{tekst:'Een feit kun je controleren of bewijzen (Parijs ligt in Frankrijk). Een mening is wat iemand vindt (Parijs is de mooiste stad) en verschilt per persoon.'},
+  'Verwijswoorden':{tekst:'Woorden als hij, die, dat en deze verwijzen naar iets dat eerder genoemd is. Vraag je af: naar wie of wat verwijst dit woord? Vul het even in om te controleren.'},
+  'Interpreteren':{tekst:'Soms staat het antwoord niet letterlijk in de tekst; je leidt het af. Let op signalen (een rood hoofd → schaamte) en lees tussen de regels door.'},
+  'Volgorde':{tekst:'Een verhaal heeft een begin, een midden en een einde. Signaalwoorden als eerst, daarna en ten slotte helpen je de juiste volgorde te vinden.'},
+  'Opzoeken':{tekst:'Zoek slim: de inhoudsopgave (voorin) geeft de hoofdstukken, het register (achterin) geeft op alfabet de bladzijde van een onderwerp, en het woordenboek geeft de betekenis.'},
+  // Wassima · wiskunde/natuurkunde verdieping
+  'Kwadratische verbanden':{tekst:'Bij y = x² hoort een parabool. Functiewaarde berekenen: vul x in en werk de macht eerst uit. y = x² − 3 bij x = 5 → 25 − 3 = 22.'},
+  'Machten':{tekst:'Een macht is herhaald vermenigvuldigen: 2⁴ = 2 × 2 × 2 × 2 = 16 en 3³ = 27. De exponent (het kleine getal) zegt hoe vaak.'},
+  'Stelsels':{tekst:'Bij een stelsel horen twee vergelijkingen die tegelijk kloppen. Weet je één waarde, vul die in de andere in: x + y = 10 met x = 6 → y = 4.'},
+  // Amaani · wiskunde A / scheikunde / natuurkunde
+  'Kansrekening':{tekst:'Kans = gunstige uitkomsten ÷ alle uitkomsten. Twee dingen ná elkaar (en-regel): kansen vermenigvuldigen. Twee keer kop: 1/2 × 1/2 = 1/4.'},
+  'Tellen (combinatoriek)':{tekst:'Op hoeveel manieren? Voor een rij van n verschillende dingen: n! (3! = 3 × 2 × 1 = 6). Kies je een groepje waarbij de volgorde niet telt, gebruik dan combinaties C(n,k).'},
+  'Exponentiële groei':{tekst:'Bij vaste procentuele groei vermenigvuldig je elke periode met de groeifactor: +10% → × 1,1; −20% → × 0,8. Over meerdere jaren: de factor tot de macht van het aantal jaren.'},
+  'Procenten & groeifactor':{tekst:'Groeifactor = 1 + p/100 bij toename, 1 − p/100 bij afname. Handig om ineens mee te rekenen: 15% erbij = × 1,15; 20% eraf = × 0,80.'},
+  'Molverhoudingen':{tekst:'De coëfficiënten in de reactievergelijking geven de molverhouding. 2 H₂ + O₂ → 2 H₂O betekent H₂ : O₂ : H₂O = 2 : 1 : 2. Reken daarmee om tussen de stoffen.'},
+  'Molmassa':{tekst:"De molaire massa (g/mol) tel je op uit de atoommassa's. O₂ = 2 × 16 = 32 g/mol. Massa = aantal mol × molaire massa."},
+  'Concentratie':{tekst:'Concentratie = aantal mol ÷ volume (mol/L). 0,5 mol in 2 L → 0,5 ÷ 2 = 0,25 mol/L. Meer stof of minder water geeft een hogere concentratie.'},
+  'Zuren en basen':{tekst:'De pH-schaal loopt van 0 tot 14. Onder 7 is zuur, precies 7 is neutraal, boven 7 is basisch. Hoe verder van 7, hoe sterker.'},
+  'Rekenen aan reacties':{tekst:'Gebruik de molverhouding uit de kloppende reactievergelijking. 2 H₂ + O₂ → 2 H₂O: voor 8 mol H₂ heb je 8 × ½ = 4 mol O₂ nodig.'},
+  'Kracht & versnelling':{tekst:'De tweede wet van Newton: F = m × a (kracht in N, massa in kg, versnelling in m/s²). Zoek je a, dan a = F ÷ m.'},
+  'Zwaartekracht':{tekst:'De zwaartekracht trekt alles naar de aarde: Fz = m × g. In de bovenbouw reken je vaak met g = 9,81 N/kg; in de onderbouw met g = 10 N/kg.'},
+  'Arbeid & energie':{tekst:'Arbeid W = F × s (kracht × verplaatsing), in joule (J). Vermogen is arbeid per seconde: P = W ÷ t.'},
+  'Elektriciteit':{tekst:'Wet van Ohm: U = I × R (spanning in V, stroom in A, weerstand in Ω). Vermogen: P = U × I (in watt).'},
+  // Zaakvakken
+  'Cel':{tekst:'De cel is de bouwsteen van het leven. In de celkern ligt het DNA (de erfelijke informatie). Daaromheen zit het cytoplasma, omsloten door het celmembraan.'},
+  'Vertering':{tekst:'De vertering begint in de mond (kauwen + speeksel), gaat via de slokdarm naar de maag en dan de dunne darm, waar voedingsstoffen in het bloed worden opgenomen.'},
+  'Klimaat':{tekst:'Het klimaat is het gemiddelde weer over lange tijd. Bij de evenaar (0° breedte) is het warm; naar de polen toe wordt het kouder. Zo ontstaan klimaatzones.'},
+  'Fotosynthese':{tekst:'Planten maken met licht hun eigen voedsel: ze nemen koolstofdioxide (CO₂) en water op en maken glucose, waarbij zuurstof (O₂) vrijkomt.'},
+  'Inflatie':{tekst:'Inflatie is een algehele stijging van het prijspeil: met hetzelfde geld kun je minder kopen. Een beetje inflatie is normaal; veel inflatie maakt sparen minder waard.'},
+  'Industriële revolutie':{tekst:'Vanaf het einde van de 18e eeuw begon in Engeland de Industriële Revolutie: machines (de stoommachine) en fabrieken veranderden werk, steden en samenleving ingrijpend.'},
+  'Wereldoorlogen':{tekst:'De Eerste Wereldoorlog duurde van 1914 tot 1918, de Tweede van 1939 tot 1945. Nederland was in WOI neutraal, maar in WOII bezet (1940–1945).'},
+  'Sparen & rente':{tekst:'Rente is de vergoeding voor sparen of lenen, in procenten per jaar. 2% over € 100 = € 2 per jaar. Bij samengestelde rente krijg je rente over rente.'},
+  // Talen
+  'Tenses':{tekst:'Present simple voor gewoontes: bij he/she/it komt er -s bij (he goes). Present continuous voor iets dat nu bezig is: to be + werkwoord+ing (he is going).'},
+  'Naamvallen':{tekst:'In het Duits verandert het lidwoord met de naamval. Nominatief (onderwerp): der (m.), die (v.), das (o.). In de accusatief wordt der → den.'},
+  'Werkwoorden':{tekst:'Leer de kernwerkwoorden uit je hoofd. Frans être (zijn): je suis, tu es, il est. Duits sein: ich bin, du bist, er ist.'},
 };
 function UitlegPaneel({data,open,onToggle}){
   return (
