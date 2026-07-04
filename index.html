@@ -309,6 +309,59 @@ function mmss(sec) {
 function weekbudgetVan(pr) {
   return typeof pr.weekbudget === 'number' && pr.weekbudget >= 0 ? pr.weekbudget : BELONING.weekbudget;
 }
+// ISO-weeksleutel (jaar-week) voor het wekelijkse toernooi
+function weekKey(dd) {
+  const d = dd ? new Date(dd) : new Date();
+  const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const day = t.getUTCDay() || 7;
+  t.setUTCDate(t.getUTCDate() + 4 - day);
+  const ys = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+  const wk = Math.ceil(((t - ys) / 86400000 + 1) / 7);
+  return t.getUTCFullYear() + '-w' + wk;
+}
+// dagelijkse missie: 3 taken op basis van vandaag
+function dagMissie(prog) {
+  const goal = prog.goal || 10,
+    td = prog.todayCount || 0;
+  const d = prog.dag && prog.dag.d === todayStr() ? prog.dag : {
+    goed: 0,
+    fout: 0
+  };
+  const pog = (d.goed || 0) + (d.fout || 0),
+    nauw = pog ? d.goed / pog : 0;
+  const t = prog.toetsDag && prog.toetsDag.d === todayStr() ? prog.toetsDag : {
+    oefen: 0,
+    proef: 0
+  };
+  const taken = [{
+    k: 'doel',
+    ok: td >= goal,
+    tekst: 'Haal je dagdoel (' + td + '/' + goal + ' sommen)'
+  }, {
+    k: 'nauw',
+    ok: pog >= 8 && nauw >= 0.8,
+    tekst: 'Werk nauwkeurig (≥ 80% van ' + Math.max(8, pog) + ')'
+  }, {
+    k: 'toets',
+    ok: (t.oefen || 0) > 0 || (t.proef || 0) > 0,
+    tekst: 'Doe een oefentoets'
+  }];
+  return {
+    taken,
+    klaar: taken.every(x => x.ok)
+  };
+}
+// dagmissie afgerond? → streak bijwerken en een XP-bonus (één keer per dag). Muteert pr.
+function crediteerMissie(pr) {
+  const vandaag = todayStr();
+  if (pr.missieLaatst === vandaag) return false;
+  if (!dagMissie(pr).klaar) return false;
+  pr.missieStreak = pr.missieLaatst === yesterdayStr() ? (pr.missieStreak || 0) + 1 : 1;
+  pr.missieLaatst = vandaag;
+  pr.punten = (pr.punten || 0) + 25;
+  pr.weekPunten = (pr.weekPunten || 0) + 25; // missiebonus (XP)
+  return true;
+}
 // zomer-challenge: hoeveel al verdiend sinds de startdatum, en de stand t.o.v. het doel
 function zomerStand(prog, zomer) {
   if (!zomer || !zomer.aan || !zomer.start) return null;
@@ -11321,7 +11374,11 @@ function blankProg() {
     },
     betaaldOp: null,
     weekbudget: BELONING.weekbudget,
-    betalingen: []
+    betalingen: [],
+    missieStreak: 0,
+    missieLaatst: null,
+    weekKey: null,
+    weekPunten: 0
   };
 }
 function normalizeProg(p) {
@@ -11350,6 +11407,8 @@ function normalizeProg(p) {
   if (typeof np.dag.sterkPunten !== 'number') np.dag.sterkPunten = 0;
   if (typeof np.weekbudget !== 'number') np.weekbudget = BELONING.weekbudget;
   if (!Array.isArray(np.betalingen)) np.betalingen = [];
+  if (typeof np.missieStreak !== 'number') np.missieStreak = 0;
+  if (typeof np.weekPunten !== 'number') np.weekPunten = 0;
   if (!np.toetsDag || typeof np.toetsDag !== 'object') np.toetsDag = {
     d: null,
     oefen: 0,
@@ -11395,6 +11454,7 @@ function loadStore() {
     doel: 50,
     bonus: 15
   }; // zomer-challenge
+  if (typeof s.spelNaDoel !== 'boolean') s.spelNaDoel = false; // spelletjes pas na het dagdoel
   for (const pid of Object.keys(PROFILES)) s.prog[pid] = normalizeProg(s.prog[pid]);
   return s;
 }
@@ -11498,6 +11558,9 @@ function mergeProg(a, b) {
     punten: _max(a.punten, b.punten),
     streak: _max(a.streak, b.streak),
     dagstreak: _max(a.dagstreak, b.dagstreak),
+    missieStreak: _max(a.missieStreak, b.missieStreak),
+    weekPunten: _max(a.weekPunten, b.weekPunten),
+    missieLaatst: parseDag(a.missieLaatst) >= parseDag(b.missieLaatst) ? a.missieLaatst : b.missieLaatst,
     todayCount: _max(a.todayCount, b.todayCount),
     goal: Math.max(a.goal || 10, b.goal || 10),
     weekbudget: Math.max(a.weekbudget || 0, b.weekbudget || 0),
@@ -12087,8 +12150,16 @@ function App() {
         sterkIds: [...(pr.dag.sterkIds || [])]
       };
       const lvl = inst && inst.lvl || card.lvl || 1; // moeilijkheidsgraad van deze vraag
+      // wekelijks toernooi: punten resetten bij een nieuwe week
+      const wk = weekKey();
+      if (pr.weekKey !== wk) {
+        pr.weekKey = wk;
+        pr.weekPunten = 0;
+      }
       if (correct) {
-        pr.punten = (pr.punten || 0) + (wasMastered ? 3 : usedHint ? 5 : 10);
+        const gain = wasMastered ? 3 : usedHint ? 5 : 10;
+        pr.punten = (pr.punten || 0) + gain;
+        pr.weekPunten = (pr.weekPunten || 0) + gain;
         pr.streak = (pr.streak || 0) + 1;
         pr.todayCount = (pr.todayCount || 0) + 1;
         pr.dag.goed++;
@@ -12133,6 +12204,7 @@ function App() {
       }
       c.last = Date.now();
       pr.cards[card.id] = c;
+      crediteerMissie(pr); // dagmissie-bonus + streak
       pr.badges = [...(pr.badges || [])];
       BADGES.forEach(b => {
         if (!pr.badges.includes(b.id) && b.test(pr)) pr.badges.push(b.id);
@@ -12161,6 +12233,12 @@ function App() {
       };
       if (isProef) td.proef = Math.max(td.proef || 0, pct);else td.oefen = Math.max(td.oefen || 0, pct);
       pr.toetsDag = td;
+      const wk = weekKey();
+      if (pr.weekKey !== wk) {
+        pr.weekKey = wk;
+        pr.weekPunten = 0;
+      }
+      crediteerMissie(pr); // toets afgerond kan de dagmissie voltooien
       return {
         ...prev,
         prog: {
@@ -12184,6 +12262,7 @@ function App() {
     onFormules: () => setView('formules'),
     onLeertips: () => setView('leertips'),
     onSpellen: () => setView('spellen'),
+    spelNaDoel: store.spelNaDoel === true,
     geluid: geluid,
     onToggleGeluid: toggleGeluid
   }), view === 'kidlogin' && /*#__PURE__*/React.createElement(KidLogin, {
@@ -12233,7 +12312,9 @@ function App() {
     onSetGoal: g => setGoal(profile, g),
     onSetNiveau: n => setNiveau(profile, n),
     wedstrijdAan: store.wedstrijdAan !== false,
-    onWedstrijd: () => setView('wedstrijd-maak')
+    onWedstrijd: () => setView('wedstrijd-maak'),
+    onSpellen: () => setView('spellen'),
+    spelNaDoel: store.spelNaDoel === true
   }), view === 'practice' && /*#__PURE__*/React.createElement(Practice, {
     profile: profile,
     vak: vak,
@@ -12266,6 +12347,7 @@ function Home({
   onFormules,
   onLeertips,
   onSpellen,
+  spelNaDoel,
   geluid,
   onToggleGeluid
 }) {
@@ -12339,7 +12421,108 @@ function Home({
     style: {
       fontSize: 12
     }
-  }, k.th.xp)))), store.zomer && store.zomer.aan && (() => {
+  }, k.th.xp)))), (() => {
+    const tk = [...kinderen].sort((a, b) => (b.pr.weekPunten || 0) - (a.pr.weekPunten || 0));
+    const leider = tk[0] && (tk[0].pr.weekPunten || 0) > 0 ? tk[0] : null;
+    const nu = new Date();
+    const dow = nu.getDay() || 7;
+    const dagenTot = 8 - dow;
+    return /*#__PURE__*/React.createElement("div", {
+      className: "card",
+      style: {
+        marginTop: 12,
+        background: 'linear-gradient(120deg,#eafaf0,#e6f0fb)'
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "row",
+      style: {
+        justifyContent: 'space-between'
+      }
+    }, /*#__PURE__*/React.createElement("b", null, "🏆 Toernooi van de week"), /*#__PURE__*/React.createElement("span", {
+      className: "muted",
+      style: {
+        fontSize: 12
+      }
+    }, "nieuwe ronde over ", dagenTot, " ", dagenTot === 1 ? 'dag' : 'dagen')), leider && /*#__PURE__*/React.createElement("div", {
+      style: {
+        margin: '6px 0',
+        fontWeight: 700
+      }
+    }, "👑 Aan kop: ", leider.p.emoji, " ", leider.p.naam, " (", leider.pr.weekPunten, " punten deze week)"), tk.map((k, i) => /*#__PURE__*/React.createElement("div", {
+      key: k.id,
+      className: "rankrow",
+      style: {
+        background: 'transparent',
+        border: 'none',
+        padding: '4px 0'
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "medal"
+    }, medals[i] || '⭐'), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 20
+      }
+    }, k.p.emoji), /*#__PURE__*/React.createElement("b", {
+      style: {
+        flex: 1
+      }
+    }, k.p.naam), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontWeight: 700
+      }
+    }, k.pr.weekPunten || 0), /*#__PURE__*/React.createElement("span", {
+      className: "muted",
+      style: {
+        fontSize: 12
+      }
+    }, "deze week"))));
+  })(), (() => {
+    const rows = kinderen.map(k => ({
+      k,
+      v: weekUitbetaald(k.pr)
+    }));
+    const tot = rows.reduce((s, r) => s + r.v, 0);
+    const nu = new Date();
+    const isZo = nu.getDay() === 0;
+    return /*#__PURE__*/React.createElement("div", {
+      className: "card",
+      style: {
+        marginTop: 12
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "row",
+      style: {
+        justifyContent: 'space-between'
+      }
+    }, /*#__PURE__*/React.createElement("b", null, "📅 Week-uitslag"), /*#__PURE__*/React.createElement("span", {
+      className: "muted",
+      style: {
+        fontSize: 12
+      }
+    }, isZo ? 'Het is zondag — tijd voor de uitslag! 🎉' : 'samen ' + euro(tot))), rows.map(({
+      k,
+      v
+    }) => /*#__PURE__*/React.createElement("div", {
+      key: k.id,
+      className: "row",
+      style: {
+        justifyContent: 'space-between',
+        fontSize: 14,
+        padding: '3px 0'
+      }
+    }, /*#__PURE__*/React.createElement("span", null, k.p.emoji, " ", k.p.naam), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontWeight: 700,
+        color: '#a8730a'
+      }
+    }, euro(v)))), /*#__PURE__*/React.createElement("div", {
+      className: "muted",
+      style: {
+        fontSize: 12,
+        marginTop: 4
+      }
+    }, "Dit is wat er deze week eerlijk verdiend is. Uitbetalen doe je in de ouder-modus."));
+  })(), store.zomer && store.zomer.aan && (() => {
     const fam = kinderen.map(k => ({
       k,
       z: zomerStand(k.pr, store.zomer)
@@ -12473,10 +12656,23 @@ function Home({
     style: {
       marginTop: 20
     }
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "btn gold",
-    onClick: onSpellen
-  }, "🎮 Spelletjes")), /*#__PURE__*/React.createElement("div", {
+  }, (() => {
+    const iemandKlaar = kinderen.some(k => (k.pr.todayCount || 0) >= (k.pr.goal || 10));
+    const slot = spelNaDoel && !iemandKlaar;
+    return slot ? /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("button", {
+      className: "btn ghost",
+      disabled: true
+    }, "🔒 Spelletjes"), /*#__PURE__*/React.createElement("div", {
+      className: "muted",
+      style: {
+        fontSize: 12,
+        marginTop: 4
+      }
+    }, "Eerst een dagdoel halen, dan verdien je speeltijd! 💪")) : /*#__PURE__*/React.createElement("button", {
+      className: "btn gold",
+      onClick: onSpellen
+    }, "🎮 Spelletjes");
+  })()), /*#__PURE__*/React.createElement("div", {
     className: "hint",
     style: {
       margin: '16px 0'
@@ -14299,7 +14495,9 @@ function Hub({
   onSetGoal,
   onSetNiveau,
   wedstrijdAan,
-  onWedstrijd
+  onWedstrijd,
+  onSpellen,
+  spelNaDoel
 }) {
   const P = PROFILES[profile];
   const [jaar, setJaar] = useState('nu'); // 'nu' | 'next'
@@ -14368,7 +14566,42 @@ function Hub({
     style: {
       width: rang.pct + '%'
     }
-  }))), /*#__PURE__*/React.createElement("div", {
+  }))), (() => {
+    const m = dagMissie(prog);
+    return /*#__PURE__*/React.createElement("div", {
+      className: "card",
+      style: {
+        marginTop: 12,
+        background: m.klaar ? '#eaf7e2' : '#fff'
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "row",
+      style: {
+        justifyContent: 'space-between'
+      }
+    }, /*#__PURE__*/React.createElement("b", null, "⭐ Dagmissie ", m.klaar ? '— gehaald! 🎉' : ''), /*#__PURE__*/React.createElement("span", {
+      className: "muted",
+      style: {
+        fontSize: 13
+      }
+    }, "🔥 missie-streak: ", prog.missieStreak || 0)), /*#__PURE__*/React.createElement("div", {
+      style: {
+        marginTop: 6
+      }
+    }, m.taken.map((t, i) => /*#__PURE__*/React.createElement("div", {
+      key: i,
+      style: {
+        fontSize: 14,
+        padding: '2px 0'
+      }
+    }, t.ok ? '✅' : '⬜', " ", t.tekst))), !m.klaar && /*#__PURE__*/React.createElement("div", {
+      className: "muted",
+      style: {
+        fontSize: 12,
+        marginTop: 4
+      }
+    }, "Rond alle drie af → +25 punten en je missie-streak groeit!"));
+  })(), /*#__PURE__*/React.createElement("div", {
     className: "card",
     style: {
       marginTop: 12,
@@ -14518,7 +14751,24 @@ function Hub({
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn accent",
     onClick: onWedstrijd
-  }, "⚔️ Daag een vriend uit")), heeftVolgend && /*#__PURE__*/React.createElement("div", {
+  }, "⚔️ Daag een vriend uit")), onSpellen && (() => {
+    const doelGehaald = (prog.todayCount || 0) >= (prog.goal || 10);
+    const slot = spelNaDoel && !doelGehaald;
+    return /*#__PURE__*/React.createElement("div", {
+      className: "center",
+      style: {
+        marginTop: 10
+      }
+    }, slot ? /*#__PURE__*/React.createElement("button", {
+      className: "btn ghost",
+      onClick: () => {},
+      disabled: true,
+      title: "Haal eerst je dagdoel"
+    }, "🔒 Spelletjes — haal eerst je dagdoel") : /*#__PURE__*/React.createElement("button", {
+      className: "btn gold",
+      onClick: onSpellen
+    }, "🎮 Spelletjes", spelNaDoel ? ' (verdiend!)' : ''));
+  })(), heeftVolgend && /*#__PURE__*/React.createElement("div", {
     className: "wrap",
     style: {
       margin: '14px 0 0',
@@ -15535,7 +15785,29 @@ function OuderDashboard({
       ...prev,
       wedstrijdAan: !(prev.wedstrijdAan !== false)
     }))
-  }, store.wedstrijdAan !== false ? 'Aan' : 'Uit'))));
+  }, store.wedstrijdAan !== false ? 'Aan' : 'Uit'))), /*#__PURE__*/React.createElement("div", {
+    className: "card",
+    style: {
+      marginBottom: 16
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "row",
+    style: {
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("span", null, "🎮 ", /*#__PURE__*/React.createElement("b", null, "Speeltijd verdienen"), /*#__PURE__*/React.createElement("div", {
+    className: "muted",
+    style: {
+      fontSize: 12
+    }
+  }, "Spelletjes pas beschikbaar nadat het dagdoel gehaald is.")), /*#__PURE__*/React.createElement("button", {
+    className: 'btn sm ' + (store.spelNaDoel === true ? '' : 'ghost'),
+    onClick: () => persist(prev => ({
+      ...prev,
+      spelNaDoel: !(prev.spelNaDoel === true)
+    }))
+  }, store.spelNaDoel === true ? 'Aan' : 'Uit'))));
 }
 function ZomerPaneel({
   store,

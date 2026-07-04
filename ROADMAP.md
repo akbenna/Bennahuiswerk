@@ -39,6 +39,10 @@ Instelbaar moeilijkheidsniveau per kind (**Auto / 1 / 2 / 3**; Auto wordt vanzel
 - **Volwassen ouder-/admin-dashboard:** beheersing % per kind en per vak, aandachtspunten, foutenschrift, per kind instelbaar weekbudget/dagdoel/niveau, betaal-registratie, en **back-up exporteren/terugzetten**.
 - **Online opslag (cloud):** resultaten centraal via een familiecode + pincode (beveiligde databasefuncties; de opslag is niet publiek benaderbaar). Op elk toestel inloggen = dezelfde resultaten, altijd en overal te raadplegen. De app werkt ook gewoon offline en synct daarna. **Slim samenvoegen:** bij synchroniseren worden de resultaten van toestellen samengevoegd (hoogste punten, beheerste sommen, streaks, records en betalingen) i.p.v. overschreven — met de knop "🔄 Samenvoegen &amp; gelijktrekken" tonen alle toestellen dezelfde score per kind (geen verlies).
 - **🏖️ Zomer-challenge (vakantie):** een spaardoel over ~7 weken. Elk kind spaart met écht oefenen naar een zomerdoel (bedrag) met een bonus bij het halen. De landingspagina toont per kind de voortgang ("nog € X tot je doel · nog Y weken") en het familietotaal. In te stellen in de ouder-modus (startdatum, weken, doel, bonus).
+- **⭐ Dagmissie + missie-streak:** elke dag drie taken (dagdoel halen · nauwkeurig werken · een oefentoets doen). Alles af = +25 punten en de missie-streak groeit — voor ritme en dagelijkse gewoonte.
+- **🏆 Familie-toernooi van de week:** wekelijkse ranglijst op de punten van díe week (reset elke week), met een "aan kop"-banner. Een leuke, eerlijke onderlinge competitie.
+- **📅 Week-uitslag:** overzicht van wat elk kind deze week eerlijk verdiende (met een zondag-momentje), plus het familietotaal.
+- **🎮 Speeltijd verdienen (optioneel):** de ouder kan instellen dat de spelletjes pas beschikbaar zijn nadat het dagdoel gehaald is — zo staat ontspanning tegenover echt oefenen.
 
 ## To-do — verder uitbreiden (geprioriteerd)
 1. **Talen verdiepen** (alle kinderen): woordenschat per thema, meer werkwoordstijden, langere zinnen.
