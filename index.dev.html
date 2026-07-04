@@ -2041,8 +2041,9 @@ function App(){
       return {...prev, prog:{...prev.prog,[pid]:pr}};
     });
   }
-  function setGameScore(spel, score){
-    persist(prev=>{const g={...(prev.games||{})}; if(!(g[spel]>=score)) g[spel]=score; return {...prev, games:g};});
+  function setGameScore(spel, score, lager){
+    persist(prev=>{const g={...(prev.games||{})}; const cur=g[spel];
+      if(cur===undefined || (lager? score<cur : score>cur)) g[spel]=score; return {...prev, games:g};});
   }
   function setKidPw(pid, pw){
     persist(prev=>({...prev, kidpw:{...(prev.kidpw||{}), [pid]: String(pw||'').trim()||STANDAARD_WACHTWOORD}}));
@@ -2228,31 +2229,231 @@ function KidLogin({pid,store,onBack,onOk}){
 function Spellen({store,onBack,onScore,geluid}){
   const [spel,setSpel]=useState(null);
   const games=store.games||{};
-  if(spel==='mollen') return <MollenSpel best={games.mollen||0} onBack={()=>setSpel(null)} onScore={s=>onScore('mollen',s)} geluid={geluid}/>;
-  if(spel==='memory') return <MemorySpel best={games.memory||0} onBack={()=>setSpel(null)} onScore={s=>onScore('memory',s)} geluid={geluid}/>;
-  if(spel==='reken')  return <RekenRace best={games.reken||0} onBack={()=>setSpel(null)} onScore={s=>onScore('reken',s)} geluid={geluid}/>;
+  const sc=(id,lager)=>(s=>onScore(id,s,lager));
+  const terug=()=>setSpel(null);
+  if(spel==='mollen') return <MollenSpel best={games.mollen||0} onBack={terug} onScore={sc('mollen')} geluid={geluid}/>;
+  if(spel==='memory') return <MemorySpel best={games.memory} onBack={terug} onScore={sc('memory',true)} geluid={geluid}/>;
+  if(spel==='reken')  return <RekenRace best={games.reken||0} onBack={terug} onScore={sc('reken')} geluid={geluid}/>;
+  if(spel==='simon')  return <SimonSpel best={games.simon||0} onBack={terug} onScore={sc('simon')} geluid={geluid}/>;
+  if(spel==='hoger')  return <HogerLager best={games.hoger||0} onBack={terug} onScore={sc('hoger')} geluid={geluid}/>;
+  if(spel==='groter') return <GroterGetal best={games.groter||0} onBack={terug} onScore={sc('groter')} geluid={geluid}/>;
+  if(spel==='paroon') return <EvenOneven best={games.paroon||0} onBack={terug} onScore={sc('paroon')} geluid={geluid}/>;
+  if(spel==='woord')  return <WoordWar best={games.woord||0} onBack={terug} onScore={sc('woord')} geluid={geluid}/>;
+  if(spel==='klok')   return <KlokRace best={games.klok||0} onBack={terug} onScore={sc('klok')} geluid={geluid}/>;
+  if(spel==='veelvoud')return <Veelvouden best={games.veelvoud||0} onBack={terug} onScore={sc('veelvoud')} geluid={geluid}/>;
+  if(spel==='bke')    return <BoterKaasEieren best={games.bke||0} onBack={terug} onScore={sc('bke')} geluid={geluid}/>;
+  if(spel==='sprint') return <SomSprint best={games.sprint||0} onBack={terug} onScore={sc('sprint')} geluid={geluid}/>;
   const tegels=[
-    {id:'mollen',emoji:'🦔',naam:'Mollen meppen',uitleg:'Tik zo snel mogelijk op de mol!',best:games.mollen||0,eenh:'punten'},
-    {id:'memory',emoji:'🃏',naam:'Geheugenspel',uitleg:'Vind alle paren met zo min mogelijk beurten.',best:games.memory||0,eenh:'beurten'},
-    {id:'reken', emoji:'⚡',naam:'Reken-race', uitleg:'Zoveel mogelijk sommen in 30 seconden.',best:games.reken||0,eenh:'goed'},
+    {id:'mollen',emoji:'🦔',naam:'Mollen meppen',uitleg:'Tik zo snel mogelijk op de mol!',best:games.mollen,eenh:'punten'},
+    {id:'reken', emoji:'⚡',naam:'Reken-race', uitleg:'Zoveel mogelijk tafelsommen in 30s.',best:games.reken,eenh:'goed'},
+    {id:'sprint',emoji:'➕',naam:'Som-sprint', uitleg:'Plus- en minsommen op tijd.',best:games.sprint,eenh:'goed'},
+    {id:'simon', emoji:'🎨',naam:'Volg de kleuren',uitleg:'Onthoud en herhaal de kleurenreeks.',best:games.simon,eenh:'niveau'},
+    {id:'memory',emoji:'🃏',naam:'Geheugenspel',uitleg:'Vind alle paren in zo min mogelijk beurten.',best:games.memory,eenh:'beurten',lager:true},
+    {id:'hoger', emoji:'🔢',naam:'Hoger of lager',uitleg:'Raad het getal met zo min mogelijk gokken.',best:games.hoger,eenh:'punten'},
+    {id:'groter',emoji:'🐘',naam:'Groter getal',uitleg:'Tik snel het grootste getal aan.',best:games.groter,eenh:'goed'},
+    {id:'paroon',emoji:'🔀',naam:'Even of oneven',uitleg:'Kies snel: even of oneven?',best:games.paroon,eenh:'goed'},
+    {id:'woord', emoji:'🔤',naam:'Woord-warwinkel',uitleg:'Zet de letters in de goede volgorde.',best:games.woord,eenh:'woorden'},
+    {id:'klok',  emoji:'🕐',naam:'Klok-race',   uitleg:'Lees de klok en kies de juiste tijd.',best:games.klok,eenh:'goed'},
+    {id:'veelvoud',emoji:'✖️',naam:'Veelvouden-vangst',uitleg:'Tik alleen de veelvouden aan!',best:games.veelvoud,eenh:'goed'},
+    {id:'bke',   emoji:'⭕',naam:'Boter-kaas-eieren',uitleg:'Speel tegen de computer.',best:games.bke,eenh:'winst'},
   ];
   return (
     <div>
       <div className="topbar"><button className="back" onClick={onBack}>← terug</button><span className="pill">🎮 Spelletjes</span></div>
-      <p className="muted center" style={{marginBottom:12}}>Even ontspannen tussendoor 😄</p>
+      <p className="muted center" style={{marginBottom:12}}>Even ontspannen tussendoor 😄 — 12 spellen!</p>
       <div className="wrap">
         {tegels.map(t=>(
-          <div key={t.id} className="card" style={{flex:1,minWidth:200,cursor:'pointer'}} onClick={()=>setSpel(t.id)}>
-            <div style={{fontSize:40,textAlign:'center'}}>{t.emoji}</div>
-            <h3 style={{textAlign:'center',margin:'6px 0'}}>{t.naam}</h3>
-            <p className="muted" style={{fontSize:13,textAlign:'center'}}>{t.uitleg}</p>
-            <div className="center" style={{marginTop:6,fontSize:13,fontWeight:700}}>🏆 record: {t.best||'—'} {t.best?t.eenh:''}</div>
+          <div key={t.id} className="card" style={{flex:1,minWidth:150,cursor:'pointer'}} onClick={()=>setSpel(t.id)}>
+            <div style={{fontSize:38,textAlign:'center'}}>{t.emoji}</div>
+            <h3 style={{textAlign:'center',margin:'6px 0',fontSize:17}}>{t.naam}</h3>
+            <p className="muted" style={{fontSize:12,textAlign:'center'}}>{t.uitleg}</p>
+            <div className="center" style={{marginTop:6,fontSize:13,fontWeight:700}}>🏆 {(t.best!==undefined)?(t.best+' '+t.eenh):'—'}</div>
           </div>
         ))}
       </div>
     </div>
   );
 }
+/* ===== 9 extra spelletjes ===== */
+function SpelKader({titel,children,onBack}){ return (
+  <div><div className="topbar"><button className="back" onClick={onBack}>← terug</button><span className="pill">{titel}</span></div>{children}</div>
+); }
+function SimonSpel({best,onBack,onScore,geluid}){
+  const kleuren=['#e3405a','#22aa77','#3399ff','#f5b301'];
+  const [reeks,setReeks]=useState([]);
+  const [actief,setActief]=useState(-1);
+  const [beurt,setBeurt]=useState(false);
+  const [pos,setPos]=useState(0);
+  const [af,setAf]=useState(false);
+  function toon(r){ setBeurt(false); let i=0;
+    const stap=()=>{ if(i>=r.length){ setBeurt(true); setPos(0); return; }
+      setActief(r[i]); if(geluid) speel('goed',geluid);
+      setTimeout(()=>{ setActief(-1); i++; setTimeout(stap,240); },440); };
+    setTimeout(stap,500);
+  }
+  function start(){ setAf(false); const r=[ri(0,3)]; setReeks(r); toon(r); }
+  function tik(n){ if(!beurt||af) return; setActief(n); setTimeout(()=>setActief(-1),160);
+    if(n===reeks[pos]){ if(pos+1>=reeks.length){ const r=[...reeks,ri(0,3)]; setReeks(r); toon(r); } else setPos(pos+1); }
+    else { speel('fout',geluid); setAf(true); setBeurt(false); onScore(reeks.length-1); }
+  }
+  return <SpelKader titel="🎨 Volg de kleuren" onBack={onBack}>
+    <div className="card center"><div style={{fontWeight:700}}>Niveau: {reeks.length} · record {best||'—'}</div>
+      {(!beurt&&!reeks.length)||af ? <button className="btn" style={{marginTop:10}} onClick={start}>{af?'Nog een keer 🔁':'Start 🚀'}</button>
+        : <div className="muted" style={{marginTop:6}}>{beurt?'Jouw beurt — herhaal de reeks':'Kijk goed…'}</div>}
+      {af && <p style={{marginTop:8,fontWeight:600}}>Je haalde niveau {reeks.length-1}! {(reeks.length-1)>=best?'🎉 Record!':''}</p>}
+    </div>
+    <div className="gamegrid" style={{gridTemplateColumns:'repeat(2,1fr)',maxWidth:280,margin:'12px auto'}}>
+      {kleuren.map((c,i)=>(<div key={i} className="gamecell" style={{background:actief===i?c:c+'66',border:'2px solid '+c,minHeight:90}} onClick={()=>tik(i)}></div>))}
+    </div>
+  </SpelKader>;
+}
+function HogerLager({best,onBack,onScore,geluid}){
+  const [doel,setDoel]=useState(()=>ri(1,100));
+  const [lo,setLo]=useState(1); const [hi,setHi]=useState(100);
+  const [gok,setGok]=useState(''); const [pog,setPog]=useState(0);
+  const [tip,setTip]=useState('Ik denk aan een getal van 1 t/m 100.');
+  const [klaar,setKlaar]=useState(false);
+  function raad(){ const g=Number(gok); if(!g) return; setPog(p=>p+1); setGok('');
+    if(g===doel){ speel('goed',geluid); setKlaar(true); const punten=Math.max(1,12-(pog+1)); setTip('🎉 Goed! In '+(pog+1)+' keer.'); onScore(punten); }
+    else if(g<doel){ setTip('Hoger! ⬆️'); setLo(Math.max(lo,g+1)); }
+    else { setTip('Lager! ⬇️'); setHi(Math.min(hi,g-1)); }
+  }
+  function opnieuw(){ setDoel(ri(1,100)); setLo(1); setHi(100); setPog(0); setGok(''); setKlaar(false); setTip('Nieuw getal — 1 t/m 100.'); }
+  return <SpelKader titel="🔢 Hoger of lager" onBack={onBack}>
+    <div className="card center"><div style={{fontWeight:700}}>Pogingen: {pog} · record {best||'—'} punten</div>
+      <p style={{fontSize:18,margin:'10px 0'}}>{tip}</p>
+      <div className="muted" style={{fontSize:13}}>tussen {lo} en {hi}</div>
+      {!klaar ? <div className="answerrow" style={{maxWidth:220,margin:'10px auto'}}>
+          <input className="f" inputMode="numeric" value={gok} onChange={e=>setGok(e.target.value.replace(/\D/g,''))} onKeyDown={e=>{if(e.key==='Enter')raad();}} placeholder="jouw gok"/>
+        </div> : null}
+      <button className="btn" onClick={klaar?opnieuw:raad}>{klaar?'Nog een keer 🔁':'Raad!'}</button>
+    </div>
+  </SpelKader>;
+}
+function TijdSpel({titel,best,onBack,onScore,geluid,duur,maak,render,juist}){
+  const [actief,setActief]=useState(false);
+  const [tijd,setTijd]=useState(duur);
+  const [score,setScore]=useState(0);
+  const [item,setItem]=useState(maak);
+  useEffect(()=>{ if(!actief) return;
+    if(tijd<=0){ setActief(false); onScore(score); return; }
+    const to=setTimeout(()=>setTijd(t=>t-1),1000); return ()=>clearTimeout(to);
+  },[tijd,actief]);
+  function start(){ setScore(0); setTijd(duur); setItem(maak()); setActief(true); }
+  function kies(keuze){ if(!actief) return;
+    if(juist(item,keuze)){ setScore(s=>s+1); speel('goed',geluid); } else { speel('fout',geluid); }
+    setItem(maak());
+  }
+  return <SpelKader titel={titel} onBack={onBack}>
+    <div className="card center"><div style={{fontWeight:700}}>⏱ {tijd}s · 🏆 {score} · record {best||'—'}</div>
+      {actief ? render(item,kies) : <div style={{marginTop:10}}>{score>0&&<p style={{fontWeight:600}}>Je had er {score} goed! {score>=best?'🎉 Record!':''}</p>}<button className="btn" onClick={start}>{score>0?'Nog een keer 🔁':'Start 🚀'}</button></div>}
+    </div>
+  </SpelKader>;
+}
+function GroterGetal(p){ return <TijdSpel {...p} titel="🐘 Groter getal" duur={30}
+  maak={()=>{let a=ri(1,999),b=ri(1,999); if(a===b)b++; return {a,b};}}
+  juist={(it,k)=>k===(it.a>it.b?'a':'b')}
+  render={(it,kies)=>(<div style={{marginTop:12}}><p className="muted">Tik het grootste getal</p>
+    <div className="wrap center" style={{marginTop:8}}>
+      <button className="btn" style={{fontSize:24,minWidth:110}} onClick={()=>kies('a')}>{it.a}</button>
+      <button className="btn" style={{fontSize:24,minWidth:110}} onClick={()=>kies('b')}>{it.b}</button></div></div>)}/>; }
+function EvenOneven(p){ return <TijdSpel {...p} titel="🔀 Even of oneven" duur={30}
+  maak={()=>({n:ri(1,99)})}
+  juist={(it,k)=>k===(it.n%2===0?'even':'oneven')}
+  render={(it,kies)=>(<div style={{marginTop:12}}><div style={{fontSize:44,fontWeight:800}}>{it.n}</div>
+    <div className="wrap center" style={{marginTop:8}}>
+      <button className="btn" onClick={()=>kies('even')}>Even</button>
+      <button className="btn accent" onClick={()=>kies('oneven')}>Oneven</button></div></div>)}/>; }
+function WoordWar({best,onBack,onScore,geluid}){
+  const woorden=['appel','banaan','school','vriend','zomer','winter','boek','fiets','tafel','bloem','vogel','strand','muziek','kikker','wolk','sleutel','koning','trein','ballon','draak'];
+  const [woord,setWoord]=useState(()=>pick(woorden));
+  const [door,setDoor]=useState('');
+  const [val,setVal]=useState(''); const [goed,setGoed]=useState(0); const [msg,setMsg]=useState('');
+  useEffect(()=>{ let s=woord; do{ s=shuffle(woord.split('')).join(''); }while(s===woord&&woord.length>1); setDoor(s); },[woord]);
+  function check(){ if(norm(val)===norm(woord)){ speel('goed',geluid); setGoed(g=>g+1); setMsg('✅ Goed!'); setTimeout(()=>{setMsg('');setVal('');setWoord(pick(woorden));},600);} else { speel('fout',geluid); setMsg('Nog niet…'); setTimeout(()=>setMsg(''),900);} }
+  return <SpelKader titel="🔤 Woord-warwinkel" onBack={onBack}>
+    <div className="card center"><div style={{fontWeight:700}}>Goed: {goed} · record {best||'—'}</div>
+      <div style={{fontSize:34,fontWeight:800,letterSpacing:4,margin:'12px 0',textTransform:'uppercase'}}>{door}</div>
+      <div className="answerrow" style={{maxWidth:260,margin:'0 auto'}}>
+        <input className="f" value={val} onChange={e=>setVal(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')check();}} placeholder="welk woord?"/>
+      </div>
+      {msg && <div style={{fontWeight:600,marginTop:8}}>{msg}</div>}
+      <div className="wrap center" style={{marginTop:10}}>
+        <button className="btn" onClick={check}>Controleer</button>
+        <button className="btn ghost sm" onClick={()=>{onScore(goed);setWoord(pick(woorden));setVal('');}}>Stoppen &amp; opslaan</button>
+      </div>
+    </div>
+  </SpelKader>; }
+function KlokRace(p){ return <TijdSpel {...p} titel="🕐 Klok-race" duur={40}
+  maak={()=>{const u=ri(1,12); const m=pick([0,15,30,45]); const goed=(u%12)+':'+(m<10?'0'+m:m);
+    const opts=new Set([goed]); while(opts.size<3){ const uu=ri(1,12), mm=pick([0,15,30,45]); opts.add((uu%12)+':'+(mm<10?'0'+mm:mm)); }
+    return {u,m,goed,opts:shuffle([...opts])}; }}
+  juist={(it,k)=>k===it.goed}
+  render={(it,kies)=>(<div style={{marginTop:8}}><div style={{display:'flex',justifyContent:'center'}}><Figure ill={{type:'klok',uur:it.u,min:it.m}}/></div>
+    <div className="wrap center" style={{marginTop:8}}>{it.opts.map((o,i)=><button key={i} className="btn" onClick={()=>kies(o)}>{o}</button>)}</div></div>)}/>; }
+function Veelvouden({best,onBack,onScore,geluid}){
+  const [tafel,setTafel]=useState(()=>ri(2,9));
+  const [getallen,setGetallen]=useState([]);
+  const [actief,setActief]=useState(false);
+  const [score,setScore]=useState(0); const [tijd,setTijd]=useState(30);
+  const [gekozen,setGekozen]=useState({});
+  function nieuwRij(t){ const arr=[]; for(let i=0;i<9;i++){ if(Math.random()<0.45) arr.push(t*ri(1,9)); else { let x; do{x=ri(2,90);}while(x%t===0); arr.push(x);} } return arr; }
+  useEffect(()=>{ if(!actief) return;
+    if(tijd<=0){ setActief(false); onScore(score); return; }
+    const to=setTimeout(()=>setTijd(x=>x-1),1000); return ()=>clearTimeout(to);
+  },[tijd,actief]);
+  function start(){ const t=ri(2,9); setTafel(t); setGetallen(nieuwRij(t)); setScore(0); setTijd(30); setGekozen({}); setActief(true); }
+  function tik(i){ if(!actief||gekozen[i]) return; const n=getallen[i];
+    if(n%tafel===0){ setScore(s=>s+1); speel('goed',geluid); setGekozen({...gekozen,[i]:'ok'}); }
+    else { setScore(s=>Math.max(0,s-1)); speel('fout',geluid); setGekozen({...gekozen,[i]:'no'}); }
+    setTimeout(()=>{ setGetallen(nieuwRij(tafel)); setGekozen({}); }, 500);
+  }
+  return <SpelKader titel="✖️ Veelvouden-vangst" onBack={onBack}>
+    <div className="card center"><div style={{fontWeight:700}}>⏱ {tijd}s · 🏆 {score} · record {best||'—'}</div>
+      {actief ? <p style={{marginTop:6}}>Tik alle veelvouden van <b>{tafel}</b></p>
+        : <div style={{marginTop:10}}>{score>0&&<p style={{fontWeight:600}}>Je had er {score} goed! {score>=best?'🎉 Record!':''}</p>}<button className="btn" onClick={start}>{score>0?'Nog een keer 🔁':'Start 🚀'}</button></div>}
+    </div>
+    {actief && <div className="gamegrid" style={{gridTemplateColumns:'repeat(3,1fr)',maxWidth:320,margin:'12px auto'}}>
+      {getallen.map((n,i)=>(<div key={i} className="gamecell" style={{fontSize:20,background:gekozen[i]==='ok'?'#eaf7e2':(gekozen[i]==='no'?'#fbe2e2':'#fff')}} onClick={()=>tik(i)}>{n}</div>))}
+    </div>}
+  </SpelKader>; }
+function BoterKaasEieren({best,onBack,onScore,geluid}){
+  const leeg=Array(9).fill('');
+  const [bord,setBord]=useState(leeg); const [klaar,setKlaar]=useState(''); const [winst,setWinst]=useState(best||0);
+  const lijnen=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  function win(b,s){ return lijnen.some(l=>l.every(i=>b[i]===s)); }
+  function zet(i){ if(bord[i]||klaar) return; const b=bord.slice(); b[i]='🙂'; if(win(b,'🙂')){ setBord(b); setKlaar('jij'); speel('goed',geluid); const nw=(best||0)+1; setWinst(nw); onScore(nw); return; }
+    if(b.every(x=>x)){ setBord(b); setKlaar('gelijk'); return; }
+    // computer: win, anders blokkeer, anders midden/random
+    const leegIdx=b.map((x,j)=>x?null:j).filter(x=>x!==null);
+    let keuze=null;
+    for(const j of leegIdx){ const t=b.slice(); t[j]='🤖'; if(win(t,'🤖')){keuze=j;break;} }
+    if(keuze===null) for(const j of leegIdx){ const t=b.slice(); t[j]='🙂'; if(win(t,'🙂')){keuze=j;break;} }
+    if(keuze===null && !b[4]) keuze=4;
+    if(keuze===null) keuze=pick(leegIdx);
+    b[keuze]='🤖'; if(win(b,'🤖')){ setBord(b); setKlaar('computer'); speel('fout',geluid); return; }
+    if(b.every(x=>x)){ setBord(b); setKlaar('gelijk'); return; }
+    setBord(b);
+  }
+  function opnieuw(){ setBord(leeg); setKlaar(''); }
+  return <SpelKader titel="⭕ Boter-kaas-eieren" onBack={onBack}>
+    <div className="card center"><div style={{fontWeight:700}}>Gewonnen: {winst} keer</div>
+      {klaar && <p style={{fontWeight:700,marginTop:6}}>{klaar==='jij'?'🎉 Jij wint!':klaar==='computer'?'🤖 De computer wint.':'🤝 Gelijkspel!'}</p>}
+      <div className="gamegrid" style={{gridTemplateColumns:'repeat(3,1fr)',maxWidth:240,margin:'12px auto'}}>
+        {bord.map((c,i)=>(<div key={i} className="gamecell" style={{fontSize:30,minHeight:64}} onClick={()=>zet(i)}>{c}</div>))}
+      </div>
+      <button className="btn" onClick={opnieuw}>Nieuw potje 🔁</button>
+    </div>
+  </SpelKader>; }
+function SomSprint(p){ return <TijdSpel {...p} titel="➕ Som-sprint" duur={30}
+  maak={()=>{ const plus=pick([true,false]); let a=ri(2,20),b=ri(2,20); if(!plus&&b>a){const t=a;a=b;b=t;} return {a,b,plus,ans:plus?a+b:a-b}; }}
+  juist={(it,k)=>Number(k)===it.ans}
+  render={(it,kies)=>(<SprintInvoer it={it} kies={kies}/>)}/>; }
+function SprintInvoer({it,kies}){ const [v,setV]=useState(''); const ref=useRef(null);
+  useEffect(()=>{ setV(''); setTimeout(()=>ref.current&&ref.current.focus(),40); },[it]);
+  return (<div style={{marginTop:10}}><div style={{fontSize:32,fontWeight:800}}>{it.a} {it.plus?'+':'−'} {it.b}</div>
+    <input ref={ref} className="f" style={{maxWidth:140,margin:'10px auto',textAlign:'center',fontSize:22}} inputMode="numeric"
+      value={v} onChange={e=>{const x=e.target.value.replace(/[^0-9-]/g,'');setV(x); if(Number(x)===it.ans){kies(x);}}} placeholder="?"/></div>); }
 function MollenSpel({best,onBack,onScore,geluid}){
   const [actief,setActief]=useState(false);
   const [pos,setPos]=useState(-1);
