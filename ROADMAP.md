@@ -24,12 +24,14 @@ Instelbaar moeilijkheidsniveau per kind (**Auto / 1 / 2 / 3**; Auto wordt vanzel
 
 ## Motivatie & adherence (per kind afgestemd)
 - **Amine — voetbal/game-thema:** eigen taal en beleving (XP i.p.v. punten, **doelpunten** i.p.v. sommen, "⚽ GOAL!" bij goed antwoord, voetbal-confetti) en een **rangen-ladder** (Pupil → Talent → Basisspeler → … → Kampioen → Legende) met een voortgangsbalk naar de volgende rang. Sluit aan bij wat hem motiveert (spelen, voetbal) zodat hij blijft oefenen.
-- **Alle kinderen — eerlijke beloning (zakgeld):** de app rekent per dag uit wat een sessie **eerlijk** waard is; papa/mama betaalt pas uit via de ouder-modus. Bij Amine loopt dit naast zijn voetbal/game-thema (XP en rangen blijven). Alleen **écht bewezen** werk telt:
-  - alleen "sterk goed" = de **eerste** keer goed, **zónder hint**, op een som die nog niet beheerst was (€ 0,20 per stuk, tot € 8) — en elke som telt **maar één keer per dag** mee, zodat dezelfde vraag herhalen de beloning niet opdrijft;
+- **Alle kinderen — beloning naar resultaat & niveau (zakgeld):** de app rekent per dag uit wat een sessie **eerlijk** waard is; papa/mama betaalt pas uit via de ouder-modus. Bij Amine loopt dit naast zijn voetbal/game-thema (XP en rangen blijven). Beloond wordt **succes, niet alleen bezig zijn**:
+  - alleen "sterk goed" = de **eerste** keer goed, **zónder hint**, op een nog niet beheerste som, en **moeilijker = meer waard** (niveau 1/2/3 → 1/2/3 punten × € 0,10). Elke som telt **maar één keer per dag** mee;
   - een **nauwkeurigheidspoort** tegen gok-/haastwerk: ≥ 85% vol tarief, ≥ 70% half, daaronder telt het niet;
-  - een **"klaar voor de toets"-bonus**: een gehaalde oefentoets (≥ 80%) geeft € 3, een proeftoets € 5;
-  - een **dagplafond van € 12**. Zo is belonen leuk, eerlijk én begrensd, en loont zorgvuldig werk meer dan veel-klikken.
-  De ouder-modus toont per meisje het eerlijk verdiende bedrag met een knop **"Markeer betaald"**.
+  - een **toetsbonus die met de score schaalt** (hoe beter de oefen-/proeftoets, hoe hoger);
+  - een dagplafond én een **hard weekbudget per kind** (standaard **€ 20/week**, per kind instelbaar) — de app betaalt nooit meer uit dan dat, zodat de beloning succes-gericht én begrensd blijft.
+  Het ouder-dashboard toont per kind het verdiende bedrag, de weekstand (uitbetaald/budget) en een knop **"Markeer betaald"**.
+- **Volwassen ouder-/admin-dashboard:** beheersing % per kind en per vak, aandachtspunten, foutenschrift, per kind instelbaar weekbudget/dagdoel/niveau, betaal-registratie, en **back-up exporteren/terugzetten**.
+- **Online opslag (cloud):** resultaten centraal via een familiecode + pincode (beveiligde databasefuncties; de opslag is niet publiek benaderbaar). Op elk toestel inloggen = dezelfde resultaten, altijd en overal te raadplegen. De app werkt ook gewoon offline en synct daarna.
 
 ## To-do — verder uitbreiden (geprioriteerd)
 1. **Talen verdiepen** (alle kinderen): woordenschat per thema, meer werkwoordstijden, langere zinnen.
