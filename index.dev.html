@@ -153,6 +153,10 @@ function themaVan(pid){return THEMES[(PROFILES[pid]&&PROFILES[pid].thema)||'stan
 const STANDAARD_WACHTWOORD='Bennaclan';
 function kidPw(store,pid){ return (store&&store.kidpw&&store.kidpw[pid]) || STANDAARD_WACHTWOORD; }
 function pwGelijk(a,b){ return String(a||'').trim().toLowerCase()===String(b||'').trim().toLowerCase(); }
+// Per-kind account: het kind logt in met zijn naam + wachtwoord (standaard 'Bennaclan').
+// De accountcode is afgeleid van de naam binnen de 'bennaclan'-familie, zodat het op elk toestel gelijk is.
+function accVan(store,pid){ const a=store&&store.kidacc&&store.kidacc[pid];
+  return (a&&a.code)? a : {code:'bennaclan-'+pid, pw:STANDAARD_WACHTWOORD}; }
 function rangVoor(thema, punten){
   const r=thema.rangen; let i=0;
   for(let k=0;k<r.length;k++){ if(punten>=r[k][0]) i=k; }
@@ -1850,6 +1854,7 @@ function loadStore(){
   if(typeof s.geluid!=='boolean') s.geluid=true;   // geluid standaard aan
   if(!s.cloud||typeof s.cloud!=='object') s.cloud={household:'',pin:'',lastServer:null,lastSync:null};
   if(!s.kidpw||typeof s.kidpw!=='object') s.kidpw={};   // per kind een wachtwoord (standaard 'Bennaclan')
+  if(!s.kidacc||typeof s.kidacc!=='object') s.kidacc={};   // per kind een online account {code,pw} — scores volgen het kind, niet het toestel
   if(!s.games||typeof s.games!=='object') s.games={};   // topscores van de spelletjes
   if(typeof s.wedstrijdAan!=='boolean') s.wedstrijdAan=true;   // vriend uitdagen toegestaan
   if(!s.zomer||typeof s.zomer!=='object') s.zomer={aan:false, start:null, weken:7, doel:50, bonus:15};   // zomer-challenge
@@ -1915,6 +1920,7 @@ function mergeStore(local, cloud){
   for(const e of [...(local.custom||[]),...(cloud.custom||[])]){ if(e&&!cseen.has(e.id)){cseen.add(e.id); out.custom.push(e);} }
   out.games={...(cloud.games||{})}; for(const k of Object.keys(local.games||{})) out.games[k]=_max(out.games[k], local.games[k]);
   out.kidpw={...(cloud.kidpw||{}),...(local.kidpw||{})};
+  out.kidacc={...(cloud.kidacc||{}),...(local.kidacc||{})};
   out.zomer=local.zomer||cloud.zomer||out.zomer;
   out.pin=local.pin||cloud.pin||'1234';
   return out;
@@ -2026,6 +2032,7 @@ function App(){
   const [cloudStatus,setCloudStatus]=useState('');  // korte statusmelding voor de ouder-modus
   const pushTimer=useRef(null);
   const pulledOnce=useRef(false);
+  const storeRef=useRef(store); storeRef.current=store;
 
   const persist=(updater)=>setStore(prev=>{
     const next=typeof updater==='function'?updater(prev):updater; saveStore(next);
@@ -2067,6 +2074,44 @@ function App(){
     setCloudStatus('Ingelogd — samengevoegd ✓'); return r;
   }
   function cloudDisconnect(){ persist(prev=>({...prev, cloud:{household:'',pin:'',lastServer:null,lastSync:null}})); setCloudStatus('Ontkoppeld (alleen nog lokaal).'); }
+
+  // ---- Per-kind account: scores volgen het KIND (op elk toestel), niet het toestel ----
+  const childTimers=useRef({});
+  function scheduleChildPush(pid){
+    if(childTimers.current[pid]) clearTimeout(childTimers.current[pid]);
+    childTimers.current[pid]=setTimeout(()=>childPush(pid),1500);
+  }
+  async function childPush(pid){
+    const s=storeRef.current; const acc=accVan(s,pid); if(!acc.code||!acc.pw) return;
+    try{ await cloudCall('oefenapp_save',{p_household:acc.code,p_pin:acc.pw,p_data:{prog:normalizeProg(s.prog[pid])}}); }catch(e){}
+  }
+  async function childRegister(pid, code, pw){   // maak een nieuw account voor dit kind
+    code=String(code||'').trim().toLowerCase();
+    await cloudCall('oefenapp_register',{p_household:code,p_pin:pw,p_data:{prog:normalizeProg(storeRef.current.prog[pid])}});
+    persist(prev=>({...prev, kidacc:{...(prev.kidacc||{}), [pid]:{code,pw}}}));
+    return true;
+  }
+  async function childLogin(pid, code, pw){       // log in met naam + wachtwoord; haal scores op (of maak account aan)
+    code=String(code||'').trim().toLowerCase();
+    let r;
+    try{ r=await cloudCall('oefenapp_load',{p_household:code,p_pin:pw}); }
+    catch(e){
+      if(/niet gevonden/i.test(e&&e.message||'')){   // account bestaat nog niet → aanmaken met huidige scores
+        await cloudCall('oefenapp_register',{p_household:code,p_pin:pw,p_data:{prog:normalizeProg(storeRef.current.prog[pid])}});
+        persist(prev=>({...prev, kidacc:{...(prev.kidacc||{}), [pid]:{code,pw}}}));
+        return true;
+      }
+      throw e;                                        // onjuist wachtwoord of geen verbinding
+    }
+    const cloudProg=(r.data&&r.data.prog)||{};        // gevonden → samenvoegen (geen verlies)
+    let snap=null;
+    setStore(prev=>{
+      const merged={...prev, prog:{...prev.prog, [pid]:mergeProg(prev.prog[pid], cloudProg)}, kidacc:{...(prev.kidacc||{}), [pid]:{code,pw}}};
+      saveStore(merged); snap=merged; return merged;
+    });
+    if(snap){ try{ await cloudCall('oefenapp_save',{p_household:code,p_pin:pw,p_data:{prog:normalizeProg(snap.prog[pid])}}); }catch(e){} }
+    return true;
+  }
   async function cloudMerge(){   // haal op, voeg samen, en zet terug → zelfde score overal
     const c=store.cloud; if(!c||!c.household||!c.pin){ setCloudStatus('Koppel eerst een familiecode.'); return; }
     setCloudStatus('Bezig met samenvoegen…');
@@ -2124,14 +2169,17 @@ function App(){
 
   function setGoal(pid, g){
     persist(prev=>{const pr=normalizeProg(prev.prog[pid]); pr.goal=g; return {...prev, prog:{...prev.prog,[pid]:pr}};});
+    scheduleChildPush(pid);
   }
   function setNiveau(pid, n){
     persist(prev=>{const pr=normalizeProg(prev.prog[pid]); pr.niveau=n; if(n!=='auto'){pr.autoLvl=n;} pr.correctRun=0; return {...prev, prog:{...prev.prog,[pid]:pr}};});
+    scheduleChildPush(pid);
   }
   const geluid = store.geluid!==false;
   function toggleGeluid(){ persist(prev=>({...prev, geluid: !(prev.geluid!==false)})); }
   function setWeekbudget(pid, val){
     persist(prev=>{const pr=normalizeProg(prev.prog[pid]); pr.weekbudget=Math.max(0,Math.min(50,val)); return {...prev, prog:{...prev.prog,[pid]:pr}};});
+    scheduleChildPush(pid);
   }
   function markeerBetaald(pid){
     persist(prev=>{
@@ -2142,6 +2190,7 @@ function App(){
       pr.betaaldOp=vandaag;
       return {...prev, prog:{...prev.prog,[pid]:pr}};
     });
+    scheduleChildPush(pid);
   }
   function setGameScore(spel, score, lager){
     persist(prev=>{const g={...(prev.games||{})}; const cur=g[spel];
@@ -2194,6 +2243,7 @@ function App(){
       BADGES.forEach(b=>{if(!pr.badges.includes(b.id)&&b.test(pr)) pr.badges.push(b.id);});
       return {...prev, prog:{...prev.prog,[pid]:pr}};
     });
+    scheduleChildPush(pid);
   }
 
   // toets-uitslag bewaren (voor 'klaar voor toets'-bonus bij de beloning)
@@ -2207,6 +2257,7 @@ function App(){
       crediteerMissie(pr);                        // toets afgerond kan de dagmissie voltooien
       return {...prev, prog:{...prev.prog,[pid]:pr}};
     });
+    scheduleChildPush(pid);
   }
   const prog = profile? normalizeProg(store.prog[profile]) : null;
   const goTopic=(t,jr)=>{setTopic(t);setJaar(jr||'nu');setView('practice');};
@@ -2214,7 +2265,7 @@ function App(){
   return (
     <div>
       {view==='home' && <Home onPick={kiesProfiel} store={store} allEx={allEx} onAuthor={()=>setView('author')} onFormules={()=>setView('formules')} onLeertips={()=>setView('leertips')} onSpellen={()=>setView('spellen')} spelNaDoel={store.spelNaDoel===true} geluid={geluid} onToggleGeluid={toggleGeluid}/>}
-      {view==='kidlogin' && <KidLogin pid={pendingPid} store={store} onBack={()=>{setPendingPid(null);setView('home');}} onOk={()=>{const p=pendingPid;setPendingPid(null);openProfile(p);}}/>}
+      {view==='kidlogin' && <KidLogin pid={pendingPid} store={store} onLogin={childLogin} onBack={()=>{setPendingPid(null);setView('home');}} onOk={()=>{const p=pendingPid;setPendingPid(null);openProfile(p);}}/>}
       {view==='spellen' && <Spellen store={store} onBack={()=>setView('home')} onScore={setGameScore} geluid={geluid}/>}
       {view==='wedstrijd-maak' && <WedstrijdMaken profile={profile} allEx={allEx} onBack={()=>setView('hub')} geluid={geluid}/>}
       {view==='wedstrijd-vriend' && <WedstrijdSpelen code={wedstrijdCode} geluid={geluid} onBack={()=>{try{history.replaceState(null,'',location.href.split('#')[0]);}catch(e){} setWedstrijdCode(null); setView('home');}}/>}
@@ -2227,7 +2278,8 @@ function App(){
       {view==='practice' && <Practice profile={profile} vak={vak} topic={topic} jaar={jaar} allEx={allEx}
         onBack={()=>setView('hub')} onResult={recordResult} onToets={recordToets} prog={prog} onTopic={goTopic} geluid={geluid}/>}
       {view==='author' && <Author store={store} persist={persist} onBack={()=>setView('home')}
-        onSetWeekbudget={setWeekbudget} onMarkeerBetaald={markeerBetaald} cloud={cloudApi} onSetKidPw={setKidPw}/>}
+        onSetWeekbudget={setWeekbudget} onMarkeerBetaald={markeerBetaald} cloud={cloudApi} onSetKidPw={setKidPw}
+        accApi={{register:childRegister, login:childLogin}}/>}
     </div>
   );
 }
@@ -2366,31 +2418,41 @@ function Home({onPick,store,allEx,onAuthor,onFormules,onLeertips,onSpellen,spelN
   );
 }
 
-/* ---------- KIND-WACHTWOORD (starten) ---------- */
-function KidLogin({pid,store,onBack,onOk}){
+/* ---------- KIND-LOGIN (account: scores volgen het kind, op elk toestel) ---------- */
+function KidLogin({pid,store,onLogin,onBack,onOk}){
   const P=PROFILES[pid]||{naam:'',emoji:'🔒',kleur:'#5EA03A'};
+  const acc=accVan(store,pid);
   const [pw,setPw]=useState('');
   const [msg,setMsg]=useState('');
+  const [busy,setBusy]=useState(false);
   const ref=useRef(null);
   useEffect(()=>{setTimeout(()=>ref.current&&ref.current.focus(),80);},[]);
-  function probeer(){
-    if(pwGelijk(pw, kidPw(store,pid))) onOk();
+  async function probeer(){
+    const lokaalOk=pwGelijk(pw, kidPw(store,pid)) || pwGelijk(pw, acc.pw);
+    if(onLogin){
+      setBusy(true);
+      try{ await onLogin(pid, acc.code, pw); setBusy(false); onOk(); return; }
+      catch(e){ setBusy(false);
+        if(lokaalOk){ onOk(); return; }                       // offline of mismatch → lokaal wachtwoord klopt: tóch starten
+        setMsg((e&&/pincode|wachtwoord/i.test(e.message||''))?'Onjuist wachtwoord.':'Geen verbinding — probeer opnieuw.'); setPw(''); setTimeout(()=>setMsg(''),2200); return; }
+    }
+    if(lokaalOk) onOk();
     else { setMsg('Oeps, probeer nog eens.'); setPw(''); setTimeout(()=>setMsg(''),1500); }
   }
   return (
     <div>
-      <div className="topbar"><button className="back" onClick={onBack}>← terug</button><span className="pill">Wachtwoord</span></div>
+      <div className="topbar"><button className="back" onClick={onBack}>← terug</button><span className="pill">Inloggen</span></div>
       <div className="card center" style={{marginTop:20,background:P.kleur,color:'#fff'}}>
         <div style={{fontSize:46}}>{P.emoji}</div>
         <h2 style={{color:'#fff'}}>Hoi {P.naam}!</h2>
-        <p style={{opacity:.95}}>Typ je wachtwoord om te starten</p>
+        <p style={{opacity:.95}}>Log in op je eigen account</p>
       </div>
       <div className="card" style={{marginTop:12}}>
         <input ref={ref} className="f" type="password" value={pw} placeholder="wachtwoord"
           onChange={e=>setPw(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')probeer();}}/>
         {msg && <div style={{color:'var(--accent)',fontWeight:600,marginTop:8}}>{msg}</div>}
-        <div className="center" style={{marginTop:12}}><button className="btn" onClick={probeer}>Start 🚀</button></div>
-        <p className="muted center" style={{fontSize:12,marginTop:8}}>Standaard wachtwoord: Bennaclan (in te stellen in de ouder-modus)</p>
+        <div className="center" style={{marginTop:12}}><button className="btn" disabled={busy} onClick={probeer}>{busy?'Bezig…':'Start 🚀'}</button></div>
+        <p className="muted center" style={{fontSize:12,marginTop:8}}>Log in met je naam + wachtwoord <b>Bennaclan</b>. Je scores staan op je account — op elk toestel gelijk.</p>
       </div>
     </div>
   );
@@ -3386,7 +3448,30 @@ function CloudPaneel({store,cloud}){
     </div>
   );
 }
-function OuderDashboard({store,persist,onSetWeekbudget,onMarkeerBetaald,cloud,onSetKidPw}){
+function KindAccountPaneel({store,accApi}){
+  const [busy,setBusy]=useState(false);
+  const [msg,setMsg]=useState('');
+  async function zetOnline(){
+    setBusy(true); let ok=0;
+    for(const pid of Object.keys(PROFILES)){ const a=accVan(store,pid);
+      try{ await accApi.login(pid, a.code, a.pw); ok++; }catch(e){} }
+    setBusy(false); setMsg(ok+' van '+Object.keys(PROFILES).length+' accounts online gezet ✓'); setTimeout(()=>setMsg(''),3000);
+  }
+  return (
+    <div className="card" style={{marginBottom:16,background:'#eef4fb',borderLeftColor:'#3a6ea0'}}>
+      <b>👤 Kind-accounts (scores volgen het kind)</b>
+      <p className="muted" style={{fontSize:13,marginTop:4}}>Elk kind logt op elk toestel in met <b>zijn naam + wachtwoord "Bennaclan"</b>. De scores staan online op zijn eigen account — dus op elk toestel gelijk, niet meer per toestel.</p>
+      <div className="wrap" style={{marginTop:6}}>
+        {Object.entries(PROFILES).map(([pid,P])=>(<span key={pid} className="tag">{P.emoji} {P.naam}: {accVan(store,pid).code}</span>))}
+      </div>
+      {accApi && <div className="wrap" style={{marginTop:10}}>
+        <button className="btn sm" disabled={busy} onClick={zetOnline}>{busy?'Bezig…':'☁️ Zet alle accounts nu online'}</button>
+      </div>}
+      {msg && <div style={{color:'#2c5680',fontWeight:600,marginTop:8,fontSize:13}}>{msg}</div>}
+    </div>
+  );
+}
+function OuderDashboard({store,persist,onSetWeekbudget,onMarkeerBetaald,cloud,onSetKidPw,accApi}){
   const allEx=[...SEED,...TEMPLATES,...store.custom];
   const fileRef=useRef(null);
   function backupExport(){
@@ -3408,6 +3493,7 @@ function OuderDashboard({store,persist,onSetWeekbudget,onMarkeerBetaald,cloud,on
   }
   return (
     <div>
+      <KindAccountPaneel store={store} accApi={accApi}/>
       {cloud && <CloudPaneel store={store} cloud={cloud}/>}
       <div className="card" style={{marginBottom:16,background:'#f0f6ea',borderLeftColor:'#5EA03A'}}>
         <div className="row" style={{justifyContent:'space-between',flexWrap:'wrap',gap:8}}>
@@ -3537,7 +3623,7 @@ function KidPwPaneel({store,onSetKidPw}){
     </div>
   );
 }
-function Author({store,persist,onBack,onSetWeekbudget,onMarkeerBetaald,cloud,onSetKidPw}){
+function Author({store,persist,onBack,onSetWeekbudget,onMarkeerBetaald,cloud,onSetKidPw,accApi}){
   const [unlocked,setUnlocked]=useState(false);
   const [pin,setPin]=useState('');
   const [form,setForm]=useState({p:'wassima',v:'wiskunde',t:'',lvl:'1',q:'',a:'',u:'',h1:'',h2:'',s:''});
@@ -3598,7 +3684,7 @@ function Author({store,persist,onBack,onSetWeekbudget,onMarkeerBetaald,cloud,onS
   return (
     <div>
       <div className="topbar"><button className="back" onClick={onBack}>← terug</button><span className="pill">Ouder-modus</span></div>
-      <OuderDashboard store={store} persist={persist} onSetWeekbudget={onSetWeekbudget} onMarkeerBetaald={onMarkeerBetaald} cloud={cloud} onSetKidPw={onSetKidPw}/>
+      <OuderDashboard store={store} persist={persist} onSetWeekbudget={onSetWeekbudget} onMarkeerBetaald={onMarkeerBetaald} cloud={cloud} onSetKidPw={onSetKidPw} accApi={accApi}/>
       <h2>Nieuwe opdracht toevoegen</h2>
 
       <div className="card" style={{marginTop:12}}>
