@@ -1809,6 +1809,7 @@ function loadStore(){
   if(!s.cloud||typeof s.cloud!=='object') s.cloud={household:'',pin:'',lastServer:null,lastSync:null};
   if(!s.kidpw||typeof s.kidpw!=='object') s.kidpw={};   // per kind een wachtwoord (standaard 'Bennaclan')
   if(!s.games||typeof s.games!=='object') s.games={};   // topscores van de spelletjes
+  if(typeof s.wedstrijdAan!=='boolean') s.wedstrijdAan=true;   // vriend uitdagen toegestaan
   for(const pid of Object.keys(PROFILES)) s.prog[pid]=normalizeProg(s.prog[pid]);
   return s;
 }
@@ -1833,6 +1834,27 @@ async function cloudCall(fn, payload){
 }
 // alleen de app-data delen (niet de cloud-config met de pincode)
 function syncData(store){ const {cloud, ...rest}=store; return rest; }
+// ---- Wedstrijd (vriend uitdagen via link) ----
+function chCreate(code,data){ return cloudCall('oefenapp_ch_create',{p_code:code,p_data:data}); }
+function chGet(code){ return cloudCall('oefenapp_ch_get',{p_code:code}); }
+function chSubmit(code,friend){ return cloudCall('oefenapp_ch_submit',{p_code:code,p_friend:friend}); }
+function wcode(){ return Math.random().toString(36).slice(2,8)+Math.random().toString(36).slice(2,6); }
+function wedstrijdLink(code){ try{ return (location.href.split('#')[0])+'#w='+code; }catch(e){ return '#w='+code; } }
+// bouw 10 vragen uit het eigen niveau van het kind (sjablonen krijgen concrete getallen)
+function bouwWedstrijd(profile, allEx){
+  let pool=(allEx||[]).filter(e=>e.p===profile && (e.jaar||'nu')==='nu');
+  pool=shuffle(pool).slice(0,10);
+  return pool.map(card=>{ const inst=instOf(card); return {q:inst.q, a:inst.a, alt:inst.alt||null, opties:inst.opties||null, u:inst.u||'', t:card.t}; });
+}
+function wedstrijdWinnaar(maker, friend){
+  if(!friend) return null;
+  if((friend.correct||0)>(maker.correct||0)) return 'vriend';
+  if((friend.correct||0)<(maker.correct||0)) return 'maker';
+  // gelijk aantal goed → snelste tijd wint
+  if((friend.secs||0)<(maker.secs||0)) return 'vriend';
+  if((friend.secs||0)>(maker.secs||0)) return 'maker';
+  return 'gelijk';
+}
 
 /* ----- Leitner: slim herhalen ----- */
 const BOX_DAGEN=[0,0,1,3,7,16];                                  // wachttijd per doosje (dagen)
@@ -1914,6 +1936,7 @@ function App(){
   const [topic,setTopic]=useState(null);
   const [jaar,setJaar]=useState('nu');         // 'nu' | 'next' (volgend leerjaar)
   const [pendingPid,setPendingPid]=useState(null);  // kind dat wachtwoord invoert
+  const [wedstrijdCode,setWedstrijdCode]=useState(null);  // vriend opent een wedstrijd-link
   const [cloudStatus,setCloudStatus]=useState('');  // korte statusmelding voor de ouder-modus
   const pushTimer=useRef(null);
   const pulledOnce=useRef(false);
@@ -1956,6 +1979,10 @@ function App(){
   }
   function cloudDisconnect(){ persist(prev=>({...prev, cloud:{household:'',pin:'',lastServer:null,lastSync:null}})); setCloudStatus('Ontkoppeld (alleen nog lokaal).'); }
 
+  // wedstrijd-link geopend (#w=CODE)? → toon de wedstrijd voor de vriend
+  useEffect(()=>{
+    try{ const m=(location.hash||'').match(/[#&]w=([a-z0-9]+)/i); if(m){ setWedstrijdCode(m[1]); setView('wedstrijd-vriend'); } }catch(e){}
+  },[]);
   // bij openen: als er een familiecode is, haal stilletjes de nieuwste resultaten op
   useEffect(()=>{
     if(pulledOnce.current) return; pulledOnce.current=true;
@@ -2079,10 +2106,13 @@ function App(){
       {view==='home' && <Home onPick={kiesProfiel} store={store} allEx={allEx} onAuthor={()=>setView('author')} onFormules={()=>setView('formules')} onLeertips={()=>setView('leertips')} onSpellen={()=>setView('spellen')} geluid={geluid} onToggleGeluid={toggleGeluid}/>}
       {view==='kidlogin' && <KidLogin pid={pendingPid} store={store} onBack={()=>{setPendingPid(null);setView('home');}} onOk={()=>{const p=pendingPid;setPendingPid(null);openProfile(p);}}/>}
       {view==='spellen' && <Spellen store={store} onBack={()=>setView('home')} onScore={setGameScore} geluid={geluid}/>}
+      {view==='wedstrijd-maak' && <WedstrijdMaken profile={profile} allEx={allEx} onBack={()=>setView('hub')} geluid={geluid}/>}
+      {view==='wedstrijd-vriend' && <WedstrijdSpelen code={wedstrijdCode} geluid={geluid} onBack={()=>{try{history.replaceState(null,'',location.href.split('#')[0]);}catch(e){} setWedstrijdCode(null); setView('home');}}/>}
       {view==='formules' && <FormulesView onBack={()=>setView('home')}/>}
       {view==='leertips' && <LeertipsView onBack={()=>setView('home')}/>}
       {view==='hub' && <Hub profile={profile} prog={prog} vak={vak} setVak={setVak} allEx={allEx}
-        onBack={()=>setView('home')} onTopic={goTopic} onSetGoal={(g)=>setGoal(profile,g)} onSetNiveau={(n)=>setNiveau(profile,n)}/>}
+        onBack={()=>setView('home')} onTopic={goTopic} onSetGoal={(g)=>setGoal(profile,g)} onSetNiveau={(n)=>setNiveau(profile,n)}
+        wedstrijdAan={store.wedstrijdAan!==false} onWedstrijd={()=>setView('wedstrijd-maak')}/>}
       {view==='practice' && <Practice profile={profile} vak={vak} topic={topic} jaar={jaar} allEx={allEx}
         onBack={()=>setView('hub')} onResult={recordResult} onToets={recordToets} prog={prog} onTopic={goTopic} geluid={geluid}/>}
       {view==='author' && <Author store={store} persist={persist} onBack={()=>setView('home')}
@@ -2333,8 +2363,161 @@ function RekenRace({best,onBack,onScore,geluid}){
   );
 }
 
+/* ---------- WEDSTRIJD: één vriend uitdagen via een link ---------- */
+function QuizSpel({vragen, onKlaar, geluid}){
+  const [n,setN]=useState(0);
+  const [val,setVal]=useState('');
+  const [goed,setGoed]=useState(0);
+  const [start]=useState(()=>Date.now());
+  const [flits,setFlits]=useState(null);
+  const ref=useRef(null);
+  const v=vragen[n];
+  useEffect(()=>{ setVal(''); setTimeout(()=>ref.current&&ref.current.focus(),60); },[n]);
+  function na(ok){
+    setFlits(ok?'goed':'fout'); speel(ok?'goed':'fout',geluid);
+    const ng=goed+(ok?1:0); setGoed(ng);
+    setTimeout(()=>{ setFlits(null);
+      if(n+1>=vragen.length){ onKlaar({correct:ng, secs:Math.round((Date.now()-start)/1000)}); }
+      else setN(n+1);
+    },500);
+  }
+  function nakijk(){ if(flits) return; na(checkAnswer({a:v.a,alt:v.alt,opties:v.opties,u:v.u}, val)); }
+  if(!v) return null;
+  return (
+    <div className="card">
+      <div className="row" style={{justifyContent:'space-between',marginBottom:6}}>
+        <span className="pill">Vraag {n+1} / {vragen.length}</span>
+        <span className="muted" style={{fontSize:13}}>{v.t} · goed: {goed}</span>
+      </div>
+      <div className="pbar" style={{marginBottom:12}}><i style={{width:Math.round(n/vragen.length*100)+'%'}}></i></div>
+      <div className="qbox">{v.q}</div>
+      {v.opties ? (
+        <div className="optiegrid">
+          {v.opties.map((opt,i)=><button key={i} className={'optiebtn'+(norm(val)===norm(opt)?' sel':'')} disabled={!!flits} onClick={()=>setVal(opt)}>{opt}</button>)}
+        </div>
+      ) : (
+        <div className="answerrow">
+          <input ref={ref} value={val} placeholder="jouw antwoord" disabled={!!flits}
+            onChange={e=>setVal(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')nakijk();}} inputMode="text"/>
+          {v.u && <div className="unit">{v.u}</div>}
+        </div>
+      )}
+      {flits==='goed' && <div className="feedback ok">✅ Goed!</div>}
+      {flits==='fout' && <div className="feedback no">❌ Het was: <b>{v.a} {v.u}</b></div>}
+      <div className="center" style={{marginTop:14}}><button className="btn" disabled={!!flits} onClick={nakijk}>Nakijken →</button></div>
+    </div>
+  );
+}
+function Uitslag({maker, friend}){
+  const w=wedstrijdWinnaar(maker, friend);
+  return (
+    <div className="card center" style={{marginTop:12}}>
+      <div style={{fontSize:44}}>{w==='gelijk'?'🤝':'🏆'}</div>
+      <h2>{!friend ? 'Nog geen tegenstander' : w==='gelijk' ? 'Gelijkspel!' : (w==='vriend'? (friend.naam||'Je vriend')+' wint!' : (maker.naam||'De maker')+' wint!')}</h2>
+      <div className="wrap" style={{justifyContent:'center',marginTop:8}}>
+        <div className="card" style={{minWidth:120}}><b>{maker.naam||'Maker'}</b><div style={{fontSize:24,fontWeight:800}}>{maker.correct}/{maker.totaal||maker.correct}</div><div className="muted" style={{fontSize:12}}>{maker.secs}s</div></div>
+        {friend && <div className="card" style={{minWidth:120}}><b>{friend.naam||'Vriend'}</b><div style={{fontSize:24,fontWeight:800}}>{friend.correct}/{maker.totaal||friend.correct}</div><div className="muted" style={{fontSize:12}}>{friend.secs}s</div></div>}
+      </div>
+      <p className="muted" style={{fontSize:13,marginTop:8}}>Meeste goed wint; bij gelijkspel telt de snelste tijd.</p>
+    </div>
+  );
+}
+function WedstrijdMaken({profile, allEx, onBack, geluid}){
+  const naam=PROFILES[profile].naam;
+  const [fase,setFase]=useState('intro');   // intro | spelen | delen
+  const [vragen]=useState(()=>bouwWedstrijd(profile, allEx));
+  const [code]=useState(wcode);
+  const [mijn,setMijn]=useState(null);
+  const [friend,setFriend]=useState(null);
+  const [fout,setFout]=useState('');
+  const [kopie,setKopie]=useState(false);
+  const link=wedstrijdLink(code);
+  async function klaar(res){
+    const maker={naam, correct:res.correct, secs:res.secs, totaal:vragen.length};
+    setMijn(maker); setFase('delen');
+    try{ await chCreate(code, {maker:naam, niveau:profile, vragen, score:{correct:res.correct,secs:res.secs}}); }
+    catch(e){ setFout('Kon de wedstrijd niet online zetten. Controleer internet en probeer opnieuw.'); }
+  }
+  async function ververs(){
+    try{ const r=await chGet(code); if(r.friend) setFriend({...r.friend, totaal:vragen.length}); else setFout('Je vriend heeft nog niet gespeeld.'); }
+    catch(e){ setFout('Kon niet ophalen: '+(e.message||'')); }
+    setTimeout(()=>setFout(''),2500);
+  }
+  function kopieer(){ try{ navigator.clipboard.writeText(link); setKopie(true); setTimeout(()=>setKopie(false),1500);}catch(e){} }
+  if(fase==='spelen') return (
+    <div><div className="topbar"><button className="back" onClick={()=>setFase('intro')}>← terug</button><span className="pill">⚔️ Jouw ronde</span></div>
+      <QuizSpel vragen={vragen} onKlaar={klaar} geluid={geluid}/></div>
+  );
+  if(fase==='delen') return (
+    <div><div className="topbar"><button className="back" onClick={onBack}>← terug</button><span className="pill">⚔️ Wedstrijd</span></div>
+      <div className="card center"><div style={{fontSize:40}}>🎯</div><h2>Jij had {mijn.correct}/{vragen.length} goed in {mijn.secs}s</h2>
+        <p className="muted">Stuur de link naar één vriend. Jullie spelen dezelfde vragen!</p>
+        <div className="card" style={{marginTop:8,wordBreak:'break-all',fontSize:13}}>{link}</div>
+        <div className="wrap center" style={{marginTop:10}}>
+          <button className="btn" onClick={kopieer}>{kopie?'Gekopieerd ✓':'📋 Kopieer link'}</button>
+          <button className="btn ghost" onClick={ververs}>🔄 Uitslag ophalen</button>
+        </div>
+        {fout && <div style={{color:'var(--accent)',fontWeight:600,marginTop:8,fontSize:13}}>{fout}</div>}
+      </div>
+      {friend && <Uitslag maker={mijn} friend={friend}/>}
+    </div>
+  );
+  return (
+    <div><div className="topbar"><button className="back" onClick={onBack}>← terug</button><span className="pill">⚔️ Wedstrijd</span></div>
+      <div className="card center"><div style={{fontSize:44}}>⚔️</div><h2>Daag een vriend uit!</h2>
+        <p className="muted">Jij speelt {vragen.length} vragen op jouw niveau. Daarna krijg je een link voor <b>één</b> vriend om dezelfde vragen te doen. Wie heeft de meeste goed?</p>
+        <p className="muted" style={{fontSize:12,marginTop:6}}>Veilig: het is alleen een spelletje, zonder persoonlijke gegevens.</p>
+        <button className="btn" style={{marginTop:10}} disabled={vragen.length===0} onClick={()=>setFase('spelen')}>Start jouw ronde 🚀</button>
+      </div>
+    </div>
+  );
+}
+function WedstrijdSpelen({code, onBack, geluid}){
+  const [st,setSt]=useState('laden');   // laden | naam | spelen | uitslag | fout
+  const [ch,setCh]=useState(null);
+  const [naam,setNaam]=useState('');
+  const [friend,setFriend]=useState(null);
+  const [fout,setFout]=useState('');
+  useEffect(()=>{ let ok=true;
+    chGet(code).then(r=>{ if(!ok) return; setCh(r);
+      if(r.friend){ setFriend({...r.friend, totaal:(r.data.vragen||[]).length}); setSt('uitslag'); }
+      else setSt('naam');
+    }).catch(e=>{ if(ok){ setFout(e.message||'Uitdaging niet gevonden.'); setSt('fout'); } });
+    return ()=>{ok=false;};
+  },[code]);
+  const maker=ch? {naam:ch.data.maker, correct:(ch.data.score||{}).correct, secs:(ch.data.score||{}).secs, totaal:(ch.data.vragen||[]).length} : null;
+  async function klaar(res){
+    const f={naam:naam.trim()||'Vriend', correct:res.correct, secs:res.secs};
+    try{ const r=await chSubmit(code, f); setFriend({...(r.friend||f), totaal:(ch.data.vragen||[]).length}); setSt('uitslag'); }
+    catch(e){ setFout('Kon je uitslag niet opslaan: '+(e.message||'')); setSt('fout'); }
+  }
+  if(st==='laden') return <div className="card center" style={{marginTop:40}}>⏳ Wedstrijd laden…</div>;
+  if(st==='fout')  return <div><div className="topbar"><button className="back" onClick={onBack}>← naar start</button></div><div className="card center" style={{marginTop:20}}><div style={{fontSize:40}}>😕</div><p>{fout}</p></div></div>;
+  if(st==='naam') return (
+    <div><div className="topbar"><button className="back" onClick={onBack}>← naar start</button><span className="pill">⚔️ Uitdaging</span></div>
+      <div className="card center"><div style={{fontSize:44}}>⚔️</div><h2>{maker.naam} daagt je uit!</h2>
+        <p className="muted">Speel dezelfde {maker.totaal} vragen. Wie heeft de meeste goed?</p>
+        <input className="f" style={{maxWidth:220,margin:'12px auto'}} value={naam} onChange={e=>setNaam(e.target.value)} placeholder="Jouw naam"/>
+        <div><button className="btn" onClick={()=>setSt('spelen')}>Start 🚀</button></div>
+        <p className="muted" style={{fontSize:12,marginTop:8}}>Veilig: alleen een spelletje, geen persoonlijke gegevens nodig.</p>
+      </div>
+    </div>
+  );
+  if(st==='spelen') return (
+    <div><div className="topbar"><span className="pill">⚔️ Jouw ronde tegen {maker.naam}</span></div>
+      <QuizSpel vragen={ch.data.vragen||[]} onKlaar={klaar} geluid={geluid}/></div>
+  );
+  // uitslag
+  return (
+    <div><div className="topbar"><button className="back" onClick={onBack}>← naar start</button><span className="pill">⚔️ Uitslag</span></div>
+      <Uitslag maker={maker} friend={friend}/>
+      <div className="center" style={{marginTop:14}}><button className="btn ghost" onClick={onBack}>Naar de oefenapp →</button></div>
+    </div>
+  );
+}
+
 /* ---------- HUB (vak + onderwerpen) ---------- */
-function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal,onSetNiveau}){
+function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal,onSetNiveau,wedstrijdAan,onWedstrijd}){
   const P=PROFILES[profile];
   const [jaar,setJaar]=useState('nu');     // 'nu' | 'next'
   const heeftVolgend=useMemo(()=>allEx.some(e=>e.p===profile&&(e.jaar||'nu')==='next'),[allEx,profile]);
@@ -2433,6 +2616,11 @@ function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal,onSetNiveau
       <div className="center" style={{marginTop:12}}>
         <button className="btn gold" onClick={()=>onTopic('__proeftoets__',jaar)}>📝 Proeftoets — 20 vragen, alle vakken door elkaar</button>
       </div>
+
+      {/* vriend uitdagen (wedstrijd via link) */}
+      {wedstrijdAan && <div className="center" style={{marginTop:10}}>
+        <button className="btn accent" onClick={onWedstrijd}>⚔️ Daag een vriend uit</button>
+      </div>}
 
       {/* leerjaar: dit jaar / volgend jaar (vooruitkijken) */}
       {heeftVolgend && <div className="wrap" style={{margin:'14px 0 0',alignItems:'center'}}>
@@ -2894,6 +3082,12 @@ function OuderDashboard({store,persist,onSetWeekbudget,onMarkeerBetaald,cloud,on
         </div>
       </div>
       {onSetKidPw && <KidPwPaneel store={store} onSetKidPw={onSetKidPw}/>}
+      <div className="card" style={{marginBottom:16}}>
+        <div className="row" style={{justifyContent:'space-between',alignItems:'center'}}>
+          <span>⚔️ <b>Vriend uitdagen (wedstrijd via link)</b><div className="muted" style={{fontSize:12}}>Kind kan één vriend uitnodigen voor dezelfde quiz. Alleen een spelletje, geen persoonlijke gegevens.</div></span>
+          <button className={'btn sm '+((store.wedstrijdAan!==false)?'':'ghost')} onClick={()=>persist(prev=>({...prev, wedstrijdAan: !(prev.wedstrijdAan!==false)}))}>{(store.wedstrijdAan!==false)?'Aan':'Uit'}</button>
+        </div>
+      </div>
     </div>
   );
 }
