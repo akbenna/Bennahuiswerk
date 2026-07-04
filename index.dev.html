@@ -2192,6 +2192,15 @@ function App(){
     });
     scheduleChildPush(pid);
   }
+  function resetAlles(){
+    persist(prev=>{ const prog={}; for(const pid of Object.keys(PROFILES)) prog[pid]=blankProg();
+      // ook de oude hele-gezin-koppeling loskoppelen, zodat oude scores niet terugkomen via 'hoogste wint'
+      const n={...prev, prog, games:{}, cloud:{household:'',pin:'',lastServer:null,lastSync:null}}; saveStore(n); return n; });
+    // blank naar elk kind-account zetten (overschrijven of aanmaken)
+    setTimeout(()=>{ for(const pid of Object.keys(PROFILES)){ const a=accVan(storeRef.current,pid);
+      cloudCall('oefenapp_save',{p_household:a.code,p_pin:a.pw,p_data:{prog:normalizeProg(blankProg())}})
+        .catch(()=>cloudCall('oefenapp_register',{p_household:a.code,p_pin:a.pw,p_data:{prog:normalizeProg(blankProg())}}).catch(()=>{})); } }, 250);
+  }
   function setGameScore(spel, score, lager){
     persist(prev=>{const g={...(prev.games||{})}; const cur=g[spel];
       if(cur===undefined || (lager? score<cur : score>cur)) g[spel]=score; return {...prev, games:g};});
@@ -2279,7 +2288,7 @@ function App(){
         onBack={()=>setView('hub')} onResult={recordResult} onToets={recordToets} prog={prog} onTopic={goTopic} geluid={geluid}/>}
       {view==='author' && <Author store={store} persist={persist} onBack={()=>setView('home')}
         onSetWeekbudget={setWeekbudget} onMarkeerBetaald={markeerBetaald} cloud={cloudApi} onSetKidPw={setKidPw}
-        accApi={{register:childRegister, login:childLogin}}/>}
+        accApi={{register:childRegister, login:childLogin}} onReset={resetAlles}/>}
     </div>
   );
 }
@@ -3471,8 +3480,9 @@ function KindAccountPaneel({store,accApi}){
     </div>
   );
 }
-function OuderDashboard({store,persist,onSetWeekbudget,onMarkeerBetaald,cloud,onSetKidPw,accApi}){
+function OuderDashboard({store,persist,onSetWeekbudget,onMarkeerBetaald,cloud,onSetKidPw,accApi,onReset}){
   const allEx=[...SEED,...TEMPLATES,...store.custom];
+  const [resetMsg,setResetMsg]=useState('');
   const fileRef=useRef(null);
   function backupExport(){
     const blob=new Blob([JSON.stringify(store,null,2)],{type:'application/json'});
@@ -3494,6 +3504,13 @@ function OuderDashboard({store,persist,onSetWeekbudget,onMarkeerBetaald,cloud,on
   return (
     <div>
       <KindAccountPaneel store={store} accApi={accApi}/>
+      {onReset && <div className="card" style={{marginBottom:16,background:'#fdeeee',borderLeftColor:'#C23728'}}>
+        <div className="row" style={{justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:8}}>
+          <span>🗑️ <b>Alles resetten naar 0</b><div className="muted" style={{fontSize:12}}>Wist alle punten, voortgang, betalingen en spel-records — iedereen begint schoon (accounts &amp; instellingen blijven).</div></span>
+          <button className="btn accent sm" onClick={()=>{ if(confirm('Weet je het zeker? Alle scores van álle kinderen gaan naar 0 (ook online). Dit kan niet ongedaan worden gemaakt.')){ onReset(); setResetMsg('✅ Alles gereset naar 0 — iedereen begint schoon.'); setTimeout(()=>setResetMsg(''),4000);} }}>Reset naar 0</button>
+        </div>
+        {resetMsg && <div style={{color:'#2c7a2c',fontWeight:600,marginTop:8,fontSize:13}}>{resetMsg}</div>}
+      </div>}
       {cloud && <CloudPaneel store={store} cloud={cloud}/>}
       <div className="card" style={{marginBottom:16,background:'#f0f6ea',borderLeftColor:'#5EA03A'}}>
         <div className="row" style={{justifyContent:'space-between',flexWrap:'wrap',gap:8}}>
@@ -3623,7 +3640,7 @@ function KidPwPaneel({store,onSetKidPw}){
     </div>
   );
 }
-function Author({store,persist,onBack,onSetWeekbudget,onMarkeerBetaald,cloud,onSetKidPw,accApi}){
+function Author({store,persist,onBack,onSetWeekbudget,onMarkeerBetaald,cloud,onSetKidPw,accApi,onReset}){
   const [unlocked,setUnlocked]=useState(false);
   const [pin,setPin]=useState('');
   const [form,setForm]=useState({p:'wassima',v:'wiskunde',t:'',lvl:'1',q:'',a:'',u:'',h1:'',h2:'',s:''});
@@ -3684,7 +3701,7 @@ function Author({store,persist,onBack,onSetWeekbudget,onMarkeerBetaald,cloud,onS
   return (
     <div>
       <div className="topbar"><button className="back" onClick={onBack}>← terug</button><span className="pill">Ouder-modus</span></div>
-      <OuderDashboard store={store} persist={persist} onSetWeekbudget={onSetWeekbudget} onMarkeerBetaald={onMarkeerBetaald} cloud={cloud} onSetKidPw={onSetKidPw} accApi={accApi}/>
+      <OuderDashboard store={store} persist={persist} onSetWeekbudget={onSetWeekbudget} onMarkeerBetaald={onMarkeerBetaald} cloud={cloud} onSetKidPw={onSetKidPw} accApi={accApi} onReset={onReset}/>
       <h2>Nieuwe opdracht toevoegen</h2>
 
       <div className="card" style={{marginTop:12}}>
