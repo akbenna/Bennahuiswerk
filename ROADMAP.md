@@ -26,6 +26,7 @@ Instelbaar moeilijkheidsniveau per kind (**Auto / 1 / 2 / 3**; Auto wordt vanzel
 - **Levendige landingspagina:** een familie-scorebord dat meteen de resultaten toont — ranglijst met medailles, per kind de rang, punten, voortgang naar de **volgende trofee** en de dagstreak. Motiverend en vrolijk.
 - **Wachtwoord per kind om te starten:** elk kind typt een wachtwoord (standaard **Bennaclan** voor iedereen, per kind te wijzigen in de ouder-modus).
 - **Spelletjes ter ontspanning:** Mollen meppen 🦔, Geheugenspel 🃏 en Reken-race ⚡ — met een persoonlijk record per spel.
+- **Wedstrijd — daag één vriend uit ⚔️:** een kind maakt een uitdaging (10 vragen op eigen niveau), speelt zelf, en deelt een **link** met één vriend. De vriend speelt dezelfde vragen; meeste goed wint (snelste tijd als tiebreak). Veilig en gecontroleerd: alleen een quiz, geen persoonlijke gegevens, maximaal één vriend, en de ouder kan het aan-/uitzetten. Werkt via de beveiligde cloud-functies.
 
 ## Motivatie & adherence (per kind afgestemd)
 - **Amine — voetbal/game-thema:** eigen taal en beleving (XP i.p.v. punten, **doelpunten** i.p.v. sommen, "⚽ GOAL!" bij goed antwoord, voetbal-confetti) en een **rangen-ladder** (Pupil → Talent → Basisspeler → … → Kampioen → Legende) met een voortgangsbalk naar de volgende rang. Sluit aan bij wat hem motiveert (spelen, voetbal) zodat hij blijft oefenen.
