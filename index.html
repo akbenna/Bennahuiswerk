@@ -52,10 +52,25 @@
     transition:transform .1s; position:relative;overflow:hidden;
   }
   .profcard:active{transform:scale(.98);}
+  .profcard:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(0,0,0,.16);}
   .profcard .emoji{font-size:46px;}
   .profcard h2{color:#fff;font-size:26px;margin:6px 0 2px;}
   .profcard .niv{opacity:.92;font-weight:600;}
   .profcard .vakken{margin-top:10px;font-size:13px;opacity:.92;}
+  /* levendige landingspagina */
+  .hero{border-radius:var(--radius);padding:22px;text-align:center;color:#fff;
+    background:linear-gradient(120deg,#5EA03A,#3a6ea0 55%,#c94f9a);background-size:200% 200%;animation:heroShift 12s ease infinite;box-shadow:0 8px 24px rgba(0,0,0,.14);}
+  @keyframes heroShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  .miniprog{height:10px;background:rgba(255,255,255,.35);border-radius:999px;overflow:hidden;margin-top:8px;}
+  .miniprog i{display:block;height:100%;background:#fff;border-radius:999px;transition:width .5s;}
+  .medal{font-size:18px;}
+  .rankrow{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;background:#fff;border:1px solid var(--line);margin-top:8px;}
+  .gamecell{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;font-size:30px;border-radius:12px;
+    background:#fff;border:2px solid var(--line);cursor:pointer;user-select:none;transition:transform .08s,background .15s;}
+  .gamecell:active{transform:scale(.94);}
+  .gamegrid{display:grid;gap:8px;margin-top:12px;}
+  .mole{background:#eaf3e2;border-color:#bcd9a6;}
+  .mole.up{background:#5EA03A;border-color:#48792c;box-shadow:0 4px 10px rgba(94,160,58,.4);}
   /* topic */
   .topic{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--radius);background:#fff;margin-bottom:10px;cursor:pointer;transition:transform .08s,border-color .15s;}
   .topic:active{transform:scale(.99);}
@@ -184,6 +199,13 @@ const THEMES = {
 function themaVan(pid) {
   return THEMES[PROFILES[pid] && PROFILES[pid].thema || 'standaard'] || THEMES.standaard;
 }
+const STANDAARD_WACHTWOORD = 'Bennaclan';
+function kidPw(store, pid) {
+  return store && store.kidpw && store.kidpw[pid] || STANDAARD_WACHTWOORD;
+}
+function pwGelijk(a, b) {
+  return String(a || '').trim().toLowerCase() === String(b || '').trim().toLowerCase();
+}
 function rangVoor(thema, punten) {
   const r = thema.rangen;
   let i = 0;
@@ -218,11 +240,13 @@ function rangVoor(thema, punten) {
    - nauwkeurigheidspoort tegen gok-/haastwerk.
    - toetsbonus schaalt met de score (hoe beter, hoe hoger).
    - dagplafond + weekbudget: nooit meer dan het weekbudget per kind. */
+/* Richtlijn: een goede, succesvolle oefensessie van ~1 uur ≈ € 5; een kind mag ruim
+   meer dan € 1 per dag verdienen. Begrensd door een hard weekbudget per kind (€ 20). */
 const BELONING = {
   weekbudget: 20,
-  dagMax: 5,
-  tariefPunt: 0.10,
-  werkMax: 4,
+  dagMax: 6,
+  tariefPunt: 0.06,
+  werkMax: 5,
   drempel: 12,
   oefenBonus: 2,
   proefBonus: 3,
@@ -11339,6 +11363,8 @@ function loadStore() {
     lastServer: null,
     lastSync: null
   };
+  if (!s.kidpw || typeof s.kidpw !== 'object') s.kidpw = {}; // per kind een wachtwoord (standaard 'Bennaclan')
+  if (!s.games || typeof s.games !== 'object') s.games = {}; // topscores van de spelletjes
   for (const pid of Object.keys(PROFILES)) s.prog[pid] = normalizeProg(s.prog[pid]);
   return s;
 }
@@ -11519,6 +11545,7 @@ function App() {
   const [vak, setVak] = useState(null);
   const [topic, setTopic] = useState(null);
   const [jaar, setJaar] = useState('nu'); // 'nu' | 'next' (volgend leerjaar)
+  const [pendingPid, setPendingPid] = useState(null); // kind dat wachtwoord invoert
   const [cloudStatus, setCloudStatus] = useState(''); // korte statusmelding voor de ouder-modus
   const pushTimer = useRef(null);
   const pulledOnce = useRef(false);
@@ -11657,7 +11684,12 @@ function App() {
   }, []);
   const allEx = useMemo(() => [...SEED, ...TEMPLATES, ...store.custom], [store.custom]);
 
-  // dagstreak + dagdoel bijwerken bij kiezen profiel
+  // kind kiest profiel → eerst wachtwoord (standaard 'Bennaclan')
+  function kiesProfiel(pid) {
+    setPendingPid(pid);
+    setView('kidlogin');
+  }
+  // dagstreak + dagdoel bijwerken bij starten (na wachtwoord)
   function openProfile(pid) {
     persist(prev => {
       const pr = normalizeProg(prev.prog[pid]);
@@ -11748,6 +11780,27 @@ function App() {
         }
       };
     });
+  }
+  function setGameScore(spel, score) {
+    persist(prev => {
+      const g = {
+        ...(prev.games || {})
+      };
+      if (!(g[spel] >= score)) g[spel] = score;
+      return {
+        ...prev,
+        games: g
+      };
+    });
+  }
+  function setKidPw(pid, pw) {
+    persist(prev => ({
+      ...prev,
+      kidpw: {
+        ...(prev.kidpw || {}),
+        [pid]: String(pw || '').trim() || STANDAARD_WACHTWOORD
+      }
+    }));
   }
   const cloudApi = {
     status: cloudStatus,
@@ -11882,13 +11935,32 @@ function App() {
     setView('practice');
   };
   return /*#__PURE__*/React.createElement("div", null, view === 'home' && /*#__PURE__*/React.createElement(Home, {
-    onPick: openProfile,
+    onPick: kiesProfiel,
     store: store,
+    allEx: allEx,
     onAuthor: () => setView('author'),
     onFormules: () => setView('formules'),
     onLeertips: () => setView('leertips'),
+    onSpellen: () => setView('spellen'),
     geluid: geluid,
     onToggleGeluid: toggleGeluid
+  }), view === 'kidlogin' && /*#__PURE__*/React.createElement(KidLogin, {
+    pid: pendingPid,
+    store: store,
+    onBack: () => {
+      setPendingPid(null);
+      setView('home');
+    },
+    onOk: () => {
+      const p = pendingPid;
+      setPendingPid(null);
+      openProfile(p);
+    }
+  }), view === 'spellen' && /*#__PURE__*/React.createElement(Spellen, {
+    store: store,
+    onBack: () => setView('home'),
+    onScore: setGameScore,
+    geluid: geluid
   }), view === 'formules' && /*#__PURE__*/React.createElement(FormulesView, {
     onBack: () => setView('home')
   }), view === 'leertips' && /*#__PURE__*/React.createElement(LeertipsView, {
@@ -11921,43 +11993,108 @@ function App() {
     onBack: () => setView('home'),
     onSetWeekbudget: setWeekbudget,
     onMarkeerBetaald: markeerBetaald,
-    cloud: cloudApi
+    cloud: cloudApi,
+    onSetKidPw: setKidPw
   }));
 }
 
-/* ---------- HOME ---------- */
+/* ---------- HOME = levendige familie-landingspagina ---------- */
 function Home({
   onPick,
   store,
+  allEx,
   onAuthor,
   onFormules,
   onLeertips,
+  onSpellen,
   geluid,
   onToggleGeluid
 }) {
   const tip = TIP_VAN_DE_DAG[Math.floor(Date.now() / 86400000) % TIP_VAN_DE_DAG.length];
-  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    className: "center",
-    style: {
-      margin: '18px 0 18px'
-    }
-  }, /*#__PURE__*/React.createElement("h1", {
-    style: {
-      fontSize: 30
-    }
-  }, "Oefenen 💪"), /*#__PURE__*/React.createElement("p", {
-    className: "muted"
-  }, "Kies wie er gaat oefenen")), /*#__PURE__*/React.createElement("div", {
-    className: "hint",
-    style: {
-      marginBottom: 18
-    }
-  }, /*#__PURE__*/React.createElement("b", null, "Tip van de dag:"), " ", tip), /*#__PURE__*/React.createElement("div", {
-    className: "wrap"
-  }, Object.entries(PROFILES).map(([id, p]) => {
-    const pr = store.prog[id] || blankProg();
+  const kinderen = Object.entries(PROFILES).map(([id, p]) => {
+    const pr = normalizeProg(store.prog[id]);
     const th = themaVan(id),
       rang = rangVoor(th, pr.punten || 0);
+    const eigen = (allEx || []).filter(e => e.p === id);
+    const beheerst = eigen.filter(e => isMastered(pr, e.id)).length;
+    const masteryPct = eigen.length ? Math.round(beheerst / eigen.length * 100) : 0;
+    return {
+      id,
+      p,
+      pr,
+      th,
+      rang,
+      masteryPct
+    };
+  });
+  const ranglijst = [...kinderen].sort((a, b) => (b.pr.punten || 0) - (a.pr.punten || 0));
+  const medals = ['🥇', '🥈', '🥉', '🏅'];
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "hero"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 40
+    }
+  }, "🌟"), /*#__PURE__*/React.createElement("h1", {
+    style: {
+      color: '#fff',
+      fontSize: 30,
+      margin: '2px 0'
+    }
+  }, "Benna Oefenclub"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      opacity: .95,
+      margin: 0
+    }
+  }, "Oefen, verzamel punten en ga voor de volgende trofee! 🏆")), /*#__PURE__*/React.createElement("div", {
+    className: "card",
+    style: {
+      marginTop: 14
+    }
+  }, /*#__PURE__*/React.createElement("b", null, "🏆 Ranglijst"), ranglijst.map((k, i) => /*#__PURE__*/React.createElement("div", {
+    key: k.id,
+    className: "rankrow"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "medal"
+  }, medals[i] || '⭐'), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 22
+    }
+  }, k.p.emoji), /*#__PURE__*/React.createElement("b", {
+    style: {
+      flex: 1
+    }
+  }, k.p.naam, " ", /*#__PURE__*/React.createElement("span", {
+    className: "muted",
+    style: {
+      fontWeight: 400,
+      fontSize: 13
+    }
+  }, "· ", k.rang.emoji, " ", k.rang.naam)), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontWeight: 800,
+      color: '#a8730a'
+    }
+  }, k.pr.punten || 0), /*#__PURE__*/React.createElement("span", {
+    className: "muted",
+    style: {
+      fontSize: 12
+    }
+  }, k.th.xp)))), /*#__PURE__*/React.createElement("p", {
+    className: "muted center",
+    style: {
+      margin: '16px 0 8px'
+    }
+  }, "Tik op je naam om te starten 🔒"), /*#__PURE__*/React.createElement("div", {
+    className: "wrap"
+  }, kinderen.map(({
+    id,
+    p,
+    pr,
+    th,
+    rang
+  }) => {
+    const done = Math.min(pr.todayCount || 0, pr.goal || 10);
     return /*#__PURE__*/React.createElement("div", {
       key: id,
       className: "profcard",
@@ -11966,38 +12103,79 @@ function Home({
       },
       onClick: () => onPick(id)
     }, /*#__PURE__*/React.createElement("div", {
+      className: "row",
+      style: {
+        justifyContent: 'space-between',
+        alignItems: 'flex-start'
+      }
+    }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
       className: "emoji"
     }, p.emoji), /*#__PURE__*/React.createElement("h2", null, p.naam), /*#__PURE__*/React.createElement("div", {
       className: "niv"
-    }, p.niveau), /*#__PURE__*/React.createElement("div", {
-      className: "vakken"
-    }, p.vakken.map(v => VAKNAAM[v]).join(' · ')), /*#__PURE__*/React.createElement("div", {
+    }, p.niveau)), /*#__PURE__*/React.createElement("div", {
       style: {
-        marginTop: 14,
+        textAlign: 'right'
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 26,
+        fontWeight: 800
+      }
+    }, pr.punten || 0), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 12,
+        opacity: .9
+      }
+    }, th.xp))), /*#__PURE__*/React.createElement("div", {
+      style: {
+        marginTop: 12,
         fontSize: 14,
         fontWeight: 700
       }
-    }, rang.emoji, " ", rang.naam, " · ", pr.punten || 0, " ", th.xp, " · 📅 ", pr.dagstreak || 0, " dagen"));
+    }, rang.emoji, " ", rang.naam), /*#__PURE__*/React.createElement("div", {
+      className: "miniprog"
+    }, /*#__PURE__*/React.createElement("i", {
+      style: {
+        width: rang.pct + '%'
+      }
+    })), /*#__PURE__*/React.createElement("div", {
+      style: {
+        marginTop: 6,
+        fontSize: 13,
+        opacity: .95
+      }
+    }, rang.volgendeNaam ? /*#__PURE__*/React.createElement("span", null, rang.pct >= 70 ? '🎁 Bijna! ' : '', "Nog ", rang.naar, " ", th.xp, " → ", rang.volgendeNaam, " 🏆") : /*#__PURE__*/React.createElement("span", null, "Hoogste rang! 👑")), /*#__PURE__*/React.createElement("div", {
+      style: {
+        marginTop: 8,
+        fontSize: 13,
+        opacity: .95
+      }
+    }, "🔥 ", pr.dagstreak || 0, " dagen · 🎯 vandaag ", done, "/", pr.goal || 10));
   })), /*#__PURE__*/React.createElement("div", {
     className: "center",
     style: {
-      marginTop: 24
+      marginTop: 20
     }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn gold",
+    onClick: onSpellen
+  }, "🎮 Spelletjes")), /*#__PURE__*/React.createElement("div", {
+    className: "hint",
+    style: {
+      margin: '16px 0'
+    }
+  }, /*#__PURE__*/React.createElement("b", null, "Tip van de dag:"), " ", tip), /*#__PURE__*/React.createElement("div", {
+    className: "center"
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn ghost sm",
     onClick: onFormules
-  }, "📐 Formules & uitleg bekijken")), /*#__PURE__*/React.createElement("div", {
-    className: "center",
-    style: {
-      marginTop: 10
-    }
-  }, /*#__PURE__*/React.createElement("button", {
+  }, "📐 Formules"), /*#__PURE__*/React.createElement("button", {
     className: "btn gold sm",
     onClick: onLeertips
   }, "💡 Leertips"), /*#__PURE__*/React.createElement("button", {
     className: "btn ghost sm",
     onClick: onToggleGeluid,
-    title: "Geluid bij goed/fout antwoord aan of uit"
+    title: "Geluid aan of uit"
   }, geluid ? '🔊 Geluid aan' : '🔇 Geluid uit')), /*#__PURE__*/React.createElement("div", {
     className: "center",
     style: {
@@ -12006,13 +12184,473 @@ function Home({
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn ghost sm",
     onClick: onAuthor
-  }, "👨‍⚕️ Ouder-modus — opdrachten toevoegen")), /*#__PURE__*/React.createElement("p", {
-    className: "muted center",
+  }, "👨‍👩‍👧 Ouder-modus")));
+}
+
+/* ---------- KIND-WACHTWOORD (starten) ---------- */
+function KidLogin({
+  pid,
+  store,
+  onBack,
+  onOk
+}) {
+  const P = PROFILES[pid] || {
+    naam: '',
+    emoji: '🔒',
+    kleur: '#5EA03A'
+  };
+  const [pw, setPw] = useState('');
+  const [msg, setMsg] = useState('');
+  const ref = useRef(null);
+  useEffect(() => {
+    setTimeout(() => ref.current && ref.current.focus(), 80);
+  }, []);
+  function probeer() {
+    if (pwGelijk(pw, kidPw(store, pid))) onOk();else {
+      setMsg('Oeps, probeer nog eens.');
+      setPw('');
+      setTimeout(() => setMsg(''), 1500);
+    }
+  }
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "topbar"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "back",
+    onClick: onBack
+  }, "← terug"), /*#__PURE__*/React.createElement("span", {
+    className: "pill"
+  }, "Wachtwoord")), /*#__PURE__*/React.createElement("div", {
+    className: "card center",
     style: {
       marginTop: 20,
-      fontSize: 13
+      background: P.kleur,
+      color: '#fff'
     }
-  }, "Tip: eerst zelf proberen, dan een hint openen. Elke som verdient punten 🌟"));
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 46
+    }
+  }, P.emoji), /*#__PURE__*/React.createElement("h2", {
+    style: {
+      color: '#fff'
+    }
+  }, "Hoi ", P.naam, "!"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      opacity: .95
+    }
+  }, "Typ je wachtwoord om te starten")), /*#__PURE__*/React.createElement("div", {
+    className: "card",
+    style: {
+      marginTop: 12
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    ref: ref,
+    className: "f",
+    type: "password",
+    value: pw,
+    placeholder: "wachtwoord",
+    onChange: e => setPw(e.target.value),
+    onKeyDown: e => {
+      if (e.key === 'Enter') probeer();
+    }
+  }), msg && /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: 'var(--accent)',
+      fontWeight: 600,
+      marginTop: 8
+    }
+  }, msg), /*#__PURE__*/React.createElement("div", {
+    className: "center",
+    style: {
+      marginTop: 12
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn",
+    onClick: probeer
+  }, "Start 🚀")), /*#__PURE__*/React.createElement("p", {
+    className: "muted center",
+    style: {
+      fontSize: 12,
+      marginTop: 8
+    }
+  }, "Standaard wachtwoord: Bennaclan (in te stellen in de ouder-modus)")));
+}
+
+/* ---------- SPELLETJES (ter ontspanning) ---------- */
+function Spellen({
+  store,
+  onBack,
+  onScore,
+  geluid
+}) {
+  const [spel, setSpel] = useState(null);
+  const games = store.games || {};
+  if (spel === 'mollen') return /*#__PURE__*/React.createElement(MollenSpel, {
+    best: games.mollen || 0,
+    onBack: () => setSpel(null),
+    onScore: s => onScore('mollen', s),
+    geluid: geluid
+  });
+  if (spel === 'memory') return /*#__PURE__*/React.createElement(MemorySpel, {
+    best: games.memory || 0,
+    onBack: () => setSpel(null),
+    onScore: s => onScore('memory', s),
+    geluid: geluid
+  });
+  if (spel === 'reken') return /*#__PURE__*/React.createElement(RekenRace, {
+    best: games.reken || 0,
+    onBack: () => setSpel(null),
+    onScore: s => onScore('reken', s),
+    geluid: geluid
+  });
+  const tegels = [{
+    id: 'mollen',
+    emoji: '🦔',
+    naam: 'Mollen meppen',
+    uitleg: 'Tik zo snel mogelijk op de mol!',
+    best: games.mollen || 0,
+    eenh: 'punten'
+  }, {
+    id: 'memory',
+    emoji: '🃏',
+    naam: 'Geheugenspel',
+    uitleg: 'Vind alle paren met zo min mogelijk beurten.',
+    best: games.memory || 0,
+    eenh: 'beurten'
+  }, {
+    id: 'reken',
+    emoji: '⚡',
+    naam: 'Reken-race',
+    uitleg: 'Zoveel mogelijk sommen in 30 seconden.',
+    best: games.reken || 0,
+    eenh: 'goed'
+  }];
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "topbar"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "back",
+    onClick: onBack
+  }, "← terug"), /*#__PURE__*/React.createElement("span", {
+    className: "pill"
+  }, "🎮 Spelletjes")), /*#__PURE__*/React.createElement("p", {
+    className: "muted center",
+    style: {
+      marginBottom: 12
+    }
+  }, "Even ontspannen tussendoor 😄"), /*#__PURE__*/React.createElement("div", {
+    className: "wrap"
+  }, tegels.map(t => /*#__PURE__*/React.createElement("div", {
+    key: t.id,
+    className: "card",
+    style: {
+      flex: 1,
+      minWidth: 200,
+      cursor: 'pointer'
+    },
+    onClick: () => setSpel(t.id)
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 40,
+      textAlign: 'center'
+    }
+  }, t.emoji), /*#__PURE__*/React.createElement("h3", {
+    style: {
+      textAlign: 'center',
+      margin: '6px 0'
+    }
+  }, t.naam), /*#__PURE__*/React.createElement("p", {
+    className: "muted",
+    style: {
+      fontSize: 13,
+      textAlign: 'center'
+    }
+  }, t.uitleg), /*#__PURE__*/React.createElement("div", {
+    className: "center",
+    style: {
+      marginTop: 6,
+      fontSize: 13,
+      fontWeight: 700
+    }
+  }, "🏆 record: ", t.best || '—', " ", t.best ? t.eenh : '')))));
+}
+function MollenSpel({
+  best,
+  onBack,
+  onScore,
+  geluid
+}) {
+  const [actief, setActief] = useState(false);
+  const [pos, setPos] = useState(-1);
+  const [score, setScore] = useState(0);
+  const [tijd, setTijd] = useState(20);
+  const [tik, setTik] = useState(0);
+  useEffect(() => {
+    if (!actief) return;
+    const iv = setInterval(() => setTik(t => t + 1), 700);
+    return () => clearInterval(iv);
+  }, [actief]);
+  useEffect(() => {
+    if (actief) setPos(Math.floor(Math.random() * 9));
+  }, [tik, actief]);
+  useEffect(() => {
+    if (!actief) return;
+    if (tijd <= 0) {
+      setActief(false);
+      setPos(-1);
+      onScore(score);
+      return;
+    }
+    const to = setTimeout(() => setTijd(t => t - 1), 1000);
+    return () => clearTimeout(to);
+  }, [tijd, actief]);
+  function start() {
+    setScore(0);
+    setTijd(20);
+    setPos(-1);
+    setActief(true);
+  }
+  function mep(i) {
+    if (actief && i === pos) {
+      setScore(s => s + 1);
+      speel('goed', geluid);
+      setPos(-1);
+    }
+  }
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "topbar"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "back",
+    onClick: onBack
+  }, "← terug"), /*#__PURE__*/React.createElement("span", {
+    className: "pill"
+  }, "🦔 Mollen meppen")), /*#__PURE__*/React.createElement("div", {
+    className: "card center"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 18,
+      fontWeight: 700
+    }
+  }, "⏱ ", tijd, "s · 🏆 ", score, " · record ", best || '—'), !actief && /*#__PURE__*/React.createElement("button", {
+    className: "btn",
+    style: {
+      marginTop: 10
+    },
+    onClick: start
+  }, score > 0 ? 'Nog een keer 🔁' : 'Start 🚀'), !actief && score > 0 && /*#__PURE__*/React.createElement("p", {
+    style: {
+      marginTop: 8,
+      fontWeight: 600
+    }
+  }, "Je hebt ", score, " mollen gemept! ", score >= best ? '🎉 Nieuw record!' : '')), /*#__PURE__*/React.createElement("div", {
+    className: "gamegrid",
+    style: {
+      gridTemplateColumns: 'repeat(3,1fr)',
+      maxWidth: 320,
+      margin: '12px auto'
+    }
+  }, Array.from({
+    length: 9
+  }).map((_, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    className: 'gamecell mole' + (actief && i === pos ? ' up' : ''),
+    onClick: () => mep(i)
+  }, actief && i === pos ? '🦔' : ''))));
+}
+function MemorySpel({
+  best,
+  onBack,
+  onScore,
+  geluid
+}) {
+  const emojis = ['⚽', '🎮', '🍕', '🐶', '🌟', '🚀'];
+  const nieuw = () => shuffle([...emojis, ...emojis].map((e, i) => ({
+    i,
+    e,
+    open: false,
+    klaar: false
+  })));
+  const [kaarten, setKaarten] = useState(nieuw);
+  const [open, setOpen] = useState([]);
+  const [beurten, setBeurten] = useState(0);
+  const [klaar, setKlaar] = useState(false);
+  function klik(idx) {
+    if (klaar) return;
+    const k = kaarten[idx];
+    if (k.open || k.klaar || open.length >= 2) return;
+    const nk = kaarten.map((c, j) => j === idx ? {
+      ...c,
+      open: true
+    } : c);
+    setKaarten(nk);
+    const no = [...open, idx];
+    if (no.length === 2) {
+      setBeurten(b => b + 1);
+      if (nk[no[0]].e === nk[no[1]].e) {
+        speel('goed', geluid);
+        const done = nk.map((c, j) => no.includes(j) ? {
+          ...c,
+          klaar: true
+        } : c);
+        setTimeout(() => {
+          setKaarten(done);
+          setOpen([]);
+          if (done.every(c => c.klaar)) {
+            setKlaar(true);
+            onScore(beurten + 1);
+          }
+        }, 350);
+      } else {
+        setTimeout(() => {
+          setKaarten(nk.map((c, j) => no.includes(j) && !c.klaar ? {
+            ...c,
+            open: false
+          } : c));
+          setOpen([]);
+        }, 700);
+      }
+      setOpen(no);
+    } else setOpen(no);
+  }
+  function reset() {
+    setKaarten(nieuw());
+    setOpen([]);
+    setBeurten(0);
+    setKlaar(false);
+  }
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "topbar"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "back",
+    onClick: onBack
+  }, "← terug"), /*#__PURE__*/React.createElement("span", {
+    className: "pill"
+  }, "🃏 Geheugenspel")), /*#__PURE__*/React.createElement("div", {
+    className: "card center"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 18,
+      fontWeight: 700
+    }
+  }, "Beurten: ", beurten, " · record ", best ? best + ' (minst)' : '—'), klaar && /*#__PURE__*/React.createElement("p", {
+    style: {
+      marginTop: 8,
+      fontWeight: 600
+    }
+  }, "Alle paren gevonden in ", beurten, " beurten! ", !best || beurten <= best ? '🎉 Top!' : ''), /*#__PURE__*/React.createElement("button", {
+    className: "btn ghost sm",
+    style: {
+      marginTop: 8
+    },
+    onClick: reset
+  }, "Nieuw spel 🔁")), /*#__PURE__*/React.createElement("div", {
+    className: "gamegrid",
+    style: {
+      gridTemplateColumns: 'repeat(4,1fr)',
+      maxWidth: 320,
+      margin: '12px auto'
+    }
+  }, kaarten.map((c, idx) => /*#__PURE__*/React.createElement("div", {
+    key: idx,
+    className: "gamecell",
+    style: {
+      background: c.klaar ? '#eaf7e2' : c.open ? '#fff' : '#dfe7d8'
+    },
+    onClick: () => klik(idx)
+  }, c.open || c.klaar ? c.e : '❓'))));
+}
+function RekenRace({
+  best,
+  onBack,
+  onScore,
+  geluid
+}) {
+  const maak = () => {
+    const a = ri(2, 12),
+      b = ri(2, 12);
+    return {
+      a,
+      b,
+      ans: a * b
+    };
+  };
+  const [actief, setActief] = useState(false);
+  const [som, setSom] = useState(maak);
+  const [val, setVal] = useState('');
+  const [score, setScore] = useState(0);
+  const [tijd, setTijd] = useState(30);
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!actief) return;
+    if (tijd <= 0) {
+      setActief(false);
+      onScore(score);
+      return;
+    }
+    const to = setTimeout(() => setTijd(t => t - 1), 1000);
+    return () => clearTimeout(to);
+  }, [tijd, actief]);
+  function start() {
+    setScore(0);
+    setTijd(30);
+    setSom(maak());
+    setVal('');
+    setActief(true);
+    setTimeout(() => ref.current && ref.current.focus(), 60);
+  }
+  function check(v) {
+    setVal(v);
+    if (actief && Number(v) === som.ans) {
+      setScore(s => s + 1);
+      speel('goed', geluid);
+      setSom(maak());
+      setVal('');
+    }
+  }
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "topbar"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "back",
+    onClick: onBack
+  }, "← terug"), /*#__PURE__*/React.createElement("span", {
+    className: "pill"
+  }, "⚡ Reken-race")), /*#__PURE__*/React.createElement("div", {
+    className: "card center"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 18,
+      fontWeight: 700
+    }
+  }, "⏱ ", tijd, "s · 🏆 ", score, " · record ", best || '—'), actief ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 34,
+      fontWeight: 800,
+      margin: '12px 0'
+    }
+  }, som.a, " × ", som.b), /*#__PURE__*/React.createElement("input", {
+    ref: ref,
+    className: "f",
+    style: {
+      maxWidth: 160,
+      margin: '0 auto',
+      textAlign: 'center',
+      fontSize: 22
+    },
+    inputMode: "numeric",
+    value: val,
+    onChange: e => check(e.target.value),
+    placeholder: "?"
+  })) : /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 10
+    }
+  }, score > 0 && /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontWeight: 600
+    }
+  }, "Je had er ", score, " goed! ", score >= best ? '🎉 Nieuw record!' : ''), /*#__PURE__*/React.createElement("button", {
+    className: "btn",
+    onClick: start
+  }, score > 0 ? 'Nog een keer 🔁' : 'Start 🚀'))));
 }
 
 /* ---------- HUB (vak + onderwerpen) ---------- */
@@ -12967,7 +13605,8 @@ function OuderDashboard({
   persist,
   onSetWeekbudget,
   onMarkeerBetaald,
-  cloud
+  cloud,
+  onSetKidPw
 }) {
   const allEx = [...SEED, ...TEMPLATES, ...store.custom];
   const fileRef = useRef(null);
@@ -13214,7 +13853,72 @@ function OuderDashboard({
       paddingTop: 8,
       borderTop: '1px solid var(--line)'
     }
-  }, "💶 ", /*#__PURE__*/React.createElement("b", null, "Beloning naar resultaat & niveau:"), " alleen 1e keer goed zónder hint telt, en ", /*#__PURE__*/React.createElement("b", null, "moeilijker = meer waard"), " (niveau 1/2/3 → 1/2/3 punten × € ", String(BELONING.tariefPunt).replace('.', ','), "). Nauwkeurigheidspoort (≥ 85% vol tarief, ≥ 70% half, daaronder niets). Toetsbonus schaalt met de score. Dagplafond ", euro(BELONING.dagMax), " en een ", /*#__PURE__*/React.createElement("b", null, "hard weekbudget per kind"), " — de app betaalt nooit meer uit dan dat.")));
+  }, "💶 ", /*#__PURE__*/React.createElement("b", null, "Beloning naar resultaat & niveau:"), " alleen 1e keer goed zónder hint telt, en ", /*#__PURE__*/React.createElement("b", null, "moeilijker = meer waard"), " (niveau 1/2/3 → 1/2/3 punten × € ", String(BELONING.tariefPunt).replace('.', ','), "). Nauwkeurigheidspoort (≥ 85% vol tarief, ≥ 70% half, daaronder niets). Toetsbonus schaalt met de score. Dagplafond ", euro(BELONING.dagMax), " en een ", /*#__PURE__*/React.createElement("b", null, "hard weekbudget per kind"), " — de app betaalt nooit meer uit dan dat.")), onSetKidPw && /*#__PURE__*/React.createElement(KidPwPaneel, {
+    store: store,
+    onSetKidPw: onSetKidPw
+  }));
+}
+function KidPwPaneel({
+  store,
+  onSetKidPw
+}) {
+  const [vals, setVals] = useState(() => {
+    const o = {};
+    Object.keys(PROFILES).forEach(id => o[id] = store.kidpw && store.kidpw[id] || '');
+    return o;
+  });
+  const [msg, setMsg] = useState('');
+  return /*#__PURE__*/React.createElement("div", {
+    className: "card",
+    style: {
+      marginBottom: 16,
+      background: '#faf3ff',
+      borderLeftColor: '#9c3b7e'
+    }
+  }, /*#__PURE__*/React.createElement("b", null, "🔒 Wachtwoord per kind (om te starten)"), /*#__PURE__*/React.createElement("p", {
+    className: "muted",
+    style: {
+      fontSize: 13,
+      marginTop: 4
+    }
+  }, "Standaard is het wachtwoord ", /*#__PURE__*/React.createElement("b", null, "Bennaclan"), " voor iedereen. Hieronder per kind te wijzigen."), Object.entries(PROFILES).map(([id, p]) => /*#__PURE__*/React.createElement("div", {
+    key: id,
+    className: "row",
+    style: {
+      gap: 8,
+      alignItems: 'center',
+      marginTop: 8
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      width: 110
+    }
+  }, p.emoji, " ", p.naam), /*#__PURE__*/React.createElement("input", {
+    className: "f",
+    style: {
+      flex: 1
+    },
+    value: vals[id],
+    placeholder: "Bennaclan",
+    onChange: e => setVals({
+      ...vals,
+      [id]: e.target.value
+    })
+  }), /*#__PURE__*/React.createElement("button", {
+    className: "btn sm",
+    onClick: () => {
+      onSetKidPw(id, vals[id] || STANDAARD_WACHTWOORD);
+      setMsg('✅ Wachtwoord van ' + p.naam + ' opgeslagen.');
+      setTimeout(() => setMsg(''), 2000);
+    }
+  }, "Opslaan"))), msg && /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: '#2c7a2c',
+      fontWeight: 600,
+      marginTop: 8,
+      fontSize: 13
+    }
+  }, msg));
 }
 function Author({
   store,
@@ -13222,7 +13926,8 @@ function Author({
   onBack,
   onSetWeekbudget,
   onMarkeerBetaald,
-  cloud
+  cloud,
+  onSetKidPw
 }) {
   const [unlocked, setUnlocked] = useState(false);
   const [pin, setPin] = useState('');
@@ -13364,7 +14069,8 @@ function Author({
     persist: persist,
     onSetWeekbudget: onSetWeekbudget,
     onMarkeerBetaald: onMarkeerBetaald,
-    cloud: cloud
+    cloud: cloud,
+    onSetKidPw: onSetKidPw
   }), /*#__PURE__*/React.createElement("h2", null, "Nieuwe opdracht toevoegen"), /*#__PURE__*/React.createElement("div", {
     className: "card",
     style: {

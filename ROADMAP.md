@@ -22,6 +22,11 @@ De exacte vakken staan er stevig op; de talen en zaakvakken hebben een goede bas
 ## Didactiek die actief is
 Instelbaar moeilijkheidsniveau per kind (**Auto / 1 / 2 / 3**; Auto wordt vanzelf moeilijker bij succes en makkelijker bij fouten) · **leerjaar-schakelaar (dit jaar / volgend jaar)** · **proeftoets over alle vakken (20 vragen, IEP-/examenstijl)** · **snel laden: voorgecompileerd, geen Babel in de browser** · wisselende getallen · slim herhalen (Leitner) · mix-oefening (interleaving) · **oefentoets-modus (10 vragen, eindscore, met timer)** · **meerkeuzevragen** · **geluid bij goed/fout antwoord (uitschakelbaar)** · dagdoel + sessiesamenvatting · automatisch foutenschrift · gerichte foutfeedback · uitlegpanelen met beeld (getallenlijn, breukstrook, **getekende klok**, figuren) · ouder-dashboard met aandachtspunten per kind.
 
+## Landingspagina, toegang & spelletjes
+- **Levendige landingspagina:** een familie-scorebord dat meteen de resultaten toont — ranglijst met medailles, per kind de rang, punten, voortgang naar de **volgende trofee** en de dagstreak. Motiverend en vrolijk.
+- **Wachtwoord per kind om te starten:** elk kind typt een wachtwoord (standaard **Bennaclan** voor iedereen, per kind te wijzigen in de ouder-modus).
+- **Spelletjes ter ontspanning:** Mollen meppen 🦔, Geheugenspel 🃏 en Reken-race ⚡ — met een persoonlijk record per spel.
+
 ## Motivatie & adherence (per kind afgestemd)
 - **Amine — voetbal/game-thema:** eigen taal en beleving (XP i.p.v. punten, **doelpunten** i.p.v. sommen, "⚽ GOAL!" bij goed antwoord, voetbal-confetti) en een **rangen-ladder** (Pupil → Talent → Basisspeler → … → Kampioen → Legende) met een voortgangsbalk naar de volgende rang. Sluit aan bij wat hem motiveert (spelen, voetbal) zodat hij blijft oefenen.
 - **Alle kinderen — beloning naar resultaat & niveau (zakgeld):** de app rekent per dag uit wat een sessie **eerlijk** waard is; papa/mama betaalt pas uit via de ouder-modus. Bij Amine loopt dit naast zijn voetbal/game-thema (XP en rangen blijven). Beloond wordt **succes, niet alleen bezig zijn**:
