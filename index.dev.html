@@ -208,6 +208,18 @@ function speel(kind, aan){
 }
 function mmss(sec){const m=Math.floor(sec/60), s=sec%60; return m+':'+(s<10?'0':'')+s;}
 function weekbudgetVan(pr){ return (typeof pr.weekbudget==='number' && pr.weekbudget>=0) ? pr.weekbudget : BELONING.weekbudget; }
+// zomer-challenge: hoeveel al verdiend sinds de startdatum, en de stand t.o.v. het doel
+function zomerStand(prog, zomer){
+  if(!zomer||!zomer.aan||!zomer.start) return null;
+  const startMs=parseDag(zomer.start), nu=Date.now();
+  const verdiend=(prog.betalingen||[]).filter(b=>parseDag(b.d)>=startMs).reduce((s,b)=>s+(b.bedrag||0),0);
+  const wekenTotaal=zomer.weken||7;
+  const wekenVoorbij=Math.max(0, Math.min(wekenTotaal, Math.floor((nu-startMs)/(7*86400000))));
+  const doel=zomer.doel||0, bonus=zomer.bonus||0, gehaald=doel>0&&verdiend>=doel;
+  return {verdiend:Math.round(verdiend*2)/2, doel, bonus, gehaald,
+    pct:doel?Math.min(100,Math.round(verdiend/doel*100)):0,
+    wekenVoorbij, wekenTotaal, wekenOver:Math.max(0,wekenTotaal-wekenVoorbij)};
+}
 function berekenBeloning(pr){
   const d=pr.dag||{}, t=pr.toetsDag||{};
   const goed=(d.goed||0), fout=(d.fout||0), sterk=(d.sterk||0), punten=(d.sterkPunten||0);
@@ -1810,6 +1822,7 @@ function loadStore(){
   if(!s.kidpw||typeof s.kidpw!=='object') s.kidpw={};   // per kind een wachtwoord (standaard 'Bennaclan')
   if(!s.games||typeof s.games!=='object') s.games={};   // topscores van de spelletjes
   if(typeof s.wedstrijdAan!=='boolean') s.wedstrijdAan=true;   // vriend uitdagen toegestaan
+  if(!s.zomer||typeof s.zomer!=='object') s.zomer={aan:false, start:null, weken:7, doel:50, bonus:15};   // zomer-challenge
   for(const pid of Object.keys(PROFILES)) s.prog[pid]=normalizeProg(s.prog[pid]);
   return s;
 }
@@ -1834,6 +1847,45 @@ async function cloudCall(fn, payload){
 }
 // alleen de app-data delen (niet de cloud-config met de pincode)
 function syncData(store){ const {cloud, ...rest}=store; return rest; }
+// ---- Samenvoegen (merge) zodat toestellen naar dezelfde, hoogste score convergeren ----
+function _max(a,b){ return Math.max(a||0,b||0); }
+function mergeCards(a,b){ const out={...(a||{})};
+  for(const id of Object.keys(b||{})){ const e=out[id], c=b[id];
+    out[id]=e? {box:_max(e.box,c.box), ok:_max(e.ok,c.ok), wrong:_max(e.wrong,c.wrong), last:_max(e.last,c.last)} : c; }
+  return out; }
+function mergeProg(a,b){
+  a=normalizeProg(a); b=normalizeProg(b);
+  const solved={...a.solved}; for(const id of Object.keys(b.solved||{})){ solved[id]={ok:_max((solved[id]||{}).ok, (b.solved[id]||{}).ok)}; }
+  const badges=[...new Set([...(a.badges||[]),...(b.badges||[])])];
+  const bseen=new Set(), betalingen=[];
+  for(const x of [...(a.betalingen||[]),...(b.betalingen||[])]){ const k=x.d+'|'+x.bedrag; if(!bseen.has(k)){bseen.add(k); betalingen.push(x);} }
+  const fseen=new Set(), foutLog=[];
+  for(const f of [...(a.foutLog||[]),...(b.foutLog||[])].sort((x,y)=>(y.when||0)-(x.when||0))){ if(f&&!fseen.has(f.id)){fseen.add(f.id); foutLog.push(f);} }
+  const sameDag=a.dag&&b.dag&&a.dag.d===b.dag.d;
+  const dag= sameDag ? {d:a.dag.d, goed:_max(a.dag.goed,b.dag.goed), sterk:_max(a.dag.sterk,b.dag.sterk), sterkPunten:_max(a.dag.sterkPunten,b.dag.sterkPunten), fout:_max(a.dag.fout,b.dag.fout), sterkIds:[...new Set([...(a.dag.sterkIds||[]),...(b.dag.sterkIds||[])])]}
+             : (parseDag((a.dag||{}).d)>=parseDag((b.dag||{}).d)? a.dag : b.dag);
+  return {...a, ...b,
+    punten:_max(a.punten,b.punten), streak:_max(a.streak,b.streak), dagstreak:_max(a.dagstreak,b.dagstreak),
+    todayCount:_max(a.todayCount,b.todayCount), goal:Math.max(a.goal||10,b.goal||10), weekbudget:Math.max(a.weekbudget||0,b.weekbudget||0),
+    autoLvl:Math.max(a.autoLvl||1,b.autoLvl||1), niveau:(b.niveau!=='auto'?b.niveau:a.niveau),
+    cards:mergeCards(a.cards,b.cards), solved, badges, betalingen:betalingen.slice(-80), foutLog:foutLog.slice(0,40), dag,
+    lastDay:(parseDag(a.lastDay)>=parseDag(b.lastDay)?a.lastDay:b.lastDay),
+    betaaldOp:(parseDag(a.betaaldOp)>=parseDag(b.betaaldOp)?a.betaaldOp:b.betaaldOp),
+    toetsDag:(parseDag((a.toetsDag||{}).d)>=parseDag((b.toetsDag||{}).d)?a.toetsDag:b.toetsDag)};
+}
+function mergeStore(local, cloud){
+  local=local||{}; cloud=cloud||{};
+  const out={...local}; out.prog={...(local.prog||{})};
+  const pids=new Set([...Object.keys(local.prog||{}),...Object.keys(cloud.prog||{})]);
+  pids.forEach(pid=>{ out.prog[pid]=mergeProg(local.prog&&local.prog[pid], cloud.prog&&cloud.prog[pid]); });
+  const cseen=new Set(); out.custom=[];
+  for(const e of [...(local.custom||[]),...(cloud.custom||[])]){ if(e&&!cseen.has(e.id)){cseen.add(e.id); out.custom.push(e);} }
+  out.games={...(cloud.games||{})}; for(const k of Object.keys(local.games||{})) out.games[k]=_max(out.games[k], local.games[k]);
+  out.kidpw={...(cloud.kidpw||{}),...(local.kidpw||{})};
+  out.zomer=local.zomer||cloud.zomer||out.zomer;
+  out.pin=local.pin||cloud.pin||'1234';
+  return out;
+}
 // ---- Wedstrijd (vriend uitdagen via link) ----
 function chCreate(code,data){ return cloudCall('oefenapp_ch_create',{p_code:code,p_data:data}); }
 function chGet(code){ return cloudCall('oefenapp_ch_get',{p_code:code}); }
@@ -1918,6 +1970,7 @@ function diagnoseFout(inst,val){
 }
 function todayStr(){const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
 function yesterdayStr(){const d=new Date();d.setDate(d.getDate()-1);return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
+function todayISO(){const d=new Date();const p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
 
 const BADGES=[
   {id:'p50', emoji:'⭐', naam:'50 punten', test:p=>p.punten>=50},
@@ -1969,15 +2022,28 @@ function App(){
     setCloudStatus('Bezig met inloggen…');
     const r=await cloudCall('oefenapp_load',{p_household:household,p_pin:pin});
     const data=r.data||{};
+    let mergedSnap=null;
     setStore(prev=>{
-      const merged={...prev, ...data, cloud:{household,pin,lastServer:r.updated_at,lastSync:Date.now()}};
+      const merged=mergeStore(prev, data);   // samenvoegen i.p.v. overschrijven (geen verlies)
+      merged.cloud={household,pin,lastServer:r.updated_at,lastSync:Date.now()};
       merged.custom=merged.custom||[]; merged.pin=merged.pin||'1234'; merged.prog=merged.prog||{};
       for(const pid of Object.keys(PROFILES)) merged.prog[pid]=normalizeProg(merged.prog[pid]);
-      saveStore(merged); return merged;
+      saveStore(merged); mergedSnap=merged; return merged;
     });
-    setCloudStatus('Ingelogd — resultaten opgehaald ✓'); return r;
+    if(mergedSnap) cloudPush(mergedSnap);    // push de samengevoegde stand terug
+    setCloudStatus('Ingelogd — samengevoegd ✓'); return r;
   }
   function cloudDisconnect(){ persist(prev=>({...prev, cloud:{household:'',pin:'',lastServer:null,lastSync:null}})); setCloudStatus('Ontkoppeld (alleen nog lokaal).'); }
+  async function cloudMerge(){   // haal op, voeg samen, en zet terug → zelfde score overal
+    const c=store.cloud; if(!c||!c.household||!c.pin){ setCloudStatus('Koppel eerst een familiecode.'); return; }
+    setCloudStatus('Bezig met samenvoegen…');
+    const r=await cloudCall('oefenapp_load',{p_household:c.household,p_pin:c.pin});
+    let snap=null;
+    setStore(prev=>{ const merged=mergeStore(prev, r.data||{}); merged.cloud={...prev.cloud, lastServer:r.updated_at, lastSync:Date.now()};
+      for(const pid of Object.keys(PROFILES)) merged.prog[pid]=normalizeProg(merged.prog[pid]); saveStore(merged); snap=merged; return merged; });
+    if(snap) await cloudPush(snap);
+    setCloudStatus('Alles samengevoegd — elk toestel toont nu dezelfde score ✓');
+  }
 
   // wedstrijd-link geopend (#w=CODE)? → toon de wedstrijd voor de vriend
   useEffect(()=>{
@@ -1989,14 +2055,17 @@ function App(){
     const c=store.cloud;
     if(c&&c.household&&c.pin){
       cloudCall('oefenapp_load',{p_household:c.household,p_pin:c.pin}).then(r=>{
-        if(r&&r.data&&r.updated_at && r.updated_at!==c.lastServer){
+        if(r&&r.data){
+          let snap=null;
           setStore(prev=>{
-            const merged={...prev, ...r.data, cloud:{...prev.cloud, lastServer:r.updated_at, lastSync:Date.now()}};
+            const merged=mergeStore(prev, r.data);   // altijd samenvoegen → zelfde score op elk toestel
+            merged.cloud={...prev.cloud, lastServer:r.updated_at, lastSync:Date.now()};
             merged.custom=merged.custom||[]; merged.pin=merged.pin||'1234'; merged.prog=merged.prog||{};
             for(const pid of Object.keys(PROFILES)) merged.prog[pid]=normalizeProg(merged.prog[pid]);
-            saveStore(merged); return merged;
+            saveStore(merged); snap=merged; return merged;
           });
-          setCloudStatus('Nieuwste resultaten opgehaald ✓');
+          if(snap) cloudPush(snap);
+          setCloudStatus('Samengevoegd met de cloud ✓');
         }
       }).catch(()=>{});
     }
@@ -2048,7 +2117,7 @@ function App(){
   function setKidPw(pid, pw){
     persist(prev=>({...prev, kidpw:{...(prev.kidpw||{}), [pid]: String(pw||'').trim()||STANDAARD_WACHTWOORD}}));
   }
-  const cloudApi={status:cloudStatus, register:cloudRegister, login:cloudLogin, sync:()=>cloudPush(), disconnect:cloudDisconnect, setStatus:setCloudStatus};
+  const cloudApi={status:cloudStatus, register:cloudRegister, login:cloudLogin, sync:()=>cloudPush(), merge:cloudMerge, disconnect:cloudDisconnect, setStatus:setCloudStatus};
 
   // resultaat verwerken: punten + Leitner-doosje + dagdoel + foutenschrift
   function recordResult(pid, card, inst, correct, usedHint){
@@ -2156,6 +2225,29 @@ function Home({onPick,store,allEx,onAuthor,onFormules,onLeertips,onSpellen,gelui
           </div>
         ))}
       </div>
+
+      {/* zomer-challenge (vakantie): spaar naar je zomerdoel */}
+      {store.zomer&&store.zomer.aan&&(()=>{ const fam=kinderen.map(k=>({k, z:zomerStand(k.pr, store.zomer)})).filter(x=>x.z);
+        const totVerdiend=fam.reduce((s,x)=>s+x.z.verdiend,0);
+        return (
+        <div className="card" style={{marginTop:14,background:'linear-gradient(120deg,#fff4d1,#ffe0c2)'}}>
+          <div className="row" style={{justifyContent:'space-between'}}><b>🏖️ Zomer-challenge</b>
+            <span className="muted" style={{fontSize:13}}>samen al {euro(totVerdiend)} verdiend</span></div>
+          {fam.map(({k,z})=>(
+            <div key={k.id} style={{marginTop:8}}>
+              <div className="row" style={{justifyContent:'space-between',fontSize:14}}>
+                <span>{k.p.emoji} <b>{k.p.naam}</b> {z.gehaald&&<span>🏆</span>}</span>
+                <span style={{fontWeight:700,color:'#a8730a'}}>{euro(z.verdiend)} / {euro(z.doel)}</span>
+              </div>
+              <div className="miniprog" style={{background:'rgba(0,0,0,.08)'}}><i style={{width:z.pct+'%',background:'#e08a2b'}}></i></div>
+              <div className="muted" style={{fontSize:12,marginTop:2}}>
+                {z.gehaald ? <span>🎉 Zomerdoel gehaald — verdien je bonus van {euro(z.bonus)}!</span>
+                  : <span>Nog {euro(Math.max(0,z.doel-z.verdiend))} tot je doel · dan +{euro(z.bonus)} bonus · nog {z.wekenOver} {z.wekenOver===1?'week':'weken'}</span>}
+              </div>
+            </div>
+          ))}
+        </div>);
+      })()}
 
       {/* per kind: klik om te starten (met wachtwoord) */}
       <p className="muted center" style={{margin:'16px 0 8px'}}>Tik op je naam om te starten 🔒</p>
@@ -3167,9 +3259,11 @@ function CloudPaneel({store,cloud}){
           Gekoppeld aan familiecode <b>{c.household}</b>. Resultaten worden automatisch opgeslagen en op elk toestel gelijk gehouden.
           {c.lastSync && <div className="muted" style={{marginTop:2}}>Laatst gesynct: {new Date(c.lastSync).toLocaleString('nl-NL')}</div>}
           <div className="wrap" style={{marginTop:10}}>
-            <button className="btn sm" disabled={busy} onClick={()=>doe(()=>cloud.sync())}>🔄 Nu synchroniseren</button>
-            <button className="btn ghost sm" onClick={cloud.disconnect}>Ontkoppel dit toestel</button>
+            <button className="btn sm" disabled={busy} onClick={()=>doe(()=>cloud.merge())}>🔄 Samenvoegen &amp; gelijktrekken</button>
+            <button className="btn ghost sm" disabled={busy} onClick={()=>doe(()=>cloud.sync())}>⬆️ Uploaden</button>
+            <button className="btn ghost sm" onClick={cloud.disconnect}>Ontkoppel</button>
           </div>
+          <p className="muted" style={{fontSize:12,marginTop:6}}>Tip: doe "Samenvoegen &amp; gelijktrekken" één keer op élk toestel — dan tonen alle toestellen dezelfde (hoogste) score per kind.</p>
         </div>
       ) : (
         <div style={{marginTop:8}}>
@@ -3282,12 +3376,36 @@ function OuderDashboard({store,persist,onSetWeekbudget,onMarkeerBetaald,cloud,on
           Nauwkeurigheidspoort (≥ 85% vol tarief, ≥ 70% half, daaronder niets). Toetsbonus schaalt met de score. Dagplafond {euro(BELONING.dagMax)} en een <b>hard weekbudget per kind</b> — de app betaalt nooit meer uit dan dat.
         </div>
       </div>
+      <ZomerPaneel store={store} persist={persist}/>
       {onSetKidPw && <KidPwPaneel store={store} onSetKidPw={onSetKidPw}/>}
       <div className="card" style={{marginBottom:16}}>
         <div className="row" style={{justifyContent:'space-between',alignItems:'center'}}>
           <span>⚔️ <b>Vriend uitdagen (wedstrijd via link)</b><div className="muted" style={{fontSize:12}}>Kind kan één vriend uitnodigen voor dezelfde quiz. Alleen een spelletje, geen persoonlijke gegevens.</div></span>
           <button className={'btn sm '+((store.wedstrijdAan!==false)?'':'ghost')} onClick={()=>persist(prev=>({...prev, wedstrijdAan: !(prev.wedstrijdAan!==false)}))}>{(store.wedstrijdAan!==false)?'Aan':'Uit'}</button>
         </div>
+      </div>
+    </div>
+  );
+}
+function ZomerPaneel({store,persist}){
+  const z=store.zomer||{aan:false,start:null,weken:7,doel:50,bonus:15};
+  function upd(patch){ persist(prev=>({...prev, zomer:{...(prev.zomer||{}), ...patch}})); }
+  return (
+    <div className="card" style={{marginBottom:16,background:'#fff7ea',borderLeftColor:'#e08a2b'}}>
+      <div className="row" style={{justifyContent:'space-between',alignItems:'center'}}>
+        <span>🏖️ <b>Zomer-challenge (vakantie)</b></span>
+        <button className={'btn sm '+(z.aan?'':'ghost')} onClick={()=>upd({aan:!z.aan, start:z.start||todayISO()})}>{z.aan?'Aan':'Uit'}</button>
+      </div>
+      <p className="muted" style={{fontSize:13,marginTop:4}}>Elk kind spaart over ~{z.weken} weken naar een zomerdoel; bij het doel volgt een bonus. Zo staat er een leuk streefbedrag "na de vakantie" tegenover echt oefenen.</p>
+      <div className="row" style={{gap:10,marginTop:8,flexWrap:'wrap'}}>
+        <div style={{flex:1,minWidth:130}}><label className="fld">Startdatum</label>
+          <input className="f" type="date" value={z.start||todayISO()} onChange={e=>upd({start:e.target.value})}/></div>
+        <div style={{width:80}}><label className="fld">Weken</label>
+          <input className="f" inputMode="numeric" value={z.weken} onChange={e=>upd({weken:Math.max(1,Number(String(e.target.value).replace(/\D/g,''))||7)})}/></div>
+        <div style={{width:100}}><label className="fld">Doel (€)</label>
+          <input className="f" inputMode="numeric" value={z.doel} onChange={e=>upd({doel:Number(String(e.target.value).replace(/\D/g,''))||0})}/></div>
+        <div style={{width:100}}><label className="fld">Bonus (€)</label>
+          <input className="f" inputMode="numeric" value={z.bonus} onChange={e=>upd({bonus:Number(String(e.target.value).replace(/\D/g,''))||0})}/></div>
       </div>
     </div>
   );

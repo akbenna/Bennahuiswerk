@@ -37,7 +37,8 @@ Instelbaar moeilijkheidsniveau per kind (**Auto / 1 / 2 / 3**; Auto wordt vanzel
   - een dagplafond én een **hard weekbudget per kind** (standaard **€ 20/week**, per kind instelbaar) — de app betaalt nooit meer uit dan dat, zodat de beloning succes-gericht én begrensd blijft.
   Het ouder-dashboard toont per kind het verdiende bedrag, de weekstand (uitbetaald/budget) en een knop **"Markeer betaald"**.
 - **Volwassen ouder-/admin-dashboard:** beheersing % per kind en per vak, aandachtspunten, foutenschrift, per kind instelbaar weekbudget/dagdoel/niveau, betaal-registratie, en **back-up exporteren/terugzetten**.
-- **Online opslag (cloud):** resultaten centraal via een familiecode + pincode (beveiligde databasefuncties; de opslag is niet publiek benaderbaar). Op elk toestel inloggen = dezelfde resultaten, altijd en overal te raadplegen. De app werkt ook gewoon offline en synct daarna.
+- **Online opslag (cloud):** resultaten centraal via een familiecode + pincode (beveiligde databasefuncties; de opslag is niet publiek benaderbaar). Op elk toestel inloggen = dezelfde resultaten, altijd en overal te raadplegen. De app werkt ook gewoon offline en synct daarna. **Slim samenvoegen:** bij synchroniseren worden de resultaten van toestellen samengevoegd (hoogste punten, beheerste sommen, streaks, records en betalingen) i.p.v. overschreven — met de knop "🔄 Samenvoegen &amp; gelijktrekken" tonen alle toestellen dezelfde score per kind (geen verlies).
+- **🏖️ Zomer-challenge (vakantie):** een spaardoel over ~7 weken. Elk kind spaart met écht oefenen naar een zomerdoel (bedrag) met een bonus bij het halen. De landingspagina toont per kind de voortgang ("nog € X tot je doel · nog Y weken") en het familietotaal. In te stellen in de ouder-modus (startdatum, weken, doel, bonus).
 
 ## To-do — verder uitbreiden (geprioriteerd)
 1. **Talen verdiepen** (alle kinderen): woordenschat per thema, meer werkwoordstijden, langere zinnen.
