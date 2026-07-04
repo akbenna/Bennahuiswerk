@@ -208,6 +208,34 @@ function speel(kind, aan){
 }
 function mmss(sec){const m=Math.floor(sec/60), s=sec%60; return m+':'+(s<10?'0':'')+s;}
 function weekbudgetVan(pr){ return (typeof pr.weekbudget==='number' && pr.weekbudget>=0) ? pr.weekbudget : BELONING.weekbudget; }
+// ISO-weeksleutel (jaar-week) voor het wekelijkse toernooi
+function weekKey(dd){ const d=dd?new Date(dd):new Date();
+  const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())); const day=t.getUTCDay()||7;
+  t.setUTCDate(t.getUTCDate()+4-day); const ys=new Date(Date.UTC(t.getUTCFullYear(),0,1));
+  const wk=Math.ceil((((t-ys)/86400000)+1)/7); return t.getUTCFullYear()+'-w'+wk; }
+// dagelijkse missie: 3 taken op basis van vandaag
+function dagMissie(prog){
+  const goal=prog.goal||10, td=prog.todayCount||0;
+  const d=(prog.dag&&prog.dag.d===todayStr())?prog.dag:{goed:0,fout:0};
+  const pog=(d.goed||0)+(d.fout||0), nauw=pog?d.goed/pog:0;
+  const t=(prog.toetsDag&&prog.toetsDag.d===todayStr())?prog.toetsDag:{oefen:0,proef:0};
+  const taken=[
+    {k:'doel', ok:td>=goal, tekst:'Haal je dagdoel ('+td+'/'+goal+' sommen)'},
+    {k:'nauw', ok:(pog>=8&&nauw>=0.8), tekst:'Werk nauwkeurig (≥ 80% van '+Math.max(8,pog)+')'},
+    {k:'toets',ok:((t.oefen||0)>0||(t.proef||0)>0), tekst:'Doe een oefentoets'},
+  ];
+  return {taken, klaar:taken.every(x=>x.ok)};
+}
+// dagmissie afgerond? → streak bijwerken en een XP-bonus (één keer per dag). Muteert pr.
+function crediteerMissie(pr){
+  const vandaag=todayStr();
+  if(pr.missieLaatst===vandaag) return false;
+  if(!dagMissie(pr).klaar) return false;
+  pr.missieStreak=(pr.missieLaatst===yesterdayStr())?(pr.missieStreak||0)+1:1;
+  pr.missieLaatst=vandaag;
+  pr.punten=(pr.punten||0)+25; pr.weekPunten=(pr.weekPunten||0)+25;   // missiebonus (XP)
+  return true;
+}
 // zomer-challenge: hoeveel al verdiend sinds de startdatum, en de stand t.o.v. het doel
 function zomerStand(prog, zomer){
   if(!zomer||!zomer.aan||!zomer.start) return null;
@@ -1789,7 +1817,7 @@ const TEMPLATES=[
 
 /* ============================ STORE (localStorage) ============================ */
 const KEY='oefenapp_v1';
-function blankProg(){return {punten:0, solved:{}, cards:{}, streak:0, dagstreak:0, lastDay:null, badges:[], goal:10, todayCount:0, foutLog:[], niveau:'auto', autoLvl:1, correctRun:0, dag:{d:null,goed:0,sterk:0,sterkPunten:0,fout:0,sterkIds:[]}, toetsDag:{d:null,oefen:0,proef:0}, betaaldOp:null, weekbudget:BELONING.weekbudget, betalingen:[]};}
+function blankProg(){return {punten:0, solved:{}, cards:{}, streak:0, dagstreak:0, lastDay:null, badges:[], goal:10, todayCount:0, foutLog:[], niveau:'auto', autoLvl:1, correctRun:0, dag:{d:null,goed:0,sterk:0,sterkPunten:0,fout:0,sterkIds:[]}, toetsDag:{d:null,oefen:0,proef:0}, betaaldOp:null, weekbudget:BELONING.weekbudget, betalingen:[], missieStreak:0, missieLaatst:null, weekKey:null, weekPunten:0};}
 function normalizeProg(p){
   const np={...blankProg(), ...(p||{})};
   np.solved=(p&&p.solved)||{}; np.cards=(p&&p.cards)||{};
@@ -1804,6 +1832,8 @@ function normalizeProg(p){
   if(typeof np.dag.sterkPunten!=='number') np.dag.sterkPunten=0;
   if(typeof np.weekbudget!=='number') np.weekbudget=BELONING.weekbudget;
   if(!Array.isArray(np.betalingen)) np.betalingen=[];
+  if(typeof np.missieStreak!=='number') np.missieStreak=0;
+  if(typeof np.weekPunten!=='number') np.weekPunten=0;
   if(!np.toetsDag||typeof np.toetsDag!=='object') np.toetsDag={d:null,oefen:0,proef:0};
   // eenmalige migratie: oude 'solved' → Leitner-kaarten
   if(Object.keys(np.cards).length===0 && Object.keys(np.solved).length>0){
@@ -1823,6 +1853,7 @@ function loadStore(){
   if(!s.games||typeof s.games!=='object') s.games={};   // topscores van de spelletjes
   if(typeof s.wedstrijdAan!=='boolean') s.wedstrijdAan=true;   // vriend uitdagen toegestaan
   if(!s.zomer||typeof s.zomer!=='object') s.zomer={aan:false, start:null, weken:7, doel:50, bonus:15};   // zomer-challenge
+  if(typeof s.spelNaDoel!=='boolean') s.spelNaDoel=false;   // spelletjes pas na het dagdoel
   for(const pid of Object.keys(PROFILES)) s.prog[pid]=normalizeProg(s.prog[pid]);
   return s;
 }
@@ -1866,6 +1897,8 @@ function mergeProg(a,b){
              : (parseDag((a.dag||{}).d)>=parseDag((b.dag||{}).d)? a.dag : b.dag);
   return {...a, ...b,
     punten:_max(a.punten,b.punten), streak:_max(a.streak,b.streak), dagstreak:_max(a.dagstreak,b.dagstreak),
+    missieStreak:_max(a.missieStreak,b.missieStreak), weekPunten:_max(a.weekPunten,b.weekPunten),
+    missieLaatst:(parseDag(a.missieLaatst)>=parseDag(b.missieLaatst)?a.missieLaatst:b.missieLaatst),
     todayCount:_max(a.todayCount,b.todayCount), goal:Math.max(a.goal||10,b.goal||10), weekbudget:Math.max(a.weekbudget||0,b.weekbudget||0),
     autoLvl:Math.max(a.autoLvl||1,b.autoLvl||1), niveau:(b.niveau!=='auto'?b.niveau:a.niveau),
     cards:mergeCards(a.cards,b.cards), solved, badges, betalingen:betalingen.slice(-80), foutLog:foutLog.slice(0,40), dag,
@@ -2131,8 +2164,12 @@ function App(){
       if(!pr.dag||pr.dag.d!==vandaag) pr.dag={d:vandaag,goed:0,sterk:0,sterkPunten:0,fout:0,sterkIds:[]};
       else pr.dag={...pr.dag, sterkIds:[...(pr.dag.sterkIds||[])]};
       const lvl=(inst&&inst.lvl)||card.lvl||1;                    // moeilijkheidsgraad van deze vraag
+      // wekelijks toernooi: punten resetten bij een nieuwe week
+      const wk=weekKey(); if(pr.weekKey!==wk){ pr.weekKey=wk; pr.weekPunten=0; }
       if(correct){
-        pr.punten=(pr.punten||0)+(wasMastered?3:(usedHint?5:10));
+        const gain=(wasMastered?3:(usedHint?5:10));
+        pr.punten=(pr.punten||0)+gain;
+        pr.weekPunten=(pr.weekPunten||0)+gain;
         pr.streak=(pr.streak||0)+1;
         pr.todayCount=(pr.todayCount||0)+1;
         pr.dag.goed++;
@@ -2152,6 +2189,7 @@ function App(){
       if(correct){ pr.correctRun=(pr.correctRun||0)+1; if(pr.correctRun>=3 && (pr.autoLvl||1)<3){pr.autoLvl=(pr.autoLvl||1)+1; pr.correctRun=0;} }
       else { pr.correctRun=0; if((pr.autoLvl||1)>1) pr.autoLvl=(pr.autoLvl||1)-1; }
       c.last=Date.now(); pr.cards[card.id]=c;
+      crediteerMissie(pr);                        // dagmissie-bonus + streak
       pr.badges=[...(pr.badges||[])];
       BADGES.forEach(b=>{if(!pr.badges.includes(b.id)&&b.test(pr)) pr.badges.push(b.id);});
       return {...prev, prog:{...prev.prog,[pid]:pr}};
@@ -2165,6 +2203,8 @@ function App(){
       const td=(pr.toetsDag&&pr.toetsDag.d===vandaag)?{...pr.toetsDag}:{d:vandaag,oefen:0,proef:0};
       if(isProef) td.proef=Math.max(td.proef||0,pct); else td.oefen=Math.max(td.oefen||0,pct);
       pr.toetsDag=td;
+      const wk=weekKey(); if(pr.weekKey!==wk){ pr.weekKey=wk; pr.weekPunten=0; }
+      crediteerMissie(pr);                        // toets afgerond kan de dagmissie voltooien
       return {...prev, prog:{...prev.prog,[pid]:pr}};
     });
   }
@@ -2173,7 +2213,7 @@ function App(){
 
   return (
     <div>
-      {view==='home' && <Home onPick={kiesProfiel} store={store} allEx={allEx} onAuthor={()=>setView('author')} onFormules={()=>setView('formules')} onLeertips={()=>setView('leertips')} onSpellen={()=>setView('spellen')} geluid={geluid} onToggleGeluid={toggleGeluid}/>}
+      {view==='home' && <Home onPick={kiesProfiel} store={store} allEx={allEx} onAuthor={()=>setView('author')} onFormules={()=>setView('formules')} onLeertips={()=>setView('leertips')} onSpellen={()=>setView('spellen')} spelNaDoel={store.spelNaDoel===true} geluid={geluid} onToggleGeluid={toggleGeluid}/>}
       {view==='kidlogin' && <KidLogin pid={pendingPid} store={store} onBack={()=>{setPendingPid(null);setView('home');}} onOk={()=>{const p=pendingPid;setPendingPid(null);openProfile(p);}}/>}
       {view==='spellen' && <Spellen store={store} onBack={()=>setView('home')} onScore={setGameScore} geluid={geluid}/>}
       {view==='wedstrijd-maak' && <WedstrijdMaken profile={profile} allEx={allEx} onBack={()=>setView('hub')} geluid={geluid}/>}
@@ -2182,7 +2222,8 @@ function App(){
       {view==='leertips' && <LeertipsView onBack={()=>setView('home')}/>}
       {view==='hub' && <Hub profile={profile} prog={prog} vak={vak} setVak={setVak} allEx={allEx}
         onBack={()=>setView('home')} onTopic={goTopic} onSetGoal={(g)=>setGoal(profile,g)} onSetNiveau={(n)=>setNiveau(profile,n)}
-        wedstrijdAan={store.wedstrijdAan!==false} onWedstrijd={()=>setView('wedstrijd-maak')}/>}
+        wedstrijdAan={store.wedstrijdAan!==false} onWedstrijd={()=>setView('wedstrijd-maak')}
+        onSpellen={()=>setView('spellen')} spelNaDoel={store.spelNaDoel===true}/>}
       {view==='practice' && <Practice profile={profile} vak={vak} topic={topic} jaar={jaar} allEx={allEx}
         onBack={()=>setView('hub')} onResult={recordResult} onToets={recordToets} prog={prog} onTopic={goTopic} geluid={geluid}/>}
       {view==='author' && <Author store={store} persist={persist} onBack={()=>setView('home')}
@@ -2192,7 +2233,7 @@ function App(){
 }
 
 /* ---------- HOME = levendige familie-landingspagina ---------- */
-function Home({onPick,store,allEx,onAuthor,onFormules,onLeertips,onSpellen,geluid,onToggleGeluid}){
+function Home({onPick,store,allEx,onAuthor,onFormules,onLeertips,onSpellen,spelNaDoel,geluid,onToggleGeluid}){
   const tip = TIP_VAN_DE_DAG[Math.floor(Date.now()/86400000) % TIP_VAN_DE_DAG.length];
   const kinderen = Object.entries(PROFILES).map(([id,p])=>{
     const pr=normalizeProg(store.prog[id]);
@@ -2225,6 +2266,40 @@ function Home({onPick,store,allEx,onAuthor,onFormules,onLeertips,onSpellen,gelui
           </div>
         ))}
       </div>
+
+      {/* familie-toernooi van de week (op punten van deze week) */}
+      {(()=>{ const tk=[...kinderen].sort((a,b)=>(b.pr.weekPunten||0)-(a.pr.weekPunten||0));
+        const leider=tk[0]&&(tk[0].pr.weekPunten||0)>0?tk[0]:null;
+        const nu=new Date(); const dow=nu.getDay()||7; const dagenTot=8-dow;
+        return (
+        <div className="card" style={{marginTop:12,background:'linear-gradient(120deg,#eafaf0,#e6f0fb)'}}>
+          <div className="row" style={{justifyContent:'space-between'}}><b>🏆 Toernooi van de week</b>
+            <span className="muted" style={{fontSize:12}}>nieuwe ronde over {dagenTot} {dagenTot===1?'dag':'dagen'}</span></div>
+          {leider && <div style={{margin:'6px 0',fontWeight:700}}>👑 Aan kop: {leider.p.emoji} {leider.p.naam} ({leider.pr.weekPunten} punten deze week)</div>}
+          {tk.map((k,i)=>(
+            <div key={k.id} className="rankrow" style={{background:'transparent',border:'none',padding:'4px 0'}}>
+              <span className="medal">{medals[i]||'⭐'}</span><span style={{fontSize:20}}>{k.p.emoji}</span>
+              <b style={{flex:1}}>{k.p.naam}</b><span style={{fontWeight:700}}>{k.pr.weekPunten||0}</span><span className="muted" style={{fontSize:12}}>deze week</span>
+            </div>
+          ))}
+        </div>);
+      })()}
+
+      {/* week-uitslag (verdiend deze week) */}
+      {(()=>{ const rows=kinderen.map(k=>({k, v:weekUitbetaald(k.pr)})); const tot=rows.reduce((s,r)=>s+r.v,0);
+        const nu=new Date(); const isZo=nu.getDay()===0;
+        return (
+        <div className="card" style={{marginTop:12}}>
+          <div className="row" style={{justifyContent:'space-between'}}><b>📅 Week-uitslag</b>
+            <span className="muted" style={{fontSize:12}}>{isZo?'Het is zondag — tijd voor de uitslag! 🎉':'samen '+euro(tot)}</span></div>
+          {rows.map(({k,v})=>(
+            <div key={k.id} className="row" style={{justifyContent:'space-between',fontSize:14,padding:'3px 0'}}>
+              <span>{k.p.emoji} {k.p.naam}</span><span style={{fontWeight:700,color:'#a8730a'}}>{euro(v)}</span>
+            </div>
+          ))}
+          <div className="muted" style={{fontSize:12,marginTop:4}}>Dit is wat er deze week eerlijk verdiend is. Uitbetalen doe je in de ouder-modus.</div>
+        </div>);
+      })()}
 
       {/* zomer-challenge (vakantie): spaar naar je zomerdoel */}
       {store.zomer&&store.zomer.aan&&(()=>{ const fam=kinderen.map(k=>({k, z:zomerStand(k.pr, store.zomer)})).filter(x=>x.z);
@@ -2272,7 +2347,11 @@ function Home({onPick,store,allEx,onAuthor,onFormules,onLeertips,onSpellen,gelui
       </div>
 
       <div className="center" style={{marginTop:20}}>
-        <button className="btn gold" onClick={onSpellen}>🎮 Spelletjes</button>
+        {(()=>{ const iemandKlaar=kinderen.some(k=>(k.pr.todayCount||0)>=(k.pr.goal||10)); const slot=spelNaDoel&&!iemandKlaar;
+          return slot
+            ? <div><button className="btn ghost" disabled>🔒 Spelletjes</button><div className="muted" style={{fontSize:12,marginTop:4}}>Eerst een dagdoel halen, dan verdien je speeltijd! 💪</div></div>
+            : <button className="btn gold" onClick={onSpellen}>🎮 Spelletjes</button>;
+        })()}
       </div>
       <div className="hint" style={{margin:'16px 0'}}><b>Tip van de dag:</b> {tip}</div>
       <div className="center">
@@ -2810,7 +2889,7 @@ function WedstrijdSpelen({code, onBack, geluid}){
 }
 
 /* ---------- HUB (vak + onderwerpen) ---------- */
-function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal,onSetNiveau,wedstrijdAan,onWedstrijd}){
+function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal,onSetNiveau,wedstrijdAan,onWedstrijd,onSpellen,spelNaDoel}){
   const P=PROFILES[profile];
   const [jaar,setJaar]=useState('nu');     // 'nu' | 'next'
   const heeftVolgend=useMemo(()=>allEx.some(e=>e.p===profile&&(e.jaar||'nu')==='next'),[allEx,profile]);
@@ -2849,6 +2928,20 @@ function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal,onSetNiveau
         </div>
         <div className="pbar" style={{marginTop:8}}><i style={{width:rang.pct+'%'}}></i></div>
       </div>
+
+      {/* dagmissie: 3 sterren + missie-streak */}
+      {(()=>{ const m=dagMissie(prog); return (
+        <div className="card" style={{marginTop:12,background:m.klaar?'#eaf7e2':'#fff'}}>
+          <div className="row" style={{justifyContent:'space-between'}}>
+            <b>⭐ Dagmissie {m.klaar?'— gehaald! 🎉':''}</b>
+            <span className="muted" style={{fontSize:13}}>🔥 missie-streak: {prog.missieStreak||0}</span>
+          </div>
+          <div style={{marginTop:6}}>
+            {m.taken.map((t,i)=>(<div key={i} style={{fontSize:14,padding:'2px 0'}}>{t.ok?'✅':'⬜'} {t.tekst}</div>))}
+          </div>
+          {!m.klaar && <div className="muted" style={{fontSize:12,marginTop:4}}>Rond alle drie af → +25 punten en je missie-streak groeit!</div>}
+        </div>
+      );})()}
 
       {/* dagdoel */}
       <div className="card" style={{marginTop:12,background:done>=goal?'#eaf7e2':'#fff'}}>
@@ -2914,6 +3007,15 @@ function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal,onSetNiveau
       {wedstrijdAan && <div className="center" style={{marginTop:10}}>
         <button className="btn accent" onClick={onWedstrijd}>⚔️ Daag een vriend uit</button>
       </div>}
+
+      {/* speeltijd: spelletjes (evt. pas na het dagdoel) */}
+      {onSpellen && (()=>{ const doelGehaald=(prog.todayCount||0)>=(prog.goal||10); const slot=spelNaDoel&&!doelGehaald; return (
+        <div className="center" style={{marginTop:10}}>
+          {slot
+            ? <button className="btn ghost" onClick={()=>{}} disabled title="Haal eerst je dagdoel">🔒 Spelletjes — haal eerst je dagdoel</button>
+            : <button className="btn gold" onClick={onSpellen}>🎮 Spelletjes{spelNaDoel?' (verdiend!)':''}</button>}
+        </div>
+      );})()}
 
       {/* leerjaar: dit jaar / volgend jaar (vooruitkijken) */}
       {heeftVolgend && <div className="wrap" style={{margin:'14px 0 0',alignItems:'center'}}>
@@ -3382,6 +3484,12 @@ function OuderDashboard({store,persist,onSetWeekbudget,onMarkeerBetaald,cloud,on
         <div className="row" style={{justifyContent:'space-between',alignItems:'center'}}>
           <span>⚔️ <b>Vriend uitdagen (wedstrijd via link)</b><div className="muted" style={{fontSize:12}}>Kind kan één vriend uitnodigen voor dezelfde quiz. Alleen een spelletje, geen persoonlijke gegevens.</div></span>
           <button className={'btn sm '+((store.wedstrijdAan!==false)?'':'ghost')} onClick={()=>persist(prev=>({...prev, wedstrijdAan: !(prev.wedstrijdAan!==false)}))}>{(store.wedstrijdAan!==false)?'Aan':'Uit'}</button>
+        </div>
+      </div>
+      <div className="card" style={{marginBottom:16}}>
+        <div className="row" style={{justifyContent:'space-between',alignItems:'center'}}>
+          <span>🎮 <b>Speeltijd verdienen</b><div className="muted" style={{fontSize:12}}>Spelletjes pas beschikbaar nadat het dagdoel gehaald is.</div></span>
+          <button className={'btn sm '+((store.spelNaDoel===true)?'':'ghost')} onClick={()=>persist(prev=>({...prev, spelNaDoel: !(prev.spelNaDoel===true)}))}>{(store.spelNaDoel===true)?'Aan':'Uit'}</button>
         </div>
       </div>
     </div>
