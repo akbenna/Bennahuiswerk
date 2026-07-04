@@ -309,6 +309,28 @@ function mmss(sec) {
 function weekbudgetVan(pr) {
   return typeof pr.weekbudget === 'number' && pr.weekbudget >= 0 ? pr.weekbudget : BELONING.weekbudget;
 }
+// zomer-challenge: hoeveel al verdiend sinds de startdatum, en de stand t.o.v. het doel
+function zomerStand(prog, zomer) {
+  if (!zomer || !zomer.aan || !zomer.start) return null;
+  const startMs = parseDag(zomer.start),
+    nu = Date.now();
+  const verdiend = (prog.betalingen || []).filter(b => parseDag(b.d) >= startMs).reduce((s, b) => s + (b.bedrag || 0), 0);
+  const wekenTotaal = zomer.weken || 7;
+  const wekenVoorbij = Math.max(0, Math.min(wekenTotaal, Math.floor((nu - startMs) / (7 * 86400000))));
+  const doel = zomer.doel || 0,
+    bonus = zomer.bonus || 0,
+    gehaald = doel > 0 && verdiend >= doel;
+  return {
+    verdiend: Math.round(verdiend * 2) / 2,
+    doel,
+    bonus,
+    gehaald,
+    pct: doel ? Math.min(100, Math.round(verdiend / doel * 100)) : 0,
+    wekenVoorbij,
+    wekenTotaal,
+    wekenOver: Math.max(0, wekenTotaal - wekenVoorbij)
+  };
+}
 function berekenBeloning(pr) {
   const d = pr.dag || {},
     t = pr.toetsDag || {};
@@ -11366,6 +11388,13 @@ function loadStore() {
   if (!s.kidpw || typeof s.kidpw !== 'object') s.kidpw = {}; // per kind een wachtwoord (standaard 'Bennaclan')
   if (!s.games || typeof s.games !== 'object') s.games = {}; // topscores van de spelletjes
   if (typeof s.wedstrijdAan !== 'boolean') s.wedstrijdAan = true; // vriend uitdagen toegestaan
+  if (!s.zomer || typeof s.zomer !== 'object') s.zomer = {
+    aan: false,
+    start: null,
+    weken: 7,
+    doel: 50,
+    bonus: 15
+  }; // zomer-challenge
   for (const pid of Object.keys(PROFILES)) s.prog[pid] = normalizeProg(s.prog[pid]);
   return s;
 }
@@ -11404,6 +11433,119 @@ function syncData(store) {
     ...rest
   } = store;
   return rest;
+}
+// ---- Samenvoegen (merge) zodat toestellen naar dezelfde, hoogste score convergeren ----
+function _max(a, b) {
+  return Math.max(a || 0, b || 0);
+}
+function mergeCards(a, b) {
+  const out = {
+    ...(a || {})
+  };
+  for (const id of Object.keys(b || {})) {
+    const e = out[id],
+      c = b[id];
+    out[id] = e ? {
+      box: _max(e.box, c.box),
+      ok: _max(e.ok, c.ok),
+      wrong: _max(e.wrong, c.wrong),
+      last: _max(e.last, c.last)
+    } : c;
+  }
+  return out;
+}
+function mergeProg(a, b) {
+  a = normalizeProg(a);
+  b = normalizeProg(b);
+  const solved = {
+    ...a.solved
+  };
+  for (const id of Object.keys(b.solved || {})) {
+    solved[id] = {
+      ok: _max((solved[id] || {}).ok, (b.solved[id] || {}).ok)
+    };
+  }
+  const badges = [...new Set([...(a.badges || []), ...(b.badges || [])])];
+  const bseen = new Set(),
+    betalingen = [];
+  for (const x of [...(a.betalingen || []), ...(b.betalingen || [])]) {
+    const k = x.d + '|' + x.bedrag;
+    if (!bseen.has(k)) {
+      bseen.add(k);
+      betalingen.push(x);
+    }
+  }
+  const fseen = new Set(),
+    foutLog = [];
+  for (const f of [...(a.foutLog || []), ...(b.foutLog || [])].sort((x, y) => (y.when || 0) - (x.when || 0))) {
+    if (f && !fseen.has(f.id)) {
+      fseen.add(f.id);
+      foutLog.push(f);
+    }
+  }
+  const sameDag = a.dag && b.dag && a.dag.d === b.dag.d;
+  const dag = sameDag ? {
+    d: a.dag.d,
+    goed: _max(a.dag.goed, b.dag.goed),
+    sterk: _max(a.dag.sterk, b.dag.sterk),
+    sterkPunten: _max(a.dag.sterkPunten, b.dag.sterkPunten),
+    fout: _max(a.dag.fout, b.dag.fout),
+    sterkIds: [...new Set([...(a.dag.sterkIds || []), ...(b.dag.sterkIds || [])])]
+  } : parseDag((a.dag || {}).d) >= parseDag((b.dag || {}).d) ? a.dag : b.dag;
+  return {
+    ...a,
+    ...b,
+    punten: _max(a.punten, b.punten),
+    streak: _max(a.streak, b.streak),
+    dagstreak: _max(a.dagstreak, b.dagstreak),
+    todayCount: _max(a.todayCount, b.todayCount),
+    goal: Math.max(a.goal || 10, b.goal || 10),
+    weekbudget: Math.max(a.weekbudget || 0, b.weekbudget || 0),
+    autoLvl: Math.max(a.autoLvl || 1, b.autoLvl || 1),
+    niveau: b.niveau !== 'auto' ? b.niveau : a.niveau,
+    cards: mergeCards(a.cards, b.cards),
+    solved,
+    badges,
+    betalingen: betalingen.slice(-80),
+    foutLog: foutLog.slice(0, 40),
+    dag,
+    lastDay: parseDag(a.lastDay) >= parseDag(b.lastDay) ? a.lastDay : b.lastDay,
+    betaaldOp: parseDag(a.betaaldOp) >= parseDag(b.betaaldOp) ? a.betaaldOp : b.betaaldOp,
+    toetsDag: parseDag((a.toetsDag || {}).d) >= parseDag((b.toetsDag || {}).d) ? a.toetsDag : b.toetsDag
+  };
+}
+function mergeStore(local, cloud) {
+  local = local || {};
+  cloud = cloud || {};
+  const out = {
+    ...local
+  };
+  out.prog = {
+    ...(local.prog || {})
+  };
+  const pids = new Set([...Object.keys(local.prog || {}), ...Object.keys(cloud.prog || {})]);
+  pids.forEach(pid => {
+    out.prog[pid] = mergeProg(local.prog && local.prog[pid], cloud.prog && cloud.prog[pid]);
+  });
+  const cseen = new Set();
+  out.custom = [];
+  for (const e of [...(local.custom || []), ...(cloud.custom || [])]) {
+    if (e && !cseen.has(e.id)) {
+      cseen.add(e.id);
+      out.custom.push(e);
+    }
+  }
+  out.games = {
+    ...(cloud.games || {})
+  };
+  for (const k of Object.keys(local.games || {})) out.games[k] = _max(out.games[k], local.games[k]);
+  out.kidpw = {
+    ...(cloud.kidpw || {}),
+    ...(local.kidpw || {})
+  };
+  out.zomer = local.zomer || cloud.zomer || out.zomer;
+  out.pin = local.pin || cloud.pin || '1234';
+  return out;
 }
 // ---- Wedstrijd (vriend uitdagen via link) ----
 function chCreate(code, data) {
@@ -11564,6 +11706,11 @@ function yesterdayStr() {
   d.setDate(d.getDate() - 1);
   return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
 }
+function todayISO() {
+  const d = new Date();
+  const p = n => String(n).padStart(2, '0');
+  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+}
 const BADGES = [{
   id: 'p50',
   emoji: '⭐',
@@ -11670,25 +11817,25 @@ function App() {
       p_pin: pin
     });
     const data = r.data || {};
+    let mergedSnap = null;
     setStore(prev => {
-      const merged = {
-        ...prev,
-        ...data,
-        cloud: {
-          household,
-          pin,
-          lastServer: r.updated_at,
-          lastSync: Date.now()
-        }
+      const merged = mergeStore(prev, data); // samenvoegen i.p.v. overschrijven (geen verlies)
+      merged.cloud = {
+        household,
+        pin,
+        lastServer: r.updated_at,
+        lastSync: Date.now()
       };
       merged.custom = merged.custom || [];
       merged.pin = merged.pin || '1234';
       merged.prog = merged.prog || {};
       for (const pid of Object.keys(PROFILES)) merged.prog[pid] = normalizeProg(merged.prog[pid]);
       saveStore(merged);
+      mergedSnap = merged;
       return merged;
     });
-    setCloudStatus('Ingelogd — resultaten opgehaald ✓');
+    if (mergedSnap) cloudPush(mergedSnap); // push de samengevoegde stand terug
+    setCloudStatus('Ingelogd — samengevoegd ✓');
     return r;
   }
   function cloudDisconnect() {
@@ -11702,6 +11849,34 @@ function App() {
       }
     }));
     setCloudStatus('Ontkoppeld (alleen nog lokaal).');
+  }
+  async function cloudMerge() {
+    // haal op, voeg samen, en zet terug → zelfde score overal
+    const c = store.cloud;
+    if (!c || !c.household || !c.pin) {
+      setCloudStatus('Koppel eerst een familiecode.');
+      return;
+    }
+    setCloudStatus('Bezig met samenvoegen…');
+    const r = await cloudCall('oefenapp_load', {
+      p_household: c.household,
+      p_pin: c.pin
+    });
+    let snap = null;
+    setStore(prev => {
+      const merged = mergeStore(prev, r.data || {});
+      merged.cloud = {
+        ...prev.cloud,
+        lastServer: r.updated_at,
+        lastSync: Date.now()
+      };
+      for (const pid of Object.keys(PROFILES)) merged.prog[pid] = normalizeProg(merged.prog[pid]);
+      saveStore(merged);
+      snap = merged;
+      return merged;
+    });
+    if (snap) await cloudPush(snap);
+    setCloudStatus('Alles samengevoegd — elk toestel toont nu dezelfde score ✓');
   }
 
   // wedstrijd-link geopend (#w=CODE)? → toon de wedstrijd voor de vriend
@@ -11724,25 +11899,25 @@ function App() {
         p_household: c.household,
         p_pin: c.pin
       }).then(r => {
-        if (r && r.data && r.updated_at && r.updated_at !== c.lastServer) {
+        if (r && r.data) {
+          let snap = null;
           setStore(prev => {
-            const merged = {
-              ...prev,
-              ...r.data,
-              cloud: {
-                ...prev.cloud,
-                lastServer: r.updated_at,
-                lastSync: Date.now()
-              }
+            const merged = mergeStore(prev, r.data); // altijd samenvoegen → zelfde score op elk toestel
+            merged.cloud = {
+              ...prev.cloud,
+              lastServer: r.updated_at,
+              lastSync: Date.now()
             };
             merged.custom = merged.custom || [];
             merged.pin = merged.pin || '1234';
             merged.prog = merged.prog || {};
             for (const pid of Object.keys(PROFILES)) merged.prog[pid] = normalizeProg(merged.prog[pid]);
             saveStore(merged);
+            snap = merged;
             return merged;
           });
-          setCloudStatus('Nieuwste resultaten opgehaald ✓');
+          if (snap) cloudPush(snap);
+          setCloudStatus('Samengevoegd met de cloud ✓');
         }
       }).catch(() => {});
     }
@@ -11873,6 +12048,7 @@ function App() {
     register: cloudRegister,
     login: cloudLogin,
     sync: () => cloudPush(),
+    merge: cloudMerge,
     disconnect: cloudDisconnect,
     setStatus: setCloudStatus
   };
@@ -12163,7 +12339,65 @@ function Home({
     style: {
       fontSize: 12
     }
-  }, k.th.xp)))), /*#__PURE__*/React.createElement("p", {
+  }, k.th.xp)))), store.zomer && store.zomer.aan && (() => {
+    const fam = kinderen.map(k => ({
+      k,
+      z: zomerStand(k.pr, store.zomer)
+    })).filter(x => x.z);
+    const totVerdiend = fam.reduce((s, x) => s + x.z.verdiend, 0);
+    return /*#__PURE__*/React.createElement("div", {
+      className: "card",
+      style: {
+        marginTop: 14,
+        background: 'linear-gradient(120deg,#fff4d1,#ffe0c2)'
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "row",
+      style: {
+        justifyContent: 'space-between'
+      }
+    }, /*#__PURE__*/React.createElement("b", null, "🏖️ Zomer-challenge"), /*#__PURE__*/React.createElement("span", {
+      className: "muted",
+      style: {
+        fontSize: 13
+      }
+    }, "samen al ", euro(totVerdiend), " verdiend")), fam.map(({
+      k,
+      z
+    }) => /*#__PURE__*/React.createElement("div", {
+      key: k.id,
+      style: {
+        marginTop: 8
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "row",
+      style: {
+        justifyContent: 'space-between',
+        fontSize: 14
+      }
+    }, /*#__PURE__*/React.createElement("span", null, k.p.emoji, " ", /*#__PURE__*/React.createElement("b", null, k.p.naam), " ", z.gehaald && /*#__PURE__*/React.createElement("span", null, "🏆")), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontWeight: 700,
+        color: '#a8730a'
+      }
+    }, euro(z.verdiend), " / ", euro(z.doel))), /*#__PURE__*/React.createElement("div", {
+      className: "miniprog",
+      style: {
+        background: 'rgba(0,0,0,.08)'
+      }
+    }, /*#__PURE__*/React.createElement("i", {
+      style: {
+        width: z.pct + '%',
+        background: '#e08a2b'
+      }
+    })), /*#__PURE__*/React.createElement("div", {
+      className: "muted",
+      style: {
+        fontSize: 12,
+        marginTop: 2
+      }
+    }, z.gehaald ? /*#__PURE__*/React.createElement("span", null, "🎉 Zomerdoel gehaald — verdien je bonus van ", euro(z.bonus), "!") : /*#__PURE__*/React.createElement("span", null, "Nog ", euro(Math.max(0, z.doel - z.verdiend)), " tot je doel · dan +", euro(z.bonus), " bonus · nog ", z.wekenOver, " ", z.wekenOver === 1 ? 'week' : 'weken')))));
+  })(), /*#__PURE__*/React.createElement("p", {
     className: "muted center",
     style: {
       margin: '16px 0 8px'
@@ -14946,11 +15180,21 @@ function CloudPaneel({
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn sm",
     disabled: busy,
+    onClick: () => doe(() => cloud.merge())
+  }, "🔄 Samenvoegen & gelijktrekken"), /*#__PURE__*/React.createElement("button", {
+    className: "btn ghost sm",
+    disabled: busy,
     onClick: () => doe(() => cloud.sync())
-  }, "🔄 Nu synchroniseren"), /*#__PURE__*/React.createElement("button", {
+  }, "⬆️ Uploaden"), /*#__PURE__*/React.createElement("button", {
     className: "btn ghost sm",
     onClick: cloud.disconnect
-  }, "Ontkoppel dit toestel"))) : /*#__PURE__*/React.createElement("div", {
+  }, "Ontkoppel")), /*#__PURE__*/React.createElement("p", {
+    className: "muted",
+    style: {
+      fontSize: 12,
+      marginTop: 6
+    }
+  }, "Tip: doe \"Samenvoegen & gelijktrekken\" één keer op élk toestel — dan tonen alle toestellen dezelfde (hoogste) score per kind.")) : /*#__PURE__*/React.createElement("div", {
     style: {
       marginTop: 8
     }
@@ -15263,7 +15507,10 @@ function OuderDashboard({
       paddingTop: 8,
       borderTop: '1px solid var(--line)'
     }
-  }, "💶 ", /*#__PURE__*/React.createElement("b", null, "Beloning naar resultaat & niveau:"), " alleen 1e keer goed zónder hint telt, en ", /*#__PURE__*/React.createElement("b", null, "moeilijker = meer waard"), " (niveau 1/2/3 → 1/2/3 punten × € ", String(BELONING.tariefPunt).replace('.', ','), "). Nauwkeurigheidspoort (≥ 85% vol tarief, ≥ 70% half, daaronder niets). Toetsbonus schaalt met de score. Dagplafond ", euro(BELONING.dagMax), " en een ", /*#__PURE__*/React.createElement("b", null, "hard weekbudget per kind"), " — de app betaalt nooit meer uit dan dat.")), onSetKidPw && /*#__PURE__*/React.createElement(KidPwPaneel, {
+  }, "💶 ", /*#__PURE__*/React.createElement("b", null, "Beloning naar resultaat & niveau:"), " alleen 1e keer goed zónder hint telt, en ", /*#__PURE__*/React.createElement("b", null, "moeilijker = meer waard"), " (niveau 1/2/3 → 1/2/3 punten × € ", String(BELONING.tariefPunt).replace('.', ','), "). Nauwkeurigheidspoort (≥ 85% vol tarief, ≥ 70% half, daaronder niets). Toetsbonus schaalt met de score. Dagplafond ", euro(BELONING.dagMax), " en een ", /*#__PURE__*/React.createElement("b", null, "hard weekbudget per kind"), " — de app betaalt nooit meer uit dan dat.")), /*#__PURE__*/React.createElement(ZomerPaneel, {
+    store: store,
+    persist: persist
+  }), onSetKidPw && /*#__PURE__*/React.createElement(KidPwPaneel, {
     store: store,
     onSetKidPw: onSetKidPw
   }), /*#__PURE__*/React.createElement("div", {
@@ -15289,6 +15536,113 @@ function OuderDashboard({
       wedstrijdAan: !(prev.wedstrijdAan !== false)
     }))
   }, store.wedstrijdAan !== false ? 'Aan' : 'Uit'))));
+}
+function ZomerPaneel({
+  store,
+  persist
+}) {
+  const z = store.zomer || {
+    aan: false,
+    start: null,
+    weken: 7,
+    doel: 50,
+    bonus: 15
+  };
+  function upd(patch) {
+    persist(prev => ({
+      ...prev,
+      zomer: {
+        ...(prev.zomer || {}),
+        ...patch
+      }
+    }));
+  }
+  return /*#__PURE__*/React.createElement("div", {
+    className: "card",
+    style: {
+      marginBottom: 16,
+      background: '#fff7ea',
+      borderLeftColor: '#e08a2b'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "row",
+    style: {
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("span", null, "🏖️ ", /*#__PURE__*/React.createElement("b", null, "Zomer-challenge (vakantie)")), /*#__PURE__*/React.createElement("button", {
+    className: 'btn sm ' + (z.aan ? '' : 'ghost'),
+    onClick: () => upd({
+      aan: !z.aan,
+      start: z.start || todayISO()
+    })
+  }, z.aan ? 'Aan' : 'Uit')), /*#__PURE__*/React.createElement("p", {
+    className: "muted",
+    style: {
+      fontSize: 13,
+      marginTop: 4
+    }
+  }, "Elk kind spaart over ~", z.weken, " weken naar een zomerdoel; bij het doel volgt een bonus. Zo staat er een leuk streefbedrag \"na de vakantie\" tegenover echt oefenen."), /*#__PURE__*/React.createElement("div", {
+    className: "row",
+    style: {
+      gap: 10,
+      marginTop: 8,
+      flexWrap: 'wrap'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      minWidth: 130
+    }
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "fld"
+  }, "Startdatum"), /*#__PURE__*/React.createElement("input", {
+    className: "f",
+    type: "date",
+    value: z.start || todayISO(),
+    onChange: e => upd({
+      start: e.target.value
+    })
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: 80
+    }
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "fld"
+  }, "Weken"), /*#__PURE__*/React.createElement("input", {
+    className: "f",
+    inputMode: "numeric",
+    value: z.weken,
+    onChange: e => upd({
+      weken: Math.max(1, Number(String(e.target.value).replace(/\D/g, '')) || 7)
+    })
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: 100
+    }
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "fld"
+  }, "Doel (€)"), /*#__PURE__*/React.createElement("input", {
+    className: "f",
+    inputMode: "numeric",
+    value: z.doel,
+    onChange: e => upd({
+      doel: Number(String(e.target.value).replace(/\D/g, '')) || 0
+    })
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: 100
+    }
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "fld"
+  }, "Bonus (€)"), /*#__PURE__*/React.createElement("input", {
+    className: "f",
+    inputMode: "numeric",
+    value: z.bonus,
+    onChange: e => upd({
+      bonus: Number(String(e.target.value).replace(/\D/g, '')) || 0
+    })
+  }))));
 }
 function KidPwPaneel({
   store,
