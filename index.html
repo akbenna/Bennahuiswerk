@@ -206,6 +206,15 @@ function kidPw(store, pid) {
 function pwGelijk(a, b) {
   return String(a || '').trim().toLowerCase() === String(b || '').trim().toLowerCase();
 }
+// Per-kind account: het kind logt in met zijn naam + wachtwoord (standaard 'Bennaclan').
+// De accountcode is afgeleid van de naam binnen de 'bennaclan'-familie, zodat het op elk toestel gelijk is.
+function accVan(store, pid) {
+  const a = store && store.kidacc && store.kidacc[pid];
+  return a && a.code ? a : {
+    code: 'bennaclan-' + pid,
+    pw: STANDAARD_WACHTWOORD
+  };
+}
 function rangVoor(thema, punten) {
   const r = thema.rangen;
   let i = 0;
@@ -11445,6 +11454,7 @@ function loadStore() {
     lastSync: null
   };
   if (!s.kidpw || typeof s.kidpw !== 'object') s.kidpw = {}; // per kind een wachtwoord (standaard 'Bennaclan')
+  if (!s.kidacc || typeof s.kidacc !== 'object') s.kidacc = {}; // per kind een online account {code,pw} — scores volgen het kind, niet het toestel
   if (!s.games || typeof s.games !== 'object') s.games = {}; // topscores van de spelletjes
   if (typeof s.wedstrijdAan !== 'boolean') s.wedstrijdAan = true; // vriend uitdagen toegestaan
   if (!s.zomer || typeof s.zomer !== 'object') s.zomer = {
@@ -11605,6 +11615,10 @@ function mergeStore(local, cloud) {
   out.kidpw = {
     ...(cloud.kidpw || {}),
     ...(local.kidpw || {})
+  };
+  out.kidacc = {
+    ...(cloud.kidacc || {}),
+    ...(local.kidacc || {})
   };
   out.zomer = local.zomer || cloud.zomer || out.zomer;
   out.pin = local.pin || cloud.pin || '1234';
@@ -11814,6 +11828,8 @@ function App() {
   const [cloudStatus, setCloudStatus] = useState(''); // korte statusmelding voor de ouder-modus
   const pushTimer = useRef(null);
   const pulledOnce = useRef(false);
+  const storeRef = useRef(store);
+  storeRef.current = store;
   const persist = updater => setStore(prev => {
     const next = typeof updater === 'function' ? updater(prev) : updater;
     saveStore(next);
@@ -11912,6 +11928,116 @@ function App() {
       }
     }));
     setCloudStatus('Ontkoppeld (alleen nog lokaal).');
+  }
+
+  // ---- Per-kind account: scores volgen het KIND (op elk toestel), niet het toestel ----
+  const childTimers = useRef({});
+  function scheduleChildPush(pid) {
+    if (childTimers.current[pid]) clearTimeout(childTimers.current[pid]);
+    childTimers.current[pid] = setTimeout(() => childPush(pid), 1500);
+  }
+  async function childPush(pid) {
+    const s = storeRef.current;
+    const acc = accVan(s, pid);
+    if (!acc.code || !acc.pw) return;
+    try {
+      await cloudCall('oefenapp_save', {
+        p_household: acc.code,
+        p_pin: acc.pw,
+        p_data: {
+          prog: normalizeProg(s.prog[pid])
+        }
+      });
+    } catch (e) {}
+  }
+  async function childRegister(pid, code, pw) {
+    // maak een nieuw account voor dit kind
+    code = String(code || '').trim().toLowerCase();
+    await cloudCall('oefenapp_register', {
+      p_household: code,
+      p_pin: pw,
+      p_data: {
+        prog: normalizeProg(storeRef.current.prog[pid])
+      }
+    });
+    persist(prev => ({
+      ...prev,
+      kidacc: {
+        ...(prev.kidacc || {}),
+        [pid]: {
+          code,
+          pw
+        }
+      }
+    }));
+    return true;
+  }
+  async function childLogin(pid, code, pw) {
+    // log in met naam + wachtwoord; haal scores op (of maak account aan)
+    code = String(code || '').trim().toLowerCase();
+    let r;
+    try {
+      r = await cloudCall('oefenapp_load', {
+        p_household: code,
+        p_pin: pw
+      });
+    } catch (e) {
+      if (/niet gevonden/i.test(e && e.message || '')) {
+        // account bestaat nog niet → aanmaken met huidige scores
+        await cloudCall('oefenapp_register', {
+          p_household: code,
+          p_pin: pw,
+          p_data: {
+            prog: normalizeProg(storeRef.current.prog[pid])
+          }
+        });
+        persist(prev => ({
+          ...prev,
+          kidacc: {
+            ...(prev.kidacc || {}),
+            [pid]: {
+              code,
+              pw
+            }
+          }
+        }));
+        return true;
+      }
+      throw e; // onjuist wachtwoord of geen verbinding
+    }
+    const cloudProg = r.data && r.data.prog || {}; // gevonden → samenvoegen (geen verlies)
+    let snap = null;
+    setStore(prev => {
+      const merged = {
+        ...prev,
+        prog: {
+          ...prev.prog,
+          [pid]: mergeProg(prev.prog[pid], cloudProg)
+        },
+        kidacc: {
+          ...(prev.kidacc || {}),
+          [pid]: {
+            code,
+            pw
+          }
+        }
+      };
+      saveStore(merged);
+      snap = merged;
+      return merged;
+    });
+    if (snap) {
+      try {
+        await cloudCall('oefenapp_save', {
+          p_household: code,
+          p_pin: pw,
+          p_data: {
+            prog: normalizeProg(snap.prog[pid])
+          }
+        });
+      } catch (e) {}
+    }
+    return true;
   }
   async function cloudMerge() {
     // haal op, voeg samen, en zet terug → zelfde score overal
@@ -12026,6 +12152,7 @@ function App() {
         }
       };
     });
+    scheduleChildPush(pid);
   }
   function setNiveau(pid, n) {
     persist(prev => {
@@ -12043,6 +12170,7 @@ function App() {
         }
       };
     });
+    scheduleChildPush(pid);
   }
   const geluid = store.geluid !== false;
   function toggleGeluid() {
@@ -12063,6 +12191,7 @@ function App() {
         }
       };
     });
+    scheduleChildPush(pid);
   }
   function markeerBetaald(pid) {
     persist(prev => {
@@ -12083,6 +12212,7 @@ function App() {
         }
       };
     });
+    scheduleChildPush(pid);
   }
   function setGameScore(spel, score, lager) {
     persist(prev => {
@@ -12217,6 +12347,7 @@ function App() {
         }
       };
     });
+    scheduleChildPush(pid);
   }
 
   // toets-uitslag bewaren (voor 'klaar voor toets'-bonus bij de beloning)
@@ -12247,6 +12378,7 @@ function App() {
         }
       };
     });
+    scheduleChildPush(pid);
   }
   const prog = profile ? normalizeProg(store.prog[profile]) : null;
   const goTopic = (t, jr) => {
@@ -12268,6 +12400,7 @@ function App() {
   }), view === 'kidlogin' && /*#__PURE__*/React.createElement(KidLogin, {
     pid: pendingPid,
     store: store,
+    onLogin: childLogin,
     onBack: () => {
       setPendingPid(null);
       setView('home');
@@ -12334,7 +12467,11 @@ function App() {
     onSetWeekbudget: setWeekbudget,
     onMarkeerBetaald: markeerBetaald,
     cloud: cloudApi,
-    onSetKidPw: setKidPw
+    onSetKidPw: setKidPw,
+    accApi: {
+      register: childRegister,
+      login: childLogin
+    }
   }));
 }
 
@@ -12700,10 +12837,11 @@ function Home({
   }, "👨‍👩‍👧 Ouder-modus")));
 }
 
-/* ---------- KIND-WACHTWOORD (starten) ---------- */
+/* ---------- KIND-LOGIN (account: scores volgen het kind, op elk toestel) ---------- */
 function KidLogin({
   pid,
   store,
+  onLogin,
   onBack,
   onOk
 }) {
@@ -12712,14 +12850,36 @@ function KidLogin({
     emoji: '🔒',
     kleur: '#5EA03A'
   };
+  const acc = accVan(store, pid);
   const [pw, setPw] = useState('');
   const [msg, setMsg] = useState('');
+  const [busy, setBusy] = useState(false);
   const ref = useRef(null);
   useEffect(() => {
     setTimeout(() => ref.current && ref.current.focus(), 80);
   }, []);
-  function probeer() {
-    if (pwGelijk(pw, kidPw(store, pid))) onOk();else {
+  async function probeer() {
+    const lokaalOk = pwGelijk(pw, kidPw(store, pid)) || pwGelijk(pw, acc.pw);
+    if (onLogin) {
+      setBusy(true);
+      try {
+        await onLogin(pid, acc.code, pw);
+        setBusy(false);
+        onOk();
+        return;
+      } catch (e) {
+        setBusy(false);
+        if (lokaalOk) {
+          onOk();
+          return;
+        } // offline of mismatch → lokaal wachtwoord klopt: tóch starten
+        setMsg(e && /pincode|wachtwoord/i.test(e.message || '') ? 'Onjuist wachtwoord.' : 'Geen verbinding — probeer opnieuw.');
+        setPw('');
+        setTimeout(() => setMsg(''), 2200);
+        return;
+      }
+    }
+    if (lokaalOk) onOk();else {
       setMsg('Oeps, probeer nog eens.');
       setPw('');
       setTimeout(() => setMsg(''), 1500);
@@ -12732,7 +12892,7 @@ function KidLogin({
     onClick: onBack
   }, "← terug"), /*#__PURE__*/React.createElement("span", {
     className: "pill"
-  }, "Wachtwoord")), /*#__PURE__*/React.createElement("div", {
+  }, "Inloggen")), /*#__PURE__*/React.createElement("div", {
     className: "card center",
     style: {
       marginTop: 20,
@@ -12751,7 +12911,7 @@ function KidLogin({
     style: {
       opacity: .95
     }
-  }, "Typ je wachtwoord om te starten")), /*#__PURE__*/React.createElement("div", {
+  }, "Log in op je eigen account")), /*#__PURE__*/React.createElement("div", {
     className: "card",
     style: {
       marginTop: 12
@@ -12779,14 +12939,15 @@ function KidLogin({
     }
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn",
+    disabled: busy,
     onClick: probeer
-  }, "Start 🚀")), /*#__PURE__*/React.createElement("p", {
+  }, busy ? 'Bezig…' : 'Start 🚀')), /*#__PURE__*/React.createElement("p", {
     className: "muted center",
     style: {
       fontSize: 12,
       marginTop: 8
     }
-  }, "Standaard wachtwoord: Bennaclan (in te stellen in de ouder-modus)")));
+  }, "Log in met je naam + wachtwoord ", /*#__PURE__*/React.createElement("b", null, "Bennaclan"), ". Je scores staan op je account — op elk toestel gelijk.")));
 }
 
 /* ---------- SPELLETJES (ter ontspanning) ---------- */
@@ -15504,13 +15665,73 @@ function CloudPaneel({
     }
   }, cloud.status));
 }
+function KindAccountPaneel({
+  store,
+  accApi
+}) {
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState('');
+  async function zetOnline() {
+    setBusy(true);
+    let ok = 0;
+    for (const pid of Object.keys(PROFILES)) {
+      const a = accVan(store, pid);
+      try {
+        await accApi.login(pid, a.code, a.pw);
+        ok++;
+      } catch (e) {}
+    }
+    setBusy(false);
+    setMsg(ok + ' van ' + Object.keys(PROFILES).length + ' accounts online gezet ✓');
+    setTimeout(() => setMsg(''), 3000);
+  }
+  return /*#__PURE__*/React.createElement("div", {
+    className: "card",
+    style: {
+      marginBottom: 16,
+      background: '#eef4fb',
+      borderLeftColor: '#3a6ea0'
+    }
+  }, /*#__PURE__*/React.createElement("b", null, "👤 Kind-accounts (scores volgen het kind)"), /*#__PURE__*/React.createElement("p", {
+    className: "muted",
+    style: {
+      fontSize: 13,
+      marginTop: 4
+    }
+  }, "Elk kind logt op elk toestel in met ", /*#__PURE__*/React.createElement("b", null, "zijn naam + wachtwoord \"Bennaclan\""), ". De scores staan online op zijn eigen account — dus op elk toestel gelijk, niet meer per toestel."), /*#__PURE__*/React.createElement("div", {
+    className: "wrap",
+    style: {
+      marginTop: 6
+    }
+  }, Object.entries(PROFILES).map(([pid, P]) => /*#__PURE__*/React.createElement("span", {
+    key: pid,
+    className: "tag"
+  }, P.emoji, " ", P.naam, ": ", accVan(store, pid).code))), accApi && /*#__PURE__*/React.createElement("div", {
+    className: "wrap",
+    style: {
+      marginTop: 10
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn sm",
+    disabled: busy,
+    onClick: zetOnline
+  }, busy ? 'Bezig…' : '☁️ Zet alle accounts nu online')), msg && /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: '#2c5680',
+      fontWeight: 600,
+      marginTop: 8,
+      fontSize: 13
+    }
+  }, msg));
+}
 function OuderDashboard({
   store,
   persist,
   onSetWeekbudget,
   onMarkeerBetaald,
   cloud,
-  onSetKidPw
+  onSetKidPw,
+  accApi
 }) {
   const allEx = [...SEED, ...TEMPLATES, ...store.custom];
   const fileRef = useRef(null);
@@ -15552,7 +15773,10 @@ function OuderDashboard({
     rdr.readAsText(f);
     e.target.value = '';
   }
-  return /*#__PURE__*/React.createElement("div", null, cloud && /*#__PURE__*/React.createElement(CloudPaneel, {
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(KindAccountPaneel, {
+    store: store,
+    accApi: accApi
+  }), cloud && /*#__PURE__*/React.createElement(CloudPaneel, {
     store: store,
     cloud: cloud
   }), /*#__PURE__*/React.createElement("div", {
@@ -15985,7 +16209,8 @@ function Author({
   onSetWeekbudget,
   onMarkeerBetaald,
   cloud,
-  onSetKidPw
+  onSetKidPw,
+  accApi
 }) {
   const [unlocked, setUnlocked] = useState(false);
   const [pin, setPin] = useState('');
@@ -16128,7 +16353,8 @@ function Author({
     onSetWeekbudget: onSetWeekbudget,
     onMarkeerBetaald: onMarkeerBetaald,
     cloud: cloud,
-    onSetKidPw: onSetKidPw
+    onSetKidPw: onSetKidPw,
+    accApi: accApi
   }), /*#__PURE__*/React.createElement("h2", null, "Nieuwe opdracht toevoegen"), /*#__PURE__*/React.createElement("div", {
     className: "card",
     style: {
