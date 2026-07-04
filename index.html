@@ -212,18 +212,41 @@ function rangVoor(thema, punten) {
    - een nauwkeurigheidspoort tegen gok-/haastwerk (te veel fouten → geen of half tarief);
    - een bonus als een oefentoets/proeftoets écht gehaald is (klaar voor de toets);
    - een dagplafond (standaard € 20) zodat het eerlijk en begrensd blijft.               */
+/* Beloning naar RESULTAAT en MOEILIJKHEIDSGRAAD, met een hard weekbudget per kind (standaard € 20).
+   - elke 'sterk goed' (1e keer, zonder hint, nog niet beheerst) telt naar moeilijkheid:
+     niveau 1 = 1 punt, niveau 2 = 2, niveau 3 = 3. Hoger niveau = meer waard.
+   - nauwkeurigheidspoort tegen gok-/haastwerk.
+   - toetsbonus schaalt met de score (hoe beter, hoe hoger).
+   - dagplafond + weekbudget: nooit meer dan het weekbudget per kind. */
 const BELONING = {
-  dagMax: 12,
-  tarief: 0.20,
-  werkMax: 8,
+  weekbudget: 20,
+  dagMax: 5,
+  tariefPunt: 0.10,
+  werkMax: 4,
   drempel: 12,
-  oefenBonus: 3,
-  proefBonus: 5,
+  oefenBonus: 2,
+  proefBonus: 3,
   hoog: 0.85,
   mid: 0.70
 };
+const NIVEAUGEWICHT = {
+  1: 1,
+  2: 2,
+  3: 3
+};
 function euro(n) {
   return '€ ' + (Math.round(n * 2) / 2).toFixed(2).replace('.', ',');
+}
+function halfRond(n) {
+  return Math.round(n * 2) / 2;
+}
+function parseDag(s) {
+  const p = String(s || '').split('-').map(Number);
+  return new Date(p[0] || 2000, (p[1] || 1) - 1, p[2] || 1).getTime();
+}
+function weekUitbetaald(pr) {
+  const grens = Date.now() - 7 * 86400000;
+  return (pr.betalingen || []).filter(b => parseDag(b.d) >= grens).reduce((s, b) => s + (b.bedrag || 0), 0);
 }
 
 /* ---- Geluid: korte, zelfgemaakte tonen (Web Audio, geen bestanden, werkt offline) ---- */
@@ -259,12 +282,16 @@ function mmss(sec) {
     s = sec % 60;
   return m + ':' + (s < 10 ? '0' : '') + s;
 }
+function weekbudgetVan(pr) {
+  return typeof pr.weekbudget === 'number' && pr.weekbudget >= 0 ? pr.weekbudget : BELONING.weekbudget;
+}
 function berekenBeloning(pr) {
   const d = pr.dag || {},
     t = pr.toetsDag || {};
   const goed = d.goed || 0,
     fout = d.fout || 0,
-    sterk = d.sterk || 0;
+    sterk = d.sterk || 0,
+    punten = d.sterkPunten || 0;
   const pogingen = goed + fout;
   const nauw = pogingen ? goed / pogingen : 0;
   const genoeg = pogingen >= BELONING.drempel;
@@ -282,27 +309,39 @@ function berekenBeloning(pr) {
     factor = 0;
     poort = 'Te veel fouten — dit telt nog niet. Rustig en goed = beloning.';
   }
-  const werkEuro = Math.min(BELONING.werkMax, sterk * BELONING.tarief) * factor;
+  // werk: naar moeilijkheid (sterkPunten) i.p.v. puur aantal → hoger niveau = meer waard
+  const werkEuro = Math.min(BELONING.werkMax, punten * BELONING.tariefPunt) * factor;
+  // toetsbonus schaalt met de score (pas vanaf een voldoende, 70%)
   const proef = t.proef || 0,
     oefen = t.oefen || 0;
-  const toetsEuro = proef >= 80 ? BELONING.proefBonus : oefen >= 80 ? BELONING.oefenBonus : 0;
-  const bedrag = Math.min(BELONING.dagMax, Math.round((werkEuro + toetsEuro) * 2) / 2);
+  const toetsEuro = proef >= 70 ? halfRond(BELONING.proefBonus * (proef / 100)) : oefen >= 70 ? halfRond(BELONING.oefenBonus * (oefen / 100)) : 0;
+  const vandaagBruto = Math.min(BELONING.dagMax, halfRond(werkEuro + toetsEuro));
+  // hard weekbudget per kind: nooit meer dan het budget deze week
+  const weekbudget = weekbudgetVan(pr);
+  const weekPaid = weekUitbetaald(pr);
+  const restWeek = Math.max(0, halfRond(weekbudget - weekPaid));
+  const bedrag = Math.min(vandaagBruto, restWeek);
   const betaald = pr.betaaldOp === todayStr();
   return {
     bedrag,
+    vandaagBruto,
     nauw,
     genoeg,
     factor,
     poort,
     sterk,
+    punten,
     goed,
     fout,
     pogingen,
-    werkEuro: Math.round(werkEuro * 2) / 2,
+    werkEuro: halfRond(werkEuro),
     toetsEuro,
     proef,
     oefen,
-    betaald
+    betaald,
+    weekbudget,
+    weekPaid,
+    restWeek
   };
 }
 const VAKNAAM = {
@@ -11225,6 +11264,7 @@ function blankProg() {
       d: null,
       goed: 0,
       sterk: 0,
+      sterkPunten: 0,
       fout: 0,
       sterkIds: []
     },
@@ -11233,7 +11273,9 @@ function blankProg() {
       oefen: 0,
       proef: 0
     },
-    betaaldOp: null
+    betaaldOp: null,
+    weekbudget: BELONING.weekbudget,
+    betalingen: []
   };
 }
 function normalizeProg(p) {
@@ -11254,10 +11296,14 @@ function normalizeProg(p) {
     d: null,
     goed: 0,
     sterk: 0,
+    sterkPunten: 0,
     fout: 0,
     sterkIds: []
   };
   if (!Array.isArray(np.dag.sterkIds)) np.dag.sterkIds = [];
+  if (typeof np.dag.sterkPunten !== 'number') np.dag.sterkPunten = 0;
+  if (typeof np.weekbudget !== 'number') np.weekbudget = BELONING.weekbudget;
+  if (!Array.isArray(np.betalingen)) np.betalingen = [];
   if (!np.toetsDag || typeof np.toetsDag !== 'object') np.toetsDag = {
     d: null,
     oefen: 0,
@@ -11287,11 +11333,50 @@ function loadStore() {
   s.pin = s.pin || '1234';
   s.prog = s.prog || {};
   if (typeof s.geluid !== 'boolean') s.geluid = true; // geluid standaard aan
+  if (!s.cloud || typeof s.cloud !== 'object') s.cloud = {
+    household: '',
+    pin: '',
+    lastServer: null,
+    lastSync: null
+  };
   for (const pid of Object.keys(PROFILES)) s.prog[pid] = normalizeProg(s.prog[pid]);
   return s;
 }
 function saveStore(s) {
   localStorage.setItem(KEY, JSON.stringify(s));
+}
+
+/* ============================ CLOUD-OPSLAG (Supabase RPC) ============================ */
+/* Resultaten centraal: op elk toestel dezelfde resultaten, altijd te raadplegen.
+   Toegang loopt via beveiligde databasefuncties met een familiecode + pincode;
+   de tabel zelf is niet publiek benaderbaar. De app werkt ook gewoon offline. */
+const CLOUD_URL = 'https://jnlvvdaisyerhxucxnuu.supabase.co';
+const CLOUD_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpubHZ2ZGFpc3llcmh4dWN4bnV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NDg0MjIsImV4cCI6MjA4MjQyNDQyMn0.8ZXa-N96pRSQovdL_bH5FpJTHeL454830h5LMapCawY';
+async function cloudCall(fn, payload) {
+  const res = await fetch(CLOUD_URL + '/rest/v1/rpc/' + fn, {
+    method: 'POST',
+    headers: {
+      'apikey': CLOUD_ANON,
+      'Authorization': 'Bearer ' + CLOUD_ANON,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
+  let out = {};
+  try {
+    out = await res.json();
+  } catch (e) {}
+  if (out && out.error) throw new Error(out.error);
+  if (!res.ok) throw new Error('Verbinding mislukt (' + res.status + ')');
+  return out;
+}
+// alleen de app-data delen (niet de cloud-config met de pincode)
+function syncData(store) {
+  const {
+    cloud,
+    ...rest
+  } = store;
+  return rest;
 }
 
 /* ----- Leitner: slim herhalen ----- */
@@ -11434,12 +11519,142 @@ function App() {
   const [vak, setVak] = useState(null);
   const [topic, setTopic] = useState(null);
   const [jaar, setJaar] = useState('nu'); // 'nu' | 'next' (volgend leerjaar)
-
+  const [cloudStatus, setCloudStatus] = useState(''); // korte statusmelding voor de ouder-modus
+  const pushTimer = useRef(null);
+  const pulledOnce = useRef(false);
   const persist = updater => setStore(prev => {
     const next = typeof updater === 'function' ? updater(prev) : updater;
     saveStore(next);
+    // gekoppeld aan de cloud? push de wijziging (met korte debounce)
+    if (next.cloud && next.cloud.household && next.cloud.pin) {
+      if (pushTimer.current) clearTimeout(pushTimer.current);
+      pushTimer.current = setTimeout(() => cloudPush(next), 1500);
+    }
     return next;
   });
+  async function cloudPush(snap) {
+    const s = snap || store;
+    if (!s.cloud || !s.cloud.household || !s.cloud.pin) return;
+    try {
+      const r = await cloudCall('oefenapp_save', {
+        p_household: s.cloud.household,
+        p_pin: s.cloud.pin,
+        p_data: syncData(s)
+      });
+      setStore(prev => {
+        const n = {
+          ...prev,
+          cloud: {
+            ...prev.cloud,
+            lastServer: r.updated_at,
+            lastSync: Date.now()
+          }
+        };
+        saveStore(n);
+        return n;
+      });
+      setCloudStatus('Opgeslagen in de cloud ✓');
+    } catch (e) {
+      setCloudStatus('Cloud niet bereikbaar (lokaal bewaard)');
+    }
+  }
+  async function cloudRegister(household, pin) {
+    setCloudStatus('Bezig met koppelen…');
+    const r = await cloudCall('oefenapp_register', {
+      p_household: household,
+      p_pin: pin,
+      p_data: syncData(store)
+    });
+    setStore(prev => {
+      const n = {
+        ...prev,
+        cloud: {
+          household,
+          pin,
+          lastServer: null,
+          lastSync: Date.now()
+        }
+      };
+      saveStore(n);
+      return n;
+    });
+    setCloudStatus('Gekoppeld! Resultaten staan nu in de cloud ✓');
+    return r;
+  }
+  async function cloudLogin(household, pin) {
+    setCloudStatus('Bezig met inloggen…');
+    const r = await cloudCall('oefenapp_load', {
+      p_household: household,
+      p_pin: pin
+    });
+    const data = r.data || {};
+    setStore(prev => {
+      const merged = {
+        ...prev,
+        ...data,
+        cloud: {
+          household,
+          pin,
+          lastServer: r.updated_at,
+          lastSync: Date.now()
+        }
+      };
+      merged.custom = merged.custom || [];
+      merged.pin = merged.pin || '1234';
+      merged.prog = merged.prog || {};
+      for (const pid of Object.keys(PROFILES)) merged.prog[pid] = normalizeProg(merged.prog[pid]);
+      saveStore(merged);
+      return merged;
+    });
+    setCloudStatus('Ingelogd — resultaten opgehaald ✓');
+    return r;
+  }
+  function cloudDisconnect() {
+    persist(prev => ({
+      ...prev,
+      cloud: {
+        household: '',
+        pin: '',
+        lastServer: null,
+        lastSync: null
+      }
+    }));
+    setCloudStatus('Ontkoppeld (alleen nog lokaal).');
+  }
+
+  // bij openen: als er een familiecode is, haal stilletjes de nieuwste resultaten op
+  useEffect(() => {
+    if (pulledOnce.current) return;
+    pulledOnce.current = true;
+    const c = store.cloud;
+    if (c && c.household && c.pin) {
+      cloudCall('oefenapp_load', {
+        p_household: c.household,
+        p_pin: c.pin
+      }).then(r => {
+        if (r && r.data && r.updated_at && r.updated_at !== c.lastServer) {
+          setStore(prev => {
+            const merged = {
+              ...prev,
+              ...r.data,
+              cloud: {
+                ...prev.cloud,
+                lastServer: r.updated_at,
+                lastSync: Date.now()
+              }
+            };
+            merged.custom = merged.custom || [];
+            merged.pin = merged.pin || '1234';
+            merged.prog = merged.prog || {};
+            for (const pid of Object.keys(PROFILES)) merged.prog[pid] = normalizeProg(merged.prog[pid]);
+            saveStore(merged);
+            return merged;
+          });
+          setCloudStatus('Nieuwste resultaten opgehaald ✓');
+        }
+      }).catch(() => {});
+    }
+  }, []);
   const allEx = useMemo(() => [...SEED, ...TEMPLATES, ...store.custom], [store.custom]);
 
   // dagstreak + dagdoel bijwerken bij kiezen profiel
@@ -11501,6 +11716,47 @@ function App() {
       geluid: !(prev.geluid !== false)
     }));
   }
+  function setWeekbudget(pid, val) {
+    persist(prev => {
+      const pr = normalizeProg(prev.prog[pid]);
+      pr.weekbudget = Math.max(0, Math.min(50, val));
+      return {
+        ...prev,
+        prog: {
+          ...prev.prog,
+          [pid]: pr
+        }
+      };
+    });
+  }
+  function markeerBetaald(pid) {
+    persist(prev => {
+      const pr = normalizeProg(prev.prog[pid]);
+      const vandaag = todayStr();
+      if (pr.betaaldOp === vandaag) return prev; // niet dubbel uitbetalen
+      const b = berekenBeloning(pr);
+      if (b.bedrag > 0) pr.betalingen = [...(pr.betalingen || []), {
+        d: vandaag,
+        bedrag: b.bedrag
+      }];
+      pr.betaaldOp = vandaag;
+      return {
+        ...prev,
+        prog: {
+          ...prev.prog,
+          [pid]: pr
+        }
+      };
+    });
+  }
+  const cloudApi = {
+    status: cloudStatus,
+    register: cloudRegister,
+    login: cloudLogin,
+    sync: () => cloudPush(),
+    disconnect: cloudDisconnect,
+    setStatus: setCloudStatus
+  };
 
   // resultaat verwerken: punten + Leitner-doosje + dagdoel + foutenschrift
   function recordResult(pid, card, inst, correct, usedHint) {
@@ -11528,20 +11784,23 @@ function App() {
         d: vandaag,
         goed: 0,
         sterk: 0,
+        sterkPunten: 0,
         fout: 0,
         sterkIds: []
       };else pr.dag = {
         ...pr.dag,
         sterkIds: [...(pr.dag.sterkIds || [])]
       };
+      const lvl = inst && inst.lvl || card.lvl || 1; // moeilijkheidsgraad van deze vraag
       if (correct) {
         pr.punten = (pr.punten || 0) + (wasMastered ? 3 : usedHint ? 5 : 10);
         pr.streak = (pr.streak || 0) + 1;
         pr.todayCount = (pr.todayCount || 0) + 1;
         pr.dag.goed++;
-        // 'sterk' telt maar één keer per kaart per dag: herhaling van dezelfde vraag verhoogt de beloning niet
+        // 'sterk' telt maar één keer per kaart per dag; punten schalen met het niveau (moeilijker = meer waard)
         if (!wasMastered && !usedHint && !pr.dag.sterkIds.includes(card.id)) {
           pr.dag.sterk++;
+          pr.dag.sterkPunten = (pr.dag.sterkPunten || 0) + (NIVEAUGEWICHT[lvl] || 1);
           pr.dag.sterkIds.push(card.id);
         }
         c.ok = (c.ok || 0) + 1;
@@ -11659,7 +11918,10 @@ function App() {
   }), view === 'author' && /*#__PURE__*/React.createElement(Author, {
     store: store,
     persist: persist,
-    onBack: () => setView('home')
+    onBack: () => setView('home'),
+    onSetWeekbudget: setWeekbudget,
+    onMarkeerBetaald: markeerBetaald,
+    cloud: cloudApi
   }));
 }
 
@@ -11882,7 +12144,7 @@ function Hub({
     onClick: () => onSetGoal(Math.min(40, goal + 5))
   }, "+"))), P.beloning && (() => {
     const b = berekenBeloning(prog);
-    const pct = Math.round(b.bedrag / BELONING.dagMax * 100);
+    const pct = b.weekbudget ? Math.round(b.weekPaid / b.weekbudget * 100) : 0;
     return /*#__PURE__*/React.createElement("div", {
       className: "card",
       style: {
@@ -11902,29 +12164,40 @@ function Hub({
         color: '#a8730a'
       }
     }, b.betaald ? 'uitbetaald ✓' : euro(b.bedrag))), /*#__PURE__*/React.createElement("div", {
-      className: "pbar",
-      style: {
-        marginTop: 8
-      }
-    }, /*#__PURE__*/React.createElement("i", {
-      style: {
-        width: pct + '%'
-      }
-    })), /*#__PURE__*/React.createElement("div", {
       className: "muted",
       style: {
         fontSize: 13,
         marginTop: 8,
         lineHeight: 1.5
       }
-    }, b.poort, /*#__PURE__*/React.createElement("br", null), "🎯 Sterk goed (1e keer, zonder hint): ", /*#__PURE__*/React.createElement("b", null, b.sterk), " · nauwkeurigheid ", /*#__PURE__*/React.createElement("b", null, b.pogingen ? Math.round(b.nauw * 100) : 0, "%"), /*#__PURE__*/React.createElement("br", null), b.toetsEuro > 0 ? /*#__PURE__*/React.createElement("span", null, "✅ Toets gehaald (", b.proef >= 80 ? 'proeftoets ' + b.proef + '%' : 'oefentoets ' + b.oefen + '%', ") → bonus ", euro(b.toetsEuro)) : /*#__PURE__*/React.createElement("span", null, "💡 Haal een oefentoets (≥ 80%) voor een bonus — of een proeftoets voor de topbonus.")), /*#__PURE__*/React.createElement("div", {
+    }, b.poort, /*#__PURE__*/React.createElement("br", null), "🎯 Goed op niveau (moeilijker = meer): ", /*#__PURE__*/React.createElement("b", null, b.punten), " punten · nauwkeurigheid ", /*#__PURE__*/React.createElement("b", null, b.pogingen ? Math.round(b.nauw * 100) : 0, "%"), /*#__PURE__*/React.createElement("br", null), b.toetsEuro > 0 ? /*#__PURE__*/React.createElement("span", null, "✅ Toets gehaald (", b.proef >= 70 ? 'proeftoets ' + b.proef + '%' : 'oefentoets ' + b.oefen + '%', ") → bonus ", euro(b.toetsEuro)) : /*#__PURE__*/React.createElement("span", null, "💡 Haal een oefentoets voor een bonus — hoe hoger je score, hoe meer.")), /*#__PURE__*/React.createElement("div", {
+      className: "row",
+      style: {
+        justifyContent: 'space-between',
+        marginTop: 8,
+        fontSize: 12
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "muted"
+    }, "Deze week: ", euro(b.weekPaid), " van ", euro(b.weekbudget)), /*#__PURE__*/React.createElement("span", {
+      className: "muted"
+    }, "nog ", euro(b.restWeek), " te verdienen")), /*#__PURE__*/React.createElement("div", {
+      className: "pbar",
+      style: {
+        marginTop: 4
+      }
+    }, /*#__PURE__*/React.createElement("i", {
+      style: {
+        width: Math.min(100, pct) + '%'
+      }
+    })), /*#__PURE__*/React.createElement("div", {
       className: "muted",
       style: {
         fontSize: 12,
         marginTop: 8,
         fontStyle: 'italic'
       }
-    }, "Eerlijk & begrensd: max ", euro(BELONING.dagMax), " per dag. Papa/mama betaalt uit via de ouder-modus."));
+    }, "Papa/mama betaalt uit via de ouder-modus."));
   })(), /*#__PURE__*/React.createElement("div", {
     className: "card",
     style: {
@@ -12582,23 +12855,164 @@ function downloadRapport(store) {
   a.download = 'voortgangsrapport.txt';
   a.click();
 }
+function CloudPaneel({
+  store,
+  cloud
+}) {
+  const c = store.cloud || {};
+  const gekoppeld = !!(c.household && c.pin);
+  const [hh, setHh] = useState(c.household || '');
+  const [pin, setPin] = useState('');
+  const [busy, setBusy] = useState(false);
+  const doe = async fn => {
+    setBusy(true);
+    try {
+      await fn();
+    } catch (e) {
+      cloud.setStatus('⚠️ ' + (e && e.message ? e.message : 'mislukt'));
+    }
+    setBusy(false);
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "card",
+    style: {
+      marginBottom: 16,
+      background: '#eef4fb',
+      borderLeftColor: '#3a6ea0'
+    }
+  }, /*#__PURE__*/React.createElement("b", null, "☁️ Online opslag — overal & altijd inzien"), gekoppeld ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 8,
+      fontSize: 13
+    }
+  }, "Gekoppeld aan familiecode ", /*#__PURE__*/React.createElement("b", null, c.household), ". Resultaten worden automatisch opgeslagen en op elk toestel gelijk gehouden.", c.lastSync && /*#__PURE__*/React.createElement("div", {
+    className: "muted",
+    style: {
+      marginTop: 2
+    }
+  }, "Laatst gesynct: ", new Date(c.lastSync).toLocaleString('nl-NL')), /*#__PURE__*/React.createElement("div", {
+    className: "wrap",
+    style: {
+      marginTop: 10
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn sm",
+    disabled: busy,
+    onClick: () => doe(() => cloud.sync())
+  }, "🔄 Nu synchroniseren"), /*#__PURE__*/React.createElement("button", {
+    className: "btn ghost sm",
+    onClick: cloud.disconnect
+  }, "Ontkoppel dit toestel"))) : /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 8
+    }
+  }, /*#__PURE__*/React.createElement("p", {
+    className: "muted",
+    style: {
+      fontSize: 13
+    }
+  }, "Kies één familiecode + pincode. Koppel op dit toestel; op elk ander toestel log je met dezelfde code in en zie je dezelfde resultaten."), /*#__PURE__*/React.createElement("div", {
+    className: "row",
+    style: {
+      gap: 10,
+      marginTop: 6
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 2
+    }
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "fld"
+  }, "Familiecode"), /*#__PURE__*/React.createElement("input", {
+    className: "f",
+    value: hh,
+    onChange: e => setHh(e.target.value),
+    placeholder: "bijv. benna-gezin"
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1
+    }
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "fld"
+  }, "Pincode (4–8 cijfers)"), /*#__PURE__*/React.createElement("input", {
+    className: "f",
+    value: pin,
+    onChange: e => setPin(e.target.value.replace(/\D/g, '').slice(0, 8)),
+    inputMode: "numeric",
+    placeholder: "1234"
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "wrap",
+    style: {
+      marginTop: 10
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn sm",
+    disabled: busy,
+    onClick: () => doe(() => cloud.register(hh.trim().toLowerCase(), pin))
+  }, "➕ Nieuw gezin koppelen (upload)"), /*#__PURE__*/React.createElement("button", {
+    className: "btn ghost sm",
+    disabled: busy,
+    onClick: () => doe(() => cloud.login(hh.trim().toLowerCase(), pin))
+  }, "🔑 Inloggen & ophalen"))), cloud.status && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 8,
+      fontSize: 13,
+      fontWeight: 600,
+      color: '#2c5680'
+    }
+  }, cloud.status));
+}
 function OuderDashboard({
   store,
-  persist
+  persist,
+  onSetWeekbudget,
+  onMarkeerBetaald,
+  cloud
 }) {
   const allEx = [...SEED, ...TEMPLATES, ...store.custom];
-  const betaal = pid => persist && persist(prev => {
-    const pr = normalizeProg(prev.prog[pid]);
-    pr.betaaldOp = todayStr();
-    return {
-      ...prev,
-      prog: {
-        ...prev.prog,
-        [pid]: pr
+  const fileRef = useRef(null);
+  function backupExport() {
+    const blob = new Blob([JSON.stringify(store, null, 2)], {
+      type: 'application/json'
+    });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'bennahuiswerk-backup.json';
+    a.click();
+  }
+  function backupImport(e) {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    const rdr = new FileReader();
+    rdr.onload = () => {
+      try {
+        const obj = JSON.parse(rdr.result);
+        if (!obj || !obj.prog) throw 0;
+        if (confirm('Back-up terugzetten? Dit vervangt de resultaten op dit toestel.')) {
+          persist(() => {
+            const n = {
+              ...obj
+            };
+            n.custom = n.custom || [];
+            n.pin = n.pin || '1234';
+            n.prog = n.prog || {};
+            n.cloud = store.cloud;
+            if (typeof n.geluid !== 'boolean') n.geluid = true;
+            for (const pid of Object.keys(PROFILES)) n.prog[pid] = normalizeProg(n.prog[pid]);
+            return n;
+          });
+        }
+      } catch (err) {
+        alert('Kon dit bestand niet lezen.');
       }
     };
-  });
-  return /*#__PURE__*/React.createElement("div", {
+    rdr.readAsText(f);
+    e.target.value = '';
+  }
+  return /*#__PURE__*/React.createElement("div", null, cloud && /*#__PURE__*/React.createElement(CloudPaneel, {
+    store: store,
+    cloud: cloud
+  }), /*#__PURE__*/React.createElement("div", {
     className: "card",
     style: {
       marginBottom: 16,
@@ -12608,12 +13022,30 @@ function OuderDashboard({
   }, /*#__PURE__*/React.createElement("div", {
     className: "row",
     style: {
-      justifyContent: 'space-between'
+      justifyContent: 'space-between',
+      flexWrap: 'wrap',
+      gap: 8
     }
-  }, /*#__PURE__*/React.createElement("b", null, "📊 Voortgang per kind"), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("b", null, "📊 Voortgang & beloning per kind"), /*#__PURE__*/React.createElement("div", {
+    className: "wrap"
+  }, /*#__PURE__*/React.createElement("button", {
     className: "btn ghost sm",
     onClick: () => downloadRapport(store)
-  }, "⬇️ Rapport")), Object.entries(PROFILES).map(([pid, P]) => {
+  }, "⬇️ Rapport"), /*#__PURE__*/React.createElement("button", {
+    className: "btn ghost sm",
+    onClick: backupExport
+  }, "💾 Back-up"), /*#__PURE__*/React.createElement("button", {
+    className: "btn ghost sm",
+    onClick: () => fileRef.current && fileRef.current.click()
+  }, "📂 Terugzetten"), /*#__PURE__*/React.createElement("input", {
+    ref: fileRef,
+    type: "file",
+    accept: "application/json,.json",
+    style: {
+      display: 'none'
+    },
+    onChange: backupImport
+  }))), Object.entries(PROFILES).map(([pid, P]) => {
     const prog = normalizeProg(store.prog[pid]);
     const vakRijen = P.vakken.map(v => {
       const cards = allEx.filter(e => e.p === pid && e.v === v);
@@ -12623,6 +13055,9 @@ function OuderDashboard({
         beheerst: cards.filter(e => isMastered(prog, e.id)).length
       };
     });
+    const totBeheerst = vakRijen.reduce((s, r) => s + r.beheerst, 0),
+      totKaart = vakRijen.reduce((s, r) => s + r.total, 0);
+    const masteryPct = totKaart ? Math.round(totBeheerst / totKaart * 100) : 0;
     const perTopic = {};
     allEx.filter(e => e.p === pid).forEach(e => {
       const c = cardInfo(prog, e.id);
@@ -12642,24 +13077,33 @@ function OuderDashboard({
         avg: beg.length ? beg.reduce((a, b) => a + b, 0) / beg.length : 0
       };
     }).filter(o => o.beg > 0 && o.avg < 4).sort((a, b) => a.avg - b.avg).slice(0, 4);
+    const b = berekenBeloning(prog);
+    const weekPct = b.weekbudget ? Math.round(b.weekPaid / b.weekbudget * 100) : 0;
     return /*#__PURE__*/React.createElement("div", {
       key: pid,
       style: {
-        marginTop: 10,
-        paddingTop: 10,
+        marginTop: 12,
+        paddingTop: 12,
         borderTop: '1px solid var(--line)'
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
         fontWeight: 700
       }
-    }, P.emoji, " ", P.naam, /*#__PURE__*/React.createElement("span", {
+    }, P.emoji, " ", P.naam, " ", /*#__PURE__*/React.createElement("span", {
       className: "muted",
       style: {
         fontWeight: 400,
         fontSize: 13
       }
-    }, " · ⭐ ", prog.punten || 0, " · 🔥 ", prog.streak || 0, " · 📅 ", prog.dagstreak || 0, " · vandaag ", prog.todayCount || 0, "/", prog.goal || 10, " · niveau ", prog.niveau === 'auto' ? 'auto (' + (prog.autoLvl || 1) + ')' : prog.niveau)), /*#__PURE__*/React.createElement("div", {
+    }, "· ", P.niveau, " · beheersing ", masteryPct, "% (", totBeheerst, "/", totKaart, ")")), /*#__PURE__*/React.createElement("div", {
+      className: "muted",
+      style: {
+        fontWeight: 400,
+        fontSize: 13,
+        marginTop: 2
+      }
+    }, "⭐ ", prog.punten || 0, " · 🔥 ", prog.streak || 0, " · 📅 ", prog.dagstreak || 0, " dagen · vandaag ", prog.todayCount || 0, "/", prog.goal || 10, " · niveau ", prog.niveau === 'auto' ? 'auto (' + (prog.autoLvl || 1) + ')' : prog.niveau), /*#__PURE__*/React.createElement("div", {
       className: "wrap",
       style: {
         marginTop: 6
@@ -12684,36 +13128,83 @@ function OuderDashboard({
         fontSize: 13,
         marginTop: 2
       }
-    }, "📕 Foutenschrift: ", (prog.foutLog || []).length, " open"), P.beloning && (() => {
-      const b = berekenBeloning(prog);
-      return /*#__PURE__*/React.createElement("div", {
-        className: "row",
-        style: {
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginTop: 6,
-          padding: '6px 10px',
-          background: '#fff9e6',
-          border: '1px solid #f0d67a',
-          borderRadius: 10
-        }
-      }, /*#__PURE__*/React.createElement("span", {
-        style: {
-          fontSize: 13
-        }
-      }, "💶 ", /*#__PURE__*/React.createElement("b", null, "Eerlijk verdiend vandaag: ", euro(b.bedrag)), /*#__PURE__*/React.createElement("span", {
-        className: "muted"
-      }, " (sterk ", b.sterk, " · nauwk. ", b.pogingen ? Math.round(b.nauw * 100) : 0, "%", b.toetsEuro > 0 ? ' · toetsbonus ' + euro(b.toetsEuro) : '', ")")), b.betaald ? /*#__PURE__*/React.createElement("span", {
-        className: "tag",
-        style: {
-          background: '#eaf7e2'
-        }
-      }, "uitbetaald ✓") : /*#__PURE__*/React.createElement("button", {
-        className: "btn sm",
-        disabled: b.bedrag <= 0,
-        onClick: () => betaal(pid)
-      }, "Markeer betaald"));
-    })());
+    }, "📕 Foutenschrift: ", (prog.foutLog || []).length, " open"), /*#__PURE__*/React.createElement("div", {
+      style: {
+        marginTop: 8,
+        padding: '8px 10px',
+        background: '#fff9e6',
+        border: '1px solid #f0d67a',
+        borderRadius: 10
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "row",
+      style: {
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 14
+      }
+    }, "💶 ", /*#__PURE__*/React.createElement("b", null, "Vandaag: ", euro(b.bedrag))), b.betaald ? /*#__PURE__*/React.createElement("span", {
+      className: "tag",
+      style: {
+        background: '#eaf7e2'
+      }
+    }, "uitbetaald ✓") : /*#__PURE__*/React.createElement("button", {
+      className: "btn sm",
+      disabled: b.bedrag <= 0,
+      onClick: () => onMarkeerBetaald(pid)
+    }, "Markeer betaald")), /*#__PURE__*/React.createElement("div", {
+      className: "muted",
+      style: {
+        fontSize: 12,
+        marginTop: 4
+      }
+    }, "moeilijkheidspunten ", b.punten, " (uit ", b.sterk, " sterke sommen) · nauwkeurigheid ", b.pogingen ? Math.round(b.nauw * 100) : 0, "%", b.toetsEuro > 0 ? ' · toetsbonus ' + euro(b.toetsEuro) : '', b.factor === 0.5 ? ' · half tarief' : '', !b.genoeg ? ' · nog te weinig gedaan' : ''), /*#__PURE__*/React.createElement("div", {
+      className: "row",
+      style: {
+        justifyContent: 'space-between',
+        marginTop: 8,
+        fontSize: 12
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "muted"
+    }, "Deze week uitbetaald: ", /*#__PURE__*/React.createElement("b", null, euro(b.weekPaid)), " van ", euro(b.weekbudget)), /*#__PURE__*/React.createElement("span", {
+      className: "muted"
+    }, "nog ", euro(b.restWeek))), /*#__PURE__*/React.createElement("div", {
+      className: "pbar",
+      style: {
+        marginTop: 4
+      }
+    }, /*#__PURE__*/React.createElement("i", {
+      style: {
+        width: Math.min(100, weekPct) + '%'
+      }
+    })), /*#__PURE__*/React.createElement("div", {
+      className: "wrap",
+      style: {
+        marginTop: 8,
+        alignItems: 'center'
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "muted",
+      style: {
+        fontSize: 12
+      }
+    }, "Weekbudget:"), /*#__PURE__*/React.createElement("button", {
+      className: "btn ghost sm",
+      onClick: () => onSetWeekbudget(pid, weekbudgetVan(prog) - 2.5)
+    }, "−"), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontWeight: 700,
+        minWidth: 64,
+        textAlign: 'center'
+      }
+    }, euro(weekbudgetVan(prog))), /*#__PURE__*/React.createElement("button", {
+      className: "btn ghost sm",
+      onClick: () => onSetWeekbudget(pid, weekbudgetVan(prog) + 2.5)
+    }, "+"))));
   }), /*#__PURE__*/React.createElement("div", {
     className: "muted",
     style: {
@@ -12723,12 +13214,15 @@ function OuderDashboard({
       paddingTop: 8,
       borderTop: '1px solid var(--line)'
     }
-  }, "💶 ", /*#__PURE__*/React.createElement("b", null, "Eerlijke beloning"), " (Wassima & Amaani): alleen écht bewezen werk telt — 1e keer goed zónder hint (€ ", String(BELONING.tarief).replace('.', ','), " p/st, max ", euro(BELONING.werkMax), "), met een nauwkeurigheidspoort (≥ 85% vol tarief, ≥ 70% half, daaronder niets) tegen gok-/haastwerk. Een gehaalde oefentoets geeft ", euro(BELONING.oefenBonus), " bonus, een proeftoets ", euro(BELONING.proefBonus), " (\"klaar voor de toets\"). Dagplafond ", euro(BELONING.dagMax), "."));
+  }, "💶 ", /*#__PURE__*/React.createElement("b", null, "Beloning naar resultaat & niveau:"), " alleen 1e keer goed zónder hint telt, en ", /*#__PURE__*/React.createElement("b", null, "moeilijker = meer waard"), " (niveau 1/2/3 → 1/2/3 punten × € ", String(BELONING.tariefPunt).replace('.', ','), "). Nauwkeurigheidspoort (≥ 85% vol tarief, ≥ 70% half, daaronder niets). Toetsbonus schaalt met de score. Dagplafond ", euro(BELONING.dagMax), " en een ", /*#__PURE__*/React.createElement("b", null, "hard weekbudget per kind"), " — de app betaalt nooit meer uit dan dat.")));
 }
 function Author({
   store,
   persist,
-  onBack
+  onBack,
+  onSetWeekbudget,
+  onMarkeerBetaald,
+  cloud
 }) {
   const [unlocked, setUnlocked] = useState(false);
   const [pin, setPin] = useState('');
@@ -12867,7 +13361,10 @@ function Author({
     className: "pill"
   }, "Ouder-modus")), /*#__PURE__*/React.createElement(OuderDashboard, {
     store: store,
-    persist: persist
+    persist: persist,
+    onSetWeekbudget: onSetWeekbudget,
+    onMarkeerBetaald: onMarkeerBetaald,
+    cloud: cloud
   }), /*#__PURE__*/React.createElement("h2", null, "Nieuwe opdracht toevoegen"), /*#__PURE__*/React.createElement("div", {
     className: "card",
     style: {

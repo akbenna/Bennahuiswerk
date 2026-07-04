@@ -152,8 +152,18 @@ function rangVoor(thema, punten){
    - een nauwkeurigheidspoort tegen gok-/haastwerk (te veel fouten → geen of half tarief);
    - een bonus als een oefentoets/proeftoets écht gehaald is (klaar voor de toets);
    - een dagplafond (standaard € 20) zodat het eerlijk en begrensd blijft.               */
-const BELONING = { dagMax:12, tarief:0.20, werkMax:8, drempel:12, oefenBonus:3, proefBonus:5, hoog:0.85, mid:0.70 };
+/* Beloning naar RESULTAAT en MOEILIJKHEIDSGRAAD, met een hard weekbudget per kind (standaard € 20).
+   - elke 'sterk goed' (1e keer, zonder hint, nog niet beheerst) telt naar moeilijkheid:
+     niveau 1 = 1 punt, niveau 2 = 2, niveau 3 = 3. Hoger niveau = meer waard.
+   - nauwkeurigheidspoort tegen gok-/haastwerk.
+   - toetsbonus schaalt met de score (hoe beter, hoe hoger).
+   - dagplafond + weekbudget: nooit meer dan het weekbudget per kind. */
+const BELONING = { weekbudget:20, dagMax:5, tariefPunt:0.10, werkMax:4, drempel:12, oefenBonus:2, proefBonus:3, hoog:0.85, mid:0.70 };
+const NIVEAUGEWICHT = {1:1, 2:2, 3:3};
 function euro(n){ return '€ '+(Math.round(n*2)/2).toFixed(2).replace('.',','); }
+function halfRond(n){ return Math.round(n*2)/2; }
+function parseDag(s){ const p=String(s||'').split('-').map(Number); return new Date(p[0]||2000,(p[1]||1)-1,p[2]||1).getTime(); }
+function weekUitbetaald(pr){ const grens=Date.now()-7*86400000; return (pr.betalingen||[]).filter(b=>parseDag(b.d)>=grens).reduce((s,b)=>s+(b.bedrag||0),0); }
 
 /* ---- Geluid: korte, zelfgemaakte tonen (Web Audio, geen bestanden, werkt offline) ---- */
 let _actx=null;
@@ -177,9 +187,10 @@ function speel(kind, aan){
   }catch(e){}
 }
 function mmss(sec){const m=Math.floor(sec/60), s=sec%60; return m+':'+(s<10?'0':'')+s;}
+function weekbudgetVan(pr){ return (typeof pr.weekbudget==='number' && pr.weekbudget>=0) ? pr.weekbudget : BELONING.weekbudget; }
 function berekenBeloning(pr){
   const d=pr.dag||{}, t=pr.toetsDag||{};
-  const goed=(d.goed||0), fout=(d.fout||0), sterk=(d.sterk||0);
+  const goed=(d.goed||0), fout=(d.fout||0), sterk=(d.sterk||0), punten=(d.sterkPunten||0);
   const pogingen=goed+fout;
   const nauw = pogingen? goed/pogingen : 0;
   const genoeg = pogingen>=BELONING.drempel;
@@ -188,13 +199,21 @@ function berekenBeloning(pr){
   else if(nauw>=BELONING.hoog){ factor=1;   poort='Top nauwkeurig 💯 — vol tarief'; }
   else if(nauw>=BELONING.mid){  factor=0.5; poort='Redelijk — half tarief. Werk nog wat rustiger.'; }
   else {                        factor=0;   poort='Te veel fouten — dit telt nog niet. Rustig en goed = beloning.'; }
-  const werkEuro = Math.min(BELONING.werkMax, sterk*BELONING.tarief) * factor;
+  // werk: naar moeilijkheid (sterkPunten) i.p.v. puur aantal → hoger niveau = meer waard
+  const werkEuro = Math.min(BELONING.werkMax, punten*BELONING.tariefPunt) * factor;
+  // toetsbonus schaalt met de score (pas vanaf een voldoende, 70%)
   const proef=t.proef||0, oefen=t.oefen||0;
-  const toetsEuro = proef>=80 ? BELONING.proefBonus : (oefen>=80 ? BELONING.oefenBonus : 0);
-  const bedrag = Math.min(BELONING.dagMax, Math.round((werkEuro+toetsEuro)*2)/2);
+  const toetsEuro = proef>=70 ? halfRond(BELONING.proefBonus*(proef/100))
+                  : (oefen>=70 ? halfRond(BELONING.oefenBonus*(oefen/100)) : 0);
+  const vandaagBruto = Math.min(BELONING.dagMax, halfRond(werkEuro+toetsEuro));
+  // hard weekbudget per kind: nooit meer dan het budget deze week
+  const weekbudget = weekbudgetVan(pr);
+  const weekPaid = weekUitbetaald(pr);
+  const restWeek = Math.max(0, halfRond(weekbudget-weekPaid));
+  const bedrag = Math.min(vandaagBruto, restWeek);
   const betaald = pr.betaaldOp===todayStr();
-  return {bedrag, nauw, genoeg, factor, poort, sterk, goed, fout, pogingen,
-    werkEuro:Math.round(werkEuro*2)/2, toetsEuro, proef, oefen, betaald};
+  return {bedrag, vandaagBruto, nauw, genoeg, factor, poort, sterk, punten, goed, fout, pogingen,
+    werkEuro:halfRond(werkEuro), toetsEuro, proef, oefen, betaald, weekbudget, weekPaid, restWeek};
 }
 const VAKNAAM = {wiskunde:'Wiskunde', natuurkunde:'Natuurkunde', wiskundeA:'Wiskunde A', geschiedenis:'Geschiedenis',
   nederlands:'Nederlands', engels:'Engels', frans:'Frans', duits:'Duits', biologie:'Biologie',
@@ -1738,7 +1757,7 @@ const TEMPLATES=[
 
 /* ============================ STORE (localStorage) ============================ */
 const KEY='oefenapp_v1';
-function blankProg(){return {punten:0, solved:{}, cards:{}, streak:0, dagstreak:0, lastDay:null, badges:[], goal:10, todayCount:0, foutLog:[], niveau:'auto', autoLvl:1, correctRun:0, dag:{d:null,goed:0,sterk:0,fout:0,sterkIds:[]}, toetsDag:{d:null,oefen:0,proef:0}, betaaldOp:null};}
+function blankProg(){return {punten:0, solved:{}, cards:{}, streak:0, dagstreak:0, lastDay:null, badges:[], goal:10, todayCount:0, foutLog:[], niveau:'auto', autoLvl:1, correctRun:0, dag:{d:null,goed:0,sterk:0,sterkPunten:0,fout:0,sterkIds:[]}, toetsDag:{d:null,oefen:0,proef:0}, betaaldOp:null, weekbudget:BELONING.weekbudget, betalingen:[]};}
 function normalizeProg(p){
   const np={...blankProg(), ...(p||{})};
   np.solved=(p&&p.solved)||{}; np.cards=(p&&p.cards)||{};
@@ -1748,8 +1767,11 @@ function normalizeProg(p){
   if(np.niveau!=='auto' && ![1,2,3].includes(np.niveau)) np.niveau='auto';   // 'auto' | 1 | 2 | 3
   if(![1,2,3].includes(np.autoLvl)) np.autoLvl=1;
   if(typeof np.correctRun!=='number') np.correctRun=0;
-  if(!np.dag||typeof np.dag!=='object') np.dag={d:null,goed:0,sterk:0,fout:0,sterkIds:[]};
+  if(!np.dag||typeof np.dag!=='object') np.dag={d:null,goed:0,sterk:0,sterkPunten:0,fout:0,sterkIds:[]};
   if(!Array.isArray(np.dag.sterkIds)) np.dag.sterkIds=[];
+  if(typeof np.dag.sterkPunten!=='number') np.dag.sterkPunten=0;
+  if(typeof np.weekbudget!=='number') np.weekbudget=BELONING.weekbudget;
+  if(!Array.isArray(np.betalingen)) np.betalingen=[];
   if(!np.toetsDag||typeof np.toetsDag!=='object') np.toetsDag={d:null,oefen:0,proef:0};
   // eenmalige migratie: oude 'solved' → Leitner-kaarten
   if(Object.keys(np.cards).length===0 && Object.keys(np.solved).length>0){
@@ -1764,10 +1786,31 @@ function loadStore(){
   let r=null; try{r=JSON.parse(localStorage.getItem(KEY));}catch(e){}
   const s=r||{}; s.custom=s.custom||[]; s.pin=s.pin||'1234'; s.prog=s.prog||{};
   if(typeof s.geluid!=='boolean') s.geluid=true;   // geluid standaard aan
+  if(!s.cloud||typeof s.cloud!=='object') s.cloud={household:'',pin:'',lastServer:null,lastSync:null};
   for(const pid of Object.keys(PROFILES)) s.prog[pid]=normalizeProg(s.prog[pid]);
   return s;
 }
 function saveStore(s){localStorage.setItem(KEY, JSON.stringify(s));}
+
+/* ============================ CLOUD-OPSLAG (Supabase RPC) ============================ */
+/* Resultaten centraal: op elk toestel dezelfde resultaten, altijd te raadplegen.
+   Toegang loopt via beveiligde databasefuncties met een familiecode + pincode;
+   de tabel zelf is niet publiek benaderbaar. De app werkt ook gewoon offline. */
+const CLOUD_URL='https://jnlvvdaisyerhxucxnuu.supabase.co';
+const CLOUD_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpubHZ2ZGFpc3llcmh4dWN4bnV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NDg0MjIsImV4cCI6MjA4MjQyNDQyMn0.8ZXa-N96pRSQovdL_bH5FpJTHeL454830h5LMapCawY';
+async function cloudCall(fn, payload){
+  const res=await fetch(CLOUD_URL+'/rest/v1/rpc/'+fn, {
+    method:'POST',
+    headers:{'apikey':CLOUD_ANON,'Authorization':'Bearer '+CLOUD_ANON,'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
+  });
+  let out={}; try{out=await res.json();}catch(e){}
+  if(out && out.error) throw new Error(out.error);
+  if(!res.ok) throw new Error('Verbinding mislukt ('+res.status+')');
+  return out;
+}
+// alleen de app-data delen (niet de cloud-config met de pincode)
+function syncData(store){ const {cloud, ...rest}=store; return rest; }
 
 /* ----- Leitner: slim herhalen ----- */
 const BOX_DAGEN=[0,0,1,3,7,16];                                  // wachttijd per doosje (dagen)
@@ -1848,8 +1891,66 @@ function App(){
   const [vak,setVak]=useState(null);
   const [topic,setTopic]=useState(null);
   const [jaar,setJaar]=useState('nu');         // 'nu' | 'next' (volgend leerjaar)
+  const [cloudStatus,setCloudStatus]=useState('');  // korte statusmelding voor de ouder-modus
+  const pushTimer=useRef(null);
+  const pulledOnce=useRef(false);
 
-  const persist=(updater)=>setStore(prev=>{const next=typeof updater==='function'?updater(prev):updater; saveStore(next); return next;});
+  const persist=(updater)=>setStore(prev=>{
+    const next=typeof updater==='function'?updater(prev):updater; saveStore(next);
+    // gekoppeld aan de cloud? push de wijziging (met korte debounce)
+    if(next.cloud&&next.cloud.household&&next.cloud.pin){
+      if(pushTimer.current) clearTimeout(pushTimer.current);
+      pushTimer.current=setTimeout(()=>cloudPush(next),1500);
+    }
+    return next;
+  });
+
+  async function cloudPush(snap){
+    const s=snap||store; if(!s.cloud||!s.cloud.household||!s.cloud.pin) return;
+    try{
+      const r=await cloudCall('oefenapp_save',{p_household:s.cloud.household,p_pin:s.cloud.pin,p_data:syncData(s)});
+      setStore(prev=>{const n={...prev, cloud:{...prev.cloud, lastServer:r.updated_at, lastSync:Date.now()}}; saveStore(n); return n;});
+      setCloudStatus('Opgeslagen in de cloud ✓');
+    }catch(e){ setCloudStatus('Cloud niet bereikbaar (lokaal bewaard)'); }
+  }
+  async function cloudRegister(household, pin){
+    setCloudStatus('Bezig met koppelen…');
+    const r=await cloudCall('oefenapp_register',{p_household:household,p_pin:pin,p_data:syncData(store)});
+    setStore(prev=>{const n={...prev, cloud:{household,pin,lastServer:null,lastSync:Date.now()}}; saveStore(n); return n;});
+    setCloudStatus('Gekoppeld! Resultaten staan nu in de cloud ✓'); return r;
+  }
+  async function cloudLogin(household, pin){
+    setCloudStatus('Bezig met inloggen…');
+    const r=await cloudCall('oefenapp_load',{p_household:household,p_pin:pin});
+    const data=r.data||{};
+    setStore(prev=>{
+      const merged={...prev, ...data, cloud:{household,pin,lastServer:r.updated_at,lastSync:Date.now()}};
+      merged.custom=merged.custom||[]; merged.pin=merged.pin||'1234'; merged.prog=merged.prog||{};
+      for(const pid of Object.keys(PROFILES)) merged.prog[pid]=normalizeProg(merged.prog[pid]);
+      saveStore(merged); return merged;
+    });
+    setCloudStatus('Ingelogd — resultaten opgehaald ✓'); return r;
+  }
+  function cloudDisconnect(){ persist(prev=>({...prev, cloud:{household:'',pin:'',lastServer:null,lastSync:null}})); setCloudStatus('Ontkoppeld (alleen nog lokaal).'); }
+
+  // bij openen: als er een familiecode is, haal stilletjes de nieuwste resultaten op
+  useEffect(()=>{
+    if(pulledOnce.current) return; pulledOnce.current=true;
+    const c=store.cloud;
+    if(c&&c.household&&c.pin){
+      cloudCall('oefenapp_load',{p_household:c.household,p_pin:c.pin}).then(r=>{
+        if(r&&r.data&&r.updated_at && r.updated_at!==c.lastServer){
+          setStore(prev=>{
+            const merged={...prev, ...r.data, cloud:{...prev.cloud, lastServer:r.updated_at, lastSync:Date.now()}};
+            merged.custom=merged.custom||[]; merged.pin=merged.pin||'1234'; merged.prog=merged.prog||{};
+            for(const pid of Object.keys(PROFILES)) merged.prog[pid]=normalizeProg(merged.prog[pid]);
+            saveStore(merged); return merged;
+          });
+          setCloudStatus('Nieuwste resultaten opgehaald ✓');
+        }
+      }).catch(()=>{});
+    }
+  },[]);
 
   const allEx=useMemo(()=>[...SEED, ...TEMPLATES, ...store.custom],[store.custom]);
 
@@ -1875,6 +1976,20 @@ function App(){
   }
   const geluid = store.geluid!==false;
   function toggleGeluid(){ persist(prev=>({...prev, geluid: !(prev.geluid!==false)})); }
+  function setWeekbudget(pid, val){
+    persist(prev=>{const pr=normalizeProg(prev.prog[pid]); pr.weekbudget=Math.max(0,Math.min(50,val)); return {...prev, prog:{...prev.prog,[pid]:pr}};});
+  }
+  function markeerBetaald(pid){
+    persist(prev=>{
+      const pr=normalizeProg(prev.prog[pid]); const vandaag=todayStr();
+      if(pr.betaaldOp===vandaag) return prev;                       // niet dubbel uitbetalen
+      const b=berekenBeloning(pr);
+      if(b.bedrag>0) pr.betalingen=[...(pr.betalingen||[]), {d:vandaag, bedrag:b.bedrag}];
+      pr.betaaldOp=vandaag;
+      return {...prev, prog:{...prev.prog,[pid]:pr}};
+    });
+  }
+  const cloudApi={status:cloudStatus, register:cloudRegister, login:cloudLogin, sync:()=>cloudPush(), disconnect:cloudDisconnect, setStatus:setCloudStatus};
 
   // resultaat verwerken: punten + Leitner-doosje + dagdoel + foutenschrift
   function recordResult(pid, card, inst, correct, usedHint){
@@ -1885,15 +2000,18 @@ function App(){
       const c={...(pr.cards[card.id]||{box:0,ok:0,wrong:0,last:0})};
       // eerlijke dagteller (voor zakgeld): reset bij nieuwe dag
       const vandaag=todayStr();
-      if(!pr.dag||pr.dag.d!==vandaag) pr.dag={d:vandaag,goed:0,sterk:0,fout:0,sterkIds:[]};
+      if(!pr.dag||pr.dag.d!==vandaag) pr.dag={d:vandaag,goed:0,sterk:0,sterkPunten:0,fout:0,sterkIds:[]};
       else pr.dag={...pr.dag, sterkIds:[...(pr.dag.sterkIds||[])]};
+      const lvl=(inst&&inst.lvl)||card.lvl||1;                    // moeilijkheidsgraad van deze vraag
       if(correct){
         pr.punten=(pr.punten||0)+(wasMastered?3:(usedHint?5:10));
         pr.streak=(pr.streak||0)+1;
         pr.todayCount=(pr.todayCount||0)+1;
         pr.dag.goed++;
-        // 'sterk' telt maar één keer per kaart per dag: herhaling van dezelfde vraag verhoogt de beloning niet
-        if(!wasMastered && !usedHint && !pr.dag.sterkIds.includes(card.id)){ pr.dag.sterk++; pr.dag.sterkIds.push(card.id); }
+        // 'sterk' telt maar één keer per kaart per dag; punten schalen met het niveau (moeilijker = meer waard)
+        if(!wasMastered && !usedHint && !pr.dag.sterkIds.includes(card.id)){
+          pr.dag.sterk++; pr.dag.sterkPunten=(pr.dag.sterkPunten||0)+(NIVEAUGEWICHT[lvl]||1); pr.dag.sterkIds.push(card.id);
+        }
         c.ok=(c.ok||0)+1; c.box=Math.min(5,(c.box||0)+1);
         pr.solved[card.id]={ok:((pr.solved[card.id]||{}).ok||0)+1};
         if(c.box>=4) pr.foutLog=pr.foutLog.filter(f=>f.id!==card.id);   // beheerst → uit foutenschrift
@@ -1934,7 +2052,8 @@ function App(){
         onBack={()=>setView('home')} onTopic={goTopic} onSetGoal={(g)=>setGoal(profile,g)} onSetNiveau={(n)=>setNiveau(profile,n)}/>}
       {view==='practice' && <Practice profile={profile} vak={vak} topic={topic} jaar={jaar} allEx={allEx}
         onBack={()=>setView('hub')} onResult={recordResult} onToets={recordToets} prog={prog} onTopic={goTopic} geluid={geluid}/>}
-      {view==='author' && <Author store={store} persist={persist} onBack={()=>setView('home')}/>}
+      {view==='author' && <Author store={store} persist={persist} onBack={()=>setView('home')}
+        onSetWeekbudget={setWeekbudget} onMarkeerBetaald={markeerBetaald} cloud={cloudApi}/>}
     </div>
   );
 }
@@ -2038,20 +2157,24 @@ function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal,onSetNiveau
       </div>
 
       {/* eerlijke beloning (zakgeld) — alleen bij profielen met beloning */}
-      {P.beloning && (()=>{ const b=berekenBeloning(prog); const pct=Math.round(b.bedrag/BELONING.dagMax*100); return (
+      {P.beloning && (()=>{ const b=berekenBeloning(prog); const pct=b.weekbudget?Math.round(b.weekPaid/b.weekbudget*100):0; return (
         <div className="card" style={{marginTop:12,background:'linear-gradient(135deg,#fff9e6,#fff4d1)',border:'1px solid #f0d67a'}}>
           <div className="row" style={{justifyContent:'space-between'}}>
             <b>💶 Verdiend vandaag</b>
             <span style={{fontWeight:800,fontSize:18,color:'#a8730a'}}>{b.betaald?'uitbetaald ✓':euro(b.bedrag)}</span>
           </div>
-          <div className="pbar" style={{marginTop:8}}><i style={{width:pct+'%'}}></i></div>
           <div className="muted" style={{fontSize:13,marginTop:8,lineHeight:1.5}}>
             {b.poort}<br/>
-            🎯 Sterk goed (1e keer, zonder hint): <b>{b.sterk}</b> · nauwkeurigheid <b>{b.pogingen?Math.round(b.nauw*100):0}%</b><br/>
-            {b.toetsEuro>0 ? <span>✅ Toets gehaald ({b.proef>=80?'proeftoets '+b.proef+'%':'oefentoets '+b.oefen+'%'}) → bonus {euro(b.toetsEuro)}</span>
-                           : <span>💡 Haal een oefentoets (≥ 80%) voor een bonus — of een proeftoets voor de topbonus.</span>}
+            🎯 Goed op niveau (moeilijker = meer): <b>{b.punten}</b> punten · nauwkeurigheid <b>{b.pogingen?Math.round(b.nauw*100):0}%</b><br/>
+            {b.toetsEuro>0 ? <span>✅ Toets gehaald ({b.proef>=70?'proeftoets '+b.proef+'%':'oefentoets '+b.oefen+'%'}) → bonus {euro(b.toetsEuro)}</span>
+                           : <span>💡 Haal een oefentoets voor een bonus — hoe hoger je score, hoe meer.</span>}
           </div>
-          <div className="muted" style={{fontSize:12,marginTop:8,fontStyle:'italic'}}>Eerlijk & begrensd: max {euro(BELONING.dagMax)} per dag. Papa/mama betaalt uit via de ouder-modus.</div>
+          <div className="row" style={{justifyContent:'space-between',marginTop:8,fontSize:12}}>
+            <span className="muted">Deze week: {euro(b.weekPaid)} van {euro(b.weekbudget)}</span>
+            <span className="muted">nog {euro(b.restWeek)} te verdienen</span>
+          </div>
+          <div className="pbar" style={{marginTop:4}}><i style={{width:Math.min(100,pct)+'%'}}></i></div>
+          <div className="muted" style={{fontSize:12,marginTop:8,fontStyle:'italic'}}>Papa/mama betaalt uit via de ouder-modus.</div>
         </div>
       );})()}
 
@@ -2407,59 +2530,140 @@ function downloadRapport(store){
   const blob=new Blob([rapportTekst(store)],{type:'text/plain'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='voortgangsrapport.txt'; a.click();
 }
-function OuderDashboard({store,persist}){
-  const allEx=[...SEED,...TEMPLATES,...store.custom];
-  const betaal=(pid)=>persist&&persist(prev=>{const pr=normalizeProg(prev.prog[pid]); pr.betaaldOp=todayStr(); return {...prev, prog:{...prev.prog,[pid]:pr}};});
+function CloudPaneel({store,cloud}){
+  const c=store.cloud||{};
+  const gekoppeld=!!(c.household&&c.pin);
+  const [hh,setHh]=useState(c.household||'');
+  const [pin,setPin]=useState('');
+  const [busy,setBusy]=useState(false);
+  const doe=async(fn)=>{ setBusy(true); try{ await fn(); }catch(e){ cloud.setStatus('⚠️ '+(e&&e.message?e.message:'mislukt')); } setBusy(false); };
   return (
-    <div className="card" style={{marginBottom:16,background:'#f0f6ea',borderLeftColor:'#5EA03A'}}>
-      <div className="row" style={{justifyContent:'space-between'}}>
-        <b>📊 Voortgang per kind</b>
-        <button className="btn ghost sm" onClick={()=>downloadRapport(store)}>⬇️ Rapport</button>
-      </div>
-      {Object.entries(PROFILES).map(([pid,P])=>{
-        const prog=normalizeProg(store.prog[pid]);
-        const vakRijen=P.vakken.map(v=>{
-          const cards=allEx.filter(e=>e.p===pid&&e.v===v);
-          return {v, total:cards.length, beheerst:cards.filter(e=>isMastered(prog,e.id)).length};
-        });
-        const perTopic={};
-        allEx.filter(e=>e.p===pid).forEach(e=>{const c=cardInfo(prog,e.id); const k=e.v+'|'+e.t;
-          (perTopic[k]=perTopic[k]||{v:e.v,t:e.t,boxes:[]}).boxes.push(c.box);});
-        const zwak=Object.values(perTopic).map(o=>{const beg=o.boxes.filter(b=>b>0);
-          return {v:o.v,t:o.t,beg:beg.length,avg:beg.length?beg.reduce((a,b)=>a+b,0)/beg.length:0};})
-          .filter(o=>o.beg>0&&o.avg<4).sort((a,b)=>a.avg-b.avg).slice(0,4);
-        return (
-          <div key={pid} style={{marginTop:10,paddingTop:10,borderTop:'1px solid var(--line)'}}>
-            <div style={{fontWeight:700}}>{P.emoji} {P.naam}
-              <span className="muted" style={{fontWeight:400,fontSize:13}}> · ⭐ {prog.punten||0} · 🔥 {prog.streak||0} · 📅 {prog.dagstreak||0} · vandaag {prog.todayCount||0}/{prog.goal||10} · niveau {prog.niveau==='auto'?'auto ('+(prog.autoLvl||1)+')':prog.niveau}</span></div>
-            <div className="wrap" style={{marginTop:6}}>
-              {vakRijen.map(r=>(<span key={r.v} className="tag">{VAKNAAM[r.v]}: {r.beheerst}/{r.total}</span>))}
-            </div>
-            {zwak.length>0
-              ? <div style={{marginTop:6,fontSize:13}}>⚠️ <b>Aandacht nodig:</b> {zwak.map(o=>VAKNAAM[o.v]+' – '+o.t).join(' · ')}</div>
-              : <div className="muted" style={{marginTop:6,fontSize:13}}>Nog te weinig geoefend om zwakke punten te bepalen.</div>}
-            {(prog.foutLog||[]).length>0 && <div className="muted" style={{fontSize:13,marginTop:2}}>📕 Foutenschrift: {(prog.foutLog||[]).length} open</div>}
-            {P.beloning && (()=>{ const b=berekenBeloning(prog); return (
-              <div className="row" style={{justifyContent:'space-between',alignItems:'center',marginTop:6,padding:'6px 10px',background:'#fff9e6',border:'1px solid #f0d67a',borderRadius:10}}>
-                <span style={{fontSize:13}}>💶 <b>Eerlijk verdiend vandaag: {euro(b.bedrag)}</b>
-                  <span className="muted"> (sterk {b.sterk} · nauwk. {b.pogingen?Math.round(b.nauw*100):0}%{b.toetsEuro>0?' · toetsbonus '+euro(b.toetsEuro):''})</span></span>
-                {b.betaald
-                  ? <span className="tag" style={{background:'#eaf7e2'}}>uitbetaald ✓</span>
-                  : <button className="btn sm" disabled={b.bedrag<=0} onClick={()=>betaal(pid)}>Markeer betaald</button>}
-              </div>
-            );})()}
+    <div className="card" style={{marginBottom:16,background:'#eef4fb',borderLeftColor:'#3a6ea0'}}>
+      <b>☁️ Online opslag — overal &amp; altijd inzien</b>
+      {gekoppeld ? (
+        <div style={{marginTop:8,fontSize:13}}>
+          Gekoppeld aan familiecode <b>{c.household}</b>. Resultaten worden automatisch opgeslagen en op elk toestel gelijk gehouden.
+          {c.lastSync && <div className="muted" style={{marginTop:2}}>Laatst gesynct: {new Date(c.lastSync).toLocaleString('nl-NL')}</div>}
+          <div className="wrap" style={{marginTop:10}}>
+            <button className="btn sm" disabled={busy} onClick={()=>doe(()=>cloud.sync())}>🔄 Nu synchroniseren</button>
+            <button className="btn ghost sm" onClick={cloud.disconnect}>Ontkoppel dit toestel</button>
           </div>
-        );
-      })}
-      <div className="muted" style={{fontSize:12,marginTop:12,lineHeight:1.5,paddingTop:8,borderTop:'1px solid var(--line)'}}>
-        💶 <b>Eerlijke beloning</b> (Wassima & Amaani): alleen écht bewezen werk telt — 1e keer goed zónder hint (€ {String(BELONING.tarief).replace('.',',')} p/st, max {euro(BELONING.werkMax)}),
-        met een nauwkeurigheidspoort (≥ 85% vol tarief, ≥ 70% half, daaronder niets) tegen gok-/haastwerk.
-        Een gehaalde oefentoets geeft {euro(BELONING.oefenBonus)} bonus, een proeftoets {euro(BELONING.proefBonus)} ("klaar voor de toets"). Dagplafond {euro(BELONING.dagMax)}.
+        </div>
+      ) : (
+        <div style={{marginTop:8}}>
+          <p className="muted" style={{fontSize:13}}>Kies één familiecode + pincode. Koppel op dit toestel; op elk ander toestel log je met dezelfde code in en zie je dezelfde resultaten.</p>
+          <div className="row" style={{gap:10,marginTop:6}}>
+            <div style={{flex:2}}><label className="fld">Familiecode</label>
+              <input className="f" value={hh} onChange={e=>setHh(e.target.value)} placeholder="bijv. benna-gezin"/></div>
+            <div style={{flex:1}}><label className="fld">Pincode (4–8 cijfers)</label>
+              <input className="f" value={pin} onChange={e=>setPin(e.target.value.replace(/\D/g,'').slice(0,8))} inputMode="numeric" placeholder="1234"/></div>
+          </div>
+          <div className="wrap" style={{marginTop:10}}>
+            <button className="btn sm" disabled={busy} onClick={()=>doe(()=>cloud.register(hh.trim().toLowerCase(),pin))}>➕ Nieuw gezin koppelen (upload)</button>
+            <button className="btn ghost sm" disabled={busy} onClick={()=>doe(()=>cloud.login(hh.trim().toLowerCase(),pin))}>🔑 Inloggen &amp; ophalen</button>
+          </div>
+        </div>
+      )}
+      {cloud.status && <div style={{marginTop:8,fontSize:13,fontWeight:600,color:'#2c5680'}}>{cloud.status}</div>}
+    </div>
+  );
+}
+function OuderDashboard({store,persist,onSetWeekbudget,onMarkeerBetaald,cloud}){
+  const allEx=[...SEED,...TEMPLATES,...store.custom];
+  const fileRef=useRef(null);
+  function backupExport(){
+    const blob=new Blob([JSON.stringify(store,null,2)],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    a.download='bennahuiswerk-backup.json'; a.click();
+  }
+  function backupImport(e){
+    const f=e.target.files&&e.target.files[0]; if(!f) return;
+    const rdr=new FileReader();
+    rdr.onload=()=>{ try{ const obj=JSON.parse(rdr.result); if(!obj||!obj.prog) throw 0;
+      if(confirm('Back-up terugzetten? Dit vervangt de resultaten op dit toestel.')){
+        persist(()=>{ const n={...obj}; n.custom=n.custom||[]; n.pin=n.pin||'1234'; n.prog=n.prog||{}; n.cloud=store.cloud;
+          if(typeof n.geluid!=='boolean') n.geluid=true;
+          for(const pid of Object.keys(PROFILES)) n.prog[pid]=normalizeProg(n.prog[pid]); return n; });
+      }
+    }catch(err){ alert('Kon dit bestand niet lezen.'); } };
+    rdr.readAsText(f); e.target.value='';
+  }
+  return (
+    <div>
+      {cloud && <CloudPaneel store={store} cloud={cloud}/>}
+      <div className="card" style={{marginBottom:16,background:'#f0f6ea',borderLeftColor:'#5EA03A'}}>
+        <div className="row" style={{justifyContent:'space-between',flexWrap:'wrap',gap:8}}>
+          <b>📊 Voortgang &amp; beloning per kind</b>
+          <div className="wrap">
+            <button className="btn ghost sm" onClick={()=>downloadRapport(store)}>⬇️ Rapport</button>
+            <button className="btn ghost sm" onClick={backupExport}>💾 Back-up</button>
+            <button className="btn ghost sm" onClick={()=>fileRef.current&&fileRef.current.click()}>📂 Terugzetten</button>
+            <input ref={fileRef} type="file" accept="application/json,.json" style={{display:'none'}} onChange={backupImport}/>
+          </div>
+        </div>
+        {Object.entries(PROFILES).map(([pid,P])=>{
+          const prog=normalizeProg(store.prog[pid]);
+          const vakRijen=P.vakken.map(v=>{
+            const cards=allEx.filter(e=>e.p===pid&&e.v===v);
+            return {v, total:cards.length, beheerst:cards.filter(e=>isMastered(prog,e.id)).length};
+          });
+          const totBeheerst=vakRijen.reduce((s,r)=>s+r.beheerst,0), totKaart=vakRijen.reduce((s,r)=>s+r.total,0);
+          const masteryPct=totKaart?Math.round(totBeheerst/totKaart*100):0;
+          const perTopic={};
+          allEx.filter(e=>e.p===pid).forEach(e=>{const c=cardInfo(prog,e.id); const k=e.v+'|'+e.t;
+            (perTopic[k]=perTopic[k]||{v:e.v,t:e.t,boxes:[]}).boxes.push(c.box);});
+          const zwak=Object.values(perTopic).map(o=>{const beg=o.boxes.filter(b=>b>0);
+            return {v:o.v,t:o.t,beg:beg.length,avg:beg.length?beg.reduce((a,b)=>a+b,0)/beg.length:0};})
+            .filter(o=>o.beg>0&&o.avg<4).sort((a,b)=>a.avg-b.avg).slice(0,4);
+          const b=berekenBeloning(prog);
+          const weekPct=b.weekbudget?Math.round(b.weekPaid/b.weekbudget*100):0;
+          return (
+            <div key={pid} style={{marginTop:12,paddingTop:12,borderTop:'1px solid var(--line)'}}>
+              <div style={{fontWeight:700}}>{P.emoji} {P.naam} <span className="muted" style={{fontWeight:400,fontSize:13}}>· {P.niveau} · beheersing {masteryPct}% ({totBeheerst}/{totKaart})</span></div>
+              <div className="muted" style={{fontWeight:400,fontSize:13,marginTop:2}}>⭐ {prog.punten||0} · 🔥 {prog.streak||0} · 📅 {prog.dagstreak||0} dagen · vandaag {prog.todayCount||0}/{prog.goal||10} · niveau {prog.niveau==='auto'?'auto ('+(prog.autoLvl||1)+')':prog.niveau}</div>
+              <div className="wrap" style={{marginTop:6}}>
+                {vakRijen.map(r=>(<span key={r.v} className="tag">{VAKNAAM[r.v]}: {r.beheerst}/{r.total}</span>))}
+              </div>
+              {zwak.length>0
+                ? <div style={{marginTop:6,fontSize:13}}>⚠️ <b>Aandacht nodig:</b> {zwak.map(o=>VAKNAAM[o.v]+' – '+o.t).join(' · ')}</div>
+                : <div className="muted" style={{marginTop:6,fontSize:13}}>Nog te weinig geoefend om zwakke punten te bepalen.</div>}
+              {(prog.foutLog||[]).length>0 && <div className="muted" style={{fontSize:13,marginTop:2}}>📕 Foutenschrift: {(prog.foutLog||[]).length} open</div>}
+              {/* beloning: naar resultaat & moeilijkheid, met hard weekbudget */}
+              <div style={{marginTop:8,padding:'8px 10px',background:'#fff9e6',border:'1px solid #f0d67a',borderRadius:10}}>
+                <div className="row" style={{justifyContent:'space-between',alignItems:'center'}}>
+                  <span style={{fontSize:14}}>💶 <b>Vandaag: {euro(b.bedrag)}</b></span>
+                  {b.betaald
+                    ? <span className="tag" style={{background:'#eaf7e2'}}>uitbetaald ✓</span>
+                    : <button className="btn sm" disabled={b.bedrag<=0} onClick={()=>onMarkeerBetaald(pid)}>Markeer betaald</button>}
+                </div>
+                <div className="muted" style={{fontSize:12,marginTop:4}}>
+                  moeilijkheidspunten {b.punten} (uit {b.sterk} sterke sommen) · nauwkeurigheid {b.pogingen?Math.round(b.nauw*100):0}%
+                  {b.toetsEuro>0?' · toetsbonus '+euro(b.toetsEuro):''}{b.factor===0.5?' · half tarief':''}{(!b.genoeg)?' · nog te weinig gedaan':''}
+                </div>
+                <div className="row" style={{justifyContent:'space-between',marginTop:8,fontSize:12}}>
+                  <span className="muted">Deze week uitbetaald: <b>{euro(b.weekPaid)}</b> van {euro(b.weekbudget)}</span>
+                  <span className="muted">nog {euro(b.restWeek)}</span>
+                </div>
+                <div className="pbar" style={{marginTop:4}}><i style={{width:Math.min(100,weekPct)+'%'}}></i></div>
+                <div className="wrap" style={{marginTop:8,alignItems:'center'}}>
+                  <span className="muted" style={{fontSize:12}}>Weekbudget:</span>
+                  <button className="btn ghost sm" onClick={()=>onSetWeekbudget(pid, weekbudgetVan(prog)-2.5)}>−</button>
+                  <span style={{fontWeight:700,minWidth:64,textAlign:'center'}}>{euro(weekbudgetVan(prog))}</span>
+                  <button className="btn ghost sm" onClick={()=>onSetWeekbudget(pid, weekbudgetVan(prog)+2.5)}>+</button>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+        <div className="muted" style={{fontSize:12,marginTop:12,lineHeight:1.5,paddingTop:8,borderTop:'1px solid var(--line)'}}>
+          💶 <b>Beloning naar resultaat &amp; niveau:</b> alleen 1e keer goed zónder hint telt, en <b>moeilijker = meer waard</b> (niveau 1/2/3 → 1/2/3 punten × € {String(BELONING.tariefPunt).replace('.',',')}).
+          Nauwkeurigheidspoort (≥ 85% vol tarief, ≥ 70% half, daaronder niets). Toetsbonus schaalt met de score. Dagplafond {euro(BELONING.dagMax)} en een <b>hard weekbudget per kind</b> — de app betaalt nooit meer uit dan dat.
+        </div>
       </div>
     </div>
   );
 }
-function Author({store,persist,onBack}){
+function Author({store,persist,onBack,onSetWeekbudget,onMarkeerBetaald,cloud}){
   const [unlocked,setUnlocked]=useState(false);
   const [pin,setPin]=useState('');
   const [form,setForm]=useState({p:'wassima',v:'wiskunde',t:'',lvl:'1',q:'',a:'',u:'',h1:'',h2:'',s:''});
@@ -2520,7 +2724,7 @@ function Author({store,persist,onBack}){
   return (
     <div>
       <div className="topbar"><button className="back" onClick={onBack}>← terug</button><span className="pill">Ouder-modus</span></div>
-      <OuderDashboard store={store} persist={persist}/>
+      <OuderDashboard store={store} persist={persist} onSetWeekbudget={onSetWeekbudget} onMarkeerBetaald={onMarkeerBetaald} cloud={cloud}/>
       <h2>Nieuwe opdracht toevoegen</h2>
 
       <div className="card" style={{marginTop:12}}>
