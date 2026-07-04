@@ -136,9 +136,9 @@ const {useState,useEffect,useMemo,useRef} = React;
 /* ============================ CONFIG ============================ */
 const PROFILES = {
   wassima:{naam:'Wassima', niveau:'2 havo', volgend:'3 havo', emoji:'🌱', kleur:'linear-gradient(135deg,#5EA03A,#48792c)', vakken:['wiskunde','natuurkunde','nederlands','engels','frans','duits','biologie','aardrijkskunde','geschiedenis','economie'], beloning:true},
-  amaani: {naam:'Amaani',  niveau:'4 vwo',  volgend:'5 vwo',  emoji:'🚀', kleur:'linear-gradient(135deg,#3a6ea0,#2c5680)', vakken:['wiskundeA','natuurkunde','scheikunde','nederlands','engels','frans','biologie','aardrijkskunde','geschiedenis','economie'], beloning:true},
-  amine:  {naam:'Amine',   niveau:'groep 7', volgend:'groep 8', emoji:'⚽', kleur:'linear-gradient(135deg,#2e8b57,#1f6e43)', vakken:['rekenen','taal','lezen','studievaardigheden','engels'], thema:'voetbal', beloning:true},
-  selma:  {naam:'Selma',   niveau:'groep 5', volgend:'groep 6', emoji:'🌸', kleur:'linear-gradient(135deg,#d95b9a,#b34584)', vakken:['rekenen','taal','lezen'], beloning:true},
+  amaani: {naam:'Amaani',  niveau:'5 vwo',  volgend:'6 vwo',  emoji:'🚀', kleur:'linear-gradient(135deg,#3a6ea0,#2c5680)', vakken:['wiskundeA','natuurkunde','scheikunde','nederlands','engels','frans','biologie','aardrijkskunde','geschiedenis','economie'], beloning:true},
+  amine:  {naam:'Amine',   niveau:'groep 8', volgend:'brugklas', emoji:'⚽', kleur:'linear-gradient(135deg,#2e8b57,#1f6e43)', vakken:['rekenen','taal','lezen','studievaardigheden','engels'], thema:'voetbal', beloning:true},
+  selma:  {naam:'Selma',   niveau:'groep 6', volgend:'groep 7', emoji:'🌸', kleur:'linear-gradient(135deg,#d95b9a,#b34584)', vakken:['rekenen','taal','lezen'], beloning:true},
 };
 
 /* ============================ THEMA'S (motivatie) ============================ */
@@ -210,6 +210,38 @@ function speel(kind, aan){
     });
   }catch(e){}
 }
+/* ---- Voorlezen: tekst-naar-spraak (Web Speech API, gratis, offline, geen bestanden) ---- */
+let _nlStem=null;
+function kiesNlStem(){
+  try{
+    const ss=window.speechSynthesis; if(!ss) return null;
+    const vs=ss.getVoices()||[];
+    _nlStem = vs.find(v=>/nl[-_]NL/i.test(v.lang)) || vs.find(v=>/^nl/i.test(v.lang)) || _nlStem;
+  }catch(e){}
+  return _nlStem;
+}
+try{ if(window.speechSynthesis){ window.speechSynthesis.onvoiceschanged=kiesNlStem; kiesNlStem(); } }catch(e){}
+/* maak wiskundige tekens uitspreekbaar in het Nederlands */
+function spreekbaar(t){
+  return String(t==null?'':t)
+    .replace(/√/g,' wortel ').replace(/²/g,' kwadraat ').replace(/³/g,' tot de derde ')
+    .replace(/×/g,' keer ').replace(/÷/g,' gedeeld door ').replace(/·/g,' keer ')
+    .replace(/−/g,' min ').replace(/π/g,' pi ').replace(/°/g,' graden ')
+    .replace(/€\s?/g,' euro ').replace(/\s+/g,' ').trim();
+}
+function leesVoor(tekst, aan){
+  if(!aan) return;
+  try{
+    const ss=window.speechSynthesis; if(!ss) return;
+    const txt=spreekbaar(tekst); if(!txt) return;
+    ss.cancel();
+    const u=new SpeechSynthesisUtterance(txt);
+    u.lang='nl-NL'; u.rate=0.95; u.pitch=1;
+    const stem=_nlStem||kiesNlStem(); if(stem) u.voice=stem;
+    ss.speak(u);
+  }catch(e){}
+}
+function stopVoorlezen(){ try{ if(window.speechSynthesis) window.speechSynthesis.cancel(); }catch(e){} }
 function mmss(sec){const m=Math.floor(sec/60), s=sec%60; return m+':'+(s<10?'0':'')+s;}
 function weekbudgetVan(pr){ return (typeof pr.weekbudget==='number' && pr.weekbudget>=0) ? pr.weekbudget : BELONING.weekbudget; }
 // ISO-weeksleutel (jaar-week) voor het wekelijkse toernooi
@@ -1531,6 +1563,155 @@ const SEED = [
   {p:'amaani',v:'nederlands',t:'Stijlfiguren',lvl:2,q:'"Ik heb je duizend keer gebeld." Welke stijlfiguur? (kies)',a:'overdrijving (hyperbool)',opties:['overdrijving (hyperbool)','vergelijking','herhaling'],h:['Sterk overdreven aantal.'],s:'Dit is een hyperbool (overdrijving).'},
   {p:'amaani',v:'nederlands',t:'Stijlfiguren',lvl:2,q:'"Zo sterk als een beer." Welke stijlfiguur? (kies)',a:'vergelijking',opties:['vergelijking','overdrijving','tegenstelling'],h:['Het woordje "als" verbindt twee dingen.'],s:'"zo ... als ..." is een vergelijking.'},
   {p:'amaani',v:'nederlands',t:'Spelling & stijl',lvl:2,q:'Is "U kunt contact met ons opnemen" formeel of informeel taalgebruik?',a:'formeel',h:['Het gebruik van "u" en volledige zinnen.'],s:'Dit is formeel taalgebruik.'},
+
+  /* ═══════════════ CURRICULUM-AANSLUITING (juli 2026) — nieuwe leerjaren ═══════════════
+     Zelf opgestelde oefenstof, geordend naar de officiële leerlijndomeinen
+     (referentieniveaus PO, doorstroomtoets, examenprogramma's). Zie CURRICULUM-aansluiting.md. */
+
+  /* ---------- SELMA · groep 6 · REKENEN ---------- */
+  // Getallen (tot 100.000)
+  {p:'selma',v:'rekenen',t:'Getallen tot 100.000',lvl:1,q:'Welk getal is één méér dan 9 999?',a:'10000',h:['9 999 + 1.'],s:'9 999 + 1 = 10 000.'},
+  {p:'selma',v:'rekenen',t:'Getallen tot 100.000',lvl:1,q:'Hoeveel duizendtallen zitten er in 24 000?',a:'24',h:['24 000 = 24 × 1000.'],s:'24 000 ÷ 1000 = 24.'},
+  {p:'selma',v:'rekenen',t:'Getallen tot 100.000',lvl:2,q:'Rond 34 780 af op duizendtallen.',a:'35000',h:['Kijk naar het honderdtal (7). 7 ≥ 5 → naar boven.'],s:'34 780 → 35 000.'},
+  {p:'selma',v:'rekenen',t:'Getallen tot 100.000',lvl:2,q:'Reken uit: 45 000 + 8 000',a:'53000',s:'45 000 + 8 000 = 53 000.'},
+  {p:'selma',v:'rekenen',t:'Getallen tot 100.000',lvl:2,q:'Reken uit: 60 000 − 12 000',a:'48000',s:'60 000 − 12 000 = 48 000.'},
+  // Getallen: delen met rest & grotere keersommen
+  {p:'selma',v:'rekenen',t:'Delen met rest',lvl:1,q:'Reken uit: 17 ÷ 5. Geef de rest.',a:'2',h:['5 × 3 = 15, wat blijft over?'],s:'5 × 3 = 15, 17 − 15 = 2. Rest 2.'},
+  {p:'selma',v:'rekenen',t:'Delen met rest',lvl:2,q:'50 ÷ 6. Geef de rest.',a:'2',h:['6 × 8 = 48.'],s:'6 × 8 = 48, 50 − 48 = 2. Rest 2.'},
+  {p:'selma',v:'rekenen',t:'Vermenigvuldigen (groter)',lvl:2,q:'Reken uit: 6 × 40',a:'240',h:['6 × 4 = 24, dan × 10.'],s:'6 × 4 = 24 → 240.'},
+  {p:'selma',v:'rekenen',t:'Vermenigvuldigen (groter)',lvl:2,q:'Reken uit: 12 × 8',a:'96',h:['10 × 8 = 80 en 2 × 8 = 16.'],s:'80 + 16 = 96.'},
+  // Verhoudingen: breuken
+  {p:'selma',v:'rekenen',t:'Breuken',lvl:1,ill:{type:'breukstrook',delen:5,gevuld:2},q:'Welk deel is gekleurd? Schrijf als breuk (bijv. 2/5).',a:'2/5',h:['gekleurde delen / totaal.'],s:'2 van de 5 delen → 2/5.'},
+  {p:'selma',v:'rekenen',t:'Breuken',lvl:2,q:'Wat is groter: 1/2 of 1/3?',a:'1/2',h:['Hoe meer delen, hoe kleiner elk deel.'],s:'1/2 is groter dan 1/3.'},
+  {p:'selma',v:'rekenen',t:'Breuken',lvl:2,q:'Vereenvoudig: 2/4',a:'1/2',alt:['0.5','0,5'],h:['Deel teller en noemer door 2.'],s:'2/4 = 1/2.'},
+  {p:'selma',v:'rekenen',t:'Breuken',lvl:3,q:'Hoeveel is 3/5 van 25?',a:'15',h:['Eerst ÷ 5, dan × 3.'],s:'25 ÷ 5 = 5, 5 × 3 = 15.'},
+  // Meten & Meetkunde + kommagetallen
+  {p:'selma',v:'rekenen',t:'Kommagetallen',lvl:1,q:'Reken uit: € 2,50 + € 1,25',a:'3.75',alt:['3,75'],u:'€',s:'2,50 + 1,25 = 3,75.'},
+  {p:'selma',v:'rekenen',t:'Kommagetallen',lvl:2,q:'Reken uit: € 5,00 − € 1,75',a:'3.25',alt:['3,25'],u:'€',s:'5,00 − 1,75 = 3,25.'},
+  {p:'selma',v:'rekenen',t:'Kommagetallen',lvl:2,q:'Reken uit: 0,5 + 0,25',a:'0.75',alt:['0,75'],s:'0,5 + 0,25 = 0,75.'},
+  {p:'selma',v:'rekenen',t:'Meten & maten',lvl:1,q:'Hoeveel centimeter is 2 meter?',a:'200',u:'cm',s:'2 × 100 = 200 cm.'},
+  {p:'selma',v:'rekenen',t:'Meten & maten',lvl:2,q:'Hoeveel gram is 1,5 kilogram?',a:'1500',u:'g',s:'1,5 × 1000 = 1500 g.'},
+  {p:'selma',v:'rekenen',t:'Oppervlakte (hokjes)',lvl:1,ill:{type:'rechthoek',l:5,b:3},q:'Een rechthoek is 5 hokjes lang en 3 hokjes breed. Hoeveel hokjes passen erin?',a:'15',u:'hokjes',h:['lengte × breedte.'],s:'5 × 3 = 15 hokjes.'},
+  // Verbanden: verhoudingstabel & grafiek
+  {p:'selma',v:'rekenen',t:'Verhoudingstabel',lvl:2,q:'2 appels kosten € 1. Wat kosten 6 appels?',a:'3',u:'€',h:['6 is 3× zoveel als 2.'],s:'6 ÷ 2 = 3, 3 × € 1 = € 3.'},
+  {p:'selma',v:'rekenen',t:'Verhoudingstabel',lvl:2,q:'1 pak koekjes weegt 200 g. Hoeveel wegen 4 pakken?',a:'800',u:'g',s:'4 × 200 = 800 g.'},
+  {p:'selma',v:'rekenen',t:'Tabellen & grafieken',lvl:1,q:'In een staafdiagram is de staaf van maandag 6 hoog en van dinsdag 4. Hoeveel samen?',a:'10',s:'6 + 4 = 10.'},
+  /* ---------- SELMA · groep 6 · TAAL ---------- */
+  {p:'selma',v:'taal',t:'Werkwoordspelling',lvl:1,q:'Vul in (tegenwoordige tijd): ik ... een brief. (schrijven)',a:'schrijf',h:['De ik-vorm is de stam, zonder t.'],s:'ik schrijf (de stam).'},
+  {p:'selma',v:'taal',t:'Werkwoordspelling',lvl:2,q:'Vul in: hij ... voetbal. (spelen) → hij',a:'speelt',h:['stam speel + t.'],s:'speel + t = speelt.'},
+  {p:'selma',v:'taal',t:'Samenstellingen',lvl:1,q:'Maak één woord: voetbal + veld =',a:'voetbalveld',s:'voetbalveld.'},
+  {p:'selma',v:'taal',t:'Verkleinwoorden',lvl:1,q:'Maak een verkleinwoord van “boom”.',a:'boompje',s:'boom → boompje.'},
+
+  /* ---------- AMINE · groep 8 · DOORSTROOMTOETS ---------- */
+  // Taalverzorging · werkwoordspelling (zwak punt)
+  {p:'amine',v:'taal',t:'Werkwoordspelling',lvl:2,q:'Voltooid deelwoord van “werken”: Ik heb ge...',a:'gewerkt',h:["'t kofschip: werk eindigt op k → +t."],s:'ge + werk + t = gewerkt.'},
+  {p:'amine',v:'taal',t:'Werkwoordspelling',lvl:2,q:'Voltooid deelwoord van “leven”: Hij heeft ge...',a:'geleefd',h:["leven → stam leef; f/v niet in 't kofschip → +d."],s:'ge + leef + d = geleefd.'},
+  {p:'amine',v:'taal',t:'Werkwoordspelling',lvl:2,q:'Verleden tijd van “fietsen”: Gisteren ... hij naar school. → hij',a:'fietste',h:["s zit in 't kofschip → +te."],s:'fiets → fietste.'},
+  {p:'amine',v:'taal',t:'Werkwoordspelling',lvl:3,q:'“word” of “wordt”? Hij ... later dokter.',a:'wordt',h:['hij/zij → stam + t.'],s:'hij wordt (stam word + t).'},
+  {p:'amine',v:'taal',t:'Werkwoordspelling',lvl:3,q:'“gebeurd” of “gebeurt”? Dat ... elke dag.',a:'gebeurt',h:['Tegenwoordige tijd, hij-vorm → +t.'],s:'Het gebeurt (tegenwoordige tijd, stam + t).'},
+  // Lezen · woordenschat in context (zwak punt)
+  {p:'amine',v:'lezen',t:'Woordenschat',lvl:2,q:'“Het was een monotone les.” Wat betekent monotoon?',a:'eentonig',alt:['saai','eentonig/saai'],h:['mono = één (toon).'],s:'monotoon = eentonig/saai.'},
+  {p:'amine',v:'lezen',t:'Woordenschat',lvl:3,q:'“De uitleg was beknopt.” Beknopt betekent …',a:'kort',alt:['kort en bondig','bondig'],h:['Het tegenovergestelde van uitgebreid.'],s:'beknopt = kort en bondig.'},
+  {p:'amine',v:'lezen',t:'Woordenschat',lvl:2,q:'Wat is een synoniem van “snel”? (kies)',a:'vlug',opties:['vlug','langzaam','moe'],s:'snel ≈ vlug.'},
+  // Lezen · samenvatten (zwak punt)
+  {p:'amine',v:'lezen',t:'Samenvatten',lvl:2,q:'De belangrijkste zin van een alinea heet de …? (kies)',a:'kernzin',opties:['kernzin','bijzin','vraagzin'],s:'De kernzin geeft de hoofdgedachte.'},
+  {p:'amine',v:'lezen',t:'Samenvatten',lvl:2,q:'Alinea: “Honden hebben beweging nodig. Een dagelijkse wandeling houdt ze gezond en blij.” Welke zin is de kern? (kies)',a:'Honden hebben beweging nodig.',opties:['Honden hebben beweging nodig.','Honden zijn blij.','Wandelen is leuk.'],s:'De eerste zin geeft de hoofdgedachte; de rest is uitleg.'},
+  // Studievaardigheden · opzoeken (zwak punt)
+  {p:'amine',v:'studievaardigheden',t:'Opzoeken',lvl:1,q:'In welk deel van een boek zoek je op welke bladzijde een onderwerp staat?',a:'register',alt:['index','het register'],h:['Vaak achterin, alfabetisch.'],s:'In het register (index).'},
+  {p:'amine',v:'studievaardigheden',t:'Opzoeken',lvl:1,q:'Waar vind je vooraan in een boek de titels van alle hoofdstukken?',a:'inhoudsopgave',alt:['de inhoudsopgave'],s:'In de inhoudsopgave.'},
+  {p:'amine',v:'studievaardigheden',t:'Opzoeken',lvl:2,q:'In een woordenboek: staat “kat” vóór “kist”? (ja/nee)',a:'ja',h:['Alfabetisch: ka… vóór ki…'],s:'Ja, “ka” komt vóór “ki”.'},
+  // Rekenen · doorstroomdomeinen
+  {p:'amine',v:'rekenen',t:'Procenten',lvl:2,q:'Hoeveel is 25% van 80?',a:'20',h:['25% = 1/4.'],s:'80 ÷ 4 = 20.'},
+  {p:'amine',v:'rekenen',t:'Procenten',lvl:2,q:'Een jas van € 60 met 10% korting. Hoeveel korting in euro?',a:'6',u:'€',s:'10% van 60 = 6.'},
+  {p:'amine',v:'rekenen',t:'Verhoudingen',lvl:2,q:'Op een kaart 1 : 1000 is een weg 5 cm. Hoeveel meter in het echt?',a:'50',u:'m',h:['1 cm = 1000 cm = 10 m.'],s:'5 × 1000 cm = 5000 cm = 50 m.'},
+  {p:'amine',v:'rekenen',t:'Meten & meetkunde',lvl:2,ill:{type:'rechthoek',l:7,b:4},q:'Een rechthoek is 7 cm bij 4 cm. Bereken de oppervlakte.',a:'28',u:'cm²',s:'7 × 4 = 28 cm².'},
+  {p:'amine',v:'rekenen',t:'Verbanden',lvl:1,q:'Bereken het gemiddelde van 4, 6 en 8.',a:'6',s:'(4 + 6 + 8) ÷ 3 = 6.'},
+
+  /* ---------- WASSIMA · verdieping richting 3 havo (schakelaar: volgend jaar) ---------- */
+  {p:'wassima',v:'wiskunde',t:'Kwadratische verbanden',lvl:1,jaar:'next',q:'Gegeven y = x². Bereken y als x = 4.',a:'16',s:'4² = 16.'},
+  {p:'wassima',v:'wiskunde',t:'Kwadratische verbanden',lvl:2,jaar:'next',q:'Gegeven y = x² − 3. Bereken y als x = 5.',a:'22',s:'5² − 3 = 25 − 3 = 22.'},
+  {p:'wassima',v:'wiskunde',t:'Machten',lvl:2,jaar:'next',q:'Reken uit: 2⁴',a:'16',h:['2 × 2 × 2 × 2.'],s:'2⁴ = 16.'},
+  {p:'wassima',v:'wiskunde',t:'Machten',lvl:2,jaar:'next',q:'Reken uit: 3³',a:'27',s:'3 × 3 × 3 = 27.'},
+  {p:'wassima',v:'wiskunde',t:'Stelsels',lvl:2,jaar:'next',q:'Los op: x + y = 10 en x = 6. Wat is y?',a:'4',s:'6 + y = 10 → y = 4.'},
+  {p:'wassima',v:'wiskunde',t:'Procenten',lvl:2,q:'Een bedrag van € 200 stijgt met 15%. Hoeveel is de stijging in euro?',a:'30',u:'€',s:'15% van 200 = 30.'},
+  {p:'wassima',v:'natuurkunde',t:'Snelheid',lvl:2,q:'Een auto rijdt 90 km in 1,5 uur. Wat is de gemiddelde snelheid?',a:'60',u:'km/h',h:['v = afstand ÷ tijd.'],s:'90 ÷ 1,5 = 60 km/h.'},
+  {p:'wassima',v:'natuurkunde',t:'Snelheid',lvl:2,q:'v = 20 m/s gedurende 5 s. Welke afstand? (s = v × t)',a:'100',u:'m',s:'20 × 5 = 100 m.'},
+
+  /* ---------- AMAANI · 5 vwo · wiskunde A (statistiek & kans), scheikunde, natuurkunde ---------- */
+  {p:'amaani',v:'wiskundeA',t:'Statistiek',lvl:2,q:'Bereken het gemiddelde van 2, 5, 5 en 8.',a:'5',s:'(2 + 5 + 5 + 8) ÷ 4 = 20 ÷ 4 = 5.'},
+  {p:'amaani',v:'wiskundeA',t:'Statistiek',lvl:2,q:'Wat is de modus van 3, 7, 7, 7 en 9?',a:'7',s:'7 komt het vaakst voor.'},
+  {p:'amaani',v:'wiskundeA',t:'Statistiek',lvl:2,q:'Bereken de mediaan van 4, 8, 6, 2 en 10.',a:'6',h:['Op volgorde: 2, 4, 6, 8, 10.'],s:'De middelste waarde is 6.'},
+  {p:'amaani',v:'wiskundeA',t:'Kansrekening',lvl:1,q:'Kans op “kop” bij één eerlijke muntworp? (breuk)',a:'1/2',alt:['0.5','0,5'],s:'1 gunstig van 2 → 1/2.'},
+  {p:'amaani',v:'wiskundeA',t:'Kansrekening',lvl:2,q:'Kans op een 6 met één dobbelsteen? (breuk)',a:'1/6',s:'1 van de 6 → 1/6.'},
+  {p:'amaani',v:'wiskundeA',t:'Kansrekening',lvl:2,q:'Twee keer kop achter elkaar (en-regel). Kans? (breuk)',a:'1/4',alt:['0.25','0,25'],h:['1/2 × 1/2.'],s:'1/2 × 1/2 = 1/4.'},
+  {p:'amaani',v:'wiskundeA',t:'Kansrekening',lvl:3,q:'Verwachtingswaarde: je wint € 6 met kans 1/3, anders € 0. Verwachte winst?',a:'2',u:'€',h:['E = 6 × 1/3.'],s:'6 × 1/3 = € 2.'},
+  {p:'amaani',v:'wiskundeA',t:'Tellen (combinatoriek)',lvl:2,q:'Op hoeveel volgordes kun je 3 verschillende boeken op een rij zetten?',a:'6',h:['3! = 3 × 2 × 1.'],s:'3! = 6.'},
+  {p:'amaani',v:'wiskundeA',t:'Tellen (combinatoriek)',lvl:3,q:'Hoeveel manieren om 2 uit 4 personen te kiezen (volgorde maakt niet uit)? (C(4,2))',a:'6',h:['4! ÷ (2! × 2!).'],s:'C(4,2) = 6.'},
+  {p:'amaani',v:'wiskundeA',t:'Exponentiële groei',lvl:2,q:'Een bedrag groeit per jaar met 10%. Wat is de groeifactor?',a:'1.1',alt:['1,1'],s:'1 + 10/100 = 1,1.'},
+  {p:'amaani',v:'wiskundeA',t:'Exponentiële groei',lvl:3,q:'€ 100 groeit 2 jaar met groeifactor 1,1 per jaar. Eindbedrag?',a:'121',u:'€',h:['100 × 1,1².'],s:'100 × 1,1² = 100 × 1,21 = € 121.'},
+  {p:'amaani',v:'wiskundeA',t:'Procenten & groeifactor',lvl:2,q:'Een prijs daalt met 20%. Wat is de groeifactor?',a:'0.8',alt:['0,8'],s:'1 − 0,2 = 0,8.'},
+  {p:'amaani',v:'scheikunde',t:'Molverhoudingen',lvl:2,q:'2 H₂ + O₂ → 2 H₂O. Hoeveel mol H₂O ontstaat er uit 6 mol H₂?',a:'6',u:'mol',h:['H₂ : H₂O = 2 : 2 = 1 : 1.'],s:'6 mol H₂ → 6 mol H₂O.'},
+  {p:'amaani',v:'scheikunde',t:'Molverhoudingen',lvl:3,q:'N₂ + 3 H₂ → 2 NH₃. Hoeveel mol NH₃ uit 9 mol H₂?',a:'6',u:'mol',h:['H₂ : NH₃ = 3 : 2.'],s:'9 × (2/3) = 6 mol NH₃.'},
+  {p:'amaani',v:'scheikunde',t:'Reactievergelijkingen',lvl:2,q:'Maak kloppend: 2 Na + Cl₂ → __ NaCl. Welk getal hoort er vóór NaCl?',a:'2',h:['Links staan 2 Na-atomen.'],s:'2 Na + Cl₂ → 2 NaCl.'},
+  {p:'amaani',v:'natuurkunde',t:'Energie & vermogen',lvl:2,q:'Een apparaat van 2000 W draait 3 uur. Hoeveel kWh verbruikt het?',a:'6',u:'kWh',h:['2000 W = 2 kW; E = P × t.'],s:'2 kW × 3 h = 6 kWh.'},
+  {p:'amaani',v:'natuurkunde',t:'Kracht & versnelling',lvl:2,q:'F = m · a. Met m = 4 kg en a = 3 m/s². Bereken F.',a:'12',u:'N',s:'4 × 3 = 12 N.'},
+  {p:'amaani',v:'natuurkunde',t:'Druk',lvl:2,q:'p = F / A. Met F = 200 N en A = 4 m². Bereken p.',a:'50',u:'Pa',s:'200 ÷ 4 = 50 Pa.'},
+
+  /* ═══════════════ CURRICULUM-AANSLUITING · LAAG 2 (juli 2026) ═══════════════ */
+
+  /* ---------- AMINE · groep 8 · doorstroomtoets — bredere dekking ---------- */
+  // Taalverzorging · niet-werkwoordspelling
+  {p:'amine',v:'taal',t:'Niet-werkwoordspelling',lvl:2,q:'Welk woord is goed geschreven: “trein” of “trijn”?',a:'trein',s:'trein (met ei).'},
+  {p:'amine',v:'taal',t:'Niet-werkwoordspelling',lvl:2,q:'“vrouw” of “vrou”? Kies het goede woord.',a:'vrouw',s:'vrouw (ou + w).'},
+  {p:'amine',v:'taal',t:'Niet-werkwoordspelling',lvl:2,q:'s of z? Het meervoud van “huis” schrijf je als hui__en. Vul in het hele woord.',a:'huizen',h:['s wordt vaak z in het meervoud.'],s:'huis → huizen.'},
+  {p:'amine',v:'taal',t:'Niet-werkwoordspelling',lvl:3,q:'d of t aan het eind? “Het weer is kou__.” Vul in het hele woord.',a:'koud',h:['Verleng: koude → hoor je een d.'],s:'koud (verlengen → koude → d).'},
+  {p:'amine',v:'taal',t:'Leestekens & hoofdletters',lvl:2,q:'Krijgt “maandag” een hoofdletter? (ja/nee)',a:'nee',h:['Dagen van de week: kleine letter.'],s:'Nee — dagen van de week krijgen geen hoofdletter.'},
+  {p:'amine',v:'taal',t:'Leestekens & hoofdletters',lvl:2,q:'Krijgt “nederland” een hoofdletter? (ja/nee)',a:'ja',s:'Ja — landnamen krijgen een hoofdletter: Nederland.'},
+  {p:'amine',v:'taal',t:'Leestekens & hoofdletters',lvl:2,q:'Welk leesteken zet je vóór een opsomming of uitleg?',a:'dubbele punt',alt:[':','de dubbele punt'],s:'De dubbele punt (:).'},
+  // Lezen · interpreteren, evalueren, verwijzen, signaalwoorden
+  {p:'amine',v:'lezen',t:'Feit of mening',lvl:2,q:'“De Mont Blanc is de hoogste berg van de Alpen.” Feit of mening?',a:'feit',s:'Controleerbaar → feit.'},
+  {p:'amine',v:'lezen',t:'Feit of mening',lvl:2,q:'“Voetbal is de leukste sport.” Feit of mening?',a:'mening',s:'Persoonlijk, niet te bewijzen → mening.'},
+  {p:'amine',v:'lezen',t:'Verwijswoorden',lvl:2,q:'“Sara pakt haar jas. Die is blauw.” Waar verwijst “die” naar?',a:'de jas',alt:['jas','haar jas'],s:'“die” verwijst naar de jas.'},
+  {p:'amine',v:'lezen',t:'Signaalwoorden',lvl:2,q:'Het woord “omdat” geeft een … aan? (kies)',a:'reden/oorzaak',opties:['reden/oorzaak','tegenstelling','opsomming'],s:'“omdat” geeft een reden/oorzaak.'},
+  {p:'amine',v:'lezen',t:'Signaalwoorden',lvl:2,q:'Het woord “maar” geeft een … aan? (kies)',a:'tegenstelling',opties:['tegenstelling','gevolg','tijd'],s:'“maar” geeft een tegenstelling.'},
+  {p:'amine',v:'lezen',t:'Interpreteren',lvl:3,q:'“Hij keek met een rood hoofd naar de grond.” Hoe voelt hij zich waarschijnlijk? (kies)',a:'beschaamd',opties:['beschaamd','blij','boos'],s:'Rood hoofd + naar de grond kijken → schaamte.'},
+  // Rekenen · breuken, kommagetallen, meten, tijd, geld
+  {p:'amine',v:'rekenen',t:'Breuken',lvl:2,q:'Reken uit: 1/2 + 1/4',a:'3/4',alt:['0.75','0,75'],h:['Maak gelijke noemers: 1/2 = 2/4.'],s:'2/4 + 1/4 = 3/4.'},
+  {p:'amine',v:'rekenen',t:'Kommagetallen',lvl:2,q:'Reken uit: 3,2 + 1,75',a:'4.95',alt:['4,95'],s:'3,20 + 1,75 = 4,95.'},
+  {p:'amine',v:'rekenen',t:'Meten & meetkunde',lvl:2,ill:{type:'rechthoek',l:6,b:4},q:'Een rechthoek is 6 cm bij 4 cm. Bereken de omtrek.',a:'20',u:'cm',h:['omtrek = 2 × (l + b).'],s:'2 × (6 + 4) = 20 cm.'},
+  {p:'amine',v:'rekenen',t:'Meten & meetkunde',lvl:3,ill:{type:'balk',l:5,b:3,h:2},q:'Een balk is 5 × 3 × 2 cm. Bereken de inhoud.',a:'30',u:'cm³',s:'5 × 3 × 2 = 30 cm³.'},
+  {p:'amine',v:'rekenen',t:'Tijd',lvl:2,q:'Een film begint om 19:15 en duurt 90 minuten. Hoe laat is hij afgelopen?',a:'20:45',alt:['20.45'],h:['90 min = 1 uur 30 min.'],s:'19:15 + 1:30 = 20:45.'},
+  {p:'amine',v:'rekenen',t:'Geld',lvl:2,q:'Je betaalt € 10 voor iets van € 6,75. Hoeveel krijg je terug?',a:'3.25',alt:['3,25'],u:'€',s:'10 − 6,75 = 3,25.'},
+
+  /* ---------- SELMA · groep 6 · spelling & lezen ---------- */
+  {p:'selma',v:'taal',t:'Open en gesloten lettergreep',lvl:2,q:'Meervoud van “boom”?',a:'bomen',h:['Lange klank, open lettergreep: één o.'],s:'boom → bomen.'},
+  {p:'selma',v:'taal',t:'Open en gesloten lettergreep',lvl:2,q:'Meervoud van “bal”?',a:'ballen',h:['Korte klank: medeklinker verdubbelen.'],s:'bal → ballen (dubbele l).'},
+  {p:'selma',v:'taal',t:'au/ou',lvl:2,q:'“kou” of “kauw”? Het woord voor lage temperatuur:',a:'kou',s:'kou (ou).'},
+  {p:'selma',v:'taal',t:'Hoofdletters & leestekens',lvl:1,q:'Begin je een nieuwe zin met een hoofdletter of een kleine letter?',a:'hoofdletter',alt:['met een hoofdletter'],s:'Met een hoofdletter.'},
+  {p:'selma',v:'lezen',t:'Verwijswoorden',lvl:2,q:'“Tom heeft een hond. Hij is bruin.” Naar wie of wat verwijst “hij”?',a:'de hond',alt:['hond'],s:'“hij” verwijst naar de hond.'},
+  {p:'selma',v:'lezen',t:'Volgorde',lvl:1,q:'Wat komt eerst in een verhaal: het begin, het midden of het einde?',a:'het begin',alt:['begin'],s:'Het begin.'},
+
+  /* ---------- WASSIMA · wiskunde, zaakvakken, Engels ---------- */
+  {p:'wassima',v:'wiskunde',t:'Negatieve getallen',lvl:2,q:'Reken uit: −5 + 8',a:'3',s:'Vanaf −5 acht naar rechts → 3.'},
+  {p:'wassima',v:'wiskunde',t:'Negatieve getallen',lvl:2,q:'Reken uit: −3 − 4',a:'-7',alt:['−7'],s:'−3 − 4 = −7.'},
+  {p:'wassima',v:'wiskunde',t:'Verhoudingen & schaal',lvl:2,q:'4 pennen kosten € 2. Wat kosten 10 pennen?',a:'5',u:'€',h:['1 pen = € 0,50.'],s:'10 × € 0,50 = € 5.'},
+  {p:'wassima',v:'wiskunde',t:'Lineaire formules',lvl:2,q:'Gegeven y = 3x − 2. Bereken y bij x = 4.',a:'10',s:'3 × 4 − 2 = 10.'},
+  {p:'wassima',v:'biologie',t:'Cel',lvl:1,q:'In welk celonderdeel ligt het DNA (de erfelijke informatie)?',a:'celkern',alt:['de celkern','kern','de kern'],s:'Het DNA ligt in de celkern.'},
+  {p:'wassima',v:'biologie',t:'Vertering',lvl:2,q:'In welk orgaan begint de vertering, met kauwen en speeksel?',a:'mond',alt:['de mond'],s:'De vertering begint in de mond.'},
+  {p:'wassima',v:'aardrijkskunde',t:'Klimaat',lvl:2,q:'Hoe heet de denkbeeldige lijn op 0° breedte, waar het klimaat het warmst is?',a:'evenaar',alt:['de evenaar','equator'],s:'De evenaar (0° breedte).'},
+  {p:'wassima',v:'engels',t:'Tenses',lvl:2,q:'Vul in (present simple): He ... to school every day. (to go)',a:'goes',s:'He goes (derde persoon enkelvoud + -es).'},
+  {p:'wassima',v:'engels',t:'Woordenschat',lvl:1,q:'Wat betekent “library”?',a:'bibliotheek',alt:['de bibliotheek'],s:'library = bibliotheek.'},
+
+  /* ---------- AMAANI · 5 vwo · wiskunde A, scheikunde, natuurkunde ---------- */
+  {p:'amaani',v:'wiskundeA',t:'Kansrekening',lvl:3,q:'Uit een zak met 3 rode en 2 blauwe knikkers pak je er 1. Kans op rood? (breuk)',a:'3/5',alt:['0.6','0,6'],s:'3 rood van 5 → 3/5.'},
+  {p:'amaani',v:'wiskundeA',t:'Kansrekening',lvl:3,q:'Twee keer een 6 gooien met één dobbelsteen (en-regel). Kans? (breuk)',a:'1/36',s:'1/6 × 1/6 = 1/36.'},
+  {p:'amaani',v:'wiskundeA',t:'Statistiek',lvl:3,q:'Bij 20 worpen valt 5 keer kop. Wat is de relatieve frequentie van kop?',a:'0.25',alt:['1/4','0,25'],s:'5 ÷ 20 = 0,25.'},
+  {p:'amaani',v:'wiskundeA',t:'Logaritmen',lvl:2,q:'Reken uit: log(1000) (grondtal 10).',a:'3',h:['10 tot welke macht is 1000?'],s:'10³ = 1000 → log(1000) = 3.'},
+  {p:'amaani',v:'wiskundeA',t:'Exponentiële groei',lvl:3,q:'Een populatie verdubbelt elk jaar. Wat is de groeifactor?',a:'2',s:'Verdubbelen → groeifactor 2.'},
+  {p:'amaani',v:'scheikunde',t:'Molrekenen',lvl:2,q:'Molaire massa van water (H₂O) ≈ 18 g/mol. Hoeveel gram is 2 mol water?',a:'36',u:'g',h:['massa = mol × molaire massa.'],s:'2 × 18 = 36 g.'},
+  {p:'amaani',v:'scheikunde',t:'Molrekenen',lvl:3,q:'Hoeveel mol is 44 g CO₂? (molaire massa 44 g/mol)',a:'1',u:'mol',s:'44 ÷ 44 = 1 mol.'},
+  {p:'amaani',v:'natuurkunde',t:'Kracht & versnelling',lvl:3,q:'Een kracht van 30 N werkt op 6 kg. Bereken de versnelling (a = F/m).',a:'5',u:'m/s²',s:'30 ÷ 6 = 5 m/s².'},
+  {p:'amaani',v:'natuurkunde',t:'Energie & vermogen',lvl:3,q:'Een lamp van 60 W brandt 10 uur. Hoeveel Wh verbruikt hij?',a:'600',u:'Wh',s:'60 × 10 = 600 Wh.'},
 ];
 SEED.forEach((e,i)=> e.id = 'seed_'+i);
 
@@ -1852,6 +2033,7 @@ function loadStore(){
   let r=null; try{r=JSON.parse(localStorage.getItem(KEY));}catch(e){}
   const s=r||{}; s.custom=s.custom||[]; s.pin=s.pin||'1234'; s.prog=s.prog||{};
   if(typeof s.geluid!=='boolean') s.geluid=true;   // geluid standaard aan
+  if(typeof s.voorlezen!=='boolean') s.voorlezen=true;   // voorlezen (tekst-naar-spraak) standaard aan
   if(!s.cloud||typeof s.cloud!=='object') s.cloud={household:'',pin:'',lastServer:null,lastSync:null};
   if(!s.kidpw||typeof s.kidpw!=='object') s.kidpw={};   // per kind een wachtwoord (standaard 'Bennaclan')
   if(!s.kidacc||typeof s.kidacc!=='object') s.kidacc={};   // per kind een online account {code,pw} — scores volgen het kind, niet het toestel
@@ -2177,6 +2359,8 @@ function App(){
   }
   const geluid = store.geluid!==false;
   function toggleGeluid(){ persist(prev=>({...prev, geluid: !(prev.geluid!==false)})); }
+  const voorlezen = store.voorlezen!==false;
+  function toggleVoorlezen(){ if(voorlezen) stopVoorlezen(); persist(prev=>({...prev, voorlezen: !(prev.voorlezen!==false)})); }
   function setWeekbudget(pid, val){
     persist(prev=>{const pr=normalizeProg(prev.prog[pid]); pr.weekbudget=Math.max(0,Math.min(50,val)); return {...prev, prog:{...prev.prog,[pid]:pr}};});
     scheduleChildPush(pid);
@@ -2273,7 +2457,7 @@ function App(){
 
   return (
     <div>
-      {view==='home' && <Home onPick={kiesProfiel} store={store} allEx={allEx} onAuthor={()=>setView('author')} onFormules={()=>setView('formules')} onLeertips={()=>setView('leertips')} onSpellen={()=>setView('spellen')} spelNaDoel={store.spelNaDoel===true} geluid={geluid} onToggleGeluid={toggleGeluid}/>}
+      {view==='home' && <Home onPick={kiesProfiel} store={store} allEx={allEx} onAuthor={()=>setView('author')} onFormules={()=>setView('formules')} onLeertips={()=>setView('leertips')} onSpellen={()=>setView('spellen')} spelNaDoel={store.spelNaDoel===true} geluid={geluid} onToggleGeluid={toggleGeluid} voorlezen={voorlezen} onToggleVoorlezen={toggleVoorlezen}/>}
       {view==='kidlogin' && <KidLogin pid={pendingPid} store={store} onLogin={childLogin} onBack={()=>{setPendingPid(null);setView('home');}} onOk={()=>{const p=pendingPid;setPendingPid(null);openProfile(p);}}/>}
       {view==='spellen' && <Spellen store={store} onBack={()=>setView('home')} onScore={setGameScore} geluid={geluid}/>}
       {view==='wedstrijd-maak' && <WedstrijdMaken profile={profile} allEx={allEx} onBack={()=>setView('hub')} geluid={geluid}/>}
@@ -2285,7 +2469,7 @@ function App(){
         wedstrijdAan={store.wedstrijdAan!==false} onWedstrijd={()=>setView('wedstrijd-maak')}
         onSpellen={()=>setView('spellen')} spelNaDoel={store.spelNaDoel===true}/>}
       {view==='practice' && <Practice profile={profile} vak={vak} topic={topic} jaar={jaar} allEx={allEx}
-        onBack={()=>setView('hub')} onResult={recordResult} onToets={recordToets} prog={prog} onTopic={goTopic} geluid={geluid}/>}
+        onBack={()=>setView('hub')} onResult={recordResult} onToets={recordToets} prog={prog} onTopic={goTopic} geluid={geluid} voorlezen={voorlezen}/>}
       {view==='author' && <Author store={store} persist={persist} onBack={()=>setView('home')}
         onSetWeekbudget={setWeekbudget} onMarkeerBetaald={markeerBetaald} cloud={cloudApi} onSetKidPw={setKidPw}
         accApi={{register:childRegister, login:childLogin}} onReset={resetAlles}/>}
@@ -2294,7 +2478,7 @@ function App(){
 }
 
 /* ---------- HOME = levendige familie-landingspagina ---------- */
-function Home({onPick,store,allEx,onAuthor,onFormules,onLeertips,onSpellen,spelNaDoel,geluid,onToggleGeluid}){
+function Home({onPick,store,allEx,onAuthor,onFormules,onLeertips,onSpellen,spelNaDoel,geluid,onToggleGeluid,voorlezen,onToggleVoorlezen}){
   const tip = TIP_VAN_DE_DAG[Math.floor(Date.now()/86400000) % TIP_VAN_DE_DAG.length];
   const kinderen = Object.entries(PROFILES).map(([id,p])=>{
     const pr=normalizeProg(store.prog[id]);
@@ -2419,6 +2603,7 @@ function Home({onPick,store,allEx,onAuthor,onFormules,onLeertips,onSpellen,spelN
         <button className="btn ghost sm" onClick={onFormules}>📐 Formules</button>
         <button className="btn gold sm" onClick={onLeertips}>💡 Leertips</button>
         <button className="btn ghost sm" onClick={onToggleGeluid} title="Geluid aan of uit">{geluid?'🔊 Geluid aan':'🔇 Geluid uit'}</button>
+        <button className="btn ghost sm" onClick={onToggleVoorlezen} title="Voorlezen aan of uit (tekst-naar-spraak)">{voorlezen?'🗣️ Voorlezen aan':'🔇 Voorlezen uit'}</button>
       </div>
       <div className="center" style={{marginTop:10}}>
         <button className="btn ghost sm" onClick={onAuthor}>👨‍👩‍👧 Ouder-modus</button>
@@ -3146,7 +3331,7 @@ function Hub({profile,prog,vak,setVak,allEx,onBack,onTopic,onSetGoal,onSetNiveau
 }
 
 /* ---------- PRACTICE (slim herhalen + mix + fouten + samenvatting) ---------- */
-function Practice({profile,vak,topic,jaar,allEx,onBack,onResult,onToets,prog,onTopic,geluid}){
+function Practice({profile,vak,topic,jaar,allEx,onBack,onResult,onToets,prog,onTopic,geluid,voorlezen}){
   const jr=jaar||'nu';
   const th=themaVan(profile);
   const [pool,setPool]=useState([]);
@@ -3341,6 +3526,7 @@ function Practice({profile,vak,topic,jaar,allEx,onBack,onResult,onToets,prog,onT
       {uitlegKey && <UitlegPaneel data={UITLEG[uitlegKey]} open={showUitleg} onToggle={()=>setShowUitleg(!showUitleg)}/>}
       <div className="card">
         {inst.ill && <div style={{textAlign:'center',marginBottom:10}}><Figure ill={inst.ill}/></div>}
+        {voorlezen && <div style={{marginBottom:6}}><button className="btn ghost sm" title="Lees de vraag voor" onClick={()=>leesVoor(inst.q, true)}>🔊 Lees voor</button></div>}
         <div className="qbox">{inst.q}</div>
         {inst.opties ? (
           <div className="optiegrid">

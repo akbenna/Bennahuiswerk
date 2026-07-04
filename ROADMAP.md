@@ -1,9 +1,9 @@
 # Oefenapp — dekking & uitbreidingslijst
 
-_Bijgewerkt: juli 2026. Vier profielen: Selma (groep 5), Amine (groep 7), Wassima (2 havo), Amaani (4 vwo). Elk vak heeft nu oefenstof — geen lege vakken meer._
+_Bijgewerkt: juli 2026. Vier profielen op het niveau van komend schooljaar: Selma (groep 6), Amine (groep 8, doorstroomtoets), Wassima (2 havo, schakelaar naar 3 havo), Amaani (5 vwo). Oefenstof aangesloten op de landelijke leerlijnen — zie CURRICULUM-aansluiting.md. Elk vak heeft oefenstof._
 
 ## Omvang nu
-- **962 vaste opgaven + 54 sjablonen** (de sjablonen geven oneindig veel sommen door wisselende getallen), waarvan ± 105 meerkeuze.
+- **± 1.075 vaste opgaven + 54 sjablonen** (incl. de curriculum-aansluiting van juli 2026) (de sjablonen geven oneindig veel sommen door wisselende getallen), waarvan ± 105 meerkeuze.
 - **Selma (groep 5, net klaar met groep 4):** een compleet groep-5-blok — rekenen (getallen tot 1000, optellen/aftrekken tot 1000, tafels & delen, klokkijken met getekende klok, geld, meten & maten, breuken, verhoudingstabellen, kommagetallen (intro), verhaaltjessommen, tabellen & grafieken), taal (korte/lange klank, meervoud, ei/ij, au/ou, verkleinwoorden, hakwoorden, d/t aan het eind, ng/nk, cht-woorden, samenstellingen, werkwoorden tegenwoordige tijd, woordenschat, hoofdletters & leestekens) en begrijpend lezen (wie/wat/waar/waarom, hoofdgedachte, volgorde, woordbetekenis, verwijswoorden) — inclusief **langere leesteksten** (complete verhalen/informatieve teksten met meerdere vragen). Met een vooruitblik naar groep 6.
 - **Amine (groep 7 → groep 8):** gericht op de **IEP-eindtoets** — rekendomeinen, taalverzorging (werkwoord- en niet-werkwoordspelling, leestekens) en lezen met álle IEP-categorieën: begrijpen, interpreteren, woordenschat, opzoeken, evalueren en samenvatten. Afgestemd op zijn detailrapport (zwakke punten: samenvatten, woordenschat, opzoeken, werkwoordspelling).
 - **Volgend leerjaar (vooruitkijken):** per kind een schakelaar "Dit jaar / Volgend jaar" met alvast stof van het volgende niveau (Selma → groep 6, Wassima → 3 havo, Amaani → 5 vwo, Amine → groep 8).
@@ -54,4 +54,4 @@ Instelbaar moeilijkheidsniveau per kind (**Auto / 1 / 2 / 3**; Auto wordt vanzel
 5. **Begrijpend lezen** verder uitbouwen met meer (meerkeuze-)teksten en signaalwoorden.
 6. **Engine-ideeën:** extra visuals (breukcirkel, geodriehoek, lijngrafiek).
 
-_Gereed (engine):_ meerkeuze-vraagtype ✓ · getekende klok ✓ · staafdiagram ✓ · voortgangsrapport exporteren ✓ · **geluid bij goed/fout antwoord (aan/uit-knop) ✓** · **timer bij de oefentoets (+ gemiddelde tijd per vraag) ✓**.
+_Gereed (engine):_ meerkeuze-vraagtype ✓ · getekende klok ✓ · staafdiagram ✓ · voortgangsrapport exporteren ✓ · **geluid bij goed/fout antwoord (aan/uit-knop) ✓** · **timer bij de oefentoets (+ gemiddelde tijd per vraag) ✓** · **voorlezen van vragen & leesteksten (tekst-naar-spraak, NL, aan/uit-knop) ✓**.
