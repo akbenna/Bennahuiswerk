@@ -13048,6 +13048,270 @@ const SEED = [
   alt: ['de inhoudsopgave', 'inhoud'],
   h: ['Staat vooraan in het boek.'],
   s: 'In de inhoudsopgave (voorin) staan de hoofdstukken met paginanummers.'
+}, /* ===== Amaani · 4 vwo · VERDIEPING (exact: wiskunde A, scheikunde, natuurkunde) ===== */
+/* ---- Wiskunde A · Kansrekening: en/of-regel, met/zonder terugleggen, combinaties, verwachtingswaarde ---- */
+{
+  p: 'amaani',
+  v: 'wiskundeA',
+  t: 'Kansrekening',
+  lvl: 2,
+  q: 'Je gooit twee keer een munt. Bereken de kans op twee keer kop.',
+  a: '0.25',
+  alt: ['0,25'],
+  h: ['En-regel: onafhankelijk → kansen vermenigvuldigen.', '0,5 × 0,5.'],
+  s: 'P = 0,5 × 0,5 = 0,25.'
+}, {
+  p: 'amaani',
+  v: 'wiskundeA',
+  t: 'Kansrekening',
+  lvl: 2,
+  q: 'In een klas zitten 12 jongens en 8 meisjes. Je kiest willekeurig één leerling. Hoeveel procent kans op een meisje?',
+  a: '40',
+  u: '%',
+  h: ['Of-regel/gunstig ÷ totaal: 8 van de 20.'],
+  s: '8 ÷ 20 = 0,40 = 40%.'
+}, {
+  p: 'amaani',
+  v: 'wiskundeA',
+  t: 'Kansrekening',
+  lvl: 2,
+  q: 'Het regent op zaterdag met kans 0,3 en (los daarvan) op zondag met kans 0,3. Bereken de kans dat het beide dagen regent.',
+  a: '0.09',
+  alt: ['0,09'],
+  h: ['En-regel bij onafhankelijke gebeurtenissen: vermenigvuldigen.'],
+  s: '0,3 × 0,3 = 0,09.'
+}, {
+  p: 'amaani',
+  v: 'wiskundeA',
+  t: 'Kansrekening',
+  lvl: 3,
+  q: 'In een vaas zitten 3 rode en 2 blauwe knikkers. Je pakt er zonder terugleggen 2. Bereken de kans dat beide rood zijn.',
+  a: '0.3',
+  alt: ['0,3'],
+  h: ['Eerste rood: 3/5. Daarna nog 2 rode van 4: 2/4.', '3/5 × 2/4.'],
+  s: '3/5 × 2/4 = 6/20 = 0,3.'
+}, {
+  p: 'amaani',
+  v: 'wiskundeA',
+  t: 'Tellen (combinatoriek)',
+  lvl: 2,
+  q: 'Op hoeveel manieren kun je 2 leerlingen kiezen uit een groep van 6 (volgorde maakt niet uit)?',
+  a: '15',
+  h: ['Combinaties: C(6,2) = (6×5)/(2×1).'],
+  s: 'C(6,2) = 15.'
+}, {
+  p: 'amaani',
+  v: 'wiskundeA',
+  t: 'Tellen (combinatoriek)',
+  lvl: 3,
+  q: 'Een commissie van 3 personen wordt gekozen uit 5 kandidaten. Hoeveel verschillende commissies zijn mogelijk?',
+  a: '10',
+  h: ['C(5,3) = C(5,2) = (5×4)/(2×1).'],
+  s: 'C(5,3) = 10.'
+}, {
+  p: 'amaani',
+  v: 'wiskundeA',
+  t: 'Kansrekening',
+  lvl: 3,
+  q: 'In een loterij win je met kans 0,1 een bedrag van € 50, anders niets. Bereken de verwachtingswaarde van de winst.',
+  a: '5',
+  u: '€',
+  h: ['E = Σ kans × waarde.'],
+  s: 'E = 0,1 × 50 = € 5.'
+}, {
+  p: 'amaani',
+  v: 'wiskundeA',
+  t: 'Kansrekening',
+  lvl: 3,
+  q: 'Je betaalt € 3 om te spelen. Met kans 0,2 win je € 10 (anders niets). Bereken de verwachte netto-winst (kan negatief zijn).',
+  a: '-1',
+  alt: ['−1'],
+  u: '€',
+  h: ['E(opbrengst) = 0,2 × 10 = 2. Trek de inleg van € 3 af.'],
+  s: '0,2 × 10 − 3 = 2 − 3 = −€ 1 (gemiddeld verlies).'
+}, /* ---- Wiskunde A · Statistiek: gewogen gemiddelde, spreiding, boxplot ---- */
+{
+  p: 'amaani',
+  v: 'wiskundeA',
+  t: 'Statistiek',
+  lvl: 3,
+  q: 'Een cijfer 6 telt één keer mee en een cijfer 8 telt drie keer mee. Bereken het gewogen gemiddelde.',
+  a: '7.5',
+  alt: ['7,5'],
+  h: ['(6×1 + 8×3) ÷ (1+3).'],
+  s: '(6 + 24) ÷ 4 = 30 ÷ 4 = 7,5.'
+}, {
+  p: 'amaani',
+  v: 'wiskundeA',
+  t: 'Statistiek',
+  lvl: 2,
+  q: 'Bereken de spreidingsbreedte (range) van 6, 9, 14, 18.',
+  a: '12',
+  h: ['Range = grootste − kleinste.'],
+  s: '18 − 6 = 12.'
+}, {
+  p: 'amaani',
+  v: 'wiskundeA',
+  t: 'Statistiek',
+  lvl: 2,
+  q: 'Wat is de modus van 3, 5, 5, 7, 9?',
+  a: '5',
+  h: ['De waarde die het vaakst voorkomt.'],
+  s: '5 komt twee keer voor → modus 5.'
+}, {
+  p: 'amaani',
+  v: 'wiskundeA',
+  t: 'Statistiek',
+  lvl: 3,
+  q: 'Twee klassen hebben hetzelfde gemiddelde. Klas A heeft standaardafwijking 2, klas B heeft 6. In welke klas liggen de cijfers dichter bij het gemiddelde? (kies)',
+  a: 'klas A',
+  opties: ['klas A', 'klas B'],
+  h: ['Een kleinere standaardafwijking = minder spreiding.'],
+  s: 'Klas A: kleinere standaardafwijking → cijfers dichter bij het gemiddelde.'
+}, {
+  p: 'amaani',
+  v: 'wiskundeA',
+  t: 'Statistiek',
+  lvl: 2,
+  q: 'Onder welk kwartiel ligt ongeveer 25% van de waarnemingen? (kies)',
+  a: 'Q1',
+  opties: ['Q1', 'Q2', 'Q3'],
+  h: ['Q1 is het eerste (onderste) kwartiel.'],
+  s: 'Onder Q1 ligt ± 25% van de data.'
+}, /* ---- Scheikunde · molrekenen (samengesteld) ---- */
+{
+  p: 'amaani',
+  v: 'scheikunde',
+  t: 'Rekenen (mol)',
+  lvl: 2,
+  q: 'Bereken de molaire massa van CO₂. (C = 12, O = 16 g/mol)',
+  a: '44',
+  u: 'g/mol',
+  h: ['1 × C + 2 × O.'],
+  s: '12 + 2 × 16 = 44 g/mol.'
+}, {
+  p: 'amaani',
+  v: 'scheikunde',
+  t: 'Rekenen (mol)',
+  lvl: 2,
+  q: 'Bereken de molaire massa van O₂. (O = 16 g/mol)',
+  a: '32',
+  u: 'g/mol',
+  h: ['2 × O.'],
+  s: '2 × 16 = 32 g/mol.'
+}, {
+  p: 'amaani',
+  v: 'scheikunde',
+  t: 'Rekenen (mol)',
+  lvl: 3,
+  q: 'Hoeveel gram is 3 mol CO₂? (molaire massa 44 g/mol)',
+  a: '132',
+  u: 'g',
+  h: ['massa = mol × molaire massa.'],
+  s: '3 × 44 = 132 g.'
+}, {
+  p: 'amaani',
+  v: 'scheikunde',
+  t: 'Rekenen (mol)',
+  lvl: 3,
+  q: 'Hoeveel mol is 88 g CO₂? (molaire massa 44 g/mol)',
+  a: '2',
+  u: 'mol',
+  h: ['mol = massa ÷ molaire massa.'],
+  s: '88 ÷ 44 = 2 mol.'
+}, {
+  p: 'amaani',
+  v: 'scheikunde',
+  t: 'Concentratie',
+  lvl: 3,
+  q: 'Je lost 0,5 mol zout op tot 2 L oplossing. Bereken de concentratie in mol/L.',
+  a: '0.25',
+  alt: ['0,25'],
+  u: 'mol/L',
+  h: ['c = n ÷ V.'],
+  s: '0,5 ÷ 2 = 0,25 mol/L.'
+}, {
+  p: 'amaani',
+  v: 'scheikunde',
+  t: 'Molverhoudingen',
+  lvl: 3,
+  q: 'Reactie: N₂ + 3 H₂ → 2 NH₃. Hoeveel mol NH₃ ontstaat uit 3 mol H₂ (H₂ in overmaat N₂)?',
+  a: '2',
+  u: 'mol',
+  h: ['Molverhouding H₂ : NH₃ = 3 : 2.'],
+  s: '3 mol H₂ × (2/3) = 2 mol NH₃.'
+}, {
+  p: 'amaani',
+  v: 'scheikunde',
+  t: 'Molverhoudingen',
+  lvl: 2,
+  q: 'Reactie: 2 H₂ + O₂ → 2 H₂O. Hoeveel mol H₂O ontstaat uit 4 mol H₂?',
+  a: '4',
+  u: 'mol',
+  h: ['Molverhouding H₂ : H₂O = 2 : 2 = 1 : 1.'],
+  s: '4 mol H₂ → 4 mol H₂O.'
+}, /* ---- Natuurkunde · samengestelde vraagstukken ---- */
+{
+  p: 'amaani',
+  v: 'natuurkunde',
+  t: 'Kinematica',
+  lvl: 3,
+  q: 'Een auto rijdt 90 km/h. Reken om naar m/s.',
+  a: '25',
+  u: 'm/s',
+  h: ['Deel door 3,6.'],
+  s: '90 ÷ 3,6 = 25 m/s.'
+}, {
+  p: 'amaani',
+  v: 'natuurkunde',
+  t: 'Kinematica',
+  lvl: 3,
+  q: 'Een auto (20 m/s) remt in 4 s tot stilstand. Bereken de (grootte van de) versnelling.',
+  a: '5',
+  u: 'm/s²',
+  h: ['a = Δv ÷ t.'],
+  s: 'a = 20 ÷ 4 = 5 m/s².'
+}, {
+  p: 'amaani',
+  v: 'natuurkunde',
+  t: 'Kracht & versnelling',
+  lvl: 3,
+  q: 'Diezelfde auto weegt 1000 kg en vertraagt met 5 m/s². Bereken de remkracht. (F = m·a)',
+  a: '5000',
+  u: 'N',
+  h: ['F = m × a.'],
+  s: 'F = 1000 × 5 = 5000 N.'
+}, {
+  p: 'amaani',
+  v: 'natuurkunde',
+  t: 'Druk',
+  lvl: 2,
+  q: 'Een kracht van 200 N drukt op een oppervlak van 0,5 m². Bereken de druk. (p = F/A)',
+  a: '400',
+  u: 'Pa',
+  h: ['p = F ÷ A.'],
+  s: 'p = 200 ÷ 0,5 = 400 Pa.'
+}, {
+  p: 'amaani',
+  v: 'natuurkunde',
+  t: 'Rendement',
+  lvl: 3,
+  q: 'Een motor krijgt 800 J en levert 600 J nuttige energie. Bereken het rendement in procent.',
+  a: '75',
+  u: '%',
+  h: ['η = nuttig ÷ toegevoerd × 100%.'],
+  s: '600 ÷ 800 × 100% = 75%.'
+}, {
+  p: 'amaani',
+  v: 'natuurkunde',
+  t: 'Energie & vermogen',
+  lvl: 3,
+  q: 'Een apparaat van 2000 W staat 3 uur aan. De stroomprijs is € 0,30 per kWh. Bereken de kosten.',
+  a: '1.8',
+  alt: ['1,80', '1.80', '1,8'],
+  u: '€',
+  h: ['Energie = P × t = 2 kW × 3 h = 6 kWh. Kosten = kWh × prijs.'],
+  s: '2 kW × 3 h = 6 kWh; 6 × € 0,30 = € 1,80.'
 }];
 SEED.forEach((e, i) => e.id = 'seed_' + i);
 
