@@ -20,7 +20,9 @@ De app is al grotendeels langs deze lijnen opgebouwd. De aansluiting bestaat dus
 
 ---
 
-## Amine — groep 8, doorstroomtoets (IEP-stijl)
+## Amine — groep 7 → groep 8, doorstroomtoets (IEP-stijl)
+
+_Dit jaar rondt hij groep 7 af; na de zomer gaat hij naar groep 8, waar de doorstroomtoets wordt afgenomen. De schakelaar "Volgend jaar" toont alvast de groep-8-/brugklas-stof._
 
 **De drie verplichte onderdelen.** *Rekenen*: de vier domeinen Getallen, Verhoudingen, Meten & Meetkunde, Verbanden, op 1F/1S-niveau (procenten, breuken, kommagetallen, schaal, oppervlakte/omtrek/inhoud, gemiddelde, grafieken). *Taalverzorging*: werkwoordspelling (tegenwoordige/verleden tijd, voltooid deelwoord — het lastige 't kofschip' en 'd/dt'), niet-werkwoordspelling (ei/ij, au/ou, s/z, d/t aan het eind), leestekens en hoofdletters. *Lezen*: leestechniek en woordenschat, begrijpen, interpreteren, evalueren, samenvatten en opzoeken.
 
@@ -30,9 +32,9 @@ De app is al grotendeels langs deze lijnen opgebouwd. De aansluiting bestaat dus
 
 ---
 
-## Wassima — 2 havo, mogelijk 3 havo (blijft mogelijk zitten)
+## Wassima — 2 havo → 3 havo
 
-De app houdt via de leerjaar-schakelaar beide niveaus vast: **2 havo als "dit jaar"** en **3 havo als "volgend jaar"**. Dat sluit precies aan bij de onzekerheid over blijven zitten — ze kan op beide oefenen zonder dat er iets omgezet hoeft te worden.
+De app houdt via de leerjaar-schakelaar beide niveaus vast: **2 havo als "dit jaar"** (dat ze net afrondt) en **3 havo als "volgend jaar"** (waar ze na de zomer naartoe gaat) — ze kan op beide oefenen zonder dat er iets omgezet hoeft te worden.
 
 **Referentie/kerndoelen onderbouw havo.** Wiskunde: rekenen met negatieve getallen, breuken en procenten (2F→3F), verhoudingen en schaal, lineaire verbanden en grafieken, oppervlakte/omtrek/inhoud, Pythagoras, eerste stappen algebra (herleiden, haakjes, vergelijkingen). Natuurkunde: grootheden en eenheden, krachten, snelheid, energie, elektriciteit, licht en geluid. Talen en zaakvakken op onderbouwniveau.
 
@@ -40,7 +42,9 @@ De app houdt via de leerjaar-schakelaar beide niveaus vast: **2 havo als "dit ja
 
 ---
 
-## Amaani — 5 vwo (was 4 vwo)
+## Amaani — 4 vwo → 5 vwo
+
+_Dit jaar rondt ze 4 vwo af; na de zomer gaat ze naar 5 vwo. De schakelaar "Volgend jaar" toont alvast de 5-vwo-stof._
 
 **Examenprogramma's, kerndomeinen.** *Wiskunde A*: domein B algebra en tellen (rekenregels, machten, procenten/groeifactoren, tellen), domein C verbanden (formules, grafieken, exponentieel en lineair), domein D verandering (toe-/afname, hellingen), domein E **statistiek en kansrekening** (in vwo A het zwaartepunt: centrummaten, spreiding, relatieve frequentie, kansen met en/of-regel, met/zonder terugleggen, verwachtingswaarde). *Natuurkunde*: samengestelde vraagstukken (kinematica, krachten, energie en vermogen, druk, elektriciteit). *Scheikunde*: rekenen aan reacties, molverhoudingen, reactievergelijkingen kloppend maken, reactiesnelheid.
 
@@ -50,7 +54,7 @@ De app houdt via de leerjaar-schakelaar beide niveaus vast: **2 havo als "dit ja
 
 ## Aanpak in de app
 
-1. **Profielniveaus** gelijkgezet met het nieuwe schooljaar (Selma groep 6, Amine groep 8, Amaani 5 vwo; Wassima blijft 2 havo met 3 havo als schakelaar).
+1. **Profielniveaus** per kind ingesteld als "dit jaar (net afgerond) → volgend jaar (na de zomer)": Selma groep 4 → groep 5, Amine groep 7 → groep 8, Wassima 2 havo → 3 havo, Amaani 4 vwo → 5 vwo. De leerjaar-schakelaar toont per kind het huidige niveau en een vooruitblik naar het volgende.
 2. **Domein-labels**: elk onderwerp rolt op naar het officiële domein, zodat het rapport en de proeftoets herkenbaar het schoolcurriculum volgen.
 3. **Content per kind**: nieuwe oefenstof op het nieuwe niveau, met prioriteit op de gaten hierboven. Omdat elke som klopt moet zijn, doe ik dit in gecontroleerde batches (rekenkundig geverifieerd) en breid ik per kind verder uit — liever correct en stapsgewijs dan veel en slordig.
 
