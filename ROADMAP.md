@@ -3,7 +3,7 @@
 _Bijgewerkt: juli 2026. Vier profielen — dit jaar (net afgerond) → volgend jaar (na de zomer): Selma (groep 4 → groep 5), Amine (groep 7 → groep 8, doorstroomtoets), Wassima (2 havo → 3 havo), Amaani (4 vwo → 5 vwo). Elk kind heeft de schakelaar "Dit jaar / Volgend jaar". Oefenstof aangesloten op de landelijke leerlijnen — zie CURRICULUM-aansluiting.md. Elk vak heeft oefenstof._
 
 ## Omvang nu
-- **± 1.110 vaste opgaven + 54 sjablonen** (incl. de curriculum-aansluiting van juli 2026) (de sjablonen geven oneindig veel sommen door wisselende getallen), waarvan ± 105 meerkeuze.
+- **± 1.340 vaste opgaven + 58 sjablonen** (de sjablonen geven oneindig veel sommen door wisselende getallen), waarvan ± 130 meerkeuze. Alle vier de kinderen op het juiste niveau (dit jaar → volgend jaar), met per kind een gevulde "dit jaar"- en "volgend jaar"-set.
 - **Selma (groep 4 dit jaar → groep 5 na de zomer):** _dit jaar_ een compleet groep-4-blok — rekenen (getallen tot 100, optellen/aftrekken tot 100, tafels & keer, klokkijken met getekende klok, geld, meten & maten, verhaaltjessommen, helft/breuken) en taal (hakwoorden & klankgroepen, meervoud, verkleinwoorden, ei/ij, au/ou, hoofdletters & leestekens, woordenschat) en begrijpend lezen (wie/wat/waar/waarom, volgorde). _Volgend jaar_ (schakelaar 🔭) staat het complete groep-5-blok klaar — rekenen (getallen tot 1000, optellen/aftrekken tot 1000, tafels & delen, klokkijken, geld, meten & maten, breuken, verhoudingstabellen, kommagetallen (intro), verhaaltjessommen, tabellen & grafieken), taal (korte/lange klank, meervoud, ei/ij, au/ou, verkleinwoorden, hakwoorden, d/t aan het eind, ng/nk, cht-woorden, samenstellingen, werkwoorden tegenwoordige tijd, woordenschat, hoofdletters & leestekens) en begrijpend lezen (wie/wat/waar/waarom, hoofdgedachte, volgorde, woordbetekenis, verwijswoorden) — inclusief **langere leesteksten** (complete verhalen/informatieve teksten met meerdere vragen), zodat ze na de zomer meteen mee kan.
 - **Amine (groep 7 → groep 8):** gericht op de **IEP-eindtoets** — rekendomeinen, taalverzorging (werkwoord- en niet-werkwoordspelling, leestekens) en lezen met álle IEP-categorieën: begrijpen, interpreteren, woordenschat, opzoeken, evalueren en samenvatten. Afgestemd op zijn detailrapport (zwakke punten: samenvatten, woordenschat, opzoeken, werkwoordspelling).
 - **Volgend leerjaar (vooruitkijken):** per kind een schakelaar "Dit jaar / Volgend jaar" met alvast stof van het volgende niveau (Selma → groep 5, Amine → groep 8, Wassima → 3 havo, Amaani → 5 vwo).
@@ -47,11 +47,12 @@ Instelbaar moeilijkheidsniveau per kind (**Auto / 1 / 2 / 3**; Auto wordt vanzel
 - **🎮 Speeltijd verdienen (optioneel):** de ouder kan instellen dat de spelletjes pas beschikbaar zijn nadat het dagdoel gehaald is — zo staat ontspanning tegenover echt oefenen.
 
 ## To-do — verder uitbreiden (geprioriteerd)
-1. **Talen verdiepen** (alle kinderen): woordenschat per thema, meer werkwoordstijden, langere zinnen.
-2. **Zaakvakken verdiepen** (Wassima & Amaani): Biologie, Aardrijkskunde, Geschiedenis, Economie — meer onderwerpen en niveau-3 vragen.
-3. **Amaani exact uitdiepen:** Scheikunde (rekenen aan reacties, molverhoudingen), Wiskunde A (logaritmen/exponentieel verdiepen), Natuurkunde (samengestelde vraagstukken).
-4. **Amine verdiepen:** langere begrijpend-leesteksten, breuken/verhoudingstabellen gevorderd, meer studievaardigheden.
-5. **Begrijpend lezen** verder uitbouwen met meer (meerkeuze-)teksten en signaalwoorden.
-6. **Engine-ideeën:** extra visuals (breukcirkel, geodriehoek, lijngrafiek).
+1. ~~**Talen verdiepen** (alle kinderen): woordenschat per thema, meer werkwoordstijden, langere zinnen.~~ ✓ (Engels/Frans/Duits verbreed, dit jaar én als 3-havo/5-vwo-vooruitblik).
+2. ~~**Zaakvakken verdiepen** (Wassima & Amaani): Biologie, Aardrijkskunde, Geschiedenis, Economie — meer onderwerpen en niveau-3 vragen.~~ ✓ (o.a. hormonen/erfelijkheid/evolutie, platentektoniek/globalisering/bevolkingsdichtheid, Koude Oorlog/dekolonisatie, conjunctuur/marktvormen/elasticiteit).
+3. ~~**Amaani exact uitdiepen:** Scheikunde (molrekenen, molverhoudingen), Wiskunde A (kans/statistiek), Natuurkunde (samengestelde vraagstukken).~~ ✓
+4. ~~**Amine verdiepen:** langere begrijpend-leesteksten, werkwoordspelling, samenvatten, woordenschat, opzoeken/studievaardigheden.~~ ✓ (op zijn rapport-zwakke punten).
+5. ~~**Begrijpend lezen** verder uitbouwen met meer (meerkeuze-)teksten en signaalwoorden.~~ ✓ (feit/mening, samenvatten, signaalwoorden, woordbetekenis-in-context).
+6. **Nog open — engine-ideeën:** extra visuals **geodriehoek** en **lijngrafiek** (de **breukcirkel** is nu klaar ✓).
+7. **Nog open — onderhoud:** onderwerp-namen zijn opgeschoond (dubbelingen samengevoegd); periodiek blijven controleren bij nieuwe stof.
 
-_Gereed (engine):_ meerkeuze-vraagtype ✓ · getekende klok ✓ · staafdiagram ✓ · voortgangsrapport exporteren ✓ · **geluid bij goed/fout antwoord (aan/uit-knop) ✓** · **timer bij de oefentoets (+ gemiddelde tijd per vraag) ✓** · **voorlezen van vragen & leesteksten (tekst-naar-spraak, NL, aan/uit-knop) ✓**.
+_Gereed (engine):_ meerkeuze-vraagtype ✓ · getekende klok ✓ · staafdiagram ✓ · **breukcirkel (taartdiagram) ✓** · voortgangsrapport exporteren ✓ · **geluid bij goed/fout antwoord (aan/uit-knop) ✓** · **timer bij de oefentoets (+ gemiddelde tijd per vraag) ✓** · **voorlezen van vragen & leesteksten (tekst-naar-spraak, NL, aan/uit-knop) ✓**.

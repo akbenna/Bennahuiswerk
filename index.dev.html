@@ -1533,8 +1533,8 @@ const SEED = [
   {p:'wassima',v:'duits',t:'Werkwoorden',lvl:1,q:'Wat betekent het Duitse werkwoord "haben"?',a:'hebben',h:['"ich habe" = ik heb.'],s:'haben = hebben.'},
   {p:'wassima',v:'duits',t:'Werkwoorden',lvl:2,q:'Vervoeg "sein": ich ___',a:'bin',h:['ich ... (onregelmatig).'],s:'ich bin.'},
   {p:'wassima',v:'duits',t:'Werkwoorden',lvl:2,q:'Vervoeg "spielen" (spelen): ich ___',a:'spiele',h:['Regelmatig: ich ...e.'],s:'ich spiele.'},
-  {p:'wassima',v:'duits',t:'Naamvallen (Akkusativ)',lvl:3,q:'In de 4e naamval (Akkusativ) verandert "der" in ...?',a:'den',h:['Alleen het mannelijke lidwoord verandert.'],s:'der → den (Akkusativ). Bijv. Ich sehe den Hund.'},
-  {p:'wassima',v:'duits',t:'Naamvallen (Akkusativ)',lvl:3,q:'der, die, das of den? "Ich sehe ___ Mann." (4e naamval, mannelijk)',a:'den',h:['Mannelijk lijdend voorwerp → den.'],s:'Ich sehe den Mann.'},
+  {p:'wassima',v:'duits',t:'Naamvallen',lvl:3,q:'In de 4e naamval (Akkusativ) verandert "der" in ...?',a:'den',h:['Alleen het mannelijke lidwoord verandert.'],s:'der → den (Akkusativ). Bijv. Ich sehe den Hund.'},
+  {p:'wassima',v:'duits',t:'Naamvallen',lvl:3,q:'der, die, das of den? "Ich sehe ___ Mann." (4e naamval, mannelijk)',a:'den',h:['Mannelijk lijdend voorwerp → den.'],s:'Ich sehe den Mann.'},
   {p:'wassima',v:'duits',t:'Woordenschat',lvl:1,q:'Wat betekent het Duitse woord "Freund"?',a:'vriend',alt:['de vriend'],h:['Iemand die je aardig vindt.'],s:'Freund = vriend.'},
   /* ---- Amaani · Frans · werkwoorden & passé composé ---- */
   {p:'amaani',v:'frans',t:'Werkwoorden (être/avoir)',lvl:2,q:'Vervoeg "parler" (spreken): vous ___',a:'parlez',h:['vous ...ez.'],s:'vous parlez.'},
@@ -1595,8 +1595,8 @@ const SEED = [
   {p:'selma',jaar:'next',v:'rekenen',t:'Meten & maten',lvl:2,q:'Hoeveel gram is 1,5 kilogram?',a:'1500',u:'g',s:'1,5 × 1000 = 1500 g.'},
   {p:'selma',jaar:'next',v:'rekenen',t:'Oppervlakte (hokjes)',lvl:1,ill:{type:'rechthoek',l:5,b:3},q:'Een rechthoek is 5 hokjes lang en 3 hokjes breed. Hoeveel hokjes passen erin?',a:'15',u:'hokjes',h:['lengte × breedte.'],s:'5 × 3 = 15 hokjes.'},
   // Verbanden: verhoudingstabel & grafiek
-  {p:'selma',jaar:'next',v:'rekenen',t:'Verhoudingstabel',lvl:2,q:'2 appels kosten € 1. Wat kosten 6 appels?',a:'3',u:'€',h:['6 is 3× zoveel als 2.'],s:'6 ÷ 2 = 3, 3 × € 1 = € 3.'},
-  {p:'selma',jaar:'next',v:'rekenen',t:'Verhoudingstabel',lvl:2,q:'1 pak koekjes weegt 200 g. Hoeveel wegen 4 pakken?',a:'800',u:'g',s:'4 × 200 = 800 g.'},
+  {p:'selma',jaar:'next',v:'rekenen',t:'Verhoudingstabellen',lvl:2,q:'2 appels kosten € 1. Wat kosten 6 appels?',a:'3',u:'€',h:['6 is 3× zoveel als 2.'],s:'6 ÷ 2 = 3, 3 × € 1 = € 3.'},
+  {p:'selma',jaar:'next',v:'rekenen',t:'Verhoudingstabellen',lvl:2,q:'1 pak koekjes weegt 200 g. Hoeveel wegen 4 pakken?',a:'800',u:'g',s:'4 × 200 = 800 g.'},
   {p:'selma',jaar:'next',v:'rekenen',t:'Tabellen & grafieken',lvl:1,q:'In een staafdiagram is de staaf van maandag 6 hoog en van dinsdag 4. Hoeveel samen?',a:'10',s:'6 + 4 = 10.'},
   /* ---------- SELMA · groep 6 · TAAL ---------- */
   {p:'selma',jaar:'next',v:'taal',t:'Werkwoordspelling',lvl:1,q:'Vul in (tegenwoordige tijd): ik ... een brief. (schrijven)',a:'schrijf',h:['De ik-vorm is de stam, zonder t.'],s:'ik schrijf (de stam).'},
@@ -1688,7 +1688,7 @@ const SEED = [
   /* ---------- SELMA · groep 6 · spelling & lezen ---------- */
   {p:'selma',jaar:'next',v:'taal',t:'Open en gesloten lettergreep',lvl:2,q:'Meervoud van “boom”?',a:'bomen',h:['Lange klank, open lettergreep: één o.'],s:'boom → bomen.'},
   {p:'selma',jaar:'next',v:'taal',t:'Open en gesloten lettergreep',lvl:2,q:'Meervoud van “bal”?',a:'ballen',h:['Korte klank: medeklinker verdubbelen.'],s:'bal → ballen (dubbele l).'},
-  {p:'selma',jaar:'next',v:'taal',t:'au/ou',lvl:2,q:'“kou” of “kauw”? Het woord voor lage temperatuur:',a:'kou',s:'kou (ou).'},
+  {p:'selma',jaar:'next',v:'taal',t:'au of ou',lvl:2,q:'“kou” of “kauw”? Het woord voor lage temperatuur:',a:'kou',s:'kou (ou).'},
   {p:'selma',jaar:'next',v:'taal',t:'Hoofdletters & leestekens',lvl:1,q:'Begin je een nieuwe zin met een hoofdletter of een kleine letter?',a:'hoofdletter',alt:['met een hoofdletter'],s:'Met een hoofdletter.'},
   {p:'selma',jaar:'next',v:'lezen',t:'Verwijswoorden',lvl:2,q:'“Tom heeft een hond. Hij is bruin.” Naar wie of wat verwijst “hij”?',a:'de hond',alt:['hond'],s:'“hij” verwijst naar de hond.'},
   {p:'selma',jaar:'next',v:'lezen',t:'Volgorde',lvl:1,q:'Wat komt eerst in een verhaal: het begin, het midden of het einde?',a:'het begin',alt:['begin'],s:'Het begin.'},
@@ -1698,9 +1698,9 @@ const SEED = [
   {p:'wassima',v:'wiskunde',t:'Negatieve getallen',lvl:2,q:'Reken uit: −3 − 4',a:'-7',alt:['−7'],s:'−3 − 4 = −7.'},
   {p:'wassima',v:'wiskunde',t:'Verhoudingen & schaal',lvl:2,q:'4 pennen kosten € 2. Wat kosten 10 pennen?',a:'5',u:'€',h:['1 pen = € 0,50.'],s:'10 × € 0,50 = € 5.'},
   {p:'wassima',v:'wiskunde',t:'Lineaire formules',lvl:2,q:'Gegeven y = 3x − 2. Bereken y bij x = 4.',a:'10',s:'3 × 4 − 2 = 10.'},
-  {p:'wassima',v:'biologie',t:'Cel',lvl:1,q:'In welk celonderdeel ligt het DNA (de erfelijke informatie)?',a:'celkern',alt:['de celkern','kern','de kern'],s:'Het DNA ligt in de celkern.'},
+  {p:'wassima',v:'biologie',t:'De cel',lvl:1,q:'In welk celonderdeel ligt het DNA (de erfelijke informatie)?',a:'celkern',alt:['de celkern','kern','de kern'],s:'Het DNA ligt in de celkern.'},
   {p:'wassima',v:'biologie',t:'Vertering',lvl:2,q:'In welk orgaan begint de vertering, met kauwen en speeksel?',a:'mond',alt:['de mond'],s:'De vertering begint in de mond.'},
-  {p:'wassima',v:'aardrijkskunde',t:'Klimaat',lvl:2,q:'Hoe heet de denkbeeldige lijn op 0° breedte, waar het klimaat het warmst is?',a:'evenaar',alt:['de evenaar','equator'],s:'De evenaar (0° breedte).'},
+  {p:'wassima',v:'aardrijkskunde',t:'Klimaat & weer',lvl:2,q:'Hoe heet de denkbeeldige lijn op 0° breedte, waar het klimaat het warmst is?',a:'evenaar',alt:['de evenaar','equator'],s:'De evenaar (0° breedte).'},
   {p:'wassima',v:'engels',t:'Tenses',lvl:2,q:'Vul in (present simple): He ... to school every day. (to go)',a:'goes',s:'He goes (derde persoon enkelvoud + -es).'},
   {p:'wassima',v:'engels',t:'Woordenschat',lvl:1,q:'Wat betekent “library”?',a:'bibliotheek',alt:['de bibliotheek'],s:'library = bibliotheek.'},
 
@@ -1710,8 +1710,8 @@ const SEED = [
   {p:'amaani',v:'wiskundeA',t:'Statistiek',lvl:3,q:'Bij 20 worpen valt 5 keer kop. Wat is de relatieve frequentie van kop?',a:'0.25',alt:['1/4','0,25'],s:'5 ÷ 20 = 0,25.'},
   {p:'amaani',v:'wiskundeA',t:'Logaritmen',lvl:2,q:'Reken uit: log(1000) (grondtal 10).',a:'3',h:['10 tot welke macht is 1000?'],s:'10³ = 1000 → log(1000) = 3.'},
   {p:'amaani',v:'wiskundeA',t:'Exponentiële groei',lvl:3,q:'Een populatie verdubbelt elk jaar. Wat is de groeifactor?',a:'2',s:'Verdubbelen → groeifactor 2.'},
-  {p:'amaani',v:'scheikunde',t:'Molrekenen',lvl:2,q:'Molaire massa van water (H₂O) ≈ 18 g/mol. Hoeveel gram is 2 mol water?',a:'36',u:'g',h:['massa = mol × molaire massa.'],s:'2 × 18 = 36 g.'},
-  {p:'amaani',v:'scheikunde',t:'Molrekenen',lvl:3,q:'Hoeveel mol is 44 g CO₂? (molaire massa 44 g/mol)',a:'1',u:'mol',s:'44 ÷ 44 = 1 mol.'},
+  {p:'amaani',v:'scheikunde',t:'Rekenen (mol)',lvl:2,q:'Molaire massa van water (H₂O) ≈ 18 g/mol. Hoeveel gram is 2 mol water?',a:'36',u:'g',h:['massa = mol × molaire massa.'],s:'2 × 18 = 36 g.'},
+  {p:'amaani',v:'scheikunde',t:'Rekenen (mol)',lvl:3,q:'Hoeveel mol is 44 g CO₂? (molaire massa 44 g/mol)',a:'1',u:'mol',s:'44 ÷ 44 = 1 mol.'},
   {p:'amaani',v:'natuurkunde',t:'Kracht & versnelling',lvl:3,q:'Een kracht van 30 N werkt op 6 kg. Bereken de versnelling (a = F/m).',a:'5',u:'m/s²',s:'30 ÷ 6 = 5 m/s².'},
   {p:'amaani',v:'natuurkunde',t:'Energie & vermogen',lvl:3,q:'Een lamp van 60 W brandt 10 uur. Hoeveel Wh verbruikt hij?',a:'600',u:'Wh',s:'60 × 10 = 600 Wh.'},
 
@@ -1720,10 +1720,10 @@ const SEED = [
   /* ---------- AMAANI · 5 vwo · scheikunde examenbreed ---------- */
   {p:'amaani',v:'scheikunde',t:'Atoombouw',lvl:2,q:'Hoeveel protonen heeft een koolstofatoom (C, atoomnummer 6)?',a:'6',h:['Atoomnummer = aantal protonen.'],s:'Atoomnummer 6 → 6 protonen.'},
   {p:'amaani',v:'scheikunde',t:'Atoombouw',lvl:2,q:'Een neutraal atoom heeft 11 protonen. Hoeveel elektronen?',a:'11',h:['Neutraal → evenveel elektronen als protonen.'],s:'11 protonen → 11 elektronen.'},
-  {p:'amaani',v:'scheikunde',t:'Rekenen aan reacties',lvl:3,q:'2 H₂ + O₂ → 2 H₂O. Hoeveel mol O₂ is nodig voor 8 mol H₂?',a:'4',u:'mol',h:['H₂ : O₂ = 2 : 1.'],s:'8 × 1/2 = 4 mol O₂.'},
+  {p:'amaani',v:'scheikunde',t:'Rekenen (mol)',lvl:3,q:'2 H₂ + O₂ → 2 H₂O. Hoeveel mol O₂ is nodig voor 8 mol H₂?',a:'4',u:'mol',h:['H₂ : O₂ = 2 : 1.'],s:'8 × 1/2 = 4 mol O₂.'},
   {p:'amaani',v:'scheikunde',t:'Molmassa',lvl:2,q:'Molaire massa van O₂ (O = 16 g/mol)?',a:'32',u:'g/mol',s:'2 × 16 = 32 g/mol.'},
   {p:'amaani',v:'scheikunde',t:'Concentratie',lvl:3,q:'0,5 mol stof opgelost in 2 L. Concentratie in mol/L? (c = n/V)',a:'0.25',alt:['0,25'],u:'mol/L',s:'0,5 ÷ 2 = 0,25 mol/L.'},
-  {p:'amaani',v:'scheikunde',t:'Zuren en basen',lvl:2,q:'Een oplossing met pH 3: zuur, neutraal of basisch?',a:'zuur',h:['pH < 7 → zuur.'],s:'pH 3 < 7, dus zuur.'},
+  {p:'amaani',v:'scheikunde',t:'Zuur & base',lvl:2,q:'Een oplossing met pH 3: zuur, neutraal of basisch?',a:'zuur',h:['pH < 7 → zuur.'],s:'pH 3 < 7, dus zuur.'},
   /* ---------- AMAANI · 5 vwo · natuurkunde examenbreed ---------- */
   {p:'amaani',v:'natuurkunde',t:'Snelheid',lvl:3,q:'Een auto rijdt 108 km/h. Hoeveel m/s is dat? (÷ 3,6)',a:'30',u:'m/s',s:'108 ÷ 3,6 = 30 m/s.'},
   {p:'amaani',v:'natuurkunde',t:'Arbeid & energie',lvl:3,q:'Arbeid W = F × s. Met F = 50 N over s = 4 m. Bereken W.',a:'200',u:'J',s:'50 × 4 = 200 J.'},
@@ -1957,7 +1957,7 @@ const SEED = [
   {p:'wassima',v:'frans',t:'Woordenschat',lvl:1,q:'Vertaal naar het Nederlands: "l\'école".',a:'de school',alt:['school'],h:['Daar heb je les.'],s:'l\'école = de school.'},
   {p:'wassima',v:'frans',t:'Woordenschat',lvl:2,q:'Vertaal naar het Frans: "water".',a:'l\'eau',alt:['eau','de l\'eau'],h:['Vrouwelijk, begint met een klinker → l\'...'],s:'water = l\'eau.'},
   /* ---- Duits · naamvallen & woordenschat ---- */
-  {p:'wassima',v:'duits',t:'Naamvallen (Akkusativ)',lvl:3,q:'Zet in de 4e naamval (Akkusativ): "Ich sehe ___ Mann." (der Mann)',a:'den',h:['In de Akkusativ wordt "der" → "den".'],s:'der Mann → Ich sehe den Mann.'},
+  {p:'wassima',v:'duits',t:'Naamvallen',lvl:3,q:'Zet in de 4e naamval (Akkusativ): "Ich sehe ___ Mann." (der Mann)',a:'den',h:['In de Akkusativ wordt "der" → "den".'],s:'der Mann → Ich sehe den Mann.'},
   {p:'wassima',v:'duits',t:'Werkwoorden',lvl:2,q:'Vervoeg "haben" (hebben): du ___',a:'hast',h:['du ... (onregelmatig).'],s:'du hast = jij hebt.'},
   {p:'wassima',v:'duits',t:'Woordenschat',lvl:1,q:'Vertaal naar het Nederlands: "die Schule".',a:'de school',alt:['school'],h:['Daar krijg je les.'],s:'die Schule = de school.'},
   {p:'wassima',v:'duits',t:'Woordenschat',lvl:1,q:'Vertaal naar het Nederlands: "danke".',a:'dank je',alt:['dank u','bedankt','dankjewel','dank je wel'],h:['Beleefd woordje.'],s:'danke = dank je.'},
@@ -2018,6 +2018,50 @@ const SEED = [
   {p:'amaani',v:'aardrijkskunde',jaar:'next',t:'Globalisering',lvl:2,q:'Hoe heet de toenemende wereldwijde verwevenheid van economie en cultuur?',a:'globalisering',alt:['mondialisering','de globalisering'],h:['Van "globe" = wereldbol.'],s:'Dat is globalisering (mondialisering).'},
   {p:'amaani',v:'economie',jaar:'next',t:'Marktvormen',lvl:2,q:'Hoe heet een markt met maar één aanbieder?',a:'monopolie',alt:['een monopolie','monopoly'],h:['Mono = één.'],s:'Eén aanbieder = een monopolie.'},
   {p:'amaani',v:'economie',jaar:'next',t:'Elasticiteit',lvl:3,q:'De prijs stijgt een beetje en de gevraagde hoeveelheid daalt sterk. Is de vraag elastisch of inelastisch? (kies)',a:'elastisch',opties:['elastisch','inelastisch'],h:['Sterke reactie van de vraag op een kleine prijsverandering.'],s:'Grote reactie op een kleine prijsverandering → de vraag is elastisch.'},
+
+  /* ===== TO-DO-ronde: brede afronding ===== */
+  /* ---- Amine · langere IEP-leestekst 1 (informatief, feit/mening + samenvatten) ---- */
+  {p:'amine',v:'lezen',t:'Feit of mening',lvl:2,q:'Lees:\n"In de zee drijft steeds meer plastic. Dieren zoals vissen en vogels denken dat het eten is en worden er ziek van. Wetenschappers zeggen dat we minder plastic moeten gebruiken. Volgens mij zou iedereen een steentje moeten bijdragen."\n\nIs dit een feit of een mening: "In de zee drijft steeds meer plastic."? (kies)',a:'feit',opties:['feit','mening'],h:['Kun je het controleren/meten? Dan is het een feit.'],s:'Het is te meten/controleren → een feit.'},
+  {p:'amine',v:'lezen',t:'Feit of mening',lvl:3,q:'Lees:\n"In de zee drijft steeds meer plastic. Dieren zoals vissen en vogels denken dat het eten is en worden er ziek van. Wetenschappers zeggen dat we minder plastic moeten gebruiken. Volgens mij zou iedereen een steentje moeten bijdragen."\n\nIs dit een feit of een mening: "Volgens mij zou iedereen een steentje moeten bijdragen."? (kies)',a:'mening',opties:['mening','feit'],h:['"Volgens mij" verklapt het.'],s:'Het is een persoonlijke gedachte → een mening.'},
+  {p:'amine',v:'lezen',t:'Woordbetekenis',lvl:3,q:'Lees:\n"... Volgens mij zou iedereen een steentje moeten bijdragen."\n\nWat betekent "een steentje bijdragen"? (kies)',a:'een beetje meehelpen',opties:['een beetje meehelpen','een steen gooien','geld sparen'],h:['Het is een uitdrukking, niet letterlijk.'],s:'"Een steentje bijdragen" = een beetje meehelpen.'},
+  {p:'amine',v:'lezen',t:'Samenvatten',lvl:3,q:'Lees:\n"In de zee drijft steeds meer plastic. Dieren zoals vissen en vogels denken dat het eten is en worden er ziek van. Wetenschappers zeggen dat we minder plastic moeten gebruiken."\n\nWelke titel past het best? (kies)',a:'Plastic in zee is een probleem',opties:['Plastic in zee is een probleem','Vissen kunnen zwemmen','Een dagje strand'],h:['Een goede titel dekt de hele tekst.'],s:'De tekst gaat over het probleem van plastic in zee.'},
+  {p:'amine',v:'lezen',t:'Conclusie',lvl:2,q:'Lees:\n"Dieren zoals vissen en vogels denken dat plastic eten is en worden er ziek van."\n\nWaarom worden de dieren ziek? (kies)',a:'ze eten het plastic op',opties:['ze eten het plastic op','ze zwemmen te snel','het is te koud'],h:['Wat doen ze met het plastic?'],s:'Ze eten het plastic op en worden daar ziek van.'},
+  /* ---- Amine · signaalwoorden ---- */
+  {p:'amine',v:'lezen',t:'Signaalwoorden',lvl:2,q:'Vul het signaalwoord van oorzaak/reden in: "We bleven binnen, ... het regende."',a:'omdat',alt:['want','doordat'],h:['Het geeft de reden aan.'],s:'"omdat/want" geeft de reden: omdat het regende.'},
+  {p:'amine',v:'lezen',t:'Signaalwoorden',lvl:2,q:'Vul het signaalwoord van tegenstelling in: "Ik wilde nog spelen, ... ik was te moe."',a:'maar',alt:['echter'],h:['Er komt iets tegenovergestelds.'],s:'"maar" geeft een tegenstelling aan.'},
+  {p:'amine',v:'lezen',t:'Signaalwoorden',lvl:3,q:'Welk woord is een signaalwoord voor volgorde/tijd? (kies)',a:'daarna',opties:['daarna','omdat','maar'],h:['Het vertelt wanneer iets gebeurt.'],s:'"daarna" is een signaalwoord voor volgorde in de tijd.'},
+  {p:'amine',v:'taal',t:'Woordenschat & spreekwoorden',lvl:3,q:'"Dat was een lastig dilemma." Wat is een dilemma? (kies)',a:'een moeilijke keuze',opties:['een moeilijke keuze','een grote fout','een leuk feest'],h:['Je moet kiezen tussen twee dingen.'],s:'Een dilemma is een moeilijke keuze tussen twee opties.'},
+  {p:'amine',v:'taal',t:'Woordenschat & spreekwoorden',lvl:3,q:'"Hij werkte heel efficiënt." Wat betekent efficiënt? (kies)',a:'handig, zonder tijd te verspillen',opties:['handig, zonder tijd te verspillen','heel langzaam','met veel fouten'],h:['Slim omgaan met tijd en moeite.'],s:'Efficiënt = doelmatig: veel bereiken zonder te verspillen.'},
+
+  /* ---- Selma · groep 4 · rekenen extra (dit jaar) ---- */
+  {p:'selma',v:'rekenen',t:'Optellen tot 100',lvl:1,q:'Wat is het dubbele van 7?',a:'14',h:['Dubbel = 2 keer zoveel.'],s:'7 + 7 = 14.'},
+  {p:'selma',v:'rekenen',t:'Optellen tot 100',lvl:2,q:'Wat is het dubbele van 9?',a:'18',h:['9 + 9.'],s:'9 + 9 = 18.'},
+  {p:'selma',v:'rekenen',t:'Getallen tot 100',lvl:1,q:'Splits het getal: 47 = 40 + ?',a:'7',h:['Kijk naar de eenheden.'],s:'47 = 40 + 7.'},
+  {p:'selma',v:'rekenen',t:'Aftrekken tot 100',lvl:2,q:'Reken uit: 34 − 8',a:'26',h:['34 − 4 = 30, dan − 4.'],s:'34 − 8 = 26.'},
+  {p:'selma',v:'rekenen',t:'Tafels & keer',lvl:2,q:'Reken uit: 4 × 6',a:'24',h:['Tafel van 4.'],s:'4 × 6 = 24.'},
+  {p:'selma',v:'rekenen',t:'Tijd & klok',lvl:2,ill:{type:'klok',uur:3,min:45},q:'Hoe laat is het op de klok? (kies)',a:'3:45',opties:['3:45','4:15','2:45'],h:['Kwart vóór 4.'],s:'Kwart voor 4 → 3:45.'},
+  /* ---- Selma · groep 4 · leesteksten extra (dit jaar) ---- */
+  {p:'selma',v:'lezen',t:'Leesteksten',lvl:1,q:'Lees:\n"Bram vindt een jong vogeltje op de grond. Het is uit het nest gevallen. Bram legt het voorzichtig terug. De volgende dag hoort hij de vogeltjes vrolijk fluiten."\n\nWat vindt Bram? (kies)',a:'een vogeltje',opties:['een vogeltje','een bal','een kat'],h:['Lees de eerste zin.'],s:'Bram vindt een jong vogeltje.'},
+  {p:'selma',v:'lezen',t:'Leesteksten',lvl:2,q:'Lees:\n"Bram vindt een jong vogeltje op de grond. Het is uit het nest gevallen. Bram legt het voorzichtig terug. De volgende dag hoort hij de vogeltjes vrolijk fluiten."\n\nWat doet Bram met het vogeltje? (kies)',a:'hij legt het terug in het nest',opties:['hij legt het terug in het nest','hij neemt het mee naar huis','hij laat het liggen'],h:['Wat gebeurt er in de derde zin?'],s:'Bram legt het voorzichtig terug in het nest.'},
+  {p:'selma',v:'lezen',t:'Leesteksten',lvl:1,q:'Lees:\n"Een vlinder begint als rups. De rups eet veel blaadjes. Daarna maakt hij een cocon. Uit de cocon komt een mooie vlinder."\n\nWaar begint een vlinder mee? (kies)',a:'als rups',opties:['als rups','als ei','als vogel'],h:['Lees de eerste zin.'],s:'Een vlinder begint als rups.'},
+  {p:'selma',v:'lezen',t:'Leesteksten',lvl:2,q:'Lees:\n"Een vlinder begint als rups. De rups eet veel blaadjes. Daarna maakt hij een cocon. Uit de cocon komt een mooie vlinder."\n\nWat komt er uit de cocon? (kies)',a:'een vlinder',opties:['een vlinder','een rups','een blaadje'],h:['Lees de laatste zin.'],s:'Uit de cocon komt een vlinder.'},
+
+  /* ---- Wassima · 3 havo (VOLGEND JAAR) · geschiedenis & zaakvakken niveau 3 ---- */
+  {p:'wassima',v:'geschiedenis',jaar:'next',t:'Koude Oorlog',lvl:2,q:'De Koude Oorlog was een conflict tussen de VS en welk ander land? (kies)',a:'de Sovjet-Unie',opties:['de Sovjet-Unie','Frankrijk','Japan'],h:['Het communistische blok in het oosten.'],s:'De Koude Oorlog: VS (westen) tegen de Sovjet-Unie (oosten).'},
+  {p:'wassima',v:'geschiedenis',jaar:'next',t:'Koude Oorlog',lvl:2,q:'In welk jaar viel de Berlijnse Muur?',a:'1989',h:['Eind jaren 80.'],s:'De Muur viel in 1989.'},
+  {p:'wassima',v:'geschiedenis',jaar:'next',t:'Dekolonisatie',lvl:2,q:'In welk jaar riep Indonesië de onafhankelijkheid uit?',a:'1945',h:['Vlak na de Tweede Wereldoorlog.'],s:'Op 17 augustus 1945 riep Indonesië de onafhankelijkheid uit.'},
+  {p:'wassima',v:'biologie',jaar:'next',t:'Erfelijkheid',lvl:2,q:'Waardoor lijkt een kind op zijn ouders?',a:'door de genen',alt:['genen','door genen','dna','door het dna'],h:['Die krijg je van je ouders door via het DNA.'],s:'Door de genen (het DNA) die je van je ouders erft.'},
+  {p:'wassima',v:'aardrijkskunde',jaar:'next',t:'Bevolking',lvl:3,q:'Hoe noem je het aantal inwoners per vierkante kilometer?',a:'bevolkingsdichtheid',alt:['de bevolkingsdichtheid'],h:['Hoe "dicht" mensen op elkaar wonen.'],s:'Dat is de bevolkingsdichtheid (inwoners per km²).'},
+
+  /* ---- Amaani · 5 vwo (VOLGEND JAAR) · geschiedenis & biologie niveau 3 ---- */
+  {p:'amaani',v:'geschiedenis',jaar:'next',t:'Koude Oorlog',lvl:3,q:'Hoe noemde Churchill de scheidslijn die Europa in oost en west verdeelde?',a:'het ijzeren gordijn',alt:['ijzeren gordijn','iron curtain'],h:['Een "gordijn" van ijzer.'],s:'Het "ijzeren gordijn" scheidde het communistische oosten van het westen.'},
+  {p:'amaani',v:'geschiedenis',jaar:'next',t:'Dekolonisatie',lvl:3,q:'Na welke oorlog kwam de golf van dekolonisatie wereldwijd op gang?',a:'de Tweede Wereldoorlog',alt:['tweede wereldoorlog','wo ii','ww2','de tweede wereldoorlog (1945)'],h:['Na 1945.'],s:'Na de Tweede Wereldoorlog werden veel koloniën onafhankelijk.'},
+  {p:'amaani',v:'biologie',jaar:'next',t:'Erfelijkheid',lvl:3,q:'Hoe heet de tweede stap, waarbij van RNA een eiwit wordt gemaakt?',a:'translatie',h:['Na de transcriptie (DNA → RNA).'],s:'RNA → eiwit heet translatie.'},
+  {p:'amaani',v:'biologie',jaar:'next',t:'Erfelijkheid',lvl:3,q:'Hoe heet de celdeling die geslachtscellen (met de helft van het aantal chromosomen) maakt?',a:'meiose',alt:['de meiose','reductiedeling'],h:['Niet de gewone mitose; het aantal chromosomen halveert.'],s:'De meiose (reductiedeling) maakt geslachtscellen.'},
+
+  /* ---- Breukcirkel-visual in gebruik ---- */
+  {p:'selma',v:'rekenen',t:'Breuken',lvl:1,ill:{type:'breukcirkel',delen:2,gevuld:1},q:'Welk deel van de cirkel is gekleurd? Schrijf als breuk (bijv. 1/2).',a:'1/2',alt:['0,5','0.5','een half'],h:['Er zijn 2 gelijke delen; 1 is gekleurd.'],s:'1 van de 2 delen = 1/2 (een half).'},
+  {p:'selma',v:'rekenen',jaar:'next',t:'Breuken',lvl:2,ill:{type:'breukcirkel',delen:4,gevuld:3},q:'Welk deel van de cirkel is gekleurd? Schrijf als breuk (bijv. 3/4).',a:'3/4',alt:['0,75','0.75'],h:['Er zijn 4 gelijke delen; 3 zijn gekleurd.'],s:'3 van de 4 delen = 3/4.'},
 ];
 SEED.forEach((e,i)=> e.id = 'seed_'+i);
 
@@ -4623,6 +4667,21 @@ function Figure({ill}){
       return (
         <svg width={W} height={hh+8} viewBox={'0 0 '+W+' '+(hh+8)} role="img" aria-label="breuk">
           {rc.map(i=>(<rect key={i} x={i*w} y="4" width={w} height={hh} fill={i<g?G:F} stroke={M} strokeWidth="1.5"/>))}
+        </svg>);
+    }
+    case 'breukcirkel': {
+      const d=Math.max(1,ill.delen), g=Math.min(d,Math.max(0,ill.gevuld)), cx=85, cy=72, r=54;
+      const pt=(ang)=>[cx+r*Math.cos(ang), cy+r*Math.sin(ang)];
+      const slices=[];
+      for(let i=0;i<d;i++){
+        const a0=-Math.PI/2 + i*(2*Math.PI/d), a1=-Math.PI/2 + (i+1)*(2*Math.PI/d);
+        const [x0,y0]=pt(a0), [x1,y1]=pt(a1), large=(a1-a0)>Math.PI?1:0;
+        slices.push({key:i, dstr:`M ${cx} ${cy} L ${x0.toFixed(2)} ${y0.toFixed(2)} A ${r} ${r} 0 ${large} 1 ${x1.toFixed(2)} ${y1.toFixed(2)} Z`, vol:i<g});
+      }
+      return (
+        <svg width="170" height="150" viewBox="0 0 170 150" role="img" aria-label={'breuk '+g+' van '+d}>
+          {slices.map(s=>(<path key={s.key} d={s.dstr} fill={s.vol?G:F} stroke={M} strokeWidth="1.6"/>))}
+          <text x="85" y="142" fontSize="13" textAnchor="middle" fill={M} fontWeight="bold">{g}/{d}</text>
         </svg>);
     }
     case 'staaf': {
