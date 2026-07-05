@@ -702,7 +702,13 @@ const TOPICICON = {
   'Passé composé': '🇫🇷',
   'Getallen tot 100': '🔢',
   'Optellen tot 100': '➕',
-  'Aftrekken tot 100': '➖'
+  'Aftrekken tot 100': '➖',
+  'Even & oneven': '🔀',
+  'Rijen & patronen': '🔢',
+  'Tafels & keer': '✖️',
+  'Tijd & klok': '🕐',
+  'Meten & maten': '📏',
+  'Breuken': '🍕'
 };
 
 /* ============================ OEFENINGEN (startvoorraad) ============================ */
@@ -12509,6 +12515,313 @@ const SEED = [
   opties: ['eten', 'slapen'],
   h: ['Zoek het woord "eerst".'],
   s: 'Eerst eten.'
+}, /* ===== Selma · groep 4 · VERDIEPING (dit jaar) ===== */
+/* ---- Rekenen · Even & oneven ---- */
+{
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Even & oneven',
+  lvl: 1,
+  q: 'Is 8 een even of een oneven getal?',
+  a: 'even',
+  h: ['Even getallen kun je eerlijk in twee gelijke delen delen.'],
+  s: '8 = 4 + 4, dus 8 is even.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Even & oneven',
+  lvl: 1,
+  q: 'Is 7 een even of een oneven getal?',
+  a: 'oneven',
+  h: ['Eindigt op 1, 3, 5, 7 of 9 → oneven.'],
+  s: '7 is oneven.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Even & oneven',
+  lvl: 2,
+  q: 'Welk getal is even? (kies)',
+  a: '14',
+  opties: ['14', '15', '13'],
+  h: ['Kijk naar het laatste cijfer: 0, 2, 4, 6 of 8.'],
+  s: '14 eindigt op 4 → even.'
+}, /* ---- Rekenen · Rijen & patronen ---- */
+{
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Rijen & patronen',
+  lvl: 1,
+  q: 'Welk getal komt erna? 2, 4, 6, 8, ...?',
+  a: '10',
+  h: ['Er komt steeds 2 bij.'],
+  s: '8 + 2 = 10.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Rijen & patronen',
+  lvl: 2,
+  q: 'Welk getal komt erna? 5, 10, 15, 20, ...?',
+  a: '25',
+  h: ['Sprongen van 5.'],
+  s: '20 + 5 = 25.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Rijen & patronen',
+  lvl: 2,
+  q: 'Tel terug: 30, 27, 24, ...?',
+  a: '21',
+  h: ['Er gaat steeds 3 af.'],
+  s: '24 − 3 = 21.'
+}, /* ---- Rekenen · Getallen tot 100 (extra) ---- */
+{
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Getallen tot 100',
+  lvl: 2,
+  q: 'Welk getal zit tussen 48 en 50?',
+  a: '49',
+  h: ['Eén meer dan 48.'],
+  s: '49 zit tussen 48 en 50.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Getallen tot 100',
+  lvl: 2,
+  q: 'Rond af op het dichtstbijzijnde tiental: 63 (kies)',
+  a: '60',
+  opties: ['60', '70', '65'],
+  h: ['3 is minder dan 5 → naar beneden.'],
+  s: '63 ligt het dichtst bij 60.'
+}, /* ---- Rekenen · Tijd & klok (kwartier) ---- */
+{
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Tijd & klok',
+  lvl: 2,
+  ill: {
+    type: 'klok',
+    uur: 6,
+    min: 15
+  },
+  q: 'Hoe laat is het op de klok? (kies)',
+  a: '6:15',
+  opties: ['6:15', '6:45', '7:15'],
+  h: ['Lange wijzer op de 3 = kwart over.'],
+  s: 'Kwart over 6 → 6:15.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Tijd & klok',
+  lvl: 2,
+  q: 'Hoeveel minuten is een kwartier?',
+  a: '15',
+  u: 'min',
+  h: ['Een kwart van een uur (60 min).'],
+  s: '60 ÷ 4 = 15 minuten.'
+}, /* ---- Rekenen · Geld (extra) ---- */
+{
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Geld',
+  lvl: 2,
+  q: 'Een ijsje kost € 3. Je betaalt met € 5. Hoeveel krijg je terug?',
+  a: '2',
+  u: '€',
+  h: ['5 − 3.'],
+  s: '€ 5 − € 3 = € 2.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Geld',
+  lvl: 2,
+  q: 'Hoeveel munten van € 2 heb je nodig voor € 10?',
+  a: '5',
+  h: ['10 ÷ 2.'],
+  s: '5 × € 2 = € 10.'
+}, /* ---- Rekenen · Verhaaltjessommen (extra) ---- */
+{
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Verhaaltjessommen',
+  lvl: 2,
+  q: 'In de klas zitten 24 kinderen. 6 zijn ziek. Hoeveel kinderen zijn er?',
+  a: '18',
+  h: ['24 − 6.'],
+  s: '24 − 6 = 18.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Verhaaltjessommen',
+  lvl: 2,
+  q: 'Papa koopt 3 pakjes met elk 4 koekjes. Hoeveel koekjes samen?',
+  a: '12',
+  h: ['3 × 4.'],
+  s: '3 × 4 = 12 koekjes.'
+}, /* ---- Taal · d of t aan het eind (simpel) ---- */
+{
+  p: 'selma',
+  v: 'taal',
+  t: 'd of t aan het eind',
+  lvl: 1,
+  q: 'd of t? Schrijf het woord: hij vindt een schat in het zan__.',
+  a: 'zand',
+  alt: ['zand.'],
+  h: ['Verlengen: "zanden" → je hoort een d.'],
+  s: 'zand (want "zanden").'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'd of t aan het eind',
+  lvl: 2,
+  q: 'd of t? Schrijf het woord: de kat zit op het da__.',
+  a: 'dak',
+  alt: ['dak.'],
+  h: ['Verlengen: "daken" → je hoort een k.'],
+  s: 'dak (want "daken").'
+}, /* ---- Taal · Meervoud (extra) ---- */
+{
+  p: 'selma',
+  v: 'taal',
+  t: 'Meervoud',
+  lvl: 2,
+  q: 'Meervoud van "huis"?',
+  a: 'huizen',
+  h: ['s wordt vaak z in het meervoud.'],
+  s: 'huis → huizen.'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'Meervoud',
+  lvl: 2,
+  q: 'Meervoud van "kind"?',
+  a: 'kinderen',
+  h: ['Een uitzondering: er komt -eren bij.'],
+  s: 'kind → kinderen.'
+}, /* ---- Taal · Verkleinwoorden (extra) ---- */
+{
+  p: 'selma',
+  v: 'taal',
+  t: 'Verkleinwoorden',
+  lvl: 2,
+  q: 'Verkleinwoord van "boom"?',
+  a: 'boompje',
+  h: ['+ pje na m.'],
+  s: 'boom → boompje.'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'Verkleinwoorden',
+  lvl: 2,
+  q: 'Verkleinwoord van "bal"?',
+  a: 'balletje',
+  h: ['Korte a: l verdubbelen + etje.'],
+  s: 'bal → balletje.'
+}, /* ---- Taal · Woordenschat (extra) ---- */
+{
+  p: 'selma',
+  v: 'taal',
+  t: 'Woordenschat',
+  lvl: 1,
+  q: 'Wat is het tegenovergestelde van "warm"? (kies)',
+  a: 'koud',
+  opties: ['koud', 'nat', 'hard'],
+  h: ['Denk aan de winter.'],
+  s: 'Het tegenovergestelde van warm is koud.'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'Woordenschat',
+  lvl: 2,
+  q: 'Welk woord hoort NIET in het rijtje? appel, banaan, wortel, peer (kies)',
+  a: 'wortel',
+  opties: ['wortel', 'appel', 'peer'],
+  h: ['Drie zijn fruit, één is groente.'],
+  s: 'Wortel is een groente; de rest is fruit.'
+}, /* ---- Lezen · LEESTEKSTEN groep 4 (korte verhalen, meerdere vragen) ---- */
+/* Tekst 1 — verhaal: de verjaardag van Lot */
+{
+  p: 'selma',
+  v: 'lezen',
+  t: 'Leesteksten',
+  lvl: 1,
+  q: 'Lees:\n"Lot is vandaag jarig. Ze wordt 8 jaar. Op tafel staat een grote taart met kaarsjes. Haar oma heeft een cadeau meegenomen: een rode step."\n\nHoe oud wordt Lot? (kies)',
+  a: '8 jaar',
+  opties: ['8 jaar', '7 jaar', '9 jaar'],
+  h: ['Zoek de zin met "wordt".'],
+  s: 'Lot wordt 8 jaar.'
+}, {
+  p: 'selma',
+  v: 'lezen',
+  t: 'Leesteksten',
+  lvl: 1,
+  q: 'Lees:\n"Lot is vandaag jarig. Ze wordt 8 jaar. Op tafel staat een grote taart met kaarsjes. Haar oma heeft een cadeau meegenomen: een rode step."\n\nWat heeft oma meegenomen? (kies)',
+  a: 'een rode step',
+  opties: ['een rode step', 'een taart', 'een bal'],
+  h: ['Lees de laatste zin.'],
+  s: 'Oma nam een rode step mee.'
+}, {
+  p: 'selma',
+  v: 'lezen',
+  t: 'Leesteksten',
+  lvl: 2,
+  q: 'Lees:\n"Lot is vandaag jarig. Ze wordt 8 jaar. Op tafel staat een grote taart met kaarsjes. Haar oma heeft een cadeau meegenomen: een rode step."\n\nWaar gaat het verhaaltje over? (kies)',
+  a: 'de verjaardag van Lot',
+  opties: ['de verjaardag van Lot', 'een dag op school', 'een voetbalwedstrijd'],
+  h: ['Wat is het belangrijkste in het hele stukje?'],
+  s: 'Het gaat over de verjaardag van Lot.'
+}, /* Tekst 2 — informatief: de egel */
+{
+  p: 'selma',
+  v: 'lezen',
+  t: 'Leesteksten',
+  lvl: 1,
+  q: 'Lees:\n"De egel heeft stekels op zijn rug. Als hij bang is, rolt hij zich op tot een bal. Dan kan niemand hem pakken. \'s Nachts zoekt de egel naar slakken en wormen om te eten."\n\nWat doet de egel als hij bang is? (kies)',
+  a: 'hij rolt zich op',
+  opties: ['hij rolt zich op', 'hij rent weg', 'hij klimt in een boom'],
+  h: ['Zoek de zin met "bang".'],
+  s: 'Hij rolt zich op tot een bal.'
+}, {
+  p: 'selma',
+  v: 'lezen',
+  t: 'Leesteksten',
+  lvl: 2,
+  q: 'Lees:\n"De egel heeft stekels op zijn rug. Als hij bang is, rolt hij zich op tot een bal. Dan kan niemand hem pakken. \'s Nachts zoekt de egel naar slakken en wormen om te eten."\n\nWanneer zoekt de egel eten? (kies)',
+  a: '\'s nachts',
+  opties: ['\'s nachts', '\'s morgens', '\'s middags'],
+  h: ['Lees de laatste zin.'],
+  s: 'De egel zoekt \'s nachts naar eten.'
+}, {
+  p: 'selma',
+  v: 'lezen',
+  t: 'Leesteksten',
+  lvl: 2,
+  q: 'Lees:\n"De egel heeft stekels op zijn rug. Als hij bang is, rolt hij zich op tot een bal. Dan kan niemand hem pakken. \'s Nachts zoekt de egel naar slakken en wormen om te eten."\n\nWaarom kan niemand de egel pakken als hij een bal is? (kies)',
+  a: 'door de stekels',
+  opties: ['door de stekels', 'omdat hij snel is', 'omdat hij klein is'],
+  h: ['Wat zit er op zijn rug?'],
+  s: 'Door de stekels op zijn rug kan niemand hem pakken.'
+}, /* Tekst 3 — verhaal: de nieuwe school */
+{
+  p: 'selma',
+  v: 'lezen',
+  t: 'Leesteksten',
+  lvl: 2,
+  q: 'Lees:\n"Sam is nieuw op school. In het begin kent hij niemand. In de pauze vraagt Tim of hij mee wil voetballen. Sam maakt een doelpunt. Na school lopen ze samen naar huis. Nu heeft Sam een vriend."\n\nWie vraagt Sam om mee te voetballen? (kies)',
+  a: 'Tim',
+  opties: ['Tim', 'de juf', 'zijn broer'],
+  h: ['Zoek de zin over de pauze.'],
+  s: 'Tim vraagt het in de pauze.'
+}, {
+  p: 'selma',
+  v: 'lezen',
+  t: 'Leesteksten',
+  lvl: 3,
+  q: 'Lees:\n"Sam is nieuw op school. In het begin kent hij niemand. In de pauze vraagt Tim of hij mee wil voetballen. Sam maakt een doelpunt. Na school lopen ze samen naar huis. Nu heeft Sam een vriend."\n\nHoe voelt Sam zich waarschijnlijk aan het einde? (kies)',
+  a: 'blij',
+  opties: ['blij', 'verdrietig', 'boos'],
+  h: ['Hij heeft nu een vriend — hoe voel je je dan?'],
+  s: 'Aan het einde heeft Sam een vriend, dus hij voelt zich blij.'
 }];
 SEED.forEach((e, i) => e.id = 'seed_' + i);
 
