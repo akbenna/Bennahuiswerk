@@ -169,8 +169,8 @@ const PROFILES = {
   },
   selma: {
     naam: 'Selma',
-    niveau: 'groep 6',
-    volgend: 'groep 7',
+    niveau: 'groep 4',
+    volgend: 'groep 5',
     emoji: '🌸',
     kleur: 'linear-gradient(135deg,#d95b9a,#b34584)',
     vakken: ['rekenen', 'taal', 'lezen'],
@@ -699,7 +699,10 @@ const TOPICICON = {
   'Endogeen & exogeen': '🌋',
   'Tenses': '⏱️',
   'Naamvallen (Akkusativ)': '🇩🇪',
-  'Passé composé': '🇫🇷'
+  'Passé composé': '🇫🇷',
+  'Getallen tot 100': '🔢',
+  'Optellen tot 100': '➕',
+  'Aftrekken tot 100': '➖'
 };
 
 /* ============================ OEFENINGEN (startvoorraad) ============================ */
@@ -7598,6 +7601,7 @@ const SEED = [
 /* ---- Rekenen · getallen tot 1000 ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Getallen tot 1000',
   lvl: 1,
@@ -7607,6 +7611,7 @@ const SEED = [
   s: '4 honderd + 3 tien + 7 = 437.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Getallen tot 1000',
   lvl: 1,
@@ -7616,6 +7621,7 @@ const SEED = [
   s: '260 ÷ 10 = 26 tientallen.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Getallen tot 1000',
   lvl: 1,
@@ -7625,6 +7631,7 @@ const SEED = [
   s: '599 + 1 = 600.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Getallen tot 1000',
   lvl: 1,
@@ -7634,6 +7641,7 @@ const SEED = [
   s: '700 − 1 = 699.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Getallen tot 1000',
   lvl: 1,
@@ -7644,6 +7652,7 @@ const SEED = [
   s: '478, 487, 448 → 487 is het grootst.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Getallen tot 1000',
   lvl: 2,
@@ -7653,6 +7662,7 @@ const SEED = [
   s: '347 ligt dichter bij 300 dan bij 400 → 300.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Getallen tot 1000',
   lvl: 2,
@@ -7663,6 +7673,7 @@ const SEED = [
 }, /* ---- Rekenen · optellen tot 1000 ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Optellen tot 1000',
   lvl: 1,
@@ -7672,6 +7683,7 @@ const SEED = [
   s: '340 + 250 = 590.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Optellen tot 1000',
   lvl: 1,
@@ -7681,6 +7693,7 @@ const SEED = [
   s: '125 + 60 = 185.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Optellen tot 1000',
   lvl: 1,
@@ -7690,6 +7703,7 @@ const SEED = [
   s: '400 + 250 = 650, + 30 = 680.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Optellen tot 1000',
   lvl: 2,
@@ -7699,6 +7713,7 @@ const SEED = [
   s: '268 + 147 = 415.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Optellen tot 1000',
   lvl: 2,
@@ -7709,6 +7724,7 @@ const SEED = [
 }, /* ---- Rekenen · aftrekken tot 1000 ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Aftrekken tot 1000',
   lvl: 1,
@@ -7718,6 +7734,7 @@ const SEED = [
   s: '580 − 200 = 380.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Aftrekken tot 1000',
   lvl: 1,
@@ -7727,6 +7744,7 @@ const SEED = [
   s: '650 − 40 = 610.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Aftrekken tot 1000',
   lvl: 2,
@@ -7736,6 +7754,7 @@ const SEED = [
   s: '512 − 148 = 364.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Aftrekken tot 1000',
   lvl: 2,
@@ -7745,6 +7764,7 @@ const SEED = [
   s: '700 − 265 = 435.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Aftrekken tot 1000',
   lvl: 3,
@@ -7755,6 +7775,7 @@ const SEED = [
 }, /* ---- Rekenen · tafels & delen ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Tafels & keer',
   lvl: 1,
@@ -7764,6 +7785,7 @@ const SEED = [
   s: '6 × 7 = 42.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Tafels & keer',
   lvl: 1,
@@ -7773,6 +7795,7 @@ const SEED = [
   s: '8 × 4 = 32.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Tafels & keer',
   lvl: 1,
@@ -7782,6 +7805,7 @@ const SEED = [
   s: '9 × 6 = 54.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Tafels & keer',
   lvl: 1,
@@ -7791,6 +7815,7 @@ const SEED = [
   s: '7 × 8 = 56.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Tafels & keer',
   lvl: 2,
@@ -7800,6 +7825,7 @@ const SEED = [
   s: '4 × 25 = 100.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Tafels & keer',
   lvl: 2,
@@ -7809,6 +7835,7 @@ const SEED = [
   s: '30 × 8 = 240.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Delen',
   lvl: 1,
@@ -7818,6 +7845,7 @@ const SEED = [
   s: '6 × 7 = 42 → 42 ÷ 6 = 7.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Delen',
   lvl: 1,
@@ -7827,6 +7855,7 @@ const SEED = [
   s: '8 × 7 = 56 → 56 ÷ 8 = 7.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Delen',
   lvl: 2,
@@ -7836,6 +7865,7 @@ const SEED = [
   s: '9 × 8 = 72 → 72 ÷ 9 = 8.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Delen',
   lvl: 2,
@@ -7846,6 +7876,7 @@ const SEED = [
 }, /* ---- Rekenen · tijd & klok ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Tijd & klok',
   lvl: 1,
@@ -7861,6 +7892,7 @@ const SEED = [
   s: 'Korte wijzer op 2, lange op 12 → 2:00.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Tijd & klok',
   lvl: 1,
@@ -7876,6 +7908,7 @@ const SEED = [
   s: 'Lange wijzer op 6, korte tussen 7 en 8 → 7:30 (half 8).'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Tijd & klok',
   lvl: 2,
@@ -7891,6 +7924,7 @@ const SEED = [
   s: 'Korte net voorbij 4, lange op 3 → 4:15.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Tijd & klok',
   lvl: 1,
@@ -7900,6 +7934,7 @@ const SEED = [
   s: '1 uur = 60 minuten.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Tijd & klok',
   lvl: 2,
@@ -7910,6 +7945,7 @@ const SEED = [
   s: '15:00 + 1.30 = 16:30.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Tijd & klok',
   lvl: 2,
@@ -7921,6 +7957,7 @@ const SEED = [
 }, /* ---- Rekenen · geld ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Geld',
   lvl: 1,
@@ -7932,6 +7969,7 @@ const SEED = [
   s: '€ 5,00 − € 3,50 = € 1,50.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Geld',
   lvl: 1,
@@ -7942,6 +7980,7 @@ const SEED = [
   s: '€ 2,45 = 245 cent.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Geld',
   lvl: 2,
@@ -7952,6 +7991,7 @@ const SEED = [
   s: '4 × € 1,25 = € 5,00.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Geld',
   lvl: 2,
@@ -7964,6 +8004,7 @@ const SEED = [
 }, /* ---- Rekenen · meten & maten ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Meten & maten',
   lvl: 1,
@@ -7974,6 +8015,7 @@ const SEED = [
   s: '3 × 100 = 300 cm.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Meten & maten',
   lvl: 1,
@@ -7984,6 +8026,7 @@ const SEED = [
   s: '2 × 1000 = 2000 gram.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Meten & maten',
   lvl: 1,
@@ -7993,6 +8036,7 @@ const SEED = [
   s: '1000 gram > 900 gram, dus de veren.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Meten & maten',
   lvl: 2,
@@ -8004,6 +8048,7 @@ const SEED = [
   s: '250 ÷ 100 = 2,5 meter.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Meten & maten',
   lvl: 2,
@@ -8015,6 +8060,7 @@ const SEED = [
 }, /* ---- Rekenen · breuken ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Breuken',
   lvl: 1,
@@ -8030,6 +8076,7 @@ const SEED = [
   s: '1 van 2 delen → 1/2.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Breuken',
   lvl: 1,
@@ -8045,6 +8092,7 @@ const SEED = [
   s: '1 van 4 → 1/4.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Breuken',
   lvl: 2,
@@ -8054,6 +8102,7 @@ const SEED = [
   s: '30 ÷ 2 = 15.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Breuken',
   lvl: 2,
@@ -8063,6 +8112,7 @@ const SEED = [
   s: '20 ÷ 4 = 5.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Breuken',
   lvl: 2,
@@ -8073,6 +8123,7 @@ const SEED = [
 }, /* ---- Rekenen · verhaaltjessommen ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Verhaaltjessommen',
   lvl: 2,
@@ -8082,6 +8133,7 @@ const SEED = [
   s: '28 − 12 = 16 meisjes.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Verhaaltjessommen',
   lvl: 2,
@@ -8091,6 +8143,7 @@ const SEED = [
   s: '24 − 6 = 18 koekjes.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Verhaaltjessommen',
   lvl: 2,
@@ -8100,6 +8153,7 @@ const SEED = [
   s: '3 × 8 = 24 appels.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Verhaaltjessommen',
   lvl: 2,
@@ -8110,6 +8164,7 @@ const SEED = [
   s: '6 × € 5 = € 30.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Verhaaltjessommen',
   lvl: 3,
@@ -8119,6 +8174,7 @@ const SEED = [
   s: '27 + 8 = 35; 40 − 35 = 5 vrij.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Verhaaltjessommen',
   lvl: 3,
@@ -8129,6 +8185,7 @@ const SEED = [
 }, /* ---- Rekenen · tabellen & grafieken ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Tabellen & grafieken',
   lvl: 1,
@@ -8138,6 +8195,7 @@ const SEED = [
   s: '4 + 7 + 3 = 14.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Tabellen & grafieken',
   lvl: 2,
@@ -8148,6 +8206,7 @@ const SEED = [
   s: '11 is het grootst → bananen.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Tabellen & grafieken',
   lvl: 2,
@@ -8158,6 +8217,7 @@ const SEED = [
 }, /* ---- Taal · korte en lange klank / meervoud ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Korte en lange klank',
   lvl: 1,
@@ -8167,6 +8227,7 @@ const SEED = [
   s: 'maan → manen.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Korte en lange klank',
   lvl: 1,
@@ -8176,6 +8237,7 @@ const SEED = [
   s: 'boom → bomen.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Korte en lange klank',
   lvl: 2,
@@ -8185,6 +8247,7 @@ const SEED = [
   s: 'bal → ballen.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Korte en lange klank',
   lvl: 2,
@@ -8194,6 +8257,7 @@ const SEED = [
   s: 'pop → poppen.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Meervoud',
   lvl: 1,
@@ -8203,6 +8267,7 @@ const SEED = [
   s: 'huis → huizen.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Meervoud',
   lvl: 1,
@@ -8212,6 +8277,7 @@ const SEED = [
   s: 'kind → kinderen.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Meervoud',
   lvl: 1,
@@ -8221,6 +8287,7 @@ const SEED = [
   s: 'ei → eieren.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Meervoud',
   lvl: 2,
@@ -8230,6 +8297,7 @@ const SEED = [
   s: "auto → auto's."
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Meervoud',
   lvl: 3,
@@ -8240,6 +8308,7 @@ const SEED = [
 }, /* ---- Taal · ei/ij en au/ou ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'ei of ij',
   lvl: 1,
@@ -8249,6 +8318,7 @@ const SEED = [
   s: 'Het woord is klein.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'ei of ij',
   lvl: 1,
@@ -8258,6 +8328,7 @@ const SEED = [
   s: 'Het woord is trein.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'ei of ij',
   lvl: 2,
@@ -8267,6 +8338,7 @@ const SEED = [
   s: 'Het woord is tijd.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'ei of ij',
   lvl: 2,
@@ -8276,6 +8348,7 @@ const SEED = [
   s: 'Het woord is vrij.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'au of ou',
   lvl: 1,
@@ -8285,6 +8358,7 @@ const SEED = [
   s: 'Het woord is koud.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'au of ou',
   lvl: 1,
@@ -8294,6 +8368,7 @@ const SEED = [
   s: 'Het woord is blauw.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'au of ou',
   lvl: 2,
@@ -8303,6 +8378,7 @@ const SEED = [
   s: 'Het woord is goud.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'au of ou',
   lvl: 2,
@@ -8313,6 +8389,7 @@ const SEED = [
 }, /* ---- Taal · verkleinwoorden ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Verkleinwoorden',
   lvl: 1,
@@ -8322,6 +8399,7 @@ const SEED = [
   s: 'boom → boompje.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Verkleinwoorden',
   lvl: 1,
@@ -8331,6 +8409,7 @@ const SEED = [
   s: 'kat → katje.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Verkleinwoorden',
   lvl: 1,
@@ -8340,6 +8419,7 @@ const SEED = [
   s: 'huis → huisje.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Verkleinwoorden',
   lvl: 2,
@@ -8349,6 +8429,7 @@ const SEED = [
   s: 'bloem → bloempje.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Verkleinwoorden',
   lvl: 2,
@@ -8359,6 +8440,7 @@ const SEED = [
 }, /* ---- Taal · hakwoorden ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Hakwoorden & klankgroepen',
   lvl: 1,
@@ -8368,6 +8450,7 @@ const SEED = [
   s: 'to-maat = 2 klankgroepen.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Hakwoorden & klankgroepen',
   lvl: 1,
@@ -8377,6 +8460,7 @@ const SEED = [
   s: 'ba-naan = 2 klankgroepen.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Hakwoorden & klankgroepen',
   lvl: 2,
@@ -8386,6 +8470,7 @@ const SEED = [
   s: 'o-li-fant = 3 klankgroepen.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Hakwoorden & klankgroepen',
   lvl: 2,
@@ -8396,6 +8481,7 @@ const SEED = [
 }, /* ---- Taal · d of t aan het eind ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'd of t aan het eind',
   lvl: 1,
@@ -8405,6 +8491,7 @@ const SEED = [
   s: 'honden → dus hond.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'd of t aan het eind',
   lvl: 2,
@@ -8414,6 +8501,7 @@ const SEED = [
   s: 'kranten → dus krant.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'd of t aan het eind',
   lvl: 2,
@@ -8424,6 +8512,7 @@ const SEED = [
 }, /* ---- Taal · werkwoorden (tegenwoordige tijd) ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Werkwoorden (nu)',
   lvl: 1,
@@ -8433,6 +8522,7 @@ const SEED = [
   s: 'ik loop.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Werkwoorden (nu)',
   lvl: 1,
@@ -8442,6 +8532,7 @@ const SEED = [
   s: 'hij loopt.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Werkwoorden (nu)',
   lvl: 1,
@@ -8451,6 +8542,7 @@ const SEED = [
   s: 'de hond blaft.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Werkwoorden (nu)',
   lvl: 2,
@@ -8460,6 +8552,7 @@ const SEED = [
   s: 'hij speelt.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Werkwoorden (nu)',
   lvl: 2,
@@ -8470,6 +8563,7 @@ const SEED = [
 }, /* ---- Taal · hoofdletters & leestekens ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Leestekens & hoofdletters',
   lvl: 1,
@@ -8479,6 +8573,7 @@ const SEED = [
   s: 'Achter een vraag komt een ?.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Leestekens & hoofdletters',
   lvl: 1,
@@ -8488,6 +8583,7 @@ const SEED = [
   s: 'Een zin begint met een hoofdletter.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Leestekens & hoofdletters',
   lvl: 1,
@@ -8498,6 +8594,7 @@ const SEED = [
   s: 'Parijs is een stad → hoofdletter: "We gaan naar Parijs."'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Leestekens & hoofdletters',
   lvl: 2,
@@ -8509,6 +8606,7 @@ const SEED = [
 }, /* ---- Lezen · wie/wat/waar/waarom ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'lezen',
   t: 'Wie, wat, waar, waarom',
   lvl: 1,
@@ -8519,6 +8617,7 @@ const SEED = [
   s: 'Tom gaat met zijn hond.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'lezen',
   t: 'Wie, wat, waar, waarom',
   lvl: 1,
@@ -8529,6 +8628,7 @@ const SEED = [
   s: 'Tom gaat naar het park.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'lezen',
   t: 'Wie, wat, waar, waarom',
   lvl: 2,
@@ -8540,6 +8640,7 @@ const SEED = [
 }, /* ---- Lezen · hoofdgedachte ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'lezen',
   t: 'Hoofdgedachte',
   lvl: 2,
@@ -8551,6 +8652,7 @@ const SEED = [
 }, /* ---- Lezen · volgorde ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'lezen',
   t: 'Volgorde',
   lvl: 1,
@@ -8561,6 +8663,7 @@ const SEED = [
   s: 'Eerst je jas aan.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'lezen',
   t: 'Volgorde',
   lvl: 2,
@@ -8572,6 +8675,7 @@ const SEED = [
 }, /* ---- Lezen · woordbetekenis ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'lezen',
   t: 'Woordbetekenis',
   lvl: 2,
@@ -8582,6 +8686,7 @@ const SEED = [
   s: '"enorm" betekent heel erg.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'lezen',
   t: 'Woordbetekenis',
   lvl: 2,
@@ -8593,6 +8698,7 @@ const SEED = [
 }, /* ---- Lezen · verwijswoorden ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'lezen',
   t: 'Verwijswoorden',
   lvl: 2,
@@ -8603,6 +8709,7 @@ const SEED = [
   s: '"zij" verwijst naar Sara.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'lezen',
   t: 'Verwijswoorden',
   lvl: 3,
@@ -8615,6 +8722,7 @@ const SEED = [
 /* Tekst A — informatief: bijen */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'lezen',
   t: 'Leesteksten',
   lvl: 2,
@@ -8625,6 +8733,7 @@ const SEED = [
   s: 'De koningin legt alle eitjes.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'lezen',
   t: 'Leesteksten',
   lvl: 2,
@@ -8635,6 +8744,7 @@ const SEED = [
   s: 'Van nectar maken ze honing.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'lezen',
   t: 'Leesteksten',
   lvl: 3,
@@ -8646,6 +8756,7 @@ const SEED = [
 }, /* Tekst B — verhaal: Noor en de storm */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'lezen',
   t: 'Leesteksten',
   lvl: 2,
@@ -8656,6 +8767,7 @@ const SEED = [
   s: 'Ze kon niet slapen door de wind.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'lezen',
   t: 'Leesteksten',
   lvl: 2,
@@ -8666,6 +8778,7 @@ const SEED = [
   s: 'Ze kroop bij haar grote broer in bed.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'lezen',
   t: 'Leesteksten',
   lvl: 3,
@@ -8677,6 +8790,7 @@ const SEED = [
 }, /* Tekst C — informatief: de woestijn */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'lezen',
   t: 'Leesteksten',
   lvl: 2,
@@ -8687,6 +8801,7 @@ const SEED = [
   s: '\'s Nachts is het juist koud.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'lezen',
   t: 'Leesteksten',
   lvl: 3,
@@ -8698,6 +8813,7 @@ const SEED = [
 }, /* Tekst D — verhaal: de finale (voetbal) */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'lezen',
   t: 'Leesteksten',
   lvl: 2,
@@ -8708,6 +8824,7 @@ const SEED = [
   s: 'Bo geeft de bal aan Sam.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'lezen',
   t: 'Leesteksten',
   lvl: 2,
@@ -8718,6 +8835,7 @@ const SEED = [
   s: 'Als laatste wint het team de beker.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'lezen',
   t: 'Leesteksten',
   lvl: 3,
@@ -8729,6 +8847,7 @@ const SEED = [
 }, /* ---- Rekenen · extra ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Getallen tot 1000',
   lvl: 1,
@@ -8738,6 +8857,7 @@ const SEED = [
   s: '800 ÷ 100 = 8 honderdtallen.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Optellen tot 1000',
   lvl: 2,
@@ -8747,6 +8867,7 @@ const SEED = [
   s: '298 + 45 = 343.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Aftrekken tot 1000',
   lvl: 3,
@@ -8756,6 +8877,7 @@ const SEED = [
   s: '403 − 198 = 205.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Tafels & keer',
   lvl: 2,
@@ -8765,6 +8887,7 @@ const SEED = [
   s: '12 × 8 = 96.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Delen',
   lvl: 3,
@@ -8774,6 +8897,7 @@ const SEED = [
   s: '37 − 35 = 2 snoepjes over (rest 2).'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Tijd & klok',
   lvl: 2,
@@ -8784,6 +8908,7 @@ const SEED = [
   s: '45 − 10 = 35 minuten.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Tijd & klok',
   lvl: 2,
@@ -8799,6 +8924,7 @@ const SEED = [
   s: 'Korte net voorbij 3, lange op 4 → 3:20.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Geld',
   lvl: 2,
@@ -8810,6 +8936,7 @@ const SEED = [
   s: '3 × € 1,50 = € 4,50.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Meten & maten',
   lvl: 2,
@@ -8821,6 +8948,7 @@ const SEED = [
   s: '350 ÷ 100 = 3,5 meter.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Verhaaltjessommen',
   lvl: 2,
@@ -8831,6 +8959,7 @@ const SEED = [
 }, /* ---- Taal · extra ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'ng of nk',
   lvl: 1,
@@ -8840,6 +8969,7 @@ const SEED = [
   s: 'Het woord is bank.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'ng of nk',
   lvl: 2,
@@ -8849,6 +8979,7 @@ const SEED = [
   s: 'Het woord is ring.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'cht-woorden',
   lvl: 1,
@@ -8858,6 +8989,7 @@ const SEED = [
   s: 'Het woord is nacht.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'cht-woorden',
   lvl: 2,
@@ -8867,6 +8999,7 @@ const SEED = [
   s: 'Het woord is zacht.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Samenstellingen',
   lvl: 1,
@@ -8876,6 +9009,7 @@ const SEED = [
   s: 'voet + bal = voetbal.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Samenstellingen',
   lvl: 2,
@@ -8885,6 +9019,7 @@ const SEED = [
   s: 'Het is één woord: verjaardag.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Werkwoorden (nu)',
   lvl: 2,
@@ -8894,6 +9029,7 @@ const SEED = [
   s: 'zij fietst.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Werkwoorden (nu)',
   lvl: 1,
@@ -8903,6 +9039,7 @@ const SEED = [
   s: 'hij heeft.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Werkwoorden (nu)',
   lvl: 1,
@@ -8912,6 +9049,7 @@ const SEED = [
   s: 'werken − en = werk.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Woordenschat',
   lvl: 1,
@@ -8922,6 +9060,7 @@ const SEED = [
   s: 'Het tegenovergestelde van groot is klein.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Woordenschat',
   lvl: 2,
@@ -8933,6 +9072,7 @@ const SEED = [
 }, /* ---- Rekenen · verhoudingstabellen (groep 5) ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Verhoudingstabellen',
   lvl: 1,
@@ -8943,6 +9083,7 @@ const SEED = [
   s: '6 appels = 2 × 3, dus 2 × € 1 = € 2.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Verhoudingstabellen',
   lvl: 1,
@@ -8953,6 +9094,7 @@ const SEED = [
   s: '3 × 4 = 12 km.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Verhoudingstabellen',
   lvl: 2,
@@ -8964,6 +9106,7 @@ const SEED = [
   s: '€ 9 ÷ 2 = € 4,50.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Verhoudingstabellen',
   lvl: 2,
@@ -8974,6 +9117,7 @@ const SEED = [
   s: '100 ÷ 5 = 20 gram.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Verhoudingstabellen',
   lvl: 2,
@@ -8984,6 +9128,7 @@ const SEED = [
   s: '2 × 8 = 16 eieren.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Verhoudingstabellen',
   lvl: 3,
@@ -8995,6 +9140,7 @@ const SEED = [
 }, /* ---- Rekenen · kommagetallen (intro via geld en meten) ---- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Kommagetallen',
   lvl: 1,
@@ -9006,6 +9152,7 @@ const SEED = [
   s: '3 euro en 50 cent = € 3,50.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Kommagetallen',
   lvl: 1,
@@ -9015,6 +9162,7 @@ const SEED = [
   s: '2,5 + 1,5 = 4.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Kommagetallen',
   lvl: 1,
@@ -9024,6 +9172,7 @@ const SEED = [
   s: '0,5 + 0,5 = 1.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Kommagetallen',
   lvl: 2,
@@ -9034,6 +9183,7 @@ const SEED = [
   s: '€ 1,20 + € 0,80 = € 2,00.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Kommagetallen',
   lvl: 2,
@@ -9044,6 +9194,7 @@ const SEED = [
   s: '3,4 = 3,40 en dat is meer dan 3,04.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Kommagetallen',
   lvl: 2,
@@ -10406,6 +10557,7 @@ const SEED = [
 // Getallen (tot 100.000)
 {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Getallen tot 100.000',
   lvl: 1,
@@ -10415,6 +10567,7 @@ const SEED = [
   s: '9 999 + 1 = 10 000.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Getallen tot 100.000',
   lvl: 1,
@@ -10424,6 +10577,7 @@ const SEED = [
   s: '24 000 ÷ 1000 = 24.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Getallen tot 100.000',
   lvl: 2,
@@ -10433,6 +10587,7 @@ const SEED = [
   s: '34 780 → 35 000.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Getallen tot 100.000',
   lvl: 2,
@@ -10441,6 +10596,7 @@ const SEED = [
   s: '45 000 + 8 000 = 53 000.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Getallen tot 100.000',
   lvl: 2,
@@ -10451,6 +10607,7 @@ const SEED = [
 // Getallen: delen met rest & grotere keersommen
 {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Delen met rest',
   lvl: 1,
@@ -10460,6 +10617,7 @@ const SEED = [
   s: '5 × 3 = 15, 17 − 15 = 2. Rest 2.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Delen met rest',
   lvl: 2,
@@ -10469,6 +10627,7 @@ const SEED = [
   s: '6 × 8 = 48, 50 − 48 = 2. Rest 2.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Vermenigvuldigen (groter)',
   lvl: 2,
@@ -10478,6 +10637,7 @@ const SEED = [
   s: '6 × 4 = 24 → 240.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Vermenigvuldigen (groter)',
   lvl: 2,
@@ -10489,6 +10649,7 @@ const SEED = [
 // Verhoudingen: breuken
 {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Breuken',
   lvl: 1,
@@ -10503,6 +10664,7 @@ const SEED = [
   s: '2 van de 5 delen → 2/5.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Breuken',
   lvl: 2,
@@ -10512,6 +10674,7 @@ const SEED = [
   s: '1/2 is groter dan 1/3.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Breuken',
   lvl: 2,
@@ -10522,6 +10685,7 @@ const SEED = [
   s: '2/4 = 1/2.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Breuken',
   lvl: 3,
@@ -10533,6 +10697,7 @@ const SEED = [
 // Meten & Meetkunde + kommagetallen
 {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Kommagetallen',
   lvl: 1,
@@ -10543,6 +10708,7 @@ const SEED = [
   s: '2,50 + 1,25 = 3,75.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Kommagetallen',
   lvl: 2,
@@ -10553,6 +10719,7 @@ const SEED = [
   s: '5,00 − 1,75 = 3,25.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Kommagetallen',
   lvl: 2,
@@ -10562,6 +10729,7 @@ const SEED = [
   s: '0,5 + 0,25 = 0,75.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Meten & maten',
   lvl: 1,
@@ -10571,6 +10739,7 @@ const SEED = [
   s: '2 × 100 = 200 cm.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Meten & maten',
   lvl: 2,
@@ -10580,6 +10749,7 @@ const SEED = [
   s: '1,5 × 1000 = 1500 g.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Oppervlakte (hokjes)',
   lvl: 1,
@@ -10597,6 +10767,7 @@ const SEED = [
 // Verbanden: verhoudingstabel & grafiek
 {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Verhoudingstabel',
   lvl: 2,
@@ -10607,6 +10778,7 @@ const SEED = [
   s: '6 ÷ 2 = 3, 3 × € 1 = € 3.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Verhoudingstabel',
   lvl: 2,
@@ -10616,6 +10788,7 @@ const SEED = [
   s: '4 × 200 = 800 g.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Tabellen & grafieken',
   lvl: 1,
@@ -10625,6 +10798,7 @@ const SEED = [
 }, /* ---------- SELMA · groep 6 · TAAL ---------- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Werkwoordspelling',
   lvl: 1,
@@ -10634,6 +10808,7 @@ const SEED = [
   s: 'ik schrijf (de stam).'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Werkwoordspelling',
   lvl: 2,
@@ -10643,6 +10818,7 @@ const SEED = [
   s: 'speel + t = speelt.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Samenstellingen',
   lvl: 1,
@@ -10651,6 +10827,7 @@ const SEED = [
   s: 'voetbalveld.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Verkleinwoorden',
   lvl: 1,
@@ -11270,6 +11447,7 @@ const SEED = [
 }, /* ---------- SELMA · groep 6 · spelling & lezen ---------- */
 {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Open en gesloten lettergreep',
   lvl: 2,
@@ -11279,6 +11457,7 @@ const SEED = [
   s: 'boom → bomen.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Open en gesloten lettergreep',
   lvl: 2,
@@ -11288,6 +11467,7 @@ const SEED = [
   s: 'bal → ballen (dubbele l).'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'au/ou',
   lvl: 2,
@@ -11296,6 +11476,7 @@ const SEED = [
   s: 'kou (ou).'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'taal',
   t: 'Hoofdletters & leestekens',
   lvl: 1,
@@ -11305,6 +11486,7 @@ const SEED = [
   s: 'Met een hoofdletter.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'lezen',
   t: 'Verwijswoorden',
   lvl: 2,
@@ -11314,6 +11496,7 @@ const SEED = [
   s: '“hij” verwijst naar de hond.'
 }, {
   p: 'selma',
+  jaar: 'next',
   v: 'lezen',
   t: 'Volgorde',
   lvl: 1,
@@ -11822,6 +12005,510 @@ const SEED = [
   opties: ['stoppen met zoeken', 'harder gaan zoeken', 'de politie bellen'],
   h: ['Wat wilde ze bijna doen voordat ze het gerinkel hoorde? (woordbetekenis uit de context)'],
   s: '“opgeven” betekent hier: stoppen met zoeken.'
+}, /* ================= SELMA · groep 4 (dit jaar — net afgerond, om mee te komen) ================= */
+/* ---- Rekenen · getallen tot 100 ---- */
+{
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Getallen tot 100',
+  lvl: 1,
+  q: 'Welk getal komt na 39?',
+  a: '40',
+  h: ['Eén meer.'],
+  s: '39 + 1 = 40.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Getallen tot 100',
+  lvl: 1,
+  q: 'Welk getal komt vlak vóór 70?',
+  a: '69',
+  h: ['Eén minder.'],
+  s: '70 − 1 = 69.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Getallen tot 100',
+  lvl: 1,
+  q: 'Hoeveel tientallen zitten er in 50?',
+  a: '5',
+  h: ['Elke 10 is één tiental.'],
+  s: '50 = 5 tientallen.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Getallen tot 100',
+  lvl: 1,
+  q: 'Tel met sprongen van 10 verder: 20, 30, 40, ...?',
+  a: '50',
+  h: ['Steeds 10 erbij.'],
+  s: '40 + 10 = 50.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Getallen tot 100',
+  lvl: 1,
+  q: 'Tel met sprongen van 5 verder: 15, 20, 25, ...?',
+  a: '30',
+  h: ['Steeds 5 erbij.'],
+  s: '25 + 5 = 30.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Getallen tot 100',
+  lvl: 2,
+  q: 'Welk getal is het grootst? (kies)',
+  a: '58',
+  opties: ['48', '58', '45'],
+  h: ['Kijk naar de tientallen.'],
+  s: '58 is het grootst.'
+}, /* ---- Rekenen · optellen tot 100 ---- */
+{
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Optellen tot 100',
+  lvl: 1,
+  q: 'Reken uit: 30 + 20',
+  a: '50',
+  h: ['Tel de tientallen.'],
+  s: '30 + 20 = 50.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Optellen tot 100',
+  lvl: 1,
+  q: 'Reken uit: 24 + 5',
+  a: '29',
+  h: ['Tel de eenheden erbij.'],
+  s: '24 + 5 = 29.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Optellen tot 100',
+  lvl: 1,
+  q: 'Reken uit: 46 + 30',
+  a: '76',
+  h: ['Tel 3 tientallen erbij.'],
+  s: '46 + 30 = 76.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Optellen tot 100',
+  lvl: 2,
+  q: 'Reken uit: 38 + 7',
+  a: '45',
+  h: ['38 + 2 = 40, dan + 5.'],
+  s: '38 + 7 = 45.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Optellen tot 100',
+  lvl: 2,
+  q: 'Reken uit: 25 + 25',
+  a: '50',
+  h: ['Dubbel 25.'],
+  s: '25 + 25 = 50.'
+}, /* ---- Rekenen · aftrekken tot 100 ---- */
+{
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Aftrekken tot 100',
+  lvl: 1,
+  q: 'Reken uit: 60 − 20',
+  a: '40',
+  h: ['Haal 2 tientallen eraf.'],
+  s: '60 − 20 = 40.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Aftrekken tot 100',
+  lvl: 1,
+  q: 'Reken uit: 47 − 5',
+  a: '42',
+  h: ['Haal de eenheden eraf.'],
+  s: '47 − 5 = 42.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Aftrekken tot 100',
+  lvl: 1,
+  q: 'Reken uit: 53 − 30',
+  a: '23',
+  h: ['Haal 3 tientallen eraf.'],
+  s: '53 − 30 = 23.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Aftrekken tot 100',
+  lvl: 2,
+  q: 'Reken uit: 42 − 6',
+  a: '36',
+  h: ['42 − 2 = 40, dan − 4.'],
+  s: '42 − 6 = 36.'
+}, /* ---- Rekenen · tafels (1,2,3,4,5,10) ---- */
+{
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Tafels & keer',
+  lvl: 1,
+  q: 'Reken uit: 2 × 6',
+  a: '12',
+  h: ['Tafel van 2.'],
+  s: '2 × 6 = 12.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Tafels & keer',
+  lvl: 1,
+  q: 'Reken uit: 5 × 4',
+  a: '20',
+  h: ['Tafel van 5.'],
+  s: '5 × 4 = 20.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Tafels & keer',
+  lvl: 1,
+  q: 'Reken uit: 10 × 7',
+  a: '70',
+  h: ['Tafel van 10: zet er een 0 achter.'],
+  s: '10 × 7 = 70.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Tafels & keer',
+  lvl: 1,
+  q: 'Reken uit: 2 × 9',
+  a: '18',
+  h: ['Tafel van 2.'],
+  s: '2 × 9 = 18.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Tafels & keer',
+  lvl: 2,
+  q: 'Reken uit: 5 × 5',
+  a: '25',
+  h: ['Tafel van 5.'],
+  s: '5 × 5 = 25.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Tafels & keer',
+  lvl: 2,
+  q: 'Reken uit: 3 × 4',
+  a: '12',
+  h: ['Tafel van 3.'],
+  s: '3 × 4 = 12.'
+}, /* ---- Rekenen · tijd & klok (hele en halve uren) ---- */
+{
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Tijd & klok',
+  lvl: 1,
+  ill: {
+    type: 'klok',
+    uur: 3,
+    min: 0
+  },
+  q: 'Hoe laat is het op de klok? (kies)',
+  a: '3:00',
+  opties: ['3:00', '4:00', '3:30'],
+  h: ['Korte wijzer op 3, lange op 12.'],
+  s: '3 uur → 3:00.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Tijd & klok',
+  lvl: 2,
+  ill: {
+    type: 'klok',
+    uur: 8,
+    min: 30
+  },
+  q: 'Hoe laat is het op de klok? (kies)',
+  a: '8:30',
+  opties: ['8:30', '7:30', '8:00'],
+  h: ['Lange wijzer op 6 = half.'],
+  s: 'Half 9 → 8:30.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Tijd & klok',
+  lvl: 1,
+  q: 'Hoeveel uur zit er tussen 2 uur en 5 uur?',
+  a: '3',
+  u: 'uur',
+  h: ['Tel: 3, 4, 5.'],
+  s: '5 − 2 = 3 uur.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Tijd & klok',
+  lvl: 2,
+  q: 'De klok wijst "half 5". Hoe schrijf je dat digitaal? (bijv. 4:30)',
+  a: '4:30',
+  alt: ['4.30'],
+  h: ['Half 5 = 30 minuten vóór 5.'],
+  s: 'Half 5 = 4:30.'
+}, /* ---- Rekenen · geld & meten ---- */
+{
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Geld',
+  lvl: 1,
+  q: 'Je hebt € 2 en € 1. Hoeveel is dat samen?',
+  a: '3',
+  u: '€',
+  h: ['2 + 1.'],
+  s: '€ 2 + € 1 = € 3.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Geld',
+  lvl: 1,
+  q: 'Een snoep kost € 1. Je betaalt met € 2. Hoeveel krijg je terug?',
+  a: '1',
+  u: '€',
+  h: ['2 − 1.'],
+  s: '€ 2 − € 1 = € 1.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Geld',
+  lvl: 2,
+  q: 'Hoeveel is 3 munten van € 2 samen?',
+  a: '6',
+  u: '€',
+  h: ['3 × 2.'],
+  s: '3 × € 2 = € 6.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Meten & maten',
+  lvl: 1,
+  q: 'Hoeveel cm is 1 meter?',
+  a: '100',
+  u: 'cm',
+  h: ['1 meter = 100 cm.'],
+  s: '1 meter = 100 cm.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Meten & maten',
+  lvl: 1,
+  q: 'Wat is langer: 1 meter of 50 cm? (meter/50 cm)',
+  a: 'meter',
+  alt: ['1 meter', 'een meter'],
+  h: ['1 meter = 100 cm.'],
+  s: '1 meter (100 cm) is langer dan 50 cm.'
+}, /* ---- Rekenen · verhaaltjes & helft ---- */
+{
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Verhaaltjessommen',
+  lvl: 1,
+  q: 'Je hebt 8 knikkers en krijgt er 5 bij. Hoeveel heb je nu?',
+  a: '13',
+  h: ['8 + 5.'],
+  s: '8 + 5 = 13.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Verhaaltjessommen',
+  lvl: 1,
+  q: 'Er zijn 12 koekjes. Je eet er 4. Hoeveel blijven er over?',
+  a: '8',
+  h: ['12 − 4.'],
+  s: '12 − 4 = 8.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Verhaaltjessommen',
+  lvl: 2,
+  q: '2 kinderen krijgen elk 5 stickers. Hoeveel stickers samen?',
+  a: '10',
+  h: ['2 × 5.'],
+  s: '2 × 5 = 10.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Breuken',
+  lvl: 1,
+  q: 'Wat is de helft van 10?',
+  a: '5',
+  h: ['Deel door 2.'],
+  s: '10 ÷ 2 = 5.'
+}, {
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Breuken',
+  lvl: 1,
+  q: 'Wat is de helft van 8?',
+  a: '4',
+  h: ['Deel door 2.'],
+  s: '8 ÷ 2 = 4.'
+}, /* ---- Taal · spelling, meervoud, verkleinwoord ---- */
+{
+  p: 'selma',
+  v: 'taal',
+  t: 'Hakwoorden & klankgroepen',
+  lvl: 1,
+  q: 'Hoeveel klanken hoor je in "kat"? (k-a-t)',
+  a: '3',
+  h: ['Hak het woord: k-a-t.'],
+  s: 'k-a-t = 3 klanken.'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'Hakwoorden & klankgroepen',
+  lvl: 1,
+  q: 'Hoeveel klanken hoor je in "boom"? (b-oo-m)',
+  a: '3',
+  h: ['oo is één klank.'],
+  s: 'b-oo-m = 3 klanken.'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'Meervoud',
+  lvl: 1,
+  q: 'Meervoud van "boek"?',
+  a: 'boeken',
+  h: ['+ en.'],
+  s: 'boek → boeken.'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'Meervoud',
+  lvl: 1,
+  q: 'Meervoud van "pen"?',
+  a: 'pennen',
+  h: ['Korte e: n verdubbelen.'],
+  s: 'pen → pennen.'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'Meervoud',
+  lvl: 2,
+  q: 'Meervoud van "kat"?',
+  a: 'katten',
+  h: ['Korte a: t verdubbelen.'],
+  s: 'kat → katten.'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'Verkleinwoorden',
+  lvl: 1,
+  q: 'Verkleinwoord van "kat"?',
+  a: 'katje',
+  h: ['+ je.'],
+  s: 'kat → katje.'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'Verkleinwoorden',
+  lvl: 1,
+  q: 'Verkleinwoord van "huis"?',
+  a: 'huisje',
+  h: ['+ je.'],
+  s: 'huis → huisje.'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'ei of ij',
+  lvl: 1,
+  q: 'ei of ij? Schrijf het woord: het tegenovergestelde van groot is kl__n.',
+  a: 'klein',
+  h: ['De "korte ei".'],
+  s: 'Het woord is klein.'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'au of ou',
+  lvl: 1,
+  q: 'au of ou? Schrijf het woord: niet warm maar k__d.',
+  a: 'koud',
+  h: ['De "ou".'],
+  s: 'Het woord is koud.'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'Leestekens & hoofdletters',
+  lvl: 1,
+  q: 'Begint een zin met een hoofdletter of een kleine letter?',
+  a: 'hoofdletter',
+  h: ['Aan het begin van de zin.'],
+  s: 'Een zin begint met een hoofdletter.'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'Leestekens & hoofdletters',
+  lvl: 1,
+  q: 'Welk teken hoort achter een vraag? (. of ?)',
+  a: '?',
+  h: ['Een vraag eindigt met een vraagteken.'],
+  s: 'Achter een vraag komt een ?.'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'Leestekens & hoofdletters',
+  lvl: 2,
+  q: 'Welk woord krijgt een hoofdletter? (kies)',
+  a: 'anna',
+  opties: ['maandag', 'anna', 'tafel'],
+  h: ['Namen van mensen.'],
+  s: 'Anna is een naam → hoofdletter.'
+}, {
+  p: 'selma',
+  v: 'taal',
+  t: 'Woordenschat',
+  lvl: 1,
+  q: 'Wat is het tegenovergestelde van "groot"? (kies)',
+  a: 'klein',
+  opties: ['klein', 'hoog', 'dik'],
+  h: ['Denk aan het omgekeerde.'],
+  s: 'Het tegenovergestelde van groot is klein.'
+}, /* ---- Lezen · korte zinnen ---- */
+{
+  p: 'selma',
+  v: 'lezen',
+  t: 'Wie, wat, waar, waarom',
+  lvl: 1,
+  q: 'Lees: "Sara heeft een rode bal." Welke kleur heeft de bal? (kies)',
+  a: 'rood',
+  opties: ['rood', 'blauw', 'groen'],
+  h: ['Lees de zin goed.'],
+  s: 'De bal is rood.'
+}, {
+  p: 'selma',
+  v: 'lezen',
+  t: 'Wie, wat, waar, waarom',
+  lvl: 1,
+  q: 'Lees: "Tim speelt buiten met de hond." Met wie speelt Tim? (kies)',
+  a: 'de hond',
+  opties: ['de hond', 'de kat', 'zijn zus'],
+  h: ['Wie staat er in de zin?'],
+  s: 'Tim speelt met de hond.'
+}, {
+  p: 'selma',
+  v: 'lezen',
+  t: 'Wie, wat, waar, waarom',
+  lvl: 2,
+  q: 'Lees: "Het regent. Daarom pakt Bo zijn jas." Waarom pakt Bo zijn jas? (kies)',
+  a: 'omdat het regent',
+  opties: ['omdat het regent', 'omdat het warm is', 'omdat hij speelt'],
+  h: ['Zoek het woord "daarom".'],
+  s: 'Omdat het regent.'
+}, {
+  p: 'selma',
+  v: 'lezen',
+  t: 'Volgorde',
+  lvl: 1,
+  q: 'Lees: "Eerst eet ik, dan ga ik slapen." Wat doe ik als eerste? (kies)',
+  a: 'eten',
+  opties: ['eten', 'slapen'],
+  h: ['Zoek het woord "eerst".'],
+  s: 'Eerst eten.'
 }];
 SEED.forEach((e, i) => e.id = 'seed_' + i);
 
@@ -12580,10 +13267,76 @@ const TEMPLATES = [/* ----- Wassima · wiskunde ----- */
       s: `${n} → ${r}.`
     };
   }
+}, /* ----- Selma · groep 4 (dit jaar, oneindig oefenen) ----- */
+{
+  id: 'tpl_se4_plus',
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Optellen tot 100',
+  lvl: 1,
+  gen: () => {
+    const a = ri(10, 60),
+      b = ri(2, 30);
+    return {
+      q: `Reken uit: ${a} + ${b}`,
+      a: String(a + b),
+      h: ['Tel eerst de tientallen, dan de eenheden.'],
+      s: `${a} + ${b} = ${a + b}.`
+    };
+  }
+}, {
+  id: 'tpl_se4_min',
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Aftrekken tot 100',
+  lvl: 1,
+  gen: () => {
+    const a = ri(30, 99),
+      b = ri(2, a - 10);
+    return {
+      q: `Reken uit: ${a} − ${b}`,
+      a: String(a - b),
+      h: ['Haal eerst de tientallen eraf.'],
+      s: `${a} − ${b} = ${a - b}.`
+    };
+  }
+}, {
+  id: 'tpl_se4_tafel',
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Tafels & keer',
+  lvl: 1,
+  gen: () => {
+    const a = pick([1, 2, 3, 4, 5, 10]),
+      b = ri(1, 10);
+    return {
+      q: `Reken uit: ${a} × ${b}`,
+      a: String(a * b),
+      h: [`Tafel van ${a}.`],
+      s: `${a} × ${b} = ${a * b}.`
+    };
+  }
+}, {
+  id: 'tpl_se4_helft',
+  p: 'selma',
+  v: 'rekenen',
+  t: 'Breuken',
+  lvl: 1,
+  gen: () => {
+    const h = ri(2, 15),
+      n = h * 2;
+    return {
+      q: `Wat is de helft van ${n}?`,
+      a: String(h),
+      h: ['De helft = ÷ 2.'],
+      s: `${n} ÷ 2 = ${h}.`
+    };
+  }
 }, /* ----- Selma · groep 5 (oneindig oefenen) ----- */
 {
   id: 'tpl_se_tafel',
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Tafels & keer',
   lvl: 1,
@@ -12600,6 +13353,7 @@ const TEMPLATES = [/* ----- Wassima · wiskunde ----- */
 }, {
   id: 'tpl_se_deel',
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Delen',
   lvl: 2,
@@ -12617,6 +13371,7 @@ const TEMPLATES = [/* ----- Wassima · wiskunde ----- */
 }, {
   id: 'tpl_se_plus',
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Optellen tot 1000',
   lvl: 1,
@@ -12633,6 +13388,7 @@ const TEMPLATES = [/* ----- Wassima · wiskunde ----- */
 }, {
   id: 'tpl_se_min',
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Aftrekken tot 1000',
   lvl: 2,
@@ -12649,6 +13405,7 @@ const TEMPLATES = [/* ----- Wassima · wiskunde ----- */
 }, {
   id: 'tpl_se_geld',
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Geld',
   lvl: 1,
@@ -12665,6 +13422,7 @@ const TEMPLATES = [/* ----- Wassima · wiskunde ----- */
 }, {
   id: 'tpl_se_maten',
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Meten & maten',
   lvl: 1,
@@ -12682,6 +13440,7 @@ const TEMPLATES = [/* ----- Wassima · wiskunde ----- */
 }, {
   id: 'tpl_se_helft',
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Breuken',
   lvl: 1,
@@ -12698,6 +13457,7 @@ const TEMPLATES = [/* ----- Wassima · wiskunde ----- */
 }, {
   id: 'tpl_se_afronden',
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Getallen tot 1000',
   lvl: 2,
@@ -12714,6 +13474,7 @@ const TEMPLATES = [/* ----- Wassima · wiskunde ----- */
 }, {
   id: 'tpl_se_verhouding',
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Verhoudingstabellen',
   lvl: 2,
@@ -12733,6 +13494,7 @@ const TEMPLATES = [/* ----- Wassima · wiskunde ----- */
 }, {
   id: 'tpl_se_kommageld',
   p: 'selma',
+  jaar: 'next',
   v: 'rekenen',
   t: 'Kommagetallen',
   lvl: 2,
