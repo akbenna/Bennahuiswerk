@@ -52,7 +52,16 @@ Instelbaar moeilijkheidsniveau per kind (**Auto / 1 / 2 / 3**; Auto wordt vanzel
 3. ~~**Amaani exact uitdiepen:** Scheikunde (molrekenen, molverhoudingen), Wiskunde A (kans/statistiek), Natuurkunde (samengestelde vraagstukken).~~ ✓
 4. ~~**Amine verdiepen:** langere begrijpend-leesteksten, werkwoordspelling, samenvatten, woordenschat, opzoeken/studievaardigheden.~~ ✓ (op zijn rapport-zwakke punten).
 5. ~~**Begrijpend lezen** verder uitbouwen met meer (meerkeuze-)teksten en signaalwoorden.~~ ✓ (feit/mening, samenvatten, signaalwoorden, woordbetekenis-in-context).
-6. **Nog open — engine-ideeën:** extra visuals **geodriehoek** en **lijngrafiek** (de **breukcirkel** is nu klaar ✓).
-7. **Nog open — onderhoud:** onderwerp-namen zijn opgeschoond (dubbelingen samengevoegd); periodiek blijven controleren bij nieuwe stof.
+6. ~~**Engine-ideeën:** extra visuals geodriehoek, lijngrafiek, breukcirkel.~~ ✓ (alle drie klaar).
+7. **Onderhoud:** onderwerp-namen opgeschoond (dubbelingen samengevoegd); periodiek blijven controleren bij nieuwe stof.
+8. **Volgend-jaar-blokken verder verrijken (optioneel):** de vooruitblik-sets (talen/zaakvakken) zijn nu gevuld maar dun (≈ 1–5 per vak); kan bij gelegenheid verder groeien. Niet urgent — het is een vooruitblik, geen hoofdstof.
 
-_Gereed (engine):_ meerkeuze-vraagtype ✓ · getekende klok ✓ · staafdiagram ✓ · **breukcirkel (taartdiagram) ✓** · voortgangsrapport exporteren ✓ · **geluid bij goed/fout antwoord (aan/uit-knop) ✓** · **timer bij de oefentoets (+ gemiddelde tijd per vraag) ✓** · **voorlezen van vragen & leesteksten (tekst-naar-spraak, NL, aan/uit-knop) ✓**.
+_Gereed (engine):_ meerkeuze-vraagtype ✓ · getekende klok ✓ · staafdiagram ✓ · **breukcirkel (taartdiagram) ✓** · **geodriehoek (hoek) ✓** · **lijngrafiek ✓** · voortgangsrapport exporteren ✓ · **geluid bij goed/fout antwoord (aan/uit-knop) ✓** · **timer bij de oefentoets (+ gemiddelde tijd per vraag) ✓** · **voorlezen van vragen & leesteksten (tekst-naar-spraak, NL, aan/uit-knop) ✓**.
+
+## Compleetheid & variatie (check juli 2026)
+Elk kind heeft ruim voldoende oefenmateriaal, met spreiding over moeilijkheid (L1/L2/L3), open én meerkeuze, en per vak meerdere onderwerpen:
+- **Selma (groep 4 → 5):** 294 opgaven — rekenen/taal/lezen dit jaar gevuld, groep-5-blok ruim als vooruitblik.
+- **Amine (groep 7 → 8):** 327 — dit jaar zeer ruim (rekenen, taal, lezen, studievaardigheden, Engels), sterk op de doorstroomtoets-categorieën.
+- **Wassima (2 → 3 havo):** 388 — alle 10 vakken gevuld; exact ruim, talen/zaakvakken degelijk.
+- **Amaani (4 → 5 vwo):** 387 — alle 10 vakken gevuld; exact zeer ruim.
+Geen enkel vak-vak-combinatie meer leeg. Aandachtspunt (niet urgent): de "volgend jaar"-vooruitblik van talen/zaakvakken is bewust dun.

@@ -2062,6 +2062,35 @@ const SEED = [
   /* ---- Breukcirkel-visual in gebruik ---- */
   {p:'selma',v:'rekenen',t:'Breuken',lvl:1,ill:{type:'breukcirkel',delen:2,gevuld:1},q:'Welk deel van de cirkel is gekleurd? Schrijf als breuk (bijv. 1/2).',a:'1/2',alt:['0,5','0.5','een half'],h:['Er zijn 2 gelijke delen; 1 is gekleurd.'],s:'1 van de 2 delen = 1/2 (een half).'},
   {p:'selma',v:'rekenen',jaar:'next',t:'Breuken',lvl:2,ill:{type:'breukcirkel',delen:4,gevuld:3},q:'Welk deel van de cirkel is gekleurd? Schrijf als breuk (bijv. 3/4).',a:'3/4',alt:['0,75','0.75'],h:['Er zijn 4 gelijke delen; 3 zijn gekleurd.'],s:'3 van de 4 delen = 3/4.'},
+
+  /* ===== Compleetheids-ronde: nieuwe visuals + gaten dichten ===== */
+  /* ---- Geodriehoek-visual (hoeken) ---- */
+  {p:'wassima',v:'wiskunde',t:'Hoeken',lvl:2,ill:{type:'geodriehoek',hoek:40},q:'De getekende hoek is 40°. Samen met de hoek ernaast op een rechte lijn is dat 180°. Hoe groot is de andere hoek? (in graden)',a:'140',h:['180 − 40.'],s:'Gestrekte hoek = 180°: 180 − 40 = 140°.'},
+  {p:'wassima',v:'wiskunde',t:'Hoeken',lvl:2,ill:{type:'geodriehoek',hoek:50},q:'Deze hoek is 50°. Hoeveel graden moet erbij om samen een rechte hoek (90°) te vormen?',a:'40',h:['90 − 50.'],s:'90 − 50 = 40°.'},
+  {p:'amaani',v:'wiskundeA',t:'Meetkunde',lvl:2,ill:{type:'geodriehoek',hoek:35},q:'Twee hoeken samen zijn 90° (complement). De ene is 35° (zie figuur). Hoe groot is de andere?',a:'55',h:['90 − 35.'],s:'90 − 35 = 55°.'},
+  /* ---- Lijngrafiek-visual (aflezen) ---- */
+  {p:'amine',v:'studievaardigheden',t:'Grafieken & tabellen lezen',lvl:2,ill:{type:'lijngrafiek',punten:[[1,12],[2,15],[3,20],[4,17]],xlabel:'dag',ylabel:'°C'},q:'De lijngrafiek toont de temperatuur per dag. Wat was de hoogste temperatuur? (in °C)',a:'20',h:['Zoek het hoogste punt.'],s:'Op dag 3 was het 20 °C, het hoogst.'},
+  {p:'amine',v:'studievaardigheden',t:'Grafieken & tabellen lezen',lvl:2,ill:{type:'lijngrafiek',punten:[[1,12],[2,15],[3,20],[4,17]],xlabel:'dag',ylabel:'°C'},q:'Op welke dag was het het warmst?',a:'3',u:'dag',h:['Bij het hoogste punt.'],s:'Op dag 3 (20 °C).'},
+  {p:'amaani',v:'wiskundeA',t:'Statistiek',lvl:2,ill:{type:'lijngrafiek',punten:[[1,20],[2,35],[3,50]],xlabel:'maand',ylabel:'omzet'},q:'De grafiek toont de omzet per maand (× € 1000). Hoeveel steeg de omzet van maand 1 naar maand 3? (× € 1000)',a:'30',h:['50 − 20.'],s:'50 − 20 = 30 (× € 1000).'},
+  /* ---- Amine · studievaardigheden VOLGEND JAAR (groep 8) — was leeg ---- */
+  {p:'amine',v:'studievaardigheden',jaar:'next',t:'Kaart & schaal',lvl:3,q:'Op een kaart met schaal 1 : 1000 is een weg 5 cm. Hoe lang is de weg in het echt? (in meter)',a:'50',u:'m',h:['5 × 1000 = 5000 cm; deel door 100 voor meter.'],s:'5 cm × 1000 = 5000 cm = 50 m.'},
+  {p:'amine',v:'studievaardigheden',jaar:'next',t:'Grafieken & tabellen lezen',lvl:2,q:'In een verhoudingstabel: 2 kg appels kost € 3. Hoeveel kosten 6 kg?',a:'9',u:'€',h:['6 is 3× zoveel als 2 → 3× de prijs.'],s:'3 × € 3 = € 9.'},
+  {p:'amine',v:'studievaardigheden',jaar:'next',t:'Opzoeken',lvl:2,q:'Je zoekt in een digitale encyclopedie snel informatie. Welk woord typ je het best in de zoekbalk als je iets over de bloedsomloop wilt weten? (kies)',a:'bloedsomloop',opties:['bloedsomloop','ik wil graag weten hoe','een lange zin'],h:['Eén kernwoord (trefwoord) werkt het best.'],s:'Zoek op het trefwoord: "bloedsomloop".'},
+  /* ---- Wassima · Nederlands VOLGEND JAAR (3 havo) — was leeg ---- */
+  {p:'wassima',v:'nederlands',jaar:'next',t:'Werkwoordspelling',lvl:3,q:'Voltooid deelwoord: "Er is iets ergs ... ." (gebeuren) → is',a:'gebeurd',h:['Stam eindigt op r → +d; en het is een voltooid deelwoord (ge-...-d).'],s:'gebeuren → gebeurd (niet "gebeurt").'},
+  {p:'wassima',v:'nederlands',jaar:'next',t:'Woordsoorten',lvl:2,q:'Welk woordsoort is "snel" in de zin "Hij loopt snel"? (kies)',a:'bijwoord',opties:['bijwoord','zelfstandig naamwoord','lidwoord'],h:['Het zegt iets over hóe hij loopt (bij het werkwoord).'],s:'"snel" zegt iets over het werkwoord "loopt" → bijwoord.'},
+  {p:'wassima',v:'nederlands',jaar:'next',t:'Spelling',lvl:2,q:'Wat is het meervoud van "kilo" met een leesteken? (bijv. auto → auto\'s)',a:'kilo\'s',alt:['kilos'],h:['Klinker aan het eind → meervoud met apostrof-s.'],s:'kilo → kilo\'s.'},
+  /* ---- Amaani · Nederlands VOLGEND JAAR (5 vwo) — was leeg ---- */
+  {p:'amaani',v:'nederlands',jaar:'next',t:'Stijlfiguren',lvl:3,q:'Hoe heet de stijlfiguur waarbij woorden met dezelfde beginklank achter elkaar staan (bijv. "vurige vlammen")? (kies)',a:'alliteratie',opties:['alliteratie','vergelijking','overdrijving'],h:['Denk aan de herhaalde beginletter.'],s:'Herhaling van de beginklank = alliteratie.'},
+  {p:'amaani',v:'nederlands',jaar:'next',t:'Argumentatie',lvl:3,q:'Hoe noem je een bewering (standpunt) samen met de onderbouwing ervan?',a:'argument',alt:['een argument','argumentatie'],h:['Je "beargumenteert" je mening.'],s:'Een standpunt met onderbouwing is een argument.'},
+  {p:'amaani',v:'nederlands',jaar:'next',t:'Tekstsoorten',lvl:2,q:'Een tekst die je van een mening wil overtuigen, is een ...? (kies)',a:'betoog',opties:['betoog','verslag','recept'],h:['Overtuigen = betogen.'],s:'Een overtuigende tekst is een betoog.'},
+  /* ---- Meer meerkeuze-variatie + iets dikkere zaakvakken (Wassima & Amaani) ---- */
+  {p:'amaani',v:'aardrijkskunde',t:'Ontwikkeling',lvl:2,q:'Een land met een laag gemiddeld inkomen en weinig industrie noem je een ...? (kies)',a:'ontwikkelingsland',opties:['ontwikkelingsland','industrieland','poolgebied'],h:['Het "ontwikkelt" zich economisch nog.'],s:'Dat is een ontwikkelingsland.'},
+  {p:'amaani',v:'aardrijkskunde',t:'Kaartvaardigheden',lvl:1,q:'Hoe heet de denkbeeldige lijn op 0° breedte, midden om de aarde? (kies)',a:'de evenaar',opties:['de evenaar','de noordpool','de nulmeridiaan'],h:['Precies tussen noord- en zuidpool.'],s:'De evenaar ligt op 0° breedte.'},
+  {p:'amaani',v:'economie',t:'Begrippen',lvl:2,q:'Kosten die niet veranderen als je meer of minder maakt, heten ...? (kies)',a:'vaste kosten',opties:['vaste kosten','variabele kosten','totale kosten'],h:['Ze blijven gelijk (bijv. huur).'],s:'Kosten die gelijk blijven = vaste kosten.'},
+  {p:'wassima',v:'economie',t:'Begrippen',lvl:1,q:'Geld dat je opzij zet voor later heet ...? (kies)',a:'sparen',opties:['sparen','lenen','uitgeven'],h:['Niet uitgeven maar bewaren.'],s:'Geld bewaren voor later = sparen.'},
+  {p:'wassima',v:'geschiedenis',t:'Industriële revolutie',lvl:2,q:'Welke uitvinding gaf de fabrieken in de industriële revolutie hun kracht? (kies)',a:'de stoommachine',opties:['de stoommachine','de computer','de auto'],h:['Werkte op kolen en stoom.'],s:'De stoommachine dreef de fabrieken aan.'},
+  {p:'wassima',v:'biologie',t:'Het menselijk lichaam',lvl:2,q:'Welk orgaan pompt het bloed rond? (kies)',a:'het hart',opties:['het hart','de longen','de maag'],h:['Het klopt in je borst.'],s:'Het hart pompt het bloed rond.'},
 ];
 SEED.forEach((e,i)=> e.id = 'seed_'+i);
 
@@ -4667,6 +4696,39 @@ function Figure({ill}){
       return (
         <svg width={W} height={hh+8} viewBox={'0 0 '+W+' '+(hh+8)} role="img" aria-label="breuk">
           {rc.map(i=>(<rect key={i} x={i*w} y="4" width={w} height={hh} fill={i<g?G:F} stroke={M} strokeWidth="1.5"/>))}
+        </svg>);
+    }
+    case 'geodriehoek': {
+      const hoek=typeof ill.hoek==='number'?ill.hoek:40, cx=34, cy=112, L=150, rad=hoek*Math.PI/180, arcR=40;
+      const ex=cx+L, ey=cy;
+      const ax=cx+L*Math.cos(-rad), ay=cy+L*Math.sin(-rad);
+      const a0x=cx+arcR, a0y=cy, a1x=cx+arcR*Math.cos(-rad), a1y=cy+arcR*Math.sin(-rad);
+      const large=hoek>180?1:0;
+      const lx=cx+(arcR+16)*Math.cos(-rad/2), ly=cy+(arcR+16)*Math.sin(-rad/2);
+      return (
+        <svg width="200" height="140" viewBox="0 0 200 140" role="img" aria-label={'hoek van '+(ill.hoek==='?'?'?':hoek+' graden')}>
+          <line x1={cx} y1={cy} x2={ex} y2={ey} stroke={G} strokeWidth="2.5"/>
+          <line x1={cx} y1={cy} x2={ax.toFixed(1)} y2={ay.toFixed(1)} stroke={G} strokeWidth="2.5"/>
+          <path d={`M ${a0x} ${a0y} A ${arcR} ${arcR} 0 ${large} 0 ${a1x.toFixed(1)} ${a1y.toFixed(1)}`} fill="none" stroke={A} strokeWidth="2"/>
+          <text x={lx.toFixed(1)} y={ly.toFixed(1)} fontSize="14" textAnchor="middle" fill={A} fontWeight="bold">{ill.hoek==='?'?'?':hoek+'°'}</text>
+        </svg>);
+    }
+    case 'lijngrafiek': {
+      const pts=ill.punten||[], xs=pts.map(p=>p[0]), ys=pts.map(p=>p[1]);
+      const W=270,H=150,padL=32,padB=26,padT=12,padR=12;
+      const xmin=Math.min.apply(null,xs), xmax=Math.max.apply(null,xs), ymax=Math.max.apply(null,ys.concat([1]));
+      const px=x=>padL+((x-xmin)/((xmax-xmin)||1))*(W-padL-padR);
+      const py=y=>H-padB-(y/ymax)*(H-padB-padT);
+      const poly=pts.map(p=>px(p[0]).toFixed(1)+','+py(p[1]).toFixed(1)).join(' ');
+      return (
+        <svg width={W} height={H} viewBox={'0 0 '+W+' '+H} role="img" aria-label="lijngrafiek">
+          <line x1={padL} y1={padT} x2={padL} y2={H-padB} stroke={M} strokeWidth="1.5"/>
+          <line x1={padL} y1={H-padB} x2={W-padR} y2={H-padB} stroke={M} strokeWidth="1.5"/>
+          <polyline points={poly} fill="none" stroke={G} strokeWidth="2.5"/>
+          {pts.map((p,i)=>(<g key={i}><circle cx={px(p[0])} cy={py(p[1])} r="3.2" fill={A}/>
+            <text x={px(p[0])} y={H-padB+14} fontSize="11" textAnchor="middle" fill={M}>{p[0]}</text></g>))}
+          {ill.ylabel && <text x={padL-4} y={padT+2} fontSize="10" textAnchor="end" fill={M}>{ill.ylabel}</text>}
+          {ill.xlabel && <text x={W-padR} y={H-6} fontSize="10" textAnchor="end" fill={M}>{ill.xlabel}</text>}
         </svg>);
     }
     case 'breukcirkel': {
