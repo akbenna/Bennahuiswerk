@@ -2091,6 +2091,76 @@ const SEED = [
   {p:'wassima',v:'economie',t:'Begrippen',lvl:1,q:'Geld dat je opzij zet voor later heet ...? (kies)',a:'sparen',opties:['sparen','lenen','uitgeven'],h:['Niet uitgeven maar bewaren.'],s:'Geld bewaren voor later = sparen.'},
   {p:'wassima',v:'geschiedenis',t:'Industriële revolutie',lvl:2,q:'Welke uitvinding gaf de fabrieken in de industriële revolutie hun kracht? (kies)',a:'de stoommachine',opties:['de stoommachine','de computer','de auto'],h:['Werkte op kolen en stoom.'],s:'De stoommachine dreef de fabrieken aan.'},
   {p:'wassima',v:'biologie',t:'Het menselijk lichaam',lvl:2,q:'Welk orgaan pompt het bloed rond? (kies)',a:'het hart',opties:['het hart','de longen','de maag'],h:['Het klopt in je borst.'],s:'Het hart pompt het bloed rond.'},
+
+  /* ===== Verbeterronde #2 · Nederlands als hoofdvak uitbreiden (dit jaar) ===== */
+  /* ---- Wassima · Nederlands (2 havo) ---- */
+  {p:'wassima',v:'nederlands',t:'Werkwoordspelling',lvl:2,q:'Vul in (tegenwoordige tijd): "Hij ... snel." (antwoorden) → hij',a:'antwoordt',h:['Stam "antwoord" + t.'],s:'antwoord + t = antwoordt.'},
+  {p:'wassima',v:'nederlands',t:'Werkwoordspelling',lvl:3,q:'Verleden tijd meervoud: "Gisteren ... wij naar school." (fietsen) → wij',a:'fietsten',h:['Stam fiets (s in \'t kofschip) → +te, meervoud +n.'],s:'fiets + te + n = fietsten.'},
+  {p:'wassima',v:'nederlands',t:'Werkwoordspelling',lvl:2,q:'Voltooid deelwoord: "We hebben lang ge... ." (wandelen) → ge',a:'wandeld',alt:['gewandeld'],h:['Stam wandel (l, niet in \'t kofschip) → +d.'],s:'wandelen → gewandeld.'},
+  {p:'wassima',v:'nederlands',t:'Woordsoorten',lvl:1,q:'Welk woordsoort is "de"? (kies)',a:'lidwoord',opties:['lidwoord','werkwoord','bijvoeglijk naamwoord'],h:['de, het, een.'],s:'"de" is een lidwoord.'},
+  {p:'wassima',v:'nederlands',t:'Woordsoorten',lvl:2,q:'Welk woordsoort is "mooi" in "een mooi huis"? (kies)',a:'bijvoeglijk naamwoord',opties:['bijvoeglijk naamwoord','werkwoord','lidwoord'],h:['Het zegt iets over het zelfstandig naamwoord (huis).'],s:'"mooi" beschrijft "huis" → bijvoeglijk naamwoord.'},
+  {p:'wassima',v:'nederlands',t:'Woordsoorten',lvl:2,q:'Welk woordsoort is "zij" in "Zij loopt"? (kies)',a:'voornaamwoord',opties:['voornaamwoord','zelfstandig naamwoord','bijwoord'],h:['Het vervangt een naam.'],s:'"zij" is een (persoonlijk) voornaamwoord.'},
+  {p:'wassima',v:'nederlands',t:'Zinsdelen',lvl:2,q:'In de zin "De hond blaft" — wat is het onderwerp?',a:'de hond',alt:['hond'],h:['Wie of wat doet iets? Vraag: wie blaft?'],s:'"De hond" is het onderwerp (wie blaft? → de hond).'},
+  {p:'wassima',v:'nederlands',t:'Zinsdelen',lvl:3,q:'In "Ik eet een appel" — wat is het lijdend voorwerp?',a:'een appel',alt:['appel','de appel'],h:['Vraag: ik eet wát?'],s:'"een appel" is het lijdend voorwerp (ik eet wat? → een appel).'},
+  {p:'wassima',v:'nederlands',t:'Spelling',lvl:2,q:'Wat is juist: "pannekoek" of "pannenkoek"?',a:'pannenkoek',h:['Tussen-n omdat je aan meer dan één pan/pannen denkt.'],s:'Juist: pannenkoek (met tussen-n).'},
+  {p:'wassima',v:'nederlands',t:'Spelling',lvl:2,q:'Schrijf de samenstelling van "fiets" + "bel" (aan elkaar).',a:'fietsbel',h:['Samenstellingen schrijf je aan elkaar.'],s:'fiets + bel = fietsbel.'},
+  {p:'wassima',v:'nederlands',t:'Leesvaardigheid',lvl:2,q:'Vul het signaalwoord van gevolg in: "Het regende hard, ... bleven we binnen."',a:'daarom',alt:['dus'],h:['Het geeft het gevolg aan.'],s:'"daarom/dus" geeft een gevolg aan.'},
+  {p:'wassima',v:'nederlands',t:'Leesvaardigheid',lvl:2,q:'Hoe heet de belangrijkste boodschap van een tekst?',a:'de hoofdgedachte',alt:['hoofdgedachte','kerngedachte'],h:['De kern van de hele tekst.'],s:'Dat is de hoofdgedachte.'},
+  {p:'wassima',v:'nederlands',t:'Spreekwoorden',lvl:2,q:'Wat betekent "de kat uit de boom kijken"? (kies)',a:'eerst rustig afwachten',opties:['eerst rustig afwachten','snel toeslaan','ruzie zoeken'],h:['Je onderneemt nog niets.'],s:'Eerst afwachten hoe iets zich ontwikkelt.'},
+  /* ---- Amaani · Nederlands (4 vwo) ---- */
+  {p:'amaani',v:'nederlands',t:'Argumentatie',lvl:3,q:'Hoe heet een drogreden waarbij je de persoon aanvalt in plaats van zijn argument?',a:'ad hominem',alt:['persoonlijke aanval','op de man spelen'],h:['Latijn: "naar de mens".'],s:'Dat is een ad-hominem-drogreden (op de man spelen).'},
+  {p:'amaani',v:'nederlands',t:'Stijlfiguren',lvl:3,q:'Hoe heet een sterke overdrijving als stijlfiguur (bijv. "ik heb je duizend keer gebeld")? (kies)',a:'hyperbool',opties:['hyperbool','understatement','alliteratie'],h:['Bewust enorm overdrijven.'],s:'Een overdrijving is een hyperbool.'},
+  {p:'amaani',v:'nederlands',t:'Stijlfiguren',lvl:3,q:'Hoe heet een vergelijking zónder "als" of "zoals", waarbij iets iets anders wordt genoemd (bijv. "die man is een leeuw")? (kies)',a:'metafoor',opties:['metafoor','vergelijking','hyperbool'],h:['Beeldspraak zonder vergelijkingswoord.'],s:'Dat is een metafoor.'},
+  {p:'amaani',v:'nederlands',t:'Tekstverbanden',lvl:2,q:'Bij welk tekstverband horen de signaalwoorden "echter", "daarentegen", "maar"? (kies)',a:'tegenstelling',opties:['tegenstelling','opsomming','oorzaak-gevolg'],h:['Er komt iets tegenovergestelds.'],s:'Die woorden geven een tegenstelling aan.'},
+  {p:'amaani',v:'nederlands',t:'Tekstverbanden',lvl:2,q:'Bij welk tekstverband horen "ten eerste, ten tweede, bovendien"? (kies)',a:'opsomming',opties:['opsomming','tegenstelling','conclusie'],h:['Je somt punten op.'],s:'Die woorden horen bij een opsomming.'},
+  {p:'amaani',v:'nederlands',t:'Formuleren',lvl:3,q:'Congruentie: "De rij wachtende mensen ... al een uur." (staan/staat) → de rij',a:'staat',h:['Het onderwerp is "de rij" (enkelvoud), niet "mensen".'],s:'De kern van het onderwerp is "de rij" (enkelvoud) → staat.'},
+  {p:'amaani',v:'nederlands',t:'Leesvaardigheid',lvl:2,q:'Waar staat de kernzin van een alinea meestal?',a:'aan het begin',alt:['begin','vooraan','aan het begin van de alinea'],h:['Vaak de eerste zin.'],s:'Meestal aan het begin van de alinea.'},
+  {p:'amaani',v:'nederlands',t:'Leesvaardigheid',lvl:3,q:'Wat is het hoofddoel van een advertentie? (kies)',a:'overtuigen / aanzetten tot kopen',opties:['overtuigen / aanzetten tot kopen','alleen informeren','vermaken met een verhaal'],h:['Waarom wordt de tekst geschreven?'],s:'Een advertentie wil je overtuigen om iets te kopen.'},
+
+  /* ===== Verbeterronde #1 · Wassima 3 havo (VOLGEND JAAR) verrijken ===== */
+  {p:'wassima',v:'engels',jaar:'next',t:'Grammatica',lvl:3,q:'Passive: "The house ... in 1900." (build) → was',a:'built',h:['was/were + voltooid deelwoord. build → built.'],s:'The house was built in 1900.'},
+  {p:'wassima',v:'engels',jaar:'next',t:'Grammatica',lvl:3,q:'Reported speech: "He said he ... tired." (is → verleden) → he said he',a:'was',h:['In indirecte rede schuift de tijd terug: is → was.'],s:'He said he was tired.'},
+  {p:'wassima',v:'engels',jaar:'next',t:'Woordenschat',lvl:2,q:'Vertaal naar het Engels: "verminderen".',a:'to reduce',alt:['reduce','decrease','to decrease'],h:['Het tegenovergestelde van to increase.'],s:'verminderen = to reduce / to decrease.'},
+  {p:'wassima',v:'frans',jaar:'next',t:'Werkwoorden',lvl:2,q:'Ontkenning: vul het ontbrekende deel in: "Je ... mange pas." → je',a:'ne',h:['De Franse ontkenning is ne ... pas.'],s:'Je ne mange pas = ik eet niet.'},
+  {p:'wassima',v:'frans',jaar:'next',t:'Werkwoorden',lvl:3,q:'Futur proche: "Je vais ... ." (manger, gaan eten) → je vais',a:'manger',h:['aller + hele werkwoord (infinitief).'],s:'Je vais manger = ik ga eten.'},
+  {p:'wassima',v:'frans',jaar:'next',t:'Woordenschat',lvl:1,q:'Vertaal naar het Nederlands: "demain".',a:'morgen',h:['De dag na vandaag.'],s:'demain = morgen.'},
+  {p:'wassima',v:'frans',jaar:'next',t:'Woordenschat',lvl:1,q:'Vertaal naar het Nederlands: "hier".',a:'gisteren',h:['De dag vóór vandaag (Frans, niet Engels).'],s:'hier = gisteren.'},
+  {p:'wassima',v:'duits',jaar:'next',t:'Werkwoorden',lvl:3,q:'Perfekt: "Ich habe Fußball ge... ." (spielen) → ge',a:'spielt',alt:['gespielt'],h:['spielen → gespielt.'],s:'Ich habe Fußball gespielt.'},
+  {p:'wassima',v:'duits',jaar:'next',t:'Werkwoorden',lvl:2,q:'Wat betekent het modale werkwoord "müssen"?',a:'moeten',h:['"ich muss" = ik moet.'],s:'müssen = moeten.'},
+  {p:'wassima',v:'duits',jaar:'next',t:'Woordenschat',lvl:1,q:'Vertaal naar het Nederlands: "gestern".',a:'gisteren',h:['De dag vóór vandaag.'],s:'gestern = gisteren.'},
+  {p:'wassima',v:'biologie',jaar:'next',t:'Zenuwstelsel',lvl:3,q:'Hoe heet de bouwsteen (cel) van het zenuwstelsel?',a:'zenuwcel',alt:['neuron','de zenuwcel','het neuron'],h:['Geleidt prikkels door.'],s:'De zenuwcel (neuron) is de bouwsteen van het zenuwstelsel.'},
+  {p:'wassima',v:'biologie',jaar:'next',t:'Ecologie',lvl:2,q:'Hoe heet een gebied met alle organismen én hun omgeving samen?',a:'ecosysteem',alt:['een ecosysteem'],h:['Bijv. een bos of een sloot als geheel.'],s:'Dat is een ecosysteem.'},
+  {p:'wassima',v:'aardrijkskunde',jaar:'next',t:'Endogeen & exogeen',lvl:2,q:'Komen endogene krachten van binnen of van buiten de aarde? (kies)',a:'van binnen',opties:['van binnen','van buiten'],h:['Endo = binnen.'],s:'Endogene krachten (vulkanisme, aardbevingen) komen van binnen de aarde.'},
+  {p:'wassima',v:'aardrijkskunde',jaar:'next',t:'Water & landschap',lvl:2,q:'Hoe heet de plek waar een rivier uitmondt in zee?',a:'de monding',alt:['monding'],h:['Het einde van de rivier.'],s:'Dat is de monding.'},
+  {p:'wassima',v:'aardrijkskunde',jaar:'next',t:'Klimaatzones',lvl:2,q:'Rond welke lijn ligt het tropisch regenwoud vooral? (kies)',a:'de evenaar',opties:['de evenaar','de noordpool','de nulmeridiaan'],h:['Warm en vochtig, 0° breedte.'],s:'Rond de evenaar.'},
+  {p:'wassima',v:'geschiedenis',jaar:'next',t:'Naoorlogse tijd',lvl:2,q:'In welk jaar werden de Verenigde Naties (VN) opgericht?',a:'1945',h:['Direct na de Tweede Wereldoorlog.'],s:'De VN werd opgericht in 1945.'},
+  {p:'wassima',v:'geschiedenis',jaar:'next',t:'Naoorlogse tijd',lvl:2,q:'Hoe heette het systeem van rassenscheiding in Zuid-Afrika?',a:'apartheid',alt:['de apartheid'],h:['Een Afrikaans/Nederlands woord: "apart houden".'],s:'Dat systeem heette apartheid.'},
+  {p:'wassima',v:'economie',jaar:'next',t:'Markt',lvl:2,q:'Vraag en aanbod bepalen samen de ...? (kies)',a:'prijs',opties:['prijs','belasting','rente'],h:['Waar vraag en aanbod elkaar kruisen.'],s:'Vraag en aanbod bepalen samen de prijs.'},
+  {p:'wassima',v:'economie',jaar:'next',t:'Markt',lvl:2,q:'Hoe heet de vergoeding die je betaalt als je geld leent?',a:'rente',alt:['de rente'],h:['Ook wat je krijgt als je spaart.'],s:'Dat is rente.'},
+  {p:'wassima',v:'economie',jaar:'next',t:'Begrippen',lvl:2,q:'Hoe heet het verschijnsel dat de prijzen algemeen blijven stijgen?',a:'inflatie',alt:['de inflatie'],h:['Je geld wordt minder waard.'],s:'Dat is inflatie.'},
+
+  /* ===== Verbeterronde #1 · Amaani 5 vwo (VOLGEND JAAR) verrijken ===== */
+  {p:'amaani',v:'engels',jaar:'next',t:'Grammatica',lvl:3,q:'Third conditional: "If I had known, I ... have come." → I',a:'would',alt:["'d",'would have','wouldhave'],h:['If + had + voltooid deelwoord, ... would have + voltooid deelwoord.'],s:'If I had known, I would have come.'},
+  {p:'amaani',v:'engels',jaar:'next',t:'Woordenschat',lvl:3,q:'Vertaal naar het Nederlands (formeel): "nevertheless".',a:'niettemin',alt:['toch','desondanks','echter'],h:['Ondanks wat eerder gezegd is.'],s:'nevertheless = niettemin / toch.'},
+  {p:'amaani',v:'engels',jaar:'next',t:'Grammatica',lvl:3,q:'Wat betekent de uitdrukking "to cost an arm and a leg"? (kies)',a:'heel duur zijn',opties:['heel duur zijn','heel goedkoop zijn','pijn doen'],h:['Het gaat over geld, niet over lichaamsdelen.'],s:'"cost an arm and a leg" = heel duur zijn.'},
+  {p:'amaani',v:'frans',jaar:'next',t:'Woordenschat',lvl:2,q:'Vertaal naar het Nederlands: "jamais".',a:'nooit',alt:['ne jamais'],h:['Ne ... jamais = nooit.'],s:'jamais = nooit.'},
+  {p:'amaani',v:'frans',jaar:'next',t:'Werkwoorden',lvl:3,q:'Conditionnel: "je ... " (aimer, ik zou willen/houden van) → j\'',a:'aimerais',h:['aimer + terminatie -ais in de conditionnel.'],s:'j\'aimerais = ik zou willen.'},
+  {p:'amaani',v:'biologie',jaar:'next',t:'Erfelijkheid',lvl:3,q:'Hoe heet het verdubbelen van het DNA vóór een celdeling?',a:'replicatie',alt:['dna-replicatie','de replicatie'],h:['Een kopie maken van het DNA.'],s:'Dat is de (DNA-)replicatie.'},
+  {p:'amaani',v:'biologie',jaar:'next',t:'Evolutie',lvl:2,q:'"Survival of the fittest" hoort bij welk mechanisme van Darwin? (kies)',a:'natuurlijke selectie',opties:['natuurlijke selectie','fotosynthese','celdeling'],h:['De best aangepaste overleeft en plant zich voort.'],s:'Dat is natuurlijke selectie.'},
+  {p:'amaani',v:'aardrijkskunde',jaar:'next',t:'Platentektoniek',lvl:3,q:'Wat gebeurt er vooral op de grens van twee botsende aardplaten? (kies)',a:'aardbevingen en vulkanen',opties:['aardbevingen en vulkanen','woestijnvorming','eb en vloed'],h:['Denk aan de "Ring of Fire".'],s:'Op plaatgrenzen ontstaan aardbevingen en vulkanen.'},
+  {p:'amaani',v:'aardrijkskunde',jaar:'next',t:'Bevolking',lvl:2,q:'Hoe heet de trek van mensen van het platteland naar de stad?',a:'urbanisatie',alt:['verstedelijking','de urbanisatie'],h:['Van "urbs" = stad.'],s:'Dat is urbanisatie (verstedelijking).'},
+  {p:'amaani',v:'aardrijkskunde',jaar:'next',t:'Klimaat & weer',lvl:3,q:'Welke warme zeestroom houdt West-Europa relatief mild?',a:'de Golfstroom',alt:['golfstroom','de warme golfstroom'],h:['Komt uit de Golf van Mexico.'],s:'De Golfstroom (warme zeestroom) houdt West-Europa mild.'},
+  {p:'amaani',v:'geschiedenis',jaar:'next',t:'Historische vaardigheden',lvl:3,q:'Hoe noem je een bron van een direct ooggetuige uit de tijd zelf? (kies)',a:'een primaire bron',opties:['een primaire bron','een secundaire bron','een leerboek'],h:['Uit de eerste hand, uit de tijd zelf.'],s:'Dat is een primaire bron.'},
+  {p:'amaani',v:'geschiedenis',jaar:'next',t:'Historische vaardigheden',lvl:3,q:'Hoe heet het beoordelen van een bron op betrouwbaarheid en bruikbaarheid?',a:'bronkritiek',alt:['bronnenkritiek','de bronkritiek'],h:['Kritisch naar de bron kijken.'],s:'Dat is bronkritiek.'},
+  {p:'amaani',v:'economie',jaar:'next',t:'Conjunctuur',lvl:2,q:'Bij hoogconjunctuur groeit of krimpt de economie? (kies)',a:'groeit',opties:['groeit','krimpt'],h:['"Hoog" = het gaat goed.'],s:'Bij hoogconjunctuur groeit de economie.'},
+  {p:'amaani',v:'economie',jaar:'next',t:'Overheid',lvl:3,q:'Hoe heet de belasting die je over je inkomen betaalt?',a:'inkomstenbelasting',alt:['de inkomstenbelasting','loonbelasting'],h:['Belasting over wat je verdient.'],s:'Dat is de inkomstenbelasting.'},
+
+  /* ===== Verbeterronde #1 · Amine groep 8 (VOLGEND JAAR) · Engels & lezen aanvullen ===== */
+  {p:'amine',v:'engels',jaar:'next',t:'Woordenschat',lvl:2,q:'Vertaal naar het Engels: "vriend".',a:'friend',h:['Iemand die je aardig vindt.'],s:'vriend = friend.'},
+  {p:'amine',v:'engels',jaar:'next',t:'Woordenschat',lvl:2,q:'Vertaal naar het Nederlands: "school".',a:'school',alt:['de school'],h:['Daar leer je (zelfde woord bijna).'],s:'school = school.'},
+  {p:'amine',v:'engels',jaar:'next',t:'Grammatica',lvl:2,q:'Vergrotende trap van "big" (Engels).',a:'bigger',h:['+ ger, medeklinker verdubbelen.'],s:'big → bigger.'},
+  {p:'amine',v:'engels',jaar:'next',t:'Zinnen & vragen',lvl:2,q:'Hoe zeg je "tot ziens" in het Engels?',a:'goodbye',alt:['bye','see you','good bye'],h:['Bij het afscheid.'],s:'tot ziens = goodbye.'},
+  {p:'amine',v:'lezen',jaar:'next',t:'Leesteksten',lvl:2,q:'Lees:\n"In de brugklas krijg je veel nieuwe vakken en meer huiswerk. Een agenda helpt je om alles bij te houden. Zo vergeet je geen toets of opdracht."\n\nWaarom helpt een agenda? (kies)',a:'om alles bij te houden en niets te vergeten',opties:['om alles bij te houden en niets te vergeten','om sneller te fietsen','om vrienden te maken'],h:['Lees de laatste twee zinnen.'],s:'Een agenda helpt je alles bij te houden, zodat je niets vergeet.'},
 ];
 SEED.forEach((e,i)=> e.id = 'seed_'+i);
 
@@ -2532,6 +2602,22 @@ function cardInfo(prog,id){return (prog.cards||{})[id]||{box:0,ok:0,wrong:0,last
 function dueTime(c){return (c.last||0) + (BOX_DAGEN[c.box]||0)*86400000;}
 function isMastered(prog,id){return cardInfo(prog,id).box>=4;}
 function puntenVoor(prog,id,usedHint){return isMastered(prog,id)?3:(usedHint?5:10);}
+// Adaptieve analyse: per onderwerp beheersing% + foutenteller → gerangschikte zwakke/sterke onderwerpen
+function zwakteAnalyse(prog, allEx, pid){
+  const perTopic={};
+  allEx.filter(e=>e.p===pid && !e.gen).forEach(e=>{      // vaste opgaven (sjablonen niet per stuk beheersbaar)
+    const c=cardInfo(prog,e.id), k=e.v+'|'+e.t;
+    const o=(perTopic[k]=perTopic[k]||{v:e.v,t:e.t,total:0,mastered:0,wrong:0,boxSum:0,beg:0,jaar:e.jaar||'nu'});
+    o.total++; if(c.box>=4)o.mastered++; o.wrong+=(c.wrong||0); if(c.box>0){o.beg++; o.boxSum+=c.box;}
+  });
+  const rows=Object.values(perTopic).map(o=>{ const avg=o.beg?o.boxSum/o.beg:0;
+    return {v:o.v,t:o.t,jaar:o.jaar,total:o.total,mastered:o.mastered,wrong:o.wrong,beg:o.beg,avg,
+      pct:o.total?Math.round(o.mastered/o.total*100):0, score:o.wrong*2+(4-avg)}; });   // score hoger = zwakker
+  const geoefend=rows.filter(o=>o.beg>0);
+  const zwak=geoefend.filter(o=>o.wrong>0||o.avg<4).sort((a,b)=>b.score-a.score).slice(0,5);
+  const sterk=geoefend.filter(o=>o.avg>=4&&o.wrong===0).sort((a,b)=>b.beg-a.beg).slice(0,3);
+  return {zwak, sterk, geoefendAantal:geoefend.length};
+}
 function instOf(card){return card.gen ? {...card.gen(), id:card.id} : card;}
 // huidig doelniveau van een kind: vaste keuze (1/2/3) of automatisch (groeit/daalt mee)
 function doelNiveau(prog){return (prog&&[1,2,3].includes(prog.niveau)) ? prog.niveau : (prog&&prog.autoLvl)||1;}
@@ -4059,6 +4145,9 @@ function rapportTekst(store){
       const beg=cards.filter(e=>cardInfo(prog,e.id).box>0).length;
       L.push('  - '+VAKNAAM[v]+': '+beh+'/'+cards.length+' beheerst ('+beg+' begonnen)');
     }
+    const az=zwakteAnalyse(prog, allEx, pid);
+    if(az.zwak.length) L.push('  Aandachtspunten: '+az.zwak.map(o=>VAKNAAM[o.v]+' – '+o.t+' ('+o.pct+'% beheerst'+(o.wrong?(', '+o.wrong+'x fout'):'')+')').join('; '));
+    if(az.sterk.length) L.push('  Gaat goed: '+az.sterk.map(o=>VAKNAAM[o.v]+' – '+o.t).join('; '));
     if((prog.foutLog||[]).length) L.push('  Nog te herhalen (foutenschrift): '+prog.foutLog.length);
     L.push('');
   }
@@ -4234,12 +4323,7 @@ function OuderDashboard({store,persist,onSetWeekbudget,onMarkeerBetaald,cloud,on
           });
           const totBeheerst=vakRijen.reduce((s,r)=>s+r.beheerst,0), totKaart=vakRijen.reduce((s,r)=>s+r.total,0);
           const masteryPct=totKaart?Math.round(totBeheerst/totKaart*100):0;
-          const perTopic={};
-          allEx.filter(e=>e.p===pid).forEach(e=>{const c=cardInfo(prog,e.id); const k=e.v+'|'+e.t;
-            (perTopic[k]=perTopic[k]||{v:e.v,t:e.t,boxes:[]}).boxes.push(c.box);});
-          const zwak=Object.values(perTopic).map(o=>{const beg=o.boxes.filter(b=>b>0);
-            return {v:o.v,t:o.t,beg:beg.length,avg:beg.length?beg.reduce((a,b)=>a+b,0)/beg.length:0};})
-            .filter(o=>o.beg>0&&o.avg<4).sort((a,b)=>a.avg-b.avg).slice(0,4);
+          const analyse=zwakteAnalyse(prog, allEx, pid);
           const b=berekenBeloning(prog);
           const weekPct=b.weekbudget?Math.round(b.weekPaid/b.weekbudget*100):0;
           return (
@@ -4249,10 +4333,20 @@ function OuderDashboard({store,persist,onSetWeekbudget,onMarkeerBetaald,cloud,on
               <div className="wrap" style={{marginTop:6}}>
                 {vakRijen.map(r=>(<span key={r.v} className="tag">{VAKNAAM[r.v]}: {r.beheerst}/{r.total}</span>))}
               </div>
-              {zwak.length>0
-                ? <div style={{marginTop:6,fontSize:13}}>⚠️ <b>Aandacht nodig:</b> {zwak.map(o=>VAKNAAM[o.v]+' – '+o.t).join(' · ')}</div>
+              {analyse.zwak.length>0
+                ? <div style={{marginTop:8}}>
+                    <div style={{fontSize:13,fontWeight:600,color:'#a33'}}>⚠️ Aandachtspunten — zwakste onderwerpen:</div>
+                    {analyse.zwak.map((o,i)=>(<div key={i} style={{marginTop:4}}>
+                      <div className="row" style={{justifyContent:'space-between',fontSize:12}}>
+                        <span>{VAKNAAM[o.v]} – {o.t}{o.jaar==='next'?' (volgend jaar)':''}</span>
+                        <span className="muted">{o.pct}% beheerst{o.wrong>0?(' · '+o.wrong+'× fout'):''}</span>
+                      </div>
+                      <div className="pbar" style={{height:5}}><i style={{width:o.pct+'%',background:o.wrong>0?'#C23728':undefined}}></i></div>
+                    </div>))}
+                    {analyse.sterk.length>0 && <div className="muted" style={{fontSize:12,marginTop:6}}>💪 Gaat goed: {analyse.sterk.map(o=>VAKNAAM[o.v]+' – '+o.t).join(' · ')}</div>}
+                  </div>
                 : <div className="muted" style={{marginTop:6,fontSize:13}}>Nog te weinig geoefend om zwakke punten te bepalen.</div>}
-              {(prog.foutLog||[]).length>0 && <div className="muted" style={{fontSize:13,marginTop:2}}>📕 Foutenschrift: {(prog.foutLog||[]).length} open</div>}
+              {(prog.foutLog||[]).length>0 && <div className="muted" style={{fontSize:13,marginTop:4}}>📕 Foutenschrift: {(prog.foutLog||[]).length} som(men) om te herhalen</div>}
               {/* beloning: naar resultaat & moeilijkheid, met hard weekbudget */}
               <div style={{marginTop:8,padding:'8px 10px',background:'#fff9e6',border:'1px solid #f0d67a',borderRadius:10}}>
                 <div className="row" style={{justifyContent:'space-between',alignItems:'center'}}>
