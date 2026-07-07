@@ -182,7 +182,7 @@ function rangVoor(thema, punten){
    - dagplafond + weekbudget: nooit meer dan het weekbudget per kind. */
 /* Richtlijn: een goede, succesvolle oefensessie van ~1 uur ≈ € 5; een kind mag ruim
    meer dan € 1 per dag verdienen. Begrensd door een hard weekbudget per kind (€ 20). */
-const BELONING = { weekbudget:20, dagMax:6, tariefPunt:0.06, werkMax:5, drempel:12, oefenBonus:2, proefBonus:3, hoog:0.85, mid:0.70 };
+const BELONING = { weekbudget:20, dagMax:6, tariefPunt:0.06, werkMax:5, drempel:12, oefenBonus:2, proefBonus:3, hoog:0.85, mid:0.70, toernooiBonus:10 };
 const NIVEAUGEWICHT = {1:1, 2:2, 3:3};
 function euro(n){ return '€ '+(Math.round(n*2)/2).toFixed(2).replace('.',','); }
 function halfRond(n){ return Math.round(n*2)/2; }
@@ -317,13 +317,24 @@ function upsertVerdiend(pr){
   const vandaag=todayStr(), bruto=berekenBeloning(pr).vandaagBruto;
   const lijst=(pr.verdiend||[]).filter(x=>x&&x.d!==vandaag);
   if(bruto>0) lijst.push({d:vandaag, bedrag:bruto});
-  pr.verdiend=lijst.slice(-40);
+  pr.verdiend=lijst.slice(-400);
 }
-function weekVerdiend(pr){
+function weekVerdiend(pr){    // deze week eerlijk verdiend met oefenen (gecapt op het weekbudget)
   const grens=Date.now()-7*86400000;
-  const som=(pr.verdiend||[]).filter(x=>x&&parseDag(x.d)>=grens).reduce((s,x)=>s+(x.bedrag||0),0) + (pr.verdiendBij||0);
+  const som=(pr.verdiend||[]).filter(x=>x&&parseDag(x.d)>=grens).reduce((s,x)=>s+(x.bedrag||0),0);
   return Math.max(0, Math.min(weekbudgetVan(pr), halfRond(som)));
 }
+// TOTALEN (net als de punten: alles-bij-elkaar, blijvend). Werk telt per week gecapt op het budget;
+// toernooibonus (pr.bonus) en handmatige bijstelling (pr.verdiendBij) komen daar bovenop.
+function totaalVerdiend(pr){
+  const perWeek={};
+  for(const x of (pr.verdiend||[])){ if(!x||!x.d) continue; const wk=weekKey(parseDag(x.d)); perWeek[wk]=(perWeek[wk]||0)+(x.bedrag||0); }
+  const budget=weekbudgetVan(pr); let som=0;
+  for(const wk in perWeek) som+=Math.min(budget, perWeek[wk]);
+  return Math.max(0, halfRond(som + (pr.bonus||0) + (pr.verdiendBij||0)));
+}
+function totaalUitbetaald(pr){ return halfRond((pr.betalingen||[]).reduce((s,b)=>s+(b.bedrag||0),0)); }
+function openstaand(pr){ return Math.max(0, halfRond(totaalVerdiend(pr)-totaalUitbetaald(pr))); }
 const VAKNAAM = {wiskunde:'Wiskunde', natuurkunde:'Natuurkunde', wiskundeA:'Wiskunde A', geschiedenis:'Geschiedenis',
   nederlands:'Nederlands', engels:'Engels', frans:'Frans', duits:'Duits', biologie:'Biologie',
   aardrijkskunde:'Aardrijkskunde', economie:'Economie', scheikunde:'Scheikunde',
@@ -2481,7 +2492,7 @@ const TEMPLATES=[
 
 /* ============================ STORE (localStorage) ============================ */
 const KEY='oefenapp_v1';
-function blankProg(){return {punten:0, solved:{}, cards:{}, streak:0, dagstreak:0, lastDay:null, badges:[], goal:10, todayCount:0, foutLog:[], niveau:'auto', autoLvl:1, correctRun:0, dag:{d:null,goed:0,sterk:0,sterkPunten:0,fout:0,sterkIds:[]}, toetsDag:{d:null,oefen:0,proef:0}, betaaldOp:null, weekbudget:BELONING.weekbudget, betalingen:[], verdiend:[], verdiendBij:0, missieStreak:0, missieLaatst:null, weekKey:null, weekPunten:0};}
+function blankProg(){return {punten:0, solved:{}, cards:{}, streak:0, dagstreak:0, lastDay:null, badges:[], goal:10, todayCount:0, foutLog:[], niveau:'auto', autoLvl:1, correctRun:0, dag:{d:null,goed:0,sterk:0,sterkPunten:0,fout:0,sterkIds:[]}, toetsDag:{d:null,oefen:0,proef:0}, betaaldOp:null, weekbudget:BELONING.weekbudget, betalingen:[], verdiend:[], verdiendBij:0, bonus:0, missieStreak:0, missieLaatst:null, weekKey:null, weekPunten:0};}
 function normalizeProg(p){
   const np={...blankProg(), ...(p||{})};
   np.solved=(p&&p.solved)||{}; np.cards=(p&&p.cards)||{};
@@ -2498,6 +2509,7 @@ function normalizeProg(p){
   if(!Array.isArray(np.betalingen)) np.betalingen=[];
   if(!Array.isArray(np.verdiend)) np.verdiend=[];
   if(typeof np.verdiendBij!=='number') np.verdiendBij=0;
+  if(typeof np.bonus!=='number') np.bonus=0;
   if(typeof np.missieStreak!=='number') np.missieStreak=0;
   if(typeof np.weekPunten!=='number') np.weekPunten=0;
   if(!np.toetsDag||typeof np.toetsDag!=='object') np.toetsDag={d:null,oefen:0,proef:0};
@@ -2561,8 +2573,9 @@ function mergeProg(a,b){
   for(const x of [...(a.betalingen||[]),...(b.betalingen||[])]){ const k=x.d+'|'+x.bedrag; if(!bseen.has(k)){bseen.add(k); betalingen.push(x);} }
   // verdiensten: per dag het hoogste bruto-bedrag (zodat de weekstand niet verloren gaat en op elk toestel gelijk is)
   const vmap={}; for(const x of [...(a.verdiend||[]),...(b.verdiend||[])]){ if(x&&x.d) vmap[x.d]=Math.max(vmap[x.d]||0, x.bedrag||0); }
-  const verdiend=Object.keys(vmap).map(d=>({d,bedrag:vmap[d]})).slice(-40);
+  const verdiend=Object.keys(vmap).map(d=>({d,bedrag:vmap[d]})).slice(-400);
   const verdiendBij=Math.max(a.verdiendBij||0, b.verdiendBij||0);
+  const bonus=Math.max(a.bonus||0, b.bonus||0);
   const fseen=new Set(), foutLog=[];
   for(const f of [...(a.foutLog||[]),...(b.foutLog||[])].sort((x,y)=>(y.when||0)-(x.when||0))){ if(f&&!fseen.has(f.id)){fseen.add(f.id); foutLog.push(f);} }
   const sameDag=a.dag&&b.dag&&a.dag.d===b.dag.d;
@@ -2574,7 +2587,7 @@ function mergeProg(a,b){
     missieLaatst:(parseDag(a.missieLaatst)>=parseDag(b.missieLaatst)?a.missieLaatst:b.missieLaatst),
     todayCount:_max(a.todayCount,b.todayCount), goal:Math.max(a.goal||10,b.goal||10), weekbudget:Math.max(a.weekbudget||0,b.weekbudget||0),
     autoLvl:Math.max(a.autoLvl||1,b.autoLvl||1), niveau:(b.niveau!=='auto'?b.niveau:a.niveau),
-    cards:mergeCards(a.cards,b.cards), solved, badges, betalingen:betalingen.slice(-80), verdiend, verdiendBij, foutLog:foutLog.slice(0,40), dag,
+    cards:mergeCards(a.cards,b.cards), solved, badges, betalingen:betalingen.slice(-120), verdiend, verdiendBij, bonus, foutLog:foutLog.slice(0,40), dag,
     lastDay:(parseDag(a.lastDay)>=parseDag(b.lastDay)?a.lastDay:b.lastDay),
     betaaldOp:(parseDag(a.betaaldOp)>=parseDag(b.betaaldOp)?a.betaaldOp:b.betaaldOp),
     toetsDag:(parseDag((a.toetsDag||{}).d)>=parseDag((b.toetsDag||{}).d)?a.toetsDag:b.toetsDag)};
@@ -2811,6 +2824,29 @@ function App(){
   useEffect(()=>{
     try{ const m=(location.hash||'').match(/[#&]w=([a-z0-9]+)/i); if(m){ setWedstrijdCode(m[1]); setView('wedstrijd-vriend'); } }catch(e){}
   },[]);
+  // 🏆 Toernooi-van-de-week: de winnaar van de afgelopen week krijgt € 10 (eenmalig per week).
+  // We houden een 'peak'-momentopname per week bij; als de week omslaat betalen we de koploper uit.
+  useEffect(()=>{
+    const nu=weekKey();
+    persist(prev=>{
+      const huidige={};
+      for(const pid of Object.keys(PROFILES)){ const p=normalizeProg(prev.prog[pid]); huidige[pid]=(p.weekKey===nu?(p.weekPunten||0):0); }
+      const stand=prev.toernooiStand;
+      if(stand && stand.week && stand.week!==nu){
+        const entries=Object.entries(stand.punten||{}).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
+        let prog2=prev.prog, winnaar=null;
+        if(entries.length){ const winPid=entries[0][0]; const wp=normalizeProg(prev.prog[winPid]);
+          wp.bonus=halfRond((wp.bonus||0)+BELONING.toernooiBonus);
+          prog2={...prev.prog,[winPid]:wp}; winnaar={pid:winPid, week:stand.week, bedrag:BELONING.toernooiBonus};
+          setTimeout(()=>scheduleChildPush(winPid),60);
+        }
+        return {...prev, prog:prog2, toernooiStand:{week:nu,punten:huidige}, toernooiWinnaar:winnaar};
+      }
+      const merged={};
+      for(const pid of Object.keys(PROFILES)) merged[pid]=Math.max((stand&&stand.punten&&stand.punten[pid])||0, huidige[pid]||0);
+      return {...prev, toernooiStand:{week:nu,punten:merged}};
+    });
+  },[]);
   // bij openen: als er een familiecode is, haal stilletjes de nieuwste resultaten op
   useEffect(()=>{
     if(pulledOnce.current) return; pulledOnce.current=true;
@@ -2870,10 +2906,10 @@ function App(){
   function markeerBetaald(pid){
     persist(prev=>{
       const pr=normalizeProg(prev.prog[pid]); const vandaag=todayStr();
-      // betaal wat er deze week nog openstaat (verdiend − al uitbetaald), niet alleen vandaag
-      const openstaand=halfRond(weekVerdiend(pr)-weekUitbetaald(pr));
-      if(openstaand<=0) return prev;
-      pr.betalingen=[...(pr.betalingen||[]), {d:vandaag, bedrag:openstaand}];
+      // betaal het totale openstaande bedrag (totaal verdiend − totaal uitbetaald), incl. toernooibonus
+      const open=openstaand(pr);
+      if(open<=0) return prev;
+      pr.betalingen=[...(pr.betalingen||[]), {d:vandaag, bedrag:open}];
       pr.betaaldOp=vandaag;
       return {...prev, prog:{...prev.prog,[pid]:pr}};
     });
@@ -3032,7 +3068,10 @@ function Home({onPick,store,allEx,onAuthor,onFormules,onLeertips,onSpellen,spelN
         <div className="card" style={{marginTop:12,background:'linear-gradient(120deg,#eafaf0,#e6f0fb)'}}>
           <div className="row" style={{justifyContent:'space-between'}}><b>🏆 Toernooi van de week</b>
             <span className="muted" style={{fontSize:12}}>nieuwe ronde over {dagenTot} {dagenTot===1?'dag':'dagen'}</span></div>
-          {leider && <div style={{margin:'6px 0',fontWeight:700}}>👑 Aan kop: {leider.p.emoji} {leider.p.naam} ({leider.pr.weekPunten} punten deze week)</div>}
+          <div style={{fontSize:13,color:'#a8730a',fontWeight:700,marginTop:2}}>💶 De winnaar krijgt € 10!</div>
+          {store.toernooiWinnaar && PROFILES[store.toernooiWinnaar.pid] &&
+            <div style={{margin:'4px 0',fontSize:13,color:'#2c7a2c',fontWeight:600}}>🎉 Vorige week won {PROFILES[store.toernooiWinnaar.pid].emoji} {PROFILES[store.toernooiWinnaar.pid].naam} {euro(store.toernooiWinnaar.bedrag)}! (staat in de ouder-modus klaar)</div>}
+          {leider && <div style={{margin:'6px 0',fontWeight:700}}>👑 Aan kop: {leider.p.emoji} {leider.p.naam} ({leider.pr.weekPunten} punten deze week) — wint € 10 als de week zo eindigt</div>}
           {tk.map((k,i)=>(
             <div key={k.id} className="rankrow" style={{background:'transparent',border:'none',padding:'4px 0'}}>
               <span className="medal">{medals[i]||'⭐'}</span><span style={{fontSize:20}}>{k.p.emoji}</span>
@@ -4353,7 +4392,8 @@ function OuderDashboard({store,persist,onSetWeekbudget,onMarkeerBetaald,onCorrig
           const masteryPct=totKaart?Math.round(totBeheerst/totKaart*100):0;
           const analyse=zwakteAnalyse(prog, allEx, pid);
           const b=berekenBeloning(prog);
-          const wVerdiend=weekVerdiend(prog), wBetaald=weekUitbetaald(prog), wOpen=halfRond(Math.max(0,wVerdiend-wBetaald));
+          const wVerdiend=weekVerdiend(prog);
+          const totVerdiend=totaalVerdiend(prog), totBetaald=totaalUitbetaald(prog), open=openstaand(prog);
           const weekPct=b.weekbudget?Math.round(wVerdiend/b.weekbudget*100):0;
           return (
             <div key={pid} style={{marginTop:12,paddingTop:12,borderTop:'1px solid var(--line)'}}>
@@ -4379,16 +4419,16 @@ function OuderDashboard({store,persist,onSetWeekbudget,onMarkeerBetaald,onCorrig
               {/* beloning: naar resultaat & moeilijkheid, met hard weekbudget */}
               <div style={{marginTop:8,padding:'8px 10px',background:'#fff9e6',border:'1px solid #f0d67a',borderRadius:10}}>
                 <div className="row" style={{justifyContent:'space-between',alignItems:'center'}}>
-                  <span style={{fontSize:15}}>💶 <b>Deze week verdiend: {euro(wVerdiend)}</b></span>
-                  <button className="btn sm" disabled={wOpen<=0} onClick={()=>onMarkeerBetaald(pid)}>{wOpen>0?('Betaal '+euro(wOpen)):'Betaald ✓'}</button>
+                  <span style={{fontSize:15}}>💶 <b>Totaal verdiend: {euro(totVerdiend)}</b></span>
+                  <button className="btn sm" disabled={open<=0} onClick={()=>onMarkeerBetaald(pid)}>{open>0?('Betaal '+euro(open)):'Betaald ✓'}</button>
                 </div>
-                <div className="muted" style={{fontSize:12,marginTop:4}}>
-                  vandaag {euro(b.bedrag)} · moeilijkheidspunten {b.punten} (uit {b.sterk} sterke sommen) · nauwkeurigheid {b.pogingen?Math.round(b.nauw*100):0}%
-                  {b.toetsEuro>0?' · toetsbonus '+euro(b.toetsEuro):''}{b.factor===0.5?' · half tarief':''}{(!b.genoeg)?' · vandaag nog te weinig gedaan':''}
+                <div className="row" style={{justifyContent:'space-between',marginTop:4,fontSize:13}}>
+                  <span className="muted">Uitbetaald: <b>{euro(totBetaald)}</b></span>
+                  <span style={{fontWeight:700,color:open>0?'#a8730a':'#2c7a2c'}}>nog te betalen: {euro(open)}</span>
                 </div>
-                <div className="row" style={{justifyContent:'space-between',marginTop:8,fontSize:12}}>
-                  <span className="muted">Uitbetaald: <b>{euro(wBetaald)}</b> · nog te betalen <b>{euro(wOpen)}</b></span>
-                  <span className="muted">budget {euro(b.weekbudget)}</span>
+                <div className="muted" style={{fontSize:12,marginTop:6}}>
+                  deze week {euro(wVerdiend)} van {euro(b.weekbudget)} budget{(prog.bonus||0)>0?' · 🏆 toernooibonus '+euro(prog.bonus):''}{(prog.verdiendBij||0)!==0?' · bijstelling '+(prog.verdiendBij>0?'+':'')+euro(prog.verdiendBij):''}
+                  <br/>vandaag {euro(b.bedrag)} · nauwkeurigheid {b.pogingen?Math.round(b.nauw*100):0}%{b.toetsEuro>0?' · toetsbonus '+euro(b.toetsEuro):''}{b.factor===0.5?' · half tarief':''}
                 </div>
                 <div className="pbar" style={{marginTop:4}}><i style={{width:Math.min(100,weekPct)+'%'}}></i></div>
                 <div className="wrap" style={{marginTop:8,alignItems:'center',gap:6}}>
