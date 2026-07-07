@@ -2778,9 +2778,29 @@ function App(){
     if(childTimers.current[pid]) clearTimeout(childTimers.current[pid]);
     childTimers.current[pid]=setTimeout(()=>childPush(pid),1500);
   }
+  // Veilig opslaan: eerst de cloud ophalen, SAMENVOEGEN met lokaal (hoogste wint), dan pas terugschrijven.
+  // Zo kan een toestel de centrale stand nooit verlagen/overschrijven → scores convergeren i.p.v. verdwijnen.
   async function childPush(pid){
     const s=storeRef.current; const acc=accVan(s,pid); if(!acc.code||!acc.pw) return;
-    try{ await cloudCall('oefenapp_save',{p_household:acc.code,p_pin:acc.pw,p_data:{prog:normalizeProg(s.prog[pid])}}); }catch(e){}
+    const localProg=normalizeProg(s.prog[pid]);
+    try{
+      const r=await cloudCall('oefenapp_load',{p_household:acc.code,p_pin:acc.pw});
+      const merged=mergeProg(localProg, (r&&r.data&&r.data.prog)||{});
+      setStore(prev=>{ const n={...prev, prog:{...prev.prog,[pid]:merged}}; saveStore(n); return n; });
+      await cloudCall('oefenapp_save',{p_household:acc.code,p_pin:acc.pw,p_data:{prog:normalizeProg(merged)}});
+    }catch(e){
+      // account bestaat waarschijnlijk nog niet → aanmaken met de lokale stand
+      try{ await cloudCall('oefenapp_register',{p_household:acc.code,p_pin:acc.pw,p_data:{prog:localProg}}); }catch(e2){}
+    }
+  }
+  // Haal stilletjes de nieuwste stand van ALLE kinderen op en voeg samen (voor de landingspagina/scorebord op elk toestel)
+  async function pullAllChildren(){
+    for(const pid of Object.keys(PROFILES)){
+      const acc=accVan(storeRef.current,pid);
+      try{ const r=await cloudCall('oefenapp_load',{p_household:acc.code,p_pin:acc.pw});
+        if(r&&r.data&&r.data.prog){ setStore(prev=>{ const n={...prev, prog:{...prev.prog,[pid]:mergeProg(prev.prog[pid], r.data.prog)}}; saveStore(n); return n; }); }
+      }catch(e){}
+    }
   }
   async function childRegister(pid, code, pw){   // maak een nieuw account voor dit kind
     code=String(code||'').trim().toLowerCase();
@@ -2793,12 +2813,13 @@ function App(){
     let r;
     try{ r=await cloudCall('oefenapp_load',{p_household:code,p_pin:pw}); }
     catch(e){
-      if(/niet gevonden/i.test(e&&e.message||'')){   // account bestaat nog niet → aanmaken met huidige scores
+      // account bestaat waarschijnlijk nog niet → probeer aan te maken met de huidige scores.
+      // Lukt dat, dan is het account nieuw; lukt het niet (bestaat al met ander wachtwoord), dan is het een echte fout.
+      try{
         await cloudCall('oefenapp_register',{p_household:code,p_pin:pw,p_data:{prog:normalizeProg(storeRef.current.prog[pid])}});
         persist(prev=>({...prev, kidacc:{...(prev.kidacc||{}), [pid]:{code,pw}}}));
         return true;
-      }
-      throw e;                                        // onjuist wachtwoord of geen verbinding
+      }catch(e2){ throw e; }                           // onjuist wachtwoord of geen verbinding
     }
     const cloudProg=(r.data&&r.data.prog)||{};        // gevonden → samenvoegen (geen verlies)
     let snap=null;
@@ -2824,6 +2845,9 @@ function App(){
   useEffect(()=>{
     try{ const m=(location.hash||'').match(/[#&]w=([a-z0-9]+)/i); if(m){ setWedstrijdCode(m[1]); setView('wedstrijd-vriend'); } }catch(e){}
   },[]);
+  // bij openen: haal stilletjes de nieuwste stand van alle kind-accounts op → scorebord op elk toestel gelijk
+  const pulledKidsOnce=useRef(false);
+  useEffect(()=>{ if(pulledKidsOnce.current) return; pulledKidsOnce.current=true; pullAllChildren(); },[]);
   // 🏆 Toernooi-van-de-week: de winnaar van de afgelopen week krijgt € 10 (eenmalig per week).
   // We houden een 'peak'-momentopname per week bij; als de week omslaat betalen we de koploper uit.
   useEffect(()=>{
@@ -3020,7 +3044,7 @@ function App(){
         onBack={()=>setView('hub')} onResult={recordResult} onToets={recordToets} prog={prog} onTopic={goTopic} geluid={geluid} voorlezen={voorlezen}/>}
       {view==='author' && <Author store={store} persist={persist} onBack={()=>setView('home')}
         onSetWeekbudget={setWeekbudget} onMarkeerBetaald={markeerBetaald} onCorrigeerVerdiend={corrigeerVerdiend} cloud={cloudApi} onSetKidPw={setKidPw}
-        accApi={{register:childRegister, login:childLogin}} onReset={resetAlles}/>}
+        accApi={{register:childRegister, login:childLogin, pullAll:pullAllChildren}} onReset={resetAlles}/>}
     </div>
   );
 }
@@ -4273,6 +4297,11 @@ function KindAccountPaneel({store,accApi}){
       try{ await accApi.login(pid, a.code, a.pw); ok++; }catch(e){} }
     setBusy(false); setMsg(ok+' van '+Object.keys(PROFILES).length+' accounts online gezet ✓'); setTimeout(()=>setMsg(''),3000);
   }
+  async function ververs(){
+    if(!accApi.pullAll) return;
+    setBusy(true); try{ await accApi.pullAll(); setMsg('Nieuwste scores opgehaald ✓'); }catch(e){ setMsg('Kon niet ophalen — probeer opnieuw.'); }
+    setBusy(false); setTimeout(()=>setMsg(''),3000);
+  }
   return (
     <div className="card" style={{marginBottom:16,background:'#eef4fb',borderLeftColor:'#3a6ea0'}}>
       <b>👤 Kind-accounts (scores volgen het kind)</b>
@@ -4282,7 +4311,9 @@ function KindAccountPaneel({store,accApi}){
       </div>
       {accApi && <div className="wrap" style={{marginTop:10}}>
         <button className="btn sm" disabled={busy} onClick={zetOnline}>{busy?'Bezig…':'☁️ Zet alle accounts nu online'}</button>
+        {accApi.pullAll && <button className="btn ghost sm" disabled={busy} onClick={ververs}>🔄 Nieuwste scores ophalen</button>}
       </div>}
+      <p className="muted" style={{fontSize:12,marginTop:8}}>De app haalt bij openen automatisch de nieuwste scores van elk kind op en voegt ze samen (hoogste telt), zodat elk toestel hetzelfde toont. Werkt een toestel offline, dan synct het zodra er weer verbinding is.</p>
       {msg && <div style={{color:'#2c5680',fontWeight:600,marginTop:8,fontSize:13}}>{msg}</div>}
     </div>
   );
