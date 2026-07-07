@@ -2492,7 +2492,7 @@ const TEMPLATES=[
 
 /* ============================ STORE (localStorage) ============================ */
 const KEY='oefenapp_v1';
-function blankProg(){return {punten:0, solved:{}, cards:{}, streak:0, dagstreak:0, lastDay:null, badges:[], goal:10, todayCount:0, foutLog:[], niveau:'auto', autoLvl:1, correctRun:0, dag:{d:null,goed:0,sterk:0,sterkPunten:0,fout:0,sterkIds:[]}, toetsDag:{d:null,oefen:0,proef:0}, betaaldOp:null, weekbudget:BELONING.weekbudget, betalingen:[], verdiend:[], verdiendBij:0, bonus:0, missieStreak:0, missieLaatst:null, weekKey:null, weekPunten:0};}
+function blankProg(){return {punten:0, solved:{}, cards:{}, streak:0, dagstreak:0, lastDay:null, badges:[], goal:10, todayCount:0, foutLog:[], niveau:'auto', autoLvl:1, correctRun:0, dag:{d:null,goed:0,sterk:0,sterkPunten:0,fout:0,sterkIds:[]}, toetsDag:{d:null,oefen:0,proef:0}, betaaldOp:null, weekbudget:BELONING.weekbudget, betalingen:[], verdiend:[], verdiendBij:0, bonus:0, missieStreak:0, missieLaatst:null, weekKey:null, weekPunten:0, historie:[]};}
 function normalizeProg(p){
   const np={...blankProg(), ...(p||{})};
   np.solved=(p&&p.solved)||{}; np.cards=(p&&p.cards)||{};
@@ -2510,6 +2510,7 @@ function normalizeProg(p){
   if(!Array.isArray(np.verdiend)) np.verdiend=[];
   if(typeof np.verdiendBij!=='number') np.verdiendBij=0;
   if(typeof np.bonus!=='number') np.bonus=0;
+  if(!Array.isArray(np.historie)) np.historie=[];
   if(typeof np.missieStreak!=='number') np.missieStreak=0;
   if(typeof np.weekPunten!=='number') np.weekPunten=0;
   if(!np.toetsDag||typeof np.toetsDag!=='object') np.toetsDag={d:null,oefen:0,proef:0};
@@ -2576,6 +2577,10 @@ function mergeProg(a,b){
   const verdiend=Object.keys(vmap).map(d=>({d,bedrag:vmap[d]})).slice(-400);
   const verdiendBij=Math.max(a.verdiendBij||0, b.verdiendBij||0);
   const bonus=Math.max(a.bonus||0, b.bonus||0);
+  // leerhistorie: per week de meest complete momentopname (hoogste punten/beheersing) behouden
+  const hmap={}; for(const x of [...(a.historie||[]),...(b.historie||[])]){ if(!x||!x.wk) continue; const e=hmap[x.wk];
+    if(!e || (x.punten||0)>=(e.punten||0)) hmap[x.wk]={wk:x.wk, punten:Math.max((x.punten||0),(e&&e.punten)||0), beheerst:Math.max((x.beheerst||0),(e&&e.beheerst)||0), geoefend:Math.max((x.geoefend||0),(e&&e.geoefend)||0)}; }
+  const historie=Object.keys(hmap).sort().map(k=>hmap[k]).slice(-52);
   const fseen=new Set(), foutLog=[];
   for(const f of [...(a.foutLog||[]),...(b.foutLog||[])].sort((x,y)=>(y.when||0)-(x.when||0))){ if(f&&!fseen.has(f.id)){fseen.add(f.id); foutLog.push(f);} }
   const sameDag=a.dag&&b.dag&&a.dag.d===b.dag.d;
@@ -2587,7 +2592,7 @@ function mergeProg(a,b){
     missieLaatst:(parseDag(a.missieLaatst)>=parseDag(b.missieLaatst)?a.missieLaatst:b.missieLaatst),
     todayCount:_max(a.todayCount,b.todayCount), goal:Math.max(a.goal||10,b.goal||10), weekbudget:Math.max(a.weekbudget||0,b.weekbudget||0),
     autoLvl:Math.max(a.autoLvl||1,b.autoLvl||1), niveau:(b.niveau!=='auto'?b.niveau:a.niveau),
-    cards:mergeCards(a.cards,b.cards), solved, badges, betalingen:betalingen.slice(-120), verdiend, verdiendBij, bonus, foutLog:foutLog.slice(0,40), dag,
+    cards:mergeCards(a.cards,b.cards), solved, badges, betalingen:betalingen.slice(-120), verdiend, verdiendBij, bonus, historie, foutLog:foutLog.slice(0,40), dag,
     lastDay:(parseDag(a.lastDay)>=parseDag(b.lastDay)?a.lastDay:b.lastDay),
     betaaldOp:(parseDag(a.betaaldOp)>=parseDag(b.betaaldOp)?a.betaaldOp:b.betaaldOp),
     toetsDag:(parseDag((a.toetsDag||{}).d)>=parseDag((b.toetsDag||{}).d)?a.toetsDag:b.toetsDag)};
@@ -2649,6 +2654,59 @@ function zwakteAnalyse(prog, allEx, pid){
   const zwak=geoefend.filter(o=>o.wrong>0||o.avg<4).sort((a,b)=>b.score-a.score).slice(0,5);
   const sterk=geoefend.filter(o=>o.avg>=4&&o.wrong===0).sort((a,b)=>b.beg-a.beg).slice(0,3);
   return {zwak, sterk, geoefendAantal:geoefend.length};
+}
+/* ============================ DIDACTISCH VOLGSYSTEEM ============================ */
+/* Duurzame vastlegging van prestaties per kind: een wekelijkse momentopname (longitudinaal),
+   een heldere beheersings-taxonomie per onderwerp, en een gestructureerd leerprofiel dat we
+   later kunnen gebruiken om het systeem gericht te verrijken en uit te breiden. */
+
+// Wekelijkse momentopname van de voortgang (uit prog.cards; goedkoop, geen opgavenlijst nodig)
+function snapshotHistorie(pr){
+  const wk=weekKey();
+  const cards=Object.values(pr.cards||{});
+  const beheerst=cards.filter(c=>(c.box||0)>=4).length;
+  const geoefend=cards.filter(c=>(c.box||0)>0).length;
+  const snap={wk, punten:pr.punten||0, beheerst, geoefend};
+  const lijst=(pr.historie||[]).filter(x=>x&&x.wk!==wk);
+  lijst.push(snap);
+  pr.historie=lijst.slice(-52);
+}
+// Heldere didactische status per onderwerp (op basis van beheersing%, of het al geoefend is, en fouten)
+const BEHEERS_NIVEAUS=[
+  {key:'nieuw',    label:'nog niet begonnen', emoji:'⚪', kleur:'#9aa0a6'},
+  {key:'zwak',     label:'in ontwikkeling',   emoji:'🔴', kleur:'#C23728'},
+  {key:'bijna',    label:'bijna beheerst',     emoji:'🟡', kleur:'#c9a227'},
+  {key:'beheerst', label:'beheerst',           emoji:'🟢', kleur:'#2c7a2c'},
+];
+function beheersStatus(pct, geoefend){
+  if(!geoefend) return BEHEERS_NIVEAUS[0];
+  if(pct>=80)   return BEHEERS_NIVEAUS[3];
+  if(pct>=50)   return BEHEERS_NIVEAUS[2];
+  return BEHEERS_NIVEAUS[1];
+}
+// Volledig gestructureerd leerprofiel per kind (per vak → per onderwerp), incl. dekking, beheersing,
+// nauwkeurigheid, niveauverdeling en status. Basis voor het dashboard én de export.
+function leerprofiel(prog, allEx, pid){
+  const P=PROFILES[pid]; if(!P) return null;
+  const eigen=allEx.filter(e=>e.p===pid && !e.gen);              // vaste opgaven (sjablonen zijn oneindig, niet per stuk 'beheerst')
+  const vakken=[];
+  for(const v of (P.vakken||[])){
+    const items=eigen.filter(e=>e.v===v);
+    const map={};
+    items.forEach(e=>{ const c=cardInfo(prog,e.id);
+      const o=(map[e.t]=map[e.t]||{t:e.t, jaar:e.jaar||'nu', totaal:0, beheerst:0, geoefend:0, ok:0, wrong:0, lvl:{1:0,2:0,3:0}, laatst:0});
+      o.totaal++; if(c.box>=4)o.beheerst++; if(c.box>0)o.geoefend++; o.ok+=(c.ok||0); o.wrong+=(c.wrong||0); o.lvl[e.lvl||1]++; o.laatst=Math.max(o.laatst,c.last||0); });
+    const onderwerpen=Object.values(map).map(o=>{ const pog=o.ok+o.wrong; const pct=o.totaal?Math.round(o.beheerst/o.totaal*100):0;
+      return {...o, pct, pogingen:pog, nauw:pog?Math.round(o.ok/pog*100):null, status:beheersStatus(pct,o.geoefend)}; })
+      .sort((a,b)=>a.pct-b.pct || b.wrong-a.wrong);
+    const totaal=items.length, beheerst=onderwerpen.reduce((s,o)=>s+o.beheerst,0), geoefend=onderwerpen.reduce((s,o)=>s+o.geoefend,0);
+    vakken.push({v, naam:VAKNAAM[v]||v, totaal, beheerst, geoefend, pct:totaal?Math.round(beheerst/totaal*100):0,
+      dekking:totaal?Math.round(geoefend/totaal*100):0, onderwerpen});
+  }
+  const totaal=vakken.reduce((s,x)=>s+x.totaal,0), beheerst=vakken.reduce((s,x)=>s+x.beheerst,0), geoefend=vakken.reduce((s,x)=>s+x.geoefend,0);
+  return {pid, naam:P.naam, niveau:P.niveau, volgend:P.volgend,
+    totaal, beheerst, geoefend, mastery:totaal?Math.round(beheerst/totaal*100):0, dekking:totaal?Math.round(geoefend/totaal*100):0,
+    punten:prog.punten||0, dagstreak:prog.dagstreak||0, vakken, historie:(prog.historie||[]) };
 }
 function instOf(card){return card.gen ? {...card.gen(), id:card.id} : card;}
 // huidig doelniveau van een kind: vaste keuze (1/2/3) of automatisch (groeit/daalt mee)
@@ -3004,6 +3062,7 @@ function App(){
       pr.badges=[...(pr.badges||[])];
       BADGES.forEach(b=>{if(!pr.badges.includes(b.id)&&b.test(pr)) pr.badges.push(b.id);});
       upsertVerdiend(pr);                          // verdiensten persistent bijhouden (telt per week, synct online)
+      snapshotHistorie(pr);                        // wekelijkse voortgangs-momentopname (didactisch volgsysteem)
       return {...prev, prog:{...prev.prog,[pid]:pr}};
     });
     scheduleChildPush(pid);
@@ -4248,6 +4307,25 @@ function downloadRapport(store){
   const blob=new Blob([rapportTekst(store)],{type:'text/plain'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='voortgangsrapport.txt'; a.click();
 }
+// Gestructureerde export van het volledige leerprofiel (machine-leesbaar) — basis om later
+// op te bouwen/te verrijken (analyse, extra oefenstof richten op zwakke onderdelen, enz.).
+function leerprofielData(store){
+  const allEx=[...SEED,...TEMPLATES,...(store.custom||[])];
+  const kinderen=Object.keys(PROFILES).map(pid=>{
+    const prof=leerprofiel(normalizeProg(store.prog[pid]), allEx, pid);
+    return { kind:prof.naam, pid, niveau:prof.niveau, volgend:prof.volgend,
+      samenvatting:{ opgaven:prof.totaal, geoefend:prof.geoefend, beheerst:prof.beheerst, dekking_pct:prof.dekking, beheersing_pct:prof.mastery, punten:prof.punten },
+      vakken:prof.vakken.map(v=>({ vak:v.naam, opgaven:v.totaal, beheerst:v.beheerst, geoefend:v.geoefend, beheersing_pct:v.pct, dekking_pct:v.dekking,
+        onderwerpen:v.onderwerpen.map(o=>({ onderwerp:o.t, jaar:o.jaar, opgaven:o.totaal, beheerst:o.beheerst, geoefend:o.geoefend,
+          beheersing_pct:o.pct, nauwkeurigheid_pct:o.nauw, pogingen:o.pogingen, fouten:o.wrong, status:o.status.label, niveauverdeling:o.lvl })) })),
+      historie:prof.historie };
+  });
+  return { app:'Bennahuiswerk', type:'leerprofiel', gegenereerd_lokaal:true, kinderen };
+}
+function downloadLeerprofiel(store){
+  const blob=new Blob([JSON.stringify(leerprofielData(store),null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='leerprofiel.json'; a.click();
+}
 function CloudPaneel({store,cloud}){
   const c=store.cloud||{};
   const gekoppeld=!!(c.household&&c.pin);
@@ -4315,6 +4393,67 @@ function KindAccountPaneel({store,accApi}){
       </div>}
       <p className="muted" style={{fontSize:12,marginTop:8}}>De app haalt bij openen automatisch de nieuwste scores van elk kind op en voegt ze samen (hoogste telt), zodat elk toestel hetzelfde toont. Werkt een toestel offline, dan synct het zodra er weer verbinding is.</p>
       {msg && <div style={{color:'#2c5680',fontWeight:600,marginTop:8,fontSize:13}}>{msg}</div>}
+    </div>
+  );
+}
+/* ---- Leerprofiel: didactisch volgsysteem — beheersing per vak/onderwerp + trend over tijd ---- */
+function LeerprofielPaneel({store}){
+  const [open,setOpen]=useState(false);
+  const [detail,setDetail]=useState(null);        // pid van het opengeklapte kind
+  const [ovak,setOvak]=useState({});              // 'pid|vak' → onderwerpen zichtbaar
+  const allEx=useMemo(()=>[...SEED,...TEMPLATES,...(store.custom||[])],[store.custom]);
+  const profielen=useMemo(()=>Object.keys(PROFILES).map(pid=>leerprofiel(normalizeProg(store.prog[pid]), allEx, pid)),[store.prog,allEx]);
+  const bar=(pct,kleur)=>(<div className="pbar" style={{height:7,marginTop:3}}><i style={{width:Math.min(100,pct)+'%',background:kleur}}></i></div>);
+  return (
+    <div className="card" style={{marginBottom:16,background:'#eef6f0',borderLeftColor:'#2c7a2c'}}>
+      <div className="row" style={{justifyContent:'space-between',alignItems:'center',cursor:'pointer'}} onClick={()=>setOpen(!open)}>
+        <b>📊 Leerprofiel — wat wordt goed beheerst, wat nog niet</b>
+        <span className="muted" style={{fontSize:13}}>{open?'▲ inklappen':'▼ bekijk beheersing per kind, vak en onderwerp'}</span>
+      </div>
+      {open && <div className="muted" style={{fontSize:12,marginTop:4}}>
+        Legenda: {BEHEERS_NIVEAUS.map(n=>(<span key={n.key} style={{marginRight:10,whiteSpace:'nowrap'}}>{n.emoji} {n.label}</span>))}
+        <div style={{marginTop:2}}>Beheersing = onderdelen met het Leitner-doosje op "vast" (≥ 4/5). Dekking = aandeel dat al is geoefend.</div>
+      </div>}
+      {open && profielen.map(pr=>{
+        const isOpen=detail===pr.pid;
+        const trend=(pr.historie||[]).slice(-8);
+        return (
+          <div key={pr.pid} style={{marginTop:12,paddingTop:12,borderTop:'1px solid var(--line)'}}>
+            <div className="row" style={{justifyContent:'space-between',alignItems:'center',cursor:'pointer'}} onClick={()=>setDetail(isOpen?null:pr.pid)}>
+              <div style={{fontWeight:700}}>{PROFILES[pr.pid].emoji} {pr.naam} <span className="muted" style={{fontWeight:400,fontSize:13}}>· {pr.niveau}</span></div>
+              <span className="muted" style={{fontSize:12}}>{isOpen?'▲':'▼'} beheersing {pr.mastery}% · dekking {pr.dekking}%</span>
+            </div>
+            <div className="row" style={{gap:12,marginTop:4,flexWrap:'wrap'}}>
+              <div style={{flex:1,minWidth:150}}><span className="muted" style={{fontSize:12}}>Beheerst {pr.beheerst}/{pr.totaal} ({pr.mastery}%)</span>{bar(pr.mastery,'#2c7a2c')}</div>
+              <div style={{flex:1,minWidth:150}}><span className="muted" style={{fontSize:12}}>Geoefend {pr.geoefend}/{pr.totaal} ({pr.dekking}%)</span>{bar(pr.dekking,'#3a6ea0')}</div>
+            </div>
+            {isOpen && <div style={{marginTop:8}}>
+              {trend.length>=2 && <div style={{margin:'4px 0 8px'}}>
+                <div className="muted" style={{fontSize:12}}>Trend — beheerste onderdelen per week (laatste {trend.length}):</div>
+                <Figure ill={{type:'lijngrafiek', punten:trend.map((h,i)=>[i+1, h.beheerst]), xlabel:'week', ylabel:'beheerst'}}/>
+              </div>}
+              {pr.vakken.map(v=>{ const vkey=pr.pid+'|'+v.v; const vOpen=ovak[vkey]; const st=beheersStatus(v.pct, v.geoefend);
+                return (
+                <div key={v.v} style={{marginTop:6}}>
+                  <div className="row" style={{justifyContent:'space-between',alignItems:'center',cursor:'pointer',fontSize:14}} onClick={()=>setOvak({...ovak,[vkey]:!vOpen})}>
+                    <span>{st.emoji} <b>{v.naam}</b> <span className="muted" style={{fontSize:12}}>{v.beheerst}/{v.totaal} beheerst</span></span>
+                    <span className="muted" style={{fontSize:12}}>{vOpen?'▲':'▼'} {v.pct}%</span>
+                  </div>
+                  {bar(v.pct, st.kleur)}
+                  {vOpen && <div style={{marginTop:4,paddingLeft:6}}>
+                    {v.onderwerpen.map(o=>(
+                      <div key={o.t} className="row" style={{justifyContent:'space-between',fontSize:12,padding:'2px 0'}}>
+                        <span>{o.status.emoji} {o.t}{o.jaar==='next'?' · volgend jaar':''}</span>
+                        <span className="muted">{o.geoefend>0?(o.pct+'% · '+(o.nauw!=null?o.nauw+'% goed':'—')+(o.wrong>0?(' · '+o.wrong+'× fout'):'')):'nog niet begonnen'}</span>
+                      </div>
+                    ))}
+                  </div>}
+                </div>
+              );})}
+            </div>}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -4393,6 +4532,7 @@ function OuderDashboard({store,persist,onSetWeekbudget,onMarkeerBetaald,onCorrig
   return (
     <div>
       <KindAccountPaneel store={store} accApi={accApi}/>
+      <LeerprofielPaneel store={store}/>
       <LeerlijnPaneel store={store}/>
       <WeektaakBeheer store={store} persist={persist}/>
       {onReset && <div className="card" style={{marginBottom:16,background:'#fdeeee',borderLeftColor:'#C23728'}}>
@@ -4408,6 +4548,7 @@ function OuderDashboard({store,persist,onSetWeekbudget,onMarkeerBetaald,onCorrig
           <b>📊 Voortgang &amp; beloning per kind</b>
           <div className="wrap">
             <button className="btn ghost sm" onClick={()=>downloadRapport(store)}>⬇️ Rapport</button>
+            <button className="btn ghost sm" onClick={()=>downloadLeerprofiel(store)}>📊 Leerprofiel (JSON)</button>
             <button className="btn ghost sm" onClick={backupExport}>💾 Back-up</button>
             <button className="btn ghost sm" onClick={()=>fileRef.current&&fileRef.current.click()}>📂 Terugzetten</button>
             <input ref={fileRef} type="file" accept="application/json,.json" style={{display:'none'}} onChange={backupImport}/>
