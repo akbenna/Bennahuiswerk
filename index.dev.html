@@ -59,9 +59,25 @@
   .profcard .niv{opacity:.92;font-weight:600;}
   .profcard .vakken{margin-top:10px;font-size:13px;opacity:.92;}
   /* levendige landingspagina */
-  .hero{border-radius:var(--radius);padding:22px;text-align:center;color:#fff;
-    background:linear-gradient(120deg,#5EA03A,#3a6ea0 55%,#c94f9a);background-size:200% 200%;animation:heroShift 12s ease infinite;box-shadow:0 8px 24px rgba(0,0,0,.14);}
+  .hero{position:relative;overflow:hidden;border-radius:var(--radius);padding:24px 22px 22px;text-align:center;color:#fff;
+    background:linear-gradient(120deg,#5EA03A,#3a6ea0 55%,#c94f9a);background-size:200% 200%;animation:heroShift 14s ease infinite;box-shadow:0 10px 28px rgba(0,0,0,.16);}
   @keyframes heroShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  .hero .kicker{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;font-weight:800;opacity:.9;}
+  .hero .brand{font-family:'Playfair Display',Georgia,serif;font-weight:800;font-size:34px;line-height:1.05;margin:2px 0 0;text-shadow:0 2px 6px rgba(0,0,0,.18);}
+  .hero .brand small{display:block;font-family:inherit;font-size:16px;font-weight:700;letter-spacing:3px;opacity:.95;text-transform:uppercase;}
+  .hero .tag{opacity:.96;margin:8px 0 0;font-size:14px;}
+  .crest{display:flex;justify-content:center;gap:10px;margin-bottom:6px;}
+  .crest .face{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;
+    background:rgba(255,255,255,.22);border:2px solid rgba(255,255,255,.7);box-shadow:0 3px 8px rgba(0,0,0,.15);}
+  /* kleurrijkere onderste navigatie */
+  .navrow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px;}
+  .navbtn{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:999px;font-weight:700;font-size:13px;cursor:pointer;
+    border:1.5px solid var(--line);background:#fff;color:#2a2f2a;transition:transform .08s,box-shadow .15s,background .15s;}
+  .navbtn:active{transform:scale(.96);}
+  .navbtn.p{background:linear-gradient(135deg,#7a5ea0,#5b4585);color:#fff;border-color:transparent;}
+  .navbtn.g{background:linear-gradient(135deg,#e8b84a,#d99b1c);color:#3a2b00;border-color:transparent;}
+  .navbtn.b{background:linear-gradient(135deg,#3a6ea0,#2c5680);color:#fff;border-color:transparent;}
+  .navbtn.on{background:linear-gradient(135deg,#5EA03A,#48792c);color:#fff;border-color:transparent;}
   .miniprog{height:10px;background:rgba(255,255,255,.35);border-radius:999px;overflow:hidden;margin-top:8px;}
   .miniprog i{display:block;height:100%;background:#fff;border-radius:999px;transition:width .5s;}
   .medal{font-size:18px;}
@@ -249,6 +265,10 @@ function weekKey(dd){ const d=dd?new Date(dd):new Date();
   const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())); const day=t.getUTCDay()||7;
   t.setUTCDate(t.getUTCDate()+4-day); const ys=new Date(Date.UTC(t.getUTCFullYear(),0,1));
   const wk=Math.ceil((((t-ys)/86400000)+1)/7); return t.getUTCFullYear()+'-w'+wk; }
+// vergelijkbaar weeknummer (jaar*100+week) — voor correcte week-vergelijking (w28 > w9, niet lexicaal)
+function weekNum(wk){ const m=/^(\d+)-w(\d+)$/.exec(wk||''); return m?(+m[1])*100+(+m[2]):0; }
+// toernooipunten van DEZE week (0 als de opgeslagen weekstand van een oudere week is → nette reset per week)
+function weekPuntenNu(pr){ return (pr && pr.weekKey===weekKey()) ? (pr.weekPunten||0) : 0; }
 // dagelijkse missie: 3 taken op basis van vandaag
 function dagMissie(prog){
   const goal=prog.goal||10, td=prog.todayCount||0;
@@ -2583,12 +2603,17 @@ function mergeProg(a,b){
   const historie=Object.keys(hmap).sort().map(k=>hmap[k]).slice(-52);
   const fseen=new Set(), foutLog=[];
   for(const f of [...(a.foutLog||[]),...(b.foutLog||[])].sort((x,y)=>(y.when||0)-(x.when||0))){ if(f&&!fseen.has(f.id)){fseen.add(f.id); foutLog.push(f);} }
+  // toernooipunten reconciliëren per week: zelfde week → hoogste; anders → de nieuwste week (oude weekstand vervalt)
+  let weekKeyM, weekPuntenM;
+  if(a.weekKey && a.weekKey===b.weekKey){ weekKeyM=a.weekKey; weekPuntenM=_max(a.weekPunten,b.weekPunten); }
+  else if(weekNum(a.weekKey)>=weekNum(b.weekKey)){ weekKeyM=a.weekKey||b.weekKey; weekPuntenM=(weekNum(a.weekKey)>=weekNum(b.weekKey)?(a.weekPunten||0):(b.weekPunten||0)); }
+  else { weekKeyM=b.weekKey; weekPuntenM=b.weekPunten||0; }
   const sameDag=a.dag&&b.dag&&a.dag.d===b.dag.d;
   const dag= sameDag ? {d:a.dag.d, goed:_max(a.dag.goed,b.dag.goed), sterk:_max(a.dag.sterk,b.dag.sterk), sterkPunten:_max(a.dag.sterkPunten,b.dag.sterkPunten), fout:_max(a.dag.fout,b.dag.fout), sterkIds:[...new Set([...(a.dag.sterkIds||[]),...(b.dag.sterkIds||[])])]}
              : (parseDag((a.dag||{}).d)>=parseDag((b.dag||{}).d)? a.dag : b.dag);
   return {...a, ...b,
     punten:_max(a.punten,b.punten), streak:_max(a.streak,b.streak), dagstreak:_max(a.dagstreak,b.dagstreak),
-    missieStreak:_max(a.missieStreak,b.missieStreak), weekPunten:_max(a.weekPunten,b.weekPunten),
+    missieStreak:_max(a.missieStreak,b.missieStreak), weekPunten:weekPuntenM, weekKey:weekKeyM,
     missieLaatst:(parseDag(a.missieLaatst)>=parseDag(b.missieLaatst)?a.missieLaatst:b.missieLaatst),
     todayCount:_max(a.todayCount,b.todayCount), goal:Math.max(a.goal||10,b.goal||10), weekbudget:Math.max(a.weekbudget||0,b.weekbudget||0),
     autoLvl:Math.max(a.autoLvl||1,b.autoLvl||1), niveau:(b.niveau!=='auto'?b.niveau:a.niveau),
@@ -3124,9 +3149,12 @@ function Home({onPick,store,allEx,onAuthor,onFormules,onLeertips,onSpellen,spelN
   return (
     <div>
       <div className="hero">
-        <div style={{fontSize:40}}>🌟</div>
-        <h1 style={{color:'#fff',fontSize:30,margin:'2px 0'}}>Benna Oefenclub</h1>
-        <p style={{opacity:.95,margin:0}}>Oefen, verzamel punten en ga voor de volgende trofee! 🏆</p>
+        <div className="crest">
+          {Object.values(PROFILES).map((p,i)=>(<span key={i} className="face" title={p.naam}>{p.emoji}</span>))}
+        </div>
+        <div className="kicker">✦ Familie ✦</div>
+        <h1 className="brand">Bennaghmouch<small>Oefenclub</small></h1>
+        <p className="tag">Samen slim worden — oefen, verzamel punten en ga voor de trofee 🏆</p>
       </div>
 
       {/* ranglijst / podium */}
@@ -3144,8 +3172,8 @@ function Home({onPick,store,allEx,onAuthor,onFormules,onLeertips,onSpellen,spelN
       </div>
 
       {/* familie-toernooi van de week (op punten van deze week) */}
-      {(()=>{ const tk=[...kinderen].sort((a,b)=>(b.pr.weekPunten||0)-(a.pr.weekPunten||0));
-        const leider=tk[0]&&(tk[0].pr.weekPunten||0)>0?tk[0]:null;
+      {(()=>{ const tk=[...kinderen].sort((a,b)=>weekPuntenNu(b.pr)-weekPuntenNu(a.pr));
+        const leider=tk[0]&&weekPuntenNu(tk[0].pr)>0?tk[0]:null;
         const nu=new Date(); const dow=nu.getDay()||7; const dagenTot=8-dow;
         return (
         <div className="card" style={{marginTop:12,background:'linear-gradient(120deg,#eafaf0,#e6f0fb)'}}>
@@ -3154,11 +3182,11 @@ function Home({onPick,store,allEx,onAuthor,onFormules,onLeertips,onSpellen,spelN
           <div style={{fontSize:13,color:'#a8730a',fontWeight:700,marginTop:2}}>💶 De winnaar krijgt € 10!</div>
           {store.toernooiWinnaar && PROFILES[store.toernooiWinnaar.pid] &&
             <div style={{margin:'4px 0',fontSize:13,color:'#2c7a2c',fontWeight:600}}>🎉 Vorige week won {PROFILES[store.toernooiWinnaar.pid].emoji} {PROFILES[store.toernooiWinnaar.pid].naam} {euro(store.toernooiWinnaar.bedrag)}! (staat in de ouder-modus klaar)</div>}
-          {leider && <div style={{margin:'6px 0',fontWeight:700}}>👑 Aan kop: {leider.p.emoji} {leider.p.naam} ({leider.pr.weekPunten} punten deze week) — wint € 10 als de week zo eindigt</div>}
+          {leider && <div style={{margin:'6px 0',fontWeight:700}}>👑 Aan kop: {leider.p.emoji} {leider.p.naam} ({weekPuntenNu(leider.pr)} punten deze week) — wint € 10 als de week zo eindigt</div>}
           {tk.map((k,i)=>(
             <div key={k.id} className="rankrow" style={{background:'transparent',border:'none',padding:'4px 0'}}>
               <span className="medal">{medals[i]||'⭐'}</span><span style={{fontSize:20}}>{k.p.emoji}</span>
-              <b style={{flex:1}}>{k.p.naam}</b><span style={{fontWeight:700}}>{k.pr.weekPunten||0}</span><span className="muted" style={{fontSize:12}}>deze week</span>
+              <b style={{flex:1}}>{k.p.naam}</b><span style={{fontWeight:700}}>{weekPuntenNu(k.pr)}</span><span className="muted" style={{fontSize:12}}>deze week</span>
             </div>
           ))}
         </div>);
@@ -3233,14 +3261,12 @@ function Home({onPick,store,allEx,onAuthor,onFormules,onLeertips,onSpellen,spelN
         })()}
       </div>
       <div className="hint" style={{margin:'16px 0'}}><b>Tip van de dag:</b> {tip}</div>
-      <div className="center">
-        <button className="btn ghost sm" onClick={onFormules}>📐 Formules</button>
-        <button className="btn gold sm" onClick={onLeertips}>💡 Leertips</button>
-        <button className="btn ghost sm" onClick={onToggleGeluid} title="Geluid aan of uit">{geluid?'🔊 Geluid aan':'🔇 Geluid uit'}</button>
-        <button className="btn ghost sm" onClick={onToggleVoorlezen} title="Voorlezen aan of uit (tekst-naar-spraak)">{voorlezen?'🗣️ Voorlezen aan':'🔇 Voorlezen uit'}</button>
-      </div>
-      <div className="center" style={{marginTop:10}}>
-        <button className="btn ghost sm" onClick={onAuthor}>👨‍👩‍👧 Ouder-modus</button>
+      <div className="navrow">
+        <span className="navbtn b" onClick={onFormules}>📐 Formules</span>
+        <span className="navbtn g" onClick={onLeertips}>💡 Leertips</span>
+        <span className="navbtn" onClick={onToggleGeluid} title="Geluid aan of uit">{geluid?'🔊 Geluid':'🔇 Geluid'}</span>
+        <span className="navbtn" onClick={onToggleVoorlezen} title="Voorlezen aan of uit (tekst-naar-spraak)">{voorlezen?'🗣️ Voorlezen':'🔇 Voorlezen'}</span>
+        <span className="navbtn p" onClick={onAuthor}>👨‍👩‍👧 Ouder-modus</span>
       </div>
     </div>
   );
