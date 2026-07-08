@@ -268,7 +268,14 @@ function weekKey(dd){ const d=dd?new Date(dd):new Date();
 // vergelijkbaar weeknummer (jaar*100+week) — voor correcte week-vergelijking (w28 > w9, niet lexicaal)
 function weekNum(wk){ const m=/^(\d+)-w(\d+)$/.exec(wk||''); return m?(+m[1])*100+(+m[2]):0; }
 // toernooipunten van DEZE week (0 als de opgeslagen weekstand van een oudere week is → nette reset per week)
-function weekPuntenNu(pr){ return (pr && pr.weekKey===weekKey()) ? (pr.weekPunten||0) : 0; }
+// Toernooipunten van DEZE week = totaalscore − totaalscore aan het begin van de week.
+// Zo zijn ze afgeleid van de (betrouwbaar bijgehouden) ranglijst en bewegen ze altijd mee;
+// bij een nieuwe week schuift de ijkwaarde mee en begint de toernooistand netjes bij 0.
+function weekPuntenNu(pr){
+  if(!pr || pr.weekKey!==weekKey()) return 0;                 // nog niet geoefend deze week
+  const basis=(typeof pr.weekBasis==='number')?pr.weekBasis:(pr.punten||0);
+  return Math.max(0, (pr.punten||0)-basis);
+}
 // dagelijkse missie: 3 taken op basis van vandaag
 function dagMissie(prog){
   const goal=prog.goal||10, td=prog.todayCount||0;
@@ -2512,7 +2519,7 @@ const TEMPLATES=[
 
 /* ============================ STORE (localStorage) ============================ */
 const KEY='oefenapp_v1';
-function blankProg(){return {punten:0, solved:{}, cards:{}, streak:0, dagstreak:0, lastDay:null, badges:[], goal:10, todayCount:0, foutLog:[], niveau:'auto', autoLvl:1, correctRun:0, dag:{d:null,goed:0,sterk:0,sterkPunten:0,fout:0,sterkIds:[]}, toetsDag:{d:null,oefen:0,proef:0}, betaaldOp:null, weekbudget:BELONING.weekbudget, betalingen:[], verdiend:[], verdiendBij:0, bonus:0, missieStreak:0, missieLaatst:null, weekKey:null, weekPunten:0, historie:[]};}
+function blankProg(){return {punten:0, solved:{}, cards:{}, streak:0, dagstreak:0, lastDay:null, badges:[], goal:10, todayCount:0, foutLog:[], niveau:'auto', autoLvl:1, correctRun:0, dag:{d:null,goed:0,sterk:0,sterkPunten:0,fout:0,sterkIds:[]}, toetsDag:{d:null,oefen:0,proef:0}, betaaldOp:null, weekbudget:BELONING.weekbudget, betalingen:[], verdiend:[], verdiendBij:0, bonus:0, missieStreak:0, missieLaatst:null, weekKey:null, weekPunten:0, weekBasis:0, historie:[]};}
 function normalizeProg(p){
   const np={...blankProg(), ...(p||{})};
   np.solved=(p&&p.solved)||{}; np.cards=(p&&p.cards)||{};
@@ -2533,6 +2540,10 @@ function normalizeProg(p){
   if(!Array.isArray(np.historie)) np.historie=[];
   if(typeof np.missieStreak!=='number') np.missieStreak=0;
   if(typeof np.weekPunten!=='number') np.weekPunten=0;
+  // ijkwaarde voor de weekstand: als de opgeslagen data géén weekBasis heeft (legacy/bevroren),
+  // zet 'm op het huidige totaal → de toernooistand begint netjes bij 0 i.p.v. een oude teller te tonen.
+  np.weekBasis = (p && typeof p.weekBasis==='number') ? p.weekBasis : (np.punten||0);
+  if(np.weekBasis>(np.punten||0)) np.weekBasis=np.punten||0;   // ijkwaarde nooit boven het totaal
   if(!np.toetsDag||typeof np.toetsDag!=='object') np.toetsDag={d:null,oefen:0,proef:0};
   // eenmalige migratie: oude 'solved' → Leitner-kaarten
   if(Object.keys(np.cards).length===0 && Object.keys(np.solved).length>0){
@@ -2603,17 +2614,21 @@ function mergeProg(a,b){
   const historie=Object.keys(hmap).sort().map(k=>hmap[k]).slice(-52);
   const fseen=new Set(), foutLog=[];
   for(const f of [...(a.foutLog||[]),...(b.foutLog||[])].sort((x,y)=>(y.when||0)-(x.when||0))){ if(f&&!fseen.has(f.id)){fseen.add(f.id); foutLog.push(f);} }
-  // toernooipunten reconciliëren per week: zelfde week → hoogste; anders → de nieuwste week (oude weekstand vervalt)
-  let weekKeyM, weekPuntenM;
-  if(a.weekKey && a.weekKey===b.weekKey){ weekKeyM=a.weekKey; weekPuntenM=_max(a.weekPunten,b.weekPunten); }
-  else if(weekNum(a.weekKey)>=weekNum(b.weekKey)){ weekKeyM=a.weekKey||b.weekKey; weekPuntenM=(weekNum(a.weekKey)>=weekNum(b.weekKey)?(a.weekPunten||0):(b.weekPunten||0)); }
-  else { weekKeyM=b.weekKey; weekPuntenM=b.weekPunten||0; }
+  // toernooistand reconciliëren per week: zelfde week → hoogste teller + laagste ijkwaarde (grootste weekdelta);
+  // andere week → de nieuwste week (oude weekstand vervalt). weekBasis reist mee met de gekozen week.
+  const puntenM=_max(a.punten,b.punten);
+  let weekKeyM, weekPuntenM, weekBasisM;
+  const bA=(typeof a.weekBasis==='number')?a.weekBasis:(a.punten||0), bB=(typeof b.weekBasis==='number')?b.weekBasis:(b.punten||0);
+  if(a.weekKey && a.weekKey===b.weekKey){ weekKeyM=a.weekKey; weekPuntenM=_max(a.weekPunten,b.weekPunten); weekBasisM=Math.min(bA,bB); }
+  else if(weekNum(a.weekKey)>=weekNum(b.weekKey)){ weekKeyM=a.weekKey||b.weekKey; weekPuntenM=a.weekPunten||0; weekBasisM=bA; }
+  else { weekKeyM=b.weekKey; weekPuntenM=b.weekPunten||0; weekBasisM=bB; }
+  if(weekBasisM>puntenM) weekBasisM=puntenM;                 // ijkwaarde nooit boven het (samengevoegde) totaal
   const sameDag=a.dag&&b.dag&&a.dag.d===b.dag.d;
   const dag= sameDag ? {d:a.dag.d, goed:_max(a.dag.goed,b.dag.goed), sterk:_max(a.dag.sterk,b.dag.sterk), sterkPunten:_max(a.dag.sterkPunten,b.dag.sterkPunten), fout:_max(a.dag.fout,b.dag.fout), sterkIds:[...new Set([...(a.dag.sterkIds||[]),...(b.dag.sterkIds||[])])]}
              : (parseDag((a.dag||{}).d)>=parseDag((b.dag||{}).d)? a.dag : b.dag);
   return {...a, ...b,
     punten:_max(a.punten,b.punten), streak:_max(a.streak,b.streak), dagstreak:_max(a.dagstreak,b.dagstreak),
-    missieStreak:_max(a.missieStreak,b.missieStreak), weekPunten:weekPuntenM, weekKey:weekKeyM,
+    missieStreak:_max(a.missieStreak,b.missieStreak), weekPunten:weekPuntenM, weekKey:weekKeyM, weekBasis:weekBasisM,
     missieLaatst:(parseDag(a.missieLaatst)>=parseDag(b.missieLaatst)?a.missieLaatst:b.missieLaatst),
     todayCount:_max(a.todayCount,b.todayCount), goal:Math.max(a.goal||10,b.goal||10), weekbudget:Math.max(a.weekbudget||0,b.weekbudget||0),
     autoLvl:Math.max(a.autoLvl||1,b.autoLvl||1), niveau:(b.niveau!=='auto'?b.niveau:a.niveau),
@@ -2937,7 +2952,7 @@ function App(){
     const nu=weekKey();
     persist(prev=>{
       const huidige={};
-      for(const pid of Object.keys(PROFILES)){ const p=normalizeProg(prev.prog[pid]); huidige[pid]=(p.weekKey===nu?(p.weekPunten||0):0); }
+      for(const pid of Object.keys(PROFILES)){ const p=normalizeProg(prev.prog[pid]); huidige[pid]=weekPuntenNu(p); }
       const stand=prev.toernooiStand;
       if(stand && stand.week && stand.week!==nu){
         const entries=Object.entries(stand.punten||{}).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
@@ -3059,7 +3074,7 @@ function App(){
       else pr.dag={...pr.dag, sterkIds:[...(pr.dag.sterkIds||[])]};
       const lvl=(inst&&inst.lvl)||card.lvl||1;                    // moeilijkheidsgraad van deze vraag
       // wekelijks toernooi: punten resetten bij een nieuwe week
-      const wk=weekKey(); if(pr.weekKey!==wk){ pr.weekKey=wk; pr.weekPunten=0; }
+      const wk=weekKey(); if(pr.weekKey!==wk){ pr.weekKey=wk; pr.weekPunten=0; pr.weekBasis=pr.punten||0; }   // nieuwe week → ijkwaarde = totaal aan begin van de week
       if(correct){
         const gain=(wasMastered?3:(usedHint?5:10));
         pr.punten=(pr.punten||0)+gain;
@@ -3100,7 +3115,7 @@ function App(){
       const td=(pr.toetsDag&&pr.toetsDag.d===vandaag)?{...pr.toetsDag}:{d:vandaag,oefen:0,proef:0};
       if(isProef) td.proef=Math.max(td.proef||0,pct); else td.oefen=Math.max(td.oefen||0,pct);
       pr.toetsDag=td;
-      const wk=weekKey(); if(pr.weekKey!==wk){ pr.weekKey=wk; pr.weekPunten=0; }
+      const wk=weekKey(); if(pr.weekKey!==wk){ pr.weekKey=wk; pr.weekPunten=0; pr.weekBasis=pr.punten||0; }   // nieuwe week → ijkwaarde = totaal aan begin van de week
       crediteerMissie(pr);                        // toets afgerond kan de dagmissie voltooien
       upsertVerdiend(pr);                          // toetsbonus telt mee in de weekverdiensten
       return {...prev, prog:{...prev.prog,[pid]:pr}};
