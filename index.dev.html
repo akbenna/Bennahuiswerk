@@ -3350,6 +3350,7 @@ function Spellen({store,onBack,onScore,geluid}){
   if(spel==='bke')    return <BoterKaasEieren best={games.bke||0} onBack={terug} onScore={sc('bke')} geluid={geluid}/>;
   if(spel==='sprint') return <SomSprint best={games.sprint||0} onBack={terug} onScore={sc('sprint')} geluid={geluid}/>;
   if(spel==='voxel')  return <VoxelSpel onBack={terug}/>;
+  if(spel==='verkeer')return <VerkeersSpel onBack={terug}/>;
   const tegels=[
     {id:'mollen',emoji:'🦔',naam:'Mollen meppen',uitleg:'Tik zo snel mogelijk op de mol!',best:games.mollen,eenh:'punten'},
     {id:'reken', emoji:'⚡',naam:'Reken-race', uitleg:'Zoveel mogelijk tafelsommen in 30s.',best:games.reken,eenh:'goed'},
@@ -3364,11 +3365,12 @@ function Spellen({store,onBack,onScore,geluid}){
     {id:'veelvoud',emoji:'✖️',naam:'Veelvouden-vangst',uitleg:'Tik alleen de veelvouden aan!',best:games.veelvoud,eenh:'goed'},
     {id:'bke',   emoji:'⭕',naam:'Boter-kaas-eieren',uitleg:'Speel tegen de computer.',best:games.bke,eenh:'winst'},
     {id:'voxel', emoji:'🧱',naam:'AminoQMc GAME',uitleg:'Bouw en verken een 3D-blokkenwereld.',best:undefined,eenh:''},
+    {id:'verkeer',emoji:'🚦',naam:'Verkeersschool',uitleg:'Rijd door de stad en let op de verkeersborden.',best:undefined,eenh:''},
   ];
   return (
     <div>
       <div className="topbar"><button className="back" onClick={onBack}>← terug</button><span className="pill">🎮 Spelletjes</span></div>
-      <p className="muted center" style={{marginBottom:12}}>Even ontspannen tussendoor 😄 — 13 spellen!</p>
+      <p className="muted center" style={{marginBottom:12}}>Even ontspannen tussendoor 😄 — 14 spellen!</p>
       <div className="wrap">
         {tegels.map(t=>(
           <div key={t.id} className="card" style={{flex:1,minWidth:150,cursor:'pointer'}} onClick={()=>setSpel(t.id)}>
@@ -3390,6 +3392,18 @@ function VoxelSpel({onBack}){
         style={{position:'fixed',top:10,left:10,zIndex:51,background:'rgba(18,20,26,.72)',color:'#fff',border:'1px solid rgba(255,255,255,.25)',borderRadius:10,padding:'8px 12px',backdropFilter:'blur(6px)'}}>← terug</button>
       <iframe title="AminoQMc GAME" src="voxelsandbox.html"
         allow="fullscreen; pointer-lock"
+        style={{position:'absolute',inset:0,width:'100%',height:'100%',border:0}}/>
+    </div>
+  );
+}
+/* ===== Verkeersschool: los, zelfstandig 3D-spel in een iframe (verkeersschool.html naast de app) ===== */
+function VerkeersSpel({onBack}){
+  return (
+    <div style={{position:'fixed',inset:0,zIndex:50,background:'#9ec2e0'}}>
+      <button className="back" onClick={onBack}
+        style={{position:'fixed',top:10,left:10,zIndex:51,background:'rgba(18,20,26,.72)',color:'#fff',border:'1px solid rgba(255,255,255,.25)',borderRadius:10,padding:'8px 12px',backdropFilter:'blur(6px)'}}>← terug</button>
+      <iframe title="Verkeersschool" src="verkeersschool.html"
+        allow="fullscreen"
         style={{position:'absolute',inset:0,width:'100%',height:'100%',border:0}}/>
     </div>
   );
