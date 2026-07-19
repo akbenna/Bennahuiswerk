@@ -42,6 +42,11 @@
   .pedal.pressed .face,.pedal:active .face{transform:perspective(320px) rotateX(46deg) translateY(6px);box-shadow:inset 0 3px 0 rgba(255,255,255,.06),0 2px 0 rgba(0,0,0,.55);}
   .wheel{position:absolute;bottom:12px;left:14px;width:168px;height:168px;z-index:6;touch-action:none;filter:drop-shadow(0 6px 12px rgba(0,0,0,.5));}
   .wheel svg{width:100%;height:100%;display:block;}
+  .capbtn{position:absolute;right:12px;bottom:150px;width:62px;height:48px;border:none;border-radius:11px;z-index:6;background:linear-gradient(#2b3350,#1b2036);color:#eef1f4;box-shadow:0 3px 0 rgba(0,0,0,.5);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;padding:0;}
+  .capbtn:active{transform:translateY(2px);}
+  .capbtn .capnum{font-size:19px;font-weight:900;}
+  .capbtn .capsub{font-size:8px;letter-spacing:1px;color:#9fb0d0;margin-top:2px;text-transform:uppercase;}
+  .capbtn.max{background:linear-gradient(#3a2b1b,#241a10);} .capbtn.max .capnum{color:#ffd100;font-size:15px;} .capbtn.max .capsub{color:#c8a24a;}
   .steerhint{position:absolute;bottom:190px;left:0;right:0;text-align:center;font-size:11.5px;color:rgba(255,255,255,.9);z-index:5;pointer-events:none;text-shadow:0 1px 2px rgba(0,0,0,.55);}
 
   .screen{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,15,20,.94),rgba(12,15,20,.98));display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:22px;gap:11px;z-index:10;overflow-y:auto;}
@@ -141,6 +146,7 @@
 
     <button class="pedal brake" id="brakePedal"><span class="face"><span class="lbl">REM</span></span></button>
     <button class="pedal gas" id="gasPedal"><span class="face"><span class="lbl">GAS</span></span></button>
+    <button class="capbtn" id="capBtn"><span class="capnum" id="capNum">50</span><span class="capsub" id="capSub">max km/h</span></button>
     <div class="wheel" id="wheel2d">
       <svg id="wheelSvg" viewBox="0 0 100 100">
         <circle cx="50" cy="50" r="45" fill="none" stroke="#15161a" stroke-width="10"/>
@@ -526,11 +532,20 @@ const input={gas:false,brake:false};
 function hold(id,key){const el=document.getElementById(id);const on=e=>{e.preventDefault();input[key]=true;el.classList.add('pressed');},off=e=>{e.preventDefault();input[key]=false;el.classList.remove('pressed');};
   el.addEventListener('pointerdown',on);el.addEventListener('pointerup',off);el.addEventListener('pointerleave',off);el.addEventListener('pointercancel',off);}
 hold('gasPedal','gas');hold('brakePedal','brake');
+/* snelheidsbegrenzer: 0 = MAX (vrij) */
+const CAPS=[30,50,0];let capIdx=1,capHintShown=false;
+const capBtn=document.getElementById('capBtn'),capNum=document.getElementById('capNum'),capSub=document.getElementById('capSub');
+function updateCapBtn(){const c=CAPS[capIdx];if(c===0){capBtn.classList.add('max');capNum.textContent='MAX';capSub.textContent='vrij';}
+  else{capBtn.classList.remove('max');capNum.textContent=c;capSub.textContent='max km/h';}}
+function cycleCap(){capIdx=(capIdx+1)%CAPS.length;updateCapBtn();const c=CAPS[capIdx];toast('Snelheidslimiet '+(c===0?'MAX':c),c===0?'Vrij rijden — jij bepaalt de snelheid.':'Geef gas: de auto blijft rustig op '+c+' km/u.','good');}
+capBtn.addEventListener('click',e=>{e.preventDefault();cycleCap();});
+updateCapBtn();
 function setPressed(id,on){const el=document.getElementById(id);if(el)el.classList.toggle('pressed',on);}
 const keyTurn={left:false,right:false};
 window.addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();
   if(e.key==='ArrowUp'||e.key==='w'){input.gas=true;setPressed('gasPedal',true);}if(e.key==='ArrowDown'||e.key===' '||e.key==='s'){input.brake=true;setPressed('brakePedal',true);}
-  if(e.key==='ArrowLeft'||e.key==='a')keyTurn.left=true;if(e.key==='ArrowRight'||e.key==='d')keyTurn.right=true;});
+  if(e.key==='ArrowLeft'||e.key==='a')keyTurn.left=true;if(e.key==='ArrowRight'||e.key==='d')keyTurn.right=true;
+  if(e.key==='c'||e.key==='C')cycleCap();});
 window.addEventListener('keyup',e=>{if(e.key==='ArrowUp'||e.key==='w'){input.gas=false;setPressed('gasPedal',false);}if(e.key==='ArrowDown'||e.key===' '||e.key==='s'){input.brake=false;setPressed('brakePedal',false);}
   if(e.key==='ArrowLeft'||e.key==='a')keyTurn.left=false;if(e.key==='ArrowRight'||e.key==='d')keyTurn.right=false;});
 const MAXANG=2.0;const wheelEl=document.getElementById('wheel2d'),wheelSvg=document.getElementById('wheelSvg');
@@ -554,12 +569,22 @@ function resetRun(){for(const h of hazards)scene.remove(h.g);hazards.length=0;fo
   if(finishMesh){scene.remove(finishMesh);finishMesh=null;}finishAdded=false;prepopulate();updateRoad();updateHUD();}
 function startRun(seed){curSeed=(seed===undefined||seed===null)?newSeed():seed;RNG=mulberry32(curSeed);DP=DIFF[diff];GOAL_M=DP.goal;
   const bd=document.getElementById('diffBadge');bd.textContent=DP.label;bd.classList.remove('hidden');
-  resetRun();hideAllScreens();hideDriveUI(false);state='play';last=0;}
+  resetRun();hideAllScreens();hideDriveUI(false);state='play';last=0;
+  if(!capHintShown){capHintShown=true;setTimeout(()=>toast('Tip: snelheidsknop','Tik ⏱ rechtsonder voor 30 / 50 / MAX. Geef gas en de auto blijft netjes op die snelheid.','good'),700);}}
 function fout(t){fouten++;tally[t]++;toast(KOP[t],TIPS[t],'bad');updateHUD();if(fouten>=GAME_OVER_FOUTEN)endGame(false);}
 const elSpeed=document.getElementById('speed'),elLimit=document.getElementById('limit'),elDist=document.getElementById('dist'),elFouten=document.getElementById('fouten'),elPunten=document.getElementById('punten');
 function updateHUD(){elSpeed.textContent=Math.round(speed);let show=currentLimit,warn=false,near=null;for(const h of hazards){if(h.type==='speed'&&h.d>JUDGE_D&&h.d<95&&(!near||h.d<near.d))near=h;}
   if(near){show=near.limit;warn=speed>show;}elLimit.textContent=show;elLimit.className='limit'+(warn?' warn':'');elDist.textContent=Math.round(distM)+' m';elPunten.textContent=computePunten(false);elFouten.textContent=fouten+' / '+DP.pass;}
-function update(dt){if(input.gas)speed+=36*dt;else if(input.brake)speed-=95*dt;else speed-=18*dt;if(input.brake)speed-=40*dt;speed=Math.max(0,Math.min(DP.maxSpeed,speed));
+function update(dt){
+  const cap=CAPS[capIdx],target=Math.min(DP.maxSpeed,cap===0?DP.maxSpeed:cap);
+  if(input.brake){speed-=72*dt;}                                   // vaste, voorspelbare rem tot stilstand
+  else if(input.gas){
+    if(speed<target-0.4){let accel=15*(1-0.5*speed/DP.maxSpeed);const room=target-speed;if(room<10)accel*=Math.max(0.12,room/10);speed+=accel*dt;} // zacht optrekken, soepel naar doel
+    else if(speed>target+0.4){speed-=(6+0.10*speed)*dt;}           // begrenzer: laat gas los tot je op de limiet zit
+    /* anders: houd de gekozen snelheid vast */
+  }
+  else{speed-=(3.5+0.11*speed)*dt;}                                // rustig uitrollen (rolweerstand)
+  speed=Math.max(0,Math.min(DP.maxSpeed,speed));
   if(keyTurn.left){wheelAngle=Math.max(-MAXANG,wheelAngle-2.6*dt);steerHeld=true;}else if(keyTurn.right){wheelAngle=Math.min(MAXANG,wheelAngle+2.6*dt);steerHeld=true;}else if(!rotating)steerHeld=false;
   if(!steerHeld)wheelAngle+=(0-wheelAngle)*Math.min(1,3.2*dt);   // stuur centreert vanzelf
   wheelSvg.style.transform='rotate('+(wheelAngle*180/Math.PI)+'deg)';
@@ -601,7 +626,7 @@ const setupScreen=document.getElementById('setupScreen'),lockScreen=document.get
       menuScreen=document.getElementById('menuScreen'),endScreen=document.getElementById('endScreen'),duelScreen=document.getElementById('duelScreen'),reportScreen=document.getElementById('reportScreen'),
       bookSheet=document.getElementById('bookSheet'),quizSheet=document.getElementById('quizSheet'),examSheet=document.getElementById('examSheet');
 function hideAllScreens(){[setupScreen,lockScreen,profileScreen,menuScreen,endScreen,duelScreen,reportScreen].forEach(s=>s.classList.add('hidden'));}
-function hideDriveUI(h){['wheel2d','gasPedal','brakePedal'].forEach(id=>{document.getElementById(id).style.display=h?'none':'';});document.getElementById('steerhint').style.display=h?'none':'';document.getElementById('diffBadge').classList.toggle('hidden',h);}
+function hideDriveUI(h){['wheel2d','gasPedal','brakePedal','capBtn'].forEach(id=>{document.getElementById(id).style.display=h?'none':'';});document.getElementById('steerhint').style.display=h?'none':'';document.getElementById('diffBadge').classList.toggle('hidden',h);}
 
 function showSetup(){hideAllScreens();hideDriveUI(true);setupScreen.classList.remove('hidden');state='fam';}
 function showLock(){hideAllScreens();hideDriveUI(true);document.getElementById('lockTitle').textContent=fam?fam.name:'Welkom terug';document.getElementById('lkCode').value='';document.getElementById('lkErr').textContent='';lockScreen.classList.remove('hidden');state='fam';}
