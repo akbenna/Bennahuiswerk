@@ -466,7 +466,10 @@ const dash=new THREE.Mesh(new THREE.BoxGeometry(4.4,1.0,0.5),new THREE.MeshLambe
 const grey=new THREE.MeshLambertMaterial({color:0x8b8f96});
 
 /* gedeelde geometrie/materialen (minder GC, meer fps) */
-const GEO={sign:new THREE.PlaneGeometry(1.7,1.7),post:new THREE.BoxGeometry(0.14,4.8,0.14),carBody:new THREE.BoxGeometry(1.9,0.9,3.9),carCab:new THREE.BoxGeometry(1.6,0.7,2.0),
+const GEO={sign:new THREE.PlaneGeometry(1.7,1.7),post:new THREE.BoxGeometry(0.14,4.8,0.14),
+  carLower:new THREE.BoxGeometry(1.86,0.5,4.0),carHood:new THREE.BoxGeometry(1.72,0.34,1.15),carCab:new THREE.BoxGeometry(1.58,0.56,1.85),
+  carWheel:new THREE.CylinderGeometry(0.34,0.34,0.26,12),carWheelHub:new THREE.CylinderGeometry(0.13,0.13,0.28,8),
+  carHead:new THREE.BoxGeometry(0.34,0.17,0.1),carTail:new THREE.BoxGeometry(0.42,0.2,0.1),carWindow:new THREE.BoxGeometry(1.6,0.42,1.55),carBumper:new THREE.BoxGeometry(1.9,0.22,0.18),
   trunk:new THREE.CylinderGeometry(0.2,0.26,1.6,7),leaf:new THREE.SphereGeometry(1.1,8,8),lampC:new THREE.CircleGeometry(0.22,14),stripe:new THREE.PlaneGeometry(1.3,3),
   zebraLine:new THREE.PlaneGeometry(12,0.6),cross:new THREE.PlaneGeometry(46,7),crossLine:new THREE.PlaneGeometry(12,0.5),lightLine:new THREE.PlaneGeometry(12,0.6),
   pole:new THREE.BoxGeometry(0.2,4,0.2),lightHead:new THREE.BoxGeometry(0.7,1.8,0.4),camBox:new THREE.BoxGeometry(0.5,0.4,0.8),camPost:new THREE.BoxGeometry(0.15,3.1,0.15),
@@ -474,7 +477,9 @@ const GEO={sign:new THREE.PlaneGeometry(1.7,1.7),post:new THREE.BoxGeometry(0.14
 const carMatCache={};function carMat(col){if(!carMatCache[col])carMatCache[col]=new THREE.MeshLambertMaterial({color:col});return carMatCache[col];}
 const cabMat=new THREE.MeshLambertMaterial({color:0x22303f}),trunkMat=new THREE.MeshLambertMaterial({color:0x6b4b2a}),leafMat=new THREE.MeshLambertMaterial({color:0x357a34}),
       whiteMat=new THREE.MeshBasicMaterial({color:0xf3f2ee}),darkMat=new THREE.MeshLambertMaterial({color:0x101318}),roadMat2=new THREE.MeshLambertMaterial({color:0x3a4048}),
-      camMat=new THREE.MeshLambertMaterial({color:0x2a2a2a}),pedMat=new THREE.MeshLambertMaterial({color:0xffcf3f});
+      camMat=new THREE.MeshLambertMaterial({color:0x2a2a2a}),pedMat=new THREE.MeshLambertMaterial({color:0xffcf3f}),
+      tyreMat=new THREE.MeshLambertMaterial({color:0x161718}),hubMat=new THREE.MeshLambertMaterial({color:0xb8bcc2}),
+      glassMat=new THREE.MeshLambertMaterial({color:0x1a2733}),headMat=new THREE.MeshBasicMaterial({color:0xfff2c2}),tailMat=new THREE.MeshBasicMaterial({color:0xe22a20}),chromeMat=new THREE.MeshLambertMaterial({color:0x2b2e33});
 
 const signTex3D={};function signTexture(id){if(signTex3D[id])return signTex3D[id];const t=new THREE.CanvasTexture(makeSignCanvas(id,140));signTex3D[id]=t;return t;}
 const signMatCache={};function signMat(id){if(!signMatCache[id])signMatCache[id]=new THREE.MeshBasicMaterial({map:signTexture(id),transparent:true});return signMatCache[id];}
@@ -497,8 +502,18 @@ function makeTree(d){const g=new THREE.Group();const side=Math.random()<0.5?-1:1
   const baseX=side*(HALF+0.8+Math.random()*1.4);g.position.set(baseX,0,-d);scene.add(g);scenery.push({g,d,baseX});}
 function spawnScenery(d){if(Math.random()<0.82)makeHouse(d);else makeTree(d);}
 function prepopulate(){for(let d=6;d<DRAW;d+=7+Math.random()*6){spawnScenery(d);if(Math.random()<0.7)spawnScenery(d+2);}}
-function buildCar(col){const g=new THREE.Group();const body=new THREE.Mesh(GEO.carBody,carMat(col));body.position.y=0.55;g.add(body);
-  const cab=new THREE.Mesh(GEO.carCab,cabMat);cab.position.set(0,1.15,-0.1);g.add(cab);return g;}
+function buildCar(col){const g=new THREE.Group();const m=carMat(col);
+  const lower=new THREE.Mesh(GEO.carLower,m);lower.position.y=0.5;g.add(lower);                  // carrosserie
+  const cab=new THREE.Mesh(GEO.carCab,m);cab.position.set(0,0.98,-0.12);g.add(cab);              // dak/cabine (zelfde kleur)
+  const glass=new THREE.Mesh(GEO.carWindow,glassMat);glass.position.set(0,1.02,-0.12);g.add(glass); // getinte ramenband
+  const wp=[[-0.93,-1.28],[0.93,-1.28],[-0.93,1.28],[0.93,1.28]];
+  for(const w of wp){const t=new THREE.Mesh(GEO.carWheel,tyreMat);t.rotation.z=Math.PI/2;t.position.set(w[0],0.34,w[1]);g.add(t);
+    const hub=new THREE.Mesh(GEO.carWheelHub,hubMat);hub.rotation.z=Math.PI/2;hub.position.set(w[0],0.34,w[1]);g.add(hub);}
+  const fb=new THREE.Mesh(GEO.carBumper,chromeMat);fb.position.set(0,0.34,-1.98);g.add(fb);        // bumpers
+  const rb=new THREE.Mesh(GEO.carBumper,chromeMat);rb.position.set(0,0.34,1.98);g.add(rb);
+  for(const x of [-0.62,0.62]){const hl=new THREE.Mesh(GEO.carHead,headMat);hl.position.set(x,0.55,-1.99);g.add(hl);}   // koplampen (voor = -z)
+  for(const x of [-0.66,0.66]){const tl=new THREE.Mesh(GEO.carTail,tailMat);tl.position.set(x,0.6,1.99);g.add(tl);}     // achterlichten (achter = +z, naar speler)
+  return g;}
 const carCols=[0xd9822b,0xc74b50,0x5b6bd8,0xe0b400,0xcccccc,0x3f4a54];
 const hazards=[];
 function addCar(d){const lane=(RNG()*3)|0;const g=buildCar(carCols[(RNG()*carCols.length)|0]);scene.add(g);hazards.push({type:'car',g,d,baseX:LANES[lane],ownSpeed:DP.carSpeed[0]+RNG()*(DP.carSpeed[1]-DP.carSpeed[0]),hit:false,judged:false});}
@@ -563,7 +578,7 @@ const KOP={rood:'Door rood!',voetganger:'Voetganger gemist!',snelheid:'Te hard!'
 let state='fam',speed=0,distM=0,steer=0,carX=0,currentLimit=50,fouten=0,goed=0,punten=0,tally,pxSpawn=0,nextGap=0,last=0,judgedFinish=false;
 let finishMesh=null,finishAdded=false,curSeed=0;
 function goedGedaan(n){goed+=(n||1);}
-function computePunten(p){let v=goed*10-fouten*25+(p?150:0)+Math.round(distM/10);return Math.max(0,v);}
+function computePunten(p){let v=goed*12-fouten*25+(p?120:0);return Math.max(0,v);}   // kwaliteit van rijden, geen race op afstand/snelheid
 function resetRun(){for(const h of hazards)scene.remove(h.g);hazards.length=0;for(const s of scenery)scene.remove(s.g);scenery.length=0;
   speed=0;distM=0;s0=0;steer=0;carX=0;wheelAngle=0;currentLimit=50;fouten=0;goed=0;punten=0;tally={rood:0,voetganger:0,snelheid:0,botsing:0,voorrang:0,stopbord:0};pxSpawn=0;nextGap=DP.gap[0];judgedFinish=false;warnCd=0;infoQueue=[];infoQi=0;
   if(finishMesh){scene.remove(finishMesh);finishMesh=null;}finishAdded=false;prepopulate();updateRoad();updateHUD();}
@@ -725,7 +740,7 @@ function endGame(p){state='end';judgedFinishPass=p;punten=computePunten(p);
   endTitle.textContent=(naam?naam+', ':'')+(p?'knap gereden!':'nog niet gehaald.');
   const L={rood:'Door rood',voetganger:'Voetganger gemist',snelheid:'Te hard',botsing:'Botsing',voorrang:'Geen voorrang',stopbord:'Stopbord genegeerd'};
   let rows='';for(const k in tally)rows+='• '+L[k]+': <span class="n">'+tally[k]+'</span><br>';
-  rows+='<br>Score: <span class="n">'+punten+' punten</span> · Afstand: <span class="n">'+Math.round(distM)+' m</span> · Fouten: <span class="n">'+fouten+'</span> (geslaagd bij ≤ '+DP.pass+')';
+  rows+='<br><b style="color:#7fe0a0">Kwaliteitsscore: '+punten+' punten</b><br>Regels goed toegepast: <span class="n">'+goed+'</span> · Fouten: <span class="n">'+fouten+'</span> (geslaagd bij ≤ '+DP.pass+') · Afstand: <span class="n">'+Math.round(distM)+' m</span>';
   tallyEl.innerHTML=rows;
   endVs.classList.add('hidden');endVs.innerHTML='';
   if(duelChallenge){ // vergelijk met uitdager
