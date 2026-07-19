@@ -25,9 +25,10 @@
   .limit{width:54px;height:54px;border-radius:50%;background:#fff;border:6px solid var(--rood);color:#111;font-weight:900;font-size:21px;display:flex;align-items:center;justify-content:center;}
   .limit.warn{box-shadow:0 0 0 5px rgba(226,59,50,.4);}
   .meta{background:rgba(10,12,16,.72);border-radius:8px;padding:5px 9px;font-size:12px;font-weight:700;text-align:right;}
-  .meta .row{display:flex;justify-content:space-between;gap:10px;} .meta b{color:var(--geel);} .fouten b{color:#ff6b63;}
+  .meta .row{display:flex;justify-content:space-between;gap:10px;} .meta b{color:var(--geel);} .fouten b{color:#ff6b63;} .punten b{color:#7fe0a0;}
+  .diffbadge{position:absolute;top:74px;right:12px;background:rgba(10,12,16,.72);border-radius:8px;padding:3px 8px;font-size:11px;font-weight:800;z-index:5;pointer-events:none;}
 
-  .bordlabel{position:absolute;top:74px;left:50%;transform:translateX(-50%);background:rgba(10,12,16,.82);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:6px 12px;font-size:12.5px;font-weight:700;z-index:6;opacity:0;transition:opacity .2s;pointer-events:none;max-width:82%;text-align:center;}
+  .bordlabel{position:absolute;top:74px;left:50%;transform:translateX(-50%);background:rgba(10,12,16,.82);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:6px 12px;font-size:12.5px;font-weight:700;z-index:6;opacity:0;transition:opacity .2s;pointer-events:none;max-width:70%;text-align:center;}
   .bordlabel.show{opacity:1;} .bordlabel b{color:var(--geel);}
   .toast{position:absolute;left:50%;top:20%;transform:translateX(-50%);background:#fff;color:#111;border-radius:12px;padding:11px 15px;max-width:82%;text-align:center;font-weight:700;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.45);opacity:0;transition:opacity .18s;pointer-events:none;z-index:7;}
   .toast.show{opacity:1;} .toast .head{font-size:14px;font-weight:900;margin-bottom:3px;}
@@ -40,7 +41,7 @@
   .pedal.brake{right:82px;} .pedal.brake .face{background:repeating-linear-gradient(0deg, rgba(0,0,0,.25) 0 3px, transparent 3px 11px),linear-gradient(#9e3b34,#5c1f1b);}
   .pedal.pressed .face,.pedal:active .face{transform:perspective(320px) rotateX(46deg) translateY(6px);box-shadow:inset 0 3px 0 rgba(255,255,255,.06),0 2px 0 rgba(0,0,0,.55);}
   .wheel{position:absolute;bottom:12px;left:14px;width:168px;height:168px;z-index:6;touch-action:none;filter:drop-shadow(0 6px 12px rgba(0,0,0,.5));}
-  .wheel svg{width:100%;height:100%;display:block;transition:transform .02s linear;}
+  .wheel svg{width:100%;height:100%;display:block;}
   .steerhint{position:absolute;bottom:190px;left:0;right:0;text-align:center;font-size:11.5px;color:rgba(255,255,255,.9);z-index:5;pointer-events:none;text-shadow:0 1px 2px rgba(0,0,0,.55);}
 
   .screen{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,15,20,.94),rgba(12,15,20,.98));display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:22px;gap:11px;z-index:10;overflow-y:auto;}
@@ -52,9 +53,17 @@
   .mbtn.sec{background:#2a3038;color:#eef1f4;}
   .mbtn.tiny{padding:10px 14px;font-size:13px;box-shadow:0 3px 0 rgba(0,0,0,.4);}
   .mbtn:active{transform:translateY(3px);}
+  .segrow{display:flex;gap:6px;width:min(320px,86vw);}
+  .segrow button{flex:1;border:none;border-radius:10px;padding:9px 4px;font-size:12px;font-weight:800;background:#20262e;color:#aeb6bf;cursor:pointer;}
+  .segrow button.on{background:var(--geel);color:#111;}
+  .seglabel{font-size:11px;color:#8b939c;font-weight:700;margin-bottom:-4px;}
   .stamp{font-size:30px;font-weight:900;letter-spacing:1px;padding:6px 18px;border-radius:10px;border:4px solid;transform:rotate(-6deg);}
   .stamp.pass{color:var(--groen);border-color:var(--groen);} .stamp.fail{color:var(--rood);border-color:var(--rood);}
   .tally{font-size:12.5px;color:#cfd6dd;text-align:left;max-width:340px;line-height:1.7;} .tally .n{color:var(--geel);font-weight:800;}
+  .versus{display:flex;gap:10px;width:min(340px,90vw);margin:2px 0;}
+  .vcard{flex:1;background:#161b22;border:1px solid #232b36;border-radius:12px;padding:10px 8px;text-align:center;}
+  .vcard.win{border-color:var(--groen);box-shadow:0 0 0 2px rgba(47,191,90,.3);}
+  .vcard .vn{font-size:13px;font-weight:900;} .vcard .vp{font-size:22px;font-weight:900;color:var(--geel);margin-top:3px;} .vcard .vs{font-size:11px;color:#9aa3ad;margin-top:2px;}
   .hidden{display:none !important;} .err{color:#ffb3ae;font-size:13px;max-width:300px;line-height:1.5;}
 
   .field{display:flex;flex-direction:column;gap:5px;width:min(320px,86vw);text-align:left;}
@@ -74,9 +83,16 @@
   .link{color:#8fb3d9;font-size:12px;text-decoration:underline;background:none;border:none;cursor:pointer;}
   .err2{color:#ff9a92;font-size:12px;min-height:15px;}
 
+  .modal{position:absolute;inset:0;z-index:30;background:rgba(6,8,11,.72);display:flex;align-items:center;justify-content:center;padding:20px;}
+  .modal .box{background:#151a22;border:1px solid #232b36;border-radius:16px;padding:18px;width:min(360px,92vw);text-align:center;display:flex;flex-direction:column;gap:11px;}
+  .modal h3{margin:0;font-size:18px;font-weight:900;}
+  .modal textarea{width:100%;height:64px;border:none;border-radius:10px;background:#0f1319;color:#8fd0ff;font-size:12px;padding:9px;resize:none;font-family:monospace;}
+  .modrow{display:flex;gap:8px;} .modrow .mbtn{flex:1;}
+
   .sheet{position:absolute;inset:0;background:#0f1319;z-index:22;display:flex;flex-direction:column;}
   .sheet header{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#151a22;border-bottom:1px solid #232b36;}
   .sheet header h3{margin:0;font-size:17px;font-weight:900;flex:1;}
+  .sheet header .clock{background:#20262e;color:var(--geel);border-radius:8px;padding:5px 9px;font-size:13px;font-weight:900;}
   .backbtn{border:none;background:#2a3038;color:#fff;border-radius:9px;padding:8px 12px;font-weight:800;font-size:13px;}
   .sheet .body{flex:1;overflow-y:auto;padding:12px 12px 40px;}
   .catt{font-size:13px;font-weight:900;color:var(--geel);margin:16px 4px 8px;}
@@ -91,10 +107,21 @@
   .qscore{font-size:13px;font-weight:800;color:#cfd6dd;}
   .qopts{display:flex;flex-direction:column;gap:9px;width:min(360px,90vw);}
   .qopt{border:none;border-radius:11px;padding:13px 14px;font-size:13.5px;font-weight:800;background:#232b36;color:#eef1f4;text-align:left;cursor:pointer;}
-  .qopt.good{background:#1f7a45;} .qopt.bad{background:#8f2f2a;}
+  .qopt.good{background:#1f7a45;} .qopt.bad{background:#8f2f2a;} .qopt.sel{outline:3px solid var(--geel);}
   .qexpl{font-size:12.5px;color:#cfd6dd;max-width:360px;text-align:center;line-height:1.5;min-height:34px;}
   .qnext{border:none;border-radius:11px;padding:12px 26px;font-size:15px;font-weight:900;background:var(--geel);color:#111;box-shadow:0 4px 0 #b99700;}
   .qnext:active{transform:translateY(3px);}
+  .progbar{width:min(360px,90vw);height:8px;background:#232b36;border-radius:6px;overflow:hidden;}
+  .progbar .fill{height:100%;background:var(--geel);transition:width .2s;}
+  .examnav{display:flex;gap:8px;width:min(360px,90vw);}
+  .examnav button{flex:1;border:none;border-radius:10px;padding:11px;font-weight:800;font-size:13px;background:#2a3038;color:#eef1f4;}
+  .examnav button.prim{background:var(--geel);color:#111;}
+  .examnav button:disabled{opacity:.4;}
+  .review{width:min(380px,92vw);display:flex;flex-direction:column;gap:10px;text-align:left;}
+  .rvitem{background:#161b22;border:1px solid #232b36;border-radius:12px;padding:10px 12px;font-size:12.5px;line-height:1.5;}
+  .rvitem .q{font-weight:800;margin-bottom:4px;}
+  .rvitem.good{border-left:4px solid var(--groen);} .rvitem.bad{border-left:4px solid var(--rood);}
+  .rvitem .ans{color:#9aa3ad;} .rvitem .ans b{color:#eef1f4;}
 </style>
 </head>
 <body>
@@ -104,9 +131,10 @@
       <div class="plate"><div class="big" id="speed">0</div><span class="unit">KM/H</span></div>
       <div class="hud-right">
         <div class="limit" id="limit">50</div>
-        <div class="meta"><div class="row">afstand <b id="dist">0 m</b></div><div class="row fouten">fouten <b id="fouten">0 / 3</b></div></div>
+        <div class="meta"><div class="row">afstand <b id="dist">0 m</b></div><div class="row punten">punten <b id="punten">0</b></div><div class="row fouten">fouten <b id="fouten">0 / 3</b></div></div>
       </div>
     </div>
+    <div class="diffbadge hidden" id="diffBadge">Normaal</div>
     <div class="bordlabel" id="bordlabel"></div>
     <div class="toast" id="toast"><div class="head" id="toastHead"></div><div id="toastBody"></div></div>
     <div class="steerhint" id="steerhint">Draai het stuur · let op de borden</div>
@@ -133,6 +161,7 @@
       <div class="field"><label>Eerste gezinslid</label><input id="suMember" placeholder="bijv. Sara" maxlength="16"></div>
       <div class="err2" id="suErr"></div>
       <button class="mbtn primary" id="suBtn" style="width:min(320px,86vw)">Aanmaken</button>
+      <button class="link" id="suGuest">Even snel spelen zonder account →</button>
       <p class="small">De code en scores blijven op dit toestel. Deel de app-link + code met je familie.</p>
     </div>
 
@@ -144,6 +173,7 @@
       <label class="small" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="lkRemember"> Onthoud op dit toestel</label>
       <div class="err2" id="lkErr"></div>
       <button class="mbtn primary" id="lkBtn" style="width:min(320px,86vw)">Openen</button>
+      <button class="link" id="lkGuest">Even snel spelen zonder code →</button>
       <button class="link" id="lkReset">Code vergeten? Opnieuw instellen</button>
     </div>
 
@@ -155,15 +185,42 @@
       <button class="mbtn sec tiny" id="profLock" style="width:min(340px,90vw)">🔒 Vergrendelen</button>
     </div>
 
+    <!-- DUEL-UITNODIGING -->
+    <div class="screen fam hidden" id="duelScreen">
+      <div style="font-size:44px">⚔️</div>
+      <h2 id="duelTitle">Uitdaging!</h2>
+      <p id="duelText"></p>
+      <div class="field"><label>Jouw naam</label><input id="duelName" placeholder="bijv. Sam" maxlength="16"></div>
+      <button class="mbtn primary" id="duelStart" style="width:min(320px,86vw)">Neem de uitdaging aan 🚗</button>
+      <button class="link" id="duelSkip">Nee, gewoon zelf spelen →</button>
+    </div>
+
+    <!-- DUEL-UITSLAG (via terug-link geopend) -->
+    <div class="screen fam hidden" id="reportScreen">
+      <div style="font-size:44px">🏁</div>
+      <h2>Duel-uitslag</h2>
+      <div class="versus" id="reportVs"></div>
+      <p id="reportText" style="font-weight:800"></p>
+      <button class="mbtn primary" id="reportPlay" style="width:min(320px,86vw)">Zelf ook spelen 🚗</button>
+    </div>
+
     <!-- MENU -->
     <div class="screen hidden" id="menuScreen">
       <div class="ava" id="menuAva" style="width:56px;height:56px;font-size:24px"></div>
       <h2 id="menuHi">Hoi!</h2>
       <p id="menuStats" class="small"></p>
+      <div class="seglabel">Verkeersdrukte</div>
+      <div class="segrow" id="diffSeg">
+        <button data-d="kalm">🌿 Kalm</button>
+        <button data-d="normaal" class="on">🚗 Normaal</button>
+        <button data-d="druk">🔥 Druk</button>
+      </div>
       <div class="menu-btns">
         <button class="mbtn primary" id="btnDrive">🚗 Rijden door de stad</button>
-        <button class="mbtn sec" id="btnBook">📖 Bordenboek</button>
-        <button class="mbtn sec" id="btnQuiz">❓ Bordenquiz</button>
+        <button class="mbtn sec" id="btnDuel">⚔️ Daag iemand uit (duel)</button>
+        <button class="mbtn sec" id="btnExam">🎓 Theorie-examen</button>
+        <button class="mbtn sec tiny" id="btnBook">📖 Bordenboek</button>
+        <button class="mbtn sec tiny" id="btnQuiz">❓ Bordenquiz (oefenen)</button>
         <button class="mbtn sec tiny" id="btnSwitch">👥 Ander gezinslid</button>
         <button class="mbtn sec tiny" id="btnInstall">📲 Installeren op telefoon</button>
         <button class="mbtn sec tiny" id="btnLock">🔒 Vergrendelen</button>
@@ -174,16 +231,34 @@
     <div class="screen hidden" id="endScreen">
       <div class="stamp" id="stamp">GESLAAGD</div>
       <h2 id="endTitle"></h2>
+      <div class="versus hidden" id="endVs"></div>
       <div class="tally" id="tally"></div>
-      <button class="mbtn primary" id="againBtn" style="width:min(320px,86vw)">Opnieuw rijden</button>
-      <button class="mbtn sec" id="toMenuBtn" style="width:min(320px,86vw)">Naar menu</button>
+      <button class="mbtn primary" id="shareBtn" style="width:min(320px,86vw)">⚔️ Daag iemand uit met deze rit</button>
+      <button class="mbtn sec" id="againBtn" style="width:min(320px,86vw)">Opnieuw rijden</button>
+      <button class="mbtn sec tiny" id="toMenuBtn" style="width:min(320px,86vw)">Naar menu</button>
     </div>
 
     <div class="screen hidden" id="errScreen"><h2>Oeps</h2><p class="err">De 3D-bibliotheek kon niet laden. Controleer je internet en laad opnieuw.</p></div>
 
+    <!-- DEEL-MODAL -->
+    <div class="modal hidden" id="shareModal"><div class="box">
+      <h3 id="shareTitle">Deel de link</h3>
+      <p class="small" id="shareDesc" style="margin:0 auto"></p>
+      <textarea id="shareUrl" readonly></textarea>
+      <div class="modrow">
+        <button class="mbtn primary tiny" id="shareCopy">📋 Kopieer</button>
+        <button class="mbtn sec tiny" id="shareNative">📤 Deel</button>
+      </div>
+      <button class="link" id="shareClose">Sluiten</button>
+    </div></div>
+
     <div class="sheet hidden" id="bookSheet"><header><h3>Bordenboek</h3><button class="backbtn" id="bookBack">Terug</button></header><div class="body" id="bookBody"></div></div>
     <div class="sheet hidden" id="quizSheet"><header><h3>Bordenquiz</h3><button class="backbtn" id="quizBack">Terug</button></header>
       <div class="quizwrap"><div class="qscore" id="qscore">Score 0 / 0</div><div class="qcanvas" id="qcanvas"></div><div class="qopts" id="qopts"></div><div class="qexpl" id="qexpl"></div><button class="qnext hidden" id="qnext">Volgende</button></div></div>
+
+    <!-- THEORIE-EXAMEN -->
+    <div class="sheet hidden" id="examSheet"><header><h3 id="examHdr">Theorie-examen</h3><div class="clock hidden" id="examClock">08:00</div><button class="backbtn" id="examBack">Terug</button></header>
+      <div class="body"><div class="quizwrap" id="examBody"></div></div></div>
   </div>
 </div>
 
@@ -280,6 +355,14 @@ const SIGNMAP={};SIGNS.forEach(s=>SIGNMAP[s.id]=s);
 function drawTo(cv,id){const g=cv.getContext('2d');const px=cv.width;g.clearRect(0,0,px,px);g.save();g.scale(px/120,px/120);SIGNMAP[id].draw(g);g.restore();}
 function makeSignCanvas(id,px){const c=document.createElement('canvas');c.width=c.height=px;drawTo(c,id);return c;}
 
+/* ---------- seeded willekeur (voor eerlijke duels) ---------- */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+let RNG=Math.random;                       // gameplay-willekeur; scenery gebruikt Math.random
+function seededShuffle(a,rnd){for(let i=a.length-1;i>0;i--){const j=(rnd()*(i+1))|0;[a[i],a[j]]=[a[j],a[i]];}return a;}
+function newSeed(){return (Math.random()*2147483647)|0;}
+function b64enc(str){return btoa(unescape(encodeURIComponent(str)));}
+function b64dec(str){return decodeURIComponent(escape(atob(str)));}
+
 /* ---------- Bordenboek + Quiz ---------- */
 const bookBody=document.getElementById('bookBody');let bookBuilt=false;
 function buildBook(){if(bookBuilt)return;bookBuilt=true;const cats=[];SIGNS.forEach(s=>{if(!cats.includes(s.cat))cats.push(s.cat);});
@@ -305,16 +388,61 @@ function quizAnswer(btn,opt){if(qAnswered)return;qAnswered=true;qTotal++;const b
   qscore.textContent='Score '+qScore+' / '+qTotal;qnext.classList.remove('hidden');}
 qnext.onclick=quizNew;
 
+/* ---------- Theorie-examen: vragenbank ---------- */
+const THEORY=[
+ {cat:'voorrang',q:'Je nadert een gelijkwaardig kruispunt (geen borden, geen verkeerslichten). Rechts nadert een auto. Wie gaat voor?',opts:['De auto van rechts','Jij','Wie het hardst rijdt','Niemand'],a:0,expl:'Op een gelijkwaardig kruispunt verleen je voorrang aan bestuurders van rechts.'},
+ {cat:'voorrang',sign:'B6',q:'Wat moet je doen bij dit bord?',opts:['Voorrang verlenen aan kruisend verkeer','Je hebt zelf voorrang','Verplicht stoppen','Keren verboden'],a:0,expl:'De omgekeerde driehoek betekent: voorrang verlenen.'},
+ {cat:'voorrang',sign:'B7',q:'Dit bord betekent…',opts:['Stoppen en voorrang verlenen','Voorrangsweg','Inrijden verboden','Adviessnelheid'],a:0,expl:'Stopbord: volledig stilstaan en dan voorrang verlenen.'},
+ {cat:'voorrang',q:'Op het wegdek zie je “haaientanden” (witte driehoeken die naar je wijzen). Dit betekent…',opts:['Voorrang verlenen','Je hebt voorrang','Fietsstrook','Einde weg'],a:0,expl:'Haaientanden = voorrang verlenen aan bestuurders op de kruisende weg.'},
+ {cat:'voorrang',q:'Je nadert een rotonde. Bestuurders die al op de rotonde rijden hebben meestal…',opts:['Voorrang','Geen voorrang','Alleen voorrang rechts','Nooit voorrang'],a:0,expl:'In Nederland heeft verkeer op de rotonde doorgaans voorrang (aangegeven met haaientanden/bord).'},
+ {cat:'voorrang',q:'Je hebt groen, maar een brandweerauto met zwaailicht en sirene kruist het kruispunt. Je…',opts:['Verleent voorrang aan het voorrangsvoertuig','Rijdt door, want jij hebt groen','Toetert','Stopt midden op het kruispunt'],a:0,expl:'Een voorrangsvoertuig met optische én geluidssignalen gaat altijd voor.'},
+ {cat:'snelheid',q:'Wat is binnen de bebouwde kom standaard de maximumsnelheid (zonder afwijkend bord)?',opts:['50 km/u','30 km/u','60 km/u','70 km/u'],a:0,expl:'Standaard binnen de bebouwde kom: 50 km/u.'},
+ {cat:'snelheid',q:'Op een gewone weg buiten de bebouwde kom (één rijbaan) geldt standaard…',opts:['80 km/u','60 km/u','100 km/u','geen limiet'],a:0,expl:'Buiten de bebouwde kom op een gewone weg: 80 km/u.'},
+ {cat:'snelheid',q:'Sinds 2020 geldt op veel autosnelwegen overdag (6–19 uur) een maximumsnelheid van…',opts:['100 km/u','120 km/u','130 km/u','90 km/u'],a:0,expl:'Overdag geldt op veel snelwegen 100 km/u; ’s avonds/’s nachts vaak 120 of 130.'},
+ {cat:'snelheid',sign:'A1-30',q:'Wat geeft dit bord aan?',opts:['Maximaal 30 km/u','Adviessnelheid 30','Minimaal 30 km/u','Einde 30-zone'],a:0,expl:'Rode ring met getal = maximumsnelheid.'},
+ {cat:'snelheid',q:'Als je snelheid verdubbelt, wordt je remweg ongeveer…',opts:['Vier keer zo lang','Twee keer zo lang','Even lang','Korter'],a:0,expl:'De remweg neemt toe met het kwadraat van de snelheid: 2× sneller ≈ 4× remweg.'},
+ {cat:'algemeen',q:'Voor een beginnend bestuurder (< 5 jaar rijbewijs) is de wettelijke alcohollimiet…',opts:['0,2 ‰','0,5 ‰','0,8 ‰','0,0 ‰'],a:0,expl:'Beginnend bestuurder: 0,2 promille. Ervaren bestuurder: 0,5 promille.'},
+ {cat:'algemeen',q:'Mag je tijdens het rijden je telefoon vasthouden om te bellen?',opts:['Nee, vasthouden is verboden','Ja, kort mag','Alleen in de file','Alleen buiten de kom'],a:0,expl:'Een mobiel apparaat vasthouden tijdens het rijden is verboden.'},
+ {cat:'algemeen',q:'De autogordel is…',opts:['Voor bestuurder én alle passagiers verplicht','Alleen voorin verplicht','Een advies','In de stad niet nodig'],a:0,expl:'Iedereen in de auto is verplicht de gordel te dragen.'},
+ {cat:'algemeen',q:'Een goede vuistregel voor volgafstand bij droog weer is minstens…',opts:['Twee seconden','Een halve seconde','Eén autolengte','Tien meter, altijd'],a:0,expl:'De 2-secondenregel; bij nat of glad wegdek houd je méér afstand.'},
+ {cat:'algemeen',q:'Wie is de “Bob”?',opts:['Degene die nuchter blijft en rijdt','De snelste chauffeur','Een type auto','De bijrijder met de kaart'],a:0,expl:'Bob = de bewuste, nuchtere bestuurder.'},
+ {cat:'algemeen',q:'Voordat je afslaat of van rijstrook wisselt, controleer je…',opts:['De dode hoek door over je schouder te kijken','Alleen je spiegel','Niets, spiegels zijn genoeg','Alleen je snelheid'],a:0,expl:'Spiegels tonen de dode hoek niet volledig — kijk over je schouder.'},
+ {cat:'algemeen',q:'Bij een rijstrook die eindigt (file bij een versmalling) hoor je…',opts:['Vlak voor de versmalling om beurten in te voegen (ritsen)','Zo vroeg mogelijk in te voegen','De andere strook te blokkeren','Stil te blijven staan'],a:0,expl:'Ritsen: om en om invoegen vlak vóór de versmalling houdt de doorstroming het beste.'},
+ {cat:'algemeen',q:'Bij gladheid of regen pas je je rijstijl aan door…',opts:['Meer afstand te houden en rustig te remmen','Harder te rijden','Dichter op je voorganger','Fel te sturen'],a:0,expl:'Minder grip vraagt om meer afstand en rustige, geleidelijke bewegingen.'},
+ {cat:'algemeen',q:'Je mag het mistachterlicht gebruiken als het zicht minder is dan…',opts:['50 meter','200 meter','100 meter','20 meter'],a:0,expl:'Mistachterlicht is toegestaan bij een zicht van minder dan 50 meter.'},
+ {cat:'algemeen',q:'Bij het inhalen van een fietser houd je zijdelings minstens… afstand.',opts:['1,5 meter','0,5 meter','3 meter','Geen'],a:0,expl:'Houd ruim (± 1,5 m) afstand bij het inhalen van fietsers.'},
+ {cat:'gevaar',q:'Een voetganger stapt de zebra op terwijl jij nadert. Je…',opts:['Laat de voetganger voorgaan','Toetert en rijdt door','Rijdt er snel langs','Mag doorrijden als je licht groen is'],a:0,expl:'Voetgangers op (of duidelijk bij) een zebrapad hebben voorrang.'},
+ {cat:'gevaar',q:'Het verkeerslicht springt op geel terwijl je het nadert. Je…',opts:['Stopt als dat veilig kan','Geeft gas om nog te halen','Mag altijd doorrijden','Maakt altijd een noodstop'],a:0,expl:'Bij geel stop je, tenzij stoppen niet meer veilig kan.'},
+ {cat:'gevaar',q:'Je rijdt in een woonstraat langs geparkeerde auto’s. Het grootste risico is…',opts:['Een openslaand portier of overstekend kind','Dat je te langzaam rijdt','Je benzineverbruik','Niets bijzonders'],a:0,expl:'Reken op onverwachte voetgangers/portieren; matig je snelheid.'},
+ {cat:'gevaar',q:'Je rijdt langs een school en kinderen spelen op de stoep. Je…',opts:['Mindert snelheid en let extra op','Rijdt gewoon door op 50','Toetert zodat ze opzij gaan','Rijdt midden op de weg'],a:0,expl:'Kinderen zijn onvoorspelbaar — anticipeer en rijd rustig.'},
+ {cat:'gevaar',q:'Achter je nadert een ambulance met zwaailicht en sirene. Je…',opts:['Maakt zo snel mogelijk veilig ruimte','Blijft rustig doorrijden','Stopt midden op de weg','Rijdt harder om weg te komen'],a:0,expl:'Ga rustig maar tijdig opzij en maak ruimte voor het voorrangsvoertuig.'},
+ {cat:'verkeersborden',sign:'C2',q:'Dit bord betekent…',opts:['Eenrichtingsweg: inrijden verboden','Voorrangsweg','Doodlopende weg','Parkeren'],a:0,expl:'Rond, rood met witte balk: inrijden verboden.'},
+ {cat:'verkeersborden',sign:'E4',q:'Dit blauwe bord met witte P betekent…',opts:['Parkeergelegenheid','Parkeerverbod','Politiepost','Pechhaven'],a:0,expl:'Blauw bord met P = hier mag je parkeren.'},
+ {cat:'verkeersborden',sign:'J23',q:'Dit waarschuwingsbord betekent…',opts:['Kinderen','Fietsers','Voetgangers','Werk in uitvoering'],a:0,expl:'Driehoek met twee kinderen = waarschuwing voor kinderen.'},
+ {cat:'verkeersborden',sign:'D1',q:'Het blauwe ronde bord met pijlen in een cirkel betekent…',opts:['Rotonde: verplichte rijrichting','Parkeerplaats','Keren verplicht','Verboden richting'],a:0,expl:'Gebodsbord rotonde: volg de aangegeven rijrichting.'},
+ {cat:'verkeersborden',sign:'B1',q:'De gele ruit (diamant) betekent…',opts:['Je rijdt op een voorrangsweg','Voorrang verlenen','Parkeerplaats','Einde snelweg'],a:0,expl:'Gele ruit = voorrangsweg: jij hebt voorrang.'}
+];
+
 /* ---------- 3D stadrit ---------- */
 if(typeof THREE==='undefined'){document.getElementById('errScreen').classList.remove('hidden');return;}
 const stage=document.getElementById('stage');
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x9ec2e0);scene.fog=new THREE.Fog(0x9ec2e0,32,175);
 const camera=new THREE.PerspectiveCamera(72,stage.clientWidth/stage.clientHeight,0.1,400);camera.position.set(0,1.5,0);
-const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
+const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
 renderer.setSize(stage.clientWidth,stage.clientHeight);renderer.domElement.className='gl';renderer.domElement.style.touchAction='none';
 stage.insertBefore(renderer.domElement,stage.firstChild);
 scene.add(new THREE.AmbientLight(0xffffff,0.85));const sun=new THREE.DirectionalLight(0xffffff,0.6);sun.position.set(-20,40,10);scene.add(sun);
-const LANES=[-3.6,0,3.6],GOAL_M=1000,MAX_FOUTEN_PASS=3,GAME_OVER_FOUTEN=7,MAXSPEED=90,JUDGE_D=1.6,DRAW=175,HALF=6;
+
+/* moeilijkheidsgraden */
+const DIFF={
+  kalm:   {label:'Kalm',   goal:800,  pass:4, maxSpeed:80,  gap:[46,80], carSpeed:[13,25], overSpeed:2, weights:{info:0.36,kruising:0.16,car:0.08,light:0.10,zebra:0.14,speed:0.16}},
+  normaal:{label:'Normaal',goal:1000, pass:3, maxSpeed:90,  gap:[34,66], carSpeed:[18,34], overSpeed:1, weights:{info:0.28,kruising:0.20,car:0.14,light:0.12,zebra:0.12,speed:0.14}},
+  druk:   {label:'Druk',   goal:1200, pass:2, maxSpeed:100, gap:[26,50], carSpeed:[22,40], overSpeed:1, weights:{info:0.20,kruising:0.22,car:0.24,light:0.14,zebra:0.10,speed:0.10}}
+};
+let diff='normaal';let DP=DIFF.normaal;
+
+const LANES=[-3.6,0,3.6],MAX_FOUTEN_PASS=3,GAME_OVER_FOUTEN=7,JUDGE_D=1.6,DRAW=175,HALF=6;
+let GOAL_M=1000;
 let s0=0;function C(s){return 6*Math.sin(s*0.010)+3*Math.sin(s*0.022+1.0);}function bend(d){return C(s0+d)-C(s0);}
 function roadTexture(){const c=document.createElement('canvas');c.width=128;c.height=256;const g=c.getContext('2d');
   g.fillStyle='#3a4048';g.fillRect(0,0,128,256);g.fillStyle='#f3f2ee';g.fillRect(2,0,4,256);g.fillRect(122,0,4,256);
@@ -330,53 +458,70 @@ const ground=new THREE.Mesh(new THREE.PlaneGeometry(700,800),new THREE.MeshLambe
 const cockpit=new THREE.Group();camera.add(cockpit);scene.add(camera);
 const dash=new THREE.Mesh(new THREE.BoxGeometry(4.4,1.0,0.5),new THREE.MeshLambertMaterial({color:0x14181e}));dash.position.set(0,-1.12,-1.15);cockpit.add(dash);
 const grey=new THREE.MeshLambertMaterial({color:0x8b8f96});
+
+/* gedeelde geometrie/materialen (minder GC, meer fps) */
+const GEO={sign:new THREE.PlaneGeometry(1.7,1.7),post:new THREE.BoxGeometry(0.14,4.8,0.14),carBody:new THREE.BoxGeometry(1.9,0.9,3.9),carCab:new THREE.BoxGeometry(1.6,0.7,2.0),
+  trunk:new THREE.CylinderGeometry(0.2,0.26,1.6,7),leaf:new THREE.SphereGeometry(1.1,8,8),lampC:new THREE.CircleGeometry(0.22,14),stripe:new THREE.PlaneGeometry(1.3,3),
+  zebraLine:new THREE.PlaneGeometry(12,0.6),cross:new THREE.PlaneGeometry(46,7),crossLine:new THREE.PlaneGeometry(12,0.5),lightLine:new THREE.PlaneGeometry(12,0.6),
+  pole:new THREE.BoxGeometry(0.2,4,0.2),lightHead:new THREE.BoxGeometry(0.7,1.8,0.4),camBox:new THREE.BoxGeometry(0.5,0.4,0.8),camPost:new THREE.BoxGeometry(0.15,3.1,0.15),
+  pedBody:new THREE.BoxGeometry(0.5,0.9,0.4),pedHead:new THREE.SphereGeometry(0.28,10,10)};
+const carMatCache={};function carMat(col){if(!carMatCache[col])carMatCache[col]=new THREE.MeshLambertMaterial({color:col});return carMatCache[col];}
+const cabMat=new THREE.MeshLambertMaterial({color:0x22303f}),trunkMat=new THREE.MeshLambertMaterial({color:0x6b4b2a}),leafMat=new THREE.MeshLambertMaterial({color:0x357a34}),
+      whiteMat=new THREE.MeshBasicMaterial({color:0xf3f2ee}),darkMat=new THREE.MeshLambertMaterial({color:0x101318}),roadMat2=new THREE.MeshLambertMaterial({color:0x3a4048}),
+      camMat=new THREE.MeshLambertMaterial({color:0x2a2a2a}),pedMat=new THREE.MeshLambertMaterial({color:0xffcf3f});
+
 const signTex3D={};function signTexture(id){if(signTex3D[id])return signTex3D[id];const t=new THREE.CanvasTexture(makeSignCanvas(id,140));signTex3D[id]=t;return t;}
-function signPlane(id,x,y,z,size){const g=new THREE.Group();const s=new THREE.Mesh(new THREE.PlaneGeometry(size||1.7,size||1.7),new THREE.MeshBasicMaterial({map:signTexture(id),transparent:true}));s.position.set(x,y,z);g.add(s);
-  const post=new THREE.Mesh(new THREE.BoxGeometry(0.14,y,0.14),grey);post.position.set(x,y/2,z);g.add(post);return g;}
+const signMatCache={};function signMat(id){if(!signMatCache[id])signMatCache[id]=new THREE.MeshBasicMaterial({map:signTexture(id),transparent:true});return signMatCache[id];}
+function signPlane(id,x,y,z,size){const g=new THREE.Group();const geo=size?new THREE.PlaneGeometry(size,size):GEO.sign;const s=new THREE.Mesh(geo,signMat(id));s.position.set(x,y,z);g.add(s);
+  const post=new THREE.Mesh(GEO.post,grey);post.scale.y=y/4.8;post.position.set(x,y/2,z);g.add(post);return g;}
 const wallCols=[0xb5651d,0xa8574a,0xcdb891,0x8a9a5b,0x9aa7b0,0xc7c1b0,0xd9a441,0x7d8b99,0xbfae93];const roofCols=[0x7a3b2e,0x54606b,0x8a4b3a,0x3f4a54,0x9a6b3a];
 const houseTexCache=[];function houseTexture(w){if(houseTexCache[w])return houseTexCache[w];const c=document.createElement('canvas');c.width=64;c.height=96;const g=c.getContext('2d');
   g.fillStyle='#'+w.toString(16).padStart(6,'0');g.fillRect(0,0,64,96);for(let ry=0;ry<5;ry++)for(let rx=0;rx<3;rx++){g.fillStyle=Math.random()<0.45?'#ffe08a':'#2b3a4a';g.fillRect(8+rx*18,8+ry*17,10,11);}
   g.fillStyle='#4a3527';g.fillRect(27,80,10,16);const t=new THREE.CanvasTexture(c);houseTexCache[w]=t;return t;}
+const houseMatCache={};function houseMat(w){if(!houseMatCache[w])houseMatCache[w]=new THREE.MeshLambertMaterial({map:houseTexture(w)});return houseMatCache[w];}
+const roofMatCache={};function roofMat(c){if(!roofMatCache[c])roofMatCache[c]=new THREE.MeshLambertMaterial({color:c});return roofMatCache[c];}
 const scenery=[];
 function makeHouse(d){const g=new THREE.Group();const side=Math.random()<0.5?-1:1;const w=5+Math.random()*4,dp=5+Math.random()*4,h=6+Math.random()*11;
-  const wall=new THREE.Mesh(new THREE.BoxGeometry(w,h,dp),new THREE.MeshLambertMaterial({map:houseTexture(wallCols[(Math.random()*wallCols.length)|0])}));wall.position.y=h/2;g.add(wall);
-  const roofH=1.4+Math.random()*1.4;const roof=new THREE.Mesh(new THREE.ConeGeometry(Math.max(w,dp)*0.74,roofH,4),new THREE.MeshLambertMaterial({color:roofCols[(Math.random()*roofCols.length)|0]}));roof.rotation.y=Math.PI/4;roof.position.y=h+roofH/2;g.add(roof);
+  const wall=new THREE.Mesh(new THREE.BoxGeometry(w,h,dp),houseMat(wallCols[(Math.random()*wallCols.length)|0]));wall.position.y=h/2;g.add(wall);
+  const roofH=1.4+Math.random()*1.4;const roof=new THREE.Mesh(new THREE.ConeGeometry(Math.max(w,dp)*0.74,roofH,4),roofMat(roofCols[(Math.random()*roofCols.length)|0]));roof.rotation.y=Math.PI/4;roof.position.y=h+roofH/2;g.add(roof);
   const baseX=side*(HALF+(0.6+Math.random()*2.4)+w/2);g.position.set(baseX,0,-d);scene.add(g);scenery.push({g,d,baseX});}
 function makeTree(d){const g=new THREE.Group();const side=Math.random()<0.5?-1:1;
-  const trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.26,1.6,8),new THREE.MeshLambertMaterial({color:0x6b4b2a}));trunk.position.y=0.8;g.add(trunk);
-  const leaf=new THREE.Mesh(new THREE.SphereGeometry(1.1,10,10),new THREE.MeshLambertMaterial({color:0x357a34}));leaf.position.y=2.2;g.add(leaf);
+  const trunk=new THREE.Mesh(GEO.trunk,trunkMat);trunk.position.y=0.8;g.add(trunk);
+  const leaf=new THREE.Mesh(GEO.leaf,leafMat);leaf.position.y=2.2;g.add(leaf);
   const baseX=side*(HALF+0.8+Math.random()*1.4);g.position.set(baseX,0,-d);scene.add(g);scenery.push({g,d,baseX});}
 function spawnScenery(d){if(Math.random()<0.82)makeHouse(d);else makeTree(d);}
 function prepopulate(){for(let d=6;d<DRAW;d+=7+Math.random()*6){spawnScenery(d);if(Math.random()<0.7)spawnScenery(d+2);}}
-function buildCar(col){const g=new THREE.Group();const body=new THREE.Mesh(new THREE.BoxGeometry(1.9,0.9,3.9),new THREE.MeshLambertMaterial({color:col}));body.position.y=0.55;g.add(body);
-  const cab=new THREE.Mesh(new THREE.BoxGeometry(1.6,0.7,2.0),new THREE.MeshLambertMaterial({color:0x22303f}));cab.position.set(0,1.15,-0.1);g.add(cab);return g;}
+function buildCar(col){const g=new THREE.Group();const body=new THREE.Mesh(GEO.carBody,carMat(col));body.position.y=0.55;g.add(body);
+  const cab=new THREE.Mesh(GEO.carCab,cabMat);cab.position.set(0,1.15,-0.1);g.add(cab);return g;}
 const carCols=[0xd9822b,0xc74b50,0x5b6bd8,0xe0b400,0xcccccc,0x3f4a54];
 const hazards=[];
-function addCar(d){const lane=(Math.random()*3)|0;const g=buildCar(carCols[(Math.random()*carCols.length)|0]);scene.add(g);hazards.push({type:'car',g,d,baseX:LANES[lane],ownSpeed:18+Math.random()*16,hit:false});}
-function addLight(d){const g=new THREE.Group();const line=new THREE.Mesh(new THREE.PlaneGeometry(12,0.6),new THREE.MeshBasicMaterial({color:0xf3f2ee}));line.rotation.x=-Math.PI/2;line.position.y=0.03;g.add(line);
-  const pole=new THREE.Mesh(new THREE.BoxGeometry(0.2,4,0.2),grey);pole.position.set(6.6,2,0);g.add(pole);
-  const head=new THREE.Mesh(new THREE.BoxGeometry(0.7,1.8,0.4),new THREE.MeshLambertMaterial({color:0x101318}));head.position.set(6.6,3.6,0.2);g.add(head);
+function addCar(d){const lane=(RNG()*3)|0;const g=buildCar(carCols[(RNG()*carCols.length)|0]);scene.add(g);hazards.push({type:'car',g,d,baseX:LANES[lane],ownSpeed:DP.carSpeed[0]+RNG()*(DP.carSpeed[1]-DP.carSpeed[0]),hit:false,judged:false});}
+function addLight(d){const g=new THREE.Group();const line=new THREE.Mesh(GEO.lightLine,whiteMat);line.rotation.x=-Math.PI/2;line.position.y=0.03;g.add(line);
+  const pole=new THREE.Mesh(GEO.pole,grey);pole.position.set(6.6,2,0);g.add(pole);
+  const head=new THREE.Mesh(GEO.lightHead,darkMat);head.position.set(6.6,3.6,0.2);g.add(head);
   const mats=[new THREE.MeshBasicMaterial({color:0x3a1210}),new THREE.MeshBasicMaterial({color:0x3a2c10}),new THREE.MeshBasicMaterial({color:0x10361f})];
-  const lamps=[];for(let i=0;i<3;i++){const l=new THREE.Mesh(new THREE.CircleGeometry(0.22,16),mats[i]);l.position.set(6.6,4.15-i*0.55,0.42);g.add(l);lamps.push(l);}
-  scene.add(g);hazards.push({type:'light',g,d,baseX:0,light:'green',timer:2,lamps,judged:false});}
-function addZebra(d){const g=new THREE.Group();for(let i=0;i<6;i++){const s=new THREE.Mesh(new THREE.PlaneGeometry(1.3,3),new THREE.MeshBasicMaterial({color:0xf3f2ee}));s.rotation.x=-Math.PI/2;s.position.set(-5+i*2,0.03,0);g.add(s);}
-  const ped=new THREE.Group();const bm=new THREE.MeshLambertMaterial({color:0xffcf3f});const t=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.9,0.4),bm);t.position.y=1;ped.add(t);
-  const h=new THREE.Mesh(new THREE.SphereGeometry(0.28,12,12),bm);h.position.y=1.65;ped.add(h);ped.position.set(-6.2,0,0);g.add(ped);scene.add(g);
-  hazards.push({type:'pedestrian',g,d,baseX:0,ped,pedX:-6.2,walking:true,pause:0.7+Math.random(),judged:false});}
-function addSpeed(d){const g=new THREE.Group();const lim=Math.random()<0.6?30:50;g.add(signPlane(lim===30?'A1-30':'A1-50',-6.4,2.4,0));
-  const cam=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.4,0.8),new THREE.MeshLambertMaterial({color:0x2a2a2a}));cam.position.set(6.5,3.1,0);g.add(cam);
-  const cp=new THREE.Mesh(new THREE.BoxGeometry(0.15,3.1,0.15),grey);cp.position.set(6.5,1.55,0);g.add(cp);scene.add(g);hazards.push({type:'speed',g,d,baseX:0,limit:lim,judged:false});}
-function addKruising(d){const g=new THREE.Group();const cross=new THREE.Mesh(new THREE.PlaneGeometry(46,7),new THREE.MeshLambertMaterial({color:0x3a4048}));cross.rotation.x=-Math.PI/2;cross.position.y=0.01;g.add(cross);
-  const roll=Math.random();let signType;if(roll<0.30)signType='priority';else if(roll<0.58)signType='yield';else if(roll<0.78)signType='stop';else signType='equal';const mustYield=(signType!=='priority');
+  const lamps=[];for(let i=0;i<3;i++){const l=new THREE.Mesh(GEO.lampC,mats[i]);l.position.set(6.6,4.15-i*0.55,0.42);g.add(l);lamps.push(l);}
+  scene.add(g);hazards.push({type:'light',g,d,baseX:0,light:'green',timer:1.4+RNG()*2.2,lamps,judged:false});}
+function addZebra(d){const g=new THREE.Group();for(let i=0;i<6;i++){const s=new THREE.Mesh(GEO.stripe,whiteMat);s.rotation.x=-Math.PI/2;s.position.set(-5+i*2,0.03,0);g.add(s);}
+  const ped=new THREE.Group();const t=new THREE.Mesh(GEO.pedBody,pedMat);t.position.y=1;ped.add(t);
+  const h=new THREE.Mesh(GEO.pedHead,pedMat);h.position.y=1.65;ped.add(h);ped.position.set(-6.2,0,0);g.add(ped);scene.add(g);
+  hazards.push({type:'pedestrian',g,d,baseX:0,ped,pedX:-6.2,walking:true,pause:0.5+RNG()*1.2,judged:false});}
+function addSpeed(d){const g=new THREE.Group();const lim=RNG()<0.6?30:50;g.add(signPlane(lim===30?'A1-30':'A1-50',-6.4,2.4,0));
+  const cam=new THREE.Mesh(GEO.camBox,camMat);cam.position.set(6.5,3.1,0);g.add(cam);
+  const cp=new THREE.Mesh(GEO.camPost,grey);cp.position.set(6.5,1.55,0);g.add(cp);scene.add(g);hazards.push({type:'speed',g,d,baseX:0,limit:lim,judged:false});}
+function addKruising(d){const g=new THREE.Group();const cross=new THREE.Mesh(GEO.cross,roadMat2);cross.rotation.x=-Math.PI/2;cross.position.y=0.01;g.add(cross);
+  const roll=RNG();let signType;if(roll<0.30)signType='priority';else if(roll<0.58)signType='yield';else if(roll<0.78)signType='stop';else signType='equal';const mustYield=(signType!=='priority');
   if(signType!=='equal'){g.add(signPlane(signType==='priority'?'B1':(signType==='stop'?'B7':'B6'),-(HALF+1.0),2.4,4.2));
-    if(signType!=='priority'){const l=new THREE.Mesh(new THREE.PlaneGeometry(12,0.5),new THREE.MeshBasicMaterial({color:0xf3f2ee}));l.rotation.x=-Math.PI/2;l.position.set(0,0.03,3.6);g.add(l);}}
-  const hasCar=Math.random()<0.75;let crossCar=null;if(hasCar){crossCar=buildCar(carCols[(Math.random()*carCols.length)|0]);crossCar.rotation.y=Math.PI/2;crossCar.position.set(12,0,0);g.add(crossCar);}
+    if(signType!=='priority'){const l=new THREE.Mesh(GEO.crossLine,whiteMat);l.rotation.x=-Math.PI/2;l.position.set(0,0.03,3.6);g.add(l);}}
+  const hasCar=RNG()<0.75;let crossCar=null;if(hasCar){crossCar=buildCar(carCols[(RNG()*carCols.length)|0]);crossCar.rotation.y=Math.PI/2;crossCar.position.set(12,0,0);g.add(crossCar);}
   scene.add(g);hazards.push({type:'kruising',g,d,baseX:0,signType,mustYield,hasCar,crossCar,active:false,carT:0,hit:false,judged:false});}
 let infoQueue=[],infoQi=0;const INFO_IDS=SIGNS.map(s=>s.id);
-function nextInfoId(){if(infoQi>=infoQueue.length){infoQueue=shuffle(INFO_IDS.slice());infoQi=0;}return infoQueue[infoQi++];}
+function nextInfoId(){if(infoQi>=infoQueue.length){infoQueue=seededShuffle(INFO_IDS.slice(),RNG);infoQi=0;}return infoQueue[infoQi++];}
 function addInfo(d){const id=nextInfoId();const g=new THREE.Group();g.add(signPlane(id,HALF+1.0,2.4,0));scene.add(g);hazards.push({type:'info',g,d,baseX:0,id,judged:false});}
-function spawn(){const r=Math.random(),d=DRAW-8;if(r<0.30)addInfo(d);else if(r<0.50)addKruising(d);else if(r<0.62)addCar(d);else if(r<0.73)addLight(d);else if(r<0.85)addZebra(d);else addSpeed(d);}
+function spawn(){const d=DRAW-8;const w=DP.weights;let r=RNG(),acc=0;const order=[['info',w.info],['kruising',w.kruising],['car',w.car],['light',w.light],['zebra',w.zebra],['speed',w.speed]];
+  for(const[t,ww]of order){acc+=ww;if(r<acc){({info:addInfo,kruising:addKruising,car:addCar,light:addLight,zebra:addZebra,speed:addSpeed})[t](d);return;}}addInfo(d);}
 
+/* ---------- besturing ---------- */
 const input={gas:false,brake:false};
 function hold(id,key){const el=document.getElementById(id);const on=e=>{e.preventDefault();input[key]=true;el.classList.add('pressed');},off=e=>{e.preventDefault();input[key]=false;el.classList.remove('pressed');};
   el.addEventListener('pointerdown',on);el.addEventListener('pointerup',off);el.addEventListener('pointerleave',off);el.addEventListener('pointercancel',off);}
@@ -389,28 +534,34 @@ window.addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','Arr
 window.addEventListener('keyup',e=>{if(e.key==='ArrowUp'||e.key==='w'){input.gas=false;setPressed('gasPedal',false);}if(e.key==='ArrowDown'||e.key===' '||e.key==='s'){input.brake=false;setPressed('brakePedal',false);}
   if(e.key==='ArrowLeft'||e.key==='a')keyTurn.left=false;if(e.key==='ArrowRight'||e.key==='d')keyTurn.right=false;});
 const MAXANG=2.0;const wheelEl=document.getElementById('wheel2d'),wheelSvg=document.getElementById('wheelSvg');
-let wheelAngle=0,rotating=false,lastA=0;function angNorm(a){while(a>Math.PI)a-=2*Math.PI;while(a<-Math.PI)a+=2*Math.PI;return a;}
+let wheelAngle=0,rotating=false,lastA=0,steerHeld=false;function angNorm(a){while(a>Math.PI)a-=2*Math.PI;while(a<-Math.PI)a+=2*Math.PI;return a;}
 function wc(){const r=wheelEl.getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height/2};}
-wheelEl.addEventListener('pointerdown',e=>{e.preventDefault();rotating=true;const c=wc();lastA=Math.atan2(e.clientY-c.y,e.clientX-c.x);if(wheelEl.setPointerCapture)try{wheelEl.setPointerCapture(e.pointerId);}catch(_){}document.getElementById('steerhint').style.opacity=0;});
+wheelEl.addEventListener('pointerdown',e=>{e.preventDefault();rotating=true;steerHeld=true;const c=wc();lastA=Math.atan2(e.clientY-c.y,e.clientX-c.x);if(wheelEl.setPointerCapture)try{wheelEl.setPointerCapture(e.pointerId);}catch(_){}document.getElementById('steerhint').style.opacity=0;});
 window.addEventListener('pointermove',e=>{if(!rotating)return;const c=wc();const a=Math.atan2(e.clientY-c.y,e.clientX-c.x);wheelAngle=Math.max(-MAXANG,Math.min(MAXANG,wheelAngle+angNorm(a-lastA)));lastA=a;});
-window.addEventListener('pointerup',()=>{rotating=false;});window.addEventListener('pointercancel',()=>{rotating=false;});
+window.addEventListener('pointerup',()=>{rotating=false;steerHeld=false;});window.addEventListener('pointercancel',()=>{rotating=false;steerHeld=false;});
 const toastEl=document.getElementById('toast'),tH=document.getElementById('toastHead'),tB=document.getElementById('toastBody');let toastTimer=null,warnCd=0;
-function toast(h,b,k){tH.textContent=h;tB.textContent=b;toastEl.className='toast show '+(k||'');if(toastTimer)clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastEl.className='toast '+(k||''),2600);}
+function toast(h,b,k){tH.textContent=h;tB.textContent=b;toastEl.className='toast show '+(k||'');if(toastTimer)clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastEl.className='toast '+(k||''),2400);}
 const bordEl=document.getElementById('bordlabel');let bordTimer=null;
-function showBord(id){const s=SIGNMAP[id];bordEl.innerHTML='<b>'+s.name+'</b> — '+s.meaning;bordEl.classList.add('show');if(bordTimer)clearTimeout(bordTimer);bordTimer=setTimeout(()=>bordEl.classList.remove('show'),2600);}
+function showBord(id){const s=SIGNMAP[id];bordEl.innerHTML='<b>'+s.name+'</b> — '+s.meaning;bordEl.classList.add('show');if(bordTimer)clearTimeout(bordTimer);bordTimer=setTimeout(()=>bordEl.classList.remove('show'),2400);}
 const TIPS={rood:'Bij rood stop je altijd vóór de stopstreep.',voetganger:'Voetgangers op een zebrapad hebben voorrang.',snelheid:'Houd je aan de aangegeven snelheid.',botsing:'Kijk of de kruising vrij is en houd afstand.',voorrang:'Verleen voorrang aan verkeer van rechts / bij een driehoek.',stopbord:'Bij een stopbord altijd volledig stilstaan.'};
 const KOP={rood:'Door rood!',voetganger:'Voetganger gemist!',snelheid:'Te hard!',botsing:'Botsing!',voorrang:'Geen voorrang!',stopbord:'Niet gestopt!'};
-let state='fam',speed=0,distM=0,steer=0,carX=0,currentLimit=50,fouten=0,tally,pxSpawn=0,nextGap=0,last=0,judgedFinish=false;
-let finishMesh=null,finishAdded=false;
+let state='fam',speed=0,distM=0,steer=0,carX=0,currentLimit=50,fouten=0,goed=0,punten=0,tally,pxSpawn=0,nextGap=0,last=0,judgedFinish=false;
+let finishMesh=null,finishAdded=false,curSeed=0;
+function goedGedaan(n){goed+=(n||1);}
+function computePunten(p){let v=goed*10-fouten*25+(p?150:0)+Math.round(distM/10);return Math.max(0,v);}
 function resetRun(){for(const h of hazards)scene.remove(h.g);hazards.length=0;for(const s of scenery)scene.remove(s.g);scenery.length=0;
-  speed=0;distM=0;s0=0;steer=0;carX=0;wheelAngle=0;currentLimit=50;fouten=0;tally={rood:0,voetganger:0,snelheid:0,botsing:0,voorrang:0,stopbord:0};pxSpawn=0;nextGap=30;judgedFinish=false;warnCd=0;infoQueue=[];infoQi=0;
+  speed=0;distM=0;s0=0;steer=0;carX=0;wheelAngle=0;currentLimit=50;fouten=0;goed=0;punten=0;tally={rood:0,voetganger:0,snelheid:0,botsing:0,voorrang:0,stopbord:0};pxSpawn=0;nextGap=DP.gap[0];judgedFinish=false;warnCd=0;infoQueue=[];infoQi=0;
   if(finishMesh){scene.remove(finishMesh);finishMesh=null;}finishAdded=false;prepopulate();updateRoad();updateHUD();}
+function startRun(seed){curSeed=(seed===undefined||seed===null)?newSeed():seed;RNG=mulberry32(curSeed);DP=DIFF[diff];GOAL_M=DP.goal;
+  const bd=document.getElementById('diffBadge');bd.textContent=DP.label;bd.classList.remove('hidden');
+  resetRun();hideAllScreens();hideDriveUI(false);state='play';last=0;}
 function fout(t){fouten++;tally[t]++;toast(KOP[t],TIPS[t],'bad');updateHUD();if(fouten>=GAME_OVER_FOUTEN)endGame(false);}
-const elSpeed=document.getElementById('speed'),elLimit=document.getElementById('limit'),elDist=document.getElementById('dist'),elFouten=document.getElementById('fouten');
+const elSpeed=document.getElementById('speed'),elLimit=document.getElementById('limit'),elDist=document.getElementById('dist'),elFouten=document.getElementById('fouten'),elPunten=document.getElementById('punten');
 function updateHUD(){elSpeed.textContent=Math.round(speed);let show=currentLimit,warn=false,near=null;for(const h of hazards){if(h.type==='speed'&&h.d>JUDGE_D&&h.d<95&&(!near||h.d<near.d))near=h;}
-  if(near){show=near.limit;warn=speed>show;}elLimit.textContent=show;elLimit.className='limit'+(warn?' warn':'');elDist.textContent=Math.round(distM)+' m';elFouten.textContent=fouten+' / '+MAX_FOUTEN_PASS;}
-function update(dt){if(input.gas)speed+=36*dt;else if(input.brake)speed-=95*dt;else speed-=18*dt;if(input.brake)speed-=40*dt;speed=Math.max(0,Math.min(MAXSPEED,speed));
-  if(keyTurn.left)wheelAngle=Math.max(-MAXANG,wheelAngle-2.6*dt);if(keyTurn.right)wheelAngle=Math.min(MAXANG,wheelAngle+2.6*dt);
+  if(near){show=near.limit;warn=speed>show;}elLimit.textContent=show;elLimit.className='limit'+(warn?' warn':'');elDist.textContent=Math.round(distM)+' m';elPunten.textContent=computePunten(false);elFouten.textContent=fouten+' / '+DP.pass;}
+function update(dt){if(input.gas)speed+=36*dt;else if(input.brake)speed-=95*dt;else speed-=18*dt;if(input.brake)speed-=40*dt;speed=Math.max(0,Math.min(DP.maxSpeed,speed));
+  if(keyTurn.left){wheelAngle=Math.max(-MAXANG,wheelAngle-2.6*dt);steerHeld=true;}else if(keyTurn.right){wheelAngle=Math.min(MAXANG,wheelAngle+2.6*dt);steerHeld=true;}else if(!rotating)steerHeld=false;
+  if(!steerHeld)wheelAngle+=(0-wheelAngle)*Math.min(1,3.2*dt);   // stuur centreert vanzelf
   wheelSvg.style.transform='rotate('+(wheelAngle*180/Math.PI)+'deg)';
   const wheelPos=wheelAngle/MAXANG;steer+=(wheelPos-steer)*Math.min(1,12*dt);const mps=speed/3.6;const lat=6.0*Math.max(0.25,Math.min(1,speed/22));
   const curv=(C(s0+2)-C(s0))*0.5;let drift=curv*mps*0.14;drift=Math.max(-1.6,Math.min(1.6,drift));carX+=steer*lat*dt-drift*dt;carX=Math.max(-7.5,Math.min(7.5,carX));
@@ -418,66 +569,75 @@ function update(dt){if(input.gas)speed+=36*dt;else if(input.brake)speed-=95*dt;e
   camera.position.x=carX;camera.rotation.set(-0.115,-bend(35)*0.005,-steer*0.05);distM+=mps*dt;s0=distM;roadTex.offset.y+=(mps*dt)/18;updateRoad();
   for(const s of scenery){s.d-=mps*dt;s.g.position.set(bend(s.d)+s.baseX,0,-s.d);}for(let i=scenery.length-1;i>=0;i--){if(scenery[i].d<-16){scene.remove(scenery[i].g);scenery.splice(i,1);}}
   if(scenery.length<34&&Math.random()<0.9)spawnScenery(DRAW-2);
-  pxSpawn+=mps*dt;if(pxSpawn>=nextGap){pxSpawn=0;nextGap=34+Math.random()*34;spawn();}
+  pxSpawn+=mps*dt;if(pxSpawn>=nextGap){pxSpawn=0;nextGap=DP.gap[0]+RNG()*(DP.gap[1]-DP.gap[0]);spawn();}
   for(const h of hazards){if(h.type==='car')h.d-=((speed-h.ownSpeed)/3.6)*dt;else h.d-=mps*dt;h.g.position.set(bend(h.d)+h.baseX,0,-h.d);
     if(h.type==='light'){h.timer-=dt;if(h.timer<=0){if(h.light==='green'){h.light='amber';h.timer=0.9;}else if(h.light==='amber'){h.light='red';h.timer=2.4;}else{h.light='green';h.timer=2.4;}
         const on={red:0xff4136,amber:0xffb01b,green:0x2fbf5a},off={red:0x3a1210,amber:0x3a2c10,green:0x10361f};h.lamps[0].material.color.setHex(h.light==='red'?on.red:off.red);h.lamps[1].material.color.setHex(h.light==='amber'?on.amber:off.amber);h.lamps[2].material.color.setHex(h.light==='green'?on.green:off.green);}
-      if(!h.judged&&h.d<=JUDGE_D){if(h.light==='red'){h.judged=true;fout('rood');}else if(h.d<=JUDGE_D-0.6){h.judged=true;}}}
-    else if(h.type==='pedestrian'){if(h.walking){if(h.pause>0)h.pause-=dt;else{h.pedX+=2.3*dt;h.ped.position.x=h.pedX;if(h.pedX>6.2)h.walking=false;}}if(!h.judged&&h.d<=JUDGE_D){if(h.walking&&h.pedX<5.5){h.judged=true;fout('voetganger');}else h.judged=true;}}
-    else if(h.type==='speed'){if(!h.judged&&h.d<=JUDGE_D){h.judged=true;currentLimit=h.limit;if(speed>h.limit+1)fout('snelheid');}}
-    else if(h.type==='car'){if(!h.hit&&Math.abs(carX-h.baseX)<1.8&&Math.abs(h.d-1)<2.9){h.hit=true;speed*=0.3;fout('botsing');}}
+      if(!h.judged&&h.d<=JUDGE_D){if(h.light==='red'){h.judged=true;fout('rood');}else if(h.d<=JUDGE_D-0.6){h.judged=true;goedGedaan(1);}}}
+    else if(h.type==='pedestrian'){if(h.walking){if(h.pause>0)h.pause-=dt;else{h.pedX+=2.3*dt;h.ped.position.x=h.pedX;if(h.pedX>6.2)h.walking=false;}}if(!h.judged&&h.d<=JUDGE_D){if(h.walking&&h.pedX<5.5&&speed>10){h.judged=true;fout('voetganger');}else{h.judged=true;goedGedaan(1);}}}
+    else if(h.type==='speed'){if(!h.judged&&h.d<=JUDGE_D){h.judged=true;currentLimit=h.limit;if(speed>h.limit+DP.overSpeed)fout('snelheid');else goedGedaan(1);}}
+    else if(h.type==='car'){if(!h.hit&&Math.abs(carX-h.baseX)<1.8&&Math.abs(h.d-1)<2.9){h.hit=true;speed*=0.3;fout('botsing');}else if(!h.judged&&h.d<-3){h.judged=true;goedGedaan(1);}}
     else if(h.type==='info'){if(!h.judged&&h.d<=JUDGE_D+1){h.judged=true;showBord(h.id);}}
     else if(h.type==='kruising'){if(h.hasCar){if(h.mustYield){if(!h.active&&h.d<20){h.active=true;h.carT=0;}if(h.active){h.carT+=dt;const cx=12-h.carT*5.5;h.crossCar.position.x=cx;h.crossCar.visible=cx>-14;}else{h.crossCar.position.x=12;h.crossCar.visible=false;}}else{h.crossCar.position.x=7;h.crossCar.visible=true;}}
       if(h.hasCar&&!h.hit&&h.crossCar.visible&&Math.abs(h.d-1)<2.2&&Math.abs(carX-h.crossCar.position.x)<1.7){h.hit=true;h.judged=true;speed*=0.3;fout('botsing');}
-      if(!h.judged&&h.d<=JUDGE_D){h.judged=true;const carInZone=h.hasCar&&h.crossCar.visible&&Math.abs(h.crossCar.position.x)<HALF+2;if(h.signType==='stop'&&speed>8)fout('stopbord');else if(h.mustYield&&carInZone&&speed>12)fout('voorrang');}}}
+      if(!h.judged&&h.d<=JUDGE_D){h.judged=true;const carInZone=h.hasCar&&h.crossCar.visible&&Math.abs(h.crossCar.position.x)<HALF+2;if(h.signType==='stop'&&speed>8)fout('stopbord');else if(h.mustYield&&carInZone&&speed>12)fout('voorrang');else goedGedaan(1);}}}
   for(let i=hazards.length-1;i>=0;i--){if(hazards[i].d<-14){scene.remove(hazards[i].g);hazards.splice(i,1);}}
   const fd=GOAL_M-distM;if(!finishAdded&&fd<160){const c=document.createElement('canvas');c.width=256;c.height=32;const g=c.getContext('2d');
     for(let i=0;i<32;i++){g.fillStyle=(i%2)?'#111':'#fff';g.fillRect(i*8,0,8,16);g.fillStyle=(i%2)?'#fff':'#111';g.fillRect(i*8,16,8,16);}
     finishMesh=new THREE.Mesh(new THREE.PlaneGeometry(12,3),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c)}));finishMesh.rotation.x=-Math.PI/2;scene.add(finishMesh);finishAdded=true;}
-  if(finishMesh)finishMesh.position.set(bend(fd),0.05,-fd);if(!judgedFinish&&distM>=GOAL_M){judgedFinish=true;endGame(fouten<=MAX_FOUTEN_PASS);}updateHUD();}
+  if(finishMesh)finishMesh.position.set(bend(fd),0.05,-fd);if(!judgedFinish&&distM>=GOAL_M){judgedFinish=true;endGame(fouten<=DP.pass);}updateHUD();}
 
 /* ---------- FAMILIE-LAAG ---------- */
 const FKEY='vs_familie_v1',UKEY='vs_unlocked_v1';
-let fam=null,memFam=null,cur=0;
+let fam=null,memFam=null,cur=0,guestMode=false;
 const avaColors=['#ffd100','#2fbf5a','#e0834b','#5b9bd8','#c77fd8','#e06b6b','#4fc9c0','#f0a93a'];
 function load(){try{const s=localStorage.getItem(FKEY);if(s)return JSON.parse(s);}catch(_){}return memFam;}
-function persist(){try{localStorage.setItem(FKEY,JSON.stringify(fam));}catch(_){memFam=fam;}}
+function persist(){if(guestMode)return;try{localStorage.setItem(FKEY,JSON.stringify(fam));}catch(_){memFam=fam;}}
 function setUnlocked(v){try{if(v)localStorage.setItem(UKEY,'1');else localStorage.removeItem(UKEY);}catch(_){}}
 function isUnlocked(){try{return localStorage.getItem(UKEY)==='1';}catch(_){return false;}}
-function newMember(name){return {name:name,color:avaColors[(fam?fam.members.length:0)%avaColors.length],runs:0,geslaagd:0,bestFouten:null,bestAfstand:0};}
+function newMember(name,idx){return {name:name,color:avaColors[(idx||0)%avaColors.length],runs:0,geslaagd:0,bestFouten:null,bestAfstand:0,bestPunten:0,bestExam:null};}
 
 const setupScreen=document.getElementById('setupScreen'),lockScreen=document.getElementById('lockScreen'),profileScreen=document.getElementById('profileScreen'),
-      menuScreen=document.getElementById('menuScreen'),endScreen=document.getElementById('endScreen'),bookSheet=document.getElementById('bookSheet'),quizSheet=document.getElementById('quizSheet');
-function hideAllScreens(){[setupScreen,lockScreen,profileScreen,menuScreen,endScreen].forEach(s=>s.classList.add('hidden'));}
-function hideDriveUI(h){['wheel2d','gasPedal','brakePedal'].forEach(id=>{document.getElementById(id).style.display=h?'none':'';});document.getElementById('steerhint').style.display=h?'none':'';}
+      menuScreen=document.getElementById('menuScreen'),endScreen=document.getElementById('endScreen'),duelScreen=document.getElementById('duelScreen'),reportScreen=document.getElementById('reportScreen'),
+      bookSheet=document.getElementById('bookSheet'),quizSheet=document.getElementById('quizSheet'),examSheet=document.getElementById('examSheet');
+function hideAllScreens(){[setupScreen,lockScreen,profileScreen,menuScreen,endScreen,duelScreen,reportScreen].forEach(s=>s.classList.add('hidden'));}
+function hideDriveUI(h){['wheel2d','gasPedal','brakePedal'].forEach(id=>{document.getElementById(id).style.display=h?'none':'';});document.getElementById('steerhint').style.display=h?'none':'';document.getElementById('diffBadge').classList.toggle('hidden',h);}
 
 function showSetup(){hideAllScreens();hideDriveUI(true);setupScreen.classList.remove('hidden');state='fam';}
 function showLock(){hideAllScreens();hideDriveUI(true);document.getElementById('lockTitle').textContent=fam?fam.name:'Welkom terug';document.getElementById('lkCode').value='';document.getElementById('lkErr').textContent='';lockScreen.classList.remove('hidden');state='fam';}
 function showProfiles(){hideAllScreens();hideDriveUI(true);renderProfiles();profileScreen.classList.remove('hidden');state='fam';}
 function showMenu(){hideAllScreens();hideDriveUI(true);const m=fam.members[cur];document.getElementById('menuHi').textContent='Hoi '+m.name+'! 👋';
   const av=document.getElementById('menuAva');av.textContent=m.name.charAt(0).toUpperCase();av.style.background=m.color;
-  document.getElementById('menuStats').textContent=m.runs? (m.geslaagd+'× geslaagd · beste: '+(m.bestFouten===null?'—':m.bestFouten+' fouten')+' · '+m.bestAfstand+' m') : 'Nog geen ritten — veel plezier!';
-  menuScreen.classList.remove('hidden');state='menu';}
+  const ex=(m.bestExam!==null&&m.bestExam!==undefined)?' · examen best '+m.bestExam+'/20':'';
+  document.getElementById('menuStats').textContent=m.runs? (m.geslaagd+'× geslaagd · top '+(m.bestPunten||0)+' pnt · '+(m.bestAfstand||0)+' m'+ex) : (m.bestExam!=null?('examen best '+m.bestExam+'/20 — rijd je eerste rit!'):'Nog geen ritten — veel plezier!');
+  menuScreen.classList.remove('hidden');state='menu';setDiffButtons();}
+function setDiffButtons(){document.querySelectorAll('#diffSeg button').forEach(b=>b.classList.toggle('on',b.dataset.d===diff));}
 
 function renderProfiles(){const list=document.getElementById('memberList');list.innerHTML='';
   fam.members.forEach((m,i)=>{const row=document.createElement('div');row.className='mrow';
     const av=document.createElement('div');av.className='ava';av.style.background=m.color;av.textContent=m.name.charAt(0).toUpperCase();
-    const mi=document.createElement('div');mi.className='mi';mi.innerHTML='<div class="mn">'+m.name+'</div><div class="ms">'+(m.runs?(m.geslaagd+'× geslaagd · beste '+(m.bestFouten===null?'—':m.bestFouten+' f')):'nog geen ritten')+'</div>';
+    const mi=document.createElement('div');mi.className='mi';mi.innerHTML='<div class="mn">'+m.name+'</div><div class="ms">'+(m.runs?(m.geslaagd+'× geslaagd · top '+(m.bestPunten||0)+' pnt'):'nog geen ritten')+'</div>';
     const play=document.createElement('button');play.className='play';play.textContent='Speel';play.onclick=()=>{cur=i;fam.current=i;persist();showMenu();};
     const del=document.createElement('button');del.className='del';del.textContent='×';del.onclick=()=>{if(fam.members.length<=1){return;}fam.members.splice(i,1);if(cur>=fam.members.length)cur=0;persist();renderProfiles();};
     row.appendChild(av);row.appendChild(mi);row.appendChild(play);if(fam.members.length>1)row.appendChild(del);list.appendChild(row);});}
 
+function startGuest(){guestMode=true;fam={name:'Gast',code:null,members:[newMember('Gast',0)],current:0,guest:true};cur=0;showMenu();}
+
 document.getElementById('suBtn').onclick=()=>{const name=document.getElementById('suName').value.trim(),code=document.getElementById('suCode').value.trim(),mem=document.getElementById('suMember').value.trim();
   const err=document.getElementById('suErr');if(name.length<2){err.textContent='Vul een familienaam in.';return;}if(!/^\d{4}$/.test(code)){err.textContent='De code moet 4 cijfers zijn.';return;}if(mem.length<1){err.textContent='Vul minstens één gezinslid in.';return;}
-  fam={name:name,code:code,members:[],current:0};fam.members.push(newMember(mem));persist();setUnlocked(true);cur=0;showProfiles();};
+  guestMode=false;fam={name:name,code:code,members:[newMember(mem,0)],current:0};persist();setUnlocked(true);cur=0;showProfiles();};
+document.getElementById('suGuest').onclick=startGuest;
+document.getElementById('lkGuest').onclick=startGuest;
 document.getElementById('lkBtn').onclick=()=>{const code=document.getElementById('lkCode').value.trim();const err=document.getElementById('lkErr');
   if(code===fam.code){if(document.getElementById('lkRemember').checked)setUnlocked(true);cur=fam.current||0;showProfiles();}else{err.textContent='Onjuiste code.';}};
 document.getElementById('lkReset').onclick=()=>{if(confirm('Alles wissen en opnieuw instellen? Scores gaan verloren.')){try{localStorage.removeItem(FKEY);localStorage.removeItem(UKEY);}catch(_){}memFam=null;fam=null;showSetup();}};
-document.getElementById('addBtn').onclick=()=>{const inp=document.getElementById('addName');const n=inp.value.trim();if(n.length<1)return;fam.members.push(newMember(n));persist();inp.value='';renderProfiles();};
+document.getElementById('addBtn').onclick=()=>{const inp=document.getElementById('addName');const n=inp.value.trim();if(n.length<1)return;fam.members.push(newMember(n,fam.members.length));persist();inp.value='';renderProfiles();};
 document.getElementById('profLock').onclick=()=>{setUnlocked(false);showLock();};
 
-document.getElementById('btnDrive').onclick=()=>{resetRun();hideAllScreens();hideDriveUI(false);state='play';last=0;};
-document.getElementById('againBtn').onclick=()=>{resetRun();hideAllScreens();hideDriveUI(false);state='play';last=0;};
+document.querySelectorAll('#diffSeg button').forEach(b=>b.onclick=()=>{diff=b.dataset.d;setDiffButtons();});
+document.getElementById('btnDrive').onclick=()=>{duelChallenge=null;startRun();};
+document.getElementById('btnDuel').onclick=()=>{duelChallenge=null;toast('Duel-rit','Rijd je ronde; deel daarna de link met je tegenstander!','good');startRun();};
+document.getElementById('againBtn').onclick=()=>{startRun(duelChallenge?curSeed:undefined);};
 document.getElementById('toMenuBtn').onclick=showMenu;
 document.getElementById('btnSwitch').onclick=showProfiles;
 document.getElementById('btnLock').onclick=()=>{setUnlocked(false);showLock();};
@@ -485,21 +645,114 @@ document.getElementById('btnBook').onclick=()=>{buildBook();bookSheet.classList.
 document.getElementById('bookBack').onclick=()=>bookSheet.classList.add('hidden');
 document.getElementById('btnQuiz').onclick=()=>{qScore=0;qTotal=0;quizNew();quizSheet.classList.remove('hidden');};
 document.getElementById('quizBack').onclick=()=>quizSheet.classList.add('hidden');
+document.getElementById('btnExam').onclick=examStart;
+
+/* ---------- DUEL via link ---------- */
+let duelChallenge=null;  // {n:naam, d:diff, s:seed, r:{f,a,g,p}}
+function parseHash(){const h=location.hash||'';let m=h.match(/duel=([^&]+)/);if(m){try{return{type:'duel',data:JSON.parse(b64dec(decodeURIComponent(m[1])))};}catch(_){}}
+  m=h.match(/uitslag=([^&]+)/);if(m){try{return{type:'uitslag',data:JSON.parse(b64dec(decodeURIComponent(m[1])))};}catch(_){}}return null;}
+function clearHash(){try{history.replaceState(null,'',location.pathname+location.search);}catch(_){location.hash='';}}
+function baseURL(){return location.href.split('#')[0];}
+function showChallenge(pl){duelChallenge={n:pl.n,d:pl.d,s:pl.s,r:pl.r};diff=DIFF[pl.d]?pl.d:'normaal';
+  hideAllScreens();hideDriveUI(true);
+  document.getElementById('duelText').innerHTML='<b>'+esc(pl.n)+'</b> daagt je uit! Zelfde route, moeilijkheid <b>'+(DIFF[diff].label)+'</b>.<br>Te verslaan: <b>'+pl.r.p+' punten</b>'+(pl.r.g?' (geslaagd)':' (gezakt)')+' · '+pl.r.f+' fouten · '+pl.r.a+' m.';
+  document.getElementById('duelName').value=(fam&&fam.members[cur]&&!fam.guest)?fam.members[cur].name:'';
+  duelScreen.classList.remove('hidden');state='fam';}
+document.getElementById('duelStart').onclick=()=>{const nm=document.getElementById('duelName').value.trim()||'Jij';duelName=nm;startRun(duelChallenge.s);};
+document.getElementById('duelSkip').onclick=()=>{duelChallenge=null;if(fam)showMenu();else startGuest();};
+document.getElementById('reportPlay').onclick=()=>{if(fam)showMenu();else startGuest();};
+let duelName='Jij';
+function showReport(pl){ // pl: {a:{n,p,f,af,g}, b:{n,p,f,af,g}}
+  hideAllScreens();hideDriveUI(true);const A=pl.a,B=pl.b;const win=B.p>A.p?'b':(A.p>B.p?'a':'gelijk');
+  const vs=document.getElementById('reportVs');vs.innerHTML='';
+  [['a',A],['b',B]].forEach(([k,x])=>{const c=document.createElement('div');c.className='vcard'+(win===k?' win':'');c.innerHTML='<div class="vn">'+esc(x.n)+'</div><div class="vp">'+x.p+'</div><div class="vs">'+(x.g?'geslaagd':'gezakt')+' · '+x.f+' f · '+x.af+' m</div>';vs.appendChild(c);});
+  document.getElementById('reportText').textContent=win==='gelijk'?'Gelijkspel! 🤝':(esc((win==='a'?A.n:B.n))+' wint! 🏆');
+  reportScreen.classList.remove('hidden');state='fam';}
+function esc(s){return String(s).replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));}
+
+/* ---------- DEEL-MODAL ---------- */
+const shareModal=document.getElementById('shareModal'),shareUrlEl=document.getElementById('shareUrl');
+let lastShare={url:'',title:'',text:''};
+function openShare(url,title,desc,text){lastShare={url,title,text:text||title};document.getElementById('shareTitle').textContent=title;document.getElementById('shareDesc').textContent=desc||'';shareUrlEl.value=url;
+  document.getElementById('shareNative').style.display=navigator.share?'':'none';shareModal.classList.remove('hidden');}
+document.getElementById('shareClose').onclick=()=>shareModal.classList.add('hidden');
+document.getElementById('shareCopy').onclick=()=>{const t=shareUrlEl.value;const done=()=>toast('Gekopieerd!','Plak de link in WhatsApp of Berichten.','good');
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,()=>{shareUrlEl.select();try{document.execCommand('copy');done();}catch(_){}});}else{shareUrlEl.select();try{document.execCommand('copy');done();}catch(_){}}};
+document.getElementById('shareNative').onclick=()=>{if(navigator.share)navigator.share({title:lastShare.title,text:lastShare.text,url:lastShare.url}).catch(()=>{});};
+function makeChallengeURL(){const me=fam&&fam.members[cur];const nm=(duelChallenge?duelName:(me&&!fam.guest?me.name:'Ik'));
+  const pl={v:1,n:nm,d:diff,s:curSeed,r:{f:fouten,a:Math.round(distM),g:judgedFinishPass?1:0,p:punten}};
+  return baseURL()+'#duel='+encodeURIComponent(b64enc(JSON.stringify(pl)));}
+function makeResultURL(){const A={n:duelChallenge.n,p:duelChallenge.r.p,f:duelChallenge.r.f,af:duelChallenge.r.a,g:duelChallenge.r.g};
+  const B={n:duelName,p:punten,f:fouten,af:Math.round(distM),g:judgedFinishPass?1:0};
+  const pl={v:1,a:A,b:B};return baseURL()+'#uitslag='+encodeURIComponent(b64enc(JSON.stringify(pl)));}
 
 let deferredPrompt=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;});
 document.getElementById('btnInstall').onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice;}catch(_){}deferredPrompt=null;}
   else{toast('Zet op je beginscherm','iPhone: Deel-knop → “Zet op beginscherm”. Android: menu (⋮) → “App installeren”.','good');showMenuFront();}};
 function showMenuFront(){menuScreen.style.zIndex=25;setTimeout(()=>menuScreen.style.zIndex='',3000);}
 
-const stampEl=document.getElementById('stamp'),endTitle=document.getElementById('endTitle'),tallyEl=document.getElementById('tally');
-function endGame(p){state='end';
-  const m=fam&&fam.members[cur];if(m){m.runs++;if(p)m.geslaagd++;if(m.bestFouten===null||fouten<m.bestFouten)m.bestFouten=fouten;if(distM>m.bestAfstand)m.bestAfstand=Math.round(distM);persist();}
+const stampEl=document.getElementById('stamp'),endTitle=document.getElementById('endTitle'),tallyEl=document.getElementById('tally'),endVs=document.getElementById('endVs'),shareBtn=document.getElementById('shareBtn');
+let judgedFinishPass=false;
+function endGame(p){state='end';judgedFinishPass=p;punten=computePunten(p);
+  const m=fam&&fam.members[cur];if(m&&!fam.guest){m.runs++;if(p)m.geslaagd++;if(m.bestFouten===null||fouten<m.bestFouten)m.bestFouten=fouten;if(distM>m.bestAfstand)m.bestAfstand=Math.round(distM);if(punten>(m.bestPunten||0))m.bestPunten=punten;persist();}
   stampEl.textContent=p?'GESLAAGD':'GEZAKT';stampEl.className='stamp '+(p?'pass':'fail');
-  endTitle.textContent=(m?m.name+', ':'')+(p?'knap gereden!':'nog niet gehaald.');
+  const naam=duelChallenge?duelName:(m?m.name:'');
+  endTitle.textContent=(naam?naam+', ':'')+(p?'knap gereden!':'nog niet gehaald.');
   const L={rood:'Door rood',voetganger:'Voetganger gemist',snelheid:'Te hard',botsing:'Botsing',voorrang:'Geen voorrang',stopbord:'Stopbord genegeerd'};
   let rows='';for(const k in tally)rows+='• '+L[k]+': <span class="n">'+tally[k]+'</span><br>';
-  rows+='<br>Afstand: <span class="n">'+Math.round(distM)+' m</span> · Fouten: <span class="n">'+fouten+'</span> (geslaagd bij ≤ '+MAX_FOUTEN_PASS+')';
-  tallyEl.innerHTML=rows;hideDriveUI(true);endScreen.classList.remove('hidden');if(p)toast('Geslaagd!','Netjes op de borden gelet.','good');}
+  rows+='<br>Score: <span class="n">'+punten+' punten</span> · Afstand: <span class="n">'+Math.round(distM)+' m</span> · Fouten: <span class="n">'+fouten+'</span> (geslaagd bij ≤ '+DP.pass+')';
+  tallyEl.innerHTML=rows;
+  endVs.classList.add('hidden');endVs.innerHTML='';
+  if(duelChallenge){ // vergelijk met uitdager
+    const A={n:duelChallenge.n,p:duelChallenge.r.p,g:duelChallenge.r.g,f:duelChallenge.r.f,af:duelChallenge.r.a};
+    const B={n:duelName,p:punten,g:p?1:0,f:fouten,af:Math.round(distM)};const win=B.p>A.p?'b':(A.p>B.p?'a':'x');
+    [['a',A],['b',B]].forEach(([k,x])=>{const c=document.createElement('div');c.className='vcard'+(win===k?' win':'');c.innerHTML='<div class="vn">'+esc(x.n)+'</div><div class="vp">'+x.p+'</div><div class="vs">'+(x.g?'geslaagd':'gezakt')+' · '+x.f+' f</div>';endVs.appendChild(c);});
+    endVs.classList.remove('hidden');
+    endTitle.textContent=win==='x'?'Gelijkspel! 🤝':(win==='b'?(duelName+' wint! 🏆'):(duelChallenge.n+' wint 💪'));
+    shareBtn.textContent='📤 Stuur je uitslag terug';
+  } else shareBtn.textContent='⚔️ Daag iemand uit met deze rit';
+  hideDriveUI(true);endScreen.classList.remove('hidden');if(p&&!duelChallenge)toast('Geslaagd!','Netjes op de borden gelet.','good');}
+shareBtn.onclick=()=>{if(duelChallenge){openShare(makeResultURL(),'Duel-uitslag','Stuur dit terug naar '+esc(duelChallenge.n)+' zodat die de uitslag ziet.','Ik heb je duel gereden! Uitslag: ');}
+  else openShare(makeChallengeURL(),'Daag iemand uit','Stuur deze link. De ander rijdt exact dezelfde route en probeert jouw '+punten+' punten te verslaan.','Ik daag je uit in Verkeersschool! Zelfde route, versla mijn '+punten+' punten: ');};
+
+/* ---------- THEORIE-EXAMEN ---------- */
+const EXAM_N=20,EXAM_PASS=15,EXAM_TIME=480;
+let examQ=[],examI=0,examAns=[],examTimer=null,examLeft=0;
+const examBody=document.getElementById('examBody'),examClock=document.getElementById('examClock'),examHdr=document.getElementById('examHdr');
+function examStart(){examQ=shuffle(THEORY.slice()).slice(0,Math.min(EXAM_N,THEORY.length));examI=0;examAns=new Array(examQ.length).fill(-1);
+  examLeft=EXAM_TIME;examClock.classList.remove('hidden');examTick();if(examTimer)clearInterval(examTimer);examTimer=setInterval(()=>{examLeft--;examTick();if(examLeft<=0)examFinish();},1000);
+  examSheet.classList.remove('hidden');renderExamQ();}
+function examTick(){const mm=String(Math.floor(Math.max(0,examLeft)/60)).padStart(2,'0'),ss=String(Math.max(0,examLeft)%60).padStart(2,'0');examClock.textContent=mm+':'+ss;examClock.style.color=examLeft<60?'#ff6b63':'';}
+function stopExamTimer(){if(examTimer){clearInterval(examTimer);examTimer=null;}}
+function renderExamQ(){const q=examQ[examI];examHdr.textContent='Examen · vraag '+(examI+1)+'/'+examQ.length;examBody.innerHTML='';
+  const prog=document.createElement('div');prog.className='progbar';const f=document.createElement('div');f.className='fill';f.style.width=((examI)/examQ.length*100)+'%';prog.appendChild(f);examBody.appendChild(prog);
+  if(q.sign){const cw=document.createElement('div');cw.className='qcanvas';const cv=makeSignCanvas(q.sign,240);cw.appendChild(cv);examBody.appendChild(cw);}
+  const qt=document.createElement('div');qt.className='qexpl';qt.style.minHeight='0';qt.style.fontWeight='800';qt.style.fontSize='14px';qt.style.color='#eef1f4';qt.textContent=q.q;examBody.appendChild(qt);
+  const opts=document.createElement('div');opts.className='qopts';
+  q.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='qopt'+(examAns[examI]===i?' sel':'');b.textContent=o;b.onclick=()=>{examAns[examI]=i;renderExamQ();};opts.appendChild(b);});
+  examBody.appendChild(opts);
+  const nav=document.createElement('div');nav.className='examnav';
+  const prev=document.createElement('button');prev.textContent='← Vorige';prev.disabled=examI===0;prev.onclick=()=>{examI--;renderExamQ();};
+  const next=document.createElement('button');next.className='prim';const laatste=examI===examQ.length-1;next.textContent=laatste?'Inleveren ✓':'Volgende →';
+  next.onclick=()=>{if(laatste){if(examAns.includes(-1)&&!confirm('Niet alle vragen zijn beantwoord. Toch inleveren?'))return;examFinish();}else{examI++;renderExamQ();}};
+  nav.appendChild(prev);nav.appendChild(next);examBody.appendChild(nav);
+  const skip=document.createElement('div');skip.className='small';skip.textContent=(examAns.filter(a=>a>=0).length)+' van '+examQ.length+' beantwoord';examBody.appendChild(skip);}
+function examFinish(){stopExamTimer();examClock.classList.add('hidden');let correct=0;examQ.forEach((q,i)=>{if(examAns[i]===q.a)correct++;});
+  const geslaagd=correct>=EXAM_PASS;const m=fam&&fam.members[cur];if(m&&!fam.guest){if(m.bestExam===null||m.bestExam===undefined||correct>m.bestExam)m.bestExam=correct;persist();}
+  examHdr.textContent='Examenuitslag';examBody.innerHTML='';
+  const stamp=document.createElement('div');stamp.className='stamp '+(geslaagd?'pass':'fail');stamp.textContent=geslaagd?'GESLAAGD':'GEZAKT';examBody.appendChild(stamp);
+  const sc=document.createElement('h2');sc.style.margin='6px 0 0';sc.textContent=correct+' / '+examQ.length+' goed';examBody.appendChild(sc);
+  const pct=document.createElement('div');pct.className='small';pct.textContent='Slagen vanaf '+EXAM_PASS+'/'+examQ.length+' ('+Math.round(EXAM_PASS/examQ.length*100)+'%). Jij: '+Math.round(correct/examQ.length*100)+'%.';examBody.appendChild(pct);
+  const rv=document.createElement('div');rv.className='review';
+  examQ.forEach((q,i)=>{const ok=examAns[i]===q.a;const it=document.createElement('div');it.className='rvitem '+(ok?'good':'bad');
+    const jouw=examAns[i]>=0?q.opts[examAns[i]]:'— niet beantwoord —';
+    it.innerHTML='<div class="q">'+(ok?'✅ ':'❌ ')+esc(q.q)+'</div><div class="ans">Jouw antwoord: <b>'+esc(jouw)+'</b></div>'+(ok?'':'<div class="ans">Juist: <b>'+esc(q.opts[q.a])+'</b></div>')+'<div class="ans" style="margin-top:4px">'+esc(q.expl)+'</div>';rv.appendChild(it);});
+  examBody.appendChild(rv);
+  const nav=document.createElement('div');nav.className='examnav';
+  const again=document.createElement('button');again.className='prim';again.textContent='Nieuw examen';again.onclick=examStart;
+  const back=document.createElement('button');back.textContent='Naar menu';back.onclick=()=>{examSheet.classList.add('hidden');showMenu();};
+  nav.appendChild(again);nav.appendChild(back);examBody.appendChild(nav);examBody.scrollTop=0;}
+document.getElementById('examBack').onclick=()=>{if(examTimer&&!confirm('Examen afbreken? Je voortgang gaat verloren.'))return;stopExamTimer();examClock.classList.add('hidden');examSheet.classList.add('hidden');if(fam)showMenu();};
 
 /* ---------- PWA icoon + manifest ---------- */
 function makeIconURL(sz){const c=document.createElement('canvas');c.width=c.height=sz;const g=c.getContext('2d');const S=sz/120;g.scale(S,S);
@@ -517,10 +770,13 @@ function injectPWA(){try{const i192=makeIconURL(192),i512=makeIconURL(512);
 function onResize(){const w=stage.clientWidth,h=stage.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h);}
 window.addEventListener('resize',onResize);onResize();
 function frame(t){if(!last)last=t;let dt=(t-last)/1000;last=t;if(dt>0.05)dt=0.05;if(state==='play')update(dt);renderer.render(scene,camera);requestAnimationFrame(frame);}
-resetRun();injectPWA();
-// start: opzetten of ontgrendelen
-fam=load();
-if(!fam)showSetup();else if(isUnlocked()){cur=fam.current||0;showProfiles();}else showLock();
+DP=DIFF[diff];GOAL_M=DP.goal;prepopulate();updateRoad();injectPWA();
+
+// start: uitdaging-link, uitslag-link, of gewone opstart
+const hashInfo=parseHash();
+if(hashInfo&&hashInfo.type==='duel'&&hashInfo.data&&hashInfo.data.r){fam=load();clearHash();showChallenge(hashInfo.data);}
+else if(hashInfo&&hashInfo.type==='uitslag'&&hashInfo.data&&hashInfo.data.a){fam=load();clearHash();showReport(hashInfo.data);}
+else{fam=load();if(!fam)showSetup();else if(isUnlocked()){cur=fam.current||0;showProfiles();}else showLock();}
 requestAnimationFrame(frame);
 })();
 </script>
