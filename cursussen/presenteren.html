@@ -104,9 +104,31 @@
   .fade{animation:fade .25s ease;}
   @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
   .backhome{display:inline-flex;align-items:center;gap:6px;margin-top:18px;color:var(--muted);font-size:12.5px;text-decoration:none;}
+  /* Ouder-code gate — Bennaghmouch Academie */
+  .lock{display:none;position:fixed;inset:0;z-index:50;background:var(--grad);align-items:center;justify-content:center;padding:20px;}
+  .lockcard{background:#fff;border-radius:20px;padding:28px 22px;max-width:340px;width:100%;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.28);}
+  .lockicon{font-size:40px;line-height:1;}
+  .lockttl{font-size:20px;font-weight:800;margin-top:8px;color:var(--ink);}
+  .locksub{color:var(--muted);font-size:13px;margin-top:6px;}
+  .lockin{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px;font:inherit;font-size:20px;text-align:center;letter-spacing:6px;margin:16px 0 10px;background:#fff;color:var(--ink);}
+  .lockmsg{color:#e11d48;font-size:13px;min-height:18px;margin-top:6px;}
+  .lockcard .backhome{margin-top:14px;}
+  .shake{animation:shake .4s;}
+  @keyframes shake{0%,100%{transform:translateX(0);}20%,60%{transform:translateX(-7px);}40%,80%{transform:translateX(7px);}}
 </style>
 </head>
 <body>
+<div id="lock" class="lock">
+  <div class="lockcard">
+    <div class="lockicon">🔒</div>
+    <div class="lockttl">Bennaghmouch Academie</div>
+    <p class="locksub">Deze cursussen zijn beveiligd met een ouder-code.</p>
+    <input id="lockinput" class="lockin" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="• • • •" aria-label="Ouder-code">
+    <button id="lockbtn" class="btn block">Ontgrendel</button>
+    <p id="lockmsg" class="lockmsg"></p>
+    <a class="backhome" href="../index.html">‹ Terug naar start</a>
+  </div>
+</div>
 <div id="app"></div>
 <div class="nav"><div class="inner" id="nav"></div></div>
 <script>
@@ -791,7 +813,22 @@ function act(a,ds){
   else if(a==='simmodel'){ view.simModel=true; render(); }
   else if(a==='naarsim'){ view.oefsub='sim'; }
 }
-render();
+/* ---- Ouder-code gate — Bennaghmouch Academie ---- */
+const AC_CODE='1987';
+function acUnlocked(){ try{return sessionStorage.getItem('academie_ok')==='1';}catch(e){return false;} }
+function acBoot(){
+  const lock=document.getElementById('lock');
+  if(acUnlocked()){ if(lock) lock.style.display='none'; render(); return; }
+  if(!lock){ render(); return; }
+  lock.style.display='flex';
+  const inp=lock.querySelector('#lockinput'), btn=lock.querySelector('#lockbtn'),
+        msg=lock.querySelector('#lockmsg'), cardEl=lock.querySelector('.lockcard');
+  const tryUnlock=()=>{ if(inp.value.trim()===AC_CODE){ try{sessionStorage.setItem('academie_ok','1');}catch(e){} lock.style.display='none'; render(); }
+    else { msg.textContent='Onjuiste code — probeer opnieuw.'; inp.value=''; inp.focus();
+      if(cardEl){ cardEl.classList.remove('shake'); void cardEl.offsetWidth; cardEl.classList.add('shake'); } } };
+  btn.onclick=tryUnlock; inp.onkeydown=e=>{ if(e.key==='Enter') tryUnlock(); }; setTimeout(()=>inp.focus(),60);
+}
+acBoot();
 </script>
 </body>
 </html>
