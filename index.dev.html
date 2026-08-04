@@ -169,6 +169,9 @@ const GEZINSCURSUSSEN = [
   {id:'presenteren', naam:'Podium — Presenteren & Spreken', voor:'Papa', emoji:'🎤',
    kleur:'linear-gradient(135deg,#f97316,#e11d48)', uitleg:'Zelfverzekerd presenteren, pitchen en spreken voor publiek.',
    url:'cursussen/presenteren.html'},
+  {id:'studievaardigheden', naam:'Kompas — Slim Leren & Focus', voor:'De kinderen', emoji:'🧭',
+   kleur:'linear-gradient(135deg,#22c55e,#06b6d4)', uitleg:'Focus, plannen & slim onthouden — voor beter huiswerk en toetsen.',
+   url:'cursussen/kompas.html'},
 ];
 
 /* ============================ THEMA'S (motivatie) ============================ */
@@ -3294,9 +3297,9 @@ function Home({onPick,store,allEx,onAuthor,onFormules,onLeertips,onSpellen,spelN
       <div className="card" style={{marginTop:16,background:'linear-gradient(135deg,#f4f2ff,#eafaf6)',borderLeftColor:'#6d5fef'}}>
         <div className="row" style={{justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:6}}>
           <b>🎓 Bennaghmouch Academie</b>
-          <span className="muted" style={{fontSize:12}}>voor het hele gezin</span>
+          <span className="muted" style={{fontSize:12}}>🔒 ouder-code</span>
         </div>
-        <p className="muted" style={{fontSize:12,marginTop:2}}>Naast het huiswerk: eigen cursussen om elke dag een vaardigheid te trainen.</p>
+        <p className="muted" style={{fontSize:12,marginTop:2}}>Naast het huiswerk: eigen cursussen om elke dag een vaardigheid te trainen. Beveiligd met een ouder-code.</p>
         <div style={{marginTop:10}}>
           {GEZINSCURSUSSEN.map(c=>(
             <a key={c.id} href={c.url} style={{display:'block',textDecoration:'none',color:'#fff',background:c.kleur,borderRadius:14,padding:'14px 16px',marginTop:8,boxShadow:'0 6px 16px rgba(60,50,150,.18)'}}>
