@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Verbind · Communicatie & Netwerken</title>
+<meta name="theme-color" content="#4f46e5">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjNmQ1ZmVmIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMjJjNGE2Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiByeD0iMTUiIGZpbGw9InVybCgjZykiLz48cGF0aCBkPSJNMTggMjJoMjJ2MTZILjkiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJNMTcgMjBoMjRhNCA0IDAgMCAxIDQgNHYxMGE0IDQgMCAwIDEtNCA0aC02bDAgNi04LTZoLTEwYTQgNCAwIDAgMS00LTR2LTEwYTQgNCAwIDAgMSA0LTR6IiBmaWxsPSIjZmZmIi8+PGNpcmNsZSBjeD0iMjciIGN5PSIyOSIgcj0iMiIgZmlsbD0iIzZkNWZlZiIvPjxjaXJjbGUgY3g9IjM0IiBjeT0iMjkiIHI9IjIiIGZpbGw9IiM2ZDVmZWYiLz48Y2lyY2xlIGN4PSI0MSIgY3k9IjI5IiByPSIyIiBmaWxsPSIjNmQ1ZmVmIi8+PC9zdmc+">
+<style>
+  :root{
+    --ink:#151726; --muted:#6b7089; --line:#e7e8f0; --bg:#f5f6fb; --card:#ffffff;
+    --pri:#4f46e5; --pri2:#22c4a6; --accent:#f59e0b; --pink:#ec4899;
+    --grad:linear-gradient(135deg,#6d5fef 0%,#4f46e5 45%,#22c4a6 100%);
+    --radius:18px; --shadow:0 10px 30px rgba(30,34,90,.10);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{background:var(--bg);color:var(--ink);font-family:"DM Sans",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.5;}
+  body{max-width:620px;margin:0 auto;padding:0 14px 96px;}
+  a{color:var(--pri);}
+  h1,h2,h3{line-height:1.2;}
+  .hero{position:relative;overflow:hidden;border-radius:var(--radius);margin-top:14px;padding:26px 22px;color:#fff;background:var(--grad);box-shadow:var(--shadow);}
+  .hero::after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.12);}
+  .hero .eyebrow{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;font-weight:700;opacity:.9;}
+  .hero h1{font-size:27px;font-weight:800;margin:4px 0 6px;position:relative;z-index:1;}
+  .hero p{opacity:.95;font-size:14px;max-width:90%;position:relative;z-index:1;}
+  .hero .stats{display:flex;gap:8px;margin-top:16px;position:relative;z-index:1;flex-wrap:wrap;}
+  .hero .chip{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:7px 12px;font-size:12.5px;font-weight:700;backdrop-filter:blur(4px);}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-top:14px;box-shadow:var(--shadow);}
+  .card h2{font-size:17px;font-weight:800;}
+  .sub{color:var(--muted);font-size:13px;}
+  .pbar{height:9px;background:#eceef6;border-radius:999px;overflow:hidden;margin-top:8px;}
+  .pbar i{display:block;height:100%;background:var(--grad);border-radius:999px;transition:width .5s;}
+  .btn{font:inherit;font-weight:700;font-size:14px;color:#fff;background:var(--pri);border:0;border-radius:12px;padding:12px 16px;cursor:pointer;transition:transform .08s,filter .15s;}
+  .btn:active{transform:scale(.97);}
+  .btn.ghost{background:#eef0fb;color:var(--pri);}
+  .btn.ok{background:linear-gradient(135deg,#12b886,#0ca678);}
+  .btn.block{width:100%;}
+  .tag{display:inline-block;background:#eef0fb;color:var(--pri);font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;}
+  .tag.done{background:#e4f8ef;color:#0ca678;}
+  /* tabs (bottom nav) */
+  .nav{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;justify-content:center;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-top:1px solid var(--line);}
+  .nav .inner{display:flex;width:100%;max-width:620px;}
+  .nav button{flex:1;background:none;border:0;padding:9px 2px 10px;font:inherit;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .nav button .ic{font-size:21px;}
+  .nav button.active{color:var(--pri);}
+  /* lesson list */
+  .lesrow{display:flex;align-items:center;gap:12px;padding:13px 8px;border-bottom:1px solid var(--line);cursor:pointer;}
+  .lesrow:last-child{border-bottom:0;}
+  .lesrow .num{width:34px;height:34px;flex:none;border-radius:10px;background:var(--grad);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:14px;}
+  .lesrow .num.done{background:linear-gradient(135deg,#12b886,#0ca678);}
+  .lesrow .grow{flex:1;min-width:0;}
+  .lesrow .grow b{font-size:15px;display:block;}
+  .lesrow .grow span{font-size:12px;color:var(--muted);}
+  .lesrow .chev{color:var(--muted);font-size:20px;}
+  /* detail */
+  .topbar{display:flex;align-items:center;gap:10px;margin-top:14px;}
+  .back{background:#eef0fb;color:var(--pri);border:0;border-radius:10px;padding:9px 13px;font:inherit;font-weight:700;cursor:pointer;}
+  .block{margin-top:14px;}
+  .block h3{font-size:14px;text-transform:uppercase;letter-spacing:.06em;color:var(--pri);margin-bottom:6px;}
+  .tech{background:#f7f8fe;border:1px solid var(--line);border-left:3px solid var(--pri);border-radius:10px;padding:11px 13px;margin-top:8px;}
+  .tech b{display:block;font-size:14.5px;margin-bottom:2px;}
+  .tech p{font-size:13.5px;color:#3a3e57;}
+  .lines li{list-style:none;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:7px;font-size:14px;}
+  .lines li::before{content:"💬 ";}
+  .oef{background:linear-gradient(135deg,#fff7ed,#fef2f2);border:1px solid #fde3c7;border-radius:12px;padding:13px;margin-top:10px;}
+  .oef b{color:#c2410c;}
+  .pill-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+  .seg{display:flex;background:#eef0fb;border-radius:12px;padding:4px;gap:4px;margin-top:12px;overflow:auto;}
+  .seg button{flex:1;white-space:nowrap;border:0;background:none;font:inherit;font-weight:700;font-size:13px;color:var(--muted);padding:8px 10px;border-radius:9px;cursor:pointer;}
+  .seg button.on{background:#fff;color:var(--pri);box-shadow:0 1px 4px rgba(0,0,0,.08);}
+  .quote{font-size:15px;line-height:1.55;}
+  .kv{display:flex;justify-content:space-between;font-size:14px;padding:7px 0;border-bottom:1px solid var(--line);}
+  .kv:last-child{border-bottom:0;}
+  .big{font-size:30px;font-weight:800;}
+  .center{text-align:center;}
+  .muted{color:var(--muted);}
+  .fade{animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+  .backhome{display:inline-flex;align-items:center;gap:6px;margin-top:16px;color:var(--muted);font-size:12.5px;text-decoration:none;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="nav"><div class="inner" id="nav"></div></div>
+<script>
+"use strict";
+/* ============================================================
+   VERBIND — dagelijkse training in communicatie & netwerken
+   Zelfstandige, offline werkende app (geen externe afhankelijkheden).
+   Voortgang in localStorage. Onderdeel van de Bennaghmouch-cursussen.
+   ============================================================ */
+const KEY='verbind_v1';
+const store=(()=>{ let s={}; try{s=JSON.parse(localStorage.getItem(KEY))||{};}catch(e){s={};}
+  s.done=s.done||{};            // {lesId:true}
+  s.oefdagen=s.oefdagen||[];    // ['2026-7-13', ...] dagen dat de dagoefening is afgevinkt
+  s.oefLaatst=s.oefLaatst||null;
+  return s; })();
+function save(){ try{localStorage.setItem(KEY,JSON.stringify(store));}catch(e){} }
+function today(){ const d=new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
+function dagIndex(){ return Math.floor(Date.now()/86400000); }
+
+/* ---------------- CURSUSINHOUD ---------------- */
+const LESSONS=[
+  {t:"De perfecte opener", d:"Elk gesprek begint met de eerste seconden. Leer hoe je moeiteloos het ijs breekt — zonder script, zonder ongemak.",
+   min:12, principe:"Mensen onthouden niet wát je zei, maar hoe je ze liet voelen. Een goede opener is warm, laagdrempelig en nodigt uit om te reageren.",
+   tech:[
+     ["De 3 soorten openers","Situatie ('Druk hier, hè?'), observatie ('Mooie tas — waar heb je die vandaan?') of oprechte vraag ('Wat brengt jou hier?'). Kies wat past bij de plek."],
+     ["Warmte vóór inhoud","Glimlach en oogcontact eerst, wóórden daarna. 55% van je eerste indruk is non-verbaal."],
+     ["De haak achterlaten","Eindig je opener met een open vraag, zodat de ander iets heeft om op te reageren. Nooit een ja/nee-vraag."]
+   ],
+   lines:["Sorry dat ik je stoor — ik moest even zeggen dat ik je [X] echt tof vind.","Jij lijkt iemand die hier vaker komt. Wat is jouw favoriete plek?","Ik ken hier bijna niemand — hoe ken jij [de gastheer]?","Even eerlijk: wat is het leukste dat je vandaag hebt gedaan?"],
+   oef:"Spreek vandaag één onbekende aan met een situatie-opener (in de rij, lift, koffiehoek). Doel: gewoon dóen, uitkomst maakt niet uit."},
+
+  {t:"FORD & doorvragen", d:"De kunst van het gesprek gaande houden. Nooit meer een pijnlijke stilte.",
+   min:13, principe:"Mensen praten het liefst over zichzelf. Jouw taak is niet interessant zíjn, maar geïnteresseerd zijn. FORD geeft je oneindig veel gespreksstof.",
+   tech:[
+     ["FORD","Family (gezin), Occupation (werk), Recreation (vrije tijd), Dreams (dromen/plannen). Vier onuitputtelijke bronnen voor elk gesprek."],
+     ["Open vragen (wie/wat/hoe)","Vermijd ja/nee. Vraag 'Hoe ben je daarin gerold?' i.p.v. 'Vind je je werk leuk?'"],
+     ["Doorvragen op emotie","Als iemand enthousiasme toont, graaf daar: 'Wat maakt dat zo bijzonder voor je?' Daar zit het echte gesprek."]
+   ],
+   lines:["Hoe ben je hierin terechtgekomen?","Wat vind je daar het leukste aan?","En wat doe je als je níét aan het werk bent?","Als geld geen rol speelde — wat zou je dan doen?","Vertel eens meer, dat klinkt bijzonder."],
+   oef:"Voer vandaag één gesprek waarin je 3 keer doorvraagt vóórdat je zelf iets over jezelf vertelt. Merk hoe het gesprek vanzelf stroomt."},
+
+  {t:"Luisteren als een leider", d:"De meest onderschatte skill. Wie écht luistert, wint elk vertrouwen.",
+   min:11, principe:"Luisteren is niet wachten tot jij mag praten. Het is de ander het gevoel geven volledig gehoord te zijn. Dat maakt je onvergetelijk.",
+   tech:[
+     ["LSD: Luisteren, Samenvatten, Doorvragen","Vat samen wat je hoort ('Dus als ik je goed begrijp…') vóór je reageert. Het bewijst dat je luisterde."],
+     ["Minimal encouragers","'Mm', knikken, 'en toen?' — kleine signalen die de ander laten doorpraten zonder dat jij het gesprek kaapt."],
+     ["De 2-seconden pauze","Wacht 2 tellen na wat de ander zei vóór je praat. Je onderbreekt minder en de ander voelt zich serieus genomen."]
+   ],
+   lines:["Dus als ik je goed begrijp, …?","Wat je zegt raakt me — hoe voelde dat voor jou?","Even checken of ik het snap: je bedoelt …","Ga door, ik luister."],
+   oef:"Vat vandaag in één gesprek minstens twee keer samen wat de ander zei vóór je je eigen mening geeft."},
+
+  {t:"Namen onthouden & gebruiken", d:"'Iemands naam is voor die persoon het mooiste woord in elke taal.' — Dale Carnegie.",
+   min:9, principe:"Namen onthouden is geen talent maar een techniek. En een naam gebruiken schept direct verbondenheid.",
+   tech:[
+     ["Herhaal meteen","Zeg de naam direct terug: 'Leuk je te ontmoeten, Sara.' Herhaling verankert."],
+     ["Associeer & visualiseer","Koppel de naam aan een beeld of iemand die je kent ('Sara zoals mijn buurvrouw')."],
+     ["Gebruik 'm 3×","Gebruik de naam nog eens midden in het gesprek en bij het afscheid. Niet vaker — dan wordt het geforceerd."]
+   ],
+   lines:["Sorry, hoe was je naam ook alweer? Ik wil 'm onthouden.","Leuk je te ontmoeten, [naam].","Fijn met je gesproken te hebben, [naam] — tot snel!"],
+   oef:"Onthoud vandaag de naam van 3 nieuwe mensen door ze meteen te herhalen en te visualiseren."},
+
+  {t:"Lichaamstaal & aanwezigheid", d:"Je lichaam praat luider dan je woorden. Zorg dat het dezelfde taal spreekt.",
+   min:14, principe:"Voordat je een woord zegt, heeft je houding al een boodschap verstuurd. Open, ontspannen en aanwezig zijn opent deuren.",
+   tech:[
+     ["Open houding","Geen gekruiste armen, schouders los, borst open. Richt je torso naar de ander — dat leest als interesse."],
+     ["Oogcontact (50/70-regel)","Kijk ~70% van de tijd terwijl je luistert, ~50% terwijl je praat. Te weinig = onzeker, te veel = intens."],
+     ["Spiegelen","Neem subtiel het tempo en de houding van de ander over. Het schept onbewust een klik."]
+   ],
+   lines:[],
+   oef:"Let vandaag een half uur bewust op je houding: schouders los, torso naar de ander, glimlach. Voel het verschil in reacties."},
+
+  {t:"Je stem & vertrouwen", d:"Dezelfde woorden klinken totaal anders met de juiste stem. Bouw gezag op met hoe je klinkt.",
+   min:11, principe:"Een rustige, lage, gevarieerde stem straalt vertrouwen uit. Tempo en pauzes bepalen of mensen naar je luisteren.",
+   tech:[
+     ["Vertraag & pauzeer","Praat 20% langzamer dan je neiging is. Een stilte vóór een belangrijk punt geeft het gewicht."],
+     ["Zak met je toon","Eindig zinnen omlaag (niet omhoog als een vraag). Uptalk ondermijnt je gezag."],
+     ["Adem vanuit je buik","Diepe buikademhaling geeft een vollere, kalmere stem — en houdt zenuwen in bedwang."]
+   ],
+   lines:[],
+   oef:"Neem vandaag 60 seconden van jezelf op (een verhaaltje). Luister terug: tempo, pauzes, toonhoogte. Doe het nog eens, 20% langzamer."},
+
+  {t:"Zelfvertrouwen & eerste indruk", d:"De eerste 7 seconden bepalen alles. Maak ze onvergetelijk.",
+   min:10, principe:"Mensen beoordelen je razendsnel op twee assen: warmte (kan ik je vertrouwen?) en competentie (kun je iets?). Straal beide uit.",
+   tech:[
+     ["Power-pose vooraf","Sta 2 minuten groot en open vóór een belangrijk moment. Het verlaagt stress en verhoogt je zelfvertrouwen."],
+     ["Warmte eerst, dan competentie","Glimlach en toon interesse (warmte) vóór je je expertise laat zien (competentie). Andersom kom je arrogant over."],
+     ["De stevige begroeting","Rechte rug, glimlach, naam noemen, kort en droog handcontact of een warme groet. Dit is je visitekaartje."]
+   ],
+   lines:["Hoi, ik ben [naam] — leuk je te ontmoeten.","Ik heb me op dit moment verheugd."],
+   oef:"Sta vandaag vóór je belangrijkste afspraak 2 minuten in een power-pose. Begin het gesprek met warmte (een oprecht compliment of vraag)."},
+
+  {t:"Storytelling", d:"Feiten overtuigen niet — verhalen wel. Leer boeien met een goed verhaal.",
+   min:13, principe:"Een verhaal maakt je boodschap onthoudbaar en menselijk. Structuur is alles: zonder spanning geen aandacht.",
+   tech:[
+     ["Situatie → Complicatie → Oplossing","Schets de situatie, introduceer een probleem/wending, en land met wat je leerde. Klassiek en krachtig."],
+     ["Begin met de haak","Open met spanning of een vraag: 'Ik dacht dat ik ontslagen zou worden…'. Nooit met de saaie context vooraf."],
+     ["Toon, niet vertel","'Mijn handen trilden' i.p.v. 'ik was nerveus'. Details en emotie laten de ander het meebeleven."]
+   ],
+   lines:["Ik zal je iets vertellen dat ik nooit meer vergeet…","Even een klein verhaal — dit veranderde hoe ik erover denk…"],
+   oef:"Bereid één anekdote van 60 sec voor volgens Situatie-Complicatie-Oplossing. Vertel 'm vandaag aan iemand."},
+
+  {t:"Charisma & warmte", d:"Charisma is geen gave — het is aandacht. Leer mensen zich bijzonder te laten voelen.",
+   min:12, principe:"Charismatische mensen laten de ánder stralen. Ze zijn volledig aanwezig, oprecht nieuwsgierig en gul met erkenning.",
+   tech:[
+     ["Volledige aanwezigheid","Telefoon weg, ogen bij de ander, gedachten in het nu. Aanwezigheid is het zeldzaamste cadeau."],
+     ["De spotlight op de ander","Stel vragen, geef complimenten, herinner details van eerdere gesprekken. Mensen houden van wie hen laat schijnen."],
+     ["Oprechte erkenning","Benoem specifiek wat je waardeert: 'De manier waarop je dat oploste, vond ik slim.' Vaag = leeg; specifiek = raak."]
+   ],
+   lines:["Ik moest nog denken aan wat je laatst zei over…","Wat knap dat je dat zo hebt aangepakt.","Jij bent iemand die… — dat waardeer ik."],
+   oef:"Geef vandaag 3 specifieke, oprechte complimenten. Let op wat het met de sfeer én met jou doet."},
+
+  {t:"Netwerken met impact", d:"Netwerken is geen visitekaartjes verzamelen — het is relaties bouwen die ertoe doen.",
+   min:15, principe:"Goede netwerkers geven eerst en vragen later. Ze denken in 'hoe kan ik helpen?' — dat maakt hen onvergetelijk en gewild.",
+   tech:[
+     ["Geef eerst","Bied waarde vóór je iets vraagt: een tip, een introductie, een compliment. Wederkerigheid volgt vanzelf."],
+     ["Bereid je doel voor","Weet vóór een event: wie wil ik spreken en waarom? 2 goede gesprekken > 20 handjes schudden."],
+     ["Opvolgen binnen 48u","Stuur een korte, persoonlijke boodschap ('Leuk gesproken over X, hier de link die ik beloofde'). Zonder opvolging verdampt elk contact."]
+   ],
+   lines:["Waar ben je op dit moment het meest mee bezig?","Is er iets waar ik je mee kan helpen of iemand aan wie ik je moet voorstellen?","Zullen we contact houden? Ik stuur je even een berichtje.","Leuk gesproken — ik stuur je die [tip/link] die ik noemde."],
+   oef:"Volg vandaag één contact op met een persoonlijk berichtje (refereer aan iets uit jullie gesprek). Of: bereid 3 vragen voor je volgende event voor."},
+
+  {t:"Van small talk naar diepgang", d:"Oppervlakkig praten is de opwarmer. Leer moeiteloos naar een écht gesprek te bruggen.",
+   min:12, principe:"Small talk bouwt veiligheid; diepgang bouwt band. De brug is een net iets persoonlijkere vraag op het juiste moment.",
+   tech:[
+     ["Bouw een brug","Pak een woord uit de small talk en verdiep het: 'Je zei net dat je pas verhuisd bent — hoe bevalt het nieuwe leven?'"],
+     ["Deel eerst zelf iets","Kwetsbaarheid nodigt uit tot kwetsbaarheid. Deel iets persoonlijks (klein), dan durft de ander ook."],
+     ["Vraag naar het waarom","Achter elk feit zit een verhaal. 'Waarom is dat belangrijk voor je?' opent de diepte."]
+   ],
+   lines:["Wat je net zei over [X] — hoe kwam je daarbij?","Mag ik je iets persoonlijks vragen?","Waar word je de laatste tijd echt blij van?","Wat houdt je op dit moment het meest bezig?"],
+   oef:"Breng vandaag één gesprek van small talk naar iets persoonlijkers met een brug-vraag. Deel eerst zelf iets kleins."},
+
+  {t:"Nee zeggen & grenzen — en toch aardig blijven", d:"Grenzen stellen zonder de relatie te schaden. Assertief, niet agressief.",
+   min:11, principe:"Een duidelijke, warme nee is waardevoller dan een halfslachtige ja. Mensen respecteren wie zijn grenzen kent.",
+   tech:[
+     ["Waardeer → weiger → alternatief","'Dank dat je aan me denkt (waardeer). Dit past nu niet bij me (weiger). Wat wél kan is… (alternatief).'"],
+     ["Kort en zonder overmatig excuus","Eén reden is genoeg. Te veel uitleg klinkt als een opening om te onderhandelen."],
+     ["Nee tegen de vraag, ja tegen de persoon","Wijs het verzoek af, niet de mens. Houd je toon warm en je rug recht."]
+   ],
+   lines:["Wat fijn dat je aan me denkt — dit lukt me nu even niet.","Ik zeg hier nee tegen, maar laten we snel bijpraten.","Dat past nu niet bij mijn planning; volgende maand wel."],
+   oef:"Zeg vandaag één keer bewust en warm 'nee' tegen iets kleins, met de formule waardeer-weiger-alternatief."},
+
+  {t:"Lastige gesprekken & conflict de-escaleren", d:"Wrijving hoort erbij. Leer spanning ombuigen naar begrip.",
+   min:15, principe:"In een lastig gesprek win je niet door gelijk te krijgen, maar door de relatie heel te houden én je punt te maken. Rust en helderheid zijn je gereedschap.",
+   tech:[
+     ["Feit → gevoel → gevolg → wens","'Toen je [feit], voelde ik [gevoel], waardoor [gevolg]. Ik zou graag [wens].' Geen verwijt, wel duidelijk."],
+     ["NIVEA: Niet Invullen Voor Een Ander","Check aannames met een vraag ('Klopt het dat…?') i.p.v. ze in te vullen. De meeste conflicten zijn misverstanden."],
+     ["Erken eerst","'Ik snap dat dit vervelend is voor je.' Erkenning haalt 80% van de spanning eruit vóór je je punt maakt."]
+   ],
+   lines:["Ik merk dat we hier anders in staan — help me jouw kant te begrijpen.","Klopt het dat je bedoelde dat…?","Toen [feit] gebeurde, voelde ik [gevoel]. Ik zou graag [wens].","Ik snap dat dit vervelend is — laten we samen kijken."],
+   oef:"Formuleer vandaag één irritatie volgens feit-gevoel-gevolg-wens (op papier of hardop). Merk hoe anders dat klinkt dan een verwijt."},
+
+  {t:"Een gesprek elegant afsluiten", d:"De laatste indruk telt net zo zwaar als de eerste. Sluit warm en met een vervolg af.",
+   min:9, principe:"Een goed einde laat de ander met een fijn gevoel achter én opent de deur naar een volgend contact. Blijf nooit hangen tot het ongemakkelijk wordt.",
+   tech:[
+     ["De waarderende exit","Sluit af met wat je waardeerde: 'Wat een leuk gesprek — ik onthoud vooral [X].'"],
+     ["Maak het vervolg concreet","'Laten we contact houden' is vaag. 'Ik stuur je maandag die link' is een echte belofte die je opvolgt."],
+     ["Eerlijke reden om te gaan","'Ik ga even rondlopen / iemand gedag zeggen' — kort, warm, zonder smoes. Eindig op een hoogtepunt, niet bij een dip."]
+   ],
+   lines:["Wat een fijn gesprek — leuk je gesproken te hebben, [naam].","Ik ga even verder mingelen, maar laten we contact houden.","Ik stuur je die [tip/link]. Tot snel!","Ik onthoud vooral wat je zei over [X]. Bedankt daarvoor."],
+   oef:"Sluit vandaag één gesprek bewust af met een waarderende exit + een concreet vervolg. Volg het vervolg daadwerkelijk op."}
+];
+
+/* dagelijkse micro-uitdagingen (roteren per dag) */
+const DAGUITDAGINGEN=[
+  "Maak vandaag met 1 onbekende een praatje van minstens 60 seconden.",
+  "Stel vandaag 3 keer een open vraag (wie/wat/hoe) en vraag telkens één keer door.",
+  "Onthoud vandaag de naam van iemand nieuw en gebruik 'm 2× in het gesprek.",
+  "Geef vandaag 2 specifieke, oprechte complimenten.",
+  "Vat vandaag in een gesprek 2× samen wat de ander zei vóór je reageert.",
+  "Praat vandaag in één gesprek bewust 20% langzamer, met bewuste pauzes.",
+  "Breng vandaag een small talk naar iets persoonlijkers met een brug-vraag.",
+  "Volg vandaag 1 contact op met een persoonlijk berichtje.",
+  "Zeg vandaag 1× warm 'nee' met de formule waardeer-weiger-alternatief.",
+  "Vertel vandaag een anekdote van 60 sec volgens situatie-complicatie-oplossing.",
+  "Let vandaag 30 min op je houding: schouders los, torso naar de ander, glimlach.",
+  "Sluit vandaag een gesprek af met een waarderende exit + concreet vervolg."
+];
+const TECHVDDAG=[
+  ["FORD","Onthoud: Family, Occupation, Recreation, Dreams. Vier bronnen voor eindeloze gespreksstof."],
+  ["De 2-seconden pauze","Wacht 2 tellen na wat de ander zei vóór je praat. Minder onderbreken, meer verbinding."],
+  ["Warmte vóór competentie","Toon eerst interesse, dan pas je expertise. Andersom kom je arrogant over."],
+  ["Geef eerst","Bied waarde vóór je iets vraagt. Wederkerigheid volgt vanzelf."],
+  ["Zak met je toon","Eindig zinnen omlaag, niet omhoog. Uptalk ondermijnt gezag."],
+  ["Specifiek compliment","'Slim hoe je dat oploste' raakt; 'goed gedaan' is leeg. Wees concreet."],
+  ["De brug","Pak een woord uit de small talk en verdiep het met een vervolgvraag."]
+];
+const MATERIAAL={
+  "Openers":["Sorry dat ik je stoor — ik moest even zeggen dat ik je [X] tof vind.","Jij lijkt hier vaker te komen — wat is jouw favoriete plek?","Ik ken hier bijna niemand, hoe ken jij [gastheer]?","Wat is het leukste dat je vandaag hebt gedaan?","Druk hier, hè? Waar kom jij voor?","Mag ik je iets vragen? Je lijkt me iemand die [X] weet."],
+  "Doorvragen (FORD)":["Hoe ben je hierin terechtgekomen?","Wat vind je daar het leukste aan?","Wat doe je als je niet werkt?","Waar word je de laatste tijd blij van?","Als geld geen rol speelde, wat zou je doen?","Wat houdt je op dit moment het meest bezig?"],
+  "Bruggen (naar diepgang)":["Wat je net zei over [X] — hoe kwam je daarbij?","Mag ik je iets persoonlijks vragen?","Waarom is dat belangrijk voor je?","Wat zou je anders doen als je opnieuw kon kiezen?"],
+  "Netwerken":["Waar ben je nu het meest mee bezig?","Kan ik je ergens mee helpen of aan iemand voorstellen?","Zullen we contact houden? Ik app je even.","Leuk gesproken — ik stuur je die link die ik noemde."],
+  "Lastig gesprek":["Klopt het dat je bedoelde dat…?","Toen [feit] gebeurde, voelde ik [gevoel]. Ik zou graag [wens].","Ik snap dat dit vervelend is — laten we samen kijken.","Help me jouw kant te begrijpen."],
+  "Afsluiten":["Wat een fijn gesprek — leuk je gesproken te hebben, [naam].","Ik ga even verder mingelen, maar laten we contact houden.","Ik stuur je die [tip]. Tot snel!","Ik onthoud vooral wat je zei over [X]. Bedankt."]
+};
+
+/* ---------------- STREAK / VOORTGANG ---------------- */
+function streak(){ const dagen=new Set(store.oefdagen); let s=0; let d=new Date();
+  // tel terug vanaf vandaag zolang er aaneengesloten dagen zijn (vandaag mag nog leeg zijn)
+  const key=x=>x.getFullYear()+'-'+(x.getMonth()+1)+'-'+x.getDate();
+  if(!dagen.has(key(d))){ d.setDate(d.getDate()-1); if(!dagen.has(key(d))) return 0; }
+  while(dagen.has(key(d))){ s++; d.setDate(d.getDate()-1); }
+  return s;
+}
+function afgerond(){ return LESSONS.filter((_,i)=>store.done[i]).length; }
+
+/* ---------------- ROUTER / RENDER ---------------- */
+let view={tab:'vandaag', les:null};
+const app=document.getElementById('app');
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+function render(){
+  window.scrollTo(0,0);
+  if(view.les!==null){ app.innerHTML=lesDetail(view.les); }
+  else if(view.tab==='vandaag') app.innerHTML=tabVandaag();
+  else if(view.tab==='lessen') app.innerHTML=tabLessen();
+  else if(view.tab==='materiaal') app.innerHTML=tabMateriaal();
+  else if(view.tab==='voortgang') app.innerHTML=tabVoortgang();
+  app.classList.remove('fade'); void app.offsetWidth; app.classList.add('fade');
+  renderNav();
+  bind();
+}
+function renderNav(){
+  const items=[['vandaag','☀️','Vandaag'],['lessen','📚','Lessen'],['materiaal','🗂️','Materiaal'],['voortgang','📈','Voortgang']];
+  document.getElementById('nav').innerHTML=items.map(([id,ic,l])=>
+    `<button data-tab="${id}" class="${view.les===null&&view.tab===id?'active':''}"><span class="ic">${ic}</span>${l}</button>`).join('');
+}
+
+function tabVandaag(){
+  const d=dagIndex();
+  const uit=DAGUITDAGINGEN[d%DAGUITDAGINGEN.length];
+  const [tt,tp]=TECHVDDAG[d%TECHVDDAG.length];
+  const gedaan=store.oefdagen.includes(today());
+  const s=streak(), af=afgerond();
+  const openerAll=MATERIAAL["Openers"]; const opener=openerAll[d%openerAll.length];
+  return `
+  <div class="hero">
+    <div class="eyebrow">Dagtraining</div>
+    <h1>Elke dag een beetje beter communiceren</h1>
+    <p>Small talk, charisma & netwerken — één oefening per dag maakt het verschil.</p>
+    <div class="stats"><span class="chip">🔥 ${s} dag${s===1?'':'en'} streak</span><span class="chip">✅ ${af}/${LESSONS.length} lessen</span><span class="chip">🗓️ ${store.oefdagen.length} oefendagen</span></div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Uitdaging van vandaag</span>
+    <h2 style="margin-top:8px">${esc(uit)}</h2>
+    <p class="sub" style="margin-top:6px">Klein en concreet. Doe 'm vandaag en vink af — zo bouw je je streak.</p>
+    ${gedaan
+      ? `<button class="btn ok block" style="margin-top:12px" disabled>✅ Vandaag gedaan — sterk!</button>`
+      : `<button class="btn ok block" data-act="oefdone" style="margin-top:12px">Ik heb 'm gedaan ✅</button>`}
+  </div>
+
+  <div class="card">
+    <span class="tag">Techniek van de dag</span>
+    <h2 style="margin-top:8px">${esc(tt)}</h2>
+    <p class="sub" style="margin-top:6px">${esc(tp)}</p>
+  </div>
+
+  <div class="card">
+    <span class="tag">Opener om vandaag te gebruiken</span>
+    <p class="quote" style="margin-top:10px">💬 “${esc(opener)}”</p>
+    <button class="btn ghost" data-act="nieuweopener" style="margin-top:12px">Geef me een andere</button>
+  </div>
+
+  <div class="card center">
+    <p class="sub">Klaar voor meer? Duik in de lessen.</p>
+    <button class="btn block" data-tab="lessen" style="margin-top:10px">📚 Naar de lessen</button>
+  </div>`;
+}
+
+function tabLessen(){
+  return `
+  <div class="hero"><div class="eyebrow">De cursus</div><h1>${LESSONS.length} lessen naar meesterschap</h1>
+    <p>Van je eerste opener tot moeiteloos netwerken en lastige gesprekken.</p>
+    <div class="stats"><span class="chip">✅ ${afgerond()}/${LESSONS.length} afgerond</span></div>
+  </div>
+  <div class="card" style="padding:6px 12px">
+    ${LESSONS.map((l,i)=>{const done=!!store.done[i];return `
+      <div class="lesrow" data-les="${i}">
+        <div class="num ${done?'done':''}">${done?'✓':(i+1)}</div>
+        <div class="grow"><b>${esc(l.t)}</b><span>${esc(l.d)}</span></div>
+        <div class="chev">›</div>
+      </div>`;}).join('')}
+  </div>`;
+}
+
+function lesDetail(i){
+  const l=LESSONS[i]; const done=!!store.done[i];
+  return `
+  <div class="topbar"><button class="back" data-act="terug">‹ Lessen</button><span class="tag">Les ${i+1} · ${l.min} min</span></div>
+  <div class="hero" style="margin-top:12px"><div class="eyebrow">Les ${i+1}</div><h1>${esc(l.t)}</h1><p>${esc(l.d)}</p></div>
+
+  <div class="card">
+    <div class="block"><h3>Kernprincipe</h3><p class="quote">${esc(l.principe)}</p></div>
+    <div class="block"><h3>Technieken</h3>
+      ${l.tech.map(([b,p])=>`<div class="tech"><b>${esc(b)}</b><p>${esc(p)}</p></div>`).join('')}
+    </div>
+    ${l.lines&&l.lines.length?`<div class="block"><h3>Zo klinkt het</h3><ul class="lines" style="padding:0;margin:0">${l.lines.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
+    <div class="oef"><b>🎯 Oefening van vandaag</b><p style="margin-top:4px">${esc(l.oef)}</p></div>
+    ${done
+      ? `<button class="btn ok block" data-act="undone" data-les="${i}" style="margin-top:14px">✅ Afgerond — tik om te herzien</button>`
+      : `<button class="btn block" data-act="done" data-les="${i}" style="margin-top:14px">Markeer als afgerond</button>`}
+  </div>
+  ${i<LESSONS.length-1?`<button class="btn ghost block" data-les="${i+1}" style="margin-top:12px">Volgende les › ${esc(LESSONS[i+1].t)}</button>`:`<div class="card center"><b>🎉 Laatste les!</b><p class="sub">Herhaal dagelijks in het tabblad Vandaag.</p></div>`}`;
+}
+
+function tabMateriaal(){
+  const cats=Object.keys(MATERIAAL);
+  const cur=view.mat||cats[0];
+  return `
+  <div class="hero"><div class="eyebrow">Oefenmateriaal</div><h1>Je gespreks-toolkit</h1>
+    <p>Kant-en-klare zinnen om vandaag te gebruiken. Vervang [X] door de situatie.</p></div>
+  <div class="seg">${cats.map(c=>`<button data-mat="${esc(c)}" class="${c===cur?'on':''}">${esc(c)}</button>`).join('')}</div>
+  <div class="card"><ul class="lines" style="padding:0;margin:0">${MATERIAAL[cur].map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>
+  <div class="card center">
+    <span class="tag">Gesprekssimulator</span>
+    <p id="simtxt" class="quote" style="margin-top:10px">Tik op de knop voor een willekeurige oefensituatie.</p>
+    <button class="btn block" data-act="sim" style="margin-top:12px">🎲 Geef me een oefensituatie</button>
+  </div>`;
+}
+const SIM_SCENARIOS=[
+  "Je staat in de rij voor de koffie op een congres. Naast je staat iemand die je niet kent.",
+  "Je zit aan een netwerkdiner naast een onbekende. Het is even stil.",
+  "Je komt een oud-collega tegen die je 3 jaar niet zag.",
+  "Je wilt op een borrel de spreker aanspreken die je bewondert.",
+  "Een gesprek loopt dood en je wilt het weer op gang brengen.",
+  "Je wilt een leuk gesprek netjes afsluiten om verder te mingelen.",
+  "Iemand vraagt je iets waar je 'nee' op wilt zeggen, maar aardig blijven.",
+  "Je wilt van small talk over het weer naar iets persoonlijkers."
+];
+function simulatie(){
+  const sc=SIM_SCENARIOS[Math.floor((Date.now()/1000)%SIM_SCENARIOS.length + Math.floor(performance.now()))%SIM_SCENARIOS.length];
+  const el=document.getElementById('simtxt');
+  if(el) el.innerHTML=`<b>Situatie:</b> ${esc(sc)}<br><br><span class="sub">Wat zeg je? Bedenk je opener, stel 1 open vraag, en oefen je exit. Gebruik het materiaal hierboven.</span>`;
+}
+
+function tabVoortgang(){
+  const s=streak(), af=afgerond(), pct=Math.round(af/LESSONS.length*100);
+  return `
+  <div class="hero"><div class="eyebrow">Jouw groei</div><h1>Voortgang</h1><p>Consistentie verslaat intensiteit. Elke dag telt.</p></div>
+  <div class="card">
+    <div class="kv"><span>🔥 Huidige streak</span><b>${s} dag${s===1?'':'en'}</b></div>
+    <div class="kv"><span>🗓️ Totaal oefendagen</span><b>${store.oefdagen.length}</b></div>
+    <div class="kv"><span>📚 Lessen afgerond</span><b>${af} / ${LESSONS.length}</b></div>
+  </div>
+  <div class="card">
+    <div class="kv" style="border:0"><span><b>Cursusvoortgang</b></span><b>${pct}%</b></div>
+    <div class="pbar"><i style="width:${pct}%"></i></div>
+    <p class="sub" style="margin-top:10px">${af===LESSONS.length?'🎉 Hele cursus doorlopen! Blijf dagelijks oefenen in het tabblad Vandaag.':'Rond de volgende les af om verder te komen.'}</p>
+  </div>
+  <div class="card center">
+    <p class="big">${store.oefdagen.length===0?'💪':'⭐'}</p>
+    <p class="sub">${store.oefdagen.length===0?'Begin vandaag met de uitdaging van de dag — de eerste stap is de belangrijkste.':'Sterk bezig. Kom morgen terug voor je volgende oefening.'}</p>
+  </div>
+  <a class="backhome" href="../index.html">‹ Terug naar de Bennaghmouch-cursussen</a>`;
+}
+
+/* ---------------- EVENTS ---------------- */
+function bind(){
+  document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{ view.les=null; view.tab=b.dataset.tab; render(); });
+  document.querySelectorAll('[data-les]').forEach(b=>b.onclick=()=>{ view.les=+b.dataset.les; render(); });
+  document.querySelectorAll('[data-mat]').forEach(b=>b.onclick=()=>{ view.mat=b.dataset.mat; render(); });
+  document.querySelectorAll('[data-act]').forEach(b=>b.onclick=()=>act(b.dataset.act, b.dataset));
+}
+function act(a,ds){
+  if(a==='terug'){ view.les=null; view.tab='lessen'; render(); }
+  else if(a==='done'){ store.done[+ds.les]=true; save(); render(); }
+  else if(a==='undone'){ store.done[+ds.les]=false; save(); render(); }
+  else if(a==='oefdone'){ const t=today(); if(!store.oefdagen.includes(t)){ store.oefdagen.push(t); store.oefdagen=store.oefdagen.slice(-400); store.oefLaatst=t; save(); } render(); }
+  else if(a==='nieuweopener'){ const el=document.querySelector('.quote'); const arr=MATERIAAL["Openers"]; if(el) el.innerHTML='💬 “'+esc(arr[Math.floor(Math.random()*arr.length)])+'”'; }
+  else if(a==='sim'){ simulatie(); }
+}
+render();
+</script>
+</body>
+</html>
