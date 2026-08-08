@@ -126,6 +126,7 @@
     <input id="lockinput" class="lockin" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="• • • •" aria-label="Ouder-code">
     <button id="lockbtn" class="btn block">Ontgrendel</button>
     <p id="lockmsg" class="lockmsg"></p>
+    <a id="lockchg" href="#" style="display:inline-block;margin-top:2px;color:var(--pri);font-size:12.5px;font-weight:700;text-decoration:none;">Ouder-code wijzigen</a>
     <a class="backhome" href="../index.html">‹ Terug naar start</a>
   </div>
 </div>
@@ -811,20 +812,52 @@ function act(a,ds){
   else if(a==='simmodel'){ view.simModel=true; render(); }
   else if(a==='naarsim'){ view.oefsub='sim'; }
 }
-/* ---- Ouder-code gate — Bennaghmouch Academie ---- */
-const AC_CODE='1987';
+/* ---- Ouder-code gate — Bennaghmouch Academie (aanpasbare code) ---- */
+const AC_DEFAULT='1987';
+function acGetCode(){ try{ return localStorage.getItem('academie_code') || AC_DEFAULT; }catch(e){ return AC_DEFAULT; } }
+function acSetCode(c){ try{ localStorage.setItem('academie_code', c); }catch(e){} }
 function acUnlocked(){ try{return sessionStorage.getItem('academie_ok')==='1';}catch(e){return false;} }
+function acDoUnlock(lock){ try{sessionStorage.setItem('academie_ok','1');}catch(e){} lock.style.display='none'; render(); }
 function acBoot(){
   const lock=document.getElementById('lock');
   if(acUnlocked()){ if(lock) lock.style.display='none'; render(); return; }
   if(!lock){ render(); return; }
+  const card=lock.querySelector('.lockcard'); const orig=card.innerHTML;
   lock.style.display='flex';
-  const inp=lock.querySelector('#lockinput'), btn=lock.querySelector('#lockbtn'),
-        msg=lock.querySelector('#lockmsg'), cardEl=lock.querySelector('.lockcard');
-  const tryUnlock=()=>{ if(inp.value.trim()===AC_CODE){ try{sessionStorage.setItem('academie_ok','1');}catch(e){} lock.style.display='none'; render(); }
-    else { msg.textContent='Onjuiste code — probeer opnieuw.'; inp.value=''; inp.focus();
-      if(cardEl){ cardEl.classList.remove('shake'); void cardEl.offsetWidth; cardEl.classList.add('shake'); } } };
-  btn.onclick=tryUnlock; inp.onkeydown=e=>{ if(e.key==='Enter') tryUnlock(); }; setTimeout(()=>inp.focus(),60);
+  const shake=()=>{ card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake'); };
+  function showUnlock(){
+    card.innerHTML=orig;
+    const inp=card.querySelector('#lockinput'), btn=card.querySelector('#lockbtn'),
+          msg=card.querySelector('#lockmsg'), chg=card.querySelector('#lockchg');
+    const go=()=>{ if(inp.value.trim()===acGetCode()){ acDoUnlock(lock); }
+      else { msg.textContent='Onjuiste code — probeer opnieuw.'; inp.value=''; inp.focus(); shake(); } };
+    btn.onclick=go; inp.onkeydown=e=>{ if(e.key==='Enter') go(); };
+    if(chg) chg.onclick=e=>{ e.preventDefault(); showChange(); };
+    setTimeout(()=>inp.focus(),60);
+  }
+  function showChange(){
+    card.innerHTML='<div class="lockicon">🔧</div><div class="lockttl">Ouder-code wijzigen</div>'
+      +'<p class="locksub">Voer je huidige code in en kies een nieuwe (minstens 4 cijfers).</p>'
+      +'<input id="cCur" class="lockin" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="Huidige code">'
+      +'<input id="cNew" class="lockin" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="Nieuwe code">'
+      +'<input id="cNew2" class="lockin" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="Nieuwe code nogmaals">'
+      +'<button id="cSave" class="btn block">Opslaan</button>'
+      +'<p id="cMsg" class="lockmsg"></p>'
+      +'<a id="cBack" class="backhome" href="#">‹ Terug</a>';
+    const cur=card.querySelector('#cCur'), nw=card.querySelector('#cNew'), nw2=card.querySelector('#cNew2'),
+          save=card.querySelector('#cSave'), msg=card.querySelector('#cMsg'), back=card.querySelector('#cBack');
+    const go=()=>{
+      if(cur.value.trim()!==acGetCode()){ msg.style.color='#e11d48'; msg.textContent='Huidige code klopt niet.'; shake(); return; }
+      const a=nw.value.trim(), b=nw2.value.trim();
+      if(!/^[0-9]{4,8}$/.test(a)){ msg.style.color='#e11d48'; msg.textContent='Nieuwe code: 4 tot 8 cijfers.'; shake(); return; }
+      if(a!==b){ msg.style.color='#e11d48'; msg.textContent='De nieuwe codes komen niet overeen.'; shake(); return; }
+      acSetCode(a); msg.style.color='#0ca678'; msg.textContent='Code gewijzigd ✓'; setTimeout(()=>acDoUnlock(lock),700);
+    };
+    save.onclick=go; nw2.onkeydown=e=>{ if(e.key==='Enter') go(); };
+    back.onclick=e=>{ e.preventDefault(); showUnlock(); };
+    setTimeout(()=>cur.focus(),60);
+  }
+  showUnlock();
 }
 acBoot();
 </script>
