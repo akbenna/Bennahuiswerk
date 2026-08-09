@@ -1,0 +1,16 @@
+{
+  "name": "Bennaghmouch Oefenclub",
+  "short_name": "Oefenclub",
+  "description": "Huiswerk oefenen voor het gezin — rekenen, taal, spelling, spellen en de Bennaghmouch Academie. Werkt offline.",
+  "lang": "nl",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#eef3fa",
+  "theme_color": "#3a6ea0",
+  "icons": [
+    { "src": "favicon.svg", "type": "image/svg+xml", "sizes": "any", "purpose": "any maskable" },
+    { "src": "apple-touch-icon.png", "type": "image/png", "sizes": "180x180", "purpose": "any" }
+  ]
+}
