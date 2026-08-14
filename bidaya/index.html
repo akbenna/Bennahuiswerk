@@ -495,38 +495,73 @@ function toon(soort){
 
 /* ---------------------------- stem ---------------------------- */
 /* De Web Speech API zit in de browser zelf: geen kosten, geen bestanden, werkt
-   offline zodra de stem op het toestel staat. Arabisch is niet overal
-   geïnstalleerd; dan verbergen we de knop en leggen we uit hoe je hem erbij zet. */
+   offline zodra de stem op het toestel staat.
+
+   Drie dingen bepalen of het Arabisch bruikbaar klinkt, en alle drie zijn hier
+   instelbaar, omdat ze per toestel anders uitpakken:
+   1. WELKE STEM. Op een iPhone staat standaard de kleine (compacte) Arabische
+      stem; de verbeterde versie moet je apart downloaden en klinkt veel beter.
+      Staan er meerdere, dan kun je hier kiezen.
+   2. MET OF ZONDER TEKENS. Sommige stemmen lezen de klinkertekens netjes mee,
+      andere struikelen erover en klinken beter zonder. Daarom een schakelaar.
+   3. IN STUKJES. Een lange zin in één keer gaat mis; per stukje van een paar
+      woorden komt het er rustiger en duidelijker uit. */
 const STEM = {
-  nl:null, ar:null, klaar:false,
+  nl:null, ar:null, arLijst:[], klaar:false,
   zoek(){
     try{
       const ss=window.speechSynthesis; if(!ss) return;
       const vs=ss.getVoices()||[];
       if(!vs.length) return;
       this.nl = vs.find(v=>/nl[-_]NL/i.test(v.lang)) || vs.find(v=>/^nl/i.test(v.lang)) || null;
-      this.ar = vs.find(v=>/ar[-_]SA/i.test(v.lang)) || vs.find(v=>/^ar/i.test(v.lang)) || null;
+      this.arLijst = vs.filter(v=>/^ar/i.test(v.lang));
+      /* Bij het allereerste zoeken zijn de instellingen nog niet ingelezen;
+         dan pakken we gewoon de beste stem die er is en corrigeren we later. */
+      let voorkeur=null;
+      try{ if(S.instel.arStem) voorkeur=this.arLijst.find(v=>v.name===S.instel.arStem); }catch(e){}
+      this.ar = voorkeur
+        || this.arLijst.find(v=>/enhanced|premium|verbeterd|neural/i.test(v.name))
+        || this.arLijst.find(v=>/ar[-_]SA/i.test(v.lang))
+        || this.arLijst[0] || null;
       this.klaar = true;
     }catch(e){}
   },
   heeftAr(){ return !!this.ar; },
+  /* Arabisch in stukjes van een paar woorden. De browser zet ze zelf achter
+     elkaar in de wachtrij, dus je hoort één doorlopende zin met rustpunten. */
+  zegAr(tekst, tempo){
+    if(!S.instel.stem || !this.ar) return;
+    try{
+      const ss=window.speechSynthesis; if(!ss||!tekst) return;
+      ss.cancel();
+      const bron = S.instel.harakat ? String(tekst) : kaal(tekst);
+      const woorden = bron.replace(/\s+/g,' ').trim().split(' ');
+      const stukjes=[];
+      for(let i=0;i<woorden.length;i+=4) stukjes.push(woorden.slice(i,i+4).join(' '));
+      const snelheid = Math.max(.4, Math.min(1.2, (S.instel.arTempo||.85) * (tempo||1)));
+      stukjes.forEach(st=>{
+        const u=new SpeechSynthesisUtterance(st);
+        u.lang=this.ar.lang||'ar-SA'; u.voice=this.ar; u.rate=snelheid; u.pitch=1;
+        ss.speak(u);
+      });
+    }catch(e){}
+  },
   zeg(tekst, taal, tempo){
+    if(taal==='ar') return this.zegAr(tekst, tempo);
     if(!S.instel.stem) return;
     try{
       const ss=window.speechSynthesis; if(!ss||!tekst) return;
       ss.cancel();
       const u=new SpeechSynthesisUtterance(String(tekst));
-      if(taal==='ar'){ u.lang='ar-SA'; if(this.ar) u.voice=this.ar; u.rate=tempo||.72; }
-      else           { u.lang='nl-NL'; if(this.nl) u.voice=this.nl; u.rate=tempo||.98; }
-      u.pitch=1; ss.speak(u);
+      u.lang='nl-NL'; if(this.nl) u.voice=this.nl; u.rate=tempo||.98; u.pitch=1;
+      ss.speak(u);
     }catch(e){}
   },
   stop(){ try{ if(window.speechSynthesis) window.speechSynthesis.cancel(); }catch(e){} }
 };
 try{ if(window.speechSynthesis){ window.speechSynthesis.onvoiceschanged=()=>STEM.zoek(); STEM.zoek(); } }catch(e){}
-/* Arabische tekst zonder tekens leest een stem rustiger voor dan met alle
-   klinkertekens erin; die halen we er dus uit vlak voor het voorlezen. */
-const kaal = t => String(t||'').replace(/[ً-ْٰۖ-ࣰۭ-ࣿ]/g,'').replace(/۝|۝/g,' ').replace(/\s+/g,' ').trim();
+/* De klinkertekens eraf halen, voor de stemmen die er niet tegen kunnen. */
+const kaal = t => String(t||'').replace(/[\u064B-\u0652\u0670\u06D6-\u06ED]/g,'').replace(/\s+/g,' ').trim();
 
 /* ---------------------------- opnemen ---------------------------- */
 /* Jezelf horen is de snelste manier om je uitspraak te verbeteren. We nemen op
@@ -1459,7 +1494,7 @@ function leegS(){
     profielen:[], actief:null, data:{},
     gezin:{ budget:TARIEF.weekbudget, gebedTelt:false, ouderPin:'',
             plaats:'Roermond', lat:51.1942, lon:5.9873, methode:'MWL', asr:1, hoog:'zevende' },
-    instel:{ geluid:true, stem:true, tempo:1, groot:false },
+    instel:{ geluid:true, stem:true, tempo:1, groot:false, arStem:'', harakat:true, arTempo:.85 },
     last:null
   };
 }
@@ -1758,7 +1793,7 @@ let _teller=0;
 function tekstBlok(o, opt){
   opt=opt||{};
   const id='tb'+(++_teller);
-  const arKnop = STEM.heeftAr() ? '<button class="icoon" data-hoor-ar="'+esc(kaal(o.ar))+'" title="Arabisch horen">🔊</button>' : '';
+  const arKnop = STEM.heeftAr() ? '<button class="icoon" data-hoor-ar="'+esc(o.ar)+'" title="Arabisch horen">🔊</button>' : '';
   const nlKnop = '<button class="icoon" data-hoor-nl="'+esc(o.nl||'')+'" title="Betekenis horen">💬</button>';
   return `<div class="card plat" id="${id}" style="background:var(--surface-2)">
     <div class="rij tussen" style="align-items:flex-start">
@@ -1785,7 +1820,7 @@ function blokkenFatiha(opnemen){
 /* Alle luisterknoppen in één keer bedienen — schermen worden vaak opnieuw
    opgebouwd, dus we luisteren op documentniveau. */
 document.addEventListener('click', e=>{
-  const ar=e.target.closest('[data-hoor-ar]'); if(ar){ STEM.zeg(ar.dataset.hoorAr,'ar', S.instel.tempo*0.72); return; }
+  const ar=e.target.closest('[data-hoor-ar]'); if(ar){ STEM.zegAr(ar.dataset.hoorAr); return; }
   const nl=e.target.closest('[data-hoor-nl]'); if(nl){ STEM.zeg(nl.dataset.hoorNl,'nl'); return; }
 });
 /* =============================================================================
@@ -2124,7 +2159,7 @@ function wuduLoop(i){
     </div>`);
   $('#vorige').onclick=()=>wuduLoop(i-1);
   $('#volgende').onclick=()=>wuduLoop(i+1);
-  if(w.zeg && STEM.heeftAr()) STEM.zeg(kaal(w.zeg.ar),'ar',S.instel.tempo*0.72);
+  if(w.zeg && STEM.heeftAr()) STEM.zegAr(w.zeg.ar);
 }
 function wuduKlaar(){
   markeerOefening(); punten(10); checkMissie(); bewaar();
@@ -2229,7 +2264,7 @@ function stapLoop(i){
   $('#vorige').onclick=()=>stapLoop(i-1);
   $('#volgende').onclick=()=>stapLoop(i+1);
   zetOpname();
-  if(t1 && STEM.heeftAr() && s.zeg!=='fatiha') STEM.zeg(kaal(t1.ar),'ar',S.instel.tempo*0.72);
+  if(t1 && STEM.heeftAr() && s.zeg!=='fatiha') STEM.zegAr(t1.ar);
 }
 
 /* Opnemen en terugluisteren: hoor jezelf naast de voorgelezen tekst. */
@@ -2318,7 +2353,7 @@ function meeSpelen(rak, naam){
     $('#terug').onclick=()=>{ i--; herstart(); };
     $('#door').onclick=()=>{ vooruit(); };
     $('#auto').onclick=()=>{ vanzelf=!vanzelf; herstart(); };
-    if(t1 && STEM.heeftAr()) STEM.zeg(kaal(t1.ar),'ar',S.instel.tempo*0.7); else toon('tik');
+    if(t1 && STEM.heeftAr()) STEM.zegAr(t1.ar); else toon('tik');
   };
   const vooruit=()=>{
     if(i>=seq.length-1){ stop(); return klaar(); }
@@ -2403,7 +2438,7 @@ function hifzLees(h){
       ${STEM.heeftAr()?'<button class="btn" id="alles">🔊 Alles achter elkaar</button>':''}
       <button class="btn ghost" id="klaar">Klaar &rarr;</button></div>`);
   if($('#alles')) $('#alles').onclick=()=>{
-    let k=0; const volgende=()=>{ if(k>=h.r.length) return; STEM.zeg(kaal(h.r[k][0]),'ar',S.instel.tempo*0.68); k++; setTimeout(volgende, 2600+h.r[k-1][0].length*55); };
+    let k=0; const volgende=()=>{ if(k>=h.r.length) return; STEM.zegAr(h.r[k][0]); k++; setTimeout(volgende, 3000+h.r[k-1][0].length*70); };
     volgende();
   };
   $('#klaar').onclick=()=>{ hifzNiveau(h,1); hifzMenu(h.id); };
@@ -2447,7 +2482,7 @@ function woordPuzzel(regels, opt, klaarF){
           ${los.map(o=>`<button class="woord" data-x="${o.x}">${o.w}</button>`).join('')}
         </div>
         <div class="rij" style="margin-top:16px">
-          ${STEM.heeftAr()?'<button class="icoon" data-hoor-ar="'+esc(kaal(regels[r][0]))+'" title="Voorzeggen">🔊</button>':''}
+          ${STEM.heeftAr()?'<button class="icoon" data-hoor-ar="'+esc(regels[r][0])+'" title="Voorzeggen">🔊</button>':''}
           <button class="btn ghost sm" id="over">Opnieuw</button></div>`;
       $$('[data-x]').forEach(b=>b.onclick=()=>{
         if(bezig) return;
@@ -2788,13 +2823,33 @@ function tekenOuder(){
       <h3>Instellingen van de app</h3>
       <label class="veld"><span>Geluid</span><select id="iGeluid"><option value="1" ${S.instel.geluid?'selected':''}>Aan</option><option value="0" ${S.instel.geluid?'':'selected'}>Uit</option></select></label>
       <label class="veld"><span>Voorlezen</span><select id="iStem"><option value="1" ${S.instel.stem?'selected':''}>Aan</option><option value="0" ${S.instel.stem?'':'selected'}>Uit</option></select></label>
+      <label class="veld"><span>Arabische stem</span><select id="iArStem">
+        ${STEM.arLijst.length
+          ? STEM.arLijst.map(v=>`<option value="${esc(v.name)}" ${(STEM.ar&&STEM.ar.name===v.name)?'selected':''}>${esc(v.name)} (${esc(v.lang)})</option>`).join('')
+          : '<option value="">Geen Arabische stem gevonden</option>'}</select></label>
+      <label class="veld"><span>Klinkertekens meelezen</span><select id="iHarakat">
+        <option value="1" ${S.instel.harakat?'selected':''}>Ja — met de tekens (meestal beter)</option>
+        <option value="0" ${S.instel.harakat?'':'selected'}>Nee — zonder de tekens</option></select></label>
+      <label class="veld"><span>Snelheid van het Arabisch</span><select id="iArTempo">
+        <option value="0.6" ${S.instel.arTempo==0.6?'selected':''}>Heel langzaam</option>
+        <option value="0.75" ${S.instel.arTempo==0.75?'selected':''}>Langzaam</option>
+        <option value="0.85" ${S.instel.arTempo==0.85?'selected':''}>Rustig</option>
+        <option value="1" ${S.instel.arTempo==1?'selected':''}>Gewoon</option></select></label>
+      <div class="rij" style="margin-top:12px">
+        <button class="btn sm ghost" data-hoor-ar="بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ">🔊 Test: bismillah</button>
+        <button class="btn sm ghost" data-hoor-ar="السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ">🔊 Test: salaam</button>
+      </div>
+      <div class="kader let" style="margin-top:12px"><h4>De stem klinkt niet goed. Wat kun je doen?</h4>
+        <p>De stem komt uit de telefoon zelf, niet uit deze app. Op een iPhone staat standaard de <b>kleine</b> Arabische stem; die klinkt vlak en legt de klemtoon vaak verkeerd. Download de verbeterde versie via <b>Instellingen → Toegankelijkheid → Gesproken materiaal → Stemmen → Arabisch</b> en kies daar de variant met de grootste download. Kom daarna hier terug en kies hem hierboven. Helpt dat niet genoeg, zet dan de klinkertekens uit — sommige stemmen struikelen erover.</p>
+        <p style="margin-top:8px">Blijft het onvoldoende: voor het echte voorzeggen van de Koran is een stem uit de telefoon sowieso niet bedoeld. Zie de knop hieronder om zelf de teksten in te spreken.</p>
+      </div>
       <label class="veld"><span>Tempo bij meebidden en voorlezen</span><select id="iTempo">
         <option value="0.8" ${S.instel.tempo==0.8?'selected':''}>Rustig</option>
         <option value="1" ${S.instel.tempo==1?'selected':''}>Gewoon</option>
         <option value="1.3" ${S.instel.tempo==1.3?'selected':''}>Vlot</option></select></label>
       <label class="veld"><span>Grote letters</span><select id="iGroot"><option value="0" ${S.instel.groot?'':'selected'}>Nee</option><option value="1" ${S.instel.groot?'selected':''}>Ja</option></select></label>
       <label class="veld"><span>Code voor dit scherm (leeg = geen slot)</span><input id="iPin" value="${esc(g.ouderPin||'')}" inputmode="numeric"></label>
-      <p class="klein" style="margin-top:10px">Arabische stem gevonden: <b>${STEM.heeftAr()?'ja':'nee'}</b>. Zo niet, voeg er op het toestel zelf een toe bij Toegankelijkheid → Spraak → Stemmen.</p>
+      <p class="klein" style="margin-top:10px">Gevonden op dit toestel: <b>${STEM.arLijst.length}</b> Arabische ${STEM.arLijst.length===1?'stem':'stemmen'}${STEM.nl?', en een Nederlandse stem':', geen Nederlandse stem'}.</p>
     </div>
     <div class="card">
       <h3>Centrale opslag</h3>
@@ -2852,6 +2907,9 @@ function tekenOuder(){
   zetGetal('iStem',v=>S.instel.stem=(v==='1'));
   zetGetal('iTempo',v=>S.instel.tempo=parseFloat(v));
   zetGetal('iGroot',v=>{ S.instel.groot=(v==='1'); document.body.classList.toggle('groot',S.instel.groot); });
+  zetGetal('iArStem',v=>{ S.instel.arStem=v; STEM.zoek(); });
+  zetGetal('iHarakat',v=>S.instel.harakat=(v==='1'));
+  zetGetal('iArTempo',v=>S.instel.arTempo=parseFloat(v));
   zetGetal('iPin',v=>S.gezin.ouderPin=String(v||'').trim());
   if($('#wIn')) $('#wIn').onclick=async()=>{
     const a=$('#wAcc').value.trim(), p=$('#wPin').value;
@@ -2927,6 +2985,7 @@ async function gelijktrekken(eerste){
   const lokaal=await store.get();
   if(lokaal) S=Object.assign(leegS(), lokaal, {gezin:Object.assign(leegS().gezin, lokaal.gezin||{}), instel:Object.assign(leegS().instel, lokaal.instel||{})});
   document.body.classList.toggle('groot', !!S.instel.groot);
+  STEM.zoek();                       // nu pas is de voorkeursstem bekend
   if(S.actief && !S.profielen.some(p=>p.id===S.actief)) S.actief = S.profielen.length?S.profielen[0].id:null;
   WOLK.init('bidaya');
   tekenWie(); teken();
