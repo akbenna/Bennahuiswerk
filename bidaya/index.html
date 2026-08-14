@@ -246,6 +246,16 @@ ul.geen li:last-child{border-bottom:0}
 @keyframes omhoog{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
 @media(min-width:640px){ .overlay{align-items:center} .blad{border-radius:16px;max-height:84dvh} }
 
+/* De titel op de startpagina. De naam mag groot: het is het eerste wat een kind
+   ziet als het de app opent, en het is de enige plek waar de app zichzelf
+   voorstelt. */
+.held{padding:6px 0 2px}
+.held .naam{font-family:var(--serif);font-size:3.3rem;line-height:1;letter-spacing:-.035em;color:var(--ink);font-weight:500}
+.held .naam em{font-style:normal;font-family:var(--ar);font-size:2.15rem;color:var(--k);margin-left:15px;vertical-align:.06em}
+.held .zin{margin-top:13px;font-family:var(--serif);font-size:1.16rem;line-height:1.5;color:var(--muted);max-width:44ch}
+.held .streep{margin-top:20px;height:3px;width:66px;background:var(--k);border-radius:2px;opacity:.9}
+@media(max-width:560px){ .held .naam{font-size:2.5rem} .held .naam em{font-size:1.66rem} .held .zin{font-size:1.06rem} }
+
 .voortgang-strip{display:flex;gap:4px;margin-top:11px}
 .voortgang-strip i{flex:1;height:4px;border-radius:9999px;background:var(--surface-2)}
 .voortgang-strip i.aan{background:var(--k)}
@@ -1781,9 +1791,14 @@ document.addEventListener('click', e=>{
 /* =============================================================================
    SCHERM — VANDAAG
 ============================================================================= */
+const HELD = `<div class="held">
+    <div class="naam">Bidaya<em lang="ar">بداية</em></div>
+    <p class="zin">De basis van de islam, en leren bidden — stap voor stap, in je eigen tempo.</p>
+    <div class="streep"></div>
+  </div>`;
 function tekenVandaag(){
   const p=prof(), pr=P(), el=$('#vandaagInhoud');
-  if(!p){ el.innerHTML=kaartGeenProfiel(); return; }
+  if(!p){ el.innerHTML=HELD+kaartGeenProfiel(); return; }
   const nv=niveauVan(pr.punten||0), vg=volgendGebed(), m=missie();
   const dag=vandaag(), log=(pr.gebed||{})[dag]||{};
   const gedaan=GEBEDEN.filter(g=>log[g.id]).length;
@@ -1793,7 +1808,7 @@ function tekenVandaag(){
   const uur=new Date().getHours();
   const groet = uur<6?'Nog vroeg':uur<12?'Goedemorgen':uur<18?'Goedemiddag':'Goedenavond';
 
-  el.innerHTML = `
+  el.innerHTML = HELD + `
   <div class="card">
     <div class="rij tussen">
       <div>
