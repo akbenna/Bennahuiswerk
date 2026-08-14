@@ -1,0 +1,15 @@
+{
+  "name": "Bidaya — de basis van de islam",
+  "short_name": "Bidaya",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F6F4F0",
+  "theme_color": "#F6F4F0",
+  "lang": "nl",
+  "description": "De basis van de islam voor kinderen van 7 tot 15, met begeleiding bij het leren bidden.",
+  "icons": [
+    { "src": "../apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "../favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
