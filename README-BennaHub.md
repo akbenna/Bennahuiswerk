@@ -53,16 +53,22 @@ weegt zwaarder dan het vermijden van die dubbeling.
 
 ## Bidaya
 
-Tien modules met vierenvijftig lessen over de basis van de islam, en een
+Veertien modules met vierenzeventig lessen over de basis van de islam — geloof,
+de vijf zuilen, reinheid, het gebed, de Koran, de seerah, gedrag, du'a, de
+kalender, het leven hier, de soennah en de hadithwetenschap, de geschiedenis van
+na de Profeet ﷺ tot en met al-Andalus en de Maghreb, de betekenis van de soera's
+die je uit je hoofd leert, en de grote vragen voor de oudsten. Daarnaast een
 gebedsonderdeel dat het leren bidden helemaal afdekt: de wassing, de twaalf
 onderdelen van het gebed, een meebid-oefening voor elk van de vijf gebeden,
 vijftien teksten om uit het hoofd te leren, de du'a's van de dag, een overzicht
 van alle gebeden en wat te doen als het misgaat. De fiqh volgt de Malikitische
 school; waar andere scholen het anders doen staat dat erbij.
 
-Elk kind krijgt de versie die bij zijn leeftijd hoort: 7–9 jaar korte teksten,
-10–12 de gewone versie, 13–15 met verdieping erbij. De leeftijd volgt uit het
-geboortejaar in het profiel.
+Elk kind krijgt zijn eigen leerlijn, afgeleid uit het geboortejaar in het
+profiel: 7–9 jaar krijgt korte teksten en 47 lessen, 10–12 de volledige uitleg en
+69 lessen, 13 jaar en ouder alle 74 met een blok verdieping onder elke les.
+Modules die nog niet aan de beurt zijn staan zichtbaar op slot met "vanaf 10
+jaar" erbij — dat scheelt uitleg en geeft de jongsten iets om naar uit te kijken.
 
 De gebedshoudingen en de wassing zijn getekende SVG's en de geluidjes komen uit
 de Web Audio API, dus daar zijn geen bestanden voor nodig.
