@@ -1,6 +1,6 @@
 # BennaHub
 
-Eén startpagina, vier apps. Alles is statische HTML: geen build-stap, geen server,
+Eén startpagina, vijf apps. Alles is statische HTML: geen build-stap, geen server,
 geen dependencies behalve Google Fonts. Wat hier staat, is wat er draait.
 
 ```
@@ -11,6 +11,10 @@ huiswerk/           de oefenapp voor de kinderen — ongewijzigd, alleen een lin
 noer/index.html     Noer Islam — de basis van de islam en leren bidden (7–15 jaar)
 sanad/index.html    Sanad — achtentwintig weken islamitische wetenschappen
 arabisch/index.html Lisan — Arabisch voor het hele gezin, met een jaarprogramma
+rasikh/             Rasikh — de Koran memoriseren (voor volwassenen)
+  index.html          de app
+  tekst/              de hele Koran: 114 soera's, 6236 aya, plus de verwarpunten
+  audio/              recitatie per aya, op te halen met het script dat er staat
 ```
 
 ## Centrale opslag
@@ -131,6 +135,49 @@ aantal lessen en uren, de uitslag van de niveaubepaling en van elke blokstoets,
 wanneer de laatste les was en wat er hierna komt — met knoppen om het jaarplan
 te openen, het werkblad van die week af te drukken of opnieuw te meten.
 
+## Rasikh — memoriseren
+
+Rasikh is de enige app die niet voor de kinderen is. Hij gaat uit van een
+volwassene die laat begint, en dat verandert wat er nodig is: geen tekort aan
+begrip maar aan herhaaltijd.
+
+**De hele Koran staat erin.** In `rasikh/tekst/` staat per soera een JSON-bestand
+met de Warsh- én de Hafs-tekst (de druk van het King Fahd-complex), de vertaling
+van Fred Leemhuis en een klankweergave — samen 6236 aya, gecontroleerd tegen de
+gangbare telling. De app laadt alleen de soera die je op dat moment nodig hebt.
+Het doelgebied stel je zelf in; standaard is dat juz 'amma, soera 78 tot en met
+114. Met één knop wordt dat de laatste twee juz of het hele boek.
+
+**Zes stappen per aya**, in deze volgorde: horen, begrijpen, inprenten,
+losmaken, vastzetten, knopen. Betekenis komt vóór klank — een volwassene onthoudt
+via begrip, een kind via klank. *Knopen* is de laatste stap: de aya aan de vorige
+vastmaken, want dáár breekt het reciteren.
+
+**De planner is de kern.** De opgegeven tijd per dag wordt éérst gevuld met wat
+herhaald moet worden. Wat overblijft bepaalt of er nieuwe stof bij mag. Blijft er
+niets over, dan komt er niets bij, en dat zegt de app ook met zoveel woorden.
+Herhalen loopt op 1, 2, 4, 8, 16, 32, 64, 120, 200 dagen; een misser zet de reeks
+terug.
+
+**Verwarpunten** zijn niet met de hand bedacht maar berekend uit de hele Koran:
+86 groepen aya's die woordelijk gelijk zijn en 349 die met dezelfde vier woorden
+beginnen, opgeslagen in `rasikh/tekst/mutashabihat.json`. Zodra je stof zo'n
+groep raakt, kun je er een ronde over doen: je krijgt de gedeelde tekst en de
+plaats, en moet zeggen wat dáár volgt. Dit is waar hifz omvalt — niet bij
+moeilijke woorden.
+
+**Recitatie.** Zonder eigen bestanden valt de app terug op de achtenvijftig
+Warsh-fragmenten uit Noer Islam. De rest haal je op met
+`node rasikh/audio/haal-audio.mjs` (zonder opties: juz 'amma); zie
+`rasikh/audio/LEESMIJ.md`. De hele Koran is ruim zesduizend bestanden en een
+halve gigabyte — dat wil je waarschijnlijk niet in git.
+
+**Zonder internet.** De servicewerker bewaart de app, de tekst, de recitatie en
+het Arabische lettertype. Dat laatste is geen luxe: de Warsh-druk gebruikt tekens
+(zoals de kleine hoge nul boven de hamzat wasl) die een systeemletter niet kent,
+en dan vallen er gaten in de tekst. Onder *Instellingen* staat een knop die het
+hele doelgebied vooraf klaarzet.
+
 ## De AI-functies in Sanad
 
 *Doorvragen* en *laat meelezen* praten rechtstreeks met de Anthropic-API vanuit de
@@ -144,8 +191,10 @@ serverless functie, dan hoeft de sleutel de browser niet meer in.
 ## Onderhoud
 
 De huiswerkapp bouw je zoals altijd: bewerk `huiswerk/index.dev.html` en compileer
-naar `huiswerk/index.html` (zie `BUILD.md`). Noer Islam, Sanad en Lisan zijn gewone
-HTML — openen, bewerken, klaar. In Noer Islam staat de leerstof bovenaan het
-scriptblok als gewone lijsten (`MODULES`, `WUDU`, `STAPPEN`, `HIFZ`, `DUAS`);
-wie de inhoud wil aanpassen hoeft de schermcode niet aan te raken. Let bij beide op de terugpijl naar `../`; die veronderstelt
-dat de app in een submap onder de hub staat.
+naar `huiswerk/index.html` (zie `BUILD.md`). Noer Islam, Sanad, Lisan en Rasikh
+zijn gewone HTML — openen, bewerken, klaar. In Noer Islam staat de leerstof
+bovenaan het scriptblok als gewone lijsten (`MODULES`, `WUDU`, `STAPPEN`, `HIFZ`,
+`DUAS`); wie de inhoud wil aanpassen hoeft de schermcode niet aan te raken. In
+Rasikh zit de stof niet in het bestand maar in `rasikh/tekst/`; de app zelf bevat
+alleen de leerlogica. Let bij alle apps op de terugpijl naar `../`; die
+veronderstelt dat de app in een submap onder de hub staat.

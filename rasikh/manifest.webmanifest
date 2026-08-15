@@ -1,0 +1,15 @@
+{
+  "name": "Rasikh — de Koran vastzetten",
+  "short_name": "Rasikh",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F6F4F0",
+  "theme_color": "#F6F4F0",
+  "lang": "nl",
+  "description": "Memoriseren en vasthouden: een systeem voor volwassenen dat stuurt op behoud.",
+  "icons": [
+    { "src": "../apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "../favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
