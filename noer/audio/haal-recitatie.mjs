@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /* =============================================================================
-   Haalt de recitatiefragmenten op die Bidaya gebruikt.
+   Haalt de recitatiefragmenten op die Noer Islam gebruikt.
 
    Zonder opties zoekt het script zelf een bron die werkt:
 
-     node bidaya/audio/haal-recitatie.mjs
+     node noer/audio/haal-recitatie.mjs
 
    Een bepaalde reciteerder kiezen:      --bron=warsh-dosary
    De lijst met bronnen zien:            --lijst
@@ -153,4 +153,4 @@ console.log('\nKlaar. ' + gelukt.length + ' fragmenten, ' + mislukt.length + ' m
 if (mislukt.length) console.log('Mislukt:\n  ' + mislukt.join('\n  '));
 console.log('\nLuister naar audio/quran/h-fatiha-1.mp3. Hoor je "bismillahi r-rahmani r-rahim"?');
 console.log('Zo niet: draai opnieuw met --fatiha=madani --opnieuw');
-console.log('Daarna: git add bidaya/audio/quran && git commit -m "Recitatie erbij"');
+console.log('Daarna: git add noer/audio/quran && git commit -m "Recitatie erbij"');

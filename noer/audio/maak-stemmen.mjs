@@ -15,9 +15,9 @@
      pip install edge-tts        of      pipx install edge-tts
 
    Daarna:
-     node bidaya/audio/maak-stemmen.mjs
-     node bidaya/audio/maak-stemmen.mjs --stem=ar-SA-ZariyahNeural
-     node bidaya/audio/maak-stemmen.mjs --lijst-stemmen
+     node noer/audio/maak-stemmen.mjs
+     node noer/audio/maak-stemmen.mjs --stem=ar-SA-ZariyahNeural
+     node noer/audio/maak-stemmen.mjs --lijst-stemmen
 ============================================================================= */
 import { writeFile, mkdir, readFile, access } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
@@ -133,4 +133,4 @@ await writeFile(join(DOEL, 'lijst.json'), JSON.stringify({
 
 console.log('\n' + n + ' gemaakt, ' + over + ' stonden er al, ' + fout + ' mislukt.');
 console.log('Luister er een paar na — een voorleesstem legt de klemtoon soms verkeerd.');
-console.log('Daarna: git add bidaya/audio/stem && git commit -m "Stemmen erbij"');
+console.log('Daarna: git add noer/audio/stem && git commit -m "Stemmen erbij"');

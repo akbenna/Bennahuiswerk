@@ -1,6 +1,6 @@
 # De map `audio`
 
-Hier staat het geluid dat Bidaya afspeelt bij de Arabische teksten. De app werkt
+Hier staat het geluid dat Noer Islam afspeelt bij de Arabische teksten. De app werkt
 zonder deze map: dan valt alles terug op de stem van het toestel. Met de map
 erin klinkt het zoals het hoort.
 
@@ -25,7 +25,7 @@ De fragmenten zitten niet in de repository; ze komen uit een archief dat per aya
 één opname aanbiedt. Eén commando:
 
 ```sh
-node bidaya/audio/haal-recitatie.mjs --basis="https://<archief>/<map-van-de-reciteerder>"
+node noer/audio/haal-recitatie.mjs --basis="https://<archief>/<map-van-de-reciteerder>"
 ```
 
 Het script haalt precies de tweeënzestig regels op die in de app staan, zet ze
@@ -68,7 +68,7 @@ te krijgen sla je alle opnames op als één bestand (knop onderaan dat scherm) e
 draai je op de computer:
 
 ```sh
-node bidaya/audio/zet-eigen.mjs ~/Downloads/bidaya-stem-2026-08-15.json
+node noer/audio/zet-eigen.mjs ~/Downloads/noer-stem-2026-08-15.json
 ```
 
 Dat pakt ze uit naar `audio/eigen/` en schrijft `audio/eigen/lijst.json`. Commit

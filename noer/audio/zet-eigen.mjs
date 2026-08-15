@@ -9,7 +9,7 @@
    telefoon die de app voor het eerst opent, en ook zonder internet.
 
    Gebruik:
-     node bidaya/audio/zet-eigen.mjs ~/Downloads/bidaya-stem-2026-08-15.json
+     node noer/audio/zet-eigen.mjs ~/Downloads/noer-stem-2026-08-15.json
 
    Draai je het nog een keer met een nieuw bestand, dan worden bestaande opnames
    overschreven en blijven de opnames die er niet in zitten gewoon staan.
@@ -25,7 +25,7 @@ const DOEL = join(HIER, 'eigen');
 const bron = process.argv[2];
 if (!bron) {
   console.error('Geef het geëxporteerde bestand op:\n' +
-    '  node bidaya/audio/zet-eigen.mjs <bidaya-stem-….json>\n');
+    '  node noer/audio/zet-eigen.mjs <noer-stem-….json>\n');
   process.exit(1);
 }
 
@@ -93,4 +93,4 @@ console.log(n + ' opnames weggeschreven (' + over + ' vervangen). In de map staa
 if (!heeftFfmpeg) console.log('\nLet op: ffmpeg staat niet op deze computer, dus de opnames blijven in het formaat\n' +
   'van het toestel waarop ze gemaakt zijn. Een webm-opname uit Chrome speelt niet af op een\n' +
   'iPhone. Installeer ffmpeg en draai dit nog eens met dezelfde export om dat te verhelpen.');
-console.log('Commit `bidaya/audio/eigen/` en de opnames staan op elk toestel.');
+console.log('Commit `noer/audio/eigen/` en de opnames staan op elk toestel.');

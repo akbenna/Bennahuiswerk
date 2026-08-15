@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Bidaya — de basis van de islam en leren bidden</title>
+<title>Noer Islam — de basis van de islam en leren bidden</title>
 <meta name="theme-color" content="#F6F4F0" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#141518" media="(prefers-color-scheme: dark)">
 <meta name="description" content="De basis van de islam voor kinderen van 7 tot 15, met een volledige begeleiding bij het leren bidden.">
@@ -22,7 +22,7 @@
   --ink:#0D0D0D; --ink-2:#24282B; --muted:#5F5C55;
   --line:#DAD6CE; --line-2:#C4BFB4;
 
-  --k:#0F6F6C; --k-bg:#DCEFEE;         /* Bidaya-teal */
+  --k:#0F6F6C; --k-bg:#DCEFEE;         /* de kleur van Noer */
   --goed:#2F6B1F; --goed-bg:#E4EFDD;
   --fout:#9F2F2D; --fout-bg:#FBE9E8;
   --let:#7E5300; --let-bg:#F8EFD4;
@@ -288,7 +288,9 @@ ul.geen li:last-child{border-bottom:0}
 .held .naam{font-family:var(--serif);font-size:3.3rem;line-height:1;letter-spacing:-.035em;color:var(--ink);font-weight:500}
 .held .naam em{font-style:normal;font-family:var(--ar);font-size:2.15rem;color:var(--k);margin-left:15px;vertical-align:.06em}
 .held .zin{margin-top:13px;font-family:var(--serif);font-size:1.16rem;line-height:1.5;color:var(--muted);max-width:44ch}
-.held .streep{margin-top:20px;height:3px;width:66px;background:var(--k);border-radius:2px;opacity:.9}
+.held .ondertitel{font-family:var(--mono);font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--k);margin-top:6px}
+.held .streep{margin-top:16px;height:3px;width:66px;background:var(--k);border-radius:2px;opacity:.9}
 @media(max-width:560px){ .held .naam{font-size:2.5rem} .held .naam em{font-size:1.66rem} .held .zin{font-size:1.06rem} }
 
 .voortgang-strip{display:flex;gap:4px;margin-top:11px}
@@ -319,7 +321,7 @@ footer p+p{margin-top:8px}
 <header class="top">
   <div class="top-in">
     <a class="terug" href="../" title="Terug naar BennaHub" aria-label="Terug naar BennaHub">&larr;</a>
-    <span class="brand">Bidaya<em lang="ar">بداية</em></span>
+    <span class="brand">Noer Islam<em lang="ar">نور</em></span>
     <div class="wie">
       <button id="knopWie" type="button"><span class="bol" id="wieBol">?</span><span id="wieNaam">Kies wie je bent</span></button>
     </div>
@@ -383,7 +385,7 @@ footer p+p{margin-top:8px}
   </section>
 
   <footer>
-    <p>Bidaya bewaart je voortgang op dit toestel en — als er een gezinsaccount is ingesteld — ook centraal, zodat je op elke telefoon of tablet verder gaat waar je gebleven was. Zonder internet werkt alles gewoon door.</p>
+    <p>Noer Islam bewaart je voortgang op dit toestel en — als er een gezinsaccount is ingesteld — ook centraal, zodat je op elke telefoon of tablet verder gaat waar je gebleven was. Zonder internet werkt alles gewoon door.</p>
     <p>De fiqh volgt de Malikitische school. Waar andere scholen het anders doen, staat dat erbij. De gebedstijden zijn berekend en bedoeld ter oriëntatie; houd de kalender van je eigen moskee aan.</p>
     <p class="meta" style="margin-top:14px">Gebouwd voor het gezin Benna</p>
   </footer>
@@ -397,7 +399,7 @@ footer p+p{margin-top:8px}
 
 <script>
 /* =============================================================================
-   Bidaya — de basis van de islam, en leren bidden.
+   Noer Islam — de basis van de islam, en leren bidden.
    Eén bestand, geen bouwstap, werkt zonder internet. De opzet volgt de andere
    apps van de hub: gegevens bovenaan als gewone lijsten, daaronder de scherm-
    code. Wie de leerstof wil aanpassen hoeft alleen de lijsten te bewerken.
@@ -2106,6 +2108,10 @@ const SPOREN = {1:{n:'7–9 jaar', u:'Korte lessen, veel beeld'},2:{n:'10–12 j
 /* =============================================================================
    OPSLAG EN TOESTAND
 ============================================================================= */
+/* De sleutel heet nog `bidaya`, de naam waaronder de app begon. Die laten we
+   staan: er zit al voortgang en er zitten al opnames onder, en een nieuwe naam
+   is geen reden om die weg te gooien. Hetzelfde geldt voor WOLK.init hieronder
+   en voor de naam van de opnamedatabase. */
 const KEY='bidaya.v1';
 const store={
   async get(){
@@ -2494,7 +2500,8 @@ document.addEventListener('click', e=>{
    SCHERM — VANDAAG
 ============================================================================= */
 const HELD = `<div class="held">
-    <div class="naam">Bidaya<em lang="ar">بداية</em></div>
+    <div class="naam">Noer<em lang="ar">نور</em></div>
+    <div class="ondertitel">Islam</div>
     <p class="zin">De basis van de islam: geloven, mooi leven, en leren bidden — stap voor stap, in je eigen tempo.</p>
     <div class="streep"></div>
   </div>`;
@@ -2587,7 +2594,7 @@ function volgendeLes(){
 }
 function kaartGeenProfiel(){
   return `<div class="card"><h1>Wie ben jij?</h1>
-    <p style="margin-top:10px">Bidaya houdt de voortgang per kind bij: welke lessen je gehad hebt, wat je uit je hoofd kent en wat je verdiend hebt. Kies hierboven wie je bent, of laat je vader of moeder een profiel aanmaken bij <b>Ouder</b>.</p>
+    <p style="margin-top:10px">Noer Islam houdt de voortgang per kind bij: welke lessen je gehad hebt, wat je uit je hoofd kent en wat je verdiend hebt. Kies hierboven wie je bent, of laat je vader of moeder een profiel aanmaken bij <b>Ouder</b>.</p>
     <div class="rij" style="margin-top:16px"><button class="btn" onclick="naarTab('ouder')">Naar het ouderscherm</button></div></div>`;
 }
 
@@ -3648,7 +3655,7 @@ function tekenOuder(){
   $('#exporteer').onclick=()=>{
     const a=document.createElement('a');
     a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,2)],{type:'application/json'}));
-    a.download='bidaya-'+vandaag()+'.json'; a.click();
+    a.download='noer-'+vandaag()+'.json'; a.click();
   };
 }
 
@@ -3725,7 +3732,7 @@ function stemStudio(){
       <h3>Naar een ander toestel</h3>
       <p class="klein" style="margin-top:5px">Een opname staat eerst alleen in het toestel waarop hij gemaakt is. Er zijn twee manieren om hem bij de kinderen te krijgen.</p>
       <p class="klein" style="margin-top:8px"><b>Snel:</b> sla ze op als bestand, stuur dat naar de telefoon van een kind en lees het daar in met de tweede knop.</p>
-      <p class="klein" style="margin-top:6px"><b>Voorgoed:</b> stuur het bestand naar de computer en draai <span class="meta" style="text-transform:none">node bidaya/audio/zet-eigen.mjs &lt;bestand&gt;</span>. De opnames komen dan in de app zelf te zitten, dus op elk toestel, ook op een nieuwe telefoon, en ook zonder internet. Dat is de plek waar ze horen: geluid hoort niet in de gedeelde opslag thuis, dat wordt te zwaar.</p>
+      <p class="klein" style="margin-top:6px"><b>Voorgoed:</b> stuur het bestand naar de computer en draai <span class="meta" style="text-transform:none">node noer/audio/zet-eigen.mjs &lt;bestand&gt;</span>. De opnames komen dan in de app zelf te zitten, dus op elk toestel, ook op een nieuwe telefoon, en ook zonder internet. Dat is de plek waar ze horen: geluid hoort niet in de gedeelde opslag thuis, dat wordt te zwaar.</p>
       <div class="rij" style="margin-top:12px">
         <button class="btn ghost sm" id="opnUit" ${gedaan?'':'disabled'}>Opnames opslaan als bestand</button>
         <button class="btn ghost sm" id="opnIn">Opnames inlezen</button>
@@ -3756,7 +3763,7 @@ function stemStudio(){
       }
       const a=document.createElement('a');
       a.href=URL.createObjectURL(new Blob([JSON.stringify(uit)],{type:'application/json'}));
-      a.download='bidaya-stem-'+vandaag()+'.json'; a.click();
+      a.download='noer-stem-'+vandaag()+'.json'; a.click();
     };
     $('#opnIn').onclick=()=>$('#opnBestand').click();
     $('#opnBestand').onchange=async e=>{
