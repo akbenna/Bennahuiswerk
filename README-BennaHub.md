@@ -191,6 +191,13 @@ halve gigabyte — dat wil je waarschijnlijk niet in git.
 het Arabische lettertype (zie hierboven). Onder *Instellingen* staat een knop die
 het hele doelgebied vooraf klaarzet.
 
+**Centrale opslag.** Rasikh hangt aan dezelfde `WOLK` als de andere apps, met een
+samenvoeging die past bij herhaalgegevens: niet "de hoogste waarde wint" — een
+hoge `due` betekent immers *later* herhalen — maar het toestel waarop het laatst
+geoefend is. Dat weet wat er echt gebeurd is. Instellingen dragen een tijdstempel
+zodat een doel dat je op je telefoon verzet niet wordt teruggedraaid door de
+oudere stand op je laptop. Voor een reeks van jaren is dat geen luxe.
+
 ## De AI-functies in Sanad
 
 *Doorvragen* en *laat meelezen* praten rechtstreeks met de Anthropic-API vanuit de
