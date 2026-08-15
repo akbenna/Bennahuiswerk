@@ -74,6 +74,30 @@ weegt zwaarder dan het vermijden van die dubbeling.
 
 ## Noer Islam
 
+### Het gebed compleet
+
+Wat er in de volgorde ontbrak is toegevoegd, ook waar het geen plicht is:
+
+- de **qunut** stond wel als tekst in de app maar niet in de volgorde; hij zit nu
+  als eigen stap in de tweede rak'a van de Fajr, en alleen daar;
+- de **du'a vóór de slotgroet** (bescherming tegen vier dingen) ontbrak helemaal,
+  terwijl de stap ernaast al zei "daarna mag je vragen wat je wilt";
+- de **dhikr ná de slotgroet** — istighfar, *allahumma anta s-salam*, 33/33/33 en
+  de tahlil — stond alleen in een les over dhikr, niet in het gebedsonderdeel;
+- **al-Humaza (104)** ontbrak in de rij soera's om uit het hoofd te leren: die
+  liep van 114 terug naar 105 en sprong dan naar 103.
+
+Daarnaast een blok **Naast de volgorde** met de openingsdu'a, het zoeken van
+bescherming en *amin*. Die horen in de Malikitische school niet in het verplichte
+gebed, en daarom staan ze niet tússen de stappen — maar wel eronder, met uitleg,
+want in een vrijwillig gebed mogen ze wel en de meeste andere scholen zeggen ze
+altijd.
+
+De stappen dragen nu drie etiketten in plaats van twee: *moet*, *sunna* en *na
+het gebed*. Het examen over de volgorde blijft over de twaalf kernstappen gaan;
+de qunut hoort alleen bij één gebed en de dhikr komt ná de slotgroet, dus die
+tellen daar niet in mee.
+
 Veertien modules met vierenzeventig lessen over de basis van de islam — geloof,
 de vijf zuilen, reinheid, het gebed, de Koran, de seerah, gedrag, du'a, de
 kalender, het leven hier, de soennah en de hadithwetenschap, de geschiedenis van
