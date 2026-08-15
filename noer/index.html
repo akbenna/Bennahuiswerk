@@ -284,6 +284,16 @@ body[data-spoor="2"]{font-size:16.5px}
 body[data-spoor="2"] .card{border-radius:14px}
 body[data-spoor="2"] .nl{font-size:1.06rem}
 
+/* ---------- de verwijzing naar een verhaal ----------
+   Een verhaal is het onderdeel waar kinderen naar toe willen; dan moet de
+   verwijzing eruitzien als een uitnodiging en niet als een voetnoot. */
+.verhaalkaart{display:flex;align-items:center;gap:14px;border-left:4px solid var(--mk);background:var(--mkbg)}
+.verhaalkaart .vk-tekst{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0;text-align:left}
+.verhaalkaart .vk-tekst b{font-family:var(--serif);font-size:1.12rem;color:var(--ink);font-weight:500;letter-spacing:-.015em}
+.verhaalkaart .vk-pijl{font-size:1.3rem;color:var(--mk);flex:0 0 auto}
+.verhaalkaart:hover{border-color:var(--mk)}
+body[data-spoor="1"] .verhaalkaart .vk-tekst b{font-size:1.2rem}
+
 /* ---------- praten over een verhaal ---------- */
 .praat{margin-top:18px;border:1px solid var(--line);border-left:4px solid var(--let);
   background:var(--let-bg);border-radius:10px;padding:15px 17px}
@@ -2717,9 +2727,31 @@ function toonLes(id){
   /* Bij een verhaal hoort een vraag om samen over door te praten. Die staat
      apart, want hij is niet bedoeld om af te vinken maar om te stellen. */
   const praat = l.praat ? `<div class="praat"><p class="meta" style="margin-bottom:6px">Praat er thuis over</p><p>${esc(l.praat)}</p></div>` : '';
+  /* Een verhaal dat bij deze les hoort verdient meer dan een knopje onderaan.
+     Kinderen lezen die verhalen het liefst; laat dus zien dát het er een is, en
+     waar het over gaat, in plaats van alleen de titel. */
   const verder = (l.zie||[]).map(id=>alleLessen().find(x=>x.id===id)).filter(Boolean);
-  const lees = verder.length ? `<div style="margin-top:18px"><p class="meta">Hoort hierbij</p>
-      <div class="rij" style="margin-top:8px">${verder.map(v=>`<button class="btn sm ghost" data-naar="${v.id}">${esc(v.t)}</button>`).join('')}</div></div>` : '';
+  const kaal2 = t => String(t||'').replace(/<[^>]+>/g,'');
+  const tip = v => { const e=kaal2((v.tk||[])[0]||v.jr||''); return e.length>112 ? e.slice(0,112).replace(/\s\S*$/,'')+'…' : e; };
+  const verhalen = verder.filter(v=>v.mod==='m15');
+  const overig   = verder.filter(v=>v.mod!=='m15');
+  const vkl = kleurVan('m15');
+  const lees =
+    (verhalen.length ? `<div style="margin-top:20px">
+        <p class="meta">${verhalen.length===1?'Hierover gaat een verhaal':'Hierover gaan verhalen'}</p>
+        <div class="stack" style="margin-top:9px">${verhalen.map(v=>`
+          <button class="card klik verhaalkaart" data-naar="${v.id}" style="--mk:var(--${vkl});--mkbg:var(--${vkl}-bg)">
+            <span class="ico-vak">📜</span>
+            <span class="vk-tekst">
+              <span class="meta" style="color:var(--mk)">Verhaal van een profeet</span>
+              <b>${esc(v.t)}</b>
+              <span class="klein">${esc(tip(v))}</span>
+            </span>
+            <span class="vk-pijl">&rarr;</span>
+          </button>`).join('')}</div>
+      </div>` : '') +
+    (overig.length ? `<div style="margin-top:18px"><p class="meta">Hoort hierbij</p>
+      <div class="rij" style="margin-top:8px">${overig.map(v=>`<button class="btn sm ghost" data-naar="${v.id}">${esc(v.t)}</button>`).join('')}</div></div>` : '');
   const kl = kleurVan(l.mod);
   blad(`<div style="--mk:var(--${kl});--mkbg:var(--${kl}-bg)">
     <div class="rij tussen"><p class="meta" style="color:var(--mk)">${esc(l.modT)}</p>
