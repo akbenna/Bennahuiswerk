@@ -95,12 +95,27 @@ header.top{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--c
 .bol{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:.72rem;font-weight:600;color:#fff;background:var(--k)}
 @media (prefers-color-scheme:dark){ .bol{color:#0B1F1E} }
 
+/* ---------- een kleur per onderdeel ----------
+   De app was overal teal. Voor een kind is kleur het snelste onderscheid: het
+   leerpad is groenblauw, leren bidden paars, de tijden blauw, oefenen groen en
+   de beloning oker. Het zijn dezelfde tokens die elders al gebruikt worden, dus
+   het contrast is in licht en donker al nagemeten. */
+body{--vk:var(--k)}
+body[data-view="gebed"]{--vk:var(--paars)}
+body[data-view="tijden"]{--vk:var(--info)}
+body[data-view="oefenen"]{--vk:var(--goed)}
+body[data-view="beloning"]{--vk:var(--let)}
+body[data-view="ouder"]{--vk:var(--muted)}
+.bar>i{background:var(--vk)}
+.ring{background:conic-gradient(var(--vk) calc(var(--p)*1%), var(--surface-2) 0)}
+section.view h1{border-left:4px solid var(--vk);padding-left:13px;margin-left:-17px}
+
 nav.tabs{position:sticky;top:48px;z-index:39;background:var(--canvas);border-bottom:1px solid var(--line)}
 .tabs-in{max-width:900px;margin:0 auto;padding:0 12px;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
 .tabs-in::-webkit-scrollbar{display:none}
 .tab{appearance:none;border:0;background:none;padding:12px 11px;cursor:pointer;white-space:nowrap;
   font-family:var(--sans);font-size:.87rem;color:var(--muted);border-bottom:2px solid transparent;transition:color .18s}
-.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--k)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--vk)}
 .tab .dot{display:inline-block;min-width:18px;padding:0 5px;margin-left:6px;border-radius:9999px;
   background:var(--k-bg);color:var(--k);font-family:var(--mono);font-size:.63rem;line-height:18px;text-align:center}
 
@@ -208,14 +223,21 @@ table.tbl tr:last-child td{border-bottom:0}
 .verborgen.zicht{background:none;color:inherit}
 
 /* ---------- stickers, insignes ---------- */
-.stickers{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:7px}
+/* Zeven kolommen: één week per rij. Een willekeurig aflopend raster zegt een
+   kind niets; een week wel — je ziet in één oogopslag welke dagen je miste. */
+.stickers{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}
+.stickers .kop{text-align:center;font-family:var(--mono);font-size:.62rem;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted);padding-bottom:2px}
 .sticker{aspect-ratio:1;border-radius:9px;border:1px dashed var(--line-2);display:grid;place-items:center;
   font-size:1.05rem;color:var(--muted);background:var(--surface-2)}
 .sticker.vol{border-style:solid;border-color:var(--k);background:var(--k-bg)}
-.insignes{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:11px}
-.insigne{border:1px solid var(--line);border-radius:11px;padding:13px 9px;text-align:center;background:var(--surface);opacity:.42}
+.sticker.nu{box-shadow:0 0 0 2px var(--k)}
+.sticker.komt{opacity:.35;border-style:dotted}
+.insignes{display:grid;grid-template-columns:repeat(auto-fill,minmax(126px,1fr));gap:11px}
+.insigne{border:1px solid var(--line);border-radius:11px;padding:13px 10px;text-align:center;background:var(--surface);opacity:.6}
 .insigne.aan{opacity:1;border-color:var(--k);background:var(--k-bg)}
-.insigne .ico{font-size:1.6rem;line-height:1.3}
+.insigne .ico{font-size:1.7rem;line-height:1.3;filter:grayscale(1)}
+.insigne.aan .ico{filter:none}
 .insigne .nm{font-size:.78rem;line-height:1.32;color:var(--ink);margin-top:3px}
 
 .ring{--p:0;width:70px;height:70px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;
@@ -252,6 +274,12 @@ body[data-spoor="1"] button.btn.sm{padding:9px 15px;font-size:.9rem}
 body[data-spoor="1"] .tab{font-size:.95rem;padding:14px 12px}
 body[data-spoor="1"] .vink{width:26px;height:26px}
 body[data-spoor="1"] .woord{font-size:1.5rem;padding:8px 16px}
+body[data-spoor="1"] .sticker{font-size:1.35rem;border-radius:12px}
+body[data-spoor="1"] .insigne .ico{font-size:2.1rem}
+body[data-spoor="1"] .insigne .nm{font-size:.85rem}
+body[data-spoor="1"] .cijfer{font-size:2.4rem}
+body[data-spoor="1"] .tijdrij .nm{font-size:1.14rem}
+body[data-spoor="1"] ul.geen li{padding:12px 0}
 body[data-spoor="2"]{font-size:16.5px}
 body[data-spoor="2"] .card{border-radius:14px}
 body[data-spoor="2"] .nl{font-size:1.06rem}
@@ -2421,6 +2449,7 @@ function volgendGebed(){
 let huidigeTab='vandaag';
 function naarTab(v){
   huidigeTab=v;
+  document.body.dataset.view=v;
   $$('.tab').forEach(b=>b.setAttribute('aria-selected', String(b.dataset.v===v)));
   $$('section.view').forEach(s=>s.classList.toggle('on', s.id==='v-'+v));
   window.scrollTo({top:0,behavior:'instant'});
@@ -3413,8 +3442,13 @@ function tekenBeloning(){
   if(!p){ el.innerHTML=kaartGeenProfiel(); return; }
   const nv=niveauVan(pr.punten||0), week=verdiendDezeWeek(pr), budget=S.gezin.budget;
   const heb=new Set(pr.insignes||[]);
-  const dagen=[...Array(28)].map((_,i)=>{ const d=new Date(Date.now()-(27-i)*864e5);
-    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); });
+  /* Vier volle weken, netjes uitgelijnd op de weekdagen: de rij loopt van
+     maandag tot en met zondag en eindigt in de week van vandaag. */
+  const vandaagD=new Date(); const naZondag=(7-((vandaagD.getDay()||7)))%7;
+  const eind=new Date(Date.now()+naZondag*864e5);
+  const dagen=[...Array(28)].map((_,i)=>{ const d=new Date(eind.getTime()-(27-i)*864e5);
+    return {s:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),
+            komt:d>vandaagD, nu:d.toDateString()===vandaagD.toDateString(), n:d.getDate()}; });
   const laatste=(pr.verdiensten||[]).slice(-8).reverse();
   el.innerHTML=`
   <div><h1>Beloning</h1>
@@ -3434,17 +3468,21 @@ function tekenBeloning(){
     <h3>Je stickerkaart</h3>
     <p class="klein" style="margin-top:5px">Elke dag waarop je de opdracht van de dag afmaakt, komt er een ster bij. De laatste vier weken:</p>
     <div class="stickers" style="margin-top:12px">
-      ${dagen.map(d=>`<div class="sticker ${(pr.missieDagen||{})[d]?'vol':''}" title="${d}">${(pr.missieDagen||{})[d]?'⭐':''}</div>`).join('')}
+      ${['M','D','W','D','V','Z','Z'].map(k=>`<div class="kop">${k}</div>`).join('')}
+      ${dagen.map(d=>{ const vol=(pr.missieDagen||{})[d.s];
+        return `<div class="sticker ${vol?'vol':''} ${d.nu?'nu':''} ${d.komt?'komt':''}" title="${d.s}">${vol?'⭐':(d.komt?'':d.n)}</div>`; }).join('')}
     </div>
+    <p class="klein" style="margin-top:10px">${Object.keys(pr.missieDagen||{}).length} sterren verdiend. Vandaag heeft een rand eromheen.</p>
   </div>
   <div class="card">
-    <h3>Insignes</h3>
+    <div class="rij tussen"><h3>Insignes</h3><span class="tag ${heb.size?'goed':''}">${heb.size} van de ${INSIGNES.length}</span></div>
     <div class="insignes" style="margin-top:12px">
-      ${INSIGNES.map(b=>`<div class="insigne ${heb.has(b.id)?'aan':''}" title="${esc(b.u)}">
-        <div class="ico">${b.ico}</div><div class="nm">${esc(b.n)}</div></div>`).join('')}
+      ${[...INSIGNES].sort((a,b)=>(heb.has(b.id)?1:0)-(heb.has(a.id)?1:0)).map(b=>`<div class="insigne ${heb.has(b.id)?'aan':''}" title="${esc(b.u)}">
+        <div class="ico">${b.ico}</div><div class="nm">${esc(b.n)}</div>
+        ${heb.has(b.id)?'':'<div class="klein" style="font-size:.68rem;line-height:1.25;margin-top:3px">'+esc(b.u)+'</div>'}</div>`).join('')}
     </div>
   </div>
-  <div class="grid g2">
+  <div class="grid g2" style="align-items:start">
     <div class="card"><h3>Zo verdien je</h3>
       <div class="tblwrap" style="margin-top:10px"><table class="tbl"><tbody>
         <tr><td>Een les halen (eerste keer)</td><td>${euro(TARIEF.les)}</td></tr>
@@ -3831,6 +3869,7 @@ $('#knopWie').onclick=()=>{
 ============================================================================= */
 function teken(){
   document.body.dataset.spoor = prof() ? String(spoor()) : '3';
+  document.body.dataset.view = huidigeTab;
   ({vandaag:tekenVandaag, leerpad:tekenLeerpad, gebed:tekenGebed, tijden:tekenTijden,
     oefenen:tekenOefenen, beloning:tekenBeloning, ouder:tekenOuder}[huidigeTab]||tekenVandaag)();
 }
