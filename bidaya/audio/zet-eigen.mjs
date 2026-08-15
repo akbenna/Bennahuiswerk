@@ -14,9 +14,10 @@
    Draai je het nog een keer met een nieuw bestand, dan worden bestaande opnames
    overschreven en blijven de opnames die er niet in zitten gewoon staan.
 ============================================================================= */
-import { writeFile, mkdir, readFile, readdir } from 'node:fs/promises';
+import { writeFile, mkdir, readFile, readdir, unlink } from 'node:fs/promises';
 import { dirname, join, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { spawn } from 'node:child_process';
 
 const HIER = dirname(fileURLToPath(import.meta.url));
 const DOEL = join(HIER, 'eigen');
@@ -35,6 +36,18 @@ const EXT = { 'audio/mp4':'m4a', 'audio/x-m4a':'m4a', 'audio/aac':'m4a',
 
 /* `q:h-dhikr:1` wordt `q-h-dhikr-1` — leesbaar, en veilig als bestandsnaam. */
 const veilig = id => id.replace(/[^a-zA-Z0-9-]+/g, '-').replace(/^-|-$/g, '');
+
+/* Een browser neemt op in webm (Chrome) of m4a (Safari). Webm speelt niet op een
+   iPhone en m4a niet overal even soepel — mp3 speelt overal. Staat ffmpeg op deze
+   computer, dan zetten we alles om; zo niet, dan houden we het origineel en
+   zeggen we erbij dat het op sommige toestellen stil kan blijven. */
+const draai = (cmd, args) => new Promise((res, rej) => {
+  const k = spawn(cmd, args, { shell: process.platform === 'win32' });
+  let fout = ''; k.stderr.on('data', d => fout += d);
+  k.on('error', rej); k.on('close', c => c === 0 ? res() : rej(new Error(fout.slice(-200))));
+});
+let heeftFfmpeg = false;
+try { await draai('ffmpeg', ['-version']); heeftFfmpeg = true; } catch (e) {}
 
 const json = JSON.parse(await readFile(bron, 'utf8'));
 const opnames = json.opnames || {};
@@ -57,9 +70,17 @@ for (const [id, dataUrl] of Object.entries(opnames)) {
   const soort = m[1].split(';')[0];
   const ext = EXT[soort];
   if (!ext) { console.warn('Overgeslagen (onbekend formaat ' + soort + '): ' + id); continue; }
-  const naam = veilig(id) + '.' + ext;
   if (bestanden[id]) over++;
-  await writeFile(join(DOEL, naam), Buffer.from(m[2], 'base64'));
+  const rauw = veilig(id) + '.' + ext;
+  await writeFile(join(DOEL, rauw), Buffer.from(m[2], 'base64'));
+  let naam = rauw;
+  if (heeftFfmpeg && ext !== 'mp3') {
+    naam = veilig(id) + '.mp3';
+    try {
+      await draai('ffmpeg', ['-y', '-loglevel', 'error', '-i', join(DOEL, rauw), '-codec:a', 'libmp3lame', '-q:a', '5', join(DOEL, naam)]);
+      await unlink(join(DOEL, rauw));
+    } catch (e) { naam = rauw; console.warn('Omzetten mislukt voor ' + id + ', origineel bewaard.'); }
+  }
   bestanden[id] = naam;
   n++;
 }
@@ -69,4 +90,7 @@ await writeFile(join(DOEL, 'lijst.json'),
 
 const alles = (await readdir(DOEL)).filter(f => f !== 'lijst.json');
 console.log(n + ' opnames weggeschreven (' + over + ' vervangen). In de map staan er nu ' + alles.length + '.');
+if (!heeftFfmpeg) console.log('\nLet op: ffmpeg staat niet op deze computer, dus de opnames blijven in het formaat\n' +
+  'van het toestel waarop ze gemaakt zijn. Een webm-opname uit Chrome speelt niet af op een\n' +
+  'iPhone. Installeer ffmpeg en draai dit nog eens met dezelfde export om dat te verhelpen.');
 console.log('Commit `bidaya/audio/eigen/` en de opnames staan op elk toestel.');

@@ -2,38 +2,46 @@
 /* =============================================================================
    Haalt de recitatiefragmenten op die Bidaya gebruikt.
 
-   Waarom een script en geen kant-en-klare map: de opnames komen van een archief
-   dat per aya één bestand aanbiedt, en welke reciteerder je wilt is een keuze.
-   Dit script haalt precies de vierenzestig regels op die in de app staan, zet ze
-   neer onder de naam die de app verwacht, en schrijft een lijstje van wat er
-   gelukt is. Wat ontbreekt, valt in de app vanzelf terug op de stem van het
-   toestel — de app blijft dus werken, ook als je dit nooit draait.
+   Zonder opties zoekt het script zelf een bron die werkt:
 
-   Gebruik:
-     node haal-recitatie.mjs --basis="https://<archief>/<map-van-de-reciteerder>"
+     node bidaya/audio/haal-recitatie.mjs
 
-   Er wordt per aya een bestand verwacht met de gebruikelijke naamgeving
-   SSSAAA.mp3 — 001001.mp3 is soera 1, aya 1. Kandidaten voor een Warsh-lezing
-   vind je op everyayah.com (map `data/warsh/...`) en bij mp3quran.net. Draait
-   het script vast op 404's, dan klopt de map niet; probeer een andere.
+   Een bepaalde reciteerder kiezen:      --bron=warsh-dosary
+   De lijst met bronnen zien:            --lijst
+   Een eigen archief gebruiken:          --basis="https://…/map"
+   Opnieuw ophalen wat er al staat:      --opnieuw
 
-   Over al-Fatiha: in de Kufische telling (die de meeste archieven aanhouden) is
-   de basmala aya 1 en loopt de soera tot aya 7. In de Medinensische telling,
-   die bij Warsh hoort, telt de basmala niet mee en schuift alles één op. Draai
-   met --fatiha=madani als je merkt dat het eerste fragment niet de basmala is.
-
-   Na afloop: open bidaya/audio/quran/h-fatiha-1.mp3 en luister of je "bismillahi
-   r-rahmani r-rahim" hoort. Klopt dat niet, draai dan met de andere telling.
+   Er wordt per aya één bestand verwacht met de gebruikelijke naamgeving
+   SSSAAA.mp3 — 001001.mp3 is soera 1, aya 1.
 ============================================================================= */
-import { writeFile, mkdir } from 'node:fs/promises';
+import { writeFile, mkdir, access } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const HIER = dirname(fileURLToPath(import.meta.url));
 const DOEL = join(HIER, 'quran');
 
-/* Wat de app nodig heeft: per tekst het soeranummer en het aantal regels.
-   De regels van de app zijn de aya's, in dezelfde volgorde. */
+/* De lezing van Warsh staat bovenaan: dat is de lezing van Marokko en de rest
+   van de Maghreb, en dus wat de kinderen in de moskee horen. Werkt geen van de
+   Warsh-bronnen, dan pakt het script een Hafs-lezing — beter een goede stem in
+   de verkeerde lezing dan een robot. Het meldt altijd wát het gepakt heeft. */
+const BRONNEN = [
+  { id:'warsh-dosary',  lezing:'Warsh', naam:'Ibrahim al-Dosary',
+    basis:'https://everyayah.com/data/warsh/warsh_ibrahim_aldosary_128kbps' },
+  { id:'warsh-jazaery', lezing:'Warsh', naam:'Yassin al-Jazaery',
+    basis:'https://everyayah.com/data/warsh/warsh_yassin_al_jazaery_128kbps' },
+  { id:'warsh-basit',   lezing:'Warsh', naam:'Abdul Basit',
+    basis:'https://everyayah.com/data/warsh/warsh_abdulbasit_128kbps' },
+  { id:'husary-leraar', lezing:'Hafs',  naam:'Al-Husary, langzaam voorzeggend (voor kinderen)',
+    basis:'https://everyayah.com/data/Husary_Muallim_128kbps' },
+  { id:'husary',        lezing:'Hafs',  naam:'Al-Husary, mujawwad',
+    basis:'https://everyayah.com/data/Husary_128kbps_Mujawwad' },
+  { id:'minshawi-leraar', lezing:'Hafs', naam:'Al-Minshawi, langzaam voorzeggend',
+    basis:'https://everyayah.com/data/Minshawy_Teacher_128kbps' },
+  { id:'alafasy',       lezing:'Hafs',  naam:'Mishary al-Afasy',
+    basis:'https://everyayah.com/data/Alafasy_128kbps' },
+];
+
 const TEKSTEN = [
   { id:'h-fatiha',   soera:1,   regels:7 },
   { id:'h-nas',      soera:114, regels:6 },
@@ -53,76 +61,96 @@ const arg = (naam, standaard) => {
   const t = process.argv.find(a => a.startsWith('--' + naam + '='));
   return t ? t.slice(naam.length + 3) : standaard;
 };
-const basis  = (arg('basis', '') || '').replace(/\/$/, '');
-const fatiha = arg('fatiha', 'kufi');
+const vlag = naam => process.argv.includes('--' + naam);
 
-if (!basis) {
-  console.error('Geef op waar de fragmenten vandaan komen:\n' +
-    '  node haal-recitatie.mjs --basis="https://<archief>/<reciteerder>"\n' +
-    '  optioneel: --fatiha=madani\n');
-  process.exit(1);
+if (vlag('lijst')) {
+  console.log('\nBeschikbare bronnen (--bron=<naam>):\n');
+  for (const b of BRONNEN) console.log('  ' + b.id.padEnd(16) + b.lezing.padEnd(7) + b.naam);
+  console.log('\nOf een eigen archief: --basis="https://…/map"\n');
+  process.exit(0);
 }
 
 const nr = (s, a) => String(s).padStart(3, '0') + String(a).padStart(3, '0');
+const bestaat = async f => { try { await access(f); return true; } catch (e) { return false; } };
 
-/* Regelnummer in de app → aya-nummer in het archief. Alleen al-Fatiha wijkt af. */
-function ayaVan(tekst, regel) {
-  if (tekst.id === 'h-fatiha' && fatiha === 'madani') {
-    // De basmala staat in de Medinensische telling niet als aya van de soera.
-    // Regel 1 (de basmala) pakken we dan van de basmala aan het begin van
-    // soera 2 — dat is dezelfde zin, door dezelfde reciteerder ingesproken.
-    if (regel === 1) return { soera: 1, aya: 1, let: 'basmala' };
-    return { soera: 1, aya: regel - 1 };
+async function haal(url, kort) {
+  const c = new AbortController();
+  const t = setTimeout(() => c.abort(), kort ? 12000 : 45000);
+  try {
+    const r = await fetch(url, { signal: c.signal });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const buf = Buffer.from(await r.arrayBuffer());
+    const goed = buf.length > 2000 && (buf.slice(0, 3).toString() === 'ID3' || buf[0] === 0xff);
+    if (!goed) throw new Error('geen bruikbaar mp3-bestand (' + buf.length + ' bytes)');
+    return buf;
+  } finally { clearTimeout(t); }
+}
+
+/* Welke bron gebruiken we? Eén proefbestand zegt genoeg. */
+async function kiesBron() {
+  const eigen = arg('basis', '');
+  if (eigen) return { id:'eigen', lezing:'onbekend', naam:'eigen opgave', basis: eigen.replace(/\/$/, '') };
+  const gevraagd = arg('bron', '');
+  const rij = gevraagd ? BRONNEN.filter(b => b.id === gevraagd) : BRONNEN;
+  if (gevraagd && !rij.length) { console.error('Onbekende bron. Bekijk ze met --lijst.'); process.exit(1); }
+  for (const b of rij) {
+    process.stdout.write('Proberen: ' + b.naam + ' (' + b.lezing + ') … ');
+    try { await haal(b.basis + '/112001.mp3', true); console.log('werkt.'); return b; }
+    catch (e) { console.log('nee (' + e.message + ')'); }
   }
-  return { soera: tekst.soera, aya: regel };
+  return null;
 }
 
-async function haal(url) {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(r.status + ' ' + r.statusText);
-  const buf = Buffer.from(await r.arrayBuffer());
-  // Een echt mp3-bestand begint met "ID3" of met een frame-synchronisatie.
-  const goed = buf.length > 2000 && (buf.slice(0, 3).toString() === 'ID3' || buf[0] === 0xff);
-  if (!goed) throw new Error('geen bruikbaar mp3-bestand (' + buf.length + ' bytes)');
-  return buf;
+const bron = await kiesBron();
+if (!bron) {
+  console.error('\nGeen enkele bron reageerde. Zit je achter een filter of firewall?\n' +
+    'Probeer het anders met een eigen archief: --basis="https://…/map"\n');
+  process.exit(1);
 }
+console.log('\nGekozen: ' + bron.naam + ' — lezing ' + bron.lezing + '\n');
 
 await mkdir(DOEL, { recursive: true });
+const opnieuw = vlag('opnieuw');
 const gelukt = [], mislukt = [];
 
 for (const t of TEKSTEN) {
+  process.stdout.write(t.id.padEnd(12));
   for (let regel = 1; regel <= t.regels; regel++) {
-    const { soera, aya } = ayaVan(t, regel);
-    const bron = basis + '/' + nr(soera, aya) + '.mp3';
     const naam = t.id + '-' + regel + '.mp3';
+    const pad = join(DOEL, naam);
+    if (!opnieuw && await bestaat(pad)) { gelukt.push('q:' + t.id + ':' + regel); process.stdout.write('='); continue; }
+    /* Al-Fatiha: de basmala is in de gebruikelijke telling aya 1. Klopt dat in
+       dit archief niet, dan merk je dat aan het eerste fragment; draai dan met
+       --fatiha=madani (zie LEESMIJ.md). */
+    const aya = (t.id === 'h-fatiha' && arg('fatiha','kufi') === 'madani')
+      ? (regel === 1 ? 1 : regel - 1) : regel;
     try {
-      const buf = await haal(bron);
-      await writeFile(join(DOEL, naam), buf);
+      await writeFile(pad, await haal(bron.basis + '/' + nr(t.soera, aya) + '.mp3'));
       gelukt.push('q:' + t.id + ':' + regel);
       process.stdout.write('.');
     } catch (e) {
-      mislukt.push(naam + '  ←  ' + bron + '  (' + e.message + ')');
+      mislukt.push(naam + '  (' + e.message + ')');
       process.stdout.write('x');
     }
   }
+  process.stdout.write('\n');
 }
-process.stdout.write('\n');
 
-/* Controle: bestaat er ook een aya ná de laatste die wij verwachten? Dan houdt
-   dit archief een andere telling aan en klopt de indeling van die soera niet. */
 for (const t of TEKSTEN) {
-  const { soera } = ayaVan(t, 1);
   try {
-    await haal(basis + '/' + nr(t.soera, t.regels + 1) + '.mp3');
-    console.warn('Let op: ' + t.id + ' heeft in dit archief meer aya\'s dan de ' +
-      t.regels + ' regels in de app. Controleer de indeling van die soera.');
+    await haal(bron.basis + '/' + nr(t.soera, t.regels + 1) + '.mp3', true);
+    console.warn('Let op: ' + t.id + ' heeft in dit archief meer aya\'s dan de ' + t.regels +
+      ' regels in de app. Controleer de indeling van die soera.');
   } catch (e) { /* niets gevonden is precies goed */ }
 }
 
-await writeFile(join(DOEL, 'lijst.json'),
-  JSON.stringify({ bron: basis, telling: fatiha, gemaakt: new Date().toISOString().slice(0, 10), fragmenten: gelukt }, null, 1));
+await writeFile(join(DOEL, 'lijst.json'), JSON.stringify({
+  bron: bron.naam, lezing: bron.lezing, adres: bron.basis,
+  gemaakt: new Date().toISOString().slice(0, 10), fragmenten: gelukt
+}, null, 1));
 
-console.log('\nKlaar. ' + gelukt.length + ' fragmenten opgehaald, ' + mislukt.length + ' mislukt.');
+console.log('\nKlaar. ' + gelukt.length + ' fragmenten, ' + mislukt.length + ' mislukt.');
 if (mislukt.length) console.log('Mislukt:\n  ' + mislukt.join('\n  '));
-console.log('\nLuister nu naar audio/quran/h-fatiha-1.mp3. Hoor je "bismillahi r-rahmani r-rahim"?\n' +
-  'Zo niet, draai opnieuw met --fatiha=' + (fatiha === 'kufi' ? 'madani' : 'kufi') + '.');
+console.log('\nLuister naar audio/quran/h-fatiha-1.mp3. Hoor je "bismillahi r-rahmani r-rahim"?');
+console.log('Zo niet: draai opnieuw met --fatiha=madani --opnieuw');
+console.log('Daarna: git add bidaya/audio/quran && git commit -m "Recitatie erbij"');
