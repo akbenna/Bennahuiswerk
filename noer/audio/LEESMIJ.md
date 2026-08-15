@@ -28,7 +28,7 @@ De fragmenten zitten niet in de repository; ze komen uit een archief dat per aya
 node noer/audio/haal-recitatie.mjs --basis="https://<archief>/<map-van-de-reciteerder>"
 ```
 
-Het script haalt precies de tweeënzestig regels op die in de app staan, zet ze
+Het script haalt precies de achtenvijftig regels op die in de app staan, zet ze
 neer onder de naam die de app verwacht, en schrijft `lijst.json`. Wat mislukt,
 meldt het; die regel valt in de app terug op de stem van het toestel.
 

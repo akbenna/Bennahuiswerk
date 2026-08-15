@@ -11,8 +11,12 @@
    Het blijft een machine. Neemt iemand thuis of in de moskee ze later echt in,
    dan gaan die opnames er vanzelf boven: de app kijkt eerst in `audio/eigen`.
 
-   Eenmalig installeren (Python nodig):
-     pip install edge-tts        of      pipx install edge-tts
+   Eenmalig installeren (Python 3 zit al op elke Mac):
+     python3 -m pip install --user edge-tts
+   Weigert dat met "externally managed environment", dan:
+     brew install pipx && pipx install edge-tts
+   Of, als laatste redmiddel:
+     python3 -m pip install --user --break-system-packages edge-tts
 
    Daarna:
      node noer/audio/maak-stemmen.mjs
@@ -34,7 +38,7 @@ const STEM = arg('stem', 'ar-SA-HamedNeural');
 const TEMPO = arg('tempo', '-25%');
 
 const draai = (cmd, args) => new Promise((res, rej) => {
-  const k = spawn(cmd, args, { shell: process.platform === 'win32' });
+  const k = spawn(cmd[0], [...cmd.slice(1), ...args], { shell: process.platform === 'win32' });
   let uit = '', fout = '';
   k.stdout.on('data', d => uit += d); k.stderr.on('data', d => fout += d);
   k.on('error', rej);
@@ -86,12 +90,24 @@ const WERK = [
 const veilig = id => id.replace(/[^a-zA-Z0-9-]+/g, '-').replace(/^-|-$/g, '');
 const bestaat = async f => { try { await access(f); return true; } catch (e) { return false; } };
 
+/* Waar zit edge-tts? Na een installatie met --user zet Python de opdracht in een
+   map die niet altijd op het PATH staat. In dat geval werkt de omweg via de
+   Python-module wél. We proberen ze op volgorde en onthouden wat werkt. */
+async function vindEdgeTts() {
+  const kandidaten = [['edge-tts'], ['python3', '-m', 'edge_tts'], ['python', '-m', 'edge_tts'], ['py', '-m', 'edge_tts']];
+  for (const k of kandidaten) {
+    try { await draai(k, ['--help']); return k; } catch (e) { /* volgende proberen */ }
+  }
+  return null;
+}
+const EDGE = await vindEdgeTts();
+
 if (vlag('lijst-stemmen')) {
   try {
-    const uit = await draai('edge-tts', ['--list-voices']);
+    const uit = await draai(EDGE, ['--list-voices']);
     console.log('\nArabische stemmen:\n');
     uit.split('\n').filter(r => /^ar-/.test(r.trim())).forEach(r => console.log('  ' + r.trim().split(/\s{2,}/)[0]));
-  } catch (e) { console.error('edge-tts staat er nog niet op: pip install edge-tts'); }
+  } catch (e) { console.error('edge-tts staat er nog niet op.'); }
   process.exit(0);
 }
 
@@ -102,14 +118,18 @@ if (vlag('proef')) {
   process.exit(0);
 }
 
-try { await draai('edge-tts', ['--help']); }
-catch (e) {
-  console.error('\nedge-tts is niet gevonden. Installeer het eenmalig:\n' +
-    '  pip install edge-tts        (of: pipx install edge-tts)\n\n' +
+if (!EDGE) {
+  console.error('\nedge-tts is niet gevonden — niet als opdracht en niet als Python-module.\n\n' +
+    'Installeer het eenmalig. Op een Mac heet pip niet "pip" maar zit hij in Python:\n' +
+    '  python3 -m pip install --user edge-tts\n\n' +
+    'Weigert dat met "externally managed environment", gebruik dan pipx:\n' +
+    '  brew install pipx && pipx install edge-tts\n\n' +
     'Het is de neurale voorleesstem van Microsoft. Er is geen sleutel of account voor nodig,\n' +
-    'wel internet op het moment dat je dit script draait.\n');
+    'wel internet op het moment dat je dit script draait. Na het installeren hoef je niets\n' +
+    'aan je PATH te doen: dit script vindt hem ook via python3 -m edge_tts.\n');
   process.exit(1);
 }
+console.log('Gevonden: ' + EDGE.join(' '));
 
 await mkdir(DOEL, { recursive: true });
 let bestanden = {};
@@ -121,7 +141,7 @@ for (const w of WERK) {
   const naam = veilig(w.id) + '.mp3', pad = join(DOEL, naam);
   if (!vlag('opnieuw') && await bestaat(pad)) { bestanden[w.id] = naam; over++; process.stdout.write('='); continue; }
   try {
-    await draai('edge-tts', ['--voice', STEM, '--rate=' + TEMPO, '--text', w.ar, '--write-media', pad]);
+    await draai(EDGE, ['--voice', STEM, '--rate=' + TEMPO, '--text', w.ar, '--write-media', pad]);
     bestanden[w.id] = naam; n++; process.stdout.write('.');
   } catch (e) { fout++; process.stdout.write('x'); console.error('\n  ' + w.wat + ': ' + e.message); }
 }
