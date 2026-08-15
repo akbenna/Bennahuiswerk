@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rasikh — de Koran vastzetten</title>
+<meta name="theme-color" content="#F6F4F0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141518" media="(prefers-color-scheme: dark)">
+<meta name="description" content="Memoriseren en vasthouden: een systeem voor volwassenen dat stuurt op behoud, niet op tempo.">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preload" href="../fonts/amiri-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+/* Amiri staat als bestand in de repo en niet bij Google. De Warsh-druk gebruikt
+   tekens — de kleine hoge nul boven de hamzat wasl voorop — die de meeste
+   systeemletters niet kennen; die laten dan lege vakken achter midden in een
+   woord. Zie fonts/LEESMIJ.md. */
+@font-face{font-family:'Amiri';font-style:normal;font-weight:400;font-display:swap;
+  src:url('../fonts/amiri-400.woff2') format('woff2')}
+@font-face{font-family:'Amiri';font-style:normal;font-weight:700;font-display:swap;
+  src:url('../fonts/amiri-700.woff2') format('woff2')}
+</style>
+<style>
+/* Rasikh is voor een volwassene: rustiger, dichter, minder aanmoediging en meer
+   informatie. De kleuren komen uit hetzelfde palet als de rest van de hub. */
+:root{
+  --canvas:#F6F4F0; --surface:#FFFFFF; --surface-2:#F0EDE7; --surface-3:#E8E4DC;
+  --ink:#0D0D0D; --ink-2:#24282B; --muted:#5F5C55;
+  --line:#DAD6CE; --line-2:#C4BFB4;
+  --k:#3B4A8F; --k-bg:#E3E7F6;
+  --goed:#2F6B1F; --goed-bg:#E4EFDD;
+  --let:#7E5300;  --let-bg:#F8EFD4;
+  --fout:#9F2F2D; --fout-bg:#FBE9E8;
+  --schaduw:0 1px 2px rgba(20,18,14,.05), 0 8px 24px rgba(20,18,14,.06);
+  --sans:'SF Pro Display','Helvetica Neue',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --serif:'Newsreader','Lyon Text',Georgia,serif;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;
+  --ar:'Amiri','Traditional Arabic',serif;
+  --r:11px;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --canvas:#141518; --surface:#1C1E22; --surface-2:#24262B; --surface-3:#2C2F35;
+    --ink:#F4F3F0; --ink-2:#E2E0DA; --muted:#A8A69F;
+    --line:#33363C; --line-2:#474B52;
+    --k:#A3B0EE; --k-bg:#1D2240;
+    --goed:#8FD268; --goed-bg:#22321B;
+    --let:#E9BC55;  --let-bg:#31280F;
+    --fout:#F2938F; --fout-bg:#3A1E1D;
+    --schaduw:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.34);
+  }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:var(--canvas);color:var(--ink-2);font-family:var(--sans);font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom)}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px}
+h1,h2,h3,h4{font-family:var(--serif);color:var(--ink);letter-spacing:-.022em;line-height:1.16;margin:0;font-weight:500}
+h1{font-size:1.95rem} h2{font-size:1.42rem} h3{font-size:1.1rem} h4{font-size:.98rem}
+p{margin:0 0 1em} p:last-child{margin-bottom:0}
+.meta{font-family:var(--mono);font-size:.67rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.klein{font-size:.86rem;line-height:1.5;color:var(--muted)}
+b,strong{font-weight:600;color:var(--ink)}
+:focus-visible{outline:2px solid var(--k);outline-offset:2px;border-radius:6px}
+.ar{font-family:var(--ar);direction:rtl;unicode-bidi:isolate;line-height:2.1;font-size:1.5em;color:var(--ink)}
+.tr{font-style:italic;color:var(--muted);font-family:var(--serif);font-size:.98rem;line-height:1.5}
+.nl{font-family:var(--serif);font-size:1rem;line-height:1.55}
+
+header.top{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--canvas) 88%,transparent);
+  backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line)}
+.top-in{max-width:880px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:11px}
+.terug{text-decoration:none;color:var(--muted);font-size:1.15rem;padding:7px 9px;margin-left:-9px;border-radius:8px}
+.terug:hover{color:var(--ink);background:var(--surface-2)}
+.brand{font-family:var(--serif);font-size:1.18rem;color:var(--ink)}
+.brand em{font-style:normal;font-family:var(--ar);font-size:1.02rem;color:var(--k);margin-left:7px}
+.tegen{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--muted)}
+
+nav.tabs{position:sticky;top:48px;z-index:39;background:var(--canvas);border-bottom:1px solid var(--line)}
+.tabs-in{max-width:880px;margin:0 auto;padding:0 12px;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.tabs-in::-webkit-scrollbar{display:none}
+.tab{appearance:none;border:0;background:none;padding:12px 11px;cursor:pointer;white-space:nowrap;
+  font-family:var(--sans);font-size:.87rem;color:var(--muted);border-bottom:2px solid transparent}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--k)}
+.tab .bol{display:inline-block;min-width:18px;padding:0 5px;margin-left:6px;border-radius:9999px;
+  background:var(--k-bg);color:var(--k);font-family:var(--mono);font-size:.62rem;line-height:18px;text-align:center}
+main{padding:24px 0 90px}
+section.view{display:none} section.view.on{display:block}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;box-shadow:var(--schaduw)}
+.card.plat{box-shadow:none;background:var(--surface-2)}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:720px){.g3,.g4{grid-template-columns:repeat(2,1fr)}}
+/* Op een telefoon blijven de tellers twee naast twee staan: vier grote kaarten
+   onder elkaar duwt alles wat je eigenlijk moet zien onder de vouw. Alleen de
+   panelen met invulvelden (g2) gaan wél op één kolom. */
+@media(max-width:520px){.g2{grid-template-columns:1fr}}
+@media(max-width:360px){.g3,.g4{grid-template-columns:1fr}}
+.stack>*+*{margin-top:12px}
+.rij{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.rij.tussen{justify-content:space-between}
+hr.rule{border:0;border-top:1px solid var(--line);margin:26px 0}
+
+.tag{display:inline-block;border-radius:9999px;padding:3px 10px;font-family:var(--mono);font-size:.62rem;
+  letter-spacing:.07em;text-transform:uppercase;background:var(--surface-2);color:var(--muted);white-space:nowrap}
+.tag.k{background:var(--k-bg);color:var(--k)}
+.tag.goed{background:var(--goed-bg);color:var(--goed)}
+.tag.let{background:var(--let-bg);color:var(--let)}
+.tag.fout{background:var(--fout-bg);color:var(--fout)}
+
+button.btn{appearance:none;font-family:var(--sans);font-size:.92rem;padding:10px 18px;border-radius:9px;
+  background:var(--k);color:#fff;border:1px solid var(--k);cursor:pointer;font-weight:500}
+@media (prefers-color-scheme:dark){ button.btn{color:#0E1226} }
+button.btn:hover{filter:brightness(1.08)}
+button.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+button.btn.ghost:hover{background:var(--surface-2);filter:none}
+button.btn.sm{padding:7px 13px;font-size:.83rem}
+button.btn.groot{padding:14px 24px;font-size:1.02rem}
+button.btn:disabled{opacity:.4;cursor:default}
+/* Antwoordkeuzes met Arabische tekst staan bewust niet in een <button>: een knop
+   rekt tekst die over meerdere regels loopt uit tot aan beide randen, en dat
+   maakt Arabisch onleesbaar. Een blok met een rol eromheen doet dat niet. */
+.keuze{display:block;width:100%;margin-top:10px;padding:12px 15px;border-radius:12px;
+  border:1px solid var(--line);background:var(--surface);cursor:pointer}
+.keuze .ar{display:block;font-size:1.3rem;text-align:right}
+.keuze:hover{border-color:var(--k)}
+.keuze:focus-visible{outline:2px solid var(--k);outline-offset:2px}
+button.icoon{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);
+  width:38px;height:38px;border-radius:9px;cursor:pointer;display:grid;place-items:center}
+button.icoon:hover{border-color:var(--k);color:var(--k)}
+
+.bar{height:6px;background:var(--surface-2);border-radius:9999px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--k);border-radius:9999px;transition:width .5s}
+.bar.dun{height:3px}
+.kpi{display:flex;flex-direction:column;gap:1px}
+.cijfer{font-family:var(--serif);font-size:1.9rem;color:var(--ink);line-height:1.1;letter-spacing:-.03em}
+
+.veld{display:block;margin-top:12px}
+.veld>span{display:block;font-family:var(--mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.veld input,.veld select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;
+  background:var(--surface);font-family:var(--sans);font-size:.94rem;color:var(--ink)}
+.veld input:focus,.veld select:focus{outline:none;border-color:var(--k)}
+.melding{margin-top:10px;font-size:.86rem;color:var(--muted)}
+.melding.fout{color:var(--fout)} .melding.goed{color:var(--goed)}
+.kader{border:1px solid var(--line);border-left:3px solid var(--k);border-radius:8px;padding:12px 14px;background:var(--surface-2)}
+.kader.let{border-left-color:var(--let)} .kader.fout{border-left-color:var(--fout)}
+
+/* de aya zelf */
+.aya{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px}
+.aya .ar{font-size:1.85rem}
+.verborgen{background:var(--surface-3);color:transparent;border-radius:4px;cursor:pointer;user-select:none}
+.verborgen.zicht{background:none;color:inherit}
+.woorden{display:flex;flex-wrap:wrap;gap:7px;direction:rtl}
+.woord{font-family:var(--ar);font-size:1.4rem;padding:5px 12px;border-radius:8px;border:1px solid var(--line);
+  background:var(--surface);color:var(--ink);cursor:pointer;line-height:1.9}
+.woord.fout{border-color:var(--fout);background:var(--fout-bg)}
+
+/* de kaart van wat vaststaat */
+.kaartrij{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.kaartrij:last-child{border-bottom:0}
+.staaf{flex:1;height:8px;border-radius:9999px;background:var(--surface-2);overflow:hidden;display:flex}
+.staaf i{display:block;height:100%}
+.staaf i.st{background:var(--goed)} .staaf i.zw{background:var(--let)} .staaf i.nw{background:var(--fout)}
+/* De kaart van het hele boek. De vakjes worden niet kleiner dan 26 px: daaronder
+   zijn ze op een telefoon niet meer te raken. */
+.boek{display:grid;grid-template-columns:repeat(auto-fill,minmax(26px,1fr));gap:4px;margin-top:12px}
+.boek .vak{aspect-ratio:1;border-radius:5px;border:1px solid var(--line);padding:0;cursor:pointer;
+  -webkit-appearance:none;appearance:none;transition:transform .08s}
+.boek .vak.doel{border-color:color-mix(in srgb,var(--k) 55%,var(--line))}
+.boek .vak:hover{transform:scale(1.14)}
+.boek .vak:focus-visible{outline:2px solid var(--k);outline-offset:2px}
+.punt{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+.punt.st{background:var(--goed)} .punt.zw{background:var(--let)} .punt.nw{background:var(--fout)} .punt.geen{background:var(--line-2)}
+
+.overlay{position:fixed;inset:0;z-index:60;background:rgba(10,10,10,.55);display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
+.overlay.on{display:flex}
+.blad{background:var(--canvas);border-radius:16px 16px 0 0;width:100%;max-width:680px;max-height:92dvh;overflow:auto;
+  padding:20px 20px calc(26px + env(safe-area-inset-bottom));border:1px solid var(--line)}
+@media(min-width:640px){ .overlay{align-items:center} .blad{border-radius:16px;max-height:88dvh} }
+
+footer{padding:34px 0 28px;border-top:1px solid var(--line);margin-top:40px}
+footer p{font-size:.84rem;color:var(--muted);max-width:62ch}
+footer p+p{margin-top:8px}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <a class="terug" href="../" title="Terug naar BennaHub" aria-label="Terug naar BennaHub">&larr;</a>
+  <span class="brand">Rasikh<em lang="ar">رَاسِخ</em></span>
+  <span class="tegen" id="tegen"></span>
+</div></header>
+
+<nav class="tabs" aria-label="Onderdelen"><div class="tabs-in" id="tabs" role="tablist">
+  <button class="tab" role="tab" data-v="vandaag" aria-selected="true">Vandaag</button>
+  <button class="tab" role="tab" data-v="nieuw" aria-selected="false">Nieuw</button>
+  <button class="tab" role="tab" data-v="herhalen" aria-selected="false">Herhalen<span class="bol" id="bolH" style="display:none">0</span></button>
+  <button class="tab" role="tab" data-v="verwarring" aria-selected="false">Verwarring</button>
+  <button class="tab" role="tab" data-v="kaart" aria-selected="false">Kaart</button>
+  <button class="tab" role="tab" data-v="instel" aria-selected="false">Instellingen</button>
+</div></nav>
+
+<main class="wrap">
+  <section class="view on" id="v-vandaag" role="tabpanel"><div id="iVandaag" class="stack"></div></section>
+  <section class="view" id="v-nieuw" role="tabpanel"><div id="iNieuw" class="stack"></div></section>
+  <section class="view" id="v-herhalen" role="tabpanel"><div id="iHerhalen" class="stack"></div></section>
+  <section class="view" id="v-verwarring" role="tabpanel"><div id="iVerwarring" class="stack"></div></section>
+  <section class="view" id="v-kaart" role="tabpanel"><div id="iKaart" class="stack"></div></section>
+  <section class="view" id="v-instel" role="tabpanel"><div id="iInstel" class="stack"></div></section>
+  <footer>
+    <p>Rasikh stuurt op behoud. Nieuwe stof komt er pas bij als de herhalingen bij zijn — dat is geen strengheid maar de enige manier waarop memoriseren op de lange duur standhoudt.</p>
+    <p>De Arabische tekst is de druk van het King Fahd-complex — Warsh en Hafs — met de vertaling van Fred Leemhuis. De recitatie komt uit Noer Islam, aan te vullen met het script in <span style="white-space:nowrap">rasikh/audio/</span>. Leg de tekst één keer naast een moshaf voordat je iets vastzet.</p>
+    <p class="meta" style="margin-top:12px">Onderdeel van BennaHub</p>
+  </footer>
+</main>
+<div class="overlay" id="overlay" role="dialog" aria-modal="true"><div class="blad" id="blad"></div></div>
+<script>
+/* =============================================================================
+   RASIKH — de Koran vastzetten
+   Voor een volwassene met weinig tijd en veel geheugen. Het uitgangspunt is
+   omgekeerd aan de meeste apps: niet "hoeveel leer je erbij" maar "hoeveel houd
+   je vast". Nieuwe stof komt er pas bij als de herhalingen bij zijn.
+
+   De tekst staat in `tekst/`: honderdveertien bestanden, 6236 aya's, in de
+   Warsh- en de Hafs-lezing, met de vertaling van Leemhuis en een klankweergave.
+   Ze worden per soera geladen op het moment dat je ze nodig hebt.
+============================================================================= */
+const $  = (s,e)=> (e||document).querySelector(s);
+const $$ = (s,e)=> [...(e||document).querySelectorAll(s)];
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const dag = () => Math.floor(Date.now()/864e5);
+const datum = d => { const x=new Date((d==null?dag():d)*864e5); return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); };
+const hussel = a => { const b=a.slice(); for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]];} return b; };
+
+/* ------------------------------ de tekst ------------------------------ */
+let INDEX = [], MUT = null;
+const cache = new Map();
+async function laadSoera(nr){
+  if(cache.has(nr)) return cache.get(nr);
+  const r = await fetch('tekst/'+nr+'.json'); if(!r.ok) throw new Error('soera '+nr+' ontbreekt');
+  const j = await r.json(); cache.set(nr, j); return j;
+}
+const soeraInfo = nr => INDEX.find(x=>x.nr===nr);
+const sleutel = (nr,n) => nr+':'+n;
+/* Een aya in de vorm waarin de schermen hem verwachten. `ar` volgt de gekozen
+   lezing; `nl` is de betekenis, `tr` de klank. */
+function maakAya(s, a){
+  return { id:sleutel(s.nr,a.n), nr:s.nr, n:a.n, soera:s,
+           ar: (S.instel.lezing==='hafs' ? a.h : a.w), w:a.w, h:a.h, tr:a.t, nl:a.nl };
+}
+async function aya(nr, n){ const s=await laadSoera(nr); const a=s.aya[n-1]; return a?maakAya(s,a):null; }
+async function ayaVanId(id){ const [nr,n]=id.split(':').map(Number); return aya(nr,n); }
+const totaalAya = () => INDEX.reduce((n,s)=>n+s.aya,0);
+
+/* ============================ WOLK — centrale opslag ============================
+   Letterlijk dezelfde module als in Noer Islam, Sanad en Lisan. Bewust gedupliceerd: één
+   zelfstandig bestand per app weegt zwaarder dan het vermijden van die dubbeling.
+================================================================================= */
+const WOLK = (function () {
+  const URL  = 'https://jnlvvdaisyerhxucxnuu.supabase.co';
+  const ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpubHZ2ZGFpc3llcmh4dWN4bnV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NDg0MjIsImV4cCI6MjA4MjQyNDQyMn0.8ZXa-N96pRSQovdL_bH5FpJTHeL454830h5LMapCawY';
+
+  let app = null, acc = null, pin = null, aan = false;
+  let bezig = false, wacht = null, laatsteFout = null;
+  const luisteraars = [];
+
+  async function rpc(fn, body) {
+    const r = await fetch(URL + '/rest/v1/rpc/' + fn, {
+      method: 'POST',
+      headers: { apikey: ANON, Authorization: 'Bearer ' + ANON, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    let out = {};
+    try { out = await r.json(); } catch (e) {}
+    if (out && out.error) throw new Error(out.error);
+    if (!r.ok) throw new Error('Verbinding mislukt (' + r.status + ')');
+    return out;
+  }
+
+  const sleutel = () => 'bennahub.acc.' + app;
+  function onthoud(){ try{ localStorage.setItem(sleutel(), JSON.stringify({acc,pin})); }catch(e){} }
+  function vergeet(){ try{ localStorage.removeItem(sleutel()); }catch(e){} }
+  function meld(){ luisteraars.forEach(f=>{ try{ f(status()); }catch(e){} }); }
+  function status(){ return { aan, account: acc, bezig, fout: laatsteFout }; }
+
+  return {
+    init(naamApp){
+      app = naamApp;
+      try{ const s=JSON.parse(localStorage.getItem(sleutel())||'null');
+        if(s&&s.acc&&s.pin){ acc=s.acc; pin=s.pin; aan=true; } }catch(e){}
+      return aan;
+    },
+    status,
+    opStatus(f){ luisteraars.push(f); f(status()); },
+    async accounts(){ try{ return await rpc('bennahub_accounts',{p_app:app}); }catch(e){ return []; } },
+    async registreren(account, wachtwoord, beginData){
+      await rpc('bennahub_register',{p_app:app,p_account:account,p_pin:wachtwoord,p_data:beginData||{}});
+      acc=account; pin=wachtwoord; aan=true; laatsteFout=null; onthoud(); meld(); return true;
+    },
+    async inloggen(account, wachtwoord){
+      const r = await rpc('bennahub_load',{p_app:app,p_account:account,p_pin:wachtwoord});
+      acc=account; pin=wachtwoord; aan=true; laatsteFout=null; onthoud(); meld();
+      return r.data || {};
+    },
+    uitloggen(){ aan=false; acc=null; pin=null; vergeet(); meld(); },
+    async ophalen(){
+      if(!aan) return null;
+      bezig=true; meld();
+      try{ const r=await rpc('bennahub_load',{p_app:app,p_account:acc,p_pin:pin}); laatsteFout=null; return r.data||{}; }
+      catch(e){ laatsteFout=e.message; return null; }
+      finally{ bezig=false; meld(); }
+    },
+    bewaar(data, direct){
+      if(!aan) return;
+      clearTimeout(wacht);
+      const doen = async () => {
+        bezig=true; meld();
+        try{ await rpc('bennahub_save',{p_app:app,p_account:acc,p_pin:pin,p_data:data}); laatsteFout=null; }
+        catch(e){ laatsteFout=e.message; }
+        finally{ bezig=false; meld(); }
+      };
+      if(direct) return doen();
+      wacht = setTimeout(doen, 2500);
+    }
+  };
+})();
+
+/* Samenvoegen van twee momentopnamen, met dezelfde regel als in de andere apps:
+   niets weggooien. Voor herhaalgegevens is "de hoogste waarde wint" alleen
+   gevaarlijk — een hoge `due` betekent láter herhalen, en dat zou een misser op
+   het ene toestel wegpoetsen met een oude stand van het andere. Daarom telt hier
+   wie het laatst geoefend heeft: dat toestel weet wat er echt gebeurd is. */
+const SAMEN = {
+  nieuwste(a,b){ if(!a) return b; if(!b) return a; return a>=b?a:b; },
+  aya(x,y){
+    if(!x) return y; if(!y) return x;
+    const w = (y.laatst||0) > (x.laatst||0) ? y : x;      // de jongste beoordeling wint
+    return Object.assign({}, w, {
+      vast: !!(x.vast||y.vast),
+      begonnen: Math.min(x.begonnen||y.begonnen||0, y.begonnen||x.begonnen||0) || undefined
+    });
+  },
+  log(a,b){
+    const uit = {};
+    for(const r of (a||[]).concat(b||[])){
+      const o = uit[r.d];
+      /* Twee toestellen op dezelfde dag: de hoogste telling, niet de som. Anders
+         groeit de dag bij elke samenvoeging opnieuw. */
+      uit[r.d] = o ? {d:r.d, nieuw:Math.max(o.nieuw||0,r.nieuw||0), herhaald:Math.max(o.herhaald||0,r.herhaald||0)} : Object.assign({},r);
+    }
+    return Object.keys(uit).sort().map(d=>uit[d]).slice(-500);
+  }
+};
+function samenvoegen(a,b){
+  const uit = Object.assign({}, a, b);
+  uit.aya = Object.assign({}, a.aya||{});
+  for(const id of Object.keys(b.aya||{})) uit.aya[id] = SAMEN.aya(uit.aya[id], b.aya[id]);
+  uit.log = SAMEN.log(a.log, b.log);
+  /* Instellingen horen bij het hoofd, niet bij het toestel: wat je op je telefoon
+     als doel zet wil je op je laptop terugzien. Daarom de jongst gewijzigde. */
+  uit.instel = ((b.instelD||'') > (a.instelD||'')) ? Object.assign({}, b.instel) : Object.assign({}, a.instel);
+  uit.instelD = SAMEN.nieuwste(a.instelD, b.instelD);
+  uit.laatste = SAMEN.nieuwste(a.laatste, b.laatste);
+  return uit;
+}
+
+/* --------------------------- opslag en toestand --------------------------- */
+const KEY='rasikh.v1';
+const store={
+  async get(){
+    try{ if(window.storage){const r=await window.storage.get(KEY,false); return r&&r.value?JSON.parse(r.value):null;} }catch(e){}
+    try{ const v=localStorage.getItem(KEY); return v?JSON.parse(v):null; }catch(e){}
+    return null;
+  },
+  async set(o){ const s=JSON.stringify(o);
+    try{ if(window.storage){ window.storage.set(KEY,s,false); } }catch(e){}
+    try{ localStorage.setItem(KEY,s); }catch(e){}
+  }
+};
+function leegS(){
+  return { aya:{}, log:[],
+    instel:{ minuten:25, maxNieuw:3, tempo:1, lezing:'warsh', volgorde:'kort',
+             doelVan:78, doelTot:114 },   /* standaard: juz 'amma */
+    instelD:null, laatste:null };
+}
+let S = leegS();
+const bewaar = () => { store.set(S); WOLK.bewaar(S); };
+
+const REEKS = [1,2,4,8,16,32,64,120,200];
+const staat = id => S.aya[id] || null;
+const vastgezet = id => !!(S.aya[id] && S.aya[id].vast);
+function dueLijst(){
+  const d=dag();
+  return Object.keys(S.aya).filter(id => S.aya[id].vast && S.aya[id].due<=d)
+    .map(id=>({id, ...S.aya[id]}))
+    .sort((a,b)=> (b.zwak||0)-(a.zwak||0) || a.due-b.due);
+}
+function beoordeel(id, cijfer){
+  const t = S.aya[id] || {stap:0, vast:true, reeks:[], zwak:0};
+  t.reeks=(t.reeks||[]).concat(cijfer).slice(-6);
+  if(cijfer===3){ t.stap=Math.min(REEKS.length-1,(t.stap||0)+1); t.zwak=Math.max(0,(t.zwak||0)-1); }
+  else if(cijfer===2){ t.zwak=(t.zwak||0)+1; }
+  else { t.stap=0; t.zwak=(t.zwak||0)+2; }
+  t.due=dag()+REEKS[t.stap]; t.laatst=dag(); t.vast=true;
+  S.aya[id]=t; logDag({herhaald:1}); bewaar();
+}
+function zetVast(id){
+  const t = S.aya[id] || {stap:0, reeks:[], zwak:0};
+  t.vast=true; t.due=dag()+REEKS[0]; t.laatst=dag(); t.begonnen=t.begonnen||dag();
+  S.aya[id]=t; logDag({nieuw:1}); bewaar();
+}
+function logDag(x){
+  const d=datum(); let r=S.log.find(y=>y.d===d);
+  if(!r){ r={d,nieuw:0,herhaald:0}; S.log.push(r); if(S.log.length>500) S.log=S.log.slice(-500); }
+  r.nieuw+=x.nieuw||0; r.herhaald+=x.herhaald||0; S.laatste=d;
+}
+
+/* ----------------------------- de dagplanning ----------------------------- */
+const SEC_HERHAAL=30, SEC_NIEUW=360;
+const inDoel = nr => nr>=Math.min(S.instel.doelVan,S.instel.doelTot) && nr<=Math.max(S.instel.doelVan,S.instel.doelTot);
+function doelSoeras(){
+  const r = INDEX.filter(s=>inDoel(s.nr));
+  if(S.instel.volgorde==='kort') return r.slice().sort((a,b)=>a.aya-b.aya || b.nr-a.nr);
+  if(S.instel.volgorde==='achter') return r.slice().sort((a,b)=>b.nr-a.nr);
+  return r.slice().sort((a,b)=>a.nr-b.nr);
+}
+function doelTotaal(){ return doelSoeras().reduce((n,s)=>n+s.aya,0); }
+function doelVast(){ return Object.keys(S.aya).filter(id=>S.aya[id].vast && inDoel(+id.split(':')[0])).length; }
+function plan(){
+  const due=dueLijst();
+  const budget=(S.instel.minuten||25)*60;
+  const herhaalTijd=due.length*SEC_HERHAAL;
+  const over=budget-herhaalTijd;
+  const rest=doelTotaal()-doelVast();
+  let nieuw=0, reden='';
+  if(!rest) reden='Alles binnen je doel staat vast. Verruim het doel bij Instellingen, of houd bij wat je hebt.';
+  else if(over<SEC_NIEUW) reden = due.length
+    ? 'Vandaag geen nieuwe aya: de herhalingen vullen je tijd al. Dat is precies zoals het hoort — eerst vasthouden, dan uitbreiden.'
+    : 'Zet je tijd iets ruimer; onder de zes minuten past er geen nieuwe aya in.';
+  else nieuw=Math.min(S.instel.maxNieuw||3, Math.floor(over/SEC_NIEUW), rest);
+  return {due, nieuw, reden, herhaalTijd, budget, rest};
+}
+/* De volgende aya: binnen het doel, in de gekozen volgorde, en altijd de eerste
+   die nog niet vastligt — zo blijven soera's heel in plaats van los. */
+async function volgendeAya(){
+  for(const s of doelSoeras()){
+    for(let n=1;n<=s.aya;n++){
+      if(!vastgezet(sleutel(s.nr,n))) return aya(s.nr,n);
+    }
+  }
+  return null;
+}
+async function vorigeAya(a){ return a.n>1 ? aya(a.nr, a.n-1) : null; }
+
+/* -------------------------------- gezondheid -------------------------------- */
+function gezond(id){
+  const t=staat(id); if(!t||!t.vast) return null;
+  const l=(t.reeks||[]).slice(-3);
+  const gem=l.length? l.reduce((a,b)=>a+b,0)/l.length : 2;
+  const rijp=Math.min(1,(t.stap||0)/5);
+  const laat=Math.max(0, dag()-(t.due||dag()));
+  return Math.max(0, Math.min(1, (gem-1)/2*0.6 + rijp*0.4 - Math.min(.4, laat*0.05)));
+}
+function soeraStand(nr){
+  const info=soeraInfo(nr); if(!info) return {totaal:0,vast:0,sterk:0,zwak:0,wankel:0};
+  let vast=0,sterk=0,zwak=0,wankel=0;
+  for(let n=1;n<=info.aya;n++){
+    const id=sleutel(nr,n); if(!vastgezet(id)) continue;
+    vast++; const g=gezond(id);
+    if(g>=.66) sterk++; else if(g>=.33) zwak++; else wankel++;
+  }
+  return {totaal:info.aya, vast, sterk, zwak, wankel};
+}
+
+/* ------------------------------- recitatie ------------------------------- */
+/* Rasikh gebruikt zijn eigen map als die er is, en valt anders terug op de
+   achtenvijftig fragmenten die voor Noer Islam zijn opgehaald. */
+const NOER = {1:'fatiha',103:'asr',105:'fil',106:'quraysh',107:'maun',108:'kawthar',
+              109:'kafirun',110:'nasr',111:'masad',112:'ikhlas',113:'falaq',114:'nas'};
+const AUDIO = {
+  eigen:new Set(), noer:new Set(), speler:null, ontgrendeld:false, bron:'',
+  async lees(){
+    try{ const r=await fetch('audio/lijst.json',{cache:'no-cache'});
+      if(r.ok){ const j=await r.json(); this.eigen=new Set(j.fragmenten||[]); this.bron=j.bron||''; } }catch(e){}
+    try{ const r=await fetch('../noer/audio/quran/lijst.json',{cache:'no-cache'});
+      if(r.ok){ const j=await r.json(); this.noer=new Set(j.fragmenten||[]); if(!this.bron) this.bron=j.bron||''; } }catch(e){}
+  },
+  pad(a){
+    if(this.eigen.has(a.nr+':'+a.n)) return 'audio/'+a.nr+'-'+a.n+'.mp3';
+    const k=NOER[a.nr]; if(k && this.noer.has('q:h-'+k+':'+a.n)) return '../noer/audio/quran/h-'+k+'-'+a.n+'.mp3';
+    return null;
+  },
+  heeft(a){ return !!this.pad(a); },
+  aantal(){ return this.eigen.size + this.noer.size; },
+  ontgrendel(){ if(this.ontgrendeld) return;
+    try{ this.speler=this.speler||new Audio();
+      this.speler.src='data:audio/wav;base64,UklGRiUAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQEAAACA';
+      const p=this.speler.play(); if(p&&p.then) p.then(()=>{this.speler.pause();this.ontgrendeld=true;}).catch(()=>{});
+    }catch(e){} },
+  stop(){ try{ if(this.speler){this.speler.pause(); this.speler.currentTime=0;} }catch(e){} },
+  speel(a){ const f=this.pad(a); if(!f) return Promise.resolve(false);
+    return new Promise(res=>{ this.stop(); this.speler=this.speler||new Audio();
+      const el=this.speler; el.src=f; el.playbackRate=S.instel.tempo||1;
+      const af=()=>{el.onended=null;el.onerror=null;res(true);};
+      el.onended=af; el.onerror=af; const p=el.play(); if(p&&p.catch) p.catch(af); }); }
+};
+['pointerdown','click'].forEach(g=>document.addEventListener(g,()=>AUDIO.ontgrendel(),{passive:true}));
+
+/* --------------------------------- schermen --------------------------------- */
+let tab='vandaag';
+function naarTab(v){ tab=v; AUDIO.stop();
+  $$('.tab').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.v===v)));
+  $$('section.view').forEach(x=>x.classList.toggle('on', x.id==='v-'+v));
+  window.scrollTo({top:0}); teken(); }
+function blad(html){ $('#blad').innerHTML=html; $('#overlay').classList.add('on'); }
+function bladDicht(){ $('#overlay').classList.remove('on'); $('#blad').innerHTML=''; AUDIO.stop(); }
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') bladDicht(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') bladDicht(); });
+const balk = p => '<div class="bar"><i style="width:'+Math.max(0,Math.min(100,p))+'%"></i></div>';
+const naam = nr => { const s=soeraInfo(nr); return s? s.naam : 'soera '+nr; };
+
+function ayaBlok(a, opt){
+  opt=opt||{};
+  const knop = AUDIO.heeft(a) ? '<button class="icoon" data-hoor="'+a.id+'" title="Luister">🔊</button>' : '';
+  return '<div class="aya"><div class="rij tussen" style="align-items:flex-start">'+
+    '<div style="flex:1;min-width:0"><div class="ar">'+(opt.ar!=null?opt.ar:a.ar)+'</div>'+
+      (opt.geenTr?'':'<div class="tr" style="margin-top:8px">'+esc(a.tr)+'</div>')+
+      (opt.geenNl?'':'<div class="nl" style="margin-top:5px;color:var(--muted)">'+esc(a.nl)+'</div>')+
+    '</div>'+(knop?'<div>'+knop+'</div>':'')+'</div></div>';
+}
+document.addEventListener('click',async e=>{
+  const b=e.target.closest('[data-hoor]'); if(b){ const a=await ayaVanId(b.dataset.hoor); if(a) AUDIO.speel(a); }
+});
+
+/* ---------------------------------- vandaag ---------------------------------- */
+function tekenVandaag(){
+  const p=plan(), el=$('#iVandaag');
+  const vast=doelVast(), tot=doelTotaal();
+  const wankel=Object.keys(S.aya).filter(id=>S.aya[id].vast && gezond(id)<.33).length;
+  const min=Math.round((p.herhaalTijd+p.nieuw*SEC_NIEUW)/60);
+  el.innerHTML=
+  '<div><h1>Vandaag</h1><p class="klein" style="margin-top:5px">'+datum()+' · ongeveer '+min+' minuten · doel: soera '+
+    Math.min(S.instel.doelVan,S.instel.doelTot)+' tot '+Math.max(S.instel.doelVan,S.instel.doelTot)+'</p></div>'+
+  '<div class="grid g4">'+
+    '<div class="card"><p class="meta">Te herhalen</p><p class="cijfer">'+p.due.length+'</p><p class="klein">'+Math.round(p.herhaalTijd/60)+' min</p></div>'+
+    '<div class="card"><p class="meta">Nieuw vandaag</p><p class="cijfer">'+p.nieuw+'</p><p class="klein">'+(p.nieuw?Math.round(p.nieuw*SEC_NIEUW/60)+' min':'—')+'</p></div>'+
+    '<div class="card"><p class="meta">Staat vast</p><p class="cijfer">'+vast+'<span style="font-size:.95rem;color:var(--muted)">/'+tot+'</span></p>'+balk(tot?vast/tot*100:0)+'</div>'+
+    '<div class="card"><p class="meta">Wankel</p><p class="cijfer" style="color:'+(wankel?'var(--fout)':'var(--ink)')+'">'+wankel+'</p><p class="klein">aandacht nodig</p></div>'+
+  '</div>'+
+  (p.due.length
+    ? '<div class="card"><div class="rij tussen"><h3>Eerst herhalen</h3><span class="tag k">'+p.due.length+' open</span></div>'+
+      '<p class="klein" style="margin-top:6px">Herhalen gaat vóór. Wat je vandaag laat liggen kost volgende week het dubbele.</p>'+
+      '<div class="rij" style="margin-top:12px"><button class="btn groot" data-ga="herhalen">Begin met herhalen</button></div></div>'
+    : '<div class="card"><h3>Je bent bij</h3><p class="klein" style="margin-top:6px">Er staat niets open. Dat is het doel — niet dat je veel kent, maar dat wat je kent blijft staan.</p></div>')+
+  (p.nieuw
+    ? '<div class="card"><div class="rij tussen"><h3>Daarna iets nieuws</h3><span class="tag goed">'+p.nieuw+' aya</span></div>'+
+      '<p class="klein" style="margin-top:6px">Doe dit pas als het herhalen klaar is.</p>'+
+      '<div class="rij" style="margin-top:12px"><button class="btn ghost" data-ga="nieuw">Naar het nieuwe stuk</button></div></div>'
+    : '<div class="kader let"><h4>Vandaag niets nieuws</h4><p class="klein" style="margin-top:4px">'+esc(p.reden)+'</p></div>')+
+  (wankel?'<div class="kader fout"><h4>'+wankel+' aya\'s staan wankel</h4><p class="klein" style="margin-top:4px">Die haperden de laatste keren; ze komen sneller terug. Kijk ze na bij <b>Kaart</b>.</p></div>':'')+
+  '<div class="card"><h3>De laatste twee weken</h3>'+streep()+'</div>';
+  $$('[data-ga]',el).forEach(b=>b.onclick=()=>naarTab(b.dataset.ga));
+}
+function streep(){
+  const d=[]; for(let i=13;i>=0;i--){ const dd=datum(dag()-i); const r=S.log.find(x=>x.d===dd);
+    d.push({dd,n:(r&&r.nieuw)||0,h:(r&&r.herhaald)||0}); }
+  const max=Math.max(4,...d.map(x=>x.n+x.h));
+  return '<div class="rij" style="align-items:flex-end;gap:5px;margin-top:12px;height:74px">'+
+    d.map(x=>'<div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%" title="'+x.dd+': '+x.n+' nieuw, '+x.h+' herhaald">'+
+      '<div style="height:'+(x.n/max*100)+'%;background:var(--goed);border-radius:3px 3px 0 0"></div>'+
+      '<div style="height:'+(x.h/max*100)+'%;background:var(--k);border-radius:0 0 3px 3px;opacity:.75"></div></div>').join('')+
+    '</div><p class="klein" style="margin-top:8px"><span style="color:var(--goed)">■</span> nieuw &nbsp; <span style="color:var(--k)">■</span> herhaald</p>';
+}
+
+/* ----------------------------------- nieuw ----------------------------------- */
+const STAPPEN=[
+  {t:'Horen',u:'Luister drie keer mee terwijl je meeleest. Nog niets uit je hoofd.'},
+  {t:'Begrijpen',u:'Wat staat er. Betekenis is de haak waar de klank aan blijft hangen — dat is het voordeel dat een volwassene heeft.'},
+  {t:'Inprenten',u:'Vijf keer hardop, mét de tekst voor je.'},
+  {t:'Losmaken',u:'De tekst verdwijnt in stappen. Tik op een grijs vlak als je vastloopt.'},
+  {t:'Vastzetten',u:'Uit het hoofd, drie keer vlekkeloos achter elkaar. Eén hapering en de teller gaat terug.'},
+  {t:'Knopen',u:'De naad met de vorige aya is waar het later misgaat. Zeg ze aan elkaar.'}
+];
+async function tekenNieuw(){
+  const el=$('#iNieuw'), p=plan(), a=await volgendeAya();
+  if(!a){ el.innerHTML='<div class="card"><h1>Alles staat vast</h1><p style="margin-top:8px">Binnen je doel ligt alles vast. Verruim het doel bij <b>Instellingen</b>.</p></div>'; return; }
+  const st=soeraStand(a.nr);
+  el.innerHTML=
+    '<div><h1>Nieuw</h1><p class="klein" style="margin-top:5px">'+esc(a.soera.naam)+' · aya '+a.n+' van '+a.soera.aya.length+'</p></div>'+
+    (p.nieuw?'':'<div class="kader let"><h4>Eigenlijk niet vandaag</h4><p class="klein" style="margin-top:4px">'+esc(p.reden)+' Je kunt doorgaan, maar het herhalen wordt morgen zwaarder.</p></div>')+
+    '<div class="card"><div class="rij tussen"><h3>'+esc(a.soera.naam)+' <span class="ar" style="font-size:1rem;color:var(--k)">'+esc(a.soera.ar)+'</span></h3>'+
+      '<span class="tag">'+st.vast+' van '+st.totaal+' vast</span></div>'+
+      '<div style="margin-top:10px">'+balk(st.vast/st.totaal*100)+'</div>'+
+      '<p class="klein" style="margin-top:10px">'+esc(a.soera.ev)+' · geopenbaard in '+esc(a.soera.plaats)+'</p></div>'+
+    ayaBlok(a)+
+    '<div class="rij"><button class="btn groot" id="start">Begin bij stap 1 — horen</button></div>';
+  $('#start').onclick=()=>leerStap(a.id,0,{});
+}
+async function leerStap(id,i,st){
+  const a=await ayaVanId(id); if(!a) return;
+  if(i>=STAPPEN.length) return leerKlaar(a);
+  const S1=STAPPEN[i]; const v=await vorigeAya(a);
+  let inh='';
+  if(i===0) inh = ayaBlok(a,{geenNl:true}) + (AUDIO.heeft(a)
+      ? '<div class="rij" style="margin-top:12px"><button class="btn" id="luister">Speel af ('+(st.gehoord||0)+' van 3)</button></div>'
+      : '<div class="kader let" style="margin-top:12px"><p class="klein">Voor deze aya is nog geen recitatie opgehaald. Lees hem hardop mee met je eigen opname, of haal de recitatie op — zie Instellingen.</p></div>');
+  if(i===1) inh = ayaBlok(a) + (v?'<div class="card plat" style="margin-top:12px"><p class="meta">Hiervoor staat</p><div class="ar" style="font-size:1.15rem;margin-top:4px">'+v.ar+'</div></div>':'');
+  if(i===2) inh = ayaBlok(a,{geenNl:true}) + '<div class="rij" style="margin-top:12px"><button class="btn" id="tel">Hardop gezegd ('+(st.gezegd||0)+' van 5)</button>'+
+      (AUDIO.heeft(a)?'<button class="btn ghost" data-hoor="'+a.id+'">Nog eens horen</button>':'')+'</div>';
+  if(i===3){ const niv=[0,.35,.7,1][st.verberg||0];
+    inh = '<div class="aya"><div class="ar">'+a.ar.split(' ').map(w=>Math.random()<niv?'<span class="verborgen">'+w+'</span>':w).join(' ')+'</div></div>'+
+      '<p class="klein" style="margin-top:10px">'+Math.round(niv*100)+'% verborgen</p>'+
+      '<div class="rij" style="margin-top:10px"><button class="btn ghost" id="opnieuw">Opnieuw</button>'+
+      (niv<1?'<button class="btn" id="meer">Meer verbergen</button>':'')+'</div>'; }
+  if(i===4) inh = '<div class="card plat" style="text-align:center"><p class="meta">Uit het hoofd</p>'+
+      '<p class="klein" style="margin-top:6px">Zeg de aya hardop. Kijk niet.</p>'+
+      '<p class="cijfer" style="margin-top:10px">'+(st.vlekkeloos||0)+' / 3</p></div>'+
+      '<div class="rij" style="margin-top:12px"><button class="btn" id="goed">Vlekkeloos</button>'+
+      '<button class="btn ghost" id="mis">Ik haperde</button><button class="btn ghost" id="kijk">Laat zien</button></div><div id="kijkvak"></div>';
+  if(i===5) inh = v
+      ? '<div class="card plat"><p class="meta">De naad</p><div class="ar" style="font-size:1.2rem;margin-top:6px;opacity:.6">'+v.ar+'</div>'+
+        '<div class="ar" style="font-size:1.45rem;margin-top:8px">'+a.ar+'</div></div>'+
+        '<p class="klein" style="margin-top:10px">Zeg ze twee keer aan elkaar. Het einde van de vorige aya is de sleutel voor het begin van deze.</p>'
+      : '<div class="card plat"><p class="meta">Het begin van de soera</p><div class="ar" style="margin-top:6px">'+a.ar+'</div></div>'+
+        '<p class="klein" style="margin-top:10px">Dit is de eerste aya; er is nog geen naad.</p>';
+  blad('<div class="rij tussen"><p class="meta">'+esc(a.soera.naam)+' '+a.n+' · stap '+(i+1)+' van 6 · '+esc(S1.t)+'</p>'+
+      '<button class="icoon" onclick="bladDicht();teken()" aria-label="Sluiten">✕</button></div>'+
+    '<div class="bar dun" style="margin:10px 0 4px"><i style="width:'+Math.round(i/6*100)+'%"></i></div>'+
+    '<p class="klein" style="margin-bottom:14px">'+esc(S1.u)+'</p>'+inh+
+    '<div class="rij tussen" style="margin-top:20px"><button class="btn ghost" id="terug"'+(i===0?' disabled':'')+'>Terug</button>'+
+    '<button class="btn" id="door"'+(magDoor(i,st)?'':' disabled')+'>'+(i===5?'Zet vast':'Volgende')+'</button></div>');
+  $('#terug').onclick=()=>leerStap(id,i-1,st);
+  $('#door').onclick =()=>leerStap(id,i+1,st);
+  if($('#luister')) $('#luister').onclick=async()=>{ await AUDIO.speel(a); st.gehoord=(st.gehoord||0)+1; leerStap(id,i,st); };
+  if($('#tel'))     $('#tel').onclick=()=>{ st.gezegd=(st.gezegd||0)+1; leerStap(id,i,st); };
+  if($('#meer'))    $('#meer').onclick=()=>{ st.verberg=(st.verberg||0)+1; leerStap(id,i,st); };
+  if($('#opnieuw')) $('#opnieuw').onclick=()=>leerStap(id,i,st);
+  if($('#goed'))    $('#goed').onclick=()=>{ st.vlekkeloos=(st.vlekkeloos||0)+1; leerStap(id,i,st); };
+  if($('#mis'))     $('#mis').onclick=()=>{ st.vlekkeloos=0; leerStap(id,i,st); };
+  if($('#kijk'))    $('#kijk').onclick=()=>{ $('#kijkvak').innerHTML=ayaBlok(a,{geenNl:true}); };
+  $$('.verborgen').forEach(x=>x.onclick=()=>x.classList.toggle('zicht'));
+}
+function magDoor(i,st){
+  if(i===2) return (st.gezegd||0)>=5;
+  if(i===3) return (st.verberg||0)>=3;
+  if(i===4) return (st.vlekkeloos||0)>=3;
+  return true;
+}
+async function leerKlaar(a){
+  zetVast(a.id); const p=plan();
+  blad('<h2>'+esc(a.soera.naam)+' '+a.n+' staat vast</h2>'+
+    '<p style="margin-top:8px">Hij komt morgen terug, daarna over twee dagen, vier, acht — steeds verder uit elkaar zolang het goed gaat. Dat terugkomen is het werk; het leren was het makkelijke deel.</p>'+
+    ayaBlok(a)+
+    '<div class="rij" style="margin-top:16px">'+(p.nieuw>1?'<button class="btn" id="nog">Nog een aya</button>':'')+
+    '<button class="btn ghost" onclick="bladDicht();naarTab(\'vandaag\')">Klaar voor vandaag</button></div>');
+  if($('#nog')) $('#nog').onclick=async()=>{ const v=await volgendeAya(); if(v) leerStap(v.id,0,{}); else bladDicht(); };
+}
+
+/* ---------------------------------- herhalen ---------------------------------- */
+function tekenHerhalen(){
+  const el=$('#iHerhalen'), due=dueLijst();
+  el.innerHTML=
+    '<div><h1>Herhalen</h1><p class="klein" style="margin-top:5px">Zelf beoordelen. Wees streng: een hapering nu is beter dan een gat over een maand.</p></div>'+
+    (due.length
+      ? '<div class="card"><div class="rij tussen"><h3>'+due.length+' aan de beurt</h3><span class="tag k">± '+Math.round(due.length*SEC_HERHAAL/60)+' min</span></div>'+
+        '<p class="klein" style="margin-top:6px">De wankelste eerst.</p>'+
+        '<div class="rij" style="margin-top:12px"><button class="btn groot" id="begin">Beginnen</button></div></div>'
+      : '<div class="card"><h3>Niets open</h3><p class="klein" style="margin-top:6px">Je bent bij. Oefen desnoods de <b>verwarpunten</b> — dat mag altijd.</p></div>')+
+    (Object.keys(S.aya).length?'<div class="card"><h3>Wat er aankomt</h3>'+komende()+'</div>':'');
+  if($('#begin')) $('#begin').onclick=()=>herhaalRonde(due,0,{g:0,t:0});
+}
+function komende(){
+  const per={};
+  Object.keys(S.aya).filter(id=>S.aya[id].vast).forEach(id=>{
+    const d=Math.max(0,S.aya[id].due-dag());
+    const k=d===0?'vandaag':d===1?'morgen':d<=7?'deze week':d<=30?'deze maand':'later';
+    per[k]=(per[k]||0)+1; });
+  return '<div class="rij" style="margin-top:10px">'+['vandaag','morgen','deze week','deze maand','later']
+    .filter(k=>per[k]).map(k=>'<span class="tag'+(k==='vandaag'?' k':'')+'">'+k+': '+per[k]+'</span>').join('')+'</div>';
+}
+async function herhaalRonde(rij,i,tel){
+  if(i>=rij.length){
+    blad('<h2>Ronde klaar</h2><p style="margin-top:8px">'+tel.g+' van de '+tel.t+' vlekkeloos.</p>'+
+      '<p class="klein" style="margin-top:8px">Wat haperde komt sneller terug. Dat is geen straf; daar is dit systeem voor.</p>'+
+      '<div class="rij" style="margin-top:16px"><button class="btn" onclick="bladDicht();teken()">Klaar</button></div>');
+    return;
+  }
+  const a=await ayaVanId(rij[i].id); if(!a) return herhaalRonde(rij,i+1,tel);
+  const v=await vorigeAya(a);
+  blad('<div class="rij tussen"><p class="meta">Herhalen · '+(i+1)+' van '+rij.length+'</p>'+
+      '<button class="icoon" onclick="bladDicht();teken()" aria-label="Sluiten">✕</button></div>'+
+    '<div class="bar dun" style="margin:10px 0 16px"><i style="width:'+Math.round(i/rij.length*100)+'%"></i></div>'+
+    '<div class="card plat"><p class="meta">'+esc(a.soera.naam)+' · aya '+a.n+'</p>'+
+      (v?'<div class="ar" style="font-size:1.05rem;margin-top:8px;opacity:.5">'+v.ar+'</div>':'')+
+      '<p class="klein" style="margin-top:8px">Zeg deze aya hardop, uit je hoofd.</p></div>'+
+    '<div class="rij" style="margin-top:14px"><button class="btn" id="toon">Laat zien</button></div><div id="na"></div>');
+  $('#toon').onclick=()=>{
+    $('#na').innerHTML=ayaBlok(a)+'<p class="klein" style="margin-top:12px">Hoe ging het?</p>'+
+      '<div class="rij" style="margin-top:8px"><button class="btn" data-c="3">Vlekkeloos</button>'+
+      '<button class="btn ghost" data-c="2">Haperde</button><button class="btn ghost" data-c="1">Kwijt</button></div>';
+    $$('#na [data-c]').forEach(b=>b.onclick=()=>{ const c=+b.dataset.c; beoordeel(a.id,c);
+      herhaalRonde(rij,i+1,{g:tel.g+(c===3?1:0),t:tel.t+1}); });
+  };
+}
+
+/* --------------------------------- verwarring ---------------------------------
+   Niet met de hand bedacht maar berekend: alle aya's die woordelijk gelijk zijn
+   of hetzelfde beginnen, over de hele Koran. Dat is precies waar hifz omvalt. */
+async function tekenVerwarring(){
+  const el=$('#iVerwarring');
+  if(!MUT){ try{ MUT=await (await fetch('tekst/mutashabihat.json')).json(); }catch(e){ MUT={exact:[],opening:[]}; } }
+  const eigen = relevant();
+  el.innerHTML=
+    '<div><h1>Verwarpunten</h1><p class="klein" style="margin-top:5px">Aya\'s die woordelijk gelijk zijn of hetzelfde beginnen. Dit is waar hifz omvalt — niet bij moeilijke woorden.</p></div>'+
+    '<div class="grid g3">'+
+      '<div class="card"><p class="meta">Woordelijk gelijk</p><p class="cijfer">'+MUT.exact.length+'</p><p class="klein">groepen in de hele Koran</p></div>'+
+      '<div class="card"><p class="meta">Gelijke opening</p><p class="cijfer">'+MUT.opening.length+'</p><p class="klein">eerste vier woorden gelijk</p></div>'+
+      '<div class="card"><p class="meta">Raakt jouw stof</p><p class="cijfer">'+eigen.length+'</p><p class="klein">binnen wat je kent</p></div>'+
+    '</div>'+
+    '<div class="card"><h3>Doe een ronde</h3>'+
+      '<p class="klein" style="margin-top:6px">'+(eigen.length
+        ? 'Tien vragen uit de groepen die jouw stof raken: je krijgt de gedeelde tekst en de plaats, en moet zeggen wat daar volgt.'
+        : 'Je hebt nog te weinig vastgezet om hier iets zinnigs uit te halen. Zodra je een soera af hebt, staan hier de valstrikken uit precies die soera.')+'</p>'+
+      '<div class="rij" style="margin-top:12px"><button class="btn groot" id="startV"'+(eigen.length?'':' disabled')+'>Beginnen</button>'+
+      '<button class="btn ghost" id="bekijk">Bekijk de lijst</button></div></div>'+
+    '<div class="kader"><h4>Waarom dit apart getraind wordt</h4>'+
+      '<p class="klein" style="margin-top:4px">Het refrein van ar-Rahman staat eenendertig keer in dezelfde soera. "Ya ayyuha lladhina amanu" opent zevenentwintig aya\'s. Wie zulke plekken niet apart oefent, springt vroeg of laat van de ene naar de andere — meestal midden in het gebed.</p></div>';
+  if($('#startV')) $('#startV').onclick=()=>verwarRonde(hussel(eigen).slice(0,10),0,0);
+  $('#bekijk').onclick=()=>toonLijst();
+}
+function relevant(){
+  const m = MUT || {};
+  const heb=new Set(Object.keys(S.aya).filter(id=>S.aya[id].vast));
+  const raakt=g=>g.p.filter(([c,v])=>heb.has(c+':'+v)).length>0 && g.p.length>1;
+  return [...(m.exact||[]).map(g=>({...g,soort:'gelijk'})), ...(m.opening||[]).map(g=>({...g,soort:'opening'}))].filter(raakt);
+}
+function toonLijst(){
+  const e=relevant().slice(0,40);
+  blad('<div class="rij tussen"><p class="meta">Verwarpunten in jouw stof</p>'+
+    '<button class="icoon" onclick="bladDicht()" aria-label="Sluiten">✕</button></div>'+
+    (e.length? e.map(g=>'<div class="card plat" style="margin-top:10px">'+
+      '<div class="ar" style="font-size:1.15rem">'+esc(g.t)+'</div>'+
+      '<p class="klein" style="margin-top:6px">'+(g.soort==='gelijk'?'Woordelijk gelijk':'Zelfde opening')+' · '+
+        g.p.map(([c,v])=>esc(naam(c))+' '+v).join(' · ')+'</p></div>').join('')
+      : '<p style="margin-top:10px">Nog niets — dat komt zodra je meer hebt vastgezet.</p>'));
+}
+/* Bij de keuzes hoort niet de hele aya — sommige zijn een half scherm lang. Het
+   gaat om herkennen hoe het verdergaat, en dat zit in de eerste woorden. */
+const aanhef = (t,n)=>{ const w=String(t).split(/\s+/); return w.length<=(n||9) ? t : w.slice(0,n||9).join(' ')+' …'; };
+async function verwarRonde(rij,i,goed){
+  if(i>=rij.length){
+    blad('<h2>'+goed+' van de '+rij.length+' goed</h2><p style="margin-top:8px">'+
+      (goed===rij.length?'Deze plekken zitten. Kom over een week terug.':'Loop de uitleg na van wat misging; juist hier gaat het in het gebed mis.')+'</p>'+
+      '<div class="rij" style="margin-top:16px"><button class="btn" onclick="bladDicht();teken()">Klaar</button></div>');
+    return;
+  }
+  const g=rij[i];
+  /* Neem twee plaatsen uit de groep en vraag wat er ná de gedeelde aya komt. */
+  const plek=hussel(g.p.slice()).slice(0,3);
+  const lees=x=>S.instel.lezing==='hafs'?x.h:x.w;
+  const na=[];
+  for(const [c,v] of plek){ const s=await laadSoera(c); const vv=s.aya[v]; if(vv) na.push({c,v,tekst:lees(vv)}); }
+  if(na.length<2) return verwarRonde(rij,i+1,goed);
+  const juist=na[0];
+  /* De sleutel in mutashabihat.json staat zonder tekens; toon liever de echte
+     tekst uit het moshaf. Bij een gedeelde opening: de eerste vier woorden. */
+  let gedeeld = g.t;
+  try{ const s=await laadSoera(juist.c); const zelf=s.aya[juist.v-1];
+    if(zelf){ const t=lees(zelf); gedeeld = g.soort==='gelijk' ? t : t.split(/\s+/).slice(0,4).join(' ')+' …'; }
+  }catch(e){}
+  const opties=hussel(na.slice());
+  blad('<div class="rij tussen"><p class="meta">Verwarpunt '+(i+1)+' van '+rij.length+'</p>'+
+      '<button class="icoon" onclick="bladDicht();teken()" aria-label="Sluiten">✕</button></div>'+
+    '<div class="bar dun" style="margin:10px 0 16px"><i style="width:'+Math.round(i/rij.length*100)+'%"></i></div>'+
+    '<p>Je staat in <b>'+esc(naam(juist.c))+'</b>, aya '+juist.v+'. Je hebt net dit gezegd:</p>'+
+    '<div class="aya" style="margin-top:10px"><div class="ar">'+esc(gedeeld)+'</div></div>'+
+    '<p style="margin-top:14px">Wat volgt hier?</p>'+
+    '<div id="opties">'+opties.map((o,k)=>'<div class="keuze" role="button" tabindex="0" data-o="'+k+'">'+
+      '<span class="ar">'+esc(aanhef(o.tekst))+'</span></div>').join('')+'</div><div id="uit"></div>');
+  $$('#opties [data-o]').forEach(b=>{
+   b.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); b.click(); } };
+   b.onclick=()=>{
+    const ok=opties[+b.dataset.o]===juist;
+    $$('#opties [data-o]').forEach((x,k)=>{ x.style.pointerEvents='none';
+      if(opties[k]===juist) x.style.borderColor='var(--goed)';
+      if(x===b&&!ok) x.style.borderColor='var(--fout)'; });
+    $('#uit').innerHTML='<div class="kader '+(ok?'':'let')+'" style="margin-top:14px"><h4>'+(ok?'Goed':'Let op')+'</h4>'+
+      '<p class="klein" style="margin-top:4px">Deze tekst staat op '+g.p.length+' plaatsen: '+
+      g.p.map(([c,v])=>esc(naam(c))+' '+v).join(', ')+'. Wat erná komt verschilt — dat is het enige dat je uit elkaar houdt.</p>'+
+      '<p class="klein" style="margin-top:8px">In '+esc(naam(juist.c))+' volgt aya '+(juist.v+1)+':</p>'+
+      '<div class="ar" style="font-size:1.2rem;margin-top:4px">'+esc(juist.tekst)+'</div></div>'+
+      '<div class="rij" style="margin-top:14px"><button class="btn" id="v">Verder</button></div>';
+    $('#v').onclick=()=>verwarRonde(rij,i+1,goed+(ok?1:0));
+   };
+  });
+}
+
+/* ------------------------------------ kaart ------------------------------------ */
+function tekenKaart(){
+  const el=$('#iKaart');
+  const vast=Object.keys(S.aya).filter(id=>S.aya[id].vast);
+  const g=vast.map(gezond);
+  const sterk=g.filter(x=>x>=.66).length, zwak=g.filter(x=>x<.66&&x>=.33).length, wankel=g.filter(x=>x<.33).length;
+  const recent=S.log.slice(-21), tempo=recent.length? recent.reduce((n,r)=>n+r.nieuw,0)/Math.max(1,recent.length):0;
+  const rest=doelTotaal()-doelVast();
+  const dagen=tempo>0?Math.ceil(rest/tempo):null;
+  const bezig=INDEX.filter(s=>soeraStand(s.nr).vast>0);
+  el.innerHTML=
+    '<div><h1>Kaart</h1><p class="klein" style="margin-top:5px">Niet hoeveel je kent, maar hoe stevig het staat.</p></div>'+
+    '<div class="grid g4">'+
+      '<div class="card"><p class="meta">Vast</p><p class="cijfer">'+vast.length+'<span style="font-size:.9rem;color:var(--muted)">/'+totaalAya()+'</span></p></div>'+
+      '<div class="card"><p class="meta">Stevig</p><p class="cijfer" style="color:var(--goed)">'+sterk+'</p></div>'+
+      '<div class="card"><p class="meta">Zwak</p><p class="cijfer" style="color:var(--let)">'+zwak+'</p></div>'+
+      '<div class="card"><p class="meta">Wankel</p><p class="cijfer" style="color:var(--fout)">'+wankel+'</p></div>'+
+    '</div>'+
+    (bezig.length?'<div class="card"><h3>Waar je mee bezig bent</h3><div style="margin-top:10px">'+
+      bezig.map(s=>{ const st=soeraStand(s.nr); const b=n=>n/st.totaal*100;
+        return '<div class="kaartrij"><span style="min-width:118px"><b>'+esc(s.naam)+'</b><span class="klein"> '+s.nr+'</span></span>'+
+          '<span class="staaf"><i class="st" style="width:'+b(st.sterk)+'%"></i><i class="zw" style="width:'+b(st.zwak)+'%"></i><i class="nw" style="width:'+b(st.wankel)+'%"></i></span>'+
+          '<span class="klein" style="min-width:58px;text-align:right">'+st.vast+'/'+st.totaal+'</span></div>'; }).join('')+
+      '</div><p class="klein" style="margin-top:10px"><span style="color:var(--goed)">■</span> stevig &nbsp; <span style="color:var(--let)">■</span> zwak &nbsp; <span style="color:var(--fout)">■</span> wankel</p></div>'
+      :'<div class="card"><h3>Nog niets vastgezet</h3><p class="klein" style="margin-top:6px">Zodra je een aya vastzet, verschijnt hier hoe stevig hij staat.</p></div>')+
+    '<div class="card"><h3>Het hele boek</h3><p class="klein" style="margin-top:6px">Honderdveertien soera\'s. Groen is vast, grijs is nog niet. Tik een vakje aan voor de naam.</p>'+
+      '<div class="boek">'+
+      INDEX.map(s=>{ const st=soeraStand(s.nr); const p=st.vast/st.totaal;
+        const kl = p===0?'var(--surface-2)' : p<1?'color-mix(in srgb,var(--goed) '+Math.round(20+p*80)+'%,var(--surface-2))':'var(--goed)';
+        return '<button class="vak'+(inDoel(s.nr)?' doel':'')+'" data-s="'+s.nr+'" title="'+esc(s.naam)+' — '+st.vast+'/'+st.totaal+
+          '" aria-label="'+esc(s.naam)+', '+st.vast+' van '+st.totaal+' vast" style="background:'+kl+'"></button>'; }).join('')+
+      '</div><p class="klein" style="margin-top:10px">Een randje betekent: dit valt binnen je doel.</p></div>'+
+    '<div class="card"><h3>Tempo</h3>'+
+      (tempo>0
+        ? '<p style="margin-top:8px">Je zet gemiddeld <b>'+(Math.round(tempo*10)/10)+'</b> aya per dag vast. In dit tempo staan de resterende '+rest+' aya\'s van je doel er over ongeveer <b>'+dagen+' dagen</b> — rond '+datum(dag()+dagen)+'.</p>'
+        : '<p style="margin-top:8px">Nog te weinig gegevens. Na een week of twee staat hier een eerlijke schatting.</p>')+
+      '<p class="klein" style="margin-top:8px">Die schatting gaat uit van doorgaan zoals nu. Ga je sneller, dan groeit het herhaalwerk mee — en dáár loopt het meestal vast.</p></div>';
+  $$('#iKaart .vak').forEach(k=>k.onclick=()=>soeraBlad(+k.dataset.s));
+}
+/* Een vakje op de kaart zegt zonder naam niets, en op een telefoon is er geen
+   muisaanwijzer om hem uit te lezen. Aantikken opent daarom de gegevens — en
+   meteen de enige handeling die je daar wilt doen: dit tot je doel maken. */
+function soeraBlad(nr){
+  const s=soeraInfo(nr); if(!s) return;
+  const st=soeraStand(nr); const b=n=>n/st.totaal*100;
+  blad('<div class="rij tussen"><p class="meta">Soera '+nr+' · juz '+s.juz+' · '+esc(s.plaats)+'</p>'+
+    '<button class="icoon" onclick="bladDicht()" aria-label="Sluiten">✕</button></div>'+
+    '<h2 style="margin-top:6px">'+esc(s.naam)+'</h2>'+
+    '<p class="ar" style="font-size:1.5rem;margin-top:4px">'+esc(s.ar)+'</p>'+
+    '<p class="klein" style="margin-top:6px">'+s.aya+' aya · '+st.vast+' vastgezet</p>'+
+    '<div class="staaf" style="margin-top:12px"><i class="st" style="width:'+b(st.sterk)+'%"></i>'+
+      '<i class="zw" style="width:'+b(st.zwak)+'%"></i><i class="nw" style="width:'+b(st.wankel)+'%"></i></div>'+
+    '<div class="rij" style="margin-top:16px"><button class="btn" id="doel">Maak dit mijn doel</button>'+
+    '<button class="btn ghost" onclick="bladDicht()">Sluiten</button></div>'+
+    '<p class="klein" style="margin-top:10px">Je doel is nu soera '+S.instel.doelVan+' tot en met '+S.instel.doelTot+
+      '. Een breder gebied stel je in bij Instellingen.</p>');
+  $('#doel').onclick=()=>{ S.instel.doelVan=nr; S.instel.doelTot=nr;
+    S.instelD=new Date().toISOString(); bewaar(); bladDicht(); teken(); };
+}
+
+/* -------------------------------- instellingen -------------------------------- */
+function tekenInstel(){
+  const el=$('#iInstel'), vast=Object.keys(S.aya).filter(id=>S.aya[id].vast).length, w=WOLK.status();
+  const opties = (a,v,l)=> a.map(x=>'<option value="'+x[0]+'"'+(v==x[0]?' selected':'')+'>'+x[1]+'</option>').join('');
+  el.innerHTML=
+    '<div><h1>Instellingen</h1></div>'+
+    '<div class="grid g2">'+
+      '<div class="card"><h3>Tempo en doel</h3>'+
+        '<label class="veld"><span>Tijd per dag</span><select id="iMin">'+opties([[10,'10 minuten'],[15,'15'],[20,'20'],[25,'25'],[30,'30'],[45,'45'],[60,'60 minuten']],S.instel.minuten)+'</select></label>'+
+        '<label class="veld"><span>Hoogstens nieuw per dag</span><select id="iNw">'+opties([[1,'1 aya'],[2,'2'],[3,'3'],[5,'5'],[8,'8 aya']],S.instel.maxNieuw)+'</select></label>'+
+        '<div class="rij" style="gap:10px">'+
+          '<label class="veld" style="flex:1"><span>Doel van soera</span><select id="iVan">'+INDEX.map(s=>'<option value="'+s.nr+'"'+(S.instel.doelVan===s.nr?' selected':'')+'>'+s.nr+'. '+esc(s.naam)+'</option>').join('')+'</select></label>'+
+          '<label class="veld" style="flex:1"><span>tot en met</span><select id="iTot">'+INDEX.map(s=>'<option value="'+s.nr+'"'+(S.instel.doelTot===s.nr?' selected':'')+'>'+s.nr+'. '+esc(s.naam)+'</option>').join('')+'</select></label>'+
+        '</div>'+
+        '<div class="rij" style="margin-top:8px"><button class="btn ghost sm" data-doel="78,114">Juz \'amma</button>'+
+          '<button class="btn ghost sm" data-doel="67,114">Laatste twee juz</button>'+
+          '<button class="btn ghost sm" data-doel="1,114">De hele Koran</button></div>'+
+        '<label class="veld"><span>Volgorde</span><select id="iVg">'+opties([['kort','Kortste soera eerst'],['achter','Van achteren naar voren'],['voor','Van voren naar achteren']],S.instel.volgorde)+'</select></label>'+
+      '</div>'+
+      '<div class="card"><h3>Tekst en klank</h3>'+
+        '<label class="veld"><span>Lezing</span><select id="iLz">'+opties([['warsh','Warsh — zoals in de Maghreb'],['hafs','Hafs — de meest verspreide druk']],S.instel.lezing)+'</select></label>'+
+        '<label class="veld"><span>Tempo van de recitatie</span><select id="iTp">'+opties([[.75,'Langzaam'],[1,'Gewoon'],[1.25,'Vlot']],S.instel.tempo)+'</select></label>'+
+        '<p class="klein" style="margin-top:12px">De Warsh-tekst komt van het King Fahd-complex en past bij de Warsh-recitatie die in Noer Islam staat. Ziet een teken er vreemd uit, dan mist je toestel het juiste lettertype; zet dan Hafs aan — de tekst is dezelfde openbaring, alleen anders overgeleverd.</p>'+
+        '<p class="klein" style="margin-top:8px">Recitatie beschikbaar voor <b>'+AUDIO.aantal()+'</b> aya\'s'+(AUDIO.bron?' ('+esc(AUDIO.bron)+')':'')+'. Voor de rest van je doel haal je hem op met <span class="meta" style="text-transform:none">node rasikh/audio/haal-audio.mjs</span> — zie LEESMIJ.md in die map.</p>'+
+      '</div>'+
+    '</div>'+
+    '<div class="card"><h3>Zonder internet</h3>'+
+      '<p class="klein" style="margin-top:6px">Wat je opent blijft op je toestel staan. Wil je zeker weten dat je hele doel meegaat in de trein of op reis, zet het dan van tevoren klaar: dat haalt de tekst van soera '+
+      Math.min(S.instel.doelVan,S.instel.doelTot)+' tot en met '+Math.max(S.instel.doelVan,S.instel.doelTot)+' binnen.</p>'+
+      '<div class="rij" style="margin-top:12px"><button class="btn ghost sm" id="offline">Doel klaarzetten</button></div>'+
+      '<p class="melding" id="offmld"></p></div>'+
+    '<div class="card"><h3>Waarom het zo werkt</h3>'+
+      '<p class="klein" style="margin-top:8px">De tijd die je opgeeft wordt éérst gevuld met herhalen. Wat overblijft bepaalt hoeveel nieuwe aya\'s erbij mogen. Blijft er niets over, dan komt er niets bij. Dat voelt langzaam in de eerste weken en redt je in het tweede jaar.</p>'+
+      '<p class="klein" style="margin-top:8px">Wie op zijn eenenvijftigste begint heeft geen tekort aan begrip maar aan herhaaltijd. Daarom staat betekenis vóór klank in de zes stappen, en daarom worden de verwarpunten apart getraind: dat zijn de twee plekken waar een volwassen geheugen wint of verliest.</p></div>'+
+    '<div class="card"><h3>Centrale opslag</h3>'+
+      '<p class="klein" style="margin-top:5px">Met een account staat je voortgang op elk toestel gelijk: begin op de bank op je telefoon, ga verder op de laptop. Zonder internet werkt alles gewoon door; bij de volgende verbinding wordt het samengevoegd — er gaat nooit iets verloren.</p>'+
+      '<p class="klein" style="margin-top:5px">Voor een reeks van jaren is dat geen luxe. Alles wat hier staat — wat vast is, wanneer het terugkomt, waar je haperde — bestaat anders op één toestel.</p>'+
+      '<p class="klein" style="margin-top:9px"><span class="tag '+(w.aan?'goed':'')+'">'+
+        (w.aan?'Ingelogd als '+esc(w.account):'Alleen op dit toestel')+'</span>'+
+        (w.fout?' <span class="tag fout">'+esc(w.fout)+'</span>':'')+'</p>'+
+      (w.aan
+        ? '<div class="rij" style="margin-top:14px"><button class="btn ghost sm" id="wUit">Uitloggen</button>'+
+          '<button class="btn ghost sm" id="wNu">Nu gelijktrekken</button></div>'
+        : '<label class="veld"><span>Account</span><input id="wAcc" placeholder="benna" autocomplete="username"></label>'+
+          '<label class="veld"><span>Wachtwoord</span><input id="wPin" type="password" autocomplete="current-password"></label>'+
+          '<div class="rij" style="margin-top:14px"><button class="btn" id="wIn">Inloggen</button>'+
+          '<button class="btn ghost" id="wNieuw">Nieuw account</button></div>')+
+      '<p class="melding" id="wMld"></p></div>'+
+    '<div class="card"><h3>Gegevens</h3>'+
+      '<p class="klein" style="margin-top:6px">'+vast+' aya\'s vastgelegd · '+S.log.length+' dagen geschiedenis · tekst: 114 soera\'s, '+totaalAya()+' aya\'s</p>'+
+      '<div class="rij" style="margin-top:12px"><button class="btn ghost sm" id="uit">Opslaan als bestand</button>'+
+      '<button class="btn ghost sm" id="in">Inlezen</button><input type="file" id="bestand" accept="application/json" style="display:none">'+
+      '<button class="btn ghost sm" id="wis" style="color:var(--fout)">Alles wissen</button></div><p class="melding" id="mld"></p></div>';
+  /* Elke wijziging krijgt een tijdstempel: bij het samenvoegen tellen de jongste
+     instellingen, zodat een doel dat je op je telefoon verzet niet wordt
+     teruggedraaid door de oudere stand op je laptop. */
+  const bewaarInstel=()=>{ S.instelD=new Date().toISOString(); bewaar(); };
+  const zet=(id,f)=>{ const e=$('#'+id); if(e) e.onchange=()=>{ f(e.value); bewaarInstel(); teken(); }; };
+  zet('iMin',v=>S.instel.minuten=+v); zet('iNw',v=>S.instel.maxNieuw=+v);
+  zet('iVg',v=>S.instel.volgorde=v);  zet('iTp',v=>S.instel.tempo=parseFloat(v));
+  zet('iLz',v=>S.instel.lezing=v);
+  zet('iVan',v=>S.instel.doelVan=+v); zet('iTot',v=>S.instel.doelTot=+v);
+  $$('[data-doel]',el).forEach(b=>b.onclick=()=>{ const [a,z]=b.dataset.doel.split(',').map(Number);
+    S.instel.doelVan=a; S.instel.doelTot=z; bewaarInstel(); teken(); });
+  /* Klaarzetten is niets anders dan de bestanden één keer ophalen: de
+     servicewerker bewaart ze dan vanzelf. Rustig aan, vier tegelijk. */
+  $('#offline').onclick=async ()=>{
+    const k=$('#offline'), m=$('#offmld'); k.disabled=true;
+    const rij=doelSoeras().map(s=>s.nr); let n=0, mis=0;
+    const doe=async()=>{ while(rij.length){ const nr=rij.shift();
+      try{ await laadSoera(nr); }catch(e){ mis++; }
+      n++; m.className='melding'; m.textContent=n+' van de '+doelSoeras().length+' soera\'s klaargezet…'; } };
+    await Promise.all([doe(),doe(),doe(),doe()]);
+    try{ await fetch('tekst/mutashabihat.json'); }catch(e){}
+    m.className = mis? 'melding let' : 'melding goed';
+    m.textContent = mis ? (n-mis)+' soera\'s staan klaar, '+mis+' lukten niet. Probeer het zo nog eens.'
+                        : 'Klaar. Je doel staat op dit toestel, ook zonder verbinding.';
+    k.disabled=false;
+  };
+  const wMeld=(tekst,soort)=>{ const m=$('#wMld'); if(m){ m.textContent=tekst; m.className='melding '+(soort||''); } };
+  if($('#wIn')) $('#wIn').onclick=async()=>{
+    const a=$('#wAcc').value.trim(), c=$('#wPin').value;
+    if(!a||!c) return wMeld('Vul een account en een wachtwoord in.','fout');
+    wMeld('Bezig…');
+    try{ await WOLK.inloggen(a,c); await gelijktrekken(); tekenInstel(); wMeld('Ingelogd en gelijkgetrokken.','goed'); }
+    catch(e){ wMeld(e.message,'fout'); }
+  };
+  if($('#wNieuw')) $('#wNieuw').onclick=async()=>{
+    const a=$('#wAcc').value.trim(), c=$('#wPin').value;
+    if(!a||c.length<4) return wMeld('Kies een naam en een wachtwoord van minstens vier tekens.','fout');
+    wMeld('Bezig…');
+    try{ await WOLK.registreren(a,c,S); tekenInstel(); wMeld('Account aangemaakt.','goed'); }
+    catch(e){ wMeld(e.message,'fout'); }
+  };
+  if($('#wUit')) $('#wUit').onclick=()=>{ WOLK.uitloggen(); tekenInstel(); };
+  if($('#wNu')) $('#wNu').onclick=async()=>{ wMeld('Bezig…');
+    try{ await gelijktrekken(); tekenInstel(); wMeld('Gelijkgetrokken.','goed'); }
+    catch(e){ wMeld(e.message,'fout'); } };
+  $('#uit').onclick=()=>{ const a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:'application/json'}));
+    a.download='rasikh-'+datum()+'.json'; a.click(); };
+  $('#in').onclick=()=>$('#bestand').click();
+  $('#bestand').onchange=async e=>{ const f=e.target.files[0]; if(!f) return;
+    try{ const j=JSON.parse(await f.text()); if(!j.aya) throw 0;
+      S=Object.assign(leegS(),j,{instel:Object.assign(leegS().instel,j.instel||{})}); bewaar(); teken();
+      $('#mld').textContent='Ingelezen.'; $('#mld').className='melding goed';
+    }catch(err){ $('#mld').textContent='Dat bestand kon niet gelezen worden.'; $('#mld').className='melding fout'; } };
+  $('#wis').onclick=()=>{ if(!confirm('Alles wissen? Alle voortgang gaat weg.')) return; S=leegS(); bewaar(); teken(); };
+}
+
+/* Ophalen, samenvoegen, terugschrijven. In die volgorde, want alleen zo weet je
+   zeker dat het andere toestel ook krijgt wat hier gebeurd is. */
+async function gelijktrekken(eerste){
+  const ver = await WOLK.ophalen();
+  if(ver && (ver.aya || ver.log)) S = samenvoegen(S, ver);
+  S.laatste = new Date().toISOString();
+  await store.set(S);
+  await WOLK.bewaar(S, true);
+  if(eerste) teken();
+}
+
+/* -------------------------------- tekenen -------------------------------- */
+function teken(){
+  ({vandaag:tekenVandaag,nieuw:tekenNieuw,herhalen:tekenHerhalen,
+    verwarring:tekenVerwarring,kaart:tekenKaart,instel:tekenInstel}[tab]||tekenVandaag)();
+  const n=dueLijst().length, b=$('#bolH');
+  b.textContent=n; b.style.display=n?'':'none';
+  $('#tegen').textContent = doelVast()+' van '+doelTotaal()+' vast';
+}
+$$('.tab').forEach(b=>b.onclick=()=>naarTab(b.dataset.v));
+(async function(){
+  const l=await store.get();
+  if(l) S=Object.assign(leegS(), l, {instel:Object.assign(leegS().instel, l.instel||{})});
+  try{ const j=await (await fetch('tekst/index.json')).json(); INDEX=j.soera||[]; BRON=j.bron||''; }
+  catch(e){ document.querySelector('main').innerHTML='<div class="card" style="margin-top:20px"><h2>De tekst ontbreekt</h2><p style="margin-top:8px">De map <b>tekst/</b> is niet gevonden. Zonder die bestanden kan Rasikh niets doen.</p></div>'; return; }
+  await AUDIO.lees();
+  WOLK.init('rasikh');
+  teken();
+  if(WOLK.status().aan) gelijktrekken(true).catch(()=>{});
+  /* Bij het wegleggen van de telefoon nog één keer wegschrijven, zonder de
+     gebruikelijke wachttijd — anders gaat de laatste beoordeling verloren. */
+  window.addEventListener('pagehide',()=>{ if(WOLK.status().aan) WOLK.bewaar(S,true); });
+  if('serviceWorker' in navigator){ try{ navigator.serviceWorker.register('sw.js'); }catch(e){} }
+})();
+let BRON='';
+</script>
+</body>
+</html>
