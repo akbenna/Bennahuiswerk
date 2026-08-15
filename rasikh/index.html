@@ -10,9 +10,20 @@
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="preload" href="../fonts/amiri-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+/* Amiri staat als bestand in de repo en niet bij Google. De Warsh-druk gebruikt
+   tekens — de kleine hoge nul boven de hamzat wasl voorop — die de meeste
+   systeemletters niet kennen; die laten dan lege vakken achter midden in een
+   woord. Zie fonts/LEESMIJ.md. */
+@font-face{font-family:'Amiri';font-style:normal;font-weight:400;font-display:swap;
+  src:url('../fonts/amiri-400.woff2') format('woff2')}
+@font-face{font-family:'Amiri';font-style:normal;font-weight:700;font-display:swap;
+  src:url('../fonts/amiri-700.woff2') format('woff2')}
+</style>
 <style>
 /* Rasikh is voor een volwassene: rustiger, dichter, minder aanmoediging en meer
    informatie. De kleuren komen uit hetzelfde palet als de rest van de hub. */

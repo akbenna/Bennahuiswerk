@@ -1,7 +1,8 @@
 # BennaHub
 
 Eén startpagina, vijf apps. Alles is statische HTML: geen build-stap, geen server,
-geen dependencies behalve Google Fonts. Wat hier staat, is wat er draait.
+geen dependencies behalve de Latijnse letters van Google Fonts — het Arabisch
+staat in de repo zelf. Wat hier staat, is wat er draait.
 
 ```
 index.html          de startpagina (klein, alleen doorverwijzing)
@@ -15,7 +16,21 @@ rasikh/             Rasikh — de Koran memoriseren (voor volwassenen)
   index.html          de app
   tekst/              de hele Koran: 114 soera's, 6236 aya, plus de verwarpunten
   audio/              recitatie per aya, op te halen met het script dat er staat
+fonts/              Amiri, het Arabische lettertype van alle apps
 ```
+
+## Het Arabische lettertype
+
+Amiri staat als bestand in `fonts/` en komt niet meer van Google. Dat is geen
+netheid maar noodzaak: de Warsh-druk gebruikt tekens die de meeste
+systeemletters niet kennen — de kleine hoge nul boven de hamzat wasl (U+06EC)
+staat in bijna elke aya — en een letter die dat teken mist laat een leeg vak
+achter. Dan vallen er gaten midden in woorden en klopt de tekst niet meer met
+wat er staat. Zonder verbinding gebeurde dat overal.
+
+Elke app zet het lettertype nu zelf met een `@font-face` bovenaan het stijlblok
+en haalt alleen de Latijnse letters nog bij Google. Zie `fonts/LEESMIJ.md` voor
+de herkomst, de licentie en hoe je het vervangt.
 
 ## Centrale opslag
 
@@ -173,10 +188,8 @@ Warsh-fragmenten uit Noer Islam. De rest haal je op met
 halve gigabyte — dat wil je waarschijnlijk niet in git.
 
 **Zonder internet.** De servicewerker bewaart de app, de tekst, de recitatie en
-het Arabische lettertype. Dat laatste is geen luxe: de Warsh-druk gebruikt tekens
-(zoals de kleine hoge nul boven de hamzat wasl) die een systeemletter niet kent,
-en dan vallen er gaten in de tekst. Onder *Instellingen* staat een knop die het
-hele doelgebied vooraf klaarzet.
+het Arabische lettertype (zie hierboven). Onder *Instellingen* staat een knop die
+het hele doelgebied vooraf klaarzet.
 
 ## De AI-functies in Sanad
 

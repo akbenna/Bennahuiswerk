@@ -5,12 +5,13 @@
      binnen, en draait de bewaarde versie door als het net wegvalt;
    - de tekst van de Koran, de recitatie en de letters: eerst de kast. Die
      veranderen niet meer zodra ze er zijn, dus opnieuw ophalen is verspild;
-   - het Arabische lettertype hoort bij die laatste groep. Zonder Amiri vallen
-     de tekens van de Warsh-druk terug op een systeemletter die ze niet kent,
-     en dan staan er gaten in de tekst. Daarom bewaren we die ook, ook al komt
-     hij van een ander adres. */
+   - het Arabische lettertype hoort bij die laatste groep, en staat sinds kort
+     als bestand in fonts/ naast de app. Zonder Amiri vallen de tekens van de
+     Warsh-druk terug op een systeemletter die ze niet kent, en dan staan er
+     gaten in de tekst. Het wordt meteen bij het installeren opgehaald. */
 const CACHE = 'rasikh-v1';
 const BESTANDEN = ['./', './index.html', './manifest.webmanifest', './tekst/index.json',
+                   '../fonts/amiri-400.woff2', '../fonts/amiri-700.woff2',
                    '../favicon.svg', '../apple-touch-icon.png'];
 const BLIJFT = /\.(mp3|woff2?)$|\/tekst\/.+\.json$/;
 const LETTERS = /^https:\/\/fonts\.(googleapis|gstatic)\.com\//;
