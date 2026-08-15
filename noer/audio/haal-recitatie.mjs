@@ -14,7 +14,7 @@
    Er wordt per aya één bestand verwacht met de gebruikelijke naamgeving
    SSSAAA.mp3 — 001001.mp3 is soera 1, aya 1.
 ============================================================================= */
-import { writeFile, mkdir, access } from 'node:fs/promises';
+import { writeFile, mkdir, access, readFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -143,6 +143,22 @@ for (const t of TEKSTEN) {
       ' regels in de app. Controleer de indeling van die soera.');
   } catch (e) { /* niets gevonden is precies goed */ }
 }
+
+/* De valkuil met al-Fatiha: kiest iemand de Medinensische telling terwijl het
+   archief de Kufische aanhoudt, dan krijgen regel 1 en regel 2 hetzelfde
+   fragment. Dat is met een vergelijking van twee bestanden hard vast te stellen,
+   dus dat doen we hier in plaats van het aan het gehoor over te laten. */
+try {
+  const a = await readFile(join(DOEL, 'h-fatiha-1.mp3'));
+  const b = await readFile(join(DOEL, 'h-fatiha-2.mp3'));
+  if (a.equals(b)) {
+    console.error('\n⚠  De eerste twee regels van al-Fatiha zijn hetzelfde fragment geworden.\n' +
+      '   Dit archief houdt de andere telling aan dan je hebt opgegeven.\n' +
+      '   Draai opnieuw ' + (arg('fatiha','kufi') === 'madani'
+        ? 'zonder --fatiha=madani:  node noer/audio/haal-recitatie.mjs --opnieuw'
+        : 'met --fatiha=madani:     node noer/audio/haal-recitatie.mjs --fatiha=madani --opnieuw') + '\n');
+  }
+} catch (e) { /* een van de twee ontbreekt; dat is elders al gemeld */ }
 
 await writeFile(join(DOEL, 'lijst.json'), JSON.stringify({
   bron: bron.naam, lezing: bron.lezing, adres: bron.basis,

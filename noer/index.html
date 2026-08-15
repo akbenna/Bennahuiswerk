@@ -693,7 +693,12 @@ const AUDIO = {
       else this.ontgrendeld=true;
     }catch(e){}
   },
-  stop(){ try{ if(this.speler){ this.speler.pause(); this.speler.currentTime=0; } }catch(e){} STEM.stop(); this._merk=null; },
+  /* Stil maken en stoppen zijn twee verschillende dingen. Binnen een reeks moet
+     het vorige fragment stil worden zonder dat de reeks zelf wordt afgebroken;
+     alleen een echte stopknop breekt de reeks af. Dat onderscheid ontbrak, en
+     daardoor speelde "alles achter elkaar" maar één regel. */
+  _stil(){ try{ if(this.speler){ this.speler.pause(); this.speler.currentTime=0; } }catch(e){} STEM.stop(); },
+  stop(){ this._merk=null; this._stil(); },
   _speelUrl(url, opruimen){
     return new Promise(res=>{
       this.speler=this.speler||new Audio();
@@ -708,7 +713,7 @@ const AUDIO = {
   /* Eén stukje laten horen. Geeft terug wanneer het afgelopen is, zodat je
      regels achter elkaar kunt afspelen. */
   async speel(id, arTekst){
-    this.stop();
+    this._stil();
     if(id){
       const eigen=await this.haal(id);
       if(eigen) return this._speelUrl(URL.createObjectURL(eigen), true);
@@ -718,7 +723,7 @@ const AUDIO = {
     return new Promise(res=>STEM.zegAr(arTekst,null,res));
   },
   async speelReeks(rijen){
-    const merk={}; this.bezig=merk; this._merk=merk;
+    const merk={}; this._merk=merk;
     for(const [id,ar] of rijen){
       if(this._merk!==merk) return;
       await this.speel(id,ar);
@@ -3692,14 +3697,21 @@ function stemStudio(){
   const teken=()=>{
     /* Tellen doen we op wat er écht nog moet: de soera's komen uit de
        recitatie, dus die horen niet in de opgave thuis. */
-    const nodig=groepen.flatMap(g=>g.items).filter(i=>!AUDIO.lijst.has(i.id) && !AUDIO.eigenMee[i.id]);
-    const metStem=groepen.flatMap(g=>g.items).filter(i=>AUDIO.stemMee[i.id]).length;
+    const alles=groepen.flatMap(g=>g.items);
+    const nodig=alles.filter(i=>!AUDIO.lijst.has(i.id) && !AUDIO.eigenMee[i.id]);
+    const metStem=alles.filter(i=>AUDIO.stemMee[i.id] && !AUDIO.eigenMee[i.id]).length;
+    const zonder=alles.filter(i=>!AUDIO.heeft(i.id)).length;
     const gedaan=nodig.filter(i=>AUDIO.eigen.has(i.id)).length;
     $('#blad').innerHTML=`
       <div class="rij tussen"><p class="meta">Eigen stem</p>
         <button class="icoon" onclick="AUDIO.stop();bladDicht();teken()" aria-label="Sluiten">✕</button></div>
       <h2 style="margin-top:6px">De teksten zelf inspreken</h2>
-      <p class="klein" style="margin-top:6px">${metStem?'Voor '+metStem+' fragmenten staat er al een voorleesstem klaar; spreek je er zelf een in, dan gaat die er meteen boven. ':''}${gedaan} van de ${nodig.length} ingesproken. Houd de telefoon een handbreedte van je mond, spreek rustig, en luister meteen terug — je hoort zelf wanneer het goed is. Het hoeft niet in één keer: een paar per dag is genoeg.</p>
+      <p class="klein" style="margin-top:6px">${
+        zonder ? 'Er zijn nog <b>'+zonder+'</b> fragmenten zonder geluid. '
+               : 'Alles heeft geluid. '}${
+        metStem ? 'Voor <b>'+metStem+'</b> daarvan staat een voorleesstem klaar — die doet het werk, maar het is een machine. Spreek je er zelf een in, dan gaat die er meteen boven en hoort je kind de uitspraak van thuis. '
+                : ''}Zelf ingesproken: <b>${gedaan}</b> van de ${nodig.length}.</p>
+      <p class="klein" style="margin-top:6px">Houd de telefoon een handbreedte van je mond, spreek rustig, en luister meteen terug — je hoort zelf wanneer het goed is. Het hoeft niet in één keer: een paar per dag is genoeg.</p>
       <div style="margin-top:10px">${balk(nodig.length?gedaan/nodig.length*100:0)}</div>
       ${groepen.map((g,gi)=>`
         ${g.klein?'<details style="margin-top:22px"><summary style="cursor:pointer"><b>'+esc(g.g)+'</b></summary><p class="klein" style="margin-top:6px">'+esc(g.klein)+'</p>'
