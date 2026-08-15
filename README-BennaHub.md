@@ -8,14 +8,14 @@ index.html          de startpagina (klein, alleen doorverwijzing)
 huiswerk/           de oefenapp voor de kinderen — ongewijzigd, alleen een link terug
   index.html          de live versie (voorgecompileerd, niet met de hand bewerken)
   index.dev.html      de bron met JSX en de oefenstof
-bidaya/index.html   Bidaya — de basis van de islam en leren bidden (7–15 jaar)
+noer/index.html     Noer Islam — de basis van de islam en leren bidden (7–15 jaar)
 sanad/index.html    Sanad — achtentwintig weken islamitische wetenschappen
 arabisch/index.html Lisan — Arabisch voor het hele gezin
 ```
 
 ## Centrale opslag
 
-Bidaya, Sanad en Lisan slaan voortgang op in `localStorage` én centraal, zodat je op elk
+Noer Islam, Sanad en Lisan slaan voortgang op in `localStorage` én centraal, zodat je op elk
 toestel verder gaat waar je gebleven was. De opslag loopt via het bestaande
 Supabase-project, tabel `bennahub_state`, met vier `SECURITY DEFINER`-functies:
 
@@ -46,34 +46,40 @@ weegt zwaarder dan het vermijden van die dubbeling.
 - **Lisan** — één gezinsaccount met daarbinnen vijf leerprofielen (Hanae, Selma,
   Amine, Wassima, Amaani). In te stellen onder *Ouder*. Bij een lege installatie
   staat er een knop klaar die de vijf profielen in één keer aanmaakt.
-- **Bidaya** — één gezinsaccount met daarbinnen een profiel per kind. In te
+- **Noer Islam** — één gezinsaccount met daarbinnen een profiel per kind. In te
   stellen onder *Ouder*; bij een lege installatie staat er een knop klaar die de
   vier kinderen in één keer aanmaakt.
 - **Huiswerk** — houdt zijn eigen bestaande inlog per kind. Ongewijzigd.
 
-## Bidaya
+## Noer Islam
 
-Tien modules met vierenvijftig lessen over de basis van de islam, en een
+Veertien modules met vierenzeventig lessen over de basis van de islam — geloof,
+de vijf zuilen, reinheid, het gebed, de Koran, de seerah, gedrag, du'a, de
+kalender, het leven hier, de soennah en de hadithwetenschap, de geschiedenis van
+na de Profeet ﷺ tot en met al-Andalus en de Maghreb, de betekenis van de soera's
+die je uit je hoofd leert, en de grote vragen voor de oudsten. Daarnaast een
 gebedsonderdeel dat het leren bidden helemaal afdekt: de wassing, de twaalf
 onderdelen van het gebed, een meebid-oefening voor elk van de vijf gebeden,
 vijftien teksten om uit het hoofd te leren, de du'a's van de dag, een overzicht
 van alle gebeden en wat te doen als het misgaat. De fiqh volgt de Malikitische
 school; waar andere scholen het anders doen staat dat erbij.
 
-Elk kind krijgt de versie die bij zijn leeftijd hoort: 7–9 jaar korte teksten,
-10–12 de gewone versie, 13–15 met verdieping erbij. De leeftijd volgt uit het
-geboortejaar in het profiel.
+Elk kind krijgt zijn eigen leerlijn, afgeleid uit het geboortejaar in het
+profiel: 7–9 jaar krijgt korte teksten en 47 lessen, 10–12 de volledige uitleg en
+69 lessen, 13 jaar en ouder alle 74 met een blok verdieping onder elke les.
+Modules die nog niet aan de beurt zijn staan zichtbaar op slot met "vanaf 10
+jaar" erbij — dat scheelt uitleg en geeft de jongsten iets om naar uit te kijken.
 
 De gebedshoudingen en de wassing zijn getekende SVG's en de geluidjes komen uit
 de Web Audio API, dus daar zijn geen bestanden voor nodig.
 
 **Het geluid bij de Arabische teksten** komt uit drie bronnen, in deze volgorde:
 een opname die thuis zelf is ingesproken, anders een meegeleverd recitatiefragment
-uit `bidaya/audio/`, en anders de stem van het toestel. Die laatste is het
+uit `noer/audio/`, en anders de stem van het toestel. Die laatste is het
 noodvangnet: een voorleesstem is geen reciteerder, en dat hoor je.
 
 De recitatie zit niet in de repository maar wordt opgehaald met
-`node bidaya/audio/haal-recitatie.mjs --basis="…"`; zie `bidaya/audio/LEESMIJ.md`
+`node noer/audio/haal-recitatie.mjs --basis="…"`; zie `noer/audio/LEESMIJ.md`
 voor de bron, de Warsh-lezing en de valkuil met de telling van al-Fatiha. Voor de
 zinnen van het gebed en de du'a's bestaat geen archief — die spreek je thuis in
 onder *Ouder → Eigen stem opnemen*. Opnames staan in de IndexedDB van het toestel
@@ -109,8 +115,8 @@ serverless functie, dan hoeft de sleutel de browser niet meer in.
 ## Onderhoud
 
 De huiswerkapp bouw je zoals altijd: bewerk `huiswerk/index.dev.html` en compileer
-naar `huiswerk/index.html` (zie `BUILD.md`). Bidaya, Sanad en Lisan zijn gewone
-HTML — openen, bewerken, klaar. In Bidaya staat de leerstof bovenaan het
+naar `huiswerk/index.html` (zie `BUILD.md`). Noer Islam, Sanad en Lisan zijn gewone
+HTML — openen, bewerken, klaar. In Noer Islam staat de leerstof bovenaan het
 scriptblok als gewone lijsten (`MODULES`, `WUDU`, `STAPPEN`, `HIFZ`, `DUAS`);
 wie de inhoud wil aanpassen hoeft de schermcode niet aan te raken. Let bij beide op de terugpijl naar `../`; die veronderstelt
 dat de app in een submap onder de hub staat.

@@ -24,7 +24,7 @@
   --line:#DAD6CE; --line-sterk:#C4BFB4;
 
   --huiswerk:#2F6B1F;  --huiswerk-bg:#E4EFDD;
-  --bidaya:#0F6F6C;    --bidaya-bg:#DCEFEE;
+  --noer:#0F6F6C;      --noer-bg:#DCEFEE;
   --sanad:#5B3B7A;     --sanad-bg:#EFE8F6;
   --lisan:#175D92;     --lisan-bg:#DEEDF9;
   --academie:#7E5300;  --academie-bg:#F8EFD4;
@@ -44,7 +44,7 @@
     --line:#33363C; --line-sterk:#474B52;
 
     --huiswerk:#8FD268;  --huiswerk-bg:#22321B;
-    --bidaya:#5FD3CD;    --bidaya-bg:#10312F;
+    --noer:#5FD3CD;      --noer-bg:#10312F;
     --sanad:#C9A6E8;     --sanad-bg:#2A2136;
     --lisan:#7CC4F5;     --lisan-bg:#152D3E;
     --academie:#E9BC55;  --academie-bg:#31280F;
@@ -70,33 +70,47 @@ a:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:4p
 header{padding:56px 0 0}
 .merk{font-family:var(--serif);font-size:2.6rem;color:var(--ink);letter-spacing:-.032em;line-height:1}
 .merk .b{font-weight:600}
+/* Een streep in de vijf kleuren van de vijf ingangen. */
+.regenboog{height:5px;border-radius:9999px;margin-top:16px;max-width:220px;
+  background:linear-gradient(90deg,var(--huiswerk) 0 20%,var(--noer) 20% 40%,var(--sanad) 40% 60%,var(--lisan) 60% 80%,var(--academie) 80% 100%)}
 .lede{margin-top:14px;font-family:var(--serif);font-size:1.14rem;line-height:1.55;color:var(--muted);max-width:46ch}
 
 main{flex:1;padding:38px 0 0}
 .kaarten{display:grid;gap:14px}
-@media (min-width:680px){ .kaarten{grid-template-columns:1fr 1fr} .kaarten a:first-child{grid-column:1 / -1} }
+@media (min-width:680px){ .kaarten{grid-template-columns:1fr 1fr;align-items:start} .kaarten a:first-child{grid-column:1 / -1} }
 
+/* De kaarten dragen nu de kleur van hun app in plaats van hem alleen aan de rand
+   te tonen. De vlakken komen uit hetzelfde palet als de tekstkleur erop, dus het
+   contrast dat eerder is nagemeten blijft staan: donkere tekst op een licht
+   vlak in de dag, lichte tekst op een donker vlak 's avonds. */
 a.app{
-  display:block;text-decoration:none;color:inherit;background:var(--surface);
-  border:1px solid var(--line);border-radius:14px;padding:22px 22px 20px 26px;
+  display:block;text-decoration:none;color:inherit;background:var(--kbg);
+  border:1px solid color-mix(in srgb, var(--k) 30%, var(--line));border-radius:16px;
+  padding:20px 22px 18px 26px;
   position:relative;overflow:hidden;box-shadow:var(--schaduw);
   transition:transform .16s ease, border-color .16s ease, box-shadow .16s ease;
 }
 /* De gekleurde rand links is het snelste onderscheid tussen de kaarten;
    vier pixel leest ook op een telefoon in de zon. */
-a.app::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--k)}
+a.app::before{content:"";position:absolute;inset:0 auto 0 0;width:5px;background:var(--k)}
+/* Een gekleurde tegel met een pictogram: het snelste onderscheid op een telefoon,
+   en het geeft de rij kaarten ritme. */
+.tegel{width:50px;height:50px;border-radius:15px;background:var(--k);display:grid;place-items:center;
+  font-size:1.55rem;line-height:1;flex:0 0 auto;box-shadow:0 2px 8px color-mix(in srgb, var(--k) 30%, transparent)}
 a.app:hover,a.app:focus-visible{transform:translateY(-2px);border-color:var(--k);box-shadow:var(--schaduw-op)}
 a.app:active{transform:translateY(0);box-shadow:var(--schaduw)}
-.kop{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.kop{display:flex;align-items:center;gap:11px;flex-wrap:wrap}
 .kop h2{font-size:1.44rem;color:var(--ink)}
 .kop .ar{font-family:var(--ar);font-size:1.14rem;color:var(--k);direction:rtl;unicode-bidi:isolate}
 .rol{
   margin-left:auto;font-family:var(--mono);font-size:.63rem;letter-spacing:.07em;text-transform:uppercase;
-  background:var(--kbg);color:var(--k);padding:5px 10px;border-radius:5px;white-space:nowrap;font-weight:500;
+  background:var(--surface);color:var(--k);padding:5px 10px;border-radius:6px;white-space:nowrap;font-weight:500;
+  border:1px solid color-mix(in srgb, var(--k) 25%, transparent);
 }
 a.app p{margin-top:9px;font-family:var(--serif);font-size:1.03rem;line-height:1.52;color:var(--ink-2);max-width:52ch}
 .detail{margin-top:14px;display:flex;gap:7px;flex-wrap:wrap}
-.detail span{font-size:.78rem;color:var(--muted);background:var(--surface-2);border:1px solid var(--line);border-radius:20px;padding:3px 11px}
+.detail span{font-size:.78rem;color:var(--ink-2);background:var(--surface);
+  border:1px solid color-mix(in srgb, var(--k) 22%, transparent);border-radius:20px;padding:3px 11px}
 .pijl{margin-top:17px;font-size:.88rem;color:var(--k);font-weight:600;letter-spacing:-.005em}
 .snel{margin-top:24px;line-height:1.9}
 .snel a{color:var(--academie);text-decoration:none;border-bottom:1px solid var(--line-sterk);padding-bottom:1px}
@@ -113,6 +127,7 @@ footer p + p{margin-top:9px}
 
 <header>
   <div class="merk"><span class="b">Benna</span>Hub</div>
+  <div class="regenboog"></div>
   <p class="lede">Vijf ingangen onder één dak. Kies waar je vandaag mee verder wilt.</p>
 </header>
 
@@ -121,6 +136,7 @@ footer p + p{margin-top:9px}
 
     <a class="app" href="huiswerk/" style="--k:var(--huiswerk);--kbg:var(--huiswerk-bg)">
       <div class="kop">
+        <span class="tegel">📚</span>
         <h2>Huiswerk</h2>
         <span class="rol">Selma · Amine · Wassima · Amaani</span>
       </div>
@@ -129,19 +145,21 @@ footer p + p{margin-top:9px}
       <div class="pijl">Openen &rarr;</div>
     </a>
 
-    <a class="app" href="bidaya/" style="--k:var(--bidaya);--kbg:var(--bidaya-bg)">
+    <a class="app" href="noer/" style="--k:var(--noer);--kbg:var(--noer-bg)">
       <div class="kop">
-        <h2>Bidaya</h2>
-        <span class="ar" lang="ar">بداية</span>
+        <span class="tegel">🌙</span>
+        <h2>Noer Islam</h2>
+        <span class="ar" lang="ar">نور</span>
         <span class="rol">Selma · Amine · Wassima · Amaani</span>
       </div>
-      <p>De basis van de islam voor zeven tot vijftien jaar, en een complete begeleiding bij het leren bidden: de wassing, elke houding, elke zin, en een oefening waarin de app met je meebidt.</p>
-      <div class="detail"><span>Tien modules</span><span>Eigen versie per leeftijd</span><span>Wassing en gebed stap voor stap</span><span>Soera's uit je hoofd</span><span>Gebedstijden en qibla</span><span>Beloning per week</span></div>
+      <p>Een brede kennismaking met de islam voor zeven tot vijftien jaar — geloof, gedrag, de Koran, de verhalen van de profeten en het leven hier. En daarnaast een complete begeleiding bij het leren bidden, met echte recitatie erbij.</p>
+      <div class="detail"><span>Vijftien modules, 87 lessen</span><span>Eigen leerlijn per leeftijd</span><span>Leren bidden stap voor stap</span><span>Gebedstijden en qibla</span></div>
       <div class="pijl">Openen &rarr;</div>
     </a>
 
     <a class="app" href="sanad/" style="--k:var(--sanad);--kbg:var(--sanad-bg)">
       <div class="kop">
+        <span class="tegel">📜</span>
         <h2>Sanad</h2>
         <span class="ar" lang="ar">سند</span>
         <span class="rol">Abdelkader</span>
@@ -153,6 +171,7 @@ footer p + p{margin-top:9px}
 
     <a class="app" href="arabisch/" style="--k:var(--lisan);--kbg:var(--lisan-bg)">
       <div class="kop">
+        <span class="tegel">🗣️</span>
         <h2>Lisan</h2>
         <span class="ar" lang="ar">لسان</span>
         <span class="rol">Hanae en de kinderen</span>
@@ -164,6 +183,7 @@ footer p + p{margin-top:9px}
 
     <a class="app" href="huiswerk/cursussen/kompas.html" style="--k:var(--academie);--kbg:var(--academie-bg)">
       <div class="kop">
+        <span class="tegel">🎓</span>
         <h2>Academie</h2>
         <span class="rol">Voor de groten</span>
       </div>

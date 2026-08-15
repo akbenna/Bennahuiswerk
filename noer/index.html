@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Bidaya — de basis van de islam en leren bidden</title>
+<title>Noer Islam — de basis van de islam en leren bidden</title>
 <meta name="theme-color" content="#F6F4F0" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#141518" media="(prefers-color-scheme: dark)">
 <meta name="description" content="De basis van de islam voor kinderen van 7 tot 15, met een volledige begeleiding bij het leren bidden.">
@@ -22,7 +22,7 @@
   --ink:#0D0D0D; --ink-2:#24282B; --muted:#5F5C55;
   --line:#DAD6CE; --line-2:#C4BFB4;
 
-  --k:#0F6F6C; --k-bg:#DCEFEE;         /* Bidaya-teal */
+  --k:#0F6F6C; --k-bg:#DCEFEE;         /* de kleur van Noer */
   --goed:#2F6B1F; --goed-bg:#E4EFDD;
   --fout:#9F2F2D; --fout-bg:#FBE9E8;
   --let:#7E5300; --let-bg:#F8EFD4;
@@ -95,12 +95,27 @@ header.top{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--c
 .bol{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:.72rem;font-weight:600;color:#fff;background:var(--k)}
 @media (prefers-color-scheme:dark){ .bol{color:#0B1F1E} }
 
+/* ---------- een kleur per onderdeel ----------
+   De app was overal teal. Voor een kind is kleur het snelste onderscheid: het
+   leerpad is groenblauw, leren bidden paars, de tijden blauw, oefenen groen en
+   de beloning oker. Het zijn dezelfde tokens die elders al gebruikt worden, dus
+   het contrast is in licht en donker al nagemeten. */
+body{--vk:var(--k)}
+body[data-view="gebed"]{--vk:var(--paars)}
+body[data-view="tijden"]{--vk:var(--info)}
+body[data-view="oefenen"]{--vk:var(--goed)}
+body[data-view="beloning"]{--vk:var(--let)}
+body[data-view="ouder"]{--vk:var(--muted)}
+.bar>i{background:var(--vk)}
+.ring{background:conic-gradient(var(--vk) calc(var(--p)*1%), var(--surface-2) 0)}
+section.view h1{border-left:4px solid var(--vk);padding-left:13px;margin-left:-17px}
+
 nav.tabs{position:sticky;top:48px;z-index:39;background:var(--canvas);border-bottom:1px solid var(--line)}
 .tabs-in{max-width:900px;margin:0 auto;padding:0 12px;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
 .tabs-in::-webkit-scrollbar{display:none}
 .tab{appearance:none;border:0;background:none;padding:12px 11px;cursor:pointer;white-space:nowrap;
   font-family:var(--sans);font-size:.87rem;color:var(--muted);border-bottom:2px solid transparent;transition:color .18s}
-.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--k)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--vk)}
 .tab .dot{display:inline-block;min-width:18px;padding:0 5px;margin-left:6px;border-radius:9999px;
   background:var(--k-bg);color:var(--k);font-family:var(--mono);font-size:.63rem;line-height:18px;text-align:center}
 
@@ -208,14 +223,21 @@ table.tbl tr:last-child td{border-bottom:0}
 .verborgen.zicht{background:none;color:inherit}
 
 /* ---------- stickers, insignes ---------- */
-.stickers{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:7px}
+/* Zeven kolommen: één week per rij. Een willekeurig aflopend raster zegt een
+   kind niets; een week wel — je ziet in één oogopslag welke dagen je miste. */
+.stickers{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}
+.stickers .kop{text-align:center;font-family:var(--mono);font-size:.62rem;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted);padding-bottom:2px}
 .sticker{aspect-ratio:1;border-radius:9px;border:1px dashed var(--line-2);display:grid;place-items:center;
   font-size:1.05rem;color:var(--muted);background:var(--surface-2)}
 .sticker.vol{border-style:solid;border-color:var(--k);background:var(--k-bg)}
-.insignes{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:11px}
-.insigne{border:1px solid var(--line);border-radius:11px;padding:13px 9px;text-align:center;background:var(--surface);opacity:.42}
+.sticker.nu{box-shadow:0 0 0 2px var(--k)}
+.sticker.komt{opacity:.35;border-style:dotted}
+.insignes{display:grid;grid-template-columns:repeat(auto-fill,minmax(126px,1fr));gap:11px}
+.insigne{border:1px solid var(--line);border-radius:11px;padding:13px 10px;text-align:center;background:var(--surface);opacity:.6}
 .insigne.aan{opacity:1;border-color:var(--k);background:var(--k-bg)}
-.insigne .ico{font-size:1.6rem;line-height:1.3}
+.insigne .ico{font-size:1.7rem;line-height:1.3;filter:grayscale(1)}
+.insigne.aan .ico{filter:none}
 .insigne .nm{font-size:.78rem;line-height:1.32;color:var(--ink);margin-top:3px}
 
 .ring{--p:0;width:70px;height:70px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;
@@ -225,6 +247,47 @@ table.tbl tr:last-child td{border-bottom:0}
 
 .cijfer{font-family:var(--serif);font-size:2.1rem;color:var(--ink);line-height:1.1;letter-spacing:-.03em}
 .kpi{display:flex;flex-direction:column;gap:2px}
+
+/* ---------- kleur per module ----------
+   Een kind van acht navigeert op kleur en pictogram, niet op een titel. Elke
+   module heeft daarom een eigen kleur uit het vaste palet — dat zijn dezelfde
+   waarden die elders in de app gebruikt worden, dus het contrast klopt in licht
+   én donker zonder dat er iets nagemeten hoeft te worden. */
+.mod{border-left:4px solid var(--mk)}
+.mod .bar>i{background:var(--mk)}
+.ico-vak{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+  font-size:1.55rem;background:var(--mkbg);flex:0 0 auto;line-height:1}
+
+/* ---------- maatvoering per leeftijd ----------
+   Dezelfde app, drie maten. De jongsten krijgen grotere letters, rondere
+   vlakken, meer lucht en grotere knoppen; naarmate het spoor hoger wordt gaat
+   het terug naar de rustige, dichte opmaak van de rest van de hub. */
+body[data-spoor="1"]{font-size:17.5px}
+body[data-spoor="1"] .card{border-radius:18px;padding:22px 24px}
+body[data-spoor="1"] .ico-vak{width:58px;height:58px;font-size:2rem;border-radius:18px}
+body[data-spoor="1"] h1{font-size:2.25rem}
+body[data-spoor="1"] h3{font-size:1.24rem}
+body[data-spoor="1"] .nl{font-size:1.14rem;line-height:1.74}
+body[data-spoor="1"] .nl p{margin-bottom:1.15em}
+body[data-spoor="1"] button.btn{padding:13px 22px;font-size:1rem;border-radius:13px}
+body[data-spoor="1"] button.btn.sm{padding:9px 15px;font-size:.9rem}
+body[data-spoor="1"] .tab{font-size:.95rem;padding:14px 12px}
+body[data-spoor="1"] .vink{width:26px;height:26px}
+body[data-spoor="1"] .woord{font-size:1.5rem;padding:8px 16px}
+body[data-spoor="1"] .sticker{font-size:1.35rem;border-radius:12px}
+body[data-spoor="1"] .insigne .ico{font-size:2.1rem}
+body[data-spoor="1"] .insigne .nm{font-size:.85rem}
+body[data-spoor="1"] .cijfer{font-size:2.4rem}
+body[data-spoor="1"] .tijdrij .nm{font-size:1.14rem}
+body[data-spoor="1"] ul.geen li{padding:12px 0}
+body[data-spoor="2"]{font-size:16.5px}
+body[data-spoor="2"] .card{border-radius:14px}
+body[data-spoor="2"] .nl{font-size:1.06rem}
+
+/* ---------- praten over een verhaal ---------- */
+.praat{margin-top:18px;border:1px solid var(--line);border-left:4px solid var(--let);
+  background:var(--let-bg);border-radius:10px;padding:15px 17px}
+.praat p{font-family:var(--serif);font-size:1.06rem;line-height:1.55;color:var(--ink)}
 
 /* ---------- lijstjes ---------- */
 ul.net{margin:0;padding-left:1.15em}
@@ -253,7 +316,9 @@ ul.geen li:last-child{border-bottom:0}
 .held .naam{font-family:var(--serif);font-size:3.3rem;line-height:1;letter-spacing:-.035em;color:var(--ink);font-weight:500}
 .held .naam em{font-style:normal;font-family:var(--ar);font-size:2.15rem;color:var(--k);margin-left:15px;vertical-align:.06em}
 .held .zin{margin-top:13px;font-family:var(--serif);font-size:1.16rem;line-height:1.5;color:var(--muted);max-width:44ch}
-.held .streep{margin-top:20px;height:3px;width:66px;background:var(--k);border-radius:2px;opacity:.9}
+.held .ondertitel{font-family:var(--mono);font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--k);margin-top:6px}
+.held .streep{margin-top:16px;height:3px;width:66px;background:var(--k);border-radius:2px;opacity:.9}
 @media(max-width:560px){ .held .naam{font-size:2.5rem} .held .naam em{font-size:1.66rem} .held .zin{font-size:1.06rem} }
 
 .voortgang-strip{display:flex;gap:4px;margin-top:11px}
@@ -284,7 +349,7 @@ footer p+p{margin-top:8px}
 <header class="top">
   <div class="top-in">
     <a class="terug" href="../" title="Terug naar BennaHub" aria-label="Terug naar BennaHub">&larr;</a>
-    <span class="brand">Bidaya<em lang="ar">بداية</em></span>
+    <span class="brand">Noer Islam<em lang="ar">نور</em></span>
     <div class="wie">
       <button id="knopWie" type="button"><span class="bol" id="wieBol">?</span><span id="wieNaam">Kies wie je bent</span></button>
     </div>
@@ -348,7 +413,7 @@ footer p+p{margin-top:8px}
   </section>
 
   <footer>
-    <p>Bidaya bewaart je voortgang op dit toestel en — als er een gezinsaccount is ingesteld — ook centraal, zodat je op elke telefoon of tablet verder gaat waar je gebleven was. Zonder internet werkt alles gewoon door.</p>
+    <p>Noer Islam bewaart je voortgang op dit toestel en — als er een gezinsaccount is ingesteld — ook centraal, zodat je op elke telefoon of tablet verder gaat waar je gebleven was. Zonder internet werkt alles gewoon door.</p>
     <p>De fiqh volgt de Malikitische school. Waar andere scholen het anders doen, staat dat erbij. De gebedstijden zijn berekend en bedoeld ter oriëntatie; houd de kalender van je eigen moskee aan.</p>
     <p class="meta" style="margin-top:14px">Gebouwd voor het gezin Benna</p>
   </footer>
@@ -362,7 +427,7 @@ footer p+p{margin-top:8px}
 
 <script>
 /* =============================================================================
-   Bidaya — de basis van de islam, en leren bidden.
+   Noer Islam — de basis van de islam, en leren bidden.
    Eén bestand, geen bouwstap, werkt zonder internet. De opzet volgt de andere
    apps van de hub: gegevens bovenaan als gewone lijsten, daaronder de scherm-
    code. Wie de leerstof wil aanpassen hoeft alleen de lijsten te bewerken.
@@ -575,7 +640,7 @@ const kaal = t => String(t||'').replace(/[\u064B-\u0652\u0670\u06D6-\u06ED]/g,''
    zinnen in het gebed, en `d:<nummer>` voor de du'a's van de dag.
 ============================================================================= */
 const AUDIO = {
-  db:null, lijst:new Set(), eigen:new Set(), speler:null, bezig:null,
+  db:null, lijst:new Set(), eigenMee:{}, stemMee:{}, eigen:new Set(), speler:null,
 
   async open(){
     if(this.db) return this.db;
@@ -604,35 +669,79 @@ const AUDIO = {
        Ontbreekt dat, dan is de map leeg en valt alles terug op de stem. */
     try{
       const r=await fetch('audio/quran/lijst.json',{cache:'no-cache'});
-      if(r.ok){ const j=await r.json(); this.lijst=new Set(j.fragmenten||[]);
-        if(this.lijst.size) setTimeout(()=>this.voorraad(), 8000); }
+      if(r.ok){ const j=await r.json(); this.lijst=new Set(j.fragmenten||[]); }
     }catch(e){}
+    /* En de opnames die thuis gemaakt zijn en meegeleverd worden — die staan
+       in de app zelf, dus op elk toestel, zonder dat er iets gesynchroniseerd
+       hoeft te worden. */
+    try{
+      const r=await fetch('audio/eigen/lijst.json',{cache:'no-cache'});
+      if(r.ok){ const j=await r.json(); this.eigenMee=j.bestanden||{}; }
+    }catch(e){}
+    /* En de fragmenten die met een voorleesstem zijn gemaakt: beter dan de stem
+       in het toestel, minder dan een mens. Vandaar dat ze onderaan staan. */
+    try{
+      const r=await fetch('audio/stem/lijst.json',{cache:'no-cache'});
+      if(r.ok){ const j=await r.json(); this.stemMee=j.bestanden||{}; }
+    }catch(e){}
+    if(this.lijst.size || Object.keys(this.eigenMee).length || Object.keys(this.stemMee).length)
+      setTimeout(()=>this.voorraad(), 8000);
   },
-  bestand(id){ return this.lijst.has(id) ? 'audio/quran/'+id.slice(2).replace(':','-')+'.mp3' : null; },
+  /* Een meegeleverde opname van thuis gaat vóór op de recitatie: bij de zinnen
+     van het gebed is de stem van je eigen vader nu eenmaal de bedoeling. */
+  bestand(id){
+    if(this.eigenMee[id]) return 'audio/eigen/'+this.eigenMee[id];
+    if(this.lijst.has(id)) return 'audio/quran/'+id.slice(2).replace(':','-')+'.mp3';
+    if(this.stemMee[id])  return 'audio/stem/'+this.stemMee[id];
+    return null;
+  },
   /* Rustig op de achtergrond alle fragmenten één keer ophalen, zodat ze in de
      kast staan en het ook zonder internet werkt. Eén tegelijk: geen haast. */
   async voorraad(){
-    for(const id of this.lijst){
-      try{ await fetch(this.bestand(id)); }catch(e){ return; }
+    for(const id of [...Object.keys(this.eigenMee), ...this.lijst, ...Object.keys(this.stemMee)]){
+      const f=this.bestand(id); if(!f) continue;
+      try{ await fetch(f); }catch(e){ return; }
       await new Promise(r=>setTimeout(r,400));
     }
   },
-  heeft(id){ return this.eigen.has(id) || this.lijst.has(id); },
+  heeft(id){ return this.eigen.has(id) || !!this.eigenMee[id] || this.lijst.has(id) || !!this.stemMee[id]; },
 
-  stop(){ try{ if(this.speler){ this.speler.pause(); this.speler.currentTime=0; } }catch(e){} STEM.stop(); this.bezig=null; },
+  /* Een telefoon speelt geen geluid af dat niet uit een aanraking voortkomt.
+     Daarom maken we bij de eerste tik op het scherm één speler wakker met een
+     stukje stilte; daarna mag diezelfde speler ook uit zichzelf beginnen. Zonder
+     dit blijft het stil zodra er iets tussen zit — een opslagactie bijvoorbeeld. */
+  ontgrendeld:false,
+  ontgrendel(){
+    if(this.ontgrendeld) return;
+    try{
+      this.speler = this.speler || new Audio();
+      this.speler.src='data:audio/wav;base64,UklGRiUAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQEAAACA';
+      const p=this.speler.play();
+      if(p && p.then) p.then(()=>{ this.speler.pause(); this.ontgrendeld=true; }).catch(()=>{});
+      else this.ontgrendeld=true;
+    }catch(e){}
+  },
+  /* Stil maken en stoppen zijn twee verschillende dingen. Binnen een reeks moet
+     het vorige fragment stil worden zonder dat de reeks zelf wordt afgebroken;
+     alleen een echte stopknop breekt de reeks af. Dat onderscheid ontbrak, en
+     daardoor speelde "alles achter elkaar" maar één regel. */
+  _stil(){ try{ if(this.speler){ this.speler.pause(); this.speler.currentTime=0; } }catch(e){} STEM.stop(); },
+  stop(){ this._merk=null; this._stil(); },
   _speelUrl(url, opruimen){
     return new Promise(res=>{
       this.speler=this.speler||new Audio();
       const a=this.speler; a.src=url; a.playbackRate=Math.max(.5,Math.min(1.5,S.instel.arTempo/0.85));
-      const af=()=>{ a.onended=null; a.onerror=null; if(opruimen) URL.revokeObjectURL(url); res(); };
-      a.onended=af; a.onerror=af;
-      a.play().catch(af);
+      const af=()=>{ a.onended=null; a.onerror=null; if(opruimen) setTimeout(()=>URL.revokeObjectURL(url),1000); res(); };
+      a.onended=af;
+      a.onerror=()=>{ kort('Dit fragment kan op dit toestel niet worden afgespeeld.'); af(); };
+      const p=a.play();
+      if(p && p.catch) p.catch(e=>{ kort('Tik nog een keer op de knop — de telefoon wil geluid pas na een aanraking.'); af(); });
     });
   },
   /* Eén stukje laten horen. Geeft terug wanneer het afgelopen is, zodat je
      regels achter elkaar kunt afspelen. */
   async speel(id, arTekst){
-    this.stop();
+    this._stil();
     if(id){
       const eigen=await this.haal(id);
       if(eigen) return this._speelUrl(URL.createObjectURL(eigen), true);
@@ -642,7 +751,7 @@ const AUDIO = {
     return new Promise(res=>STEM.zegAr(arTekst,null,res));
   },
   async speelReeks(rijen){
-    const merk={}; this.bezig=merk; this._merk=merk;
+    const merk={}; this._merk=merk;
     for(const [id,ar] of rijen){
       if(this._merk!==merk) return;
       await this.speel(id,ar);
@@ -656,24 +765,35 @@ const AUDIO = {
 /* Jezelf horen is de snelste manier om je uitspraak te verbeteren. We nemen op
    in het geheugen en spelen terug; er wordt niets bewaard of verstuurd. */
 const OPNAME = {
-  rec:null, brokken:[], url:null, bezig:false,
+  rec:null, brokken:[], bezig:false, soort:'',
   kan(){ return !!(navigator.mediaDevices && window.MediaRecorder); },
+  /* Elk toestel neemt in zijn eigen formaat op: Safari levert mp4, Chrome en
+     Firefox leveren webm. Welk formaat het is, moet je van de recorder zélf
+     overnemen — noem je het verkeerd, dan slaat het bestand wel op maar weigert
+     de speler het af te spelen. Dat is precies wat er misging. */
   async start(){
     const stream = await navigator.mediaDevices.getUserMedia({audio:true});
-    this.brokken=[]; this.rec=new MediaRecorder(stream);
-    this.rec.ondataavailable=e=>{ if(e.data.size) this.brokken.push(e.data); };
+    this.brokken=[];
+    let opties={};
+    for(const t of ['audio/mp4','audio/webm;codecs=opus','audio/webm']){
+      try{ if(window.MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)){ opties={mimeType:t}; break; } }catch(e){}
+    }
+    this.rec = new MediaRecorder(stream, opties);
+    this.soort = this.rec.mimeType || opties.mimeType || '';
+    this.rec.ondataavailable=e=>{ if(e.data && e.data.size) this.brokken.push(e.data); };
     this.rec.onstop=()=>{ stream.getTracks().forEach(t=>t.stop()); };
     this.rec.start(); this.bezig=true;
   },
+  /* Geeft het opgenomen fragment terug, met het juiste soortlabel erop. */
   stop(){
     return new Promise(res=>{
-      if(!this.rec){ res(null); return; }
+      if(!this.rec){ this.bezig=false; res(null); return; }
       this.rec.addEventListener('stop',()=>{
-        if(this.url) URL.revokeObjectURL(this.url);
-        this.url = URL.createObjectURL(new Blob(this.brokken,{type:'audio/webm'}));
-        this.bezig=false; res(this.url);
+        this.bezig=false;
+        const soort=(this.soort||'audio/webm').split(';')[0];
+        res(this.brokken.length ? new Blob(this.brokken,{type:soort}) : null);
       },{once:true});
-      this.rec.stop();
+      try{ this.rec.stop(); }catch(e){ this.bezig=false; res(null); }
     });
   }
 };
@@ -777,6 +897,7 @@ const MODULES = [
       `Allah ziet en hoort alles, ook wat niemand anders merkt. Dat is niet bedoeld om je bang te maken maar om je gerust te stellen: je bent nooit alleen, en niets goeds dat je doet gaat verloren.`],
   jr:`Allah heeft alles gemaakt: jou, de zee, de sterren. Hij is Eén, en er is niemand zoals Hij. Hij ziet en hoort je altijd, ook als je heel zachtjes praat.`,
   dp:`Geleerden vatten tawhid samen in drie kanten: Hij alleen is de Schepper, Hij alleen verdient aanbidding, en Zijn namen en eigenschappen zijn van Hem alleen. Vers 11 van soera ash-Shura zegt het in vier woorden: <span class="ar">لَيْسَ كَمِثْلِهِ شَيْءٌ</span> — "niets is als Hij". Dat vers is de rem op elke poging om je Allah voor te stellen als iets uit de schepping.`,
+  zie:['l1503'],
   q:[{v:'Wat betekent tawhid?',o:['Dat Allah Eén is en alleen Hij aanbeden wordt','Dat er veel goden zijn','Dat je alleen op vrijdag bidt'],a:0,u:'Tawhid is het hart van het geloof: Eén Allah, zonder gelijke.'},
      {v:'Wie heeft Allah gemaakt?',o:['De engelen','Niemand — Hij is er altijd geweest','De profeten'],a:1,u:'Allah is niet geschapen en heeft geen begin.'},
      {v:'Wat is waar over Allah?',o:['Hij lijkt op een heel sterke mens','Niets lijkt op Hem','Hij woont in de lucht'],a:1,u:'"Niets is als Hij" — soera ash-Shura 11.'}],
@@ -798,6 +919,7 @@ const MODULES = [
       `Je kunt ze niet zien, en toch zijn ze dichtbij. <b>Jibril</b> bracht de openbaring naar de profeten. <b>Mika'il</b> is belast met de regen en het levensonderhoud. <b>Israfil</b> zal op de bazuin blazen. Twee engelen schrijven op wat je doet: de rechter het goede, de linker het verkeerde.`,
       `Dat opschrijven is eerlijk werk, geen valstrik. Een goede daad wordt meteen genoteerd; een verkeerde daad krijgt eerst tijd — als je spijt hebt en het niet doet, wordt hij niet eens opgeschreven.`],
   jr:`Engelen zijn gemaakt van licht. Je ziet ze niet, maar ze zijn er. Jibril bracht Allahs woorden naar de profeten. Twee engelen schrijven op wat jij doet.`,
+  dp:`De engelen kennen geen keuze en de dieren geen opdracht; de mens en de jinn staan daartussen — met een opdracht én de vrijheid om die te weigeren. Daarom kan een mens door zijn keuzes hoger komen dan een engel, en ook veel lager.`,
   q:[{v:'Waarvan zijn de engelen geschapen?',o:['Van klei','Van licht','Van vuur'],a:1,u:'Engelen zijn van licht; de jinn van vuur; de mens van klei.'},
      {v:'Welke engel bracht de openbaring?',o:['Jibril','Israfil','Mika\'il'],a:0,u:'Jibril (Gabriël) bracht de woorden van Allah naar de profeten.'},
      {v:'Kunnen engelen ongehoorzaam zijn?',o:['Ja, soms','Nee, ze doen wat Allah opdraagt','Alleen \'s nachts'],a:1,u:'Engelen hebben die keuze niet; mensen en jinn wel.'}]},
@@ -816,6 +938,8 @@ const MODULES = [
       `Vijf van hen worden de <b>ulu al-'azm</b> genoemd, de standvastigen: Nuh, Ibrahim, Musa, 'Isa en Mohammed ﷺ. Ze hadden allemaal dezelfde boodschap: aanbid Allah alleen.`,
       `Mohammed ﷺ is de laatste. Na hem komt er geen profeet meer. Wat wij nog nodig hebben, staat in de Koran en in wat hij ons heeft nagelaten.`],
   jr:`Allah stuurde profeten naar de mensen: Nuh, Ibrahim, Musa, 'Isa en als laatste Mohammed ﷺ. Ze zeiden allemaal hetzelfde: aanbid Allah alleen.`,
+  dp:`Profeten worden in de leer beschermd tegen het overbrengen van onwaarheid en tegen grote zonden: die eigenschap heet <i>ʿisma</i>. Dat is geen verheerlijking — de Koran vertelt zelf hoe zij twijfelden, huilden en vergissingen maakten in gewone dingen. Wat beschermd is, is de boodschap.`,
+  zie:['l1502','l1503','l1506'],
   q:[{v:'Wie is de laatste profeet?',o:['\'Isa','Mohammed ﷺ','Ibrahim'],a:1,u:'Mohammed ﷺ is het zegel van de profeten.'},
      {v:'Waren profeten mensen of engelen?',o:['Mensen','Engelen','Half en half'],a:0,u:'Het waren mensen, uitgekozen door Allah.'},
      {v:'Wat was de boodschap van alle profeten?',o:['Aanbid Allah alleen','Word rijk','Bouw een moskee'],a:0,u:'Van Adam tot Mohammed ﷺ was de kern dezelfde.'}]},
@@ -845,6 +969,7 @@ const MODULES = [
   tk:[`De Profeet ﷺ zei dat de islam op vijf dingen gebouwd is: <b>de getuigenis</b>, <b>het gebed</b>, <b>de zakat</b>, <b>het vasten in ramadan</b> en <b>de bedevaart</b> voor wie het kan.`,
       `Zie het als een huis. De getuigenis is de grond waarop het staat. Het gebed zijn de muren, elke dag opnieuw. De zakat is de deur die open staat naar anderen. Het vasten is de rust in huis. De bedevaart is de reis die je één keer maakt als je kunt.`],
   jr:`De islam heeft vijf zuilen: geloven en dat uitspreken, bidden, geven aan de armen, vasten in ramadan, en één keer naar Mekka als je kunt.`,
+  dp:`De vijf zuilen zijn wat je doet; de zes zuilen van iman zijn wat je gelooft; en <i>ihsan</i> is hoe je het doet — "dat je Allah aanbidt alsof je Hem ziet". Die drie samen komen uit één hadith, die van Jibril, en de hele traditie is er in zekere zin een uitwerking van.`,
   q:[{v:'Hoeveel zuilen heeft de islam?',o:['Drie','Vijf','Zes'],a:1,u:'Vijf: shahada, salah, zakat, sawm, hajj.'},
      {v:'Welke zuil doe je vijf keer per dag?',o:['De zakat','Het gebed','De hajj'],a:1,u:'Het gebed is de enige die elke dag terugkomt, vijf keer.'},
      {v:'Voor wie is de hajj verplicht?',o:['Voor iedereen, altijd','Voor wie het lichamelijk en financieel kan','Alleen voor mannen'],a:1,u:'"Voor wie de weg ernaartoe kan vinden" — soera Al ‘Imran 97.'}]},
@@ -854,6 +979,7 @@ const MODULES = [
       `Het is de kortste zin van de islam en tegelijk de zwaarste. Het eerste deel zegt: niets anders verdient mijn aanbidding — geen mens, geen geld, geen beroemdheid, geen angst. Het tweede deel zegt: en ik volg de weg zoals de Profeet ﷺ hem heeft voorgedaan.`,
       `Je zegt hem niet één keer en dan nooit meer. Hij zit in elke adhan, in elk gebed, en veel moslims zeggen hem als laatste woorden van hun leven.`],
   jr:`De shahada is: "er is geen god dan Allah, en Mohammed is Zijn boodschapper". Wie dat met zijn hart gelooft en uitspreekt, is moslim.`,
+  dp:`De shahada bestaat uit een ontkenning en een bevestiging: eerst <i>la ilaha</i> (er is geen god), dan <i>illa llah</i> (behalve Allah). Die volgorde is niet toevallig — je ruimt eerst op wat de plaats van Allah inneemt (geld, aanzien, angst voor mensen) en daarna zet je Hem daar neer.`,
   q:[{v:'Wat betekent "la ilaha illa-llah"?',o:['Er is geen god dan Allah','Allah is groot','Allah vergeeft'],a:0,u:'Het eerste deel van de shahada.'},
      {v:'Waar komt de shahada nog meer in voor?',o:['In de adhan en in het gebed','Alleen op vrijdag','Nergens anders'],a:0,u:'In de adhan, de iqama en in de tashahhud van elk gebed.'},
      {v:'Wat zegt het tweede deel van de shahada?',o:['Dat je moet vasten','Dat Mohammed ﷺ de boodschapper van Allah is','Dat je naar Mekka moet'],a:1,u:'Geloven in Allah én de weg volgen die Zijn boodschapper wees.'}],
@@ -863,6 +989,8 @@ const MODULES = [
   tk:[`Het gebed is de tweede zuil en de eerste waar je op de laatste dag naar gevraagd wordt. Vijf keer per dag, op vaste tijden, zet je alles even opzij en sta je voor Allah.`,
       `Kinderen leren het stap voor stap. De Profeet ﷺ zei dat je kinderen op hun zevende het gebed leert. Vanaf de puberteit is het een plicht — en dan ben je blij dat je het al kunt.`,
       `In deze app zit een compleet onderdeel om het te leren: de wassing, elke houding, elke zin, en een oefening waarin je een heel gebed meebidt. Ga naar <b>Leren bidden</b>.`],
+  jr:`Bidden doe je vijf keer per dag. Je leert het vanaf je zevende, zodat je het goed kunt als je groter bent. In het onderdeel Leren bidden staat alles stap voor stap.`,
+  dp:`In de fiqh geldt het gebed als de scheidslijn: er is geen andere daad waarvan het weglaten zo streng wordt besproken. Tegelijk kent diezelfde fiqh veel ruimte — zittend bidden als je niet kunt staan, met gebaren als je niet kunt zitten, en inhalen wat je door slaap of vergeten hebt gemist. Streng in het belang, ruim in de uitvoering.`,
   q:[{v:'Hoe vaak per dag is het gebed verplicht?',o:['Drie keer','Vijf keer','Zeven keer'],a:1,u:'Fajr, Dhuhr, Asr, Maghrib en Isha.'},
      {v:'Vanaf welke leeftijd leer je het gebed?',o:['Vanaf zeven jaar','Vanaf achttien jaar','Vanaf dertig jaar'],a:0,u:'Leren vanaf zeven; verplicht vanaf de puberteit.'},
      {v:'Waar wordt op de laatste dag als eerste naar gevraagd?',o:['Het gebed','Je geld','Je huis'],a:0,u:'Zo staat het in de overlevering.'}]},
@@ -882,6 +1010,7 @@ const MODULES = [
       `Vasten is meer dan niet eten. Je mond vast ook: geen roddel, geen ruzie, geen liegen. "Wie het valse spreken niet laat," zei de Profeet ﷺ, "diens honger heeft Allah niet nodig."`,
       `Kinderen hoeven nog niet te vasten. Veel kinderen oefenen met een halve dag of met een paar dagen, en dat is precies goed: je went eraan zonder dat het te zwaar wordt. Wie ziek is of op reis, haalt de dagen later in.`],
   jr:`In de maand ramadan eten en drinken moslims overdag niet. Kinderen hoeven dat nog niet, maar je mag oefenen — bijvoorbeeld een halve dag. Je let ook op je woorden: niet schelden of liegen.`,
+  dp:`Vasten bestaat in bijna elke godsdienst; de Koran zegt dat ook met zoveel woorden: "zoals het was voorgeschreven aan wie voor jullie waren". Wat de ramadan bijzonder maakt is dat een hele gemeenschap het tegelijk doet — het is een maand van gelijktijdigheid, en dat is de helft van de kracht ervan.`,
   q:[{v:'Wanneer eindigt het vasten op een dag?',o:['Bij zonsondergang','Om twaalf uur \'s middags','Als je honger hebt'],a:0,u:'Bij maghrib, als de zon onder is.'},
      {v:'Moeten kinderen vasten?',o:['Ja, vanaf hun vijfde','Nee, maar oefenen mag','Nooit'],a:1,u:'Verplicht vanaf de puberteit; oefenen is aan te raden.'},
      {v:'Wat hoort er nog meer bij het vasten?',o:['Meer tv kijken','Niet liegen, roddelen of ruziën','Extra hard rennen'],a:1,u:'Ook je tong en je gedrag vasten mee.'}]},
@@ -890,6 +1019,7 @@ const MODULES = [
   tk:[`Eén keer in je leven, als je gezond genoeg bent en het kunt betalen, ga je naar Mekka. Iedereen draagt dezelfde eenvoudige kleding, en dan is er geen verschil meer tussen rijk en arm, tussen de ene taal en de andere.`,
       `Je loopt zeven keer om de <b>Ka'ba</b> — het huis dat Ibrahim en zijn zoon Isma'il bouwden. Je loopt tussen Safa en Marwa, zoals Hajar deed toen ze water zocht voor haar baby. Je staat op de vlakte van <b>'Arafat</b>, en dat staan is het hart van de hajj.`,
       `Wie buiten het hajj-seizoen naar Mekka gaat voor een kleiner bezoek, doet de <b>'umra</b>.`],
+  dp:`De hajj is de enige aanbidding waarin je precies de handelingen herhaalt van mensen die vierduizend jaar geleden leefden — Hajar die tussen twee heuvels heen en weer rende, Ibrahim die zijn zoon niet hoefde te offeren. Je stapt letterlijk in hun voetstappen.`,
   q:[{v:'Hoe vaak in je leven is de hajj verplicht?',o:['Elk jaar','Eén keer, als je kunt','Nooit'],a:1,u:'Eén keer, voor wie het lichamelijk en financieel kan.'},
      {v:'Wie bouwde de Ka\'ba volgens de Koran?',o:['Ibrahim en Isma\'il','Musa','Nuh'],a:0,u:'Soera al-Baqara 127.'},
      {v:'Wat is de \'umra?',o:['Een kleiner bezoek aan Mekka, buiten de hajj','Een gebed','Het vasten'],a:0,u:'De \'umra kan het hele jaar door.'}]}
@@ -902,6 +1032,7 @@ const MODULES = [
       `Dat is geen overdreven netheid. Het is een manier om je klaar te maken: je wast je handen, je gezicht, je voeten, en ondertussen kom je van buiten naar binnen tot rust.`,
       `Er zijn twee soorten onreinheid. <b>Najasa</b> is echt vuil dat je van je lichaam, kleren of plek wast — met water, tot het weg is. <b>Hadath</b> is de toestand waarin je terechtkomt na bijvoorbeeld naar het toilet gaan; die haal je weg met de wassing.`],
   jr:`Voordat je bidt, maak je je schoon: jezelf, je kleren en de plek waar je bidt. De Profeet ﷺ zei: reinheid is de helft van het geloof.`,
+  dp:`De fiqh onderscheidt <i>hadath</i> (een toestand die je met wassen opheft) van <i>najasa</i> (echt vuil dat je verwijdert). Dat verschil verklaart waarom je na diep slapen wel de wassing moet doen terwijl je nergens vies van bent geworden: het is geen hygiëne, het is een toestand waarin je het gebed binnengaat.`,
   q:[{v:'Wat moet schoon zijn voor het gebed?',o:['Alleen je handen','Jijzelf, je kleren en de plek','Alleen de gebedsmat'],a:1,u:'Alle drie.'},
      {v:'Waarmee haal je najasa weg?',o:['Met water, tot het vuil weg is','Met een doekje eroverheen','Dat hoeft niet'],a:0,u:'Najasa wordt weggewassen; water is het middel.'},
      {v:'Wat haalt hadath weg?',o:['De wassing (wudu of ghusl)','Nieuwe kleren','Een gebed'],a:0,u:'Hadath verdwijnt met wudu, of bij de grote hadath met ghusl.'}]},
@@ -910,6 +1041,8 @@ const MODULES = [
   tk:[`Na het toilet maak je je schoon met water: dat heet <b>istinja</b>. Je gebruikt daarvoor je linkerhand.`,
       `Je gaat het toilet binnen met je linkervoet en zegt: <span class="ar">اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْخُبُثِ وَالْخَبَائِثِ</span> — <i>Allahumma inni a'udhu bika mina l-khubuthi wa l-khaba'ith</i>, "Allah, ik zoek bij U bescherming tegen het kwade." Je gaat naar buiten met je rechtervoet en zegt <span class="ar">غُفْرَانَكَ</span> — <i>ghufranak</i>, "Uw vergeving".`,
       `Binnen praat je niet en neem je niets mee waar de naam van Allah op staat. Daarna was je je handen. Pas dan begin je met de wassing.`],
+  jr:`Na het toilet maak je je schoon met water, met je linkerhand. Je gaat naar binnen met je linkervoet en naar buiten met je rechter.`,
+  dp:`De Malikitische school laat istinja met water als het beste gelden, maar staat ook stenen of papier toe wanneer water er niet is — mits het vuil er werkelijk mee weggaat. Zulke regels laten zien hoe de fiqh werkt: een doel (schoon zijn) en meerdere toegestane wegen ernaartoe.`,
   q:[{v:'Met welke hand doe je istinja?',o:['De rechter','De linker','Allebei tegelijk'],a:1,u:'De linkerhand; de rechter is voor eten en schone dingen.'},
      {v:'Wat zeg je als je het toilet uit komt?',o:['Bismillah','Ghufranak','Alhamdulillah'],a:1,u:'"Ghufranak" — Uw vergeving.'},
      {v:'Met welke voet ga je het toilet binnen?',o:['De linker','De rechter','Maakt niet uit'],a:0,u:'Binnen met links, naar buiten met rechts.'}]},
@@ -919,6 +1052,7 @@ const MODULES = [
       `Twee dingen zijn typisch Malikitisch en worden vaak vergeten: je moet <b>wrijven</b> (dalk) — water eroverheen laten lopen is niet genoeg — en je moet <b>doorgaan</b> zonder lange pauzes (fawr). En je veegt je <b>hele hoofd</b> af, niet een klein stukje.`,
       `In het onderdeel <b>Leren bidden</b> staat de wassing stap voor stap, met een tekening waarop je ziet welk deel aan de beurt is. Oefen hem daar een paar keer; daarna zit hij erin.`],
   jr:`Voor het gebed doe je de wassing: handen, mond, neus, gezicht, armen, hoofd, oren en voeten. Belangrijk: je moet echt wrijven, niet alleen water eroverheen laten lopen.`,
+  dp:`Dat <i>dalk</i> (wrijven) en <i>fawr</i> (aaneengesloten doorgaan) in deze school tot de verplichte onderdelen horen, is een van de duidelijkste verschillen met de andere scholen. De redenering is dat wassen in het Arabisch méér is dan water eroverheen laten lopen: wie zijn handen "wast" onder de kraan zonder te wrijven, zegt zelf ook niet dat ze gewassen zijn.`,
   q:[{v:'Hoeveel verplichte onderdelen heeft de wudu volgens de Malikitische school?',o:['Vijf','Zeven','Tien'],a:1,u:'Zeven fara\'id, waaronder wrijven en aaneengesloten doorgaan.'},
      {v:'Wat is dalk?',o:['Wrijven met je hand over het natte deel','Snel klaar zijn','Drie keer wassen'],a:0,u:'Dalk hoort in deze school bij de verplichte onderdelen.'},
      {v:'Hoeveel van je hoofd veeg je af?',o:['Een klein stukje','Het hele hoofd','Alleen je haar aan de voorkant'],a:1,u:'In de Malikitische school het hele hoofd, van voor naar achter en terug.'}]},
@@ -928,6 +1062,7 @@ const MODULES = [
       `Wat hem <i>niet</i> verbreekt: bloeden uit een wondje, overgeven, lachen, of je hond of kat aaien. Twijfel je of je wassing weg is? Dan gaat de zekerheid voor: je had hem, dus je hebt hem nog.`,
       `Als je wassing verbroken is, doe je hem opnieuw voordat je bidt. Meer is het niet.`],
   dp:`De Malikitische school onderscheidt <b>ahdath</b> (wat uit het lichaam komt en de gewone gang van zaken is) van <b>asbab</b> (oorzaken zoals diepe slaap, bewustzijnsverlies, aanraking met begeerte, en bij mannen het aanraken van het geslachtsdeel met de binnenkant van de hand). Vragen over wat er in de puberteit verandert, bespreek je met je vader of moeder — daar is niets ongemakkelijks aan; het hoort erbij.`,
+  jr:`Je wassing gaat weg als je hebt geplast of gepoept, een wind hebt gelaten, of diep in slaap bent gevallen. Bloeden uit een wondje telt niet.`,
   q:[{v:'Verbreekt bloeden uit een wondje de wassing?',o:['Ja','Nee','Alleen bij veel bloed'],a:1,u:'In de Malikitische school niet.'},
      {v:'Verbreekt diep slapen de wassing?',o:['Ja','Nee','Alleen \'s nachts'],a:0,u:'Diepe slaap verbreekt de wudu.'},
      {v:'Je twijfelt of je wassing nog geldig is. Wat doe je?',o:['Je gaat uit van wat zeker was: hij is er nog','Je bidt niet','Je wast alleen je handen'],a:0,u:'Zekerheid gaat boven twijfel — een vaste regel in de fiqh.'}]},
@@ -936,6 +1071,7 @@ const MODULES = [
   tk:[`Soms is de kleine wassing niet genoeg en moet je je hele lichaam wassen: dat is de <b>ghusl</b>. Je wast dan van top tot teen, waarbij geen plekje droog blijft, en je wrijft erbij. Wanneer dat nodig wordt, hoort bij het ouder worden — je ouders leggen dat op tijd uit, en dat is heel gewoon.`,
       `Ghusl is ook aanbevolen op vrijdag voor het vrijdaggebed, en bij de twee feesten.`,
       `Is er geen water, of mag je vanwege ziekte geen water gebruiken? Dan is er <b>tayammum</b>: je slaat met je handen op schone aarde of steen, veegt je gezicht af en daarna je handen tot de polsen. Daarmee kun je bidden.`],
+  dp:`Bij de ghusl volstaat in deze school de intentie plus het volledig natmaken en wrijven van het lichaam; de aparte wassing van de onderdelen hoeft niet apart herhaald te worden. Wat er in de puberteit verandert, staat in elk fiqh-boek gewoon en zakelijk beschreven — schaamte hoort niet bij kennis, en je ouders of de imam leggen het rustig uit.`,
   q:[{v:'Wat is ghusl?',o:['De wassing van het hele lichaam','Alleen je handen wassen','Een gebed'],a:0,u:'De grote wassing, waarbij geen plek droog blijft.'},
      {v:'Wanneer doe je tayammum?',o:['Als er geen water is of je het niet mag gebruiken','Als je haast hebt','Elke vrijdag'],a:0,u:'Tayammum vervangt de wassing als water er niet is.'},
      {v:'Waarmee doe je tayammum?',o:['Met schone aarde of steen','Met zeep','Met melk'],a:0,u:'Schone aarde, zand of steen.'}]}
@@ -948,6 +1084,7 @@ const MODULES = [
       `Het gebed is ook een gesprek. In elke rak'a zeg je "alleen U aanbidden wij en alleen U vragen wij om hulp", en in een overlevering staat dat Allah op elk vers van al-Fatiha antwoordt.`,
       `En het is een ritme. Wie vijf keer per dag stopt, valt minder makkelijk om. Daarom zei de Profeet ﷺ dat het gebed is als een rivier voor je deur waarin je vijf keer per dag wast: er blijft weinig vuil aan je hangen.`],
   jr:`Bidden is even stoppen met alles en met Allah praten. Dat doe je vijf keer per dag. Het maakt je hart schoon, zoals water je handen schoonmaakt.`,
+  dp:`"Waarlijk, het gebed weerhoudt van het schandelijke en het verwerpelijke" (al-ʿAnkabut 45). Dat is een toetsbare uitspraak: een gebed dat je gedrag nergens raakt, is ergens onderweg leeg geraakt. Geleerden lazen dat vers altijd als een spiegel, niet als een garantie.`,
   q:[{v:'Waarmee vergeleek de Profeet ﷺ het gebed?',o:['Met een rivier voor je deur','Met een berg','Met een boek'],a:0,u:'Vijf keer per dag wassen in die rivier laat weinig vuil achter.'},
      {v:'Wat zeg je in elke rak\'a over hulp vragen?',o:['"Alleen U vragen wij om hulp"','"Ik doe het zelf wel"','Niets'],a:0,u:'Uit al-Fatiha: iyyaka na\'budu wa iyyaka nasta\'in.'},
      {v:'Hoe vaak per dag stop je voor het gebed?',o:['Twee keer','Vijf keer','Tien keer'],a:1,u:'De vijf verplichte gebeden.'}]},
@@ -957,6 +1094,7 @@ const MODULES = [
       `De tijden lopen mee met de zon, dus ze verschuiven elke dag een beetje en verschillen per plaats. In Nederland is het verschil tussen zomer en winter groot: in juni is fajr heel vroeg en isha heel laat.`,
       `In het onderdeel <b>Gebedstijden</b> rekent de app de tijden voor jouw plaats uit en laat zien hoe lang het nog duurt tot het volgende gebed.`],
   jr:`Er zijn vijf gebeden: Fajr (vroeg), Dhuhr (middag), Asr (namiddag), Maghrib (bij zonsondergang) en Isha (avond). Ze horen bij de stand van de zon, dus de tijden veranderen elke dag een beetje.`,
+  dp:`De tijden zijn niet willekeurig gekozen: ze markeren de overgangen van de dag — het licht dat komt, de zon op zijn hoogst, het licht dat afneemt, de zon die verdwijnt, de duisternis die volledig is. Wie op die momenten stopt, meet zijn dag aan iets dat niet van hem is.`,
   q:[{v:'Hoeveel rak\'a heeft Maghrib?',o:['Twee','Drie','Vier'],a:1,u:'Maghrib is het enige gebed met drie rak\'a.'},
      {v:'Wanneer begint Fajr?',o:['Bij de dageraad','Bij zonsopgang','Om zes uur'],a:0,u:'Bij het echte ochtendlicht, en de tijd loopt tot de zon opkomt.'},
      {v:'Waarom verschillen de gebedstijden per plaats?',o:['Omdat ze meelopen met de zon','Omdat elke moskee zelf kiest','Dat verschilt niet'],a:0,u:'De tijden zijn gekoppeld aan de stand van de zon.'}]},
@@ -965,6 +1103,8 @@ const MODULES = [
   tk:[`De <b>adhan</b> is de oproep die klinkt als de tijd van een gebed begint. Hij roept: Allah is groter, er is geen god dan Allah, Mohammed is Zijn boodschapper, kom tot het gebed, kom tot het welslagen. Bij Fajr komt er één zin bij: "het gebed is beter dan de slaap".`,
       `Hoor je de adhan, dan herhaal je zachtjes wat de oproeper zegt. Alleen bij "kom tot het gebed" zeg je: <i>la hawla wa la quwwata illa billah</i>. Daarna vraag je Allah om de Profeet ﷺ te verheffen.`,
       `De <b>iqama</b> is de kortere oproep, vlak voordat het gebed echt begint. Dan ga je staan.`],
+  jr:`De adhan is de oproep die je hoort als het tijd is om te bidden. Zeg hem zachtjes na. De iqama is de korte oproep vlak voordat het gebed begint.`,
+  dp:`De adhan is de oudste doorlopend uitgevoerde oproep ter wereld: sinds Medina, onafgebroken, in dezelfde bewoordingen. Bilal — een voormalige slaaf — was de eerste die hem uitsprak, en dat was geen toeval maar een verklaring: de stem van de gemeenschap was uitdrukkelijk niet die van de voornaamste familie.`,
   q:[{v:'Wat is de adhan?',o:['De oproep tot het gebed','Een soera','Een gebedsmat'],a:0,u:'De oproep die klinkt als de tijd begint.'},
      {v:'Wat is de iqama?',o:['De oproep vlak voor het gebed begint','Het einde van het gebed','Een du\'a bij het eten'],a:0,u:'De tweede, kortere oproep.'},
      {v:'Welke zin komt er bij de adhan van Fajr bij?',o:['"Het gebed is beter dan de slaap"','"Allah is groter"','"Kom tot het gebed"'],a:0,u:'As-salatu khayrun mina n-nawm.'}]},
@@ -973,6 +1113,8 @@ const MODULES = [
   tk:[`Als je bidt, sta je gericht naar de <b>Ka'ba</b> in Mekka. Vanuit Nederland is dat ongeveer naar het zuidoosten.`,
       `Weet je niet welke kant het op is? Zoek het eerst uit: vraag het, kijk op een kompas, of gebruik het kompas in deze app. Kun je het echt niet weten, dan bid je in de richting die je het meest waarschijnlijk lijkt — en dan is je gebed geldig.`,
       `In de trein, het vliegtuig of de auto voor een vrijwillig gebed gelden versoepelingen; voor de verplichte gebeden zoek je de qibla wel echt op.`],
+  jr:`Als je bidt, sta je richting de Ka'ba in Mekka. Vanuit Nederland is dat zuidoost. Weet je het niet zeker? Kijk op het kompas in deze app.`,
+  dp:`De qibla is aanvankelijk Jeruzalem geweest en werd na de hidjra veranderd naar Mekka (al-Baqara 144). De richting zelf is dus niet heilig; de gehoorzaamheid eraan is de bedoeling. Vandaar ook de soepelheid: wie zijn best doet en zich vergist, heeft geldig gebeden.`,
   q:[{v:'Waar richt je je naartoe in het gebed?',o:['Naar het oosten','Naar de Ka\'ba in Mekka','Naar de imam'],a:1,u:'Naar de Ka\'ba — vanuit Nederland ongeveer zuidoost.'},
      {v:'Je weet de richting echt niet en kunt het niet nakijken. Wat doe je?',o:['Je bidt niet','Je kiest de richting die het meest waarschijnlijk is','Je wacht tot morgen'],a:1,u:'Je doet je best; het gebed telt.'},
      {v:'Welke richting is de qibla ongeveer vanuit Nederland?',o:['Noordwest','Zuidoost','Recht naar het noorden'],a:1,u:'Ongeveer 120 graden, dus zuidoost.'}]},
@@ -981,6 +1123,7 @@ const MODULES = [
   tk:[`Vijf dingen moeten op orde zijn voordat je in het gebed stapt: je bent <b>rein</b> (wudu, en je lichaam, kleren en plek zijn schoon), de <b>tijd</b> van dat gebed is begonnen, je bent naar de <b>qibla</b> gericht, je bedekt wat bedekt hoort te zijn (de <b>'awra</b>), en je hebt de <b>intentie</b> voor precies dít gebed.`,
       `Die intentie zit in je hart. Je hoeft niets hardop te zeggen; je weet gewoon: ik ga nu de Asr bidden.`,
       `Voor jongens is de 'awra minstens van de navel tot en met de knieën; in het gebed hoort ook je schouder bedekt te zijn. Voor meisjes vanaf de puberteit is dat het hele lichaam behalve gezicht en handen. Kleren moeten schoon zijn en niet doorschijnend.`],
+  dp:`De vijf voorwaarden heten <i>shurut</i>: ze gaan vóór het gebed en gelden de hele tijd door. Valt er tijdens het gebed één weg — je wassing bijvoorbeeld — dan stopt het gebed. Dat is het verschil met de <i>arkan</i>, de onderdelen die ín het gebed zelf zitten.`,
   q:[{v:'Waar zit de intentie?',o:['In je hart','In je stem','Op papier'],a:0,u:'Hardop uitspreken hoeft niet.'},
      {v:'Mag je bidden voordat de tijd is begonnen?',o:['Ja','Nee','Alleen bij Fajr'],a:1,u:'De tijd moet begonnen zijn; anders telt het gebed niet als dat verplichte gebed.'},
      {v:'Hoeveel voorwaarden noemt deze les?',o:['Drie','Vijf','Acht'],a:1,u:'Reinheid, tijd, qibla, bedekking en intentie.'}]},
@@ -990,6 +1133,7 @@ const MODULES = [
       `Kom je te laat binnen, dan sluit je gewoon aan waar de imam is. Wat je gemist hebt, maak je af nadat de imam de slotgroet heeft gegeven. Zo iemand heet een <b>masbuq</b>.`,
       `Op vrijdag is er het <b>jumu'a</b>-gebed in plaats van Dhuhr: eerst een preek (khutba), dan twee rak'a achter de imam. Voor mannen is het verplicht; je gaat schoon, in nette kleren, en je luistert stil naar de preek.`],
   jr:`Samen bidden is beter dan alleen. De imam gaat voor en jij doet hem na — nooit eerder dan hij. Op vrijdag is er het vrijdaggebed met een preek.`,
+  dp:`Het gemeenschappelijke gebed geldt volgens de overlevering als zevenentwintig maal beter dan alleen bidden. Geleerden wijzen erop dat de winst niet alleen geestelijk is: in de rij staat de rijke naast de arme, de directeur naast de schoonmaker, en niemand kan zien wie wie is. Dat is een wekelijkse oefening in iets wat een samenleving zelden vanzelf doet.`,
   q:[{v:'Wat doe je als je te laat komt in het gemeenschappelijk gebed?',o:['Je sluit aan waar de imam is en maakt later af','Je wacht tot het volgende gebed','Je begint helemaal opnieuw naast de rij'],a:0,u:'Dat heet masbuq zijn.'},
      {v:'Wat vervangt op vrijdag het Dhuhr-gebed?',o:['Het jumu\'a-gebed','Het Asr-gebed','Niets'],a:0,u:'Twee rak\'a met een preek ervoor.'},
      {v:'Mag je vóór de imam naar de ruku\' gaan?',o:['Ja, dat mag','Nee, je volgt hem','Alleen bij Fajr'],a:1,u:'De imam wordt gevolgd, niet ingehaald.'}]}
@@ -1002,6 +1146,7 @@ const MODULES = [
       `Hij kwam niet in één keer. Drieëntwintig jaar lang kwamen er stukken — soms als antwoord op iets wat er gebeurde, soms als troost, soms als opdracht.`,
       `De Koran gaat over wie Allah is, over de profeten voor ons, over hoe je met mensen omgaat, en over wat komen gaat. Wie hem leest krijgt er iets voor terug, ook als hij nog struikelt over de letters — juist dan, zei de Profeet ﷺ.`],
   jr:`De Koran is het woord van Allah in het Arabisch. Hij kwam via de engel Jibril naar de Profeet ﷺ. Ook als je nog moeilijk leest, tellen je pogingen dubbel.`,
+  dp:`De Koran is niet chronologisch geordend en dat is opzet: de volgorde van de openbaring en de volgorde van het boek verschillen. Wie het leest als een verhaal van begin tot eind raakt in verwarring; wie het leest als een gesprek dat op verschillende momenten wordt gevoerd, ziet hoe het in elkaar zit.`,
   q:[{v:'In welke taal werd de Koran geopenbaard?',o:['In het Arabisch','In het Nederlands','In het Hebreeuws'],a:0,u:'Het Arabisch van de openbaring.'},
      {v:'Hoe lang duurde de openbaring?',o:['Eén nacht','Ongeveer 23 jaar','Honderd jaar'],a:1,u:'Van de eerste openbaring tot het overlijden van de Profeet ﷺ.'},
      {v:'Wie bracht de openbaring?',o:['Jibril','Israfil','Musa'],a:0,u:'De engel Jibril.'}]},
@@ -1010,6 +1155,8 @@ const MODULES = [
   tk:[`De Koran heeft <b>114 soera's</b> (hoofdstukken). Elke soera bestaat uit <b>aya's</b> (verzen). De langste soera is al-Baqara, de kortste is al-Kawthar met drie aya's.`,
       `Om het lezen makkelijk te verdelen is de Koran ook in <b>30 juz</b> geknipt. In de ramadan lezen veel mensen elke dag één juz, zodat ze aan het eind van de maand de hele Koran uit hebben.`,
       `De eerste soera heet <b>al-Fatiha</b>, "de opening". Die zeg je in elke rak'a van elk gebed — dus die leer je als eerste uit je hoofd.`],
+  jr:`De Koran heeft 114 soera's. Elke soera bestaat uit aya's. De eerste soera heet al-Fatiha; die zeg je in elk gebed.`,
+  dp:`De verdeling in juz is een leeshulp van later; de soera-indeling zelf gaat terug op de Profeet ﷺ. De Mekkaanse soera's zijn meestal kort en gaan over Allah en de laatste dag; de Medinense zijn langer en gaan vaker over hoe je samenleeft. Aan de toon hoor je vaak al waar een soera vandaan komt.`,
   q:[{v:'Hoeveel soera\'s heeft de Koran?',o:['30','99','114'],a:2,u:'Honderdveertien.'},
      {v:'Wat is een juz?',o:['Eén dertigste deel van de Koran','Een vers','Een gebed'],a:0,u:'Dertig delen, handig voor de ramadan.'},
      {v:'Welke soera zeg je in elke rak\'a?',o:['Al-Fatiha','Al-Ikhlas','An-Nas'],a:0,u:'Zonder al-Fatiha is de rak\'a niet compleet.'}]},
@@ -1018,6 +1165,8 @@ const MODULES = [
   tk:[`Je pakt de moshaf met schone handen op en legt hem hoog, niet op de grond met andere spullen erbovenop. Voor het lezen zeg je: <span class="ar">أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ</span> — <i>a'udhu billahi mina sh-shaytani r-rajim</i>, en daarna <i>bismillahi r-rahmani r-rahim</i>.`,
       `Je leest rustig. Beter drie aya's met aandacht dan drie bladzijden op de automatische piloot.`,
       `Luister je naar de Koran, dan ben je stil. Dat is geen strengheid; het is dezelfde beleefdheid als wanneer iemand van wie je houdt tegen je praat.`],
+  jr:`Pak de Koran met schone handen en leg hem hoog. Zeg voor het lezen a'udhu billah en bismillah. Rustig lezen is beter dan snel.`,
+  dp:`De adab rond de moshaf — schone handen, hoog leggen — is geen bijgeloof over papier maar een oefening in eerbied: hoe je omgaat met het voorwerp, oefent hoe je omgaat met de inhoud. Tegelijk waarschuwden geleerden altijd tegen het omgekeerde: een prachtig ingebonden moshaf op de plank die nooit opengaat.`,
   q:[{v:'Wat zeg je voordat je begint met lezen?',o:['A\'udhu billahi mina sh-shaytani r-rajim','Alhamdulillah','Allahu akbar'],a:0,u:'De ta\'awwudh, en daarna de basmala.'},
      {v:'Wat is beter?',o:['Snel veel bladzijden','Rustig lezen met aandacht','Zo hard mogelijk'],a:1,u:'Aandacht boven aantal.'},
      {v:'Wat doe je als iemand de Koran voordraagt?',o:['Je luistert stil','Je praat door','Je zet muziek aan'],a:0,u:'Stil luisteren hoort erbij.'}]},
@@ -1027,6 +1176,8 @@ const MODULES = [
       `Het geheim is <b>herhalen</b>, niet talent. Vijf minuten per dag, elke dag, is beter dan een uur op zondag. Lees eerst hardop mee, dan met een paar woorden bedekt, dan helemaal alleen — en herhaal wat je gisteren deed voordat je iets nieuws pakt.`,
       `In deze app zit een trainer die precies dat doet, met een puzzel waarin je de woorden in de goede volgorde legt. Kijk bij <b>Leren bidden → Uit je hoofd</b>.`],
   jr:`Je leert de Koran uit je hoofd door kleine stukjes vaak te herhalen. Begin bij de korte soera's. Elke dag vijf minuten is beter dan één keer heel lang.`,
+  dp:`Bij het memoriseren gaat kwaliteit vóór kwantiteit: één bladzijde die vaststaat is meer waard dan tien die wegzakken. De klassieke methode is drieledig — nieuw stuk, herhaling van gisteren, en een vaste ronde door alles wat je al kent. Die derde ronde slaan de meeste mensen over, en dat is precies waarom ze het weer kwijtraken.`,
+  zie:['l1512'],
   q:[{v:'Wat is het belangrijkste bij memoriseren?',o:['Talent','Herhalen, elke dag een beetje','Heel hard praten'],a:1,u:'Regelmaat wint van intensiteit.'},
      {v:'Met welke soera\'s begin je meestal?',o:['De korte, achteraan','Al-Baqara','Willekeurig'],a:0,u:'De korte soera\'s van juz \'amma.'},
      {v:'Wat doe je voordat je iets nieuws leert?',o:['Herhalen wat je al kende','Meteen verder','Een pauze van een week'],a:0,u:'Eerst het oude vasthouden.'}]}
@@ -1038,6 +1189,8 @@ const MODULES = [
   tk:[`Mekka was een handelsstad in de woestijn, met de Ka'ba in het midden. Dat huis was ooit door Ibrahim gebouwd om Allah alleen te aanbidden, maar er stonden inmiddels honderden afgodsbeelden omheen.`,
       `In het jaar dat een leger met olifanten de Ka'ba wilde afbreken en werd tegengehouden, werd Mohammed ﷺ geboren. Zijn vader 'Abdullah was al overleden; zijn moeder Amina stierf toen hij zes was. Hij werd opgevoed door zijn opa 'Abd al-Muttalib en daarna door zijn oom Abu Talib.`,
       `Hij groeide op als wees. Later staat er in de Koran: "Vond Hij je niet als wees en gaf Hij je onderdak?" — daarom zijn wezen in de islam nooit een bijzaak.`],
+  jr:`De Profeet ﷺ werd geboren in Mekka, in het jaar dat een leger met een olifant de Ka'ba wilde afbreken. Zijn vader en moeder overleden toen hij klein was; zijn opa en zijn oom voedden hem op.`,
+  dp:`De seerah is opvallend goed gedocumenteerd voor de zesde eeuw: namen, jaartallen, ooggetuigen en zelfs tegenstrijdige versies zijn bewaard. Dat laatste is een teken van betrouwbaarheid — wie een verhaal verzint, laat de rommelige stukken weg.`,
   q:[{v:'Wat gebeurde er in het jaar van zijn geboorte?',o:['Het leger met de olifant werd tegengehouden','De Ka\'ba werd gebouwd','De Koran was af'],a:0,u:'Het jaar van de olifant; soera al-Fil gaat erover.'},
      {v:'Hoe oud was hij toen zijn moeder overleed?',o:['Zes','Twaalf','Twintig'],a:0,u:'Hij verloor zijn vader voor zijn geboorte en zijn moeder op zijn zesde.'},
      {v:'Wie voedde hem op na zijn opa?',o:['Zijn oom Abu Talib','Zijn buurman','Niemand'],a:0,u:'Abu Talib nam hem in huis.'}]},
@@ -1047,6 +1200,7 @@ const MODULES = [
       `Toen de stammen ruzie kregen over wie de zwarte steen terug mocht leggen in de muur van de Ka'ba, bedacht hij een oplossing waar iedereen tevreden mee was: hij legde de steen op een kleed en liet elke stam een hoek vasthouden.`,
       `Hij trouwde met Khadija, een vrouw die hem als eerste geloofde toen alles moeilijk werd. Ze was zijn grootste steun.`],
   jr:`Voordat hij profeet werd, noemden de mensen hem al-Amin: de betrouwbare. Iedereen vertrouwde hem met hun spullen. Hij loste ruzies op zonder dat iemand zich verloor.`,
+  dp:`Dat zijn tegenstanders hun spullen bij hem in bewaring bleven geven, óók toen ze hem openlijk bestreden, staat in de vroegste bronnen en is een van de sterkste aanwijzingen voor zijn karakter: mensen liegen over meningen, niet over aan wie ze hun geld toevertrouwen.`,
   q:[{v:'Wat betekent al-Amin?',o:['De sterke','De betrouwbare','De rijke'],a:1,u:'Zijn bijnaam in Mekka, nog vóór de openbaring.'},
      {v:'Hoe loste hij de ruzie om de zwarte steen op?',o:['Elke stam hield een hoek van een kleed vast','Hij liet ze loten','Hij nam hem zelf'],a:0,u:'Een oplossing waarbij niemand gezichtsverlies leed.'},
      {v:'Wie geloofde als eerste in hem?',o:['Khadija','Abu Talib','Bilal'],a:0,u:'Zijn vrouw Khadija.'}]},
@@ -1055,6 +1209,8 @@ const MODULES = [
   tk:[`In de grot Hira, waar hij zich vaak terugtrok om na te denken, kwam Jibril. "Lees!" zei hij. "Ik kan niet lezen," antwoordde Mohammed ﷺ. Toen kwamen de eerste woorden van de Koran: <span class="ar">اقْرَأْ بِاسْمِ رَبِّكَ الَّذِي خَلَقَ</span> — "Lees, in de naam van jouw Heer die schiep."`,
       `Hij ging bevend naar huis. Khadija sloeg een deken om hem heen en zei: "Allah zal je nooit in de steek laten — je bent goed voor je familie, je helpt de armen, je draagt andermans last."`,
       `Zo begon het. Eerst in stilte, met een handvol mensen. Daarna in het openbaar.`],
+  jr:`In de grot Hira kwam de engel Jibril bij hem en zei: "Lees!" Zo begonnen de eerste woorden van de Koran. Thuis stelde Khadija hem gerust.`,
+  dp:`De eerste openbaring gaat over <i>lezen</i> en over de pen — in een stad waar bijna niemand kon lezen, aan iemand die het zelf niet kon. Dat de boodschap van een ongeletterde begint met een leesopdracht, is in de traditie altijd als veelzeggend gelezen.`,
   q:[{v:'Waar kwam de eerste openbaring?',o:['In de grot Hira','In Medina','In de Ka\'ba'],a:0,u:'De grot Hira bij Mekka.'},
      {v:'Wat waren de eerste woorden?',o:['"Lees, in de naam van jouw Heer die schiep"','"Bid vijf keer per dag"','"Vast in ramadan"'],a:0,u:'Soera al-\'Alaq, vers 1.'},
      {v:'Hoe reageerde Khadija?',o:['Ze stelde hem gerust','Ze werd boos','Ze ging weg'],a:0,u:'Ze noemde alle goede eigenschappen op die hij al had.'}]},
@@ -1063,6 +1219,7 @@ const MODULES = [
   tk:[`Toen hij openlijk begon te spreken, keerden veel Mekkanen zich tegen hem. Wie geen machtige familie had, werd het hardst geraakt. <b>Bilal</b>, een slaaf, werd in de brandende zon gelegd met een steen op zijn borst en bleef zeggen: "Eén, Eén." Abu Bakr kocht hem vrij.`,
       `De familie van de Profeet ﷺ werd drie jaar lang geboycot: niemand mocht met hen handelen of trouwen. Ze aten bladeren van honger.`,
       `In hetzelfde jaar stierven Khadija en Abu Talib. Dat werd het "jaar van verdriet" genoemd. Kort daarna ging hij naar de stad Ta'if om hulp te vragen en werd hij met stenen weggejaagd. Toen hem werd aangeboden de stad te vernietigen, zei hij nee: misschien komen hun kinderen tot het goede.`],
+  dp:`De boycot en de jaren van vervolging zijn belangrijk om te snappen waarom de vroege soera's klinken zoals ze klinken: kort, ritmisch, over geduld en over rechtvaardigheid die komt. Wie die verzen leest zonder te weten wanneer ze kwamen, mist de helft.`,
   q:[{v:'Wie bleef "Eén, Eén" zeggen onder de marteling?',o:['Bilal','Abu Bakr','\'Umar'],a:0,u:'Bilal ibn Rabah, later de eerste oproeper tot het gebed.'},
      {v:'Wat deed de Profeet ﷺ toen hij in Ta\'if werd weggejaagd?',o:['Hij vroeg om vergelding','Hij bad voor hun nakomelingen','Hij ging terug met een leger'],a:1,u:'Hij hoopte op hun kinderen.'},
      {v:'Waarom heette het "jaar van verdriet"?',o:['Khadija en Abu Talib stierven','Er was geen eten','Het regende niet'],a:0,u:'Hij verloor in één jaar zijn vrouw en zijn beschermer.'}]},
@@ -1072,6 +1229,7 @@ const MODULES = [
       `De Profeet ﷺ vertrok als laatste, samen met Abu Bakr. Ze verborgen zich drie dagen in een grot terwijl de achtervolgers vlak langs de opening liepen. "Wees niet bedroefd," zei hij, "Allah is met ons."`,
       `In Medina koppelde hij elke gevluchte Mekkaan (<b>muhajir</b>) aan een inwoner van Medina (<b>ansari</b>): jullie zijn nu broers. Wat de een had, deelde hij met de ander.`],
   jr:`De moslims verhuisden van Mekka naar Medina. Dat heet de hidjra. Daar begint de islamitische kalender. In Medina deelden de inwoners alles met de mensen die gevlucht waren.`,
+  dp:`Dat de jaartelling begint bij de hidjra en niet bij de geboorte of de eerste openbaring, is een keuze met betekenis: niet een persoon of een wonder, maar het moment waarop een gemeenschap ontstond met afspraken, buren en verantwoordelijkheden. ʿUmar koos die datum, jaren later, bewust.`,
   q:[{v:'Wat is de hidjra?',o:['De verhuizing naar Medina','Een gebed','Een feest'],a:0,u:'Het begin van de islamitische jaartelling.'},
      {v:'Wie waren de ansar?',o:['De inwoners van Medina die hielpen','De vijanden','De engelen'],a:0,u:'"Helpers": de mensen van Medina.'},
      {v:'Wat zei hij tegen Abu Bakr in de grot?',o:['"Wees niet bedroefd, Allah is met ons"','"We gaan terug"','"Ren weg"'],a:0,u:'Soera at-Tawba 40 vertelt het.'}]},
@@ -1080,6 +1238,7 @@ const MODULES = [
   tk:[`In Medina bouwde hij een moskee van klei en palmtakken en sloot hij een verdrag waarin joden, moslims en anderen samen één gemeenschap vormden met afspraken over veiligheid en recht.`,
       `Na jaren van strijd en verdragen keerde hij terug naar Mekka. De stad die hem had verjaagd, gaf zich over. Iedereen verwachtte wraak. Hij zei: "Gaan jullie maar, jullie zijn vrij."`,
       `In zijn laatste preek op 'Arafat zei hij dat een Arabier niet beter is dan een niet-Arabier, een blanke niet beter dan een zwarte — alleen wie Allah het meest vreest staat hoger. Kort daarna overleed hij, in Medina, in het huis van 'A'isha.`],
+  dp:`Het verdrag van Medina wordt door historici gelezen als een van de vroegste geschreven staatsordeningen: het noemt joden en moslims met zoveel woorden "één gemeenschap" (<i>umma</i>) met eigen godsdienst en gedeelde veiligheidsplichten. Dat is een ander begin dan mensen vaak denken.`,
   q:[{v:'Wat deed hij toen Mekka zich overgaf?',o:['Hij vergaf de mensen','Hij verbande iedereen','Hij brak de stad af'],a:0,u:'"Gaan jullie maar, jullie zijn vrij."'},
      {v:'Wat zei hij in zijn afscheidspreek over afkomst?',o:['Arabieren staan hoger','Niemand staat hoger door afkomst','Alleen rijken tellen'],a:1,u:'Alleen godsvrees maakt verschil.'},
      {v:'Waar overleed hij?',o:['In Medina','In Mekka','In Ta\'if'],a:0,u:'In Medina, in het huis van \'A\'isha.'}]},
@@ -1087,6 +1246,8 @@ const MODULES = [
  {id:'l607', t:'Vijf profeten die je kent', sp:1,
   tk:[`<b>Nuh</b> bouwde een schip terwijl iedereen hem uitlachte, en had eeuwenlang geduld. <b>Ibrahim</b> brak de afgodsbeelden van zijn volk en werd in het vuur geworpen dat koel voor hem werd. <b>Musa</b> ging naar de farao met de opdracht een heel volk te bevrijden, hoewel hij stotterde.`,
       `<b>'Isa</b> werd geboren zonder vader, sprak als baby in de wieg en genas zieken met toestemming van Allah. Moslims geloven dat hij niet gedood is, maar door Allah opgenomen. <b>Yusuf</b> werd door zijn broers in een put gegooid, kwam onschuldig in de gevangenis en vergaf hen later alles.`],
+  jr:`Nuh bouwde een schip. Ibrahim brak de beelden en het vuur werd koel voor hem. Musa ging naar de farao. 'Isa sprak al als baby. Yusuf vergaf zijn broers.`,
+  dp:`De Koran vertelt de verhalen van de profeten nooit volledig achter elkaar, maar telkens een stuk, passend bij wat er speelde. Yusuf is de uitzondering: die staat als één doorlopend verhaal, en juist die soera kwam in het jaar van verdriet — een lang verhaal over onrecht dat uiteindelijk goedkomt, voor iemand die alles kwijt was.`,
   q:[{v:'Wie bouwde het schip?',o:['Nuh','Musa','Yusuf'],a:0,u:'Nuh, met veel geduld.'},
      {v:'Wat gebeurde er met Ibrahim in het vuur?',o:['Het werd koel voor hem','Hij verbrandde','Hij vluchtte'],a:0,u:'"Wees koel en veilig voor Ibrahim" — al-Anbiya 69.'},
      {v:'Wat deed Yusuf met zijn broers toen hij machtig was?',o:['Hij vergaf hen','Hij strafte hen','Hij stuurde hen weg'],a:0,u:'"Vandaag is er geen verwijt tegen jullie."'}]}
@@ -1099,6 +1260,8 @@ const MODULES = [
       `Op de weegschaal van de laatste dag is er niets zwaarder dan goed gedrag. En in een bekende overlevering wordt verteld over iemand die veel bad en vastte, maar haar buren pijn deed met haar tong: "zij hoort in het vuur".`,
       `Dus: hoe je praat over iemand die er niet bij is, hoe je reageert als je moe bent, wat je doet als niemand kijkt — dat is je geloof, net zo goed als je gebed.`],
   jr:`De Profeet ﷺ zei dat hij kwam om goed gedrag compleet te maken. Hoe je met mensen omgaat hoort net zo bij de islam als bidden.`,
+  dp:`"Het beste van jullie zijn zij die het beste zijn voor hun gezin" — de maatstaf ligt dus thuis, waar niemand kijkt, en niet in de moskee waar iedereen kijkt. In de fiqh zijn de rechten van mensen (<i>huquq al-ʿibad</i>) bovendien strenger dan de rechten van Allah: het eerste kan alleen die mens zelf vergeven.`,
+  zie:['l1513'],
   q:[{v:'Wat is het zwaarst op de weegschaal?',o:['Goed gedrag','Veel geld','Lange verhalen'],a:0,u:'Zo staat het in de overlevering.'},
      {v:'Iemand bidt veel maar scheldt haar buren uit. Wat zegt de hadith?',o:['Dat is goed genoeg','Dat is niet goed','Dat maakt niet uit'],a:1,u:'Gebed en gedrag horen bij elkaar.'},
      {v:'Waar zie je iemands geloof aan?',o:['Aan zijn kleren','Aan hoe hij met mensen omgaat','Aan zijn telefoon'],a:1,u:'Vooral daaraan.'}]},
@@ -1107,6 +1270,9 @@ const MODULES = [
   tk:[`Meteen na "aanbid Allah alleen" staat in de Koran: "en wees goed voor je ouders". Zeg nooit "oef" tegen hen, staat er — niet eens dat kleine geluid van irritatie.`,
       `Goed zijn voor je ouders is heel gewoon werk: opruimen zonder dat het gevraagd wordt, luisteren als ze iets zeggen, vragen hoe het met ze gaat, niet doen alsof je hun berichtjes niet hebt gezien.`,
       `En je maakt du'a voor ze: <span class="ar">رَبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا</span> — <i>rabbi rhamhuma kama rabbayani saghira</i>, "Heer, wees barmhartig voor hen zoals zij mij hebben grootgebracht toen ik klein was."`],
+  jr:`Wees lief voor je vader en moeder. Zeg nooit "oef" tegen ze, help zonder dat het gevraagd wordt, en maak du'a voor ze.`,
+  dp:`Goed zijn voor je ouders geldt ook als zij niet geloven, en zelfs als zij onrechtvaardig zijn: de Koran zegt dat je hen dan "met vriendelijkheid vergezelt" en toch niet gehoorzaamt in wat verkeerd is (Luqman 15). Gehoorzaamheid heeft dus een grens, goed gedrag niet.`,
+  zie:['l1513','l1504'],
   q:[{v:'Wat staat er in de Koran vlak na "aanbid Allah alleen"?',o:['"Wees goed voor je ouders"','"Word rijk"','"Reis veel"'],a:0,u:'Soera al-Isra 23.'},
      {v:'Wat mag je volgens dat vers niet eens zeggen?',o:['"Oef"','"Nee"','"Later"'],a:0,u:'Zelfs dat kleine geluid van ergernis niet.'},
      {v:'Wat betekent "rabbi rhamhuma..."?',o:['Heer, wees barmhartig voor hen','Heer, geef mij geld','Heer, vergeef mij'],a:0,u:'De du\'a voor je ouders.'}],
@@ -1116,6 +1282,9 @@ const MODULES = [
   tk:[`"Houd je aan de waarheid," zei de Profeet ﷺ, "want waarheid leidt naar het goede." Liegen begint klein — een smoesje, een cijfer dat je verzwijgt — en het went.`,
       `Er zijn drie tekenen van iemand die zijn woord niet houdt: hij liegt als hij praat, hij belooft en komt het niet na, en hij gaat slordig om met wat je hem toevertrouwt.`,
       `Waarheid spreken is soms ongemakkelijk. Zeg dan liever niets dan iets onwaars — of zeg het eerlijk, en accepteer het gedoe dat erbij hoort. Dat is korter dan de weg van een leugen.`],
+  jr:`Zeg altijd de waarheid, ook als het moeilijk is. Liegen begint klein en wordt een gewoonte. Weet je iets niet zeker? Zeg dan liever niets.`,
+  dp:`De fiqh kent één beroemde uitzondering: verzoening stichten tussen twee ruziënde mensen, waarbij je van beiden het goede overbrengt. Dat het een uitzondering is die apart genoemd moet worden, zegt hoe hard de hoofdregel is.`,
+  zie:['l1505'],
   q:[{v:'Waar leidt waarheid volgens de hadith naar?',o:['Naar het goede','Naar problemen','Naar rijkdom'],a:0,u:'"Waarheid leidt naar het goede, en het goede naar het paradijs."'},
      {v:'Wat is een teken van onbetrouwbaarheid?',o:['Beloftes niet nakomen','Vroeg opstaan','Veel lezen'],a:0,u:'Een van de drie genoemde tekenen.'},
      {v:'Wat doe je als de waarheid ongemakkelijk is?',o:['Je liegt een beetje','Je zegt het eerlijk of je zwijgt','Je verzint iets anders'],a:1,u:'Zwijgen mag; liegen niet.'}]},
@@ -1125,6 +1294,7 @@ const MODULES = [
       `Dat betekent: geen herrie op rare tijden, geen rommel voor hun deur, wél even helpen met tillen, en iets brengen als je gekookt hebt. Vraag ook hoe het gaat met wie alleen woont.`,
       `Komt er iemand op bezoek, dan is je gast een eer. Je geeft wat je hebt, ook als het weinig is.`],
   jr:`Wees goed voor je buren, wie ze ook zijn. Help ze, maak geen herrie en breng eens iets lekkers. En wees lief voor gasten.`,
+  dp:`De overlevering onderscheidt drie soorten buren met oplopend recht: de buur zonder verdere band, de buur die familie is, en de buur die ook moslim is. De laagste categorie heeft dus al gewoon recht op je — geloof speelt geen rol bij de vraag óf je goed voor iemand bent.`,
   q:[{v:'Wie zijn je buren?',o:['Alleen moslims','Iedereen die naast je woont','Alleen familie'],a:1,u:'Ongeacht geloof of afkomst.'},
      {v:'Wat zei de Profeet ﷺ over de buren?',o:['Jibril bleef ze aanbevelen','Ze doen er niet toe','Alleen op vrijdag'],a:0,u:'"Totdat ik dacht dat ze zouden erven."'},
      {v:'Hoe behandel je een gast?',o:['Je geeft wat je hebt','Je stuurt hem weg','Je doet alsof je niet thuis bent'],a:0,u:'Gastvrijheid hoort bij het geloof.'}]},
@@ -1133,6 +1303,8 @@ const MODULES = [
   tk:[`<b>As-salamu 'alaykum</b> betekent "vrede zij met jou". Het antwoord is <b>wa 'alaykumu s-salam</b>. Wie er nog "wa rahmatullahi wa barakatuh" bij zegt, geeft er meer bij — en het antwoord mag altijd mooier zijn dan de groet.`,
       `Verspreid de salaam, ook naar mensen die je niet kent, zei de Profeet ﷺ. Het is de kortste manier om een muur tussen twee mensen weg te halen.`,
       `Bij goede woorden hoort ook: geen bijnamen die pijn doen, niet roddelen (dat is iets over iemand zeggen wat hij niet leuk zou vinden, ook als het waar is), en geen ruzie stoken tussen twee mensen.`],
+  jr:`As-salamu 'alaykum betekent "vrede zij met jou". Groet ook mensen die je niet kent. En zeg niets over iemand wat hij niet leuk zou vinden.`,
+  dp:`Roddel (<i>ghiba</i>) is in de Koran vergeleken met het eten van het vlees van je dode broer (al-Hujurat 12). Dat beeld is met opzet weerzinwekkend: het gaat om iemand die zich niet kan verdedigen. Geleerden noemen een paar uitzonderingen — onrecht melden, waarschuwen voor gevaar, advies vragen — maar altijd met precies zoveel woorden als nodig.`,
   q:[{v:'Wat is het antwoord op "as-salamu \'alaykum"?',o:['Wa \'alaykumu s-salam','Bismillah','Alhamdulillah'],a:0,u:'En liefst nog uitgebreider.'},
      {v:'Wat is roddelen?',o:['Iets over iemand zeggen wat hij niet leuk zou vinden','Alleen liegen over iemand','Hardop praten'],a:0,u:'Ook als het waar is, blijft het roddel.'},
      {v:'Tegen wie geef je salaam?',o:['Alleen tegen vrienden','Ook tegen wie je niet kent','Alleen in de moskee'],a:1,u:'"Verspreid de salaam."'}]},
@@ -1141,6 +1313,8 @@ const MODULES = [
   tk:[`Een man vroeg de Profeet ﷺ om raad. "Word niet boos," zei hij. De man vroeg het nog eens. "Word niet boos." En nog eens. Hetzelfde antwoord.`,
       `Dat betekent niet dat je nooit iets voelt. Het betekent: laat je woede niet de baas worden. De Profeet ﷺ gaf praktische raad — ga zitten als je staat, ga liggen als je zit, was je gezicht, zwijg.`,
       `En daarna komt het moeilijkste: vergeven. "Wie vergeeft en het goedmaakt, diens beloning is bij Allah." Sterk zijn is niet iemand omgooien; sterk zijn is jezelf inhouden op het moment dat je woedend bent.`],
+  dp:`"De sterke is niet wie een ander omgooit; de sterke is wie zichzelf beheerst bij woede." Dat is een herdefinitie van kracht, uitgesproken in een cultuur waar eer en vergelding het hoogst stonden. En vergeven is in de Koran nadrukkelijk een keuze, geen plicht: je mág je recht halen, maar wie kwijtscheldt krijgt zijn loon van Allah.`,
+  zie:['l1508','l1505'],
   q:[{v:'Wat was het advies dat de Profeet ﷺ drie keer herhaalde?',o:['"Word niet boos"','"Slaap veel"','"Praat harder"'],a:0,u:'Elke keer hetzelfde antwoord.'},
      {v:'Wat doe je volgens de raad als je boos wordt en staat?',o:['Ga zitten','Ga rennen','Roep harder'],a:0,u:'Zitten, en anders liggen; en zwijgen.'},
      {v:'Wat is echte kracht?',o:['Jezelf inhouden als je boos bent','De sterkste zijn','Altijd winnen'],a:0,u:'"De sterke is wie zichzelf beheerst bij woede."'}]},
@@ -1149,6 +1323,9 @@ const MODULES = [
   tk:[`Een vrouw kwam in het vuur om een kat die ze opsloot zonder eten. Een man kreeg vergeving omdat hij een dorstige hond water gaf uit zijn schoen. Dieren zijn geen speelgoed.`,
       `De aarde is je toevertrouwd. Water verspillen is verkeerd, ook als je bij een rivier staat, zei de Profeet ﷺ — dus zeker als je bij de kraan de wassing doet.`,
       `En je spullen: wat je leent, breng je terug. Wat niet van jou is, pak je niet, ook niet "even". Eerlijkheid met kleine dingen is de oefening voor eerlijkheid met grote dingen.`],
+  jr:`Wees lief voor dieren; ze zijn geen speelgoed. Verspil geen water, ook niet bij de kraan. En wat je leent, breng je terug.`,
+  dp:`De aarde is in de Koran een <i>amana</i>, iets wat je in bewaring krijgt. Daar hoort een merkwaardig concreet advies bij: plant je boompje ook als je weet dat morgen de wereld vergaat. Dat is geen romantiek maar een uitspraak over hoe je met tijd omgaat.`,
+  zie:['l1510'],
   q:[{v:'Wat gebeurde er met de man die een hond water gaf?',o:['Hij kreeg vergeving','Er gebeurde niets','Hij werd rijk'],a:0,u:'Een bekende overlevering over barmhartigheid voor dieren.'},
      {v:'Mag je water verspillen bij de wassing?',o:['Nee, ook niet bij een rivier','Ja, als het gratis is','Alleen \'s zomers'],a:0,u:'Zuinigheid geldt zelfs met veel water beschikbaar.'},
      {v:'Wat doe je met geleende spullen?',o:['Terugbrengen','Houden','Doorgeven aan een ander'],a:0,u:'Toevertrouwd goed geef je terug.'}]}
@@ -1161,6 +1338,7 @@ const MODULES = [
       `"Du'a is de aanbidding," zei de Profeet ﷺ. Je hoeft geen speciale houding of speciale taal — je heft je handen, je vraagt, je gelooft dat Hij hoort.`,
       `Er zijn momenten waarop het extra dichtbij is: in de sujud, tussen de adhan en de iqama, op vrijdag, en op reis. En er zijn drie antwoorden mogelijk: je krijgt het, je krijgt iets beters, of het wordt bewaard voor later.`],
   jr:`Du'a is aan Allah vragen. Dat mag in je eigen woorden en in het Nederlands. Hij hoort je altijd.`,
+  dp:`Du'a is in de fiqh nooit een verplichting maar wel de aanbidding die het dichtst bij het hart ligt — vandaar de uitspraak "du'a is de aanbidding", niet "een deel van". Dat verklaart ook waarom er zo weinig regels voor gelden: geen taal, geen richting, geen tijd, geen wassing vereist.`,
   q:[{v:'In welke taal mag je du\'a maken?',o:['Alleen Arabisch','In je eigen taal','Alleen fluisterend'],a:1,u:'Je eigen woorden zijn welkom.'},
      {v:'Wanneer ben je in het gebed het dichtst bij Allah?',o:['In de sujud','Bij het staan','Bij de salam'],a:0,u:'"Het dichtst is een dienaar bij zijn Heer in de sujud."'},
      {v:'Wat kan er met een du\'a gebeuren?',o:['Je krijgt het, iets beters, of het wordt bewaard','Er gebeurt niets','Hij verdwijnt'],a:0,u:'Geen du\'a gaat verloren.'}]},
@@ -1169,6 +1347,8 @@ const MODULES = [
   tk:[`Kleine zinnen die je dag optillen. Bij het wakker worden: <i>alhamdulillahi lladhi ahyana ba'da ma amatana wa ilayhi n-nushur</i>. Voor het eten: <i>bismillah</i>; ben je het vergeten, dan zeg je <i>bismillahi awwalahu wa akhirahu</i>. Na het eten: <i>alhamdulillahi lladhi at'amana wa saqana wa ja'alana muslimin</i>.`,
       `Bij het huis uit gaan: <i>bismillah, tawakkaltu 'ala llah, wa la hawla wa la quwwata illa billah</i>. Voor het slapen: <i>bismika llahumma amutu wa ahya</i>.`,
       `Ze staan allemaal met tekst en klank in het onderdeel <b>Leren bidden → Du'a's</b>, zodat je ze kunt naspreken.`],
+  jr:`Er zijn kleine zinnetjes voor de hele dag: bismillah voor het eten, alhamdulillah erna, en een du'a voor het slapen. Ze staan met geluid bij Leren bidden.`,
+  dp:`Deze korte du'a's dekken bijna elk moment van de dag, en dat is de bedoeling: niet meer aanbidding erbij, maar een gewone dag die er helemaal in getrokken wordt. Wie ze een tijd gebruikt, merkt dat het minder een handeling wordt en meer een manier van kijken.`,
   q:[{v:'Wat zeg je voor het eten?',o:['Bismillah','Alhamdulillah','Allahu akbar'],a:0,u:'En vergeet je het, dan "bismillahi awwalahu wa akhirah".'},
      {v:'Wat zeg je bij het wakker worden?',o:['Alhamdulillahi lladhi ahyana...','Ghufranak','Amin'],a:0,u:'Dank voor het leven na de "kleine dood" van de slaap.'},
      {v:'Wat zeg je bij het slapen gaan?',o:['Bismika llahumma amutu wa ahya','Bismillah alleen','Niets'],a:0,u:'"In Uw naam, Allah, sterf ik en leef ik."'}]},
@@ -1177,6 +1357,8 @@ const MODULES = [
   tk:[`<b>SubhanAllah</b> (Allah is volmaakt), <b>alhamdulillah</b> (alle lof is voor Allah), <b>Allahu akbar</b> (Allah is groter), <b>la ilaha illa llah</b> (er is geen god dan Allah). Vier zinnen die je overal kunt zeggen.`,
       `"Twee woorden die licht zijn op de tong en zwaar op de weegschaal," zei de Profeet ﷺ over <i>subhanallahi wa bihamdih, subhanallahi l-'azim</i>.`,
       `Dhikr is ook <b>istighfar</b>: <i>astaghfirullah</i>, ik vraag Allah om vergeving. En het rustigst maakt het je als je het zomaar doet: in de bus, tijdens het wachten, als je niet kunt slapen.`],
+  jr:`SubhanAllah, alhamdulillah, Allahu akbar, la ilaha illa llah. Vier korte zinnen die je overal kunt zeggen — in de bus, op de fiets, in bed.`,
+  dp:`Dhikr betekent letterlijk <i>herinnering</i>. Het is dus geen kwestie van tellen maar van niet-vergeten; het aantal is een hulpmiddel. Vandaar dat de traditie meer waarde hecht aan tien woorden met aandacht dan aan honderd met een leeg hoofd.`,
   q:[{v:'Wat betekent alhamdulillah?',o:['Alle lof is voor Allah','Allah is groter','Ik vraag vergeving'],a:0,u:'Dankbaarheid in één woord.'},
      {v:'Wat betekent astaghfirullah?',o:['Ik vraag Allah om vergeving','Allah is Eén','Vrede zij met jou'],a:0,u:'Istighfar.'},
      {v:'Wanneer kun je dhikr doen?',o:['Alleen in de moskee','Overal en altijd','Alleen na het gebed'],a:1,u:'Dat is juist de kracht ervan.'}]},
@@ -1185,6 +1367,7 @@ const MODULES = [
   tk:[`Als je klaar bent met bidden, blijf je nog even zitten. Je zegt drie keer <i>astaghfirullah</i>, en daarna: <i>Allahumma anta s-salam wa minka s-salam, tabarakta ya dha l-jalali wa l-ikram</i>.`,
       `Daarna 33 keer <i>subhanallah</i>, 33 keer <i>alhamdulillah</i>, 33 keer <i>Allahu akbar</i>, en als honderdste: <i>la ilaha illa llahu wahdahu la sharika lah, lahu l-mulku wa lahu l-hamdu wa huwa 'ala kulli shay'in qadir</i>.`,
       `Wie na elk gebed <b>ayat al-kursi</b> leest, staat niets tussen hem en het paradijs dan de dood, zegt de overlevering.`],
+  dp:`De dhikr na het gebed heeft een praktische functie die vaak wordt vergeten: hij houdt je nog even zitten. Wie meteen opstaat, stapt van het gebed rechtstreeks terug in de dag; die paar minuten zijn de landing.`,
   q:[{v:'Hoe vaak zeg je subhanallah na het gebed?',o:['10 keer','33 keer','100 keer'],a:1,u:'33 subhanallah, 33 alhamdulillah, 33 Allahu akbar, en één afsluiter.'},
      {v:'Wat lees je na elk gebed volgens de overlevering?',o:['Ayat al-kursi','Soera Yasin','Al-Fatiha nog eens'],a:0,u:'Het bekende vers uit al-Baqara.'},
      {v:'Waarmee begin je na de slotgroet?',o:['Drie keer astaghfirullah','Met opstaan','Met praten'],a:0,u:'Eerst istighfar, dan de dhikr.'}]}
@@ -1196,6 +1379,8 @@ const MODULES = [
   tk:[`Het islamitische jaar heeft twaalf maanden die met de <b>maan</b> meelopen. Een maand begint als de nieuwe maansikkel gezien wordt en duurt 29 of 30 dagen.`,
       `Daardoor is het jaar ongeveer elf dagen korter dan het jaar op de gewone kalender. Ramadan schuift dus elk jaar naar voren: nu in het voorjaar, over een aantal jaren midden in de winter.`,
       `De maanden heten onder andere Muharram, Rabi' al-awwal, Rajab, Sha'ban, <b>Ramadan</b>, Shawwal en Dhu l-Hijja. Het jaar telt vanaf de hidjra: daarom staat er "H" achter een islamitisch jaartal.`],
+  jr:`De islamitische maanden lopen met de maan mee. Daarom schuift ramadan elk jaar elf dagen naar voren.`,
+  dp:`Dat de maanden meelopen met de maan betekent dat elk feest en elke vastenmaand door alle seizoenen wandelt. Over een mensenleven vast je ramadan dus zowel in de korte winterdagen als in de lange zomerdagen — een gelijkheid die een zonnekalender nooit had gegeven.`,
   q:[{v:'Waar loopt de islamitische kalender mee?',o:['Met de maan','Met de zon','Met de sterren'],a:0,u:'Een maanmaand duurt 29 of 30 dagen.'},
      {v:'Hoeveel korter is het islamitische jaar?',o:['Ongeveer elf dagen','Een maand','Even lang'],a:0,u:'Daarom schuiven de feesten door de seizoenen.'},
      {v:'Waar telt de kalender vanaf?',o:['De hidjra','De geboorte van de Profeet ﷺ','De eerste openbaring'],a:0,u:'Vandaar de "H" achter het jaartal.'}]},
@@ -1204,6 +1389,8 @@ const MODULES = [
   tk:[`Ramadan is de negende maand: de maand waarin de Koran begon neer te dalen. Overdag vasten, 's avonds samen eten, en 's nachts extra bidden — de <b>tarawih</b>.`,
       `In de laatste tien nachten zit <b>laylat al-qadr</b>, de nacht die beter is dan duizend maanden. Niemand weet precies welke nacht het is; daarom doen mensen in die tien nachten extra hun best.`,
       `Aan het eind van de maand geef je <b>zakat al-fitr</b>: eten of de waarde daarvan, per persoon in huis, zodat ook de armen het feest kunnen vieren. Dat gebeurt vóór het feestgebed.`],
+  jr:`Ramadan is de maand waarin moslims overdag niet eten of drinken. 's Avonds eet je samen en 's nachts wordt er extra gebeden.`,
+  dp:`De laatste tien nachten zijn niet toevallig ongenummerd. Was bekend gemaakt welke nacht laylat al-qadr is, dan zouden de meeste mensen alleen die ene nacht doen. Door het te verbergen wordt tien nachten inzet gevraagd — dezelfde pedagogiek die je terugziet bij het uur van vrijdag en het uur van het einde.`,
   q:[{v:'Wat is laylat al-qadr?',o:['De nacht die beter is dan duizend maanden','De eerste nacht van ramadan','Het feest'],a:0,u:'In de laatste tien nachten.'},
      {v:'Wat is tarawih?',o:['Het extra nachtgebed in ramadan','Het ontbijt','Een soera'],a:0,u:'In de Malikitische traditie meestal twintig rak\'a.'},
      {v:'Wanneer geef je zakat al-fitr?',o:['Vóór het feestgebed','Na het feest','In de winter'],a:0,u:'Zodat de armen op tijd het feest kunnen meevieren.'}]},
@@ -1213,6 +1400,7 @@ const MODULES = [
       `<b>'Id al-adha</b> valt in de maand van de hajj. Het herinnert aan Ibrahim, die bereid was alles op te geven voor Allah, en aan het offer dat in plaats van zijn zoon kwam. Van het geofferde vlees gaat een deel naar familie en een deel naar de armen.`,
       `Feest betekent ook echt feest: bezoek, eten, spelletjes en cadeaus. De Profeet ﷺ liet kinderen op de feestdag zingen en spelen.`],
   jr:`Er zijn twee feesten: 'Id al-fitr na de ramadan en 'Id al-adha in de hajj-maand. Je trekt mooie kleren aan, bidt het feestgebed en viert het met familie.`,
+  dp:`Beide feesten zijn nadrukkelijk gekoppeld aan iets wat vooraf ging: het fitr aan een maand van inhouding, het adha aan de hajj en het offer. Een feest zonder wat eraan vooraf ging is in deze traditie een halve feest — en daarom valt het feestgebed altijd 's ochtends vroeg, niet als slot maar als begin van de dag.`,
   q:[{v:'Welk feest komt na ramadan?',o:['\'Id al-fitr','\'Id al-adha','Ashura'],a:0,u:'Het feest van het verbreken van het vasten.'},
      {v:'Waaraan herinnert \'Id al-adha?',o:['Aan Ibrahim en het offer','Aan de hidjra','Aan de eerste openbaring'],a:0,u:'En het vlees wordt gedeeld.'},
      {v:'Wat doe je vóór het gebed van \'Id al-fitr?',o:['Iets zoets eten','Vasten','Niets'],a:0,u:'Meestal dadels, in oneven aantal.'}]},
@@ -1221,6 +1409,7 @@ const MODULES = [
   tk:[`<b>Vrijdag</b> is de beste dag van de week. Je doucht, trekt schone kleren aan, gaat vroeg naar de moskee en luistert stil naar de preek. Er is een moment op die dag waarop een du'a niet geweigerd wordt.`,
       `De <b>maandag en donderdag</b> zijn dagen waarop de Profeet ﷺ vaak vrijwillig vastte. <b>'Ashura</b>, de tiende van Muharram, en de <b>dag van 'Arafat</b> zijn dagen waarop veel mensen vasten.`,
       `Er zijn ook zes dagen in Shawwal, vlak na ramadan: wie die vast, is als iemand die het hele jaar heeft gevast, zegt de overlevering.`],
+  dp:`Vrijdag is geen rustdag zoals de zondag; de Koran zegt uitdrukkelijk: als het gebed voorbij is, verspreid je dan over de aarde en zoek je werk (al-Jumuʿa 10). De onderbreking is een uur, geen dag — een verschil dat veel misverstanden op school en op het werk verklaart.`,
   q:[{v:'Wat is de beste dag van de week?',o:['Vrijdag','Zondag','Maandag'],a:0,u:'Met het vrijdaggebed als hoogtepunt.'},
      {v:'Op welke dagen vastte de Profeet ﷺ vaak vrijwillig?',o:['Maandag en donderdag','Zaterdag en zondag','Alleen in ramadan'],a:0,u:'Naast de witte dagen van de maand.'},
      {v:'Wat doe je tijdens de preek op vrijdag?',o:['Stil luisteren','Praten met je buurman','Je telefoon bekijken'],a:0,u:'Zelfs "ssst" zeggen tegen een ander wordt afgeraden.'}]}
@@ -1232,6 +1421,8 @@ const MODULES = [
   tk:[`Je bent Nederlands én moslim, en dat botst minder dan mensen soms denken. Je zit in de klas, je doet mee met gym, je hebt vrienden met en zonder geloof.`,
       `Sommige dingen doe je anders: je eet geen varkensvlees, je bidt misschien tussendoor, in de ramadan lunch je niet mee. Dat hoef je niet te verstoppen en je hoeft er ook geen show van te maken. Gewoon zeggen hoe het zit werkt het beste.`,
       `Heb je ruimte nodig om te bidden op school? Vraag het rustig aan je mentor. Meestal is er meer mogelijk dan je denkt, zeker als je het netjes vraagt.`],
+  jr:`Je bent Nederlands en moslim tegelijk. Sommige dingen doe je anders — geen varkensvlees, soms bidden — en dat mag je gewoon zeggen.`,
+  dp:`Onderzoek naar tweede- en derdegeneratiejongeren laat telkens hetzelfde zien: wie zijn geloof kan uitléggen, heeft er op school het minst last van, en wie het alleen gewend is, het meest. Dat is precies waarom dit leerpad bestaat — niet om je anders te maken, maar om je te laten weten wat je weet.`,
   q:[{v:'Wat doe je als je op school wilt bidden?',o:['Je vraagt het rustig aan je mentor','Je doet het stiekem','Je bidt maar niet'],a:0,u:'Vragen kost weinig en levert vaak veel op.'},
      {v:'Moet je je geloof verbergen?',o:['Ja','Nee, gewoon eerlijk zijn','Alleen op maandag'],a:1,u:'Geen show, geen verstoppertje.'},
      {v:'Kun je Nederlands en moslim tegelijk zijn?',o:['Ja','Nee','Alleen thuis'],a:0,u:'Dat is de dagelijkse werkelijkheid van miljoenen mensen.'}]},
@@ -1240,6 +1431,8 @@ const MODULES = [
   tk:[`Vroeg of laat vraagt iemand iets: waarom eet je dat niet, waarom draagt je zus een hoofddoek, geloof jij echt in God? Dat is meestal nieuwsgierigheid, geen aanval.`,
       `Antwoord kort en rustig. "Ik eet geen varkensvlees, dat hoort bij mijn geloof." Klaar. Weet je iets niet? Zeg dat gewoon: "goede vraag, dat ga ik opzoeken." Dat is sterker dan iets verzinnen.`,
       `Wordt iemand vervelend of pest hij je ermee, dan is dat geen discussie meer maar pesten. Vertel het thuis en op school. Je hoeft dat niet in je eentje op te lossen.`],
+  dp:`Er bestaat een verschil tussen een vraag en een uitdaging, en dat hoor je aan de toon, niet aan de woorden. Op een vraag geef je een antwoord; op een uitdaging geef je meestal het beste antwoord door hem niet aan te gaan. "Interessante vraag, daar praat ik graag een keer rustig over" is geen ontwijken maar een keuze.`,
+  zie:['l1503'],
   q:[{v:'Iemand vraagt waarom je iets niet eet. Wat doe je?',o:['Kort en rustig uitleggen','Boos worden','Weglopen'],a:0,u:'De meeste vragen zijn nieuwsgierigheid.'},
      {v:'Je weet het antwoord niet. Wat zeg je?',o:['Je verzint iets','"Goede vraag, dat zoek ik op"','Je zwijgt boos'],a:1,u:'Eerlijk is sterker.'},
      {v:'Iemand pest je met je geloof. Wat doe je?',o:['Je vertelt het thuis en op school','Je lost het alleen op','Je gaat terugpesten'],a:0,u:'Pesten is geen discussie; daar hoort hulp bij.'}]},
@@ -1249,6 +1442,7 @@ const MODULES = [
       `Let op verborgen dingen: gelatine in snoep, vanille-extract met veel alcohol, dierlijke vetten in koekjes. Kijk op de verpakking of vraag het. Twijfel je bij iemand thuis? Neem iets vegetarisch; dat is bijna altijd veilig en niemand hoeft zich ongemakkelijk te voelen.`,
       `En eten dat halal is, eet je ook netjes: met rechts, met bismillah, zonder verspillen, en je klaagt niet over wat er op tafel staat.`],
   jr:`Bijna alles mag je eten. Niet: varkensvlees, bloed en alcohol. Kijk bij snoep of er gelatine in zit. Eet met je rechterhand en zeg bismillah.`,
+  dp:`De grondregel bij eten is ruim: alles is toegestaan behalve wat uitdrukkelijk verboden is. Bij twijfelgevallen — E-nummers, gelatine, alcohol in een saus — geldt bovendien dat wat door een proces volledig van eigenschap verandert (<i>istihala</i>) in veel adviezen niet meer als het oorspronkelijke geldt. Zoek het na bij iemand die het weet, in plaats van te gokken of alles te verbieden.`,
   q:[{v:'Wat betekent halal?',o:['Toegestaan','Verboden','Duur'],a:0,u:'Haram is het tegenovergestelde.'},
      {v:'Waar let je op bij snoep?',o:['Of er gelatine in zit','De kleur','Het merk'],a:0,u:'Gelatine kan van varkens komen.'},
      {v:'Met welke hand eet je?',o:['De rechter','De linker','Om en om'],a:0,u:'Rechts, met bismillah.'}]},
@@ -1257,9 +1451,394 @@ const MODULES = [
   tk:[`"Geen dwang in het geloof," zegt de Koran. Je mag laten zien waar je in gelooft, maar je duwt het niemand op — ook niet je vriend die iets anders gelooft of niets gelooft.`,
       `Je scheldt niet op wat anderen heilig vinden. Dat staat letterlijk in de Koran: doe het niet, want dan gaan zij op hun beurt schelden.`,
       `Respect is niet hetzelfde als het overal mee eens zijn. Je mag verschillen én aardig zijn. Dat is precies wat de Profeet ﷺ deed met de mensen om hem heen: hij was duidelijk over wat hij geloofde en zacht in hoe hij met mensen omging.`],
+  dp:`"En scheld niet op wie zij naast Allah aanroepen, want dan schelden zij op Allah uit vijandschap, zonder kennis" (al-Anʿam 108). Het opvallende is de reden: niet "omdat het onaardig is", maar omdat het het tegenovergestelde bereikt van wat je wilt. De Koran redeneert hier gewoon over gevolgen.`,
+  zie:['l1506'],
   q:[{v:'Wat zegt de Koran over dwang in het geloof?',o:['"Geen dwang in het geloof"','Dat je iedereen moet overtuigen','Niets'],a:0,u:'Soera al-Baqara 256.'},
      {v:'Mag je schelden op wat anderen heilig vinden?',o:['Nee','Ja','Alleen terug'],a:0,u:'De Koran verbiedt het uitdrukkelijk.'},
      {v:'Betekent respect dat je het overal mee eens bent?',o:['Nee, je mag verschillen én aardig zijn','Ja','Alleen bij familie'],a:0,u:'Duidelijk in de inhoud, zacht in de omgang.'}]}
+]},
+
+{id:'m11', t:'De soennah', ar:'السنة', ico:'🌿', lead:'Hoe we weten wat de Profeet ﷺ deed en zei — en wat je daarmee doet.', lessen:[
+
+ {id:'l1101', t:'Wat is een hadith?', ar:'الحديث', sp:1,
+  tk:[`De Koran is het woord van Allah. Een <b>hadith</b> is iets anders: het is wat de Profeet ﷺ zei, deed of goedkeurde, opgeschreven door de mensen die erbij waren.`,
+      `Je hebt ze allebei nodig. In de Koran staat "verricht het gebed" — maar hoevéél rak'a, en hoe je staat en buigt, dat weten we omdat de Profeet ﷺ het heeft voorgedaan en zei: "Bid zoals jullie mij hebben zien bidden."`,
+      `Samen heten die woorden en daden de <b>soennah</b>: de weg die hij liep en die wij achter hem aan lopen.`],
+  jr:`De Koran komt van Allah. Een hadith is wat de Profeet ﷺ zei of deed. Daaruit weten we bijvoorbeeld hoe je precies moet bidden.`,
+  dp:`Hadith en Koran verschillen niet alleen in herkomst maar ook in status: de Koran is woord voor woord overgeleverd, een hadith meestal naar betekenis. Vandaar dat dezelfde uitspraak in verschillende bewoordingen kan voorkomen zonder dat er iets mis is — en vandaar ook dat je een hadith nooit als Koran citeert.`,
+  q:[{v:'Wat is een hadith?',o:['Wat de Profeet ﷺ zei of deed','Een soera','Een gebed'],a:0,u:'Overgeleverd door de mensen die erbij waren.'},
+     {v:'Waarom hebben we de soennah nodig naast de Koran?',o:['Om te weten hoe je de opdrachten uitvoert','Om de Koran te vervangen','Dat hebben we niet nodig'],a:0,u:'"Bid zoals jullie mij hebben zien bidden."'},
+     {v:'Wat is het verschil tussen Koran en hadith?',o:['De Koran is het woord van Allah, de hadith van de Profeet ﷺ','Er is geen verschil','De hadith is ouder'],a:0,u:'Twee bronnen, elk met zijn eigen plaats.'}]},
+
+ {id:'l1102', t:'Hoe weten we dat het klopt?', ar:'الإسناد', sp:2,
+  tk:[`Niet alles wat mensen zeggen over de Profeet ﷺ is waar. Daarom hebben geleerden eeuwenlang aan één ding gewerkt: uitzoeken wat écht van hem komt.`,
+      `Elke hadith heeft een <b>isnad</b>, een ketting van namen: ik hoorde het van hem, en hij van haar, en zij van de metgezel die erbij was. Van elke naam in die ketting werd nagegaan wie het was, of hij betrouwbaar was, en of hij die ander werkelijk ontmoet kán hebben.`,
+      `Zo ontstonden woorden als <b>sahih</b> (gezond, betrouwbaar) en <b>da'if</b> (zwak). De bekendste verzamelingen zijn die van al-Bukhari en Muslim, en voor onze school de <b>Muwatta'</b> van imam Malik.`],
+  dp:`De hadithwetenschap is een van de zorgvuldigste vormen van bronnenkritiek die er bestaan: er zijn woordenboeken met levensbeschrijvingen van tienduizenden overleveraars, met geboorte- en sterfjaren, reizen, leraren en leerlingen — juist om te kunnen nagaan of een ketting kán kloppen. Wie zegt "er staat ergens dat de Profeet ﷺ zei…" zegt daarmee dus nog niets; de vraag is altijd: wáár staat het, en hoe sterk is de ketting?`,
+  q:[{v:'Wat is een isnad?',o:['De ketting van overleveraars','De titel van een boek','Een soera'],a:0,u:'Wie hoorde het van wie, terug tot de Profeet ﷺ.'},
+     {v:'Wat betekent sahih?',o:['Zwak','Betrouwbaar','Onbekend'],a:1,u:'Da\'if is het tegenovergestelde: zwak.'},
+     {v:'Welke verzameling hoort bij onze school?',o:['De Muwatta\' van imam Malik','Alleen Bukhari','Geen enkele'],a:0,u:'Het oudste bewaarde boek van zijn soort.'}],
+  kt:[['Wat is een <b>isnad</b> en waarom telt hij?','De ketting van overleveraars terug tot de Profeet ﷺ. Van elke naam werd nagegaan of hij betrouwbaar was en of hij de vorige echt kan hebben ontmoet.']]},
+
+ {id:'l1103', t:'Imam Malik en Medina', ar:'الموطأ', sp:2,
+  tk:[`<b>Malik ibn Anas</b> woonde in Medina, de stad van de Profeet ﷺ, ongeveer honderd jaar na hem. Hij gaf er les in de moskee waar de Profeet ﷺ had gebeden.`,
+      `Zijn boek de <b>Muwatta'</b> is het oudste bewaarde boek in zijn soort. Wat het bijzonder maakt: naast hadith schreef hij op wát de mensen van Medina deden. Zijn redenering was eenvoudig — als een hele stad iets van generatie op generatie zo doet, en dat is de stad waar de Profeet ﷺ tien jaar woonde, dan zegt dat iets.`,
+      `Hij was voorzichtig. "Ik weet het niet" was een antwoord dat hij vaak gaf. Toen een kalief zijn boek verplicht wilde stellen voor het hele rijk, zei hij nee: de mensen elders hebben hun eigen geleerden gehoord.`],
+  dp:`Dat "handelen van de mensen van Medina" (<span class="ar">عمل أهل المدينة</span>, ʿamal ahl al-Madina) is een eigen bewijsbron in de Malikitische school, naast Koran, soennah, consensus en analogie. Het verklaart een deel van de verschillen met de andere scholen — en het verklaart waarom de Maghreb, die zijn islam via Medina kreeg, zo consequent Malikitisch is gebleven.`,
+  q:[{v:'Waar woonde imam Malik?',o:['In Medina','In Mekka','In Bagdad'],a:0,u:'De stad van de Profeet ﷺ.'},
+     {v:'Wat is de Muwatta\'?',o:['Zijn boek met hadith en de praktijk van Medina','Een moskee','Een soera'],a:0,u:'Het oudste bewaarde boek in zijn soort.'},
+     {v:'Wat zei hij toen de kalief zijn boek wilde opleggen?',o:['Nee — anderen hebben hun eigen geleerden','Ja, graag','Hij zei niets'],a:0,u:'Bescheidenheid over je eigen gelijk hoort bij kennis.'}]},
+
+ {id:'l1104', t:'De soennah in het klein', sp:1,
+  tk:[`De soennah volgen is niet vooral een kwestie van kleding. Het zit in dingen die niemand ziet.`,
+      `Eten met je rechterhand en van wat vlak voor je ligt. Bismillah zeggen. Niet blazen in warm eten. Op je rechterzij gaan liggen als je gaat slapen. Als eerste groeten. Je schoenen rechts eerst aandoen.`,
+      `En vooral: hoe hij met mensen omging. Hij luisterde tot iemand uitgesproken was, hij lachte veel, hij hielp thuis mee, hij ging op ziekenbezoek — ook bij mensen die geen moslim waren. Wie alleen de buitenkant naadoet en dat overslaat, doet het halve werk.`],
+  jr:`De soennah zit in kleine dingen: eten met rechts, bismillah zeggen, als eerste groeten, aardig zijn. Zo deed de Profeet ﷺ het.`,
+  dp:`Geleerden onderscheiden de <i>sunna ʿadiyya</i> — dingen die de Profeet ﷺ deed omdat hij nu eenmaal in Arabië leefde, zoals kleding en eten — van de <i>sunna tashriʿiyya</i>, wat hij deed als voorbeeld voor de godsdienst. Dat onderscheid voorkomt twee fouten tegelijk: alles wegwuiven als cultuur, en alles verplicht maken tot en met de snit van je hemd.`,
+  q:[{v:'Waar zit de soennah vooral in?',o:['In kleine dagelijkse dingen en in hoe je met mensen omgaat','Alleen in kleding','Alleen in de moskee'],a:0,u:'De buitenkant zonder het gedrag is halve arbeid.'},
+     {v:'Met welke hand eet je?',o:['De rechter','De linker','Om en om'],a:0,u:'En van wat vlak voor je ligt.'},
+     {v:'Ging de Profeet ﷺ ook op ziekenbezoek bij niet-moslims?',o:['Ja','Nee','Alleen bij familie'],a:0,u:'Dat is overgeleverd.'}]}
+]},
+
+{id:'m12', t:'Na de Profeet ﷺ', ar:'التاريخ', ico:'🗺️', lead:'Van Medina naar Fes, Cordoba en Roermond — hoe de islam bij jullie terechtkwam.', lessen:[
+
+ {id:'l1201', t:'De vier na hem', ar:'الخلفاء الراشدون', sp:2,
+  tk:[`Toen de Profeet ﷺ overleed, moest iemand de gemeenschap leiden. Dat werden er vier, na elkaar.`,
+      `<b>Abu Bakr</b>, zijn oudste vriend, hield de mensen bij elkaar toen alles uit elkaar dreigde te vallen; onder hem werd de Koran verzameld. <b>'Umar</b> was streng en rechtvaardig; hij liep 's nachts door de stad om te zien wie honger had. <b>'Uthman</b> liet de Koran in één schrijfwijze vastleggen en kopieën naar alle steden sturen — daar komt de moshaf van vandaag vandaan. <b>'Ali</b>, zijn neef en schoonzoon, stond bekend om zijn kennis en zijn moed.`,
+      `Het waren geen makkelijke jaren. Er waren oorlogen en er werden kaliefen vermoord. Geschiedenis is geen sprookje; ook onder goede mensen gaat het soms mis.`],
+  dp:`De opvolging is niet geregeld in een tekst, en dat is precies waar de vroege verdeeldheid vandaan komt — uiteindelijk ook de scheiding tussen soennieten en sjiieten. Weten dat dat verschil bestaat en waar het vandaan komt, hoort bij algemene ontwikkeling; het is geen reden om iemand anders af te schrijven.`,
+  q:[{v:'Wie was de eerste kalief?',o:['Abu Bakr','\'Umar','\'Ali'],a:0,u:'De oudste vriend van de Profeet ﷺ.'},
+     {v:'Wat deed \'Uthman?',o:['De Koran in één schrijfwijze vastleggen','De Ka\'ba bouwen','Naar Medina verhuizen'],a:0,u:'Daar komt de moshaf van vandaag vandaan.'},
+     {v:'Waren die jaren rustig?',o:['Nee, er waren oorlogen en moorden','Ja, alles ging goed','Er gebeurde niets'],a:0,u:'Eerlijk zijn over het verleden hoort erbij.'}]},
+
+ {id:'l1202', t:'Hoe het zich verspreidde', sp:2,
+  tk:[`Binnen honderd jaar reikte het gebied van moslims van Spanje tot de grens van China. Deels door verovering, deels — en dat wordt vaak vergeten — door handelaren die met een schip aankwamen, bleven, trouwden en aardig waren.`,
+      `Zo ging het in West-Afrika en in Indonesië, het land met de meeste moslims ter wereld: daar is nooit een leger geweest. Kooplieden brachten het mee.`,
+      `Steden werden centra van kennis. In Bagdad werden Griekse boeken vertaald en verder ontwikkeld; wiskunde die je op school leert — het woord <i>algoritme</i> komt van de naam al-Khwarizmi — liep via die weg naar Europa.`],
+  dp:`"Geen dwang in het geloof" (al-Baqara 256) is geen latere verontschuldiging maar een vers uit Medina zelf. Onder moslimbestuur bleven grote christelijke en joodse gemeenschappen eeuwenlang bestaan — dat zou onmogelijk zijn geweest bij gedwongen bekering. Dat betekent niet dat er nooit onrecht is gepleegd; het betekent dat je geschiedenis leest zoals ze is, met het goede en het lelijke.`,
+  q:[{v:'Hoe kwam de islam in Indonesië?',o:['Via handelaren','Via een leger','Via de post'],a:0,u:'Het land met de meeste moslims ter wereld, zonder verovering.'},
+     {v:'Waar komt het woord "algoritme" vandaan?',o:['Van de geleerde al-Khwarizmi','Van een stad','Van het Latijn'],a:0,u:'Via Bagdad naar Europa.'},
+     {v:'Wat zegt de Koran over dwang in het geloof?',o:['Geen dwang','Dwang mag','Daar staat niets over'],a:0,u:'Soera al-Baqara 256.'}]},
+
+ {id:'l1203', t:'Vier scholen, één islam', ar:'المذاهب', sp:2,
+  tk:[`Een <b>madhhab</b> is een school: een manier waarop geleerden uit de Koran en de soennah afleiden wat je moet doen. Er zijn er vier gebleven: die van Abu Hanifa, Malik, ash-Shafi'i en Ahmad ibn Hanbal.`,
+      `Ze zijn het over het grote eens — één Allah, vijf gebeden, ramadan — en verschillen in details: waar je je handen houdt in het gebed, of bloeden je wassing verbreekt.`,
+      `Jullie familie volgt de school van <b>Malik</b>, zoals bijna heel Marokko en de Maghreb. Niet omdat de andere fout zijn, maar omdat je bij één weg blijft in plaats van te shoppen. En als je iemand anders ziet bidden: dat is geen fout, dat is een andere school.`],
+  jr:`Er zijn vier scholen die uitleggen hoe je precies moet bidden en leven. Wij volgen die van imam Malik, net als bijna heel Marokko. De andere zijn niet fout — het zijn andere wegen naar hetzelfde.`,
+  dp:`Het verschil van mening (<span class="ar">اختلاف</span>, ikhtilaf) tussen de scholen geldt in de traditie als een ruimte, niet als een probleem. Waar het misgaat is bij het uitkiezen van steeds de makkelijkste mening uit elke school — <i>talfiq</i> — omdat je dan niet meer een weg volgt maar je eigen zin.`,
+  q:[{v:'Wat is een madhhab?',o:['Een school die uitlegt hoe je de bronnen toepast','Een moskee','Een land'],a:0,u:'Vier zijn er overgebleven.'},
+     {v:'Welke school volgt de Maghreb?',o:['Die van imam Malik','Die van Abu Hanifa','Geen enkele'],a:0,u:'Vandaar de gewoonten die je thuis ziet.'},
+     {v:'Iemand bidt anders dan jij. Wat betekent dat?',o:['Hij volgt waarschijnlijk een andere school','Hij doet het fout','Hij is geen moslim'],a:0,u:'Verschil in details hoort erbij.'}]},
+
+ {id:'l1204', t:'Al-Andalus en de Maghreb', sp:2,
+  tk:[`In het jaar 711 staken moslims de zeestraat over naar Spanje. Bijna achthonderd jaar lang was een deel daarvan <b>al-Andalus</b>. In Cordoba stond een bibliotheek met honderdduizenden boeken toen de meeste Europese steden er geen enkele hadden.`,
+      `Dichterbij huis: in <b>Fes</b> stichtte een vrouw, <b>Fatima al-Fihri</b>, in 859 de al-Qarawiyyin. Die geldt als de oudste nog werkende universiteit ter wereld. Een vrouw, in Marokko, meer dan duizend jaar geleden.`,
+      `Vanuit Marokko en de Maghreb kwam de Malikitische school, de Warsh-lezing van de Koran en veel van wat jullie thuis herkennen. Jullie familie staat in die lijn.`],
+  dp:`Al-Andalus is geen sprookje geweest: er waren bloeiperiodes met joodse ministers en christelijke geleerden aan hetzelfde hof, en er waren perioden van onderdrukking en burgeroorlog. Wie alleen het mooie vertelt, doet aan reclame; wie alleen het lelijke vertelt, ook. Geschiedenis lees je met beide ogen open.`,
+  q:[{v:'Wie stichtte de oudste nog werkende universiteit?',o:['Fatima al-Fihri','Imam Malik','Een kalief'],a:0,u:'In Fes, in het jaar 859.'},
+     {v:'Wat is al-Andalus?',o:['Het islamitische deel van Spanje','Een stad in Marokko','Een boek'],a:0,u:'Bijna achthonderd jaar.'},
+     {v:'Welke lezing van de Koran hoort bij de Maghreb?',o:['Warsh','Hafs','Geen'],a:0,u:'Daarom klinkt het in Marokko anders dan op veel opnames uit het oosten.'}]},
+
+ {id:'l1205', t:'Hoe wij hier kwamen', sp:3,
+  tk:[`In de jaren zestig kwamen mannen uit Marokko en Turkije naar Nederland om te werken in fabrieken en mijnen — ook hier in Limburg. Ze zouden een paar jaar blijven. Hun vrouwen en kinderen kwamen later; die paar jaar werden een leven.`,
+      `De eerste gebedsruimtes waren kamers boven een café en zalen in een fabriek. Pas later kwamen er moskeeën. Jullie grootouders hoorden bij die eerste generatie, en veel van wat nu vanzelfsprekend is — een moskee in de buurt, halal vlees in de winkel — is er omdat zij het hebben opgebouwd.`,
+      `Jij bent de derde of vierde generatie. Je spreekt Nederlands als eerste taal en Marokko is een land waar je op vakantie komt. Dat is geen verlies en geen verraad; dat is hoe het gaat. De vraag is niet of je hier hoort, maar wat je meeneemt.`],
+  dp:`Elke generatie krijgt een andere vraag. Voor je grootouders was het: hoe houd ik dit vast in een land dat me niet kent? Voor jou is het eerder: hoe leg ik uit wat ik geloof aan mensen die me wél kennen? Dat is een makkelijker vraag om te stellen en een moeilijkere om te beantwoorden — daarvoor moet je het zelf snappen, en niet alleen overgenomen hebben.`,
+  q:[{v:'Waarom kwamen de eerste Marokkaanse Nederlanders hierheen?',o:['Om te werken','Op vakantie','Om te studeren'],a:0,u:'Fabrieken en mijnen, ook in Limburg.'},
+     {v:'Waar waren de eerste gebedsruimtes?',o:['In kamers en zalen, geen moskeeën','In grote moskeeën','Er waren er geen'],a:0,u:'De moskeeën kwamen later.'},
+     {v:'Wat is de vraag voor jouw generatie volgens deze les?',o:['Uitleggen wat je gelooft aan mensen die je kennen','Of je hier mag zijn','Of je terug moet'],a:0,u:'Daarvoor moet je het zelf begrijpen.'}]}
+]},
+
+{id:'m13', t:'Wat je uit je hoofd leert', ar:'التدبر', ico:'💡', lead:'De soera\'s die je memoriseert, van binnen. Weten wat je zegt maakt het zeggen anders.', lessen:[
+
+ {id:'l1301', t:'Al-Fatiha, regel voor regel', ar:'الفاتحة', sp:1,
+  tk:[`Je zegt hem zeventien keer per dag. Dan is het jammer als je niet weet wat er staat.`,
+      `Je begint met <i>prijzen</i>: alle lof voor Allah, de Heer van alles wat er is. Dan noem je Hem barmhartig — twee keer, met twee woorden die allebei van "barmhartigheid" komen. Dan: Meester van de dag van het oordeel; wat je doet telt.`,
+      `In het midden draait het om: "Alleen U aanbidden wij en alleen U vragen wij om hulp." Daarvoor sprak je óver Allah, daarna spreek je tégen Hem. En dan pas komt je vraag, en het is er één: leid ons op het rechte pad.`,
+      `In een overlevering staat dat Allah op elk vers van al-Fatiha antwoordt: "Mijn dienaar heeft Mij geprezen… Mijn dienaar heeft Mij verheerlijkt… dit is tussen Mij en Mijn dienaar." Het is een gesprek, geen tekst die je opzegt.`],
+  jr:`Al-Fatiha zeg je zeventien keer per dag. Je prijst Allah, je zegt dat je alleen Hem aanbidt en alleen Hem om hulp vraagt, en je vraagt één ding: laat me de goede weg zien.`,
+  dp:`Al-Fatiha heet in de overlevering ook <i>as-sabʿ al-mathani</i>, de zeven veelherhaalde. Het opvallende aan de smeekbede is wat er níet gevraagd wordt: geen gezondheid, geen geld, geen succes. Alleen leiding — kennelijk omdat daar de rest uit volgt.`,
+  q:[{v:'Wat is de enige vraag in al-Fatiha?',o:['Leid ons op het rechte pad','Geef ons geld','Vergeef ons alles'],a:0,u:'Alles ervoor is lof, daarna komt die ene vraag.'},
+     {v:'Wat verandert er halverwege de soera?',o:['Je gaat van praten óver Allah naar praten tégen Hem','Niets','De taal'],a:0,u:'Bij "iyyaka na\'budu".'},
+     {v:'Hoe vaak zeg je al-Fatiha op een dag?',o:['Zeventien keer','Vijf keer','Eén keer'],a:0,u:'In elke rak\'a van de vijf gebeden.'}]},
+
+ {id:'l1302', t:'Al-Ikhlas: vier regels over Allah', ar:'الإخلاص', sp:1,
+  tk:[`Toen mensen in Mekka vroegen "beschrijf ons je Heer, waar komt Hij vandaan, van wie stamt Hij af?", kwam deze soera.`,
+      `<i>Hij is Allah, de Enige.</i> Niet één van meerdere — de Enige. <i>As-Samad</i>: degene tot wie alles zich wendt en die niemand nodig heeft. <i>Hij heeft niet verwekt en is niet verwekt</i>: geen vader, geen zoon, geen familie. <i>En niemand is aan Hem gelijk.</i>`,
+      `De Profeet ﷺ zei dat deze soera "een derde van de Koran" waard is. Geleerden leggen uit: de Koran gaat over Allah, over de regels en over de verhalen — en deze vier regels vatten het eerste deel helemaal samen.`],
+  jr:`Deze soera zegt wie Allah is: Hij is Eén, Hij heeft niemand nodig, Hij heeft geen vader en geen kinderen, en er is niemand zoals Hij.`,
+  dp:`<i>As-Samad</i> is een van de moeilijkst te vertalen woorden uit de Koran: het draagt tegelijk "degene tot wie iedereen zich wendt" en "degene die zelf niets nodig heeft, massief, zonder leegte". Beide betekenissen samen zeggen precies waar het om gaat: afhankelijkheid loopt maar één kant op.`,
+  q:[{v:'Waarom werd deze soera geopenbaard?',o:['Mensen vroegen wie Allah is','Er was oorlog','Iemand was ziek'],a:0,u:'"Beschrijf ons je Heer."'},
+     {v:'Hoeveel van de Koran is deze soera waard volgens de hadith?',o:['Een derde','De helft','Alles'],a:0,u:'Omdat hij het onderwerp "wie is Allah" volledig samenvat.'},
+     {v:'Wat betekent "lam yalid wa lam yulad"?',o:['Hij heeft niet verwekt en is niet verwekt','Hij hoort alles','Hij is groot'],a:0,u:'Geen vader, geen zoon.'}]},
+
+ {id:'l1303', t:'Al-\'Asr: de tijd loopt', ar:'العصر', sp:2,
+  tk:[`Drie regels. Imam ash-Shafi'i zei: als mensen alleen deze soera zouden hebben, was het genoeg voor hen.`,
+      `Allah zweert bij de tijd. En dan: <i>de mens lijdt werkelijk verlies</i> — iedereen, zonder uitzondering, want elke minuut die voorbij is komt niet terug.`,
+      `Behalve vier soorten mensen: wie gelooft, wie het goede doet, wie elkaar aanspoort tot de waarheid, en wie elkaar aanspoort tot geduld. Let op die laatste twee: ze gaan niet over jou alleen. Je kunt jezelf niet redden en de rest laten zitten.`],
+  dp:`De opbouw is die van een uitspraak in de rechtszaal: eerst de eed, dan het vonnis (verlies), dan de uitzondering. Dat "elkaar aansporen" in de laatste twee is grammaticaal wederkerig — het veronderstelt een gemeenschap. Vandaar dat deze soera vaak wordt aangehaald als het over vriendschap en over wie je om je heen kiest gaat.`,
+  q:[{v:'Wat zei imam ash-Shafi\'i over deze soera?',o:['Hij zou genoeg zijn voor de mensen','Hij is te kort','Hij is moeilijk'],a:0,u:'Drie regels met alles erin.'},
+     {v:'Wie ontsnappen aan het verlies?',o:['Wie geloven, goed doen, en elkaar aansporen tot waarheid en geduld','Wie rijk zijn','Wie oud worden'],a:0,u:'Vier dingen, waarvan twee samen met anderen.'},
+     {v:'Waarbij zweert Allah in deze soera?',o:['Bij de tijd','Bij de zon','Bij de bergen'],a:0,u:'Wal-\'asr.'}]},
+
+ {id:'l1304', t:'Al-Ma\'un: bidden zonder hart', ar:'الماعون', sp:2,
+  tk:[`Deze soera stelt een vraag: heb je die gezien, die het oordeel ontkent? Dat is degene die de wees wegduwt en niet aanspoort om de arme te voeden.`,
+      `En dan komt de zin die schrikt: <i>wee de biddenden</i>. Niet: wee wie niet bidt — wee wie wél bidt. Namelijk zij die achteloos zijn tegenover hun gebed, die het doen om gezien te worden, en die weigeren zelfs de kleinste hulp te geven.`,
+      `Het is de scherpste waarschuwing in de Koran tegen geloof dat alleen vanbuiten zit. Je kunt vijf keer per dag bidden en toch de verkeerde kant op leven. De weeskinderen en de armen zijn de test.`],
+  dp:`<i>Al-maʿun</i> betekent de kleine gebruiksdingen die je uitleent — een emmer, een pan, zout. De soera eindigt dus niet met een grote zonde maar met een kleinigheid: wie zelfs dát weigert, heeft iets wezenlijks niet begrepen. Kleine gierigheid verraadt meer dan grote woorden.`,
+  q:[{v:'Wie krijgt in deze soera de waarschuwing?',o:['Mensen die wél bidden maar achteloos zijn','Mensen die niet bidden','Kinderen'],a:0,u:'"Wee de biddenden."'},
+     {v:'Wat is al-ma\'un?',o:['Kleine dingen die je uitleent','Geld','Een gebed'],a:0,u:'Een emmer, een pan — en zelfs dát weigeren.'},
+     {v:'Wat is volgens deze soera de test?',o:['Hoe je met wezen en armen omgaat','Hoe lang je bidt','Hoeveel je weet'],a:0,u:'Het gebed en het gedrag horen bij elkaar.'}]},
+
+ {id:'l1305', t:'Al-Fil en Quraysh horen bij elkaar', ar:'الفيل وقريش', sp:1,
+  tk:[`In het jaar dat de Profeet ﷺ geboren werd, trok Abraha met een leger en een olifant naar Mekka om de Ka'ba af te breken. Ze kwamen er nooit: er kwamen zwermen vogels die stenen lieten vallen, en het leger werd "als afgevreten kaf".`,
+      `De volgende soera, Quraysh, gaat verder waar die ophoudt: dankzij die bescherming konden de mensen van Mekka rustig hun handelsreizen maken, 's winters naar het zuiden en 's zomers naar het noorden.`,
+      `En dan komt de pointer: <i>laat hen dan de Heer van dit Huis aanbidden, die hen voedde tegen de honger en veilig maakte voor de angst</i>. Je bent beschermd en je hebt te eten — wees dan ook dankbaar aan wie dat gaf. Daarom lezen veel mensen die twee soera's achter elkaar.`],
+  jr:`Een koning wilde met olifanten de Ka'ba afbreken. Vogels met steentjes hielden hem tegen. In datzelfde jaar werd de Profeet ﷺ geboren. De volgende soera zegt: jullie zijn beschermd en hebben eten — wees dankbaar.`,
+  dp:`De twee soera's staan in de moshaf naast elkaar en veel geleerden lazen ze als één betoog — al-Fil beschrijft de gunst, Quraysh trekt de conclusie. Zulke paren komen vaker voor (ad-Duha en ash-Sharh bijvoorbeeld) en het is een van de manieren waarop de ordening van het boek betekenis draagt.`,
+  q:[{v:'Wat wilde Abraha doen?',o:['De Ka\'ba afbreken','Mekka bezoeken','Handel drijven'],a:0,u:'Het jaar van de olifant.'},
+     {v:'Waarom horen al-Fil en Quraysh bij elkaar?',o:['Quraysh gaat verder waar al-Fil ophoudt','Ze zijn even lang','Dat doen ze niet'],a:0,u:'Bescherming, en daarna de dankbaarheid die daarbij hoort.'},
+     {v:'Wat vraagt Quraysh van de mensen van Mekka?',o:['De Heer van dit Huis aanbidden','Meer handel drijven','Weggaan'],a:0,u:'Dankbaarheid aan wie voedde en beschermde.'}]},
+
+ {id:'l1306', t:'Al-Kafirun: duidelijk én vriendelijk', ar:'الكافرون', sp:2,
+  tk:[`De Mekkanen deden de Profeet ﷺ een voorstel: aanbid jij een jaar onze goden, dan aanbidden wij een jaar de jouwe. Dan hebben we geen ruzie meer.`,
+      `Het antwoord is deze soera, en het is glashelder: ik aanbid niet wat jullie aanbidden, en jullie aanbidden niet wat ik aanbid. Geen halve deal, geen mengelmoes.`,
+      `Maar kijk hoe hij eindigt: <i>voor jullie jullie godsdienst, en voor mij de mijne</i>. Geen scheldwoord, geen dreigement. Dat is precies de houding die je later nodig hebt op school: duidelijk over wat je gelooft, zonder een ander naar beneden te halen.`],
+  dp:`De soera wordt <i>al-baraʾa</i> genoemd, de vrijspraak: hij trekt een grens zonder een oordeel over personen uit te spreken. Dat onderscheid — helder over wat je gelooft, terughoudend over wie een ander is — loopt door de hele traditie heen en is precies wat in verhitte gesprekken als eerste sneuvelt.`,
+  q:[{v:'Wat stelden de Mekkanen voor?',o:['Om beurten elkaars goden aanbidden','Vrede sluiten','Verhuizen'],a:0,u:'Deze soera was het antwoord.'},
+     {v:'Hoe eindigt de soera?',o:['"Voor jullie jullie godsdienst, en voor mij de mijne"','Met een dreigement','Met een vraag'],a:0,u:'Duidelijk zonder te schelden.'},
+     {v:'Wat leer je hieruit voor school?',o:['Duidelijk zijn zonder een ander omlaag te halen','Discussies vermijden','Altijd meedoen'],a:0,u:'Helder in de inhoud, zacht in de omgang.'}]}
+]},
+
+{id:'m15', t:'Verhalen van de profeten', ar:'قصص الأنبياء', ico:'📜', lead:'Dertien verhalen om voor te lezen en over door te praten. Elk verhaal eindigt met een vraag voor aan tafel.', lessen:[
+
+ {id:'l1501', t:'Adam en de eerste keuze', ar:'آدم', sp:1,
+  tk:[`Voordat er mensen waren, waren er engelen. Allah zei tegen hen: Ik ga iemand op aarde plaatsen die daar de leiding krijgt. De engelen vroegen zich af of dat wel goed zou aflopen. Allah zei: Ik weet wat jullie niet weten.`,
+      `Hij schiep Adam uit klei en leerde hem de namen van alle dingen — hij wist hoe alles heette en waar het voor was. Toen zei Allah tegen de engelen: buig voor hem. Ze bogen allemaal. Op één na. <b>Iblis</b> weigerde. "Ik ben beter dan hij," zei hij, "ik ben van vuur en hij van klei."`,
+      `Adam en zijn vrouw Hawwa mochten in de tuin wonen en van alles eten, behalve van één boom. Iblis fluisterde net zolang tot ze er toch van aten. Meteen daarna wisten ze dat ze fout zaten.`,
+      `En kijk nu naar het verschil. Iblis had ook fout gezeten, maar hij gaf de schuld aan iedereen behalve zichzelf. Adam zei: <i>Onze Heer, wij hebben onszelf onrecht aangedaan; als U ons niet vergeeft, zijn wij verloren.</i> Hij kreeg vergeving. Zij gingen naar de aarde, waar wij nu wonen.`,
+      `De fout van Iblis was niet dat hij iets verkeerds deed — dat deed Adam ook. De fout was zijn hoogmoed: hij vond zichzelf te goed om te buigen, en te goed om sorry te zeggen.`],
+  jr:`Allah maakte Adam en zei tegen de engelen: buig voor hem. Iedereen deed het, behalve Iblis: die vond zichzelf beter. Adam at van de verboden boom, maar hij zei sorry en kreeg vergeving. Iblis zei geen sorry. Dát was het verschil.`,
+  dp:`De Koran vertelt dit verhaal zeven keer, telkens met een ander accent — soms ligt de nadruk op de kennis die Adam kreeg, soms op de hoogmoed van Iblis, soms op het berouw. In de aqida wordt hieruit afgeleid dat de eerste zonde geen erfelijke smet achterliet: elk kind wordt schoon geboren (<i>fitra</i>). Wat wij van Adam erven is niet zijn fout maar zijn manier van goedmaken.`,
+  praat:`Wanneer is sorry zeggen het moeilijkst: als je het per ongeluk deed, of als je het expres deed? En waarom eigenlijk?`,
+  q:[{v:'Waarom weigerde Iblis te buigen?',o:['Hij vond zichzelf beter dan Adam','Hij zag Adam niet','Hij was moe'],a:0,u:'Hoogmoed: "ik ben van vuur en hij van klei".'},
+     {v:'Wat deed Adam nadat hij fout zat?',o:['Hij vroeg om vergeving','Hij gaf een ander de schuld','Hij deed alsof er niets was'],a:0,u:'Daarin zit het verschil met Iblis.'},
+     {v:'Wat is volgens dit verhaal de ergste fout?',o:['Hoogmoed en geen sorry willen zeggen','Van een boom eten','Vragen stellen'],a:0,u:'Beiden deden iets fout; maar één van de twee maakte het goed.'}]},
+
+ {id:'l1502', t:'Nuh en de ark', ar:'نوح', sp:1,
+  tk:[`Nuh riep zijn volk op om Allah alleen te aanbidden. Negenhonderdvijftig jaar lang. 's Nachts, overdag, in het openbaar, onder vier ogen. Er luisterde bijna niemand. Ze staken hun vingers in hun oren als ze hem zagen aankomen.`,
+      `Toen kreeg hij de opdracht een schip te bouwen. Midden op het droge, ver van de zee. De mensen kwamen kijken en lachten hem uit: daar heb je die oude man met zijn boot in de woestijn.`,
+      `Hij bouwde door. En toen kwam het water — uit de lucht en uit de grond tegelijk. Wie meeging in de ark was veilig: zijn familie, de mensen die geloofden, en van elke diersoort een paar.`,
+      `Eén verdriet bleef. Zijn eigen zoon wilde niet mee. "Ik klim wel op een berg," riep hij, "dan houdt het water mij niet tegen." Nuh riep hem, het water kwam tussen hen in, en zijn zoon verdronk.`,
+      `Nuh was een profeet, en zelfs hij kon zijn eigen kind niet laten geloven. Je kunt iemand de deur wijzen; je kunt hem er niet doorheen dragen.`],
+  jr:`Nuh vertelde de mensen honderden jaren over Allah, maar bijna niemand luisterde. Hij bouwde een groot schip midden op het droge en iedereen lachte hem uit. Toen kwam het water, en wie meeging was veilig.`,
+  dp:`Het verhaal wordt in de Koran verteld vlak nadat de Profeet ﷺ in Mekka het zwaarst werd tegengewerkt — als troost: kijk, ook hij hield het eeuwenlang vol zonder resultaat, en dat was geen mislukking. Het gaat om de inzet, niet om de score. Dat de zoon van een profeet niet gelooft, is bovendien een van de duidelijkste weerleggingen van het idee dat geloof erfelijk is.`,
+  praat:`Nuh bleef doorgaan terwijl mensen hem uitlachten. Wanneer is doorgaan moedig, en wanneer is het koppig? Hoe zie je het verschil?`,
+  q:[{v:'Waarom lachten de mensen Nuh uit?',o:['Hij bouwde een schip op het droge','Hij kon niet zwemmen','Hij was te oud'],a:0,u:'Ver van de zee, jarenlang.'},
+     {v:'Wat gebeurde er met zijn zoon?',o:['Hij wilde niet mee en verdronk','Hij ging als eerste mee','Hij bouwde mee'],a:0,u:'Geloof gaat niet automatisch over van vader op zoon.'},
+     {v:'Wat leert dit verhaal over anderen overtuigen?',o:['Je kunt iemand de weg wijzen, niet dwingen','Je moet harder roepen','Het heeft geen zin'],a:0,u:'Zelfs een profeet kon dat niet bij zijn eigen kind.'}]},
+
+ {id:'l1503', t:'Ibrahim en de beelden', ar:'إبراهيم', sp:1,
+  tk:[`Ibrahim was nog jong toen hij begon met een vraag: waarom aanbidden jullie deze beelden? Ze horen niets, ze zien niets, ze kunnen niks. Zijn vader maakte ze zelf — Ibrahim had het zien gebeuren, met een beitel.`,
+      `Op een feestdag ging iedereen de stad uit. Ibrahim bleef achter. Hij ging de tempel binnen en sloeg alle beelden kapot, op de grootste na. De bijl hing hij aan de schouder van dat ene beeld.`,
+      `Toen ze terugkwamen: wie heeft dit gedaan?! Ibrahim zei: "Vraag het aan de grootste, die staat er nog. Als hij tenminste kan praten."`,
+      `Even was het stil. Ze wisten precies wat hij bedoelde. En toen werden ze woedend — niet omdat hij ongelijk had, maar omdat hij gelijk had. Ze staken een enorm vuur aan en wierpen hem erin. Allah zei tegen het vuur: <i>wees koel en veilig voor Ibrahim</i>. Hij kwam er ongedeerd uit.`,
+      `Ibrahim gebruikte geen scheldwoorden en geen geweld tegen mensen. Hij stelde een vraag waar zij zelf het antwoord op wisten.`],
+  jr:`Ibrahim vroeg: waarom aanbidden jullie beelden die niks kunnen? Hij sloeg ze kapot, behalve de grootste, en zei: vraag het maar aan hem. Ze werden boos en gooiden hem in het vuur, maar Allah maakte het vuur koel voor hem.`,
+  dp:`Wat Ibrahim doet is een klassieke redenering: hij dwingt zijn tegenstanders tot een tegenspraak die zij zelf moeten uitspreken. De Koran zegt er daarna droog achteraan: <i>toen keerden zij terug tot zichzelf</i> — één moment van inzicht, gevolgd door woede. Dat is een scherpe waarneming over mensen: het lastigste aan gelijk krijgen is dat de ander het al wist.`,
+  praat:`Ibrahim stelde een vraag in plaats van ruzie te maken. Wanneer werkt een goede vraag beter dan een goed argument?`,
+  q:[{v:'Wat deed Ibrahim in de tempel?',o:['Hij sloeg de beelden kapot, behalve de grootste','Hij bad er','Hij maakte ze schoon'],a:0,u:'En hing de bijl aan het overgebleven beeld.'},
+     {v:'Wat zei hij toen ze vroegen wie het gedaan had?',o:['"Vraag het aan de grootste, als hij kan praten"','"Ik weet het niet"','"Zij deden het"'],a:0,u:'Hij liet ze hun eigen antwoord uitspreken.'},
+     {v:'Wat gebeurde er in het vuur?',o:['Het werd koel en veilig voor hem','Hij verbrandde','Hij vluchtte'],a:0,u:'Soera al-Anbiya 69.'}]},
+
+ {id:'l1504', t:'Hajar tussen de twee heuvels', ar:'هاجر', sp:1,
+  tk:[`Ibrahim bracht zijn vrouw Hajar en hun baby Isma'il naar een vallei waar niets was. Geen mensen, geen huizen, geen water. Hij zette een zak dadels en een waterzak neer en liep weg.`,
+      `Hajar rende achter hem aan: "Waar ga je heen? Laat je ons hier alleen?" Hij antwoordde niet. Toen vroeg ze het anders: "Heeft Allah je dit opgedragen?" Hij zei: ja. En zij zei: <i>dan zal Hij ons niet in de steek laten.</i>`,
+      `Het water raakte op. De baby huilde van de dorst. Hajar rende naar de heuvel Safa om te kijken of ze iemand zag. Niemand. Ze rende naar de andere heuvel, Marwa. Niemand. Ze rende zeven keer heen en weer, in de hitte, met een huilend kind beneden.`,
+      `En toen kwam er water uit de grond, vlak bij de voeten van de baby. Ze maakte er snel een randje omheen zodat het niet weg zou lopen. Dat is de bron <b>Zamzam</b>, en die stroomt vandaag nog.`,
+      `Miljoenen mensen lopen elk jaar tijdens de hajj tussen Safa en Marwa. Ze lopen de voetstappen na van een vrouw die niet ging zitten wachten, maar rende — en die tegelijk wist dat het water niet van haar rennen zou komen.`],
+  jr:`Hajar bleef met haar baby achter in een lege vallei. Het water raakte op en ze rende zeven keer tussen twee heuvels om hulp te zoeken. Toen kwam er water uit de grond: de bron Zamzam. Bij de hajj lopen mensen die zeven rondjes nog steeds na.`,
+  dp:`Hier zit een van de mooiste evenwichten in de islam: vertrouwen (<i>tawakkul</i>) en inspanning (<i>asbab</i>) sluiten elkaar niet uit. Hajar zei "dan laat Hij ons niet in de steek" én ze ging rennen. De hadith over de kameel vat het samen: bind hem vast, en vertrouw dan op Allah. Dat een verplicht onderdeel van de hajj bestaat uit het nadoen van een rennende moeder, zegt genoeg over hoe die inspanning gewaardeerd wordt.`,
+  praat:`Hajar vertrouwde op Allah én ze ging rennen. Waarvoor moet jij deze week zelf iets doen in plaats van afwachten?`,
+  q:[{v:'Wat vroeg Hajar aan Ibrahim?',o:['Of Allah hem dit had opgedragen','Waar hij heenging','Hoe lang het duurde'],a:0,u:'Toen hij ja zei, was ze gerust.'},
+     {v:'Hoe vaak rende ze heen en weer?',o:['Zeven keer','Drie keer','Eén keer'],a:0,u:'Tussen Safa en Marwa.'},
+     {v:'Wat is Zamzam?',o:['De bron die daar opkwam','Een berg','Een stad'],a:0,u:'Die stroomt vandaag nog.'}]},
+
+ {id:'l1505', t:'Yusuf en zijn broers', ar:'يوسف', sp:1,
+  tk:[`Yusuf droomde dat elf sterren, de zon en de maan voor hem bogen. Zijn vader Ya'qub zei: vertel die droom niet aan je broers. Hij kende ze.`,
+      `Ze waren al jaloers. Op een dag namen ze hem mee "om te spelen", gooiden hem in een put en gingen naar huis met zijn hemd, besmeurd met bloed van een geit. "Een wolf heeft hem opgegeten." Hun vader geloofde het niet, maar hij kon niets bewijzen.`,
+      `Een karavaan vond Yusuf en verkocht hem in Egypte. Daar werd hij vals beschuldigd en kwam hij in de gevangenis, jarenlang, zonder iets te hebben gedaan. In die gevangenis legde hij dromen uit voor medegevangenen. Zo bereikte zijn naam uiteindelijk de koning, die een droom had die niemand begreep: zeven vette koeien en zeven magere.`,
+      `Yusuf legde het uit: zeven goede jaren, dan zeven jaren honger — sla dus voorraad op. Hij kreeg de leiding over het graan van het hele land.`,
+      `En toen kwam de honger, en stonden zijn broers voor hem om eten te kopen. Ze herkenden hem niet. Hij hen wel. Hij had alle macht en zij hadden niets.`,
+      `Hij zei: <i>Vandaag is er geen verwijt tegen jullie. Allah vergeve jullie.</i> Hij gaf ze te eten, stuurde zijn hemd mee voor zijn oude vader, en haalde het hele gezin naar Egypte.`],
+  jr:`Yusuf werd door zijn jaloerse broers in een put gegooid. Hij belandde in Egypte, kwam onschuldig in de gevangenis en werd daarna de belangrijkste man na de koning. Toen zijn broers hem later om eten kwamen vragen, kon hij ze straffen — maar hij vergaf ze.`,
+  dp:`Soera Yusuf is de enige soera die één verhaal van begin tot eind vertelt, en de Koran noemt hem "het mooiste verhaal". Hij kwam in het jaar van verdriet, toen de Profeet ﷺ zijn vrouw en zijn beschermer had verloren en uit Ta'if was weggejaagd. Een lang verhaal over iemand die alles kwijtraakt en jarenlang onrecht ondergaat, en bij wie het uiteindelijk goedkomt — dat is geen toeval maar een gerichte troost.`,
+  praat:`Yusuf had zijn broers alles kunnen betaald zetten. Wat maakt vergeven moeilijker: dat je gelijk hebt, of dat je de macht hebt?`,
+  q:[{v:'Waarom gooiden de broers Yusuf in de put?',o:['Uit jaloezie','Uit ongeluk','Om te spelen'],a:0,u:'Hun vader hield veel van hem.'},
+     {v:'Wat zei Yusuf toen zijn broers voor hem stonden?',o:['"Vandaag is er geen verwijt tegen jullie"','"Nu is het mijn beurt"','Niets'],a:0,u:'Terwijl hij alle macht had.'},
+     {v:'Wat betekende de droom van de koning?',o:['Zeven goede jaren, dan zeven jaren honger','Zeven oorlogen','Zeven kinderen'],a:0,u:'Daarom werd er voorraad aangelegd.'}]},
+
+ {id:'l1506', t:'Musa tegenover de farao', ar:'موسى', sp:1,
+  tk:[`De farao van Egypte liet de jongetjes van de Israëlieten doden. De moeder van Musa legde haar baby in een mandje in de rivier. Het mandje dreef naar het paleis. De vrouw van de farao vond hem en voedde hem op — in het huis van de man die hem had willen doden.`,
+      `Musa groeide op, maakte een grote fout waar hij zijn leven lang spijt van had, en vluchtte. Jaren later kwam hij bij een brandende struik in de woestijn en kreeg hij de opdracht: ga naar de farao.`,
+      `Naar de machtigste man ter wereld, die zei dat hij zelf een god was. Musa stotterde en was bang. Hij vroeg twee dingen: laat mijn broer Harun meegaan, en <i>Heer, verruim mijn borst en maak mijn taak gemakkelijk voor mij.</i>`,
+      `En er kwam nog een opdracht bij die makkelijk over het hoofd wordt gezien: <b>spreek zacht tegen hem</b>. Tegen de farao. Misschien laat hij zich raden.`,
+      `De farao luisterde niet. Uiteindelijk vluchtten Musa en zijn volk, met het leger achter zich aan en de zee voor zich. "We zijn ingehaald!" riepen de mensen. Musa zei: <i>nee — mijn Heer is met mij, Hij zal mij leiden.</i> De zee ging open.`],
+  jr:`Musa werd als baby in een mandje in de rivier gelegd en groeide op in het paleis van de farao. Later moest hij naar diezelfde farao om te zeggen dat er maar één God is. Hij was bang en stotterde, maar hij ging. Aan het eind ging de zee voor hem open.`,
+  dp:`De opdracht "spreek zacht tegen hem" (Ta-Ha 44) is een van de meest aangehaalde verzen als het over dawah gaat: als dít de toon is tegenover iemand die zichzelf god noemt en kinderen liet doden, dan is er weinig ruimte om harder te spreken tegen een klasgenoot die een vervelende vraag stelt. Musa's gebed om een verruimde borst wordt om dezelfde reden vaak geleerd aan kinderen die iets spannends moeten doen.`,
+  praat:`Musa was bang en ging tóch. Wat is iets waar jij tegenop ziet — en wat zou je "kleine stap één" kunnen zijn?`,
+  q:[{v:'Waar groeide Musa op?',o:['In het paleis van de farao','In de woestijn','In een dorp'],a:0,u:'In het huis van de man die hem had willen doden.'},
+     {v:'Wat vroeg Musa aan Allah voordat hij ging?',o:['Verruim mijn borst en maak het gemakkelijk','Maak mij rijk','Maak mij sterk'],a:0,u:'Soera Ta-Ha 25–28.'},
+     {v:'Hoe moest hij met de farao praten?',o:['Zacht','Schreeuwend','Helemaal niet'],a:0,u:'"Misschien laat hij zich raden."'}]},
+
+ {id:'l1507', t:'De man die meer wist', ar:'الخضر', sp:2,
+  tk:[`Musa kreeg te horen dat er iemand was die dingen wist die hij niet wist. Hij ging op zoek en vond hem: een dienaar van Allah, die de geleerden al-Khidr noemen.`,
+      `"Mag ik met je meelopen om te leren?" vroeg Musa. De man zei: dat ga je niet volhouden — je zult geduld verliezen bij dingen die je niet begrijpt. Musa beloofde niets te vragen.`,
+      `Ze stapten in een boot en de man maakte een gat in de romp. Musa: wat doe je?! De vissers hebben ons gratis meegenomen! — Zei ik niet dat je geen geduld zou hebben?`,
+      `Verderop doodde de man een jongen. Musa schrok en riep het uit. Weer die herinnering. Daarna kwamen ze in een dorp waar niemand hun eten wilde geven, en zette de man daar een muur recht die op instorten stond, zonder betaling. Nu was het op.`,
+      `Toen legde hij het uit. De boot: er kwam een koning aan die alle goede boten in beslag nam; een lekke boot bleef van de arme vissers. De jongen: hij zou zijn goede ouders veel verdriet doen, en zij zouden een beter kind krijgen. De muur: eronder lag een schat van twee weeskinderen, en als de muur was ingestort was die gevonden en gestolen voordat zij groot waren.`,
+      `Musa had bij elke gebeurtenis precies gezien wat er gebeurde — en bij alle drie het verkeerde gedacht.`],
+  jr:`Musa liep mee met een man die meer wist dan hij. Die man deed drie dingen die er verschrikkelijk uitzagen. Steeds werd Musa boos. Aan het eind legde de man uit waarom hij het deed, en toen bleek elk van de drie juist goed te zijn.`,
+  dp:`Dit is in de traditie hét verhaal over de grenzen van menselijk oordeel: zelfs een profeet, kijkend met eigen ogen, trekt drie keer achter elkaar de verkeerde conclusie. Het wordt vaak aangehaald bij de vraag waarom Allah dingen laat gebeuren die wij niet begrijpen. Let ook op het slot: de uitleg komt er wél. Niet meteen, maar uiteindelijk.`,
+  praat:`Wanneer heb jij een keer iets van iemand gedacht wat later helemaal niet klopte? Wat had je kunnen doen voordat je het dacht?`,
+  q:[{v:'Waarom maakte de man een gat in de boot?',o:['Zodat een koning hem niet zou afpakken','Uit boosheid','Per ongeluk'],a:0,u:'Een lekke boot bleef van de arme vissers.'},
+     {v:'Wat lag er onder de muur?',o:['Een schat van twee weeskinderen','Water','Niets'],a:0,u:'Daarom moest hij blijven staan.'},
+     {v:'Wat is de les van dit verhaal?',o:['Je ziet nooit het hele plaatje','Je moet altijd vragen stellen','Geduld is onnodig'],a:0,u:'Zelfs een profeet oordeelde drie keer te snel.'}]},
+
+ {id:'l1508', t:'Yunus en de vis', ar:'يونس', sp:1,
+  tk:[`Yunus riep zijn stad op tot geloof en er luisterde niemand. Op een dag was hij het zat. Hij liep weg — kwaad, zonder toestemming te vragen — en stapte op een schip.`,
+      `Midden op zee kwam er storm. Het schip was te zwaar; er moest iemand overboord. Ze lootten, en het lot viel op hem. Ze lootten nog eens, en nog eens. Steeds hij.`,
+      `Hij ging het water in en werd opgeslokt door een grote vis. Donker in de vis, donker in de zee, donker in de nacht: drie duisternissen over elkaar.`,
+      `En daar zei hij: <span class="ar">لَا إِلَٰهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ</span> — <i>La ilaha illa anta, subhanaka, inni kuntu mina z-zalimin.</i> "Er is geen god dan U, volmaakt bent U; ik was werkelijk onrechtvaardig."`,
+      `Geen smoes, geen uitleg over hoe moeilijk zijn stad wel niet was. Alleen: ik zat fout. De vis bracht hem aan land. En zijn stad? Die was intussen wél gaan geloven — de enige stad in de Koran waarvan dat verteld wordt.`],
+  jr:`Yunus werd boos omdat niemand naar hem luisterde en liep weg. Op zee kwam hij in de buik van een grote vis terecht. In het donker zei hij: "Er is geen god dan U, ik zat fout." Toen kwam hij vrij.`,
+  dp:`Die du'a heet <i>duʿa dhi n-nun</i> en er is over overgeleverd dat geen moslim hem in nood uitspreekt zonder verhoord te worden. Het opvallende eraan: er staat geen enkel verzoek in. Het is drie keer erkenning — wie Allah is, hoe volmaakt Hij is, en wat ik zelf fout deed — en verder niets. De vraag zit in het weglaten van de vraag.`,
+  praat:`Yunus liep weg omdat hij het zat was. Wat doe jij als je iets zat bent — en wat zou een betere eerste stap zijn dan weglopen?`,
+  q:[{v:'Waarom liep Yunus weg?',o:['Niemand luisterde en hij werd boos','Hij had honger','Hij was ziek'],a:0,u:'Zonder toestemming te vragen.'},
+     {v:'Wat zei hij in de buik van de vis?',o:['Er is geen god dan U; ik zat fout','Laat me eruit','Niets'],a:0,u:'Erkenning zonder smoes.'},
+     {v:'Wat gebeurde er met zijn stad?',o:['Die ging alsnog geloven','Die verdween','Er veranderde niets'],a:0,u:'De enige stad in de Koran waarvan dat verteld wordt.'}]},
+
+ {id:'l1509', t:'Ayyub en het geduld', ar:'أيوب', sp:2,
+  tk:[`Ayyub had alles: gezondheid, kinderen, land, vee. En hij was dankbaar — niet zo'n beetje, maar echt.`,
+      `Toen raakte hij het kwijt. Zijn bezit ging weg. Zijn kinderen stierven. Hij werd zo ziek dat zijn lichaam er slecht aan toe was en de mensen bij hem weggingen. Alleen zijn vrouw bleef, en zij verzorgde hem jarenlang.`,
+      `Hij klaagde niet. Toen iemand vroeg hoe hij dit volhield, zei hij dat hij zeventig jaar in voorspoed had geleefd — dan mocht hij toch ook een tijd het andere dragen?`,
+      `Uiteindelijk maakte hij één smeekbede, en let op hoe voorzichtig die is: <i>Mij heeft tegenspoed getroffen, en U bent de Barmhartigste der barmhartigen.</i> Hij eist niets. Hij vertelt alleen hoe het ervoor staat, en wie Allah is.`,
+      `Hij genas. Hij kreeg terug wat hij verloren had. Maar wat de Koran over hem zegt is niet "hij werd beter" — er staat: <i>Wij vonden hem geduldig. Wat een uitstekende dienaar!</i> Het geduld zelf was de eer.`],
+  jr:`Ayyub had alles en raakte alles kwijt: zijn geld, zijn kinderen, zijn gezondheid. Hij bleef geduldig en klaagde niet. Uiteindelijk werd hij weer beter. In de Koran wordt hij geprezen om zijn geduld.`,
+  dp:`Geduld (<i>sabr</i>) betekent in de Koran niet gevoelloosheid. Ayyub vroeg wél om hulp — je mag zeggen dat het zwaar is, je mag huilen, je mag om verlichting vragen. Wat geduld uitsluit is niet het verdriet maar de opstand: klagen tégen Allah in plaats van bij Hem. Het verschil zit in de richting, niet in de intensiteit.`,
+  praat:`Ayyub zei: ik heb zeventig goede jaren gehad. Noem eens drie dingen die je vandaag hebt gekregen zonder dat je erom gevraagd hebt.`,
+  q:[{v:'Wat raakte Ayyub kwijt?',o:['Zijn bezit, zijn kinderen en zijn gezondheid','Alleen zijn geld','Niets'],a:0,u:'En bijna iedereen ging weg.'},
+     {v:'Hoe vroeg hij om hulp?',o:['Zonder iets te eisen','Boos','Hij vroeg niets'],a:0,u:'"U bent de Barmhartigste der barmhartigen."'},
+     {v:'Waarom wordt hij geprezen in de Koran?',o:['Om zijn geduld','Om zijn rijkdom','Om zijn genezing'],a:0,u:'"Wij vonden hem geduldig."'}]},
+
+ {id:'l1510', t:'Sulayman en de mier', ar:'سليمان', sp:1,
+  tk:[`Sulayman had een koninkrijk zoals niemand ooit had gehad. Hij begreep de taal van de dieren en van de vogels, en de wind bracht hem waar hij wilde.`,
+      `Op een dag trok zijn leger door een dal van mieren. Eén mier riep: "Mieren! Ga jullie huizen in, anders vertrapt Sulayman met zijn leger jullie zonder dat ze het merken!"`,
+      `Sulayman hoorde het — een mier, van bovenaf, tussen duizenden soldaten. En hij moest glimlachen. Toen zei hij: <i>Heer, breng mij ertoe dankbaar te zijn voor Uw gunst die U mij en mijn ouders gegeven hebt, en dat ik goed doe waarmee U tevreden bent.</i>`,
+      `Een koning met alles wat er te hebben is, hoort een mier bezorgd zijn over zijn voeten — en zijn eerste reactie is niet trots maar dankbaarheid.`,
+      `Er is nog een detail. De mier zei erbij: "zonder dat ze het merken." Zelfs in een waarschuwing ging ze er niet vanuit dat ze het expres zouden doen. Dat is netjes denken over een ander.`],
+  jr:`Sulayman was een koning die de taal van de dieren verstond. Toen een mier de andere mieren waarschuwde voor zijn leger, hoorde hij het en moest hij lachen. Daarna bedankte hij Allah — hij werd er niet trots van.`,
+  dp:`Soera an-Naml is naar deze mier genoemd, niet naar de koning. Dat is typerend voor de Koran: de macht van Sulayman wordt uitvoerig beschreven en vervolgens is het de opmerking van het kleinste dier die de soera zijn naam geeft, en de dankbaarheid van de koning die het hoogtepunt vormt.`,
+  praat:`De mier ging ervan uit dat het leger het níét expres zou doen. Wanneer heb jij dat laatst gedaan — of juist niet?`,
+  q:[{v:'Wat riep de mier?',o:['Ga naar binnen, anders worden we vertrapt','Val aan','Kom kijken'],a:0,u:'"Zonder dat ze het merken."'},
+     {v:'Wat deed Sulayman toen hij het hoorde?',o:['Hij glimlachte en bedankte Allah','Hij werd boos','Hij hoorde het niet'],a:0,u:'Geen trots maar dankbaarheid.'},
+     {v:'Naar wie is soera an-Naml genoemd?',o:['Naar de mier','Naar Sulayman','Naar de wind'],a:0,u:'Niet naar de koning.'}]},
+
+ {id:'l1511', t:'Maryam', ar:'مريم', sp:2,
+  tk:[`Maryam groeide op in de tempel. Ze bad, ze vastte, ze werd verzorgd door de profeet Zakariyya. Als hij bij haar kwam vond hij eten waarvan niemand wist waar het vandaan kwam. "Waar heb je dit vandaan?" — "Van Allah."`,
+      `Toen kwam er een engel die zei dat ze een zoon zou krijgen. Ze was niet getrouwd. "Hoe kan ik een zoon krijgen?" vroeg ze. Het antwoord: voor Allah is dat gemakkelijk.`,
+      `Ze wist wat er zou komen. Ze kende de mensen. Toen de bevalling begon, alleen onder een palmboom, zei ze: <i>Was ik maar eerder gestorven en helemaal vergeten.</i> Dat staat er gewoon, in de Koran: haar wanhoop.`,
+      `En het antwoord daarop is opvallend praktisch. Er is water onder je. Schud aan de stam, dan vallen er dadels. Eet, drink, en wees gerust. Geen preek — eerst eten en drinken.`,
+      `Daarna kwam ze terug bij de mensen met haar baby en werd er precies gezegd wat ze had gevreesd. Ze antwoordde niet. Ze wees naar het kind. En het kind sprak: <i>Ik ben een dienaar van Allah.</i>`,
+      `In de Koran is een hele soera naar haar genoemd. Zij is de enige vrouw die met naam genoemd wordt.`],
+  jr:`Maryam was een heel vrome vrouw. Ze kreeg een zoon, 'Isa, zonder vader — dat kan bij Allah. De mensen roddelden over haar, maar zij zei niets terug; haar baby sprak zelf, als klein kind in de wieg.`,
+  dp:`Dat de Koran haar wanhoop letterlijk citeert, is theologisch van belang: uitverkoren zijn beschermt niet tegen pijn en zelfs niet tegen de wens dood te zijn. En het antwoord dat ze krijgt is geen troostende gedachte maar een aanwijzing — water, dadels, rust. In de traditie is dat vaak gelezen als een lesje in hulpverlening: geef eerst wat een mens nodig heeft, praat daarna.`,
+  praat:`Maryam kreeg eerst eten en drinken en pas daarna woorden. Wat heeft iemand die verdriet heeft volgens jou het eerst nodig?`,
+  q:[{v:'Wie is de enige vrouw die in de Koran bij naam genoemd wordt?',o:['Maryam','Hajar','Khadija'],a:0,u:'Er is zelfs een soera naar haar genoemd.'},
+     {v:'Wat zei Maryam onder de palmboom?',o:['Was ik maar eerder gestorven','Ik ben blij','Niets'],a:0,u:'Haar wanhoop staat er gewoon.'},
+     {v:'Wat kreeg ze als antwoord?',o:['Water, dadels en rust','Een preek','Niets'],a:0,u:'Eerst het praktische.'}]},
+
+ {id:'l1512', t:'De jongens in de grot', ar:'أصحاب الكهف', sp:2,
+  tk:[`Een groep jonge mannen woonde in een stad waar iedereen beelden aanbad. Zij niet. Zij geloofden in Allah alleen, en dat werd gevaarlijk.`,
+      `Ze besloten weg te gaan, met z'n allen, en verstopten zich in een grot in de bergen. Ze hadden een hond bij zich. Ze vroegen: <i>Onze Heer, geef ons barmhartigheid van Uw kant en bereid ons een goede afloop.</i>`,
+      `En toen lieten ze zich slapen. Driehonderd jaar, en negen erbij.`,
+      `Toen ze wakker werden, dachten ze dat ze een dag hadden geslapen. Iemand ging de stad in om eten te kopen — met geld waar niemand nog iets van begreep. Zo kwam het uit.`,
+      `De Koran vertelt er nadrukkelijk bij dat de mensen daarna gingen ruziën over hoeveel jongens het waren: drie, vijf, zeven? En dan staat er droog: <i>zeg: mijn Heer weet het beste hoeveel het er waren; slechts weinigen weten het.</i> Discussieer daar niet over.`,
+      `Wat blijft is het begin: een paar jonge mensen, samen, die tegen de stroom in gingen omdat ze wisten dat ze gelijk hadden. In elke moskee wordt deze soera op vrijdag gelezen.`],
+  jr:`Een paar jonge mannen geloofden in Allah in een stad waar niemand dat deed. Ze verstopten zich in een grot en vielen in slaap — meer dan driehonderd jaar. Toen ze wakker werden was de wereld veranderd.`,
+  dp:`Soera al-Kahf wordt op vrijdag gelezen en bevat vier verhalen die elk over een beproeving gaan: geloof (de grot), rijkdom (de twee tuinen), kennis (Musa en al-Khidr) en macht (Dhu l-Qarnayn). Het commentaar op de ruzie over het aantal jongens is bovendien een zeldzaam expliciete waarschuwing in de Koran zelf tegen bijzaken-discussies: sommige details zijn er niet om over te twisten.`,
+  praat:`Zij hielden het samen vol. Wie zijn de mensen om jou heen die je helpen om te doen wat goed is — en ben jij dat voor iemand anders?`,
+  q:[{v:'Waarom gingen de jongens naar de grot?',o:['Ze geloofden in Allah in een stad die dat niet deed','Om te spelen','Om te slapen'],a:0,u:'Het werd gevaarlijk voor hen.'},
+     {v:'Hoe lang sliepen ze?',o:['Meer dan driehonderd jaar','Eén dag','Tien jaar'],a:0,u:'Zij dachten zelf: een dag.'},
+     {v:'Wat zegt de Koran over de ruzie hoeveel jongens het waren?',o:['Discussieer daar niet over','Het waren er zeven','Het maakt veel uit'],a:0,u:'"Mijn Heer weet het beste."'}]},
+
+ {id:'l1513', t:'Luqman en zijn zoon', ar:'لقمان', sp:1,
+  tk:[`Luqman was geen profeet. Hij was een wijze man, en Allah heeft zijn advies aan zijn zoon opgenomen in de Koran — voor altijd, voor iedereen.`,
+      `Hij begon met het belangrijkste: <i>mijn zoon, geef Allah geen deelgenoot.</i> Daarna: wees goed voor je ouders. Daarna kwamen de dingen waar je de hele dag mee te maken hebt.`,
+      `<i>Mijn zoon, al is het maar zo zwaar als een mosterdzaadje en al zit het in een rots of ergens in de hemelen of in de aarde — Allah brengt het tevoorschijn.</i> Niets is te klein om mee te tellen, en niets is goed verstopt.`,
+      `<i>Verricht het gebed, roep op tot het goede, verbied het verkeerde, en wees geduldig met wat je overkomt.</i>`,
+      `En dan drie over hoe je je gedraagt: <i>Wend je gezicht niet minachtend van de mensen af, en loop niet verwaand over de aarde. Wees bescheiden in je manier van lopen, en houd je stem laag — het lelijkste geluid is dat van een ezel.</i>`,
+      `Zes zinnen van een vader aan zijn zoon, en de helft gaat over hoe je overkomt op andere mensen. Niet omdat het uiterlijk telt, maar omdat je gedrag laat zien wat er vanbinnen zit.`],
+  jr:`Luqman gaf zijn zoon advies: aanbid alleen Allah, wees lief voor je ouders, bid, doe goed, wees geduldig, kijk niet neer op mensen, loop niet verwaand en schreeuw niet. Dat advies staat in de Koran.`,
+  dp:`Opvallend: Luqman was geen profeet, en zijn advies staat in dezelfde Koran als de openbaringen aan de profeten. Wijsheid (<i>hikma</i>) is dus niet voorbehouden aan een ambt. De opbouw van het advies — eerst tawhid, dan de ouders, dan de daden, dan de omgang — wordt in de opvoedkunde vaak gebruikt als volgorde voor wat je een kind meegeeft, en in die volgorde.`,
+  praat:`Luqman zei: houd je stem laag. Waar in huis of op school zou dat volgens jou het meeste schelen?`,
+  q:[{v:'Was Luqman een profeet?',o:['Nee, een wijze man','Ja','Dat staat er niet'],a:0,u:'En toch staat zijn advies in de Koran.'},
+     {v:'Wat zei hij over een mosterdzaadje?',o:['Zelfs dat brengt Allah tevoorschijn','Dat het niet telt','Dat het klein is'],a:0,u:'Niets is te klein en niets is goed verstopt.'},
+     {v:'Wat zei hij over lopen en praten?',o:['Wees bescheiden en houd je stem laag','Loop snel','Praat hard'],a:0,u:'"Het lelijkste geluid is dat van een ezel."'}]}
+]},
+
+{id:'m14', t:'Grote vragen', ar:'أسئلة', ico:'🌀', lead:'De vragen die je op je vijftiende krijgt — van anderen en van jezelf.', lessen:[
+
+ {id:'l1401', t:'Waarom regels?', sp:2,
+  tk:[`Een veelgehoorde vraag: als Allah van ons houdt, waarom dan zoveel dat niet mag?`,
+      `Kijk eens naar wat er werkelijk verboden is. Het is een korte lijst, en er zit een lijn in: dingen die jou kapotmaken (alcohol, gokken), dingen die een ander kapotmaken (stelen, roddelen, liegen), en dingen die je band met Allah kapotmaken.`,
+      `De grondregel in de fiqh is precies andersom dan mensen denken: <b>alles is toegestaan tenzij er een bewijs is dat het verboden is</b>. Het is dus geen wereld van verboden met een paar gaatjes, maar een open wereld met een paar hekken. En een hek staat er meestal omdat er een afgrond achter zit.`],
+  dp:`Geleerden vatten de bedoelingen van de sharia samen in vijf dingen die beschermd worden: geloof, leven, verstand, nageslacht en bezit. Loop de verboden er eens langs — alcohol raakt het verstand, moord het leven, diefstal het bezit. Dat kader (<i>maqasid</i>) helpt ook bij nieuwe vragen waar geen oude tekst over gaat.`,
+  q:[{v:'Wat is de grondregel over dingen die niet genoemd zijn?',o:['Toegestaan, tenzij er bewijs is dat het verboden is','Verboden, tenzij toegestaan','Onduidelijk'],a:0,u:'Een open wereld met een paar hekken.'},
+     {v:'Welke vijf dingen beschermt de sharia volgens de geleerden?',o:['Geloof, leven, verstand, nageslacht en bezit','Geld, macht, land, taal en eer','Niets bepaalds'],a:0,u:'De maqasid.'},
+     {v:'Waarom staat er een hek?',o:['Omdat er meestal een afgrond achter zit','Om te pesten','Zonder reden'],a:0,u:'Verboden hebben een bedoeling.'}]},
+
+ {id:'l1402', t:'Als alles al bekend is, kies ik dan zelf?', ar:'القدر', sp:3,
+  tk:[`Dit is de oudste vraag die er is, en je mag hem stellen. Allah weet wat je morgen doet. Ben je dan nog vrij?`,
+      `Denk aan het verschil tussen <i>weten</i> en <i>laten gebeuren</i>. Jouw moeder weet precies dat jij die laatste koek gaat pakken. Haar weten is niet de reden dat jij hem pakt; jij pakt hem. Allahs kennis is oneindig veel groter, maar het verschil blijft: kennis dwingt niet.`,
+      `En je merkt het zelf. Niemand die 's ochtends besluit op te staan, denkt dat hij geen keuze had. De metgezellen vroegen: "zullen we dan maar afwachten?" Het antwoord was: "Werk — ieder wordt gemakkelijk gemaakt waarvoor hij geschapen is."`,
+      `Geloof in het lot is niet bedoeld om vooraf te verlammen, maar om achteraf te troosten: wat er ook gebeurt, het is niet buiten Allah om gegaan.`],
+  dp:`De klassieke middenpositie: de mens heeft een werkelijke, verworven keuze (<i>kasb</i>), maar geen scheppende macht — je kiest de daad, je schept hem niet. De uitersten zijn allebei afgewezen: dat de mens volledig zijn eigen schepper is, en dat hij een pop aan een touwtje is. En er is een oude regel bij: gebruik het lot vooruit nooit als excuus, alleen achteraf als troost.`,
+  zie:['l1507'],
+  q:[{v:'Wat is het verschil dat deze les maakt?',o:['Tussen iets weten en iets laten gebeuren','Tussen goed en kwaad','Tussen dag en nacht'],a:0,u:'Kennis dwingt niet.'},
+     {v:'Wat antwoordde de Profeet ﷺ op "zullen we dan maar afwachten?"',o:['"Werk"','"Ja"','"Slaap"'],a:0,u:'Het lot is geen excuus om stil te zitten.'},
+     {v:'Waarvoor is geloof in het lot vooral bedoeld?',o:['Om achteraf te troosten','Om vooraf te verlammen','Om ruzie te maken'],a:0,u:'Niets gaat buiten Allah om.'}]},
+
+ {id:'l1403', t:'Waarom is er verdriet?', sp:3,
+  tk:[`Kinderen worden ziek. Er zijn oorlogen. Iemand van wie je houdt gaat dood. Als Allah goed is en alles kan, hoe kan dat dan?`,
+      `De Koran ontwijkt die vraag niet. "Wij zullen jullie beproeven met iets van angst en honger en verlies" — het staat er gewoon, als aankondiging. Deze wereld is niet bedoeld als het paradijs; ze is bedoeld als een tussenstop waarin iets van je gevraagd wordt.`,
+      `Twee dingen helpen. Het eerste: het is niet af. Wat hier niet is rechtgezet, wordt daar rechtgezet — anders is er geen enkele gerechtigheid voor wie hier onschuldig geleden heeft. Het tweede: pijn is niet leeg. Er is overgeleverd dat zelfs een doorn die je prikt fouten wegneemt.`,
+      `En eerlijk: dat maakt verdriet niet minder erg. De Profeet ﷺ huilde toen zijn zoontje stierf. "Het oog traant en het hart is bedroefd," zei hij, "maar wij zeggen alleen wat onze Heer behaagt." Verdriet mag. Wanhoop is iets anders.`],
+  dp:`Filosofisch heet dit het probleem van het kwaad, en het is de zwaarste vraag die aan elk godsgeloof gesteld wordt. De islamitische lijn ontkent het lijden niet en verklaart het ook niet weg; ze plaatst het in een groter verhaal waarin dit leven niet het hele verhaal is. Wie een antwoord wil dat de pijn wegneemt, komt bedrogen uit — er is geen enkele levensbeschouwing die dat levert.`,
+  zie:['l1509','l1507'],
+  q:[{v:'Wat zegt de Koran over beproeving?',o:['Dat die er zal zijn','Dat die er niet is','Niets'],a:0,u:'Al-Baqara 155, als aankondiging.'},
+     {v:'Wat deed de Profeet ﷺ toen zijn zoontje stierf?',o:['Hij huilde','Hij lachte','Hij zei niets'],a:0,u:'"Het oog traant en het hart is bedroefd."'},
+     {v:'Wat is het verschil dat de les maakt?',o:['Tussen verdriet en wanhoop','Tussen jong en oud','Tussen rijk en arm'],a:0,u:'Verdriet mag; wanhoop is iets anders.'}]},
+
+ {id:'l1404', t:'Geloof en wetenschap', sp:3,
+  tk:[`Op school leer je over sterrenstelsels, DNA en miljoenen jaren. Botst dat met wat je thuis hoort?`,
+      `Bijna nooit, en dat komt doordat ze een andere vraag beantwoorden. Wetenschap vraagt <i>hoe</i>: hoe verloopt een proces, hoe hangt het samen. Geloof vraagt <i>waarom en van wie</i>. "Het regent doordat waterdamp afkoelt" en "Allah laat het regenen" zijn geen concurrenten; het tweede gaat over de bron van het eerste.`,
+      `In de geschiedenis van de islam is wetenschap nooit de vijand geweest. Ibn al-Haytham legde de basis voor de optica en voor het experiment als methode; Ibn Sina schreef een medisch handboek dat in Europa eeuwenlang studiestof was. Ze zagen onderzoek als een manier om de schepping serieus te nemen.`,
+      `Wees wel eerlijk over wat je niet weet. "Wetenschappers zeggen X, dus mijn geloof is fout" is even lui als "in de Koran staat alles al wetenschappelijk beschreven". Allebei slaan een stap over.`],
+  dp:`Wanneer een wetenschappelijk resultaat wél lijkt te botsen met een tekst, zijn er in de traditie meerdere wegen: opnieuw kijken of de tekst wel zegt wat men dacht (veel verzen zijn beeldend, niet beschrijvend), opnieuw kijken hoe hard het resultaat is, of vaststellen dat het voorlopig open blijft. Dat laatste is een volwassen antwoord — al-Ghazali waarschuwde al dat wie het geloof vastknoopt aan een natuurwetenschappelijke opvatting, het geloof laat vallen zodra die opvatting verandert.`,
+  q:[{v:'Welke vraag beantwoordt wetenschap?',o:['Hoe iets werkt','Waarom iets bestaat','Wie het maakte'],a:0,u:'Geloof gaat over waarom en van wie.'},
+     {v:'Wie legde de basis voor de optica?',o:['Ibn al-Haytham','Ibn Sina','Al-Khwarizmi'],a:0,u:'En voor het experiment als methode.'},
+     {v:'Wat is volgens al-Ghazali onverstandig?',o:['Je geloof vastknopen aan één natuurwetenschappelijke opvatting','Wetenschap studeren','Vragen stellen'],a:0,u:'Verandert die opvatting, dan valt het geloof mee om.'}]},
+
+ {id:'l1405', t:'Wat als ik twijfel?', sp:3,
+  tk:[`Er komen dagen waarop je denkt: geloof ik dit eigenlijk wel? Dat is geen ramp en het betekent niet dat je slecht bent.`,
+      `De metgezellen kwamen bij de Profeet ﷺ met precies dat: er komen gedachten in ons op die we niet eens durven uitspreken. Zijn antwoord: <i>dat is duidelijk geloof</i> — juist dat je ervan schrikt, laat zien dat het geloof er zit.`,
+      `Wat helpt: het verschil zien tussen een vraag en een gevoel. Een vraag heeft een antwoord — zoek het op, vraag het aan iemand die het weet, geef je niet tevreden met "dat vraag je niet". Een gevoel gaat vaak over iets anders: vermoeidheid, een rotweek, iemand die je gekwetst heeft.`,
+      `Wat niet helpt: alleen blijven zitten met de vraag, of je hele geloof laten afhangen van een filmpje dat je op je telefoon zag. Praat met je ouders, met een imam, met iemand die je vertrouwt. Vragen stellen is geen zwakte; in deze traditie is het hoe kennis begint.`],
+  dp:`Twijfel over een detail is iets anders dan twijfel over de grond. De klassieke raad is: begin niet bij de moeilijkste vraag maar bij de eenvoudigste zekerheid, en bouw van daaruit terug. En zoek iemand die je vraag serieus neemt — een antwoord van iemand die je vraag dom vindt, helpt nooit, ook niet als het antwoord klopt.`,
+  q:[{v:'Wat antwoordde de Profeet ﷺ toen metgezellen over twijfelgedachten spraken?',o:['Dat is duidelijk geloof','Ga weg','Zeg het nooit meer'],a:0,u:'Dat je ervan schrikt, zegt iets.'},
+     {v:'Welk verschil helpt volgens de les?',o:['Tussen een vraag en een gevoel','Tussen dag en nacht','Tussen jong en oud'],a:0,u:'Een vraag heeft een antwoord; een gevoel gaat vaak over iets anders.'},
+     {v:'Wat doe je bij twijfel?',o:['Praten met iemand die je vertrouwt','Er alleen mee blijven zitten','Meteen stoppen'],a:0,u:'Vragen stellen is hoe kennis begint.'}]}
 ]}
 ];
 /* =============================================================================
@@ -1556,10 +2135,16 @@ const INSIGNES = [
  {id:'i-duas',  n:'Du\'a-kenner',           ico:'🤲', u:'Alle du\'a\'s van de dag geoefend'}
 ];
 
-const SPOREN = {1:{n:'7–9 jaar', u:'Korte lessen, veel beeld'},2:{n:'10–12 jaar', u:'Meer uitleg en achtergrond'},3:{n:'13–15 jaar', u:'Met verdieping en fiqh-termen'}};
+const MODKLEUR=['k','info','paars','goed','let'];
+const kleurVan = id => MODKLEUR[MODULES.findIndex(m=>m.id===id) % MODKLEUR.length];
+const SPOREN = {1:{n:'7–9 jaar', u:'Korte lessen, veel beeld'},2:{n:'10–12 jaar', u:'Meer uitleg en achtergrond'},3:{n:'13 jaar en ouder', u:'Met verdieping en fiqh-termen'}};
 /* =============================================================================
    OPSLAG EN TOESTAND
 ============================================================================= */
+/* De sleutel heet nog `bidaya`, de naam waaronder de app begon. Die laten we
+   staan: er zit al voortgang en er zitten al opnames onder, en een nieuwe naam
+   is geen reden om die weg te gooien. Hetzelfde geldt voor WOLK.init hieronder
+   en voor de naam van de opnamedatabase. */
 const KEY='bidaya.v1';
 const store={
   async get(){
@@ -1864,6 +2449,7 @@ function volgendGebed(){
 let huidigeTab='vandaag';
 function naarTab(v){
   huidigeTab=v;
+  document.body.dataset.view=v;
   $$('.tab').forEach(b=>b.setAttribute('aria-selected', String(b.dataset.v===v)));
   $$('section.view').forEach(s=>s.classList.toggle('on', s.id==='v-'+v));
   window.scrollTo({top:0,behavior:'instant'});
@@ -1873,6 +2459,20 @@ function blad(html){ $('#blad').innerHTML=html; $('#overlay').classList.add('on'
 function bladDicht(){ $('#overlay').classList.remove('on'); $('#blad').innerHTML=''; STEM.stop(); }
 $('#overlay').addEventListener('click', e=>{ if(e.target.id==='overlay') bladDicht(); });
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') bladDicht(); });
+
+/* Een kort berichtje onderin beeld. Bedoeld voor dingen die misgaan terwijl er
+   geen scherm is om het in te zetten — beter dan stilte. */
+let _kortTimer=null;
+function kort(tekst){
+  let el=$('#kortje');
+  if(!el){ el=document.createElement('div'); el.id='kortje';
+    el.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:26px;z-index:80;max-width:88vw;'+
+      'background:var(--ink);color:var(--canvas);padding:11px 16px;border-radius:10px;font-size:.9rem;line-height:1.4;'+
+      'box-shadow:var(--schaduw-op);text-align:center';
+    document.body.appendChild(el); }
+  el.textContent=tekst; el.style.display='block';
+  clearTimeout(_kortTimer); _kortTimer=setTimeout(()=>{ el.style.display='none'; }, 4200);
+}
 
 function balk(pct){ return '<div class="bar"><i style="width:'+Math.max(0,Math.min(100,pct))+'%"></i></div>'; }
 function ring(pct,tekst){ return '<div class="ring" style="--p:'+Math.max(0,Math.min(100,pct))+'"><span>'+tekst+'</span></div>'; }
@@ -1922,6 +2522,9 @@ document.addEventListener('click', e=>{
 
 /* Alle luisterknoppen in één keer bedienen — schermen worden vaak opnieuw
    opgebouwd, dus we luisteren op documentniveau. */
+['pointerdown','touchstart','click'].forEach(g=>
+  document.addEventListener(g, ()=>AUDIO.ontgrendel(), {once:false, passive:true}));
+
 document.addEventListener('click', e=>{
   const ar=e.target.closest('[data-hoor-ar]');
   if(ar){ AUDIO.speel(ar.dataset.aid||'', ar.dataset.hoorAr); return; }
@@ -1931,8 +2534,9 @@ document.addEventListener('click', e=>{
    SCHERM — VANDAAG
 ============================================================================= */
 const HELD = `<div class="held">
-    <div class="naam">Bidaya<em lang="ar">بداية</em></div>
-    <p class="zin">De basis van de islam, en leren bidden — stap voor stap, in je eigen tempo.</p>
+    <div class="naam">Noer<em lang="ar">نور</em></div>
+    <div class="ondertitel">Islam</div>
+    <p class="zin">De basis van de islam: geloven, mooi leven, en leren bidden — stap voor stap, in je eigen tempo.</p>
     <div class="streep"></div>
   </div>`;
 function tekenVandaag(){
@@ -1994,7 +2598,7 @@ function tekenVandaag(){
 
   <div class="grid g3">
     <button class="card klik" data-ga="leerpad">
-      <p class="meta">Verder leren</p><h3 style="margin-top:5px">${lessenKlaar<totaal?'De volgende les':'Alles gehaald 🎉'}</h3>
+      <p class="meta">Het leerpad · ${MODULES.length} modules</p><h3 style="margin-top:5px">${lessenKlaar<totaal?'De volgende les':'Alles gehaald 🎉'}</h3>
       <p class="klein" style="margin-top:5px">${lessenKlaar<totaal?esc(volgendeLes()?volgendeLes().t:''):'Herhaal wat je geleerd hebt.'}</p>
     </button>
     <button class="card klik" data-ga="gebed">
@@ -2024,7 +2628,7 @@ function volgendeLes(){
 }
 function kaartGeenProfiel(){
   return `<div class="card"><h1>Wie ben jij?</h1>
-    <p style="margin-top:10px">Bidaya houdt de voortgang per kind bij: welke lessen je gehad hebt, wat je uit je hoofd kent en wat je verdiend hebt. Kies hierboven wie je bent, of laat je vader of moeder een profiel aanmaken bij <b>Ouder</b>.</p>
+    <p style="margin-top:10px">Noer Islam houdt de voortgang per kind bij: welke lessen je gehad hebt, wat je uit je hoofd kent en wat je verdiend hebt. Kies hierboven wie je bent, of laat je vader of moeder een profiel aanmaken bij <b>Ouder</b>.</p>
     <div class="rij" style="margin-top:16px"><button class="btn" onclick="naarTab('ouder')">Naar het ouderscherm</button></div></div>`;
 }
 
@@ -2034,21 +2638,53 @@ function kaartGeenProfiel(){
 function tekenLeerpad(){
   const el=$('#leerpadInhoud'), pr=P();
   if(!prof()){ el.innerHTML=kaartGeenProfiel(); return; }
-  const sp=spoor();
+  const sp=spoor(), p=prof();
+  const mijn=alleLessen(), klaarTotaal=mijn.filter(l=>(pr.lessen||{})[l.id]&&pr.lessen[l.id].klaar).length;
+  const later=MODULES.filter(m=>lessenVan(m).length===0);
+  const vanaf=n=>n===1?7:n===2?10:13;
+
   el.innerHTML = `
   <div>
     <h1>Het leerpad</h1>
-    <p class="klein" style="margin-top:6px">Tien modules, van wie Allah is tot hoe je op school met je geloof omgaat. Je leest een stukje en beantwoordt daarna drie vragen. Je krijgt de versie die bij jouw leeftijd hoort: <b>${esc(SPOREN[sp].n)}</b> — ${esc(SPOREN[sp].u.toLowerCase())}.</p>
+    <p class="klein" style="margin-top:6px">Alles wat een moslim moet weten, in veertien modules — van wie Allah is tot de vragen die je op je vijftiende krijgt. Het gebed is daarvan één onderdeel; de rest gaat over geloven, gedrag, de Koran, de geschiedenis en het leven hier.</p>
   </div>
+
+  <div class="card">
+    <div class="rij tussen">
+      <div>
+        <p class="meta">Jouw leerlijn</p>
+        <h2 style="margin-top:4px">${esc(SPOREN[sp].n)}</h2>
+        <p class="klein" style="margin-top:4px">${esc(p.naam)} is ${leeftijd(p)} · ${esc(SPOREN[sp].u.toLowerCase())}</p>
+      </div>
+      ${ring(mijn.length?klaarTotaal/mijn.length*100:0, klaarTotaal+'/'+mijn.length)}
+    </div>
+    <div style="margin-top:14px">${balk(mijn.length?klaarTotaal/mijn.length*100:0)}</div>
+    <p class="klein" style="margin-top:11px">${
+      sp===1 ? 'Korte teksten, veel beeld, en drie vragen na elke les. De zwaardere onderwerpen komen vanzelf als je ouder wordt.'
+      : sp===2 ? 'De volledige uitleg, met de achtergrond erbij: waar iets vandaan komt en waarom het zo is.'
+      : 'De volledige uitleg plus een blok verdieping bij elke les — met de fiqh-termen, het verschil van mening en de vragen waar niet iedereen een makkelijk antwoord op heeft.'}</p>
+    ${later.length?'<p class="klein" style="margin-top:8px">Er ' + (later.length===1?'wacht nog één module die opengaat':'wachten nog '+later.length+' modules die opengaan') + ' als je ouder bent.</p>':''}
+  </div>
+
   <div class="grid g2">
   ${MODULES.map(m=>{
-    const ls=lessenVan(m), klaar=ls.filter(l=>(pr.lessen||{})[l.id]&&pr.lessen[l.id].klaar).length;
-    return `<button class="card klik" data-mod="${m.id}">
-      <div class="rij tussen"><span style="font-size:1.7rem">${m.ico}</span>
-        ${klaar===ls.length?'<span class="tag goed">Af</span>':'<span class="tag">'+klaar+'/'+ls.length+'</span>'}</div>
-      <h3 style="margin-top:9px">${esc(m.t)} ${m.ar?'<span class="ar" style="font-size:1rem;color:var(--k)">'+m.ar+'</span>':''}</h3>
+    const ls=lessenVan(m);
+    if(!ls.length){
+      const nodig=Math.min(...m.lessen.map(l=>l.sp||1));
+      return `<div class="card plat" style="opacity:.55">
+        <div class="rij tussen"><span class="ico-vak" style="--mkbg:var(--surface-2);filter:grayscale(1)">${m.ico}</span>
+          <span class="tag let">Vanaf ${vanaf(nodig)} jaar</span></div>
+        <h3 style="margin-top:9px">${esc(m.t)} ${m.ar?'<span class="ar" style="font-size:1rem;color:var(--muted)">'+m.ar+'</span>':''}</h3>
+        <p class="klein" style="margin-top:5px">${esc(m.lead)}</p></div>`;
+    }
+    const klaar=ls.filter(l=>(pr.lessen||{})[l.id]&&pr.lessen[l.id].klaar).length;
+    const kl=kleurVan(m.id);
+    return `<button class="card klik mod" data-mod="${m.id}" style="--mk:var(--${kl});--mkbg:var(--${kl}-bg)">
+      <div class="rij tussen"><span class="ico-vak">${m.ico}</span>
+        ${klaar===ls.length?'<span class="tag goed">Af</span>':'<span class="tag" style="background:var(--mkbg);color:var(--mk)">'+klaar+'/'+ls.length+'</span>'}</div>
+      <h3 style="margin-top:11px">${esc(m.t)} ${m.ar?'<span class="ar" style="font-size:1rem;color:var(--mk)">'+m.ar+'</span>':''}</h3>
       <p class="klein" style="margin-top:5px">${esc(m.lead)}</p>
-      <div style="margin-top:11px">${balk(ls.length?klaar/ls.length*100:0)}</div>
+      <div style="margin-top:11px">${balk(klaar/ls.length*100)}</div>
     </button>`;
   }).join('')}
   </div>`;
@@ -2056,7 +2692,9 @@ function tekenLeerpad(){
 }
 function toonModule(id){
   const m=MODULES.find(x=>x.id===id), pr=P(), ls=lessenVan(m);
-  blad(`<div class="rij tussen"><span style="font-size:2rem">${m.ico}</span>
+  const kl=kleurVan(m.id);
+  blad(`<div style="--mk:var(--${kl});--mkbg:var(--${kl}-bg)">
+    <div class="rij tussen"><span class="ico-vak">${m.ico}</span>
       <button class="icoon" onclick="bladDicht()" aria-label="Sluiten">✕</button></div>
     <h2 style="margin-top:8px">${esc(m.t)}</h2>
     <p class="klein" style="margin-top:5px">${esc(m.lead)}</p>
@@ -2067,7 +2705,7 @@ function toonModule(id){
           <b>${i+1}. ${esc(l.t)}</b>${l.ar?' <span class="ar" style="font-size:.95rem;color:var(--k)">'+l.ar+'</span>':''}
           ${st&&st.klaar?'<span class="klein"> · '+st.score+'/3 goed</span>':''}
         </button></li>`; }).join('')}
-    </ul>`);
+    </ul></div>`);
   $$('[data-les]').forEach(b=>b.onclick=()=>toonLes(b.dataset.les));
 }
 
@@ -2077,16 +2715,27 @@ function toonLes(id){
   const sp=spoor();
   const tekst = (sp===1 && l.jr) ? '<p>'+l.jr+'</p>' : (l.tk||[]).map(t=>'<p>'+t+'</p>').join('');
   const diep = (sp===3 && l.dp) ? `<div class="kader info" style="margin-top:16px"><h4>Voor wie verder wil</h4><p>${l.dp}</p></div>` : '';
-  blad(`<div class="rij tussen"><p class="meta">${esc(l.modT)}</p>
+  /* Bij een verhaal hoort een vraag om samen over door te praten. Die staat
+     apart, want hij is niet bedoeld om af te vinken maar om te stellen. */
+  const praat = l.praat ? `<div class="praat"><p class="meta" style="margin-bottom:6px">Praat er thuis over</p><p>${esc(l.praat)}</p></div>` : '';
+  const verder = (l.zie||[]).map(id=>alleLessen().find(x=>x.id===id)).filter(Boolean);
+  const lees = verder.length ? `<div style="margin-top:18px"><p class="meta">Hoort hierbij</p>
+      <div class="rij" style="margin-top:8px">${verder.map(v=>`<button class="btn sm ghost" data-naar="${v.id}">${esc(v.t)}</button>`).join('')}</div></div>` : '';
+  const kl = kleurVan(l.mod);
+  blad(`<div style="--mk:var(--${kl});--mkbg:var(--${kl}-bg)">
+    <div class="rij tussen"><p class="meta" style="color:var(--mk)">${esc(l.modT)}</p>
       <button class="icoon" onclick="bladDicht()" aria-label="Sluiten">✕</button></div>
     <h2 style="margin-top:6px">${esc(l.t)} ${l.ar?'<span class="ar" style="font-size:1.1rem;color:var(--k)">'+l.ar+'</span>':''}</h2>
     <div class="nl" style="margin-top:14px">${tekst}</div>
     ${diep}
+    ${praat}
+    ${lees}
     <div class="rij" style="margin-top:20px">
       <button class="btn" id="naarVragen">Ik heb het gelezen &rarr;</button>
       <button class="icoon" data-hoor-nl="${esc(((sp===1&&l.jr)?l.jr:(l.tk||[]).join(' ')).replace(/<[^>]+>/g,''))}" title="Voorlezen">🔊</button>
-    </div>`);
+    </div></div>`);
   $('#naarVragen').onclick=()=>vragenRonde(l);
+  $$('[data-naar]').forEach(b=>b.onclick=()=>toonLes(b.dataset.naar));
 }
 function vragenRonde(l){
   let i=0, goed=0;
@@ -2382,9 +3031,10 @@ function zetOpname(){
       try{ await OPNAME.start(); k.textContent='⏹ Stoppen'; k.classList.remove('ghost'); $('#opnTekst').textContent='Aan het opnemen…'; }
       catch(e){ $('#opnTekst').textContent='Geen toegang tot de microfoon.'; }
     } else {
-      const url=await OPNAME.stop();
+      const blob=await OPNAME.stop();
       k.textContent='🎙️ Nog een keer'; k.classList.add('ghost'); $('#opnTekst').textContent='';
-      const a=document.createElement('audio'); a.controls=true; a.src=url; a.style.cssText='width:100%;margin-top:9px';
+      if(!blob){ $('#opnTekst').textContent='Er is niets opgenomen.'; return; }
+      const a=document.createElement('audio'); a.controls=true; a.src=URL.createObjectURL(blob); a.style.cssText='width:100%;margin-top:9px';
       const oud=vak.querySelector('audio'); if(oud) oud.remove();
       vak.appendChild(a);
     }
@@ -2792,8 +3442,13 @@ function tekenBeloning(){
   if(!p){ el.innerHTML=kaartGeenProfiel(); return; }
   const nv=niveauVan(pr.punten||0), week=verdiendDezeWeek(pr), budget=S.gezin.budget;
   const heb=new Set(pr.insignes||[]);
-  const dagen=[...Array(28)].map((_,i)=>{ const d=new Date(Date.now()-(27-i)*864e5);
-    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); });
+  /* Vier volle weken, netjes uitgelijnd op de weekdagen: de rij loopt van
+     maandag tot en met zondag en eindigt in de week van vandaag. */
+  const vandaagD=new Date(); const naZondag=(7-((vandaagD.getDay()||7)))%7;
+  const eind=new Date(Date.now()+naZondag*864e5);
+  const dagen=[...Array(28)].map((_,i)=>{ const d=new Date(eind.getTime()-(27-i)*864e5);
+    return {s:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),
+            komt:d>vandaagD, nu:d.toDateString()===vandaagD.toDateString(), n:d.getDate()}; });
   const laatste=(pr.verdiensten||[]).slice(-8).reverse();
   el.innerHTML=`
   <div><h1>Beloning</h1>
@@ -2813,17 +3468,21 @@ function tekenBeloning(){
     <h3>Je stickerkaart</h3>
     <p class="klein" style="margin-top:5px">Elke dag waarop je de opdracht van de dag afmaakt, komt er een ster bij. De laatste vier weken:</p>
     <div class="stickers" style="margin-top:12px">
-      ${dagen.map(d=>`<div class="sticker ${(pr.missieDagen||{})[d]?'vol':''}" title="${d}">${(pr.missieDagen||{})[d]?'⭐':''}</div>`).join('')}
+      ${['M','D','W','D','V','Z','Z'].map(k=>`<div class="kop">${k}</div>`).join('')}
+      ${dagen.map(d=>{ const vol=(pr.missieDagen||{})[d.s];
+        return `<div class="sticker ${vol?'vol':''} ${d.nu?'nu':''} ${d.komt?'komt':''}" title="${d.s}">${vol?'⭐':(d.komt?'':d.n)}</div>`; }).join('')}
     </div>
+    <p class="klein" style="margin-top:10px">${Object.keys(pr.missieDagen||{}).length} sterren verdiend. Vandaag heeft een rand eromheen.</p>
   </div>
   <div class="card">
-    <h3>Insignes</h3>
+    <div class="rij tussen"><h3>Insignes</h3><span class="tag ${heb.size?'goed':''}">${heb.size} van de ${INSIGNES.length}</span></div>
     <div class="insignes" style="margin-top:12px">
-      ${INSIGNES.map(b=>`<div class="insigne ${heb.has(b.id)?'aan':''}" title="${esc(b.u)}">
-        <div class="ico">${b.ico}</div><div class="nm">${esc(b.n)}</div></div>`).join('')}
+      ${[...INSIGNES].sort((a,b)=>(heb.has(b.id)?1:0)-(heb.has(a.id)?1:0)).map(b=>`<div class="insigne ${heb.has(b.id)?'aan':''}" title="${esc(b.u)}">
+        <div class="ico">${b.ico}</div><div class="nm">${esc(b.n)}</div>
+        ${heb.has(b.id)?'':'<div class="klein" style="font-size:.68rem;line-height:1.25;margin-top:3px">'+esc(b.u)+'</div>'}</div>`).join('')}
     </div>
   </div>
-  <div class="grid g2">
+  <div class="grid g2" style="align-items:start">
     <div class="card"><h3>Zo verdien je</h3>
       <div class="tblwrap" style="margin-top:10px"><table class="tbl"><tbody>
         <tr><td>Een les halen (eerste keer)</td><td>${euro(TARIEF.les)}</td></tr>
@@ -2926,7 +3585,10 @@ function tekenOuder(){
     <div class="card">
       <h3>Instellingen van de app</h3>
       <label class="veld"><span>Geluid</span><select id="iGeluid"><option value="1" ${S.instel.geluid?'selected':''}>Aan</option><option value="0" ${S.instel.geluid?'':'selected'}>Uit</option></select></label>
-      <label class="veld"><span>Voorlezen</span><select id="iStem"><option value="1" ${S.instel.stem?'selected':''}>Aan</option><option value="0" ${S.instel.stem?'':'selected'}>Uit</option></select></label>
+      <label class="veld"><span>Voorlezen door de stem van het toestel</span><select id="iStem">
+        <option value="1" ${S.instel.stem?'selected':''}>Aan — ook waar geen opname is</option>
+        <option value="0" ${S.instel.stem?'':'selected'}>Uit — alleen echte opnames</option></select></label>
+      <p class="klein" style="margin-top:6px">Zet dit uit als de voorleesstem meer stoort dan helpt. De recitatie en de opnames van thuis blijven dan gewoon spelen; waar niets is, blijft het stil.</p>
       <label class="veld"><span>Arabische stem</span><select id="iArStem">
         ${STEM.arLijst.length
           ? STEM.arLijst.map(v=>`<option value="${esc(v.name)}" ${(STEM.ar&&STEM.ar.name===v.name)?'selected':''}>${esc(v.name)} (${esc(v.lang)})</option>`).join('')
@@ -3036,7 +3698,7 @@ function tekenOuder(){
   $('#exporteer').onclick=()=>{
     const a=document.createElement('a');
     a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,2)],{type:'application/json'}));
-    a.download='bidaya-'+vandaag()+'.json'; a.click();
+    a.download='noer-'+vandaag()+'.json'; a.click();
   };
 }
 
@@ -3073,20 +3735,29 @@ function stemStudio(){
   const teken=()=>{
     /* Tellen doen we op wat er écht nog moet: de soera's komen uit de
        recitatie, dus die horen niet in de opgave thuis. */
-    const nodig=groepen.flatMap(g=>g.items).filter(i=>!AUDIO.lijst.has(i.id));
+    const alles=groepen.flatMap(g=>g.items);
+    const nodig=alles.filter(i=>!AUDIO.lijst.has(i.id) && !AUDIO.eigenMee[i.id]);
+    const metStem=alles.filter(i=>AUDIO.stemMee[i.id] && !AUDIO.eigenMee[i.id]).length;
+    const zonder=alles.filter(i=>!AUDIO.heeft(i.id)).length;
     const gedaan=nodig.filter(i=>AUDIO.eigen.has(i.id)).length;
     $('#blad').innerHTML=`
       <div class="rij tussen"><p class="meta">Eigen stem</p>
         <button class="icoon" onclick="AUDIO.stop();bladDicht();teken()" aria-label="Sluiten">✕</button></div>
       <h2 style="margin-top:6px">De teksten zelf inspreken</h2>
-      <p class="klein" style="margin-top:6px">${gedaan} van de ${nodig.length} ingesproken. Houd de telefoon een handbreedte van je mond, spreek rustig, en luister meteen terug — je hoort zelf wanneer het goed is. Het hoeft niet in één keer: een paar per dag is genoeg.</p>
+      <p class="klein" style="margin-top:6px">${
+        zonder ? 'Er zijn nog <b>'+zonder+'</b> fragmenten zonder geluid. '
+               : 'Alles heeft geluid. '}${
+        metStem ? 'Voor <b>'+metStem+'</b> daarvan staat een voorleesstem klaar — die doet het werk, maar het is een machine. Spreek je er zelf een in, dan gaat die er meteen boven en hoort je kind de uitspraak van thuis. '
+                : ''}Zelf ingesproken: <b>${gedaan}</b> van de ${nodig.length}.</p>
+      <p class="klein" style="margin-top:6px">Houd de telefoon een handbreedte van je mond, spreek rustig, en luister meteen terug — je hoort zelf wanneer het goed is. Het hoeft niet in één keer: een paar per dag is genoeg.</p>
       <div style="margin-top:10px">${balk(nodig.length?gedaan/nodig.length*100:0)}</div>
       ${groepen.map((g,gi)=>`
         ${g.klein?'<details style="margin-top:22px"><summary style="cursor:pointer"><b>'+esc(g.g)+'</b></summary><p class="klein" style="margin-top:6px">'+esc(g.klein)+'</p>'
                  :'<h3 style="margin-top:22px">'+esc(g.g)+'</h3>'}
         <div class="stack" style="margin-top:10px">
         ${g.items.map((it,ii)=>{
-          const eigen=AUDIO.eigen.has(it.id), mee=AUDIO.lijst.has(it.id);
+          const eigen=AUDIO.eigen.has(it.id), thuis=!!AUDIO.eigenMee[it.id],
+                mee=AUDIO.lijst.has(it.id), voorgelezen=!!AUDIO.stemMee[it.id];
           return `<div class="card plat" style="background:var(--surface-2);padding:13px 15px">
             <div class="rij tussen" style="align-items:flex-start">
               <div style="flex:1;min-width:0">
@@ -3094,7 +3765,10 @@ function stemStudio(){
                 <div class="ar" style="font-size:1.2rem;color:var(--ink);margin-top:3px">${it.ar}</div>
                 <div class="tr" style="font-size:.9rem">${esc(it.tr||'')}</div>
                 <div class="rij" style="margin-top:7px">
-                  ${eigen?'<span class="tag goed">Eigen opname</span>':(mee?'<span class="tag k">Recitatie meegeleverd</span>':'<span class="tag let">Nog niets</span>')}
+                  ${eigen?'<span class="tag goed">Op dit toestel opgenomen</span>'
+                    :(thuis?'<span class="tag goed">Eigen stem meegeleverd</span>'
+                    :(mee?'<span class="tag k">Recitatie meegeleverd</span>'
+                    :(voorgelezen?'<span class="tag info">Voorleesstem meegeleverd</span>':'<span class="tag let">Nog niets</span>')))}
                 </div>
               </div>
               <div class="rij" style="flex-direction:column;gap:6px">
@@ -3106,7 +3780,9 @@ function stemStudio(){
         </div>${g.klein?'</details>':''}`).join('')}
       <hr class="rule">
       <h3>Naar een ander toestel</h3>
-      <p class="klein" style="margin-top:5px">Opnames blijven in het toestel waarop ze gemaakt zijn — ze gaan niet mee met de centrale opslag, want geluid is te zwaar. Sla ze op als bestand, stuur dat naar de telefoon van een kind en lees het daar in.</p>
+      <p class="klein" style="margin-top:5px">Een opname staat eerst alleen in het toestel waarop hij gemaakt is. Er zijn twee manieren om hem bij de kinderen te krijgen.</p>
+      <p class="klein" style="margin-top:8px"><b>Snel:</b> sla ze op als bestand, stuur dat naar de telefoon van een kind en lees het daar in met de tweede knop.</p>
+      <p class="klein" style="margin-top:6px"><b>Voorgoed:</b> stuur het bestand naar de computer en draai <span class="meta" style="text-transform:none">node noer/audio/zet-eigen.mjs &lt;bestand&gt;</span>. De opnames komen dan in de app zelf te zitten, dus op elk toestel, ook op een nieuwe telefoon, en ook zonder internet. Dat is de plek waar ze horen: geluid hoort niet in de gedeelde opslag thuis, dat wordt te zwaar.</p>
       <div class="rij" style="margin-top:12px">
         <button class="btn ghost sm" id="opnUit" ${gedaan?'':'disabled'}>Opnames opslaan als bestand</button>
         <button class="btn ghost sm" id="opnIn">Opnames inlezen</button>
@@ -3122,11 +3798,11 @@ function stemStudio(){
         try{ await OPNAME.start(); b.textContent='⏹'; b.classList.add('aan'); b.dataset.loopt='1'; }
         catch(e){ $('#opnMeld').textContent='Geen toegang tot de microfoon.'; $('#opnMeld').className='melding fout'; }
       } else {
-        await OPNAME.stop();
-        const blob=new Blob(OPNAME.brokken,{type:'audio/webm'});
+        const blob=await OPNAME.stop();
+        if(!blob){ $('#opnMeld').textContent='Er is niets opgenomen — probeer het nog een keer.'; $('#opnMeld').className='melding fout'; teken(); return; }
         await AUDIO.zet(b.dataset.op, blob);
+        AUDIO.speel(b.dataset.op,'');            // meteen terugluisteren, nog binnen de aanraking
         teken();
-        AUDIO.speel(b.dataset.op,'');            // meteen terugluisteren
       }
     });
     $('#opnUit').onclick=async()=>{
@@ -3137,7 +3813,7 @@ function stemStudio(){
       }
       const a=document.createElement('a');
       a.href=URL.createObjectURL(new Blob([JSON.stringify(uit)],{type:'application/json'}));
-      a.download='bidaya-stem-'+vandaag()+'.json'; a.click();
+      a.download='noer-stem-'+vandaag()+'.json'; a.click();
     };
     $('#opnIn').onclick=()=>$('#opnBestand').click();
     $('#opnBestand').onchange=async e=>{
@@ -3192,6 +3868,8 @@ $('#knopWie').onclick=()=>{
    TEKENEN EN STARTEN
 ============================================================================= */
 function teken(){
+  document.body.dataset.spoor = prof() ? String(spoor()) : '3';
+  document.body.dataset.view = huidigeTab;
   ({vandaag:tekenVandaag, leerpad:tekenLeerpad, gebed:tekenGebed, tijden:tekenTijden,
     oefenen:tekenOefenen, beloning:tekenBeloning, ouder:tekenOuder}[huidigeTab]||tekenVandaag)();
 }

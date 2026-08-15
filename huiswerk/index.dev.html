@@ -170,19 +170,6 @@ const PROFILES = {
   selma:  {naam:'Selma',   niveau:'groep 4', volgend:'groep 5', emoji:'🌸', kleur:'linear-gradient(135deg,#d95b9a,#b34584)', vakken:['rekenen','taal','lezen'], beloning:true},
 };
 
-// 🎓 Bennaghmouch Academie — losse cursus-apps die vanaf de startpagina te openen zijn (uitbreidbaar).
-const GEZINSCURSUSSEN = [
-  {id:'communicatie', naam:'Verbind — Communicatie & Netwerken', voor:'Papa', emoji:'💬',
-   kleur:'linear-gradient(135deg,#6d5fef,#22c4a6)', uitleg:'Small talk, charisma & netwerken — dagelijkse training.',
-   url:'cursussen/communicatie.html'},
-  {id:'presenteren', naam:'Podium — Presenteren & Spreken', voor:'Papa', emoji:'🎤',
-   kleur:'linear-gradient(135deg,#f97316,#e11d48)', uitleg:'Zelfverzekerd presenteren, pitchen en spreken voor publiek.',
-   url:'cursussen/presenteren.html'},
-  {id:'studievaardigheden', naam:'Kompas — Slim Leren & Focus', voor:'De kinderen', emoji:'🧭',
-   kleur:'linear-gradient(135deg,#22c55e,#06b6d4)', uitleg:'Focus, plannen & slim onthouden — voor beter huiswerk en toetsen.',
-   url:'cursussen/kompas.html'},
-];
-
 /* ============================ THEMA'S (motivatie) ============================ */
 /* Per profiel een thema. Amine = voetbal/game: XP, rangen, doelpunten, voetbal-feedback. */
 const THEMES = {
@@ -3300,30 +3287,6 @@ function Home({onPick,store,allEx,onAuthor,onFormules,onLeertips,onSpellen,spelN
             ? <div><button className="btn ghost" disabled>🔒 Spelletjes</button><div className="muted" style={{fontSize:12,marginTop:4}}>Eerst een dagdoel halen, dan verdien je speeltijd! 💪</div></div>
             : <button className="btn gold" onClick={onSpellen}>🎮 Spelletjes</button>;
         })()}
-      </div>
-
-      {/* 🎓 Bennaghmouch Academie — launchpad naar de losse cursus-apps */}
-      <div className="card" style={{marginTop:16,background:'linear-gradient(135deg,#f4f2ff,#eafaf6)',borderLeftColor:'#6d5fef'}}>
-        <div className="row" style={{justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:6}}>
-          <b>🎓 Bennaghmouch Academie</b>
-          <span className="muted" style={{fontSize:12}}>🔒 ouder-code</span>
-        </div>
-        <p className="muted" style={{fontSize:12,marginTop:2}}>Naast het huiswerk: eigen cursussen om elke dag een vaardigheid te trainen. Beveiligd met een ouder-code.</p>
-        <div style={{marginTop:10}}>
-          {GEZINSCURSUSSEN.map(c=>(
-            <a key={c.id} href={c.url} style={{display:'block',textDecoration:'none',color:'#fff',background:c.kleur,borderRadius:14,padding:'14px 16px',marginTop:8,boxShadow:'0 6px 16px rgba(60,50,150,.18)'}}>
-              <div className="row" style={{justifyContent:'space-between',alignItems:'center'}}>
-                <div style={{minWidth:0}}>
-                  <div style={{fontSize:12,opacity:.9,fontWeight:700}}>{c.emoji} voor {c.voor}</div>
-                  <div style={{fontSize:17,fontWeight:800,margin:'2px 0'}}>{c.naam}</div>
-                  <div style={{fontSize:12.5,opacity:.95}}>{c.uitleg}</div>
-                </div>
-                <span style={{fontSize:24,marginLeft:10}}>›</span>
-              </div>
-            </a>
-          ))}
-        </div>
-        <p className="muted center" style={{fontSize:11,marginTop:10}}>Meer cursussen volgen — dit is het startpunt voor het gezin.</p>
       </div>
 
       <div className="hint" style={{margin:'16px 0'}}><b>Tip van de dag:</b> {tip}</div>

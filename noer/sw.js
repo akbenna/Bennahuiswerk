@@ -1,7 +1,7 @@
-/* Bidaya werkt zonder internet. De app is één bestand, dus die bewaren we —
+/* Noer Islam werkt zonder internet. De app is één bestand, dus die bewaren we —
    en bij het openen halen we hem opnieuw op zodat een nieuwe versie meteen
    binnenkomt; lukt dat niet, dan draait de bewaarde versie gewoon door. */
-const CACHE = 'bidaya-v2';
+const CACHE = 'noer-v1';
 const BESTANDEN = ['./', './index.html', './manifest.webmanifest', '../favicon.svg', '../apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
