@@ -575,7 +575,7 @@ const kaal = t => String(t||'').replace(/[\u064B-\u0652\u0670\u06D6-\u06ED]/g,''
    zinnen in het gebed, en `d:<nummer>` voor de du'a's van de dag.
 ============================================================================= */
 const AUDIO = {
-  db:null, lijst:new Set(), eigen:new Set(), speler:null, bezig:null,
+  db:null, lijst:new Set(), eigenMee:{}, eigen:new Set(), speler:null,
 
   async open(){
     if(this.db) return this.db;
@@ -604,29 +604,59 @@ const AUDIO = {
        Ontbreekt dat, dan is de map leeg en valt alles terug op de stem. */
     try{
       const r=await fetch('audio/quran/lijst.json',{cache:'no-cache'});
-      if(r.ok){ const j=await r.json(); this.lijst=new Set(j.fragmenten||[]);
-        if(this.lijst.size) setTimeout(()=>this.voorraad(), 8000); }
+      if(r.ok){ const j=await r.json(); this.lijst=new Set(j.fragmenten||[]); }
     }catch(e){}
+    /* En de opnames die thuis gemaakt zijn en meegeleverd worden — die staan
+       in de app zelf, dus op elk toestel, zonder dat er iets gesynchroniseerd
+       hoeft te worden. */
+    try{
+      const r=await fetch('audio/eigen/lijst.json',{cache:'no-cache'});
+      if(r.ok){ const j=await r.json(); this.eigenMee=j.bestanden||{}; }
+    }catch(e){}
+    if(this.lijst.size || Object.keys(this.eigenMee).length) setTimeout(()=>this.voorraad(), 8000);
   },
-  bestand(id){ return this.lijst.has(id) ? 'audio/quran/'+id.slice(2).replace(':','-')+'.mp3' : null; },
+  /* Een meegeleverde opname van thuis gaat vóór op de recitatie: bij de zinnen
+     van het gebed is de stem van je eigen vader nu eenmaal de bedoeling. */
+  bestand(id){
+    if(this.eigenMee[id]) return 'audio/eigen/'+this.eigenMee[id];
+    return this.lijst.has(id) ? 'audio/quran/'+id.slice(2).replace(':','-')+'.mp3' : null;
+  },
   /* Rustig op de achtergrond alle fragmenten één keer ophalen, zodat ze in de
      kast staan en het ook zonder internet werkt. Eén tegelijk: geen haast. */
   async voorraad(){
-    for(const id of this.lijst){
-      try{ await fetch(this.bestand(id)); }catch(e){ return; }
+    for(const id of [...Object.keys(this.eigenMee), ...this.lijst]){
+      const f=this.bestand(id); if(!f) continue;
+      try{ await fetch(f); }catch(e){ return; }
       await new Promise(r=>setTimeout(r,400));
     }
   },
-  heeft(id){ return this.eigen.has(id) || this.lijst.has(id); },
+  heeft(id){ return this.eigen.has(id) || !!this.eigenMee[id] || this.lijst.has(id); },
 
-  stop(){ try{ if(this.speler){ this.speler.pause(); this.speler.currentTime=0; } }catch(e){} STEM.stop(); this.bezig=null; },
+  /* Een telefoon speelt geen geluid af dat niet uit een aanraking voortkomt.
+     Daarom maken we bij de eerste tik op het scherm één speler wakker met een
+     stukje stilte; daarna mag diezelfde speler ook uit zichzelf beginnen. Zonder
+     dit blijft het stil zodra er iets tussen zit — een opslagactie bijvoorbeeld. */
+  ontgrendeld:false,
+  ontgrendel(){
+    if(this.ontgrendeld) return;
+    try{
+      this.speler = this.speler || new Audio();
+      this.speler.src='data:audio/wav;base64,UklGRiUAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQEAAACA';
+      const p=this.speler.play();
+      if(p && p.then) p.then(()=>{ this.speler.pause(); this.ontgrendeld=true; }).catch(()=>{});
+      else this.ontgrendeld=true;
+    }catch(e){}
+  },
+  stop(){ try{ if(this.speler){ this.speler.pause(); this.speler.currentTime=0; } }catch(e){} STEM.stop(); this._merk=null; },
   _speelUrl(url, opruimen){
     return new Promise(res=>{
       this.speler=this.speler||new Audio();
       const a=this.speler; a.src=url; a.playbackRate=Math.max(.5,Math.min(1.5,S.instel.arTempo/0.85));
-      const af=()=>{ a.onended=null; a.onerror=null; if(opruimen) URL.revokeObjectURL(url); res(); };
-      a.onended=af; a.onerror=af;
-      a.play().catch(af);
+      const af=()=>{ a.onended=null; a.onerror=null; if(opruimen) setTimeout(()=>URL.revokeObjectURL(url),1000); res(); };
+      a.onended=af;
+      a.onerror=()=>{ kort('Dit fragment kan op dit toestel niet worden afgespeeld.'); af(); };
+      const p=a.play();
+      if(p && p.catch) p.catch(e=>{ kort('Tik nog een keer op de knop — de telefoon wil geluid pas na een aanraking.'); af(); });
     });
   },
   /* Eén stukje laten horen. Geeft terug wanneer het afgelopen is, zodat je
@@ -656,24 +686,35 @@ const AUDIO = {
 /* Jezelf horen is de snelste manier om je uitspraak te verbeteren. We nemen op
    in het geheugen en spelen terug; er wordt niets bewaard of verstuurd. */
 const OPNAME = {
-  rec:null, brokken:[], url:null, bezig:false,
+  rec:null, brokken:[], bezig:false, soort:'',
   kan(){ return !!(navigator.mediaDevices && window.MediaRecorder); },
+  /* Elk toestel neemt in zijn eigen formaat op: Safari levert mp4, Chrome en
+     Firefox leveren webm. Welk formaat het is, moet je van de recorder zélf
+     overnemen — noem je het verkeerd, dan slaat het bestand wel op maar weigert
+     de speler het af te spelen. Dat is precies wat er misging. */
   async start(){
     const stream = await navigator.mediaDevices.getUserMedia({audio:true});
-    this.brokken=[]; this.rec=new MediaRecorder(stream);
-    this.rec.ondataavailable=e=>{ if(e.data.size) this.brokken.push(e.data); };
+    this.brokken=[];
+    let opties={};
+    for(const t of ['audio/mp4','audio/webm;codecs=opus','audio/webm']){
+      try{ if(window.MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)){ opties={mimeType:t}; break; } }catch(e){}
+    }
+    this.rec = new MediaRecorder(stream, opties);
+    this.soort = this.rec.mimeType || opties.mimeType || '';
+    this.rec.ondataavailable=e=>{ if(e.data && e.data.size) this.brokken.push(e.data); };
     this.rec.onstop=()=>{ stream.getTracks().forEach(t=>t.stop()); };
     this.rec.start(); this.bezig=true;
   },
+  /* Geeft het opgenomen fragment terug, met het juiste soortlabel erop. */
   stop(){
     return new Promise(res=>{
-      if(!this.rec){ res(null); return; }
+      if(!this.rec){ this.bezig=false; res(null); return; }
       this.rec.addEventListener('stop',()=>{
-        if(this.url) URL.revokeObjectURL(this.url);
-        this.url = URL.createObjectURL(new Blob(this.brokken,{type:'audio/webm'}));
-        this.bezig=false; res(this.url);
+        this.bezig=false;
+        const soort=(this.soort||'audio/webm').split(';')[0];
+        res(this.brokken.length ? new Blob(this.brokken,{type:soort}) : null);
       },{once:true});
-      this.rec.stop();
+      try{ this.rec.stop(); }catch(e){ this.bezig=false; res(null); }
     });
   }
 };
@@ -1874,6 +1915,20 @@ function bladDicht(){ $('#overlay').classList.remove('on'); $('#blad').innerHTML
 $('#overlay').addEventListener('click', e=>{ if(e.target.id==='overlay') bladDicht(); });
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') bladDicht(); });
 
+/* Een kort berichtje onderin beeld. Bedoeld voor dingen die misgaan terwijl er
+   geen scherm is om het in te zetten — beter dan stilte. */
+let _kortTimer=null;
+function kort(tekst){
+  let el=$('#kortje');
+  if(!el){ el=document.createElement('div'); el.id='kortje';
+    el.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:26px;z-index:80;max-width:88vw;'+
+      'background:var(--ink);color:var(--canvas);padding:11px 16px;border-radius:10px;font-size:.9rem;line-height:1.4;'+
+      'box-shadow:var(--schaduw-op);text-align:center';
+    document.body.appendChild(el); }
+  el.textContent=tekst; el.style.display='block';
+  clearTimeout(_kortTimer); _kortTimer=setTimeout(()=>{ el.style.display='none'; }, 4200);
+}
+
 function balk(pct){ return '<div class="bar"><i style="width:'+Math.max(0,Math.min(100,pct))+'%"></i></div>'; }
 function ring(pct,tekst){ return '<div class="ring" style="--p:'+Math.max(0,Math.min(100,pct))+'"><span>'+tekst+'</span></div>'; }
 
@@ -1922,6 +1977,9 @@ document.addEventListener('click', e=>{
 
 /* Alle luisterknoppen in één keer bedienen — schermen worden vaak opnieuw
    opgebouwd, dus we luisteren op documentniveau. */
+['pointerdown','touchstart','click'].forEach(g=>
+  document.addEventListener(g, ()=>AUDIO.ontgrendel(), {once:false, passive:true}));
+
 document.addEventListener('click', e=>{
   const ar=e.target.closest('[data-hoor-ar]');
   if(ar){ AUDIO.speel(ar.dataset.aid||'', ar.dataset.hoorAr); return; }
@@ -2382,9 +2440,10 @@ function zetOpname(){
       try{ await OPNAME.start(); k.textContent='⏹ Stoppen'; k.classList.remove('ghost'); $('#opnTekst').textContent='Aan het opnemen…'; }
       catch(e){ $('#opnTekst').textContent='Geen toegang tot de microfoon.'; }
     } else {
-      const url=await OPNAME.stop();
+      const blob=await OPNAME.stop();
       k.textContent='🎙️ Nog een keer'; k.classList.add('ghost'); $('#opnTekst').textContent='';
-      const a=document.createElement('audio'); a.controls=true; a.src=url; a.style.cssText='width:100%;margin-top:9px';
+      if(!blob){ $('#opnTekst').textContent='Er is niets opgenomen.'; return; }
+      const a=document.createElement('audio'); a.controls=true; a.src=URL.createObjectURL(blob); a.style.cssText='width:100%;margin-top:9px';
       const oud=vak.querySelector('audio'); if(oud) oud.remove();
       vak.appendChild(a);
     }
@@ -2926,7 +2985,10 @@ function tekenOuder(){
     <div class="card">
       <h3>Instellingen van de app</h3>
       <label class="veld"><span>Geluid</span><select id="iGeluid"><option value="1" ${S.instel.geluid?'selected':''}>Aan</option><option value="0" ${S.instel.geluid?'':'selected'}>Uit</option></select></label>
-      <label class="veld"><span>Voorlezen</span><select id="iStem"><option value="1" ${S.instel.stem?'selected':''}>Aan</option><option value="0" ${S.instel.stem?'':'selected'}>Uit</option></select></label>
+      <label class="veld"><span>Voorlezen door de stem van het toestel</span><select id="iStem">
+        <option value="1" ${S.instel.stem?'selected':''}>Aan — ook waar geen opname is</option>
+        <option value="0" ${S.instel.stem?'':'selected'}>Uit — alleen echte opnames</option></select></label>
+      <p class="klein" style="margin-top:6px">Zet dit uit als de voorleesstem meer stoort dan helpt. De recitatie en de opnames van thuis blijven dan gewoon spelen; waar niets is, blijft het stil.</p>
       <label class="veld"><span>Arabische stem</span><select id="iArStem">
         ${STEM.arLijst.length
           ? STEM.arLijst.map(v=>`<option value="${esc(v.name)}" ${(STEM.ar&&STEM.ar.name===v.name)?'selected':''}>${esc(v.name)} (${esc(v.lang)})</option>`).join('')
@@ -3073,7 +3135,7 @@ function stemStudio(){
   const teken=()=>{
     /* Tellen doen we op wat er écht nog moet: de soera's komen uit de
        recitatie, dus die horen niet in de opgave thuis. */
-    const nodig=groepen.flatMap(g=>g.items).filter(i=>!AUDIO.lijst.has(i.id));
+    const nodig=groepen.flatMap(g=>g.items).filter(i=>!AUDIO.lijst.has(i.id) && !AUDIO.eigenMee[i.id]);
     const gedaan=nodig.filter(i=>AUDIO.eigen.has(i.id)).length;
     $('#blad').innerHTML=`
       <div class="rij tussen"><p class="meta">Eigen stem</p>
@@ -3086,7 +3148,7 @@ function stemStudio(){
                  :'<h3 style="margin-top:22px">'+esc(g.g)+'</h3>'}
         <div class="stack" style="margin-top:10px">
         ${g.items.map((it,ii)=>{
-          const eigen=AUDIO.eigen.has(it.id), mee=AUDIO.lijst.has(it.id);
+          const eigen=AUDIO.eigen.has(it.id), thuis=!!AUDIO.eigenMee[it.id], mee=AUDIO.lijst.has(it.id);
           return `<div class="card plat" style="background:var(--surface-2);padding:13px 15px">
             <div class="rij tussen" style="align-items:flex-start">
               <div style="flex:1;min-width:0">
@@ -3094,7 +3156,9 @@ function stemStudio(){
                 <div class="ar" style="font-size:1.2rem;color:var(--ink);margin-top:3px">${it.ar}</div>
                 <div class="tr" style="font-size:.9rem">${esc(it.tr||'')}</div>
                 <div class="rij" style="margin-top:7px">
-                  ${eigen?'<span class="tag goed">Eigen opname</span>':(mee?'<span class="tag k">Recitatie meegeleverd</span>':'<span class="tag let">Nog niets</span>')}
+                  ${eigen?'<span class="tag goed">Op dit toestel opgenomen</span>'
+                    :(thuis?'<span class="tag goed">Eigen stem meegeleverd</span>'
+                    :(mee?'<span class="tag k">Recitatie meegeleverd</span>':'<span class="tag let">Nog niets</span>'))}
                 </div>
               </div>
               <div class="rij" style="flex-direction:column;gap:6px">
@@ -3106,7 +3170,9 @@ function stemStudio(){
         </div>${g.klein?'</details>':''}`).join('')}
       <hr class="rule">
       <h3>Naar een ander toestel</h3>
-      <p class="klein" style="margin-top:5px">Opnames blijven in het toestel waarop ze gemaakt zijn — ze gaan niet mee met de centrale opslag, want geluid is te zwaar. Sla ze op als bestand, stuur dat naar de telefoon van een kind en lees het daar in.</p>
+      <p class="klein" style="margin-top:5px">Een opname staat eerst alleen in het toestel waarop hij gemaakt is. Er zijn twee manieren om hem bij de kinderen te krijgen.</p>
+      <p class="klein" style="margin-top:8px"><b>Snel:</b> sla ze op als bestand, stuur dat naar de telefoon van een kind en lees het daar in met de tweede knop.</p>
+      <p class="klein" style="margin-top:6px"><b>Voorgoed:</b> stuur het bestand naar de computer en draai <span class="meta" style="text-transform:none">node bidaya/audio/zet-eigen.mjs &lt;bestand&gt;</span>. De opnames komen dan in de app zelf te zitten, dus op elk toestel, ook op een nieuwe telefoon, en ook zonder internet. Dat is de plek waar ze horen: geluid hoort niet in de gedeelde opslag thuis, dat wordt te zwaar.</p>
       <div class="rij" style="margin-top:12px">
         <button class="btn ghost sm" id="opnUit" ${gedaan?'':'disabled'}>Opnames opslaan als bestand</button>
         <button class="btn ghost sm" id="opnIn">Opnames inlezen</button>
@@ -3122,11 +3188,11 @@ function stemStudio(){
         try{ await OPNAME.start(); b.textContent='⏹'; b.classList.add('aan'); b.dataset.loopt='1'; }
         catch(e){ $('#opnMeld').textContent='Geen toegang tot de microfoon.'; $('#opnMeld').className='melding fout'; }
       } else {
-        await OPNAME.stop();
-        const blob=new Blob(OPNAME.brokken,{type:'audio/webm'});
+        const blob=await OPNAME.stop();
+        if(!blob){ $('#opnMeld').textContent='Er is niets opgenomen — probeer het nog een keer.'; $('#opnMeld').className='melding fout'; teken(); return; }
         await AUDIO.zet(b.dataset.op, blob);
+        AUDIO.speel(b.dataset.op,'');            // meteen terugluisteren, nog binnen de aanraking
         teken();
-        AUDIO.speel(b.dataset.op,'');            // meteen terugluisteren
       }
     });
     $('#opnUit').onclick=async()=>{
