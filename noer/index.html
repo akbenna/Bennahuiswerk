@@ -89,6 +89,11 @@ b,strong{font-weight:600;color:var(--ink)}
 :focus-visible{outline:2px solid var(--k);outline-offset:2px;border-radius:6px}
 .ar{font-family:var(--ar);direction:rtl;unicode-bidi:isolate;line-height:2.05;font-size:1.34em}
 .tr{font-style:italic;color:var(--muted);font-family:var(--serif);font-size:1rem;line-height:1.5}
+/* Hoe je het hardop zegt, in Nederlandse klanken en met de klemtoon in
+   hoofdletters. De wetenschappelijke omschrijving eronder (`.tr`) is precies
+   maar leest lastig: "Subhana rabbiya l-a'la" wordt dan zomaar "soebhanaropbil
+   ala". Deze regel is bedoeld om te lézen, niet om correct te zijn. */
+.uitspraak{margin-top:6px;font-family:var(--mono);font-size:.82rem;letter-spacing:.01em;color:var(--k)}
 .nl{font-family:var(--serif);font-size:1.02rem;line-height:1.55}
 
 /* ---------- chrome ---------- */
@@ -2041,26 +2046,26 @@ const MODULES = [
    De indeling volgt de Malikitische school.
 ============================================================================= */
 const WUDU = [
- {id:'w1', t:'De intentie', deel:'', soort:'fard', kort:'Weet in je hart: ik ga nu de wassing doen.',
+ {id:'w1', t:'De intentie', deel:'', soort:'fard', kort:'Weet in je hart: ik ga nu de wassing doen.', tip:'Zeg de intentie niet hardop. Het is genoeg dat je wéét waarvoor je het doet — dat zit in je hoofd, niet in je mond.',
   hoe:['Je hoeft niets hardop te zeggen. Je weet gewoon waarvoor je het doet.','De intentie hoort aan het begin, bij het wassen van je gezicht of vlak ervoor.'],
   zeg:{aid:'t:bismillah', ar:'بِسْمِ اللَّهِ', tr:'Bismillah', nl:'In de naam van Allah'}},
- {id:'w2', t:'Je handen wassen', deel:'handen', soort:'sunna', aantal:'3×', kort:'Was je handen tot je polsen, rechts eerst.',
+ {id:'w2', t:'Je handen wassen', deel:'handen', soort:'sunna', aantal:'3×', kort:'Was je handen tot je polsen, rechts eerst.', tip:'Ring of horloge af, of schuif hem heen en weer. Onder een strak bandje komt geen water, en dan is die plek niet gewassen.',
   hoe:['Drie keer, rechts en dan links.','Tussen je vingers door.','Dit doe je vóór je je hand in het water steekt.']},
- {id:'w3', t:'Je mond spoelen', deel:'mond', soort:'sunna', aantal:'3×', kort:'Neem water in je mond en spoel goed.',
+ {id:'w3', t:'Je mond spoelen', deel:'mond', soort:'sunna', aantal:'3×', kort:'Neem water in je mond en spoel goed.', tip:'Ben je aan het vasten? Spoel dan voorzichtig en slik niets door.',
   hoe:['Drie keer, met je rechterhand water opnemen.','Beweeg het water rond in je mond en spuug het uit.']},
- {id:'w4', t:'Je neus', deel:'neus', soort:'sunna', aantal:'3×', kort:'Water optrekken en weer uitsnuiten.',
+ {id:'w4', t:'Je neus', deel:'neus', soort:'sunna', aantal:'3×', kort:'Water optrekken en weer uitsnuiten.', tip:'Niet te diep optrekken — je hoeft er niet van te hoesten. Snuit uit met je linkerhand.',
   hoe:['Trek water op met je rechterhand, snuit uit met je linker.','Drie keer. Rustig — niet te diep.']},
- {id:'w5', t:'Je gezicht wassen', deel:'gezicht', soort:'fard', aantal:'3×', kort:'Van je haargrens tot je kin, van oor tot oor — en wrijven.',
+ {id:'w5', t:'Je gezicht wassen', deel:'gezicht', soort:'fard', aantal:'3×', kort:'Van je haargrens tot je kin, van oor tot oor — en wrijven.', tip:'Heb je een baard? Laat het water erdoorheen lopen en wrijf met natte vingers. Bij een dikke baard is de buitenkant genoeg.',
   hoe:['Neem water met beide handen.','Was van waar je haar begint tot onder je kin, en van oor tot oor.','<b>Wrijf erover met je hand.</b> Alleen water eroverheen laten lopen telt in deze school niet.','Vergeet niet: alles moet nat worden, geen droog plekje.']},
- {id:'w6', t:'Je armen tot de ellebogen', deel:'armen', soort:'fard', aantal:'3×', kort:'Rechts eerst, tot en met je elleboog, met wrijven.',
+ {id:'w6', t:'Je armen tot de ellebogen', deel:'armen', soort:'fard', aantal:'3×', kort:'Rechts eerst, tot en met je elleboog, met wrijven.', tip:'Stroop je mouw ruim op tot bóven je elleboog. Blijft hij halverwege hangen, dan houd je een droge rand over.',
   hoe:['Begin bij je vingertoppen en ga door tot voorbij je elleboog.','De elleboog hoort erbij, niet er net onder.','Wrijf met je andere hand over je arm.','Eerst rechts, dan links.']},
- {id:'w7', t:'Je hoofd afvegen', deel:'hoofd', soort:'fard', aantal:'1×', kort:'Je hele hoofd, van voor naar achter en terug.',
+ {id:'w7', t:'Je hoofd afvegen', deel:'hoofd', soort:'fard', aantal:'1×', kort:'Je hele hoofd, van voor naar achter en terug.', tip:'Maak je handen eerst opnieuw nat. Pet of hoofddoek gaat af: het gaat om je haar en je hoofdhuid.',
   hoe:['Maak je handen nat en leg ze op de voorkant van je hoofd.','Veeg naar achteren tot in je nek, en dan weer terug naar voren.','<b>Het hele hoofd</b> — niet een klein stukje. Dat is typisch voor de Malikitische school.']},
- {id:'w8', t:'Je oren', deel:'oren', soort:'sunna', aantal:'1×', kort:'Nieuw water pakken en je oren afvegen.',
+ {id:'w8', t:'Je oren', deel:'oren', soort:'sunna', aantal:'1×', kort:'Nieuw water pakken en je oren afvegen.', tip:'Nieuw water pakken, dus niet wat er nog aan je handen zit van je hoofd.',
   hoe:['Maak je handen opnieuw nat.','Wijsvinger in het oor, duim erachter.','Binnenkant en buitenkant.']},
- {id:'w9', t:'Je voeten wassen', deel:'voeten', soort:'fard', aantal:'3×', kort:'Tot en met je enkels, tussen je tenen door, rechts eerst.',
+ {id:'w9', t:'Je voeten wassen', deel:'voeten', soort:'fard', aantal:'3×', kort:'Tot en met je enkels, tussen je tenen door, rechts eerst.', tip:'In de moskee gaat het makkelijker met je voet ín de wasbak dan hangend op één been. Droog daarna tussen je tenen af, dat scheelt kou.',
   hoe:['Was je rechtervoet helemaal, tot voorbij je enkel.','Ga met je pink tussen je tenen door.','Wrijf over je voet.','Daarna de linker.','Draag je sokken over een geldige wassing? Dan mag je onder voorwaarden over je leren sokken (khuffayn) vegen in plaats van je voeten te wassen — vraag dat na bij je ouders.']},
- {id:'w10', t:'Klaar — en dan dit', deel:'', soort:'sunna', kort:'Sluit af met de getuigenis.',
+ {id:'w10', t:'Klaar — en dan dit', deel:'', soort:'sunna', kort:'Sluit af met de getuigenis.', tip:'Heb je even tijd, bid dan meteen twee rak\'a. Dat hoort bij deze wassing en het is zonde om het moment te laten lopen.',
   hoe:['Kijk omhoog en zeg de shahada. Wie dat doet, staan volgens de overlevering alle acht poorten van het paradijs open.'],
   zeg:{aid:'t:wudu-shahada', ar:'أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ',
        tr:'Ashhadu an la ilaha illa llahu wahdahu la sharika lah, wa ashhadu anna Muhammadan \'abduhu wa rasuluh',
@@ -2077,22 +2082,22 @@ const WUDU_REGELS = {
    HET GEBED — de losse onderdelen, met wat je doet en wat je zegt.
 ============================================================================= */
 const T = {
-  takbir:{aid:'t:takbir', ar:'اللَّهُ أَكْبَرُ', tr:'Allahu akbar', nl:'Allah is groter'},
+  takbir:{aid:'t:takbir', ar:'اللَّهُ أَكْبَرُ', tr:'Allahu akbar', uit:'al-LAA-hoe AK-bar', nl:'Allah is groter'},
   fatiha:{naam:'Al-Fatiha', ar:'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ٱلْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ الرَّحْمَٰنِ الرَّحِيمِ مَالِكِ يَوْمِ الدِّينِ إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ',
     tr:'Bismillahi r-rahmani r-rahim. Alhamdu lillahi rabbi l-\'alamin. Ar-rahmani r-rahim. Maliki yawmi d-din. Iyyaka na\'budu wa iyyaka nasta\'in. Ihdina s-sirata l-mustaqim. Sirata lladhina an\'amta \'alayhim ghayri l-maghdubi \'alayhim wa la d-dallin.',
     nl:'In de naam van Allah, de Erbarmer, de Barmhartige. Alle lof is voor Allah, de Heer van de werelden. De Erbarmer, de Barmhartige. Meester van de dag van het oordeel. Alleen U aanbidden wij en alleen U vragen wij om hulp. Leid ons op het rechte pad. Het pad van hen die U begunstigd hebt, niet van hen op wie toorn rust en niet van de dwalenden.'},
-  ruku:{aid:'q:h-dhikr:1', ar:'سُبْحَانَ رَبِّيَ الْعَظِيمِ', tr:'Subhana rabbiya l-\'azim', nl:'Volmaakt is mijn Heer, de Geweldige', keer:'3×'},
-  sami:{aid:'q:h-dhikr:2', ar:'سَمِعَ اللَّهُ لِمَنْ حَمِدَهُ', tr:'Sami\'a llahu liman hamidah', nl:'Allah hoort wie Hem prijst'},
-  rabbana:{aid:'q:h-dhikr:3', ar:'رَبَّنَا وَلَكَ الْحَمْدُ', tr:'Rabbana wa laka l-hamd', nl:'Onze Heer, aan U komt alle lof toe'},
-  sujud:{aid:'q:h-dhikr:4', ar:'سُبْحَانَ رَبِّيَ الْأَعْلَى', tr:'Subhana rabbiya l-a\'la', nl:'Volmaakt is mijn Heer, de Allerhoogste', keer:'3×'},
-  jalsa:{aid:'q:h-dhikr:5', ar:'رَبِّ اغْفِرْ لِي', tr:'Rabbi ghfir li', nl:'Heer, vergeef mij'},
+  ruku:{aid:'q:h-dhikr:1', ar:'سُبْحَانَ رَبِّيَ الْعَظِيمِ', tr:'Subhana rabbiya l-\'azim', uit:'soeb-HAA-na RAB-bi-ya l-‘a-DHIEM', nl:'Volmaakt is mijn Heer, de Geweldige', keer:'3×'},
+  sami:{aid:'q:h-dhikr:2', ar:'سَمِعَ اللَّهُ لِمَنْ حَمِدَهُ', tr:'Sami\'a llahu liman hamidah', uit:'sa-MI-‘a l-LAA-hoe LI-man HA-mi-dah', nl:'Allah hoort wie Hem prijst'},
+  rabbana:{aid:'q:h-dhikr:3', ar:'رَبَّنَا وَلَكَ الْحَمْدُ', tr:'Rabbana wa laka l-hamd', uit:'RAB-ba-naa wa LA-ka l-HAMD', nl:'Onze Heer, aan U komt alle lof toe'},
+  sujud:{aid:'q:h-dhikr:4', ar:'سُبْحَانَ رَبِّيَ الْأَعْلَى', tr:'Subhana rabbiya l-a\'la', uit:'soeb-HAA-na RAB-bi-ya l-A‘-laa', nl:'Volmaakt is mijn Heer, de Allerhoogste', keer:'3×'},
+  jalsa:{aid:'q:h-dhikr:5', ar:'رَبِّ اغْفِرْ لِي', tr:'Rabbi ghfir li', uit:'RAB-bigh-FIR lie', nl:'Heer, vergeef mij'},
   tashahhud:{ar:'التَّحِيَّاتُ لِلَّهِ، الزَّاكِيَاتُ لِلَّهِ، الطَّيِّبَاتُ الصَّلَوَاتُ لِلَّهِ، السَّلَامُ عَلَيْكَ أَيُّهَا النَّبِيُّ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ، السَّلَامُ عَلَيْنَا وَعَلَىٰ عِبَادِ اللَّهِ الصَّالِحِينَ، أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ',
     tr:'At-tahiyyatu lillah, az-zakiyatu lillah, at-tayyibatu s-salawatu lillah. As-salamu \'alayka ayyuha n-nabiyyu wa rahmatu llahi wa barakatuh. As-salamu \'alayna wa \'ala \'ibadi llahi s-salihin. Ashhadu an la ilaha illa llahu wahdahu la sharika lah, wa ashhadu anna Muhammadan \'abduhu wa rasuluh.',
     nl:'De groeten zijn voor Allah, de reine daden zijn voor Allah, de goede woorden en de gebeden zijn voor Allah. Vrede zij met jou, o profeet, en de barmhartigheid van Allah en Zijn zegeningen. Vrede zij met ons en met de oprechte dienaren van Allah. Ik getuig dat er geen god is dan Allah alleen, zonder deelgenoot, en ik getuig dat Mohammed Zijn dienaar en boodschapper is.'},
   salawat:{ar:'اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ وَعَلَىٰ آلِ مُحَمَّدٍ، كَمَا صَلَّيْتَ عَلَىٰ إِبْرَاهِيمَ وَعَلَىٰ آلِ إِبْرَاهِيمَ، وَبَارِكْ عَلَىٰ مُحَمَّدٍ وَعَلَىٰ آلِ مُحَمَّدٍ، كَمَا بَارَكْتَ عَلَىٰ إِبْرَاهِيمَ وَعَلَىٰ آلِ إِبْرَاهِيمَ، فِي الْعَالَمِينَ إِنَّكَ حَمِيدٌ مَجِيدٌ',
     tr:'Allahumma salli \'ala Muhammadin wa \'ala ali Muhammad, kama sallayta \'ala Ibrahima wa \'ala ali Ibrahim, wa barik \'ala Muhammadin wa \'ala ali Muhammad, kama barakta \'ala Ibrahima wa \'ala ali Ibrahim, fi l-\'alamina innaka hamidun majid.',
     nl:'Allah, zegen Mohammed en de familie van Mohammed, zoals U Ibrahim en de familie van Ibrahim gezegend hebt, en geef zegen aan Mohammed en zijn familie, zoals U die aan Ibrahim en zijn familie gaf, in alle werelden. U bent waarlijk de Geprezene, de Verhevene.'},
-  amin:{aid:'t:amin', ar:'آمِينَ', tr:'Amin', nl:'Verhoor het'},
+  amin:{aid:'t:amin', ar:'آمِينَ', tr:'Amin', uit:'AA-mien', nl:'Verhoor het'},
   /* Wat je ná de tashahhud en de zegenwens mag vragen, vóór de slotgroet. Dit
      is de overlevering waarin de Profeet ﷺ om bescherming vroeg tegen vier
      dingen; hij leerde hem aan zoals hij een soera aanleerde. */
@@ -2100,7 +2105,7 @@ const T = {
     ar:'اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ عَذَابِ جَهَنَّمَ، وَمِنْ عَذَابِ الْقَبْرِ، وَمِنْ فِتْنَةِ الْمَحْيَا وَالْمَمَاتِ، وَمِنْ شَرِّ فِتْنَةِ الْمَسِيحِ الدَّجَّالِ',
     tr:'Allahumma inni a\'udhu bika min \'adhabi jahannam, wa min \'adhabi l-qabr, wa min fitnati l-mahya wa l-mamat, wa min sharri fitnati l-masihi d-dajjal',
     nl:'Allah, ik zoek bij U bescherming tegen de straf van de hel, tegen de straf van het graf, tegen de beproeving van het leven en de dood, en tegen het kwaad van de beproeving van de valse messias.'},
-  salam:{aid:'t:salam', ar:'السَّلَامُ عَلَيْكُمْ', tr:'As-salamu \'alaykum', nl:'Vrede zij met jullie'},
+  salam:{aid:'t:salam', ar:'السَّلَامُ عَلَيْكُمْ', tr:'As-salamu \'alaykum', uit:'as-sa-LAA-moe ‘a-LAY-koem', nl:'Vrede zij met jullie'},
 
   /* Buiten de verplichte volgorde, maar wel goed om te kennen: wat je in een
      vrijwillig gebed zegt en wat andere scholen ook in het fard-gebed doen. */
@@ -2109,11 +2114,12 @@ const T = {
     tr:'Subhanaka llahumma wa bihamdik, wa tabaraka smuk, wa ta\'ala jadduk, wa la ilaha ghayruk',
     nl:'Volmaakt bent U, Allah, en aan U komt de lof toe. Gezegend is Uw naam, verheven is Uw grootheid, en er is geen god buiten U.'},
   taawwudh:{aid:'t:taawwudh', ar:'أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ',
-    tr:'A\'udhu billahi mina sh-shaytani r-rajim', nl:'Ik zoek bescherming bij Allah tegen de vervloekte duivel'},
+    tr:'A\'udhu billahi mina sh-shaytani r-rajim', uit:'a-‘OE-dzoe bil-LAA-hi MI-na sj-sjay-TAA-ni r-ra-DJIEM',
+    nl:'Ik zoek bescherming bij Allah tegen de vervloekte duivel'},
 
   /* Na de slotgroet. Deze stonden wel in de les over dhikr, maar niet in het
      gebedsonderdeel zelf — en juist hier hoor je ze te leren. */
-  istighfar:{aid:'t:istighfar', ar:'أَسْتَغْفِرُ اللَّهَ', tr:'Astaghfiru llah',
+  istighfar:{aid:'t:istighfar', ar:'أَسْتَغْفِرُ اللَّهَ', tr:'Astaghfiru llah', uit:'as-tagh-FI-roe l-LAAH',
     nl:'Ik vraag Allah om vergeving', keer:'3×'},
   naSalam:{aid:'t:na-salam', ar:'اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ',
     tr:'Allahumma anta s-salamu wa minka s-salam, tabarakta ya dha l-jalali wa l-ikram',
@@ -2143,6 +2149,9 @@ const STAPPEN = [
  {k:'fatiha', t:'Staan en lezen', h:'staan', merk:null, soort:'fard', zeg:'fatiha',
   doe:['Laat je armen langs je lichaam hangen (sadl); de armen over elkaar (qabd) is binnen de school ook overgeleverd.','Lees al-Fatiha. Zonder al-Fatiha telt de rak\'a niet.','Zeg daarna zachtjes: āmīn.','In de eerste twee rak\'a lees je er een soera achteraan.'],
   let:'In deze school begin je meteen met al-Fatiha: geen openingsdu\'a en geen a\'udhu billah in het verplichte gebed, en de basmala wordt niet hardop gezegd.'},
+ {k:'soera', t:'Een soera lezen', h:'staan', merk:null, soort:'sunna',
+  doe:['Meteen na al-Fatiha, zonder pauze en zonder opnieuw takbir te zeggen.','Lees een soera die je uit je hoofd kent — helemaal, van de eerste tot de laatste regel.','In de eerste twee rak\'a doe je dit; in de derde en vierde alleen al-Fatiha.','Bij Fajr, en in de eerste twee rak\'a van Maghrib en Isha, lees je hardop.'],
+  let:'Dit is sunna mu\'akkada: sterk aanbevolen, maar je gebed is geldig zonder. Al-Fatiha is dat níet — zonder al-Fatiha telt de rak\'a niet mee. Een korte soera die je goed kent is beter dan een lange waar je in vastloopt.'},
  {k:'qunut', t:'De qunut', h:'staan', merk:null, soort:'sunna', zeg:'qunut',
   doe:['Alleen in de Fajr, in de tweede rak\'a, ná het lezen en vóór de buiging.','Zeg hem zachtjes, ook als het gebed verder hardop is.','Je handen hoef je er niet voor op te heffen.'],
   let:'In de Malikitische school hoort de qunut bij de Fajr en nergens anders. Sterk aanbevolen, geen plicht: vergeet je hem, dan is je gebed gewoon geldig en hoef je niets te herstellen.'},
@@ -2348,17 +2357,17 @@ const HIFZ = [
      ['فِي الْعَالَمِينَ إِنَّكَ حَمِيدٌ مَجِيدٌ','Fi l-\'alamina innaka hamidun majid','In alle werelden. U bent de Geprezene, de Verhevene']]},
 
  {id:'h-dhikr', naam:'De woorden in het gebed', ar:'أذكار الصلاة', soort:'gebed', waarom:'Wat je zegt in de buiging, bij het opkomen en in de knieval.',
-  r:[['سُبْحَانَ رَبِّيَ الْعَظِيمِ','Subhana rabbiya l-\'azim','Volmaakt is mijn Heer, de Geweldige — in de buiging'],
-     ['سَمِعَ اللَّهُ لِمَنْ حَمِدَهُ','Sami\'a llahu liman hamidah','Allah hoort wie Hem prijst — bij het opkomen'],
-     ['رَبَّنَا وَلَكَ الْحَمْدُ','Rabbana wa laka l-hamd','Onze Heer, aan U komt alle lof toe — als je rechtop staat'],
-     ['سُبْحَانَ رَبِّيَ الْأَعْلَى','Subhana rabbiya l-a\'la','Volmaakt is mijn Heer, de Allerhoogste — in de knieval'],
-     ['رَبِّ اغْفِرْ لِي','Rabbi ghfir li','Heer, vergeef mij — tussen de twee knievallen']]},
+  r:[['سُبْحَانَ رَبِّيَ الْعَظِيمِ','Subhana rabbiya l-\'azim','Volmaakt is mijn Heer, de Geweldige — in de buiging','soeb-HAA-na RAB-bi-ya l-‘a-DHIEM'],
+     ['سَمِعَ اللَّهُ لِمَنْ حَمِدَهُ','Sami\'a llahu liman hamidah','Allah hoort wie Hem prijst — bij het opkomen','sa-MI-‘a l-LAA-hoe LI-man HA-mi-dah'],
+     ['رَبَّنَا وَلَكَ الْحَمْدُ','Rabbana wa laka l-hamd','Onze Heer, aan U komt alle lof toe — als je rechtop staat','RAB-ba-naa wa LA-ka l-HAMD'],
+     ['سُبْحَانَ رَبِّيَ الْأَعْلَى','Subhana rabbiya l-a\'la','Volmaakt is mijn Heer, de Allerhoogste — in de knieval','soeb-HAA-na RAB-bi-ya l-A‘-laa'],
+     ['رَبِّ اغْفِرْ لِي','Rabbi ghfir li','Heer, vergeef mij — tussen de twee knievallen','RAB-bigh-FIR lie']]},
  {id:'h-nagebed', naam:'Na het gebed', ar:'أذكار بعد الصلاة', soort:'gebed', waarom:'Wat je zegt als je na de slotgroet nog even blijft zitten.',
-  r:[['أَسْتَغْفِرُ اللَّهَ','Astaghfiru llah','Ik vraag Allah om vergeving — drie keer'],
+  r:[['أَسْتَغْفِرُ اللَّهَ','Astaghfiru llah','Ik vraag Allah om vergeving — drie keer','as-tagh-FI-roe l-LAAH'],
      ['اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ','Allahumma anta s-salamu wa minka s-salam, tabarakta ya dha l-jalali wa l-ikram','Allah, U bent de Vrede en van U komt de vrede; gezegend bent U, Bezitter van majesteit en eer'],
-     ['سُبْحَانَ اللَّهِ','Subhana llah','Volmaakt is Allah — 33 keer'],
-     ['الْحَمْدُ لِلَّهِ','Alhamdu lillah','Alle lof is voor Allah — 33 keer'],
-     ['اللَّهُ أَكْبَرُ','Allahu akbar','Allah is groter — 33 keer'],
+     ['سُبْحَانَ اللَّهِ','Subhana llah','Volmaakt is Allah — 33 keer','soeb-HAA-na l-LAAH'],
+     ['الْحَمْدُ لِلَّهِ','Alhamdu lillah','Alle lof is voor Allah — 33 keer','al-HAM-doe lil-LAAH'],
+     ['اللَّهُ أَكْبَرُ','Allahu akbar','Allah is groter — 33 keer','al-LAA-hoe AK-bar'],
      ['لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ','La ilaha illa llahu wahdahu la sharika lah, lahu l-mulku wa lahu l-hamdu wa huwa \'ala kulli shay\'in qadir','Er is geen god dan Allah alleen, zonder deelgenoot — als honderdste']]},
  {id:'h-dua-salam', naam:'De du\'a vóór de slotgroet', ar:'دعاء قبل السلام', soort:'gebed', waarom:'Het laatste dat je zegt terwijl je nog in het gebed zit.',
   r:[['اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ عَذَابِ جَهَنَّمَ','Allahumma inni a\'udhu bika min \'adhabi jahannam','Allah, ik zoek bij U bescherming tegen de straf van de hel'],
@@ -2770,6 +2779,7 @@ function tekstBlok(o, opt){
       <div style="flex:1;min-width:0">
         <div class="ar" style="font-size:1.55rem;color:var(--ink)">${o.ar}</div>
         <div class="tr" style="margin-top:8px">${esc(o.tr||'')}</div>
+        ${o.uit?'<div class="uitspraak">'+esc(o.uit)+'</div>':''}
         <div class="nl" style="margin-top:6px;color:var(--muted)">${esc(o.nl||'')}</div>
         ${o.keer?'<div class="tag k" style="margin-top:9px">'+o.keer+'</div>':''}
       </div>
@@ -2785,7 +2795,7 @@ const LANG={fatiha:'h-fatiha', tashahhud:'h-tashahhud', salawat:'h-salawat'};
 function blokkenVan(hifzId, opnemen){
   const h=HIFZ.find(x=>x.id===hifzId); if(!h) return '';
   return '<div class="stack">'
-    + h.r.map((r,i)=>tekstBlok({ar:r[0],tr:r[1],nl:r[2],aid:'q:'+h.id+':'+(i+1)})).join('')
+    + h.r.map((r,i)=>tekstBlok({ar:r[0],tr:r[1],nl:r[2],uit:r[3],aid:'q:'+h.id+':'+(i+1)})).join('')
     + '<div class="rij"><button class="btn sm ghost" data-reeks="'+esc(h.id)+'">▶︎ Hele tekst achter elkaar</button>'
     + '<button class="btn sm ghost" data-stopreeks>■ Stop</button></div>'
     + (opnemen?'<div class="card plat" style="background:var(--surface-2)"><div class="rij" data-opname></div></div>':'')
@@ -3185,6 +3195,7 @@ function vWudu(el){
         <button class="btn ghost" id="examenWudu">Examen: zet ze op volgorde</button></div>
     </div>
     <div class="grid g2">
+      <div class="card" style="grid-column:1/-1"><h4>Wat betekenen de kleuren</h4><p class="klein" style="margin-top:4px"><span class="tag fout">Moet</span> is fard: laat je dit weg, dan is je wassing niet geldig en is je gebed dat ook niet. <span class="tag k">Sunna</span> is wat de Profeet ﷺ deed: sterk aanbevolen, en je wassing blijft geldig zonder.</p></div>
       <div class="card"><h3>Wat moet (fard)</h3><ul class="net" style="margin-top:9px">${WUDU_REGELS.fard.map(x=>'<li>'+esc(x)+'</li>').join('')}</ul>
         <p class="klein" style="margin-top:10px">Wrijven en aaneengesloten doorgaan staan in andere scholen niet in dit rijtje. In de Malikitische school wel.</p></div>
       <div class="card"><h3>Wat de Profeet ﷺ deed (sunna)</h3><ul class="net" style="margin-top:9px">${WUDU_REGELS.sunna.map(x=>'<li>'+esc(x)+'</li>').join('')}</ul></div>
@@ -3205,6 +3216,7 @@ function wuduLoop(i){
     <h2 style="margin-top:16px">${esc(w.t)} ${w.aantal?'<span class="tag" style="vertical-align:middle">'+esc(w.aantal)+'</span>':''}</h2>
     <p class="nl" style="margin-top:6px">${esc(w.kort)}</p>
     <ul class="net" style="margin-top:12px">${w.hoe.map(h=>'<li>'+h+'</li>').join('')}</ul>
+    ${w.tip?'<div class="kader" style="margin-top:12px"><h4>Tip</h4><p class="klein" style="margin-top:4px">'+esc(w.tip)+'</p></div>':''}
     ${w.zeg?tekstBlok(w.zeg):''}
     <div class="rij tussen" style="margin-top:20px">
       <button class="btn ghost" id="vorige" ${i===0?'disabled':''}>&larr; Terug</button>
@@ -3281,6 +3293,7 @@ function vStappen(el){
         <div class="rij tussen"><span class="tag ${s.soort==='fard'?'fout':(s.soort==='na'?'':'k')}">${etiket(s.soort)}</span><span class="meta">${i+1}</span></div>
         <h4 style="margin-top:8px">${esc(s.t)}</h4></button>`).join('')}
     </div>
+    <div class="kader" style="margin-top:12px"><h4>Wat betekenen de kleuren</h4><p class="klein" style="margin-top:4px"><span class="tag fout">Moet</span> is fard: valt dit weg, dan telt je gebed niet en begin je opnieuw. <span class="tag k">Sunna</span> is sterk aanbevolen: vergeet je het, dan blijft je gebed geldig — bij twee of meer herstel je het met de knieval van vergetelheid. <span class="tag">Na het gebed</span> hoort er niet meer bij, maar de Profeet ﷺ bleef er wel voor zitten.</p></div>
     <div class="card">
       <h3>De verplichte onderdelen van het gebed</h3>
       <p class="klein" style="margin-top:6px">Deze horen er volgens de Malikitische school echt bij; valt er één weg, dan telt het gebed niet.</p>
@@ -3353,15 +3366,28 @@ function zetOpname(){
 }
 
 /* ------------------------------- bid mee ------------------------------- */
-const DUUR={niyyah:5, takbir:3, fatiha:24, ruku:7, itidal:5, sujud1:7, jalsa:5, sujud2:7, opstaan:4, tashahhud:15, salawat:13, salam:4};
-function bouwGebed(rak, id){
+const DUUR={niyyah:5, takbir:3, fatiha:24, soera:8, qunut:20, ruku:7, itidal:5, sujud1:7, jalsa:5, sujud2:7,
+            opstaan:4, tashahhud:15, salawat:13, dua:12, salam:4, nagebed:25};
+/* Twee verschillende korte soera's voor de eerste twee rak'a: dat is hoe het
+   in het echt gaat, en het oefent er meteen twee in plaats van één. */
+function kiesSoeras(){
+  const kort = HIFZ.filter(h=>h.nr && h.nr!==1);
+  const a = husselaar(kort);
+  return [a[0], a[1] || a[0]];
+}
+function bouwGebed(rak, id, soeras){
+  soeras = soeras || kiesSoeras();
   const seq=[];
   for(let r=1;r<=rak;r++){
     if(r===1){ seq.push({k:'niyyah',r}); seq.push({k:'takbir',r}); }
     else seq.push({k:'opstaan',r});
-    seq.push({k:'fatiha',r,soera:r<=2});
+    seq.push({k:'fatiha',r});
+    /* De soera na al-Fatiha is een eigen stap, niet een zinnetje onder de
+       Fatiha. Je leest hem helemaal, en dat duurt langer dan de Fatiha zelf —
+       wie hem alleen als voetnoot ziet, slaat hem in het echt ook over. */
+    if(r<=2) seq.push({k:'soera',r,soera:soeras[r-1]});
     /* De qunut hoort in deze school alleen bij de Fajr, in de tweede rak'a,
-       tussen het lezen en de buiging. */
+       ná het lezen en vóór de buiging. */
     if(id==='fajr' && r===2) seq.push({k:'qunut',r});
     seq.push({k:'ruku',r}); seq.push({k:'itidal',r});
     seq.push({k:'sujud1',r}); seq.push({k:'jalsa',r}); seq.push({k:'sujud2',r});
@@ -3392,8 +3418,9 @@ function vMee(el){
   </div>`;
   $$('[data-mee]',el).forEach(b=>b.onclick=()=>meeSpelen(+b.dataset.mee, b.dataset.n, b.dataset.id||''));
 }
-function meeSpelen(rak, naam, id){
-  const seq=bouwGebed(rak, id);
+function meeSpelen(rak, naam, id, soeras){
+  soeras = soeras || kiesSoeras();
+  const seq=bouwGebed(rak, id, soeras);
   let i=0, vanzelf=false, timer=null, rest=0;
   const stop=()=>{ clearInterval(timer); timer=null; };
   const teken=()=>{
@@ -3407,11 +3434,13 @@ function meeSpelen(rak, naam, id){
         <span class="stap-uit tag ${s.soort==='fard'?'fout':(s.soort==='na'?'':'k')}">${etiket(s.soort)}</span></div>
       <h2 style="margin-top:14px">${esc(s.t)}</h2>
       ${q.midden?'<p class="klein">De eerste zitting: alleen de tashahhud, daarna sta je weer op.</p>':''}
-      ${q.soera?'<p class="klein">In deze rak\'a lees je na al-Fatiha nog een soera.</p>':''}
+      ${q.soera?'<div class="rij tussen" style="margin-top:10px"><p class="meta">'+esc(q.soera.naam)+' · '+q.soera.aya+' regels</p>'+
+        '<button class="btn ghost sm" id="andere">Andere soera</button></div>'+blokkenVan(q.soera.id,false):''}
       ${t1?(LANG[s.zeg]?blokkenVan(LANG[s.zeg],false):tekstBlok(t1)):''}
       ${t2?tekstBlok(t2):''}
       ${(s.extra||[]).map(k=>tekstBlok(T[k])).join('')}
-      <ul class="net" style="margin-top:10px">${s.doe.slice(0,2).map(d=>'<li>'+d+'</li>').join('')}</ul>
+      <ul class="net" style="margin-top:10px">${s.doe.map(d=>'<li>'+d+'</li>').join('')}</ul>
+      ${s.let?'<div class="kader let" style="margin-top:12px"><h4>Let op</h4><p class="klein" style="margin-top:4px">'+s.let+'</p></div>':''}
       <div class="rij tussen" style="margin-top:18px">
         <button class="btn ghost sm" id="terug" ${i===0?'disabled':''}>&larr;</button>
         <div class="rij">
@@ -3423,7 +3452,16 @@ function meeSpelen(rak, naam, id){
     $('#terug').onclick=()=>{ i--; herstart(); };
     $('#door').onclick=()=>{ vooruit(); };
     $('#auto').onclick=()=>{ vanzelf=!vanzelf; herstart(); };
-    if(t1){ if(LANG[s.zeg]){ const h=HIFZ.find(x=>x.id===LANG[s.zeg]); AUDIO.speelReeks(h.r.map((x,i)=>['q:'+h.id+':'+(i+1),x[0]])); }
+    if($('#andere')) $('#andere').onclick=()=>{
+      /* Een andere soera voor déze rak'a, zonder het gebed opnieuw te beginnen. */
+      const kort=HIFZ.filter(h=>h.nr && h.nr!==1 && h.id!==q.soera.id);
+      const nieuw=husselaar(kort)[0]; if(!nieuw) return;
+      soeras[q.r-1]=nieuw;
+      seq.forEach(x=>{ if(x.k==='soera' && x.r===q.r) x.soera=nieuw; });
+      herstart();
+    };
+    if(q.soera){ const h=q.soera; AUDIO.speelReeks(h.r.map((x,n)=>['q:'+h.id+':'+(n+1),x[0]])); }
+    else if(t1){ if(LANG[s.zeg]){ const h=HIFZ.find(x=>x.id===LANG[s.zeg]); AUDIO.speelReeks(h.r.map((x,i)=>['q:'+h.id+':'+(i+1),x[0]])); }
             else AUDIO.speel(t1.aid||'', t1.ar); } else toon('tik');
   };
   const vooruit=()=>{
@@ -3434,7 +3472,7 @@ function meeSpelen(rak, naam, id){
     stop(); teken();
     if(!vanzelf) return;
     const q=seq[i];
-    rest = (DUUR[q.k]||6) * (q.soera?1.4:1) / (S.instel.tempo||1);
+    rest = (DUUR[q.k]||6) * (q.soera? 1 + q.soera.aya*0.55 : 1) / (S.instel.tempo||1);
     const totaal=rest;
     timer=setInterval(()=>{
       rest-=0.25;

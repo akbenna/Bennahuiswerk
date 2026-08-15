@@ -93,17 +93,36 @@ gebed, en daarom staan ze niet tússen de stappen — maar wel eronder, met uitl
 want in een vrijwillig gebed mogen ze wel en de meeste andere scholen zeggen ze
 altijd.
 
+**De soera na al-Fatiha is een eigen stap geworden.** Hij stond er als zinnetje
+onder de Fatiha — "in deze rak'a lees je nog een soera" — en dat is precies hoe
+je hem in het echt ook overslaat. In *Bid mee* kiest de app nu twee verschillende
+korte soera's voor de eerste twee rak'a, toont ze regel voor regel met de
+recitatie, en er zit een knop bij om er een andere te pakken. Een volledige Fajr
+loopt daarmee van de intentie tot de dhikr ná de slotgroet, met alles ertussen.
+
+**De uitspraak.** Onder de wetenschappelijke omschrijving staat nu een regel in
+Nederlandse klanken, met de klemtoon in hoofdletters: *soeb-HAA-na RAB-bi-ya
+l-A'-laa*. Die omschrijving is precies maar leest lastig — "Subhana rabbiya
+l-a'la" wordt bij hardop lezen zomaar "soebhanaropbil ala". De nieuwe regel is
+bedoeld om te lézen, niet om correct te zijn.
+
 De stappen dragen nu drie etiketten in plaats van twee: *moet*, *sunna* en *na
-het gebed*. Het examen over de volgorde blijft over de twaalf kernstappen gaan;
-de qunut hoort alleen bij één gebed en de dhikr komt ná de slotgroet, dus die
-tellen daar niet in mee.
+het gebed*, met een legenda erboven die uitlegt wat elk etiket betekent voor de
+geldigheid van je gebed. Het examen over de volgorde loopt van de intentie tot
+de slotgroet; de qunut hoort alleen bij één gebed en de dhikr komt ná de
+slotgroet, dus die twee tellen daar niet in mee.
+
+**De wassing** kreeg bij elke stap een tip uit de praktijk: je ring afdoen omdat
+er anders geen water onderdoor komt, je mouw ruim genoeg opstropen, nieuw water
+pakken voor je oren, en tussen je tenen afdrogen. Ook daar staat nu een legenda
+bij wat *moet* en wat *sunna* is.
 
 Veertien modules met vierenzeventig lessen over de basis van de islam — geloof,
 de vijf zuilen, reinheid, het gebed, de Koran, de seerah, gedrag, du'a, de
 kalender, het leven hier, de soennah en de hadithwetenschap, de geschiedenis van
 na de Profeet ﷺ tot en met al-Andalus en de Maghreb, de betekenis van de soera's
 die je uit je hoofd leert, en de grote vragen voor de oudsten. Daarnaast een
-gebedsonderdeel dat het leren bidden helemaal afdekt: de wassing, de twaalf
+gebedsonderdeel dat het leren bidden helemaal afdekt: de wassing, de zestien
 onderdelen van het gebed, een meebid-oefening voor elk van de vijf gebeden,
 vijftien teksten om uit het hoofd te leren, de du'a's van de dag, een overzicht
 van alle gebeden en wat te doen als het misgaat. De fiqh volgt de Malikitische
