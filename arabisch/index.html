@@ -7,9 +7,20 @@
 <meta name="theme-color" content="#FAF8F4">
 <meta name="description" content="Lisan: Arabisch leren lezen, begrijpen en spreken. Vier sporen, van het alfabet tot Koranisch Arabisch.">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preload" href="../fonts/amiri-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Amiri staat als bestand in de repo en niet bij Google. De Warsh-druk gebruikt
+   tekens — de kleine hoge nul boven de hamzat wasl voorop — die de meeste
+   systeemletters niet kennen; die laten dan lege vakken achter midden in een
+   woord. Zie fonts/LEESMIJ.md. */
+@font-face{font-family:'Amiri';font-style:normal;font-weight:400;font-display:swap;
+  src:url('../fonts/amiri-400.woff2') format('woff2')}
+@font-face{font-family:'Amiri';font-style:normal;font-weight:700;font-display:swap;
+  src:url('../fonts/amiri-700.woff2') format('woff2')}
+</style>
 <style>
 /* ============================================================
    LISAN — stijlblad
@@ -4778,10 +4789,11 @@ function start(){
   }, 60000);
 }
 
-/* De fonts komen van Google. Lukt dat niet — geen internet, of een
-   blokkade — dan valt het Arabisch terug op een systeemfont. We
-   melden dat één keer rustig in plaats van het te verbergen, want
-   de vormen wijken dan zichtbaar af van wat er in de uitleg staat. */
+/* Amiri staat sinds kort als bestand naast de app, dus dit hoort niet
+   meer voor te komen. De controle blijft staan voor het geval het
+   bestand ontbreekt of niet uitgepakt raakt: dan wijken de vormen
+   zichtbaar af van wat er in de uitleg staat, en dat melden we liever
+   rustig dan dat we het verbergen. */
 /* document.fonts.check() geeft ook true voor een familie die
    helemaal niet bestaat, dus die is hier onbruikbaar. We meten in
    plaats daarvan de breedte van een stuk Arabisch: valt Amiri terug
@@ -4803,7 +4815,8 @@ function controleerFont(){
       b.className = 'wrap';
       b.innerHTML = '<div class="melding waarschuwing" style="margin:10px 0">' +
         'Het lettertype Amiri kon niet worden geladen; het Arabisch wordt met een lettertype van dit toestel getoond. ' +
-        'De letters kloppen, maar zien er iets anders uit dan in de uitleg. Zodra je één keer met internet opent, blijft Amiri bewaard.</div>';
+        'De letters kloppen, maar zien er iets anders uit dan in de uitleg — en sommige tekens van de Warsh-druk ontbreken. ' +
+        'Het lettertype hoort in fonts/ te staan; ontbreekt die map, dan is er iets misgegaan bij het kopiëren.</div>';
       document.querySelector('main').prepend(b);
     }
   });
