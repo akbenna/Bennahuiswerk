@@ -255,20 +255,139 @@ async function aya(nr, n){ const s=await laadSoera(nr); const a=s.aya[n-1]; retu
 async function ayaVanId(id){ const [nr,n]=id.split(':').map(Number); return aya(nr,n); }
 const totaalAya = () => INDEX.reduce((n,s)=>n+s.aya,0);
 
+/* ============================ WOLK — centrale opslag ============================
+   Letterlijk dezelfde module als in Noer Islam, Sanad en Lisan. Bewust gedupliceerd: één
+   zelfstandig bestand per app weegt zwaarder dan het vermijden van die dubbeling.
+================================================================================= */
+const WOLK = (function () {
+  const URL  = 'https://jnlvvdaisyerhxucxnuu.supabase.co';
+  const ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpubHZ2ZGFpc3llcmh4dWN4bnV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NDg0MjIsImV4cCI6MjA4MjQyNDQyMn0.8ZXa-N96pRSQovdL_bH5FpJTHeL454830h5LMapCawY';
+
+  let app = null, acc = null, pin = null, aan = false;
+  let bezig = false, wacht = null, laatsteFout = null;
+  const luisteraars = [];
+
+  async function rpc(fn, body) {
+    const r = await fetch(URL + '/rest/v1/rpc/' + fn, {
+      method: 'POST',
+      headers: { apikey: ANON, Authorization: 'Bearer ' + ANON, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    let out = {};
+    try { out = await r.json(); } catch (e) {}
+    if (out && out.error) throw new Error(out.error);
+    if (!r.ok) throw new Error('Verbinding mislukt (' + r.status + ')');
+    return out;
+  }
+
+  const sleutel = () => 'bennahub.acc.' + app;
+  function onthoud(){ try{ localStorage.setItem(sleutel(), JSON.stringify({acc,pin})); }catch(e){} }
+  function vergeet(){ try{ localStorage.removeItem(sleutel()); }catch(e){} }
+  function meld(){ luisteraars.forEach(f=>{ try{ f(status()); }catch(e){} }); }
+  function status(){ return { aan, account: acc, bezig, fout: laatsteFout }; }
+
+  return {
+    init(naamApp){
+      app = naamApp;
+      try{ const s=JSON.parse(localStorage.getItem(sleutel())||'null');
+        if(s&&s.acc&&s.pin){ acc=s.acc; pin=s.pin; aan=true; } }catch(e){}
+      return aan;
+    },
+    status,
+    opStatus(f){ luisteraars.push(f); f(status()); },
+    async accounts(){ try{ return await rpc('bennahub_accounts',{p_app:app}); }catch(e){ return []; } },
+    async registreren(account, wachtwoord, beginData){
+      await rpc('bennahub_register',{p_app:app,p_account:account,p_pin:wachtwoord,p_data:beginData||{}});
+      acc=account; pin=wachtwoord; aan=true; laatsteFout=null; onthoud(); meld(); return true;
+    },
+    async inloggen(account, wachtwoord){
+      const r = await rpc('bennahub_load',{p_app:app,p_account:account,p_pin:wachtwoord});
+      acc=account; pin=wachtwoord; aan=true; laatsteFout=null; onthoud(); meld();
+      return r.data || {};
+    },
+    uitloggen(){ aan=false; acc=null; pin=null; vergeet(); meld(); },
+    async ophalen(){
+      if(!aan) return null;
+      bezig=true; meld();
+      try{ const r=await rpc('bennahub_load',{p_app:app,p_account:acc,p_pin:pin}); laatsteFout=null; return r.data||{}; }
+      catch(e){ laatsteFout=e.message; return null; }
+      finally{ bezig=false; meld(); }
+    },
+    bewaar(data, direct){
+      if(!aan) return;
+      clearTimeout(wacht);
+      const doen = async () => {
+        bezig=true; meld();
+        try{ await rpc('bennahub_save',{p_app:app,p_account:acc,p_pin:pin,p_data:data}); laatsteFout=null; }
+        catch(e){ laatsteFout=e.message; }
+        finally{ bezig=false; meld(); }
+      };
+      if(direct) return doen();
+      wacht = setTimeout(doen, 2500);
+    }
+  };
+})();
+
+/* Samenvoegen van twee momentopnamen, met dezelfde regel als in de andere apps:
+   niets weggooien. Voor herhaalgegevens is "de hoogste waarde wint" alleen
+   gevaarlijk — een hoge `due` betekent láter herhalen, en dat zou een misser op
+   het ene toestel wegpoetsen met een oude stand van het andere. Daarom telt hier
+   wie het laatst geoefend heeft: dat toestel weet wat er echt gebeurd is. */
+const SAMEN = {
+  nieuwste(a,b){ if(!a) return b; if(!b) return a; return a>=b?a:b; },
+  aya(x,y){
+    if(!x) return y; if(!y) return x;
+    const w = (y.laatst||0) > (x.laatst||0) ? y : x;      // de jongste beoordeling wint
+    return Object.assign({}, w, {
+      vast: !!(x.vast||y.vast),
+      begonnen: Math.min(x.begonnen||y.begonnen||0, y.begonnen||x.begonnen||0) || undefined
+    });
+  },
+  log(a,b){
+    const uit = {};
+    for(const r of (a||[]).concat(b||[])){
+      const o = uit[r.d];
+      /* Twee toestellen op dezelfde dag: de hoogste telling, niet de som. Anders
+         groeit de dag bij elke samenvoeging opnieuw. */
+      uit[r.d] = o ? {d:r.d, nieuw:Math.max(o.nieuw||0,r.nieuw||0), herhaald:Math.max(o.herhaald||0,r.herhaald||0)} : Object.assign({},r);
+    }
+    return Object.keys(uit).sort().map(d=>uit[d]).slice(-500);
+  }
+};
+function samenvoegen(a,b){
+  const uit = Object.assign({}, a, b);
+  uit.aya = Object.assign({}, a.aya||{});
+  for(const id of Object.keys(b.aya||{})) uit.aya[id] = SAMEN.aya(uit.aya[id], b.aya[id]);
+  uit.log = SAMEN.log(a.log, b.log);
+  /* Instellingen horen bij het hoofd, niet bij het toestel: wat je op je telefoon
+     als doel zet wil je op je laptop terugzien. Daarom de jongst gewijzigde. */
+  uit.instel = ((b.instelD||'') > (a.instelD||'')) ? Object.assign({}, b.instel) : Object.assign({}, a.instel);
+  uit.instelD = SAMEN.nieuwste(a.instelD, b.instelD);
+  uit.laatste = SAMEN.nieuwste(a.laatste, b.laatste);
+  return uit;
+}
+
 /* --------------------------- opslag en toestand --------------------------- */
 const KEY='rasikh.v1';
 const store={
-  async get(){ try{ const v=localStorage.getItem(KEY); return v?JSON.parse(v):null; }catch(e){ return null; } },
-  async set(o){ try{ localStorage.setItem(KEY, JSON.stringify(o)); }catch(e){} }
+  async get(){
+    try{ if(window.storage){const r=await window.storage.get(KEY,false); return r&&r.value?JSON.parse(r.value):null;} }catch(e){}
+    try{ const v=localStorage.getItem(KEY); return v?JSON.parse(v):null; }catch(e){}
+    return null;
+  },
+  async set(o){ const s=JSON.stringify(o);
+    try{ if(window.storage){ window.storage.set(KEY,s,false); } }catch(e){}
+    try{ localStorage.setItem(KEY,s); }catch(e){}
+  }
 };
 function leegS(){
   return { aya:{}, log:[],
     instel:{ minuten:25, maxNieuw:3, tempo:1, lezing:'warsh', volgorde:'kort',
              doelVan:78, doelTot:114 },   /* standaard: juz 'amma */
-    laatste:null };
+    instelD:null, laatste:null };
 }
 let S = leegS();
-const bewaar = () => store.set(S);
+const bewaar = () => { store.set(S); WOLK.bewaar(S); };
 
 const REEKS = [1,2,4,8,16,32,64,120,200];
 const staat = id => S.aya[id] || null;
@@ -735,12 +854,13 @@ function soeraBlad(nr){
     '<button class="btn ghost" onclick="bladDicht()">Sluiten</button></div>'+
     '<p class="klein" style="margin-top:10px">Je doel is nu soera '+S.instel.doelVan+' tot en met '+S.instel.doelTot+
       '. Een breder gebied stel je in bij Instellingen.</p>');
-  $('#doel').onclick=()=>{ S.instel.doelVan=nr; S.instel.doelTot=nr; bewaar(); bladDicht(); teken(); };
+  $('#doel').onclick=()=>{ S.instel.doelVan=nr; S.instel.doelTot=nr;
+    S.instelD=new Date().toISOString(); bewaar(); bladDicht(); teken(); };
 }
 
 /* -------------------------------- instellingen -------------------------------- */
 function tekenInstel(){
-  const el=$('#iInstel'), vast=Object.keys(S.aya).filter(id=>S.aya[id].vast).length;
+  const el=$('#iInstel'), vast=Object.keys(S.aya).filter(id=>S.aya[id].vast).length, w=WOLK.status();
   const opties = (a,v,l)=> a.map(x=>'<option value="'+x[0]+'"'+(v==x[0]?' selected':'')+'>'+x[1]+'</option>').join('');
   el.innerHTML=
     '<div><h1>Instellingen</h1></div>'+
@@ -772,18 +892,36 @@ function tekenInstel(){
     '<div class="card"><h3>Waarom het zo werkt</h3>'+
       '<p class="klein" style="margin-top:8px">De tijd die je opgeeft wordt éérst gevuld met herhalen. Wat overblijft bepaalt hoeveel nieuwe aya\'s erbij mogen. Blijft er niets over, dan komt er niets bij. Dat voelt langzaam in de eerste weken en redt je in het tweede jaar.</p>'+
       '<p class="klein" style="margin-top:8px">Wie op zijn eenenvijftigste begint heeft geen tekort aan begrip maar aan herhaaltijd. Daarom staat betekenis vóór klank in de zes stappen, en daarom worden de verwarpunten apart getraind: dat zijn de twee plekken waar een volwassen geheugen wint of verliest.</p></div>'+
+    '<div class="card"><h3>Centrale opslag</h3>'+
+      '<p class="klein" style="margin-top:5px">Met een account staat je voortgang op elk toestel gelijk: begin op de bank op je telefoon, ga verder op de laptop. Zonder internet werkt alles gewoon door; bij de volgende verbinding wordt het samengevoegd — er gaat nooit iets verloren.</p>'+
+      '<p class="klein" style="margin-top:5px">Voor een reeks van jaren is dat geen luxe. Alles wat hier staat — wat vast is, wanneer het terugkomt, waar je haperde — bestaat anders op één toestel.</p>'+
+      '<p class="klein" style="margin-top:9px"><span class="tag '+(w.aan?'goed':'')+'">'+
+        (w.aan?'Ingelogd als '+esc(w.account):'Alleen op dit toestel')+'</span>'+
+        (w.fout?' <span class="tag fout">'+esc(w.fout)+'</span>':'')+'</p>'+
+      (w.aan
+        ? '<div class="rij" style="margin-top:14px"><button class="btn ghost sm" id="wUit">Uitloggen</button>'+
+          '<button class="btn ghost sm" id="wNu">Nu gelijktrekken</button></div>'
+        : '<label class="veld"><span>Account</span><input id="wAcc" placeholder="benna" autocomplete="username"></label>'+
+          '<label class="veld"><span>Wachtwoord</span><input id="wPin" type="password" autocomplete="current-password"></label>'+
+          '<div class="rij" style="margin-top:14px"><button class="btn" id="wIn">Inloggen</button>'+
+          '<button class="btn ghost" id="wNieuw">Nieuw account</button></div>')+
+      '<p class="melding" id="wMld"></p></div>'+
     '<div class="card"><h3>Gegevens</h3>'+
       '<p class="klein" style="margin-top:6px">'+vast+' aya\'s vastgelegd · '+S.log.length+' dagen geschiedenis · tekst: 114 soera\'s, '+totaalAya()+' aya\'s</p>'+
       '<div class="rij" style="margin-top:12px"><button class="btn ghost sm" id="uit">Opslaan als bestand</button>'+
       '<button class="btn ghost sm" id="in">Inlezen</button><input type="file" id="bestand" accept="application/json" style="display:none">'+
       '<button class="btn ghost sm" id="wis" style="color:var(--fout)">Alles wissen</button></div><p class="melding" id="mld"></p></div>';
-  const zet=(id,f)=>{ const e=$('#'+id); if(e) e.onchange=()=>{ f(e.value); bewaar(); teken(); }; };
+  /* Elke wijziging krijgt een tijdstempel: bij het samenvoegen tellen de jongste
+     instellingen, zodat een doel dat je op je telefoon verzet niet wordt
+     teruggedraaid door de oudere stand op je laptop. */
+  const bewaarInstel=()=>{ S.instelD=new Date().toISOString(); bewaar(); };
+  const zet=(id,f)=>{ const e=$('#'+id); if(e) e.onchange=()=>{ f(e.value); bewaarInstel(); teken(); }; };
   zet('iMin',v=>S.instel.minuten=+v); zet('iNw',v=>S.instel.maxNieuw=+v);
   zet('iVg',v=>S.instel.volgorde=v);  zet('iTp',v=>S.instel.tempo=parseFloat(v));
   zet('iLz',v=>S.instel.lezing=v);
   zet('iVan',v=>S.instel.doelVan=+v); zet('iTot',v=>S.instel.doelTot=+v);
   $$('[data-doel]',el).forEach(b=>b.onclick=()=>{ const [a,z]=b.dataset.doel.split(',').map(Number);
-    S.instel.doelVan=a; S.instel.doelTot=z; bewaar(); teken(); });
+    S.instel.doelVan=a; S.instel.doelTot=z; bewaarInstel(); teken(); });
   /* Klaarzetten is niets anders dan de bestanden één keer ophalen: de
      servicewerker bewaart ze dan vanzelf. Rustig aan, vier tegelijk. */
   $('#offline').onclick=async ()=>{
@@ -799,6 +937,25 @@ function tekenInstel(){
                         : 'Klaar. Je doel staat op dit toestel, ook zonder verbinding.';
     k.disabled=false;
   };
+  const wMeld=(tekst,soort)=>{ const m=$('#wMld'); if(m){ m.textContent=tekst; m.className='melding '+(soort||''); } };
+  if($('#wIn')) $('#wIn').onclick=async()=>{
+    const a=$('#wAcc').value.trim(), c=$('#wPin').value;
+    if(!a||!c) return wMeld('Vul een account en een wachtwoord in.','fout');
+    wMeld('Bezig…');
+    try{ await WOLK.inloggen(a,c); await gelijktrekken(); tekenInstel(); wMeld('Ingelogd en gelijkgetrokken.','goed'); }
+    catch(e){ wMeld(e.message,'fout'); }
+  };
+  if($('#wNieuw')) $('#wNieuw').onclick=async()=>{
+    const a=$('#wAcc').value.trim(), c=$('#wPin').value;
+    if(!a||c.length<4) return wMeld('Kies een naam en een wachtwoord van minstens vier tekens.','fout');
+    wMeld('Bezig…');
+    try{ await WOLK.registreren(a,c,S); tekenInstel(); wMeld('Account aangemaakt.','goed'); }
+    catch(e){ wMeld(e.message,'fout'); }
+  };
+  if($('#wUit')) $('#wUit').onclick=()=>{ WOLK.uitloggen(); tekenInstel(); };
+  if($('#wNu')) $('#wNu').onclick=async()=>{ wMeld('Bezig…');
+    try{ await gelijktrekken(); tekenInstel(); wMeld('Gelijkgetrokken.','goed'); }
+    catch(e){ wMeld(e.message,'fout'); } };
   $('#uit').onclick=()=>{ const a=document.createElement('a');
     a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:'application/json'}));
     a.download='rasikh-'+datum()+'.json'; a.click(); };
@@ -809,6 +966,17 @@ function tekenInstel(){
       $('#mld').textContent='Ingelezen.'; $('#mld').className='melding goed';
     }catch(err){ $('#mld').textContent='Dat bestand kon niet gelezen worden.'; $('#mld').className='melding fout'; } };
   $('#wis').onclick=()=>{ if(!confirm('Alles wissen? Alle voortgang gaat weg.')) return; S=leegS(); bewaar(); teken(); };
+}
+
+/* Ophalen, samenvoegen, terugschrijven. In die volgorde, want alleen zo weet je
+   zeker dat het andere toestel ook krijgt wat hier gebeurd is. */
+async function gelijktrekken(eerste){
+  const ver = await WOLK.ophalen();
+  if(ver && (ver.aya || ver.log)) S = samenvoegen(S, ver);
+  S.laatste = new Date().toISOString();
+  await store.set(S);
+  await WOLK.bewaar(S, true);
+  if(eerste) teken();
 }
 
 /* -------------------------------- tekenen -------------------------------- */
@@ -826,7 +994,12 @@ $$('.tab').forEach(b=>b.onclick=()=>naarTab(b.dataset.v));
   try{ const j=await (await fetch('tekst/index.json')).json(); INDEX=j.soera||[]; BRON=j.bron||''; }
   catch(e){ document.querySelector('main').innerHTML='<div class="card" style="margin-top:20px"><h2>De tekst ontbreekt</h2><p style="margin-top:8px">De map <b>tekst/</b> is niet gevonden. Zonder die bestanden kan Rasikh niets doen.</p></div>'; return; }
   await AUDIO.lees();
+  WOLK.init('rasikh');
   teken();
+  if(WOLK.status().aan) gelijktrekken(true).catch(()=>{});
+  /* Bij het wegleggen van de telefoon nog één keer wegschrijven, zonder de
+     gebruikelijke wachttijd — anders gaat de laatste beoordeling verloren. */
+  window.addEventListener('pagehide',()=>{ if(WOLK.status().aan) WOLK.bewaar(S,true); });
   if('serviceWorker' in navigator){ try{ navigator.serviceWorker.register('sw.js'); }catch(e){} }
 })();
 let BRON='';

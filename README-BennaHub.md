@@ -1,6 +1,6 @@
 # BennaHub
 
-Eén startpagina, vijf apps. Alles is statische HTML: geen build-stap, geen server,
+Eén startpagina, zes apps. Alles is statische HTML: geen build-stap, geen server,
 geen dependencies behalve de Latijnse letters van Google Fonts — het Arabisch
 staat in de repo zelf. Wat hier staat, is wat er draait.
 
@@ -16,6 +16,7 @@ rasikh/             Rasikh — de Koran memoriseren (voor volwassenen)
   index.html          de app
   tekst/              de hele Koran: 114 soera's, 6236 aya, plus de verwarpunten
   audio/              recitatie per aya, op te halen met het script dat er staat
+bunyan/index.html   Bunyan — leren coderen en een pc bouwen (vanaf 10 jaar)
 fonts/              Amiri, het Arabische lettertype van alle apps
 ```
 
@@ -191,6 +192,57 @@ halve gigabyte — dat wil je waarschijnlijk niet in git.
 het Arabische lettertype (zie hierboven). Onder *Instellingen* staat een knop die
 het hele doelgebied vooraf klaarzet.
 
+**Centrale opslag.** Rasikh hangt aan dezelfde `WOLK` als de andere apps, met een
+samenvoeging die past bij herhaalgegevens: niet "de hoogste waarde wint" — een
+hoge `due` betekent immers *later* herhalen — maar het toestel waarop het laatst
+geoefend is. Dat weet wat er echt gebeurd is. Instellingen dragen een tijdstempel
+zodat een doel dat je op je telefoon verzet niet wordt teruggedraaid door de
+oudere stand op je laptop. Voor een reeks van jaren is dat geen luxe.
+
+## Bunyan — coderen en pc's bouwen
+
+De app voor Amine (11), die van gamen, computers en voetbal houdt. Twee sporen
+naast elkaar, 63 lessen in totaal.
+
+**Coderen** (38 lessen) begint met Python, want daarin zie je met één regel wat
+je doet. Zes blokken: de eerste stappen, keuzes en herhalen, lijsten en
+woordenboeken, functies en fouten, de webtalen (HTML, CSS, JavaScript, DOM,
+events, canvas), en tot slot welke taal waarvoor is, hoe je Python op je eigen pc
+zet, en wat git doet. Elk blok eindigt met een project: een spelerskaart, "raad
+het getal", een competitiestand uit uitslagen, een dobbelspel en een klikspel in
+de browser.
+
+**Bouwen** (25 lessen) doet eerst de acht onderdelen en waarom ze er zijn, dan de
+getallen (GHz, VRAM, fps, Hz, bottleneck, compatibiliteit), dan het bouwen zelf
+(statisch werken, volgorde, koelpasta, kabels, BIOS, Windows of Linux) en tot
+slot onderhoud, problemen zoeken, upgraden en online veilig blijven.
+
+**De Python zit in de app.** Geen Pyodide, geen CDN: `MINIPY` is met de hand
+geschreven en staat bovenaan het scriptblok. Reden één is dat de app dan zonder
+internet werkt en niets van buiten haalt. Reden twee weegt zwaarder: de taal van
+de foutmeldingen. Een kind van elf leert niets van `SyntaxError: invalid syntax`,
+maar wel van *"regel 3: je bent de dubbele punt vergeten aan het eind van de
+if-regel"*. Hij kent getallen, tekst, lijsten, woordenboeken, if/elif/else,
+while, for, functies, f-strings, `random` en de gewone ingebouwde functies — het
+eerste jaar Python, en niets daarbuiten. Een oneindige lus wordt na een vast
+aantal stappen afgebroken met een uitleg in plaats van een vastgelopen tabblad.
+
+JavaScript en HTML draaien in een afgeschermd `iframe`, zodat een typefout of een
+`while(true)` de app zelf niet platlegt; `console.log` komt via `postMessage`
+terug in het uitvoervenster.
+
+**De bouwbank** staat op de werkbank: kies onderdelen binnen een budget en de app
+controleert de vijf dingen die je in het echt ook nakijkt (voetje, geheugentype,
+wattage met marge, bordmaat in de kast, lengte van de videokaart) en schat wat je
+haalt in zes spellen op 1080p, 1440p of 4K. De schatting neemt het minimum van
+een videokaart- en een processorgrens, zodat een dure kaart naast een zwakke
+processor zichtbaar niets oplevert — precies de les uit blok 2.
+
+**De beloning** werkt als in de huiswerkapp: geld voor afgemaakt werk, niet voor
+tijd. Een gewone les € 0,40, een project € 1,50, met een hard weekplafond
+(standaard € 6) en uitbetalen door de ouder. Punten, rangen en insignes lopen
+dóór als het budget op is — leren stopt niet als het geld stopt.
+
 ## De AI-functies in Sanad
 
 *Doorvragen* en *laat meelezen* praten rechtstreeks met de Anthropic-API vanuit de
@@ -204,8 +256,8 @@ serverless functie, dan hoeft de sleutel de browser niet meer in.
 ## Onderhoud
 
 De huiswerkapp bouw je zoals altijd: bewerk `huiswerk/index.dev.html` en compileer
-naar `huiswerk/index.html` (zie `BUILD.md`). Noer Islam, Sanad, Lisan en Rasikh
-zijn gewone HTML — openen, bewerken, klaar. In Noer Islam staat de leerstof
+naar `huiswerk/index.html` (zie `BUILD.md`). Noer Islam, Sanad, Lisan, Rasikh en
+Bunyan zijn gewone HTML — openen, bewerken, klaar. In Noer Islam staat de leerstof
 bovenaan het scriptblok als gewone lijsten (`MODULES`, `WUDU`, `STAPPEN`, `HIFZ`,
 `DUAS`); wie de inhoud wil aanpassen hoeft de schermcode niet aan te raken. In
 Rasikh zit de stof niet in het bestand maar in `rasikh/tekst/`; de app zelf bevat
