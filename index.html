@@ -41,6 +41,7 @@
   --academie:#7E5300;  --academie-bg:#F8EFD4;
   --rasikh:#3B4A8F;    --rasikh-bg:#E3E7F6;
   --bunyan:#96286A;    --bunyan-bg:#F9E5F1;
+  --raha:#B4442C;      --raha-bg:#FBE7E0;
 
   --schaduw:0 1px 2px rgba(20,18,14,.05), 0 8px 24px rgba(20,18,14,.06);
   --schaduw-op:0 2px 4px rgba(20,18,14,.07), 0 14px 34px rgba(20,18,14,.11);
@@ -63,6 +64,7 @@
     --academie:#E9BC55;  --academie-bg:#31280F;
     --rasikh:#A3B0EE;    --rasikh-bg:#1D2240;
     --bunyan:#EFA0CE;    --bunyan-bg:#33122A;
+    --raha:#F0A08A;      --raha-bg:#3A1C14;
 
     --schaduw:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.34);
     --schaduw-op:0 2px 4px rgba(0,0,0,.46), 0 14px 34px rgba(0,0,0,.5);
@@ -87,12 +89,21 @@ header{padding:56px 0 0}
 .merk .b{font-weight:600}
 /* Een streep in de vijf kleuren van de vijf ingangen. */
 .regenboog{height:5px;border-radius:9999px;margin-top:16px;max-width:280px;
-  background:linear-gradient(90deg,var(--huiswerk) 0 14%,var(--noer) 14% 29%,var(--sanad) 29% 43%,var(--lisan) 43% 57%,var(--rasikh) 57% 71%,var(--bunyan) 71% 86%,var(--academie) 86% 100%)}
+  background:linear-gradient(90deg,var(--huiswerk) 0 12.5%,var(--noer) 12.5% 25%,var(--lisan) 25% 37.5%,var(--bunyan) 37.5% 50%,var(--raha) 50% 62.5%,var(--academie) 62.5% 75%,var(--sanad) 75% 87.5%,var(--rasikh) 87.5% 100%)}
 .lede{margin-top:14px;font-family:var(--serif);font-size:1.14rem;line-height:1.55;color:var(--muted);max-width:46ch}
 
 main{flex:1;padding:38px 0 0}
 .kaarten{display:grid;gap:14px}
 @media (min-width:680px){ .kaarten{grid-template-columns:1fr 1fr;align-items:start} .kaarten a:first-child{grid-column:1 / -1} }
+/* Twee groepen, want de helft van deze apps is niet voor de kinderen. De kop is
+   een streep met een woord erop: genoeg om de scheiding te zien, niet zoveel dat
+   het een menu wordt. In de groep van de groten geen brede eerste kaart — daar
+   staan er maar twee. */
+.groep + .groep{margin-top:38px}
+.groepkop{font-family:var(--mono);font-size:.68rem;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--muted);font-weight:500;margin:0 0 13px;display:flex;align-items:center;gap:12px}
+.groepkop::after{content:"";flex:1;height:1px;background:var(--line)}
+@media (min-width:680px){ .kaarten.smal a:first-child{grid-column:auto} }
 
 /* De kaarten dragen nu de kleur van hun app in plaats van hem alleen aan de rand
    te tonen. De vlakken komen uit hetzelfde palet als de tekstkleur erop, dus het
@@ -143,23 +154,23 @@ footer p + p{margin-top:9px}
 <header>
   <div class="merk"><span class="b">Benna</span>Hub</div>
   <div class="regenboog"></div>
-  <p class="lede">Zeven ingangen onder één dak. Kies waar je vandaag mee verder wilt.</p>
+  <p class="lede">Acht ingangen onder één dak: eerst die van de kinderen, daaronder die van de groten.</p>
 </header>
 
 <main>
-  <div class="kaarten">
-
+  <section class="groep">
+    <h2 class="groepkop">Voor de kinderen</h2>
+    <div class="kaarten">
     <a class="app" href="huiswerk/" style="--k:var(--huiswerk);--kbg:var(--huiswerk-bg)">
       <div class="kop">
         <span class="tegel">📚</span>
         <h2>Huiswerk</h2>
         <span class="rol">Selma · Amine · Wassima · Amaani</span>
       </div>
-      <p>Oefenen op je eigen niveau, met een scorebord voor het hele gezin, spelletjes als je je dagdoel hebt gehaald, en een ouder-dashboard voor papa en mama. Werkt ook zonder internet.</p>
-      <div class="detail"><span>Alle vakken</span><span>Dit jaar en volgend jaar</span><span>Spellen</span><span>Verkeersschool</span><span>Toegangscode per kind</span></div>
+      <p>Oefenen op je eigen niveau, met een scorebord voor het hele gezin, een weektaak en een ouder-dashboard voor papa en mama. Werkt ook zonder internet. De spelletjes staan nu bij Raha.</p>
+      <div class="detail"><span>Alle vakken</span><span>Dit jaar en volgend jaar</span><span>Weektaak</span><span>Wedstrijd met een vriend</span><span>Toegangscode per kind</span></div>
       <div class="pijl">Openen &rarr;</div>
     </a>
-
     <a class="app" href="noer/" style="--k:var(--noer);--kbg:var(--noer-bg)">
       <div class="kop">
         <span class="tegel">🌙</span>
@@ -171,19 +182,6 @@ footer p + p{margin-top:9px}
       <div class="detail"><span>Vijftien modules, 87 lessen</span><span>Eigen leerlijn per leeftijd</span><span>Leren bidden stap voor stap</span><span>Gebedstijden en qibla</span></div>
       <div class="pijl">Openen &rarr;</div>
     </a>
-
-    <a class="app" href="sanad/" style="--k:var(--sanad);--kbg:var(--sanad-bg)">
-      <div class="kop">
-        <span class="tegel">📜</span>
-        <h2>Sanad</h2>
-        <span class="ar" lang="ar">سند</span>
-        <span class="rol">Abdelkader</span>
-      </div>
-      <p>Achtentwintig weken Malikitische fiqh, usul, ‘aqida, bronnenkritiek en medische ethiek — elke week met een fragment uit de oorspronkelijke tekst.</p>
-      <div class="detail"><span>Eén week per week</span><span>Arabisch met vertaling</span><span>Kaarten voor herhaling</span></div>
-      <div class="pijl">Openen &rarr;</div>
-    </a>
-
     <a class="app" href="arabisch/" style="--k:var(--lisan);--kbg:var(--lisan-bg)">
       <div class="kop">
         <span class="tegel">🗣️</span>
@@ -195,19 +193,6 @@ footer p + p{margin-top:9px}
       <div class="detail"><span>Eigen spoor per leeftijd</span><span>Alle 28 letters</span><span>Spel voor de kinderen</span></div>
       <div class="pijl">Openen &rarr;</div>
     </a>
-
-    <a class="app" href="rasikh/" style="--k:var(--rasikh);--kbg:var(--rasikh-bg)">
-      <div class="kop">
-        <span class="tegel">📕</span>
-        <h2>Rasikh</h2>
-        <span class="ar" lang="ar">رَاسِخ</span>
-        <span class="rol">Abdelkader</span>
-      </div>
-      <p>De Koran uit je hoofd leren en — dat is het moeilijke deel — vasthouden. Zes stappen per aya, en een systeem dat pas nieuwe stof geeft als de herhalingen bij zijn.</p>
-      <div class="detail"><span>Voor volwassenen</span><span>25 minuten per dag</span><span>Herhalen op ritme</span><span>Verwarpunten apart</span></div>
-      <div class="pijl">Openen &rarr;</div>
-    </a>
-
     <a class="app" href="bunyan/" style="--k:var(--bunyan);--kbg:var(--bunyan-bg)">
       <div class="kop">
         <span class="tegel">💻</span>
@@ -219,7 +204,17 @@ footer p + p{margin-top:9px}
       <div class="detail"><span>Vanaf 10 jaar</span><span>63 lessen</span><span>Python, HTML en JavaScript</span><span>Zakgeld per les</span></div>
       <div class="pijl">Openen &rarr;</div>
     </a>
-
+    <a class="app" href="spellen/" style="--k:var(--raha);--kbg:var(--raha-bg)">
+      <div class="kop">
+        <span class="tegel">🎲</span>
+        <h2>Raha</h2>
+        <span class="ar" lang="ar">رَاحَة</span>
+        <span class="rol">Voor iedereen</span>
+      </div>
+      <p>Even afschakelen: dertien spelletjes plus de twee grote. Raha betekent rust — en vrije tijd is een gunst, dus: even pauze, en daarna weer verder.</p>
+      <div class="detail"><span>Mollen meppen</span><span>Reken-race</span><span>Arabische letterjacht</span><span>Records blijven staan</span></div>
+      <div class="pijl">Openen &rarr;</div>
+    </a>
     <a class="app" href="huiswerk/cursussen/kompas.html" style="--k:var(--academie);--kbg:var(--academie-bg)">
       <div class="kop">
         <span class="tegel">🎓</span>
@@ -232,8 +227,9 @@ footer p + p{margin-top:9px}
       </div>
       <div class="pijl">Openen &rarr;</div>
     </a>
+    </div>
+  </section>
 
-  </div>
 
   <p class="meta snel">
     Rechtstreeks naar een cursus:
@@ -241,6 +237,35 @@ footer p + p{margin-top:9px}
     <a href="huiswerk/cursussen/communicatie.html">Verbind</a> ·
     <a href="huiswerk/cursussen/presenteren.html">Podium</a>
   </p>
+
+  <section class="groep">
+    <h2 class="groepkop">Voor de groten</h2>
+    <div class="kaarten smal">
+    <a class="app" href="sanad/" style="--k:var(--sanad);--kbg:var(--sanad-bg)">
+      <div class="kop">
+        <span class="tegel">📜</span>
+        <h2>Sanad</h2>
+        <span class="ar" lang="ar">سند</span>
+        <span class="rol">Abdelkader</span>
+      </div>
+      <p>Achtentwintig weken Malikitische fiqh, usul, ‘aqida, bronnenkritiek en medische ethiek — elke week met een fragment uit de oorspronkelijke tekst.</p>
+      <div class="detail"><span>Eén week per week</span><span>Arabisch met vertaling</span><span>Kaarten voor herhaling</span></div>
+      <div class="pijl">Openen &rarr;</div>
+    </a>
+    <a class="app" href="rasikh/" style="--k:var(--rasikh);--kbg:var(--rasikh-bg)">
+      <div class="kop">
+        <span class="tegel">📕</span>
+        <h2>Rasikh</h2>
+        <span class="ar" lang="ar">رَاسِخ</span>
+        <span class="rol">Abdelkader</span>
+      </div>
+      <p>De Koran uit je hoofd leren en — dat is het moeilijke deel — vasthouden. Zes stappen per aya, en een systeem dat pas nieuwe stof geeft als de herhalingen bij zijn.</p>
+      <div class="detail"><span>Voor volwassenen</span><span>25 minuten per dag</span><span>Herhalen op ritme</span><span>Verwarpunten apart</span></div>
+      <div class="pijl">Openen &rarr;</div>
+    </a>
+    </div>
+  </section>
+
 </main>
 
 <footer>

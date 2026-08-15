@@ -1,6 +1,6 @@
 # BennaHub
 
-Eén startpagina, zes apps. Alles is statische HTML: geen build-stap, geen server,
+Eén startpagina, zeven apps. Alles is statische HTML: geen build-stap, geen server,
 geen dependencies behalve de Latijnse letters van Google Fonts — het Arabisch
 staat in de repo zelf. Wat hier staat, is wat er draait.
 
@@ -17,6 +17,7 @@ rasikh/             Rasikh — de Koran memoriseren (voor volwassenen)
   tekst/              de hele Koran: 114 soera's, 6236 aya, plus de verwarpunten
   audio/              recitatie per aya, op te halen met het script dat er staat
 bunyan/index.html   Bunyan — leren coderen en een pc bouwen (vanaf 10 jaar)
+spellen/index.html  Raha — de spelletjes, los van de huiswerkapp
 fonts/              Amiri, het Arabische lettertype van alle apps
 ```
 
@@ -243,6 +244,31 @@ tijd. Een gewone les € 0,40, een project € 1,50, met een hard weekplafond
 (standaard € 6) en uitbetalen door de ouder. Punten, rangen en insignes lopen
 dóór als het budget op is — leren stopt niet als het geld stopt.
 
+## Raha — de spelletjes
+
+De spelletjes zaten tot augustus 2026 verstopt in de huiswerkapp, achter een knop
+op het beginscherm. Nu staan ze als eigen app op de startpagina: dertien stuks,
+plus de twee grote die als eigen bestand naast de huiswerkapp blijven wonen
+(AminoQMc en de Verkeersschool).
+
+De naam betekent *rust*. De religieuze toets zit in de naam en het onderschrift,
+niet in de spelletjes zelf — een spel dat stiekem een les is, is geen van beide.
+Wat de app wél doet is niets doen om je langer vast te houden dan je van plan
+was: geen meldingen, geen dagelijkse beloning, geen reclame, geen eindeloze
+reeks. De grap staat onderaan, één regel, elke keer een andere.
+
+Twaalf spellen komen uit de huiswerkapp en zijn overgezet naar gewone
+JavaScript; **Letterjacht** is nieuw en oefent de Arabische letters die in Lisan
+geleerd worden. Het geheugenspel kan met plaatjes of met Arabische letters.
+
+De **records** verhuizen mee: bij de eerste opening leest Raha de oude
+`oefenapp_v1`-opslag en neemt de topscores over. Ze gaan verder via dezelfde
+`WOLK` als de andere apps, met één verschil in het samenvoegen — bij het
+geheugenspel is *minder* beter, dus daar wint het laagste getal.
+
+In de huiswerkapp blijven de twee knoppen staan, inclusief de instelling
+*spelletjes pas na het dagdoel*; ze verwijzen nu naar `/spellen/`.
+
 ## De AI-functies in Sanad
 
 *Doorvragen* en *laat meelezen* praten rechtstreeks met de Anthropic-API vanuit de
@@ -256,8 +282,8 @@ serverless functie, dan hoeft de sleutel de browser niet meer in.
 ## Onderhoud
 
 De huiswerkapp bouw je zoals altijd: bewerk `huiswerk/index.dev.html` en compileer
-naar `huiswerk/index.html` (zie `BUILD.md`). Noer Islam, Sanad, Lisan, Rasikh en
-Bunyan zijn gewone HTML — openen, bewerken, klaar. In Noer Islam staat de leerstof
+naar `huiswerk/index.html` (zie `BUILD.md`). Noer Islam, Sanad, Lisan, Rasikh,
+Bunyan en Raha zijn gewone HTML — openen, bewerken, klaar. In Noer Islam staat de leerstof
 bovenaan het scriptblok als gewone lijsten (`MODULES`, `WUDU`, `STAPPEN`, `HIFZ`,
 `DUAS`); wie de inhoud wil aanpassen hoeft de schermcode niet aan te raken. In
 Rasikh zit de stof niet in het bestand maar in `rasikh/tekst/`; de app zelf bevat

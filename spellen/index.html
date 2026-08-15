@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Raha — de spelletjes van BennaHub</title>
+<meta name="description" content="Vijftien spelletjes om even af te schakelen: mollen meppen, reken-race, geheugen, Arabische letterjacht en meer.">
+<meta name="theme-color" content="#F6F4F0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141518" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preload" href="../fonts/amiri-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:'Amiri';font-style:normal;font-weight:400;font-display:swap;
+  src:url('../fonts/amiri-400.woff2') format('woff2')}
+</style>
+<style>
+/* Raha is de speelhoek van de hub. Warmer en losser dan de rest — maar wel
+   hetzelfde huis: dezelfde letters, dezelfde kaarten. De grap zit in de
+   teksten, niet in de vormgeving; een app die zelf staat te schreeuwen wordt
+   sneller saai dan een die gewoon goed werkt. */
+:root{
+  --canvas:#F6F4F0; --surface:#FFFFFF; --surface-2:#F0EDE7; --surface-3:#E8E4DC;
+  --ink:#0D0D0D; --ink-2:#24282B; --muted:#5F5C55;
+  --line:#DAD6CE; --line-2:#C4BFB4;
+  --k:#B4442C;    --k-bg:#FBE7E0;
+  --goed:#2F6B1F; --goed-bg:#E4EFDD;
+  --let:#7E5300;  --let-bg:#F8EFD4;
+  --fout:#9F2F2D; --fout-bg:#FBE9E8;
+  --schaduw:0 1px 2px rgba(20,18,14,.05), 0 8px 24px rgba(20,18,14,.06);
+  --sans:'SF Pro Display','Helvetica Neue',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --serif:'Newsreader','Lyon Text',Georgia,serif;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;
+  --ar:'Amiri','Traditional Arabic',serif;
+  --r:12px;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --canvas:#141518; --surface:#1C1E22; --surface-2:#24262B; --surface-3:#2C2F35;
+    --ink:#F4F3F0; --ink-2:#E2E0DA; --muted:#A8A69F;
+    --line:#33363C; --line-2:#474B52;
+    --k:#F0A08A;    --k-bg:#3A1C14;
+    --goed:#8FD268; --goed-bg:#22321B;
+    --let:#E9BC55;  --let-bg:#31280F;
+    --fout:#F2938F; --fout-bg:#3A1E1D;
+    --schaduw:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.34);
+  }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:var(--canvas);color:var(--ink-2);font-family:var(--sans);font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom)}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px}
+h1,h2,h3,h4{font-family:var(--serif);color:var(--ink);letter-spacing:-.022em;line-height:1.16;margin:0;font-weight:500}
+h1{font-size:2rem} h2{font-size:1.45rem} h3{font-size:1.1rem}
+p{margin:0 0 1em} p:last-child{margin-bottom:0}
+.meta{font-family:var(--mono);font-size:.67rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.klein{font-size:.88rem;line-height:1.5;color:var(--muted)}
+b,strong{font-weight:600;color:var(--ink)}
+.ar{font-family:var(--ar);direction:rtl;unicode-bidi:isolate}
+:focus-visible{outline:2px solid var(--k);outline-offset:2px;border-radius:6px}
+
+header.top{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--canvas) 88%,transparent);
+  backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line)}
+.top-in{max-width:880px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:11px}
+.terug{text-decoration:none;color:var(--muted);font-size:1.15rem;padding:7px 9px;margin-left:-9px;border-radius:8px;background:none;border:0;cursor:pointer;font-family:var(--sans)}
+.terug:hover{color:var(--ink);background:var(--surface-2)}
+.brand{font-family:var(--serif);font-size:1.2rem;color:var(--ink)}
+.brand em{font-style:normal;font-family:var(--ar);font-size:1.05rem;color:var(--k);margin-left:7px}
+.tegen{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--muted)}
+main{padding:24px 0 80px}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;box-shadow:var(--schaduw)}
+.card.plat{box-shadow:none;background:var(--surface-2)}
+.card.kleur{background:var(--k-bg);border-color:color-mix(in srgb,var(--k) 30%,var(--line))}
+.stack>*+*{margin-top:12px}
+.rij{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.rij.tussen{justify-content:space-between}
+.midden{text-align:center}
+.tag{display:inline-block;border-radius:9999px;padding:3px 10px;font-family:var(--mono);font-size:.62rem;
+  letter-spacing:.07em;text-transform:uppercase;background:var(--surface-2);color:var(--muted);white-space:nowrap}
+.tag.k{background:var(--k-bg);color:var(--k)}
+.tag.goed{background:var(--goed-bg);color:var(--goed)}
+
+button.btn{appearance:none;font-family:var(--sans);font-size:.94rem;padding:11px 19px;border-radius:10px;
+  background:var(--k);color:#fff;border:1px solid var(--k);cursor:pointer;font-weight:500}
+@media (prefers-color-scheme:dark){ button.btn{color:#2A0F08} }
+button.btn:hover{filter:brightness(1.08)}
+button.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+button.btn.ghost:hover{background:var(--surface-2);filter:none}
+button.btn.sm{padding:7px 13px;font-size:.83rem}
+button.btn.groot{padding:14px 26px;font-size:1.05rem}
+button.btn:disabled{opacity:.4;cursor:default}
+
+/* de tegels op de startpagina */
+.tegels{display:grid;grid-template-columns:repeat(auto-fill,minmax(152px,1fr));gap:12px;margin-top:14px}
+.tegel{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;padding:16px 12px;
+  border:1px solid var(--line);border-radius:var(--r);background:var(--surface);cursor:pointer;font:inherit;color:inherit;
+  box-shadow:var(--schaduw);transition:transform .08s}
+.tegel:hover{border-color:var(--k);transform:translateY(-2px)}
+.tegel .ico{font-size:2rem;line-height:1.2}
+.tegel b{font-weight:500;color:var(--ink);font-size:.98rem}
+.tegel span{font-size:.78rem;color:var(--muted);line-height:1.35}
+.tegel .rec{margin-top:4px;font-family:var(--mono);font-size:.68rem;color:var(--k)}
+
+/* het speelveld */
+.veld{display:grid;gap:8px;margin:14px auto;max-width:340px}
+.vak{aspect-ratio:1;display:grid;place-items:center;border:1px solid var(--line);border-radius:10px;
+  background:var(--surface);cursor:pointer;font-size:1.5rem;user-select:none;font-family:inherit;color:var(--ink);padding:0}
+.vak:hover{border-color:var(--k)}
+.vak.op{background:var(--k-bg);border-color:var(--k)}
+.vak.goed{background:var(--goed-bg);border-color:var(--goed)}
+.vak.mis{background:var(--fout-bg);border-color:var(--fout)}
+.vak.dicht{background:var(--surface-2);color:var(--muted)}
+.vak.ar{font-family:var(--ar);font-size:2rem;direction:rtl}
+.groot{font-size:2.6rem;font-weight:600;font-family:var(--serif);color:var(--ink);letter-spacing:-.02em}
+.klok{display:block;margin:0 auto}
+.invoer{width:100%;max-width:170px;margin:12px auto;display:block;text-align:center;font-size:1.5rem;
+  padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);
+  color:var(--ink);font-family:var(--mono)}
+.invoer:focus{outline:none;border-color:var(--k)}
+.stand{font-family:var(--mono);font-size:.82rem;color:var(--muted)}
+.stand b{color:var(--ink)}
+
+.overlay{position:fixed;inset:0;z-index:60;background:rgba(10,10,10,.55);display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
+.overlay.on{display:flex}
+.blad{background:var(--canvas);border-radius:16px 16px 0 0;width:100%;max-width:620px;max-height:94dvh;overflow:auto;
+  padding:20px 20px calc(26px + env(safe-area-inset-bottom));border:1px solid var(--line)}
+@media(min-width:640px){ .overlay{align-items:center} .blad{border-radius:16px;max-height:90dvh} }
+
+footer{padding:32px 0 26px;border-top:1px solid var(--line);margin-top:38px}
+footer p{font-size:.84rem;color:var(--muted);max-width:62ch}
+footer p+p{margin-top:8px}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <button class="terug" id="terug" title="Terug" aria-label="Terug">&larr;</button>
+  <span class="brand">Raha<em lang="ar">رَاحَة</em></span>
+  <span class="tegen" id="tegen"></span>
+</div></header>
+
+<main class="wrap">
+  <div id="scherm" class="stack"></div>
+  <footer>
+    <p id="grap"></p>
+    <p>Raha betekent rust. Vrije tijd is een gunst waar volgens de overlevering veel mensen zich in vergissen — dus: even pauze, en daarna weer verder. De app helpt daarbij door niets te doen wat je hier langer houdt dan je van plan was: geen meldingen, geen dagelijkse beloning, geen reclame.</p>
+    <p class="meta">Onderdeel van BennaHub</p>
+  </footer>
+</main>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true"><div class="blad" id="blad"></div></div>
+
+<script>
+/* ------------------------------- gereedschap ------------------------------- */
+const $  = (s,e)=> (e||document).querySelector(s);
+const $$ = (s,e)=> [...(e||document).querySelectorAll(s)];
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ri = (a,b)=> Math.floor(Math.random()*(b-a+1))+a;
+const pak = a => a[Math.floor(Math.random()*a.length)];
+const hussel = a => { const b=a.slice(); for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]];} return b; };
+const datum = () => { const x=new Date(); return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); };
+
+/* Twee tonen uit de Web Audio API in plaats van geluidsbestanden: scheelt
+   downloads en werkt zonder internet. */
+let ctx=null;
+function toon(soort){
+  if(!S.instel.geluid) return;
+  try{
+    ctx = ctx || new (window.AudioContext||window.webkitAudioContext)();
+    const o=ctx.createOscillator(), g=ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type='sine';
+    const t=ctx.currentTime;
+    if(soort==='goed'){ o.frequency.setValueAtTime(660,t); o.frequency.setValueAtTime(880,t+.08); }
+    else if(soort==='mis'){ o.frequency.setValueAtTime(220,t); o.frequency.setValueAtTime(160,t+.09); }
+    else { o.frequency.setValueAtTime(440+ri(0,220),t); }
+    g.gain.setValueAtTime(.12,t); g.gain.exponentialRampToValueAtTime(.001,t+.22);
+    o.start(t); o.stop(t+.24);
+  }catch(e){}
+}
+
+/* --------------------------- opslag en toestand --------------------------- */
+const KEY='raha.v1';
+const store={
+  async get(){
+    try{ if(window.storage){const r=await window.storage.get(KEY,false); return r&&r.value?JSON.parse(r.value):null;} }catch(e){}
+    try{ const v=localStorage.getItem(KEY); return v?JSON.parse(v):null; }catch(e){}
+    return null;
+  },
+  async set(o){ const s=JSON.stringify(o);
+    try{ if(window.storage){ window.storage.set(KEY,s,false); } }catch(e){}
+    try{ localStorage.setItem(KEY,s); }catch(e){}
+  }
+};
+function leegS(){ return { records:{}, gespeeld:{}, laatste:null, instelD:null, instel:{ geluid:true } }; }
+let S = leegS();
+const bewaar = () => { store.set(S); WOLK.bewaar(S); };
+
+/* De records stonden tot nu toe in de huiswerkapp. Die halen we één keer op in
+   plaats van ze te laten verdampen: een record van een half jaar geleden gooi
+   je niet weg omdat de spelletjes verhuizen. */
+function haalOud(){
+  try{
+    const r = JSON.parse(localStorage.getItem('oefenapp_v1')||'null');
+    if(!r || !r.games) return 0;
+    let n=0;
+    for(const id of Object.keys(r.games)){
+      const w = r.games[id];
+      if(typeof w!=='number') continue;
+      const spel = SPELLEN.find(s=>s.id===id);
+      const beter = spel && spel.lager ? (S.records[id]===undefined || w < S.records[id])
+                                       : (S.records[id]===undefined || w > S.records[id]);
+      if(beter){ S.records[id]=w; n++; }
+    }
+    return n;
+  }catch(e){ return 0; }
+}
+
+/* Bij het samenvoegen tussen toestellen wint het béste record, en dat is niet
+   altijd het hoogste: bij het geheugenspel tellen juist minder beurten. */
+function samenvoegen(a,b){
+  const uit = Object.assign({}, a, b);
+  uit.records = Object.assign({}, a.records||{});
+  for(const id of Object.keys(b.records||{})){
+    const spel = SPELLEN.find(s=>s.id===id);
+    const x = uit.records[id], y = b.records[id];
+    uit.records[id] = x===undefined ? y : (spel && spel.lager ? Math.min(x,y) : Math.max(x,y));
+  }
+  uit.gespeeld = Object.assign({}, a.gespeeld||{});
+  for(const id of Object.keys(b.gespeeld||{}))
+    uit.gespeeld[id] = Math.max(uit.gespeeld[id]||0, b.gespeeld[id]||0);
+  uit.instel = ((b.instelD||'') > (a.instelD||'')) ? Object.assign({}, b.instel) : Object.assign({}, a.instel);
+  const nieuwste=(x,y)=>!x?y:!y?x:(x>=y?x:y);
+  uit.instelD = nieuwste(a.instelD,b.instelD);
+  uit.laatste = nieuwste(a.laatste,b.laatste);
+  return uit;
+}
+
+function record(id, score){
+  const spel = SPELLEN.find(s=>s.id===id);
+  const oud = S.records[id];
+  const beter = oud===undefined || (spel.lager ? score<oud : score>oud);
+  if(beter) S.records[id]=score;
+  S.gespeeld[id] = (S.gespeeld[id]||0)+1;
+  bewaar();
+  return beter;
+}
+const recordTekst = s => S.records[s.id]===undefined ? '—' : S.records[s.id]+' '+s.eenh;
+
+/* ---------------------------------- de grap ----------------------------------
+   Eén regel onderaan, elke keer een andere. Niets meer dan dat: een app die om
+   de twee schermen een grap maakt is na drie dagen vermoeiend. */
+const GRAPPEN = [
+ 'De mol is eigenlijk een egel. Dat weet niemand en het maakt niemand uit.',
+ '"Even vijf minuten" is de meest gebroken belofte in dit huis.',
+ 'De computer bij boter-kaas-eieren speelt eerlijk. Hij is alleen wat beter.',
+ 'Bij de reken-race gaat het om snelheid. Bij de tafels van school ook, maar dan zonder muziek.',
+ 'Als je verliest van de computer: hij heeft geen huiswerk.',
+ 'Wie het geheugenspel in twaalf beurten haalt mag opscheppen. Onder de tien is verdacht.',
+ 'De klok-race is oefenen voor de vraag "hoe laat kom je thuis".',
+ 'Een record verbeteren met één punt telt ook. Vraag maar aan een topsporter.',
+ 'Voor de duidelijkheid: de getallen bij "groter getal" zijn willekeurig. Echt.',
+ 'Tip bij hoger of lager: begin in het midden. Dat scheelt de helft. Elke keer.'
+];
+
+
+/* ============================ WOLK — centrale opslag ============================
+   Letterlijk dezelfde module als in de andere apps van de hub. Bewust gedupliceerd: één
+   zelfstandig bestand per app weegt zwaarder dan het vermijden van die dubbeling.
+================================================================================= */
+const WOLK = (function () {
+  const URL  = 'https://jnlvvdaisyerhxucxnuu.supabase.co';
+  const ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpubHZ2ZGFpc3llcmh4dWN4bnV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NDg0MjIsImV4cCI6MjA4MjQyNDQyMn0.8ZXa-N96pRSQovdL_bH5FpJTHeL454830h5LMapCawY';
+
+  let app = null, acc = null, pin = null, aan = false;
+  let bezig = false, wacht = null, laatsteFout = null;
+  const luisteraars = [];
+
+  async function rpc(fn, body) {
+    const r = await fetch(URL + '/rest/v1/rpc/' + fn, {
+      method: 'POST',
+      headers: { apikey: ANON, Authorization: 'Bearer ' + ANON, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    let out = {};
+    try { out = await r.json(); } catch (e) {}
+    if (out && out.error) throw new Error(out.error);
+    if (!r.ok) throw new Error('Verbinding mislukt (' + r.status + ')');
+    return out;
+  }
+
+  const sleutel = () => 'bennahub.acc.' + app;
+  function onthoud(){ try{ localStorage.setItem(sleutel(), JSON.stringify({acc,pin})); }catch(e){} }
+  function vergeet(){ try{ localStorage.removeItem(sleutel()); }catch(e){} }
+  function meld(){ luisteraars.forEach(f=>{ try{ f(status()); }catch(e){} }); }
+  function status(){ return { aan, account: acc, bezig, fout: laatsteFout }; }
+
+  return {
+    init(naamApp){
+      app = naamApp;
+      try{ const s=JSON.parse(localStorage.getItem(sleutel())||'null');
+        if(s&&s.acc&&s.pin){ acc=s.acc; pin=s.pin; aan=true; } }catch(e){}
+      return aan;
+    },
+    status,
+    opStatus(f){ luisteraars.push(f); f(status()); },
+    async accounts(){ try{ return await rpc('bennahub_accounts',{p_app:app}); }catch(e){ return []; } },
+    async registreren(account, wachtwoord, beginData){
+      await rpc('bennahub_register',{p_app:app,p_account:account,p_pin:wachtwoord,p_data:beginData||{}});
+      acc=account; pin=wachtwoord; aan=true; laatsteFout=null; onthoud(); meld(); return true;
+    },
+    async inloggen(account, wachtwoord){
+      const r = await rpc('bennahub_load',{p_app:app,p_account:account,p_pin:wachtwoord});
+      acc=account; pin=wachtwoord; aan=true; laatsteFout=null; onthoud(); meld();
+      return r.data || {};
+    },
+    uitloggen(){ aan=false; acc=null; pin=null; vergeet(); meld(); },
+    async ophalen(){
+      if(!aan) return null;
+      bezig=true; meld();
+      try{ const r=await rpc('bennahub_load',{p_app:app,p_account:acc,p_pin:pin}); laatsteFout=null; return r.data||{}; }
+      catch(e){ laatsteFout=e.message; return null; }
+      finally{ bezig=false; meld(); }
+    },
+    bewaar(data, direct){
+      if(!aan) return;
+      clearTimeout(wacht);
+      const doen = async () => {
+        bezig=true; meld();
+        try{ await rpc('bennahub_save',{p_app:app,p_account:acc,p_pin:pin,p_data:data}); laatsteFout=null; }
+        catch(e){ laatsteFout=e.message; }
+        finally{ bezig=false; meld(); }
+      };
+      if(direct) return doen();
+      wacht = setTimeout(doen, 2500);
+    }
+  };
+})();
+
+/* ================================ DE SPELLEN ================================
+   Elk spel krijgt een blad met dezelfde kop en vult daarna zelf `#veld`. De
+   `start`-functie mag alles, zolang hij bij het eindigen `klaar(score)` roept —
+   die zorgt voor het record, het geluid en het slotscherm.
+============================================================================ */
+let lopend = null;              /* actieve timers, zodat sluiten alles opruimt */
+function stopAlles(){ if(lopend){ lopend.forEach(t=>{clearTimeout(t);clearInterval(t);}); } lopend=[]; }
+const later = (f,ms)=>{ const t=setTimeout(f,ms); lopend.push(t); return t; };
+const elke  = (f,ms)=>{ const t=setInterval(f,ms); lopend.push(t); return t; };
+
+function blad(html){ $('#blad').innerHTML=html; $('#overlay').classList.add('on'); $('#blad').scrollTop=0; }
+function bladDicht(){ stopAlles(); $('#overlay').classList.remove('on'); $('#blad').innerHTML=''; teken(); }
+
+function kader(spel, boven, lijf){
+  blad('<div class="rij tussen"><p class="meta">'+spel.ico+' '+esc(spel.n)+'</p>'+
+    '<button class="btn ghost sm" onclick="bladDicht()">Klaar</button></div>'+
+    '<div class="card midden" style="margin-top:12px"><div class="stand" id="stand">'+boven+'</div>'+
+    '<div id="knop"></div></div><div id="veld">'+(lijf||'')+'</div>');
+}
+function stand(html){ const e=$('#stand'); if(e) e.innerHTML=html; }
+function knop(html){ const e=$('#knop'); if(e) e.innerHTML=html; }
+const recRegel = s => 'record <b>'+(S.records[s.id]===undefined?'—':S.records[s.id]+' '+s.eenh)+'</b>';
+
+function slot(spel, score, extra){
+  const nieuw = record(spel.id, score);
+  toon(nieuw?'goed':'mis');
+  knop('<p style="margin:10px 0 0;font-weight:600">'+(extra||('Je haalde '+score+' '+spel.eenh+'.'))+
+    (nieuw?' <span class="tag goed">record</span>':'')+'</p>'+
+    '<div class="rij" style="justify-content:center;margin-top:12px">'+
+    '<button class="btn" id="nog">Nog een keer</button>'+
+    '<button class="btn ghost" onclick="bladDicht()">Terug</button></div>');
+  $('#nog').onclick=()=>speel(spel.id);
+}
+
+/* Een spel op tijd: klok bovenin, telkens een nieuwe opgave, punt per goed
+   antwoord. Zes van de spellen werken zo, dus dat schrijven we één keer. */
+function tijdSpel(spel, duur, maak, teken2, juist){
+  let tijd=duur, score=0, item=null;
+  kader(spel, '⏱ <b>'+duur+'</b>s · 🏆 <b>0</b> · '+recRegel(spel), '');
+  const nieuw = () => { item = maak(); $('#veld').innerHTML = teken2(item);
+    $$('#veld [data-k]').forEach(k=>k.onclick=()=>kies(k.dataset.k));
+    const inv = $('#veld input'); if(inv){ inv.focus();
+      inv.oninput = () => { if(juist(item, inv.value)) kies(inv.value); }; } };
+  const kies = k => { if(juist(item,k)){ score++; toon('goed'); } else toon('mis');
+    stand('⏱ <b>'+tijd+'</b>s · 🏆 <b>'+score+'</b> · '+recRegel(spel)); nieuw(); };
+  elke(()=>{ tijd--; stand('⏱ <b>'+tijd+'</b>s · 🏆 <b>'+score+'</b> · '+recRegel(spel));
+    if(tijd<=0){ stopAlles(); $('#veld').innerHTML=''; slot(spel, score); } }, 1000);
+  nieuw();
+}
+
+/* Een klok tekenen; met wijzers die echt kloppen, ook de uurwijzer die met de
+   minuten meeschuift — anders leert een kind hem verkeerd lezen. */
+function klokSvg(u, m){
+  const hoekM = m*6 - 90, hoekU = ((u%12)+m/60)*30 - 90;
+  const p = (hoek, lengte) => [70+Math.cos(hoek*Math.PI/180)*lengte, 70+Math.sin(hoek*Math.PI/180)*lengte];
+  const [mx,my]=p(hoekM,46), [ux,uy]=p(hoekU,32);
+  let streep='';
+  for(let i=0;i<12;i++){ const h=i*30-90; const [x1,y1]=p(h,56), [x2,y2]=p(h,62);
+    streep += '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="var(--line-2)" stroke-width="2"/>'; }
+  return '<svg class="klok" width="140" height="140" viewBox="0 0 140 140" role="img" aria-label="klok">'+
+    '<circle cx="70" cy="70" r="64" fill="var(--surface)" stroke="var(--line-2)" stroke-width="2"/>'+streep+
+    '<line x1="70" y1="70" x2="'+ux+'" y2="'+uy+'" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/>'+
+    '<line x1="70" y1="70" x2="'+mx+'" y2="'+my+'" stroke="var(--k)" stroke-width="3" stroke-linecap="round"/>'+
+    '<circle cx="70" cy="70" r="4" fill="var(--ink)"/></svg>';
+}
+
+const LETTERS = ['ا','ب','ت','ث','ج','ح','خ','د','ذ','ر','ز','س','ش','ص','ض','ط','ظ','ع','غ','ف','ق','ك','ل','م','ن','ه','و','ي'];
+const WOORDEN = ['appel','banaan','school','vriend','zomer','winter','boek','fiets','tafel','bloem','vogel',
+                 'strand','muziek','kikker','wolk','sleutel','koning','trein','ballon','draak','moskee','dadel','kameel'];
+
+const SPELLEN = [
+{id:'mollen', ico:'🦔', n:'Mollen meppen', u:'Tik zo snel mogelijk op de egel', eenh:'punten', start(spel){
+  let score=0, tijd=20, plek=-1;
+  kader(spel, '⏱ <b>20</b>s · 🏆 <b>0</b> · '+recRegel(spel),
+    '<div class="veld" style="grid-template-columns:repeat(3,1fr);max-width:300px">'+
+    Array.from({length:9},(_,i)=>'<button class="vak" data-i="'+i+'"></button>').join('')+'</div>');
+  const vakken = $$('#veld .vak');
+  vakken.forEach((v,i)=>v.onclick=()=>{ if(i!==plek) return;
+    score++; toon('goed'); v.textContent=''; v.classList.remove('op'); plek=-1;
+    stand('⏱ <b>'+tijd+'</b>s · 🏆 <b>'+score+'</b> · '+recRegel(spel)); });
+  elke(()=>{ vakken.forEach(v=>{v.textContent='';v.classList.remove('op');});
+    plek = ri(0,8); vakken[plek].textContent='🦔'; vakken[plek].classList.add('op'); }, 720);
+  elke(()=>{ tijd--; stand('⏱ <b>'+tijd+'</b>s · 🏆 <b>'+score+'</b> · '+recRegel(spel));
+    if(tijd<=0){ stopAlles(); $('#veld').innerHTML=''; slot(spel, score, 'Je hebt er '+score+' gemept.'); } }, 1000);
+}},
+
+{id:'reken', ico:'⚡', n:'Reken-race', u:'Zoveel mogelijk tafelsommen in 30 seconden', eenh:'goed', start(spel){
+  tijdSpel(spel, 30, ()=>{ const a=ri(2,12), b=ri(2,12); return {a,b,ans:a*b}; },
+    it => '<div class="card midden"><div class="groot">'+it.a+' × '+it.b+'</div>'+
+          '<input class="invoer" inputmode="numeric" autocomplete="off" placeholder="?"></div>',
+    (it,k) => Number(k)===it.ans);
+}},
+
+{id:'sprint', ico:'➕', n:'Som-sprint', u:'Plus en min op tijd', eenh:'goed', start(spel){
+  tijdSpel(spel, 30, ()=>{ const plus=Math.random()<.5; let a=ri(2,20), b=ri(2,20);
+      if(!plus && b>a){ const t=a; a=b; b=t; } return {a,b,plus,ans:plus?a+b:a-b}; },
+    it => '<div class="card midden"><div class="groot">'+it.a+' '+(it.plus?'+':'−')+' '+it.b+'</div>'+
+          '<input class="invoer" inputmode="numeric" autocomplete="off" placeholder="?"></div>',
+    (it,k) => String(k).trim()!=='' && Number(k)===it.ans);
+}},
+
+{id:'groter', ico:'🐘', n:'Groter getal', u:'Tik snel het grootste getal aan', eenh:'goed', start(spel){
+  tijdSpel(spel, 30, ()=>{ let a=ri(1,999), b=ri(1,999); if(a===b) b++; return {a,b}; },
+    it => '<div class="card midden"><p class="klein">Welke is groter?</p>'+
+      '<div class="rij" style="justify-content:center;margin-top:10px">'+
+      '<button class="btn" data-k="a" style="font-size:1.5rem;min-width:110px">'+it.a+'</button>'+
+      '<button class="btn ghost" data-k="b" style="font-size:1.5rem;min-width:110px">'+it.b+'</button></div></div>',
+    (it,k) => k === (it.a>it.b ? 'a' : 'b'));
+}},
+
+{id:'paroon', ico:'🔀', n:'Even of oneven', u:'Kies snel: even of oneven', eenh:'goed', start(spel){
+  tijdSpel(spel, 30, ()=>({n:ri(1,99)}),
+    it => '<div class="card midden"><div class="groot">'+it.n+'</div>'+
+      '<div class="rij" style="justify-content:center;margin-top:10px">'+
+      '<button class="btn" data-k="even">Even</button>'+
+      '<button class="btn ghost" data-k="oneven">Oneven</button></div></div>',
+    (it,k) => k === (it.n%2===0 ? 'even' : 'oneven'));
+}},
+
+{id:'klok', ico:'🕐', n:'Klok-race', u:'Lees de klok en kies de juiste tijd', eenh:'goed', start(spel){
+  tijdSpel(spel, 40, ()=>{ const u=ri(1,12), m=pak([0,15,30,45]);
+      const zeg=(uu,mm)=>((uu%12)||12)+':'+String(mm).padStart(2,'0');
+      const goed=zeg(u,m); const set=new Set([goed]);
+      while(set.size<3) set.add(zeg(ri(1,12), pak([0,15,30,45])));
+      return {u,m,goed,keus:hussel([...set])}; },
+    it => '<div class="card midden">'+klokSvg(it.u,it.m)+
+      '<div class="rij" style="justify-content:center;margin-top:10px">'+
+      it.keus.map(o=>'<button class="btn ghost" data-k="'+o+'">'+o+'</button>').join('')+'</div></div>',
+    (it,k) => k===it.goed);
+}},
+
+{id:'letters', ico:'ع', n:'Letterjacht', u:'Tik alle plekken aan waar dezelfde Arabische letter staat', eenh:'goed', start(spel){
+  let score=0, tijd=40, doel=null, vakken=[];
+  kader(spel, '⏱ <b>40</b>s · 🏆 <b>0</b> · '+recRegel(spel), '');
+  const ronde = () => {
+    doel = pak(LETTERS);
+    const rest = LETTERS.filter(l=>l!==doel);
+    const hoeveel = ri(2,4);
+    const rij = hussel(Array.from({length:9},(_,i)=> i<hoeveel ? doel : pak(rest)));
+    $('#veld').innerHTML =
+      '<div class="card midden"><p class="klein">Zoek deze letter</p>'+
+      '<div class="ar" style="font-size:3rem;line-height:1.4">'+doel+'</div></div>'+
+      '<div class="veld" style="grid-template-columns:repeat(3,1fr);max-width:300px">'+
+      rij.map((l,i)=>'<button class="vak ar" data-i="'+i+'" data-l="'+l+'">'+l+'</button>').join('')+'</div>';
+    vakken = $$('#veld .vak');
+    let over = hoeveel;
+    vakken.forEach(v=>v.onclick=()=>{
+      if(v.disabled) return;
+      v.disabled = true;
+      if(v.dataset.l===doel){ v.classList.add('goed'); score++; toon('goed'); over--;
+        if(over===0) later(ronde, 350);
+      } else { v.classList.add('mis'); score=Math.max(0,score-1); toon('mis'); }
+      stand('⏱ <b>'+tijd+'</b>s · 🏆 <b>'+score+'</b> · '+recRegel(spel));
+    });
+  };
+  elke(()=>{ tijd--; stand('⏱ <b>'+tijd+'</b>s · 🏆 <b>'+score+'</b> · '+recRegel(spel));
+    if(tijd<=0){ stopAlles(); $('#veld').innerHTML=''; slot(spel, score); } }, 1000);
+  ronde();
+}},
+
+{id:'veelvoud', ico:'✖️', n:'Veelvouden-vangst', u:'Tik alleen de veelvouden aan', eenh:'goed', start(spel){
+  let score=0, tijd=30, tafel=ri(2,9);
+  kader(spel, '⏱ <b>30</b>s · 🏆 <b>0</b> · '+recRegel(spel), '');
+  const rij = () => Array.from({length:9},()=>{
+    if(Math.random()<.45) return tafel*ri(1,9);
+    let x; do{ x=ri(2,90); }while(x%tafel===0); return x; });
+  const ronde = () => {
+    const g = rij();
+    $('#veld').innerHTML = '<div class="card midden"><p>Tik alle veelvouden van <b>'+tafel+'</b></p></div>'+
+      '<div class="veld" style="grid-template-columns:repeat(3,1fr);max-width:320px">'+
+      g.map((n,i)=>'<button class="vak" data-n="'+n+'" style="font-size:1.15rem">'+n+'</button>').join('')+'</div>';
+    $$('#veld .vak').forEach(v=>v.onclick=()=>{
+      if(v.disabled) return; v.disabled=true;
+      if(+v.dataset.n % tafel===0){ v.classList.add('goed'); score++; toon('goed'); }
+      else { v.classList.add('mis'); score=Math.max(0,score-1); toon('mis'); }
+      stand('⏱ <b>'+tijd+'</b>s · 🏆 <b>'+score+'</b> · '+recRegel(spel));
+      later(ronde, 550);
+    });
+  };
+  elke(()=>{ tijd--; stand('⏱ <b>'+tijd+'</b>s · 🏆 <b>'+score+'</b> · '+recRegel(spel));
+    if(tijd<=0){ stopAlles(); $('#veld').innerHTML=''; slot(spel, score); } }, 1000);
+  ronde();
+}},
+
+{id:'simon', ico:'🎨', n:'Volg de kleuren', u:'Onthoud de reeks en herhaal hem', eenh:'niveau', start(spel){
+  const kleur = ['#C0392B','#1E8449','#1F618D','#B7950B'];
+  let reeks=[], pos=0, mag=false;
+  kader(spel, 'Niveau <b>0</b> · '+recRegel(spel),
+    '<div class="veld" style="grid-template-columns:repeat(2,1fr);max-width:280px">'+
+    kleur.map((c,i)=>'<button class="vak" data-i="'+i+'" style="background:'+c+'55;border-color:'+c+'"></button>').join('')+'</div>');
+  const vakken = $$('#veld .vak');
+  const licht = i => { vakken[i].style.background=kleur[i]; later(()=>{ vakken[i].style.background=kleur[i]+'55'; },330); };
+  const toonReeks = () => { mag=false; pos=0; let i=0;
+    const stap = () => { if(i>=reeks.length){ mag=true; knop('<p class="klein" style="margin-top:8px">Jouw beurt</p>'); return; }
+      licht(reeks[i]); toon('piep'); i++; later(stap, 560); };
+    knop('<p class="klein" style="margin-top:8px">Kijk goed…</p>');
+    later(stap, 500);
+  };
+  const groei = () => { reeks.push(ri(0,3)); stand('Niveau <b>'+reeks.length+'</b> · '+recRegel(spel)); toonReeks(); };
+  vakken.forEach((v,i)=>v.onclick=()=>{
+    if(!mag) return; licht(i);
+    if(i===reeks[pos]){ pos++; if(pos>=reeks.length){ mag=false; later(groei, 600); } }
+    else { mag=false; stopAlles(); $('#veld').innerHTML='';
+      slot(spel, reeks.length-1, 'Je kwam tot niveau '+(reeks.length-1)+'.'); }
+  });
+  groei();
+}},
+
+{id:'memory', ico:'🃏', n:'Geheugenspel', u:'Vind alle paren in zo min mogelijk beurten', eenh:'beurten', lager:true, start(spel){
+  let beurten=0, open=[], klaar=0;
+  const arabisch = S.instel.memoryAr;
+  const set = arabisch ? hussel(LETTERS).slice(0,6) : ['⚽','🎮','🍕','🐶','🌟','🚀'];
+  const kaarten = hussel([...set,...set]);
+  kader(spel, 'Beurten <b>0</b> · record <b>'+(S.records.memory===undefined?'—':S.records.memory+' (minst)')+'</b>',
+    '<div class="rij" style="justify-content:center"><button class="btn ghost sm" id="wissel">'+
+      (arabisch?'Met plaatjes spelen':'Met Arabische letters spelen')+'</button></div>'+
+    '<div class="veld" style="grid-template-columns:repeat(4,1fr);max-width:320px">'+
+    kaarten.map((e,i)=>'<button class="vak dicht'+(arabisch?' ar':'')+'" data-i="'+i+'" data-e="'+e+'">❓</button>').join('')+'</div>');
+  $('#wissel').onclick=()=>{ S.instel.memoryAr=!arabisch; S.instelD=new Date().toISOString(); bewaar(); speel('memory'); };
+  const vakken = $$('#veld .vak');
+  vakken.forEach((v,i)=>v.onclick=()=>{
+    if(open.length>=2 || v.classList.contains('goed') || open.includes(i)) return;
+    v.textContent = v.dataset.e; v.classList.remove('dicht'); v.classList.add('op');
+    open.push(i);
+    if(open.length===2){
+      beurten++;
+      stand('Beurten <b>'+beurten+'</b> · record <b>'+(S.records.memory===undefined?'—':S.records.memory+' (minst)')+'</b>');
+      const [a,b] = open;
+      if(vakken[a].dataset.e === vakken[b].dataset.e){
+        toon('goed'); klaar++;
+        later(()=>{ [a,b].forEach(j=>{ vakken[j].classList.remove('op'); vakken[j].classList.add('goed'); });
+          open=[];
+          if(klaar===6){ $('#veld').innerHTML='';
+            slot(spel, beurten, 'Alle paren in '+beurten+' beurten.'); } }, 300);
+      } else {
+        toon('mis');
+        later(()=>{ [a,b].forEach(j=>{ vakken[j].textContent='❓'; vakken[j].classList.remove('op'); vakken[j].classList.add('dicht'); });
+          open=[]; }, 700);
+      }
+    }
+  });
+}},
+
+{id:'hoger', ico:'🔢', n:'Hoger of lager', u:'Raad het getal met zo min mogelijk gokken', eenh:'punten', start(spel){
+  let doel=ri(1,100), lo=1, hi=100, pog=0;
+  kader(spel, 'Pogingen <b>0</b> · '+recRegel(spel),
+    '<div class="card midden"><p id="tip" style="font-size:1.1rem">Ik denk aan een getal van 1 tot en met 100.</p>'+
+    '<p class="klein" id="grens">tussen 1 en 100</p>'+
+    '<input class="invoer" id="gok" inputmode="numeric" autocomplete="off" placeholder="jouw gok">'+
+    '<button class="btn" id="raad">Raad</button></div>');
+  const raad = () => {
+    const g = Number($('#gok').value); if(!g) return;
+    pog++; $('#gok').value=''; $('#gok').focus();
+    stand('Pogingen <b>'+pog+'</b> · '+recRegel(spel));
+    if(g===doel){ stopAlles(); $('#veld').innerHTML='';
+      slot(spel, Math.max(1,12-pog), 'Goed! In '+pog+' '+(pog===1?'keer':'keer')+'.'); return; }
+    if(g<doel){ $('#tip').textContent='Hoger! ⬆️'; lo=Math.max(lo,g+1); toon('mis'); }
+    else { $('#tip').textContent='Lager! ⬇️'; hi=Math.min(hi,g-1); toon('mis'); }
+    $('#grens').textContent='tussen '+lo+' en '+hi;
+  };
+  $('#raad').onclick=raad;
+  $('#gok').onkeydown=e=>{ if(e.key==='Enter') raad(); };
+  $('#gok').focus();
+}},
+
+{id:'woord', ico:'🔤', n:'Woord-warwinkel', u:'Zet de letters in de goede volgorde', eenh:'woorden', start(spel){
+  let goed=0, woord='';
+  kader(spel, 'Goed <b>0</b> · '+recRegel(spel), '');
+  const ronde = () => {
+    woord = pak(WOORDEN);
+    let door = woord;
+    while(door===woord) door = hussel(woord.split('')).join('');
+    $('#veld').innerHTML = '<div class="card midden">'+
+      '<div class="groot" style="letter-spacing:.22em;text-transform:uppercase">'+esc(door)+'</div>'+
+      '<input class="invoer" id="wv" autocomplete="off" placeholder="welk woord?" style="font-family:var(--sans)">'+
+      '<p class="klein" id="wm" style="min-height:20px"></p>'+
+      '<div class="rij" style="justify-content:center">'+
+      '<button class="btn" id="wc">Controleer</button>'+
+      '<button class="btn ghost" id="wo">Overslaan</button>'+
+      '<button class="btn ghost" id="ws">Stoppen</button></div></div>';
+    const check = () => {
+      const v = String($('#wv').value||'').trim().toLowerCase();
+      if(v===woord){ goed++; toon('goed'); stand('Goed <b>'+goed+'</b> · '+recRegel(spel));
+        $('#wm').textContent='Goed!'; later(ronde, 600); }
+      else { toon('mis'); $('#wm').textContent='Nog niet…'; }
+    };
+    $('#wc').onclick=check;
+    $('#wo').onclick=ronde;
+    $('#ws').onclick=()=>{ stopAlles(); $('#veld').innerHTML=''; slot(spel, goed, 'Je had er '+goed+' goed.'); };
+    $('#wv').onkeydown=e=>{ if(e.key==='Enter') check(); };
+    $('#wv').focus();
+  };
+  ronde();
+}},
+
+{id:'bke', ico:'⭕', n:'Boter-kaas-eieren', u:'Speel tegen de computer', eenh:'gewonnen', start(spel){
+  const lijnen=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  let bord = Array(9).fill('');
+  const win = (b,s)=> lijnen.some(l=>l.every(i=>b[i]===s));
+  kader(spel, 'Gewonnen <b>'+(S.records.bke||0)+'</b> keer', '');
+  const teken2 = (melding) => {
+    $('#veld').innerHTML = (melding? '<div class="card midden"><p style="font-weight:600;margin:0">'+melding+'</p></div>':'')+
+      '<div class="veld" style="grid-template-columns:repeat(3,1fr);max-width:250px">'+
+      bord.map((c,i)=>'<button class="vak" data-i="'+i+'" style="font-size:1.7rem">'+c+'</button>').join('')+'</div>'+
+      '<div class="rij" style="justify-content:center"><button class="btn ghost" id="nieuw">Nieuw potje</button></div>';
+    $('#nieuw').onclick=()=>{ bord=Array(9).fill(''); teken2(''); };
+    $$('#veld .vak').forEach((v,i)=>v.onclick=()=>zet(i));
+  };
+  const zet = i => {
+    if(bord[i] || win(bord,'🙂') || win(bord,'🤖')) return;
+    bord[i]='🙂';
+    if(win(bord,'🙂')){ toon('goed'); const n=(S.records.bke||0)+1; S.records.bke=n; S.gespeeld.bke=(S.gespeeld.bke||0)+1; bewaar();
+      stand('Gewonnen <b>'+n+'</b> keer'); teken2('🎉 Jij wint!'); return; }
+    if(bord.every(x=>x)){ teken2('🤝 Gelijkspel.'); return; }
+    /* De computer kijkt of hij kan winnen, blokkeert anders, pakt anders het
+       midden. Verliezen mag, maar cadeautjes geven is niet leuk. */
+    const leeg = bord.map((x,j)=>x?null:j).filter(j=>j!==null);
+    let keus=null;
+    for(const j of leeg){ const t=bord.slice(); t[j]='🤖'; if(win(t,'🤖')){ keus=j; break; } }
+    if(keus===null) for(const j of leeg){ const t=bord.slice(); t[j]='🙂'; if(win(t,'🙂')){ keus=j; break; } }
+    if(keus===null && !bord[4]) keus=4;
+    if(keus===null) keus=pak(leeg);
+    bord[keus]='🤖';
+    if(win(bord,'🤖')){ toon('mis'); teken2('🤖 De computer wint. Volgende keer beter.'); return; }
+    if(bord.every(x=>x)){ teken2('🤝 Gelijkspel.'); return; }
+    teken2('');
+  };
+  teken2('');
+}}
+];
+
+/* Twee spellen staan als eigen bestand naast de huiswerkapp en blijven daar. */
+const EXTERN = [
+  {ico:'🧱', n:'AminoQMc', u:'Bouw en verken een wereld van blokken', href:'../huiswerk/voxelsandbox.html'},
+  {ico:'🚦', n:'Verkeersschool', u:'Rijden, een vriend uitdagen en het theorie-examen', href:'../huiswerk/verkeersschool.html'}
+];
+
+function speel(id){
+  stopAlles();
+  const spel = SPELLEN.find(s=>s.id===id); if(!spel) return;
+  spel.start(spel);
+}
+
+/* --------------------------------- schermen --------------------------------- */
+function teken(){
+  const w = WOLK.status();
+  const gespeeld = Object.values(S.gespeeld||{}).reduce((a,b)=>a+b,0);
+  const records = Object.keys(S.records||{}).length;
+  $('#tegen').textContent = records ? records+' van de '+SPELLEN.length+' met een record' : '';
+  $('#scherm').innerHTML =
+    '<div><h1>Spelletjes</h1>'+
+      '<p class="klein" style="margin-top:5px">'+SPELLEN.length+' spellen plus twee grote. '+
+      (gespeeld? 'Je speelde er tot nu toe '+gespeeld+'.' : 'Nog niets gespeeld — begin waar je zin in hebt.')+'</p></div>'+
+    '<div class="tegels">'+SPELLEN.map(s=>
+      '<button class="tegel" data-s="'+s.id+'"><span class="ico'+(s.id==='letters'?' ar':'')+'">'+s.ico+'</span>'+
+      '<b>'+esc(s.n)+'</b><span>'+esc(s.u)+'</span>'+
+      '<span class="rec">'+(S.records[s.id]===undefined?'nog geen record':'🏆 '+recordTekst(s))+'</span></button>').join('')+
+    '</div>'+
+    '<h2 style="margin-top:26px">De grote twee</h2>'+
+    '<p class="klein" style="margin-top:5px">Deze openen in een eigen scherm en zijn een stuk uitgebreider.</p>'+
+    '<div class="tegels">'+EXTERN.map(s=>
+      '<a class="tegel" href="'+s.href+'" style="text-decoration:none"><span class="ico">'+s.ico+'</span>'+
+      '<b>'+esc(s.n)+'</b><span>'+esc(s.u)+'</span></a>').join('')+'</div>'+
+    '<div class="card" style="margin-top:22px"><div class="rij tussen"><h3>Instellingen</h3>'+
+      '<button class="btn ghost sm" id="geluid">Geluid: '+(S.instel.geluid?'aan':'uit')+'</button></div>'+
+      '<p class="klein" style="margin-top:8px">Records staan op dit toestel. Wil je ze ook op je telefoon of de laptop, log dan in met hetzelfde account als in de andere apps.</p>'+
+      '<p class="klein" style="margin-top:8px"><span class="tag '+(w.aan?'goed':'')+'">'+
+        (w.aan?'Ingelogd als '+esc(w.account):'Alleen op dit toestel')+'</span></p>'+
+      (w.aan
+        ? '<div class="rij" style="margin-top:10px"><button class="btn ghost sm" id="wUit">Uitloggen</button>'+
+          '<button class="btn ghost sm" id="wNu">Nu gelijktrekken</button></div>'
+        : '<div class="rij" style="margin-top:10px">'+
+          '<input id="wAcc" placeholder="account" autocomplete="username" style="flex:1;min-width:120px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font-family:var(--sans)">'+
+          '<input id="wPin" type="password" placeholder="wachtwoord" autocomplete="current-password" style="flex:1;min-width:120px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font-family:var(--sans)">'+
+          '<button class="btn sm" id="wIn">Inloggen</button>'+
+          '<button class="btn ghost sm" id="wNieuw">Nieuw</button></div>')+
+      (Object.keys(S.records).length? '<div class="rij" style="margin-top:10px"><button class="btn ghost sm" id="wis" style="color:var(--fout)">Records wissen</button></div>':'')+
+      '<p class="melding klein" id="mld"></p></div>';
+  $$('[data-s]').forEach(k=>k.onclick=()=>speel(k.dataset.s));
+  $('#geluid').onclick=()=>{ S.instel.geluid=!S.instel.geluid; S.instelD=new Date().toISOString(); bewaar(); teken(); };
+  if($('#wis')) $('#wis').onclick=()=>{ if(!confirm('Alle records wissen?')) return;
+    S.records={}; S.gespeeld={}; bewaar(); teken(); };
+  const mld=(t,s)=>{ const m=$('#mld'); if(m){ m.textContent=t; m.className='melding klein '+(s||''); } };
+  if($('#wIn')) $('#wIn').onclick=async()=>{
+    const a=$('#wAcc').value.trim(), c=$('#wPin').value;
+    if(!a||!c) return mld('Vul een account en een wachtwoord in.','fout');
+    mld('Bezig…');
+    try{ await WOLK.inloggen(a,c); await gelijktrekken(); mld('Ingelogd en gelijkgetrokken.','goed'); }
+    catch(e){ mld(e.message,'fout'); }
+  };
+  if($('#wNieuw')) $('#wNieuw').onclick=async()=>{
+    const a=$('#wAcc').value.trim(), c=$('#wPin').value;
+    if(!a||c.length<4) return mld('Kies een naam en een wachtwoord van minstens vier tekens.','fout');
+    mld('Bezig…');
+    try{ await WOLK.registreren(a,c,S); teken(); mld('Account aangemaakt.','goed'); }
+    catch(e){ mld(e.message,'fout'); }
+  };
+  if($('#wUit')) $('#wUit').onclick=()=>{ WOLK.uitloggen(); teken(); };
+  if($('#wNu')) $('#wNu').onclick=async()=>{ mld('Bezig…');
+    try{ await gelijktrekken(); mld('Gelijkgetrokken.','goed'); }catch(e){ mld(e.message,'fout'); } };
+  $('#grap').textContent = pak(GRAPPEN);
+}
+
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') bladDicht(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && $('#overlay').classList.contains('on')) bladDicht(); });
+$('#terug').onclick=()=>{ if($('#overlay').classList.contains('on')) bladDicht(); else location.href='../'; };
+
+(async function(){
+  const l = await store.get();
+  if(l) S = Object.assign(leegS(), l, {instel:Object.assign(leegS().instel, l.instel||{})});
+  const over = haalOud();
+  WOLK.init('raha');
+  teken();
+  if(over){ $('#mld').textContent = over+' '+(over===1?'record is':'records zijn')+' overgenomen uit de huiswerkapp.'; bewaar(); }
+  if(WOLK.status().aan) gelijktrekken().catch(()=>{});
+  window.addEventListener('pagehide',()=>{ if(WOLK.status().aan) WOLK.bewaar(S,true); });
+  if('serviceWorker' in navigator){ try{ navigator.serviceWorker.register('sw.js'); }catch(e){} }
+})();
+
+async function gelijktrekken(){
+  const ver = await WOLK.ophalen();
+  if(ver && ver.records) S = samenvoegen(S, ver);
+  S.laatste = new Date().toISOString();
+  await store.set(S);
+  await WOLK.bewaar(S, true);
+  teken();
+}
+
+</script>
+</body>
+</html>
