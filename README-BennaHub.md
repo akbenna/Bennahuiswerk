@@ -64,11 +64,24 @@ Elk kind krijgt de versie die bij zijn leeftijd hoort: 7–9 jaar korte teksten,
 10–12 de gewone versie, 13–15 met verdieping erbij. De leeftijd volgt uit het
 geboortejaar in het profiel.
 
-Alles zit in het bestand zelf. De gebedshoudingen en de wassing zijn getekende
-SVG's, het geluid komt uit de Web Audio API en het voorlezen uit de stem van het
-toestel (Nederlands en, als die geïnstalleerd is, Arabisch). Kinderen kunnen
-zichzelf opnemen en terugluisteren; die opname blijft in het geheugen en wordt
-nergens bewaard of verstuurd.
+De gebedshoudingen en de wassing zijn getekende SVG's en de geluidjes komen uit
+de Web Audio API, dus daar zijn geen bestanden voor nodig.
+
+**Het geluid bij de Arabische teksten** komt uit drie bronnen, in deze volgorde:
+een opname die thuis zelf is ingesproken, anders een meegeleverd recitatiefragment
+uit `bidaya/audio/`, en anders de stem van het toestel. Die laatste is het
+noodvangnet: een voorleesstem is geen reciteerder, en dat hoor je.
+
+De recitatie zit niet in de repository maar wordt opgehaald met
+`node bidaya/audio/haal-recitatie.mjs --basis="…"`; zie `bidaya/audio/LEESMIJ.md`
+voor de bron, de Warsh-lezing en de valkuil met de telling van al-Fatiha. Voor de
+zinnen van het gebed en de du'a's bestaat geen archief — die spreek je thuis in
+onder *Ouder → Eigen stem opnemen*. Opnames staan in de IndexedDB van het toestel
+zelf en gaan niet mee met de centrale opslag; er zit een knop bij om ze als
+bestand over te zetten naar de telefoon van een kind.
+
+Kinderen kunnen zichzelf ook opnemen en terugluisteren bij het oefenen; die
+opname blijft in het geheugen en wordt nergens bewaard of verstuurd.
 
 De gebedstijden worden ter plekke uitgerekend uit de stand van de zon. Voor
 Nederland staat de regel "nacht in zevenen" aan, omdat het in juni 's nachts
