@@ -10,7 +10,7 @@ huiswerk/           de oefenapp voor de kinderen — ongewijzigd, alleen een lin
   index.dev.html      de bron met JSX en de oefenstof
 noer/index.html     Noer Islam — de basis van de islam en leren bidden (7–15 jaar)
 sanad/index.html    Sanad — achtentwintig weken islamitische wetenschappen
-arabisch/index.html Lisan — Arabisch voor het hele gezin
+arabisch/index.html Lisan — Arabisch voor het hele gezin, met een jaarprogramma
 ```
 
 ## Centrale opslag
@@ -101,6 +101,35 @@ weekbudget per kind (standaard € 10) en de ouder betaalt uit; de app rekent
 alleen. Het afvinken van een gebed levert standaard géén geld op — dat is een
 bewuste keuze en onder *Ouder* met één klik om te zetten. Voor het gebed werken
 de stickerkaart, de dagenreeks en de insignes.
+
+## Het jaarprogramma in Lisan
+
+Naast het losse leerpad staat er in Lisan een **jaarplan**: zesendertig weken van
+negentig minuten, bedoeld voor één vast moment per week — zaterdag of zondag.
+Elke les heeft dezelfde zeven onderdelen: openen, herhalen, nieuwe letters,
+lezen, schrijven, een stuk geloof, en afsluiten met wat er thuis blijft liggen.
+
+Het begint met een **niveaubepaling** van achttien vragen die oploopt van
+letterherkenning naar het lezen van een vers. De uitslag bepaalt niet wie het
+knapst is maar op welke week het programma voor dat kind begint — wie de eerste
+letters al kent, slaat ze over. Nooit verder dan week 17: de tekens en het
+verbinden slaat niemand over.
+
+De stof loopt cumulatief. Blok 1 doet de eerste zestien letters met de korte
+klinkers, blok 2 maakt het alfabet af en voegt de tekens toe, blok 3 gaat over
+verbinden, het lidwoord en de eerste zinnen, en blok 4 leest al-Fatiha en de
+korte soera's. Elke negende week is herhaling met een **toets**, waarvan de
+uitslag bewaard blijft. Het geloofsdeel haakt waar het kan aan de letter of het
+woord van die week: de week van de ب is de week van *bismillah*, de week van de
+ق die van de *qibla*.
+
+Bij elke week hoort een **werkblad** om af te drukken: de letters in hun vier
+vormen, twee rijen om over te trekken en lege regels om zelf te schrijven.
+
+Het **ouderscherm** opent met een cockpit: per kind de week, het percentage, het
+aantal lessen en uren, de uitslag van de niveaubepaling en van elke blokstoets,
+wanneer de laatste les was en wat er hierna komt — met knoppen om het jaarplan
+te openen, het werkblad van die week af te drukken of opnieuw te meten.
 
 ## De AI-functies in Sanad
 
