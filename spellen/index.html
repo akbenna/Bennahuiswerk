@@ -197,7 +197,8 @@ const store={
     try{ localStorage.setItem(KEY,s); }catch(e){}
   }
 };
-function leegS(){ return { records:{}, gespeeld:{}, laatste:null, instelD:null, instel:{ geluid:true } }; }
+function leegS(){ return { records:{}, gespeeld:{}, laatste:null, instelD:null,
+                           instel:{ geluid:true, memoryAr:false, ouderPin:'1234' } }; }
 let S = leegS();
 const bewaar = () => { store.set(S); WOLK.bewaar(S); };
 
@@ -686,6 +687,7 @@ function speel(id){
 }
 
 /* --------------------------------- schermen --------------------------------- */
+let ouderOpen = false;
 function teken(){
   const w = WOLK.status();
   const gespeeld = Object.values(S.gespeeld||{}).reduce((a,b)=>a+b,0);
@@ -707,21 +709,38 @@ function teken(){
       '<b>'+esc(s.n)+'</b><span>'+esc(s.u)+'</span></a>').join('')+'</div>'+
     '<div class="card" style="margin-top:22px"><div class="rij tussen"><h3>Instellingen</h3>'+
       '<button class="btn ghost sm" id="geluid">Geluid: '+(S.instel.geluid?'aan':'uit')+'</button></div>'+
-      '<p class="klein" style="margin-top:8px">Records staan op dit toestel. Wil je ze ook op je telefoon of de laptop, log dan in met hetzelfde account als in de andere apps.</p>'+
-      '<p class="klein" style="margin-top:8px"><span class="tag '+(w.aan?'goed':'')+'">'+
-        (w.aan?'Ingelogd als '+esc(w.account):'Alleen op dit toestel')+'</span></p>'+
-      (w.aan
-        ? '<div class="rij" style="margin-top:10px"><button class="btn ghost sm" id="wUit">Uitloggen</button>'+
-          '<button class="btn ghost sm" id="wNu">Nu gelijktrekken</button></div>'
+      '<p class="klein" style="margin-top:8px">Records staan op dit toestel. Het geluid mag je zelf aan- en uitzetten; de rest — inloggen en records wissen — zit achter de oudercode.</p>'+
+      (ouderOpen
+        ? '<p class="klein" style="margin-top:8px"><span class="tag '+(w.aan?'goed':'')+'">'+
+            (w.aan?'Ingelogd als '+esc(w.account):'Alleen op dit toestel')+'</span></p>'+
+          (w.aan
+            ? '<div class="rij" style="margin-top:10px"><button class="btn ghost sm" id="wUit">Uitloggen</button>'+
+              '<button class="btn ghost sm" id="wNu">Nu gelijktrekken</button></div>'
+            : '<div class="rij" style="margin-top:10px">'+
+              '<input id="wAcc" placeholder="account" autocomplete="username" style="flex:1;min-width:120px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font-family:var(--sans)">'+
+              '<input id="wPin" type="password" placeholder="wachtwoord" autocomplete="current-password" style="flex:1;min-width:120px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font-family:var(--sans)">'+
+              '<button class="btn sm" id="wIn">Inloggen</button>'+
+              '<button class="btn ghost sm" id="wNieuw">Nieuw</button></div>')+
+          '<label class="veld" style="display:block;margin-top:12px"><span class="meta">Oudercode</span>'+
+          '<input id="oCode" value="'+esc(S.instel.ouderPin||'1234')+'" inputmode="numeric" style="width:160px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font-family:var(--sans)"></label>'+
+          ((S.instel.ouderPin||'1234')==='1234'
+            ? '<p class="klein" style="margin-top:6px;color:var(--fout)">Hij staat nog op <b>1234</b> — verander hem.</p>':'')+
+          (Object.keys(S.records).length? '<div class="rij" style="margin-top:12px"><button class="btn ghost sm" id="wis" style="color:var(--fout)">Records wissen</button></div>':'')
         : '<div class="rij" style="margin-top:10px">'+
-          '<input id="wAcc" placeholder="account" autocomplete="username" style="flex:1;min-width:120px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font-family:var(--sans)">'+
-          '<input id="wPin" type="password" placeholder="wachtwoord" autocomplete="current-password" style="flex:1;min-width:120px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font-family:var(--sans)">'+
-          '<button class="btn sm" id="wIn">Inloggen</button>'+
-          '<button class="btn ghost sm" id="wNieuw">Nieuw</button></div>')+
-      (Object.keys(S.records).length? '<div class="rij" style="margin-top:10px"><button class="btn ghost sm" id="wis" style="color:var(--fout)">Records wissen</button></div>':'')+
+          '<input id="oPin" type="password" placeholder="oudercode" inputmode="numeric" style="flex:1;min-width:120px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font-family:var(--sans)">'+
+          '<button class="btn sm" id="oIn">Openen</button></div>')+
       '<p class="melding klein" id="mld"></p></div>';
   $$('[data-s]').forEach(k=>k.onclick=()=>speel(k.dataset.s));
   $('#geluid').onclick=()=>{ S.instel.geluid=!S.instel.geluid; S.instelD=new Date().toISOString(); bewaar(); teken(); };
+  if($('#oIn')) $('#oIn').onclick=()=>{
+    if($('#oPin').value === (S.instel.ouderPin||'1234')){ ouderOpen=true; teken(); }
+    else { const m=$('#mld'); m.className='melding klein fout'; m.textContent='Dat is hem niet.'; $('#oPin').value=''; }
+  };
+  if($('#oPin')) $('#oPin').onkeydown=e=>{ if(e.key==='Enter') $('#oIn').click(); };
+  if($('#oCode')) $('#oCode').onchange=()=>{
+    const c=String($('#oCode').value||'').trim();
+    S.instel.ouderPin = c || '1234'; S.instelD=new Date().toISOString(); bewaar(); teken();
+  };
   if($('#wis')) $('#wis').onclick=()=>{ if(!confirm('Alle records wissen?')) return;
     S.records={}; S.gespeeld={}; bewaar(); teken(); };
   const mld=(t,s)=>{ const m=$('#mld'); if(m){ m.textContent=t; m.className='melding klein '+(s||''); } };

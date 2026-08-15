@@ -1088,7 +1088,7 @@ function leegS(){
     punten:0, saldo:0, uitbetaald:0, reeks:0, laatsteDag:null,
     insignes:[], week:{ nr:null, verdiend:0 },
     log:[],
-    instel:{ naam:'Amine', weekbudget:6, tariefLes:0.40, tariefProject:1.50, tariefBlok:2.00, ouderPin:'' },
+    instel:{ naam:'Amine', weekbudget:6, tariefLes:0.40, tariefProject:1.50, tariefBlok:2.00, ouderPin:'1234' },
     instelD:null, laatste:null
   };
 }
@@ -2966,14 +2966,16 @@ function tekenBeloning(){
 let ouderOpen = false;
 function tekenOuder(){
   const el = $('#iOuder');
-  if(S.instel.ouderPin && !ouderOpen){
+  /* Altijd op slot, ook zonder ingestelde code — dan geldt de standaardcode.
+     Anders zet degene voor wie de beloning bedoeld is zijn eigen tarief. */
+  if(!ouderOpen){
     el.innerHTML = '<div class="card"><h3>Ouderscherm</h3>'+
-      '<p class="klein" style="margin-top:6px">Hier staan de instellingen, de voortgang en het uitbetalen.</p>'+
+      '<p class="klein" style="margin-top:6px">Dit scherm is voor papa en mama: de instellingen, de voortgang en het uitbetalen.</p>'+
       '<label class="veld"><span>Code</span><input id="oPin" type="password" inputmode="numeric"></label>'+
       '<div class="rij" style="margin-top:12px"><button class="btn" id="oIn">Openen</button></div>'+
       '<p class="melding" id="oMld"></p></div>';
-    $('#oIn').onclick=()=>{ if($('#oPin').value===S.instel.ouderPin){ ouderOpen=true; tekenOuder(); }
-      else { $('#oMld').className='melding fout'; $('#oMld').textContent='Dat is hem niet.'; } };
+    $('#oIn').onclick=()=>{ if($('#oPin').value===(S.instel.ouderPin||'1234')){ ouderOpen=true; tekenOuder(); }
+      else { $('#oMld').className='melding fout'; $('#oMld').textContent='Dat is hem niet.'; $('#oPin').value=''; } };
     $('#oPin').addEventListener('keydown',e=>{ if(e.key==='Enter') $('#oIn').click(); });
     return;
   }
@@ -3009,7 +3011,11 @@ function tekenOuder(){
           [0.20,0.30,0.40,0.50,0.75].map(b=>'<option value="'+b+'"'+(S.instel.tariefLes===b?' selected':'')+'>'+euro(b)+'</option>').join('')+'</select></label>'+
         '<label class="veld"><span>Per project</span><select id="iTp">'+
           [1,1.5,2,3].map(b=>'<option value="'+b+'"'+(S.instel.tariefProject===b?' selected':'')+'>'+euro(b)+'</option>').join('')+'</select></label>'+
-        '<label class="veld"><span>Code voor dit scherm (leeg = geen slot)</span><input id="iPin" value="'+esc(S.instel.ouderPin||'')+'" inputmode="numeric"></label>'+
+        '<label class="veld"><span>Code voor het ouderscherm</span><input id="iPin" value="'+esc(S.instel.ouderPin||'1234')+'" inputmode="numeric"></label>'+
+        ((S.instel.ouderPin||'1234')==='1234'
+          ? '<div class="kader let" style="margin-top:10px"><h4>Verander deze code</h4>'+
+            '<p class="klein" style="margin-top:4px">Hij staat nog op <b>1234</b>. Dat raadt Amine binnen een minuut, en dit scherm bepaalt wat een les hem oplevert.</p></div>'
+          : '')+
       '</div>'+
       '<div class="card"><h3>Centrale opslag</h3>'+
         '<p class="klein" style="margin-top:5px">Met een account staat de voortgang op elk toestel gelijk. Zonder internet werkt alles door; bij de volgende verbinding wordt het samengevoegd — er gaat nooit iets verloren.</p>'+
@@ -3043,7 +3049,7 @@ function tekenOuder(){
   zet('iBud', v=>S.instel.weekbudget=+v);
   zet('iTl',  v=>S.instel.tariefLes=parseFloat(v));
   zet('iTp',  v=>S.instel.tariefProject=parseFloat(v));
-  zet('iPin', v=>S.instel.ouderPin=String(v||'').trim());
+  zet('iPin', v=>{ const c=String(v||'').trim(); S.instel.ouderPin = c || '1234'; });
   $('#oUit').onclick=()=>{ if(!confirm('Is '+euro(S.saldo)+' uitbetaald?')) return;
     S.uitbetaald = Math.round((S.uitbetaald + S.saldo)*100)/100; S.saldo = 0; bewaar(); tekenOuder(); };
 

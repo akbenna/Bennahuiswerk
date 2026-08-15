@@ -94,10 +94,10 @@ jaar" erbij — dat scheelt uitleg en geeft de jongsten iets om naar uit te kijk
 De gebedshoudingen en de wassing zijn getekende SVG's en de geluidjes komen uit
 de Web Audio API, dus daar zijn geen bestanden voor nodig.
 
-**Het geluid bij de Arabische teksten** komt uit drie bronnen, in deze volgorde:
-een opname die thuis zelf is ingesproken, anders een meegeleverd recitatiefragment
-uit `noer/audio/`, en anders de stem van het toestel. Die laatste is het
-noodvangnet: een voorleesstem is geen reciteerder, en dat hoor je.
+**Het geluid bij de Arabische teksten** komt uit een opname die thuis zelf is
+ingesproken, en anders uit een meegeleverd recitatiefragment uit `noer/audio/`.
+De stem van het toestel wordt daar níet meer achteraan geplakt — zie *Het
+Arabisch komt alleen uit opnames* hieronder.
 
 De recitatie zit niet in de repository maar wordt opgehaald met
 `node noer/audio/haal-recitatie.mjs --basis="…"`; zie `noer/audio/LEESMIJ.md`
@@ -268,6 +268,44 @@ geheugenspel is *minder* beter, dus daar wint het laagste getal.
 
 In de huiswerkapp blijven de twee knoppen staan, inclusief de instelling
 *spelletjes pas na het dagdoel*; ze verwijzen nu naar `/spellen/`.
+
+## Het ouderscherm zit op slot
+
+Elk beheerscherm vraagt een code voordat er iets te veranderen valt. Dat was er
+niet, en het gevolg was voorspelbaar: een kind dat de stemmen, het weekbudget en
+de gebedstijden omzette omdat het kon.
+
+| App | Wat er achter de code zit |
+|---|---|
+| Noer Islam | het hele ouderscherm: kinderen, budget, gebedstijden, stemmen, opnames, uitbetalen |
+| Bunyan | het hele ouderscherm: tarieven, weekbudget, voortgang, uitbetalen |
+| Lisan | het hele ouderscherm: profielen, sporen, back-up, alles wissen |
+| Raha | inloggen en records wissen — het geluid mag een kind zelf aan- en uitzetten |
+| Huiswerk | had dit al (de bestaande PIN, standaard 1234) |
+| Rasikh, Sanad | geen slot; dat zijn de apps van de ouder zelf |
+
+De standaardcode is **1234**, dezelfde die de huiswerkapp altijd al had. Zolang
+hij daarop staat toont elk ouderscherm een waarschuwing om hem te veranderen —
+dat is het enige dat het scherm dichthoudt. Het veld leeg laten kan niet meer;
+dan geldt weer 1234. Eerder betekende leeg *geen slot*, en dat was precies het
+gat.
+
+## Het Arabisch komt alleen uit opnames
+
+Noer Islam speelde bij Arabische tekst zonder opname de stem van het toestel af.
+Die legt klemtonen verkeerd en spreekt de Koran uit als een voorleesrobot; bij
+het gebed en de Koran is dat geen detail. Er is nu één schakelaar, **"alleen
+echte opnames"**, en die staat standaard aan: je hoort de recitatie van de
+reciteerder en wat er thuis is ingesproken, en verder blijft het stil — met een
+regel erbij die zegt waar je het inspreekt. Zet de ouder hem uit, dan komen de
+keuze van de toestelstem en de uitleg over betere stemmen weer tevoorschijn.
+
+Alle toestellen worden één keer teruggezet op wat er thuis is afgesproken:
+`alleenEcht` aan, geen zelfgekozen toestelstem meer, klinkertekens aan en het
+rustige tempo. Een stempel (`instel.stemV`) zorgt dat dit precies één keer per
+toestel gebeurt en daarna nooit meer — een latere bewuste keuze van de ouder
+blijft dus staan. Het herstel loopt ook ná het gelijktrekken, want anders komt
+de oude stand gewoon via een ander toestel terug.
 
 ## De AI-functies in Sanad
 

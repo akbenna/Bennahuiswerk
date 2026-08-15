@@ -792,6 +792,14 @@ const AUDIO = {
       const f=this.bestand(id);
       if(f) return this._speelUrl(f);
     }
+    /* De stem van de telefoon is nadrukkelijk niet de bedoeling bij Arabisch:
+       hij legt klemtonen verkeerd en spreekt de Koran uit als een voorleesrobot.
+       Zolang `alleenEcht` aanstaat — en dat is standaard — blijft het liever
+       stil, met een regel erbij die zegt wat eraan te doen is. */
+    if(S.instel.alleenEcht){
+      kort('Van dit stukje is nog geen opname. Neem het in bij Ouder → Eigen stem opnemen.');
+      return Promise.resolve();
+    }
     return new Promise(res=>STEM.zegAr(arTekst,null,res));
   },
   async speelReeks(rijen){
@@ -2351,9 +2359,10 @@ function leegProg(){
 function leegS(){
   return {
     profielen:[], actief:null, data:{},
-    gezin:{ budget:TARIEF.weekbudget, gebedTelt:false, ouderPin:'',
+    gezin:{ budget:TARIEF.weekbudget, gebedTelt:false, ouderPin:'1234',
             plaats:'Roermond', lat:51.1942, lon:5.9873, methode:'MWL', asr:1, hoog:'zevende' },
-    instel:{ geluid:true, stem:true, tempo:1, groot:false, arStem:'', harakat:true, arTempo:.85 },
+    instel:{ geluid:true, stem:true, tempo:1, groot:false, arStem:'', harakat:true, arTempo:.85,
+             alleenEcht:true, stemV:0 },
     last:null
   };
 }
@@ -3717,15 +3726,18 @@ function tekenBeloning(){
 let ouderOpen=false;
 function tekenOuder(){
   const el=$('#ouderInhoud'), g=S.gezin;
-  if(g.ouderPin && !ouderOpen){
+  /* Het ouderscherm zit op slot, ook als er geen code is ingesteld — dan geldt
+     de standaardcode. Eerder kon je hier zonder meer in, en dan zet een kind in
+     vijf minuten de stemmen, het weekbudget en de gebedstijden om. */
+  if(!ouderOpen){
     el.innerHTML=`<div class="card" style="max-width:420px">
       <h1>Ouderscherm</h1>
-      <p class="klein" style="margin-top:8px">Voer de code in om verder te gaan.</p>
+      <p class="klein" style="margin-top:8px">Dit scherm is voor papa en mama. Voer de code in om verder te gaan.</p>
       <label class="veld"><span>Code</span><input type="password" id="oPin" inputmode="numeric"></label>
       <div class="rij" style="margin-top:14px"><button class="btn" id="oIn">Openen</button></div>
       <p class="melding" id="oMeld"></p></div>`;
-    $('#oIn').onclick=()=>{ if($('#oPin').value===g.ouderPin){ ouderOpen=true; tekenOuder(); }
-      else { $('#oMeld').textContent='Dat is hem niet.'; $('#oMeld').className='melding fout'; } };
+    $('#oIn').onclick=()=>{ if($('#oPin').value===(g.ouderPin||'1234')){ ouderOpen=true; tekenOuder(); }
+      else { $('#oMeld').textContent='Dat is hem niet.'; $('#oMeld').className='melding fout'; $('#oPin').value=''; } };
     $('#oPin').addEventListener('keydown',e=>{ if(e.key==='Enter') $('#oIn').click(); });
     return;
   }
@@ -3796,32 +3808,38 @@ function tekenOuder(){
         <option value="1" ${S.instel.stem?'selected':''}>Aan — ook waar geen opname is</option>
         <option value="0" ${S.instel.stem?'':'selected'}>Uit — alleen echte opnames</option></select></label>
       <p class="klein" style="margin-top:6px">Zet dit uit als de voorleesstem meer stoort dan helpt. De recitatie en de opnames van thuis blijven dan gewoon spelen; waar niets is, blijft het stil.</p>
-      <label class="veld"><span>Arabische stem</span><select id="iArStem">
+      <label class="veld"><span>Het Arabisch</span><select id="iEcht">
+        <option value="1" ${S.instel.alleenEcht?'selected':''}>Alleen echte opnames (aanbevolen)</option>
+        <option value="0" ${S.instel.alleenEcht?'':'selected'}>Ook de stem van het toestel als er geen opname is</option></select></label>
+      <p class="klein" style="margin-top:6px">Staat dit op "alleen echte opnames", dan hoor je alleen de recitatie van de reciteerder en de opnames die thuis zijn ingesproken. Waar niets is blijft het stil, met een regel erbij. Dat is bewust: een voorleesstem uit een telefoon legt de klemtonen verkeerd, en dat is bij de Koran geen detail.</p>
+      <label class="veld"><span>Snelheid van het Arabisch</span><select id="iArTempo">
+        <option value="0.6" ${S.instel.arTempo==0.6?'selected':''}>Heel langzaam</option>
+        <option value="0.75" ${S.instel.arTempo==0.75?'selected':''}>Langzaam</option>
+        <option value="0.85" ${S.instel.arTempo==0.85?'selected':''}>Rustig</option>
+        <option value="1" ${S.instel.arTempo==1?'selected':''}>Gewoon</option></select></label>
+      ${S.instel.alleenEcht ? '' : `
+      <label class="veld"><span>Arabische stem van het toestel</span><select id="iArStem">
         ${STEM.arLijst.length
           ? STEM.arLijst.map(v=>`<option value="${esc(v.name)}" ${(STEM.ar&&STEM.ar.name===v.name)?'selected':''}>${esc(v.name)} (${esc(v.lang)})</option>`).join('')
           : '<option value="">Geen Arabische stem gevonden</option>'}</select></label>
       <label class="veld"><span>Klinkertekens meelezen</span><select id="iHarakat">
         <option value="1" ${S.instel.harakat?'selected':''}>Ja — met de tekens (meestal beter)</option>
         <option value="0" ${S.instel.harakat?'':'selected'}>Nee — zonder de tekens</option></select></label>
-      <label class="veld"><span>Snelheid van het Arabisch</span><select id="iArTempo">
-        <option value="0.6" ${S.instel.arTempo==0.6?'selected':''}>Heel langzaam</option>
-        <option value="0.75" ${S.instel.arTempo==0.75?'selected':''}>Langzaam</option>
-        <option value="0.85" ${S.instel.arTempo==0.85?'selected':''}>Rustig</option>
-        <option value="1" ${S.instel.arTempo==1?'selected':''}>Gewoon</option></select></label>
       <div class="rij" style="margin-top:12px">
         <button class="btn sm ghost" data-hoor-ar="بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ">🔊 Test: bismillah</button>
-        <button class="btn sm ghost" data-hoor-ar="السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ">🔊 Test: salaam</button>
-      </div>
-      <div class="kader let" style="margin-top:12px"><h4>De stem klinkt niet goed. Wat kun je doen?</h4>
-        <p>De stem komt uit de telefoon zelf, niet uit deze app. Op een iPhone staat standaard de <b>kleine</b> Arabische stem; die klinkt vlak en legt de klemtoon vaak verkeerd. Download de verbeterde versie via <b>Instellingen → Toegankelijkheid → Gesproken materiaal → Stemmen → Arabisch</b> en kies daar de variant met de grootste download. Kom daarna hier terug en kies hem hierboven. Helpt dat niet genoeg, zet dan de klinkertekens uit — sommige stemmen struikelen erover.</p>
-        <p style="margin-top:8px">Blijft het onvoldoende: voor het echte voorzeggen van de Koran is een stem uit de telefoon sowieso niet bedoeld. Zie de knop hieronder om zelf de teksten in te spreken.</p>
-      </div>
+      </div>`}
+      ${S.instel.alleenEcht ? '' : `<div class="kader let" style="margin-top:12px"><h4>De stem klinkt niet goed. Wat kun je doen?</h4>
+        <p>De stem komt uit de telefoon zelf, niet uit deze app. Op een iPhone staat standaard de <b>kleine</b> Arabische stem; die klinkt vlak en legt de klemtoon vaak verkeerd. Download de verbeterde versie via <b>Instellingen → Toegankelijkheid → Gesproken materiaal → Stemmen → Arabisch</b> en kies daar de variant met de grootste download. Helpt dat niet genoeg, zet dan de klinkertekens uit — sommige stemmen struikelen erover.</p>
+        <p style="margin-top:8px">Blijft het onvoldoende, en dat is het meestal: zet hierboven "alleen echte opnames" aan en spreek de teksten zelf in met de knop verderop. Voor het voorzeggen van de Koran is een stem uit een telefoon niet bedoeld.</p>
+      </div>`}
       <label class="veld"><span>Tempo bij meebidden en voorlezen</span><select id="iTempo">
         <option value="0.8" ${S.instel.tempo==0.8?'selected':''}>Rustig</option>
         <option value="1" ${S.instel.tempo==1?'selected':''}>Gewoon</option>
         <option value="1.3" ${S.instel.tempo==1.3?'selected':''}>Vlot</option></select></label>
       <label class="veld"><span>Grote letters</span><select id="iGroot"><option value="0" ${S.instel.groot?'':'selected'}>Nee</option><option value="1" ${S.instel.groot?'selected':''}>Ja</option></select></label>
-      <label class="veld"><span>Code voor dit scherm (leeg = geen slot)</span><input id="iPin" value="${esc(g.ouderPin||'')}" inputmode="numeric"></label>
+      <label class="veld"><span>Code voor het ouderscherm</span><input id="iPin" value="${esc(g.ouderPin||'1234')}" inputmode="numeric"></label>
+      ${(g.ouderPin||'1234')==='1234'?`<div class="kader let" style="margin-top:10px"><h4>Verander deze code</h4>
+        <p>Hij staat nog op <b>1234</b>, en dat raadt een kind binnen een minuut. Vul hierboven iets anders in — dat is het enige dat dit scherm dichthoudt.</p></div>`:''}
       <p class="klein" style="margin-top:10px">Gevonden op dit toestel: <b>${STEM.arLijst.length}</b> Arabische ${STEM.arLijst.length===1?'stem':'stemmen'}${STEM.nl?', en een Nederlandse stem':', geen Nederlandse stem'}.</p>
     </div>
     <div class="card">
@@ -3883,10 +3901,11 @@ function tekenOuder(){
   zetGetal('iStem',v=>S.instel.stem=(v==='1'));
   zetGetal('iTempo',v=>S.instel.tempo=parseFloat(v));
   zetGetal('iGroot',v=>{ S.instel.groot=(v==='1'); document.body.classList.toggle('groot',S.instel.groot); });
-  zetGetal('iArStem',v=>{ S.instel.arStem=v; STEM.zoek(); });
-  zetGetal('iHarakat',v=>S.instel.harakat=(v==='1'));
+  zetGetal('iEcht',v=>S.instel.alleenEcht=(v==='1'));
+  if($('#iArStem')) zetGetal('iArStem',v=>{ S.instel.arStem=v; STEM.zoek(); });
+  if($('#iHarakat')) zetGetal('iHarakat',v=>S.instel.harakat=(v==='1'));
   zetGetal('iArTempo',v=>S.instel.arTempo=parseFloat(v));
-  zetGetal('iPin',v=>S.gezin.ouderPin=String(v||'').trim());
+  zetGetal('iPin',v=>{ const c=String(v||'').trim(); S.gezin.ouderPin = c || '1234'; });
   if($('#wIn')) $('#wIn').onclick=async()=>{
     const a=$('#wAcc').value.trim(), p=$('#wPin').value;
     if(!a||!p) return;
@@ -4082,9 +4101,30 @@ function teken(){
 }
 $$('.tab').forEach(b=>b.onclick=()=>naarTab(b.dataset.v));
 
+/* Eén keer per toestel de stem-instellingen terugzetten op wat er thuis is
+   afgesproken: het Arabisch alleen uit echte opnames, in het rustige tempo, en
+   geen zelfgekozen stem van het toestel meer. Het stempel `stemV` zorgt dat dit
+   precies één keer gebeurt en daarna nooit meer — verandert er later iets aan
+   de afspraak, dan hoogt een nieuwe versie het opnieuw op.
+
+   Dit loopt ook na het gelijktrekken, want anders komt de oude stand gewoon
+   weer terug via de centrale opslag van een ander toestel. */
+const STEM_VERSIE = 1;
+function stemHerstel(){
+  if((S.instel.stemV||0) >= STEM_VERSIE) return false;
+  S.instel.alleenEcht = true;
+  S.instel.arStem     = '';
+  S.instel.arTempo    = .85;
+  S.instel.harakat    = true;
+  S.instel.tempo      = 1;
+  S.instel.stemV      = STEM_VERSIE;
+  try{ STEM.zoek(); }catch(e){}
+  return true;
+}
+
 async function gelijktrekken(eerste){
   const ver=await WOLK.ophalen();
-  if(ver && (ver.profielen||ver.data)){ S=samenvoegen(S,ver); }
+  if(ver && (ver.profielen||ver.data)){ S=samenvoegen(S,ver); stemHerstel(); }
   S.last=new Date().toISOString();
   store.set(S);
   await WOLK.bewaar(S,true);
@@ -4094,6 +4134,7 @@ async function gelijktrekken(eerste){
 (async function start(){
   const lokaal=await store.get();
   if(lokaal) S=Object.assign(leegS(), lokaal, {gezin:Object.assign(leegS().gezin, lokaal.gezin||{}), instel:Object.assign(leegS().instel, lokaal.instel||{})});
+  stemHerstel();
   document.body.classList.toggle('groot', !!S.instel.groot);
   STEM.zoek();                       // nu pas is de voorkeursstem bekend
   await AUDIO.lees();                // eigen opnames en meegeleverde recitatie

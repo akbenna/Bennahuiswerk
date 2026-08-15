@@ -2232,7 +2232,7 @@ let S = null;          // de hele opslag
 let P = null;          // het actieve profiel (verwijzing in S.profielen)
 
 function verseStaat(){
-  return { versie:1, actief:null, thema:null, profielen:{} };
+  return { versie:1, actief:null, thema:null, profielen:{}, ouderPin:'1234' };
 }
 function laadStaat(){
   S = opslag.lees() || verseStaat();
@@ -4423,8 +4423,26 @@ function spelAf(goed){
 /* ============================================================
    OUDER
    ============================================================ */
+/* Het ouderscherm zit op slot. Hier staan de profielen, de sporen en de knop
+   die alles wist — dat is geen scherm waar een kind per ongeluk in hoort te
+   komen. Zonder ingestelde code geldt de standaardcode. */
+let ouderOpen = false;
 function tekenOuder(){
   const doel = $('#z-ouder');
+  if(!ouderOpen){
+    doel.innerHTML = '<div class="wrap"><h1>Ouder</h1>' +
+      '<div class="kaart" style="margin-top:12px;max-width:420px">' +
+      '<p class="small muted" style="margin:0">Dit scherm is voor papa en mama: de profielen, de voortgang en het beheer. Voer de code in om verder te gaan.</p>' +
+      '<label class="veldje" style="margin-top:10px"><span>Code</span><input id="oPin" type="password" inputmode="numeric"></label>' +
+      '<div style="margin-top:12px"><button class="k" id="oIn">Openen</button></div>' +
+      '<p class="small" id="oMeld" style="margin-top:8px"></p></div></div>';
+    $('#oIn').onclick = () => {
+      if($('#oPin').value === (S.ouderPin || '1234')){ ouderOpen = true; tekenOuder(); }
+      else { $('#oMeld').textContent = 'Dat is hem niet.'; $('#oMeld').style.color = 'var(--fout, #9F2F2D)'; $('#oPin').value=''; }
+    };
+    $('#oPin').addEventListener('keydown', e => { if(e.key === 'Enter') $('#oIn').click(); });
+    return;
+  }
   const lijst = Object.values(S.profielen);
   doel.innerHTML = '<div class="wrap">' +
     '<h1>Ouder</h1>' +
@@ -4504,7 +4522,15 @@ function tekenOuder(){
     '</div>' +
 
     '<hr class="regel">' +
-    '<h3>Gegevens</h3>' +
+    '<h3>De code van dit scherm</h3>' +
+    '<div class="kaart" style="margin-top:10px">' +
+      '<label class="veldje" style="margin-top:0"><span>Code</span><input id="ouCode" value="' + esc(S.ouderPin || '1234') + '" inputmode="numeric"></label>' +
+      ((S.ouderPin || '1234') === '1234'
+        ? '<p class="small" style="margin-top:8px;color:var(--fout)">Hij staat nog op <b>1234</b>. Verander hem — dat is het enige dat dit scherm dichthoudt.</p>'
+        : '<p class="small muted" style="margin-top:8px">Leeg laten kan niet; dan geldt weer 1234.</p>') +
+    '</div>' +
+
+    '<h3 style="margin-top:22px">Gegevens</h3>' +
     '<p class="small muted">Een back-up is één JSON-bestand met alle profielen en hun voortgang. Zet hem terug op een ander toestel en je gaat verder waar je was.</p>' +
     '<div class="rij" style="margin-top:10px">' +
       '<button class="k rand" id="ouExport">Back-up opslaan</button>' +
@@ -4542,6 +4568,11 @@ function tekenOuder(){
   $('#ouExport').onclick = exporteer;
   $('#ouImportKnop').onclick = () => $('#ouBestand').click();
   $('#ouBestand').onchange = e => importeer(e.target.files[0]);
+  $('#ouCode').onchange = () => {
+    const c = String($('#ouCode').value || '').trim();
+    S.ouderPin = c || '1234';
+    bewaar(); tekenOuder();
+  };
   $('#ouWis').onclick = () => {
     /* Geen ingebouwd bevestigingsvenster: een inline bevestiging is
        duidelijker, laat zich vormgeven en blijft binnen de app. */
