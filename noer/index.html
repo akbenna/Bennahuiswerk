@@ -284,6 +284,18 @@ body[data-spoor="2"]{font-size:16.5px}
 body[data-spoor="2"] .card{border-radius:14px}
 body[data-spoor="2"] .nl{font-size:1.06rem}
 
+/* ---------- taferelen bij de verhalen ---------- */
+.tafereel{border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--mkbg);
+  margin:0 0 16px;aspect-ratio:20/11}
+.tafereel svg{display:block;width:100%;height:100%}
+.t-lucht{fill:var(--mkbg)}
+.t-vlak{fill:var(--mk);opacity:.16}
+.t-grond{fill:var(--mk);opacity:.28}
+.t-vorm{fill:none;stroke:var(--mk);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
+.t-lijn{fill:none;stroke:var(--mk);stroke-width:2;stroke-linecap:round;opacity:.45}
+.t-accent{fill:var(--mk);opacity:.85}
+body[data-spoor="1"] .tafereel{aspect-ratio:20/12}
+
 /* ---------- de verwijzing naar een verhaal ----------
    Een verhaal is het onderdeel waar kinderen naar toe willen; dan moet de
    verwijzing eruitzien als een uitnodiging en niet als een voetnoot. */
@@ -291,7 +303,18 @@ body[data-spoor="2"] .nl{font-size:1.06rem}
 .verhaalkaart .vk-tekst{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0;text-align:left}
 .verhaalkaart .vk-tekst b{font-family:var(--serif);font-size:1.12rem;color:var(--ink);font-weight:500;letter-spacing:-.015em}
 .verhaalkaart .vk-pijl{font-size:1.3rem;color:var(--mk);flex:0 0 auto}
+.verhaalkaart .vk-beeld{flex:0 0 auto;width:84px}
+.verhaalkaart .vk-beeld .tafereel{margin:0;aspect-ratio:1;border-radius:11px}
 .verhaalkaart:hover{border-color:var(--mk)}
+/* Op een telefoon staat het beeld boven de tekst: naast elkaar wordt de kolom
+   te smal en breekt het label af. */
+@media(max-width:560px){
+  .verhaalkaart{flex-direction:column;align-items:stretch;gap:10px}
+  .verhaalkaart .vk-beeld{width:100%}
+  .verhaalkaart .vk-beeld .tafereel{aspect-ratio:20/8;border-radius:9px}
+  .verhaalkaart .vk-pijl{display:none}
+  .verhaalkaart .vk-tekst::after{content:"Lees het verhaal →";color:var(--mk);font-size:.86rem;font-weight:500;margin-top:4px}
+}
 body[data-spoor="1"] .verhaalkaart .vk-tekst b{font-size:1.2rem}
 
 /* ---------- praten over een verhaal ---------- */
@@ -892,6 +915,147 @@ function tekenWudu(deel){
     <rect x="160" y="232" width="34" height="24" rx="11" style="${lijn}"/>
   </svg>`;
 }
+
+/* =============================================================================
+   TAFERELEN BIJ DE VERHALEN
+   Profeten worden niet afgebeeld. Dat is geen technische beperking maar een
+   uitgangspunt, en het is precies wat kinderboeken in deze traditie al eeuwen
+   doen: teken de plek, niet de persoon. De ark, het vuur dat koel werd, de twee
+   heuvels, de put onder de sterren. Geen mensen, geen dieren — alleen het
+   landschap en de dingen.
+
+   Alles staat in de kleur van de module, dus het werkt vanzelf in licht en in
+   donker. Getekend, niet geladen: geen bestanden, geen bronvermelding nodig,
+   en het blijft scherp op elk scherm.
+============================================================================= */
+const TAFEREEL = {
+  /* Adam — een tuin met één boom apart */
+  l1501:`<rect class="t-lucht" x="0" y="0" width="400" height="150"/>
+    <path class="t-grond" d="M0 150 h400 v70 H0 z"/>
+    <path class="t-vorm" d="M70 150 v-34 M56 116 a14 14 0 0 1 28 0 a14 14 0 0 1-28 0" />
+    <path class="t-vorm" d="M120 150 v-44 M104 106 a16 16 0 0 1 32 0 a16 16 0 0 1-32 0"/>
+    <path class="t-vlak" d="M300 150 v-52 M274 98 a26 26 0 0 1 52 0 a26 26 0 0 1-52 0"/>
+    <path class="t-vorm" d="M300 150 v-52 M274 98 a26 26 0 0 1 52 0 a26 26 0 0 1-52 0"/>
+    <circle class="t-accent" cx="288" cy="96" r="5"/><circle class="t-accent" cx="310" cy="104" r="5"/>
+    <path class="t-lijn" d="M0 176 C120 168 260 184 400 174"/>`,
+  /* Nuh — een ark op hoog water, met regen */
+  l1502:`<rect class="t-lucht" x="0" y="0" width="400" height="150"/>
+    ${[...Array(16)].map((_,i)=>`<path class="t-lijn" d="M${18+i*24} 14 l-6 26"/>`).join('')}
+    <path class="t-vlak" d="M0 150 c40-10 70 10 110 0 s70-12 110 0 s70 10 110 0 s60-8 70-2 V220 H0 z"/>
+    <path class="t-vorm" d="M132 146 h140 l-18 30 H150 z"/>
+    <path class="t-vorm" d="M168 146 v-30 h68 v30"/>
+    <path class="t-vorm" d="M202 116 v-26"/>
+    <path class="t-lijn" d="M0 186 c60-8 110 8 170 0 s110-10 230 0"/>`,
+  /* Ibrahim — een vuur dat koel bleef: de vlam laait, het hart is koel */
+  l1503:`<rect class="t-lucht" x="0" y="0" width="400" height="150"/>
+    <path class="t-grond" d="M0 150 h400 v70 H0 z"/>
+    <path class="t-vlak" d="M200 30 c8 30 30 40 34 66 a34 34 0 0 1-68 0 c0-16 10-24 14-40 c10 12 12 22 12 22 c4-20-2-34 8-48 z"/>
+    <path class="t-vorm" d="M200 30 c8 30 30 40 34 66 a34 34 0 0 1-68 0 c0-16 10-24 14-40 c10 12 12 22 12 22 c4-20-2-34 8-48 z"/>
+    <path class="t-vlak" d="M146 58 c6 22 22 30 22 50 a22 22 0 0 1-44 0 c0-12 7-17 10-28 c7 9 9 15 9 15 c3-14-2-24 3-37 z" style="opacity:.1"/>
+    <path class="t-lijn" d="M146 58 c6 22 22 30 22 50 a22 22 0 0 1-44 0 c0-12 7-17 10-28 c7 9 9 15 9 15 c3-14-2-24 3-37 z"/>
+    <path class="t-vlak" d="M262 68 c5 18 19 26 19 42 a19 19 0 0 1-38 0 c0-10 6-15 9-24 c6 8 7 13 7 13 c3-12-1-20 3-31 z" style="opacity:.1"/>
+    <path class="t-lijn" d="M262 68 c5 18 19 26 19 42 a19 19 0 0 1-38 0 c0-10 6-15 9-24 c6 8 7 13 7 13 c3-12-1-20 3-31 z"/>
+    <path class="t-accent" d="M200 92 c5 12 12 17 12 25 a12 12 0 0 1-24 0 c0-8 7-13 12-25 z" style="opacity:.35"/>
+    <path class="t-lijn" d="M96 150 h208"/>`,
+  /* Hajar — twee heuvels met een bron ertussen */
+  l1504:`<rect class="t-lucht" x="0" y="0" width="400" height="150"/>
+    <path class="t-vlak" d="M0 150 L96 62 L176 150 z"/><path class="t-vorm" d="M0 150 L96 62 L176 150"/>
+    <path class="t-vlak" d="M224 150 L304 76 L400 150 z"/><path class="t-vorm" d="M224 150 L304 76 L400 150"/>
+    <path class="t-grond" d="M0 150 h400 v70 H0 z"/>
+    <path class="t-accent" d="M200 150 v34"/>
+    <ellipse class="t-vlak" cx="200" cy="192" rx="46" ry="12"/>
+    <ellipse class="t-vorm" cx="200" cy="192" rx="46" ry="12"/>
+    <path class="t-lijn" d="M96 62 v-14 M304 76 v-14"/>`,
+  /* Yusuf — een put onder elf sterren, de zon en de maan */
+  l1505:`<rect class="t-lucht" x="0" y="0" width="400" height="150"/>
+    ${[[40,34],[78,20],[116,40],[150,22],[188,36],[226,20],[262,40],[298,26],[330,44],[358,24],[64,58]]
+      .map(([x,y])=>`<circle class="t-accent" cx="${x}" cy="${y}" r="3"/>`).join('')}
+    <circle class="t-vlak" cx="320" cy="80" r="20"/><circle class="t-vorm" cx="320" cy="80" r="20"/>
+    ${[0,45,90,135].map(a=>`<path class="t-lijn" d="M320 52 v-10" transform="rotate(${a} 320 80)"/>`).join('')}
+    <path class="t-vlak" d="M96 56 A22 22 0 1 0 96 100 A17 17 0 1 1 96 56 Z"/>
+    <path class="t-vorm" d="M96 56 A22 22 0 1 0 96 100 A17 17 0 1 1 96 56 Z"/>
+    <path class="t-grond" d="M0 150 h400 v70 H0 z"/>
+    <path class="t-vorm" d="M150 150 v-8 h100 v8"/>
+    <path class="t-vlak" d="M158 150 h84 v58 h-84 z"/>
+    <path class="t-vorm" d="M158 150 h84 v58 h-84 z M186 102 h28 M200 102 v10"/>
+    <ellipse class="t-grond" cx="200" cy="150" rx="42" ry="9"/>
+    <ellipse class="t-vorm" cx="200" cy="150" rx="42" ry="9"/>
+    <path class="t-vorm" d="M186 102 v-6 h28 v6"/>
+    <path class="t-accent" d="M200 112 v30"/>`,
+  /* Musa — de zee die openging */
+  l1506:`<rect class="t-lucht" x="0" y="0" width="400" height="150"/>
+    <path class="t-vlak" d="M0 118 c40-8 70 6 100 2 c26-4 36 8 40 18 v82 H0 z"/>
+    <path class="t-vlak" d="M400 118 c-40-8-70 6-100 2 c-26-4-36 8-40 18 v82 h140 z"/>
+    <path class="t-vorm" d="M0 118 c40-8 70 6 100 2 c26-4 36 8 40 18 v82 M400 118 c-40-8-70 6-100 2 c-26-4-36 8-40 18 v82"/>
+    <path class="t-grond" d="M140 220 h120 v-82 h-120 z"/>
+    <path class="t-lijn" d="M170 214 v-58 M200 216 v-64 M230 214 v-58"/>
+    <circle class="t-accent" cx="200" cy="46" r="16"/>`,
+  /* Al-Khidr — de boot met het gat, en de muur */
+  l1507:`<rect class="t-lucht" x="0" y="0" width="400" height="150"/>
+    <path class="t-vlak" d="M0 150 c50-8 90 8 140 0 s90-10 140 0 s90 8 120 0 V220 H0 z"/>
+    <path class="t-vorm" d="M40 142 h130 l-16 26 H56 z"/>
+    <circle class="t-grond" cx="104" cy="152" r="9"/>
+    <path class="t-vorm" d="M104 152 m-9 0 a9 9 0 1 0 18 0 a9 9 0 1 0 -18 0"/>
+    <path class="t-vorm" d="M100 142 v-24"/>
+    <path class="t-vlak" d="M250 176 h110 v44 H250 z"/>
+    <path class="t-vorm" d="M250 176 h110 v44 H250 z M250 198 h110 M286 176 v22 M322 198 v22"/>
+    <path class="t-accent" d="M300 214 a10 10 0 0 1 20 0" style="opacity:.6"/>`,
+  /* Yunus — drie duisternissen: de nacht, de zee, en daaronder */
+  l1508:`<rect class="t-lucht" x="0" y="0" width="400" height="88"/>
+    <path class="t-vlak" d="M324 22 A19 19 0 1 0 324 60 A15 15 0 1 1 324 22 Z"/>
+    <path class="t-vorm" d="M324 22 A19 19 0 1 0 324 60 A15 15 0 1 1 324 22 Z"/>
+    <path class="t-vlak" d="M0 88 c50 8 90-6 140 0 s90 10 140 0 s90-8 120 0 V150 H0 z"/>
+    <path class="t-grond" d="M0 150 h400 v70 H0 z" style="opacity:.5"/>
+    <path class="t-grond" d="M0 186 h400 v34 H0 z" style="opacity:.7"/>
+    <path class="t-lijn" d="M0 118 c60 8 110-6 170 0 s110 8 230 0 M0 158 c60 6 110-6 170 0 s110 8 230 0"/>
+    <circle class="t-accent" cx="200" cy="200" r="4"/>`,
+  /* Ayyub — een kale boom, en water bij de wortel */
+  l1509:`<rect class="t-lucht" x="0" y="0" width="400" height="150"/>
+    <path class="t-grond" d="M0 150 h400 v70 H0 z"/>
+    <path class="t-vorm" d="M200 150 V70 M200 108 l-30-24 M200 96 l30-26 M200 128 l-24-16 M200 84 l16-20"/>
+    <ellipse class="t-vlak" cx="200" cy="182" rx="54" ry="13"/>
+    <ellipse class="t-vorm" cx="200" cy="182" rx="54" ry="13"/>
+    <circle class="t-accent" cx="330" cy="52" r="18"/>
+    <path class="t-lijn" d="M290 52 h-14 M330 12 v-8"/>`,
+  /* Sulayman — een wijd dal met een smal pad */
+  l1510:`<rect class="t-lucht" x="0" y="0" width="400" height="126"/>
+    <path class="t-vlak" d="M0 126 c60-30 110 12 180-10 s130-28 220 6 V220 H0 z"/>
+    <path class="t-vorm" d="M0 126 c60-30 110 12 180-10 s130-28 220 6"/>
+    <path class="t-grond" d="M0 168 c80-16 150 18 240 4 s120-14 160-6 V220 H0 z"/>
+    <path class="t-lijn" d="M60 220 C120 190 150 186 200 176 S300 166 360 150"/>
+    <circle class="t-accent" cx="212" cy="188" r="3"/>
+    <path class="t-lijn" d="M196 196 c8-4 16-6 26-8 M188 202 c10-5 22-8 34-10" style="opacity:.55"/>`,
+  /* Maryam — de palm met dadels, en het beekje eronder */
+  l1511:`<rect class="t-lucht" x="0" y="0" width="400" height="150"/>
+    <path class="t-grond" d="M0 150 h400 v70 H0 z"/>
+    <path class="t-vorm" d="M200 150 C196 120 198 96 200 74"/>
+    <path class="t-vorm" d="M200 74 C170 62 146 66 132 82 M200 74 C230 62 254 66 268 82 M200 74 C176 54 152 50 138 56 M200 74 C224 54 248 50 262 56 M200 74 C194 50 190 40 194 30 M200 74 C206 50 210 40 206 30"/>
+    <circle class="t-accent" cx="190" cy="86" r="4"/><circle class="t-accent" cx="208" cy="90" r="4"/><circle class="t-accent" cx="199" cy="98" r="4"/>
+    <path class="t-vlak" d="M0 190 c60-10 110 10 170 4 s110-12 230-2 V220 H0 z"/>
+    <path class="t-lijn" d="M0 194 c60-10 110 10 170 4 s110-12 230-2"/>`,
+  /* De grot — een opening in de rots met licht dat naar binnen valt */
+  l1512:`<rect class="t-lucht" x="0" y="0" width="400" height="220"/>
+    <path class="t-vlak" d="M0 0 h400 v220 H0 z" style="opacity:.5"/>
+    <path class="t-grond" d="M0 0 h400 v220 H0 z" style="opacity:.55"/>
+    <path class="t-lucht" d="M200 46 c46 0 84 40 84 92 c0 34-18 62-42 76 h-84 c-24-14-42-42-42-76 c0-52 38-92 84-92 z"/>
+    <path class="t-vorm" d="M200 46 c46 0 84 40 84 92 c0 34-18 62-42 76 h-84 c-24-14-42-42-42-76 c0-52 38-92 84-92 z"/>
+    <path class="t-accent" d="M172 214 l28-96 l28 96 z" style="opacity:.35"/>
+    <path class="t-lijn" d="M60 214 h280"/>`,
+  /* Luqman — een opengeslagen boek onder een lamp, met het mosterdzaadje */
+  l1513:`<rect class="t-lucht" x="0" y="0" width="400" height="150"/>
+    <path class="t-grond" d="M0 150 h400 v70 H0 z"/>
+    <path class="t-vorm" d="M200 16 v26 M182 42 h36 l10 22 h-56 z"/>
+    <path class="t-accent" d="M200 64 v34" style="opacity:.4"/>
+    <path class="t-vlak" d="M96 160 c34-20 68-20 104-6 c36-14 70-14 104 6 l-12 34 c-32-18-68-18-92-6 c-24-12-60-12-92 6 z"/>
+    <path class="t-vorm" d="M96 160 c34-20 68-20 104-6 c36-14 70-14 104 6 M200 154 v34 M112 168 c28-12 54-12 74-2 M288 168 c-28-12-54-12-74-2"/>
+    <circle class="t-accent" cx="344" cy="196" r="4"/>
+    <path class="t-lijn" d="M344 196 m-15 0 a15 15 0 1 0 30 0 a15 15 0 1 0 -30 0" style="opacity:.45"/>`
+};
+function tekenTafereel(id){
+  const t = TAFEREEL[id]; if(!t) return '';
+  return `<div class="tafereel"><svg viewBox="0 0 400 220" role="img" aria-hidden="true" preserveAspectRatio="xMidYMid meet">${t}</svg></div>`;
+}
+
 /* =============================================================================
    HET LEERPAD — de basis van de islam in tien modules.
    Per les: `tk` is de gewone tekst, `jr` de kortere versie voor de jongsten
@@ -2741,7 +2905,7 @@ function toonLes(id){
         <p class="meta">${verhalen.length===1?'Hierover gaat een verhaal':'Hierover gaan verhalen'}</p>
         <div class="stack" style="margin-top:9px">${verhalen.map(v=>`
           <button class="card klik verhaalkaart" data-naar="${v.id}" style="--mk:var(--${vkl});--mkbg:var(--${vkl}-bg)">
-            <span class="ico-vak">📜</span>
+            ${TAFEREEL[v.id]?'<span class="vk-beeld">'+tekenTafereel(v.id)+'</span>':'<span class="ico-vak">📜</span>'}
             <span class="vk-tekst">
               <span class="meta" style="color:var(--mk)">Verhaal van een profeet</span>
               <b>${esc(v.t)}</b>
@@ -2756,7 +2920,8 @@ function toonLes(id){
   blad(`<div style="--mk:var(--${kl});--mkbg:var(--${kl}-bg)">
     <div class="rij tussen"><p class="meta" style="color:var(--mk)">${esc(l.modT)}</p>
       <button class="icoon" onclick="bladDicht()" aria-label="Sluiten">✕</button></div>
-    <h2 style="margin-top:6px">${esc(l.t)} ${l.ar?'<span class="ar" style="font-size:1.1rem;color:var(--k)">'+l.ar+'</span>':''}</h2>
+    <h2 style="margin-top:6px">${esc(l.t)} ${l.ar?'<span class="ar" style="font-size:1.1rem;color:var(--mk)">'+l.ar+'</span>':''}</h2>
+    ${TAFEREEL[l.id]?'<div style="margin-top:14px">'+tekenTafereel(l.id)+'</div>':''}
     <div class="nl" style="margin-top:14px">${tekst}</div>
     ${diep}
     ${praat}
