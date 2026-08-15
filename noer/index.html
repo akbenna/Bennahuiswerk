@@ -792,6 +792,14 @@ const AUDIO = {
       const f=this.bestand(id);
       if(f) return this._speelUrl(f);
     }
+    /* De stem van de telefoon is nadrukkelijk niet de bedoeling bij Arabisch:
+       hij legt klemtonen verkeerd en spreekt de Koran uit als een voorleesrobot.
+       Zolang `alleenEcht` aanstaat — en dat is standaard — blijft het liever
+       stil, met een regel erbij die zegt wat eraan te doen is. */
+    if(S.instel.alleenEcht){
+      kort('Van dit stukje is nog geen opname. Neem het in bij Ouder → Eigen stem opnemen.');
+      return Promise.resolve();
+    }
     return new Promise(res=>STEM.zegAr(arTekst,null,res));
   },
   async speelReeks(rijen){
@@ -2084,11 +2092,47 @@ const T = {
   salawat:{ar:'اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ وَعَلَىٰ آلِ مُحَمَّدٍ، كَمَا صَلَّيْتَ عَلَىٰ إِبْرَاهِيمَ وَعَلَىٰ آلِ إِبْرَاهِيمَ، وَبَارِكْ عَلَىٰ مُحَمَّدٍ وَعَلَىٰ آلِ مُحَمَّدٍ، كَمَا بَارَكْتَ عَلَىٰ إِبْرَاهِيمَ وَعَلَىٰ آلِ إِبْرَاهِيمَ، فِي الْعَالَمِينَ إِنَّكَ حَمِيدٌ مَجِيدٌ',
     tr:'Allahumma salli \'ala Muhammadin wa \'ala ali Muhammad, kama sallayta \'ala Ibrahima wa \'ala ali Ibrahim, wa barik \'ala Muhammadin wa \'ala ali Muhammad, kama barakta \'ala Ibrahima wa \'ala ali Ibrahim, fi l-\'alamina innaka hamidun majid.',
     nl:'Allah, zegen Mohammed en de familie van Mohammed, zoals U Ibrahim en de familie van Ibrahim gezegend hebt, en geef zegen aan Mohammed en zijn familie, zoals U die aan Ibrahim en zijn familie gaf, in alle werelden. U bent waarlijk de Geprezene, de Verhevene.'},
+  amin:{aid:'t:amin', ar:'آمِينَ', tr:'Amin', nl:'Verhoor het'},
+  /* Wat je ná de tashahhud en de zegenwens mag vragen, vóór de slotgroet. Dit
+     is de overlevering waarin de Profeet ﷺ om bescherming vroeg tegen vier
+     dingen; hij leerde hem aan zoals hij een soera aanleerde. */
+  duaVoorSalam:{aid:'t:dua-salam',
+    ar:'اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ عَذَابِ جَهَنَّمَ، وَمِنْ عَذَابِ الْقَبْرِ، وَمِنْ فِتْنَةِ الْمَحْيَا وَالْمَمَاتِ، وَمِنْ شَرِّ فِتْنَةِ الْمَسِيحِ الدَّجَّالِ',
+    tr:'Allahumma inni a\'udhu bika min \'adhabi jahannam, wa min \'adhabi l-qabr, wa min fitnati l-mahya wa l-mamat, wa min sharri fitnati l-masihi d-dajjal',
+    nl:'Allah, ik zoek bij U bescherming tegen de straf van de hel, tegen de straf van het graf, tegen de beproeving van het leven en de dood, en tegen het kwaad van de beproeving van de valse messias.'},
   salam:{aid:'t:salam', ar:'السَّلَامُ عَلَيْكُمْ', tr:'As-salamu \'alaykum', nl:'Vrede zij met jullie'},
+
+  /* Buiten de verplichte volgorde, maar wel goed om te kennen: wat je in een
+     vrijwillig gebed zegt en wat andere scholen ook in het fard-gebed doen. */
+  istiftah:{aid:'t:istiftah',
+    ar:'سُبْحَانَكَ اللَّهُمَّ وَبِحَمْدِكَ، وَتَبَارَكَ اسْمُكَ، وَتَعَالَىٰ جَدُّكَ، وَلَا إِلَٰهَ غَيْرُكَ',
+    tr:'Subhanaka llahumma wa bihamdik, wa tabaraka smuk, wa ta\'ala jadduk, wa la ilaha ghayruk',
+    nl:'Volmaakt bent U, Allah, en aan U komt de lof toe. Gezegend is Uw naam, verheven is Uw grootheid, en er is geen god buiten U.'},
+  taawwudh:{aid:'t:taawwudh', ar:'أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ',
+    tr:'A\'udhu billahi mina sh-shaytani r-rajim', nl:'Ik zoek bescherming bij Allah tegen de vervloekte duivel'},
+
+  /* Na de slotgroet. Deze stonden wel in de les over dhikr, maar niet in het
+     gebedsonderdeel zelf — en juist hier hoor je ze te leren. */
+  istighfar:{aid:'t:istighfar', ar:'أَسْتَغْفِرُ اللَّهَ', tr:'Astaghfiru llah',
+    nl:'Ik vraag Allah om vergeving', keer:'3×'},
+  naSalam:{aid:'t:na-salam', ar:'اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ',
+    tr:'Allahumma anta s-salamu wa minka s-salam, tabarakta ya dha l-jalali wa l-ikram',
+    nl:'Allah, U bent de Vrede en van U komt de vrede. Gezegend bent U, Bezitter van majesteit en eer.'},
+  tasbih:{aid:'t:tasbih', ar:'سُبْحَانَ اللَّهِ · الْحَمْدُ لِلَّهِ · اللَّهُ أَكْبَرُ',
+    tr:'Subhana llah (33×) · Alhamdu lillah (33×) · Allahu akbar (33×)',
+    nl:'Volmaakt is Allah · Alle lof is voor Allah · Allah is groter', keer:'33× elk'},
+  tahlil:{aid:'t:tahlil',
+    ar:'لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ',
+    tr:'La ilaha illa llahu wahdahu la sharika lah, lahu l-mulku wa lahu l-hamdu wa huwa \'ala kulli shay\'in qadir',
+    nl:'Er is geen god dan Allah alleen, zonder deelgenoot. Aan Hem behoort het koningschap en aan Hem komt de lof toe, en Hij is tot alles in staat.', keer:'als honderdste'},
   qunut:{aid:'t:qunut', ar:'اللَّهُمَّ إِنَّا نَسْتَعِينُكَ وَنَسْتَغْفِرُكَ وَنُؤْمِنُ بِكَ وَنَتَوَكَّلُ عَلَيْكَ وَنُثْنِي عَلَيْكَ الْخَيْرَ كُلَّهُ، نَشْكُرُكَ وَلَا نَكْفُرُكَ، وَنَخْلَعُ وَنَتْرُكُ مَنْ يَفْجُرُكَ. اللَّهُمَّ إِيَّاكَ نَعْبُدُ وَلَكَ نُصَلِّي وَنَسْجُدُ، وَإِلَيْكَ نَسْعَىٰ وَنَحْفِدُ، نَرْجُو رَحْمَتَكَ وَنَخْشَىٰ عَذَابَكَ، إِنَّ عَذَابَكَ الْجِدَّ بِالْكُفَّارِ مُلْحِقٌ',
     tr:'Allahumma inna nasta\'inuka wa nastaghfiruka wa nu\'minu bika wa natawakkalu \'alayka wa nuthni \'alayka l-khayra kullah, nashkuruka wa la nakfuruk, wa nakhla\'u wa natruku man yafjuruk. Allahumma iyyaka na\'budu wa laka nusalli wa nasjud, wa ilayka nas\'a wa nahfid, narju rahmataka wa nakhsha \'adhabak, inna \'adhabaka l-jidda bi-l-kuffari mulhiq.',
     nl:'Allah, wij vragen U om hulp en om vergeving, wij geloven in U en vertrouwen op U, en wij prijzen U met al het goede. Wij danken U en verloochenen U niet. Allah, U alleen aanbidden wij, voor U bidden en knielen wij, naar U streven wij, wij hopen op Uw barmhartigheid en vrezen Uw straf.'}
 };
+
+/* Drie soorten: wat moet, wat sterk aanbevolen is, en wat ná de slotgroet komt
+   en dus strikt genomen niet meer bij het gebed hoort. */
+const etiket = s => s==='fard' ? 'Moet' : s==='na' ? 'Na het gebed' : 'Sunna';
 
 const STAPPEN = [
  {k:'niyyah', t:'Intentie en staan', h:'staan', merk:null, soort:'fard',
@@ -2099,6 +2143,9 @@ const STAPPEN = [
  {k:'fatiha', t:'Staan en lezen', h:'staan', merk:null, soort:'fard', zeg:'fatiha',
   doe:['Laat je armen langs je lichaam hangen (sadl); de armen over elkaar (qabd) is binnen de school ook overgeleverd.','Lees al-Fatiha. Zonder al-Fatiha telt de rak\'a niet.','Zeg daarna zachtjes: āmīn.','In de eerste twee rak\'a lees je er een soera achteraan.'],
   let:'In deze school begin je meteen met al-Fatiha: geen openingsdu\'a en geen a\'udhu billah in het verplichte gebed, en de basmala wordt niet hardop gezegd.'},
+ {k:'qunut', t:'De qunut', h:'staan', merk:null, soort:'sunna', zeg:'qunut',
+  doe:['Alleen in de Fajr, in de tweede rak\'a, ná het lezen en vóór de buiging.','Zeg hem zachtjes, ook als het gebed verder hardop is.','Je handen hoef je er niet voor op te heffen.'],
+  let:'In de Malikitische school hoort de qunut bij de Fajr en nergens anders. Sterk aanbevolen, geen plicht: vergeet je hem, dan is je gebed gewoon geldig en hoef je niets te herstellen.'},
  {k:'ruku', t:'De buiging', h:'ruku', merk:[178,130,30], soort:'fard', zeg:'ruku',
   doe:['Zeg Allahu akbar en buig.','Je rug wordt vlak, je handen pakken je knieën, je vingers gespreid.','Je hoofd is in lijn met je rug, niet omhoog en niet omlaag.','Kom pas overeind als je echt tot rust bent gekomen.']},
  {k:'itidal', t:'Rechtop komen', h:'staan', merk:null, soort:'fard', zeg:'sami', zeg2:'rabbana',
@@ -2116,9 +2163,31 @@ const STAPPEN = [
   let:'In de Malikitische school wordt deze woordkeuze aangehouden (de tashahhud van \'Umar, uit de Muwatta\'). Andere scholen gebruiken een iets andere formulering; beide zijn overgeleverd.'},
  {k:'salawat', t:'Zegenwens over de Profeet ﷺ', h:'zitten', merk:null, soort:'sunna', zeg:'salawat',
   doe:['In de laatste zitting, na de tashahhud.','Daarna mag je vragen wat je wilt, voordat je de slotgroet geeft.']},
+ {k:'dua', t:'Vragen vóór de slotgroet', h:'zitten', merk:null, soort:'sunna', zeg:'duaVoorSalam',
+  doe:['Nog steeds in de laatste zitting, ná de zegenwens.','Zeg de du\'a hieronder, of vraag in je eigen woorden wat je wilt.','Dit is het laatste rustige moment vóór je uit het gebed stapt — gebruik het.'],
+  let:'Dit is geen plicht. De Profeet ﷺ leerde deze du\'a aan zoals hij een soera aanleerde, en hij past precies op deze plek. Je eigen woorden mogen ook, in welke taal dan ook.'},
  {k:'salam', t:'De slotgroet', h:'salam', merk:null, soort:'fard', zeg:'salam',
   doe:['Draai je hoofd naar rechts en zeg: as-salamu \'alaykum.','Daarmee is het gebed klaar.'],
-  let:'Volgens de Malikitische school is die ene groet naar rechts het verplichte deel. Bid je achter een imam, dan geef je er nog een naar links en één als antwoord aan de imam.'}
+  let:'Volgens de Malikitische school is die ene groet naar rechts het verplichte deel. Bid je achter een imam, dan geef je er nog een naar links en één als antwoord aan de imam.'},
+ /* De dhikr ná het gebed stond wel in de les over dhikr, maar niet hier — en
+    hier hoort hij: het is het staartje van het gebed, niet een los onderwerp.
+    Hij telt niet mee in het examen over de volgorde, want hij valt erbuiten. */
+ {k:'nagebed', t:'Blijven zitten na het gebed', h:'zitten', merk:null, soort:'na', zeg:'istighfar', zeg2:'naSalam',
+  doe:['Sta niet meteen op. Zeg drie keer: astaghfiru llah.','Daarna: allahumma anta s-salamu wa minka s-salam.','Dan 33× subhanallah, 33× alhamdulillah, 33× Allahu akbar, en als honderdste de tahlil.','Lees tot slot ayat al-kursi.'],
+  extra:['tasbih','tahlil'],
+  let:'Dit hoort niet bij het gebed zelf en is geen plicht. Het is wel de landing: wie meteen opstaat, stapt van het gebed rechtstreeks terug in de dag.'}
+];
+
+/* Naast de volgorde: wat in deze school niet in het verplichte gebed wordt
+   gezegd, maar wel in een vrijwillig gebed en in andere scholen. Kennen is
+   nuttig — je staat vroeg of laat achter een imam die het wél zegt. */
+const NAAST = [
+ {zeg:'istiftah', t:'De openingsdu\'a', w:'Na de openingstakbir, vóór al-Fatiha',
+  u:'In de Malikitische school niet in het verplichte gebed. In een vrijwillig gebed mag hij wel, en de meeste andere scholen zeggen hem altijd.'},
+ {zeg:'taawwudh', t:'Bescherming zoeken', w:'Vóór het lezen',
+  u:'Ook dit hoort in deze school niet in het verplichte gebed. Buiten het gebed zeg je het wél elke keer dat je de Koran opent.'},
+ {zeg:'amin', t:'Amin', w:'Direct na al-Fatiha',
+  u:'Zachtjes, ook als het gebed hardop is. Bid je achter een imam, dan zeg je het als hij klaar is met al-Fatiha.'}
 ];
 
 /* De vijf verplichte gebeden en wat eromheen hoort. */
@@ -2247,6 +2316,17 @@ const HIFZ = [
      ['تَرْمِيهِم بِحِجَارَةٍ مِّن سِجِّيلٍ','Tarmihim bi-hijaratin min sijjil','Die hen bekogelden met stenen van gebakken klei'],
      ['فَجَعَلَهُمْ كَعَصْفٍ مَّأْكُولٍ','Faja\'alahum ka-\'asfin ma\'kul','En Hij maakte hen als afgevreten kaf']]},
 
+ {id:'h-humaza', naam:'Al-Humaza', ar:'الهمزة', nr:104, aya:9, soort:'soera', waarom:'Stond nog niet in de rij; hij hoort tussen al-Fil en al-\'Asr.',
+  r:[['وَيْلٌ لِّكُلِّ هُمَزَةٍ لُّمَزَةٍ','Waylun li-kulli humazatin lumaza','Wee elke lasteraar en roddelaar'],
+     ['الَّذِي جَمَعَ مَالًا وَعَدَّدَهُ','Alladhi jama\'a malan wa \'addadah','Die bezit bijeenbrengt en het telkens telt'],
+     ['يَحْسَبُ أَنَّ مَالَهُ أَخْلَدَهُ','Yahsabu anna malahu akhladah','En daarbij denkt dat zijn bezit hem onsterfelijk maakt'],
+     ['كَلَّا لَيُنبَذَنَّ فِي الْحُطَمَةِ','Kalla la-yunbadhanna fi l-hutama','Welnee, hij wordt in de verbrijzelaar gesmeten'],
+     ['وَمَا أَدْرَاكَ مَا الْحُطَمَةُ','Wa ma adraka ma l-hutama','En hoe kom jij te weten wat de verbrijzelaar is?'],
+     ['نَارُ اللَّهِ الْمُوقَدَةُ','Naru llahi l-muqada','Het aangestoken vuur van Allah'],
+     ['الَّتِي تَطَّلِعُ عَلَى الْأَفْئِدَةِ','Allati tattali\'u \'ala l-af\'ida','Dat tot in de harten doordringt'],
+     ['إِنَّهَا عَلَيْهِم مُّؤْصَدَةٌ','Innaha \'alayhim mu\'sada','Het zal zich boven hen sluiten'],
+     ['فِي عَمَدٍ مُّمَدَّدَةٍ','Fi \'amadin mumaddada','In langgerekte zuilen']]},
+
  {id:'h-asr', naam:'Al-\'Asr', ar:'العصر', nr:103, aya:3, soort:'soera', waarom:'Drie regels waarin de hele islam past.',
   r:[['وَالْعَصْرِ','Wa l-\'asr','Bij de tijd'],
      ['إِنَّ الْإِنسَانَ لَفِي خُسْرٍ','Inna l-insana lafi khusr','De mens lijdt werkelijk verlies'],
@@ -2272,7 +2352,19 @@ const HIFZ = [
      ['سَمِعَ اللَّهُ لِمَنْ حَمِدَهُ','Sami\'a llahu liman hamidah','Allah hoort wie Hem prijst — bij het opkomen'],
      ['رَبَّنَا وَلَكَ الْحَمْدُ','Rabbana wa laka l-hamd','Onze Heer, aan U komt alle lof toe — als je rechtop staat'],
      ['سُبْحَانَ رَبِّيَ الْأَعْلَى','Subhana rabbiya l-a\'la','Volmaakt is mijn Heer, de Allerhoogste — in de knieval'],
-     ['رَبِّ اغْفِرْ لِي','Rabbi ghfir li','Heer, vergeef mij — tussen de twee knievallen']]}
+     ['رَبِّ اغْفِرْ لِي','Rabbi ghfir li','Heer, vergeef mij — tussen de twee knievallen']]},
+ {id:'h-nagebed', naam:'Na het gebed', ar:'أذكار بعد الصلاة', soort:'gebed', waarom:'Wat je zegt als je na de slotgroet nog even blijft zitten.',
+  r:[['أَسْتَغْفِرُ اللَّهَ','Astaghfiru llah','Ik vraag Allah om vergeving — drie keer'],
+     ['اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ','Allahumma anta s-salamu wa minka s-salam, tabarakta ya dha l-jalali wa l-ikram','Allah, U bent de Vrede en van U komt de vrede; gezegend bent U, Bezitter van majesteit en eer'],
+     ['سُبْحَانَ اللَّهِ','Subhana llah','Volmaakt is Allah — 33 keer'],
+     ['الْحَمْدُ لِلَّهِ','Alhamdu lillah','Alle lof is voor Allah — 33 keer'],
+     ['اللَّهُ أَكْبَرُ','Allahu akbar','Allah is groter — 33 keer'],
+     ['لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ','La ilaha illa llahu wahdahu la sharika lah, lahu l-mulku wa lahu l-hamdu wa huwa \'ala kulli shay\'in qadir','Er is geen god dan Allah alleen, zonder deelgenoot — als honderdste']]},
+ {id:'h-dua-salam', naam:'De du\'a vóór de slotgroet', ar:'دعاء قبل السلام', soort:'gebed', waarom:'Het laatste dat je zegt terwijl je nog in het gebed zit.',
+  r:[['اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ عَذَابِ جَهَنَّمَ','Allahumma inni a\'udhu bika min \'adhabi jahannam','Allah, ik zoek bij U bescherming tegen de straf van de hel'],
+     ['وَمِنْ عَذَابِ الْقَبْرِ','wa min \'adhabi l-qabr','en tegen de straf van het graf'],
+     ['وَمِنْ فِتْنَةِ الْمَحْيَا وَالْمَمَاتِ','wa min fitnati l-mahya wa l-mamat','en tegen de beproeving van het leven en de dood'],
+     ['وَمِنْ شَرِّ فِتْنَةِ الْمَسِيحِ الدَّجَّالِ','wa min sharri fitnati l-masihi d-dajjal','en tegen het kwaad van de beproeving van de valse messias']]}
 ];
 
 /* Du'a's voor de dag. */
@@ -2351,9 +2443,10 @@ function leegProg(){
 function leegS(){
   return {
     profielen:[], actief:null, data:{},
-    gezin:{ budget:TARIEF.weekbudget, gebedTelt:false, ouderPin:'',
+    gezin:{ budget:TARIEF.weekbudget, gebedTelt:false, ouderPin:'1234',
             plaats:'Roermond', lat:51.1942, lon:5.9873, methode:'MWL', asr:1, hoog:'zevende' },
-    instel:{ geluid:true, stem:true, tempo:1, groot:false, arStem:'', harakat:true, arTempo:.85 },
+    instel:{ geluid:true, stem:true, tempo:1, groot:false, arStem:'', harakat:true, arTempo:.85,
+             alleenEcht:true, stemV:0 },
     last:null
   };
 }
@@ -3108,7 +3201,7 @@ function wuduLoop(i){
       <button class="icoon" onclick="bladDicht();teken()" aria-label="Sluiten">✕</button></div>
     <div class="voortgang-strip">${WUDU.map((_,k)=>'<i class="'+(k<=i?'aan':'')+'"></i>').join('')}</div>
     <div class="podium" style="margin-top:16px">${tekenWudu(w.deel)}
-      <span class="stap-uit tag ${w.soort==='fard'?'fout':'k'}">${w.soort==='fard'?'Moet':'Sunna'}</span></div>
+      <span class="stap-uit tag ${w.soort==='fard'?'fout':(w.soort==='na'?'':'k')}">${etiket(w.soort)}</span></div>
     <h2 style="margin-top:16px">${esc(w.t)} ${w.aantal?'<span class="tag" style="vertical-align:middle">'+esc(w.aantal)+'</span>':''}</h2>
     <p class="nl" style="margin-top:6px">${esc(w.kort)}</p>
     <ul class="net" style="margin-top:12px">${w.hoe.map(h=>'<li>'+h+'</li>').join('')}</ul>
@@ -3132,7 +3225,7 @@ function wuduKlaar(){
 
 /* Examen: de stappen op de goede volgorde zetten. Eén fout mag. */
 function examenVolgorde(soort){
-  const bron = soort==='wudu' ? WUDU.map(w=>({id:w.id,t:w.t})) : STAPPEN.filter(s=>s.k!=='opstaan').map(s=>({id:s.k,t:s.t}));
+  const bron = soort==='wudu' ? WUDU.map(w=>({id:w.id,t:w.t})) : STAPPEN.filter(s=>!['opstaan','qunut','nagebed'].includes(s.k)).map(s=>({id:s.k,t:s.t}));
   const juist = bron.map(b=>b.id);
   let gelegd=[], fouten=0;
   const teken=()=>{
@@ -3185,7 +3278,7 @@ function vStappen(el){
     </div>
     <div class="grid g3">
       ${STAPPEN.map((s,i)=>`<button class="card klik" data-st="${i}" style="padding:14px 15px">
-        <div class="rij tussen"><span class="tag ${s.soort==='fard'?'fout':'k'}">${s.soort==='fard'?'Moet':'Sunna'}</span><span class="meta">${i+1}</span></div>
+        <div class="rij tussen"><span class="tag ${s.soort==='fard'?'fout':(s.soort==='na'?'':'k')}">${etiket(s.soort)}</span><span class="meta">${i+1}</span></div>
         <h4 style="margin-top:8px">${esc(s.t)}</h4></button>`).join('')}
     </div>
     <div class="card">
@@ -3199,6 +3292,16 @@ function vStappen(el){
       </ul>
       <p class="klein" style="margin-top:10px">De soera na de Fatiha, de takbirs onderweg, de eerste zitting en de tashahhud zijn sterk aanbevolen (sunna mu'akkada). Vergeet je er twee of meer, dan herstel je dat met de knieval van vergetelheid — zie <b>Als het misgaat</b>.</p>
     </div>
+    <div class="card">
+      <h3>Naast de volgorde</h3>
+      <p class="klein" style="margin-top:6px">Deze drie staan niet in de stappen hierboven, omdat ze in deze school niet bij het verplichte gebed horen. Kennen is wel nuttig: in een vrijwillig gebed mag je ze zeggen, en je staat vroeg of laat achter een imam die het wél doet.</p>
+      <div class="stack" style="margin-top:12px">
+        ${NAAST.map(x=>{ const w=T[x.zeg]; return `<div class="card plat">
+          <div class="rij tussen"><h4>${esc(x.t)}</h4><span class="tag">${esc(x.w)}</span></div>
+          ${tekstBlok(w)}
+          <p class="klein" style="margin-top:8px">${x.u}</p></div>`; }).join('')}
+      </div>
+    </div>
   </div>`;
   $('#startStap').onclick=()=>stapLoop(0);
   $('#examenSalah').onclick=()=>examenVolgorde('salah');
@@ -3211,11 +3314,12 @@ function stapLoop(i){
       <button class="icoon" onclick="bladDicht();teken()" aria-label="Sluiten">✕</button></div>
     <div class="voortgang-strip">${STAPPEN.map((_,k)=>'<i class="'+(k<=i?'aan':'')+'"></i>').join('')}</div>
     <div class="podium" style="margin-top:16px">${tekenHouding(s.h,s.merk)}
-      <span class="stap-uit tag ${s.soort==='fard'?'fout':'k'}">${s.soort==='fard'?'Moet':'Sunna'}</span></div>
+      <span class="stap-uit tag ${s.soort==='fard'?'fout':(s.soort==='na'?'':'k')}">${etiket(s.soort)}</span></div>
     <h2 style="margin-top:16px">${esc(s.t)}</h2>
     <ul class="net" style="margin-top:10px">${s.doe.map(d=>'<li>'+d+'</li>').join('')}</ul>
     ${t1?(LANG[s.zeg]?blokkenVan(LANG[s.zeg],true):tekstBlok(t1,{opnemen:true})):''}
     ${t2?tekstBlok(t2):''}
+    ${(s.extra||[]).map(k=>tekstBlok(T[k])).join('')}
     ${s.let?'<div class="kader let" style="margin-top:14px"><h4>Let op</h4><p>'+s.let+'</p></div>':''}
     <div class="rij tussen" style="margin-top:20px">
       <button class="btn ghost" id="vorige" ${i===0?'disabled':''}>&larr; Terug</button>
@@ -3250,16 +3354,20 @@ function zetOpname(){
 
 /* ------------------------------- bid mee ------------------------------- */
 const DUUR={niyyah:5, takbir:3, fatiha:24, ruku:7, itidal:5, sujud1:7, jalsa:5, sujud2:7, opstaan:4, tashahhud:15, salawat:13, salam:4};
-function bouwGebed(rak){
+function bouwGebed(rak, id){
   const seq=[];
   for(let r=1;r<=rak;r++){
     if(r===1){ seq.push({k:'niyyah',r}); seq.push({k:'takbir',r}); }
     else seq.push({k:'opstaan',r});
     seq.push({k:'fatiha',r,soera:r<=2});
+    /* De qunut hoort in deze school alleen bij de Fajr, in de tweede rak'a,
+       tussen het lezen en de buiging. */
+    if(id==='fajr' && r===2) seq.push({k:'qunut',r});
     seq.push({k:'ruku',r}); seq.push({k:'itidal',r});
     seq.push({k:'sujud1',r}); seq.push({k:'jalsa',r}); seq.push({k:'sujud2',r});
     if(rak>2 && r===2) seq.push({k:'tashahhud',r,midden:true});
-    if(r===rak){ seq.push({k:'tashahhud',r}); seq.push({k:'salawat',r}); seq.push({k:'salam',r}); }
+    if(r===rak){ seq.push({k:'tashahhud',r}); seq.push({k:'salawat',r}); seq.push({k:'dua',r});
+                 seq.push({k:'salam',r}); seq.push({k:'nagebed',r}); }
   }
   return seq;
 }
@@ -3270,7 +3378,7 @@ function vMee(el){
       <p class="klein" style="margin-top:8px">Doe dit eerst een paar keer zonder wassing als oefening, en daarna echt.</p>
     </div>
     <div class="grid g3">
-      ${GEBEDEN.map(g=>`<button class="card klik" data-mee="${g.rak}" data-n="${esc(g.naam)}">
+      ${GEBEDEN.map(g=>`<button class="card klik" data-mee="${g.rak}" data-n="${esc(g.naam)}" data-id="${esc(g.id)}">
         <div class="rij tussen"><h3>${esc(g.naam)}</h3><span class="ar" style="color:var(--k)">${g.ar}</span></div>
         <p class="klein" style="margin-top:5px">${g.rak} rak'a · ${esc(g.hardop.toLowerCase())}</p>
         <p class="klein" style="margin-top:3px">${esc(g.tijd)}</p></button>`).join('')}
@@ -3282,10 +3390,10 @@ function vMee(el){
     <div class="card"><h3>Hardop of zacht?</h3>
       <p class="klein" style="margin-top:6px">Bij Fajr, en in de eerste twee rak'a van Maghrib en Isha, lees je hardop. Bij Dhuhr en Asr lees je zacht, zodat je jezelf net hoort. In de rak'a die daarna nog komen lees je altijd zacht, en dan alleen al-Fatiha.</p></div>
   </div>`;
-  $$('[data-mee]',el).forEach(b=>b.onclick=()=>meeSpelen(+b.dataset.mee, b.dataset.n));
+  $$('[data-mee]',el).forEach(b=>b.onclick=()=>meeSpelen(+b.dataset.mee, b.dataset.n, b.dataset.id||''));
 }
-function meeSpelen(rak, naam){
-  const seq=bouwGebed(rak);
+function meeSpelen(rak, naam, id){
+  const seq=bouwGebed(rak, id);
   let i=0, vanzelf=false, timer=null, rest=0;
   const stop=()=>{ clearInterval(timer); timer=null; };
   const teken=()=>{
@@ -3296,12 +3404,13 @@ function meeSpelen(rak, naam){
         <button class="icoon" onclick="bladDicht();teken()" aria-label="Sluiten">✕</button></div>
       <div class="voortgang-strip">${seq.map((_,k)=>'<i class="'+(k<=i?'aan':'')+'"></i>').join('')}</div>
       <div class="podium" style="margin-top:14px">${tekenHouding(s.h,s.merk)}
-        <span class="stap-uit tag ${s.soort==='fard'?'fout':'k'}">${s.soort==='fard'?'Moet':'Sunna'}</span></div>
+        <span class="stap-uit tag ${s.soort==='fard'?'fout':(s.soort==='na'?'':'k')}">${etiket(s.soort)}</span></div>
       <h2 style="margin-top:14px">${esc(s.t)}</h2>
       ${q.midden?'<p class="klein">De eerste zitting: alleen de tashahhud, daarna sta je weer op.</p>':''}
       ${q.soera?'<p class="klein">In deze rak\'a lees je na al-Fatiha nog een soera.</p>':''}
       ${t1?(LANG[s.zeg]?blokkenVan(LANG[s.zeg],false):tekstBlok(t1)):''}
       ${t2?tekstBlok(t2):''}
+      ${(s.extra||[]).map(k=>tekstBlok(T[k])).join('')}
       <ul class="net" style="margin-top:10px">${s.doe.slice(0,2).map(d=>'<li>'+d+'</li>').join('')}</ul>
       <div class="rij tussen" style="margin-top:18px">
         <button class="btn ghost sm" id="terug" ${i===0?'disabled':''}>&larr;</button>
@@ -3717,15 +3826,18 @@ function tekenBeloning(){
 let ouderOpen=false;
 function tekenOuder(){
   const el=$('#ouderInhoud'), g=S.gezin;
-  if(g.ouderPin && !ouderOpen){
+  /* Het ouderscherm zit op slot, ook als er geen code is ingesteld — dan geldt
+     de standaardcode. Eerder kon je hier zonder meer in, en dan zet een kind in
+     vijf minuten de stemmen, het weekbudget en de gebedstijden om. */
+  if(!ouderOpen){
     el.innerHTML=`<div class="card" style="max-width:420px">
       <h1>Ouderscherm</h1>
-      <p class="klein" style="margin-top:8px">Voer de code in om verder te gaan.</p>
+      <p class="klein" style="margin-top:8px">Dit scherm is voor papa en mama. Voer de code in om verder te gaan.</p>
       <label class="veld"><span>Code</span><input type="password" id="oPin" inputmode="numeric"></label>
       <div class="rij" style="margin-top:14px"><button class="btn" id="oIn">Openen</button></div>
       <p class="melding" id="oMeld"></p></div>`;
-    $('#oIn').onclick=()=>{ if($('#oPin').value===g.ouderPin){ ouderOpen=true; tekenOuder(); }
-      else { $('#oMeld').textContent='Dat is hem niet.'; $('#oMeld').className='melding fout'; } };
+    $('#oIn').onclick=()=>{ if($('#oPin').value===(g.ouderPin||'1234')){ ouderOpen=true; tekenOuder(); }
+      else { $('#oMeld').textContent='Dat is hem niet.'; $('#oMeld').className='melding fout'; $('#oPin').value=''; } };
     $('#oPin').addEventListener('keydown',e=>{ if(e.key==='Enter') $('#oIn').click(); });
     return;
   }
@@ -3796,32 +3908,38 @@ function tekenOuder(){
         <option value="1" ${S.instel.stem?'selected':''}>Aan — ook waar geen opname is</option>
         <option value="0" ${S.instel.stem?'':'selected'}>Uit — alleen echte opnames</option></select></label>
       <p class="klein" style="margin-top:6px">Zet dit uit als de voorleesstem meer stoort dan helpt. De recitatie en de opnames van thuis blijven dan gewoon spelen; waar niets is, blijft het stil.</p>
-      <label class="veld"><span>Arabische stem</span><select id="iArStem">
+      <label class="veld"><span>Het Arabisch</span><select id="iEcht">
+        <option value="1" ${S.instel.alleenEcht?'selected':''}>Alleen echte opnames (aanbevolen)</option>
+        <option value="0" ${S.instel.alleenEcht?'':'selected'}>Ook de stem van het toestel als er geen opname is</option></select></label>
+      <p class="klein" style="margin-top:6px">Staat dit op "alleen echte opnames", dan hoor je alleen de recitatie van de reciteerder en de opnames die thuis zijn ingesproken. Waar niets is blijft het stil, met een regel erbij. Dat is bewust: een voorleesstem uit een telefoon legt de klemtonen verkeerd, en dat is bij de Koran geen detail.</p>
+      <label class="veld"><span>Snelheid van het Arabisch</span><select id="iArTempo">
+        <option value="0.6" ${S.instel.arTempo==0.6?'selected':''}>Heel langzaam</option>
+        <option value="0.75" ${S.instel.arTempo==0.75?'selected':''}>Langzaam</option>
+        <option value="0.85" ${S.instel.arTempo==0.85?'selected':''}>Rustig</option>
+        <option value="1" ${S.instel.arTempo==1?'selected':''}>Gewoon</option></select></label>
+      ${S.instel.alleenEcht ? '' : `
+      <label class="veld"><span>Arabische stem van het toestel</span><select id="iArStem">
         ${STEM.arLijst.length
           ? STEM.arLijst.map(v=>`<option value="${esc(v.name)}" ${(STEM.ar&&STEM.ar.name===v.name)?'selected':''}>${esc(v.name)} (${esc(v.lang)})</option>`).join('')
           : '<option value="">Geen Arabische stem gevonden</option>'}</select></label>
       <label class="veld"><span>Klinkertekens meelezen</span><select id="iHarakat">
         <option value="1" ${S.instel.harakat?'selected':''}>Ja — met de tekens (meestal beter)</option>
         <option value="0" ${S.instel.harakat?'':'selected'}>Nee — zonder de tekens</option></select></label>
-      <label class="veld"><span>Snelheid van het Arabisch</span><select id="iArTempo">
-        <option value="0.6" ${S.instel.arTempo==0.6?'selected':''}>Heel langzaam</option>
-        <option value="0.75" ${S.instel.arTempo==0.75?'selected':''}>Langzaam</option>
-        <option value="0.85" ${S.instel.arTempo==0.85?'selected':''}>Rustig</option>
-        <option value="1" ${S.instel.arTempo==1?'selected':''}>Gewoon</option></select></label>
       <div class="rij" style="margin-top:12px">
         <button class="btn sm ghost" data-hoor-ar="بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ">🔊 Test: bismillah</button>
-        <button class="btn sm ghost" data-hoor-ar="السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ">🔊 Test: salaam</button>
-      </div>
-      <div class="kader let" style="margin-top:12px"><h4>De stem klinkt niet goed. Wat kun je doen?</h4>
-        <p>De stem komt uit de telefoon zelf, niet uit deze app. Op een iPhone staat standaard de <b>kleine</b> Arabische stem; die klinkt vlak en legt de klemtoon vaak verkeerd. Download de verbeterde versie via <b>Instellingen → Toegankelijkheid → Gesproken materiaal → Stemmen → Arabisch</b> en kies daar de variant met de grootste download. Kom daarna hier terug en kies hem hierboven. Helpt dat niet genoeg, zet dan de klinkertekens uit — sommige stemmen struikelen erover.</p>
-        <p style="margin-top:8px">Blijft het onvoldoende: voor het echte voorzeggen van de Koran is een stem uit de telefoon sowieso niet bedoeld. Zie de knop hieronder om zelf de teksten in te spreken.</p>
-      </div>
+      </div>`}
+      ${S.instel.alleenEcht ? '' : `<div class="kader let" style="margin-top:12px"><h4>De stem klinkt niet goed. Wat kun je doen?</h4>
+        <p>De stem komt uit de telefoon zelf, niet uit deze app. Op een iPhone staat standaard de <b>kleine</b> Arabische stem; die klinkt vlak en legt de klemtoon vaak verkeerd. Download de verbeterde versie via <b>Instellingen → Toegankelijkheid → Gesproken materiaal → Stemmen → Arabisch</b> en kies daar de variant met de grootste download. Helpt dat niet genoeg, zet dan de klinkertekens uit — sommige stemmen struikelen erover.</p>
+        <p style="margin-top:8px">Blijft het onvoldoende, en dat is het meestal: zet hierboven "alleen echte opnames" aan en spreek de teksten zelf in met de knop verderop. Voor het voorzeggen van de Koran is een stem uit een telefoon niet bedoeld.</p>
+      </div>`}
       <label class="veld"><span>Tempo bij meebidden en voorlezen</span><select id="iTempo">
         <option value="0.8" ${S.instel.tempo==0.8?'selected':''}>Rustig</option>
         <option value="1" ${S.instel.tempo==1?'selected':''}>Gewoon</option>
         <option value="1.3" ${S.instel.tempo==1.3?'selected':''}>Vlot</option></select></label>
       <label class="veld"><span>Grote letters</span><select id="iGroot"><option value="0" ${S.instel.groot?'':'selected'}>Nee</option><option value="1" ${S.instel.groot?'selected':''}>Ja</option></select></label>
-      <label class="veld"><span>Code voor dit scherm (leeg = geen slot)</span><input id="iPin" value="${esc(g.ouderPin||'')}" inputmode="numeric"></label>
+      <label class="veld"><span>Code voor het ouderscherm</span><input id="iPin" value="${esc(g.ouderPin||'1234')}" inputmode="numeric"></label>
+      ${(g.ouderPin||'1234')==='1234'?`<div class="kader let" style="margin-top:10px"><h4>Verander deze code</h4>
+        <p>Hij staat nog op <b>1234</b>, en dat raadt een kind binnen een minuut. Vul hierboven iets anders in — dat is het enige dat dit scherm dichthoudt.</p></div>`:''}
       <p class="klein" style="margin-top:10px">Gevonden op dit toestel: <b>${STEM.arLijst.length}</b> Arabische ${STEM.arLijst.length===1?'stem':'stemmen'}${STEM.nl?', en een Nederlandse stem':', geen Nederlandse stem'}.</p>
     </div>
     <div class="card">
@@ -3883,10 +4001,11 @@ function tekenOuder(){
   zetGetal('iStem',v=>S.instel.stem=(v==='1'));
   zetGetal('iTempo',v=>S.instel.tempo=parseFloat(v));
   zetGetal('iGroot',v=>{ S.instel.groot=(v==='1'); document.body.classList.toggle('groot',S.instel.groot); });
-  zetGetal('iArStem',v=>{ S.instel.arStem=v; STEM.zoek(); });
-  zetGetal('iHarakat',v=>S.instel.harakat=(v==='1'));
+  zetGetal('iEcht',v=>S.instel.alleenEcht=(v==='1'));
+  if($('#iArStem')) zetGetal('iArStem',v=>{ S.instel.arStem=v; STEM.zoek(); });
+  if($('#iHarakat')) zetGetal('iHarakat',v=>S.instel.harakat=(v==='1'));
   zetGetal('iArTempo',v=>S.instel.arTempo=parseFloat(v));
-  zetGetal('iPin',v=>S.gezin.ouderPin=String(v||'').trim());
+  zetGetal('iPin',v=>{ const c=String(v||'').trim(); S.gezin.ouderPin = c || '1234'; });
   if($('#wIn')) $('#wIn').onclick=async()=>{
     const a=$('#wAcc').value.trim(), p=$('#wPin').value;
     if(!a||!p) return;
@@ -3925,9 +4044,14 @@ function opnameGroepen(){
     ...regels('h-dhikr','Buiging en knieval'),
     ...regels('h-tashahhud','Tashahhud'),
     ...regels('h-salawat','Salawat'),
+    ...regels('h-dua-salam',"Du'a vóór de slotgroet"),
     {id:'t:salam', ar:T.salam.ar, tr:T.salam.tr, w:'De slotgroet'},
-    {id:'t:qunut', ar:T.qunut.ar, tr:T.qunut.tr, w:'De qunut (lang)'}
+    {id:'t:qunut', ar:T.qunut.ar, tr:T.qunut.tr, w:'De qunut (lang)'},
+    {id:'t:amin', ar:T.amin.ar, tr:T.amin.tr, w:'Amin'}
   ]});
+  uit.push({g:'Na het gebed', items:regels('h-nagebed','Na het gebed')});
+  uit.push({g:'Naast de volgorde', klein:'Niet in het verplichte gebed van deze school, wel goed om te kennen.',
+    items:NAAST.map(x=>({id:T[x.zeg].aid, ar:T[x.zeg].ar, tr:T[x.zeg].tr, w:x.t}))});
   uit.push({g:'Bij de wassing', items:[
     {id:'t:bismillah', ar:'بِسْمِ اللَّهِ', tr:'Bismillah', w:'Aan het begin'},
     {id:'t:wudu-shahada', ar:WUDU[WUDU.length-1].zeg.ar, tr:WUDU[WUDU.length-1].zeg.tr, w:'Aan het einde'}
@@ -4082,9 +4206,30 @@ function teken(){
 }
 $$('.tab').forEach(b=>b.onclick=()=>naarTab(b.dataset.v));
 
+/* Eén keer per toestel de stem-instellingen terugzetten op wat er thuis is
+   afgesproken: het Arabisch alleen uit echte opnames, in het rustige tempo, en
+   geen zelfgekozen stem van het toestel meer. Het stempel `stemV` zorgt dat dit
+   precies één keer gebeurt en daarna nooit meer — verandert er later iets aan
+   de afspraak, dan hoogt een nieuwe versie het opnieuw op.
+
+   Dit loopt ook na het gelijktrekken, want anders komt de oude stand gewoon
+   weer terug via de centrale opslag van een ander toestel. */
+const STEM_VERSIE = 1;
+function stemHerstel(){
+  if((S.instel.stemV||0) >= STEM_VERSIE) return false;
+  S.instel.alleenEcht = true;
+  S.instel.arStem     = '';
+  S.instel.arTempo    = .85;
+  S.instel.harakat    = true;
+  S.instel.tempo      = 1;
+  S.instel.stemV      = STEM_VERSIE;
+  try{ STEM.zoek(); }catch(e){}
+  return true;
+}
+
 async function gelijktrekken(eerste){
   const ver=await WOLK.ophalen();
-  if(ver && (ver.profielen||ver.data)){ S=samenvoegen(S,ver); }
+  if(ver && (ver.profielen||ver.data)){ S=samenvoegen(S,ver); stemHerstel(); }
   S.last=new Date().toISOString();
   store.set(S);
   await WOLK.bewaar(S,true);
@@ -4094,6 +4239,7 @@ async function gelijktrekken(eerste){
 (async function start(){
   const lokaal=await store.get();
   if(lokaal) S=Object.assign(leegS(), lokaal, {gezin:Object.assign(leegS().gezin, lokaal.gezin||{}), instel:Object.assign(leegS().instel, lokaal.instel||{})});
+  stemHerstel();
   document.body.classList.toggle('groot', !!S.instel.groot);
   STEM.zoek();                       // nu pas is de voorkeursstem bekend
   await AUDIO.lees();                // eigen opnames en meegeleverde recitatie

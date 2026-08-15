@@ -1,6 +1,6 @@
 # BennaHub
 
-Eén startpagina, zes apps. Alles is statische HTML: geen build-stap, geen server,
+Eén startpagina, zeven apps. Alles is statische HTML: geen build-stap, geen server,
 geen dependencies behalve de Latijnse letters van Google Fonts — het Arabisch
 staat in de repo zelf. Wat hier staat, is wat er draait.
 
@@ -17,6 +17,7 @@ rasikh/             Rasikh — de Koran memoriseren (voor volwassenen)
   tekst/              de hele Koran: 114 soera's, 6236 aya, plus de verwarpunten
   audio/              recitatie per aya, op te halen met het script dat er staat
 bunyan/index.html   Bunyan — leren coderen en een pc bouwen (vanaf 10 jaar)
+spellen/index.html  Raha — de spelletjes, los van de huiswerkapp
 fonts/              Amiri, het Arabische lettertype van alle apps
 ```
 
@@ -73,6 +74,30 @@ weegt zwaarder dan het vermijden van die dubbeling.
 
 ## Noer Islam
 
+### Het gebed compleet
+
+Wat er in de volgorde ontbrak is toegevoegd, ook waar het geen plicht is:
+
+- de **qunut** stond wel als tekst in de app maar niet in de volgorde; hij zit nu
+  als eigen stap in de tweede rak'a van de Fajr, en alleen daar;
+- de **du'a vóór de slotgroet** (bescherming tegen vier dingen) ontbrak helemaal,
+  terwijl de stap ernaast al zei "daarna mag je vragen wat je wilt";
+- de **dhikr ná de slotgroet** — istighfar, *allahumma anta s-salam*, 33/33/33 en
+  de tahlil — stond alleen in een les over dhikr, niet in het gebedsonderdeel;
+- **al-Humaza (104)** ontbrak in de rij soera's om uit het hoofd te leren: die
+  liep van 114 terug naar 105 en sprong dan naar 103.
+
+Daarnaast een blok **Naast de volgorde** met de openingsdu'a, het zoeken van
+bescherming en *amin*. Die horen in de Malikitische school niet in het verplichte
+gebed, en daarom staan ze niet tússen de stappen — maar wel eronder, met uitleg,
+want in een vrijwillig gebed mogen ze wel en de meeste andere scholen zeggen ze
+altijd.
+
+De stappen dragen nu drie etiketten in plaats van twee: *moet*, *sunna* en *na
+het gebed*. Het examen over de volgorde blijft over de twaalf kernstappen gaan;
+de qunut hoort alleen bij één gebed en de dhikr komt ná de slotgroet, dus die
+tellen daar niet in mee.
+
 Veertien modules met vierenzeventig lessen over de basis van de islam — geloof,
 de vijf zuilen, reinheid, het gebed, de Koran, de seerah, gedrag, du'a, de
 kalender, het leven hier, de soennah en de hadithwetenschap, de geschiedenis van
@@ -93,10 +118,10 @@ jaar" erbij — dat scheelt uitleg en geeft de jongsten iets om naar uit te kijk
 De gebedshoudingen en de wassing zijn getekende SVG's en de geluidjes komen uit
 de Web Audio API, dus daar zijn geen bestanden voor nodig.
 
-**Het geluid bij de Arabische teksten** komt uit drie bronnen, in deze volgorde:
-een opname die thuis zelf is ingesproken, anders een meegeleverd recitatiefragment
-uit `noer/audio/`, en anders de stem van het toestel. Die laatste is het
-noodvangnet: een voorleesstem is geen reciteerder, en dat hoor je.
+**Het geluid bij de Arabische teksten** komt uit een opname die thuis zelf is
+ingesproken, en anders uit een meegeleverd recitatiefragment uit `noer/audio/`.
+De stem van het toestel wordt daar níet meer achteraan geplakt — zie *Het
+Arabisch komt alleen uit opnames* hieronder.
 
 De recitatie zit niet in de repository maar wordt opgehaald met
 `node noer/audio/haal-recitatie.mjs --basis="…"`; zie `noer/audio/LEESMIJ.md`
@@ -243,6 +268,69 @@ tijd. Een gewone les € 0,40, een project € 1,50, met een hard weekplafond
 (standaard € 6) en uitbetalen door de ouder. Punten, rangen en insignes lopen
 dóór als het budget op is — leren stopt niet als het geld stopt.
 
+## Raha — de spelletjes
+
+De spelletjes zaten tot augustus 2026 verstopt in de huiswerkapp, achter een knop
+op het beginscherm. Nu staan ze als eigen app op de startpagina: dertien stuks,
+plus de twee grote die als eigen bestand naast de huiswerkapp blijven wonen
+(AminoQMc en de Verkeersschool).
+
+De naam betekent *rust*. De religieuze toets zit in de naam en het onderschrift,
+niet in de spelletjes zelf — een spel dat stiekem een les is, is geen van beide.
+Wat de app wél doet is niets doen om je langer vast te houden dan je van plan
+was: geen meldingen, geen dagelijkse beloning, geen reclame, geen eindeloze
+reeks. De grap staat onderaan, één regel, elke keer een andere.
+
+Twaalf spellen komen uit de huiswerkapp en zijn overgezet naar gewone
+JavaScript; **Letterjacht** is nieuw en oefent de Arabische letters die in Lisan
+geleerd worden. Het geheugenspel kan met plaatjes of met Arabische letters.
+
+De **records** verhuizen mee: bij de eerste opening leest Raha de oude
+`oefenapp_v1`-opslag en neemt de topscores over. Ze gaan verder via dezelfde
+`WOLK` als de andere apps, met één verschil in het samenvoegen — bij het
+geheugenspel is *minder* beter, dus daar wint het laagste getal.
+
+In de huiswerkapp blijven de twee knoppen staan, inclusief de instelling
+*spelletjes pas na het dagdoel*; ze verwijzen nu naar `/spellen/`.
+
+## Het ouderscherm zit op slot
+
+Elk beheerscherm vraagt een code voordat er iets te veranderen valt. Dat was er
+niet, en het gevolg was voorspelbaar: een kind dat de stemmen, het weekbudget en
+de gebedstijden omzette omdat het kon.
+
+| App | Wat er achter de code zit |
+|---|---|
+| Noer Islam | het hele ouderscherm: kinderen, budget, gebedstijden, stemmen, opnames, uitbetalen |
+| Bunyan | het hele ouderscherm: tarieven, weekbudget, voortgang, uitbetalen |
+| Lisan | het hele ouderscherm: profielen, sporen, back-up, alles wissen |
+| Raha | inloggen en records wissen — het geluid mag een kind zelf aan- en uitzetten |
+| Huiswerk | had dit al (de bestaande PIN, standaard 1234) |
+| Rasikh, Sanad | geen slot; dat zijn de apps van de ouder zelf |
+
+De standaardcode is **1234**, dezelfde die de huiswerkapp altijd al had. Zolang
+hij daarop staat toont elk ouderscherm een waarschuwing om hem te veranderen —
+dat is het enige dat het scherm dichthoudt. Het veld leeg laten kan niet meer;
+dan geldt weer 1234. Eerder betekende leeg *geen slot*, en dat was precies het
+gat.
+
+## Het Arabisch komt alleen uit opnames
+
+Noer Islam speelde bij Arabische tekst zonder opname de stem van het toestel af.
+Die legt klemtonen verkeerd en spreekt de Koran uit als een voorleesrobot; bij
+het gebed en de Koran is dat geen detail. Er is nu één schakelaar, **"alleen
+echte opnames"**, en die staat standaard aan: je hoort de recitatie van de
+reciteerder en wat er thuis is ingesproken, en verder blijft het stil — met een
+regel erbij die zegt waar je het inspreekt. Zet de ouder hem uit, dan komen de
+keuze van de toestelstem en de uitleg over betere stemmen weer tevoorschijn.
+
+Alle toestellen worden één keer teruggezet op wat er thuis is afgesproken:
+`alleenEcht` aan, geen zelfgekozen toestelstem meer, klinkertekens aan en het
+rustige tempo. Een stempel (`instel.stemV`) zorgt dat dit precies één keer per
+toestel gebeurt en daarna nooit meer — een latere bewuste keuze van de ouder
+blijft dus staan. Het herstel loopt ook ná het gelijktrekken, want anders komt
+de oude stand gewoon via een ander toestel terug.
+
 ## De AI-functies in Sanad
 
 *Doorvragen* en *laat meelezen* praten rechtstreeks met de Anthropic-API vanuit de
@@ -256,8 +344,8 @@ serverless functie, dan hoeft de sleutel de browser niet meer in.
 ## Onderhoud
 
 De huiswerkapp bouw je zoals altijd: bewerk `huiswerk/index.dev.html` en compileer
-naar `huiswerk/index.html` (zie `BUILD.md`). Noer Islam, Sanad, Lisan, Rasikh en
-Bunyan zijn gewone HTML — openen, bewerken, klaar. In Noer Islam staat de leerstof
+naar `huiswerk/index.html` (zie `BUILD.md`). Noer Islam, Sanad, Lisan, Rasikh,
+Bunyan en Raha zijn gewone HTML — openen, bewerken, klaar. In Noer Islam staat de leerstof
 bovenaan het scriptblok als gewone lijsten (`MODULES`, `WUDU`, `STAPPEN`, `HIFZ`,
 `DUAS`); wie de inhoud wil aanpassen hoeft de schermcode niet aan te raken. In
 Rasikh zit de stof niet in het bestand maar in `rasikh/tekst/`; de app zelf bevat

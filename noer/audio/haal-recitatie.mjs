@@ -54,6 +54,7 @@ const TEKSTEN = [
   { id:'h-maun',     soera:107, regels:7 },
   { id:'h-quraysh',  soera:106, regels:4 },
   { id:'h-fil',      soera:105, regels:5 },
+  { id:'h-humaza',   soera:104, regels:9 },
   { id:'h-asr',      soera:103, regels:3 },
 ];
 
