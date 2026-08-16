@@ -119,6 +119,45 @@ geldigheid van je gebed. Het examen over de volgorde loopt van de intentie tot
 de slotgroet; de qunut hoort alleen bij één gebed en de dhikr komt ná de
 slotgroet, dus die twee tellen daar niet in mee.
 
+### Bijzondere gebeden
+
+Een eigen tabblad onder *Leren bidden*, voor de gebeden die niet elke dag
+terugkomen. De vijf dagelijkse gebeden leer je vanzelf, door ze te doen. Deze
+niet: het feestgebed komt twee keer per jaar langs, en het gebed bij een
+overledene komt precies op de dag dat niemand in huis rustig kan nadenken.
+Daarom staan ze uitgeschreven, met wat je doet, wat je zegt en wat er wél en
+niet moet.
+
+Zeven gebeden, elk met een etiket voor de regel — *verplicht*, *plicht van de
+gemeenschap* (fard kifaya), *sterk aanbevolen* — plus wanneer, hoeveel rak'a,
+de stappen op volgorde, een "let op" en de tips:
+
+- **het vrijdaggebed** — inclusief dat de khutba in deze school een voorwaarde
+  is, en dat wie de tweede rak'a niet meer haalt gewoon Dhuhr bidt;
+- **het feestgebed** — zeven takbirs in de eerste rak'a en zes in de tweede
+  (Malikitisch geteld, de openingstakbir en de opsta-takbir meegerekend), geen
+  adhan, geen iqama, en de preek erná;
+- **het gebed bij een overledene** — vier takbirs, staand, geen buiging en geen
+  knieval, geen al-Fatiha en de handen alleen omhoog bij de eerste takbir;
+- **bidden op reis**, **de verduistering**, **om regen vragen** en **de
+  istikhara**.
+
+Direct achter het janaza-gebed staat **Rond een overlijden**: het nieuws, de
+wassing, het gebed, het graf, condoleren en wat daarna helpt — met de teksten
+erbij. Uitgeschreven omdat niemand op zo'n dag iets kan opzoeken. Er staat ook
+in dat huilen mag en jammeren niet, en dat kinderen gerust mee mogen.
+
+Tien nieuwe teksten met Arabisch, omschrijving, uitspraak in Nederlandse klanken
+en betekenis: de takbir van het feest, de du'a bij een overledene en die bij een
+overleden kind, *inna lillahi wa inna ilayhi raji'un*, de du'a bij verdriet, de
+zin waarmee je condoleert, wat je zegt bij het graf, de groet aan het kerkhof,
+de du'a van de istikhara en die om regen. Ze staan ook in de opnamestudio onder
+*Ouder → eigen stem opnemen*, en in `maak-stemmen.mjs`.
+
+Verschillen tussen de scholen zijn hier groter dan bij het dagelijkse gebed, en
+gebruiken verschillen per land en per moskee. Dat staat er onderaan ook zo bij:
+sta je ergens anders mee te bidden, kijk naar de imam.
+
 **De wassing** kreeg bij elke stap een tip uit de praktijk: je ring afdoen omdat
 er anders geen water onderdoor komt, je mouw ruim genoeg opstropen, nieuw water
 pakken voor je oren, en tussen je tenen afdrogen. Ook daar staat nu een legenda
