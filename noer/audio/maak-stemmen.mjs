@@ -76,6 +76,7 @@ const T = lees(bron, 'T'), HIFZ = lees(bron, 'HIFZ'), DUAS = lees(bron, 'DUAS'),
 const regelsVan = id => (HIFZ.find(h => h.id === id) || { r: [] }).r;
 
 const WERK = [
+  ...regelsVan('h-iqama').map((r, i)      => ({ id:'q:h-iqama:' + (i+1),      ar:r[0], wat:'Iqama ' + (i+1) })),
   { id:'t:takbir', ar:T.takbir.ar, wat:'De takbir' },
   ...regelsVan('h-dhikr').map((r, i)      => ({ id:'q:h-dhikr:' + (i+1),      ar:r[0], wat:'Buiging en knieval ' + (i+1) })),
   ...regelsVan('h-tashahhud').map((r, i)  => ({ id:'q:h-tashahhud:' + (i+1),  ar:r[0], wat:'Tashahhud ' + (i+1) })),

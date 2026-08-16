@@ -93,6 +93,13 @@ gebed, en daarom staan ze niet tússen de stappen — maar wel eronder, met uitl
 want in een vrijwillig gebed mogen ze wel en de meeste andere scholen zeggen ze
 altijd.
 
+**De iqama** ontbrak helemaal. Hij is nu de eerste stap van elk verplicht gebed,
+met de tien zinnen erbij. In de Malikitische school is de iqama *enkel*: elke zin
+één keer, alleen de takbir twee keer, en "qad qamati s-salah" ook maar één keer —
+andere scholen verdubbelen, en dat hoor je in sommige moskeeën. Bij een
+vrijwillig gebed en bij de witr komt hij niet, en in *Bid mee* verschijnt hij dan
+ook niet.
+
 **De soera na al-Fatiha is een eigen stap geworden.** Hij stond er als zinnetje
 onder de Fatiha — "in deze rak'a lees je nog een soera" — en dat is precies hoe
 je hem in het echt ook overslaat. In *Bid mee* kiest de app nu twee verschillende
@@ -122,7 +129,7 @@ de vijf zuilen, reinheid, het gebed, de Koran, de seerah, gedrag, du'a, de
 kalender, het leven hier, de soennah en de hadithwetenschap, de geschiedenis van
 na de Profeet ﷺ tot en met al-Andalus en de Maghreb, de betekenis van de soera's
 die je uit je hoofd leert, en de grote vragen voor de oudsten. Daarnaast een
-gebedsonderdeel dat het leren bidden helemaal afdekt: de wassing, de zestien
+gebedsonderdeel dat het leren bidden helemaal afdekt: de wassing, de zeventien
 onderdelen van het gebed, een meebid-oefening voor elk van de vijf gebeden,
 vijftien teksten om uit het hoofd te leren, de du'a's van de dag, een overzicht
 van alle gebeden en wat te doen als het misgaat. De fiqh volgt de Malikitische

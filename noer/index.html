@@ -2141,6 +2141,9 @@ const T = {
 const etiket = s => s==='fard' ? 'Moet' : s==='na' ? 'Na het gebed' : 'Sunna';
 
 const STAPPEN = [
+ {k:'iqama', t:'De iqama', h:'staan', merk:null, soort:'sunna', zeg:'iqama',
+  doe:['Ga staan met je gezicht naar de qibla, vóór je aan het gebed begint.','Zeg de tien zinnen hardop, of zachtjes als je alleen bidt.','Bij "qad qamati s-salah" sta je klaar; daarna begin je met de intentie en de takbir.'],
+  let:'De iqama hoort bij de vijf verplichte gebeden, ook als je alleen thuis bidt — dan mag hij zacht. Bij een vrijwillig gebed en bij de witr zeg je hem niet. In de Malikitische school is de iqama <b>enkel</b>: elke zin één keer, alleen de takbir twee keer, en "qad qamati s-salah" ook maar één keer. Andere scholen verdubbelen; dat hoor je in sommige moskeeën. Het roepen is in deze school aan de mannen; meeleren mag iedereen.'},
  {k:'niyyah', t:'Intentie en staan', h:'staan', merk:null, soort:'fard',
   doe:['Sta recht, met je voeten stevig op de grond en je gezicht naar de qibla.','Weet in je hart welk gebed je gaat bidden. Niets hardop.','Kijk naar de plek waar je hoofd straks komt.']},
  {k:'takbir', t:'De openingstakbir', h:'takbir', merk:[131,60,24], soort:'fard', zeg:'takbir',
@@ -2362,6 +2365,15 @@ const HIFZ = [
      ['رَبَّنَا وَلَكَ الْحَمْدُ','Rabbana wa laka l-hamd','Onze Heer, aan U komt alle lof toe — als je rechtop staat','RAB-ba-naa wa LA-ka l-HAMD'],
      ['سُبْحَانَ رَبِّيَ الْأَعْلَى','Subhana rabbiya l-a\'la','Volmaakt is mijn Heer, de Allerhoogste — in de knieval','soeb-HAA-na RAB-bi-ya l-A‘-laa'],
      ['رَبِّ اغْفِرْ لِي','Rabbi ghfir li','Heer, vergeef mij — tussen de twee knievallen','RAB-bigh-FIR lie']]},
+ {id:'h-iqama', naam:'De iqama', ar:'الإقامة', soort:'gebed', waarom:'De oproep vlak voordat het gebed begint. Tien zinnen, elk één keer — behalve de takbir.',
+  r:[['اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ','Allahu akbar, Allahu akbar','Allah is groter, Allah is groter','al-LAA-hoe AK-bar · al-LAA-hoe AK-bar'],
+     ['أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ','Ashhadu an la ilaha illa llah','Ik getuig dat er geen god is dan Allah','asj-HA-doe an laa i-LAA-ha il-la l-LAAH'],
+     ['أَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ','Ashhadu anna Muhammadan rasulu llah','Ik getuig dat Mohammed de boodschapper van Allah is','asj-HA-doe AN-na moe-HAM-ma-dan ra-SOE-loe l-LAAH'],
+     ['حَيَّ عَلَى الصَّلَاةِ','Hayya \'ala s-salah','Kom naar het gebed','HAY-ya ‘a-la s-sa-LAAH'],
+     ['حَيَّ عَلَى الْفَلَاحِ','Hayya \'ala l-falah','Kom naar wat je redt','HAY-ya ‘a-la l-fa-LAAH'],
+     ['قَدْ قَامَتِ الصَّلَاةُ','Qad qamati s-salah','Het gebed begint nu','qad QAA-ma-ti s-sa-LAAH'],
+     ['اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ','Allahu akbar, Allahu akbar','Allah is groter, Allah is groter','al-LAA-hoe AK-bar · al-LAA-hoe AK-bar'],
+     ['لَا إِلَٰهَ إِلَّا اللَّهُ','La ilaha illa llah','Er is geen god dan Allah','laa i-LAA-ha il-la l-LAAH']]},
  {id:'h-nagebed', naam:'Na het gebed', ar:'أذكار بعد الصلاة', soort:'gebed', waarom:'Wat je zegt als je na de slotgroet nog even blijft zitten.',
   r:[['أَسْتَغْفِرُ اللَّهَ','Astaghfiru llah','Ik vraag Allah om vergeving — drie keer','as-tagh-FI-roe l-LAAH'],
      ['اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ','Allahumma anta s-salamu wa minka s-salam, tabarakta ya dha l-jalali wa l-ikram','Allah, U bent de Vrede en van U komt de vrede; gezegend bent U, Bezitter van majesteit en eer'],
@@ -2791,7 +2803,7 @@ function tekstBlok(o, opt){
 /* Al-Fatiha is te lang voor één blok: die zetten we vers voor vers neer, zoals
    je hem ook leert. */
 /* Teksten die te lang zijn voor één blok, staan al regel voor regel in HIFZ. */
-const LANG={fatiha:'h-fatiha', tashahhud:'h-tashahhud', salawat:'h-salawat'};
+const LANG={iqama:'h-iqama', fatiha:'h-fatiha', tashahhud:'h-tashahhud', salawat:'h-salawat'};
 function blokkenVan(hifzId, opnemen){
   const h=HIFZ.find(x=>x.id===hifzId); if(!h) return '';
   return '<div class="stack">'
@@ -3237,7 +3249,7 @@ function wuduKlaar(){
 
 /* Examen: de stappen op de goede volgorde zetten. Eén fout mag. */
 function examenVolgorde(soort){
-  const bron = soort==='wudu' ? WUDU.map(w=>({id:w.id,t:w.t})) : STAPPEN.filter(s=>!['opstaan','qunut','nagebed'].includes(s.k)).map(s=>({id:s.k,t:s.t}));
+  const bron = soort==='wudu' ? WUDU.map(w=>({id:w.id,t:w.t})) : STAPPEN.filter(s=>!['iqama','opstaan','qunut','nagebed'].includes(s.k)).map(s=>({id:s.k,t:s.t}));
   const juist = bron.map(b=>b.id);
   let gelegd=[], fouten=0;
   const teken=()=>{
@@ -3330,7 +3342,7 @@ function stapLoop(i){
       <span class="stap-uit tag ${s.soort==='fard'?'fout':(s.soort==='na'?'':'k')}">${etiket(s.soort)}</span></div>
     <h2 style="margin-top:16px">${esc(s.t)}</h2>
     <ul class="net" style="margin-top:10px">${s.doe.map(d=>'<li>'+d+'</li>').join('')}</ul>
-    ${t1?(LANG[s.zeg]?blokkenVan(LANG[s.zeg],true):tekstBlok(t1,{opnemen:true})):''}
+    ${LANG[s.zeg]?blokkenVan(LANG[s.zeg],true):(t1?tekstBlok(t1,{opnemen:true}):'')}
     ${t2?tekstBlok(t2):''}
     ${(s.extra||[]).map(k=>tekstBlok(T[k])).join('')}
     ${s.let?'<div class="kader let" style="margin-top:14px"><h4>Let op</h4><p>'+s.let+'</p></div>':''}
@@ -3341,7 +3353,8 @@ function stapLoop(i){
   $('#vorige').onclick=()=>stapLoop(i-1);
   $('#volgende').onclick=()=>stapLoop(i+1);
   zetOpname();
-  if(t1 && !LANG[s.zeg]) AUDIO.speel(t1.aid||'', t1.ar);
+  if(LANG[s.zeg]){ const h=HIFZ.find(x=>x.id===LANG[s.zeg]); if(h) AUDIO.speelReeks(h.r.map((x,i)=>['q:'+h.id+':'+(i+1),x[0]])); }
+  else if(t1) AUDIO.speel(t1.aid||'', t1.ar);
 }
 
 /* Opnemen en terugluisteren: hoor jezelf naast de voorgelezen tekst. */
@@ -3366,7 +3379,7 @@ function zetOpname(){
 }
 
 /* ------------------------------- bid mee ------------------------------- */
-const DUUR={niyyah:5, takbir:3, fatiha:24, soera:8, qunut:20, ruku:7, itidal:5, sujud1:7, jalsa:5, sujud2:7,
+const DUUR={iqama:22, niyyah:5, takbir:3, fatiha:24, soera:8, qunut:20, ruku:7, itidal:5, sujud1:7, jalsa:5, sujud2:7,
             opstaan:4, tashahhud:15, salawat:13, dua:12, salam:4, nagebed:25};
 /* Twee verschillende korte soera's voor de eerste twee rak'a: dat is hoe het
    in het echt gaat, en het oefent er meteen twee in plaats van één. */
@@ -3378,6 +3391,9 @@ function kiesSoeras(){
 function bouwGebed(rak, id, soeras){
   soeras = soeras || kiesSoeras();
   const seq=[];
+  /* De iqama hoort bij de vijf verplichte gebeden. Bij een vrijwillig gebed en
+     bij de witr niet, en daar geven de knoppen dan ook geen `id` mee. */
+  if(id) seq.push({k:'iqama',r:1});
   for(let r=1;r<=rak;r++){
     if(r===1){ seq.push({k:'niyyah',r}); seq.push({k:'takbir',r}); }
     else seq.push({k:'opstaan',r});
@@ -3436,7 +3452,7 @@ function meeSpelen(rak, naam, id, soeras){
       ${q.midden?'<p class="klein">De eerste zitting: alleen de tashahhud, daarna sta je weer op.</p>':''}
       ${q.soera?'<div class="rij tussen" style="margin-top:10px"><p class="meta">'+esc(q.soera.naam)+' · '+q.soera.aya+' regels</p>'+
         '<button class="btn ghost sm" id="andere">Andere soera</button></div>'+blokkenVan(q.soera.id,false):''}
-      ${t1?(LANG[s.zeg]?blokkenVan(LANG[s.zeg],false):tekstBlok(t1)):''}
+      ${LANG[s.zeg]?blokkenVan(LANG[s.zeg],false):(t1?tekstBlok(t1):'')}
       ${t2?tekstBlok(t2):''}
       ${(s.extra||[]).map(k=>tekstBlok(T[k])).join('')}
       <ul class="net" style="margin-top:10px">${s.doe.map(d=>'<li>'+d+'</li>').join('')}</ul>
@@ -3461,8 +3477,9 @@ function meeSpelen(rak, naam, id, soeras){
       herstart();
     };
     if(q.soera){ const h=q.soera; AUDIO.speelReeks(h.r.map((x,n)=>['q:'+h.id+':'+(n+1),x[0]])); }
-    else if(t1){ if(LANG[s.zeg]){ const h=HIFZ.find(x=>x.id===LANG[s.zeg]); AUDIO.speelReeks(h.r.map((x,i)=>['q:'+h.id+':'+(i+1),x[0]])); }
-            else AUDIO.speel(t1.aid||'', t1.ar); } else toon('tik');
+    else if(LANG[s.zeg]){ const h=HIFZ.find(x=>x.id===LANG[s.zeg]); AUDIO.speelReeks(h.r.map((x,i)=>['q:'+h.id+':'+(i+1),x[0]])); }
+    else if(t1) AUDIO.speel(t1.aid||'', t1.ar);
+    else toon('tik');
   };
   const vooruit=()=>{
     if(i>=seq.length-1){ stop(); return klaar(); }
@@ -4077,6 +4094,7 @@ function tekenOuder(){
 function opnameGroepen(){
   const uit=[];
   const regels=(id,naam)=>{ const h=HIFZ.find(x=>x.id===id); return h?h.r.map((r,i)=>({id:'q:'+h.id+':'+(i+1), ar:r[0], tr:r[1], w:naam+' · regel '+(i+1)})):[]; };
+  uit.push({g:'Voor het gebed', items:regels('h-iqama','Iqama')});
   uit.push({g:'De zinnen in het gebed', items:[
     {id:'t:takbir', ar:T.takbir.ar, tr:T.takbir.tr, w:'De takbir'},
     ...regels('h-dhikr','Buiging en knieval'),
