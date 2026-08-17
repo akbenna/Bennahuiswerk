@@ -199,9 +199,8 @@ spaarpot terechtkomen. Dat is nu weg:
 ### Het geboortejaar, en waar het wél en niet over gaat
 
 Het jaar staat één keer bij het lid (`geboren` op `bennahub_leden`) en is aan te
-passen in het ouderoverzicht. De jaren zijn afgeleid uit de schoolniveaus die al
-in de huiswerkapp stonden (groep 8 = 2014, en van daaruit één jaar per
-schooljaar): Selma 2017, Amine 2014, Wassima 2012, Amaani 2010. **Kijk ze na.**
+passen in het ouderoverzicht: Selma 2018, Amine 2015, Wassima 2012, Amaani 2010.
+Door de ouder opgegeven, niet afgeleid.
 
 Maar leeftijd is niet overal het goede aanknopingspunt, en dat scheelt per app:
 
