@@ -196,18 +196,32 @@ spaarpot terechtkomen. Dat is nu weg:
   kijken. Een ouder krijgt géén eigen profiel aangemaakt: die komt kijken, niet
   meedoen.
 
-### Het geboortejaar
+### Het geboortejaar, en waar het wél en niet over gaat
 
-Beide apps kiezen hun leerlijn op leeftijd. Zolang dat per app apart werd
-ingevuld, kon hetzelfde kind in de ene app op spoor 2 staan en in de andere op
-spoor 3. Het jaar staat nu één keer bij het lid (`geboren` op `bennahub_leden`)
-en beide apps maken er hun eigen spoor uit. Wijzig je het in het ouderoverzicht,
-dan schuift het spoor mee — behalve waar het spoor met de hand is vastgezet.
+Het jaar staat één keer bij het lid (`geboren` op `bennahub_leden`) en is aan te
+passen in het ouderoverzicht. De jaren zijn afgeleid uit de schoolniveaus die al
+in de huiswerkapp stonden (groep 8 = 2014, en van daaruit één jaar per
+schooljaar): Selma 2017, Amine 2014, Wassima 2012, Amaani 2010. **Kijk ze na.**
 
-De jaren zijn afgeleid uit de schoolniveaus die al in de huiswerkapp stonden
-(groep 8 = 2014, en van daaruit één jaar per schooljaar): Selma 2017, Amine
-2014, Wassima 2012, Amaani 2010. **Kijk ze na** — klopt het jaar niet, dan krijgt
-een kind te makkelijke of te moeilijke stof.
+Maar leeftijd is niet overal het goede aanknopingspunt, en dat scheelt per app:
+
+- **Islam leren** bouwt zijn leerlijn wél op leeftijd op. De stof loopt mee met
+  wat een kind aankan, en dat volgt de schoolleeftijd redelijk.
+- **Arabisch niet.** Hoe ver iemand met Arabisch is, staat los van hoe oud hij
+  is: een kind van vijftien dat het nooit heeft gehad begint bij de letters, en
+  een kind van acht dat thuis al leest hoort niet op spoor 1. Daar is de
+  **niveaubepaling** voor — achttien vragen die oplopen van letterherkenning tot
+  lezen.
+
+Die toets zette tot nu toe alleen de startweek van het jaarplan, terwijl het
+spoor ondertussen op leeftijd bleef staan. Dat is rechtgezet: **de uitslag van de
+niveaubepaling bepaalt nu het spoor**, en vanaf dat moment rekent de app het
+nooit meer terug uit de leeftijd. Het geboortejaar houdt daar alleen nog de
+leeftijd bij, en dient als eerste gok zolang de toets niet gedaan is.
+
+In het ouderscherm staat er daarom bij waar het spoor vandaan komt — *uit de
+niveaubepaling*, *op leeftijd* of *handmatig* — en kun je alle drie kiezen. Laat
+de toets staan tenzij je zeker weet dat hij ernaast zit.
 
 ## Centrale opslag
 

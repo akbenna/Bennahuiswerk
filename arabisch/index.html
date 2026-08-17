@@ -2372,6 +2372,9 @@ function maakProfiel(naam, leeftijd, intentie){
   const spoor = spoorBijLeeftijd(leeftijd);
   S.profielen[id] = {
     id, naam, leeftijd, spoor, spoorHandmatig:false,
+    /* Waar het spoor vandaan komt: 'leeftijd' is een gok tot de niveaubepaling
+       is gedaan, 'toets' is het echte antwoord, 'hand' is door de ouder gezet. */
+    spoorBron: 'leeftijd',
     intentie: intentie || '',
     gemaakt: vandaag(),
     dagdoel: spoor === 1 ? 15 : spoor === 2 ? 25 : spoor === 3 ? 40 : 60,
@@ -2420,11 +2423,17 @@ function zelfKoppelen(){
     const leeftijd = w.geboren ? (new Date()).getFullYear() - w.geboren : 12;
     p = maakProfiel(naam, leeftijd, '');
   }
-  /* Is het jaar centraal bijgesteld en staat het spoor hier nog niet met de hand
-     vast, dan trekken we het spoor mee. */
-  if(w.geboren && !p.spoorHandmatig){
-    const nieuwSpoor = spoorBijLeeftijd((new Date()).getFullYear() - w.geboren);
-    if(p.spoor !== nieuwSpoor){ p.spoor = nieuwSpoor; p.leeftijd = (new Date()).getFullYear() - w.geboren; }
+  /* Het geboortejaar van de startpagina houdt hier alleen de leeftijd bij. Het
+     spoor raken we niet aan: Arabisch is geen schoolvak dat met je leeftijd
+     meegroeit. Een kind van vijftien dat nooit Arabisch heeft gehad begint bij
+     de letters, en een kind van acht dat thuis al leest hoort niet op spoor 1.
+     Daar is de niveaubepaling voor, en die wint. */
+  if(w.geboren){
+    const lft = (new Date()).getFullYear() - w.geboren;
+    if(p.leeftijd !== lft) p.leeftijd = lft;
+    /* Alleen bij een gloednieuw profiel zonder toets is de leeftijd een betere
+       gok dan niets. Zodra de toets gedaan is, komt hier niets meer aan. */
+    if(!p.jaar && p.spoorBron !== 'toets' && !p.spoorHandmatig) p.spoor = spoorBijLeeftijd(lft);
   }
   kiesProfiel(p.id);
   return true;
@@ -3265,6 +3274,17 @@ function startJaar(niveau, week, score){
     meting: { d: vandaag(), score, totaal: METING.length },
     sessies: {}, toetsen: {}
   };
+  /* De niveaubepaling zette tot nu toe alleen de startweek van het jaarplan; het
+     spoor bleef ondertussen op leeftijd staan. Dat is precies verkeerd om: hoe
+     ver iemand met Arabisch is, heeft niets met zijn leeftijd te maken. Het
+     resultaat van de toets bepaalt nu het spoor, en vanaf dat moment rekent de
+     app het nooit meer terug uit de leeftijd.
+
+     Verandert het spoor, dan begint het leerpad opnieuw te tellen — de
+     herhalingskaarten blijven staan, dus er gaat niets verloren. */
+  if(P.spoor !== niveau){ P.spoor = niveau; P.blok = 0; }
+  P.spoorBron = 'toets';
+  P.spoorHandmatig = false;
   bewaar();
 }
 
@@ -3394,7 +3414,10 @@ function metingKlaar(goed, per){
     '</div>' +
     '<p class="klein muted" style="margin-top:12px">Het programma begint voor jou bij week ' + nv.week + '. Je kunt altijd terug naar een eerdere week — in het jaarplan tik je gewoon op het weeknummer.</p>' +
     '<div class="rij" style="margin-top:16px"><button class="k vol" id="metingOk">Begin bij week ' + nv.week + '</button></div>');
-  $('#metingOk').onclick = () => { startJaar(nv.niveau, nv.week, goed); sluitBlad(); tekenJaarplan(); };
+  /* Het spoor kan door de toets veranderd zijn, en daarmee ook welke kaarten in
+     het leerpad horen. Zonder herbouwen blijf je het pad van het oude spoor
+     zien terwijl het jaarplan al op het nieuwe staat. */
+  $('#metingOk').onclick = () => { startJaar(nv.niveau, nv.week, goed); herbouwPad(); sluitBlad(); tekenAlles(); tekenJaarplan(); };
 }
 
 /* ---------- de cockpit: het jaarplan van alle kinderen naast elkaar ---------- */
@@ -4575,7 +4598,8 @@ function tekenOuder(){
             '<span style="width:38px;height:38px;flex:none;border-radius:999px;display:grid;place-items:center;background:var(--accent-zacht);color:var(--accent-diep);font-weight:700">' +
               esc(p.naam.trim().charAt(0).toUpperCase()) + '</span>' +
             '<div><b>' + esc(p.naam) + '</b><div class="klein muted">' + p.leeftijd + ' jaar · spoor ' + p.spoor +
-            ' — ' + esc(SPOORNAAM[p.spoor]) + (p.spoorHandmatig ? ' (handmatig)' : '') + '</div></div>' +
+            ' — ' + esc(SPOORNAAM[p.spoor]) +
+            (p.spoorHandmatig ? ' (handmatig)' : p.spoorBron === 'toets' ? ' (uit de niveaubepaling)' : ' (op leeftijd)') + '</div></div>' +
           '</div>' +
           (p.id === P.id ? '<span class="vlag acc">actief</span>' :
             '<button class="k rand klein" data-wissel="' + esc(p.id) + '">Kiezen</button>') + '</div>' +
@@ -4746,11 +4770,12 @@ function bewerkProfiel(id){
       '<input class="veld" id="bpLeeftijd" type="number" min="4" max="99" value="' + p.leeftijd + '"></div>' +
     '<div class="veldje"><label class="lbl" for="bpSpoor">Spoor</label>' +
       '<select class="veld" id="bpSpoor">' +
-        '<option value="auto"' + (!p.spoorHandmatig ? ' selected' : '') + '>Automatisch op leeftijd (nu spoor ' + spoorBijLeeftijd(p.leeftijd) + ')</option>' +
+        (p.jaar ? '<option value="toets"' + (!p.spoorHandmatig ? ' selected' : '') + '>Uit de niveaubepaling (spoor ' + p.jaar.niveau + ')</option>' : '') +
+        '<option value="auto"' + (!p.spoorHandmatig && !p.jaar ? ' selected' : '') + '>Op leeftijd (nu spoor ' + spoorBijLeeftijd(p.leeftijd) + ')</option>' +
         [1,2,3,4].map(s => '<option value="' + s + '"' + (p.spoorHandmatig && p.spoor === s ? ' selected' : '') + '>' +
           'Spoor ' + s + ' — ' + esc(SPOORNAAM[s]) + '</option>').join('') +
       '</select>' +
-      '<p class="klein muted" style="margin:6px 0 0">Bij een ander spoor begint het leerpad opnieuw te tellen. De herhalingskaarten blijven behouden.</p></div>' +
+      '<p class="klein muted" style="margin:6px 0 0">Arabisch groeit niet mee met de leeftijd: hoe ver iemand is, komt uit de niveaubepaling. Laat die staan tenzij je zeker weet dat hij ernaast zit. Bij een ander spoor begint het leerpad opnieuw te tellen; de herhalingskaarten blijven behouden.</p></div>' +
     '<div class="veldje"><label class="lbl" for="bpDoel">Dagplafond herhalingen</label>' +
       '<input class="veld" id="bpDoel" type="number" min="5" max="200" value="' + p.dagdoel + '">' +
       '<p class="klein muted" style="margin:6px 0 0">Wat er boven dit aantal uitkomt schuift door naar de volgende dag, zodat de wachtrij nooit onbegrensd groeit.</p></div>' +
@@ -4766,8 +4791,9 @@ function bewerkProfiel(id){
     p.naam = nn; p.leeftijd = nl;
     const sp = $('#bpSpoor').value;
     const oudSpoor = p.spoor;
-    if(sp === 'auto'){ p.spoorHandmatig = false; p.spoor = spoorBijLeeftijd(nl); }
-    else { p.spoorHandmatig = true; p.spoor = parseInt(sp, 10); }
+    if(sp === 'toets' && p.jaar){ p.spoorHandmatig = false; p.spoorBron = 'toets'; p.spoor = p.jaar.niveau; }
+    else if(sp === 'auto'){ p.spoorHandmatig = false; p.spoorBron = 'leeftijd'; p.spoor = spoorBijLeeftijd(nl); }
+    else { p.spoorHandmatig = true; p.spoorBron = 'hand'; p.spoor = parseInt(sp, 10); }
     if(p.spoor !== oudSpoor) p.blok = 0;
     p.dagdoel = Math.min(200, Math.max(5, parseInt($('#bpDoel').value, 10) || p.dagdoel));
     p.intentie = $('#bpIntentie').value.trim();
