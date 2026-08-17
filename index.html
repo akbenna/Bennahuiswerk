@@ -181,13 +181,17 @@ footer p + p{margin-top:9px}
 }
 .persoon:hover,.persoon:focus-visible{transform:translateY(-2px);border-color:var(--pk);box-shadow:var(--schaduw-op)}
 .persoon .gezicht{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;
-  font-size:1.9rem;line-height:1;background:var(--pbg);border:2px solid var(--pk)}
+  font-size:1.9rem;line-height:1;background:var(--pbg);border:2px solid var(--pk);overflow:hidden}
+/* Een foto vult de hele cirkel. `cover` en niet `contain`: een portret dat in
+   het rondje wordt gepropt met witte randen eromheen ziet er verkeerd uit, en
+   het midden van een pasfoto is precies het goede stuk om te laten staan. */
+.gezicht img,.groot img,.gezichtje img{width:100%;height:100%;object-fit:cover;display:block}
 .persoon .pnaam{font-family:var(--serif);font-size:1.16rem;color:var(--ink);text-transform:capitalize}
 .persoon .pmeta{font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 
 .codekaart{max-width:400px;margin:0 auto;text-align:center}
 .groot{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;margin:0 auto;
-  font-size:3rem;line-height:1;background:var(--pbg);border:3px solid var(--pk)}
+  font-size:3rem;line-height:1;background:var(--pbg);border:3px solid var(--pk);overflow:hidden}
 input[type=password],input[type=text],input[type=number]{
   width:100%;padding:13px 15px;border:1px solid var(--line-sterk);border-radius:11px;
   background:var(--surface);color:var(--ink);font:inherit;font-size:1.05rem;margin-top:10px}
@@ -214,7 +218,7 @@ input.code{text-align:center;font-family:var(--mono);font-size:1.6rem;letter-spa
 .balk .in{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
 .balk.breed .in{max-width:940px}
 .balk .gezichtje{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
-  font-size:1.05rem;background:var(--pbg);border:1.5px solid var(--pk);flex:0 0 auto}
+  font-size:1.05rem;background:var(--pbg);border:1.5px solid var(--pk);flex:0 0 auto;overflow:hidden}
 .balk .wie{font-family:var(--serif);font-size:1.02rem;color:var(--ink);text-transform:capitalize}
 .balk .rest{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
 
@@ -376,6 +380,64 @@ function meldAf(){
 
 let ik = null, leden = [];
 
+/* ---------------------------------- foto's ----------------------------------
+   De foto's staan centraal, maar ze komen niet uit de openbare ledenlijst: deze
+   repo is openbaar en de sleutel staat dus in leesbare HTML. Ze worden pas
+   opgehaald ná een geslaagde aanmelding en daarna hier op het toestel bewaard,
+   zodat de tegels bij de volgende keer meteen met foto verschijnen zonder dat er
+   iets van de kinderen op straat ligt.
+
+   Op een nieuw toestel zie je de eerste keer dus de emoji, en vanaf de tweede
+   keer de foto's. Dat is precies de bedoeling. */
+const FOTOKAST = 'bennahub.fotos';
+let fotos = (function(){ try{ return JSON.parse(localStorage.getItem(FOTOKAST) || '{}'); }catch(e){ return {}; } })();
+
+function bewaarFotos(nieuwe){
+  fotos = nieuwe || {};
+  try{ localStorage.setItem(FOTOKAST, JSON.stringify(fotos)); }catch(e){ /* vol of geweigerd: dan emoji */ }
+}
+async function haalFotos(naam, wachtwoord){
+  try{
+    const r = await WOLK.rpc('bennahub_fotos', {p_gezin:GEZIN, p_naam:naam, p_code:wachtwoord});
+    bewaarFotos(r.fotos || {});
+  }catch(e){ /* niet erg: de emoji blijft staan */ }
+}
+
+/* Overal waar een gezicht staat, staat dezelfde afweging: is er een foto, dan
+   die; anders het teken. */
+function gezichtHTML(naam, emoji){
+  const f = fotos[naam];
+  return f ? '<img src="' + esc(f) + '" alt="">' : esc(emoji || '🙂');
+}
+
+/* De camera van een telefoon levert een bestand van enkele megabytes. Dat gaat
+   niet naar de database: we snijden het hier eerst vierkant uit het midden en
+   verkleinen naar 256 pixels. Wat overblijft is een paar tientallen kilobytes,
+   en dat laadt ook op een trage verbinding meteen. */
+const FOTOMAAT = 256;
+function kleinerMaken(bestand){
+  return new Promise((klaar, mis) => {
+    if(!bestand || !/^image\//.test(bestand.type)) return mis(new Error('Kies een foto.'));
+    const lezer = new FileReader();
+    lezer.onerror = () => mis(new Error('Kon de foto niet lezen.'));
+    lezer.onload = () => {
+      const beeld = new Image();
+      beeld.onerror = () => mis(new Error('Dat bestand is geen foto.'));
+      beeld.onload = () => {
+        const kant = Math.min(beeld.width, beeld.height);
+        const doek = document.createElement('canvas');
+        doek.width = doek.height = FOTOMAAT;
+        doek.getContext('2d').drawImage(beeld,
+          (beeld.width - kant) / 2, (beeld.height - kant) / 2, kant, kant,
+          0, 0, FOTOMAAT, FOTOMAAT);
+        klaar(doek.toDataURL('image/jpeg', 0.82));
+      };
+      beeld.src = lezer.result;
+    };
+    lezer.readAsDataURL(bestand);
+  });
+}
+
 /* ------------------------------- gereedschap ------------------------------- */
 const $  = s => document.querySelector(s);
 const $$ = s => Array.from(document.querySelectorAll(s));
@@ -483,7 +545,7 @@ function schermKiezen(){
   const tegel = l => `
     <button class="persoon" data-naam="${esc(l.naam)}"
             style="--pk:var(--${esc(l.kleur)});--pbg:var(--${esc(l.kleur)}-bg)">
-      <span class="gezicht">${esc(l.emoji)}</span>
+      <span class="gezicht">${gezichtHTML(l.naam, l.emoji)}</span>
       <span class="pnaam">${esc(hoofd(l.naam))}</span>
       <span class="pmeta">${l.heeftCode ? esc(stilte(l.laatstActief).tekst) : 'kies een wachtwoord'}</span>
     </button>`;
@@ -504,7 +566,7 @@ function schermCode(lid){
   zetScherm(`
   <div class="wrap poort">
     <div class="codekaart" style="--pk:var(--${esc(lid.kleur)});--pbg:var(--${esc(lid.kleur)}-bg)">
-      <div class="groot">${esc(lid.emoji)}</div>
+      <div class="groot">${gezichtHTML(lid.naam, lid.emoji)}</div>
       <h2 style="margin-top:16px;font-size:1.7rem">Hallo ${esc(hoofd(lid.naam))}</h2>
       <p class="klein" style="margin-top:8px">${nieuw
         ? 'Je bent hier voor het eerst. Verzin een wachtwoord van minstens vier tekens en onthoud het — dat heb je elke keer nodig. Vertel het aan niemand; is het toch weg, dan zet papa of mama het opnieuw open.'
@@ -531,6 +593,11 @@ function schermCode(lid){
     try{
       const r = await WOLK.rpc('bennahub_lid_aanmelden', {p_gezin:GEZIN, p_naam:lid.naam, p_code:c});
       ik = meldAan(r);
+      /* Nu er een geldig wachtwoord is gegeven mogen de foto's mee. Ze staan
+         daarna op dit toestel, dus de volgende keer zijn de tegels meteen
+         compleet. Lukt het niet, dan blijft het bij de emoji. */
+      try{ sessionStorage.setItem('bennahub.mijnww', c); }catch(e){}
+      await haalFotos(lid.naam, c);
       /* Is dit een ouder en is zijn code ook het ouderwachtwoord, dan hoeft hij
          het voor het overzicht niet nóg een keer te typen. Werkt het niet, dan
          vraagt het overzicht er straks gewoon om. */
@@ -588,7 +655,7 @@ function kaartenHTML(lijst){
 function balkHTML(wie, breed){
   return `<div class="balk${breed ? ' breed' : ''}" style="--pk:var(--${esc(wie.kleur)});--pbg:var(--${esc(wie.kleur)}-bg)">
     <div class="in">
-      <span class="gezichtje">${esc(wie.emoji)}</span>
+      <span class="gezichtje">${gezichtHTML(wie.naam, wie.emoji)}</span>
       <span class="wie">${esc(hoofd(wie.naam))}</span>
       <span class="rest">
         ${wie.rol === 'ouder' ? '<button class="btn ghost sm" onclick="schermOuder()">Overzicht</button>' : ''}
@@ -604,7 +671,24 @@ function voetHTML(){
     <p class="meta" style="margin-top:16px">Gebouwd voor het gezin Benna</p></footer>`;
 }
 
+/* Kwam je hier omdat je rechtstreeks een app probeerde te openen, dan sturen we
+   je daar na het aanmelden meteen weer heen. Alleen als je die app ook mag zien:
+   anders is dit een omweg om langs de poort te komen. */
+function terugNaarApp(){
+  let terug = null;
+  try{ terug = new URLSearchParams(location.search).get('terug'); }catch(e){}
+  if(!terug) return false;
+  /* Alleen een pad binnen deze site, nooit een adres ergens anders heen. */
+  if(/^[a-zA-Z][a-zA-Z0-9+.-]*:|^\/\//.test(terug)) return false;
+  const schoon = terug.replace(/^\/+/, '').split('?')[0].split('#')[0];
+  const mag = zichtbareApps(ik).some(a => schoon === a.href || schoon.startsWith(a.href));
+  if(!mag) return false;
+  location.replace(schoon);
+  return true;
+}
+
 function schermHub(){
+  if(terugNaarApp()) return;
   const lijst = zichtbareApps(ik);
   zetScherm(`
     ${balkHTML(ik)}
@@ -635,8 +719,14 @@ function schermCodeWijzigen(){
     ${balkHTML(ik)}
     <div class="wrap" style="padding-top:34px">
       <div class="codekaart" style="--pk:var(--${esc(ik.kleur)});--pbg:var(--${esc(ik.kleur)}-bg)">
-        <div class="groot">${esc(ik.emoji)}</div>
-        <h2 style="margin-top:16px">Je wachtwoord wijzigen</h2>
+        <div class="groot" id="mijnGezicht">${gezichtHTML(ik.naam, ik.emoji)}</div>
+        <div class="rij" style="justify-content:center;margin-top:12px">
+          <button class="btn ghost sm" id="fotoKies">Foto kiezen</button>
+          ${fotos[ik.naam] ? '<button class="btn ghost sm" id="fotoWeg">Foto weghalen</button>' : ''}
+        </div>
+        <input type="file" id="fotoBestand" accept="image/*" class="verborgen">
+        <p class="melding" id="fotoMld"></p>
+        <h2 style="margin-top:26px">Je wachtwoord wijzigen</h2>
         <p class="klein" style="margin-top:8px">Je huidige wachtwoord is genoeg; je hebt er niemand anders bij nodig. Nu staat iedereen nog op hetzelfde — zet hier je eigen.</p>
         <input type="password" id="oud"  placeholder="huidig wachtwoord" autocomplete="current-password">
         <input type="password" id="nw1"  placeholder="nieuw wachtwoord" autocomplete="new-password">
@@ -648,6 +738,35 @@ function schermCodeWijzigen(){
         </div>
       </div>
     </div>`);
+  /* Voor het opslaan van een foto is een wachtwoord nodig. Dat van deze
+     aanmelding staat in sessionStorage; is het er niet (na een herlaadbeurt),
+     dan vragen we het gewoon even. */
+  const mijnWW = () => {
+    let w = null; try{ w = sessionStorage.getItem('bennahub.mijnww'); }catch(e){}
+    if(!w) w = prompt('Typ je wachtwoord om de foto op te slaan:');
+    return w;
+  };
+  const zetFoto = async (data) => {
+    const w = mijnWW(); if(!w) return;
+    $('#fotoMld').className = 'melding'; $('#fotoMld').textContent = 'Bezig…';
+    try{
+      await WOLK.rpc('bennahub_lid_foto', {p_gezin:GEZIN, p_naam:ik.naam, p_code:w, p_foto:data || ''});
+      try{ sessionStorage.setItem('bennahub.mijnww', w); }catch(e){}
+      const nieuweKast = Object.assign({}, fotos);
+      if(data) nieuweKast[ik.naam] = data; else delete nieuweKast[ik.naam];
+      bewaarFotos(nieuweKast);
+      schermCodeWijzigen();
+    }catch(e){ $('#fotoMld').textContent = e.message; }
+  };
+  $('#fotoKies').onclick = () => $('#fotoBestand').click();
+  $('#fotoBestand').onchange = async e => {
+    const bestand = e.target.files && e.target.files[0]; if(!bestand) return;
+    $('#fotoMld').className = 'melding'; $('#fotoMld').textContent = 'Foto verkleinen…';
+    try{ zetFoto(await kleinerMaken(bestand)); }
+    catch(err){ $('#fotoMld').textContent = err.message; }
+  };
+  if($('#fotoWeg')) $('#fotoWeg').onclick = () => { if(confirm('De foto weghalen? Je teken komt dan terug.')) zetFoto(''); };
+
   $('#doe').onclick = async () => {
     const a = $('#nw1').value;
     if(a.length < 4)          return $('#mld').textContent = 'Het nieuwe wachtwoord moet minstens vier tekens zijn.';
@@ -846,9 +965,12 @@ function tekenOuder(r){
           <div class="tabelwrap" style="margin-top:10px"><table class="tbl">
             <tbody>${ledenNu.map(l => {
               const st = stilte(l.laatstActief);
-              return `<tr><td>${esc(l.emoji)} <b>${esc(hoofd(l.naam))}</b></td>
+              return `<tr>
+                <td><span class="gezichtje" style="--pk:var(--${esc(l.kleur)});--pbg:var(--${esc(l.kleur)}-bg);display:inline-grid;vertical-align:middle;width:30px;height:30px;border-radius:50%;place-items:center;overflow:hidden;border:1.5px solid var(--pk);background:var(--pbg)">${gezichtHTML(l.naam, l.emoji)}</span>
+                    <b style="margin-left:7px">${esc(hoofd(l.naam))}</b></td>
                 <td class="klein">${l.rol === 'ouder' ? 'ouder' : ''}</td>
                 <td style="text-align:right"><span class="speld ${st.klasse}">${esc(st.tekst)}</span></td>
+                <td style="text-align:right"><button class="btn ghost sm nowrap" data-foto="${esc(l.naam)}">Foto</button></td>
                 <td style="text-align:right"><button class="btn ghost sm nowrap" data-reset="${esc(l.naam)}">Resetten</button></td></tr>`;
             }).join('')}</tbody></table></div>
           <p class="klein" style="margin-top:10px">"Resetten" wist alleen het wachtwoord van dat kind — zijn lessen, punten en spaarpot blijven staan. Bij de volgende keer kiest hij zelf een nieuw wachtwoord, dus jij hoeft er niets voor te onthouden.</p>
@@ -874,6 +996,26 @@ function tekenOuder(r){
         <button class="btn ghost" onclick="schermOuder()">Vernieuwen</button>
       </div>
     </div>`);
+
+  /* Als ouder mag je de foto van iedereen zetten — handig, want jij hebt de
+     foto's op je telefoon staan en een kind van zes niet. */
+  $$('[data-foto]').forEach(b => b.onclick = () => {
+    const naam = b.dataset.foto;
+    const kiezer = document.createElement('input');
+    kiezer.type = 'file'; kiezer.accept = 'image/*';
+    kiezer.onchange = async e => {
+      const bestand = e.target.files && e.target.files[0]; if(!bestand) return;
+      b.disabled = true; b.textContent = '…';
+      try{
+        const data = await kleinerMaken(bestand);
+        await WOLK.rpc('bennahub_lid_foto', {p_gezin:GEZIN, p_naam:naam,
+                        p_code:sessionStorage.getItem('bennahub.ouderww'), p_foto:data});
+        const kast = Object.assign({}, fotos); kast[naam] = data; bewaarFotos(kast);
+        schermOuder();
+      }catch(err){ b.disabled = false; b.textContent = 'Foto'; alert(err.message); }
+    };
+    kiezer.click();
+  });
 
   $$('[data-reset]').forEach(b => b.onclick = async () => {
     const naam = b.dataset.reset;

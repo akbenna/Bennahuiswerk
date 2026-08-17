@@ -188,6 +188,65 @@ footer p+p{margin-top:8px}
 </style>
 </head>
 <body>
+
+<!-- ===================================================================== -->
+<!-- DE POORT — je meldt je op de startpagina, niet hier.                   -->
+<!--                                                                        -->
+<!-- Alle apps staan op hetzelfde webadres, dus de aanmelding van de         -->
+<!-- startpagina is hier gewoon leesbaar. Wie niet is aangemeld, wordt       -->
+<!-- teruggestuurd en komt na het aanmelden vanzelf op deze pagina terug.    -->
+<!-- Wie hier niets te zoeken heeft, krijgt dat te lezen in plaats van een   -->
+<!-- lege pagina of een foutmelding.                                        -->
+<!-- ===================================================================== -->
+<script>
+var POORT = (function(){
+  var SLEUTEL = 'bennahub.wie', UREN = 8, PAD = '../';
+  function wie(){
+    try{
+      var s = JSON.parse(localStorage.getItem(SLEUTEL) || 'null');
+      if(!s || !s.naam) return null;
+      if(Date.now() - (s.tijd || 0) > UREN*3600*1000) return null;   /* verlopen */
+      return s;
+    }catch(e){ return null; }
+  }
+  function terugAdres(){
+    return PAD + '?terug=' + encodeURIComponent(location.pathname + location.search);
+  }
+  /* Eigen opmaak, want dit moet ook kloppen als het stijlblok van de app nog
+     niet geladen is of er straks anders uitziet. */
+  function weiger(w, naam){
+    var d = document.createElement('div');
+    d.setAttribute('style', 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;'
+      + 'justify-content:center;padding:24px;background:#F6F4F0;color:#24282B;'
+      + 'font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif');
+    d.innerHTML = '<div style="max-width:420px;text-align:center">'
+      + '<div style="font-size:2.6rem;line-height:1">🔒</div>'
+      + '<h1 style="font-family:Georgia,serif;font-size:1.6rem;margin:14px 0 0;color:#0D0D0D">Dit is een app voor de groten</h1>'
+      + '<p style="margin:12px 0 0;color:#5F5C55">Hallo ' + (w.naam.charAt(0).toUpperCase() + w.naam.slice(1))
+      + '. ' + naam + ' is van papa. Ga terug naar de startpagina — daar staan de apps die voor jou klaarstaan.</p>'
+      + '<a href="' + PAD + '" style="display:inline-block;margin-top:20px;background:#0D0D0D;color:#F6F4F0;'
+      + 'text-decoration:none;padding:12px 20px;border-radius:11px;font-weight:500">← Naar de startpagina</a>'
+      + '</div>';
+    function zet(){ document.body.appendChild(d); }
+    if(document.body) zet(); else document.addEventListener('DOMContentLoaded', zet);
+  }
+  return {
+    wie: wie,
+    /* appId = de sleutel van deze app; alleenOuder = of kinderen erbuiten blijven.
+       Een ouder mag altijd; een kind alleen als het die app uitdrukkelijk in zijn
+       eigen lijstje heeft staan (dat zet je in het ouderoverzicht). */
+    eis: function(appId, alleenOuder, naam){
+      var w = wie();
+      if(!w){ location.replace(terugAdres()); return null; }
+      var expliciet = w.apps && w.apps.length && w.apps.indexOf(appId) >= 0;
+      if(alleenOuder && w.rol !== 'ouder' && !expliciet){ weiger(w, naam || 'Deze app'); return null; }
+      return w;
+    }
+  };
+})();
+</script>
+<script>POORT.eis('rasikh', true,  'Koran uit je hoofd');</script>
+
 <header class="top"><div class="top-in">
   <a class="terug" href="../" title="Terug naar BennaHub" aria-label="Terug naar BennaHub">&larr;</a>
   <span class="brand">Koran uit je hoofd<em lang="ar">رَاسِخ</em></span>

@@ -139,10 +139,50 @@ geen enkele functie geeft ooit een hash terug.
 | `bennahub_overzicht` | alles van alle apps, alleen voor de ouder |
 | `bennahub_wachtwoord` | het wachtwoord van een app-account wijzigen |
 
-**De apps zelf hebben hun eigen inlog nog.** Dat is met opzet: eerst deze poort
-erbij zetten en gebruiken, daarna de apps er één voor één op aansluiten. Zo werkt
-er onderweg niets niet meer. De startpagina zet al wel `bennahub.wie` in
-`localStorage`, zodat een app straks kan zien wie er is aangemeld.
+### Foto's, zoals bij Netflix
+
+Elk gezinslid kan een foto op zijn tegel zetten in plaats van een teken. Onder
+*Wachtwoord* zet je je eigen foto; vanuit het ouderoverzicht zet je die van
+iedereen — handig, want de foto's staan op jouw telefoon en niet op die van een
+kind van zes.
+
+Twee dingen zijn hier bewust anders geregeld:
+
+- **De foto's zitten niet in de openbare ledenlijst.** Deze repo is openbaar,
+  dus de anon-sleutel staat in leesbare HTML en `bennahub_leden_lijst` kan door
+  iedereen worden aangeroepen. Foto's van de kinderen horen daar niet in. Ze
+  komen uit `bennahub_fotos`, die pas antwoordt na een geldig wachtwoord, en
+  worden daarna op het toestel zelf bewaard. Gevolg: op een nieuw toestel zie je
+  de eerste keer de tekens en vanaf de tweede keer de foto's. Dat is de
+  bedoeling, geen tekortkoming.
+- **De foto wordt eerst verkleind.** Een telefooncamera levert megabytes. De
+  startpagina snijdt het beeld vierkant uit het midden en schaalt naar 256
+  pixels; wat er overblijft is een paar tientallen kilobytes. De database
+  weigert bovendien alles boven 400 kB en alles wat geen afbeelding is.
+
+## De poort in de apps
+
+Elke app begint nu met een klein `POORT`-blok in de `<body>`. Alle apps staan op
+hetzelfde webadres, dus de aanmelding van de startpagina is daar gewoon leesbaar.
+
+- **Niet aangemeld** → je gaat terug naar de startpagina, met `?terug=` erachter.
+  Na het aanmelden kom je vanzelf weer op de pagina die je wilde.
+- **Wel aangemeld, maar niet welkom** → je krijgt te lezen dat dit een app voor
+  de groten is, met een knop terug. Geen lege pagina en geen foutmelding.
+
+Geloofsstudie en Koran uit je hoofd staan op `alleenOuder`. Een kind komt daar
+niet in, ook niet door het adres in te typen. Wil je er tóch een kind bij laten,
+zet die app dan in het `apps`-lijstje van dat lid: dat telt als uitdrukkelijke
+toestemming en de poort laat hem door.
+
+Het blok staat letterlijk in elke app in plaats van in een gedeeld bestand.
+Dezelfde afweging als bij `WOLK` en `SAMEN`: één zelfstandig bestand per app
+weegt zwaarder dan het vermijden van die dubbeling, en het scheelt een verzoek
+dat anders ook in elke service worker gecachet moet worden.
+
+**De apps regelen hun eigen profielkeuze nog zelf.** De poort bepaalt nu wél wie
+je bent en of je binnen mag; welk profiel een app daarbinnen kiest, doet die app
+nog op zijn eigen manier. Dat is de volgende stap.
 
 ## Centrale opslag
 

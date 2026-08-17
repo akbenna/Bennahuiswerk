@@ -1,7 +1,7 @@
 /* Noer Islam werkt zonder internet. De app is één bestand, dus die bewaren we —
    en bij het openen halen we hem opnieuw op zodat een nieuwe versie meteen
    binnenkomt; lukt dat niet, dan draait de bewaarde versie gewoon door. */
-const CACHE = 'noer-v2';
+const CACHE = 'noer-v3';
 const BESTANDEN = ['./', './index.html', './manifest.webmanifest', '../iconen/islam.svg', '../iconen/islam-180.png',
                    '../fonts/amiri-400.woff2', '../fonts/amiri-700.woff2'];
 

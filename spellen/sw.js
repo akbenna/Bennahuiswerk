@@ -1,6 +1,6 @@
 /* Raha werkt zonder internet. Eén bestand, plus het Arabische lettertype voor
    de letterjacht en het geheugenspel. */
-const CACHE = 'spelletjes-v2';
+const CACHE = 'spelletjes-v3';
 const BESTANDEN = ['./', './index.html', './manifest.webmanifest',
                    '../fonts/amiri-400.woff2', '../iconen/spelletjes.svg', '../iconen/spelletjes-180.png'];
 

@@ -3,7 +3,7 @@
    zodat alles zonder netwerk blijft werken. Cloud-sync (Supabase) en
    fonts gaan naar het netwerk en falen offline stilletjes (de app werkt
    dan lokaal verder via localStorage). */
-const CACHE = 'benna-offline-v2';
+const CACHE = 'benna-offline-v3';
 const ASSETS = [
   './',
   './index.html',
