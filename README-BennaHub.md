@@ -180,9 +180,34 @@ Dezelfde afweging als bij `WOLK` en `SAMEN`: één zelfstandig bestand per app
 weegt zwaarder dan het vermijden van die dubbeling, en het scheelt een verzoek
 dat anders ook in elke service worker gecachet moet worden.
 
-**De apps regelen hun eigen profielkeuze nog zelf.** De poort bepaalt nu wél wie
-je bent en of je binnen mag; welk profiel een app daarbinnen kiest, doet die app
-nog op zijn eigen manier. Dat is de volgende stap.
+## Het profiel komt van de startpagina
+
+Islam leren en Arabisch hadden allebei hun eigen profielkiezer met iedereen
+erin. Selma kon dus het profiel van Wassima aanklikken en in haar punten en haar
+spaarpot terechtkomen. Dat is nu weg:
+
+- bij het openen zoekt de app het profiel met **jouw** naam op en kiest dat;
+- bestaat het nog niet, dan wordt het aangemaakt met de naam en het
+  geboortejaar van de startpagina — geen tweede keer invullen;
+- **de kiezer is dicht voor kinderen.** Wie op de knop tikt, leest dat het via
+  de startpagina gaat. Iemand anders zijn kan alleen door je af te melden en de
+  tegel van die ander te kiezen — met diens wachtwoord;
+- **voor ouders blijft de kiezer open**, want jij moet bij ieder kind kunnen
+  kijken. Een ouder krijgt géén eigen profiel aangemaakt: die komt kijken, niet
+  meedoen.
+
+### Het geboortejaar
+
+Beide apps kiezen hun leerlijn op leeftijd. Zolang dat per app apart werd
+ingevuld, kon hetzelfde kind in de ene app op spoor 2 staan en in de andere op
+spoor 3. Het jaar staat nu één keer bij het lid (`geboren` op `bennahub_leden`)
+en beide apps maken er hun eigen spoor uit. Wijzig je het in het ouderoverzicht,
+dan schuift het spoor mee — behalve waar het spoor met de hand is vastgezet.
+
+De jaren zijn afgeleid uit de schoolniveaus die al in de huiswerkapp stonden
+(groep 8 = 2014, en van daaruit één jaar per schooljaar): Selma 2017, Amine
+2014, Wassima 2012, Amaani 2010. **Kijk ze na** — klopt het jaar niet, dan krijgt
+een kind te makkelijke of te moeilijke stof.
 
 ## Centrale opslag
 

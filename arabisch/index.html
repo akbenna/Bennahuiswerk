@@ -2394,6 +2394,42 @@ function kiesProfiel(id){
   S.actief = id; P = S.profielen[id]; bewaar(); return true;
 }
 
+/* =============================================================================
+   HET PROFIEL KOMT VAN DE STARTPAGINA
+
+   Deze app had zijn eigen profielwisselaar met iedereen erin. Dat betekende dat
+   een kind het profiel van een ander kon aanklikken en in diens kaarten en
+   voortgang terechtkwam. Wie je bent staat nu één keer vast, op de startpagina.
+   Voor een ouder blijft de wisselaar staan — jij moet bij ieder kind kunnen
+   kijken.
+============================================================================= */
+function zelfIsOuder(){ const w = POORT.wie(); return !w || w.rol === 'ouder'; }
+function zelfKoppelen(){
+  const w = POORT.wie(); if(!w) return false;
+  const gelijk = n => String(n||'').trim().toLowerCase() === w.naam;
+  let p = Object.values(S.profielen).find(x => gelijk(x.naam));
+  if(!p){
+    /* Een ouder komt kijken en hoort daar geen leeg eigen profiel bij te
+       krijgen; die kiest zelf in de wisselaar. Heeft hij er wél een, dan wordt
+       dat hierboven al gevonden. */
+    if(w.rol === 'ouder') return false;
+    /* Het geboortejaar staat centraal; zonder dat kan de app het spoor niet
+       kiezen. Ontbreekt het, dan begint hij op het middelste spoor en zet je
+       het jaar alsnog in het ouderoverzicht van de startpagina. */
+    const naam = w.naam.charAt(0).toUpperCase() + w.naam.slice(1);
+    const leeftijd = w.geboren ? (new Date()).getFullYear() - w.geboren : 12;
+    p = maakProfiel(naam, leeftijd, '');
+  }
+  /* Is het jaar centraal bijgesteld en staat het spoor hier nog niet met de hand
+     vast, dan trekken we het spoor mee. */
+  if(w.geboren && !p.spoorHandmatig){
+    const nieuwSpoor = spoorBijLeeftijd((new Date()).getFullYear() - w.geboren);
+    if(p.spoor !== nieuwSpoor){ p.spoor = nieuwSpoor; p.leeftijd = (new Date()).getFullYear() - w.geboren; }
+  }
+  kiesProfiel(p.id);
+  return true;
+}
+
 /* ---------- 5. het leerpad ---------------------------------
    Het pad is een vaste reeks blokken. Eén blok is één sessie.
 
@@ -4825,6 +4861,14 @@ function koppelChrome(){
   /* Profielwisselaar: één tik in de kop, want op één toestel zitten
      hier meerdere mensen achter. */
   $('#profielKnop').onclick = () => {
+    if(!zelfIsOuder()){
+      toonBlad('<h3>Dat gaat via de startpagina</h3>' +
+        '<p style="margin-top:10px">Je bent hier aangemeld als <b>' + esc(P ? P.naam : 'jezelf') + '</b>. ' +
+        'Wil je iemand anders zijn, meld je dan op de startpagina af en kies daar je eigen tegel.</p>' +
+        '<a class="k rand vol" href="../" style="margin-top:14px;display:block;text-align:center">Naar de startpagina</a>' +
+        '<button class="k stil vol" style="margin-top:6px" onclick="sluitBlad()">Sluiten</button>');
+      return;
+    }
     const lijst = Object.values(S.profielen);
     toonBlad('<h3>Wie leert er?</h3><div class="stack" style="margin-top:14px">' +
       lijst.map(p => '<button class="profkaart" data-p="' + esc(p.id) + '"' +
@@ -4861,7 +4905,7 @@ function start(){
   WOLK.init('lisan');
   // Op de achtergrond gelijktrekken: de app is meteen bruikbaar, en dit
   // mag mislukken zonder dat iemand er iets van merkt.
-  if(WOLK.status().aan) gelijktrekken(true).then(ok => { if(ok && P) { herbouwPad(); tekenAlles(); } });
+  if(WOLK.status().aan) gelijktrekken(true).then(ok => { if(ok){ zelfKoppelen(); if(P){ herbouwPad(); tekenAlles(); } } });
   window.addEventListener('pagehide', () => { if(WOLK.status().aan) WOLK.bewaar(S, true); });
   pasThemaToe();
   spraak.init();
@@ -4870,6 +4914,9 @@ function start(){
     window.matchMedia('(prefers-color-scheme: dark)')
       .addEventListener('change', () => { if((S.thema||'auto') === 'auto') pasThemaToe(); });
   }
+  /* Wie op de startpagina is aangemeld, is het hier ook. Lukt dat, dan is het
+     onthaal met "hoe heet je en hoe oud ben je" niet meer nodig: dat weten we al. */
+  zelfKoppelen();
   if(P){ herbouwPad(); startApp(); }
   else  { tekenOnthaal(); }
 

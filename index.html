@@ -196,6 +196,11 @@ input[type=password],input[type=text],input[type=number]{
   width:100%;padding:13px 15px;border:1px solid var(--line-sterk);border-radius:11px;
   background:var(--surface);color:var(--ink);font:inherit;font-size:1.05rem;margin-top:10px}
 input.code{text-align:center;font-family:var(--mono);font-size:1.6rem;letter-spacing:.5em;padding-left:.5em}
+/* Het geboortejaar in de ledentabel. Smal, want het staat in een rij die op een
+   telefoon toch al krap is, en met een eigen marge zodat het niet tegen de knop
+   ernaast aan komt te staan. */
+input.jaartje{width:5.4em;margin-top:0;padding:6px 8px;font-size:.88rem;text-align:center;
+  font-family:var(--mono);border-radius:8px}
 .btn{display:inline-flex;align-items:center;gap:8px;justify-content:center;
   background:var(--ink);color:var(--canvas);border:1px solid var(--ink);border-radius:11px;
   padding:12px 20px;font:inherit;font-weight:500;cursor:pointer;transition:opacity .14s ease}
@@ -237,6 +242,14 @@ input.code{text-align:center;font-family:var(--mono);font-size:1.6rem;letter-spa
 .cijfer{font-family:var(--serif);font-size:2rem;line-height:1.1;color:var(--ink)}
 .tabelwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
 table.tbl{width:100%;border-collapse:collapse;font-size:.92rem;min-width:420px}
+/* De ledentabel moet juist wél in een telefoonbreedte passen: hier staan de
+   knoppen waarmee je iets doet, en die achter een zijwaartse schuifbalk
+   verstoppen betekent dat je ze nooit vindt. Naam en laatst-actief onder elkaar,
+   knoppen in één vak dat afbreekt. */
+table.tbl.leden{min-width:0}
+table.tbl.leden td{padding:12px 0}
+.knoppenvak{text-align:right;white-space:normal}
+.knoppenvak > *{margin:3px 0 3px 6px;vertical-align:middle}
 table.tbl th{text-align:left;font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;
   color:var(--muted);font-weight:500;padding:0 12px 8px 0;border-bottom:1px solid var(--line);white-space:nowrap}
 table.tbl td{padding:10px 12px 10px 0;border-bottom:1px solid var(--line);vertical-align:top}
@@ -369,7 +382,7 @@ function wieBenIk(){
 }
 function meldAan(lid){
   const s = {gezin:GEZIN, naam:lid.naam, rol:lid.rol, emoji:lid.emoji, kleur:lid.kleur,
-             apps:lid.apps||[], tijd:Date.now()};
+             apps:lid.apps||[], geboren:lid.geboren||null, tijd:Date.now()};
   try{ localStorage.setItem(SESSIE, JSON.stringify(s)); }catch(e){}
   return s;
 }
@@ -962,18 +975,23 @@ function tekenOuder(r){
         </div>
         <div class="kaart">
           <p class="meta">Wie was er voor het laatst</p>
-          <div class="tabelwrap" style="margin-top:10px"><table class="tbl">
+          <div style="margin-top:10px"><table class="tbl leden">
             <tbody>${ledenNu.map(l => {
               const st = stilte(l.laatstActief);
               return `<tr>
                 <td><span class="gezichtje" style="--pk:var(--${esc(l.kleur)});--pbg:var(--${esc(l.kleur)}-bg);display:inline-grid;vertical-align:middle;width:30px;height:30px;border-radius:50%;place-items:center;overflow:hidden;border:1.5px solid var(--pk);background:var(--pbg)">${gezichtHTML(l.naam, l.emoji)}</span>
-                    <b style="margin-left:7px">${esc(hoofd(l.naam))}</b></td>
-                <td class="klein">${l.rol === 'ouder' ? 'ouder' : ''}</td>
-                <td style="text-align:right"><span class="speld ${st.klasse}">${esc(st.tekst)}</span></td>
-                <td style="text-align:right"><button class="btn ghost sm nowrap" data-foto="${esc(l.naam)}">Foto</button></td>
-                <td style="text-align:right"><button class="btn ghost sm nowrap" data-reset="${esc(l.naam)}">Resetten</button></td></tr>`;
+                    <b style="margin-left:7px">${esc(hoofd(l.naam))}</b>
+                    ${l.rol === 'ouder' ? '<span class="klein"> · ouder</span>' : ''}
+                    <br><span class="speld ${st.klasse}" style="margin-top:5px">${esc(st.tekst)}</span></td>
+                <td class="knoppenvak">
+                  <input type="number" class="jaartje" data-jaar="${esc(l.naam)}"
+                         value="${l.geboren||''}" placeholder="jaar" min="1900" max="2026"
+                         aria-label="Geboortejaar van ${esc(hoofd(l.naam))}">
+                  <button class="btn ghost sm nowrap" data-foto="${esc(l.naam)}">Foto</button>
+                  <button class="btn ghost sm nowrap" data-reset="${esc(l.naam)}">Resetten</button></td></tr>`;
             }).join('')}</tbody></table></div>
-          <p class="klein" style="margin-top:10px">"Resetten" wist alleen het wachtwoord van dat kind — zijn lessen, punten en spaarpot blijven staan. Bij de volgende keer kiest hij zelf een nieuw wachtwoord, dus jij hoeft er niets voor te onthouden.</p>
+          <p class="klein" style="margin-top:10px"><b>Het jaartal is het geboortejaar.</b> Islam leren en Arabisch kiezen daarop de leerlijn, dus als het niet klopt krijgt een kind te makkelijke of te moeilijke stof. Ik heb het afgeleid uit de schoolniveaus in de huiswerkapp — kijk het even na.</p>
+          <p class="klein" style="margin-top:8px">"Resetten" wist alleen het wachtwoord van dat kind — zijn lessen, punten en spaarpot blijven staan. Bij de volgende keer kiest hij zelf een nieuw wachtwoord, dus jij hoeft er niets voor te onthouden.</p>
         </div>
       </div>
 
@@ -999,6 +1017,19 @@ function tekenOuder(r){
 
   /* Als ouder mag je de foto van iedereen zetten — handig, want jij hebt de
      foto's op je telefoon staan en een kind van zes niet. */
+  $$('[data-jaar]').forEach(v => v.onchange = async () => {
+    const jaar = v.value ? parseInt(v.value, 10) : null;
+    v.disabled = true;
+    try{
+      await WOLK.rpc('bennahub_lid_geboren', {p_gezin:GEZIN, p_ouder_ww:sessionStorage.getItem('bennahub.ouderww'),
+                                              p_naam:v.dataset.jaar, p_jaar:jaar});
+      v.style.borderColor = 'var(--goed)';
+      /* Ben jij het zelf, dan moet je eigen sessie het ook weten. */
+      if(ik && ik.naam === v.dataset.jaar){ ik.geboren = jaar; meldAan(ik); }
+    }catch(e){ v.style.borderColor = 'var(--fout)'; alert(e.message); }
+    finally{ v.disabled = false; }
+  });
+
   $$('[data-foto]').forEach(b => b.onclick = () => {
     const naam = b.dataset.foto;
     const kiezer = document.createElement('input');

@@ -4564,6 +4564,46 @@ function stemStudio(){
   blad(''); teken();
 }
 
+/* =============================================================================
+   HET PROFIEL KOMT VAN DE STARTPAGINA
+
+   Deze app had zijn eigen "Wie ben je?" met alle profielen erin. Dat betekende
+   dat Selma het profiel van Wassima kon aanklikken en in haar punten en haar
+   spaarpot terechtkwam. Wie je bent staat nu één keer vast, op de startpagina,
+   en die keuze geldt hier gewoon.
+
+   Voor een ouder blijft de kiezer wél staan: jij moet kunnen kijken hoe het bij
+   ieder kind loopt.
+============================================================================= */
+function zelfKoppelen(){
+  const w = POORT.wie(); if(!w) return;
+  const gelijk = n => String(n||'').trim().toLowerCase() === w.naam;
+  let p = S.profielen.find(x => gelijk(x.naam));
+
+  /* Nog geen profiel in deze app? Dan maken we het aan met de naam en het
+     geboortejaar van de startpagina. Zonder dat jaar kan de app de leerlijn
+     niet kiezen — het staat daarom centraal, en niet nog een keer hier.
+
+     Voor een ouder doen we dat niet: die komt kijken hoe het bij de kinderen
+     loopt, en hoort daar niet een leeg eigen profiel bij te krijgen. Heeft hij
+     er zelf wel een, dan wordt dat gewoon gekozen. */
+  if(!p){
+    if(w.rol === 'ouder') return;
+    const naam = w.naam.charAt(0).toUpperCase() + w.naam.slice(1);
+    voegProfiel(naam, w.geboren || null);
+    p = S.profielen.find(x => gelijk(x.naam));
+  }
+  if(p){
+    /* Klopt het geboortejaar centraal en hier niet, dan wint de startpagina:
+       daar is het één keer goed gezet en hier stond het misschien nog op de
+       gok. */
+    if(w.geboren && p.geb !== w.geboren){ p.geb = w.geboren; }
+    S.actief = p.id;
+    bewaar();
+  }
+}
+const isOuder = () => { const w = POORT.wie(); return !w || w.rol === 'ouder'; };
+
 function melding(t,soort){ const m=$('#wMeld'); if(m){ m.textContent=t; m.className='melding '+(soort||''); } }
 function voegProfiel(naam, geb){
   const id='p'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
@@ -4583,6 +4623,15 @@ function tekenWie(){
   if(p) $('#wieBol').style.background=p.kleur||'var(--k)';
 }
 $('#knopWie').onclick=()=>{
+  /* Een kind zit vast aan zijn eigen naam. Wil hij iemand anders zijn, dan gaat
+     dat via de startpagina — met het wachtwoord van die ander. */
+  if(!isOuder()){
+    blad(`<h2>Dat gaat via de startpagina</h2>
+      <p style="margin-top:10px">Je bent hier aangemeld als <b>${esc(prof()?prof().naam:'jezelf')}</b>. Wil je iemand anders zijn, meld je dan op de startpagina af en kies daar je eigen tegel.</p>
+      <div class="rij" style="margin-top:18px"><a class="btn" href="../">Naar de startpagina</a>
+      <button class="btn ghost" onclick="bladDicht()">Sluiten</button></div>`);
+    return;
+  }
   if(!S.profielen.length){ naarTab('ouder'); return; }
   blad(`<h2>Wie ben je?</h2>
     <div class="stack" style="margin-top:16px">
@@ -4646,8 +4695,9 @@ async function gelijktrekken(eerste){
   await AUDIO.lees();                // eigen opnames en meegeleverde recitatie
   if(S.actief && !S.profielen.some(p=>p.id===S.actief)) S.actief = S.profielen.length?S.profielen[0].id:null;
   WOLK.init('bidaya');
+  zelfKoppelen();                    // wie op de startpagina is aangemeld, is het hier ook
   tekenWie(); teken();
-  if(WOLK.status().aan) gelijktrekken(true);
+  if(WOLK.status().aan) gelijktrekken(true).then(()=>{ zelfKoppelen(); tekenWie(); teken(); });
   setInterval(()=>{ if(huidigeTab==='vandaag'||huidigeTab==='tijden') teken(); }, 60000);
   window.addEventListener('pagehide',()=>{ if(WOLK.status().aan) WOLK.bewaar(S,true); });
   if('serviceWorker' in navigator){ try{ navigator.serviceWorker.register('sw.js'); }catch(e){} }
