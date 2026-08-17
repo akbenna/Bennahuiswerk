@@ -2,9 +2,9 @@
    draait zit er gewoon in — dus die bewaren we, en bij het openen halen we hem
    opnieuw op zodat een nieuwe versie meteen binnenkomt; lukt dat niet, dan
    draait de bewaarde versie door. */
-const CACHE = 'bunyan-v1';
+const CACHE = 'bunyan-v2';
 const BESTANDEN = ['./', './index.html', './manifest.webmanifest',
-                   '../favicon.svg', '../apple-touch-icon.png'];
+                   '../iconen/code.svg', '../iconen/code-180.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE)

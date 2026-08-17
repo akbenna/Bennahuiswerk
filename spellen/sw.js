@@ -1,8 +1,8 @@
 /* Raha werkt zonder internet. Eén bestand, plus het Arabische lettertype voor
    de letterjacht en het geheugenspel. */
-const CACHE = 'raha-v1';
+const CACHE = 'spelletjes-v2';
 const BESTANDEN = ['./', './index.html', './manifest.webmanifest',
-                   '../fonts/amiri-400.woff2', '../favicon.svg', '../apple-touch-icon.png'];
+                   '../fonts/amiri-400.woff2', '../iconen/spelletjes.svg', '../iconen/spelletjes-180.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE)

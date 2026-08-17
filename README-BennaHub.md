@@ -1,25 +1,67 @@
 # BennaHub
 
-Eén startpagina, zeven apps. Alles is statische HTML: geen build-stap, geen server,
+Eén startpagina, acht apps. Alles is statische HTML: geen build-stap, geen server,
 geen dependencies behalve de Latijnse letters van Google Fonts — het Arabisch
 staat in de repo zelf. Wat hier staat, is wat er draait.
 
 ```
-index.html          de startpagina (klein, alleen doorverwijzing)
-huiswerk/           de oefenapp voor de kinderen — ongewijzigd, alleen een link terug
+index.html          de startpagina: eerst de apps van de kinderen, dan die van de groten
+huiswerk/           Huiswerk — oefenen voor school
   index.html          de live versie (voorgecompileerd, niet met de hand bewerken)
   index.dev.html      de bron met JSX en de oefenstof
-noer/index.html     Noer Islam — de basis van de islam en leren bidden (7–15 jaar)
-sanad/index.html    Sanad — achtentwintig weken islamitische wetenschappen
-arabisch/index.html Lisan — Arabisch voor het hele gezin, met een jaarprogramma
-rasikh/             Rasikh — de Koran memoriseren (voor volwassenen)
+noer/index.html     Islam leren — de basis van de islam en leren bidden (7–15 jaar)
+arabisch/index.html Arabisch — lezen, begrijpen en spreken, met een jaarprogramma
+bunyan/index.html   Computers & Code — een pc bouwen en leren programmeren (vanaf 10)
+spellen/index.html  Spelletjes — de speelhoek, los van de huiswerkapp
+sanad/index.html    Geloofsstudie — achtentwintig weken islamitische wetenschappen
+rasikh/             Koran uit je hoofd — memoriseren en vasthouden (voor volwassenen)
   index.html          de app
   tekst/              de hele Koran: 114 soera's, 6236 aya, plus de verwarpunten
   audio/              recitatie per aya, op te halen met het script dat er staat
-bunyan/index.html   Bunyan — leren coderen en een pc bouwen (vanaf 10 jaar)
-spellen/index.html  Raha — de spelletjes, los van de huiswerkapp
+iconen/             één pictogram per app, plus het script dat er PNG's van maakt
 fonts/              Amiri, het Arabische lettertype van alle apps
 ```
+
+## De namen
+
+De apps heetten eerst Noer Islam, Lisan, Bunyan, Raha, Sanad en Rasikh. Mooie
+namen, en ze staan er nog — klein, naast de nieuwe. Maar een kind van acht dat
+op een telefoon de juiste tegel zoekt heeft er niets aan: het moet eerst weten
+wat het woord betekent voordat het weet wat de app doet. De naam is nu wat de
+app ís, in het Nederlands.
+
+| Map | Nu | Heette | Op het beginscherm |
+|---|---|---|---|
+| `huiswerk/` | Huiswerk | Bennaghmouch Oefenclub | Huiswerk |
+| `noer/` | Islam leren | Noer Islam · نور الإسلام | Islam |
+| `arabisch/` | Arabisch | Lisan · لِسَان | Arabisch |
+| `bunyan/` | Computers & Code | Bunyan · بُنْيَان | Computers |
+| `spellen/` | Spelletjes | Raha · رَاحَة | Spelletjes |
+| `sanad/` | Geloofsstudie | Sanad · سند | Geloofsstudie |
+| `rasikh/` | Koran uit je hoofd | Rasikh · رَاسِخ | Koran |
+| — | Academie | — | — |
+
+De mapnamen zijn niet meegegaan. Die staan in bladwijzers, in service workers,
+in opgeslagen accounts en in het pad van elke opname die al ingesproken is; ze
+hernoemen levert een dag opruimen op en niets extra's voor wie de app opent.
+
+De oude naam staat op de startpagina onder de nieuwe, en in elke app naast het
+merk in de bovenbalk — meestal in het Arabisch, want dáár betekent hij iets.
+
+## De pictogrammen
+
+Elke app heeft er nu een eigen, in zijn eigen kleur: `iconen/`. Daarvoor deelden
+ze allemaal dezelfde lachende ster, en dan staan er op een beginscherm acht
+identieke tegels naast elkaar. De tegels op de startpagina zijn precies dezelfde
+bestanden, zodat wat je hier aanwijst hetzelfde is als wat je daar terugvindt.
+
+Van elk pictogram staat er ook een PNG van 180×180, want iOS zet geen SVG op het
+beginscherm. Verander je een SVG, draai dan `node iconen/maak-png.mjs` en commit
+beide bestanden samen. Zie `iconen/LEESMIJ.md`.
+
+De indeling van de startpagina volgt dezelfde gedachte: bovenaan de vijf apps van
+de kinderen, daaronder de drie van de groten. De Academie stond bij de kinderen
+terwijl er "voor de groten" op de kaart zelf stond; die is nu verhuisd.
 
 ## Het Arabische lettertype
 
@@ -36,7 +78,7 @@ de herkomst, de licentie en hoe je het vervangt.
 
 ## Centrale opslag
 
-Noer Islam, Sanad en Lisan slaan voortgang op in `localStorage` én centraal, zodat je op elk
+Islam leren, Geloofsstudie en Arabisch slaan voortgang op in `localStorage` én centraal, zodat je op elk
 toestel verder gaat waar je gebleven was. De opslag loopt via het bestaande
 Supabase-project, tabel `bennahub_state`, met vier `SECURITY DEFINER`-functies:
 
@@ -63,16 +105,16 @@ weegt zwaarder dan het vermijden van die dubbeling.
 
 ## Accounts
 
-- **Sanad** — één account, voor Abdelkader. In te stellen onder *Instellingen*.
-- **Lisan** — één gezinsaccount met daarbinnen vijf leerprofielen (Hanae, Selma,
+- **Geloofsstudie** — één account, voor Abdelkader. In te stellen onder *Instellingen*.
+- **Arabisch** — één gezinsaccount met daarbinnen vijf leerprofielen (Hanae, Selma,
   Amine, Wassima, Amaani). In te stellen onder *Ouder*. Bij een lege installatie
   staat er een knop klaar die de vijf profielen in één keer aanmaakt.
-- **Noer Islam** — één gezinsaccount met daarbinnen een profiel per kind. In te
+- **Islam leren** — één gezinsaccount met daarbinnen een profiel per kind. In te
   stellen onder *Ouder*; bij een lege installatie staat er een knop klaar die de
   vier kinderen in één keer aanmaakt.
 - **Huiswerk** — houdt zijn eigen bestaande inlog per kind. Ongewijzigd.
 
-## Noer Islam
+## Islam leren
 
 ### Het gebed compleet
 
@@ -212,9 +254,9 @@ alleen. Het afvinken van een gebed levert standaard géén geld op — dat is ee
 bewuste keuze en onder *Ouder* met één klik om te zetten. Voor het gebed werken
 de stickerkaart, de dagenreeks en de insignes.
 
-## Het jaarprogramma in Lisan
+## Het jaarprogramma in Arabisch
 
-Naast het losse leerpad staat er in Lisan een **jaarplan**: zesendertig weken van
+Naast het losse leerpad staat er in Arabisch een **jaarplan**: zesendertig weken van
 negentig minuten, bedoeld voor één vast moment per week — zaterdag of zondag.
 Elke les heeft dezelfde zeven onderdelen: openen, herhalen, nieuwe letters,
 lezen, schrijven, een stuk geloof, en afsluiten met wat er thuis blijft liggen.
@@ -241,9 +283,9 @@ aantal lessen en uren, de uitslag van de niveaubepaling en van elke blokstoets,
 wanneer de laatste les was en wat er hierna komt — met knoppen om het jaarplan
 te openen, het werkblad van die week af te drukken of opnieuw te meten.
 
-## Rasikh — memoriseren
+## Koran uit je hoofd — memoriseren
 
-Rasikh is de enige app die niet voor de kinderen is. Hij gaat uit van een
+Deze app is niet voor de kinderen. Hij gaat uit van een
 volwassene die laat begint, en dat verandert wat er nodig is: geen tekort aan
 begrip maar aan herhaaltijd.
 
@@ -273,7 +315,7 @@ plaats, en moet zeggen wat dáár volgt. Dit is waar hifz omvalt — niet bij
 moeilijke woorden.
 
 **Recitatie.** Zonder eigen bestanden valt de app terug op de achtenvijftig
-Warsh-fragmenten uit Noer Islam. De rest haal je op met
+Warsh-fragmenten uit Islam leren. De rest haal je op met
 `node rasikh/audio/haal-audio.mjs` (zonder opties: juz 'amma); zie
 `rasikh/audio/LEESMIJ.md`. De hele Koran is ruim zesduizend bestanden en een
 halve gigabyte — dat wil je waarschijnlijk niet in git.
@@ -282,14 +324,14 @@ halve gigabyte — dat wil je waarschijnlijk niet in git.
 het Arabische lettertype (zie hierboven). Onder *Instellingen* staat een knop die
 het hele doelgebied vooraf klaarzet.
 
-**Centrale opslag.** Rasikh hangt aan dezelfde `WOLK` als de andere apps, met een
+**Centrale opslag.** De app hangt aan dezelfde `WOLK` als de andere apps, met een
 samenvoeging die past bij herhaalgegevens: niet "de hoogste waarde wint" — een
 hoge `due` betekent immers *later* herhalen — maar het toestel waarop het laatst
 geoefend is. Dat weet wat er echt gebeurd is. Instellingen dragen een tijdstempel
 zodat een doel dat je op je telefoon verzet niet wordt teruggedraaid door de
 oudere stand op je laptop. Voor een reeks van jaren is dat geen luxe.
 
-## Bunyan — coderen en pc's bouwen
+## Computers & Code — coderen en pc's bouwen
 
 De app voor Amine (11), die van gamen, computers en voetbal houdt. Twee sporen
 naast elkaar, 63 lessen in totaal.
@@ -333,7 +375,7 @@ tijd. Een gewone les € 0,40, een project € 1,50, met een hard weekplafond
 (standaard € 6) en uitbetalen door de ouder. Punten, rangen en insignes lopen
 dóór als het budget op is — leren stopt niet als het geld stopt.
 
-## Raha — de spelletjes
+## Spelletjes
 
 De spelletjes zaten tot augustus 2026 verstopt in de huiswerkapp, achter een knop
 op het beginscherm. Nu staan ze als eigen app op de startpagina: dertien stuks,
@@ -347,10 +389,10 @@ was: geen meldingen, geen dagelijkse beloning, geen reclame, geen eindeloze
 reeks. De grap staat onderaan, één regel, elke keer een andere.
 
 Twaalf spellen komen uit de huiswerkapp en zijn overgezet naar gewone
-JavaScript; **Letterjacht** is nieuw en oefent de Arabische letters die in Lisan
+JavaScript; **Letterjacht** is nieuw en oefent de Arabische letters die in Arabisch
 geleerd worden. Het geheugenspel kan met plaatjes of met Arabische letters.
 
-De **records** verhuizen mee: bij de eerste opening leest Raha de oude
+De **records** verhuizen mee: bij de eerste opening leest de app de oude
 `oefenapp_v1`-opslag en neemt de topscores over. Ze gaan verder via dezelfde
 `WOLK` als de andere apps, met één verschil in het samenvoegen — bij het
 geheugenspel is *minder* beter, dus daar wint het laagste getal.
@@ -366,12 +408,12 @@ de gebedstijden omzette omdat het kon.
 
 | App | Wat er achter de code zit |
 |---|---|
-| Noer Islam | het hele ouderscherm: kinderen, budget, gebedstijden, stemmen, opnames, uitbetalen |
-| Bunyan | het hele ouderscherm: tarieven, weekbudget, voortgang, uitbetalen |
-| Lisan | het hele ouderscherm: profielen, sporen, back-up, alles wissen |
-| Raha | inloggen en records wissen — het geluid mag een kind zelf aan- en uitzetten |
+| Islam leren | het hele ouderscherm: kinderen, budget, gebedstijden, stemmen, opnames, uitbetalen |
+| Computers & Code | het hele ouderscherm: tarieven, weekbudget, voortgang, uitbetalen |
+| Arabisch | het hele ouderscherm: profielen, sporen, back-up, alles wissen |
+| Spelletjes | inloggen en records wissen — het geluid mag een kind zelf aan- en uitzetten |
 | Huiswerk | had dit al (de bestaande PIN, standaard 1234) |
-| Rasikh, Sanad | geen slot; dat zijn de apps van de ouder zelf |
+| Koran uit je hoofd, Geloofsstudie | geen slot; dat zijn de apps van de ouder zelf |
 
 De standaardcode is **1234**, dezelfde die de huiswerkapp altijd al had. Zolang
 hij daarop staat toont elk ouderscherm een waarschuwing om hem te veranderen —
@@ -381,7 +423,7 @@ gat.
 
 ## Het Arabisch komt alleen uit opnames
 
-Noer Islam speelde bij Arabische tekst zonder opname de stem van het toestel af.
+Islam leren speelde bij Arabische tekst zonder opname de stem van het toestel af.
 Die legt klemtonen verkeerd en spreekt de Koran uit als een voorleesrobot; bij
 het gebed en de Koran is dat geen detail. Er is nu één schakelaar, **"alleen
 echte opnames"**, en die staat standaard aan: je hoort de recitatie van de
@@ -396,7 +438,7 @@ toestel gebeurt en daarna nooit meer — een latere bewuste keuze van de ouder
 blijft dus staan. Het herstel loopt ook ná het gelijktrekken, want anders komt
 de oude stand gewoon via een ander toestel terug.
 
-## De AI-functies in Sanad
+## De AI-functies in Geloofsstudie
 
 *Doorvragen* en *laat meelezen* praten rechtstreeks met de Anthropic-API vanuit de
 browser. Daarvoor is een eigen sleutel nodig, in te vullen onder *Instellingen*;
@@ -409,10 +451,9 @@ serverless functie, dan hoeft de sleutel de browser niet meer in.
 ## Onderhoud
 
 De huiswerkapp bouw je zoals altijd: bewerk `huiswerk/index.dev.html` en compileer
-naar `huiswerk/index.html` (zie `BUILD.md`). Noer Islam, Sanad, Lisan, Rasikh,
-Bunyan en Raha zijn gewone HTML — openen, bewerken, klaar. In Noer Islam staat de leerstof
+naar `huiswerk/index.html` (zie `BUILD.md`). De andere zes apps zijn gewone HTML — openen, bewerken, klaar. In Islam leren staat de leerstof
 bovenaan het scriptblok als gewone lijsten (`MODULES`, `WUDU`, `STAPPEN`, `HIFZ`,
 `DUAS`); wie de inhoud wil aanpassen hoeft de schermcode niet aan te raken. In
-Rasikh zit de stof niet in het bestand maar in `rasikh/tekst/`; de app zelf bevat
+Koran uit je hoofd zit de stof niet in het bestand maar in `rasikh/tekst/`; de app zelf bevat
 alleen de leerlogica. Let bij alle apps op de terugpijl naar `../`; die
 veronderstelt dat de app in een submap onder de hub staat.

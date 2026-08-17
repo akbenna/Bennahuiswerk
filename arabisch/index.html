@@ -3,10 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Lisan — Arabisch leren</title>
+<title>Arabisch — lezen, begrijpen en spreken</title>
 <meta name="theme-color" content="#FAF8F4">
-<meta name="description" content="Lisan: Arabisch leren lezen, begrijpen en spreken. Vier sporen, van het alfabet tot Koranisch Arabisch.">
+<meta name="description" content="Arabisch leren lezen, begrijpen en spreken. Vier sporen, van het alfabet tot Koranisch Arabisch.">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Arabisch">
+<link rel="icon" href="../iconen/arabisch.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../iconen/arabisch-180.png">
 <link rel="preload" href="../fonts/amiri-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -396,7 +399,7 @@ footer.voet{border-top:1px solid var(--line);margin-top:40px;padding:20px 0 30px
   <header class="top">
     <div class="top-in">
       <a class="terugpijl" href="../" title="Terug naar BennaHub" aria-label="Terug naar BennaHub">&#8592;</a>
-      <span class="merk">Lisan <span class="ar" lang="ar">لِسَان</span></span>
+      <span class="merk">Arabisch <span class="ar" lang="ar">لِسَان</span></span>
       <button class="profielknop" id="profielKnop" aria-label="Profiel wisselen">
         <span class="bol" id="profielBol">?</span>
         <span id="profielNaam"></span>
@@ -428,7 +431,7 @@ footer.voet{border-top:1px solid var(--line);margin-top:40px;padding:20px 0 30px
     <section class="zicht"     id="z-ouder"     role="tabpanel"></section>
 
     <footer class="voet"><div class="wrap">
-      Lisan · Modern Standaardarabisch · voortgang staat centraal, met dit toestel als terugval<br>
+      Arabisch · Modern Standaardarabisch · voortgang staat centraal, met dit toestel als terugval<br>
       Onderdeel van BennaHub
     </div></footer>
   </main>
@@ -438,7 +441,7 @@ footer.voet{border-top:1px solid var(--line);margin-top:40px;padding:20px 0 30px
 <div class="overlay" id="overlay" role="dialog" aria-modal="true">
   <div class="blad">
     <div class="rij tussen" style="margin-bottom:8px">
-      <span class="label">Lisan</span>
+      <span class="label">Arabisch</span>
       <button class="ikoon" id="bladSluit" aria-label="Sluiten">✕</button>
     </div>
     <div id="bladInhoud"></div>
@@ -1914,7 +1917,7 @@ const JAAR = [
   x:'De islam rust op vijf dingen: de getuigenis, het gebed, de zakat, het vasten en de bedevaart. Vijf, zoals je vijf vingers hebt.'}},
  {n:5,  t:'Dhal en ra', letters:['ذ','ر'], doel:'Je leest lettergrepen met vier letters door elkaar.',
   lezen:['ذَهَب','رَبّ','دَرَ'], geloof:{t:'Rein worden', ar:'وُضُوء', tr:'wudu',
-  x:'Voor het gebed maak je je schoon: handen, mond, neus, gezicht, armen, hoofd, voeten. In Noer Islam staat het stap voor stap.'}},
+  x:'Voor het gebed maak je je schoon: handen, mond, neus, gezicht, armen, hoofd, voeten. In Islam leren staat het stap voor stap.'}},
  {n:6,  t:'Zay en sin', letters:['ز','س'], doel:'Je leest woorden van drie letters zonder hulp.',
   lezen:['سَمَك','زَيْت','دَرْس'], geloof:{t:'De vijf gebeden', ar:'صَلَاة', tr:'salah',
   x:'Fajr, Dhuhr, Asr, Maghrib en Isha. Vijf keer per dag stop je met alles en sta je voor Allah.'}},
@@ -2019,7 +2022,7 @@ const JAAR = [
  {n:35, t:'Vloeiend lezen', letters:[], doel:'Je leest een half blad achter elkaar, zonder haperen.',
   lezen:['الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ','قُلْ هُوَ اللَّهُ أَحَدٌ'],
   geloof:{t:'De profeten', ar:'الأَنْبِيَاء', tr:'al-anbiya',
-  x:'Van Adam tot Mohammed ﷺ. In Noer Islam staan dertien van hun verhalen; lees er deze week één samen.'}},
+  x:'Van Adam tot Mohammed ﷺ. In Islam leren staan dertien van hun verhalen; lees er deze week één samen.'}},
  {n:36, t:'Eindtoets en afsluiting', letters:[], toets:4,
   doel:'Je laat het hele jaar zien: lezen, schrijven en begrijpen.',
   lezen:['الْفَاتِحَة','الإِخْلَاص','الْفَلَق','النَّاس'], geloof:{t:'Wat je nu kunt', ar:'الْحَمْدُ لِلَّهِ', tr:'alhamdulillah',
@@ -3409,7 +3412,7 @@ function les(n, i){
     inhoud = '<div class="mid"><div class="ar reus">' + (g.ar || '') + '</div><p class="tr">' + esc(g.tr || '') + '</p></div>' +
       '<h3 style="margin-top:12px">' + esc(g.t || '') + '</h3>' +
       '<p style="margin-top:6px">' + esc(g.x || '') + '</p>' +
-      '<p class="klein muted" style="margin-top:12px">Meer hierover staat in Noer Islam, de andere app van de hub.</p>';
+      '<p class="klein muted" style="margin-top:12px">Meer hierover staat in Islam leren, de andere app van de hub.</p>';
   }
   if(st.id === 'slot'){
     inhoud = '<p class="small">Spreek af wat er deze week thuis blijft liggen:</p>' +
@@ -3475,7 +3478,7 @@ function werkblad(n){
     Array.from({length:6}).map(() => '<span class="wbspoor">' + l + '</span>').join('') + '</div>';
   toonBlad(
     '<div class="printbaar">' +
-      '<div class="wbkop"><b>Lisan · werkblad week ' + n + '</b><span>' + esc(w.t) + '</span></div>' +
+      '<div class="wbkop"><b>Arabisch · werkblad week ' + n + '</b><span>' + esc(w.t) + '</span></div>' +
       '<p class="klein muted">Naam: ______________________   Datum: ______________</p>' +
       ltrs.map(l => {
         const L = LETTERS.find(x => x.l === l), v = letterVormen(l);
@@ -3579,7 +3582,7 @@ function tekenOnthaal(){
     '<div class="onthaal" style="padding:36px 0">' +
       '<div class="mid" style="margin-bottom:26px">' +
         '<div class="ar" style="font-size:3.4rem;line-height:1.2;color:var(--accent)">لِسَان</div>' +
-        '<h1 style="margin-top:6px">Lisan</h1>' +
+        '<h1 style="margin-top:6px">Arabisch</h1>' +
         '<p class="muted" style="margin-top:6px">Arabisch leren lezen, begrijpen en spreken</p>' +
       '</div>' +
       (lijst.length
@@ -4717,7 +4720,7 @@ function importeer(bestand){
     try{
       const nieuw = JSON.parse(lezer.result);
       if(!nieuw || typeof nieuw !== 'object' || !nieuw.profielen || typeof nieuw.profielen !== 'object')
-        throw new Error('geen geldig Lisan-bestand');
+        throw new Error('geen geldig Arabisch-bestand');
       const n = Object.keys(nieuw.profielen).length;
       $('#ouImportMelding').innerHTML =
         '<div class="melding waarschuwing" style="margin-top:10px">Dit bestand bevat ' + n +

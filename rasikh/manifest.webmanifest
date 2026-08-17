@@ -1,6 +1,6 @@
 {
-  "name": "Rasikh — de Koran vastzetten",
-  "short_name": "Rasikh",
+  "name": "Koran uit je hoofd — memoriseren en vasthouden",
+  "short_name": "Koran",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -9,7 +9,16 @@
   "lang": "nl",
   "description": "Memoriseren en vasthouden: een systeem voor volwassenen dat stuurt op behoud.",
   "icons": [
-    { "src": "../apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
-    { "src": "../favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+    {
+      "src": "../iconen/koran-180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "../iconen/koran.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
   ]
 }
