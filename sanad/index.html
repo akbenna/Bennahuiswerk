@@ -3,8 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Sanad — Leerpad Maliki fiqh en bronnenkennis</title>
+<title>Geloofsstudie — Malikitische fiqh en bronnenkennis</title>
 <meta name="theme-color" content="#F7F6F3">
+<meta name="apple-mobile-web-app-title" content="Geloofsstudie">
+<link rel="icon" href="../iconen/geloofsstudie.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../iconen/geloofsstudie-180.png">
 <link rel="preload" href="../fonts/amiri-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1010,7 +1013,7 @@ const CONSOLIDATIE = [
 <header class="top">
   <div class="top-in">
     <a class="terug" href="../" title="Terug naar BennaHub" aria-label="Terug naar BennaHub">&#8592;</a>
-    <span class="brand">Sanad<em>&#1587;&#1606;&#1583;</em></span>
+    <span class="brand">Geloofsstudie<em lang="ar">&#1587;&#1606;&#1583;</em></span>
     <span class="top-sub" id="topStat">&mdash;</span>
   </div>
 </header>
@@ -1124,7 +1127,7 @@ const CONSOLIDATIE = [
     </div>
   </div></section>
 
-  <footer class="foot"><div class="wrap"><p class="small muted" style="margin:0">Sanad &middot; achtentwintig weken &middot; Malikitische fiqh, usul, &lsquo;aqida, bronnenkritiek en medische ethiek<br>Arabische teksten zijn gezet naar de gangbare edities; controleer bij twijfel een gedrukte uitgave.</p></div></footer>
+  <footer class="foot"><div class="wrap"><p class="small muted" style="margin:0">Geloofsstudie &middot; achtentwintig weken &middot; Malikitische fiqh, usul, &lsquo;aqida, bronnenkritiek en medische ethiek<br>Arabische teksten zijn gezet naar de gangbare edities; controleer bij twijfel een gedrukte uitgave.</p></div></footer>
 </main>
 
 <script>
@@ -1268,7 +1271,7 @@ const store={
 let S={start:null,dag:'4',klaar:{},cards:{},notities:{},alles:false,last:null,dagreeks:0};
 const bewaar=()=>{ store.set(S); WOLK.bewaar(S); };
 
-/* Twee momentopnamen van Sanad samenvoegen. Niets gaat verloren: een week die
+/* Twee momentopnamen van Geloofsstudie samenvoegen. Niets gaat verloren: een week die
    ergens is afgerond blijft afgerond, een kaart houdt zijn verste doos, en een
    notitie wint met de langste tekst (die is bijna altijd de laatst bewerkte). */
 function samenvoegen(a,b){
@@ -1341,7 +1344,7 @@ function tekenWeek(nr){
   const pw=planWeek();
 
   if(!S.start){
-    box.innerHTML=`<h1>Sanad</h1>
+    box.innerHTML=`<h1>Geloofsstudie</h1>
       <p class="lede" style="margin-top:12px;max-width:54ch">Een leerprogramma van achtentwintig weken in Malikitische fiqh, usul al-fiqh, Ash\u2018aritische geloofsleer, bronnenkritiek en medische ethiek \u2014 met elke week een fragment uit de oorspronkelijke tekst.</p>
       <div class="card" style="margin-top:26px">
         <span class="meta">Instellen</span>

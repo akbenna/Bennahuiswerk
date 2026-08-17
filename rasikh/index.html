@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Rasikh — de Koran vastzetten</title>
+<title>Koran uit je hoofd — memoriseren en vasthouden</title>
 <meta name="theme-color" content="#F6F4F0" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#141518" media="(prefers-color-scheme: dark)">
 <meta name="description" content="Memoriseren en vasthouden: een systeem voor volwassenen dat stuurt op behoud, niet op tempo.">
-<link rel="icon" href="../favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="icon" href="../iconen/koran.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../iconen/koran-180.png">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preload" href="../fonts/amiri-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,7 +25,7 @@
   src:url('../fonts/amiri-700.woff2') format('woff2')}
 </style>
 <style>
-/* Rasikh is voor een volwassene: rustiger, dichter, minder aanmoediging en meer
+/* Deze app is voor een volwassene: rustiger, dichter, minder aanmoediging en meer
    informatie. De kleuren komen uit hetzelfde palet als de rest van de hub. */
 :root{
   --canvas:#F6F4F0; --surface:#FFFFFF; --surface-2:#F0EDE7; --surface-3:#E8E4DC;
@@ -190,7 +190,7 @@ footer p+p{margin-top:8px}
 <body>
 <header class="top"><div class="top-in">
   <a class="terug" href="../" title="Terug naar BennaHub" aria-label="Terug naar BennaHub">&larr;</a>
-  <span class="brand">Rasikh<em lang="ar">رَاسِخ</em></span>
+  <span class="brand">Koran uit je hoofd<em lang="ar">رَاسِخ</em></span>
   <span class="tegen" id="tegen"></span>
 </div></header>
 
@@ -211,8 +211,8 @@ footer p+p{margin-top:8px}
   <section class="view" id="v-kaart" role="tabpanel"><div id="iKaart" class="stack"></div></section>
   <section class="view" id="v-instel" role="tabpanel"><div id="iInstel" class="stack"></div></section>
   <footer>
-    <p>Rasikh stuurt op behoud. Nieuwe stof komt er pas bij als de herhalingen bij zijn — dat is geen strengheid maar de enige manier waarop memoriseren op de lange duur standhoudt.</p>
-    <p>De Arabische tekst is de druk van het King Fahd-complex — Warsh en Hafs — met de vertaling van Fred Leemhuis. De recitatie komt uit Noer Islam, aan te vullen met het script in <span style="white-space:nowrap">rasikh/audio/</span>. Leg de tekst één keer naast een moshaf voordat je iets vastzet.</p>
+    <p>Deze app stuurt op behoud. Nieuwe stof komt er pas bij als de herhalingen bij zijn — dat is geen strengheid maar de enige manier waarop memoriseren op de lange duur standhoudt.</p>
+    <p>De Arabische tekst is de druk van het King Fahd-complex — Warsh en Hafs — met de vertaling van Fred Leemhuis. De recitatie komt uit Islam leren, aan te vullen met het script in <span style="white-space:nowrap">rasikh/audio/</span>. Leg de tekst één keer naast een moshaf voordat je iets vastzet.</p>
     <p class="meta" style="margin-top:12px">Onderdeel van BennaHub</p>
   </footer>
 </main>
@@ -256,7 +256,7 @@ async function ayaVanId(id){ const [nr,n]=id.split(':').map(Number); return aya(
 const totaalAya = () => INDEX.reduce((n,s)=>n+s.aya,0);
 
 /* ============================ WOLK — centrale opslag ============================
-   Letterlijk dezelfde module als in Noer Islam, Sanad en Lisan. Bewust gedupliceerd: één
+   Letterlijk dezelfde module als in Islam leren, Geloofsstudie en Arabisch. Bewust gedupliceerd: één
    zelfstandig bestand per app weegt zwaarder dan het vermijden van die dubbeling.
 ================================================================================= */
 const WOLK = (function () {
@@ -476,8 +476,8 @@ function soeraStand(nr){
 }
 
 /* ------------------------------- recitatie ------------------------------- */
-/* Rasikh gebruikt zijn eigen map als die er is, en valt anders terug op de
-   achtenvijftig fragmenten die voor Noer Islam zijn opgehaald. */
+/* De app gebruikt zijn eigen map als die er is, en valt anders terug op de
+   achtenvijftig fragmenten die voor Islam leren zijn opgehaald. */
 const NOER = {1:'fatiha',103:'asr',105:'fil',106:'quraysh',107:'maun',108:'kawthar',
               109:'kafirun',110:'nasr',111:'masad',112:'ikhlas',113:'falaq',114:'nas'};
 const AUDIO = {
@@ -880,7 +880,7 @@ function tekenInstel(){
       '<div class="card"><h3>Tekst en klank</h3>'+
         '<label class="veld"><span>Lezing</span><select id="iLz">'+opties([['warsh','Warsh — zoals in de Maghreb'],['hafs','Hafs — de meest verspreide druk']],S.instel.lezing)+'</select></label>'+
         '<label class="veld"><span>Tempo van de recitatie</span><select id="iTp">'+opties([[.75,'Langzaam'],[1,'Gewoon'],[1.25,'Vlot']],S.instel.tempo)+'</select></label>'+
-        '<p class="klein" style="margin-top:12px">De Warsh-tekst komt van het King Fahd-complex en past bij de Warsh-recitatie die in Noer Islam staat. Ziet een teken er vreemd uit, dan mist je toestel het juiste lettertype; zet dan Hafs aan — de tekst is dezelfde openbaring, alleen anders overgeleverd.</p>'+
+        '<p class="klein" style="margin-top:12px">De Warsh-tekst komt van het King Fahd-complex en past bij de Warsh-recitatie die in Islam leren staat. Ziet een teken er vreemd uit, dan mist je toestel het juiste lettertype; zet dan Hafs aan — de tekst is dezelfde openbaring, alleen anders overgeleverd.</p>'+
         '<p class="klein" style="margin-top:8px">Recitatie beschikbaar voor <b>'+AUDIO.aantal()+'</b> aya\'s'+(AUDIO.bron?' ('+esc(AUDIO.bron)+')':'')+'. Voor de rest van je doel haal je hem op met <span class="meta" style="text-transform:none">node rasikh/audio/haal-audio.mjs</span> — zie LEESMIJ.md in die map.</p>'+
       '</div>'+
     '</div>'+

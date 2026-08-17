@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Bunyan — computers bouwen en leren coderen</title>
+<title>Computers &amp; Code — een pc bouwen en leren programmeren</title>
 <meta name="description" content="Leren programmeren en een pc bouwen, voor kinderen van tien tot veertien. Python in de browser, een bouwsimulator en beloningen.">
 <meta name="theme-color" content="#F6F4F0" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#141518" media="(prefers-color-scheme: dark)">
-<link rel="icon" href="../favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="icon" href="../iconen/code.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../iconen/code-180.png">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
 <style>
-/* Bunyan is voor een jongen van elf die van gamen, pc's en voetbal houdt. Dat
+/* Computers &amp; Code is voor een jongen van elf die van gamen, pc's en voetbal houdt. Dat
    mag je zien: meer kleur, grotere knoppen en kortere stukken tekst dan in de
    apps voor volwassenen. Maar het blijft hetzelfde huis — dezelfde letters,
    dezelfde kaarten, dezelfde rust eronder. Geen confetti om de confetti. */
@@ -22,7 +22,7 @@
   --canvas:#F6F4F0; --surface:#FFFFFF; --surface-2:#F0EDE7; --surface-3:#E8E4DC;
   --ink:#0D0D0D; --ink-2:#24282B; --muted:#5F5C55;
   --line:#DAD6CE; --line-2:#C4BFB4;
-  --k:#96286A;    --k-bg:#F9E5F1;          /* het pruimrood van Bunyan zelf */
+  --k:#96286A;    --k-bg:#F9E5F1;          /* het pruimrood van deze app */
   --code:#0B6E6E; --code-bg:#DDF0EF;       /* het spoor coderen — terminalgroen */
   --pc:#A6501B;   --pc-bg:#FAEADF;         /* het spoor bouwen — koper */
   --goed:#2F6B1F; --goed-bg:#E4EFDD;
@@ -204,7 +204,7 @@ footer p+p{margin-top:8px}
 <body data-spoor="">
 <header class="top"><div class="top-in">
   <a class="terug" href="../" title="Terug naar BennaHub" aria-label="Terug naar BennaHub">&larr;</a>
-  <span class="brand">Bunyan<em>bouwen</em></span>
+  <span class="brand">Computers &amp; Code<em>Bunyan</em></span>
   <span class="tegen" id="tegen"></span>
 </div></header>
 
@@ -226,7 +226,7 @@ footer p+p{margin-top:8px}
   <section class="view" id="v-ouder" role="tabpanel"><div id="iOuder" class="stack"></div></section>
 
   <footer>
-    <p>Bunyan leert twee dingen tegelijk: hoe je een computer in elkaar zet en hoe je hem iets laat doen. Het eerste is een middag werk, het tweede een paar jaar — daarom staat hier elke dag maar één stap.</p>
+    <p>Deze app leert twee dingen tegelijk: hoe je een computer in elkaar zet en hoe je hem iets laat doen. Het eerste is een middag werk, het tweede een paar jaar — daarom staat hier elke dag maar één stap.</p>
     <p>De Python hierin draait in je browser en is met de hand gebouwd voor deze app. Hij kent genoeg voor het eerste jaar. Wat je hier leert werkt precies zo in de echte Python op een pc, en zodra je toe bent aan meer staat in de laatste module wat je dan installeert.</p>
     <p class="meta">Onderdeel van BennaHub</p>
   </footer>
@@ -1327,7 +1327,7 @@ const CODE = [
   uitleg:[
    'Met <code>input()</code> vraagt je programma iets aan degene die het gebruikt. Wat er tussen de haakjes staat is de vraag die op het scherm komt.',
    'Wat je terugkrijgt is <b>altijd tekst</b>, ook als er een getal is ingetypt. Wil je ermee rekenen, dan zet je het om met <code>int(...)</code> voor hele getallen of <code>float(...)</code> voor kommagetallen.',
-   'Hier in Bunyan typ je je antwoorden vooraf in het vakje "Wat jij intypt", elk antwoord op een eigen regel. Op een echte computer typ je ze terwijl het programma draait.'
+   'Hier in de app typ je je antwoorden vooraf in het vakje "Wat jij intypt", elk antwoord op een eigen regel. Op een echte computer typ je ze terwijl het programma draait.'
   ],
   voorbeeld:'naam = input("Hoe heet je? ")\nprint("Hoi " + naam)\n\nleeftijd = int(input("Hoe oud ben je? "))\nprint("Volgend jaar ben je " + str(leeftijd + 1))',
   opdracht:{ vraag:'Vraag om twee getallen en print de som. Zet in het invoervak twee getallen, elk op een eigen regel.',
@@ -1451,7 +1451,7 @@ const CODE = [
  {id:'c2-5', t:'while', d:'Zolang als',
   uitleg:[
    'Een <code>while</code>-lus herhaalt een blok zolang de test waar blijft. Na elke ronde kijkt Python opnieuw.',
-   'Er is één ding dat je nooit mag vergeten: in de lus moet iets veranderen waardoor de test ooit onwaar wordt. Doe je dat niet, dan blijft hij eeuwig draaien. In Bunyan grijpt de app dan in en zegt het; op een echte computer loopt je programma vast.',
+   'Er is één ding dat je nooit mag vergeten: in de lus moet iets veranderen waardoor de test ooit onwaar wordt. Doe je dat niet, dan blijft hij eeuwig draaien. In deze app grijpt de app dan in en zegt het; op een echte computer loopt je programma vast.',
    'Een lus die met de hand telt gebruikt bijna altijd dit patroon: een variabele op 0 zetten, testen, en aan het eind van de lus ophogen.'
   ],
   voorbeeld:'leven = 100\nronde = 1\n\nwhile leven > 0:\n    schade = ronde * 15\n    leven = leven - schade\n    print(f"Ronde {ronde}: nog {leven} leven")\n    ronde = ronde + 1\n\nprint("Game over")',
@@ -1895,7 +1895,7 @@ const CODE = [
 
  {id:'c6-2', t:'Python op je eigen pc', d:'Van deze app naar het echte werk',
   uitleg:[
-   'De Python in Bunyan is met de hand gebouwd zodat hij in je browser past. Hij kent genoeg voor alles wat je tot nu toe deed, maar de echte kan meer: bestanden lezen, internet op, plaatjes maken, spellen bouwen.',
+   'De Python hier is met de hand gebouwd zodat hij in je browser past. Hij kent genoeg voor alles wat je tot nu toe deed, maar de echte kan meer: bestanden lezen, internet op, plaatjes maken, spellen bouwen.',
    'Installeren doe je zo. Ga naar <code>python.org</code>, download de laatste versie, en zet bij het installeren op Windows een vinkje bij <b>"Add Python to PATH"</b>. Vergeet je dat vinkje, dan werkt het commando straks niet — dat is de klassieke eerste hobbel.',
    'Daarna heb je een <em>editor</em> nodig. VS Code is gratis en wat bijna iedereen gebruikt. Installeer daarin de Python-uitbreiding en je kunt je programma draaien met één toets.',
    'Test of het gelukt is: open de terminal en typ <code>python --version</code>. Komt er een versienummer, dan staat het goed.'

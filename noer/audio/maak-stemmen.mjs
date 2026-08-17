@@ -48,7 +48,13 @@ const draai = (cmd, args) => new Promise((res, rej) => {
 /* ---- de teksten uit de app halen, zodat er maar één plek is waar ze staan ---- */
 /* We lezen index.html en snijden er de gegevenslijsten uit. Haakjes tellen mag
    niet naïef: er staan haakjes ín de teksten. Vandaar dit kleine leesmachientje
-   dat aanhalingstekens overslaat. */
+   dat aanhalingstekens overslaat.
+
+   Commentaar moet het net zo goed overslaan, en dat is geen luxe: in het
+   Nederlands staat er zo "de du'a" in een uitleg, en zo'n losse apostrof laat
+   een naïeve lezer denken dat er een string begint. Alles tot de vólgende
+   apostrof — soms honderden regels verderop — telt dan niet meer mee, en de
+   lijst loopt scheef af met een foutmelding die nergens naar wijst. */
 function haalLiteral(bron, naam) {
   const start = bron.indexOf('const ' + naam + ' = ');
   if (start < 0) throw new Error('kon ' + naam + ' niet vinden in index.html');
@@ -63,6 +69,8 @@ function haalLiteral(bron, naam) {
       if (c === aanhaling) aanhaling = null;
       continue;
     }
+    if (c === '/' && bron[j + 1] === '*') { const e = bron.indexOf('*/', j + 2); if (e < 0) break; j = e + 1; continue; }
+    if (c === '/' && bron[j + 1] === '/') { const e = bron.indexOf('\n', j + 2); if (e < 0) break; j = e; continue; }
     if (c === "'" || c === '"' || c === '`') { aanhaling = c; continue; }
     if (c === open) diep++;
     else if (c === dicht) { diep--; if (!diep) return bron.slice(i, j + 1); }
@@ -76,6 +84,7 @@ const T = lees(bron, 'T'), HIFZ = lees(bron, 'HIFZ'), DUAS = lees(bron, 'DUAS'),
 const regelsVan = id => (HIFZ.find(h => h.id === id) || { r: [] }).r;
 
 const WERK = [
+  ...regelsVan('h-iqama').map((r, i)      => ({ id:'q:h-iqama:' + (i+1),      ar:r[0], wat:'Iqama ' + (i+1) })),
   { id:'t:takbir', ar:T.takbir.ar, wat:'De takbir' },
   ...regelsVan('h-dhikr').map((r, i)      => ({ id:'q:h-dhikr:' + (i+1),      ar:r[0], wat:'Buiging en knieval ' + (i+1) })),
   ...regelsVan('h-tashahhud').map((r, i)  => ({ id:'q:h-tashahhud:' + (i+1),  ar:r[0], wat:'Tashahhud ' + (i+1) })),
@@ -87,6 +96,17 @@ const WERK = [
   ...regelsVan('h-nagebed').map((r, i)   => ({ id:'q:h-nagebed:' + (i+1),   ar:r[0], wat:'Na het gebed ' + (i+1) })),
   { id:'t:istiftah', ar:T.istiftah.ar, wat:"De openingsdu'a" },
   { id:'t:taawwudh', ar:T.taawwudh.ar, wat:'Bescherming zoeken' },
+  /* De gebeden die zelden langskomen — en die je juist dán niet wilt opzoeken. */
+  { id:'t:takbir-eid',   ar:T.takbirEid.ar,  wat:'Takbir van het feest' },
+  { id:'t:janaza',       ar:T.janazaDua.ar,  wat:"Du'a bij een overledene" },
+  { id:'t:janaza-kind',  ar:T.janazaKind.ar, wat:"Du'a bij een overleden kind" },
+  { id:'t:istirja',      ar:T.istirja.ar,    wat:'Als je het nieuws hoort' },
+  { id:'t:musiba',       ar:T.duaMusiba.ar,  wat:"Du'a bij verdriet" },
+  { id:'t:taziya',       ar:T.taziya.ar,     wat:'Condoleren' },
+  { id:'t:bij-graf',     ar:T.bijGraf.ar,    wat:'Bij het graf' },
+  { id:'t:groet-graf',   ar:T.groetGraf.ar,  wat:'Groet aan het kerkhof' },
+  { id:'t:istikhara',    ar:T.istikhara.ar,  wat:'De istikhara' },
+  { id:'t:istisqa',      ar:T.istisqa.ar,    wat:'Vragen om regen' },
   { id:'t:bismillah',     ar:WUDU[0].zeg.ar,                 wat:'Wassing: begin' },
   { id:'t:wudu-shahada',  ar:WUDU[WUDU.length-1].zeg.ar,     wat:'Wassing: slot' },
   ...DUAS.map((d, i) => ({ id:'d:' + (i+1), ar:d.ar, wat:"Du'a: " + d.w })),

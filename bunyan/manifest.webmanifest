@@ -1,6 +1,6 @@
 {
-  "name": "Bunyan — computers bouwen en leren coderen",
-  "short_name": "Bunyan",
+  "name": "Computers & Code — een pc bouwen en leren programmeren",
+  "short_name": "Computers",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -9,7 +9,16 @@
   "lang": "nl",
   "description": "Leren programmeren en een pc bouwen, voor kinderen van tien tot veertien.",
   "icons": [
-    { "src": "../apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
-    { "src": "../favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+    {
+      "src": "../iconen/code-180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "../iconen/code.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
   ]
 }

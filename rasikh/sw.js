@@ -9,10 +9,10 @@
      als bestand in fonts/ naast de app. Zonder Amiri vallen de tekens van de
      Warsh-druk terug op een systeemletter die ze niet kent, en dan staan er
      gaten in de tekst. Het wordt meteen bij het installeren opgehaald. */
-const CACHE = 'rasikh-v1';
+const CACHE = 'rasikh-v2';
 const BESTANDEN = ['./', './index.html', './manifest.webmanifest', './tekst/index.json',
                    '../fonts/amiri-400.woff2', '../fonts/amiri-700.woff2',
-                   '../favicon.svg', '../apple-touch-icon.png'];
+                   '../iconen/koran.svg', '../iconen/koran-180.png'];
 const BLIJFT = /\.(mp3|woff2?)$|\/tekst\/.+\.json$/;
 const LETTERS = /^https:\/\/fonts\.(googleapis|gstatic)\.com\//;
 

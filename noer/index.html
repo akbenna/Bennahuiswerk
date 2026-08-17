@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Noer Islam — de basis van de islam en leren bidden</title>
+<title>Islam leren — de basis van de islam en leren bidden</title>
 <meta name="theme-color" content="#F6F4F0" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#141518" media="(prefers-color-scheme: dark)">
 <meta name="description" content="De basis van de islam voor kinderen van 7 tot 15, met een volledige begeleiding bij het leren bidden.">
-<link rel="icon" href="../favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="icon" href="../iconen/islam.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../iconen/islam-180.png">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preload" href="../fonts/amiri-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,7 +33,7 @@
   --ink:#0D0D0D; --ink-2:#24282B; --muted:#5F5C55;
   --line:#DAD6CE; --line-2:#C4BFB4;
 
-  --k:#0F6F6C; --k-bg:#DCEFEE;         /* de kleur van Noer */
+  --k:#0F6F6C; --k-bg:#DCEFEE;         /* de kleur van Islam leren */
   --goed:#2F6B1F; --goed-bg:#E4EFDD;
   --fout:#9F2F2D; --fout-bg:#FBE9E8;
   --let:#7E5300; --let-bg:#F8EFD4;
@@ -341,6 +341,11 @@ body[data-spoor="1"] .verhaalkaart .vk-tekst b{font-size:1.2rem}
 /* ---------- lijstjes ---------- */
 ul.net{margin:0;padding-left:1.15em}
 ul.net li{margin-bottom:.42em;line-height:1.55}
+/* Genummerd voor waar de volgorde er echt toe doet — bij het feestgebed en het
+   gebed voor een overledene is stap drie niet los te lezen van stap twee. */
+ol.genummerd{margin:0;padding-left:1.35em}
+ol.genummerd li{margin-bottom:.5em;line-height:1.55}
+ol.genummerd li::marker{font-family:var(--mono);font-size:.8em;color:var(--k)}
 ul.geen{list-style:none;margin:0;padding:0}
 ul.geen li{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line)}
 ul.geen li:last-child{border-bottom:0}
@@ -398,7 +403,7 @@ footer p+p{margin-top:8px}
 <header class="top">
   <div class="top-in">
     <a class="terug" href="../" title="Terug naar BennaHub" aria-label="Terug naar BennaHub">&larr;</a>
-    <span class="brand">Noer Islam<em lang="ar">نور الإسلام</em></span>
+    <span class="brand">Islam leren<em lang="ar">نور الإسلام</em></span>
     <div class="wie">
       <button id="knopWie" type="button"><span class="bol" id="wieBol">?</span><span id="wieNaam">Kies wie je bent</span></button>
     </div>
@@ -462,7 +467,7 @@ footer p+p{margin-top:8px}
   </section>
 
   <footer>
-    <p>Noer Islam bewaart je voortgang op dit toestel en — als er een gezinsaccount is ingesteld — ook centraal, zodat je op elke telefoon of tablet verder gaat waar je gebleven was. Zonder internet werkt alles gewoon door.</p>
+    <p>Islam leren bewaart je voortgang op dit toestel en — als er een gezinsaccount is ingesteld — ook centraal, zodat je op elke telefoon of tablet verder gaat waar je gebleven was. Zonder internet werkt alles gewoon door.</p>
     <p>De fiqh volgt de Malikitische school. Waar andere scholen het anders doen, staat dat erbij. De gebedstijden zijn berekend en bedoeld ter oriëntatie; houd de kalender van je eigen moskee aan.</p>
     <p class="meta" style="margin-top:14px">Gebouwd voor het gezin Benna</p>
   </footer>
@@ -476,14 +481,14 @@ footer p+p{margin-top:8px}
 
 <script>
 /* =============================================================================
-   Noer Islam — de basis van de islam, en leren bidden.
+   Islam leren (voorheen Noer Islam) — de basis van de islam, en leren bidden.
    Eén bestand, geen bouwstap, werkt zonder internet. De opzet volgt de andere
    apps van de hub: gegevens bovenaan als gewone lijsten, daaronder de scherm-
    code. Wie de leerstof wil aanpassen hoeft alleen de lijsten te bewerken.
 ============================================================================= */
 
 /* ============================ WOLK — centrale opslag ============================
-   Letterlijk dezelfde module als in Sanad en Lisan. Bewust gedupliceerd: één
+   Letterlijk dezelfde module als in Geloofsstudie en Arabisch. Bewust gedupliceerd: één
    zelfstandig bestand per app weegt zwaarder dan het vermijden van die dubbeling.
 ================================================================================= */
 const WOLK = (function () {
@@ -2133,7 +2138,60 @@ const T = {
     nl:'Er is geen god dan Allah alleen, zonder deelgenoot. Aan Hem behoort het koningschap en aan Hem komt de lof toe, en Hij is tot alles in staat.', keer:'als honderdste'},
   qunut:{aid:'t:qunut', ar:'اللَّهُمَّ إِنَّا نَسْتَعِينُكَ وَنَسْتَغْفِرُكَ وَنُؤْمِنُ بِكَ وَنَتَوَكَّلُ عَلَيْكَ وَنُثْنِي عَلَيْكَ الْخَيْرَ كُلَّهُ، نَشْكُرُكَ وَلَا نَكْفُرُكَ، وَنَخْلَعُ وَنَتْرُكُ مَنْ يَفْجُرُكَ. اللَّهُمَّ إِيَّاكَ نَعْبُدُ وَلَكَ نُصَلِّي وَنَسْجُدُ، وَإِلَيْكَ نَسْعَىٰ وَنَحْفِدُ، نَرْجُو رَحْمَتَكَ وَنَخْشَىٰ عَذَابَكَ، إِنَّ عَذَابَكَ الْجِدَّ بِالْكُفَّارِ مُلْحِقٌ',
     tr:'Allahumma inna nasta\'inuka wa nastaghfiruka wa nu\'minu bika wa natawakkalu \'alayka wa nuthni \'alayka l-khayra kullah, nashkuruka wa la nakfuruk, wa nakhla\'u wa natruku man yafjuruk. Allahumma iyyaka na\'budu wa laka nusalli wa nasjud, wa ilayka nas\'a wa nahfid, narju rahmataka wa nakhsha \'adhabak, inna \'adhabaka l-jidda bi-l-kuffari mulhiq.',
-    nl:'Allah, wij vragen U om hulp en om vergeving, wij geloven in U en vertrouwen op U, en wij prijzen U met al het goede. Wij danken U en verloochenen U niet. Allah, U alleen aanbidden wij, voor U bidden en knielen wij, naar U streven wij, wij hopen op Uw barmhartigheid en vrezen Uw straf.'}
+    nl:'Allah, wij vragen U om hulp en om vergeving, wij geloven in U en vertrouwen op U, en wij prijzen U met al het goede. Wij danken U en verloochenen U niet. Allah, U alleen aanbidden wij, voor U bidden en knielen wij, naar U streven wij, wij hopen op Uw barmhartigheid en vrezen Uw straf.'},
+
+  /* ---- de gebeden die niet elke dag terugkomen ---- */
+  /* De takbir van het feest. In de Maghrebijnse moskeeën zing je hem op weg naar
+     het feestgebed, en na de gebeden in de dagen van het offerfeest. */
+  takbirEid:{aid:'t:takbir-eid',
+    ar:'اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، لَا إِلَٰهَ إِلَّا اللَّهُ، وَاللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، وَلِلَّهِ الْحَمْدُ',
+    tr:'Allahu akbar, Allahu akbar, Allahu akbar, la ilaha illa llah, wallahu akbar, Allahu akbar, wa lillahi l-hamd',
+    uit:'al-LAA-hoe AK-bar (3×) · laa i-LAA-ha il-la l-LAAH · wal-LAA-hoe AK-bar, al-LAA-hoe AK-bar, wa lil-LAA-hi l-HAMD',
+    nl:'Allah is groter, Allah is groter, Allah is groter. Er is geen god dan Allah. Allah is groter, Allah is groter, en aan Allah komt de lof toe.'},
+
+  /* Het gebed bij een overledene kent geen buiging en geen knieval: het ís de
+     du'a. Deze staat bij Muslim, van Awf ibn Malik, die zei dat hij hem zo mooi
+     vond dat hij wenste dat hij zelf die overledene was. */
+  janazaDua:{aid:'t:janaza',
+    ar:'اللَّهُمَّ اغْفِرْ لَهُ وَارْحَمْهُ، وَعَافِهِ وَاعْفُ عَنْهُ، وَأَكْرِمْ نُزُلَهُ، وَوَسِّعْ مُدْخَلَهُ، وَاغْسِلْهُ بِالْمَاءِ وَالثَّلْجِ وَالْبَرَدِ، وَنَقِّهِ مِنَ الْخَطَايَا كَمَا نَقَّيْتَ الثَّوْبَ الْأَبْيَضَ مِنَ الدَّنَسِ',
+    tr:'Allahumma ghfir lahu warhamh, wa \'afihi wa\'fu \'anh, wa akrim nuzulah, wa wassi\' mudkhalah, waghsilhu bi-l-ma\'i wa th-thalji wa l-barad, wa naqqihi mina l-khataya kama naqqayta th-thawba l-abyada mina d-danas',
+    nl:'Allah, vergeef hem en heb erbarmen met hem, spaar hem en scheld hem kwijt. Ontvang hem gastvrij en maak zijn plaats ruim. Was hem met water, sneeuw en hagel, en maak hem schoon van fouten zoals U een wit kleed van vuil schoonmaakt.'},
+  janazaKind:{aid:'t:janaza-kind',
+    ar:'اللَّهُمَّ اجْعَلْهُ فَرَطًا وَذُخْرًا لِوَالِدَيْهِ، وَشَفِيعًا مُجَابًا',
+    tr:'Allahumma j\'alhu faratan wa dhukhran li-walidayh, wa shafi\'an mujaba',
+    uit:'al-LAA-hoem-ma DJ‘AL-hoe FA-ra-tan wa DZOEKH-ran li-waa-li-DAYH, wa sja-FIE-‘an moe-DJAA-baa',
+    nl:'Allah, maak hem tot iemand die vooruitgaat en tot een schat voor zijn ouders, en tot een voorspreker die verhoord wordt.'},
+
+  /* Wat je zegt zodra je het slechte nieuws hoort — de woorden staan in de Koran
+     zelf (2:156), en de tweede du'a leerde de Profeet ﷺ aan Umm Salama. */
+  istirja:{aid:'t:istirja', ar:'إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ',
+    tr:'Inna lillahi wa inna ilayhi raji\'un', uit:'IN-naa lil-LAA-hi wa IN-naa i-LAY-hi RAA-dji-‘oen',
+    nl:'Wij zijn van Allah en tot Hem keren wij terug'},
+  duaMusiba:{aid:'t:musiba', ar:'اللَّهُمَّ أْجُرْنِي فِي مُصِيبَتِي، وَأَخْلِفْ لِي خَيْرًا مِنْهَا',
+    tr:'Allahumma jurni fi musibati, wa akhlif li khayran minha',
+    uit:'al-LAA-hoem-ma DJOER-nie fie moe-SIE-ba-tie, wa AKH-lif lie GHAY-ran MIN-haa',
+    nl:'Allah, beloon mij in mijn verdriet en geef mij iets beters ervoor terug'},
+  taziya:{aid:'t:taziya', ar:'أَعْظَمَ اللَّهُ أَجْرَكَ، وَأَحْسَنَ عَزَاءَكَ، وَغَفَرَ لِمَيِّتِكَ',
+    tr:'A\'zama llahu ajrak, wa ahsana \'aza\'ak, wa ghafara li-mayyitik',
+    uit:'A‘-dha-ma l-LAA-hoe AJ-rak, wa AH-sa-na ‘a-ZAA-‘ak, wa GHA-fa-ra li-MAY-yi-tik',
+    nl:'Moge Allah je beloning groot maken, je troost mooi maken en je overledene vergeven'},
+  bijGraf:{aid:'t:bij-graf', ar:'بِسْمِ اللَّهِ وَعَلَىٰ مِلَّةِ رَسُولِ اللَّهِ',
+    tr:'Bismillahi wa \'ala millati rasuli llah', uit:'BIS-mil-LAAH wa ‘a-LAA MIL-la-ti ra-SOE-li l-LAAH',
+    nl:'In de naam van Allah en op de weg van de boodschapper van Allah'},
+  groetGraf:{aid:'t:groet-graf',
+    ar:'السَّلَامُ عَلَيْكُمْ أَهْلَ الدِّيَارِ مِنَ الْمُؤْمِنِينَ وَالْمُسْلِمِينَ، وَإِنَّا إِنْ شَاءَ اللَّهُ بِكُمْ لَاحِقُونَ، نَسْأَلُ اللَّهَ لَنَا وَلَكُمُ الْعَافِيَةَ',
+    tr:'As-salamu \'alaykum ahla d-diyari mina l-mu\'minina wa l-muslimin, wa inna in sha\'a llahu bikum lahiqun, nas\'alu llaha lana wa lakumu l-\'afiya',
+    nl:'Vrede zij met jullie, bewoners van deze plaats, gelovigen en moslims. En wij komen, als Allah het wil, achter jullie aan. Wij vragen Allah om welzijn voor ons en voor jullie.'},
+
+  istikhara:{aid:'t:istikhara',
+    ar:'اللَّهُمَّ إِنِّي أَسْتَخِيرُكَ بِعِلْمِكَ وَأَسْتَقْدِرُكَ بِقُدْرَتِكَ وَأَسْأَلُكَ مِنْ فَضْلِكَ الْعَظِيمِ، فَإِنَّكَ تَقْدِرُ وَلَا أَقْدِرُ وَتَعْلَمُ وَلَا أَعْلَمُ وَأَنْتَ عَلَّامُ الْغُيُوبِ. اللَّهُمَّ إِنْ كُنْتَ تَعْلَمُ أَنَّ هَٰذَا الْأَمْرَ خَيْرٌ لِي فِي دِينِي وَمَعَاشِي وَعَاقِبَةِ أَمْرِي فَاقْدُرْهُ لِي وَيَسِّرْهُ لِي ثُمَّ بَارِكْ لِي فِيهِ، وَإِنْ كُنْتَ تَعْلَمُ أَنَّهُ شَرٌّ لِي فِي دِينِي وَمَعَاشِي وَعَاقِبَةِ أَمْرِي فَاصْرِفْهُ عَنِّي وَاصْرِفْنِي عَنْهُ وَاقْدُرْ لِيَ الْخَيْرَ حَيْثُ كَانَ ثُمَّ أَرْضِنِي بِهِ',
+    tr:'Allahumma inni astakhiruka bi-\'ilmik, wa astaqdiruka bi-qudratik, wa as\'aluka min fadlika l-\'azim, fa-innaka taqdiru wa la aqdir, wa ta\'lamu wa la a\'lam, wa anta \'allamu l-ghuyub. Allahumma in kunta ta\'lamu anna hadha l-amra khayrun li fi dini wa ma\'ashi wa \'aqibati amri fa-qdurhu li wa yassirhu li thumma barik li fih. Wa in kunta ta\'lamu annahu sharrun li fi dini wa ma\'ashi wa \'aqibati amri fa-srifhu \'anni wa-srifni \'anh, wa-qdur liya l-khayra haythu kan, thumma ardini bih.',
+    nl:'Allah, ik vraag U om het goede te kiezen met Uw kennis, en om kracht met Uw macht, en ik vraag U van Uw grote gunst. U kunt en ik kan niet, U weet en ik weet niet, en U kent het verborgene. Allah, als U weet dat deze zaak goed voor mij is in mijn geloof, mijn leven en mijn toekomst, breng haar dan bij mij, maak haar makkelijk voor mij en zegen haar. En als U weet dat zij slecht voor mij is in mijn geloof, mijn leven en mijn toekomst, houd haar dan bij mij weg en mij bij haar, en breng mij het goede, waar het ook is, en maak mij daar tevreden mee.'},
+
+  istisqa:{aid:'t:istisqa',
+    ar:'اللَّهُمَّ اسْقِنَا غَيْثًا مُغِيثًا مَرِيئًا مَرِيعًا، نَافِعًا غَيْرَ ضَارٍّ، عَاجِلًا غَيْرَ آجِلٍ',
+    tr:'Allahumma sqina ghaythan mughithan mari\'an mari\'an, nafi\'an ghayra darr, \'ajilan ghayra ajil',
+    nl:'Allah, geef ons regen die helpt, die goed is om te drinken en het land vruchtbaar maakt; die baat en geen schade brengt, en die nu komt en niet later.'}
 };
 
 /* Drie soorten: wat moet, wat sterk aanbevolen is, en wat ná de slotgroet komt
@@ -2141,6 +2199,9 @@ const T = {
 const etiket = s => s==='fard' ? 'Moet' : s==='na' ? 'Na het gebed' : 'Sunna';
 
 const STAPPEN = [
+ {k:'iqama', t:'De iqama', h:'staan', merk:null, soort:'sunna', zeg:'iqama',
+  doe:['Ga staan met je gezicht naar de qibla, vóór je aan het gebed begint.','Zeg de tien zinnen hardop, of zachtjes als je alleen bidt.','Bij "qad qamati s-salah" sta je klaar; daarna begin je met de intentie en de takbir.'],
+  let:'De iqama hoort bij de vijf verplichte gebeden, ook als je alleen thuis bidt — dan mag hij zacht. Bij een vrijwillig gebed en bij de witr zeg je hem niet. In de Malikitische school is de iqama <b>enkel</b>: elke zin één keer, alleen de takbir twee keer, en "qad qamati s-salah" ook maar één keer. Andere scholen verdubbelen; dat hoor je in sommige moskeeën. Het roepen is in deze school aan de mannen; meeleren mag iedereen.'},
  {k:'niyyah', t:'Intentie en staan', h:'staan', merk:null, soort:'fard',
   doe:['Sta recht, met je voeten stevig op de grond en je gezicht naar de qibla.','Weet in je hart welk gebed je gaat bidden. Niets hardop.','Kijk naar de plek waar je hoofd straks komt.']},
  {k:'takbir', t:'De openingstakbir', h:'takbir', merk:[131,60,24], soort:'fard', zeg:'takbir',
@@ -2228,7 +2289,146 @@ const NAWAFIL = [
  {n:'Istikhara', ar:'الاستخارة', r:'2', w:'Als je moet kiezen', u:'Twee rak\'a en daarna de du\'a van de istikhara: je vraagt Allah om het goede voor je te kiezen.'},
  {n:'Het feestgebed', ar:'صلاة العيد', r:'2', w:'Op de ochtend van beide feesten', u:'Met extra takbirs, en een preek na het gebed.'},
  {n:'Het gebed bij een overledene', ar:'صلاة الجنازة', r:'—', w:'Bij een begrafenis', u:'Staand, met vier takbirs, zonder buiging en zonder knieval. Je bidt voor de overledene.'},
- {n:'Op reis', ar:'صلاة السفر', r:'4 → 2', w:'Bij een reis van ongeveer 80 km of meer', u:'De gebeden van vier rak\'a bid je als twee (qasr). Onder voorwaarden mag je Dhuhr en Asr, of Maghrib en Isha, samenvoegen.'}
+ {n:'Op reis', ar:'صلاة السفر', r:'4 → 2', w:'Bij een reis van ongeveer 80 km of meer', u:'De gebeden van vier rak\'a bid je als twee (qasr). Onder voorwaarden mag je Dhuhr en Asr, of Maghrib en Isha, samenvoegen.'},
+ {n:'Bij een verduistering', ar:'صلاة الكسوف', r:'2', w:'Zolang de zon of de maan verduisterd is', u:'Bij de zon met twee keer lezen en twee keer buigen per rak\'a, samen in de moskee. Bij de maan bidt ieder voor zich.'},
+ {n:'Om regen vragen', ar:'صلاة الاستسقاء', r:'2', w:'Bij droogte, \'s ochtends buiten', u:'Hardop, met een preek erna en veel istighfar. De hele gemeenschap komt.'}
+];
+
+/* =============================================================================
+   DE GEBEDEN DIE NIET ELKE DAG TERUGKOMEN
+
+   De vijf gebeden leer je door ze te doen: vijf keer per dag, jaar in jaar uit.
+   Deze niet. Het feestgebed komt twee keer per jaar langs, en het gebed bij een
+   overledene komt precies op het moment dat niemand in huis rustig kan nadenken.
+   Juist daarom staan ze hier uitgeschreven, met wat je doet, wat je zegt, en
+   wat er wél en niet moet.
+
+   Per gebed staat de regel erbij:
+     fard    — verplicht voor wie eraan toe is
+     kifaya  — plicht van de gemeenschap: doet een groep het, dan is het gedaan
+               voor iedereen; doet niemand het, dan draagt de hele buurt de schuld
+     sunna   — sterk aanbevolen, niet verplicht
+============================================================================= */
+const REGELS = {
+  fard:  {t:'Verplicht',                  c:'fout'},
+  kifaya:{t:'Plicht van de gemeenschap',  c:'let'},
+  sunna: {t:'Sterk aanbevolen',           c:'k'},
+  mag:   {t:'Aanbevolen',                 c:'info'}
+};
+
+const BIJZONDER = [
+ {id:'jumua', n:'Het vrijdaggebed', ar:'صلاة الجمعة', regel:'fard', rak:'2 rak\'a, hardop',
+  kort:'Op vrijdag vervangt dit het Dhuhr-gebed. Voor volwassen mannen die thuis zijn is het geen keuze: je gaat.',
+  wanneer:'Vrijdagmiddag, in de tijd van Dhuhr, in de moskee van de buurt.',
+  hoe:['De imam houdt eerst de <b>khutba</b>, de preek — in twee stukken, met een korte zit ertussen.',
+       'Daarna bid je twee rak\'a achter de imam, hardop gelezen.',
+       'Kom je zo laat dat je de imam niet meer in de buiging van de tweede rak\'a haalt, dan heb je het vrijdaggebed gemist: je bidt dan gewoon Dhuhr, vier rak\'a.'],
+  let:'In deze school hoort de khutba erbij als voorwaarde: wie alleen het gebed pakt en de preek overslaat, heeft het vrijdaggebed niet. Tijdens de preek zwijg je — zelfs "ssst" tegen iemand die praat is te veel. Telefoon uit, dus.',
+  tips:['Was je (ghusl), trek schone kleren aan en gebruik geur. Dat is sunna en het is precies wat vrijdag anders maakt dan donderdag.',
+        'Lees soerat al-Kahf op vrijdag.',
+        'Zeg vaak de zegenwens op de Profeet ﷺ; vrijdag is daar de dag voor.',
+        'Ergens op vrijdag zit een uur waarin een du\'a wordt verhoord. Niemand weet precies wanneer — dus vraag de hele dag door.'],
+  vragen:[['Geldt het ook voor kinderen?','Nee. Het is verplicht voor volwassen mannen die niet op reis zijn. Ga je als kind mee, dan is dat prachtig en went het vanzelf — maar het is geen plicht en niemand mag je erop aankijken.'],
+          ['En vrouwen?','Voor vrouwen is het niet verplicht. Wil je gaan, dan mag dat; blijf je thuis, dan bid je Dhuhr.']],
+  zeg:[]},
+
+ {id:'eid', n:'Het feestgebed', ar:'صلاة العيد', regel:'sunna', rak:'2 rak\'a, hardop',
+  kort:'Twee keer per jaar: op de ochtend van het suikerfeest (\'id al-fitr) en van het offerfeest (\'id al-adha).',
+  wanneer:'\'s Ochtends, vanaf een klein half uur na zonsopgang tot de middag. Het liefst buiten of in een grote zaal, met de hele buurt bij elkaar.',
+  hoe:['Er is <b>geen adhan en geen iqama</b>. Het gebed begint gewoon.',
+       'Eerste rak\'a: zeven takbirs — de openingstakbir meegeteld, dus zes extra. Daarna al-Fatiha en een soera, hardop.',
+       'Tweede rak\'a: zes takbirs, waaronder die waarmee je opstaat. Dus vijf extra, en daarna weer al-Fatiha en een soera.',
+       'De rest gaat als een gewoon gebed: buiging, knieval, tashahhud, slotgroet.',
+       'Pas <b>ná</b> het gebed komt de preek — andersom dan op vrijdag. Je mag weglopen, maar blijven is beter.'],
+  let:'Vergeet je een takbir of doe je er een te veel, dan is je gebed niet stuk. De takbirs zijn sunna. In andere scholen worden ze anders geteld; bid je mee, kijk dan naar de imam en volg hem.',
+  tips:['Op het suikerfeest eet je iets zoets vóór je gaat — een oneven aantal dadels is de gewoonte. Op het offerfeest juist niet: daar eet je pas ná het gebed.',
+        'Schone of nieuwe kleren, geur, en iedereen mee: ook de kleintjes.',
+        'Loop naar het gebed langs de ene weg en terug langs de andere. Zo groet je meer mensen.',
+        'Onderweg zeg je de takbir van het feest, hardop, samen.'],
+  vragen:[['Wanneer zeg je die takbir precies?','Bij het suikerfeest op weg naar het gebed. Bij het offerfeest bovendien na elk verplicht gebed — in deze school vanaf Dhuhr op de feestdag zelf tot en met het Fajr-gebed op de dertiende. Dat zijn vijftien gebeden.'],
+          ['Is het feestgebed verplicht?','In deze school niet: het is sterk aanbevolen. Maar het is een van die dingen die je niet overslaat — het feest ís dat gebed.']],
+  zeg:['takbirEid']},
+
+ {id:'janaza', n:'Het gebed bij een overledene', ar:'صلاة الجنازة', regel:'kifaya', rak:'Geen rak\'a — vier takbirs, staand',
+  kort:'Het enige gebed zonder buiging en zonder knieval. Je staat, en je vraagt vergeving voor iemand die er niet meer is.',
+  wanneer:'Vlak voor de begrafenis, meestal na een van de vijf gebeden. In de moskee of op het kerkhof.',
+  hoe:['Je hebt wudu nodig, net als bij elk gebed, en je staat naar de qibla met de overledene voor je.',
+       '<b>Eerste takbir</b> — handen omhoog. Daarna prijs je Allah en zeg je de zegenwens op de Profeet ﷺ.',
+       '<b>Tweede takbir</b> — handen blijven nu omlaag. Du\'a voor de overledene.',
+       '<b>Derde takbir</b> — nog een du\'a, ook voor alle moslims, levend en overleden.',
+       '<b>Vierde takbir</b> — een korte du\'a, en dan één slotgroet naar rechts, zachtjes.',
+       'Daarna loop je mee naar het graf. De overledene wordt op zijn rechterzij gelegd, met het gezicht naar de qibla.'],
+  let:'Er wordt geen al-Fatiha gelezen in dit gebed volgens de Malikitische school, en de handen gaan alleen bij de éérste takbir omhoog. In andere scholen wordt al-Fatiha wél gelezen. Sta je ergens anders mee te bidden: kijk en volg.',
+  tips:['Het is een <i>fard kifaya</i>: als een groep het doet, is het voor iedereen gedaan. Maar meelopen is een van de mooiste dingen die je voor iemand kunt doen, en je krijgt er beloning voor tot het graf gedicht is.',
+        'Kinderen mogen mee. Het is niet eng — het is eerlijk, en beter dan het van een afstand raden.',
+        'Voor een klein kind zeg je een andere du\'a: een kind heeft geen vergeving nodig, dus je vraagt of het zijn ouders vooruit mag gaan.'],
+  vragen:[['Mag ik het ook doen als ik te laat ben?','Ja. Je stapt in bij de takbir waar de imam is en maakt de takbirs die je mist daarna alleen af.'],
+          ['En als iemand ver weg begraven wordt?','Dan wordt er soms in afwezigheid gebeden. In deze school gebeurt dat niet standaard; vraag je imam.']],
+  zeg:['janazaDua','janazaKind','bijGraf']},
+
+ {id:'reis', n:'Bidden op reis', ar:'صلاة المسافر', regel:'sunna', rak:'4 wordt 2',
+  kort:'Ben je onderweg naar iets ver weg, dan wordt het gebed korter. Dat is geen uitzondering die je krijgt — het is hoe het hoort.',
+  wanneer:'Vanaf ongeveer 80 kilometer, gerekend vanaf de rand van je eigen plaats.',
+  hoe:['Dhuhr, Asr en Isha bid je met <b>twee</b> rak\'a in plaats van vier.',
+       'Fajr blijft twee en Maghrib blijft drie — die veranderen niet.',
+       'Het korten begint zodra je de bebouwde kom uit bent, en stopt zodra je terug bent.',
+       'Ben je van plan vier dagen of langer op één plek te blijven, dan bid je daar weer volledig.'],
+  let:'Het korten heet <i>qasr</i> en is in deze school sterk aanbevolen: je slaat het niet zomaar over omdat je het "netter" vindt om vier te bidden.',
+  tips:['Bid je achter een imam die niet op reis is, dan bid je met hem mee volledig.',
+        'Het samenvoegen van twee gebeden (Dhuhr met Asr, Maghrib met Isha) mag, maar de voorwaarden zijn in deze school nauwer dan in sommige andere. Vraag ernaar bij je imam voor je op reis gaat.',
+        'In de auto, het vliegtuig of de trein: bepaal de qibla zo goed als je kunt en bid. Niet bidden omdat het lastig is, is geen optie.'],
+  vragen:[['Geldt het ook voor een schoolreisje?','Alleen als het ver genoeg is. Rijden jullie van Roermond naar Amsterdam, dan zit je er ruim over.']],
+  zeg:[]},
+
+ {id:'verduistering', n:'Bij een zons- of maansverduistering', ar:'صلاة الكسوف والخسوف', regel:'sunna', rak:'2 rak\'a',
+  kort:'Gaat de zon of de maan overdag of \'s nachts op slot, dan ga je bidden. Niet uit angst — uit ontzag.',
+  wanneer:'Zolang de verduistering duurt.',
+  hoe:['Bij een <b>zonsverduistering</b>: twee rak\'a, maar met twee keer lezen en twee keer buigen in elke rak\'a. Je leest, buigt, komt overeind, leest opnieuw, buigt opnieuw, en gaat dan pas naar de knieval. In deze school lees je zachtjes.',
+       'Dat gebeurt in de moskee, samen, en er wordt daarna gesproken.',
+       'Bij een <b>maansverduistering</b> bidt iedereen voor zichzelf, twee rak\'a tegelijk, zoals elk vrijwillig gebed.',
+       'Verder: veel du\'a, istighfar en iets weggeven.'],
+  let:'De Profeet ﷺ zei het er expres bij toen zijn zoon Ibrahim stierf op de dag van een verduistering: de zon en de maan verduisteren niet om de dood of de geboorte van wie dan ook. Het is een teken van Allah, geen voorspelling en geen ongeluk.',
+  tips:['Kijk nooit met het blote oog naar een zonsverduistering. Dat is geen fiqh, dat is je ogen.',
+        'Een verduistering staat jaren van tevoren in de agenda. Zet hem erin — dan sta je niet te zoeken als het zover is.'],
+  vragen:[],
+  zeg:[]},
+
+ {id:'regen', n:'Om regen vragen', ar:'صلاة الاستسقاء', regel:'sunna', rak:'2 rak\'a, hardop',
+  kort:'Blijft de regen te lang weg en droogt het land uit, dan gaat de hele gemeenschap naar buiten en vraagt erom.',
+  wanneer:'Bij droogte, \'s ochtends, buiten het dorp of de stad.',
+  hoe:['Twee rak\'a hardop, net als het feestgebed, zonder adhan en zonder iqama.',
+       'Daarna de preek, met veel istighfar erin.',
+       'De imam draait zijn mantel binnenstebuiten — een oud gebaar: moge de toestand ook omslaan.',
+       'Iedereen komt: oud, jong, kinderen.'],
+  let:'Vooraf wordt aangeraden te vasten en ruzies bij te leggen. De gedachte erachter staat in de Koran: "Vraag jullie Heer om vergeving, Hij is zeer vergevend — Hij zal de hemel overvloedig regen laten zenden." (71:10-11)',
+  tips:['Zeg als het regent: <i>allahumma sayyiban nafi\'a</i> — Allah, laat het regen zijn die goed doet.',
+        'Regen is een moment waarop du\'a wordt verhoord. Steek je hand uit en vraag.'],
+  vragen:[],
+  zeg:['istisqa']},
+
+ {id:'istikhara', n:'Als je moet kiezen', ar:'صلاة الاستخارة', regel:'mag', rak:'2 rak\'a',
+  kort:'Twee rak\'a en een du\'a, voor als je een besluit moet nemen en er niet uitkomt.',
+  wanneer:'Wanneer je maar wilt, behalve op de momenten waarop je niet bidt (vlak na zonsopgang en vlak voor zonsondergang).',
+  hoe:['Bid twee gewone vrijwillige rak\'a.',
+       'Zeg daarna de du\'a van de istikhara, en noem in gedachten waar het over gaat op de plek waar "deze zaak" staat.',
+       'Neem daarna je besluit en ga ervoor. Vraag ook mensen om raad — dat hoort erbij.'],
+  let:'Je hoeft geen droom te krijgen en er komt geen teken in de lucht. Het gaat om iets anders: je legt de keuze bij Allah neer, en daarna is de onrust weg — of het nu de ene of de andere kant op gaat.',
+  tips:['Voor kleine dingen mag het ook. Een schoolkeuze, een team, een vriendschap.',
+        'Ken je de du\'a nog niet uit je hoofd? Lees hem van je telefoon. Dat mag gewoon.'],
+  vragen:[],
+  zeg:['istikhara']}
+];
+
+/* Rond een overlijden gebeurt er meer dan het gebed alleen. Wat hier staat is
+   het stuk dat kinderen meemaken: het nieuws, het huis vol mensen, het kerkhof.
+   Uitgeschreven omdat niemand op dat moment iets kan opzoeken. */
+const ROUW = [
+ {t:'Als je het hoort', d:'Je zegt de woorden die in de Koran staan. Verdriet mag: huilen is toegestaan en de Profeet ﷺ deed het zelf. Wat niet mag is jammeren, jezelf slaan of je kleren scheuren.', zeg:['istirja','duaMusiba']},
+ {t:'De wassing en de lijkwade', d:'De overledene wordt gewassen door mensen van dezelfde sekse — familie het liefst — en in witte doeken gewikkeld. Wie in ihram stierf tijdens de hadj, wordt niet geparfumeerd. Dit is werk voor volwassenen; kinderen hoeven hier niet bij te zijn.'},
+ {t:'Het gebed', d:'Vier takbirs, staand, zonder buiging en zonder knieval. Hoe dat precies gaat, staat hierboven bij het gebed bij een overledene.'},
+ {t:'Naar het graf', d:'De baar wordt gedragen en meelopen is sterk aanbevolen. De overledene wordt op de rechterzij gelegd, met het gezicht naar de qibla, terwijl er gezegd wordt: bismillahi wa \'ala millati rasulillah. Daarna wordt het graf gedicht en blijft men nog even staan om te vragen of hij standvastig gehouden wordt.', zeg:['bijGraf']},
+ {t:'Condoleren', d:'Drie dagen lang. Je hoeft geen mooie zin te bedenken; er ís een zin. Wat je verder doet: eten brengen naar het huis van de familie. Zij koken die dagen niet — dat is een sunna, en het is precies wat helpt.', zeg:['taziya']},
+ {t:'Daarna', d:'Wat een overledene het meest heeft aan de levenden: du\'a voor hem, schulden die worden afbetaald, en goed dat uit zijn naam wordt gedaan. Bezoek het graf af en toe — dat is toegestaan en het herinnert je aan hoe kort alles is. Bij binnenkomst groet je de bewoners van het kerkhof.', zeg:['groetGraf']}
 ];
 
 const FOUTEN = [
@@ -2362,6 +2562,15 @@ const HIFZ = [
      ['رَبَّنَا وَلَكَ الْحَمْدُ','Rabbana wa laka l-hamd','Onze Heer, aan U komt alle lof toe — als je rechtop staat','RAB-ba-naa wa LA-ka l-HAMD'],
      ['سُبْحَانَ رَبِّيَ الْأَعْلَى','Subhana rabbiya l-a\'la','Volmaakt is mijn Heer, de Allerhoogste — in de knieval','soeb-HAA-na RAB-bi-ya l-A‘-laa'],
      ['رَبِّ اغْفِرْ لِي','Rabbi ghfir li','Heer, vergeef mij — tussen de twee knievallen','RAB-bigh-FIR lie']]},
+ {id:'h-iqama', naam:'De iqama', ar:'الإقامة', soort:'gebed', waarom:'De oproep vlak voordat het gebed begint. Tien zinnen, elk één keer — behalve de takbir.',
+  r:[['اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ','Allahu akbar, Allahu akbar','Allah is groter, Allah is groter','al-LAA-hoe AK-bar · al-LAA-hoe AK-bar'],
+     ['أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ','Ashhadu an la ilaha illa llah','Ik getuig dat er geen god is dan Allah','asj-HA-doe an laa i-LAA-ha il-la l-LAAH'],
+     ['أَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ','Ashhadu anna Muhammadan rasulu llah','Ik getuig dat Mohammed de boodschapper van Allah is','asj-HA-doe AN-na moe-HAM-ma-dan ra-SOE-loe l-LAAH'],
+     ['حَيَّ عَلَى الصَّلَاةِ','Hayya \'ala s-salah','Kom naar het gebed','HAY-ya ‘a-la s-sa-LAAH'],
+     ['حَيَّ عَلَى الْفَلَاحِ','Hayya \'ala l-falah','Kom naar wat je redt','HAY-ya ‘a-la l-fa-LAAH'],
+     ['قَدْ قَامَتِ الصَّلَاةُ','Qad qamati s-salah','Het gebed begint nu','qad QAA-ma-ti s-sa-LAAH'],
+     ['اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ','Allahu akbar, Allahu akbar','Allah is groter, Allah is groter','al-LAA-hoe AK-bar · al-LAA-hoe AK-bar'],
+     ['لَا إِلَٰهَ إِلَّا اللَّهُ','La ilaha illa llah','Er is geen god dan Allah','laa i-LAA-ha il-la l-LAAH']]},
  {id:'h-nagebed', naam:'Na het gebed', ar:'أذكار بعد الصلاة', soort:'gebed', waarom:'Wat je zegt als je na de slotgroet nog even blijft zitten.',
   r:[['أَسْتَغْفِرُ اللَّهَ','Astaghfiru llah','Ik vraag Allah om vergeving — drie keer','as-tagh-FI-roe l-LAAH'],
      ['اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ','Allahumma anta s-salamu wa minka s-salam, tabarakta ya dha l-jalali wa l-ikram','Allah, U bent de Vrede en van U komt de vrede; gezegend bent U, Bezitter van majesteit en eer'],
@@ -2791,7 +3000,7 @@ function tekstBlok(o, opt){
 /* Al-Fatiha is te lang voor één blok: die zetten we vers voor vers neer, zoals
    je hem ook leert. */
 /* Teksten die te lang zijn voor één blok, staan al regel voor regel in HIFZ. */
-const LANG={fatiha:'h-fatiha', tashahhud:'h-tashahhud', salawat:'h-salawat'};
+const LANG={iqama:'h-iqama', fatiha:'h-fatiha', tashahhud:'h-tashahhud', salawat:'h-salawat'};
 function blokkenVan(hifzId, opnemen){
   const h=HIFZ.find(x=>x.id===hifzId); if(!h) return '';
   return '<div class="stack">'
@@ -2822,7 +3031,7 @@ document.addEventListener('click', e=>{
    SCHERM — VANDAAG
 ============================================================================= */
 const HELD = `<div class="held">
-    <div class="naam">Noer Islam<em lang="ar">نور الإسلام</em></div>
+    <div class="naam">Islam leren<em lang="ar">نور الإسلام</em></div>
     <p class="zin">De basis van de islam: geloven, mooi leven, en leren bidden — stap voor stap, in je eigen tempo.</p>
     <div class="streep"></div>
   </div>`;
@@ -2915,7 +3124,7 @@ function volgendeLes(){
 }
 function kaartGeenProfiel(){
   return `<div class="card"><h1>Wie ben jij?</h1>
-    <p style="margin-top:10px">Noer Islam houdt de voortgang per kind bij: welke lessen je gehad hebt, wat je uit je hoofd kent en wat je verdiend hebt. Kies hierboven wie je bent, of laat je vader of moeder een profiel aanmaken bij <b>Ouder</b>.</p>
+    <p style="margin-top:10px">Islam leren houdt de voortgang per kind bij: welke lessen je gehad hebt, wat je uit je hoofd kent en wat je verdiend hebt. Kies hierboven wie je bent, of laat je vader of moeder een profiel aanmaken bij <b>Ouder</b>.</p>
     <div class="rij" style="margin-top:16px"><button class="btn" onclick="naarTab('ouder')">Naar het ouderscherm</button></div></div>`;
 }
 
@@ -3173,15 +3382,21 @@ function ronde(){
    SCHERM — LEREN BIDDEN
 ============================================================================= */
 const GEBED_NAV=[['wudu','De wassing'],['stappen','Stap voor stap'],['mee','Bid mee'],
-                 ['hifz','Uit je hoofd'],['alle','Alle gebeden'],['duas','Du\'a\'s'],['fouten','Als het misgaat']];
+                 ['hifz','Uit je hoofd'],['alle','Alle gebeden'],['bijzonder','Bijzondere gebeden'],
+                 ['duas','Du\'a\'s'],['fouten','Als het misgaat']];
 let gebedTab='wudu';
 function tekenGebed(){
   $('#gebedNav').innerHTML = GEBED_NAV.map(([k,n])=>
     `<button class="btn sm ${gebedTab===k?'':'ghost'}" data-gt="${k}">${esc(n)}</button>`).join('');
   $$('#gebedNav [data-gt]').forEach(b=>b.onclick=()=>{ gebedTab=b.dataset.gt; tekenGebed(); });
   const el=$('#gebedInhoud');
-  ({wudu:vWudu, stappen:vStappen, mee:vMee, hifz:vHifz, alle:vAlle, duas:vDuas, fouten:vFouten}[gebedTab]||vWudu)(el);
+  ({wudu:vWudu, stappen:vStappen, mee:vMee, hifz:vHifz, alle:vAlle, bijzonder:vBijzonder,
+    duas:vDuas, fouten:vFouten}[gebedTab]||vWudu)(el);
 }
+/* Vanuit een tekst naar een ander tabblad springen. De knoppen ín de balk worden
+   in tekenGebed aangesloten; deze staan midden in de inhoud en hebben een eigen
+   ingang nodig. */
+function naarGebedTab(k){ gebedTab=k; tekenGebed(); window.scrollTo({top:0,behavior:'smooth'}); }
 
 /* ------------------------------- de wassing ------------------------------- */
 function vWudu(el){
@@ -3237,7 +3452,7 @@ function wuduKlaar(){
 
 /* Examen: de stappen op de goede volgorde zetten. Eén fout mag. */
 function examenVolgorde(soort){
-  const bron = soort==='wudu' ? WUDU.map(w=>({id:w.id,t:w.t})) : STAPPEN.filter(s=>!['opstaan','qunut','nagebed'].includes(s.k)).map(s=>({id:s.k,t:s.t}));
+  const bron = soort==='wudu' ? WUDU.map(w=>({id:w.id,t:w.t})) : STAPPEN.filter(s=>!['iqama','opstaan','qunut','nagebed'].includes(s.k)).map(s=>({id:s.k,t:s.t}));
   const juist = bron.map(b=>b.id);
   let gelegd=[], fouten=0;
   const teken=()=>{
@@ -3330,7 +3545,7 @@ function stapLoop(i){
       <span class="stap-uit tag ${s.soort==='fard'?'fout':(s.soort==='na'?'':'k')}">${etiket(s.soort)}</span></div>
     <h2 style="margin-top:16px">${esc(s.t)}</h2>
     <ul class="net" style="margin-top:10px">${s.doe.map(d=>'<li>'+d+'</li>').join('')}</ul>
-    ${t1?(LANG[s.zeg]?blokkenVan(LANG[s.zeg],true):tekstBlok(t1,{opnemen:true})):''}
+    ${LANG[s.zeg]?blokkenVan(LANG[s.zeg],true):(t1?tekstBlok(t1,{opnemen:true}):'')}
     ${t2?tekstBlok(t2):''}
     ${(s.extra||[]).map(k=>tekstBlok(T[k])).join('')}
     ${s.let?'<div class="kader let" style="margin-top:14px"><h4>Let op</h4><p>'+s.let+'</p></div>':''}
@@ -3341,7 +3556,8 @@ function stapLoop(i){
   $('#vorige').onclick=()=>stapLoop(i-1);
   $('#volgende').onclick=()=>stapLoop(i+1);
   zetOpname();
-  if(t1 && !LANG[s.zeg]) AUDIO.speel(t1.aid||'', t1.ar);
+  if(LANG[s.zeg]){ const h=HIFZ.find(x=>x.id===LANG[s.zeg]); if(h) AUDIO.speelReeks(h.r.map((x,i)=>['q:'+h.id+':'+(i+1),x[0]])); }
+  else if(t1) AUDIO.speel(t1.aid||'', t1.ar);
 }
 
 /* Opnemen en terugluisteren: hoor jezelf naast de voorgelezen tekst. */
@@ -3366,7 +3582,7 @@ function zetOpname(){
 }
 
 /* ------------------------------- bid mee ------------------------------- */
-const DUUR={niyyah:5, takbir:3, fatiha:24, soera:8, qunut:20, ruku:7, itidal:5, sujud1:7, jalsa:5, sujud2:7,
+const DUUR={iqama:22, niyyah:5, takbir:3, fatiha:24, soera:8, qunut:20, ruku:7, itidal:5, sujud1:7, jalsa:5, sujud2:7,
             opstaan:4, tashahhud:15, salawat:13, dua:12, salam:4, nagebed:25};
 /* Twee verschillende korte soera's voor de eerste twee rak'a: dat is hoe het
    in het echt gaat, en het oefent er meteen twee in plaats van één. */
@@ -3378,6 +3594,9 @@ function kiesSoeras(){
 function bouwGebed(rak, id, soeras){
   soeras = soeras || kiesSoeras();
   const seq=[];
+  /* De iqama hoort bij de vijf verplichte gebeden. Bij een vrijwillig gebed en
+     bij de witr niet, en daar geven de knoppen dan ook geen `id` mee. */
+  if(id) seq.push({k:'iqama',r:1});
   for(let r=1;r<=rak;r++){
     if(r===1){ seq.push({k:'niyyah',r}); seq.push({k:'takbir',r}); }
     else seq.push({k:'opstaan',r});
@@ -3436,7 +3655,7 @@ function meeSpelen(rak, naam, id, soeras){
       ${q.midden?'<p class="klein">De eerste zitting: alleen de tashahhud, daarna sta je weer op.</p>':''}
       ${q.soera?'<div class="rij tussen" style="margin-top:10px"><p class="meta">'+esc(q.soera.naam)+' · '+q.soera.aya+' regels</p>'+
         '<button class="btn ghost sm" id="andere">Andere soera</button></div>'+blokkenVan(q.soera.id,false):''}
-      ${t1?(LANG[s.zeg]?blokkenVan(LANG[s.zeg],false):tekstBlok(t1)):''}
+      ${LANG[s.zeg]?blokkenVan(LANG[s.zeg],false):(t1?tekstBlok(t1):'')}
       ${t2?tekstBlok(t2):''}
       ${(s.extra||[]).map(k=>tekstBlok(T[k])).join('')}
       <ul class="net" style="margin-top:10px">${s.doe.map(d=>'<li>'+d+'</li>').join('')}</ul>
@@ -3461,8 +3680,9 @@ function meeSpelen(rak, naam, id, soeras){
       herstart();
     };
     if(q.soera){ const h=q.soera; AUDIO.speelReeks(h.r.map((x,n)=>['q:'+h.id+':'+(n+1),x[0]])); }
-    else if(t1){ if(LANG[s.zeg]){ const h=HIFZ.find(x=>x.id===LANG[s.zeg]); AUDIO.speelReeks(h.r.map((x,i)=>['q:'+h.id+':'+(i+1),x[0]])); }
-            else AUDIO.speel(t1.aid||'', t1.ar); } else toon('tik');
+    else if(LANG[s.zeg]){ const h=HIFZ.find(x=>x.id===LANG[s.zeg]); AUDIO.speelReeks(h.r.map((x,i)=>['q:'+h.id+':'+(i+1),x[0]])); }
+    else if(t1) AUDIO.speel(t1.aid||'', t1.ar);
+    else toon('tik');
   };
   const vooruit=()=>{
     if(i>=seq.length-1){ stop(); return klaar(); }
@@ -3652,6 +3872,7 @@ function vAlle(el){
       ${GEBEDEN.map(g=>`<div class="card plat"><h4>${esc(g.naam)}</h4><p class="klein" style="margin-top:5px">${esc(g.extra)}</p></div>`).join('')}
     </div>
     <div class="card"><h3>Vrijwillige en bijzondere gebeden</h3>
+      <p class="klein" style="margin-top:6px">Dit is de korte lijst. Het vrijdaggebed, het feestgebed, het gebed bij een overledene en de rest staan helemaal uitgeschreven onder <button class="btn sm ghost" onclick="naarGebedTab('bijzonder')">Bijzondere gebeden</button>.</p>
       <div class="tblwrap" style="margin-top:12px"><table class="tbl">
         <thead><tr><th>Gebed</th><th>Rak'a</th><th>Wanneer</th><th>Waarom</th></tr></thead>
         <tbody>${NAWAFIL.map(n=>`<tr><td><b>${esc(n.n)}</b><br><span class="ar" style="font-size:1rem;color:var(--k)">${n.ar}</span></td>
@@ -3659,6 +3880,70 @@ function vAlle(el){
       </table></div>
     </div>
   </div>`;
+}
+/* ------------------------- de bijzondere gebeden ------------------------- */
+/* Het rouwblok hoort direct achter het gebed bij een overledene: wie dat
+   opzoekt, zoekt op dat moment ook de rest. */
+function rouwKaart(){
+  return `<div class="card" id="rond-overlijden">
+    <h3>Rond een overlijden</h3>
+    <p class="klein" style="margin-top:6px">Er gebeurt in die dagen meer dan het gebed alleen, en het gaat snel. Dit is de volgorde, zodat je niets hoeft op te zoeken op een moment dat opzoeken niet lukt.</p>
+    <div class="stack" style="margin-top:14px">
+      ${ROUW.map((r,i)=>`<div class="kader">
+        <div class="rij tussen"><h4>${esc(r.t)}</h4><span class="meta">${i+1}</span></div>
+        <p class="klein" style="margin-top:5px">${r.d}</p>
+        ${(r.zeg||[]).map(k=>tekstBlok(T[k])).join('')}
+      </div>`).join('')}
+    </div>
+    <div class="kader let" style="margin-top:14px"><h4>Voor kinderen</h4>
+      <p>De dood is in dit geloof geen geheim en geen spookverhaal. Vragen stellen mag, meelopen mag, en verdrietig zijn hoort erbij. Wat je niet hoeft te doen is doen alsof je het niet erg vindt.</p></div>
+  </div>`;
+}
+function vBijzonder(el){
+  const pr=P();
+  const kaart = b => `<div class="card" id="bz-${b.id}">
+    <div class="rij tussen" style="align-items:flex-start">
+      <div><h3>${esc(b.n)}</h3>
+        <div class="ar" style="font-size:1.3rem;color:var(--k);margin-top:3px">${b.ar}</div></div>
+      <span class="tag ${REGELS[b.regel].c}">${esc(REGELS[b.regel].t)}</span>
+    </div>
+    <p style="margin-top:10px">${esc(b.kort)}</p>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="kader"><h4>Wanneer</h4><p>${esc(b.wanneer)}</p></div>
+      <div class="kader info"><h4>Hoeveel</h4><p>${esc(b.rak)}</p></div>
+    </div>
+    <h4 style="margin-top:16px">Hoe het gaat</h4>
+    <ol class="genummerd" style="margin-top:8px">${b.hoe.map(h=>'<li>'+h+'</li>').join('')}</ol>
+    <div class="kader let" style="margin-top:14px"><h4>Let op</h4><p>${b.let}</p></div>
+    ${b.tips.length?`<h4 style="margin-top:16px">Tips</h4><ul class="net" style="margin-top:7px">${b.tips.map(t=>'<li>'+t+'</li>').join('')}</ul>`:''}
+    ${b.zeg.length?`<h4 style="margin-top:16px">Wat je zegt</h4><div class="stack" style="margin-top:9px">${b.zeg.map(k=>tekstBlok(T[k])).join('')}</div>`:''}
+    ${b.vragen.length?`<div class="stack" style="margin-top:16px">${b.vragen.map(([v,a])=>
+      `<details style="border:1px solid var(--line);border-radius:9px;padding:12px 14px;background:var(--surface-2)">
+         <summary style="cursor:pointer;font-weight:500;color:var(--ink)">${esc(v)}</summary>
+         <p class="klein" style="margin-top:9px">${esc(a)}</p></details>`).join('')}</div>`:''}
+  </div>`;
+
+  el.innerHTML=`<div class="stack">
+    <div class="card"><h2>Gebeden die niet elke dag terugkomen</h2>
+      <p class="klein" style="margin-top:6px">De vijf gebeden leer je vanzelf: je doet ze vijf keer per dag. Deze niet. Het feestgebed komt twee keer per jaar langs, en het gebed bij een overledene komt precies op de dag dat niemand in huis rustig kan nadenken. Daarom staan ze hier uitgeschreven.</p>
+      <div class="rij" style="margin-top:12px;flex-wrap:wrap">
+        ${BIJZONDER.map(b=>`<button class="btn sm ghost" data-spring="bz-${b.id}">${esc(b.n)}</button>`).join('')}
+        <button class="btn sm ghost" data-spring="rond-overlijden">Rond een overlijden</button>
+      </div>
+      <div class="kader" style="margin-top:14px"><h4>Wat betekenen de kleuren</h4>
+        <p class="klein" style="margin-top:4px"><span class="tag fout">Verplicht</span> geldt voor wie eraan toe is — het vrijdaggebed bijvoorbeeld voor volwassen mannen die thuis zijn.
+        <span class="tag let">Plicht van de gemeenschap</span> is <i>fard kifaya</i>: doet een groep het, dan is het gedaan voor iedereen; doet niemand het, dan valt het de hele buurt aan te rekenen.
+        <span class="tag k">Sterk aanbevolen</span> laat je niet zomaar lopen, maar er staat geen zonde op.</p></div>
+    </div>
+    ${BIJZONDER.map(b=>kaart(b) + (b.id==='janaza'?rouwKaart():'')).join('')}
+    <div class="card plat"><p class="klein">Verschillen tussen de scholen zijn hier groter dan bij het dagelijkse gebed, en gebruiken verschillen ook per land en per moskee. Wat hier staat, is de Malikitische lijn zoals die in Marokko en hier in de moskee gevolgd wordt. Sta je ergens anders mee te bidden: kijk naar de imam en doe hem na. Twijfel je: vraag het hem gewoon, na het gebed.</p></div>
+  </div>`;
+
+  $$('[data-spring]').forEach(b=>b.onclick=()=>{
+    const d=document.getElementById(b.dataset.spring);
+    if(d) d.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+  if(!pr.bijzonderGezien){ pr.bijzonderGezien=1; punten(5); checkInsignes(); bewaar(); }
 }
 function vDuas(el){
   const pr=P();
@@ -3997,7 +4282,7 @@ function tekenOuder(){
   <div class="card">
     <h3>Hoe dit programma in elkaar zit</h3>
     <p class="klein" style="margin-top:8px">Het leerpad heeft tien modules met samen ${MODULES.reduce((s,m)=>s+m.lessen.length,0)} lessen. Elk kind krijgt de versie die bij zijn leeftijd hoort: 7–9 jaar korte teksten, 10–12 de gewone versie, 13–15 met verdieping erbij. De fiqh volgt de Malikitische school; waar andere scholen het anders doen staat dat erbij, zonder oordeel.</p>
-    <p class="klein" style="margin-top:8px">Het gebedsonderdeel bestaat uit de wassing, de twaalf onderdelen van het gebed, een meebid-oefening voor elk van de vijf gebeden, twaalf teksten om uit het hoofd te leren, een overzicht van alle gebeden, de du'a's van de dag, en wat te doen als het misgaat. Er zijn twee examens: de wassing en het gebed op volgorde.</p>
+    <p class="klein" style="margin-top:8px">Het gebedsonderdeel bestaat uit de wassing, de onderdelen van het gebed op volgorde, een meebid-oefening voor elk van de vijf gebeden, de teksten om uit het hoofd te leren, een overzicht van alle gebeden, de bijzondere gebeden (vrijdag, het feest, een overlijden, op reis, een verduistering, regen, de istikhara), de du'a's van de dag, en wat te doen als het misgaat. Er zijn twee examens: de wassing en het gebed op volgorde.</p>
     <p class="klein" style="margin-top:8px">De Arabische teksten zijn met zorg overgenomen, maar controleer ze een keer naast een moshaf of met de imam voordat een kind ze uit het hoofd leert — dat is nooit verkeerd.</p>
     <div class="rij" style="margin-top:14px">
       <button class="btn" id="studio">🎙 Eigen stem opnemen</button>
@@ -4077,6 +4362,7 @@ function tekenOuder(){
 function opnameGroepen(){
   const uit=[];
   const regels=(id,naam)=>{ const h=HIFZ.find(x=>x.id===id); return h?h.r.map((r,i)=>({id:'q:'+h.id+':'+(i+1), ar:r[0], tr:r[1], w:naam+' · regel '+(i+1)})):[]; };
+  uit.push({g:'Voor het gebed', items:regels('h-iqama','Iqama')});
   uit.push({g:'De zinnen in het gebed', items:[
     {id:'t:takbir', ar:T.takbir.ar, tr:T.takbir.tr, w:'De takbir'},
     ...regels('h-dhikr','Buiging en knieval'),
@@ -4090,6 +4376,19 @@ function opnameGroepen(){
   uit.push({g:'Na het gebed', items:regels('h-nagebed','Na het gebed')});
   uit.push({g:'Naast de volgorde', klein:'Niet in het verplichte gebed van deze school, wel goed om te kennen.',
     items:NAAST.map(x=>({id:T[x.zeg].aid, ar:T[x.zeg].ar, tr:T[x.zeg].tr, w:x.t}))});
+  uit.push({g:'De bijzondere gebeden', klein:'Het feest, een overlijden, een keuze, droogte. Ze komen zelden langs — juist daarom is het fijn als ze klaarstaan.',
+    items:[
+    {id:T.takbirEid.aid, ar:T.takbirEid.ar, tr:T.takbirEid.tr, w:'De takbir van het feest'},
+    {id:T.janazaDua.aid, ar:T.janazaDua.ar, tr:T.janazaDua.tr, w:"Du'a bij een overledene"},
+    {id:T.janazaKind.aid, ar:T.janazaKind.ar, tr:T.janazaKind.tr, w:"Du'a bij een overleden kind"},
+    {id:T.istirja.aid, ar:T.istirja.ar, tr:T.istirja.tr, w:'Als je het nieuws hoort'},
+    {id:T.duaMusiba.aid, ar:T.duaMusiba.ar, tr:T.duaMusiba.tr, w:"Du'a bij verdriet"},
+    {id:T.taziya.aid, ar:T.taziya.ar, tr:T.taziya.tr, w:'Condoleren'},
+    {id:T.bijGraf.aid, ar:T.bijGraf.ar, tr:T.bijGraf.tr, w:'Bij het graf'},
+    {id:T.groetGraf.aid, ar:T.groetGraf.ar, tr:T.groetGraf.tr, w:'Groet aan het kerkhof'},
+    {id:T.istikhara.aid, ar:T.istikhara.ar, tr:T.istikhara.tr, w:"Du'a van de istikhara"},
+    {id:T.istisqa.aid, ar:T.istisqa.ar, tr:T.istisqa.tr, w:'Vragen om regen'}
+  ]});
   uit.push({g:'Bij de wassing', items:[
     {id:'t:bismillah', ar:'بِسْمِ اللَّهِ', tr:'Bismillah', w:'Aan het begin'},
     {id:'t:wudu-shahada', ar:WUDU[WUDU.length-1].zeg.ar, tr:WUDU[WUDU.length-1].zeg.tr, w:'Aan het einde'}
@@ -4097,7 +4396,12 @@ function opnameGroepen(){
   uit.push({g:"De du'a's van de dag", items:DUAS.map((d,i)=>({id:'d:'+(i+1), ar:d.ar, tr:d.tr, w:d.w}))});
   uit.push({g:'De soera\'s en al-Fatiha', klein:'Hiervoor is de recitatie meegeleverd; zelf inspreken kan, maar hoeft niet.',
     items:HIFZ.filter(h=>h.nr).flatMap(h=>regels(h.id,h.naam))});
-  return uit;
+  /* Eén zin kan in twee groepen thuishoren — de amin staat zowel bij de zinnen
+     van het gebed als bij wat ernaast hoort. Twee keer opnemen is zonde van de
+     moeite, dus de eerste plek wint en de rest valt weg. */
+  const gezien=new Set();
+  return uit.map(g=>Object.assign({}, g, {items:g.items.filter(i=>!gezien.has(i.id) && gezien.add(i.id))}))
+            .filter(g=>g.items.length);
 }
 function stemStudio(){
   const groepen=opnameGroepen();
