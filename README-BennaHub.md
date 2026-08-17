@@ -5,7 +5,7 @@ geen dependencies behalve de Latijnse letters van Google Fonts — het Arabisch
 staat in de repo zelf. Wat hier staat, is wat er draait.
 
 ```
-index.html          de startpagina: eerst de apps van de kinderen, dan die van de groten
+index.html          de startpagina: aanmelden, de apps van die persoon, ouderoverzicht
 huiswerk/           Huiswerk — oefenen voor school
   index.html          de live versie (voorgecompileerd, niet met de hand bewerken)
   index.dev.html      de bron met JSX en de oefenstof
@@ -75,6 +75,74 @@ wat er staat. Zonder verbinding gebeurde dat overal.
 Elke app zet het lettertype nu zelf met een `@font-face` bovenaan het stijlblok
 en haalt alleen de Latijnse letters nog bij Google. Zie `fonts/LEESMIJ.md` voor
 de herkomst, de licentie en hoe je het vervangt.
+
+## Aanmelden op de startpagina
+
+Tot nu toe had elke app zijn eigen inlog en zijn eigen ouderscherm: zeven keer
+ergens een naam en een wachtwoord, en nergens één plek waar je zag hoe het
+ervoor stond. Binnen een gezinsaccount kon je bovendien gewoon het profiel van
+je zus aanklikken — "eigen account" was een afspraak, geen slot.
+
+Nu meldt iedereen zich op de startpagina. Je kiest je eigen tegel, typt je
+wachtwoord, en krijgt daarna de apps te zien die voor jou bedoeld zijn:
+
+- **kinderen** zien de vijf apps van de kinderen;
+- **ouders** zien alles, plus een knop naar het overzicht;
+- per lid kan daarvan worden afgeweken (`apps` op het lid): staat daar een lijst
+  in, dan is dát de hele lijst. Zo kun je Amaani de Academie geven zonder de
+  anderen erbij.
+
+De aanmelding blijft acht uur staan en verloopt daarna vanzelf — op een gedeelde
+tablet blijft anders het account van 's ochtends de hele avond openstaan.
+
+### Het ouderoverzicht
+
+Achter *Overzicht* staat alles van alle apps op één pagina: wat er nog open staat
+aan zakgeld en bij wie, wie er wanneer voor het laatst is geweest, en per app een
+tabel met punten, lessen en verdiensten. Elke app bewaart zijn voortgang in zijn
+eigen vorm; er is geen gemeenschappelijk formaat en dat is ook niet afgedwongen.
+In plaats daarvan staat er per app een kleine uitlezer (`UITLEZERS` in
+`index.html`) die er het antwoord uit haalt op de twee vragen die je echt stelt:
+heeft iemand iets gedaan, en hoeveel staat er open.
+
+Vanaf hetzelfde scherm kun je het ouderwachtwoord wijzigen en het wachtwoord van
+een kind **resetten**. Dat wist alleen het wachtwoord: de voortgang blijft staan,
+en bij de volgende aanmelding kiest het kind zelf een nieuw wachtwoord. Je hoeft
+er dus niets voor te onthouden en niemand raakt iets kwijt.
+
+### Wachtwoorden
+
+Iedereen staat op `Bennaclan`, hetzelfde wachtwoord dat de huiswerkapp al
+gebruikt. Wie wil, zet er via *Wachtwoord* zijn eigen op. Er is nu ook een weg
+terug als iemand het kwijtraakt — die ontbrak: `bennahub_wachtwoord` voor een
+app-account, en *Resetten* voor een gezinslid.
+
+### De tabellen
+
+| tabel | wat |
+|---|---|
+| `bennahub_gezin` | één rij per gezin, met het ouderwachtwoord |
+| `bennahub_leden` | één rij per persoon: rol, wachtwoord, emoji, kleur, welke apps |
+| `bennahub_state` | de voortgang per app (bestond al) |
+
+Alle drie zijn voor `anon` dicht; alles loopt via `SECURITY DEFINER`-functies en
+geen enkele functie geeft ooit een hash terug.
+
+| functie | doet |
+|---|---|
+| `bennahub_gezin_start` | het gezin één keer opzetten |
+| `bennahub_leden_lijst` | de tegels op de startpagina — namen, verder niets |
+| `bennahub_lid_aanmelden` | aanmelden; wie nog geen wachtwoord heeft, kiest er hier een |
+| `bennahub_lid_code` | je eigen wachtwoord wijzigen |
+| `bennahub_lid_zet` / `_reset` | beheer, alleen met het ouderwachtwoord |
+| `bennahub_gezin_wachtwoord` | het ouderwachtwoord wijzigen |
+| `bennahub_overzicht` | alles van alle apps, alleen voor de ouder |
+| `bennahub_wachtwoord` | het wachtwoord van een app-account wijzigen |
+
+**De apps zelf hebben hun eigen inlog nog.** Dat is met opzet: eerst deze poort
+erbij zetten en gebruiken, daarna de apps er één voor één op aansluiten. Zo werkt
+er onderweg niets niet meer. De startpagina zet al wel `bennahub.wie` in
+`localStorage`, zodat een app straks kan zien wie er is aangemeld.
 
 ## Centrale opslag
 
