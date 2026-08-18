@@ -6,12 +6,23 @@
 <title>BennaHub</title>
 <meta name="theme-color" content="#F6F4F0" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#141518" media="(prefers-color-scheme: dark)">
-<meta name="description" content="De apps van het gezin Benna: huiswerk, geloofsstudie, Arabisch en de Academie.">
+<meta name="description" content="De apps van het gezin Benna: huiswerk, islam leren, Arabisch, computers en code, spelletjes, geloofsstudie, de Koran uit je hoofd en de Academie.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preload" href="fonts/amiri-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Amiri:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+/* Amiri staat als bestand in de repo en niet bij Google. De Warsh-druk gebruikt
+   tekens — de kleine hoge nul boven de hamzat wasl voorop — die de meeste
+   systeemletters niet kennen; die laten dan lege vakken achter midden in een
+   woord. Zie fonts/LEESMIJ.md. */
+@font-face{font-family:'Amiri';font-style:normal;font-weight:400;font-display:swap;
+  src:url('fonts/amiri-400.woff2') format('woff2')}
+@font-face{font-family:'Amiri';font-style:normal;font-weight:700;font-display:swap;
+  src:url('fonts/amiri-700.woff2') format('woff2')}
+</style>
 <style>
 /* Kleuren zijn gekozen op contrast, niet op sfeer. Elke accentkleur haalt
    minstens 4,5:1 tegen zowel het kaartvlak als zijn eigen chip-achtergrond,
@@ -24,9 +35,15 @@
   --line:#DAD6CE; --line-sterk:#C4BFB4;
 
   --huiswerk:#2F6B1F;  --huiswerk-bg:#E4EFDD;
-  --sanad:#5B3B7A;     --sanad-bg:#EFE8F6;
-  --lisan:#175D92;     --lisan-bg:#DEEDF9;
+  --islam:#0F6F6C;     --islam-bg:#DCEFEE;
+  --arabisch:#175D92;  --arabisch-bg:#DEEDF9;
+  --code:#96286A;      --code-bg:#F9E5F1;
+  --spel:#B4442C;      --spel-bg:#FBE7E0;
+  --geloof:#5B3B7A;    --geloof-bg:#EFE8F6;
+  --koran:#3B4A8F;     --koran-bg:#E3E7F6;
   --academie:#7E5300;  --academie-bg:#F8EFD4;
+
+  --goed:#2F6B1F; --let:#8A5A00; --fout:#A32F2A;
 
   --schaduw:0 1px 2px rgba(20,18,14,.05), 0 8px 24px rgba(20,18,14,.06);
   --schaduw-op:0 2px 4px rgba(20,18,14,.07), 0 14px 34px rgba(20,18,14,.11);
@@ -43,9 +60,15 @@
     --line:#33363C; --line-sterk:#474B52;
 
     --huiswerk:#8FD268;  --huiswerk-bg:#22321B;
-    --sanad:#C9A6E8;     --sanad-bg:#2A2136;
-    --lisan:#7CC4F5;     --lisan-bg:#152D3E;
+    --islam:#5FD3CD;     --islam-bg:#10312F;
+    --arabisch:#7CC4F5;  --arabisch-bg:#152D3E;
+    --code:#EFA0CE;      --code-bg:#33122A;
+    --spel:#F0A08A;      --spel-bg:#3A1C14;
+    --geloof:#C9A6E8;    --geloof-bg:#2A2136;
+    --koran:#A3B0EE;     --koran-bg:#1D2240;
     --academie:#E9BC55;  --academie-bg:#31280F;
+
+    --goed:#8FD268; --let:#E9BC55; --fout:#F09B95;
 
     --schaduw:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.34);
     --schaduw-op:0 2px 4px rgba(0,0,0,.46), 0 14px 34px rgba(0,0,0,.5);
@@ -60,41 +83,77 @@ body{
   padding:0 20px env(safe-area-inset-bottom);
 }
 .wrap{width:100%;max-width:720px;margin:0 auto}
+.wrap.breed{max-width:940px}
 h1,h2,h3{font-family:var(--serif);color:var(--ink);letter-spacing:-.022em;line-height:1.15;margin:0;font-weight:500}
 p{margin:0}
 .meta{font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-a:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:4px}
+.klein{font-size:.9rem;color:var(--muted);line-height:1.55}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:4px}
 
 header{padding:56px 0 0}
 .merk{font-family:var(--serif);font-size:2.6rem;color:var(--ink);letter-spacing:-.032em;line-height:1}
 .merk .b{font-weight:600}
+/* Een streep in de acht kleuren van de acht ingangen, in dezelfde volgorde als
+   ze hieronder staan: eerst de vijf van de kinderen, dan de drie van de groten. */
+.regenboog{height:5px;border-radius:9999px;margin-top:16px;max-width:280px;
+  background:linear-gradient(90deg,var(--huiswerk) 0 12.5%,var(--islam) 12.5% 25%,var(--arabisch) 25% 37.5%,var(--code) 37.5% 50%,var(--spel) 50% 62.5%,var(--geloof) 62.5% 75%,var(--koran) 75% 87.5%,var(--academie) 87.5% 100%)}
 .lede{margin-top:14px;font-family:var(--serif);font-size:1.14rem;line-height:1.55;color:var(--muted);max-width:46ch}
 
 main{flex:1;padding:38px 0 0}
 .kaarten{display:grid;gap:14px}
-@media (min-width:680px){ .kaarten{grid-template-columns:1fr 1fr} .kaarten a:first-child{grid-column:1 / -1} }
+@media (min-width:680px){ .kaarten{grid-template-columns:1fr 1fr;align-items:start} .kaarten a:first-child{grid-column:1 / -1} }
+/* Twee groepen, want een deel van deze apps is niet voor de kinderen. De kop is
+   een streep met een woord erop: genoeg om de scheiding te zien, niet zoveel dat
+   het een menu wordt. In de groep van de groten geen brede eerste kaart: daar
+   zijn de kaarten onderling gelijkwaardig, terwijl bij de kinderen het huiswerk
+   bovenaan hoort te staan. */
+.groep + .groep{margin-top:38px}
+.groepkop{font-family:var(--mono);font-size:.68rem;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--muted);font-weight:500;margin:0 0 13px;display:flex;align-items:center;gap:12px}
+.groepkop::after{content:"";flex:1;height:1px;background:var(--line)}
+@media (min-width:680px){ .kaarten.smal a:first-child{grid-column:auto} }
 
+/* De kaarten dragen nu de kleur van hun app in plaats van hem alleen aan de rand
+   te tonen. De vlakken komen uit hetzelfde palet als de tekstkleur erop, dus het
+   contrast dat eerder is nagemeten blijft staan: donkere tekst op een licht
+   vlak in de dag, lichte tekst op een donker vlak 's avonds. */
 a.app{
-  display:block;text-decoration:none;color:inherit;background:var(--surface);
-  border:1px solid var(--line);border-radius:14px;padding:22px 22px 20px 26px;
+  display:block;text-decoration:none;color:inherit;background:var(--kbg);
+  border:1px solid color-mix(in srgb, var(--k) 30%, var(--line));border-radius:16px;
+  padding:20px 22px 18px 26px;
   position:relative;overflow:hidden;box-shadow:var(--schaduw);
   transition:transform .16s ease, border-color .16s ease, box-shadow .16s ease;
 }
 /* De gekleurde rand links is het snelste onderscheid tussen de kaarten;
    vier pixel leest ook op een telefoon in de zon. */
-a.app::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--k)}
+a.app::before{content:"";position:absolute;inset:0 auto 0 0;width:5px;background:var(--k)}
+/* De tegel is het échte pictogram van de app, hetzelfde bestand dat de telefoon
+   op het beginscherm zet. Eerst stond hier een emoji: aardig, maar dan lijkt de
+   kaart hier op niets van wat je daarna op je toestel ziet. Nu is het één beeld:
+   wie het hier aanwijst, herkent het daar terug. */
+.tegel{width:50px;height:50px;border-radius:14px;flex:0 0 auto;display:block;
+  box-shadow:0 2px 8px color-mix(in srgb, var(--k) 30%, transparent)}
 a.app:hover,a.app:focus-visible{transform:translateY(-2px);border-color:var(--k);box-shadow:var(--schaduw-op)}
 a.app:active{transform:translateY(0);box-shadow:var(--schaduw)}
-.kop{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.kop{display:flex;align-items:center;gap:11px;flex-wrap:wrap}
 .kop h2{font-size:1.44rem;color:var(--ink)}
 .kop .ar{font-family:var(--ar);font-size:1.14rem;color:var(--k);direction:rtl;unicode-bidi:isolate}
+/* De oude naam blijft staan, klein. Hij verdwijnt niet uit de app zelf en hij
+   staat in elk gesprek dat we er tot nu toe over hadden — maar hij is niet meer
+   het eerste wat een kind moet lezen om de juiste tegel te vinden. */
+.oud{font-family:var(--mono);font-size:.63rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted);white-space:nowrap}
+.oud .ar{font-family:var(--ar);font-size:.86rem;text-transform:none;letter-spacing:0;
+  direction:rtl;unicode-bidi:isolate;color:var(--muted)}
 .rol{
   margin-left:auto;font-family:var(--mono);font-size:.63rem;letter-spacing:.07em;text-transform:uppercase;
-  background:var(--kbg);color:var(--k);padding:5px 10px;border-radius:5px;white-space:nowrap;font-weight:500;
+  background:var(--surface);color:var(--k);padding:5px 10px;border-radius:6px;white-space:nowrap;font-weight:500;
+  border:1px solid color-mix(in srgb, var(--k) 25%, transparent);
 }
 a.app p{margin-top:9px;font-family:var(--serif);font-size:1.03rem;line-height:1.52;color:var(--ink-2);max-width:52ch}
 .detail{margin-top:14px;display:flex;gap:7px;flex-wrap:wrap}
-.detail span{font-size:.78rem;color:var(--muted);background:var(--surface-2);border:1px solid var(--line);border-radius:20px;padding:3px 11px}
+.detail span{font-size:.78rem;color:var(--ink-2);background:var(--surface);
+  border:1px solid color-mix(in srgb, var(--k) 22%, transparent);border-radius:20px;padding:3px 11px}
 .pijl{margin-top:17px;font-size:.88rem;color:var(--k);font-weight:600;letter-spacing:-.005em}
 .snel{margin-top:24px;line-height:1.9}
 .snel a{color:var(--academie);text-decoration:none;border-bottom:1px solid var(--line-sterk);padding-bottom:1px}
@@ -103,80 +162,743 @@ a.app p{margin-top:9px;font-family:var(--serif);font-size:1.03rem;line-height:1.
 footer{padding:44px 0 34px;border-top:1px solid var(--line);margin-top:46px}
 footer p{font-size:.85rem;color:var(--muted);max-width:56ch}
 footer p + p{margin-top:9px}
+
+/* ---------------------------------------------------------------------------
+   DE POORT — het scherm waar je je meldt.
+
+   Alles hierachter is van iemand: zijn voortgang, zijn punten, zijn spaarpot.
+   Daarom kom je er niet meer per ongeluk in door op een kaart te klikken. Je
+   kiest eerst wie je bent en typt je eigen code; pas daarna zie je de apps die
+   voor jou bedoeld zijn.
+--------------------------------------------------------------------------- */
+.poort{min-height:100dvh;display:flex;flex-direction:column;justify-content:center;padding:40px 0}
+.tegels{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:12px;margin-top:26px}
+.persoon{
+  display:flex;flex-direction:column;align-items:center;gap:9px;
+  background:var(--surface);border:1px solid var(--line);border-radius:16px;
+  padding:20px 12px 16px;cursor:pointer;font:inherit;color:inherit;
+  box-shadow:var(--schaduw);transition:transform .14s ease, border-color .14s ease, box-shadow .14s ease;
+}
+.persoon:hover,.persoon:focus-visible{transform:translateY(-2px);border-color:var(--pk);box-shadow:var(--schaduw-op)}
+.persoon .gezicht{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;
+  font-size:1.9rem;line-height:1;background:var(--pbg);border:2px solid var(--pk)}
+.persoon .pnaam{font-family:var(--serif);font-size:1.16rem;color:var(--ink);text-transform:capitalize}
+.persoon .pmeta{font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+.codekaart{max-width:400px;margin:0 auto;text-align:center}
+.groot{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;margin:0 auto;
+  font-size:3rem;line-height:1;background:var(--pbg);border:3px solid var(--pk)}
+input[type=password],input[type=text],input[type=number]{
+  width:100%;padding:13px 15px;border:1px solid var(--line-sterk);border-radius:11px;
+  background:var(--surface);color:var(--ink);font:inherit;font-size:1.05rem;margin-top:10px}
+input.code{text-align:center;font-family:var(--mono);font-size:1.6rem;letter-spacing:.5em;padding-left:.5em}
+.btn{display:inline-flex;align-items:center;gap:8px;justify-content:center;
+  background:var(--ink);color:var(--canvas);border:1px solid var(--ink);border-radius:11px;
+  padding:12px 20px;font:inherit;font-weight:500;cursor:pointer;transition:opacity .14s ease}
+.btn:hover{opacity:.86}
+.btn[disabled]{opacity:.45;cursor:default}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line-sterk)}
+.btn.sm{padding:7px 13px;font-size:.86rem;border-radius:9px}
+.btn.nowrap{white-space:nowrap}
+.btn.vol{width:100%;margin-top:14px}
+.rij{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.melding{margin-top:12px;font-size:.9rem;color:var(--fout);min-height:1.3em}
+.melding.goed{color:var(--goed)}
+
+/* De balk die laat zien wie er aan staat. Hij hoort opvallend te zijn: wie hem
+   niet ziet, denkt dat hij in zijn eigen account zit terwijl er nog iemand
+   anders aan staat. Vandaar het gezicht, de naam, en een knop die er niet
+   omheen draait. */
+.balk{position:sticky;top:0;z-index:20;background:color-mix(in srgb, var(--canvas) 88%, transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--line);margin:0 -20px 0;padding:10px 20px}
+.balk .in{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.balk.breed .in{max-width:940px}
+.balk .gezichtje{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
+  font-size:1.05rem;background:var(--pbg);border:1.5px solid var(--pk);flex:0 0 auto}
+.balk .wie{font-family:var(--serif);font-size:1.02rem;color:var(--ink);text-transform:capitalize}
+.balk .rest{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+
+/* ---------------------------------------------------------------------------
+   HET OUDEROVERZICHT
+--------------------------------------------------------------------------- */
+/* min-width:0 is hier geen detail. Een rasterkolom is standaard minstens zo
+   breed als zijn inhoud, en de tabel binnenin heeft een min-width — zonder dit
+   duwt die de hele kolom breder dan het scherm en schuift de pagina opzij,
+   ondanks de overflow-x op de wikkel eromheen. */
+.kaart{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--schaduw);min-width:0}
+.kaart + .kaart{margin-top:14px}
+.raster{display:grid;gap:14px}
+.raster > *{min-width:0}
+@media (min-width:680px){ .raster.g2{grid-template-columns:1fr 1fr} .raster.g3{grid-template-columns:repeat(3,1fr)} }
+.cijfer{font-family:var(--serif);font-size:2rem;line-height:1.1;color:var(--ink)}
+.tabelwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+table.tbl{width:100%;border-collapse:collapse;font-size:.92rem;min-width:420px}
+table.tbl th{text-align:left;font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);font-weight:500;padding:0 12px 8px 0;border-bottom:1px solid var(--line);white-space:nowrap}
+table.tbl td{padding:10px 12px 10px 0;border-bottom:1px solid var(--line);vertical-align:top}
+table.tbl tr:last-child td{border-bottom:0}
+.speld{display:inline-block;font-family:var(--mono);font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;
+  padding:3px 9px;border-radius:9999px;background:var(--surface-2);color:var(--muted)}
+.speld.goed{background:color-mix(in srgb,var(--goed) 16%,transparent);color:var(--goed)}
+.speld.let{background:color-mix(in srgb,var(--let) 18%,transparent);color:var(--let)}
+.speld.stil{background:color-mix(in srgb,var(--fout) 14%,transparent);color:var(--fout)}
+.geld{font-family:var(--mono);font-size:.95rem;color:var(--goed);white-space:nowrap}
+.verborgen{display:none}
 </style>
 </head>
 <body>
 
-<div class="wrap">
+<div id="scherm"></div>
 
-<header>
-  <div class="merk"><span class="b">Benna</span>Hub</div>
-  <p class="lede">Vier ingangen onder één dak. Kies waar je vandaag mee verder wilt.</p>
-</header>
+<script>
+/* =============================================================================
+   BENNAHUB — de startpagina.
 
-<main>
-  <div class="kaarten">
+   Tot nu toe was dit een lijst met links en had elke app zijn eigen inlog: zeven
+   keer ergens een naam en een wachtwoord, zeven ouderschermen, en nergens één
+   plek waar je zag hoe het ervoor stond. En binnen een gezinsaccount kon je
+   gewoon het profiel van je zus aanklikken — "eigen account" was een afspraak,
+   geen slot.
 
-    <a class="app" href="huiswerk/" style="--k:var(--huiswerk);--kbg:var(--huiswerk-bg)">
-      <div class="kop">
-        <h2>Huiswerk</h2>
-        <span class="rol">Selma · Amine · Wassima · Amaani</span>
+   Nu meldt iedereen zich hier. Je kiest je eigen tegel, typt je eigen code, en
+   krijgt daarna de apps te zien die voor jou bedoeld zijn. Wie ouder is, krijgt
+   er een overzicht bij: wie wat wanneer heeft gedaan, en wat er in elke app is
+   verdiend.
+
+   De apps zelf hebben hun eigen inlog nog. Dat is met opzet: eerst deze poort
+   erbij zetten en gebruiken, daarna de apps er één voor één op aansluiten. Zo
+   werkt er onderweg niets niet meer.
+============================================================================= */
+
+const GEZIN = 'benna';
+
+const WOLK = (function(){
+  const URL  = 'https://jnlvvdaisyerhxucxnuu.supabase.co';
+  const ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpubHZ2ZGFpc3llcmh4dWN4bnV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NDg0MjIsImV4cCI6MjA4MjQyNDQyMn0.8ZXa-N96pRSQovdL_bH5FpJTHeL454830h5LMapCawY';
+  async function rpc(fn, body){
+    const r = await fetch(URL + '/rest/v1/rpc/' + fn, {
+      method:'POST',
+      headers:{ apikey:ANON, Authorization:'Bearer '+ANON, 'Content-Type':'application/json' },
+      body: JSON.stringify(body)
+    });
+    let out = {};
+    try{ out = await r.json(); }catch(e){}
+    if(out && out.error) throw new Error(out.error);
+    if(!r.ok) throw new Error('Geen verbinding (' + r.status + ')');
+    return out;
+  }
+  return { rpc };
+})();
+
+/* De acht ingangen. Ze staan hier als gegevens en niet als HTML, want de lijst
+   die je te zien krijgt hangt af van wie je bent. */
+const APPS = [
+ {id:'huiswerk', naam:'Huiswerk', href:'huiswerk/', ico:'iconen/huiswerk.svg', k:'huiswerk', groep:'kind',
+  wie:'Selma · Amine · Wassima · Amaani',
+  zin:'Oefenen op je eigen niveau, met een scorebord voor het hele gezin, een weektaak en een ouder-dashboard voor papa en mama. Werkt ook zonder internet. De spelletjes staan nu apart.',
+  detail:['Alle vakken','Dit jaar en volgend jaar','Weektaak','Wedstrijd met een vriend','Toegangscode per kind']},
+
+ {id:'bidaya', naam:'Islam leren', href:'noer/', ico:'iconen/islam.svg', k:'islam', groep:'kind',
+  oud:'Noer', ar:'نور الإسلام', wie:'Selma · Amine · Wassima · Amaani',
+  zin:'Een brede kennismaking met de islam voor zeven tot vijftien jaar — geloof, gedrag, de Koran, de verhalen van de profeten en het leven hier. En daarnaast een complete begeleiding bij het leren bidden, met echte recitatie erbij.',
+  detail:['Vijftien modules, 87 lessen','Eigen leerlijn per leeftijd','Leren bidden stap voor stap','Bijzondere gebeden','Gebedstijden en qibla']},
+
+ {id:'lisan', naam:'Arabisch', href:'arabisch/', ico:'iconen/arabisch.svg', k:'arabisch', groep:'kind',
+  oud:'Lisan', ar:'لِسَان', wie:'Hanae en de kinderen',
+  zin:'Arabisch leren lezen, begrijpen en spreken. De app kiest op je leeftijd wat je krijgt aangeboden — van de eerste letters tot het lezen van een hele alinea.',
+  detail:['Eigen spoor per leeftijd','Alle 28 letters','Spel voor de kinderen']},
+
+ {id:'bunyan', naam:'Computers & Code', href:'bunyan/', ico:'iconen/code.svg', k:'code', groep:'kind',
+  oud:'Bunyan', ar:'بُنْيَان', wie:'Amine',
+  zin:'Leren coderen en een pc bouwen. Python draait in de app zelf, met foutmeldingen in gewoon Nederlands — en er is een bouwbank waarin je een computer samenstelt en ziet wat hij haalt.',
+  detail:['Vanaf 10 jaar','63 lessen','Python, HTML en JavaScript','Zakgeld per les']},
+
+ {id:'raha', naam:'Spelletjes', href:'spellen/', ico:'iconen/spelletjes.svg', k:'spel', groep:'kind',
+  oud:'Raha', ar:'رَاحَة', wie:'Voor iedereen',
+  zin:'Even afschakelen: dertien spelletjes plus de twee grote. Vrije tijd is een gunst — dus: even pauze, en daarna weer verder.',
+  detail:['Mollen meppen','Reken-race','Arabische letterjacht','Records blijven staan']},
+
+ {id:'sanad', naam:'Geloofsstudie', href:'sanad/', ico:'iconen/geloofsstudie.svg', k:'geloof', groep:'groot',
+  oud:'Sanad', ar:'سند', wie:'Abdelkader',
+  zin:'Achtentwintig weken Malikitische fiqh, usul, ‘aqida, bronnenkritiek en medische ethiek — elke week met een fragment uit de oorspronkelijke tekst.',
+  detail:['Eén week per week','Arabisch met vertaling','Kaarten voor herhaling']},
+
+ {id:'rasikh', naam:'Koran uit je hoofd', href:'rasikh/', ico:'iconen/koran.svg', k:'koran', groep:'groot',
+  oud:'Rasikh', ar:'رَاسِخ', wie:'Abdelkader',
+  zin:'De Koran uit je hoofd leren en — dat is het moeilijke deel — vasthouden. Zes stappen per aya, en een systeem dat pas nieuwe stof geeft als de herhalingen bij zijn.',
+  detail:['Voor volwassenen','25 minuten per dag','Herhalen op ritme','Verwarpunten apart']},
+
+ {id:'academie', naam:'Academie', href:'huiswerk/cursussen/kompas.html', ico:'iconen/academie.svg', k:'academie', groep:'groot',
+  wie:'Vanaf de bovenbouw',
+  zin:'Drie cursussen die los van het huiswerk staan: slim leren en focus, communicatie en netwerken, presenteren en spreken. Voor wie er qua leeftijd aan toe is — de oudsten en de groten.',
+  detail:['Kompas','Verbind','Podium']}
+];
+
+/* De leden waarmee het gezin wordt opgezet als de opslag nog leeg is. De emoji
+   en de volgorde komen uit de huiswerkapp, zodat een kind hier dezelfde bloem
+   of bal ziet als daar. De ouders krijgen meteen het ouderwachtwoord als code;
+   de kinderen kiezen er zelf een bij hun eerste keer. */
+const BEGINLEDEN = [
+  {naam:'selma',      rol:'kind',  emoji:'🌸', kleur:'code'},
+  {naam:'amine',      rol:'kind',  emoji:'⚽', kleur:'huiswerk'},
+  {naam:'wassima',    rol:'kind',  emoji:'🌱', kleur:'islam'},
+  {naam:'amaani',     rol:'kind',  emoji:'🚀', kleur:'arabisch'},
+  {naam:'hanae',      rol:'ouder', emoji:'🌷', kleur:'spel'},
+  {naam:'abdelkader', rol:'ouder', emoji:'📘', kleur:'koran'}
+];
+
+/* ------------------------------- de sessie ------------------------------- */
+/* Wie er aan staat, staat in localStorage zodat je niet bij elke stap opnieuw
+   moet typen. Wel met een houdbaarheid: op een gedeelde tablet blijft anders
+   het account van 's ochtends de hele dag openstaan. Acht uur is een schooldag
+   plus de avond. */
+const SESSIE = 'bennahub.wie';
+const UREN = 8;
+
+function wieBenIk(){
+  try{
+    const s = JSON.parse(localStorage.getItem(SESSIE) || 'null');
+    if(!s || !s.naam) return null;
+    if(Date.now() - (s.tijd||0) > UREN*3600*1000) return null;
+    return s;
+  }catch(e){ return null; }
+}
+function meldAan(lid){
+  const s = {gezin:GEZIN, naam:lid.naam, rol:lid.rol, emoji:lid.emoji, kleur:lid.kleur,
+             apps:lid.apps||[], tijd:Date.now()};
+  try{ localStorage.setItem(SESSIE, JSON.stringify(s)); }catch(e){}
+  return s;
+}
+function meldAf(){
+  try{ localStorage.removeItem(SESSIE); sessionStorage.removeItem('bennahub.ouderww'); }catch(e){}
+  ik = null; start();
+}
+
+let ik = null, leden = [];
+
+/* ------------------------------- gereedschap ------------------------------- */
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const hoofd = s => String(s||'').charAt(0).toUpperCase() + String(s||'').slice(1);
+const euro  = n => '€ ' + (Math.round((Number(n)||0)*100)/100).toFixed(2).replace('.', ',');
+
+function datum(d){
+  if(!d) return '—';
+  const t = new Date(d); if(isNaN(t)) return '—';
+  const dagen = Math.floor((Date.now() - t.getTime()) / 86400000);
+  if(dagen <= 0) return 'vandaag';
+  if(dagen === 1) return 'gisteren';
+  if(dagen < 14)  return dagen + ' dagen geleden';
+  return t.toLocaleDateString('nl-NL', {day:'numeric', month:'short'});
+}
+function stilte(d){                       // hoe lang is het al stil?
+  if(!d) return {tekst:'nog nooit', klasse:'stil'};
+  const dagen = Math.floor((Date.now() - new Date(d).getTime()) / 86400000);
+  if(dagen <= 1) return {tekst:datum(d), klasse:'goed'};
+  if(dagen <= 4) return {tekst:datum(d), klasse:'let'};
+  return {tekst:datum(d), klasse:'stil'};
+}
+
+function zetScherm(html, klassen){
+  $('#scherm').className = klassen || '';
+  $('#scherm').innerHTML = html;
+  window.scrollTo(0,0);
+}
+
+/* =============================================================================
+   SCHERM 1 — DE POORT
+============================================================================= */
+async function start(){
+  zetScherm('<div class="wrap poort"><p class="meta">Even kijken wie er zijn…</p></div>');
+  try{
+    leden = await WOLK.rpc('bennahub_leden_lijst', {p_gezin: GEZIN});
+  }catch(e){
+    return zonderNet(e.message);
+  }
+  if(!leden.length) return schermOpzetten();
+  ik = wieBenIk();
+  if(ik) return schermHub();
+  schermKiezen();
+}
+
+/* Zonder internet kun je niet aanmelden — de codes staan centraal. Dat is geen
+   fijne boodschap, dus hij komt met een uitweg: de apps zelf werken offline
+   gewoon door, dus we laten de kaarten alsnog zien met een eerlijke waarschuwing
+   erboven in plaats van een doodlopende foutmelding. */
+function zonderNet(fout){
+  ik = wieBenIk();
+  const kaarten = ik ? kaartenHTML(zichtbareApps(ik)) : kaartenHTML(APPS);
+  zetScherm(`
+    ${ik ? balkHTML(ik) : ''}
+    <div class="wrap">
+      <header><div class="merk"><span class="b">Benna</span>Hub</div><div class="regenboog"></div></header>
+      <main>
+        <div class="kaart" style="border-left:3px solid var(--let)">
+          <h3>Geen verbinding</h3>
+          <p class="klein" style="margin-top:6px">Aanmelden lukt nu niet — de codes staan centraal en die zijn even niet te bereiken (${esc(fout)}).
+          De apps zelf werken zonder internet gewoon door; wat je doet wordt bewaard en later gelijkgetrokken.</p>
+          <div class="rij" style="margin-top:12px"><button class="btn sm" onclick="start()">Opnieuw proberen</button></div>
+        </div>
+        <div style="margin-top:24px">${kaarten}</div>
+      </main>
+      ${voetHTML()}
+    </div>`);
+}
+
+function schermOpzetten(){
+  zetScherm(`
+  <div class="wrap poort">
+    <div class="codekaart">
+      <div class="merk"><span class="b">Benna</span>Hub</div>
+      <div class="regenboog" style="margin:16px auto 0"></div>
+      <h2 style="margin-top:26px;font-size:1.5rem">Eén keer instellen</h2>
+      <p class="klein" style="margin-top:8px">Er is nog geen gezin aangemaakt. Kies een ouderwachtwoord — daarmee kom jij bij het overzicht van alle apps,
+      en daarmee meld jij en Hanae je straks aan. De kinderen kiezen bij hun eerste keer zelf een code.</p>
+      <input type="password" id="ww1" placeholder="Ouderwachtwoord (minstens 6 tekens)" autocomplete="new-password">
+      <input type="password" id="ww2" placeholder="Nog een keer" autocomplete="new-password">
+      <button class="btn vol" id="doe">Gezin aanmaken</button>
+      <p class="melding" id="mld"></p>
+    </div>
+  </div>`, '');
+  const doe = async () => {
+    const a = $('#ww1').value, b = $('#ww2').value;
+    if(a.length < 6) return $('#mld').textContent = 'Het wachtwoord moet minstens 6 tekens zijn.';
+    if(a !== b)      return $('#mld').textContent = 'De twee vakjes zijn niet gelijk.';
+    $('#doe').disabled = true; $('#mld').textContent = 'Bezig…';
+    try{
+      await WOLK.rpc('bennahub_gezin_start', {p_gezin:GEZIN, p_wachtwoord:a, p_leden:BEGINLEDEN});
+      try{ sessionStorage.setItem('bennahub.ouderww', a); }catch(e){}
+      start();
+    }catch(e){ $('#doe').disabled = false; $('#mld').textContent = e.message; }
+  };
+  $('#doe').onclick = doe;
+  $('#ww2').onkeydown = e => { if(e.key === 'Enter') doe(); };
+}
+
+function schermKiezen(){
+  const kind  = leden.filter(l => l.rol === 'kind');
+  const ouder = leden.filter(l => l.rol === 'ouder');
+  const tegel = l => `
+    <button class="persoon" data-naam="${esc(l.naam)}"
+            style="--pk:var(--${esc(l.kleur)});--pbg:var(--${esc(l.kleur)}-bg)">
+      <span class="gezicht">${esc(l.emoji)}</span>
+      <span class="pnaam">${esc(hoofd(l.naam))}</span>
+      <span class="pmeta">${l.heeftCode ? esc(stilte(l.laatstActief).tekst) : 'kies een wachtwoord'}</span>
+    </button>`;
+  zetScherm(`
+  <div class="wrap poort">
+    <div class="merk"><span class="b">Benna</span>Hub</div>
+    <div class="regenboog"></div>
+    <p class="lede">Wie ben je? Alles hierachter — je lessen, je punten, je spaarpot — staat op jouw eigen naam.</p>
+    <div class="tegels">${kind.map(tegel).join('')}</div>
+    <p class="meta" style="margin-top:30px">Papa en mama</p>
+    <div class="tegels" style="margin-top:10px">${ouder.map(tegel).join('')}</div>
+  </div>`, '');
+  $$('.persoon').forEach(b => b.onclick = () => schermCode(leden.find(l => l.naam === b.dataset.naam)));
+}
+
+function schermCode(lid){
+  const nieuw = !lid.heeftCode;
+  zetScherm(`
+  <div class="wrap poort">
+    <div class="codekaart" style="--pk:var(--${esc(lid.kleur)});--pbg:var(--${esc(lid.kleur)}-bg)">
+      <div class="groot">${esc(lid.emoji)}</div>
+      <h2 style="margin-top:16px;font-size:1.7rem">Hallo ${esc(hoofd(lid.naam))}</h2>
+      <p class="klein" style="margin-top:8px">${nieuw
+        ? 'Je bent hier voor het eerst. Verzin een wachtwoord van minstens vier tekens en onthoud het — dat heb je elke keer nodig. Vertel het aan niemand; is het toch weg, dan zet papa of mama het opnieuw open.'
+        : 'Typ je wachtwoord. Hetzelfde als in de huiswerkapp.'}</p>
+      <input type="password" id="code" placeholder="${nieuw ? 'nieuw wachtwoord' : 'wachtwoord'}"
+             autocomplete="${nieuw ? 'new-password' : 'current-password'}">
+      ${nieuw ? '<input type="password" id="code2" placeholder="nog een keer" autocomplete="new-password">' : ''}
+      <button class="btn vol" id="doe">${nieuw ? 'Wachtwoord kiezen en verder' : 'Verder'}</button>
+      <p class="melding" id="mld"></p>
+      <div class="rij" style="justify-content:center;margin-top:18px">
+        <button class="btn ghost sm" id="terug">← Iemand anders</button>
       </div>
-      <p>Oefenen op je eigen niveau, met een scorebord voor het hele gezin, spelletjes als je je dagdoel hebt gehaald, en een ouder-dashboard voor papa en mama. Werkt ook zonder internet.</p>
-      <div class="detail"><span>Alle vakken</span><span>Dit jaar en volgend jaar</span><span>Spellen</span><span>Verkeersschool</span><span>Toegangscode per kind</span></div>
-      <div class="pijl">Openen &rarr;</div>
-    </a>
+      <p class="klein" style="margin-top:14px">Weet je het niet meer? Vraag papa — hij kan het openzetten zonder dat je iets kwijtraakt.</p>
+    </div>
+  </div>`, '');
 
-    <a class="app" href="sanad/" style="--k:var(--sanad);--kbg:var(--sanad-bg)">
-      <div class="kop">
-        <h2>Sanad</h2>
-        <span class="ar" lang="ar">سند</span>
-        <span class="rol">Abdelkader</span>
+  const doe = async () => {
+    const c = $('#code').value;
+    if(nieuw){
+      if(c.length < 4)              return $('#mld').textContent = 'Minstens vier tekens.';
+      if(c !== $('#code2').value)   return $('#mld').textContent = 'De twee vakjes zijn niet gelijk.';
+    }
+    $('#doe').disabled = true; $('#mld').className = 'melding'; $('#mld').textContent = 'Bezig…';
+    try{
+      const r = await WOLK.rpc('bennahub_lid_aanmelden', {p_gezin:GEZIN, p_naam:lid.naam, p_code:c});
+      ik = meldAan(r);
+      /* Is dit een ouder en is zijn code ook het ouderwachtwoord, dan hoeft hij
+         het voor het overzicht niet nóg een keer te typen. Werkt het niet, dan
+         vraagt het overzicht er straks gewoon om. */
+      if(r.rol === 'ouder'){
+        try{ await WOLK.rpc('bennahub_overzicht', {p_gezin:GEZIN, p_ouder_ww:c});
+             sessionStorage.setItem('bennahub.ouderww', c); }catch(e){}
+      }
+      schermHub();
+    }catch(e){
+      $('#doe').disabled = false; $('#mld').textContent = e.message;
+      $('#code').value = ''; $('#code').focus();
+    }
+  };
+  $('#doe').onclick = doe;
+  $('#terug').onclick = () => schermKiezen();
+  const laatste = nieuw ? $('#code2') : $('#code');
+  laatste.onkeydown = e => { if(e.key === 'Enter') doe(); };
+  $('#code').focus();
+}
+
+/* =============================================================================
+   SCHERM 2 — DE APPS, VOOR DEZE PERSOON
+============================================================================= */
+/* Een leeg lijstje bij een lid betekent "alles wat bij je rol hoort". Staat er
+   wel iets in, dan is dat de hele lijst — zo kun je Amaani de Academie geven
+   zonder de andere kinderen erbij. */
+function zichtbareApps(wie){
+  if(wie.apps && wie.apps.length) return APPS.filter(a => wie.apps.includes(a.id));
+  return wie.rol === 'ouder' ? APPS : APPS.filter(a => a.groep === 'kind');
+}
+
+function kaartHTML(a){
+  return `<a class="app" href="${a.href}" style="--k:var(--${a.k});--kbg:var(--${a.k}-bg)">
+    <div class="kop">
+      <img class="tegel" src="${a.ico}" alt="" width="50" height="50">
+      <h2>${esc(a.naam)}</h2>
+      ${a.oud ? `<span class="oud">${esc(a.oud)} <span class="ar" lang="ar">${a.ar}</span></span>` : ''}
+      <span class="rol">${esc(a.wie)}</span>
+    </div>
+    <p>${esc(a.zin)}</p>
+    <div class="detail">${a.detail.map(d => '<span>' + esc(d) + '</span>').join('')}</div>
+    <div class="pijl">Openen &rarr;</div>
+  </a>`;
+}
+function kaartenHTML(lijst){
+  const kind  = lijst.filter(a => a.groep === 'kind');
+  const groot = lijst.filter(a => a.groep === 'groot');
+  let uit = '';
+  if(kind.length)  uit += `<section class="groep"><h2 class="groepkop">Voor de kinderen</h2>
+                            <div class="kaarten">${kind.map(kaartHTML).join('')}</div></section>`;
+  if(groot.length) uit += `<section class="groep"><h2 class="groepkop">Voor de groten</h2>
+                            <div class="kaarten smal">${groot.map(kaartHTML).join('')}</div></section>`;
+  return uit;
+}
+function balkHTML(wie, breed){
+  return `<div class="balk${breed ? ' breed' : ''}" style="--pk:var(--${esc(wie.kleur)});--pbg:var(--${esc(wie.kleur)}-bg)">
+    <div class="in">
+      <span class="gezichtje">${esc(wie.emoji)}</span>
+      <span class="wie">${esc(hoofd(wie.naam))}</span>
+      <span class="rest">
+        ${wie.rol === 'ouder' ? '<button class="btn ghost sm" onclick="schermOuder()">Overzicht</button>' : ''}
+        <button class="btn ghost sm" onclick="schermCodeWijzigen()">Wachtwoord</button>
+        <button class="btn sm" onclick="meldAf()">Afmelden</button>
+      </span>
+    </div>
+  </div>`;
+}
+function voetHTML(){
+  return `<footer><p>Elke app bewaart je voortgang op dit toestel én centraal, dus je vindt hem op elk toestel terug;
+    zonder internet werkt alles gewoon door en wordt er later gelijkgetrokken.</p>
+    <p class="meta" style="margin-top:16px">Gebouwd voor het gezin Benna</p></footer>`;
+}
+
+function schermHub(){
+  const lijst = zichtbareApps(ik);
+  zetScherm(`
+    ${balkHTML(ik)}
+    <div class="wrap">
+      <header style="padding-top:34px">
+        <div class="merk"><span class="b">Benna</span>Hub</div>
+        <div class="regenboog"></div>
+        <p class="lede">Hallo ${esc(hoofd(ik.naam))}. Kies waar je mee verder wilt — alles wat je doet, komt op jouw naam te staan.</p>
+      </header>
+      <main>
+        ${kaartenHTML(lijst)}
+        <p class="meta snel">Rechtstreeks naar een cursus:
+          <a href="huiswerk/cursussen/kompas.html">Kompas</a> ·
+          <a href="huiswerk/cursussen/communicatie.html">Verbind</a> ·
+          <a href="huiswerk/cursussen/presenteren.html">Podium</a></p>
+      </main>
+      ${voetHTML()}
+    </div>`);
+}
+
+/* =============================================================================
+   SCHERM 3 — JE EIGEN CODE WIJZIGEN
+   Dit ontbrak overal. Raakte je een wachtwoord kwijt, dan was er letterlijk geen
+   weg terug behalve iemand met toegang tot de database.
+============================================================================= */
+function schermCodeWijzigen(){
+  zetScherm(`
+    ${balkHTML(ik)}
+    <div class="wrap" style="padding-top:34px">
+      <div class="codekaart" style="--pk:var(--${esc(ik.kleur)});--pbg:var(--${esc(ik.kleur)}-bg)">
+        <div class="groot">${esc(ik.emoji)}</div>
+        <h2 style="margin-top:16px">Je wachtwoord wijzigen</h2>
+        <p class="klein" style="margin-top:8px">Je huidige wachtwoord is genoeg; je hebt er niemand anders bij nodig. Nu staat iedereen nog op hetzelfde — zet hier je eigen.</p>
+        <input type="password" id="oud"  placeholder="huidig wachtwoord" autocomplete="current-password">
+        <input type="password" id="nw1"  placeholder="nieuw wachtwoord" autocomplete="new-password">
+        <input type="password" id="nw2"  placeholder="nog een keer" autocomplete="new-password">
+        <button class="btn vol" id="doe">Opslaan</button>
+        <p class="melding" id="mld"></p>
+        <div class="rij" style="justify-content:center;margin-top:18px">
+          <button class="btn ghost sm" onclick="schermHub()">← Terug</button>
+        </div>
       </div>
-      <p>Achtentwintig weken Malikitische fiqh, usul, ‘aqida, bronnenkritiek en medische ethiek — elke week met een fragment uit de oorspronkelijke tekst.</p>
-      <div class="detail"><span>Eén week per week</span><span>Arabisch met vertaling</span><span>Kaarten voor herhaling</span></div>
-      <div class="pijl">Openen &rarr;</div>
-    </a>
+    </div>`);
+  $('#doe').onclick = async () => {
+    const a = $('#nw1').value;
+    if(a.length < 4)          return $('#mld').textContent = 'Het nieuwe wachtwoord moet minstens vier tekens zijn.';
+    if(a !== $('#nw2').value) return $('#mld').textContent = 'De twee vakjes zijn niet gelijk.';
+    $('#doe').disabled = true;
+    try{
+      await WOLK.rpc('bennahub_lid_code', {p_gezin:GEZIN, p_naam:ik.naam, p_oud:$('#oud').value, p_nieuw:a});
+      $('#mld').className = 'melding goed'; $('#mld').textContent = 'Gelukt. Onthoud hem goed.';
+      $('#doe').textContent = 'Opgeslagen';
+    }catch(e){ $('#doe').disabled = false; $('#mld').className='melding'; $('#mld').textContent = e.message; }
+  };
+}
 
-    <a class="app" href="arabisch/" style="--k:var(--lisan);--kbg:var(--lisan-bg)">
-      <div class="kop">
-        <h2>Lisan</h2>
-        <span class="ar" lang="ar">لسان</span>
-        <span class="rol">Hanae en de kinderen</span>
+/* =============================================================================
+   SCHERM 4 — HET OUDEROVERZICHT
+
+   Elke app bewaart zijn voortgang in zijn eigen vorm; er is geen gemeenschappelijk
+   formaat en dat ga ik ook niet forceren. In plaats daarvan staat hier per app
+   een kleine uitlezer die er het antwoord uit haalt op de twee vragen die je
+   echt stelt: heeft iemand iets gedaan, en hoeveel staat er open?
+============================================================================= */
+const UITLEZERS = {
+  /* Islam leren: profielen in een lijst, voortgang per profiel-id. */
+  bidaya(d){
+    const profs = Array.isArray(d.profielen) ? d.profielen : [];
+    return profs.map(p => {
+      const g = (d.data || {})[p.id] || {};
+      return { wie: p.naam || p.id,
+               laatst: g.laatsteDag,
+               euro: g.saldo,
+               regels: [['Punten', g.punten || 0],
+                        ['Lessen af', Object.keys(g.lessen || {}).length],
+                        ['Uit het hoofd', Object.values(g.hifz || {}).filter(h => h && h.gehaald).length],
+                        ['Insignes', (g.insignes || []).length]] };
+    });
+  },
+  /* Arabisch: profielen als object, met de sleutel als id. */
+  lisan(d){
+    const profs = d.profielen && typeof d.profielen === 'object' ? Object.values(d.profielen) : [];
+    return profs.map(p => ({
+      wie: p.naam || p.id,
+      laatst: p.laatst || p.laatsteDag || null,
+      regels: [['Spoor', p.spoor || p.jaar || '—'],
+               ['Blok', (p.blok == null ? '—' : p.blok)],
+               ['Kaarten', Object.keys(p.kaarten || p.cards || {}).length]] }));
+  },
+  /* Computers & Code: één gebruiker, alles op het hoogste niveau. */
+  bunyan(d){
+    return [{ wie: (d.instel && d.instel.naam) || 'Amine',
+              laatst: d.laatsteDag,
+              euro: d.saldo,
+              regels: [['Punten', d.punten || 0],
+                       ['Lessen af', Object.keys(d.klaar || d.lessen || {}).length],
+                       ['Uitbetaald', euro(d.uitbetaald || 0)],
+                       ['Insignes', (d.insignes || []).length]] }];
+  },
+  /* Geloofsstudie: één gebruiker, weken afgevinkt. */
+  sanad(d){
+    const klaar = Object.keys(d.klaar || {});
+    return [{ wie: 'Abdelkader',
+              laatst: klaar.length ? Object.values(d.klaar).sort().pop() : d.start,
+              regels: [['Week', d.dag || '—'],
+                       ['Weken af', klaar.length + ' van 28'],
+                       ['Kaarten', Object.keys(d.cards || {}).length],
+                       ['Dagreeks', d.dagreeks || 0]] }];
+  },
+  /* Koran uit je hoofd. */
+  rasikh(d){
+    const k = d.kaarten || d.aya || {};
+    return [{ wie: 'Abdelkader',
+              laatst: d.laatsteDag || d.laatst,
+              regels: [['Aya vast', Object.keys(k).length],
+                       ['Te herhalen', Object.values(k).filter(x => x && x.due && new Date(x.due) <= new Date()).length],
+                       ['Verwarpunten', Object.keys(d.verwarring || {}).length]] }];
+  },
+  /* Spelletjes: records. */
+  raha(d){
+    return [{ wie: 'Iedereen',
+              laatst: d.laatste,
+              regels: [['Records', Object.keys(d.records || {}).length],
+                       ['Gespeeld', Object.values(d.gespeeld || {}).reduce((n,x) => n + (Number(x)||0), 0)]] }];
+  }
+};
+
+function schermOuder(){
+  const ww = (function(){ try{ return sessionStorage.getItem('bennahub.ouderww'); }catch(e){ return null; } })();
+  if(!ww) return vraagOuderWW();
+  zetScherm(`${balkHTML(ik, true)}<div class="wrap breed" style="padding-top:34px"><p class="meta">Bezig met ophalen…</p></div>`);
+  WOLK.rpc('bennahub_overzicht', {p_gezin:GEZIN, p_ouder_ww:ww})
+    .then(tekenOuder)
+    .catch(e => { try{ sessionStorage.removeItem('bennahub.ouderww'); }catch(x){} vraagOuderWW(e.message); });
+}
+
+function vraagOuderWW(fout){
+  zetScherm(`
+    ${balkHTML(ik)}
+    <div class="wrap" style="padding-top:34px">
+      <div class="codekaart">
+        <h2>Overzicht</h2>
+        <p class="klein" style="margin-top:8px">Hier staat wat iedereen in alle apps heeft gedaan en wat er openstaat.
+        Typ je ouderwachtwoord — dat is iets anders dan je eigen wachtwoord als je dat hebt gewijzigd.</p>
+        <input type="password" id="ww" placeholder="Ouderwachtwoord" autocomplete="current-password">
+        <button class="btn vol" id="doe">Bekijken</button>
+        <p class="melding" id="mld">${fout ? esc(fout) : ''}</p>
+        <div class="rij" style="justify-content:center;margin-top:18px">
+          <button class="btn ghost sm" onclick="schermHub()">← Terug</button>
+        </div>
       </div>
-      <p>Arabisch leren lezen, begrijpen en spreken. De app kiest op je leeftijd wat je krijgt aangeboden — van de eerste letters tot het lezen van een hele alinea.</p>
-      <div class="detail"><span>Eigen spoor per leeftijd</span><span>Alle 28 letters</span><span>Spel voor de kinderen</span></div>
-      <div class="pijl">Openen &rarr;</div>
-    </a>
+    </div>`);
+  const doe = async () => {
+    $('#doe').disabled = true; $('#mld').textContent = 'Bezig…';
+    try{
+      const r = await WOLK.rpc('bennahub_overzicht', {p_gezin:GEZIN, p_ouder_ww:$('#ww').value});
+      try{ sessionStorage.setItem('bennahub.ouderww', $('#ww').value); }catch(e){}
+      tekenOuder(r);
+    }catch(e){ $('#doe').disabled = false; $('#mld').textContent = e.message; }
+  };
+  $('#doe').onclick = doe;
+  $('#ww').onkeydown = e => { if(e.key === 'Enter') doe(); };
+  $('#ww').focus();
+}
 
-    <a class="app" href="huiswerk/cursussen/kompas.html" style="--k:var(--academie);--kbg:var(--academie-bg)">
-      <div class="kop">
-        <h2>Academie</h2>
-        <span class="rol">Voor de groten</span>
+function tekenOuder(r){
+  const appsDb = r.apps || [];
+  const ledenNu = r.leden || [];
+
+  /* Per app een blok, met per persoon een regel. Kent een app geen uitlezer of
+     staat er nog niets in, dan zeggen we dat gewoon — een lege tabel laat je
+     raden of het niet werkt of dat er niets is. */
+  const blokken = APPS.map(a => {
+    const rij = appsDb.find(x => x.app === a.id);
+    const lees = UITLEZERS[a.id];
+    let inhoud;
+    if(a.id === 'huiswerk' || a.id === 'academie'){
+      inhoud = `<p class="klein">Deze app heeft nog zijn eigen inlog en bewaart niets centraal. Het overzicht daarvan staat in de app zelf.</p>`;
+    } else if(!rij){
+      inhoud = `<p class="klein">Nog geen centraal account. Wie de app opent en zich aanmeldt, komt hier vanzelf te staan.</p>`;
+    } else if(!lees){
+      inhoud = `<p class="klein">Laatst bijgewerkt ${esc(datum(rij.updatedAt))}.</p>`;
+    } else {
+      let regels = [];
+      try{ regels = lees(rij.data || {}) || []; }catch(e){ regels = []; }
+      if(!regels.length){
+        inhoud = `<p class="klein">Account <b>${esc(rij.account)}</b>, maar er staat nog geen voortgang in. Laatst bijgewerkt ${esc(datum(rij.updatedAt))}.</p>`;
+      } else {
+        const kolommen = regels[0].regels.map(x => x[0]);
+        inhoud = `<div class="tabelwrap"><table class="tbl">
+          <thead><tr><th>Wie</th>${kolommen.map(k => '<th>' + esc(k) + '</th>').join('')}<th>Verdiend</th><th>Laatst</th></tr></thead>
+          <tbody>${regels.map(p => {
+            const st = stilte(p.laatst || rij.updatedAt);
+            return `<tr><td><b>${esc(hoofd(p.wie))}</b></td>
+              ${p.regels.map(x => '<td>' + esc(x[1]) + '</td>').join('')}
+              <td class="geld">${p.euro == null ? '—' : esc(euro(p.euro))}</td>
+              <td><span class="speld ${st.klasse}">${esc(st.tekst)}</span></td></tr>`;
+          }).join('')}</tbody></table></div>`;
+      }
+    }
+    return `<div class="kaart" style="border-left:3px solid var(--${a.k})">
+      <div class="rij" style="gap:12px">
+        <img class="tegel" src="${a.ico}" alt="" width="34" height="34" style="width:34px;height:34px;border-radius:10px;--k:var(--${a.k})">
+        <h3>${esc(a.naam)}</h3>
       </div>
-      <p>Drie cursussen die los van het huiswerk staan: slim leren en focus, communicatie en netwerken, presenteren en spreken.</p>
-      <div class="detail">
-        <span>Kompas</span><span>Verbind</span><span>Podium</span>
+      <div style="margin-top:12px">${inhoud}</div>
+    </div>`;
+  }).join('');
+
+  /* Het geld bij elkaar. Dit is de vraag die je op zaterdag stelt: wie krijgt
+     er nog wat van me? */
+  const potjes = [];
+  appsDb.forEach(rij => {
+    const lees = UITLEZERS[rij.app]; if(!lees) return;
+    let uit = []; try{ uit = lees(rij.data || {}) || []; }catch(e){}
+    uit.forEach(p => { if(p.euro != null && Number(p.euro) > 0)
+      potjes.push({app:(APPS.find(a => a.id === rij.app) || {}).naam || rij.app, wie:p.wie, euro:Number(p.euro)}); });
+  });
+  const totaal = potjes.reduce((n,p) => n + p.euro, 0);
+
+  zetScherm(`
+    ${balkHTML(ik, true)}
+    <div class="wrap breed" style="padding-top:34px">
+      <h1 style="font-size:2rem">Overzicht</h1>
+      <p class="klein" style="margin-top:6px">Alles van alle apps op één plek. Dit ziet alleen wie zich als ouder heeft aangemeld.</p>
+
+      <div class="raster g2" style="margin-top:22px">
+        <div class="kaart">
+          <p class="meta">Nog uit te betalen</p>
+          <p class="cijfer" style="color:var(--goed);margin-top:4px">${esc(euro(totaal))}</p>
+          ${potjes.length
+            ? `<div class="tabelwrap" style="margin-top:12px"><table class="tbl">
+                 <tbody>${potjes.map(p => `<tr><td><b>${esc(hoofd(p.wie))}</b></td><td class="klein">${esc(p.app)}</td>
+                   <td class="geld" style="text-align:right">${esc(euro(p.euro))}</td></tr>`).join('')}</tbody></table></div>`
+            : '<p class="klein" style="margin-top:8px">Er staat nergens iets open.</p>'}
+        </div>
+        <div class="kaart">
+          <p class="meta">Wie was er voor het laatst</p>
+          <div class="tabelwrap" style="margin-top:10px"><table class="tbl">
+            <tbody>${ledenNu.map(l => {
+              const st = stilte(l.laatstActief);
+              return `<tr><td>${esc(l.emoji)} <b>${esc(hoofd(l.naam))}</b></td>
+                <td class="klein">${l.rol === 'ouder' ? 'ouder' : ''}</td>
+                <td style="text-align:right"><span class="speld ${st.klasse}">${esc(st.tekst)}</span></td>
+                <td style="text-align:right"><button class="btn ghost sm nowrap" data-reset="${esc(l.naam)}">Resetten</button></td></tr>`;
+            }).join('')}</tbody></table></div>
+          <p class="klein" style="margin-top:10px">"Resetten" wist alleen het wachtwoord van dat kind — zijn lessen, punten en spaarpot blijven staan. Bij de volgende keer kiest hij zelf een nieuw wachtwoord, dus jij hoeft er niets voor te onthouden.</p>
+        </div>
       </div>
-      <div class="pijl">Openen &rarr;</div>
-    </a>
 
-  </div>
+      <h2 style="margin-top:34px;font-size:1.4rem">Per app</h2>
+      <div style="margin-top:14px">${blokken}</div>
 
-  <p class="meta snel">
-    Rechtstreeks naar een cursus:
-    <a href="huiswerk/cursussen/kompas.html">Kompas</a> ·
-    <a href="huiswerk/cursussen/communicatie.html">Verbind</a> ·
-    <a href="huiswerk/cursussen/presenteren.html">Podium</a>
-  </p>
-</main>
+      <div class="kaart" style="margin-top:22px">
+        <h3>Ouderwachtwoord wijzigen</h3>
+        <p class="klein" style="margin-top:6px">Hiermee kom je bij dit overzicht en hiermee melden jij en Hanae je aan.</p>
+        <div class="raster g2" style="margin-top:10px">
+          <input type="password" id="oww1" placeholder="huidig wachtwoord" autocomplete="current-password">
+          <input type="password" id="oww2" placeholder="nieuw wachtwoord (min. 6)" autocomplete="new-password">
+        </div>
+        <div class="rij" style="margin-top:12px"><button class="btn sm" id="owwDoe">Opslaan</button></div>
+        <p class="melding" id="owwMld"></p>
+      </div>
 
-<footer>
-  <p>Elke app heeft een eigen beheerscherm en een eigen manier van inloggen. Voortgang staat centraal opgeslagen, dus je vindt hem op elk toestel terug; zonder internet werkt alles gewoon door en wordt er later gelijkgetrokken.</p>
-  <p class="meta" style="margin-top:16px">Gebouwd voor het gezin Benna</p>
-</footer>
+      <div class="rij" style="margin-top:24px;margin-bottom:40px">
+        <button class="btn ghost" onclick="schermHub()">← Terug naar de apps</button>
+        <button class="btn ghost" onclick="schermOuder()">Vernieuwen</button>
+      </div>
+    </div>`);
 
-</div>
+  $$('[data-reset]').forEach(b => b.onclick = async () => {
+    const naam = b.dataset.reset;
+    if(!confirm('Het wachtwoord van ' + hoofd(naam) + ' wissen? De voortgang blijft staan; bij de volgende keer kiest ' + hoofd(naam) + ' zelf een nieuw wachtwoord.')) return;
+    b.disabled = true;
+    try{
+      await WOLK.rpc('bennahub_lid_reset', {p_gezin:GEZIN, p_ouder_ww:sessionStorage.getItem('bennahub.ouderww'), p_naam:naam});
+      b.textContent = 'Gewist';
+    }catch(e){ b.disabled = false; alert(e.message); }
+  });
+
+  $('#owwDoe').onclick = async () => {
+    const oud = $('#oww1').value, nw = $('#oww2').value;
+    if(nw.length < 6) return $('#owwMld').textContent = 'Het nieuwe wachtwoord moet minstens 6 tekens zijn.';
+    $('#owwDoe').disabled = true;
+    try{
+      await WOLK.rpc('bennahub_gezin_wachtwoord', {p_gezin:GEZIN, p_oud:oud, p_nieuw:nw});
+      try{ sessionStorage.setItem('bennahub.ouderww', nw); }catch(e){}
+      $('#owwMld').className = 'melding goed'; $('#owwMld').textContent = 'Gewijzigd.';
+    }catch(e){ $('#owwDoe').disabled = false; $('#owwMld').className='melding'; $('#owwMld').textContent = e.message; }
+  };
+}
+
+start();
+</script>
 
 </body>
 </html>

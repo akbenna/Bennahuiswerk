@@ -1,7 +1,7 @@
 {
-  "name": "Bennaghmouch Oefenclub",
-  "short_name": "Oefenclub",
-  "description": "Huiswerk oefenen voor het gezin — rekenen, taal, spelling, spellen en de Bennaghmouch Academie. Werkt offline.",
+  "name": "Huiswerk — oefenen voor school",
+  "short_name": "Huiswerk",
+  "description": "Oefenen voor school: rekenen, taal, spelling en de Academie. Werkt offline.",
   "lang": "nl",
   "start_url": "./index.html",
   "scope": "./",

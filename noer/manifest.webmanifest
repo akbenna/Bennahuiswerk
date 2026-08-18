@@ -1,0 +1,24 @@
+{
+  "name": "Islam leren — de basis van de islam en leren bidden",
+  "short_name": "Islam",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F6F4F0",
+  "theme_color": "#F6F4F0",
+  "lang": "nl",
+  "description": "De basis van de islam voor kinderen van 7 tot 15, met begeleiding bij het leren bidden.",
+  "icons": [
+    {
+      "src": "../iconen/islam-180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "../iconen/islam.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

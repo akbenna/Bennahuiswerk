@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Geloofsstudie">
+  <title>Geloofsstudie</title>
+  <rect width="64" height="64" rx="14" fill="#5B3B7A"/>
+  <rect x="20" y="15" width="24" height="34" rx="2.5" fill="#FFF8EE"/>
+  <g fill="none" stroke="#5B3B7A" stroke-width="2.8" stroke-linecap="round">
+    <path d="M26 26h12M26 32h12M26 38h8"/>
+  </g>
+  <g fill="#FFF8EE">
+    <rect x="15" y="13" width="34" height="5.5" rx="2.75"/>
+    <rect x="15" y="45.5" width="34" height="5.5" rx="2.75"/>
+  </g>
+</svg>

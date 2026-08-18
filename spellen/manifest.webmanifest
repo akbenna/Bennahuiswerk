@@ -1,0 +1,24 @@
+{
+  "name": "Spelletjes — de speelhoek van BennaHub",
+  "short_name": "Spelletjes",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F6F4F0",
+  "theme_color": "#F6F4F0",
+  "lang": "nl",
+  "description": "Vijftien spelletjes om even af te schakelen, plus twee grote.",
+  "icons": [
+    {
+      "src": "../iconen/spelletjes-180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "../iconen/spelletjes.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
