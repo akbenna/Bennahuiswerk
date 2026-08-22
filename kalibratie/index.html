@@ -111,6 +111,24 @@ label.veld{display:block}
 label.veld>span{display:block;font-size:.72rem;color:var(--grijs);margin-bottom:3px}
 .smal{width:88px}.smaller{width:68px}
 
+/* --------------------------------------------------------------- uitleg -- */
+/* De app legt veel uit, en dat hoort ook: elk getal hier heeft een aanname
+   eronder. Maar wat je de eerste week wilt lezen, wil je op dag honderd niet
+   meer zien. Daarom staat elke onderbouwing achter een 'waarom', standaard
+   dicht, en onthoudt de app per blok wat jij openzet. */
+.uitleg{margin-top:10px}
+.uitleg>summary{cursor:pointer;display:inline-flex;align-items:center;gap:6px;
+  font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--grijs);
+  padding:2px 0;list-style:none;user-select:none}
+.uitleg>summary::-webkit-details-marker{display:none}
+.uitleg>summary::before{content:'\203A';font-size:1rem;line-height:1;
+  transition:transform .15s ease;display:inline-block}
+.uitleg[open]>summary::before{transform:rotate(90deg)}
+.uitleg>summary:hover{color:var(--ink)}
+.uitleg>.inhoud{margin-top:7px;padding-left:12px;border-left:2px solid var(--vlak2)}
+.uitleg>.inhoud>p{margin:0 0 7px}
+.uitleg>.inhoud>p:last-child{margin-bottom:0}
+
 /* ---------------------------------------------------------- balk en chip -- */
 .balk{height:7px;border-radius:999px;background:var(--vlak2);overflow:hidden}
 .balk>i{display:block;height:100%;background:var(--k);transition:width .2s}
@@ -393,6 +411,22 @@ function onderhoudZone(trendGewicht, basis){
 let S = {token:null, account:null, profiel:null, dagen:{}, regels:[], producten:[],
          recepten:[], metingen:[], labs:[], vragenlijsten:[], training:[]};
 let tab='vandaag', datum=vandaag(), venster=null, bezig=false;
+/* Inklapbare onderbouwing. De stand staat per blok in localStorage, want het
+   scherm wordt bij elke wijziging opnieuw getekend en een <details> zou anders
+   telkens dichtklappen terwijl je aan het lezen bent. */
+const SLEUTEL_UITLEG = 'kalibratie.uitleg';
+let uitlegStand = {};
+try { uitlegStand = JSON.parse(localStorage.getItem(SLEUTEL_UITLEG) || '{}') || {}; } catch(e) {}
+function onthoudUitleg(el){
+  uitlegStand[el.dataset.u] = el.open;
+  try { localStorage.setItem(SLEUTEL_UITLEG, JSON.stringify(uitlegStand)); } catch(e) {}
+}
+function uitleg(id, inhoud, label){
+  return `<details class="uitleg" data-u="${id}" ontoggle="onthoudUitleg(this)"${uitlegStand[id]?' open':''}>`
+    + `<summary>${esc(label||'waarom')}</summary>`
+    + `<div class="inhoud mini">${inhoud}</div></details>`;
+}
+
 let aiConcept=null, aiFoto=null;
 
 function bundelDagen(){
@@ -574,16 +608,36 @@ function vwVandaag(A,D){
   const d = dagVan(datum);
   const regels = S.regels.filter(r=>r.datum===datum);
   const isVandaag = datum===vandaag();
+  const gewogen = d.gewicht_kg != null;
   const eiwitPct = Math.min(100, d._eiwit/A.eiwitDoel*100);
   const kcalPct = A.doel ? Math.min(100, d._kcal/A.doel*100) : 0;
 
-  return `
-  <div class="tussen" style="margin-bottom:12px">
-    <button class="knop sm" onclick="schuif(-1)">←</button>
-    <span style="font-size:.88rem;font-weight:500">${isVandaag?'Vandaag':esc(langNL(datum))}</span>
-    <button class="knop sm" onclick="schuif(1)" ${isVandaag?'disabled':''}>→</button>
-  </div>
+  /* Hoeveel wegingen er nog nodig zijn voordat het model iets durft te zeggen.
+     Dat getal is de enige zinvolle aanmoediging die de app kan geven: het is
+     geen streefcijfer maar een telling. */
+  const nogNodig = Math.max(0, 7 - (A.wPunten||0));
 
+  const weging = `
+  <div class="kaart ${!gewogen && isVandaag ? 'let':''}" style="${!gewogen && isVandaag?'':'padding-top:14px;padding-bottom:14px'}">
+    <div class="tussen">
+      <div class="eyebrow">Ochtendweging</div>
+      ${gewogen ? '<span class="mini" style="color:var(--goed)">&#10003; gedaan</span>' : ''}
+    </div>
+    <div class="rij" style="margin-top:8px;align-items:center">
+      <input class="smal" type="number" step="0.1" inputmode="decimal" value="${d.gewicht_kg??''}"
+             onchange="zetDag('gewicht_kg', this.value)" placeholder="—"
+             style="${!gewogen && isVandaag?'font-size:1.25rem;width:104px':''}">
+      <span class="klein">kg${!gewogen ? ' &middot; nuchter, na het toilet, v&oacute;&oacute;r het eten' : ''}</span>
+    </div>
+    ${!gewogen && isVandaag && nogNodig>0 ? `<p class="mini" style="margin-top:8px">Nog ${nogNodig} weging${nogNodig===1?'':'en'} voordat het model een verbruik met interval kan tonen.</p>` : ''}
+    ${uitleg('weging', `<p>Dit is de enige invoer die niet te schatten valt, en het enige onbevooroordeelde
+      signaal in het systeem. Alles wat je eet gaat door een schatting heen; de weegschaal niet.</p>
+      <p>Nuchter, na het toilet, v&oacute;&oacute;r het eten &mdash; steeds op dezelfde manier, want het gaat om het
+      verschil tussen dagen en niet om de absolute waarde. Dagelijkse schommelingen van &eacute;&eacute;n tot twee kilo
+      zijn vocht, glycogeen en darminhoud. Daarom leest het model de helling en niet de meting.</p>`, 'waarom dit de kern is')}
+  </div>`;
+
+  const stand = `
   <div class="kaart">
     <div class="duo">
       <div>
@@ -598,17 +652,23 @@ function vwVandaag(A,D){
         <div style="margin-top:3px"><span class="getal" style="font-size:2.1rem">${dz(Math.round(d._kcal))}</span>
           <span class="klein"> kcal${A.doel?' van '+dz(A.doel):''}</span></div>
         ${A.doel ? `<div class="balk" style="margin-top:8px"><i class="${d._kcal>A.doel*1.1?'let':''}" style="width:${kcalPct}%"></i></div>
-          <div class="mini cijfer" style="margin-top:4px">nog ${dz(Math.max(0,A.doel-Math.round(d._kcal)))} kcal ·
-            interval van vandaag ${dz(Math.round(d._laag))}–${dz(Math.round(d._hoog))}</div>`
-        : `<p class="mini" style="margin-top:8px">Nog geen doel — het model heeft eerst een weegreeks nodig.</p>`}
+          <div class="mini cijfer" style="margin-top:4px">nog ${dz(Math.max(0,A.doel-Math.round(d._kcal)))} kcal &middot;
+            interval van vandaag ${dz(Math.round(d._laag))}&ndash;${dz(Math.round(d._hoog))}</div>`
+        : `<p class="mini" style="margin-top:8px">Nog geen doel &mdash; het model heeft eerst een weegreeks nodig.</p>`}
       </div>
     </div>
+    ${uitleg('eiwitref', `<p>Het eiwitdoel staat op gecorrigeerd gewicht en niet op je werkelijke gewicht: vetmassa
+      vraagt nauwelijks eiwit, dus rekenen op 119 kilo geeft een doel dat niemand haalt en dat nergens op slaat.
+      De correctie kapt het referentiegewicht af op BMI 30, wat voor jou ${dec(A.eiwitRef,0)} kilo geeft.</p>
+      <p>Waarom het hoog staat: bij een tekort is eiwit wat bepaalt of je gewichtsverlies uit vet komt of ook uit
+      spier. Dat is de post waar in jouw Yazio-reeks het meeste te winnen viel.</p>`, 'waarom op gecorrigeerd gewicht')}
     ${d._kcal>0 && d._kcal<1200 && !isVandaag ? `
       <div class="kaart let plat" style="margin:12px 0 0">
         <p style="font-size:.84rem">Onder 1.200 kcal. Waarschijnlijker een onvolledige registratie dan een echte dag.
         Het model laat deze dag buiten de berekening en toont hem niet als succes.</p></div>`:''}
-  </div>
+  </div>`;
 
+  const eten = `
   <div class="kaart">
     <div class="eyebrow">Zeggen wat je at</div>
     <textarea id="ai-tekst" style="margin-top:8px"
@@ -617,13 +677,21 @@ function vwVandaag(A,D){
       <button class="knop vol" onclick="herkenTekst()">Herkennen</button>
       <label class="knop" style="cursor:pointer">Foto van het bord
         <input type="file" accept="image/*" capture="environment" style="display:none" onchange="kiesFoto(this)"></label>
-      ${aiFoto?`<span class="mini">foto klaar · ${aiFoto.naam}</span>`:''}
+      ${aiFoto?`<span class="mini">foto klaar &middot; ${aiFoto.naam}</span>`:''}
     </div>
     <p class="klein" id="ai-mld" style="margin-top:8px;min-height:1.2em"></p>
     ${aiConcept ? conceptHTML() : ''}
-  </div>
+    ${uitleg('herkennen', `<p>Schrijf het zoals je het zou vertellen. Noem het aantal en de bereiding &mdash;
+      &ldquo;twee sneetjes&rdquo;, &ldquo;gekookt&rdquo;, &ldquo;in de pan met olie&rdquo; &mdash; dat scheelt meer dan een preciezere naam.</p>
+      <p>Wat er daarna gebeurt: het model benoemt de onderdelen en schat een portiebereik, de server zoekt ze op in
+      het Nederlands Voedingsstoffenbestand, en de voedingswaarde komt uit die tabel en niet uit het geheugen van het
+      model. Dat scheelt ongeveer twee derde van de fout. Je krijgt het concept eerst te zien; er wordt niets
+      opgeslagen voordat jij het nakijkt.</p>
+      <p>De grootste ontbrekende post is bijna altijd de olie die in de bereiding is opgegaan. Die schat het model
+      apart en meldt het erbij.</p>`, 'hoe je het opschrijft')}
+  </div>`;
 
-  ${regels.length ? `
+  const gelogd = regels.length ? `
   <div class="kaart">
     <div class="eyebrow">Gelogd op ${esc(kortNL(datum))}</div>
     <div class="lijst" style="margin-top:4px">
@@ -631,28 +699,18 @@ function vwVandaag(A,D){
         ${chip(r.conf||'D')}
         <span class="groei">
           <span class="knip" style="font-size:.87rem;display:block">${esc(r.naam)}</span>
-          <span class="mini cijfer">${r.kcal_laag!=null?dz(r.kcal_laag)+'–'+dz(r.kcal_hoog)+' kcal':''}${
-            r.nevo_code?' · NEVO':''}${(r.onzekerheidsbronnen||[]).length?' · '+esc(r.onzekerheidsbronnen[0]):''}</span>
+          <span class="mini cijfer">${r.kcal_laag!=null?dz(r.kcal_laag)+'&ndash;'+dz(r.kcal_hoog)+' kcal':''}${
+            r.nevo_code?' &middot; NEVO':''}${(r.onzekerheidsbronnen||[]).length?' &middot; '+esc(r.onzekerheidsbronnen[0]):''}</span>
         </span>
         <span style="text-align:right;flex:0 0 auto;white-space:nowrap">
           <span class="cijfer" style="font-size:.85rem;display:block">${dz(Math.round(r.kcal_punt))}</span>
           <span class="mini cijfer">${dec(r.eiwit_g,1)} g</span></span>
-        <button class="knop sm" onclick="wisRegel('${r.id}')" aria-label="Verwijderen">×</button>
+        <button class="knop sm" onclick="wisRegel('${r.id}')" aria-label="Verwijderen">&times;</button>
       </div>`).join('')}
     </div>
-  </div>`:''}
+  </div>`:'';
 
-  <div class="kaart ${d.gewicht_kg==null && isVandaag ? 'let':''}">
-    <div class="eyebrow">Ochtendweging</div>
-    <div class="rij" style="margin-top:8px">
-      <input class="smal" type="number" step="0.1" inputmode="decimal" value="${d.gewicht_kg??''}"
-             onchange="zetDag('gewicht_kg', this.value)" placeholder="—">
-      <span class="klein">kg · nuchter, na het toilet, vóór het eten</span>
-    </div>
-    ${d.gewicht_kg==null && isVandaag ? `<p class="mini" style="margin-top:8px">Dit is de enige invoer die niet te
-      schatten valt, en het enige onbevooroordeelde signaal in het systeem. Zonder deze reeks meet het model niets.</p>`:''}
-  </div>
-
+  const beweging = `
   <div class="kaart">
     <div class="eyebrow">Beweging en slaap</div>
     <div class="rij" style="margin-top:8px;align-items:flex-end">
@@ -662,11 +720,27 @@ function vwVandaag(A,D){
         <input class="smaller" type="number" step="0.25" inputmode="decimal"
                value="${d.slaap_min!=null?Math.round(d.slaap_min/15)/4:''}"
                onchange="zetDag('slaap_min', this.value===''?'':Math.round(parseFloat(this.value)*60))"></label>
-      <button class="knop ${d.kracht?'vol':''}" onclick="zetDag('kracht', ${d.kracht?'false':'true'})">${d.kracht?'✓ ':''}kracht</button>
+      <button class="knop ${d.kracht?'vol':''}" onclick="zetDag('kracht', ${d.kracht?'false':'true'})">${d.kracht?'&#10003; ':''}kracht</button>
     </div>
+    ${uitleg('beweging', `<p>Stappen en slaap staan hier omdat ze ergens vandaan moeten komen, niet omdat het model
+      ermee rekent. De actieve energie die je horloge erbij optelt gaat nooit naar het doel: die fout is twintig tot
+      vijftig procent en niet consistent in &eacute;&eacute;n richting, dus corrigeren kan niet.</p>
+      <p>Wat stappen w&eacute;l doen, doen ze via de weegschaal. Beweeg je structureel meer, dan verschuift de helling,
+      en dat ziet het model vanzelf &mdash; zonder dat er iets bij opgeteld hoeft te worden.</p>`, 'waarom stappen hier alleen staan')}
   </div>`;
-}
 
+  return `
+  <div class="tussen" style="margin-bottom:12px">
+    <button class="knop sm" onclick="schuif(-1)">&larr;</button>
+    <span style="font-size:.88rem;font-weight:500">${isVandaag?'Vandaag':esc(langNL(datum))}</span>
+    <button class="knop sm" onclick="schuif(1)" ${isVandaag?'disabled':''}>&rarr;</button>
+  </div>
+  ${weging}
+  ${stand}
+  ${eten}
+  ${gelogd}
+  ${beweging}`;
+}
 function conceptHTML(){
   const tot = aiConcept.regels.reduce((a,r)=>({p:a.p+(r.kcal_punt||0), l:a.l+(r.kcal_laag||0),
     h:a.h+(r.kcal_hoog||0), e:a.e+(r.eiwit_g||0)}), {p:0,l:0,h:0,e:0});
@@ -766,9 +840,9 @@ function vwModel(A,D){
         <div class="rij" style="align-items:baseline;margin-top:3px">
           <span class="getal" style="font-size:1.5rem">${dz(A.priorLaag)}–${dz(A.priorHoog)}</span>
           <span class="klein">kcal</span></div>
-        <p class="mini" style="margin-top:6px">Ruststofwisseling ${dz(A.rustBMR)} kcal (Mifflin-St Jeor) maal een
+        ${uitleg('prior', `<p>Ruststofwisseling ${dz(A.rustBMR)} kcal (Mifflin-St Jeor) maal een
         activiteitsfactor tussen ${dec(A.palLaag,2)} en ${dec(A.palHoog,2)}. Dat is een band en geen getal, want een
-        gevalideerde omrekening van stappen naar activiteitsfactor bestaat niet. Behandel dit als prior, geen meting.</p>
+        gevalideerde omrekening van stappen naar activiteitsfactor bestaat niet. Behandel dit als prior, geen meting.</p>`, 'waar dit getal vandaan komt')}
       </div>`}
   </div>
 
@@ -798,9 +872,9 @@ function vwModel(A,D){
   <div class="kaart">
     <div class="eyebrow">Gewicht en voortschrijdend gemiddelde</div>
     ${gewichtSVG(reeks, A)}
-    <p class="mini">Punten zijn losse wegingen, de lijn is een exponentieel gewogen gemiddelde met een halfwaardetijd
+        ${uitleg('weeglijn', `<p>Punten zijn losse wegingen, de lijn is een exponentieel gewogen gemiddelde met een halfwaardetijd
     van ongeveer een week. Dagelijkse schommelingen van één tot twee kilo zijn vocht, glycogeen en darminhoud —
-    de helling is het signaal, niet de meting.</p>
+    de helling is het signaal, niet de meting.</p>`, 'wat je hier ziet')}
   </div>
 
   <div class="kaart">
@@ -827,10 +901,10 @@ function vwModel(A,D){
          nu ${dec(A.tempoKgWk,2)} kg — duurt ${dec(A.gewicht-(S.profiel.doel_gewicht_kg||A.gewicht),0)} kg ongeveer
          ${Math.round((A.gewicht-(S.profiel.doel_gewicht_kg||A.gewicht))/Math.max(0.1,A.tempoKgWk))} weken.`}</p>
     <div class="kaart plat" style="margin-top:10px">
-      <p class="mini">Drie regels staan hard in de code. Het doel zakt nooit onder de ruststofwisseling
+        ${uitleg('grenzen', `<p>Drie regels staan hard in de code. Het doel zakt nooit onder de ruststofwisseling
       (${dz(A.rustBMR)} kcal). Gaat de trend sneller dan één procent per week, dan luidt het advies méér eten.
       En actieve energie uit Garmin of Apple wordt nooit bij het doel opgeteld: de fout daarin is twintig tot vijftig
-      procent en niet consistent in één richting, dus corrigeren kan niet.</p>
+      procent en niet consistent in één richting, dus corrigeren kan niet.</p>`, 'de drie harde grenzen')}
     </div>
   </div>`;
 }
@@ -876,9 +950,13 @@ function intervalSVG(A){
 function gewichtSVG(r, A){
   const pts = r.filter(x=>x.w!=null);
   if(pts.length<1) return '<p class="klein" style="margin-top:8px">Nog geen weging. Zodra er drie staan, verschijnt hier een lijn.</p>';
+  const teWeinig = pts.length < 3;
   const W=330,H=140,L=32,B=18;
   const vals = [...r.map(x=>x.w), ...r.map(x=>x.ema)].filter(v=>v!=null).map(Number);
   const lo=Math.min(...vals)-0.8, hi=Math.max(...vals)+0.8;
+  /* Bij een smalle as zegt afronden op hele kilo's niets: drie lijnen kregen
+     dan twee keer hetzelfde getal. */
+  const decim = (hi-lo) < 3 ? 1 : 0;
   const doel = S.profiel.doel_gewicht_kg;
   const doelInBeeld = doel!=null && doel>lo && doel<hi;
   const X=i=> r.length<2 ? (L+W)/2 : L + i/(r.length-1)*(W-L-4);
@@ -888,14 +966,14 @@ function gewichtSVG(r, A){
   const yd = doelInBeeld ? Y(doel) : null;
   return `<svg class="fig" viewBox="0 0 ${W} ${H}" style="margin-top:10px" role="img" aria-label="Gewicht per dag">
     ${[0,.5,1].map(f=>{const v=lo+(hi-lo)*f;return `<line x1="${L}" y1="${Y(v)}" x2="${W}" y2="${Y(v)}" stroke="var(--lijn)" stroke-width="1"/>
-      <text x="0" y="${Y(v)+3.5}" font-size="9.5" fill="var(--grijs)" font-family="ui-monospace,monospace">${v.toFixed(0)}</text>`}).join('')}
+      <text x="0" y="${Y(v)+3.5}" font-size="9.5" fill="var(--grijs)" font-family="ui-monospace,monospace">${v.toFixed(decim).replace('.',',')}</text>`}).join('')}
     ${yd!=null?`<line x1="${L}" y1="${yd}" x2="${W}" y2="${yd}" stroke="var(--let)" stroke-width="1" stroke-dasharray="3 3"/>
       <text x="${W}" y="${yd-4}" font-size="9.5" fill="var(--let)" text-anchor="end">doel ${doel}</text>`
-    : (doel!=null?`<text x="${W}" y="${H-4}" font-size="9" fill="var(--let)" text-anchor="end">doel ${doel} kg valt onder deze schaal</text>`:'')}
+    : (doel!=null?`<text x="${W}" y="10" font-size="9" fill="var(--grijs)" text-anchor="end">doel ${doel} kg ligt onder deze uitsnede</text>`:'')}
     ${dots}${pad?`<polyline points="${pad}" fill="none" stroke="var(--k)" stroke-width="2.2" stroke-linejoin="round"/>`:''}
     <text x="${L}" y="${H-4}" font-size="9.5" fill="var(--grijs)">${esc(kortNL(r[0].d))} —</text>
     <text x="${L+34}" y="${H-4}" font-size="9.5" fill="var(--grijs)">${esc(kortNL(r[r.length-1].d))}</text>
-  </svg>`;
+  </svg>${teWeinig?`<p class="mini" style="margin-top:6px">${pts.length===1?'E&eacute;n weging':`${pts.length} wegingen`} — nog ${3-pts.length} voordat er een lijn te trekken valt, en zeven voordat de helling meer is dan ruis.</p>`:''}`;
 }
 function innameSVG(r, A){
   const s = r.slice(-VENSTER);
@@ -926,9 +1004,9 @@ function vwVoeding(A){
   <div class="kaart">
     <div class="eyebrow">Zoeken in NEVO en de gerechtenbibliotheek</div>
     <input id="v-q" placeholder="couscous, olijfolie, tajine…" style="margin-top:8px"
-      onkeydown="if(event.key==='Enter')zoeken()">
-    <div class="rij" style="margin-top:8px"><button class="knop" onclick="zoeken()">Zoeken</button>
-      <span class="mini">2.328 producten uit het Nederlands Voedingsstoffenbestand, plus de gevalideerde gerechten van ProVita.</span></div>
+      value="${esc(zoekTerm)}" autocomplete="off"
+      oninput="zoekStraks(this.value)" onkeydown="if(event.key==='Enter')zoeken()">
+    <p class="mini" style="margin-top:8px">2.328 producten uit het Nederlands Voedingsstoffenbestand, plus de gevalideerde gerechten van ProVita. Zoeken gaat terwijl je typt.</p>
     <div id="v-hits">${zoekHits?hitsHTML():''}</div>
   </div>
 
@@ -970,12 +1048,47 @@ function hitsHTML(){
   if(!uit) uit = '<p class="klein" style="margin-top:10px">Niets gevonden. Zeg het in gewone taal onder Vandaag — dan ontleedt de herkenning het voor je.</p>';
   return uit;
 }
+/* Zoeken tijdens het typen. Twee dingen die het anders stuk maken: een verzoek
+   per toetsaanslag (vandaar de rust van 300 ms) en antwoorden die in de
+   verkeerde volgorde terugkomen, waarbij een trage treffer op 'cous' het
+   resultaat van 'couscous' overschrijft (vandaar de teller). */
+let zoekTerm = '';
+let zoekTimer = null;
+let zoekTeller = 0;
+
+function zoekStraks(q){
+  zoekTerm = q;
+  clearTimeout(zoekTimer);
+  if(q.trim().length < 2){
+    zoekHits = null;
+    const el = $('#v-hits'); if(el) el.innerHTML = '';
+    return;
+  }
+  zoekTimer = setTimeout(zoeken, 300);
+}
+
 async function zoeken(){
-  const q = $('#v-q').value.trim();
-  $('#v-hits').innerHTML = '<p class="klein" style="margin-top:10px"><span class="spin"></span> Zoeken…</p>';
-  try{ zoekHits = await rpc('kal_zoeken',{p_token:S.token, p_q:q, p_limiet:12}); }
-  catch(e){ $('#v-hits').innerHTML = '<p class="klein">'+esc(e.message)+'</p>'; return; }
-  $('#v-hits').innerHTML = hitsHTML();
+  clearTimeout(zoekTimer);
+  const veld = $('#v-q');
+  const q = (veld ? veld.value : zoekTerm).trim();
+  zoekTerm = q;
+  if(q.length < 2) return;
+  const mijn = ++zoekTeller;
+  const doel = $('#v-hits');
+  if(doel) doel.innerHTML = '<p class="klein" style="margin-top:10px"><span class="spin"></span> Zoeken…</p>';
+  let uit;
+  try{ uit = await rpc('kal_zoeken',{p_token:S.token, p_q:q, p_limiet:12}); }
+  catch(e){
+    if(mijn !== zoekTeller) return;
+    const el = $('#v-hits'); if(el) el.innerHTML = '<p class="klein">'+esc(e.message)+'</p>';
+    return;
+  }
+  if(mijn !== zoekTeller) return;           // een nieuwere zoekopdracht loopt al
+  zoekHits = uit;
+  const el = $('#v-hits');
+  if(el) el.innerHTML = (uit.nevo?.length || uit.gerechten?.length || uit.eigen?.length)
+    ? hitsHTML()
+    : '<p class="klein" style="margin-top:10px">Niets gevonden voor \u201c'+esc(q)+'\u201d. Probeer het los product zonder de bereiding erbij.</p>';
 }
 async function uitTabel(code){
   const n = zoekHits.nevo.find(x=>x.nevo_code===code); if(!n) return;
@@ -1000,6 +1113,19 @@ async function wisRij(t,id){ await bewaar(()=>rpc('kal_rij_wissen',{p_token:S.to
 function eiwitVerdeling(A){
   const per = {ontbijt:0, lunch:0, diner:0, tussendoor:0, onbekend:0};
   for(const r of S.regels.filter(r=>r.datum===datum)) per[r.moment||'onbekend'] += +r.eiwit_g||0;
+  const totaal = Object.values(per).reduce((a,b)=>a+b, 0);
+  const benoemd = totaal - per.onbekend;
+  /* Dagtotalen uit een import hebben geen maaltijdmoment. Drie balken op nul
+     tonen terwijl er wel eiwit gelogd is, is geen leeg scherm maar een onjuist
+     scherm — het antwoord is onbekend, niet nul. */
+  if(totaal > 0 && benoemd === 0){
+    return `<p class="mini" style="margin-top:8px">Er is vandaag ${dec(totaal,1)} g eiwit gelogd, maar zonder
+      maaltijdmoment — dat hoort bij dagtotalen uit een import. De verdeling over de dag is dus niet bekend.
+      Zodra je een maaltijd via <em>Zeggen wat je at</em> logt, komt hij hier vanzelf op de goede plek te staan.</p>`;
+  }
+  if(totaal === 0){
+    return `<p class="mini" style="margin-top:8px">Nog niets gelogd vandaag.</p>`;
+  }
   const doelPerMaaltijd = Math.round(A.eiwitDoel/3);
   const mx = Math.max(doelPerMaaltijd*1.4, ...Object.values(per));
   return `<div style="margin-top:8px">
@@ -1037,10 +1163,10 @@ function vwBeweging(A,D){
         .map(([l,v,s])=>`<div><div class="eyebrow">${l}</div>
           <div class="getal" style="font-size:1.35rem;margin-top:4px">${v}</div><div class="mini">${s}</div></div>`).join('')}
     </div>
-    <p class="mini" style="margin-top:10px">Actieve energie uit Apple of Garmin wordt bewaard als volume-indicator maar
+        ${uitleg('actieveenergie', `<p>Actieve energie uit Apple of Garmin wordt bewaard als volume-indicator maar
     verschijnt nergens in de rekenkern. De fout in energieverbruik is twintig tot vijftig procent en niet consistent in
     één richting; een bias die je niet kent kun je niet corrigeren. Voor jou gaat het om zo'n 633 kcal per dag —
-    genoeg om het hele tekort weg te eten als je het zou bijtellen.</p>
+    genoeg om het hele tekort weg te eten als je het zou bijtellen.</p>`, 'waarom dit niet meetelt')}
   </div>
 
   <div class="kaart">
@@ -1061,11 +1187,11 @@ function vwBeweging(A,D){
           <span class="cijfer mini">${n} van 10</span></div>
         <div class="balk"><i class="${n>=10?'goed':''}" style="width:${Math.min(100,n/10*100)}%"></i></div></div>`).join('')}
     </div>`:''}
-    <p class="mini" style="margin-top:10px">Krachttraining voorkwam in Sardeli 2018 ruim 93 procent van het verlies aan
+        ${uitleg('kracht', `<p>Krachttraining voorkwam in Sardeli 2018 ruim 93 procent van het verlies aan
     vetvrije massa door caloriebeperking, zonder dat het vetverlies eronder leed; het protocol was in alle zes de
     onderliggende trials drie keer per week. Tien sets per spiergroep per week is een redelijke ondergrens
     (Schoenfeld 2017), met duidelijk afnemende meeropbrengst daarboven. Eiwit is faciliterend, niet vervangend:
-    zonder training gaf 1,7 tegen 0,9 g/kg géén verschil.</p>
+    zonder training gaf 1,7 tegen 0,9 g/kg géén verschil.</p>`, 'wat de literatuur zegt')}
   </div>
 
   <div class="kaart">
