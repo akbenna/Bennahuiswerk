@@ -25,12 +25,12 @@ const hier = dirname(fileURLToPath(import.meta.url))
  * is de enige manier om negen apps te verbouwen zonder de site ooit stuk te
  * hebben staan.
  */
-const NOG_NIET_OMGEBOUWD = [
-  'huiswerk',
-]
+const NOG_NIET_OMGEBOUWD: string[] = []
 
 /** Omgebouwd, en dus een echte ingang in de bouw. */
-const OMGEBOUWD = ['start', 'health', 'spellen', 'rasikh', 'sanad', 'bunyan', 'noer', 'arabisch']
+const OMGEBOUWD = [
+  'start', 'health', 'spellen', 'rasikh', 'sanad', 'bunyan', 'noer', 'arabisch', 'huiswerk',
+]
 
 
 

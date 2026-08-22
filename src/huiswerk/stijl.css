@@ -18,8 +18,25 @@ body{
   min-height:100vh; line-height:1.5;
 }
 #root{max-width:760px;margin:0 auto;padding:16px 16px 60px;}
+/* De terugpijl naar de hub. Stond als losse inline-opmaak in de pagina; hier
+   staat hij bij de rest van de vormgeving, waar hij hoort. */
+.naarhub{position:fixed;top:8px;left:8px;z-index:9999;text-decoration:none;
+  background:rgba(255,255,255,.92);border:1px solid #e6eade;border-radius:999px;
+  padding:6px 12px;font:500 13px/1 'DM Sans',sans-serif;color:#6b7163;
+  box-shadow:0 1px 4px rgba(0,0,0,.06);}
 h1,h2,h3{font-family:'Playfair Display',Georgia,serif;margin:0;}
 button{font-family:inherit;cursor:pointer;border:none;}
+/* Twee dingen die vroeger een <div> of een <span> met onClick waren en nu een
+   echte knop zijn: een profielkaart en een knop in de onderste balk. Een knop
+   krijgt van de browser een eigen achtergrond, tekstgrootte en centrering mee,
+   en die moeten terug naar wat de omliggende opmaak al zei. Het levert wel
+   toetsenbordbediening en een voorleesbare rol op, en dat was er niet. */
+.profcard,.navbtn,.topic,.klapkop{font:inherit;text-align:left;width:auto;}
+.topic{width:100%;background:#fff;}
+/* Een kop die uit- en inklapt: was een <div> met onClick, is nu een knop. */
+.klapkop{background:none;padding:0;}
+.topic{width:100%;background:#fff;}
+.navbtn{font-size:13px;}
 .btn{
   background:var(--primary);color:#fff;border-radius:999px;
   padding:12px 22px;font-size:16px;font-weight:700;transition:transform .08s, filter .15s;

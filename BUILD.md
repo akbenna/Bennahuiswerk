@@ -18,16 +18,18 @@ npm run controle   typen, proeven, bouw en de CSP-proef achter elkaar
 | `npm run typen` | `tsc --noEmit` over alles in `src/`. Levert niets op, controleert alles. |
 | `npm run proef` | Vitest. Onder meer de gouden waarden van de rekenkern. |
 | `npm run build` | Typen én bouw; het resultaat staat in `dist/`. |
-| `npm run csp` | Zet `dist/` achter een server die de headers uit `vercel.json` meestuurt en laadt elke omgebouwde app in Chromium. Meldt elke CSP-overtreding, en speelt bij Spelletjes een potje, loopt bij Koran uit je hoofd een aya door, bij Geloofsstudie een hele week plus een kaart, bij Computers & Code een Python-les van begin tot eind plus de zandbak, bij Islam leren een profiel met een hele les en de gebedstijden, en bij Arabisch een profiel met de eerste oefening, het alfabet en het zoeken, om te zien of het ook wérkt. |
-| `npm run gouden-waarden` | Genereert de gouden waarden opnieuw uit de oude code: de rekenkern, de herhalingsplanner, de kaartplanner van Geloofsstudie, de Python-vertaler van Computers & Code, de gebedstijden van Islam leren en de FSRS-planner van Arabisch. Alleen nodig als die veranderen, en dat hoort niet te gebeuren. |
+| `npm run csp` | Zet `dist/` achter een server die de headers uit `vercel.json` meestuurt en laadt elke omgebouwde app in Chromium. Meldt elke CSP-overtreding, en speelt bij Spelletjes een potje, loopt bij Koran uit je hoofd een aya door, bij Geloofsstudie een hele week plus een kaart, bij Computers & Code een Python-les van begin tot eind plus de zandbak, bij Islam leren een profiel met een hele les en de gebedstijden, bij Arabisch een profiel met de eerste oefening, het alfabet en het zoeken, en bij Huiswerk een kind dat inlogt, een som maakt en de ouder-modus opent, om te zien of het ook wérkt. |
+| `npm run gouden-waarden` | Genereert de gouden waarden opnieuw uit de oude code: de rekenkern, de herhalingsplanner, de kaartplanner van Geloofsstudie, de Python-vertaler van Computers & Code, de gebedstijden van Islam leren, de FSRS-planner van Arabisch en het zakgeld, Leitner en de sjablonen van Huiswerk. Alleen nodig als die veranderen, en dat hoort niet te gebeuren. |
 
-## De verbouwing is halverwege, en dat staat in de code
+## De verbouwing is klaar, en dat staat in de code
 
 Bovenin `vite.config.ts` staan twee lijsten:
 
 ```ts
-const NOG_NIET_OMGEBOUWD = ['huiswerk']
-const OMGEBOUWD = ['start', 'health', 'spellen', 'rasikh', 'sanad', 'bunyan', 'noer', 'arabisch']
+const NOG_NIET_OMGEBOUWD: string[] = []
+const OMGEBOUWD = [
+  'start', 'health', 'spellen', 'rasikh', 'sanad', 'bunyan', 'noer', 'arabisch', 'huiswerk',
+]
 ```
 
 Wat in de eerste lijst staat, draait nog als los HTML-bestand en gaat onveranderd
@@ -35,7 +37,17 @@ mee naar `dist/`. Wat in de tweede staat is een echte ingang met React en
 TypeScript. Zo blijft de site werken terwijl er app voor app wordt verbouwd; er
 is geen moment waarop de helft stuk staat.
 
-Klaar is: beide lijsten kloppen, en de eerste is leeg.
+De eerste lijst is leeg: alle negen apps zijn om. De lijst blijft staan — hij is
+de plek waar een nieuwe app die nog niet gebouwd wordt tijdelijk in kan.
+
+Drie losse pagina's onder `huiswerk/` zijn níét omgebouwd en dat is met opzet:
+`voxelsandbox.html` (een 3D-spel met three.js erin), `verkeersschool.html` en de
+drie cursussen onder `cursussen/`. Het zijn zelfstandige bestanden met inline
+script, ze staan los van de app en ze delen er geen code mee. Ze wonen nu in
+`public/huiswerk/` en gaan onveranderd mee naar `dist/`; in `vercel.json` hebben
+ze een eigen, smallere policy die inline script toestaat maar geen enkele
+verbinding naar buiten (`connect-src 'none'`). Wie ze ooit ombouwt haalt die
+uitzondering weg.
 
 ## Waarom er nu wél een bouwstap is
 

@@ -306,6 +306,45 @@ const PAGINAS = [
       return null
     },
   },
+  {
+    pad: '/huiswerk/', kop: 'Huiswerk', minKnoppen: 8, plaat: 'huiswerk',
+    /* Inloggen als kind, een som maken en nakijken, en de ouder-modus openen.
+       Dat raakt de landingspagina met de ranglijst, het kind-account (dat
+       offline mag terugvallen op het wachtwoord dat hier bekend is), de
+       oefeningenmotor met Leitner en punten, en het ouderscherm met de
+       beloning — de dingen die bij het ombouwen stuk hadden kunnen gaan. */
+    async doe(pagina) {
+      await pagina.locator('.profcard', { hasText: 'Selma' }).click()
+      await pagina.locator('input[type=password]').fill('Bennaclan')
+      await pagina.getByRole('button', { name: /Start/ }).click()
+      const kop = await pagina.locator('h1').first().textContent()
+      if (!/Selma/.test(kop ?? '')) return `het kind kwam niet binnen: ${kop}`
+
+      await pagina.locator('.topic').first().click()
+      const vraag = pagina.locator('.qbox')
+      await vraag.first().waitFor({ timeout: 5000 })
+      const som = await vraag.first().textContent()
+      if (!som || !som.trim()) return 'er kwam geen som'
+      /* Het antwoord doet er niet toe: de terugkoppeling staat er bij goed én
+         bij fout, en het punt is dat het nakijken werkt. */
+      const optie = pagina.locator('.optiebtn').first()
+      if (await optie.count()) await optie.click()
+      else await pagina.locator('.answerrow input').fill('0')
+      await pagina.getByRole('button', { name: 'Nakijken' }).click()
+      const terug = await pagina.locator('.feedback').first().textContent()
+      if (!terug) return 'geen terugkoppeling na het nakijken'
+
+      await pagina.locator('button.back').click()
+      await pagina.locator('button.back').click()
+      await pagina.getByRole('button', { name: /Ouder-modus/ }).click()
+      for (const cijfer of ['1', '2', '3', '4']) {
+        await pagina.locator('.pinpad button', { hasText: new RegExp(`^${cijfer}$`) }).click()
+      }
+      const ouder = pagina.getByText('Voortgang & beloning per kind')
+      await ouder.first().waitFor({ timeout: 5000 })
+      return null
+    },
+  },
 ]
 
 let mis = 0

@@ -9,16 +9,18 @@ niet is omgebouwd draait onveranderd als los HTML-bestand en gaat zo mee naar de
 bouw; er is dus geen moment waarop de site half stuk staat. Zie BUILD.md voor
 hoe je bouwt en waarom er nu wél een bouwstap is.
 
-Om: de startpagina, `health/`, `spellen/`, `rasikh/`, `sanad/`, `bunyan/`, `noer/` en `arabisch/`. Nog niet om: huiswerk.
+Alle negen apps zijn om: de startpagina, `health/`, `spellen/`, `rasikh/`, `sanad/`, `bunyan/`, `noer/`, `arabisch/` en `huiswerk/`.
 
 ```
 index.html          de startpagina: aanmelden, de apps van die persoon, ouderoverzicht
-huiswerk/           Huiswerk — oefenen voor school
-  index.html          de live versie (voorgecompileerd, niet met de hand bewerken)
-  index.dev.html      de bron met JSX en de oefenstof
+huiswerk/index.html Huiswerk — oefenen voor school
+                      de Vite-ingang; de app zelf staat in src/huiswerk/
+public/huiswerk/    de losse pagina's die geen deel van de app zijn:
+                      voxelsandbox.html, verkeersschool.html en cursussen/
 noer/index.html     Islam leren — de basis van de islam en leren bidden (7–15 jaar)
                       de Vite-ingang; de app zelf staat in src/noer/
 arabisch/index.html Arabisch — lezen, begrijpen en spreken, met een jaarprogramma
+                      de Vite-ingang; de app zelf staat in src/arabisch/
 bunyan/index.html   Computers & Code — een pc bouwen en leren programmeren (vanaf 10)
                       de Vite-ingang; de app zelf staat in src/bunyan/
 spellen/index.html  Spelletjes — de speelhoek, los van de huiswerkapp
@@ -672,9 +674,11 @@ aanroep naar een edge function, dan hoeft de sleutel de browser niet meer in.
 
 ## Onderhoud
 
-De huiswerkapp bouw je zoals altijd: bewerk `huiswerk/index.dev.html` en compileer
-naar `huiswerk/index.html` (zie `BUILD.md`). De omgebouwde apps staan in
-`src/`; daar geldt de bouwstap uit `BUILD.md`. In Islam leren staat de leerstof
+Alle apps staan in `src/`; daar geldt de bouwstap uit `BUILD.md`. De opgaven van
+Huiswerk staan in `src/huiswerk/gegevens/` — `seed.ts` met de vaste opgaven en
+`sjablonen.ts` met de sommen die per beurt nieuwe getallen krijgen; wie er een
+opgave bij zet doet dat áchteraan, want de id's zijn afgeleid van de plaats in
+de lijst en staan zo in ieders opslag. In Islam leren staat de leerstof
 in `src/noer/gegevens/` als gewone lijsten (`MODULES`, `WUDU`, `STAPPEN`, `HIFZ`,
 `DUAS`); wie de inhoud wil aanpassen hoeft de schermcode niet aan te raken. In
 Koran uit je hoofd zit de stof niet in het bestand maar in `rasikh/tekst/`; de app zelf bevat

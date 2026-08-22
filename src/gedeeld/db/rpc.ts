@@ -286,6 +286,26 @@ export interface RpcKaart {
   }
   bennahub_overzicht: { in: { p_gezin: string; p_ouder_ww: string }; uit: unknown }
   bennahub_fotos: { in: { p_gezin: string; p_naam: string; p_code: string }; uit: unknown }
+
+  /* --- Huiswerk --------------------------------------------------------
+     Deze functies houden hun `oefenapp_`-voorvoegsel: dat staat in de
+     database, in de rijen die er al staan, en in de accountcodes van vier
+     kinderen. Hernoemen om een appnaam is werk met risico en zonder
+     opbrengst. Ze melden een fout net als de bennahub_-functies in het
+     antwoord en niet in de statuscode, dus ze gaan via `hub()`. */
+  oefenapp_register: {
+    in: { p_household: string; p_pin: string; p_data: unknown }
+    uit: unknown
+  }
+  oefenapp_load: { in: { p_household: string; p_pin: string }; uit: unknown }
+  oefenapp_save: {
+    in: { p_household: string; p_pin: string; p_data: unknown }
+    uit: unknown
+  }
+  /** De wedstrijd: een vriend uitdagen via een link. */
+  oefenapp_ch_create: { in: { p_code: string; p_data: unknown }; uit: unknown }
+  oefenapp_ch_get: { in: { p_code: string }; uit: unknown }
+  oefenapp_ch_submit: { in: { p_code: string; p_friend: unknown }; uit: unknown }
 }
 
 /**
