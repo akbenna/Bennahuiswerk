@@ -1,0 +1,380 @@
+/* Amiri staat als bestand in de repo en niet bij Google. De Warsh-druk gebruikt
+   tekens — de kleine hoge nul boven de hamzat wasl voorop — die de meeste
+   systeemletters niet kennen; die laten dan lege vakken achter midden in een
+   woord. Zie fonts/LEESMIJ.md. */
+@font-face{font-family:'Amiri';font-style:normal;font-weight:400;font-display:swap;
+  src:url('/fonts/amiri-400.woff2') format('woff2')}
+@font-face{font-family:'Amiri';font-style:normal;font-weight:700;font-display:swap;
+  src:url('/fonts/amiri-700.woff2') format('woff2')}
+/* Kleuren zijn op contrast gekozen, net als in de hub: elke accentkleur haalt
+   minstens 4,5:1 tegen het kaartvlak én tegen zijn eigen chip-achtergrond, in
+   licht en in donker. Licht en donker hebben daarom andere waarden. */
+:root{
+  --canvas:#F6F4F0; --surface:#FFFFFF; --surface-2:#F0EDE7; --surface-3:#E8E4DC;
+  --ink:#0D0D0D; --ink-2:#24282B; --muted:#5F5C55;
+  --line:#DAD6CE; --line-2:#C4BFB4;
+
+  --k:#0F6F6C; --k-bg:#DCEFEE;         /* de kleur van Islam leren */
+  --goed:#2F6B1F; --goed-bg:#E4EFDD;
+  --fout:#9F2F2D; --fout-bg:#FBE9E8;
+  --let:#7E5300; --let-bg:#F8EFD4;
+  --info:#175D92; --info-bg:#DEEDF9;
+  --paars:#5B3B7A; --paars-bg:#EFE8F6;
+
+  --schaduw:0 1px 2px rgba(20,18,14,.05), 0 8px 24px rgba(20,18,14,.06);
+  --schaduw-op:0 2px 4px rgba(20,18,14,.07), 0 14px 34px rgba(20,18,14,.11);
+
+  --sans:'SF Pro Display','Helvetica Neue',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --serif:'Newsreader','Lyon Text',Georgia,serif;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;
+  --ar:'Amiri','Traditional Arabic',serif;
+  --r:12px;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --canvas:#141518; --surface:#1C1E22; --surface-2:#24262B; --surface-3:#2C2F35;
+    --ink:#F4F3F0; --ink-2:#E2E0DA; --muted:#A8A69F;
+    --line:#33363C; --line-2:#474B52;
+
+    --k:#5FD3CD; --k-bg:#10312F;
+    --goed:#8FD268; --goed-bg:#22321B;
+    --fout:#F2938F; --fout-bg:#3A1E1D;
+    --let:#E9BC55; --let-bg:#31280F;
+    --info:#7CC4F5; --info-bg:#152D3E;
+    --paars:#C9A6E8; --paars-bg:#2A2136;
+
+    --schaduw:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.34);
+    --schaduw-op:0 2px 4px rgba(0,0,0,.46), 0 14px 34px rgba(0,0,0,.5);
+  }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--canvas); color:var(--ink-2); font-family:var(--sans);
+  font-size:16px; line-height:1.62; -webkit-font-smoothing:antialiased;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+body.groot{font-size:18.5px}
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+h1,h2,h3,h4{font-family:var(--serif);color:var(--ink);letter-spacing:-.022em;line-height:1.16;margin:0;font-weight:500}
+h1{font-size:2rem}
+h2{font-size:1.48rem}
+h3{font-size:1.14rem;letter-spacing:-.015em}
+h4{font-size:1rem}
+p{margin:0 0 1em}
+p:last-child{margin-bottom:0}
+a{color:var(--k);text-underline-offset:3px}
+b,strong{font-weight:600;color:var(--ink)}
+.meta{font-family:var(--mono);font-size:.68rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.klein{font-size:.87rem;line-height:1.55;color:var(--muted)}
+:focus-visible{outline:2px solid var(--k);outline-offset:2px;border-radius:6px}
+.ar{font-family:var(--ar);direction:rtl;unicode-bidi:isolate;line-height:2.05;font-size:1.34em}
+.tr{font-style:italic;color:var(--muted);font-family:var(--serif);font-size:1rem;line-height:1.5}
+/* Hoe je het hardop zegt, in Nederlandse klanken en met de klemtoon in
+   hoofdletters. De wetenschappelijke omschrijving eronder (`.tr`) is precies
+   maar leest lastig: "Subhana rabbiya l-a'la" wordt dan zomaar "soebhanaropbil
+   ala". Deze regel is bedoeld om te lézen, niet om correct te zijn. */
+.uitspraak{margin-top:6px;font-family:var(--mono);font-size:.82rem;letter-spacing:.01em;color:var(--k)}
+.nl{font-family:var(--serif);font-size:1.02rem;line-height:1.55}
+
+/* ---------- chrome ---------- */
+header.top{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--canvas) 88%,transparent);
+  backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line)}
+.top-in{max-width:900px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:11px}
+.terug{text-decoration:none;color:var(--muted);font-size:1.15rem;line-height:1;padding:7px 9px;margin-left:-9px;border-radius:8px}
+.terug:hover{color:var(--ink);background:var(--surface-2)}
+.brand{font-family:var(--serif);font-size:1.2rem;color:var(--ink);letter-spacing:-.02em}
+.brand em{font-style:normal;font-family:var(--ar);font-size:1.02rem;color:var(--k);margin-left:7px}
+.wie{margin-left:auto;display:flex;align-items:center;gap:8px}
+.wie button{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);
+  font-family:var(--sans);font-size:.82rem;padding:6px 11px;border-radius:9999px;cursor:pointer;display:flex;align-items:center;gap:7px}
+.wie button:hover{border-color:var(--k)}
+.bol{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:.72rem;font-weight:600;color:#fff;background:var(--k)}
+@media (prefers-color-scheme:dark){ .bol{color:#0B1F1E} }
+
+/* ---------- een kleur per onderdeel ----------
+   De app was overal teal. Voor een kind is kleur het snelste onderscheid: het
+   leerpad is groenblauw, leren bidden paars, de tijden blauw, oefenen groen en
+   de beloning oker. Het zijn dezelfde tokens die elders al gebruikt worden, dus
+   het contrast is in licht en donker al nagemeten. */
+body{--vk:var(--k)}
+body[data-view="gebed"]{--vk:var(--paars)}
+body[data-view="tijden"]{--vk:var(--info)}
+body[data-view="oefenen"]{--vk:var(--goed)}
+body[data-view="beloning"]{--vk:var(--let)}
+body[data-view="ouder"]{--vk:var(--muted)}
+.bar>i{background:var(--vk)}
+.ring{background:conic-gradient(var(--vk) calc(var(--p)*1%), var(--surface-2) 0)}
+section.view h1{border-left:4px solid var(--vk);padding-left:13px;margin-left:-17px}
+
+nav.tabs{position:sticky;top:48px;z-index:39;background:var(--canvas);border-bottom:1px solid var(--line)}
+.tabs-in{max-width:900px;margin:0 auto;padding:0 12px;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.tabs-in::-webkit-scrollbar{display:none}
+.tab{appearance:none;border:0;background:none;padding:12px 11px;cursor:pointer;white-space:nowrap;
+  font-family:var(--sans);font-size:.87rem;color:var(--muted);border-bottom:2px solid transparent;transition:color .18s}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--vk)}
+.tab .dot{display:inline-block;min-width:18px;padding:0 5px;margin-left:6px;border-radius:9999px;
+  background:var(--k-bg);color:var(--k);font-family:var(--mono);font-size:.63rem;line-height:18px;text-align:center}
+
+main{padding:26px 0 96px}
+section.view{display:none}
+section.view.on{display:block;animation:rise .42s cubic-bezier(.16,1,.3,1)}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ---------- bouwstenen ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;box-shadow:var(--schaduw)}
+.card.plat{box-shadow:none}
+.card.klik{cursor:pointer;transition:transform .15s,border-color .15s,box-shadow .15s;text-align:left;width:100%;font:inherit;color:inherit}
+.card.klik:hover{transform:translateY(-2px);border-color:var(--k);box-shadow:var(--schaduw-op)}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:720px){.g3,.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.stack>*+*{margin-top:14px}
+.rij{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.rij.tussen{justify-content:space-between}
+hr.rule{border:0;border-top:1px solid var(--line);margin:30px 0}
+
+.tag{display:inline-block;border-radius:9999px;padding:3px 10px;font-family:var(--mono);font-size:.63rem;
+  letter-spacing:.07em;text-transform:uppercase;background:var(--surface-2);color:var(--muted);white-space:nowrap}
+.tag.k{background:var(--k-bg);color:var(--k)}
+.tag.goed{background:var(--goed-bg);color:var(--goed)}
+.tag.fout{background:var(--fout-bg);color:var(--fout)}
+.tag.let{background:var(--let-bg);color:var(--let)}
+.tag.info{background:var(--info-bg);color:var(--info)}
+.tag.paars{background:var(--paars-bg);color:var(--paars)}
+
+button.btn{appearance:none;font-family:var(--sans);font-size:.92rem;padding:10px 18px;border-radius:9px;
+  background:var(--k);color:#fff;border:1px solid var(--k);cursor:pointer;transition:filter .16s,transform .1s;font-weight:500}
+@media (prefers-color-scheme:dark){ button.btn{color:#08201F} }
+button.btn:hover{filter:brightness(1.07)}
+button.btn:active{transform:scale(.985)}
+button.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+button.btn.ghost:hover{background:var(--surface-2);filter:none}
+button.btn.sm{padding:7px 13px;font-size:.83rem;border-radius:8px}
+button.btn.groot{padding:14px 26px;font-size:1.04rem;border-radius:11px}
+button.btn:disabled{opacity:.42;cursor:default}
+button.icoon{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);
+  width:40px;height:40px;border-radius:10px;cursor:pointer;font-size:1.05rem;display:grid;place-items:center}
+button.icoon:hover{border-color:var(--k);color:var(--k)}
+button.icoon.aan{background:var(--k-bg);border-color:var(--k);color:var(--k)}
+
+.bar{height:6px;background:var(--surface-2);border-radius:9999px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--k);border-radius:9999px;transition:width .6s cubic-bezier(.16,1,.3,1)}
+.bar.dun{height:3px}
+
+.veld{display:block;margin-top:13px}
+.veld>span{display:block;font-family:var(--mono);font-size:.67rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.veld input,.veld select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:9px;background:var(--surface);
+  font-family:var(--sans);font-size:.95rem;color:var(--ink)}
+.veld input:focus,.veld select:focus{outline:none;border-color:var(--k)}
+.veld.kort{max-width:220px}
+
+.melding{margin-top:12px;font-size:.88rem;line-height:1.5;color:var(--muted)}
+.melding.fout{color:var(--fout)}
+.melding.goed{color:var(--goed)}
+
+.kader{border:1px solid var(--line);border-left:3px solid var(--k);border-radius:8px;padding:13px 15px;background:var(--surface-2)}
+.kader.let{border-left-color:var(--let)}
+.kader.info{border-left-color:var(--info)}
+.kader h4{margin-bottom:5px}
+.kader p{font-size:.93rem;line-height:1.58}
+
+table.tbl{width:100%;border-collapse:collapse;font-size:.92rem}
+table.tbl th{text-align:left;font-family:var(--mono);font-size:.64rem;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--muted);font-weight:500;padding:8px 10px;border-bottom:1px solid var(--line-2)}
+table.tbl td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+table.tbl tr:last-child td{border-bottom:0}
+.tblwrap{overflow-x:auto}
+
+/* ---------- gebedshoudingen ---------- */
+.podium{background:linear-gradient(180deg,var(--surface) 0%,var(--surface-2) 100%);
+  border:1px solid var(--line);border-radius:var(--r);padding:10px;display:grid;place-items:center;position:relative;overflow:hidden}
+.podium svg{width:100%;max-width:340px;height:auto;display:block}
+.fig-lijn{fill:none;stroke:var(--ink);stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
+.fig-kop{fill:var(--ink)}
+.fig-kleed{fill:var(--k);opacity:.22}
+.fig-vlak{fill:var(--k);opacity:.14}
+.fig-mark{fill:none;stroke:var(--k);stroke-width:3;stroke-dasharray:5 5;opacity:.9}
+.fig-ver{opacity:.38}
+.fig-mihrab{fill:none;stroke:var(--k);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:.55}
+.fig-qibla{font-family:var(--ar);font-size:15px;fill:var(--k);opacity:.6}
+.podium .stap-uit{position:absolute;top:9px;right:11px}
+
+.gloed{animation:gloed 1.5s ease-in-out infinite}
+@keyframes gloed{0%,100%{opacity:.25}50%{opacity:.6}}
+@media (prefers-reduced-motion:reduce){ .gloed{animation:none} section.view.on{animation:none} }
+
+/* ---------- woordpuzzel & memoriseren ---------- */
+.woorden{display:flex;flex-wrap:wrap;gap:8px;direction:rtl;justify-content:flex-start}
+.woord{font-family:var(--ar);font-size:1.35rem;padding:6px 14px;border-radius:9px;border:1px solid var(--line);
+  background:var(--surface);color:var(--ink);cursor:pointer;line-height:1.9}
+.woord:hover{border-color:var(--k)}
+.woord.weg{visibility:hidden}
+.woord.fout{border-color:var(--fout);background:var(--fout-bg);animation:schud .3s}
+@keyframes schud{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.doos{min-height:64px;border:1px dashed var(--line-2);border-radius:10px;padding:9px;background:var(--surface-2)}
+.verborgen{background:var(--surface-3);color:transparent;border-radius:5px;cursor:pointer;user-select:none}
+.verborgen.zicht{background:none;color:inherit}
+
+/* ---------- stickers, insignes ---------- */
+/* Zeven kolommen: één week per rij. Een willekeurig aflopend raster zegt een
+   kind niets; een week wel — je ziet in één oogopslag welke dagen je miste. */
+.stickers{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}
+.stickers .kop{text-align:center;font-family:var(--mono);font-size:.62rem;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted);padding-bottom:2px}
+.sticker{aspect-ratio:1;border-radius:9px;border:1px dashed var(--line-2);display:grid;place-items:center;
+  font-size:1.05rem;color:var(--muted);background:var(--surface-2)}
+.sticker.vol{border-style:solid;border-color:var(--k);background:var(--k-bg)}
+.sticker.nu{box-shadow:0 0 0 2px var(--k)}
+.sticker.komt{opacity:.35;border-style:dotted}
+.insignes{display:grid;grid-template-columns:repeat(auto-fill,minmax(126px,1fr));gap:11px}
+.insigne{border:1px solid var(--line);border-radius:11px;padding:13px 10px;text-align:center;background:var(--surface);opacity:.6}
+.insigne.aan{opacity:1;border-color:var(--k);background:var(--k-bg)}
+.insigne .ico{font-size:1.7rem;line-height:1.3;filter:grayscale(1)}
+.insigne.aan .ico{filter:none}
+.insigne .nm{font-size:.78rem;line-height:1.32;color:var(--ink);margin-top:3px}
+
+.ring{--p:0;width:70px;height:70px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;
+  background:conic-gradient(var(--k) calc(var(--p)*1%), var(--surface-2) 0)}
+.ring>span{width:56px;height:56px;border-radius:50%;background:var(--surface);display:grid;place-items:center;
+  font-family:var(--mono);font-size:.78rem;color:var(--ink)}
+
+.cijfer{font-family:var(--serif);font-size:2.1rem;color:var(--ink);line-height:1.1;letter-spacing:-.03em}
+.kpi{display:flex;flex-direction:column;gap:2px}
+
+/* ---------- kleur per module ----------
+   Een kind van acht navigeert op kleur en pictogram, niet op een titel. Elke
+   module heeft daarom een eigen kleur uit het vaste palet — dat zijn dezelfde
+   waarden die elders in de app gebruikt worden, dus het contrast klopt in licht
+   én donker zonder dat er iets nagemeten hoeft te worden. */
+.mod{border-left:4px solid var(--mk)}
+.mod .bar>i{background:var(--mk)}
+.ico-vak{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+  font-size:1.55rem;background:var(--mkbg);flex:0 0 auto;line-height:1}
+
+/* ---------- maatvoering per leeftijd ----------
+   Dezelfde app, drie maten. De jongsten krijgen grotere letters, rondere
+   vlakken, meer lucht en grotere knoppen; naarmate het spoor hoger wordt gaat
+   het terug naar de rustige, dichte opmaak van de rest van de hub. */
+body[data-spoor="1"]{font-size:17.5px}
+body[data-spoor="1"] .card{border-radius:18px;padding:22px 24px}
+body[data-spoor="1"] .ico-vak{width:58px;height:58px;font-size:2rem;border-radius:18px}
+body[data-spoor="1"] h1{font-size:2.25rem}
+body[data-spoor="1"] h3{font-size:1.24rem}
+body[data-spoor="1"] .nl{font-size:1.14rem;line-height:1.74}
+body[data-spoor="1"] .nl p{margin-bottom:1.15em}
+body[data-spoor="1"] button.btn{padding:13px 22px;font-size:1rem;border-radius:13px}
+body[data-spoor="1"] button.btn.sm{padding:9px 15px;font-size:.9rem}
+body[data-spoor="1"] .tab{font-size:.95rem;padding:14px 12px}
+body[data-spoor="1"] .vink{width:26px;height:26px}
+body[data-spoor="1"] .woord{font-size:1.5rem;padding:8px 16px}
+body[data-spoor="1"] .sticker{font-size:1.35rem;border-radius:12px}
+body[data-spoor="1"] .insigne .ico{font-size:2.1rem}
+body[data-spoor="1"] .insigne .nm{font-size:.85rem}
+body[data-spoor="1"] .cijfer{font-size:2.4rem}
+body[data-spoor="1"] .tijdrij .nm{font-size:1.14rem}
+body[data-spoor="1"] ul.geen li{padding:12px 0}
+body[data-spoor="2"]{font-size:16.5px}
+body[data-spoor="2"] .card{border-radius:14px}
+body[data-spoor="2"] .nl{font-size:1.06rem}
+
+/* ---------- taferelen bij de verhalen ---------- */
+.tafereel{border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--mkbg);
+  margin:0 0 16px;aspect-ratio:20/11}
+.tafereel svg{display:block;width:100%;height:100%}
+.t-lucht{fill:var(--mkbg)}
+.t-vlak{fill:var(--mk);opacity:.16}
+.t-grond{fill:var(--mk);opacity:.28}
+.t-vorm{fill:none;stroke:var(--mk);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
+.t-lijn{fill:none;stroke:var(--mk);stroke-width:2;stroke-linecap:round;opacity:.45}
+.t-accent{fill:var(--mk);opacity:.85}
+body[data-spoor="1"] .tafereel{aspect-ratio:20/12}
+
+/* ---------- de verwijzing naar een verhaal ----------
+   Een verhaal is het onderdeel waar kinderen naar toe willen; dan moet de
+   verwijzing eruitzien als een uitnodiging en niet als een voetnoot. */
+.verhaalkaart{display:flex;align-items:center;gap:14px;border-left:4px solid var(--mk);background:var(--mkbg)}
+.verhaalkaart .vk-tekst{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0;text-align:left}
+.verhaalkaart .vk-tekst b{font-family:var(--serif);font-size:1.12rem;color:var(--ink);font-weight:500;letter-spacing:-.015em}
+.verhaalkaart .vk-pijl{font-size:1.3rem;color:var(--mk);flex:0 0 auto}
+.verhaalkaart .vk-beeld{flex:0 0 auto;width:84px}
+.verhaalkaart .vk-beeld .tafereel{margin:0;aspect-ratio:1;border-radius:11px}
+.verhaalkaart:hover{border-color:var(--mk)}
+/* Op een telefoon staat het beeld boven de tekst: naast elkaar wordt de kolom
+   te smal en breekt het label af. */
+@media(max-width:560px){
+  .verhaalkaart{flex-direction:column;align-items:stretch;gap:10px}
+  .verhaalkaart .vk-beeld{width:100%}
+  .verhaalkaart .vk-beeld .tafereel{aspect-ratio:20/8;border-radius:9px}
+  .verhaalkaart .vk-pijl{display:none}
+  .verhaalkaart .vk-tekst::after{content:"Lees het verhaal →";color:var(--mk);font-size:.86rem;font-weight:500;margin-top:4px}
+}
+body[data-spoor="1"] .verhaalkaart .vk-tekst b{font-size:1.2rem}
+
+/* ---------- praten over een verhaal ---------- */
+.praat{margin-top:18px;border:1px solid var(--line);border-left:4px solid var(--let);
+  background:var(--let-bg);border-radius:10px;padding:15px 17px}
+.praat p{font-family:var(--serif);font-size:1.06rem;line-height:1.55;color:var(--ink)}
+
+/* ---------- lijstjes ---------- */
+ul.net{margin:0;padding-left:1.15em}
+ul.net li{margin-bottom:.42em;line-height:1.55}
+/* Genummerd voor waar de volgorde er echt toe doet — bij het feestgebed en het
+   gebed voor een overledene is stap drie niet los te lezen van stap twee. */
+ol.genummerd{margin:0;padding-left:1.35em}
+ol.genummerd li{margin-bottom:.5em;line-height:1.55}
+ol.genummerd li::marker{font-family:var(--mono);font-size:.8em;color:var(--k)}
+ul.geen{list-style:none;margin:0;padding:0}
+ul.geen li{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line)}
+ul.geen li:last-child{border-bottom:0}
+.vink{flex:0 0 auto;width:22px;height:22px;border-radius:6px;border:1px solid var(--line-2);display:grid;place-items:center;
+  font-size:.75rem;color:transparent;background:var(--surface);cursor:pointer}
+.vink.aan{background:var(--k);border-color:var(--k);color:#fff}
+@media (prefers-color-scheme:dark){ .vink.aan{color:#08201F} }
+
+/* ---------- overlay ---------- */
+.overlay{position:fixed;inset:0;z-index:60;background:rgba(10,10,10,.55);display:none;align-items:flex-end;justify-content:center;
+  backdrop-filter:blur(3px)}
+.overlay.on{display:flex}
+.blad{background:var(--canvas);border-radius:16px 16px 0 0;width:100%;max-width:640px;max-height:90dvh;overflow:auto;
+  padding:22px 22px calc(28px + env(safe-area-inset-bottom));border:1px solid var(--line);animation:omhoog .3s cubic-bezier(.16,1,.3,1)}
+@keyframes omhoog{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+@media(min-width:640px){ .overlay{align-items:center} .blad{border-radius:16px;max-height:84dvh} }
+
+/* De titel op de startpagina. De naam mag groot: het is het eerste wat een kind
+   ziet als het de app opent, en het is de enige plek waar de app zichzelf
+   voorstelt. */
+.held{padding:6px 0 2px}
+.held .naam{font-family:var(--serif);font-size:3.3rem;line-height:1;letter-spacing:-.035em;color:var(--ink);font-weight:500}
+.held .naam em{font-style:normal;font-family:var(--ar);font-size:2.15rem;color:var(--k);margin-left:15px;vertical-align:.06em}
+.held .zin{margin-top:13px;font-family:var(--serif);font-size:1.16rem;line-height:1.5;color:var(--muted);max-width:44ch}
+.held .ondertitel{font-family:var(--mono);font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--k);margin-top:6px}
+.held .streep{margin-top:16px;height:3px;width:66px;background:var(--k);border-radius:2px;opacity:.9}
+@media(max-width:560px){ .held .naam{font-size:2.5rem} .held .naam em{font-size:1.66rem} .held .zin{font-size:1.06rem} }
+
+.voortgang-strip{display:flex;gap:4px;margin-top:11px}
+.voortgang-strip i{flex:1;height:4px;border-radius:9999px;background:var(--surface-2)}
+.voortgang-strip i.aan{background:var(--k)}
+
+.tijdrij{display:flex;align-items:baseline;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+.tijdrij:last-child{border-bottom:0}
+.tijdrij .nm{font-family:var(--serif);font-size:1.06rem;color:var(--ink);min-width:110px}
+.tijdrij .tijd{font-family:var(--mono);font-size:1.06rem;color:var(--ink);margin-left:auto}
+.tijdrij.nu{background:var(--k-bg);margin:0 -12px;padding:11px 12px;border-radius:9px;border-bottom-color:transparent}
+.tijdrij.nu .nm,.tijdrij.nu .tijd{color:var(--k)}
+
+.kompas{width:200px;height:200px;margin:0 auto;position:relative}
+.kompas svg{width:100%;height:100%}
+
+.zwevend{position:fixed;left:0;right:0;bottom:0;z-index:35;background:color-mix(in srgb,var(--canvas) 92%,transparent);
+  backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:11px 20px calc(11px + env(safe-area-inset-bottom));display:none}
+.zwevend.on{display:block}
+.zwevend-in{max-width:900px;margin:0 auto;display:flex;gap:10px;align-items:center}
+
+footer{padding:38px 0 30px;border-top:1px solid var(--line);margin-top:44px}
+footer p{font-size:.85rem;color:var(--muted);max-width:60ch}
+footer p+p{margin-top:8px}

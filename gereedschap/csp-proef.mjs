@@ -227,6 +227,41 @@ const PAGINAS = [
       return null
     },
   },
+  {
+    pad: '/noer/', kop: 'Islam leren', minKnoppen: 7, plaat: 'noer',
+    /* Een profiel aanmaken, een les afronden, en de gebedstijden bekijken. Dat
+       raakt het ouderscherm, het spoor per leeftijd, de lesflow met vragen én
+       de zonneberekening — de vier dingen die bij het ombouwen stuk hadden
+       kunnen gaan. */
+    async doe(pagina) {
+      await pagina.getByRole('tab', { name: 'Ouder' }).click()
+      await pagina.locator('input[type=password]').fill('1234')
+      await pagina.getByRole('button', { name: 'Openen' }).click()
+      await pagina.getByPlaceholder('Bijvoorbeeld Selma').fill('Proef')
+      await pagina.getByPlaceholder('2016').fill('2014')
+      await pagina.getByRole('button', { name: 'Toevoegen' }).click()
+      if (!await pagina.getByText('spoor 2').count()) return 'het profiel kwam er niet in'
+
+      await pagina.getByRole('tab', { name: 'Leerpad' }).click()
+      await pagina.locator('.card.klik.mod').first().click()
+      const blad = pagina.locator('.blad')
+      await blad.locator('button.klik').first().click()
+      await blad.getByRole('button', { name: /Ik heb het gelezen/ }).click()
+      for (let n = 0; n < 3; n++) {
+        await blad.locator('.card.klik').first().click()
+        await blad.getByRole('button', { name: /Verder/ }).click()
+      }
+      const kop = await blad.locator('h2').first().textContent()
+      if (!/Gehaald|Nog een keer/.test(kop ?? '')) return `de les liep niet af: ${kop}`
+      await blad.locator('button.btn.ghost', { hasText: 'Sluiten' }).click()
+
+      await pagina.getByRole('tab', { name: 'Gebedstijden' }).click()
+      const tijden = await pagina.locator('.tijdrij .tijd').allTextContents()
+      if (tijden.length !== 6) return `er staan ${tijden.length} gebedstijden`
+      if (!tijden.every((x) => /^\d\d:\d\d$/.test(x))) return `geen kloktijden: ${tijden.join(' ')}`
+      return null
+    },
+  },
 ]
 
 let mis = 0

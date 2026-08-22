@@ -9,7 +9,7 @@ niet is omgebouwd draait onveranderd als los HTML-bestand en gaat zo mee naar de
 bouw; er is dus geen moment waarop de site half stuk staat. Zie BUILD.md voor
 hoe je bouwt en waarom er nu wél een bouwstap is.
 
-Om: de startpagina, `health/`, `spellen/`, `rasikh/`, `sanad/` en `bunyan/`. Nog niet om: huiswerk, Islam leren en Arabisch.
+Om: de startpagina, `health/`, `spellen/`, `rasikh/`, `sanad/`, `bunyan/` en `noer/`. Nog niet om: huiswerk en Arabisch.
 
 ```
 index.html          de startpagina: aanmelden, de apps van die persoon, ouderoverzicht
@@ -17,6 +17,7 @@ huiswerk/           Huiswerk — oefenen voor school
   index.html          de live versie (voorgecompileerd, niet met de hand bewerken)
   index.dev.html      de bron met JSX en de oefenstof
 noer/index.html     Islam leren — de basis van de islam en leren bidden (7–15 jaar)
+                      de Vite-ingang; de app zelf staat in src/noer/
 arabisch/index.html Arabisch — lezen, begrijpen en spreken, met een jaarprogramma
 bunyan/index.html   Computers & Code — een pc bouwen en leren programmeren (vanaf 10)
                       de Vite-ingang; de app zelf staat in src/bunyan/
@@ -49,6 +50,10 @@ src/
     minipy/             een kleine Python: woorden, ontleden, uitvoeren
     minipy.proef.ts     132 programma's tegen de oude vertaler, 66 met een fout
     bunyan.proef.ts     29 vergelijkingen: stof, punten, samenvoegen, bouwbank
+  noer/               profielen per kind, het leerpad, het gebed, de gebedstijden
+    gebedstijden.ts     de stand van de zon: juliaanse dag, declinatie, uurhoek
+    gebedstijden.proef.ts  1344 tijden tegen de oude app, zeven plaatsen
+    noer.proef.ts       33 vergelijkingen: stof, kaarten, missie, insignes
 public/               fonts, iconen, en de statische bestanden per app
 gereedschap/          de bouw- en proefscripts, en de oude app als ijkpunt
 iconen/             één pictogram per app, plus het script dat er PNG's van maakt
@@ -337,12 +342,12 @@ De gebedshoudingen en de wassing zijn getekende SVG's en de geluidjes komen uit
 de Web Audio API, dus daar zijn geen bestanden voor nodig.
 
 **Het geluid bij de Arabische teksten** komt uit een opname die thuis zelf is
-ingesproken, en anders uit een meegeleverd recitatiefragment uit `noer/audio/`.
+ingesproken, en anders uit een meegeleverd recitatiefragment uit `public/noer/audio/`.
 De stem van het toestel wordt daar níet meer achteraan geplakt — zie *Het
 Arabisch komt alleen uit opnames* hieronder.
 
 De recitatie zit niet in de repository maar wordt opgehaald met
-`node noer/audio/haal-recitatie.mjs --basis="…"`; zie `noer/audio/LEESMIJ.md`
+`node public/noer/audio/haal-recitatie.mjs --basis="…"`; zie `public/noer/audio/LEESMIJ.md`
 voor de bron, de Warsh-lezing en de valkuil met de telling van al-Fatiha. Voor de
 zinnen van het gebed en de du'a's bestaat geen archief — die spreek je thuis in
 onder *Ouder → Eigen stem opnemen*. Opnames staan in de IndexedDB van het toestel
@@ -668,10 +673,10 @@ aanroep naar een edge function, dan hoeft de sleutel de browser niet meer in.
 ## Onderhoud
 
 De huiswerkapp bouw je zoals altijd: bewerk `huiswerk/index.dev.html` en compileer
-naar `huiswerk/index.html` (zie `BUILD.md`). Islam leren en Arabisch zijn nog gewone
-HTML — openen, bewerken, klaar. De omgebouwde apps staan in
+naar `huiswerk/index.html` (zie `BUILD.md`). Arabisch is nog gewone HTML —
+openen, bewerken, klaar. De omgebouwde apps staan in
 `src/`; daar geldt de bouwstap uit `BUILD.md`. In Islam leren staat de leerstof
-bovenaan het scriptblok als gewone lijsten (`MODULES`, `WUDU`, `STAPPEN`, `HIFZ`,
+in `src/noer/gegevens/` als gewone lijsten (`MODULES`, `WUDU`, `STAPPEN`, `HIFZ`,
 `DUAS`); wie de inhoud wil aanpassen hoeft de schermcode niet aan te raken. In
 Koran uit je hoofd zit de stof niet in het bestand maar in `rasikh/tekst/`; de app zelf bevat
 alleen de leerlogica. Bij Geloofsstudie staat de leerstof in `src/sanad/gegevens/`
