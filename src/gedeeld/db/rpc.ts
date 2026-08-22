@@ -213,7 +213,10 @@ export type LosseTabel = 'product' | 'training' | 'meting' | 'lab' | 'vragenlijs
 /* -------------------------------------------------------------------------- */
 
 export interface RpcKaart {
-  /* --- kalibratie ------------------------------------------------------- */
+  /* --- BennaHealth -----------------------------------------------------
+     De functies houden hun kal_-voorvoegsel. Databaseobjecten hernoemen om
+     een appnaam is werk met risico en zonder opbrengst: de naam staat in
+     achttien functies, vier edge functions en een pg_cron-taak. */
   kal_registreren: { in: { p_account: string; p_ww: string; p_naam: string }; uit: Sessie }
   kal_aanmelden: { in: { p_account: string; p_ww: string }; uit: Sessie }
   kal_afmelden: { in: { p_token: string }; uit: null }

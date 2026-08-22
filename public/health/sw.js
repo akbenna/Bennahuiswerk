@@ -2,7 +2,7 @@
    app dan hangen, dan mist de reeks een dag — en het model rekent met de reeks,
    niet met losse getallen. Het schil wordt gecachet; de gegevens gaan altijd
    live naar Supabase en komen nooit uit de cache. */
-const CACHE = 'kalibratie-app-v1';
+const CACHE = 'bennahealth-app-v1';
 const SCHIL = ['./', './index.html', './manifest.webmanifest', './icoon.svg', './icoon-180.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE)
   .then(c => Promise.allSettled(SCHIL.map(f => c.add(f)))).then(() => self.skipWaiting())); });

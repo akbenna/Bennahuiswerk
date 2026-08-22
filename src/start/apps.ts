@@ -62,7 +62,7 @@ export const APPS: readonly AppTegel[] = [
   zin:'De Koran uit je hoofd leren en — dat is het moeilijke deel — vasthouden. Zes stappen per aya, en een systeem dat pas nieuwe stof geeft als de herhalingen bij zijn.',
   detail:['Voor volwassenen','25 minuten per dag','Herhalen op ritme','Verwarpunten apart']},
 
- {id:'kalibratie', naam:'Energiebalans', href:'kalibratie/', ico:'/iconen/kalibratie.svg', k:'kalibratie', groep:'groot',
+ {id:'health', naam:'BennaHealth', href:'health/', ico:'/iconen/health.svg', k:'health', groep:'groot',
   oud:'Kalibratie', ar:'', wie:'Abdelkader',
   zin:'Het dagelijks verbruik gemeten uit de gewichtstrend in plaats van geschat uit een formule — met het interval erbij. Vaste maaltijden worden één keer geijkt en schuiven daarna mee met wat je van de olie en de melk weet.',
   detail:['Voor volwassenen','Elke ochtend wegen','Interval bij elk getal','Marokkaans en Turks','Werkt zonder internet']},

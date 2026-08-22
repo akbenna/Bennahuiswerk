@@ -10,7 +10,7 @@ const hier = dirname(fileURLToPath(import.meta.url))
 /**
  * BennaHub — negen apps, één bouw.
  *
- * Elke app houdt zijn eigen map en dus zijn eigen adres: /kalibratie/, /noer/,
+ * Elke app houdt zijn eigen map en dus zijn eigen adres: /health/, /noer/,
  * /rasikh/. Dat is geen esthetiek maar noodzaak — die adressen staan in
  * bladwijzers, in negen service workers en in de tegels op de startpagina.
  * Vite draait daarom in meerpagina-stand: één ingang per app, geen router.
@@ -30,7 +30,7 @@ const NOG_NIET_OMGEBOUWD = [
 ]
 
 /** Omgebouwd, en dus een echte ingang in de bouw. */
-const OMGEBOUWD = ['start', 'kalibratie', 'spellen', 'rasikh']
+const OMGEBOUWD = ['start', 'health', 'spellen', 'rasikh']
 
 
 

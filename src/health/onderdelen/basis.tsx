@@ -87,6 +87,8 @@ export function Balk({ deel, toon }: { deel: number; toon?: 'goed' | 'let' | und
  * dicht terwijl je aan het lezen was. React hertekent niet meer op die manier,
  * maar de stand hoort ook een bezoek later nog te kloppen — dus hij blijft.
  */
+/* Ook deze sleutel blijft: welke uitleg je open had staan hoort niet te
+   verdwijnen omdat de app anders gaat heten. */
 const SLEUTEL_UITLEG = 'kalibratie.uitleg'
 
 function leesStand(): Record<string, boolean> {

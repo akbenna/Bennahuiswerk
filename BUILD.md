@@ -1,7 +1,7 @@
 # Bouwen
 
 De repo is één Vite-project met negen apps erin. Elke app houdt zijn eigen map en
-dus zijn eigen adres — `/kalibratie/`, `/noer/`, `/rasikh/` — want die adressen
+dus zijn eigen adres — `/health/`, `/noer/`, `/rasikh/` — want die adressen
 staan in bladwijzers, in negen service workers en in de tegels op de
 startpagina. Er is geen router en geen enkele app weet van de andere.
 
@@ -27,7 +27,7 @@ Bovenin `vite.config.ts` staan twee lijsten:
 
 ```ts
 const NOG_NIET_OMGEBOUWD = ['huiswerk', 'noer', 'arabisch', 'bunyan', 'sanad']
-const OMGEBOUWD = ['start', 'kalibratie', 'spellen', 'rasikh']
+const OMGEBOUWD = ['start', 'health', 'spellen', 'rasikh']
 ```
 
 Wat in de eerste lijst staat, draait nog als los HTML-bestand en gaat onveranderd
@@ -57,7 +57,7 @@ voordat er hertekend werd. Dat probleem bestaat in React niet.
 
 **Een strikte Content-Security-Policy.** Die kan alleen als er geen inline script
 en geen inline stijl meer in de pagina staat. Voor de startpagina en
-`/kalibratie/` staat hij nu aan — `script-src 'self'`, geen `unsafe-inline` — en
+`/health/` staat hij nu aan — `script-src 'self'`, geen `unsafe-inline` — en
 `npm run csp` laadt beide in een echte Chromium en telt de overtredingen. De
 andere zeven apps hebben nog inline script en vallen daar dus buiten; zodra ze om
 zijn komt hun pad erbij in `vercel.json`.
@@ -68,8 +68,8 @@ op en minder uitleg.
 
 ## De rekenkern is overgezet, niet herschreven
 
-Elke regel van `src/kalibratie/rekenkern.ts` en `klinisch.ts` komt uit de oude
-`kalibratie/index.html`, met typen erbij en zonder één getal te veranderen. Zo'n
+Elke regel van `src/health/rekenkern.ts` en `klinisch.ts` komt uit de oude
+oude app (nu `gereedschap/oud/health-index.html`), met typen erbij en zonder één getal te veranderen. Zo'n
 overzetting is precies het moment waarop een stille fout binnenkomt: een haakje
 verplaatst, een `Math.round` een niveau verschoven, een `>=` dat een `>` wordt.
 

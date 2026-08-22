@@ -35,7 +35,7 @@
       ]
     },
     {
-      "source": "/kalibratie/(.*)",
+      "source": "/health/(.*)",
       "headers": [
         {
           "key": "Content-Security-Policy",
@@ -69,6 +69,18 @@
           "value": "public, max-age=31536000, immutable"
         }
       ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/kalibratie",
+      "destination": "/health",
+      "permanent": true
+    },
+    {
+      "source": "/kalibratie/:pad*",
+      "destination": "/health/:pad*",
+      "permanent": true
     }
   ]
 }

@@ -9,7 +9,7 @@ niet is omgebouwd draait onveranderd als los HTML-bestand en gaat zo mee naar de
 bouw; er is dus geen moment waarop de site half stuk staat. Zie BUILD.md voor
 hoe je bouwt en waarom er nu wél een bouwstap is.
 
-Om: de startpagina, `kalibratie/`, `spellen/` en `rasikh/`. Nog niet om: de vijf andere.
+Om: de startpagina, `health/`, `spellen/` en `rasikh/`. Nog niet om: de vijf andere.
 
 ```
 index.html          de startpagina: aanmelden, de apps van die persoon, ouderoverzicht
@@ -25,8 +25,8 @@ rasikh/             Koran uit je hoofd — memoriseren en vasthouden (voor volwa
   index.html          de app
   tekst/              de hele Koran: 114 soera's, 6236 aya, plus de verwarpunten
   audio/              recitatie per aya, op te halen met het script dat er staat
-kalibratie/         Energiebalans — verbruik gemeten uit de gewichtstrend (volwassenen)
-  index.html          de Vite-ingang; de app zelf staat in src/kalibratie/
+health/             BennaHealth — verbruik gemeten uit de gewichtstrend (volwassenen)
+  index.html          de Vite-ingang; de app zelf staat in src/health/
   VERANTWOORDING.md   elke rekenregel met zijn bron en zijn beperking
   AUTOMATISERING.md   wat er vanzelf draait: de ochtendprikkel en het opruimen
   database/           de SQL die naast de app hoort, in volgorde genummerd
@@ -35,7 +35,7 @@ src/
   start/              de startpagina: de poort, de tegels, het ouderoverzicht
   gedeeld/            datum- en getalhulp die alle apps kunnen gebruiken
   gedeeld/wolk.ts     aanmelden en bewaren voor de apps die dat delen
-  kalibratie/         rekenkern, klinische modules, zes schermen, vier vensters
+  health/             rekenkern, klinische modules, zes schermen, vier vensters
     rekenkern.proef.ts  171 vergelijkingen tegen de oude, verantwoorde uitkomsten
   spellen/            dertien spellen, de opslag en het samenvoegen
   rasikh/             de herhalingsplanner, de tekst, de recitatie, zes schermen
@@ -63,7 +63,7 @@ app ís, in het Nederlands.
 | `spellen/` | Spelletjes | Raha · رَاحَة | Spelletjes |
 | `sanad/` | Geloofsstudie | Sanad · سند | Geloofsstudie |
 | `rasikh/` | Koran uit je hoofd | Rasikh · رَاسِخ | Koran |
-| `kalibratie/` | Energiebalans | Kalibratie | Energiebalans |
+| `health/` | BennaHealth | Kalibratie · Energiebalans | BennaHealth |
 | — | Academie | — | — |
 
 De mapnamen zijn niet meegegaan. Die staan in bladwijzers, in service workers,
@@ -502,10 +502,14 @@ geheugenspel is *minder* beter, dus daar wint het laagste getal.
 In de huiswerkapp blijven de twee knoppen staan, inclusief de instelling
 *spelletjes pas na het dagdoel*; ze verwijzen nu naar `/spellen/`.
 
-## Energiebalans — meten in plaats van schatten
+## BennaHealth — meten in plaats van schatten
 
-De app heet in de map `kalibratie/` en op de kaart *Energiebalans*, en dat
-verschil is het hele idee. Bestaande apps tonen een caloriedoel dat uit een
+De app heette eerst *Kalibratie* en daarna *Energiebalans*. Geen van beide
+klopte. "Kalibratie" is de méthode en niet het onderwerp; "energiebalans" is
+erger, want de app balanceert niets — hij meet, en het woord balans suggereert
+juist een streefgetal waar je op of onder hoort te zitten. Dat is precies wat
+hier met opzet niet gebeurt. De app woont nu op `/health/`; wie de oude
+bladwijzer gebruikt wordt doorgestuurd. Bestaande apps tonen een caloriedoel dat uit een
 formule rolt, met twee decimalen en zonder voorbehoud, alsof het een meting is.
 Het is een gok met een spreiding van vele honderden kilocalorieën, en wie er zijn
 dag op inricht en niets ziet gebeuren, concludeert dat er iets mis is met hem in

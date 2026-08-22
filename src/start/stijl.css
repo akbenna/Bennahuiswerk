@@ -39,7 +39,7 @@
   /* Leisteen, en als enige onverzadigd. De zeven leerapps zijn gekleurd omdat
      een kind een tegel moet kunnen herkennen; Kalibratie is een meetinstrument
      voor een volwassene en mag daar op het beginscherm ook naar uitzien. */
-  --kalibratie:#42545E; --kalibratie-bg:#E3EAEE;
+  --health:#42545E; --health-bg:#E3EAEE;
 
   --goed:#2F6B1F; --let:#8A5A00; --fout:#A32F2A;
 
@@ -65,7 +65,7 @@
     --geloof:#C9A6E8;    --geloof-bg:#2A2136;
     --koran:#A3B0EE;     --koran-bg:#1D2240;
     --academie:#E9BC55;  --academie-bg:#31280F;
-    --kalibratie:#9EB6C2; --kalibratie-bg:#1E272C;
+    --health:#9EB6C2; --health-bg:#1E272C;
 
     --goed:#8FD268; --let:#E9BC55; --fout:#F09B95;
 
@@ -96,7 +96,7 @@ header{padding:56px 0 0}
    als ze hieronder staan: eerst de vijf van de kinderen, dan de vier van de
    groten. */
 .regenboog{height:5px;border-radius:9999px;margin-top:16px;max-width:280px;
-  background:linear-gradient(90deg,var(--huiswerk) 0 11.11%,var(--islam) 11.11% 22.22%,var(--arabisch) 22.22% 33.33%,var(--code) 33.33% 44.44%,var(--spel) 44.44% 55.56%,var(--geloof) 55.56% 66.67%,var(--koran) 66.67% 77.78%,var(--kalibratie) 77.78% 88.89%,var(--academie) 88.89% 100%)}
+  background:linear-gradient(90deg,var(--huiswerk) 0 11.11%,var(--islam) 11.11% 22.22%,var(--arabisch) 22.22% 33.33%,var(--code) 33.33% 44.44%,var(--spel) 44.44% 55.56%,var(--geloof) 55.56% 66.67%,var(--koran) 66.67% 77.78%,var(--health) 77.78% 88.89%,var(--academie) 88.89% 100%)}
 .lede{margin-top:14px;font-family:var(--serif);font-size:1.14rem;line-height:1.55;color:var(--muted);max-width:46ch}
 
 main{flex:1;padding:38px 0 0}

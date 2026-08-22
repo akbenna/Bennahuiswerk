@@ -294,7 +294,7 @@ export function Aanmelden(
   return (
     <>
       <header>
-        <h1>Kalibratie</h1>
+        <h1>BennaHealth</h1>
         <p className="sub">
           Persoonlijk energiebalansmodel. Het verbruik wordt gemeten uit de gewichtstrend in plaats van
           geschat uit een formule.

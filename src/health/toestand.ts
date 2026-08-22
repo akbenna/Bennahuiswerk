@@ -18,6 +18,9 @@ import type { Alles, Sessie } from '@/gedeeld/db/rpc'
 import { bundelDagen } from './bundel'
 import type { Dagenkaart } from './rekenkern'
 
+/* De sleutel houdt de oude naam. Een app hernoemen mag je niet uitloggen:
+   wat hier staat is de sessie op dit toestel, en die hoort de naamswijziging
+   niet te merken. */
 const SLEUTEL_SESSIE = 'kalibratie.sessie'
 
 const LEEG: Alles = {

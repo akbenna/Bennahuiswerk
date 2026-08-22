@@ -110,7 +110,7 @@ pagina.on('requestfailed', (r) => {
    erbij, want "de pagina laadde" is geen bewijs dat er iets op staat. */
 const PAGINAS = [
   { pad: '/', kop: 'BennaHub', minKnoppen: 1, plaat: 'start' },
-  { pad: '/kalibratie/', kop: 'Kalibratie', minKnoppen: 2, plaat: 'kalibratie' },
+  { pad: '/health/', kop: 'BennaHealth', minKnoppen: 2, plaat: 'health' },
   {
     pad: '/rasikh/', kop: 'Koran uit je hoofd', minKnoppen: 6, plaat: 'rasikh',
     /* De tekst wordt per soera geladen; dat het tabblad Nieuw een echte aya

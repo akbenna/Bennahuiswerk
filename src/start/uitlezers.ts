@@ -156,11 +156,11 @@ export const UITLEZERS: Readonly<Record<string, Uitlezer>> = {
     }]
   },
 
-  /* Energiebalans. Hier staat bewust géén caloriedoel in het overzicht — dat
+  /* BennaHealth. Hier staat bewust géén caloriedoel in het overzicht — dat
      getal hoort thuis in de app, naast zijn interval, en niet los in een tabel
      waar het als een meting oogt. Wat hier telt is of de reeks doorloopt:
      zonder dagelijkse weging rekent het model niets uit. */
-  kalibratie(d) {
+  health(d) {
     const dagen = veld(d, 'dagen')
     const wegingen = sleutels(dagen)
       .filter((k) => getal(veld(veld(dagen, k), 'gewicht')) != null).sort()

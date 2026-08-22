@@ -78,7 +78,7 @@ export function App() {
         <header>
           <div className="merk">
             <div>
-              <h1>Kalibratie</h1>
+              <h1>BennaHealth</h1>
               <div className="sub">
                 {dec(a.gewicht, 1)} kg
                 {profiel.doel_gewicht_kg != null && ` → ${profiel.doel_gewicht_kg} kg`}

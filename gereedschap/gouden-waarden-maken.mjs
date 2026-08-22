@@ -3,7 +3,7 @@
  * GOUDEN WAARDEN UIT DE OUDE REKENKERN
  *
  * De oude app verdwijnt, maar zijn uitkomsten mogen niet verdwijnen. Dit script
- * draait de rekenkern uit gereedschap/oud/kalibratie-index.html — de versie die tegen
+ * draait de rekenkern uit gereedschap/oud/health-index.html — de versie die tegen
  * literatuur is verantwoord en maanden heeft gedraaid — over een reeks
  * verzonnen maar vaste gevallen, en legt de uitkomsten vast.
  *
@@ -16,7 +16,7 @@
 import fs from 'node:fs'
 import vm from 'node:vm'
 
-const html = fs.readFileSync('gereedschap/oud/kalibratie-index.html', 'utf8')
+const html = fs.readFileSync('gereedschap/oud/health-index.html', 'utf8')
 let js = html.match(/<script[^>]*>([\s\S]*?)<\/script>/)[1]
 js += `
 globalThis.__ = { analyse, bmr, eiwitReferentie, regressie, trendReeks,
@@ -152,8 +152,8 @@ const uit = {
   constanten: { KCAL_PER_KG: O.KCAL_PER_KG, VENSTER: O.VENSTER },
   gevallen, score2, fib4, stopbang, onderhoud,
 }
-fs.mkdirSync('src/kalibratie', { recursive: true })
-fs.writeFileSync('src/kalibratie/gouden-waarden.json', JSON.stringify(uit, null, 1))
+fs.mkdirSync('src/health', { recursive: true })
+fs.writeFileSync('src/health/gouden-waarden.json', JSON.stringify(uit, null, 1))
 console.log(`geschreven: ${gevallen.length} analyses, ${score2.length} score2, ` +
             `${fib4.length} fib4, ${stopbang.length} stopbang, ${onderhoud.length} onderhoud`)
 console.log(`peildag: ${VANDAAG}`)
