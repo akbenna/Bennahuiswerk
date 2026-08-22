@@ -26,11 +26,11 @@ const hier = dirname(fileURLToPath(import.meta.url))
  * hebben staan.
  */
 const NOG_NIET_OMGEBOUWD = [
-  'huiswerk', 'noer', 'arabisch', 'bunyan', 'sanad', 'rasikh',
+  'huiswerk', 'noer', 'arabisch', 'bunyan', 'sanad',
 ]
 
 /** Omgebouwd, en dus een echte ingang in de bouw. */
-const OMGEBOUWD = ['start', 'kalibratie', 'spellen']
+const OMGEBOUWD = ['start', 'kalibratie', 'spellen', 'rasikh']
 
 
 

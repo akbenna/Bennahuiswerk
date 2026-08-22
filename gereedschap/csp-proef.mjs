@@ -112,6 +112,22 @@ const PAGINAS = [
   { pad: '/', kop: 'BennaHub', minKnoppen: 1, plaat: 'start' },
   { pad: '/kalibratie/', kop: 'Kalibratie', minKnoppen: 2, plaat: 'kalibratie' },
   {
+    pad: '/rasikh/', kop: 'Koran uit je hoofd', minKnoppen: 6, plaat: 'rasikh',
+    /* De tekst wordt per soera geladen; dat het tabblad Nieuw een echte aya
+       toont bewijst dat de index, het laden en de planning samenwerken. */
+    async doe(pagina) {
+      await pagina.getByRole('tab', { name: 'Nieuw' }).click()
+      await pagina.locator('.aya .ar').first().waitFor({ timeout: 5000 })
+      const arabisch = await pagina.locator('.aya .ar').first().textContent()
+      if (!arabisch || arabisch.trim().length < 5) return 'geen Arabische tekst geladen'
+      await pagina.getByRole('button', { name: /Begin bij stap 1/ }).click()
+      const stap = await pagina.locator('.blad .meta').first().textContent()
+      if (!/stap 1 van 6/.test(stap ?? '')) return `leerflow startte niet: ${stap}`
+      await pagina.locator('.blad').getByRole('button', { name: 'Sluiten' }).click()
+      return null
+    },
+  },
+  {
     pad: '/spellen/', kop: 'Spelletjes', minKnoppen: 13, plaat: 'spellen',
     /* Renderen is niet werken. Een spel openen, een goede zet doen en kijken of
        de teller meeloopt is het kortste bewijs dat de omzetting van imperatieve

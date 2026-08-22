@@ -2,7 +2,7 @@
   "name": "bennahub",
   "private": true,
   "type": "module",
-  "description": "Negen apps op één hub. React 18 + Vite + TypeScript.",
+  "description": "Negen apps op \u00e9\u00e9n hub. React 18 + Vite + TypeScript.",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b --noEmit && vite build",
@@ -11,7 +11,7 @@
     "proef:kijk": "vitest --config vitest.config.ts",
     "controle": "npm run typen && npm run proef && npm run build && npm run csp",
     "csp": "node gereedschap/csp-proef.mjs",
-    "gouden-waarden": "node gereedschap/gouden-waarden-maken.mjs"
+    "gouden-waarden": "node gereedschap/gouden-waarden-maken.mjs && node gereedschap/rasikh-gouden-waarden.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",
