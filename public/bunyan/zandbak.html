@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Zandbak</title>
+<!--
+  DE ZANDBAK
+
+  Hier draait de JavaScript en de HTML die het kind zelf typt. Dat kan niet in
+  de app zelf: een oneindige lus zou het scherm bevriezen, en een typefout zou
+  de app kunnen platleggen — en dan is er voor een kind van elf geen verschil
+  meer tussen "mijn programma klopt niet" en "de computer is stuk".
+
+  Waarom een eigen bestand en geen srcdoc, zoals vroeger: een srcdoc-frame erft
+  de policy van de pagina eromheen, en die verbiedt losse scripts. Dit bestand
+  heeft zijn eigen policy in vercel.json, met precies één uitzondering — losse
+  scripts mogen hier — en het frame staat in `sandbox="allow-scripts"`. Zonder
+  allow-same-origin krijgt het een eigen herkomst: wat hier draait kan niet bij
+  de opslag, de sleutels of het scherm van de app.
+
+  Python loopt hier níet doorheen; die draait in MINIPY, in de app zelf, met
+  een stappenteller ertegen.
+-->
+<style>body{font-family:system-ui;margin:10px;color:#111;background:#fff}</style>
+</head>
+<body>
+<script>
+/* Wacht op de code, schrijft hem in dit document, en stuurt terug wat er
+   geprint werd. `merk` hoort bij één run: een antwoord van een vorige run mag
+   niet in het vak van de volgende belanden. */
+addEventListener('message', function (e) {
+  var d = e.data
+  if (!d || d.soort !== 'bunyan-draai') return
+  var merk = JSON.stringify(String(d.merk || ''))
+  var voor = '<script>(function(){var M=' + merk + ';'
+    + 'function z(s){try{parent.postMessage({soort:"bunyan-uit",b:M,r:String(s)},"*")}catch(e){}}'
+    + 'console.log=function(){z([].slice.call(arguments).join(" "))};'
+    + 'console.error=console.warn=console.log;'
+    + 'window.onerror=function(m,f,l){parent.postMessage({soort:"bunyan-uit",b:M,f:String(m),l:l},"*");return true};'
+    + '})();<\/script>'
+  var stijl = '<style>body{font-family:system-ui;margin:10px;color:#111;background:#fff}</style>'
+  var code = String(d.code || '')
+  var lijf = d.taal === 'js' ? voor + '<script>' + code + '<\/script>' : voor + code
+  document.open()
+  document.write('<!doctype html><meta charset="utf-8">' + stijl + lijf)
+  document.close()
+})
+/* Zeggen dat we er zijn; de app wacht daarop voordat hij code stuurt. */
+try { parent.postMessage({ soort: 'bunyan-klaar' }, '*') } catch (e) {}
+</script>
+</body>
+</html>

@@ -175,6 +175,58 @@ const PAGINAS = [
       return null
     },
   },
+  {
+    pad: '/bunyan/', kop: 'Computers & Code', minKnoppen: 6, plaat: 'bunyan',
+    /* De eerste Python-les helemaal: uitleg, het voorbeeld in de editor, laten
+       draaien, nakijken, de vragen, en afronden. Dat raakt de vertaler, de
+       nakijkfunctie uit de gegevens én de puntentelling in één keer. Daarna nog
+       de bouwbank, want die rekent met andere getallen. */
+    async doe(pagina) {
+      await pagina.getByRole('tab', { name: 'Coderen' }).click()
+      await pagina.locator('.les').first().click()
+      const blad = pagina.locator('.blad')
+      await blad.getByRole('button', { name: 'Zet dit in de editor' }).click()
+      await blad.getByRole('button', { name: 'Uitvoeren' }).click()
+      const uit = await blad.locator('.uitvoer pre').textContent()
+      if (!/Hallo wereld/.test(uit ?? '')) return `de Python draaide niet: ${uit}`
+      await blad.getByRole('button', { name: 'Nakijken' }).click()
+      const oordeel = await blad.locator('.kader h4').first().textContent()
+      if (!/Klopt/.test(oordeel ?? '')) return `de opdracht werd niet goedgekeurd: ${oordeel}`
+
+      /* Beide vragen goed beantwoorden; het juiste antwoord staat in de data
+         maar de proef mag het niet kennen — dus alle knoppen langs tot er
+         "Goed" staat is hier niet eerlijk. We nemen wat er staat en kijken of
+         de knop opengaat. */
+      const kaarten = blad.locator('#vragen .card, .card.plat')
+      const vragen = await blad.locator('.card.plat').count()
+      for (let i = 0; i < vragen; i++) {
+        const kaart = blad.locator('.card.plat').nth(i)
+        await kaart.getByRole('button').first().click()
+      }
+      const klaar = blad.getByRole('button', { name: 'Ik ben klaar' })
+      if (await klaar.isDisabled()) return 'de knop bleef op slot na alle vragen'
+      await klaar.click()
+      const kop = await blad.locator('h2').first().textContent()
+      if (!/Les af/.test(kop ?? '')) return `de les werd niet afgerond: ${kop}`
+      await blad.getByRole('button', { name: 'Terug naar het overzicht' }).click()
+
+      /* De JavaScript en de HTML draaien in een frame met een eigen policy.
+         Dat is precies de plek waar een strikte CSP het stilletjes kan
+         breken, dus die moet hier echt iets terugzeggen. */
+      await pagina.getByRole('tab', { name: 'Werkbank' }).click()
+      await pagina.getByRole('button', { name: 'JavaScript' }).click()
+      await pagina.getByRole('button', { name: 'Uitvoeren' }).click()
+      await pagina.waitForTimeout(1200)
+      const console_ = await pagina.locator('.uitvoer pre').first().textContent()
+      if (!/Hallo Amine/.test(console_ ?? '')) return `de zandbak zweeg: ${console_}`
+
+      await pagina.getByRole('button', { name: 'Openen' }).first().click()
+      await pagina.locator('.deel', { hasText: 'AMD Ryzen 5 5600' }).click()
+      const totaal = await pagina.locator('.card', { hasText: 'Totaal' }).locator('.cijfer').textContent()
+      if (!/105/.test(totaal ?? '')) return `de bouwbank rekende niet: ${totaal}`
+      return null
+    },
+  },
 ]
 
 let mis = 0

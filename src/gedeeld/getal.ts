@@ -8,3 +8,9 @@ export const dz = (n: number | null | undefined): string =>
 /** Decimaal met vaste precisie, komma als scheidingsteken. */
 export const dec = (v: number | null | undefined, n = 1): string =>
   v == null || Number.isNaN(v) ? '—' : Number(v).toFixed(n).replace('.', ',')
+
+/** Bedrag in euro. De spatie tussen het teken en het bedrag is een harde
+ *  spatie: "€" en het bedrag horen bij elkaar en mogen niet over twee regels
+ *  verdeeld raken. */
+export const euro = (n: number): string =>
+  '€ ' + (Math.round(n * 100) / 100).toFixed(2).replace('.', ',')

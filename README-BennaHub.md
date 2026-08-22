@@ -9,7 +9,7 @@ niet is omgebouwd draait onveranderd als los HTML-bestand en gaat zo mee naar de
 bouw; er is dus geen moment waarop de site half stuk staat. Zie BUILD.md voor
 hoe je bouwt en waarom er nu wél een bouwstap is.
 
-Om: de startpagina, `health/`, `spellen/`, `rasikh/` en `sanad/`. Nog niet om: de vier andere.
+Om: de startpagina, `health/`, `spellen/`, `rasikh/`, `sanad/` en `bunyan/`. Nog niet om: huiswerk, Islam leren en Arabisch.
 
 ```
 index.html          de startpagina: aanmelden, de apps van die persoon, ouderoverzicht
@@ -19,6 +19,7 @@ huiswerk/           Huiswerk — oefenen voor school
 noer/index.html     Islam leren — de basis van de islam en leren bidden (7–15 jaar)
 arabisch/index.html Arabisch — lezen, begrijpen en spreken, met een jaarprogramma
 bunyan/index.html   Computers & Code — een pc bouwen en leren programmeren (vanaf 10)
+                      de Vite-ingang; de app zelf staat in src/bunyan/
 spellen/index.html  Spelletjes — de speelhoek, los van de huiswerkapp
 sanad/index.html    Geloofsstudie — achtentwintig weken islamitische wetenschappen
                       de Vite-ingang; de app zelf staat in src/sanad/
@@ -44,6 +45,10 @@ src/
   sanad/              het programma, de kaartplanner, zeven schermen
     gegevens/           de leerstof: curriculum, kaarten, bronnen, lexicon, matn
     sanad.proef.ts      30 vergelijkingen tegen de oude app, stof én planner
+  bunyan/             twee leersporen, de bouwbank, de beloning, zes schermen
+    minipy/             een kleine Python: woorden, ontleden, uitvoeren
+    minipy.proef.ts     132 programma's tegen de oude vertaler, 66 met een fout
+    bunyan.proef.ts     29 vergelijkingen: stof, punten, samenvoegen, bouwbank
 public/               fonts, iconen, en de statische bestanden per app
 gereedschap/          de bouw- en proefscripts, en de oude app als ijkpunt
 iconen/             één pictogram per app, plus het script dat er PNG's van maakt
@@ -455,8 +460,8 @@ getallen (GHz, VRAM, fps, Hz, bottleneck, compatibiliteit), dan het bouwen zelf
 (statisch werken, volgorde, koelpasta, kabels, BIOS, Windows of Linux) en tot
 slot onderhoud, problemen zoeken, upgraden en online veilig blijven.
 
-**De Python zit in de app.** Geen Pyodide, geen CDN: `MINIPY` is met de hand
-geschreven en staat bovenaan het scriptblok. Reden één is dat de app dan zonder
+**De Python zit in de app.** Geen Pyodide, geen CDN: MINIPY is met de hand
+geschreven en staat in `src/bunyan/minipy/` — woorden lezen, ontleden, uitvoeren. Reden één is dat de app dan zonder
 internet werkt en niets van buiten haalt. Reden twee weegt zwaarder: de taal van
 de foutmeldingen. Een kind van elf leert niets van `SyntaxError: invalid syntax`,
 maar wel van *"regel 3: je bent de dubbele punt vergeten aan het eind van de
@@ -465,9 +470,22 @@ while, for, functies, f-strings, `random` en de gewone ingebouwde functies — h
 eerste jaar Python, en niets daarbuiten. Een oneindige lus wordt na een vast
 aantal stappen afgebroken met een uitleg in plaats van een vastgelopen tabblad.
 
-JavaScript en HTML draaien in een afgeschermd `iframe`, zodat een typefout of een
-`while(true)` de app zelf niet platlegt; `console.log` komt via `postMessage`
-terug in het uitvoervenster.
+De overzetting naar TypeScript is niet nagelopen maar bewézen: honderdtweeëndertig
+programma's door de oude vertaler én de nieuwe, en per programma vergeleken op de
+uitvoer regel voor regel en — bij zesenzestig ervan — op regelnummer, melding en
+tip woord voor woord. Het corpus staat in `gereedschap/bunyan-python-corpus.txt`
+en bevat één programma per foutmelding, plus elk voorbeeld en elke startcode uit
+de lessen zelf. Wie een melding herformuleert, breekt de toets; dat is de
+bedoeling, want die zinnen zíjn het onderwijs.
+
+JavaScript en HTML draaien in `public/bunyan/zandbak.html`, een frame met
+`sandbox="allow-scripts"` en dus een eigen herkomst: een typefout of een
+`while(true)` legt de app niet plat, en wat daar draait kan niet bij de opslag of
+het scherm van de app. Vroeger was dat een `srcdoc`-frame, maar dat erft de
+policy van de pagina eromheen en die verbiedt losse scripts. De zandbak heeft nu
+één eigen regel in `vercel.json` — losse scripts mogen daar, en verder niets, tot
+en met `connect-src 'none'`. `console.log` komt via `postMessage` terug in het
+uitvoervenster.
 
 **De bouwbank** staat op de werkbank: kies onderdelen binnen een budget en de app
 controleert de vijf dingen die je in het echt ook nakijkt (voetje, geheugentype,
@@ -650,8 +668,8 @@ aanroep naar een edge function, dan hoeft de sleutel de browser niet meer in.
 ## Onderhoud
 
 De huiswerkapp bouw je zoals altijd: bewerk `huiswerk/index.dev.html` en compileer
-naar `huiswerk/index.html` (zie `BUILD.md`). Islam leren, Arabisch en Computers &
-Code zijn nog gewone HTML — openen, bewerken, klaar. De omgebouwde apps staan in
+naar `huiswerk/index.html` (zie `BUILD.md`). Islam leren en Arabisch zijn nog gewone
+HTML — openen, bewerken, klaar. De omgebouwde apps staan in
 `src/`; daar geldt de bouwstap uit `BUILD.md`. In Islam leren staat de leerstof
 bovenaan het scriptblok als gewone lijsten (`MODULES`, `WUDU`, `STAPPEN`, `HIFZ`,
 `DUAS`); wie de inhoud wil aanpassen hoeft de schermcode niet aan te raken. In
