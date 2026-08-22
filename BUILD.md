@@ -27,7 +27,7 @@ Bovenin `vite.config.ts` staan twee lijsten:
 
 ```ts
 const NOG_NIET_OMGEBOUWD = ['huiswerk', 'noer', 'arabisch', ...]
-const OMGEBOUWD = ['kalibratie']
+const OMGEBOUWD = ['start', 'kalibratie']
 ```
 
 Wat in de eerste lijst staat, draait nog als los HTML-bestand en gaat onveranderd
@@ -56,9 +56,11 @@ nergens `oninput`, en daarom moest de portiekeuze een veld met de hand uitlezen
 voordat er hertekend werd. Dat probleem bestaat in React niet.
 
 **Een strikte Content-Security-Policy.** Die kan alleen als er geen inline script
-en geen inline stijl meer in de pagina staat. Voor `/kalibratie/` staat hij nu
-aan — `script-src 'self'`, geen `unsafe-inline` — en `npm run csp` controleert in
-een echte browser dat de app daaronder rendert.
+en geen inline stijl meer in de pagina staat. Voor de startpagina en
+`/kalibratie/` staat hij nu aan — `script-src 'self'`, geen `unsafe-inline` — en
+`npm run csp` laadt beide in een echte Chromium en telt de overtredingen. De
+andere zeven apps hebben nog inline script en vallen daar dus buiten; zodra ze om
+zijn komt hun pad erbij in `vercel.json`.
 
 Wat er níét is: geen Tailwind. De stijl is honderdvierenveertig regels CSS met
 namen die iets betekenen. Dat vervangen door utility-klassen levert meer regels

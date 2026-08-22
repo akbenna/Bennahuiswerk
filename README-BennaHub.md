@@ -9,7 +9,7 @@ niet is omgebouwd draait onveranderd als los HTML-bestand en gaat zo mee naar de
 bouw; er is dus geen moment waarop de site half stuk staat. Zie BUILD.md voor
 hoe je bouwt en waarom er nu wél een bouwstap is.
 
-Om: `kalibratie/`. Nog niet om: de acht andere.
+Om: de startpagina en `kalibratie/`. Nog niet om: de zeven andere.
 
 ```
 index.html          de startpagina: aanmelden, de apps van die persoon, ouderoverzicht
@@ -32,6 +32,7 @@ kalibratie/         Energiebalans — verbruik gemeten uit de gewichtstrend (vol
   database/           de SQL die naast de app hoort, in volgorde genummerd
 src/
   gedeeld/db/         de getypte databasegrens: dertig functies, één keer
+  start/              de startpagina: de poort, de tegels, het ouderoverzicht
   gedeeld/            datum- en getalhulp die alle apps kunnen gebruiken
   kalibratie/         rekenkern, klinische modules, zes schermen, vier vensters
     rekenkern.proef.ts  171 vergelijkingen tegen de oude, verantwoorde uitkomsten

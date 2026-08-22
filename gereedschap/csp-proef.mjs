@@ -82,10 +82,16 @@ const overtredingen = []
 const fouten = []
 const buitenBereik = []
 
-/* Google Fonts is vanuit deze omgeving niet bereikbaar. Dat is geen fout in de
-   app en geen CSP-overtreding — het is de sandbox. Zulke verzoeken worden
-   apart geteld en genoemd, niet stilzwijgend weggefilterd. */
-const isBuitenBereik = (url) => url.includes('fonts.googleapis.com') || url.includes('fonts.gstatic.com')
+/* Google Fonts en Supabase zijn vanuit deze omgeving niet bereikbaar. Dat is
+   geen fout in de app en geen CSP-overtreding — het is de sandbox. Zulke
+   verzoeken worden apart geteld en genoemd, niet stilzwijgend weggefilterd.
+
+   Sterker: dat het verzoek überhaupt de deur uit ging en pas op het netwerk
+   strandde, is het bewijs dat connect-src de database toestaat. Was de policy
+   te streng, dan had de browser hem hier geblokkeerd en stond hij hierboven bij
+   de overtredingen. */
+const BUITEN_BEREIK = ['fonts.googleapis.com', 'fonts.gstatic.com', 'supabase.co']
+const isBuitenBereik = (url) => BUITEN_BEREIK.some((h) => url.includes(h))
 
 pagina.on('console', (m) => {
   const t = m.text()
@@ -99,26 +105,45 @@ pagina.on('requestfailed', (r) => {
   else fouten.push(regel)
 })
 
-await pagina.goto(`http://localhost:${poort}/kalibratie/`, { waitUntil: 'networkidle' })
-const kop = await pagina.textContent('h1').catch(() => null)
-const knoppen = await pagina.locator('button').count()
-await pagina.screenshot({ path: 'gereedschap/kalibratie-aanmelden.png' })
+/* Elke omgebouwde app krijgt dezelfde behandeling: opvragen, laten renderen,
+   en kijken of de policy iets tegenhield. De verwachting per pagina staat
+   erbij, want "de pagina laadde" is geen bewijs dat er iets op staat. */
+const PAGINAS = [
+  { pad: '/', kop: 'BennaHub', minKnoppen: 1, plaat: 'start' },
+  { pad: '/kalibratie/', kop: 'Kalibratie', minKnoppen: 2, plaat: 'kalibratie' },
+]
+
+let mis = 0
+for (const p of PAGINAS) {
+  overtredingen.length = 0
+  fouten.length = 0
+  buitenBereik.length = 0
+  await pagina.goto(`http://localhost:${poort}${p.pad}`, { waitUntil: 'networkidle' })
+  // De hub haalt eerst de ledenlijst op; zonder database blijft dat hangen op
+  // de wachttekst. Dat is geen CSP-kwestie, dus we kijken naar wat er staat.
+  const kop = await pagina.textContent('h1, .merk').catch(() => null)
+  const knoppen = await pagina.locator('button').count()
+  await pagina.screenshot({ path: `gereedschap/pagina-${p.plaat}.png` })
+
+  const csp = headersVoor(p.pad)['Content-Security-Policy']
+  const goed = csp && (kop ?? '').includes(p.kop) && knoppen >= p.minKnoppen
+               && !overtredingen.length && !fouten.length
+  if (!goed) mis++
+
+  console.log(`\n${p.pad}`)
+  console.log('  CSP:', csp ? 'toegepast' : 'ONTBREEKT')
+  console.log('  kop:', JSON.stringify(kop))
+  console.log('  knoppen:', knoppen)
+  console.log('  CSP-overtredingen:', overtredingen.length)
+  overtredingen.forEach((o) => console.log('     ·', o))
+  console.log('  fouten:', fouten.length)
+  fouten.forEach((o) => console.log('     ·', o))
+  if (buitenBereik.length) {
+    console.log('  buiten bereik in deze omgeving (geen fout):', buitenBereik.length)
+  }
+  console.log(goed ? '  → rendert onder de strikte policy' : '  → ER IS IETS MIS')
+}
 
 await browser.close()
 server.close()
-
-console.log('CSP:', headersVoor('/kalibratie/')['Content-Security-Policy'] ? 'toegepast' : 'ONTBREEKT')
-console.log('kop op het scherm:', JSON.stringify(kop))
-console.log('knoppen gerenderd:', knoppen)
-console.log('CSP-overtredingen:', overtredingen.length)
-overtredingen.forEach((o) => console.log('   ·', o))
-console.log('fouten in de console:', fouten.length)
-fouten.forEach((o) => console.log('   ·', o))
-if (buitenBereik.length) {
-  console.log(`buiten bereik in deze omgeving (geen fout): ${buitenBereik.length}`)
-  buitenBereik.forEach((o) => console.log('   ·', o))
-}
-
-const goed = kop === 'Kalibratie' && knoppen >= 2 && !overtredingen.length && !fouten.length
-console.log(goed ? '\nDe app rendert onder de strikte policy.' : '\nEr is iets mis.')
-process.exit(goed ? 0 : 1)
+process.exit(mis ? 1 : 0)

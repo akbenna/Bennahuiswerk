@@ -30,14 +30,9 @@ const NOG_NIET_OMGEBOUWD = [
 ]
 
 /** Omgebouwd, en dus een echte ingang in de bouw. */
-const OMGEBOUWD = ['kalibratie']
+const OMGEBOUWD = ['start', 'kalibratie']
 
-/**
- * De startpagina en zijn service worker staan nog in de oude vorm en gaan
- * daarom mee als los bestand. Zodra `start` is omgebouwd verhuizen ze naar
- * OMGEBOUWD en verdwijnt deze regel.
- */
-const LOSSE_BESTANDEN = ['index.html', 'sw.js']
+
 
 function kopieerNietOmgebouwd(): Plugin {
   return {
@@ -49,12 +44,6 @@ function kopieerNietOmgebouwd(): Plugin {
         if (!existsSync(van)) continue
         cpSync(van, resolve(hier, 'dist', app), { recursive: true })
         this.info(`onveranderd meegekopieerd: ${app}/`)
-      }
-      for (const bestand of LOSSE_BESTANDEN) {
-        const van = resolve(hier, bestand)
-        if (!existsSync(van)) continue
-        cpSync(van, resolve(hier, 'dist', bestand))
-        this.info(`onveranderd meegekopieerd: ${bestand}`)
       }
     },
   }
@@ -69,9 +58,12 @@ export default defineConfig({
     // productiebundel niet terug te leiden naar de regel die hem veroorzaakte.
     sourcemap: true,
     rollupOptions: {
-      input: Object.fromEntries(
-        OMGEBOUWD.map((app) => [app, resolve(hier, app, 'index.html')]),
-      ),
+      /* 'start' is de startpagina en woont op de wortel; de rest in zijn
+         eigen map, want dat is het adres waarop de app bereikbaar moet zijn. */
+      input: Object.fromEntries(OMGEBOUWD.map((app) => [
+        app,
+        app === 'start' ? resolve(hier, 'index.html') : resolve(hier, app, 'index.html'),
+      ])),
     },
   },
   resolve: {
