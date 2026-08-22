@@ -9,7 +9,7 @@ niet is omgebouwd draait onveranderd als los HTML-bestand en gaat zo mee naar de
 bouw; er is dus geen moment waarop de site half stuk staat. Zie BUILD.md voor
 hoe je bouwt en waarom er nu wél een bouwstap is.
 
-Om: de startpagina, `health/`, `spellen/`, `rasikh/`, `sanad/`, `bunyan/` en `noer/`. Nog niet om: huiswerk en Arabisch.
+Om: de startpagina, `health/`, `spellen/`, `rasikh/`, `sanad/`, `bunyan/`, `noer/` en `arabisch/`. Nog niet om: huiswerk.
 
 ```
 index.html          de startpagina: aanmelden, de apps van die persoon, ouderoverzicht
@@ -102,7 +102,7 @@ De indeling van de startpagina volgt dezelfde gedachte: bovenaan de vijf apps va
 de kinderen, daaronder de vier van de groten. De Academie stond bij de kinderen
 terwijl er "voor de groten" op de kaart zelf stond; die is nu verhuisd.
 
-Eén tegel wijkt bewust af. Energiebalans is leisteengrijs, de enige onverzadigde
+Eén tegel wijkt bewust af. BennaHealth is leisteengrijs, de enige onverzadigde
 kleur van de negen. De zeven leerapps zijn gekleurd omdat een kind een tegel moet
 kunnen herkennen voordat het vlot leest; die app is een meetinstrument voor een
 volwassene en mag daar op het beginscherm ook naar uitzien.
@@ -190,7 +190,7 @@ er onderweg niets niet meer. De startpagina zet al wel `bennahub.wie` in
 
 ## Centrale opslag
 
-Islam leren, Geloofsstudie, Arabisch en Energiebalans slaan voortgang op in `localStorage` én centraal, zodat je op elk
+Islam leren, Geloofsstudie, Arabisch en BennaHealth slaan voortgang op in `localStorage` én centraal, zodat je op elk
 toestel verder gaat waar je gebleven was. De opslag loopt via het bestaande
 Supabase-project, tabel `bennahub_state`, met vier `SECURITY DEFINER`-functies:
 
@@ -224,7 +224,7 @@ weegt zwaarder dan het vermijden van die dubbeling.
 - **Islam leren** — één gezinsaccount met daarbinnen een profiel per kind. In te
   stellen onder *Ouder*; bij een lege installatie staat er een knop klaar die de
   vier kinderen in één keer aanmaakt.
-- **Energiebalans** — één account, voor Abdelkader. In te stellen achter de chip
+- **BennaHealth** — één account, voor Abdelkader. In te stellen achter de chip
   rechtsboven. Synchroniseren is hier geen gemak maar een voorwaarde: er wordt
   in de badkamer gewogen en op de laptop gelogd, en twee losse reeksen leveren
   geen trend op.
@@ -673,13 +673,15 @@ aanroep naar een edge function, dan hoeft de sleutel de browser niet meer in.
 ## Onderhoud
 
 De huiswerkapp bouw je zoals altijd: bewerk `huiswerk/index.dev.html` en compileer
-naar `huiswerk/index.html` (zie `BUILD.md`). Arabisch is nog gewone HTML —
-openen, bewerken, klaar. De omgebouwde apps staan in
+naar `huiswerk/index.html` (zie `BUILD.md`). De omgebouwde apps staan in
 `src/`; daar geldt de bouwstap uit `BUILD.md`. In Islam leren staat de leerstof
 in `src/noer/gegevens/` als gewone lijsten (`MODULES`, `WUDU`, `STAPPEN`, `HIFZ`,
 `DUAS`); wie de inhoud wil aanpassen hoeft de schermcode niet aan te raken. In
 Koran uit je hoofd zit de stof niet in het bestand maar in `rasikh/tekst/`; de app zelf bevat
 alleen de leerlogica. Bij Geloofsstudie staat de leerstof in `src/sanad/gegevens/`
 — curriculum, kaarten, bronnen, lexicon en de brontekstfragmenten, elk als een
-eigen bestand met een type erboven; wie de inhoud aanpast raakt geen schermcode aan. Let bij alle apps op de terugpijl naar `../`; die
+eigen bestand met een type erboven; wie de inhoud aanpast raakt geen schermcode aan. In
+Arabisch staat de leerstof in `src/arabisch/gegevens/` — letters, woorden, grammatica,
+zinnen, teksten, Koranwoorden en het jaarprogramma, elk als een eigen lijst; de FSRS-planner
+staat los in `src/arabisch/fsrs.ts` en het leerpad in `leerplan.ts`. Let bij alle apps op de terugpijl naar `../`; die
 veronderstelt dat de app in een submap onder de hub staat.

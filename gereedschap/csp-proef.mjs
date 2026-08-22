@@ -262,6 +262,50 @@ const PAGINAS = [
       return null
     },
   },
+  {
+    pad: '/arabisch/', kop: 'Arabisch', minKnoppen: 1, plaat: 'arabisch',
+    /* Een profiel aanmaken, de sessie van vandaag doorlopen tot de eerste
+       oefening beantwoord is, en dan het alfabet en de woordenlijst aanraken.
+       Dat raakt het onthaal, het spoor per leeftijd, het leerpad, de
+       oefeningenmotor met zijn terugkoppeling en het zoeken — de dingen die bij
+       het ombouwen stuk hadden kunnen gaan. */
+    async doe(pagina) {
+      await pagina.getByPlaceholder('Bijvoorbeeld Yasmina').fill('Proef')
+      await pagina.getByPlaceholder('Bijvoorbeeld 9').fill('9')
+      await pagina.getByRole('button', { name: 'Beginnen' }).click()
+
+      const vandaag = pagina.getByRole('tabpanel')
+      if (!await vandaag.getByText('Hallo Proef').count()) return 'het profiel kwam er niet in'
+
+      await vandaag.getByRole('button', { name: 'Beginnen' }).click()
+      await vandaag.getByRole('button', { name: 'Nu oefenen' }).click()
+      const vraag = pagina.locator('.vraagblok')
+      if (!await vraag.count()) return 'er kwam geen oefening'
+      /* Eén antwoord geven en kijken of er terugkoppeling komt. Wat het
+         antwoord is doet er niet toe: die staat er bij goed én bij fout. */
+      const optie = vraag.locator('.optie').first()
+      if (await optie.count()) await optie.click()
+      else await vraag.getByRole('button', { name: 'Weet ik niet' }).click()
+      const terug = await vraag.locator('.terug b').first().textContent()
+      if (!/Goed|Nog niet/.test(terug ?? '')) return `geen terugkoppeling: ${terug}`
+      await vraag.getByRole('button', { name: 'Verder' }).click()
+      if (!await pagina.locator('.vraagblok').count()) return 'de sessie liep vast na één vraag'
+
+      await pagina.getByRole('tab', { name: 'Alfabet' }).click()
+      const letters = await pagina.locator('.lettervak').count()
+      if (letters !== 28) return `er staan ${letters} letters in het alfabet`
+      await pagina.locator('.lettervak').first().click()
+      const vormen = await pagina.locator('.blad .vormvak').count()
+      if (vormen !== 4) return `de letter heeft ${vormen} vormen`
+      await pagina.locator('.blad button.k.rand.vol', { hasText: 'Sluiten' }).click()
+
+      await pagina.getByRole('tab', { name: 'Woorden' }).click()
+      await pagina.getByPlaceholder('Zoeken…').fill('boek')
+      const gevonden = await pagina.locator('.woordrij').count()
+      if (!gevonden) return 'zoeken op "boek" gaf niets'
+      return null
+    },
+  },
 ]
 
 let mis = 0
