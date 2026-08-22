@@ -11,7 +11,7 @@
     "proef:kijk": "vitest --config vitest.config.ts",
     "controle": "npm run typen && npm run proef && npm run build && npm run csp",
     "csp": "node gereedschap/csp-proef.mjs",
-    "gouden-waarden": "node gereedschap/gouden-waarden-maken.mjs && node gereedschap/rasikh-gouden-waarden.mjs && node gereedschap/sanad-gouden-waarden.mjs && node gereedschap/bunyan-gouden-waarden.mjs && node gereedschap/noer-gouden-waarden.mjs && node gereedschap/arabisch-gouden-waarden.mjs"
+    "gouden-waarden": "node gereedschap/gouden-waarden-maken.mjs && node gereedschap/rasikh-gouden-waarden.mjs && node gereedschap/sanad-gouden-waarden.mjs && node gereedschap/bunyan-gouden-waarden.mjs && node gereedschap/noer-gouden-waarden.mjs && node gereedschap/arabisch-gouden-waarden.mjs && node gereedschap/huiswerk-gouden-waarden.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.120.0",
