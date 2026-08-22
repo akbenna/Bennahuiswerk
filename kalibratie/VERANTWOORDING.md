@@ -196,7 +196,29 @@ En: voor samengestelde Marokkaanse gerechten bestaat **geen validatiedata**. De 
 
 ---
 
-## 12. De klinische modules
+## 12. De gerechtenbibliotheek en de huishoudmaten
+
+Naast NEVO staat er in dezelfde database een tweede soort kennis, die niet over losse producten gaat maar over gerechten: zesentwintig samengestelde gerechten uit de Marokkaanse en Turkse keuken, met tweehonderdvijfenzeventig ingrediëntregels, waarvan er zesentachtig door een diëtist zijn bevestigd. Vijfentwintig ervan zijn hier zichtbaar; de zesentwintigste is de persoonlijke variant van een patiënt in provita-care en die hoort in deze app niet thuis. Zesendertig van die regels zijn bereidingsvet, elk met een vetsoort en een opnamefractie. Daarnaast zesenvijftig porties met bandbreedte, en vijfendertig huishoudmaten verdeeld over de zevenentwintig NEVO-groepen.
+
+Die kennis lag er en werd niet gebruikt. De app kon een tajine wel vínden — het zoekveld toonde hem — maar er zat geen knop op, dus loggen ging alsnog via de herkenning uit tekst, die hetzelfde gerecht opnieuw moest ontleden en het bereidingsvet blind moest schatten.
+
+**Hoe een portie wordt doorgerekend.** Per ingrediënt: grammen maal de NEVO-waarde per honderd gram. Bereidingsvet telt mee naar zijn opnamefractie — bij een tajine is dat alles, bij frituren een deel. Dat levert een energiedichtheid voor het gerecht op, en die gaat maal de portiegrootte.
+
+Niet andersom, en dat is een keuze die uitleg verdient. De voor de hand liggende weg is een portie te behandelen als een deel van het recept: zes porties, dus een zesde per persoon. Die weg klopt niet. Harira staat op zes porties en weegt bijna vier kilo, maar een kom harira is driehonderd gram en geen zeshonderdvierentwintig; een kom is nu eenmaal geen zesde van de pan, want er wordt brood bij gegeten. Bij msemen valt het wél samen: acht stuks van honderdvijfentwintig gram op duizend gram deeg. De dichtheid is het enige dat over beide gevallen klopt.
+
+**Wat deze rekenwijze niet weet.** De dichtheid staat op het gewicht zoals de ingrediënten de pan in gaan. Wat indampt verdwijnt uit het gerecht maar niet uit die noemer, dus voor een gerecht dat lang stooft valt de uitkomst aan de lage kant. Hoeveel precies is niet bekend en wordt daarom niet verzonnen; het staat als onzekerheid bij elke regel die uit de bibliotheek komt. De orde van grootte is af te lezen aan de gerechten waar het recept zelf een deel van de schaal benoemt: bij de kiptajine ligt de portieschatting elf procent boven het ruwe gewicht gedeeld door vier, bij de couscous zesentwintig procent eronder, bij msemen precies gelijk. De afwijkingen gaan dus beide kanten op en blijven binnen de bandbreedte van de portie zelf, die ongeveer ±25 procent is.
+
+**Optionele ingrediënten zijn een vraag, geen onzekerheid.** In vier van de vijfentwintig gerechten staat een ingrediënt als optioneel: het lamsvlees in de harira, de sucuk in kuru fasulye, de ui in menemen, de harissa in de kefta-tajine. De eerste opzet liet die meelopen in de bovengrens. Dat leverde voor een kom harira 124 tot 227 kilocalorieën op — een band van tachtig procent die niets over de portie zegt en alles over een vraag die de gebruiker gewoon kan beantwoorden. Het staat nu als aanvinkhokje in het venster: zonder lamsvlees 155 kcal, met lamsvlees 179, en de band blijft in beide gevallen over de portie gaan.
+
+**De graad.** Een gerecht uit de bibliotheek krijgt C wanneer het gevalideerd is en al zijn ingrediënten een tabelwaarde hebben, en anders D. Dat is één trede beter dan wat de herkenning uit tekst of foto van hetzelfde gerecht maakt, en het verschil zit niet in de portie — die blijft een schatting — maar in het bereidingsvet en de samenstelling. Die zijn hier per gerecht uitgezocht in plaats van per keer geschat.
+
+**De huishoudmaten vervangen een onbeantwoordbare vraag.** Wie in het zoekveld een product aantikte, kreeg tot nu toe `prompt('Hoeveel gram?')`. Dat is een vraag die een mens niet kan beantwoorden: een snee brood is vijfentwintig tot vijfenveertig gram en niemand weet dat uit het hoofd. Erger is dat het antwoord geen marge had en daarmee deed alsof het gewogen was. De vijfendertig maten hangen aan de NEVO-groep en dekken alle zevenentwintig groepen, dus er is geen product zonder maat. "Drie sneetjes" wordt honderdvijf gram met een band van vijfenzeventig tot honderdvijfendertig, en die band gaat mee de regel in. Afwegen kan nog steeds en is de enige optie waarbij de portie geen schatting meer is; dan resteert alleen de tabelonzekerheid van NEVO zelf.
+
+**Waar deze kennis vandaan komt en van wie zij blijft.** De bibliotheek is opgebouwd in provita-care en wordt daar onderhouden, op een validatietool waar de diëtist mee werkt. Deze app leest eruit en schrijft er niet in. Dat is geen tijdelijke oplossing maar de bedoeling: één plek waar de gerechten worden nagelopen is beter dan twee die uit elkaar lopen, en het scheelt de diëtist dubbel werk.
+
+---
+
+## 13. De klinische modules
 
 ### SCORE2
 
@@ -276,7 +298,7 @@ Voor het volume geldt een gegradeerde dosis-responsrelatie met ongeveer tien set
 
 ---
 
-## 13. Wat niet geverifieerd kon worden
+## 14. Wat niet geverifieerd kon worden
 
 Volledigheidshalve, want een verantwoording die alleen zijn sterke punten noemt is geen verantwoording:
 
@@ -292,7 +314,7 @@ Volledigheidshalve, want een verantwoording die alleen zijn sterke punten noemt 
 
 ---
 
-## 14. Wat dit alles betekent voor de eerste weken
+## 15. Wat dit alles betekent voor de eerste weken
 
 De zwakste schakel is niet de wiskunde maar de invoer. Elke foutbron die hierboven gekwantificeerd is — de watertransiënt van enkele honderden kilocalorieën in ongunstige gevallen, de weegruis van circa 145 kcal per dag bij achtentwintig metingen — valt in het niet bij systematische onderrapportage van twintig tot dertig procent.
 

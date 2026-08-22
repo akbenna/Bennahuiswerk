@@ -22,6 +22,11 @@ kalibratie/         Energiebalans — verbruik gemeten uit de gewichtstrend (vol
   index.html          de app: rekenkern en zeven schermen; gegevens in eigen
                       kal_*-tabellen in het Supabase-project van ProVita
   VERANTWOORDING.md   elke rekenregel met zijn bron en zijn beperking
+  AUTOMATISERING.md   wat er vanzelf draait: de ochtendprikkel en het opruimen
+  database/           de SQL die naast de app hoort, in volgorde genummerd
+  proef-portiekeuze.mjs, proef-gegevens.json
+                      node kalibratie/proef-portiekeuze.mjs — rekent de
+                      portiekeuze na zonder browser en zonder netwerk
   manifest.webmanifest, sw.js, icoon.svg, icoon-180.png
 iconen/             één pictogram per app, plus het script dat er PNG's van maakt
 fonts/              Amiri, het Arabische lettertype van alle apps

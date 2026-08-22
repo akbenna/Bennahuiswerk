@@ -1034,17 +1034,36 @@ function vwVoeding(A){
 }
 function hitsHTML(){
   const h = zoekHits;
-  const rij = (naam, sub, kcal, eiw, code, conf) => `<div>
-    ${chip(conf)}<span class="groei"><span class="knip" style="font-size:.86rem;display:block">${esc(naam)}</span>
-    <span class="mini">${esc(sub)}</span></span>
-    <span class="cijfer mini" style="text-align:right">${dz(kcal)} kcal<br>${dec(eiw,1)} g</span>
-    <button class="knop sm" onclick="uitTabel('${code}')">+</button></div>`;
   let uit = '';
-  if(h.nevo?.length) uit += '<div class="eyebrow" style="margin-top:12px">NEVO</div><div class="lijst">' +
-    h.nevo.map(n=>rij(n.naam, 'per 100 g · '+(n.groep||''), n.kcal, n.eiwit_g, n.nevo_code, 'C')).join('') + '</div>';
+
+  if(h.nevo?.length) uit += '<div class="eyebrow" style="margin-top:12px">Voedingsstoffenbestand</div><div class="lijst">' +
+    h.nevo.map(n=>`<div>
+      ${chip('C')}
+      <span class="groei"><span class="knip" style="font-size:.86rem;display:block">${esc(n.naam)}</span>
+        <span class="mini">per 100 g &middot; ${esc(n.groep||'')}</span></span>
+      <span class="cijfer mini" style="text-align:right">${dz(n.kcal)} kcal<br>${dec(n.eiwit_g,1)} g</span>
+      <button class="knop sm" onclick="uitTabel('${n.nevo_code}')" aria-label="Portie kiezen">+</button></div>`).join('') + '</div>';
+
+  /* De gerechten stonden hier al, maar zonder knop: je kon een tajine wél
+     vinden en niet loggen. Achter deze plus zitten de ingrediëntregels en de
+     porties met bandbreedte die er al die tijd bij lagen. */
   if(h.gerechten?.length) uit += '<div class="eyebrow" style="margin-top:12px">Gerechten van ProVita</div><div class="lijst">' +
-    h.gerechten.map(g=>`<div>${chip('D')}<span class="groei"><span class="knip" style="font-size:.86rem;display:block">${esc(g.naam)}</span>
-      <span class="mini">${esc(g.keuken||'')}${g.omschrijving?' · '+esc(g.omschrijving).slice(0,60):''}</span></span></div>`).join('') + '</div>';
+    h.gerechten.map(g=>`<div>
+      ${chip(g.status==='validated'?'C':'D')}
+      <span class="groei"><span class="knip" style="font-size:.86rem;display:block">${esc(g.naam)}</span>
+        <span class="mini">${esc(g.keuken||'')}${g.omschrijving?' &middot; '+esc(g.omschrijving).slice(0,60):''}</span></span>
+      <button class="knop sm" onclick="kiesGerecht('${g.id}')" aria-label="Portie kiezen">+</button></div>`).join('') + '</div>';
+
+  /* kal_zoeken gaf deze altijd al terug; ze werden alleen nooit getekend.
+     Je eigen producten waren daardoor onvindbaar in het zoekveld. */
+  if(h.eigen?.length) uit += '<div class="eyebrow" style="margin-top:12px">Eigen producten</div><div class="lijst">' +
+    h.eigen.map(p=>`<div>
+      ${chip(p.conf||'A')}
+      <span class="groei"><span class="knip" style="font-size:.86rem;display:block">${esc(p.naam)}</span>
+        <span class="mini">per ${dz(p.per)} ${esc(p.eenheid||'g')}</span></span>
+      <span class="cijfer mini" style="text-align:right">${dz(p.kcal)} kcal<br>${dec(p.eiwit_g,1)} g</span>
+      <button class="knop sm" onclick="kiesEigen('${p.id}')" aria-label="Toevoegen">+</button></div>`).join('') + '</div>';
+
   if(!uit) uit = '<p class="klein" style="margin-top:10px">Niets gevonden. Zeg het in gewone taal onder Vandaag — dan ontleedt de herkenning het voor je.</p>';
   return uit;
 }
@@ -1090,17 +1109,252 @@ async function zoeken(){
     ? hitsHTML()
     : '<p class="klein" style="margin-top:10px">Niets gevonden voor \u201c'+esc(q)+'\u201d. Probeer het los product zonder de bereiding erbij.</p>';
 }
-async function uitTabel(code){
-  const n = zoekHits.nevo.find(x=>x.nevo_code===code); if(!n) return;
-  const g = parseFloat(prompt('Hoeveel gram '+n.naam+'?', '100')); if(!g) return;
-  await bewaar(()=>rpc('kal_regels_toevoegen',{p_token:S.token, p_regels:[{
-    datum, naam:n.naam+' · '+g+' g', hoeveelheid:g, eenheid:'g', gram_equivalent:g,
-    kcal_punt:Math.round(n.kcal*g/100), kcal_laag:Math.round(n.kcal*g/100*0.95), kcal_hoog:Math.round(n.kcal*g/100*1.05),
-    eiwit_g:Math.round(n.eiwit_g*g/100*10)/10, vet_g:Math.round(n.vet_g*g/100*10)/10,
-    koolhydraat_g:Math.round(n.koolhydraat_g*g/100*10)/10, conf:'C', bron:'nevo', nevo_code:code,
-    onzekerheidsbronnen:['portie opgegeven, niet gewogen']}]}));
-  tab='vandaag';
+/* ------------------------------------------------------------ portiekeuze --
+   Eén venster voor drie herkomsten: een gerecht uit de bibliotheek, een product
+   uit NEVO, en een eigen product. Ze verschillen in waar de porties vandaan
+   komen en niet in wat er daarna gebeurt, dus ze delen dit scherm.
+
+   Wat hier verdwijnt is prompt('Hoeveel gram?'). Die vraag kan een mens niet
+   beantwoorden — een snee brood is vijfentwintig tot vijfenveertig gram en dat
+   weet niemand uit het hoofd — terwijl "hoeveel sneetjes" wél te beantwoorden
+   is. De vijfendertig huishoudmaten staan per NEVO-groep in de database en
+   dekken alle zevenentwintig groepen; er is dus geen product zonder maat.
+
+   En elke maat brengt zijn eigen band mee. Het getal dat je vroeger intikte had
+   geen marge en deed daarmee alsof het gewogen was. */
+let portie = null;
+
+async function kiesGerecht(id){
+  try{
+    const g = await rpc('kal_gerecht', {p_token:S.token, p_dish_id:id});
+    if(!g.porties || !g.porties.length){ alert('Voor dit gerecht staan geen porties klaar.'); return; }
+    const std = g.porties.findIndex(x=>x.standaard);
+    portie = {soort:'gerecht', gerecht:g, gekozen:std<0?0:std, aantal:1,
+              metOptioneel:false, moment:momentNu()};
+    venster='portie'; teken();
+  }catch(e){ alert(e.message); }
 }
+async function uitTabel(code){
+  try{
+    const n = await rpc('kal_portiematen', {p_token:S.token, p_nevo_code:code});
+    portie = {soort:'nevo', product:n, gekozen:0, aantal:1, gram:'', moment:momentNu()};
+    venster='portie'; teken();
+  }catch(e){ alert(e.message); }
+}
+function kiesEigen(id){
+  const pr = (zoekHits && zoekHits.eigen || []).find(x=>x.id===id) || S.producten.find(x=>x.id===id);
+  if(!pr) return;
+  portie = {soort:'eigen', product:pr, gekozen:0, aantal:1, moment:momentNu()};
+  venster='portie'; teken();
+}
+
+/* Een maaltijdmoment raden uit de klok. Alleen voor vandaag: op een oudere dag
+   is het uur van nu niets waard, en dan is 'onbekend' het eerlijke antwoord.
+   Het staat er als keuze bij, dus fout raden kost één handeling. */
+function momentNu(){
+  if(datum !== vandaag()) return 'onbekend';
+  const u = new Date().getHours();
+  return u < 11 ? 'ontbijt' : u < 15 ? 'lunch' : u < 21 ? 'diner' : 'tussendoor';
+}
+
+/* De keuzes die in het venster staan, per herkomst. Geen enkele optie zonder
+   band, behalve een gewicht dat je zelf hebt afgewogen. */
+function portieOpties(){
+  if(portie.soort==='gerecht'){
+    return portie.gerecht.porties.map(p=>{
+      const w = (portie.metOptioneel && p.met) ? p.met : p;
+      return {label:(p.icoon?p.icoon+' ':'')+p.label, kaal:p.label,
+              sub:dz(p.gram)+' g · band '+dz(p.gram_laag)+'–'+dz(p.gram_hoog)+' g',
+              notitie:p.notitie, gram:p.gram, gram_laag:p.gram_laag, gram_hoog:p.gram_hoog,
+              kcal_punt:w.kcal_punt, kcal_laag:w.kcal_laag, kcal_hoog:w.kcal_hoog,
+              eiwit_g:w.eiwit_g, vet_g:w.vet_g, koolhydraat_g:w.koolhydraat_g, vezel_g:w.vezel_g};
+    });
+  }
+  if(portie.soort==='nevo'){
+    const n = portie.product;
+    const per = (v,g) => Math.round((+v||0)*g/100*10)/10;
+    const maak = (label, sub, g, laag, hoog, extra) => Object.assign({
+      label, sub, gram:g, gram_laag:laag, gram_hoog:hoog,
+      kcal_punt:Math.round(n.kcal*g/100), kcal_laag:Math.round(n.kcal*laag/100),
+      kcal_hoog:Math.round(n.kcal*hoog/100),
+      eiwit_g:per(n.eiwit_g,g), vet_g:per(n.vet_g,g),
+      koolhydraat_g:per(n.koolhydraat_g,g), vezel_g:per(n.vezel_g,g)}, extra||{});
+
+    const uit = (n.maten||[]).map(m => maak(m.naam,
+      dz(m.gram)+' g · band '+dz(m.gram_laag)+'–'+dz(m.gram_hoog)+' g', +m.gram, +m.gram_laag, +m.gram_hoog));
+
+    /* Afwegen blijft mogelijk en is de enige optie die geen huishoudmaat is.
+       De smalle band eromheen is de tabelonzekerheid van NEVO zelf, niet de
+       portie: die is dan immers geen schatting meer. */
+    const g = parseFloat(portie.gram);
+    if(isFinite(g) && g > 0) uit.push(maak('afgewogen', dz(g)+' g, door jou gewogen',
+      g, Math.round(g*0.95), Math.round(g*1.05), {gewogen:true}));
+    return uit;
+  }
+  const pr = portie.product, g = +pr.per || 100;
+  return [{label:'per '+dz(g)+' '+(pr.eenheid||'g'), sub:'waarde van het etiket',
+    gram:g, gram_laag:g, gram_hoog:g,
+    kcal_punt:Math.round(pr.kcal), kcal_laag:Math.round(pr.kcal*0.95), kcal_hoog:Math.round(pr.kcal*1.05),
+    eiwit_g:+pr.eiwit_g||0, vet_g:+pr.vet_g||0,
+    koolhydraat_g:+pr.koolhydraat_g||0, vezel_g:+pr.vezel_g||0}];
+}
+
+/* Waar het getal vandaan komt, in gewone zinnen. Deze lijst gaat mee de regel
+   in en is later terug te lezen; een band zonder benoemde onzekerheid is een
+   getal dat doet alsof. */
+function portieOnzeker(o){
+  const uit = [];
+  if(portie.soort==='gerecht'){
+    const g = portie.gerecht;
+    uit.push('portie geschat als ' + (o.kaal||o.label) + ', ' + dz(o.gram_laag) + '–' + dz(o.gram_hoog) + ' g');
+    if(g.vet_gram > 0) uit.push('bevat ' + dz(g.vet_gram) + ' g bereidingsvet' +
+      (g.vet_soort ? ' (' + g.vet_soort + ')' : '') + ' uit het recept, niet gewogen');
+    uit.push('energiedichtheid berekend op de ingrediënten zoals ze de pan in gaan; indampen is niet verrekend');
+    if(g.optioneel > 0) uit.push((portie.metOptioneel ? 'inclusief ' : 'zonder ') + g.optioneel_namen);
+    if(g.ongekoppeld > 0) uit.push(g.ongekoppeld_namen + ' staat niet in het voedingsstoffenbestand en telt als nul mee');
+    uit.push(g.bevestigd + ' van ' + g.ingredienten + ' ingrediëntkoppelingen door een diëtist bevestigd');
+  }else if(portie.soort==='nevo'){
+    uit.push(o.gewogen ? 'gewicht afgewogen; alleen de tabelonzekerheid van NEVO resteert'
+                       : 'huishoudmaat, niet gewogen — ' + dz(o.gram_laag) + '–' + dz(o.gram_hoog) + ' g per ' + o.label);
+  }else{
+    uit.push('etiketwaarde van een eigen product, niet nagewogen');
+  }
+  if((portie.aantal||1) !== 1) uit.push('aantal opgegeven, niet geteld uit een verpakking');
+  return uit;
+}
+
+function vensterPortie(){
+  const opties = portieOpties();
+  const i = Math.min(portie.gekozen, opties.length-1);
+  const o = opties[i] || opties[0];
+  const n = portie.aantal || 1;
+  const heel = v => Math.round((+v||0)*n);
+  const half = v => Math.round((+v||0)*n*10)/10;
+  const g = portie.soort==='gerecht' ? portie.gerecht : null;
+  const titel = g ? g.naam : portie.product.naam;
+
+  const knop = (p,k) => `<button class="knop ${i===k?'vol':''}" style="text-align:left;flex:1 1 140px"
+      onclick="kiesPortie(${k})">
+      <span style="display:block">${esc(p.label)}</span>
+      <span class="mini" style="display:block;opacity:.8">${esc(p.sub)}</span></button>`;
+
+  return `<div class="sluier" onclick="if(event.target===this)sluit()"><div class="venster">
+    <div class="tussen"><h2 style="font-size:1.2rem;line-height:1.25">${esc(titel)}</h2>
+      <button class="knop sm" onclick="sluit()">&times;</button></div>
+    ${g ? `<p class="mini" style="margin-top:2px">${esc(g.keuken||'')}${
+      g.beoordelaar ? ' &middot; nagelopen door ' + esc(g.beoordelaar) : ''} &middot; ${dz(g.kcal_per_100)} kcal per 100 g</p>` : ''}
+    ${portie.soort==='nevo' ? `<p class="mini" style="margin-top:2px">${esc(portie.product.groep||'')} &middot; ${
+      dz(portie.product.kcal)} kcal per 100 g</p>` : ''}
+
+    <div class="eyebrow" style="margin-top:14px">Hoeveel</div>
+    <div class="rij" style="margin-top:6px;flex-wrap:wrap">${opties.map(knop).join('')}</div>
+    ${o && o.notitie ? `<p class="mini" style="margin-top:6px">${esc(o.notitie)}</p>` : ''}
+
+    ${portie.soort==='nevo' ? `<div class="rij" style="margin-top:8px;align-items:center">
+      <span class="mini">of afwegen</span>
+      <input id="p-gram" class="smaller" type="number" step="1" inputmode="numeric"
+             value="${portie.gram??''}" placeholder="gram" onchange="zetGram(this.value)">
+      <span class="mini">g</span></div>` : ''}
+
+    <div class="rij" style="margin-top:12px;align-items:center">
+      <span class="mini" style="flex:1 1 auto">Aantal</span>
+      <button class="knop sm" onclick="zetAantal(-1)" ${n<=1?'disabled':''}>&minus;</button>
+      <span class="cijfer" style="min-width:2.2em;text-align:center">${dec(n,n%1?1:0)}</span>
+      <button class="knop sm" onclick="zetAantal(1)">+</button>
+    </div>
+
+    ${g && g.optioneel > 0 ? `<label class="regel" style="cursor:pointer">
+      <div><b style="font-size:.87rem">Met ${esc(g.optioneel_namen)}</b>
+      <div class="mini">Staat als optioneel in het recept. Dit is een vraag met een antwoord en
+      hoort daarom niet in de bandbreedte verstopt.</div></div>
+      <input type="checkbox" ${portie.metOptioneel?'checked':''} style="width:19px;height:19px"
+             onchange="portie.metOptioneel=this.checked;teken()"></label>` : ''}
+
+    <div class="regel"><div><b style="font-size:.87rem">Maaltijdmoment</b>
+      <div class="mini">Bepaalt waar het in de eiwitverdeling terechtkomt.</div></div>
+      <select style="width:auto" onchange="portie.moment=this.value">
+        ${['ontbijt','lunch','diner','tussendoor','onbekend'].map(m=>
+          `<option value="${m}"${portie.moment===m?' selected':''}>${m}</option>`).join('')}</select></div>
+
+    <div class="kaart plat" style="margin-top:12px">
+      <div class="tussen">
+        <div><span class="getal" style="font-size:1.8rem">${dz(heel(o.kcal_punt))}</span>
+          <span class="klein"> kcal</span>
+          <div class="mini cijfer">${dz(heel(o.kcal_laag))}&ndash;${dz(heel(o.kcal_hoog))} kcal &middot; ${dz(heel(o.gram))} g</div></div>
+        <div style="text-align:right"><span class="cijfer" style="font-size:1.05rem">${dec(half(o.eiwit_g),1)} g</span>
+          <div class="mini">eiwit</div></div>
+      </div>
+    </div>
+
+    <ul class="mini" style="margin:10px 0 0;padding-left:16px;line-height:1.5">
+      ${portieOnzeker(o).map(t=>'<li>'+esc(t)+'</li>').join('')}
+    </ul>
+
+    ${g ? uitleg('opbouw-gerecht', '<p>Zo is dit gerecht opgebouwd, per ' + dz(g.totaal_gram) +
+      ' g. Wat je hierboven ziet is dit maal het aandeel van jouw portie.</p><div class="lijst">' +
+      g.regels.map(r=>'<div><span class="groei"><span class="knip" style="font-size:.82rem;display:block">' +
+        esc(r.naam) + (r.vet_regel?' &middot; bereidingsvet':'') + (r.optioneel?' &middot; optioneel':'') +
+        (r.gekoppeld?'':' &middot; geen tabelwaarde') + '</span>' +
+        (r.nevo_naam?'<span class="mini">NEVO: '+esc(r.nevo_naam)+(r.bevestigd?' &middot; bevestigd':'')+'</span>':'') +
+        '</span><span class="cijfer mini" style="text-align:right">' + dz(r.gram) + ' g<br>' + dz(r.kcal) +
+        ' kcal</span></div>').join('') + '</div>', 'de opbouw van dit gerecht') : ''}
+
+    <div class="rij" style="margin-top:14px">
+      <button class="knop vol" onclick="portieLoggen()">Toevoegen</button>
+      <button class="knop" onclick="sluit()">Annuleren</button></div>
+  </div></div>`;
+}
+
+/* Het gramveld wordt bij elke hertekening opnieuw opgebouwd, dus de waarde moet
+   eerst de toestand in voordat er iets anders verandert. */
+function leesGram(){ const el = $('#p-gram'); if(el) portie.gram = el.value; }
+function zetGram(v){ portie.gram = v; portie.gekozen = portieOpties().length - 1; teken(); }
+function kiesPortie(k){ leesGram(); portie.gekozen = k; teken(); }
+function zetAantal(d){
+  leesGram();
+  const n = (portie.aantal||1) + (d>0 ? ((portie.aantal||1) < 1 ? 0.5 : 1) : ((portie.aantal||1) <= 1 ? -0.5 : -1));
+  portie.aantal = Math.max(0.5, Math.round(n*2)/2);
+  teken();
+}
+
+async function portieLoggen(){
+  leesGram();
+  const opties = portieOpties();
+  const o = opties[Math.min(portie.gekozen, opties.length-1)];
+  if(!o) return;
+  const n = portie.aantal || 1;
+  const heel = v => Math.round((+v||0)*n);
+  const half = v => Math.round((+v||0)*n*10)/10;
+  const g = portie.soort==='gerecht' ? portie.gerecht : null;
+
+  /* De graad volgt de ladder in de voettekst. Een gerecht uit de bibliotheek is
+     C zolang het gevalideerd is en al zijn ingrediënten een tabelwaarde hebben;
+     ontbreekt daar iets aan, dan is het D. Dat is nog steeds een trede beter
+     dan wat de herkenning uit tekst of foto van hetzelfde gerecht maakt. */
+  const conf = portie.soort==='eigen' ? (portie.product.conf || 'A')
+             : portie.soort==='nevo'  ? 'C'
+             : (g.status==='validated' && g.ongekoppeld===0) ? 'C' : 'D';
+
+  const naam = (g ? g.naam : portie.product.naam) + ' · ' +
+    (n!==1 ? dec(n, n%1?1:0) + '× ' : '') + (o.kaal || o.label) +
+    ' (' + dz(heel(o.gram)) + ' g)';
+
+  const regel = {
+    datum, moment: portie.moment || 'onbekend', naam,
+    hoeveelheid: n, eenheid: o.label, gram_equivalent: heel(o.gram),
+    kcal_punt: heel(o.kcal_punt), kcal_laag: heel(o.kcal_laag), kcal_hoog: heel(o.kcal_hoog),
+    eiwit_g: half(o.eiwit_g), vet_g: half(o.vet_g),
+    koolhydraat_g: half(o.koolhydraat_g), vezel_g: half(o.vezel_g),
+    conf, onzekerheidsbronnen: portieOnzeker(o),
+    bron: portie.soort==='gerecht' ? 'bibliotheek' : portie.soort==='nevo' ? 'nevo' : 'handmatig'
+  };
+  if(g) regel.dish_id = g.id;
+  if(portie.soort==='nevo') regel.nevo_code = portie.product.nevo_code;
+
+  portie = null; venster = null; tab = 'vandaag';
+  await bewaar(()=>rpc('kal_regels_toevoegen', {p_token:S.token, p_regels:[regel]}));
+}
+
 async function bewaarProduct(){
   const naam=$('#p-n').value.trim(), kcal=parseFloat($('#p-kcal').value);
   if(!naam||!isFinite(kcal)) return;
@@ -1441,9 +1695,10 @@ function vensterHTML(){
   if(venster==='profiel') return vensterProfiel();
   if(venster==='import')  return vensterImport();
   if(venster==='account') return vensterAccount();
+  if(venster==='portie')  return vensterPortie();
   return '';
 }
-function sluit(){ venster=null; teken(); }
+function sluit(){ venster=null; portie=null; teken(); }
 function vensterProfiel(){
   const p = S.profiel, i = p.instellingen||{};
   const inp = (id,v,st='') => `<input id="${id}" type="number" step="any" value="${v??''}" class="smaller" style="${st}">`;
