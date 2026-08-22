@@ -153,3 +153,140 @@ svg.fig{display:block;width:100%;height:auto}
 @keyframes d{to{transform:rotate(360deg)}}
 footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
   font-size:.75rem;line-height:1.6;color:var(--dim)}
+
+/* ============================================================================
+   HET STARTSCHERM — kleur, en waarom hij er is
+
+   De app opende op een formulier: drie invulvelden, twee nullen en een leeg
+   tekstvak. Alles klopte en niemand wilde het openen. Wat hieronder staat is
+   geen versiering maar een tweede taal naast de cijfers: kleur zegt in welke
+   staat iets is voordat je het gelezen hebt.
+
+   Twee regels die we niet loslaten. Kleur draagt nooit informatie in haar
+   eentje — er staat altijd een cijfer, een woord of een vorm naast, want een
+   op de twaalf mannen ziet rood en groen niet uit elkaar. En een verloop is
+   nooit een vlak: hij loopt van licht naar donker in dezelfde tint, zodat de
+   tekst erop leesbaar blijft in beide thema's.
+   ========================================================================== */
+:root{
+  /* De macro's. Deze drie kleuren komen overal terug waar eiwit, koolhydraten
+     en vet naast elkaar staan: in de ring, in de balken, in de maaltijdregels.
+     Ze zijn gekozen op onderlinge afstand in tint én in helderheid, zodat ze
+     ook in grijstinten uit elkaar te houden zijn. */
+  --eiwit:#B0553C;  --eiwitbg:#F7E7E1;
+  --koolh:#B98016;  --koolhbg:#FAEFD8;
+  --vet:#6C5F94;    --vetbg:#EDEAF5;
+
+  /* De maaltijden van de dag, van ochtendlicht naar avond. */
+  --ochtend:#D98E38; --ochtendbg:#FBEEDC;
+  --middag:#4F8A46;  --middagbg:#E6F0E2;
+  --avond:#4A6B94;   --avondbg:#E4EBF3;
+  --tussen:#A65B7A;  --tussenbg:#F7E6ED;
+
+  --heldergoed:#3E8B2A;
+  --ringrail:#E6E3DC;   /* de niet-gevulde rest van een ring */
+  --bandinkt:#C9D6D4;   /* de onzekerheidsband: zichtbaar, nooit hard */
+}
+@media (prefers-color-scheme:dark){:root{
+  --eiwit:#E4977E;  --eiwitbg:#33201B;
+  --koolh:#E7B95E;  --koolhbg:#33280F;
+  --vet:#AFA2D8;    --vetbg:#26223A;
+  --ochtend:#E9AC63; --ochtendbg:#33260F;
+  --middag:#8CC57F;  --middagbg:#1C2A19;
+  --avond:#8AAAD4;   --avondbg:#1A2431;
+  --tussen:#D690AC;  --tussenbg:#301B25;
+  --heldergoed:#7FC96A;
+  --ringrail:#2B2E33;
+  --bandinkt:#3A4A48;
+}}
+
+/* -------------------------------------------------------------- de hero --- */
+/* Eén blok bovenaan dat de dag samenvat. Het verloop volgt het tijdstip: 's
+   ochtends warm, 's avonds koel. Dat is geen effect maar oriëntatie — je ziet
+   aan de kleur of je aan het begin of aan het eind van je dag staat. */
+.hero{position:relative;border-radius:22px;padding:20px 18px 18px;overflow:hidden;
+  background:var(--herobg,linear-gradient(155deg,#EEF3F1,#E3ECE9));
+  border:1px solid var(--lijn);margin-bottom:14px}
+.hero>*{position:relative;z-index:1}
+.hero .heroglans{position:absolute;inset:auto -30% -55% -30%;height:220px;z-index:0;
+  background:radial-gradient(50% 60% at 50% 0%,var(--heroglow,rgba(255,255,255,.55)),transparent 70%);
+  pointer-events:none}
+.hero h2{font-size:1.35rem}
+.heroboven{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.heroring{display:flex;align-items:center;gap:18px;margin-top:12px}
+.heroring svg{flex:0 0 auto}
+.herocijfers{min-width:0;flex:1 1 auto}
+
+/* De drie macro-staafjes onder de ring. */
+.macros{display:flex;gap:10px;margin-top:14px}
+.macro{flex:1 1 0;min-width:0}
+.macro .staaf{height:6px;border-radius:999px;background:var(--ringrail);overflow:hidden;margin-top:5px}
+.macro .staaf>i{display:block;height:100%;border-radius:999px;transition:width .35s ease}
+.macro.eiwit .staaf>i{background:var(--eiwit)} .macro.koolh .staaf>i{background:var(--koolh)}
+.macro.vet   .staaf>i{background:var(--vet)}
+.macro b{font-family:var(--serif);font-weight:500;font-size:1.05rem;color:var(--ink)}
+
+/* ------------------------------------------------------- de dagenstrook --- */
+/* Veertien dagen naast elkaar. Dit is het antwoord op een scherm vol nullen:
+   één dag zegt niets, veertien dagen zeggen of je bezig bent. */
+.strook{display:flex;gap:3px;align-items:flex-end;height:40px;margin-top:14px}
+/* Een dag zonder iets is óók informatie: hij hoort zichtbaar te zijn als lege
+   plek, niet weggepoetst tot bijna-wit. */
+.strook>i{flex:1 1 0;border-radius:4px;background:var(--ringrail);min-height:7px;
+  transition:height .3s,background .3s;opacity:1;
+  box-shadow:inset 0 0 0 1px rgba(20,18,14,.06)}
+@media(prefers-color-scheme:dark){.strook>i{box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}}
+.strook>i.gewogen{background:var(--bandinkt)}
+.strook>i.gelogd{background:var(--k)}
+.strook>i.beide{background:var(--heldergoed)}
+.strook>i.nu{outline:1.5px solid var(--ink);outline-offset:2px;opacity:1}
+
+/* ---------------------------------------------------------- maaltijden --- */
+/* Vier vakken die er altijd staan, ook als ze leeg zijn. Een leeg vak met een
+   naam en een uitnodiging is iets anders dan een leeg scherm. */
+/* Eén kolom tot ver in het tabletgebied. Twee smalle kolommen naast elkaar
+   op een telefoon knippen de namen af, en dat was precies wat er misging. */
+.maaltijden{display:grid;grid-template-columns:1fr;gap:10px;margin-top:4px}
+@media(min-width:560px){.maaltijden{grid-template-columns:1fr 1fr}}
+.maal{border:1px solid var(--lijn);border-radius:16px;padding:13px 14px;background:var(--vlak);
+  text-align:left;width:100%;display:block;cursor:pointer;
+  transition:transform .12s,box-shadow .18s,border-color .18s}
+.maal:hover{transform:translateY(-1px);box-shadow:var(--schaduw)}
+.maal:active{transform:scale(.995)}
+.maal .maalkop{display:flex;align-items:center;gap:8px}
+.maal .stip{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+.maal.ochtend .stip{background:var(--ochtend)} .maal.middag .stip{background:var(--middag)}
+.maal.avond   .stip{background:var(--avond)}   .maal.tussen{border-style:dashed}
+.maal.tussen  .stip{background:var(--tussen)}
+.maal.gevuld.ochtend{border-color:var(--ochtend);background:var(--ochtendbg)}
+.maal.gevuld.middag{border-color:var(--middag);background:var(--middagbg)}
+.maal.gevuld.avond{border-color:var(--avond);background:var(--avondbg)}
+.maal.gevuld.tussen{border-color:var(--tussen);background:var(--tussenbg);border-style:solid}
+.maal .maalgetal{font-family:var(--serif);font-size:1.5rem;color:var(--ink);line-height:1.1;
+  font-variant-numeric:tabular-nums}
+
+/* ------------------------------------------------------- de grote knop --- */
+/* Eén handeling springt eruit. In de oude opzet was loggen een tekstvak tussen
+   twee andere tekstvakken; nu is het de enige knop met een vulling. */
+.hoofdknop{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;
+  border:0;border-radius:16px;padding:15px 18px;background:var(--k);color:#FFF8EE;
+  font-size:1rem;font-weight:600;cursor:pointer;box-shadow:var(--schaduw);
+  transition:transform .12s,filter .18s}
+.hoofdknop:hover{filter:brightness(1.08)} .hoofdknop:active{transform:scale(.985)}
+@media(prefers-color-scheme:dark){.hoofdknop{color:#101215}}
+
+/* De snelle ingangen eronder: foto, spraak, bibliotheek, streepjescode. */
+.snel{display:flex;gap:8px;margin-top:9px}
+.snel>button,.snel>.snelknop{flex:1 1 0;border:1px solid var(--lijn);border-radius:13px;background:var(--vlak);
+  padding:11px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;
+  font-size:.7rem;color:var(--grijs);transition:border-color .18s,transform .12s}
+.snel>button:hover,.snel>.snelknop:hover{border-color:var(--lijn2);transform:translateY(-1px)}
+.snel>button span:first-child,.snel>.snelknop span:first-child{font-size:1.15rem;line-height:1}
+.hoofdknop:disabled{opacity:.6;cursor:progress}
+
+/* ------------------------------------------------------------ het vak ---- */
+.vlaggetje{display:inline-flex;align-items:center;gap:5px;border-radius:999px;
+  padding:3px 9px;font-size:.72rem;font-weight:600;line-height:1.5}
+.vlaggetje.goed{background:var(--goedbg);color:var(--goed)}
+.vlaggetje.let{background:var(--letbg);color:var(--let)}
+.vlaggetje.rust{background:var(--vlak2);color:var(--grijs)}

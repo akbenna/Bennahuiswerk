@@ -102,7 +102,7 @@ export function App() {
         <div id="inhoud">
           {tab === 'vandaag' && (
             <Vandaag
-              a={a} dag={dag} regels={regelsVandaag} datum={datum}
+              a={a} dag={dag} regels={regelsVandaag} dagen={k.dagenkaart} datum={datum}
               eiwitPerKg={profiel.eiwit_g_per_kg} token={k.sessie.token}
               zetDatum={zetDatum}
               zetDagveld={(veld, waarde) =>
