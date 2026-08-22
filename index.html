@@ -6,7 +6,7 @@
 <title>BennaHub</title>
 <meta name="theme-color" content="#F6F4F0" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#141518" media="(prefers-color-scheme: dark)">
-<meta name="description" content="De apps van het gezin Benna: huiswerk, islam leren, Arabisch, computers en code, spelletjes, geloofsstudie, de Koran uit je hoofd en de Academie.">
+<meta name="description" content="De apps van het gezin Benna: huiswerk, islam leren, Arabisch, computers en code, spelletjes, geloofsstudie, de Koran uit je hoofd, de energiebalans en de Academie.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preload" href="fonts/amiri-400.woff2" as="font" type="font/woff2" crossorigin>
@@ -42,6 +42,10 @@
   --geloof:#5B3B7A;    --geloof-bg:#EFE8F6;
   --koran:#3B4A8F;     --koran-bg:#E3E7F6;
   --academie:#7E5300;  --academie-bg:#F8EFD4;
+  /* Leisteen, en als enige onverzadigd. De zeven leerapps zijn gekleurd omdat
+     een kind een tegel moet kunnen herkennen; Kalibratie is een meetinstrument
+     voor een volwassene en mag daar op het beginscherm ook naar uitzien. */
+  --kalibratie:#42545E; --kalibratie-bg:#E3EAEE;
 
   --goed:#2F6B1F; --let:#8A5A00; --fout:#A32F2A;
 
@@ -67,6 +71,7 @@
     --geloof:#C9A6E8;    --geloof-bg:#2A2136;
     --koran:#A3B0EE;     --koran-bg:#1D2240;
     --academie:#E9BC55;  --academie-bg:#31280F;
+    --kalibratie:#9EB6C2; --kalibratie-bg:#1E272C;
 
     --goed:#8FD268; --let:#E9BC55; --fout:#F09B95;
 
@@ -93,10 +98,11 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(-
 header{padding:56px 0 0}
 .merk{font-family:var(--serif);font-size:2.6rem;color:var(--ink);letter-spacing:-.032em;line-height:1}
 .merk .b{font-weight:600}
-/* Een streep in de acht kleuren van de acht ingangen, in dezelfde volgorde als
-   ze hieronder staan: eerst de vijf van de kinderen, dan de drie van de groten. */
+/* Een streep in de negen kleuren van de negen ingangen, in dezelfde volgorde
+   als ze hieronder staan: eerst de vijf van de kinderen, dan de vier van de
+   groten. */
 .regenboog{height:5px;border-radius:9999px;margin-top:16px;max-width:280px;
-  background:linear-gradient(90deg,var(--huiswerk) 0 12.5%,var(--islam) 12.5% 25%,var(--arabisch) 25% 37.5%,var(--code) 37.5% 50%,var(--spel) 50% 62.5%,var(--geloof) 62.5% 75%,var(--koran) 75% 87.5%,var(--academie) 87.5% 100%)}
+  background:linear-gradient(90deg,var(--huiswerk) 0 11.11%,var(--islam) 11.11% 22.22%,var(--arabisch) 22.22% 33.33%,var(--code) 33.33% 44.44%,var(--spel) 44.44% 55.56%,var(--geloof) 55.56% 66.67%,var(--koran) 66.67% 77.78%,var(--kalibratie) 77.78% 88.89%,var(--academie) 88.89% 100%)}
 .lede{margin-top:14px;font-family:var(--serif);font-size:1.14rem;line-height:1.55;color:var(--muted);max-width:46ch}
 
 main{flex:1;padding:38px 0 0}
@@ -290,7 +296,7 @@ const WOLK = (function(){
   return { rpc };
 })();
 
-/* De acht ingangen. Ze staan hier als gegevens en niet als HTML, want de lijst
+/* De negen ingangen. Ze staan hier als gegevens en niet als HTML, want de lijst
    die je te zien krijgt hangt af van wie je bent. */
 const APPS = [
  {id:'huiswerk', naam:'Huiswerk', href:'huiswerk/', ico:'iconen/huiswerk.svg', k:'huiswerk', groep:'kind',
@@ -327,6 +333,11 @@ const APPS = [
   oud:'Rasikh', ar:'رَاسِخ', wie:'Abdelkader',
   zin:'De Koran uit je hoofd leren en — dat is het moeilijke deel — vasthouden. Zes stappen per aya, en een systeem dat pas nieuwe stof geeft als de herhalingen bij zijn.',
   detail:['Voor volwassenen','25 minuten per dag','Herhalen op ritme','Verwarpunten apart']},
+
+ {id:'kalibratie', naam:'Energiebalans', href:'kalibratie/', ico:'iconen/kalibratie.svg', k:'kalibratie', groep:'groot',
+  oud:'Kalibratie', ar:'', wie:'Abdelkader',
+  zin:'Het dagelijks verbruik gemeten uit de gewichtstrend in plaats van geschat uit een formule — met het interval erbij. Vaste maaltijden worden één keer geijkt en schuiven daarna mee met wat je van de olie en de melk weet.',
+  detail:['Voor volwassenen','Elke ochtend wegen','Interval bij elk getal','Marokkaans en Turks','Werkt zonder internet']},
 
  {id:'academie', naam:'Academie', href:'huiswerk/cursussen/kompas.html', ico:'iconen/academie.svg', k:'academie', groep:'groot',
   wie:'Vanaf de bovenbouw',
@@ -722,6 +733,24 @@ const UITLEZERS = {
               regels: [['Aya vast', Object.keys(k).length],
                        ['Te herhalen', Object.values(k).filter(x => x && x.due && new Date(x.due) <= new Date()).length],
                        ['Verwarpunten', Object.keys(d.verwarring || {}).length]] }];
+  },
+  /* Energiebalans: één gebruiker. Hier staat bewust géén caloriedoel in het
+     overzicht — dat getal hoort thuis in de app, naast zijn interval, en niet
+     los in een tabel waar het als een meting oogt. Wat hier telt is of de
+     reeks doorloopt: zonder dagelijkse weging rekent het model niets uit. */
+  kalibratie(d){
+    const dagen = d.dagen || {};
+    const wegingen = Object.keys(dagen).filter(k => dagen[k].gewicht != null).sort();
+    const gelogd = Object.keys(dagen).filter(k => (dagen[k].entries || []).length);
+    const laatsteW = wegingen.length ? dagen[wegingen[wegingen.length - 1]].gewicht : null;
+    const doel = (d.profiel || {}).doelGewicht;
+    const alles = [...wegingen, ...gelogd].sort();
+    return [{ wie: 'Abdelkader',
+              laatst: alles.length ? alles[alles.length - 1] : null,
+              regels: [['Gewicht', laatsteW == null ? '—' : String(laatsteW).replace('.', ',') + ' kg'],
+                       ['Te gaan', (laatsteW == null || doel == null) ? '—' : (laatsteW - doel).toFixed(1).replace('.', ',') + ' kg'],
+                       ['Wegingen', wegingen.length],
+                       ['Dagen gelogd', gelogd.length]] }];
   },
   /* Spelletjes: records. */
   raha(d){

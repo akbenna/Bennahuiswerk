@@ -1,6 +1,6 @@
 # BennaHub
 
-Eén startpagina, acht apps. Alles is statische HTML: geen build-stap, geen server,
+Eén startpagina, negen apps. Alles is statische HTML: geen build-stap, geen server,
 geen dependencies behalve de Latijnse letters van Google Fonts — het Arabisch
 staat in de repo zelf. Wat hier staat, is wat er draait.
 
@@ -18,6 +18,11 @@ rasikh/             Koran uit je hoofd — memoriseren en vasthouden (voor volwa
   index.html          de app
   tekst/              de hele Koran: 114 soera's, 6236 aya, plus de verwarpunten
   audio/              recitatie per aya, op te halen met het script dat er staat
+kalibratie/         Energiebalans — verbruik gemeten uit de gewichtstrend (volwassenen)
+  index.html          de app: rekenkern en zeven schermen; gegevens in eigen
+                      kal_*-tabellen in het Supabase-project van ProVita
+  VERANTWOORDING.md   elke rekenregel met zijn bron en zijn beperking
+  manifest.webmanifest, sw.js, icoon.svg, icoon-180.png
 iconen/             één pictogram per app, plus het script dat er PNG's van maakt
 fonts/              Amiri, het Arabische lettertype van alle apps
 ```
@@ -39,6 +44,7 @@ app ís, in het Nederlands.
 | `spellen/` | Spelletjes | Raha · رَاحَة | Spelletjes |
 | `sanad/` | Geloofsstudie | Sanad · سند | Geloofsstudie |
 | `rasikh/` | Koran uit je hoofd | Rasikh · رَاسِخ | Koran |
+| `kalibratie/` | Energiebalans | Kalibratie | Energiebalans |
 | — | Academie | — | — |
 
 De mapnamen zijn niet meegegaan. Die staan in bladwijzers, in service workers,
@@ -60,8 +66,13 @@ beginscherm. Verander je een SVG, draai dan `node iconen/maak-png.mjs` en commit
 beide bestanden samen. Zie `iconen/LEESMIJ.md`.
 
 De indeling van de startpagina volgt dezelfde gedachte: bovenaan de vijf apps van
-de kinderen, daaronder de drie van de groten. De Academie stond bij de kinderen
+de kinderen, daaronder de vier van de groten. De Academie stond bij de kinderen
 terwijl er "voor de groten" op de kaart zelf stond; die is nu verhuisd.
+
+Eén tegel wijkt bewust af. Energiebalans is leisteengrijs, de enige onverzadigde
+kleur van de negen. De zeven leerapps zijn gekleurd omdat een kind een tegel moet
+kunnen herkennen voordat het vlot leest; die app is een meetinstrument voor een
+volwassene en mag daar op het beginscherm ook naar uitzien.
 
 ## Het Arabische lettertype
 
@@ -146,7 +157,7 @@ er onderweg niets niet meer. De startpagina zet al wel `bennahub.wie` in
 
 ## Centrale opslag
 
-Islam leren, Geloofsstudie en Arabisch slaan voortgang op in `localStorage` én centraal, zodat je op elk
+Islam leren, Geloofsstudie, Arabisch en Energiebalans slaan voortgang op in `localStorage` én centraal, zodat je op elk
 toestel verder gaat waar je gebleven was. De opslag loopt via het bestaande
 Supabase-project, tabel `bennahub_state`, met vier `SECURITY DEFINER`-functies:
 
@@ -180,6 +191,10 @@ weegt zwaarder dan het vermijden van die dubbeling.
 - **Islam leren** — één gezinsaccount met daarbinnen een profiel per kind. In te
   stellen onder *Ouder*; bij een lege installatie staat er een knop klaar die de
   vier kinderen in één keer aanmaakt.
+- **Energiebalans** — één account, voor Abdelkader. In te stellen achter de chip
+  rechtsboven. Synchroniseren is hier geen gemak maar een voorwaarde: er wordt
+  in de badkamer gewogen en op de laptop gelogd, en twee losse reeksen leveren
+  geen trend op.
 - **Huiswerk** — houdt zijn eigen bestaande inlog per kind. Ongewijzigd.
 
 ## Islam leren
@@ -467,6 +482,77 @@ geheugenspel is *minder* beter, dus daar wint het laagste getal.
 
 In de huiswerkapp blijven de twee knoppen staan, inclusief de instelling
 *spelletjes pas na het dagdoel*; ze verwijzen nu naar `/spellen/`.
+
+## Energiebalans — meten in plaats van schatten
+
+De app heet in de map `kalibratie/` en op de kaart *Energiebalans*, en dat
+verschil is het hele idee. Bestaande apps tonen een caloriedoel dat uit een
+formule rolt, met twee decimalen en zonder voorbehoud, alsof het een meting is.
+Het is een gok met een spreiding van vele honderden kilocalorieën, en wie er zijn
+dag op inricht en niets ziet gebeuren, concludeert dat er iets mis is met hem in
+plaats van met het getal.
+
+Hier wordt het verbruik uitgerekend uit wat er werkelijk gebeurt. Over een venster
+van achtentwintig dagen loopt een kleinste-kwadratenregressie over de ochtend­
+wegingen; die helling maal 7.700 kcal per kilo, opgeteld bij de gemiddelde
+gelogde inname, is het verbruik. Daar hoort een betrouwbaarheidsinterval bij, en
+dat interval staat groot in beeld — niet het puntgetal. Zijn er minder dan zeven
+wegingen of minder dan zeven bruikbare registratiedagen, dan geeft de app geen
+uitkomst en legt ze uit wat er ontbreekt. Dat weigeren is functionaliteit.
+
+Drie dingen zitten hard in de code en zijn geen instelling:
+
+- het doel zakt nooit onder de berekende ruststofwisseling;
+- gaat de trend sneller dan één kilo per week, dan luidt het advies **méér** eten;
+- actieve energie uit Garmin of Apple wordt nooit bij het doel opgeteld — bij lage
+  intensiteit zijn die waarden stelselmatig dertig tot zestig procent te hoog, en
+  wie ze bijtelt eet precies het tekort op dat hij denkt te maken.
+
+Dagen onder 1.200 kcal worden geteld en getoond, maar niet meegerekend en nooit
+als succes gepresenteerd: dat is vrijwel altijd een onvolledige registratie.
+
+**Recepten die meeschuiven.** Een samengesteld gerecht dat elke dag terugkomt —
+de tonijnsalade, de cappuccino — is één keer geijkt en rekent daarna mee met wat
+er in het profiel staat over de olijfolie en de melk. Weeg je één keer af hoeveel
+olie er werkelijk in gaat, dan verschuiven álle porties, ook die van vorige week.
+Zolang die twee niet gewogen zijn, staan de betreffende recepten op een D en niet
+op een B; de app doet niet alsof.
+
+Elke waarde draagt zo'n graad: **A** etiket en gewogen, **B** etiket met een
+geschatte portie, **C** databasewaarde, **D** ruwe schatting. De Marokkaanse en
+Turkse gerechten staan bijna allemaal op D. Dat is eerlijker dan een cijfer met
+één decimaal, en het is nog altijd meer dan de mainstream apps bieden, die deze
+keuken domweg niet kennen.
+
+Onder *Model* staat ook een lijstje **Wat het model nog mist**, op volgorde van
+onzekerheid. De grootste post van de dag is de olijfolie: tussen veertig en
+zeventig gram zit 265 kcal. Daarna de melk per cappuccino, bij vier of vijf op een
+werkdag de grootste onzichtbare post. De app wacht daar niet passief op maar
+vraagt erom.
+
+Er staat één contra-intuïtieve mededeling in beeld die er hoort te staan. Als de
+formuleschatting fors hoger uitvalt dan het gemeten verbruik, registreert de
+gebruiker stelselmatig te laag — meestal olie, brood, sauzen en samengestelde
+gerechten. Dat maakt het advies niet ongeldig: het model rekent in *gelogde*
+calorieën, en zolang de registratiegewoonte gelijk blijft, klopt het doel in
+gelogde eenheden. Staat dat er niet bij, dan verliest iemand het vertrouwen in
+zijn eigen cijfers zodra hij de twee getallen naast elkaar ziet.
+
+De rekenkern (`bmr`, `palUitStappen`, `regressie`, `analyse`) staat als losse,
+pure functies bovenaan het scriptblok: geen scherm, geen opslag. Zo is hij na te
+rekenen met een verzonnen reeks, en later te hergebruiken. De grafieken zijn met
+de hand getekende SVG; een grafiekbibliotheek zou drie megabyte kosten voor drie
+figuren en dan nog assen tekenen die van dit ontwerp niets weten.
+
+**Wat er nog niet in zit.** De klinische nulmeting — bloeddruk, nuchter glucose of
+HbA1c, lipiden, ALAT en GGT met het oog op MASLD, TSH, vitamine D, middelomtrek,
+STOP-BANG en SCORE2 — staat niet in het profiel. En er is geen onderhoudsfase:
+twintig kilo verliezen zonder gedefinieerd onderhoudsprotocol is waar de meeste
+trajecten stranden, niet in de afvalfase.
+
+De app staat bij de groten en is voor kinderen niet zichtbaar. Dat is geen
+smaakkwestie: dagelijks wegen en een calorietekort zijn voor een kind van acht tot
+vijftien een bekende risicofactor, en de rest van de hub is juist wél voor hen.
 
 ## Het ouderscherm zit op slot
 

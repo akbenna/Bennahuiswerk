@@ -16,9 +16,13 @@ scherm van zestien pixels breed en ook voor wie nog niet vlot leest.
 | `spelletjes.svg` | Spelletjes | terracotta | een dobbelsteen |
 | `geloofsstudie.svg` | Geloofsstudie | paars | een boekrol |
 | `koran.svg` | Koran uit je hoofd | indigo | een boek met leeslint |
+| `kalibratie.svg` | Energiebalans | leisteen | een balans met twee schalen |
 | `academie.svg` | Academie | oker | een baret |
 
 De kleuren komen uit het palet van de hub (`index.html`, de lichte variant).
+Leisteen is er als enige onverzadigd bij: de zeven leerapps zijn gekleurd omdat
+een kind een tegel moet kunnen aanwijzen, Energiebalans is een meetinstrument
+voor een volwassene en herkenbaar juist doordat hij niet meedoet.
 Het merk is altijd crème (`#FFF8EE`) op een vol gekleurd vlak: dat haalt ruim
 contrast en het blijft leesbaar als het besturingssysteem er een rondje van
 maakt.
