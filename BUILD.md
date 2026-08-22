@@ -18,16 +18,16 @@ npm run controle   typen, proeven, bouw en de CSP-proef achter elkaar
 | `npm run typen` | `tsc --noEmit` over alles in `src/`. Levert niets op, controleert alles. |
 | `npm run proef` | Vitest. Onder meer de gouden waarden van de rekenkern. |
 | `npm run build` | Typen én bouw; het resultaat staat in `dist/`. |
-| `npm run csp` | Zet `dist/` achter een server die de headers uit `vercel.json` meestuurt en laadt elke omgebouwde app in Chromium. Meldt elke CSP-overtreding, en speelt bij Spelletjes een potje om te zien of het ook wérkt. |
-| `npm run gouden-waarden` | Genereert de gouden waarden opnieuw uit de oude code — die van de rekenkern én die van de herhalingsplanner. Alleen nodig als die veranderen, en dat hoort niet te gebeuren. |
+| `npm run csp` | Zet `dist/` achter een server die de headers uit `vercel.json` meestuurt en laadt elke omgebouwde app in Chromium. Meldt elke CSP-overtreding, en speelt bij Spelletjes een potje, loopt bij Koran uit je hoofd een aya door en bij Geloofsstudie een hele week plus een kaart, om te zien of het ook wérkt. |
+| `npm run gouden-waarden` | Genereert de gouden waarden opnieuw uit de oude code: de rekenkern, de herhalingsplanner en de kaartplanner van Geloofsstudie. Alleen nodig als die veranderen, en dat hoort niet te gebeuren. |
 
 ## De verbouwing is halverwege, en dat staat in de code
 
 Bovenin `vite.config.ts` staan twee lijsten:
 
 ```ts
-const NOG_NIET_OMGEBOUWD = ['huiswerk', 'noer', 'arabisch', 'bunyan', 'sanad']
-const OMGEBOUWD = ['start', 'health', 'spellen', 'rasikh']
+const NOG_NIET_OMGEBOUWD = ['huiswerk', 'noer', 'arabisch', 'bunyan']
+const OMGEBOUWD = ['start', 'health', 'spellen', 'rasikh', 'sanad']
 ```
 
 Wat in de eerste lijst staat, draait nog als los HTML-bestand en gaat onveranderd

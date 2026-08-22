@@ -145,6 +145,36 @@ const PAGINAS = [
       return null
     },
   },
+  {
+    pad: '/sanad/', kop: 'Geloofsstudie', minKnoppen: 7, plaat: 'sanad',
+    /* De hele weekgang in het klein: instellen, door de vijf stappen, de toets
+       beantwoorden, de week afronden en dan een kaart beoordelen. Dat raakt de
+       drie dingen die bij het ombouwen stuk hadden kunnen gaan — het programma
+       uit drie gegevensbestanden, de faseovergang, en de kaartplanner. */
+    async doe(pagina) {
+      await pagina.getByRole('button', { name: 'Beginnen' }).click()
+      for (let n = 0; n < 4; n++) await pagina.getByRole('button', { name: 'Verder' }).click()
+      const opties = pagina.locator('.opt')
+      if (await opties.count() < 2) return 'de toets kwam niet op het scherm'
+      await opties.first().click()
+      const oordeel = await pagina.locator('.note .meta').first().textContent()
+      if (!/Juist|Nog niet/.test(oordeel ?? '')) return `geen beoordeling: ${oordeel}`
+      await pagina.getByRole('button', { name: 'Week afronden' }).click()
+      const af = await pagina.locator('.tag.green').first().textContent()
+      if (!/Week 1 afgerond/.test(af ?? '')) return `week werd niet afgerond: ${af}`
+
+      await pagina.getByRole('button', { name: 'Kaarten' }).click()
+      const rij = await pagina.locator('.meta').last().textContent()
+      if (!/in de rij/.test(rij ?? '')) return `geen kaartenrij: ${rij}`
+      await pagina.getByRole('button', { name: 'Toon antwoord' }).click()
+      if (!await pagina.locator('.flash .a').count()) return 'het antwoord bleef verborgen'
+      const voor = Number((rij ?? '').match(/\d+/)?.[0] ?? 0)
+      await pagina.getByRole('button', { name: /^Goed/ }).click()
+      const na = Number((await pagina.locator('.meta').last().textContent() ?? '').match(/\d+/)?.[0] ?? 0)
+      if (na !== voor - 1) return `de rij liep niet door: ${voor} → ${na}`
+      return null
+    },
+  },
 ]
 
 let mis = 0

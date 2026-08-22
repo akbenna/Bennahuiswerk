@@ -9,7 +9,7 @@ niet is omgebouwd draait onveranderd als los HTML-bestand en gaat zo mee naar de
 bouw; er is dus geen moment waarop de site half stuk staat. Zie BUILD.md voor
 hoe je bouwt en waarom er nu wél een bouwstap is.
 
-Om: de startpagina, `health/`, `spellen/` en `rasikh/`. Nog niet om: de vijf andere.
+Om: de startpagina, `health/`, `spellen/`, `rasikh/` en `sanad/`. Nog niet om: de vier andere.
 
 ```
 index.html          de startpagina: aanmelden, de apps van die persoon, ouderoverzicht
@@ -21,6 +21,7 @@ arabisch/index.html Arabisch — lezen, begrijpen en spreken, met een jaarprogra
 bunyan/index.html   Computers & Code — een pc bouwen en leren programmeren (vanaf 10)
 spellen/index.html  Spelletjes — de speelhoek, los van de huiswerkapp
 sanad/index.html    Geloofsstudie — achtentwintig weken islamitische wetenschappen
+                      de Vite-ingang; de app zelf staat in src/sanad/
 rasikh/             Koran uit je hoofd — memoriseren en vasthouden (voor volwassenen)
   index.html          de app
   tekst/              de hele Koran: 114 soera's, 6236 aya, plus de verwarpunten
@@ -40,6 +41,9 @@ src/
   spellen/            dertien spellen, de opslag en het samenvoegen
   rasikh/             de herhalingsplanner, de tekst, de recitatie, zes schermen
     planning.proef.ts   118 vergelijkingen tegen de oude planner
+  sanad/              het programma, de kaartplanner, zeven schermen
+    gegevens/           de leerstof: curriculum, kaarten, bronnen, lexicon, matn
+    sanad.proef.ts      30 vergelijkingen tegen de oude app, stof én planner
 public/               fonts, iconen, en de statische bestanden per app
 gereedschap/          de bouw- en proefscripts, en de oude app als ijkpunt
 iconen/             één pictogram per app, plus het script dat er PNG's van maakt
@@ -618,19 +622,41 @@ de oude stand gewoon via een ander toestel terug.
 ## De AI-functies in Geloofsstudie
 
 *Doorvragen* en *laat meelezen* praten rechtstreeks met de Anthropic-API vanuit de
-browser. Daarvoor is een eigen sleutel nodig, in te vullen onder *Instellingen*;
-die blijft in `localStorage` van dat ene toestel en gaat niet mee naar de centrale
-opslag. Zonder sleutel werkt de rest van de app volledig.
+browser, via de officiële SDK met `dangerouslyAllowBrowser`. Daarvoor is een eigen
+sleutel nodig, in te vullen onder *Instellingen*; die blijft in `localStorage` van
+dat ene toestel en gaat niet mee naar de centrale opslag. Zonder sleutel werkt de
+rest van de app volledig.
 
-Wil je dat later netter: zet het geheel op Vercel en verplaats de aanroep naar een
-serverless functie, dan hoeft de sleutel de browser niet meer in.
+Het model is `claude-opus-5` met adaptief denken (`thinking: {type: 'adaptive'}`) —
+de vragen gaan over meningsverschil tussen scholen, over ketens en over wat wél en
+niet in een tekst staat, en dat is het werk waar doordenken vóór antwoorden verschil
+maakt. Omdat de denkstappen uit hetzelfde budget komen als het antwoord, staat
+`max_tokens` op 4000 terwijl het antwoord zelf op 150–300 woorden gevraagd wordt.
+Het antwoord komt stromend binnen en verschijnt terwijl het geschreven wordt; wie
+zich vergist kan afbreken. De SDK zelf wordt pas opgehaald bij de eerste vraag —
+zij is groter dan de hele leerstof bij elkaar, en de meeste avonden wordt er niets
+gevraagd.
+
+Voor `/sanad/` staat daarom `https://api.anthropic.com` in de `connect-src` van de
+CSP in `vercel.json`. Dat is de enige app met die uitzondering.
+
+**De afweging.** Een sleutel in een browser is voor een dienst mét gebruikers fout:
+die hoort op een server, zoals bij BennaHealth, waar de edge function hem draagt.
+Hier is het één persoon met zijn eigen rekening, en dan is de ruil verdedigbaar:
+geen tussenserver die de vragen zou kunnen meelezen, in ruil voor een sleutel die
+op dit toestel staat. Wie de app deelt, moet die keuze omdraaien — verplaats de
+aanroep naar een edge function, dan hoeft de sleutel de browser niet meer in.
 
 ## Onderhoud
 
 De huiswerkapp bouw je zoals altijd: bewerk `huiswerk/index.dev.html` en compileer
-naar `huiswerk/index.html` (zie `BUILD.md`). De andere zes apps zijn gewone HTML — openen, bewerken, klaar. In Islam leren staat de leerstof
+naar `huiswerk/index.html` (zie `BUILD.md`). Islam leren, Arabisch en Computers &
+Code zijn nog gewone HTML — openen, bewerken, klaar. De omgebouwde apps staan in
+`src/`; daar geldt de bouwstap uit `BUILD.md`. In Islam leren staat de leerstof
 bovenaan het scriptblok als gewone lijsten (`MODULES`, `WUDU`, `STAPPEN`, `HIFZ`,
 `DUAS`); wie de inhoud wil aanpassen hoeft de schermcode niet aan te raken. In
 Koran uit je hoofd zit de stof niet in het bestand maar in `rasikh/tekst/`; de app zelf bevat
-alleen de leerlogica. Let bij alle apps op de terugpijl naar `../`; die
+alleen de leerlogica. Bij Geloofsstudie staat de leerstof in `src/sanad/gegevens/`
+— curriculum, kaarten, bronnen, lexicon en de brontekstfragmenten, elk als een
+eigen bestand met een type erboven; wie de inhoud aanpast raakt geen schermcode aan. Let bij alle apps op de terugpijl naar `../`; die
 veronderstelt dat de app in een submap onder de hub staat.
