@@ -64,6 +64,48 @@ Geen onderdeel van Kalibratie, wel jouw systeem.
 
 ---
 
+## De licentiepoort
+
+NEVO mag alleen uitgeleverd worden zolang de voorwaarden nagelopen zijn. In
+`nevo_versies` staan daarom twee vlaggen per versie, `is_actief` en
+`licentie_gecontroleerd`, met een check-constraint die "actief maar niet
+gecontroleerd" onmogelijk maakt. De view `nevo_actief` toont alleen rijen die
+door beide vlaggen komen.
+
+Die poort deed lange tijd niets. `kal_nevo_zoek`, `kal_portiematen` en
+`kal_gerecht` lazen `nevo_foods` rechtstreeks, dus de vlag omzetten had de app
+gewoon door laten draaien — de schakelaar zat er wel, maar hij zat nergens aan
+vast. Dat is nu rechtgezet: alle zes de functies die NEVO aanraken lezen via
+`nevo_actief`.
+
+Bij het naspelen bleek er nog iets tweede: met een lege bron brak
+`kal_nevo_zoek` af op `ln(0)` in de idf-berekening. De poort maakte de app dan
+niet stil maar stuk. Ook dat is opgelost; nul producten geeft nu nul resultaten.
+
+**De schakelaar omzetten** gaat via `is_actief`, niet via
+`licentie_gecontroleerd` — de constraint staat de tweede in zijn eentje niet toe:
+
+```sql
+update nevo_versies set is_actief = false where versie = '2025/9.0';
+```
+
+Daarna vindt het zoeken niets, tonen gerechten nul kcal met "ongekoppeld"
+erbij, en meldt `kal_portiematen` dat het product niet in het bestand staat.
+De tabel `nevo_foods` blijft onaangeroerd; terugzetten is dezelfde regel met
+`true`.
+
+Wie hier een functie bij bouwt: lees `nevo_actief`, nooit `nevo_foods`. Deze
+query laat zien of dat ergens misgaat:
+
+```sql
+select p.proname
+from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+where n.nspname = 'public' and p.prokind = 'f'
+  and regexp_replace(p.prosrc, '--[^\n]*', '', 'g') ~* '\m(from|join)\s+(public\.)?nevo_foods\M';
+```
+
+---
+
 ## Overzicht
 
 | Onderdeel | Waar | Wanneer |
@@ -72,6 +114,7 @@ Geen onderdeel van Kalibratie, wel jouw systeem.
 | `Kalibratie — weekbericht` | geplande Claude-taak → `kal_weekcijfers` | maandag 08:00 |
 | `kal-ai` | edge function, Sonnet 5 | op aanroep vanuit de app |
 | `kal_nevo_zoek` | één zoekfunctie, gedeeld door de app en `kal-ai` | bij elk zoeken |
+| `nevo_actief` | de licentiepoort waar alle NEVO-toegang langs gaat | — |
 | 15 tabellen, 18 functies | schema `public`, prefix `kal_` | — |
 
 Alles staat of valt bij één ding dat geen enkele automatisering kan overnemen: de ochtendweging. De prikkel herinnert eraan, het weekbericht rekent ermee, maar niemand kan hem voor je verzinnen.
