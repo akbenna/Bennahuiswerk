@@ -18,7 +18,7 @@ npm run controle   typen, proeven, bouw en de CSP-proef achter elkaar
 | `npm run typen` | `tsc --noEmit` over alles in `src/`. Levert niets op, controleert alles. |
 | `npm run proef` | Vitest. Onder meer de gouden waarden van de rekenkern. |
 | `npm run build` | Typen én bouw; het resultaat staat in `dist/`. |
-| `npm run csp` | Zet `dist/` achter een server die de headers uit `vercel.json` meestuurt en laadt de app in Chromium. Meldt elke CSP-overtreding. |
+| `npm run csp` | Zet `dist/` achter een server die de headers uit `vercel.json` meestuurt en laadt elke omgebouwde app in Chromium. Meldt elke CSP-overtreding, en speelt bij Spelletjes een potje om te zien of het ook wérkt. |
 | `npm run gouden-waarden` | Genereert `src/kalibratie/gouden-waarden.json` opnieuw uit de oude rekenkern. Alleen nodig als die verandert, en dat hoort niet te gebeuren. |
 
 ## De verbouwing is halverwege, en dat staat in de code
@@ -26,8 +26,8 @@ npm run controle   typen, proeven, bouw en de CSP-proef achter elkaar
 Bovenin `vite.config.ts` staan twee lijsten:
 
 ```ts
-const NOG_NIET_OMGEBOUWD = ['huiswerk', 'noer', 'arabisch', ...]
-const OMGEBOUWD = ['start', 'kalibratie']
+const NOG_NIET_OMGEBOUWD = ['huiswerk', 'noer', 'arabisch', 'bunyan', 'sanad', 'rasikh']
+const OMGEBOUWD = ['start', 'kalibratie', 'spellen']
 ```
 
 Wat in de eerste lijst staat, draait nog als los HTML-bestand en gaat onveranderd

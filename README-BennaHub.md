@@ -9,7 +9,7 @@ niet is omgebouwd draait onveranderd als los HTML-bestand en gaat zo mee naar de
 bouw; er is dus geen moment waarop de site half stuk staat. Zie BUILD.md voor
 hoe je bouwt en waarom er nu wél een bouwstap is.
 
-Om: de startpagina en `kalibratie/`. Nog niet om: de zeven andere.
+Om: de startpagina, `kalibratie/` en `spellen/`. Nog niet om: de zes andere.
 
 ```
 index.html          de startpagina: aanmelden, de apps van die persoon, ouderoverzicht
@@ -34,8 +34,10 @@ src/
   gedeeld/db/         de getypte databasegrens: dertig functies, één keer
   start/              de startpagina: de poort, de tegels, het ouderoverzicht
   gedeeld/            datum- en getalhulp die alle apps kunnen gebruiken
+  gedeeld/wolk.ts     aanmelden en bewaren voor de apps die dat delen
   kalibratie/         rekenkern, klinische modules, zes schermen, vier vensters
     rekenkern.proef.ts  171 vergelijkingen tegen de oude, verantwoorde uitkomsten
+  spellen/            dertien spellen, de opslag en het samenvoegen
 public/               fonts, iconen, en de statische bestanden per app
 gereedschap/          de bouw- en proefscripts, en de oude app als ijkpunt
 iconen/             één pictogram per app, plus het script dat er PNG's van maakt

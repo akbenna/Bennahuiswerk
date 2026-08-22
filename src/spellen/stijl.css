@@ -1,0 +1,126 @@
+/*
+ * DE STIJL VAN SPELLETJES
+ *
+ * Overgenomen uit de <style> van de oude spellen/index.html, ongewijzigd. Hij
+ * staat nu in een eigen bestand: geen inline stijl meer in de pagina, en dat is
+ * de voorwaarde voor een strikte Content-Security-Policy.
+ */
+@font-face{font-family:'Amiri';font-style:normal;font-weight:400;font-display:swap;
+  src:url('/fonts/amiri-400.woff2') format('woff2')}
+
+/* Dit is de speelhoek van de hub. Warmer en losser dan de rest — maar wel
+   hetzelfde huis: dezelfde letters, dezelfde kaarten. De grap zit in de
+   teksten, niet in de vormgeving; een app die zelf staat te schreeuwen wordt
+   sneller saai dan een die gewoon goed werkt. */
+:root{
+  --canvas:#F6F4F0; --surface:#FFFFFF; --surface-2:#F0EDE7; --surface-3:#E8E4DC;
+  --ink:#0D0D0D; --ink-2:#24282B; --muted:#5F5C55;
+  --line:#DAD6CE; --line-2:#C4BFB4;
+  --k:#B4442C;    --k-bg:#FBE7E0;
+  --goed:#2F6B1F; --goed-bg:#E4EFDD;
+  --let:#7E5300;  --let-bg:#F8EFD4;
+  --fout:#9F2F2D; --fout-bg:#FBE9E8;
+  --schaduw:0 1px 2px rgba(20,18,14,.05), 0 8px 24px rgba(20,18,14,.06);
+  --sans:'SF Pro Display','Helvetica Neue',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --serif:'Newsreader','Lyon Text',Georgia,serif;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;
+  --ar:'Amiri','Traditional Arabic',serif;
+  --r:12px;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --canvas:#141518; --surface:#1C1E22; --surface-2:#24262B; --surface-3:#2C2F35;
+    --ink:#F4F3F0; --ink-2:#E2E0DA; --muted:#A8A69F;
+    --line:#33363C; --line-2:#474B52;
+    --k:#F0A08A;    --k-bg:#3A1C14;
+    --goed:#8FD268; --goed-bg:#22321B;
+    --let:#E9BC55;  --let-bg:#31280F;
+    --fout:#F2938F; --fout-bg:#3A1E1D;
+    --schaduw:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.34);
+  }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:var(--canvas);color:var(--ink-2);font-family:var(--sans);font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom)}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px}
+h1,h2,h3,h4{font-family:var(--serif);color:var(--ink);letter-spacing:-.022em;line-height:1.16;margin:0;font-weight:500}
+h1{font-size:2rem} h2{font-size:1.45rem} h3{font-size:1.1rem}
+p{margin:0 0 1em} p:last-child{margin-bottom:0}
+.meta{font-family:var(--mono);font-size:.67rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.klein{font-size:.88rem;line-height:1.5;color:var(--muted)}
+b,strong{font-weight:600;color:var(--ink)}
+.ar{font-family:var(--ar);direction:rtl;unicode-bidi:isolate}
+:focus-visible{outline:2px solid var(--k);outline-offset:2px;border-radius:6px}
+
+header.top{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--canvas) 88%,transparent);
+  backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line)}
+.top-in{max-width:880px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:11px}
+.terug{text-decoration:none;color:var(--muted);font-size:1.15rem;padding:7px 9px;margin-left:-9px;border-radius:8px;background:none;border:0;cursor:pointer;font-family:var(--sans)}
+.terug:hover{color:var(--ink);background:var(--surface-2)}
+.brand{font-family:var(--serif);font-size:1.2rem;color:var(--ink)}
+.brand em{font-style:normal;font-family:var(--ar);font-size:1.05rem;color:var(--k);margin-left:7px}
+.tegen{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--muted)}
+main{padding:24px 0 80px}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;box-shadow:var(--schaduw)}
+.card.plat{box-shadow:none;background:var(--surface-2)}
+.card.kleur{background:var(--k-bg);border-color:color-mix(in srgb,var(--k) 30%,var(--line))}
+.stack>*+*{margin-top:12px}
+.rij{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.rij.tussen{justify-content:space-between}
+.midden{text-align:center}
+.tag{display:inline-block;border-radius:9999px;padding:3px 10px;font-family:var(--mono);font-size:.62rem;
+  letter-spacing:.07em;text-transform:uppercase;background:var(--surface-2);color:var(--muted);white-space:nowrap}
+.tag.k{background:var(--k-bg);color:var(--k)}
+.tag.goed{background:var(--goed-bg);color:var(--goed)}
+
+button.btn{appearance:none;font-family:var(--sans);font-size:.94rem;padding:11px 19px;border-radius:10px;
+  background:var(--k);color:#fff;border:1px solid var(--k);cursor:pointer;font-weight:500}
+@media (prefers-color-scheme:dark){ button.btn{color:#2A0F08} }
+button.btn:hover{filter:brightness(1.08)}
+button.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+button.btn.ghost:hover{background:var(--surface-2);filter:none}
+button.btn.sm{padding:7px 13px;font-size:.83rem}
+button.btn.groot{padding:14px 26px;font-size:1.05rem}
+button.btn:disabled{opacity:.4;cursor:default}
+
+/* de tegels op de startpagina */
+.tegels{display:grid;grid-template-columns:repeat(auto-fill,minmax(152px,1fr));gap:12px;margin-top:14px}
+.tegel{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;padding:16px 12px;
+  border:1px solid var(--line);border-radius:var(--r);background:var(--surface);cursor:pointer;font:inherit;color:inherit;
+  box-shadow:var(--schaduw);transition:transform .08s}
+.tegel:hover{border-color:var(--k);transform:translateY(-2px)}
+.tegel .ico{font-size:2rem;line-height:1.2}
+.tegel b{font-weight:500;color:var(--ink);font-size:.98rem}
+.tegel span{font-size:.78rem;color:var(--muted);line-height:1.35}
+.tegel .rec{margin-top:4px;font-family:var(--mono);font-size:.68rem;color:var(--k)}
+
+/* het speelveld */
+.veld{display:grid;gap:8px;margin:14px auto;max-width:340px}
+.vak{aspect-ratio:1;display:grid;place-items:center;border:1px solid var(--line);border-radius:10px;
+  background:var(--surface);cursor:pointer;font-size:1.5rem;user-select:none;font-family:inherit;color:var(--ink);padding:0}
+.vak:hover{border-color:var(--k)}
+.vak.op{background:var(--k-bg);border-color:var(--k)}
+.vak.goed{background:var(--goed-bg);border-color:var(--goed)}
+.vak.mis{background:var(--fout-bg);border-color:var(--fout)}
+.vak.dicht{background:var(--surface-2);color:var(--muted)}
+.vak.ar{font-family:var(--ar);font-size:2rem;direction:rtl}
+.groot{font-size:2.6rem;font-weight:600;font-family:var(--serif);color:var(--ink);letter-spacing:-.02em}
+.klok{display:block;margin:0 auto}
+.invoer{width:100%;max-width:170px;margin:12px auto;display:block;text-align:center;font-size:1.5rem;
+  padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);
+  color:var(--ink);font-family:var(--mono)}
+.invoer:focus{outline:none;border-color:var(--k)}
+.stand{font-family:var(--mono);font-size:.82rem;color:var(--muted)}
+.stand b{color:var(--ink)}
+
+.overlay{position:fixed;inset:0;z-index:60;background:rgba(10,10,10,.55);display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
+.overlay.on{display:flex}
+.blad{background:var(--canvas);border-radius:16px 16px 0 0;width:100%;max-width:620px;max-height:94dvh;overflow:auto;
+  padding:20px 20px calc(26px + env(safe-area-inset-bottom));border:1px solid var(--line)}
+@media(min-width:640px){ .overlay{align-items:center} .blad{border-radius:16px;max-height:90dvh} }
+
+footer{padding:32px 0 26px;border-top:1px solid var(--line);margin-top:38px}
+footer p{font-size:.84rem;color:var(--muted);max-width:62ch}
+footer p+p{margin-top:8px}

@@ -111,6 +111,24 @@ pagina.on('requestfailed', (r) => {
 const PAGINAS = [
   { pad: '/', kop: 'BennaHub', minKnoppen: 1, plaat: 'start' },
   { pad: '/kalibratie/', kop: 'Kalibratie', minKnoppen: 2, plaat: 'kalibratie' },
+  {
+    pad: '/spellen/', kop: 'Spelletjes', minKnoppen: 13, plaat: 'spellen',
+    /* Renderen is niet werken. Een spel openen, een goede zet doen en kijken of
+       de teller meeloopt is het kortste bewijs dat de omzetting van imperatieve
+       DOM-code naar componenten de logica heeft overgehouden. */
+    async doe(pagina) {
+      await pagina.locator('.tegel', { hasText: 'Even of oneven' }).click()
+      // De tegels blijven onder de overlay staan, dus zoeken gebeurt binnen het blad.
+      const blad = pagina.locator('.blad')
+      const getal = Number(await blad.locator('.groot').textContent())
+      await blad.getByRole('button', { name: getal % 2 === 0 ? 'Even' : 'Oneven', exact: true }).click()
+      const stand = await blad.locator('.stand').textContent()
+      if (!/🏆 1/.test(stand ?? '')) return `score liep niet mee: ${stand}`
+      await blad.getByRole('button', { name: 'Klaar' }).click()
+      if (await pagina.locator('.blad').count()) return 'het spel bleef openstaan'
+      return null
+    },
+  },
 ]
 
 let mis = 0
@@ -121,13 +139,15 @@ for (const p of PAGINAS) {
   await pagina.goto(`http://localhost:${poort}${p.pad}`, { waitUntil: 'networkidle' })
   // De hub haalt eerst de ledenlijst op; zonder database blijft dat hangen op
   // de wachttekst. Dat is geen CSP-kwestie, dus we kijken naar wat er staat.
-  const kop = await pagina.textContent('h1, .merk').catch(() => null)
+  const kop = await pagina.textContent('h1, .merk, .brand').catch(() => null)
   const knoppen = await pagina.locator('button').count()
   await pagina.screenshot({ path: `gereedschap/pagina-${p.plaat}.png` })
 
+  const werkt = p.doe ? await p.doe(pagina) : null
+
   const csp = headersVoor(p.pad)['Content-Security-Policy']
   const goed = csp && (kop ?? '').includes(p.kop) && knoppen >= p.minKnoppen
-               && !overtredingen.length && !fouten.length
+               && !overtredingen.length && !fouten.length && !werkt
   if (!goed) mis++
 
   console.log(`\n${p.pad}`)
@@ -141,6 +161,7 @@ for (const p of PAGINAS) {
   if (buitenBereik.length) {
     console.log('  buiten bereik in deze omgeving (geen fout):', buitenBereik.length)
   }
+  if (p.doe) console.log('  werkt:', werkt ?? 'ja')
   console.log(goed ? '  → rendert onder de strikte policy' : '  → ER IS IETS MIS')
 }
 
