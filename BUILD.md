@@ -1,28 +1,79 @@
-# Structuur & snel laden
+# Bouwen
 
-De app is bewust **licht en snel** gemaakt: de browser hoeft géén Babel (±3 MB) te
-downloaden en hoeft niets meer live te compileren. De render start daardoor in
-~0,1 s in plaats van enkele seconden.
+De repo is één Vite-project met negen apps erin. Elke app houdt zijn eigen map en
+dus zijn eigen adres — `/kalibratie/`, `/noer/`, `/rasikh/` — want die adressen
+staan in bladwijzers, in negen service workers en in de tegels op de
+startpagina. Er is geen router en geen enkele app weet van de andere.
 
-## Bestanden
-- **`index.html`** — de **live versie** die wordt geserveerd. Deze is
-  *voorgecompileerd* (JSX is al omgezet naar `React.createElement`), zonder Babel.
-  Dit is het bestand dat snel laadt. Niet met de hand bewerken — wordt gegenereerd.
-- **`index.dev.html`** — de **bron** (leesbare versie met JSX en de oefenstof).
-  Hierin worden wijzigingen gemaakt.
-- **`ROADMAP.md`** — dekking en verbeterlijst.
+```
+npm install
+npm run dev        de ontwikkelserver
+npm run controle   typen, proeven, bouw en de CSP-proef achter elkaar
+```
 
-## Bewerken & opnieuw bouwen
-1. Pas `index.dev.html` aan (oefenstof staat in de `SEED`- en `TEMPLATES`-lijsten,
-   bovenaan goed leesbaar).
-2. Genereer daarna `index.html` opnieuw door de JSX voor te compileren met de
-   React-preset (classic runtime), de Babel-`<script>` te verwijderen en de
-   gecompileerde code als gewone `<script>` terug te plaatsen.
+## De losse opdrachten
 
-De oefenstof (vragen/antwoorden) staat in beide bestanden als gewone data en is
-ook in `index.html` gewoon leesbaar; alleen de schermcode is daar voorgecompileerd.
+| | |
+|---|---|
+| `npm run typen` | `tsc --noEmit` over alles in `src/`. Levert niets op, controleert alles. |
+| `npm run proef` | Vitest. Onder meer de gouden waarden van de rekenkern. |
+| `npm run build` | Typen én bouw; het resultaat staat in `dist/`. |
+| `npm run csp` | Zet `dist/` achter een server die de headers uit `vercel.json` meestuurt en laadt de app in Chromium. Meldt elke CSP-overtreding. |
+| `npm run gouden-waarden` | Genereert `src/kalibratie/gouden-waarden.json` opnieuw uit de oude rekenkern. Alleen nodig als die verandert, en dat hoort niet te gebeuren. |
 
-## Waarom dit sneller is
-- **Geen Babel in de browser** → scheelt ±3 MB download en alle compile-tijd.
-- **React/ReactDOM** komen als kleine, gecachte bestanden van een CDN.
-- Eén zelfstandig HTML-bestand, geen extra requests voor de app zelf.
+## De verbouwing is halverwege, en dat staat in de code
+
+Bovenin `vite.config.ts` staan twee lijsten:
+
+```ts
+const NOG_NIET_OMGEBOUWD = ['huiswerk', 'noer', 'arabisch', ...]
+const OMGEBOUWD = ['kalibratie']
+```
+
+Wat in de eerste lijst staat, draait nog als los HTML-bestand en gaat onveranderd
+mee naar `dist/`. Wat in de tweede staat is een echte ingang met React en
+TypeScript. Zo blijft de site werken terwijl er app voor app wordt verbouwd; er
+is geen moment waarop de helft stuk staat.
+
+Klaar is: beide lijsten kloppen, en de eerste is leeg.
+
+## Waarom er nu wél een bouwstap is
+
+Die was er niet, en dat was een echte waarde: wat in de repo stond, was wat er
+draaide. Die eigenschap is opgegeven voor drie dingen die zonder bouwstap niet
+te krijgen zijn.
+
+**Getypte databasegrens.** Negen apps praten met dertig databasefuncties via
+handgetypte parameternamen. Eén letter mis en PostgREST geeft netjes 200 terug op
+een aanroep die niets doet — het getal blijft dan gewoon weg uit het scherm, en
+dat merk je pas als je het mist. In `src/gedeeld/db/rpc.ts` staat elke functie
+één keer, met wat erin gaat en wat eruit komt. Een verkeerde naam is nu een fout
+bij het bouwen.
+
+**Geen invoerveld dat leegloopt.** De oude schermen werden bij elke wijziging in
+hun geheel opnieuw opgebouwd met `innerHTML`. Daarom stond overal `onchange` en
+nergens `oninput`, en daarom moest de portiekeuze een veld met de hand uitlezen
+voordat er hertekend werd. Dat probleem bestaat in React niet.
+
+**Een strikte Content-Security-Policy.** Die kan alleen als er geen inline script
+en geen inline stijl meer in de pagina staat. Voor `/kalibratie/` staat hij nu
+aan — `script-src 'self'`, geen `unsafe-inline` — en `npm run csp` controleert in
+een echte browser dat de app daaronder rendert.
+
+Wat er níét is: geen Tailwind. De stijl is honderdvierenveertig regels CSS met
+namen die iets betekenen. Dat vervangen door utility-klassen levert meer regels
+op en minder uitleg.
+
+## De rekenkern is overgezet, niet herschreven
+
+Elke regel van `src/kalibratie/rekenkern.ts` en `klinisch.ts` komt uit de oude
+`kalibratie/index.html`, met typen erbij en zonder één getal te veranderen. Zo'n
+overzetting is precies het moment waarop een stille fout binnenkomt: een haakje
+verplaatst, een `Math.round` een niveau verschoven, een `>=` dat een `>` wordt.
+
+Daarom staat de oude code er nog, in `gereedschap/oud/`, en genereert
+`gereedschap/gouden-waarden-maken.mjs` daaruit de uitkomsten over veertig
+dagenreeksen, dertig SCORE2-gevallen, twintig FIB-4's, vijfentwintig
+STOP-BANG-invullingen en vijftien onderhoudszones. `rekenkern.proef.ts`
+controleert de TypeScript-versie daartegen: 171 vergelijkingen, allemaal tegen
+wat er wérkelijk uit kwam en niet tegen wat ik dacht dat eruit moest komen.

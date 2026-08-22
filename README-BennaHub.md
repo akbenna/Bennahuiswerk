@@ -1,8 +1,15 @@
 # BennaHub
 
-Eén startpagina, negen apps. Alles is statische HTML: geen build-stap, geen server,
-geen dependencies behalve de Latijnse letters van Google Fonts — het Arabisch
-staat in de repo zelf. Wat hier staat, is wat er draait.
+Eén startpagina, negen apps. Elke app houdt zijn eigen map en dus zijn eigen
+adres; er is geen router en geen app weet van de andere.
+
+**De repo wordt verbouwd naar React 18 + Vite + TypeScript.** Dat gebeurt app
+voor app, en welke er al om is staat in `vite.config.ts` in twee lijsten. Wat nog
+niet is omgebouwd draait onveranderd als los HTML-bestand en gaat zo mee naar de
+bouw; er is dus geen moment waarop de site half stuk staat. Zie BUILD.md voor
+hoe je bouwt en waarom er nu wél een bouwstap is.
+
+Om: `kalibratie/`. Nog niet om: de acht andere.
 
 ```
 index.html          de startpagina: aanmelden, de apps van die persoon, ouderoverzicht
@@ -19,15 +26,17 @@ rasikh/             Koran uit je hoofd — memoriseren en vasthouden (voor volwa
   tekst/              de hele Koran: 114 soera's, 6236 aya, plus de verwarpunten
   audio/              recitatie per aya, op te halen met het script dat er staat
 kalibratie/         Energiebalans — verbruik gemeten uit de gewichtstrend (volwassenen)
-  index.html          de app: rekenkern en zeven schermen; gegevens in eigen
-                      kal_*-tabellen in het Supabase-project van ProVita
+  index.html          de Vite-ingang; de app zelf staat in src/kalibratie/
   VERANTWOORDING.md   elke rekenregel met zijn bron en zijn beperking
   AUTOMATISERING.md   wat er vanzelf draait: de ochtendprikkel en het opruimen
   database/           de SQL die naast de app hoort, in volgorde genummerd
-  proef-portiekeuze.mjs, proef-gegevens.json
-                      node kalibratie/proef-portiekeuze.mjs — rekent de
-                      portiekeuze na zonder browser en zonder netwerk
-  manifest.webmanifest, sw.js, icoon.svg, icoon-180.png
+src/
+  gedeeld/db/         de getypte databasegrens: dertig functies, één keer
+  gedeeld/            datum- en getalhulp die alle apps kunnen gebruiken
+  kalibratie/         rekenkern, klinische modules, zes schermen, vier vensters
+    rekenkern.proef.ts  171 vergelijkingen tegen de oude, verantwoorde uitkomsten
+public/               fonts, iconen, en de statische bestanden per app
+gereedschap/          de bouw- en proefscripts, en de oude app als ijkpunt
 iconen/             één pictogram per app, plus het script dat er PNG's van maakt
 fonts/              Amiri, het Arabische lettertype van alle apps
 ```

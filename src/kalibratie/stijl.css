@@ -1,0 +1,155 @@
+/*
+ * DE STIJL VAN KALIBRATIE
+ *
+ * Overgenomen uit de <style> van de oude index.html, ongewijzigd op één punt na:
+ * hij staat nu in een eigen bestand in plaats van in de kop van de pagina, zodat
+ * een strikte Content-Security-Policy mogelijk wordt. Inline stijl en inline
+ * script zijn precies wat zo'n policy moet verbieden.
+ *
+ * Geen Tailwind. Wat hieronder staat is honderdvierenveertig regels met namen
+ * die iets betekenen -- --k voor de kernkleur, --goed, --let, --fout voor de
+ * drie toestanden. Dat vervangen door utility-klassen zou meer regels opleveren
+ * en minder uitleg.
+ */
+/* ============================================================================
+   KALIBRATIE — persoonlijk energiebalansmodel
+   Ontwerpprincipe, door de hele app heen: geen enkel getal zonder zijn
+   onzekerheid. Wat gemeten is staat in serif en groot; wat geschat is draagt
+   zijn interval en zijn graad; wat ontbreekt wordt benoemd in plaats van
+   stilzwijgend als nul behandeld.
+   ========================================================================== */
+:root{
+  --canvas:#F7F6F3; --vlak:#FFFFFF; --vlak2:#EFEDE8;
+  --ink:#12140F; --ink2:#2A2E28; --grijs:#5E6159; --dim:#8E9189;
+  --lijn:#DEDBD3; --lijn2:#C6C2B8;
+  --k:#3D5A57;  --kbg:#E1EBE9;      /* accent: de kleur van het model */
+  --let:#8A5A00; --letbg:#F8EFD4;   /* let op */
+  --fout:#A32F2A; --foutbg:#FAE6E4;
+  --goed:#2F6B1F; --goedbg:#E4EFDD;
+  --schaduw:0 1px 2px rgba(20,18,14,.04), 0 8px 22px rgba(20,18,14,.05);
+  --sans:'SF Pro Text',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --serif:'Newsreader',Georgia,serif;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root{
+  --canvas:#131417; --vlak:#1B1D21; --vlak2:#24272B;
+  --ink:#F3F2EE; --ink2:#DFDED8; --grijs:#A6A9A1; --dim:#71746D;
+  --lijn:#31343A; --lijn2:#454951;
+  --k:#8FB3AE; --kbg:#1D2A29;
+  --let:#E9BC55; --letbg:#302711;
+  --fout:#F09B95; --foutbg:#341A18;
+  --goed:#8FD268; --goedbg:#1E2A18;
+  --schaduw:0 1px 2px rgba(0,0,0,.4), 0 8px 22px rgba(0,0,0,.3);
+}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:var(--canvas);color:var(--ink2);font-family:var(--sans);font-size:16px;
+  line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100dvh;
+  padding:0 16px calc(84px + env(safe-area-inset-bottom))}
+.wrap{width:100%;max-width:660px;margin:0 auto}
+h1,h2,h3{font-family:var(--serif);color:var(--ink);letter-spacing:-.02em;line-height:1.15;margin:0;font-weight:500}
+p{margin:0}
+a{color:var(--k)}
+.eyebrow{font-family:var(--mono);font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--grijs)}
+.klein{font-size:.84rem;color:var(--grijs);line-height:1.5}
+.mini{font-size:.75rem;color:var(--dim);line-height:1.45}
+.cijfer{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.getal{font-family:var(--serif);font-variant-numeric:tabular-nums;color:var(--ink);line-height:1;font-weight:400}
+button,input,select,textarea{font-family:inherit;font-size:1rem;color:inherit}
+:focus-visible{outline:2px solid var(--k);outline-offset:2px;border-radius:6px}
+
+/* ---------------------------------------------------------------- header -- */
+header{padding:26px 0 12px;position:relative}
+.merk{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.merk h1{font-size:1.7rem}
+.sub{margin-top:2px;font-size:.82rem;color:var(--grijs)}
+.chip{font-size:.72rem;color:var(--grijs);border:1px solid var(--lijn);border-radius:999px;
+  padding:4px 11px;background:transparent;cursor:pointer;white-space:nowrap}
+.chip.aan{border-color:var(--k);color:var(--k)}
+
+/* ------------------------------------------------------------------ tabs -- */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--vlak);
+  border-top:1px solid var(--lijn);display:flex;justify-content:center;gap:2px;
+  padding:6px 8px calc(6px + env(safe-area-inset-bottom));overflow-x:auto;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{border:0;background:transparent;color:var(--grijs);cursor:pointer;
+  padding:6px 10px;border-radius:9px;font-size:.68rem;display:flex;flex-direction:column;
+  align-items:center;gap:3px;min-width:56px;line-height:1.1}
+nav.tabs button .ic{font-size:1.05rem;line-height:1}
+nav.tabs button[aria-selected="true"]{color:var(--k);background:var(--kbg);font-weight:600}
+
+/* --------------------------------------------------------------- kaarten -- */
+.kaart{background:var(--vlak);border:1px solid var(--lijn);border-radius:14px;
+  padding:15px 17px;box-shadow:var(--schaduw);margin-bottom:13px}
+.kaart.let{border-left:3px solid var(--let)}
+.kaart.fout{border-left:3px solid var(--fout)}
+.kaart.goed{border-left:3px solid var(--goed)}
+.kaart.plat{box-shadow:none;background:var(--vlak2);border-color:transparent}
+.tussen{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.rij{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.duo{display:grid;gap:16px}
+@media(min-width:520px){.duo{grid-template-columns:1fr 1fr}}
+.trio{display:grid;gap:12px;grid-template-columns:repeat(3,1fr)}
+
+/* ------------------------------------------------------------- besturing -- */
+.knop{border:1px solid var(--lijn);background:var(--vlak);color:var(--ink2);
+  padding:8px 14px;border-radius:10px;font-size:.86rem;cursor:pointer;white-space:nowrap}
+.knop:hover{border-color:var(--lijn2)}
+.knop.vol{background:var(--k);border-color:var(--k);color:var(--canvas);font-weight:600}
+.knop.sm{padding:4px 10px;font-size:.76rem;border-radius:8px}
+.knop:disabled{opacity:.45;cursor:default}
+input,select,textarea{background:var(--vlak);border:1px solid var(--lijn);border-radius:10px;
+  padding:8px 11px;width:100%;max-width:100%}
+textarea{resize:vertical;min-height:74px;line-height:1.5}
+label.veld{display:block}
+label.veld>span{display:block;font-size:.72rem;color:var(--grijs);margin-bottom:3px}
+.smal{width:88px}.smaller{width:68px}
+
+/* --------------------------------------------------------------- uitleg -- */
+/* De app legt veel uit, en dat hoort ook: elk getal hier heeft een aanname
+   eronder. Maar wat je de eerste week wilt lezen, wil je op dag honderd niet
+   meer zien. Daarom staat elke onderbouwing achter een 'waarom', standaard
+   dicht, en onthoudt de app per blok wat jij openzet. */
+.uitleg{margin-top:10px}
+.uitleg>summary{cursor:pointer;display:inline-flex;align-items:center;gap:6px;
+  font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--grijs);
+  padding:2px 0;list-style:none;user-select:none}
+.uitleg>summary::-webkit-details-marker{display:none}
+.uitleg>summary::before{content:'\203A';font-size:1rem;line-height:1;
+  transition:transform .15s ease;display:inline-block}
+.uitleg[open]>summary::before{transform:rotate(90deg)}
+.uitleg>summary:hover{color:var(--ink)}
+.uitleg>.inhoud{margin-top:7px;padding-left:12px;border-left:2px solid var(--vlak2)}
+.uitleg>.inhoud>p{margin:0 0 7px}
+.uitleg>.inhoud>p:last-child{margin-bottom:0}
+
+/* ---------------------------------------------------------- balk en chip -- */
+.balk{height:7px;border-radius:999px;background:var(--vlak2);overflow:hidden}
+.balk>i{display:block;height:100%;background:var(--k);transition:width .2s}
+.balk>i.let{background:var(--let)} .balk>i.goed{background:var(--goed)}
+.conf{display:inline-flex;width:17px;height:17px;border-radius:4px;flex:0 0 auto;
+  align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:#FFF8EE}
+.conf.A{background:#2F6B1F}.conf.B{background:#3D5A57}
+.conf.C{background:#8E9189}.conf.D{background:#8A5A00}
+@media(prefers-color-scheme:dark){.conf{color:#131417}
+  .conf.A{background:#8FD268}.conf.B{background:#8FB3AE}
+  .conf.C{background:#71746D}.conf.D{background:#E9BC55}}
+.stoplicht{display:inline-block;width:11px;height:11px;border-radius:50%}
+.lijst>*{display:flex;align-items:center;gap:9px;padding:8px 0;border-top:1px solid var(--lijn)}
+.lijst>*:first-child{border-top:0}
+.groei{flex:1 1 auto;min-width:0}
+.knip{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* -------------------------------------------------------------- venster --- */
+.sluier{position:fixed;inset:0;background:rgba(10,12,10,.5);display:flex;z-index:50;
+  align-items:flex-start;justify-content:center;padding:14px;overflow-y:auto}
+.venster{background:var(--vlak);border-radius:16px;padding:20px;width:100%;max-width:520px;margin:20px 0}
+.regel{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:11px 0;border-bottom:1px solid var(--lijn)}
+.regel input,.regel select{width:auto}
+svg.fig{display:block;width:100%;height:auto}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid var(--lijn2);
+  border-top-color:var(--k);border-radius:50%;animation:d .7s linear infinite;vertical-align:-2px}
+@keyframes d{to{transform:rotate(360deg)}}
+footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
+  font-size:.75rem;line-height:1.6;color:var(--dim)}
