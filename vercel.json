@@ -1,0 +1,171 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": null,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "geolocation=(), microphone=(), payment=(), interest-cohort=()"
+        }
+      ]
+    },
+    {
+      "source": "/",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' data:; connect-src 'self' https://jnlvvdaisyerhxucxnuu.supabase.co; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'"
+        }
+      ]
+    },
+    {
+      "source": "/health/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' data:; connect-src 'self' https://jnlvvdaisyerhxucxnuu.supabase.co; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'"
+        }
+      ]
+    },
+    {
+      "source": "/spellen/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' data:; connect-src 'self' https://jnlvvdaisyerhxucxnuu.supabase.co; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'"
+        }
+      ]
+    },
+    {
+      "source": "/rasikh/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' data:; connect-src 'self' https://jnlvvdaisyerhxucxnuu.supabase.co; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'"
+        }
+      ]
+    },
+    {
+      "source": "/sanad/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' data:; connect-src 'self' https://jnlvvdaisyerhxucxnuu.supabase.co https://api.anthropic.com; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'"
+        }
+      ]
+    },
+    {
+      "source": "/bunyan/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' data:; connect-src 'self' https://jnlvvdaisyerhxucxnuu.supabase.co; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; frame-src 'self'; object-src 'none'"
+        }
+      ]
+    },
+    {
+      "source": "/bunyan/zandbak.html",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'unsafe-inline'; img-src data: blob:; font-src 'none'; connect-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'; object-src 'none'"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        }
+      ]
+    },
+    {
+      "source": "/noer/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' data:; connect-src 'self' https://jnlvvdaisyerhxucxnuu.supabase.co; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'"
+        }
+      ]
+    },
+    {
+      "source": "/arabisch/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://jnlvvdaisyerhxucxnuu.supabase.co; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'"
+        }
+      ]
+    },
+    {
+      "source": "/huiswerk/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://jnlvvdaisyerhxucxnuu.supabase.co; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'"
+        }
+      ]
+    },
+    {
+      "source": "/huiswerk/voxelsandbox.html",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; object-src 'none'"
+        }
+      ]
+    },
+    {
+      "source": "/huiswerk/verkeersschool.html",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; object-src 'none'"
+        }
+      ]
+    },
+    {
+      "source": "/huiswerk/cursussen/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; object-src 'none'"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/kalibratie",
+      "destination": "/health",
+      "permanent": true
+    },
+    {
+      "source": "/kalibratie/:pad*",
+      "destination": "/health/:pad*",
+      "permanent": true
+    }
+  ]
+}

@@ -1,0 +1,6359 @@
+{
+ "gemaakt": "gereedschap/arabisch-gouden-waarden.mjs, uit gereedschap/oud/arabisch-index.html",
+ "nu": "2026-08-22",
+ "fsrs": [
+  {
+   "pad": [
+    3,
+    3,
+    3,
+    3,
+    3,
+    3
+   ],
+   "uit": [
+    {
+     "g": 3,
+     "s": 3.173,
+     "d": 5.2824,
+     "due": "2026-08-25",
+     "herh": 1,
+     "missers": 0,
+     "dag": "2026-08-22"
+    },
+    {
+     "g": 3,
+     "s": 10.7515,
+     "d": 5.2729,
+     "due": "2026-09-05",
+     "herh": 2,
+     "missers": 0,
+     "dag": "2026-08-25"
+    },
+    {
+     "g": 3,
+     "s": 34.6292,
+     "d": 5.2635,
+     "due": "2026-10-10",
+     "herh": 3,
+     "missers": 0,
+     "dag": "2026-09-05"
+    },
+    {
+     "g": 3,
+     "s": 100.9069,
+     "d": 5.2541,
+     "due": "2027-01-19",
+     "herh": 4,
+     "missers": 0,
+     "dag": "2026-10-10"
+    },
+    {
+     "g": 3,
+     "s": 269.7133,
+     "d": 5.2448,
+     "due": "2027-10-16",
+     "herh": 5,
+     "missers": 0,
+     "dag": "2027-01-19"
+    },
+    {
+     "g": 3,
+     "s": 671.7142,
+     "d": 5.2355,
+     "due": "2029-08-18",
+     "herh": 6,
+     "missers": 0,
+     "dag": "2027-10-16"
+    }
+   ]
+  },
+  {
+   "pad": [
+    4,
+    4,
+    4,
+    4
+   ],
+   "uit": [
+    {
+     "g": 4,
+     "s": 15.6911,
+     "d": 3.2245,
+     "due": "2026-09-07",
+     "herh": 1,
+     "missers": 0,
+     "dag": "2026-08-22"
+    },
+    {
+     "g": 4,
+     "s": 169.2272,
+     "d": 2.1301,
+     "due": "2027-02-23",
+     "herh": 2,
+     "missers": 0,
+     "dag": "2026-09-07"
+    },
+    {
+     "g": 4,
+     "s": 1095,
+     "d": 1,
+     "due": "2030-02-22",
+     "herh": 3,
+     "missers": 0,
+     "dag": "2027-02-23"
+    },
+    {
+     "g": 4,
+     "s": 1095,
+     "d": 1,
+     "due": "2033-02-21",
+     "herh": 4,
+     "missers": 0,
+     "dag": "2030-02-22"
+    }
+   ]
+  },
+  {
+   "pad": [
+    2,
+    2,
+    2,
+    2
+   ],
+   "uit": [
+    {
+     "g": 2,
+     "s": 1.1839,
+     "d": 6.4883,
+     "due": "2026-08-23",
+     "herh": 1,
+     "missers": 0,
+     "dag": "2026-08-22"
+    },
+    {
+     "g": 2,
+     "s": 1.6433,
+     "d": 7.0405,
+     "due": "2026-08-25",
+     "herh": 2,
+     "missers": 0,
+     "dag": "2026-08-23"
+    },
+    {
+     "g": 2,
+     "s": 2.3956,
+     "d": 7.501,
+     "due": "2026-08-27",
+     "herh": 3,
+     "missers": 0,
+     "dag": "2026-08-25"
+    },
+    {
+     "g": 2,
+     "s": 3.0609,
+     "d": 7.885,
+     "due": "2026-08-30",
+     "herh": 4,
+     "missers": 0,
+     "dag": "2026-08-27"
+    }
+   ]
+  },
+  {
+   "pad": [
+    1,
+    1,
+    1
+   ],
+   "uit": [
+    {
+     "g": 1,
+     "s": 0.4026,
+     "d": 7.1949,
+     "due": "2026-08-23",
+     "herh": 1,
+     "missers": 1,
+     "dag": "2026-08-22"
+    },
+    {
+     "g": 1,
+     "s": 0.262,
+     "d": 8.0828,
+     "due": "2026-08-24",
+     "herh": 2,
+     "missers": 2,
+     "dag": "2026-08-23"
+    },
+    {
+     "g": 1,
+     "s": 0.2045,
+     "d": 8.6798,
+     "due": "2026-08-25",
+     "herh": 3,
+     "missers": 3,
+     "dag": "2026-08-24"
+    }
+   ]
+  },
+  {
+   "pad": [
+    3,
+    1,
+    3,
+    3,
+    1,
+    4
+   ],
+   "uit": [
+    {
+     "g": 3,
+     "s": 3.173,
+     "d": 5.2824,
+     "due": "2026-08-25",
+     "herh": 1,
+     "missers": 0,
+     "dag": "2026-08-22"
+    },
+    {
+     "g": 1,
+     "s": 1.0556,
+     "d": 6.7969,
+     "due": "2026-08-26",
+     "herh": 2,
+     "missers": 1,
+     "dag": "2026-08-25"
+    },
+    {
+     "g": 3,
+     "s": 3.1773,
+     "d": 6.7805,
+     "due": "2026-08-29",
+     "herh": 3,
+     "missers": 1,
+     "dag": "2026-08-26"
+    },
+    {
+     "g": 3,
+     "s": 8.7823,
+     "d": 6.7641,
+     "due": "2026-09-07",
+     "herh": 4,
+     "missers": 1,
+     "dag": "2026-08-29"
+    },
+    {
+     "g": 1,
+     "s": 1.911,
+     "d": 7.7931,
+     "due": "2026-09-09",
+     "herh": 5,
+     "missers": 2,
+     "dag": "2026-09-07"
+    },
+    {
+     "g": 4,
+     "s": 11.8523,
+     "d": 7.4156,
+     "due": "2026-09-21",
+     "herh": 6,
+     "missers": 2,
+     "dag": "2026-09-09"
+    }
+   ]
+  },
+  {
+   "pad": [
+    4,
+    2,
+    3,
+    1,
+    3,
+    3,
+    3
+   ],
+   "uit": [
+    {
+     "g": 4,
+     "s": 15.6911,
+     "d": 3.2245,
+     "due": "2026-09-07",
+     "herh": 1,
+     "missers": 0,
+     "dag": "2026-08-22"
+    },
+    {
+     "g": 2,
+     "s": 24.6458,
+     "d": 4.3189,
+     "due": "2026-10-02",
+     "herh": 2,
+     "missers": 0,
+     "dag": "2026-09-07"
+    },
+    {
+     "g": 3,
+     "s": 81.9919,
+     "d": 4.3139,
+     "due": "2026-12-23",
+     "herh": 3,
+     "missers": 0,
+     "dag": "2026-10-02"
+    },
+    {
+     "g": 1,
+     "s": 5.5938,
+     "d": 6.1457,
+     "due": "2026-12-29",
+     "herh": 4,
+     "missers": 1,
+     "dag": "2026-12-23"
+    },
+    {
+     "g": 3,
+     "s": 17.4817,
+     "d": 6.1323,
+     "due": "2027-01-15",
+     "herh": 5,
+     "missers": 1,
+     "dag": "2026-12-29"
+    },
+    {
+     "g": 3,
+     "s": 47.2647,
+     "d": 6.1189,
+     "due": "2027-03-03",
+     "herh": 6,
+     "missers": 1,
+     "dag": "2027-01-15"
+    },
+    {
+     "g": 3,
+     "s": 120.4377,
+     "d": 6.1056,
+     "due": "2027-07-01",
+     "herh": 7,
+     "missers": 1,
+     "dag": "2027-03-03"
+    }
+   ]
+  },
+  {
+   "pad": [
+    3,
+    3,
+    1,
+    2,
+    4,
+    3
+   ],
+   "uit": [
+    {
+     "g": 3,
+     "s": 3.173,
+     "d": 5.2824,
+     "due": "2026-08-25",
+     "herh": 1,
+     "missers": 0,
+     "dag": "2026-08-22"
+    },
+    {
+     "g": 3,
+     "s": 10.7515,
+     "d": 5.2729,
+     "due": "2026-09-05",
+     "herh": 2,
+     "missers": 0,
+     "dag": "2026-08-25"
+    },
+    {
+     "g": 1,
+     "s": 2.1866,
+     "d": 6.7905,
+     "due": "2026-09-07",
+     "herh": 3,
+     "missers": 1,
+     "dag": "2026-09-05"
+    },
+    {
+     "g": 2,
+     "s": 2.9806,
+     "d": 7.2925,
+     "due": "2026-09-10",
+     "herh": 4,
+     "missers": 1,
+     "dag": "2026-09-07"
+    },
+    {
+     "g": 4,
+     "s": 19.4742,
+     "d": 6.8365,
+     "due": "2026-09-29",
+     "herh": 5,
+     "missers": 1,
+     "dag": "2026-09-10"
+    },
+    {
+     "g": 3,
+     "s": 47.6073,
+     "d": 6.8199,
+     "due": "2026-11-16",
+     "herh": 6,
+     "missers": 1,
+     "dag": "2026-09-29"
+    }
+   ]
+  }
+ ],
+ "intervallen": [
+  {
+   "s": 0.1,
+   "interval": 1
+  },
+  {
+   "s": 0.5,
+   "interval": 1
+  },
+  {
+   "s": 1,
+   "interval": 1
+  },
+  {
+   "s": 2,
+   "interval": 2
+  },
+  {
+   "s": 3.5,
+   "interval": 3
+  },
+  {
+   "s": 7,
+   "interval": 7
+  },
+  {
+   "s": 15,
+   "interval": 15
+  },
+  {
+   "s": 40,
+   "interval": 40
+  },
+  {
+   "s": 120,
+   "interval": 120
+  },
+  {
+   "s": 400,
+   "interval": 400
+  },
+  {
+   "s": 1095,
+   "interval": 1095
+  }
+ ],
+ "ophaalbaar": [
+  {
+   "s": 1,
+   "dagen": 0,
+   "r": 1
+  },
+  {
+   "s": 1,
+   "dagen": 1,
+   "r": 0.9
+  },
+  {
+   "s": 1,
+   "dagen": 3,
+   "r": 0.7661308777
+  },
+  {
+   "s": 1,
+   "dagen": 7,
+   "r": 0.6152273343
+  },
+  {
+   "s": 1,
+   "dagen": 30,
+   "r": 0.3527378108
+  },
+  {
+   "s": 1,
+   "dagen": 365,
+   "r": 0.1074478474
+  },
+  {
+   "s": 5,
+   "dagen": 0,
+   "r": 1
+  },
+  {
+   "s": 5,
+   "dagen": 1,
+   "r": 0.9773375462
+  },
+  {
+   "s": 5,
+   "dagen": 3,
+   "r": 0.9362816759
+  },
+  {
+   "s": 5,
+   "dagen": 7,
+   "r": 0.8676336232
+  },
+  {
+   "s": 5,
+   "dagen": 30,
+   "r": 0.6445033866
+  },
+  {
+   "s": 5,
+   "dagen": 365,
+   "r": 0.2348980879
+  },
+  {
+   "s": 20,
+   "dagen": 0,
+   "r": 1
+  },
+  {
+   "s": 20,
+   "dagen": 1,
+   "r": 0.9941868867
+  },
+  {
+   "s": 20,
+   "dagen": 3,
+   "r": 0.9828584504
+  },
+  {
+   "s": 20,
+   "dagen": 7,
+   "r": 0.9613168379
+  },
+  {
+   "s": 20,
+   "dagen": 30,
+   "r": 0.8600732686
+  },
+  {
+   "s": 20,
+   "dagen": 365,
+   "r": 0.4351585293
+  },
+  {
+   "s": 100,
+   "dagen": 0,
+   "r": 1
+  },
+  {
+   "s": 100,
+   "dagen": 1,
+   "r": 0.9988292198
+  },
+  {
+   "s": 100,
+   "dagen": 3,
+   "r": 0.9964999432
+  },
+  {
+   "s": 100,
+   "dagen": 7,
+   "r": 0.9918898627
+  },
+  {
+   "s": 100,
+   "dagen": 30,
+   "r": 0.9665692191
+  },
+  {
+   "s": 100,
+   "dagen": 365,
+   "r": 0.7339910988
+  }
+ ],
+ "nakijken": [
+  {
+   "gegeven": "kitab",
+   "juist": [
+    "kitāb"
+   ],
+   "klopt": true,
+   "nl": "kitab",
+   "ar": "kitab"
+  },
+  {
+   "gegeven": "kitāb",
+   "juist": [
+    "kitāb"
+   ],
+   "klopt": true,
+   "nl": "kitab",
+   "ar": "kitāb"
+  },
+  {
+   "gegeven": "KITAB",
+   "juist": [
+    "kitāb"
+   ],
+   "klopt": true,
+   "nl": "kitab",
+   "ar": "KITAB"
+  },
+  {
+   "gegeven": " kitab ",
+   "juist": [
+    "kitāb"
+   ],
+   "klopt": true,
+   "nl": "kitab",
+   "ar": "kitab"
+  },
+  {
+   "gegeven": "kitab.",
+   "juist": [
+    "kitāb"
+   ],
+   "klopt": true,
+   "nl": "kitab",
+   "ar": "kitab."
+  },
+  {
+   "gegeven": "boek",
+   "juist": [
+    "kitāb"
+   ],
+   "klopt": false,
+   "nl": "boek",
+   "ar": "boek"
+  },
+  {
+   "gegeven": "maktaba",
+   "juist": [
+    "maktaba"
+   ],
+   "klopt": true,
+   "nl": "maktaba",
+   "ar": "maktaba"
+  },
+  {
+   "gegeven": "al-'ilm",
+   "juist": [
+    "al-ʿilm"
+   ],
+   "klopt": true,
+   "nl": "al ilm",
+   "ar": "al-'ilm"
+  },
+  {
+   "gegeven": "alilm",
+   "juist": [
+    "al-ʿilm"
+   ],
+   "klopt": false,
+   "nl": "alilm",
+   "ar": "alilm"
+  },
+  {
+   "gegeven": "كتاب",
+   "juist": [
+    "كِتَاب"
+   ],
+   "klopt": true,
+   "nl": "",
+   "ar": "كتاب"
+  },
+  {
+   "gegeven": "كِتَاب",
+   "juist": [
+    "كِتَاب"
+   ],
+   "klopt": true,
+   "nl": "",
+   "ar": "كتاب"
+  },
+  {
+   "gegeven": "كتٰب",
+   "juist": [
+    "كِتَاب"
+   ],
+   "klopt": false,
+   "nl": "",
+   "ar": "كتب"
+  },
+  {
+   "gegeven": "الكتاب",
+   "juist": [
+    "الْكِتَاب"
+   ],
+   "klopt": true,
+   "nl": "",
+   "ar": "الكتاب"
+  },
+  {
+   "gegeven": "أحمد",
+   "juist": [
+    "احمد"
+   ],
+   "klopt": true,
+   "nl": "",
+   "ar": "احمد"
+  },
+  {
+   "gegeven": "احمد",
+   "juist": [
+    "أحمد"
+   ],
+   "klopt": true,
+   "nl": "",
+   "ar": "احمد"
+  },
+  {
+   "gegeven": "على",
+   "juist": [
+    "علي"
+   ],
+   "klopt": true,
+   "nl": "",
+   "ar": "علي"
+  },
+  {
+   "gegeven": "مسئول",
+   "juist": [
+    "مسؤول"
+   ],
+   "klopt": false,
+   "nl": "",
+   "ar": "مسيول"
+  },
+  {
+   "gegeven": "",
+   "juist": [
+    "kitāb"
+   ],
+   "klopt": false,
+   "nl": "",
+   "ar": ""
+  },
+  {
+   "gegeven": "huis",
+   "juist": [
+    "huis",
+    "woning"
+   ],
+   "klopt": true,
+   "nl": "huis",
+   "ar": "huis"
+  },
+  {
+   "gegeven": "woning",
+   "juist": [
+    "huis",
+    "woning"
+   ],
+   "klopt": true,
+   "nl": "woning",
+   "ar": "woning"
+  },
+  {
+   "gegeven": "hond",
+   "juist": [
+    "huis",
+    "woning"
+   ],
+   "klopt": false,
+   "nl": "hond",
+   "ar": "hond"
+  }
+ ],
+ "kaalGevallen": [
+  {
+   "in": "كِتَابٌ",
+   "uit": "كتاب"
+  },
+  {
+   "in": "الْحَمْدُ",
+   "uit": "الحمد"
+  },
+  {
+   "in": "مُحَمَّدْ",
+   "uit": "محمد"
+  },
+  {
+   "in": "بِسْمِ اللَّهِ",
+   "uit": "بسم الله"
+  },
+  {
+   "in": "كتاب",
+   "uit": "كتاب"
+  }
+ ],
+ "vormen": [
+  {
+   "l": "ا",
+   "los": "ا",
+   "begin": "ا",
+   "midden": "‍ا",
+   "eind": "‍ا",
+   "verbindtLinks": false
+  },
+  {
+   "l": "ب",
+   "los": "ب",
+   "begin": "ب‍",
+   "midden": "‍ب‍",
+   "eind": "‍ب",
+   "verbindtLinks": true
+  },
+  {
+   "l": "ت",
+   "los": "ت",
+   "begin": "ت‍",
+   "midden": "‍ت‍",
+   "eind": "‍ت",
+   "verbindtLinks": true
+  },
+  {
+   "l": "ث",
+   "los": "ث",
+   "begin": "ث‍",
+   "midden": "‍ث‍",
+   "eind": "‍ث",
+   "verbindtLinks": true
+  },
+  {
+   "l": "ج",
+   "los": "ج",
+   "begin": "ج‍",
+   "midden": "‍ج‍",
+   "eind": "‍ج",
+   "verbindtLinks": true
+  },
+  {
+   "l": "ح",
+   "los": "ح",
+   "begin": "ح‍",
+   "midden": "‍ح‍",
+   "eind": "‍ح",
+   "verbindtLinks": true
+  },
+  {
+   "l": "خ",
+   "los": "خ",
+   "begin": "خ‍",
+   "midden": "‍خ‍",
+   "eind": "‍خ",
+   "verbindtLinks": true
+  },
+  {
+   "l": "د",
+   "los": "د",
+   "begin": "د",
+   "midden": "‍د",
+   "eind": "‍د",
+   "verbindtLinks": false
+  },
+  {
+   "l": "ذ",
+   "los": "ذ",
+   "begin": "ذ",
+   "midden": "‍ذ",
+   "eind": "‍ذ",
+   "verbindtLinks": false
+  },
+  {
+   "l": "ر",
+   "los": "ر",
+   "begin": "ر",
+   "midden": "‍ر",
+   "eind": "‍ر",
+   "verbindtLinks": false
+  },
+  {
+   "l": "ز",
+   "los": "ز",
+   "begin": "ز",
+   "midden": "‍ز",
+   "eind": "‍ز",
+   "verbindtLinks": false
+  },
+  {
+   "l": "س",
+   "los": "س",
+   "begin": "س‍",
+   "midden": "‍س‍",
+   "eind": "‍س",
+   "verbindtLinks": true
+  },
+  {
+   "l": "ش",
+   "los": "ش",
+   "begin": "ش‍",
+   "midden": "‍ش‍",
+   "eind": "‍ش",
+   "verbindtLinks": true
+  },
+  {
+   "l": "ص",
+   "los": "ص",
+   "begin": "ص‍",
+   "midden": "‍ص‍",
+   "eind": "‍ص",
+   "verbindtLinks": true
+  },
+  {
+   "l": "ض",
+   "los": "ض",
+   "begin": "ض‍",
+   "midden": "‍ض‍",
+   "eind": "‍ض",
+   "verbindtLinks": true
+  },
+  {
+   "l": "ط",
+   "los": "ط",
+   "begin": "ط‍",
+   "midden": "‍ط‍",
+   "eind": "‍ط",
+   "verbindtLinks": true
+  },
+  {
+   "l": "ظ",
+   "los": "ظ",
+   "begin": "ظ‍",
+   "midden": "‍ظ‍",
+   "eind": "‍ظ",
+   "verbindtLinks": true
+  },
+  {
+   "l": "ع",
+   "los": "ع",
+   "begin": "ع‍",
+   "midden": "‍ع‍",
+   "eind": "‍ع",
+   "verbindtLinks": true
+  },
+  {
+   "l": "غ",
+   "los": "غ",
+   "begin": "غ‍",
+   "midden": "‍غ‍",
+   "eind": "‍غ",
+   "verbindtLinks": true
+  },
+  {
+   "l": "ف",
+   "los": "ف",
+   "begin": "ف‍",
+   "midden": "‍ف‍",
+   "eind": "‍ف",
+   "verbindtLinks": true
+  },
+  {
+   "l": "ق",
+   "los": "ق",
+   "begin": "ق‍",
+   "midden": "‍ق‍",
+   "eind": "‍ق",
+   "verbindtLinks": true
+  },
+  {
+   "l": "ك",
+   "los": "ك",
+   "begin": "ك‍",
+   "midden": "‍ك‍",
+   "eind": "‍ك",
+   "verbindtLinks": true
+  },
+  {
+   "l": "ل",
+   "los": "ل",
+   "begin": "ل‍",
+   "midden": "‍ل‍",
+   "eind": "‍ل",
+   "verbindtLinks": true
+  },
+  {
+   "l": "م",
+   "los": "م",
+   "begin": "م‍",
+   "midden": "‍م‍",
+   "eind": "‍م",
+   "verbindtLinks": true
+  },
+  {
+   "l": "ن",
+   "los": "ن",
+   "begin": "ن‍",
+   "midden": "‍ن‍",
+   "eind": "‍ن",
+   "verbindtLinks": true
+  },
+  {
+   "l": "ه",
+   "los": "ه",
+   "begin": "ه‍",
+   "midden": "‍ه‍",
+   "eind": "‍ه",
+   "verbindtLinks": true
+  },
+  {
+   "l": "و",
+   "los": "و",
+   "begin": "و",
+   "midden": "‍و",
+   "eind": "‍و",
+   "verbindtLinks": false
+  },
+  {
+   "l": "ي",
+   "los": "ي",
+   "begin": "ي‍",
+   "midden": "‍ي‍",
+   "eind": "‍ي",
+   "verbindtLinks": true
+  }
+ ],
+ "arInGevallen": [
+  {
+   "in": "Het woord <b>كِتَاب</b> betekent boek.",
+   "uit": "Het woord <b><span class=\"arin\">كِتَاب</span></b> betekent boek."
+  },
+  {
+   "in": "Zeg: السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ",
+   "uit": "Zeg: <span class=\"arin lang\">السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ</span>"
+  },
+  {
+   "in": "Geen Arabisch hier.",
+   "uit": "Geen Arabisch hier."
+  }
+ ],
+ "stof": {
+  "letters": [
+   {
+    "l": "ا",
+    "vinger": "e8c5d17c752e4499"
+   },
+   {
+    "l": "ب",
+    "vinger": "8a1ad78639d106a5"
+   },
+   {
+    "l": "ت",
+    "vinger": "bc8255c9ee743c7b"
+   },
+   {
+    "l": "ث",
+    "vinger": "91bd7f02e358e1ea"
+   },
+   {
+    "l": "ج",
+    "vinger": "74cf6a8ac8711d69"
+   },
+   {
+    "l": "ح",
+    "vinger": "976972b200c96cdd"
+   },
+   {
+    "l": "خ",
+    "vinger": "c9e02ca0a50a7688"
+   },
+   {
+    "l": "د",
+    "vinger": "3510a2ddf449df95"
+   },
+   {
+    "l": "ذ",
+    "vinger": "966c29fd14eca381"
+   },
+   {
+    "l": "ر",
+    "vinger": "413af2f333d671b9"
+   },
+   {
+    "l": "ز",
+    "vinger": "28da008db57a2543"
+   },
+   {
+    "l": "س",
+    "vinger": "db445e78a58b1d3e"
+   },
+   {
+    "l": "ش",
+    "vinger": "45fd3fc80567e42a"
+   },
+   {
+    "l": "ص",
+    "vinger": "ffe54ef163dfab7d"
+   },
+   {
+    "l": "ض",
+    "vinger": "eeea334ea4dea0bc"
+   },
+   {
+    "l": "ط",
+    "vinger": "d945c36dc74f232e"
+   },
+   {
+    "l": "ظ",
+    "vinger": "f253c8943b1947c1"
+   },
+   {
+    "l": "ع",
+    "vinger": "c80c91136dd917ad"
+   },
+   {
+    "l": "غ",
+    "vinger": "3de731911b4bcb8c"
+   },
+   {
+    "l": "ف",
+    "vinger": "9970d3cadc32a1f1"
+   },
+   {
+    "l": "ق",
+    "vinger": "f10a92d70d72ad9d"
+   },
+   {
+    "l": "ك",
+    "vinger": "4a5c0c1e0cbfb508"
+   },
+   {
+    "l": "ل",
+    "vinger": "2fb5cae7a4b2474d"
+   },
+   {
+    "l": "م",
+    "vinger": "4983b1f29541802d"
+   },
+   {
+    "l": "ن",
+    "vinger": "c46dcb2f99a11a84"
+   },
+   {
+    "l": "ه",
+    "vinger": "deaa0d7f1a38ad3d"
+   },
+   {
+    "l": "و",
+    "vinger": "477dbad5338f50d1"
+   },
+   {
+    "l": "ي",
+    "vinger": "a041a1e1c3439be2"
+   }
+  ],
+  "tekens": [
+   {
+    "vinger": "96686a1c42c85ec7"
+   },
+   {
+    "vinger": "a273f808d020955f"
+   },
+   {
+    "vinger": "bf5e4e2d66cc333f"
+   },
+   {
+    "vinger": "470c1de5caf0acb5"
+   },
+   {
+    "vinger": "7301e2184a01ea8f"
+   },
+   {
+    "vinger": "dc7d023e2da49e5c"
+   },
+   {
+    "vinger": "5d9b1ae00a2937ce"
+   },
+   {
+    "vinger": "4ff9c5ed1876689d"
+   },
+   {
+    "vinger": "614291a90149bbdb"
+   }
+  ],
+  "extra": [
+   {
+    "vinger": "5c89c2865fe031df"
+   },
+   {
+    "vinger": "902b83eff830789f"
+   },
+   {
+    "vinger": "1a15c066d3358231"
+   },
+   {
+    "vinger": "e9ab47a00e99eb2e"
+   }
+  ],
+  "woorden": [
+   {
+    "s": 1,
+    "vinger": "22f55f40a957ca21"
+   },
+   {
+    "s": 1,
+    "vinger": "6615e4467abfa4f2"
+   },
+   {
+    "s": 1,
+    "vinger": "9d92520900499dff"
+   },
+   {
+    "s": 1,
+    "vinger": "0d9183d65687d9be"
+   },
+   {
+    "s": 1,
+    "vinger": "4e35649d9fa8e9f3"
+   },
+   {
+    "s": 1,
+    "vinger": "5004acbd155cd4f0"
+   },
+   {
+    "s": 1,
+    "vinger": "0c3d85dac8ffad96"
+   },
+   {
+    "s": 1,
+    "vinger": "a0b6e0a9a967a9b9"
+   },
+   {
+    "s": 2,
+    "vinger": "44ca4904cc33f47d"
+   },
+   {
+    "s": 2,
+    "vinger": "6474b0ec2e37d6a4"
+   },
+   {
+    "s": 2,
+    "vinger": "a7987980bb5bdbec"
+   },
+   {
+    "s": 2,
+    "vinger": "1d7001986ccaa052"
+   },
+   {
+    "s": 2,
+    "vinger": "05a1427f27ec9d9c"
+   },
+   {
+    "s": 2,
+    "vinger": "e521ba409368af3a"
+   },
+   {
+    "s": 1,
+    "vinger": "77445a0ee58226e1"
+   },
+   {
+    "s": 1,
+    "vinger": "5067933bc79631c8"
+   },
+   {
+    "s": 1,
+    "vinger": "9c48d59c67f62b56"
+   },
+   {
+    "s": 2,
+    "vinger": "60f3a19ef19029f9"
+   },
+   {
+    "s": 2,
+    "vinger": "e123dcfec79769aa"
+   },
+   {
+    "s": 2,
+    "vinger": "994d0d570b517846"
+   },
+   {
+    "s": 1,
+    "vinger": "0227511c924524a6"
+   },
+   {
+    "s": 2,
+    "vinger": "27bb79e169c0b88a"
+   },
+   {
+    "s": 2,
+    "vinger": "ec340211c845630a"
+   },
+   {
+    "s": 1,
+    "vinger": "c3ee2a51cbd6d461"
+   },
+   {
+    "s": 2,
+    "vinger": "83014525aa22c917"
+   },
+   {
+    "s": 2,
+    "vinger": "c2624029b40acf1b"
+   },
+   {
+    "s": 3,
+    "vinger": "87186bab79a5f8ec"
+   },
+   {
+    "s": 3,
+    "vinger": "a0fd5881e80ac452"
+   },
+   {
+    "s": 3,
+    "vinger": "2609d228c0d5f959"
+   },
+   {
+    "s": 3,
+    "vinger": "c407e6c794764013"
+   },
+   {
+    "s": 1,
+    "vinger": "b331b5d19ab82eb1"
+   },
+   {
+    "s": 1,
+    "vinger": "97cd8fca629ce3ce"
+   },
+   {
+    "s": 1,
+    "vinger": "81e47b5784151470"
+   },
+   {
+    "s": 1,
+    "vinger": "f13392e10e35ef10"
+   },
+   {
+    "s": 1,
+    "vinger": "2b3bd0a131b25a5b"
+   },
+   {
+    "s": 1,
+    "vinger": "33f3d578855d1f01"
+   },
+   {
+    "s": 1,
+    "vinger": "924c0b2e7d76435b"
+   },
+   {
+    "s": 2,
+    "vinger": "39537f7e3c8364e9"
+   },
+   {
+    "s": 1,
+    "vinger": "34b2460a535027ad"
+   },
+   {
+    "s": 1,
+    "vinger": "c5179dc52ad29a79"
+   },
+   {
+    "s": 2,
+    "vinger": "e5f463f4180af2a5"
+   },
+   {
+    "s": 2,
+    "vinger": "08ed6fe1304a3509"
+   },
+   {
+    "s": 1,
+    "vinger": "2ec00e2361e33940"
+   },
+   {
+    "s": 2,
+    "vinger": "c1c4db49a3026e86"
+   },
+   {
+    "s": 2,
+    "vinger": "2b3fecde34ba8fb2"
+   },
+   {
+    "s": 2,
+    "vinger": "f83f64fb622bfe65"
+   },
+   {
+    "s": 1,
+    "vinger": "e749aaa02b88b0b7"
+   },
+   {
+    "s": 1,
+    "vinger": "e602a9cd8e0a7723"
+   },
+   {
+    "s": 1,
+    "vinger": "dabfd61b7cd18e10"
+   },
+   {
+    "s": 2,
+    "vinger": "f91d99c676002ae0"
+   },
+   {
+    "s": 2,
+    "vinger": "ffeca46ab6daaa5e"
+   },
+   {
+    "s": 2,
+    "vinger": "38f68b7858bed531"
+   },
+   {
+    "s": 2,
+    "vinger": "efd83ef2a54e8e6e"
+   },
+   {
+    "s": 3,
+    "vinger": "4a49ec1a218fdeef"
+   },
+   {
+    "s": 3,
+    "vinger": "cfe28117cfcc634f"
+   },
+   {
+    "s": 2,
+    "vinger": "4d6a6466e60a39f1"
+   },
+   {
+    "s": 2,
+    "vinger": "1c231d6cfcda257a"
+   },
+   {
+    "s": 2,
+    "vinger": "2712bdd929fd916c"
+   },
+   {
+    "s": 2,
+    "vinger": "629c3cd1b6b4f2be"
+   },
+   {
+    "s": 3,
+    "vinger": "a12513e8b5714c81"
+   },
+   {
+    "s": 1,
+    "vinger": "b124ee9e1698bc82"
+   },
+   {
+    "s": 1,
+    "vinger": "878cc077d782be8c"
+   },
+   {
+    "s": 1,
+    "vinger": "50d4425facff5b00"
+   },
+   {
+    "s": 1,
+    "vinger": "c67dad48df608c17"
+   },
+   {
+    "s": 1,
+    "vinger": "94fc44edf5968e7b"
+   },
+   {
+    "s": 1,
+    "vinger": "a9df0a351909e800"
+   },
+   {
+    "s": 1,
+    "vinger": "d842906f2dee9d9b"
+   },
+   {
+    "s": 1,
+    "vinger": "121d1cd90fd3a63d"
+   },
+   {
+    "s": 2,
+    "vinger": "88c76d72b0622f83"
+   },
+   {
+    "s": 2,
+    "vinger": "c58cd220dadfb9ea"
+   },
+   {
+    "s": 1,
+    "vinger": "8d6b1b4f1cf55c98"
+   },
+   {
+    "s": 1,
+    "vinger": "db0e0bf999d73d34"
+   },
+   {
+    "s": 1,
+    "vinger": "81f58ed7f6899dd2"
+   },
+   {
+    "s": 1,
+    "vinger": "0c2c7c35aa798934"
+   },
+   {
+    "s": 1,
+    "vinger": "a8d7b3f9782bd791"
+   },
+   {
+    "s": 1,
+    "vinger": "efe2503c1dd43021"
+   },
+   {
+    "s": 2,
+    "vinger": "5e99ffe0773e72ff"
+   },
+   {
+    "s": 1,
+    "vinger": "61b5ee907c10e78f"
+   },
+   {
+    "s": 1,
+    "vinger": "cabc1ad3b9002616"
+   },
+   {
+    "s": 1,
+    "vinger": "9bdadd3b56d48b15"
+   },
+   {
+    "s": 1,
+    "vinger": "abb710b00e224c5a"
+   },
+   {
+    "s": 1,
+    "vinger": "e07016e74efc5fde"
+   },
+   {
+    "s": 1,
+    "vinger": "2788fdeb582ccd6d"
+   },
+   {
+    "s": 2,
+    "vinger": "aa035dd70792dda4"
+   },
+   {
+    "s": 2,
+    "vinger": "77086f79d7272146"
+   },
+   {
+    "s": 1,
+    "vinger": "893d372c57931a97"
+   },
+   {
+    "s": 1,
+    "vinger": "6bf910e15df33626"
+   },
+   {
+    "s": 1,
+    "vinger": "0858d2eeee8d1a17"
+   },
+   {
+    "s": 1,
+    "vinger": "71eb4147d3814d9f"
+   },
+   {
+    "s": 2,
+    "vinger": "411eda0ed7730e05"
+   },
+   {
+    "s": 2,
+    "vinger": "fd6f54f578c8bc98"
+   },
+   {
+    "s": 2,
+    "vinger": "1a4eb77076c8348c"
+   },
+   {
+    "s": 1,
+    "vinger": "7e3359c206356140"
+   },
+   {
+    "s": 2,
+    "vinger": "6f4633ffbfe56404"
+   },
+   {
+    "s": 1,
+    "vinger": "a713d3b071b30690"
+   },
+   {
+    "s": 2,
+    "vinger": "b46cfa4f9b585d7c"
+   },
+   {
+    "s": 2,
+    "vinger": "2ff38e3807130393"
+   },
+   {
+    "s": 2,
+    "vinger": "94fd3a641dfc9022"
+   },
+   {
+    "s": 2,
+    "vinger": "ad1e7ed3464f8f5b"
+   },
+   {
+    "s": 1,
+    "vinger": "45e127916947f0e0"
+   },
+   {
+    "s": 1,
+    "vinger": "45953c3450aa3333"
+   },
+   {
+    "s": 2,
+    "vinger": "ddcc82d6c925e31b"
+   },
+   {
+    "s": 1,
+    "vinger": "4e13a2a4eefd96c1"
+   },
+   {
+    "s": 1,
+    "vinger": "29a978468ee3c071"
+   },
+   {
+    "s": 1,
+    "vinger": "9380deb53153a64c"
+   },
+   {
+    "s": 2,
+    "vinger": "868ccb25a1c6bb46"
+   },
+   {
+    "s": 2,
+    "vinger": "e209ff6ab25a3d2e"
+   },
+   {
+    "s": 1,
+    "vinger": "0b75ccfceb3c31e3"
+   },
+   {
+    "s": 1,
+    "vinger": "bceabb3522f18b41"
+   },
+   {
+    "s": 1,
+    "vinger": "6d2db71f65815cfb"
+   },
+   {
+    "s": 1,
+    "vinger": "2d9495f83754132f"
+   },
+   {
+    "s": 1,
+    "vinger": "43d1a77a81ccd2ba"
+   },
+   {
+    "s": 1,
+    "vinger": "ce1a1baf0a2066d7"
+   },
+   {
+    "s": 2,
+    "vinger": "bf8444da5c4e631f"
+   },
+   {
+    "s": 2,
+    "vinger": "45c2979a23b72bee"
+   },
+   {
+    "s": 2,
+    "vinger": "2e05a04837e37b51"
+   },
+   {
+    "s": 2,
+    "vinger": "d7e330d6f3574c68"
+   },
+   {
+    "s": 1,
+    "vinger": "82e89c65f7a26045"
+   },
+   {
+    "s": 1,
+    "vinger": "5624f383344c701c"
+   },
+   {
+    "s": 1,
+    "vinger": "f80506b8983cc923"
+   },
+   {
+    "s": 1,
+    "vinger": "ec0c8f7078e8336d"
+   },
+   {
+    "s": 1,
+    "vinger": "48c41025b596cc24"
+   },
+   {
+    "s": 2,
+    "vinger": "93070f5ca7c3388c"
+   },
+   {
+    "s": 2,
+    "vinger": "5c333157deec9547"
+   },
+   {
+    "s": 2,
+    "vinger": "35f1b455d3d6a068"
+   },
+   {
+    "s": 1,
+    "vinger": "1e763c666de7554a"
+   },
+   {
+    "s": 3,
+    "vinger": "6850037e2c1cdcb8"
+   },
+   {
+    "s": 2,
+    "vinger": "1c747e7445e6baba"
+   },
+   {
+    "s": 2,
+    "vinger": "f4041d1278d5005c"
+   },
+   {
+    "s": 1,
+    "vinger": "d3a77f4e9a2545a3"
+   },
+   {
+    "s": 1,
+    "vinger": "735fcf5daca307ed"
+   },
+   {
+    "s": 1,
+    "vinger": "927b7c0dcc60aea1"
+   },
+   {
+    "s": 1,
+    "vinger": "35c1f744d5514d0b"
+   },
+   {
+    "s": 1,
+    "vinger": "601e651206a0464f"
+   },
+   {
+    "s": 1,
+    "vinger": "2f5f7aa7d977a703"
+   },
+   {
+    "s": 1,
+    "vinger": "e141cd6a563dbc04"
+   },
+   {
+    "s": 1,
+    "vinger": "ee9a4c54768252bf"
+   },
+   {
+    "s": 1,
+    "vinger": "430faf672dc6886e"
+   },
+   {
+    "s": 1,
+    "vinger": "9c64181982f04acc"
+   },
+   {
+    "s": 1,
+    "vinger": "c73055a2a784d9d2"
+   },
+   {
+    "s": 1,
+    "vinger": "019dfda63d6889a8"
+   },
+   {
+    "s": 1,
+    "vinger": "0223834e1bcbdd7a"
+   },
+   {
+    "s": 2,
+    "vinger": "8fff06e2ccb38d91"
+   },
+   {
+    "s": 2,
+    "vinger": "f8dc0c8d25585e2e"
+   },
+   {
+    "s": 1,
+    "vinger": "6f084f7aa126c2b0"
+   },
+   {
+    "s": 1,
+    "vinger": "efa4460d0db12a19"
+   },
+   {
+    "s": 1,
+    "vinger": "83c64a1aa2ccd9a2"
+   },
+   {
+    "s": 2,
+    "vinger": "0e1465886b8ca522"
+   },
+   {
+    "s": 1,
+    "vinger": "7e1bd015fd1d9334"
+   },
+   {
+    "s": 1,
+    "vinger": "a57a0966ee137e3e"
+   },
+   {
+    "s": 1,
+    "vinger": "d1eccf74b2feeafc"
+   },
+   {
+    "s": 2,
+    "vinger": "c72acf67f153d6c8"
+   },
+   {
+    "s": 3,
+    "vinger": "9ca3e35fef9f2047"
+   },
+   {
+    "s": 2,
+    "vinger": "ed493922d5818ccc"
+   },
+   {
+    "s": 2,
+    "vinger": "cefbbf41493d300e"
+   },
+   {
+    "s": 2,
+    "vinger": "8d27d7e07b274e8e"
+   },
+   {
+    "s": 2,
+    "vinger": "0950f5688c44b243"
+   },
+   {
+    "s": 2,
+    "vinger": "552464d4801e760c"
+   },
+   {
+    "s": 2,
+    "vinger": "425e309f7b35264f"
+   },
+   {
+    "s": 1,
+    "vinger": "15d5d8124803ceed"
+   },
+   {
+    "s": 1,
+    "vinger": "9f2f6de3d0bfd50d"
+   },
+   {
+    "s": 1,
+    "vinger": "0f8e2f6da3a9e5a8"
+   },
+   {
+    "s": 1,
+    "vinger": "54d2fdc6069235da"
+   },
+   {
+    "s": 1,
+    "vinger": "136984a16ef4879c"
+   },
+   {
+    "s": 1,
+    "vinger": "5183f2f82c66dd85"
+   },
+   {
+    "s": 1,
+    "vinger": "27fa78e752a88765"
+   },
+   {
+    "s": 1,
+    "vinger": "1844388f9aecb560"
+   },
+   {
+    "s": 1,
+    "vinger": "1c0b5f1eb69856e7"
+   },
+   {
+    "s": 2,
+    "vinger": "c46c832c80ac4601"
+   },
+   {
+    "s": 1,
+    "vinger": "2480ffcd8128726c"
+   },
+   {
+    "s": 1,
+    "vinger": "4eef514c49c815ae"
+   },
+   {
+    "s": 2,
+    "vinger": "9455d18f240dc47d"
+   },
+   {
+    "s": 3,
+    "vinger": "dd8389f867ecde08"
+   },
+   {
+    "s": 3,
+    "vinger": "e99234c0fdb5a0d3"
+   },
+   {
+    "s": 1,
+    "vinger": "eea2ff9455fd0aeb"
+   },
+   {
+    "s": 1,
+    "vinger": "1acfdbad453e3822"
+   },
+   {
+    "s": 1,
+    "vinger": "5c0c0a02529c4bdc"
+   },
+   {
+    "s": 1,
+    "vinger": "ebbe37ad927383f8"
+   },
+   {
+    "s": 1,
+    "vinger": "4fe914316bcfb3e7"
+   },
+   {
+    "s": 1,
+    "vinger": "d09c622ea5ef0fe0"
+   },
+   {
+    "s": 1,
+    "vinger": "33b7a1f37c2ddf45"
+   },
+   {
+    "s": 1,
+    "vinger": "dd2679ecb1db021e"
+   },
+   {
+    "s": 1,
+    "vinger": "eb6374ecf8bbe9c4"
+   },
+   {
+    "s": 1,
+    "vinger": "e183c08ece579cf5"
+   },
+   {
+    "s": 1,
+    "vinger": "3b3abcfbfde9411e"
+   },
+   {
+    "s": 2,
+    "vinger": "4c9839748ff41b83"
+   },
+   {
+    "s": 2,
+    "vinger": "7125d7528ed167ce"
+   },
+   {
+    "s": 2,
+    "vinger": "94df250b4bd3891e"
+   },
+   {
+    "s": 2,
+    "vinger": "2ab6ead018ae7f61"
+   },
+   {
+    "s": 2,
+    "vinger": "194115e08e70641d"
+   },
+   {
+    "s": 2,
+    "vinger": "0a20a59005ab404a"
+   },
+   {
+    "s": 2,
+    "vinger": "c1f318df836da042"
+   },
+   {
+    "s": 2,
+    "vinger": "c75f639a87345f7d"
+   },
+   {
+    "s": 2,
+    "vinger": "de7ffa95acf6cbb3"
+   },
+   {
+    "s": 3,
+    "vinger": "f8c468d703fae525"
+   },
+   {
+    "s": 3,
+    "vinger": "d793299835e27f10"
+   },
+   {
+    "s": 2,
+    "vinger": "904c1cf12e5f2167"
+   },
+   {
+    "s": 3,
+    "vinger": "255adf1b99f5b4c5"
+   },
+   {
+    "s": 1,
+    "vinger": "244a809d3dc5f215"
+   },
+   {
+    "s": 1,
+    "vinger": "eaadd5b49b25431b"
+   },
+   {
+    "s": 1,
+    "vinger": "27e71b770640c2d7"
+   },
+   {
+    "s": 1,
+    "vinger": "3d32927a53605f52"
+   },
+   {
+    "s": 1,
+    "vinger": "c5626a3dff58e5f4"
+   },
+   {
+    "s": 1,
+    "vinger": "fef3c4a25029146f"
+   },
+   {
+    "s": 1,
+    "vinger": "c11502e8b15fe6ba"
+   },
+   {
+    "s": 2,
+    "vinger": "204fd93585b4aee6"
+   },
+   {
+    "s": 1,
+    "vinger": "6bdee5ed42dfe911"
+   },
+   {
+    "s": 2,
+    "vinger": "559d14b68d73cb26"
+   },
+   {
+    "s": 1,
+    "vinger": "c50385f77f5a9d32"
+   },
+   {
+    "s": 1,
+    "vinger": "bcee65feaee7ba2b"
+   },
+   {
+    "s": 1,
+    "vinger": "17ed0516eadbfbf4"
+   },
+   {
+    "s": 1,
+    "vinger": "f02f9b2388661e39"
+   },
+   {
+    "s": 1,
+    "vinger": "9507679f8ce9951e"
+   },
+   {
+    "s": 1,
+    "vinger": "933bb9b72f9e4ef6"
+   },
+   {
+    "s": 2,
+    "vinger": "a2c864725a1942b1"
+   },
+   {
+    "s": 2,
+    "vinger": "2a7267d924509d12"
+   },
+   {
+    "s": 1,
+    "vinger": "fa89cc3c728424e7"
+   },
+   {
+    "s": 1,
+    "vinger": "ea67dde6226961c6"
+   },
+   {
+    "s": 1,
+    "vinger": "2e9ae3c60513b084"
+   },
+   {
+    "s": 1,
+    "vinger": "03cbe3860fabbd45"
+   },
+   {
+    "s": 1,
+    "vinger": "714334e9ca6eef5b"
+   },
+   {
+    "s": 2,
+    "vinger": "d95a66af2f51b5ac"
+   },
+   {
+    "s": 2,
+    "vinger": "ef39b3b17c65f743"
+   },
+   {
+    "s": 1,
+    "vinger": "5ea1e59f2e7ad0c1"
+   },
+   {
+    "s": 1,
+    "vinger": "ac1c9fcafd418233"
+   },
+   {
+    "s": 1,
+    "vinger": "75fb36f6316dd201"
+   },
+   {
+    "s": 1,
+    "vinger": "e5e4adf7765c1c61"
+   },
+   {
+    "s": 1,
+    "vinger": "b1f1f65106d7a2ad"
+   },
+   {
+    "s": 1,
+    "vinger": "a2e02b59bc302fdb"
+   },
+   {
+    "s": 2,
+    "vinger": "f61adc82617f90b2"
+   },
+   {
+    "s": 1,
+    "vinger": "29526344037ec92f"
+   },
+   {
+    "s": 1,
+    "vinger": "b2cef8ff9f14bf34"
+   },
+   {
+    "s": 1,
+    "vinger": "96afa4f870d6d4e1"
+   },
+   {
+    "s": 1,
+    "vinger": "8ee915df86897b07"
+   },
+   {
+    "s": 2,
+    "vinger": "78c3c461dfaaa494"
+   },
+   {
+    "s": 3,
+    "vinger": "be9360c739aa734d"
+   },
+   {
+    "s": 1,
+    "vinger": "024ae4f522c9d557"
+   },
+   {
+    "s": 1,
+    "vinger": "1f6a74ecbb07d2bf"
+   },
+   {
+    "s": 1,
+    "vinger": "40274dc2ca3625db"
+   },
+   {
+    "s": 1,
+    "vinger": "715914c299be8c92"
+   },
+   {
+    "s": 2,
+    "vinger": "876925eca9ab693c"
+   },
+   {
+    "s": 2,
+    "vinger": "13e8e00868364826"
+   },
+   {
+    "s": 2,
+    "vinger": "933e4eea3a7fd209"
+   },
+   {
+    "s": 3,
+    "vinger": "067860e95c3b6cc6"
+   },
+   {
+    "s": 3,
+    "vinger": "c0b57399f5a0fdf6"
+   },
+   {
+    "s": 1,
+    "vinger": "40e4e7fd8f25da12"
+   },
+   {
+    "s": 1,
+    "vinger": "8c3f030698feb7b1"
+   },
+   {
+    "s": 1,
+    "vinger": "eeb182c6cd9fb540"
+   },
+   {
+    "s": 1,
+    "vinger": "f1b6e57a405bd2ff"
+   },
+   {
+    "s": 1,
+    "vinger": "ea4395db8b0bbc96"
+   },
+   {
+    "s": 1,
+    "vinger": "729aba83cee04a25"
+   },
+   {
+    "s": 1,
+    "vinger": "7714356b25420d84"
+   },
+   {
+    "s": 1,
+    "vinger": "ad167ac4527441e7"
+   },
+   {
+    "s": 1,
+    "vinger": "2ec86a67a4745f47"
+   },
+   {
+    "s": 1,
+    "vinger": "cf0491b961b4c5da"
+   },
+   {
+    "s": 1,
+    "vinger": "f8fd833ea0268a45"
+   },
+   {
+    "s": 1,
+    "vinger": "09ec32ee95442544"
+   },
+   {
+    "s": 1,
+    "vinger": "9837d17024fe2e91"
+   },
+   {
+    "s": 1,
+    "vinger": "797e657a3cd640f8"
+   },
+   {
+    "s": 1,
+    "vinger": "1c09095ddbdbff38"
+   },
+   {
+    "s": 1,
+    "vinger": "159ae1c21ccbf9d5"
+   },
+   {
+    "s": 1,
+    "vinger": "99ab405001e281d7"
+   },
+   {
+    "s": 1,
+    "vinger": "5501b3a65db18078"
+   },
+   {
+    "s": 2,
+    "vinger": "78c89ce67d897613"
+   },
+   {
+    "s": 1,
+    "vinger": "9ff633842d699638"
+   },
+   {
+    "s": 1,
+    "vinger": "c7fa1a1b152637fe"
+   },
+   {
+    "s": 1,
+    "vinger": "4d544f1f4a021077"
+   },
+   {
+    "s": 1,
+    "vinger": "fb7acd71a0fa3943"
+   },
+   {
+    "s": 1,
+    "vinger": "8044a0b08300e9a2"
+   },
+   {
+    "s": 1,
+    "vinger": "0c55840378ce0333"
+   },
+   {
+    "s": 2,
+    "vinger": "b1181eb93c35ffa1"
+   },
+   {
+    "s": 1,
+    "vinger": "c7955e92c381500c"
+   },
+   {
+    "s": 2,
+    "vinger": "6b419ce4b76493a4"
+   },
+   {
+    "s": 1,
+    "vinger": "605d21431921b25d"
+   },
+   {
+    "s": 1,
+    "vinger": "c3b2a7b6bc90ed8d"
+   },
+   {
+    "s": 3,
+    "vinger": "a67e1a98abda5869"
+   },
+   {
+    "s": 2,
+    "vinger": "4eba52e2d01b6ffa"
+   },
+   {
+    "s": 1,
+    "vinger": "83a7e658105012e8"
+   },
+   {
+    "s": 2,
+    "vinger": "a834d83b37b10cc0"
+   },
+   {
+    "s": 2,
+    "vinger": "b383b8ca3e064b40"
+   },
+   {
+    "s": 2,
+    "vinger": "a250c7a061f4491f"
+   },
+   {
+    "s": 3,
+    "vinger": "a964a831c351fd6a"
+   },
+   {
+    "s": 3,
+    "vinger": "199265096b85acc9"
+   },
+   {
+    "s": 3,
+    "vinger": "17ccd02e0815c56c"
+   },
+   {
+    "s": 2,
+    "vinger": "9939fa3a9012198f"
+   },
+   {
+    "s": 2,
+    "vinger": "47f84514a8e9c39f"
+   },
+   {
+    "s": 1,
+    "vinger": "5b27cb70ad2fdef0"
+   },
+   {
+    "s": 1,
+    "vinger": "4418fb631484cd21"
+   },
+   {
+    "s": 1,
+    "vinger": "51969546a2b7d2d5"
+   },
+   {
+    "s": 1,
+    "vinger": "3b95135c988737d2"
+   },
+   {
+    "s": 2,
+    "vinger": "767e6532680ae251"
+   },
+   {
+    "s": 1,
+    "vinger": "6dbabaca8455764b"
+   },
+   {
+    "s": 1,
+    "vinger": "f7bd9c8f428345f0"
+   },
+   {
+    "s": 2,
+    "vinger": "7996e9b92016c75e"
+   },
+   {
+    "s": 3,
+    "vinger": "8deac7b454b2af55"
+   },
+   {
+    "s": 2,
+    "vinger": "46d2e5937ebe35a6"
+   },
+   {
+    "s": 2,
+    "vinger": "4ad20e3c699ef8e2"
+   },
+   {
+    "s": 1,
+    "vinger": "0a93b0fb97865c7a"
+   },
+   {
+    "s": 3,
+    "vinger": "28b00f2e215b9d8b"
+   },
+   {
+    "s": 1,
+    "vinger": "6b3638014b8895ed"
+   },
+   {
+    "s": 2,
+    "vinger": "871cd7eedcc945be"
+   },
+   {
+    "s": 2,
+    "vinger": "fda06777f30172e8"
+   },
+   {
+    "s": 3,
+    "vinger": "e13a7fbd37efb3f6"
+   },
+   {
+    "s": 2,
+    "vinger": "5ba981344e9d9d38"
+   },
+   {
+    "s": 2,
+    "vinger": "16aa3ca2165f7710"
+   },
+   {
+    "s": 3,
+    "vinger": "3c72d65dab18af83"
+   },
+   {
+    "s": 2,
+    "vinger": "acd668fef52c92e3"
+   },
+   {
+    "s": 2,
+    "vinger": "197e6ccfd2afeca3"
+   },
+   {
+    "s": 2,
+    "vinger": "8d8ce8aae601f41d"
+   },
+   {
+    "s": 3,
+    "vinger": "3ad1fe486898d921"
+   },
+   {
+    "s": 2,
+    "vinger": "adba0f4ffcad8a92"
+   },
+   {
+    "s": 3,
+    "vinger": "5127a5478b290530"
+   },
+   {
+    "s": 3,
+    "vinger": "4bb7f7b3cb2ebbbe"
+   },
+   {
+    "s": 3,
+    "vinger": "822c0cdb5ea0aa75"
+   },
+   {
+    "s": 2,
+    "vinger": "11556c51be73d7d1"
+   },
+   {
+    "s": 2,
+    "vinger": "5c22f11ebfd78839"
+   },
+   {
+    "s": 2,
+    "vinger": "d3edbe8ce98a5226"
+   },
+   {
+    "s": 2,
+    "vinger": "e8b40f422e296a8b"
+   },
+   {
+    "s": 3,
+    "vinger": "c5275cd9e6020461"
+   },
+   {
+    "s": 3,
+    "vinger": "019d621b6fe4e330"
+   },
+   {
+    "s": 3,
+    "vinger": "88c8cd4a15f28e4f"
+   },
+   {
+    "s": 2,
+    "vinger": "957c296ce481a874"
+   },
+   {
+    "s": 2,
+    "vinger": "2b08f35a2e966d89"
+   },
+   {
+    "s": 1,
+    "vinger": "110e735a6ab07b76"
+   },
+   {
+    "s": 2,
+    "vinger": "1139fb3a002a6319"
+   },
+   {
+    "s": 2,
+    "vinger": "209e8202820e619a"
+   },
+   {
+    "s": 3,
+    "vinger": "cb53773e32ba76d4"
+   },
+   {
+    "s": 4,
+    "vinger": "ee57979ce172f06a"
+   },
+   {
+    "s": 3,
+    "vinger": "fa08072e68cc792c"
+   },
+   {
+    "s": 2,
+    "vinger": "b989e84b5cdc9abc"
+   },
+   {
+    "s": 2,
+    "vinger": "4071d049d2140408"
+   },
+   {
+    "s": 2,
+    "vinger": "f2339330b7f9b7ba"
+   },
+   {
+    "s": 1,
+    "vinger": "e2da4c02a32bcc06"
+   },
+   {
+    "s": 2,
+    "vinger": "372c976f57a9e4ac"
+   },
+   {
+    "s": 1,
+    "vinger": "837ff66abce8e710"
+   },
+   {
+    "s": 1,
+    "vinger": "d6761fc4e6f8d744"
+   },
+   {
+    "s": 1,
+    "vinger": "fd4251d0ee170e92"
+   },
+   {
+    "s": 1,
+    "vinger": "7180b67b5a223258"
+   },
+   {
+    "s": 1,
+    "vinger": "1a61e92b81d32b7e"
+   },
+   {
+    "s": 1,
+    "vinger": "cfcf9909bd331318"
+   },
+   {
+    "s": 1,
+    "vinger": "a42a1fc897047fcf"
+   },
+   {
+    "s": 1,
+    "vinger": "27cad0ec3815e5e0"
+   },
+   {
+    "s": 1,
+    "vinger": "a23f0b34c860c417"
+   },
+   {
+    "s": 1,
+    "vinger": "a0a8edd0f915cdcb"
+   },
+   {
+    "s": 1,
+    "vinger": "f8803213d5a5c37f"
+   },
+   {
+    "s": 2,
+    "vinger": "cacced7ef633e505"
+   },
+   {
+    "s": 2,
+    "vinger": "446b75a94baad0c9"
+   },
+   {
+    "s": 2,
+    "vinger": "228e81feaafbee92"
+   },
+   {
+    "s": 1,
+    "vinger": "bd5bd44d25ad9a7a"
+   },
+   {
+    "s": 2,
+    "vinger": "7a93651987e776ec"
+   },
+   {
+    "s": 2,
+    "vinger": "39347003986c9053"
+   },
+   {
+    "s": 1,
+    "vinger": "4c061f8fe0458d46"
+   },
+   {
+    "s": 1,
+    "vinger": "fc65a9769fdaefdf"
+   },
+   {
+    "s": 2,
+    "vinger": "6de9aa80ccc950e7"
+   },
+   {
+    "s": 2,
+    "vinger": "2fef104c44effc5e"
+   },
+   {
+    "s": 2,
+    "vinger": "7cc8aa23c44a0b5c"
+   },
+   {
+    "s": 2,
+    "vinger": "f9f77365f76ef461"
+   },
+   {
+    "s": 1,
+    "vinger": "467e5248f4dde600"
+   },
+   {
+    "s": 1,
+    "vinger": "1de833897c01d643"
+   },
+   {
+    "s": 2,
+    "vinger": "23465d9ec50062ec"
+   },
+   {
+    "s": 3,
+    "vinger": "bbe3db98c6e01bc1"
+   },
+   {
+    "s": 1,
+    "vinger": "19242a648b23223d"
+   },
+   {
+    "s": 1,
+    "vinger": "842488b6ce745aab"
+   },
+   {
+    "s": 1,
+    "vinger": "34292d311f5aeb18"
+   },
+   {
+    "s": 1,
+    "vinger": "b61aeea6b2e02d62"
+   },
+   {
+    "s": 1,
+    "vinger": "e00f521c471b25ef"
+   },
+   {
+    "s": 1,
+    "vinger": "2bff8906e4c1e0ee"
+   },
+   {
+    "s": 1,
+    "vinger": "2f623fc6d6a0aa4e"
+   },
+   {
+    "s": 1,
+    "vinger": "995756c0a236d2c2"
+   },
+   {
+    "s": 2,
+    "vinger": "0f6adf764b27443d"
+   },
+   {
+    "s": 1,
+    "vinger": "21bc4cdebe038517"
+   },
+   {
+    "s": 2,
+    "vinger": "a96db7f4c0087328"
+   },
+   {
+    "s": 3,
+    "vinger": "1e474aaa4ac57963"
+   },
+   {
+    "s": 2,
+    "vinger": "c5507db6eb8f4379"
+   },
+   {
+    "s": 3,
+    "vinger": "23c5315334e8d5f3"
+   },
+   {
+    "s": 1,
+    "vinger": "e8308c6255a03fb6"
+   },
+   {
+    "s": 2,
+    "vinger": "c7de49ffbd67d1c0"
+   },
+   {
+    "s": 1,
+    "vinger": "54d34a73296063ec"
+   },
+   {
+    "s": 2,
+    "vinger": "63a2ca2081a5f25a"
+   },
+   {
+    "s": 1,
+    "vinger": "49707c7481118425"
+   },
+   {
+    "s": 2,
+    "vinger": "21eef638ea1a8772"
+   },
+   {
+    "s": 1,
+    "vinger": "5dd2794c71c0cd2a"
+   },
+   {
+    "s": 2,
+    "vinger": "bc7b3ee28f5aeeaf"
+   },
+   {
+    "s": 1,
+    "vinger": "65198c820cff7d3a"
+   },
+   {
+    "s": 3,
+    "vinger": "18076bb7140ef408"
+   },
+   {
+    "s": 2,
+    "vinger": "8a5e275ce763ae9c"
+   },
+   {
+    "s": 2,
+    "vinger": "083640504f4fbd64"
+   },
+   {
+    "s": 2,
+    "vinger": "08feef2b5436d81b"
+   },
+   {
+    "s": 1,
+    "vinger": "5f411141c6da7d51"
+   },
+   {
+    "s": 1,
+    "vinger": "9c44c374550945ed"
+   },
+   {
+    "s": 1,
+    "vinger": "f008ae6fc83b792c"
+   },
+   {
+    "s": 1,
+    "vinger": "dc9ccc52fd6d0394"
+   },
+   {
+    "s": 1,
+    "vinger": "ee138e1efd302201"
+   },
+   {
+    "s": 2,
+    "vinger": "38c21996cda491df"
+   },
+   {
+    "s": 1,
+    "vinger": "6a5905b6d9f0b6a3"
+   },
+   {
+    "s": 3,
+    "vinger": "e4db828dc70de715"
+   },
+   {
+    "s": 2,
+    "vinger": "1866436458b20acf"
+   },
+   {
+    "s": 2,
+    "vinger": "bbaa975a59d79413"
+   },
+   {
+    "s": 1,
+    "vinger": "13fd9b1d07549899"
+   },
+   {
+    "s": 1,
+    "vinger": "c1f31c255cd80977"
+   },
+   {
+    "s": 2,
+    "vinger": "262f2ca00454a555"
+   },
+   {
+    "s": 1,
+    "vinger": "0c4c4233d521fbbd"
+   },
+   {
+    "s": 1,
+    "vinger": "0701351d446e022d"
+   },
+   {
+    "s": 1,
+    "vinger": "3df56e68dc693a09"
+   },
+   {
+    "s": 1,
+    "vinger": "419802f799c1d118"
+   },
+   {
+    "s": 1,
+    "vinger": "578177088dbfe77e"
+   },
+   {
+    "s": 2,
+    "vinger": "392b00546493a2a5"
+   },
+   {
+    "s": 1,
+    "vinger": "0f48a50f72a87eee"
+   },
+   {
+    "s": 1,
+    "vinger": "eae3f984a527e409"
+   },
+   {
+    "s": 2,
+    "vinger": "eca4700eab63049b"
+   },
+   {
+    "s": 2,
+    "vinger": "e723ed1773ab9d14"
+   },
+   {
+    "s": 2,
+    "vinger": "42bd7a5c860da699"
+   },
+   {
+    "s": 2,
+    "vinger": "3874abc1b9e253f6"
+   },
+   {
+    "s": 2,
+    "vinger": "7e6dbc8fd43288ef"
+   },
+   {
+    "s": 2,
+    "vinger": "a3fbef6fd4f9dd50"
+   },
+   {
+    "s": 1,
+    "vinger": "c61f4525001b90b9"
+   },
+   {
+    "s": 1,
+    "vinger": "c7ffc84747114cc2"
+   },
+   {
+    "s": 2,
+    "vinger": "176c29c9812d068b"
+   },
+   {
+    "s": 2,
+    "vinger": "d8ed4436545e5fd1"
+   },
+   {
+    "s": 1,
+    "vinger": "ba24bd5cd11e6195"
+   },
+   {
+    "s": 1,
+    "vinger": "4ba0ae15463ff4d0"
+   },
+   {
+    "s": 1,
+    "vinger": "73916252d21dfcfb"
+   },
+   {
+    "s": 1,
+    "vinger": "86a2620236d41624"
+   },
+   {
+    "s": 1,
+    "vinger": "4b187f576471b7e9"
+   },
+   {
+    "s": 1,
+    "vinger": "d7ad97694086835a"
+   },
+   {
+    "s": 1,
+    "vinger": "684b805ac3bb2862"
+   },
+   {
+    "s": 1,
+    "vinger": "343dc08540e67913"
+   },
+   {
+    "s": 1,
+    "vinger": "cb351da3c66bca66"
+   },
+   {
+    "s": 1,
+    "vinger": "a7e4b53e2f17c292"
+   },
+   {
+    "s": 1,
+    "vinger": "e97775232c0af0da"
+   },
+   {
+    "s": 2,
+    "vinger": "b3fa6f5d142796c5"
+   },
+   {
+    "s": 1,
+    "vinger": "dff1f0a6a3d7013d"
+   },
+   {
+    "s": 1,
+    "vinger": "aa6a185ed126af11"
+   },
+   {
+    "s": 1,
+    "vinger": "6680e8d9a955c038"
+   },
+   {
+    "s": 3,
+    "vinger": "2a509bb5a3ce68d3"
+   },
+   {
+    "s": 1,
+    "vinger": "a969d97a5f3b87ba"
+   },
+   {
+    "s": 1,
+    "vinger": "ad7ab269a84cacf2"
+   },
+   {
+    "s": 2,
+    "vinger": "289873ad16432498"
+   },
+   {
+    "s": 2,
+    "vinger": "d32b02f2f5dcc76a"
+   },
+   {
+    "s": 3,
+    "vinger": "c758c2c053f98951"
+   },
+   {
+    "s": 3,
+    "vinger": "ef05068f263b5ca7"
+   },
+   {
+    "s": 2,
+    "vinger": "28b4d4305a7594a5"
+   },
+   {
+    "s": 3,
+    "vinger": "74f48d0d46e30eeb"
+   },
+   {
+    "s": 1,
+    "vinger": "13fd6c094bbe24c2"
+   },
+   {
+    "s": 2,
+    "vinger": "5844f2f29e475cf3"
+   },
+   {
+    "s": 2,
+    "vinger": "2420dd7291ba6003"
+   },
+   {
+    "s": 1,
+    "vinger": "64cc1ce6d7f55954"
+   },
+   {
+    "s": 2,
+    "vinger": "86cd337f067598f3"
+   },
+   {
+    "s": 3,
+    "vinger": "ac6c64760ad5047f"
+   },
+   {
+    "s": 4,
+    "vinger": "32957d5c4bc08eea"
+   },
+   {
+    "s": 4,
+    "vinger": "c50c1e042342d6e5"
+   },
+   {
+    "s": 1,
+    "vinger": "d6c47f39a9fa7214"
+   },
+   {
+    "s": 1,
+    "vinger": "555366319481646d"
+   },
+   {
+    "s": 1,
+    "vinger": "b118fb214c5916e8"
+   },
+   {
+    "s": 1,
+    "vinger": "5f1880e9b9a2db04"
+   },
+   {
+    "s": 1,
+    "vinger": "b5e99776f66c69b2"
+   },
+   {
+    "s": 1,
+    "vinger": "f219849baaa72f41"
+   },
+   {
+    "s": 1,
+    "vinger": "7a9c2883ff52d692"
+   },
+   {
+    "s": 2,
+    "vinger": "b229d33f332fbd10"
+   },
+   {
+    "s": 1,
+    "vinger": "720839c87d190471"
+   },
+   {
+    "s": 1,
+    "vinger": "c3e264d6aa18d983"
+   },
+   {
+    "s": 1,
+    "vinger": "1af8df68ec5d081c"
+   },
+   {
+    "s": 1,
+    "vinger": "25e131fb24972fd3"
+   }
+  ],
+  "grammatica": [
+   {
+    "id": "g-richting",
+    "sp": 1,
+    "oef": 2,
+    "vinger": "5c50d962c68fd92d"
+   },
+   {
+    "id": "g-klinkers",
+    "sp": 1,
+    "oef": 2,
+    "vinger": "2a8ceca7f89ce5b8"
+   },
+   {
+    "id": "g-sukun",
+    "sp": 1,
+    "oef": 2,
+    "vinger": "31a59560f90edb05"
+   },
+   {
+    "id": "g-shadda",
+    "sp": 1,
+    "oef": 2,
+    "vinger": "b213c6c6c3e4f213"
+   },
+   {
+    "id": "g-lang",
+    "sp": 1,
+    "oef": 2,
+    "vinger": "76ca15cfb40f4508"
+   },
+   {
+    "id": "g-tamarbuta",
+    "sp": 1,
+    "oef": 2,
+    "vinger": "274cbff78a1c72a6"
+   },
+   {
+    "id": "g-lidwoord",
+    "sp": 2,
+    "oef": 2,
+    "vinger": "bbe3acd46ef5fc5f"
+   },
+   {
+    "id": "g-zonmaan",
+    "sp": 2,
+    "oef": 3,
+    "vinger": "78bdc4e78efad56a"
+   },
+   {
+    "id": "g-geslacht",
+    "sp": 2,
+    "oef": 2,
+    "vinger": "ceb492dd51ee91ca"
+   },
+   {
+    "id": "g-getal",
+    "sp": 2,
+    "oef": 2,
+    "vinger": "6f599c9ca5b20f69"
+   },
+   {
+    "id": "g-gebroken",
+    "sp": 2,
+    "oef": 2,
+    "vinger": "b69f06c1d146c22f"
+   },
+   {
+    "id": "g-nisba",
+    "sp": 2,
+    "oef": 2,
+    "vinger": "c4d3980d5849617d"
+   },
+   {
+    "id": "g-adjectief",
+    "sp": 2,
+    "oef": 2,
+    "vinger": "f4ef19bbeab4fad7"
+   },
+   {
+    "id": "g-bezit",
+    "sp": 2,
+    "oef": 2,
+    "vinger": "0b59bbd29a9476ec"
+   },
+   {
+    "id": "g-nominaal",
+    "sp": 3,
+    "oef": 2,
+    "vinger": "b843b6a329aacdfb"
+   },
+   {
+    "id": "g-verbaal",
+    "sp": 3,
+    "oef": 2,
+    "vinger": "4d7d57d9df26af9b"
+   },
+   {
+    "id": "g-perfectum",
+    "sp": 3,
+    "oef": 2,
+    "vinger": "6023404d42172971"
+   },
+   {
+    "id": "g-imperfectum",
+    "sp": 3,
+    "oef": 2,
+    "vinger": "6e88fbe7a296f994"
+   },
+   {
+    "id": "g-idafa",
+    "sp": 3,
+    "oef": 2,
+    "vinger": "de2ef265a6850b9c"
+   },
+   {
+    "id": "g-voorzetsels",
+    "sp": 3,
+    "oef": 2,
+    "vinger": "e34b7c756e11e71d"
+   },
+   {
+    "id": "g-ontkenning",
+    "sp": 3,
+    "oef": 2,
+    "vinger": "ddf8b6254ee2ef43"
+   },
+   {
+    "id": "g-naamval",
+    "sp": 3,
+    "oef": 2,
+    "vinger": "1a64e93ef66a89ac"
+   },
+   {
+    "id": "g-wortel",
+    "sp": 4,
+    "oef": 2,
+    "vinger": "e2091d0d1fe5a7b4"
+   },
+   {
+    "id": "g-vormen",
+    "sp": 4,
+    "oef": 2,
+    "vinger": "e6e3b1c5b293afc8"
+   },
+   {
+    "id": "g-deelwoord",
+    "sp": 4,
+    "oef": 2,
+    "vinger": "28d861039e16fa6b"
+   },
+   {
+    "id": "g-kasus-praktijk",
+    "sp": 4,
+    "oef": 2,
+    "vinger": "93d75a41cbf1cc4a"
+   },
+   {
+    "id": "g-passief",
+    "sp": 4,
+    "oef": 2,
+    "vinger": "c7b0ff867b8c90d0"
+   },
+   {
+    "id": "g-koranstijl",
+    "sp": 4,
+    "oef": 2,
+    "vinger": "dec2c13573868ac9"
+   },
+   {
+    "id": "g-vocalisatie",
+    "sp": 4,
+    "oef": 2,
+    "vinger": "9885ab8304513f4f"
+   }
+  ],
+  "zinnen": [
+   {
+    "n2": 1,
+    "vinger": "896dea1a07bdca4a"
+   },
+   {
+    "n2": 1,
+    "vinger": "6a321e2096cfb9b6"
+   },
+   {
+    "n2": 1,
+    "vinger": "0aaf9d8428d55675"
+   },
+   {
+    "n2": 1,
+    "vinger": "2a0b1ad93fdfc994"
+   },
+   {
+    "n2": 1,
+    "vinger": "3cd0fb0f6cd14c4b"
+   },
+   {
+    "n2": 1,
+    "vinger": "09f4d10a5731c067"
+   },
+   {
+    "n2": 1,
+    "vinger": "7d2d3379f1f54a9e"
+   },
+   {
+    "n2": 1,
+    "vinger": "a0872f8e83aa12f7"
+   },
+   {
+    "n2": 1,
+    "vinger": "3e2e92e2ec773e98"
+   },
+   {
+    "n2": 1,
+    "vinger": "773cc834fb224cf5"
+   },
+   {
+    "n2": 1,
+    "vinger": "5e5aa214d820dead"
+   },
+   {
+    "n2": 1,
+    "vinger": "c58c95924e4b8a54"
+   },
+   {
+    "n2": 1,
+    "vinger": "de8998cadd882738"
+   },
+   {
+    "n2": 1,
+    "vinger": "f5c96f6d6249cf5c"
+   },
+   {
+    "n2": 1,
+    "vinger": "3554b741036a913d"
+   },
+   {
+    "n2": 1,
+    "vinger": "b3e683ac54a20b9c"
+   },
+   {
+    "n2": 1,
+    "vinger": "81a29f367587991f"
+   },
+   {
+    "n2": 1,
+    "vinger": "4561bec4b10eb6c8"
+   },
+   {
+    "n2": 1,
+    "vinger": "b5abd932e184b570"
+   },
+   {
+    "n2": 1,
+    "vinger": "f3053eafbe3e8ba8"
+   },
+   {
+    "n2": 1,
+    "vinger": "156ab243ea5ead93"
+   },
+   {
+    "n2": 1,
+    "vinger": "414f507ad599b731"
+   },
+   {
+    "n2": 1,
+    "vinger": "fe7b2e1b51f84169"
+   },
+   {
+    "n2": 1,
+    "vinger": "a2aab604b95deb62"
+   },
+   {
+    "n2": 1,
+    "vinger": "c9cd081d2829ab07"
+   },
+   {
+    "n2": 1,
+    "vinger": "45cfbb2f8e2f1a4f"
+   },
+   {
+    "n2": 1,
+    "vinger": "1d6f3d2bd39ccee4"
+   },
+   {
+    "n2": 1,
+    "vinger": "b424a74e996b9efc"
+   },
+   {
+    "n2": 1,
+    "vinger": "a971ce9b2a19921f"
+   },
+   {
+    "n2": 1,
+    "vinger": "12198ee4c8264627"
+   },
+   {
+    "n2": 1,
+    "vinger": "2ba6ecf7c39af50c"
+   },
+   {
+    "n2": 1,
+    "vinger": "a2862a1e2207ff16"
+   },
+   {
+    "n2": 1,
+    "vinger": "366b6581184fd42f"
+   },
+   {
+    "n2": 1,
+    "vinger": "7d334959bf359cbe"
+   },
+   {
+    "n2": 1,
+    "vinger": "25ab35cb8cf71a03"
+   },
+   {
+    "n2": 1,
+    "vinger": "f4e1c95e4169e2f4"
+   },
+   {
+    "n2": 1,
+    "vinger": "0777e06a35a52905"
+   },
+   {
+    "n2": 1,
+    "vinger": "cf7bd43e836d3498"
+   },
+   {
+    "n2": 1,
+    "vinger": "2c39ed6d61757ae9"
+   },
+   {
+    "n2": 1,
+    "vinger": "f116d158ccca0584"
+   },
+   {
+    "n2": 2,
+    "vinger": "020a77f12cdc16f9"
+   },
+   {
+    "n2": 2,
+    "vinger": "3a580fa5e4f2d339"
+   },
+   {
+    "n2": 2,
+    "vinger": "9f2ad6b64c5f9467"
+   },
+   {
+    "n2": 2,
+    "vinger": "d44d6a021af22580"
+   },
+   {
+    "n2": 2,
+    "vinger": "8de6be097e83d032"
+   },
+   {
+    "n2": 2,
+    "vinger": "8c918b5b950823ac"
+   },
+   {
+    "n2": 2,
+    "vinger": "8f0cf76a457b0040"
+   },
+   {
+    "n2": 2,
+    "vinger": "35ea35e76d948508"
+   },
+   {
+    "n2": 2,
+    "vinger": "c430f1842f48dc9d"
+   },
+   {
+    "n2": 2,
+    "vinger": "555f62fdad98700b"
+   },
+   {
+    "n2": 2,
+    "vinger": "02e8ef14c3bffa89"
+   },
+   {
+    "n2": 2,
+    "vinger": "5941e4d9b889af9f"
+   },
+   {
+    "n2": 2,
+    "vinger": "fc3dc9c3f98da814"
+   },
+   {
+    "n2": 2,
+    "vinger": "89055d157264a387"
+   },
+   {
+    "n2": 2,
+    "vinger": "522417be03d00c92"
+   },
+   {
+    "n2": 2,
+    "vinger": "7b37648c571dd082"
+   },
+   {
+    "n2": 2,
+    "vinger": "47e1df827ed19dab"
+   },
+   {
+    "n2": 2,
+    "vinger": "e03ed17c144ac30c"
+   },
+   {
+    "n2": 2,
+    "vinger": "fce6c06e527ecea4"
+   },
+   {
+    "n2": 2,
+    "vinger": "5b6402aeefec829d"
+   },
+   {
+    "n2": 2,
+    "vinger": "132271e9dca11916"
+   },
+   {
+    "n2": 2,
+    "vinger": "013f164e97001e82"
+   },
+   {
+    "n2": 2,
+    "vinger": "2ba5669b9b15e71c"
+   },
+   {
+    "n2": 2,
+    "vinger": "fb8eb67d964aca09"
+   },
+   {
+    "n2": 2,
+    "vinger": "934bac23c690da5e"
+   },
+   {
+    "n2": 2,
+    "vinger": "556d865dc03ba226"
+   },
+   {
+    "n2": 2,
+    "vinger": "4123a49df2977c62"
+   },
+   {
+    "n2": 2,
+    "vinger": "b18a3ee0eccdc1b5"
+   },
+   {
+    "n2": 2,
+    "vinger": "ebfa772f9d300c66"
+   },
+   {
+    "n2": 2,
+    "vinger": "a1c13bd39570124d"
+   },
+   {
+    "n2": 2,
+    "vinger": "8939c88e598aa7f6"
+   },
+   {
+    "n2": 2,
+    "vinger": "b09be3e34d610563"
+   },
+   {
+    "n2": 2,
+    "vinger": "7ef2005acca1ad7e"
+   },
+   {
+    "n2": 2,
+    "vinger": "de03d6ddcc441e18"
+   },
+   {
+    "n2": 2,
+    "vinger": "3bb72d22a150d222"
+   },
+   {
+    "n2": 2,
+    "vinger": "b033fcc0046d5476"
+   },
+   {
+    "n2": 2,
+    "vinger": "2f430984109eac43"
+   },
+   {
+    "n2": 2,
+    "vinger": "001b2585b9ca71cd"
+   },
+   {
+    "n2": 2,
+    "vinger": "93ca490cdbfaa935"
+   },
+   {
+    "n2": 2,
+    "vinger": "8b015d23e7364dc7"
+   },
+   {
+    "n2": 2,
+    "vinger": "855f914e7e9c8a01"
+   },
+   {
+    "n2": 2,
+    "vinger": "0078a68015eb5d7f"
+   },
+   {
+    "n2": 3,
+    "vinger": "fa0a854cf218e11e"
+   },
+   {
+    "n2": 3,
+    "vinger": "a638b4611d99d701"
+   },
+   {
+    "n2": 3,
+    "vinger": "12fdfab174ede273"
+   },
+   {
+    "n2": 3,
+    "vinger": "da5b62ac16337ad8"
+   },
+   {
+    "n2": 3,
+    "vinger": "9a461f189ddd6ac5"
+   },
+   {
+    "n2": 3,
+    "vinger": "0e05e9bbd3972cb5"
+   },
+   {
+    "n2": 3,
+    "vinger": "99ac843bec0863c3"
+   },
+   {
+    "n2": 3,
+    "vinger": "8a28c4716f1de2de"
+   },
+   {
+    "n2": 3,
+    "vinger": "830877fe351a6dee"
+   },
+   {
+    "n2": 3,
+    "vinger": "4a0c920888707eae"
+   },
+   {
+    "n2": 3,
+    "vinger": "d0ef37fc82577f40"
+   },
+   {
+    "n2": 3,
+    "vinger": "0d048405a3730cf0"
+   },
+   {
+    "n2": 3,
+    "vinger": "1364c6183f774920"
+   },
+   {
+    "n2": 3,
+    "vinger": "f574da8716fdd567"
+   },
+   {
+    "n2": 3,
+    "vinger": "1cb428267758f0d5"
+   },
+   {
+    "n2": 3,
+    "vinger": "63b792fa6463f7e5"
+   },
+   {
+    "n2": 3,
+    "vinger": "c04e7e2d8ea27435"
+   },
+   {
+    "n2": 3,
+    "vinger": "5043ccc7b7ce4c6a"
+   },
+   {
+    "n2": 3,
+    "vinger": "98c522c26d9bd60e"
+   },
+   {
+    "n2": 3,
+    "vinger": "717bb61b8c1074e8"
+   },
+   {
+    "n2": 3,
+    "vinger": "187a242a3ef48454"
+   },
+   {
+    "n2": 3,
+    "vinger": "5fd2881b4ad62b68"
+   },
+   {
+    "n2": 3,
+    "vinger": "a9c0c0939a65d834"
+   },
+   {
+    "n2": 3,
+    "vinger": "f45b5347ea63e89b"
+   },
+   {
+    "n2": 3,
+    "vinger": "9673974dfc1518e6"
+   },
+   {
+    "n2": 3,
+    "vinger": "88861036743ac3dc"
+   },
+   {
+    "n2": 3,
+    "vinger": "6d5928aadad06e7a"
+   },
+   {
+    "n2": 3,
+    "vinger": "b4840fbd3464965e"
+   },
+   {
+    "n2": 3,
+    "vinger": "872b14653ee7eccf"
+   },
+   {
+    "n2": 3,
+    "vinger": "bcb3b35507c2d6e4"
+   },
+   {
+    "n2": 3,
+    "vinger": "793da9c2f72f375a"
+   },
+   {
+    "n2": 3,
+    "vinger": "d72387558ee2a556"
+   },
+   {
+    "n2": 3,
+    "vinger": "9e4b99e491e17b7e"
+   },
+   {
+    "n2": 3,
+    "vinger": "ccf2c33d608c7842"
+   },
+   {
+    "n2": 3,
+    "vinger": "0e34dbf3602eb128"
+   },
+   {
+    "n2": 3,
+    "vinger": "5c442aa903cb24fd"
+   },
+   {
+    "n2": 3,
+    "vinger": "76eb74aec99630f6"
+   },
+   {
+    "n2": 3,
+    "vinger": "823204d886c92088"
+   },
+   {
+    "n2": 3,
+    "vinger": "c2651459de945bbb"
+   },
+   {
+    "n2": 3,
+    "vinger": "5cbdd4f109b58852"
+   },
+   {
+    "n2": 3,
+    "vinger": "5a9cff8ffa5ecc9d"
+   },
+   {
+    "n2": 4,
+    "vinger": "28e6e76d24d87921"
+   },
+   {
+    "n2": 4,
+    "vinger": "aaef4af323b70e63"
+   },
+   {
+    "n2": 4,
+    "vinger": "607bc659e19532a7"
+   },
+   {
+    "n2": 4,
+    "vinger": "357b077b56bad635"
+   },
+   {
+    "n2": 4,
+    "vinger": "4362a99f71a4c2d8"
+   },
+   {
+    "n2": 4,
+    "vinger": "d4e86a28f6e464b8"
+   },
+   {
+    "n2": 4,
+    "vinger": "d4412a53aba41174"
+   },
+   {
+    "n2": 4,
+    "vinger": "0d9c4f9cf7c15caa"
+   },
+   {
+    "n2": 4,
+    "vinger": "e1f711d843c6d048"
+   },
+   {
+    "n2": 4,
+    "vinger": "b803d8f93cd97a8c"
+   },
+   {
+    "n2": 4,
+    "vinger": "59af271bd67aefdf"
+   },
+   {
+    "n2": 4,
+    "vinger": "59b3fcfc5fadc814"
+   },
+   {
+    "n2": 4,
+    "vinger": "b300e9a874fc4b8b"
+   },
+   {
+    "n2": 4,
+    "vinger": "2d7025fc98038917"
+   },
+   {
+    "n2": 4,
+    "vinger": "c3802a44859bbdc1"
+   },
+   {
+    "n2": 4,
+    "vinger": "cc5964c879ea4524"
+   },
+   {
+    "n2": 4,
+    "vinger": "a3c98f6554cc3020"
+   },
+   {
+    "n2": 4,
+    "vinger": "793f59b35451b43f"
+   },
+   {
+    "n2": 4,
+    "vinger": "69bd9faf4c6a683f"
+   },
+   {
+    "n2": 4,
+    "vinger": "7b55ec7c75ab7b42"
+   },
+   {
+    "n2": 4,
+    "vinger": "03a20f72477ecf64"
+   },
+   {
+    "n2": 4,
+    "vinger": "9ada71b1d5cfc594"
+   },
+   {
+    "n2": 4,
+    "vinger": "60868ebb5a0699d5"
+   },
+   {
+    "n2": 4,
+    "vinger": "f7249856c628b365"
+   }
+  ],
+  "teksten": [
+   {
+    "vinger": "8805000963c7f507"
+   },
+   {
+    "vinger": "d92e33b10ea75432"
+   },
+   {
+    "vinger": "aa4d3c86bf2cd9c2"
+   },
+   {
+    "vinger": "7b17b72a02df77b9"
+   },
+   {
+    "vinger": "be519ad2a9d4423e"
+   },
+   {
+    "vinger": "5b7403b636280cf9"
+   },
+   {
+    "vinger": "ad85e63454c1b9f9"
+   },
+   {
+    "vinger": "37bbccd3b2d34a22"
+   },
+   {
+    "vinger": "1394b97f49724ad8"
+   },
+   {
+    "vinger": "b9541f062dbec6cf"
+   },
+   {
+    "vinger": "35c62ec92079393c"
+   },
+   {
+    "vinger": "384c60a675efaaf9"
+   },
+   {
+    "vinger": "38dc8ec16dbd46d3"
+   },
+   {
+    "vinger": "8865ced8b405ff9a"
+   },
+   {
+    "vinger": "1db4c55ade17585e"
+   }
+  ],
+  "koran": [
+   {
+    "vinger": "e5afb654aa57ee7d"
+   },
+   {
+    "vinger": "f7696dd66acaebfd"
+   },
+   {
+    "vinger": "e59f44bec4872cbb"
+   },
+   {
+    "vinger": "064e6a54f90785e6"
+   },
+   {
+    "vinger": "5fbba38fc2419135"
+   },
+   {
+    "vinger": "427178a5b4aa4648"
+   },
+   {
+    "vinger": "784a75496f179de7"
+   },
+   {
+    "vinger": "ea9182d4b7387b70"
+   },
+   {
+    "vinger": "3b4aaa504c5ba793"
+   },
+   {
+    "vinger": "58d426d988f8fbe7"
+   },
+   {
+    "vinger": "fd1fc083e58d5c47"
+   },
+   {
+    "vinger": "ba52e6026a96f568"
+   },
+   {
+    "vinger": "22b68e32d2d0b8ac"
+   },
+   {
+    "vinger": "7877412dec1ab91a"
+   },
+   {
+    "vinger": "fdbf1b1ceb8dcd55"
+   },
+   {
+    "vinger": "77518f72859f7d33"
+   },
+   {
+    "vinger": "99d72c8f67e01cc8"
+   },
+   {
+    "vinger": "7e8defd1dc028e02"
+   },
+   {
+    "vinger": "b437226c2a42202d"
+   },
+   {
+    "vinger": "cbeae558328e559e"
+   },
+   {
+    "vinger": "e72bc0f874bf459a"
+   },
+   {
+    "vinger": "72c0c1c69fe020f2"
+   },
+   {
+    "vinger": "7195e045e37cd2e2"
+   },
+   {
+    "vinger": "f79777e79bfe1caa"
+   },
+   {
+    "vinger": "d2afcfa6734c9a48"
+   },
+   {
+    "vinger": "f3272189722f57ab"
+   },
+   {
+    "vinger": "bb6766054c070dc6"
+   },
+   {
+    "vinger": "fb496bfe903cc156"
+   },
+   {
+    "vinger": "0ed881849ee136d3"
+   },
+   {
+    "vinger": "7cf4d9562163915d"
+   },
+   {
+    "vinger": "ec659fb146ce3ca7"
+   },
+   {
+    "vinger": "1da7a0ea96f56b8b"
+   },
+   {
+    "vinger": "deb81ee81dc3e116"
+   },
+   {
+    "vinger": "5bf2170934bb833a"
+   },
+   {
+    "vinger": "015d21dc1da3b7ef"
+   },
+   {
+    "vinger": "664384e1048430c9"
+   },
+   {
+    "vinger": "e75c63e3c04e0fce"
+   },
+   {
+    "vinger": "291e863eef4e2ed2"
+   },
+   {
+    "vinger": "a53f2e17ab7e3b55"
+   },
+   {
+    "vinger": "06012aa9f39057f9"
+   },
+   {
+    "vinger": "c32197b81f1fba6e"
+   },
+   {
+    "vinger": "a0db228751a082cd"
+   },
+   {
+    "vinger": "5cc76ecaa441f751"
+   },
+   {
+    "vinger": "00e666a4541fb702"
+   },
+   {
+    "vinger": "67cc0b320b3096f2"
+   },
+   {
+    "vinger": "78826738e924e0ac"
+   },
+   {
+    "vinger": "90bf11b13f498f45"
+   },
+   {
+    "vinger": "6d5e75571c3684e6"
+   },
+   {
+    "vinger": "8ebf7ab9bec3abda"
+   },
+   {
+    "vinger": "6f489014fd5b6ba6"
+   },
+   {
+    "vinger": "d9e79fe99de2aa2a"
+   },
+   {
+    "vinger": "2371af23919f67c2"
+   },
+   {
+    "vinger": "faba73e4d0b04e3d"
+   },
+   {
+    "vinger": "9d1eff81a0474899"
+   },
+   {
+    "vinger": "6351f38bc44e2a72"
+   },
+   {
+    "vinger": "df702abdd325fdbc"
+   },
+   {
+    "vinger": "f5cc1971501cfadc"
+   },
+   {
+    "vinger": "721c22d6a1ad0005"
+   },
+   {
+    "vinger": "d9ca3936e6c7469b"
+   },
+   {
+    "vinger": "1faa1e9efec6ffad"
+   },
+   {
+    "vinger": "e608f82f18d7b67f"
+   },
+   {
+    "vinger": "338e2268d2e5c5aa"
+   },
+   {
+    "vinger": "545c0f530a60c964"
+   },
+   {
+    "vinger": "0d924f99429d8950"
+   },
+   {
+    "vinger": "96d1945d3afe120c"
+   },
+   {
+    "vinger": "fc31909fd825549b"
+   },
+   {
+    "vinger": "1cff7f7bffeec5ae"
+   },
+   {
+    "vinger": "8ec3a30305739c0a"
+   },
+   {
+    "vinger": "091124c13ea34aa6"
+   },
+   {
+    "vinger": "2ea871b17ac16419"
+   },
+   {
+    "vinger": "59b564a97a386bc2"
+   },
+   {
+    "vinger": "5c2047c311c54813"
+   },
+   {
+    "vinger": "fc2d2efb7ac30755"
+   },
+   {
+    "vinger": "fe6a085bb6f2ac26"
+   },
+   {
+    "vinger": "1e1596b412ebf7b6"
+   },
+   {
+    "vinger": "10616e861a3593bc"
+   },
+   {
+    "vinger": "0fd9b72cd3460b33"
+   },
+   {
+    "vinger": "e74a93742c84861b"
+   },
+   {
+    "vinger": "572adf477b07f5bd"
+   },
+   {
+    "vinger": "bac7bb205b5c7bfc"
+   },
+   {
+    "vinger": "4012197bb2369c15"
+   },
+   {
+    "vinger": "61c37f8f5585aacc"
+   },
+   {
+    "vinger": "888dddb934aca601"
+   },
+   {
+    "vinger": "5b2b4b2b4c8087aa"
+   },
+   {
+    "vinger": "914c3bd20f8b7efd"
+   },
+   {
+    "vinger": "17b506f4f16f14cd"
+   },
+   {
+    "vinger": "b1050bf56360714a"
+   },
+   {
+    "vinger": "47cb322bcebd537c"
+   },
+   {
+    "vinger": "e2bcce52fceb9903"
+   },
+   {
+    "vinger": "b90fef50f62f9ca0"
+   },
+   {
+    "vinger": "07b4ce43a9321330"
+   },
+   {
+    "vinger": "7ccf039eecdad73d"
+   },
+   {
+    "vinger": "3002228cd4f20e95"
+   },
+   {
+    "vinger": "7cbe0dcf638ec421"
+   },
+   {
+    "vinger": "f345ecdff8da47f8"
+   },
+   {
+    "vinger": "35b9d6eca7b539b4"
+   },
+   {
+    "vinger": "61cd5042f945ecbe"
+   },
+   {
+    "vinger": "b1906d53b9dc49b2"
+   },
+   {
+    "vinger": "ab8dd3db17929c16"
+   },
+   {
+    "vinger": "5aa164da5a77cfaa"
+   }
+  ],
+  "jaar": [
+   {
+    "n": 1,
+    "vinger": "0b8d62b9bf980d11"
+   },
+   {
+    "n": 2,
+    "vinger": "6e58fca1c2811a7c"
+   },
+   {
+    "n": 3,
+    "vinger": "b81a1c5817bc52de"
+   },
+   {
+    "n": 4,
+    "vinger": "0dec26eb7dd4197f"
+   },
+   {
+    "n": 5,
+    "vinger": "763922d07b49feb5"
+   },
+   {
+    "n": 6,
+    "vinger": "b76fdc3f27dcb0f2"
+   },
+   {
+    "n": 7,
+    "vinger": "c56336044007e8f5"
+   },
+   {
+    "n": 8,
+    "vinger": "6ad1e3b674dd49e0"
+   },
+   {
+    "n": 9,
+    "vinger": "d8087c4be0ac5701"
+   },
+   {
+    "n": 10,
+    "vinger": "caccad489ba3a2fa"
+   },
+   {
+    "n": 11,
+    "vinger": "20b860d4ddc8a6bf"
+   },
+   {
+    "n": 12,
+    "vinger": "db3285460c0003a2"
+   },
+   {
+    "n": 13,
+    "vinger": "5ff0f9b65ae0f60d"
+   },
+   {
+    "n": 14,
+    "vinger": "b6815b92000825f9"
+   },
+   {
+    "n": 15,
+    "vinger": "7411d4bea0d5b664"
+   },
+   {
+    "n": 16,
+    "vinger": "bd98f3d4e3416377"
+   },
+   {
+    "n": 17,
+    "vinger": "10bc03298aae7316"
+   },
+   {
+    "n": 18,
+    "vinger": "7cb91167bb7e77b1"
+   },
+   {
+    "n": 19,
+    "vinger": "3d7b92427fb93d9b"
+   },
+   {
+    "n": 20,
+    "vinger": "aee98c9aea6aea23"
+   },
+   {
+    "n": 21,
+    "vinger": "77b2723451ecf30c"
+   },
+   {
+    "n": 22,
+    "vinger": "4eac3b56b5b629c5"
+   },
+   {
+    "n": 23,
+    "vinger": "26aa50af42aba43a"
+   },
+   {
+    "n": 24,
+    "vinger": "e10a2f9471f71092"
+   },
+   {
+    "n": 25,
+    "vinger": "136baaef4759b650"
+   },
+   {
+    "n": 26,
+    "vinger": "f667468df4d5ff16"
+   },
+   {
+    "n": 27,
+    "vinger": "a53067c7a80663cf"
+   },
+   {
+    "n": 28,
+    "vinger": "6c6914e5e6696b20"
+   },
+   {
+    "n": 29,
+    "vinger": "6cd4930639b05e89"
+   },
+   {
+    "n": 30,
+    "vinger": "410f5d6e4e97d048"
+   },
+   {
+    "n": 31,
+    "vinger": "0edd4059745eec64"
+   },
+   {
+    "n": 32,
+    "vinger": "0840d446f5dbdd33"
+   },
+   {
+    "n": 33,
+    "vinger": "ffb44a2d1926d2c1"
+   },
+   {
+    "n": 34,
+    "vinger": "602a4c743212ea29"
+   },
+   {
+    "n": 35,
+    "vinger": "9bdbf0beaf5dc57c"
+   },
+   {
+    "n": 36,
+    "vinger": "729dbc2d3a919af3"
+   }
+  ],
+  "blokken": [
+   {
+    "n": 1,
+    "weken": [
+     1,
+     9
+    ],
+    "t": "De eerste zestien letters",
+    "u": "Van alif tot ta, met de korte klinkers erbij."
+   },
+   {
+    "n": 2,
+    "weken": [
+     10,
+     18
+    ],
+    "t": "Het alfabet compleet",
+    "u": "De laatste twaalf letters, en de tekens die je nodig hebt om te lezen."
+   },
+   {
+    "n": 3,
+    "weken": [
+     19,
+     27
+    ],
+    "t": "Woorden en zinnen",
+    "u": "Verbinden, het lidwoord, en de eerste echte zinnen."
+   },
+   {
+    "n": 4,
+    "weken": [
+     28,
+     36
+    ],
+    "t": "Lezen wat je bidt",
+    "u": "Al-Fatiha en de korte soera's, en je eigen zinnen schrijven."
+   }
+  ],
+  "sessie": [
+   {
+    "id": "open",
+    "min": 5,
+    "t": "Openen",
+    "wat": "Ga zitten, zeg samen de basmala, en kijk wat jullie vandaag gaan doen."
+   },
+   {
+    "id": "herhaal",
+    "min": 15,
+    "t": "Herhalen",
+    "wat": "Eerst terug: de letters en woorden van de vorige weken. Pas daarna iets nieuws."
+   },
+   {
+    "id": "letters",
+    "min": 20,
+    "t": "Nieuwe letters",
+    "wat": "Kijken, luisteren, naspreken. Elke letter in zijn vier vormen."
+   },
+   {
+    "id": "lezen",
+    "min": 15,
+    "t": "Lezen",
+    "wat": "Woorden waarin de nieuwe letters zitten. Hardop, rustig, meerdere keren."
+   },
+   {
+    "id": "schrijven",
+    "min": 20,
+    "t": "Schrijven",
+    "wat": "Het werkblad: overtrekken, dan zelf. Van rechts naar links."
+   },
+   {
+    "id": "geloof",
+    "min": 10,
+    "t": "Een stuk geloof",
+    "wat": "Kort en concreet. Hier hoort het Arabische woord van vandaag bij."
+   },
+   {
+    "id": "slot",
+    "min": 5,
+    "t": "Afsluiten",
+    "wat": "Wat blijft er deze week thuis liggen om te oefenen? Sluit af met een du'a."
+   }
+  ],
+  "sessieminuten": 90,
+  "meting": [
+   {
+    "vinger": "04511fd1d4dd2685"
+   },
+   {
+    "vinger": "be469453c29dbeba"
+   },
+   {
+    "vinger": "568d44e8a2de0927"
+   },
+   {
+    "vinger": "f28101e6baf9bcbd"
+   },
+   {
+    "vinger": "76926eed7459624e"
+   },
+   {
+    "vinger": "42303d90499cedcd"
+   },
+   {
+    "vinger": "562b0b8d9c5b7ea3"
+   },
+   {
+    "vinger": "eede714bd2023211"
+   },
+   {
+    "vinger": "9f4772e99feacb42"
+   },
+   {
+    "vinger": "a393c60488d1ee85"
+   },
+   {
+    "vinger": "cc1a9314985dcc25"
+   },
+   {
+    "vinger": "221ec53f4b0e6aaa"
+   },
+   {
+    "vinger": "5d7adc3a26379018"
+   },
+   {
+    "vinger": "8cfc819dc471fb0f"
+   },
+   {
+    "vinger": "cca1bf416e5f7125"
+   },
+   {
+    "vinger": "a2e6ec21d661f5e8"
+   },
+   {
+    "vinger": "0f82faa3ebb32fd3"
+   },
+   {
+    "vinger": "65dd9bc182ca9aaa"
+   }
+  ],
+  "metingniveaus": [
+   {
+    "min": 0,
+    "niveau": 1,
+    "week": 1,
+    "t": "Beginner",
+    "u": "Je begint bij de eerste letter. Precies goed — zo hoort het."
+   },
+   {
+    "min": 7,
+    "niveau": 2,
+    "week": 5,
+    "t": "Op weg",
+    "u": "Je kent de eerste letters al. Je slaat de eerste vier weken over."
+   },
+   {
+    "min": 12,
+    "niveau": 3,
+    "week": 11,
+    "t": "Gevorderd",
+    "u": "Je leest losse letters en korte woorden. Je begint halverwege het tweede blok."
+   },
+   {
+    "min": 16,
+    "niveau": 4,
+    "week": 17,
+    "t": "Vlot",
+    "u": "Je leest al aardig. Je begint bij de tekens en gaat snel door naar zinnen."
+   }
+  ],
+  "spoornaam": {
+   "1": "Letters en klanken",
+   "2": "Woorden en eerste grammatica",
+   "3": "Zinsbouw en werkwoorden",
+   "4": "Volwassen spoor"
+  },
+  "spoorleeftijd": {
+   "1": "7 tot 9 jaar",
+   "2": "10 tot 12 jaar",
+   "3": "13 tot 15 jaar",
+   "4": "volwassen"
+  }
+ },
+ "sporen": [
+  {
+   "leeftijd": 5,
+   "spoor": 1
+  },
+  {
+   "leeftijd": 7,
+   "spoor": 1
+  },
+  {
+   "leeftijd": 9,
+   "spoor": 1
+  },
+  {
+   "leeftijd": 10,
+   "spoor": 2
+  },
+  {
+   "leeftijd": 12,
+   "spoor": 2
+  },
+  {
+   "leeftijd": 13,
+   "spoor": 3
+  },
+  {
+   "leeftijd": 15,
+   "spoor": 3
+  },
+  {
+   "leeftijd": 16,
+   "spoor": 4
+  },
+  {
+   "leeftijd": 40,
+   "spoor": 4
+  }
+ ],
+ "kaartlijsten": [
+  {
+   "spoor": 1,
+   "aantal": 337,
+   "eerste": [
+    "L:ا",
+    "L:ب",
+    "L:ت",
+    "L:ث",
+    "L:ج",
+    "L:ح",
+    "L:خ",
+    "L:د"
+   ],
+   "vinger": "7a8d6dc676f9c03e"
+  },
+  {
+   "spoor": 2,
+   "aantal": 943,
+   "eerste": [
+    "W:0:nl",
+    "W:0:ar",
+    "W:1:nl",
+    "W:1:ar",
+    "W:2:nl",
+    "W:2:ar",
+    "W:3:nl",
+    "W:3:ar"
+   ],
+   "vinger": "9a467378c8485671"
+  },
+  {
+   "spoor": 3,
+   "aantal": 1088,
+   "eerste": [
+    "W:0:nl",
+    "W:0:ar",
+    "W:1:nl",
+    "W:1:ar",
+    "W:2:nl",
+    "W:2:ar",
+    "W:3:nl",
+    "W:3:ar"
+   ],
+   "vinger": "fd663a958c693360"
+  },
+  {
+   "spoor": 4,
+   "aantal": 1232,
+   "eerste": [
+    "W:0:nl",
+    "W:0:ar",
+    "W:1:nl",
+    "W:1:ar",
+    "W:2:nl",
+    "W:2:ar",
+    "W:3:nl",
+    "W:3:ar"
+   ],
+   "vinger": "527254405789247c"
+  }
+ ],
+ "rijen": [
+  {
+   "plafond": null,
+   "ids": [
+    "c",
+    "a",
+    "f"
+   ],
+   "totaal": 5,
+   "gebruikt": 3
+  },
+  {
+   "plafond": 2,
+   "ids": [
+    "c",
+    "a"
+   ],
+   "totaal": 5,
+   "gebruikt": 2
+  },
+  {
+   "plafond": 10,
+   "ids": [
+    "c",
+    "a",
+    "f",
+    "d",
+    "b"
+   ],
+   "totaal": 5,
+   "gebruikt": 10
+  }
+ ],
+ "paden": [
+  {
+   "spoor": 1,
+   "stappen": [
+    {
+     "k": "letters",
+     "titel": "Alif en ba — de eerste twee",
+     "n": 2
+    },
+    {
+     "k": "letters",
+     "titel": "Ta en tha — twee punten of drie",
+     "n": 2
+    },
+    {
+     "k": "teken",
+     "titel": "Teken: fatha — فَتْحَة",
+     "n": 1
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: familie 1",
+     "n": 6
+    },
+    {
+     "k": "letters",
+     "titel": "Jim, ha en kha — één vorm, drie klanken",
+     "n": 3
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: familie 2",
+     "n": 6
+    },
+    {
+     "k": "zinnen",
+     "titel": "Zinnen: begroeten",
+     "n": 6
+    },
+    {
+     "k": "letters",
+     "titel": "Dal en dhal",
+     "n": 2
+    },
+    {
+     "k": "letters",
+     "titel": "Ra en zay",
+     "n": 2
+    },
+    {
+     "k": "teken",
+     "titel": "Teken: kasra — كَسْرَة",
+     "n": 1
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: familie 3",
+     "n": 6
+    },
+    {
+     "k": "letters",
+     "titel": "Sin en shin",
+     "n": 2
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: lichaam 1",
+     "n": 6
+    },
+    {
+     "k": "zinnen",
+     "titel": "Zinnen: begroeten en kennismaken",
+     "n": 6
+    },
+    {
+     "k": "letters",
+     "titel": "Sad en dad — de zware s en d",
+     "n": 2
+    },
+    {
+     "k": "letters",
+     "titel": "Ta en za — de zware t en dh",
+     "n": 2
+    },
+    {
+     "k": "teken",
+     "titel": "Teken: damma — ضَمَّة",
+     "n": 1
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: lichaam 2",
+     "n": 6
+    },
+    {
+     "k": "letters",
+     "titel": "Ayn en ghayn — de keelletters",
+     "n": 2
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: eten 1",
+     "n": 6
+    },
+    {
+     "k": "zinnen",
+     "titel": "Zinnen: begroeten en beleefdheid",
+     "n": 6
+    },
+    {
+     "k": "letters",
+     "titel": "Fa en qaf — één punt of twee",
+     "n": 2
+    },
+    {
+     "k": "letters",
+     "titel": "Kaf en lam",
+     "n": 2
+    },
+    {
+     "k": "teken",
+     "titel": "Teken: sukun — سُكُون",
+     "n": 1
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: eten 2",
+     "n": 6
+    },
+    {
+     "k": "letters",
+     "titel": "Mim en nun",
+     "n": 2
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: eten 3",
+     "n": 6
+    },
+    {
+     "k": "zinnen",
+     "titel": "Zinnen: beleefdheid en aanwijzen",
+     "n": 6
+    },
+    {
+     "k": "letters",
+     "titel": "Ha, waw en ya — de laatste drie",
+     "n": 3
+    },
+    {
+     "k": "teken",
+     "titel": "Teken: shadda — شَدَّة",
+     "n": 1
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: eten 4",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: huis 1",
+     "n": 6
+    },
+    {
+     "k": "zinnen",
+     "titel": "Zinnen: familie en kennismaken",
+     "n": 6
+    },
+    {
+     "k": "teken",
+     "titel": "Teken: tanwin fath — تَنْوِين فَتْح",
+     "n": 1
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: huis 2",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: huis 3",
+     "n": 6
+    },
+    {
+     "k": "zinnen",
+     "titel": "Zinnen: gevoel en vragen",
+     "n": 6
+    },
+    {
+     "k": "teken",
+     "titel": "Teken: tanwin damm — تَنْوِين ضَمّ",
+     "n": 1
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: school 1",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: school 2",
+     "n": 6
+    },
+    {
+     "k": "zinnen",
+     "titel": "Zinnen: vragen",
+     "n": 4
+    },
+    {
+     "k": "teken",
+     "titel": "Teken: tanwin kasr — تَنْوِين كَسْر",
+     "n": 1
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: school 3",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: kleuren 1",
+     "n": 6
+    },
+    {
+     "k": "teken",
+     "titel": "Teken: madda — مَدَّة",
+     "n": 1
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: kleuren 2",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: getallen 1",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: getallen 2",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: dieren 1",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: dieren 2",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: dieren 3",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: tijd 1",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: tijd 2",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: tijd 3",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: tijd 4",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: gevoelens 1",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: gevoelens 2",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: gevoelens 3",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: werkwoorden 1",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: werkwoorden 2",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: natuur 1",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: natuur 2",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: kleding 1",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: kleding 2",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: stad 1",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: stad 2",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: functiewoorden 1",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: functiewoorden 2",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: functiewoorden 3",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: functiewoorden 4",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: begroetingen 1",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: begroetingen 2",
+     "n": 5
+    }
+   ]
+  },
+  {
+   "spoor": 2,
+   "stappen": [
+    {
+     "k": "grammatica",
+     "titel": "Het lidwoord الـ",
+     "n": 1
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: familie 1",
+     "n": 8
+    },
+    {
+     "k": "zinnen",
+     "titel": "Zinnen: kennismaken",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: familie 2",
+     "n": 8
+    },
+    {
+     "k": "tekst",
+     "titel": "Lezen: Een dag op school",
+     "n": 1
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: familie 3",
+     "n": 8
+    },
+    {
+     "k": "grammatica",
+     "titel": "Zons- en maansletters",
+     "n": 1
+    },
+    {
+     "k": "grammatica",
+     "titel": "Mannelijk en vrouwelijk",
+     "n": 1
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: familie 4",
+     "n": 8
+    },
+    {
+     "k": "zinnen",
+     "titel": "Zinnen: familie en dagelijks",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: lichaam 1",
+     "n": 8
+    },
+    {
+     "k": "tekst",
+     "titel": "Lezen: De markt",
+     "n": 1
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: lichaam 2",
+     "n": 8
+    },
+    {
+     "k": "grammatica",
+     "titel": "Enkelvoud, tweevoud, meervoud",
+     "n": 1
+    },
+    {
+     "k": "grammatica",
+     "titel": "Het gebroken meervoud",
+     "n": 1
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: lichaam 3",
+     "n": 8
+    },
+    {
+     "k": "zinnen",
+     "titel": "Zinnen: dagelijks",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: eten 1",
+     "n": 8
+    },
+    {
+     "k": "tekst",
+     "titel": "Lezen: De vier seizoenen",
+     "n": 1
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: eten 2",
+     "n": 8
+    },
+    {
+     "k": "grammatica",
+     "titel": "De nisba",
+     "n": 1
+    },
+    {
+     "k": "grammatica",
+     "titel": "Het bijvoeglijk naamwoord staat achteraan",
+     "n": 1
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: eten 3",
+     "n": 8
+    },
+    {
+     "k": "zinnen",
+     "titel": "Zinnen: dagelijks en beschrijven",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: eten 4",
+     "n": 8
+    },
+    {
+     "k": "tekst",
+     "titel": "Lezen: De vlijtige mier",
+     "n": 1
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: eten 5",
+     "n": 8
+    },
+    {
+     "k": "grammatica",
+     "titel": "Bezit met achtervoegsels",
+     "n": 1
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: huis 1",
+     "n": 8
+    },
+    {
+     "k": "zinnen",
+     "titel": "Zinnen: winkelen en tijd",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: huis 2",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: huis 3",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: huis 4",
+     "n": 8
+    },
+    {
+     "k": "zinnen",
+     "titel": "Zinnen: tijd en gevoel",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: school 1",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: school 2",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: school 3",
+     "n": 8
+    },
+    {
+     "k": "zinnen",
+     "titel": "Zinnen: gevoel en vragen",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: kleuren 1",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: kleuren 2",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: getallen 1",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: getallen 2",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: dieren 1",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: dieren 2",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: dieren 3",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: dieren 4",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: tijd 1",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: tijd 2",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: tijd 3",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: gevoelens 1",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: gevoelens 2",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: gevoelens 3",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: werkwoorden 1",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: werkwoorden 2",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: werkwoorden 3",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: werkwoorden 4",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: werkwoorden 5",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: natuur 1",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: natuur 2",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: natuur 3",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: kleding 1",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: kleding 2",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: stad 1",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: stad 2",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: stad 3",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: functiewoorden 1",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: functiewoorden 2",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: functiewoorden 3",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: functiewoorden 4",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: functiewoorden 5",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: begroetingen 1",
+     "n": 8
+    }
+   ]
+  },
+  {
+   "spoor": 3,
+   "stappen": [
+    {
+     "k": "grammatica",
+     "titel": "De nominale zin",
+     "n": 1
+    },
+    {
+     "k": "zinnen",
+     "titel": "Zinnen: verhalen",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: familie 1",
+     "n": 8
+    },
+    {
+     "k": "tekst",
+     "titel": "Lezen: Brief aan mijn grootvader",
+     "n": 1
+    },
+    {
+     "k": "grammatica",
+     "titel": "De verbale zin",
+     "n": 1
+    },
+    {
+     "k": "zinnen",
+     "titel": "Zinnen: verband",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: familie 2",
+     "n": 8
+    },
+    {
+     "k": "grammatica",
+     "titel": "De verleden tijd",
+     "n": 1
+    },
+    {
+     "k": "zinnen",
+     "titel": "Zinnen: verband en idafa",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: familie 3",
+     "n": 8
+    },
+    {
+     "k": "tekst",
+     "titel": "Lezen: De arts en de patiënt",
+     "n": 1
+    },
+    {
+     "k": "grammatica",
+     "titel": "De tegenwoordige tijd",
+     "n": 1
+    },
+    {
+     "k": "zinnen",
+     "titel": "Zinnen: vragen en ontkennen",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: familie 4",
+     "n": 8
+    },
+    {
+     "k": "grammatica",
+     "titel": "De idafa",
+     "n": 1
+    },
+    {
+     "k": "zinnen",
+     "titel": "Zinnen: ontkennen en gebieden",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: lichaam 1",
+     "n": 8
+    },
+    {
+     "k": "tekst",
+     "titel": "Lezen: Een reis naar Marokko",
+     "n": 1
+    },
+    {
+     "k": "grammatica",
+     "titel": "Voorzetsels en de genitief",
+     "n": 1
+    },
+    {
+     "k": "zinnen",
+     "titel": "Zinnen: verband en dagelijks",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: lichaam 2",
+     "n": 8
+    },
+    {
+     "k": "grammatica",
+     "titel": "Ontkennen",
+     "n": 1
+    },
+    {
+     "k": "zinnen",
+     "titel": "Zinnen: beleefdheid en dagelijks",
+     "n": 5
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: lichaam 3",
+     "n": 8
+    },
+    {
+     "k": "tekst",
+     "titel": "Lezen: Het huis van mijn grootmoeder",
+     "n": 1
+    },
+    {
+     "k": "grammatica",
+     "titel": "De naamvallen — een eerste kennismaking",
+     "n": 1
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: lichaam 4",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: eten 1",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: eten 2",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: eten 3",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: eten 4",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: eten 5",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: huis 1",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: huis 2",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: huis 3",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: huis 4",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: school 1",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: school 2",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: school 3",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: kleuren 1",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: kleuren 2",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: getallen 1",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: getallen 2",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: getallen 3",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: dieren 1",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: dieren 2",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: dieren 3",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: dieren 4",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: tijd 1",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: tijd 2",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: tijd 3",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: gevoelens 1",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: gevoelens 2",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: gevoelens 3",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: gevoelens 4",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: werkwoorden 1",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: werkwoorden 2",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: werkwoorden 3",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: werkwoorden 4",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: werkwoorden 5",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: werkwoorden 6",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: natuur 1",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: natuur 2",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: natuur 3",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: kleding 1",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: kleding 2",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: stad 1",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: stad 2",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: stad 3",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: functiewoorden 1",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: functiewoorden 2",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: functiewoorden 3",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: functiewoorden 4",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: functiewoorden 5",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: functiewoorden 6",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: begroetingen 1",
+     "n": 8
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: begroetingen 2",
+     "n": 4
+    }
+   ]
+  },
+  {
+   "spoor": 4,
+   "stappen": [
+    {
+     "k": "grammatica",
+     "titel": "Wortel en patroon",
+     "n": 1
+    },
+    {
+     "k": "koran",
+     "titel": "Koranwoorden 1–10",
+     "n": 10
+    },
+    {
+     "k": "zinnen",
+     "titel": "Zinnen: spreekwoord",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: familie 1",
+     "n": 14
+    },
+    {
+     "k": "koran",
+     "titel": "Koranwoorden 11–20",
+     "n": 10
+    },
+    {
+     "k": "tekst",
+     "titel": "Lezen: Over de wortel van het woord",
+     "n": 1
+    },
+    {
+     "k": "grammatica",
+     "titel": "De tien werkwoordsvormen",
+     "n": 1
+    },
+    {
+     "k": "grammatica",
+     "titel": "Deelwoorden en naamwoorden van plaats",
+     "n": 1
+    },
+    {
+     "k": "koran",
+     "titel": "Koranwoorden 21–30",
+     "n": 10
+    },
+    {
+     "k": "zinnen",
+     "titel": "Zinnen: spreekwoord en klassiek",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: familie 2",
+     "n": 14
+    },
+    {
+     "k": "koran",
+     "titel": "Koranwoorden 31–40",
+     "n": 10
+    },
+    {
+     "k": "tekst",
+     "titel": "Lezen: De geneeskunde bij Ibn Sina",
+     "n": 1
+    },
+    {
+     "k": "grammatica",
+     "titel": "Naamvallen in de praktijk",
+     "n": 1
+    },
+    {
+     "k": "grammatica",
+     "titel": "Het passief",
+     "n": 1
+    },
+    {
+     "k": "koran",
+     "titel": "Koranwoorden 41–50",
+     "n": 10
+    },
+    {
+     "k": "zinnen",
+     "titel": "Zinnen: klassiek en verzorgd",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: familie 3",
+     "n": 14
+    },
+    {
+     "k": "koran",
+     "titel": "Koranwoorden 51–60",
+     "n": 10
+    },
+    {
+     "k": "tekst",
+     "titel": "Lezen: Waarom een taal leren",
+     "n": 1
+    },
+    {
+     "k": "grammatica",
+     "titel": "Zinsverbanden in Koranisch Arabisch",
+     "n": 1
+    },
+    {
+     "k": "grammatica",
+     "titel": "Waarom je de klinkertekens leert loslaten",
+     "n": 1
+    },
+    {
+     "k": "koran",
+     "titel": "Koranwoorden 61–70",
+     "n": 10
+    },
+    {
+     "k": "zinnen",
+     "titel": "Zinnen: verzorgd en spreekwoord",
+     "n": 6
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: lichaam 1",
+     "n": 14
+    },
+    {
+     "k": "koran",
+     "titel": "Koranwoorden 71–80",
+     "n": 10
+    },
+    {
+     "k": "koran",
+     "titel": "Koranwoorden 81–90",
+     "n": 10
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: lichaam 2",
+     "n": 14
+    },
+    {
+     "k": "koran",
+     "titel": "Koranwoorden 91–100",
+     "n": 10
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: eten 1",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: eten 2",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: eten 3",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: huis 1",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: huis 2",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: school 1",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: school 2",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: kleuren 1",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: getallen 1",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: getallen 2",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: dieren 1",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: dieren 2",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: tijd 1",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: tijd 2",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: gevoelens 1",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: gevoelens 2",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: werkwoorden 1",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: werkwoorden 2",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: werkwoorden 3",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: natuur 1",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: natuur 2",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: kleding 1",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: stad 1",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: stad 2",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: functiewoorden 1",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: functiewoorden 2",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: functiewoorden 3",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: functiewoorden 4",
+     "n": 14
+    },
+    {
+     "k": "woorden",
+     "titel": "Woorden: begroetingen 1",
+     "n": 1
+    }
+   ]
+  }
+ ],
+ "vocalisaties": [
+  {
+   "zin": "كِتَابٌ جَدِيدٌ",
+   "stand": "vol",
+   "uit": "كِتَابٌ جَدِيدٌ"
+  },
+  {
+   "zin": "كِتَابٌ جَدِيدٌ",
+   "stand": "kaal",
+   "uit": "كتاب جديد"
+  },
+  {
+   "zin": "كِتَابٌ جَدِيدٌ",
+   "stand": "selectief",
+   "uit": "كتاب جديد"
+  },
+  {
+   "zin": "الْعِلْمُ نُورٌ",
+   "stand": "vol",
+   "uit": "الْعِلْمُ نُورٌ"
+  },
+  {
+   "zin": "الْعِلْمُ نُورٌ",
+   "stand": "kaal",
+   "uit": "العلم نور"
+  },
+  {
+   "zin": "الْعِلْمُ نُورٌ",
+   "stand": "selectief",
+   "uit": "الْعِلْمُ نُورٌ"
+  },
+  {
+   "zin": "بَيْتٌ كَبِيرٌ",
+   "stand": "vol",
+   "uit": "بَيْتٌ كَبِيرٌ"
+  },
+  {
+   "zin": "بَيْتٌ كَبِيرٌ",
+   "stand": "kaal",
+   "uit": "بيت كبير"
+  },
+  {
+   "zin": "بَيْتٌ كَبِيرٌ",
+   "stand": "selectief",
+   "uit": "بيت كبير"
+  },
+  {
+   "zin": "دَرَسَ الطَّالِبُ",
+   "stand": "vol",
+   "uit": "دَرَسَ الطَّالِبُ"
+  },
+  {
+   "zin": "دَرَسَ الطَّالِبُ",
+   "stand": "kaal",
+   "uit": "درس الطالب"
+  },
+  {
+   "zin": "دَرَسَ الطَّالِبُ",
+   "stand": "selectief",
+   "uit": "دَرَسَ الطالب"
+  }
+ ],
+ "samen": [
+  {
+   "a": {},
+   "b": {},
+   "uit": {
+    "versie": 1,
+    "profielen": {}
+   }
+  },
+  {
+   "a": {
+    "profielen": {
+     "p": {
+      "punten": 40,
+      "blok": 2,
+      "kaarten": {},
+      "dagen": {},
+      "letters": {},
+      "spelrecords": {},
+      "voorkeur": {
+       "a": 1
+      }
+     }
+    }
+   },
+   "b": {
+    "profielen": {
+     "p": {
+      "punten": 10,
+      "blok": 5,
+      "kaarten": {},
+      "dagen": {},
+      "letters": {},
+      "spelrecords": {},
+      "voorkeur": {
+       "b": 2
+      }
+     }
+    }
+   },
+   "uit": {
+    "versie": 1,
+    "profielen": {
+     "p": {
+      "punten": 40,
+      "blok": 5,
+      "kaarten": {},
+      "dagen": {},
+      "letters": {},
+      "spelrecords": {},
+      "voorkeur": {
+       "a": 1,
+       "b": 2
+      }
+     }
+    }
+   }
+  },
+  {
+   "a": {
+    "profielen": {
+     "p": {
+      "kaarten": {
+       "k": {
+        "laatst": "2026-08-01",
+        "s": 5
+       }
+      },
+      "dagen": {},
+      "letters": {},
+      "spelrecords": {},
+      "voorkeur": {}
+     }
+    }
+   },
+   "b": {
+    "profielen": {
+     "p": {
+      "kaarten": {
+       "k": {
+        "laatst": "2026-08-10",
+        "s": 2
+       }
+      },
+      "dagen": {},
+      "letters": {},
+      "spelrecords": {},
+      "voorkeur": {}
+     }
+    }
+   },
+   "uit": {
+    "versie": 1,
+    "profielen": {
+     "p": {
+      "kaarten": {
+       "k": {
+        "laatst": "2026-08-10",
+        "s": 2
+       }
+      },
+      "dagen": {},
+      "letters": {},
+      "spelrecords": {},
+      "voorkeur": {},
+      "blok": 0,
+      "punten": 0
+     }
+    }
+   }
+  },
+  {
+   "a": {
+    "profielen": {
+     "p": {
+      "kaarten": {},
+      "dagen": {
+       "2026-08-01": {
+        "blokken": 2,
+        "herhaald": 10,
+        "goed": 8,
+        "fout": 2
+       }
+      },
+      "letters": {},
+      "spelrecords": {},
+      "voorkeur": {}
+     }
+    }
+   },
+   "b": {
+    "profielen": {
+     "p": {
+      "kaarten": {},
+      "dagen": {
+       "2026-08-01": {
+        "blokken": 1,
+        "herhaald": 30,
+        "goed": 4,
+        "fout": 9
+       }
+      },
+      "letters": {},
+      "spelrecords": {},
+      "voorkeur": {}
+     }
+    }
+   },
+   "uit": {
+    "versie": 1,
+    "profielen": {
+     "p": {
+      "kaarten": {},
+      "dagen": {
+       "2026-08-01": {
+        "blokken": 2,
+        "herhaald": 30,
+        "goed": 8,
+        "fout": 9
+       }
+      },
+      "letters": {},
+      "spelrecords": {},
+      "voorkeur": {},
+      "blok": 0,
+      "punten": 0
+     }
+    }
+   }
+  },
+  {
+   "a": {
+    "profielen": {
+     "a": {
+      "kaarten": {},
+      "dagen": {},
+      "letters": {},
+      "spelrecords": {},
+      "voorkeur": {}
+     }
+    },
+    "actief": "a"
+   },
+   "b": {
+    "profielen": {
+     "b": {
+      "kaarten": {},
+      "dagen": {},
+      "letters": {},
+      "spelrecords": {},
+      "voorkeur": {}
+     }
+    },
+    "actief": "b"
+   },
+   "uit": {
+    "versie": 1,
+    "actief": "a",
+    "profielen": {
+     "a": {
+      "kaarten": {},
+      "dagen": {},
+      "letters": {},
+      "spelrecords": {},
+      "voorkeur": {}
+     },
+     "b": {
+      "kaarten": {},
+      "dagen": {},
+      "letters": {},
+      "spelrecords": {},
+      "voorkeur": {}
+     }
+    }
+   }
+  }
+ ],
+ "datums": [
+  {
+   "d": "2026-01-01",
+   "nl": "donderdag 1 januari",
+   "plus7": "2026-01-08",
+   "plusMin3": "2025-12-29"
+  },
+  {
+   "d": "2026-08-22",
+   "nl": "zaterdag 22 augustus",
+   "plus7": "2026-08-29",
+   "plusMin3": "2026-08-19"
+  },
+  {
+   "d": "2026-12-31",
+   "nl": "donderdag 31 december",
+   "plus7": "2027-01-07",
+   "plusMin3": "2026-12-28"
+  },
+  {
+   "d": "2027-02-28",
+   "nl": "zondag 28 februari",
+   "plus7": "2027-03-07",
+   "plusMin3": "2027-02-25"
+  }
+ ],
+ "verschillen": [
+  {
+   "a": "2026-08-01",
+   "b": "2026-08-22",
+   "n": 21
+  },
+  {
+   "a": "2026-08-22",
+   "b": "2026-08-01",
+   "n": -21
+  },
+  {
+   "a": "2026-02-28",
+   "b": "2026-03-01",
+   "n": 1
+  },
+  {
+   "a": "2026-12-31",
+   "b": "2027-01-01",
+   "n": 1
+  }
+ ]
+}

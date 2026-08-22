@@ -37,6 +37,6 @@ De volgorde die ik zou aanhouden, van meeste rendement per uur werk naar minste:
 
 ## Wat ik meteen kan bouwen
 
-Alles hierboven past binnen je huidige opzet: oefenstof blijft in `SEED`/`TEMPLATES`, de schermcode in `index.dev.html`, en na wijziging hercompileer ik `index.html` (JSX → `React.createElement`, Babel eruit) zoals je BUILD.md voorschrijft. Geen van deze punten vereist nieuwe externe diensten; audio en review draaien volledig in de browser.
+Alles hierboven past binnen de huidige opzet: de oefenstof blijft in `SEED`/`TEMPLATES` — nu `src/huiswerk/gegevens/seed.ts` en `sjablonen.ts` — en de schermcode staat in `src/huiswerk/`. Sinds de ombouw is er een echte bouwstap (zie `BUILD.md`); de losse `index.dev.html` bestaat niet meer. Geen van deze punten vereist nieuwe externe diensten; audio en review draaien volledig in de browser.
 
-Zeg welk punt je eerst wilt, dan bouw ik het in `index.dev.html`, hercompileer ik de live-versie en laat ik je precies zien wat er veranderd is. Mijn advies: begin met audio-ondersteuning (punt 1 op de prioriteitenlijst) — de kortste weg naar zichtbaar resultaat voor de kinderen.
+Zeg welk punt je eerst wilt, dan bouw ik het in `src/huiswerk/` en laat ik je precies zien wat er veranderd is. Mijn advies: begin met audio-ondersteuning (punt 1 op de prioriteitenlijst) — de kortste weg naar zichtbaar resultaat voor de kinderen.

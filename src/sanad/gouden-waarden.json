@@ -1,0 +1,3489 @@
+{
+ "gemaakt": "gereedschap/sanad-gouden-waarden.mjs, uit gereedschap/oud/sanad-index.html",
+ "nu": "2026-08-22",
+ "totaal": 28,
+ "fasen": [
+  "Kernvraag",
+  "Brontekst",
+  "Uitleg",
+  "Toepassing",
+  "Toets"
+ ],
+ "disciplines": {
+  "fiqh": "Fiqh",
+  "usul": "Usul",
+  "aqida": "‘Aqida",
+  "hadith": "Hadith",
+  "tafsir": "Tafsir",
+  "tasawwuf": "Tasawwuf",
+  "tibb": "Geneeskunde"
+ },
+ "niveaus": {
+  "begin": "green",
+  "kern": "blue",
+  "gevorderd": "yellow"
+ },
+ "stof": {
+  "curriculum": [
+   {
+    "id": "usul",
+    "nr": "I",
+    "kleur": "blue",
+    "titel": "Hoe kennis gemaakt wordt",
+    "modules": [
+     {
+      "id": "u1",
+      "titel": "Wat een madhhab eigenlijk is",
+      "tijd": 12,
+      "secties": 3,
+      "juist": 1,
+      "opties": 4,
+      "vinger": "52d49c9ea886ff9f"
+     },
+     {
+      "id": "u2",
+      "titel": "De bronnen: vier, of zestien?",
+      "tijd": 14,
+      "secties": 3,
+      "juist": 2,
+      "opties": 4,
+      "vinger": "e3f4c8a225400def"
+     },
+     {
+      "id": "u3",
+      "titel": "‘Amal ahl al-Madina",
+      "tijd": 11,
+      "secties": 3,
+      "juist": 1,
+      "opties": 4,
+      "vinger": "91d02f7af5942de8"
+     },
+     {
+      "id": "u4",
+      "titel": "Maslaha, dhara’i’ en ‘urf",
+      "tijd": 13,
+      "secties": 3,
+      "juist": 1,
+      "opties": 4,
+      "vinger": "e7088149201d9851"
+     },
+     {
+      "id": "u5",
+      "titel": "De vijf oordelen — en de tweede tabel",
+      "tijd": 10,
+      "secties": 3,
+      "juist": 1,
+      "opties": 4,
+      "vinger": "abfab1109db03bc7"
+     }
+    ],
+    "vinger": "7f9663fdfd016447"
+   },
+   {
+    "id": "maliki",
+    "nr": "II",
+    "kleur": "green",
+    "titel": "De school van Medina",
+    "modules": [
+     {
+      "id": "m1",
+      "titel": "Malik ibn Anas en de vorming van de school",
+      "tijd": 11,
+      "secties": 3,
+      "juist": 1,
+      "opties": 4,
+      "vinger": "5cfc3c7906c57ae1"
+     },
+     {
+      "id": "m2",
+      "titel": "De tekstuele ruggengraat",
+      "tijd": 14,
+      "secties": 4,
+      "juist": 1,
+      "opties": 4,
+      "vinger": "2ed0c7ace19bf976"
+     },
+     {
+      "id": "m3",
+      "titel": "‘Ibadat: waar de school anders is",
+      "tijd": 15,
+      "secties": 3,
+      "juist": 1,
+      "opties": 4,
+      "vinger": "1cf56a09cd96423d"
+     },
+     {
+      "id": "m4",
+      "titel": "Transacties en familierecht",
+      "tijd": 13,
+      "secties": 3,
+      "juist": 1,
+      "opties": 4,
+      "vinger": "b2e47aa795288d99"
+     },
+     {
+      "id": "m5",
+      "titel": "Fatwa, rechtspraak en ‘amal",
+      "tijd": 12,
+      "secties": 3,
+      "juist": 1,
+      "opties": 4,
+      "vinger": "34d82f3a887c06e5"
+     }
+    ],
+    "vinger": "672f024272065437"
+   },
+   {
+    "id": "aqida",
+    "nr": "III",
+    "kleur": "purple",
+    "titel": "Geloofsleer volgens de Maghreb",
+    "modules": [
+     {
+      "id": "a1",
+      "titel": "De drie zuilen",
+      "tijd": 9,
+      "secties": 3,
+      "juist": 1,
+      "opties": 4,
+      "vinger": "61de3fc31f1e0c33"
+     },
+     {
+      "id": "a2",
+      "titel": "Wajib, mustahil, ja’iz",
+      "tijd": 10,
+      "secties": 3,
+      "juist": 1,
+      "opties": 4,
+      "vinger": "f80e66513bbc6a95"
+     },
+     {
+      "id": "a3",
+      "titel": "De twintig eigenschappen",
+      "tijd": 12,
+      "secties": 3,
+      "juist": 1,
+      "opties": 4,
+      "vinger": "22196d24be5bed86"
+     },
+     {
+      "id": "a4",
+      "titel": "Kasb: vrije wil zonder tweede schepper",
+      "tijd": 11,
+      "secties": 3,
+      "juist": 1,
+      "opties": 4,
+      "vinger": "b7590eb5073e8fea"
+     }
+    ],
+    "vinger": "8da19e0bfebe8fa6"
+   },
+   {
+    "id": "bronnen",
+    "nr": "IV",
+    "kleur": "yellow",
+    "titel": "Bronnenkritiek",
+    "modules": [
+     {
+      "id": "b1",
+      "titel": "‘Ulum al-Qur’an",
+      "tijd": 13,
+      "secties": 3,
+      "juist": 1,
+      "opties": 4,
+      "vinger": "df0a3f7ac82a0bb7"
+     },
+     {
+      "id": "b2",
+      "titel": "Tafsir: de Andalusische lijn",
+      "tijd": 11,
+      "secties": 3,
+      "juist": 1,
+      "opties": 4,
+      "vinger": "6d29cc4a08e386de"
+     },
+     {
+      "id": "b3",
+      "titel": "‘Ulum al-hadith",
+      "tijd": 14,
+      "secties": 3,
+      "juist": 1,
+      "opties": 4,
+      "vinger": "8ff5301c8b1bb45c"
+     },
+     {
+      "id": "b4",
+      "titel": "De grote Malikitische hadithgeleerden",
+      "tijd": 10,
+      "secties": 3,
+      "juist": 1,
+      "opties": 4,
+      "vinger": "f76b876783e1f07d"
+     }
+    ],
+    "vinger": "3dde15169d1a40fe"
+   },
+   {
+    "id": "tibb",
+    "nr": "V",
+    "kleur": "red",
+    "titel": "Fiqh en geneeskunde",
+    "modules": [
+     {
+      "id": "t1",
+      "titel": "Maqasid al-shari’a",
+      "tijd": 13,
+      "secties": 3,
+      "juist": 1,
+      "opties": 4,
+      "vinger": "a4b0eebf89f72b51"
+     },
+     {
+      "id": "t2",
+      "titel": "Qawa’id fiqhiyya en darura",
+      "tijd": 12,
+      "secties": 3,
+      "juist": 1,
+      "opties": 4,
+      "vinger": "2f56fd0ad54ac777"
+     },
+     {
+      "id": "t3",
+      "titel": "Het begin van het leven",
+      "tijd": 18,
+      "secties": 5,
+      "juist": 1,
+      "opties": 4,
+      "vinger": "7ce66480bb24e12a"
+     },
+     {
+      "id": "t4",
+      "titel": "Het einde van het leven",
+      "tijd": 20,
+      "secties": 4,
+      "juist": 1,
+      "opties": 4,
+      "vinger": "21d26b2ff14e4984"
+     },
+     {
+      "id": "t5",
+      "titel": "Ramadan in de spreekkamer",
+      "tijd": 19,
+      "secties": 4,
+      "juist": 1,
+      "opties": 4,
+      "vinger": "4a5b56d1638b4923"
+     }
+    ],
+    "vinger": "22e72a8afac00015"
+   }
+  ],
+  "kaarten": [
+   {
+    "id": "k01",
+    "s": "usul",
+    "vinger": "64cfa7186c613f08"
+   },
+   {
+    "id": "k02",
+    "s": "usul",
+    "vinger": "aa0865981ddf0a6e"
+   },
+   {
+    "id": "k03",
+    "s": "usul",
+    "vinger": "d8133cc2df8492b0"
+   },
+   {
+    "id": "k04",
+    "s": "usul",
+    "vinger": "b1c6bb8ae49b1098"
+   },
+   {
+    "id": "k05",
+    "s": "usul",
+    "vinger": "42b766ec04e8b40d"
+   },
+   {
+    "id": "k06",
+    "s": "usul",
+    "vinger": "2e633e72e64b47b0"
+   },
+   {
+    "id": "k07",
+    "s": "usul",
+    "vinger": "2bd71d183a22bcc5"
+   },
+   {
+    "id": "k08",
+    "s": "usul",
+    "vinger": "12f683c2220b4c78"
+   },
+   {
+    "id": "k09",
+    "s": "usul",
+    "vinger": "b5e1f89c76356611"
+   },
+   {
+    "id": "k10",
+    "s": "usul",
+    "vinger": "7818be499e49f35c"
+   },
+   {
+    "id": "k11",
+    "s": "usul",
+    "vinger": "ad2218e555df9ead"
+   },
+   {
+    "id": "k12",
+    "s": "usul",
+    "vinger": "a3c524251d59cbf5"
+   },
+   {
+    "id": "k13",
+    "s": "usul",
+    "vinger": "85fcf3bfe1d98659"
+   },
+   {
+    "id": "k14",
+    "s": "maliki",
+    "vinger": "d8ae0db612ad9dbe"
+   },
+   {
+    "id": "k15",
+    "s": "maliki",
+    "vinger": "0a6c655768602de2"
+   },
+   {
+    "id": "k16",
+    "s": "maliki",
+    "vinger": "e3bd1ad018393dfc"
+   },
+   {
+    "id": "k17",
+    "s": "maliki",
+    "vinger": "48228253613a2453"
+   },
+   {
+    "id": "k18",
+    "s": "maliki",
+    "vinger": "15b52ca9a01b8324"
+   },
+   {
+    "id": "k19",
+    "s": "maliki",
+    "vinger": "4441af3b2189892d"
+   },
+   {
+    "id": "k20",
+    "s": "maliki",
+    "vinger": "530730247893b6fd"
+   },
+   {
+    "id": "k21",
+    "s": "maliki",
+    "vinger": "cb966fa6ba456c0c"
+   },
+   {
+    "id": "k22",
+    "s": "maliki",
+    "vinger": "299e35859750fc28"
+   },
+   {
+    "id": "k23",
+    "s": "maliki",
+    "vinger": "34aea156a66ec828"
+   },
+   {
+    "id": "k24",
+    "s": "maliki",
+    "vinger": "2182a3fd88d09b24"
+   },
+   {
+    "id": "k25",
+    "s": "maliki",
+    "vinger": "e91d96fee00e16ab"
+   },
+   {
+    "id": "k26",
+    "s": "maliki",
+    "vinger": "865f3597ae884d91"
+   },
+   {
+    "id": "k27",
+    "s": "maliki",
+    "vinger": "5ca43d29f4448e8a"
+   },
+   {
+    "id": "k28",
+    "s": "maliki",
+    "vinger": "b486c39bb6ffc1fb"
+   },
+   {
+    "id": "k29",
+    "s": "maliki",
+    "vinger": "37a3f62d7a611d76"
+   },
+   {
+    "id": "k30",
+    "s": "maliki",
+    "vinger": "adf49c376a04ff44"
+   },
+   {
+    "id": "k31",
+    "s": "maliki",
+    "vinger": "cffa0d943a93b7dd"
+   },
+   {
+    "id": "k32",
+    "s": "maliki",
+    "vinger": "e7c538ba6b785282"
+   },
+   {
+    "id": "k33",
+    "s": "maliki",
+    "vinger": "0ac58ba7ed9b13e7"
+   },
+   {
+    "id": "k34",
+    "s": "aqida",
+    "vinger": "cdc809473cdac8f7"
+   },
+   {
+    "id": "k35",
+    "s": "aqida",
+    "vinger": "8dd60d7076fee51b"
+   },
+   {
+    "id": "k36",
+    "s": "aqida",
+    "vinger": "8bb90a7f8ac0a6e5"
+   },
+   {
+    "id": "k37",
+    "s": "aqida",
+    "vinger": "0c9ac6adcc8c0039"
+   },
+   {
+    "id": "k38",
+    "s": "aqida",
+    "vinger": "4da5560ad4e2aaeb"
+   },
+   {
+    "id": "k39",
+    "s": "aqida",
+    "vinger": "b61957c1356c9068"
+   },
+   {
+    "id": "k40",
+    "s": "aqida",
+    "vinger": "9d475b43281ee755"
+   },
+   {
+    "id": "k41",
+    "s": "aqida",
+    "vinger": "8ef2e281506ccaa8"
+   },
+   {
+    "id": "k42",
+    "s": "aqida",
+    "vinger": "d28727523472b113"
+   },
+   {
+    "id": "k43",
+    "s": "aqida",
+    "vinger": "67295e401d8be466"
+   },
+   {
+    "id": "k44",
+    "s": "aqida",
+    "vinger": "64704435ec8a0945"
+   },
+   {
+    "id": "k45",
+    "s": "bronnen",
+    "vinger": "f79ff11104cc837b"
+   },
+   {
+    "id": "k46",
+    "s": "bronnen",
+    "vinger": "69505b205b5ab8d5"
+   },
+   {
+    "id": "k47",
+    "s": "bronnen",
+    "vinger": "ecc81224461e2f24"
+   },
+   {
+    "id": "k48",
+    "s": "bronnen",
+    "vinger": "57a05c5721eef496"
+   },
+   {
+    "id": "k49",
+    "s": "bronnen",
+    "vinger": "5269562c345e8f0c"
+   },
+   {
+    "id": "k50",
+    "s": "bronnen",
+    "vinger": "7868dccad7cf46bf"
+   },
+   {
+    "id": "k51",
+    "s": "bronnen",
+    "vinger": "a2290c27b385cb29"
+   },
+   {
+    "id": "k52",
+    "s": "bronnen",
+    "vinger": "5431e040a76f283d"
+   },
+   {
+    "id": "k53",
+    "s": "bronnen",
+    "vinger": "79e2c5937f028039"
+   },
+   {
+    "id": "k54",
+    "s": "bronnen",
+    "vinger": "86defd4cdad36082"
+   },
+   {
+    "id": "k55",
+    "s": "bronnen",
+    "vinger": "e709a269f3a15147"
+   },
+   {
+    "id": "k56",
+    "s": "bronnen",
+    "vinger": "030e0e48976ad405"
+   },
+   {
+    "id": "k57",
+    "s": "bronnen",
+    "vinger": "f70c9a3e7c8f227d"
+   },
+   {
+    "id": "k58",
+    "s": "bronnen",
+    "vinger": "f882c66169974528"
+   },
+   {
+    "id": "k59",
+    "s": "bronnen",
+    "vinger": "7ed204c2ddc9aed1"
+   },
+   {
+    "id": "k60",
+    "s": "tibb",
+    "vinger": "fcd784dc946a9740"
+   },
+   {
+    "id": "k61",
+    "s": "tibb",
+    "vinger": "643161ddac5d3960"
+   },
+   {
+    "id": "k62",
+    "s": "tibb",
+    "vinger": "d5fcdc431cfb657f"
+   },
+   {
+    "id": "k63",
+    "s": "tibb",
+    "vinger": "78375ad9e0f1e3a0"
+   },
+   {
+    "id": "k64",
+    "s": "tibb",
+    "vinger": "739a658f1832de2c"
+   },
+   {
+    "id": "k65",
+    "s": "tibb",
+    "vinger": "3e8e86c7c5159a8e"
+   },
+   {
+    "id": "k66",
+    "s": "tibb",
+    "vinger": "fa93a46ff46e4efb"
+   },
+   {
+    "id": "k67",
+    "s": "tibb",
+    "vinger": "15ab56aa3183f563"
+   },
+   {
+    "id": "k68",
+    "s": "tibb",
+    "vinger": "13a7a8b338a70b4b"
+   },
+   {
+    "id": "k69",
+    "s": "tibb",
+    "vinger": "dc77a691d93307d8"
+   },
+   {
+    "id": "k70",
+    "s": "tibb",
+    "vinger": "9a39d7ec14bd6689"
+   },
+   {
+    "id": "k71",
+    "s": "tibb",
+    "vinger": "d33f7046631c7fc9"
+   },
+   {
+    "id": "k72",
+    "s": "tibb",
+    "vinger": "fd13bac05cd7aa35"
+   },
+   {
+    "id": "k73",
+    "s": "tibb",
+    "vinger": "ac52771e79dd6da1"
+   },
+   {
+    "id": "k74",
+    "s": "tibb",
+    "vinger": "65d7e3aefa522c68"
+   },
+   {
+    "id": "k75",
+    "s": "tibb",
+    "vinger": "3cdc5357510b0538"
+   },
+   {
+    "id": "k76",
+    "s": "tibb",
+    "vinger": "e1a9a1b22202e22e"
+   },
+   {
+    "id": "k77",
+    "s": "tibb",
+    "vinger": "34a38477fa01c301"
+   },
+   {
+    "id": "k78",
+    "s": "tibb",
+    "vinger": "39896d327c0a1249"
+   },
+   {
+    "id": "k79",
+    "s": "tibb",
+    "vinger": "ce77e20062430b75"
+   },
+   {
+    "id": "k80",
+    "s": "tibb",
+    "vinger": "78795ad3e5c62975"
+   },
+   {
+    "id": "k81",
+    "s": "tibb",
+    "vinger": "849e9f4404532cbb"
+   },
+   {
+    "id": "k82",
+    "s": "tibb",
+    "vinger": "983335acbbbca049"
+   },
+   {
+    "id": "k83",
+    "s": "tibb",
+    "vinger": "6c62b47a6c9b0a15"
+   },
+   {
+    "id": "k84",
+    "s": "tibb",
+    "vinger": "85b0f7d6930317aa"
+   },
+   {
+    "id": "k85",
+    "s": "tibb",
+    "vinger": "308cd8a530cd0b17"
+   },
+   {
+    "id": "k86",
+    "s": "tibb",
+    "vinger": "11fb5b98cafde343"
+   },
+   {
+    "id": "k87",
+    "s": "tibb",
+    "vinger": "d23559806f624442"
+   },
+   {
+    "id": "k88",
+    "s": "tibb",
+    "vinger": "65dba30cf31016e5"
+   },
+   {
+    "id": "k89",
+    "s": "tibb",
+    "vinger": "d34e2407730d854b"
+   },
+   {
+    "id": "k90",
+    "s": "tibb",
+    "vinger": "5ec548cad61597b4"
+   },
+   {
+    "id": "k91",
+    "s": "tibb",
+    "vinger": "93da3b72121acaeb"
+   },
+   {
+    "id": "k92",
+    "s": "tibb",
+    "vinger": "dcf1208f13755688"
+   },
+   {
+    "id": "k93",
+    "s": "tibb",
+    "vinger": "102b1b8877a5aafb"
+   },
+   {
+    "id": "k94",
+    "s": "tibb",
+    "vinger": "b1c290196274c935"
+   }
+  ],
+  "bronnen": [
+   {
+    "t": "Al-Muwatta’",
+    "d": "hadith",
+    "n": "kern",
+    "vinger": "6d732b118c71f318"
+   },
+   {
+    "t": "Al-Mudawwana al-kubra",
+    "d": "fiqh",
+    "n": "gevorderd",
+    "vinger": "a95419d09a1a8ce5"
+   },
+   {
+    "t": "Al-Risala",
+    "d": "fiqh",
+    "n": "begin",
+    "vinger": "41ebeab3e93810d9"
+   },
+   {
+    "t": "Al-Murshid al-mu‘in",
+    "d": "fiqh",
+    "n": "begin",
+    "vinger": "803e1c32e7ac1954"
+   },
+   {
+    "t": "Mukhtasar al-Akhdari",
+    "d": "fiqh",
+    "n": "begin",
+    "vinger": "096213919c6284e9"
+   },
+   {
+    "t": "Mukhtasar Khalil",
+    "d": "fiqh",
+    "n": "gevorderd",
+    "vinger": "68acb91e9ed53dba"
+   },
+   {
+    "t": "Mawahib al-jalil",
+    "d": "fiqh",
+    "n": "gevorderd",
+    "vinger": "c3720798119d74ea"
+   },
+   {
+    "t": "Bidayat al-mujtahid",
+    "d": "fiqh",
+    "n": "kern",
+    "vinger": "27409090cfad7e4b"
+   },
+   {
+    "t": "Al-Qawanin al-fiqhiyya",
+    "d": "fiqh",
+    "n": "kern",
+    "vinger": "5febf04be843d47e"
+   },
+   {
+    "t": "Al-Muwafaqat",
+    "d": "usul",
+    "n": "kern",
+    "vinger": "aa5c645a4c2e1efa"
+   },
+   {
+    "t": "Al-I‘tisam",
+    "d": "usul",
+    "n": "gevorderd",
+    "vinger": "d1b8176720d21c93"
+   },
+   {
+    "t": "Tanqih al-fusul",
+    "d": "usul",
+    "n": "gevorderd",
+    "vinger": "1bd5cc2aae9f34d9"
+   },
+   {
+    "t": "Al-Furuq",
+    "d": "usul",
+    "n": "gevorderd",
+    "vinger": "9962033f997c6167"
+   },
+   {
+    "t": "Al-Waraqat",
+    "d": "usul",
+    "n": "begin",
+    "vinger": "66b681c7aedc13c4"
+   },
+   {
+    "t": "Maqasid al-shari‘a al-islamiyya",
+    "d": "usul",
+    "n": "kern",
+    "vinger": "b3c329ab4d62f084"
+   },
+   {
+    "t": "Umm al-barahin (al-Sanusiyya)",
+    "d": "aqida",
+    "n": "begin",
+    "vinger": "07a1f2fa68e08a22"
+   },
+   {
+    "t": "Al-Iqtisad fi al-i‘tiqad",
+    "d": "aqida",
+    "n": "gevorderd",
+    "vinger": "776e9f2d1ad52a14"
+   },
+   {
+    "t": "Al-Jami‘ li-ahkam al-Qur’an",
+    "d": "tafsir",
+    "n": "kern",
+    "vinger": "e1375fcd86ecbbaa"
+   },
+   {
+    "t": "Al-Muharrar al-wajiz",
+    "d": "tafsir",
+    "n": "gevorderd",
+    "vinger": "699c5cf617df8a11"
+   },
+   {
+    "t": "Al-Tamhid",
+    "d": "hadith",
+    "n": "gevorderd",
+    "vinger": "a793dad468cfe6d6"
+   },
+   {
+    "t": "Jami‘ bayan al-‘ilm wa-fadlih",
+    "d": "hadith",
+    "n": "kern",
+    "vinger": "21c4f6d6de98fa8b"
+   },
+   {
+    "t": "Al-Shifa",
+    "d": "hadith",
+    "n": "kern",
+    "vinger": "8b377379ab45124d"
+   },
+   {
+    "t": "Tartib al-madarik",
+    "d": "hadith",
+    "n": "gevorderd",
+    "vinger": "1fff78d3caadb2b0"
+   },
+   {
+    "t": "Al-Mi‘yar al-mu‘rib",
+    "d": "fiqh",
+    "n": "gevorderd",
+    "vinger": "0bb81ae15aae5f61"
+   },
+   {
+    "t": "Tuhfat al-hukkam",
+    "d": "fiqh",
+    "n": "gevorderd",
+    "vinger": "27a979e363d80aa4"
+   },
+   {
+    "t": "Al-‘Amal al-Fasi",
+    "d": "fiqh",
+    "n": "gevorderd",
+    "vinger": "45ba41a610feffd8"
+   },
+   {
+    "t": "Al-Hikam al-‘Ata’iyya",
+    "d": "tasawwuf",
+    "n": "kern",
+    "vinger": "7b3c41b62a20d8f4"
+   },
+   {
+    "t": "Ihya’ ‘ulum al-din",
+    "d": "tasawwuf",
+    "n": "kern",
+    "vinger": "6f20b551e1a915c6"
+   },
+   {
+    "t": "Nuzhat al-nazar",
+    "d": "hadith",
+    "n": "begin",
+    "vinger": "d8cbd91ad22596d1"
+   },
+   {
+    "t": "Fiqh al-tabib (moderne literatuur)",
+    "d": "tibb",
+    "n": "kern",
+    "vinger": "d74895fbb4afea14"
+   }
+  ],
+  "lexicon": [
+   {
+    "t": "‘Adala",
+    "vinger": "338c611dd4515536"
+   },
+   {
+    "t": "Ahad",
+    "vinger": "22787368508bc716"
+   },
+   {
+    "t": "‘Amal",
+    "vinger": "b6e85f7622961544"
+   },
+   {
+    "t": "Amana",
+    "vinger": "07d66da81dfda0ca"
+   },
+   {
+    "t": "Asbab al-nuzul",
+    "vinger": "f291bacd0c928ba3"
+   },
+   {
+    "t": "Batil",
+    "vinger": "91f0a5594a6686de"
+   },
+   {
+    "t": "Bid‘a",
+    "vinger": "4c379936e87f6c0c"
+   },
+   {
+    "t": "Darar",
+    "vinger": "2de3b1748cb20e7a"
+   },
+   {
+    "t": "Darura",
+    "vinger": "6e44ccc6c91a3498"
+   },
+   {
+    "t": "Daruriyyat",
+    "vinger": "4ba7d67bb6b1ad26"
+   },
+   {
+    "t": "Dalk",
+    "vinger": "c0467502b71e43b2"
+   },
+   {
+    "t": "Fard kifaya",
+    "vinger": "aa76a1a5bebc8bbf"
+   },
+   {
+    "t": "Fatwa",
+    "vinger": "4664bfbcce4b0054"
+   },
+   {
+    "t": "Fidya",
+    "vinger": "53afff1b3392c9fe"
+   },
+   {
+    "t": "Fiqh",
+    "vinger": "682c995f701d4798"
+   },
+   {
+    "t": "Fitra",
+    "vinger": "7f24318a305aee4b"
+   },
+   {
+    "t": "Furu‘",
+    "vinger": "74bc976b773f9589"
+   },
+   {
+    "t": "Gharar",
+    "vinger": "c330491441b68fa6"
+   },
+   {
+    "t": "Hadd",
+    "vinger": "34c8892bd4f9d597"
+   },
+   {
+    "t": "Hajiyyat",
+    "vinger": "8b8e8d407ae83ed4"
+   },
+   {
+    "t": "Hasan",
+    "vinger": "9d8245f482caab8e"
+   },
+   {
+    "t": "Hukm",
+    "vinger": "3d5a76df11a12a59"
+   },
+   {
+    "t": "Ijaza",
+    "vinger": "569f1f667ff251e6"
+   },
+   {
+    "t": "Ijma‘",
+    "vinger": "829205becdfd6bb9"
+   },
+   {
+    "t": "Ijtihad",
+    "vinger": "cc212b5804b1e524"
+   },
+   {
+    "t": "‘Illa",
+    "vinger": "6175499883fd1f4c"
+   },
+   {
+    "t": "Istihsan",
+    "vinger": "b67e08174519c275"
+   },
+   {
+    "t": "Istiqra’",
+    "vinger": "6ac371b0b2bba4d6"
+   },
+   {
+    "t": "Istishab",
+    "vinger": "bce3cbe9c80520fb"
+   },
+   {
+    "t": "Isnad",
+    "vinger": "4bbf508b7dd699e2"
+   },
+   {
+    "t": "Kasb",
+    "vinger": "3dfa26c9d8fe95fc"
+   },
+   {
+    "t": "Khabar al-wahid",
+    "vinger": "b390f6aca7e4c606"
+   },
+   {
+    "t": "Khiyar",
+    "vinger": "a233de72f58e9734"
+   },
+   {
+    "t": "Makruh",
+    "vinger": "4b8d08516c0d9a86"
+   },
+   {
+    "t": "Mani‘",
+    "vinger": "00acbd5df946d451"
+   },
+   {
+    "t": "Maqasid",
+    "vinger": "2c4ce9a646b317c7"
+   },
+   {
+    "t": "Mashaqqa",
+    "vinger": "191f3566def86e91"
+   },
+   {
+    "t": "Mashhur",
+    "vinger": "ae906972dbb3cb60"
+   },
+   {
+    "t": "Maslaha mursala",
+    "vinger": "1e511074e9226273"
+   },
+   {
+    "t": "Matn",
+    "vinger": "8b6e68f93a67be6d"
+   },
+   {
+    "t": "Mudd / Sa‘",
+    "vinger": "aad91ef941b30411"
+   },
+   {
+    "t": "Mursal",
+    "vinger": "6f1a674532f8f96e"
+   },
+   {
+    "t": "Mutawatir",
+    "vinger": "1b77bf61e746245c"
+   },
+   {
+    "t": "Muwalat",
+    "vinger": "f2e3a5ccab337c8f"
+   },
+   {
+    "t": "Naskh",
+    "vinger": "6b76bb5065ee5a55"
+   },
+   {
+    "t": "Nawazil",
+    "vinger": "b2df8cf9fd22ed62"
+   },
+   {
+    "t": "Niyya",
+    "vinger": "52dac21d9ba06bac"
+   },
+   {
+    "t": "Qabd / Sadl",
+    "vinger": "37f6cd2bd34644ab"
+   },
+   {
+    "t": "Qada’",
+    "vinger": "66ec58bbfd3c721f"
+   },
+   {
+    "t": "Qawa‘id fiqhiyya",
+    "vinger": "3aeb7fbdb0b7dba1"
+   },
+   {
+    "t": "Qira’at",
+    "vinger": "0b4ac5d1f0726f3c"
+   },
+   {
+    "t": "Qiyas",
+    "vinger": "5a3113b783a89233"
+   },
+   {
+    "t": "Qunut",
+    "vinger": "b6c6688c354c37c4"
+   },
+   {
+    "t": "Rukhsa",
+    "vinger": "12a34a18756b4379"
+   },
+   {
+    "t": "Sadd al-dhara’i’",
+    "vinger": "0d7a8c57ef653eb3"
+   },
+   {
+    "t": "Sahih",
+    "vinger": "8383b3dbbb576f1f"
+   },
+   {
+    "t": "Sanad",
+    "vinger": "d121052b58658724"
+   },
+   {
+    "t": "Shart",
+    "vinger": "de608e8ff5d75837"
+   },
+   {
+    "t": "Shubha",
+    "vinger": "4dda54679d6ab875"
+   },
+   {
+    "t": "Sunna mu’akkada",
+    "vinger": "8b28c46be43f252f"
+   },
+   {
+    "t": "Tahqiq al-manat",
+    "vinger": "805adabd30ad1143"
+   },
+   {
+    "t": "Tahsiniyyat",
+    "vinger": "57352c4531ec7fb9"
+   },
+   {
+    "t": "Talaqqi",
+    "vinger": "c2dba0512708d9bb"
+   },
+   {
+    "t": "Taqlid",
+    "vinger": "9f84b8a44fd5cdba"
+   },
+   {
+    "t": "Ta’wil",
+    "vinger": "3e09983d22b17a86"
+   },
+   {
+    "t": "‘Urf",
+    "vinger": "c9797747cb7e5df0"
+   },
+   {
+    "t": "Usul al-fiqh",
+    "vinger": "daed7592be4744cc"
+   },
+   {
+    "t": "Wali",
+    "vinger": "27791aa04d9ae88d"
+   },
+   {
+    "t": "Zann",
+    "vinger": "b3dccfd9fe22a757"
+   }
+  ],
+  "extra": {
+   "u1": {
+    "matn": 1,
+    "vinger": "9537fceade4086cf"
+   },
+   "u2": {
+    "matn": 1,
+    "vinger": "c83d19dc5e8dd719"
+   },
+   "u3": {
+    "matn": 1,
+    "vinger": "90a3a25670e4652a"
+   },
+   "u4": {
+    "matn": 1,
+    "vinger": "f705967224e4cbe9"
+   },
+   "u5": {
+    "matn": 1,
+    "vinger": "3330ea04cc8749da"
+   },
+   "m1": {
+    "matn": 1,
+    "vinger": "6d4682b742f47dd0"
+   },
+   "m2": {
+    "matn": 1,
+    "vinger": "219d6a4e2dd0728c"
+   },
+   "m3": {
+    "matn": 1,
+    "vinger": "e953c855da704ae8"
+   },
+   "m4": {
+    "matn": 1,
+    "vinger": "6f327d410aab8fda"
+   },
+   "m5": {
+    "matn": 1,
+    "vinger": "73076aec5088e245"
+   },
+   "a1": {
+    "matn": 1,
+    "vinger": "9c82c0f105374961"
+   },
+   "a2": {
+    "matn": 1,
+    "vinger": "20832d9eb2691179"
+   },
+   "a3": {
+    "matn": 1,
+    "vinger": "cbda69382b34c897"
+   },
+   "a4": {
+    "matn": 1,
+    "vinger": "f531ef8a646f717c"
+   },
+   "b1": {
+    "matn": 1,
+    "vinger": "a18af4b2205d2c75"
+   },
+   "b2": {
+    "matn": 1,
+    "vinger": "dcef546aae0f9256"
+   },
+   "b3": {
+    "matn": 1,
+    "vinger": "d55a6f924a0280c9"
+   },
+   "b4": {
+    "matn": 1,
+    "vinger": "dd5ef070d4a5bec5"
+   },
+   "t1": {
+    "matn": 1,
+    "vinger": "0638e854fc300109"
+   },
+   "t2": {
+    "matn": 2,
+    "vinger": "8fe81f4df7e475e6"
+   },
+   "t3": {
+    "matn": 1,
+    "vinger": "5a2eb529b30b2564"
+   },
+   "t4": {
+    "matn": 1,
+    "vinger": "9fee979226e78ebd"
+   },
+   "t5": {
+    "matn": 1,
+    "vinger": "29eed9ccb6fd7e1e"
+   }
+  },
+  "consolidatie": [
+   {
+    "na": "usul",
+    "titel": "Consolidatie — de methode",
+    "taken": 3,
+    "vinger": "ac948af3b9493600"
+   },
+   {
+    "na": "maliki",
+    "titel": "Consolidatie — de school",
+    "taken": 3,
+    "vinger": "c809689a6e96354f"
+   },
+   {
+    "na": "aqida",
+    "titel": "Consolidatie — de geloofsleer",
+    "taken": 3,
+    "vinger": "895de131b1ea4a35"
+   },
+   {
+    "na": "bronnen",
+    "titel": "Consolidatie — de bronnen",
+    "taken": 3,
+    "vinger": "1ad055d31fd035c8"
+   },
+   {
+    "na": "tibb",
+    "titel": "Consolidatie — en verder",
+    "taken": 3,
+    "vinger": "c9554ad64ef68fec"
+   }
+  ]
+ },
+ "programma": [
+  {
+   "nr": 1,
+   "type": "les",
+   "spoor": "usul",
+   "titel": "Wat een madhhab eigenlijk is",
+   "module": "u1"
+  },
+  {
+   "nr": 2,
+   "type": "les",
+   "spoor": "usul",
+   "titel": "De bronnen: vier, of zestien?",
+   "module": "u2"
+  },
+  {
+   "nr": 3,
+   "type": "les",
+   "spoor": "usul",
+   "titel": "‘Amal ahl al-Madina",
+   "module": "u3"
+  },
+  {
+   "nr": 4,
+   "type": "les",
+   "spoor": "usul",
+   "titel": "Maslaha, dhara’i’ en ‘urf",
+   "module": "u4"
+  },
+  {
+   "nr": 5,
+   "type": "les",
+   "spoor": "usul",
+   "titel": "De vijf oordelen — en de tweede tabel",
+   "module": "u5"
+  },
+  {
+   "nr": 6,
+   "type": "cons",
+   "spoor": "usul",
+   "titel": "Consolidatie — de methode",
+   "module": null
+  },
+  {
+   "nr": 7,
+   "type": "les",
+   "spoor": "maliki",
+   "titel": "Malik ibn Anas en de vorming van de school",
+   "module": "m1"
+  },
+  {
+   "nr": 8,
+   "type": "les",
+   "spoor": "maliki",
+   "titel": "De tekstuele ruggengraat",
+   "module": "m2"
+  },
+  {
+   "nr": 9,
+   "type": "les",
+   "spoor": "maliki",
+   "titel": "‘Ibadat: waar de school anders is",
+   "module": "m3"
+  },
+  {
+   "nr": 10,
+   "type": "les",
+   "spoor": "maliki",
+   "titel": "Transacties en familierecht",
+   "module": "m4"
+  },
+  {
+   "nr": 11,
+   "type": "les",
+   "spoor": "maliki",
+   "titel": "Fatwa, rechtspraak en ‘amal",
+   "module": "m5"
+  },
+  {
+   "nr": 12,
+   "type": "cons",
+   "spoor": "maliki",
+   "titel": "Consolidatie — de school",
+   "module": null
+  },
+  {
+   "nr": 13,
+   "type": "les",
+   "spoor": "aqida",
+   "titel": "De drie zuilen",
+   "module": "a1"
+  },
+  {
+   "nr": 14,
+   "type": "les",
+   "spoor": "aqida",
+   "titel": "Wajib, mustahil, ja’iz",
+   "module": "a2"
+  },
+  {
+   "nr": 15,
+   "type": "les",
+   "spoor": "aqida",
+   "titel": "De twintig eigenschappen",
+   "module": "a3"
+  },
+  {
+   "nr": 16,
+   "type": "les",
+   "spoor": "aqida",
+   "titel": "Kasb: vrije wil zonder tweede schepper",
+   "module": "a4"
+  },
+  {
+   "nr": 17,
+   "type": "cons",
+   "spoor": "aqida",
+   "titel": "Consolidatie — de geloofsleer",
+   "module": null
+  },
+  {
+   "nr": 18,
+   "type": "les",
+   "spoor": "bronnen",
+   "titel": "‘Ulum al-Qur’an",
+   "module": "b1"
+  },
+  {
+   "nr": 19,
+   "type": "les",
+   "spoor": "bronnen",
+   "titel": "Tafsir: de Andalusische lijn",
+   "module": "b2"
+  },
+  {
+   "nr": 20,
+   "type": "les",
+   "spoor": "bronnen",
+   "titel": "‘Ulum al-hadith",
+   "module": "b3"
+  },
+  {
+   "nr": 21,
+   "type": "les",
+   "spoor": "bronnen",
+   "titel": "De grote Malikitische hadithgeleerden",
+   "module": "b4"
+  },
+  {
+   "nr": 22,
+   "type": "cons",
+   "spoor": "bronnen",
+   "titel": "Consolidatie — de bronnen",
+   "module": null
+  },
+  {
+   "nr": 23,
+   "type": "les",
+   "spoor": "tibb",
+   "titel": "Maqasid al-shari’a",
+   "module": "t1"
+  },
+  {
+   "nr": 24,
+   "type": "les",
+   "spoor": "tibb",
+   "titel": "Qawa’id fiqhiyya en darura",
+   "module": "t2"
+  },
+  {
+   "nr": 25,
+   "type": "les",
+   "spoor": "tibb",
+   "titel": "Het begin van het leven",
+   "module": "t3"
+  },
+  {
+   "nr": 26,
+   "type": "les",
+   "spoor": "tibb",
+   "titel": "Het einde van het leven",
+   "module": "t4"
+  },
+  {
+   "nr": 27,
+   "type": "les",
+   "spoor": "tibb",
+   "titel": "Ramadan in de spreekkamer",
+   "module": "t5"
+  },
+  {
+   "nr": 28,
+   "type": "cons",
+   "spoor": "tibb",
+   "titel": "Consolidatie — en verder",
+   "module": null
+  }
+ ],
+ "roosters": [
+  {
+   "i": 0,
+   "e": 1.3,
+   "q": 1,
+   "d": 1,
+   "tekst": "1 d"
+  },
+  {
+   "i": 0,
+   "e": 1.3,
+   "q": 2,
+   "d": 2,
+   "tekst": "2 d"
+  },
+  {
+   "i": 0,
+   "e": 1.3,
+   "q": 3,
+   "d": 4,
+   "tekst": "4 d"
+  },
+  {
+   "i": 0,
+   "e": 1.8,
+   "q": 1,
+   "d": 1,
+   "tekst": "1 d"
+  },
+  {
+   "i": 0,
+   "e": 1.8,
+   "q": 2,
+   "d": 2,
+   "tekst": "2 d"
+  },
+  {
+   "i": 0,
+   "e": 1.8,
+   "q": 3,
+   "d": 4,
+   "tekst": "4 d"
+  },
+  {
+   "i": 0,
+   "e": 2.5,
+   "q": 1,
+   "d": 1,
+   "tekst": "1 d"
+  },
+  {
+   "i": 0,
+   "e": 2.5,
+   "q": 2,
+   "d": 2,
+   "tekst": "2 d"
+  },
+  {
+   "i": 0,
+   "e": 2.5,
+   "q": 3,
+   "d": 4,
+   "tekst": "4 d"
+  },
+  {
+   "i": 0,
+   "e": 2.9,
+   "q": 1,
+   "d": 1,
+   "tekst": "1 d"
+  },
+  {
+   "i": 0,
+   "e": 2.9,
+   "q": 2,
+   "d": 2,
+   "tekst": "2 d"
+  },
+  {
+   "i": 0,
+   "e": 2.9,
+   "q": 3,
+   "d": 4,
+   "tekst": "4 d"
+  },
+  {
+   "i": 0,
+   "e": 3.2,
+   "q": 1,
+   "d": 1,
+   "tekst": "1 d"
+  },
+  {
+   "i": 0,
+   "e": 3.2,
+   "q": 2,
+   "d": 2,
+   "tekst": "2 d"
+  },
+  {
+   "i": 0,
+   "e": 3.2,
+   "q": 3,
+   "d": 4,
+   "tekst": "4 d"
+  },
+  {
+   "i": 1,
+   "e": 1.3,
+   "q": 1,
+   "d": 1,
+   "tekst": "1 d"
+  },
+  {
+   "i": 1,
+   "e": 1.3,
+   "q": 2,
+   "d": 1,
+   "tekst": "1 d"
+  },
+  {
+   "i": 1,
+   "e": 1.3,
+   "q": 3,
+   "d": 2,
+   "tekst": "2 d"
+  },
+  {
+   "i": 1,
+   "e": 1.8,
+   "q": 1,
+   "d": 1,
+   "tekst": "1 d"
+  },
+  {
+   "i": 1,
+   "e": 1.8,
+   "q": 2,
+   "d": 2,
+   "tekst": "2 d"
+  },
+  {
+   "i": 1,
+   "e": 1.8,
+   "q": 3,
+   "d": 2,
+   "tekst": "2 d"
+  },
+  {
+   "i": 1,
+   "e": 2.5,
+   "q": 1,
+   "d": 1,
+   "tekst": "1 d"
+  },
+  {
+   "i": 1,
+   "e": 2.5,
+   "q": 2,
+   "d": 3,
+   "tekst": "3 d"
+  },
+  {
+   "i": 1,
+   "e": 2.5,
+   "q": 3,
+   "d": 3,
+   "tekst": "3 d"
+  },
+  {
+   "i": 1,
+   "e": 2.9,
+   "q": 1,
+   "d": 1,
+   "tekst": "1 d"
+  },
+  {
+   "i": 1,
+   "e": 2.9,
+   "q": 2,
+   "d": 3,
+   "tekst": "3 d"
+  },
+  {
+   "i": 1,
+   "e": 2.9,
+   "q": 3,
+   "d": 4,
+   "tekst": "4 d"
+  },
+  {
+   "i": 1,
+   "e": 3.2,
+   "q": 1,
+   "d": 1,
+   "tekst": "1 d"
+  },
+  {
+   "i": 1,
+   "e": 3.2,
+   "q": 2,
+   "d": 3,
+   "tekst": "3 d"
+  },
+  {
+   "i": 1,
+   "e": 3.2,
+   "q": 3,
+   "d": 4,
+   "tekst": "4 d"
+  },
+  {
+   "i": 2,
+   "e": 1.3,
+   "q": 1,
+   "d": 2,
+   "tekst": "2 d"
+  },
+  {
+   "i": 2,
+   "e": 1.3,
+   "q": 2,
+   "d": 3,
+   "tekst": "3 d"
+  },
+  {
+   "i": 2,
+   "e": 1.3,
+   "q": 3,
+   "d": 4,
+   "tekst": "4 d"
+  },
+  {
+   "i": 2,
+   "e": 1.8,
+   "q": 1,
+   "d": 2,
+   "tekst": "2 d"
+  },
+  {
+   "i": 2,
+   "e": 1.8,
+   "q": 2,
+   "d": 4,
+   "tekst": "4 d"
+  },
+  {
+   "i": 2,
+   "e": 1.8,
+   "q": 3,
+   "d": 5,
+   "tekst": "5 d"
+  },
+  {
+   "i": 2,
+   "e": 2.5,
+   "q": 1,
+   "d": 2,
+   "tekst": "2 d"
+  },
+  {
+   "i": 2,
+   "e": 2.5,
+   "q": 2,
+   "d": 5,
+   "tekst": "5 d"
+  },
+  {
+   "i": 2,
+   "e": 2.5,
+   "q": 3,
+   "d": 7,
+   "tekst": "7 d"
+  },
+  {
+   "i": 2,
+   "e": 2.9,
+   "q": 1,
+   "d": 2,
+   "tekst": "2 d"
+  },
+  {
+   "i": 2,
+   "e": 2.9,
+   "q": 2,
+   "d": 6,
+   "tekst": "6 d"
+  },
+  {
+   "i": 2,
+   "e": 2.9,
+   "q": 3,
+   "d": 8,
+   "tekst": "8 d"
+  },
+  {
+   "i": 2,
+   "e": 3.2,
+   "q": 1,
+   "d": 2,
+   "tekst": "2 d"
+  },
+  {
+   "i": 2,
+   "e": 3.2,
+   "q": 2,
+   "d": 6,
+   "tekst": "6 d"
+  },
+  {
+   "i": 2,
+   "e": 3.2,
+   "q": 3,
+   "d": 9,
+   "tekst": "9 d"
+  },
+  {
+   "i": 3,
+   "e": 1.3,
+   "q": 1,
+   "d": 4,
+   "tekst": "4 d"
+  },
+  {
+   "i": 3,
+   "e": 1.3,
+   "q": 2,
+   "d": 4,
+   "tekst": "4 d"
+  },
+  {
+   "i": 3,
+   "e": 1.3,
+   "q": 3,
+   "d": 5,
+   "tekst": "5 d"
+  },
+  {
+   "i": 3,
+   "e": 1.8,
+   "q": 1,
+   "d": 4,
+   "tekst": "4 d"
+  },
+  {
+   "i": 3,
+   "e": 1.8,
+   "q": 2,
+   "d": 5,
+   "tekst": "5 d"
+  },
+  {
+   "i": 3,
+   "e": 1.8,
+   "q": 3,
+   "d": 7,
+   "tekst": "7 d"
+  },
+  {
+   "i": 3,
+   "e": 2.5,
+   "q": 1,
+   "d": 4,
+   "tekst": "4 d"
+  },
+  {
+   "i": 3,
+   "e": 2.5,
+   "q": 2,
+   "d": 8,
+   "tekst": "8 d"
+  },
+  {
+   "i": 3,
+   "e": 2.5,
+   "q": 3,
+   "d": 10,
+   "tekst": "10 d"
+  },
+  {
+   "i": 3,
+   "e": 2.9,
+   "q": 1,
+   "d": 4,
+   "tekst": "4 d"
+  },
+  {
+   "i": 3,
+   "e": 2.9,
+   "q": 2,
+   "d": 9,
+   "tekst": "9 d"
+  },
+  {
+   "i": 3,
+   "e": 2.9,
+   "q": 3,
+   "d": 12,
+   "tekst": "12 d"
+  },
+  {
+   "i": 3,
+   "e": 3.2,
+   "q": 1,
+   "d": 4,
+   "tekst": "4 d"
+  },
+  {
+   "i": 3,
+   "e": 3.2,
+   "q": 2,
+   "d": 10,
+   "tekst": "10 d"
+  },
+  {
+   "i": 3,
+   "e": 3.2,
+   "q": 3,
+   "d": 13,
+   "tekst": "13 d"
+  },
+  {
+   "i": 5,
+   "e": 1.3,
+   "q": 1,
+   "d": 6,
+   "tekst": "6 d"
+  },
+  {
+   "i": 5,
+   "e": 1.3,
+   "q": 2,
+   "d": 7,
+   "tekst": "7 d"
+  },
+  {
+   "i": 5,
+   "e": 1.3,
+   "q": 3,
+   "d": 9,
+   "tekst": "9 d"
+  },
+  {
+   "i": 5,
+   "e": 1.8,
+   "q": 1,
+   "d": 6,
+   "tekst": "6 d"
+  },
+  {
+   "i": 5,
+   "e": 1.8,
+   "q": 2,
+   "d": 9,
+   "tekst": "9 d"
+  },
+  {
+   "i": 5,
+   "e": 1.8,
+   "q": 3,
+   "d": 12,
+   "tekst": "12 d"
+  },
+  {
+   "i": 5,
+   "e": 2.5,
+   "q": 1,
+   "d": 6,
+   "tekst": "6 d"
+  },
+  {
+   "i": 5,
+   "e": 2.5,
+   "q": 2,
+   "d": 13,
+   "tekst": "13 d"
+  },
+  {
+   "i": 5,
+   "e": 2.5,
+   "q": 3,
+   "d": 17,
+   "tekst": "17 d"
+  },
+  {
+   "i": 5,
+   "e": 2.9,
+   "q": 1,
+   "d": 6,
+   "tekst": "6 d"
+  },
+  {
+   "i": 5,
+   "e": 2.9,
+   "q": 2,
+   "d": 15,
+   "tekst": "15 d"
+  },
+  {
+   "i": 5,
+   "e": 2.9,
+   "q": 3,
+   "d": 20,
+   "tekst": "20 d"
+  },
+  {
+   "i": 5,
+   "e": 3.2,
+   "q": 1,
+   "d": 6,
+   "tekst": "6 d"
+  },
+  {
+   "i": 5,
+   "e": 3.2,
+   "q": 2,
+   "d": 16,
+   "tekst": "16 d"
+  },
+  {
+   "i": 5,
+   "e": 3.2,
+   "q": 3,
+   "d": 22,
+   "tekst": "22 d"
+  },
+  {
+   "i": 8,
+   "e": 1.3,
+   "q": 1,
+   "d": 10,
+   "tekst": "10 d"
+  },
+  {
+   "i": 8,
+   "e": 1.3,
+   "q": 2,
+   "d": 10,
+   "tekst": "10 d"
+  },
+  {
+   "i": 8,
+   "e": 1.3,
+   "q": 3,
+   "d": 14,
+   "tekst": "14 d"
+  },
+  {
+   "i": 8,
+   "e": 1.8,
+   "q": 1,
+   "d": 10,
+   "tekst": "10 d"
+  },
+  {
+   "i": 8,
+   "e": 1.8,
+   "q": 2,
+   "d": 14,
+   "tekst": "14 d"
+  },
+  {
+   "i": 8,
+   "e": 1.8,
+   "q": 3,
+   "d": 19,
+   "tekst": "19 d"
+  },
+  {
+   "i": 8,
+   "e": 2.5,
+   "q": 1,
+   "d": 10,
+   "tekst": "10 d"
+  },
+  {
+   "i": 8,
+   "e": 2.5,
+   "q": 2,
+   "d": 20,
+   "tekst": "20 d"
+  },
+  {
+   "i": 8,
+   "e": 2.5,
+   "q": 3,
+   "d": 27,
+   "tekst": "27 d"
+  },
+  {
+   "i": 8,
+   "e": 2.9,
+   "q": 1,
+   "d": 10,
+   "tekst": "10 d"
+  },
+  {
+   "i": 8,
+   "e": 2.9,
+   "q": 2,
+   "d": 23,
+   "tekst": "23 d"
+  },
+  {
+   "i": 8,
+   "e": 2.9,
+   "q": 3,
+   "d": 31,
+   "tekst": "1 mnd"
+  },
+  {
+   "i": 8,
+   "e": 3.2,
+   "q": 1,
+   "d": 10,
+   "tekst": "10 d"
+  },
+  {
+   "i": 8,
+   "e": 3.2,
+   "q": 2,
+   "d": 26,
+   "tekst": "26 d"
+  },
+  {
+   "i": 8,
+   "e": 3.2,
+   "q": 3,
+   "d": 35,
+   "tekst": "1 mnd"
+  },
+  {
+   "i": 13,
+   "e": 1.3,
+   "q": 1,
+   "d": 16,
+   "tekst": "16 d"
+  },
+  {
+   "i": 13,
+   "e": 1.3,
+   "q": 2,
+   "d": 17,
+   "tekst": "17 d"
+  },
+  {
+   "i": 13,
+   "e": 1.3,
+   "q": 3,
+   "d": 23,
+   "tekst": "23 d"
+  },
+  {
+   "i": 13,
+   "e": 1.8,
+   "q": 1,
+   "d": 16,
+   "tekst": "16 d"
+  },
+  {
+   "i": 13,
+   "e": 1.8,
+   "q": 2,
+   "d": 23,
+   "tekst": "23 d"
+  },
+  {
+   "i": 13,
+   "e": 1.8,
+   "q": 3,
+   "d": 32,
+   "tekst": "1 mnd"
+  },
+  {
+   "i": 13,
+   "e": 2.5,
+   "q": 1,
+   "d": 16,
+   "tekst": "16 d"
+  },
+  {
+   "i": 13,
+   "e": 2.5,
+   "q": 2,
+   "d": 33,
+   "tekst": "1 mnd"
+  },
+  {
+   "i": 13,
+   "e": 2.5,
+   "q": 3,
+   "d": 44,
+   "tekst": "1 mnd"
+  },
+  {
+   "i": 13,
+   "e": 2.9,
+   "q": 1,
+   "d": 16,
+   "tekst": "16 d"
+  },
+  {
+   "i": 13,
+   "e": 2.9,
+   "q": 2,
+   "d": 38,
+   "tekst": "1 mnd"
+  },
+  {
+   "i": 13,
+   "e": 2.9,
+   "q": 3,
+   "d": 51,
+   "tekst": "2 mnd"
+  },
+  {
+   "i": 13,
+   "e": 3.2,
+   "q": 1,
+   "d": 16,
+   "tekst": "16 d"
+  },
+  {
+   "i": 13,
+   "e": 3.2,
+   "q": 2,
+   "d": 42,
+   "tekst": "1 mnd"
+  },
+  {
+   "i": 13,
+   "e": 3.2,
+   "q": 3,
+   "d": 56,
+   "tekst": "2 mnd"
+  },
+  {
+   "i": 21,
+   "e": 1.3,
+   "q": 1,
+   "d": 25,
+   "tekst": "25 d"
+  },
+  {
+   "i": 21,
+   "e": 1.3,
+   "q": 2,
+   "d": 27,
+   "tekst": "27 d"
+  },
+  {
+   "i": 21,
+   "e": 1.3,
+   "q": 3,
+   "d": 37,
+   "tekst": "1 mnd"
+  },
+  {
+   "i": 21,
+   "e": 1.8,
+   "q": 1,
+   "d": 25,
+   "tekst": "25 d"
+  },
+  {
+   "i": 21,
+   "e": 1.8,
+   "q": 2,
+   "d": 38,
+   "tekst": "1 mnd"
+  },
+  {
+   "i": 21,
+   "e": 1.8,
+   "q": 3,
+   "d": 51,
+   "tekst": "2 mnd"
+  },
+  {
+   "i": 21,
+   "e": 2.5,
+   "q": 1,
+   "d": 25,
+   "tekst": "25 d"
+  },
+  {
+   "i": 21,
+   "e": 2.5,
+   "q": 2,
+   "d": 53,
+   "tekst": "2 mnd"
+  },
+  {
+   "i": 21,
+   "e": 2.5,
+   "q": 3,
+   "d": 71,
+   "tekst": "2 mnd"
+  },
+  {
+   "i": 21,
+   "e": 2.9,
+   "q": 1,
+   "d": 25,
+   "tekst": "25 d"
+  },
+  {
+   "i": 21,
+   "e": 2.9,
+   "q": 2,
+   "d": 61,
+   "tekst": "2 mnd"
+  },
+  {
+   "i": 21,
+   "e": 2.9,
+   "q": 3,
+   "d": 82,
+   "tekst": "3 mnd"
+  },
+  {
+   "i": 21,
+   "e": 3.2,
+   "q": 1,
+   "d": 25,
+   "tekst": "25 d"
+  },
+  {
+   "i": 21,
+   "e": 3.2,
+   "q": 2,
+   "d": 67,
+   "tekst": "2 mnd"
+  },
+  {
+   "i": 21,
+   "e": 3.2,
+   "q": 3,
+   "d": 91,
+   "tekst": "3 mnd"
+  },
+  {
+   "i": 34,
+   "e": 1.3,
+   "q": 1,
+   "d": 41,
+   "tekst": "1 mnd"
+  },
+  {
+   "i": 34,
+   "e": 1.3,
+   "q": 2,
+   "d": 44,
+   "tekst": "1 mnd"
+  },
+  {
+   "i": 34,
+   "e": 1.3,
+   "q": 3,
+   "d": 60,
+   "tekst": "2 mnd"
+  },
+  {
+   "i": 34,
+   "e": 1.8,
+   "q": 1,
+   "d": 41,
+   "tekst": "1 mnd"
+  },
+  {
+   "i": 34,
+   "e": 1.8,
+   "q": 2,
+   "d": 61,
+   "tekst": "2 mnd"
+  },
+  {
+   "i": 34,
+   "e": 1.8,
+   "q": 3,
+   "d": 83,
+   "tekst": "3 mnd"
+  },
+  {
+   "i": 34,
+   "e": 2.5,
+   "q": 1,
+   "d": 41,
+   "tekst": "1 mnd"
+  },
+  {
+   "i": 34,
+   "e": 2.5,
+   "q": 2,
+   "d": 85,
+   "tekst": "3 mnd"
+  },
+  {
+   "i": 34,
+   "e": 2.5,
+   "q": 3,
+   "d": 115,
+   "tekst": "4 mnd"
+  },
+  {
+   "i": 34,
+   "e": 2.9,
+   "q": 1,
+   "d": 41,
+   "tekst": "1 mnd"
+  },
+  {
+   "i": 34,
+   "e": 2.9,
+   "q": 2,
+   "d": 99,
+   "tekst": "3 mnd"
+  },
+  {
+   "i": 34,
+   "e": 2.9,
+   "q": 3,
+   "d": 133,
+   "tekst": "4 mnd"
+  },
+  {
+   "i": 34,
+   "e": 3.2,
+   "q": 1,
+   "d": 41,
+   "tekst": "1 mnd"
+  },
+  {
+   "i": 34,
+   "e": 3.2,
+   "q": 2,
+   "d": 109,
+   "tekst": "4 mnd"
+  },
+  {
+   "i": 34,
+   "e": 3.2,
+   "q": 3,
+   "d": 147,
+   "tekst": "5 mnd"
+  },
+  {
+   "i": 60,
+   "e": 1.3,
+   "q": 1,
+   "d": 72,
+   "tekst": "2 mnd"
+  },
+  {
+   "i": 60,
+   "e": 1.3,
+   "q": 2,
+   "d": 78,
+   "tekst": "3 mnd"
+  },
+  {
+   "i": 60,
+   "e": 1.3,
+   "q": 3,
+   "d": 105,
+   "tekst": "4 mnd"
+  },
+  {
+   "i": 60,
+   "e": 1.8,
+   "q": 1,
+   "d": 72,
+   "tekst": "2 mnd"
+  },
+  {
+   "i": 60,
+   "e": 1.8,
+   "q": 2,
+   "d": 108,
+   "tekst": "4 mnd"
+  },
+  {
+   "i": 60,
+   "e": 1.8,
+   "q": 3,
+   "d": 146,
+   "tekst": "5 mnd"
+  },
+  {
+   "i": 60,
+   "e": 2.5,
+   "q": 1,
+   "d": 72,
+   "tekst": "2 mnd"
+  },
+  {
+   "i": 60,
+   "e": 2.5,
+   "q": 2,
+   "d": 150,
+   "tekst": "5 mnd"
+  },
+  {
+   "i": 60,
+   "e": 2.5,
+   "q": 3,
+   "d": 203,
+   "tekst": "7 mnd"
+  },
+  {
+   "i": 60,
+   "e": 2.9,
+   "q": 1,
+   "d": 72,
+   "tekst": "2 mnd"
+  },
+  {
+   "i": 60,
+   "e": 2.9,
+   "q": 2,
+   "d": 174,
+   "tekst": "6 mnd"
+  },
+  {
+   "i": 60,
+   "e": 2.9,
+   "q": 3,
+   "d": 235,
+   "tekst": "8 mnd"
+  },
+  {
+   "i": 60,
+   "e": 3.2,
+   "q": 1,
+   "d": 72,
+   "tekst": "2 mnd"
+  },
+  {
+   "i": 60,
+   "e": 3.2,
+   "q": 2,
+   "d": 192,
+   "tekst": "6 mnd"
+  },
+  {
+   "i": 60,
+   "e": 3.2,
+   "q": 3,
+   "d": 259,
+   "tekst": "9 mnd"
+  },
+  {
+   "i": 120,
+   "e": 1.3,
+   "q": 1,
+   "d": 144,
+   "tekst": "5 mnd"
+  },
+  {
+   "i": 120,
+   "e": 1.3,
+   "q": 2,
+   "d": 156,
+   "tekst": "5 mnd"
+  },
+  {
+   "i": 120,
+   "e": 1.3,
+   "q": 3,
+   "d": 211,
+   "tekst": "7 mnd"
+  },
+  {
+   "i": 120,
+   "e": 1.8,
+   "q": 1,
+   "d": 144,
+   "tekst": "5 mnd"
+  },
+  {
+   "i": 120,
+   "e": 1.8,
+   "q": 2,
+   "d": 216,
+   "tekst": "7 mnd"
+  },
+  {
+   "i": 120,
+   "e": 1.8,
+   "q": 3,
+   "d": 292,
+   "tekst": "10 mnd"
+  },
+  {
+   "i": 120,
+   "e": 2.5,
+   "q": 1,
+   "d": 144,
+   "tekst": "5 mnd"
+  },
+  {
+   "i": 120,
+   "e": 2.5,
+   "q": 2,
+   "d": 300,
+   "tekst": "10 mnd"
+  },
+  {
+   "i": 120,
+   "e": 2.5,
+   "q": 3,
+   "d": 405,
+   "tekst": "14 mnd"
+  },
+  {
+   "i": 120,
+   "e": 2.9,
+   "q": 1,
+   "d": 144,
+   "tekst": "5 mnd"
+  },
+  {
+   "i": 120,
+   "e": 2.9,
+   "q": 2,
+   "d": 348,
+   "tekst": "12 mnd"
+  },
+  {
+   "i": 120,
+   "e": 2.9,
+   "q": 3,
+   "d": 470,
+   "tekst": "16 mnd"
+  },
+  {
+   "i": 120,
+   "e": 3.2,
+   "q": 1,
+   "d": 144,
+   "tekst": "5 mnd"
+  },
+  {
+   "i": 120,
+   "e": 3.2,
+   "q": 2,
+   "d": 384,
+   "tekst": "13 mnd"
+  },
+  {
+   "i": 120,
+   "e": 3.2,
+   "q": 3,
+   "d": 518,
+   "tekst": "17 mnd"
+  },
+  {
+   "i": 365,
+   "e": 1.3,
+   "q": 1,
+   "d": 438,
+   "tekst": "15 mnd"
+  },
+  {
+   "i": 365,
+   "e": 1.3,
+   "q": 2,
+   "d": 475,
+   "tekst": "16 mnd"
+  },
+  {
+   "i": 365,
+   "e": 1.3,
+   "q": 3,
+   "d": 641,
+   "tekst": "21 mnd"
+  },
+  {
+   "i": 365,
+   "e": 1.8,
+   "q": 1,
+   "d": 438,
+   "tekst": "15 mnd"
+  },
+  {
+   "i": 365,
+   "e": 1.8,
+   "q": 2,
+   "d": 657,
+   "tekst": "22 mnd"
+  },
+  {
+   "i": 365,
+   "e": 1.8,
+   "q": 3,
+   "d": 887,
+   "tekst": "30 mnd"
+  },
+  {
+   "i": 365,
+   "e": 2.5,
+   "q": 1,
+   "d": 438,
+   "tekst": "15 mnd"
+  },
+  {
+   "i": 365,
+   "e": 2.5,
+   "q": 2,
+   "d": 913,
+   "tekst": "30 mnd"
+  },
+  {
+   "i": 365,
+   "e": 2.5,
+   "q": 3,
+   "d": 1232,
+   "tekst": "41 mnd"
+  },
+  {
+   "i": 365,
+   "e": 2.9,
+   "q": 1,
+   "d": 438,
+   "tekst": "15 mnd"
+  },
+  {
+   "i": 365,
+   "e": 2.9,
+   "q": 2,
+   "d": 1059,
+   "tekst": "35 mnd"
+  },
+  {
+   "i": 365,
+   "e": 2.9,
+   "q": 3,
+   "d": 1429,
+   "tekst": "48 mnd"
+  },
+  {
+   "i": 365,
+   "e": 3.2,
+   "q": 1,
+   "d": 438,
+   "tekst": "15 mnd"
+  },
+  {
+   "i": 365,
+   "e": 3.2,
+   "q": 2,
+   "d": 1168,
+   "tekst": "39 mnd"
+  },
+  {
+   "i": 365,
+   "e": 3.2,
+   "q": 3,
+   "d": 1577,
+   "tekst": "53 mnd"
+  },
+  {
+   "i": null,
+   "e": null,
+   "q": 1,
+   "d": 1,
+   "tekst": "1 d"
+  },
+  {
+   "i": null,
+   "e": null,
+   "q": 2,
+   "d": 2,
+   "tekst": "2 d"
+  },
+  {
+   "i": null,
+   "e": null,
+   "q": 3,
+   "d": 4,
+   "tekst": "4 d"
+  }
+ ],
+ "reeksen": [
+  {
+   "pad": [
+    2,
+    2,
+    2,
+    2,
+    2,
+    2
+   ],
+   "uit": [
+    {
+     "q": 2,
+     "i": 2,
+     "e": 2.5,
+     "n": 1,
+     "due": "2026-08-24"
+    },
+    {
+     "q": 2,
+     "i": 5,
+     "e": 2.5,
+     "n": 2,
+     "due": "2026-08-27"
+    },
+    {
+     "q": 2,
+     "i": 13,
+     "e": 2.5,
+     "n": 3,
+     "due": "2026-09-04"
+    },
+    {
+     "q": 2,
+     "i": 33,
+     "e": 2.5,
+     "n": 4,
+     "due": "2026-09-24"
+    },
+    {
+     "q": 2,
+     "i": 83,
+     "e": 2.5,
+     "n": 5,
+     "due": "2026-11-13"
+    },
+    {
+     "q": 2,
+     "i": 208,
+     "e": 2.5,
+     "n": 6,
+     "due": "2027-03-18"
+    }
+   ],
+   "dagreeks": 1,
+   "last": "2026-08-22"
+  },
+  {
+   "pad": [
+    3,
+    3,
+    3,
+    3
+   ],
+   "uit": [
+    {
+     "q": 3,
+     "i": 4,
+     "e": 2.65,
+     "n": 1,
+     "due": "2026-08-26"
+    },
+    {
+     "q": 3,
+     "i": 14,
+     "e": 2.8,
+     "n": 2,
+     "due": "2026-09-05"
+    },
+    {
+     "q": 3,
+     "i": 53,
+     "e": 2.95,
+     "n": 3,
+     "due": "2026-10-14"
+    },
+    {
+     "q": 3,
+     "i": 211,
+     "e": 3.1,
+     "n": 4,
+     "due": "2027-03-21"
+    }
+   ],
+   "dagreeks": 1,
+   "last": "2026-08-22"
+  },
+  {
+   "pad": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "uit": [
+    {
+     "q": 1,
+     "i": 1,
+     "e": 2.35,
+     "n": 1,
+     "due": "2026-08-23"
+    },
+    {
+     "q": 1,
+     "i": 1,
+     "e": 2.2,
+     "n": 2,
+     "due": "2026-08-23"
+    },
+    {
+     "q": 1,
+     "i": 1,
+     "e": 2.05,
+     "n": 3,
+     "due": "2026-08-23"
+    },
+    {
+     "q": 1,
+     "i": 1,
+     "e": 1.9,
+     "n": 4,
+     "due": "2026-08-23"
+    }
+   ],
+   "dagreeks": 1,
+   "last": "2026-08-22"
+  },
+  {
+   "pad": [
+    2,
+    0,
+    2,
+    2,
+    0,
+    3
+   ],
+   "uit": [
+    {
+     "q": 2,
+     "i": 2,
+     "e": 2.5,
+     "n": 1,
+     "due": "2026-08-24"
+    },
+    {
+     "q": 0,
+     "i": 0,
+     "e": 2.3,
+     "n": 2,
+     "due": "2026-08-22"
+    },
+    {
+     "q": 2,
+     "i": 2,
+     "e": 2.3,
+     "n": 3,
+     "due": "2026-08-24"
+    },
+    {
+     "q": 2,
+     "i": 5,
+     "e": 2.3,
+     "n": 4,
+     "due": "2026-08-27"
+    },
+    {
+     "q": 0,
+     "i": 0,
+     "e": 2.1,
+     "n": 5,
+     "due": "2026-08-22"
+    },
+    {
+     "q": 3,
+     "i": 4,
+     "e": 2.25,
+     "n": 6,
+     "due": "2026-08-26"
+    }
+   ],
+   "dagreeks": 1,
+   "last": "2026-08-22"
+  },
+  {
+   "pad": [
+    3,
+    1,
+    2,
+    0,
+    3,
+    3,
+    2
+   ],
+   "uit": [
+    {
+     "q": 3,
+     "i": 4,
+     "e": 2.65,
+     "n": 1,
+     "due": "2026-08-26"
+    },
+    {
+     "q": 1,
+     "i": 5,
+     "e": 2.5,
+     "n": 2,
+     "due": "2026-08-27"
+    },
+    {
+     "q": 2,
+     "i": 13,
+     "e": 2.5,
+     "n": 3,
+     "due": "2026-09-04"
+    },
+    {
+     "q": 0,
+     "i": 0,
+     "e": 2.3,
+     "n": 4,
+     "due": "2026-08-22"
+    },
+    {
+     "q": 3,
+     "i": 4,
+     "e": 2.45,
+     "n": 5,
+     "due": "2026-08-26"
+    },
+    {
+     "q": 3,
+     "i": 13,
+     "e": 2.6,
+     "n": 6,
+     "due": "2026-09-04"
+    },
+    {
+     "q": 2,
+     "i": 34,
+     "e": 2.6,
+     "n": 7,
+     "due": "2026-09-25"
+    }
+   ],
+   "dagreeks": 1,
+   "last": "2026-08-22"
+  },
+  {
+   "pad": [
+    0,
+    0,
+    0
+   ],
+   "uit": [
+    {
+     "q": 0,
+     "i": 0,
+     "e": 2.3,
+     "n": 1,
+     "due": "2026-08-22"
+    },
+    {
+     "q": 0,
+     "i": 0,
+     "e": 2.1,
+     "n": 2,
+     "due": "2026-08-22"
+    },
+    {
+     "q": 0,
+     "i": 0,
+     "e": 1.9,
+     "n": 3,
+     "due": "2026-08-22"
+    }
+   ],
+   "dagreeks": 1,
+   "last": "2026-08-22"
+  }
+ ],
+ "samen": [
+  {
+   "a": {},
+   "b": {},
+   "uit": {
+    "start": null,
+    "dag": "4",
+    "klaar": {},
+    "cards": {},
+    "notities": {},
+    "alles": false,
+    "last": null,
+    "dagreeks": 0
+   }
+  },
+  {
+   "a": {
+    "start": "2026-03-01",
+    "klaar": {
+     "1": "a"
+    }
+   },
+   "b": {
+    "start": "2026-01-15",
+    "klaar": {
+     "2": "b"
+    }
+   },
+   "uit": {
+    "start": "2026-01-15",
+    "dag": "4",
+    "klaar": {
+     "1": "a",
+     "2": "b"
+    },
+    "cards": {},
+    "notities": {},
+    "alles": false,
+    "last": null,
+    "dagreeks": 0
+   }
+  },
+  {
+   "a": {
+    "cards": {
+     "k01": {
+      "i": 8,
+      "e": 2.5,
+      "n": 3,
+      "due": "2026-09-01"
+     }
+    }
+   },
+   "b": {
+    "cards": {
+     "k01": {
+      "i": 2,
+      "e": 2.2,
+      "n": 5,
+      "due": "2026-08-25"
+     }
+    }
+   },
+   "uit": {
+    "start": null,
+    "dag": "4",
+    "klaar": {},
+    "cards": {
+     "k01": {
+      "i": 2,
+      "e": 2.2,
+      "n": 5,
+      "due": "2026-08-25"
+     }
+    },
+    "notities": {},
+    "alles": false,
+    "last": null,
+    "dagreeks": 0
+   }
+  },
+  {
+   "a": {
+    "cards": {
+     "k01": {
+      "i": 8,
+      "e": 2.5,
+      "n": 3,
+      "due": "2026-09-01"
+     }
+    }
+   },
+   "b": {
+    "cards": {
+     "k01": {
+      "i": 4,
+      "e": 2.5,
+      "n": 3,
+      "due": "2026-09-09"
+     }
+    }
+   },
+   "uit": {
+    "start": null,
+    "dag": "4",
+    "klaar": {},
+    "cards": {
+     "k01": {
+      "i": 4,
+      "e": 2.5,
+      "n": 3,
+      "due": "2026-09-09"
+     }
+    },
+    "notities": {},
+    "alles": false,
+    "last": null,
+    "dagreeks": 0
+   }
+  },
+  {
+   "a": {
+    "cards": {
+     "k02": {
+      "i": 1,
+      "e": 2.5,
+      "n": 1,
+      "due": "2026-08-23"
+     }
+    }
+   },
+   "b": {
+    "cards": {
+     "k03": {
+      "i": 1,
+      "e": 2.5,
+      "n": 1,
+      "due": "2026-08-24"
+     }
+    }
+   },
+   "uit": {
+    "start": null,
+    "dag": "4",
+    "klaar": {},
+    "cards": {
+     "k02": {
+      "i": 1,
+      "e": 2.5,
+      "n": 1,
+      "due": "2026-08-23"
+     },
+     "k03": {
+      "i": 1,
+      "e": 2.5,
+      "n": 1,
+      "due": "2026-08-24"
+     }
+    },
+    "notities": {},
+    "alles": false,
+    "last": null,
+    "dagreeks": 0
+   }
+  },
+  {
+   "a": {
+    "notities": {
+     "3": "kort"
+    }
+   },
+   "b": {
+    "notities": {
+     "3": "een veel langere uitwerking"
+    }
+   },
+   "uit": {
+    "start": null,
+    "dag": "4",
+    "klaar": {},
+    "cards": {},
+    "notities": {
+     "3": "een veel langere uitwerking"
+    },
+    "alles": false,
+    "last": null,
+    "dagreeks": 0
+   }
+  },
+  {
+   "a": {
+    "notities": {
+     "3": "een veel langere uitwerking"
+    }
+   },
+   "b": {
+    "notities": {
+     "3": "kort"
+    }
+   },
+   "uit": {
+    "start": null,
+    "dag": "4",
+    "klaar": {},
+    "cards": {},
+    "notities": {
+     "3": "een veel langere uitwerking"
+    },
+    "alles": false,
+    "last": null,
+    "dagreeks": 0
+   }
+  },
+  {
+   "a": {
+    "alles": true,
+    "dagreeks": 9,
+    "last": "2026-08-01"
+   },
+   "b": {
+    "alles": false,
+    "dagreeks": 2,
+    "last": "2026-08-20"
+   },
+   "uit": {
+    "start": null,
+    "dag": "4",
+    "klaar": {},
+    "cards": {},
+    "notities": {},
+    "alles": true,
+    "last": "2026-08-20",
+    "dagreeks": 9
+   }
+  },
+  {
+   "a": {
+    "dag": "4",
+    "start": "2026-02-02"
+   },
+   "b": {
+    "dag": "2"
+   },
+   "uit": {
+    "start": "2026-02-02",
+    "dag": "2",
+    "klaar": {},
+    "cards": {},
+    "notities": {},
+    "alles": false,
+    "last": null,
+    "dagreeks": 0
+   }
+  },
+  {
+   "a": {
+    "klaar": {
+     "1": "x",
+     "2": "y"
+    }
+   },
+   "b": {
+    "klaar": {
+     "2": "z",
+     "3": "w"
+    }
+   },
+   "uit": {
+    "start": null,
+    "dag": "4",
+    "klaar": {
+     "1": "x",
+     "2": "z",
+     "3": "w"
+    },
+    "cards": {},
+    "notities": {},
+    "alles": false,
+    "last": null,
+    "dagreeks": 0
+   }
+  }
+ ],
+ "openstaand": [
+  {
+   "klaar": {},
+   "sporen": [],
+   "actief": 0,
+   "due": 0,
+   "week": 1,
+   "gedaan": 0
+  },
+  {
+   "klaar": {
+    "1": "2026-08-22"
+   },
+   "sporen": [
+    "usul"
+   ],
+   "actief": 13,
+   "due": 13,
+   "week": 2,
+   "gedaan": 1
+  },
+  {
+   "klaar": {
+    "1": "2026-08-22",
+    "6": "2026-08-22"
+   },
+   "sporen": [
+    "usul"
+   ],
+   "actief": 13,
+   "due": 13,
+   "week": 2,
+   "gedaan": 2
+  },
+  {
+   "klaar": {
+    "1": "2026-08-22",
+    "6": "2026-08-22",
+    "12": "2026-08-22",
+    "18": "2026-08-22",
+    "24": "2026-08-22"
+   },
+   "sporen": [
+    "bronnen",
+    "maliki",
+    "tibb",
+    "usul"
+   ],
+   "actief": 83,
+   "due": 83,
+   "week": 2,
+   "gedaan": 5
+  },
+  {
+   "klaar": {},
+   "alles": true,
+   "sporen": [],
+   "actief": 94,
+   "due": 94,
+   "week": 1,
+   "gedaan": 0
+  }
+ ],
+ "planning": [
+  {
+   "start": null,
+   "nu": "2026-08-22",
+   "week": null
+  },
+  {
+   "start": "2026-08-22",
+   "nu": "2026-08-22",
+   "week": 1
+  },
+  {
+   "start": "2026-08-15",
+   "nu": "2026-08-22",
+   "week": 2
+  },
+  {
+   "start": "2026-06-01",
+   "nu": "2026-08-22",
+   "week": 12
+  },
+  {
+   "start": "2025-01-01",
+   "nu": "2026-08-22",
+   "week": 28
+  },
+  {
+   "start": "2026-09-01",
+   "nu": "2026-08-22",
+   "week": 1
+  }
+ ]
+}

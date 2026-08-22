@@ -1,4 +1,6 @@
 node_modules/
-package-lock.json
-package.json
-PR-body.md
+dist/
+*.local
+.DS_Store
+gereedschap/*.png
+*.tsbuildinfo

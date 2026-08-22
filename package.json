@@ -1,0 +1,33 @@
+{
+  "name": "bennahub",
+  "private": true,
+  "type": "module",
+  "description": "Negen apps op één hub. React 18 + Vite + TypeScript.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b --noEmit && vite build",
+    "typen": "tsc -b --noEmit",
+    "proef": "vitest run --config vitest.config.ts",
+    "proef:kijk": "vitest --config vitest.config.ts",
+    "controle": "npm run typen && npm run proef && npm run build && npm run csp",
+    "csp": "node gereedschap/csp-proef.mjs",
+    "gouden-waarden": "node gereedschap/gouden-waarden-maken.mjs && node gereedschap/rasikh-gouden-waarden.mjs && node gereedschap/sanad-gouden-waarden.mjs && node gereedschap/bunyan-gouden-waarden.mjs && node gereedschap/noer-gouden-waarden.mjs && node gereedschap/arabisch-gouden-waarden.mjs && node gereedschap/huiswerk-gouden-waarden.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.120.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.3.2",
+    "@types/node": "^26.2.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "jsdom": "^30.0.1",
+    "playwright": "^1.62.1",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7",
+    "vitest": "^3.2.7"
+  }
+}

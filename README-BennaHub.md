@@ -1,28 +1,63 @@
 # BennaHub
 
-Eén startpagina, negen apps. Alles is statische HTML: geen build-stap, geen server,
-geen dependencies behalve de Latijnse letters van Google Fonts — het Arabisch
-staat in de repo zelf. Wat hier staat, is wat er draait.
+Eén startpagina, negen apps. Elke app houdt zijn eigen map en dus zijn eigen
+adres; er is geen router en geen app weet van de andere.
+
+**De repo wordt verbouwd naar React 18 + Vite + TypeScript.** Dat gebeurt app
+voor app, en welke er al om is staat in `vite.config.ts` in twee lijsten. Wat nog
+niet is omgebouwd draait onveranderd als los HTML-bestand en gaat zo mee naar de
+bouw; er is dus geen moment waarop de site half stuk staat. Zie BUILD.md voor
+hoe je bouwt en waarom er nu wél een bouwstap is.
+
+Alle negen apps zijn om: de startpagina, `health/`, `spellen/`, `rasikh/`, `sanad/`, `bunyan/`, `noer/`, `arabisch/` en `huiswerk/`.
 
 ```
 index.html          de startpagina: aanmelden, de apps van die persoon, ouderoverzicht
-huiswerk/           Huiswerk — oefenen voor school
-  index.html          de live versie (voorgecompileerd, niet met de hand bewerken)
-  index.dev.html      de bron met JSX en de oefenstof
+huiswerk/index.html Huiswerk — oefenen voor school
+                      de Vite-ingang; de app zelf staat in src/huiswerk/
+public/huiswerk/    de losse pagina's die geen deel van de app zijn:
+                      voxelsandbox.html, verkeersschool.html en cursussen/
 noer/index.html     Islam leren — de basis van de islam en leren bidden (7–15 jaar)
+                      de Vite-ingang; de app zelf staat in src/noer/
 arabisch/index.html Arabisch — lezen, begrijpen en spreken, met een jaarprogramma
+                      de Vite-ingang; de app zelf staat in src/arabisch/
 bunyan/index.html   Computers & Code — een pc bouwen en leren programmeren (vanaf 10)
+                      de Vite-ingang; de app zelf staat in src/bunyan/
 spellen/index.html  Spelletjes — de speelhoek, los van de huiswerkapp
 sanad/index.html    Geloofsstudie — achtentwintig weken islamitische wetenschappen
+                      de Vite-ingang; de app zelf staat in src/sanad/
 rasikh/             Koran uit je hoofd — memoriseren en vasthouden (voor volwassenen)
   index.html          de app
   tekst/              de hele Koran: 114 soera's, 6236 aya, plus de verwarpunten
   audio/              recitatie per aya, op te halen met het script dat er staat
-kalibratie/         Energiebalans — verbruik gemeten uit de gewichtstrend (volwassenen)
-  index.html          de app: rekenkern en zeven schermen; gegevens in eigen
-                      kal_*-tabellen in het Supabase-project van ProVita
+health/             BennaHealth — verbruik gemeten uit de gewichtstrend (volwassenen)
+  index.html          de Vite-ingang; de app zelf staat in src/health/
   VERANTWOORDING.md   elke rekenregel met zijn bron en zijn beperking
-  manifest.webmanifest, sw.js, icoon.svg, icoon-180.png
+  AUTOMATISERING.md   wat er vanzelf draait: de ochtendprikkel en het opruimen
+  database/           de SQL die naast de app hoort, in volgorde genummerd
+src/
+  gedeeld/db/         de getypte databasegrens: dertig functies, één keer
+  start/              de startpagina: de poort, de tegels, het ouderoverzicht
+  gedeeld/            datum- en getalhulp die alle apps kunnen gebruiken
+  gedeeld/wolk.ts     aanmelden en bewaren voor de apps die dat delen
+  health/             rekenkern, klinische modules, zes schermen, vier vensters
+    rekenkern.proef.ts  171 vergelijkingen tegen de oude, verantwoorde uitkomsten
+  spellen/            dertien spellen, de opslag en het samenvoegen
+  rasikh/             de herhalingsplanner, de tekst, de recitatie, zes schermen
+    planning.proef.ts   118 vergelijkingen tegen de oude planner
+  sanad/              het programma, de kaartplanner, zeven schermen
+    gegevens/           de leerstof: curriculum, kaarten, bronnen, lexicon, matn
+    sanad.proef.ts      30 vergelijkingen tegen de oude app, stof én planner
+  bunyan/             twee leersporen, de bouwbank, de beloning, zes schermen
+    minipy/             een kleine Python: woorden, ontleden, uitvoeren
+    minipy.proef.ts     132 programma's tegen de oude vertaler, 66 met een fout
+    bunyan.proef.ts     29 vergelijkingen: stof, punten, samenvoegen, bouwbank
+  noer/               profielen per kind, het leerpad, het gebed, de gebedstijden
+    gebedstijden.ts     de stand van de zon: juliaanse dag, declinatie, uurhoek
+    gebedstijden.proef.ts  1344 tijden tegen de oude app, zeven plaatsen
+    noer.proef.ts       33 vergelijkingen: stof, kaarten, missie, insignes
+public/               fonts, iconen, en de statische bestanden per app
+gereedschap/          de bouw- en proefscripts, en de oude app als ijkpunt
 iconen/             één pictogram per app, plus het script dat er PNG's van maakt
 fonts/              Amiri, het Arabische lettertype van alle apps
 ```
@@ -44,7 +79,7 @@ app ís, in het Nederlands.
 | `spellen/` | Spelletjes | Raha · رَاحَة | Spelletjes |
 | `sanad/` | Geloofsstudie | Sanad · سند | Geloofsstudie |
 | `rasikh/` | Koran uit je hoofd | Rasikh · رَاسِخ | Koran |
-| `kalibratie/` | Energiebalans | Kalibratie | Energiebalans |
+| `health/` | BennaHealth | Kalibratie · Energiebalans | BennaHealth |
 | — | Academie | — | — |
 
 De mapnamen zijn niet meegegaan. Die staan in bladwijzers, in service workers,
@@ -69,7 +104,7 @@ De indeling van de startpagina volgt dezelfde gedachte: bovenaan de vijf apps va
 de kinderen, daaronder de vier van de groten. De Academie stond bij de kinderen
 terwijl er "voor de groten" op de kaart zelf stond; die is nu verhuisd.
 
-Eén tegel wijkt bewust af. Energiebalans is leisteengrijs, de enige onverzadigde
+Eén tegel wijkt bewust af. BennaHealth is leisteengrijs, de enige onverzadigde
 kleur van de negen. De zeven leerapps zijn gekleurd omdat een kind een tegel moet
 kunnen herkennen voordat het vlot leest; die app is een meetinstrument voor een
 volwassene en mag daar op het beginscherm ook naar uitzien.
@@ -157,7 +192,7 @@ er onderweg niets niet meer. De startpagina zet al wel `bennahub.wie` in
 
 ## Centrale opslag
 
-Islam leren, Geloofsstudie, Arabisch en Energiebalans slaan voortgang op in `localStorage` én centraal, zodat je op elk
+Islam leren, Geloofsstudie, Arabisch en BennaHealth slaan voortgang op in `localStorage` én centraal, zodat je op elk
 toestel verder gaat waar je gebleven was. De opslag loopt via het bestaande
 Supabase-project, tabel `bennahub_state`, met vier `SECURITY DEFINER`-functies:
 
@@ -191,7 +226,7 @@ weegt zwaarder dan het vermijden van die dubbeling.
 - **Islam leren** — één gezinsaccount met daarbinnen een profiel per kind. In te
   stellen onder *Ouder*; bij een lege installatie staat er een knop klaar die de
   vier kinderen in één keer aanmaakt.
-- **Energiebalans** — één account, voor Abdelkader. In te stellen achter de chip
+- **BennaHealth** — één account, voor Abdelkader. In te stellen achter de chip
   rechtsboven. Synchroniseren is hier geen gemak maar een voorwaarde: er wordt
   in de badkamer gewogen en op de laptop gelogd, en twee losse reeksen leveren
   geen trend op.
@@ -309,12 +344,12 @@ De gebedshoudingen en de wassing zijn getekende SVG's en de geluidjes komen uit
 de Web Audio API, dus daar zijn geen bestanden voor nodig.
 
 **Het geluid bij de Arabische teksten** komt uit een opname die thuis zelf is
-ingesproken, en anders uit een meegeleverd recitatiefragment uit `noer/audio/`.
+ingesproken, en anders uit een meegeleverd recitatiefragment uit `public/noer/audio/`.
 De stem van het toestel wordt daar níet meer achteraan geplakt — zie *Het
 Arabisch komt alleen uit opnames* hieronder.
 
 De recitatie zit niet in de repository maar wordt opgehaald met
-`node noer/audio/haal-recitatie.mjs --basis="…"`; zie `noer/audio/LEESMIJ.md`
+`node public/noer/audio/haal-recitatie.mjs --basis="…"`; zie `public/noer/audio/LEESMIJ.md`
 voor de bron, de Warsh-lezing en de valkuil met de telling van al-Fatiha. Voor de
 zinnen van het gebed en de du'a's bestaat geen archief — die spreek je thuis in
 onder *Ouder → Eigen stem opnemen*. Opnames staan in de IndexedDB van het toestel
@@ -432,8 +467,8 @@ getallen (GHz, VRAM, fps, Hz, bottleneck, compatibiliteit), dan het bouwen zelf
 (statisch werken, volgorde, koelpasta, kabels, BIOS, Windows of Linux) en tot
 slot onderhoud, problemen zoeken, upgraden en online veilig blijven.
 
-**De Python zit in de app.** Geen Pyodide, geen CDN: `MINIPY` is met de hand
-geschreven en staat bovenaan het scriptblok. Reden één is dat de app dan zonder
+**De Python zit in de app.** Geen Pyodide, geen CDN: MINIPY is met de hand
+geschreven en staat in `src/bunyan/minipy/` — woorden lezen, ontleden, uitvoeren. Reden één is dat de app dan zonder
 internet werkt en niets van buiten haalt. Reden twee weegt zwaarder: de taal van
 de foutmeldingen. Een kind van elf leert niets van `SyntaxError: invalid syntax`,
 maar wel van *"regel 3: je bent de dubbele punt vergeten aan het eind van de
@@ -442,9 +477,22 @@ while, for, functies, f-strings, `random` en de gewone ingebouwde functies — h
 eerste jaar Python, en niets daarbuiten. Een oneindige lus wordt na een vast
 aantal stappen afgebroken met een uitleg in plaats van een vastgelopen tabblad.
 
-JavaScript en HTML draaien in een afgeschermd `iframe`, zodat een typefout of een
-`while(true)` de app zelf niet platlegt; `console.log` komt via `postMessage`
-terug in het uitvoervenster.
+De overzetting naar TypeScript is niet nagelopen maar bewézen: honderdtweeëndertig
+programma's door de oude vertaler én de nieuwe, en per programma vergeleken op de
+uitvoer regel voor regel en — bij zesenzestig ervan — op regelnummer, melding en
+tip woord voor woord. Het corpus staat in `gereedschap/bunyan-python-corpus.txt`
+en bevat één programma per foutmelding, plus elk voorbeeld en elke startcode uit
+de lessen zelf. Wie een melding herformuleert, breekt de toets; dat is de
+bedoeling, want die zinnen zíjn het onderwijs.
+
+JavaScript en HTML draaien in `public/bunyan/zandbak.html`, een frame met
+`sandbox="allow-scripts"` en dus een eigen herkomst: een typefout of een
+`while(true)` legt de app niet plat, en wat daar draait kan niet bij de opslag of
+het scherm van de app. Vroeger was dat een `srcdoc`-frame, maar dat erft de
+policy van de pagina eromheen en die verbiedt losse scripts. De zandbak heeft nu
+één eigen regel in `vercel.json` — losse scripts mogen daar, en verder niets, tot
+en met `connect-src 'none'`. `console.log` komt via `postMessage` terug in het
+uitvoervenster.
 
 **De bouwbank** staat op de werkbank: kies onderdelen binnen een budget en de app
 controleert de vijf dingen die je in het echt ook nakijkt (voetje, geheugentype,
@@ -483,10 +531,14 @@ geheugenspel is *minder* beter, dus daar wint het laagste getal.
 In de huiswerkapp blijven de twee knoppen staan, inclusief de instelling
 *spelletjes pas na het dagdoel*; ze verwijzen nu naar `/spellen/`.
 
-## Energiebalans — meten in plaats van schatten
+## BennaHealth — meten in plaats van schatten
 
-De app heet in de map `kalibratie/` en op de kaart *Energiebalans*, en dat
-verschil is het hele idee. Bestaande apps tonen een caloriedoel dat uit een
+De app heette eerst *Kalibratie* en daarna *Energiebalans*. Geen van beide
+klopte. "Kalibratie" is de méthode en niet het onderwerp; "energiebalans" is
+erger, want de app balanceert niets — hij meet, en het woord balans suggereert
+juist een streefgetal waar je op of onder hoort te zitten. Dat is precies wat
+hier met opzet niet gebeurt. De app woont nu op `/health/`; wie de oude
+bladwijzer gebruikt wordt doorgestuurd. Bestaande apps tonen een caloriedoel dat uit een
 formule rolt, met twee decimalen en zonder voorbehoud, alsof het een meting is.
 Het is een gok met een spreiding van vele honderden kilocalorieën, en wie er zijn
 dag op inricht en niets ziet gebeuren, concludeert dat er iets mis is met hem in
@@ -595,19 +647,45 @@ de oude stand gewoon via een ander toestel terug.
 ## De AI-functies in Geloofsstudie
 
 *Doorvragen* en *laat meelezen* praten rechtstreeks met de Anthropic-API vanuit de
-browser. Daarvoor is een eigen sleutel nodig, in te vullen onder *Instellingen*;
-die blijft in `localStorage` van dat ene toestel en gaat niet mee naar de centrale
-opslag. Zonder sleutel werkt de rest van de app volledig.
+browser, via de officiële SDK met `dangerouslyAllowBrowser`. Daarvoor is een eigen
+sleutel nodig, in te vullen onder *Instellingen*; die blijft in `localStorage` van
+dat ene toestel en gaat niet mee naar de centrale opslag. Zonder sleutel werkt de
+rest van de app volledig.
 
-Wil je dat later netter: zet het geheel op Vercel en verplaats de aanroep naar een
-serverless functie, dan hoeft de sleutel de browser niet meer in.
+Het model is `claude-opus-5` met adaptief denken (`thinking: {type: 'adaptive'}`) —
+de vragen gaan over meningsverschil tussen scholen, over ketens en over wat wél en
+niet in een tekst staat, en dat is het werk waar doordenken vóór antwoorden verschil
+maakt. Omdat de denkstappen uit hetzelfde budget komen als het antwoord, staat
+`max_tokens` op 4000 terwijl het antwoord zelf op 150–300 woorden gevraagd wordt.
+Het antwoord komt stromend binnen en verschijnt terwijl het geschreven wordt; wie
+zich vergist kan afbreken. De SDK zelf wordt pas opgehaald bij de eerste vraag —
+zij is groter dan de hele leerstof bij elkaar, en de meeste avonden wordt er niets
+gevraagd.
+
+Voor `/sanad/` staat daarom `https://api.anthropic.com` in de `connect-src` van de
+CSP in `vercel.json`. Dat is de enige app met die uitzondering.
+
+**De afweging.** Een sleutel in een browser is voor een dienst mét gebruikers fout:
+die hoort op een server, zoals bij BennaHealth, waar de edge function hem draagt.
+Hier is het één persoon met zijn eigen rekening, en dan is de ruil verdedigbaar:
+geen tussenserver die de vragen zou kunnen meelezen, in ruil voor een sleutel die
+op dit toestel staat. Wie de app deelt, moet die keuze omdraaien — verplaats de
+aanroep naar een edge function, dan hoeft de sleutel de browser niet meer in.
 
 ## Onderhoud
 
-De huiswerkapp bouw je zoals altijd: bewerk `huiswerk/index.dev.html` en compileer
-naar `huiswerk/index.html` (zie `BUILD.md`). De andere zes apps zijn gewone HTML — openen, bewerken, klaar. In Islam leren staat de leerstof
-bovenaan het scriptblok als gewone lijsten (`MODULES`, `WUDU`, `STAPPEN`, `HIFZ`,
+Alle apps staan in `src/`; daar geldt de bouwstap uit `BUILD.md`. De opgaven van
+Huiswerk staan in `src/huiswerk/gegevens/` — `seed.ts` met de vaste opgaven en
+`sjablonen.ts` met de sommen die per beurt nieuwe getallen krijgen; wie er een
+opgave bij zet doet dat áchteraan, want de id's zijn afgeleid van de plaats in
+de lijst en staan zo in ieders opslag. In Islam leren staat de leerstof
+in `src/noer/gegevens/` als gewone lijsten (`MODULES`, `WUDU`, `STAPPEN`, `HIFZ`,
 `DUAS`); wie de inhoud wil aanpassen hoeft de schermcode niet aan te raken. In
 Koran uit je hoofd zit de stof niet in het bestand maar in `rasikh/tekst/`; de app zelf bevat
-alleen de leerlogica. Let bij alle apps op de terugpijl naar `../`; die
+alleen de leerlogica. Bij Geloofsstudie staat de leerstof in `src/sanad/gegevens/`
+— curriculum, kaarten, bronnen, lexicon en de brontekstfragmenten, elk als een
+eigen bestand met een type erboven; wie de inhoud aanpast raakt geen schermcode aan. In
+Arabisch staat de leerstof in `src/arabisch/gegevens/` — letters, woorden, grammatica,
+zinnen, teksten, Koranwoorden en het jaarprogramma, elk als een eigen lijst; de FSRS-planner
+staat los in `src/arabisch/fsrs.ts` en het leerpad in `leerplan.ts`. Let bij alle apps op de terugpijl naar `../`; die
 veronderstelt dat de app in een submap onder de hub staat.

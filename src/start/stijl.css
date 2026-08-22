@@ -1,0 +1,246 @@
+/*
+ * DE STIJL VAN DE STARTPAGINA
+ *
+ * Overgenomen uit de twee <style>-blokken van de oude index.html, ongewijzigd.
+ * Ze staan nu in een eigen bestand zodat er geen inline stijl meer in de pagina
+ * zit -- dat is de voorwaarde voor een strikte Content-Security-Policy.
+ */
+/* Amiri staat als bestand in de repo en niet bij Google. De Warsh-druk gebruikt
+   tekens — de kleine hoge nul boven de hamzat wasl voorop — die de meeste
+   systeemletters niet kennen; die laten dan lege vakken achter midden in een
+   woord. Zie fonts/LEESMIJ.md. */
+/* Absoluut pad en niet relatief: dit bestand belandt na de bouw onder /assets/
+   en het lettertype staat in public/fonts/. Een relatief pad zocht het dan
+   naast de stijl in plaats van op de wortel, en dan valt het Arabisch terug op
+   een systeemletter die de tekens mist waar het hier juist om gaat. */
+@font-face{font-family:'Amiri';font-style:normal;font-weight:400;font-display:swap;
+  src:url('/fonts/amiri-400.woff2') format('woff2')}
+@font-face{font-family:'Amiri';font-style:normal;font-weight:700;font-display:swap;
+  src:url('/fonts/amiri-700.woff2') format('woff2')}
+
+/* Kleuren zijn gekozen op contrast, niet op sfeer. Elke accentkleur haalt
+   minstens 4,5:1 tegen zowel het kaartvlak als zijn eigen chip-achtergrond,
+   in licht én donker — gemeten, niet geschat. Licht en donker hebben daarom
+   verschillende accentwaarden: een kleur die op wit werkt verdwijnt op
+   antraciet, en andersom. */
+:root{
+  --canvas:#F6F4F0; --surface:#FFFFFF; --surface-2:#F0EDE7;
+  --ink:#0D0D0D; --ink-2:#24282B; --muted:#5F5C55;
+  --line:#DAD6CE; --line-sterk:#C4BFB4;
+
+  --huiswerk:#2F6B1F;  --huiswerk-bg:#E4EFDD;
+  --islam:#0F6F6C;     --islam-bg:#DCEFEE;
+  --arabisch:#175D92;  --arabisch-bg:#DEEDF9;
+  --code:#96286A;      --code-bg:#F9E5F1;
+  --spel:#B4442C;      --spel-bg:#FBE7E0;
+  --geloof:#5B3B7A;    --geloof-bg:#EFE8F6;
+  --koran:#3B4A8F;     --koran-bg:#E3E7F6;
+  --academie:#7E5300;  --academie-bg:#F8EFD4;
+  /* Leisteen, en als enige onverzadigd. De zeven leerapps zijn gekleurd omdat
+     een kind een tegel moet kunnen herkennen; Kalibratie is een meetinstrument
+     voor een volwassene en mag daar op het beginscherm ook naar uitzien. */
+  --health:#42545E; --health-bg:#E3EAEE;
+
+  --goed:#2F6B1F; --let:#8A5A00; --fout:#A32F2A;
+
+  --schaduw:0 1px 2px rgba(20,18,14,.05), 0 8px 24px rgba(20,18,14,.06);
+  --schaduw-op:0 2px 4px rgba(20,18,14,.07), 0 14px 34px rgba(20,18,14,.11);
+
+  --sans:'SF Pro Display','Helvetica Neue',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --serif:'Newsreader','Lyon Text',Georgia,serif;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;
+  --ar:'Amiri','Traditional Arabic',serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --canvas:#141518; --surface:#1C1E22; --surface-2:#24262B;
+    --ink:#F4F3F0; --ink-2:#E2E0DA; --muted:#A8A69F;
+    --line:#33363C; --line-sterk:#474B52;
+
+    --huiswerk:#8FD268;  --huiswerk-bg:#22321B;
+    --islam:#5FD3CD;     --islam-bg:#10312F;
+    --arabisch:#7CC4F5;  --arabisch-bg:#152D3E;
+    --code:#EFA0CE;      --code-bg:#33122A;
+    --spel:#F0A08A;      --spel-bg:#3A1C14;
+    --geloof:#C9A6E8;    --geloof-bg:#2A2136;
+    --koran:#A3B0EE;     --koran-bg:#1D2240;
+    --academie:#E9BC55;  --academie-bg:#31280F;
+    --health:#9EB6C2; --health-bg:#1E272C;
+
+    --goed:#8FD268; --let:#E9BC55; --fout:#F09B95;
+
+    --schaduw:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.34);
+    --schaduw-op:0 2px 4px rgba(0,0,0,.46), 0 14px 34px rgba(0,0,0,.5);
+  }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--canvas); color:var(--ink-2); font-family:var(--sans);
+  font-size:16px; line-height:1.62; -webkit-font-smoothing:antialiased;
+  min-height:100dvh; display:flex; flex-direction:column;
+  padding:0 20px env(safe-area-inset-bottom);
+}
+.wrap{width:100%;max-width:720px;margin:0 auto}
+.wrap.breed{max-width:940px}
+h1,h2,h3{font-family:var(--serif);color:var(--ink);letter-spacing:-.022em;line-height:1.15;margin:0;font-weight:500}
+p{margin:0}
+.meta{font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.klein{font-size:.9rem;color:var(--muted);line-height:1.55}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:4px}
+
+header{padding:56px 0 0}
+.merk{font-family:var(--serif);font-size:2.6rem;color:var(--ink);letter-spacing:-.032em;line-height:1}
+.merk .b{font-weight:600}
+/* Een streep in de negen kleuren van de negen ingangen, in dezelfde volgorde
+   als ze hieronder staan: eerst de vijf van de kinderen, dan de vier van de
+   groten. */
+.regenboog{height:5px;border-radius:9999px;margin-top:16px;max-width:280px;
+  background:linear-gradient(90deg,var(--huiswerk) 0 11.11%,var(--islam) 11.11% 22.22%,var(--arabisch) 22.22% 33.33%,var(--code) 33.33% 44.44%,var(--spel) 44.44% 55.56%,var(--geloof) 55.56% 66.67%,var(--koran) 66.67% 77.78%,var(--health) 77.78% 88.89%,var(--academie) 88.89% 100%)}
+.lede{margin-top:14px;font-family:var(--serif);font-size:1.14rem;line-height:1.55;color:var(--muted);max-width:46ch}
+
+main{flex:1;padding:38px 0 0}
+.kaarten{display:grid;gap:14px}
+@media (min-width:680px){ .kaarten{grid-template-columns:1fr 1fr;align-items:start} .kaarten a:first-child{grid-column:1 / -1} }
+/* Twee groepen, want een deel van deze apps is niet voor de kinderen. De kop is
+   een streep met een woord erop: genoeg om de scheiding te zien, niet zoveel dat
+   het een menu wordt. In de groep van de groten geen brede eerste kaart: daar
+   zijn de kaarten onderling gelijkwaardig, terwijl bij de kinderen het huiswerk
+   bovenaan hoort te staan. */
+.groep + .groep{margin-top:38px}
+.groepkop{font-family:var(--mono);font-size:.68rem;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--muted);font-weight:500;margin:0 0 13px;display:flex;align-items:center;gap:12px}
+.groepkop::after{content:"";flex:1;height:1px;background:var(--line)}
+@media (min-width:680px){ .kaarten.smal a:first-child{grid-column:auto} }
+
+/* De kaarten dragen nu de kleur van hun app in plaats van hem alleen aan de rand
+   te tonen. De vlakken komen uit hetzelfde palet als de tekstkleur erop, dus het
+   contrast dat eerder is nagemeten blijft staan: donkere tekst op een licht
+   vlak in de dag, lichte tekst op een donker vlak 's avonds. */
+a.app{
+  display:block;text-decoration:none;color:inherit;background:var(--kbg);
+  border:1px solid color-mix(in srgb, var(--k) 30%, var(--line));border-radius:16px;
+  padding:20px 22px 18px 26px;
+  position:relative;overflow:hidden;box-shadow:var(--schaduw);
+  transition:transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+/* De gekleurde rand links is het snelste onderscheid tussen de kaarten;
+   vier pixel leest ook op een telefoon in de zon. */
+a.app::before{content:"";position:absolute;inset:0 auto 0 0;width:5px;background:var(--k)}
+/* De tegel is het échte pictogram van de app, hetzelfde bestand dat de telefoon
+   op het beginscherm zet. Eerst stond hier een emoji: aardig, maar dan lijkt de
+   kaart hier op niets van wat je daarna op je toestel ziet. Nu is het één beeld:
+   wie het hier aanwijst, herkent het daar terug. */
+.tegel{width:50px;height:50px;border-radius:14px;flex:0 0 auto;display:block;
+  box-shadow:0 2px 8px color-mix(in srgb, var(--k) 30%, transparent)}
+a.app:hover,a.app:focus-visible{transform:translateY(-2px);border-color:var(--k);box-shadow:var(--schaduw-op)}
+a.app:active{transform:translateY(0);box-shadow:var(--schaduw)}
+.kop{display:flex;align-items:center;gap:11px;flex-wrap:wrap}
+.kop h2{font-size:1.44rem;color:var(--ink)}
+.kop .ar{font-family:var(--ar);font-size:1.14rem;color:var(--k);direction:rtl;unicode-bidi:isolate}
+/* De oude naam blijft staan, klein. Hij verdwijnt niet uit de app zelf en hij
+   staat in elk gesprek dat we er tot nu toe over hadden — maar hij is niet meer
+   het eerste wat een kind moet lezen om de juiste tegel te vinden. */
+.oud{font-family:var(--mono);font-size:.63rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted);white-space:nowrap}
+.oud .ar{font-family:var(--ar);font-size:.86rem;text-transform:none;letter-spacing:0;
+  direction:rtl;unicode-bidi:isolate;color:var(--muted)}
+.rol{
+  margin-left:auto;font-family:var(--mono);font-size:.63rem;letter-spacing:.07em;text-transform:uppercase;
+  background:var(--surface);color:var(--k);padding:5px 10px;border-radius:6px;white-space:nowrap;font-weight:500;
+  border:1px solid color-mix(in srgb, var(--k) 25%, transparent);
+}
+a.app p{margin-top:9px;font-family:var(--serif);font-size:1.03rem;line-height:1.52;color:var(--ink-2);max-width:52ch}
+.detail{margin-top:14px;display:flex;gap:7px;flex-wrap:wrap}
+.detail span{font-size:.78rem;color:var(--ink-2);background:var(--surface);
+  border:1px solid color-mix(in srgb, var(--k) 22%, transparent);border-radius:20px;padding:3px 11px}
+.pijl{margin-top:17px;font-size:.88rem;color:var(--k);font-weight:600;letter-spacing:-.005em}
+.snel{margin-top:24px;line-height:1.9}
+.snel a{color:var(--academie);text-decoration:none;border-bottom:1px solid var(--line-sterk);padding-bottom:1px}
+.snel a:hover{border-bottom-color:var(--academie)}
+
+footer{padding:44px 0 34px;border-top:1px solid var(--line);margin-top:46px}
+footer p{font-size:.85rem;color:var(--muted);max-width:56ch}
+footer p + p{margin-top:9px}
+
+/* ---------------------------------------------------------------------------
+   DE POORT — het scherm waar je je meldt.
+
+   Alles hierachter is van iemand: zijn voortgang, zijn punten, zijn spaarpot.
+   Daarom kom je er niet meer per ongeluk in door op een kaart te klikken. Je
+   kiest eerst wie je bent en typt je eigen code; pas daarna zie je de apps die
+   voor jou bedoeld zijn.
+--------------------------------------------------------------------------- */
+.poort{min-height:100dvh;display:flex;flex-direction:column;justify-content:center;padding:40px 0}
+.tegels{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:12px;margin-top:26px}
+.persoon{
+  display:flex;flex-direction:column;align-items:center;gap:9px;
+  background:var(--surface);border:1px solid var(--line);border-radius:16px;
+  padding:20px 12px 16px;cursor:pointer;font:inherit;color:inherit;
+  box-shadow:var(--schaduw);transition:transform .14s ease, border-color .14s ease, box-shadow .14s ease;
+}
+.persoon:hover,.persoon:focus-visible{transform:translateY(-2px);border-color:var(--pk);box-shadow:var(--schaduw-op)}
+.persoon .gezicht{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;
+  font-size:1.9rem;line-height:1;background:var(--pbg);border:2px solid var(--pk)}
+.persoon .pnaam{font-family:var(--serif);font-size:1.16rem;color:var(--ink);text-transform:capitalize}
+.persoon .pmeta{font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+.codekaart{max-width:400px;margin:0 auto;text-align:center}
+.groot{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;margin:0 auto;
+  font-size:3rem;line-height:1;background:var(--pbg);border:3px solid var(--pk)}
+input[type=password],input[type=text],input[type=number]{
+  width:100%;padding:13px 15px;border:1px solid var(--line-sterk);border-radius:11px;
+  background:var(--surface);color:var(--ink);font:inherit;font-size:1.05rem;margin-top:10px}
+input.code{text-align:center;font-family:var(--mono);font-size:1.6rem;letter-spacing:.5em;padding-left:.5em}
+.btn{display:inline-flex;align-items:center;gap:8px;justify-content:center;
+  background:var(--ink);color:var(--canvas);border:1px solid var(--ink);border-radius:11px;
+  padding:12px 20px;font:inherit;font-weight:500;cursor:pointer;transition:opacity .14s ease}
+.btn:hover{opacity:.86}
+.btn[disabled]{opacity:.45;cursor:default}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line-sterk)}
+.btn.sm{padding:7px 13px;font-size:.86rem;border-radius:9px}
+.btn.nowrap{white-space:nowrap}
+.btn.vol{width:100%;margin-top:14px}
+.rij{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.melding{margin-top:12px;font-size:.9rem;color:var(--fout);min-height:1.3em}
+.melding.goed{color:var(--goed)}
+
+/* De balk die laat zien wie er aan staat. Hij hoort opvallend te zijn: wie hem
+   niet ziet, denkt dat hij in zijn eigen account zit terwijl er nog iemand
+   anders aan staat. Vandaar het gezicht, de naam, en een knop die er niet
+   omheen draait. */
+.balk{position:sticky;top:0;z-index:20;background:color-mix(in srgb, var(--canvas) 88%, transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--line);margin:0 -20px 0;padding:10px 20px}
+.balk .in{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.balk.breed .in{max-width:940px}
+.balk .gezichtje{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
+  font-size:1.05rem;background:var(--pbg);border:1.5px solid var(--pk);flex:0 0 auto}
+.balk .wie{font-family:var(--serif);font-size:1.02rem;color:var(--ink);text-transform:capitalize}
+.balk .rest{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+
+/* ---------------------------------------------------------------------------
+   HET OUDEROVERZICHT
+--------------------------------------------------------------------------- */
+/* min-width:0 is hier geen detail. Een rasterkolom is standaard minstens zo
+   breed als zijn inhoud, en de tabel binnenin heeft een min-width — zonder dit
+   duwt die de hele kolom breder dan het scherm en schuift de pagina opzij,
+   ondanks de overflow-x op de wikkel eromheen. */
+.kaart{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--schaduw);min-width:0}
+.kaart + .kaart{margin-top:14px}
+.raster{display:grid;gap:14px}
+.raster > *{min-width:0}
+@media (min-width:680px){ .raster.g2{grid-template-columns:1fr 1fr} .raster.g3{grid-template-columns:repeat(3,1fr)} }
+.cijfer{font-family:var(--serif);font-size:2rem;line-height:1.1;color:var(--ink)}
+.tabelwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+table.tbl{width:100%;border-collapse:collapse;font-size:.92rem;min-width:420px}
+table.tbl th{text-align:left;font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);font-weight:500;padding:0 12px 8px 0;border-bottom:1px solid var(--line);white-space:nowrap}
+table.tbl td{padding:10px 12px 10px 0;border-bottom:1px solid var(--line);vertical-align:top}
+table.tbl tr:last-child td{border-bottom:0}
+.speld{display:inline-block;font-family:var(--mono);font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;
+  padding:3px 9px;border-radius:9999px;background:var(--surface-2);color:var(--muted)}
+.speld.goed{background:color-mix(in srgb,var(--goed) 16%,transparent);color:var(--goed)}
+.speld.let{background:color-mix(in srgb,var(--let) 18%,transparent);color:var(--let)}
+.speld.stil{background:color-mix(in srgb,var(--fout) 14%,transparent);color:var(--fout)}
+.geld{font-family:var(--mono);font-size:.95rem;color:var(--goed);white-space:nowrap}
+.verborgen{display:none}

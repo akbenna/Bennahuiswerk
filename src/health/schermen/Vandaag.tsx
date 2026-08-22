@@ -1,0 +1,579 @@
+/**
+ * VANDAAG — het scherm waar de dag op gebeurt.
+ *
+ * Dit scherm was een formulier. Drie invulvelden, twee nullen en een leeg
+ * tekstvak; alles klopte en niemand had zin om het te openen. Wie de app voor
+ * het eerst opende zag "0 van 161 g", "0 kcal" en "nog geen doel" — drie keer
+ * de mededeling dat er niets is.
+ *
+ * Wat er nu staat begint bij wat er wél is. Bovenaan één beeld dat de dag
+ * samenvat, met een ring die de onzekerheidsband toont in plaats van een harde
+ * streep: dat is de stelling van deze app als plaatje in plaats van als
+ * voetnoot. Is er nog geen doel, dan telt diezelfde ring af naar de zevende
+ * weging — een bereikbaar doel in plaats van een lege mededeling.
+ *
+ * Daaronder vier maaltijdvakken die er altijd staan, ook leeg. Een leeg vak met
+ * een naam en een uitnodiging is iets heel anders dan een leeg scherm.
+ */
+import { useEffect, useState } from 'react'
+import { Chip, Kaart, Knop, Kop, Rij, Spin, Tussen, Uitleg } from '../onderdelen/basis'
+import { Dagenstrook, Doelring } from '../hero'
+import type { Dagstaaf } from '../hero'
+import { dec, dz } from '@/gedeeld/getal'
+import { kortNL, langNL, plusDagen, vandaag } from '@/gedeeld/datum'
+import type { IsoDatum, Moment, Regel } from '@/gedeeld/db/tabellen'
+import type { Analyse, Dagenkaart, DagMetTotalen } from '../rekenkern'
+import { herken, leesFoto } from '../ai'
+import type { Herkenning } from '../ai'
+import type { NieuweRegel } from '@/gedeeld/db/rpc'
+
+export interface VandaagEigenschappen {
+  a: Analyse
+  dag: DagMetTotalen
+  regels: Regel[]
+  /** De hele reeks, voor de dagenstrook onder de ring. */
+  dagen: Dagenkaart
+  datum: IsoDatum
+  eiwitPerKg: number
+  token: string
+  zetDatum: (d: IsoDatum) => void
+  zetDagveld: (veld: string, waarde: string | number | boolean | null) => void
+  voegRegelsToe: (r: NieuweRegel[]) => void
+  wisRegel: (id: string) => void
+}
+
+/* De dingen die vrijwel elke dag terugkomen. Ze vullen het tekstvak in plaats
+   van meteen op te slaan: wat er gelogd wordt gaat altijd eerst langs jou. */
+const SNELLE = [
+  { ico: '☕', naam: 'Koffie', tekst: 'een cappuccino' },
+  { ico: '🍞', naam: 'Brood', tekst: 'twee bruine boterhammen met kaas' },
+  { ico: '🥜', naam: 'Handje', tekst: 'een handje ongezouten noten' },
+]
+
+/** De vier momenten van de dag, met hun kleur en hun uitnodiging. */
+const MOMENTEN: Array<{ id: Moment; naam: string; klas: string; leeg: string }> = [
+  { id: 'ontbijt', naam: 'Ontbijt', klas: 'ochtend', leeg: 'Koffie telt ook' },
+  { id: 'lunch', naam: 'Lunch', klas: 'middag', leeg: 'Brood, salade, restje' },
+  { id: 'diner', naam: 'Diner', klas: 'avond', leeg: 'Het bord van vanavond' },
+  { id: 'tussendoor', naam: 'Tussendoor', klas: 'tussen', leeg: 'Noten, fruit, een koekje' },
+]
+
+/**
+ * Het verloop van de hero volgt het uur: warm bij het begin van de dag, koel
+ * aan het eind. Oriëntatie, geen effect — je ziet aan de kleur of je aan het
+ * begin of aan het eind van je dag staat.
+ *
+ * Het verloop gaat als inline stijl naar binnen, en inline stijl luistert niet
+ * naar een media query. Er moeten dus twee sets zijn en de app moet zelf kijken
+ * welke geldt; anders staat er in het donkere thema lichte tekst op een lichte
+ * achtergrond, en dat is niet lelijk maar onleesbaar.
+ */
+const HERO = {
+  licht: [
+    ['linear-gradient(155deg,#FBEEDA 0%,#F4E0D2 55%,#EDD7CE 100%)', 'rgba(255,247,235,.75)'],
+    ['linear-gradient(155deg,#EAF1E6 0%,#DFEBE6 55%,#D8E7E4 100%)', 'rgba(255,255,255,.7)'],
+    ['linear-gradient(155deg,#E4E9F1 0%,#DCE2EE 55%,#D6DCEA 100%)', 'rgba(255,255,255,.55)'],
+  ],
+  donker: [
+    ['linear-gradient(155deg,#2A2118 0%,#251C17 55%,#201A16 100%)', 'rgba(255,214,150,.10)'],
+    ['linear-gradient(155deg,#1A2320 0%,#18211E 55%,#161E1D 100%)', 'rgba(180,255,220,.08)'],
+    ['linear-gradient(155deg,#181C26 0%,#171B24 55%,#151821 100%)', 'rgba(160,190,255,.08)'],
+  ],
+} as const
+
+const GROET = ['Goedemorgen', 'Goedemiddag', 'Goedenavond'] as const
+
+function heroKleur(uur: number, donker: boolean): { achtergrond: string; glans: string; groet: string } {
+  const i = uur < 11 ? 0 : uur < 18 ? 1 : 2
+  const [achtergrond, glans] = (donker ? HERO.donker : HERO.licht)[i]
+  return { achtergrond, glans, groet: GROET[i] }
+}
+
+/** Volgt het thema van het toestel, ook als dat halverwege omslaat. */
+function useDonker(): boolean {
+  const [donker, zet] = useState(
+    () => typeof matchMedia === 'function' && matchMedia('(prefers-color-scheme:dark)').matches)
+  useEffect(() => {
+    if (typeof matchMedia !== 'function') return
+    const vraag = matchMedia('(prefers-color-scheme:dark)')
+    const kijk = (): void => zet(vraag.matches)
+    vraag.addEventListener('change', kijk)
+    return () => vraag.removeEventListener('change', kijk)
+  }, [])
+  return donker
+}
+
+export function Vandaag(p: VandaagEigenschappen) {
+  const donker = useDonker()
+  const { a, dag, regels, datum } = p
+  const isVandaag = datum === vandaag()
+  const gewogen = dag.gewicht_kg != null
+
+  /* Hoeveel wegingen er nog nodig zijn voordat het model iets durft te zeggen.
+     Dat getal is de enige zinvolle aanmoediging die de app kan geven: het is
+     geen streefcijfer maar een telling. */
+  const nogNodig = Math.max(0, 7 - a.wPunten.length)
+  const kalibreert = a.doel == null
+
+  const kleur = heroKleur(new Date().getHours(), donker)
+  const koolh = regels.reduce((n, r) => n + (r.koolhydraat_g ?? 0), 0)
+  const vet = regels.reduce((n, r) => n + (r.vet_g ?? 0), 0)
+
+  /* De strook van veertien dagen. Hij staat er ook — juist — als er weinig in
+     staat: dan laat hij zien dat er iets te beginnen valt. */
+  const strook: Dagstaaf[] = Array.from({ length: 14 }, (_, i) => {
+    const d = plusDagen(datum, i - 13)
+    const x = p.dagen[d]
+    return {
+      d,
+      gewogen: x?.gewicht_kg != null,
+      gelogd: (x?._kcal ?? 0) > 0,
+      deel: a.doel ? Math.min(1.2, (x?._kcal ?? 0) / a.doel) : ((x?._kcal ?? 0) > 0 ? 0.7 : 0),
+    }
+  })
+
+  /* De reeks: hoeveel dagen achter elkaar er iets gebeurd is, terugtellend
+     vanaf vandaag. Dit is de enige teller in de app die niet over gewicht gaat,
+     en juist daarom de enige die op een slechte dag nog overeind staat. */
+  let reeksNu = 0
+  for (let i = strook.length - 1; i >= 0; i--) {
+    const x = strook[i]
+    if (!x || (!x.gewogen && !x.gelogd)) break
+    reeksNu++
+  }
+
+  const status = (() => {
+    const doel = a.doel ?? 0
+    if (dag._kcal === 0) return { zin: 'Nog niets gelogd vandaag. Eén regel is genoeg om te beginnen.' }
+    if (dag._kcal > doel * 1.08) {
+      return { zin: 'Boven de streep van vandaag. Eén dag zegt niets — de weegreeks corrigeert het vanzelf.' }
+    }
+    if (dag._kcal >= doel * 0.9) return { zin: 'Je zit er precies op.' }
+    return { zin: `Nog ${dz(Math.max(0, Math.round(doel - dag._kcal)))} kcal te gaan.` }
+  })()
+
+  const perMoment = (m: Moment): Regel[] =>
+    regels.filter((r) => (r.moment === 'onbekend' ? m === 'tussendoor' : r.moment === m))
+
+  return (
+    <>
+      <Tussen style={{ marginBottom: 12 }}>
+        <Knop klein opKlik={() => p.zetDatum(plusDagen(datum, -1))} titel="Vorige dag">←</Knop>
+        <span style={{ fontSize: '.88rem', fontWeight: 500 }}>
+          {isVandaag ? 'Vandaag' : langNL(datum)}
+        </span>
+        <Knop klein uit={isVandaag} titel="Volgende dag"
+              opKlik={() => { const n = plusDagen(datum, 1); if (n <= vandaag()) p.zetDatum(n) }}>
+          →
+        </Knop>
+      </Tussen>
+
+      <section className="hero"
+               style={{ '--herobg': kleur.achtergrond, '--heroglow': kleur.glans } as React.CSSProperties}>
+        <div className="heroglans" />
+        <div className="heroboven">
+          <div>
+            <span className="eyebrow">{isVandaag ? kleur.groet : kortNL(datum)}</span>
+            <h2 style={{ marginTop: 2 }}>
+              {kalibreert
+                ? 'Het model leert je nog'
+                : !gewogen ? 'Stap op de weegschaal'
+                : dag._kcal === 0 ? 'Wat heb je vandaag gegeten?'
+                : 'Je dag tot nu toe'}
+            </h2>
+          </div>
+          <span className={'vlaggetje ' + (gewogen ? 'goed' : 'rust')}>
+            {gewogen ? '✓ gewogen' : '— nog niet gewogen'}
+          </span>
+        </div>
+
+        <div className="heroring">
+          <Doelring
+            waarde={kalibreert ? a.wPunten.length : dag._kcal}
+            doel={kalibreert ? 7 : a.doel}
+            laag={kalibreert ? null : dag._laag}
+            hoog={kalibreert ? null : dag._hoog}
+            kind={kalibreert ? (
+              <>
+                <span className="getal" style={{ fontSize: '1.75rem' }}>{a.wPunten.length}</span>
+                <span className="mini">van 7<br />wegingen</span>
+              </>
+            ) : (
+              <>
+                <span className="getal" style={{ fontSize: '1.65rem' }}>{dz(Math.round(dag._kcal))}</span>
+                <span className="mini">van {dz(a.doel ?? 0)}<br />kcal</span>
+              </>
+            )}
+          />
+          <div className="herocijfers">
+            {kalibreert ? (
+              <p style={{ fontSize: '.9rem' }}>
+                Nog <b>{nogNodig}</b> ochtendweging{nogNodig === 1 ? '' : 'en'}, dan zegt het model
+                wat jouw lichaam werkelijk verbruikt — gemeten aan jou, niet uit een formule.
+              </p>
+            ) : (
+              <>
+                <p style={{ fontSize: '.95rem' }}>{status.zin}</p>
+                <p className="mini" style={{ marginTop: 6 }}>
+                  Wat je logde ligt tussen{' '}
+                  <span className="cijfer">{dz(Math.round(dag._laag))}</span> en{' '}
+                  <span className="cijfer">{dz(Math.round(dag._hoog))}</span> kcal. Het lichte deel
+                  van de ring is die marge.
+                </p>
+              </>
+            )}
+          </div>
+        </div>
+
+        <Dagenstrook dagen={strook} nu={datum} />
+        <div className="mini" style={{ marginTop: 6 }}>
+          veertien dagen · <b>{strook.filter((x) => x.gewogen).length}×</b> gewogen ·{' '}
+          <b>{strook.filter((x) => x.gelogd).length}×</b> gelogd
+          {reeksNu > 1 && <> · <b>{reeksNu} dagen op rij</b></>}
+        </div>
+
+        <div className="macros">
+          <Macro naam="Eiwit" klas="eiwit" gram={dag._eiwit} doel={a.eiwitDoel}
+                 kcalTotaal={dag._kcal} perGram={4} />
+          <Macro naam="Koolhydraten" klas="koolh" gram={koolh} doel={null}
+                 kcalTotaal={dag._kcal} perGram={4} />
+          <Macro naam="Vet" klas="vet" gram={vet} doel={null}
+                 kcalTotaal={dag._kcal} perGram={9} />
+        </div>
+      </section>
+
+      <Weging {...p} gewogen={gewogen} isVandaag={isVandaag} nogNodig={nogNodig} />
+
+      <Herkennen token={p.token} datum={datum} voegRegelsToe={p.voegRegelsToe} />
+
+      <Kaart>
+        <Kop>De dag in vier momenten</Kop>
+        <div className="maaltijden" style={{ marginTop: 10 }}>
+          {MOMENTEN.map((m) => {
+            const eigen = perMoment(m.id)
+            const kcal = eigen.reduce((n, r) => n + r.kcal_punt, 0)
+            return (
+              <div key={m.id} className={'maal ' + m.klas + (eigen.length ? ' gevuld' : '')}>
+                <div className="maalkop">
+                  <span className="stip" />
+                  <span style={{ fontSize: '.82rem', fontWeight: 600 }}>{m.naam}</span>
+                  <span style={{ flex: 1 }} />
+                  {eigen.length > 0 && (
+                    <span className="mini cijfer">{eigen.length} regel{eigen.length === 1 ? '' : 's'}</span>
+                  )}
+                </div>
+                {eigen.length === 0 ? (
+                  <p className="mini" style={{ marginTop: 6 }}>{m.leeg}</p>
+                ) : (
+                  <>
+                    <div className="maalgetal" style={{ marginTop: 4 }}>{dz(Math.round(kcal))}
+                      <span className="klein" style={{ fontSize: '.72rem' }}> kcal</span>
+                    </div>
+                    <div className="lijst" style={{ marginTop: 4 }}>
+                      {eigen.map((r) => (
+                        <div key={r.id} style={{ padding: '5px 0' }}>
+                          <Chip graad={r.conf} />
+                          <span className="groei">
+                            <span className="knip" style={{ fontSize: '.8rem', display: 'block' }}>
+                              {r.naam}
+                            </span>
+                          </span>
+                          <span className="mini cijfer">{dz(Math.round(r.kcal_punt))}</span>
+                          <Knop klein titel="Verwijderen" opKlik={() => p.wisRegel(r.id)}>×</Knop>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            )
+          })}
+        </div>
+        {regels.length === 0 && (
+          <p className="mini" style={{ marginTop: 10 }}>
+            Nog niets gelogd op {kortNL(datum)}. Eén regel is genoeg om te beginnen — het model
+            rekent liever met de helft dan met niets.
+          </p>
+        )}
+      </Kaart>
+
+      <Kaart>
+        <Kop>Beweging en slaap</Kop>
+        <Rij style={{ marginTop: 8, alignItems: 'flex-end' }}>
+          <label className="veld">
+            <span>stappen</span>
+            <input className="smal" type="number" inputMode="numeric"
+                   defaultValue={dag.stappen ?? ''} key={'st' + datum}
+                   onBlur={(e) => p.zetDagveld('stappen', e.target.value || null)} />
+          </label>
+          <label className="veld">
+            <span>slaap, uur</span>
+            <input className="smaller" type="number" step="0.25" inputMode="decimal"
+                   key={'sl' + datum}
+                   defaultValue={dag.slaap_min != null ? Math.round(dag.slaap_min / 15) / 4 : ''}
+                   onBlur={(e) => p.zetDagveld(
+                     'slaap_min', e.target.value === '' ? null : Math.round(parseFloat(e.target.value) * 60))} />
+          </label>
+          <Knop vol={!!dag.kracht} opKlik={() => p.zetDagveld('kracht', !dag.kracht)}>
+            {dag.kracht ? '✓ ' : ''}kracht
+          </Knop>
+        </Rij>
+        <Uitleg id="beweging" label="waarom stappen hier alleen staan">
+          <p>
+            Stappen en slaap staan hier omdat ze ergens vandaan moeten komen, niet omdat het model
+            ermee rekent. De actieve energie die je horloge erbij optelt gaat nooit naar het doel: die
+            fout is twintig tot vijftig procent en niet consistent in één richting, dus corrigeren kan
+            niet.
+          </p>
+          <p>
+            Wat stappen wél doen, doen ze via de weegschaal. Beweeg je structureel meer, dan verschuift
+            de helling, en dat ziet het model vanzelf — zonder dat er iets bij opgeteld hoeft te worden.
+          </p>
+        </Uitleg>
+      </Kaart>
+
+      <Uitleg id="eiwitref" label="waarom het eiwitdoel op gecorrigeerd gewicht staat">
+        <p>
+          Het eiwitdoel staat op gecorrigeerd gewicht en niet op je werkelijke gewicht: vetmassa
+          vraagt nauwelijks eiwit, dus rekenen op {dec(a.gewicht, 0)} kilo geeft een doel dat niemand
+          haalt en dat nergens op slaat. De correctie kapt het referentiegewicht af op BMI 30, wat
+          voor jou {dec(a.eiwitRef, 0)} kilo geeft — {dec(p.eiwitPerKg, 1)} g/kg maakt {a.eiwitDoel} g.
+        </p>
+        <p>
+          Waarom het hoog staat: bij een tekort is eiwit wat bepaalt of je gewichtsverlies uit vet
+          komt of ook uit spier.
+        </p>
+      </Uitleg>
+    </>
+  )
+}
+
+/**
+ * Eén macro-staafje.
+ *
+ * Eiwit heeft een doel, dus daar is een vulling zinvol: de balk zegt hoe ver je
+ * bent. Koolhydraten en vet hebben er geen — deze app schrijft geen verdeling
+ * voor. Een volle balk zetten omdat er "iets" gelogd is zou precies de
+ * schijnprecisie zijn waar de rest van de app zich tegen verzet.
+ *
+ * Wat er dan wél staat: het aandeel in de energie van vandaag. Dat is een
+ * gemeten verhouding en geen verzonnen doel, en het is het enige aan die twee
+ * getallen wat je iets vertelt.
+ */
+function Macro(
+  { naam, klas, gram, doel, kcalTotaal, perGram }:
+  { naam: string; klas: string; gram: number; doel: number | null
+    kcalTotaal: number; perGram: number },
+) {
+  const heeftDoel = doel != null && doel > 0
+  const aandeel = kcalTotaal > 0 ? Math.min(100, (gram * perGram) / kcalTotaal * 100) : 0
+  const deel = heeftDoel ? Math.min(100, (gram / doel) * 100) : aandeel
+  return (
+    <div className={'macro ' + klas}>
+      <div className="mini">{naam}</div>
+      <div>
+        <b>{Math.round(gram)}</b>
+        <span className="mini"> {heeftDoel ? `/ ${doel} g` : 'g'}</span>
+      </div>
+      <div className="staaf"><i style={{ width: `${deel}%` }} /></div>
+      <div className="mini" style={{ marginTop: 3 }}>
+        {heeftDoel
+          ? `${Math.round(deel)}% van je doel`
+          : kcalTotaal > 0 ? `${Math.round(aandeel)}% van de energie` : '—'}
+      </div>
+    </div>
+  )
+}
+
+function Weging(
+  { dag, datum, gewogen, isVandaag, nogNodig, zetDagveld }:
+  VandaagEigenschappen & { gewogen: boolean; isVandaag: boolean; nogNodig: number },
+) {
+  /* Is er al gewogen, dan hoeft dit vak niet meer te schreeuwen: de hero zegt
+     het al. Het blijft staan om te kunnen corrigeren, maar dan klein. */
+  const moetNog = !gewogen && isVandaag
+  return (
+    <Kaart toon={moetNog ? 'let' : undefined}
+           style={moetNog ? undefined : { paddingTop: 13, paddingBottom: 13 }}>
+      <Tussen>
+        <Kop>Ochtendweging</Kop>
+        {gewogen && <span className="vlaggetje goed">✓ gedaan</span>}
+      </Tussen>
+      <Rij style={{ marginTop: 8, alignItems: 'center' }}>
+        <input className="smal" type="number" step="0.1" inputMode="decimal" placeholder="—"
+               key={'gw' + datum} defaultValue={dag.gewicht_kg ?? ''}
+               aria-label="Gewicht in kilo"
+               onBlur={(e) => zetDagveld('gewicht_kg', e.target.value || null)}
+               style={moetNog ? { fontSize: '1.3rem', width: 112 } : undefined} />
+        <span className="klein">
+          kg{moetNog && ' · nuchter, na het toilet, vóór het eten'}
+        </span>
+      </Rij>
+      {moetNog && nogNodig > 0 && (
+        <p className="mini" style={{ marginTop: 8 }}>
+          Nog {nogNodig} weging{nogNodig === 1 ? '' : 'en'} voordat het model een verbruik met interval
+          kan tonen.
+        </p>
+      )}
+      <Uitleg id="weging" label="waarom dit de kern is">
+        <p>
+          Dit is de enige invoer die niet te schatten valt, en het enige onbevooroordeelde signaal in
+          het systeem. Alles wat je eet gaat door een schatting heen; de weegschaal niet.
+        </p>
+        <p>
+          Nuchter, na het toilet, vóór het eten — steeds op dezelfde manier, want het gaat om het
+          verschil tussen dagen en niet om de absolute waarde. Dagelijkse schommelingen van één tot
+          twee kilo zijn vocht, glycogeen en darminhoud. Daarom leest het model de helling en niet de
+          meting.
+        </p>
+      </Uitleg>
+    </Kaart>
+  )
+}
+
+/** Zeggen wat je at, in tekst of met een foto. */
+function Herkennen(
+  { token, datum, voegRegelsToe }:
+  { token: string; datum: IsoDatum; voegRegelsToe: (r: NieuweRegel[]) => void },
+) {
+  const [tekst, zetTekst] = useState('')
+  const [melding, zetMelding] = useState<string | null>(null)
+  const [loopt, zetLoopt] = useState(false)
+  const [concept, zetConcept] = useState<Herkenning | null>(null)
+
+  async function doe(soort: 'tekst' | 'foto', foto?: File) {
+    if (soort === 'tekst' && !tekst.trim()) {
+      zetMelding('Schrijf eerst op wat je gegeten hebt.')
+      return
+    }
+    zetLoopt(true)
+    zetMelding(null)
+    try {
+      const fotos = foto ? [await leesFoto(foto)] : []
+      const uit = await herken(token, soort, tekst.trim(), fotos)
+      zetConcept(uit)
+      zetTekst('')
+    } catch (e) {
+      zetMelding(e instanceof Error ? e.message : String(e))
+    } finally {
+      zetLoopt(false)
+    }
+  }
+
+  const totaal = concept?.regels.reduce(
+    (a, r) => ({
+      p: a.p + (r.kcal_punt || 0), l: a.l + (r.kcal_laag || 0),
+      h: a.h + (r.kcal_hoog || 0), e: a.e + (r.eiwit_g || 0),
+    }), { p: 0, l: 0, h: 0, e: 0 })
+
+  return (
+    <Kaart>
+      <Kop>Zeggen wat je at</Kop>
+      <textarea style={{ marginTop: 8 }} value={tekst} onChange={(e) => zetTekst(e.target.value)}
+                placeholder="Schrijf het zoals je het zou vertellen — een bord tajine met kip, twee cappuccino's, een handje amandelen." />
+
+      <button type="button" className="hoofdknop" style={{ marginTop: 10 }}
+              disabled={loopt} onClick={() => void doe('tekst')}>
+        {loopt ? <><Spin /> Bezig met herkennen…</> : 'Herkennen'}
+      </button>
+
+      {/* Vier ingangen naast elkaar. De oude opzet had er één en een halve: een
+          tekstvak, en een fotoknop die eruitzag als elke andere knop. Wie niet
+          weet dát het kan, probeert het niet. De drie rechts vullen het
+          tekstvak in plaats van meteen op te slaan — wat er gelogd wordt gaat
+          altijd eerst langs jou. */}
+      <div className="snel">
+        <label className="snelknop" style={{ cursor: 'pointer' }}>
+          <span aria-hidden="true">📷</span>
+          <span>Foto</span>
+          <input type="file" accept="image/*" capture="environment" style={{ display: 'none' }}
+                 onChange={(e) => { const f = e.target.files?.[0]; if (f) void doe('foto', f) }} />
+        </label>
+        {SNELLE.map((x) => (
+          <button type="button" key={x.naam} title={'Voeg toe: ' + x.tekst}
+                  onClick={() => zetTekst((t) => (t ? t + ', ' : '') + x.tekst)}>
+            <span aria-hidden="true">{x.ico}</span>
+            <span>{x.naam}</span>
+          </button>
+        ))}
+      </div>
+
+      <p className="klein" style={{ marginTop: 9, minHeight: '1.2em' }}>
+        {loopt
+          ? 'Dit duurt een halve minuut: er wordt in twee ronden tegen het Nederlands Voedingsstoffenbestand gematcht.'
+          : melding}
+      </p>
+
+      {concept && totaal && (
+        <Kaart plat style={{ marginTop: 12 }}>
+          <Tussen>
+            <Kop>Herkend — nakijken vóór opslaan</Kop>
+            <span className="mini">{concept.model}</span>
+          </Tussen>
+          <div className="lijst" style={{ marginTop: 6 }}>
+            {concept.regels.map((r, i) => (
+              <div key={i}>
+                <Chip graad={r.conf} />
+                <span className="groei">
+                  <span className="knip" style={{ fontSize: '.86rem', display: 'block' }}>{r.naam}</span>
+                  <span className="mini">
+                    {r.nevo_naam ? 'NEVO: ' + r.nevo_naam : 'geen tabelwaarde — schatting van het model'}
+                  </span>
+                  {r.onzekerheidsbronnen.map((o, j) => (
+                    <span className="mini" style={{ display: 'block' }} key={j}>· {o}</span>
+                  ))}
+                </span>
+                <span style={{ textAlign: 'right' }}>
+                  <span className="cijfer" style={{ fontSize: '.85rem', display: 'block' }}>
+                    {dz(r.kcal_punt)}
+                  </span>
+                  <span className="mini cijfer">{dz(r.kcal_laag)}–{dz(r.kcal_hoog)}</span>
+                </span>
+                <Knop klein titel="Weglaten"
+                      opKlik={() => {
+                        const over = concept.regels.filter((_, j) => j !== i)
+                        zetConcept(over.length ? { ...concept, regels: over } : null)
+                      }}>×</Knop>
+              </div>
+            ))}
+          </div>
+          <Tussen style={{ marginTop: 10 }}>
+            <span className="cijfer" style={{ fontSize: '.9rem' }}>
+              <b>{dz(Math.round(totaal.p))} kcal</b>{' '}
+              <span className="klein">
+                ({dz(Math.round(totaal.l))}–{dz(Math.round(totaal.h))}) · {dec(totaal.e, 1)} g eiwit
+              </span>
+            </span>
+            <Knop vol opKlik={() => {
+              voegRegelsToe(concept.regels.map((r) => ({ ...r, datum, moment: r.moment })))
+              zetConcept(null)
+            }}>Toevoegen</Knop>
+          </Tussen>
+          {concept.opmerking && <p className="klein" style={{ marginTop: 8 }}>{concept.opmerking}</p>}
+          {concept.referentieobject && (
+            <p className="mini" style={{ marginTop: 4 }}>
+              Schaal bepaald aan: {concept.referentieobject}.
+            </p>
+          )}
+        </Kaart>
+      )}
+
+      <Uitleg id="herkennen" label="hoe je het opschrijft">
+        <p>
+          Schrijf het zoals je het zou vertellen. Noem het aantal en de bereiding — "twee sneetjes",
+          "gekookt", "in de pan met olie" — dat scheelt meer dan een preciezere naam.
+        </p>
+        <p>
+          Wat er daarna gebeurt: het model benoemt de onderdelen en schat een portiebereik, de server
+          zoekt ze op in het Nederlands Voedingsstoffenbestand, en de voedingswaarde komt uit die tabel
+          en niet uit het geheugen van het model. Dat scheelt ongeveer twee derde van de fout. Je krijgt
+          het concept eerst te zien; er wordt niets opgeslagen voordat jij het nakijkt.
+        </p>
+        <p>
+          De grootste ontbrekende post is bijna altijd de olie die in de bereiding is opgegaan. Die
+          schat het model apart en meldt het erbij.
+        </p>
+      </Uitleg>
+    </Kaart>
+  )
+}
