@@ -66,9 +66,10 @@ type MetFout = { error?: unknown } | null | undefined
 
 /**
  * Roept een hub-functie aan en maakt van een `error`-veld een echte fout.
- * Alles in dit bestand loopt hierlangs; niets eromheen.
+ * Alles wat met de hub praat loopt hierlangs; niets eromheen. Ook `wolk.ts`
+ * gebruikt hem, want die vier functies melden fouten op dezelfde manier.
  */
-async function hub<K extends keyof RpcKaart>(
+export async function hub<K extends keyof RpcKaart>(
   functie: K, argumenten: RpcKaart[K]['in'],
 ): Promise<unknown> {
   const uit = (await roep(functie, argumenten)) as MetFout

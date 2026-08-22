@@ -9,7 +9,10 @@ import viteConfig from './vite.config'
  */
 export default mergeConfig(viteConfig, defineConfig({
   test: {
-    environment: 'node',
+    /* jsdom en niet node: de hooks raken localStorage en de hertekening van
+       React. Wat in een echte browser kan mislukken hoort ook in de proef te
+       kunnen mislukken. */
+    environment: 'jsdom',
     include: ['src/**/*.proef.ts', 'src/**/*.proef.tsx'],
   },
 }))
