@@ -154,10 +154,13 @@ export function bouwOnzekerheid(
 }
 
 export function PortieVenster(
-  { onderwerp, datum, opSluiten, opToevoegen }:
+  { onderwerp, datum, moment: startMoment, opSluiten, opToevoegen }:
   {
     onderwerp: Onderwerp
     datum: IsoDatum
+    /** Het moment dat elders al gekozen is. Zonder dit raadt het venster het
+     *  opnieuw uit de klok, en overschrijft het dus wat je net aantikte. */
+    moment?: Moment | undefined
     opSluiten: () => void
     opToevoegen: (r: NieuweRegel) => void
   },
@@ -169,7 +172,7 @@ export function PortieVenster(
   const [aantal, zetAantal] = useState(1)
   const [metOptioneel, zetMetOptioneel] = useState(false)
   const [gram, zetGram] = useState('')
-  const [moment, zetMoment] = useState<Moment>(momentNu(datum))
+  const [moment, zetMoment] = useState<Moment>(startMoment ?? momentNu(datum))
 
   const keuzes = bouwKeuzes(onderwerp, metOptioneel, gram)
   const k = keuzes[Math.min(gekozen, keuzes.length - 1)]

@@ -246,14 +246,33 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
    naam en een uitnodiging is iets anders dan een leeg scherm. */
 /* Eén kolom tot ver in het tabletgebied. Twee smalle kolommen naast elkaar
    op een telefoon knippen de namen af, en dat was precies wat er misging. */
-.maaltijden{display:grid;grid-template-columns:1fr;gap:10px;margin-top:4px}
-@media(min-width:560px){.maaltijden{grid-template-columns:1fr 1fr}}
-.maal{border:1px solid var(--lijn);border-radius:16px;padding:13px 14px;background:var(--vlak);
-  text-align:left;width:100%;display:block;cursor:pointer;
-  transition:transform .12s,box-shadow .18s,border-color .18s}
-.maal:hover{transform:translateY(-1px);box-shadow:var(--schaduw)}
-.maal:active{transform:scale(.995)}
-.maal .maalkop{display:flex;align-items:center;gap:8px}
+/* Eén kolom op een telefoon, twee op een grote telefoon, vier op een tablet —
+   zonder dat er drempels in de stijl staan die niet bij een toestel horen.
+   auto-fit met een ondergrens doet dat zelf: de kolom wordt nooit smaller dan
+   waar 'Tussendoor' in past, en er komt er een bij zodra dat kan. */
+/* 138 is niet willekeurig: het is de smalste kolom waar 'Tussendoor' met zijn
+   stip en zijn plus nog in past. Daarmee komen er twee kolommen op de kleinste
+   telefoon die nog verkocht wordt en vier vanaf een tablet — zonder drempels in
+   de stijl die bij een toestel horen in plaats van bij de inhoud. */
+.maaltijden{display:grid;gap:10px;margin-top:4px;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,138px),1fr))}
+.maal{border:1px solid var(--lijn);border-radius:16px;padding:5px 6px 9px;background:var(--vlak);
+  text-align:left;width:100%;display:block;min-width:0;
+  transition:box-shadow .18s,border-color .18s}
+.maal:has(.maalvoeg:hover){box-shadow:var(--schaduw)}
+/* De kop van het vak is de knop. Het vak zelf kan dat niet zijn: er staan
+   wisknoppen in, en een knop in een knop bestaat niet. */
+.maalvoeg{display:block;width:100%;text-align:left;background:transparent;border:0;
+  border-radius:12px;padding:8px;cursor:pointer;color:inherit;font:inherit;
+  transition:background .16s,transform .12s}
+.maalvoeg:hover{background:var(--vlak2)}
+.maalvoeg:active{transform:scale(.99)}
+.maalvoeg .maalplus{font-size:1.05rem;line-height:1;color:var(--grijs);flex:0 0 auto}
+.maalvoeg:hover .maalplus{color:var(--k)}
+.maalleeg{display:block;margin-top:6px}
+.maal .maalkop{display:flex;align-items:center;gap:7px;min-width:0}
+.maal .maalnaam{font-size:.82rem;font-weight:600;white-space:nowrap;min-width:0;
+  overflow:hidden;text-overflow:ellipsis}
 .maal .stip{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
 .maal.ochtend .stip{background:var(--ochtend)} .maal.middag .stip{background:var(--middag)}
 .maal.avond   .stip{background:var(--avond)}   .maal.tussen{border-style:dashed}
@@ -262,8 +281,12 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
 .maal.gevuld.middag{border-color:var(--middag);background:var(--middagbg)}
 .maal.gevuld.avond{border-color:var(--avond);background:var(--avondbg)}
 .maal.gevuld.tussen{border-color:var(--tussen);background:var(--tussenbg);border-style:solid}
-.maal .maalgetal{font-family:var(--serif);font-size:1.5rem;color:var(--ink);line-height:1.1;
-  font-variant-numeric:tabular-nums}
+.maal .maalgetal{display:block;margin-top:4px;font-family:var(--serif);font-size:1.5rem;
+  color:var(--ink);line-height:1.1;font-variant-numeric:tabular-nums}
+.maal .lijst{padding:0 8px}
+/* De graad staat in de tweede regel mee, dus hij mag niet de hoogte van een
+   losse badge houden. */
+.maal .lijst .conf{display:inline-block;vertical-align:-1px;margin-right:2px}
 
 /* ------------------------------------------------------- de grote knop --- */
 /* Eén handeling springt eruit. In de oude opzet was loggen een tekstvak tussen
@@ -378,3 +401,34 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
 .zoekvak>span{position:absolute;left:14px;top:50%;transform:translateY(-50%);
   font-size:1.05rem;line-height:1;pointer-events:none;opacity:.75}
 .zoekvak>input{padding:14px 14px 14px 42px;font-size:1rem;border-radius:15px}
+
+/* ------------------------------------------------------- het invoervel ---- */
+/* De vier momenten als één rij chips bovenin het vel. Ze staan er altijd alle
+   vier: van moment wisselen is de handeling die het vaakst misgaat als je hem
+   moet zoeken, en één rij met de kleuren van de maaltijdvakken is sneller te
+   lezen dan een keuzelijst. */
+.momentkeuze{display:flex;gap:6px;margin-top:10px;overflow-x:auto;scrollbar-width:none;
+  padding-bottom:2px}
+.momentkeuze::-webkit-scrollbar{display:none}
+.momentchip{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;cursor:pointer;
+  border:1px solid var(--lijn);border-radius:999px;padding:7px 13px;background:var(--vlak);
+  font-size:.8rem;color:var(--grijs);transition:border-color .16s,background .16s,color .16s}
+.momentchip .stip{width:8px;height:8px;border-radius:50%;flex:0 0 auto;background:var(--dim)}
+.momentchip.ochtend .stip{background:var(--ochtend)}
+.momentchip.middag  .stip{background:var(--middag)}
+.momentchip.avond   .stip{background:var(--avond)}
+.momentchip.tussen  .stip{background:var(--tussen)}
+.momentchip.aan{color:var(--ink);font-weight:600}
+.momentchip.ochtend.aan{border-color:var(--ochtend);background:var(--ochtendbg)}
+.momentchip.middag.aan{border-color:var(--middag);background:var(--middagbg)}
+.momentchip.avond.aan{border-color:var(--avond);background:var(--avondbg)}
+.momentchip.tussen.aan{border-color:var(--tussen);background:var(--tussenbg)}
+
+/* Eén variant van de hoofdknop draagt twee regels: wat hij doet en wat dat
+   oplevert. Die lijnt links uit, want gecentreerde tekst van twee regels leest
+   slecht — de gewone hoofdknop blijft gecentreerd. */
+.hoofdknop.breed{text-align:left}
+.hoofdknop.breed>span:last-child{flex:1 1 auto}
+/* Niet .klein: dat is grijs, en grijs op donkergroen is niet te lezen. */
+.hoofdknopsub{display:block;font-size:.8rem;font-weight:400;color:inherit;opacity:.78;
+  margin-top:1px}

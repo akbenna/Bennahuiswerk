@@ -211,14 +211,19 @@ async function naarTab(pagina, label) {
   await pagina.waitForTimeout(1100)
 }
 
-for (const [naam, dagen, thema, fase, tabs] of gevallen) {
-  const pagina = await ctx.newPage()
-  await pagina.emulateMedia({ colorScheme: thema })
+/** De databaseaanroepen onderscheppen voor één pagina. */
+async function bedienDb(pagina, dagen, fase) {
   await pagina.route('**/rest/v1/rpc/**', async (route) => {
     const fn = route.request().url().split('/').pop()
     const lijf = fn === 'kal_ophalen' ? alles(dagen, fase) : {}
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(lijf) })
   })
+}
+
+for (const [naam, dagen, thema, fase, tabs] of gevallen) {
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: thema })
+  await bedienDb(pagina, dagen, fase)
   await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
   await pagina.waitForSelector('.hero', { timeout: 5000 })
 
@@ -233,6 +238,92 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
     console.log(`${stam.padEnd(26)} kop=${JSON.stringify(kop)}`)
   }
   await pagina.close()
+}
+
+/* ------------------------------------------------------- het invoervel -- */
+/* Het vel is het scherm waar de app om draait en het is niet te zien zonder het
+   open te doen. Twee toestanden: met geschiedenis (dan staat er een lijst om te
+   herhalen) en zonder (dan is de eerste keer aan de beurt). */
+
+for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg', 1, 'light']]) {
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: thema })
+  await bedienDb(pagina, dagen, 'afvallen')
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.maal', { timeout: 5000 })
+  /* Via het maaltijdvak en niet via de grote knop: dat is de weg die het meest
+     gelopen wordt, en de weg die het moment meteen goed zet. */
+  await pagina.getByTitle('Iets toevoegen aan je lunch').click()
+  await pagina.waitForSelector('.venster', { timeout: 5000 })
+  await pagina.waitForTimeout(400)
+  await pagina.screenshot({ path: `gereedschap/health-${naam}.png` })
+
+  const chips = await pagina.locator('.momentchip').count()
+  const aan = await pagina.locator('.momentchip.aan').textContent()
+  const suggesties = await pagina.locator('.venster .lijst > div').count()
+  if (chips !== 4) throw new Error(`${naam}: ${chips} momentchips in plaats van 4`)
+
+  /* De belofte van dit vel is één tik. Die tik wordt hier werkelijk gedaan, en
+     er wordt gekeken of hij aankomt: een bevestiging bovenin, en het vinkje op
+     de regel die je aanraakte. Zonder die controle is 'één tik' een bewering. */
+  let bevestiging = 'geen suggesties'
+  if (suggesties > 0) {
+    await pagina.locator('.venster .lijst > div').first().getByRole('button').click()
+    await pagina.waitForSelector('.venster .kaart.goed', { timeout: 5000 })
+    bevestiging = (await pagina.locator('.venster .kaart.goed').textContent()) ?? ''
+    await pagina.waitForTimeout(300)
+    await pagina.screenshot({ path: `gereedschap/health-${naam}-getikt.png` })
+  }
+  console.log(`${naam.padEnd(26)} moment=${JSON.stringify(aan)} suggesties=${suggesties}`)
+  console.log(`${''.padEnd(26)} na één tik: ${JSON.stringify(bevestiging.slice(0, 70))}`)
+  await pagina.close()
+}
+
+/* ------------------------------------------------ meebewegen met de maat -- */
+/* De maaltijdvakken stonden op één kolom tot 560 pixels en daarna op twee, en
+   daar bleef het bij: op een tablet en op een groot scherm bleven het er twee.
+   Deze controle kijkt of het aantal kolommen werkelijk meebeweegt. */
+
+const breedtes = [360, 430, 768, 1100]
+const kolommen = []
+for (const breedte of breedtes) {
+  const maat = await browser.newContext({
+    viewport: { width: breedte, height: 900 }, deviceScaleFactor: 1,
+    locale: 'nl-NL', timezoneId: 'Europe/Amsterdam',
+  })
+  /* Dezelfde vaste klok als hierboven: zonder die klok is 'vandaag' de echte
+     dag, staan de vakken leeg en meet je de opmaak van een leeg scherm. */
+  await maat.addInitScript(`{
+    const echt = Date; const vast = ${NU};
+    class V extends echt {
+      constructor(...a){ super(...(a.length ? a : [vast])) }
+      static now(){ return vast }
+    }
+    window.Date = V;
+    localStorage.setItem('kalibratie.sessie',
+      JSON.stringify({ token: 'proef', account: 'abdelkader' }));
+  }`)
+  const pagina = await maat.newPage()
+  await bedienDb(pagina, 28, 'afvallen')
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.maal', { timeout: 5000 })
+
+  /* Het aantal kolommen is het aantal verschillende linkerposities van de vier
+     vakken. Dat meet wat je ziet, en niet wat er in de stijl staat. */
+  const links = await pagina.locator('.maal').evaluateAll(
+    (els) => [...new Set(els.map((e) => Math.round(e.getBoundingClientRect().left)))].length)
+  /* En of er niets buiten de rand valt. */
+  const overloop = await pagina.evaluate(
+    () => document.documentElement.scrollWidth > document.documentElement.clientWidth)
+  if (overloop) throw new Error(`${breedte}px: de pagina schuift horizontaal`)
+  kolommen.push(`${breedte}px→${links}kol`)
+  if (breedte === 1100) await pagina.screenshot({ path: 'gereedschap/health-breed.png' })
+  if (breedte === 360) await pagina.screenshot({ path: 'gereedschap/health-smal.png' })
+  await maat.close()
+}
+console.log('maaltijdvakken             ' + kolommen.join(' · '))
+if (kolommen[0] === kolommen[kolommen.length - 1]) {
+  throw new Error('de maaltijdvakken bewegen niet mee met de schermbreedte')
 }
 
 await browser.close()

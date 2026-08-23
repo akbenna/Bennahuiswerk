@@ -9,7 +9,7 @@ import { useKalibratie } from './toestand'
 import { analyse, trendReeks } from './rekenkern'
 import { dec } from '@/gedeeld/getal'
 import { vandaag } from '@/gedeeld/datum'
-import type { IsoDatum } from '@/gedeeld/db/tabellen'
+import type { IsoDatum, Moment } from '@/gedeeld/db/tabellen'
 import { roep } from '@/gedeeld/db/rpc'
 import type { NieuweRegel } from '@/gedeeld/db/rpc'
 import { Vandaag } from './schermen/Vandaag'
@@ -18,8 +18,9 @@ import { Voeding } from './schermen/Voeding'
 import { Beweging } from './schermen/Beweging'
 import { Klinisch } from './schermen/Klinisch'
 import { Meer } from './schermen/Meer'
-import { PortieVenster } from './vensters/Portie'
+import { PortieVenster, momentNu } from './vensters/Portie'
 import type { Onderwerp } from './vensters/Portie'
+import { InvoerVenster } from './vensters/Invoer'
 import {
   AccountVenster, Aanmelden, ImportVenster, ProfielVenster,
 } from './vensters/Instellingen'
@@ -44,6 +45,10 @@ export function App() {
   const [datum, zetDatum] = useState<IsoDatum>(vandaag())
   const [venster, zetVenster] = useState<VensterNaam | null>(null)
   const [portie, zetPortie] = useState<Onderwerp | null>(null)
+  /* Het invoervel. Het moment zit in de toestand en niet in het vel zelf, omdat
+     het portievenster erbovenop kan komen en daarna terug moet kunnen vallen op
+     hetzelfde moment. */
+  const [invoer, zetInvoer] = useState<Moment | null>(null)
 
   const voegRegelsToe = useCallback((regels: NieuweRegel[]) => {
     if (!regels.length) return
@@ -103,13 +108,13 @@ export function App() {
           {tab === 'vandaag' && (
             <Vandaag
               a={a} dag={dag} regels={regelsVandaag} dagen={k.dagenkaart} datum={datum}
-              eiwitPerKg={profiel.eiwit_g_per_kg} token={k.sessie.token}
+              eiwitPerKg={profiel.eiwit_g_per_kg}
               zetDatum={zetDatum}
               zetDagveld={(veld, waarde) =>
                 void k.wijzig((t) => roep('kal_dag_zetten', {
                   p_token: t, p_datum: datum, p_patch: { [veld]: waarde },
                 }))}
-              voegRegelsToe={voegRegelsToe}
+              opInvoer={zetInvoer}
               wisRegel={(id) =>
                 void k.wijzig((t) => roep('kal_regel_wissen', { p_token: t, p_id: id }))}
             />
@@ -187,11 +192,26 @@ export function App() {
         ))}
       </nav>
 
+      {invoer && !portie && (
+        <InvoerVenster
+          datum={datum} token={k.sessie.token} startMoment={invoer} regels={k.alles.regels}
+          opPortie={(o, m) => { zetInvoer(m); zetPortie(o) }}
+          voegRegelsToe={voegRegelsToe}
+          opSluiten={() => zetInvoer(null)}
+        />
+      )}
+
       {portie && (
         <PortieVenster
-          onderwerp={portie} datum={datum}
+          onderwerp={portie} datum={datum} moment={invoer ?? momentNu(datum)}
+          /* Terug naar het vel als het daarvandaan kwam: je was een maaltijd
+             aan het samenstellen, niet één product aan het opzoeken. */
           opSluiten={() => zetPortie(null)}
-          opToevoegen={(r) => { zetPortie(null); zetTab('vandaag'); voegRegelsToe([r]) }}
+          opToevoegen={(r) => {
+            zetPortie(null)
+            if (!invoer) zetTab('vandaag')
+            voegRegelsToe([r])
+          }}
         />
       )}
 
