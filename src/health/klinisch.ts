@@ -137,3 +137,83 @@ export function onderhoudZone(
   if (d < 2.3) return { zone: 'geel', delta: d }
   return { zone: 'rood', delta: d }
 }
+
+/* ==========================================================================
+   WELKE METING GELDT ALS ER TWEE OP DEZELFDE DAG STAAN
+   ========================================================================== */
+
+/**
+ * De nieuwste van een reeks — en wat er gebeurt bij gelijke datums.
+ *
+ * De vergelijking hier was `x.datum < y.datum ? 1 : -1`. Voor twee gelijke
+ * datums geeft dat -1 in beide richtingen: a hoort vóór b én b hoort vóór a.
+ * Dat is geen ordening maar een tegenspraak, en welke rij er dan bovenaan komt
+ * hangt af van de sorteerfunctie van de browser.
+ *
+ * Zolang niemand twee metingen op één dag had was dat onzichtbaar. Met de
+ * koppeling is het dat niet meer: het horloge schrijft elke nacht een rustpols,
+ * en jij kunt er die dag zelf ook een invullen. Op 23 augustus stonden er
+ * werkelijk twee, 64 en 70, en het scherm koos er willekeurig één.
+ *
+ * De tiebreak volgt de regel die in de database al geldt en die in
+ * `kal_proef_koppeling` staat vastgelegd: wat jij zelf invulde wint van wat
+ * automatisch binnenkwam. Een koppeling mag aanvullen, niet overstemmen.
+ */
+export const AUTOMATISCH = 'koppeling'
+
+function bronrang(x: { notitie?: string | null }): number {
+  return x.notitie === AUTOMATISCH ? 1 : 0
+}
+
+export function nieuwsteEerst<T extends { datum: string; notitie?: string | null }>(
+  lijst: T[],
+): T[] {
+  return [...lijst].sort((x, y) => (
+    x.datum === y.datum ? bronrang(x) - bronrang(y) : x.datum < y.datum ? 1 : -1
+  ))
+}
+
+export function nieuwste<T extends { datum: string; notitie?: string | null }>(
+  lijst: T[], test: (x: T) => boolean,
+): T | null {
+  return nieuwsteEerst(lijst.filter(test))[0] ?? null
+}
+
+/** Kale ISO-datums, dus geen tijdzone in het spel. */
+export function dagenTussen(van: string, tot: string): number {
+  const t = (x: string) => Date.UTC(+x.slice(0, 4), +x.slice(5, 7) - 1, +x.slice(8, 10))
+  return Math.round((t(tot) - t(van)) / 86400000)
+}
+
+export interface Rustpols<M> { nu: M; basis: number | null; n: number }
+
+/**
+ * De rustpols: de laatste meting, en hoe hij zich verhoudt tot de maand ervoor.
+ *
+ * Bij deze meting is de verandering het signaal en niet de waarde. Een pols van
+ * 58 zegt op zichzelf weinig — bij de een is dat hoog, bij de ander laag. Vier
+ * slagen omhoog ten opzichte van je eigen gemiddelde zegt wel iets.
+ *
+ * De vergelijking gebruikt de dagen ervóór en niet de hele reeks: anders trekt
+ * de laatste meting zijn eigen referentie mee omhoog en zie je nooit een
+ * verandering. Meerdere metingen op dezelfde dag tellen één keer mee, want
+ * anders weegt een dag waarop je twee keer mat dubbel zo zwaar.
+ */
+export function rustpols<M extends {
+  datum: string; soort: string; waarde: number; notitie?: string | null
+}>(
+  metingen: M[],
+): Rustpols<M> | null {
+  const alle = nieuwsteEerst(metingen.filter((m) => m.soort === 'hartslag_rust'))
+  const nu = alle[0]
+  if (!nu) return null
+  const perDag = new Map<string, M>()
+  for (const m of alle.slice(1)) if (!perDag.has(m.datum)) perDag.set(m.datum, m)
+  const eerder = [...perDag.values()].filter((m) => dagenTussen(m.datum, nu.datum) <= 30)
+  return {
+    nu,
+    basis: eerder.length >= 3
+      ? eerder.reduce((t, m) => t + m.waarde, 0) / eerder.length : null,
+    n: eerder.length,
+  }
+}
