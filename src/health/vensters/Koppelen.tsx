@@ -30,6 +30,19 @@ import { kortNL } from '@/gedeeld/datum'
 
 const ENDPOINT = DATABASE_URL + '/rest/v1/rpc/kal_beweging_ontvangen'
 
+/**
+ * De naam van een menu-onderdeel, in beide talen.
+ *
+ * De helft van de instructie hierboven bestaat uit menunamen, en die heten op
+ * een Engelse telefoon anders. Wie op zijn Engelse toestel naar "Verkrijg
+ * inhoud van URL" zoekt vindt niets en denkt dat de instructie niet klopt.
+ * Beide namen erbij is de goedkoopste oplossing van dat probleem: de app weet
+ * niet in welke taal je toestel staat, en hoeft dat ook niet te weten.
+ */
+function Menu({ nl, en }: { nl: string; en: string }) {
+  return <><em>{nl}</em> <span className="anderstalig">({en})</span></>
+}
+
 /** Het lichaam dat de opdracht moet versturen, met de sleutel er al in. */
 function voorbeeldLichaam(sleutel: string): string {
   return JSON.stringify({
@@ -157,16 +170,21 @@ export function KoppelVenster(
       <Kaart plat style={{ marginTop: 14 }}>
         <Kop>Wat je in de Opdrachten-app zet</Kop>
         <p className="klein" style={{ marginTop: 4 }}>
-          Op de iPhone, in <em>Opdrachten</em> → <em>Automatisering</em> → <em>Tijdstip</em>, bijvoorbeeld
-          elke dag om 07:00. Eén actie is genoeg: <em>Verkrijg inhoud van URL</em>.
+          Op de iPhone, in <Menu nl="Opdrachten" en="Shortcuts" /> →{' '}
+          <Menu nl="Automatisering" en="Automation" /> → <Menu nl="Tijdstip" en="Time of Day" />,
+          bijvoorbeeld elke dag om 07:00. Eén actie is genoeg:{' '}
+          <Menu nl="Verkrijg inhoud van URL" en="Get Contents of URL" />.
+        </p>
+        <p className="mini" style={{ marginTop: 6 }}>
+          Tussen haakjes staat hoe het heet als je toestel op Engels staat.
         </p>
         <ol className="stappen">
           <li>
             <b>URL</b> — <Kopieer waarde={ENDPOINT} label="Endpoint" />
           </li>
-          <li><b>Methode</b> — POST</li>
+          <li><b>Methode</b> <span className="anderstalig">(Method)</span> — POST</li>
           <li>
-            <b>Kopteksten</b> — drie stuks:
+            <b>Kopteksten</b> <span className="anderstalig">(Headers)</span> — drie stuks:
             <Kopieer waarde={ANON_SLEUTEL} label="apikey" />
             <p className="mini" style={{ marginTop: 4 }}>
               Zet dezelfde waarde ook onder <code>Authorization</code>, met <code>Bearer </code>
@@ -175,9 +193,11 @@ export function KoppelVenster(
             </p>
           </li>
           <li>
-            <b>Verzoektekst</b> — JSON, in deze vorm. De getallen komen uit
-            <em> Zoek gezondheidsmonsters</em>-acties; de datum uit <em>Huidige datum</em>, opgemaakt
-            als <code>jjjj-MM-dd</code>.
+            <b>Verzoektekst</b> <span className="anderstalig">(Request Body)</span> — JSON, in deze
+            vorm. De getallen komen uit{' '}
+            <Menu nl="Zoek gezondheidsmonsters" en="Find Health Samples" />-acties; de datum uit{' '}
+            <Menu nl="Huidige datum" en="Current Date" />, opgemaakt als <code>jjjj-MM-dd</code>{' '}
+            <span className="anderstalig">(yyyy-MM-dd)</span>.
             <Kopieer waarde={voorbeeldLichaam(nieuw ?? 'kal_…jouw sleutel…')} label="Verzoektekst"
                      meerregelig />
           </li>
@@ -192,15 +212,18 @@ export function KoppelVenster(
       <Kaart plat style={{ marginTop: 12 }}>
         <Kop>En Garmin?</Kop>
         <p className="klein" style={{ marginTop: 4 }}>
-          Die loopt mee over dezelfde weg. Zet in de Garmin Connect-app <em>Meer</em> →{' '}
-          <em>Instellingen</em> → <em>Verbonden apps</em> → <em>Apple Gezondheid</em> aan, en kies daar
-          stappen, slaap, trainingen en gewicht. Garmin schrijft die dan in Gezondheid, en de opdracht
-          hierboven haalt ze daar op. Eén koppeling, twee bronnen.
+          Die loopt mee over dezelfde weg. Zet in de Garmin Connect-app{' '}
+          <Menu nl="Meer" en="More" /> → <Menu nl="Instellingen" en="Settings" /> →{' '}
+          <Menu nl="Verbonden apps" en="Connected Apps" /> →{' '}
+          <Menu nl="Apple Gezondheid" en="Apple Health" /> aan, en kies daar stappen, slaap,
+          trainingen en gewicht. Garmin schrijft die dan in Gezondheid, en de opdracht hierboven
+          haalt ze daar op. Eén koppeling, twee bronnen.
         </p>
         <p className="mini" style={{ marginTop: 8 }}>
           Let op de volgorde van de bronnen in Gezondheid: staat je iPhone boven Garmin Connect, dan
           krijg je de stappen van je telefoon in plaats van die van je horloge. Dat staat onder
-          Gezondheid → het gegeven → <em>Gegevensbronnen en toegang</em>.
+          Gezondheid → het gegeven →{' '}
+          <Menu nl="Gegevensbronnen en toegang" en="Data Sources & Access" />.
         </p>
         <Uitleg id="garminapi" label="waarom niet rechtstreeks op de Garmin-API">
           <p>

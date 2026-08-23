@@ -441,6 +441,9 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
   background:var(--vlak2);border:1px solid var(--lijn);border-radius:9px;padding:8px 10px;
   overflow-wrap:anywhere;line-height:1.45;color:var(--ink)}
 .sleutelvak.meer{white-space:pre-wrap;max-height:190px;overflow:auto}
+/* De Engelse menunaam naast de Nederlandse: erbij, niet ervoor. Hij hoort te
+   helpen als je hem nodig hebt en weg te vallen als je hem niet nodig hebt. */
+.anderstalig{color:var(--dim);font-size:.92em}
 .stappen{margin:8px 0 0;padding-left:20px;font-size:.86rem;line-height:1.6}
 .stappen>li{margin-bottom:9px}
 .stappen code{font-family:var(--mono);font-size:.8rem;background:var(--vlak2);
