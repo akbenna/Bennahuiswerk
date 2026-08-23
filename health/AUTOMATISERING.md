@@ -122,13 +122,15 @@ Drie dingen daaraan komen niet uit een ontwerp maar uit het opbouwen op een echt
 
 **Alle waarden komen binnen als tekst.** Een nacht zonder slaapmeting stuurde een lege waarde, PostgREST probeerde die naar `numeric` te casten, en het hele bericht sneuvelde met `22P02` — inclusief de stappen die wél gemeten waren. Eén ontbrekende meting hoort de andere niet mee te slepen. `kal_getal` leest de getallen nu zelf: leeg betekent *niet meegestuurd*, een komma is een decimaalteken (de telefoon staat op Nederlands), en iets onleesbaars wordt overgeslagen en genoemd in `niet_gelezen`. Dat laatste veld is er expres: stil overslaan is hetzelfde als liegen over wat er is binnengekomen.
 
+**Een 0 wordt niet weggeschreven.** *Bereken statistiek* geeft over nul monsters een **0** terug en niet leeg. Die 0 is dus niet te onderscheiden van "niets gevonden" — en als meting is hij onmogelijk: wie zijn telefoon bij zich draagt komt niet op nul stappen of nul actieve energie uit, en nul minuten slaap bestaat niet. Op 23 augustus kwam er zo 0 kcal binnen naast 1.746 stappen. Wegschrijven levert een dag op die eruitziet als gemeten en die het model als echte nul meeneemt, dus die 0 gaat de tabellen niet in; hij komt terug in `nul_overgeslagen`. Dat is expres iets anders dan `niet_gelezen`: een "0" is prima leesbaar. En het geldt expres alleen voor de platte ingang — wie via de lijst-ingang een 0 stuurt, meent hem.
+
 **`p_hartslag_rust`.** De rustpols bestond al als meting die je met de hand invulde, maar kwam nergens binnen en werd nergens getoond. Het is het waardevolste dagcijfer dat een horloge levert: hij daalt als de conditie verbetert en stijgt bij ziekte, slechte slaap of te zware belasting. In de opdracht hoort hij op **Gemiddelde** te staan, niet op Som. Het scherm *Klinisch* zet hem af tegen je gemiddelde van de afgelopen dertig dagen, en zwijgt zolang er minder dan drie eerdere metingen zijn — één dag verschil is ruis.
 
-Het antwoord vertelt per stuk wat er gebeurd is, ook als er niets gebeurde: `{"datum": …, "dagen": 1, "hartslag_rust": "opgeslagen" | "die van jou blijft staan" | "onmogelijk, genegeerd" | "niet meegestuurd", "niet_gelezen": []}`.
+Het antwoord vertelt per stuk wat er gebeurd is, ook als er niets gebeurde: `{"datum": …, "dagen": 1, "hartslag_rust": "opgeslagen" | "die van jou blijft staan" | "onmogelijk, genegeerd" | "niet meegestuurd", "niet_gelezen": [], "nul_overgeslagen": []}`.
 
 ### De regels zijn vastgelegd
 
-De botsingsregels stonden alleen in de functie. Sinds 23 augustus staan ze ook in een proef: `select * from kal_proef_koppeling();` — 31 gevallen, alle regels uit de tabel hierboven plus de sleutelafhandeling, de grenzen, de scheiding tussen gebruikers en alles wat de platte ingang hierboven moet verdragen. Zie `health/database/03-proef-koppeling.sql`.
+De botsingsregels stonden alleen in de functie. Sinds 23 augustus staan ze ook in een proef: `select * from kal_proef_koppeling();` — 36 gevallen, alle regels uit de tabel hierboven plus de sleutelafhandeling, de grenzen, de scheiding tussen gebruikers en alles wat de platte ingang hierboven moet verdragen. Zie `health/database/03-proef-koppeling.sql`.
 
 Twee dingen daaraan zijn niet vanzelfsprekend en dus het vermelden waard.
 
@@ -209,7 +211,7 @@ where n.nspname = 'public' and p.prokind = 'f'
 | `nevo_actief` | de licentiepoort waar alle NEVO-toegang langs gaat | — |
 | `kal_beweging_ontvangen` | Opdrachten op de iPhone → PostgREST → `kal_dagen` | dagelijks, door de telefoon |
 | `kal_beweging_dag` | de platte ingang die de Opdrachten-app aanroept | dagelijks, door de telefoon |
-| `kal_proef_koppeling` | 31 gevallen over de botsingsregels en de platte ingang, draait zichzelf terug | met de hand, na elke wijziging |
+| `kal_proef_koppeling` | 36 gevallen over de botsingsregels en de platte ingang, draait zichzelf terug | met de hand, na elke wijziging |
 | 16 tabellen, 24 functies | schema `public`, prefix `kal_` | — |
 
 Alles staat of valt bij één ding dat geen enkele automatisering kan overnemen: de ochtendweging. De prikkel herinnert eraan, het weekbericht rekent ermee, maar niemand kan hem voor je verzinnen.
