@@ -102,6 +102,18 @@ describe('recent', () => {
     expect(uit.map((h) => h.naam)).toEqual(['Binnen'])
   })
 
+  it('laat een geïmporteerd dagtotaal buiten de suggesties', () => {
+    /* Kwam tegen het echte logboek boven water: 'Dagtotaal uit Yazio' stond
+       zeventien keer in de geschiedenis en werd braaf voorgesteld als maaltijd
+       van 1.319 kcal. Eén tik en je hele dag staat er als één regel in. */
+    const uit = herhalingen([
+      regel('2026-08-20', 'Dagtotaal uit Yazio', 'onbekend', 1319, { bron: 'import' }),
+      regel('2026-08-21', 'Dagtotaal uit Yazio', 'onbekend', 1319, { bron: 'import' }),
+      regel('2026-08-21', 'Havermout', 'ontbijt'),
+    ], { nu: NU, soort: 'vaak' })
+    expect(uit.map((h) => h.naam)).toEqual(['Havermout'])
+  })
+
   it('houdt zich aan max', () => {
     const veel = Array.from({ length: 30 }, (_, i) => regel('2026-08-2' + (i % 10), 'x' + i, 'lunch'))
     expect(herhalingen(veel, { nu: NU, soort: 'recent', max: 5 })).toHaveLength(5)

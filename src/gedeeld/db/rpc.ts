@@ -249,6 +249,18 @@ export interface RpcKaart {
     uit: unknown
   }
   kal_dagen_importeren: { in: { p_token: string; p_dagen: NieuweDag[] }; uit: unknown }
+  /* De postbus voor de prikkel. De rekenkern draait in de app; de coach die 's
+     middags een mail stuurt kan hem niet zelf uitrekenen zonder een tweede
+     implementatie van het model, en die zouden uit elkaar gaan lopen. Dus legt
+     de app zijn uitkomst neer met een tijdstempel, en zwijgt de coach zodra die
+     ouder is dan twee dagen. Zie health/database/06-de-coach-prikkelt.sql. */
+  kal_modelstand_zetten: {
+    in: {
+      p_token: string; p_doel_kcal: number | null; p_eiwit_doel_g: number | null
+      p_tdee_laag: number | null; p_tdee_hoog: number | null; p_zekerheid: string
+    }
+    uit: null
+  }
   kal_regels_toevoegen: { in: { p_token: string; p_regels: NieuweRegel[] }; uit: Regel[] }
   kal_regel_wissen: { in: { p_token: string; p_id: string }; uit: unknown }
   kal_rij_toevoegen: {

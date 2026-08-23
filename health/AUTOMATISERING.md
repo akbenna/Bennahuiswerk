@@ -140,6 +140,20 @@ De andere helft staat in `health/database/05-peilingen-van-de-dag.sql`. Elke sta
 
 Twee dingen doet die tabel expres niet. Hij vervangt `kal_dagen` niet — daar staat het dagtotaal, en dat blijft de waarheid over een dag; een tussenstand is een meting van een moment. En hij rekent niet mee in het model: stappen zitten sowieso niet in de verbruiksschatting (hoofdstuk 6 van `VERANTWOORDING.md`), dus een advies om te wandelen is hier nooit een calorieënhandel.
 
+### De coach: het scherm dat naar je toe komt
+
+Het scherm rekent al uit wat er nog in past. Dat helpt alleen als je kijkt. Sinds 24 augustus stuurt de app op drie momenten een bericht — **12:30, 15:30 en 18:30** — maar alleen als er iets te zeggen valt, en dat is meestal niet zo.
+
+De drempels staan in `kal_coach_bouwen` en in `meldenNu` in `src/health/coach.ts`, en ze zijn met opzet grof: minder dan vijftien gram eiwit verschil is binnen de ruis van het loggen zelf. Er gaat niets uit vóór negen uur, niets na negenen 's avonds, en niets als je al over je doel zit — daar valt die dag niets meer aan te doen en het benoemen helpt niemand. De soort draagt het tijdvak (`coach-12`), zodat de ontdubbeling per dag én per moment werkt.
+
+**Waarom er een postbus tussen zit.** Om te zeggen "je hebt nog 800 kcal" moet je het doel kennen, en dat komt uit de rekenkern: een regressie over de weegreeks, gekruist met de gelogde inname. Die kern staat in TypeScript en is daar met gouden waarden vastgelegd. Hem in SQL nabouwen zou een tweede implementatie van het model opleveren, en twee implementaties lopen uit elkaar zonder dat iemand ziet welke van de twee liegt. Dus publiceert de app zijn uitkomst in `kal_modelstand` met een tijdstempel, en zwijgt de coach zodra die ouder is dan achtenveertig uur. Dat is meteen de juiste uitkomst om een tweede reden: als de app twee dagen niet open is geweest, is de dagregistratie ook onvolledig en klopt het tekort toch niet.
+
+**Wanneer een model aan zet is.** Alleen als er in je eigen geschiedenis niets meer past binnen de resterende ruimte. Dán zet `kal_coach_bouwen` het vlaggetje `vraag_model` aan en vraagt de edge function om één concreet idee — eerst OpenAI, dan Claude. Het model mag geen kcal- of eiwitwaarden noemen: die komen uit de tabel zodra je het logt, en een getal uit het geheugen van een model zou daarmee botsen. In het bericht staat erbij dat het een voorstel van een taalmodel is en niet iets uit je geschiedenis.
+
+De modelnamen staan in `kal_config` en niet in de code, om dezelfde reden als bij `kal-ai`: namen verlopen. Staat er geen `model_coach_openai`, dan wordt OpenAI overgeslagen — er wordt geen naam geraden die niemand heeft nagekeken.
+
+**Eén ding om te onthouden bij het uitrollen.** Een nieuwe versie van een edge function komt terug met `verify_jwt = true`, ook als hij eerder open stond. De prikkel-cron stuurde alleen een `Content-Type` mee en kreeg daarmee `UNAUTHORIZED_NO_AUTH_HEADER` van de poort — vóór de functie zelf ook maar iets zag. Alle prikkel-taken sturen nu een `Authorization` met de service-role-sleutel uit de vault. Dat is per saldo beter: het endpoint stond open en het gedeelde geheim was het enige slot; nu zijn het er twee.
+
 ### De regels zijn vastgelegd
 
 De botsingsregels stonden alleen in de functie. Sinds 23 augustus staan ze ook in een proef: `select * from kal_proef_koppeling();` — 41 gevallen, alle regels uit de tabel hierboven plus de sleutelafhandeling, de grenzen, de scheiding tussen gebruikers en alles wat de platte ingang hierboven moet verdragen. Zie `health/database/03-proef-koppeling.sql`.
@@ -224,6 +238,9 @@ where n.nspname = 'public' and p.prokind = 'f'
 | `kal_beweging_ontvangen` | Opdrachten op de iPhone → PostgREST → `kal_dagen` | dagelijks, door de telefoon |
 | `kal_beweging_dag` | de platte ingang die de Opdrachten-app aanroept | een paar keer per dag, door de telefoon |
 | `kal_peiling_vastleggen` | bewaart elke stand van vandaag met zijn tijdstip | bij elke aanroep hierboven |
+| `kal_modelstand_zetten` | de app legt de uitkomst van de rekenkern neer | bij elke keer dat de app opent |
+| `kal_coach_stand` | wat er nog in past, en wat dat kan vullen | door de coachprikkel |
+| `kal_coach_bouwen` | bouwt de coachberichten | 12:30, 15:30 en 18:30 |
 | `kal_proef_koppeling` | 41 gevallen over de botsingsregels en de platte ingang, draait zichzelf terug | met de hand, na elke wijziging |
 | 16 tabellen, 24 functies | schema `public`, prefix `kal_` | — |
 
