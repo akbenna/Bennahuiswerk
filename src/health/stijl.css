@@ -290,3 +290,91 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
 .vlaggetje.goed{background:var(--goedbg);color:var(--goed)}
 .vlaggetje.let{background:var(--letbg);color:var(--let)}
 .vlaggetje.rust{background:var(--vlak2);color:var(--grijs)}
+.vlaggetje.fout{background:var(--foutbg);color:var(--fout)}
+
+/* ---------------------------------------------- de koppen van de schermen -- */
+/* Elk scherm opende met een tabel of een invulveld: je moest lezen om te weten
+   hoe je ervoor stond. Nu heeft elk scherm dezelfde kop, met een verloop dat
+   de staat draagt. Vier standen, en er staat altijd een woord bij — kleur
+   alleen is voor niemand genoeg. */
+.hero.kop-rust{--herobg:linear-gradient(155deg,#EDF1F0 0%,#E5EBEA 55%,#DFE7E5 100%);
+  --heroglow:rgba(255,255,255,.6)}
+.hero.kop-goed{--herobg:linear-gradient(155deg,#E9F2E3 0%,#DFEDD8 55%,#D7E8CE 100%);
+  --heroglow:rgba(255,255,255,.6)}
+.hero.kop-let{--herobg:linear-gradient(155deg,#FAF0D9 0%,#F5E7CA 55%,#F0DFBC 100%);
+  --heroglow:rgba(255,252,240,.6)}
+.hero.kop-fout{--herobg:linear-gradient(155deg,#FAE8E5 0%,#F5DCD8 55%,#F0D2CD 100%);
+  --heroglow:rgba(255,248,246,.55)}
+@media(prefers-color-scheme:dark){
+  .hero.kop-rust{--herobg:linear-gradient(155deg,#191C1F 0%,#171A1D 55%,#15181B 100%);
+    --heroglow:rgba(180,220,255,.06)}
+  .hero.kop-goed{--herobg:linear-gradient(155deg,#1A2318 0%,#182016 55%,#161D14 100%);
+    --heroglow:rgba(160,255,170,.07)}
+  .hero.kop-let{--herobg:linear-gradient(155deg,#282013 0%,#241D11 55%,#20190F 100%);
+    --heroglow:rgba(255,220,140,.08)}
+  .hero.kop-fout{--herobg:linear-gradient(155deg,#2A1A19 0%,#251717 55%,#211414 100%);
+    --heroglow:rgba(255,170,160,.07)}
+}
+
+/* De trapmeter: iets dat in stappen komt en niet in procenten. */
+.trap{display:flex;gap:5px;margin-top:9px}
+.trap>i{flex:1 1 0;height:9px;border-radius:999px;background:var(--ringrail);
+  box-shadow:inset 0 0 0 1px rgba(20,18,14,.06);transition:background .25s}
+.trap>i.aan{background:var(--k)}
+@media(prefers-color-scheme:dark){.trap>i{box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}}
+.trapnamen{display:flex;gap:5px;margin-top:5px}
+.trapnamen>span{flex:1 1 0;font-size:.66rem;color:var(--dim);text-align:center;
+  letter-spacing:.02em}
+.trapnamen>span.nu{color:var(--ink);font-weight:600}
+
+/* Bolletjes: kleine telbare aantallen. Tellen is sneller dan lezen. */
+.bolletjes{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.bolletjes>i{width:13px;height:13px;border-radius:50%;border:1.5px solid var(--lijn2);
+  background:transparent;transition:background .2s}
+.bolletjes>i.aan{background:var(--k);border-color:var(--k)}
+
+/* De rij grote cijfers onder een schermkop. */
+.kerngetallen{display:flex;gap:18px;margin-top:14px;flex-wrap:wrap}
+.kerngetallen>div{min-width:0}
+.kerngetallen .getal{font-size:1.7rem}
+
+/* Een labwaarde die buiten de referentie valt, of er precies in. */
+.labrij{display:flex;align-items:center;gap:10px;padding:9px 0;
+  border-top:1px solid var(--lijn)}
+.labrij:first-child{border-top:0}
+.labrij .naam{flex:1 1 auto;min-width:0}
+.labrij .waarde{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:600}
+.labrij .waarde.buiten{color:var(--let)}
+.labrij .waarde.binnen{color:var(--goed)}
+
+/* ----------------------------------------------------- de eiwitstaven ---- */
+/* Vier maaltijden naast elkaar met één streep op het richtgetal. De streep is
+   het hele punt: zonder referentie is een staaf een decoratie. */
+.maalstaven{display:flex;gap:9px;align-items:flex-end;margin-top:2px}
+.maalstaaf{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px}
+.maalstaaf .baan{position:relative;width:100%;height:62px;border-radius:9px;
+  background:var(--ringrail);overflow:hidden;display:flex;align-items:flex-end;
+  box-shadow:inset 0 0 0 1px rgba(20,18,14,.06)}
+@media(prefers-color-scheme:dark){.maalstaaf .baan{box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}}
+.maalstaaf .baan>i{display:block;width:100%;border-radius:9px 9px 0 0;background:var(--k);
+  transition:height .45s cubic-bezier(.2,.8,.2,1);min-height:2px}
+.maalstaaf.ochtend .baan>i{background:var(--ochtend)}
+.maalstaaf.middag  .baan>i{background:var(--middag)}
+.maalstaaf.avond   .baan>i{background:var(--avond)}
+.maalstaaf.tussen  .baan>i{background:var(--tussen)}
+/* De streep loopt over de vulling heen: hij moet ook zichtbaar zijn als de
+   staaf er al voorbij is, want dat is juist het geval dat je wilt zien. */
+.maalstaaf .streep{position:absolute;left:0;right:0;height:0;z-index:1;
+  border-top:1.5px dashed var(--ink);opacity:.34}
+.maalstaaf .staafnaam{font-size:.68rem;color:var(--dim);text-align:center;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.maalstaaf .staafgetal{font-family:var(--mono);font-variant-numeric:tabular-nums;
+  font-size:.74rem;font-weight:600;color:var(--ink);line-height:1}
+
+/* ------------------------------------------------------------ zoekvak ---- */
+/* Op het voedingsscherm is zoeken de handeling. Hij stond als een gewoon
+   invulveld tussen twee andere kaarten; nu is hij het enige veld met gewicht. */
+.zoekvak{position:relative;margin-top:10px}
+.zoekvak>span{position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  font-size:1.05rem;line-height:1;pointer-events:none;opacity:.75}
+.zoekvak>input{padding:14px 14px 14px 42px;font-size:1rem;border-radius:15px}

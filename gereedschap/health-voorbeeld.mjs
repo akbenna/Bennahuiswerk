@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * HET STARTSCHERM VAN BENNAHEALTH BEKIJKEN
+ * DE SCHERMEN VAN BENNAHEALTH BEKIJKEN
  *
  * Het scherm is pas te beoordelen met gegevens erin. Zonder sessie toont de app
  * het aanmeldscherm, en met een lege sessie een scherm vol nullen — precies wat
@@ -8,9 +8,11 @@
  * databaseaanroepen en geeft er een verzonnen maar geloofwaardige reeks voor
  * terug: achtentwintig dagen wegen en loggen.
  *
- * Twee toestanden komen eruit als plaatje, want ze zijn allebei het bekijken
- * waard: de eerste dag (nog geen doel, het model kalibreert) en een dag na
- * enkele weken (band, ring, maaltijden).
+ * Er komen vier toestanden uit als plaatje, want ze zijn allemaal het bekijken
+ * waard: de eerste dag (nog geen doel, het model kalibreert), een dag na enkele
+ * weken (band, ring, maaltijden), diezelfde dag in het donker, en de
+ * onderhoudsfase — de enige toestand waarin het stoplicht bestaat. Van de dag
+ * na vier weken gaan alle zes de tabbladen mee.
  *
  *   node gereedschap/health-voorbeeld.mjs
  */
@@ -101,11 +103,68 @@ const PROFIEL = {
   onderhoud_basis_kg: null, instellingen: {},
 }
 
-function alles(aantalDagen) {
+/** Twee krachtsessies in de afgelopen week: het doel is drie, dus dit is de
+ *  toestand die de bolletjes moeten kunnen tonen — bijna, niet gehaald. */
+function training(aantalDagen) {
+  if (aantalDagen < 7) return []
+  const uit = []
+  const oefeningen = [
+    ['Squat', 'benen', 4, 6, 90], ['Roeien', 'rug', 4, 10, 60],
+    ['Bankdrukken', 'borst', 3, 8, 62.5], ['Schouderdrukken', 'schouders', 3, 10, 30],
+  ]
+  for (const [i, dag] of [2, 5].entries()) {
+    oefeningen.slice(i * 2, i * 2 + 2).forEach(([oefening, spiergroep, sets, reps, kg], j) => {
+      uit.push({
+        id: `t${dag}-${j}`, datum: iso(NU - dag * DAG), oefening, spiergroep,
+        sets, reps, gewicht_kg: kg, rpe: 8, notitie: null,
+      })
+    })
+  }
+  return uit
+}
+
+/** Een bloeduitslag van zes weken terug: het meeste binnen de referentie, twee
+ *  waarden erbuiten. Alles groen is net zo min een test als alles leeg. */
+const LABUITSLAG = [
+  ['hba1c', 'HbA1c', 41, 'mmol/mol', null, 42],
+  ['glucose_nuchter', 'Nuchter glucose', 6.4, 'mmol/L', null, 6.0],
+  ['tc', 'Totaal cholesterol', 5.1, 'mmol/L', null, null],
+  ['hdl', 'HDL-cholesterol', 1.2, 'mmol/L', 1.0, null],
+  ['ldl', 'LDL-cholesterol', 3.1, 'mmol/L', null, 2.6],
+  ['tg', 'Triglyceriden', 1.4, 'mmol/L', null, 1.7],
+  ['alat', 'ALAT', 38, 'U/L', null, 45],
+  ['tsh', 'TSH', 2.1, 'mE/L', 0.4, 4.0],
+  ['vitd', 'Vitamine D', 58, 'nmol/L', 50, null],
+  ['egfr', 'eGFR', 94, 'ml/min', 60, null],
+]
+
+function labs(aantalDagen) {
+  if (aantalDagen < 7) return []
+  const d = iso(NU - 44 * DAG)
+  return LABUITSLAG.map(([code, naam, waarde, eenheid, lo, hi], i) => ({
+    id: `l${i}`, datum: d, code, naam, waarde, eenheid,
+    ref_laag: lo, ref_hoog: hi, notitie: null,
+  }))
+}
+
+function metingen(aantalDagen) {
+  if (aantalDagen < 7) return []
+  const d = iso(NU - 9 * DAG)
+  return [
+    { id: 'm1', datum: d, soort: 'bloeddruk_sys', waarde: 128, eenheid: 'mmHg', notitie: null },
+    { id: 'm2', datum: d, soort: 'bloeddruk_dia', waarde: 82, eenheid: 'mmHg', notitie: null },
+    { id: 'm3', datum: d, soort: 'middelomtrek', waarde: 108, eenheid: 'cm', notitie: null },
+  ]
+}
+
+function alles(aantalDagen, fase = 'afvallen') {
   const { dagen, regels } = aantalDagen > 0 ? reeks(aantalDagen) : { dagen: [], regels: [] }
+  const profiel = fase === 'onderhoud'
+    ? { ...PROFIEL, fase: 'onderhoud', onderhoud_basis_kg: 115.0 }
+    : PROFIEL
   return {
-    profiel: PROFIEL, dagen, regels,
-    producten: [], recepten: [], metingen: [], labs: [], vragenlijsten: [], training: [],
+    profiel, dagen, regels, producten: [], recepten: [], vragenlijsten: [],
+    metingen: metingen(aantalDagen), labs: labs(aantalDagen), training: training(aantalDagen),
   }
 }
 
@@ -131,29 +190,48 @@ await ctx.addInitScript(`{
 /* Ook het donkere thema, want het heroverloop gaat als inline stijl naar
    binnen en luistert dus niet naar een media query. Dat moet je zién. */
 const gevallen = [
-  ['eerste-dag', 1, 'light'],
-  ['na-vier-weken', 28, 'light'],
-  ['donker', 28, 'dark'],
+  ['eerste-dag', 1, 'light', 'afvallen', ['Vandaag']],
+  ['na-vier-weken', 28, 'light', 'afvallen',
+   ['Vandaag', 'Model', 'Voeding', 'Beweging', 'Klinisch', 'Meer']],
+  ['donker', 28, 'dark', 'afvallen', ['Vandaag', 'Voeding', 'Meer']],
+  /* De onderhoudsfase is de enige toestand waarin het stoplicht bestaat. Zonder
+     dit geval blijft die kop ongezien tot iemand hem in productie tegenkomt. */
+  ['onderhoud', 28, 'light', 'onderhoud', ['Meer']],
 ]
 
-for (const [naam, dagen, thema] of gevallen) {
+/** Een tabblad openen en wachten tot de kop er echt staat. */
+async function naarTab(pagina, label) {
+  if (label !== 'Vandaag') {
+    await pagina.getByRole('tab', { name: label }).click()
+    await pagina.waitForSelector('.hero', { timeout: 5000 })
+  }
+  /* De ring tekent zichzelf in acht tienden van een seconde, de staven in bijna
+     een halve. Een screenshot daarvóór laat een halve ring zien en dat is geen
+     ijkpunt. */
+  await pagina.waitForTimeout(1100)
+}
+
+for (const [naam, dagen, thema, fase, tabs] of gevallen) {
   const pagina = await ctx.newPage()
   await pagina.emulateMedia({ colorScheme: thema })
   await pagina.route('**/rest/v1/rpc/**', async (route) => {
     const fn = route.request().url().split('/').pop()
-    const lijf = fn === 'kal_ophalen' ? alles(dagen) : {}
+    const lijf = fn === 'kal_ophalen' ? alles(dagen, fase) : {}
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(lijf) })
   })
   await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
   await pagina.waitForSelector('.hero', { timeout: 5000 })
-  /* De ring tekent zichzelf in acht tienden van een seconde. Een screenshot
-     daarvóór laat een halve ring zien en dat is geen ijkpunt. */
-  await pagina.waitForTimeout(1100)
-  await pagina.screenshot({ path: `gereedschap/health-${naam}.png` })
-  const kop = await pagina.locator('.hero h2').textContent()
-  const ring = await pagina.locator('.hero .getal').first().textContent()
-  const vakken = await pagina.locator('.maal').count()
-  console.log(`${naam.padEnd(16)} kop=${JSON.stringify(kop)} ring=${ring} maaltijdvakken=${vakken}`)
+
+  for (const tab of tabs) {
+    await naarTab(pagina, tab)
+    const stam = tab === 'Vandaag' ? naam : `${naam}-${tab.toLowerCase()}`
+    await pagina.screenshot({ path: `gereedschap/health-${stam}.png` })
+    const kop = await pagina.locator('.hero h2').textContent()
+    /* Elk scherm hoort een kop met een oordeel te hebben. Een lege kop is geen
+       stijlkwestie maar een scherm dat zijn eigen vraag niet beantwoordt. */
+    if (!kop || !kop.trim()) throw new Error(`${stam}: kop is leeg`)
+    console.log(`${stam.padEnd(26)} kop=${JSON.stringify(kop)}`)
+  }
   await pagina.close()
 }
 

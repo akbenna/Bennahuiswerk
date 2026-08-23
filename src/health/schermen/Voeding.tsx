@@ -5,9 +5,16 @@
  * hier goed: de gerechten hadden geen knop, dus je kon een tajine wél vinden en
  * niet loggen; en `kal_zoeken` gaf je eigen producten altijd al terug, maar
  * hitsHTML had er geen tak voor, dus ze waren onvindbaar in het zoekveld.
+ *
+ * En één ding dat pas bij het herontwerp opviel: dit scherm opende met een leeg
+ * invulveld. Het antwoord op de vraag die het scherm stelt — is mijn eiwit over
+ * de dag verdeeld — stond onderaan, onder twee kaarten door. Dat staat nu
+ * bovenaan, en het zoeken eronder als de handeling die het is.
  */
 import { useEffect, useRef, useState } from 'react'
-import { Balk, Chip, Kaart, Knop, Kop, Rij, Spin, Tussen, Uitleg } from '../onderdelen/basis'
+import { Chip, Kaart, Knop, Kop, Rij, Spin, Uitleg } from '../onderdelen/basis'
+import { Doelring, Maalstaven, Schermkop } from '../hero'
+import type { Maalstaaf } from '../hero'
 import { dec, dz } from '@/gedeeld/getal'
 import { roep } from '@/gedeeld/db/rpc'
 import type { Zoekuitslag } from '@/gedeeld/db/rpc'
@@ -28,13 +35,71 @@ export interface VoedingEigenschappen {
 }
 
 export function Voeding(p: VoedingEigenschappen) {
+  const v = verdeling(p.a, p.regelsVandaag)
+
   return (
     <>
+      <Schermkop toon={v.toon} bovenschrift="Eiwit vandaag" titel={v.titel}
+                 rechts={
+                   <span className={'vlaggetje ' + (v.toon === 'goed' ? 'goed'
+                     : v.toon === 'rust' ? 'rust' : 'let')}>
+                     {dec(v.totaal, 0)} van {dz(p.a.eiwitDoel)} g
+                   </span>
+                 }>
+        <div className="heroring">
+          <Doelring waarde={v.totaal} doel={p.a.eiwitDoel} maat={112}
+                    kind={
+                      <>
+                        <div className="getal" style={{ fontSize: '1.5rem' }}>
+                          {dec(v.totaal, 0)}
+                        </div>
+                        <div className="mini">van {dz(p.a.eiwitDoel)} g</div>
+                      </>
+                    } />
+          <div className="herocijfers">
+            {v.benoemd > 0 ? (
+              <>
+                <Maalstaven staven={v.staven} doel={v.doelPerMaaltijd} />
+                <p className="mini" style={{ marginTop: 9 }}>
+                  De stippellijn ligt op {v.doelPerMaaltijd} g — je dagdoel gedeeld door drie.
+                </p>
+              </>
+            ) : v.totaal > 0 ? (
+              <p className="klein">
+                Er is {dec(v.totaal, 1)} g eiwit gelogd, maar zonder maaltijdmoment. Dat hoort bij
+                dagtotalen uit een import: de verdeling over de dag is niet bekend, en dat is iets
+                anders dan drie maaltijden op nul.
+              </p>
+            ) : (
+              <p className="klein">
+                Nog niets gelogd vandaag. Zoek hieronder een product of gerecht, of zeg onder
+                <em> Vandaag</em> in gewone taal wat je at.
+              </p>
+            )}
+          </div>
+        </div>
+      </Schermkop>
+
       <Zoeken token={p.token} opPortie={p.opPortie} />
       <EigenProducten producten={p.producten} bewaar={p.bewaarProduct} wis={p.wisProduct} />
-      <Kaart>
-        <Kop>Eiwitverdeling over de dag</Kop>
-        <EiwitVerdeling a={p.a} regels={p.regelsVandaag} />
+      <Kaart plat>
+        <Kop>Waarom de verdeling telt</Kop>
+        <p className="mini" style={{ marginTop: 4 }}>
+          Streef naar drie tot vier maaltijden van {v.doelPerMaaltijd} tot{' '}
+          {Math.round(v.doelPerMaaltijd * 1.2)} g eiwit met minstens drie uur ertussen. Gelijkmatige
+          verdeling gaf in Mamerow 2014 een 25 procent hogere spiereiwitsynthese dan een scheve
+          verdeling — al ging dat om acht deelnemers van gemiddeld 37 jaar, dus behandel het als
+          richting, niet als wet. Het ontbijt is de maaltijd waar de scheve verdeling vrijwel altijd
+          ontstaat.
+        </p>
+        <Uitleg id="eiwitverdeling" label="en waarom er drie staven staan en geen vier">
+          <p>
+            Tussendoortjes krijgen dezelfde streep als de maaltijden, maar tellen niet mee in het
+            oordeel bovenaan. Een dag met vier volwaardige eetmomenten is prima; een dag waarop het
+            eiwit vooral uit tussendoortjes komt is dat meestal niet, en dat verschil zou verdwijnen
+            als alles even zwaar meetelde.
+          </p>
+        </Uitleg>
       </Kaart>
     </>
   )
@@ -85,8 +150,11 @@ function Zoeken({ token, opPortie }: { token: string; opPortie: (o: Onderwerp) =
   return (
     <Kaart>
       <Kop>Zoeken in NEVO en de gerechtenbibliotheek</Kop>
-      <input style={{ marginTop: 8 }} placeholder="couscous, olijfolie, tajine…" autoComplete="off"
-             value={term} onChange={(e) => zetTerm(e.target.value)} />
+      <div className="zoekvak">
+        <span aria-hidden="true">🔎</span>
+        <input placeholder="couscous, olijfolie, tajine…" autoComplete="off"
+               value={term} onChange={(e) => zetTerm(e.target.value)} />
+      </div>
       <p className="mini" style={{ marginTop: 8 }}>
         2.328 producten uit het Nederlands Voedingsstoffenbestand, plus de gevalideerde gerechten van
         ProVita. Zoeken gaat terwijl je typt.
@@ -231,56 +299,57 @@ function EigenProducten(
   )
 }
 
-const MAALTIJDEN: Moment[] = ['ontbijt', 'lunch', 'diner', 'tussendoor', 'onbekend']
+/* De vier eetmomenten in de volgorde van de dag, met de kleur die ze onder
+   Vandaag ook al hadden. 'onbekend' staat er los van: dat is geen moment maar
+   het ontbreken ervan. */
+const MOMENTEN = [
+  { m: 'ontbijt', naam: 'Ontbijt', kort: 'Ontbijt', toon: 'ochtend' },
+  { m: 'lunch', naam: 'Lunch', kort: 'Lunch', toon: 'middag' },
+  { m: 'diner', naam: 'Diner', kort: 'Diner', toon: 'avond' },
+  { m: 'tussendoor', naam: 'Tussendoor', kort: 'Tussen', toon: 'tussen' },
+] as const satisfies ReadonlyArray<
+  { m: Moment; naam: string; kort: string; toon: Maalstaaf['toon'] }
+>
 
-function EiwitVerdeling({ a, regels }: { a: Analyse; regels: Regel[] }) {
+interface Verdeling {
+  totaal: number
+  benoemd: number
+  staven: Maalstaaf[]
+  doelPerMaaltijd: number
+  opPeil: number
+  toon: 'rust' | 'goed' | 'let'
+  titel: string
+}
+
+/**
+ * Wat er vandaag aan eiwit binnenkwam, uitgesplitst naar eetmoment.
+ *
+ * Het oordeel kijkt naar de drie hoofdmaaltijden en niet naar het dagtotaal:
+ * 130 g in één maaltijd is niet hetzelfde als 130 g over drie, en een ring die
+ * alleen het totaal toont zou dat verschil wegpoetsen.
+ */
+function verdeling(a: Analyse, regels: Regel[]): Verdeling {
   const per: Record<Moment, number> = {
     ontbijt: 0, lunch: 0, diner: 0, tussendoor: 0, onbekend: 0,
   }
   for (const r of regels) per[r.moment ?? 'onbekend'] += Number(r.eiwit_g) || 0
-  const totaal = MAALTIJDEN.reduce((s, m) => s + per[m], 0)
+
+  const totaal = (Object.keys(per) as Moment[]).reduce((s, m) => s + per[m], 0)
   const benoemd = totaal - per.onbekend
+  const doelPerMaaltijd = Math.max(1, Math.round(a.eiwitDoel / 3))
+  const staven: Maalstaaf[] = MOMENTEN.map((x) => ({
+    naam: x.naam, kort: x.kort, toon: x.toon, gram: per[x.m],
+  }))
+  /* Alleen de drie hoofdmaaltijden tellen mee; zie de uitleg op het scherm. */
+  const opPeil = MOMENTEN.slice(0, 3).filter((x) => per[x.m] >= doelPerMaaltijd).length
 
-  /* Dagtotalen uit een import hebben geen maaltijdmoment. Drie balken op nul
-     tonen terwijl er wel eiwit gelogd is, is geen leeg scherm maar een onjuist
-     scherm — het antwoord is onbekend, niet nul. */
-  if (totaal > 0 && benoemd === 0) {
-    return (
-      <p className="mini" style={{ marginTop: 8 }}>
-        Er is vandaag {dec(totaal, 1)} g eiwit gelogd, maar zonder maaltijdmoment — dat hoort bij
-        dagtotalen uit een import. De verdeling over de dag is dus niet bekend. Zodra je een maaltijd
-        via <em>Zeggen wat je at</em> logt, komt hij hier vanzelf op de goede plek te staan.
-      </p>
-    )
-  }
-  if (totaal === 0) return <p className="mini" style={{ marginTop: 8 }}>Nog niets gelogd vandaag.</p>
+  const titel = totaal === 0 ? 'Nog niets gelogd vandaag'
+    : benoemd === 0 ? 'Wel eiwit, geen eetmomenten'
+    : opPeil >= 3 ? 'Goed verdeeld over de dag'
+    : opPeil === 0 ? 'Nog geen maaltijd op peil'
+    : `${opPeil} van de 3 maaltijden op peil`
+  const toon: Verdeling['toon'] = totaal === 0 || benoemd === 0 ? 'rust'
+    : opPeil >= 3 ? 'goed' : 'let'
 
-  const doelPerMaaltijd = Math.round(a.eiwitDoel / 3)
-  const mx = Math.max(doelPerMaaltijd * 1.4, ...MAALTIJDEN.map((m) => per[m]))
-  const tonen = MAALTIJDEN.filter(
-    (m) => per[m] > 0 || m === 'ontbijt' || m === 'lunch' || m === 'diner')
-
-  return (
-    <div style={{ marginTop: 8 }}>
-      {tonen.map((m) => (
-        <div key={m} style={{ marginBottom: 7 }}>
-          <Tussen>
-            <span className="mini" style={{ textTransform: 'capitalize' }}>{m}</span>
-            <span className="cijfer mini">{dec(per[m], 1)} g</span>
-          </Tussen>
-          <Balk deel={(per[m] / mx) * 100} toon={per[m] >= doelPerMaaltijd ? 'goed' : undefined} />
-        </div>
-      ))}
-      <Uitleg id="eiwitverdeling" label="waarom de verdeling telt">
-        <p>
-          Streef naar drie tot vier maaltijden van {doelPerMaaltijd} tot{' '}
-          {Math.round((a.eiwitDoel / 3) * 1.2)} g eiwit met minstens drie uur ertussen. Gelijkmatige
-          verdeling gaf in Mamerow 2014 een 25 procent hogere spiereiwitsynthese dan een scheve
-          verdeling — al ging dat om acht deelnemers van gemiddeld 37 jaar, dus behandel het als
-          richting, niet als wet. Het ontbijt is de maaltijd waar de scheve verdeling vrijwel altijd
-          ontstaat.
-        </p>
-      </Uitleg>
-    </div>
-  )
+  return { totaal, benoemd, staven, doelPerMaaltijd, opPeil, toon, titel }
 }

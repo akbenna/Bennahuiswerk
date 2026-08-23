@@ -1,8 +1,14 @@
 /**
  * MODEL — waar het geschatte verbruik vandaan komt, en hoe zeker het is.
- * Overgezet uit vwModel() en meetgaten().
+ *
+ * De zekerheid stond hier als drie woorden in kleine letters rechtsboven, en
+ * dat is het verkeerde formaat voor het belangrijkste wat dit scherm te melden
+ * heeft. Een getal met lage zekerheid is een ánder getal dan hetzelfde getal
+ * met hoge zekerheid, en dat verschil hoort te zien te zijn voordat je het
+ * cijfer leest. Vandaar de trapmeter bovenaan.
  */
 import { Kaart, Knop, Kop, Rij, Tussen, Uitleg } from '../onderdelen/basis'
+import { Lijntje, Schermkop, Trapmeter } from '../hero'
 import { GewichtFiguur, InnameFiguur, IntervalFiguur } from '../figuren'
 import { dec, dz } from '@/gedeeld/getal'
 import { kortNL, plusDagen, vandaag } from '@/gedeeld/datum'
@@ -20,27 +26,81 @@ export function Model(
     profiel: Profiel; labs: Lab[]
   },
 ) {
+  const trap = { geen: 0, laag: 1, middel: 2, hoog: 3 }[a.zekerheid]
   const kleur = a.zekerheid === 'hoog' ? 'var(--goed)'
               : a.zekerheid === 'laag' ? 'var(--let)' : 'var(--k)'
   const trendNu = [...reeks].reverse().find((x) => x.ema != null)
 
+  /* De laatste acht weken gewicht: de ruwe wegingen licht, de gladde lijn
+     erover. Wie alleen de gladde lijn ziet denkt dat wegen nauwkeuriger is dan
+     het is. */
+  const laatste = reeks.slice(-56)
+
   return (
     <>
+      <Schermkop
+        toon={a.zekerheid === 'hoog' ? 'goed' : a.zekerheid === 'geen' ? 'rust' : 'let'}
+        bovenschrift="Het model"
+        titel={a.tdee != null ? 'Wat je lichaam verbruikt' : 'Nog niet te berekenen'}
+        rechts={
+          <span className={'vlaggetje ' + (a.zekerheid === 'hoog' ? 'goed'
+            : a.zekerheid === 'geen' ? 'rust' : 'let')}>
+            zekerheid {ZEKERHEID_LABEL[a.zekerheid]}
+          </span>
+        }
+      >
+        {a.tdee != null && a.laag != null && a.hoog != null ? (
+          <>
+            <div className="kerngetallen">
+              <div>
+                <div className="mini">Verbruik per dag</div>
+                <div>
+                  <span className="getal">{dz(Math.round(a.laag))}–{dz(Math.round(a.hoog))}</span>
+                  <span className="klein"> kcal</span>
+                </div>
+              </div>
+              <div>
+                <div className="mini">Bijbehorende inname</div>
+                <div><span className="getal">{dz(a.doel)}</span><span className="klein"> kcal</span></div>
+              </div>
+            </div>
+            <p className="mini" style={{ marginTop: 8 }}>
+              Een band en geen getal. Hoe smaller hij wordt, hoe meer het model van je weet.
+            </p>
+          </>
+        ) : (
+          <p style={{ fontSize: '.9rem', marginTop: 10 }}>
+            Er zijn zeven wegingen én zeven volledige registratiedagen nodig. Je hebt er{' '}
+            <b>{a.wPunten.length}</b> en <b>{a.volledig}</b>.
+          </p>
+        )}
+
+        <div style={{ marginTop: 14 }}>
+          <Trapmeter trede={trap} van={3} kleur={kleur}
+                     etiketten={['laag', 'middel', 'hoog']} />
+        </div>
+
+        {laatste.length > 2 && (
+          <div style={{ marginTop: 14 }}>
+            <div className="mini">Gewicht, laatste acht weken</div>
+            <Lijntje ruw={laatste.map((x) => x.w)}
+                     glad={laatste.map((x) => x.ema)} />
+          </div>
+        )}
+      </Schermkop>
+
       <Kaart>
         <Tussen>
-          <Kop>Geschat dagelijks energieverbruik</Kop>
+          <Kop>Waar de band vandaan komt</Kop>
           <span className="eyebrow" style={{ color: kleur }}>
             zekerheid {ZEKERHEID_LABEL[a.zekerheid]}
           </span>
         </Tussen>
         {a.tdee != null && a.laag != null && a.hoog != null ? (
           <>
-            <Rij style={{ alignItems: 'baseline', marginTop: 4 }}>
-              <span className="getal" style={{ fontSize: '2.3rem' }}>
-                {dz(Math.round(a.laag))}–{dz(Math.round(a.hoog))}
-              </span>
-              <span className="klein">kcal per dag</span>
-            </Rij>
+            {/* De band staat al in de kop. Hij hier nóg een keer groot herhalen
+                maakt hem niet waarder; wat deze kaart toevoegt is waar hij
+                vandaan komt — de figuur en de afleiding eronder. */}
             <IntervalFiguur a={a} />
             <p style={{ fontSize: '.88rem', marginTop: 10 }}>
               Afgeleid uit {a.volledig} bruikbare registratiedagen — gemiddeld{' '}
