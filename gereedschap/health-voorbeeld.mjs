@@ -315,8 +315,15 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
   /* Het endpoint in het vel moet het echte endpoint zijn. Een instructie met
      een verkeerde URL faalt pas op de telefoon van iemand anders. */
   const url = await pagina.locator('#kop-Endpoint').textContent()
-  if (!url?.endsWith('/rest/v1/rpc/kal_beweging_ontvangen')) {
+  if (!url?.endsWith('/rest/v1/rpc/kal_beweging_dag')) {
     throw new Error(`koppelvel: verkeerd endpoint ${url}`)
+  }
+  /* De veldnamen in de instructie moeten de parameternamen van de functie zijn.
+     Een typefout hierin faalt pas op de telefoon van iemand anders, met een
+     melding die over de schemacache gaat en niet over het veld. */
+  const velden = await pagina.locator('.veldtabel code').allTextContents()
+  for (const v of ['p_sleutel', 'p_datum', 'p_stappen', 'p_slaap_uur']) {
+    if (!velden.includes(v)) throw new Error(`koppelvel: ${v} ontbreekt in de veldtabel`)
   }
   console.log(`koppelen                   endpoint=${JSON.stringify(url)}`)
   await pagina.close()

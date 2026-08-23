@@ -28,7 +28,12 @@ import { roep } from '@/gedeeld/db/rpc'
 import type { Koppeling } from '@/gedeeld/db/rpc'
 import { kortNL } from '@/gedeeld/datum'
 
-const ENDPOINT = DATABASE_URL + '/rest/v1/rpc/kal_beweging_ontvangen'
+/* Twee ingangen naar dezelfde functie. De platte is voor de opdracht op de
+   telefoon: de Opdrachten-app kan een plat json-formulier invullen zonder één
+   regel tekst, terwijl een lijst van objecten met de hand in een tekstveld moet.
+   De lijst-ingang blijft voor een inhaalslag van meerdere dagen tegelijk. */
+const ENDPOINT = DATABASE_URL + '/rest/v1/rpc/kal_beweging_dag'
+const ENDPOINT_LIJST = DATABASE_URL + '/rest/v1/rpc/kal_beweging_ontvangen'
 
 /**
  * De naam van een menu-onderdeel, in beide talen.
@@ -44,22 +49,18 @@ function Menu({ nl, en }: { nl: string; en: string }) {
 }
 
 /**
- * Het lichaam dat de opdracht moet versturen, met de sleutel er al in.
+ * De velden die de opdracht meestuurt.
  *
- * De namen tussen accolades zijn de plekken waar in Opdrachten een variabele
- * komt. Ze staan er als tekst in zodat het lichaam te kopiëren is en je alleen
- * nog de vier variabelen hoeft te vervangen — dat is minder werk dan het zelf
- * uittypen, en er gaat minder mis.
+ * Plat, want zo kan de Opdrachten-app het formulier zelf invullen: je voegt per
+ * veld een regel toe en sleept er een variabele in. Zodra er een lijst in zit
+ * moet je hem als tekst bouwen, en dan gaat het over aanhalingstekens en komma's
+ * in plaats van over je stappen.
  */
 function voorbeeldLichaam(sleutel: string): string {
   return JSON.stringify({
     p_sleutel: sleutel,
-    p_dagen: [{
-      datum: '{Opgemaakte datum}',
-      stappen: '{Stappen}',
-      actieve_energie_kcal: '{Energie}',
-      slaap_min: '{Slaapminuten}',
-    }],
+    p_datum: '{Opgemaakte datum}',
+    p_stappen: '{Som van de stappen}',
   }, null, 2)
 }
 
@@ -181,55 +182,37 @@ export function KoppelVenster(
         <p className="klein" style={{ marginTop: 4 }}>
           Op de iPhone, in <Menu nl="Opdrachten" en="Shortcuts" /> →{' '}
           <Menu nl="Automatisering" en="Automation" /> → <Menu nl="Tijdstip" en="Time of Day" />,
-          bijvoorbeeld elke dag om 07:00. Eén actie is genoeg:{' '}
-          <Menu nl="Verkrijg inhoud van URL" en="Get Contents of URL" />.
+          en zet <Menu nl="Vraag voor uitvoering" en="Ask Before Running" /> uit.
         </p>
         <p className="mini" style={{ marginTop: 6 }}>
           Tussen haakjes staat hoe het heet als je toestel op Engels staat.
         </p>
 
-        {/* Eerst de acties, dan de velden. Andersom stond de beschrijving van
-            één actie vóór de lijst waar hij in hoort, en dan lees je het twee
-            keer. */}
-        <p className="klein" style={{ marginTop: 10 }}>
-          <b>De acties, in deze volgorde:</b>
+        <p className="klein" style={{ marginTop: 12 }}>
+          <b>Zet hem op 23:45 en niet op 's ochtends.</b> Dan is de dag af, en hoeft de opdracht
+          alleen maar <em>vandaag</em> uit te lezen — dat is één keuze in een menu, terwijl
+          &ldquo;gisteren&rdquo; je door twee datumberekeningen jaagt.
+        </p>
+
+        <p className="klein" style={{ marginTop: 12 }}>
+          <b>Vijf acties, in deze volgorde:</b>
         </p>
         <ol className="stappen">
           <li>
-            <Menu nl="Huidige datum" en="Current Date" />
-          </li>
-          <li>
-            <Menu nl="Pas datum aan" en="Adjust Date" /> — <b>min 1 dag</b>.
-            <p className="mini" style={{ marginTop: 3 }}>
-              Om zeven uur 's ochtends is vandaag nog bijna leeg. Je stuurt dus gisteren, en die dag
-              is compleet.
-            </p>
-          </li>
-          <li>
-            <Menu nl="Formatteer datum" en="Format Date" /> — aangepast,{' '}
-            <code>yyyy-MM-dd</code>
-          </li>
-          <li>
             <Menu nl="Zoek gezondheidsmonsters" en="Find Health Samples" /> — type{' '}
-            <b>Stappen</b>, gefilterd op de datum uit stap 3
+            <b>Stappen</b>, filter <Menu nl="Startdatum is vandaag" en="Start Date is today" />
           </li>
           <li>
             <Menu nl="Bereken statistiek" en="Calculate Statistics" /> — <b>Som</b> over de
             waarden. Dit is je stappentotaal.
           </li>
+          <li><Menu nl="Huidige datum" en="Current Date" /></li>
           <li>
-            Stap 4 en 5 nog eens voor <b>Actieve energie</b>, en nog eens voor{' '}
-            <b>Slaapanalyse</b> <span className="anderstalig">(Sleep Analysis)</span> — bij slaap som
-            je de duur en deel je door 60, want dit veld gaat in minuten.
-          </li>
-          <li>
-            <Menu nl="Tekst" en="Text" /> — hier plak je het lichaam van hieronder in en sleep je de
-            uitkomsten van stap 3, 5 en 6 op de juiste plek.
+            <Menu nl="Formatteer datum" en="Format Date" /> — aangepast, precies{' '}
+            <code>yyyy-MM-dd</code>
           </li>
           <li>
             <Menu nl="Verkrijg inhoud van URL" en="Get Contents of URL" /> — met de velden hieronder.
-            Zet <b>Verzoektekst</b> op <Menu nl="Bestand" en="File" /> en kies de tekst uit stap 7;
-            dan hoef je de json niet in het formulier na te bouwen.
           </li>
         </ol>
 
@@ -251,26 +234,65 @@ export function KoppelVenster(
             </p>
           </li>
           <li>
-            <b>Verzoektekst</b> <span className="anderstalig">(Request Body)</span> — JSON, in deze
-            vorm. De getallen komen uit{' '}
-            <Menu nl="Zoek gezondheidsmonsters" en="Find Health Samples" />-acties; de datum uit{' '}
-            <Menu nl="Huidige datum" en="Current Date" />, opgemaakt als <code>jjjj-MM-dd</code>{' '}
-            <span className="anderstalig">(yyyy-MM-dd)</span>.
+            <b>Verzoektekst</b> <span className="anderstalig">(Request Body)</span> —{' '}
+            <b>JSON</b>, en dan drie regels toevoegen:
+            <div className="veldtabel">
+              <div><code>p_sleutel</code><span>Tekst</span><span>je sleutel hierboven</span></div>
+              <div><code>p_datum</code><span>Tekst</span><span>de uitkomst van actie 4</span></div>
+              <div><code>p_stappen</code><span>Getal</span><span>de uitkomst van actie 2</span></div>
+            </div>
+            <p className="mini" style={{ marginTop: 6 }}>
+              Geen tekstveld, geen aanhalingstekens, geen komma's: je voegt per regel een sleutel toe
+              en sleept de variabele in de waarde. Zo ziet het geheel eruit:
+            </p>
             <Kopieer waarde={voorbeeldLichaam(nieuw ?? 'kal_…jouw sleutel…')} label="Verzoektekst"
                      meerregelig />
           </li>
         </ol>
-        <p className="mini" style={{ marginTop: 8 }}>
-          Velden die je weglaat blijven staan zoals ze stonden. Je hoeft dus niet alles mee te sturen:
-          begin desnoods met alleen de datum en de stappen — dat zijn stap 1 tot en met 5 — en breid
-          uit als dat werkt. Kommagetallen zijn geen probleem, die rondt de server zelf af.
+
+        <p className="klein" style={{ marginTop: 12 }}>
+          <b>Werkt het? Breid dan uit.</b> Herhaal actie 1 en 2 voor{' '}
+          <Menu nl="Actieve energie" en="Active Energy" /> en voor{' '}
+          <Menu nl="Slaapanalyse" en="Sleep Analysis" />, en voeg die als extra regels toe:
+        </p>
+        <div className="veldtabel">
+          <div><code>p_actieve_energie_kcal</code><span>Getal</span><span>kcal</span></div>
+          <div><code>p_slaap_uur</code><span>Getal</span><span>of <code>p_slaap_min</code>, of{' '}
+            <code>p_slaap_sec</code></span></div>
+          <div><code>p_fiets_min</code><span>Getal</span><span>minuten</span></div>
+        </div>
+        <p className="mini" style={{ marginTop: 6 }}>
+          Voor slaap kies je het veld dat past bij wat je opdracht teruggeeft — uren, minuten of
+          seconden. Zit je ernaast, dan komt er iets van dertig uur slaap uit en dat wordt geweigerd
+          in plaats van weggeschreven. In het antwoord staat dan{' '}
+          <code>slaap_genegeerd: true</code>.
+        </p>
+
+        <p className="mini" style={{ marginTop: 10 }}>
+          Er komt iets terug in de vorm{' '}
+          <code>{'{"dagen":1,"datum":"2026-08-22","gewicht_behouden":0,"overgeslagen":0}'}</code>.
+          Kijk naar <code>datum</code>: dat is de dag waar het naartoe ging. Staat er{' '}
+          <code>dagen: 0</code>, dan kwam je datum niet door — meestal omdat actie 4 er{' '}
+          <code>22-08-2026</code> van maakt in plaats van <code>2026-08-22</code>.
         </p>
         <p className="mini" style={{ marginTop: 6 }}>
-          Er komt iets terug in de vorm{' '}
-          <code>{'{"dagen":1,"gewicht_behouden":0,"overgeslagen":0}'}</code>. Staat er{' '}
-          <code>dagen: 0</code>, dan is je datum niet aangekomen. Kijk dan of de opgemaakte datum
-          werkelijk <code>2026-08-22</code> is en niet <code>22-08-2026</code>.
+          Laat je <code>p_datum</code> helemaal weg, dan wordt het gisteren. Dat is bedoeld voor wie
+          de opdracht 's ochtends laat vuren; bij een run om 23:45 hoort de datum er wél in.
         </p>
+
+        <Uitleg id="inhaalslag" label="meerdere dagen tegelijk insturen">
+          <p>
+            Voor een inhaalslag is er een tweede ingang die een hele lijst aanneemt. Die vraagt wel
+            een tekstveld met json erin, en is dus omslachtiger — maar hij doet er vierhonderd dagen
+            in één keer:
+          </p>
+          <Kopieer waarde={ENDPOINT_LIJST} label="Lijst-endpoint" />
+          <p style={{ marginTop: 8 }}>
+            Het lichaam is dan <code>{'{"p_sleutel": "…", "p_dagen": [{"datum": "2026-08-22",'}</code>
+            <code>{' "stappen": 8421}, …]}'}</code>. Dezelfde velden, dezelfde regels; alleen de vorm
+            verschilt.
+          </p>
+        </Uitleg>
       </Kaart>
 
       {/* ------------------------------------------------------- Garmin ----- */}
