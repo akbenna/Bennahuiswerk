@@ -72,6 +72,30 @@ Deno.serve(async (req) => {
       return json({ error: "Geen toegang" }, 401);
     }
 
+    /* Een proefstand voor de modellaag. Zonder dit is de eerste echte toets pas
+       op de dag dat er toevallig niets meer in je geschiedenis past — dat kan
+       weken duren, en dan blijkt de sleutel verkeerd te staan. Deze weg stuurt
+       niets, schrijft niets en zegt per aanbieder wat er gebeurde. */
+    if (body.proef_model === true) {
+      const stand = { kcal_over: 600, eiwit_over: 45, eis_per_100: 7.5 };
+      const v = vraag(stand);
+      const [open, claudeUit] = [await viaOpenAI(db, v), await viaClaude(db, v)];
+      return json({
+        vraag: v,
+        openai: {
+          sleutel_aanwezig: !!Deno.env.get("OPENAI_API_KEY"),
+          model: await modelNaam(db, "model_coach_openai"),
+          antwoord: open,
+        },
+        claude: {
+          sleutel_aanwezig: !!Deno.env.get("ANTHROPIC_API_KEY"),
+          model: (await modelNaam(db, "model_coach")) ?? (await modelNaam(db, "model_herkenning")),
+          antwoord: claudeUit,
+        },
+        wie_wint: open ? "openai" : claudeUit ? "claude" : "geen van beide",
+      });
+    }
+
     const sleutel = Deno.env.get("RESEND_API_KEY");
     if (!sleutel) return json({ error: "RESEND_API_KEY ontbreekt" }, 503);
 

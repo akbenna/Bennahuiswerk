@@ -152,6 +152,21 @@ De drempels staan in `kal_coach_bouwen` en in `meldenNu` in `src/health/coach.ts
 
 De modelnamen staan in `kal_config` en niet in de code, om dezelfde reden als bij `kal-ai`: namen verlopen. Staat er geen `model_coach_openai`, dan wordt OpenAI overgeslagen — er wordt geen naam geraden die niemand heeft nagekeken.
 
+**De proefstand.** Zonder die zou de eerste echte toets van de modellaag pas komen op de dag dat er toevallig niets meer in je geschiedenis past — dat kan weken duren, en dan blijkt de sleutel verkeerd te staan. Deze weg stuurt niets en schrijft niets, en zegt per aanbieder wat er gebeurde:
+
+```sql
+select net.http_post(
+  url := 'https://jnlvvdaisyerhxucxnuu.supabase.co/functions/v1/kal-prikkel',
+  headers := jsonb_build_object('Content-Type','application/json',
+    'Authorization','Bearer ' || (select decrypted_secret from vault.decrypted_secrets where name = 'service_role_key')),
+  body := jsonb_build_object('proef_model', true,
+    'geheim',(select waarde from kal_config where sleutel = 'prikkel_geheim')),
+  timeout_milliseconds := 45000);
+-- daarna: select content from net._http_response order by id desc limit 1;
+```
+
+Let op die `timeout_milliseconds`: `net.http_post` kapt standaard na vijf seconden af, en een modelaanroep duurt langer. Dat raakt de cron-taken niet — die gebruiken het antwoord niet en de edge function loopt gewoon door — maar het maakt een handmatige proef onbruikbaar zonder deze regel.
+
 **Eén ding om te onthouden bij het uitrollen.** Een nieuwe versie van een edge function komt terug met `verify_jwt = true`, ook als hij eerder open stond. De prikkel-cron stuurde alleen een `Content-Type` mee en kreeg daarmee `UNAUTHORIZED_NO_AUTH_HEADER` van de poort — vóór de functie zelf ook maar iets zag. Alle prikkel-taken sturen nu een `Authorization` met de service-role-sleutel uit de vault. Dat is per saldo beter: het endpoint stond open en het gedeelde geheim was het enige slot; nu zijn het er twee.
 
 ### De regels zijn vastgelegd
