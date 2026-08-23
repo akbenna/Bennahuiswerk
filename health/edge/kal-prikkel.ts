@@ -79,13 +79,15 @@ Deno.serve(async (req) => {
     if (body.proef_model === true) {
       const stand = { kcal_over: 600, eiwit_over: 45, eis_per_100: 7.5 };
       const v = vraag(stand);
-      const [open, claudeUit] = [await viaOpenAI(db, v), await viaClaude(db, v)];
+      const uitleg: Uitleg = {};
+      const [open, claudeUit] = [await viaOpenAI(db, v, uitleg), await viaClaude(db, v)];
       return json({
         vraag: v,
         openai: {
           sleutel_aanwezig: !!Deno.env.get("OPENAI_API_KEY"),
           model: await modelNaam(db, "model_coach_openai"),
           antwoord: open,
+          waarom_niet: open ? null : uitleg,
         },
         claude: {
           sleutel_aanwezig: !!Deno.env.get("ANTHROPIC_API_KEY"),
@@ -195,13 +197,23 @@ async function modelNaam(
   return naam ? naam : null;
 }
 
+/* De uitleg is er alleen voor de proefstand. In het echte pad wordt een fout
+   stil opgevangen en valt hij terug op Claude — dat is daar juist, want een
+   uitgebleven prikkel is erger dan een prikkel zonder idee. Maar bij het
+   instellen wil je weten wát er misging: een verkeerde modelnaam en een
+   verlopen sleutel geven allebei "geen antwoord", en dat zijn heel verschillende
+   dingen om op te lossen. */
+interface Uitleg { reden?: string; status?: number; antwoord?: string }
+
 async function viaOpenAI(
   db: ReturnType<typeof createClient>,
   v: string,
+  uitleg?: Uitleg,
 ): Promise<string | null> {
   const sleutel = Deno.env.get("OPENAI_API_KEY");
   const model = await modelNaam(db, "model_coach_openai");
-  if (!sleutel || !model) return null;
+  if (!sleutel) { if (uitleg) uitleg.reden = "geen OPENAI_API_KEY in de secrets"; return null; }
+  if (!model) { if (uitleg) uitleg.reden = "geen model_coach_openai in kal_config"; return null; }
   try {
     /* Chat Completions en niet de nieuwere Responses-vorm: deze weg werkt op
        elke sleutel en elk model, en er is hier geen manier om een aanroep te
@@ -218,10 +230,20 @@ async function viaOpenAI(
         max_completion_tokens: 300,
       }),
     });
-    if (!r.ok) return null;
+    if (!r.ok) {
+      if (uitleg) {
+        uitleg.status = r.status;
+        uitleg.antwoord = (await r.text()).slice(0, 300);
+        uitleg.reden = "OpenAI weigerde het verzoek";
+      }
+      return null;
+    }
     const d = await r.json();
-    return schoon(d.choices?.[0]?.message?.content);
-  } catch {
+    const tekst = schoon(d.choices?.[0]?.message?.content);
+    if (!tekst && uitleg) uitleg.reden = "OpenAI antwoordde, maar zonder tekst";
+    return tekst;
+  } catch (e) {
+    if (uitleg) uitleg.reden = "netwerkfout: " + (e instanceof Error ? e.message : String(e));
     return null;
   }
 }
