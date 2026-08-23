@@ -96,6 +96,7 @@ declare
   v_genegeerd boolean := false;
   v_leeg      text[]  := '{}';
   v_nul       text[]  := '{}';
+  v_peiling   boolean := false;
   v_polsuit   text    := 'niet meegestuurd';
   v_id        uuid;
   v_dag       jsonb;
@@ -154,15 +155,24 @@ begin
 
   v_uit := kal_beweging_ontvangen(p_sleutel, jsonb_build_array(v_dag));
 
+  /* Wie dit stuurde. Eén keer opzoeken: zowel de peiling als de rustpols heeft
+     het nodig, en twee keer dezelfde hash uitrekenen is twee plekken waar het
+     uit elkaar kan gaan lopen. */
+  select k.gebruiker_id into v_id from kal_koppelingen k
+   where k.sleutel_hash = encode(digest(p_sleutel, 'sha256'), 'hex') and k.actief;
+
+  /* Een tussenstand van vandaag blijft staan mét het tijdstip erbij. Waarom dat
+     nodig is staat in 05: uit dagtotalen valt niet af te lezen of 3.400 stappen
+     om drie uur voor jou veel of weinig is, en zonder dat weet de app niet
+     wanneer het zin heeft om iets te zeggen. */
+  v_peiling := kal_peiling_vastleggen(v_id, v_datum, v_stappen, v_energie);
+
   /* ---- de rustpols, apart, want die woont in kal_metingen ---------------- */
   if v_pols is not null then
     /* Een pols buiten 25 en 150 is geen rustpols maar een verkeerd veld. */
     if v_pols < 25 or v_pols > 150 then
       v_polsuit := 'onmogelijk, genegeerd';
     else
-      select k.gebruiker_id into v_id from kal_koppelingen k
-       where k.sleutel_hash = encode(digest(p_sleutel, 'sha256'), 'hex') and k.actief;
-
       if exists (select 1 from kal_metingen m
                   where m.gebruiker_id = v_id and m.datum = v_datum
                     and m.soort = 'hartslag_rust'
@@ -186,7 +196,8 @@ begin
       || jsonb_build_object('slaap_genegeerd', v_genegeerd)
       || jsonb_build_object('hartslag_rust', v_polsuit)
       || jsonb_build_object('niet_gelezen', to_jsonb(v_leeg))
-      || jsonb_build_object('nul_overgeslagen', to_jsonb(v_nul));
+      || jsonb_build_object('nul_overgeslagen', to_jsonb(v_nul))
+      || jsonb_build_object('peiling', v_peiling);
 end $$;
 
 revoke all on function public.kal_getal(text) from public;

@@ -128,9 +128,21 @@ Drie dingen daaraan komen niet uit een ontwerp maar uit het opbouwen op een echt
 
 Het antwoord vertelt per stuk wat er gebeurd is, ook als er niets gebeurde: `{"datum": …, "dagen": 1, "hartslag_rust": "opgeslagen" | "die van jou blijft staan" | "onmogelijk, genegeerd" | "niet meegestuurd", "niet_gelezen": [], "nul_overgeslagen": []}`.
 
+### Peilingen: waarom de opdracht vaker mag vuren
+
+Eten voer je zelf in, dus dat staat er meteen. Beweging kwam één keer per etmaal binnen, om 23:45, als de dag al voorbij was. Over iets wat je pas achteraf weet valt niets te adviseren.
+
+De helft van de oplossing zit op de telefoon: laat de opdracht **vaker vuren**. Vier of vijf tijdstip-automatiseringen die dezelfde opdracht draaien, plus eventueel één op *Wanneer ik een training beëindig*. Dat werkt zonder enige wijziging, want `stappen` heeft de regel "het toestel wint" en een nieuwere stand is altijd hoger dan de vorige.
+
+De andere helft staat in `health/database/05-peilingen-van-de-dag.sql`. Elke stand van vandáág blijft daar staan **mét het tijdstip**, in `kal_beweging_peilingen`. Uit dagtotalen valt namelijk niet af te leiden of 3.400 stappen om drie uur voor jou veel of weinig is: twee dagen van 8.000 stappen kunnen een ochtendwandeling zijn of een avondrondje, en het advies om drie uur is in die twee gevallen tegengesteld.
+
+`kal_beweging_gewoonte(gebruiker, minuut)` geeft de mediane stand rond dat tijdstip op eerdere dagen, mét het aantal dagen waarop dat berust. Dat aantal is het belangrijkste veld: onder de vijf dagen zegt het niets en hoort de app te zwijgen.
+
+Twee dingen doet die tabel expres niet. Hij vervangt `kal_dagen` niet — daar staat het dagtotaal, en dat blijft de waarheid over een dag; een tussenstand is een meting van een moment. En hij rekent niet mee in het model: stappen zitten sowieso niet in de verbruiksschatting (hoofdstuk 6 van `VERANTWOORDING.md`), dus een advies om te wandelen is hier nooit een calorieënhandel.
+
 ### De regels zijn vastgelegd
 
-De botsingsregels stonden alleen in de functie. Sinds 23 augustus staan ze ook in een proef: `select * from kal_proef_koppeling();` — 36 gevallen, alle regels uit de tabel hierboven plus de sleutelafhandeling, de grenzen, de scheiding tussen gebruikers en alles wat de platte ingang hierboven moet verdragen. Zie `health/database/03-proef-koppeling.sql`.
+De botsingsregels stonden alleen in de functie. Sinds 23 augustus staan ze ook in een proef: `select * from kal_proef_koppeling();` — 41 gevallen, alle regels uit de tabel hierboven plus de sleutelafhandeling, de grenzen, de scheiding tussen gebruikers en alles wat de platte ingang hierboven moet verdragen. Zie `health/database/03-proef-koppeling.sql`.
 
 Twee dingen daaraan zijn niet vanzelfsprekend en dus het vermelden waard.
 
@@ -210,8 +222,9 @@ where n.nspname = 'public' and p.prokind = 'f'
 | `kal_nevo_zoek` | één zoekfunctie, gedeeld door de app en `kal-ai` | bij elk zoeken |
 | `nevo_actief` | de licentiepoort waar alle NEVO-toegang langs gaat | — |
 | `kal_beweging_ontvangen` | Opdrachten op de iPhone → PostgREST → `kal_dagen` | dagelijks, door de telefoon |
-| `kal_beweging_dag` | de platte ingang die de Opdrachten-app aanroept | dagelijks, door de telefoon |
-| `kal_proef_koppeling` | 36 gevallen over de botsingsregels en de platte ingang, draait zichzelf terug | met de hand, na elke wijziging |
+| `kal_beweging_dag` | de platte ingang die de Opdrachten-app aanroept | een paar keer per dag, door de telefoon |
+| `kal_peiling_vastleggen` | bewaart elke stand van vandaag met zijn tijdstip | bij elke aanroep hierboven |
+| `kal_proef_koppeling` | 41 gevallen over de botsingsregels en de platte ingang, draait zichzelf terug | met de hand, na elke wijziging |
 | 16 tabellen, 24 functies | schema `public`, prefix `kal_` | — |
 
 Alles staat of valt bij één ding dat geen enkele automatisering kan overnemen: de ochtendweging. De prikkel herinnert eraan, het weekbericht rekent ermee, maar niemand kan hem voor je verzinnen.
