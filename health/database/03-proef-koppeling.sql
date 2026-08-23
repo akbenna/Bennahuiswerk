@@ -23,10 +23,11 @@
 --    slaan er twee gevallen om. Een proef die nooit rood wordt is erger dan
 --    geen proef, want hij geeft dekking die er niet is.
 --
--- 31 gevallen, in zes groepen: de sleutel, de botsingsregels, de grenzen, de
+-- 41 gevallen, in zeven groepen: de sleutel, de botsingsregels, de grenzen, de
 -- scheiding tussen gebruikers, de platte ingang die de telefoon gebruikt, en de
--- rustpols. Die laatste twee groepen zijn er bijgekomen toen de opdracht op de
--- iPhone echt ging draaien; wat daar misging staat in `AUTOMATISERING.md`.
+-- rustpols en de peilingen van de dag. Die laatste groepen zijn er bijgekomen
+-- toen de opdracht op de iPhone echt ging draaien; wat daar misging staat in
+-- `AUTOMATISERING.md`.
 --
 -- Waarom dit geen vijfde poort in `npm run controle` is: die poorten draaien
 -- zonder database. Dit is dus een script dat je zelf draait, na elke wijziging
@@ -55,6 +56,7 @@ declare
   v_gist     date;
   v_dag      date;
   v_n        integer;
+  v_n2       integer;
 begin
   v_gist := v_vandaag - 1;
   v_dag  := v_vandaag - 5;
@@ -264,6 +266,79 @@ begin
     v_ant := kal_beweging_dag(v_sa, p_dagen_terug := '0', p_stappen := '100');
     v_uit := v_uit || jsonb_build_object('geval','zonder pols verandert er niets aan de pols',
       'goed', v_ant->>'hartslag_rust' = 'niet meegestuurd', 'gezien', v_ant->>'hartslag_rust');
+
+    /* ------------------- een 0 uit een lege zoekactie -------------------- */
+    /* Bereken statistiek geeft over nul monsters een 0 en niet leeg. Die 0 is
+       niet te onderscheiden van "niets gevonden" en hoort dus niet in de
+       tabellen; hij hoort wel in het antwoord. */
+    perform kal_beweging_dag(v_sa, p_datum := (v_vandaag - 8)::text,
+                             p_stappen := '5000', p_actieve_energie_kcal := '300');
+    v_ant := kal_beweging_dag(v_sa, p_datum := (v_vandaag - 8)::text,
+                              p_stappen := '6000', p_actieve_energie_kcal := '0');
+    select stappen, actieve_energie_kcal into v_d
+      from kal_dagen where gebruiker_id = v_a and datum = v_vandaag - 8;
+    v_uit := v_uit || jsonb_build_object('geval','EEN 0 WORDT NIET WEGGESCHREVEN',
+      'goed', v_d.stappen = 6000 and v_d.actieve_energie_kcal = 300
+              and v_ant->'nul_overgeslagen' ? 'actieve_energie_kcal',
+      'gezien', format('stappen=%s energie=%s nul=%s',
+                       v_d.stappen, v_d.actieve_energie_kcal, v_ant->>'nul_overgeslagen'));
+
+    v_uit := v_uit || jsonb_build_object('geval','een 0 is leesbaar, dus niet niet_gelezen',
+      'goed', not (v_ant->'niet_gelezen' ? 'actieve_energie_kcal'),
+      'gezien', v_ant->>'niet_gelezen');
+
+    v_ant := kal_beweging_dag(v_sa, p_datum := (v_vandaag - 8)::text, p_slaap_sec := '0');
+    select slaap_min into v_d from kal_dagen where gebruiker_id = v_a and datum = v_vandaag - 8;
+    v_uit := v_uit || jsonb_build_object('geval','nul minuten slaap bestaat niet',
+      'goed', v_d.slaap_min is null and v_ant->'nul_overgeslagen' ? 'slaap'
+              and not (v_ant->>'slaap_genegeerd')::boolean,
+      'gezien', format('slaap=%s nul=%s', v_d.slaap_min, v_ant->>'nul_overgeslagen'));
+
+    v_ant := kal_beweging_dag(v_sa, p_datum := (v_vandaag - 8)::text, p_stappen := '0');
+    select stappen into v_d from kal_dagen where gebruiker_id = v_a and datum = v_vandaag - 8;
+    v_uit := v_uit || jsonb_build_object('geval','0 stappen laat de gemeten stappen staan',
+      'goed', v_d.stappen = 6000, 'gezien', format('%s', v_d.stappen));
+
+    v_ant := kal_beweging_dag(v_sa, p_datum := (v_vandaag - 8)::text, p_stappen := '7000');
+    v_uit := v_uit || jsonb_build_object('geval','zonder nullen blijft de lijst leeg',
+      'goed', jsonb_array_length(v_ant->'nul_overgeslagen') = 0,
+      'gezien', v_ant->>'nul_overgeslagen');
+
+    /* ---------------------- de peilingen van de dag ---------------------- */
+    /* Een tussenstand van vandaag hoort te blijven staan met zijn tijdstip;
+       een bijgewerkte oude dag is geen peiling maar een inhaalslag. */
+    select count(*) into v_n from kal_beweging_peilingen
+     where gebruiker_id = v_a and datum = v_vandaag;
+    v_ant := kal_beweging_dag(v_sa, p_dagen_terug := '0', p_stappen := '4321');
+    select count(*) into v_n2 from kal_beweging_peilingen
+     where gebruiker_id = v_a and datum = v_vandaag;
+    v_uit := v_uit || jsonb_build_object('geval','een stand van vandaag wordt een peiling',
+      'goed', (v_ant->>'peiling')::boolean and v_n2 > v_n,
+      'gezien', format('peiling=%s, %s rijen (was %s)', v_ant->>'peiling', v_n2, v_n));
+
+    v_ant := kal_beweging_dag(v_sa, p_dagen_terug := '0', p_stappen := '4400');
+    select count(*) into v_n from kal_beweging_peilingen
+     where gebruiker_id = v_a and datum = v_vandaag;
+    v_uit := v_uit || jsonb_build_object('geval','peilingen stapelen, ze overschrijven elkaar niet',
+      'goed', v_n > v_n2, 'gezien', format('%s rijen (was %s)', v_n, v_n2));
+
+    v_ant := kal_beweging_dag(v_sa, p_datum := (v_vandaag - 3)::text, p_stappen := '9000');
+    select count(*) into v_n2 from kal_beweging_peilingen
+     where gebruiker_id = v_a and datum = v_vandaag - 3;
+    v_uit := v_uit || jsonb_build_object('geval','EEN OUDE DAG WORDT GEEN PEILING',
+      'goed', not (v_ant->>'peiling')::boolean and v_n2 = 0,
+      'gezien', format('peiling=%s, %s rijen', v_ant->>'peiling', v_n2));
+
+    v_ant := kal_beweging_dag(v_sa, p_dagen_terug := '0', p_hartslag_rust := '60');
+    v_uit := v_uit || jsonb_build_object('geval','zonder stappen of energie geen peiling',
+      'goed', not (v_ant->>'peiling')::boolean, 'gezien', v_ant->>'peiling');
+
+    /* De gewoonte kijkt alleen naar eerdere dagen. Alles wat deze proef vandaag
+       schreef mag daar dus niet in meetellen, anders vergelijkt de app je met
+       jezelf van vijf seconden geleden. */
+    select n into v_n from kal_beweging_gewoonte(v_a, 720);
+    v_uit := v_uit || jsonb_build_object('geval','de gewoonte telt vandaag niet mee',
+      'goed', v_n = 0, 'gezien', format('%s eerdere dagen', v_n));
 
     /* Altijd terugdraaien. Deze proef schrijft in echte tabellen; hij mag er
        niets van achterlaten. */

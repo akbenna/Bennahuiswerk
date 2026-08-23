@@ -28,13 +28,18 @@ import type { Dagstaaf } from '../hero'
 import { dec, dz } from '@/gedeeld/getal'
 import { kortNL, langNL, plusDagen, vandaag } from '@/gedeeld/datum'
 import type { IsoDatum, Moment, Regel } from '@/gedeeld/db/tabellen'
+import type { NieuweRegel } from '@/gedeeld/db/rpc'
 import type { Analyse, Dagenkaart, DagMetTotalen } from '../rekenkern'
 import { momentNu } from '../vensters/Portie'
+import { meldenNu, tekort, voorstellen } from '../coach'
+import { herhaalRegel } from '../herhaal'
 
 export interface VandaagEigenschappen {
   a: Analyse
   dag: DagMetTotalen
   regels: Regel[]
+  /** De hele geschiedenis, want de coach stelt voor uit wat je zelf eet. */
+  alleRegels: Regel[]
   /** De hele reeks, voor de dagenstrook onder de ring. */
   dagen: Dagenkaart
   datum: IsoDatum
@@ -44,6 +49,8 @@ export interface VandaagEigenschappen {
   /** Het invoervel openen, met het moment er al in. */
   opInvoer: (m: Moment) => void
   wisRegel: (id: string) => void
+  /** Eén tik op een voorstel zet het meteen op de dag. */
+  voegToe: (regels: NieuweRegel[]) => void
 }
 
 /**
@@ -244,6 +251,8 @@ export function Vandaag(p: VandaagEigenschappen) {
                  kcalTotaal={dag._kcal} perGram={9} />
         </div>
       </section>
+
+      {isVandaag && <Coachkaart {...p} />}
 
       <Weging {...p} gewogen={gewogen} isVandaag={isVandaag} nogNodig={nogNodig} />
 
@@ -455,6 +464,127 @@ function Weging(
           verschil tussen dagen en niet om de absolute waarde. Dagelijkse schommelingen van één tot
           twee kilo zijn vocht, glycogeen en darminhoud. Daarom leest het model de helling en niet de
           meting.
+        </p>
+      </Uitleg>
+    </Kaart>
+  )
+}
+
+/* ==========================================================================
+   DE COACH — wat er nog in past, en wat dat kan vullen
+   ==========================================================================
+
+   Het rekenwerk staat in `coach.ts` en is daar bewezen; hier staat alleen hoe
+   het eruitziet. Twee dingen zijn ontwerp en geen toeval.
+
+   Er staat bij elk voorstel wat het jou oplevert en wat er daarna nog overblijft.
+   Een lijstje namen is een menukaart; "nog 200 kcal en 20 g eiwit te gaan" is
+   een antwoord op de vraag die je stelde.
+
+   En de kaart durft leeg te zijn. Past er niets meer uit wat je de laatste weken
+   at, dan zegt hij dat, in plaats van het dichtstbijzijnde te tonen. Een
+   voorstel dat je over je doel zet is erger dan geen voorstel.
+*/
+function Coachkaart(p: VandaagEigenschappen) {
+  const { a, dag, alleRegels, datum } = p
+  const moment = momentNu(datum)
+  const uur = new Date().getHours()
+
+  const t = tekort(
+    { kcal: dag._kcal, kcalLaag: dag._laag, kcalHoog: dag._hoog, eiwit: dag._eiwit },
+    a.doel, a.eiwitDoel,
+  )
+  /* Zonder doel heeft het model nog niets te zeggen, en dan zwijgt de kaart
+     helemaal in plaats van een kop met niets eronder te tonen. */
+  if (a.doel == null) return null
+
+  const lijst = voorstellen(alleRegels, t, { nu: datum, moment })
+  const let_op = meldenNu(t, uur)
+
+  return (
+    <Kaart toon={let_op.reden === 'bijna-op' ? 'let' : undefined}>
+      <Tussen>
+        <Kop>Wat er nog in past</Kop>
+        {let_op.melden && (
+          <span className={'vlaggetje ' + (let_op.reden === 'bijna-op' ? 'let' : 'rust')}>
+            {let_op.reden === 'eiwit-achter' ? 'eiwit loopt achter'
+              : let_op.reden === 'bijna-op' ? 'ruimte bijna op'
+              : 'veel ruimte over'}
+          </span>
+        )}
+      </Tussen>
+
+      {t.erover ? (
+        <p className="klein" style={{ marginTop: 6 }}>
+          Je zit <span className="cijfer">{dz(Math.abs(Math.round(t.kcalOver)))}</span> kcal over je
+          doel. Eén dag is geen trend — de weegreeks van morgen zegt meer dan dit getal.
+        </p>
+      ) : (
+        <p className="klein" style={{ marginTop: 6 }}>
+          Nog <span className="cijfer">{dz(Math.round(t.kcalOver))}</span> kcal
+          {' '}<span className="mini">
+            ({dz(Math.round(t.kcalOverLaag))}–{dz(Math.round(t.kcalOverHoog))})
+          </span>
+          {t.eiwitOver > 0
+            ? <> en <span className="cijfer">{Math.round(t.eiwitOver)}</span> g eiwit te gaan
+                — dat vraagt <span className="cijfer">{dec((t.eis ?? 0) * 100, 1)}</span> g eiwit
+                per 100 kcal in alles wat er nog bij komt.</>
+            : <>. Je eiwit is binnen.</>}
+        </p>
+      )}
+
+      {lijst.length > 0 && (
+        <div className="lijst" style={{ marginTop: 10 }}>
+          {lijst.map((v) => (
+            <div key={v.herhaling.sleutel}>
+              <div className="groei">
+                <div className="knip">{v.naam}</div>
+                {/* Eén getal maakt de vier voorstellen vergelijkbaar: eiwit per
+                    100 kcal, dezelfde maat waarin de eis staat. "Helpt je eiwit
+                    niet" stond hier eerst, en dat is een oordeel op de plek waar
+                    een getal hoort — 46 gram eiwit helpt natuurlijk wel; wat het
+                    niet doet is de rést van de dag op tempo houden. */}
+                <div className="mini">
+                  <span className="cijfer">{dz(v.kcal)}</span> kcal ·{' '}
+                  <span className="cijfer">{Math.round(v.eiwit)}</span> g eiwit
+                  {' · '}<span className="cijfer">{dec(v.dichtheid * 100, 1)}</span> g/100 kcal
+                  {v.reden === 'eiwit' && ' — houdt je eiwit op tempo'}
+                  {' · daarna nog '}<span className="cijfer">{dz(v.restKcal)}</span> kcal
+                  {v.restEiwit > 0 && <> en <span className="cijfer">{v.restEiwit}</span> g eiwit</>}
+                </div>
+              </div>
+              <Knop klein opKlik={() => p.voegToe([herhaalRegel(v.herhaling, datum, moment)])}>
+                ＋
+              </Knop>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {!t.erover && lijst.length === 0 && (
+        <p className="mini" style={{ marginTop: 8 }}>
+          Uit wat je de laatste weken at past hier niets meer in zonder eroverheen te gaan.
+        </p>
+      )}
+
+      <Uitleg id="coach" label="hoe deze lijst tot stand komt">
+        <p>
+          De voorstellen komen uit je eigen geschiedenis, met de portie die jij toen at — er wordt
+          niets geschat en niets verzonnen.
+        </p>
+        {t.eis != null && (
+          <p>
+            Er zijn nog <span className="cijfer">{Math.round(t.eiwitOver)}</span> gram eiwit nodig
+            in <span className="cijfer">{dz(Math.round(t.kcalOver))}</span> kcal. Alles wat je vanaf
+            nu eet moet dus minstens <span className="cijfer">{dec(t.eis * 100, 1)}</span> gram
+            eiwit per 100 kcal leveren, anders wordt de rest van de dag moeilijker in plaats van
+            makkelijker. Dat is de eis waarop deze lijst gerangschikt is.
+          </p>
+        )}
+        <p>
+          Het bereik tussen haakjes komt van wat je logde: die getallen zijn geschat, dus wat je
+          overhoudt is dat ook. Voorgesteld wordt er alleen binnen de puntschatting — onzekerheid
+          is geen vergunning om erover te gaan.
         </p>
       </Uitleg>
     </Kaart>

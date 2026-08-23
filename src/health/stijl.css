@@ -14,32 +14,44 @@
 /* ============================================================================
    KALIBRATIE — persoonlijk energiebalansmodel
    Ontwerpprincipe, door de hele app heen: geen enkel getal zonder zijn
-   onzekerheid. Wat gemeten is staat in serif en groot; wat geschat is draagt
+   onzekerheid. Wat gemeten is staat groot en zwaar; wat geschat is draagt
    zijn interval en zijn graad; wat ontbreekt wordt benoemd in plaats van
    stilzwijgend als nul behandeld.
    ========================================================================== */
 :root{
-  --canvas:#F7F6F3; --vlak:#FFFFFF; --vlak2:#EFEDE8;
-  --ink:#12140F; --ink2:#2A2E28; --grijs:#5E6159; --dim:#8E9189;
-  --lijn:#DEDBD3; --lijn2:#C6C2B8;
-  --k:#3D5A57;  --kbg:#E1EBE9;      /* accent: de kleur van het model */
+  --canvas:#F3F6F5; --vlak:#FFFFFF; --vlak2:#EDF2F0;
+  --ink:#0E1A16; --ink2:#28352F; --grijs:#5B6862; --dim:#8A968F;
+  --lijn:#E4EAE7; --lijn2:#CBD5D0;
+  /* Twee tinten van hetzelfde accent, en dat is geen luxe. --k draagt tekst en
+     moet donker genoeg zijn om op wit te lezen; --kfel is de vulkleur van
+     ringen, staven en de groene kaart, waar juist helderheid telt. Eén kleur
+     voor allebei levert altijd één van de twee verkeerd op. */
+  --k:#07785C;  --kfel:#10A87E; --kbg:#DFF2EB;
+  /* Een gevulde knop draagt tekst en moet dus contrast halen: in licht het
+     donkere accent met wit erop, in donker het rustigere met bijna-zwart. */
+  --knopvul:#07785C;
   --let:#8A5A00; --letbg:#F8EFD4;   /* let op */
   --fout:#A32F2A; --foutbg:#FAE6E4;
   --goed:#2F6B1F; --goedbg:#E4EFDD;
-  --schaduw:0 1px 2px rgba(20,18,14,.04), 0 8px 22px rgba(20,18,14,.05);
+  --schaduw:0 1px 2px rgba(12,30,24,.03), 0 10px 26px rgba(12,30,24,.06);
   --sans:'SF Pro Text',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-  --serif:'Newsreader',Georgia,serif;
+  /* Koppen en gemeten getallen stonden in een serif. Die stond voor "dit is
+     gemeten", maar dat zeggen het interval en de graad er al bij — het was dus
+     een tweede stem voor dezelfde boodschap. Nu één familie, en het verschil
+     zit in gewicht en grootte. */
+  --kop:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',sans-serif;
   --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;
 }
 @media (prefers-color-scheme:dark){:root{
-  --canvas:#131417; --vlak:#1B1D21; --vlak2:#24272B;
-  --ink:#F3F2EE; --ink2:#DFDED8; --grijs:#A6A9A1; --dim:#71746D;
-  --lijn:#31343A; --lijn2:#454951;
-  --k:#8FB3AE; --kbg:#1D2A29;
+  --canvas:#080D0C; --vlak:#121A18; --vlak2:#1B2523;
+  --ink:#F1F5F3; --ink2:#DCE4E1; --grijs:#9AA8A2; --dim:#6C7A74;
+  --lijn:#243230; --lijn2:#354642;
+  --k:#4FD2A6; --kfel:#28BE8E; --kbg:#0F2E26;
+  --knopvul:#28BE8E;
   --let:#E9BC55; --letbg:#302711;
   --fout:#F09B95; --foutbg:#341A18;
   --goed:#8FD268; --goedbg:#1E2A18;
-  --schaduw:0 1px 2px rgba(0,0,0,.4), 0 8px 22px rgba(0,0,0,.3);
+  --schaduw:0 1px 2px rgba(0,0,0,.5), 0 10px 26px rgba(0,0,0,.35);
 }}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0}
@@ -47,25 +59,37 @@ body{background:var(--canvas);color:var(--ink2);font-family:var(--sans);font-siz
   line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100dvh;
   padding:0 16px calc(84px + env(safe-area-inset-bottom))}
 .wrap{width:100%;max-width:660px;margin:0 auto}
-h1,h2,h3{font-family:var(--serif);color:var(--ink);letter-spacing:-.02em;line-height:1.15;margin:0;font-weight:500}
+h1,h2,h3{font-family:var(--kop);color:var(--ink);letter-spacing:-.022em;line-height:1.2;margin:0;font-weight:640}
 p{margin:0}
 a{color:var(--k)}
-.eyebrow{font-family:var(--mono);font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--grijs)}
+/* Stond in mono, in kapitalen, met wijde spatiëring. Dat leest als een
+   dossierkop en niet als een tussenkopje; het trok bovendien meer
+   aandacht dan het getal eronder. Nu gewoon een klein vet woord. */
+.eyebrow{font-size:.78rem;font-weight:640;letter-spacing:0;color:var(--grijs)}
 .klein{font-size:.84rem;color:var(--grijs);line-height:1.5}
 .mini{font-size:.75rem;color:var(--dim);line-height:1.45}
 .cijfer{font-family:var(--mono);font-variant-numeric:tabular-nums}
-.getal{font-family:var(--serif);font-variant-numeric:tabular-nums;color:var(--ink);line-height:1;font-weight:400}
+.getal{font-family:var(--kop);font-variant-numeric:tabular-nums;color:var(--ink);line-height:1;
+  font-weight:660;letter-spacing:-.03em}
 button,input,select,textarea{font-family:inherit;font-size:1rem;color:inherit}
 :focus-visible{outline:2px solid var(--k);outline-offset:2px;border-radius:6px}
 
 /* ---------------------------------------------------------------- header -- */
-header{padding:26px 0 12px;position:relative}
-.merk{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-.merk h1{font-size:1.7rem}
-.sub{margin-top:2px;font-size:.82rem;color:var(--grijs)}
+/* De naam van de app stond in koeienletters bovenaan je eigen dashboard. Je
+   weet welke app je opent; wat je niet weet is hoe je ervoor staat. Het merk is
+   nu een regel, en de ruimte is naar het scherm eronder gegaan. */
+header{padding:16px 0 10px;position:relative}
+.merk{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.merk h1{font-size:1.02rem;color:var(--k);letter-spacing:-.01em;font-weight:700}
+.sub{margin-top:1px;font-size:.8rem;color:var(--grijs)}
 .chip{font-size:.72rem;color:var(--grijs);border:1px solid var(--lijn);border-radius:999px;
   padding:4px 11px;background:transparent;cursor:pointer;white-space:nowrap}
 .chip.aan{border-color:var(--k);color:var(--k)}
+/* De accountknop als rondje met initialen: hij hoort bereikbaar te zijn en
+   verder niets van de bovenrand op te eisen. */
+.chip.rond{width:36px;height:36px;padding:0;border-radius:50%;flex:0 0 auto;
+  display:inline-flex;align-items:center;justify-content:center;font-size:.76rem;
+  font-weight:700;background:var(--kbg);border-color:transparent;color:var(--k)}
 
 /* ------------------------------------------------------------------ tabs -- */
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--vlak);
@@ -79,8 +103,8 @@ nav.tabs button .ic{font-size:1.05rem;line-height:1}
 nav.tabs button[aria-selected="true"]{color:var(--k);background:var(--kbg);font-weight:600}
 
 /* --------------------------------------------------------------- kaarten -- */
-.kaart{background:var(--vlak);border:1px solid var(--lijn);border-radius:14px;
-  padding:15px 17px;box-shadow:var(--schaduw);margin-bottom:13px}
+.kaart{background:var(--vlak);border:1px solid var(--lijn);border-radius:16px;
+  padding:16px 18px;box-shadow:var(--schaduw);margin-bottom:13px}
 .kaart.let{border-left:3px solid var(--let)}
 .kaart.fout{border-left:3px solid var(--fout)}
 .kaart.goed{border-left:3px solid var(--goed)}
@@ -97,7 +121,7 @@ nav.tabs button[aria-selected="true"]{color:var(--k);background:var(--kbg);font-
 .knop{border:1px solid var(--lijn);background:var(--vlak);color:var(--ink2);
   padding:8px 14px;border-radius:10px;font-size:.86rem;cursor:pointer;white-space:nowrap}
 .knop:hover{border-color:var(--lijn2)}
-.knop.vol{background:var(--k);border-color:var(--k);color:var(--canvas);font-weight:600}
+.knop.vol{background:var(--knopvul);border-color:var(--knopvul);color:var(--canvas);font-weight:600}
 .knop.sm{padding:4px 10px;font-size:.76rem;border-radius:8px}
 .knop:disabled{opacity:.45;cursor:default}
 input,select,textarea{background:var(--vlak);border:1px solid var(--lijn);border-radius:10px;
@@ -114,13 +138,14 @@ label.veld>span{display:block;font-size:.72rem;color:var(--grijs);margin-bottom:
    dicht, en onthoudt de app per blok wat jij openzet. */
 .uitleg{margin-top:10px}
 .uitleg>summary{cursor:pointer;display:inline-flex;align-items:center;gap:6px;
-  font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--grijs);
+  font-size:.78rem;font-weight:600;color:var(--k);
   padding:2px 0;list-style:none;user-select:none}
 .uitleg>summary::-webkit-details-marker{display:none}
 .uitleg>summary::before{content:'\203A';font-size:1rem;line-height:1;
   transition:transform .15s ease;display:inline-block}
 .uitleg[open]>summary::before{transform:rotate(90deg)}
 .uitleg>summary:hover{color:var(--ink)}
+.uitleg>.inhoud{color:var(--grijs)}
 .uitleg>.inhoud{margin-top:7px;padding-left:12px;border-left:2px solid var(--vlak2)}
 .uitleg>.inhoud>p{margin:0 0 7px}
 .uitleg>.inhoud>p:last-child{margin-bottom:0}
@@ -131,10 +156,10 @@ label.veld>span{display:block;font-size:.72rem;color:var(--grijs);margin-bottom:
 .balk>i.let{background:var(--let)} .balk>i.goed{background:var(--goed)}
 .conf{display:inline-flex;width:17px;height:17px;border-radius:4px;flex:0 0 auto;
   align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:#FFF8EE}
-.conf.A{background:#2F6B1F}.conf.B{background:#3D5A57}
+.conf.A{background:#2F6B1F}.conf.B{background:#07785C}
 .conf.C{background:#8E9189}.conf.D{background:#8A5A00}
-@media(prefers-color-scheme:dark){.conf{color:#131417}
-  .conf.A{background:#8FD268}.conf.B{background:#8FB3AE}
+@media(prefers-color-scheme:dark){.conf{color:#080D0C}
+  .conf.A{background:#8FD268}.conf.B{background:#4FD2A6}
   .conf.C{background:#71746D}.conf.D{background:#E9BC55}}
 .stoplicht{display:inline-block;width:11px;height:11px;border-radius:50%}
 .lijst>*{display:flex;align-items:center;gap:9px;padding:8px 0;border-top:1px solid var(--lijn)}
@@ -185,9 +210,9 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
   --avond:#4A6B94;   --avondbg:#E4EBF3;
   --tussen:#A65B7A;  --tussenbg:#F7E6ED;
 
-  --heldergoed:#3E8B2A;
-  --ringrail:#E6E3DC;   /* de niet-gevulde rest van een ring */
-  --bandinkt:#C9D6D4;   /* de onzekerheidsband: zichtbaar, nooit hard */
+  --heldergoed:#2E9E56;
+  --ringrail:#E6EBE9;   /* de niet-gevulde rest van een ring */
+  --bandinkt:#B7DCCE;   /* de onzekerheidsband: zichtbaar, nooit hard */
 }
 @media (prefers-color-scheme:dark){:root{
   --eiwit:#E4977E;  --eiwitbg:#33201B;
@@ -197,16 +222,16 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
   --middag:#8CC57F;  --middagbg:#1C2A19;
   --avond:#8AAAD4;   --avondbg:#1A2431;
   --tussen:#D690AC;  --tussenbg:#301B25;
-  --heldergoed:#7FC96A;
-  --ringrail:#2B2E33;
-  --bandinkt:#3A4A48;
+  --heldergoed:#63D18C;
+  --ringrail:#22302D;
+  --bandinkt:#2C4A41;
 }}
 
 /* -------------------------------------------------------------- de hero --- */
 /* Eén blok bovenaan dat de dag samenvat. Het verloop volgt het tijdstip: 's
    ochtends warm, 's avonds koel. Dat is geen effect maar oriëntatie — je ziet
    aan de kleur of je aan het begin of aan het eind van je dag staat. */
-.hero{position:relative;border-radius:22px;padding:20px 18px 18px;overflow:hidden;
+.hero{position:relative;border-radius:20px;padding:20px 18px 18px;overflow:hidden;
   background:var(--herobg,linear-gradient(155deg,#EEF3F1,#E3ECE9));
   border:1px solid var(--lijn);margin-bottom:14px}
 .hero>*{position:relative;z-index:1}
@@ -226,15 +251,15 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
 .macro .staaf>i{display:block;height:100%;border-radius:999px;transition:width .35s ease}
 .macro.eiwit .staaf>i{background:var(--eiwit)} .macro.koolh .staaf>i{background:var(--koolh)}
 .macro.vet   .staaf>i{background:var(--vet)}
-.macro b{font-family:var(--serif);font-weight:500;font-size:1.05rem;color:var(--ink)}
+.macro b{font-family:var(--kop);font-weight:640;letter-spacing:-.02em;font-size:1.05rem;color:var(--ink)}
 
 /* ------------------------------------------------------- de dagenstrook --- */
 /* Veertien dagen naast elkaar. Dit is het antwoord op een scherm vol nullen:
    één dag zegt niets, veertien dagen zeggen of je bezig bent. */
-.strook{display:flex;gap:3px;align-items:flex-end;height:40px;margin-top:14px}
+.strook{display:flex;gap:4px;align-items:flex-end;height:34px;margin-top:14px}
 /* Een dag zonder iets is óók informatie: hij hoort zichtbaar te zijn als lege
    plek, niet weggepoetst tot bijna-wit. */
-.strook>i{flex:1 1 0;border-radius:4px;background:var(--ringrail);min-height:7px;
+.strook>i{flex:1 1 0;border-radius:5px;background:var(--ringrail);min-height:6px;
   transition:height .3s,background .3s;opacity:1;
   box-shadow:inset 0 0 0 1px rgba(20,18,14,.06)}
 @media(prefers-color-scheme:dark){.strook>i{box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}}
@@ -283,7 +308,7 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
 .maal.gevuld.middag{border-color:var(--middag);background:var(--middagbg)}
 .maal.gevuld.avond{border-color:var(--avond);background:var(--avondbg)}
 .maal.gevuld.tussen{border-color:var(--tussen);background:var(--tussenbg);border-style:solid}
-.maal .maalgetal{display:block;margin-top:4px;font-family:var(--serif);font-size:1.5rem;
+.maal .maalgetal{display:block;margin-top:4px;font-family:var(--kop);font-weight:660;letter-spacing:-.03em;font-size:1.5rem;
   color:var(--ink);line-height:1.1;font-variant-numeric:tabular-nums}
 .maal .lijst{padding:0 8px}
 /* De graad staat in de tweede regel mee, dus hij mag niet de hoogte van een
@@ -294,11 +319,11 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
 /* Eén handeling springt eruit. In de oude opzet was loggen een tekstvak tussen
    twee andere tekstvakken; nu is het de enige knop met een vulling. */
 .hoofdknop{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;
-  border:0;border-radius:16px;padding:15px 18px;background:var(--k);color:#FFF8EE;
+  border:0;border-radius:16px;padding:15px 18px;background:var(--knopvul);color:#FFFFFF;
   font-size:1rem;font-weight:600;cursor:pointer;box-shadow:var(--schaduw);
   transition:transform .12s,filter .18s}
 .hoofdknop:hover{filter:brightness(1.08)} .hoofdknop:active{transform:scale(.985)}
-@media(prefers-color-scheme:dark){.hoofdknop{color:#101215}}
+@media(prefers-color-scheme:dark){.hoofdknop{color:#06100D}}
 
 /* De snelle ingangen eronder: foto, spraak, bibliotheek, streepjescode. */
 .snel{display:flex;gap:8px;margin-top:9px}
@@ -322,19 +347,19 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
    hoe je ervoor stond. Nu heeft elk scherm dezelfde kop, met een verloop dat
    de staat draagt. Vier standen, en er staat altijd een woord bij — kleur
    alleen is voor niemand genoeg. */
-.hero.kop-rust{--herobg:linear-gradient(155deg,#EDF1F0 0%,#E5EBEA 55%,#DFE7E5 100%);
-  --heroglow:rgba(255,255,255,.6)}
-.hero.kop-goed{--herobg:linear-gradient(155deg,#E9F2E3 0%,#DFEDD8 55%,#D7E8CE 100%);
-  --heroglow:rgba(255,255,255,.6)}
+.hero.kop-rust{--herobg:linear-gradient(155deg,#FFFFFF 0%,#F4F8F7 55%,#EDF3F1 100%);
+  --heroglow:rgba(255,255,255,.7)}
+.hero.kop-goed{--herobg:linear-gradient(155deg,#E3F6EE 0%,#D6F0E4 55%,#C9EBDB 100%);
+  --heroglow:rgba(255,255,255,.65)}
 .hero.kop-let{--herobg:linear-gradient(155deg,#FAF0D9 0%,#F5E7CA 55%,#F0DFBC 100%);
   --heroglow:rgba(255,252,240,.6)}
 .hero.kop-fout{--herobg:linear-gradient(155deg,#FAE8E5 0%,#F5DCD8 55%,#F0D2CD 100%);
   --heroglow:rgba(255,248,246,.55)}
 @media(prefers-color-scheme:dark){
-  .hero.kop-rust{--herobg:linear-gradient(155deg,#191C1F 0%,#171A1D 55%,#15181B 100%);
-    --heroglow:rgba(180,220,255,.06)}
-  .hero.kop-goed{--herobg:linear-gradient(155deg,#1A2318 0%,#182016 55%,#161D14 100%);
-    --heroglow:rgba(160,255,170,.07)}
+  .hero.kop-rust{--herobg:linear-gradient(155deg,#16201E 0%,#131C1A 55%,#111816 100%);
+    --heroglow:rgba(150,255,220,.05)}
+  .hero.kop-goed{--herobg:linear-gradient(155deg,#0F2C24 0%,#0D2620 55%,#0B201B 100%);
+    --heroglow:rgba(120,255,200,.08)}
   .hero.kop-let{--herobg:linear-gradient(155deg,#282013 0%,#241D11 55%,#20190F 100%);
     --heroglow:rgba(255,220,140,.08)}
   .hero.kop-fout{--herobg:linear-gradient(155deg,#2A1A19 0%,#251717 55%,#211414 100%);

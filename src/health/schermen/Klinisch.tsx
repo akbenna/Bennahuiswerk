@@ -14,8 +14,8 @@ import { dec } from '@/gedeeld/getal'
 import { kortNL, vandaag } from '@/gedeeld/datum'
 import type { IsoDatum, Lab, Meting, Profiel, Vragenlijst } from '@/gedeeld/db/tabellen'
 import type { Analyse } from '../rekenkern'
-import { STOPBANG, fib4, score2, stopbangScore } from '../klinisch'
-import type { StopbangAntwoorden, StopbangSleutel } from '../klinisch'
+import { STOPBANG, fib4, nieuwste, rustpols, score2, stopbangScore } from '../klinisch'
+import type { Rustpols, StopbangAntwoorden, StopbangSleutel } from '../klinisch'
 
 /** code, naam, eenheid, ondergrens, bovengrens */
 const LABS = [
@@ -60,8 +60,6 @@ export interface KlinischEigenschappen {
   }) => void
 }
 
-const nieuwste = <T extends { datum: IsoDatum }>(lijst: T[], test: (x: T) => boolean): T | null =>
-  lijst.filter(test).sort((x, y) => (x.datum < y.datum ? 1 : -1))[0] ?? null
 
 export function Klinisch(p: KlinischEigenschappen) {
   const { a, profiel, labs, metingen } = p
@@ -220,46 +218,12 @@ export function Klinisch(p: KlinischEigenschappen) {
   )
 }
 
-/**
- * De rustpols: de laatste meting, en hoe hij zich verhoudt tot de maand ervoor.
- *
- * Bij deze meting is de verandering het signaal en niet de waarde. Een pols van
- * 58 zegt op zichzelf weinig — bij de een is dat hoog, bij de ander laag. Vier
- * slagen omhoog ten opzichte van je eigen gemiddelde zegt wel iets: slechter
- * herstel, een naderende infectie, of te zwaar getraind.
- *
- * De vergelijking gebruikt de dagen ervóór en niet de hele reeks: anders trekt
- * de laatste meting zijn eigen referentie mee omhoog en zie je nooit een
- * verandering.
- */
-interface Rustpols { nu: Meting; basis: number | null; n: number }
-
-function rustpols(metingen: Meting[]): Rustpols | null {
-  const alle = metingen.filter((m) => m.soort === 'hartslag_rust')
-    .sort((x, y) => (x.datum < y.datum ? 1 : -1))
-  const nu = alle[0]
-  if (!nu) return null
-  const eerder = alle.slice(1).filter((m) => dagenTussen(m.datum, nu.datum) <= 30)
-  return {
-    nu,
-    basis: eerder.length >= 3
-      ? eerder.reduce((t, m) => t + m.waarde, 0) / eerder.length : null,
-    n: eerder.length,
-  }
-}
-
-/** Kale ISO-datums, dus geen tijdzone in het spel. */
-function dagenTussen(van: string, tot: string): number {
-  const t = (x: string) => Date.UTC(+x.slice(0, 4), +x.slice(5, 7) - 1, +x.slice(8, 10))
-  return Math.round((t(tot) - t(van)) / 86400000)
-}
-
 function MetingInvoer(
   { bewaar, a, sbd, dbd, middel, pols }:
   {
     bewaar: KlinischEigenschappen['bewaarMeting']; a: Analyse
     sbd: Meting | null; dbd: Meting | null; middel: Meting | null
-    pols: Rustpols | null
+    pols: Rustpols<Meting> | null
   },
 ) {
   const [soort, zetSoort] = useState<string>(METINGSOORTEN[0][0])

@@ -192,11 +192,11 @@ await ctx.addInitScript(`{
 const gevallen = [
   ['eerste-dag', 1, 'light', 'afvallen', ['Vandaag']],
   ['na-vier-weken', 28, 'light', 'afvallen',
-   ['Vandaag', 'Model', 'Voeding', 'Beweging', 'Klinisch', 'Meer']],
-  ['donker', 28, 'dark', 'afvallen', ['Vandaag', 'Voeding', 'Meer']],
+   ['Vandaag', 'Inzicht', 'Voeding', 'Beweging', 'Gezondheid', 'Profiel']],
+  ['donker', 28, 'dark', 'afvallen', ['Vandaag', 'Voeding', 'Profiel']],
   /* De onderhoudsfase is de enige toestand waarin het stoplicht bestaat. Zonder
      dit geval blijft die kop ongezien tot iemand hem in productie tegenkomt. */
-  ['onderhoud', 28, 'light', 'onderhoud', ['Meer']],
+  ['onderhoud', 28, 'light', 'onderhoud', ['Profiel']],
 ]
 
 /** Een tabblad openen en wachten tot de kop er echt staat. */
@@ -250,6 +250,21 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
        stijlkwestie maar een scherm dat zijn eigen vraag niet beantwoordt. */
     if (!kop || !kop.trim()) throw new Error(`${stam}: kop is leeg`)
     console.log(`${stam.padEnd(26)} kop=${JSON.stringify(kop)}`)
+
+    /* De coachkaart staat alleen op Vandaag, en alleen als er een doel is. Hij
+       hoort de eiwiteis te noemen én voorstellen te tonen: een kaart die wel
+       rekent maar niets aanbiedt is de helft van de functie, en dat is aan een
+       screenshot niet te zien. */
+    if (tab === 'Vandaag' && naam !== 'eerste-dag') {
+      const kaart = pagina.locator('.kaart', { hasText: 'Wat er nog in past' })
+      if (!(await kaart.count())) throw new Error(`${stam}: coachkaart ontbreekt`)
+      const zin = (await kaart.locator('p.klein').first().textContent()) ?? ''
+      if (!/g eiwit per 100 kcal|eiwit is binnen|over je doel/.test(zin)) {
+        throw new Error(`${stam}: coachkaart noemt de eis niet — ${JSON.stringify(zin)}`)
+      }
+      const n = await kaart.locator('.lijst > *').count()
+      console.log(`${''.padEnd(26)} coach=${n} voorstellen`)
+    }
   }
   await pagina.close()
 }
@@ -301,7 +316,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
   await pagina.emulateMedia({ colorScheme: 'light' })
   await bedienDb(pagina, 28, 'afvallen')
   await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
-  await pagina.getByRole('tab', { name: 'Meer' }).click()
+  await pagina.getByRole('tab', { name: 'Profiel' }).click()
   await pagina.getByRole('button', { name: 'Horloge en telefoon koppelen' }).click()
   await pagina.waitForSelector('.venster', { timeout: 5000 })
   await pagina.waitForSelector('.lijst > div', { timeout: 5000 })

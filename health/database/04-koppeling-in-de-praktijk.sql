@@ -23,6 +23,12 @@
 --      invulde, maar kwam nergens binnen en werd nergens getoond. Het is het
 --      waardevolste dagcijfer dat een horloge levert: hij daalt als de conditie
 --      verbetert en stijgt bij ziekte, slechte slaap of te zware belasting.
+--
+--   4. Een 0 wordt niet weggeschreven. `Bereken statistiek` geeft over nul
+--      monsters een 0 terug en niet leeg. Op 23 augustus kwam er zo 0 kcal
+--      actieve energie binnen naast 1.746 stappen — onmogelijk als meting, en
+--      niet te onderscheiden van "niets gevonden". Zo'n 0 maakt een dag die
+--      eruitziet als gemeten, en het model rekent er dan mee.
 -- =============================================================================
 
 -- -----------------------------------------------------------------------------
@@ -89,6 +95,8 @@ declare
   v_slaap     numeric;
   v_genegeerd boolean := false;
   v_leeg      text[]  := '{}';
+  v_nul       text[]  := '{}';
+  v_peiling   boolean := false;
   v_polsuit   text    := 'niet meegestuurd';
   v_id        uuid;
   v_dag       jsonb;
@@ -117,6 +125,24 @@ begin
   if nullif(trim(coalesce(p_gewicht_kg,'')),'')           is not null and v_gewicht is null then v_leeg := array_append(v_leeg, 'gewicht_kg'); end if;
   if nullif(trim(coalesce(p_hartslag_rust,'')),'')        is not null and v_pols    is null then v_leeg := array_append(v_leeg, 'hartslag_rust'); end if;
 
+  /* ---- een 0 die uit een lege zoekactie komt ----------------------------- */
+  /* Bereken statistiek geeft over nul monsters een 0 terug en niet leeg. Die 0
+     is dus niet te onderscheiden van "niets gevonden" — en als meting is hij
+     voor elk van deze velden onmogelijk: wie zijn telefoon bij zich draagt komt
+     niet op nul stappen of nul actieve energie uit, en nul minuten slaap
+     bestaat niet. Wegschrijven levert een dag op die eruitziet als gemeten en
+     die het model als echte nul meeneemt.
+
+     Dit staat expres ná de leescontrole hierboven: een "0" is prima leesbaar en
+     hoort niet in niet_gelezen thuis. En het staat expres alléén hier, in de
+     platte ingang: die is van de telefoon, en dit is een eigenaardigheid van de
+     Opdrachten-app. Wie via de lijst-ingang een 0 stuurt, meent hem. */
+  if v_stappen = 0 then v_stappen := null; v_nul := array_append(v_nul, 'stappen'); end if;
+  if v_energie = 0 then v_energie := null; v_nul := array_append(v_nul, 'actieve_energie_kcal'); end if;
+  if v_fiets   = 0 then v_fiets   := null; v_nul := array_append(v_nul, 'fiets_min'); end if;
+  if v_slaap   = 0 then v_slaap   := null; v_nul := array_append(v_nul, 'slaap'); end if;
+  if v_gewicht = 0 then v_gewicht := null; v_nul := array_append(v_nul, 'gewicht_kg'); end if;
+
   v_dag := jsonb_build_object('datum', v_datum);
   if v_stappen is not null then v_dag := v_dag || jsonb_build_object('stappen', v_stappen); end if;
   if v_slaap   is not null then v_dag := v_dag || jsonb_build_object('slaap_min', v_slaap); end if;
@@ -129,15 +155,24 @@ begin
 
   v_uit := kal_beweging_ontvangen(p_sleutel, jsonb_build_array(v_dag));
 
+  /* Wie dit stuurde. Eén keer opzoeken: zowel de peiling als de rustpols heeft
+     het nodig, en twee keer dezelfde hash uitrekenen is twee plekken waar het
+     uit elkaar kan gaan lopen. */
+  select k.gebruiker_id into v_id from kal_koppelingen k
+   where k.sleutel_hash = encode(digest(p_sleutel, 'sha256'), 'hex') and k.actief;
+
+  /* Een tussenstand van vandaag blijft staan mét het tijdstip erbij. Waarom dat
+     nodig is staat in 05: uit dagtotalen valt niet af te lezen of 3.400 stappen
+     om drie uur voor jou veel of weinig is, en zonder dat weet de app niet
+     wanneer het zin heeft om iets te zeggen. */
+  v_peiling := kal_peiling_vastleggen(v_id, v_datum, v_stappen, v_energie);
+
   /* ---- de rustpols, apart, want die woont in kal_metingen ---------------- */
   if v_pols is not null then
     /* Een pols buiten 25 en 150 is geen rustpols maar een verkeerd veld. */
     if v_pols < 25 or v_pols > 150 then
       v_polsuit := 'onmogelijk, genegeerd';
     else
-      select k.gebruiker_id into v_id from kal_koppelingen k
-       where k.sleutel_hash = encode(digest(p_sleutel, 'sha256'), 'hex') and k.actief;
-
       if exists (select 1 from kal_metingen m
                   where m.gebruiker_id = v_id and m.datum = v_datum
                     and m.soort = 'hartslag_rust'
@@ -160,7 +195,9 @@ begin
       || jsonb_build_object('datum', v_datum)
       || jsonb_build_object('slaap_genegeerd', v_genegeerd)
       || jsonb_build_object('hartslag_rust', v_polsuit)
-      || jsonb_build_object('niet_gelezen', to_jsonb(v_leeg));
+      || jsonb_build_object('niet_gelezen', to_jsonb(v_leeg))
+      || jsonb_build_object('nul_overgeslagen', to_jsonb(v_nul))
+      || jsonb_build_object('peiling', v_peiling);
 end $$;
 
 revoke all on function public.kal_getal(text) from public;

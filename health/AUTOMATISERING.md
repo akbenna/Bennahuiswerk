@@ -122,13 +122,41 @@ Drie dingen daaraan komen niet uit een ontwerp maar uit het opbouwen op een echt
 
 **Alle waarden komen binnen als tekst.** Een nacht zonder slaapmeting stuurde een lege waarde, PostgREST probeerde die naar `numeric` te casten, en het hele bericht sneuvelde met `22P02` — inclusief de stappen die wél gemeten waren. Eén ontbrekende meting hoort de andere niet mee te slepen. `kal_getal` leest de getallen nu zelf: leeg betekent *niet meegestuurd*, een komma is een decimaalteken (de telefoon staat op Nederlands), en iets onleesbaars wordt overgeslagen en genoemd in `niet_gelezen`. Dat laatste veld is er expres: stil overslaan is hetzelfde als liegen over wat er is binnengekomen.
 
+**Een 0 wordt niet weggeschreven.** *Bereken statistiek* geeft over nul monsters een **0** terug en niet leeg. Die 0 is dus niet te onderscheiden van "niets gevonden" — en als meting is hij onmogelijk: wie zijn telefoon bij zich draagt komt niet op nul stappen of nul actieve energie uit, en nul minuten slaap bestaat niet. Op 23 augustus kwam er zo 0 kcal binnen naast 1.746 stappen. Wegschrijven levert een dag op die eruitziet als gemeten en die het model als echte nul meeneemt, dus die 0 gaat de tabellen niet in; hij komt terug in `nul_overgeslagen`. Dat is expres iets anders dan `niet_gelezen`: een "0" is prima leesbaar. En het geldt expres alleen voor de platte ingang — wie via de lijst-ingang een 0 stuurt, meent hem.
+
 **`p_hartslag_rust`.** De rustpols bestond al als meting die je met de hand invulde, maar kwam nergens binnen en werd nergens getoond. Het is het waardevolste dagcijfer dat een horloge levert: hij daalt als de conditie verbetert en stijgt bij ziekte, slechte slaap of te zware belasting. In de opdracht hoort hij op **Gemiddelde** te staan, niet op Som. Het scherm *Klinisch* zet hem af tegen je gemiddelde van de afgelopen dertig dagen, en zwijgt zolang er minder dan drie eerdere metingen zijn — één dag verschil is ruis.
 
-Het antwoord vertelt per stuk wat er gebeurd is, ook als er niets gebeurde: `{"datum": …, "dagen": 1, "hartslag_rust": "opgeslagen" | "die van jou blijft staan" | "onmogelijk, genegeerd" | "niet meegestuurd", "niet_gelezen": []}`.
+Het antwoord vertelt per stuk wat er gebeurd is, ook als er niets gebeurde: `{"datum": …, "dagen": 1, "hartslag_rust": "opgeslagen" | "die van jou blijft staan" | "onmogelijk, genegeerd" | "niet meegestuurd", "niet_gelezen": [], "nul_overgeslagen": []}`.
+
+### Peilingen: waarom de opdracht vaker mag vuren
+
+Eten voer je zelf in, dus dat staat er meteen. Beweging kwam één keer per etmaal binnen, om 23:45, als de dag al voorbij was. Over iets wat je pas achteraf weet valt niets te adviseren.
+
+De helft van de oplossing zit op de telefoon: laat de opdracht **vaker vuren**. Vier of vijf tijdstip-automatiseringen die dezelfde opdracht draaien, plus eventueel één op *Wanneer ik een training beëindig*. Dat werkt zonder enige wijziging, want `stappen` heeft de regel "het toestel wint" en een nieuwere stand is altijd hoger dan de vorige.
+
+De andere helft staat in `health/database/05-peilingen-van-de-dag.sql`. Elke stand van vandáág blijft daar staan **mét het tijdstip**, in `kal_beweging_peilingen`. Uit dagtotalen valt namelijk niet af te leiden of 3.400 stappen om drie uur voor jou veel of weinig is: twee dagen van 8.000 stappen kunnen een ochtendwandeling zijn of een avondrondje, en het advies om drie uur is in die twee gevallen tegengesteld.
+
+`kal_beweging_gewoonte(gebruiker, minuut)` geeft de mediane stand rond dat tijdstip op eerdere dagen, mét het aantal dagen waarop dat berust. Dat aantal is het belangrijkste veld: onder de vijf dagen zegt het niets en hoort de app te zwijgen.
+
+Twee dingen doet die tabel expres niet. Hij vervangt `kal_dagen` niet — daar staat het dagtotaal, en dat blijft de waarheid over een dag; een tussenstand is een meting van een moment. En hij rekent niet mee in het model: stappen zitten sowieso niet in de verbruiksschatting (hoofdstuk 6 van `VERANTWOORDING.md`), dus een advies om te wandelen is hier nooit een calorieënhandel.
+
+### De coach: het scherm dat naar je toe komt
+
+Het scherm rekent al uit wat er nog in past. Dat helpt alleen als je kijkt. Sinds 24 augustus stuurt de app op drie momenten een bericht — **12:30, 15:30 en 18:30** — maar alleen als er iets te zeggen valt, en dat is meestal niet zo.
+
+De drempels staan in `kal_coach_bouwen` en in `meldenNu` in `src/health/coach.ts`, en ze zijn met opzet grof: minder dan vijftien gram eiwit verschil is binnen de ruis van het loggen zelf. Er gaat niets uit vóór negen uur, niets na negenen 's avonds, en niets als je al over je doel zit — daar valt die dag niets meer aan te doen en het benoemen helpt niemand. De soort draagt het tijdvak (`coach-12`), zodat de ontdubbeling per dag én per moment werkt.
+
+**Waarom er een postbus tussen zit.** Om te zeggen "je hebt nog 800 kcal" moet je het doel kennen, en dat komt uit de rekenkern: een regressie over de weegreeks, gekruist met de gelogde inname. Die kern staat in TypeScript en is daar met gouden waarden vastgelegd. Hem in SQL nabouwen zou een tweede implementatie van het model opleveren, en twee implementaties lopen uit elkaar zonder dat iemand ziet welke van de twee liegt. Dus publiceert de app zijn uitkomst in `kal_modelstand` met een tijdstempel, en zwijgt de coach zodra die ouder is dan achtenveertig uur. Dat is meteen de juiste uitkomst om een tweede reden: als de app twee dagen niet open is geweest, is de dagregistratie ook onvolledig en klopt het tekort toch niet.
+
+**Wanneer een model aan zet is.** Alleen als er in je eigen geschiedenis niets meer past binnen de resterende ruimte. Dán zet `kal_coach_bouwen` het vlaggetje `vraag_model` aan en vraagt de edge function om één concreet idee — eerst OpenAI, dan Claude. Het model mag geen kcal- of eiwitwaarden noemen: die komen uit de tabel zodra je het logt, en een getal uit het geheugen van een model zou daarmee botsen. In het bericht staat erbij dat het een voorstel van een taalmodel is en niet iets uit je geschiedenis.
+
+De modelnamen staan in `kal_config` en niet in de code, om dezelfde reden als bij `kal-ai`: namen verlopen. Staat er geen `model_coach_openai`, dan wordt OpenAI overgeslagen — er wordt geen naam geraden die niemand heeft nagekeken.
+
+**Eén ding om te onthouden bij het uitrollen.** Een nieuwe versie van een edge function komt terug met `verify_jwt = true`, ook als hij eerder open stond. De prikkel-cron stuurde alleen een `Content-Type` mee en kreeg daarmee `UNAUTHORIZED_NO_AUTH_HEADER` van de poort — vóór de functie zelf ook maar iets zag. Alle prikkel-taken sturen nu een `Authorization` met de service-role-sleutel uit de vault. Dat is per saldo beter: het endpoint stond open en het gedeelde geheim was het enige slot; nu zijn het er twee.
 
 ### De regels zijn vastgelegd
 
-De botsingsregels stonden alleen in de functie. Sinds 23 augustus staan ze ook in een proef: `select * from kal_proef_koppeling();` — 31 gevallen, alle regels uit de tabel hierboven plus de sleutelafhandeling, de grenzen, de scheiding tussen gebruikers en alles wat de platte ingang hierboven moet verdragen. Zie `health/database/03-proef-koppeling.sql`.
+De botsingsregels stonden alleen in de functie. Sinds 23 augustus staan ze ook in een proef: `select * from kal_proef_koppeling();` — 41 gevallen, alle regels uit de tabel hierboven plus de sleutelafhandeling, de grenzen, de scheiding tussen gebruikers en alles wat de platte ingang hierboven moet verdragen. Zie `health/database/03-proef-koppeling.sql`.
 
 Twee dingen daaraan zijn niet vanzelfsprekend en dus het vermelden waard.
 
@@ -208,8 +236,12 @@ where n.nspname = 'public' and p.prokind = 'f'
 | `kal_nevo_zoek` | één zoekfunctie, gedeeld door de app en `kal-ai` | bij elk zoeken |
 | `nevo_actief` | de licentiepoort waar alle NEVO-toegang langs gaat | — |
 | `kal_beweging_ontvangen` | Opdrachten op de iPhone → PostgREST → `kal_dagen` | dagelijks, door de telefoon |
-| `kal_beweging_dag` | de platte ingang die de Opdrachten-app aanroept | dagelijks, door de telefoon |
-| `kal_proef_koppeling` | 31 gevallen over de botsingsregels en de platte ingang, draait zichzelf terug | met de hand, na elke wijziging |
+| `kal_beweging_dag` | de platte ingang die de Opdrachten-app aanroept | een paar keer per dag, door de telefoon |
+| `kal_peiling_vastleggen` | bewaart elke stand van vandaag met zijn tijdstip | bij elke aanroep hierboven |
+| `kal_modelstand_zetten` | de app legt de uitkomst van de rekenkern neer | bij elke keer dat de app opent |
+| `kal_coach_stand` | wat er nog in past, en wat dat kan vullen | door de coachprikkel |
+| `kal_coach_bouwen` | bouwt de coachberichten | 12:30, 15:30 en 18:30 |
+| `kal_proef_koppeling` | 41 gevallen over de botsingsregels en de platte ingang, draait zichzelf terug | met de hand, na elke wijziging |
 | 16 tabellen, 24 functies | schema `public`, prefix `kal_` | — |
 
 Alles staat of valt bij één ding dat geen enkele automatisering kan overnemen: de ochtendweging. De prikkel herinnert eraan, het weekbericht rekent ermee, maar niemand kan hem voor je verzinnen.

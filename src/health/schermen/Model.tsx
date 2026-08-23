@@ -112,7 +112,7 @@ export function Model(
           </>
         ) : (
           <>
-            <p style={{ fontFamily: 'var(--serif)', fontSize: '1.3rem', color: 'var(--grijs)', marginTop: 4 }}>
+            <p style={{ fontFamily: 'var(--kop)', fontWeight: 640, fontSize: '1.3rem', color: 'var(--grijs)', marginTop: 4 }}>
               Nog niet te berekenen.
             </p>
             <p style={{ fontSize: '.88rem', marginTop: 8 }}>

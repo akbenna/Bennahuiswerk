@@ -4,9 +4,10 @@
  * Kop, zes tabbladen, een bodembalk en de vensters. Wat de oude `teken()` deed,
  * maar dan zonder het hele scherm opnieuw op te bouwen.
  */
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useKalibratie } from './toestand'
 import { analyse, trendReeks } from './rekenkern'
+import type { Analyse } from './rekenkern'
 import { dec } from '@/gedeeld/getal'
 import { vandaag } from '@/gedeeld/datum'
 import type { IsoDatum, Moment } from '@/gedeeld/db/tabellen'
@@ -28,14 +29,61 @@ import {
 import { Opzet } from './Opzet'
 import { Kaart, Knop } from './onderdelen/basis'
 
+/* De namen op de balk zijn niet de namen in de code. 'Model' en 'Klinisch'
+   zeggen wat een scherm ís voor wie het gebouwd heeft; 'Inzicht' en
+   'Gezondheid' zeggen wat je er komt halen. De sleutels blijven staan zoals ze
+   waren, want die zitten in de toestand en in de proeven. */
 const TABS = [
   ['vandaag', 'Vandaag', '◍'],
-  ['model', 'Model', '◎'],
+  ['model', 'Inzicht', '◎'],
   ['voeding', 'Voeding', '◇'],
   ['beweging', 'Beweging', '◈'],
-  ['klinisch', 'Klinisch', '✚'],
-  ['meer', 'Meer', '⋯'],
+  ['klinisch', 'Gezondheid', '✚'],
+  ['meer', 'Profiel', '⋯'],
 ] as const
+
+/** Twee letters voor het rondje rechtsboven. Twee woorden geven de eerste van
+ *  allebei; één woord geeft zijn eerste twee letters. */
+function initialen(account: string): string {
+  const delen = account.trim().split(/[^\p{L}\p{N}]+/u).filter(Boolean)
+  if (delen.length >= 2) return (delen[0]![0]! + delen[1]![0]!).toUpperCase()
+  return (delen[0] ?? account).slice(0, 2).toUpperCase()
+}
+
+/**
+ * DE POSTBUS VULLEN
+ *
+ * De rekenkern draait hier, in de app. De coach die 's middags een bericht
+ * stuurt kan hem niet zelf uitrekenen: dat zou een tweede implementatie van het
+ * model in SQL vragen, en twee implementaties lopen uit elkaar zonder dat
+ * iemand ziet welke van de twee liegt. Het model heeft één huis.
+ *
+ * Dus legt de app zijn uitkomst neer met een tijdstempel, en zwijgt de coach
+ * zodra die ouder is dan twee dagen. De datum zit in de sleutel omdat het
+ * tijdstempel anders blijft staan op de dag dat het doel toevallig niet
+ * verandert — en dan valt de coach stil terwijl er niets aan de hand is.
+ *
+ * Mislukt het, dan komen er geen prikkels en gebeurt er verder niets. Dat is de
+ * veilige kant om op te falen, en het is aan de gebruiker te merken; een
+ * foutmelding op het scherm voor een achtergrondbericht is ruis.
+ */
+function Postbus({ token, a }: { token: string; a: Analyse }) {
+  const sleutel = [vandaag(), a.doel, Math.round(a.eiwitDoel), a.laag, a.hoog, a.zekerheid].join('|')
+  useEffect(() => {
+    void roep('kal_modelstand_zetten', {
+      p_token: token,
+      p_doel_kcal: a.doel,
+      p_eiwit_doel_g: Math.round(a.eiwitDoel),
+      p_tdee_laag: a.laag,
+      p_tdee_hoog: a.hoog,
+      p_zekerheid: a.zekerheid,
+    }).catch(() => undefined)
+    /* De sleutel draagt alles wat ertoe doet; `a` zelf is elke render een nieuw
+       object en zou de aanroep bij elke toetsaanslag herhalen. */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, sleutel])
+  return null
+}
 
 type Tab = (typeof TABS)[number][0]
 type VensterNaam = 'profiel' | 'import' | 'account' | 'koppelen'
@@ -92,8 +140,9 @@ export function App() {
                 {' · '}{profiel.fase === 'onderhoud' ? 'onderhoudsfase' : 'afvalfase'}
               </div>
             </div>
-            <button type="button" className="chip aan" onClick={() => zetVenster('account')}>
-              {k.sessie.account}
+            <button type="button" className="chip aan rond" aria-label={`Account van ${k.sessie.account}`}
+                    onClick={() => zetVenster('account')}>
+              {initialen(k.sessie.account)}
             </button>
           </div>
         </header>
@@ -105,11 +154,15 @@ export function App() {
           </Kaart>
         )}
 
+        <Postbus token={k.sessie.token} a={a} />
+
         <div id="inhoud">
           {tab === 'vandaag' && (
             <Vandaag
-              a={a} dag={dag} regels={regelsVandaag} dagen={k.dagenkaart} datum={datum}
+              a={a} dag={dag} regels={regelsVandaag} alleRegels={k.alles.regels}
+              dagen={k.dagenkaart} datum={datum}
               eiwitPerKg={profiel.eiwit_g_per_kg}
+              voegToe={voegRegelsToe}
               zetDatum={zetDatum}
               zetDagveld={(veld, waarde) =>
                 void k.wijzig((t) => roep('kal_dag_zetten', {

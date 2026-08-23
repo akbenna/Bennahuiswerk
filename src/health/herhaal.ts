@@ -127,6 +127,11 @@ export function herhalingen(regels: Regel[], vraag: Herhaalvraag): Herhaling[] {
   const max = vraag.max ?? 12
 
   const binnen = regels.filter((r) => {
+    /* Een importregel is geen gerecht maar een dagtotaal: "Dagtotaal uit Yazio",
+       1.319 kcal, 76 gram eiwit. Die als suggestie aanbieden betekent dat één
+       tik een hele dag als één maaltijd wegschrijft. Hij hoort in de
+       geschiedenis thuis en niet in een lijst waar je uit kiest. */
+    if (r.bron === 'import') return false
     const d = dagenTussen(r.datum, vraag.nu)
     return d >= 0 && d <= venster
   })

@@ -287,6 +287,16 @@ export function KoppelVenster(
           Een meting die op een dag ontbreekt is geen probleem: dat veld blijft dan leeg en de rest
           komt gewoon binnen. Een dag zonder slaapmeting laat je stappen dus niet sneuvelen.
         </p>
+        <p className="mini" style={{ marginTop: 6 }}>
+          <b>Krijg je een 0 waar een getal hoort?</b> Dan vond de zoekactie niets:{' '}
+          <Menu nl="Bereken statistiek" en="Calculate Statistics" /> geeft over nul monsters een 0
+          terug en niet leeg. Zo'n 0 wordt niet opgeslagen — hij is niet te onderscheiden van
+          &ldquo;niets gemeten&rdquo;, en als meting onmogelijk: wie zijn telefoon bij zich draagt
+          komt niet op nul stappen of nul actieve energie uit. In het antwoord staat dan{' '}
+          <code>nul_overgeslagen</code> met dat veld erin. Kijk dan bij{' '}
+          <em>Instellingen → Privacy en beveiliging → Gezondheid → Opdrachten</em> of dat gegeven
+          wel gedeeld mag worden, en of de statistiek onder de juiste zoekactie hangt.
+        </p>
 
         <p className="mini" style={{ marginTop: 10 }}>
           Er komt iets terug in de vorm{' '}
