@@ -94,6 +94,7 @@ Ze zijn met opzet niet symmetrisch:
 | `stappen`, `actieve_energie_kcal`, `slaap_min`, `fiets_min`, `bedtijd`, `waaktijd` | wat binnenkomt | Dit zijn metingen. Wat je zelf intikt is een herinnering. |
 | `gewicht_kg` | wat er al staat | Het model rekent op de ochtendweging volgens protocol: nuchter, na het toilet, vóór het eten. Een weegschaal die 's avonds met kleren aan een getal doorgeeft meet iets anders; twee metingen door elkaar geven een helling die nergens op slaat. Lege dagen worden wél aangevuld. |
 | `kracht`, `notitie` | wat er al staat | Een oordeel van jou, geen meting. De functie raakt ze niet aan. |
+| `hartslag_rust` | het toestel, tenzij jij hem invulde | Hij staat niet in `kal_dagen` maar in `kal_metingen`, en heeft daarom zijn eigen regel. Een pols die de koppeling zelf neerzette mag hij bijwerken — die van vanochtend is voorlopig. Eentje die jij hebt ingetikt blijft staan. |
 
 Een veld dat niet in het bericht zit laat de bestaande waarde met rust — je hoeft dus niet alles mee te sturen. Dagen in de toekomst en dagen van vóór 2015 worden overgeslagen en geteld in het antwoord, niet stilzwijgend weggeschreven: dat is altijd een fout in de opdracht en niet een meting.
 
@@ -111,9 +112,23 @@ Wat het zo vervelend maakt is de melding die je dan krijgt: *"De netwerkverbindi
 
 Een `Authorization`-koptekst is ook niet nodig; `apikey` alleen volstaat.
 
+### De platte ingang: `kal_beweging_dag`
+
+De Opdrachten-app kan geen lijst van objecten bouwen zonder dat het een middag kost. Daarom staat er naast `kal_beweging_ontvangen` een tweede ingang die één dag plat aanneemt — twaalf losse velden, en niets anders te doen dan ze invullen. Hij rekent zelf niets uit: hij bouwt de dag en geeft hem door aan `kal_beweging_ontvangen`, zodat de botsingsregels op één plek blijven staan.
+
+Drie dingen daaraan komen niet uit een ontwerp maar uit het opbouwen op een echt toestel. Ze staan met de reden erbij in `health/database/04-koppeling-in-de-praktijk.sql`.
+
+**`p_dagen_terug` in plaats van een datum.** De datum meesturen vraagt op een iPhone twee extra acties, een aangepaste notatie, en de variabele *Huidige datum* — die niet in de variabelenkiezer staat. Eén getal doet hetzelfde werk: `0` is vandaag, `1` is gisteren. Laat je hem weg, dan wordt het gisteren; stuur je toch een `p_datum` mee, dan wint die.
+
+**Alle waarden komen binnen als tekst.** Een nacht zonder slaapmeting stuurde een lege waarde, PostgREST probeerde die naar `numeric` te casten, en het hele bericht sneuvelde met `22P02` — inclusief de stappen die wél gemeten waren. Eén ontbrekende meting hoort de andere niet mee te slepen. `kal_getal` leest de getallen nu zelf: leeg betekent *niet meegestuurd*, een komma is een decimaalteken (de telefoon staat op Nederlands), en iets onleesbaars wordt overgeslagen en genoemd in `niet_gelezen`. Dat laatste veld is er expres: stil overslaan is hetzelfde als liegen over wat er is binnengekomen.
+
+**`p_hartslag_rust`.** De rustpols bestond al als meting die je met de hand invulde, maar kwam nergens binnen en werd nergens getoond. Het is het waardevolste dagcijfer dat een horloge levert: hij daalt als de conditie verbetert en stijgt bij ziekte, slechte slaap of te zware belasting. In de opdracht hoort hij op **Gemiddelde** te staan, niet op Som. Het scherm *Klinisch* zet hem af tegen je gemiddelde van de afgelopen dertig dagen, en zwijgt zolang er minder dan drie eerdere metingen zijn — één dag verschil is ruis.
+
+Het antwoord vertelt per stuk wat er gebeurd is, ook als er niets gebeurde: `{"datum": …, "dagen": 1, "hartslag_rust": "opgeslagen" | "die van jou blijft staan" | "onmogelijk, genegeerd" | "niet meegestuurd", "niet_gelezen": []}`.
+
 ### De regels zijn vastgelegd
 
-De botsingsregels stonden alleen in de functie. Sinds 23 augustus staan ze ook in een proef: `select * from kal_proef_koppeling();` — 22 gevallen, alle regels uit de tabel hierboven plus de sleutelafhandeling, de grenzen en de scheiding tussen gebruikers. Zie `health/database/03-proef-koppeling.sql`.
+De botsingsregels stonden alleen in de functie. Sinds 23 augustus staan ze ook in een proef: `select * from kal_proef_koppeling();` — 31 gevallen, alle regels uit de tabel hierboven plus de sleutelafhandeling, de grenzen, de scheiding tussen gebruikers en alles wat de platte ingang hierboven moet verdragen. Zie `health/database/03-proef-koppeling.sql`.
 
 Twee dingen daaraan zijn niet vanzelfsprekend en dus het vermelden waard.
 
@@ -193,7 +208,8 @@ where n.nspname = 'public' and p.prokind = 'f'
 | `kal_nevo_zoek` | één zoekfunctie, gedeeld door de app en `kal-ai` | bij elk zoeken |
 | `nevo_actief` | de licentiepoort waar alle NEVO-toegang langs gaat | — |
 | `kal_beweging_ontvangen` | Opdrachten op de iPhone → PostgREST → `kal_dagen` | dagelijks, door de telefoon |
-| `kal_proef_koppeling` | 22 gevallen over de botsingsregels, draait zichzelf terug | met de hand, na elke wijziging |
+| `kal_beweging_dag` | de platte ingang die de Opdrachten-app aanroept | dagelijks, door de telefoon |
+| `kal_proef_koppeling` | 31 gevallen over de botsingsregels en de platte ingang, draait zichzelf terug | met de hand, na elke wijziging |
 | 16 tabellen, 24 functies | schema `public`, prefix `kal_` | — |
 
 Alles staat of valt bij één ding dat geen enkele automatisering kan overnemen: de ochtendweging. De prikkel herinnert eraan, het weekbericht rekent ermee, maar niemand kan hem voor je verzinnen.
