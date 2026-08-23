@@ -121,8 +121,10 @@ export function App() {
         <div id="inhoud">
           {tab === 'vandaag' && (
             <Vandaag
-              a={a} dag={dag} regels={regelsVandaag} dagen={k.dagenkaart} datum={datum}
+              a={a} dag={dag} regels={regelsVandaag} alleRegels={k.alles.regels}
+              dagen={k.dagenkaart} datum={datum}
               eiwitPerKg={profiel.eiwit_g_per_kg}
+              voegToe={voegRegelsToe}
               zetDatum={zetDatum}
               zetDagveld={(veld, waarde) =>
                 void k.wijzig((t) => roep('kal_dag_zetten', {

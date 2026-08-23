@@ -250,6 +250,21 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
        stijlkwestie maar een scherm dat zijn eigen vraag niet beantwoordt. */
     if (!kop || !kop.trim()) throw new Error(`${stam}: kop is leeg`)
     console.log(`${stam.padEnd(26)} kop=${JSON.stringify(kop)}`)
+
+    /* De coachkaart staat alleen op Vandaag, en alleen als er een doel is. Hij
+       hoort de eiwiteis te noemen én voorstellen te tonen: een kaart die wel
+       rekent maar niets aanbiedt is de helft van de functie, en dat is aan een
+       screenshot niet te zien. */
+    if (tab === 'Vandaag' && naam !== 'eerste-dag') {
+      const kaart = pagina.locator('.kaart', { hasText: 'Wat er nog in past' })
+      if (!(await kaart.count())) throw new Error(`${stam}: coachkaart ontbreekt`)
+      const zin = (await kaart.locator('p.klein').first().textContent()) ?? ''
+      if (!/g eiwit per 100 kcal|eiwit is binnen|over je doel/.test(zin)) {
+        throw new Error(`${stam}: coachkaart noemt de eis niet — ${JSON.stringify(zin)}`)
+      }
+      const n = await kaart.locator('.lijst > *').count()
+      console.log(`${''.padEnd(26)} coach=${n} voorstellen`)
+    }
   }
   await pagina.close()
 }
