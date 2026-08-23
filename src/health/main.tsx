@@ -5,10 +5,9 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { App } from './App'
 import './stijl.css'
+import './desktop.css'
+import './medical-intelligence.css'
 
-/* Offline bruikbaar houden: de weging gebeurt in de badkamer en juist daar valt
-   het bereik weg. Blijft de app dan hangen, dan mist de reeks een dag — en het
-   model rekent met de reeks, niet met losse getallen. */
 if ('serviceWorker' in navigator) {
   addEventListener('load', () => {
     void navigator.serviceWorker.register('sw.js').catch(() => {})
