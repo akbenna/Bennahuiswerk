@@ -183,12 +183,20 @@ begin
     /* Het toestel wint voor de metingen. `coalesce(nieuw, oud)` en niet
        andersom: een veld dat niet meegestuurd wordt laat de bestaande waarde
        met rust, een veld dat wél meekomt vervangt hem. */
+    /* De omweg via numeric is er omdat Apple Gezondheid in kommagetallen rekent:
+       "Bereken statistiek → Som" over de stappen van een dag levert 8421.0 op
+       en niet 8421, en `'8421.0'::integer` weigert Postgres. Ronden en niet
+       afkappen: 8421,6 stappen zijn er 8422. */
     update kal_dagen d set
-      stappen              = coalesce(nullif(v_rij->>'stappen','')::integer, d.stappen),
-      actieve_energie_kcal = coalesce(nullif(v_rij->>'actieve_energie_kcal','')::integer,
-                                      d.actieve_energie_kcal),
-      slaap_min            = coalesce(nullif(v_rij->>'slaap_min','')::integer, d.slaap_min),
-      fiets_min            = coalesce(nullif(v_rij->>'fiets_min','')::integer, d.fiets_min),
+      stappen              = coalesce(round(nullif(v_rij->>'stappen','')::numeric)::integer,
+                                      d.stappen),
+      actieve_energie_kcal = coalesce(
+                               round(nullif(v_rij->>'actieve_energie_kcal','')::numeric)::integer,
+                               d.actieve_energie_kcal),
+      slaap_min            = coalesce(round(nullif(v_rij->>'slaap_min','')::numeric)::integer,
+                                      d.slaap_min),
+      fiets_min            = coalesce(round(nullif(v_rij->>'fiets_min','')::numeric)::integer,
+                                      d.fiets_min),
       bedtijd              = coalesce(nullif(v_rij->>'bedtijd','')::time, d.bedtijd),
       waaktijd             = coalesce(nullif(v_rij->>'waaktijd','')::time, d.waaktijd),
       /* Het gewicht andersom: alleen invullen als er nog niets staat. */
