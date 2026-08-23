@@ -28,14 +28,26 @@ import {
 import { Opzet } from './Opzet'
 import { Kaart, Knop } from './onderdelen/basis'
 
+/* De namen op de balk zijn niet de namen in de code. 'Model' en 'Klinisch'
+   zeggen wat een scherm ís voor wie het gebouwd heeft; 'Inzicht' en
+   'Gezondheid' zeggen wat je er komt halen. De sleutels blijven staan zoals ze
+   waren, want die zitten in de toestand en in de proeven. */
 const TABS = [
   ['vandaag', 'Vandaag', '◍'],
-  ['model', 'Model', '◎'],
+  ['model', 'Inzicht', '◎'],
   ['voeding', 'Voeding', '◇'],
   ['beweging', 'Beweging', '◈'],
-  ['klinisch', 'Klinisch', '✚'],
-  ['meer', 'Meer', '⋯'],
+  ['klinisch', 'Gezondheid', '✚'],
+  ['meer', 'Profiel', '⋯'],
 ] as const
+
+/** Twee letters voor het rondje rechtsboven. Twee woorden geven de eerste van
+ *  allebei; één woord geeft zijn eerste twee letters. */
+function initialen(account: string): string {
+  const delen = account.trim().split(/[^\p{L}\p{N}]+/u).filter(Boolean)
+  if (delen.length >= 2) return (delen[0]![0]! + delen[1]![0]!).toUpperCase()
+  return (delen[0] ?? account).slice(0, 2).toUpperCase()
+}
 
 type Tab = (typeof TABS)[number][0]
 type VensterNaam = 'profiel' | 'import' | 'account' | 'koppelen'
@@ -92,8 +104,9 @@ export function App() {
                 {' · '}{profiel.fase === 'onderhoud' ? 'onderhoudsfase' : 'afvalfase'}
               </div>
             </div>
-            <button type="button" className="chip aan" onClick={() => zetVenster('account')}>
-              {k.sessie.account}
+            <button type="button" className="chip aan rond" aria-label={`Account van ${k.sessie.account}`}
+                    onClick={() => zetVenster('account')}>
+              {initialen(k.sessie.account)}
             </button>
           </div>
         </header>

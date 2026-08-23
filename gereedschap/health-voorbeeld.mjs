@@ -192,11 +192,11 @@ await ctx.addInitScript(`{
 const gevallen = [
   ['eerste-dag', 1, 'light', 'afvallen', ['Vandaag']],
   ['na-vier-weken', 28, 'light', 'afvallen',
-   ['Vandaag', 'Model', 'Voeding', 'Beweging', 'Klinisch', 'Meer']],
-  ['donker', 28, 'dark', 'afvallen', ['Vandaag', 'Voeding', 'Meer']],
+   ['Vandaag', 'Inzicht', 'Voeding', 'Beweging', 'Gezondheid', 'Profiel']],
+  ['donker', 28, 'dark', 'afvallen', ['Vandaag', 'Voeding', 'Profiel']],
   /* De onderhoudsfase is de enige toestand waarin het stoplicht bestaat. Zonder
      dit geval blijft die kop ongezien tot iemand hem in productie tegenkomt. */
-  ['onderhoud', 28, 'light', 'onderhoud', ['Meer']],
+  ['onderhoud', 28, 'light', 'onderhoud', ['Profiel']],
 ]
 
 /** Een tabblad openen en wachten tot de kop er echt staat. */
@@ -301,7 +301,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
   await pagina.emulateMedia({ colorScheme: 'light' })
   await bedienDb(pagina, 28, 'afvallen')
   await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
-  await pagina.getByRole('tab', { name: 'Meer' }).click()
+  await pagina.getByRole('tab', { name: 'Profiel' }).click()
   await pagina.getByRole('button', { name: 'Horloge en telefoon koppelen' }).click()
   await pagina.waitForSelector('.venster', { timeout: 5000 })
   await pagina.waitForSelector('.lijst > div', { timeout: 5000 })
