@@ -239,3 +239,87 @@ grant execute on function public.kal_koppeling_maken(text, text)     to anon, au
 grant execute on function public.kal_koppelingen_lijst(text)         to anon, authenticated;
 grant execute on function public.kal_koppeling_wissen(text, uuid)    to anon, authenticated;
 grant execute on function public.kal_beweging_ontvangen(text, jsonb) to anon, authenticated;
+
+-- =============================================================================
+-- ÉÉN DAG INSTUREN, PLAT
+--
+-- Toegevoegd 23 augustus 2026, ook al toegepast.
+--
+-- `kal_beweging_ontvangen` neemt een lijst dagen. Dat is de juiste vorm voor een
+-- inhaalslag, maar de verkeerde vorm voor een opdracht op een telefoon: de
+-- Opdrachten-app kan een plat json-formulier invullen zonder één regel tekst,
+-- maar een lijst van objecten moet je met de hand in een tekstveld bouwen en
+-- daar variabelen in slepen. Dat is precies waar het misgaat.
+--
+-- Deze functie is die platte ingang. Hij rekent zelf niets uit: hij bouwt de
+-- lijst en geeft hem door, zodat de botsingsregels op één plek blijven staan.
+--
+-- Drie dingen die hij extra doet, elk omdat ze anders stil misgaan:
+--
+--   1. Geen datum meegestuurd -> gisteren in Amsterdam. Een opdracht die
+--      's ochtends vuurt gaat over de dag die net af is; vandaag is dan nog
+--      bijna leeg. De gebruikte datum komt terug in het antwoord, zodat die
+--      aanname zichtbaar is en niet geraden hoeft te worden.
+--
+--   2. Slaap mag in minuten, uren of seconden. Welke eenheid de Opdrachten-app
+--      teruggeeft verschilt per manier van uitlezen, en wie seconden in het
+--      minutenveld stopt logt 26.820 minuten slaap zonder het te merken.
+--
+--   3. Slaap buiten nul tot vierentwintig uur wordt niet weggeschreven maar
+--      gemeld. Dat is altijd een verkeerde eenheid en nooit een nacht.
+-- =============================================================================
+
+create or replace function public.kal_beweging_dag(
+  p_sleutel              text,
+  p_datum                text    default null,
+  p_stappen              numeric default null,
+  p_slaap_min            numeric default null,
+  p_slaap_uur            numeric default null,
+  p_slaap_sec            numeric default null,
+  p_actieve_energie_kcal numeric default null,
+  p_fiets_min            numeric default null,
+  p_gewicht_kg           numeric default null,
+  p_gewicht_bron         text    default null
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path to 'public'
+as $$
+declare
+  v_datum     date;
+  v_slaap     numeric;
+  v_genegeerd boolean := false;
+  v_dag       jsonb;
+  v_uit       jsonb;
+begin
+  v_datum := coalesce(
+    nullif(trim(coalesce(p_datum, '')), '')::date,
+    (now() at time zone 'Europe/Amsterdam')::date - 1);
+
+  v_slaap := coalesce(p_slaap_min, p_slaap_uur * 60, p_slaap_sec / 60);
+  if v_slaap is not null and (v_slaap < 0 or v_slaap > 1440) then
+    v_slaap := null;
+    v_genegeerd := true;
+  end if;
+
+  /* Alleen wat er werkelijk meekwam in de dag zetten. */
+  v_dag := jsonb_build_object('datum', v_datum);
+  if p_stappen              is not null then v_dag := v_dag || jsonb_build_object('stappen', p_stappen); end if;
+  if v_slaap                is not null then v_dag := v_dag || jsonb_build_object('slaap_min', v_slaap); end if;
+  if p_actieve_energie_kcal is not null then v_dag := v_dag || jsonb_build_object('actieve_energie_kcal', p_actieve_energie_kcal); end if;
+  if p_fiets_min            is not null then v_dag := v_dag || jsonb_build_object('fiets_min', p_fiets_min); end if;
+  if p_gewicht_kg           is not null then v_dag := v_dag || jsonb_build_object('gewicht_kg', p_gewicht_kg); end if;
+  if p_gewicht_bron         is not null then v_dag := v_dag || jsonb_build_object('gewicht_bron', p_gewicht_bron); end if;
+
+  v_uit := kal_beweging_ontvangen(p_sleutel, jsonb_build_array(v_dag));
+
+  return v_uit
+      || jsonb_build_object('datum', v_datum)
+      || jsonb_build_object('slaap_genegeerd', v_genegeerd);
+end $$;
+
+revoke all on function public.kal_beweging_dag(
+  text, text, numeric, numeric, numeric, numeric, numeric, numeric, numeric, text) from public;
+grant execute on function public.kal_beweging_dag(
+  text, text, numeric, numeric, numeric, numeric, numeric, numeric, numeric, text) to anon, authenticated;

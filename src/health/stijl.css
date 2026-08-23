@@ -444,6 +444,15 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
 /* De Engelse menunaam naast de Nederlandse: erbij, niet ervoor. Hij hoort te
    helpen als je hem nodig hebt en weg te vallen als je hem niet nodig hebt. */
 .anderstalig{color:var(--dim);font-size:.92em}
+/* De velden die je in het json-formulier van Opdrachten toevoegt: naam, type,
+   waarde. Een tabel en geen lopende zin, want je legt hem naast je telefoon. */
+.veldtabel{margin-top:7px;border:1px solid var(--lijn);border-radius:10px;overflow:hidden}
+.veldtabel>div{display:flex;gap:9px;align-items:baseline;padding:7px 10px;
+  border-top:1px solid var(--lijn);font-size:.78rem;flex-wrap:wrap}
+.veldtabel>div:first-child{border-top:0}
+.veldtabel code{flex:0 0 auto;font-family:var(--mono);font-size:.75rem;color:var(--ink)}
+.veldtabel span:nth-of-type(1){flex:0 0 auto;color:var(--k);font-weight:600}
+.veldtabel span:nth-of-type(2){flex:1 1 90px;min-width:0;color:var(--grijs)}
 .stappen{margin:8px 0 0;padding-left:20px;font-size:.86rem;line-height:1.6}
 .stappen>li{margin-bottom:9px}
 .stappen code{font-family:var(--mono);font-size:.8rem;background:var(--vlak2);

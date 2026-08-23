@@ -103,6 +103,18 @@ Het antwoord is `{"dagen": n, "gewicht_behouden": n, "overgeslagen": n}`. Die tw
 
 De functie zelf is in de database getest, inclusief alle botsingsregels en een geweigerde sleutel. De HTTP-weg erheen is **niet** vanuit de ontwikkelomgeving te testen — het netwerk daar laat de Supabase-host niet door. Daarvoor zit de knop *Verbinding proberen* in het koppelscherm: die stuurt vanaf jouw toestel een bericht met een lege dagenlijst langs precies dezelfde weg als de opdracht straks loopt. Slaagt die, dan klopt de hele keten op de inhoud van het bericht na.
 
+### De regels zijn vastgelegd
+
+De botsingsregels stonden alleen in de functie. Sinds 23 augustus staan ze ook in een proef: `select * from kal_proef_koppeling();` — 22 gevallen, alle regels uit de tabel hierboven plus de sleutelafhandeling, de grenzen en de scheiding tussen gebruikers. Zie `health/database/03-proef-koppeling.sql`.
+
+Twee dingen daaraan zijn niet vanzelfsprekend en dus het vermelden waard.
+
+**Hij schrijft in de echte tabellen.** Anders toetst hij een nabootsing van de regels in plaats van de regels zelf. Hij draait zichzelf altijd terug: alles staat in een blok dat eindigt met een exception, en plpgsql rolt de schrijfacties van dat blok dan terug. De uitslag overleeft dat wel, want variabelen zijn niet transactioneel. Na afloop staat er geen proefgebruiker, geen proefsleutel en geen proefdag.
+
+**De proef is zelf getoetst.** Met de gewichtsregel expres omgedraaid — `coalesce(nieuw, oud)` in plaats van `coalesce(oud, nieuw)` — slaan er precies twee gevallen om: *"GEWICHT WORDT NOOIT OVERSCHREVEN"* en *"lege dag krijgt het gewicht wel"*. Die mutatie liep in een transactie die is teruggedraaid; de kapotte versie heeft nooit gecommit. Een proef die nooit rood wordt is erger dan geen proef, want hij geeft dekking die er niet is.
+
+Waarom dit geen vijfde poort in `npm run controle` is: die poorten draaien zonder database. Dit is dus een script dat je zelf draait, na elke wijziging aan `kal_beweging_ontvangen` of `kal_beweging_dag`.
+
 ### Als de Garmin-API ooit wel kan
 
 Dan verandert er aan deze kant niets. Alles wat binnenkomt gaat door dezelfde functie met dezelfde botsingsregels; er komt alleen een andere afzender bij.
@@ -173,6 +185,7 @@ where n.nspname = 'public' and p.prokind = 'f'
 | `kal_nevo_zoek` | één zoekfunctie, gedeeld door de app en `kal-ai` | bij elk zoeken |
 | `nevo_actief` | de licentiepoort waar alle NEVO-toegang langs gaat | — |
 | `kal_beweging_ontvangen` | Opdrachten op de iPhone → PostgREST → `kal_dagen` | dagelijks, door de telefoon |
-| 16 tabellen, 22 functies | schema `public`, prefix `kal_` | — |
+| `kal_proef_koppeling` | 22 gevallen over de botsingsregels, draait zichzelf terug | met de hand, na elke wijziging |
+| 16 tabellen, 24 functies | schema `public`, prefix `kal_` | — |
 
 Alles staat of valt bij één ding dat geen enkele automatisering kan overnemen: de ochtendweging. De prikkel herinnert eraan, het weekbericht rekent ermee, maar niemand kan hem voor je verzinnen.
