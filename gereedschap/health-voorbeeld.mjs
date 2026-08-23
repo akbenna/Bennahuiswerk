@@ -211,11 +211,25 @@ async function naarTab(pagina, label) {
   await pagina.waitForTimeout(1100)
 }
 
+/* Twee gekoppelde toestellen, om het koppelvel met inhoud te kunnen zien. */
+const KOPPELINGEN = [
+  { id: 'k1', naam: 'iPhone', sleutel_begin: 'kal_9f3a2c1b', aangemaakt_op: '2026-08-01T09:00:00Z',
+    laatst_gebruikt_op: '2026-08-22T05:02:00Z', aantal_berichten: 21, aantal_dagen: 21, actief: true },
+  { id: 'k2', naam: 'Oude telefoon', sleutel_begin: 'kal_44be07d2',
+    aangemaakt_op: '2026-06-14T09:00:00Z', laatst_gebruikt_op: null,
+    aantal_berichten: 0, aantal_dagen: 0, actief: true },
+]
+
 /** De databaseaanroepen onderscheppen voor één pagina. */
 async function bedienDb(pagina, dagen, fase) {
   await pagina.route('**/rest/v1/rpc/**', async (route) => {
     const fn = route.request().url().split('/').pop()
-    const lijf = fn === 'kal_ophalen' ? alles(dagen, fase) : {}
+    const lijf = fn === 'kal_ophalen' ? alles(dagen, fase)
+      : fn === 'kal_koppelingen_lijst' ? KOPPELINGEN
+      : fn === 'kal_koppeling_maken'
+        ? { sleutel: 'kal_' + 'a3f19c7e42b08d5619fa2c3d7e8b04915cad6237'.slice(0, 48),
+            koppeling: KOPPELINGEN[0] }
+      : {}
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(lijf) })
   })
 }
@@ -276,6 +290,35 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
   }
   console.log(`${naam.padEnd(26)} moment=${JSON.stringify(aan)} suggesties=${suggesties}`)
   console.log(`${''.padEnd(26)} na één tik: ${JSON.stringify(bevestiging.slice(0, 70))}`)
+  await pagina.close()
+}
+
+/* -------------------------------------------------------- het koppelvel -- */
+/* Het vel met de instructies is het enige scherm van de app dat iemand op een
+   ander apparaat naast zich moet kunnen leggen. Dan moet het wel kloppen. */
+{
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: 'light' })
+  await bedienDb(pagina, 28, 'afvallen')
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.getByRole('tab', { name: 'Meer' }).click()
+  await pagina.getByRole('button', { name: 'Horloge en telefoon koppelen' }).click()
+  await pagina.waitForSelector('.venster', { timeout: 5000 })
+  await pagina.waitForSelector('.lijst > div', { timeout: 5000 })
+  await pagina.screenshot({ path: 'gereedschap/health-koppelen.png' })
+
+  await pagina.getByRole('button', { name: 'Sleutel maken' }).click()
+  await pagina.waitForSelector('.sleutelvak', { timeout: 5000 })
+  await pagina.waitForTimeout(200)
+  await pagina.screenshot({ path: 'gereedschap/health-koppelen-sleutel.png' })
+
+  /* Het endpoint in het vel moet het echte endpoint zijn. Een instructie met
+     een verkeerde URL faalt pas op de telefoon van iemand anders. */
+  const url = await pagina.locator('#kop-Endpoint').textContent()
+  if (!url?.endsWith('/rest/v1/rpc/kal_beweging_ontvangen')) {
+    throw new Error(`koppelvel: verkeerd endpoint ${url}`)
+  }
+  console.log(`koppelen                   endpoint=${JSON.stringify(url)}`)
   await pagina.close()
 }
 

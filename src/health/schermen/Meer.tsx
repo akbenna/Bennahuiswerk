@@ -30,7 +30,7 @@ export function Meer(
   { dagen, reeks, profiel, opVenster }:
   {
     dagen: Dagenkaart; reeks: Trendpunt[]; profiel: Profiel
-    opVenster: (v: 'profiel' | 'import' | 'account') => void
+    opVenster: (v: 'profiel' | 'import' | 'account' | 'koppelen') => void
   },
 ) {
   const trendNu = [...reeks].reverse().find((x) => x.ema != null)
@@ -169,9 +169,15 @@ export function Meer(
         <Kop>Instellingen</Kop>
         <Rij style={{ marginTop: 10 }}>
           <Knop opKlik={() => opVenster('profiel')}>Profiel en doelen</Knop>
+          <Knop vol opKlik={() => opVenster('koppelen')}>Horloge en telefoon koppelen</Knop>
           <Knop opKlik={() => opVenster('import')}>Importeren uit een andere app</Knop>
           <Knop opKlik={() => opVenster('account')}>Account</Knop>
         </Rij>
+        <p className="mini" style={{ marginTop: 8 }}>
+          Koppelen haalt stappen, slaap en fietsminuten elke ochtend vanzelf uit Apple Gezondheid —
+          en daarmee ook wat je Garmin daarin schrijft. Importeren is voor een eenmalige overstap uit
+          een andere app.
+        </p>
       </Kaart>
 
       <Kaart plat>

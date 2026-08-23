@@ -21,6 +21,7 @@ import { Meer } from './schermen/Meer'
 import { PortieVenster, momentNu } from './vensters/Portie'
 import type { Onderwerp } from './vensters/Portie'
 import { InvoerVenster } from './vensters/Invoer'
+import { KoppelVenster } from './vensters/Koppelen'
 import {
   AccountVenster, Aanmelden, ImportVenster, ProfielVenster,
 } from './vensters/Instellingen'
@@ -37,7 +38,7 @@ const TABS = [
 ] as const
 
 type Tab = (typeof TABS)[number][0]
-type VensterNaam = 'profiel' | 'import' | 'account'
+type VensterNaam = 'profiel' | 'import' | 'account' | 'koppelen'
 
 export function App() {
   const k = useKalibratie()
@@ -235,6 +236,15 @@ export function App() {
               if (regels.length) await roep('kal_regels_toevoegen', { p_token: t, p_regels: regels })
             })
           }}
+        />
+      )}
+
+      {venster === 'koppelen' && (
+        <KoppelVenster
+          token={k.sessie.token} opSluiten={() => zetVenster(null)}
+          /* Een proefbericht kan dagen hebben aangevuld. Bij het sluiten dus
+             opnieuw ophalen, anders staat het scherm achter op de database. */
+          opVernieuwen={() => void k.herlaad()}
         />
       )}
 

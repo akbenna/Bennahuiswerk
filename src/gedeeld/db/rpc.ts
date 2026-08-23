@@ -197,12 +197,34 @@ export interface NieuweRegel {
   ai_model?: string | null
 }
 
+/**
+ * Een koppelsleutel zoals de app hem te zien krijgt: zonder de sleutel zelf.
+ * Die staat als hash in de database en komt één keer terug, bij het maken.
+ */
+export interface Koppeling {
+  id: string
+  naam: string
+  sleutel_begin: string
+  aangemaakt_op: string
+  laatst_gebruikt_op: string | null
+  aantal_berichten: number
+  aantal_dagen: number
+  actief: boolean
+}
+
 export interface NieuweDag {
   datum: IsoDatum
   stappen?: number
   actieve_energie_kcal?: number
   gewicht_kg?: number
   bron?: string
+  /* Alleen de koppeling stuurt deze vier mee; de import uit een screenshot
+     komt er niet aan. */
+  slaap_min?: number
+  fiets_min?: number
+  bedtijd?: string
+  waaktijd?: string
+  gewicht_bron?: string
 }
 
 /** De tabellen waar kal_rij_toevoegen en kal_rij_wissen op werken. */
@@ -234,6 +256,18 @@ export interface RpcKaart {
     uit: unknown
   }
   kal_rij_wissen: { in: { p_token: string; p_tabel: LosseTabel; p_id: string }; uit: unknown }
+  kal_koppeling_maken: {
+    in: { p_token: string; p_naam: string }
+    uit: { sleutel: string; koppeling: Koppeling }
+  }
+  kal_koppelingen_lijst: { in: { p_token: string }; uit: Koppeling[] }
+  kal_koppeling_wissen: { in: { p_token: string; p_id: string }; uit: number }
+  /* De ingang voor van buiten. De app roept hem alleen aan om een verse sleutel
+     te proberen; in het gewone geval komt hij van een telefoon. */
+  kal_beweging_ontvangen: {
+    in: { p_sleutel: string; p_dagen: NieuweDag[] }
+    uit: { dagen: number; gewicht_behouden: number; overgeslagen: number }
+  }
   kal_zoeken: { in: { p_token: string; p_q: string; p_limiet?: number }; uit: Zoekuitslag }
   kal_gerecht: { in: { p_token: string; p_dish_id: string }; uit: Gerecht }
   kal_portiematen: { in: { p_token: string; p_nevo_code: string }; uit: ProductMetMaten }

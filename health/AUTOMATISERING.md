@@ -52,7 +52,64 @@ De regressie gebruikt de ingebouwde `regr_*`-aggregaten; de standaardfout van de
 
 ---
 
-## 3. Twee dingen die ik onderweg tegenkwam, buiten dit project
+## 3. De koppeling — bewegingsgegevens van je horloge en je telefoon
+
+*Toegevoegd 23 augustus 2026.*
+
+### Waarom de omweg via Apple Gezondheid en niet rechtstreeks op Garmin
+
+Garmin heeft een echte Health API met precies wat we willen: dagtotalen voor stappen en calorieën, slaap, activiteiten. Hij zit achter het [Garmin Connect Developer Program](https://developer.garmin.com/gc-developer-program/health-api/), en dat vraagt een aanvraag namens een rechtspersoon plus goedkeuring per partij. Er is geen zelfbedieningssleutel. Bovendien nam het programma bij het schrijven hiervan geen nieuwe aanmeldingen aan. Voor één huishouden is dat geen begaanbare weg.
+
+Apple Gezondheid is nog strikter: er ís geen web-API. HealthKit-gegevens komen alleen van het toestel af, via een app óp dat toestel.
+
+Wat wél werkt en van niemand toestemming nodig heeft:
+
+1. De **Garmin Connect-app schrijft in Apple Gezondheid** — stappen, slaap, trainingen, hartslag en gewicht. Aan te zetten onder *Meer → Instellingen → Verbonden apps → Apple Gezondheid*. Die weg is eenrichtingsverkeer: Garmin → Gezondheid, niet terug.
+2. De **Opdrachten-app** leest Gezondheid uit (*Zoek gezondheidsmonsters*) en mag zelf een POST versturen (*Verkrijg inhoud van URL*), automatisch op een tijdstip.
+
+Eén weg dekt dus beide bronnen. En hij heeft een voordeel dat de directe API niet heeft: de gegevens gaan van de telefoon rechtstreeks naar onze eigen database, zonder tussenpartij.
+
+Eén valkuil hoort erbij: als meerdere apps hetzelfde gegeven in Gezondheid schrijven, kiest Gezondheid welke voorgaat. Staat de iPhone boven Garmin Connect bij *Stappen*, dan krijg je de stappen van je telefoon en niet die van je horloge. Dat staat onder *Gezondheid → het gegeven → Gegevensbronnen en toegang*.
+
+### De keten
+
+`Opdrachten-automatisering (07:00)` → POST naar `…/rest/v1/rpc/kal_beweging_ontvangen` → upsert in `kal_dagen`.
+
+Geen edge function. De ontvangst is een gewone `SECURITY DEFINER`-functie achter PostgREST, net als alle andere aanroepen van de app. Een edge function zou een tweede plek zijn waar dezelfde regels staan.
+
+### De sleutel
+
+`kal_koppelingen` houdt per koppeling een **sha256 van de sleutel** bij, niet de sleutel zelf. Wie de database leest kan er dus niets mee versturen. De sleutel is één keer te zien, bij het maken, in het scherm *Meer → Horloge en telefoon koppelen*.
+
+Waarom niet het sessietoken: dat verloopt. Een koppeling die elke ochtend om zeven uur vuurt mag niet stilvallen omdat je een week niet ingelogd bent. Deze sleutel verloopt niet en is per stuk in te trekken zonder dat je uitlogt.
+
+De tabel houdt `laatst_gebruikt_op`, `aantal_berichten` en `aantal_dagen` bij, zodat het scherm kan laten zien of er werkelijk iets binnenkomt. Een koppeling die stilletjes gestopt is, is erger dan geen koppeling.
+
+### De botsingsregels — het hart van `kal_beweging_ontvangen`
+
+Ze zijn met opzet niet symmetrisch:
+
+| Veld | Wie wint | Waarom |
+|---|---|---|
+| `stappen`, `actieve_energie_kcal`, `slaap_min`, `fiets_min`, `bedtijd`, `waaktijd` | wat binnenkomt | Dit zijn metingen. Wat je zelf intikt is een herinnering. |
+| `gewicht_kg` | wat er al staat | Het model rekent op de ochtendweging volgens protocol: nuchter, na het toilet, vóór het eten. Een weegschaal die 's avonds met kleren aan een getal doorgeeft meet iets anders; twee metingen door elkaar geven een helling die nergens op slaat. Lege dagen worden wél aangevuld. |
+| `kracht`, `notitie` | wat er al staat | Een oordeel van jou, geen meting. De functie raakt ze niet aan. |
+
+Een veld dat niet in het bericht zit laat de bestaande waarde met rust — je hoeft dus niet alles mee te sturen. Dagen in de toekomst en dagen van vóór 2015 worden overgeslagen en geteld in het antwoord, niet stilzwijgend weggeschreven: dat is altijd een fout in de opdracht en niet een meting.
+
+Het antwoord is `{"dagen": n, "gewicht_behouden": n, "overgeslagen": n}`. Die tweede is er expres: zonder dat getal lijkt het alsof er niets gebeurde met het gewicht dat je meestuurde.
+
+### Wat er nog niet bewezen is
+
+De functie zelf is in de database getest, inclusief alle botsingsregels en een geweigerde sleutel. De HTTP-weg erheen is **niet** vanuit de ontwikkelomgeving te testen — het netwerk daar laat de Supabase-host niet door. Daarvoor zit de knop *Verbinding proberen* in het koppelscherm: die stuurt vanaf jouw toestel een bericht met een lege dagenlijst langs precies dezelfde weg als de opdracht straks loopt. Slaagt die, dan klopt de hele keten op de inhoud van het bericht na.
+
+### Als de Garmin-API ooit wel kan
+
+Dan verandert er aan deze kant niets. Alles wat binnenkomt gaat door dezelfde functie met dezelfde botsingsregels; er komt alleen een andere afzender bij.
+
+---
+
+## 4. Twee dingen die ik onderweg tegenkwam, buiten dit project
 
 Geen onderdeel van Kalibratie, wel jouw systeem.
 
@@ -115,6 +172,7 @@ where n.nspname = 'public' and p.prokind = 'f'
 | `kal-ai` | edge function, Sonnet 5 | op aanroep vanuit de app |
 | `kal_nevo_zoek` | één zoekfunctie, gedeeld door de app en `kal-ai` | bij elk zoeken |
 | `nevo_actief` | de licentiepoort waar alle NEVO-toegang langs gaat | — |
-| 15 tabellen, 18 functies | schema `public`, prefix `kal_` | — |
+| `kal_beweging_ontvangen` | Opdrachten op de iPhone → PostgREST → `kal_dagen` | dagelijks, door de telefoon |
+| 16 tabellen, 22 functies | schema `public`, prefix `kal_` | — |
 
 Alles staat of valt bij één ding dat geen enkele automatisering kan overnemen: de ochtendweging. De prikkel herinnert eraan, het weekbericht rekent ermee, maar niemand kan hem voor je verzinnen.
