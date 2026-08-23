@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * HET STARTSCHERM VAN BENNAHEALTH BEKIJKEN
+ * DE SCHERMEN VAN BENNAHEALTH BEKIJKEN
  *
  * Het scherm is pas te beoordelen met gegevens erin. Zonder sessie toont de app
  * het aanmeldscherm, en met een lege sessie een scherm vol nullen — precies wat
@@ -8,9 +8,11 @@
  * databaseaanroepen en geeft er een verzonnen maar geloofwaardige reeks voor
  * terug: achtentwintig dagen wegen en loggen.
  *
- * Twee toestanden komen eruit als plaatje, want ze zijn allebei het bekijken
- * waard: de eerste dag (nog geen doel, het model kalibreert) en een dag na
- * enkele weken (band, ring, maaltijden).
+ * Er komen vier toestanden uit als plaatje, want ze zijn allemaal het bekijken
+ * waard: de eerste dag (nog geen doel, het model kalibreert), een dag na enkele
+ * weken (band, ring, maaltijden), diezelfde dag in het donker, en de
+ * onderhoudsfase — de enige toestand waarin het stoplicht bestaat. Van de dag
+ * na vier weken gaan alle zes de tabbladen mee.
  *
  *   node gereedschap/health-voorbeeld.mjs
  */
@@ -101,11 +103,68 @@ const PROFIEL = {
   onderhoud_basis_kg: null, instellingen: {},
 }
 
-function alles(aantalDagen) {
+/** Twee krachtsessies in de afgelopen week: het doel is drie, dus dit is de
+ *  toestand die de bolletjes moeten kunnen tonen — bijna, niet gehaald. */
+function training(aantalDagen) {
+  if (aantalDagen < 7) return []
+  const uit = []
+  const oefeningen = [
+    ['Squat', 'benen', 4, 6, 90], ['Roeien', 'rug', 4, 10, 60],
+    ['Bankdrukken', 'borst', 3, 8, 62.5], ['Schouderdrukken', 'schouders', 3, 10, 30],
+  ]
+  for (const [i, dag] of [2, 5].entries()) {
+    oefeningen.slice(i * 2, i * 2 + 2).forEach(([oefening, spiergroep, sets, reps, kg], j) => {
+      uit.push({
+        id: `t${dag}-${j}`, datum: iso(NU - dag * DAG), oefening, spiergroep,
+        sets, reps, gewicht_kg: kg, rpe: 8, notitie: null,
+      })
+    })
+  }
+  return uit
+}
+
+/** Een bloeduitslag van zes weken terug: het meeste binnen de referentie, twee
+ *  waarden erbuiten. Alles groen is net zo min een test als alles leeg. */
+const LABUITSLAG = [
+  ['hba1c', 'HbA1c', 41, 'mmol/mol', null, 42],
+  ['glucose_nuchter', 'Nuchter glucose', 6.4, 'mmol/L', null, 6.0],
+  ['tc', 'Totaal cholesterol', 5.1, 'mmol/L', null, null],
+  ['hdl', 'HDL-cholesterol', 1.2, 'mmol/L', 1.0, null],
+  ['ldl', 'LDL-cholesterol', 3.1, 'mmol/L', null, 2.6],
+  ['tg', 'Triglyceriden', 1.4, 'mmol/L', null, 1.7],
+  ['alat', 'ALAT', 38, 'U/L', null, 45],
+  ['tsh', 'TSH', 2.1, 'mE/L', 0.4, 4.0],
+  ['vitd', 'Vitamine D', 58, 'nmol/L', 50, null],
+  ['egfr', 'eGFR', 94, 'ml/min', 60, null],
+]
+
+function labs(aantalDagen) {
+  if (aantalDagen < 7) return []
+  const d = iso(NU - 44 * DAG)
+  return LABUITSLAG.map(([code, naam, waarde, eenheid, lo, hi], i) => ({
+    id: `l${i}`, datum: d, code, naam, waarde, eenheid,
+    ref_laag: lo, ref_hoog: hi, notitie: null,
+  }))
+}
+
+function metingen(aantalDagen) {
+  if (aantalDagen < 7) return []
+  const d = iso(NU - 9 * DAG)
+  return [
+    { id: 'm1', datum: d, soort: 'bloeddruk_sys', waarde: 128, eenheid: 'mmHg', notitie: null },
+    { id: 'm2', datum: d, soort: 'bloeddruk_dia', waarde: 82, eenheid: 'mmHg', notitie: null },
+    { id: 'm3', datum: d, soort: 'middelomtrek', waarde: 108, eenheid: 'cm', notitie: null },
+  ]
+}
+
+function alles(aantalDagen, fase = 'afvallen') {
   const { dagen, regels } = aantalDagen > 0 ? reeks(aantalDagen) : { dagen: [], regels: [] }
+  const profiel = fase === 'onderhoud'
+    ? { ...PROFIEL, fase: 'onderhoud', onderhoud_basis_kg: 115.0 }
+    : PROFIEL
   return {
-    profiel: PROFIEL, dagen, regels,
-    producten: [], recepten: [], metingen: [], labs: [], vragenlijsten: [], training: [],
+    profiel, dagen, regels, producten: [], recepten: [], vragenlijsten: [],
+    metingen: metingen(aantalDagen), labs: labs(aantalDagen), training: training(aantalDagen),
   }
 }
 
@@ -131,30 +190,183 @@ await ctx.addInitScript(`{
 /* Ook het donkere thema, want het heroverloop gaat als inline stijl naar
    binnen en luistert dus niet naar een media query. Dat moet je zién. */
 const gevallen = [
-  ['eerste-dag', 1, 'light'],
-  ['na-vier-weken', 28, 'light'],
-  ['donker', 28, 'dark'],
+  ['eerste-dag', 1, 'light', 'afvallen', ['Vandaag']],
+  ['na-vier-weken', 28, 'light', 'afvallen',
+   ['Vandaag', 'Model', 'Voeding', 'Beweging', 'Klinisch', 'Meer']],
+  ['donker', 28, 'dark', 'afvallen', ['Vandaag', 'Voeding', 'Meer']],
+  /* De onderhoudsfase is de enige toestand waarin het stoplicht bestaat. Zonder
+     dit geval blijft die kop ongezien tot iemand hem in productie tegenkomt. */
+  ['onderhoud', 28, 'light', 'onderhoud', ['Meer']],
 ]
 
-for (const [naam, dagen, thema] of gevallen) {
-  const pagina = await ctx.newPage()
-  await pagina.emulateMedia({ colorScheme: thema })
+/** Een tabblad openen en wachten tot de kop er echt staat. */
+async function naarTab(pagina, label) {
+  if (label !== 'Vandaag') {
+    await pagina.getByRole('tab', { name: label }).click()
+    await pagina.waitForSelector('.hero', { timeout: 5000 })
+  }
+  /* De ring tekent zichzelf in acht tienden van een seconde, de staven in bijna
+     een halve. Een screenshot daarvóór laat een halve ring zien en dat is geen
+     ijkpunt. */
+  await pagina.waitForTimeout(1100)
+}
+
+/* Twee gekoppelde toestellen, om het koppelvel met inhoud te kunnen zien. */
+const KOPPELINGEN = [
+  { id: 'k1', naam: 'iPhone', sleutel_begin: 'kal_9f3a2c1b', aangemaakt_op: '2026-08-01T09:00:00Z',
+    laatst_gebruikt_op: '2026-08-22T05:02:00Z', aantal_berichten: 21, aantal_dagen: 21, actief: true },
+  { id: 'k2', naam: 'Oude telefoon', sleutel_begin: 'kal_44be07d2',
+    aangemaakt_op: '2026-06-14T09:00:00Z', laatst_gebruikt_op: null,
+    aantal_berichten: 0, aantal_dagen: 0, actief: true },
+]
+
+/** De databaseaanroepen onderscheppen voor één pagina. */
+async function bedienDb(pagina, dagen, fase) {
   await pagina.route('**/rest/v1/rpc/**', async (route) => {
     const fn = route.request().url().split('/').pop()
-    const lijf = fn === 'kal_ophalen' ? alles(dagen) : {}
+    const lijf = fn === 'kal_ophalen' ? alles(dagen, fase)
+      : fn === 'kal_koppelingen_lijst' ? KOPPELINGEN
+      : fn === 'kal_koppeling_maken'
+        ? { sleutel: 'kal_' + 'a3f19c7e42b08d5619fa2c3d7e8b04915cad6237'.slice(0, 48),
+            koppeling: KOPPELINGEN[0] }
+      : {}
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(lijf) })
   })
+}
+
+for (const [naam, dagen, thema, fase, tabs] of gevallen) {
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: thema })
+  await bedienDb(pagina, dagen, fase)
   await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
   await pagina.waitForSelector('.hero', { timeout: 5000 })
-  /* De ring tekent zichzelf in acht tienden van een seconde. Een screenshot
-     daarvóór laat een halve ring zien en dat is geen ijkpunt. */
-  await pagina.waitForTimeout(1100)
-  await pagina.screenshot({ path: `gereedschap/health-${naam}.png` })
-  const kop = await pagina.locator('.hero h2').textContent()
-  const ring = await pagina.locator('.hero .getal').first().textContent()
-  const vakken = await pagina.locator('.maal').count()
-  console.log(`${naam.padEnd(16)} kop=${JSON.stringify(kop)} ring=${ring} maaltijdvakken=${vakken}`)
+
+  for (const tab of tabs) {
+    await naarTab(pagina, tab)
+    const stam = tab === 'Vandaag' ? naam : `${naam}-${tab.toLowerCase()}`
+    await pagina.screenshot({ path: `gereedschap/health-${stam}.png` })
+    const kop = await pagina.locator('.hero h2').textContent()
+    /* Elk scherm hoort een kop met een oordeel te hebben. Een lege kop is geen
+       stijlkwestie maar een scherm dat zijn eigen vraag niet beantwoordt. */
+    if (!kop || !kop.trim()) throw new Error(`${stam}: kop is leeg`)
+    console.log(`${stam.padEnd(26)} kop=${JSON.stringify(kop)}`)
+  }
   await pagina.close()
+}
+
+/* ------------------------------------------------------- het invoervel -- */
+/* Het vel is het scherm waar de app om draait en het is niet te zien zonder het
+   open te doen. Twee toestanden: met geschiedenis (dan staat er een lijst om te
+   herhalen) en zonder (dan is de eerste keer aan de beurt). */
+
+for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg', 1, 'light']]) {
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: thema })
+  await bedienDb(pagina, dagen, 'afvallen')
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.maal', { timeout: 5000 })
+  /* Via het maaltijdvak en niet via de grote knop: dat is de weg die het meest
+     gelopen wordt, en de weg die het moment meteen goed zet. */
+  await pagina.getByTitle('Iets toevoegen aan je lunch').click()
+  await pagina.waitForSelector('.venster', { timeout: 5000 })
+  await pagina.waitForTimeout(400)
+  await pagina.screenshot({ path: `gereedschap/health-${naam}.png` })
+
+  const chips = await pagina.locator('.momentchip').count()
+  const aan = await pagina.locator('.momentchip.aan').textContent()
+  const suggesties = await pagina.locator('.venster .lijst > div').count()
+  if (chips !== 4) throw new Error(`${naam}: ${chips} momentchips in plaats van 4`)
+
+  /* De belofte van dit vel is één tik. Die tik wordt hier werkelijk gedaan, en
+     er wordt gekeken of hij aankomt: een bevestiging bovenin, en het vinkje op
+     de regel die je aanraakte. Zonder die controle is 'één tik' een bewering. */
+  let bevestiging = 'geen suggesties'
+  if (suggesties > 0) {
+    await pagina.locator('.venster .lijst > div').first().getByRole('button').click()
+    await pagina.waitForSelector('.venster .kaart.goed', { timeout: 5000 })
+    bevestiging = (await pagina.locator('.venster .kaart.goed').textContent()) ?? ''
+    await pagina.waitForTimeout(300)
+    await pagina.screenshot({ path: `gereedschap/health-${naam}-getikt.png` })
+  }
+  console.log(`${naam.padEnd(26)} moment=${JSON.stringify(aan)} suggesties=${suggesties}`)
+  console.log(`${''.padEnd(26)} na één tik: ${JSON.stringify(bevestiging.slice(0, 70))}`)
+  await pagina.close()
+}
+
+/* -------------------------------------------------------- het koppelvel -- */
+/* Het vel met de instructies is het enige scherm van de app dat iemand op een
+   ander apparaat naast zich moet kunnen leggen. Dan moet het wel kloppen. */
+{
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: 'light' })
+  await bedienDb(pagina, 28, 'afvallen')
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.getByRole('tab', { name: 'Meer' }).click()
+  await pagina.getByRole('button', { name: 'Horloge en telefoon koppelen' }).click()
+  await pagina.waitForSelector('.venster', { timeout: 5000 })
+  await pagina.waitForSelector('.lijst > div', { timeout: 5000 })
+  await pagina.screenshot({ path: 'gereedschap/health-koppelen.png' })
+
+  await pagina.getByRole('button', { name: 'Sleutel maken' }).click()
+  await pagina.waitForSelector('.sleutelvak', { timeout: 5000 })
+  await pagina.waitForTimeout(200)
+  await pagina.screenshot({ path: 'gereedschap/health-koppelen-sleutel.png' })
+
+  /* Het endpoint in het vel moet het echte endpoint zijn. Een instructie met
+     een verkeerde URL faalt pas op de telefoon van iemand anders. */
+  const url = await pagina.locator('#kop-Endpoint').textContent()
+  if (!url?.endsWith('/rest/v1/rpc/kal_beweging_ontvangen')) {
+    throw new Error(`koppelvel: verkeerd endpoint ${url}`)
+  }
+  console.log(`koppelen                   endpoint=${JSON.stringify(url)}`)
+  await pagina.close()
+}
+
+/* ------------------------------------------------ meebewegen met de maat -- */
+/* De maaltijdvakken stonden op één kolom tot 560 pixels en daarna op twee, en
+   daar bleef het bij: op een tablet en op een groot scherm bleven het er twee.
+   Deze controle kijkt of het aantal kolommen werkelijk meebeweegt. */
+
+const breedtes = [360, 430, 768, 1100]
+const kolommen = []
+for (const breedte of breedtes) {
+  const maat = await browser.newContext({
+    viewport: { width: breedte, height: 900 }, deviceScaleFactor: 1,
+    locale: 'nl-NL', timezoneId: 'Europe/Amsterdam',
+  })
+  /* Dezelfde vaste klok als hierboven: zonder die klok is 'vandaag' de echte
+     dag, staan de vakken leeg en meet je de opmaak van een leeg scherm. */
+  await maat.addInitScript(`{
+    const echt = Date; const vast = ${NU};
+    class V extends echt {
+      constructor(...a){ super(...(a.length ? a : [vast])) }
+      static now(){ return vast }
+    }
+    window.Date = V;
+    localStorage.setItem('kalibratie.sessie',
+      JSON.stringify({ token: 'proef', account: 'abdelkader' }));
+  }`)
+  const pagina = await maat.newPage()
+  await bedienDb(pagina, 28, 'afvallen')
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.maal', { timeout: 5000 })
+
+  /* Het aantal kolommen is het aantal verschillende linkerposities van de vier
+     vakken. Dat meet wat je ziet, en niet wat er in de stijl staat. */
+  const links = await pagina.locator('.maal').evaluateAll(
+    (els) => [...new Set(els.map((e) => Math.round(e.getBoundingClientRect().left)))].length)
+  /* En of er niets buiten de rand valt. */
+  const overloop = await pagina.evaluate(
+    () => document.documentElement.scrollWidth > document.documentElement.clientWidth)
+  if (overloop) throw new Error(`${breedte}px: de pagina schuift horizontaal`)
+  kolommen.push(`${breedte}px→${links}kol`)
+  if (breedte === 1100) await pagina.screenshot({ path: 'gereedschap/health-breed.png' })
+  if (breedte === 360) await pagina.screenshot({ path: 'gereedschap/health-smal.png' })
+  await maat.close()
+}
+console.log('maaltijdvakken             ' + kolommen.join(' · '))
+if (kolommen[0] === kolommen[kolommen.length - 1]) {
+  throw new Error('de maaltijdvakken bewegen niet mee met de schermbreedte')
 }
 
 await browser.close()

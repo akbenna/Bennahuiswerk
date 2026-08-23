@@ -1,10 +1,15 @@
 /**
  * BEWEGING — stappen, kracht, en waarom actieve energie nergens meetelt.
- * Overgezet uit vwBeweging().
+ *
+ * Dit scherm opende met drie kale getallen naast elkaar. Een getal met "doel
+ * 8.000" eronder zegt niet of je het haalt; daar moet je zelf voor rekenen. Nu
+ * staat de staat vooraan: de ring vergelijkt de week met het doel, en de drie
+ * krachtsessies zijn drie bolletjes — bij zulke kleine aantallen is tellen
+ * sneller dan lezen.
  */
 import { useState } from 'react'
 import { Balk, Kaart, Knop, Kop, Rij, Tussen, Uitleg } from '../onderdelen/basis'
-import { Cijfer } from '../figuren'
+import { Bolletjes, Doelring, Schermkop } from '../hero'
 import { dz } from '@/gedeeld/getal'
 import { kortNL, plusDagen, vandaag } from '@/gedeeld/datum'
 import type { IsoDatum, Training } from '@/gedeeld/db/tabellen'
@@ -37,16 +42,63 @@ export function Beweging(
     perSpier[s] = (perSpier[s] ?? 0) + (Number(t.sets) || 0)
   }
 
+  /* Acht duizend is de knik in de dosis-responscurve voor sterfte (Paluch 2022),
+     niet de tienduizend uit een Japanse stappentellerreclame van 1965. */
+  const STAPDOEL = 8000
+  const KRACHTDOEL = 3
+  const haaltStappen = gem7 != null && gem7 >= STAPDOEL
+  const haaltKracht = sessies >= KRACHTDOEL
+
   return (
     <>
-      <Kaart>
-        <div className="trio">
-          <Cijfer label="Stappen 7 dgn" waarde={gem7 != null ? dz(gem7) : '—'}
-                  onder="doel 8.000 gemiddeld" />
-          <Cijfer label="Venster" waarde={a.gemStappen != null ? dz(Math.round(a.gemStappen)) : '—'}
-                  onder={`${a.venster} dagen`} />
-          <Cijfer label="Krachtsessies" waarde={String(sessies)} onder="doel 3 per week" />
+      <Schermkop
+        toon={haaltStappen && haaltKracht ? 'goed' : gem7 == null ? 'rust' : 'let'}
+        bovenschrift="Deze week"
+        titel={haaltStappen && haaltKracht ? 'Allebei gehaald'
+          : haaltStappen ? 'Stappen staan, kracht nog niet'
+          : haaltKracht ? 'Kracht staat, stappen nog niet'
+          : gem7 == null ? 'Nog niets ingevuld' : 'Nog niet op dreef'}
+        rechts={<span className={'vlaggetje ' + (haaltStappen && haaltKracht ? 'goed' : 'rust')}>
+          {sessies}/{KRACHTDOEL} kracht
+        </span>}
+      >
+        <div className="heroring">
+          <Doelring waarde={gem7 ?? 0} doel={STAPDOEL} maat={118}
+                    kind={<>
+                      <span className="getal" style={{ fontSize: '1.35rem' }}>
+                        {gem7 != null ? dz(gem7) : '—'}
+                      </span>
+                      <span className="mini">stappen<br />per dag</span>
+                    </>} />
+          <div className="herocijfers">
+            <p style={{ fontSize: '.92rem' }}>
+              {gem7 == null
+                ? 'Vul een paar dagen stappen in bij Vandaag; dan staat hier een gemiddelde.'
+                : haaltStappen
+                  ? `Gemiddeld over zeven dagen, boven de ${dz(STAPDOEL)} waar de winst zit.`
+                  : `Gemiddeld over zeven dagen. Nog ${dz(STAPDOEL - gem7)} per dag tot ${dz(STAPDOEL)}.`}
+            </p>
+            <div className="mini" style={{ marginTop: 10 }}>Krachtsessies deze week</div>
+            <Bolletjes aantal={sessies} van={KRACHTDOEL} naam="krachtsessies"
+                       kleur={haaltKracht ? 'var(--heldergoed)' : undefined} />
+          </div>
         </div>
+      </Schermkop>
+
+      <Kaart>
+        {/* Van de drie getallen die hier stonden zijn er twee naar de kop
+            verhuisd. Hetzelfde getal twee keer op één scherm is geen nadruk
+            maar ruis; wat overblijft is het getal dat de kop níét toont. */}
+        <Kop>Over het hele venster</Kop>
+        <Rij style={{ alignItems: 'baseline', marginTop: 4 }}>
+          <span className="getal" style={{ fontSize: '1.6rem' }}>
+            {a.gemStappen != null ? dz(Math.round(a.gemStappen)) : '—'}
+          </span>
+          <span className="klein">
+            stappen per dag over {a.venster} dagen — de reeks waar het model op rekent, en niet de
+            week hierboven.
+          </span>
+        </Rij>
         <Uitleg id="actieveenergie" label="waarom dit niet meetelt">
           <p>
             Actieve energie uit Apple of Garmin wordt bewaard als volume-indicator maar verschijnt

@@ -73,6 +73,22 @@ export function Chip({ graad }: { graad: Graad }) {
   return <span className={'conf ' + graad} title={'Betrouwbaarheid ' + graad}>{graad}</span>
 }
 
+/**
+ * Een aantikbaar chipje: een keuze uit een klein rijtje, zonder de zwaarte van
+ * een knop. Bewust iets anders dan `Chip` hierboven — die is een label voor de
+ * betrouwbaarheidsgraad en nooit aantikbaar. Twee dingen die er hetzelfde
+ * uitzien maar niet hetzelfde doen zouden een vergissing zijn.
+ */
+export function Keuzechip(
+  { aan, opKlik, titel, children }:
+  { aan?: boolean | undefined; opKlik: () => void; titel?: string | undefined; children: ReactNode },
+) {
+  return (
+    <button type="button" className={'chip' + (aan ? ' aan' : '')} aria-pressed={aan ?? false}
+            title={titel} onClick={opKlik}>{children}</button>
+  )
+}
+
 export function Balk({ deel, toon }: { deel: number; toon?: 'goed' | 'let' | undefined }) {
   return (
     <div className="balk">

@@ -145,3 +145,177 @@ export function Dagenstrook({ dagen, nu }: { dagen: Dagstaaf[]; nu: string }): R
     </div>
   )
 }
+
+/* ==========================================================================
+   Wat hieronder staat is voor de andere vijf schermen. Ze deelden met Vandaag
+   alleen de kaartrand; elk scherm opende met een tabel of een invulveld en je
+   moest lezen om te weten hoe je ervoor stond. Deze stukken geven elk scherm
+   dezelfde kop: één beeld dat de vraag van dát scherm beantwoordt voordat je
+   iets gelezen hebt.
+   ========================================================================== */
+
+/** De schil van een schermkop. Eén plek voor het verloop, zodat de vijf
+ *  schermen niet uit elkaar lopen zodra er één wordt aangeraakt. */
+export function Schermkop(
+  { toon, bovenschrift, titel, rechts, children }:
+  { toon: 'rust' | 'goed' | 'let' | 'fout'; bovenschrift: string; titel: string
+    rechts?: ReactNode | undefined; children?: ReactNode | undefined },
+): ReactNode {
+  return (
+    <section className={'hero kop-' + toon}>
+      <div className="heroglans" />
+      <div className="heroboven">
+        <div>
+          <span className="eyebrow">{bovenschrift}</span>
+          <h2 style={{ marginTop: 2 }}>{titel}</h2>
+        </div>
+        {rechts}
+      </div>
+      {children}
+    </section>
+  )
+}
+
+/**
+ * Een trapmeter: hoeveel van de treden gehaald zijn.
+ *
+ * Bedoeld voor dingen die in stappen komen en niet in procenten — de zekerheid
+ * van het model, het aantal krachtsessies. Een percentage suggereert daar een
+ * precisie die er niet is; vier vakjes waarvan er twee vol staan liegt niet.
+ */
+export function Trapmeter(
+  { trede, van, etiketten, kleur }:
+  { trede: number; van: number
+    etiketten?: readonly string[] | undefined; kleur?: string | undefined },
+): ReactNode {
+  return (
+    <div>
+      <div className="trap" role="img" aria-label={`${trede} van ${van}`}>
+        {Array.from({ length: van }, (_, i) => (
+          <i key={i} className={i < trede ? 'aan' : ''}
+             style={i < trede && kleur ? { background: kleur } : undefined} />
+        ))}
+      </div>
+      {etiketten && (
+        <div className="trapnamen">
+          {etiketten.map((e, i) => (
+            <span key={e} className={i === trede - 1 ? 'nu' : ''}>{e}</span>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+/**
+ * Een reeks bolletjes: n van m gehaald.
+ *
+ * Voor kleine, telbare aantallen — drie krachtsessies per week, zeven wegingen.
+ * Bij zulke getallen is tellen sneller dan lezen, en dat is precies wat een
+ * balk je afneemt.
+ */
+export function Bolletjes(
+  { aantal, van, kleur, naam }:
+  { aantal: number; van: number; kleur?: string | undefined; naam: string },
+): ReactNode {
+  return (
+    <div className="bolletjes" role="img" aria-label={`${aantal} van ${van} ${naam}`}>
+      {Array.from({ length: Math.max(van, aantal) }, (_, i) => (
+        <i key={i} className={i < aantal ? 'aan' : ''}
+           style={i < aantal && kleur ? { background: kleur, borderColor: kleur } : undefined} />
+      ))}
+    </div>
+  )
+}
+
+/**
+ * Een sparkline met een band eromheen, voor een reeks die ergens naartoe loopt.
+ *
+ * De ruwe punten staan er licht in, de gladde lijn er donker overheen. Dat is
+ * geen versiering: bij dagelijks wegen schommelt het gewicht een tot twee kilo
+ * op vocht alleen, en wie alleen de gladde lijn ziet denkt dat het meten
+ * nauwkeuriger is dan het is.
+ */
+export function Lijntje(
+  { ruw, glad, hoogte = 46, kleur = 'var(--k)' }:
+  { ruw: Array<number | null>; glad: Array<number | null>; hoogte?: number; kleur?: string },
+): ReactNode {
+  const alles = [...ruw, ...glad].filter((x): x is number => x != null)
+  if (alles.length < 2) return null
+  const lo = Math.min(...alles)
+  const hi = Math.max(...alles)
+  const spanne = hi - lo || 1
+  const B = 300
+  const px = (i: number, n: number): number => (n <= 1 ? 0 : (i / (n - 1)) * B)
+  const py = (v: number): number => hoogte - 4 - ((v - lo) / spanne) * (hoogte - 10)
+
+  const pad = (reeks: Array<number | null>): string => {
+    const stukken: string[] = []
+    let open = false
+    reeks.forEach((v, i) => {
+      if (v == null) { open = false; return }
+      stukken.push(`${open ? 'L' : 'M'} ${px(i, reeks.length).toFixed(1)} ${py(v).toFixed(1)}`)
+      open = true
+    })
+    return stukken.join(' ')
+  }
+
+  return (
+    <svg className="fig" viewBox={`0 0 ${B} ${hoogte}`} preserveAspectRatio="none"
+         style={{ height: hoogte }} role="img"
+         aria-label={`Verloop van ${dec1(lo)} tot ${dec1(hi)}`}>
+      <path d={pad(ruw)} fill="none" stroke={kleur} strokeWidth="1.2" opacity=".3"
+            vectorEffect="non-scaling-stroke" />
+      <path d={pad(glad)} fill="none" stroke={kleur} strokeWidth="2.4" strokeLinecap="round"
+            strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+    </svg>
+  )
+}
+
+const dec1 = (x: number): string => (Math.round(x * 10) / 10).toString().replace('.', ',')
+
+/**
+ * Vier staven naast elkaar: hoeveel eiwit er per maaltijd binnenkwam.
+ *
+ * Dit stond als vier horizontale balken onderaan het voedingsscherm, en de
+ * schaal liep mee met de hoogste maaltijd — waardoor één goede maaltijd de
+ * andere drie klein maakte en het er slechter uitzag dan het was. Verticaal
+ * naast elkaar met één streep op het richtgetal laat je in één blik zien wat
+ * de vraag is: welke maaltijd blijft achter. De kleuren zijn dezelfde als die
+ * van de maaltijdvakken onder Vandaag, zodat ochtend overal ochtend is.
+ */
+export interface Maalstaaf {
+  /** Voluit, voor de schermlezer. */
+  naam: string
+  /** Wat er onder de staaf past. Vier kolommen op een telefoon zijn smal. */
+  kort: string
+  toon: 'ochtend' | 'middag' | 'avond' | 'tussen'
+  gram: number
+}
+
+export function Maalstaven(
+  { staven, doel }: { staven: Maalstaaf[]; doel: number | null },
+): ReactNode {
+  /* De schaal is het richtgetal met ruimte erboven, niet de hoogste staaf.
+     Anders verandert de betekenis van dezelfde hoogte per dag. */
+  const top = Math.max((doel ?? 0) * 1.45, ...staven.map((s) => s.gram), 1)
+  const streep = doel != null && doel < top ? (doel / top) * 100 : null
+
+  return (
+    <div className="maalstaven">
+      {staven.map((s) => (
+        <div key={s.naam} className={'maalstaaf ' + s.toon}>
+          <div className="baan" role="img"
+               aria-label={`${s.naam}: ${dec1(s.gram)} gram eiwit`}>
+            {streep != null && <span className="streep" style={{ bottom: `${streep}%` }} />}
+            {/* Nul gram is geen streepje kleur onderin. Een maaltijd waar niets
+                in zit hoort leeg te zijn, anders lees je 'een beetje'. */}
+            {s.gram > 0 && <i style={{ height: `${Math.min(100, (s.gram / top) * 100)}%` }} />}
+          </div>
+          <span className="staafnaam">{s.kort}</span>
+          <span className="staafgetal">{s.gram > 0 ? dec1(s.gram) : '–'}</span>
+        </div>
+      ))}
+    </div>
+  )
+}

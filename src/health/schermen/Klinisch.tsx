@@ -1,9 +1,15 @@
 /**
  * KLINISCH — metingen, lab, SCORE2, FIB-4 en STOP-BANG.
- * Overgezet uit vwKlinisch() en stopbangKaart().
+ *
+ * De vraag van dit scherm is: staat er iets buiten de grens. Die vraag was
+ * alleen te beantwoorden door zestien labwaarden na te lopen en ze zelf tegen
+ * hun referentie te houden. Nu telt de kop dat voor je, en toont hij metéén
+ * wélke — met de referentie erbij, want "afwijkend" zonder grens is een
+ * schrikbeeld en geen gegeven.
  */
 import { useState } from 'react'
 import { Kaart, Knop, Kop, Rij, Uitleg } from '../onderdelen/basis'
+import { Schermkop } from '../hero'
 import { dec } from '@/gedeeld/getal'
 import { kortNL, vandaag } from '@/gedeeld/datum'
 import type { IsoDatum, Lab, Meting, Profiel, Vragenlijst } from '@/gedeeld/db/tabellen'
@@ -81,8 +87,77 @@ export function Klinisch(p: KlinischEigenschappen) {
     trombo: Number(lab('trombo')?.waarde ?? 0),
   })
 
+  /* Alles wat er is, tegen zijn eigen referentie gehouden. Ontbrekende waarden
+     tellen niet als "goed": ze tellen als niet gemeten, en dat is iets anders. */
+  const gekeurd = LABS.map(([code, naam, eenheid, lo, hi]) => {
+    const x = lab(code)
+    if (x?.waarde == null) return { code, naam, eenheid, x: null, buiten: false, lo, hi }
+    const w = Number(x.waarde)
+    return {
+      code, naam, eenheid, x, lo, hi,
+      buiten: (lo != null && w < lo) || (hi != null && w > hi),
+    }
+  })
+  const gemeten = gekeurd.filter((g) => g.x != null)
+  const buiten = gemeten.filter((g) => g.buiten)
+
   return (
     <>
+      <Schermkop
+        toon={gemeten.length === 0 ? 'rust' : buiten.length ? 'let' : 'goed'}
+        bovenschrift="Klinisch"
+        titel={gemeten.length === 0
+          ? 'Nog geen labwaarden'
+          : buiten.length === 0
+            ? 'Alles binnen de referentie'
+            : `${buiten.length} waarde${buiten.length === 1 ? '' : 'n'} buiten de referentie`}
+        rechts={<span className={'vlaggetje ' + (gemeten.length === 0 ? 'rust'
+          : buiten.length ? 'let' : 'goed')}>
+          {gemeten.length}/{LABS.length} ingevuld
+        </span>}
+      >
+        {gemeten.length === 0 ? (
+          <p style={{ fontSize: '.92rem', marginTop: 10 }}>
+            Vul hieronder in wat er in je laatste uitslag stond. Zonder ASAT, ALAT en trombocyten
+            valt FIB-4 niet te berekenen, en zonder bloeddruk en cholesterol SCORE2 niet.
+          </p>
+        ) : (
+          <>
+            <div style={{ marginTop: 10 }}>
+              {(buiten.length ? buiten : gemeten.slice(0, 4)).map((g) => (
+                <div className="labrij" key={g.code}>
+                  {/* Oranje en niet rood, en dezelfde kleur als in de tabel
+                      eronder. Rood zegt 'ziek' terwijl de zin eronder juist
+                      uitlegt dat dat er niet staat; twee kleuren voor hetzelfde
+                      feit op één scherm zeggen dat het twee feiten zijn. */}
+                  <span className="stoplicht"
+                        style={{ background: g.buiten ? 'var(--let)' : 'var(--goed)' }} />
+                  <span className="naam">
+                    <span style={{ fontSize: '.88rem' }}>{g.naam}</span>
+                    <span className="mini" style={{ display: 'block' }}>
+                      referentie {g.lo != null ? `vanaf ${dec(g.lo, 1)}` : ''}
+                      {g.lo != null && g.hi != null ? ' ' : ''}
+                      {g.hi != null ? `tot ${dec(g.hi, 1)}` : ''}
+                      {g.lo == null && g.hi == null ? 'geen afkapwaarde in deze app' : ''}
+                      {' '}{g.eenheid} · gemeten {kortNL(g.x?.datum ?? vandaag())}
+                    </span>
+                  </span>
+                  <span className={'waarde ' + (g.buiten ? 'buiten' : 'binnen')}>
+                    {dec(Number(g.x?.waarde), 1)}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <p className="mini" style={{ marginTop: 10 }}>
+              {buiten.length
+                ? 'Buiten de referentie is niet hetzelfde als ziek. Het is een reden om het met je '
+                  + 'huisarts te bespreken, en om het over een tijd nog eens te meten.'
+                : `De vier meest recente van ${gemeten.length} ingevulde waarden.`}
+            </p>
+          </>
+        )}
+      </Schermkop>
+
       <MetingInvoer bewaar={p.bewaarMeting} a={a} sbd={sbd} dbd={dbd} middel={middel} />
       <LabInvoer bewaar={p.bewaarLab} labs={labs} />
 

@@ -14,18 +14,22 @@
  *
  * Daaronder vier maaltijdvakken die er altijd staan, ook leeg. Een leeg vak met
  * een naam en een uitnodiging is iets heel anders dan een leeg scherm.
+ *
+ * En sinds kort zijn die vakken ook de ingang: je tikt op het vak en het
+ * invoervel gaat open met dat moment er al in. Het tekstvak dat hier stond is
+ * daarheen verhuisd. Het hoorde hier niet — loggen gebeurt op drie manieren
+ * (herhalen, zoeken, beschrijven) en die horen bij elkaar te staan, niet één op
+ * dit scherm, één op het volgende tabblad en één in een derde venster.
  */
 import { useEffect, useState } from 'react'
-import { Chip, Kaart, Knop, Kop, Rij, Spin, Tussen, Uitleg } from '../onderdelen/basis'
+import { Chip, Kaart, Knop, Kop, Rij, Tussen, Uitleg } from '../onderdelen/basis'
 import { Dagenstrook, Doelring } from '../hero'
 import type { Dagstaaf } from '../hero'
 import { dec, dz } from '@/gedeeld/getal'
 import { kortNL, langNL, plusDagen, vandaag } from '@/gedeeld/datum'
 import type { IsoDatum, Moment, Regel } from '@/gedeeld/db/tabellen'
 import type { Analyse, Dagenkaart, DagMetTotalen } from '../rekenkern'
-import { herken, leesFoto } from '../ai'
-import type { Herkenning } from '../ai'
-import type { NieuweRegel } from '@/gedeeld/db/rpc'
+import { momentNu } from '../vensters/Portie'
 
 export interface VandaagEigenschappen {
   a: Analyse
@@ -35,27 +39,26 @@ export interface VandaagEigenschappen {
   dagen: Dagenkaart
   datum: IsoDatum
   eiwitPerKg: number
-  token: string
   zetDatum: (d: IsoDatum) => void
   zetDagveld: (veld: string, waarde: string | number | boolean | null) => void
-  voegRegelsToe: (r: NieuweRegel[]) => void
+  /** Het invoervel openen, met het moment er al in. */
+  opInvoer: (m: Moment) => void
   wisRegel: (id: string) => void
 }
 
-/* De dingen die vrijwel elke dag terugkomen. Ze vullen het tekstvak in plaats
-   van meteen op te slaan: wat er gelogd wordt gaat altijd eerst langs jou. */
-const SNELLE = [
-  { ico: '☕', naam: 'Koffie', tekst: 'een cappuccino' },
-  { ico: '🍞', naam: 'Brood', tekst: 'twee bruine boterhammen met kaas' },
-  { ico: '🥜', naam: 'Handje', tekst: 'een handje ongezouten noten' },
-]
-
-/** De vier momenten van de dag, met hun kleur en hun uitnodiging. */
-const MOMENTEN: Array<{ id: Moment; naam: string; klas: string; leeg: string }> = [
-  { id: 'ontbijt', naam: 'Ontbijt', klas: 'ochtend', leeg: 'Koffie telt ook' },
-  { id: 'lunch', naam: 'Lunch', klas: 'middag', leeg: 'Brood, salade, restje' },
-  { id: 'diner', naam: 'Diner', klas: 'avond', leeg: 'Het bord van vanavond' },
-  { id: 'tussendoor', naam: 'Tussendoor', klas: 'tussen', leeg: 'Noten, fruit, een koekje' },
+/**
+ * De vier momenten van de dag, met hun kleur en hun uitnodiging.
+ *
+ * `kort` is wat er in het vak past als er vier naast elkaar staan. Het volle
+ * woord blijft in de titel en in de schermlezer staan — een afgekapt
+ * "Tussend…" is minder duidelijk dan een korter woord dat wél af is.
+ */
+const MOMENTEN: Array<{ id: Moment; naam: string; kort: string; klas: string; leeg: string }> = [
+  { id: 'ontbijt', naam: 'Ontbijt', kort: 'Ontbijt', klas: 'ochtend', leeg: 'Koffie telt ook' },
+  { id: 'lunch', naam: 'Lunch', kort: 'Lunch', klas: 'middag', leeg: 'Brood, salade, restje' },
+  { id: 'diner', naam: 'Diner', kort: 'Diner', klas: 'avond', leeg: 'Het bord van vanavond' },
+  { id: 'tussendoor', naam: 'Tussendoor', kort: 'Tussen', klas: 'tussen',
+    leeg: 'Noten, fruit, een koekje' },
 ]
 
 /**
@@ -183,7 +186,7 @@ export function Vandaag(p: VandaagEigenschappen) {
             </h2>
           </div>
           <span className={'vlaggetje ' + (gewogen ? 'goed' : 'rust')}>
-            {gewogen ? '✓ gewogen' : '— nog niet gewogen'}
+            {gewogen ? '✓ gewogen' : '— niet gewogen'}
           </span>
         </div>
 
@@ -244,7 +247,15 @@ export function Vandaag(p: VandaagEigenschappen) {
 
       <Weging {...p} gewogen={gewogen} isVandaag={isVandaag} nogNodig={nogNodig} />
 
-      <Herkennen token={p.token} datum={datum} voegRegelsToe={p.voegRegelsToe} />
+      {/* Eén knop met een vulling op het hele scherm. Wie de app opent om te
+          loggen — en dat is de gewone reden — hoeft niet te zoeken waar dat
+          kan. Het moment wordt uit de klok geraden; in het vel kun je het met
+          één tik veranderen. */}
+      <button type="button" className="hoofdknop" style={{ marginBottom: 14 }}
+              onClick={() => p.opInvoer(momentNu(datum))}>
+        <span aria-hidden="true">＋</span>
+        <span>Eten toevoegen</span>
+      </button>
 
       <Kaart>
         <Kop>De dag in vier momenten</Kop>
@@ -254,36 +265,55 @@ export function Vandaag(p: VandaagEigenschappen) {
             const kcal = eigen.reduce((n, r) => n + r.kcal_punt, 0)
             return (
               <div key={m.id} className={'maal ' + m.klas + (eigen.length ? ' gevuld' : '')}>
-                <div className="maalkop">
-                  <span className="stip" />
-                  <span style={{ fontSize: '.82rem', fontWeight: 600 }}>{m.naam}</span>
-                  <span style={{ flex: 1 }} />
-                  {eigen.length > 0 && (
-                    <span className="mini cijfer">{eigen.length} regel{eigen.length === 1 ? '' : 's'}</span>
-                  )}
-                </div>
-                {eigen.length === 0 ? (
-                  <p className="mini" style={{ marginTop: 6 }}>{m.leeg}</p>
-                ) : (
-                  <>
-                    <div className="maalgetal" style={{ marginTop: 4 }}>{dz(Math.round(kcal))}
+                {/* De kop is de knop. Het vak zelf kan dat niet zijn: er staan
+                    wisknoppen in, en een knop in een knop is geen knop meer. */}
+                <button type="button" className="maalvoeg"
+                        onClick={() => p.opInvoer(m.id)}
+                        title={`Iets toevoegen aan je ${m.naam.toLowerCase()}`}>
+                  <span className="maalkop">
+                    <span className="stip" />
+                    <span className="maalnaam">{m.kort}</span>
+                    <span style={{ flex: 1 }} />
+                    {/* Alleen het aantal, niet 'regels' erbij: in vier kolommen
+                        naast elkaar is dat het verschil tussen passen en
+                        afkappen. Het woord staat in de titel. */}
+                    {eigen.length > 0 && (
+                      <span className="mini cijfer"
+                            title={`${eigen.length} regel${eigen.length === 1 ? '' : 's'}`}>
+                        {eigen.length}×
+                      </span>
+                    )}
+                    <span className="maalplus" aria-hidden="true">＋</span>
+                  </span>
+                  {eigen.length === 0 ? (
+                    <span className="mini maalleeg">{m.leeg}</span>
+                  ) : (
+                    <span className="maalgetal">{dz(Math.round(kcal))}
                       <span className="klein" style={{ fontSize: '.72rem' }}> kcal</span>
-                    </div>
-                    <div className="lijst" style={{ marginTop: 4 }}>
-                      {eigen.map((r) => (
-                        <div key={r.id} style={{ padding: '5px 0' }}>
-                          <Chip graad={r.conf} />
-                          <span className="groei">
-                            <span className="knip" style={{ fontSize: '.8rem', display: 'block' }}>
-                              {r.naam}
-                            </span>
+                    </span>
+                  )}
+                </button>
+                {eigen.length > 0 && (
+                  <div className="lijst" style={{ marginTop: 2 }}>
+                    {/* Twee regels en niet één. Op één regel moesten de naam,
+                        de graad, de calorieën en de wisknop naast elkaar, en
+                        dan bleef er van 'Havermout met melk en banaan' precies
+                        'Haver…' over. De naam krijgt nu de hele breedte. */}
+                    {eigen.map((r) => (
+                      <div key={r.id} style={{ padding: '5px 0' }}>
+                        <span className="groei">
+                          <span className="knip" style={{ fontSize: '.8rem', display: 'block' }}>
+                            {r.naam}
                           </span>
-                          <span className="mini cijfer">{dz(Math.round(r.kcal_punt))}</span>
-                          <Knop klein titel="Verwijderen" opKlik={() => p.wisRegel(r.id)}>×</Knop>
-                        </div>
-                      ))}
-                    </div>
-                  </>
+                          <span className="mini">
+                            <Chip graad={r.conf} /> {dz(Math.round(r.kcal_punt))} kcal
+                          </span>
+                        </span>
+                        <Knop klein titel={`${r.naam} verwijderen`}
+                              opKlik={() => p.wisRegel(r.id)}>×</Knop>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
             )
@@ -292,7 +322,7 @@ export function Vandaag(p: VandaagEigenschappen) {
         {regels.length === 0 && (
           <p className="mini" style={{ marginTop: 10 }}>
             Nog niets gelogd op {kortNL(datum)}. Eén regel is genoeg om te beginnen — het model
-            rekent liever met de helft dan met niets.
+            rekent liever met de helft dan met niets. Tik een vak aan, of gebruik de knop hierboven.
           </p>
         )}
       </Kaart>
@@ -425,153 +455,6 @@ function Weging(
           verschil tussen dagen en niet om de absolute waarde. Dagelijkse schommelingen van één tot
           twee kilo zijn vocht, glycogeen en darminhoud. Daarom leest het model de helling en niet de
           meting.
-        </p>
-      </Uitleg>
-    </Kaart>
-  )
-}
-
-/** Zeggen wat je at, in tekst of met een foto. */
-function Herkennen(
-  { token, datum, voegRegelsToe }:
-  { token: string; datum: IsoDatum; voegRegelsToe: (r: NieuweRegel[]) => void },
-) {
-  const [tekst, zetTekst] = useState('')
-  const [melding, zetMelding] = useState<string | null>(null)
-  const [loopt, zetLoopt] = useState(false)
-  const [concept, zetConcept] = useState<Herkenning | null>(null)
-
-  async function doe(soort: 'tekst' | 'foto', foto?: File) {
-    if (soort === 'tekst' && !tekst.trim()) {
-      zetMelding('Schrijf eerst op wat je gegeten hebt.')
-      return
-    }
-    zetLoopt(true)
-    zetMelding(null)
-    try {
-      const fotos = foto ? [await leesFoto(foto)] : []
-      const uit = await herken(token, soort, tekst.trim(), fotos)
-      zetConcept(uit)
-      zetTekst('')
-    } catch (e) {
-      zetMelding(e instanceof Error ? e.message : String(e))
-    } finally {
-      zetLoopt(false)
-    }
-  }
-
-  const totaal = concept?.regels.reduce(
-    (a, r) => ({
-      p: a.p + (r.kcal_punt || 0), l: a.l + (r.kcal_laag || 0),
-      h: a.h + (r.kcal_hoog || 0), e: a.e + (r.eiwit_g || 0),
-    }), { p: 0, l: 0, h: 0, e: 0 })
-
-  return (
-    <Kaart>
-      <Kop>Zeggen wat je at</Kop>
-      <textarea style={{ marginTop: 8 }} value={tekst} onChange={(e) => zetTekst(e.target.value)}
-                placeholder="Schrijf het zoals je het zou vertellen — een bord tajine met kip, twee cappuccino's, een handje amandelen." />
-
-      <button type="button" className="hoofdknop" style={{ marginTop: 10 }}
-              disabled={loopt} onClick={() => void doe('tekst')}>
-        {loopt ? <><Spin /> Bezig met herkennen…</> : 'Herkennen'}
-      </button>
-
-      {/* Vier ingangen naast elkaar. De oude opzet had er één en een halve: een
-          tekstvak, en een fotoknop die eruitzag als elke andere knop. Wie niet
-          weet dát het kan, probeert het niet. De drie rechts vullen het
-          tekstvak in plaats van meteen op te slaan — wat er gelogd wordt gaat
-          altijd eerst langs jou. */}
-      <div className="snel">
-        <label className="snelknop" style={{ cursor: 'pointer' }}>
-          <span aria-hidden="true">📷</span>
-          <span>Foto</span>
-          <input type="file" accept="image/*" capture="environment" style={{ display: 'none' }}
-                 onChange={(e) => { const f = e.target.files?.[0]; if (f) void doe('foto', f) }} />
-        </label>
-        {SNELLE.map((x) => (
-          <button type="button" key={x.naam} title={'Voeg toe: ' + x.tekst}
-                  onClick={() => zetTekst((t) => (t ? t + ', ' : '') + x.tekst)}>
-            <span aria-hidden="true">{x.ico}</span>
-            <span>{x.naam}</span>
-          </button>
-        ))}
-      </div>
-
-      <p className="klein" style={{ marginTop: 9, minHeight: '1.2em' }}>
-        {loopt
-          ? 'Dit duurt een halve minuut: er wordt in twee ronden tegen het Nederlands Voedingsstoffenbestand gematcht.'
-          : melding}
-      </p>
-
-      {concept && totaal && (
-        <Kaart plat style={{ marginTop: 12 }}>
-          <Tussen>
-            <Kop>Herkend — nakijken vóór opslaan</Kop>
-            <span className="mini">{concept.model}</span>
-          </Tussen>
-          <div className="lijst" style={{ marginTop: 6 }}>
-            {concept.regels.map((r, i) => (
-              <div key={i}>
-                <Chip graad={r.conf} />
-                <span className="groei">
-                  <span className="knip" style={{ fontSize: '.86rem', display: 'block' }}>{r.naam}</span>
-                  <span className="mini">
-                    {r.nevo_naam ? 'NEVO: ' + r.nevo_naam : 'geen tabelwaarde — schatting van het model'}
-                  </span>
-                  {r.onzekerheidsbronnen.map((o, j) => (
-                    <span className="mini" style={{ display: 'block' }} key={j}>· {o}</span>
-                  ))}
-                </span>
-                <span style={{ textAlign: 'right' }}>
-                  <span className="cijfer" style={{ fontSize: '.85rem', display: 'block' }}>
-                    {dz(r.kcal_punt)}
-                  </span>
-                  <span className="mini cijfer">{dz(r.kcal_laag)}–{dz(r.kcal_hoog)}</span>
-                </span>
-                <Knop klein titel="Weglaten"
-                      opKlik={() => {
-                        const over = concept.regels.filter((_, j) => j !== i)
-                        zetConcept(over.length ? { ...concept, regels: over } : null)
-                      }}>×</Knop>
-              </div>
-            ))}
-          </div>
-          <Tussen style={{ marginTop: 10 }}>
-            <span className="cijfer" style={{ fontSize: '.9rem' }}>
-              <b>{dz(Math.round(totaal.p))} kcal</b>{' '}
-              <span className="klein">
-                ({dz(Math.round(totaal.l))}–{dz(Math.round(totaal.h))}) · {dec(totaal.e, 1)} g eiwit
-              </span>
-            </span>
-            <Knop vol opKlik={() => {
-              voegRegelsToe(concept.regels.map((r) => ({ ...r, datum, moment: r.moment })))
-              zetConcept(null)
-            }}>Toevoegen</Knop>
-          </Tussen>
-          {concept.opmerking && <p className="klein" style={{ marginTop: 8 }}>{concept.opmerking}</p>}
-          {concept.referentieobject && (
-            <p className="mini" style={{ marginTop: 4 }}>
-              Schaal bepaald aan: {concept.referentieobject}.
-            </p>
-          )}
-        </Kaart>
-      )}
-
-      <Uitleg id="herkennen" label="hoe je het opschrijft">
-        <p>
-          Schrijf het zoals je het zou vertellen. Noem het aantal en de bereiding — "twee sneetjes",
-          "gekookt", "in de pan met olie" — dat scheelt meer dan een preciezere naam.
-        </p>
-        <p>
-          Wat er daarna gebeurt: het model benoemt de onderdelen en schat een portiebereik, de server
-          zoekt ze op in het Nederlands Voedingsstoffenbestand, en de voedingswaarde komt uit die tabel
-          en niet uit het geheugen van het model. Dat scheelt ongeveer twee derde van de fout. Je krijgt
-          het concept eerst te zien; er wordt niets opgeslagen voordat jij het nakijkt.
-        </p>
-        <p>
-          De grootste ontbrekende post is bijna altijd de olie die in de bereiding is opgegaan. Die
-          schat het model apart en meldt het erbij.
         </p>
       </Uitleg>
     </Kaart>
