@@ -225,12 +225,20 @@ export function KoppelVenster(
           </li>
           <li><b>Methode</b> <span className="anderstalig">(Method)</span> — POST</li>
           <li>
-            <b>Kopteksten</b> <span className="anderstalig">(Headers)</span> — drie stuks:
+            <b>Kopteksten</b> <span className="anderstalig">(Headers)</span> — precies één, met de
+            sleutel <code>apikey</code>:
             <Kopieer waarde={ANON_SLEUTEL} label="apikey" />
             <p className="mini" style={{ marginTop: 4 }}>
-              Zet dezelfde waarde ook onder <code>Authorization</code>, met <code>Bearer </code>
-              ervoor. En <code>Content-Type</code> op <code>application/json</code>. Deze sleutel is
-              openbaar en geeft uit zichzelf nergens toegang toe — die van jou hierboven wel.
+              Deze sleutel is openbaar en geeft uit zichzelf nergens toegang toe — die van jou
+              hierboven wel. En &ldquo;sleutel&rdquo; betekent hier iets anders dan jouw
+              koppelsleutel: in dit scherm is het gewoon de naam van het veld.
+            </p>
+            <p className="mini" style={{ marginTop: 6 }}>
+              <b>Voeg er geen <code>Content-Type</code> aan toe.</b> Die zet de Opdrachten-app zelf
+              al, omdat de hoofdtekst op JSON staat; doe je het met de hand, dan staat hij er twee
+              keer in en weigert iOS het verzoek — met de melding dat de netwerkverbinding is
+              verbroken, die nergens naar de echte oorzaak wijst. Een <code>Authorization</code>
+              hoeft ook niet: <code>apikey</code> alleen is genoeg.
             </p>
           </li>
           <li>

@@ -103,6 +103,14 @@ Het antwoord is `{"dagen": n, "gewicht_behouden": n, "overgeslagen": n}`. Die tw
 
 De functie zelf is in de database getest, inclusief alle botsingsregels en een geweigerde sleutel. De HTTP-weg erheen is **niet** vanuit de ontwikkelomgeving te testen — het netwerk daar laat de Supabase-host niet door. Daarvoor zit de knop *Verbinding proberen* in het koppelscherm: die stuurt vanaf jouw toestel een bericht met een lege dagenlijst langs precies dezelfde weg als de opdracht straks loopt. Slaagt die, dan klopt de hele keten op de inhoud van het bericht na.
 
+### Eén valkuil, gevonden bij het echt instellen
+
+De opdracht heeft **precies één koptekst** nodig: `apikey`. Voeg je er met de hand een `Content-Type: application/json` aan toe, dan weigert iOS het hele verzoek — de Opdrachten-app zet die koptekst zelf al zodra de hoofdtekst op JSON staat, en een dubbele koptekst wordt afgekeurd.
+
+Wat het zo vervelend maakt is de melding die je dan krijgt: *"De netwerkverbinding is verbroken."* Die wijst naar wifi, naar het domein, naar van alles behalve naar de koptekst. De weg eruit was opbouwen in stappen: eerst alleen de URL (dan antwoordt de server met *"No API key found in request"* — een net antwoord, dus de verbinding stáát), daarna één ding per keer erbij tot het omslaat.
+
+Een `Authorization`-koptekst is ook niet nodig; `apikey` alleen volstaat.
+
 ### De regels zijn vastgelegd
 
 De botsingsregels stonden alleen in de functie. Sinds 23 augustus staan ze ook in een proef: `select * from kal_proef_koppeling();` — 22 gevallen, alle regels uit de tabel hierboven plus de sleutelafhandeling, de grenzen en de scheiding tussen gebruikers. Zie `health/database/03-proef-koppeling.sql`.
