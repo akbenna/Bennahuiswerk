@@ -5,7 +5,7 @@ body{padding:0;overflow-x:hidden;background:radial-gradient(circle at 8% 0%,rgba
 .wrap{max-width:none;margin:0;padding:0 42px 44px 286px}
 header{padding:28px 0 20px;max-width:1320px}.merk{align-items:center}.merk h1{font-size:2rem}.sub{font-size:.9rem}
 nav.tabs{left:0;right:auto;top:0;bottom:0;width:248px;height:100dvh;display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch;gap:7px;padding:26px 14px;border-top:0;border-right:1px solid var(--lijn);box-shadow:8px 0 30px rgba(25,50,48,.05);background:color-mix(in srgb,var(--vlak) 92%,transparent);backdrop-filter:blur(18px)}
-nav.tabs:before{content:'BennaHealth';font-family:var(--serif);font-size:1.25rem;color:var(--ink);padding:0 14px 2px}
+nav.tabs:before{content:'BennaHealth';font-family:var(--kop);font-size:1.25rem;color:var(--ink);padding:0 14px 2px}
 nav.tabs:after{content:'MEDICAL INTELLIGENCE';font-family:var(--mono);font-size:.58rem;letter-spacing:.13em;color:var(--mi-teal);padding:0 14px 20px}
 nav.tabs button{min-width:0;display:grid;grid-template-columns:30px 1fr;align-items:center;justify-content:start;text-align:left;gap:9px;padding:11px 13px;font-size:.84rem;border:1px solid transparent;transition:.15s ease}
 nav.tabs button .ic{font-size:1.1rem;text-align:center}

@@ -346,6 +346,56 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
   await pagina.close()
 }
 
+/* --------------------------------------------- het brede scherm ------------ */
+/* Sinds de Medical-Intelligence-laag wordt de tabbalk boven 960 pixels een
+   zijbalk, met de merknaam en een onderschrift als ::before en ::after. Die
+   staan in CSS en niet in de app, dus geen enkele proef raakte ze aan — terwijl
+   ze wél naar tokens verwijzen die de app kan hernoemen.
+   Dat is precies wat er gebeurde: `--serif` bestaat niet meer sinds de koppen
+   naar één familie gingen, en een `var()` naar een token dat niet bestaat is
+   ongeldig bij het berekenen. Deze controle kijkt of de merknaam in de zijbalk
+   nog de familie krijgt die hij hoort te krijgen. */
+{
+  const breed = await browser.newContext({
+    viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1,
+    locale: 'nl-NL', timezoneId: 'Europe/Amsterdam',
+  })
+  await breed.addInitScript(`{
+    const echt = Date; const vast = ${NU};
+    class V extends echt {
+      constructor(...a){ super(...(a.length ? a : [vast])) }
+      static now(){ return vast }
+    }
+    window.Date = V;
+    localStorage.setItem('kalibratie.sessie',
+      JSON.stringify({ token: 'proef', account: 'abdelkader' }));
+  }`)
+  const pagina = await breed.newPage()
+  await bedienDb(pagina, 28, 'afvallen')
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForTimeout(1100)
+  await pagina.screenshot({ path: 'gereedschap/health-breed-vandaag.png' })
+
+  const merk = await pagina.evaluate(() => {
+    const nav = document.querySelector('nav.tabs')
+    if (!nav) return null
+    const s = getComputedStyle(nav, '::before')
+    return { familie: s.fontFamily, inhoud: s.content }
+  })
+  const kop = await pagina.evaluate(() =>
+    getComputedStyle(document.querySelector('header h1')).fontFamily)
+  if (!merk) throw new Error('breed: geen zijbalk gevonden')
+  /* Een var() naar een verdwenen token laat de eigenschap terugvallen op wat er
+     geërfd wordt. Dat is geen fout die opvalt, maar de merknaam staat dan in een
+     andere letter dan de rest van het scherm. */
+  if (merk.familie !== kop) {
+    throw new Error(`breed: de merknaam in de zijbalk staat in ${merk.familie}, `
+      + `de kop in ${kop}`)
+  }
+  console.log(`breed                      zijbalk=${merk.inhoud} familie=ok`)
+  await pagina.close()
+}
+
 /* ------------------------------------------------ meebewegen met de maat -- */
 /* De maaltijdvakken stonden op één kolom tot 560 pixels en daarna op twee, en
    daar bleef het bij: op een tablet en op een groot scherm bleven het er twee.
