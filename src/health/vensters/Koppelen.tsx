@@ -43,13 +43,22 @@ function Menu({ nl, en }: { nl: string; en: string }) {
   return <><em>{nl}</em> <span className="anderstalig">({en})</span></>
 }
 
-/** Het lichaam dat de opdracht moet versturen, met de sleutel er al in. */
+/**
+ * Het lichaam dat de opdracht moet versturen, met de sleutel er al in.
+ *
+ * De namen tussen accolades zijn de plekken waar in Opdrachten een variabele
+ * komt. Ze staan er als tekst in zodat het lichaam te kopiëren is en je alleen
+ * nog de vier variabelen hoeft te vervangen — dat is minder werk dan het zelf
+ * uittypen, en er gaat minder mis.
+ */
 function voorbeeldLichaam(sleutel: string): string {
   return JSON.stringify({
     p_sleutel: sleutel,
     p_dagen: [{
-      datum: '2026-08-23', stappen: 8421, slaap_min: 447,
-      actieve_energie_kcal: 612, fiets_min: 0,
+      datum: '{Opgemaakte datum}',
+      stappen: '{Stappen}',
+      actieve_energie_kcal: '{Energie}',
+      slaap_min: '{Slaapminuten}',
     }],
   }, null, 2)
 }
@@ -178,6 +187,55 @@ export function KoppelVenster(
         <p className="mini" style={{ marginTop: 6 }}>
           Tussen haakjes staat hoe het heet als je toestel op Engels staat.
         </p>
+
+        {/* Eerst de acties, dan de velden. Andersom stond de beschrijving van
+            één actie vóór de lijst waar hij in hoort, en dan lees je het twee
+            keer. */}
+        <p className="klein" style={{ marginTop: 10 }}>
+          <b>De acties, in deze volgorde:</b>
+        </p>
+        <ol className="stappen">
+          <li>
+            <Menu nl="Huidige datum" en="Current Date" />
+          </li>
+          <li>
+            <Menu nl="Pas datum aan" en="Adjust Date" /> — <b>min 1 dag</b>.
+            <p className="mini" style={{ marginTop: 3 }}>
+              Om zeven uur 's ochtends is vandaag nog bijna leeg. Je stuurt dus gisteren, en die dag
+              is compleet.
+            </p>
+          </li>
+          <li>
+            <Menu nl="Formatteer datum" en="Format Date" /> — aangepast,{' '}
+            <code>yyyy-MM-dd</code>
+          </li>
+          <li>
+            <Menu nl="Zoek gezondheidsmonsters" en="Find Health Samples" /> — type{' '}
+            <b>Stappen</b>, gefilterd op de datum uit stap 3
+          </li>
+          <li>
+            <Menu nl="Bereken statistiek" en="Calculate Statistics" /> — <b>Som</b> over de
+            waarden. Dit is je stappentotaal.
+          </li>
+          <li>
+            Stap 4 en 5 nog eens voor <b>Actieve energie</b>, en nog eens voor{' '}
+            <b>Slaapanalyse</b> <span className="anderstalig">(Sleep Analysis)</span> — bij slaap som
+            je de duur en deel je door 60, want dit veld gaat in minuten.
+          </li>
+          <li>
+            <Menu nl="Tekst" en="Text" /> — hier plak je het lichaam van hieronder in en sleep je de
+            uitkomsten van stap 3, 5 en 6 op de juiste plek.
+          </li>
+          <li>
+            <Menu nl="Verkrijg inhoud van URL" en="Get Contents of URL" /> — met de velden hieronder.
+            Zet <b>Verzoektekst</b> op <Menu nl="Bestand" en="File" /> en kies de tekst uit stap 7;
+            dan hoef je de json niet in het formulier na te bouwen.
+          </li>
+        </ol>
+
+        <p className="klein" style={{ marginTop: 12 }}>
+          <b>Wat er in die laatste actie moet:</b>
+        </p>
         <ol className="stappen">
           <li>
             <b>URL</b> — <Kopieer waarde={ENDPOINT} label="Endpoint" />
@@ -203,8 +261,15 @@ export function KoppelVenster(
           </li>
         </ol>
         <p className="mini" style={{ marginTop: 8 }}>
-          Velden die je weglaat blijven staan zoals ze stonden. Je hoeft dus niet alles mee te sturen —
-          alleen stappen is ook goed, en er komt later gewoon meer bij.
+          Velden die je weglaat blijven staan zoals ze stonden. Je hoeft dus niet alles mee te sturen:
+          begin desnoods met alleen de datum en de stappen — dat zijn stap 1 tot en met 5 — en breid
+          uit als dat werkt. Kommagetallen zijn geen probleem, die rondt de server zelf af.
+        </p>
+        <p className="mini" style={{ marginTop: 6 }}>
+          Er komt iets terug in de vorm{' '}
+          <code>{'{"dagen":1,"gewicht_behouden":0,"overgeslagen":0}'}</code>. Staat er{' '}
+          <code>dagen: 0</code>, dan is je datum niet aangekomen. Kijk dan of de opgemaakte datum
+          werkelijk <code>2026-08-22</code> is en niet <code>22-08-2026</code>.
         </p>
       </Kaart>
 
