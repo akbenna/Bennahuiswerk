@@ -23,6 +23,11 @@
 --    slaan er twee gevallen om. Een proef die nooit rood wordt is erger dan
 --    geen proef, want hij geeft dekking die er niet is.
 --
+-- 31 gevallen, in zes groepen: de sleutel, de botsingsregels, de grenzen, de
+-- scheiding tussen gebruikers, de platte ingang die de telefoon gebruikt, en de
+-- rustpols. Die laatste twee groepen zijn er bijgekomen toen de opdracht op de
+-- iPhone echt ging draaien; wat daar misging staat in `AUTOMATISERING.md`.
+--
 -- Waarom dit geen vijfde poort in `npm run controle` is: die poorten draaien
 -- zonder database. Dit is dus een script dat je zelf draait, na elke wijziging
 -- aan `kal_beweging_ontvangen` of `kal_beweging_dag`:
@@ -40,10 +45,10 @@ set search_path to 'public', 'extensions'
 as $$
 declare
   v_uit      jsonb := '[]'::jsonb;
-  v_a        uuid;   -- gebruiker A, met een sleutel
-  v_b        uuid;   -- gebruiker B, zonder
+  v_a        uuid;
+  v_b        uuid;
   v_sa       text;
-  v_dood     text;   -- ingetrokken sleutel
+  v_dood     text;
   v_ant      jsonb;
   v_d        record;
   v_vandaag  date := (now() at time zone 'Europe/Amsterdam')::date;
@@ -55,7 +60,6 @@ begin
   v_dag  := v_vandaag - 5;
 
   begin
-    /* ---- opzet: twee gebruikers, één sleutel, één ingetrokken sleutel ---- */
     insert into kal_gebruikers(account, ww_hash) values ('proef-a-'||gen_random_uuid(), 'x')
       returning id into v_a;
     insert into kal_gebruikers(account, ww_hash) values ('proef-b-'||gen_random_uuid(), 'x')
@@ -71,33 +75,26 @@ begin
     /* ================================ de sleutel ======================== */
     begin
       perform kal_beweging_ontvangen('kal_bestaatniet', '[]'::jsonb);
-      v_uit := v_uit || jsonb_build_object('geval','onbekende sleutel wordt geweigerd',
-                                           'goed',false,'gezien','geaccepteerd');
+      v_uit := v_uit || jsonb_build_object('geval','onbekende sleutel wordt geweigerd','goed',false,'gezien','geaccepteerd');
     exception when others then
-      v_uit := v_uit || jsonb_build_object('geval','onbekende sleutel wordt geweigerd',
-                                           'goed',sqlerrm like '%koppelsleutel%','gezien',sqlerrm);
+      v_uit := v_uit || jsonb_build_object('geval','onbekende sleutel wordt geweigerd','goed',sqlerrm like '%koppelsleutel%','gezien',sqlerrm);
     end;
 
     begin
       perform kal_beweging_ontvangen('', '[]'::jsonb);
-      v_uit := v_uit || jsonb_build_object('geval','lege sleutel wordt geweigerd',
-                                           'goed',false,'gezien','geaccepteerd');
+      v_uit := v_uit || jsonb_build_object('geval','lege sleutel wordt geweigerd','goed',false,'gezien','geaccepteerd');
     exception when others then
-      v_uit := v_uit || jsonb_build_object('geval','lege sleutel wordt geweigerd',
-                                           'goed',true,'gezien',sqlerrm);
+      v_uit := v_uit || jsonb_build_object('geval','lege sleutel wordt geweigerd','goed',true,'gezien',sqlerrm);
     end;
 
     begin
       perform kal_beweging_ontvangen(v_dood, '[]'::jsonb);
-      v_uit := v_uit || jsonb_build_object('geval','ingetrokken sleutel wordt geweigerd',
-                                           'goed',false,'gezien','geaccepteerd');
+      v_uit := v_uit || jsonb_build_object('geval','ingetrokken sleutel wordt geweigerd','goed',false,'gezien','geaccepteerd');
     exception when others then
-      v_uit := v_uit || jsonb_build_object('geval','ingetrokken sleutel wordt geweigerd',
-                                           'goed',true,'gezien',sqlerrm);
+      v_uit := v_uit || jsonb_build_object('geval','ingetrokken sleutel wordt geweigerd','goed',true,'gezien',sqlerrm);
     end;
 
     /* ============================ de botsingsregels ===================== */
-    /* Een dag zoals hij eruitziet als je hem zelf hebt ingevuld. */
     insert into kal_dagen(gebruiker_id, datum, gewicht_kg, stappen, kracht, notitie, bron)
       values (v_a, v_dag, 111.1, 3000, true, 'met de hand', 'app');
 
@@ -119,7 +116,6 @@ begin
     v_uit := v_uit || jsonb_build_object('geval','behouden weging wordt gemeld',
       'goed', (v_ant->>'gewicht_behouden')::int = 1, 'gezien', v_ant::text);
 
-    /* Weglaten laat staan wat er stond. */
     v_ant := kal_beweging_ontvangen(v_sa, jsonb_build_array(
       jsonb_build_object('datum', v_dag, 'fiets_min', 30)));
     select * into v_d from kal_dagen where gebruiker_id=v_a and datum=v_dag;
@@ -127,7 +123,6 @@ begin
       'goed', v_d.stappen = 8421 and v_d.slaap_min = 448 and v_d.fiets_min = 30,
       'gezien', format('stappen=%s slaap=%s fiets=%s', v_d.stappen, v_d.slaap_min, v_d.fiets_min));
 
-    /* Een lege dag krijgt het gewicht wél. */
     v_ant := kal_beweging_ontvangen(v_sa, jsonb_build_array(jsonb_build_object(
       'datum', v_dag - 1, 'gewicht_kg', 116.4, 'gewicht_bron', 'garmin')));
     select * into v_d from kal_dagen where gebruiker_id=v_a and datum=v_dag-1;
@@ -141,8 +136,7 @@ begin
       jsonb_build_object('datum', '2014-12-31',  'stappen', 1),
       jsonb_build_object('datum', null,          'stappen', 1)));
     v_uit := v_uit || jsonb_build_object('geval','toekomst, te oud en zonder datum: overgeslagen',
-      'goed', (v_ant->>'overgeslagen')::int = 3 and (v_ant->>'dagen')::int = 0,
-      'gezien', v_ant::text);
+      'goed', (v_ant->>'overgeslagen')::int = 3 and (v_ant->>'dagen')::int = 0, 'gezien', v_ant::text);
     select count(*) into v_n from kal_dagen where gebruiker_id=v_a and datum > v_vandaag;
     v_uit := v_uit || jsonb_build_object('geval','er staat geen dag in de toekomst',
       'goed', v_n = 0, 'gezien', format('%s dagen', v_n));
@@ -151,20 +145,16 @@ begin
       perform kal_beweging_ontvangen(v_sa, (
         select jsonb_agg(jsonb_build_object('datum', v_vandaag - i, 'stappen', 1))
           from generate_series(1, 401) i));
-      v_uit := v_uit || jsonb_build_object('geval','meer dan 400 dagen wordt geweigerd',
-                                           'goed',false,'gezien','geaccepteerd');
+      v_uit := v_uit || jsonb_build_object('geval','meer dan 400 dagen wordt geweigerd','goed',false,'gezien','geaccepteerd');
     exception when others then
-      v_uit := v_uit || jsonb_build_object('geval','meer dan 400 dagen wordt geweigerd',
-                                           'goed',true,'gezien',sqlerrm);
+      v_uit := v_uit || jsonb_build_object('geval','meer dan 400 dagen wordt geweigerd','goed',true,'gezien',sqlerrm);
     end;
 
     begin
       perform kal_beweging_ontvangen(v_sa, '{"geen":"lijst"}'::jsonb);
-      v_uit := v_uit || jsonb_build_object('geval','iets dat geen lijst is wordt geweigerd',
-                                           'goed',false,'gezien','geaccepteerd');
+      v_uit := v_uit || jsonb_build_object('geval','iets dat geen lijst is wordt geweigerd','goed',false,'gezien','geaccepteerd');
     exception when others then
-      v_uit := v_uit || jsonb_build_object('geval','iets dat geen lijst is wordt geweigerd',
-                                           'goed',true,'gezien',sqlerrm);
+      v_uit := v_uit || jsonb_build_object('geval','iets dat geen lijst is wordt geweigerd','goed',true,'gezien',sqlerrm);
     end;
 
     /* ======================= scheiding tussen gebruikers ================ */
@@ -177,41 +167,108 @@ begin
       into v_d from kal_koppelingen where sleutel_hash = encode(digest(v_sa,'sha256'),'hex');
     v_uit := v_uit || jsonb_build_object('geval','de koppeling houdt bij dat er iets binnenkwam',
       'goed', v_d.aantal_berichten >= 4 and v_d.aantal_dagen >= 3 and v_d.gezien,
-      'gezien', format('%s berichten, %s dagen, gezien=%s',
-                       v_d.aantal_berichten, v_d.aantal_dagen, v_d.gezien));
+      'gezien', format('%s berichten, %s dagen, gezien=%s', v_d.aantal_berichten, v_d.aantal_dagen, v_d.gezien));
 
     /* ========================= de platte ingang ========================= */
-    v_ant := kal_beweging_dag(v_sa, p_stappen := 7000);
+    /* Alle waarden als tekst: zo stuurt de Opdrachten-app ze ook. */
+    v_ant := kal_beweging_dag(v_sa, p_stappen := '7000');
     v_uit := v_uit || jsonb_build_object('geval','zonder datum wordt het gisteren',
       'goed', (v_ant->>'datum')::date = v_gist, 'gezien', v_ant->>'datum');
 
-    v_ant := kal_beweging_dag(v_sa, p_datum := '', p_stappen := 7001);
+    v_ant := kal_beweging_dag(v_sa, p_datum := '', p_stappen := '7001');
     v_uit := v_uit || jsonb_build_object('geval','lege datumtekst wordt ook gisteren',
       'goed', (v_ant->>'datum')::date = v_gist, 'gezien', v_ant->>'datum');
 
-    v_ant := kal_beweging_dag(v_sa, p_datum := (v_vandaag - 6)::text, p_stappen := 100);
+    v_ant := kal_beweging_dag(v_sa, p_dagen_terug := '0', p_stappen := '7002');
+    v_uit := v_uit || jsonb_build_object('geval','dagen_terug 0 is vandaag',
+      'goed', (v_ant->>'datum')::date = v_vandaag, 'gezien', v_ant->>'datum');
+
+    v_ant := kal_beweging_dag(v_sa, p_datum := (v_vandaag - 6)::text, p_dagen_terug := '0', p_stappen := '100');
     v_uit := v_uit || jsonb_build_object('geval','een eigen datum overrulet de standaard',
       'goed', (v_ant->>'datum')::date = v_vandaag - 6, 'gezien', v_ant->>'datum');
 
-    perform kal_beweging_dag(v_sa, p_slaap_uur := 7.45);
+    perform kal_beweging_dag(v_sa, p_slaap_uur := '7.45');
     select slaap_min into v_d from kal_dagen where gebruiker_id=v_a and datum=v_gist;
     v_uit := v_uit || jsonb_build_object('geval','slaap in uren wordt minuten',
-      'goed', v_d.slaap_min = 447, 'gezien', format('7,45 uur -> %s min', v_d.slaap_min));
+      'goed', v_d.slaap_min = 447, 'gezien', format('7.45 uur -> %s min', v_d.slaap_min));
 
-    perform kal_beweging_dag(v_sa, p_slaap_sec := 28800);
+    perform kal_beweging_dag(v_sa, p_slaap_sec := '28800');
     select slaap_min into v_d from kal_dagen where gebruiker_id=v_a and datum=v_gist;
     v_uit := v_uit || jsonb_build_object('geval','slaap in seconden wordt minuten',
       'goed', v_d.slaap_min = 480, 'gezien', format('28800 sec -> %s min', v_d.slaap_min));
 
-    v_ant := kal_beweging_dag(v_sa, p_slaap_min := 28800);
+    v_ant := kal_beweging_dag(v_sa, p_slaap_min := '28800');
     select slaap_min into v_d from kal_dagen where gebruiker_id=v_a and datum=v_gist;
     v_uit := v_uit || jsonb_build_object('geval','onmogelijke slaap wordt geweigerd en gemeld',
       'goed', (v_ant->>'slaap_genegeerd')::boolean and v_d.slaap_min = 480,
       'gezien', format('genegeerd=%s, blijft %s min', v_ant->>'slaap_genegeerd', v_d.slaap_min));
 
+    /* ---- wat een echte telefoon stuurt: soms niets, en komma's ---------- */
+    /* Een nacht zonder slaapmeting gaf 22P02 en sloopte het hele bericht,
+       inclusief de stappen die wél gemeten waren. */
+    v_ant := kal_beweging_dag(v_sa, p_dagen_terug := '0',
+                              p_stappen := '8421', p_actieve_energie_kcal := '612',
+                              p_slaap_sec := '');
+    select stappen, actieve_energie_kcal into v_d
+      from kal_dagen where gebruiker_id=v_a and datum=v_vandaag;
+    v_uit := v_uit || jsonb_build_object('geval','EEN LEEG GETAL SLOOPT HET BERICHT NIET',
+      'goed', (v_ant->>'dagen')::int = 1 and v_d.stappen = 8421 and v_d.actieve_energie_kcal = 612,
+      'gezien', format('stappen=%s energie=%s', v_d.stappen, v_d.actieve_energie_kcal));
+
+    perform kal_beweging_dag(v_sa, p_dagen_terug := '0', p_slaap_uur := '7,45');
+    select slaap_min into v_d from kal_dagen where gebruiker_id=v_a and datum=v_vandaag;
+    v_uit := v_uit || jsonb_build_object('geval','een komma is een decimaalteken',
+      'goed', v_d.slaap_min = 447, 'gezien', format('7,45 uur -> %s min', v_d.slaap_min));
+
+    v_ant := kal_beweging_dag(v_sa, p_dagen_terug := '0', p_stappen := 'zeven');
+    select stappen into v_d from kal_dagen where gebruiker_id=v_a and datum=v_vandaag;
+    v_uit := v_uit || jsonb_build_object('geval','onleesbaar wordt gemeld, niet weggeschreven',
+      'goed', v_ant->'niet_gelezen' ? 'stappen' and v_d.stappen = 8421,
+      'gezien', format('niet_gelezen=%s, stappen blijft %s', v_ant->>'niet_gelezen', v_d.stappen));
+
+    /* ---------------------------- de rustpols --------------------------- */
+    /* Hij woont in kal_metingen en niet in kal_dagen, dus hij heeft zijn eigen
+       botsingsregels — en die zijn net anders: een meting die de koppeling zelf
+       neerzette mag hij bijwerken, want de rustpols van vanochtend is voorlopig. */
+    v_ant := kal_beweging_dag(v_sa, p_dagen_terug := '0', p_hartslag_rust := '58');
+    select waarde into v_d from kal_metingen
+     where gebruiker_id=v_a and datum=v_vandaag and soort='hartslag_rust';
+    v_uit := v_uit || jsonb_build_object('geval','rustpols komt binnen',
+      'goed', v_ant->>'hartslag_rust' = 'opgeslagen' and v_d.waarde = 58,
+      'gezien', format('%s -> %s', v_ant->>'hartslag_rust', v_d.waarde));
+
+    v_ant := kal_beweging_dag(v_sa, p_dagen_terug := '0', p_hartslag_rust := '55');
+    select count(*) into v_n from kal_metingen
+     where gebruiker_id=v_a and datum=v_vandaag and soort='hartslag_rust';
+    select waarde into v_d from kal_metingen
+     where gebruiker_id=v_a and datum=v_vandaag and soort='hartslag_rust';
+    v_uit := v_uit || jsonb_build_object('geval','tweede keer werkt bij, zonder dubbele rij',
+      'goed', v_n = 1 and v_d.waarde = 55, 'gezien', format('%s rij(en), waarde %s', v_n, v_d.waarde));
+
+    update kal_metingen set notitie = null, waarde = 62
+     where gebruiker_id=v_a and datum=v_vandaag and soort='hartslag_rust';
+    v_ant := kal_beweging_dag(v_sa, p_dagen_terug := '0', p_hartslag_rust := '55');
+    select waarde into v_d from kal_metingen
+     where gebruiker_id=v_a and datum=v_vandaag and soort='hartslag_rust';
+    v_uit := v_uit || jsonb_build_object('geval','EEN POLS DIE JIJ INVULDE BLIJFT STAAN',
+      'goed', v_d.waarde = 62 and v_ant->>'hartslag_rust' = 'die van jou blijft staan',
+      'gezien', format('%s -> %s', v_ant->>'hartslag_rust', v_d.waarde));
+
+    v_ant := kal_beweging_dag(v_sa, p_dagen_terug := '2', p_hartslag_rust := '600');
+    select count(*) into v_n from kal_metingen
+     where gebruiker_id=v_a and datum=v_vandaag-2 and soort='hartslag_rust';
+    v_uit := v_uit || jsonb_build_object('geval','onmogelijke pols wordt geweigerd',
+      'goed', v_n = 0 and v_ant->>'hartslag_rust' = 'onmogelijk, genegeerd',
+      'gezien', format('%s, %s rijen', v_ant->>'hartslag_rust', v_n));
+
+    v_ant := kal_beweging_dag(v_sa, p_dagen_terug := '0', p_stappen := '100');
+    v_uit := v_uit || jsonb_build_object('geval','zonder pols verandert er niets aan de pols',
+      'goed', v_ant->>'hartslag_rust' = 'niet meegestuurd', 'gezien', v_ant->>'hartslag_rust');
+
     /* Altijd terugdraaien. Deze proef schrijft in echte tabellen; hij mag er
        niets van achterlaten. */
     raise exception 'PROEF-TERUGDRAAIEN';
+
   exception when others then
     if sqlerrm <> 'PROEF-TERUGDRAAIEN' then
       v_uit := v_uit || jsonb_build_object('geval','de proef zelf liep vast',

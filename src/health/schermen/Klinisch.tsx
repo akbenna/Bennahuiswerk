@@ -70,6 +70,7 @@ export function Klinisch(p: KlinischEigenschappen) {
 
   const sbd = meting('bloeddruk_sys'), dbd = meting('bloeddruk_dia')
   const middel = meting('middelomtrek')
+  const pols = rustpols(metingen)
   const tc = lab('tc'), hdl = lab('hdl')
 
   const sc = sbd?.waarde != null && tc?.waarde != null && hdl?.waarde != null
@@ -158,7 +159,8 @@ export function Klinisch(p: KlinischEigenschappen) {
         )}
       </Schermkop>
 
-      <MetingInvoer bewaar={p.bewaarMeting} a={a} sbd={sbd} dbd={dbd} middel={middel} />
+      <MetingInvoer bewaar={p.bewaarMeting} a={a} sbd={sbd} dbd={dbd} middel={middel}
+                    pols={pols} />
       <LabInvoer bewaar={p.bewaarLab} labs={labs} />
 
       <Kaart toon={sc?.klasse === 'hoog' ? 'let' : undefined}>
@@ -218,11 +220,46 @@ export function Klinisch(p: KlinischEigenschappen) {
   )
 }
 
+/**
+ * De rustpols: de laatste meting, en hoe hij zich verhoudt tot de maand ervoor.
+ *
+ * Bij deze meting is de verandering het signaal en niet de waarde. Een pols van
+ * 58 zegt op zichzelf weinig — bij de een is dat hoog, bij de ander laag. Vier
+ * slagen omhoog ten opzichte van je eigen gemiddelde zegt wel iets: slechter
+ * herstel, een naderende infectie, of te zwaar getraind.
+ *
+ * De vergelijking gebruikt de dagen ervóór en niet de hele reeks: anders trekt
+ * de laatste meting zijn eigen referentie mee omhoog en zie je nooit een
+ * verandering.
+ */
+interface Rustpols { nu: Meting; basis: number | null; n: number }
+
+function rustpols(metingen: Meting[]): Rustpols | null {
+  const alle = metingen.filter((m) => m.soort === 'hartslag_rust')
+    .sort((x, y) => (x.datum < y.datum ? 1 : -1))
+  const nu = alle[0]
+  if (!nu) return null
+  const eerder = alle.slice(1).filter((m) => dagenTussen(m.datum, nu.datum) <= 30)
+  return {
+    nu,
+    basis: eerder.length >= 3
+      ? eerder.reduce((t, m) => t + m.waarde, 0) / eerder.length : null,
+    n: eerder.length,
+  }
+}
+
+/** Kale ISO-datums, dus geen tijdzone in het spel. */
+function dagenTussen(van: string, tot: string): number {
+  const t = (x: string) => Date.UTC(+x.slice(0, 4), +x.slice(5, 7) - 1, +x.slice(8, 10))
+  return Math.round((t(tot) - t(van)) / 86400000)
+}
+
 function MetingInvoer(
-  { bewaar, a, sbd, dbd, middel }:
+  { bewaar, a, sbd, dbd, middel, pols }:
   {
     bewaar: KlinischEigenschappen['bewaarMeting']; a: Analyse
     sbd: Meting | null; dbd: Meting | null; middel: Meting | null
+    pols: Rustpols | null
   },
 ) {
   const [soort, zetSoort] = useState<string>(METINGSOORTEN[0][0])
@@ -267,7 +304,34 @@ function MetingInvoer(
           <div className="mini">BMI</div>
           <div className="getal" style={{ fontSize: '1.2rem' }}>{dec(a.bmi, 1)}</div>
         </div>
+        <div>
+          <div className="mini">Rustpols</div>
+          <div className="getal" style={{ fontSize: '1.2rem' }}>
+            {pols ? Math.round(pols.nu.waarde) + ' /min' : '—'}
+          </div>
+        </div>
       </div>
+      {pols && (
+        <p className="mini" style={{ marginTop: 8 }}>
+          Gemeten op {kortNL(pols.nu.datum)}.{' '}
+          {pols.basis == null
+            ? `Nog te weinig eerdere metingen (${pols.n}) om een verandering te zien; `
+              + 'vanaf drie staat hier wat hij doet ten opzichte van je eigen gemiddelde.'
+            : (() => {
+                const d = pols.nu.waarde - pols.basis
+                return Math.abs(d) < 2
+                  ? `Gelijk aan je gemiddelde van de afgelopen maand (${dec(pols.basis, 0)}).`
+                  : `${dec(Math.abs(d), 0)} slagen ${d > 0 ? 'hoger' : 'lager'} dan je gemiddelde `
+                    + `van de afgelopen maand (${dec(pols.basis, 0)}). `
+                    + (d > 0
+                      ? 'Omhoog wijst op slechter herstel, een naderende infectie of te zware '
+                        + 'belasting — meestal tijdelijk.'
+                      : 'Omlaag gaat meestal samen met een betere conditie.')
+              })()}{' '}
+          Bij deze meting is de verándering het signaal: de waarde zelf verschilt te veel per persoon
+          om er iets uit af te lezen.
+        </p>
+      )}
       {middel ? (
         <p className="mini" style={{ marginTop: 8 }}>
           {middel.waarde >= 102 ? 'Boven 102 cm — de grens waarbij gewichtsafname wordt aanbevolen.'

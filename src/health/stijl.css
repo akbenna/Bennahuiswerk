@@ -89,7 +89,9 @@ nav.tabs button[aria-selected="true"]{color:var(--k);background:var(--kbg);font-
 .rij{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
 .duo{display:grid;gap:16px}
 @media(min-width:520px){.duo{grid-template-columns:1fr 1fr}}
-.trio{display:grid;gap:12px;grid-template-columns:repeat(3,1fr)}
+/* Heette trio toen het er drie waren; sinds de rustpols erbij kwam past het
+   aantal zich aan in plaats van de naam. */
+.trio{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,116px),1fr))}
 
 /* ------------------------------------------------------------- besturing -- */
 .knop{border:1px solid var(--lijn);background:var(--vlak);color:var(--ink2);

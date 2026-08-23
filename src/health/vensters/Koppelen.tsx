@@ -59,7 +59,7 @@ function Menu({ nl, en }: { nl: string; en: string }) {
 function voorbeeldLichaam(sleutel: string): string {
   return JSON.stringify({
     p_sleutel: sleutel,
-    p_datum: '{Opgemaakte datum}',
+    p_dagen_terug: 0,
     p_stappen: '{Som van de stappen}',
   }, null, 2)
 }
@@ -190,12 +190,11 @@ export function KoppelVenster(
 
         <p className="klein" style={{ marginTop: 12 }}>
           <b>Zet hem op 23:45 en niet op 's ochtends.</b> Dan is de dag af, en hoeft de opdracht
-          alleen maar <em>vandaag</em> uit te lezen — dat is één keuze in een menu, terwijl
-          &ldquo;gisteren&rdquo; je door twee datumberekeningen jaagt.
+          alleen maar <em>vandaag</em> uit te lezen — dat is één keuze in een menu.
         </p>
 
         <p className="klein" style={{ marginTop: 12 }}>
-          <b>Vijf acties, in deze volgorde:</b>
+          <b>Drie acties, in deze volgorde:</b>
         </p>
         <ol className="stappen">
           <li>
@@ -206,15 +205,17 @@ export function KoppelVenster(
             <Menu nl="Bereken statistiek" en="Calculate Statistics" /> — <b>Som</b> over de
             waarden. Dit is je stappentotaal.
           </li>
-          <li><Menu nl="Huidige datum" en="Current Date" /></li>
-          <li>
-            <Menu nl="Formatteer datum" en="Format Date" /> — aangepast, precies{' '}
-            <code>yyyy-MM-dd</code>
-          </li>
           <li>
             <Menu nl="Verkrijg inhoud van URL" en="Get Contents of URL" /> — met de velden hieronder.
           </li>
         </ol>
+        <p className="mini" style={{ marginTop: 6 }}>
+          Hier stonden eerst vijf acties: <em>Huidige datum</em> en <em>Formatteer datum</em>{' '}
+          hoorden de dag als <code>2026-08-22</code> aanleveren. Dat liep vast — <em>Huidige
+          datum</em> staat niet in de variabelenkiezer waar de instructie hem beloofde. Daarom
+          rekent de database de dag nu zelf uit en stuur je alleen nog een getal:{' '}
+          <code>p_dagen_terug</code>, 0 voor vandaag.
+        </p>
 
         <p className="klein" style={{ marginTop: 12 }}>
           <b>Wat er in die laatste actie moet:</b>
@@ -246,7 +247,7 @@ export function KoppelVenster(
             <b>JSON</b>, en dan drie regels toevoegen:
             <div className="veldtabel">
               <div><code>p_sleutel</code><span>Tekst</span><span>je sleutel hierboven</span></div>
-              <div><code>p_datum</code><span>Tekst</span><span>de uitkomst van actie 4</span></div>
+              <div><code>p_dagen_terug</code><span>Getal</span><span>0 — vandaag</span></div>
               <div><code>p_stappen</code><span>Getal</span><span>de uitkomst van actie 2</span></div>
             </div>
             <p className="mini" style={{ marginTop: 6 }}>
@@ -265,27 +266,45 @@ export function KoppelVenster(
         </p>
         <div className="veldtabel">
           <div><code>p_actieve_energie_kcal</code><span>Getal</span><span>kcal</span></div>
+          <div><code>p_hartslag_rust</code><span>Getal</span><span>slagen per minuut</span></div>
           <div><code>p_slaap_uur</code><span>Getal</span><span>of <code>p_slaap_min</code>, of{' '}
             <code>p_slaap_sec</code></span></div>
           <div><code>p_fiets_min</code><span>Getal</span><span>minuten</span></div>
         </div>
         <p className="mini" style={{ marginTop: 6 }}>
+          De rustpols is van deze vier de moeite waard om er als eerste bij te zetten: hij daalt als
+          je conditie verbetert en stijgt bij ziekte, slechte slaap of te zware belasting. Hij komt
+          binnen als meting en verschijnt onder <em>Klinisch</em>, met erbij hoeveel hij afwijkt van
+          je eigen gemiddelde — want bij die meting is de verandering het signaal en niet de waarde.
+        </p>
+        <p className="mini" style={{ marginTop: 6 }}>
           Voor slaap kies je het veld dat past bij wat je opdracht teruggeeft — uren, minuten of
           seconden. Zit je ernaast, dan komt er iets van dertig uur slaap uit en dat wordt geweigerd
           in plaats van weggeschreven. In het antwoord staat dan{' '}
-          <code>slaap_genegeerd: true</code>.
+          <code>slaap_genegeerd: true</code>. Hetzelfde geldt voor de rustpols buiten 25 en 150.
+        </p>
+        <p className="mini" style={{ marginTop: 6 }}>
+          Een meting die op een dag ontbreekt is geen probleem: dat veld blijft dan leeg en de rest
+          komt gewoon binnen. Een dag zonder slaapmeting laat je stappen dus niet sneuvelen.
         </p>
 
         <p className="mini" style={{ marginTop: 10 }}>
           Er komt iets terug in de vorm{' '}
           <code>{'{"dagen":1,"datum":"2026-08-22","gewicht_behouden":0,"overgeslagen":0}'}</code>.
           Kijk naar <code>datum</code>: dat is de dag waar het naartoe ging. Staat er{' '}
-          <code>dagen: 0</code>, dan kwam je datum niet door — meestal omdat actie 4 er{' '}
-          <code>22-08-2026</code> van maakt in plaats van <code>2026-08-22</code>.
+          <code>dagen: 0</code>, dan kwam er niets binnen dat opgeslagen kon worden.
         </p>
         <p className="mini" style={{ marginTop: 6 }}>
-          Laat je <code>p_datum</code> helemaal weg, dan wordt het gisteren. Dat is bedoeld voor wie
-          de opdracht 's ochtends laat vuren; bij een run om 23:45 hoort de datum er wél in.
+          <code>p_dagen_terug</code> telt vanaf vandaag: <code>0</code> is vandaag,{' '}
+          <code>1</code> is gisteren. Laat je zowel <code>p_dagen_terug</code> als{' '}
+          <code>p_datum</code> weg, dan wordt het gisteren — bedoeld voor wie de opdracht 's
+          ochtends laat vuren. Wil je toch een vaste dag insturen, dan mag{' '}
+          <code>p_datum</code> als <code>2026-08-22</code>; die wint dan van het getal.
+        </p>
+        <p className="mini" style={{ marginTop: 6 }}>
+          Staat er een veld in <code>niet_gelezen</code>, dan kwam daar iets binnen dat geen getal
+          was. De rest van het bericht is dan gewoon opgeslagen: één veld dat misgaat sleept de
+          andere niet mee.
         </p>
 
         <Uitleg id="inhaalslag" label="meerdere dagen tegelijk insturen">
