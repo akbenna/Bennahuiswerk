@@ -203,7 +203,10 @@ async function modelNaam(
    instellen wil je weten wát er misging: een verkeerde modelnaam en een
    verlopen sleutel geven allebei "geen antwoord", en dat zijn heel verschillende
    dingen om op te lossen. */
-interface Uitleg { reden?: string; status?: number; antwoord?: string }
+interface Uitleg {
+  reden?: string; status?: number; antwoord?: string
+  klaar_omdat?: string; verbruik?: unknown
+}
 
 async function viaOpenAI(
   db: ReturnType<typeof createClient>,
@@ -227,7 +230,12 @@ async function viaOpenAI(
           { role: "system", content: OPDRACHT },
           { role: "user", content: v },
         ],
-        max_completion_tokens: 300,
+        /* Ruim, en dat is geen slordigheid. Een redeneermodel rekent eerst en
+           schrijft daarna, en beide komen uit ditzelfde budget. Op 300 kwam er
+           een keurige 200 terug met een leeg antwoord: alles was opgegaan aan
+           denken, en `finish_reason` stond op length. Veertig woorden kosten
+           er hooguit honderd; de rest is ruimte om te mogen nadenken. */
+        max_completion_tokens: 2000,
       }),
     });
     if (!r.ok) {
@@ -240,7 +248,11 @@ async function viaOpenAI(
     }
     const d = await r.json();
     const tekst = schoon(d.choices?.[0]?.message?.content);
-    if (!tekst && uitleg) uitleg.reden = "OpenAI antwoordde, maar zonder tekst";
+    if (!tekst && uitleg) {
+      uitleg.reden = "OpenAI antwoordde, maar zonder tekst";
+      uitleg.klaar_omdat = d.choices?.[0]?.finish_reason;
+      uitleg.verbruik = d.usage;
+    }
     return tekst;
   } catch (e) {
     if (uitleg) uitleg.reden = "netwerkfout: " + (e instanceof Error ? e.message : String(e));
