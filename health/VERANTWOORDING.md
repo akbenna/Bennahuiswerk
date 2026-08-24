@@ -380,6 +380,36 @@ Voor de tonijnsalade komen die twee uit op de olijfolie (48 procent van de energ
 
 De laatste rij is het hele punt in twee getallen: voor 35 kcal mínder dan nu het dubbele aan eiwit per calorie. Er staat expres geen aanbeveling bij. Een tabel blijft kloppen als je voorkeuren veranderen; een aanbeveling niet.
 
+### Wat de duiding meteen opleverde
+
+Er staat een derde gerecht in, en dat is geen illustratie maar het resultaat van de vorige twee. Een stokbrood met tonijn, tomaat, paprika, één plak jonge kaas, een theelepel olie en zout:
+
+| | kcal | eiwit | per 100 kcal | dichtheid | graad |
+|---|---|---|---|---|---|
+| Mijn stokbroodtonijn | 629 | 43,6 g | **6,9 g** | 1,21 | C |
+| Tonijnsalade (per portie) | 376 | 15,2 g | 4,0 g | 0,96 | D |
+| Half stokbrood belegd | 752 | 22,4 g | 3,0 g | 2,25 | D |
+
+Het verschil zit niet in wat erbij is gekomen maar in wat er níét in zit: één theelepel olie in plaats van anderhalve eetlepel, en dat scheelt 135 kcal. De tonijn levert 24,9 van de 43,6 gram eiwit voor 109 kcal.
+
+En dit gerecht is een C waar de andere twee een D zijn. Dezelfde onzekerheid over dezelfde handeling — een lepel olie die niet gewogen wordt — maar hier loopt de schatting van 3 tot 10 gram en dat is 63 kcal, tegen 30 tot 70 gram en 360 kcal bij de salade. Dat is precies wat een graad hoort uit te drukken: niet of je slordig bent geweest, maar hoeveel die slordigheid kost.
+
+Dit gerecht dekt bovendien een tak van de rekenregels die de andere twee niet raken. Bij de salade is de grootste energiepost toevallig ook het vet; hier is het het brood. Een regel die simpelweg "het vet" aanwijst zou op de salade niet stukgaan en hier wel, en daarom staat dit geval als tweede ijkpunt in `maaltijd.proef.ts`.
+
+### Een variant vastleggen, en waarom de graad dan omhoog mag
+
+De onderste rij van de variantentabel — olie halveren én tonijn verdubbelen — staat als eigen gerecht in de app: *Tonijnsalade licht*, 341 kcal per portie met 27,6 gram eiwit, oftewel 8,1 gram per 100 kcal tegen 4,0. Voor mínder energie het dubbele aan eiwit per calorie.
+
+Dat schept een risico dat het benoemen waard is: hetzelfde getal staat nu op twee plekken, in de tabel in het scherm en in de rij in de database, en twee plekken met hetzelfde getal lopen uiteen zodra iemand er één aanraakt. Er staat daarom een proef tussen die eist dat het punt, het eiwit en de eiwitdichtheid exact gelijk zijn aan wat `varianten()` uitrekent.
+
+**Eén ding is met opzet níét gelijk: de band.** `varianten()` halveert de band van de olie mee en houdt daarmee de onzekerheid van een slordige gieting; het vastgelegde gerecht heeft een smallere marge. Dat verschil is de hele reden dat deze variant een gerecht is en geen tabelregel.
+
+Dat raakt aan wat een graad betekent. *Tonijnsalade licht* is een C waar het origineel een D is, en niet omdat er minder olie in gaat — een kleinere hoeveelheid van iets onbekends blijft onbekend. Het is een C omdat de olie wordt **afgemeten**: anderhalve gestreken eetlepel is een huishoudmaat met een tabelwaarde, terwijl "drie ruime lepels" aantoonbaar onbepaald is (de bronanalyse schrijft letterlijk dat het 40 of 70 gram kan zijn). Die voorwaarde staat in de toelichting van het gerecht, waar je hem leest op het moment dat je logt: giet je hem vrij, dan klopt de band niet meer en is het weer een D.
+
+Het gevolg is zichtbaar in de band en niet alleen in de letter: 273 tot 437 kcal per portie tegen 289 tot 580. Het punt zakt met 35 kcal en de band wordt honderdvijftig kcal smaller. Dat tweede is de grotere winst — een smalle band is wat het model nodig heeft om iets te durven zeggen (§3).
+
+Het origineel blijft staan. Dit is geen verbeterde versie die de oude vervangt maar een tweede gerecht ernaast: wat er op tafel staat hangt af van wie er meeeet, en een app die dat invult heeft het mis.
+
 ### Vindbaar, en het sterretje
 
 Twee dingen die pas opvielen bij gebruik. Wie "tonijn" typte kreeg de tonijnregels van NEVO en niet zijn eigen salade — de app had het antwoord al en liet het niet zien. `kal_zoeken` doorzoekt nu ook de eigen maaltijden, en dan niet alleen op de titel maar ook op de namen van de onderdelen: "paprika" vindt zo het gerecht waar paprika in zit zonder dat dat woord in de naam staat. Dat is precies waar een samengesteld gerecht zich anders gedraagt dan een product.

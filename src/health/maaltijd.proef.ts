@@ -242,13 +242,13 @@ describe('naamvoorstel', () => {
 const echt: Maaltijd = {
   id: 'm2', naam: 'Tonijnsalade', toelichting: null, porties: 2, favoriet: true,
   regels: [
-    onderdeel({ naam: 'Tomaat', kcal_punt: 79, eiwit_g: 2.5, vet_g: 1.8, koolhydraat_g: 10.8, vezel_g: 4.3, gram_equivalent: 360, conf: 'C' }),
-    onderdeel({ naam: 'Ui', kcal_punt: 41, eiwit_g: 1.4, vet_g: 0.2, koolhydraat_g: 6.9, vezel_g: 3.0, gram_equivalent: 110, conf: 'C' }),
-    onderdeel({ naam: 'Paprika', kcal_punt: 38, eiwit_g: 1.2, vet_g: 0.2, koolhydraat_g: 6.5, vezel_g: 2.7, gram_equivalent: 150, conf: 'C' }),
-    onderdeel({ naam: 'Tonijn uit blik, uitgelekt', kcal_punt: 109, eiwit_g: 24.9, vet_g: 1.0, koolhydraat_g: 0, vezel_g: 0, gram_equivalent: 100, conf: 'B' }),
-    onderdeel({ naam: 'Mayonaise', kcal_punt: 80, eiwit_g: 0.1, vet_g: 8.6, koolhydraat_g: 0.4, vezel_g: 0, gram_equivalent: 12, conf: 'C' }),
-    onderdeel({ naam: 'Dressing honing/mosterd', kcal_punt: 45, eiwit_g: 0.2, vet_g: 3.9, koolhydraat_g: 2.3, vezel_g: 0, gram_equivalent: 15, conf: 'C' }),
-    onderdeel({ naam: 'Olijfolie', kcal_punt: 360, eiwit_g: 0, vet_g: 40, koolhydraat_g: 0, vezel_g: 0, gram_equivalent: 40, conf: 'D' }),
+    onderdeel({ naam: 'Tomaat', kcal_punt: 79, kcal_laag: 62, kcal_hoog: 97, eiwit_g: 2.5, vet_g: 1.8, koolhydraat_g: 10.8, vezel_g: 4.3, gram_equivalent: 360, conf: 'C' }),
+    onderdeel({ naam: 'Ui', kcal_punt: 41, kcal_laag: 30, kcal_hoog: 56, eiwit_g: 1.4, vet_g: 0.2, koolhydraat_g: 6.9, vezel_g: 3.0, gram_equivalent: 110, conf: 'C' }),
+    onderdeel({ naam: 'Paprika', kcal_punt: 38, kcal_laag: 28, kcal_hoog: 48, eiwit_g: 1.2, vet_g: 0.2, koolhydraat_g: 6.5, vezel_g: 2.7, gram_equivalent: 150, conf: 'C' }),
+    onderdeel({ naam: 'Tonijn uit blik, uitgelekt', kcal_punt: 109, kcal_laag: 104, kcal_hoog: 120, eiwit_g: 24.9, vet_g: 1.0, koolhydraat_g: 0, vezel_g: 0, gram_equivalent: 100, conf: 'B' }),
+    onderdeel({ naam: 'Mayonaise', kcal_punt: 80, kcal_laag: 53, kcal_hoog: 133, eiwit_g: 0.1, vet_g: 8.6, koolhydraat_g: 0.4, vezel_g: 0, gram_equivalent: 12, conf: 'C' }),
+    onderdeel({ naam: 'Dressing honing/mosterd', kcal_punt: 45, kcal_laag: 30, kcal_hoog: 75, eiwit_g: 0.2, vet_g: 3.9, koolhydraat_g: 2.3, vezel_g: 0, gram_equivalent: 15, conf: 'C' }),
+    onderdeel({ naam: 'Olijfolie', kcal_punt: 360, kcal_laag: 270, kcal_hoog: 630, eiwit_g: 0, vet_g: 40, koolhydraat_g: 0, vezel_g: 0, gram_equivalent: 40, conf: 'D' }),
   ],
 }
 
@@ -260,6 +260,12 @@ describe('duiding', () => {
     expect(d.dichtheid).toBe(0.96)      // onder de 1,0: dit vult
     expect(d.eiwitPer100).toBe(4.0)     // en dít is waarom het toch te weinig is
     expect(d.vezel).toBe(10)
+    /* De band hoort er ook bij te kloppen, en die is breed: 577 tot 1159 voor de
+       schaal. Bijna al die breedte komt uit één regel — de olie loopt van 270
+       tot 630 kcal. */
+    const a = aggregaat(echt, echt.porties)
+    expect(a.kcalLaag).toBe(577)
+    expect(a.kcalHoog).toBe(1159)
   })
 
   it('geeft de energieprocenten zonder ze naar 100 te praten', () => {
@@ -367,5 +373,146 @@ describe('aandelen', () => {
     const groenteEnVis = a.filter((x) => x.naam !== 'Olijfolie' && x.naam !== 'Mayonaise'
       && x.naam !== 'Dressing honing/mosterd').reduce((n, x) => n + x.kcal, 0)
     expect(groenteEnVis).toBeLessThan(a[0]?.kcal ?? 0)
+  })
+})
+
+/* ------------------------------------------------------------------------- */
+/*  HET TWEEDE IJKPUNT                                                       */
+/*                                                                           */
+/*  De salade laat de hefbomen zien in het makkelijke geval: de grootste post */
+/*  is het vet. Dit gerecht doet dat niet — daar is het brood de grootste     */
+/*  post en het vet een theelepel. Zonder dit geval zou een rekenregel die    */
+/*  simpelweg "het vet" aanwijst er even goed doorheen komen.                 */
+/*                                                                           */
+/*  De getallen komen uit 10-stokbroodtonijn.sql zoals die in de database     */
+/*  staan; verandert daar een ingrediënt, dan hoort deze proef om te vallen.  */
+/* ------------------------------------------------------------------------- */
+
+const brood: Maaltijd = {
+  id: 'm3', naam: 'Mijn stokbroodtonijn', toelichting: null, porties: 1, favoriet: true,
+  regels: [
+    onderdeel({ naam: 'Stokbrood wit', kcal_punt: 338, kcal_laag: 270, kcal_hoog: 432, eiwit_g: 12.1, vet_g: 1.5, koolhydraat_g: 67.0, vezel_g: 3.5, gram_equivalent: 125, conf: 'C' }),
+    onderdeel({ naam: 'Tonijn uit blik, uitgelekt', kcal_punt: 109, kcal_laag: 104, kcal_hoog: 120, eiwit_g: 24.9, vet_g: 1.0, koolhydraat_g: 0, vezel_g: 0, gram_equivalent: 100, conf: 'B' }),
+    onderdeel({ naam: 'Tomaat', kcal_punt: 26, kcal_laag: 20, kcal_hoog: 35, eiwit_g: 0.8, vet_g: 0.6, koolhydraat_g: 3.6, vezel_g: 1.4, gram_equivalent: 120, conf: 'C' }),
+    onderdeel({ naam: 'Paprika', kcal_punt: 38, kcal_laag: 28, kcal_hoog: 48, eiwit_g: 1.2, vet_g: 0.2, koolhydraat_g: 6.5, vezel_g: 2.7, gram_equivalent: 150, conf: 'C' }),
+    onderdeel({ naam: 'Kaas Goudse 48+ jong', kcal_punt: 73, kcal_laag: 55, kcal_hoog: 109, eiwit_g: 4.6, vet_g: 5.9, koolhydraat_g: 0, vezel_g: 0, gram_equivalent: 20, conf: 'C' }),
+    onderdeel({ naam: 'Olijfolie erover', kcal_punt: 45, kcal_laag: 27, kcal_hoog: 90, eiwit_g: 0, vet_g: 5.0, koolhydraat_g: 0, vezel_g: 0, gram_equivalent: 5, conf: 'C' }),
+    onderdeel({ naam: 'Zout', kcal_punt: 0, kcal_laag: 0, kcal_hoog: 0, eiwit_g: 0, vet_g: 0, koolhydraat_g: 0, vezel_g: 0, gram_equivalent: 1, conf: 'A' }),
+  ],
+}
+
+describe('het stokbroodtonijn als tweede ijkpunt', () => {
+  it('telt op tot wat er in de database staat', () => {
+    const a = aggregaat(brood, 1)
+    expect(a.kcal).toBe(629)
+    expect(a.kcalLaag).toBe(504)
+    expect(a.kcalHoog).toBe(834)
+    expect(a.eiwit).toBe(43.6)
+    expect(a.gram).toBe(521)
+  })
+
+  it('is een C en niet een D, omdat de olie hier een theelepel is', () => {
+    /* Dezelfde onzekerheid over dezelfde handeling — een lepel olie die niet
+       gewogen wordt — maar hier is het gevolg 63 kcal en bij de salade 360.
+       Dat verschil hoort de graad uit te drukken, en dat doet hij. */
+    expect(aggregaat(brood, 1).conf).toBe('C')
+    expect(aggregaat(echt, echt.porties).conf).toBe('D')
+  })
+
+  it('wijst het brood aan als grootste post, en niet het vet', () => {
+    /* Dit is waarom dit geval erbij staat. Bij de salade is de grootste post
+       toevallig ook het vet; een regel die simpelweg "het vet" aanwijst zou
+       daar niet op stukgaan en hier wel. */
+    const h = hefbomen(brood)
+    expect(h.grootste?.naam).toBe('Stokbrood wit')
+    expect(h.eiwitrijkste?.naam).toBe('Tonijn uit blik, uitgelekt')
+  })
+
+  it('is de eiwitrijkste van de drie', () => {
+    const d = duiding(brood)
+    expect(d.eiwitPer100).toBe(6.9)
+    expect(d.dichtheid).toBe(1.21)
+    /* Ruim anderhalf keer zo eiwitdicht als de salade. Dat is de hele reden dat
+       dit gerecht er is, en het is geen mening maar een deling. */
+    expect(d.eiwitPer100 ?? 0).toBeGreaterThan((duiding(echt).eiwitPer100 ?? 0) * 1.5)
+  })
+
+  it('laat zien wat de twee knoppen hier doen', () => {
+    const v = varianten(brood)
+    expect(v.map((x) => x.label)).toEqual([
+      'zoals je hem maakt',
+      'Stokbrood wit halveren',
+      'Tonijn uit blik, uitgelekt verdubbelen',
+      'allebei',
+    ])
+    expect(v.map((x) => x.kcal)).toEqual([629, 460, 738, 569])
+    /* Elke knop hoort de eiwitdichtheid omhoog te brengen, en allebei het meest.
+       Gaat die volgorde ooit door elkaar, dan klopt er iets niet in de
+       rekenregels en niet in het broodje. */
+    const dicht = v.map((x) => x.eiwitPer100 ?? 0)
+    expect(dicht[1]).toBeGreaterThan(dicht[0] ?? 0)
+    expect(dicht[2]).toBeGreaterThan(dicht[0] ?? 0)
+    expect(dicht[3]).toBeGreaterThan(Math.max(dicht[1] ?? 0, dicht[2] ?? 0))
+    expect(dicht[3]).toBeGreaterThan(10)
+  })
+})
+
+/* ------------------------------------------------------------------------- */
+/*  DE VASTGELEGDE VARIANT                                                    */
+/*                                                                            */
+/*  "Tonijnsalade licht" is de onderste rij van de variantentabel, opgeslagen  */
+/*  als gerecht. Dat betekent dat er nu twee plekken zijn waar hetzelfde       */
+/*  getal vandaan komt — de tabel in het scherm en de rij in de database — en  */
+/*  twee plekken met hetzelfde getal lopen uiteen zodra iemand er één          */
+/*  aanraakt. Deze proef is het touwtje ertussen.                             */
+/* ------------------------------------------------------------------------- */
+
+const licht: Maaltijd = {
+  id: 'm4', naam: 'Tonijnsalade licht', toelichting: null, porties: 2, favoriet: true,
+  regels: [
+    onderdeel({ naam: 'Tomaat', kcal_punt: 79, kcal_laag: 62, kcal_hoog: 97, eiwit_g: 2.5, vet_g: 1.8, koolhydraat_g: 10.8, vezel_g: 4.3, gram_equivalent: 360, conf: 'C' }),
+    onderdeel({ naam: 'Ui', kcal_punt: 41, kcal_laag: 30, kcal_hoog: 56, eiwit_g: 1.4, vet_g: 0.2, koolhydraat_g: 6.9, vezel_g: 3.0, gram_equivalent: 110, conf: 'C' }),
+    onderdeel({ naam: 'Paprika', kcal_punt: 38, kcal_laag: 28, kcal_hoog: 48, eiwit_g: 1.2, vet_g: 0.2, koolhydraat_g: 6.5, vezel_g: 2.7, gram_equivalent: 150, conf: 'C' }),
+    onderdeel({ naam: 'Tonijn uit blik, uitgelekt', kcal_punt: 218, kcal_laag: 207, kcal_hoog: 240, eiwit_g: 49.8, vet_g: 2.0, koolhydraat_g: 0, vezel_g: 0, gram_equivalent: 200, conf: 'B' }),
+    onderdeel({ naam: 'Mayonaise', kcal_punt: 80, kcal_laag: 53, kcal_hoog: 133, eiwit_g: 0.1, vet_g: 8.6, koolhydraat_g: 0.4, vezel_g: 0, gram_equivalent: 12, conf: 'C' }),
+    onderdeel({ naam: 'Dressing honing/mosterd', kcal_punt: 45, kcal_laag: 30, kcal_hoog: 75, eiwit_g: 0.2, vet_g: 3.9, koolhydraat_g: 2.3, vezel_g: 0, gram_equivalent: 15, conf: 'C' }),
+    onderdeel({ naam: 'Olijfolie, afgemeten', kcal_punt: 180, kcal_laag: 135, kcal_hoog: 225, eiwit_g: 0, vet_g: 20.0, koolhydraat_g: 0, vezel_g: 0, gram_equivalent: 20, conf: 'C' }),
+  ],
+}
+
+describe('Tonijnsalade licht', () => {
+  it('is exact de vierde rij van de variantentabel', () => {
+    /* Het touwtje. Verandert er een ingrediënt in het recept zonder dat het
+       origineel meeverandert — of andersom — dan valt dit om. */
+    const vier = varianten(echt)[3]
+    expect(vier?.label).toBe('allebei')
+    expect(aggregaat(licht, licht.porties).kcal).toBe(vier?.kcal)
+    expect(aggregaat(licht, 1).kcal).toBe(vier?.perPortie)
+    expect(aggregaat(licht, 1).eiwit).toBe(vier?.eiwitPortie)
+    expect(duiding(licht).eiwitPer100).toBe(vier?.eiwitPer100)
+  })
+
+  it('heeft een smallere band dan de tabel voorspelt, en dat is het punt', () => {
+    /* varianten() halveert de band van de olie mee en houdt daarmee de
+       onzekerheid van een slordige gieting. Dit gerecht legt vast dat je de
+       lepel afmeet, en dan is de marge kleiner dan de helft van de oude. Wie
+       dat gelijk zou trekken, zou de winst van het afmeten weggooien. */
+    const a = aggregaat(licht, licht.porties)
+    expect(a.kcalHoog).toBe(874)
+    expect(a.kcalHoog ?? 0).toBeLessThan(964)      // wat varianten() zou geven
+    expect(a.conf).toBe('C')
+  })
+
+  it('haalt bijna twee keer zoveel eiwit uit minder energie dan het origineel', () => {
+    const oud = aggregaat(echt, 1)
+    const nieuw = aggregaat(licht, 1)
+    expect(nieuw.kcal).toBeLessThan(oud.kcal)
+    expect(nieuw.eiwit ?? 0).toBeGreaterThan((oud.eiwit ?? 0) * 1.8)
+    /* En de band is smaller geworden, niet alleen het punt. Dat tweede is de
+       grotere winst: het model heeft een smalle band nodig om iets te durven
+       zeggen. */
+    const breedOud = (oud.kcalHoog ?? 0) - (oud.kcalLaag ?? 0)
+    const breedNieuw = (nieuw.kcalHoog ?? 0) - (nieuw.kcalLaag ?? 0)
+    expect(breedNieuw).toBeLessThan(breedOud / 1.5)
   })
 })
