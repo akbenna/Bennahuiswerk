@@ -595,7 +595,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
    daar bleef het bij: op een tablet en op een groot scherm bleven het er twee.
    Deze controle kijkt of het aantal kolommen werkelijk meebeweegt. */
 
-const breedtes = [360, 430, 768, 1000, 1100]
+const breedtes = [360, 430, 768, 1000, 1100, 1920]
 const kolommen = []
 const strookmaten = []
 for (const breedte of breedtes) {
@@ -643,9 +643,32 @@ for (const breedte of breedtes) {
       throw new Error(`${breedte}px: een dagblok is ${blok}px breed — de strook is een staafdiagram`)
     }
     strookmaten.push(`${breedte}px→${blok}px`)
+
+    /* En of de inhoud niet ónder de zijbalk begint. De zijbalk staat vast en de
+       inhoud houdt afstand met padding; die twee getallen staan los van elkaar
+       in de stijl en kunnen dus uit elkaar lopen. Gebeurt dat, dan valt de
+       linkerrand van elke kaart weg achter de balk — geen foutmelding, alleen
+       tekst die halverwege een woord begint. */
+    const rand = await pagina.evaluate(() => {
+      const nav = document.querySelector('nav.tabs')
+      const kaart = document.querySelector('#inhoud .kaart, #inhoud .hero')
+      if (!nav || !kaart) return null
+      const n = nav.getBoundingClientRect(); const k = kaart.getBoundingClientRect()
+      return { navRechts: Math.round(n.right), navHoog: Math.round(n.height),
+               kaartLinks: Math.round(k.left), viewport: window.innerHeight }
+    })
+    if (!rand || rand.kaartLinks < rand.navRechts) {
+      throw new Error(`${breedte}px: de inhoud begint op ${rand?.kaartLinks} en de zijbalk `
+        + `loopt tot ${rand?.navRechts} — de kaarten liggen eronder`)
+    }
+    if (rand.navHoog < rand.viewport - 2) {
+      throw new Error(`${breedte}px: de zijbalk is ${rand.navHoog} hoog in een venster van `
+        + `${rand.viewport} — hij loopt niet door`)
+    }
   }
 
   if (breedte === 1100) await pagina.screenshot({ path: 'gereedschap/health-breed.png' })
+  if (breedte === 1920) await pagina.screenshot({ path: 'gereedschap/health-zeerbreed.png' })
   if (breedte === 360) await pagina.screenshot({ path: 'gereedschap/health-smal.png' })
   await maat.close()
 }
