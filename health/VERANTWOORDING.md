@@ -326,3 +326,33 @@ Daarom zijn dit de vier dingen die de app actief blijft vragen, op volgorde van 
 4. **Gaten dichten met een ruwe schatting.** Een D-waarde verbreedt het interval minder dan een ontbrekende dag dat doet.
 
 En twee getallen die permanent in beeld horen te staan, niet alleen in de code: het betrouwbaarheidsinterval op de verbruiksschatting, en de mededeling dat het systeem ongeveer twee weken achterloopt. Beide voorkomen dat ruis wordt gelezen als falen.
+
+---
+
+## 16. Eigen maaltijden — één gerecht, zeven producten, één regel
+
+Dit hoofdstuk is later toegevoegd dan de rest, en om een reden die niet in de literatuur staat maar in de praktijk: *"ik vind het moeilijk invoeren van mijn favoriete maaltijden."* Een tonijnsalade is één ding om te eten en zeven dingen om op te zoeken, en wie hem wekelijks logt zoekt hem wekelijks opnieuw op — met wekelijks een net iets ander antwoord.
+
+Dat is geen ongemak maar een meetfout, en wel de duurste soort. De app leidt het verbruik af uit de hélling van gelogde inname tegen gewicht (§3). Ruis in de invoer die niets met de werkelijke inname te maken heeft gaat rechtstreeks de standaardfout van die helling in, en verbreedt dus het interval waarbinnen het model iets durft te zeggen. Dezelfde salade twee keer verschillend invoeren kost meetbaar zekerheid.
+
+De oplossing is de gewone: zoek het één keer uit, bewaar het, log het daarna als één regel. Drie keuzes daarin zijn niet vanzelfsprekend.
+
+**Eén regel en niet zeven.** De onderdelen blijven in het recept staan en de gelogde regel wijst er met `recept_id` naar terug, maar in het dagoverzicht is een salade één salade. Dat is niet alleen netjes: de coach (§ AUTOMATISERING) stelt voor uit wat je eerder at, en met losse onderdelen stelt hij "olijfolie, veertig gram" voor als tussendoortje. Een voorstel dat niemand eet is erger dan geen voorstel.
+
+**De band telt op zijn breedst op.** Laag bij laag, hoog bij hoog — de aanname dat alle fouten dezelfde kant op wijzen. Statistisch is dat te ruim: bij onafhankelijke fouten hoort de wortel uit de kwadratensom, en die is smaller. Hier is te ruim precies goed. De fouten in een recept zijn aantoonbaar níét onafhankelijk — wie ruim opschept doet dat met alles tegelijk — en bovenal geldt in deze app dat onzekerheid nooit in je voordeel pleit. Een smallere band zou een nauwkeurigheid claimen die uit een optelling van zeven schattingen niet te halen valt.
+
+**De graad is de slechtste van de onderdelen, niet het gemiddelde.** Zes gewogen ingrediënten en één geschat scheutje olie maken samen een geschatte maaltijd. Middelen zou dat scheutje wegpoetsen, en juist dat scheutje is bij deze gebruiker de grootste post van de dag (§8, en de vier prioriteiten in §15).
+
+**Delen door porties kost een trede.** Wat je afgewogen in de pan doet is A; wat je daarna over twee borden verdeelt is dat niet meer, want die twee borden zijn niet gelijk. A zakt daarom naar B zodra er verdeeld wordt. Lager dan B zakt hij niet: het verdelen voegt onzekerheid toe, het wist niet wat er al bekend was. De aanname staat bovendien uitgeschreven in de regel zelf — "1 van 2 porties, niet apart gewogen" — en niet in de kleine lettertjes, conform de regel die de hele app draagt.
+
+### De band komt uit grammen, niet uit een percentage
+
+De twee maaltijden die bij de oplevering al klaarstonden (`health/database/08-de-twee-favorieten.sql`) zijn zo opgebouwd dat er geen enkele calorie is ingetypt. Er staan grammen, en die worden vermenigvuldigd met wat NEVO per honderd gram zegt. De ondergrens en de bovengrens komen op dezelfde manier tot stand: uit een ondergrens en een bovengrens in gráms.
+
+Dat is het eerlijke model van deze onzekerheid. De tabelwaarde van tomaat is niet onzeker; het aantal tomaten is dat. "Drie middelgrote tomaten" is alles tussen 280 en 440 gram, en dat verschil hoort in de band te staan en niet in een percentage dat iemand gekozen heeft omdat het redelijk voelde.
+
+De olijfolie is waarom dit zo moet. Zijn ondergrens staat op 30 en zijn bovengrens op 70 gram — een verschil van 360 kcal in de kom — en zijn graad op D. Omdat de maaltijd de slechtste graad van zijn onderdelen erft, is de hele salade D zolang die olie niet gewogen is. Dat is geen defect van de weergave maar de boodschap zelf: één keer wegen maakt van deze maaltijd een B en haalt de breedste band van de dag weg. Het is dezelfde aansporing als prioriteit 2 in §15, maar nu op de plek waar hij ertoe doet — op het moment dat je logt, en niet in een lijstje achteraf.
+
+### Wat dit niet is
+
+Geen nieuwe schatting. Er komt hier geen enkel getal bij dat niet al ergens vandaan kwam; alles is wat je ooit hebt ingevoerd, maal een factor. En geen vervanging van de gerechtenbibliotheek (§12): die bevat gevalideerde gerechten met portiematen voor iedereen, dit zijn de jouwe.

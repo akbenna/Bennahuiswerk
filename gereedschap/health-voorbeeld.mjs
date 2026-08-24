@@ -220,11 +220,51 @@ const KOPPELINGEN = [
     aantal_berichten: 0, aantal_dagen: 0, actief: true },
 ]
 
+/* Eén bewaarde maaltijd, met de getallen die 08-de-twee-favorieten.sql echt in
+   de database zet. Zo controleert de proef de schaling tegen een bekend geval:
+   798 kcal voor twee porties, dus 399 voor één en 200 voor een halve. */
+const MAALTIJDEN = [{
+  id: 'mt1', naam: 'Tonijnsalade', porties: 2,
+  toelichting: 'Staat voor twee porties. Tonijn op water.',
+  regels: [
+    { naam: 'Tomaat, 3 middelgroot', hoeveelheid: 360, eenheid: 'g', gram_equivalent: 360,
+      kcal_punt: 79, kcal_laag: 62, kcal_hoog: 97, eiwit_g: 2.5, vet_g: 1.8,
+      koolhydraat_g: 10.8, vezel_g: 4.3, conf: 'C',
+      onzekerheidsbronnen: ['geschat op het oog'], bron: 'nevo', nevo_code: '2730' },
+    { naam: 'Ui', hoeveelheid: 110, eenheid: 'g', gram_equivalent: 110,
+      kcal_punt: 41, kcal_laag: 30, kcal_hoog: 56, eiwit_g: 1.4, vet_g: 0.2,
+      koolhydraat_g: 6.9, vezel_g: 3.0, conf: 'C',
+      onzekerheidsbronnen: null, bron: 'nevo', nevo_code: '63' },
+    { naam: 'Paprika', hoeveelheid: 150, eenheid: 'g', gram_equivalent: 150,
+      kcal_punt: 38, kcal_laag: 28, kcal_hoog: 48, eiwit_g: 1.2, vet_g: 0.2,
+      koolhydraat_g: 6.5, vezel_g: 2.7, conf: 'C',
+      onzekerheidsbronnen: null, bron: 'nevo', nevo_code: '884' },
+    { naam: 'Tonijn uit blik, uitgelekt', hoeveelheid: 100, eenheid: 'g', gram_equivalent: 100,
+      kcal_punt: 109, kcal_laag: 104, kcal_hoog: 120, eiwit_g: 24.9, vet_g: 1.0,
+      koolhydraat_g: 0, vezel_g: 0, conf: 'B',
+      onzekerheidsbronnen: null, bron: 'nevo', nevo_code: '1590' },
+    { naam: 'Mayonaise, 2 theelepels', hoeveelheid: 12, eenheid: 'g', gram_equivalent: 12,
+      kcal_punt: 80, kcal_laag: 53, kcal_hoog: 133, eiwit_g: 0.1, vet_g: 8.6,
+      koolhydraat_g: 0.4, vezel_g: 0, conf: 'C',
+      onzekerheidsbronnen: null, bron: 'nevo', nevo_code: '451' },
+    { naam: 'Dressing olijfolie-azijn', hoeveelheid: 15, eenheid: 'g', gram_equivalent: 15,
+      kcal_punt: 91, kcal_laag: 61, kcal_hoog: 152, eiwit_g: 0.1, vet_g: 10.0,
+      koolhydraat_g: 0.1, vezel_g: 0, conf: 'C',
+      onzekerheidsbronnen: null, bron: 'nevo', nevo_code: '2605' },
+    { naam: 'Olijfolie, 3 eetlepels', hoeveelheid: 40, eenheid: 'g', gram_equivalent: 40,
+      kcal_punt: 360, kcal_laag: 270, kcal_hoog: 630, eiwit_g: 0, vet_g: 40,
+      koolhydraat_g: 0, vezel_g: 0, conf: 'D',
+      onzekerheidsbronnen: ['niet gewogen; 30 tot 70 gram scheelt 360 kcal in de kom'],
+      bron: 'nevo', nevo_code: '601' },
+  ],
+}]
+
 /** De databaseaanroepen onderscheppen voor één pagina. */
 async function bedienDb(pagina, dagen, fase) {
   await pagina.route('**/rest/v1/rpc/**', async (route) => {
     const fn = route.request().url().split('/').pop()
     const lijf = fn === 'kal_ophalen' ? alles(dagen, fase)
+      : fn === 'kal_maaltijden' ? MAALTIJDEN
       : fn === 'kal_koppelingen_lijst' ? KOPPELINGEN
       : fn === 'kal_koppeling_maken'
         ? { sleutel: 'kal_' + 'a3f19c7e42b08d5619fa2c3d7e8b04915cad6237'.slice(0, 48),
@@ -286,6 +326,35 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
   await pagina.waitForSelector('.venster', { timeout: 5000 })
   await pagina.waitForTimeout(400)
   await pagina.screenshot({ path: `gereedschap/health-${naam}.png` })
+
+  /* De bewaarde maaltijd is de kortste weg die het vel kent, en de enige met
+     rekenwerk erin: wat er op de tegel staat hoort mee te bewegen met de
+     portiekeuze. Een tegel die bij ½ hetzelfde getal toont als bij 1 is niet
+     lelijk maar onwaar, en dat is aan een screenshot niet te zien. */
+  {
+    const tegel = pagina.locator('.venster .kaart', { hasText: 'Tonijnsalade' }).first()
+    if (!(await tegel.count())) throw new Error(`${naam}: de bewaarde maaltijd staat er niet`)
+    const kcal = async () => {
+      const t = (await tegel.locator('.mini').first().textContent()) ?? ''
+      const m = t.match(/([\d.]+) kcal/)
+      if (!m) throw new Error(`${naam}: geen kcal op de maaltijdtegel — ${JSON.stringify(t)}`)
+      return Number(m[1].replace(/\./g, ''))
+    }
+    const heel = await kcal()
+    await tegel.getByRole('button', { name: '½', exact: true }).click()
+    await pagina.waitForTimeout(120)
+    const half = await kcal()
+    if (Math.abs(half - heel / 2) > 1) {
+      throw new Error(`${naam}: ½ portie geeft ${half} en niet ongeveer ${heel / 2}`)
+    }
+    /* En de aanname hoort op de tegel te staan, niet achter een uitklapje. */
+    const uitleg = (await tegel.textContent()) ?? ''
+    if (!uitleg.includes('niet apart gewogen')) {
+      throw new Error(`${naam}: de tegel zegt niet dat een deelportie een aanname is`)
+    }
+    console.log(`${naam.padEnd(26)} maaltijd: 1 portie=${heel} kcal, ½=${half} kcal`)
+    await tegel.getByRole('button', { name: '1', exact: true }).click()
+  }
 
   const chips = await pagina.locator('.momentchip').count()
   const aan = await pagina.locator('.momentchip.aan').textContent()

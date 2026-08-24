@@ -18,16 +18,28 @@
  * suggesties nemen de portie van de vorige keer over en zeggen dat er ook bij;
  * de herkenning legt haar concept eerst voor. Snel is niet hetzelfde als
  * ongezien.
+ *
+ * DE VIERDE MANIER: JE EIGEN MAALTIJDEN
+ *
+ * De drie hierboven werken per product. Een tonijnsalade is geen product maar
+ * zeven producten, en die zoek je bij elke keer opnieuw op — met elke keer een
+ * net iets ander antwoord. Vandaar de bovenste strook: wat je één keer hebt
+ * uitgezocht staat daar als één tegel, met een portiekeuze erbij.
+ *
+ * Bewaren gebeurt onderaan, uit wat er op dit moment van deze dag staat. Dat is
+ * de enige plek waar het kan zonder een tweede invoerscherm: je hebt de
+ * maaltijd dan net ingevoerd, dus je weet precies wat erin zat.
  */
 import { useEffect, useRef, useState } from 'react'
 import { Chip, Kaart, Keuzechip, Knop, Kop, Rij, Spin, Tussen, Venster } from '../onderdelen/basis'
 import { dec, dz } from '@/gedeeld/getal'
 import { kortNL } from '@/gedeeld/datum'
 import { roep } from '@/gedeeld/db/rpc'
-import type { NieuweRegel, Zoekuitslag } from '@/gedeeld/db/rpc'
+import type { Maaltijd, NieuweRegel, Zoekuitslag } from '@/gedeeld/db/rpc'
 import type { IsoDatum, Moment, Regel } from '@/gedeeld/db/tabellen'
 import { herhaalRegel, herhalingen, laatsteMaaltijd } from '../herhaal'
 import type { Herhaling, Lijstsoort } from '../herhaal'
+import { aggregaat, maaltijdRegel, naamvoorstel, portieNaam, snapshot } from '../maaltijd'
 import { herken, leesFoto } from '../ai'
 import type { Herkenning } from '../ai'
 import type { Onderwerp } from './Portie'
@@ -84,9 +96,22 @@ export function InvoerVenster(p: InvoerEigenschappen) {
      zie je niet of je tik is aangekomen — en tik je hem nog een keer. */
   const [gedaan, zetGedaan] = useState<string[]>([])
 
+  const [maaltijden, zetMaaltijden] = useState<Maaltijd[]>([])
+
   const zoekt = term.trim().length >= 2
   const suggesties = herhalingen(p.regels, { nu: p.datum, soort, moment, max: 10 })
   const maaltijd = laatsteMaaltijd(p.regels, moment, p.datum, p.datum)
+
+  /* Wat er nú op dit moment van deze dag staat. Hetzelfde vangnet als op
+     Vandaag: een regel zonder moment hoort bij 'tussendoor'. */
+  const opDitMoment = p.regels.filter(
+    (r) => r.datum === p.datum
+      && (r.moment === moment || (moment === 'tussendoor' && r.moment === 'onbekend')))
+
+  async function haalMaaltijden() {
+    try { zetMaaltijden(await roep('kal_maaltijden', { p_token: p.token }) ?? []) } catch { /* stil */ }
+  }
+  useEffect(() => { void haalMaaltijden() }, [p.token])
 
   function voegToe(regels: NieuweRegel[], namen: string[]) {
     p.voegRegelsToe(regels)
@@ -134,6 +159,29 @@ export function InvoerVenster(p: InvoerEigenschappen) {
         ? <Zoekvangst token={p.token} term={term} opKies={(o) => p.opPortie(o, moment)} />
         : (
           <>
+            {maaltijden.length > 0 && (
+              <>
+                <Tussen style={{ marginTop: 14 }}>
+                  <Kop>Je eigen maaltijden</Kop>
+                  <span className="mini">één tik, portie erbij</span>
+                </Tussen>
+                <div style={{ marginTop: 6 }}>
+                  {maaltijden.map((m) => (
+                    <Maaltijdtegel
+                      key={m.id} m={m} moment={moment}
+                      opKies={(aantal) => {
+                        const r = maaltijdRegel(m, aantal, p.datum, moment)
+                        voegToe([r], [r.naam])
+                      }}
+                      opWissen={async () => {
+                        await roep('kal_maaltijd_wissen', { p_token: p.token, p_id: m.id })
+                        await haalMaaltijden()
+                      }} />
+                  ))}
+                </div>
+              </>
+            )}
+
             {maaltijd && (
               <button type="button" className="hoofdknop breed" style={{ marginTop: 12 }}
                       onClick={() => voegToe(
@@ -176,6 +224,9 @@ export function InvoerVenster(p: InvoerEigenschappen) {
 
             <Beschrijven token={p.token} datum={p.datum} moment={moment}
                          opToevoegen={(r, n) => voegToe(r, n)} />
+
+            <Bewaren token={p.token} regels={opDitMoment} moment={moment}
+                     opBewaard={() => void haalMaaltijden()} />
           </>
         )}
 
@@ -461,6 +512,160 @@ function Beschrijven(
           )}
         </Kaart>
       )}
+    </div>
+  )
+}
+
+/**
+ * Eén bewaarde maaltijd, met de portiekeuze erbij.
+ *
+ * De vier knopjes zijn geen sierlijkheid. Een recept staat voor een aantal
+ * porties dat je zelf gekozen hebt — twee, meestal — en wat je ervan eet is
+ * daar zelden gelijk aan. Zonder die keuze zou je de helft van de tijd een
+ * getal loggen waarvan je weet dat het niet klopt, en dat is precies hoe een
+ * logboek onbruikbaar wordt.
+ *
+ * Wat eronder staat is wat er écht wordt weggeschreven: het punt, de band en
+ * de graad die bij dít aantal porties horen. Niet het recept in het algemeen.
+ */
+function Maaltijdtegel(
+  { m, moment, opKies, opWissen }:
+  { m: Maaltijd; moment: Moment; opKies: (aantal: number) => void; opWissen: () => void },
+) {
+  const [aantal, zetAantal] = useState(1)
+  const [weg, zetWeg] = useState(false)
+  const a = aggregaat(m, aantal)
+
+  return (
+    <Kaart plat style={{ marginBottom: 8 }}>
+      <Tussen>
+        <span className="groei">
+          <span className="knip" style={{ fontSize: '.9rem', fontWeight: 600, display: 'block' }}>
+            {m.naam}
+          </span>
+          <span className="mini">
+            <Chip graad={a.conf} /> {dz(a.kcal)} kcal ({dz(a.kcalLaag ?? a.kcal)}–{dz(a.kcalHoog ?? a.kcal)})
+            {a.eiwit != null && ` · ${dec(a.eiwit, 1)} g eiwit`}
+          </span>
+        </span>
+        <Knop vol klein titel={`${m.naam} toevoegen aan je ${moment}`}
+              opKlik={() => opKies(aantal)}>+</Knop>
+      </Tussen>
+
+      <Rij style={{ marginTop: 8 }}>
+        {[0.5, 1, 1.5, 2].map((n) => (
+          <Keuzechip key={n} aan={aantal === n} opKlik={() => zetAantal(n)}>
+            {portieNaam(n)}
+          </Keuzechip>
+        ))}
+        <span style={{ flex: 1 }} />
+        {weg ? (
+          <>
+            <Knop klein opKlik={opWissen}>echt weg</Knop>
+            <Knop klein opKlik={() => zetWeg(false)}>nee</Knop>
+          </>
+        ) : (
+          <Knop klein titel={`${m.naam} verwijderen`} opKlik={() => zetWeg(true)}>×</Knop>
+        )}
+      </Rij>
+
+      {/* De onzekerheid staat hier en niet achter een uitklapje: wie een halve
+          portie kiest hoort te zien dat dat een aanname is en geen meting. */}
+      {a.onzeker.map((o, i) => (
+        <span className="mini" style={{ display: 'block', marginTop: 3 }} key={i}>· {o}</span>
+      ))}
+      {m.toelichting && (
+        <p className="mini" style={{ marginTop: 6 }}>{m.toelichting}</p>
+      )}
+    </Kaart>
+  )
+}
+
+/**
+ * Wat er nu op dit moment staat bewaren als een maaltijd.
+ *
+ * Twee regels is de ondergrens, om dezelfde reden als bij het overnemen van een
+ * eerdere maaltijd: één regel is geen samengesteld gerecht, daar is de gewone
+ * suggestielijst al voor, en twee wegen naar hetzelfde is er één te veel.
+ *
+ * Het aantal porties is het enige veld dat er echt toe doet en tegelijk het
+ * enige dat je makkelijk verkeerd invult. Vandaar de zin eronder: wat je hier
+ * invoert is wat er nu op tafel staat, niet wat je ervan opeet.
+ */
+function Bewaren(
+  { token, regels, moment, opBewaard }:
+  { token: string; regels: Regel[]; moment: Moment; opBewaard: () => void },
+) {
+  const onderdelen = snapshot(regels)
+  const [open, zetOpen] = useState(false)
+  const [naam, zetNaam] = useState('')
+  const [porties, zetPorties] = useState(1)
+  const [loopt, zetLoopt] = useState(false)
+  const [melding, zetMelding] = useState<string | null>(null)
+
+  if (onderdelen.length < 2) return null
+
+  async function bewaar() {
+    const hoe = naam.trim() || naamvoorstel(regels, moment)
+    zetLoopt(true)
+    zetMelding(null)
+    try {
+      await roep('kal_maaltijd_bewaren', {
+        p_token: token, p_naam: hoe, p_toelichting: null,
+        p_porties: porties, p_regels: onderdelen,
+      })
+      zetMelding(`"${hoe}" staat er. Vanaf nu is het één tik.`)
+      zetOpen(false)
+      opBewaard()
+    } catch (e) {
+      zetMelding(e instanceof Error ? e.message : String(e))
+    } finally {
+      zetLoopt(false)
+    }
+  }
+
+  const totaal = onderdelen.reduce((n, r) => n + r.kcal_punt, 0)
+
+  return (
+    <div style={{ marginTop: 16 }}>
+      <Tussen>
+        <Kop>Vaker eten?</Kop>
+        <Keuzechip aan={open}
+                   opKlik={() => { zetOpen((o) => !o); if (!naam) zetNaam(naamvoorstel(regels, moment)) }}>
+          ☆ Bewaar als maaltijd
+        </Keuzechip>
+      </Tussen>
+
+      {open && (
+        <Kaart plat style={{ marginTop: 8 }}>
+          <p className="klein" style={{ marginTop: 0 }}>
+            De {onderdelen.length} regels van je {moment} worden één maaltijd. De volgende keer is
+            dat één tik in plaats van {onderdelen.length} keer zoeken — en dan met dezelfde getallen,
+            wat het verschil is tussen variatie in wat je at en ruis in hoe je het invoerde.
+          </p>
+          <label className="veld" style={{ display: 'block', marginTop: 8 }}>
+            <span>naam</span>
+            <input value={naam} onChange={(e) => zetNaam(e.target.value)}
+                   placeholder="Tonijnsalade" aria-label="Naam van de maaltijd" />
+          </label>
+          <label className="veld" style={{ display: 'block', marginTop: 8 }}>
+            <span>staat voor hoeveel porties?</span>
+            <input className="smaller" type="number" min="0.5" step="0.5" inputMode="decimal"
+                   value={porties}
+                   onChange={(e) => zetPorties(Math.max(0.5, parseFloat(e.target.value) || 1))} />
+          </label>
+          <p className="mini" style={{ marginTop: 6 }}>
+            {dz(Math.round(totaal))} kcal in totaal, dus{' '}
+            {dz(Math.round(totaal / Math.max(porties, 0.5)))} kcal per portie. Vul in wat er nu in de
+            kom zit, niet wat je ervan opeet — dat kies je bij het loggen.
+          </p>
+          <Knop vol style={{ marginTop: 10 }} uit={loopt} opKlik={() => void bewaar()}>
+            {loopt ? <><Spin /> Bewaren…</> : 'Bewaren'}
+          </Knop>
+        </Kaart>
+      )}
+
+      {melding && <p className="klein" style={{ marginTop: 8 }}>{melding}</p>}
     </div>
   )
 }
