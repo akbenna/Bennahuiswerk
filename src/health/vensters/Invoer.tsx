@@ -18,16 +18,30 @@
  * suggesties nemen de portie van de vorige keer over en zeggen dat er ook bij;
  * de herkenning legt haar concept eerst voor. Snel is niet hetzelfde als
  * ongezien.
+ *
+ * DE VIERDE MANIER: JE EIGEN MAALTIJDEN
+ *
+ * De drie hierboven werken per product. Een tonijnsalade is geen product maar
+ * zeven producten, en die zoek je bij elke keer opnieuw op — met elke keer een
+ * net iets ander antwoord. Vandaar de bovenste strook: wat je één keer hebt
+ * uitgezocht staat daar als één tegel, met een portiekeuze erbij.
+ *
+ * Bewaren gebeurt onderaan, uit wat er op dit moment van deze dag staat. Dat is
+ * de enige plek waar het kan zonder een tweede invoerscherm: je hebt de
+ * maaltijd dan net ingevoerd, dus je weet precies wat erin zat.
  */
 import { useEffect, useRef, useState } from 'react'
-import { Chip, Kaart, Keuzechip, Knop, Kop, Rij, Spin, Tussen, Venster } from '../onderdelen/basis'
+import { Chip, Kaart, Keuzechip, Knop, Kop, Rij, Spin, Tussen, Uitleg, Venster } from '../onderdelen/basis'
 import { dec, dz } from '@/gedeeld/getal'
 import { kortNL } from '@/gedeeld/datum'
 import { roep } from '@/gedeeld/db/rpc'
-import type { NieuweRegel, Zoekuitslag } from '@/gedeeld/db/rpc'
+import type { Maaltijd, NieuweRegel, Zoekuitslag } from '@/gedeeld/db/rpc'
 import type { IsoDatum, Moment, Regel } from '@/gedeeld/db/tabellen'
 import { herhaalRegel, herhalingen, laatsteMaaltijd } from '../herhaal'
 import type { Herhaling, Lijstsoort } from '../herhaal'
+import {
+  aandelen, aggregaat, duiding, maaltijdRegel, naamvoorstel, portieNaam, snapshot, varianten,
+} from '../maaltijd'
 import { herken, leesFoto } from '../ai'
 import type { Herkenning } from '../ai'
 import type { Onderwerp } from './Portie'
@@ -84,9 +98,22 @@ export function InvoerVenster(p: InvoerEigenschappen) {
      zie je niet of je tik is aangekomen — en tik je hem nog een keer. */
   const [gedaan, zetGedaan] = useState<string[]>([])
 
+  const [maaltijden, zetMaaltijden] = useState<Maaltijd[]>([])
+
   const zoekt = term.trim().length >= 2
   const suggesties = herhalingen(p.regels, { nu: p.datum, soort, moment, max: 10 })
   const maaltijd = laatsteMaaltijd(p.regels, moment, p.datum, p.datum)
+
+  /* Wat er nú op dit moment van deze dag staat. Hetzelfde vangnet als op
+     Vandaag: een regel zonder moment hoort bij 'tussendoor'. */
+  const opDitMoment = p.regels.filter(
+    (r) => r.datum === p.datum
+      && (r.moment === moment || (moment === 'tussendoor' && r.moment === 'onbekend')))
+
+  async function haalMaaltijden() {
+    try { zetMaaltijden(await roep('kal_maaltijden', { p_token: p.token }) ?? []) } catch { /* stil */ }
+  }
+  useEffect(() => { void haalMaaltijden() }, [p.token])
 
   function voegToe(regels: NieuweRegel[], namen: string[]) {
     p.voegRegelsToe(regels)
@@ -131,9 +158,44 @@ export function InvoerVenster(p: InvoerEigenschappen) {
       )}
 
       {zoekt
-        ? <Zoekvangst token={p.token} term={term} opKies={(o) => p.opPortie(o, moment)} />
+        ? (
+          <Zoekvangst token={p.token} term={term} moment={moment}
+                      opKies={(o) => p.opPortie(o, moment)}
+                      opMaaltijd={(m, aantal) => {
+                        const r = maaltijdRegel(m, aantal, p.datum, moment)
+                        voegToe([r], [r.naam])
+                      }} />
+        )
         : (
           <>
+            {maaltijden.length > 0 && (
+              <>
+                <Tussen style={{ marginTop: 14 }}>
+                  <Kop>Je eigen maaltijden</Kop>
+                  <span className="mini">één tik, portie erbij</span>
+                </Tussen>
+                <div style={{ marginTop: 6 }}>
+                  {maaltijden.map((m) => (
+                    <Maaltijdtegel
+                      key={m.id} m={m} moment={moment}
+                      opKies={(aantal) => {
+                        const r = maaltijdRegel(m, aantal, p.datum, moment)
+                        voegToe([r], [r.naam])
+                      }}
+                      opWissen={async () => {
+                        await roep('kal_maaltijd_wissen', { p_token: p.token, p_id: m.id })
+                        await haalMaaltijden()
+                      }}
+                      opSter={async () => {
+                        await roep('kal_maaltijd_favoriet',
+                          { p_token: p.token, p_id: m.id, p_aan: !m.favoriet })
+                        await haalMaaltijden()
+                      }} />
+                  ))}
+                </div>
+              </>
+            )}
+
             {maaltijd && (
               <button type="button" className="hoofdknop breed" style={{ marginTop: 12 }}
                       onClick={() => voegToe(
@@ -166,7 +228,11 @@ export function InvoerVenster(p: InvoerEigenschappen) {
                 vanaf de tweede keer staat het hier en is het één tik.
               </p>
             ) : (
-              <div className="lijst" style={{ marginTop: 6 }}>
+              /* `suggesties` staat naast `lijst` zodat deze lijst aan te wijzen is.
+                 Er staan er inmiddels drie in dit vel — suggesties, zoekresultaten
+                 en de duiding van een maaltijd — en "de eerste .lijst" is dan geen
+                 aanwijzing meer maar een gok. */
+              <div className="lijst suggesties" style={{ marginTop: 6 }}>
                 {suggesties.map((h) => (
                   <Suggestie key={h.sleutel} h={h} moment={moment} gedaan={gedaan.includes(h.naam)}
                              opKies={() => voegToe([herhaalRegel(h, p.datum, moment)], [h.naam])} />
@@ -176,6 +242,9 @@ export function InvoerVenster(p: InvoerEigenschappen) {
 
             <Beschrijven token={p.token} datum={p.datum} moment={moment}
                          opToevoegen={(r, n) => voegToe(r, n)} />
+
+            <Bewaren token={p.token} regels={opDitMoment} moment={moment}
+                     opBewaard={() => void haalMaaltijden()} />
           </>
         )}
 
@@ -227,7 +296,12 @@ function Suggestie(
  * 'cous' mag het resultaat van 'couscous' niet overschrijven.
  */
 function Zoekvangst(
-  { token, term, opKies }: { token: string; term: string; opKies: (o: Onderwerp) => void },
+  { token, term, moment, opKies, opMaaltijd }:
+  {
+    token: string; term: string; moment: Moment
+    opKies: (o: Onderwerp) => void
+    opMaaltijd: (m: Maaltijd, aantal: number) => void
+  },
 ) {
   const [uitslag, zetUitslag] = useState<Zoekuitslag | null>(null)
   const [loopt, zetLoopt] = useState(false)
@@ -265,12 +339,25 @@ function Zoekvangst(
     } catch (e) { zetFout(e instanceof Error ? e.message : String(e)) }
   }
 
-  const leeg = uitslag && !uitslag.nevo.length && !uitslag.gerechten.length && !uitslag.eigen.length
+  const maaltijden = uitslag?.maaltijden ?? []
+  const leeg = uitslag && !uitslag.nevo.length && !uitslag.gerechten.length
+    && !uitslag.eigen.length && !maaltijden.length
 
   return (
     <div style={{ marginTop: 10 }}>
       {loopt && <p className="klein"><Spin /> Zoeken…</p>}
       {fout && <p className="klein">{fout}</p>}
+
+      {/* Je eigen maaltijden staan boven de tabel, want wie "tonijn" typt bedoelt
+          zijn eigen salade en niet de vierentwintig tonijnregels van NEVO. */}
+      {maaltijden.length > 0 && (
+        <div style={{ marginBottom: 10 }}>
+          {maaltijden.map((m) => (
+            <Maaltijdtegel key={m.id} m={m} moment={moment}
+                           opKies={(aantal) => opMaaltijd(m, aantal)} />
+          ))}
+        </div>
+      )}
 
       {uitslag && (uitslag.eigen.length > 0 || uitslag.gerechten.length > 0 || uitslag.nevo.length > 0) && (
         <div className="lijst">
@@ -461,6 +548,251 @@ function Beschrijven(
           )}
         </Kaart>
       )}
+    </div>
+  )
+}
+
+/**
+ * Eén bewaarde maaltijd: kiezen, loggen, en desgewenst nakijken.
+ *
+ * De vier portieknopjes zijn geen sierlijkheid. Een recept staat voor een aantal
+ * porties dat je zelf gekozen hebt — twee, meestal — en wat je ervan eet is daar
+ * zelden gelijk aan. Zonder die keuze zou je de helft van de tijd een getal
+ * loggen waarvan je weet dat het niet klopt.
+ *
+ * Wat eronder staat is wat er écht wordt weggeschreven: het punt, de band en de
+ * graad die bij dít aantal porties horen. Niet het recept in het algemeen.
+ *
+ * Het sterretje bepaalt de volgorde. Dat is de goedkoopste sortering die er is —
+ * jij zegt wat bovenaan hoort, in plaats van dat de app het afleidt uit hoe vaak
+ * je iets gegeten hebt, want dat laatste straft precies het gerecht af dat je
+ * nét bewaard hebt.
+ *
+ * `opWissen` en `opSter` ontbreken als de tegel uit het zoekveld komt. Daar
+ * kijk je wat er is; beheren doe je in de lijst.
+ */
+function Maaltijdtegel(
+  { m, moment, opKies, opWissen, opSter }:
+  {
+    m: Maaltijd; moment: Moment
+    opKies: (aantal: number) => void
+    opWissen?: (() => void) | undefined
+    opSter?: (() => void) | undefined
+  },
+) {
+  const [aantal, zetAantal] = useState(1)
+  const [weg, zetWeg] = useState(false)
+  const a = aggregaat(m, aantal)
+
+  return (
+    <Kaart plat style={{ marginBottom: 8 }}>
+      <Tussen>
+        <span className="groei">
+          <span className="knip" style={{ fontSize: '.9rem', fontWeight: 600, display: 'block' }}>
+            {opSter && (
+              <button type="button" className="ster" onClick={opSter}
+                      aria-pressed={m.favoriet}
+                      title={m.favoriet ? `${m.naam} niet meer bovenaan` : `${m.naam} bovenaan zetten`}>
+                {m.favoriet ? '★' : '☆'}
+              </button>
+            )}
+            {!opSter && m.favoriet && <span aria-hidden="true">★ </span>}
+            {m.naam}
+          </span>
+          <span className="mini">
+            <Chip graad={a.conf} /> {dz(a.kcal)} kcal ({dz(a.kcalLaag ?? a.kcal)}–{dz(a.kcalHoog ?? a.kcal)})
+            {a.eiwit != null && ` · ${dec(a.eiwit, 1)} g eiwit`}
+          </span>
+        </span>
+        <Knop vol klein titel={`${m.naam} toevoegen aan je ${moment}`}
+              opKlik={() => opKies(aantal)}>+</Knop>
+      </Tussen>
+
+      <Rij style={{ marginTop: 8 }}>
+        {[0.5, 1, 1.5, 2].map((n) => (
+          <Keuzechip key={n} aan={aantal === n} opKlik={() => zetAantal(n)}>
+            {portieNaam(n)}
+          </Keuzechip>
+        ))}
+        <span style={{ flex: 1 }} />
+        {opWissen && (weg ? (
+          <>
+            <Knop klein opKlik={opWissen}>echt weg</Knop>
+            <Knop klein opKlik={() => zetWeg(false)}>nee</Knop>
+          </>
+        ) : (
+          <Knop klein titel={`${m.naam} verwijderen`} opKlik={() => zetWeg(true)}>×</Knop>
+        ))}
+      </Rij>
+
+      {/* De onzekerheid staat hier en niet achter een uitklapje: wie een halve
+          portie kiest hoort te zien dat dat een aanname is en geen meting. */}
+      {a.onzeker.map((o, i) => (
+        <span className="mini" style={{ display: 'block', marginTop: 3 }} key={i}>· {o}</span>
+      ))}
+      {m.toelichting && (
+        <p className="mini" style={{ marginTop: 6 }}>{m.toelichting}</p>
+      )}
+
+      <Duidingsvak m={m} />
+    </Kaart>
+  )
+}
+
+/**
+ * Wat het gerecht bétekent, achter een uitklapje.
+ *
+ * Achter een uitklapje omdat dit niet is wat je komt doen — je komt loggen. Maar
+ * wél in het gerecht en niet op een apart scherm, want de vraag "kan dit beter"
+ * komt precies op het moment dat je ernaar kijkt.
+ *
+ * Drie maten en een tabel. De maten zijn verhoudingen en dus onafhankelijk van
+ * hoeveel je opschept; de tabel zet vier uitkomsten naast elkaar zónder te
+ * zeggen welke je moet kiezen. Dat laatste is opzet: een tabel blijft kloppen
+ * als je voorkeuren veranderen, een aanbeveling niet.
+ */
+function Duidingsvak({ m }: { m: Maaltijd }) {
+  const d = duiding(m)
+  const lijst = aandelen(m)
+  const v = varianten(m)
+  const pct = (x: number): string => dec(x * 100, 0) + '%'
+
+  return (
+    <Uitleg id={'duiding-' + m.id} label="wat zit erin, en kan het beter">
+      <p>
+        De hele schaal is {dz(d.kcal)} kcal
+        {d.gram != null && ` op ${dz(d.gram)} gram`}
+        {d.dichtheid != null && ` — ${dec(d.dichtheid, 2)} kcal per gram`}.
+        {d.eiwitPer100 != null && (
+          <> Eiwit: <b>{dec(d.eiwitPer100, 1)} gram per 100 kcal</b>. Dát is de maat die telt
+          bij een tekort; alles onder de vijf is mager.</>
+        )}
+      </p>
+      <p>
+        Van de energie komt {d.ePct.eiwit != null && `${dec(d.ePct.eiwit, 0)}% uit eiwit, `}
+        {d.ePct.vet != null && `${dec(d.ePct.vet, 0)}% uit vet en `}
+        {d.ePct.koolhydraat != null && `${dec(d.ePct.koolhydraat, 0)}% uit koolhydraten`}.
+        {d.vezel != null && d.vezel > 0 && ` Vezels: ${dec(d.vezel, 1)} gram.`}
+        {' '}Die percentages tellen niet op tot honderd — dat gat is de afronding per
+        onderdeel plus de energie uit vezels, en het staat er omdat het iets zegt over hoe
+        grof de invoer is.
+      </p>
+
+      <p style={{ marginBottom: 4 }}><b>Waar de energie zit</b></p>
+      {lijst.map((x) => (
+        <div className="duidingrij" key={x.naam}>
+          <span>{x.naam}</span>
+          <span className="cijfer">{dz(x.kcal)} kcal · {pct(x.deel)}</span>
+        </div>
+      ))}
+
+      {v.length > 0 && (
+        <>
+          <p style={{ marginTop: 10, marginBottom: 4 }}><b>Als je aan twee knoppen draait — per portie</b></p>
+          {v.map((x) => (
+            <div className="duidingrij" key={x.label}>
+              <span>{x.label}</span>
+              <span className="cijfer">
+                {dz(x.perPortie)} kcal
+                {x.eiwitPer100 != null && ` · ${dec(x.eiwitPer100, 1)} g/100 kcal`}
+              </span>
+            </div>
+          ))}
+          <p style={{ marginTop: 6 }}>
+            Er staat expres niet bij welke rij de beste is. De getallen zeggen wat elke keuze
+            kost en oplevert; welke daarvan je vanavond wilt eten is geen rekensom.
+          </p>
+        </>
+      )}
+    </Uitleg>
+  )
+}
+
+/**
+ * Wat er nu op dit moment staat bewaren als een maaltijd.
+ *
+ * Twee regels is de ondergrens, om dezelfde reden als bij het overnemen van een
+ * eerdere maaltijd: één regel is geen samengesteld gerecht, daar is de gewone
+ * suggestielijst al voor, en twee wegen naar hetzelfde is er één te veel.
+ *
+ * Het aantal porties is het enige veld dat er echt toe doet en tegelijk het
+ * enige dat je makkelijk verkeerd invult. Vandaar de zin eronder: wat je hier
+ * invoert is wat er nu op tafel staat, niet wat je ervan opeet.
+ */
+function Bewaren(
+  { token, regels, moment, opBewaard }:
+  { token: string; regels: Regel[]; moment: Moment; opBewaard: () => void },
+) {
+  const onderdelen = snapshot(regels)
+  const [open, zetOpen] = useState(false)
+  const [naam, zetNaam] = useState('')
+  const [porties, zetPorties] = useState(1)
+  const [loopt, zetLoopt] = useState(false)
+  const [melding, zetMelding] = useState<string | null>(null)
+
+  if (onderdelen.length < 2) return null
+
+  async function bewaar() {
+    const hoe = naam.trim() || naamvoorstel(regels, moment)
+    zetLoopt(true)
+    zetMelding(null)
+    try {
+      await roep('kal_maaltijd_bewaren', {
+        p_token: token, p_naam: hoe, p_toelichting: null,
+        p_porties: porties, p_regels: onderdelen,
+      })
+      zetMelding(`"${hoe}" staat er. Vanaf nu is het één tik.`)
+      zetOpen(false)
+      opBewaard()
+    } catch (e) {
+      zetMelding(e instanceof Error ? e.message : String(e))
+    } finally {
+      zetLoopt(false)
+    }
+  }
+
+  const totaal = onderdelen.reduce((n, r) => n + r.kcal_punt, 0)
+
+  return (
+    <div style={{ marginTop: 16 }}>
+      <Tussen>
+        <Kop>Vaker eten?</Kop>
+        <Keuzechip aan={open}
+                   opKlik={() => { zetOpen((o) => !o); if (!naam) zetNaam(naamvoorstel(regels, moment)) }}>
+          ☆ Bewaar als maaltijd
+        </Keuzechip>
+      </Tussen>
+
+      {open && (
+        <Kaart plat style={{ marginTop: 8 }}>
+          <p className="klein" style={{ marginTop: 0 }}>
+            De {onderdelen.length} regels van je {moment} worden één maaltijd. De volgende keer is
+            dat één tik in plaats van {onderdelen.length} keer zoeken — en dan met dezelfde getallen,
+            wat het verschil is tussen variatie in wat je at en ruis in hoe je het invoerde.
+          </p>
+          <label className="veld" style={{ display: 'block', marginTop: 8 }}>
+            <span>naam</span>
+            <input value={naam} onChange={(e) => zetNaam(e.target.value)}
+                   placeholder="Tonijnsalade" aria-label="Naam van de maaltijd" />
+          </label>
+          <label className="veld" style={{ display: 'block', marginTop: 8 }}>
+            <span>staat voor hoeveel porties?</span>
+            <input className="smaller" type="number" min="0.5" step="0.5" inputMode="decimal"
+                   value={porties}
+                   onChange={(e) => zetPorties(Math.max(0.5, parseFloat(e.target.value) || 1))} />
+          </label>
+          <p className="mini" style={{ marginTop: 6 }}>
+            {dz(Math.round(totaal))} kcal in totaal, dus{' '}
+            {dz(Math.round(totaal / Math.max(porties, 0.5)))} kcal per portie. Vul in wat er nu in de
+            kom zit, niet wat je ervan opeet — dat kies je bij het loggen.
+          </p>
+          <Knop vol style={{ marginTop: 10 }} uit={loopt} opKlik={() => void bewaar()}>
+            {loopt ? <><Spin /> Bewaren…</> : 'Bewaren'}
+          </Knop>
+        </Kaart>
+      )}
+
+      {melding && <p className="klein" style={{ marginTop: 8 }}>{melding}</p>}
     </div>
   )
 }

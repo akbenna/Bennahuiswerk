@@ -68,6 +68,10 @@ export interface GerechtTreffer {
 }
 
 export interface Zoekuitslag {
+  /* Eerst, want wie 'tonijn' typt bedoelt zijn eigen salade en niet de tabel.
+     Er wordt ook in de namen van de onderdelen gezocht, dus 'paprika' vindt de
+     salade waar paprika in zit zonder dat dat woord in de titel staat. */
+  maaltijden: Maaltijd[]
   nevo: NevoTreffer[]
   gerechten: GerechtTreffer[]
   eigen: EigenProduct[]
@@ -165,6 +169,44 @@ export interface ProductMetMaten {
 }
 
 /**
+ * EEN EIGEN MAALTIJD
+ *
+ * Een samengesteld gerecht dat je één keer hebt uitgezocht en daarna als één
+ * regel logt. In de database zijn dit `kal_recepten` en `kal_recept_regels`;
+ * wat je ermee rekent staat in src/health/maaltijd.ts.
+ */
+
+/** Eén onderdeel van een maaltijd: de momentopname van een gelogde regel. */
+export interface MaaltijdRegel {
+  naam: string
+  hoeveelheid: number | null
+  eenheid: string | null
+  gram_equivalent: number | null
+  kcal_punt: number
+  kcal_laag: number | null
+  kcal_hoog: number | null
+  eiwit_g: number | null
+  vet_g: number | null
+  koolhydraat_g: number | null
+  vezel_g: number | null
+  conf: Graad
+  onzekerheidsbronnen: string[] | null
+  bron: RegelBron
+  nevo_code: string | null
+}
+
+export interface Maaltijd {
+  id: string
+  naam: string
+  toelichting: string | null
+  /** Voor hoeveel porties de onderdelen samen staan. */
+  porties: number
+  /** Handmatig gezet: bovenaan in de lijst en in het zoekveld. */
+  favoriet: boolean
+  regels: MaaltijdRegel[]
+}
+
+/**
  * Wat er in kal_regels_toevoegen mag. Verplicht is alleen wat de tabel eist.
  *
  * De optionele velden nemen ook `null` aan en niet alleen `undefined`. Dat is
@@ -227,8 +269,15 @@ export interface NieuweDag {
   gewicht_bron?: string
 }
 
-/** De tabellen waar kal_rij_toevoegen en kal_rij_wissen op werken. */
-export type LosseTabel = 'product' | 'training' | 'meting' | 'lab' | 'vragenlijst' | 'recept'
+/**
+ * De tabellen waar kal_rij_toevoegen en kal_rij_wissen op werken.
+ *
+ * `recept` stond hier ook, en dat was een belofte die de database niet doet:
+ * kal_rij_toevoegen kent die tak niet en zou 'Onbekende tabel recept' roepen.
+ * Eigen maaltijden gaan sinds 24 augustus 2026 via kal_maaltijd_bewaren, dat
+ * ook de onderdelen wegschrijft — iets wat één rij nooit had gekund.
+ */
+export type LosseTabel = 'product' | 'training' | 'meting' | 'lab' | 'vragenlijst'
 
 /* -------------------------------------------------------------------------- */
 /*  De kaart: functienaam → wat erin gaat, wat eruit komt                      */
@@ -263,6 +312,22 @@ export interface RpcKaart {
   }
   kal_regels_toevoegen: { in: { p_token: string; p_regels: NieuweRegel[] }; uit: Regel[] }
   kal_regel_wissen: { in: { p_token: string; p_id: string }; uit: unknown }
+  /* Eigen maaltijden. Bewaren vervangt een maaltijd met dezelfde naam; wissen
+     raakt de gelogde geschiedenis niet, want kal_regels.recept_id is een spoor
+     en geen refererende sleutel. Zie health/database/07-eigen-maaltijden.sql. */
+  kal_maaltijden: { in: { p_token: string }; uit: Maaltijd[] }
+  kal_maaltijd_bewaren: {
+    in: {
+      p_token: string; p_naam: string; p_toelichting: string | null
+      p_porties: number; p_regels: MaaltijdRegel[]
+    }
+    uit: Maaltijd
+  }
+  kal_maaltijd_wissen: { in: { p_token: string; p_id: string }; uit: number }
+  kal_maaltijd_favoriet: {
+    in: { p_token: string; p_id: string; p_aan: boolean }
+    uit: boolean
+  }
   kal_rij_toevoegen: {
     in: { p_token: string; p_tabel: LosseTabel; p_rij: Record<string, unknown> }
     uit: unknown

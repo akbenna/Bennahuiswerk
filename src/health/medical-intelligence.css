@@ -1,32 +1,113 @@
-/* Medical Intelligence — visual system layered over the existing health UI. */
-/* --mi-teal wees naar een eigen groen (#2f756d) naast het accent van de app.
-   Twee groenen op één scherm leest als een fout, ook als geen van beide fout is:
-   de zijbalk zei "MEDICAL INTELLIGENCE" in een andere tint dan de merknaam
-   erboven. Hij volgt nu het accent, zodat er één groen is en de donkere stand
-   vanzelf meebeweegt. De andere kleuren blijven van deze laag: die dragen hier
-   toestanden en niet het merk. */
-:root{--mi-teal:var(--k);--mi-blue:#4c7fd9;--mi-coral:#d86b62;--mi-amber:#d39a36}
-@media (min-width:960px){
-body{background:radial-gradient(circle at 7% 0%,rgba(76,127,217,.09),transparent 30rem),radial-gradient(circle at 92% 4%,rgba(128,103,200,.09),transparent 32rem),var(--canvas)}
-.wrap{max-width:none;margin:0;padding-left:286px;padding-right:42px;padding-bottom:48px}
-header{max-width:1320px;padding-top:28px}
-nav.tabs{left:0;right:auto;top:0;bottom:0;width:248px;height:100dvh;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:7px;padding:27px 14px;border-right:1px solid var(--lijn);border-top:0;background:color-mix(in srgb,var(--vlak) 93%,transparent);backdrop-filter:blur(18px);box-shadow:8px 0 30px rgba(25,50,48,.05)}
-nav.tabs:before{content:'BennaHealth';font-family:var(--kop);font-size:1.25rem;color:var(--ink);padding:0 14px 2px}
-nav.tabs:after{content:'MEDICAL INTELLIGENCE';font-family:var(--mono);font-size:.58rem;letter-spacing:.13em;color:var(--mi-teal);padding:0 14px 20px}
-nav.tabs button{display:grid;grid-template-columns:30px 1fr;align-items:center;gap:9px;min-width:0;text-align:left;padding:11px 13px;border:1px solid transparent}
-/* De geselecteerde tab droeg een violet streepje en een lila verloop: de enige
-   kleur in de navigatie die buiten de familie viel. Nu dezelfde tokens als de
-   tabbalk op de telefoon — kbg als vlak, k als tekst en als streepje. Daarmee
-   is er geen aparte donkere regel meer nodig: de tokens schakelen zelf. */
-nav.tabs button[aria-selected=true]{background:var(--kbg);color:var(--k);
-  border-color:transparent;box-shadow:inset 3px 0 0 var(--k)}
-nav.tabs button:hover{background:var(--vlak2)}
-#inhoud{max-width:1320px}#inhoud:before{content:'';display:block;height:1px;background:var(--lijn);margin-bottom:18px}
-.kaart{border-radius:18px;padding:20px 22px;box-shadow:0 10px 30px rgba(25,50,48,.055)}
-.hero{border-radius:24px;box-shadow:0 22px 55px rgba(37,91,83,.12)}.heroboven h2{font-size:2rem}.heroring{gap:30px}.hoofdknop{min-height:52px;border-radius:14px}
-.kaart.let{border-left-color:var(--mi-amber)}.kaart.fout{border-left-color:var(--mi-coral)}.kaart.goed{border-left-color:#4f9a54}
-.knop.vol{background:linear-gradient(135deg,var(--mi-teal),#397c91);border-color:transparent;box-shadow:0 8px 20px rgba(47,117,109,.18)}
-.balk>i{background:linear-gradient(90deg,var(--mi-teal),var(--mi-blue))}.balk>i.let{background:linear-gradient(90deg,var(--mi-amber),var(--mi-coral))}.balk>i.goed{background:linear-gradient(90deg,#4f9a54,var(--mi-teal))}
+/* ============================================================================
+   HET BREDE SCHERM
+
+   Boven 960 pixels wordt de tabbalk een zijbalk en krijgt de inhoud twee
+   kolommen. Onder die grens gebeurt hier niets: de telefoon houdt de balk
+   onderaan, want daar hoort hij.
+
+   ---------------------------------------------------------------------------
+   WAAROM DIT ÉÉN BESTAND IS
+
+   Dit waren er twee — `desktop.css` en `medical-intelligence.css` — die allebei
+   geladen werden en voor negen tiende dezelfde regels bevatten. Dat is geen
+   nette scheiding maar een val: welke wint hangt af van de vololgorde van de
+   imports, en de rest interleavet. Twee dingen bewezen dat het misging.
+
+   De letterfamilie van de merknaam in de zijbalk moest in beide bestanden
+   gerepareerd worden; hetzelfde gold voor het accent. Eén vergeten kopie en je
+   hebt een verschil dat afhangt van de importvolgorde.
+
+   En één lila verloop overleefde het opruimen van het violet, simpelweg omdat
+   het maar in één van de twee stond: `.chip.aan`, de accountknop. Precies de
+   fout waar dit soort verdubbeling voor gemaakt is.
+
+   Alles staat nu hier. De tokens komen uit `stijl.css`, zodat licht en donker
+   vanzelf meeschakelen en er geen tweede plek is om te vergeten.
+   ========================================================================== */
+
+:root{
+  /* --mi-teal wees naar een eigen groen (#2f756d) naast het accent van de app.
+     Twee groenen op één scherm leest als een fout, ook als geen van beide fout
+     is. Hij volgt nu het accent. De andere kleuren blijven van deze laag: die
+     dragen toestanden en niet het merk. */
+  --mi-teal:var(--k); --mi-blue:#4c7fd9; --mi-coral:#d86b62; --mi-amber:#d39a36;
 }
-@media (min-width:1280px){.wrap{padding-left:310px;padding-right:54px}nav.tabs{width:270px}#inhoud{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,.75fr);gap:18px;align-items:start}#inhoud>.hero{grid-column:1/-1}#inhoud>.duo,#inhoud>.trio,#inhoud>footer{grid-column:1/-1}}
-@media (prefers-color-scheme:dark) and (min-width:960px){body{background:radial-gradient(circle at 8% 0%,rgba(76,127,217,.14),transparent 30rem),#111617}nav.tabs{background:rgba(20,25,27,.94);box-shadow:10px 0 35px rgba(0,0,0,.22)}.kaart{box-shadow:0 12px 34px rgba(0,0,0,.18)}}
+
+@media (min-width:960px){
+  body{padding:0;overflow-x:hidden;
+    background:radial-gradient(circle at 7% 0%,rgba(76,127,217,.09),transparent 30rem),
+               radial-gradient(circle at 92% 4%,rgba(128,103,200,.09),transparent 32rem),
+               var(--canvas)}
+  .wrap{max-width:none;margin:0;padding:0 42px 48px 286px}
+
+  /* De zijbalk draagt de merknaam al. Hem daarnaast nog eens in koeienletters
+     boven de inhoud zetten is hetzelfde woord twee keer op één scherm, waarvan
+     één keer als het grootste element. Op de telefoon staat hij op 1,02rem en
+     daar is geen zijbalk; hier mag hij dus net zo klein blijven. */
+  header{max-width:1320px;padding:28px 0 20px}
+  .merk{align-items:center}
+  .sub{font-size:.9rem}
+
+  nav.tabs{left:0;right:auto;top:0;bottom:0;width:248px;height:100dvh;
+    display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;
+    gap:7px;padding:27px 14px;border-top:0;border-right:1px solid var(--lijn);
+    background:color-mix(in srgb,var(--vlak) 93%,transparent);backdrop-filter:blur(18px);
+    box-shadow:8px 0 30px rgba(25,50,48,.05)}
+  nav.tabs:before{content:'BennaHealth';font-family:var(--kop);font-size:1.25rem;
+    color:var(--ink);padding:0 14px 2px}
+  nav.tabs:after{content:'MEDICAL INTELLIGENCE';font-family:var(--mono);font-size:.58rem;
+    letter-spacing:.13em;color:var(--mi-teal);padding:0 14px 20px}
+  nav.tabs button{display:grid;grid-template-columns:30px 1fr;align-items:center;
+    justify-content:start;gap:9px;min-width:0;text-align:left;padding:11px 13px;
+    font-size:.84rem;border:1px solid transparent;transition:.15s ease}
+  nav.tabs button .ic{font-size:1.1rem;text-align:center}
+  /* Dezelfde tokens als de tabbalk op de telefoon: kbg als vlak, k als tekst en
+     als streepje. Daarmee is er geen aparte donkere regel nodig — de tokens
+     schakelen zelf. */
+  nav.tabs button[aria-selected=true]{background:var(--kbg);color:var(--k);
+    border-color:transparent;box-shadow:inset 3px 0 0 var(--k)}
+  nav.tabs button:hover{background:var(--vlak2)}
+
+  #inhoud{max-width:1320px}
+  #inhoud:before{content:'';display:block;height:1px;background:var(--lijn);margin-bottom:18px}
+  #inhoud>section:not(.hero){animation:mi-in .18s ease both}
+  @keyframes mi-in{from{opacity:.55;transform:translateY(4px)}to{opacity:1;transform:none}}
+  footer{max-width:1320px;padding:16px 2px;color:var(--dim)}
+
+  .kaart{border-radius:18px;padding:20px 22px;box-shadow:0 10px 30px rgba(25,50,48,.055)}
+  .duo{gap:18px} .trio{gap:14px}
+  .hero{border-radius:24px;box-shadow:0 22px 55px rgba(37,91,83,.12)}
+  .heroboven h2{font-size:2rem} .heroring{gap:30px}
+  .hoofdknop{min-height:52px;border-radius:14px}
+
+  .kaart.let{border-left-color:var(--mi-amber)}
+  .kaart.fout{border-left-color:var(--mi-coral)}
+  .kaart.goed{border-left-color:#4f9a54}
+  /* Stond op een lila verloop met een grijsblauwe rand — het laatste restje van
+     het violet, dat het opruimen overleefde omdat het maar in één van de twee
+     bestanden stond. Nu het accent, net als het rondje op de telefoon. */
+  .chip.aan{background:var(--kbg);border-color:transparent;color:var(--k)}
+  .knop.vol{background:linear-gradient(135deg,var(--mi-teal),#397c91);border-color:transparent;
+    box-shadow:0 8px 20px rgba(47,117,109,.18)}
+  .balk>i{background:linear-gradient(90deg,var(--mi-teal),var(--mi-blue))}
+  .balk>i.let{background:linear-gradient(90deg,var(--mi-amber),var(--mi-coral))}
+  .balk>i.goed{background:linear-gradient(90deg,#4f9a54,var(--mi-teal))}
+}
+
+@media (min-width:1280px){
+  .wrap{padding-left:310px;padding-right:54px}
+  nav.tabs{width:270px}
+  #inhoud{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,.75fr);
+    gap:18px;align-items:start}
+  #inhoud>.hero{grid-column:1/-1}
+  #inhoud>.kaart{margin-bottom:0}
+  #inhoud>.duo,#inhoud>.trio,#inhoud>footer{grid-column:1/-1}
+}
+
+@media (prefers-color-scheme:dark) and (min-width:960px){
+  body{background:radial-gradient(circle at 8% 0%,rgba(76,127,217,.14),transparent 30rem),
+                 var(--canvas)}
+  nav.tabs{background:color-mix(in srgb,var(--vlak) 94%,transparent);
+    box-shadow:10px 0 35px rgba(0,0,0,.22)}
+  .kaart{box-shadow:0 12px 34px rgba(0,0,0,.18)}
+}

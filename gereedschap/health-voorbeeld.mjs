@@ -220,11 +220,65 @@ const KOPPELINGEN = [
     aantal_berichten: 0, aantal_dagen: 0, actief: true },
 ]
 
+/* Eén bewaarde maaltijd, met de getallen die 08-de-twee-favorieten.sql echt in
+   de database zet. Zo controleert de proef de schaling tegen een bekend geval:
+   752 kcal voor twee porties, dus 376 voor één en 188 voor een halve. */
+const MAALTIJDEN = [{
+  id: 'mt1', naam: 'Tonijnsalade', porties: 2, favoriet: true,
+  toelichting: 'Staat voor twee porties. Tonijn op water.',
+  regels: [
+    { naam: 'Tomaat', hoeveelheid: 3, eenheid: 'stuk', gram_equivalent: 360,
+      kcal_punt: 79, kcal_laag: 62, kcal_hoog: 97, eiwit_g: 2.5, vet_g: 1.8,
+      koolhydraat_g: 10.8, vezel_g: 4.3, conf: 'C',
+      onzekerheidsbronnen: ['geschat op het oog'], bron: 'nevo', nevo_code: '2730' },
+    { naam: 'Ui', hoeveelheid: 1, eenheid: 'stuk', gram_equivalent: 110,
+      kcal_punt: 41, kcal_laag: 30, kcal_hoog: 56, eiwit_g: 1.4, vet_g: 0.2,
+      koolhydraat_g: 6.9, vezel_g: 3.0, conf: 'C',
+      onzekerheidsbronnen: null, bron: 'nevo', nevo_code: '63' },
+    { naam: 'Paprika', hoeveelheid: 1, eenheid: 'stuk', gram_equivalent: 150,
+      kcal_punt: 38, kcal_laag: 28, kcal_hoog: 48, eiwit_g: 1.2, vet_g: 0.2,
+      koolhydraat_g: 6.5, vezel_g: 2.7, conf: 'C',
+      onzekerheidsbronnen: null, bron: 'nevo', nevo_code: '884' },
+    { naam: 'Tonijn uit blik, uitgelekt', hoeveelheid: 1, eenheid: 'blik', gram_equivalent: 100,
+      kcal_punt: 109, kcal_laag: 104, kcal_hoog: 120, eiwit_g: 24.9, vet_g: 1.0,
+      koolhydraat_g: 0, vezel_g: 0, conf: 'B',
+      onzekerheidsbronnen: null, bron: 'nevo', nevo_code: '1590' },
+    { naam: 'Mayonaise', hoeveelheid: 2, eenheid: 'theelepel', gram_equivalent: 12,
+      kcal_punt: 80, kcal_laag: 53, kcal_hoog: 133, eiwit_g: 0.1, vet_g: 8.6,
+      koolhydraat_g: 0.4, vezel_g: 0, conf: 'C',
+      onzekerheidsbronnen: null, bron: 'nevo', nevo_code: '451' },
+    { naam: 'Dressing honing/mosterd', hoeveelheid: 1, eenheid: 'eetlepel', gram_equivalent: 15,
+      kcal_punt: 45, kcal_laag: 30, kcal_hoog: 75, eiwit_g: 0.2, vet_g: 3.9,
+      koolhydraat_g: 2.3, vezel_g: 0, conf: 'C',
+      onzekerheidsbronnen: null, bron: 'nevo', nevo_code: '2468' },
+    { naam: 'Olijfolie', hoeveelheid: 3, eenheid: 'eetlepel', gram_equivalent: 40,
+      kcal_punt: 360, kcal_laag: 270, kcal_hoog: 630, eiwit_g: 0, vet_g: 40,
+      koolhydraat_g: 0, vezel_g: 0, conf: 'D',
+      onzekerheidsbronnen: ['niet gewogen; 30 tot 70 gram scheelt 360 kcal in de schaal'],
+      bron: 'nevo', nevo_code: '601' },
+  ],
+}]
+
+/* Vier tonijnregels uit NEVO, om te kunnen zien dat de eigen maaltijd erbovenuit
+   komt en niet ergens tussen de tabel verdwijnt. */
+const NEVO_TONIJN = [
+  { nevo_code: '1589', naam: 'Tonijn in olie blik', groep: 'Vis', kcal: 206,
+    eiwit_g: 27, vet_g: 10.8, koolhydraat_g: 0.1, vezel_g: 0.1 },
+  { nevo_code: '1590', naam: 'Tonijn in water blik', groep: 'Vis', kcal: 109,
+    eiwit_g: 24.9, vet_g: 1, koolhydraat_g: 0, vezel_g: 0 },
+  { nevo_code: '5265', naam: 'Tonijn m groente en tomatensaus in blik', groep: 'Vis', kcal: 98,
+    eiwit_g: 11.7, vet_g: 3.5, koolhydraat_g: 4.8, vezel_g: 0.6 },
+  { nevo_code: '1591', naam: 'Tonijn vers gebakken', groep: 'Vis', kcal: 184,
+    eiwit_g: 25.9, vet_g: 8.7, koolhydraat_g: 0, vezel_g: 0 },
+]
+
 /** De databaseaanroepen onderscheppen voor één pagina. */
 async function bedienDb(pagina, dagen, fase) {
   await pagina.route('**/rest/v1/rpc/**', async (route) => {
     const fn = route.request().url().split('/').pop()
     const lijf = fn === 'kal_ophalen' ? alles(dagen, fase)
+      : fn === 'kal_maaltijden' ? MAALTIJDEN
+      : fn === 'kal_zoeken' ? { maaltijden: MAALTIJDEN, nevo: NEVO_TONIJN, gerechten: [], eigen: [] }
       : fn === 'kal_koppelingen_lijst' ? KOPPELINGEN
       : fn === 'kal_koppeling_maken'
         ? { sleutel: 'kal_' + 'a3f19c7e42b08d5619fa2c3d7e8b04915cad6237'.slice(0, 48),
@@ -287,9 +341,71 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
   await pagina.waitForTimeout(400)
   await pagina.screenshot({ path: `gereedschap/health-${naam}.png` })
 
+  /* De bewaarde maaltijd is de kortste weg die het vel kent, en de enige met
+     rekenwerk erin: wat er op de tegel staat hoort mee te bewegen met de
+     portiekeuze. Een tegel die bij ½ hetzelfde getal toont als bij 1 is niet
+     lelijk maar onwaar, en dat is aan een screenshot niet te zien. */
+  {
+    const tegel = pagina.locator('.venster .kaart', { hasText: 'Tonijnsalade' }).first()
+    if (!(await tegel.count())) throw new Error(`${naam}: de bewaarde maaltijd staat er niet`)
+    const kcal = async () => {
+      const t = (await tegel.locator('.mini').first().textContent()) ?? ''
+      const m = t.match(/([\d.]+) kcal/)
+      if (!m) throw new Error(`${naam}: geen kcal op de maaltijdtegel — ${JSON.stringify(t)}`)
+      return Number(m[1].replace(/\./g, ''))
+    }
+    const heel = await kcal()
+    await tegel.getByRole('button', { name: '½', exact: true }).click()
+    await pagina.waitForTimeout(120)
+    const half = await kcal()
+    if (Math.abs(half - heel / 2) > 1) {
+      throw new Error(`${naam}: ½ portie geeft ${half} en niet ongeveer ${heel / 2}`)
+    }
+    /* En de aanname hoort op de tegel te staan, niet achter een uitklapje. */
+    const uitleg = (await tegel.textContent()) ?? ''
+    if (!uitleg.includes('niet apart gewogen')) {
+      throw new Error(`${naam}: de tegel zegt niet dat een deelportie een aanname is`)
+    }
+    console.log(`${naam.padEnd(26)} maaltijd: 1 portie=${heel} kcal, ½=${half} kcal`)
+
+    /* De duiding zit achter een uitklapje, en wat erin staat is de hele reden
+       dat het uitklapje er is: waar de energie zit, en wat er gebeurt als je
+       eraan draait. Een leeg vak is erger dan geen vak. */
+    await tegel.locator('details.uitleg > summary').click()
+    await pagina.waitForTimeout(200)
+    await pagina.screenshot({ path: `gereedschap/health-${naam}-duiding.png` })
+    const duiding = (await tegel.locator('details.uitleg .inhoud').textContent()) ?? ''
+    for (const woord of ['kcal per gram', 'gram per 100 kcal', 'Waar de energie zit',
+                         'Olijfolie', 'halveren', 'verdubbelen']) {
+      if (!duiding.includes(woord)) {
+        throw new Error(`${naam}: de duiding mist "${woord}"`)
+      }
+    }
+    await tegel.locator('details.uitleg > summary').click()
+    await tegel.getByRole('button', { name: '1', exact: true }).click()
+  }
+
+  /* En de weg via het zoekveld. Dit is wat er eerder niet werkte: wie "tonijn"
+     typte kreeg de vierentwintig tonijnregels van NEVO en niet zijn eigen
+     salade. Hij hoort nu bovenaan te staan, met het sterretje aan. */
+  {
+    await pagina.getByLabel('Zoeken').fill('tonijn')
+    await pagina.waitForSelector('.venster .kaart', { timeout: 5000 })
+    await pagina.waitForTimeout(500)
+    const eerste = pagina.locator('.venster .kaart').first()
+    const titel = (await eerste.locator('.knip').first().textContent()) ?? ''
+    if (!titel.includes('Tonijnsalade')) {
+      throw new Error(`${naam}: zoeken op tonijn geeft "${titel}" en niet je eigen salade`)
+    }
+    if (!titel.includes('★')) throw new Error(`${naam}: het sterretje staat niet aan`)
+    console.log(`${''.padEnd(26)} zoeken op "tonijn" → ${JSON.stringify(titel.trim())}`)
+    await pagina.getByLabel('Zoeken').fill('')
+    await pagina.waitForTimeout(300)
+  }
+
   const chips = await pagina.locator('.momentchip').count()
   const aan = await pagina.locator('.momentchip.aan').textContent()
-  const suggesties = await pagina.locator('.venster .lijst > div').count()
+  const suggesties = await pagina.locator('.venster .suggesties > div').count()
   if (chips !== 4) throw new Error(`${naam}: ${chips} momentchips in plaats van 4`)
 
   /* De belofte van dit vel is één tik. Die tik wordt hier werkelijk gedaan, en
@@ -297,7 +413,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
      de regel die je aanraakte. Zonder die controle is 'één tik' een bewering. */
   let bevestiging = 'geen suggesties'
   if (suggesties > 0) {
-    await pagina.locator('.venster .lijst > div').first().getByRole('button').click()
+    await pagina.locator('.venster .suggesties > div').first().getByRole('button').click()
     await pagina.waitForSelector('.venster .kaart.goed', { timeout: 5000 })
     bevestiging = (await pagina.locator('.venster .kaart.goed').textContent()) ?? ''
     await pagina.waitForTimeout(300)

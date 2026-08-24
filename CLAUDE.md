@@ -56,7 +56,7 @@ eruit gestript.
 Na elke wijziging aan `kal_beweging_ontvangen` of `kal_beweging_dag`:
 
 ```sql
-select * from kal_proef_koppeling();   -- 31 gevallen, alle goed
+select * from kal_proef_koppeling();   -- 41 gevallen, alle goed
 ```
 
 Die proef schrijft in de echte tabellen en draait zichzelf terug. Hij is zelf
