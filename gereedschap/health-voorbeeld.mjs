@@ -509,7 +509,85 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
       + `de kop in ${kop}`)
   }
   console.log(`breed                      zijbalk=${merk.inhoud} familie=ok`)
+
+  /* Twee dingen die op 430 pixels niet kunnen misgaan en op 1440 wel, en die
+     allebei één keer misgegaan zijn tijdens het bouwen van deze indeling.
+
+     De eerste: de veertien dagen staan op `flex:1 1 0` zonder maximum. Zonder
+     bovengrens worden het planken van zeventig pixels en lees je een
+     staafdiagram in plaats van een strook dagen.
+
+     De tweede is erger, want hij verandert wat er staat: met `grid-auto-flow:
+     dense` mag het raster achteruit zoeken naar een gat, en dan springt de
+     weegkaart boven de hero uit. De pagina klopt dan nog steeds — alleen de
+     leesvolgorde niet meer. Een screenshot laat dat zien; een proef die alleen
+     naar kleuren kijkt niet. */
+  const maten = await pagina.evaluate(() => {
+    const blok = document.querySelector('.strook > i')
+    const hero = document.querySelector('.hero')
+    const zij = document.querySelector('.kaart.zijkolom')
+    const streep = document.querySelector('#inhoud')
+    return {
+      blok: blok ? Math.round(blok.getBoundingClientRect().width) : null,
+      heroBoven: hero ? Math.round(hero.getBoundingClientRect().top) : null,
+      zijBoven: zij ? Math.round(zij.getBoundingClientRect().top) : null,
+      inhoudBreed: streep ? Math.round(streep.getBoundingClientRect().width) : null,
+      streepBreed: streep
+        ? Math.round(parseFloat(getComputedStyle(streep, '::before').width) || 0) : null,
+    }
+  })
+  if (maten.blok == null || maten.blok > 30) {
+    throw new Error(`breed: een dagblok is ${maten.blok}px breed — de strook is een staafdiagram geworden`)
+  }
+  if (maten.zijBoven == null || maten.heroBoven == null || maten.zijBoven < maten.heroBoven) {
+    throw new Error(`breed: de zijkolom begint op ${maten.zijBoven} en de hero op ${maten.heroBoven} — `
+      + 'de leesvolgorde staat op zijn kop')
+  }
+  if (maten.streepBreed != null && maten.inhoudBreed != null
+      && maten.streepBreed < maten.inhoudBreed - 2) {
+    throw new Error(`breed: de scheidingslijn is ${maten.streepBreed} van ${maten.inhoudBreed} px breed`)
+  }
+  console.log(`${''.padEnd(26)} dagblok=${maten.blok}px · zijkolom onder de hero · streep vol`)
   await pagina.close()
+
+  /* En hetzelfde scherm in het donker. De telefoon staat in het donker en het
+     brede scherm heeft eigen regels voor achtergrond, schaduw en de macrotegels
+     — precies de plek waar een vergeten donkere variant licht op licht geeft. */
+  const donkerpagina = await breed.newPage()
+  await donkerpagina.emulateMedia({ colorScheme: 'dark' })
+  await bedienDb(donkerpagina, 28, 'afvallen')
+  await donkerpagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await donkerpagina.waitForSelector('.hero', { timeout: 5000 })
+  await donkerpagina.waitForTimeout(1100)
+  await donkerpagina.screenshot({ path: 'gereedschap/health-breed-donker.png' })
+  const donkermaat = await donkerpagina.evaluate(() => {
+    const lees = (el) => getComputedStyle(el).backgroundColor
+    return { body: lees(document.body), tegel: lees(document.querySelector('.macro')) }
+  })
+  console.log(`${''.padEnd(26)} donker: body=${donkermaat.body}`)
+  await donkerpagina.close()
+
+  /* Eén ander tabblad op dezelfde breedte. De kolomindeling van Vandaag geldt
+     alleen op een scherm dat zelf een zijkolom aanwijst; de vijf andere blijven
+     op de gewone plaatsing. Dat is precies het soort onderscheid dat je pas ziet
+     als je kijkt, en dat op 430 pixels niet bestaat. */
+  const anderpagina = await breed.newPage()
+  await bedienDb(anderpagina, 28, 'afvallen')
+  await anderpagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await anderpagina.getByRole('tab', { name: 'Inzicht' }).click()
+  await anderpagina.waitForSelector('.hero', { timeout: 5000 })
+  await anderpagina.waitForTimeout(1100)
+  await anderpagina.screenshot({ path: 'gereedschap/health-breed-inzicht.png' })
+  /* Op zo'n scherm horen de kaarten over twee kolommen verdeeld te staan. Staan
+     ze allemaal op dezelfde x, dan is de rechterkolom leeg en is er veertig
+     procent van het scherm weggegooid. */
+  const kolommenDaar = await anderpagina.locator('#inhoud > .kaart').evaluateAll(
+    (els) => [...new Set(els.map((e) => Math.round(e.getBoundingClientRect().left)))].length)
+  if (kolommenDaar < 2) {
+    throw new Error(`breed: Inzicht zet alle ${kolommenDaar} kaarten in één kolom`)
+  }
+  console.log(`${''.padEnd(26)} Inzicht op 1440: ${kolommenDaar} kolommen`)
+  await anderpagina.close()
 }
 
 /* ------------------------------------------------ meebewegen met de maat -- */
@@ -517,8 +595,9 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
    daar bleef het bij: op een tablet en op een groot scherm bleven het er twee.
    Deze controle kijkt of het aantal kolommen werkelijk meebeweegt. */
 
-const breedtes = [360, 430, 768, 1100]
+const breedtes = [360, 430, 768, 1000, 1100]
 const kolommen = []
+const strookmaten = []
 for (const breedte of breedtes) {
   const maat = await browser.newContext({
     viewport: { width: breedte, height: 900 }, deviceScaleFactor: 1,
@@ -550,11 +629,28 @@ for (const breedte of breedtes) {
     () => document.documentElement.scrollWidth > document.documentElement.clientWidth)
   if (overloop) throw new Error(`${breedte}px: de pagina schuift horizontaal`)
   kolommen.push(`${breedte}px→${links}kol`)
+
+  /* De dagenstrook op elke brede maat. Op 1440 knijpt de rechterkolom van de
+     hero hem vanzelf al klein — daar bewees de proef dus niets. Tussen 960 en
+     1100 staat de hero op één kolom en heeft de strook de volle breedte, en
+     precies daar wordt het een staafdiagram als het maximum ontbreekt. */
+  if (breedte >= 960) {
+    const blok = await pagina.evaluate(() => {
+      const i = document.querySelector('.strook > i')
+      return i ? Math.round(i.getBoundingClientRect().width) : null
+    })
+    if (blok == null || blok > 30) {
+      throw new Error(`${breedte}px: een dagblok is ${blok}px breed — de strook is een staafdiagram`)
+    }
+    strookmaten.push(`${breedte}px→${blok}px`)
+  }
+
   if (breedte === 1100) await pagina.screenshot({ path: 'gereedschap/health-breed.png' })
   if (breedte === 360) await pagina.screenshot({ path: 'gereedschap/health-smal.png' })
   await maat.close()
 }
 console.log('maaltijdvakken             ' + kolommen.join(' · '))
+console.log('dagenstrook                ' + strookmaten.join(' · '))
 if (kolommen[0] === kolommen[kolommen.length - 1]) {
   throw new Error('de maaltijdvakken bewegen niet mee met de schermbreedte')
 }

@@ -167,7 +167,9 @@ export function Vandaag(p: VandaagEigenschappen) {
 
   return (
     <>
-      <Tussen style={{ marginBottom: 12 }}>
+      {/* `dagnav` staat er alleen zodat het brede scherm deze rij over beide
+          kolommen kan zetten. Op de telefoon is het een gewone tussenrij. */}
+      <div className="tussen dagnav" style={{ marginBottom: 12 }}>
         <Knop klein opKlik={() => p.zetDatum(plusDagen(datum, -1))} titel="Vorige dag">←</Knop>
         <span style={{ fontSize: '.88rem', fontWeight: 500 }}>
           {isVandaag ? 'Vandaag' : langNL(datum)}
@@ -176,7 +178,7 @@ export function Vandaag(p: VandaagEigenschappen) {
               opKlik={() => { const n = plusDagen(datum, 1); if (n <= vandaag()) p.zetDatum(n) }}>
           →
         </Knop>
-      </Tussen>
+      </div>
 
       <section className="hero"
                style={{ '--herobg': kleur.achtergrond, '--heroglow': kleur.glans } as React.CSSProperties}>
@@ -336,7 +338,7 @@ export function Vandaag(p: VandaagEigenschappen) {
         )}
       </Kaart>
 
-      <Kaart>
+      <Kaart zij>
         <Kop>Beweging en slaap</Kop>
         <Rij style={{ marginTop: 8, alignItems: 'flex-end' }}>
           <label className="veld">
@@ -432,7 +434,7 @@ function Weging(
      het al. Het blijft staan om te kunnen corrigeren, maar dan klein. */
   const moetNog = !gewogen && isVandaag
   return (
-    <Kaart toon={moetNog ? 'let' : undefined}
+    <Kaart zij toon={moetNog ? 'let' : undefined}
            style={moetNog ? undefined : { paddingTop: 13, paddingBottom: 13 }}>
       <Tussen>
         <Kop>Ochtendweging</Kop>

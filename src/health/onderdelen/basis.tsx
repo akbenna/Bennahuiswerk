@@ -14,15 +14,27 @@ import { useCallback, useEffect, useState } from 'react'
 import type { Graad } from '@/gedeeld/db/tabellen'
 
 export function Kaart(
-  { toon, plat, style, children }:
+  { toon, plat, zij, style, children }:
   {
     toon?: 'let' | 'fout' | 'goed' | undefined
     plat?: boolean | undefined
+    /**
+     * Op een breed scherm hoort deze kaart in de smalle kolom naast de inhoud.
+     * Op de telefoon doet het niets — daar is er maar één kolom.
+     *
+     * Dit staat hier en niet in de CSS omdat de volgorde in de code de volgorde
+     * op de telefoon ís, en die klopt. Welke kaart naar de zijkolom mag is een
+     * uitspraak over wat die kaart betekent (een terzijde, geen hoofdlijn), en
+     * die uitspraak hoort bij de kaart te staan en niet in een selector die op
+     * volgnummer telt.
+     */
+    zij?: boolean | undefined
     style?: CSSProperties | undefined
     children: ReactNode
   },
 ) {
-  const klas = ['kaart', toon ?? '', plat ? 'plat' : ''].filter(Boolean).join(' ')
+  const klas = ['kaart', toon ?? '', plat ? 'plat' : '', zij ? 'zijkolom' : '']
+    .filter(Boolean).join(' ')
   return <div className={klas} style={style}>{children}</div>
 }
 
