@@ -1,15 +1,26 @@
 /* Medical Intelligence — visual system layered over the existing health UI. */
-:root{--mi-teal:#2f756d;--mi-blue:#4c7fd9;--mi-violet:#8067c8;--mi-coral:#d86b62;--mi-amber:#d39a36}
+/* --mi-teal wees naar een eigen groen (#2f756d) naast het accent van de app.
+   Twee groenen op één scherm leest als een fout, ook als geen van beide fout is:
+   de zijbalk zei "MEDICAL INTELLIGENCE" in een andere tint dan de merknaam
+   erboven. Hij volgt nu het accent, zodat er één groen is en de donkere stand
+   vanzelf meebeweegt. De andere kleuren blijven van deze laag: die dragen hier
+   toestanden en niet het merk. */
+:root{--mi-teal:var(--k);--mi-blue:#4c7fd9;--mi-coral:#d86b62;--mi-amber:#d39a36}
 @media (min-width:960px){
 body{background:radial-gradient(circle at 7% 0%,rgba(76,127,217,.09),transparent 30rem),radial-gradient(circle at 92% 4%,rgba(128,103,200,.09),transparent 32rem),var(--canvas)}
 .wrap{max-width:none;margin:0;padding-left:286px;padding-right:42px;padding-bottom:48px}
 header{max-width:1320px;padding-top:28px}
 nav.tabs{left:0;right:auto;top:0;bottom:0;width:248px;height:100dvh;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:7px;padding:27px 14px;border-right:1px solid var(--lijn);border-top:0;background:color-mix(in srgb,var(--vlak) 93%,transparent);backdrop-filter:blur(18px);box-shadow:8px 0 30px rgba(25,50,48,.05)}
-nav.tabs:before{content:'BennaHealth';font-family:var(--serif);font-size:1.25rem;color:var(--ink);padding:0 14px 2px}
+nav.tabs:before{content:'BennaHealth';font-family:var(--kop);font-size:1.25rem;color:var(--ink);padding:0 14px 2px}
 nav.tabs:after{content:'MEDICAL INTELLIGENCE';font-family:var(--mono);font-size:.58rem;letter-spacing:.13em;color:var(--mi-teal);padding:0 14px 20px}
 nav.tabs button{display:grid;grid-template-columns:30px 1fr;align-items:center;gap:9px;min-width:0;text-align:left;padding:11px 13px;border:1px solid transparent}
-nav.tabs button[aria-selected=true]{background:linear-gradient(135deg,#e1efec,#ece8fa);color:#245f58;border-color:#d6e4e1;box-shadow:inset 3px 0 0 var(--mi-violet)}
-nav.tabs button:hover{background:linear-gradient(135deg,#f0f6f4,#f4f1fb)}
+/* De geselecteerde tab droeg een violet streepje en een lila verloop: de enige
+   kleur in de navigatie die buiten de familie viel. Nu dezelfde tokens als de
+   tabbalk op de telefoon — kbg als vlak, k als tekst en als streepje. Daarmee
+   is er geen aparte donkere regel meer nodig: de tokens schakelen zelf. */
+nav.tabs button[aria-selected=true]{background:var(--kbg);color:var(--k);
+  border-color:transparent;box-shadow:inset 3px 0 0 var(--k)}
+nav.tabs button:hover{background:var(--vlak2)}
 #inhoud{max-width:1320px}#inhoud:before{content:'';display:block;height:1px;background:var(--lijn);margin-bottom:18px}
 .kaart{border-radius:18px;padding:20px 22px;box-shadow:0 10px 30px rgba(25,50,48,.055)}
 .hero{border-radius:24px;box-shadow:0 22px 55px rgba(37,91,83,.12)}.heroboven h2{font-size:2rem}.heroring{gap:30px}.hoofdknop{min-height:52px;border-radius:14px}
@@ -18,4 +29,4 @@ nav.tabs button:hover{background:linear-gradient(135deg,#f0f6f4,#f4f1fb)}
 .balk>i{background:linear-gradient(90deg,var(--mi-teal),var(--mi-blue))}.balk>i.let{background:linear-gradient(90deg,var(--mi-amber),var(--mi-coral))}.balk>i.goed{background:linear-gradient(90deg,#4f9a54,var(--mi-teal))}
 }
 @media (min-width:1280px){.wrap{padding-left:310px;padding-right:54px}nav.tabs{width:270px}#inhoud{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,.75fr);gap:18px;align-items:start}#inhoud>.hero{grid-column:1/-1}#inhoud>.duo,#inhoud>.trio,#inhoud>footer{grid-column:1/-1}}
-@media (prefers-color-scheme:dark) and (min-width:960px){body{background:radial-gradient(circle at 8% 0%,rgba(76,127,217,.14),transparent 30rem),#111617}nav.tabs{background:rgba(20,25,27,.94);box-shadow:10px 0 35px rgba(0,0,0,.22)}nav.tabs button[aria-selected=true]{background:linear-gradient(135deg,#1b302e,#28243b);color:#9fe3d6;border-color:#2c4542}nav.tabs button:hover{background:#1a2426}.kaart{box-shadow:0 12px 34px rgba(0,0,0,.18)}}
+@media (prefers-color-scheme:dark) and (min-width:960px){body{background:radial-gradient(circle at 8% 0%,rgba(76,127,217,.14),transparent 30rem),#111617}nav.tabs{background:rgba(20,25,27,.94);box-shadow:10px 0 35px rgba(0,0,0,.22)}.kaart{box-shadow:0 12px 34px rgba(0,0,0,.18)}}
