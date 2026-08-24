@@ -235,3 +235,184 @@ export function naamvoorstel(regels: readonly Regel[], moment: Moment): string {
   if (!namen.length) return moment === 'onbekend' ? 'Eigen maaltijd' : moment
   return namen.join(' met ')
 }
+
+/* ========================================================================== */
+/*  DE DUIDING                                                                */
+/*                                                                            */
+/*  Wat er in de schaal zit is één ding; wat het bétekent is een ander. Een    */
+/*  maaltijd van 752 kcal zegt niets zonder te weten waar die kcal vandaan     */
+/*  komen — en bij deze gebruiker is dat de hele vraag. Vandaar drie maten die */
+/*  wél iets zeggen, en twee knoppen om aan te draaien.                        */
+/*                                                                            */
+/*  Alle drie zijn verhoudingen en dus onafhankelijk van hoeveel je opschept.  */
+/*  Dat is precies waarom ze bruikbaar zijn: een halve portie van een schaal   */
+/*  met vier gram eiwit per honderd kilocalorieën heeft nog steeds vier gram   */
+/*  eiwit per honderd kilocalorieën.                                           */
+/* ========================================================================== */
+
+export interface Duiding {
+  gram: number | null
+  kcal: number
+  /** Kilocalorieën per gram. Onder de 1,0 vult het; boven de 2,0 telt het aan. */
+  dichtheid: number | null
+  /** Gram eiwit per 100 kcal. Dít is de maat die telt bij een tekort. */
+  eiwitPer100: number | null
+  /** Het aandeel van elke macro in de energie. Telt niet op tot 100 — zie hieronder. */
+  ePct: { eiwit: number | null; vet: number | null; koolhydraat: number | null }
+  vezel: number | null
+}
+
+/**
+ * De maten die iets zeggen, over de hele schaal gerekend.
+ *
+ * De energieprocenten tellen expres niet op tot honderd. Ze worden berekend uit
+ * de macro's die er staan, elk met zijn eigen Atwater-factor, en die macro's zijn
+ * per onderdeel afgerond op één decimaal. Bovendien leveren vezels zelf ook nog
+ * ongeveer twee kilocalorieën per gram. Het verschil normaliseren zou het beeld
+ * netter maken en de afwijking verbergen; die afwijking is juist informatie over
+ * hoe grof de invoer is.
+ */
+export function duiding(m: Maaltijd): Duiding {
+  const a = aggregaat(m, m.porties)
+  const pct = (g: number | null, factor: number): number | null =>
+    g == null || a.kcal <= 0 ? null : Math.round((g * factor) / a.kcal * 1000) / 10
+  return {
+    gram: a.gram,
+    kcal: a.kcal,
+    dichtheid: a.gram && a.gram > 0 ? Math.round(a.kcal / a.gram * 100) / 100 : null,
+    eiwitPer100: a.eiwit == null || a.kcal <= 0
+      ? null : Math.round(a.eiwit / a.kcal * 1000) / 10,
+    ePct: { eiwit: pct(a.eiwit, 4), vet: pct(a.vet, 9), koolhydraat: pct(a.koolhydraat, 4) },
+    vezel: a.vezel,
+  }
+}
+
+export interface Aandeel {
+  naam: string
+  kcal: number
+  /** Het aandeel in de energie van de hele schaal, tussen 0 en 1. */
+  deel: number
+  /** Gram eiwit per kcal van dit onderdeel. */
+  dichtheid: number | null
+}
+
+/** De onderdelen op energie-aandeel, het duurste eerst. */
+export function aandelen(m: Maaltijd): Aandeel[] {
+  const totaal = m.regels.reduce((n, r) => n + r.kcal_punt, 0)
+  return m.regels
+    .map((r) => ({
+      naam: r.naam,
+      kcal: Math.round(r.kcal_punt),
+      deel: totaal > 0 ? r.kcal_punt / totaal : 0,
+      dichtheid: r.kcal_punt > 0 && r.eiwit_g != null ? r.eiwit_g / r.kcal_punt : null,
+    }))
+    .sort((x, y) => y.deel - x.deel || x.naam.localeCompare(y.naam, 'nl'))
+}
+
+export interface Hefbomen {
+  /** Wat je kunt halveren: het onderdeel dat de meeste energie levert. */
+  grootste: Aandeel | null
+  /** Wat je kunt verdubbelen: het onderdeel met de hoogste eiwitdichtheid. */
+  eiwitrijkste: Aandeel | null
+}
+
+/**
+ * De twee knoppen waar aan te draaien valt.
+ *
+ * Halveren heeft alleen zin bij iets dat groot genoeg is om de uitkomst te
+ * veranderen; onder een kwart van de energie is het een gebaar. Verdubbelen
+ * heeft alleen zin bij iets dat de eiwitdichtheid ómhoog trekt, en dat is
+ * precies wat "boven het gemiddelde van de maaltijd" betekent — reken het na en
+ * het is een identiteit, geen vuistregel. Ligt het rijkste onderdeel op het
+ * gemiddelde, dan is er niets te verdubbelen dat iets oplevert, en dan zegt de
+ * app dat door te zwijgen.
+ */
+export function hefbomen(m: Maaltijd): Hefbomen {
+  const lijst = aandelen(m)
+  const kcal = m.regels.reduce((n, r) => n + r.kcal_punt, 0)
+  const eiwit = m.regels.reduce((n, r) => n + (r.eiwit_g ?? 0), 0)
+  const gemiddeld = kcal > 0 ? eiwit / kcal : 0
+
+  const grootste = lijst[0] && lijst[0].deel >= 0.25 ? lijst[0] : null
+
+  let eiwitrijkste: Aandeel | null = null
+  for (const a of lijst) {
+    if (a.dichtheid == null || a.dichtheid <= gemiddeld) continue
+    if (eiwitrijkste == null || a.dichtheid > (eiwitrijkste.dichtheid ?? 0)) eiwitrijkste = a
+  }
+  return { grootste, eiwitrijkste }
+}
+
+/** Eén onderdeel met een factor vermenigvuldigen; de rest blijft staan. */
+function metFactor(m: Maaltijd, naam: string, f: number): Maaltijd {
+  const maal = (n: number | null): number | null => (n == null ? null : n * f)
+  return {
+    ...m,
+    regels: m.regels.map((r) => (r.naam !== naam ? r : {
+      ...r,
+      hoeveelheid: maal(r.hoeveelheid),
+      gram_equivalent: maal(r.gram_equivalent),
+      kcal_punt: r.kcal_punt * f,
+      kcal_laag: maal(r.kcal_laag),
+      kcal_hoog: maal(r.kcal_hoog),
+      eiwit_g: maal(r.eiwit_g),
+      vet_g: maal(r.vet_g),
+      koolhydraat_g: maal(r.koolhydraat_g),
+      vezel_g: maal(r.vezel_g),
+    })),
+  }
+}
+
+export interface Variant {
+  label: string
+  /** De hele schaal. */
+  kcal: number
+  perPortie: number
+  eiwitPortie: number | null
+  eiwitPer100: number | null
+}
+
+function variant(m: Maaltijd, label: string): Variant {
+  const heel = aggregaat(m, m.porties)
+  const een = aggregaat(m, 1)
+  return {
+    label,
+    kcal: heel.kcal,
+    perPortie: een.kcal,
+    eiwitPortie: een.eiwit,
+    eiwitPer100: heel.eiwit == null || heel.kcal <= 0
+      ? null : Math.round(heel.eiwit / heel.kcal * 1000) / 10,
+  }
+}
+
+/**
+ * Wat er gebeurt als je aan de twee knoppen draait.
+ *
+ * Vier regels als beide knoppen bestaan, minder als er minder te draaien valt,
+ * en niets als er niets te draaien valt. Dat laatste is geen tekortkoming: een
+ * maaltijd waarin geen enkel onderdeel een kwart van de energie levert en geen
+ * enkel onderdeel boven het eiwitgemiddelde ligt, ís in balans, en dan is er
+ * niets te adviseren.
+ *
+ * Er staat expres geen aanbeveling bij. De tabel zet de vier uitkomsten naast
+ * elkaar en jij ziet zelf welke rij je bevalt — dat is een ander soort advies
+ * dan een app die zegt wat je moet doen, en het is het soort dat blijft kloppen
+ * als je voorkeuren veranderen.
+ */
+export function varianten(m: Maaltijd): Variant[] {
+  const { grootste, eiwitrijkste } = hefbomen(m)
+  if (!grootste && !eiwitrijkste) return []
+
+  const uit: Variant[] = [variant(m, 'zoals je hem maakt')]
+  let beide = m
+  if (grootste) {
+    uit.push(variant(metFactor(m, grootste.naam, 0.5), `${grootste.naam} halveren`))
+    beide = metFactor(beide, grootste.naam, 0.5)
+  }
+  if (eiwitrijkste) {
+    uit.push(variant(metFactor(m, eiwitrijkste.naam, 2), `${eiwitrijkste.naam} verdubbelen`))
+    beide = metFactor(beide, eiwitrijkste.naam, 2)
+  }
+  if (grootste && eiwitrijkste) uit.push(variant(beide, 'allebei'))
+  return uit
+}

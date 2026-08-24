@@ -68,6 +68,10 @@ export interface GerechtTreffer {
 }
 
 export interface Zoekuitslag {
+  /* Eerst, want wie 'tonijn' typt bedoelt zijn eigen salade en niet de tabel.
+     Er wordt ook in de namen van de onderdelen gezocht, dus 'paprika' vindt de
+     salade waar paprika in zit zonder dat dat woord in de titel staat. */
+  maaltijden: Maaltijd[]
   nevo: NevoTreffer[]
   gerechten: GerechtTreffer[]
   eigen: EigenProduct[]
@@ -197,6 +201,8 @@ export interface Maaltijd {
   toelichting: string | null
   /** Voor hoeveel porties de onderdelen samen staan. */
   porties: number
+  /** Handmatig gezet: bovenaan in de lijst en in het zoekveld. */
+  favoriet: boolean
   regels: MaaltijdRegel[]
 }
 
@@ -318,6 +324,10 @@ export interface RpcKaart {
     uit: Maaltijd
   }
   kal_maaltijd_wissen: { in: { p_token: string; p_id: string }; uit: number }
+  kal_maaltijd_favoriet: {
+    in: { p_token: string; p_id: string; p_aan: boolean }
+    uit: boolean
+  }
   kal_rij_toevoegen: {
     in: { p_token: string; p_tabel: LosseTabel; p_rij: Record<string, unknown> }
     uit: unknown

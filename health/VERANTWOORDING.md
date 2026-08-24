@@ -356,3 +356,32 @@ De olijfolie is waarom dit zo moet. Zijn ondergrens staat op 30 en zijn bovengre
 ### Wat dit niet is
 
 Geen nieuwe schatting. Er komt hier geen enkel getal bij dat niet al ergens vandaan kwam; alles is wat je ooit hebt ingevoerd, maal een factor. En geen vervanging van de gerechtenbibliotheek (§12): die bevat gevalideerde gerechten met portiematen voor iedereen, dit zijn de jouwe.
+
+### Wat een maaltijd betekent, en de twee knoppen
+
+Bij de oplevering stond er alleen wat erin zat. Wat het bétekent is een andere vraag, en bij deze gebruiker is het de hele vraag: 752 kcal zegt niets zonder te weten waar die kilocalorieën vandaan komen.
+
+Drie maten staan daarom bij elk gerecht, alle drie verhoudingen en dus onafhankelijk van hoeveel je opschept — een halve portie van een schaal met vier gram eiwit per honderd kilocalorieën heeft nog steeds vier gram eiwit per honderd kilocalorieën.
+
+- **Energiedichtheid** (kcal per gram). Onder de 1,0 vult het meer dan het aantelt; boven de 2,0 andersom. De tonijnsalade zit op 0,96 en het halve stokbrood op 2,25 — bijna dezelfde energie, minder dan de helft van het volume.
+- **Gram eiwit per 100 kcal.** Dit is de maat die telt bij een tekort (§9). De salade komt op 4,0, en dat is de bevinding uit §8 nu zichtbaar op gerechtniveau: qua groente uitstekend, qua eiwit een lege huls.
+- **De energieprocenten**, die expres niet optellen tot honderd. Ze worden berekend uit macro's die per onderdeel op één decimaal zijn afgerond, en vezels leveren zelf ook nog ongeveer twee kilocalorieën per gram. Normaliseren zou het beeld netter maken en de afwijking verbergen; die afwijking is informatie over hoe grof de invoer is.
+
+Daaronder staan twee hefbomen, en die worden afgeleid en niet ingetypt: **halveer wat de meeste energie levert** en **verdubbel wat de hoogste eiwitdichtheid heeft**. De eerste geldt alleen bij een onderdeel dat ten minste een kwart van de energie levert — daaronder is halveren een gebaar. De tweede geldt alleen bij een onderdeel boven het eiwitgemiddelde van de maaltijd, en dat is geen vuistregel maar een identiteit: verdubbelen van iets boven het gemiddelde trekt het gemiddelde per definitie omhoog. Ligt niets erboven, dan valt er niets te verdubbelen dat iets oplevert, en zwijgt de app.
+
+Voor de tonijnsalade komen die twee uit op de olijfolie (48 procent van de energie) en de tonijn. De vier uitkomsten naast elkaar:
+
+| | per portie | eiwit per 100 kcal |
+|---|---|---|
+| zoals je hem maakt | 376 kcal | 4,0 g |
+| olijfolie halveren | 286 kcal | 5,3 g |
+| tonijn verdubbelen | 431 kcal | 6,4 g |
+| allebei | 341 kcal | 8,1 g |
+
+De laatste rij is het hele punt in twee getallen: voor 35 kcal mínder dan nu het dubbele aan eiwit per calorie. Er staat expres geen aanbeveling bij. Een tabel blijft kloppen als je voorkeuren veranderen; een aanbeveling niet.
+
+### Vindbaar, en het sterretje
+
+Twee dingen die pas opvielen bij gebruik. Wie "tonijn" typte kreeg de tonijnregels van NEVO en niet zijn eigen salade — de app had het antwoord al en liet het niet zien. `kal_zoeken` doorzoekt nu ook de eigen maaltijden, en dan niet alleen op de titel maar ook op de namen van de onderdelen: "paprika" vindt zo het gerecht waar paprika in zit zonder dat dat woord in de naam staat. Dat is precies waar een samengesteld gerecht zich anders gedraagt dan een product.
+
+Het sterretje bepaalt de volgorde, in de lijst en in het zoekveld. Handmatig, en niet afgeleid uit hoe vaak iets gegeten is: die afleiding straft precies het gerecht af dat je nét bewaard hebt. Bij opnieuw bewaren onder dezelfde naam blijft het staan — anders verlies je het op het moment dat je de olie eindelijk gewogen hebt, en dat is nu juist het moment waarop je het gerecht het meest gebruikt.
