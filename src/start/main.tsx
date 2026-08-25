@@ -3,6 +3,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { App } from './App'
 import './stijl.css'
+import './portal.css'
 
 if ('serviceWorker' in navigator) {
   addEventListener('load', () => {
