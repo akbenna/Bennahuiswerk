@@ -43,6 +43,13 @@
 
   --goed:#2F6B1F; --let:#8A5A00; --fout:#A32F2A;
 
+  /* De zijbalk is in beide standen donker, dus zijn kleuren staan los van het
+     schema. Gemeten tegen --zij: de gedempte letter haalt 6,3:1 en het accent
+     9,3:1 — ruim boven de 4,5:1 die de rest ook aanhoudt. In de donkere stand
+     wordt het paneel één tint lichter, anders valt hij weg tegen het doek. */
+  --zij:#191C22; --zij-2:#242832; --zij-line:#2C313B;
+  --zij-ink:#F3F2EE; --zij-muted:#9B9EAA; --zij-aan:#4ED3CB;
+
   --schaduw:0 1px 2px rgba(20,18,14,.05), 0 8px 24px rgba(20,18,14,.06);
   --schaduw-op:0 2px 4px rgba(20,18,14,.07), 0 14px 34px rgba(20,18,14,.11);
 
@@ -68,6 +75,8 @@
     --health:#9EB6C2; --health-bg:#1E272C;
 
     --goed:#8FD268; --let:#E9BC55; --fout:#F09B95;
+
+    --zij:#1E212A; --zij-2:#2A2E39; --zij-line:#343943;
 
     --schaduw:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.34);
     --schaduw-op:0 2px 4px rgba(0,0,0,.46), 0 14px 34px rgba(0,0,0,.5);
@@ -99,69 +108,237 @@ header{padding:56px 0 0}
   background:linear-gradient(90deg,var(--huiswerk) 0 11.11%,var(--islam) 11.11% 22.22%,var(--arabisch) 22.22% 33.33%,var(--code) 33.33% 44.44%,var(--spel) 44.44% 55.56%,var(--geloof) 55.56% 66.67%,var(--koran) 66.67% 77.78%,var(--health) 77.78% 88.89%,var(--academie) 88.89% 100%)}
 .lede{margin-top:14px;font-family:var(--serif);font-size:1.14rem;line-height:1.55;color:var(--muted);max-width:46ch}
 
-main{flex:1;padding:38px 0 0}
-.kaarten{display:grid;gap:14px}
-@media (min-width:680px){ .kaarten{grid-template-columns:1fr 1fr;align-items:start} .kaarten a:first-child{grid-column:1 / -1} }
-/* Twee groepen, want een deel van deze apps is niet voor de kinderen. De kop is
-   een streep met een woord erop: genoeg om de scheiding te zien, niet zoveel dat
-   het een menu wordt. In de groep van de groten geen brede eerste kaart: daar
-   zijn de kaarten onderling gelijkwaardig, terwijl bij de kinderen het huiswerk
-   bovenaan hoort te staan. */
-.groep + .groep{margin-top:38px}
-.groepkop{font-family:var(--mono);font-size:.68rem;letter-spacing:.11em;text-transform:uppercase;
-  color:var(--muted);font-weight:500;margin:0 0 13px;display:flex;align-items:center;gap:12px}
-.groepkop::after{content:"";flex:1;height:1px;background:var(--line)}
-@media (min-width:680px){ .kaarten.smal a:first-child{grid-column:auto} }
+/* ---------------------------------------------------------------------------
+   HET WERKBLAD
 
-/* De kaarten dragen nu de kleur van hun app in plaats van hem alleen aan de rand
-   te tonen. De vlakken komen uit hetzelfde palet als de tekstkleur erop, dus het
-   contrast dat eerder is nagemeten blijft staan: donkere tekst op een licht
-   vlak in de dag, lichte tekst op een donker vlak 's avonds. */
-a.app{
-  display:block;text-decoration:none;color:inherit;background:var(--kbg);
-  border:1px solid color-mix(in srgb, var(--k) 30%, var(--line));border-radius:16px;
-  padding:20px 22px 18px 26px;
-  position:relative;overflow:hidden;box-shadow:var(--schaduw);
+   Achter de poort is de startpagina geen lijst meer maar een werkblad: een
+   vaste zijbalk links en de inhoud rechts. De zijbalk is in licht én donker
+   donker — hij is de omlijsting en niet het papier, en een omlijsting die per
+   stand van kleur wisselt maakt de pagina onrustig. Zijn kleuren staan daarom
+   apart en niet in het schema hieronder; ze zijn tegen hetzelfde contrast
+   gemeten als de rest.
+
+   .hub trekt zich met een negatieve marge los van de 20px die body overal geeft:
+   de zijbalk hoort tot de rand van het scherm te lopen. De inhoud krijgt zijn
+   ruimte binnen .romp weer terug.
+--------------------------------------------------------------------------- */
+.hub{flex:1;display:grid;grid-template-columns:minmax(0,1fr);margin:0 -20px;min-width:0}
+.romp{min-width:0;width:100%;max-width:1240px;display:flex;flex-direction:column;padding:0 20px}
+@media (min-width:1000px){
+  /* De kolom draagt de kleur van de zijbalk zelf. De zijbalk plakt namelijk met
+     100dvh aan de bovenkant, en op een lange pagina is hij korter dan de rij
+     waar hij in staat — zonder dit staat er onder hem een streep doek. */
+  .hub{grid-template-columns:266px minmax(0,1fr);
+       background:linear-gradient(90deg,var(--zij) 0 266px,transparent 266px)}
+  .romp{padding:0 34px}
+}
+
+.zij{
+  background:var(--zij);color:var(--zij-ink);min-width:0;
+  display:flex;flex-direction:column;
+  padding:24px 14px calc(20px + env(safe-area-inset-bottom));
+}
+@media (min-width:1000px){
+  .zij{position:sticky;top:0;height:100dvh;overflow-y:auto;border-right:1px solid var(--zij-line)}
+}
+.zijkop{text-align:center;padding:4px 6px 18px;border-bottom:1px solid var(--zij-line);margin-bottom:14px}
+.zijkop img{border-radius:14px;display:block;margin:0 auto 11px;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+.zij .merk{font-size:1.5rem;color:var(--zij-ink)}
+.zijzin{margin-top:7px;font-size:.79rem;line-height:1.45;color:var(--zij-muted)}
+.zijnav{display:flex;flex-direction:column;gap:3px}
+.zijgroep{margin:20px 13px 8px;font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--zij-muted)}
+/* Eén vorm voor de ankers en de knoppen: waar je heen springt en wat je doet
+   zien er hier hetzelfde uit, want voor wie kijkt is het allebei "een regel in
+   het menu". */
+.zijlink{
+  display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+  padding:11px 13px;border-radius:11px;border:1px solid transparent;background:transparent;
+  color:var(--zij-muted);font:inherit;font-size:.95rem;text-decoration:none;cursor:pointer;
+  transition:background .14s ease, color .14s ease;
+}
+.zijlink svg{flex:0 0 auto}
+.zijlink:hover{background:var(--zij-2);color:var(--zij-ink)}
+.zijlink.aan{background:var(--zij-2);color:var(--zij-ink);border-color:var(--zij-line)}
+.zijlink.aan svg{color:var(--zij-aan)}
+.zij a:focus-visible,.zij button:focus-visible{outline:2px solid var(--zij-aan);outline-offset:2px}
+.zijvoet{margin-top:auto;display:flex;gap:10px;align-items:flex-start;color:var(--zij-muted);
+  border-top:1px solid var(--zij-line);padding:14px 13px 0;margin-top:24px}
+.zijvoet svg{flex:0 0 auto;margin-top:2px}
+.zijvoet p{font-size:.78rem;line-height:1.45}
+/* Op een telefoon is er geen kolom naast de inhoud. Dan wordt de zijbalk een
+   kop met een menu dat opzij schuift — dezelfde regels, dezelfde volgorde. */
+@media (max-width:999px){
+  .zijkop{display:flex;align-items:center;gap:12px;text-align:left;padding-bottom:14px;margin-bottom:12px}
+  .zijkop img{margin:0;width:38px;height:38px}
+  .zij .merk{font-size:1.24rem}
+  .zijzin,.zijvoet{display:none}
+  .zijnav{flex-direction:row;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+  .zijnav + .zijnav{margin-top:8px}
+  /* width:100% uit de basisregel zou hier de eerste knop de hele rij geven en
+     de rest buiten beeld duwen. */
+  .zijlink{width:auto;flex:0 0 auto;white-space:nowrap;padding:9px 13px}
+  .zijgroep{margin:14px 2px 6px}
+}
+
+/* ---------------------------------------------------------------------------
+   HET ONTHAAL — wie je bent, welke dag het is, en waar je heen kunt.
+--------------------------------------------------------------------------- */
+.welkom{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start;justify-content:space-between;
+  padding:34px 0 0}
+.welkomtekst{flex:1 1 340px;min-width:0}
+.welkom h1{font-size:2.2rem}
+.welkom .lede{margin-top:10px;max-width:44ch}
+.welkom .rij{margin-top:16px}
+.welkom.mager{max-width:62ch}
+.welkomkaarten{display:flex;gap:12px;flex-wrap:wrap}
+.mkaart{display:flex;gap:13px;align-items:center;min-width:215px;
+  background:var(--surface);border:1px solid var(--line);border-radius:16px;
+  padding:14px 18px;box-shadow:var(--schaduw)}
+.mico{width:42px;height:42px;border-radius:12px;flex:0 0 auto;display:grid;place-items:center;
+  background:var(--surface-2);color:var(--ink-2)}
+.mkaart .gezichtje{width:42px;height:42px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;
+  font-size:1.25rem;line-height:1;background:var(--pbg);border:1.5px solid var(--pk)}
+.mtekst{display:flex;flex-direction:column;min-width:0}
+.mtekst strong{font-family:var(--serif);font-size:1.04rem;font-weight:600;color:var(--ink);line-height:1.3}
+.mtekst .klein{font-size:.78rem;line-height:1.4;max-width:26ch}
+.mtijd{display:flex;align-items:center;gap:5px;margin-top:4px;
+  font-family:var(--mono);font-size:.72rem;color:var(--muted)}
+.mlink{margin-top:6px;align-self:flex-start;background:none;border:0;padding:0;cursor:pointer;
+  font:inherit;font-size:.82rem;font-weight:600;color:var(--pk)}
+.mlink:hover{text-decoration:underline}
+
+/* ---------------------------------------------------------------------------
+   DE TWEE GROEPEN
+
+   Per groep één grote kaart en een raster met de rest. Welke er groot staat
+   bepaalt de volgorde in apps.ts: bij de kinderen het huiswerk, bij de groten
+   de geloofsstudie. Dat is geen ranglijst maar een ingang — de andere staan er
+   direct naast en niet eronder.
+--------------------------------------------------------------------------- */
+main{flex:1;padding:34px 0 0}
+.groep + .groep{margin-top:36px}
+.groepkop{display:flex;align-items:center;gap:14px;margin:0 0 16px}
+.groepico{width:46px;height:46px;border-radius:14px;flex:0 0 auto;display:grid;place-items:center;
+  background:var(--surface);border:1px solid var(--line);color:var(--ink-2);box-shadow:var(--schaduw)}
+.groeptekst{display:flex;flex-direction:column;min-width:0}
+.groepkop h2{font-size:1.58rem}
+.groeptekst .klein{font-size:.88rem}
+.groeptel{margin-left:auto;white-space:nowrap;font-family:var(--mono);font-size:.63rem;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+  background:var(--surface);border:1px solid var(--line);border-radius:9999px;padding:5px 12px}
+.groeplijf{display:grid;gap:14px;align-items:stretch}
+@media (min-width:860px){ .groeplijf{grid-template-columns:minmax(268px,1fr) minmax(0,1.2fr)} }
+
+/* De grote kaart draagt de kleur van zijn app als vlak. In het licht is die
+   kleur donker — dus lichte tekst erop; in het donker is dezelfde naam een
+   pastel, en dan zou lichte tekst verdwijnen. Vandaar dat de donkere stand
+   terugvalt op hetzelfde recept als de kleine tegels: donker vlak, lichte
+   letter, de kleur alleen als accent. */
+.uitgelicht{
+  position:relative;overflow:hidden;display:flex;flex-direction:column;
+  text-decoration:none;border-radius:20px;padding:22px 24px 22px;
+  background:var(--k);color:#FFF8EE;border:1px solid var(--k);box-shadow:var(--schaduw);
+  transition:transform .16s ease, box-shadow .16s ease;
+}
+.uitgelicht::after{content:"";position:absolute;right:-80px;bottom:-80px;width:250px;height:250px;
+  border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,255,255,.17),transparent 68%)}
+.uitgelicht:hover,.uitgelicht:focus-visible{transform:translateY(-2px);box-shadow:var(--schaduw-op)}
+.uitgelicht:active{transform:none;box-shadow:var(--schaduw)}
+.uitgelicht > *{position:relative}
+.merkje{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;font-weight:500;
+  color:#FFF8EE;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);
+  border-radius:9999px;padding:5px 11px}
+.uitico{width:80px;height:80px;border-radius:21px;display:block;margin:15px 0 14px;
+  box-shadow:0 10px 26px rgba(0,0,0,.25)}
+.uitgelicht h3{font-size:1.66rem;color:#FFF8EE}
+/* De oude naam blijft staan, klein onder de nieuwe. Hij verdwijnt niet uit de
+   app zelf en hij staat in elk gesprek dat we er tot nu toe over hadden — maar
+   hij is niet meer het eerste wat je moet lezen om de juiste kaart te vinden. */
+.uitoud{margin-top:5px;font-family:var(--mono);font-size:.64rem;letter-spacing:.07em;
+  text-transform:uppercase;color:#FFF8EE;opacity:.75}
+.uitoud .ar{font-family:var(--ar);font-size:1.02rem;letter-spacing:0;text-transform:none;
+  direction:rtl;unicode-bidi:isolate}
+.uitgelicht p{margin-top:9px;font-family:var(--serif);font-size:1rem;line-height:1.5;
+  color:#FFF8EE;opacity:.93;max-width:42ch}
+.detail{margin-top:15px;display:flex;gap:7px;flex-wrap:wrap}
+.uitgelicht .detail span{font-size:.75rem;color:#FFF8EE;border-radius:9999px;padding:3px 11px;
+  background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.26)}
+.opknop{margin-top:20px;align-self:flex-start;display:inline-flex;align-items:center;gap:8px;
+  background:#FFF8EE;color:var(--k);border-radius:11px;padding:11px 18px;font-size:.92rem;font-weight:600}
+@media (prefers-color-scheme:dark){
+  .uitgelicht{background:var(--kbg);color:var(--ink-2);
+    border-color:color-mix(in srgb,var(--k) 34%,var(--line))}
+  .uitgelicht::after{background:radial-gradient(circle,color-mix(in srgb,var(--k) 17%,transparent),transparent 68%)}
+  .uitgelicht h3{color:var(--ink)}
+  .uitgelicht p{color:var(--ink-2);opacity:1}
+  .uitoud{color:var(--muted);opacity:1}
+  .merkje{color:var(--k);background:color-mix(in srgb,var(--k) 15%,transparent);
+    border-color:color-mix(in srgb,var(--k) 34%,transparent)}
+  .uitgelicht .detail span{color:var(--ink-2);background:var(--surface);
+    border-color:color-mix(in srgb,var(--k) 26%,transparent)}
+  .opknop{background:var(--k);color:#141518}
+}
+
+/* De kleine tegels: het pictogram van de app, zijn naam, en in drie woorden wat
+   je er doet. Hetzelfde beeld als op het beginscherm van de telefoon, dus wie
+   het hier aanwijst herkent het daar terug. */
+/* Twee kolommen zodra de tegels naast de grote kaart staan. Ze houden hun eigen
+   hoogte in plaats van zich uit te rekken tot de grote kaart — een tegel van
+   twee regels die tot een halve pagina wordt opgeblazen leest als een fout.
+   Bij een oneven aantal krijgt de laatste de hele rij; dat is netter dan een
+   gat middenin het raster. */
+.tegelraster{display:grid;gap:12px;align-content:start;
+  grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.tegelraster .appt:last-child:nth-child(odd){grid-column:1 / -1}
+@media (min-width:860px){
+  .tegelraster{grid-template-columns:repeat(2,1fr);grid-auto-rows:1fr;align-content:stretch}
+  /* Op de brede tegel staat de pijl niet meer aan de overkant van een halve
+     kolom leegte, maar direct achter de regel waar hij bij hoort. */
+  .tegelraster .appt:last-child:nth-child(odd) .apptrij{justify-content:center}
+  .tegelraster .appt:last-child:nth-child(odd) .apptpijl{margin-left:8px}
+}
+.appt{
+  display:flex;flex-direction:column;text-decoration:none;color:inherit;min-width:0;
+  background:var(--surface);border:1px solid var(--line);border-radius:16px;
+  padding:16px 15px 15px;box-shadow:var(--schaduw);justify-content:center;
   transition:transform .16s ease, border-color .16s ease, box-shadow .16s ease;
 }
-/* De gekleurde rand links is het snelste onderscheid tussen de kaarten;
-   vier pixel leest ook op een telefoon in de zon. */
-a.app::before{content:"";position:absolute;inset:0 auto 0 0;width:5px;background:var(--k)}
-/* De tegel is het échte pictogram van de app, hetzelfde bestand dat de telefoon
-   op het beginscherm zet. Eerst stond hier een emoji: aardig, maar dan lijkt de
-   kaart hier op niets van wat je daarna op je toestel ziet. Nu is het één beeld:
-   wie het hier aanwijst, herkent het daar terug. */
-.tegel{width:50px;height:50px;border-radius:14px;flex:0 0 auto;display:block;
-  box-shadow:0 2px 8px color-mix(in srgb, var(--k) 30%, transparent)}
-a.app:hover,a.app:focus-visible{transform:translateY(-2px);border-color:var(--k);box-shadow:var(--schaduw-op)}
-a.app:active{transform:translateY(0);box-shadow:var(--schaduw)}
-.kop{display:flex;align-items:center;gap:11px;flex-wrap:wrap}
-.kop h2{font-size:1.44rem;color:var(--ink)}
-.kop .ar{font-family:var(--ar);font-size:1.14rem;color:var(--k);direction:rtl;unicode-bidi:isolate}
-/* De oude naam blijft staan, klein. Hij verdwijnt niet uit de app zelf en hij
-   staat in elk gesprek dat we er tot nu toe over hadden — maar hij is niet meer
-   het eerste wat een kind moet lezen om de juiste tegel te vinden. */
-.oud{font-family:var(--mono);font-size:.63rem;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--muted);white-space:nowrap}
-.oud .ar{font-family:var(--ar);font-size:.86rem;text-transform:none;letter-spacing:0;
-  direction:rtl;unicode-bidi:isolate;color:var(--muted)}
-.rol{
-  margin-left:auto;font-family:var(--mono);font-size:.63rem;letter-spacing:.07em;text-transform:uppercase;
-  background:var(--surface);color:var(--k);padding:5px 10px;border-radius:6px;white-space:nowrap;font-weight:500;
-  border:1px solid color-mix(in srgb, var(--k) 25%, transparent);
-}
-a.app p{margin-top:9px;font-family:var(--serif);font-size:1.03rem;line-height:1.52;color:var(--ink-2);max-width:52ch}
-.detail{margin-top:14px;display:flex;gap:7px;flex-wrap:wrap}
-.detail span{font-size:.78rem;color:var(--ink-2);background:var(--surface);
-  border:1px solid color-mix(in srgb, var(--k) 22%, transparent);border-radius:20px;padding:3px 11px}
-.pijl{margin-top:17px;font-size:.88rem;color:var(--k);font-weight:600;letter-spacing:-.005em}
-.snel{margin-top:24px;line-height:1.9}
-.snel a{color:var(--academie);text-decoration:none;border-bottom:1px solid var(--line-sterk);padding-bottom:1px}
-.snel a:hover{border-bottom-color:var(--academie)}
+.appt:hover,.appt:focus-visible{transform:translateY(-2px);border-color:var(--k);box-shadow:var(--schaduw-op)}
+.appt:active{transform:none;box-shadow:var(--schaduw)}
+.apptico{width:44px;height:44px;border-radius:13px;display:block;margin:0 auto;
+  box-shadow:0 3px 10px color-mix(in srgb,var(--k) 32%,transparent)}
+.appt h3{margin-top:12px;text-align:center;font-size:1.05rem;line-height:1.25}
+.apptrij{margin-top:11px;display:flex;align-items:flex-end;gap:8px}
+.apptzin{min-width:0;font-size:.79rem;line-height:1.35;color:var(--muted)}
+.apptpijl{margin-left:auto;flex:0 0 auto;color:var(--k);font-weight:700;font-size:.95rem;line-height:1.3}
 
-footer{padding:44px 0 34px;border-top:1px solid var(--line);margin-top:46px}
+/* De balk onderaan. In het ontwerp stond hier een tip van de dag; het is een
+   snelkoppeling geworden, want een tip die niemand geschreven heeft is vulling
+   en deze drie cursussen zijn anders drie klikken diep. */
+.snelbalk{margin-top:30px;display:flex;align-items:center;gap:13px;flex-wrap:wrap;
+  background:var(--academie-bg);border-radius:16px;padding:14px 18px;
+  border:1px solid color-mix(in srgb,var(--academie) 26%,transparent)}
+.snelico{width:34px;height:34px;border-radius:10px;flex:0 0 auto;display:grid;place-items:center;
+  background:var(--surface);color:var(--academie);
+  border:1px solid color-mix(in srgb,var(--academie) 26%,transparent)}
+.snelbalk strong{font-family:var(--serif);font-size:1.02rem;font-weight:600;color:var(--ink)}
+.snellinks{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.snellinks a{font-size:.86rem;font-weight:500;text-decoration:none;color:var(--academie);
+  background:var(--surface);border-radius:9999px;padding:5px 13px;
+  border:1px solid color-mix(in srgb,var(--academie) 30%,transparent)}
+.snellinks a:hover{border-color:var(--academie)}
+
+/* Het pictogram van een app zoals het in het ouderoverzicht meekomt. */
+.tegel{border-radius:14px;flex:0 0 auto;display:block;
+  box-shadow:0 2px 8px color-mix(in srgb, var(--k) 30%, transparent)}
+
+footer{padding:40px 0 34px;border-top:1px solid var(--line);margin-top:44px}
 footer p{font-size:.85rem;color:var(--muted);max-width:56ch}
 footer p + p{margin-top:9px}
+footer .meta{margin-top:16px}
 
 /* ---------------------------------------------------------------------------
    DE POORT — het scherm waar je je meldt.

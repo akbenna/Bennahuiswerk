@@ -9,15 +9,20 @@
  * De apps zelf hebben hun eigen inlog nog. Dat is met opzet: eerst deze poort
  * erbij zetten en gebruiken, daarna de apps er één voor één op aansluiten. Zo
  * werkt er onderweg niets niet meer.
+ *
+ * Achter de poort is dit geen lijst kaarten meer maar een werkblad: een vaste
+ * zijbalk links met het merk en de weg naar alles, en rechts het onthaal met de
+ * klok, de twee groepen apps en de snelkoppelingen. De zijbalk vervangt de
+ * balk die hier vroeger bovenaan plakte — die zei precies hetzelfde.
  */
 import { useCallback, useEffect, useState } from 'react'
+import type { ReactNode } from 'react'
 import { APPS } from './apps'
 import type { AppTegel } from './apps'
-import { Balk, Kaarten, Merk, Voet } from './onderdelen'
+import { Appgroep, Balk, GROEPEN, Onthaal, Snelbalk, Voet, Zijbalk } from './onderdelen'
 import { Code, Kiezen, Opzetten } from './schermen/Poort'
 import { Ouder } from './schermen/Ouder'
 import { CodeWijzigen } from './schermen/CodeWijzigen'
-import { hoofd } from './opmaak'
 import type { Ik } from './sessie'
 import { meldAan, meldAf, wieBenIk, zetOuderWw } from './sessie'
 import type { Lid } from '@/gedeeld/db/bennahub'
@@ -73,13 +78,41 @@ export function App() {
     void start()
   }, [start])
 
+  const naarOverzicht = useCallback(() => zetScherm({ naam: 'ouder' }), [])
+  const naarWachtwoord = useCallback(() => zetScherm({ naam: 'wachtwoord' }), [])
+
   const balk = (breed?: boolean) =>
     ik ? (
       <Balk ik={ik} breed={breed ?? false}
-            naarOverzicht={() => zetScherm({ naam: 'ouder' })}
-            naarWachtwoord={() => zetScherm({ naam: 'wachtwoord' })}
+            naarOverzicht={naarOverzicht}
+            naarWachtwoord={naarWachtwoord}
             opAfmelden={afmelden} />
     ) : null
+
+  /** Het werkblad: zijbalk links, wat je meegeeft rechts. Alleen de zichtbare
+   *  groepen komen in het menu — wie geen apps voor de groten heeft, hoort daar
+   *  ook geen regel voor te zien staan. */
+  const werkblad = (lijst: readonly AppTegel[], boven?: ReactNode) => {
+    const groepen = GROEPEN.filter((g) => lijst.some((a) => a.groep === g.groep))
+    return (
+      <div className="hub">
+        <Zijbalk ik={ik} groepen={groepen}
+                 naarOverzicht={naarOverzicht}
+                 naarWachtwoord={naarWachtwoord}
+                 opAfmelden={afmelden} />
+        <div className="romp">
+          {boven}
+          <main>
+            {groepen.map((g) => (
+              <Appgroep key={g.anker} kop={g} lijst={lijst.filter((a) => a.groep === g.groep)} />
+            ))}
+            <Snelbalk />
+          </main>
+          <Voet />
+        </div>
+      </div>
+    )
+  }
 
   switch (scherm.naam) {
     case 'laden':
@@ -90,32 +123,23 @@ export function App() {
        offline gewoon door, dus we laten de kaarten alsnog zien met een eerlijke
        waarschuwing erboven in plaats van een doodlopende foutmelding. */
     case 'zonderNet':
-      return (
-        <>
-          {balk()}
-          <div className="wrap">
-            <header><Merk /><div className="regenboog" /></header>
-            <main>
-              <div className="kaart" style={{ borderLeft: '3px solid var(--let)' }}>
-                <h3>Geen verbinding</h3>
-                <p className="klein" style={{ marginTop: 6 }}>
-                  Aanmelden lukt nu niet — de codes staan centraal en die zijn even niet te bereiken
-                  ({scherm.fout}). De apps zelf werken zonder internet gewoon door; wat je doet wordt
-                  bewaard en later gelijkgetrokken.
-                </p>
-                <div className="rij" style={{ marginTop: 12 }}>
-                  <button type="button" className="btn sm" onClick={() => void start()}>
-                    Opnieuw proberen
-                  </button>
-                </div>
-              </div>
-              <div style={{ marginTop: 24 }}>
-                <Kaarten lijst={ik ? zichtbareApps(ik) : APPS} />
-              </div>
-            </main>
-            <Voet />
+      return werkblad(
+        ik ? zichtbareApps(ik) : APPS,
+        <header className="welkom mager" id="boven">
+          <div className="welkomtekst">
+            <h1>Geen verbinding</h1>
+            <p className="lede">
+              Aanmelden lukt nu niet — de codes staan centraal en die zijn even niet te bereiken
+              ({scherm.fout}). De apps zelf werken zonder internet gewoon door; wat je doet wordt
+              bewaard en later gelijkgetrokken.
+            </p>
+            <div className="rij">
+              <button type="button" className="btn sm" onClick={() => void start()}>
+                Opnieuw proberen
+              </button>
+            </div>
           </div>
-        </>
+        </header>,
       )
 
     case 'opzetten':
@@ -153,36 +177,15 @@ export function App() {
     case 'ouder':
       return ik ? (
         <Ouder ik={ik} naarHub={() => zetScherm({ naam: 'hub' })}
-               naarWachtwoord={() => zetScherm({ naam: 'wachtwoord' })}
+               naarWachtwoord={naarWachtwoord}
                opAfmelden={afmelden} />
       ) : null
 
     case 'hub':
       if (!ik) return null
-      return (
-        <>
-          {balk()}
-          <div className="wrap">
-            <header style={{ paddingTop: 34 }}>
-              <Merk />
-              <div className="regenboog" />
-              <p className="lede">
-                Hallo {hoofd(ik.naam)}. Kies waar je mee verder wilt — alles wat je doet, komt op jouw
-                naam te staan.
-              </p>
-            </header>
-            <main>
-              <Kaarten lijst={zichtbareApps(ik)} />
-              <p className="meta snel">
-                Rechtstreeks naar een cursus:{' '}
-                <a href="huiswerk/cursussen/kompas.html">Kompas</a> ·{' '}
-                <a href="huiswerk/cursussen/communicatie.html">Verbind</a> ·{' '}
-                <a href="huiswerk/cursussen/presenteren.html">Podium</a>
-              </p>
-            </main>
-            <Voet />
-          </div>
-        </>
+      return werkblad(
+        zichtbareApps(ik),
+        <Onthaal ik={ik} naarOverzicht={naarOverzicht} naarWachtwoord={naarWachtwoord} />,
       )
   }
 }
