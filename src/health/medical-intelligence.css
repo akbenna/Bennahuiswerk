@@ -1,69 +1,89 @@
 /* ============================================================================
    HET BREDE SCHERM
 
-   Boven 960 pixels wordt de tabbalk een zijbalk en krijgt de inhoud twee
-   kolommen. Onder die grens gebeurt hier niets: de telefoon houdt de balk
-   onderaan, want daar hoort hij.
+   Boven 960 pixels wordt de tabbalk een zijbalk en krijgt de inhoud ruimte.
+   Onder die grens gebeurt hier niets: de telefoon houdt de balk onderaan, want
+   daar hoort hij.
+
+   ---------------------------------------------------------------------------
+   WAT HIER MIS GING, EN WAAROM
+
+   Het brede scherm hád geen eigen indeling. Het was de telefoon, uitgerekt. Elk
+   onderdeel is ontworpen op 430 pixels en kreeg er duizend, en dat pakt voor
+   elk onderdeel anders uit — maar nooit goed:
+
+     * De dagenstrook is veertien blokjes met `flex:1 1 0` en geen maximum. Op
+       een telefoon zijn dat chips die samen "veertien dagen" zeggen. Op een
+       breed scherm worden het planken van zeventig pixels met gaten ertussen,
+       en dan lees je een staafdiagram dat niets betekent.
+     * De macrobalken zijn zes pixels hoog. Over driehonderdvijftig pixels
+       breedte is dat een haarlijn, en het getal ernaast verdwijnt in de leegte.
+     * De tekst in de hero liep over duizend pixels. Een regellengte waarbij je
+       oog de volgende regel niet meer terugvindt.
+     * De rechterkolom had één kaartje en verder niets, terwijl de linker alles
+       droeg. En de knop "Eten toevoegen" was een rasteritem zonder `align-self`
+       en rekte dus mee met de hoogte van zijn rij: een groen blok van een halve
+       schermhoogte.
+
+   De regel die eruit volgt: **breedte is geen ruimte om dingen uit te rekken
+   maar om ze naast elkaar te zetten.** De hero is nu zelf twee kolommen — ring
+   en tekst links, de veertien dagen en de macro's rechts — en elk onderdeel
+   houdt de maat waarop het ontworpen is.
+
+   ---------------------------------------------------------------------------
+   ÉÉN PALET, NIET TWEE
+
+   Deze laag had een eigen kleurenset: `--mi-teal`, `--mi-blue`, `--mi-coral`,
+   `--mi-amber`. Vier kleuren die naast de tokens van de app stonden en er niet
+   gelijk aan waren. Het gevolg was zichtbaar: een gevulde knop met een
+   groen-naar-blauw verloop op het brede scherm en een vlakke accentkleur op de
+   telefoon, macrobalken die van kleur wisselden met de schermbreedte, en drie
+   verschillende groenen op één scherm.
+
+   Ze zijn alle vier weg. Wat overblijft is `--k`, `--let`, `--fout`, `--goed`
+   en de macrokleuren uit `stijl.css` — dezelfde die de telefoon gebruikt. Deze
+   laag gaat over indeling; kleur hoort op één plek te staan.
 
    ---------------------------------------------------------------------------
    WAAROM DIT ÉÉN BESTAND IS
 
-   Dit waren er twee — `desktop.css` en `medical-intelligence.css` — die allebei
-   geladen werden en voor negen tiende dezelfde regels bevatten. Dat is geen
-   nette scheiding maar een val: welke wint hangt af van de vololgorde van de
-   imports, en de rest interleavet. Twee dingen bewezen dat het misging.
-
-   De letterfamilie van de merknaam in de zijbalk moest in beide bestanden
-   gerepareerd worden; hetzelfde gold voor het accent. Eén vergeten kopie en je
-   hebt een verschil dat afhangt van de importvolgorde.
-
-   En één lila verloop overleefde het opruimen van het violet, simpelweg omdat
-   het maar in één van de twee stond: `.chip.aan`, de accountknop. Precies de
-   fout waar dit soort verdubbeling voor gemaakt is.
-
-   Alles staat nu hier. De tokens komen uit `stijl.css`, zodat licht en donker
-   vanzelf meeschakelen en er geen tweede plek is om te vergeten.
+   Dit waren er twee — `desktop.css` en dit — die allebei geladen werden en voor
+   negen tiende dezelfde regels bevatten. Welke won hing af van de importvolgorde.
+   Eén lila verloop overleefde het opruimen van het violet omdat het maar in één
+   van de twee stond. Alles staat nu hier.
    ========================================================================== */
 
-:root{
-  /* --mi-teal wees naar een eigen groen (#2f756d) naast het accent van de app.
-     Twee groenen op één scherm leest als een fout, ook als geen van beide fout
-     is. Hij volgt nu het accent. De andere kleuren blijven van deze laag: die
-     dragen toestanden en niet het merk. */
-  --mi-teal:var(--k); --mi-blue:#4c7fd9; --mi-coral:#d86b62; --mi-amber:#d39a36;
-}
-
 @media (min-width:960px){
+  /* Eén zachte wassing in de accentkleur, links boven. Er stonden er twee: een
+     blauwe en een violette, allebei buiten de familie. */
   body{padding:0;overflow-x:hidden;
-    background:radial-gradient(circle at 7% 0%,rgba(76,127,217,.09),transparent 30rem),
-               radial-gradient(circle at 92% 4%,rgba(128,103,200,.09),transparent 32rem),
+    background:radial-gradient(1100px 520px at 10% -8%,rgba(16,168,126,.07),transparent 70%),
                var(--canvas)}
   .wrap{max-width:none;margin:0;padding:0 42px 48px 286px}
 
   /* De zijbalk draagt de merknaam al. Hem daarnaast nog eens in koeienletters
-     boven de inhoud zetten is hetzelfde woord twee keer op één scherm, waarvan
-     één keer als het grootste element. Op de telefoon staat hij op 1,02rem en
-     daar is geen zijbalk; hier mag hij dus net zo klein blijven. */
-  header{max-width:1320px;padding:28px 0 20px}
+     boven de inhoud zetten is hetzelfde woord twee keer op één scherm. */
+  header{max-width:1320px;padding:26px 0 18px}
   .merk{align-items:center}
   .sub{font-size:.9rem}
 
   nav.tabs{left:0;right:auto;top:0;bottom:0;width:248px;height:100dvh;
     display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;
-    gap:7px;padding:27px 14px;border-top:0;border-right:1px solid var(--lijn);
+    gap:5px;padding:27px 14px;border-top:0;border-right:1px solid var(--lijn);
     background:color-mix(in srgb,var(--vlak) 93%,transparent);backdrop-filter:blur(18px);
     box-shadow:8px 0 30px rgba(25,50,48,.05)}
   nav.tabs:before{content:'BennaHealth';font-family:var(--kop);font-size:1.25rem;
     color:var(--ink);padding:0 14px 2px}
   nav.tabs:after{content:'MEDICAL INTELLIGENCE';font-family:var(--mono);font-size:.58rem;
-    letter-spacing:.13em;color:var(--mi-teal);padding:0 14px 20px}
+    letter-spacing:.13em;color:var(--k);padding:0 14px 20px}
   nav.tabs button{display:grid;grid-template-columns:30px 1fr;align-items:center;
     justify-content:start;gap:9px;min-width:0;text-align:left;padding:11px 13px;
-    font-size:.84rem;border:1px solid transparent;transition:.15s ease}
+    /* Stond op --grijs en las als uitgeschakeld. Een tabblad waar je heen kunt
+       hoort net zo leesbaar te zijn als het tabblad waar je bent. */
+    font-size:.86rem;color:var(--ink2);border:1px solid transparent;transition:.15s ease}
   nav.tabs button .ic{font-size:1.1rem;text-align:center}
   /* Dezelfde tokens als de tabbalk op de telefoon: kbg als vlak, k als tekst en
-     als streepje. Daarmee is er geen aparte donkere regel nodig — de tokens
-     schakelen zelf. */
+     als streepje. Daarmee is er geen aparte donkere regel nodig. */
   nav.tabs button[aria-selected=true]{background:var(--kbg);color:var(--k);
     border-color:transparent;box-shadow:inset 3px 0 0 var(--k)}
   nav.tabs button:hover{background:var(--vlak2)}
@@ -74,40 +94,108 @@
   @keyframes mi-in{from{opacity:.55;transform:translateY(4px)}to{opacity:1;transform:none}}
   footer{max-width:1320px;padding:16px 2px;color:var(--dim)}
 
+  /* Op de telefoon staan de pijlen aan de randen en het woord in het midden;
+     dat is daar precies goed. Hier zouden ze duizend pixels uit elkaar staan en
+     is het geen bedieningselement meer maar drie losse dingen. */
+  .dagnav{justify-content:flex-start;gap:12px;width:max-content}
+
   .kaart{border-radius:18px;padding:20px 22px;box-shadow:0 10px 30px rgba(25,50,48,.055)}
   .duo{gap:18px} .trio{gap:14px}
-  .hero{border-radius:24px;box-shadow:0 22px 55px rgba(37,91,83,.12)}
-  .heroboven h2{font-size:2rem} .heroring{gap:30px}
   .hoofdknop{min-height:52px;border-radius:14px}
 
-  .kaart.let{border-left-color:var(--mi-amber)}
-  .kaart.fout{border-left-color:var(--mi-coral)}
-  .kaart.goed{border-left-color:#4f9a54}
-  /* Stond op een lila verloop met een grijsblauwe rand — het laatste restje van
-     het violet, dat het opruimen overleefde omdat het maar in één van de twee
-     bestanden stond. Nu het accent, net als het rondje op de telefoon. */
+  /* Dezelfde tokens als op de telefoon. Hier stonden een eigen amber, een eigen
+     koraal en een derde groen. */
+  .kaart.let{border-left-color:var(--let)}
+  .kaart.fout{border-left-color:var(--fout)}
+  .kaart.goed{border-left-color:var(--goed)}
   .chip.aan{background:var(--kbg);border-color:transparent;color:var(--k)}
-  .knop.vol{background:linear-gradient(135deg,var(--mi-teal),#397c91);border-color:transparent;
-    box-shadow:0 8px 20px rgba(47,117,109,.18)}
-  .balk>i{background:linear-gradient(90deg,var(--mi-teal),var(--mi-blue))}
-  .balk>i.let{background:linear-gradient(90deg,var(--mi-amber),var(--mi-coral))}
-  .balk>i.goed{background:linear-gradient(90deg,#4f9a54,var(--mi-teal))}
+
+  /* --- de hero ---------------------------------------------------------- */
+
+  .hero{border-radius:24px;padding:26px 28px 24px;
+    box-shadow:0 18px 46px rgba(20,60,50,.11);
+    /* Een dunne rand van binnen: de lichte verlopen zijn zo bleek dat de kaart
+       anders in de achtergrond wegvalt. */
+    outline:1px solid rgba(20,60,50,.06);outline-offset:-1px}
+  .hero h2{font-size:1.9rem;letter-spacing:-.015em}
+  .heroring{gap:26px}
+  .herocijfers{max-width:52ch}
+
+  /* De veertien dagen houden hun maat. Zonder dit maximum worden het planken. */
+  .strook{gap:5px;height:38px}
+  .strook>i{max-width:26px;border-radius:6px}
+
+  /* Drie tegels in plaats van drie haarlijnen over de volle breedte. Het getal
+     is waar je naar kijkt, dus dat wordt groter; de staaf blijft de maat. */
+  .macros{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}
+  .macro{background:color-mix(in srgb,var(--vlak) 58%,transparent);
+    border:1px solid color-mix(in srgb,var(--lijn) 65%,transparent);
+    border-radius:14px;padding:11px 12px}
+  .macro b{font-size:1.3rem}
+  .macro .staaf{margin-top:8px;height:7px}
+}
+
+/* Vanaf 1240 pixels past de hero in twee kolommen: links waar je staat, rechts
+   waar het vandaan komt.
+
+   Die grens is gemeten en niet gekozen. Hij stond eerst op 1100, en daar klopte
+   de rekensom niet: de rechterkolom eist 380 pixels voor de veertien dagen, en
+   wat er dan links overblijft is 356 — te weinig voor een ring van 130 naast een
+   alinea. Het gevolg was tekst die na drie woorden afbreekt, wat erger is dan
+   één kolom. Onder deze grens blijft de hero dus één kolom; de strook heeft daar
+   de volle breedte en houdt zijn maat via het maximum per blok. */
+@media (min-width:1240px){
+  .hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(380px,.8fr);
+    column-gap:36px;align-items:start}
+  .heroboven{grid-column:1/-1;margin-bottom:20px}
+  .heroring{grid-column:1;grid-row:2/span 3;align-self:center;margin-top:0}
+  .hero>.strook{grid-column:2;grid-row:2;margin-top:2px}
+  .hero>.mini{grid-column:2;grid-row:3}
+  .hero>.macros{grid-column:2;grid-row:4;align-self:end}
 }
 
 @media (min-width:1280px){
   .wrap{padding-left:310px;padding-right:54px}
   nav.tabs{width:270px}
-  #inhoud{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,.75fr);
-    gap:18px;align-items:start}
-  #inhoud>.hero{grid-column:1/-1}
+
+  /* Geen `dense`. Dat leek de juiste keuze — het vult de lege rijen die de
+     zijkolom overhoudt — maar het vult ze met de eerstvolgende kaart die past,
+     en dat was de weegkaart, boven de hero uit. Een raster dat achteruit mag
+     zoeken zet de leesvolgorde op zijn kop. De gewone, vooruitlopende plaatsing
+     doet precies wat de bedoeling is: de weging komt naast de coach, de
+     bewegingskaart naast de maaltijdvakken, en een gaatje in de zijkolom is
+     goedkoper dan een kaart die op de verkeerde plek opduikt. */
+  #inhoud{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,.72fr);
+    gap:20px;align-items:start}
+  /* Rasteritems rekken standaard mee met de hoogte van hun rij. Dat maakte van
+     "Eten toevoegen" een groen blok van een halve schermhoogte. */
+  #inhoud>*{align-self:start}
+
+  /* De vaste kolomindeling geldt alleen op een scherm dat zélf zegt wat er
+     terzijde hoort. Zonder deze voorwaarde zou `grid-column:1` ook gelden op
+     Inzicht, Voeding, Beweging, Gezondheid en Profiel — schermen zonder
+     zijkolom — en die zouden dan alles in de linkerkolom stapelen met een lege
+     strook van veertig procent ernaast. Daar blijft de gewone plaatsing staan,
+     die de kaarten om en om verdeelt. */
+  #inhoud:has(.zijkolom)>*{grid-column:1}
+  #inhoud>.hero,#inhoud>.duo,#inhoud>.trio,#inhoud>footer{grid-column:1/-1}
+  #inhoud>.zijkolom{grid-column:2}
+  /* Een ::before op een rastercontainer is zélf een rasteritem. Zonder deze
+     regel spant de scheidingslijn maar één kolom en houdt hij op halverwege het
+     scherm — een streep die nergens naartoe loopt. */
+  #inhoud:before{grid-column:1/-1}
   #inhoud>.kaart{margin-bottom:0}
-  #inhoud>.duo,#inhoud>.trio,#inhoud>footer{grid-column:1/-1}
+  /* Een knop van zeshonderd pixels breed is geen knop meer maar een balk. */
+  #inhoud>.hoofdknop{max-width:340px}
 }
 
 @media (prefers-color-scheme:dark) and (min-width:960px){
-  body{background:radial-gradient(circle at 8% 0%,rgba(76,127,217,.14),transparent 30rem),
+  body{background:radial-gradient(1100px 520px at 10% -8%,rgba(40,190,142,.10),transparent 70%),
                  var(--canvas)}
   nav.tabs{background:color-mix(in srgb,var(--vlak) 94%,transparent);
     box-shadow:10px 0 35px rgba(0,0,0,.22)}
   .kaart{box-shadow:0 12px 34px rgba(0,0,0,.18)}
+  .hero{box-shadow:0 18px 46px rgba(0,0,0,.28);outline-color:rgba(255,255,255,.05)}
+  .macro{background:color-mix(in srgb,var(--vlak) 45%,transparent);
+    border-color:color-mix(in srgb,var(--lijn) 55%,transparent)}
 }
