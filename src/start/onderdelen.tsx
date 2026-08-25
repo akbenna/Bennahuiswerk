@@ -15,44 +15,73 @@ export function Merk() {
   return <div className="merk"><span className="b">Benna</span>Hub</div>
 }
 
-export function Kaart({ tegel }: { tegel: AppTegel }) {
+export function Kaart({ tegel, featured = false }: { tegel: AppTegel; featured?: boolean }) {
   return (
-    <a className="app" href={tegel.href} style={kleurVan(tegel.k)}>
-      <div className="kop">
-        <img className="tegel" src={tegel.ico} alt="" width={50} height={50} />
-        <h2>{tegel.naam}</h2>
-        {tegel.oud && (
-          <span className="oud">
-            {tegel.oud} <span className="ar" lang="ar">{tegel.ar}</span>
-          </span>
-        )}
-        <span className="rol">{tegel.wie}</span>
+    <a className={'app' + (featured ? ' featured' : '')} href={tegel.href} style={kleurVan(tegel.k)}>
+      <div className="app-topline">
+        <div className="app-icon-wrap">
+          <img className="tegel" src={tegel.ico} alt="" width={50} height={50} />
+        </div>
+        <div className="app-heading">
+          <div className="app-title-row">
+            <h2>{tegel.naam}</h2>
+            {tegel.oud && <span className="oud">{tegel.oud}</span>}
+          </div>
+          {tegel.ar && <span className="app-ar" lang="ar">{tegel.ar}</span>}
+          <span className="rol">{tegel.wie}</span>
+        </div>
+        <span className="app-open">Openen <span aria-hidden="true">↗</span></span>
       </div>
-      <p>{tegel.zin}</p>
+      <p className="app-description">{tegel.zin}</p>
       <div className="detail">{tegel.detail.map((d) => <span key={d}>{d}</span>)}</div>
-      <div className="pijl">Openen →</div>
     </a>
   )
 }
 
+function sortApps(lijst: readonly AppTegel[]) {
+  const volgorde = ['huiswerk', 'bidaya', 'lisan', 'bunyan', 'raha', 'health', 'academie', 'sanad', 'rasikh']
+  return [...lijst].sort((a, b) => volgorde.indexOf(a.id) - volgorde.indexOf(b.id))
+}
+
 export function Kaarten({ lijst }: { lijst: readonly AppTegel[] }) {
-  const kind = lijst.filter((a) => a.groep === 'kind')
-  const groot = lijst.filter((a) => a.groep === 'groot')
+  const gesorteerd = sortApps(lijst)
+  const kind = gesorteerd.filter((a) => a.groep === 'kind')
+  const groot = gesorteerd.filter((a) => a.groep === 'groot')
+
   return (
-    <>
+    <div className="app-portaal">
       {kind.length > 0 && (
-        <section className="groep">
-          <h2 className="groepkop">Voor de kinderen</h2>
-          <div className="kaarten">{kind.map((a) => <Kaart key={a.id} tegel={a} />)}</div>
+        <section className="groep app-section">
+          <div className="section-heading">
+            <div>
+              <p className="section-kicker">Leren &amp; ontdekken</p>
+              <h2 className="groepkop">Voor de kinderen</h2>
+              <p className="section-intro">Kies een app en ga meteen verder waar je gebleven bent.</p>
+            </div>
+            <span className="section-count">{kind.length} apps</span>
+          </div>
+          <div className="kaarten kind-grid">
+            {kind.map((a, i) => <Kaart key={a.id} tegel={a} featured={i === 0} />)}
+          </div>
         </section>
       )}
+
       {groot.length > 0 && (
-        <section className="groep">
-          <h2 className="groepkop">Voor de groten</h2>
-          <div className="kaarten smal">{groot.map((a) => <Kaart key={a.id} tegel={a} />)}</div>
+        <section className="groep app-section adults-section">
+          <div className="section-heading">
+            <div>
+              <p className="section-kicker">Verdieping &amp; dagelijks gebruik</p>
+              <h2 className="groepkop">Voor de groten</h2>
+              <p className="section-intro">Persoonlijke tools, studie en verdieping op één plek.</p>
+            </div>
+            <span className="section-count">{groot.length} apps</span>
+          </div>
+          <div className="kaarten adult-grid">
+            {groot.map((a, i) => <Kaart key={a.id} tegel={a} featured={i === 0} />)}
+          </div>
         </section>
       )}
-    </>
+    </div>
   )
 }
 
