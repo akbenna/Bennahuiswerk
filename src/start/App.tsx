@@ -25,6 +25,7 @@ import { Ouder } from './schermen/Ouder'
 import { CodeWijzigen } from './schermen/CodeWijzigen'
 import type { Ik } from './sessie'
 import { meldAan, meldAf, wieBenIk, zetOuderWw } from './sessie'
+import { voortgangAlles } from './voortgang'
 import type { Lid } from '@/gedeeld/db/bennahub'
 import { ledenLijst, overzicht } from '@/gedeeld/db/bennahub'
 
@@ -94,6 +95,7 @@ export function App() {
    *  ook geen regel voor te zien staan. */
   const werkblad = (lijst: readonly AppTegel[], boven?: ReactNode) => {
     const groepen = GROEPEN.filter((g) => lijst.some((a) => a.groep === g.groep))
+    const standen = voortgangAlles(lijst, ik)
     return (
       <div className="hub">
         <Zijbalk ik={ik} groepen={groepen}
@@ -104,7 +106,8 @@ export function App() {
           {boven}
           <main>
             {groepen.map((g) => (
-              <Appgroep key={g.anker} kop={g} lijst={lijst.filter((a) => a.groep === g.groep)} />
+              <Appgroep key={g.anker} kop={g} standen={standen}
+                        lijst={lijst.filter((a) => a.groep === g.groep)} />
             ))}
             <Snelbalk />
           </main>

@@ -173,7 +173,10 @@ header{padding:56px 0 0}
   .zijkop img{margin:0;width:38px;height:38px}
   .zij .merk{font-size:1.24rem}
   .zijzin,.zijvoet{display:none}
-  .zijnav{flex-direction:row;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+  /* Wikkelen en niet opzij schuiven: een knop die achter de rand staat is op
+     een telefoon een knop die er niet is, en "Afmelden" hoort niet weg te
+     kunnen vallen. */
+  .zijnav{flex-direction:row;flex-wrap:wrap;gap:8px}
   .zijnav + .zijnav{margin-top:8px}
   /* width:100% uit de basisregel zou hier de eerste knop de hele rij geven en
      de rest buiten beeld duwen. */
@@ -266,6 +269,19 @@ main{flex:1;padding:34px 0 0}
 .detail{margin-top:15px;display:flex;gap:7px;flex-wrap:wrap}
 .uitgelicht .detail span{font-size:.75rem;color:#FFF8EE;border-radius:9999px;padding:3px 11px;
   background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.26)}
+/* De cijfers op de grote kaart. Ze staan waar eerst de kenmerken stonden: zodra
+   er iets te melden is over waar je gebleven bent, is dát het antwoord waar je
+   voor kijkt, en niet meer wat de app kan. Wikkelt netjes op een telefoon —
+   drie getallen naast elkaar zolang het past, daarna onder elkaar. */
+.uitstand{margin-top:16px;display:flex;align-items:flex-end;gap:10px 20px;flex-wrap:wrap;
+  padding-top:15px;border-top:1px solid rgba(255,255,255,.22)}
+.uitcijfer{display:flex;flex-direction:column;min-width:0}
+.uitcijfer b{font-family:var(--serif);font-size:1.62rem;line-height:1.05;font-weight:600}
+.uitcijfer span{margin-top:2px;font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;
+  text-transform:uppercase;opacity:.8}
+.uitlaatst{margin-left:auto;align-self:center;font-family:var(--mono);font-size:.62rem;
+  letter-spacing:.07em;text-transform:uppercase;color:#FFF8EE;opacity:.85;white-space:nowrap}
+
 .opknop{margin-top:20px;align-self:flex-start;display:inline-flex;align-items:center;gap:8px;
   background:#FFF8EE;color:var(--k);border-radius:11px;padding:11px 18px;font-size:.92rem;font-weight:600}
 @media (prefers-color-scheme:dark){
@@ -280,6 +296,8 @@ main{flex:1;padding:34px 0 0}
   .uitgelicht .detail span{color:var(--ink-2);background:var(--surface);
     border-color:color-mix(in srgb,var(--k) 26%,transparent)}
   .opknop{background:var(--k);color:#141518}
+  .uitstand{border-top-color:color-mix(in srgb,var(--k) 26%,var(--line))}
+  .uitlaatst{color:var(--muted);opacity:1}
 }
 
 /* De kleine tegels: het pictogram van de app, zijn naam, en in drie woorden wat
@@ -311,7 +329,17 @@ main{flex:1;padding:34px 0 0}
 .apptico{width:44px;height:44px;border-radius:13px;display:block;margin:0 auto;
   box-shadow:0 3px 10px color-mix(in srgb,var(--k) 32%,transparent)}
 .appt h3{margin-top:12px;text-align:center;font-size:1.05rem;line-height:1.25}
+/* Twee cijfers onder de naam, met het label ervoor: "Punten 240". Andersom —
+   het getal voorop — leest scheef zodra een waarde zelf een woord is, zoals het
+   spoor bij Arabisch. Ze wikkelen, want op een smalle tegel past er één per
+   regel en dat is beter dan afgeknipt. */
+.apptcijfers{margin-top:9px;display:flex;justify-content:center;flex-wrap:wrap;
+  gap:2px 12px;font-family:var(--mono);font-size:.6rem;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--muted);text-align:center}
+.apptcijfers b{margin-left:4px;font-family:var(--sans);font-size:.88rem;letter-spacing:0;
+  text-transform:none;color:var(--ink);font-weight:600}
 .apptrij{margin-top:11px;display:flex;align-items:flex-end;gap:8px}
+.apptrij .speld{min-width:0}
 .apptzin{min-width:0;font-size:.79rem;line-height:1.35;color:var(--muted)}
 .apptpijl{margin-left:auto;flex:0 0 auto;color:var(--k);font-weight:700;font-size:.95rem;line-height:1.3}
 

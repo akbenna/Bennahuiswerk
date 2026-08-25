@@ -68,6 +68,53 @@ const euroTekst = (n: number): string =>
 /* -------------------------------------------------------- per app ---------- */
 
 export const UITLEZERS: Readonly<Record<string, Uitlezer>> = {
+  /* Huiswerk. Deze uitlezer draait op wat er op het toestel zelf staat en niet
+     op de centrale opslag: de huiswerkapp heeft nog zijn eigen inlog en zet daar
+     nog niets neer. Zie `voortgang.ts`. Verdiend geld staat er bewust niet in —
+     de app rekent dat uit betalingen en bonussen die hier niet compleet te
+     overzien zijn, en een bedrag dat er net naast zit is erger dan geen bedrag. */
+  huiswerk(d) {
+    return sleutels(veld(d, 'prog')).map((pid): Regel => {
+      const p = veld(veld(d, 'prog'), pid)
+      const beheerst = waarden(veld(p, 'cards'))
+        .filter((c) => (getal(veld(c, 'box')) ?? 0) >= 4).length
+      return {
+        wie: pid,
+        laatst: tekst(veld(p, 'lastDay')),
+        euro: null,
+        regels: [
+          ['Punten', getal(veld(p, 'punten')) ?? 0],
+          ['Dagreeks', getal(veld(p, 'dagstreak')) ?? 0],
+          ['Beheerst', beheerst],
+          ['Insignes', lijst(veld(p, 'badges')).length],
+        ],
+      }
+    })
+  },
+
+  /* De Academie is niet één opslag maar drie — Kompas, Verbind en Podium hebben
+     elk hun eigen sleutel. Ze komen hier binnen als `delen`. De cursussen kennen
+     geen profielen, dus wat er staat is wat er op dit toestel gedaan is. */
+  academie(d) {
+    const delen = lijst(veld(d, 'delen'))
+    const af = delen.reduce<number>(
+      (n, c) => n + waarden(veld(c, 'done')).filter(Boolean).length, 0)
+    const kaarten = delen.reduce<number>((n, c) => n + aantal(veld(c, 'kaarten')), 0)
+    const dagen = new Set(delen.flatMap(
+      (c) => lijst(veld(c, 'oefdagen')).map(tekst).filter((x): x is string => x != null)))
+    const gesorteerd = [...dagen].sort()
+    return [{
+      wie: 'Iedereen',
+      laatst: gesorteerd.length ? (gesorteerd[gesorteerd.length - 1] ?? null) : null,
+      euro: null,
+      regels: [
+        ['Lessen af', af],
+        ['Oefendagen', dagen.size],
+        ['Kaarten', kaarten],
+      ],
+    }]
+  },
+
   /* Islam leren: profielen in een lijst, voortgang per profiel-id. */
   bidaya(d) {
     return lijst(veld(d, 'profielen')).map((p): Regel => {

@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react'
 import type { CSSProperties, ReactNode } from 'react'
 import type { AppTegel, Groep } from './apps'
 import type { Ik } from './sessie'
-import { hoofd, nu } from './opmaak'
+import { hoofd, nu, stilte } from './opmaak'
+import type { Voortgang } from './voortgang'
 import {
   TekenBoek, TekenGrafiek, TekenHuis, TekenHulp, TekenKalender, TekenKlok,
   TekenLamp, TekenRaster, TekenSleutel, TekenSter, TekenUit,
@@ -44,7 +45,7 @@ const groepTeken = (g: Groep) => (g === 'kind' ? <TekenRaster /> : <TekenBoek />
    de kinderen, en de geloofsstudie bij de groten.
 --------------------------------------------------------------------------- */
 
-export function Uitgelicht({ tegel }: { tegel: AppTegel }) {
+export function Uitgelicht({ tegel, stand }: { tegel: AppTegel; stand?: Voortgang | undefined }) {
   return (
     <a className="uitgelicht" href={tegel.href} style={kleurVan(tegel.k)}>
       <span className="merkje"><TekenSter /> Begin hier</span>
@@ -57,27 +58,70 @@ export function Uitgelicht({ tegel }: { tegel: AppTegel }) {
         </span>
       )}
       <p>{tegel.zin}</p>
-      <div className="detail">{tegel.detail.slice(0, 3).map((d) => <span key={d}>{d}</span>)}</div>
+      {stand
+        ? <Strook stand={stand} />
+        : <div className="detail">{tegel.detail.slice(0, 3).map((d) => <span key={d}>{d}</span>)}</div>}
       <span className="opknop">Open {tegel.naam} <span aria-hidden="true">→</span></span>
     </a>
   )
 }
 
-export function Tegelkaart({ tegel }: { tegel: AppTegel }) {
+/** "Gisteren", of "Selma · gisteren" als de cijfers van iemand anders zijn. */
+const wanneer = (stand: Voortgang): { tekst: string; klasse: string } => {
+  const st = stilte(stand.laatst)
+  return { tekst: stand.wie ? `${hoofd(stand.wie)} · ${st.tekst}` : st.tekst, klasse: st.klasse }
+}
+
+export function Tegelkaart({ tegel, stand }: { tegel: AppTegel; stand?: Voortgang | undefined }) {
+  const st = stand ? wanneer(stand) : null
   return (
     <a className="appt" href={tegel.href} style={kleurVan(tegel.k)}>
       <img className="apptico" src={tegel.ico} alt="" width={44} height={44} />
       <h3>{tegel.naam}</h3>
+      {stand && (
+        <span className="apptcijfers">
+          {stand.cellen.slice(0, 2).map(([label, waarde]) => (
+            <span key={label}>{label} <b>{waarde}</b></span>
+          ))}
+        </span>
+      )}
       <span className="apptrij">
-        <span className="apptzin">{tegel.kort}</span>
+        {/* Waar de app over gaat, tot je hem gebruikt hebt; daarna hoe lang het
+            geleden is — dat is dan het antwoord waar je voor komt kijken. */}
+        {st
+          ? <span className={'speld ' + st.klasse}>{st.tekst}</span>
+          : <span className="apptzin">{tegel.kort}</span>}
         <span className="apptpijl" aria-hidden="true">→</span>
       </span>
     </a>
   )
 }
 
+/** De cijfers op de grote kaart: drie getallen groot, met eronder waar ze over
+ *  gaan, en rechts hoe lang het geleden is. */
+function Strook({ stand }: { stand: Voortgang }) {
+  return (
+    <div className="uitstand">
+      {stand.cellen.slice(0, 3).map(([label, waarde]) => (
+        <span className="uitcijfer" key={label}>
+          <b>{waarde}</b>
+          <span>{label}</span>
+        </span>
+      ))}
+      {/* Hier geen gekleurd speldje. De kleuren van `stilte` zijn gemeten tegen
+          een lichte kaart; op een vlak dat de kleur van zijn app draagt zijn ze
+          onleesbaar. Wat er staat — "vandaag", "vier dagen geleden" — zegt het
+          zelf al, en dat haalt op elk van de negen vlakken zijn contrast. */}
+      <span className="uitlaatst">{wanneer(stand).tekst}</span>
+    </div>
+  )
+}
+
 /** Eén blok: de kop, de grote kaart, en de tegels ernaast. */
-export function Appgroep({ kop, lijst }: { kop: Groepkop; lijst: readonly AppTegel[] }) {
+export function Appgroep(
+  { kop, lijst, standen }:
+  { kop: Groepkop; lijst: readonly AppTegel[]; standen: ReadonlyMap<string, Voortgang> },
+) {
   const [eerste, ...rest] = lijst
   if (!eerste) return null
   return (
@@ -91,10 +135,10 @@ export function Appgroep({ kop, lijst }: { kop: Groepkop; lijst: readonly AppTeg
         <span className="groeptel">{lijst.length} {lijst.length === 1 ? 'app' : 'apps'}</span>
       </div>
       <div className="groeplijf">
-        <Uitgelicht tegel={eerste} />
+        <Uitgelicht tegel={eerste} stand={standen.get(eerste.id)} />
         {rest.length > 0 && (
           <div className="tegelraster">
-            {rest.map((a) => <Tegelkaart key={a.id} tegel={a} />)}
+            {rest.map((a) => <Tegelkaart key={a.id} tegel={a} stand={standen.get(a.id)} />)}
           </div>
         )}
       </div>
@@ -230,7 +274,9 @@ export function Onthaal(
   return (
     <header className="welkom" id="boven">
       <div className="welkomtekst">
-        <h1>Hallo {hoofd(ik.naam)}! <span className="zwaai" aria-hidden="true">👋</span></h1>
+        {/* Een harde spatie voor het zwaaien: anders valt de hand op een smal
+            scherm op een eigen regel onder de naam. */}
+        <h1>Hallo {hoofd(ik.naam)}!{'\u00A0'}<span className="zwaai" aria-hidden="true">👋</span></h1>
         <p className="lede">Kies waar je mee verder wilt — alles wat je doet, komt op jouw naam te staan.</p>
       </div>
       <div className="welkomkaarten">
@@ -309,6 +355,10 @@ export function Voet() {
       <p>
         Elke app bewaart je voortgang op dit toestel én centraal, dus je vindt hem op elk toestel
         terug; zonder internet werkt alles gewoon door en wordt er later gelijkgetrokken.
+      </p>
+      <p>
+        De cijfers op de kaarten komen van dit toestel — van het account dat hier het laatst in die
+        app aanstond. Op een ander toestel staat er dus wat daar gedaan is, tot beide bij zijn.
       </p>
       <p className="meta">Gebouwd voor het gezin Benna</p>
     </footer>
