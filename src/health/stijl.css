@@ -175,6 +175,16 @@ label.veld>span{display:block;font-size:.72rem;color:var(--grijs);margin-bottom:
 .ster[aria-pressed=true]{color:var(--kfel)}
 .ster:hover{color:var(--k)}
 
+/* De kop van een bewaarde maaltijd is de knop die hem open- en dichtklapt. Een
+   knop dus, en geen div met een klikafhandelaar: hij moet met de tab-toets te
+   bereiken zijn en met de spatiebalk te bedienen, en een schermlezer hoort te
+   horen dát het openklapt en of het openstaat. Daar is aria-expanded voor. */
+.maalopen{background:none;border:0;padding:0;margin:0;font:inherit;color:inherit;
+  text-align:left;cursor:pointer;display:block}
+.maalopen .pijl{display:inline-block;color:var(--k);font-size:.85rem;margin-right:5px;
+  transition:transform .15s ease}
+.maalopen[aria-expanded=true] .pijl{transform:rotate(90deg)}
+
 /* Een regel in de duiding van een maaltijd: naam links, getal rechts. De naam
    mag afbreken en wordt niet geknipt — "Tonijn uit blik, uitgelekt verdubbelen"
    afkappen tot "Tonijn uit blik, uitge…" maakt van een uitleg een raadsel. Het

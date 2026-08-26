@@ -555,21 +555,28 @@ function Beschrijven(
 /**
  * Eén bewaarde maaltijd: kiezen, loggen, en desgewenst nakijken.
  *
- * De vier portieknopjes zijn geen sierlijkheid. Een recept staat voor een aantal
- * porties dat je zelf gekozen hebt — twee, meestal — en wat je ervan eet is daar
- * zelden gelijk aan. Zonder die keuze zou je de helft van de tijd een getal
- * loggen waarvan je weet dat het niet klopt.
+ * INGEKLAPT, MET ÉÉN TIK OM TE LOGGEN
  *
- * Wat eronder staat is wat er écht wordt weggeschreven: het punt, de band en de
- * graad die bij dít aantal porties horen. Niet het recept in het algemeen.
+ * Uitgeklapt was elke tegel een blok van tien regels — naam, band, vier
+ * portieknopjes, zes onzekerheidsbronnen, een toelichting en een uitklapje. Bij
+ * vier bewaarde maaltijden vulde dat het hele vel, en dan moet je scrollen langs
+ * dingen die je al weet om bij het zoekveld te komen dat je nodig hebt.
  *
- * Het sterretje bepaalt de volgorde. Dat is de goedkoopste sortering die er is —
- * jij zegt wat bovenaan hoort, in plaats van dat de app het afleidt uit hoe vaak
- * je iets gegeten hebt, want dat laatste straft precies het gerecht af dat je
- * nét bewaard hebt.
+ * Ingeklapt is één regel, en de plus ernaast logt één portie. Dat is meteen de
+ * juiste standaard: één portie is verreweg het gewone geval, en wie een halve
+ * wil klapt open en kiest hem.
  *
- * `opWissen` en `opSter` ontbreken als de tegel uit het zoekveld komt. Daar
- * kijk je wat er is; beheren doe je in de lijst.
+ * WAT ER NOOIT VERDWIJNT
+ *
+ * De graad en de band blijven staan, ook ingeklapt. Dat is geen detail maar de
+ * afspraak van deze app: geen enkel getal zonder zijn onzekerheid. De letter en
+ * de twee grenzen ná het punt zíjn die onzekerheid, samengevat; wat achter het
+ * uitklapje verdwijnt is waar die vandaan komt — welk onderdeel niet gewogen is
+ * en hoe erg dat is. Een samenvatting mag inklappen, de uitkomst niet.
+ *
+ * De portiekeuze verandert de kop mee. Staat er een halve portie gekozen, dan
+ * zegt de kop dat, ook als de tegel weer dichtgaat — anders log je met één tik
+ * iets anders dan wat er staat.
  */
 function Maaltijdtegel(
   { m, moment, opKies, opWissen, opSter }:
@@ -581,60 +588,68 @@ function Maaltijdtegel(
   },
 ) {
   const [aantal, zetAantal] = useState(1)
+  const [open, zetOpen] = useState(false)
   const [weg, zetWeg] = useState(false)
   const a = aggregaat(m, aantal)
 
   return (
     <Kaart plat style={{ marginBottom: 8 }}>
       <Tussen>
-        <span className="groei">
+        {opSter && (
+          <button type="button" className="ster" onClick={opSter} aria-pressed={m.favoriet}
+                  title={m.favoriet ? `${m.naam} niet meer bovenaan` : `${m.naam} bovenaan zetten`}>
+            {m.favoriet ? '★' : '☆'}
+          </button>
+        )}
+        <button type="button" className="maalopen groei" aria-expanded={open}
+                onClick={() => zetOpen((o) => !o)}
+                title={open ? 'Minder tonen' : 'Wat erin zit'}>
           <span className="knip" style={{ fontSize: '.9rem', fontWeight: 600, display: 'block' }}>
-            {opSter && (
-              <button type="button" className="ster" onClick={opSter}
-                      aria-pressed={m.favoriet}
-                      title={m.favoriet ? `${m.naam} niet meer bovenaan` : `${m.naam} bovenaan zetten`}>
-                {m.favoriet ? '★' : '☆'}
-              </button>
-            )}
+            <span className="pijl" aria-hidden="true">›</span>
             {!opSter && m.favoriet && <span aria-hidden="true">★ </span>}
             {m.naam}
           </span>
           <span className="mini">
             <Chip graad={a.conf} /> {dz(a.kcal)} kcal ({dz(a.kcalLaag ?? a.kcal)}–{dz(a.kcalHoog ?? a.kcal)})
             {a.eiwit != null && ` · ${dec(a.eiwit, 1)} g eiwit`}
+            {aantal !== 1 && ` · ${portieNaam(aantal)} portie`}
           </span>
-        </span>
+        </button>
         <Knop vol klein titel={`${m.naam} toevoegen aan je ${moment}`}
               opKlik={() => opKies(aantal)}>+</Knop>
       </Tussen>
 
-      <Rij style={{ marginTop: 8 }}>
-        {[0.5, 1, 1.5, 2].map((n) => (
-          <Keuzechip key={n} aan={aantal === n} opKlik={() => zetAantal(n)}>
-            {portieNaam(n)}
-          </Keuzechip>
-        ))}
-        <span style={{ flex: 1 }} />
-        {opWissen && (weg ? (
-          <>
-            <Knop klein opKlik={opWissen}>echt weg</Knop>
-            <Knop klein opKlik={() => zetWeg(false)}>nee</Knop>
-          </>
-        ) : (
-          <Knop klein titel={`${m.naam} verwijderen`} opKlik={() => zetWeg(true)}>×</Knop>
-        ))}
-      </Rij>
+      {open && (
+        <>
+          <Rij style={{ marginTop: 8 }}>
+            {[0.5, 1, 1.5, 2].map((n) => (
+              <Keuzechip key={n} aan={aantal === n} opKlik={() => zetAantal(n)}>
+                {portieNaam(n)}
+              </Keuzechip>
+            ))}
+            <span style={{ flex: 1 }} />
+            {opWissen && (weg ? (
+              <>
+                <Knop klein opKlik={opWissen}>echt weg</Knop>
+                <Knop klein opKlik={() => zetWeg(false)}>nee</Knop>
+              </>
+            ) : (
+              <Knop klein titel={`${m.naam} verwijderen`} opKlik={() => zetWeg(true)}>×</Knop>
+            ))}
+          </Rij>
 
-      {/* De onzekerheid staat hier en niet achter een uitklapje: wie een halve
-          portie kiest hoort te zien dat dat een aanname is en geen meting. */}
-      {a.onzeker.map((o, i) => (
-        <span className="mini" style={{ display: 'block', marginTop: 3 }} key={i}>· {o}</span>
-      ))}
-      {m.toelichting && (
-        <p className="mini" style={{ marginTop: 6 }}>{m.toelichting}</p>
+          {/* Waar de onzekerheid vandaan komt. De uitkomst ervan — de graad en
+              de band — staat hierboven en gaat nooit weg. */}
+          {a.onzeker.map((o, i) => (
+            <span className="mini" style={{ display: 'block', marginTop: 3 }} key={i}>· {o}</span>
+          ))}
+          {m.toelichting && (
+            <p className="mini" style={{ marginTop: 6 }}>{m.toelichting}</p>
+          )}
+
+          <Duidingsvak m={m} />
+        </>
       )}
-
-      <Duidingsvak m={m} />
     </Kaart>
   )
 }

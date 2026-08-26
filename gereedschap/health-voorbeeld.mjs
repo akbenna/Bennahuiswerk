@@ -344,10 +344,30 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
   /* De bewaarde maaltijd is de kortste weg die het vel kent, en de enige met
      rekenwerk erin: wat er op de tegel staat hoort mee te bewegen met de
      portiekeuze. Een tegel die bij ½ hetzelfde getal toont als bij 1 is niet
-     lelijk maar onwaar, en dat is aan een screenshot niet te zien. */
+     lelijk maar onwaar, en dat is aan een screenshot niet te zien.
+
+     Sinds de tegels ingeklapt beginnen wordt hier ook getoetst wát er ingeklapt
+     te zien is. De afspraak is dat de graad en de band nooit weggaan: die twee
+     zíjn de onzekerheid, samengevat. Wat mag inklappen is waar ze vandaan komen.
+     Een tegel die ingeklapt alleen een naam en een getal toont, breekt de regel
+     waar deze hele app op staat. */
   {
     const tegel = pagina.locator('.venster .kaart', { hasText: 'Tonijnsalade' }).first()
     if (!(await tegel.count())) throw new Error(`${naam}: de bewaarde maaltijd staat er niet`)
+
+    const dicht = (await tegel.locator('.maalopen').getAttribute('aria-expanded')) === 'false'
+    if (!dicht) throw new Error(`${naam}: de maaltijdtegel staat open in plaats van dicht`)
+    if (await tegel.getByRole('button', { name: '½', exact: true }).count()) {
+      throw new Error(`${naam}: de portiekeuze staat er terwijl de tegel dicht is`)
+    }
+    const kop = (await tegel.locator('.mini').first().textContent()) ?? ''
+    if (!/\(\d[\d.]*–\d[\d.]*\)/.test(kop)) {
+      throw new Error(`${naam}: ingeklapt staat er geen band — ${JSON.stringify(kop)}`)
+    }
+    if (!(await tegel.locator('.conf').count())) {
+      throw new Error(`${naam}: ingeklapt staat er geen graad`)
+    }
+
     const kcal = async () => {
       const t = (await tegel.locator('.mini').first().textContent()) ?? ''
       const m = t.match(/([\d.]+) kcal/)
@@ -355,22 +375,29 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
       return Number(m[1].replace(/\./g, ''))
     }
     const heel = await kcal()
+
+    await tegel.locator('.maalopen').click()
+    await pagina.waitForTimeout(120)
     await tegel.getByRole('button', { name: '½', exact: true }).click()
     await pagina.waitForTimeout(120)
     const half = await kcal()
     if (Math.abs(half - heel / 2) > 1) {
       throw new Error(`${naam}: ½ portie geeft ${half} en niet ongeveer ${heel / 2}`)
     }
+    /* En de kop zegt dat er een halve gekozen is. Zonder dat log je met één tik
+       iets anders dan wat er staat zodra de tegel weer dichtgaat. */
+    if (!((await tegel.locator('.mini').first().textContent()) ?? '').includes('½ portie')) {
+      throw new Error(`${naam}: de kop zegt niet dat er een halve portie gekozen is`)
+    }
     /* En de aanname hoort op de tegel te staan, niet achter een uitklapje. */
     const uitleg = (await tegel.textContent()) ?? ''
     if (!uitleg.includes('niet apart gewogen')) {
       throw new Error(`${naam}: de tegel zegt niet dat een deelportie een aanname is`)
     }
-    console.log(`${naam.padEnd(26)} maaltijd: 1 portie=${heel} kcal, ½=${half} kcal`)
 
-    /* De duiding zit achter een uitklapje, en wat erin staat is de hele reden
-       dat het uitklapje er is: waar de energie zit, en wat er gebeurt als je
-       eraan draait. Een leeg vak is erger dan geen vak. */
+    /* De duiding zit achter een tweede uitklapje, en wat erin staat is de hele
+       reden dat het uitklapje er is: waar de energie zit, en wat er gebeurt als
+       je eraan draait. Een leeg vak is erger dan geen vak. */
     await tegel.locator('details.uitleg > summary').click()
     await pagina.waitForTimeout(200)
     await pagina.screenshot({ path: `gereedschap/health-${naam}-duiding.png` })
@@ -383,6 +410,9 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
     }
     await tegel.locator('details.uitleg > summary').click()
     await tegel.getByRole('button', { name: '1', exact: true }).click()
+    await tegel.locator('.maalopen').click()
+    await pagina.waitForTimeout(120)
+    console.log(`${naam.padEnd(26)} maaltijd: dicht=1 regel · 1 portie=${heel} kcal, ½=${half} kcal`)
   }
 
   /* En de weg via het zoekveld. Dit is wat er eerder niet werkte: wie "tonijn"
