@@ -152,7 +152,7 @@ export function App() {
   const totaal = index ? doelTotaal(index, stand.instel) : 0
 
   return (
-    <>
+    <div className="schil">
       <header className="top">
         <div className="top-in">
           <a className="terug" href="/" title="Terug naar BennaHub" aria-label="Terug naar BennaHub">←</a>
@@ -212,6 +212,6 @@ export function App() {
           <p className="meta" style={{ marginTop: 12 }}>Onderdeel van BennaHub</p>
         </footer>
       </main>
-    </>
+    </div>
   )
 }

@@ -1,0 +1,98 @@
+/*
+ * DE SCHIL — de tabbalk wordt een zijbalk zodra er ruimte is
+ *
+ * Vijf apps hadden precies hetzelfde skelet: een plakkende kop, daaronder een
+ * plakkende tabbalk met zes tot acht tabs, en daaronder een kolom van hooguit
+ * 900 pixels breed. Op een telefoon klopt dat. Op een laptop van 1440 stond
+ * ruim een derde van het scherm leeg terwijl de tabs boven elkaar lagen te
+ * verdringen, en op het scherm van de werkkamer nog veel meer.
+ *
+ * Wat hier gebeurt is één ding: boven de duizend pixels wordt diezelfde
+ * tabbalk de zijbalk links, en krijgt de inhoud de rest. Geen nieuwe knoppen,
+ * geen nieuwe schermen, dezelfde volgorde, dezelfde tabs.
+ *
+ * WAAROM DIT ALLEEN STIJL IS
+ *
+ * Er staat geen enkele regel buiten de mediaquery. Onder de duizend pixels
+ * raakt dit bestand niets aan — een telefoon en een tablet staand krijgen exact
+ * de app die ze eerst kregen, tot op de pixel. Dat is met opzet: het scherm
+ * waarop deze apps het meest gebruikt worden is het scherm waar het minst aan
+ * te winnen viel, en dus ook het scherm waar het minst aan stuk mag gaan.
+ *
+ * "Schil" en niet "werkblad": in Arabisch heet een werkblad al iets anders —
+ * het afdrukbare oefenblad — en twee betekenissen voor één woord in één repo
+ * levert precies de verwarring op die een naam hoort weg te nemen.
+ *
+ * En het is stijl en geen component, dus de vijf apps houden hun eigen kop met
+ * hun eigen merk, hun eigen teller en hun eigen tweede navigatielaag. Ze
+ * hoefden er alleen `schil` bij te zetten op het element dat de kop, de
+ * tabbalk en de inhoud bij elkaar houdt.
+ *
+ * De zijbalk is dezelfde donkere balk als op de startpagina, met dezelfde
+ * kleuren uit hetzelfde bestand. Dat is niet alleen netjes: je verlaat de hub
+ * en komt in een app, en de omlijsting blijft staan terwijl de inhoud wisselt.
+ */
+@import './zijbalk.css';
+
+@media (min-width:1000px){
+  .schil{
+    display:grid;
+    grid-template-columns:250px minmax(0,1fr);
+    grid-template-areas:"zij kop" "zij hoofd";
+    align-items:start;
+    min-height:100dvh;
+    /* De kolom draagt zelf de kleur van de zijbalk. Die plakt met 100dvh aan de
+       bovenkant en is op een lange pagina korter dan de rij waar hij in staat;
+       zonder dit staat er onder hem een streep doek. */
+    background:linear-gradient(90deg,var(--zij) 0 250px,transparent 250px);
+  }
+  /* Wat er verder nog in staat — een blad, een kortje, een overlay — hoort bij
+     de inhoud en niet in een eigen rij. Wat zwevend gepositioneerd is telt
+     sowieso niet mee als vak in het raster en blijft dus waar het was. */
+  .schil > *{grid-area:hoofd;min-width:0}
+
+  .schil > header.top{grid-area:kop}
+  .schil > header.top .top-in{max-width:none;margin:0;padding-left:30px;padding-right:30px}
+
+  .schil > nav.tabs{
+    grid-area:zij;
+    position:sticky;top:0;height:100dvh;overflow-y:auto;z-index:41;
+    background:var(--zij);border-bottom:0;border-right:1px solid var(--zij-line);
+    padding:18px 12px;
+  }
+  .schil > nav.tabs .tabs-in{
+    max-width:none;margin:0;padding:0;
+    flex-direction:column;gap:3px;overflow:visible;
+  }
+  /* De tab was een woord met een streepje eronder; hier wordt hij een regel in
+     een menu. Het streepje verdwijnt — een onderrand op een volle breedte leest
+     als een scheiding tussen twee tabs in plaats van als "deze staat aan" — en
+     wat er aanstaat krijgt een vlak met een balkje ervoor. */
+  .schil > nav.tabs .tab{
+    width:100%;text-align:left;white-space:normal;
+    display:flex;align-items:center;gap:8px;
+    padding:11px 14px;min-height:0;border-radius:11px;border-bottom:0;
+    color:var(--zij-muted);
+    transition:background .14s ease, color .14s ease;
+  }
+  .schil > nav.tabs .tab:hover{background:var(--zij-2);color:var(--zij-ink)}
+  .schil > nav.tabs .tab[aria-selected="true"]{
+    background:var(--zij-2);color:var(--zij-ink);border-bottom-color:transparent;
+    box-shadow:inset 3px 0 0 var(--zij-aan);
+  }
+  .schil > nav.tabs .tab:focus-visible{outline:2px solid var(--zij-aan);outline-offset:2px}
+  /* Het telbolletje stond achter het woord; in een kolom hoort het aan de
+     overkant van de regel, zoals in elk ander menu met een teller. */
+  .schil > nav.tabs .tab .bol,
+  .schil > nav.tabs .tab .telbol{margin-left:auto;margin-inline-start:auto}
+
+  /* De inhoud krijgt de ruimte die vrijkomt, maar niet onbeperkt: een regel
+     tekst van vijftienhonderd pixels leest niemand meer. Elfhonderd is ruim
+     twee kolommen kaarten naast elkaar en nog steeds een leesbare alinea. */
+  .schil > main{padding-left:30px;padding-right:30px}
+  /* Twee vormen, want de ene app zet .wrap op main zelf en de andere op een div
+     erbinnen. Alleen die binnenste mag zijn eigen zijkanten verliezen — main
+     heeft ze dan al, en twee keer aftellen zet de inhoud te ver naar binnen. */
+  .schil > main.wrap{max-width:1120px;margin:0}
+  .schil > main .wrap{max-width:1120px;margin:0;padding-left:0;padding-right:0}
+}

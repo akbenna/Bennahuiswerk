@@ -75,9 +75,33 @@ en geen inline stijl meer in de pagina staat. Voor de startpagina en
 andere zeven apps hebben nog inline script en vallen daar dus buiten; zodra ze om
 zijn komt hun pad erbij in `vercel.json`.
 
-Wat er níét is: geen Tailwind. De stijl is honderdvierenveertig regels CSS met
-namen die iets betekenen. Dat vervangen door utility-klassen levert meer regels
-op en minder uitleg.
+Wat er níét is: geen Tailwind. De stijl is gewone CSS met namen die iets
+betekenen. Dat vervangen door utility-klassen levert meer regels op en minder
+uitleg.
+
+## Wat de apps wél delen
+
+Bijna niets, en dat is de bedoeling — behalve waar zes kopieën van hetzelfde
+uit elkaar gaan lopen. Op dit moment is dat drie dingen in `src/gedeeld/`:
+
+| | |
+|---|---|
+| `db/` | De databasegrens. Elke functie één keer getypt; zie `db/rpc.ts`. |
+| `wolk.ts` | Aanmelden en bewaren voor de zes apps die dat delen. |
+| `schil.css` | De omlijsting: boven 1000 pixels wordt de tabbalk een zijbalk. |
+
+`schil.css` is stijl en geen component. Vijf apps — Islam leren, Arabisch,
+Computers & Code, Geloofsstudie en Koran uit je hoofd — hadden exact hetzelfde
+skelet (`header.top` / `nav.tabs` / `main.wrap`) met elk een eigen kopie in hun
+eigen `stijl.css`. Ze zetten nu `schil` op het element dat die drie bij elkaar
+houdt en importeren dat bestand; verder verandert er niets in hun markup en
+houden ze hun eigen kop, hun eigen teller en hun eigen kleuren.
+
+Elke regel in dat bestand staat binnen `@media (min-width:1000px)`. Onder die
+breedte raakt het niets aan: een telefoon krijgt exact de app die hij eerst
+kreeg — nagemeten door de schermafdruk op 420 pixels voor en na te vergelijken,
+en die is bij alle vijf byte voor byte gelijk. De kleuren van de zijbalk staan
+in `gedeeld/zijbalk.css`, want de startpagina gebruikt ze ook.
 
 ## De rekenkern is overgezet, niet herschreven
 
