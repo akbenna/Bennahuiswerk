@@ -1,3 +1,7 @@
+/* De kleuren van de zijbalk staan apart: de apps gebruiken ze ook, via
+   gedeeld/schil.css. Zie dat bestand voor waarom. */
+@import '../gedeeld/zijbalk.css';
+
 /*
  * DE STIJL VAN DE STARTPAGINA
  *
@@ -43,13 +47,6 @@
 
   --goed:#2F6B1F; --let:#8A5A00; --fout:#A32F2A;
 
-  /* De zijbalk is in beide standen donker, dus zijn kleuren staan los van het
-     schema. Gemeten tegen --zij: de gedempte letter haalt 6,3:1 en het accent
-     9,3:1 — ruim boven de 4,5:1 die de rest ook aanhoudt. In de donkere stand
-     wordt het paneel één tint lichter, anders valt hij weg tegen het doek. */
-  --zij:#191C22; --zij-2:#242832; --zij-line:#2C313B;
-  --zij-ink:#F3F2EE; --zij-muted:#9B9EAA; --zij-aan:#4ED3CB;
-
   --schaduw:0 1px 2px rgba(20,18,14,.05), 0 8px 24px rgba(20,18,14,.06);
   --schaduw-op:0 2px 4px rgba(20,18,14,.07), 0 14px 34px rgba(20,18,14,.11);
 
@@ -75,8 +72,6 @@
     --health:#9EB6C2; --health-bg:#1E272C;
 
     --goed:#8FD268; --let:#E9BC55; --fout:#F09B95;
-
-    --zij:#1E212A; --zij-2:#2A2E39; --zij-line:#343943;
 
     --schaduw:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.34);
     --schaduw-op:0 2px 4px rgba(0,0,0,.46), 0 14px 34px rgba(0,0,0,.5);

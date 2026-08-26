@@ -95,7 +95,7 @@ export function App(): ReactNode {
   const due = aantalDue(p.kaarten, t.dag)
 
   return (
-    <>
+    <div className="schil">
       <header className="top">
         <div className="top-in">
           <a className="terugpijl" href="/" title="Terug naar BennaHub" aria-label="Terug naar BennaHub">
@@ -183,7 +183,7 @@ export function App(): ReactNode {
       <Blad open={blad !== null} sluit={sluit}>
         {blad && <Bladinhoud t={t} blad={blad} zetBlad={zetBlad} sluit={sluit} ga={ga} />}
       </Blad>
-    </>
+    </div>
   )
 }
 

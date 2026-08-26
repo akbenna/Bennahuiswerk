@@ -87,7 +87,7 @@ export function App(): ReactNode {
   }
 
   return (
-    <div data-spoor={spoor}>
+    <div className="schil" data-spoor={spoor}>
       <header className="top">
         <div className="top-in">
           <a className="terug" href="/" title="Terug naar BennaHub" aria-label="Terug naar BennaHub">←</a>
