@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kalibratie</title>
+<meta name="theme-color" content="#F7F6F3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131417" media="(prefers-color-scheme: dark)">
+<meta name="description" content="Energiebalans gemeten uit de gewichtstrend in plaats van geschat uit een formule. Geen enkel getal zonder zijn onzekerheid.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Kalibratie">
+<link rel="apple-touch-icon" href="icoon-180.png">
+<link rel="icon" href="icoon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+/* ============================================================================
+   KALIBRATIE — persoonlijk energiebalansmodel
+   Ontwerpprincipe, door de hele app heen: geen enkel getal zonder zijn
+   onzekerheid. Wat gemeten is staat in serif en groot; wat geschat is draagt
+   zijn interval en zijn graad; wat ontbreekt wordt benoemd in plaats van
+   stilzwijgend als nul behandeld.
+   ========================================================================== */
+:root{
+  --canvas:#F7F6F3; --vlak:#FFFFFF; --vlak2:#EFEDE8;
+  --ink:#12140F; --ink2:#2A2E28; --grijs:#5E6159; --dim:#8E9189;
+  --lijn:#DEDBD3; --lijn2:#C6C2B8;
+  --k:#3D5A57;  --kbg:#E1EBE9;      /* accent: de kleur van het model */
+  --let:#8A5A00; --letbg:#F8EFD4;   /* let op */
+  --fout:#A32F2A; --foutbg:#FAE6E4;
+  --goed:#2F6B1F; --goedbg:#E4EFDD;
+  --schaduw:0 1px 2px rgba(20,18,14,.04), 0 8px 22px rgba(20,18,14,.05);
+  --sans:'SF Pro Text',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --serif:'Newsreader',Georgia,serif;
+  --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root{
+  --canvas:#131417; --vlak:#1B1D21; --vlak2:#24272B;
+  --ink:#F3F2EE; --ink2:#DFDED8; --grijs:#A6A9A1; --dim:#71746D;
+  --lijn:#31343A; --lijn2:#454951;
+  --k:#8FB3AE; --kbg:#1D2A29;
+  --let:#E9BC55; --letbg:#302711;
+  --fout:#F09B95; --foutbg:#341A18;
+  --goed:#8FD268; --goedbg:#1E2A18;
+  --schaduw:0 1px 2px rgba(0,0,0,.4), 0 8px 22px rgba(0,0,0,.3);
+}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:var(--canvas);color:var(--ink2);font-family:var(--sans);font-size:16px;
+  line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100dvh;
+  padding:0 16px calc(84px + env(safe-area-inset-bottom))}
+.wrap{width:100%;max-width:660px;margin:0 auto}
+h1,h2,h3{font-family:var(--serif);color:var(--ink);letter-spacing:-.02em;line-height:1.15;margin:0;font-weight:500}
+p{margin:0}
+a{color:var(--k)}
+.eyebrow{font-family:var(--mono);font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--grijs)}
+.klein{font-size:.84rem;color:var(--grijs);line-height:1.5}
+.mini{font-size:.75rem;color:var(--dim);line-height:1.45}
+.cijfer{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.getal{font-family:var(--serif);font-variant-numeric:tabular-nums;color:var(--ink);line-height:1;font-weight:400}
+button,input,select,textarea{font-family:inherit;font-size:1rem;color:inherit}
+:focus-visible{outline:2px solid var(--k);outline-offset:2px;border-radius:6px}
+
+/* ---------------------------------------------------------------- header -- */
+header{padding:26px 0 12px;position:relative}
+.merk{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.merk h1{font-size:1.7rem}
+.sub{margin-top:2px;font-size:.82rem;color:var(--grijs)}
+.chip{font-size:.72rem;color:var(--grijs);border:1px solid var(--lijn);border-radius:999px;
+  padding:4px 11px;background:transparent;cursor:pointer;white-space:nowrap}
+.chip.aan{border-color:var(--k);color:var(--k)}
+
+/* ------------------------------------------------------------------ tabs -- */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--vlak);
+  border-top:1px solid var(--lijn);display:flex;justify-content:center;gap:2px;
+  padding:6px 8px calc(6px + env(safe-area-inset-bottom));overflow-x:auto;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{border:0;background:transparent;color:var(--grijs);cursor:pointer;
+  padding:6px 10px;border-radius:9px;font-size:.68rem;display:flex;flex-direction:column;
+  align-items:center;gap:3px;min-width:56px;line-height:1.1}
+nav.tabs button .ic{font-size:1.05rem;line-height:1}
+nav.tabs button[aria-selected="true"]{color:var(--k);background:var(--kbg);font-weight:600}
+
+/* --------------------------------------------------------------- kaarten -- */
+.kaart{background:var(--vlak);border:1px solid var(--lijn);border-radius:14px;
+  padding:15px 17px;box-shadow:var(--schaduw);margin-bottom:13px}
+.kaart.let{border-left:3px solid var(--let)}
+.kaart.fout{border-left:3px solid var(--fout)}
+.kaart.goed{border-left:3px solid var(--goed)}
+.kaart.plat{box-shadow:none;background:var(--vlak2);border-color:transparent}
+.tussen{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.rij{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.duo{display:grid;gap:16px}
+@media(min-width:520px){.duo{grid-template-columns:1fr 1fr}}
+.trio{display:grid;gap:12px;grid-template-columns:repeat(3,1fr)}
+
+/* ------------------------------------------------------------- besturing -- */
+.knop{border:1px solid var(--lijn);background:var(--vlak);color:var(--ink2);
+  padding:8px 14px;border-radius:10px;font-size:.86rem;cursor:pointer;white-space:nowrap}
+.knop:hover{border-color:var(--lijn2)}
+.knop.vol{background:var(--k);border-color:var(--k);color:var(--canvas);font-weight:600}
+.knop.sm{padding:4px 10px;font-size:.76rem;border-radius:8px}
+.knop:disabled{opacity:.45;cursor:default}
+input,select,textarea{background:var(--vlak);border:1px solid var(--lijn);border-radius:10px;
+  padding:8px 11px;width:100%;max-width:100%}
+textarea{resize:vertical;min-height:74px;line-height:1.5}
+label.veld{display:block}
+label.veld>span{display:block;font-size:.72rem;color:var(--grijs);margin-bottom:3px}
+.smal{width:88px}.smaller{width:68px}
+
+/* ---------------------------------------------------------- balk en chip -- */
+.balk{height:7px;border-radius:999px;background:var(--vlak2);overflow:hidden}
+.balk>i{display:block;height:100%;background:var(--k);transition:width .2s}
+.balk>i.let{background:var(--let)} .balk>i.goed{background:var(--goed)}
+.conf{display:inline-flex;width:17px;height:17px;border-radius:4px;flex:0 0 auto;
+  align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:#FFF8EE}
+.conf.A{background:#2F6B1F}.conf.B{background:#3D5A57}
+.conf.C{background:#8E9189}.conf.D{background:#8A5A00}
+@media(prefers-color-scheme:dark){.conf{color:#131417}
+  .conf.A{background:#8FD268}.conf.B{background:#8FB3AE}
+  .conf.C{background:#71746D}.conf.D{background:#E9BC55}}
+.stoplicht{display:inline-block;width:11px;height:11px;border-radius:50%}
+.lijst>*{display:flex;align-items:center;gap:9px;padding:8px 0;border-top:1px solid var(--lijn)}
+.lijst>*:first-child{border-top:0}
+.groei{flex:1 1 auto;min-width:0}
+.knip{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* -------------------------------------------------------------- venster --- */
+.sluier{position:fixed;inset:0;background:rgba(10,12,10,.5);display:flex;z-index:50;
+  align-items:flex-start;justify-content:center;padding:14px;overflow-y:auto}
+.venster{background:var(--vlak);border-radius:16px;padding:20px;width:100%;max-width:520px;margin:20px 0}
+.regel{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:11px 0;border-bottom:1px solid var(--lijn)}
+.regel input,.regel select{width:auto}
+svg.fig{display:block;width:100%;height:auto}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid var(--lijn2);
+  border-top-color:var(--k);border-radius:50%;animation:d .7s linear infinite;vertical-align:-2px}
+@keyframes d{to{transform:rotate(360deg)}}
+footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
+  font-size:.75rem;line-height:1.6;color:var(--dim)}
+</style>
+</head>
+<body><div class="wrap" id="app"></div>
+<script>
+/* ============================================================================
+   1. VERBINDING
+   Alle toegang loopt via SECURITY DEFINER-functies in Supabase met een
+   sessietoken. De sleutel hieronder is de publieke anon-sleutel en geeft uit
+   zichzelf geen toegang tot gegevens: geen enkele kal_-tabel is voor anon
+   benaderbaar.
+   ========================================================================== */
+const URL_DB = 'https://jnlvvdaisyerhxucxnuu.supabase.co';
+const ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpubHZ2ZGFpc3llcmh4dWN4bnV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NDg0MjIsImV4cCI6MjA4MjQyNDQyMn0.8ZXa-N96pRSQovdL_bH5FpJTHeL454830h5LMapCawY';
+const SLEUTEL_SESSIE = 'kalibratie.sessie';
+
+async function rpc(fn, body){
+  const r = await fetch(URL_DB + '/rest/v1/rpc/' + fn, {
+    method:'POST',
+    headers:{apikey:ANON, Authorization:'Bearer '+ANON, 'Content-Type':'application/json'},
+    body: JSON.stringify(body||{})
+  });
+  let uit = null;
+  try{ uit = await r.json(); }catch(e){}
+  if(!r.ok) throw new Error((uit && (uit.message||uit.error)) || ('Verbinding mislukt ('+r.status+')'));
+  return uit;
+}
+async function ai(body){
+  const r = await fetch(URL_DB + '/functions/v1/kal-ai', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(Object.assign({token:S.token}, body))
+  });
+  const uit = await r.json();
+  if(uit.error) throw new Error(uit.error);
+  return uit;
+}
+
+/* ============================================================================
+   2. HULP
+   ========================================================================== */
+const $ = s => document.querySelector(s);
+const iso = d => { const p=n=>String(n).padStart(2,'0');
+  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); };
+const vandaag = () => iso(new Date());
+const opDatum = s => new Date(s+'T12:00:00');
+const plusDagen = (s,n) => { const d=opDatum(s); d.setDate(d.getDate()+n); return iso(d); };
+const dagVerschil = (a,b) => Math.round((opDatum(b)-opDatum(a))/86400000);
+const kortNL = s => opDatum(s).toLocaleDateString('nl-NL',{day:'numeric',month:'short'});
+const langNL = s => opDatum(s).toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'long'});
+const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const dz = n => (n==null||isNaN(n)) ? '—' : Number(n).toLocaleString('nl-NL');
+const dec = (v,n=1) => (v==null||isNaN(v)) ? '—' : Number(v).toFixed(n).replace('.',',');
+const chip = c => '<span class="conf '+c+'" title="Betrouwbaarheid '+c+'">'+c+'</span>';
+const KCAL_PER_KG = 7700;
+
+/* ============================================================================
+   3. REKENKERN
+   Pure functies. Elke keuze hieronder is verantwoord in VERANTWOORDING.md;
+   de verwijzing staat erbij zodat een getal in het scherm terugvindbaar is.
+   ========================================================================== */
+
+/* Mifflin-St Jeor. Aanbevolen bij overgewicht boven Harris-Benedict
+   (Frankenfield 2003). Blijft een prior, geen meting. */
+function bmr(pf, w){
+  return Math.round(10*w + 6.25*pf.lengte_cm - 5*pf.leeftijd_jaar + (pf.geslacht==='m'?5:-161));
+}
+
+/* Referentiegewicht voor het eiwitdoel: actueel gewicht met een plafond op
+   BMI 30 (Weijs 2025). Vetmassa vraagt geen eiwit; rekenen op actueel gewicht
+   geeft bij obesitas klinisch relevante overschatting (Dekker 2022). */
+function eiwitReferentie(pf, w){
+  const m = pf.lengte_cm/100;
+  return Math.min(w, 30*m*m);
+}
+
+/* Kleinste-kwadratenregressie. Levert helling én standaardfout; die laatste
+   voedt het betrouwbaarheidsinterval op het verbruik. */
+function regressie(p){
+  const n=p.length; if(n<3) return null;
+  const mx=p.reduce((a,x)=>a+x.x,0)/n, my=p.reduce((a,x)=>a+x.y,0)/n;
+  const sxx=p.reduce((a,x)=>a+(x.x-mx)**2,0); if(!sxx) return null;
+  const sxy=p.reduce((a,x)=>a+(x.x-mx)*(x.y-my),0);
+  const helling=sxy/sxx, snij=my-helling*mx;
+  const rest=p.reduce((a,x)=>a+(x.y-(snij+helling*x.x))**2,0);
+  return {helling, snij, se: Math.sqrt(rest/(n-2)/sxx), n};
+}
+
+/* Exponentieel gewogen gemiddelde met halfwaardetijd rond zeven dagen
+   (alfa 0,1). Presteert gelijk aan Kalman-smoothing en is uitlegbaar
+   (Turicchi 2020). Alleen een punt op dagen waarop echt gewogen is. */
+function trendReeks(dagen){
+  const k = Object.keys(dagen).sort(); let ema=null; const uit=[];
+  for(const d of k){
+    const w = dagen[d].gewicht_kg;
+    if(w!=null) ema = ema==null ? w : ema*0.9 + w*0.1;
+    uit.push({d, w, ema: (w!=null&&ema!=null) ? Math.round(ema*100)/100 : null,
+              kcal: dagen[d]._kcal||null, eiwit: dagen[d]._eiwit||null});
+  }
+  return uit;
+}
+
+const VENSTER = 28;   // veelvoud van zeven: anders lekt het weekritme in de helling (Orsama 2014)
+
+function analyse(dagen, pf){
+  const eind = vandaag(), start = plusDagen(eind, -VENSTER+1);
+  const sleutels = Object.keys(dagen).filter(k=>k>=start&&k<=eind).sort();
+
+  const wPunten=[], innames=[], stappen=[];
+  let gelogd=0, gemarkeerd=0;
+  for(const k of sleutels){
+    const d = dagen[k];
+    if(d.gewicht_kg!=null) wPunten.push({x:dagVerschil(start,k), y:+d.gewicht_kg, datum:k});
+    const kcal = d._kcal||0;
+    if(kcal>0 && k!==eind){              // de lopende dag is per definitie onvolledig
+      gelogd++;
+      if(kcal<1200) gemarkeerd++;        // niet weggooien, wel apart tellen
+      else innames.push(kcal);
+    }
+    if(d.stappen!=null) stappen.push(+d.stappen);
+  }
+
+  const alleW = Object.keys(dagen).filter(k=>dagen[k].gewicht_kg!=null).sort();
+  const gewicht = alleW.length ? +dagen[alleW[alleW.length-1]].gewicht_kg
+                               : (pf.start_gewicht_kg||pf.doel_gewicht_kg||80);
+  const gemStappen = stappen.length ? stappen.reduce((a,b)=>a+b,0)/stappen.length : null;
+  const gemInname = innames.length ? innames.reduce((a,b)=>a+b,0)/innames.length : null;
+  const sdInname = innames.length>1
+    ? Math.sqrt(innames.reduce((a,v)=>a+(v-gemInname)**2,0)/(innames.length-1)) : null;
+
+  const rustBMR = bmr(pf, gewicht);
+  /* De activiteitsfactor uit stappen is het zwakste onderdeel van de app: een
+     gevalideerde conversie bestaat niet (Westerterp 2013). Daarom een band en
+     geen punt, en zodra het model meet is hij overbodig. */
+  const palLaag = 1.35, palHoog = gemStappen ? Math.min(1.70, 1.40 + gemStappen/22000) : 1.60;
+  const priorLaag = Math.round(rustBMR*palLaag), priorHoog = Math.round(rustBMR*palHoog);
+  const priorMid = Math.round((priorLaag+priorHoog)/2);
+
+  const reg = regressie(wPunten);
+  let tdee=null, laag=null, hoog=null, half=null, zekerheid='geen', hellingWk=null;
+  if(reg) hellingWk = reg.helling*7;
+
+  if(reg && gemInname!=null && wPunten.length>=7 && innames.length>=7){
+    tdee = gemInname - reg.helling*KCAL_PER_KG;
+    const seH = (reg.se ?? 0.05)*KCAL_PER_KG;
+    const seG = sdInname!=null ? sdInname/Math.sqrt(innames.length) : 150;
+    /* Ondergrens van 100 kcal: bij achtentwintig dagelijkse metingen ligt de
+       ruisvloer op de helling alleen al rond 145 kcal/dag. Een smaller
+       interval is schijnprecisie. */
+    half = Math.max(100, 1.96*Math.sqrt(seH**2 + seG**2));
+    laag = tdee-half; hoog = tdee+half;
+    const dekking = gelogd/VENSTER;
+    if(wPunten.length>=18 && innames.length>=18 && dekking>0.75 && half<350) zekerheid='hoog';
+    else if(wPunten.length>=12 && innames.length>=12 && half<550) zekerheid='middel';
+    else zekerheid='laag';
+  }
+
+  /* Tempo in procent lichaamsgewicht per week, herberekend op het actuele
+     gewicht (Garthe 2011 in combinatie met Forbes 2000). */
+  const tempoKgWk = (pf.tempo_pct_week/100)*gewicht;
+  const tekort = tempoKgWk*KCAL_PER_KG/7;
+  const hellingPct = hellingWk!=null ? hellingWk/gewicht*100 : null;
+  const teSnel = hellingPct!=null && hellingPct < -1.0;
+  const doel = tdee!=null ? Math.max(rustBMR, Math.round((tdee-tekort)/10)*10) : null;
+
+  const eiwitRef = eiwitReferentie(pf, gewicht);
+  const eiwitDoel = Math.round(pf.eiwit_g_per_kg*eiwitRef);
+
+  const wekenTotDoel = (hellingWk && hellingWk<-0.05 && pf.doel_gewicht_kg)
+    ? Math.round((gewicht-pf.doel_gewicht_kg)/-hellingWk) : null;
+
+  return {gewicht, wPunten, reg, hellingWk, hellingPct, gemInname, sdInname, gemStappen,
+    rustBMR, palLaag, palHoog, priorLaag, priorHoog, priorMid,
+    tdee, laag, hoog, half, zekerheid, doel, tekort, tempoKgWk, teSnel,
+    onderrapportage: tdee!=null ? priorMid-tdee : null,
+    eiwitDoel, eiwitRef, wekenTotDoel,
+    gelogd, volledig: innames.length, gemarkeerd, venster:VENSTER,
+    bmi: gewicht/((pf.lengte_cm/100)**2)};
+}
+
+/* SCORE2, laag-risicoregio (Nederland), mannen en vrouwen onder de zeventig.
+   Coëfficiënten uit Eur Heart J 2021;42:2439-54; deze implementatie
+   reproduceert de vier gepubliceerde rekenvoorbeelden exact. */
+function score2(pf, {leeftijd, rook, sbd, tc, hdl, dm}){
+  if(leeftijd<40 || leeftijd>69) return null;
+  const cage=(leeftijd-60)/5, csbp=(sbd-120)/20, ctc=tc-6, chdl=(hdl-1.3)/0.5;
+  const r = rook?1:0, d = dm?1:0;
+  let x, base, s1, s2;
+  if(pf.geslacht==='m'){
+    x = 0.3742*cage + 0.6012*r + 0.2777*csbp + 0.6457*d + 0.1458*ctc - 0.2698*chdl
+      - 0.0755*cage*r - 0.0255*cage*csbp - 0.0281*cage*ctc + 0.0426*cage*chdl - 0.0983*cage*d;
+    base = 0.9605; s1 = -0.5699; s2 = 0.7476;
+  }else{
+    x = 0.4648*cage + 0.7744*r + 0.3131*csbp + 0.8096*d + 0.1002*ctc - 0.2606*chdl
+      - 0.1088*cage*r - 0.0277*cage*csbp - 0.0226*cage*ctc + 0.0613*cage*chdl - 0.1272*cage*d;
+    base = 0.9776; s1 = -0.7380; s2 = 0.7019;
+  }
+  const u = 1 - Math.pow(base, Math.exp(x));
+  if(u<=0 || u>=1) return null;
+  const risico = (1 - Math.exp(-Math.exp(s1 + s2*Math.log(-Math.log(1-u)))))*100;
+  let klasse;                                    // NHG-CVRM, leeftijdsafhankelijk
+  if(leeftijd<50) klasse = risico<2.5?'laag':(risico<7.5?'matig':'hoog');
+  else klasse = risico<5?'laag':(risico<10?'matig':'hoog');
+  return {risico, klasse};
+}
+
+/* FIB-4 (Sterling 2006), met de leeftijdsgrens uit de Richtlijn MASLD/MASH
+   2024: onder 65 jaar sluit 1,3 uit, daarboven 2,0 (McPherson 2017). */
+function fib4({leeftijd, asat, alat, trombo}){
+  if(!(leeftijd>0&&asat>0&&alat>0&&trombo>0)) return null;
+  const w = (leeftijd*asat)/(trombo*Math.sqrt(alat));
+  const onder = leeftijd>=65 ? 2.0 : 1.3;
+  const klasse = w<onder ? 'uitgesloten' : (w<=2.67 ? 'grijs' : 'verwijzen');
+  return {waarde:w, onder, klasse};
+}
+
+/* STOP-BANG, officiële versie: BMI-drempel 35 (niet 30) en een
+   geslachtsspecifieke nekomtrek van 43 en 41 cm. */
+const STOPBANG = [
+  ['snurken','Luid snurken — hoorbaar door een gesloten deur'],
+  ['moe','Overdag vaak moe of slaperig'],
+  ['apneu','Waargenomen ademstops, stikken of naar adem happen'],
+  ['bloeddruk','Hoge bloeddruk, of daarvoor behandeld'],
+  ['bmi','BMI boven 35'],
+  ['leeftijd','Ouder dan 50'],
+  ['nek','Nekomtrek 43 cm of meer (man) / 41 cm of meer (vrouw)'],
+  ['man','Man']
+];
+function stopbangScore(a){
+  const n = STOPBANG.filter(([k])=>a[k]).length;
+  const stop = ['snurken','moe','apneu','bloeddruk'].filter(k=>a[k]).length;
+  let klasse = n<=2 ? 'laag' : (n<=4 ? 'matig' : 'hoog');
+  // Verfijning voor de matige groep; verhoogt de specificiteit.
+  if(klasse==='matig' && stop>=2 && (a.man || a.bmi || a.nek)) klasse = 'hoog';
+  return {score:n, klasse};
+}
+
+/* Onderhoud: het stoplicht uit STOP Regain (Wing 2006). Triggert op het
+   voortschrijdend gemiddelde, niet op de dagmeting — anders vuurt rood op
+   dagelijkse schommelingen van een tot twee kilo. */
+function onderhoudZone(trendGewicht, basis){
+  if(trendGewicht==null || basis==null) return null;
+  const d = trendGewicht - basis;
+  if(d < 1.4)  return {zone:'groen',  kleur:'var(--goed)', delta:d};
+  if(d < 2.3)  return {zone:'geel',   kleur:'var(--let)',  delta:d};
+  return {zone:'rood', kleur:'var(--fout)', delta:d};
+}
+
+/* ============================================================================
+   4. TOESTAND
+   ========================================================================== */
+let S = {token:null, account:null, profiel:null, dagen:{}, regels:[], producten:[],
+         recepten:[], metingen:[], labs:[], vragenlijsten:[], training:[]};
+let tab='vandaag', datum=vandaag(), venster=null, bezig=false;
+let aiConcept=null, aiFoto=null;
+
+function bundelDagen(){
+  // Voedingsregels worden per dag opgeteld en aan het dagrecord gehangen; de
+  // rekenkern werkt met dagtotalen, de interface met de losse regels.
+  const d = {};
+  for(const r of (S.dagen._lijst||[])) d[r.datum] = Object.assign({}, r, {_kcal:0,_eiwit:0,_laag:0,_hoog:0});
+  for(const r of S.regels){
+    if(!d[r.datum]) d[r.datum] = {datum:r.datum,_kcal:0,_eiwit:0,_laag:0,_hoog:0};
+    d[r.datum]._kcal  += +r.kcal_punt||0;
+    d[r.datum]._laag  += +(r.kcal_laag ?? r.kcal_punt)||0;
+    d[r.datum]._hoog  += +(r.kcal_hoog ?? r.kcal_punt)||0;
+    d[r.datum]._eiwit += +r.eiwit_g||0;
+  }
+  return d;
+}
+function dagenKaart(){ const d=bundelDagen(); S._dagen=d; return d; }
+
+async function laden(){
+  const o = await rpc('kal_ophalen', {p_token:S.token});
+  S.profiel = o.profiel;
+  S.dagen = {_lijst:o.dagen||[]};
+  S.regels = o.regels||[]; S.producten = o.producten||[];
+  S.recepten = o.recepten||[]; S.metingen = o.metingen||[];
+  S.labs = o.labs||[]; S.vragenlijsten = o.vragenlijsten||[];
+  S.training = o.training||[];
+}
+function dagVan(k){ return (S._dagen||{})[k] || {datum:k,_kcal:0,_eiwit:0,_laag:0,_hoog:0}; }
+
+/* ============================================================================
+   5. SCHERM
+   ========================================================================== */
+const TABS = [['vandaag','Vandaag','◍'],['model','Model','◎'],['voeding','Voeding','◇'],
+              ['beweging','Beweging','◈'],['klinisch','Klinisch','✚'],['meer','Meer','⋯']];
+
+function teken(){
+  if(!S.token){ return tekenAanmelden(); }
+  if(!S.profiel){ return tekenOpzet(); }
+  const D = dagenKaart();
+  const A = analyse(D, S.profiel);
+  const inhoud =
+    tab==='vandaag'  ? vwVandaag(A,D) :
+    tab==='model'    ? vwModel(A,D) :
+    tab==='voeding'  ? vwVoeding(A) :
+    tab==='beweging' ? vwBeweging(A,D) :
+    tab==='klinisch' ? vwKlinisch(A) : vwMeer(A,D);
+
+  $('#app').innerHTML = `
+    <header><div class="merk">
+      <div>
+        <h1>Kalibratie</h1>
+        <div class="sub">${dec(A.gewicht,1)} kg${S.profiel.doel_gewicht_kg?' → '+S.profiel.doel_gewicht_kg+' kg':''}
+          · BMI ${dec(A.bmi,1)} · ${S.profiel.fase==='onderhoud'?'onderhoudsfase':'afvalfase'}</div>
+      </div>
+      <button class="chip aan" onclick="venster='account';teken()">${esc(S.account||'account')}</button>
+    </div></header>
+    <div id="inhoud">${inhoud}</div>
+    <footer>
+      <b>A</b> etiket en gewogen · <b>B</b> etiket, portie geschat · <b>C</b> tabelwaarde · <b>D</b> ruwe schatting.<br>
+      Het model rekent in gelogde calorieën en kalibreert het niveau op de weegreeks. Het loopt ongeveer
+      anderhalve week achter op de werkelijkheid; dat is de prijs van ruisonderdrukking, geen fout.
+    </footer>
+    ${venster ? vensterHTML() : ''}`;
+
+  document.body.insertAdjacentHTML('beforeend','');
+  if(!document.querySelector('nav.tabs')){
+    document.body.insertAdjacentHTML('beforeend',
+      `<nav class="tabs" role="tablist">${TABS.map(([k,l,i])=>
+        `<button role="tab" aria-selected="${tab===k}" onclick="naar('${k}')"><span class="ic">${i}</span>${l}</button>`
+      ).join('')}</nav>`);
+  }else{
+    document.querySelectorAll('nav.tabs button').forEach((b,i)=>
+      b.setAttribute('aria-selected', TABS[i][0]===tab));
+  }
+}
+function naar(k){ tab=k; venster=null; aiConcept=null; teken(); window.scrollTo(0,0); }
+
+/* ------------------------------------------------------------- aanmelden -- */
+function tekenAanmelden(){
+  document.querySelector('nav.tabs')?.remove();
+  $('#app').innerHTML = `
+    <header><h1>Kalibratie</h1>
+      <p class="sub">Persoonlijk energiebalansmodel. Het verbruik wordt gemeten uit
+      de gewichtstrend in plaats van geschat uit een formule.</p></header>
+    <div class="kaart" style="margin-top:18px">
+      <label class="veld"><span>naam</span><input id="a-acc" autocomplete="username" autocapitalize="none"></label>
+      <label class="veld" style="margin-top:10px"><span>wachtwoord</span>
+        <input id="a-ww" type="password" autocomplete="current-password"></label>
+      <p class="klein" id="a-mld" style="margin-top:10px;min-height:1.3em"></p>
+      <div class="rij" style="margin-top:6px">
+        <button class="knop vol" onclick="aanmelden(false)">Aanmelden</button>
+        <button class="knop" onclick="aanmelden(true)">Nieuw account</button>
+      </div>
+    </div>
+    <p class="mini">De gegevens staan in je eigen tabellen in het Supabase-project van ProVita, afgescheiden
+    van de patiëntgegevens. Geen enkele tabel is publiek benaderbaar; toegang loopt via beveiligde
+    databasefuncties en het wachtwoord staat gehasht.</p>`;
+  $('#a-ww').onkeydown = e => { if(e.key==='Enter') aanmelden(false); };
+}
+async function aanmelden(nieuw){
+  const acc = $('#a-acc').value.trim().toLowerCase(), ww = $('#a-ww').value;
+  if(!acc||!ww){ $('#a-mld').textContent='Vul een naam en een wachtwoord in.'; return; }
+  $('#a-mld').innerHTML='<span class="spin"></span> Bezig…';
+  try{
+    const r = await rpc(nieuw?'kal_registreren':'kal_aanmelden',
+                        nieuw?{p_account:acc,p_ww:ww,p_naam:acc}:{p_account:acc,p_ww:ww});
+    S.token=r.token; S.account=r.account;
+    try{ localStorage.setItem(SLEUTEL_SESSIE, JSON.stringify(r)); }catch(e){}
+    await laden(); teken();
+  }catch(e){ $('#a-mld').textContent = e.message; }
+}
+
+/* ----------------------------------------------------------------- opzet -- */
+const SEED = {
+  profiel:{lengte_cm:196, leeftijd_jaar:51, geslacht:'m', start_gewicht_kg:120,
+    doel_gewicht_kg:100, tempo_pct_week:0.7, eiwit_g_per_kg:1.4, etniciteit:'Noord-Afrikaans',
+    fase:'afvallen', instellingen:{olie_g:40, olie_gewogen:false, melk_ml:150,
+      melk_soort:'half', melk_gemeten:false}},
+  // Uit de Yazio- en Apple-schermafdrukken van 21 augustus 2026.
+  dagen:[['2026-08-04',8436,1109],['2026-08-05',8465,997],['2026-08-06',10866,1429],
+    ['2026-08-07',13149,1201],['2026-08-08',10857,1279],['2026-08-09',11717,640],
+    ['2026-08-10',5368,259],['2026-08-11',1991,80],['2026-08-12',4108,141],
+    ['2026-08-13',5797,573],['2026-08-14',5438,405],['2026-08-15',4992,486],
+    ['2026-08-16',4672,386],['2026-08-17',9884,912],['2026-08-18',2758,221],
+    ['2026-08-19',10308,841]],
+  // datum, kcal, koolhydraten g, eiwit g, vet g — uit de macroschermen omgerekend
+  eten:[['2026-08-05',3257,350,147,141],['2026-08-06',904,131,29,29],
+    ['2026-08-07',1332,163,57,50],['2026-08-08',2386,227,89,125],
+    ['2026-08-09',2364,278,89,100],['2026-08-10',2032,259,56,86],
+    ['2026-08-11',982,128,52,29],['2026-08-13',1602,168,68,73],
+    ['2026-08-14',1668,175,67,78],['2026-08-15',1254,110,75,57],
+    ['2026-08-16',1291,52,84,83],['2026-08-17',966,97,46,44],
+    ['2026-08-18',1429,111,93,68],['2026-08-19',1481,107,93,76],
+    ['2026-08-20',1319,132,76,54]]
+};
+function tekenOpzet(){
+  document.querySelector('nav.tabs')?.remove();
+  $('#app').innerHTML = `
+    <header><h1>Eerste keer</h1><p class="sub">Er staat nog geen profiel.</p></header>
+    <div class="kaart">
+      <div class="eyebrow">Klaarzetten</div>
+      <p style="font-size:.9rem;margin-top:6px">Ik kan het profiel van Abdelkader invullen — 196 cm, 51 jaar,
+      120 naar 100 kg, streeftempo 0,7 procent per week, eiwit 1,4 g/kg op gecorrigeerd gewicht — en de
+      augustusreeks uit Yazio en Apple Gezondheid meteen inladen: zestien dagen stappen en actieve energie,
+      vijftien dagen energie met macro's.</p>
+      <p class="klein" style="margin-top:8px">Wat er niet in zit, en wat het model nodig heeft: wegingen.
+      Zonder die reeks blijft het model inert.</p>
+      <div class="rij" style="margin-top:12px">
+        <button class="knop vol" onclick="opzetten(true)">Vul mijn profiel en de reeks in</button>
+        <button class="knop" onclick="opzetten(false)">Leeg beginnen</button>
+      </div>
+      <p class="klein" id="o-mld" style="margin-top:10px"></p>
+    </div>`;
+}
+async function opzetten(metSeed){
+  $('#o-mld').innerHTML='<span class="spin"></span> Bezig…';
+  try{
+    await rpc('kal_profiel_zetten', {p_token:S.token, p_patch: metSeed ? SEED.profiel
+      : {lengte_cm:180, leeftijd_jaar:40, geslacht:'m', tempo_pct_week:0.7, eiwit_g_per_kg:1.4}});
+    if(metSeed){
+      await rpc('kal_dagen_importeren', {p_token:S.token,
+        p_dagen: SEED.dagen.map(([d,st,ae])=>({datum:d, stappen:st, actieve_energie_kcal:ae, bron:'apple-import'}))});
+      await rpc('kal_regels_toevoegen', {p_token:S.token,
+        p_regels: SEED.eten.map(([d,k,koolh,eiw,vet])=>({
+          datum:d, naam:'Dagtotaal uit Yazio', kcal_punt:k,
+          kcal_laag:Math.round(k*0.85), kcal_hoog:Math.round(k*1.45),
+          eiwit_g:eiw, vet_g:vet, koolhydraat_g:koolh, conf:'D', bron:'import',
+          onzekerheidsbronnen:['dagtotaal uit een andere app, niet per product terug te rekenen',
+            'bovengrens ruim genomen wegens de gebruikelijke onderregistratie van twintig tot dertig procent']}))});
+    }
+    await laden(); teken();
+  }catch(e){ $('#o-mld').textContent = e.message; }
+}
+
+/* ============================================================================
+   6. TABBLAD VANDAAG
+   ========================================================================== */
+function vwVandaag(A,D){
+  const d = dagVan(datum);
+  const regels = S.regels.filter(r=>r.datum===datum);
+  const isVandaag = datum===vandaag();
+  const eiwitPct = Math.min(100, d._eiwit/A.eiwitDoel*100);
+  const kcalPct = A.doel ? Math.min(100, d._kcal/A.doel*100) : 0;
+
+  return `
+  <div class="tussen" style="margin-bottom:12px">
+    <button class="knop sm" onclick="schuif(-1)">←</button>
+    <span style="font-size:.88rem;font-weight:500">${isVandaag?'Vandaag':esc(langNL(datum))}</span>
+    <button class="knop sm" onclick="schuif(1)" ${isVandaag?'disabled':''}>→</button>
+  </div>
+
+  <div class="kaart">
+    <div class="duo">
+      <div>
+        <div class="eyebrow">Eiwit</div>
+        <div style="margin-top:3px"><span class="getal" style="font-size:2.1rem">${Math.round(d._eiwit)}</span>
+          <span class="klein"> van ${A.eiwitDoel} g</span></div>
+        <div class="balk" style="margin-top:8px"><i class="${d._eiwit>=A.eiwitDoel*0.9?'goed':'let'}" style="width:${eiwitPct}%"></i></div>
+        <div class="mini cijfer" style="margin-top:4px">${dec(S.profiel.eiwit_g_per_kg,1)} g/kg op ${dec(A.eiwitRef,0)} kg gecorrigeerd</div>
+      </div>
+      <div>
+        <div class="eyebrow">Energie gelogd</div>
+        <div style="margin-top:3px"><span class="getal" style="font-size:2.1rem">${dz(Math.round(d._kcal))}</span>
+          <span class="klein"> kcal${A.doel?' van '+dz(A.doel):''}</span></div>
+        ${A.doel ? `<div class="balk" style="margin-top:8px"><i class="${d._kcal>A.doel*1.1?'let':''}" style="width:${kcalPct}%"></i></div>
+          <div class="mini cijfer" style="margin-top:4px">nog ${dz(Math.max(0,A.doel-Math.round(d._kcal)))} kcal ·
+            interval van vandaag ${dz(Math.round(d._laag))}–${dz(Math.round(d._hoog))}</div>`
+        : `<p class="mini" style="margin-top:8px">Nog geen doel — het model heeft eerst een weegreeks nodig.</p>`}
+      </div>
+    </div>
+    ${d._kcal>0 && d._kcal<1200 && !isVandaag ? `
+      <div class="kaart let plat" style="margin:12px 0 0">
+        <p style="font-size:.84rem">Onder 1.200 kcal. Waarschijnlijker een onvolledige registratie dan een echte dag.
+        Het model laat deze dag buiten de berekening en toont hem niet als succes.</p></div>`:''}
+  </div>
+
+  <div class="kaart">
+    <div class="eyebrow">Zeggen wat je at</div>
+    <textarea id="ai-tekst" style="margin-top:8px"
+      placeholder="Bijvoorbeeld: halve schaal tonijnsalade met olijfolie, twee cappuccino's, en een bord tajine met kip."></textarea>
+    <div class="rij" style="margin-top:8px">
+      <button class="knop vol" onclick="herkenTekst()">Herkennen</button>
+      <label class="knop" style="cursor:pointer">Foto van het bord
+        <input type="file" accept="image/*" capture="environment" style="display:none" onchange="kiesFoto(this)"></label>
+      ${aiFoto?`<span class="mini">foto klaar · ${aiFoto.naam}</span>`:''}
+    </div>
+    <p class="klein" id="ai-mld" style="margin-top:8px;min-height:1.2em"></p>
+    ${aiConcept ? conceptHTML() : ''}
+  </div>
+
+  ${regels.length ? `
+  <div class="kaart">
+    <div class="eyebrow">Gelogd op ${esc(kortNL(datum))}</div>
+    <div class="lijst" style="margin-top:4px">
+      ${regels.map(r=>`<div>
+        ${chip(r.conf||'D')}
+        <span class="groei">
+          <span class="knip" style="font-size:.87rem;display:block">${esc(r.naam)}</span>
+          <span class="mini cijfer">${r.kcal_laag!=null?dz(r.kcal_laag)+'–'+dz(r.kcal_hoog)+' kcal':''}${
+            r.nevo_code?' · NEVO':''}${(r.onzekerheidsbronnen||[]).length?' · '+esc(r.onzekerheidsbronnen[0]):''}</span>
+        </span>
+        <span style="text-align:right;flex:0 0 auto;white-space:nowrap">
+          <span class="cijfer" style="font-size:.85rem;display:block">${dz(Math.round(r.kcal_punt))}</span>
+          <span class="mini cijfer">${dec(r.eiwit_g,1)} g</span></span>
+        <button class="knop sm" onclick="wisRegel('${r.id}')" aria-label="Verwijderen">×</button>
+      </div>`).join('')}
+    </div>
+  </div>`:''}
+
+  <div class="kaart ${d.gewicht_kg==null && isVandaag ? 'let':''}">
+    <div class="eyebrow">Ochtendweging</div>
+    <div class="rij" style="margin-top:8px">
+      <input class="smal" type="number" step="0.1" inputmode="decimal" value="${d.gewicht_kg??''}"
+             onchange="zetDag('gewicht_kg', this.value)" placeholder="—">
+      <span class="klein">kg · nuchter, na het toilet, vóór het eten</span>
+    </div>
+    ${d.gewicht_kg==null && isVandaag ? `<p class="mini" style="margin-top:8px">Dit is de enige invoer die niet te
+      schatten valt, en het enige onbevooroordeelde signaal in het systeem. Zonder deze reeks meet het model niets.</p>`:''}
+  </div>
+
+  <div class="kaart">
+    <div class="eyebrow">Beweging en slaap</div>
+    <div class="rij" style="margin-top:8px;align-items:flex-end">
+      <label class="veld"><span>stappen</span>
+        <input class="smal" type="number" inputmode="numeric" value="${d.stappen??''}" onchange="zetDag('stappen',this.value)"></label>
+      <label class="veld"><span>slaap, uur</span>
+        <input class="smaller" type="number" step="0.25" inputmode="decimal"
+               value="${d.slaap_min!=null?Math.round(d.slaap_min/15)/4:''}"
+               onchange="zetDag('slaap_min', this.value===''?'':Math.round(parseFloat(this.value)*60))"></label>
+      <button class="knop ${d.kracht?'vol':''}" onclick="zetDag('kracht', ${d.kracht?'false':'true'})">${d.kracht?'✓ ':''}kracht</button>
+    </div>
+  </div>`;
+}
+
+function conceptHTML(){
+  const tot = aiConcept.regels.reduce((a,r)=>({p:a.p+(r.kcal_punt||0), l:a.l+(r.kcal_laag||0),
+    h:a.h+(r.kcal_hoog||0), e:a.e+(r.eiwit_g||0)}), {p:0,l:0,h:0,e:0});
+  return `<div class="kaart plat" style="margin-top:12px">
+    <div class="tussen"><span class="eyebrow">Herkend — nakijken vóór opslaan</span>
+      <span class="mini">${esc(aiConcept.model||'')}</span></div>
+    <div class="lijst" style="margin-top:6px">
+      ${aiConcept.regels.map((r,i)=>`<div>
+        ${chip(r.conf)}
+        <span class="groei">
+          <span class="knip" style="font-size:.86rem;display:block">${esc(r.naam)}</span>
+          <span class="mini">${r.nevo_naam?'NEVO: '+esc(r.nevo_naam):'geen tabelwaarde — schatting van het model'}</span>
+          ${(r.onzekerheidsbronnen||[]).map(o=>'<span class="mini" style="display:block">· '+esc(o)+'</span>').join('')}
+        </span>
+        <span style="text-align:right">
+          <span class="cijfer" style="font-size:.85rem;display:block">${dz(r.kcal_punt)}</span>
+          <span class="mini cijfer">${dz(r.kcal_laag)}–${dz(r.kcal_hoog)}</span></span>
+        <button class="knop sm" onclick="conceptWeg(${i})">×</button>
+      </div>`).join('')}
+    </div>
+    <div class="tussen" style="margin-top:10px">
+      <span class="cijfer" style="font-size:.9rem"><b>${dz(Math.round(tot.p))} kcal</b>
+        <span class="klein">(${dz(Math.round(tot.l))}–${dz(Math.round(tot.h))}) · ${dec(tot.e,1)} g eiwit</span></span>
+      <button class="knop vol" onclick="conceptOpslaan()">Toevoegen</button>
+    </div>
+    ${aiConcept.opmerking?`<p class="klein" style="margin-top:8px">${esc(aiConcept.opmerking)}</p>`:''}
+    ${aiConcept.referentieobject?`<p class="mini" style="margin-top:4px">Schaal bepaald aan: ${esc(aiConcept.referentieobject)}.</p>`:''}
+  </div>`;
+}
+
+function schuif(n){ const nw=plusDagen(datum,n); if(nw>vandaag()) return; datum=nw; aiConcept=null; teken(); }
+function kiesFoto(inp){
+  const f = inp.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = () => { aiFoto = {naam:f.name, type:f.type, data:r.result.split(',')[1]}; herkenFoto(); };
+  r.readAsDataURL(f);
+}
+async function herkenTekst(){ await herken('tekst'); }
+async function herkenFoto(){ await herken('foto'); }
+async function herken(soort){
+  const tekst = ($('#ai-tekst')?.value||'').trim();
+  if(soort==='tekst' && !tekst){ $('#ai-mld').textContent='Schrijf eerst op wat je gegeten hebt.'; return; }
+  $('#ai-mld').innerHTML = '<span class="spin"></span> Bezig — dit duurt een halve minuut, want er wordt in twee ronden tegen NEVO gematcht.';
+  try{
+    const uit = await ai({soort, tekst, fotos: soort==='foto'&&aiFoto ? [aiFoto] : []});
+    aiConcept = uit; aiFoto = null; teken();
+  }catch(e){ $('#ai-mld').textContent = e.message; }
+}
+function conceptWeg(i){ aiConcept.regels.splice(i,1); if(!aiConcept.regels.length) aiConcept=null; teken(); }
+async function conceptOpslaan(){
+  const regels = aiConcept.regels.map(r=>Object.assign({}, r, {datum}));
+  aiConcept=null;
+  await bewaar(()=>rpc('kal_regels_toevoegen',{p_token:S.token, p_regels:regels}));
+}
+async function wisRegel(id){ await bewaar(()=>rpc('kal_regel_wissen',{p_token:S.token,p_id:id})); }
+async function zetDag(veld, waarde){
+  const patch = {}; patch[veld] = waarde===''?null:waarde;
+  await bewaar(()=>rpc('kal_dag_zetten',{p_token:S.token,p_datum:datum,p_patch:patch}));
+}
+async function bewaar(fn){
+  if(bezig) return; bezig=true;
+  try{ await fn(); await laden(); }catch(e){ alert(e.message); }
+  bezig=false; teken();
+}
+
+/* ============================================================================
+   7. TABBLAD MODEL
+   ========================================================================== */
+function vwModel(A,D){
+  const label = {hoog:'hoog', middel:'middel', laag:'laag', geen:'onvoldoende'}[A.zekerheid];
+  const kleur = A.zekerheid==='hoog'?'var(--goed)':A.zekerheid==='laag'?'var(--let)':'var(--k)';
+  const reeks = trendReeks(D);
+  const trendNu = [...reeks].reverse().find(x=>x.ema!=null);
+
+  return `
+  <div class="kaart">
+    <div class="tussen"><span class="eyebrow">Geschat dagelijks energieverbruik</span>
+      <span class="eyebrow" style="color:${kleur}">zekerheid ${label}</span></div>
+    ${A.tdee!=null ? `
+      <div class="rij" style="align-items:baseline;margin-top:4px">
+        <span class="getal" style="font-size:2.3rem">${dz(Math.round(A.laag))}–${dz(Math.round(A.hoog))}</span>
+        <span class="klein">kcal per dag</span></div>
+      ${intervalSVG(A)}
+      <p style="font-size:.88rem;margin-top:10px">Afgeleid uit ${A.volledig} bruikbare registratiedagen — gemiddeld
+        ${dz(Math.round(A.gemInname))} kcal — en een gewichtstrend van ${A.hellingWk>0?'+':''}${dec(A.hellingWk,2)} kg
+        per week, ofwel ${dec(A.hellingPct,2)} procent van je lichaamsgewicht.
+        Bij een streeftempo van ${dec(S.profiel.tempo_pct_week,1)} procent hoort een inname van
+        <b>${dz(A.doel)} kcal</b>.</p>`
+    : `
+      <p style="font-family:var(--serif);font-size:1.3rem;color:var(--grijs);margin-top:4px">Nog niet te berekenen.</p>
+      <p style="font-size:.88rem;margin-top:8px">Er zijn minstens zeven wegingen én zeven volledige registratiedagen
+        nodig binnen het venster van ${A.venster} dagen. Je hebt nu <b>${A.wPunten.length}</b> weging${A.wPunten.length===1?'':'en'}
+        en <b>${A.volledig}</b> bruikbare dag${A.volledig===1?'':'en'}. Weeg vanaf morgen elke ochtend; het model rekent
+        zichzelf uit zodra de reeks lang genoeg is. Vier weken geeft pas een bruikbaar interval.</p>
+      <div class="kaart plat" style="margin-top:12px">
+        <div class="eyebrow">Voorlopige aanname zolang er geen trend is</div>
+        <div class="rij" style="align-items:baseline;margin-top:3px">
+          <span class="getal" style="font-size:1.5rem">${dz(A.priorLaag)}–${dz(A.priorHoog)}</span>
+          <span class="klein">kcal</span></div>
+        <p class="mini" style="margin-top:6px">Ruststofwisseling ${dz(A.rustBMR)} kcal (Mifflin-St Jeor) maal een
+        activiteitsfactor tussen ${dec(A.palLaag,2)} en ${dec(A.palHoog,2)}. Dat is een band en geen getal, want een
+        gevalideerde omrekening van stappen naar activiteitsfactor bestaat niet. Behandel dit als prior, geen meting.</p>
+      </div>`}
+  </div>
+
+  ${A.teSnel ? `<div class="kaart let">
+    <div class="eyebrow">Te snel</div>
+    <p style="font-size:.88rem;margin-top:4px">De trend is ${dec(A.hellingWk,2)} kg per week, ofwel
+    ${dec(A.hellingPct,2)} procent — steiler dan één procent. Dat gaat ten koste van vetvrije massa en is slecht vol
+    te houden. Het advies is hier <b>méér</b> eten, niet minder${A.doel?`: het doel van ${dz(A.doel)} kcal ligt boven
+    wat je nu gemiddeld logt`:''}.</p></div>`:''}
+
+  ${A.tdee!=null ? `<div class="kaart">
+    <div class="eyebrow">Consistentiecheck registratie</div>
+    <p style="font-size:.88rem;margin-top:4px">De formule voorspelt bij dit gewicht en deze activiteit een onderhoud
+      tussen ${dz(A.priorLaag)} en ${dz(A.priorHoog)} kcal. De gewichtstrend impliceert ${dz(Math.round(A.tdee))} kcal.
+      ${A.onderrapportage>300
+        ? `Een verschil van ongeveer <b>${dz(Math.round(A.onderrapportage))} kcal</b> is te groot voor toeval en past bij
+           onderregistratie van twintig tot dertig procent — de best gedocumenteerde systematische fout in de
+           voedingswetenschap. Dat maakt het advies niet ongeldig: de bias is proportioneel en stabiel binnen een
+           persoon, dus zolang je op dezelfde manier blijft loggen klopt het doel in gelogde eenheden.`
+        : A.onderrapportage < -300
+        ? 'Je registreert méér dan de formule verwacht. Dat past bij een hogere activiteit dan de stappen laten zien, of bij een onrustige weegreeks.'
+        : 'Die liggen dicht bij elkaar. De registratie is intern consistent.'}</p>
+  </div>`:''}
+
+  ${meetgaten(A,D)}
+
+  <div class="kaart">
+    <div class="eyebrow">Gewicht en voortschrijdend gemiddelde</div>
+    ${gewichtSVG(reeks, A)}
+    <p class="mini">Punten zijn losse wegingen, de lijn is een exponentieel gewogen gemiddelde met een halfwaardetijd
+    van ongeveer een week. Dagelijkse schommelingen van één tot twee kilo zijn vocht, glycogeen en darminhoud —
+    de helling is het signaal, niet de meting.</p>
+  </div>
+
+  <div class="kaart">
+    <div class="eyebrow">Gelogde energie per dag</div>
+    ${innameSVG(reeks, A)}
+    <p class="mini">Oranje staven liggen onder 1.200 kcal en gelden als onvolledig, niet als succes.${
+      A.gemarkeerd?' '+A.gemarkeerd+' dag'+(A.gemarkeerd===1?'':'en')+' in dit venster valt in die categorie.':''}</p>
+  </div>
+
+  <div class="kaart">
+    <div class="eyebrow">Traject</div>
+    <div class="trio" style="margin-top:8px">
+      ${[['Nu', dec(A.gewicht,1)+' kg'],
+         ['Trend', trendNu?dec(trendNu.ema,1)+' kg':'—'],
+         ['Doel', (S.profiel.doel_gewicht_kg||'—')+' kg']]
+        .map(([l,v])=>`<div><div class="mini">${l}</div><div class="getal" style="font-size:1.25rem">${v}</div></div>`).join('')}
+    </div>
+    <p style="font-size:.88rem;margin-top:10px">${
+      A.wekenTotDoel
+      ? `Bij het huidige tempo is ${S.profiel.doel_gewicht_kg} kg over ongeveer <b>${A.wekenTotDoel} weken</b> in zicht —
+         rond ${esc(kortNL(plusDagen(vandaag(), A.wekenTotDoel*7)))}. Plateaus zitten daar niet in; reken op tien tot
+         twintig procent langer.`
+      : `Zonder gemeten helling is elke einddatum verzonnen. Bij ${dec(S.profiel.tempo_pct_week,1)} procent per week —
+         nu ${dec(A.tempoKgWk,2)} kg — duurt ${dec(A.gewicht-(S.profiel.doel_gewicht_kg||A.gewicht),0)} kg ongeveer
+         ${Math.round((A.gewicht-(S.profiel.doel_gewicht_kg||A.gewicht))/Math.max(0.1,A.tempoKgWk))} weken.`}</p>
+    <div class="kaart plat" style="margin-top:10px">
+      <p class="mini">Drie regels staan hard in de code. Het doel zakt nooit onder de ruststofwisseling
+      (${dz(A.rustBMR)} kcal). Gaat de trend sneller dan één procent per week, dan luidt het advies méér eten.
+      En actieve energie uit Garmin of Apple wordt nooit bij het doel opgeteld: de fout daarin is twintig tot vijftig
+      procent en niet consistent in één richting, dus corrigeren kan niet.</p>
+    </div>
+  </div>`;
+}
+
+function meetgaten(A,D){
+  const g=[], inst=S.profiel.instellingen||{};
+  if(D[vandaag()]?.gewicht_kg==null)
+    g.push('<b>De weging van vanochtend ontbreekt.</b> Zonder dagelijkse reeks is het model inert; het is de enige invoer die niet te schatten valt.');
+  if(!inst.olie_gewogen)
+    g.push('<b>Weeg één keer de olijfolie in de saladebereiding.</b> Verreweg de grootste onzekerheid van de dag: het verschil tussen 40 en 70 gram is 265 kcal, elke dag.');
+  if(!inst.melk_gemeten)
+    g.push('<b>Meet af wat de machine per cappuccino schenkt.</b> Bij vier à vijf op een werkdag de grootste onzichtbare post.');
+  const leeg = Array.from({length:7},(_,i)=>plusDagen(vandaag(),-i-1)).filter(k=>!(D[k]?._kcal));
+  if(leeg.length>=2)
+    g.push('<b>'+leeg.length+' van de afgelopen zeven dagen heeft geen registratie.</b> Gaten verbreden het interval sneller dan een onnauwkeurige schatting dat doet: een ruwe D-waarde is beter dan niets.');
+  if(!S.labs.length)
+    g.push('<b>De klinische nulmeting staat nog leeg.</b> Bloeddruk, HbA1c, lipiden, ALAT en GGT, TSH, vitamine D en middelomtrek — zonder uitgangswaarde is beloop niet te beoordelen.');
+  if(!g.length) return '';
+  return `<div class="kaart let"><div class="eyebrow">Wat het model nog mist</div>
+    <ol style="margin:8px 0 0;padding-left:19px;font-size:.86rem;line-height:1.5">
+      ${g.map(x=>'<li style="margin-bottom:6px">'+x+'</li>').join('')}</ol></div>`;
+}
+
+/* ------------------------------------------------------------- de figuren -- */
+function intervalSVG(A){
+  const min = Math.min(A.laag, A.doel??A.laag, A.priorLaag) - 200;
+  const max = Math.max(A.hoog, A.priorHoog) + 200;
+  const p = v => ((v-min)/(max-min))*100;
+  return `<svg class="fig" viewBox="0 0 100 18" preserveAspectRatio="none" style="height:48px;margin-top:10px" role="img"
+      aria-label="Interval ${Math.round(A.laag)} tot ${Math.round(A.hoog)} kcal, doel ${A.doel}">
+      <rect x="${p(A.priorLaag)}" y="7.5" width="${p(A.priorHoog)-p(A.priorLaag)}" height="3" fill="var(--dim)" opacity=".28"/>
+      <line x1="0" y1="9" x2="100" y2="9" stroke="var(--lijn)" stroke-width=".35"/>
+      <rect x="${p(A.laag)}" y="4" width="${p(A.hoog)-p(A.laag)}" height="10" fill="var(--k)" opacity=".2"/>
+      <line x1="${p(A.laag)}" y1="4" x2="${p(A.laag)}" y2="14" stroke="var(--k)" stroke-width=".4"/>
+      <line x1="${p(A.hoog)}" y1="4" x2="${p(A.hoog)}" y2="14" stroke="var(--k)" stroke-width=".4"/>
+      <line x1="${p(A.tdee)}" y1="2" x2="${p(A.tdee)}" y2="16" stroke="var(--ink)" stroke-width=".7"/>
+      ${A.doel?`<line x1="${p(A.doel)}" y1="2" x2="${p(A.doel)}" y2="16" stroke="var(--let)" stroke-width=".7"/>`:''}
+    </svg>
+    <div class="tussen mini cijfer"><span>${dz(Math.round(min))}</span>
+      <span style="font-family:var(--sans)">grijs = formuleschatting · zwart = meting · oranje = doel</span>
+      <span>${dz(Math.round(max))}</span></div>`;
+}
+function gewichtSVG(r, A){
+  const pts = r.filter(x=>x.w!=null);
+  if(pts.length<1) return '<p class="klein" style="margin-top:8px">Nog geen weging. Zodra er drie staan, verschijnt hier een lijn.</p>';
+  const W=330,H=140,L=32,B=18;
+  const vals = [...r.map(x=>x.w), ...r.map(x=>x.ema)].filter(v=>v!=null).map(Number);
+  const lo=Math.min(...vals)-0.8, hi=Math.max(...vals)+0.8;
+  const doel = S.profiel.doel_gewicht_kg;
+  const doelInBeeld = doel!=null && doel>lo && doel<hi;
+  const X=i=> r.length<2 ? (L+W)/2 : L + i/(r.length-1)*(W-L-4);
+  const Y=v=> H-B-((v-lo)/((hi-lo)||1))*(H-B-10);
+  const pad = r.map((x,i)=>x.ema!=null?X(i)+','+Y(x.ema):null).filter(Boolean).join(' ');
+  const dots = r.map((x,i)=>x.w!=null?`<circle cx="${X(i)}" cy="${Y(x.w)}" r="2" fill="var(--dim)"/>`:'').join('');
+  const yd = doelInBeeld ? Y(doel) : null;
+  return `<svg class="fig" viewBox="0 0 ${W} ${H}" style="margin-top:10px" role="img" aria-label="Gewicht per dag">
+    ${[0,.5,1].map(f=>{const v=lo+(hi-lo)*f;return `<line x1="${L}" y1="${Y(v)}" x2="${W}" y2="${Y(v)}" stroke="var(--lijn)" stroke-width="1"/>
+      <text x="0" y="${Y(v)+3.5}" font-size="9.5" fill="var(--grijs)" font-family="ui-monospace,monospace">${v.toFixed(0)}</text>`}).join('')}
+    ${yd!=null?`<line x1="${L}" y1="${yd}" x2="${W}" y2="${yd}" stroke="var(--let)" stroke-width="1" stroke-dasharray="3 3"/>
+      <text x="${W}" y="${yd-4}" font-size="9.5" fill="var(--let)" text-anchor="end">doel ${doel}</text>`
+    : (doel!=null?`<text x="${W}" y="${H-4}" font-size="9" fill="var(--let)" text-anchor="end">doel ${doel} kg valt onder deze schaal</text>`:'')}
+    ${dots}${pad?`<polyline points="${pad}" fill="none" stroke="var(--k)" stroke-width="2.2" stroke-linejoin="round"/>`:''}
+    <text x="${L}" y="${H-4}" font-size="9.5" fill="var(--grijs)">${esc(kortNL(r[0].d))} —</text>
+    <text x="${L+34}" y="${H-4}" font-size="9.5" fill="var(--grijs)">${esc(kortNL(r[r.length-1].d))}</text>
+  </svg>`;
+}
+function innameSVG(r, A){
+  const s = r.slice(-VENSTER);
+  if(!s.length) return '';
+  const W=330,H=118,L=32,B=15;
+  const top = Math.max(2600, ...s.map(x=>x.kcal||0))*1.06;
+  const Y=v=>H-B-(v/top)*(H-B-8);
+  const bw = Math.max(2.5, (W-L-4)/s.length-2);
+  return `<svg class="fig" viewBox="0 0 ${W} ${H}" style="margin-top:10px" role="img" aria-label="Gelogde energie per dag">
+    ${[0,1300,2600].map(v=>`<line x1="${L}" y1="${Y(v)}" x2="${W}" y2="${Y(v)}" stroke="var(--lijn)" stroke-width="1"/>
+      <text x="0" y="${Y(v)+3.5}" font-size="9.5" fill="var(--grijs)" font-family="ui-monospace,monospace">${v}</text>`).join('')}
+    ${s.map((x,i)=>x.kcal?`<rect x="${L+i/s.length*(W-L-4)}" y="${Y(x.kcal)}" width="${bw}"
+       height="${H-B-Y(x.kcal)}" rx="1.5" fill="${x.kcal<1200?'var(--let)':'var(--k)'}" opacity=".85"/>`:'').join('')}
+    <line x1="${L}" y1="${Y(1200)}" x2="${W}" y2="${Y(1200)}" stroke="var(--let)" stroke-width="1" stroke-dasharray="2 3"/>
+    ${A.doel?`<line x1="${L}" y1="${Y(A.doel)}" x2="${W}" y2="${Y(A.doel)}" stroke="var(--k)" stroke-width="1.2" stroke-dasharray="4 3"/>
+      <text x="${W}" y="${Y(A.doel)-3}" font-size="9.5" fill="var(--k)" text-anchor="end">doel ${dz(A.doel)}</text>`:''}
+    <text x="${L}" y="${H-3}" font-size="9.5" fill="var(--grijs)">${esc(kortNL(s[0].d))}</text>
+    <text x="${W}" y="${H-3}" font-size="9.5" fill="var(--grijs)" text-anchor="end">${esc(kortNL(s[s.length-1].d))}</text>
+  </svg>`;
+}
+
+/* ============================================================================
+   8. TABBLAD VOEDING
+   ========================================================================== */
+let zoekHits = null;
+function vwVoeding(A){
+  return `
+  <div class="kaart">
+    <div class="eyebrow">Zoeken in NEVO en de gerechtenbibliotheek</div>
+    <input id="v-q" placeholder="couscous, olijfolie, tajine…" style="margin-top:8px"
+      onkeydown="if(event.key==='Enter')zoeken()">
+    <div class="rij" style="margin-top:8px"><button class="knop" onclick="zoeken()">Zoeken</button>
+      <span class="mini">2.328 producten uit het Nederlands Voedingsstoffenbestand, plus de gevalideerde gerechten van ProVita.</span></div>
+    <div id="v-hits">${zoekHits?hitsHTML():''}</div>
+  </div>
+
+  <div class="kaart">
+    <div class="eyebrow">Eigen producten</div>
+    <p class="mini" style="margin-top:4px">Wat je van het etiket overneemt en afweegt is een A-waarde — de enige categorie zonder schatting.</p>
+    <div class="rij" style="margin-top:8px">
+      <input id="p-n" placeholder="naam" style="flex:2 1 140px;width:auto">
+      <input id="p-per" type="number" placeholder="per" value="100" style="flex:0 0 72px">
+      <select id="p-u" style="flex:0 0 78px"><option>g</option><option>ml</option><option>stuk</option><option>portie</option></select>
+      <input id="p-kcal" type="number" placeholder="kcal" style="flex:0 0 78px">
+      <input id="p-eiw" type="number" step="0.1" placeholder="eiwit" style="flex:0 0 78px">
+      <button class="knop vol" onclick="bewaarProduct()">Opslaan</button>
+    </div>
+    ${S.producten.length?`<div class="lijst" style="margin-top:10px">${S.producten.map(p=>`<div>
+      ${chip('A')}<span class="groei knip" style="font-size:.86rem">${esc(p.naam)}</span>
+      <span class="cijfer mini">${dz(p.kcal)}/${p.per}${esc(p.eenheid)} · ${dec(p.eiwit_g,1)} g</span>
+      <button class="knop sm" onclick="wisRij('product','${p.id}')">×</button></div>`).join('')}</div>`:''}
+  </div>
+
+  <div class="kaart">
+    <div class="eyebrow">Eiwitverdeling over de dag</div>
+    ${eiwitVerdeling(A)}
+  </div>`;
+}
+function hitsHTML(){
+  const h = zoekHits;
+  const rij = (naam, sub, kcal, eiw, code, conf) => `<div>
+    ${chip(conf)}<span class="groei"><span class="knip" style="font-size:.86rem;display:block">${esc(naam)}</span>
+    <span class="mini">${esc(sub)}</span></span>
+    <span class="cijfer mini" style="text-align:right">${dz(kcal)} kcal<br>${dec(eiw,1)} g</span>
+    <button class="knop sm" onclick="uitTabel('${code}')">+</button></div>`;
+  let uit = '';
+  if(h.nevo?.length) uit += '<div class="eyebrow" style="margin-top:12px">NEVO</div><div class="lijst">' +
+    h.nevo.map(n=>rij(n.naam, 'per 100 g · '+(n.groep||''), n.kcal, n.eiwit_g, n.nevo_code, 'C')).join('') + '</div>';
+  if(h.gerechten?.length) uit += '<div class="eyebrow" style="margin-top:12px">Gerechten van ProVita</div><div class="lijst">' +
+    h.gerechten.map(g=>`<div>${chip('D')}<span class="groei"><span class="knip" style="font-size:.86rem;display:block">${esc(g.naam)}</span>
+      <span class="mini">${esc(g.keuken||'')}${g.omschrijving?' · '+esc(g.omschrijving).slice(0,60):''}</span></span></div>`).join('') + '</div>';
+  if(!uit) uit = '<p class="klein" style="margin-top:10px">Niets gevonden. Zeg het in gewone taal onder Vandaag — dan ontleedt de herkenning het voor je.</p>';
+  return uit;
+}
+async function zoeken(){
+  const q = $('#v-q').value.trim();
+  $('#v-hits').innerHTML = '<p class="klein" style="margin-top:10px"><span class="spin"></span> Zoeken…</p>';
+  try{ zoekHits = await rpc('kal_zoeken',{p_token:S.token, p_q:q, p_limiet:12}); }
+  catch(e){ $('#v-hits').innerHTML = '<p class="klein">'+esc(e.message)+'</p>'; return; }
+  $('#v-hits').innerHTML = hitsHTML();
+}
+async function uitTabel(code){
+  const n = zoekHits.nevo.find(x=>x.nevo_code===code); if(!n) return;
+  const g = parseFloat(prompt('Hoeveel gram '+n.naam+'?', '100')); if(!g) return;
+  await bewaar(()=>rpc('kal_regels_toevoegen',{p_token:S.token, p_regels:[{
+    datum, naam:n.naam+' · '+g+' g', hoeveelheid:g, eenheid:'g', gram_equivalent:g,
+    kcal_punt:Math.round(n.kcal*g/100), kcal_laag:Math.round(n.kcal*g/100*0.95), kcal_hoog:Math.round(n.kcal*g/100*1.05),
+    eiwit_g:Math.round(n.eiwit_g*g/100*10)/10, vet_g:Math.round(n.vet_g*g/100*10)/10,
+    koolhydraat_g:Math.round(n.koolhydraat_g*g/100*10)/10, conf:'C', bron:'nevo', nevo_code:code,
+    onzekerheidsbronnen:['portie opgegeven, niet gewogen']}]}));
+  tab='vandaag';
+}
+async function bewaarProduct(){
+  const naam=$('#p-n').value.trim(), kcal=parseFloat($('#p-kcal').value);
+  if(!naam||!isFinite(kcal)) return;
+  await bewaar(()=>rpc('kal_rij_toevoegen',{p_token:S.token,p_tabel:'product',p_rij:{
+    naam, per:parseFloat($('#p-per').value)||100, eenheid:$('#p-u').value, kcal,
+    eiwit_g:parseFloat($('#p-eiw').value)||0, conf:'A'}}));
+}
+async function wisRij(t,id){ await bewaar(()=>rpc('kal_rij_wissen',{p_token:S.token,p_tabel:t,p_id:id})); }
+
+function eiwitVerdeling(A){
+  const per = {ontbijt:0, lunch:0, diner:0, tussendoor:0, onbekend:0};
+  for(const r of S.regels.filter(r=>r.datum===datum)) per[r.moment||'onbekend'] += +r.eiwit_g||0;
+  const doelPerMaaltijd = Math.round(A.eiwitDoel/3);
+  const mx = Math.max(doelPerMaaltijd*1.4, ...Object.values(per));
+  return `<div style="margin-top:8px">
+    ${Object.entries(per).filter(([m,v])=>v>0||['ontbijt','lunch','diner'].includes(m)).map(([m,v])=>`<div style="margin-bottom:7px">
+      <div class="tussen"><span class="mini" style="text-transform:capitalize">${m}</span>
+        <span class="cijfer mini">${dec(v,1)} g</span></div>
+      <div class="balk"><i class="${v>=doelPerMaaltijd?'goed':''}" style="width:${Math.min(100,v/mx*100)}%"></i></div>
+    </div>`).join('')}
+    <p class="mini" style="margin-top:8px">Streef naar drie tot vier maaltijden van ${doelPerMaaltijd} tot
+    ${Math.round(A.eiwitDoel/3*1.2)} g eiwit met minstens drie uur ertussen. Gelijkmatige verdeling gaf in Mamerow 2014
+    een 25 procent hogere spiereiwitsynthese dan een scheve verdeling — al ging dat om acht deelnemers van gemiddeld
+    37 jaar, dus behandel het als richting, niet als wet. Het ontbijt is de maaltijd waar de scheve verdeling
+    vrijwel altijd ontstaat.</p></div>`;
+}
+
+/* ============================================================================
+   9. TABBLAD BEWEGING
+   ========================================================================== */
+function vwBeweging(A,D){
+  const k = Object.keys(D).sort().slice(-21);
+  const laatste7 = k.slice(-7).map(x=>D[x].stappen).filter(v=>v!=null).map(Number);
+  const gem7 = laatste7.length ? Math.round(laatste7.reduce((a,b)=>a+b,0)/laatste7.length) : null;
+  const sinds = plusDagen(vandaag(),-7);
+  const sets = S.training.filter(t=>t.datum>=sinds).reduce((a,t)=>a+(+t.sets||0),0);
+  const sessies = new Set(S.training.filter(t=>t.datum>=sinds).map(t=>t.datum)).size;
+  const perSpier = {};
+  for(const t of S.training.filter(t=>t.datum>=sinds)) perSpier[t.spiergroep||'overig'] = (perSpier[t.spiergroep||'overig']||0)+(+t.sets||0);
+
+  return `
+  <div class="kaart">
+    <div class="trio">
+      ${[['Stappen 7 dgn', gem7?dz(gem7):'—','doel 8.000 gemiddeld'],
+         ['Venster', A.gemStappen?dz(Math.round(A.gemStappen)):'—', A.venster+' dagen'],
+         ['Krachtsessies', sessies, 'doel 3 per week']]
+        .map(([l,v,s])=>`<div><div class="eyebrow">${l}</div>
+          <div class="getal" style="font-size:1.35rem;margin-top:4px">${v}</div><div class="mini">${s}</div></div>`).join('')}
+    </div>
+    <p class="mini" style="margin-top:10px">Actieve energie uit Apple of Garmin wordt bewaard als volume-indicator maar
+    verschijnt nergens in de rekenkern. De fout in energieverbruik is twintig tot vijftig procent en niet consistent in
+    één richting; een bias die je niet kent kun je niet corrigeren. Voor jou gaat het om zo'n 633 kcal per dag —
+    genoeg om het hele tekort weg te eten als je het zou bijtellen.</p>
+  </div>
+
+  <div class="kaart">
+    <div class="eyebrow">Krachttraining toevoegen</div>
+    <div class="rij" style="margin-top:8px">
+      <input id="t-oef" placeholder="oefening" style="flex:2 1 130px;width:auto">
+      <select id="t-sp" style="flex:0 0 110px">
+        ${['benen','rug','borst','schouders','armen','romp'].map(s=>`<option>${s}</option>`).join('')}</select>
+      <input id="t-sets" type="number" placeholder="sets" style="flex:0 0 68px">
+      <input id="t-reps" type="number" placeholder="reps" style="flex:0 0 68px">
+      <input id="t-kg" type="number" step="0.5" placeholder="kg" style="flex:0 0 68px">
+      <button class="knop vol" onclick="bewaarTraining()">Opslaan</button>
+    </div>
+    ${Object.keys(perSpier).length?`<div style="margin-top:12px">
+      <div class="eyebrow">Sets per spiergroep, laatste zeven dagen</div>
+      ${Object.entries(perSpier).map(([s,n])=>`<div style="margin-top:6px">
+        <div class="tussen"><span class="mini" style="text-transform:capitalize">${esc(s)}</span>
+          <span class="cijfer mini">${n} van 10</span></div>
+        <div class="balk"><i class="${n>=10?'goed':''}" style="width:${Math.min(100,n/10*100)}%"></i></div></div>`).join('')}
+    </div>`:''}
+    <p class="mini" style="margin-top:10px">Krachttraining voorkwam in Sardeli 2018 ruim 93 procent van het verlies aan
+    vetvrije massa door caloriebeperking, zonder dat het vetverlies eronder leed; het protocol was in alle zes de
+    onderliggende trials drie keer per week. Tien sets per spiergroep per week is een redelijke ondergrens
+    (Schoenfeld 2017), met duidelijk afnemende meeropbrengst daarboven. Eiwit is faciliterend, niet vervangend:
+    zonder training gaf 1,7 tegen 0,9 g/kg géén verschil.</p>
+  </div>
+
+  <div class="kaart">
+    <div class="eyebrow">Laatste drie weken</div>
+    <div class="lijst" style="margin-top:4px">
+      ${k.slice().reverse().map(x=>{const r=D[x];return `<div>
+        <span class="cijfer mini" style="width:52px">${esc(kortNL(x))}</span>
+        <span class="balk groei"><i style="width:${Math.min(100,(r.stappen||0)/12000*100)}%;${(r.stappen||0)<5000?'background:var(--dim)':''}"></i></span>
+        <span class="cijfer mini" style="width:52px;text-align:right">${r.stappen!=null?dz(r.stappen):'—'}</span>
+        <span style="width:16px;color:var(--goed)">${r.kracht?'✓':''}</span></div>`}).join('')}
+    </div>
+  </div>`;
+}
+async function bewaarTraining(){
+  const oef=$('#t-oef').value.trim(); if(!oef) return;
+  await bewaar(()=>rpc('kal_rij_toevoegen',{p_token:S.token,p_tabel:'training',p_rij:{
+    datum, oefening:oef, spiergroep:$('#t-sp').value, sets:parseInt($('#t-sets').value)||null,
+    reps:parseInt($('#t-reps').value)||null, gewicht_kg:parseFloat($('#t-kg').value)||null}}));
+}
+
+/* ============================================================================
+   10. TABBLAD KLINISCH
+   ========================================================================== */
+const LABS = [
+  ['hba1c','HbA1c','mmol/mol',null,42],['glucose_nuchter','Nuchter glucose','mmol/L',null,6.0],
+  ['tc','Totaal cholesterol','mmol/L',null,null],['hdl','HDL-cholesterol','mmol/L',1.0,null],
+  ['ldl','LDL-cholesterol','mmol/L',null,2.6],['tg','Triglyceriden','mmol/L',null,1.7],
+  ['alat','ALAT','U/L',null,45],['asat','ASAT','U/L',null,35],['ggt','GGT','U/L',null,55],
+  ['trombo','Trombocyten','10⁹/L',150,400],['tsh','TSH','mE/L',0.4,4.0],
+  ['vitd','Vitamine D','nmol/L',50,null],['egfr','eGFR','ml/min',60,null],
+  ['kreat','Kreatinine','µmol/L',null,110]
+];
+function laatsteLab(code){
+  const l = S.labs.filter(x=>x.code===code).sort((a,b)=>a.datum<b.datum?1:-1);
+  return l[0]||null;
+}
+function laatsteMeting(soort){
+  const m = S.metingen.filter(x=>x.soort===soort).sort((a,b)=>a.datum<b.datum?1:-1);
+  return m[0]||null;
+}
+function vwKlinisch(A){
+  const sbd = laatsteMeting('bloeddruk_sys'), dbd = laatsteMeting('bloeddruk_dia');
+  const middel = laatsteMeting('middelomtrek');
+  const tc=laatsteLab('tc'), hdl=laatsteLab('hdl');
+  const rook = !!(S.profiel.instellingen||{}).rookt;
+  const sc = (sbd&&tc&&hdl) ? score2(S.profiel,{leeftijd:S.profiel.leeftijd_jaar, rook,
+    sbd:+sbd.waarde, tc:+tc.waarde, hdl:+hdl.waarde, dm:false}) : null;
+  const f = fib4({leeftijd:S.profiel.leeftijd_jaar, asat:+(laatsteLab('asat')?.waarde||0),
+    alat:+(laatsteLab('alat')?.waarde||0), trombo:+(laatsteLab('trombo')?.waarde||0)});
+
+  return `
+  <div class="kaart">
+    <div class="eyebrow">Metingen</div>
+    <div class="rij" style="margin-top:8px">
+      <select id="m-s" style="flex:1 1 150px;width:auto">
+        <option value="bloeddruk_sys">bloeddruk systolisch</option>
+        <option value="bloeddruk_dia">bloeddruk diastolisch</option>
+        <option value="middelomtrek">middelomtrek</option>
+        <option value="nekomtrek">nekomtrek</option>
+        <option value="hartslag_rust">hartslag in rust</option>
+      </select>
+      <input id="m-w" type="number" step="0.1" placeholder="waarde" style="flex:0 0 96px">
+      <button class="knop vol" onclick="bewaarMeting()">Opslaan</button>
+    </div>
+    <div class="trio" style="margin-top:12px">
+      <div><div class="mini">Bloeddruk</div><div class="getal" style="font-size:1.2rem">${
+        sbd&&dbd?Math.round(sbd.waarde)+'/'+Math.round(dbd.waarde):'—'}</div></div>
+      <div><div class="mini">Middelomtrek</div><div class="getal" style="font-size:1.2rem">${
+        middel?dec(middel.waarde,0)+' cm':'—'}</div></div>
+      <div><div class="mini">BMI</div><div class="getal" style="font-size:1.2rem">${dec(A.bmi,1)}</div></div>
+    </div>
+    ${middel?`<p class="mini" style="margin-top:8px">${
+      middel.waarde>=102?'Boven 102 cm — de grens waarbij gewichtsafname wordt aanbevolen.'
+      :middel.waarde>=94?'Tussen 94 en 102 cm — de grens waarbij het gewicht niet meer mag toenemen.'
+      :'Onder 94 cm.'} Voor Noord-Afrikaanse afkomst gelden dezelfde waarden als voor Europese mannen: IDF, WHO en de
+      Nederlandse richtlijn 2023 verwijzen alle drie naar de Europese afkappunten. Alleen voor Aziatische afkomst
+      liggen ze lager. Meetfout in de literatuur 0,7 tot 15 cm — twee centimeter verschil is ruis.</p>`
+    :`<p class="mini" style="margin-top:8px">Meten halverwege tussen de onderste rib en de bovenrand van de bekkenkam,
+      staand, op de blote huid, lint parallel aan de vloer.</p>`}
+  </div>
+
+  <div class="kaart">
+    <div class="eyebrow">Laboratorium</div>
+    <div class="rij" style="margin-top:8px">
+      <select id="l-c" style="flex:1 1 160px;width:auto">${LABS.map(([c,n,e])=>`<option value="${c}">${n} (${e})</option>`).join('')}</select>
+      <input id="l-w" type="number" step="0.01" placeholder="waarde" style="flex:0 0 96px">
+      <input id="l-d" type="date" value="${vandaag()}" style="flex:0 0 148px">
+      <button class="knop vol" onclick="bewaarLab()">Opslaan</button>
+    </div>
+    <div class="lijst" style="margin-top:10px">
+      ${LABS.map(([c,n,e,lo,hi])=>{const l=laatsteLab(c); if(!l) return '';
+        const buiten = (lo!=null&&l.waarde<lo)||(hi!=null&&l.waarde>hi);
+        return `<div><span class="groei" style="font-size:.86rem">${n}</span>
+          <span class="cijfer" style="font-size:.86rem;color:${buiten?'var(--let)':'inherit'}">${dec(l.waarde,2)} ${e}</span>
+          <span class="mini">${esc(kortNL(l.datum))}</span></div>`}).join('') || '<div class="klein">Nog geen labwaarden.</div>'}
+    </div>
+  </div>
+
+  <div class="kaart ${sc&&sc.klasse==='hoog'?'let':''}">
+    <div class="eyebrow">SCORE2 — tienjaarsrisico hart- en vaatziekten</div>
+    ${sc ? `
+      <div class="rij" style="align-items:baseline;margin-top:4px">
+        <span class="getal" style="font-size:2rem">${dec(sc.risico,1)}%</span>
+        <span class="klein">${sc.klasse} risico volgens NHG-CVRM</span></div>
+      <p class="mini" style="margin-top:8px">Berekend met het gepubliceerde ESC-algoritme voor de laag-risicoregio,
+      niet met de tabel. Twee kanttekeningen die erbij horen: SCORE2 onderschat in Nederland met een factor 1,3 bij
+      mannen, oplopend bij lage sociaaleconomische status en niet-westerse afkomst, en de C-index is 0,65 tot 0,72.
+      Dit is een gespreksinstrument, geen individuele voorspelling.</p>`
+    : `<p class="klein" style="margin-top:4px">Nog niet te berekenen. Nodig: systolische bloeddruk, totaal cholesterol
+       en HDL. Het algoritme rekent met totaal en HDL apart, terwijl de NHG-tabellen non-HDL gebruiken — bij gelijk
+       non-HDL kunnen die uiteenlopen.</p>`}
+  </div>
+
+  <div class="kaart ${f&&f.klasse==='verwijzen'?'let':''}">
+    <div class="eyebrow">FIB-4 — leverfibrose bij MASLD</div>
+    ${f ? `
+      <div class="rij" style="align-items:baseline;margin-top:4px">
+        <span class="getal" style="font-size:2rem">${dec(f.waarde,2)}</span>
+        <span class="klein">${f.klasse==='uitgesloten'?'fibrose praktisch uitgesloten'
+          :f.klasse==='grijs'?'grijze zone — tweede test (FibroScan of ELF)':'boven 2,67 — verwijzing MDL overwegen'}</span></div>
+      <p class="mini" style="margin-top:8px">Afkapwaarden uit de Richtlijn MASLD/MASH (NVMDL, april 2024): onder
+      ${dec(f.onder,1)} is fibrose uitgesloten bij jouw leeftijd, tot 2,67 volgt een tweede test. Geen enkele
+      niet-invasieve test haalt sensitiviteit én specificiteit boven de tachtig procent; dit is een uitsluittest, geen
+      stadiëring. Bij BMI ${dec(A.bmi,1)} is het cardiometabole criterium voor MASLD al vervuld — maar de diagnose
+      vraagt aangetoonde steatose, en die stelt deze app niet.</p>`
+    : `<p class="klein" style="margin-top:4px">Nodig: ASAT, ALAT en trombocyten. Met het oog op MASLD hoort dat in de nulmeting.</p>`}
+  </div>
+
+  ${stopbangKaart(A)}`;
+}
+function stopbangKaart(A){
+  const v = S.vragenlijsten.filter(x=>x.soort==='stopbang').sort((a,b)=>a.datum<b.datum?1:-1)[0];
+  const a = v?.antwoorden || {};
+  const r = v ? stopbangScore(a) : null;
+  return `<div class="kaart ${r&&r.klasse==='hoog'?'let':''}">
+    <div class="eyebrow">STOP-BANG — obstructieve slaapapneu</div>
+    <div style="margin-top:8px">
+      ${STOPBANG.map(([k,l])=>`<label style="display:flex;gap:9px;padding:6px 0;cursor:pointer;align-items:flex-start">
+        <input type="checkbox" id="sb-${k}" ${a[k]?'checked':''} style="width:19px;height:19px;flex:0 0 19px;margin-top:2px">
+        <span style="font-size:.85rem;line-height:1.35">${l}</span></label>`).join('')}
+    </div>
+    <div class="rij" style="margin-top:8px"><button class="knop vol" onclick="bewaarStopbang()">Berekenen en bewaren</button>
+      ${r?`<span class="klein"><b>${r.score} van 8</b> — ${r.klasse} risico</span>`:''}</div>
+    <p class="mini" style="margin-top:10px">Let op wat deze score wél en niet zegt. Bij een score van drie of meer is de
+    sensitiviteit voor matig tot ernstig OSA 94 procent, maar de <b>specificiteit slechts 34 procent</b>. Man boven de
+    vijftig levert al twee punten op zonder één klacht: in een populatie van vijftigplusmannen met obesitas is bijna
+    iedereen "matig risico", en dat is informatie over de vragenlijst, niet over jou.<br><br>
+    En de richting van het bewijs is anders dan vaak wordt aangenomen. CPAP maakt afvallen niet makkelijker — twee
+    meta-analyses vinden een kleine gewichts<i>toename</i>. Omgekeerd wél: tien kilo afvallen verlaagde in Sleep AHEAD
+    de AHI met bijna tien events per uur. Behandel OSA om de OSA, en het gewicht apart.</p>
+  </div>`;
+}
+async function bewaarMeting(){
+  const w = parseFloat($('#m-w').value); if(!isFinite(w)) return;
+  await bewaar(()=>rpc('kal_rij_toevoegen',{p_token:S.token,p_tabel:'meting',p_rij:{
+    datum:vandaag(), soort:$('#m-s').value, waarde:w,
+    eenheid:$('#m-s').value.includes('bloeddruk')?'mmHg':($('#m-s').value.includes('omtrek')?'cm':'/min')}}));
+}
+async function bewaarLab(){
+  const w = parseFloat($('#l-w').value); if(!isFinite(w)) return;
+  const c = $('#l-c').value, def = LABS.find(x=>x[0]===c);
+  await bewaar(()=>rpc('kal_rij_toevoegen',{p_token:S.token,p_tabel:'lab',p_rij:{
+    datum:$('#l-d').value, code:c, naam:def[1], waarde:w, eenheid:def[2],
+    ref_laag:def[3], ref_hoog:def[4]}}));
+}
+async function bewaarStopbang(){
+  const a = {}; STOPBANG.forEach(([k])=>a[k] = $('#sb-'+k).checked);
+  const r = stopbangScore(a);
+  await bewaar(()=>rpc('kal_rij_toevoegen',{p_token:S.token,p_tabel:'vragenlijst',p_rij:{
+    datum:vandaag(), soort:'stopbang', antwoorden:a, score:r.score, klasse:r.klasse}}));
+}
+
+/* ============================================================================
+   11. TABBLAD MEER — slaap, onderhoud, instellingen
+   ========================================================================== */
+function vwMeer(A,D){
+  const reeks = trendReeks(D);
+  const trendNu = [...reeks].reverse().find(x=>x.ema!=null);
+  const zone = S.profiel.fase==='onderhoud'
+    ? onderhoudZone(trendNu?.ema, S.profiel.onderhoud_basis_kg) : null;
+  const slaap = Object.keys(D).sort().slice(-14).map(k=>D[k].slaap_min).filter(v=>v!=null).map(Number);
+  const gemSlaap = slaap.length ? slaap.reduce((a,b)=>a+b,0)/slaap.length/60 : null;
+
+  return `
+  <div class="kaart">
+    <div class="eyebrow">Slaap, laatste twee weken</div>
+    <div class="rij" style="align-items:baseline;margin-top:4px">
+      <span class="getal" style="font-size:1.8rem">${gemSlaap?dec(gemSlaap,1):'—'}</span>
+      <span class="klein">uur gemiddeld over ${slaap.length} nacht${slaap.length===1?'':'en'}</span></div>
+    <p class="mini" style="margin-top:8px">Bij 5,5 tegenover 8,5 uur slaapgelegenheid daalde in Nedeltcheva 2010 het
+    aandeel gewichtsverlies als vet met 55 procent en steeg het verlies van vetvrije massa met 60 procent, bij
+    identieke caloriebeperking — met meer honger erbij. Tien deelnemers, dus klein, maar het mechanisme is plausibel
+    en de richting eenduidig. Slaap is hier geen wellness-item maar een variabele in dezelfde vergelijking.</p>
+  </div>
+
+  ${S.profiel.fase==='onderhoud' ? `
+  <div class="kaart" style="border-left:3px solid ${zone?zone.kleur:'var(--lijn)'}">
+    <div class="tussen"><span class="eyebrow">Onderhoud — stoplicht</span>
+      ${zone?`<span class="stoplicht" style="background:${zone.kleur}"></span>`:''}</div>
+    ${zone ? `
+      <div class="rij" style="align-items:baseline;margin-top:4px">
+        <span class="getal" style="font-size:1.8rem">${zone.delta>0?'+':''}${dec(zone.delta,1)} kg</span>
+        <span class="klein">ten opzichte van ${dec(S.profiel.onderhoud_basis_kg,1)} kg</span></div>
+      <p style="font-size:.88rem;margin-top:8px">${
+        zone.zone==='groen' ? 'Groen: binnen 1,4 kg van je basisgewicht. Doorgaan.'
+        : zone.zone==='geel' ? 'Geel: 1,4 tot 2,3 kg erboven. Zoek de oorzaak en stel eten en bewegen bij — dit is het moment, niet volgende maand.'
+        : 'Rood: 2,3 kg of meer erboven. Herstart de actieve afvalfase.'}</p>`
+    : `<p class="klein" style="margin-top:4px">Stel eerst een basisgewicht in bij de instellingen — dat is het laagste
+       stabiele gewicht waar je op wilt blijven.</p>`}
+    <p class="mini" style="margin-top:10px">De drempels komen uit STOP Regain (Wing 2006): in die trial kwam 72 procent
+    van de controlegroep 2,3 kg of meer aan tegen 46 procent in de begeleide groep. Twee eerlijke kanttekeningen. De
+    randomisatie betrof het prógramma, niet het wegen zelf — dagelijks wegen zonder actieregel heeft veel zwakker
+    bewijs. En de internet-arm presteerde nauwelijks beter dan de controlegroep; een app die alleen digitaal is
+    repliceert de zwakste arm. Het stoplicht triggert op het voortschrijdend gemiddelde en niet op de dagmeting,
+    anders vuurt rood op vocht.</p>
+  </div>` : `
+  <div class="kaart plat">
+    <div class="eyebrow">Onderhoudsfase</div>
+    <p class="klein" style="margin-top:4px">Nog niet actief. Twintig kilo verliezen zonder gedefinieerd
+    onderhoudsprotocol is waar de meeste trajecten stranden — niet in de afvalfase. Zet de fase om zodra je op gewicht
+    bent; dan verschijnt hier het stoplicht met een vaste actieregel per zone.</p>
+  </div>`}
+
+  <div class="kaart">
+    <div class="eyebrow">Instellingen</div>
+    <div class="rij" style="margin-top:10px">
+      <button class="knop" onclick="venster='profiel';teken()">Profiel en doelen</button>
+      <button class="knop" onclick="venster='import';teken()">Importeren uit een andere app</button>
+      <button class="knop" onclick="venster='account';teken()">Account</button>
+    </div>
+  </div>
+
+  <div class="kaart plat">
+    <div class="eyebrow">Waar de getallen vandaan komen</div>
+    <p class="mini" style="margin-top:4px">Elke rekenregel in deze app is verantwoord in VERANTWOORDING.md, met bron,
+    beperking en een lijst van wat niet te verifiëren viel. De kern in één zin: het verbruik wordt gemeten uit de
+    gewichtstrend in plaats van geschat uit een formule, en door te meten worden adaptieve thermogenese en de
+    individuele activiteitsfactor automatisch geabsorbeerd — die hoeven niet gemodelleerd te worden, ze zitten al in
+    de meting.</p>
+  </div>`;
+}
+
+/* ============================================================================
+   12. VENSTERS
+   ========================================================================== */
+function vensterHTML(){
+  if(venster==='profiel') return vensterProfiel();
+  if(venster==='import')  return vensterImport();
+  if(venster==='account') return vensterAccount();
+  return '';
+}
+function sluit(){ venster=null; teken(); }
+function vensterProfiel(){
+  const p = S.profiel, i = p.instellingen||{};
+  const inp = (id,v,st='') => `<input id="${id}" type="number" step="any" value="${v??''}" class="smaller" style="${st}">`;
+  return `<div class="sluier" onclick="if(event.target===this)sluit()"><div class="venster">
+    <div class="tussen"><h2 style="font-size:1.25rem">Profiel en doelen</h2>
+      <button class="knop sm" onclick="sluit()">×</button></div>
+
+    <div class="regel"><div><b style="font-size:.87rem">Lengte, leeftijd, geslacht</b></div>
+      <div class="rij" style="gap:5px">${inp('i-lengte',p.lengte_cm)}${inp('i-leeftijd',p.leeftijd_jaar)}
+        <select id="i-gesl" style="width:auto"><option value="m"${p.geslacht==='m'?' selected':''}>m</option>
+        <option value="v"${p.geslacht==='v'?' selected':''}>v</option></select></div></div>
+
+    <div class="regel"><div><b style="font-size:.87rem">Doelgewicht</b></div>${inp('i-doel',p.doel_gewicht_kg)}</div>
+
+    <div class="regel"><div><b style="font-size:.87rem">Streeftempo</b>
+      <div class="mini">Procent lichaamsgewicht per week. Boven 1,0 gaat het ten koste van vetvrije massa; 0,5 tot 1,0 is de band.</div></div>
+      <div class="rij" style="gap:5px">${inp('i-tempo',p.tempo_pct_week)}<span class="mini">%/wk</span></div></div>
+
+    <div class="regel"><div><b style="font-size:.87rem">Eiwitdoel</b>
+      <div class="mini">Gram per kilo <i>gecorrigeerd</i> gewicht, met plafond op BMI 30. 1,2 tot 1,5 tijdens energierestrictie.</div></div>
+      <div class="rij" style="gap:5px">${inp('i-eiwit',p.eiwit_g_per_kg)}<span class="mini">g/kg</span></div></div>
+
+    <div class="regel"><div><b style="font-size:.87rem">Olijfolie in de saladebereiding</b>
+      <div class="mini">De grootste onzekerheid van de dag. Weeg één keer.</div></div>
+      <div class="rij" style="gap:5px">${inp('i-olie',i.olie_g)}<span class="mini">g</span>
+        <input type="checkbox" id="i-oliew" ${i.olie_gewogen?'checked':''} style="width:19px;height:19px"></div></div>
+
+    <div class="regel"><div><b style="font-size:.87rem">Melk per cappuccino</b></div>
+      <div class="rij" style="gap:5px">${inp('i-melk',i.melk_ml)}
+        <select id="i-melks" style="width:auto">${['mager','half','vol'].map(v=>
+          `<option value="${v}"${i.melk_soort===v?' selected':''}>${v==='half'?'halfvol':v}</option>`).join('')}</select>
+        <input type="checkbox" id="i-melkw" ${i.melk_gemeten?'checked':''} style="width:19px;height:19px"></div></div>
+
+    <div class="regel"><div><b style="font-size:.87rem">Rookt</b>
+      <div class="mini">Invoer voor SCORE2.</div></div>
+      <input type="checkbox" id="i-rookt" ${i.rookt?'checked':''} style="width:19px;height:19px"></div>
+
+    <div class="regel"><div><b style="font-size:.87rem">Fase</b></div>
+      <select id="i-fase" style="width:auto">
+        <option value="afvallen"${p.fase==='afvallen'?' selected':''}>afvallen</option>
+        <option value="onderhoud"${p.fase==='onderhoud'?' selected':''}>onderhoud</option>
+        <option value="pauze"${p.fase==='pauze'?' selected':''}>pauze</option></select></div>
+
+    <div class="regel"><div><b style="font-size:.87rem">Basisgewicht onderhoud</b>
+      <div class="mini">Het laagste stabiele gewicht; de zones rekenen hiervandaan.</div></div>
+      ${inp('i-basis',p.onderhoud_basis_kg)}</div>
+
+    <div class="rij" style="margin-top:14px">
+      <button class="knop vol" onclick="bewaarProfiel()">Bewaren</button>
+      <button class="knop" onclick="sluit()">Annuleren</button></div>
+  </div></div>`;
+}
+async function bewaarProfiel(){
+  const n = id => { const v=parseFloat($(id).value); return isFinite(v)?v:null; };
+  const patch = {
+    lengte_cm:n('#i-lengte'), leeftijd_jaar:n('#i-leeftijd'), geslacht:$('#i-gesl').value,
+    doel_gewicht_kg:n('#i-doel'), tempo_pct_week:n('#i-tempo'), eiwit_g_per_kg:n('#i-eiwit'),
+    fase:$('#i-fase').value, onderhoud_basis_kg:n('#i-basis'),
+    instellingen:{olie_g:n('#i-olie'), olie_gewogen:$('#i-oliew').checked,
+      melk_ml:n('#i-melk'), melk_soort:$('#i-melks').value, melk_gemeten:$('#i-melkw').checked,
+      rookt:$('#i-rookt').checked}
+  };
+  venster=null;
+  await bewaar(()=>rpc('kal_profiel_zetten',{p_token:S.token,p_patch:patch}));
+}
+function vensterImport(){
+  return `<div class="sluier" onclick="if(event.target===this)sluit()"><div class="venster">
+    <div class="tussen"><h2 style="font-size:1.25rem">Importeren</h2><button class="knop sm" onclick="sluit()">×</button></div>
+    <p class="klein" style="margin-top:8px">Plak tekst uit Yazio of Apple Gezondheid, of stuur schermafdrukken mee.
+    Er wordt alleen overgenomen wat er werkelijk staat; gaten worden niet opgevuld.</p>
+    <textarea id="im-tekst" style="margin-top:10px;min-height:120px"
+      placeholder="20 augustus 2026    1.319 kcal&#10;19 augustus 2026    1.481 kcal&#10;…"></textarea>
+    <div class="rij" style="margin-top:8px">
+      <label class="knop" style="cursor:pointer">Schermafdrukken kiezen
+        <input type="file" accept="image/*" multiple style="display:none" onchange="kiesImportFotos(this)"></label>
+      <span class="mini" id="im-n"></span></div>
+    <p class="klein" id="im-mld" style="margin-top:8px;min-height:1.2em"></p>
+    <div id="im-uit"></div>
+    <div class="rij" style="margin-top:10px"><button class="knop vol" onclick="importeren()">Uitlezen</button></div>
+  </div></div>`;
+}
+let importFotos=[], importConcept=null;
+function kiesImportFotos(inp){
+  importFotos=[]; const fs=[...inp.files].slice(0,8);
+  let n=0;
+  fs.forEach(f=>{ const r=new FileReader();
+    r.onload=()=>{ importFotos.push({type:f.type, data:r.result.split(',')[1]});
+      if(++n===fs.length) $('#im-n').textContent = fs.length+' afbeelding'+(fs.length===1?'':'en')+' klaar'; };
+    r.readAsDataURL(f); });
+}
+async function importeren(){
+  $('#im-mld').innerHTML='<span class="spin"></span> Uitlezen…';
+  try{
+    const uit = await ai({soort:'import', tekst:$('#im-tekst').value, fotos:importFotos});
+    importConcept = uit.dagen||[];
+    $('#im-mld').textContent = importConcept.length+' dagen gevonden.';
+    $('#im-uit').innerHTML = `<div class="lijst" style="margin-top:8px;max-height:230px;overflow:auto">
+      ${importConcept.map(d=>`<div><span class="cijfer mini groei">${esc(d.datum)}</span>
+        <span class="cijfer mini">${d.kcal?dz(d.kcal)+' kcal':''} ${d.eiwit_g?'· '+dec(d.eiwit_g,0)+' g eiwit':''}
+        ${d.stappen?'· '+dz(d.stappen)+' stappen':''} ${d.gewicht_kg?'· '+dec(d.gewicht_kg,1)+' kg':''}</span></div>`).join('')}
+      </div><div class="rij" style="margin-top:8px"><button class="knop vol" onclick="importOpslaan()">Overnemen</button></div>`;
+  }catch(e){ $('#im-mld').textContent = e.message; }
+}
+async function importOpslaan(){
+  const dagen = importConcept.filter(d=>d.gewicht_kg!=null||d.stappen!=null||d.actieve_energie_kcal!=null);
+  const eten = importConcept.filter(d=>d.kcal);
+  venster=null;
+  await bewaar(async ()=>{
+    if(dagen.length) await rpc('kal_dagen_importeren',{p_token:S.token,p_dagen:dagen});
+    if(eten.length) await rpc('kal_regels_toevoegen',{p_token:S.token, p_regels: eten.map(d=>({
+      datum:d.datum, naam:'Dagtotaal, geïmporteerd', kcal_punt:d.kcal,
+      kcal_laag:Math.round(d.kcal*0.85), kcal_hoog:Math.round(d.kcal*1.45),
+      eiwit_g:d.eiwit_g, vet_g:d.vet_g, koolhydraat_g:d.koolhydraat_g, conf:'D', bron:'import',
+      onzekerheidsbronnen:['dagtotaal uit een andere app, niet per product terug te rekenen',
+        'bovengrens ruim genomen wegens de gebruikelijke onderregistratie']}))});
+  });
+}
+function vensterAccount(){
+  return `<div class="sluier" onclick="if(event.target===this)sluit()"><div class="venster">
+    <div class="tussen"><h2 style="font-size:1.25rem">Account</h2><button class="knop sm" onclick="sluit()">×</button></div>
+    <p class="klein" style="margin-top:8px">Aangemeld als <b>${esc(S.account||'')}</b>. De sessie blijft dertig dagen
+    staan. Je gegevens staan in eigen tabellen in het Supabase-project van ProVita, afgescheiden van de
+    patiëntgegevens, en zijn alleen via beveiligde databasefuncties met dit wachtwoord bereikbaar.</p>
+    <div class="rij" style="margin-top:14px"><button class="knop" onclick="afmelden()">Afmelden</button></div>
+  </div></div>`;
+}
+async function afmelden(){
+  try{ await rpc('kal_afmelden',{p_token:S.token}); }catch(e){}
+  try{ localStorage.removeItem(SLEUTEL_SESSIE); }catch(e){}
+  S.token=null; S.account=null; venster=null;
+  document.querySelector('nav.tabs')?.remove(); teken();
+}
+
+/* ============================================================================
+   13. START
+   ========================================================================== */
+if('serviceWorker' in navigator){ addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{})); }
+
+(async function(){
+  try{
+    const s = JSON.parse(localStorage.getItem(SLEUTEL_SESSIE)||'null');
+    if(s&&s.token){ S.token=s.token; S.account=s.account; await laden(); }
+  }catch(e){ S.token=null; }
+  teken();
+})();
+</script>
+</body>
+</html>
