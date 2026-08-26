@@ -56,16 +56,6 @@ export const APPS: readonly AppTegel[] = [
   zin:'Even afschakelen: dertien spelletjes plus de twee grote. Vrije tijd is een gunst — dus: even pauze, en daarna weer verder.',
   detail:['Mollen meppen','Reken-race','Arabische letterjacht','Records blijven staan']},
 
- {id:'sanad', naam:'Geloofsstudie', href:'sanad/', ico:'/iconen/geloofsstudie.svg', k:'geloof', groep:'groot', kort:'Achtentwintig weken fiqh',
-  oud:'Sanad', ar:'سند', wie:'Abdelkader',
-  zin:'Achtentwintig weken Malikitische fiqh, usul, ‘aqida, bronnenkritiek en medische ethiek — elke week met een fragment uit de oorspronkelijke tekst.',
-  detail:['Eén week per week','Arabisch met vertaling','Kaarten voor herhaling']},
-
- {id:'rasikh', naam:'Koran uit je hoofd', href:'rasikh/', ico:'/iconen/koran.svg', k:'koran', groep:'groot', kort:'Memoriseren en herhalen',
-  oud:'Rasikh', ar:'رَاسِخ', wie:'Abdelkader',
-  zin:'De Koran uit je hoofd leren en — dat is het moeilijke deel — vasthouden. Zes stappen per aya, en een systeem dat pas nieuwe stof geeft als de herhalingen bij zijn.',
-  detail:['Voor volwassenen','25 minuten per dag','Herhalen op ritme','Verwarpunten apart']},
-
  {id:'health', naam:'BennaHealth', href:'health/', ico:'/iconen/health.svg', k:'health', groep:'groot', kort:'Je energiebalans gemeten',
   oud:'Kalibratie', ar:'', wie:'Abdelkader',
   zin:'Het dagelijks verbruik gemeten uit de gewichtstrend in plaats van geschat uit een formule — met het interval erbij. Vaste maaltijden worden één keer geijkt en schuiven daarna mee met wat je van de olie en de melk weet.',
@@ -74,5 +64,15 @@ export const APPS: readonly AppTegel[] = [
  {id:'academie', naam:'Academie', href:'huiswerk/cursussen/kompas.html', ico:'/iconen/academie.svg', k:'academie', groep:'groot', kort:'Kompas, Verbind, Podium',
   wie:'Vanaf de bovenbouw',
   zin:'Drie cursussen die los van het huiswerk staan: slim leren en focus, communicatie en netwerken, presenteren en spreken. Voor wie er qua leeftijd aan toe is — de oudsten en de groten.',
-  detail:['Kompas','Verbind','Podium']}
+  detail:['Kompas','Verbind','Podium']},
+
+ {id:'sanad', naam:'Geloofsstudie', href:'sanad/', ico:'/iconen/geloofsstudie.svg', k:'geloof', groep:'groot', kort:'Achtentwintig weken fiqh',
+  oud:'Sanad', ar:'سند', wie:'Abdelkader',
+  zin:'Achtentwintig weken Malikitische fiqh, usul, ‘aqida, bronnenkritiek en medische ethiek — elke week met een fragment uit de oorspronkelijke tekst.',
+  detail:['Eén week per week','Arabisch met vertaling','Kaarten voor herhaling']},
+
+ {id:'rasikh', naam:'Koran uit je hoofd', href:'rasikh/', ico:'/iconen/koran.svg', k:'koran', groep:'groot', kort:'Memoriseren en herhalen',
+  oud:'Rasikh', ar:'رَاسِخ', wie:'Abdelkader',
+  zin:'De Koran uit je hoofd leren en — dat is het moeilijke deel — vasthouden. Zes stappen per aya, en een systeem dat pas nieuwe stof geeft als de herhalingen bij zijn.',
+  detail:['Voor volwassenen','25 minuten per dag','Herhalen op ritme','Verwarpunten apart']}
 ]
