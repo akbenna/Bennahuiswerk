@@ -39,9 +39,15 @@ const groepTeken = (g: Groep) => (g === 'kind' ? <TekenRaster /> : <TekenBoek />
    DE KAARTEN
 
    Eén app per groep staat groot: dat is de app waar je in negen van de tien
-   gevallen naartoe gaat, en die hoort niet even breed te zijn als de rest. De
-   volgorde in apps.ts bepaalt wie dat is — daar staat het huiswerk bovenaan bij
-   de kinderen, en de geloofsstudie bij de groten.
+   gevallen naartoe gaat, en die hoort niet even breed te zijn als de rest.
+
+   De volgorde in apps.ts bepaalt wie dat is — daar staat het huiswerk bovenaan
+   bij de kinderen en BennaHealth bij de groten. Die lijst ís de volgorde, en dat
+   is met opzet: een sorteerfunctie ernaast zou een tweede plek zijn waar de
+   volgorde staat, en twee plekken lopen uiteen. Bovendien vraagt zo'n functie om
+   een lijst met namen erin, en een naam die daar níét in staat krijgt bij
+   `indexOf` een −1 en springt dus naar vóóraan. Een tiende app zou zich zo
+   stilletjes bovenaan zetten. `apps.proef.ts` legt vast wie er nu voorop staat.
 --------------------------------------------------------------------------- */
 
 export function Uitgelicht({ tegel }: { tegel: AppTegel }) {
