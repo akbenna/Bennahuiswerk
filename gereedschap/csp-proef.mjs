@@ -58,13 +58,44 @@ const poort = server.address().port
    over de app. */
 function zoekChromium() {
   if (process.env.PLAYWRIGHT_CHROMIUM) return process.env.PLAYWRIGHT_CHROMIUM
-  const mappen = ['/opt/pw-browsers', join(process.env.HOME ?? '', '.cache/ms-playwright')]
+
+  /* Elke bouw legt zijn uitvoerbare bestand ergens anders neer. Linux houdt het
+     bij chrome-linux/chrome; macOS levert sinds Chrome for Testing een echte
+     .app met een spatie in de naam, en apart daarvan een headless shell. Die
+     laatste is voor deze proef zelfs de beste keuze: geen venster, sneller op.
+     De volgorde hieronder is dus geen willekeur maar een voorkeur. */
+  const paden = [
+    'chrome-headless-shell-mac-x64/chrome-headless-shell',
+    'chrome-headless-shell-mac-arm64/chrome-headless-shell',
+    'chrome-headless-shell-linux/chrome-headless-shell',
+    'chrome-linux/chrome',
+    'chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
+    'chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
+    'chrome-mac/Chromium.app/Contents/MacOS/Chromium',
+  ]
+  const mappen = [
+    '/opt/pw-browsers',
+    join(process.env.HOME ?? '', '.cache/ms-playwright'),
+    join(process.env.HOME ?? '', 'Library/Caches/ms-playwright'),
+  ]
   for (const map of mappen) {
     if (!existsSync(map)) continue
     for (const naam of readdirSync(map)) {
-      const kandidaat = join(map, naam, 'chrome-linux', 'chrome')
-      if (existsSync(kandidaat)) return kandidaat
+      for (const rest of paden) {
+        const kandidaat = join(map, naam, rest)
+        if (existsSync(kandidaat)) return kandidaat
+      }
     }
+  }
+
+  /* Laatste kans: Playwright weet zelf waar zijn eigen bouw staat. Dat werkt
+     alleen als de geïnstalleerde bouw bij deze versie van playwright hoort,
+     vandaar dat het pas hier komt. */
+  try {
+    const eigen = chromium.executablePath()
+    if (eigen && existsSync(eigen)) return eigen
+  } catch {
+    /* playwright kent geen bouw voor deze versie; dan blijft het bij null */
   }
   return null
 }

@@ -60,14 +60,37 @@ describe('trendReeks', () => {
   })
 })
 
+/* SCORE2 is de enige van deze vijf die niet op de bit af vergeleken wordt, en
+   dat is geen verzachting maar een correctie. De formule ketent exponentiëlen:
+   `Math.exp` en `Math.pow` mogen per implementatie in de laatste bit afwijken,
+   en dat doen ze ook — op Node 24 vielen twee van de dertig gevallen om op het
+   vijftiende significante cijfer (12.86730793710429 tegen 12.8673079371043).
+   Dat is geen overzettingsfout maar het gedrag van een `double`.
+
+   Wat deze proef moet vangen is een verplaatst haakje of een omgeklapt
+   vergelijkingsteken, en dat verandert een uitkomst in het derde cijfer, niet
+   in het vijftiende. Tien decimalen is daarvoor een miljard keer scherper dan
+   nodig. De klasse blijft wél exact vergeleken: dat is het enige dat een
+   patiënt ooit te zien krijgt, en die mag niet schuiven. */
 describe('score2', () => {
-  ;(gouden.score2 as Array<{ geslacht: string; invoer: Score2Invoer; uit: unknown }>).forEach(
-    (g, i) => {
-      it(`geval ${i}: ${g.geslacht}, ${g.invoer.leeftijd} jaar`, () => {
-        expect(score2(g.geslacht as Geslacht, g.invoer)).toEqual(g.uit)
-      })
-    },
-  )
+  ;(
+    gouden.score2 as Array<{
+      geslacht: string
+      invoer: Score2Invoer
+      uit: { risico: number; klasse: string } | null
+    }>
+  ).forEach((g, i) => {
+    it(`geval ${i}: ${g.geslacht}, ${g.invoer.leeftijd} jaar`, () => {
+      const uit = score2(g.geslacht as Geslacht, g.invoer)
+      if (g.uit === null) {
+        expect(uit).toBeNull()
+        return
+      }
+      expect(uit).not.toBeNull()
+      expect(uit!.klasse).toBe(g.uit.klasse)
+      expect(uit!.risico).toBeCloseTo(g.uit.risico, 10)
+    })
+  })
 })
 
 describe('fib4', () => {

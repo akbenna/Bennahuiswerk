@@ -2,22 +2,18 @@
 // KALIBRATIE — de prikkel op de post.
 //
 // SQL bouwt de berichten en weet niets van HTTP; deze functie haalt ze op en
-// verstuurt ze. De service-role-sleutel komt uit de eigen runtime en niet uit de
-// vault: de vault-kopie in dit project matcht niet meer met wat de functies
-// verwachten — een testverzending via send-email gaf 401 — en dat soort
-// afhankelijkheid breekt stil bij elke sleutelrotatie.
-//
-// Aanroep gebeurt door pg_cron met een gedeeld geheim uit kal_config. Zonder dat
-// geheim gebeurt er niets, ook al staat het endpoint open.
+// verstuurt ze. Aanroep gebeurt door pg_cron met een gedeeld geheim uit
+// kal_config, én achter de JWT-poort: een nieuwe uitrol zet verify_jwt op true,
+// en de cron stuurde alleen een Content-Type mee. Alle prikkeltaken sturen nu
+// ook een Authorization met de service-role-sleutel uit de vault.
 //
 // -----------------------------------------------------------------------------
-// WAT ERBIJ KWAM: DE COACH
+// DE COACH
 // -----------------------------------------------------------------------------
-// Er zijn nu twee soorten prikkels, en ze worden door verschillende functies
-// gebouwd. `dagelijks` gaat over de weegreeks en komt uit kal_prikkel_bouwen.
-// Alles wat met `coach-` begint gaat over de dag die loopt en komt uit
-// kal_coach_bouwen; het achtervoegsel is het tijdvak ('coach-12'), zodat de
-// ontdubbeling per dag én per moment werkt.
+// Twee soorten prikkels, twee bouwers. `dagelijks` gaat over de weegreeks en
+// komt uit kal_prikkel_bouwen. Alles wat met `coach-` begint gaat over de dag
+// die loopt en komt uit kal_coach_bouwen; het achtervoegsel is het tijdvak
+// ('coach-12'), zodat de ontdubbeling per dag én per moment werkt.
 //
 // Eén bericht kan om raad vragen. Vindt de coach in je eigen geschiedenis niets
 // dat nog binnen je resterende ruimte past, dan zet hij `vraag_model` aan. Dán
@@ -25,10 +21,9 @@
 // betere suggestie dan wat een taalmodel verzint, want je kent het en je hebt
 // het in huis.
 //
-// De volgorde is OpenAI, dan Claude. Dat is een keuze van de eigenaar en geen
-// technisch oordeel. Faalt er één, dan probeert de ander. Falen ze allebei, dan
-// gaat het bericht zonder suggestie de deur uit — een prikkel zonder idee is nog
-// steeds een prikkel, een uitgebleven prikkel is niets.
+// De volgorde is OpenAI, dan Claude. Faalt er één, dan probeert de ander. Falen
+// ze allebei, dan gaat het bericht zonder suggestie de deur uit — een prikkel
+// zonder idee is nog steeds een prikkel, een uitgebleven prikkel is niets.
 //
 // Modelnamen staan in kal_config en niet hier, om dezelfde reden als in kal-ai:
 // namen verlopen, en dan valt een functie stil zonder dat iemand het merkt. Eén
@@ -200,9 +195,9 @@ async function modelNaam(
 /* De uitleg is er alleen voor de proefstand. In het echte pad wordt een fout
    stil opgevangen en valt hij terug op Claude — dat is daar juist, want een
    uitgebleven prikkel is erger dan een prikkel zonder idee. Maar bij het
-   instellen wil je weten wát er misging: een verkeerde modelnaam en een
-   verlopen sleutel geven allebei "geen antwoord", en dat zijn heel verschillende
-   dingen om op te lossen. */
+   instellen wil je weten wát er misging: een verkeerde modelnaam, een verlopen
+   sleutel en een opgebruikt tokenbudget geven alle drie "geen antwoord", en dat
+   zijn heel verschillende dingen om op te lossen. */
 interface Uitleg {
   reden?: string; status?: number; antwoord?: string
   klaar_omdat?: string; verbruik?: unknown
@@ -233,8 +228,8 @@ async function viaOpenAI(
         /* Ruim, en dat is geen slordigheid. Een redeneermodel rekent eerst en
            schrijft daarna, en beide komen uit ditzelfde budget. Op 300 kwam er
            een keurige 200 terug met een leeg antwoord: alles was opgegaan aan
-           denken, en `finish_reason` stond op length. Veertig woorden kosten
-           er hooguit honderd; de rest is ruimte om te mogen nadenken. */
+           denken. Veertig woorden kosten er hooguit honderd; de rest is ruimte
+           om te mogen nadenken. */
         max_completion_tokens: 2000,
       }),
     });
