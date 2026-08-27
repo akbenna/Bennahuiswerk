@@ -152,28 +152,71 @@ oude project. De hele keten is getoetst met een proefaanroep langs exact de weg
 van de cron: die kwam door de JWT-poort, langs de geheimcontrole, en strandde op
 `503 RESEND_API_KEY ontbreekt` — het enige dat nog mist.
 
-### Wat er nog moet gebeuren
+### Wat er op naam zoeken miste
 
-1. **De geheimen.** `ANTHROPIC_API_KEY` en `OPENAI_API_KEY` staan er sinds
-   26 augustus. Getoetst met de ingebouwde proefstand (`proef_model`), die niets
-   verstuurt en niets wegschrijft:
-   - **Claude werkt.** Model `claude-sonnet-5` uit `kal_config`, en er kwam een
-     bruikbaar antwoord terug.
-   - **De OpenAI-sleutel wordt geweigerd**: `401 Incorrect API key provided`.
-     De terugval doet wat hij moet — OpenAI faalt, Claude neemt over — dus dit
-     breekt niets. Wie OpenAI toch wil, vervangt de sleutel; de modelnaam in
-     `kal_config` staat op `gpt-5.6-luna` en is dan meteen het tweede ding om na
-     te kijken.
-   - **`RESEND_API_KEY` staat er bewust nog niet.** Zolang die ontbreekt draait
-     de cron gewoon, krijgt hij `503` terug en gaat er geen bericht de deur uit.
-     De app zelf — loggen, wegen, zoeken in NEVO — staat daar los van.
-2. **De repo uitrollen.** De tak `verhuizing-eigen-database` moet gecommit en
-   naar Vercel; pas dan praten de apps met de nieuwe database.
-3. **Daarna pas opruimen in het oude project**: de `kal_`-, `bennahub_`- en
-   `oefenapp_`-tabellen en -functies, de vier cronjobs, de drie edge functions,
-   en de twee hulpfuncties `hub_verhuis_ddl()` en `hub_verhuis_rechten()`. Niet
-   eerder dan wanneer de apps aantoonbaar op de nieuwe database draaien.
-4. **Let op de slaapstand.** Een gratis project gaat na een week zonder verkeer
-   in slaapstand; de eerste bezoeker daarna wacht op het opstarten. De dagelijkse
-   cronjobs houden de database waarschijnlijk wakker, maar dat is geen garantie
-   die Supabase geeft.
+De generator koos functies op hun naam: alles wat met `kal_`, `bennahub_` of
+`oefenapp` begint. Dat leek volledig en was het niet. `bh_ouder_ok` heet niet
+naar de hub maar hoort er wel bij — zeven bennahub-functies vragen hem of het
+ouderwachtwoord klopt. Hij ging dus niet mee, en omdat Postgres het lichaam van
+een functie niet controleert bij het aanmaken, viel dat bij de verhuizing niet
+op. Het zou zijn opgevallen op de dag dat iemand het ouderoverzicht opende.
+
+Gevonden door vóór het opruimen te vragen wát er in het oude project nog naar de
+hub verwijst, in plaats van aan te nemen dat de lijst klopte. Er is nu een derde
+generator, `hub_verhuis_hulpfuncties()`, die niet op naam zoekt maar op gebruik:
+elke functie in public die door een hub-functie wordt aangeroepen en zelf geen
+hub-naam draagt. Die vangt ook wat er later bij komt.
+
+De les die eronder ligt: een naamconventie is een afspraak tussen mensen, geen
+eigenschap van de database. Wie verhuist op naam, verhuist wat hij zich herinnert.
+
+### Hoe het is afgelopen
+
+Uitgerold op 27 augustus 2026, commit 8115ec9 op main.
+
+Nagemeten aan de productiesite, niet aan de bouw op de eigen machine:
+
+- de CSP-kop die Vercel meestuurt noemt alleen `huiuvnjrvvoybbzwfrfp`
+- de uitgeserveerde bundel `rpc-*.js` bevat één databaseadres — het nieuwe —
+  de `sb_publishable_`-sleutel, nul JWT-sleutels en nul keer `Bearer`
+- de andere bundels noemen het oude project nergens meer
+- `bennahub_leden_lijst` levert via de publieke sleutel het gezin terug: zes
+  leden met hun rol en emoji
+- de zeven functies achter `bh_ouder_ok` geven hun eigen foutmelding op een
+  verkeerd wachtwoord, en niet "functie bestaat niet"
+
+### Wat er in het oude project van over is
+
+De hub is daar niet weggegooid maar apart gezet. 23 tabellen en 63 functies
+staan in het schema `oud_bennahub`. PostgREST kijkt alleen in `public`, dus geen
+enkele sleutel komt er nog bij: `kal_dagen`, `bennahub_leden` en `oefenapp_state`
+geven `404`, en de rpc-namen bestaan daar niet meer. De vier cronjobs zijn
+opgeheven; de zeven van ProVita draaien door. `kal-ai` en `kal-prikkel` geven
+`410` met een verwijzing naar deze repo.
+
+De gegevens staan er nog wél — 23 dagen, 6 leden — want er is geen haast bij
+weggooien en een stille tabel kost niets. Terugdraaien is één regel:
+
+    alter table oud_bennahub.<naam> set schema public;
+
+En als het over een tijdje weg mag:
+
+    drop schema oud_bennahub cascade;
+
+Dat laatste is bewust niet gedaan.
+
+### Wat er nog open blijft
+
+- **`RESEND_API_KEY`** staat nog niet in het nieuwe project. Tot dan draait de
+  cron, krijgt hij `503` en gaat er geen bericht de deur uit. De app zelf staat
+  daar los van.
+- **De OpenAI-sleutel wordt geweigerd** (`401`). De terugval naar Claude werkt,
+  dus dit breekt niets.
+- **De slaapstand.** Een gratis project gaat na een week zonder verkeer in
+  slaapstand. De dagelijkse cronjobs houden het waarschijnlijk wakker, maar dat
+  is geen garantie die Supabase geeft.
+- **De sleutelomzetting in het ProVita-project**, uitgeschreven in
+  `SUPABASE-sleutels.md`. Die is nu een stuk kleiner: vier van de negen cronjobs
+  en drie van de twintig edge functions zijn met de hub meeverhuisd.
+- **Het Roosendael-project** is nog niet af: `rsd_kv` staat op beide plekken en
+  de cronjob `rsd_kv_opruimen` draait nog hier.
