@@ -194,16 +194,20 @@ geven `404`, en de rpc-namen bestaan daar niet meer. De vier cronjobs zijn
 opgeheven; de zeven van ProVita draaien door. `kal-ai` en `kal-prikkel` geven
 `410` met een verwijzing naar deze repo.
 
-De gegevens staan er nog wél — 23 dagen, 6 leden — want er is geen haast bij
-weggooien en een stille tabel kost niets. Terugdraaien is één regel:
+Dat archief is er niet meer. Op verzoek is `oud_bennahub` diezelfde dag
+weggegooid, na een laatste telling waarin elke van de 23 tabellen tegen de
+nieuwe database is gelegd: alle tellingen gelijk, op `kal_ai_log` na, die er
+daarginds één meer heeft — de proefaanroep van de coach, die zichzelf netjes
+logde.
 
-    alter table oud_bennahub.<naam> set schema public;
+Nagemeten na afloop: geen schema `oud_bennahub`, geen `kal_`-, `bennahub_`- of
+`oefenapp`-tabel of -functie meer in welk schema dan ook. En ProVita staat er
+ongeschonden naast: 369 tabellen, 1.111.937 declaratieregels, 6.133
+SignaalZorg-classificaties, 10.891 zorgzwaarte-uitkomsten, 2.328 NEVO-producten,
+zeven draaiende cronjobs.
 
-En als het over een tijdje weg mag:
-
-    drop schema oud_bennahub cascade;
-
-Dat laatste is bewust niet gedaan.
+De enige plek waar de hub nu nog staat is zijn eigen database — en, als tekst,
+de SQL in `gereedschap/verhuizing/`.
 
 ### Wat er nog open blijft
 
