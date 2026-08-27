@@ -222,5 +222,31 @@ de SQL in `gereedschap/verhuizing/`.
 - **De sleutelomzetting in het ProVita-project**, uitgeschreven in
   `SUPABASE-sleutels.md`. Die is nu een stuk kleiner: vier van de negen cronjobs
   en drie van de twintig edge functions zijn met de hub meeverhuisd.
-- **Het Roosendael-project** is nog niet af: `rsd_kv` staat op beide plekken en
-  de cronjob `rsd_kv_opruimen` draait nog hier.
+### Het Roosendael, ook afgemaakt
+
+Op 27 augustus 2026 nagelopen en opgeruimd. Het portaal was al verhuisd — dat
+bleek uit de klok en niet uit een aanname: in het eigen project stond verkeer van
+21:36, in het gedeelde niets meer na 13:44. Wat hier nog stond was een
+stilstaande kopie.
+
+Alle sleutels bleken daarginds ook te staan, met hogere tellers en dezelfde
+vervaldatum. Dat laatste is het bewijs dat het dezelfde rij is, meegekopieerd en
+doorgeteld, en niet een tweede boekhouding: home 39 tegen 64, de dagteller 59
+tegen 97. Er ging dus niets verloren door hier weg te gooien.
+
+Weg uit het gedeelde project: `rsd_kv`, de functies `rsd_kv_incr`,
+`rsd_kv_schrijf_indien` en `rsd_kv_opruimen`, en de cronjob `rsd_kv_opruimen` —
+die draaide op hetzelfde uur als de taak in het eigen project, dus twee
+opruimtaken op twee databases voor één tabel.
+
+**Wat hier bleef staan: `rsd_is_behandelaar` en `rsd_is_beheerder`.** Die heten
+wel `rsd_`, maar ze lezen `public.user_roles` en worden gebruikt door zes
+ProVita-functies — `get_all_users_with_details`, `delete_user_cascade`,
+`get_pending_review_patients`, `update_patient_risk_profile`,
+`add_lab_values_to_patient` en `soft_delete_user`. Ze horen bij ProVita; alleen
+de naam suggereert iets anders. Dezelfde les als bij `bh_ouder_ok`, nu andersom:
+een naam die wél naar het vertrekkende project verwijst terwijl het object blijft.
+
+Nagemeten: `rsd_kv` bestaat hier in geen enkel schema meer, de zes overige
+cronjobs draaien door, `get_all_users_with_details()` werkt nog, en de site geeft
+`200`.
