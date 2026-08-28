@@ -345,7 +345,7 @@ const PAGINAS = [
        oefeningenmotor met Leitner en punten, en het ouderscherm met de
        beloning — de dingen die bij het ombouwen stuk hadden kunnen gaan. */
     async doe(pagina) {
-      await pagina.locator('.profcard', { hasText: 'Selma' }).click()
+      await pagina.locator('.naamknop', { hasText: 'Selma' }).click()
       await pagina.locator('input[type=password]').fill('Bennaclan')
       await pagina.getByRole('button', { name: /Start/ }).click()
       const kop = await pagina.locator('h1').first().textContent()
@@ -373,6 +373,49 @@ const PAGINAS = [
       }
       const ouder = pagina.getByText('Voortgang & beloning per kind')
       await ouder.first().waitFor({ timeout: 5000 })
+
+      /* En dan het doorlopen vanaf het portaal: wie daar zijn profiel al koos
+         hoort meteen op zijn eigen scherm te staan. Dat is niet met het oog te
+         controleren — je ziet alleen dát er een scherm is, niet dat er twee
+         schermen zijn overgeslagen. Dus: de aanmelding neerzetten zoals het
+         portaal hem schrijft, herladen, en kijken wat er staat. */
+      await pagina.evaluate(() => {
+        localStorage.setItem('bennahub.wie', JSON.stringify({
+          gezin: 'benna', naam: 'Amine', rol: 'kind', emoji: '⚽',
+          kleur: '#2e8b57', apps: [], tijd: Date.now(),
+        }))
+      })
+      await pagina.reload({ waitUntil: 'networkidle' })
+      const eigen = await pagina.locator('h1').first().textContent()
+      if (!/Amine/.test(eigen ?? '')) {
+        return `het portaal liep niet door naar het eigen scherm: ${eigen}`
+      }
+      if (await pagina.locator('input[type=password]').count()) {
+        return 'er werd alsnog om een wachtwoord gevraagd'
+      }
+      if (!(await pagina.locator('.topic').count())) {
+        return 'de onderwerpen stonden niet meteen in beeld'
+      }
+      const heen = await pagina.locator('button.back').first().textContent()
+      if (!/startpagina/.test(heen ?? '')) {
+        return `de terugknop wijst niet naar het portaal: ${heen}`
+      }
+      /* Dit scherm is de hele reden voor de verbouwing; leg het vast. */
+      await pagina.screenshot({ path: 'gereedschap/pagina-huiswerk-kind.png' })
+
+      /* En een ouder is geen kind: die hoort gewoon op het beginscherm uit te
+         komen, met de vier namen. */
+      await pagina.evaluate(() => {
+        localStorage.setItem('bennahub.wie', JSON.stringify({
+          gezin: 'benna', naam: 'Amine', rol: 'ouder', emoji: '⚽',
+          kleur: '#2e8b57', apps: [], tijd: Date.now(),
+        }))
+      })
+      await pagina.reload({ waitUntil: 'networkidle' })
+      if (await pagina.locator('.naamknop').count() !== 4) {
+        return 'een ouder kwam niet op het beginscherm met de vier namen uit'
+      }
+      await pagina.evaluate(() => localStorage.removeItem('bennahub.wie'))
       return null
     },
   },

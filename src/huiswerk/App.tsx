@@ -23,6 +23,7 @@ import { verwerkAntwoord, verwerkToets } from './uitslag'
 import {
   familieAanmaken, familieBewaren, familieInloggen, familieOphalen, kindAanmelden, kindBewaren,
 } from './wolk'
+import { portaalKind } from './portaal'
 import { themaVan, Thuis } from './schermen/Thuis'
 import { Inloggen } from './schermen/Inloggen'
 import { Vakken } from './schermen/Vakken'
@@ -36,15 +37,27 @@ type Zicht = 'thuis' | 'inloggen' | 'vakken' | 'oefenen' | 'ouder' | 'formules' 
 
 export function App(): ReactNode {
   const t = useHuiswerk()
-  const [zicht, zetZicht] = useState<Zicht>('thuis')
-  const [pid, zetPid] = useState<string | null>(null)
+  /* Wie op het portaal al zijn eigen profiel koos, hoeft zich hier niet opnieuw
+     voor te stellen — zie `portaal.ts`. Eén keer uitgelezen bij het opstarten en
+     daarna niet meer: klapt de aanmelding halverwege om, dan is dat geen reden
+     om een kind midden in een som naar een ander scherm te gooien. */
+  const [viaPortaal] = useState<string | null>(() => portaalKind())
+  const [zicht, zetZicht] = useState<Zicht>(viaPortaal ? 'vakken' : 'thuis')
+  const [pid, zetPid] = useState<string | null>(viaPortaal)
   const [wachtPid, zetWachtPid] = useState<string | null>(null)
-  const [vak, zetVak] = useState('')
+  const [vak, zetVak] = useState(
+    () => (viaPortaal ? PROFIELEN[viaPortaal]?.vakken[0] ?? '' : ''))
   const [onderwerp, zetOnderwerp] = useState('')
   const [jaar, zetJaar] = useState('nu')
   const [wedstrijd, zetWedstrijd] = useState<string | null>(null)
 
   useEffect(() => { stemKlaarzetten() }, [])
+
+  /* De dagreeks bijwerken en de dagteller op nul, net als wanneer er op een naam
+     getikt wordt. Dat gebeurde in `openProfiel`; wie het inlogscherm overslaat
+     komt daar niet langs. */
+  const openKind = t.openKind
+  useEffect(() => { if (viaPortaal) openKind(viaPortaal) }, [viaPortaal, openKind])
 
   /* Een wedstrijdlink (#w=CODE) opent meteen de uitdaging — de vriend die hem
      krijgt heeft geen profiel in deze app en hoort er ook niet doorheen. */
@@ -183,7 +196,15 @@ export function App(): ReactNode {
         wedstrijdAan={t.stand.wedstrijdAan !== false}
         spelNaDoel={t.stand.spelNaDoel === true}
         zetVak={zetVak}
-        terug={() => { zetPid(null); zetZicht('thuis') }}
+        terugLabel={pid === viaPortaal ? 'startpagina' : 'terug'}
+        terug={() => {
+          /* Terug naar waar je vandaan kwam. Wie via het portaal binnenkwam
+             hoort niet op een scherm te belanden met de namen en de standen van
+             zijn broers en zussen — dat is precies wat we hier weghalen. */
+          if (pid === viaPortaal) { location.href = '/'; return }
+          zetPid(null)
+          zetZicht('thuis')
+        }}
         naarOnderwerp={naarOnderwerp}
         zetDoel={(n) => t.zetKind(pid, (pr) => ({ ...pr, goal: n }))}
         zetNiveau={(n) => t.zetKind(pid, (pr) => ({ ...pr, niveau: n }))}

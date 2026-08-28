@@ -1,52 +1,32 @@
 /**
- * WIE ER AAN STAAT
+ * DE AANMELDING VAN HET PORTAAL
  *
- * In localStorage, zodat je niet bij elke stap opnieuw moet typen. Wel met een
- * houdbaarheid: op een gedeelde tablet blijft anders het account van 's ochtends
- * de hele dag openstaan. Acht uur is een schooldag plus de avond.
+ * Wie er aan staat wordt bewaard en gelezen in `@/gedeeld/sessie` — daar staat
+ * ook waarom. Hier staat alleen wat van het portaal zelf is: het omzetten van
+ * een aanmelding naar een sessie, en het ouderwachtwoord.
  */
-import type { Aanmelding, Rol } from '@/gedeeld/db/bennahub'
+import type { Aanmelding } from '@/gedeeld/db/bennahub'
 import { GEZIN } from '@/gedeeld/db/bennahub'
+import { bewaarWie, vergeetWie, wieBenIk } from '@/gedeeld/sessie'
+import type { Ik } from '@/gedeeld/sessie'
 
-const SLEUTEL = 'bennahub.wie'
 const OUDER_WW = 'bennahub.ouderww'
-const UREN = 8
 
-export interface Ik {
-  gezin: string
-  naam: string
-  rol: Rol
-  emoji: string
-  kleur: string
-  apps: string[]
-  tijd: number
-}
-
-export function wieBenIk(): Ik | null {
-  try {
-    const s = JSON.parse(localStorage.getItem(SLEUTEL) ?? 'null') as Ik | null
-    if (!s?.naam) return null
-    if (Date.now() - (s.tijd ?? 0) > UREN * 3600 * 1000) return null
-    return s
-  } catch {
-    return null
-  }
-}
+export type { Ik }
+export { wieBenIk }
 
 export function meldAan(lid: Aanmelding): Ik {
   const s: Ik = {
     gezin: GEZIN, naam: lid.naam, rol: lid.rol, emoji: lid.emoji,
     kleur: lid.kleur, apps: lid.apps ?? [], tijd: Date.now(),
   }
-  try { localStorage.setItem(SLEUTEL, JSON.stringify(s)) } catch { /* mag falen */ }
+  bewaarWie(s)
   return s
 }
 
 export function meldAf(): void {
-  try {
-    localStorage.removeItem(SLEUTEL)
-    sessionStorage.removeItem(OUDER_WW)
-  } catch { /* mag falen */ }
+  vergeetWie()
+  try { sessionStorage.removeItem(OUDER_WW) } catch { /* mag falen */ }
 }
 
 /* Het ouderwachtwoord staat in sessionStorage en niet in localStorage: het

@@ -152,3 +152,47 @@ textarea.f{min-height:70px;resize:vertical;}
 .pindots{font-size:30px;letter-spacing:10px;text-align:center;height:34px;}
 .exrow{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;font-size:14px;}
 .tag{font-size:11px;background:#eef1ea;border-radius:6px;padding:2px 6px;font-weight:600;color:var(--muted);}
+
+/* DE UITKLAPKAART EN HET COMPACTE BEGINSCHERM
+ *
+ * Toegevoegd toen de app onder het portaal kwam te hangen. De klassement- en
+ * voortgangskaarten stonden vóór het huiswerk in plaats van erachter; ze staan
+ * nu in een <details> die dicht begint. De driehoek is die van de browser zelf,
+ * alleen in de kleur van de app en met wat lucht eromheen. */
+.klapkaart{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:0;margin-top:12px;overflow:hidden;}
+.klapkaart>summary{display:flex;align-items:center;gap:10px;padding:14px 18px;cursor:pointer;
+  list-style:none;font-size:15px;}
+.klapkaart>summary::-webkit-details-marker{display:none;}
+.klapkaart>summary::after{content:'▸';margin-left:auto;color:var(--muted);font-size:15px;
+  transition:transform .18s;}
+.klapkaart[open]>summary::after{transform:rotate(90deg);}
+.klapkaart>summary:hover{background:#fafcf7;}
+.klapkaart>summary .zij{font-size:13px;font-weight:400;}
+.klapkaart[open]>summary{border-bottom:1px solid var(--line);}
+.klapbak{padding:14px 18px 18px;}
+.klapbak>.card{border:none;padding:0;background:none;}
+.klapbak>.card+.card{margin-top:16px;padding-top:16px;border-top:1px solid var(--line);}
+
+/* De kop van het beginscherm: een regel in plaats van een banier. Wie hier
+   komt heeft het portaal al gezien en hoeft niet nog eens welkom geheten. */
+.minikop{display:flex;align-items:center;gap:10px;margin:0 0 4px;}
+.minikop h1{font-size:22px;margin:0;}
+.minikop .gezicht{font-size:20px;}
+
+/* Een naamknop zonder de stand van de anderen erop. */
+.naamknop{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;
+  padding:14px 16px;border-radius:var(--radius);color:#fff;margin-bottom:10px;
+  cursor:pointer;border:none;transition:transform .08s;}
+.naamknop:active{transform:scale(.99);}
+.naamknop .em{font-size:28px;}
+.naamknop .nm{font-weight:700;font-size:17px;}
+.naamknop .nv{font-size:13px;opacity:.9;}
+.naamknop .pijl{margin-left:auto;font-size:20px;opacity:.85;}
+
+/* De strook met het dagdoel op het kindscherm: één regel, altijd zichtbaar. */
+.doelstrook{display:flex;align-items:center;gap:12px;background:var(--card);
+  border:1px solid var(--line);border-radius:var(--radius);padding:12px 16px;margin-top:12px;}
+.doelstrook.klaar{background:#eaf7e2;border-color:#bcd9a6;}
+.doelstrook .tel{font-weight:800;white-space:nowrap;}
+.doelstrook .pbar{flex:1;margin-top:0;}
