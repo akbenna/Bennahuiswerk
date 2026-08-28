@@ -41,9 +41,10 @@ import { Vakken } from './schermen/Vakken'
 import { Oefenen } from './schermen/Oefenen'
 import { Ouder } from './schermen/Ouder'
 import { Formules, Leertips } from './schermen/Naslag'
+import { Leerscan } from './schermen/Leerscan'
 import { WedstrijdMaken, WedstrijdSpelen } from './schermen/Wedstrijd'
 
-type Zicht = 'thuis' | 'vakken' | 'oefenen' | 'ouder' | 'formules' | 'leertips'
+type Zicht = 'thuis' | 'vakken' | 'oefenen' | 'ouder' | 'formules' | 'leertips' | 'leerscan'
   | 'wedstrijd-maken' | 'wedstrijd-spelen'
 
 export function App(): ReactNode {
@@ -168,6 +169,16 @@ export function App(): ReactNode {
     )
   }
 
+  if (zicht === 'leerscan' && pid && prog) {
+    return (
+      <Leerscan
+        naam={PROFIELEN[pid]?.naam ?? ''} scan={prog.leerscan ?? null}
+        terug={() => zetZicht('vakken')}
+        bewaar={(sc) => t.zetKind(pid, (pr) => ({ ...pr, leerscan: sc }))}
+      />
+    )
+  }
+
   if (zicht === 'formules') return <Formules terug={() => zetZicht('thuis')} />
   if (zicht === 'leertips') return <Leertips terug={() => zetZicht('thuis')} />
 
@@ -221,6 +232,7 @@ export function App(): ReactNode {
         naarWedstrijd={() => zetZicht('wedstrijd-maken')}
         naarSpellen={() => { location.href = '/spellen/' }}
         opVraag={(vraag, u) => onthoudVraag(pid, vraag, u)}
+        naarLeerscan={() => { zetZicht('leerscan'); scrollTo({ top: 0 }) }}
       />
     )
   }

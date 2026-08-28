@@ -24,6 +24,7 @@ import {
 import { isBeheerst } from '../leitner'
 import { zwakteAnalyse } from '../volgsysteem'
 import { bewaarAls, leerprofielData, rapportTekst } from '../rapport'
+import { advies, bandNaam, isAf } from '../leerscan'
 import {
   KindAccounts, Kindwachtwoorden, Leerlijnpaneel, Leerprofielpaneel, Weektaakbeheer, Zomerpaneel,
 } from './Panelen'
@@ -97,6 +98,7 @@ function OuderOpen(p: OuderProps): ReactNode {
         <button type="button" className="back" onClick={p.terug}>← terug</button>
         <span className="pill">Ouder-modus</span>
       </div>
+      <Leerscanpaneel stand={p.stand} />
       <Vragenpaneel stand={p.stand} zet={p.zet} />
       <KindAccounts stand={p.stand} alleOnline={p.alleOnline} ververs={p.ververs} />
       <Leerprofielpaneel stand={p.stand} alle={p.alle} />
@@ -763,6 +765,58 @@ export function Vragenpaneel(
           )
         })}
       </div>
+    </div>
+  )
+}
+
+/* ------------------------------------------------ hoe de kinderen leren */
+
+/**
+ * De leerscan per kind, voor de ouder.
+ *
+ * Wat hier bewust níét staat is een cijfer of een type. De scan meet gewoontes,
+ * geen aanleg, en het nut zit in het gesprek dat erop volgt — vandaar dat er per
+ * kind één ding uitspringt en niet vijf.
+ *
+ * En de waarschuwing eronder hoort erbij: een kind voelt welk antwoord braaf
+ * klinkt. Wat er staat is wat het kind zegt te doen, en dat is een prima begin
+ * van een gesprek maar geen meting.
+ */
+export function Leerscanpaneel({ stand }: { stand: Stand }): ReactNode {
+  const rijen = Object.entries(PROFIELEN)
+    .map(([pid, prof]) => ({ pid, prof, scan: schoonVoortgang(stand.prog[pid]).leerscan }))
+  const ingevuld = rijen.filter((r) => isAf(r.scan ?? null))
+  if (!ingevuld.length) return null
+
+  return (
+    <div className="card" style={{ marginBottom: 16 }}>
+      <b>🔎 Hoe de kinderen leren</b>
+      <p className="muted" style={{ fontSize: 13, marginTop: 4 }}>
+        Uit de leerscan in de app. Dit gaat over gewoontes — wat een kind dóét — en niet over
+        aanleg of een leertype.
+      </p>
+      {ingevuld.map(({ pid, prof, scan }) => {
+        const a = advies(scan as NonNullable<typeof scan>)
+        return (
+          <div key={pid} style={{ padding: '10px 0', borderTop: '1px solid var(--line)' }}>
+            <div style={{ fontWeight: 700 }}>{prof.emoji} {prof.naam}</div>
+            <div style={{ fontSize: 14, marginTop: 2 }}>
+              Grootste winst: <b>{a.kop.kaart.kop.toLowerCase()}</b>{' '}
+              <span className="muted">({bandNaam(a.kop.band)})</span>
+            </div>
+            {a.sterk && (
+              <div className="muted" style={{ fontSize: 13, marginTop: 2 }}>
+                Gaat al goed: {a.sterk.kaart.kop.toLowerCase()}
+              </div>
+            )}
+            <div className="muted" style={{ fontSize: 13, marginTop: 4 }}>{a.kop.kaart.waarom}</div>
+          </div>
+        )
+      })}
+      <p className="muted" style={{ fontSize: 12, marginTop: 10, fontStyle: 'italic' }}>
+        Een kind voelt welk antwoord braaf klinkt, dus lees dit als wat het zegt te doen. Het is
+        een goede opening voor een gesprek, geen meting.
+      </p>
     </div>
   )
 }

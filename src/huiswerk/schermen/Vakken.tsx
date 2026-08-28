@@ -49,6 +49,7 @@ export interface VakkenProps {
   naarSpellen: () => void
   /** Wat een kind aan de vraagbaak vroeg, voor het ouderscherm. */
   opVraag: (vraag: string, uitslag: Uitslag) => void
+  naarLeerscan: () => void
 }
 
 export function Vakken(p: VakkenProps): ReactNode {
@@ -372,6 +373,12 @@ export function Vakken(p: VakkenProps): ReactNode {
         <button
           type="button" className="btn gold" onClick={() => p.naarOnderwerp('__proeftoets__', jaar)}
         >📝 Proeftoets — 20 vragen, alle vakken door elkaar</button>
+      </div>
+
+      <div className="center" style={{ marginTop: 10 }}>
+        <button type="button" className="btn ghost" onClick={p.naarLeerscan}>
+          🔎 {p.prog.leerscan ? 'Zo leer jij' : 'Hoe leer jij? — 15 korte vragen'}
+        </button>
       </div>
 
       {p.wedstrijdAan && (

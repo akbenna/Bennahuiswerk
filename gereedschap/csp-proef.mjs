@@ -375,6 +375,21 @@ const PAGINAS = [
       /* Dit scherm is de hele reden voor de verbouwing; leg het vast. */
       await pagina.screenshot({ path: 'gereedschap/pagina-huiswerk-kind.png' })
 
+      /* De leerscan helemaal doorlopen. Vijftien vragen, en aan het eind hoort er
+         precies één ding uit te komen waar dit kind aan moet werken — geen cijfer
+         en geen leertype. */
+      await pagina.getByRole('button', { name: /Hoe leer jij/ }).click()
+      for (let n = 0; n < 15; n++) {
+        const opties = pagina.locator('.scanoptie')
+        await opties.first().waitFor({ timeout: 5000 })
+        if (await opties.count() !== 3) return `vraag ${n + 1} had geen drie antwoorden`
+        await opties.nth(n % 3).click()
+      }
+      const advies = await pagina.locator('.card', { hasText: 'Werk hier als eerste aan' }).count()
+      if (!advies) return 'de leerscan gaf geen advies'
+      await pagina.screenshot({ path: 'gereedschap/pagina-huiswerk-leerscan.png' })
+      await pagina.locator('button.back').first().click()
+
       /* En een ouder is geen kind: die hoort gewoon op het beginscherm uit te
          komen, met de vier namen. */
       await pagina.evaluate(() => {

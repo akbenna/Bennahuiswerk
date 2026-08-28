@@ -63,6 +63,8 @@ export interface Voortgang {
    *  uit de pas kan lopen. */
   weekBasis: number
   historie: Weekstuk[]
+  /** De leerscan van dit kind, als hij hem ingevuld heeft. */
+  leerscan?: Leerscanstand
 }
 
 export interface Zomer {
@@ -99,6 +101,13 @@ export interface Stand {
    *  lijst met wat er nog gemaakt moet worden, opgeschreven door de kinderen
    *  zelf. Optioneel, dus een oude opslag blijft gewoon leesbaar. */
   vragen?: Vraagregel[]
+}
+
+/** De uitslag van de leerscan van één kind. Optioneel: wie hem nooit invulde
+ *  heeft er gewoon geen. */
+export interface Leerscanstand {
+  tijd: number
+  antwoorden: Record<string, number>
 }
 
 /** Eén vraag aan de vraagbaak, zoals hij bewaard wordt. */
