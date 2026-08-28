@@ -143,6 +143,22 @@ describe('de nieuwe opgaven voor 2026/27', () => {
       expect(e.opties, e.id).toContain(e.a)
     }
   })
+
+  it('zet nooit twee keer dezelfde optie onder één vraag', () => {
+    for (const e of NIEUW2627.filter((x) => x.opties?.length)) {
+      expect(new Set(e.opties).size, e.id).toBe(e.opties?.length)
+    }
+  })
+
+  /* Bij het schrijven van de derde aanvulling bleek er een vraag tussen te
+     zitten die letterlijk al in `seed.ts` stond. Eén dubbele opgave is niet erg,
+     maar hij kost een kind wel twee keer dezelfde beurt en telt dubbel mee in
+     zijn voortgang. Vandaar dat het hier vastligt. */
+  it('herhaalt geen vraag die al in de vaste lijst staat', () => {
+    const bestaand = new Set(SEED.map((e) => e.q.trim()))
+    for (const e of NIEUW2627) expect(bestaand.has(e.q.trim()), e.q.slice(0, 60)).toBe(false)
+    expect(new Set(NIEUW2627.map((e) => e.q.trim())).size).toBe(NIEUW2627.length)
+  })
 })
 
 /**
@@ -239,12 +255,12 @@ describe('de sommen kloppen nog steeds', () => {
     expect(getal(zoek('12 in en verkoopt het voor'))).toBe(8)
     expect(getal(zoek('procent is de brutowinst'))).toBe(40)
     expect(getal(zoek('rechthoekszijden van 6 en 8'))).toBe(10)
-    expect(getal(zoek('y = 2x + 3. Bereken y'))).toBe(11)
+    expect(getal(zoek('y = 3x − 2. Bereken y'))).toBe(3 * 5 - 2)
     expect(getal(zoek('2x + 3 = 17'))).toBe(7)
   })
 
   it('rekent de sommen van Selma na', () => {
-    expect(getal(zoek('7 × 8'))).toBe(56)
+    expect(getal(zoek('9 × 7'))).toBe(63)
     expect(getal(zoek('6 × 9'))).toBe(54)
     expect(getal(zoek('47 + 38'))).toBe(85)
     expect(getal(zoek('92 − 47'))).toBe(45)
