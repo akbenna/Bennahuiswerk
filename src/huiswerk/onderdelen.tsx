@@ -35,3 +35,24 @@ export const Regels = ({ tekst, className, style }:
 { tekst: string; className?: string; style?: CSSProperties }): ReactNode => (
   <div className={className} style={{ whiteSpace: 'pre-wrap', ...style }}>{tekst}</div>
 )
+
+/**
+ * Een kaart die dichtgeklapt begint. Voor alles wat leuk is om te zien maar
+ * niet nodig om te beginnen: de stand, de rangen, het verdiende geld.
+ *
+ * Dit is een `<details>` en geen knop met een `useState`. Dat is met opzet: een
+ * browser klapt hem dan zelf open en dicht, hij is met het toetsenbord te
+ * bedienen, een schermlezer noemt hem uitklapbaar, en zoeken in de pagina
+ * (⌘F) vindt de tekst erin ook als hij dicht staat. Er komt geen enkele regel
+ * JavaScript aan te pas.
+ */
+export const Klapkaart = ({ titel, zij, open, children }:
+{ titel: ReactNode; zij?: ReactNode; open?: boolean; children: ReactNode }): ReactNode => (
+  <details className="klapkaart" open={open}>
+    <summary>
+      <b>{titel}</b>
+      {zij != null && <span className="muted zij">{zij}</span>}
+    </summary>
+    <div className="klapbak">{children}</div>
+  </details>
+)
