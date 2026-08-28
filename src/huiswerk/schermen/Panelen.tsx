@@ -55,9 +55,10 @@ export function KindAccounts(
     <div className="card" style={{ marginBottom: 16, background: '#eef4fb', borderLeftColor: '#3a6ea0' }}>
       <b>👤 Kind-accounts (scores volgen het kind)</b>
       <p className="muted" style={{ fontSize: 13, marginTop: 4 }}>
-        Elk kind logt op elk toestel in met <b>zijn naam + wachtwoord &ldquo;
-        {STANDAARD_WACHTWOORD}&rdquo;</b>. De scores staan online op zijn eigen account — dus op
-        elk toestel gelijk, niet meer per toestel.
+        Elk kind heeft een eigen account in de cloud, met wachtwoord{' '}
+        <b>&ldquo;{STANDAARD_WACHTWOORD}&rdquo;</b>. Daar staan zijn scores, dus op elk toestel
+        gelijk. Er wordt hier niet meer mee ingelogd — dat gebeurt op de startpagina van
+        BennaHub; dit wachtwoord is alleen nog de sleutel van het account zelf.
       </p>
       <div className="wrap" style={{ marginTop: 6 }}>
         {Object.entries(PROFIELEN).map(([pid, P]) => (

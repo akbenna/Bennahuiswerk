@@ -308,15 +308,18 @@ const PAGINAS = [
   },
   {
     pad: '/huiswerk/', kop: 'Huiswerk', minKnoppen: 8, plaat: 'huiswerk',
-    /* Inloggen als kind, een som maken en nakijken, en de ouder-modus openen.
-       Dat raakt de landingspagina met de ranglijst, het kind-account (dat
-       offline mag terugvallen op het wachtwoord dat hier bekend is), de
-       oefeningenmotor met Leitner en punten, en het ouderscherm met de
-       beloning — de dingen die bij het ombouwen stuk hadden kunnen gaan. */
+    /* Een kind kiezen, een som maken en nakijken, en de ouder-modus openen. Dat
+       raakt de landingspagina, de oefeningenmotor met Leitner en punten, en het
+       ouderscherm met de beloning — de dingen die bij het ombouwen stuk hadden
+       kunnen gaan. En het legt vast dat er nergens meer een wachtwoordscherm
+       tussen zit. */
     async doe(pagina) {
       await pagina.locator('.naamknop', { hasText: 'Selma' }).click()
-      await pagina.locator('input[type=password]').fill('Bennaclan')
-      await pagina.getByRole('button', { name: /Start/ }).click()
+      /* Er komt geen wachtwoordscherm meer tussen: het inloggen gebeurt op het
+         portaal. Eén tik op de naam hoort meteen haar eigen scherm te geven. */
+      if (await pagina.locator('input[type=password]').count()) {
+        return 'er werd alsnog om een wachtwoord gevraagd'
+      }
       const kop = await pagina.locator('h1').first().textContent()
       if (!/Selma/.test(kop ?? '')) return `het kind kwam niet binnen: ${kop}`
 

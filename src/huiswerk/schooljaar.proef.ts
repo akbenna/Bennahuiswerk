@@ -116,8 +116,13 @@ describe('de nieuwe opgaven voor 2026/27', () => {
     expect(new Set(NIEUW2627.map((e) => e.id)).size).toBe(NIEUW2627.length)
   })
 
-  it('is er niet voor Wassima — zij doet haar jaar over', () => {
-    expect(NIEUW2627.filter((e) => e.p === 'wassima')).toHaveLength(0)
+  /* Zij doet 2 havo over. Nieuwe stof mag, maar alleen op háár niveau: geen
+     enkele opgave hier mag als "volgend jaar" gemarkeerd staan, want dan zou ze
+     3-havo-werk voorgeschoteld krijgen dat ze nooit gehad heeft. */
+  it('geeft Wassima alleen 2-havo-stof en niets van volgend jaar', () => {
+    const hare = NIEUW2627.filter((e) => e.p === 'wassima')
+    expect(hare.length).toBeGreaterThan(0)
+    for (const e of hare) expect(e.jaar, e.id).toBeUndefined()
   })
 
   it('hoort helemaal bij dit jaar, niet bij volgend jaar', () => {
@@ -186,6 +191,58 @@ describe('de sommen kloppen nog steeds', () => {
     expect(getal(zoek('tilt 500 kg 12 m'))).toBeCloseTo(500 * 9.81 * 12, 6)
   })
 
+  it('rekent de tweede aanvulling van Amine na', () => {
+    expect(getal(zoek('15% van 240'))).toBe(240 * 0.15)
+    expect(getal(zoek('3/5 als percentage'))).toBe(60)
+    expect(getal(zoek('3,45 + 2,7'))).toBeCloseTo(6.15, 10)
+    expect(getal(zoek('7,2 : 0,8'))).toBe(9)
+    expect(getal(zoek('schaal 1 : 200'))).toBe(3.5 * 200 / 100)
+    expect(getal(zoek('12 cm bij 7 cm'))).toBe(84)
+    expect(getal(zoek('diameter van 10 cm'))).toBeCloseTo(31.4, 10)
+    expect(getal(zoek('ribben van 4 cm'))).toBe(64)
+    expect(getal(zoek('gemiddelde van vier getallen'))).toBe(12 * 4 - (10 + 11 + 13))
+    expect(getal(zoek('120 km in 1,5 uur'))).toBe(80)
+    expect(getal(zoek('eerst 20% korting en daarna'))).toBeCloseTo(100 * 0.8 * 0.9, 10)
+  })
+
+  it('rekent de tweede aanvulling van Amaani na', () => {
+    expect(getal(zoek('2, 4, 4, 5 en 10'))).toBe(5)
+    expect(getal(zoek('mediaan van 3, 7, 2, 9 en 5'))).toBe(5)
+    expect(getal(zoek('standaardafwijking van de populatie'))).toBe(2)
+    expect(getal(zoek('45 voor optie A'))).toBe(15)
+    expect(getal(zoek('P(A en B) = 0,1'))).toBeCloseTo(0.7, 10)
+    expect(getal(zoek('twee keer kop'))).toBe(0.25)
+    expect(zoek('minstens één zes')).toBe('11/36')
+    expect(1 - (5 / 6) ** 2).toBeCloseTo(11 / 36, 10)
+    expect(getal(zoek('precies 3 keer kop'))).toBe(10 / 32)
+    expect(getal(zoek('één prijs van € 500'))).toBe(500 / 1000 - 1)
+    expect(getal(zoek('2 mensen kiezen uit 8'))).toBe(28)
+    expect(getal(zoek('2¹⁰'))).toBe(1024)
+    expect(getal(zoek('10ˣ = 1000'))).toBe(3)
+    expect(getal(zoek('verdubbelingstijd'))).toBeCloseTo(Math.log(2) / Math.log(1.05), 2)
+    expect(getal(zoek('elk jaar met 8% af'))).toBeCloseTo(0.92 ** 3, 3)
+    expect(getal(zoek('22,0 gram CO'))).toBeCloseTo(22 / 44.01, 2)
+    expect(getal(zoek('0,20 mol op in 500 mL'))).toBeCloseTo(0.4, 2)
+    expect(getal(zoek('lamp van 60 W'))).toBeCloseTo(0.18, 2)
+    expect(getal(zoek('waterkoker van 2000 W'))).toBe(600000)
+    expect(getal(zoek('0,50 A bij 12 V'))).toBe(24)
+    expect(getal(zoek('4,0 Ω staan parallel'))).toBe(2)
+    expect(getal(zoek('steen valt 2,0 s'))).toBeCloseTo(9.81 * 2, 1)
+    expect(getal(zoek('krijgt 1200 J en levert 300 J'))).toBe(25)
+    expect(getal(zoek('prijsindex ging van 100 naar 105'))).toBe(5)
+    expect(getal(zoek('nominaal 4% bij een inflatie'))).toBeCloseTo((1.04 / 1.02 - 1) * 100, 1)
+    expect(getal(zoek('prijs stijgt met 10%'))).toBe(-2)
+  })
+
+  it('rekent de stof van Wassima na — op 2 havo, niet hoger', () => {
+    expect(getal(zoek('150 exclusief btw'))).toBeCloseTo(150 * 1.21, 10)
+    expect(getal(zoek('12 in en verkoopt het voor'))).toBe(8)
+    expect(getal(zoek('procent is de brutowinst'))).toBe(40)
+    expect(getal(zoek('rechthoekszijden van 6 en 8'))).toBe(10)
+    expect(getal(zoek('y = 2x + 3. Bereken y'))).toBe(11)
+    expect(getal(zoek('2x + 3 = 17'))).toBe(7)
+  })
+
   it('rekent de sommen van Selma na', () => {
     expect(getal(zoek('7 × 8'))).toBe(56)
     expect(getal(zoek('6 × 9'))).toBe(54)
@@ -193,5 +250,9 @@ describe('de sommen kloppen nog steeds', () => {
     expect(getal(zoek('92 − 47'))).toBe(45)
     expect(getal(zoek('35 : 5'))).toBe(7)
     expect(getal(zoek('€ 3,50'))).toBe(3.5 / 2)
+    expect(getal(zoek('4 × 12'))).toBe(48)
+    expect(getal(zoek('helft van 24'))).toBe(12)
+    expect(getal(zoek('€ 5,00 voor iets van € 2,35'))).toBeCloseTo(2.65, 10)
+    expect(getal(zoek('1/4 van 20'))).toBe(5)
   })
 })
