@@ -24,6 +24,8 @@ import { berekenBeloning, euro, halfRond, weekVerdiend } from '../beloning'
 import { isBeheerst, kaartStand } from '../leitner'
 import { INSIGNES, dagMissie, rangVoor } from '../missie'
 import { Klapkaart } from '../onderdelen'
+import { Vraagveld } from './Vraagveld'
+import type { Uitslag } from '../vraagbaak'
 
 export interface VakkenProps {
   pid: string
@@ -45,6 +47,8 @@ export interface VakkenProps {
   zetNiveau: (n: Voortgang['niveau']) => void
   naarWedstrijd: () => void
   naarSpellen: () => void
+  /** Wat een kind aan de vraagbaak vroeg, voor het ouderscherm. */
+  opVraag: (vraag: string, uitslag: Uitslag) => void
 }
 
 export function Vakken(p: VakkenProps): ReactNode {
@@ -117,6 +121,15 @@ export function Vakken(p: VakkenProps): ReactNode {
           {doelGehaald ? 'gehaald! 🎉' : p.thema.doel}
         </span>
       </div>
+
+      <Vraagveld
+        pid={p.pid} alle={p.alle} prog={p.prog} opVraag={p.opVraag}
+        ga={(vak, onderwerp, jr) => {
+          p.zetVak(vak)
+          zetJaar(jr)
+          p.naarOnderwerp(onderwerp, jr)
+        }}
+      />
 
       {weekrijen.length > 0 && (
         <div

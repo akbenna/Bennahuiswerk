@@ -196,3 +196,27 @@ textarea.f{min-height:70px;resize:vertical;}
 .doelstrook.klaar{background:#eaf7e2;border-color:#bcd9a6;}
 .doelstrook .tel{font-weight:800;white-space:nowrap;}
 .doelstrook .pbar{flex:1;margin-top:0;}
+
+/* DE VRAAGBAAK
+ *
+ * Eén regel bovenaan het kindscherm. Hij hoort op te vallen zonder te schreeuwen:
+ * een kind dat vastzit moet hem meteen zien, een kind dat gewoon komt oefenen mag
+ * eroverheen kijken. Vandaar de zachte rand in plaats van een volle kleur. */
+.vraagbaak{border:1.5px solid #cfe0f5;background:linear-gradient(120deg,#f4f9ff,#eef6ff);
+  border-radius:var(--radius);padding:12px 14px;margin-top:12px;}
+.vraagrij{display:flex;align-items:center;gap:10px;}
+.vraagicoon{font-size:20px;flex:none;}
+.vraagrij input.f{flex:1;min-width:0;background:#fff;}
+.vraagrij .btn{flex:none;}
+.vraagfout{margin:10px 0 0;font-size:14px;color:var(--accent);font-weight:600;}
+.vraaguit{margin-top:12px;padding-top:12px;border-top:1px solid #cfe0f5;}
+.vraagtekst{margin:0 0 10px;font-size:15px;line-height:1.55;}
+.vraaggat{margin:10px 0 0;font-size:13px;color:var(--muted);font-style:italic;}
+
+/* De vragenlijst in het ouderscherm. */
+.vraagregel{padding:8px 0;border-top:1px solid var(--line);font-size:14px;}
+.vraagregel:first-of-type{border-top:none;}
+.vraagregel .wie{font-weight:700;}
+.vraagregel .raak{color:var(--muted);font-size:13px;}
+.vraagregel.leeg{background:#fff7e8;border-radius:10px;padding:8px 10px;margin-top:6px;
+  border:1px solid #f0d67a;}

@@ -97,6 +97,7 @@ function OuderOpen(p: OuderProps): ReactNode {
         <button type="button" className="back" onClick={p.terug}>← terug</button>
         <span className="pill">Ouder-modus</span>
       </div>
+      <Vragenpaneel stand={p.stand} zet={p.zet} />
       <KindAccounts stand={p.stand} alleOnline={p.alleOnline} ververs={p.ververs} />
       <Leerprofielpaneel stand={p.stand} alle={p.alle} />
       <Leerlijnpaneel stand={p.stand} />
@@ -702,5 +703,66 @@ function Opgavenbeheer(
         </div>
       </div>
     </>
+  )
+}
+
+/* ------------------------------------------------ wat de kinderen vroegen */
+
+/**
+ * De vragen die de kinderen aan de vraagbaak stelden, nieuwste eerst.
+ *
+ * Dit is het enige scherm in de app dat vertelt wat er *ontbreekt*. Een vraag
+ * waar niets voor gevonden werd is geen fout van het kind en ook niet van de
+ * vraagbaak: het is stof die er nog niet is. Die staan daarom apart en bovenaan
+ * — ze zijn de werklijst, opgeschreven door de kinderen zelf.
+ */
+export function Vragenpaneel(
+  { stand, zet }: { stand: Stand; zet: (v: (s: Stand) => Stand) => void },
+): ReactNode {
+  const vragen = stand.vragen ?? []
+  if (!vragen.length) return null
+  const gaten = vragen.filter((v) => !v.raak.length)
+
+  return (
+    <div className="card" style={{ marginBottom: 16 }}>
+      <div className="row" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+        <b>💬 Wat de kinderen vroegen</b>
+        <button
+          type="button" className="btn ghost sm"
+          onClick={() => zet((s) => ({ ...s, vragen: [] }))}
+        >Lijst wissen</button>
+      </div>
+
+      {gaten.length > 0 && (
+        <p className="muted" style={{ fontSize: 13, marginTop: 6 }}>
+          Bij <b>{gaten.length}</b> van de {vragen.length} vragen vond de app niets. Dat is de
+          stof die nog gemaakt moet worden.
+        </p>
+      )}
+
+      <div style={{ marginTop: 10 }}>
+        {vragen.slice(0, 25).map((v, i) => {
+          const naam = PROFIELEN[v.pid]?.naam ?? v.pid
+          const emoji = PROFIELEN[v.pid]?.emoji ?? '❓'
+          return (
+            <div key={i} className={'vraagregel' + (v.raak.length ? '' : ' leeg')}>
+              <div>
+                <span className="wie">{emoji} {naam}</span>{' '}
+                <span className="muted" style={{ fontSize: 12 }}>
+                  {new Date(v.tijd).toLocaleDateString('nl-NL',
+                    { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                </span>
+              </div>
+              <div style={{ marginTop: 2 }}>&ldquo;{v.vraag}&rdquo;</div>
+              <div className="raak" style={{ marginTop: 2 }}>
+                {v.raak.length
+                  ? '→ ' + v.raak.join(' · ')
+                  : <span><b>niets gevonden</b>{v.gat ? ' — ' + v.gat : ''}</span>}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
   )
 }

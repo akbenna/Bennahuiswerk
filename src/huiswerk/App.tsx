@@ -24,6 +24,7 @@ import {
   familieAanmaken, familieBewaren, familieInloggen, familieOphalen, kindAanmelden, kindBewaren,
 } from './wolk'
 import { portaalKind } from './portaal'
+import type { Uitslag } from './vraagbaak'
 import { themaVan, Thuis } from './schermen/Thuis'
 import { Inloggen } from './schermen/Inloggen'
 import { Vakken } from './schermen/Vakken'
@@ -74,6 +75,20 @@ export function App(): ReactNode {
     zetZicht('oefenen')
     scrollTo({ top: 0 })
   }, [])
+
+  /* De vragen van de kinderen bewaren, met hoogstens honderd tegelijk: het is
+     een signaallijst voor de ouder, geen archief. Vraagt een kind iets waar
+     niets voor is, dan is dat precies wat er nog gemaakt moet worden. */
+  const onthoudVraag = (id: string | null, vraag: string, u: Uitslag): void => {
+    if (!id) return
+    t.zet((s) => ({
+      ...s,
+      vragen: [
+        { tijd: Date.now(), pid: id, vraag, raak: u.routes.map((r) => r.onderwerp), gat: u.gat },
+        ...(s.vragen ?? []),
+      ].slice(0, 100),
+    }))
+  }
 
   const openProfiel = (id: string): void => {
     t.openKind(id)
@@ -210,6 +225,7 @@ export function App(): ReactNode {
         zetNiveau={(n) => t.zetKind(pid, (pr) => ({ ...pr, niveau: n }))}
         naarWedstrijd={() => zetZicht('wedstrijd-maken')}
         naarSpellen={() => { location.href = '/spellen/' }}
+        opVraag={(vraag, u) => onthoudVraag(pid, vraag, u)}
       />
     )
   }

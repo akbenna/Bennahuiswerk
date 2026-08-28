@@ -94,6 +94,22 @@ export interface Stand {
   toernooiStand?: { week: string; punten: Record<string, number> }
   /** Wie de vorige week won, zodat het scherm het één keer kan melden. */
   toernooiWinnaar?: { pid: string; week: string; bedrag: number } | null
+  /** Wat de kinderen aan de vraagbaak vroegen. Staat hier en niet in de
+   *  voortgang van één kind, omdat het ouderscherm ze samen wil zien: het is de
+   *  lijst met wat er nog gemaakt moet worden, opgeschreven door de kinderen
+   *  zelf. Optioneel, dus een oude opslag blijft gewoon leesbaar. */
+  vragen?: Vraagregel[]
+}
+
+/** Eén vraag aan de vraagbaak, zoals hij bewaard wordt. */
+export interface Vraagregel {
+  tijd: number
+  pid: string
+  vraag: string
+  /** De onderwerpen die de app aanwees. Leeg betekent: hier was niets voor. */
+  raak: string[]
+  /** Wat er volgens het model zou moeten komen, als er niets was. */
+  gat: string | null
 }
 
 /** Het weekbudget waarmee een nieuw kind begint. */
