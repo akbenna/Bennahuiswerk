@@ -1,82 +1,157 @@
 -- ===========================================================================
--- A. SYNONIEMEN — woorden die jij gebruikt en NEVO niet
+-- A. WOORDEN DIE JIJ GEBRUIKT EN NEVO NIET
 -- ===========================================================================
 --
--- Nog niet toegepast. De genummerde bestanden in `health/database/` zijn een
--- verslag van wat er in de database staat; dit is een voorstel dat er nog niet
--- in zit. Zodra het toegepast is hoort het te verhuizen naar het volgende
--- nummer en hoort deze kop weg.
+-- Nog niet toegepast.
 --
--- WAT HIER EERST STOND, EN WAAROM HET WEG IS
+-- HET PATROON ACHTER DE GATEN
 --
--- Dit bestand begon als drie blokken over mayonaise. Twee daarvan zijn af en
--- verhuisd; wat overblijft is dit. Het is de moeite waard op te schrijven wat er
--- niet aan de hand bleek, want ik zat er twee keer naast:
+-- De zoekregel doet twee dingen. Woorden tot vier letters worden op woordbegin
+-- gezocht; woorden van vijf letters of meer letterlijk, als tekenreeks. Dat
+-- tweede is waar het misgaat, en het gaat systematisch mis:
 --
---   * Mayonaise was gewoon vindbaar. Alle drie de spellingen geven treffers —
---     mayonaise 4, mayonnaise 5, mayo 5. Een synoniem "mayo" toevoegen zou niets
---     opgelost hebben. "mayo" is vier letters en valt onder de regel "begin van
---     een woord", en `mayonaise` begint met `mayo`.
+--     jij typt          NEVO schrijft          waarom het misgaat
+--     kipfilet          Kip filet              spatie ertussen
+--     boterham          Tarwebrood bruin       heel ander woord
+--     pasta             Macaroni ongekookt     heel ander woord
+--     patat             Frites                 heel ander woord
 --
---   * De huishoudmaat ontbrak ook niet. Voor de groep "Hartige sauzen" stond al
---     een eetlepel van 15 g, band 10 tot 20, als standaard.
+-- Twee soorten dus. Samenstellingen die NEVO los schrijft, en huishoudwoorden
+-- die nergens op lijken. Voor allebei is `synoniemen_afgeleid` de plek: geen
+-- NEVO-gegeven maar iets van ons, dus het aanvullen tast de bron niet aan, en de
+-- zoekfunctie kijkt er wel in mee.
 --
---   * Waar het wél aan lag staat in `health/edge/kal-ai.ts`: bij het beschrijven
---     van een maaltijd kwam het portiegewicht van het model en werd
---     `voeding_portiematen` niet geraadpleegd. De maten stonden er; de weg liep
---     eraan voorbij. Verholpen daar, niet hier.
+-- WAAROM DIT VOORZICHTIG MOET
 --
---   * En de graanreep die bovenaan verscheen was een derde ding: het telwoord
---     "twee" matchte op "B'tween". Zie 12-telwoorden-uit-het-zoeken.sql.
---
--- WAT ER DAN WEL OVERBLIJFT
---
--- Eén echt gat: "pasta" vindt `Macaroni` niet, en zal dat nooit doen — er is
--- geen gedeeld woordbegin. Datzelfde geldt voor "boterhammen", want NEVO kent
--- alleen "brood". Daar is `synoniemen_afgeleid` voor: geen NEVO-gegeven maar
--- iets van ons, dus het aanvullen tast de bron niet aan, en de zoekfunctie kijkt
--- er wel in mee.
+-- Een synoniem dat te ruim staat maakt het zoeken slechter, niet beter. Hang je
+-- "pasta" aan alles met "saus" erin, dan komt bij "pasta" de pastasaus omhoog en
+-- de macaroni niet. Daarom laat blok 1 eerst zien hoeveel producten elk patroon
+-- zou raken. Een woord dat aan dertig producten hangt is geen synoniem meer maar
+-- een categorie.
 
 
 -- ---------------------------------------------------------------------------
--- WOORDEN DIE JE THUIS GEBRUIKT
+-- BLOK 1 — WAT ELK WOORD NU DOET EN ZOU GAAN DOEN. Verandert niets.
 -- ---------------------------------------------------------------------------
 --
--- Niet "mayo": dat werkt al. Wel het geval waar de zoekregel niets aan kan doen
--- omdat het woord niets met de tabelnaam gemeen heeft. "pasta" vindt `Macaroni`
--- niet, en zal dat nooit doen — er is geen gedeeld woordbegin. Daar is
--- `synoniemen_afgeleid` voor: het is geen NEVO-gegeven maar iets van ons, dus
--- het aanvullen tast de bron niet aan en de zoekfunctie kijkt er wel in mee.
+-- Drie kolommen om naar te kijken:
 --
--- Eerst: welke van deze woorden vindt nu al iets? Vul de lijst gerust aan met
---     wat de kinderen en jij werkelijk intypen. Alles wat op 0 staat is een gat.
+--   `vindt_nu`   staat dit op 0, dan is er een gat. Staat het boven 0, dan is
+--                het woord al vindbaar en hoeft er niets bij.
+--   `raakt`      hoeveel producten het patroon zou aanhaken. Eén tot een stuk of
+--                acht is een synoniem. Boven de vijftien is het te ruim.
+--   `voorbeeld`  de eerste treffer, om te zien of het het goede product is.
 
-select w.woord, (select count(*) from kal_nevo_zoek(w.woord, 20)) as treffers
-from (values ('pasta'),('mayo'),('pindakaas'),('hagelslag'),('frisdrank'),
-             ('patat'),('sla'),('kipfilet'),('yoghurt'),('kaas'),
-             ('chips'),('koek'),('cola'),('brood'),('rijst')) as w(woord)
-order by treffers, w.woord;
+with paren as (
+  select * from (values
+     ('kipfilet',    '%kip%filet%'),
+     ('kalkoenfilet','%kalkoen%filet%'),
+     ('boterham',    '%brood%'),
+     ('boterhammen', '%brood%'),
+     ('pasta',       '%macaroni%'),
+     ('pasta',       '%spaghetti%'),
+     ('pasta',       '%penne%'),
+     ('pasta',       '%tagliatelle%'),
+     ('patat',       '%frites%'),
+     ('friet',       '%frites%'),
+     ('eieren',      '%ei kippen%'),
+     ('pindakaas',   '%pinda%kaas%'),
+     ('slagroom',    '%room slag%'),
+     ('halfvol',     '%halfvolle%'),
+     ('koffiemelk',  '%koffie%melk%'),
+     ('sinaasappel', '%sinaasappel%')
+   ) as p(woord, patroon)
+)
+select p.woord, p.patroon,
+       (select count(*) from kal_nevo_zoek(p.woord, 20))               as vindt_nu,
+       (select count(*) from nevo_actief n where n.naam_nl ilike p.patroon) as raakt,
+       (select n.naam_nl from nevo_actief n
+         where n.naam_nl ilike p.patroon order by length(n.naam_nl) limit 1) as voorbeeld
+from paren p
+order by vindt_nu, raakt desc, p.woord;
 
--- En dan de koppeling: woord → producten waar het bij hoort. Alleen de paren
---     invullen waarvan de vraag hierboven liet zien dat ze nu niets vinden, en alleen waar je
---     zeker van bent. Een synoniem dat te ruim staat maakt het zoeken slechter,
---     niet beter — dan komt bij "pasta" ook de pastasaus omhoog.
+
+-- ---------------------------------------------------------------------------
+-- BLOK 2 — DE KOPPELING
+-- ---------------------------------------------------------------------------
 --
---     Herhaalbaar: het woord wordt alleen toegevoegd als het er nog niet staat.
+-- Het snoeien gebeurt hier vanzelf. De laatste voorwaarde eist dat het woord nú
+-- niets vindt: een synoniem toevoegen voor iets wat al vindbaar is voegt niets
+-- toe behalve ruis, en op deze proefgegevens gold dat al voor "pindakaas",
+-- "slagroom" en "koffiemelk" — NEVO schrijft die gewoon aan elkaar.
+--
+-- Dat `kal_nevo_zoek` STABLE is maakt dit veilig: hij kijkt naar de toestand aan
+-- het begin van de opdracht, dus de drie patronen van "pasta" zien alle drie nog
+-- een nul en worden alle drie toegepast.
+--
+-- Wat het NIET zelf kan snoeien is een patroon dat te veel producten raakt. Daar
+-- is blok 1 voor, en daar moet je zelf naar kijken.
+--
+-- Herhaalbaar op twee manieren: een woord dat er al staat wordt niet nog eens
+-- toegevoegd, en na afloop vindt het woord iets, dus grijpt de laatste
+-- voorwaarde niet meer.
 
+/* EERST VERZAMELEN, DAN ÉÉN KEER BIJWERKEN
+
+   Dit stond eerst als een gewone `update ... from (values ...)`, en dat was
+   fout. Postgres werkt elke doelrij hoogstens één keer bij binnen één opdracht,
+   ook als er meerdere bronrijen op passen: "Tarwebrood wit" kreeg dan wel
+   `boterham` óf `boterhammen`, niet allebei. Twee keer draaien vulde de rest
+   aan, en dat is precies het soort fout dat je alleen ziet door twee keer te
+   draaien — de eerste keer zag er goed uit.
+
+   Nu worden de woorden per product eerst verzameld en dan in één keer
+   toegevoegd. Eén doorloop is genoeg, en de tweede verandert niets meer. */
 update nevo_foods f
-   set synoniemen_afgeleid = f.synoniemen_afgeleid || array[p.woord]
-from (values
-        ('pasta', '%macaroni%'),
-        ('pasta', '%spaghetti%'),
-        ('pasta', '%penne%')
+   set synoniemen_afgeleid = f.synoniemen_afgeleid || nieuw.erbij
+from (
+  select b.id, array_agg(distinct p.woord) as erbij
+    from nevo_foods b
+    join (values
+       ('kipfilet',    '%kip%filet%'),
+       ('kalkoenfilet','%kalkoen%filet%'),
+       ('boterham',    '%brood%'),
+       ('boterhammen', '%brood%'),
+       ('pasta',       '%macaroni%'),
+       ('pasta',       '%spaghetti%'),
+       ('pasta',       '%penne%'),
+       ('pasta',       '%tagliatelle%'),
+       ('patat',       '%frites%'),
+       ('friet',       '%frites%'),
+       ('eieren',      '%ei kippen%'),
+       ('pindakaas',   '%pinda%kaas%'),
+       ('slagroom',    '%room slag%'),
+       ('koffiemelk',  '%koffie%melk%')
      ) as p(woord, patroon)
- where f.naam_nl ilike p.patroon
-   and not (p.woord = any(f.synoniemen_afgeleid));
+      on b.naam_nl ilike p.patroon
+   where not (p.woord = any(b.synoniemen_afgeleid))
+     and (select count(*) from kal_nevo_zoek(p.woord, 5)) = 0
+   group by b.id
+) as nieuw
+where f.id = nieuw.id;
 
--- Nakijken:
-select 'pasta' as term, count(*) as treffers from kal_nevo_zoek('pasta', 20);
 
--- Terugdraaien:
+-- ---------------------------------------------------------------------------
+-- BLOK 3 — NAKIJKEN
+-- ---------------------------------------------------------------------------
+--
+-- Elk woord hoort nu boven nul te staan. En de tweede vraag is de belangrijkste:
+-- de dingen die al werkten moeten blijven werken. Een synoniem dat te ruim staat
+-- verpest die eerst.
+
+select w as woord, (select count(*) from kal_nevo_zoek(w, 20)) as treffers
+from unnest(array['kipfilet','boterham','boterhammen','pasta','patat','friet',
+                  'eieren','pindakaas','slagroom','koffiemelk']) w
+order by treffers, w;
+
+select w as woord, (select count(*) from kal_nevo_zoek(w, 20)) as treffers
+from unnest(array['mayonaise','tonijn','halfvolle melk','halvarine','brood',
+                  'kaas','rijst','appel']) w
+order by treffers, w;
+
+-- En waar "pasta" nu op uitkomt, als steekproef:
+select nevo_code, naam_nl from kal_nevo_zoek('pasta', 10);
+
+-- Terugdraaien, per woord:
 -- update nevo_foods set synoniemen_afgeleid = array_remove(synoniemen_afgeleid, 'pasta')
 --  where 'pasta' = any(synoniemen_afgeleid);
