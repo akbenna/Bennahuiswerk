@@ -1,33 +1,45 @@
--- ===========================================================================
--- A. WOORDEN DIE JIJ GEBRUIKT EN NEVO NIET
--- ===========================================================================
+-- =============================================================================
+-- SYNONIEMEN — woorden die jij gebruikt en NEVO niet
 --
--- Nog niet toegepast.
+-- Toegepast 29 augustus 2026, in twee stappen.
 --
 -- HET PATROON ACHTER DE GATEN
 --
--- De zoekregel doet twee dingen. Woorden tot vier letters worden op woordbegin
--- gezocht; woorden van vijf letters of meer letterlijk, als tekenreeks. Dat
--- tweede is waar het misgaat, en het gaat systematisch mis:
+-- De zoekregel doet twee dingen: woorden tot vier letters op woordbegin, woorden
+-- van vijf letters of meer letterlijk als tekenreeks. Dat tweede gaat op twee
+-- manieren mis. Samenstellingen die NEVO los schrijft — jij typt "kipfilet", er
+-- staat "Kip filet". En huishoudwoorden die nergens op lijken: boterham tegen
+-- Tarwebrood, patat tegen Frites.
 --
---     jij typt          NEVO schrijft          waarom het misgaat
---     kipfilet          Kip filet              spatie ertussen
---     boterham          Tarwebrood bruin       heel ander woord
---     pasta             Macaroni ongekookt     heel ander woord
---     patat             Frites                 heel ander woord
+-- WAT ER GEMETEN IS, NA AFLOOP
 --
--- Twee soorten dus. Samenstellingen die NEVO los schrijft, en huishoudwoorden
--- die nergens op lijken. Voor allebei is `synoniemen_afgeleid` de plek: geen
--- NEVO-gegeven maar iets van ons, dus het aanvullen tast de bron niet aan, en de
--- zoekfunctie kijkt er wel in mee.
+--     pindakaas 4    kipfilet 5    koffiemelk 5    eieren 9
+--     friet 9        patat 9       slagroom 9      spaghetti 13
+--     boterham 20    boterhammen 20               pasta 20
 --
--- WAAROM DIT VOORZICHTIG MOET
+-- (20 is de limiet van de vraag, niet het aantal broden.)
 --
--- Een synoniem dat te ruim staat maakt het zoeken slechter, niet beter. Hang je
--- "pasta" aan alles met "saus" erin, dan komt bij "pasta" de pastasaus omhoog en
--- de macaroni niet. Daarom laat blok 1 eerst zien hoeveel producten elk patroon
--- zou raken. Een woord dat aan dertig producten hangt is geen synoniem meer maar
--- een categorie.
+-- DE ZELFSNOEI, EN WAAR HIJ OPHOUDT
+--
+-- Blok 2 voegt een woord alleen toe als het nú niets vindt. Dat scheelt handwerk:
+-- pindakaas, slagroom en koffiemelk schrijft NEVO gewoon aan elkaar en die kregen
+-- niets.
+--
+-- Maar hij telt treffers en leest ze niet, en daar liep het mis bij "pasta". Dat
+-- woord vond al van alles — chocoladepasta, speculoospasta, kruidenpasta — want
+-- in het Nederlands zijn dat twee woorden die hetzelfde geschreven worden. De
+-- zelfsnoei zag treffers, zag geen gat, en sloeg het over.
+--
+-- Toen dacht ik dat macaroni ontbrak. Ook mis: er ís geen macaroni. NEVO noemt
+-- álles "Pasta ...", tot "Manti gevulde pasta gekookt Turks" aan toe. Het gat zat
+-- andersom — "spaghetti", "macaroni" en "penne" vonden niets, en dat zijn juist
+-- de woorden die een kind gebruikt.
+--
+-- Blok 3 hangt die drie aan de pastaproducten, met de voorwaarde op de groep.
+-- Zonder dat zou "Pasta chocolade- melk" een synoniem "spaghetti" krijgen. De
+-- tegenproef na afloop: "spaghetti" geeft elf graanproducten, een bolognese en
+-- een kruidenmix, en geen enkel smeersel.
+-- =============================================================================
 
 
 -- ---------------------------------------------------------------------------
@@ -132,26 +144,32 @@ where f.id = nieuw.id;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 3 — NAKIJKEN
+-- BLOK 3 — SPAGHETTI, MACARONI EN PENNE
 -- ---------------------------------------------------------------------------
 --
--- Elk woord hoort nu boven nul te staan. En de tweede vraag is de belangrijkste:
--- de dingen die al werkten moeten blijven werken. Een synoniem dat te ruim staat
--- verpest die eerst.
+-- Alleen op de graangroep. Chocoladepasta en speculoospasta staan in "Suiker,
+-- snoep, zoet beleg en zoete sauzen" en blijven ongemoeid.
+--
+-- Geen zelfsnoeiende voorwaarde meer zoals in A. Die telde treffers en las ze
+-- niet, en juist dat ging bij "pasta" mis. Blok 1 is de controle, en die doe jij.
+
+update nevo_foods f
+   set synoniemen_afgeleid = f.synoniemen_afgeleid
+                             || array['spaghetti','macaroni','penne','pastas']
+ where f.naam_nl ilike '%pasta%'
+   and f.groep = 'Graanproducten en meelsoorten'
+   and not ('spaghetti' = any(f.synoniemen_afgeleid));
+
+
+-- ---------------------------------------------------------------------------
+-- NAKIJKEN
+-- ---------------------------------------------------------------------------
 
 select w as woord, (select count(*) from kal_nevo_zoek(w, 20)) as treffers
-from unnest(array['kipfilet','boterham','boterhammen','pasta','patat','friet',
-                  'eieren','pindakaas','slagroom','koffiemelk']) w
+from unnest(array['kipfilet','boterham','boterhammen','patat','friet','eieren',
+                  'pindakaas','slagroom','koffiemelk','spaghetti','macaroni',
+                  'penne','pasta']) w
 order by treffers, w;
 
-select w as woord, (select count(*) from kal_nevo_zoek(w, 20)) as treffers
-from unnest(array['mayonaise','tonijn','halfvolle melk','halvarine','brood',
-                  'kaas','rijst','appel']) w
-order by treffers, w;
-
--- En waar "pasta" nu op uitkomt, als steekproef:
-select nevo_code, naam_nl from kal_nevo_zoek('pasta', 10);
-
--- Terugdraaien, per woord:
--- update nevo_foods set synoniemen_afgeleid = array_remove(synoniemen_afgeleid, 'pasta')
---  where 'pasta' = any(synoniemen_afgeleid);
+-- De tegenproef die het meest waard is: hier hoort geen chocoladepasta te staan.
+select nevo_code, naam_nl, groep from kal_nevo_zoek('spaghetti', 20);
