@@ -20,10 +20,18 @@
 --     dus niet aan het zoeken, en een synoniem "mayo" toevoegen zou niets
 --     opgelost hebben — dat stond hier eerst wel, en is eruit.
 --
---   * Wat er wél ontbreekt zijn de huishoudmaten. Zonder een rij in
---     `voeding_portiematen` is de lijst `maten` leeg, en dan heeft het
---     portievenster niets om aan te bieden: je kunt alleen nog zelf een gewicht
---     typen. Dat is precies "hij geeft de hele pot in plaats van een lepel".
+--   * Ook de huishoudmaat ontbrak niet. Blok 1d gaf op de echte database: groep
+--     "Hartige sauzen", vier producten, en één maat — een eetlepel van 15 g,
+--     band 10 tot 20, die al als standaard aanstond. Dus ook dáár lag het niet.
+--
+--     Waar het wél aan lag staat inmiddels in `health/edge/kal-ai.ts`: bij het
+--     beschrijven van een maaltijd kwam het portiegewicht van het model, en werd
+--     `voeding_portiematen` niet geraadpleegd. De maten stonden er, alleen liep
+--     die weg eraan voorbij. Dat is daar verholpen, niet hier.
+--
+--     Blok 2 hieronder blijft nuttig, maar bescheidener dan het begon: het voegt
+--     de theelepel en het schaaltje toe die er nog niet zijn. De bestaande
+--     eetlepel blijft ongemoeid — de guard kijkt op naam.
 --
 --   * "pasta" vindt `Macaroni, ongekookt` niet. Geen gedeeld woordbegin, dus
 --     geen treffer. Dát is het echte synoniemgat, en daar gaat blok 3 over.
@@ -98,12 +106,13 @@ limit 30;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 2 — EEN LEPEL, GEEN POT
+-- BLOK 2 — EEN THEELEPEL EN EEN SCHAALTJE ERBIJ
 -- ---------------------------------------------------------------------------
 --
--- Dit is de eigenlijke klacht. Wie mayonaise op zijn brood doet eet geen 100
--- gram; hij eet een lepel. Zonder huishoudmaat is 100 g wat er overblijft, en
--- dat scheelt vijfhonderd calorieën.
+-- De eetlepel staat er al (zie de kop). Wat er niet is, is de maat eronder en
+-- de maat erboven: een theelepel mayonaise op een cracker, en een schaaltje
+-- saus bij het eten. Zonder die twee is elke portie een eetlepel of zelf
+-- afwegen.
 --
 -- Op de groep en niet op het product. Een lepel ketchup, een lepel dressing en
 -- een lepel mayonaise zijn alle drie een lepel; ze aan één nevo_code hangen zou
