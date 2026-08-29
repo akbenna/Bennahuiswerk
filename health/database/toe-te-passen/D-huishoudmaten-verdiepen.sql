@@ -74,8 +74,13 @@ select n.nevo_code, m.naam, m.meervoud, m.gram, m.laag, m.hoog, m.standaard, m.v
 from nevo_actief n
 cross join (values
       -- volgorde 0 én standaard: zo komt hij vóór de opscheplepel van de groep
-      ('schaaltje', 'schaaltjes', 40::numeric, 25::numeric, 60::numeric, true,  0),
-      ('eetlepel',  'eetlepels',  10::numeric,  7::numeric, 15::numeric, false, 1)
+      ('schaaltje',    'schaaltjes',    40::numeric, 25::numeric, 60::numeric, true,  0),
+      -- De opscheplepel moet hier óók staan, en dat was eerst niet zo. De groep
+      -- heeft er een van 60 g; laat je die staan, dan krijgt wie op
+      -- "opscheplepel" tikt nog steeds het gewicht van gekookte rijst. Een
+      -- opscheplepel cornflakes is 15 à 20 gram.
+      ('opscheplepel', 'opscheplepels', 18::numeric, 12::numeric, 25::numeric, false, 1),
+      ('eetlepel',     'eetlepels',     10::numeric,  7::numeric, 15::numeric, false, 2)
    ) as m(naam, meervoud, gram, laag, hoog, standaard, volgorde)
 where n.groep = 'Graanproducten en meelsoorten'
   and (n.naam_nl ilike '%cornflakes%' or n.naam_nl ilike '%muesli%'
@@ -138,7 +143,86 @@ update voeding_portiematen
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 5 — NAKIJKEN
+-- BLOK 5 — DE PRODUCTMAAT LATEN WINNEN
+-- ---------------------------------------------------------------------------
+--
+-- Dit blok kwam er pas na het draaien van blok 2, en dat is precies waarom het
+-- gedraaid moest worden.
+--
+-- Het idee was dat een maat op het product zou winnen door hem `is_standaard` en
+-- volgorde 0 te geven. Voor het schaaltje werkt dat. Voor de opscheplepel niet:
+-- die van de groep draagt zelf `is_standaard`, en `is_standaard desc` weegt
+-- zwaarder dan het volgnummer. Bij cornflakes stond de opscheplepel van 60 g dus
+-- nog steeds boven die van 18 g.
+--
+-- Met alleen gegevens is dat niet op te lossen. Om een standaard-groepsmaat te
+-- verslaan zou de productmaat óók standaard moeten zijn, en dan staan er twee
+-- standaarden en beslist het volgnummer alsnog willekeurig. De voorrang hoort
+-- dus in de functie, en daar is het één regel: eerst wat aan het product hangt,
+-- dan pas wat aan de groep hangt.
+--
+-- `kal-ai` deed dit al zo. Nu doet het portievenster het ook.
+
+CREATE OR REPLACE FUNCTION public.kal_portiematen(p_token text, p_nevo_code text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO 'public'
+AS $function$
+declare
+  v_gebruiker uuid;
+  v_uit       jsonb;
+begin
+  v_gebruiker := kal_sessie(p_token);
+
+  select jsonb_build_object(
+    'nevo_code', n.nevo_code,
+    'naam',      n.naam_nl,
+    'groep',     n.groep,
+    'kcal',      n.energie_kcal_per_100g,
+    'eiwit_g',   n.eiwit_g,
+    'vet_g',     n.vet_g,
+    'koolhydraat_g', n.koolhydraten_g,
+    'vezel_g',   n.vezels_g,
+    'maten', coalesce((
+      select jsonb_agg(jsonb_build_object(
+               'naam',      m.naam,
+               'meervoud',  coalesce(m.meervoud, m.naam),
+               'gram',      m.gram_schatting,
+               'gram_laag', m.gram_laag,
+               'gram_hoog', m.gram_hoog,
+               'standaard', m.is_standaard,
+               'herkomst',  m.herkomst,
+               'dietist',   m.gecontroleerd_door_dietist)
+             -- Een maat op het product zelf gaat vóór een maat op de groep.
+             -- Zonder deze regel wint de groepsmaat zodra die `is_standaard`
+             -- draagt, en dan staat bij cornflakes de opscheplepel van 60 g
+             -- (gekookte granen) boven die van 18 g (cornflakes). Met alleen
+             -- gegevens is dat niet te winnen: om een standaard-groepsmaat te
+             -- verslaan zou de productmaat óók standaard moeten zijn, en dan
+             -- zijn er twee standaarden. Het hoort dus hier.
+             order by (m.nevo_code is not null) desc, m.is_standaard desc, m.volgorde)
+        from voeding_portiematen m
+       where m.nevo_code = n.nevo_code
+          or (m.nevo_code is null and m.nevo_groep = n.groep)), '[]'::jsonb))
+    into v_uit
+    -- nevo_actief: de licentiepoort. Staat de licentie niet op gecontroleerd,
+    -- dan is dit product onvindbaar en volgt de melding hieronder.
+    from nevo_actief n
+   where n.nevo_code = p_nevo_code
+   limit 1;
+
+  if v_uit is null then
+    raise exception 'Dit product staat niet in het voedingsstoffenbestand';
+  end if;
+  return v_uit;
+end
+$function$
+;
+
+
+-- ---------------------------------------------------------------------------
+-- BLOK 6 — NAKIJKEN
 -- ---------------------------------------------------------------------------
 
 -- Cornflakes: het schaaltje van 40 g hoort nu bovenaan te staan, vóór de
