@@ -1,13 +1,16 @@
-# De vraagbaak weer aan de praat
+# De vraagbaak uitrollen
 
-`huiswerk-ai` staat sinds 26 augustus 2026 op het oude, gedeelde project
-`jnlvvdaisyerhxucxnuu`. Een dag later verhuisde Bennahuiswerk naar zijn eigen
-database, en `DATABASE_URL` in `src/gedeeld/db/verbinding.ts` wijst sindsdien
-naar `huiuvnjrvvoybbzwfrfp`. De app roept dus een adres aan waar deze function
-niet staat: elk kind dat een vraag stelt krijgt "De vraagbaak doet het even
-niet."
+**Gedaan op 29 augustus 2026.** `huiswerk-ai` draait op `huiuvnjrvvoybbzwfrfp`
+en de vraagbaak werkt. Dit blijft staan als de procedure, voor als hij ooit
+opnieuw uitgerold moet worden — naar een ander project, of na een grote
+wijziging.
 
-Dit is geen SQL maar vier handelingen in het dashboard. Ze duren samen een paar
+De aanleiding was dit: de function stond op het oude, gedeelde project, en toen
+Bennahuiswerk naar zijn eigen database verhuisde riep de app een adres aan waar
+hij niet meer stond. Elk kind dat een vraag stelde kreeg "De vraagbaak doet het
+even niet."
+
+Het is geen SQL maar vier handelingen in het dashboard. Ze duren samen een paar
 minuten.
 
 ## 1. De function aanmaken

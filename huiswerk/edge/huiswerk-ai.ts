@@ -5,16 +5,18 @@
  * `health/edge/kal-prikkel.ts` dat is voor BennaHealth. Wijzigt er iets, dan
  * hoort dit bestand mee te veranderen.
  *
- * NOG NIET UITGEROLD OP HET JUISTE PROJECT
+ * WAAR HIJ DRAAIT
  *
- * Deze function is op 26 augustus 2026 uitgerold op `jnlvvdaisyerhxucxnuu` — het
- * oude, gedeelde project. Een dag later verhuisde Bennahuiswerk naar zijn eigen
- * database (zie SUPABASE-scheiding.md), en `DATABASE_URL` wijst nu daarheen.
- * De vraagbaak roept dus een adres aan waar deze function nog niet staat.
+ * Op `huiuvnjrvvoybbzwfrfp`, sinds 29 augustus 2026, met `verify_jwt` uit en
+ * `ANTHROPIC_API_KEY` in de secrets. Daarvoor stond hij op het oude, gedeelde
+ * project, en na de verhuizing van de database (zie SUPABASE-scheiding.md) riep
+ * de app een adres aan waar hij niet meer stond. Dat is verholpen; de stappen
+ * staan in `huiswerk/edge/UITROLLEN.md`, mocht het nog eens moeten.
  *
- * Wat er moet gebeuren: deze bron uitrollen als `huiswerk-ai` op het nieuwe
- * project, met `verify_jwt` uit en `ANTHROPIC_API_KEY` in de secrets. Daarna kan
- * de kopie op het oude project weg.
+ * Nagekeken langs de weg van de app: een vraag over breuken optellen gaf een
+ * antwoord met `routes: ["wis-breuken"]` — een sleutel uit de meegestuurde
+ * catalogus, en geen verzonnen onderwerp. De grendel hieronder doet dus wat hij
+ * belooft.
  *
  * WAAROM DIT OP DE SERVER STAAT
  *

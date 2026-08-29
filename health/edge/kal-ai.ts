@@ -13,8 +13,20 @@
 //            eenheid, en geeft een eigen voedingswaarde per 100 g als vangnet
 //   server   zoekt per onderdeel kandidaten in NEVO (2.328 producten)
 //   ronde 2  het model kiest de beste NEVO-treffer per onderdeel
+//   server   noemt het model een huishoudmaat die in de tabel staat, dan komt
+//            het gewicht daarvandaan en niet van het model
 //   server   vermenigvuldigt met het aantal en rekent met de NEVO-waarde; is
 //            die er niet, dan met het vangnet, en dan zakt de regel naar D
+//
+// Die vijfde stap is later toegevoegd, en de reden is het waard om op te
+// schrijven. Het beginsel van deze app is dat het model kiest en de server met
+// de tabel rekent — maar dat gold alleen voor de voedingsstoffen. Het
+// portiegewicht kwam nog volledig van het model, terwijl in dezelfde database
+// `voeding_portiematen` staat: een eetlepel hartige saus is 15 g, band 10 tot
+// 20. Zei het model "eetlepel, 40 gram", dan rekende de server met 40 en keek
+// niemand in de tabel. Dat is precies de klacht "hij pakt de hele pot in plaats
+// van een lepel", en het was geen ontbrekend gegeven maar een weg die eraan
+// voorbijliep.
 //
 // Vier regels die uit testen zijn gekomen en niet uit ontwerp:
 //   - een onderdeel mag nooit uit het totaal vallen. Een ontbrekende
@@ -68,6 +80,71 @@ const MIN_REL_SPREIDING: Record<string, number> = {
   "tekst-ai": 0.25,
   gewogen: 0.08,
 };
+
+/* ---------------------------------------------------------------------------
+   HUISHOUDMATEN UIT DE TABEL
+
+   Het model mag zeggen wélke maat het was; hoeveel die weegt staat in de
+   database. Dat is dezelfde taakverdeling als bij de voedingswaarde, en om
+   dezelfde reden: een curated maat is nagekeken, een schatting van het model
+   niet.
+
+   Alleen bij een échte huishoudmaat. Zegt het model "gram", dan is er niets te
+   vervangen; zegt het "portie" en kent de tabel dat woord niet, dan blijft de
+   schatting staan. Liever de schatting van het model dan een maat die er
+   toevallig op lijkt.
+--------------------------------------------------------------------------- */
+
+export interface Portiemaat {
+  naam: string;
+  meervoud: string | null;
+  gram_schatting: number;
+  gram_laag: number;
+  gram_hoog: number;
+}
+
+/* Woorden die hetzelfde betekenen maar anders geschreven worden. Klein
+   gehouden met opzet: alles wat hier niet in staat wordt gewoon letterlijk
+   vergeleken met de naam in de tabel, en dat is de veilige kant. */
+const EENHEID_ALIAS: Record<string, string> = {
+  el: "eetlepel", lepel: "eetlepel", lepels: "eetlepel", eetlepels: "eetlepel",
+  tl: "theelepel", theelepels: "theelepel",
+  sneetje: "snede", sneetjes: "snede", snee: "snede", sneden: "snede", sneetje_brood: "snede",
+  kopjes: "kopje", glazen: "glas", stuks: "stuk", stuk_je: "stuk",
+  handjes: "handje", schaaltjes: "schaaltje", porties: "portie",
+};
+
+/** Eén schrijfwijze, zodat "Eetlepels" en "el" hetzelfde woord worden. */
+export function normaliseerEenheid(eenheid: string): string {
+  const kaal = (eenheid || "").toLowerCase().trim().replace(/[^a-zà-ÿ]/g, "");
+  return EENHEID_ALIAS[kaal] ?? kaal;
+}
+
+/**
+ * De maat die bij deze eenheid hoort, of null.
+ *
+ * Een portie die de gebruiker zelf gewogen heeft laten we met rust: die is
+ * beter dan wat dan ook uit een tabel.
+ *
+ * De regel over gram en milliliter is eerlijk gezegd een tweede slot. De
+ * aanroeper vangt "g" en "ml" al af, en zou hij dat niet doen, dan vindt de
+ * lus hieronder toch geen maat die zo heet. Een mutatieproef kreeg hem dan ook
+ * niet om. Hij blijft staan omdat hij de bedoeling uitspreekt en omdat hij wél
+ * gaat bijten zodra iemand ooit een portiemaat "gram" noemt — maar hij is
+ * bescherming, geen dragende regel, en dat is iets anders.
+ */
+export function kiesMaat(
+  eenheid: string, gewogen: boolean, maten: readonly Portiemaat[],
+): Portiemaat | null {
+  if (gewogen) return null;
+  const e = normaliseerEenheid(eenheid);
+  if (!e || e === "g" || e === "gram" || e === "ml" || e === "milliliter") return null;
+  for (const m of maten) {
+    if (normaliseerEenheid(m.naam) === e) return m;
+    if (m.meervoud && normaliseerEenheid(m.meervoud) === e) return m;
+  }
+  return null;
+}
 
 interface Onderdeel {
   naam: string;
@@ -286,6 +363,72 @@ async function zoekNevo(db: ReturnType<typeof createClient>, term: string) {
   return uniek;
 }
 
+/**
+ * De huishoudmaten voor een stel gekoppelde producten, in één vraag.
+ *
+ * Maten hangen aan een product of aan een productgroep — de tabel dwingt af dat
+ * het precies één van de twee is. De groepsmaten zijn de nuttigste: één keer
+ * vastleggen dat een eetlepel hartige saus 15 gram is, en elke saus heeft hem.
+ *
+ * De service-sleutel gaat langs RLS heen. Dat is hier de bedoeling en het is
+ * dezelfde weg die `kal_ai_log` hierboven al neemt: deze functie draait op de
+ * server, niet in een browser.
+ */
+async function haalMaten(
+  db: ReturnType<typeof createClient>,
+  bronnen: Array<Record<string, unknown> | null>,
+): Promise<(bron: Record<string, unknown> | null) => Portiemaat[]> {
+  const codes = [...new Set(bronnen.filter(Boolean).map((b) => String(b!.nevo_code)))];
+  const groepen = [...new Set(bronnen.filter((b) => b?.groep).map((b) => String(b!.groep)))];
+  if (!codes.length && !groepen.length) return () => [];
+
+  /* Twee vragen en geen `or`-filter: PostgREST wil de waarden dan in één string
+     geplakt hebben, en een groepsnaam met een komma erin ("Sauzen, hartig")
+     breekt zo'n string stilletijds doormidden. */
+  const [perCode, perGroep] = await Promise.all([
+    codes.length
+      ? db.from("voeding_portiematen")
+          .select("nevo_code, nevo_groep, naam, meervoud, gram_schatting, gram_laag, gram_hoog, is_standaard, volgorde")
+          .in("nevo_code", codes)
+      : Promise.resolve({ data: [] as Array<Record<string, unknown>> }),
+    groepen.length
+      ? db.from("voeding_portiematen")
+          .select("nevo_code, nevo_groep, naam, meervoud, gram_schatting, gram_laag, gram_hoog, is_standaard, volgorde")
+          .in("nevo_groep", groepen)
+      : Promise.resolve({ data: [] as Array<Record<string, unknown>> }),
+  ]);
+
+  const naarMaat = (r: Record<string, unknown>): Portiemaat => ({
+    naam: String(r.naam),
+    meervoud: r.meervoud == null ? null : String(r.meervoud),
+    gram_schatting: Number(r.gram_schatting),
+    gram_laag: Number(r.gram_laag),
+    gram_hoog: Number(r.gram_hoog),
+  });
+
+  const opCode = new Map<string, Portiemaat[]>();
+  for (const r of (perCode.data ?? []) as Array<Record<string, unknown>>) {
+    const k = String(r.nevo_code);
+    (opCode.get(k) ?? opCode.set(k, []).get(k)!).push(naarMaat(r));
+  }
+  const opGroep = new Map<string, Portiemaat[]>();
+  for (const r of (perGroep.data ?? []) as Array<Record<string, unknown>>) {
+    const k = String(r.nevo_groep);
+    (opGroep.get(k) ?? opGroep.set(k, []).get(k)!).push(naarMaat(r));
+  }
+
+  /* Een maat op het product zelf gaat vóór een maat op de groep: hij is
+     specifieker, en wie de moeite nam hem apart vast te leggen had daar een
+     reden voor. */
+  return (bron) => {
+    if (!bron) return [];
+    return [
+      ...(opCode.get(String(bron.nevo_code)) ?? []),
+      ...(bron.groep ? opGroep.get(String(bron.groep)) ?? [] : []),
+    ];
+  };
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
 
@@ -390,19 +533,36 @@ Past geen enkele kandidaat werkelijk, kies dan null. Een verkeerde koppeling is 
       }
     }
 
+    // --------------------------- server: huishoudmaten bij de koppelingen ----
+    const gekozen = onderdelen.map((_, i) => {
+      const code = keuzes[i] ?? null;
+      return code ? (kandidaten[i] ?? []).find((c) => c.nevo_code === code) ?? null : null;
+    });
+    const matenVoor = await haalMaten(db, gekozen);
+
     // ------------------------------- server: voedingswaarde uit de tabel ----
     const regels = onderdelen.map((o, i) => {
-      const code = keuzes[i] ?? null;
-      const bron = code ? (kandidaten[i] ?? []).find((c) => c.nevo_code === code) : null;
+      const bron = gekozen[i];
+      const code = bron ? String(bron.nevo_code) : null;
 
       /* De vermenigvuldiging gebeurt hier en niet bij het model. Zie de kop. */
       const eh = (o.eenheid || "").toLowerCase();
       const isMaat = eh === "g" || eh === "ml";
-      const perEenheid = Math.max(0, Number(o.gram_per_eenheid) || 0);
+
+      /* Kent de tabel deze huishoudmaat, dan wint zij van het model — voor het
+         gewicht én voor de band eromheen. Die band is niet altijd smaller: een
+         eetlepel is nu eenmaal 10 tot 20 gram, en dat hoort er te staan in
+         plaats van het ene getal waar het model zich op vastlegde. */
+      const tabelmaat = isMaat ? null : kiesMaat(o.eenheid || "", !!o.gewogen, matenVoor(bron));
+      const perEenheid = tabelmaat
+        ? tabelmaat.gram_schatting
+        : Math.max(0, Number(o.gram_per_eenheid) || 0);
       const aantal = isMaat ? 1 : Math.max(1, Number(o.hoeveelheid) || 1);
       const punt = isMaat ? Math.max(0, Number(o.hoeveelheid) || perEenheid) : aantal * perEenheid;
-      let laag = Math.max(0, Math.min((Number(o.gram_laag) || perEenheid) * aantal, punt));
-      let hoog = Math.max((Number(o.gram_hoog) || perEenheid) * aantal, punt);
+      const laagPer = tabelmaat ? tabelmaat.gram_laag : (Number(o.gram_laag) || perEenheid);
+      const hoogPer = tabelmaat ? tabelmaat.gram_hoog : (Number(o.gram_hoog) || perEenheid);
+      let laag = Math.max(0, Math.min(laagPer * aantal, punt));
+      let hoog = Math.max(hoogPer * aantal, punt);
 
       // Ondergrens op de intervalbreedte. Een model dat 200 tot 210 gram zegt
       // over een gefotografeerd bord beweert een nauwkeurigheid die uit geen
@@ -440,6 +600,12 @@ Past geen enkele kandidaat werkelijk, kies dan null. Een verkeerde koppeling is 
 
       const uit = (g: number) => (g / 100) * per100.kcal + kcalVet;
       const onz = [...(o.onzekerheid ?? [])];
+      if (tabelmaat) {
+        onz.push(
+          `portiegewicht uit de tabel: één ${tabelmaat.naam} is ${Math.round(tabelmaat.gram_schatting)} g `
+          + `(${Math.round(tabelmaat.gram_laag)}–${Math.round(tabelmaat.gram_hoog)} g), niet geschat`,
+        );
+      }
       if (!uitTabel) onz.push("niet in het voedingsstoffenbestand gevonden; gerekend met een schatting van het model");
       if (vet > 0) onz.push(`inclusief ${Math.round(vet)} g bereidingsvet, geschat en niet gewogen`);
 
