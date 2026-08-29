@@ -72,7 +72,15 @@ function getal(v) {
 export function porties(tekst) {
   if (!tekst) return { gram: null, naam: null }
   const s = String(tekst).trim()
-  const m = s.match(/(\d+(?:[.,]\d+)?)\s*g\b/i)
+  /* "gram" voluit hoort er ook bij, en dat stond er eerst niet in: `g\b`
+     mislukt op "10 gram", want na de g komt een letter. Vier van de eerste
+     twintig Lidl-producten verloren daardoor hun portiegewicht — Open Food
+     Facts schrijft het vaker voluit dan afgekort.
+
+     De langste vorm staat vooraan uit gewoonte, niet uit noodzaak: een
+     mutatieproef met `g|gr|gram` bleef groen, want de alternatie zoekt terug
+     zodra `\b` niet uitkomt. Ik dacht van wel en had het mis. */
+  const m = s.match(/(\d+(?:[.,]\d+)?)\s*(?:gram|gr|g)\b/i)
   if (!m) return { gram: null, naam: s.slice(0, 60) || null }
   const gram = Number(m[1].replace(',', '.'))
   if (!Number.isFinite(gram) || gram <= 0 || gram > 5000) return { gram: null, naam: s.slice(0, 60) }
@@ -211,6 +219,9 @@ function proef() {
   const eis = (goed, wat) => { if (!goed) { console.error('MIS: ' + wat); process.exitCode = 1 } else console.log('ok  ' + wat) }
 
   eis(porties('30 g').gram === 30, 'een portie in gram wordt gelezen')
+  eis(porties('10 gram').gram === 10, '"gram" voluit ook — anders valt een kwart weg')
+  eis(porties('35g').gram === 35, 'zonder spatie ook')
+  eis(porties('500 mg').gram === null, 'milligram is geen gram')
   eis(porties('1 portie (15 g)').gram === 15, 'gram tussen haakjes ook')
   eis(porties('250 ml').gram === null, 'milliliter is geen gram en wordt niet verzonnen')
   eis(porties('1 pièce').gram === null, 'een stuk zonder gewicht levert niets op')
