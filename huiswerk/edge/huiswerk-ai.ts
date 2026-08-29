@@ -5,6 +5,17 @@
  * `health/edge/kal-prikkel.ts` dat is voor BennaHealth. Wijzigt er iets, dan
  * hoort dit bestand mee te veranderen.
  *
+ * NOG NIET UITGEROLD OP HET JUISTE PROJECT
+ *
+ * Deze function is op 26 augustus 2026 uitgerold op `jnlvvdaisyerhxucxnuu` — het
+ * oude, gedeelde project. Een dag later verhuisde Bennahuiswerk naar zijn eigen
+ * database (zie SUPABASE-scheiding.md), en `DATABASE_URL` wijst nu daarheen.
+ * De vraagbaak roept dus een adres aan waar deze function nog niet staat.
+ *
+ * Wat er moet gebeuren: deze bron uitrollen als `huiswerk-ai` op het nieuwe
+ * project, met `verify_jwt` uit en `ANTHROPIC_API_KEY` in de secrets. Daarna kan
+ * de kopie op het oude project weg.
+ *
  * WAAROM DIT OP DE SERVER STAAT
  *
  * De sleutel. Sanad zet hem in de browser en legt in `src/sanad/ai.ts` uit
