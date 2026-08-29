@@ -2,20 +2,28 @@
  * DE VERBINDING
  *
  * Waarom de sleutel hieronder gewoon in de repo staat en niet in een geheim:
- * dit is de publieke anon-sleutel. Hij hoort in de browser terecht te komen en
- * geeft uit zichzelf geen toegang tot gegevens — geen enkele kal_- of
- * bennahub_-tabel is voor de rol `anon` benaderbaar. Alle toegang loopt via
- * SECURITY DEFINER-functies die zelf een sessietoken of een pincode eisen.
+ * dit is de publieke sleutel. Hij hoort in de browser terecht te komen en geeft
+ * uit zichzelf geen toegang tot gegevens — geen enkele tabel in deze database is
+ * voor de rol `anon` benaderbaar. Alle toegang loopt via SECURITY DEFINER-
+ * functies die zelf een sessietoken of een pincode eisen.
  *
  * Een omgevingsvariabele zou hier niets beveiligen en wel iets stukmaken: een
  * bouw zonder die variabele levert een app op die het stilzwijgend niet doet.
- * De service-rolsleutel is een heel ander verhaal en staat hier dus niet, en
- * hoort ook nooit in een browser.
+ * De service-sleutel is een heel ander verhaal en staat hier dus niet, en hoort
+ * ook nooit in een browser.
+ *
+ * Sinds 26 augustus 2026 wijst dit naar de eigen database van BennaHub. Daarvoor
+ * deelden deze apps een project met de zorggegevens van ProVita: één sleutel,
+ * één back-up, één blusgebied. `SUPABASE-scheiding.md` legt uit wat daar mis
+ * mee was.
+ *
+ * De sleutel is een `sb_publishable_`-sleutel, geen JWT. Zulke sleutels horen
+ * uitsluitend in de `apikey`-kop; wie ze ook in `Authorization: Bearer` zet,
+ * laat het platform ze als token lezen. Vandaar dat die kop hieronder ontbreekt.
  */
-export const DATABASE_URL = 'https://jnlvvdaisyerhxucxnuu.supabase.co'
+export const DATABASE_URL = 'https://huiuvnjrvvoybbzwfrfp.supabase.co'
 
-export const ANON_SLEUTEL =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpubHZ2ZGFpc3llcmh4dWN4bnV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4NDg0MjIsImV4cCI6MjA4MjQyNDQyMn0.8ZXa-N96pRSQovdL_bH5FpJTHeL454830h5LMapCawY'
+export const ANON_SLEUTEL = 'sb_publishable_xlu863BFdubIZk_po2M8KQ_JpxBgNSk'
 
 /** Wat de server terugstuurt als het misgaat, in de vorm die PostgREST kiest. */
 interface Serverfout {
@@ -51,7 +59,6 @@ export async function verzoek(pad: string, lichaam: unknown): Promise<unknown> {
       method: 'POST',
       headers: {
         apikey: ANON_SLEUTEL,
-        Authorization: 'Bearer ' + ANON_SLEUTEL,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(lichaam ?? {}),

@@ -156,7 +156,7 @@ De modelnamen staan in `kal_config` en niet in de code, om dezelfde reden als bi
 
 ```sql
 select net.http_post(
-  url := 'https://jnlvvdaisyerhxucxnuu.supabase.co/functions/v1/kal-prikkel',
+  url := 'https://huiuvnjrvvoybbzwfrfp.supabase.co/functions/v1/kal-prikkel',
   headers := jsonb_build_object('Content-Type','application/json',
     'Authorization','Bearer ' || (select decrypted_secret from vault.decrypted_secrets where name = 'service_role_key')),
   body := jsonb_build_object('proef_model', true,
