@@ -25,6 +25,24 @@
 
 
 -- ---------------------------------------------------------------------------
+-- BLOK 0 — EERST B, DAN DIT
+-- ---------------------------------------------------------------------------
+--
+-- Dit bestand leunt op `merk_actief` uit B-merkproducten.sql. Draai je het los,
+-- dan krijg je `type "public.merk_actief" does not exist` — een melding die
+-- klopt maar niet zegt wat je eraan moet doen. Vandaar dit slot: het staat er
+-- omdat een kop geen slot is.
+
+do $$
+begin
+  if to_regclass('public.merk_actief') is null then
+    raise exception
+      'Draai eerst B-merkproducten.sql. De tabellen merk_bronnen en merk_producten bestaan nog niet, en zonder die twee heeft dit bestand niets om in te zoeken.';
+  end if;
+end $$;
+
+
+-- ---------------------------------------------------------------------------
 -- BLOK 1 — ZOEKEN IN DE MERKPRODUCTEN
 -- ---------------------------------------------------------------------------
 --
