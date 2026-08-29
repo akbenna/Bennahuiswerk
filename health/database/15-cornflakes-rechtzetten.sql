@@ -1,8 +1,15 @@
--- ===========================================================================
--- E. ÉÉN LOGREGEL RECHTZETTEN
--- ===========================================================================
+-- =============================================================================
+-- ÉÉN LOGREGEL RECHTZETTEN
 --
--- Nog niet toegepast. Draai dit ná bestand D.
+-- Toegepast 29 augustus 2026, na bestand 14.
+--
+-- Uitkomst: 180 g -> 54 g, 672 -> 201 kcal. Die dag ging van 1654 naar 1183.
+--
+-- Dat laatste heeft een gevolg dat het opschrijven waard is. `rekenkern.ts` telt
+-- een dag onder de 1200 kcal niet mee in het gemiddelde van de inname maar apart,
+-- als waarschijnlijk onvolledig gelogd. Met 1183 valt deze dag daar nu net onder.
+-- Dat scheelt dus twee keer in dezelfde richting: een opgeblazen dag uit het
+-- gemiddelde, én een onvolledige dag die zich niet meer voordoet als volledig.
 --
 -- Op 26 augustus staat in het log:
 --

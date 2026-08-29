@@ -1,8 +1,11 @@
--- ===========================================================================
--- F. LICHT, ZWAAR, EN GEKOOKT
--- ===========================================================================
+-- =============================================================================
+-- LICHT, ZWAAR, EN NAT
 --
--- Nog niet toegepast. Draai dit ná bestand D.
+-- Toegepast 29 augustus 2026, na bestand 14.
+--
+-- Uitkomst: DELETE 0, UPDATE 33 — elf mueslisoorten maal drie maten. Er viel
+-- niets onder "nat", en dat is de juiste uitkomst: zie de kop hieronder over de
+-- Olvarit-papjes, die droog bleken te zijn.
 --
 -- Bestand D gaf alle ontbijtproducten dezelfde maten: schaaltje 40 g,
 -- opscheplepel 18 g, eetlepel 10 g. Die zijn op cornflakes gekalibreerd, en dat

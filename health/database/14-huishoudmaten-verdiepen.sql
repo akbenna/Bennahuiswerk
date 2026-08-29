@@ -1,8 +1,13 @@
--- ===========================================================================
--- D. DE HUISHOUDMATEN VERDIEPEN — en één die aantoonbaar fout uitpakt
--- ===========================================================================
+-- =============================================================================
+-- DE HUISHOUDMATEN VERDIEPEN — en één die aantoonbaar fout uitpakte
 --
--- Nog niet toegepast.
+-- Toegepast 29 augustus 2026.
+--
+-- Uitkomst: twaalf groepsmaten erbij (Groente 2->3, Vlees 1->2, Gebak 1->2,
+-- Vis 1->2, Kaas 1->2, Noten 1->2, Fruit 2->3, Snacks 1->2, Melk 2->3,
+-- Dranken 2->3, Soepen 1->2), en 38 ontbijtproducten kregen een eigen maat.
+-- Dat waren er meer dan verwacht: het patroon "ontbijtproduct" dekt bij NEVO een
+-- hele plank. Bestand 16 splitst die 38 daarna in licht en zwaar.
 --
 -- Gemeten: 26 groepen, 2.328 producten, 37 huishoudmaten. Geen groep staat leeg,
 -- maar bijna elke groep heeft er één of twee. Dat was tot vandaag hooguit
