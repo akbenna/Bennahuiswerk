@@ -26,7 +26,7 @@ import { Chip, Kaart, Knop, Kop, Rij, Tussen, Uitleg } from '../onderdelen/basis
 import { Dagenstrook, Doelring } from '../hero'
 import type { Dagstaaf } from '../hero'
 import { dec, dz } from '@/gedeeld/getal'
-import { kortNL, langNL, plusDagen, vandaag } from '@/gedeeld/datum'
+import { kortNL, langNL, plusDagen, stapDag, vandaag } from '@/gedeeld/datum'
 import type { IsoDatum, Moment, Regel } from '@/gedeeld/db/tabellen'
 import type { NieuweRegel } from '@/gedeeld/db/rpc'
 import type { Analyse, Dagenkaart, DagMetTotalen } from '../rekenkern'
@@ -48,6 +48,8 @@ export interface VandaagEigenschappen {
   zetDagveld: (veld: string, waarde: string | number | boolean | null) => void
   /** Het invoervel openen, met het moment er al in. */
   opInvoer: (m: Moment) => void
+  /** De dag uitgesplitst, met per regel waar het getal vandaan komt. */
+  opOverzicht: () => void
   wisRegel: (id: string) => void
   /** Eén tik op een voorstel zet het meteen op de dag. */
   voegToe: (regels: NieuweRegel[]) => void
@@ -165,19 +167,25 @@ export function Vandaag(p: VandaagEigenschappen) {
   const perMoment = (m: Moment): Regel[] =>
     regels.filter((r) => (r.moment === 'onbekend' ? m === 'tussendoor' : r.moment === m))
 
+  /* Dezelfde regel als bij de veeg in App: morgen bestaat niet, dus geeft
+     `stapDag` daar niets terug en staat de knop uit. */
+  const morgen = stapDag(datum, 1)
+
   return (
     <>
       {/* `dagnav` staat er alleen zodat het brede scherm deze rij over beide
           kolommen kan zetten. Op de telefoon is het een gewone tussenrij. */}
       <div className="tussen dagnav" style={{ marginBottom: 12 }}>
         <Knop klein opKlik={() => p.zetDatum(plusDagen(datum, -1))} titel="Vorige dag">←</Knop>
-        <span style={{ fontSize: '.88rem', fontWeight: 500 }}>
+        {/* De veeg staat in de titel en niet als tekst op het scherm: wie het
+            eenmaal weet heeft er elke dag geen zin meer in, en wie het niet
+            weet heeft de pijltjes. */}
+        <span style={{ fontSize: '.88rem', fontWeight: 500 }}
+              title="Je kunt ook opzij vegen om van dag te wisselen">
           {isVandaag ? 'Vandaag' : langNL(datum)}
         </span>
-        <Knop klein uit={isVandaag} titel="Volgende dag"
-              opKlik={() => { const n = plusDagen(datum, 1); if (n <= vandaag()) p.zetDatum(n) }}>
-          →
-        </Knop>
+        <Knop klein uit={morgen == null} titel="Volgende dag"
+              opKlik={() => morgen && p.zetDatum(morgen)}>→</Knop>
       </div>
 
       <section className="hero"
@@ -269,7 +277,22 @@ export function Vandaag(p: VandaagEigenschappen) {
       </button>
 
       <Kaart>
-        <Kop>De dag in vier momenten</Kop>
+        <Tussen>
+          <Kop>De dag in vier momenten</Kop>
+          {/* Alleen als er iets te zien is: een knop naar een leeg overzicht is
+              een belofte die niet waargemaakt wordt.
+
+              De titel begint met het woord dat er ook staat. `Knop` maakt van
+              `titel` een aria-label, en dat vervángt de zichtbare tekst voor een
+              schermlezer of spraakbediening — "klik details" moet dan wel nog
+              ergens op slaan. */}
+          {regels.length > 0 && (
+            <Knop klein opKlik={p.opOverzicht}
+                  titel="Details: elke regel met portie, band en herkomst">
+              details
+            </Knop>
+          )}
+        </Tussen>
         <div className="maaltijden" style={{ marginTop: 10 }}>
           {MOMENTEN.map((m) => {
             const eigen = perMoment(m.id)

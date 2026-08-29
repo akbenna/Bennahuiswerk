@@ -1,5 +1,5 @@
 /**
- * VOEDING — zoeken in NEVO, de gerechtenbibliotheek en je eigen producten.
+ * VOEDING — zoeken in de voedingsmiddelentabel, de gerechten en je eigen producten.
  *
  * Overgezet uit vwVoeding(). Twee dingen die in de oude versie fout stonden en
  * hier goed: de gerechten hadden geen knop, dus je kon een tajine wél vinden en
@@ -149,7 +149,7 @@ function Zoeken({ token, opPortie }: { token: string; opPortie: (o: Onderwerp) =
 
   return (
     <Kaart>
-      <Kop>Zoeken in NEVO en de gerechtenbibliotheek</Kop>
+      <Kop>Zoeken in de voedingsmiddelentabel en de gerechten</Kop>
       <div className="zoekvak">
         <span aria-hidden="true">🔎</span>
         <input placeholder="couscous, olijfolie, tajine…" autoComplete="off"

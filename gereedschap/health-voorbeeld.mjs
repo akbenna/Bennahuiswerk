@@ -454,6 +454,88 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
   await pagina.close()
 }
 
+/* ------------------------------------------------- het dagoverzicht -- */
+/* Het detailvenster is de plek waar de app zijn eigen getallen uit elkaar haalt.
+   Precies daarom is een screenshot alleen er niet genoeg: wat hier fout kan gaan
+   is stille rekenfout, en die ziet er op een plaatje net zo uit als de goede.
+
+   Twee dingen worden dus echt nagerekend. De band van de dag hoort de som te zijn
+   van de banden van de vakken — niet de wortel daarvan, want dan zou de app
+   beloven dat de fouten elkaar wegstrepen, en dat mag alleen bij onafhankelijke
+   fouten. En elke regel hoort te zeggen waar zijn getal vandaan komt: sinds dat
+   een teken is (◆ gemeten, ◇ geschat) is het makkelijker om stilletjes te
+   verdwijnen dan toen het "NEVO:" heette. */
+{
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: 'light' })
+  await bedienDb(pagina, 28, 'afvallen')
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.maal', { timeout: 5000 })
+  await pagina.getByRole('button', { name: /^Details:/ }).click()
+  await pagina.waitForSelector('.venster', { timeout: 5000 })
+  await pagina.waitForTimeout(400)
+  await pagina.screenshot({ path: 'gereedschap/health-dagoverzicht.png', fullPage: true })
+
+  const venster = pagina.locator('.venster')
+  const getal = (t) => Number((t ?? '').replace(/\./g, '').replace(',', '.'))
+
+  /* Het dagtotaal met zijn band. */
+  const kop = venster.locator('.kaart', { hasText: 'De hele dag' }).first()
+  const punt = getal(await kop.locator('.getal').first().textContent())
+  const band = (await kop.locator('.cijfer').first().textContent()) ?? ''
+  const m = band.match(/([\d.]+)–([\d.]+)/)
+  if (!m) throw new Error(`dagoverzicht: geen band bij het dagtotaal — ${JSON.stringify(band)}`)
+  const [laag, hoog] = [getal(m[1]), getal(m[2])]
+  if (!(laag <= punt && punt <= hoog)) {
+    throw new Error(`dagoverzicht: ${punt} ligt niet in ${laag}–${hoog}`)
+  }
+
+  /* De vakken, en de optelling. De koppen staan in `.tussen` van elke vakkaart. */
+  const vakken = venster.locator('.kaart').filter({ has: pagina.locator('.dagstip') })
+  const n = await vakken.count()
+  if (n === 0) throw new Error('dagoverzicht: geen enkel maaltijdvak')
+  let somPunt = 0, somLaag = 0, somHoog = 0
+  for (let i = 0; i < n; i++) {
+    const t = (await vakken.nth(i).locator('.tussen .cijfer').first().textContent()) ?? ''
+    const v = t.match(/([\d.]+) kcal\s*\(([\d.]+)–([\d.]+)\)/)
+    if (!v) throw new Error(`dagoverzicht: vak ${i} zonder band — ${JSON.stringify(t)}`)
+    somPunt += getal(v[1]); somLaag += getal(v[2]); somHoog += getal(v[3])
+  }
+  /* Één kcal speling: elk getal wordt apart afgerond voordat het op het scherm
+     komt, en vier afrondingen halen het niet altijd tot op de eenheid. */
+  for (const [wat, a, b] of [['punt', somPunt, punt], ['laag', somLaag, laag],
+                             ['hoog', somHoog, hoog]]) {
+    if (Math.abs(a - b) > 1) {
+      throw new Error(`dagoverzicht: de vakken tellen op tot ${a} ${wat}, de dag zegt ${b}`)
+    }
+  }
+
+  /* Elke regel zegt waar hij vandaan komt, en de uitleg staat er nog achter. */
+  const tekens = await venster.locator('.herkomst').count()
+  const regels = await vakken.locator('.lijst > *').count()
+  if (tekens !== regels) {
+    throw new Error(`dagoverzicht: ${regels} regels maar ${tekens} herkomsttekens`)
+  }
+  const eerste = venster.locator('.herkomst').first()
+  const teken = (await eerste.textContent()) ?? ''
+  const titel = (await eerste.getAttribute('title')) ?? ''
+  if (!'◆◇'.includes(teken.trim())) {
+    throw new Error(`dagoverzicht: onbekend herkomstteken ${JSON.stringify(teken)}`)
+  }
+  if (!/tabel|geschat/.test(titel)) {
+    throw new Error(`dagoverzicht: het teken heeft geen uitleg — ${JSON.stringify(titel)}`)
+  }
+  /* En het woord waar dit teken voor in de plaats kwam hoort nergens meer als
+     kale kop op het scherm te staan. */
+  const alles = (await venster.textContent()) ?? ''
+  if (/\bNEVO\b/.test(alles)) throw new Error('dagoverzicht: "NEVO" staat nog op het scherm')
+
+  console.log(`dagoverzicht${''.padEnd(14)} ${regels} regels in ${n} vakken`)
+  console.log(`${''.padEnd(26)} dag=${punt} (${laag}–${hoog}) = som van de vakken`)
+  console.log(`${''.padEnd(26)} herkomst: ${tekens}× teken, titel=${JSON.stringify(titel)}`)
+  await pagina.close()
+}
+
 /* -------------------------------------------------------- het koppelvel -- */
 /* Het vel met de instructies is het enige scherm van de app dat iemand op een
    ander apparaat naast zich moet kunnen leggen. Dan moet het wel kloppen. */

@@ -9,7 +9,7 @@ import { useKalibratie } from './toestand'
 import { analyse, trendReeks } from './rekenkern'
 import type { Analyse } from './rekenkern'
 import { dec } from '@/gedeeld/getal'
-import { vandaag } from '@/gedeeld/datum'
+import { plusDagen, stapDag, vandaag } from '@/gedeeld/datum'
 import type { IsoDatum, Moment } from '@/gedeeld/db/tabellen'
 import { roep } from '@/gedeeld/db/rpc'
 import type { NieuweRegel } from '@/gedeeld/db/rpc'
@@ -23,11 +23,13 @@ import { PortieVenster, momentNu } from './vensters/Portie'
 import type { Onderwerp } from './vensters/Portie'
 import { InvoerVenster } from './vensters/Invoer'
 import { KoppelVenster } from './vensters/Koppelen'
+import { DagoverzichtVenster } from './vensters/Dagoverzicht'
 import {
   AccountVenster, Aanmelden, ImportVenster, ProfielVenster,
 } from './vensters/Instellingen'
 import { Opzet } from './Opzet'
 import { Kaart, Knop } from './onderdelen/basis'
+import { useVeeg } from './veeg'
 
 /* De namen op de balk zijn niet de namen in de code. 'Model' en 'Klinisch'
    zeggen wat een scherm ís voor wie het gebouwd heeft; 'Inzicht' en
@@ -86,7 +88,7 @@ function Postbus({ token, a }: { token: string; a: Analyse }) {
 }
 
 type Tab = (typeof TABS)[number][0]
-type VensterNaam = 'profiel' | 'import' | 'account' | 'koppelen'
+type VensterNaam = 'profiel' | 'import' | 'account' | 'koppelen' | 'overzicht'
 
 export function App() {
   const k = useKalibratie()
@@ -98,6 +100,26 @@ export function App() {
      het portievenster erbovenop kan komen en daarna terug moet kunnen vallen op
      hetzelfde moment. */
   const [invoer, zetInvoer] = useState<Moment | null>(null)
+
+  /* VEGEN OM VAN DAG TE WISSELEN
+     Het luistervlak is `#inhoud` en niet het dagscherm zelf: dat scherm levert
+     op een breed venster losse roosterkinderen af, en er een omhulsel omheen
+     zetten zou de tweekolomsindeling slopen.
+
+     Een terugroep-ref en geen `useRef`, want dit vlak bestaat nog niet zolang
+     er niet aangemeld is. Zie `useVeeg` voor waarom dat verschil uitmaakt.
+
+     Alleen op het dagtabblad. Op een grafiekscherm een dag opschuiven die je
+     niet ziet is verwarrend, en op de andere tabbladen betekent zijwaarts vegen
+     meestal iets anders. */
+  const [vlak, zetVlak] = useState<HTMLElement | null>(null)
+  const morgen = stapDag(datum, 1)
+  useVeeg(vlak, tab === 'vandaag'
+    ? {
+        links: morgen ? () => zetDatum(morgen) : undefined,
+        rechts: () => zetDatum(plusDagen(datum, -1)),
+      }
+    : {})
 
   const voegRegelsToe = useCallback((regels: NieuweRegel[]) => {
     if (!regels.length) return
@@ -156,7 +178,7 @@ export function App() {
 
         <Postbus token={k.sessie.token} a={a} />
 
-        <div id="inhoud">
+        <div id="inhoud" ref={zetVlak}>
           {tab === 'vandaag' && (
             <Vandaag
               a={a} dag={dag} regels={regelsVandaag} alleRegels={k.alles.regels}
@@ -169,6 +191,7 @@ export function App() {
                   p_token: t, p_datum: datum, p_patch: { [veld]: waarde },
                 }))}
               opInvoer={zetInvoer}
+              opOverzicht={() => zetVenster('overzicht')}
               wisRegel={(id) =>
                 void k.wijzig((t) => roep('kal_regel_wissen', { p_token: t, p_id: id }))}
             />
@@ -266,6 +289,13 @@ export function App() {
             if (!invoer) zetTab('vandaag')
             voegRegelsToe([r])
           }}
+        />
+      )}
+
+      {venster === 'overzicht' && (
+        <DagoverzichtVenster
+          datum={datum} regels={regelsVandaag} dag={dag} a={a}
+          opSluiten={() => zetVenster(null)}
         />
       )}
 

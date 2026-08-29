@@ -2,13 +2,13 @@
  * DE PORTIEKEUZE
  *
  * Eén venster voor drie herkomsten: een gerecht uit de bibliotheek, een product
- * uit NEVO, en een eigen product. Ze verschillen in waar de porties vandaan
+ * uit de voedingsmiddelentabel, en een eigen product. Ze verschillen in waar de porties vandaan
  * komen en niet in wat er daarna gebeurt, dus ze delen dit scherm.
  *
  * Wat hier niet meer staat is prompt('Hoeveel gram?'). Die vraag kan een mens
  * niet beantwoorden — een snee brood is vijfentwintig tot vijfenveertig gram en
  * dat weet niemand uit het hoofd — terwijl "hoeveel sneetjes" wél te
- * beantwoorden is. De vijfendertig huishoudmaten staan per NEVO-groep in de
+ * beantwoorden is. De vijfendertig huishoudmaten staan per productgroep in de
  * database en dekken alle zevenentwintig groepen; er is dus geen product zonder
  * maat. En elke maat brengt zijn eigen band mee: het getal dat je vroeger
  * intikte had geen marge en deed daarmee alsof het gewogen was.
@@ -19,6 +19,7 @@ import { dec, dz } from '@/gedeeld/getal'
 import { vandaag } from '@/gedeeld/datum'
 import type { EigenProduct, Graad, IsoDatum, Moment } from '@/gedeeld/db/tabellen'
 import type { Gerecht, NieuweRegel, ProductMetMaten } from '@/gedeeld/db/rpc'
+import { Bron } from '../herkomst'
 
 /** Waar de portiekeuze op dit moment over gaat. */
 export type Onderwerp =
@@ -92,7 +93,7 @@ export function bouwKeuzes(o: Onderwerp, metOptioneel: boolean, gram: string): K
            m.gram, m.gram_laag, m.gram_hoog))
 
     /* Afwegen blijft mogelijk en is de enige keuze die geen huishoudmaat is.
-       De smalle band eromheen is de tabelonzekerheid van NEVO zelf, niet de
+       De smalle band eromheen is de onzekerheid van de tabel zelf, niet de
        portie: die is dan immers geen schatting meer. */
     const g = parseFloat(gram)
     if (Number.isFinite(g) && g > 0) {
@@ -144,7 +145,7 @@ export function bouwOnzekerheid(
     uit.push(`${g.bevestigd} van ${g.ingredienten} ingrediëntkoppelingen door een diëtist bevestigd`)
   } else if (o.soort === 'nevo') {
     uit.push(k.gewogen
-      ? 'gewicht afgewogen; alleen de tabelonzekerheid van NEVO resteert'
+      ? 'gewicht afgewogen; alleen de onzekerheid van de voedingsmiddelentabel resteert'
       : `huishoudmaat, niet gewogen — ${dz(k.gram_laag)}–${dz(k.gram_hoog)} g per ${k.kaal}`)
   } else {
     uit.push('etiketwaarde van een eigen product, niet nagewogen')
@@ -332,7 +333,7 @@ export function PortieVenster(
                   </span>
                   {r.nevo_naam && (
                     <span className="mini">
-                      NEVO: {r.nevo_naam}{r.bevestigd && ' · bevestigd'}
+                      <Bron regel={r} />{r.bevestigd && ' · bevestigd'}
                     </span>
                   )}
                 </span>

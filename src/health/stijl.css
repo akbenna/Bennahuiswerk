@@ -161,6 +161,11 @@ label.veld>span{display:block;font-size:.72rem;color:var(--grijs);margin-bottom:
 @media(prefers-color-scheme:dark){.conf{color:#080D0C}
   .conf.A{background:#8FD268}.conf.B{background:#4FD2A6}
   .conf.C{background:#71746D}.conf.D{background:#E9BC55}}
+/* Het teken voor de herkomst: ◆ gemeten uit de tabel, ◇ geschat. Een <abbr>
+   krijgt in sommige browsers vanzelf een stippellijn eronder; die hoort hier
+   niet, het is één teken en geen woord. De cursor blijft wel de vraagteken-
+   aanwijzer, zodat je ziet dat er uitleg onder zit. */
+.herkomst{text-decoration:none;border:0;cursor:help;font-style:normal}
 .stoplicht{display:inline-block;width:11px;height:11px;border-radius:50%}
 .lijst>*{display:flex;align-items:center;gap:9px;padding:8px 0;border-top:1px solid var(--lijn)}
 .lijst>*:first-child{border-top:0}
@@ -327,6 +332,11 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
 .maal .maalkop{display:flex;align-items:center;gap:7px;min-width:0}
 .maal .maalnaam{font-size:.82rem;font-weight:600;white-space:nowrap;min-width:0;
   overflow:hidden;text-overflow:ellipsis}
+/* Hetzelfde stipje, maar losstaand: in het dagoverzicht staat het naast een kop
+   en niet in een maaltijdvak, en dan is er geen ouder die het zijn kleur geeft. */
+.dagstip{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+.dagstip.ochtend{background:var(--ochtend)} .dagstip.middag{background:var(--middag)}
+.dagstip.avond{background:var(--avond)}     .dagstip.tussen{background:var(--tussen)}
 .maal .stip{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
 .maal.ochtend .stip{background:var(--ochtend)} .maal.middag .stip{background:var(--middag)}
 .maal.avond   .stip{background:var(--avond)}   .maal.tussen{border-style:dashed}
