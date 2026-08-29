@@ -24,6 +24,8 @@ import { berekenBeloning, euro, halfRond, weekVerdiend } from '../beloning'
 import { isBeheerst, kaartStand } from '../leitner'
 import { INSIGNES, dagMissie, rangVoor } from '../missie'
 import { Klapkaart } from '../onderdelen'
+import { Vraagveld } from './Vraagveld'
+import type { Uitslag } from '../vraagbaak'
 
 export interface VakkenProps {
   pid: string
@@ -45,6 +47,9 @@ export interface VakkenProps {
   zetNiveau: (n: Voortgang['niveau']) => void
   naarWedstrijd: () => void
   naarSpellen: () => void
+  /** Wat een kind aan de vraagbaak vroeg, voor het ouderscherm. */
+  opVraag: (vraag: string, uitslag: Uitslag) => void
+  naarLeerscan: () => void
 }
 
 export function Vakken(p: VakkenProps): ReactNode {
@@ -117,6 +122,15 @@ export function Vakken(p: VakkenProps): ReactNode {
           {doelGehaald ? 'gehaald! 🎉' : p.thema.doel}
         </span>
       </div>
+
+      <Vraagveld
+        pid={p.pid} alle={p.alle} prog={p.prog} opVraag={p.opVraag}
+        ga={(vak, onderwerp, jr) => {
+          p.zetVak(vak)
+          zetJaar(jr)
+          p.naarOnderwerp(onderwerp, jr)
+        }}
+      />
 
       {weekrijen.length > 0 && (
         <div
@@ -359,6 +373,12 @@ export function Vakken(p: VakkenProps): ReactNode {
         <button
           type="button" className="btn gold" onClick={() => p.naarOnderwerp('__proeftoets__', jaar)}
         >📝 Proeftoets — 20 vragen, alle vakken door elkaar</button>
+      </div>
+
+      <div className="center" style={{ marginTop: 10 }}>
+        <button type="button" className="btn ghost" onClick={p.naarLeerscan}>
+          🔎 {p.prog.leerscan ? 'Zo leer jij' : 'Hoe leer jij? — 15 korte vragen'}
+        </button>
       </div>
 
       {p.wedstrijdAan && (

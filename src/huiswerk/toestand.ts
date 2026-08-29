@@ -14,6 +14,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { PROFIELEN } from './gegevens/profielen'
 import { SEED } from './gegevens/seed'
+import { NIEUW2627 } from './gegevens/schooljaar2627'
+import { naarDitJaar } from './gegevens/schooljaar'
 import { sjablonen } from './gegevens/sjablonen'
 import type { Kaart } from './gegevens/soorten'
 import { ECHT } from './toeval'
@@ -147,8 +149,12 @@ export function useHuiswerk(): Toestand {
     }
   }, [])
 
+  /* De hele voorraad, en daarna één keer door `naarDitJaar`: de opgaven dragen
+     hun leerjaar ten opzichte van het oude niveau, en wie is overgegaan leest
+     dat anders. Zie `gegevens/schooljaar.ts`. */
   const alle = useMemo<Kaart[]>(
-    () => [...SEED, ...SJABLONEN, ...(stand.custom as unknown as Kaart[])],
+    () => naarDitJaar([...SEED, ...NIEUW2627, ...SJABLONEN,
+      ...(stand.custom as unknown as Kaart[])]),
     [stand.custom])
 
   return {

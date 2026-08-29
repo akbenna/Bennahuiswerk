@@ -10,6 +10,17 @@
  *
  * De scores volgen het kind en niet het toestel. Wie op de telefoon van zijn
  * broer oefent, ziet zijn eigen punten.
+ *
+ * ER WORDT HIER NIET MEER INGELOGD
+ *
+ * Dat gebeurt op het portaal. Deze app had een eigen wachtwoordscherm uit de
+ * tijd dat hij los stond; sinds hij onder BennaHub hangt vroeg hij een tweede
+ * keer wie je bent. Twee keer dezelfde vraag is niet twee keer zo veilig.
+ *
+ * De wachtwoorden zelf zijn er nog wél, en dat is geen restant: ze horen bij het
+ * kind-account in de cloud, en `useHuiswerk` haalt daar bij het opstarten al
+ * stil de voortgang mee op (`haalKinderen`). Het scherm was een poort, geen
+ * ophaler — precies zoals bij het doorlopen vanaf het portaal.
  */
 import { useCallback, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
@@ -21,18 +32,19 @@ import { ECHT } from './toeval'
 import { stemKlaarzetten } from './geluid'
 import { verwerkAntwoord, verwerkToets } from './uitslag'
 import {
-  familieAanmaken, familieBewaren, familieInloggen, familieOphalen, kindAanmelden, kindBewaren,
+  familieAanmaken, familieBewaren, familieInloggen, familieOphalen, kindBewaren,
 } from './wolk'
 import { portaalKind } from './portaal'
+import type { Uitslag } from './vraagbaak'
 import { themaVan, Thuis } from './schermen/Thuis'
-import { Inloggen } from './schermen/Inloggen'
 import { Vakken } from './schermen/Vakken'
 import { Oefenen } from './schermen/Oefenen'
 import { Ouder } from './schermen/Ouder'
 import { Formules, Leertips } from './schermen/Naslag'
+import { Leerscan } from './schermen/Leerscan'
 import { WedstrijdMaken, WedstrijdSpelen } from './schermen/Wedstrijd'
 
-type Zicht = 'thuis' | 'inloggen' | 'vakken' | 'oefenen' | 'ouder' | 'formules' | 'leertips'
+type Zicht = 'thuis' | 'vakken' | 'oefenen' | 'ouder' | 'formules' | 'leertips' | 'leerscan'
   | 'wedstrijd-maken' | 'wedstrijd-spelen'
 
 export function App(): ReactNode {
@@ -44,7 +56,6 @@ export function App(): ReactNode {
   const [viaPortaal] = useState<string | null>(() => portaalKind())
   const [zicht, zetZicht] = useState<Zicht>(viaPortaal ? 'vakken' : 'thuis')
   const [pid, zetPid] = useState<string | null>(viaPortaal)
-  const [wachtPid, zetWachtPid] = useState<string | null>(null)
   const [vak, zetVak] = useState(
     () => (viaPortaal ? PROFIELEN[viaPortaal]?.vakken[0] ?? '' : ''))
   const [onderwerp, zetOnderwerp] = useState('')
@@ -74,6 +85,20 @@ export function App(): ReactNode {
     zetZicht('oefenen')
     scrollTo({ top: 0 })
   }, [])
+
+  /* De vragen van de kinderen bewaren, met hoogstens honderd tegelijk: het is
+     een signaallijst voor de ouder, geen archief. Vraagt een kind iets waar
+     niets voor is, dan is dat precies wat er nog gemaakt moet worden. */
+  const onthoudVraag = (id: string | null, vraag: string, u: Uitslag): void => {
+    if (!id) return
+    t.zet((s) => ({
+      ...s,
+      vragen: [
+        { tijd: Date.now(), pid: id, vraag, raak: u.routes.map((r) => r.onderwerp), gat: u.gat },
+        ...(s.vragen ?? []),
+      ].slice(0, 100),
+    }))
+  }
 
   const openProfiel = (id: string): void => {
     t.openKind(id)
@@ -144,16 +169,12 @@ export function App(): ReactNode {
     )
   }
 
-  if (zicht === 'inloggen' && wachtPid) {
+  if (zicht === 'leerscan' && pid && prog) {
     return (
-      <Inloggen
-        pid={wachtPid} stand={t.stand}
-        terug={() => { zetWachtPid(null); zetZicht('thuis') }}
-        aanmelden={async (id, code, pw) => {
-          const samen = await kindAanmelden(t.stand, id, code, pw)
-          t.zet((s) => ({ ...s, prog: { ...s.prog, [id]: samen } }))
-        }}
-        ok={() => { const id = wachtPid; zetWachtPid(null); openProfiel(id) }}
+      <Leerscan
+        naam={PROFIELEN[pid]?.naam ?? ''} scan={prog.leerscan ?? null}
+        terug={() => zetZicht('vakken')}
+        bewaar={(sc) => t.zetKind(pid, (pr) => ({ ...pr, leerscan: sc }))}
       />
     )
   }
@@ -210,6 +231,8 @@ export function App(): ReactNode {
         zetNiveau={(n) => t.zetKind(pid, (pr) => ({ ...pr, niveau: n }))}
         naarWedstrijd={() => zetZicht('wedstrijd-maken')}
         naarSpellen={() => { location.href = '/spellen/' }}
+        opVraag={(vraag, u) => onthoudVraag(pid, vraag, u)}
+        naarLeerscan={() => { zetZicht('leerscan'); scrollTo({ top: 0 }) }}
       />
     )
   }
@@ -232,7 +255,7 @@ export function App(): ReactNode {
   return (
     <Thuis
       stand={t.stand} alle={t.alle} nuMs={Date.now()}
-      kies={(id) => { zetWachtPid(id); zetZicht('inloggen') }}
+      kies={openProfiel}
       naarOuder={() => zetZicht('ouder')}
       naarFormules={() => zetZicht('formules')}
       naarLeertips={() => zetZicht('leertips')}

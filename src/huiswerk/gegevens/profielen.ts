@@ -1,18 +1,45 @@
 /**
  * WIE ER OEFENEN, EN WAARMEE
  *
- * Vier kinderen van groep 4 tot 4 vwo in één app. Wat een kind te zien krijgt
- * hangt af van zijn profiel: welke vakken, welk thema, en of er zakgeld tegenover
- * staat. Mechanisch overgenomen uit de oude pagina.
+ * Wat een kind te zien krijgt hangt af van zijn profiel: welke vakken, welk
+ * thema, en of er zakgeld tegenover staat.
+ *
+ * TWEE LIJSTEN, EN WAAROM
+ *
+ * `PROFIELEN_OUD` is het verslag van de overzetting: regel voor regel wat er in
+ * de oude pagina stond. De gouden waarden leggen daar een vingerafdruk op, en
+ * dat is geen sier — het is het bewijs dat er bij het ombouwen geen letter is
+ * verschoven. Die lijst hoort dus nooit meer te veranderen.
+ *
+ * `PROFIELEN` is waar de kinderen nu zitten. Elk jaar in augustus schuift die op
+ * en de andere niet. Zou het één lijst zijn, dan moest je bij elke
+ * septemberwijziging het migratiebewijs weggooien om de app kloppend te krijgen
+ * — en dan bewijst het niets meer.
+ *
+ * Het jaar zelf staat in `schooljaar.ts`, met daarbij wie er is overgegaan en
+ * wie niet.
  */
 import type { Profielkaart, Thema } from './soorten'
+import { KLASSEN } from './schooljaar'
 
-export const PROFIELEN: Record<string, Profielkaart> = {
+/** Het verslag van de overzetting. Niet aanpassen; zie de kop. */
+export const PROFIELEN_OUD: Record<string, Profielkaart> = {
   wassima:{naam:'Wassima', niveau:'2 havo', volgend:'3 havo', emoji:'🌱', kleur:'linear-gradient(135deg,#5EA03A,#48792c)', vakken:['wiskunde','natuurkunde','nederlands','engels','frans','duits','biologie','aardrijkskunde','geschiedenis','economie'], beloning:true},
   amaani: {naam:'Amaani',  niveau:'4 vwo',  volgend:'5 vwo',  emoji:'🚀', kleur:'linear-gradient(135deg,#3a6ea0,#2c5680)', vakken:['wiskundeA','natuurkunde','scheikunde','nederlands','engels','frans','biologie','aardrijkskunde','geschiedenis','economie'], beloning:true},
   amine:  {naam:'Amine',   niveau:'groep 7', volgend:'groep 8', emoji:'⚽', kleur:'linear-gradient(135deg,#2e8b57,#1f6e43)', vakken:['rekenen','taal','lezen','studievaardigheden','engels'], thema:'voetbal', beloning:true},
   selma:  {naam:'Selma',   niveau:'groep 4', volgend:'groep 5', emoji:'🌸', kleur:'linear-gradient(135deg,#d95b9a,#b34584)', vakken:['rekenen','taal','lezen'], beloning:true},
 };
+
+/**
+ * De profielen zoals ze dit schooljaar gelden: hetzelfde als hierboven, maar met
+ * de klas van nu erin. Dit is wat de app overal gebruikt.
+ */
+export const PROFIELEN: Record<string, Profielkaart> = Object.fromEntries(
+  Object.entries(PROFIELEN_OUD).map(([pid, prof]) => {
+    const klas = KLASSEN[pid]
+    return [pid, klas ? { ...prof, niveau: klas.niveau, volgend: klas.volgend } : prof]
+  }),
+)
 
 export const THEMAS: Record<string, Thema> = {
   standaard:{ xp:'punten', doel:'sommen', goal:'✅ Goed gedaan!', feest:['🎉','⭐','🎊','✨','👏'],

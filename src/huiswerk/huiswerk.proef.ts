@@ -12,7 +12,7 @@
 import { describe, expect, it } from 'vitest'
 import { createHash } from 'node:crypto'
 import gouden from './gouden-waarden.json'
-import { PROFIELEN, THEMAS, VAKNAAM } from './gegevens/profielen'
+import { PROFIELEN, PROFIELEN_OUD, THEMAS, VAKNAAM } from './gegevens/profielen'
 import { SEED } from './gegevens/seed'
 import { sjablonen } from './gegevens/sjablonen'
 import type { Kaart } from './gegevens/soorten'
@@ -62,7 +62,10 @@ describe('de leerstof', () => {
   })
 
   it('houdt de profielen en de thema’s ongeschonden', () => {
-    expect(vinger(PROFIELEN)).toBe(gouden.stof.vingerProfielen)
+    /* Het migratiebewijs zit op de vaste lijst. `PROFIELEN` schuift elk jaar in
+       augustus op — zie gegevens/schooljaar.ts — en die verschuiving heeft een
+       eigen proef in schooljaar.proef.ts. */
+    expect(vinger(PROFIELEN_OUD)).toBe(gouden.stof.vingerProfielen)
     expect(vinger(THEMAS)).toBe(gouden.stof.vingerThemas)
   })
 
