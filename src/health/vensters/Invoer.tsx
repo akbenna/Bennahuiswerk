@@ -43,6 +43,7 @@ import {
   aandelen, aggregaat, duiding, maaltijdRegel, naamvoorstel, portieNaam, snapshot, varianten,
 } from '../maaltijd'
 import { herken, leesFoto } from '../ai'
+import { lijktOpZin } from '../zoekzin'
 import { Bron } from '../herkomst'
 import type { Herkenning } from '../ai'
 import type { Onderwerp } from './Portie'
@@ -100,6 +101,25 @@ export function InvoerVenster(p: InvoerEigenschappen) {
   const [gedaan, zetGedaan] = useState<string[]>([])
 
   const [maaltijden, zetMaaltijden] = useState<Maaltijd[]>([])
+
+  /* Het beschrijfvak staat verderop en ingeklapt, maar het zoekveld moet het
+     kunnen openen met de zin er al in. Daarom wonen deze twee hier en niet in
+     `Beschrijven` zelf: anders kan alleen dat vak zichzelf openen, en juist wie
+     het niet gevonden heeft moet erheen geholpen worden. */
+  const [beschrijfOpen, zetBeschrijfOpen] = useState(false)
+  const [beschrijfTekst, zetBeschrijfTekst] = useState('')
+  const beschrijfVak = useRef<HTMLDivElement>(null)
+
+  /* De overstap van zoeken naar beschrijven. Het zoekveld gaat leeg — anders
+     blijven de zoekresultaten eroverheen staan en zie je nog steeds niet waar je
+     terechtkwam. En dan naar het vak toe scrollen, want het staat onder de vouw. */
+  function laatHerkennen(zin: string) {
+    zetBeschrijfTekst(zin)
+    zetBeschrijfOpen(true)
+    zetTerm('')
+    requestAnimationFrame(
+      () => beschrijfVak.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }))
+  }
 
   const zoekt = term.trim().length >= 2
   const suggesties = herhalingen(p.regels, { nu: p.datum, soort, moment, max: 10 })
@@ -161,6 +181,7 @@ export function InvoerVenster(p: InvoerEigenschappen) {
       {zoekt
         ? (
           <Zoekvangst token={p.token} term={term} moment={moment}
+                      opHerkennen={lijktOpZin(term) ? () => laatHerkennen(term.trim()) : undefined}
                       opKies={(o) => p.opPortie(o, moment)}
                       opMaaltijd={(m, aantal) => {
                         const r = maaltijdRegel(m, aantal, p.datum, moment)
@@ -241,8 +262,12 @@ export function InvoerVenster(p: InvoerEigenschappen) {
               </div>
             )}
 
-            <Beschrijven token={p.token} datum={p.datum} moment={moment}
-                         opToevoegen={(r, n) => voegToe(r, n)} />
+            <div ref={beschrijfVak}>
+              <Beschrijven token={p.token} datum={p.datum} moment={moment}
+                           open={beschrijfOpen} zetOpen={zetBeschrijfOpen}
+                           tekst={beschrijfTekst} zetTekst={zetBeschrijfTekst}
+                           opToevoegen={(r, n) => voegToe(r, n)} />
+            </div>
 
             <Bewaren token={p.token} regels={opDitMoment} moment={moment}
                      opBewaard={() => void haalMaaltijden()} />
@@ -297,11 +322,14 @@ function Suggestie(
  * 'cous' mag het resultaat van 'couscous' niet overschrijven.
  */
 function Zoekvangst(
-  { token, term, moment, opKies, opMaaltijd }:
+  { token, term, moment, opKies, opMaaltijd, opHerkennen }:
   {
     token: string; term: string; moment: Moment
     opKies: (o: Onderwerp) => void
     opMaaltijd: (m: Maaltijd, aantal: number) => void
+    /* Ontbreekt deze, dan lijkt de term geen zin en komt er geen aanbod. Het
+       oordeel valt buiten dit onderdeel: hier staat alleen hoe het eruitziet. */
+    opHerkennen?: (() => void) | undefined
   },
 ) {
   const [uitslag, zetUitslag] = useState<Zoekuitslag | null>(null)
@@ -348,6 +376,31 @@ function Zoekvangst(
     <div style={{ marginTop: 10 }}>
       {loopt && <p className="klein"><Spin /> Zoeken…</p>}
       {fout && <p className="klein">{fout}</p>}
+
+      {/* HET AANBOD, EN WAAROM HET HELEMAAL BOVENAAN STAAT
+
+          Wie "twee boterhammen met mayonaise" in het zoekveld typt bedoelt een
+          maaltijd, en krijgt losse producten. Dat is geen fout van de gebruiker:
+          het zoekveld staat bovenaan en het beschrijfvak zit ingeklapt onder de
+          vouw, dus je vindt het niet als je het niet al wist.
+
+          Daarom staat dit vóór de resultaten en niet erna. Eronder zou het het
+          aanbod maken dat je pas ziet als je de verkeerde weg al bent ingeslagen.
+
+          De zoekresultaten blijven er wel onder staan: soms bedoelde je toch dat
+          ene product, en dan is dit een aanbod en geen omleiding. */}
+      {opHerkennen && (
+        <button type="button" className="hoofdknop breed" style={{ marginBottom: 10 }}
+                onClick={opHerkennen}>
+          <span aria-hidden="true">✎</span>
+          <span>
+            Dit klinkt als een hele maaltijd
+            <span className="hoofdknopsub">
+              laat “{term.trim()}” herkennen in plaats van los opzoeken
+            </span>
+          </span>
+        </button>
+      )}
 
       {/* Je eigen maaltijden staan boven de tabel, want wie "tonijn" typt bedoelt
           zijn eigen salade en niet de vierentwintig tonijnregels uit de tabel. */}
@@ -417,14 +470,18 @@ function Zoekvangst(
  * want het is de langzaamste van de drie — een halve minuut tegenover één tik.
  */
 function Beschrijven(
-  { token, datum, moment, opToevoegen }:
+  { token, datum, moment, open, zetOpen, tekst, zetTekst, opToevoegen }:
   {
     token: string; datum: IsoDatum; moment: Moment
+    /* Open en tekst komen van buiten: het zoekveld kan dit vak openklappen met
+       een zin er al in. Zie `laatHerkennen` in InvoerVenster. */
+    open: boolean
+    zetOpen: (aan: boolean) => void
+    tekst: string
+    zetTekst: (t: string | ((oud: string) => string)) => void
     opToevoegen: (r: NieuweRegel[], namen: string[]) => void
   },
 ) {
-  const [open, zetOpen] = useState(false)
-  const [tekst, zetTekst] = useState('')
   const [melding, zetMelding] = useState<string | null>(null)
   const [loopt, zetLoopt] = useState(false)
   const [concept, zetConcept] = useState<Herkenning | null>(null)
@@ -464,7 +521,7 @@ function Beschrijven(
             <input type="file" accept="image/*" capture="environment" style={{ display: 'none' }}
                    onChange={(e) => { const f = e.target.files?.[0]; if (f) void doe('foto', f) }} />
           </label>
-          <Keuzechip aan={open} opKlik={() => zetOpen((o) => !o)}>✎ Tekst</Keuzechip>
+          <Keuzechip aan={open} opKlik={() => zetOpen(!open)}>✎ Tekst</Keuzechip>
         </Rij>
       </Tussen>
 

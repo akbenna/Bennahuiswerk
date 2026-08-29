@@ -415,6 +415,52 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
     console.log(`${naam.padEnd(26)} maaltijd: dicht=1 regel · 1 portie=${heel} kcal, ½=${half} kcal`)
   }
 
+  /* DE BRUG VAN ZOEKEN NAAR BESCHRIJVEN
+
+     Wie een hele zin in het zoekveld typt bedoelt een maaltijd en krijgt losse
+     producten. Sinds kort biedt het vel dan aan om hem te laten herkennen. Dat
+     aanbod is te toetsen én het is te makkelijk stuk te maken: één woord meer in
+     de drempel en het komt nooit meer, zonder dat er iets rood wordt. */
+  {
+    await pagina.getByLabel('Zoeken').fill('twee boterhammen met mayonaise')
+    await pagina.waitForTimeout(700)
+    const aanbod = pagina.locator('.venster button.hoofdknop', { hasText: 'hele maaltijd' })
+    if (!(await aanbod.count())) {
+      throw new Error(`${naam}: geen aanbod om een zin te laten herkennen`)
+    }
+    /* Het hoort vóór de zoekresultaten te staan. Eronder zie je het pas als je
+       de verkeerde weg al bent ingeslagen. */
+    const eerste = pagina.locator('.venster .hoofdknop, .venster .lijst, .venster .kaart').first()
+    if (!((await eerste.textContent()) ?? '').includes('hele maaltijd')) {
+      throw new Error(`${naam}: het aanbod staat niet bovenaan`)
+    }
+
+    await aanbod.click()
+    await pagina.waitForTimeout(400)
+    /* Na de tik: het zoekveld leeg, het beschrijfvak open, en de zin erin. */
+    const zoek = await pagina.getByLabel('Zoeken').inputValue()
+    if (zoek !== '') throw new Error(`${naam}: het zoekveld is niet leeggemaakt (${zoek})`)
+    const vak = pagina.locator('.venster textarea')
+    if (!(await vak.count())) throw new Error(`${naam}: het beschrijfvak ging niet open`)
+    const inhoud = await vak.inputValue()
+    if (inhoud !== 'twee boterhammen met mayonaise') {
+      throw new Error(`${naam}: de zin is niet overgenomen — ${JSON.stringify(inhoud)}`)
+    }
+    await pagina.screenshot({ path: `gereedschap/health-${naam}-herkenaanbod.png` })
+    console.log(`${''.padEnd(26)} zin → beschrijfvak: ${JSON.stringify(inhoud)}`)
+
+    /* En een gewone zoekterm hoort het aanbod NIET te krijgen. Zonder deze
+       controle zou een drempel van één woord er net zo goed uitzien. */
+    await pagina.locator('.venster textarea').fill('')
+    await pagina.getByLabel('Zoeken').fill('tonijn')
+    await pagina.waitForTimeout(700)
+    if (await pagina.locator('.venster button.hoofdknop', { hasText: 'hele maaltijd' }).count()) {
+      throw new Error(`${naam}: "tonijn" krijgt het aanbod, en dat hoort niet`)
+    }
+    await pagina.getByLabel('Zoeken').fill('')
+    await pagina.waitForTimeout(300)
+  }
+
   /* En de weg via het zoekveld. Dit is wat er eerder niet werkte: wie "tonijn"
      typte kreeg de vierentwintig tonijnregels van NEVO en niet zijn eigen
      salade. Hij hoort nu bovenaan te staan, met het sterretje aan. */
