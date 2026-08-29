@@ -12,16 +12,39 @@
 --     gedroogd fruit. Een opscheplepel daarvan is eerder 25 à 30 gram dan 18, en
 --     een schaaltje 50 in plaats van 40.
 --
---   * En als het patroon uit D ook gekóókte producten heeft geraakt — pap,
---     bereide havermout — dan staat daar nu een schaaltje van 40 gram terwijl
---     een kom pap er tweehonderdvijftig weegt. Dat is precies dezelfde fout als
---     de cornflakes, alleen zes keer de andere kant op.
+--   * En als het patroon uit D ook gekóókte producten zou raken — pap, bereide
+--     havermout — dan zou daar een schaaltje van 40 gram staan terwijl een kom
+--     pap er tweehonderdvijftig weegt. Dezelfde fout als de cornflakes, alleen
+--     zes keer de andere kant op. In déze database gebeurt dat niet; zie
+--     hieronder waarom dat pas bleek na het draaien.
 --
 -- Dat tweede is de reden dat dit bestand er nu is en niet later. Een maat die te
 -- laag staat is net zo onwaar als een die te hoog staat, en sinds `kal-ai` het
 -- tabelgewicht boven de schatting van het model zet, wordt hij ook nog geloofd.
 --
--- WAT ER MET GEKOOKTE PRODUCTEN GEBEURT
+-- HET WOORD IS NIET GENOEG — WAT DE METING LIET ZIEN
+--
+-- Dit bestand vroeg eerst alleen naar de naam: staat er "pap", "bereid",
+-- "gekookt" of "met melk" in, dan is het nat. Blok 1 op de echte database liet
+-- zien dat dat niet klopt. Er kwamen drie producten uit:
+--
+--     Ontbijtproduct Olvarit pap 8 granen 12+ mnd        378 kcal/100 g
+--     Ontbijtproduct Olvarit pap fijne granen 6+ mnd     367 kcal/100 g
+--     Ontbijtproduct Olvarit pap tarwe en rogge 8+ mnd   376 kcal/100 g
+--
+-- Dat is droog poeder. Het woord "pap" staat in de naam omdat je er pap van
+-- máákt. Ze hun maten afpakken zou ze terugzetten op de groepsmaat van 60 gram —
+-- zestig gram droog babypoeder, dat is een verdrievoudiging.
+--
+-- Er staat nu een tweede voorwaarde bij: minder dan 150 kcal per 100 gram. Dat
+-- is geen woord maar een meting, en water is het enige wat een graanproduct zo
+-- licht maakt. Met die voorwaarde erbij valt er in deze database niets onder —
+-- blok 2 verwijdert dus niets, en dat is de juiste uitkomst.
+--
+-- Het blok blijft staan voor wat er nog bij komt. Zodra er een bereid product in
+-- de tabel verschijnt, vangt het hem af.
+--
+-- WAT ER MET NATTE PRODUCTEN GEBEURT
 --
 -- Die krijgen hun productmaten niet bijgesteld maar weggehaald. Dan valt de app
 -- terug op de groepsmaat — opscheplepel 60 g — en die klopt voor pap ongeveer
@@ -40,8 +63,9 @@
 
 select n.naam_nl, n.energie_kcal_per_100g,
        case
-         when n.naam_nl ilike '%pap%' or n.naam_nl ilike '%bereid%'
-           or n.naam_nl ilike '%gekookt%' or n.naam_nl ilike '%met melk%' then 'GEKOOKT → maten eraf'
+         when (n.naam_nl ilike '%pap%' or n.naam_nl ilike '%bereid%'
+               or n.naam_nl ilike '%gekookt%' or n.naam_nl ilike '%met melk%')
+              and n.energie_kcal_per_100g < 150                            then 'NAT → maten eraf'
          when n.naam_nl ilike '%muesli%' or n.naam_nl ilike '%granola%'
            or n.naam_nl ilike '%cruesli%' or n.naam_nl ilike '%crunchy%'  then 'zwaar → 28 g'
          else 'licht → blijft 18 g'
@@ -67,7 +91,9 @@ delete from voeding_portiematen m
         select n.nevo_code from nevo_actief n
          where n.groep = 'Graanproducten en meelsoorten'
            and (n.naam_nl ilike '%pap%' or n.naam_nl ilike '%bereid%'
-                or n.naam_nl ilike '%gekookt%' or n.naam_nl ilike '%met melk%'));
+                or n.naam_nl ilike '%gekookt%' or n.naam_nl ilike '%met melk%')
+           -- Het woord alleen is niet genoeg: zie de kop. Water maakt licht.
+           and n.energie_kcal_per_100g < 150);
 
 
 -- ---------------------------------------------------------------------------
@@ -115,8 +141,9 @@ order by n.naam_nl, m.nevo_code is not null desc, m.is_standaard desc, m.volgord
 
 -- En het aantal maten per soort, als samenvatting:
 select case
-         when n.naam_nl ilike '%pap%' or n.naam_nl ilike '%bereid%'
-           or n.naam_nl ilike '%gekookt%' or n.naam_nl ilike '%met melk%' then 'gekookt'
+         when (n.naam_nl ilike '%pap%' or n.naam_nl ilike '%bereid%'
+               or n.naam_nl ilike '%gekookt%' or n.naam_nl ilike '%met melk%')
+              and n.energie_kcal_per_100g < 150                           then 'nat'
          when n.naam_nl ilike '%muesli%' or n.naam_nl ilike '%granola%'
            or n.naam_nl ilike '%cruesli%' or n.naam_nl ilike '%crunchy%'  then 'zwaar'
          else 'licht'
