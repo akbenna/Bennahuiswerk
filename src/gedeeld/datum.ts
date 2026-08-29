@@ -26,6 +26,19 @@ export const plusDagen = (s: IsoDatum, n: number): IsoDatum => {
   return iso(d)
 }
 
+/**
+ * Een dag opschuiven binnen wat bestaat. Morgen is er niet: die dag heeft nog
+ * niets om te tonen, en een leeg dagoverzicht van de toekomst is verwarrend.
+ *
+ * `null` betekent dat de stap niet mag. Dat is met opzet één functie en geen
+ * regel die op twee plekken staat — de pijltjesknop en de veeg horen precies
+ * hetzelfde te weigeren.
+ */
+export const stapDag = (s: IsoDatum, n: number): IsoDatum | null => {
+  const d = plusDagen(s, n)
+  return d > vandaag() ? null : d
+}
+
 export const dagVerschil = (van: IsoDatum, tot: IsoDatum): number =>
   Math.round((opDatum(tot).getTime() - opDatum(van).getTime()) / 86_400_000)
 

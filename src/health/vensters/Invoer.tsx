@@ -43,6 +43,7 @@ import {
   aandelen, aggregaat, duiding, maaltijdRegel, naamvoorstel, portieNaam, snapshot, varianten,
 } from '../maaltijd'
 import { herken, leesFoto } from '../ai'
+import { Bron } from '../herkomst'
 import type { Herkenning } from '../ai'
 import type { Onderwerp } from './Portie'
 
@@ -137,7 +138,7 @@ export function InvoerVenster(p: InvoerEigenschappen) {
 
       <div className="zoekvak" style={{ marginTop: 12 }}>
         <span aria-hidden="true">🔎</span>
-        <input placeholder="zoek in NEVO, gerechten en je eigen producten" autoComplete="off"
+        <input placeholder="zoek in de tabel, gerechten en je eigen producten" autoComplete="off"
                aria-label="Zoeken" value={term} onChange={(e) => zetTerm(e.target.value)} />
       </div>
 
@@ -289,7 +290,7 @@ function Suggestie(
 }
 
 /**
- * Zoeken in NEVO, de gerechtenbibliotheek en je eigen producten.
+ * Zoeken in de voedingsmiddelentabel, de gerechtenbibliotheek en je eigen producten.
  *
  * Hetzelfde zoeken als op het voedingsscherm, maar hier zonder van tabblad te
  * wisselen. De volgorde van de antwoorden wordt bewaakt: een trage treffer op
@@ -349,7 +350,7 @@ function Zoekvangst(
       {fout && <p className="klein">{fout}</p>}
 
       {/* Je eigen maaltijden staan boven de tabel, want wie "tonijn" typt bedoelt
-          zijn eigen salade en niet de vierentwintig tonijnregels van NEVO. */}
+          zijn eigen salade en niet de vierentwintig tonijnregels uit de tabel. */}
       {maaltijden.length > 0 && (
         <div style={{ marginBottom: 10 }}>
           {maaltijden.map((m) => (
@@ -503,9 +504,7 @@ function Beschrijven(
                 <Chip graad={r.conf} />
                 <span className="groei">
                   <span className="knip" style={{ fontSize: '.86rem', display: 'block' }}>{r.naam}</span>
-                  <span className="mini">
-                    {r.nevo_naam ? 'NEVO: ' + r.nevo_naam : 'geen tabelwaarde — schatting van het model'}
-                  </span>
+                  <span className="mini"><Bron regel={r} /></span>
                   {r.onzekerheidsbronnen.map((o, j) => (
                     <span className="mini" style={{ display: 'block' }} key={j}>· {o}</span>
                   ))}
