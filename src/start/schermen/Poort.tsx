@@ -3,7 +3,7 @@
  * Overgezet uit schermOpzetten(), schermKiezen() en schermCode().
  */
 import { useState } from 'react'
-import { Codekaart, Melding, Merk, persoonKleur } from '../onderdelen'
+import { Codekaart, Melding, Merk, Snelbalk, persoonKleur } from '../onderdelen'
 import { hoofd, stilte } from '../opmaak'
 import type { Aanmelding, Lid } from '@/gedeeld/db/bennahub'
 import { gezinStart, lidAanmelden } from '@/gedeeld/db/bennahub'
@@ -91,6 +91,7 @@ export function Kiezen({ leden, opKies }: { leden: Lid[]; opKies: (l: Lid) => vo
       <div className="tegels" style={{ marginTop: 10 }}>
         {leden.filter((l) => l.rol === 'ouder').map(tegel)}
       </div>
+      <Snelbalk vrij />
     </div>
   )
 }

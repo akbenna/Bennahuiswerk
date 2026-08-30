@@ -267,12 +267,19 @@ export function Onthaal(
 }
 
 /** De balk onderaan, in de vorm van de tip uit het ontwerp — maar met iets erin
- *  dat ergens heen gaat. */
-export function Snelbalk() {
+ *  dat ergens heen gaat.
+ *
+ *  Hij staat op twee plekken: onder de tegels van de hub, en op de poort waar je
+ *  kiest wie je bent. Dat tweede is met opzet. De cursussen zijn lesstof voor
+ *  volwassenen zonder account en zonder gegevens van een kind erin; daar hoort
+ *  geen wachtwoord voor. Op de poort zegt hij daarom ook dát er geen nodig is,
+ *  want een link naar iets waarvan je aanneemt dat hij toch om een code vraagt,
+ *  klik je niet aan. */
+export function Snelbalk({ vrij }: { vrij?: boolean }) {
   return (
     <div className="snelbalk">
       <span className="snelico"><TekenLamp /></span>
-      <strong>Rechtstreeks naar een cursus</strong>
+      <strong>{vrij ? 'Meteen naar een cursus — zonder wachtwoord' : 'Rechtstreeks naar een cursus'}</strong>
       <span className="snellinks">
         <a href="huiswerk/cursussen/kompas.html">Kompas</a>
         <a href="huiswerk/cursussen/communicatie.html">Verbind</a>

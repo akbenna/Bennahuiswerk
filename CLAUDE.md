@@ -28,6 +28,12 @@ maaltijdtegels die niet meer meebewegen. Hij leest `dist/`, dus **eerst
 bouwen**. Verandert er iets aan een scherm van BennaHealth, dan hoort hij mee te
 draaien en horen de afdrukken mee de commit in.
 
+`node gereedschap/cursus-proef.mjs` staat er net zo naast, en leest ook `dist/`.
+Hij bewijst dat de drie cursussen van de Academie zonder code opengaan én dat de
+poort ernaar wijst. Een grep zou hier niet volstaan: het slot was gedrag, geen
+markering — het riep `render()` pas ná het ontgrendelen aan, dus een half
+verwijderd slot geeft een leeg scherm dat er in de tekst prima uitziet.
+
 ## Wat er nooit in mag
 
 **De NEVO-bronbestanden.** De CSV met de voedingsmiddelentabel blijft buiten de

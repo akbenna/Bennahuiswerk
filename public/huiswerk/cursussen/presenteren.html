@@ -104,32 +104,9 @@
   .fade{animation:fade .25s ease;}
   @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
   .backhome{display:inline-flex;align-items:center;gap:6px;margin-top:18px;color:var(--muted);font-size:12.5px;text-decoration:none;}
-  /* Ouder-code gate — Bennaghmouch Academie */
-  .lock{display:none;position:fixed;inset:0;z-index:50;background:var(--grad);align-items:center;justify-content:center;padding:20px;}
-  .lockcard{background:#fff;border-radius:20px;padding:28px 22px;max-width:340px;width:100%;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.28);}
-  .lockicon{font-size:40px;line-height:1;}
-  .lockttl{font-size:20px;font-weight:800;margin-top:8px;color:var(--ink);}
-  .locksub{color:var(--muted);font-size:13px;margin-top:6px;}
-  .lockin{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px;font:inherit;font-size:20px;text-align:center;letter-spacing:6px;margin:16px 0 10px;background:#fff;color:var(--ink);}
-  .lockmsg{color:#e11d48;font-size:13px;min-height:18px;margin-top:6px;}
-  .lockcard .backhome{margin-top:14px;}
-  .shake{animation:shake .4s;}
-  @keyframes shake{0%,100%{transform:translateX(0);}20%,60%{transform:translateX(-7px);}40%,80%{transform:translateX(7px);}}
 </style>
 </head>
 <body>
-<div id="lock" class="lock">
-  <div class="lockcard">
-    <div class="lockicon">🔒</div>
-    <div class="lockttl">Bennaghmouch Academie</div>
-    <p class="locksub">Deze cursussen zijn beveiligd met een ouder-code.</p>
-    <input id="lockinput" class="lockin" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="• • • •" aria-label="Ouder-code">
-    <button id="lockbtn" class="btn block">Ontgrendel</button>
-    <p id="lockmsg" class="lockmsg"></p>
-    <a id="lockchg" href="#" style="display:inline-block;margin-top:2px;color:var(--pri);font-size:12.5px;font-weight:700;text-decoration:none;">Ouder-code wijzigen</a>
-    <a class="backhome" href="../index.html">‹ Terug naar start</a>
-  </div>
-</div>
 <div id="app"></div>
 <div class="nav"><div class="inner" id="nav"></div></div>
 <script>
@@ -814,54 +791,11 @@ function act(a,ds){
   else if(a==='simmodel'){ view.simModel=true; render(); }
   else if(a==='naarsim'){ view.oefsub='sim'; }
 }
-/* ---- Ouder-code gate — Bennaghmouch Academie (aanpasbare code) ---- */
-const AC_DEFAULT='1987';
-function acGetCode(){ try{ return localStorage.getItem('academie_code') || AC_DEFAULT; }catch(e){ return AC_DEFAULT; } }
-function acSetCode(c){ try{ localStorage.setItem('academie_code', c); }catch(e){} }
-function acUnlocked(){ try{return sessionStorage.getItem('academie_ok')==='1';}catch(e){return false;} }
-function acDoUnlock(lock){ try{sessionStorage.setItem('academie_ok','1');}catch(e){} lock.style.display='none'; render(); }
-function acBoot(){
-  const lock=document.getElementById('lock');
-  if(acUnlocked()){ if(lock) lock.style.display='none'; render(); return; }
-  if(!lock){ render(); return; }
-  const card=lock.querySelector('.lockcard'); const orig=card.innerHTML;
-  lock.style.display='flex';
-  const shake=()=>{ card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake'); };
-  function showUnlock(){
-    card.innerHTML=orig;
-    const inp=card.querySelector('#lockinput'), btn=card.querySelector('#lockbtn'),
-          msg=card.querySelector('#lockmsg'), chg=card.querySelector('#lockchg');
-    const go=()=>{ if(inp.value.trim()===acGetCode()){ acDoUnlock(lock); }
-      else { msg.textContent='Onjuiste code — probeer opnieuw.'; inp.value=''; inp.focus(); shake(); } };
-    btn.onclick=go; inp.onkeydown=e=>{ if(e.key==='Enter') go(); };
-    if(chg) chg.onclick=e=>{ e.preventDefault(); showChange(); };
-    setTimeout(()=>inp.focus(),60);
-  }
-  function showChange(){
-    card.innerHTML='<div class="lockicon">🔧</div><div class="lockttl">Ouder-code wijzigen</div>'
-      +'<p class="locksub">Voer je huidige code in en kies een nieuwe (minstens 4 cijfers).</p>'
-      +'<input id="cCur" class="lockin" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="Huidige code">'
-      +'<input id="cNew" class="lockin" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="Nieuwe code">'
-      +'<input id="cNew2" class="lockin" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="Nieuwe code nogmaals">'
-      +'<button id="cSave" class="btn block">Opslaan</button>'
-      +'<p id="cMsg" class="lockmsg"></p>'
-      +'<a id="cBack" class="backhome" href="#">‹ Terug</a>';
-    const cur=card.querySelector('#cCur'), nw=card.querySelector('#cNew'), nw2=card.querySelector('#cNew2'),
-          save=card.querySelector('#cSave'), msg=card.querySelector('#cMsg'), back=card.querySelector('#cBack');
-    const go=()=>{
-      if(cur.value.trim()!==acGetCode()){ msg.style.color='#e11d48'; msg.textContent='Huidige code klopt niet.'; shake(); return; }
-      const a=nw.value.trim(), b=nw2.value.trim();
-      if(!/^[0-9]{4,8}$/.test(a)){ msg.style.color='#e11d48'; msg.textContent='Nieuwe code: 4 tot 8 cijfers.'; shake(); return; }
-      if(a!==b){ msg.style.color='#e11d48'; msg.textContent='De nieuwe codes komen niet overeen.'; shake(); return; }
-      acSetCode(a); msg.style.color='#0ca678'; msg.textContent='Code gewijzigd ✓'; setTimeout(()=>acDoUnlock(lock),700);
-    };
-    save.onclick=go; nw2.onkeydown=e=>{ if(e.key==='Enter') go(); };
-    back.onclick=e=>{ e.preventDefault(); showUnlock(); };
-    setTimeout(()=>cur.focus(),60);
-  }
-  showUnlock();
-}
-acBoot();
+/* Deze cursus stond achter een slot met een cijfercode. Dat slot is eraf: het
+   is lesstof voor volwassenen en er staat niets in dat afgeschermd hoeft te
+   worden — geen gegevens van een kind, geen account, geen naam. Wat je hier
+   doet blijft net als eerst in localStorage op dit toestel staan. */
+render();
 </script>
 </body>
 </html>
