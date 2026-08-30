@@ -30,7 +30,7 @@ export function Meer(
   { dagen, reeks, profiel, opVenster }:
   {
     dagen: Dagenkaart; reeks: Trendpunt[]; profiel: Profiel
-    opVenster: (v: 'profiel' | 'import' | 'account' | 'koppelen') => void
+    opVenster: (v: 'profiel' | 'import' | 'account' | 'koppelen' | 'hoewerkt') => void
   },
 ) {
   const trendNu = [...reeks].reverse().find((x) => x.ema != null)
@@ -189,6 +189,12 @@ export function Meer(
           thermogenese en de individuele activiteitsfactor automatisch geabsorbeerd — die hoeven niet
           gemodelleerd te worden, ze zitten al in de meting.
         </p>
+        {/* Die verwijzing naar een bestand is genoeg voor wie de repo kent en
+            nutteloos voor ieder ander. De uitleg zelf hoort ook hier te staan,
+            achter één tik. */}
+        <Rij>
+          <Knop opKlik={() => opVenster('hoewerkt')}>Hoe deze app werkt</Knop>
+        </Rij>
       </Kaart>
     </>
   )

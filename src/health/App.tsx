@@ -24,6 +24,7 @@ import type { Onderwerp } from './vensters/Portie'
 import { InvoerVenster } from './vensters/Invoer'
 import { KoppelVenster } from './vensters/Koppelen'
 import { DagoverzichtVenster } from './vensters/Dagoverzicht'
+import { HoewerktVenster } from './vensters/Hoewerkt'
 import {
   AccountVenster, Aanmelden, ImportVenster, ProfielVenster,
 } from './vensters/Instellingen'
@@ -88,7 +89,7 @@ function Postbus({ token, a }: { token: string; a: Analyse }) {
 }
 
 type Tab = (typeof TABS)[number][0]
-type VensterNaam = 'profiel' | 'import' | 'account' | 'koppelen' | 'overzicht'
+type VensterNaam = 'profiel' | 'import' | 'account' | 'koppelen' | 'overzicht' | 'hoewerkt'
 
 export function App() {
   const k = useKalibratie()
@@ -323,6 +324,8 @@ export function App() {
           opSluiten={() => zetVenster(null)}
         />
       )}
+
+      {venster === 'hoewerkt' && <HoewerktVenster opSluiten={() => zetVenster(null)} />}
 
       {venster === 'profiel' && (
         <ProfielVenster
