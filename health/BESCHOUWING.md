@@ -72,6 +72,7 @@ na te gaan door de md5 van `prosrc` te vergelijken.
 | 19 | `'merk'` toegestaan als herkomst van een regel |
 | 20 | zoeken met alternatieven — schrijfvarianten en andere namen |
 | 21 | de zeef en de volgorde omgedraaid, nadat 20 haring voor harira gaf |
+| 22 | benaderen mag alleen op een naam, niet op een synoniem |
 
 Twee dingen zaten daar structureel in. De **licentiepoort**: net als `nevo_versies`
 heeft `merk_bronnen` een schakelaar, en zonder gecontroleerde licentie én
@@ -131,6 +132,17 @@ zeeft schoon — harira wordt `rr` en valt af op de lengte-eis), en de trigram i
 de volgorde binnen wat het skelet doorlaat (want `brt` staat voor brood, bereid,
 bread en broad samen, en zit in 285 producten). Gemeten: "broot" zet
 Glutenvrij brood bovenaan en laat "bereid" wegzakken.
+
+Er bleef er één over: `doner` gaf Pepermunt. Te volgen tot op het veld — NEVO
+zet bij Pepermunt "Tic-tac mint, after dinner mints" in `synoniem_nevo`, en het
+skelet van "dinner" is `tnr`, net als dat van "doner". Erger nog: er ís geen
+goed antwoord, want NEVO kent geen döner en geen kebab, alleen twee
+varkensshoarma's.
+
+De regel die daaruit volgt is niet "pepermunt uitzonderen" maar: benaderen mag
+alleen op wat NEVO zelf een náám noemt. Een benadering bovenop een synoniem dat
+zelf al een benadering is, is twee keer raden. Dat is `22-benaderen-mag-alleen-
+op-een-naam.sql`, en het kostte geen enkele treffer.
 
 Daar kwam nog iets bij dat ik niet zocht. De gerechtenbibliotheek heeft een kolom
 `names` met alternatieve namen per taal: nl, darija_lat, darija_ar, tarifit_lat,
