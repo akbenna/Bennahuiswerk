@@ -1,5 +1,5 @@
 /* Bennaghmouch Oefenclub — service worker voor offline gebruik.
-   Cachet de app-shell (huiswerk-app, spellen en de Academie-cursussen)
+   Cachet de app-shell (huiswerk-app en spellen)
    zodat alles zonder netwerk blijft werken. Cloud-sync (Supabase) en
    fonts gaan naar het netwerk en falen offline stilletjes (de app werkt
    dan lokaal verder via localStorage). */
@@ -13,9 +13,6 @@ const ASSETS = [
   './voxelsandbox.html',
   './verkeersschool.html',
   './vendor/three.min.js',
-  './cursussen/communicatie.html',
-  './cursussen/presenteren.html',
-  './cursussen/kompas.html'
 ];
 
 self.addEventListener('install', (e) => {

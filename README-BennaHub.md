@@ -80,7 +80,6 @@ app ís, in het Nederlands.
 | `sanad/` | Geloofsstudie | Sanad · سند | Geloofsstudie |
 | `rasikh/` | Koran uit je hoofd | Rasikh · رَاسِخ | Koran |
 | `health/` | BennaHealth | Kalibratie · Energiebalans | BennaHealth |
-| — | Academie | — | — |
 
 De mapnamen zijn niet meegegaan. Die staan in bladwijzers, in service workers,
 in opgeslagen accounts en in het pad van elke opname die al ingesproken is; ze
@@ -101,11 +100,10 @@ beginscherm. Verander je een SVG, draai dan `node iconen/maak-png.mjs` en commit
 beide bestanden samen. Zie `iconen/LEESMIJ.md`.
 
 De indeling van de startpagina volgt dezelfde gedachte: bovenaan de vijf apps van
-de kinderen, daaronder de vier van de groten. De Academie stond bij de kinderen
-terwijl er "voor de groten" op de kaart zelf stond; die is nu verhuisd.
+de kinderen, daaronder de drie van de groten.
 
 Eén tegel wijkt bewust af. BennaHealth is leisteengrijs, de enige onverzadigde
-kleur van de negen. De zeven leerapps zijn gekleurd omdat een kind een tegel moet
+kleur van de acht. De zeven leerapps zijn gekleurd omdat een kind een tegel moet
 kunnen herkennen voordat het vlot leest; die app is een meetinstrument voor een
 volwassene en mag daar op het beginscherm ook naar uitzien.
 
@@ -135,8 +133,8 @@ wachtwoord, en krijgt daarna de apps te zien die voor jou bedoeld zijn:
 - **kinderen** zien de vijf apps van de kinderen;
 - **ouders** zien alles, plus een knop naar het overzicht;
 - per lid kan daarvan worden afgeweken (`apps` op het lid): staat daar een lijst
-  in, dan is dát de hele lijst. Zo kun je Amaani de Academie geven zonder de
-  anderen erbij.
+  in, dan is dát de hele lijst. Zo kun je Amaani alleen het huiswerk en het
+  Arabisch geven zonder de anderen erbij.
 
 De aanmelding blijft acht uur staan en verloopt daarna vanzelf — op een gedeelde
 tablet blijft anders het account van 's ochtends de hele avond openstaan.

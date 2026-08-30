@@ -61,11 +61,6 @@ export const APPS: readonly AppTegel[] = [
   zin:'Het dagelijks verbruik gemeten uit de gewichtstrend in plaats van geschat uit een formule — met het interval erbij. Vaste maaltijden worden één keer geijkt en schuiven daarna mee met wat je van de olie en de melk weet.',
   detail:['Voor volwassenen','Elke ochtend wegen','Interval bij elk getal','Marokkaans en Turks','Werkt zonder internet']},
 
- {id:'academie', naam:'Academie', href:'huiswerk/cursussen/kompas.html', ico:'/iconen/academie.svg', k:'academie', groep:'groot', kort:'Kompas, Verbind, Podium',
-  wie:'Vanaf de bovenbouw',
-  zin:'Drie cursussen die los van het huiswerk staan: slim leren en focus, communicatie en netwerken, presenteren en spreken. Voor wie er qua leeftijd aan toe is — de oudsten en de groten.',
-  detail:['Kompas','Verbind','Podium']},
-
  {id:'sanad', naam:'Geloofsstudie', href:'sanad/', ico:'/iconen/geloofsstudie.svg', k:'geloof', groep:'groot', kort:'Achtentwintig weken fiqh',
   oud:'Sanad', ar:'سند', wie:'Abdelkader',
   zin:'Achtentwintig weken Malikitische fiqh, usul, ‘aqida, bronnenkritiek en medische ethiek — elke week met een fragment uit de oorspronkelijke tekst.',

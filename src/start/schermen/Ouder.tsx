@@ -239,7 +239,7 @@ function AppBlok(
   /* Kent een app geen uitlezer of staat er nog niets in, dan zeggen we dat
      gewoon — een lege tabel laat je raden of het niet werkt of dat er niets is. */
   let inhoud
-  if (tegel.id === 'huiswerk' || tegel.id === 'academie') {
+  if (tegel.id === 'huiswerk') {
     inhoud = (
       <p className="klein">
         Deze app heeft nog zijn eigen inlog en bewaart niets centraal. Het overzicht daarvan staat in

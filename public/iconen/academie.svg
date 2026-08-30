@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Academie">
-  <title>Academie</title>
-  <rect width="64" height="64" rx="14" fill="#7E5300"/>
-  <path d="M32 15 55 26 32 37 9 26z" fill="#FFF8EE"/>
-  <path d="M19 30.5V40c0 3.6 5.8 6.5 13 6.5S45 43.6 45 40v-9.5" fill="none"
-        stroke="#FFF8EE" stroke-width="4.6" stroke-linecap="round"/>
-</svg>

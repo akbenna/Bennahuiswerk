@@ -35,7 +35,6 @@
   --spel:#B4442C;      --spel-bg:#FBE7E0;
   --geloof:#5B3B7A;    --geloof-bg:#EFE8F6;
   --koran:#3B4A8F;     --koran-bg:#E3E7F6;
-  --academie:#7E5300;  --academie-bg:#F8EFD4;
   /* Leisteen, en als enige onverzadigd. De zeven leerapps zijn gekleurd omdat
      een kind een tegel moet kunnen herkennen; Kalibratie is een meetinstrument
      voor een volwassene en mag daar op het beginscherm ook naar uitzien. */
@@ -71,7 +70,6 @@
     --spel:#F0A08A;      --spel-bg:#3A1C14;
     --geloof:#C9A6E8;    --geloof-bg:#2A2136;
     --koran:#A3B0EE;     --koran-bg:#1D2240;
-    --academie:#E9BC55;  --academie-bg:#31280F;
     --health:#9EB6C2; --health-bg:#1E272C;
 
     --goed:#8FD268; --let:#E9BC55; --fout:#F09B95;
@@ -101,11 +99,11 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(-
 header{padding:56px 0 0}
 .merk{font-family:var(--serif);font-size:2.6rem;color:var(--ink);letter-spacing:-.032em;line-height:1}
 .merk .b{font-weight:600}
-/* Een streep in de negen kleuren van de negen ingangen, in dezelfde volgorde
-   als ze hieronder staan: eerst de vijf van de kinderen, dan de vier van de
+/* Een streep in de acht kleuren van de acht ingangen, in dezelfde volgorde
+   als ze hieronder staan: eerst de vijf van de kinderen, dan de drie van de
    groten. */
 .regenboog{height:5px;border-radius:9999px;margin-top:16px;max-width:280px;
-  background:linear-gradient(90deg,var(--huiswerk) 0 11.11%,var(--islam) 11.11% 22.22%,var(--arabisch) 22.22% 33.33%,var(--code) 33.33% 44.44%,var(--spel) 44.44% 55.56%,var(--geloof) 55.56% 66.67%,var(--koran) 66.67% 77.78%,var(--health) 77.78% 88.89%,var(--academie) 88.89% 100%)}
+  background:linear-gradient(90deg,var(--huiswerk) 0 12.5%,var(--islam) 12.5% 25%,var(--arabisch) 25% 37.5%,var(--code) 37.5% 50%,var(--spel) 50% 62.5%,var(--geloof) 62.5% 75%,var(--koran) 75% 87.5%,var(--health) 87.5% 100%)}
 .lede{margin-top:14px;font-family:var(--serif);font-size:1.14rem;line-height:1.55;color:var(--muted);max-width:46ch}
 
 /* ---------------------------------------------------------------------------
@@ -314,22 +312,6 @@ main{flex:1;padding:34px 0 0}
 .apptrij{margin-top:11px;display:flex;align-items:flex-end;gap:8px}
 .apptzin{min-width:0;font-size:.79rem;line-height:1.35;color:var(--muted)}
 .apptpijl{margin-left:auto;flex:0 0 auto;color:var(--k);font-weight:700;font-size:.95rem;line-height:1.3}
-
-/* De balk onderaan. In het ontwerp stond hier een tip van de dag; het is een
-   snelkoppeling geworden, want een tip die niemand geschreven heeft is vulling
-   en deze drie cursussen zijn anders drie klikken diep. */
-.snelbalk{margin-top:30px;display:flex;align-items:center;gap:13px;flex-wrap:wrap;
-  background:var(--academie-bg);border-radius:16px;padding:14px 18px;
-  border:1px solid color-mix(in srgb,var(--academie) 26%,transparent)}
-.snelico{width:34px;height:34px;border-radius:10px;flex:0 0 auto;display:grid;place-items:center;
-  background:var(--surface);color:var(--academie);
-  border:1px solid color-mix(in srgb,var(--academie) 26%,transparent)}
-.snelbalk strong{font-family:var(--serif);font-size:1.02rem;font-weight:600;color:var(--ink)}
-.snellinks{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
-.snellinks a{font-size:.86rem;font-weight:500;text-decoration:none;color:var(--academie);
-  background:var(--surface);border-radius:9999px;padding:5px 13px;
-  border:1px solid color-mix(in srgb,var(--academie) 30%,transparent)}
-.snellinks a:hover{border-color:var(--academie)}
 
 /* Het pictogram van een app zoals het in het ouderoverzicht meekomt. */
 .tegel{border-radius:14px;flex:0 0 auto;display:block;

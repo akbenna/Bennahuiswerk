@@ -2,7 +2,7 @@
   "name": "bennahub",
   "private": true,
   "type": "module",
-  "description": "Negen apps op één hub. React 18 + Vite + TypeScript.",
+  "description": "Acht apps op één hub. React 18 + Vite + TypeScript.",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b --noEmit && vite build",
