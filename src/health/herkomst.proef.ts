@@ -33,6 +33,27 @@ describe('herkomstVan', () => {
     expect(herkomstVan({ nevo_naam: '' }).gemeten).toBe(false)
   })
 
+  it('een merkregel krijgt het derde teken', () => {
+    const h = herkomstVan({ bron: 'merk' })
+    expect(h.teken).toBe('◈')
+    expect(h.gemeten).toBe(false)
+    expect(h.uitleg).toContain('etiket')
+  })
+
+  it('de tabel wint van het etiket', () => {
+    /* Kan vandaag niet voorkomen — een merkregel heeft geen tabelnaam — maar de
+       volgorde ligt vast, zodat een meting nooit door een etiket overschreven
+       wordt als die twee ooit samenvallen. */
+    expect(herkomstVan({ bron: 'merk', nevo_naam: 'Pindakaas' }).teken).toBe('◆')
+  })
+
+  it('drie tekens en geen twee: ze horen alle drie iets anders te zeggen', () => {
+    const t = [herkomstVan({ nevo_naam: 'x' }).teken,
+               herkomstVan({ bron: 'merk' }).teken,
+               herkomstVan({}).teken]
+    expect(new Set(t).size).toBe(3)
+  })
+
   it('de bron alleen zegt niets: een gerecht is opgebouwd uit tabelregels', () => {
     expect(herkomstVan({ bron: 'gerecht', nevo_naam: 'Rijst gekookt' }).gemeten).toBe(true)
     expect(herkomstVan({ bron: 'gerecht' }).gemeten).toBe(false)

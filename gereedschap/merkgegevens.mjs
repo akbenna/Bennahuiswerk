@@ -72,7 +72,15 @@ function getal(v) {
 export function porties(tekst) {
   if (!tekst) return { gram: null, naam: null }
   const s = String(tekst).trim()
-  const m = s.match(/(\d+(?:[.,]\d+)?)\s*g\b/i)
+  /* "gram" voluit hoort er ook bij, en dat stond er eerst niet in: `g\b`
+     mislukt op "10 gram", want na de g komt een letter. Vier van de eerste
+     twintig Lidl-producten verloren daardoor hun portiegewicht — Open Food
+     Facts schrijft het vaker voluit dan afgekort.
+
+     De langste vorm staat vooraan uit gewoonte, niet uit noodzaak: een
+     mutatieproef met `g|gr|gram` bleef groen, want de alternatie zoekt terug
+     zodra `\b` niet uitkomt. Ik dacht van wel en had het mis. */
+  const m = s.match(/(\d+(?:[.,]\d+)?)\s*(?:gram|gr|g)\b/i)
   if (!m) return { gram: null, naam: s.slice(0, 60) || null }
   const gram = Number(m[1].replace(',', '.'))
   if (!Number.isFinite(gram) || gram <= 0 || gram > 5000) return { gram: null, naam: s.slice(0, 60) }
@@ -171,14 +179,61 @@ export function naarSql(producten) {
   ].join('\n')
 }
 
+/**
+ * Hoe lang wachten na een weigering. Vijf seconden, dan vijftien, dan
+ * vijfenveertig.
+ *
+ * Oplopend en niet vast: een server die "te druk" zegt heeft niets aan een
+ * cliënt die na elke weigering even hard terugkomt. Dat maakt het drukker, niet
+ * rustiger.
+ */
+export function wachttijd(poging) {
+  return 5000 * 3 ** (poging - 1)
+}
+
+const wacht = (ms) => new Promise((r) => setTimeout(r, ms))
+
+/**
+ * Eén bladzijde ophalen, met geduld.
+ *
+ * Open Food Facts geeft 503 als hun zoek-API het te druk heeft en 429 als jij te
+ * snel vraagt. Allebei betekenen "straks nog eens", niet "het bestaat niet".
+ * Vandaar vier pogingen; daarna houdt het op en zegt het script wat er was.
+ */
+async function haalBladzijde(url, pogingen = 4) {
+  for (let poging = 1; ; poging++) {
+    const a = await fetch(url, {
+      headers: { 'User-Agent': 'BennaHealth/1.0 (gezinsapp, niet-commercieel)' },
+    })
+    if (a.ok) return a.json()
+    if ((a.status === 503 || a.status === 429) && poging < pogingen) {
+      const ms = wachttijd(poging)
+      console.error(`  Open Food Facts gaf ${a.status}; ${ms / 1000} s wachten en dan poging ${poging + 1}`)
+      await wacht(ms)
+      continue
+    }
+    throw new Error(
+      `Open Food Facts gaf ${a.status} na ${poging} poging(en). `
+      + (a.status === 503 || a.status === 429
+         ? 'Hun zoek-API heeft het druk. Probeer het later nog eens, of haal minder op met --max.'
+         : 'Kijk of het merk goed geschreven is: albert-heijn en niet "Albert Heijn".'))
+  }
+}
+
+/* Tussen twee bladzijden. Open Food Facts vraagt om hoogstens tien
+   zoekopdrachten per minuut; zes seconden blijft daar netjes onder. Dat maakt
+   driehonderd producten een klus van een halve minuut in plaats van drie
+   seconden, en dat is de prijs van een server die van iedereen is. */
+const PAUZE_MS = 6000
+
 async function haal(merk, max) {
   const uit = []
   for (let bladzijde = 1; uit.length < max; bladzijde++) {
+    if (bladzijde > 1) await wacht(PAUZE_MS)
     const url = `${API}?countries_tags_en=netherlands&brands_tags=${encodeURIComponent(merk)}`
       + `&fields=${VELDEN}&page_size=100&page=${bladzijde}`
-    const a = await fetch(url, { headers: { 'User-Agent': 'BennaHealth/1.0 (gezinsapp)' } })
-    if (!a.ok) throw new Error(`Open Food Facts gaf ${a.status}`)
-    const d = await a.json()
+    console.error(`  bladzijde ${bladzijde} ophalen…`)
+    const d = await haalBladzijde(url)
     if (!d.products?.length) break
     uit.push(...d.products)
     if (d.products.length < 100) break
@@ -211,10 +266,20 @@ function proef() {
   const eis = (goed, wat) => { if (!goed) { console.error('MIS: ' + wat); process.exitCode = 1 } else console.log('ok  ' + wat) }
 
   eis(porties('30 g').gram === 30, 'een portie in gram wordt gelezen')
+  eis(porties('10 gram').gram === 10, '"gram" voluit ook — anders valt een kwart weg')
+  eis(porties('35g').gram === 35, 'zonder spatie ook')
+  eis(porties('500 mg').gram === null, 'milligram is geen gram')
   eis(porties('1 portie (15 g)').gram === 15, 'gram tussen haakjes ook')
   eis(porties('250 ml').gram === null, 'milliliter is geen gram en wordt niet verzonnen')
   eis(porties('1 pièce').gram === null, 'een stuk zonder gewicht levert niets op')
   eis(porties(null).gram === null && porties('').naam === null, 'niets in, niets uit')
+
+  /* Het wachten loopt op. Een vaste wachttijd zou een drukke server even hard
+     blijven bestoken; dat maakt het drukker en niet rustiger. */
+  eis(wachttijd(1) === 5000 && wachttijd(2) === 15000 && wachttijd(3) === 45000,
+      'na een weigering wordt er steeds langer gewacht')
+  eis(wachttijd(2) > wachttijd(1) && wachttijd(3) > wachttijd(2),
+      'en nooit korter dan de vorige keer')
 
   eis(q("Sinaasappelsap 'vers'") === "'Sinaasappelsap ''vers'''", 'aanhalingstekens worden verdubbeld')
   eis(q(null) === 'null::text' && q('') === 'null::text', 'leeg wordt een null mét type')

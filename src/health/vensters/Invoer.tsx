@@ -448,6 +448,29 @@ function Zoekvangst(
               <Knop vol klein titel="Portie kiezen" opKlik={() => void kiesNevo(n.nevo_code)}>+</Knop>
             </div>
           ))}
+
+          {/* Merkproducten onderaan, en met graad D. Dat is geen minachting maar
+              de ladder: een etiket is een opgave van de fabrikant met een
+              wettelijke marge, geen laboratoriumbepaling. Wat het wél heeft en de
+              tabel niet is het gewicht van de verpakking — daarom staat dat er
+              meteen bij. */}
+          {(uitslag.merk ?? []).map((m) => (
+            <div key={'m' + m.id}>
+              <Chip graad="D" />
+              <span className="groei">
+                <span className="knip" style={{ fontSize: '.86rem', display: 'block' }}>
+                  {m.naam}
+                </span>
+                <span className="mini">
+                  <abbr className="herkomst" title="etiketwaarde van de fabrikant">◈</abbr>{' '}
+                  {m.merk ?? 'merkproduct'} · {dz(m.kcal)} kcal per 100 g
+                  {m.verpakking_gram != null && <> · pak van {dz(m.verpakking_gram)} g</>}
+                </span>
+              </span>
+              <Knop vol klein titel="Portie kiezen"
+                    opKlik={() => opKies({ soort: 'merk', product: m })}>+</Knop>
+            </div>
+          ))}
         </div>
       )}
 

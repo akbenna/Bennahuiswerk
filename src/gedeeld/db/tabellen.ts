@@ -24,6 +24,10 @@ export type Moment = 'ontbijt' | 'lunch' | 'diner' | 'tussendoor' | 'onbekend'
 export type Graad = 'A' | 'B' | 'C' | 'D'
 export type RegelBron =
   | 'handmatig' | 'recept' | 'bibliotheek' | 'tekst-ai' | 'foto-ai' | 'import' | 'nevo'
+  /* 'merk' is een etiketwaarde van een fabrikant. Bewust géén 'nevo': dat zou de
+     app laten beweren dat er een laboratoriumbepaling achter zit. Zie
+     health/database/19-merkregels.sql voor de bijbehorende constraint. */
+  | 'merk'
 
 export interface Instellingen {
   olie_g?: number

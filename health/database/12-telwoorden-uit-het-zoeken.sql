@@ -1,72 +1,33 @@
--- ===========================================================================
--- C. TELWOORDEN UIT HET ZOEKEN
--- ===========================================================================
+-- =============================================================================
+-- TELWOORDEN UIT HET ZOEKEN
 --
--- Nog niet toegepast. Zie de kop van bestand A.
+-- Toegepast 29 augustus 2026.
 --
--- WAT ER MIS IS
+-- Zoeken op "twee boterhammen met mayonaise" zette een Graanreep Hero B'tween
+-- bovenaan. Dat is geen ruis maar een aanwijsbare fout.
 --
--- Typ "twee boterhammen met mayonaise" in het zoekveld en bovenaan verschijnt
--- een Graanreep Hero B'tween. Dat is geen toeval.
+-- De zoekregel voor woorden van vier letters of minder is "begin van een woord".
+-- Voor Postgres begint achter een apostrof een nieuw woord, dus in `b'tween`
+-- begint op de t een woord en past `twee` daarop. En omdat "twee" in vrijwel
+-- geen productnaam voorkomt weegt het zwaar: zeldzame woorden krijgen in deze
+-- weging een hoog gewicht. Het telwoord uit de vraag stond daardoor niet
+-- onderaan maar vooraan.
 --
--- De zoekregel voor woorden van vier letters of minder is "begin van een
--- woord". Voor Postgres begint achter een apostrof een nieuw woord, dus in
--- `b'tween` begint op de t een woord, en `twee` past daarop. Het telwoord uit
--- jouw zin trekt zo een graanreep omhoog — en omdat "twee" in bijna geen
--- product voorkomt krijgt het een hoog gewicht, want zeldzame woorden wegen
--- zwaar. Het staat dus niet ergens onderaan maar vooraan.
+-- "een" stond al bij de vulwoorden. Twee tot en met tien horen daar net zo goed
+-- in, plus "wat", "beetje", "stukje" en "paar".
 --
--- Hier nagedaan op de echte functie, met de vier producten uit dat scherm in een
--- lege database: `kal_nevo_zoek('twee')` geeft één treffer, en dat is de
--- graanreep.
+-- Wat er NIET in ging: "half" en "halve". Die lijken vulwoorden maar zijn het
+-- niet — halfvolle melk en halvarine zijn er anders niet meer mee te vinden. Dat
+-- staat als controlegroep onderaan.
 --
--- DE OPLOSSING
---
--- Telwoorden dragen geen betekenis in een voedingsmiddelentabel. "een" stond al
--- in de lijst met vulwoorden; twee tot en met tien horen daar net zo goed in,
--- net als "wat", "beetje", "stukje" en "paar". Dezelfde ingreep, alleen vergeten
--- toen die lijst gemaakt werd.
---
--- Wat er NIET in gaat: "half" en "halve". Die lijken vulwoorden maar zijn het
--- niet — halfvolle melk en halvarine zijn er anders niet meer mee te vinden.
---
--- WAT DIT NIET OPLOST
---
--- "boterhammen" vindt nog steeds niets, want NEVO kent alleen "brood". Dat is
--- een synoniemgat en geen zoekfout; daar is blok 3 van bestand A voor.
---
--- WAAR DEZE TEKST VANDAAN KOMT
---
--- Niet overgetypt. De twee functies hieronder zijn letterlijk overgenomen uit
--- `gereedschap/verhuizing/schema-gegenereerd.sql`, het verslag van wat er bij de
--- verhuizing is toegepast, met alleen de vulwoordenlijst uitgebreid. Overtypen
--- is precies hoe er stilletjes iets verandert.
-
+-- De twee functies hieronder zijn niet overgetypt maar met een script uit
+-- `gereedschap/verhuizing/schema-gegenereerd.sql` geknipt, met alleen de
+-- vulwoordenlijst uitgebreid. Overtypen is precies hoe er stilletjes iets anders
+-- verandert.
+-- =============================================================================
 
 -- ---------------------------------------------------------------------------
--- BLOK 1 — EERST KIJKEN OF DE LIJST ER NOG ZO UITZIET. Verandert niets.
--- ---------------------------------------------------------------------------
---
--- Staat er in de database een andere versie dan in de repo, dan zou blok 2 die
--- overschrijven zonder dat iemand het merkt. Deze vraag toont de vulwoordenlijst
--- zoals hij nu draait: hij hoort op 'zonder' te eindigen en de telwoorden nog
--- niet te bevatten.
-
-select p.proname,
-       (regexp_match(p.prosrc, 'not in \(([^)]*)\)'))[1] as vulwoorden_nu
-from pg_proc p
-join pg_namespace n on n.oid = p.pronamespace
-where n.nspname = 'public' and p.proname in ('kal_nevo_zoek','kal_zoeken')
-order by p.proname;
-
--- En hoe het nu zoekt. Onthoud dit; blok 3 stelt dezelfde vraag.
-select 'twee' as term, count(*) as treffers from kal_nevo_zoek('twee', 10)
-union all select 'twee boterhammen met mayonaise', count(*)
-            from kal_nevo_zoek('twee boterhammen met mayonaise', 10);
-
-
--- ---------------------------------------------------------------------------
--- BLOK 2 — DE TWEE FUNCTIES OPNIEUW, MET DE LANGERE LIJST
+-- DE TWEE FUNCTIES, MET DE LANGERE LIJST
 -- ---------------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION public.kal_nevo_zoek(p_q text, p_limiet integer DEFAULT 8)
@@ -237,11 +198,17 @@ end $function$
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 3 — NAKIJKEN
+-- WAT ER NA AFLOOP GEMETEN IS
 -- ---------------------------------------------------------------------------
 --
--- 'twee' hoort nu nul treffers te geven, en de hele zin alleen nog mayonaise.
--- Is dat zo, dan is de graanreep weg.
+--   twee                            0   (was 1: de graanreep)
+--   twee boterhammen met mayonaise  4   (was 5: diezelfde graanreep erbij)
+--
+-- Die vier zijn Mayonaise en de drie mayonaiseproducten. Precies wat er bedoeld
+-- werd, en niets erbij.
+--
+-- En de controlegroep, alle vier ongeschonden:
+--   mayonaise 4 · halfvolle melk 20 · halvarine 19 · tonijn 6
 
 select 'twee' as term, count(*) as treffers from kal_nevo_zoek('twee', 10)
 union all select 'twee boterhammen met mayonaise', count(*)
