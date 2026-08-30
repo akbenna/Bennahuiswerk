@@ -321,7 +321,7 @@ function Voortgangpaneel({ stand, alle, nuMs, zet, zetKind }: OuderProps): React
           >📊 Leerprofiel (JSON)</button>
           <button
             type="button" className="btn ghost sm"
-            onClick={() => bewaarAls('bennahuiswerk-backup.json',
+            onClick={() => bewaarAls('bennahub-huiswerk-backup.json',
               JSON.stringify(stand, null, 2), 'application/json')}
           >💾 Back-up</button>
           <button type="button" className="btn ghost sm" onClick={() => bestand.current?.click()}>

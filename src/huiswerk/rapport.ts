@@ -68,7 +68,7 @@ export function leerprofielData(stand: Stand, alle: Kaart[]): unknown {
       historie: prof.historie,
     }
   }).filter(Boolean)
-  return { app: 'Bennahuiswerk', type: 'leerprofiel', gegenereerd_lokaal: true, kinderen }
+  return { app: 'BennaHub', type: 'leerprofiel', gegenereerd_lokaal: true, kinderen }
 }
 
 /** Een bestand aanbieden zonder dat het ergens de deur uit gaat. */

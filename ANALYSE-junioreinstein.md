@@ -1,10 +1,10 @@
-# Bennahuiswerk × Junior Einstein — analyse en verbeterplan
+# BennaHub × Junior Einstein — analyse en verbeterplan
 
 _Opgesteld juli 2026. Doel: de didactische opbouw en best practices van Junior Einstein vertalen naar concrete verbeteringen voor jouw eigen app. Geen content van Junior Einstein wordt overgenomen — auteursrechtelijk beschermd — wél de onderliggende aanpak, waarmee je eigen, originele oefenstof sterker wordt._
 
 ## Waar je al staat
 
-Voordat we naar Junior Einstein kijken, is het eerlijk om vast te stellen dat Bennahuiswerk didactisch al verrassend compleet is. Je hebt een adaptief niveau (Auto 1–3 dat meebeweegt met succes), slim herhalen via Leitner, interleaving, een proeftoets- en oefentoetsmodus met timer, meerkeuze, gerichte foutfeedback met uitlegpanelen en visuals, een automatisch foutenschrift, een volwaardig ouder-dashboard, per-kind cloud-accounts en een stevige motivatielaag met beloningen, rangen, spelletjes en challenges. Dat is precies de kern die Junior Einstein óók heeft — je zit dus niet achter, je mist vooral een paar specifieke bouwstenen in de *opbouw* rondom het oefenen zelf.
+Voordat we naar Junior Einstein kijken, is het eerlijk om vast te stellen dat BennaHub didactisch al verrassend compleet is. Je hebt een adaptief niveau (Auto 1–3 dat meebeweegt met succes), slim herhalen via Leitner, interleaving, een proeftoets- en oefentoetsmodus met timer, meerkeuze, gerichte foutfeedback met uitlegpanelen en visuals, een automatisch foutenschrift, een volwaardig ouder-dashboard, per-kind cloud-accounts en een stevige motivatielaag met beloningen, rangen, spelletjes en challenges. Dat is precies de kern die Junior Einstein óók heeft — je zit dus niet achter, je mist vooral een paar specifieke bouwstenen in de *opbouw* rondom het oefenen zelf.
 
 Junior Einstein is in de basis een oefenmachine met meer dan 500.000 vragen, verdeeld over aparte vakwebsites (rekenen, taal, begrijpend lezen, IEP, spelling, automatiseren, doorstroomtoets, engels, topo, zaakvakken). Hun voorsprong zit niet in de vraagtypes — die heb jij ook — maar in de schil eromheen: hoe ze een kind *naar* een som toe leiden, hoe ze uitleg aanbieden vóór en na een fout, hoe toegankelijk ze het maken, en hoe de ouder stuurt. Daar zit jouw winst.
 

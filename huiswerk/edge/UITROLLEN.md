@@ -6,7 +6,7 @@ opnieuw uitgerold moet worden — naar een ander project, of na een grote
 wijziging.
 
 De aanleiding was dit: de function stond op het oude, gedeelde project, en toen
-Bennahuiswerk naar zijn eigen database verhuisde riep de app een adres aan waar
+BennaHub naar zijn eigen database verhuisde riep de app een adres aan waar
 hij niet meer stond. Elk kind dat een vraag stelde kreeg "De vraagbaak doet het
 even niet."
 

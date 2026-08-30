@@ -1,4 +1,4 @@
-# Curriculum-aansluiting Bennahuiswerk
+# Curriculum-aansluiting BennaHub
 
 _Opgesteld juli 2026. Doel: de oefenstof laten aansluiten op de gangbare Nederlandse leerlijnen én op het niveau waar de kinderen komend schooljaar (vanaf september 2026) op zitten. De landelijke domeinindeling is leidend; de oefenvragen die ik toevoeg zijn origineel en zelf opgesteld op basis van die openbare domeinstructuur — geen materiaal van uitgevers of Junior Einstein overgenomen._
 
