@@ -282,6 +282,18 @@ const NEVO_TONIJN = [
     eiwit_g: 25.9, vet_g: 8.7, koolhydraat_g: 0, vezel_g: 0 },
 ]
 
+/* Wat de database teruggeeft als het woordzoeken niets vond en de terugval op
+   schrijfvarianten aansloeg. De vlag staat aan, en daar hoort het scherm een
+   regel bij te zetten. Zie health/database/20-zoeken-met-alternatieven.sql. */
+const NEVO_BENADERD = [
+  { nevo_code: '1491', naam: 'Lasagne bolognese koelverse maaltijd',
+    groep: 'Samengestelde gerechten', kcal: 162,
+    eiwit_g: 8.4, vet_g: 7.7, koolhydraat_g: 15.1, vezel_g: 1.1, benadering: true },
+  { nevo_code: '5458', naam: 'Lasagne groenten- koelverse maaltijd',
+    groep: 'Samengestelde gerechten', kcal: 112,
+    eiwit_g: 4.3, vet_g: 5.2, koolhydraat_g: 11.6, vezel_g: 1.5, benadering: true },
+]
+
 /** De databaseaanroepen onderscheppen voor één pagina. */
 async function bedienDb(pagina, dagen, fase) {
   await pagina.route('**/rest/v1/rpc/**', async (route) => {
@@ -289,7 +301,14 @@ async function bedienDb(pagina, dagen, fase) {
     const lijf = fn === 'kal_ophalen' ? alles(dagen, fase)
       : fn === 'kal_maaltijden' ? MAALTIJDEN
       : fn === 'kal_zoeken'
-        ? { maaltijden: MAALTIJDEN, nevo: NEVO_TONIJN, gerechten: [], eigen: [], merk: MERK }
+        ? {
+            maaltijden: MAALTIJDEN,
+            /* De verkeerd gespelde vraag krijgt de benaderde uitslag terug,
+               precies zoals de database hem geeft. Zo is te zien of het scherm
+               de vlag ook echt gebruikt en niet altijd dezelfde regel toont. */
+            nevo: /lesagn/i.test(route.request().postData() ?? '') ? NEVO_BENADERD : NEVO_TONIJN,
+            gerechten: [], eigen: [], merk: MERK,
+          }
       : fn === 'kal_koppelingen_lijst' ? KOPPELINGEN
       : fn === 'kal_koppeling_maken'
         ? { sleutel: 'kal_' + 'a3f19c7e42b08d5619fa2c3d7e8b04915cad6237'.slice(0, 48),
@@ -524,6 +543,30 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
     }
     if (!titel.includes('★')) throw new Error(`${naam}: het sterretje staat niet aan`)
     console.log(`${''.padEnd(26)} zoeken op "tonijn" → ${JSON.stringify(titel.trim())}`)
+
+    /* En de benadering. "Lesagna" gaf tot voor kort een leeg scherm; nu komt
+       Lasagne eruit, mét de regel dat er geraden is naar wat er bedoeld werd.
+       Beide helften tellen: de producten zonder die regel zou net zo goed een
+       gewone treffer kunnen zijn, en dan zwijgt het scherm over het raden. */
+    await pagina.getByLabel('Zoeken').fill('lesagna')
+    await pagina.waitForTimeout(700)
+    const gezegd = pagina.locator('.venster', { hasText: 'Niets met precies die spelling' })
+    if (!(await gezegd.count())) {
+      throw new Error(`${naam}: "lesagna" toont een benadering zonder dat te zeggen`)
+    }
+    const benaderd = (await pagina.locator('.venster .lijst .knip').allTextContents())
+      .find((t) => t.includes('Lasagne'))
+    if (!benaderd) throw new Error(`${naam}: "lesagna" vindt geen Lasagne`)
+    console.log(`${''.padEnd(26)} zoeken op "lesagna" → ${JSON.stringify(benaderd.trim())}`)
+
+    /* De tegenproef: bij een gewone treffer hoort die regel er NIET te staan.
+       Zonder deze helft zou een regel die er altijd staat er net zo uitzien. */
+    await pagina.getByLabel('Zoeken').fill('tonijn')
+    await pagina.waitForTimeout(700)
+    if (await pagina.locator('.venster', { hasText: 'Niets met precies die spelling' }).count()) {
+      throw new Error(`${naam}: "tonijn" krijgt de benaderingsregel, en dat hoort niet`)
+    }
+
     await pagina.getByLabel('Zoeken').fill('')
     await pagina.waitForTimeout(300)
   }
