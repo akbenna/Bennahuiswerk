@@ -438,6 +438,21 @@ function Zoekvangst(
               <Knop vol klein titel="Portie kiezen" opKlik={() => void kiesGerecht(g.id)}>+</Knop>
             </div>
           ))}
+          {/* WAAROM DIT ERBOVEN STAAT EN NIET WEGGELATEN IS
+
+              De database valt terug op schrijfvarianten als het gewone zoeken
+              niets vond: "lesagna" komt zo bij Lasagne uit. Dat is precies de
+              bedoeling, maar het stilzwijgend tonen zou hetzelfde zijn als een
+              getal zonder zijn onzekerheid geven — je zou denken dat je het
+              gevonden hebt terwijl er geraden is naar wat je bedoelde.
+
+              Eén regel, en alleen als het echt een benadering is. Bij een gewone
+              treffer staat hier niets. */}
+          {uitslag.nevo.some((n) => n.benadering) && (
+            <p className="mini" style={{ padding: '6px 2px 2px' }}>
+              Niets met precies die spelling. Dit lijkt erop:
+            </p>
+          )}
           {uitslag.nevo.map((n) => (
             <div key={'n' + n.nevo_code}>
               <Chip graad="C" />

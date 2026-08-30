@@ -56,6 +56,15 @@ export interface NevoTreffer {
   vet_g: number | null
   koolhydraat_g: number | null
   vezel_g: number | null
+  /* True als dit product niet gevonden maar benaderd is: het woordzoeken gaf
+     niets en de terugval op schrijfvarianten heeft het erbij gehaald. "Lesagna"
+     komt zo bij Lasagne uit. Het scherm hoort dat te zeggen in plaats van te
+     doen alsof er gewoon iets gevonden is.
+
+     Optioneel, want de database geeft hem pas mee vanaf
+     health/database/20-zoeken-met-alternatieven.sql. Draait de app tegen een
+     database zonder dat bestand, dan is hij undefined en verandert er niets. */
+  benadering?: boolean
 }
 
 export interface GerechtTreffer {

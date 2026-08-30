@@ -28,7 +28,7 @@ import {
   AccountVenster, Aanmelden, ImportVenster, ProfielVenster,
 } from './vensters/Instellingen'
 import { Opzet } from './Opzet'
-import { Kaart, Knop } from './onderdelen/basis'
+import { Kaart, Knop, Spin } from './onderdelen/basis'
 import { useVeeg } from './veeg'
 
 /* De namen op de balk zijn niet de namen in de code. 'Model' en 'Klinisch'
@@ -130,6 +130,31 @@ export function App() {
     return (
       <div className="wrap">
         <Aanmelden bezig={k.bezig} fout={k.fout} opAanmelden={(a, w, n) => void k.aanmelden(a, w, n)} />
+      </div>
+    )
+  }
+
+  /* EERST OPHALEN, DAN PAS OORDELEN
+
+     De sessie komt uit localStorage en is er dus meteen; `alles` komt van de
+     server en is er een halve seconde later. In die halve seconde is `profiel`
+     nog null, en zonder deze poort las het scherm dat als "deze gebruiker is
+     nieuw" en zette het de opzetpagina neer — die daarna vanzelf weer verdween.
+
+     Dat was niet alleen lelijk. Op die pagina staan twee knoppen die een profiel
+     zetten en de augustusreeks kunnen inladen; één tik in dat raampje schreef
+     over je eigen profiel heen.
+
+     Een fout hoort hier wél te blijven staan: gaat het ophalen mis, dan is dit
+     scherm het enige dat je nog ziet, en een eeuwig draaiend rondje zegt niets. */
+  if (!k.geladen) {
+    return (
+      <div className="wrap">
+        <Kaart plat style={{ marginTop: 24, textAlign: 'center' }}>
+          {k.fout
+            ? <span className="klein">{k.fout}</span>
+            : <span className="klein"><Spin /> Je gegevens ophalen…</span>}
+        </Kaart>
       </div>
     )
   }
