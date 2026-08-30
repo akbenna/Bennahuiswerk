@@ -261,6 +261,16 @@ const MAALTIJDEN = [{
 
 /* Vier tonijnregels uit NEVO, om te kunnen zien dat de eigen maaltijd erbovenuit
    komt en niet ergens tussen de tabel verdwijnt. */
+/* Eén merkproduct, met de velden die er in `merk_actief` echt in staan. Het is
+   met opzet een product mét portie én verpakkingsgewicht: dat is het geval waar
+   drie keuzes uit komen, en dus het geval waarin de volgorde ertoe doet. */
+const MERK = [{
+  id: 'm1', barcode: '4056489620921', naam: 'Pindakaas 100% pinda\'s', merk: 'Lidl',
+  groep: 'plant-based-foods-and-beverages', kcal: 604, eiwit_g: 27.3, vet_g: 47.5,
+  koolhydraat_g: 12.2, vezel_g: null, verpakking_gram: 600, portie_gram: 15,
+  portie_naam: '15 g',
+}]
+
 const NEVO_TONIJN = [
   { nevo_code: '1589', naam: 'Tonijn in olie blik', groep: 'Vis', kcal: 206,
     eiwit_g: 27, vet_g: 10.8, koolhydraat_g: 0.1, vezel_g: 0.1 },
@@ -278,7 +288,8 @@ async function bedienDb(pagina, dagen, fase) {
     const fn = route.request().url().split('/').pop()
     const lijf = fn === 'kal_ophalen' ? alles(dagen, fase)
       : fn === 'kal_maaltijden' ? MAALTIJDEN
-      : fn === 'kal_zoeken' ? { maaltijden: MAALTIJDEN, nevo: NEVO_TONIJN, gerechten: [], eigen: [] }
+      : fn === 'kal_zoeken'
+        ? { maaltijden: MAALTIJDEN, nevo: NEVO_TONIJN, gerechten: [], eigen: [], merk: MERK }
       : fn === 'kal_koppelingen_lijst' ? KOPPELINGEN
       : fn === 'kal_koppeling_maken'
         ? { sleutel: 'kal_' + 'a3f19c7e42b08d5619fa2c3d7e8b04915cad6237'.slice(0, 48),
@@ -413,6 +424,44 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
     await tegel.locator('.maalopen').click()
     await pagina.waitForTimeout(120)
     console.log(`${naam.padEnd(26)} maaltijd: dicht=1 regel · 1 portie=${heel} kcal, ½=${half} kcal`)
+  }
+
+  /* MERKPRODUCTEN IN DE ZOEKUITSLAG
+
+     Ze horen ónder de tabelwaarden te staan, met het teken ◈ en graad D. Dat is
+     geen rangorde van belang maar van herkomst: een etiket is een opgave van de
+     fabrikant. Komt dit ooit boven de tabel te staan, of krijgt het ◆, dan is de
+     hele reden voor een aparte tabel weg. */
+  {
+    await pagina.getByLabel('Zoeken').fill('pindakaas')
+    await pagina.waitForTimeout(700)
+    const rijen = pagina.locator('.venster .lijst > *')
+    const teksten = await rijen.allTextContents()
+    const iMerk = teksten.findIndex((t) => t.includes('Pindakaas 100%'))
+    if (iMerk < 0) throw new Error(`${naam}: het merkproduct staat niet in de uitslag`)
+
+    const iNevo = teksten.findIndex((t) => t.includes('Tonijn'))
+    if (iNevo >= 0 && iMerk < iNevo) {
+      throw new Error(`${naam}: het merkproduct staat bóven de tabelwaarde`)
+    }
+    const rij = rijen.nth(iMerk)
+    if (!(await rij.locator('.herkomst').count())) {
+      throw new Error(`${naam}: het merkproduct heeft geen herkomstteken`)
+    }
+    const teken = (await rij.locator('.herkomst').textContent()) ?? ''
+    if (teken.trim() !== '◈') {
+      throw new Error(`${naam}: het merkteken is ${JSON.stringify(teken)} en geen ◈`)
+    }
+    if ((await rij.locator('.conf').textContent()) !== 'D') {
+      throw new Error(`${naam}: een etiketwaarde hoort graad D te krijgen`)
+    }
+    const regel = teksten[iMerk] ?? ''
+    if (!regel.includes('pak van 600 g')) {
+      throw new Error(`${naam}: het verpakkingsgewicht staat er niet bij — ${JSON.stringify(regel)}`)
+    }
+    console.log(`${''.padEnd(26)} merk: ◈ op plek ${iMerk + 1}, onder de tabel, met pakgewicht`)
+    await pagina.getByLabel('Zoeken').fill('')
+    await pagina.waitForTimeout(300)
   }
 
   /* DE BRUG VAN ZOEKEN NAAR BESCHRIJVEN

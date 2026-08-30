@@ -12,7 +12,14 @@
  * daarom een teken geworden.
  *
  *   ◆  gemeten     — de waarde komt uit de voedingsmiddelentabel
+ *   ◈  etiket      — de opgave van een fabrikant
  *   ◇  geschat     — een schatting: het model, een gerecht of je eigen product
+ *
+ * Het middelste teken is er later bij gekomen, met de merkproducten, en het
+ * moest erbij. Een etiket is geen van beide: het is geen laboratoriumbepaling,
+ * maar het is ook geen gok — er staat een fabrikant achter die er wettelijk aan
+ * gehouden kan worden, met een toegestane marge van rond de tien procent op de
+ * energie. Dat onder ◇ scharen zou het te laag inschatten en onder ◆ te hoog.
  *
  * Gevuld tegen open, hetzelfde teken. Dat is met opzet: het zijn twee soorten
  * van hetzelfde, geen goed en fout. Een schatting is niet verkeerd, hij is
@@ -41,7 +48,7 @@ export interface RegelHerkomst {
 
 export interface Herkomst {
   /** Het teken dat op het scherm komt. */
-  teken: '◆' | '◇'
+  teken: '◆' | '◈' | '◇'
   /** Wat het teken betekent, in gewone taal. Voor `title` en schermlezers. */
   uitleg: string
   /** Of er een gemeten tabelwaarde achter zit. */
@@ -52,6 +59,12 @@ const GEMETEN: Herkomst = {
   teken: '◆',
   gemeten: true,
   uitleg: 'gemeten waarde uit de voedingsmiddelentabel',
+}
+
+const ETIKET: Herkomst = {
+  teken: '◈',
+  gemeten: false,
+  uitleg: 'etiketwaarde van de fabrikant',
 }
 
 const GESCHAT: Herkomst = {
@@ -67,7 +80,12 @@ const GESCHAT: Herkomst = {
  * terwijl de onderdelen wél uit de tabel kwamen.
  */
 export function herkomstVan(regel: RegelHerkomst): Herkomst {
-  return regel.nevo_naam || regel.nevo_code ? GEMETEN : GESCHAT
+  /* De tabel gaat voor. Een merkregel heeft nooit een tabelnaam, dus deze twee
+     kunnen elkaar niet in de weg zitten — maar de volgorde staat er expliciet,
+     want als het ooit wél kan, wint de meting. */
+  if (regel.nevo_naam || regel.nevo_code) return GEMETEN
+  if (regel.bron === 'merk') return ETIKET
+  return GESCHAT
 }
 
 /** Wat er achter het teken hoort te staan, als er ruimte voor is. */
@@ -92,7 +110,10 @@ export function Bron({ regel }: { regel: RegelHerkomst }) {
   return (
     <>
       <abbr className="herkomst" title={h.uitleg}>{h.teken}</abbr>{' '}
-      {regel.nevo_naam ?? (h.gemeten ? 'tabelwaarde' : 'schatting van het model')}
+      {regel.nevo_naam
+        ?? (h.gemeten ? 'tabelwaarde'
+            : h.teken === '◈' ? 'etiket van de fabrikant'
+            : 'schatting van het model')}
     </>
   )
 }

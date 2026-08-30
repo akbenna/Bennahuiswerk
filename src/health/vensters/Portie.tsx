@@ -18,7 +18,7 @@ import { Chip, Kaart, Knop, Kop, Rij, Tussen, Uitleg, Venster } from '../onderde
 import { dec, dz } from '@/gedeeld/getal'
 import { vandaag } from '@/gedeeld/datum'
 import type { EigenProduct, Graad, IsoDatum, Moment } from '@/gedeeld/db/tabellen'
-import type { Gerecht, NieuweRegel, ProductMetMaten } from '@/gedeeld/db/rpc'
+import type { Gerecht, MerkTreffer, NieuweRegel, ProductMetMaten } from '@/gedeeld/db/rpc'
 import { Bron } from '../herkomst'
 
 /** Waar de portiekeuze op dit moment over gaat. */
@@ -26,8 +26,9 @@ export type Onderwerp =
   | { soort: 'gerecht'; gerecht: Gerecht }
   | { soort: 'nevo'; product: ProductMetMaten }
   | { soort: 'eigen'; product: EigenProduct }
+  | { soort: 'merk'; product: MerkTreffer }
 
-interface Keuze {
+export interface Keuze {
   label: string
   /** Hetzelfde label zonder icoon; wat in de regel en de onzekerheid komt. */
   kaal: string
@@ -103,6 +104,8 @@ export function bouwKeuzes(o: Onderwerp, metOptioneel: boolean, gram: string): K
     return uit
   }
 
+  if (o.soort === 'merk') return keuzesVoorMerk(o.product)
+
   const pr = o.product
   const g = Number(pr.per) || 100
   return [{
@@ -115,6 +118,63 @@ export function bouwKeuzes(o: Onderwerp, metOptioneel: boolean, gram: string): K
     eiwit_g: Number(pr.eiwit_g) || 0, vet_g: Number(pr.vet_g) || 0,
     koolhydraat_g: Number(pr.koolhydraat_g) || 0, vezel_g: Number(pr.vezel_g) || 0,
   }]
+}
+
+/**
+ * DE PORTIES VAN EEN MERKPRODUCT
+ *
+ * Drie manieren om te zeggen hoeveel, en ze komen uit drie verschillende
+ * bronnen — vandaar dat ze niet dezelfde band krijgen.
+ *
+ *   100 g            de maat waarin de voedingswaarde op het etiket staat
+ *   één portie       wat de fabrikant een portie noemt
+ *   de verpakking    wat er in het pak zit
+ *
+ * DE BAND, EN WAAROM HIJ NIET NUL IS
+ *
+ * Een etiket ziet eruit als een exact getal en is het niet. De Europese regels
+ * staan bij de meeste voedingswaarden een afwijking toe die voor energie rond de
+ * twintig procent ligt; dat is geen slordigheid van de fabrikant maar een
+ * erkende marge. Wie 100 g afweegt weet dus het gewicht precies en de
+ * voedingswaarde niet.
+ *
+ * Daarom hier tien procent aan weerskanten op alle drie de keuzes: het gewicht
+ * staat vast, de waarde erachter niet. Dat is smaller dan een geschatte portie
+ * en breder dan een tabelwaarde, en dat is precies waar een etiket hoort te
+ * staan.
+ *
+ * De portie van de fabrikant krijgt daarbovenop niets extra's. "Eén portie" is
+ * hún keuze en niet die van jou — wie een dubbele schep neemt kiest gewoon twee.
+ */
+export function keuzesVoorMerk(p: MerkTreffer): Keuze[] {
+  const per = (waarde: number | null, gram: number) => ((Number(waarde) || 0) * gram) / 100
+  const maak = (label: string, sub: string, gram: number): Keuze => ({
+    label, kaal: label, sub,
+    gram, gram_laag: gram, gram_hoog: gram,
+    kcal_punt: Math.round((p.kcal * gram) / 100),
+    kcal_laag: Math.round((p.kcal * gram * 0.9) / 100),
+    kcal_hoog: Math.round((p.kcal * gram * 1.1) / 100),
+    eiwit_g: per(p.eiwit_g, gram), vet_g: per(p.vet_g, gram),
+    koolhydraat_g: per(p.koolhydraat_g, gram), vezel_g: per(p.vezel_g, gram),
+  })
+
+  const uit = [maak('100 g', 'zoals het op het etiket staat', 100)]
+
+  /* De portie van de fabrikant, als hij er een noemt. Hij komt vooraan, want
+     het is de maat waarin het product bedoeld is. */
+  if (p.portie_gram && p.portie_gram > 0) {
+    uit.unshift(maak(
+      p.portie_naam?.trim() ? `portie (${dz(p.portie_gram)} g)` : `portie ${dz(p.portie_gram)} g`,
+      'wat de fabrikant een portie noemt', p.portie_gram))
+  }
+
+  /* En het hele pak. Zelden wat je in één keer eet, maar wel wat je in de hand
+     hebt als je niet weet hoeveel eruit ging. */
+  if (p.verpakking_gram && p.verpakking_gram > 0 && p.verpakking_gram <= 5000) {
+    uit.push(maak(`hele verpakking (${dz(p.verpakking_gram)} g)`,
+                  'alles wat er in het pak zit', p.verpakking_gram))
+  }
+  return uit
 }
 
 /**
@@ -147,6 +207,12 @@ export function bouwOnzekerheid(
     uit.push(k.gewogen
       ? 'gewicht afgewogen; alleen de onzekerheid van de voedingsmiddelentabel resteert'
       : `huishoudmaat, niet gewogen — ${dz(k.gram_laag)}–${dz(k.gram_hoog)} g per ${k.kaal}`)
+  } else if (o.soort === 'merk') {
+    uit.push(`etiketwaarde van ${o.product.merk ?? 'de fabrikant'}, geen tabelwaarde`)
+    uit.push('de wettelijke marge op een etiket is voor energie ongeveer tien procent')
+    if (k.kaal.startsWith('portie')) {
+      uit.push('portie zoals de fabrikant hem noemt, niet door jou afgewogen')
+    }
   } else {
     uit.push('etiketwaarde van een eigen product, niet nagewogen')
   }
@@ -209,7 +275,8 @@ export function PortieVenster(
       koolhydraat_g: half(k.koolhydraat_g), vezel_g: half(k.vezel_g),
       conf, onzekerheidsbronnen: onzeker,
       bron: onderwerp.soort === 'gerecht' ? 'bibliotheek'
-          : onderwerp.soort === 'nevo' ? 'nevo' : 'handmatig',
+          : onderwerp.soort === 'nevo' ? 'nevo'
+          : onderwerp.soort === 'merk' ? 'merk' : 'handmatig',
       ...(g ? { dish_id: g.id } : {}),
       ...(onderwerp.soort === 'nevo' ? { nevo_code: onderwerp.product.nevo_code } : {}),
     }

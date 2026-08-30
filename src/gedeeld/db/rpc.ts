@@ -75,6 +75,30 @@ export interface Zoekuitslag {
   nevo: NevoTreffer[]
   gerechten: GerechtTreffer[]
   eigen: EigenProduct[]
+  /* Merkproducten staan onderaan, en dat is geen willekeur: een etiketwaarde is
+     een opgave van de fabrikant met een wettelijke speelruimte van rond de
+     twintig procent, terwijl NEVO in een laboratorium bepaald is. Zie
+     health/database/18-merkproducten.sql. */
+  merk: MerkTreffer[]
+}
+
+/** Eén merkproduct. Zie `merk_actief` en kal_merk_zoek() in de database. */
+export interface MerkTreffer {
+  id: string
+  barcode: string
+  naam: string
+  merk: string | null
+  groep: string | null
+  kcal: number
+  eiwit_g: number | null
+  vet_g: number | null
+  koolhydraat_g: number | null
+  vezel_g: number | null
+  /** Wat er in het pak zit. Null als de bron het niet weet. */
+  verpakking_gram: number | null
+  /** Wat de fabrikant een portie noemt. */
+  portie_gram: number | null
+  portie_naam: string | null
 }
 
 /** Eén portie van een gerecht, doorgerekend. Zie kal_gerecht() in de database. */
