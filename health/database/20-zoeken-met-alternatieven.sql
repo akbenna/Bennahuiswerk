@@ -618,19 +618,45 @@ select w as term,
        (select bool_or(benadering) from kal_nevo_zoek(w, 8)) as benadert
 from unnest(array['mayonaise','tonijn','halvarine','lesagna','spagetti','koeskoes']) w;
 
--- 7. De gerechtenbibliotheek. Deze drie zeggen elk iets anders:
---    `nu` is wat het zoeken vandaag geeft, en voor de anderstalige namen hoort
---    dat nul te zijn — die kolom werd niet meegezocht. Na blok 3 hoort er iets
---    te staan. Vul hier gerust namen in die in jouw bibliotheek voorkomen; deze
---    zijn geraden op wat er in `names` pleegt te staan.
-select w as term, jsonb_array_length(kal_zoeken(:'token', w, 10) -> 'gerechten') as gerechten
-from unnest(array['tajine','tazjine','harira','hariera','msemen','msemmen',
-                  'mercimek','roti','couscous']) w;
+-- 7. De gerechtenbibliotheek. Zonder token, want de Supabase-editor kent de
+--    psql-notatie `:'token'` niet — dus niet via kal_zoeken maar met dezelfde
+--    twee takken rechtstreeks op de tabel.
+--
+--    `gevonden` is wat het gewone zoeken geeft (tak 1, nu ook op `names`),
+--    `benaderd` wat de terugval erbij haalt (tak 2). Voor "tajine" en "harira"
+--    hoort de eerste kolom te vullen, voor "tazjine" en "hariera" de tweede.
+--    Staat "mercimek" in beide op nul, dan gebruikt deze bibliotheek andere
+--    sleutels in `names`; kijk dan met
+--      select distinct jsonb_object_keys(names) from cultural_dishes;
+with vraag(w) as (
+  select unnest(array['tajine','tazjine','harira','hariera','msemen','msemmen',
+                      'mercimek','roti','couscous'])
+)
+select v.w as term,
+       (select count(*) from cultural_dishes d
+         where d.owner_patient_id is null
+           and lower(coalesce(d.name_nl,'') || ' ' || coalesce(d.description_nl,'') || ' '
+                     || coalesce(d.cuisine,'') || ' '
+                     || coalesce((select string_agg(t.value, ' ')
+                                    from jsonb_each_text(d.names) t), ''))
+               like '%' || v.w || '%') as gevonden,
+       (select count(*) from cultural_dishes d
+         where d.owner_patient_id is null
+           and exists (
+             select 1 from unnest(string_to_array(
+                      regexp_replace(
+                        lower(coalesce(d.name_nl,'') || ' '
+                              || coalesce((select string_agg(t.value, ' ')
+                                             from jsonb_each_text(d.names) t), '')),
+                        '[^a-zà-ÿ0-9 ]', ' ', 'g'), ' ')) as nw
+              where length(v.w) >= 4 and length(nw) >= 4
+                and ((length(kal_woordskelet(v.w)) >= 3
+                      and kal_woordskelet(v.w) = kal_woordskelet(nw))
+                     or extensions.word_similarity(v.w, nw) >= 0.5))) as benaderd
+from vraag v
+order by v.w;
 
 -- Terugdraaien: draai `kal_nevo_zoek` uit bestand 12 en `kal_zoeken` uit bestand
 -- 18 opnieuw, en laat `kal_woordskelet` staan — die wordt dan door niets meer
 -- aangeroepen en doet geen kwaad.
---
--- LET OP: blok 6 vraag 7 heeft een sessietoken nodig. Zet hem eerst:
---   \set token 'plak-hier-een-geldig-token'
--- of sla die ene vraag over; de andere zes werken zonder.
+
