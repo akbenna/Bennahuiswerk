@@ -71,6 +71,7 @@ na te gaan door de md5 van `prosrc` te vergelijken.
 | 18 | merkproducten uit Open Food Facts, achter een ODbL-poort |
 | 19 | `'merk'` toegestaan als herkomst van een regel |
 | 20 | zoeken met alternatieven — schrijfvarianten en andere namen |
+| 21 | de zeef en de volgorde omgedraaid, nadat 20 haring voor harira gaf |
 
 Twee dingen zaten daar structureel in. De **licentiepoort**: net als `nevo_versies`
 heeft `merk_bronnen` een schakelaar, en zonder gecontroleerde licentie én
@@ -111,6 +112,25 @@ een benadering mag nooit een echte treffer verdringen. En als hij draait zegt he
 scherm dat ook — *"Niets met precies die spelling. Dit lijkt erop:"* — want een
 benadering stilzwijgend tonen is dezelfde soort leugen als een getal zonder zijn
 onzekerheid.
+
+### En toen bleek de helft ervan fout
+
+De eerste versie zeefde op twee maten tegelijk, skelet én trigram, allebei met
+een drempel. Op de echte tabel gaf dat `harira → Haring` en `doner → Donut`,
+netjes ingepakt onder "dit lijkt erop". Meten liet zien waarom: de goede
+treffers en de ruis liggen in exact dezelfde band (spagetti/spaghetti 0,58,
+harira/haring 0,57), dus er ís geen drempel die ze scheidt.
+
+Wat ik verkeerd deed is niet de maat kiezen maar de proef schrijven. Blok 6 van
+bestand 20 telde treffers en keek naar één onzinwoord. Het keek niet naar de
+námen in de rijen — en dat is letterlijk dezelfde fout als waar deze hele reeks
+mee begon, bij "mayonaise". Ik heb hem opnieuw gemaakt.
+
+`21-de-zeef-en-de-volgorde.sql` draait de rollen om: het skelet is de zeef (dat
+zeeft schoon — harira wordt `rr` en valt af op de lengte-eis), en de trigram is
+de volgorde binnen wat het skelet doorlaat (want `brt` staat voor brood, bereid,
+bread en broad samen, en zit in 285 producten). Gemeten: "broot" zet
+Glutenvrij brood bovenaan en laat "bereid" wegzakken.
 
 Daar kwam nog iets bij dat ik niet zocht. De gerechtenbibliotheek heeft een kolom
 `names` met alternatieve namen per taal: nl, darija_lat, darija_ar, tarifit_lat,
