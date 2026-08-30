@@ -6,7 +6,7 @@ import type { Ik } from './sessie'
 import { hoofd, nu } from './opmaak'
 import {
   TekenBoek, TekenGrafiek, TekenHuis, TekenHulp, TekenKalender, TekenKlok,
-  TekenRaster, TekenSleutel, TekenSter, TekenUit,
+  TekenLamp, TekenRaster, TekenSleutel, TekenSter, TekenUit,
 } from './tekens'
 
 /** De kleur van een persoon of een app als CSS-variabelen. */
@@ -263,6 +263,22 @@ export function Onthaal(
         </div>
       </div>
     </header>
+  )
+}
+
+/** De balk onderaan, in de vorm van de tip uit het ontwerp — maar met iets erin
+ *  dat ergens heen gaat. */
+export function Snelbalk() {
+  return (
+    <div className="snelbalk">
+      <span className="snelico"><TekenLamp /></span>
+      <strong>Rechtstreeks naar een cursus</strong>
+      <span className="snellinks">
+        <a href="huiswerk/cursussen/kompas.html">Kompas</a>
+        <a href="huiswerk/cursussen/communicatie.html">Verbind</a>
+        <a href="huiswerk/cursussen/presenteren.html">Podium</a>
+      </span>
+    </div>
   )
 }
 

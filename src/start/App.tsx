@@ -19,7 +19,7 @@ import { useCallback, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import { APPS } from './apps'
 import type { AppTegel } from './apps'
-import { Appgroep, Balk, GROEPEN, Onthaal, Voet, Zijbalk } from './onderdelen'
+import { Appgroep, Balk, GROEPEN, Onthaal, Snelbalk, Voet, Zijbalk } from './onderdelen'
 import { Code, Kiezen, Opzetten } from './schermen/Poort'
 import { Ouder } from './schermen/Ouder'
 import { CodeWijzigen } from './schermen/CodeWijzigen'
@@ -39,7 +39,7 @@ type Scherm =
   | { naam: 'ouder' }
 
 /** Een leeg lijstje bij een lid betekent "alles wat bij je rol hoort". Staat er
- *  wel iets in, dan is dat de hele lijst — zo kun je Amaani alleen het huiswerk
+ *  wel iets in, dan is dat de hele lijst — zo kun je Amaani de Academie geven
  *  zonder de andere kinderen erbij. */
 function zichtbareApps(wie: Ik): readonly AppTegel[] {
   if (wie.apps.length) return APPS.filter((a) => wie.apps.includes(a.id))
@@ -106,6 +106,7 @@ export function App() {
             {groepen.map((g) => (
               <Appgroep key={g.anker} kop={g} lijst={lijst.filter((a) => a.groep === g.groep)} />
             ))}
+            <Snelbalk />
           </main>
           <Voet />
         </div>

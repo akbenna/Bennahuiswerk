@@ -17,6 +17,7 @@ scherm van zestien pixels breed en ook voor wie nog niet vlot leest.
 | `geloofsstudie.svg` | Geloofsstudie | paars | een boekrol |
 | `koran.svg` | Koran uit je hoofd | indigo | een boek met leeslint |
 | `kalibratie.svg` | Energiebalans | leisteen | een balans met twee schalen |
+| `academie.svg` | Academie | oker | een baret |
 
 De kleuren komen uit het palet van de hub (`index.html`, de lichte variant).
 Leisteen is er als enige onverzadigd bij: de zeven leerapps zijn gekleurd omdat

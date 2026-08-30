@@ -1,7 +1,7 @@
 {
   "name": "Huiswerk — oefenen voor school",
   "short_name": "Huiswerk",
-  "description": "Oefenen voor school: rekenen, taal en spelling. Werkt offline.",
+  "description": "Oefenen voor school: rekenen, taal, spelling en de Academie. Werkt offline.",
   "lang": "nl",
   "start_url": "./index.html",
   "scope": "./",
