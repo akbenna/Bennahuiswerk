@@ -41,6 +41,18 @@ export interface Kalibratie {
   sessie: Sessie | null
   alles: Alles
   dagenkaart: Dagenkaart
+  /* WAAROM DIT ER APART BIJ STAAT
+
+     Zonder deze vlag kent de app twee toestanden — er is een profiel en er is er
+     geen — en niet de derde: ik ben nog aan het ophalen. De sessie komt uit
+     localStorage en is er dus meteen, terwijl `alles` nog LEEG is. Het scherm
+     concludeerde in die halve seconde dat je nieuw bent en zette de
+     opzetpagina neer, die daarna vanzelf weer verdween.
+
+     Lelijk, maar erger dan lelijk: op die pagina staan twee knoppen die een
+     profiel zetten en de augustusreeks kunnen inladen. Eén tik in dat raampje
+     schreef over je eigen profiel heen. */
+  geladen: boolean
   bezig: boolean
   /** De laatste fout, zodat een scherm hem kan tonen in plaats van een alert. */
   fout: string | null
@@ -55,6 +67,7 @@ export interface Kalibratie {
 export function useKalibratie(): Kalibratie {
   const [sessie, zetSessie] = useState<Sessie | null>(leesSessie)
   const [alles, zetAlles] = useState<Alles>(LEEG)
+  const [geladen, zetGeladen] = useState(false)
   const [bezig, zetBezig] = useState(false)
   const [fout, zetFout] = useState<string | null>(null)
 
@@ -63,6 +76,7 @@ export function useKalibratie(): Kalibratie {
     // De server kan velden weglaten; een ontbrekende lijst hoort leeg te zijn
     // en niet undefined, anders valt een scherm om op `.map` van niets.
     zetAlles({ ...LEEG, ...o })
+    zetGeladen(true)
   }, [])
 
   useEffect(() => {
@@ -77,6 +91,7 @@ export function useKalibratie(): Kalibratie {
         if (e instanceof DatabaseFout && e.status >= 400 && e.status < 500) {
           localStorage.removeItem(SLEUTEL_SESSIE)
           zetSessie(null)
+          zetGeladen(false)
         } else {
           zetFout(e instanceof Error ? e.message : String(e))
         }
@@ -105,6 +120,7 @@ export function useKalibratie(): Kalibratie {
     const t = sessie?.token
     zetSessie(null)
     zetAlles(LEEG)
+    zetGeladen(false)
     try { localStorage.removeItem(SLEUTEL_SESSIE) } catch { /* mag falen */ }
     // De server op de hoogte stellen mag mislukken: lokaal ben je al weg.
     if (t) { try { await roep('kal_afmelden', { p_token: t }) } catch { /* stil */ } }
@@ -135,7 +151,7 @@ export function useKalibratie(): Kalibratie {
   )
 
   return {
-    sessie, alles, dagenkaart, bezig, fout,
+    sessie, alles, dagenkaart, geladen, bezig, fout,
     wisFout: useCallback(() => zetFout(null), []),
     aanmelden, afmelden, wijzig, herlaad,
   }

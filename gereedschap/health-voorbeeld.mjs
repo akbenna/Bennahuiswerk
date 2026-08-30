@@ -928,5 +928,39 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
   throw new Error('de maaltijdvakken bewegen niet mee met de schermbreedte')
 }
 
+/* HET RAAMPJE WAARIN DE OPZETPAGINA VERSCHEEN
+   ------------------------------------------------------------------------
+   De sessie komt uit localStorage en is er meteen; `kal_ophalen` doet er even
+   over. Zolang de app die twee niet uit elkaar hield, las hij een profiel dat er
+   nog niet was als "deze gebruiker is nieuw" en zette hij de opzetpagina neer —
+   die daarna vanzelf weer verdween. Op die pagina staan twee knoppen die een
+   profiel zetten en de augustusreeks kunnen inladen.
+
+   Hier wordt het ophalen expres een seconde opgehouden, zodat dat raampje wijd
+   openstaat en te zien is wat erin gebeurt. Er hoort een wachtregel te staan en
+   géén "Eerste keer". */
+{
+  const traag = await ctx.newPage()
+  await bedienDb(traag, 28, 'afvallen')
+  await traag.route('**/rest/v1/rpc/kal_ophalen', async (route) => {
+    await new Promise((r) => setTimeout(r, 1000))
+    await route.fallback()
+  })
+  await traag.goto(`http://localhost:${poort}/health/`)
+  await traag.waitForTimeout(400)
+
+  const wacht = await traag.locator('text=Je gegevens ophalen').count()
+  const eerste = await traag.locator('h1', { hasText: 'Eerste keer' }).count()
+  if (eerste) throw new Error('tijdens het ophalen staat de opzetpagina er — één tik en je profiel is weg')
+  if (!wacht) throw new Error('tijdens het ophalen staat er niets; een leeg scherm zegt ook niets')
+
+  /* En daarna hoort de gewone app er te staan. Zonder deze helft zou een scherm
+     dat voor eeuwig "ophalen" zegt er net zo goed uitzien. */
+  await traag.waitForSelector('.hero', { timeout: 5000 })
+  const kop = await traag.locator('.hero h2').textContent()
+  console.log(`traag ophalen              wachtregel=ja · opzetpagina=nee · daarna kop=${JSON.stringify(kop)}`)
+  await traag.close()
+}
+
 await browser.close()
 server.close()
