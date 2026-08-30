@@ -13,11 +13,12 @@
  * Twee helften, en ze zijn allebei nodig:
  *
  *   1. de drie cursussen openen zonder slot en met inhoud erop
- *   2. de poort — het scherm waarop je kiest wie je bent — wijst ernaar, met
- *      erbij dat er geen wachtwoord nodig is
+ *   2. ze staan als drie eigen tegels tussen de andere apps, elk met een eigen
+ *      toelichting, en zonder snelkoppelingsbalk ernaast
  *
- * Zonder die tweede helft zou "vrij toegankelijk" betekenen: bereikbaar voor
- * wie het adres al kent. Dat is niet hetzelfde als vindbaar.
+ * Zonder die tweede helft zou "toegankelijk" betekenen: bereikbaar voor wie het
+ * adres al kent. Dat is niet hetzelfde als vindbaar. En één verzameltegel die
+ * "Kompas, Verbind, Podium" zegt, zegt niet waar er een van drieën over gaat.
  *
  * Hij leest `dist/`, dus eerst bouwen.
  *
@@ -80,37 +81,47 @@ for (const [bestand, merk] of CURSUSSEN) {
 /* ------------------------------------------------------------------ 2 */
 {
   const pg = await browser.newPage()
-  /* De poort haalt de gezinsleden bij de database op. Die is hier niet, dus we
-     verzinnen er twee — anders belandt het scherm op "geen verbinding" en is de
-     poort zelf niet te zien. */
+  /* De hub haalt de gezinsleden bij de database op en onthoudt wie er is
+     aangemeld. Allebei verzinnen we hier, want anders staat de poort in de weg
+     en zijn de tegels niet te zien. */
   await pg.route('**/rest/v1/rpc/**', (route) => route.fulfill({
     status: 200, contentType: 'application/json',
     body: JSON.stringify([
       { naam: 'amaani', rol: 'kind', emoji: '🚀', kleur: 'arabisch', heeftCode: true },
-      { naam: 'hanae', rol: 'ouder', emoji: '🌷', kleur: 'spel', heeftCode: true },
+      { naam: 'abdelkader', rol: 'ouder', emoji: '🌿', kleur: 'health', heeftCode: true },
     ]),
   }))
+  /* `tijd` moet erbij: een aanmelding vervalt na acht uur, en zonder dat veld
+     is hij per definitie verlopen en staat de poort er alsnog. */
+  await pg.addInitScript(`localStorage.setItem('bennahub.wie', JSON.stringify({
+    gezin: 'benna', naam: 'abdelkader', rol: 'ouder', emoji: '\u{1F33F}',
+    kleur: 'health', apps: [], tijd: Date.now(),
+  }))`)
   await pg.goto(`http://localhost:${poort}/`, { waitUntil: 'networkidle' })
-  await pg.waitForSelector('.persoon', { timeout: 5000 })
+  await pg.waitForSelector('.appt', { timeout: 5000 })
 
-  process.stdout.write('poort         ')
-  const balk = pg.locator('.snelbalk')
-  const links = await pg.locator('.snelbalk .snellinks a').allTextContents()
-  if (!(await balk.count())) val('de cursussen staan niet op de poort')
-  else if (links.length !== 3) val(`${links.length} cursuslinks in plaats van drie`)
-  else if (!(await balk.innerText()).toLowerCase().includes('zonder wachtwoord')) {
-    val('de poort zegt niet dat er geen wachtwoord nodig is')
-  } else {
-    /* En de weg zelf: één klik hoort in de cursus uit te komen, zonder dat er
-       onderweg om een code gevraagd wordt. */
-    await pg.locator('.snelbalk .snellinks a').first().click()
+  process.stdout.write('tegels        ')
+  /* Elk van de drie hoort een eigen tegel te zijn met een eigen toelichting. Eén
+     verzameltegel die "Kompas, Verbind, Podium" zegt, zegt niet waar er een van
+     drieën over gaat — dat was juist de reden om het te veranderen. */
+  const namen = await pg.locator('.appt h3').allTextContents()
+  const mist = ['Kompas', 'Verbind', 'Podium'].filter((n) => !namen.some((t) => t.trim() === n))
+  const snelbalk = await pg.locator('.snelbalk').count()
+
+  if (mist.length) val(`geen eigen tegel voor ${mist.join(', ')}`)
+  else if (snelbalk) val('de snelkoppelingsbalk staat er nog')
+  else {
+    /* En de weg: één tik op de tegel hoort in de cursus uit te komen, zonder dat
+       er onderweg nog een code gevraagd wordt. Wie in BennaHub is aangemeld,
+       hoort niet nog een tweede keer een wachtwoord te zien. */
+    await pg.locator('.appt', { hasText: 'Kompas' }).first().click()
     await pg.waitForLoadState('networkidle')
     await pg.waitForTimeout(400)
     const slot = await pg.locator('#lock, .lockcard, input[type=password]').count()
     const waar = new URL(pg.url()).pathname
-    if (slot) val('na één klik staat er alsnog een slot')
-    else if (!waar.includes('/cursussen/')) val(`één klik komt uit op ${waar}`)
-    else console.log(`${links.join(' · ')} → ${waar}, geen code gevraagd`)
+    if (slot) val('na één tik staat er alsnog een slot')
+    else if (!waar.includes('/cursussen/')) val(`één tik komt uit op ${waar}`)
+    else console.log(`drie eigen tegels · geen snelbalk · tik → ${waar}, geen code`)
   }
   await pg.close()
 }

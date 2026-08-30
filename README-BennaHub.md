@@ -80,7 +80,9 @@ app ís, in het Nederlands.
 | `sanad/` | Geloofsstudie | Sanad · سند | Geloofsstudie |
 | `rasikh/` | Koran uit je hoofd | Rasikh · رَاسِخ | Koran |
 | `health/` | BennaHealth | Kalibratie · Energiebalans | BennaHealth |
-| — | Academie | — | — |
+| — | Kompas | — | — |
+| — | Verbind | — | — |
+| — | Podium | — | — |
 
 De mapnamen zijn niet meegegaan. Die staan in bladwijzers, in service workers,
 in opgeslagen accounts en in het pad van elke opname die al ingesproken is; ze
@@ -100,9 +102,12 @@ Van elk pictogram staat er ook een PNG van 180×180, want iOS zet geen SVG op he
 beginscherm. Verander je een SVG, draai dan `node iconen/maak-png.mjs` en commit
 beide bestanden samen. Zie `iconen/LEESMIJ.md`.
 
-De indeling van de startpagina volgt dezelfde gedachte: bovenaan de vijf apps van
-de kinderen, daaronder de vier van de groten. De Academie stond bij de kinderen
-terwijl er "voor de groten" op de kaart zelf stond; die is nu verhuisd.
+De indeling van de startpagina volgt dezelfde gedachte: bovenaan de apps van de
+kinderen, daaronder die van de groten. De drie cursussen van de Academie staan er
+sinds kort als losse tegels tussen in plaats van als één verzameltegel met een
+snelkoppelingsbalk eronder — een tegel die "Kompas, Verbind, Podium" zei, zei
+niet waar een van de drie over ging. Kompas staat bij de kinderen (kindertaal,
+vanaf groep 4), Verbind en Podium bij de groten.
 
 Eén tegel wijkt bewust af. BennaHealth is leisteengrijs, de enige onverzadigde
 kleur van de negen. De zeven leerapps zijn gekleurd omdat een kind een tegel moet

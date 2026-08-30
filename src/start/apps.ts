@@ -56,15 +56,40 @@ export const APPS: readonly AppTegel[] = [
   zin:'Even afschakelen: dertien spelletjes plus de twee grote. Vrije tijd is een gunst — dus: even pauze, en daarna weer verder.',
   detail:['Mollen meppen','Reken-race','Arabische letterjacht','Records blijven staan']},
 
+ /* DE DRIE CURSUSSEN, ELK ALS EIGEN TEGEL
+
+    Ze stonden eerst als één tegel "Academie" met een snelbalk onderaan de
+    startpagina erbij. Dat was twee keer half: de tegel zei niet waar een cursus
+    over ging, en de snelbalk was een tweede weg naar hetzelfde. Nu drie tegels
+    naast de andere apps, elk met wie hem kan gebruiken en waarvoor.
+
+    Kompas staat hier bij de kinderen, Verbind en Podium verderop bij de
+    groten. Dat is geen
+    slordigheid: Kompas is in kindertaal geschreven en bruikbaar vanaf groep 4,
+    Verbind en Podium gaan over netwerken en spreken voor publiek. Wil je dat
+    anders, dan is het één woord: `groep`. */
+ {id:'kompas', naam:'Kompas', href:'huiswerk/cursussen/kompas.html', ico:'/iconen/kompas.svg',
+  k:'academie', groep:'kind', kort:'Slim leren en focus',
+  wie:'Vanaf groep 4',
+  zin:'Twintig lessen over hoe je leert in plaats van wat je leert: je aandacht vasthouden, je week plannen, dingen onthouden die blijven zitten, en rustig blijven bij een toets.',
+  detail:['Twintig lessen','Kenniskaarten','Leer-simulator','In kindertaal']},
+
  {id:'health', naam:'BennaHealth', href:'health/', ico:'/iconen/health.svg', k:'health', groep:'groot', kort:'Je energiebalans gemeten',
   oud:'Kalibratie', ar:'', wie:'Abdelkader',
   zin:'Het dagelijks verbruik gemeten uit de gewichtstrend in plaats van geschat uit een formule — met het interval erbij. Vaste maaltijden worden één keer geijkt en schuiven daarna mee met wat je van de olie en de melk weet.',
   detail:['Voor volwassenen','Elke ochtend wegen','Interval bij elk getal','Marokkaans en Turks','Werkt zonder internet']},
 
- {id:'academie', naam:'Academie', href:'huiswerk/cursussen/kompas.html', ico:'/iconen/academie.svg', k:'academie', groep:'groot', kort:'Kompas, Verbind, Podium',
+ {id:'verbind', naam:'Verbind', href:'huiswerk/cursussen/communicatie.html', ico:'/iconen/verbind.svg',
+  k:'academie', groep:'groot', kort:'Communicatie en netwerken',
   wie:'Vanaf de bovenbouw',
-  zin:'Drie cursussen die los van het huiswerk staan: slim leren en focus, communicatie en netwerken, presenteren en spreken. Voor wie er qua leeftijd aan toe is — de oudsten en de groten.',
-  detail:['Kompas','Verbind','Podium']},
+  zin:'Eenentwintig lessen over een gesprek beginnen met iemand die je niet kent, aardig overkomen zonder jezelf weg te cijferen, en een netwerk opbouwen dat later iets waard is.',
+  detail:['21 lessen in 6 modules','Gesprekssimulator','Kenniskaarten','Reflectielogboek']},
+
+ {id:'podium', naam:'Podium', href:'huiswerk/cursussen/presenteren.html', ico:'/iconen/podium.svg',
+  k:'academie', groep:'groot', kort:'Presenteren en spreken',
+  wie:'Vanaf de bovenbouw',
+  zin:'Twintig lessen over voor een groep staan: je zenuwen de baas, een verhaal dat een kop en een staart heeft, en wat je doet als iemand een vraag stelt die je niet had zien aankomen.',
+  detail:['Twintig lessen','Presentatiesimulator','Kenniskaarten','Ook voor spreekbeurten']},
 
  {id:'sanad', naam:'Geloofsstudie', href:'sanad/', ico:'/iconen/geloofsstudie.svg', k:'geloof', groep:'groot', kort:'Achtentwintig weken fiqh',
   oud:'Sanad', ar:'سند', wie:'Abdelkader',

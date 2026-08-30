@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Podium">
+  <title>Podium</title>
+  <rect width="64" height="64" rx="14" fill="#7E5300"/>
+  <rect x="26" y="11" width="12" height="23" rx="6" fill="#FFF8EE"/>
+  <path d="M19 29c0 7.2 5.8 13 13 13s13-5.8 13-13" fill="none"
+        stroke="#E2A93C" stroke-width="4.2" stroke-linecap="round"/>
+  <path d="M32 42v8" fill="none" stroke="#FFF8EE" stroke-width="4.2" stroke-linecap="round"/>
+  <path d="M23 53h18" fill="none" stroke="#FFF8EE" stroke-width="4.2" stroke-linecap="round"/>
+</svg>

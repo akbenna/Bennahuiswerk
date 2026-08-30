@@ -674,6 +674,53 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
   await pagina.close()
 }
 
+/* --------------------------------------------- hoe deze app werkt -- */
+/* De logica van deze app stond opgeschreven in HANDLEIDING.md, en dat bestand
+   staat in een repo waar niemand komt die de app gebruikt. "Zodat iedereen
+   begrijpt hoe het werkt" betekent dus: ook hier, achter één tik onder Profiel.
+
+   Een venster dat opengaat maar leeg is zou met alleen een screenshot net zo
+   goed slagen. Daarom wordt er gekeken naar de vier dingen die het moet dragen:
+   de grondregel, de drie herkomsttekens, waarom er soms "dit lijkt erop" staat,
+   en wat de app niet weet. */
+{
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: 'light' })
+  await bedienDb(pagina, 28, 'afvallen')
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.hero', { timeout: 5000 })
+  await naarTab(pagina, 'Profiel')
+
+  await pagina.getByRole('button', { name: 'Hoe deze app werkt' }).click()
+  await pagina.waitForSelector('.venster', { timeout: 5000 })
+  await pagina.waitForTimeout(300)
+  await pagina.screenshot({ path: 'gereedschap/health-hoewerkt.png', fullPage: true })
+
+  const tekst = await pagina.locator('.venster').innerText()
+  for (const moet of ['onzekerheid', 'gemeten', 'etiket', 'geschat', 'lijkt erop', 'niet weet']) {
+    if (!tekst.toLowerCase().includes(moet)) {
+      throw new Error(`de uitleg zegt niets over "${moet}"`)
+    }
+  }
+  /* Drie tekens, niet twee en niet vier. Ze staan in dezelfde component als in
+     de rest van de app, dus als er ooit een teken bij komt hoort deze proef om
+     te vallen en niet stil door te lopen. */
+  const tekens = await pagina.locator('.venster .tekenlijst .herkomst').allTextContents()
+  if (tekens.join('') !== '◆◈◇') {
+    throw new Error(`de tekens in de uitleg zijn ${JSON.stringify(tekens)} en niet ◆◈◇`)
+  }
+
+  /* Escape en niet de sluitknop: het venster ligt in een sluier die het hele
+     scherm bedekt en die vangt de klik af. Zo is meteen bewezen dat die toets
+     werkt. */
+  await pagina.keyboard.press('Escape')
+  await pagina.waitForTimeout(300)
+  if (await pagina.locator('.venster').count()) throw new Error('Escape sluit de uitleg niet')
+
+  console.log(`hoe werkt het              ${tekst.length} tekens · ${tekens.join(' ')} · Escape sluit`)
+  await pagina.close()
+}
+
 /* -------------------------------------------------------- het koppelvel -- */
 /* Het vel met de instructies is het enige scherm van de app dat iemand op een
    ander apparaat naast zich moet kunnen leggen. Dan moet het wel kloppen. */

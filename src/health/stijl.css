@@ -521,3 +521,10 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
 .stappen>li{margin-bottom:9px}
 .stappen code{font-family:var(--mono);font-size:.8rem;background:var(--vlak2);
   border-radius:5px;padding:1px 4px}
+
+/* De tekenlijst in "Hoe deze app werkt": drie regels, teken links en uitleg
+   rechts. Een tabel en geen lijst met opsommingstekens, want de tekens zijn de
+   opsommingstekens — er hoort er geen tweede naast te staan. */
+.tekenlijst{width:100%;border-collapse:collapse;margin-top:8px}
+.tekenlijst td{padding:5px 0;vertical-align:baseline}
+.tekenlijst td:first-child{width:2.1em;font-size:1.05rem;text-align:center}
