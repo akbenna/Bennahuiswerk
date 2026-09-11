@@ -2,7 +2,13 @@
   <title>Huiswerk</title>
   <rect width="64" height="64" rx="14" fill="#2F6B1F"/>
   <g fill="#FFF8EE">
-    <path d="M30 22.8v25.4c-3.7-3.1-8.6-4.7-13.8-4.7H13V17.5h3.2c5.2 0 10.1 1.6 13.8 4.7z"/>
-    <path d="M34 22.8v25.4c3.7-3.1 8.6-4.7 13.8-4.7H51V17.5h-3.2c-5.2 0-10.1 1.6-13.8 4.7z"/>
+    <path d="M11 19h15q5 0 5 5v23q-9-3-20-2z"/>
+    <path d="M53 19H38q-5 0-5 5v23q9-3 20-2z"/>
+  </g>
+  <g fill="#2F6B1F">
+    <rect x="15" y="27" width="12" height="2.8" rx="1.4"/>
+    <rect x="15" y="33.5" width="12" height="2.8" rx="1.4"/>
+    <rect x="37" y="27" width="12" height="2.8" rx="1.4"/>
+    <rect x="37" y="33.5" width="12" height="2.8" rx="1.4"/>
   </g>
 </svg>
