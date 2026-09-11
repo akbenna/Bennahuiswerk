@@ -7,7 +7,7 @@
  * De kop draagt nu het oordeel als dat er is, en anders de slaap — met veertien
  * nachten erbij, want één gemiddelde zegt niet of het beter of slechter gaat.
  */
-import { Kaart, Knop, Kop, Rij, Tussen } from '../onderdelen/basis'
+import { Kaart, Knop, Kop, Rij, Tussen, Uitleg } from '../onderdelen/basis'
 import { Lijntje, Schermkop } from '../hero'
 import { dec } from '@/gedeeld/getal'
 import type { Profiel } from '@/gedeeld/db/tabellen'
@@ -108,15 +108,20 @@ export function Meer(
         )}
       </Schermkop>
 
-      <Kaart>
+      <Kaart plat>
         <Kop>Waarom slaap hier staat</Kop>
         <p className="mini" style={{ marginTop: 4 }}>
-          Bij 5,5 tegenover 8,5 uur slaapgelegenheid daalde in Nedeltcheva 2010 het aandeel
-          gewichtsverlies als vet met 55 procent en steeg het verlies van vetvrije massa met 60 procent,
-          bij identieke caloriebeperking — met meer honger erbij. Tien deelnemers, dus klein, maar het
-          mechanisme is plausibel en de richting eenduidig. Slaap is hier geen wellness-item maar een
-          variabele in dezelfde vergelijking.
+          Te kort slapen verschuift je gewichtsverlies van vet naar spier. Het is hier geen
+          wellness-item maar een variabele in dezelfde vergelijking.
         </p>
+        <Uitleg id="slaapwaarom" label="de meting erachter">
+          <p>
+            Bij 5,5 tegenover 8,5 uur slaapgelegenheid daalde in Nedeltcheva 2010 het aandeel
+            gewichtsverlies als vet met 55 procent en steeg het verlies van vetvrije massa met 60
+            procent, bij identieke caloriebeperking — met meer honger erbij. Tien deelnemers, dus
+            klein, maar het mechanisme is plausibel en de richting eenduidig.
+          </p>
+        </Uitleg>
       </Kaart>
 
       {profiel.fase === 'onderhoud' ? (
@@ -183,12 +188,19 @@ export function Meer(
       <Kaart plat>
         <Kop>Waar de getallen vandaan komen</Kop>
         <p className="mini" style={{ marginTop: 4 }}>
-          Elke rekenregel in deze app is verantwoord in VERANTWOORDING.md, met bron, beperking en een
-          lijst van wat niet te verifiëren viel. De kern in één zin: het verbruik wordt gemeten uit de
-          gewichtstrend in plaats van geschat uit een formule, en door te meten worden adaptieve
-          thermogenese en de individuele activiteitsfactor automatisch geabsorbeerd — die hoeven niet
-          gemodelleerd te worden, ze zitten al in de meting.
+          Het verbruik wordt gemeten uit je gewichtstrend en niet geschat uit een formule.
         </p>
+        <Uitleg id="waaromgemeten" label="waarom dat beter is dan rekenen">
+          <p>
+            Door te meten worden adaptieve thermogenese — je verbranding zakt als je afvalt — en je
+            persoonlijke activiteitsniveau automatisch meegenomen. Die hoeven niet gemodelleerd te
+            worden: ze zitten al in de meting.
+          </p>
+          <p>
+            Elke rekenregel in deze app is verantwoord in VERANTWOORDING.md, met bron, beperking en
+            een lijst van wat niet te verifiëren viel.
+          </p>
+        </Uitleg>
         {/* Die verwijzing naar een bestand is genoeg voor wie de repo kent en
             nutteloos voor ieder ander. De uitleg zelf hoort ook hier te staan,
             achter één tik. */}

@@ -28,10 +28,14 @@ import type { Dagstaaf } from '../hero'
 import { dec, dz } from '@/gedeeld/getal'
 import { kortNL, langNL, plusDagen, stapDag, vandaag } from '@/gedeeld/datum'
 import type { IsoDatum, Moment, Regel } from '@/gedeeld/db/tabellen'
-import type { NieuweRegel } from '@/gedeeld/db/rpc'
+import { roep } from '@/gedeeld/db/rpc'
+import type { EiwitrijkTreffer, NieuweRegel } from '@/gedeeld/db/rpc'
+import { herkomstVan } from '../herkomst'
+import type { Onderwerp } from '../vensters/Portie'
 import type { Analyse, Dagenkaart, DagMetTotalen } from '../rekenkern'
 import { momentNu } from '../vensters/Portie'
 import { meldenNu, tekort, voorstellen } from '../coach'
+import type { Tekort } from '../coach'
 import { herhaalRegel } from '../herhaal'
 
 export interface VandaagEigenschappen {
@@ -53,6 +57,10 @@ export interface VandaagEigenschappen {
   wisRegel: (id: string) => void
   /** Eén tik op een voorstel zet het meteen op de dag. */
   voegToe: (regels: NieuweRegel[]) => void
+  /** Voor de tweede laag van de coach: die zoekt in de tabel. */
+  token: string
+  /** Het portievenster openen, zodat je de hoeveelheid nog kunt bijstellen. */
+  opPortie: (o: Onderwerp) => void
 }
 
 /**
@@ -563,17 +571,23 @@ function Coachkaart(p: VandaagEigenschappen) {
           {lijst.map((v) => (
             <div key={v.herhaling.sleutel}>
               <div className="groei">
-                <div className="knip">{v.naam}</div>
+                <div className="knip">
+                  {v.naam}
+                  {v.reden === 'eiwit' && <span className="vlaggetje rust"> op tempo</span>}
+                </div>
                 {/* Eén getal maakt de vier voorstellen vergelijkbaar: eiwit per
                     100 kcal, dezelfde maat waarin de eis staat. "Helpt je eiwit
                     niet" stond hier eerst, en dat is een oordeel op de plek waar
                     een getal hoort — 46 gram eiwit helpt natuurlijk wel; wat het
                     niet doet is de rést van de dag op tempo houden. */}
+                {/* Vijf getallen op één regel waren er vier te veel. Wat je
+                    moet weten is wat het kost, wat het levert, en wat er daarna
+                    nog te gaan is. De dichtheid in g/100 kcal is de grootheid
+                    waarop gerangschikt wordt en hoort in de uitleg thuis, niet
+                    op elke regel. */}
                 <div className="mini">
                   <span className="cijfer">{dz(v.kcal)}</span> kcal ·{' '}
                   <span className="cijfer">{Math.round(v.eiwit)}</span> g eiwit
-                  {' · '}<span className="cijfer">{dec(v.dichtheid * 100, 1)}</span> g/100 kcal
-                  {v.reden === 'eiwit' && ' — houdt je eiwit op tempo'}
                   {' · daarna nog '}<span className="cijfer">{dz(v.restKcal)}</span> kcal
                   {v.restEiwit > 0 && <> en <span className="cijfer">{v.restEiwit}</span> g eiwit</>}
                 </div>
@@ -592,6 +606,8 @@ function Coachkaart(p: VandaagEigenschappen) {
         </p>
       )}
 
+      <UitDeTabel token={p.token} t={t} opPortie={p.opPortie} />
+
       <Uitleg id="coach" label="hoe deze lijst tot stand komt">
         <p>
           De voorstellen komen uit je eigen geschiedenis, met de portie die jij toen at — er wordt
@@ -606,6 +622,13 @@ function Coachkaart(p: VandaagEigenschappen) {
             makkelijker. Dat is de eis waarop deze lijst gerangschikt is.
           </p>
         )}
+        {t.eis != null && (
+          <p>
+            Bij elk voorstel is te zien wat het kost en wat het levert. Waarop gerangschikt wordt is
+            het quotiënt daarvan — gram eiwit per honderd kcal — want dat is de grootheid waarin de
+            eis hierboven staat. Bovenaan staat dus niet de grootste portie maar de zuinigste.
+          </p>
+        )}
         <p>
           Het bereik tussen haakjes komt van wat je logde: die getallen zijn geschat, dus wat je
           overhoudt is dat ook. Voorgesteld wordt er alleen binnen de puntschatting — onzekerheid
@@ -613,5 +636,105 @@ function Coachkaart(p: VandaagEigenschappen) {
         </p>
       </Uitleg>
     </Kaart>
+  )
+}
+
+/* ==========================================================================
+   UIT DE TABEL — de tweede laag, en waarom hij eronder staat
+   ==========================================================================
+
+   De coach hierboven stelt voor uit je eigen geschiedenis, en dat is de betere
+   bron: die portie is de jouwe, je hebt het in huis, de getallen zijn overgenomen
+   en niet geschat. Maar die bron loopt leeg. Wie drie weken hetzelfde eet krijgt
+   drie weken hetzelfde voorgesteld, en op de vraag "wat kán ik dan nemen" had de
+   app geen antwoord.
+
+   Dit is dat antwoord: producten uit de voedingsmiddelentabel met het meeste
+   eiwit per calorie binnen wat er nog past, met hun gebruikelijke portie erbij.
+   Het rekenwerk staat in de database (kal_eiwitrijk); hier staat alleen hoe het
+   eruitziet.
+
+   Drie dingen zijn ontwerp en geen toeval.
+
+   Hij staat eronder en niet erboven. Wat jij zelf eet gaat voor wat een tabel
+   voorstelt — een lijst van optimale producten die je nooit koopt is netjes en
+   nutteloos.
+
+   Hij verschijnt alleen als het eiwit knelt. Is je eiwit rond, dan is er niets te
+   optimaliseren en zou dit een menukaart zijn die je niet vroeg.
+
+   En hij draagt zijn herkomstteken. Een tabelwaarde is gemeten (◆), een
+   merkproduct is een etiketopgave (◈), en dat verschil hoort ook hier zichtbaar
+   te zijn — juist hier, want dit is de lijst waar een eiwitshake van de
+   supermarkt naast een stuk vis kan staan.
+
+   Gaat de aanroep mis, dan verdwijnt de kaart zonder melding. Deze laag is een
+   toevoeging: draait de app tegen een database waar bestand 23 nog niet
+   gedraaid is, dan hoort daar geen foutmelding over te komen.
+*/
+function UitDeTabel(
+  { token, t, opPortie }:
+  { token: string; t: Tekort; opPortie: (o: Onderwerp) => void },
+) {
+  const [lijst, zetLijst] = useState<EiwitrijkTreffer[]>([])
+  const eis = t.eis
+  const ruimte = Math.round(t.kcalOver)
+
+  useEffect(() => {
+    if (eis == null || ruimte <= 0) { zetLijst([]); return }
+    let afgebroken = false
+    void (async () => {
+      try {
+        const uit = await roep('kal_eiwitrijk', {
+          p_token: token, p_eis: eis, p_max_kcal: ruimte, p_limiet: 3,
+        })
+        if (!afgebroken) zetLijst(Array.isArray(uit) ? uit : [])
+      } catch {
+        if (!afgebroken) zetLijst([])
+      }
+    })()
+    return () => { afgebroken = true }
+  }, [token, eis, ruimte])
+
+  if (!lijst.length) return null
+
+  async function kies(x: EiwitrijkTreffer) {
+    try {
+      if (x.herkomst === 'merk' && x.merk) { opPortie({ soort: 'merk', product: x.merk }); return }
+      if (x.nevo_code) {
+        opPortie({
+          soort: 'nevo',
+          product: await roep('kal_portiematen', { p_token: token, p_nevo_code: x.nevo_code }),
+        })
+      }
+    } catch { /* het venster gaat dan niet open; een melding hier is erger */ }
+  }
+
+  return (
+    <div style={{ marginTop: 14 }}>
+      <Kop>Uit de tabel</Kop>
+      <p className="mini" style={{ marginTop: 2 }}>
+        Het meeste eiwit per calorie binnen wat er nog past — niet wat je meestal eet.
+      </p>
+      <div className="lijst" style={{ marginTop: 6 }}>
+        {lijst.map((x) => {
+          const h = herkomstVan({ nevo_code: x.nevo_code, bron: x.herkomst })
+          return (
+            <div key={x.herkomst + (x.nevo_code ?? x.merk?.id ?? x.naam)}>
+              <abbr className="herkomst" title={h.uitleg}>{h.teken}</abbr>
+              <span className="groei">
+                <span className="knip" style={{ display: 'block' }}>{x.naam}</span>
+                <span className="mini">
+                  {x.portie_naam} van <span className="cijfer">{dz(x.portie_gram)}</span> g ·{' '}
+                  <span className="cijfer">{dz(x.kcal)}</span> kcal ·{' '}
+                  <span className="cijfer">{Math.round(x.eiwit_g)}</span> g eiwit
+                </span>
+              </span>
+              <Knop klein titel="Portie kiezen" opKlik={() => void kies(x)}>＋</Knop>
+            </div>
+          )
+        })}
+      </div>
+    </div>
   )
 }

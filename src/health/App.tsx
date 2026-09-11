@@ -210,6 +210,8 @@ export function App() {
               a={a} dag={dag} regels={regelsVandaag} alleRegels={k.alles.regels}
               dagen={k.dagenkaart} datum={datum}
               eiwitPerKg={profiel.eiwit_g_per_kg}
+              token={k.sessie.token}
+              opPortie={zetPortie}
               voegToe={voegRegelsToe}
               zetDatum={zetDatum}
               zetDagveld={(veld, waarde) =>
@@ -246,6 +248,10 @@ export function App() {
           {tab === 'beweging' && (
             <Beweging
               a={a} dagen={k.dagenkaart} training={k.alles.training} datum={datum}
+              zetDagveld={(veld, waarde) =>
+                void k.wijzig((t) => roep('kal_dag_zetten', {
+                  p_token: t, p_datum: datum, p_patch: { [veld]: waarde },
+                }))}
               bewaarTraining={(tr) =>
                 void k.wijzig((t) => roep('kal_rij_toevoegen', {
                   p_token: t, p_tabel: 'training', p_rij: tr,
@@ -277,12 +283,12 @@ export function App() {
           )}
         </div>
 
+        {/* De legenda blijft: die verklaart een teken dat op elk scherm staat.
+            De zin over ruisonderdrukking is weg — die stond onder élk scherm en
+            hoort bij het model, waar hij ook al staat. */}
         <footer>
           <b>A</b> etiket en gewogen · <b>B</b> etiket, portie geschat · <b>C</b> tabelwaarde ·{' '}
-          <b>D</b> ruwe schatting.<br />
-          Het model rekent in gelogde calorieën en kalibreert het niveau op de weegreeks. Het loopt
-          ongeveer anderhalve week achter op de werkelijkheid; dat is de prijs van ruisonderdrukking,
-          geen fout.
+          <b>D</b> ruwe schatting.
         </footer>
       </div>
 

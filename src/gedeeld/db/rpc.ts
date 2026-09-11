@@ -76,6 +76,33 @@ export interface GerechtTreffer {
   status: 'concept' | 'in_review' | 'validated' | 'rejected'
 }
 
+/**
+ * Eén voorstel uit de voedingsmiddelentabel: veel eiwit per calorie, met de
+ * portie erbij waarin het gewoonlijk gegeten wordt. Zie kal_eiwitrijk() en
+ * health/database/23-eiwitrijk-uit-de-tabel.sql.
+ *
+ * `merk` is gevuld als dit een merkproduct is, en dan staat er een volledige
+ * MerkTreffer in — genoeg om het portievenster mee te openen zonder nog een
+ * keer de database te hoeven vragen.
+ */
+export interface EiwitrijkTreffer {
+  herkomst: 'nevo' | 'merk'
+  nevo_code: string | null
+  merk: MerkTreffer | null
+  naam: string
+  groep: string | null
+  /** De naam van de standaardportie: glas, portie, stuk, schep. */
+  portie_naam: string
+  portie_gram: number
+  gram_laag: number
+  gram_hoog: number
+  /** Kilocalorieën en eiwit ván die portie, niet per honderd gram. */
+  kcal: number
+  eiwit_g: number
+  /** Gram eiwit per kcal — dezelfde maat als de eis van de coach. */
+  dichtheid: number
+}
+
 export interface Zoekuitslag {
   /* Eerst, want wie 'tonijn' typt bedoelt zijn eigen salade en niet de tabel.
      Er wordt ook in de namen van de onderdelen gezocht, dus 'paprika' vindt de
@@ -381,6 +408,10 @@ export interface RpcKaart {
   kal_zoeken: { in: { p_token: string; p_q: string; p_limiet?: number }; uit: Zoekuitslag }
   kal_gerecht: { in: { p_token: string; p_dish_id: string }; uit: Gerecht }
   kal_portiematen: { in: { p_token: string; p_nevo_code: string }; uit: ProductMetMaten }
+  kal_eiwitrijk: {
+    in: { p_token: string; p_eis: number; p_max_kcal: number; p_limiet?: number }
+    uit: EiwitrijkTreffer[]
+  }
 
   /* --- de hub en de acht kinder-apps ------------------------------------ */
   bennahub_accounts: { in: { p_app: string }; uit: unknown }

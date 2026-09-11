@@ -82,17 +82,26 @@ export function Voeding(p: VoedingEigenschappen) {
 
       <Zoeken token={p.token} opPortie={p.opPortie} />
       <EigenProducten producten={p.producten} bewaar={p.bewaarProduct} wis={p.wisProduct} />
+      {/* HET ADVIES BOVEN, DE ONDERBOUWING ERACHTER
+
+          Hier stonden zes regels met een studie, een steekproefgrootte en een
+          voorbehoud, op het scherm waar je iets komt loggen. Wat je moet weten
+          is één zin lang; de rest is verantwoording en die staat achter de
+          uitklapper. Weggelaten is er niets — een getal zonder zijn herkomst
+          zou in deze app een fout zijn. */}
       <Kaart plat>
         <Kop>Waarom de verdeling telt</Kop>
         <p className="mini" style={{ marginTop: 4 }}>
           Streef naar drie tot vier maaltijden van {v.doelPerMaaltijd} tot{' '}
-          {Math.round(v.doelPerMaaltijd * 1.2)} g eiwit met minstens drie uur ertussen. Gelijkmatige
-          verdeling gaf in Mamerow 2014 een 25 procent hogere spiereiwitsynthese dan een scheve
-          verdeling — al ging dat om acht deelnemers van gemiddeld 37 jaar, dus behandel het als
-          richting, niet als wet. Het ontbijt is de maaltijd waar de scheve verdeling vrijwel altijd
-          ontstaat.
+          {Math.round(v.doelPerMaaltijd * 1.2)} g eiwit met minstens drie uur ertussen.
         </p>
-        <Uitleg id="eiwitverdeling" label="en waarom er drie staven staan en geen vier">
+        <Uitleg id="eiwitverdeling" label="waar dat vandaan komt">
+          <p>
+            Gelijkmatige verdeling gaf in Mamerow 2014 een 25 procent hogere spiereiwitsynthese dan
+            een scheve verdeling — al ging dat om acht deelnemers van gemiddeld 37 jaar, dus behandel
+            het als richting, niet als wet. Het ontbijt is de maaltijd waar de scheve verdeling
+            vrijwel altijd ontstaat.
+          </p>
           <p>
             Tussendoortjes krijgen dezelfde streep als de maaltijden, maar tellen niet mee in het
             oordeel bovenaan. Een dag met vier volwaardige eetmomenten is prima; een dag waarop het
@@ -156,8 +165,7 @@ function Zoeken({ token, opPortie }: { token: string; opPortie: (o: Onderwerp) =
                value={term} onChange={(e) => zetTerm(e.target.value)} />
       </div>
       <p className="mini" style={{ marginTop: 8 }}>
-        2.328 producten uit het Nederlands Voedingsstoffenbestand, plus de gevalideerde gerechten van
-        ProVita. Zoeken gaat terwijl je typt.
+        Zoeken gaat terwijl je typt.
       </p>
 
       {loopt && <p className="klein" style={{ marginTop: 10 }}><Spin /> Zoeken…</p>}
@@ -263,10 +271,6 @@ function EigenProducten(
   return (
     <Kaart>
       <Kop>Eigen producten</Kop>
-      <p className="mini" style={{ marginTop: 4 }}>
-        Wat je van het etiket overneemt en afweegt is een A-waarde — de enige categorie zonder
-        schatting.
-      </p>
       <Rij style={{ marginTop: 8 }}>
         <input placeholder="naam" value={naam} onChange={(e) => zetNaam(e.target.value)}
                style={{ flex: '2 1 140px', width: 'auto' }} />
@@ -281,6 +285,13 @@ function EigenProducten(
                onChange={(e) => zetEiwit(e.target.value)} style={{ flex: '0 0 78px' }} />
         <Knop vol opKlik={opslaan}>Opslaan</Knop>
       </Rij>
+      <Uitleg id="eigenproduct" label="waarom dit de beste soort waarde is">
+        <p>
+          Wat je van het etiket overneemt en zelf afweegt is een A-waarde — de enige categorie in
+          deze app zonder schatting. De fabrikant staat voor het getal en jij voor de hoeveelheid;
+          er wordt niets geraden.
+        </p>
+      </Uitleg>
       {producten.length > 0 && (
         <div className="lijst" style={{ marginTop: 10 }}>
           {producten.map((pr) => (

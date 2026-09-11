@@ -21,6 +21,12 @@ scherm van zestien pixels breed en ook voor wie nog niet vlot leest.
 | `verbind.svg` | Verbind | oker | twee tekstballonnen die elkaar raken |
 | `podium.svg` | Podium | oker | een microfoon op een standaard |
 
+De laatste drie delen één kleur, en dat is de enige uitzondering op de regel
+hierboven. Het zijn de drie cursussen van de Academie: ze horen bij elkaar en dat
+hoort te zien te zijn. Uit elkaar houden doet de vórm — een kompasroos, twee
+tekstballonnen en een microfoon lijken in niets op elkaar, ook niet op zestien
+pixels.
+
 De kleuren komen uit het palet van de hub (`index.html`, de lichte variant).
 Leisteen is er als enige onverzadigd bij: de zeven leerapps zijn gekleurd omdat
 een kind een tegel moet kunnen aanwijzen, Energiebalans is een meetinstrument

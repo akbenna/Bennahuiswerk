@@ -40,12 +40,27 @@ export function IntervalFiguur({ a }: { a: Analyse }) {
           <line x1={p(a.doel)} y1={2} x2={p(a.doel)} y2={16} stroke="var(--let)" strokeWidth={0.7} />
         )}
       </svg>
-      <div className="tussen mini cijfer">
+      {/* DE LEGENDA STOND OP DEZELFDE REGEL ALS DE SCHAAL
+
+          Drie dingen in één flexregel: het laagste getal links, het hoogste
+          rechts, en daartussen "grijs = formuleschatting · zwart = meting ·
+          oranje = doel". Die middelste brak op een telefoon over twee regels en
+          liep dan dwars door de getallen heen.
+
+          Nu twee regels, en de legenda toont de kleuren in plaats van ze te
+          benoemen. Een vlakje voor de band, een streepje voor de lijn: dezelfde
+          vorm als in de figuur, zodat je hem terugvindt in plaats van moet
+          onthouden welk woord bij welke kleur hoort. */}
+      <div className="tussen mini cijfer" style={{ marginTop: 2 }}>
         <span>{dz(Math.round(min))}</span>
-        <span style={{ fontFamily: 'var(--sans)' }}>
-          grijs = formuleschatting · zwart = meting · oranje = doel
-        </span>
         <span>{dz(Math.round(max))}</span>
+      </div>
+      <div className="figlegenda mini">
+        <span><i style={{ background: 'var(--dim)', opacity: 0.4 }} /> formuleschatting</span>
+        <span><i className="staand" style={{ background: 'var(--ink)' }} /> meting</span>
+        {a.doel != null && (
+          <span><i className="staand" style={{ background: 'var(--let)' }} /> doel</span>
+        )}
       </div>
     </>
   )

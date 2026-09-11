@@ -65,7 +65,10 @@ function reeks(aantalDagen) {
     dagen.push({
       datum: d, gewicht_kg: Math.round((119.4 - t * 3.1 + ruis) * 10) / 10,
       gewicht_bron: 'handmatig', stappen: 4200 + Math.round(Math.abs(Math.sin(i)) * 5200),
-      actieve_energie_kcal: null, fiets_min: null,
+      /* Om de dag drie kwartier op de hometrainer. Dat is bewust: zonder
+         fietsminuten in de proefgegevens zou het bewegingsscherm nooit zijn
+         fietskant tonen en zou die helft ongezien blijven. */
+      actieve_energie_kcal: null, fiets_min: i % 2 === 0 ? 45 : null,
       slaap_min: 420 + Math.round(Math.sin(i * 0.9) * 45), slaap_kwaliteit: null,
       bedtijd: null, waaktijd: null, kracht: i % 3 === 0, notitie: null, bron: 'handmatig',
     })
@@ -285,6 +288,31 @@ const NEVO_TONIJN = [
 /* Wat de database teruggeeft als het woordzoeken niets vond en de terugval op
    schrijfvarianten aansloeg. De vlag staat aan, en daar hoort het scherm een
    regel bij te zetten. Zie health/database/20-zoeken-met-alternatieven.sql. */
+/* Wat kal_eiwitrijk teruggeeft: de tweede laag van de coach, uit de tabel in
+   plaats van uit je geschiedenis. Eén gemeten product en één merkproduct, want
+   juist de combinatie van die twee moet het herkomstteken laten zien — ◆ naast
+   ◈ in dezelfde lijst. Zie health/database/23-eiwitrijk-uit-de-tabel.sql. */
+const EIWITRIJK = [
+  {
+    herkomst: 'nevo', nevo_code: '5295', merk: null,
+    naam: 'Skyr naturel magere', groep: 'Melk en melkproducten',
+    portie_naam: 'glas', portie_gram: 150, gram_laag: 125, gram_hoog: 200,
+    kcal: 90, eiwit_g: 15.9, dichtheid: 0.177,
+  },
+  {
+    herkomst: 'merk', nevo_code: null,
+    merk: {
+      id: 'm-shake', barcode: '4056489', naam: 'High Protein Drink chocolade',
+      merk: 'Milbona', groep: 'zuivel', kcal: 52, eiwit_g: 10,
+      vet_g: 1.2, koolhydraat_g: 2.6, vezel_g: null,
+      verpakking_gram: 250, portie_gram: 250, portie_naam: 'flesje',
+    },
+    naam: 'High Protein Drink chocolade (Milbona)', groep: 'merk',
+    portie_naam: 'flesje', portie_gram: 250, gram_laag: 225, gram_hoog: 275,
+    kcal: 130, eiwit_g: 25, dichtheid: 0.192,
+  },
+]
+
 const NEVO_BENADERD = [
   { nevo_code: '1491', naam: 'Lasagne bolognese koelverse maaltijd',
     groep: 'Samengestelde gerechten', kcal: 162,
@@ -309,6 +337,7 @@ async function bedienDb(pagina, dagen, fase) {
             nevo: /lesagn/i.test(route.request().postData() ?? '') ? NEVO_BENADERD : NEVO_TONIJN,
             gerechten: [], eigen: [], merk: MERK,
           }
+      : fn === 'kal_eiwitrijk' ? EIWITRIJK
       : fn === 'kal_koppelingen_lijst' ? KOPPELINGEN
       : fn === 'kal_koppeling_maken'
         ? { sleutel: 'kal_' + 'a3f19c7e42b08d5619fa2c3d7e8b04915cad6237'.slice(0, 48),
@@ -671,6 +700,64 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
   console.log(`dagoverzicht${''.padEnd(14)} ${regels} regels in ${n} vakken`)
   console.log(`${''.padEnd(26)} dag=${punt} (${laag}–${hoog}) = som van de vakken`)
   console.log(`${''.padEnd(26)} herkomst: ${tekens}× teken, titel=${JSON.stringify(titel)}`)
+  await pagina.close()
+}
+
+/* ------------------------------------------------- de fiets en de tabel -- */
+/* Twee toevoegingen die allebei onzichtbaar konden blijven, en dat ook deden.
+
+   `fiets_min` stond al in elke dag en kwam via de koppeling binnen, maar het
+   bewegingsscherm keek er niet naar: het zei "nog 913 stappen per dag tot 8.000"
+   op een dag waarop er drie kwartier gefietst was. Er is niets aan de gegevens
+   veranderd om dit te repareren — alleen aan het scherm.
+
+   En de coach stelde alleen voor uit je eigen geschiedenis. Die loopt leeg, en
+   dan stond er niets. Nu komt er een tweede lijst uit de voedingsmiddelentabel,
+   en die moet zijn herkomstteken dragen: ◆ voor een gemeten waarde, ◈ voor een
+   etiket. Juist hier, want dit is de enige lijst waar een eiwitshake van de
+   supermarkt naast een stuk vis kan staan. */
+{
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: 'light' })
+  await bedienDb(pagina, 28, 'afvallen')
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.hero', { timeout: 5000 })
+
+  /* De tabel onder de coach. */
+  {
+    const kaart = pagina.locator('.kaart', { hasText: 'Wat er nog in past' })
+    await kaart.locator('text=Uit de tabel').waitFor({ timeout: 5000 })
+    const rijen = kaart.locator('.lijst').last().locator('> div')
+    const tekens = await rijen.locator('.herkomst').allTextContents()
+    if (tekens.join('') !== '◆◈') {
+      throw new Error(`uit de tabel: tekens zijn ${JSON.stringify(tekens)} en niet ◆◈`)
+    }
+    const eerste = (await rijen.first().innerText()).replace(/\s+/g, ' ')
+    /* De portie hoort erbij te staan. "Skyr" zonder hoeveelheid is geen
+       voorstel maar een categorie. */
+    for (const moet of ['Skyr', 'glas van 150 g', '90 kcal', '16 g eiwit']) {
+      if (!eerste.includes(moet)) throw new Error(`uit de tabel: "${moet}" ontbreekt in ${JSON.stringify(eerste)}`)
+    }
+    await pagina.screenshot({ path: 'gereedschap/health-uitdetabel.png' })
+    console.log(`uit de tabel               ${tekens.join(' ')} · ${JSON.stringify(eerste.slice(0, 64))}`)
+  }
+
+  /* En de fiets op het bewegingsscherm. */
+  {
+    await naarTab(pagina, 'Beweging')
+    const kop = (await pagina.locator('.hero').innerText()).replace(/\s+/g, ' ')
+    if (!/minuten op de fiets/.test(kop)) {
+      throw new Error(`beweging: de kop noemt de fiets niet — ${JSON.stringify(kop.slice(0, 120))}`)
+    }
+    const veld = pagina.getByLabel('Fietsminuten vandaag')
+    if (!(await veld.count())) throw new Error('beweging: er is geen veld voor fietsminuten')
+    const week = (await pagina.locator('.kaart', { hasText: 'Fietsen' }).first().innerText())
+      .replace(/\s+/g, ' ')
+    if (!/van 150 min/.test(week)) throw new Error(`beweging: het weekdoel staat er niet — ${JSON.stringify(week)}`)
+    await pagina.screenshot({ path: 'gereedschap/health-beweging-fiets.png', fullPage: true })
+    const titel = (await pagina.locator('.hero h2').textContent()) ?? ''
+    console.log(`fiets                      kop=${JSON.stringify(titel)} · ${week.match(/\d+ van 150 min/)?.[0]}`)
+  }
   await pagina.close()
 }
 
