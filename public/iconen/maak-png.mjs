@@ -35,7 +35,12 @@ if (!chromium) {
 const svgs = (await readdir(HIER)).filter(f => f.endsWith('.svg')).sort();
 if (!svgs.length) { console.error('Geen SVG gevonden in ' + HIER); process.exit(1); }
 
-const browser = await chromium.launch();
+/* Dezelfde schakelaar als de rest van het gereedschap in deze repo. Zonder deze
+   regel zoekt Playwright zijn eigen gedownloade browser, en in een omgeving waar
+   Chromium ergens anders staat breekt dit script af met "Executable doesn't
+   exist" — terwijl de browser er wel degelijk is. */
+const browser = await chromium.launch(
+  process.env.CHROOM ? { executablePath: process.env.CHROOM } : {});
 const pagina = await browser.newPage({ viewport: { width: MAAT, height: MAAT }, deviceScaleFactor: 1 });
 
 for (const naam of svgs) {
