@@ -406,3 +406,16 @@ table.tbl tr:last-child td{border-bottom:0}
 .speld.stil{background:color-mix(in srgb,var(--fout) 14%,transparent);color:var(--fout)}
 .geld{font-family:var(--mono);font-size:.95rem;color:var(--goed);white-space:nowrap}
 .verborgen{display:none}
+
+/* De eigen ingang van BennaHealth op de poort. Hij staat onder de profielen en
+   ziet er met opzet anders uit: geen persoonstegel, want hij is geen antwoord op
+   de vraag wie je bent. */
+.eigeningang{margin-top:28px;display:flex;align-items:center;gap:13px;text-decoration:none;
+  background:var(--health-bg);border-radius:16px;padding:13px 16px;
+  border:1px solid color-mix(in srgb,var(--health) 26%,transparent)}
+.eigeningang:hover{border-color:var(--health)}
+.eigeningang img{width:38px;height:38px;border-radius:10px;flex:0 0 auto}
+.eigeningang .groei{min-width:0}
+.eigeningang b{font-family:var(--serif);font-size:1.02rem;font-weight:600;color:var(--ink);display:block}
+.eigeningang .mini{display:block;color:var(--muted)}
+.eigeningang .pijl{margin-left:auto;flex:0 0 auto;color:var(--health);font-weight:700}

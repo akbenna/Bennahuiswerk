@@ -30,7 +30,7 @@
  * de enige plek waar het kan zonder een tweede invoerscherm: je hebt de
  * maaltijd dan net ingevoerd, dus je weet precies wat erin zat.
  */
-import { useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { Chip, Kaart, Keuzechip, Knop, Kop, Rij, Spin, Tussen, Uitleg, Venster } from '../onderdelen/basis'
 import { dec, dz } from '@/gedeeld/getal'
 import { kortNL } from '@/gedeeld/datum'
@@ -44,8 +44,9 @@ import {
 } from '../maaltijd'
 import { herken, leesFoto } from '../ai'
 import { lijktOpZin } from '../zoekzin'
+import { grootsteOnzekerheid, weegRegel } from '../wegen'
 import { Bron } from '../herkomst'
-import type { Herkenning } from '../ai'
+import type { Herkenning, HerkendeRegel } from '../ai'
 import type { Onderwerp } from './Portie'
 
 /** De vier momenten waar je uit kiest, in de volgorde van de dag. */
@@ -275,6 +276,43 @@ export function InvoerVenster(p: InvoerEigenschappen) {
         )}
 
     </Venster>
+  )
+}
+
+/**
+ * HET WEEGVELD ONDER DE BREEDSTE REGEL
+ *
+ * Het staat er maar één keer, en dat is het ontwerp. Onder elke regel een veld
+ * zetten maakt van een lijstje om na te kijken een formulier, en dan wordt er
+ * niets gewogen. Onder de regel die de band van je hele maaltijd bepaalt is het
+ * één handeling met een zichtbaar gevolg.
+ *
+ * De belofte staat erbij en is precies wat er gebeurt: er blijft een band over,
+ * die van de tabel. Niet nul. Zie wegen.ts.
+ */
+function Weegveld(
+  { r, opWegen }: { r: HerkendeRegel; opWegen: (gram: number) => void },
+) {
+  const [gram, zetGram] = useState('')
+  const getal = parseFloat(gram)
+  const kan = Number.isFinite(getal) && getal > 0
+
+  return (
+    <div>
+      <span className="groei">
+        <span className="mini" style={{ display: 'block' }}>
+          Grootste onzekerheid van deze maaltijd:{' '}
+          <span className="cijfer">{dz(r.kcal_laag)}–{dz(r.kcal_hoog)}</span> kcal.
+          Weeg het, dan blijft alleen de marge van de tabel over.
+        </span>
+      </span>
+      <input className="smal" type="number" inputMode="numeric" min="1" placeholder="gram"
+             value={gram} onChange={(e) => zetGram(e.target.value)}
+             aria-label={`Gewogen gewicht van ${r.naam} in gram`}
+             onKeyDown={(e) => { if (e.key === 'Enter' && kan) opWegen(getal) }}
+             style={{ flex: '0 0 74px' }} />
+      <Knop klein vol titel="Gewicht overnemen" opKlik={() => { if (kan) opWegen(getal) }}>✓</Knop>
+    </div>
   )
 }
 
@@ -541,6 +579,19 @@ function Beschrijven(
     }
   }
 
+  /* Welke regel het meest te winnen heeft bij een weging. Zie wegen.ts: bij
+     herkenning uit tekst of foto is niet het herkennen de zwakke schakel maar de
+     portie, en één weging vervangt precies die post. */
+  const breedste = concept ? grootsteOnzekerheid(concept.regels) : null
+
+  function weeg(i: number, gram: number) {
+    if (!concept) return
+    zetConcept({
+      ...concept,
+      regels: concept.regels.map((x, j) => (j === i ? weegRegel(x, gram) : x)),
+    })
+  }
+
   const totaal = concept?.regels.reduce(
     (a, r) => ({
       p: a.p + (r.kcal_punt || 0), l: a.l + (r.kcal_laag || 0),
@@ -595,7 +646,8 @@ function Beschrijven(
           </Tussen>
           <div className="lijst" style={{ marginTop: 6 }}>
             {concept.regels.map((r, i) => (
-              <div key={i}>
+              <Fragment key={i}>
+              <div>
                 <Chip graad={r.conf} />
                 <span className="groei">
                   <span className="knip" style={{ fontSize: '.86rem', display: 'block' }}>{r.naam}</span>
@@ -616,6 +668,11 @@ function Beschrijven(
                         zetConcept(over.length ? { ...concept, regels: over } : null)
                       }}>×</Knop>
               </div>
+              {/* Alleen onder de breedste regel, en alleen als er iets te winnen
+                  valt. Een weegveld onder elke regel zou van een lijstje om na te
+                  kijken een formulier maken, en dan wordt er niets gewogen. */}
+              {i === breedste && <Weegveld r={r} opWegen={(g) => weeg(i, g)} />}
+              </Fragment>
             ))}
           </div>
           <Tussen style={{ marginTop: 10 }}>

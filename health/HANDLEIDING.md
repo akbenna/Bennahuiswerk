@@ -147,6 +147,26 @@ gewicht als een hard getal en de energie met een marge eromheen. Bij een
 huishoudmaat ("een eetlepel", "een schaaltje") ligt het andersom — dán is het
 gewicht de onzekere kant, en staat er een band omheen.
 
+### De breedste band smaller maken
+
+Beschrijf je een maaltijd in woorden of maak je er een foto van, dan komt er een
+lijst regels terug met elk een band: *"720 kcal (520–980)"*. Onder de regel met
+de **breedste** band staat een weegveld.
+
+Dat staat daar om een reden. Bij herkenning uit tekst of foto is niet het
+herkennen de zwakke schakel maar de portie — het product benoemen is makkelijk,
+de hoeveelheid schatten niet. Eén weging vervangt precies die post. In het
+voorbeeld hierboven: 300 gram intikken maakt van 520–980 een band van 497–583.
+
+En let op wat er blijft staan: **een band, geen getal.** De portie is nu bekend,
+maar de voedingswaarde komt nog steeds uit de tabel, en die draagt zijn eigen
+marge van ongeveer acht procent. Een app die na het wegen een kaal getal toont,
+beweert dat de tabel exact is.
+
+De graad gaat hoogstens naar C. Niet naar A — dat is voorbehouden aan een etiket
+dat je zelf overnam, en dat is iets anders dan een tabelwaarde met een gewogen
+portie.
+
 ### De tabel heeft gezag over het model
 
 Vraag je de app om een maaltijd in gewone taal te herkennen, dan schat het model

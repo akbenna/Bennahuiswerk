@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Kompas">
   <title>Kompas</title>
   <rect width="64" height="64" rx="14" fill="#7E5300"/>
-  <circle cx="32" cy="32" r="17" fill="none" stroke="#FFF8EE" stroke-width="4"/>
-  <path d="M39.5 24.5 35 35 24.5 39.5 29 29z" fill="#E2A93C"/>
-  <circle cx="32" cy="32" r="2.6" fill="#FFF8EE"/>
+  <circle cx="32" cy="32" r="20.5" fill="none" stroke="#FFF8EE" stroke-width="3.2"/>
+  <path d="M46.5 17.5 26.5 26.5l11 11z" fill="#FFF8EE"/>
+  <path d="M17.5 46.5 37.5 37.5l-11-11z" fill="#E2A93C"/>
 </svg>

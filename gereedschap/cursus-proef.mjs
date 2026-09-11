@@ -1,4 +1,11 @@
 /**
+ * DE INGANGEN VAN DE STARTPAGINA
+ *
+ * Dit bestand begon als de proef op de cursussen en is meegegroeid: het gaat
+ * over waar de startpagina je heen laat gaan zonder eerst ergens langs te
+ * moeten. Twee gevallen, allebei om dezelfde reden ontstaan — iets stond
+ * onnodig diep.
+ *
  * DE CURSUSSEN ZIJN VRIJ TOEGANKELIJK
  *
  * De drie cursussen van de Academie stonden elk achter een eigen slot met een
@@ -122,6 +129,54 @@ for (const [bestand, merk] of CURSUSSEN) {
     if (slot) val('na één tik staat er alsnog een slot')
     else if (!waar.includes('/cursussen/')) val(`één tik komt uit op ${waar}`)
     else console.log(`drie eigen tegels · geen snelbalk · tik → ${waar}, geen code`)
+  }
+  await pg.close()
+}
+
+/* ------------------------------------------------------------------ 3 */
+/* DE EIGEN INGANG VAN BENNAHEALTH
+   ------------------------------------------------------------------------
+   BennaHealth heeft zijn eigen aanmelding onder zijn eigen sleutel, los van het
+   gezinsprofiel. Hij hoefde dus nooit achter de poort te staan — en stond er wel,
+   drie stappen diep: kiezen wie je bent, een code typen, en dan op de hub de
+   tegel zoeken.
+
+   Deze proef opent de poort zónder aangemelde gebruiker, want dát is het scherm
+   waar de ingang hoort te staan. Een proef die eerst aanmeldt zou langs het punt
+   heen kijken. */
+{
+  const pg = await browser.newPage()
+  await pg.route('**/rest/v1/rpc/**', (route) => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify([
+      { naam: 'amaani', rol: 'kind', emoji: '🚀', kleur: 'arabisch', heeftCode: true },
+      { naam: 'abdelkader', rol: 'ouder', emoji: '🌿', kleur: 'health', heeftCode: true },
+    ]),
+  }))
+  await pg.goto(`http://localhost:${poort}/`, { waitUntil: 'networkidle' })
+  await pg.waitForSelector('.persoon', { timeout: 5000 })
+
+  process.stdout.write('eigen ingang  ')
+  const ingang = pg.locator('.eigeningang')
+  if (!(await ingang.count())) val('BennaHealth heeft geen eigen ingang op de poort')
+  else {
+    const tekst = (await ingang.innerText()).replace(/\s+/g, ' ')
+    if (!tekst.includes('BennaHealth')) val(`de ingang zegt niet waar hij heen gaat: ${JSON.stringify(tekst)}`)
+    /* Waaróm hij buiten de profielen staat hoort erbij: zonder die regel lijkt
+       het een vergeten tegel in plaats van een bewuste uitzondering. */
+    else if (!/eigen aanmelding/.test(tekst)) val(`de ingang legt niet uit waarom hij hier staat: ${JSON.stringify(tekst)}`)
+    else {
+      await ingang.click()
+      await pg.waitForLoadState('networkidle')
+      await pg.waitForTimeout(400)
+      const waar = new URL(pg.url()).pathname
+      /* En er mag onderweg geen gezinscode gevraagd worden — dat is het hele
+         punt. De eigen aanmelding van BennaHealth zelf is iets anders. */
+      const gezinscode = await pg.locator('.persoon').count()
+      if (!waar.startsWith('/health')) val(`één tik komt uit op ${waar}`)
+      else if (gezinscode) val('de poort vraagt alsnog wie je bent')
+      else console.log(`${JSON.stringify(tekst)} → ${waar}`)
+    }
   }
   await pg.close()
 }

@@ -1,6 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Verbind">
   <title>Verbind</title>
   <rect width="64" height="64" rx="14" fill="#7E5300"/>
-  <path d="M13 20a4 4 0 0 1 4-4h18a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4h-9l-7 6v-6h-2a4 4 0 0 1-4-4z" fill="#FFF8EE"/>
-  <path d="M29 34a4 4 0 0 1 4-4h14a4 4 0 0 1 4 4v9a4 4 0 0 1-4 4h-2v6l-7-6h-5a4 4 0 0 1-4-4z" fill="#E2A93C"/>
+  <path d="M8 19a6 6 0 0 1 6-6h18a6 6 0 0 1 6 6v16a6 6 0 0 1-6 6H24l-5 9-2-9h-3a6 6 0 0 1-6-6z"
+        fill="#FFF8EE"/>
+  <path d="M27 24a6 6 0 0 1 6-6h17a6 6 0 0 1 6 6v16a6 6 0 0 1-6 6h-3l-2 9-5-9h-7a6 6 0 0 1-6-6z"
+        fill="#E2A93C"/>
 </svg>

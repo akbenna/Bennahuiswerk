@@ -9,16 +9,16 @@ scherm van zestien pixels breed en ook voor wie nog niet vlot leest.
 | Bestand | App | Kleur | Merk |
 |---|---|---|---|
 | `hub.svg` | BennaHub | antraciet | vier gekleurde tegels: alle apps onder één dak |
-| `huiswerk.svg` | Huiswerk | groen | een opengeslagen boek |
+| `huiswerk.svg` | Huiswerk | groen | een opengeslagen boek met een rug en tekstregels |
 | `islam.svg` | Islam leren | groenblauw | maan en ster |
-| `arabisch.svg` | Arabisch | blauw | de letter bāʾ |
+| `arabisch.svg` | Arabisch | blauw | de letter bāʾ, met de ruitvormige punt eronder |
 | `code.svg` | Computers & Code | pruim | de haken van code |
 | `spelletjes.svg` | Spelletjes | terracotta | een dobbelsteen |
 | `geloofsstudie.svg` | Geloofsstudie | paars | een boekrol |
 | `koran.svg` | Koran uit je hoofd | indigo | een boek met leeslint |
 | `kalibratie.svg` | Energiebalans | leisteen | een balans met twee schalen |
-| `kompas.svg` | Kompas | oker | een kompasroos |
-| `verbind.svg` | Verbind | oker | twee tekstballonnen die elkaar raken |
+| `kompas.svg` | Kompas | oker | een kompasroos met een tweekleurige naald |
+| `verbind.svg` | Verbind | oker | twee tekstballonnen die elkaar overlappen |
 | `podium.svg` | Podium | oker | een microfoon op een standaard |
 
 De laatste drie delen één kleur, en dat is de enige uitzondering op de regel
@@ -50,3 +50,31 @@ dezelfde commit. Het script heeft Playwright nodig; die zit in deze omgeving al.
 De tekening blijft binnen de middelste tachtig procent van het vlak. Android
 knipt er bij een *maskable* pictogram een cirkel of een afgerond vierkant uit,
 en wat buiten die rand staat is het eerste wat sneuvelt.
+
+## Hertekenen, en wat een beeldgenerator wel en niet kan
+
+Vier van deze pictogrammen zijn in september 2026 opnieuw getekend naar een
+voorbeeld dat met een beeldgenerator gemaakt was. Dat werkte, maar niet zoals je
+zou denken.
+
+De **compositie** die eruit kwam was beter dan wat er stond: de twee ballonnen van
+Verbind overlapten netter, het boek van Huiswerk kreeg een rug en tekstregels, de
+bāʾ werd een echte letter in plaats van een kom met een punt, en de kompasnaald
+werd groot genoeg om de ring niet te laten winnen.
+
+Het **bestand** was elke keer onbruikbaar. Bitmap in plaats van vector, gerasterde
+randen, een verloop in de achtergrond waar een vlakke kleur hoort, en bij Verbind
+witte vegen die uit de generatie waren blijven staan. Zulke bestanden passen niet
+in deze set: ze schalen niet, ze wijken af in kleur, en op zestien pixels vallen
+ze uit elkaar.
+
+De werkwijze die wél klopt is dus: laat de generator de vorm bedenken, meet de
+verhoudingen eruit, en teken hem over als vectorpaden in de kleuren die hier al
+liggen. Dat kost een paar minuten per pictogram.
+
+Twee dingen die daarbij misgingen en het onthouden waard zijn. Een staartje van
+zeven eenheden aan een ballon van zesentwintig hoog leest als een hoekje en niet
+als een punt — de verhouding telt, niet de aanwezigheid. En een letter opbouwen
+uit twee losse contouren (buitenkant en binnenkant) gaat mis bij de uiteinden:
+die lopen dan dood. Eén gestreken boog met een vaste lijndikte houdt zijn dikte
+overal, ook bij de tip.

@@ -761,6 +761,96 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
   await pagina.close()
 }
 
+/* --------------------------------------------- de breedste band -- */
+/* NA HET HERKENNEN KUN JE DE GROOTSTE ONZEKERHEID WEGWERKEN
+
+   Bij herkenning uit tekst of foto is niet het herkennen de zwakke schakel maar
+   de portie — zie VERANTWOORDING.md §18.6. Je kon zo'n regel wel weggooien en
+   niet aanscherpen. Nu krijgt de regel met de breedste band een weegveld.
+
+   Deze proef doet de hele weg: de herkenning wordt onderschept met twee regels
+   waarvan er één een brede band heeft, en dan wordt er echt een gewicht
+   ingetikt. Waar het om gaat is wat er daarna staat — een smallere band, maar
+   géén kaal getal, want de tabel blijft zijn eigen marge houden. */
+{
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: 'light' })
+  await bedienDb(pagina, 28, 'afvallen')
+
+  /* De herkenning is een edge function en niet een rpc, dus hij heeft zijn eigen
+     onderschepping nodig. Twee regels: een appel met een smalle band, en een
+     tajine met een brede. Het veld hoort bij de tajine te staan. */
+  await pagina.route('**/functions/v1/kal-ai', (route) => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({
+      model: 'proef', ms: 1200, opmerking: '', referentieobject: null,
+      regels: [
+        { naam: 'Appel', moment: 'diner', hoeveelheid: 1, eenheid: 'stuk',
+          gram_equivalent: 120, kcal_punt: 95, kcal_laag: 88, kcal_hoog: 102,
+          eiwit_g: 0.5, vet_g: 0.3, koolhydraat_g: 22, vezel_g: 2.4,
+          conf: 'C', onzekerheidsbronnen: [], bron: 'tekst-ai',
+          nevo_code: '9001', nevo_naam: 'Appel rauw',
+          gram_laag: 110, gram_hoog: 135, ai_model: 'proef' },
+        { naam: 'Tajine met kip', moment: 'diner', hoeveelheid: 1, eenheid: 'portie',
+          gram_equivalent: 400, kcal_punt: 720, kcal_laag: 520, kcal_hoog: 980,
+          eiwit_g: 46, vet_g: 30, koolhydraat_g: 71, vezel_g: 8,
+          conf: 'D', onzekerheidsbronnen: ['portie geschat', 'bereidingsvet geschat'],
+          bron: 'tekst-ai', nevo_code: '1491', nevo_naam: 'Lasagne bolognese',
+          gram_laag: 300, gram_hoog: 560, ai_model: 'proef' },
+      ],
+    }),
+  }))
+
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.maal', { timeout: 5000 })
+  /* Dezelfde weg als de invoervelproef: via het maaltijdvak, want dat is de weg
+     die gelopen wordt en die het moment meteen goed zet. */
+  await pagina.getByTitle('Iets toevoegen aan je diner').click()
+  await pagina.waitForSelector('.venster', { timeout: 5000 })
+  await pagina.getByRole('button', { name: /Tekst/ }).click()
+  await pagina.locator('.venster textarea').fill('een bord tajine met kip en een appel')
+  await pagina.getByRole('button', { name: 'Herkennen' }).click()
+  await pagina.waitForSelector('.venster .kaart', { timeout: 8000 })
+  await pagina.waitForTimeout(300)
+
+  const kaart = pagina.locator('.venster .kaart', { hasText: 'Herkend' })
+  const veld = pagina.getByLabel(/Gewogen gewicht van Tajine/)
+
+  process.stdout.write('breedste band              ')
+  if (!(await veld.count())) throw new Error('er staat geen weegveld bij de breedste regel')
+  /* En niet bij de appel: die heeft niets te winnen, en een veld onder elke
+     regel zou van dit lijstje een formulier maken. */
+  if (await pagina.getByLabel(/Gewogen gewicht van Appel/).count()) {
+    throw new Error('de appel krijgt ook een weegveld, en daar valt niets te winnen')
+  }
+
+  const voor = (await kaart.innerText()).replace(/\s+/g, ' ')
+  await veld.fill('300')
+  await pagina.getByRole('button', { name: 'Gewicht overnemen' }).click()
+  await pagina.waitForTimeout(300)
+  const na = (await kaart.innerText()).replace(/\s+/g, ' ')
+
+  /* 300 van 400 gram is driekwart: 720 wordt 540, met de tabelband van acht
+     procent eromheen. Dat is 497 tot 583. */
+  if (!na.includes('540')) throw new Error(`het gewicht rekent niet door: ${JSON.stringify(na.slice(0, 200))}`)
+  if (!/497.{0,3}583/.test(na)) throw new Error(`de band na het wegen klopt niet: ${JSON.stringify(na)}`)
+  /* De kern: er blijft een band staan. Een kaal getal zou beweren dat de tabel
+     exact is. */
+  if (na.includes('540 540')) throw new Error('na het wegen staat er een punt in plaats van een band')
+  if (!na.includes('gewogen: 300 g')) throw new Error('de weging staat niet bij de onzekerheid')
+  if (!na.includes('bereidingsvet geschat')) {
+    throw new Error('het bereidingsvet is weggegooid, en dat is na het wegen even onzeker')
+  }
+  /* En het veld is weg: er valt niets meer aan te scherpen. */
+  if (await pagina.getByLabel(/Gewogen gewicht van Tajine/).count()) {
+    throw new Error('het weegveld staat er nog na het wegen')
+  }
+  await pagina.screenshot({ path: 'gereedschap/health-gewogen.png' })
+  const band = (s) => (s.match(/(\d{3})[–-](\d{3})/) ?? []).slice(1).join('–')
+  console.log(`${band(voor)} → ${band(na)} kcal na wegen · band blijft`)
+  await pagina.close()
+}
+
 /* --------------------------------------------- hoe deze app werkt -- */
 /* De logica van deze app stond opgeschreven in HANDLEIDING.md, en dat bestand
    staat in een repo waar niemand komt die de app gebruikt. "Zodat iedereen

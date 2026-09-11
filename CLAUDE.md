@@ -29,8 +29,10 @@ bouwen**. Verandert er iets aan een scherm van BennaHealth, dan hoort hij mee te
 draaien en horen de afdrukken mee de commit in.
 
 `node gereedschap/cursus-proef.mjs` staat er net zo naast, en leest ook `dist/`.
-Hij bewijst dat de drie cursussen van de Academie zonder code opengaan én dat de
-poort ernaar wijst. Een grep zou hier niet volstaan: het slot was gedrag, geen
+Hij gaat over de ingangen van de startpagina: dat de drie cursussen van de
+Academie zonder code opengaan, dat ze elk een eigen tegel hebben, en dat
+BennaHealth een eigen ingang op de poort heeft die niet langs het gezinsprofiel
+gaat. Een grep zou hier niet volstaan: het slot was gedrag, geen
 markering — het riep `render()` pas ná het ontgrendelen aan, dus een half
 verwijderd slot geeft een leeg scherm dat er in de tekst prima uitziet.
 

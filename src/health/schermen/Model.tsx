@@ -67,6 +67,29 @@ export function Model(
             <p className="mini" style={{ marginTop: 8 }}>
               Een band en geen getal. Hoe smaller hij wordt, hoe meer het model van je weet.
             </p>
+            {/* WAT DIT GETAL PRECIES IS, EN WAAROM DAT HIER STAAT
+
+                Dit is geen meting van je stofwisseling. Het is afgeleid uit wat
+                jij logde en wat de weegschaal deed, dus het draagt de fout in je
+                logboek mee: log je stelselmatig twintig procent te laag, dan
+                staat hier een verbruik dat twintig procent te laag is.
+
+                Dat maakt het getal niet minder bruikbaar — het voorspelt jouw
+                gewichtsverloop juist goed, want die afwijking is persoonlijk en
+                stabiel. Maar "wat je lichaam verbruikt" en "wat je lichaam
+                verbruikt volgens jouw logboek" zijn twee verschillende
+                beweringen, en deze app hoort te zeggen welke van de twee hij
+                doet.
+
+                Dat stond er tot voor kort, in de voetregel onder elk scherm.
+                Bij het opruimen van de tekst is die verdwenen en bleef alleen de
+                uitleg in de consistentiekaart over — die dichtgeklapt is, en die
+                alleen verschijnt bij een verschil boven de driehonderd. Hier
+                hoort hij, altijd zichtbaar, onder het getal waar hij over gaat. */}
+            <p className="mini" style={{ marginTop: 5 }}>
+              Gerekend in gelogde calorieën: dit is je verbruik <i>zoals je logboek het
+              impliceert</i>, niet je stofwisseling gemeten.
+            </p>
           </>
         ) : (
           <p style={{ fontSize: '.9rem', marginTop: 10 }}>

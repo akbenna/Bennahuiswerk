@@ -91,6 +91,30 @@ export function Kiezen({ leden, opKies }: { leden: Lid[]; opKies: (l: Lid) => vo
       <div className="tegels" style={{ marginTop: 10 }}>
         {leden.filter((l) => l.rol === 'ouder').map(tegel)}
       </div>
+
+      {/* BENNAHEALTH LANGS DE PROFIELEN HEEN
+
+          Deze poort vraagt wie je bent omdat alles erachter op naam staat: je
+          lessen, je punten, je spaarpot. BennaHealth hoort daar niet bij. Die
+          app heeft zijn eigen aanmelding — een eigen token onder een eigen
+          sleutel, los van het gezinsprofiel — en had dus nooit achter dit slot
+          hoeven staan.
+
+          Toch stond hij er wel, en drie stappen diep: kiezen wie je bent, een
+          code typen, en dan op de hub de tegel zoeken. Voor een app die je elke
+          ochtend opent na het wegen is dat drie keer te veel.
+
+          Vandaar een eigen ingang, onder de profielen en niet ertussen. Hij
+          hoort niet bij de vraag "wie ben je" en hoort er dus ook niet uit te
+          zien als een antwoord erop. */}
+      <a className="eigeningang" href="health/">
+        <img src="/iconen/health.svg" alt="" width={38} height={38} />
+        <span className="groei">
+          <b>BennaHealth</b>
+          <span className="mini">eigen aanmelding — je hoeft hier niet langs</span>
+        </span>
+        <span className="pijl" aria-hidden="true">→</span>
+      </a>
     </div>
   )
 }
