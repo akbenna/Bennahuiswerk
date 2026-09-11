@@ -18,7 +18,7 @@ scherm van zestien pixels breed en ook voor wie nog niet vlot leest.
 | `koran.svg` | Koran uit je hoofd | indigo | een boek met leeslint |
 | `kalibratie.svg` | Energiebalans | leisteen | een balans met twee schalen |
 | `kompas.svg` | Kompas | oker | een kompasroos |
-| `verbind.svg` | Verbind | oker | twee tekstballonnen die elkaar raken |
+| `verbind.svg` | Verbind | oker | twee tekstballonnen die elkaar overlappen |
 | `podium.svg` | Podium | oker | een microfoon op een standaard |
 
 De laatste drie delen één kleur, en dat is de enige uitzondering op de regel
