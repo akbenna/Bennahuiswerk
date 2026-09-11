@@ -159,25 +159,43 @@ export function Model(
       {a.tdee != null && a.onderrapportage != null && (
         <Kaart>
           <Kop>Consistentiecheck registratie</Kop>
+          {/* Het oordeel eerst en in één zin; de redenering erachter. Dit is de
+              kaart die het meeste uitlegde en het minste zei — acht regels tekst
+              waarvan de uitkomst "de registratie is intern consistent" was, of
+              niet. Die uitkomst hoort vooraan te staan. */}
           <p style={{ fontSize: '.88rem', marginTop: 4 }}>
-            De formule voorspelt bij dit gewicht en deze activiteit een onderhoud tussen{' '}
-            {dz(a.priorLaag)} en {dz(a.priorHoog)} kcal. De gewichtstrend impliceert{' '}
-            {dz(Math.round(a.tdee))} kcal.{' '}
             {a.onderrapportage > 300 ? (
               <>
-                Een verschil van ongeveer <b>{dz(Math.round(a.onderrapportage))} kcal</b> is te groot
-                voor toeval en past bij onderregistratie van twintig tot dertig procent — de best
-                gedocumenteerde systematische fout in de voedingswetenschap. Dat maakt het advies niet
-                ongeldig: de bias is proportioneel en stabiel binnen een persoon, dus zolang je op
-                dezelfde manier blijft loggen klopt het doel in gelogde eenheden.
+                Je logt ongeveer <b>{dz(Math.round(a.onderrapportage))} kcal</b> minder dan de formule
+                verwacht. Dat is normaal, en het advies blijft geldig.
               </>
             ) : a.onderrapportage < -300 ? (
-              'Je registreert méér dan de formule verwacht. Dat past bij een hogere activiteit dan de ' +
-              'stappen laten zien, of bij een onrustige weegreeks.'
+              <>Je registreert <b>méér</b> dan de formule verwacht.</>
             ) : (
-              'Die liggen dicht bij elkaar. De registratie is intern consistent.'
+              <>Formule en weegreeks liggen dicht bij elkaar: de registratie is intern consistent.</>
             )}
           </p>
+          <Uitleg id="consistentie" label="de twee getallen naast elkaar">
+            <p>
+              De formule voorspelt bij dit gewicht en deze activiteit een onderhoud tussen{' '}
+              {dz(a.priorLaag)} en {dz(a.priorHoog)} kcal. De gewichtstrend impliceert{' '}
+              {dz(Math.round(a.tdee))} kcal.
+            </p>
+            {a.onderrapportage > 300 ? (
+              <p>
+                Een verschil van deze omvang is te groot voor toeval en past bij onderregistratie van
+                twintig tot dertig procent — de best gedocumenteerde systematische fout in de
+                voedingswetenschap. Dat maakt het advies niet ongeldig: de bias is proportioneel en
+                stabiel binnen een persoon, dus zolang je op dezelfde manier blijft loggen klopt het
+                doel in gelogde eenheden.
+              </p>
+            ) : a.onderrapportage < -300 ? (
+              <p>
+                Dat past bij een hogere activiteit dan de stappen laten zien, of bij een onrustige
+                weegreeks.
+              </p>
+            ) : null}
+          </Uitleg>
         </Kaart>
       )}
 

@@ -415,3 +415,63 @@ Het origineel blijft staan. Dit is geen verbeterde versie die de oude vervangt m
 Twee dingen die pas opvielen bij gebruik. Wie "tonijn" typte kreeg de tonijnregels van NEVO en niet zijn eigen salade — de app had het antwoord al en liet het niet zien. `kal_zoeken` doorzoekt nu ook de eigen maaltijden, en dan niet alleen op de titel maar ook op de namen van de onderdelen: "paprika" vindt zo het gerecht waar paprika in zit zonder dat dat woord in de naam staat. Dat is precies waar een samengesteld gerecht zich anders gedraagt dan een product.
 
 Het sterretje bepaalt de volgorde, in de lijst en in het zoekveld. Handmatig, en niet afgeleid uit hoe vaak iets gegeten is: die afleiding straft precies het gerecht af dat je nét bewaard hebt. Bij opnieuw bewaren onder dezelfde naam blijft het staan — anders verlies je het op het moment dat je de olie eindelijk gewogen hebt, en dat is nu juist het moment waarop je het gerecht het meest gebruikt.
+
+---
+
+## 17. De tweede coachlaag en de bewegingsminuten
+
+Twee toevoegingen van september 2026. Allebei raken ze de vraag wat er wél en
+niet in de rekenkern mag.
+
+### 17.1 Eiwitrijke voorstellen uit de tabel — `kal_eiwitrijk`
+
+**Wat het doet.** Binnen een energiegrens de producten zoeken met de hoogste
+verhouding eiwit per kilocalorie, met hun gebruikelijke portie erbij, één per
+productgroep.
+
+**Waarom per kcal en niet per 100 gram.** De coach drukt zijn tekort uit als een
+eis: nog 45 gram eiwit in 500 kcal is 0,09 g/kcal. Een voorstel helpt pas als het
+die dichtheid haalt. Rangschikken op absoluut eiwit zet de grootste portie
+bovenaan — op de proefgegevens een tajine van 720 kcal, goed voor bijna de hele
+resterende ruimte in één keer.
+
+**De vier filters, en wat elk ervan aantoonbaar tegenhield.** Gemeten op de
+volledige tabel van 2.328 producten:
+
+| filter | wat het tegenhield |
+|---|---|
+| geen `rauw`, `onbereid`, `poeder`, `extract` | "Kipfilet rauw" — staat in de tabel, op geen bord |
+| minstens 12 g eiwit per portie | strooikaas, de hóógste dichtheid van de tabel (0,241), maar een plak van 20 g is 11 g eiwit |
+| minstens 40 kcal per portie | een plak vleeswaar van 15 g: 3 g eiwit |
+| één per productgroep | zonder dit zijn de eerste vijftien allemaal magere vis |
+
+**Wat het niet is.** Geen voedingsadvies. De lijst zegt uitsluitend: dit levert
+het meeste eiwit per calorie binnen wat er vandaag nog past. Of het in huis is,
+of je het lust en of het bij de rest van je dag past weet de tabel niet. Daarom
+staat de lijst ónder je eigen geschiedenis en niet erboven.
+
+**Herkomst blijft zichtbaar.** Tabelproducten dragen ◆, merkproducten ◈. Juist
+hier, want dit is de enige lijst in de app waar een eiwitshake van de supermarkt
+naast een stuk vis kan staan.
+
+### 17.2 Bewegingsminuten naast stappen
+
+**De norm.** 150 minuten matige inspanning per week, de ondergrens uit de
+WHO-richtlijn beweging van 2020. Naast de 8.000 stappen per dag uit Paluch 2022,
+en niet in plaats daarvan: één van de twee halen is genoeg.
+
+**Waarom een tweede maat nodig was.** Stappen meten wandelen. Een uur op een
+hometrainer levert er nul op. De app beoordeelde daarmee iemand die dagelijks
+fietst als inactief — geen strengheid maar blindheid, en het veld `fiets_min`
+stond al die tijd al gevuld in de database.
+
+**Waarom er geen kilocalorieën van gemaakt worden.** Dezelfde reden waarom
+actieve energie uit Apple of Garmin nergens bij het doel wordt opgeteld: de fout
+is twintig tot vijftig procent en niet consistent in één richting, dus
+corrigeren is onmogelijk. Bij dit lichaamsgewicht zou een rit van dertig minuten
+ergens tussen 210 en 410 kcal liggen — een factor twee, en precies daarom hoort
+het getal niet in de som. Het verbruik komt uit de gewichtstrend, en de fiets zit
+daar al in.
+
+**Wat er wél mee gebeurt.** De minuten tellen mee in het weekdoel en staan in het
+dagoverzicht. Verder niets.

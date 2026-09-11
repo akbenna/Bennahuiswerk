@@ -528,3 +528,11 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
 .tekenlijst{width:100%;border-collapse:collapse;margin-top:8px}
 .tekenlijst td{padding:5px 0;vertical-align:baseline}
 .tekenlijst td:first-child{width:2.1em;font-size:1.05rem;text-align:center}
+
+/* De legenda onder een figuur: de kleur zelf in plaats van de naam ervan. Een
+   liggend vlakje staat voor een band, een staand streepje voor een lijn —
+   dezelfde vorm als in de figuur erboven. */
+.figlegenda{display:flex;flex-wrap:wrap;gap:3px 15px;margin-top:7px}
+.figlegenda span{display:inline-flex;align-items:center;gap:6px}
+.figlegenda i{width:13px;height:4px;border-radius:2px;flex:0 0 auto}
+.figlegenda i.staand{width:3px;height:12px;border-radius:1.5px}

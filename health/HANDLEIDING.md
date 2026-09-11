@@ -109,6 +109,30 @@ Nederlands, Darija, Tarifit, Arabisch, Turks en Sranan. Die worden meegezocht.
 "Mercimek" vindt de Turkse linzensoep, ook al staat dat woord in geen enkele
 Nederlandse naam.
 
+### Wat de app voorstelt als er nog iets in past
+
+Op het dagscherm staat **Wat er nog in past**: hoeveel energie en hoeveel eiwit
+er nog over is, met de band eromheen. Daaronder staan voorstellen, en die komen
+uit twee bronnen, in deze volgorde.
+
+**Eerst uit je eigen geschiedenis.** Wat je de afgelopen weken at, met de portie
+die jij toen nam. Dat is de betere bron: je hebt het in huis, je weet hoe het
+smaakt, en de getallen zijn overgenomen in plaats van geschat.
+
+**Daarna uit de tabel**, onder het kopje *Uit de tabel*. Die verschijnt alleen
+als het eiwit knelt, en toont wat het meeste eiwit per calorie levert binnen wat
+er nog past — met de portie erbij waarin het gewoonlijk gegeten wordt, zodat er
+niet "kwark" staat maar "een glas skyr, 90 kcal, 16 gram eiwit". Eiwitshakes en
+eiwitrepen staan daar gewoon tussen, met ◈ ervoor: het zijn etiketwaarden en
+geen metingen, en dat blijft te zien.
+
+Waarom die volgorde? Een lijst van optimale producten die je nooit koopt is
+netjes en nutteloos. En waarom er gerangschikt wordt op eiwit *per calorie* en
+niet op eiwit: heb je nog 500 kcal en 45 gram eiwit te gaan, dan moet alles wat
+er nog bij komt minstens 0,09 gram eiwit per kcal leveren, anders wordt de rest
+van je dag moeilijker in plaats van makkelijker. Dat is een getal, en elk
+voorstel is ertegen te toetsen.
+
 ---
 
 ## 3. Porties: de onzekerheid staat op de waarde, nooit op het gewicht
@@ -153,6 +177,25 @@ interval dat eerlijk is over hoe weinig er nog gemeten is.
 
 De volledige onderbouwing, inclusief wat er níet te verifiëren viel, staat in
 `VERANTWOORDING.md`.
+
+### Bewegen: stappen of minuten, en geen calorieën
+
+Beweging telt als gehaald bij **8.000 stappen per dag** of **150 minuten matige
+inspanning per week**. Eén van de twee is genoeg — het gaat om de belasting, niet
+om de manier. Die tweede is er gekomen voor de hometrainer: een halfuur fietsen
+levert geen enkele stap op, en de app zei tot voor kort doodleuk "nog 913 stappen
+te gaan" tegen iemand die net drie kwartier had gefietst.
+
+Wat je invult zijn **minuten**, en verder niets. Geen afstand — op een
+hometrainer is er geen afstand. Geen weerstand, geen fietstype, geen merk: zonder
+vermogensmeter is dat allemaal een gok, en een gok met een bredere marge dan het
+antwoord waard is.
+
+En met opzet **geen calorieën**. Een schatting uit hartslag of uit een tabel heeft
+een fout van twintig tot vijftig procent die niet consistent in één richting
+zit, dus corrigeren kan niet. Het hoeft ook niet: je verbruik komt uit je
+gewichtstrend, en wat je op de fiets verbrandt zit daar al in. Wat dit scherm
+doet is bijhouden dát je bewoog.
 
 ---
 
