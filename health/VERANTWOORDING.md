@@ -728,9 +728,9 @@ gevaarlijker dan geen nakijkvraag.
 
 ### 19.5 Wat er niet in zit, en waarom
 
-**De Syrische hoek.** Nog steeds leeg. NEVO heeft er geen samengestelde
-gerechten voor, dus daar zou voor álles gelden wat nu alleen voor roti en heri
-heri geldt: verzonnen grammenlijsten. Dat is een aparte afweging.
+**De Syrische hoek.** Was bij het schrijven van dit hoofdstuk nog leeg; zie
+hoofdstuk 21, waar de reden waarom hij leeg bleef bij nameten maar half bleek
+te kloppen.
 
 **Hutspot met vlees.** NEVO 1485 is de stamppot zonder vlees; een versie mét
 bestaat niet in het bestand, anders dan bij boerenkool en andijvie. Dat gat is
@@ -811,3 +811,94 @@ andere.
 Twee gevallen gaan over de rustpols, die niets nieuws doet maar wel door een
 andere functie loopt dan gisteren. Als die verhuizing iets gebroken heeft, hoort
 dat hier zichtbaar te worden en niet pas op een telefoon.
+
+
+## 21. De Syrische hoek — en een patroon in mijn eigen schattingen
+
+### 21.1 De aanname die ik in hoofdstuk 19 opschreef
+
+"NEVO heeft er geen samengestelde gerechten voor, dus daar zou voor álles
+gelden wat nu alleen voor roti en heri heri geldt: verzonnen grammenlijsten."
+
+Nagemeten klopt dat half. Samengestelde Syrische gerechten heeft NEVO inderdaad
+niet. Maar hij heeft wél een reeks Levantijnse onderdelen die als heel product
+zijn doorgemeten — hummus (320 kcal/100 g), baklava (461), falafelmengsel (231),
+tahin (585), gekookte bulgur (80), rode linzen (110), lamsgehakt gebakken (252),
+Turks witbrood (250). Hummus en baklava zijn daarmee complete gerechten met een
+gemeten waarde; de rest is de bouwdoos.
+
+Dat is een betere uitgangspositie dan de Marokkaanse hoek had.
+
+### 21.2 Het patroon
+
+Dit is de derde keer dat meten vóór bouwen een aanname van mij omkeert:
+
+1. de drempel van de zoekterugval — de trigram-zeef haalde onzin binnen waar ik
+   dacht dat hij zou werken (databasebestand 21);
+2. de Surinaamse hoek — ik dacht dat hij verzonnen moest worden; NEVO had zes
+   gerechten als geheel gemeten;
+3. de Syrische hoek — idem, met negen bruikbare onderdelen.
+
+Twee van de drie gaan over hetzelfde: **mijn schatting van wat er in de tabel
+staat is systematisch te pessimistisch.** Dat is geen toeval en het is goedkoop
+te verhelpen — één query voordat ik concludeer dat iets er niet is. Die regel
+staat hier omdat hij het soort ding is dat je een volgende keer weer vergeet.
+
+### 21.3 Twaalf gerechten, en twee getallen die alles bepalen
+
+Twee uit één gemeten NEVO-regel (hummus, baklava), tien uit gemeten onderdelen:
+rode linzensoep, tabouleh, fattoush, mujadara, moutabal, falafel, broodje
+shawarma, maqluba, kibbeh en manakish.
+
+In deze hoek zijn twee soorten getallen doorslaggevend, en allebei zijn het
+schattingen die met zoveel woorden in de regel staan.
+
+**Het frituurvet.** `absorbed_fraction` zegt hoeveel van het vet dat de pan in
+gaat in het gerecht achterblijft. Bij een tajine is dat 1,0 — er wordt in
+gestoofd. Bij frituren is het een fractie die in deze tabel niet te meten is. Ik
+heb hem gekozen en daarna gecontroleerd waar hij uitkomt, en die volgorde hoort
+er eerlijk bij: 0,12 geeft gefrituurde falafel van 303 kcal per 100 g en dat
+ligt midden in wat erover bekend is; 0,10 geeft kibbeh van 200. De fractie is
+dus geen meting maar een **ijking**.
+
+**Het water.** Water heeft geen energie en wel gewicht, dus het staat in de
+noemer van de dichtheid en verder nergens. De rode linzensoep gaf met een liter
+water 54 kcal per 100 g — dat is bouillon met linzen erin. Met 700 ml komt hij
+op 64. Eén getal, en het verschil tussen een gerecht en iets anders.
+
+Allebei zijn tijdens het schrijven bijgesteld omdat de uitkomst buiten haar
+bereik viel. Dat staat in het bestand, want het laat zien waar de hefbomen
+zitten voor wie het straks nakijkt.
+
+### 21.4 Twee dingen die NEVO niet goed genoeg heeft
+
+**Shoarmavlees is varkensvlees.** NEVO 2906 en 3027 zijn de enige
+shoarma-regels en allebei van varken. Voor een Syrisch gerecht is dat de
+verkeerde regel, en niet een beetje. Het broodje is daarom met kip gebouwd —
+kipshawarma bestaat, is gangbaar, en staat gemeten in de tabel.
+
+**Ful medames ontbreekt.** Ful is de gedroogde bruine tuinboon, gekookt; NEVO
+kent alleen de verse en de ingeblikte groene, en dat scheelt op de hoofdmoot van
+het gerecht ruim een derde. Een gerecht waarvan het belangrijkste ingrediënt er
+een derde naast zit is slechter dan geen gerecht. Het ontbreekt dus, en dat is
+een keuze.
+
+Hetzelfde geldt kleiner voor het platbrood: Syrisch khubz staat niet in NEVO, en
+Turks witbrood is de dichtstbijzijnde regel. Dat staat per gerecht in de notitie
+en niet één keer hier, want je leest het op het moment dat je het getal ziet.
+
+### 21.5 Waar de bibliotheek nu staat
+
+| keuken | gerechten |
+|---|---|
+| Nederlands | 44 |
+| Marokkaans | 16 |
+| Syrisch | 12 |
+| Turks | 10 |
+| overig | 10 |
+| Surinaams | 8 |
+| **totaal** | **100** |
+
+Alle zes de keukens die het schema toestaat zijn nu gevuld. Van de 73 nieuwe
+draagt elke regel `concept`, `ai_voorstel` en `estimated` — graad D, tot een
+diëtist ernaar heeft gekeken.
