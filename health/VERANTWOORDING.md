@@ -584,9 +584,35 @@ maaltijdfoto's vond de grootste fouten bij vet in samengestelde gerechten — en
 een duidelijke verbetering zodra er context werd meegegeven.
 
 Daaruit volgt iets concreets: **één verhelderende vraag over de portie of de
-bereiding verkleint de fout meetbaar.** Dat is goedkoop te bouwen en het verkleint
-het interval, wat in deze app precies de goede richting is. Genoteerd als
-mogelijkheid.
+bereiding verkleint de fout meetbaar.**
+
+Dat is gebouwd, en dan in de vorm die het minste vraagt. Niet een vraag terug aan
+het model — dat is een tweede aanroep met een tweede schatting erin — maar een
+weegveld onder de regel met de breedste band. De gebruiker heeft de weegschaal al
+in huis; wat ontbrak was de plek om het getal kwijt te kunnen.
+
+Drie keuzes liggen daarin vast, en ze zijn alle drie te toetsen in
+`src/health/wegen.proef.ts`.
+
+**Eén veld, niet dertien.** Onder elke regel een weegveld maakt van een lijstje
+om na te kijken een formulier, en dan wordt er niets gewogen. Het staat onder de
+regel die de band van de hele maaltijd bepaalt, en alleen als daar meer dan
+vijftig kilocalorieën te winnen zijn.
+
+**De band blijft.** Na het wegen is de portie bekend en de voedingswaarde nog
+steeds een tabelwaarde. Er blijft dus ±8 procent staan, dezelfde marge die
+`kal-ai` aanhoudt voor een gewogen portie. Een puntschatting zou beweren dat de
+tabel exact is. Gemeten op de proefgegevens: 520–980 wordt 497–583, niet 540.
+
+**De graad gaat hoogstens naar C.** A is voorbehouden aan een etiket dat de
+gebruiker zelf overnam; een tabelwaarde met een gewogen portie is iets anders.
+Omlaag gaat de graad nooit.
+
+Wat er níet gebeurt is de oude onzekerheidsopmerking weggooien. Die is vrije
+tekst van het model en niet betrouwbaar te classificeren — een opmerking over het
+bereidingsvet is na het wegen van de portie even geldig als ervoor. De nieuwe
+opmerking staat daarom vooraan en zegt met zoveel woorden dat hij de schatting
+eronder vervangt.
 
 ### 18.7 Twee dingen om te weten over de gegevensbronnen
 
