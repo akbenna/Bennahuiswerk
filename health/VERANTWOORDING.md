@@ -739,3 +739,75 @@ zichtbaar gelaten in plaats van gevuld met een eigen optelsom.
 **Keuken `overig` is geen restbak.** Bami, nasi, saté en pizza staan wekelijks
 op tafel en zijn niet Nederlands. Ze onder `nederlands` schuiven zou dat filter
 onbruikbaar maken. De keuken waar ze wél bij horen heeft de bibliotheek nog niet.
+
+## 20. De lichaamsparameters die niet meekwamen
+
+### 20.1 Wat er al was
+
+De weg van horloge naar app staat sinds bestand 04 en is uitgelegd in
+`Koppelen.tsx`: Garmin heeft een Health API achter een ontwikkelaarsprogramma
+dat geen nieuwe aanmeldingen aanneemt, en Apple Gezondheid heeft helemaal geen
+web-API. Wat wél werkt is de Opdrachten-app op de iPhone, die Gezondheid uitleest
+en zelf een verzoek mag versturen. Eén weg dekt beide bronnen, want de Garmin
+Connect-app schrijft zijn metingen in Gezondheid.
+
+Langs die weg kwamen al automatisch binnen: stappen, slaap, actieve energie,
+fietsminuten, gewicht en de rustpols. Saturatie en bloeddruk niet — terwijl ze
+allebei al bestonden als meting die je met de hand kon invullen. Dat is precies
+het overtikwerk dat een koppeling hoort weg te nemen.
+
+### 20.2 Eén regel op één plek
+
+Het blok dat de rustpols wegschrijft was twintig regels: een grens, een
+botsingsregel, een bijwerken-of-invoegen. Dat drie keer overschrijven zou drie
+plekken opleveren waar de botsingsregel uit elkaar kan gaan lopen — en juist die
+regel hoort overal dezelfde te zijn. Hij staat nu één keer, in
+`kal_meting_uit_koppeling`, en de rustpols gebruikt hem ook.
+
+Die regel luidt: wat de koppeling zelf neerzette mag hij bijwerken, want de
+rustpols van vanochtend is voorlopig. Wat jíj hebt ingevuld blijft staan, altijd.
+Jij stond erbij toen die bloeddruk gemeten werd en het horloge niet.
+
+### 20.3 De ondergrenzen doen meer werk dan ze lijken
+
+| meting | bereik |
+|---|---|
+| rustpols | 25 – 150 /min |
+| saturatie | 70 – 100 % |
+| bovendruk | 60 – 260 mmHg |
+| onderdruk | 30 – 160 mmHg |
+
+Saturatie is een percentage, dus boven de honderd is het een verkeerd veld en
+geen meting; onder de zeventig meet een polssensor geen mens meer.
+
+De ondergrenzen vangen daarnaast de fout af waar bestand 04 voor stappen en
+energie een aparte regel voor nodig had: `Bereken statistiek` in de
+Opdrachten-app geeft over nul monsters een 0 terug en niet leeg. Voor deze vier
+velden is die extra regel overbodig — een 0 valt vanzelf buiten elk bereik, en
+wordt gemeld als *onmogelijk, genegeerd* in plaats van stil weggeschreven.
+
+### 20.4 Wat een horloge niet meet
+
+Bloeddruk komt niet van een horloge. Wat hem in Gezondheid zet is een meter met
+een manchet. Voor de opdracht maakt dat niets uit — die leest Gezondheid, niet
+het horloge — maar het is het verschil tussen een waarde die er elke dag staat
+en een waarde die er staat op de dagen dat je hebt gemeten. Dat staat er ook zo
+bij, want een lege grafiek die je als een verslechtering leest is erger dan geen
+grafiek.
+
+### 20.5 Getoetst
+
+Zeventien gevallen in `kal_proef_lichaamsparameters()`, naast de 41 van
+`kal_proef_koppeling()` en niet erin: die gaat over de dagtabel, deze over
+`kal_metingen`, en ze samenvoegen zou één functie van vierhonderd regels geven
+waarin niet meer te zien is welke regel welk geval dekt.
+
+Getoetst met twee mutanten, want een proef die nooit rood wordt is erger dan
+geen proef. Haal de botsingsregel weg en "jouw meting wordt niet overschreven"
+valt om; zet de ondergrens van de saturatie op 0 en de twee gevallen over de 0
+uit een lege zoekactie vallen om. Beide keren precies die gevallen en geen
+andere.
+
+Twee gevallen gaan over de rustpols, die niets nieuws doet maar wel door een
+andere functie loopt dan gisteren. Als die verhuizing iets gebroken heeft, hoort
+dat hier zichtbaar te worden en niet pas op een telefoon.
