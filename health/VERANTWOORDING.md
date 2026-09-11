@@ -475,3 +475,146 @@ daar al in.
 
 **Wat er wél mee gebeurt.** De minuten tellen mee in het weekdoel en staan in het
 dagoverzicht. Verder niets.
+
+---
+
+## 18. Wat het marktonderzoek opleverde, en wat eruit volgt
+
+September 2026. Aanleiding: de vraag hoe deze app zich verhoudt tot Yazio en de
+rest, en wat "eerlijker naar individualiteit" zou kunnen betekenen.
+
+**Voorbehoud bij alles hieronder.** Het onderzoek is gedaan met zoekopdrachten;
+geen enkele bronpagina kon rechtstreeks gelezen worden omdat de uitgaande
+verbinding geblokkeerd is. Alles is dus tweedehands. Daar komt bij dat de
+"reviews" in deze categorie voor een groot deel automatisch gegenereerde reclame
+zijn, gepubliceerd door concurrenten, met overtuigend klinkende getallen die
+nergens op slaan. Wat hieronder staat is wat over meerdere onafhankelijke
+bronnen consistent terugkwam, of wat uit een vindplaats in de vakliteratuur
+komt.
+
+### 18.1 De dichtstbijzijnde concurrent doet het omgekeerde met onzekerheid
+
+**MacroFactor** (Greg Nuckols en Eric Trexler) berekent het verbruik uit dezelfde
+natuurkunde: over een voldoende lang venster is inname min gewichtsverandering
+gelijk aan verbruik. Ze gladden het gewicht met een voortschrijdend gemiddelde,
+convergeren in twee tot vier weken, en verwerpen "je stofwisseling is kapot" —
+bij een verlies onder de tien procent schatten ze de aanpassing op ongeveer vijf
+procent.
+
+Ze tónen ook een band om de verbruikslijn, de *flux range*. En hun eigen
+documentatie zegt erover: *"While it's tempting to think of the flux range as a
+confidence interval, it's not technically accurate"*, en hij staat er *"only for
+fun and curiosity"*. De gebruiker krijgt één getal als antwoord.
+
+Dat is precies het tegenovergestelde van de stelregel van deze app. Het is de
+sterkste aanwijzing die er is dat *geen enkel getal zonder zijn onzekerheid* geen
+heruitvinding is maar een keuze die de markt bewust niet maakt — vermoedelijk
+omdat een puntschatting makkelijker verkoopt en makkelijker naar te handelen is.
+
+### 18.2 Stappen als vertrouwen, niet als calorieën — onafhankelijke bevestiging
+
+MacroFactor voegde in 2025 *Expenditure Modifiers* toe met daarin
+*Step-Informed Updates*, en zegt er expliciet bij dat ze **geen calorische waarde
+aan stappen toekennen**. Stappen gaan erin als signaal dat het algoritme sneller
+mag bijstellen, niet als energie. De reden die ze geven is de onze: iedereen
+heeft een redelijke stappenteller, en niemand heeft een betrouwbare omrekening
+naar calorieën.
+
+Dat is dezelfde conclusie als in §17.2, langs dezelfde redenering, door een
+ander team. Het patroon dat zij eraan toevoegen — een stappentrend het *interval
+sneller laten versmallen* in plaats van het doel te verschuiven — is bruikbaar
+voor ons venster van 28 dagen, en staat als open mogelijkheid genoteerd.
+
+### 18.3 De grootste ongemodelleerde fout is onderrapportage, niet weegruis
+
+Tegen dubbelgelabeld water onderrapporteren 24-uursnavragen de energie-inname
+met tien tot twintig procent en voedselfrequentievragenlijsten met twintig tot
+dertig procent. Een analyse in *Nature Food* (2024) op basis van 6.497
+DLW-metingen, toegepast op NDNS en NHANES, kwam uit op 27,4 procent. De
+afwijking hangt systematisch samen met leeftijd, geslacht en BMI.
+
+Daaruit volgt iets over wat dit model eigenlijk berekent. Het verbruik wordt
+afgeleid uit *gelogde* inname. Is die stelselmatig twintig procent te laag, dan
+is het afgeleide verbruik dat ook. Het getal is dus geen schatting van de
+stofwisseling maar van **het verbruik zoals het logboek het impliceert**.
+
+Dat maakt het niet minder bruikbaar — omdat de afwijking persoonlijk en
+betrekkelijk stabiel is, voorspelt het getal het gewichtsverloop van déze
+gebruiker juist goed. Maar het zijn twee verschillende beweringen, en de app
+hoort te zeggen welke van de twee hij doet. Dat staat sinds deze ronde onder het
+getal op het inzichtscherm.
+
+**Wat er nog niet gebeurt.** Het interval bevat alleen een term voor de ruis in
+de weegreeks, niet voor de onzekerheid in het logboek. Strikt genomen is het
+interval dus te smal. Dat is bewust nog niet aangepast: een tweede foutterm
+erbij optellen verbreedt elke band in de app, en dat is een modelbeslissing met
+gevolgen tot in het dagdoel. Hij staat hier genoteerd als openstaand, niet als
+opgelost.
+
+### 18.4 Wat de proefliteratuur zegt over de coach
+
+De **SMARTER-trial** (n=502, twaalf maanden, JMIR 2022) vergeleek zelfregistratie
+met zelfregistratie plús dagelijkse op maat gemaakte terugkoppeling op de
+telefoon. Er kwam **geen verschil** uit: −2,39 tegen −2,12 procent
+gewichtsverlies, en vijf procent of meer werd gehaald door 29,1 tegen 26,3
+procent.
+
+Dat is een negatieve uitkomst die deze app aangaat. De dagcoach mag dus niet
+verantwoord worden als iets wat het gewichtsverlies vergroot, want daar is geen
+bewijs voor. Zijn rechtvaardiging is dat hij het loggen goedkoper maakt —
+voorstellen uit je eigen geschiedenis, het eiwitgat zichtbaar — en dat is een
+argument over volhouden, niet over uitkomst. Zo hoort het benoemd te worden.
+
+### 18.5 Eenvoudig loggen is niet de mindere variant
+
+Pilot-trials met een *stoplichtaanpak* — alleen de "rode" producten loggen —
+vonden een vergelijkbare inname-daling en gewichtsverlies over zes maanden als
+volledig calorieën tellen (−403 tegen −364 kcal per dag), en in de eenvoudige arm
+gingen deelnemers daarnaast méér bewegen. Volledig opgezette vergelijkingen zijn
+nog schaars.
+
+Dat betekent dat het stoplicht in de onderhoudsfase en de ruwe D-waarden geen
+concessies zijn maar een verdedigbare vorm, en dat ze zo beschreven mogen worden.
+
+### 18.6 Fotoherkenning: het product herkennen is makkelijk, de portie niet
+
+Een systematische review van beeldgebaseerde voedingsanalyse vond relatieve
+fouten van 0,1 tot 38,3 procent op energie. Een studie uit 2025 met GPT-4o op
+maaltijdfoto's vond de grootste fouten bij vet in samengestelde gerechten — en
+een duidelijke verbetering zodra er context werd meegegeven.
+
+Daaruit volgt iets concreets: **één verhelderende vraag over de portie of de
+bereiding verkleint de fout meetbaar.** Dat is goedkoop te bouwen en het verkleint
+het interval, wat in deze app precies de goede richting is. Genoteerd als
+mogelijkheid.
+
+### 18.7 Twee dingen om te weten over de gegevensbronnen
+
+**Open Food Facts** heeft gedocumenteerde kwaliteitsproblemen: dubbelingen,
+eenhedenchaos, halfgevulde rijen en onmogelijke waarden, en geeft geen enkele
+garantie omdat alles van vrijwilligers komt. Dat rechtvaardigt de keuze uit
+bestand 18 om die producten als eigen, lagere herkomst te merken en niet met de
+tabelwaarden te mengen.
+
+**LEDA**, de Levensmiddelendatabank waar het Voedingscentrum zijn Mijn Eetmeter
+mee vult, is een Nederlandse, samengestelde bron voor merkproducten — niet
+crowdsourced. Of hij buiten het Voedingscentrum te gebruiken is, en onder welke
+voorwaarden, is niet nagegaan. Als hoger gegradeerde herkomst voor Nederlandse
+supermarktproducten is dat het uitzoeken waard.
+
+### 18.8 Wat de markt doet dat deze app bewust niet doet
+
+Volledigheidshalve, want een keuze die je niet opschrijft ziet er later uit als
+een omissie.
+
+- **Abonnementen met donkere patronen.** Noom betaalde rond de zestig miljoen
+  dollar aan schikkingen over automatische verlenging en opzegproblemen.
+- **Schuldopwekkend ontwerp.** Gebruikers van calorie-apps rapporteren meer
+  verstoord eetgedrag; wie logt om gewicht of vorm (in plaats van om gezondheid)
+  meldt vaker voedselpreoccupatie en alles-of-nietsdenken.
+- **Zoe**, het bekendste merk in gepersonaliseerde voeding, haalde in september
+  2025 de glucosemeter en de bloedvettest uit het pakket. Die reacties worden nu
+  vóórspeld uit vragenlijsten in plaats van gemeten. De bekendste
+  personaliseerder ging dus terug naar een populatiemodel met een persoonlijk
+  jasje. Dat is een waarschuwing waard: personalisatie die niet op een meting
+  rust, is presentatie.
