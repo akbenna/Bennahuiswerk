@@ -644,3 +644,98 @@ een omissie.
   personaliseerder ging dus terug naar een populatiemodel met een persoonlijk
   jasje. Dat is een waarschuwing waard: personalisatie die niet op een meting
   rust, is presentatie.
+
+## 19. De bibliotheek uitgebreid — Surinaams, Nederlands, en het verschil met NEVO
+
+### 19.1 Twee dingen die op elkaar lijken en het niet zijn
+
+De vraag "waar zijn de RIVM-bestanden gebleven, want Nederlandse gerechten
+staan er niet in" berust op een verwarring die het waard is één keer goed op te
+schrijven, want hij komt terug.
+
+| | `nevo_foods` | `cultural_dishes` |
+|---|---|---|
+| wat | 2328 voedingsmiddelen van het RIVM | gerechten met naam en portie |
+| herkomst | NEVO-online 2025/9.0, compleet ingelezen | handwerk |
+| bevat | ingrediënten, én 83 samengestelde gerechten en 29 soepen die als geheel zijn doorgemeten | vóór deze uitbreiding: 16 Marokkaanse, 10 Turkse, 1 Nederlands concept |
+| geeft | voedingswaarde per 100 gram | een naam die je intikt en een portie in huishoudmaten |
+
+Het RIVM-bestand is compleet en is dat sinds 12 augustus 2026: 2328 van 2328
+rijen, nul overgeslagen, vastgelegd in `nevo_versies`. Er ontbrak niets aan de
+bron. Wat ontbrak was de bibliotheek — en dat is handwerk, geen import.
+
+Het gevolg was scheef op een manier die niemand bedacht had: er stond
+stamppot, hachee, erwtensoep, tosti en kroket in het RIVM-bestand, allemaal
+doorgemeten, en de app kwam er niet fatsoenlijk bij omdat niemand ze een naam
+en een portie had gegeven. Zoeken op "roti" gaf nul uit de bibliotheek en een
+roti-vél uit de tabel — wat klopt en niet is wat er op het bord ligt.
+
+### 19.2 Wat ik verwachtte en wat er bleek
+
+Ik ging ervan uit dat een Surinaamse hoek verzonnen zou moeten worden:
+ingrediëntenlijsten die niemand heeft nagewogen. Dat bleek maar voor een deel
+te kloppen. NEVO heeft een eigen Surinaamse afdeling, en zes gerechten staan er
+als geheel gemeten in — bruine bonen met rijst, pom, moksi alesi, dahl, bojo en
+bara. Voor die zes is de energie per gram een méting van precies dát gerecht,
+en dus beter onderbouwd dan de Marokkaanse hoek, waar de dichtheid uit een
+optelling van losse ingrediënten komt.
+
+Dat is de tweede keer in dit project dat meten vóór bouwen een aanname omkeerde.
+De eerste was de drempel van de zoekterugval (hoofdstuk 20 van de
+databasebestanden); dit is de tweede.
+
+### 19.3 De scheidslijn die in elk bestand terugkomt
+
+**Onderbouwd:** alle voedingswaarden. In bestand 24 en 25 staat geen enkel
+voedingsgetal — `kal_gerecht()` rekent ze uit de tabel. De identiteit van elk
+ingrediënt en zijn NEVO-code is per stuk uit `nevo_foods` gehaald, niet uit het
+geheugen opgeschreven.
+
+**Niet onderbouwd:** de grammen per ingrediënt bij de twee Surinaamse gerechten
+die uit onderdelen zijn opgebouwd (roti met kip, heri heri), en alle
+portiegewichten. Dat is oordeel en is uit geen bron hier te controleren.
+
+Daarom draagt elke laag het merkteken dat het schema ervoor heeft:
+`validation_status = 'concept'`, `mapping_status = 'ai_voorstel'`,
+`measurement_basis = 'estimated'`. De app toont ze als graad D. Dat is geen
+tijdelijke slordigheid maar de juiste graad — ze zijn niet nagekeken. Naar
+'validated' mag pas als een diëtist de porties heeft nagelopen, en het schema
+weigert dat ook zonder beoordelaar en datum.
+
+Waar de portie om opscheppen gaat, staat niet mijn schatting maar die van
+`voeding_portiematen` voor de NEVO-groep: "Samengestelde gerechten" kent portie
+250 g (175–350), "Soepen" kom 250 g (200–350). Een schatting van een ander
+blijft een schatting; wat het niet is, is een schatting die er vandaag bij
+verzonnen is.
+
+### 19.4 Hoe het getoetst is
+
+Beide bestanden zijn tegen het échte schema gedraaid — de tabellen met al hun
+checks nagebouwd in een lokale Postgres, `nevo_foods` gevuld met de 73 regels
+waar ze naar wijzen. Vijf proeven:
+
+1. elke `external_food_id` wijst naar een bestaande NEVO-regel — 0 wezen;
+2. elk gerecht heeft precies één ingrediënt en precies één standaardportie;
+3. alle drie de merktekens staan goed, bij alle 61 gerechten;
+4. veertien ijkpunten kloppen met wat er met de hand uit valt te rekenen;
+5. twee keer draaien voegt niets toe — 61 gerechten blijven 61.
+
+Proef 1 vond meteen twee gerechten waarvan de code ontbrak in de gevulde
+tabel — terecht, want de proef hoort dat te vinden — en proef 1 vond ook een
+voorrangsfout in mijn eigen nakijkvraag: `where a or b and c` leest als
+`a or (b and c)`. Een nakijkvraag die stilzwijgend de helft overslaat is
+gevaarlijker dan geen nakijkvraag.
+
+### 19.5 Wat er niet in zit, en waarom
+
+**De Syrische hoek.** Nog steeds leeg. NEVO heeft er geen samengestelde
+gerechten voor, dus daar zou voor álles gelden wat nu alleen voor roti en heri
+heri geldt: verzonnen grammenlijsten. Dat is een aparte afweging.
+
+**Hutspot met vlees.** NEVO 1485 is de stamppot zonder vlees; een versie mét
+bestaat niet in het bestand, anders dan bij boerenkool en andijvie. Dat gat is
+zichtbaar gelaten in plaats van gevuld met een eigen optelsom.
+
+**Keuken `overig` is geen restbak.** Bami, nasi, saté en pizza staan wekelijks
+op tafel en zijn niet Nederlands. Ze onder `nederlands` schuiven zou dat filter
+onbruikbaar maken. De keuken waar ze wél bij horen heeft de bibliotheek nog niet.
