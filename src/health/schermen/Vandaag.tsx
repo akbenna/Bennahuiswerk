@@ -242,12 +242,19 @@ export function Vandaag(p: VandaagEigenschappen) {
             ) : (
               <>
                 <p style={{ fontSize: '.95rem' }}>{status.zin}</p>
-                <p className="mini" style={{ marginTop: 6 }}>
-                  Wat je logde ligt tussen{' '}
-                  <span className="cijfer">{dz(Math.round(dag._laag))}</span> en{' '}
-                  <span className="cijfer">{dz(Math.round(dag._hoog))}</span> kcal. Het lichte deel
-                  van de ring is die marge.
-                </p>
+                {/* Op een lege dag stond hier "Wat je logde ligt tussen 0 en 0
+                    kcal". Dat is waar en het is geen informatie: een marge om
+                    niets is geen marge, en een band waarvan de twee grenzen
+                    gelijk zijn doet alsof er onzekerheid is gemeten waar niets
+                    gemeten is. */}
+                {dag._kcal > 0 && (
+                  <p className="mini" style={{ marginTop: 6 }}>
+                    Wat je logde ligt tussen{' '}
+                    <span className="cijfer">{dz(Math.round(dag._laag))}</span> en{' '}
+                    <span className="cijfer">{dz(Math.round(dag._hoog))}</span> kcal. Het lichte deel
+                    van de ring is die marge.
+                  </p>
+                )}
               </>
             )}
           </div>
@@ -555,9 +562,13 @@ function Coachkaart(p: VandaagEigenschappen) {
       ) : (
         <p className="klein" style={{ marginTop: 6 }}>
           Nog <span className="cijfer">{dz(Math.round(t.kcalOver))}</span> kcal
-          {' '}<span className="mini">
-            ({dz(Math.round(t.kcalOverLaag))}–{dz(Math.round(t.kcalOverHoog))})
-          </span>
+          {/* Zolang er niets gelogd is vallen de twee grenzen samen en stond er
+              "(2.165–2.165)". Dat leest als een band en is er geen. */}
+          {Math.round(t.kcalOverLaag) !== Math.round(t.kcalOverHoog) && (
+            <>{' '}<span className="mini">
+              ({dz(Math.round(t.kcalOverLaag))}–{dz(Math.round(t.kcalOverHoog))})
+            </span></>
+          )}
           {t.eiwitOver > 0
             ? <> en <span className="cijfer">{Math.round(t.eiwitOver)}</span> g eiwit te gaan
                 — dat vraagt <span className="cijfer">{dec((t.eis ?? 0) * 100, 1)}</span> g eiwit

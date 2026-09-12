@@ -98,6 +98,12 @@ function reeks(aantalDagen, vorm = 'gewoon') {
        model kwam niet eens tót een uitspraak — precies niet de toestand die
        deze proef moet vangen. Vandaar ontbijt, lunch en diner: 1.560 kcal. */
     if (vorm === 'tegenspraak' && i % 7 >= 3) continue
+    /* Vandaag niets gelogd, de dagen ervoor wel. Dat is de toestand van iemand
+       die 's ochtends de app opent — en de enige toestand waarin de app "tussen
+       0 en 0 kcal" kon zeggen. Zonder dit geval bestond die dag in de hele
+       proefopstelling niet, en kwam een mutant die de nulband terugzet er
+       ongemerkt doorheen. Dat is precies wat er gebeurde. */
+    if (vorm === 'leeg-vandaag' && i === 0) continue
     const tot = i === 0 ? 4 : menu.length
     const gekozen = vorm === 'tegenspraak'
       ? [menu[0], menu[2], menu[4]] : menu.slice(0, tot)
@@ -178,7 +184,8 @@ function metingen(aantalDagen) {
 }
 
 function alles(aantalDagen, fase = 'afvallen') {
-  const vorm = fase === 'tegenspraak' ? 'tegenspraak' : 'gewoon'
+  const vorm = fase === 'tegenspraak' ? 'tegenspraak'
+    : fase === 'leeg-vandaag' ? 'leeg-vandaag' : 'gewoon'
   const { dagen, regels } = aantalDagen > 0
     ? reeks(aantalDagen, vorm) : { dagen: [], regels: [] }
   const profiel = fase === 'onderhoud'
@@ -225,6 +232,8 @@ const gevallen = [
      geval staat er zodat die toestand een vaste plek heeft en niet pas op een
      telefoon opduikt. */
   ['tegenspraak', 28, 'light', 'tegenspraak', ['Inzicht']],
+  /* De ochtend waarop er nog niets in staat. */
+  ['leeg-vandaag', 28, 'light', 'leeg-vandaag', ['Vandaag']],
 ]
 
 /** Een tabblad openen en wachten tot de kop er echt staat. */
@@ -388,6 +397,43 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
        stijlkwestie maar een scherm dat zijn eigen vraag niet beantwoordt. */
     if (!kop || !kop.trim()) throw new Error(`${stam}: kop is leeg`)
     console.log(`${stam.padEnd(26)} kop=${JSON.stringify(kop)}`)
+
+    /* EEN BAND DIE GEEN BAND IS
+     *
+     * Op een lege dag stond in de kop "Wat je logde ligt tussen 0 en 0 kcal" en
+     * in de coachregel "(2.165–2.165)". Allebei waar, allebei geen informatie —
+     * en allebei doen ze alsof er onzekerheid gemeten is waar niets gemeten is.
+     * In een app waarvan de stelregel "geen getal zonder zijn onzekerheid" is,
+     * is het omgekeerde net zo fout. */
+    if (tab === 'Vandaag') {
+      const scherm = await pagina.locator('main, body').first().innerText()
+      const nulband = scherm.match(/tussen\s+0\s+en\s+0/)
+      if (nulband) throw new Error(`${stam}: marge van 0 tot 0 in beeld`)
+      const puntband = scherm.match(/\((\d[\d.]*)[–-](\d[\d.]*)\)/)
+      if (puntband && puntband[1] === puntband[2]) {
+        throw new Error(`${stam}: band met twee gelijke grenzen — ${puntband[0]}`)
+      }
+    }
+
+    /* WAT JE KOMT HALEN STAAT BOVEN WAT JE KOMT DOEN
+     *
+     * Op Gezondheid stond het invoerformulier bovenaan de metingenkaart, dus
+     * het eerste wat je zag was een leeg vak en niet je eigen bloeddruk.
+     * Toevoegen is de uitzondering. Dit is een volgorde en dus met een grep
+     * niet te bewaken. */
+    if (tab === 'Gezondheid') {
+      const kaart = pagina.locator('.kaart', { hasText: 'Metingen' }).first()
+      const volgorde = await kaart.evaluate((el) => {
+        const waarden = el.querySelector('.trio')
+        const veld = el.querySelector('select')
+        if (!waarden || !veld) return null
+        return waarden.compareDocumentPosition(veld) & Node.DOCUMENT_POSITION_FOLLOWING ? 'goed' : 'fout'
+      })
+      if (volgorde !== 'goed') {
+        throw new Error(`${stam}: het invoerveld staat boven de waarden (${volgorde})`)
+      }
+      console.log(`${''.padEnd(26)} metingen: waarden boven het formulier`)
+    }
 
     /* DE VOLGORDE VAN HET INZICHTSCHERM
      *

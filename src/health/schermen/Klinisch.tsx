@@ -245,16 +245,11 @@ function MetingInvoer(
   return (
     <Kaart>
       <Kop>Metingen</Kop>
-      <Rij style={{ marginTop: 8 }}>
-        <select value={soort} onChange={(e) => zetSoort(e.target.value)}
-                style={{ flex: '1 1 150px', width: 'auto' }}>
-          {METINGSOORTEN.map(([k, l]) => <option key={k} value={k}>{l}</option>)}
-        </select>
-        <input type="number" step="0.1" placeholder="waarde" value={waarde}
-               onChange={(e) => zetWaarde(e.target.value)} style={{ flex: '0 0 96px' }} />
-        <Knop vol opKlik={opslaan}>Opslaan</Knop>
-      </Rij>
-      <div className="trio" style={{ marginTop: 12 }}>
+      {/* WAAROM DE WAARDEN BOVEN HET FORMULIER STAAN
+          Je komt hier kijken, en af en toe iets toevoegen. Het formulier stond
+          bovenaan, dus het eerste wat je zag was een leeg invoervak en niet je
+          eigen bloeddruk. Toevoegen is de uitzondering en hoort onder te staan. */}
+      <div className="trio" style={{ marginTop: 10 }}>
         <div>
           <div className="mini">Bloeddruk</div>
           <div className="getal" style={{ fontSize: '1.2rem' }}>
@@ -294,27 +289,52 @@ function MetingInvoer(
                       ? 'Omhoog wijst op slechter herstel, een naderende infectie of te zware '
                         + 'belasting — meestal tijdelijk.'
                       : 'Omlaag gaat meestal samen met een betere conditie.')
-              })()}{' '}
-          Bij deze meting is de verándering het signaal: de waarde zelf verschilt te veel per persoon
-          om er iets uit af te lezen.
+              })()}
         </p>
       )}
-      {middel ? (
+      {pols && (
+        <Uitleg id="rustpols" label="waarom de verandering telt en niet de waarde">
+          <p>
+            Bij deze meting is de verándering het signaal: de waarde zelf verschilt te veel per
+            persoon om er iets uit af te lezen. Een rustpols van 66 zegt zonder jouw eigen
+            gemiddelde ernaast niets.
+          </p>
+        </Uitleg>
+      )}
+      {middel && (
         <p className="mini" style={{ marginTop: 8 }}>
           {middel.waarde >= 102 ? 'Boven 102 cm — de grens waarbij gewichtsafname wordt aanbevolen.'
            : middel.waarde >= 94 ? 'Tussen 94 en 102 cm — de grens waarbij het gewicht niet meer mag toenemen.'
-           : 'Onder 94 cm.'}{' '}
-          Voor Noord-Afrikaanse afkomst gelden dezelfde waarden als voor Europese mannen: IDF, WHO en
-          de Nederlandse richtlijn 2023 verwijzen alle drie naar de Europese afkappunten. Alleen voor
-          Aziatische afkomst liggen ze lager. Meetfout in de literatuur 0,7 tot 15 cm — twee centimeter
-          verschil is ruis.
-        </p>
-      ) : (
-        <p className="mini" style={{ marginTop: 8 }}>
-          Meten halverwege tussen de onderste rib en de bovenrand van de bekkenkam, staand, op de blote
-          huid, lint parallel aan de vloer.
+           : 'Onder 94 cm.'}
         </p>
       )}
+      {/* De meetinstructie stond altijd in beeld zolang er geen middelomtrek
+          was — een stuk grijze tekst over ribben en bekkenkammen op een scherm
+          waar je je bloeddruk kwam bekijken. Hij hoort er wel te staan, want
+          verkeerd meten geeft centimeters verschil, maar achter de uitklapper
+          waar alle andere onderbouwing in deze app ook staat. */}
+      <Uitleg id="middelomtrek"
+              label={middel ? 'waar die grenzen vandaan komen' : 'hoe je de middelomtrek meet'}>
+        <p>
+          Meten halverwege tussen de onderste rib en de bovenrand van de bekkenkam, staand, op de
+          blote huid, lint parallel aan de vloer.
+        </p>
+        <p>
+          Voor Noord-Afrikaanse afkomst gelden dezelfde waarden als voor Europese mannen: IDF, WHO
+          en de Nederlandse richtlijn 2023 verwijzen alle drie naar de Europese afkappunten. Alleen
+          voor Aziatische afkomst liggen ze lager. Meetfout in de literatuur 0,7 tot 15 cm — twee
+          centimeter verschil is ruis.
+        </p>
+      </Uitleg>
+      <Rij style={{ marginTop: 12 }}>
+        <select value={soort} onChange={(e) => zetSoort(e.target.value)}
+                style={{ flex: '1 1 150px', width: 'auto' }}>
+          {METINGSOORTEN.map(([k, l]) => <option key={k} value={k}>{l}</option>)}
+        </select>
+        <input type="number" step="0.1" placeholder="waarde" value={waarde}
+               onChange={(e) => zetWaarde(e.target.value)} style={{ flex: '0 0 96px' }} />
+        <Knop vol opKlik={opslaan}>Opslaan</Knop>
+      </Rij>
     </Kaart>
   )
 }
