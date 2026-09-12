@@ -161,7 +161,7 @@ function Zoeken({ token, opPortie }: { token: string; opPortie: (o: Onderwerp) =
       <Kop>Zoeken in de voedingsmiddelentabel en de gerechten</Kop>
       <div className="zoekvak">
         <span aria-hidden="true">🔎</span>
-        <input placeholder="couscous, olijfolie, tajine…" autoComplete="off"
+        <input placeholder="stamppot, roti, hummus, olijfolie…" autoComplete="off"
                value={term} onChange={(e) => zetTerm(e.target.value)} />
       </div>
       <p className="mini" style={{ marginTop: 8 }}>
