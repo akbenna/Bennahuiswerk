@@ -415,6 +415,50 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
       }
     }
 
+    /* DE VOLGORDE VAN HET VANDAAGSCHERM
+     *
+     * De gewone reden om deze app te openen is loggen. De knop daarvoor stond
+     * drie kaarten naar beneden, onder twee kaarten die je eerst moest lezen.
+     * Hij hoort meteen onder de hero, met "Wat er nog in past" eronder — dat is
+     * de vraag die je daarna stelt — en daarna beweging en slaap.
+     *
+     * Net als bij Inzicht is dit met een grep niet te bewaken: een blok
+     * verplaatsen verandert geen enkele tekst. Vandaar hier, op de gerenderde
+     * pagina, en met de hero erbij — anders bewijst "knop vóór coachkaart" nog
+     * niet dat er niets tussen de hero en de knop is gekropen.
+     */
+    if (tab === 'Vandaag') {
+      const rij = await pagina.evaluate(() =>
+        Array.from(document.querySelectorAll('.hero, .hoofdknop, .kaart')).map((el) => {
+          if (el.classList.contains('hero')) return 'hero'
+          if (el.classList.contains('hoofdknop')) return 'toevoegen'
+          const k = el.querySelector('.eyebrow')
+          return k && k.textContent ? k.textContent.trim() : '?'
+        }))
+      const waar = (t) => rij.findIndex((x) => x.startsWith(t))
+      const hero = waar('hero')
+      const knop = waar('toevoegen')
+      const past = waar('Wat er nog in past')
+      const bew = waar('Beweging en slaap')
+      if (hero !== 0) throw new Error(`${stam}: de hero staat niet bovenaan — ${JSON.stringify(rij)}`)
+      if (knop !== 1) {
+        throw new Error(`${stam}: "Eten toevoegen" staat niet meteen onder de hero — ` +
+                        JSON.stringify(rij))
+      }
+      /* De coachkaart ontbreekt zolang er geen doel is; dan is er niets tussen
+         de knop en beweging, en dat hoort ook zo. */
+      if (past >= 0 && past !== 2) {
+        throw new Error(`${stam}: "Wat er nog in past" staat niet onder de knop — ` +
+                        JSON.stringify(rij))
+      }
+      if (bew < 0) throw new Error(`${stam}: "Beweging en slaap" ontbreekt — ${JSON.stringify(rij)}`)
+      if (bew !== (past >= 0 ? 3 : 2)) {
+        throw new Error(`${stam}: "Beweging en slaap" staat niet direct daaronder — ` +
+                        JSON.stringify(rij))
+      }
+      console.log(`${''.padEnd(26)} volgorde: ${rij.slice(0, 5).join(' → ')}`)
+    }
+
     /* WAT JE KOMT HALEN STAAT BOVEN WAT JE KOMT DOEN
      *
      * Op Gezondheid stond het invoerformulier bovenaan de metingenkaart, dus
