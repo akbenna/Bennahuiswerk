@@ -270,6 +270,7 @@ export function KoppelVenster(
           <div><code>p_slaap_uur</code><span>Getal</span><span>of <code>p_slaap_min</code>, of{' '}
             <code>p_slaap_sec</code></span></div>
           <div><code>p_fiets_min</code><span>Getal</span><span>minuten</span></div>
+          <div><code>p_saturatie</code><span>Getal</span><span>procent — <Menu nl="Bloedzuurstof" en="Blood Oxygen" /></span></div>
         </div>
         <p className="mini" style={{ marginTop: 6 }}>
           De rustpols is van deze vier de moeite waard om er als eerste bij te zetten: hij daalt als
@@ -281,7 +282,27 @@ export function KoppelVenster(
           Voor slaap kies je het veld dat past bij wat je opdracht teruggeeft — uren, minuten of
           seconden. Zit je ernaast, dan komt er iets van dertig uur slaap uit en dat wordt geweigerd
           in plaats van weggeschreven. In het antwoord staat dan{' '}
-          <code>slaap_genegeerd: true</code>. Hetzelfde geldt voor de rustpols buiten 25 en 150.
+          <code>slaap_genegeerd: true</code>. Hetzelfde geldt voor elke waarde buiten haar bereik:
+          de rustpols buiten 25 en 150, de saturatie buiten 70 en 100, de bovendruk buiten 60 en 260
+          en de onderdruk buiten 30 en 160. In het antwoord staat dan per veld{' '}
+          <em>onmogelijk, genegeerd</em> in plaats van <em>opgeslagen</em>, zodat te zien is dat er
+          iets is meegestuurd en wat ermee gebeurde.
+        </p>
+        <p className="klein" style={{ marginTop: 12 }}>
+          <b>En de bloeddruk, als je hem meet.</b> Die komt niet van je horloge — een horloge meet
+          geen bloeddruk. Wat hem in Gezondheid zet is een meter met een manchet om je arm, van
+          welk merk dan ook. Voor de opdracht maakt dat niets uit: die leest Gezondheid en niet het
+          horloge. Het verschil is dat deze twee er alleen staan op de dagen dat je hebt gemeten.
+        </p>
+        <div className="veldtabel">
+          <div><code>p_bloeddruk_sys</code><span>Getal</span><span>bovendruk, mmHg</span></div>
+          <div><code>p_bloeddruk_dia</code><span>Getal</span><span>onderdruk, mmHg</span></div>
+        </div>
+        <p className="mini" style={{ marginTop: 6 }}>
+          Wat jij zelf hebt ingevuld wordt nooit overschreven. De opdracht mag zijn eigen meting van
+          vanochtend bijwerken — die is voorlopig — maar een waarde die jij hebt ingetikt blijft
+          staan, ook als het horloge iets anders denkt. In het antwoord heet dat{' '}
+          <em>die van jou blijft staan</em>.
         </p>
         <p className="mini" style={{ marginTop: 6 }}>
           Een meting die op een dag ontbreekt is geen probleem: dat veld blijft dan leeg en de rest

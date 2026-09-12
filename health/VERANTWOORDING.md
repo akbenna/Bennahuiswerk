@@ -644,3 +644,261 @@ een omissie.
   personaliseerder ging dus terug naar een populatiemodel met een persoonlijk
   jasje. Dat is een waarschuwing waard: personalisatie die niet op een meting
   rust, is presentatie.
+
+## 19. De bibliotheek uitgebreid — Surinaams, Nederlands, en het verschil met NEVO
+
+### 19.1 Twee dingen die op elkaar lijken en het niet zijn
+
+De vraag "waar zijn de RIVM-bestanden gebleven, want Nederlandse gerechten
+staan er niet in" berust op een verwarring die het waard is één keer goed op te
+schrijven, want hij komt terug.
+
+| | `nevo_foods` | `cultural_dishes` |
+|---|---|---|
+| wat | 2328 voedingsmiddelen van het RIVM | gerechten met naam en portie |
+| herkomst | NEVO-online 2025/9.0, compleet ingelezen | handwerk |
+| bevat | ingrediënten, én 83 samengestelde gerechten en 29 soepen die als geheel zijn doorgemeten | vóór deze uitbreiding: 16 Marokkaanse, 10 Turkse, 1 Nederlands concept |
+| geeft | voedingswaarde per 100 gram | een naam die je intikt en een portie in huishoudmaten |
+
+Het RIVM-bestand is compleet en is dat sinds 12 augustus 2026: 2328 van 2328
+rijen, nul overgeslagen, vastgelegd in `nevo_versies`. Er ontbrak niets aan de
+bron. Wat ontbrak was de bibliotheek — en dat is handwerk, geen import.
+
+Het gevolg was scheef op een manier die niemand bedacht had: er stond
+stamppot, hachee, erwtensoep, tosti en kroket in het RIVM-bestand, allemaal
+doorgemeten, en de app kwam er niet fatsoenlijk bij omdat niemand ze een naam
+en een portie had gegeven. Zoeken op "roti" gaf nul uit de bibliotheek en een
+roti-vél uit de tabel — wat klopt en niet is wat er op het bord ligt.
+
+### 19.2 Wat ik verwachtte en wat er bleek
+
+Ik ging ervan uit dat een Surinaamse hoek verzonnen zou moeten worden:
+ingrediëntenlijsten die niemand heeft nagewogen. Dat bleek maar voor een deel
+te kloppen. NEVO heeft een eigen Surinaamse afdeling, en zes gerechten staan er
+als geheel gemeten in — bruine bonen met rijst, pom, moksi alesi, dahl, bojo en
+bara. Voor die zes is de energie per gram een méting van precies dát gerecht,
+en dus beter onderbouwd dan de Marokkaanse hoek, waar de dichtheid uit een
+optelling van losse ingrediënten komt.
+
+Dat is de tweede keer in dit project dat meten vóór bouwen een aanname omkeerde.
+De eerste was de drempel van de zoekterugval (hoofdstuk 20 van de
+databasebestanden); dit is de tweede.
+
+### 19.3 De scheidslijn die in elk bestand terugkomt
+
+**Onderbouwd:** alle voedingswaarden. In bestand 24 en 25 staat geen enkel
+voedingsgetal — `kal_gerecht()` rekent ze uit de tabel. De identiteit van elk
+ingrediënt en zijn NEVO-code is per stuk uit `nevo_foods` gehaald, niet uit het
+geheugen opgeschreven.
+
+**Niet onderbouwd:** de grammen per ingrediënt bij de twee Surinaamse gerechten
+die uit onderdelen zijn opgebouwd (roti met kip, heri heri), en alle
+portiegewichten. Dat is oordeel en is uit geen bron hier te controleren.
+
+Daarom draagt elke laag het merkteken dat het schema ervoor heeft:
+`validation_status = 'concept'`, `mapping_status = 'ai_voorstel'`,
+`measurement_basis = 'estimated'`. De app toont ze als graad D. Dat is geen
+tijdelijke slordigheid maar de juiste graad — ze zijn niet nagekeken. Naar
+'validated' mag pas als een diëtist de porties heeft nagelopen, en het schema
+weigert dat ook zonder beoordelaar en datum.
+
+Waar de portie om opscheppen gaat, staat niet mijn schatting maar die van
+`voeding_portiematen` voor de NEVO-groep: "Samengestelde gerechten" kent portie
+250 g (175–350), "Soepen" kom 250 g (200–350). Een schatting van een ander
+blijft een schatting; wat het niet is, is een schatting die er vandaag bij
+verzonnen is.
+
+### 19.4 Hoe het getoetst is
+
+Beide bestanden zijn tegen het échte schema gedraaid — de tabellen met al hun
+checks nagebouwd in een lokale Postgres, `nevo_foods` gevuld met de 73 regels
+waar ze naar wijzen. Vijf proeven:
+
+1. elke `external_food_id` wijst naar een bestaande NEVO-regel — 0 wezen;
+2. elk gerecht heeft precies één ingrediënt en precies één standaardportie;
+3. alle drie de merktekens staan goed, bij alle 61 gerechten;
+4. veertien ijkpunten kloppen met wat er met de hand uit valt te rekenen;
+5. twee keer draaien voegt niets toe — 61 gerechten blijven 61.
+
+Proef 1 vond meteen twee gerechten waarvan de code ontbrak in de gevulde
+tabel — terecht, want de proef hoort dat te vinden — en proef 1 vond ook een
+voorrangsfout in mijn eigen nakijkvraag: `where a or b and c` leest als
+`a or (b and c)`. Een nakijkvraag die stilzwijgend de helft overslaat is
+gevaarlijker dan geen nakijkvraag.
+
+### 19.5 Wat er niet in zit, en waarom
+
+**De Syrische hoek.** Was bij het schrijven van dit hoofdstuk nog leeg; zie
+hoofdstuk 21, waar de reden waarom hij leeg bleef bij nameten maar half bleek
+te kloppen.
+
+**Hutspot met vlees.** NEVO 1485 is de stamppot zonder vlees; een versie mét
+bestaat niet in het bestand, anders dan bij boerenkool en andijvie. Dat gat is
+zichtbaar gelaten in plaats van gevuld met een eigen optelsom.
+
+**Keuken `overig` is geen restbak.** Bami, nasi, saté en pizza staan wekelijks
+op tafel en zijn niet Nederlands. Ze onder `nederlands` schuiven zou dat filter
+onbruikbaar maken. De keuken waar ze wél bij horen heeft de bibliotheek nog niet.
+
+## 20. De lichaamsparameters die niet meekwamen
+
+### 20.1 Wat er al was
+
+De weg van horloge naar app staat sinds bestand 04 en is uitgelegd in
+`Koppelen.tsx`: Garmin heeft een Health API achter een ontwikkelaarsprogramma
+dat geen nieuwe aanmeldingen aanneemt, en Apple Gezondheid heeft helemaal geen
+web-API. Wat wél werkt is de Opdrachten-app op de iPhone, die Gezondheid uitleest
+en zelf een verzoek mag versturen. Eén weg dekt beide bronnen, want de Garmin
+Connect-app schrijft zijn metingen in Gezondheid.
+
+Langs die weg kwamen al automatisch binnen: stappen, slaap, actieve energie,
+fietsminuten, gewicht en de rustpols. Saturatie en bloeddruk niet — terwijl ze
+allebei al bestonden als meting die je met de hand kon invullen. Dat is precies
+het overtikwerk dat een koppeling hoort weg te nemen.
+
+### 20.2 Eén regel op één plek
+
+Het blok dat de rustpols wegschrijft was twintig regels: een grens, een
+botsingsregel, een bijwerken-of-invoegen. Dat drie keer overschrijven zou drie
+plekken opleveren waar de botsingsregel uit elkaar kan gaan lopen — en juist die
+regel hoort overal dezelfde te zijn. Hij staat nu één keer, in
+`kal_meting_uit_koppeling`, en de rustpols gebruikt hem ook.
+
+Die regel luidt: wat de koppeling zelf neerzette mag hij bijwerken, want de
+rustpols van vanochtend is voorlopig. Wat jíj hebt ingevuld blijft staan, altijd.
+Jij stond erbij toen die bloeddruk gemeten werd en het horloge niet.
+
+### 20.3 De ondergrenzen doen meer werk dan ze lijken
+
+| meting | bereik |
+|---|---|
+| rustpols | 25 – 150 /min |
+| saturatie | 70 – 100 % |
+| bovendruk | 60 – 260 mmHg |
+| onderdruk | 30 – 160 mmHg |
+
+Saturatie is een percentage, dus boven de honderd is het een verkeerd veld en
+geen meting; onder de zeventig meet een polssensor geen mens meer.
+
+De ondergrenzen vangen daarnaast de fout af waar bestand 04 voor stappen en
+energie een aparte regel voor nodig had: `Bereken statistiek` in de
+Opdrachten-app geeft over nul monsters een 0 terug en niet leeg. Voor deze vier
+velden is die extra regel overbodig — een 0 valt vanzelf buiten elk bereik, en
+wordt gemeld als *onmogelijk, genegeerd* in plaats van stil weggeschreven.
+
+### 20.4 Wat een horloge niet meet
+
+Bloeddruk komt niet van een horloge. Wat hem in Gezondheid zet is een meter met
+een manchet. Voor de opdracht maakt dat niets uit — die leest Gezondheid, niet
+het horloge — maar het is het verschil tussen een waarde die er elke dag staat
+en een waarde die er staat op de dagen dat je hebt gemeten. Dat staat er ook zo
+bij, want een lege grafiek die je als een verslechtering leest is erger dan geen
+grafiek.
+
+### 20.5 Getoetst
+
+Zeventien gevallen in `kal_proef_lichaamsparameters()`, naast de 41 van
+`kal_proef_koppeling()` en niet erin: die gaat over de dagtabel, deze over
+`kal_metingen`, en ze samenvoegen zou één functie van vierhonderd regels geven
+waarin niet meer te zien is welke regel welk geval dekt.
+
+Getoetst met twee mutanten, want een proef die nooit rood wordt is erger dan
+geen proef. Haal de botsingsregel weg en "jouw meting wordt niet overschreven"
+valt om; zet de ondergrens van de saturatie op 0 en de twee gevallen over de 0
+uit een lege zoekactie vallen om. Beide keren precies die gevallen en geen
+andere.
+
+Twee gevallen gaan over de rustpols, die niets nieuws doet maar wel door een
+andere functie loopt dan gisteren. Als die verhuizing iets gebroken heeft, hoort
+dat hier zichtbaar te worden en niet pas op een telefoon.
+
+
+## 21. De Syrische hoek — en een patroon in mijn eigen schattingen
+
+### 21.1 De aanname die ik in hoofdstuk 19 opschreef
+
+"NEVO heeft er geen samengestelde gerechten voor, dus daar zou voor álles
+gelden wat nu alleen voor roti en heri heri geldt: verzonnen grammenlijsten."
+
+Nagemeten klopt dat half. Samengestelde Syrische gerechten heeft NEVO inderdaad
+niet. Maar hij heeft wél een reeks Levantijnse onderdelen die als heel product
+zijn doorgemeten — hummus (320 kcal/100 g), baklava (461), falafelmengsel (231),
+tahin (585), gekookte bulgur (80), rode linzen (110), lamsgehakt gebakken (252),
+Turks witbrood (250). Hummus en baklava zijn daarmee complete gerechten met een
+gemeten waarde; de rest is de bouwdoos.
+
+Dat is een betere uitgangspositie dan de Marokkaanse hoek had.
+
+### 21.2 Het patroon
+
+Dit is de derde keer dat meten vóór bouwen een aanname van mij omkeert:
+
+1. de drempel van de zoekterugval — de trigram-zeef haalde onzin binnen waar ik
+   dacht dat hij zou werken (databasebestand 21);
+2. de Surinaamse hoek — ik dacht dat hij verzonnen moest worden; NEVO had zes
+   gerechten als geheel gemeten;
+3. de Syrische hoek — idem, met negen bruikbare onderdelen.
+
+Twee van de drie gaan over hetzelfde: **mijn schatting van wat er in de tabel
+staat is systematisch te pessimistisch.** Dat is geen toeval en het is goedkoop
+te verhelpen — één query voordat ik concludeer dat iets er niet is. Die regel
+staat hier omdat hij het soort ding is dat je een volgende keer weer vergeet.
+
+### 21.3 Twaalf gerechten, en twee getallen die alles bepalen
+
+Twee uit één gemeten NEVO-regel (hummus, baklava), tien uit gemeten onderdelen:
+rode linzensoep, tabouleh, fattoush, mujadara, moutabal, falafel, broodje
+shawarma, maqluba, kibbeh en manakish.
+
+In deze hoek zijn twee soorten getallen doorslaggevend, en allebei zijn het
+schattingen die met zoveel woorden in de regel staan.
+
+**Het frituurvet.** `absorbed_fraction` zegt hoeveel van het vet dat de pan in
+gaat in het gerecht achterblijft. Bij een tajine is dat 1,0 — er wordt in
+gestoofd. Bij frituren is het een fractie die in deze tabel niet te meten is. Ik
+heb hem gekozen en daarna gecontroleerd waar hij uitkomt, en die volgorde hoort
+er eerlijk bij: 0,12 geeft gefrituurde falafel van 303 kcal per 100 g en dat
+ligt midden in wat erover bekend is; 0,10 geeft kibbeh van 200. De fractie is
+dus geen meting maar een **ijking**.
+
+**Het water.** Water heeft geen energie en wel gewicht, dus het staat in de
+noemer van de dichtheid en verder nergens. De rode linzensoep gaf met een liter
+water 54 kcal per 100 g — dat is bouillon met linzen erin. Met 700 ml komt hij
+op 64. Eén getal, en het verschil tussen een gerecht en iets anders.
+
+Allebei zijn tijdens het schrijven bijgesteld omdat de uitkomst buiten haar
+bereik viel. Dat staat in het bestand, want het laat zien waar de hefbomen
+zitten voor wie het straks nakijkt.
+
+### 21.4 Twee dingen die NEVO niet goed genoeg heeft
+
+**Shoarmavlees is varkensvlees.** NEVO 2906 en 3027 zijn de enige
+shoarma-regels en allebei van varken. Voor een Syrisch gerecht is dat de
+verkeerde regel, en niet een beetje. Het broodje is daarom met kip gebouwd —
+kipshawarma bestaat, is gangbaar, en staat gemeten in de tabel.
+
+**Ful medames ontbreekt.** Ful is de gedroogde bruine tuinboon, gekookt; NEVO
+kent alleen de verse en de ingeblikte groene, en dat scheelt op de hoofdmoot van
+het gerecht ruim een derde. Een gerecht waarvan het belangrijkste ingrediënt er
+een derde naast zit is slechter dan geen gerecht. Het ontbreekt dus, en dat is
+een keuze.
+
+Hetzelfde geldt kleiner voor het platbrood: Syrisch khubz staat niet in NEVO, en
+Turks witbrood is de dichtstbijzijnde regel. Dat staat per gerecht in de notitie
+en niet één keer hier, want je leest het op het moment dat je het getal ziet.
+
+### 21.5 Waar de bibliotheek nu staat
+
+| keuken | gerechten |
+|---|---|
+| Nederlands | 44 |
+| Marokkaans | 16 |
+| Syrisch | 12 |
+| Turks | 10 |
+| overig | 10 |
+| Surinaams | 8 |
+| **totaal** | **100** |
+
+Alle zes de keukens die het schema toestaat zijn nu gevuld. Van de 73 nieuwe
+draagt elke regel `concept`, `ai_voorstel` en `estimated` — graad D, tot een
+diëtist ernaar heeft gekeken.

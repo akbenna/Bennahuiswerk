@@ -41,6 +41,7 @@ const METINGSOORTEN = [
   ['middelomtrek', 'middelomtrek'],
   ['nekomtrek', 'nekomtrek'],
   ['hartslag_rust', 'hartslag in rust'],
+  ['saturatie', 'zuurstofsaturatie'],
 ] as const
 
 export interface KlinischEigenschappen {
@@ -234,7 +235,9 @@ function MetingInvoer(
     if (!Number.isFinite(w)) return
     bewaar({
       datum: vandaag(), soort, waarde: w,
-      eenheid: soort.includes('bloeddruk') ? 'mmHg' : soort.includes('omtrek') ? 'cm' : '/min',
+      eenheid: soort.includes('bloeddruk') ? 'mmHg'
+             : soort.includes('omtrek') ? 'cm'
+             : soort === 'saturatie' ? '%' : '/min',
     })
     zetWaarde('')
   }
