@@ -364,6 +364,37 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
     if (!kop || !kop.trim()) throw new Error(`${stam}: kop is leeg`)
     console.log(`${stam.padEnd(26)} kop=${JSON.stringify(kop)}`)
 
+    /* DE VOLGORDE VAN HET INZICHTSCHERM
+     *
+     * Het scherm beantwoordt twee vragen — wat verbruik ik, wat eet ik — en de
+     * rest is verantwoording. Die volgorde is een keuze en geen toeval, en ze
+     * is met een grep niet te bewaken: een kaart verplaatsen verandert geen
+     * enkele tekst. Vandaar hier, op de gerenderde pagina.
+     *
+     * Zodra er een band is hoort "Waar je nu staat" bovenaan te staan en zakt
+     * de afleiding naar onderen. Dat is precies de omkering die makkelijk
+     * ongemerkt terugdraait. */
+    if (tab === 'Inzicht') {
+      const koppen = await pagina.locator('.kaart .eyebrow').allTextContents()
+      const i = (t) => koppen.findIndex((x) => x.trim().startsWith(t))
+      const staat = i('Waar je nu staat')
+      const band = i('Waar de band vandaan komt')
+      if (staat < 0) throw new Error(`${stam}: "Waar je nu staat" ontbreekt`)
+      if (band >= 0 && band < staat) {
+        throw new Error(`${stam}: de afleiding staat bóven "Waar je nu staat" — ` +
+                        JSON.stringify(koppen))
+      }
+      /* En de kaart hoort ook echt de drie getallen te dragen. Een kop zonder
+         inhoud is aan een screenshot niet te zien. */
+      const kaart = pagina.locator('.kaart', { hasText: 'Waar je nu staat' }).first()
+      const getallen = await kaart.locator('.trio .getal').allTextContents()
+      if (getallen.length !== 3) {
+        throw new Error(`${stam}: "Waar je nu staat" toont ${getallen.length} getallen, niet 3`)
+      }
+      console.log(`${''.padEnd(26)} volgorde: waar-je-staat op ${staat}, afleiding op ${band}` +
+                  ` · ${getallen.map((x) => x.trim()).join(' / ')}`)
+    }
+
     /* De coachkaart staat alleen op Vandaag, en alleen als er een doel is. Hij
        hoort de eiwiteis te noemen én voorstellen te tonen: een kaart die wel
        rekent maar niets aanbiedt is de helft van de functie, en dat is aan een

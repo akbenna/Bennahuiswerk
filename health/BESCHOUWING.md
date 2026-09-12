@@ -153,16 +153,32 @@ alleen vindt door in de tabel te kijken in plaats van in de code.
 
 ## Wat er open staat
 
-- **19 en 20 moeten nog gedraaid worden.** 19 vóór de versie die merkproducten
-  toont live gaat, anders faalt het loggen op `kal_regels_bron_check`.
-- **De tak moet naar `main`** — Vercel bouwt daarvandaan.
 - **Vier oude edge functions** op het obesitas-project mogen weg:
   `huiswerk-ai`, `kal-ai`, `kal-prikkel`, `kal-modellen`. De ProVita-functions
   blijven staan.
-- **Meer gerechten van meer herkomsten** is dietistenwerk, geen programmeerwerk.
-  De bibliotheek is van provita-care en er staan 26 gerechten in met 275
-  ingrediëntregels. Ik heb er met opzet géén verzonnen: een gerecht met bedachte
-  ingrediënten en bedachte porties ziet er precies zo uit als een nagerekend
-  gerecht, en dat is de ene fout die deze app niet mag maken. Wat ik wel gedaan
-  heb is de gerechten die er staan vindbaar maken onder de namen die mensen thuis
-  gebruiken.
+
+Twee punten die hier stonden zijn afgehandeld: 19 en 20 zijn gedraaid, en de tak
+is via PR #117 naar `main`.
+
+Eén punt is achterhaald en hoort rechtgezet te worden in plaats van weggehaald,
+want het was een uitgesproken keuze:
+
+> **Meer gerechten van meer herkomsten** is dietistenwerk, geen programmeerwerk.
+> Ik heb er met opzet géén verzonnen: een gerecht met bedachte ingrediënten en
+> bedachte porties ziet er precies zo uit als een nagerekend gerecht, en dat is
+> de ene fout die deze app niet mag maken.
+
+Die redenering klopte, maar hij rustte op een aanname die bij nameten onjuist
+bleek: dat er niets gemetens bestond om op te bouwen. NEVO heeft 83
+samengestelde gerechten en 29 soepen die als geheel zijn doorgemeten, met een
+eigen Surinaamse afdeling en een reeks Levantijnse producten. Daarmee is er een
+derde mogelijkheid naast "verzinnen" en "niets doen": bóuwen op wat gemeten is,
+en per laag zeggen wat er geschat is.
+
+Dat is bestand 24, 25 en 27 geworden — 73 gerechten in zes keukens, alle 73 met
+`concept`, `ai_voorstel` en `estimated`, en dus graad D in de app. De zorg
+hierboven staat daarmee niet los: een gerecht met bedachte porties ziet er
+inderdaad precies zo uit als een nagerekend gerecht — tenzij het zelf zegt dat
+het dat niet is. Dat is wat die drie merktekens doen.
+
+Zie hoofdstuk 19 en 21 van `VERANTWOORDING.md`.
