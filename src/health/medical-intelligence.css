@@ -189,13 +189,25 @@
   #inhoud>.hoofdknop{max-width:340px}
 }
 
+/* De tweeling van dit blok staat eronder. Waarom, staat boven in stijl.css. */
 @media (prefers-color-scheme:dark) and (min-width:960px){
-  body{background:radial-gradient(1100px 520px at 10% -8%,rgba(40,190,142,.10),transparent 70%),
+  :root:not([data-thema]) body{background:radial-gradient(1100px 520px at 10% -8%,rgba(40,190,142,.10),transparent 70%),
                  var(--canvas)}
-  nav.tabs{background:color-mix(in srgb,var(--vlak) 94%,transparent);
+  :root:not([data-thema]) nav.tabs{background:color-mix(in srgb,var(--vlak) 94%,transparent);
     box-shadow:10px 0 35px rgba(0,0,0,.22)}
-  .kaart{box-shadow:0 12px 34px rgba(0,0,0,.18)}
-  .hero{box-shadow:0 18px 46px rgba(0,0,0,.28);outline-color:rgba(255,255,255,.05)}
-  .macro{background:color-mix(in srgb,var(--vlak) 45%,transparent);
+  :root:not([data-thema]) .kaart{box-shadow:0 12px 34px rgba(0,0,0,.18)}
+  :root:not([data-thema]) .hero{box-shadow:0 18px 46px rgba(0,0,0,.28);outline-color:rgba(255,255,255,.05)}
+  :root:not([data-thema]) .macro{background:color-mix(in srgb,var(--vlak) 45%,transparent);
+    border-color:color-mix(in srgb,var(--lijn) 55%,transparent)}
+}
+
+@media (min-width:960px){
+  :root[data-thema="donker"] body{background:radial-gradient(1100px 520px at 10% -8%,rgba(40,190,142,.10),transparent 70%),
+                 var(--canvas)}
+  :root[data-thema="donker"] nav.tabs{background:color-mix(in srgb,var(--vlak) 94%,transparent);
+    box-shadow:10px 0 35px rgba(0,0,0,.22)}
+  :root[data-thema="donker"] .kaart{box-shadow:0 12px 34px rgba(0,0,0,.18)}
+  :root[data-thema="donker"] .hero{box-shadow:0 18px 46px rgba(0,0,0,.28);outline-color:rgba(255,255,255,.05)}
+  :root[data-thema="donker"] .macro{background:color-mix(in srgb,var(--vlak) 45%,transparent);
     border-color:color-mix(in srgb,var(--lijn) 55%,transparent)}
 }

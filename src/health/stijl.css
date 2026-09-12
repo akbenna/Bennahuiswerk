@@ -11,6 +11,40 @@
  * drie toestanden. Dat vervangen door utility-klassen zou meer regels opleveren
  * en minder uitleg.
  */
+/*
+ * DAG EN NACHT — waarom elk nachtblok hier twee keer staat
+ *
+ * De nachtkleuren stonden in mediaquery's: het toestel besliste en de gebruiker
+ * niet. Nu kan hij kiezen, en die keuze staat als `data-thema` op <html> (zie
+ * `thema.ts`). Elk nachtblok heeft daarom een tweeling:
+ *
+ *   @media (prefers-color-scheme:dark){ :root:not([data-thema]) ... }
+ *   :root[data-thema="donker"] ...
+ *
+ * De eerste is de grondstand — geen keuze gemaakt, dus volgt de app het
+ * toestel. De tweede is de gedwongen stand. Staat er `data-thema="licht"`, dan
+ * geldt geen van beide en blijft de dagkleur van `:root` staan, ook op een
+ * toestel dat op nacht staat.
+ *
+ * Waarom dat niet in één blok kan: een mediaquery en een kenmerk op een element
+ * zijn twee soorten voorwaarden, en CSS kent er geen of-constructie voor. De
+ * regels moeten dus twee keer, en dat is precies het soort verdubbeling waar na
+ * een half jaar één helft van bijgewerkt wordt en de andere niet.
+ *
+ * Daarom hangt er een proef aan, in `health-voorbeeld.mjs`. Die laadt de app
+ * twee keer — één keer met een toestel op nacht en geen kenmerk, één keer met
+ * een toestel op dag en `data-thema="donker"` — en vergelijkt van élk element
+ * op drie tabbladen zes berekende eigenschappen. Ruim achthonderd elementen, en
+ * hij vergelijkt het beeld en niet de tekst van dit bestand: welke regel een
+ * verschil veroorzaakt doet er niet toe, dát er verschil is wel.
+ *
+ * Er hoort een tegenproef bij, en die is niet optioneel. Zou iemand het
+ * `:not([data-thema])` hier weghalen, dan zijn de twee nachten nog steeds
+ * gelijk — de mediaquery doet dan gewoon alles — en komt zo'n verandering er
+ * ongemerkt doorheen. Wat hem tegenhoudt is de andere helft van de proef: dag
+ * afdwingen op een toestel dat op nacht staat moet hetzelfde scherm geven als
+ * een toestel dat op dag staat. Beide helften zijn mutatiegetoetst.
+ */
 /* ============================================================================
    KALIBRATIE — persoonlijk energiebalansmodel
    Ontwerpprincipe, door de hele app heen: geen enkel getal zonder zijn
@@ -42,7 +76,7 @@
   --kop:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',sans-serif;
   --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;
 }
-@media (prefers-color-scheme:dark){:root{
+@media (prefers-color-scheme:dark){:root:not([data-thema]){
   --canvas:#080D0C; --vlak:#121A18; --vlak2:#1B2523;
   --ink:#F1F5F3; --ink2:#DCE4E1; --grijs:#9AA8A2; --dim:#6C7A74;
   --lijn:#243230; --lijn2:#354642;
@@ -53,6 +87,17 @@
   --goed:#8FD268; --goedbg:#1E2A18;
   --schaduw:0 1px 2px rgba(0,0,0,.5), 0 10px 26px rgba(0,0,0,.35);
 }}
+:root[data-thema="donker"]{
+  --canvas:#080D0C; --vlak:#121A18; --vlak2:#1B2523;
+  --ink:#F1F5F3; --ink2:#DCE4E1; --grijs:#9AA8A2; --dim:#6C7A74;
+  --lijn:#243230; --lijn2:#354642;
+  --k:#4FD2A6; --kfel:#28BE8E; --kbg:#0F2E26;
+  --knopvul:#28BE8E;
+  --let:#E9BC55; --letbg:#302711;
+  --fout:#F09B95; --foutbg:#341A18;
+  --goed:#8FD268; --goedbg:#1E2A18;
+  --schaduw:0 1px 2px rgba(0,0,0,.5), 0 10px 26px rgba(0,0,0,.35);
+}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0}
 body{background:var(--canvas);color:var(--ink2);font-family:var(--sans);font-size:16px;
@@ -158,9 +203,16 @@ label.veld>span{display:block;font-size:.72rem;color:var(--grijs);margin-bottom:
   align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:#FFF8EE}
 .conf.A{background:#2F6B1F}.conf.B{background:#07785C}
 .conf.C{background:#8E9189}.conf.D{background:#8A5A00}
-@media(prefers-color-scheme:dark){.conf{color:#080D0C}
-  .conf.A{background:#8FD268}.conf.B{background:#4FD2A6}
-  .conf.C{background:#71746D}.conf.D{background:#E9BC55}}
+@media(prefers-color-scheme:dark){:root:not([data-thema]) .conf{color:#080D0C}
+  :root:not([data-thema]) .conf.A{background:#8FD268}
+  :root:not([data-thema]) .conf.B{background:#4FD2A6}
+  :root:not([data-thema]) .conf.C{background:#71746D}
+  :root:not([data-thema]) .conf.D{background:#E9BC55}}
+:root[data-thema="donker"] .conf{color:#080D0C}
+:root[data-thema="donker"] .conf.A{background:#8FD268}
+:root[data-thema="donker"] .conf.B{background:#4FD2A6}
+:root[data-thema="donker"] .conf.C{background:#71746D}
+:root[data-thema="donker"] .conf.D{background:#E9BC55}
 /* Het teken voor de herkomst: ◆ gemeten uit de tabel, ◇ geschat. Een <abbr>
    krijgt in sommige browsers vanzelf een stippellijn eronder; die hoort hier
    niet, het is één teken en geen woord. De cursor blijft wel de vraagteken-
@@ -246,7 +298,7 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
   --ringrail:#E6EBE9;   /* de niet-gevulde rest van een ring */
   --bandinkt:#B7DCCE;   /* de onzekerheidsband: zichtbaar, nooit hard */
 }
-@media (prefers-color-scheme:dark){:root{
+@media (prefers-color-scheme:dark){:root:not([data-thema]){
   --eiwit:#E4977E;  --eiwitbg:#33201B;
   --koolh:#E7B95E;  --koolhbg:#33280F;
   --vet:#AFA2D8;    --vetbg:#26223A;
@@ -258,6 +310,18 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
   --ringrail:#22302D;
   --bandinkt:#2C4A41;
 }}
+:root[data-thema="donker"]{
+  --eiwit:#E4977E;  --eiwitbg:#33201B;
+  --koolh:#E7B95E;  --koolhbg:#33280F;
+  --vet:#AFA2D8;    --vetbg:#26223A;
+  --ochtend:#E9AC63; --ochtendbg:#33260F;
+  --middag:#8CC57F;  --middagbg:#1C2A19;
+  --avond:#8AAAD4;   --avondbg:#1A2431;
+  --tussen:#D690AC;  --tussenbg:#301B25;
+  --heldergoed:#63D18C;
+  --ringrail:#22302D;
+  --bandinkt:#2C4A41;
+}
 
 /* -------------------------------------------------------------- de hero --- */
 /* Eén blok bovenaan dat de dag samenvat. Het verloop volgt het tijdstip: 's
@@ -294,7 +358,8 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
 .strook>i{flex:1 1 0;border-radius:5px;background:var(--ringrail);min-height:6px;
   transition:height .3s,background .3s;opacity:1;
   box-shadow:inset 0 0 0 1px rgba(20,18,14,.06)}
-@media(prefers-color-scheme:dark){.strook>i{box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}}
+@media(prefers-color-scheme:dark){:root:not([data-thema]) .strook>i{box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}}
+:root[data-thema="donker"] .strook>i{box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
 .strook>i.gewogen{background:var(--bandinkt)}
 .strook>i.gelogd{background:var(--k)}
 .strook>i.beide{background:var(--heldergoed)}
@@ -360,7 +425,8 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
   font-size:1rem;font-weight:600;cursor:pointer;box-shadow:var(--schaduw);
   transition:transform .12s,filter .18s}
 .hoofdknop:hover{filter:brightness(1.08)} .hoofdknop:active{transform:scale(.985)}
-@media(prefers-color-scheme:dark){.hoofdknop{color:#06100D}}
+@media(prefers-color-scheme:dark){:root:not([data-thema]) .hoofdknop{color:#06100D}}
+:root[data-thema="donker"] .hoofdknop{color:#06100D}
 
 /* De snelle ingangen eronder: foto, spraak, bibliotheek, streepjescode. */
 .snel{display:flex;gap:8px;margin-top:9px}
@@ -393,22 +459,31 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
 .hero.kop-fout{--herobg:linear-gradient(155deg,#FAE8E5 0%,#F5DCD8 55%,#F0D2CD 100%);
   --heroglow:rgba(255,248,246,.55)}
 @media(prefers-color-scheme:dark){
-  .hero.kop-rust{--herobg:linear-gradient(155deg,#16201E 0%,#131C1A 55%,#111816 100%);
+  :root:not([data-thema]) .hero.kop-rust{--herobg:linear-gradient(155deg,#16201E 0%,#131C1A 55%,#111816 100%);
     --heroglow:rgba(150,255,220,.05)}
-  .hero.kop-goed{--herobg:linear-gradient(155deg,#0F2C24 0%,#0D2620 55%,#0B201B 100%);
+  :root:not([data-thema]) .hero.kop-goed{--herobg:linear-gradient(155deg,#0F2C24 0%,#0D2620 55%,#0B201B 100%);
     --heroglow:rgba(120,255,200,.08)}
-  .hero.kop-let{--herobg:linear-gradient(155deg,#282013 0%,#241D11 55%,#20190F 100%);
+  :root:not([data-thema]) .hero.kop-let{--herobg:linear-gradient(155deg,#282013 0%,#241D11 55%,#20190F 100%);
     --heroglow:rgba(255,220,140,.08)}
-  .hero.kop-fout{--herobg:linear-gradient(155deg,#2A1A19 0%,#251717 55%,#211414 100%);
+  :root:not([data-thema]) .hero.kop-fout{--herobg:linear-gradient(155deg,#2A1A19 0%,#251717 55%,#211414 100%);
     --heroglow:rgba(255,170,160,.07)}
 }
+:root[data-thema="donker"] .hero.kop-rust{--herobg:linear-gradient(155deg,#16201E 0%,#131C1A 55%,#111816 100%);
+  --heroglow:rgba(150,255,220,.05)}
+:root[data-thema="donker"] .hero.kop-goed{--herobg:linear-gradient(155deg,#0F2C24 0%,#0D2620 55%,#0B201B 100%);
+  --heroglow:rgba(120,255,200,.08)}
+:root[data-thema="donker"] .hero.kop-let{--herobg:linear-gradient(155deg,#282013 0%,#241D11 55%,#20190F 100%);
+  --heroglow:rgba(255,220,140,.08)}
+:root[data-thema="donker"] .hero.kop-fout{--herobg:linear-gradient(155deg,#2A1A19 0%,#251717 55%,#211414 100%);
+  --heroglow:rgba(255,170,160,.07)}
 
 /* De trapmeter: iets dat in stappen komt en niet in procenten. */
 .trap{display:flex;gap:5px;margin-top:9px}
 .trap>i{flex:1 1 0;height:9px;border-radius:999px;background:var(--ringrail);
   box-shadow:inset 0 0 0 1px rgba(20,18,14,.06);transition:background .25s}
 .trap>i.aan{background:var(--k)}
-@media(prefers-color-scheme:dark){.trap>i{box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}}
+@media(prefers-color-scheme:dark){:root:not([data-thema]) .trap>i{box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}}
+:root[data-thema="donker"] .trap>i{box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
 .trapnamen{display:flex;gap:5px;margin-top:5px}
 .trapnamen>span{flex:1 1 0;font-size:.66rem;color:var(--dim);text-align:center;
   letter-spacing:.02em}
@@ -442,7 +517,8 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
 .maalstaaf .baan{position:relative;width:100%;height:62px;border-radius:9px;
   background:var(--ringrail);overflow:hidden;display:flex;align-items:flex-end;
   box-shadow:inset 0 0 0 1px rgba(20,18,14,.06)}
-@media(prefers-color-scheme:dark){.maalstaaf .baan{box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}}
+@media(prefers-color-scheme:dark){:root:not([data-thema]) .maalstaaf .baan{box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}}
+:root[data-thema="donker"] .maalstaaf .baan{box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
 .maalstaaf .baan>i{display:block;width:100%;border-radius:9px 9px 0 0;background:var(--k);
   transition:height .45s cubic-bezier(.2,.8,.2,1);min-height:2px}
 .maalstaaf.ochtend .baan>i{background:var(--ochtend)}
