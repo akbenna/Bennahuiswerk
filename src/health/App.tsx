@@ -31,18 +31,21 @@ import {
 import { Opzet } from './Opzet'
 import { Kaart, Knop, Spin } from './onderdelen/basis'
 import { useVeeg } from './veeg'
+import {
+  TekenBeweging, TekenGezondheid, TekenInzicht, TekenProfiel, TekenVandaag, TekenVoeding,
+} from './tekens'
 
 /* De namen op de balk zijn niet de namen in de code. 'Model' en 'Klinisch'
    zeggen wat een scherm ís voor wie het gebouwd heeft; 'Inzicht' en
    'Gezondheid' zeggen wat je er komt halen. De sleutels blijven staan zoals ze
    waren, want die zitten in de toestand en in de proeven. */
 const TABS = [
-  ['vandaag', 'Vandaag', '◍'],
-  ['model', 'Inzicht', '◎'],
-  ['voeding', 'Voeding', '◇'],
-  ['beweging', 'Beweging', '◈'],
-  ['klinisch', 'Gezondheid', '✚'],
-  ['meer', 'Profiel', '⋯'],
+  ['vandaag', 'Vandaag', TekenVandaag],
+  ['model', 'Inzicht', TekenInzicht],
+  ['voeding', 'Voeding', TekenVoeding],
+  ['beweging', 'Beweging', TekenBeweging],
+  ['klinisch', 'Gezondheid', TekenGezondheid],
+  ['meer', 'Profiel', TekenProfiel],
 ] as const
 
 /** Twee letters voor het rondje rechtsboven. Twee woorden geven de eerste van
@@ -293,10 +296,10 @@ export function App() {
       </div>
 
       <nav className="tabs" role="tablist">
-        {TABS.map(([sleutel, label, icoon]) => (
+        {TABS.map(([sleutel, label, Icoon]) => (
           <button key={sleutel} type="button" role="tab" aria-selected={tab === sleutel}
                   onClick={() => { zetTab(sleutel); zetVenster(null); scrollTo(0, 0) }}>
-            <span className="ic">{icoon}</span>{label}
+            <span className="ic"><Icoon /></span>{label}
           </button>
         ))}
       </nav>

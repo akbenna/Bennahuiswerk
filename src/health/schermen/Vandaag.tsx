@@ -23,12 +23,17 @@
  *
  * DE VOLGORDE
  *
- * Hero, dan de knop, dan wat er nog in past, dan beweging en slaap. Daarna pas
- * de weging en de vier vakken. De reden is de gewone reden waarom je de app
- * opent: je wilt iets loggen. Die knop stond drie kaarten naar beneden en dat is
- * drie kaarten te ver — wie komt om te doen moet niet eerst langs wat er te
- * lezen valt. "Wat er nog in past" staat er meteen onder, want dat is de vraag
- * die je daarna stelt, en de coachkaart beantwoordt hem met één tik.
+ * Hero, dan de knop, dan de vier maaltijdvakken, dan wat er nog in past, dan
+ * beweging en slaap. De weging sluit de rij. De reden is de gewone reden waarom
+ * je de app opent: je wilt iets loggen. Die knop stond drie kaarten naar beneden
+ * en dat is drie kaarten te ver — wie komt om te doen moet niet eerst langs wat
+ * er te lezen valt.
+ *
+ * De vier vakken staan er direct onder omdat ze hetzelfde doen als die knop: ze
+ * zijn zelf de ingang, elk met zijn moment er al in. Knop en vakken uit elkaar
+ * trekken met een kaart ertussen zet twee helften van één handeling op twee
+ * plekken. Daarna pas "Wat er nog in past" — dat is de vraag die je stelt nadat
+ * je gelogd hebt, en de coachkaart beantwoordt hem met één tik.
  *
  * De weging is daarmee naar beneden gezakt, en dat is een afweging en geen
  * vergissing: de hero draagt het vlaggetje al ("✓ gewogen" of "— niet
@@ -288,45 +293,6 @@ export function Vandaag(p: VandaagEigenschappen) {
         <span>Eten toevoegen</span>
       </button>
 
-      {isVandaag && <Coachkaart {...p} />}
-
-      <Kaart zij>
-        <Kop>Beweging en slaap</Kop>
-        <Rij style={{ marginTop: 8, alignItems: 'flex-end' }}>
-          <label className="veld">
-            <span>stappen</span>
-            <input className="smal" type="number" inputMode="numeric"
-                   defaultValue={dag.stappen ?? ''} key={'st' + datum}
-                   onBlur={(e) => p.zetDagveld('stappen', e.target.value || null)} />
-          </label>
-          <label className="veld">
-            <span>slaap, uur</span>
-            <input className="smaller" type="number" step="0.25" inputMode="decimal"
-                   key={'sl' + datum}
-                   defaultValue={dag.slaap_min != null ? Math.round(dag.slaap_min / 15) / 4 : ''}
-                   onBlur={(e) => p.zetDagveld(
-                     'slaap_min', e.target.value === '' ? null : Math.round(parseFloat(e.target.value) * 60))} />
-          </label>
-          <Knop vol={!!dag.kracht} opKlik={() => p.zetDagveld('kracht', !dag.kracht)}>
-            {dag.kracht ? '✓ ' : ''}kracht
-          </Knop>
-        </Rij>
-        <Uitleg id="beweging" label="waarom stappen hier alleen staan">
-          <p>
-            Stappen en slaap staan hier omdat ze ergens vandaan moeten komen, niet omdat het model
-            ermee rekent. De actieve energie die je horloge erbij optelt gaat nooit naar het doel: die
-            fout is twintig tot vijftig procent en niet consistent in één richting, dus corrigeren kan
-            niet.
-          </p>
-          <p>
-            Wat stappen wél doen, doen ze via de weegschaal. Beweeg je structureel meer, dan verschuift
-            de helling, en dat ziet het model vanzelf — zonder dat er iets bij opgeteld hoeft te worden.
-          </p>
-        </Uitleg>
-      </Kaart>
-
-      <Weging {...p} gewogen={gewogen} isVandaag={isVandaag} nogNodig={nogNodig} />
-
       <Kaart>
         <Tussen>
           <Kop>De dag in vier momenten</Kop>
@@ -411,6 +377,45 @@ export function Vandaag(p: VandaagEigenschappen) {
           </p>
         )}
       </Kaart>
+
+      {isVandaag && <Coachkaart {...p} />}
+
+      <Kaart zij>
+        <Kop>Beweging en slaap</Kop>
+        <Rij style={{ marginTop: 8, alignItems: 'flex-end' }}>
+          <label className="veld">
+            <span>stappen</span>
+            <input className="smal" type="number" inputMode="numeric"
+                   defaultValue={dag.stappen ?? ''} key={'st' + datum}
+                   onBlur={(e) => p.zetDagveld('stappen', e.target.value || null)} />
+          </label>
+          <label className="veld">
+            <span>slaap, uur</span>
+            <input className="smaller" type="number" step="0.25" inputMode="decimal"
+                   key={'sl' + datum}
+                   defaultValue={dag.slaap_min != null ? Math.round(dag.slaap_min / 15) / 4 : ''}
+                   onBlur={(e) => p.zetDagveld(
+                     'slaap_min', e.target.value === '' ? null : Math.round(parseFloat(e.target.value) * 60))} />
+          </label>
+          <Knop vol={!!dag.kracht} opKlik={() => p.zetDagveld('kracht', !dag.kracht)}>
+            {dag.kracht ? '✓ ' : ''}kracht
+          </Knop>
+        </Rij>
+        <Uitleg id="beweging" label="waarom stappen hier alleen staan">
+          <p>
+            Stappen en slaap staan hier omdat ze ergens vandaan moeten komen, niet omdat het model
+            ermee rekent. De actieve energie die je horloge erbij optelt gaat nooit naar het doel: die
+            fout is twintig tot vijftig procent en niet consistent in één richting, dus corrigeren kan
+            niet.
+          </p>
+          <p>
+            Wat stappen wél doen, doen ze via de weegschaal. Beweeg je structureel meer, dan verschuift
+            de helling, en dat ziet het model vanzelf — zonder dat er iets bij opgeteld hoeft te worden.
+          </p>
+        </Uitleg>
+      </Kaart>
+
+      <Weging {...p} gewogen={gewogen} isVandaag={isVandaag} nogNodig={nogNodig} />
 
       <Uitleg id="eiwitref" label="waarom het eiwitdoel op gecorrigeerd gewicht staat">
         <p>
