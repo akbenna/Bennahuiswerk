@@ -479,5 +479,12 @@ COMMIT;
 --   from unnest(array['roti','pom','bara','bojo','dahl','moksi','heri heri',
 --                     'bruine bonen','surinaams']) w;
 
--- Terugdraaien: delete from cultural_dishes where cuisine = 'surinaams';
+-- Terugdraaien — op de slugs van dit bestand en niet op de keuken:
+--
+--   delete from cultural_dishes where slug like 'sur-%';
+--
+-- Dat verschil is niet cosmetisch. `where cuisine = 'surinaams'` haalt ook weg
+-- wat er later door iemand anders bij is gezet, en dat is precies het werk dat
+-- niet te herhalen is. Een terugdraairegel hoort alleen te raken wat dít
+-- bestand heeft neergezet.
 -- (dish_ingredients en dish_portions gaan mee via on delete cascade)

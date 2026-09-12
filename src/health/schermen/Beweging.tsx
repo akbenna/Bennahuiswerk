@@ -57,6 +57,23 @@ export function Beweging(
   const fietsVandaag = dagen[datum]?.fiets_min ?? null
   const fietsOoit = sleutels.some((x) => (dagen[x]?.fiets_min ?? 0) > 0)
 
+  /* WANNEER KWAM ER VOOR HET LAATST IETS BINNEN
+   *
+   * De koppeling met Gezondheid is de enige invoer op dit scherm die vanzelf
+   * hoort te gaan, en juist daarom de enige die stil kan vallen zonder dat je
+   * het merkt: er komt niets, en dat ziet eruit als een dag zonder stappen.
+   *
+   * Dit leest de gegevens en niet de sleutel. Wat je wilt weten is of er íets
+   * is aangekomen, niet of de koppeling nog bestaat — een sleutel die geldig is
+   * en waar niets doorheen komt is geen geruststelling.
+   *
+   * De regel staat er alleen als er ooit iets binnenkwam. Wie hem nooit heeft
+   * ingesteld leest niet elke dag dat er iets stilstaat wat hij niet heeft. */
+  const metStappen = Object.keys(dagen).filter((k) => (dagen[k]?.stappen ?? 0) > 0).sort()
+  const laatsteBinnen = metStappen.length ? metStappen[metStappen.length - 1]! : null
+  const dagenStil = laatsteBinnen
+    ? Math.round((Date.parse(vandaag()) - Date.parse(laatsteBinnen)) / 86400000) : null
+
   const sinds = plusDagen(vandaag(), -7)
   const recent = training.filter((t) => t.datum >= sinds)
   const sessies = new Set(recent.map((t) => t.datum)).size
@@ -134,6 +151,15 @@ export function Beweging(
             <div className="mini" style={{ marginTop: 10 }}>Krachtsessies deze week</div>
             <Bolletjes aantal={sessies} van={KRACHTDOEL} naam="krachtsessies"
                        kleur={haaltKracht ? 'var(--heldergoed)' : undefined} />
+            {dagenStil != null && (
+              <p className="mini" style={{ marginTop: 10 }}>
+                {dagenStil === 0 ? 'Uit Gezondheid vandaag binnengekomen.'
+                 : dagenStil === 1 ? 'Uit Gezondheid gisteren binnengekomen.'
+                 : dagenStil <= 2 ? `Uit Gezondheid ${dagenStil} dagen geleden binnengekomen.`
+                 : `Uit Gezondheid al ${dagenStil} dagen niets binnengekomen — kijk of de `
+                   + 'automatisering op je telefoon nog draait.'}
+              </p>
+            )}
           </div>
         </div>
       </Schermkop>

@@ -38,6 +38,9 @@ describe('constanten', () => {
   })
 })
 
+/** Velden die de oude rekenkern niet had. Zie de toelichting in de proef. */
+const NA_DE_OVERZETTING = ['tdeeOordeel', 'laagMogelijk']
+
 describe('analyse — veertig dagenreeksen', () => {
   gevallen.forEach((g, i) => {
     it(`geval ${i}: ${Object.keys(g.dagen).length} dagen, ${g.profiel.geslacht}${g.profiel.leeftijd_jaar}`, () => {
@@ -46,8 +49,13 @@ describe('analyse — veertig dagenreeksen', () => {
       for (const sleutel of Object.keys(g.analyse)) {
         expect({ [sleutel]: nu[sleutel] }).toEqual({ [sleutel]: g.analyse[sleutel] })
       }
-      // En andersom, zodat een veld niet stilletjes kan verdwijnen.
-      expect(Object.keys(nu).sort()).toEqual(Object.keys(g.analyse).sort())
+      /* En andersom, zodat een veld niet stilletjes kan verdwijnen. Velden die
+         ná de overzetting zijn toegevoegd staan hierboven met name genoemd: de
+         oude rekenkern kende ze niet en de gouden waarden kunnen er dus niets
+         over zeggen. Ze uitzonderen met een naam en niet met een patroon, zodat
+         elke toevoeging een bewuste regel in deze proef is. */
+      expect(Object.keys(nu).filter((k) => !NA_DE_OVERZETTING.includes(k)).sort())
+        .toEqual(Object.keys(g.analyse).sort())
     })
   })
 })
@@ -119,4 +127,73 @@ describe('onderhoudZone', () => {
         expect(nu).toEqual(g.uit == null ? null : { zone: g.uit.zone, delta: g.uit.delta })
       })
     })
+})
+
+/**
+ * DE GRENS AAN WAT DE BALANS MAG BEWEREN
+ *
+ * Dit is nagerekend op een echt schermbeeld, niet op een verzonnen geval. De
+ * app toonde "Wat je lichaam verbruikt: −15.786–13.652 kcal" bij een logboek
+ * van 1.461 kcal over twaalf dagen en een weegtrend van +2,30 kg per week. De
+ * som klopte; de bewering kon niet waar zijn.
+ *
+ * De proeven hieronder gaan over het oordeel en niet over de som — die blijft
+ * met opzet staan zoals hij was.
+ */
+describe('tdeeOordeel', () => {
+  /** Een reeks dagen met een vaste inname en een vaste gewichtshelling. */
+  function reeks(kcalPerDag: number, kgPerDag: number, startKg: number): Dagenkaart {
+    const uit: Dagenkaart = {}
+    for (let i = 0; i < 28; i++) {
+      const d = new Date(Date.UTC(2026, 7, 1 + i)).toISOString().slice(0, 10)
+      uit[d] = {
+        datum: d, _kcal: kcalPerDag, _eiwit: 100, _laag: kcalPerDag, _hoog: kcalPerDag,
+        gewicht_kg: Math.round((startKg + kgPerDag * i) * 10) / 10, stappen: 6000,
+      } as Dagenkaart[string]
+    }
+    return uit
+  }
+  const pf = { ...gevallen[0]!.profiel, lengte_cm: 196, gewicht_kg: 119, leeftijd_jaar: 45 }
+  const peil = '2026-08-28'
+
+  it('keurt de zaak van het schermbeeld af: aankomen op 1.461 kcal kan niet', () => {
+    const a = analyse(reeks(1461, 2.3 / 7, 119), pf, peil)
+    expect(a.tdee).not.toBeNull()
+    expect(a.tdee!).toBeLessThan(a.rustBMR)
+    expect(a.tdeeOordeel).toBe('onder-rust')
+  })
+
+  it('laat een gewone afvalreeks ongemoeid', () => {
+    const a = analyse(reeks(2000, -0.7 / 7, 119), pf, peil)
+    expect(a.tdeeOordeel).toBe('goed')
+    expect(a.tdee!).toBeGreaterThan(a.rustBMR)
+  })
+
+  it('keurt ook het onmogelijke aan de bovenkant af', () => {
+    /* Drieënhalve kilo per week eraf op 2.000 kcal vraagt een verbruik van
+       5.850 kcal per dag — tweeënhalf keer het rustverbruik van deze persoon
+       is 5.488. Twee kilo per week haalt die grens nog níet (4.200), en dat is
+       terecht: dat tempo is ongezond maar niet onmogelijk. Deze proef ging bij
+       het schrijven dan ook eerst op twee kilo en viel om — op mijn
+       verwachting, niet op de code. */
+    const a = analyse(reeks(2000, -3.5 / 7, 119), pf, peil)
+    expect(a.tdee!).toBeGreaterThan(a.rustBMR * 2.5)
+    expect(a.tdeeOordeel).toBe('boven-plafond')
+  })
+
+  it('geeft geen oordeel zolang er geen uitkomst is', () => {
+    const leeg: Dagenkaart = {}
+    expect(analyse(leeg, pf, peil).tdeeOordeel).toBeNull()
+  })
+
+  it('kapt de ondergrens van de band af op de ruststofwisseling', () => {
+    const a = analyse(reeks(1461, 2.3 / 7, 119), pf, peil)
+    expect(a.laag!).toBeLessThan(a.rustBMR)
+    expect(a.laagMogelijk).toBe(a.rustBMR)
+  })
+
+  it('raakt een band die al boven het rustverbruik ligt niet aan', () => {
+    const a = analyse(reeks(2000, -0.7 / 7, 119), pf, peil)
+    if (a.laag! > a.rustBMR) expect(a.laagMogelijk).toBe(a.laag)
+  })
 })

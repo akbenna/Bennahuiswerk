@@ -31,6 +31,11 @@ export function Model(
               : a.zekerheid === 'laag' ? 'var(--let)' : 'var(--k)'
   const trendNu = [...reeks].reverse().find((x) => x.ema != null)
 
+  /* "Er is een uitkomst" en "de uitkomst kan waar zijn" zijn twee dingen, en de
+     schermen verwarden ze. Dit is het enige punt waar dat onderscheid gemaakt
+     wordt; alles eronder kijkt naar `bruikbaar` en niet meer naar a.tdee. */
+  const bruikbaar = a.tdee != null && a.tdeeOordeel === 'goed'
+
   /* De laatste acht weken gewicht: de ruwe wegingen licht, de gladde lijn
      erover. Wie alleen de gladde lijn ziet denkt dat wegen nauwkeuriger is dan
      het is. */
@@ -41,7 +46,9 @@ export function Model(
       <Schermkop
         toon={a.zekerheid === 'hoog' ? 'goed' : a.zekerheid === 'geen' ? 'rust' : 'let'}
         bovenschrift="Het model"
-        titel={a.tdee != null ? 'Wat je lichaam verbruikt' : 'Nog niet te berekenen'}
+        titel={bruikbaar ? 'Wat je lichaam verbruikt'
+          : a.tdeeOordeel != null ? 'Je logboek en je weegschaal spreken elkaar tegen'
+          : 'Nog niet te berekenen'}
         rechts={
           <span className={'vlaggetje ' + (a.zekerheid === 'hoog' ? 'goed'
             : a.zekerheid === 'geen' ? 'rust' : 'let')}>
@@ -49,13 +56,15 @@ export function Model(
           </span>
         }
       >
-        {a.tdee != null && a.laag != null && a.hoog != null ? (
+        {bruikbaar && a.laagMogelijk != null && a.hoog != null ? (
           <>
             <div className="kerngetallen">
               <div>
                 <div className="mini">Verbruik per dag</div>
                 <div>
-                  <span className="getal">{dz(Math.round(a.laag))}–{dz(Math.round(a.hoog))}</span>
+                  <span className="getal">
+                    {dz(Math.round(a.laagMogelijk))}–{dz(Math.round(a.hoog))}
+                  </span>
                   <span className="klein"> kcal</span>
                 </div>
               </div>
@@ -91,6 +100,36 @@ export function Model(
               impliceert</i>, niet je stofwisseling gemeten.
             </p>
           </>
+        ) : a.tdeeOordeel != null ? (
+          /* WAAROM HIER GEEN GETAL STAAT
+             Tot dit scherm zo werd, stond hier wél een getal. Bij een logboek
+             van 1.461 kcal naast een weegreeks die omhoog liep, gaf de balans
+             een verbruik van min duizend, getoond als "−15.786–13.652 kcal".
+             Dat is geen brede schatting maar een onmogelijkheid, en een app die
+             onmogelijkheden toont is op geen enkel ander getal te vertrouwen.
+
+             De tekst noemt allebei de invoeren en zegt welke de verdachte is.
+             "Onvoldoende gegevens" zou hier onwaar zijn: de gegevens zijn er,
+             ze passen alleen niet bij elkaar. */
+          <>
+            <p style={{ fontSize: '.9rem', marginTop: 10 }}>
+              Je logt gemiddeld <b>{dz(Math.round(a.gemInname ?? 0))} kcal</b> over{' '}
+              {a.volledig} dag{a.volledig === 1 ? '' : 'en'}, en de weegschaal gaat ondertussen{' '}
+              <b>{(a.hellingWk ?? 0) > 0 ? '+' : ''}{dec(a.hellingWk, 2)} kg per week</b>. Die twee
+              samen geven een verbruik van {dz(Math.round(a.tdee ?? 0))} kcal per dag, en dat is{' '}
+              {a.tdeeOordeel === 'onder-rust'
+                ? `minder dan de ${dz(a.rustBMR)} kcal die je liggend al verbruikt`
+                : `meer dan tweeënhalf keer je rustverbruik van ${dz(a.rustBMR)} kcal`}.
+              Dat kan niet, dus er staat hier niets.
+            </p>
+            <p className="mini" style={{ marginTop: 8 }}>
+              Meestal is de weegreeks de verdachte: met{' '}
+              <b>{a.wPunten.length} weging{a.wPunten.length === 1 ? '' : 'en'}</b> in{' '}
+              {a.venster} dagen ligt de trend nog niet vast, en een trend die er een halve kilo per
+              dag naast zit verschuift dit getal met bijna vierduizend. Weeg een week lang elke
+              ochtend, dan lost dit zichzelf op.
+            </p>
+          </>
         ) : (
           <p style={{ fontSize: '.9rem', marginTop: 10 }}>
             Er zijn zeven wegingen én zeven volledige registratiedagen nodig. Je hebt er{' '}
@@ -112,6 +151,23 @@ export function Model(
         )}
       </Schermkop>
 
+      {/* WAAROM DEZE VOLGORDE, EN WAAROM HIJ VERSPRINGT
+
+          Het scherm beantwoordt twee vragen en de rest is verantwoording. De
+          eerste — wat verbruik ik — staat in de kop. De tweede — wat eet ik, en
+          hoe verhoudt zich dat tot het doel — stond nergens: de gemiddelde
+          inname zat verstopt in een bijzin van de afleiding, en de staafjes
+          stonden onderaan. Die staat nu hier.
+
+          Daaronder eerst wat om actie vraagt (te snel, wat het model mist), dan
+          waar je staat, dan de figuren, en pas onderaan waar de getallen
+          vandaan komen.
+
+          De afleiding versprìngt, en dat is met opzet. Zolang er geen band is,
+          is "wat er nog nodig is voordat ik iets kan zeggen" juist het
+          belangrijkste van het scherm en staat hij bovenaan. Zodra de band er
+          is, is het verantwoording en zakt hij naar onderen. */}
+      {!bruikbaar && (
       <Kaart>
         <Tussen>
           <Kop>Waar de band vandaan komt</Kop>
@@ -119,7 +175,7 @@ export function Model(
             zekerheid {ZEKERHEID_LABEL[a.zekerheid]}
           </span>
         </Tussen>
-        {a.tdee != null && a.laag != null && a.hoog != null ? (
+        {bruikbaar && a.laag != null && a.hoog != null ? (
           <>
             {/* De band staat al in de kop. Hij hier nóg een keer groot herhalen
                 maakt hem niet waarder; wat deze kaart toevoegt is waar hij
@@ -167,6 +223,10 @@ export function Model(
         )}
       </Kaart>
 
+      )}
+
+      <WaarJeStaat a={a} profiel={profiel} gefundeerd={bruikbaar} />
+
       {a.teSnel && (
         <Kaart toon="let">
           <Kop>Te snel</Kop>
@@ -179,72 +239,7 @@ export function Model(
         </Kaart>
       )}
 
-      {a.tdee != null && a.onderrapportage != null && (
-        <Kaart>
-          <Kop>Consistentiecheck registratie</Kop>
-          {/* Het oordeel eerst en in één zin; de redenering erachter. Dit is de
-              kaart die het meeste uitlegde en het minste zei — acht regels tekst
-              waarvan de uitkomst "de registratie is intern consistent" was, of
-              niet. Die uitkomst hoort vooraan te staan. */}
-          <p style={{ fontSize: '.88rem', marginTop: 4 }}>
-            {a.onderrapportage > 300 ? (
-              <>
-                Je logt ongeveer <b>{dz(Math.round(a.onderrapportage))} kcal</b> minder dan de formule
-                verwacht. Dat is normaal, en het advies blijft geldig.
-              </>
-            ) : a.onderrapportage < -300 ? (
-              <>Je registreert <b>méér</b> dan de formule verwacht.</>
-            ) : (
-              <>Formule en weegreeks liggen dicht bij elkaar: de registratie is intern consistent.</>
-            )}
-          </p>
-          <Uitleg id="consistentie" label="de twee getallen naast elkaar">
-            <p>
-              De formule voorspelt bij dit gewicht en deze activiteit een onderhoud tussen{' '}
-              {dz(a.priorLaag)} en {dz(a.priorHoog)} kcal. De gewichtstrend impliceert{' '}
-              {dz(Math.round(a.tdee))} kcal.
-            </p>
-            {a.onderrapportage > 300 ? (
-              <p>
-                Een verschil van deze omvang is te groot voor toeval en past bij onderregistratie van
-                twintig tot dertig procent — de best gedocumenteerde systematische fout in de
-                voedingswetenschap. Dat maakt het advies niet ongeldig: de bias is proportioneel en
-                stabiel binnen een persoon, dus zolang je op dezelfde manier blijft loggen klopt het
-                doel in gelogde eenheden.
-              </p>
-            ) : a.onderrapportage < -300 ? (
-              <p>
-                Dat past bij een hogere activiteit dan de stappen laten zien, of bij een onrustige
-                weegreeks.
-              </p>
-            ) : null}
-          </Uitleg>
-        </Kaart>
-      )}
-
       <Meetgaten a={a} dagen={dagen} instellingen={profiel.instellingen} labs={labs} />
-
-      <Kaart>
-        <Kop>Gewicht en voortschrijdend gemiddelde</Kop>
-        <GewichtFiguur reeks={reeks} doelGewicht={profiel.doel_gewicht_kg} />
-        <Uitleg id="weeglijn" label="wat je hier ziet">
-          <p>
-            Punten zijn losse wegingen, de lijn is een exponentieel gewogen gemiddelde met een
-            halfwaardetijd van ongeveer een week. Dagelijkse schommelingen van één tot twee kilo zijn
-            vocht, glycogeen en darminhoud — de helling is het signaal, niet de meting.
-          </p>
-        </Uitleg>
-      </Kaart>
-
-      <Kaart>
-        <Kop>Gelogde energie per dag</Kop>
-        <InnameFiguur reeks={reeks} doel={a.doel} />
-        <p className="mini">
-          Oranje staven liggen onder 1.200 kcal en gelden als onvolledig, niet als succes.
-          {a.gemarkeerd > 0 &&
-            ` ${a.gemarkeerd} dag${a.gemarkeerd === 1 ? '' : 'en'} in dit venster valt in die categorie.`}
-        </p>
-      </Kaart>
 
       <Kaart>
         <Kop>Traject</Kop>
@@ -290,7 +285,244 @@ export function Model(
           </Uitleg>
         </Kaart>
       </Kaart>
+      <Kaart>
+        <Kop>Gewicht en voortschrijdend gemiddelde</Kop>
+        <GewichtFiguur reeks={reeks} doelGewicht={profiel.doel_gewicht_kg} />
+        <Uitleg id="weeglijn" label="wat je hier ziet">
+          <p>
+            Punten zijn losse wegingen, de lijn is een exponentieel gewogen gemiddelde met een
+            halfwaardetijd van ongeveer een week. Dagelijkse schommelingen van één tot twee kilo zijn
+            vocht, glycogeen en darminhoud — de helling is het signaal, niet de meting.
+          </p>
+        </Uitleg>
+      </Kaart>
+
+      <Kaart>
+        <Kop>Gelogde energie per dag</Kop>
+        <InnameFiguur reeks={reeks} doel={a.doel} />
+        <p className="mini">
+          Oranje staven liggen onder 1.200 kcal en gelden als onvolledig, niet als succes.
+          {a.gemarkeerd > 0 &&
+            ` ${a.gemarkeerd} dag${a.gemarkeerd === 1 ? '' : 'en'} in dit venster valt in die categorie.`}
+        </p>
+      </Kaart>
+
+      {bruikbaar && (
+      <Kaart>
+        <Tussen>
+          <Kop>Waar de band vandaan komt</Kop>
+          <span className="eyebrow" style={{ color: kleur }}>
+            zekerheid {ZEKERHEID_LABEL[a.zekerheid]}
+          </span>
+        </Tussen>
+        {bruikbaar && a.laag != null && a.hoog != null ? (
+          <>
+            {/* De band staat al in de kop. Hij hier nóg een keer groot herhalen
+                maakt hem niet waarder; wat deze kaart toevoegt is waar hij
+                vandaan komt — de figuur en de afleiding eronder. */}
+            <IntervalFiguur a={a} />
+            <p style={{ fontSize: '.88rem', marginTop: 10 }}>
+              Afgeleid uit {a.volledig} bruikbare registratiedagen — gemiddeld{' '}
+              {dz(Math.round(a.gemInname ?? 0))} kcal — en een gewichtstrend van{' '}
+              {(a.hellingWk ?? 0) > 0 ? '+' : ''}{dec(a.hellingWk, 2)} kg per week, ofwel{' '}
+              {dec(a.hellingPct, 2)} procent van je lichaamsgewicht. Bij een streeftempo van{' '}
+              {dec(profiel.tempo_pct_week, 1)} procent hoort een inname van <b>{dz(a.doel)} kcal</b>.
+            </p>
+          </>
+        ) : (
+          <>
+            <p style={{ fontFamily: 'var(--kop)', fontWeight: 640, fontSize: '1.3rem', color: 'var(--grijs)', marginTop: 4 }}>
+              Nog niet te berekenen.
+            </p>
+            <p style={{ fontSize: '.88rem', marginTop: 8 }}>
+              Er zijn minstens zeven wegingen én zeven volledige registratiedagen nodig binnen het
+              venster van {a.venster} dagen. Je hebt nu <b>{a.wPunten.length}</b>{' '}
+              weging{a.wPunten.length === 1 ? '' : 'en'} en <b>{a.volledig}</b>{' '}
+              bruikbare dag{a.volledig === 1 ? '' : 'en'}. Weeg vanaf morgen elke ochtend; het model
+              rekent zichzelf uit zodra de reeks lang genoeg is. Vier weken geeft pas een bruikbaar
+              interval.
+            </p>
+            <Kaart plat style={{ marginTop: 12 }}>
+              <Kop>Voorlopige aanname zolang er geen trend is</Kop>
+              <Rij style={{ alignItems: 'baseline', marginTop: 3 }}>
+                <span className="getal" style={{ fontSize: '1.5rem' }}>
+                  {dz(a.priorLaag)}–{dz(a.priorHoog)}
+                </span>
+                <span className="klein">kcal</span>
+              </Rij>
+              <Uitleg id="prior" label="waar dit getal vandaan komt">
+                <p>
+                  Ruststofwisseling {dz(a.rustBMR)} kcal (Mifflin-St Jeor) maal een activiteitsfactor
+                  tussen {dec(a.palLaag, 2)} en {dec(a.palHoog, 2)}. Dat is een band en geen getal,
+                  want een gevalideerde omrekening van stappen naar activiteitsfactor bestaat niet.
+                  Behandel dit als prior, geen meting.
+                </p>
+              </Uitleg>
+            </Kaart>
+          </>
+        )}
+      </Kaart>
+      )}
+
+      {bruikbaar && a.tdee != null && a.onderrapportage != null && (
+        <Kaart>
+          <Kop>Consistentiecheck registratie</Kop>
+          {/* Het oordeel eerst en in één zin; de redenering erachter. Dit is de
+              kaart die het meeste uitlegde en het minste zei — acht regels tekst
+              waarvan de uitkomst "de registratie is intern consistent" was, of
+              niet. Die uitkomst hoort vooraan te staan. */}
+          <p style={{ fontSize: '.88rem', marginTop: 4 }}>
+            {a.onderrapportage > 300 ? (
+              <>
+                Je logt ongeveer <b>{dz(Math.round(a.onderrapportage))} kcal</b> minder dan de formule
+                verwacht. Dat is normaal, en het advies blijft geldig.
+              </>
+            ) : a.onderrapportage < -300 ? (
+              <>Je registreert <b>méér</b> dan de formule verwacht.</>
+            ) : (
+              <>Formule en weegreeks liggen dicht bij elkaar: de registratie is intern consistent.</>
+            )}
+          </p>
+          <Uitleg id="consistentie" label="de twee getallen naast elkaar">
+            <p>
+              De formule voorspelt bij dit gewicht en deze activiteit een onderhoud tussen{' '}
+              {dz(a.priorLaag)} en {dz(a.priorHoog)} kcal. De gewichtstrend impliceert{' '}
+              {dz(Math.round(a.tdee))} kcal.
+            </p>
+            {a.onderrapportage > 300 ? (
+              <p>
+                Een verschil van deze omvang is te groot voor toeval en past bij onderregistratie van
+                twintig tot dertig procent — de best gedocumenteerde systematische fout in de
+                voedingswetenschap. Dat maakt het advies niet ongeldig: de bias is proportioneel en
+                stabiel binnen een persoon, dus zolang je op dezelfde manier blijft loggen klopt het
+                doel in gelogde eenheden.
+              </p>
+            ) : a.onderrapportage < -300 ? (
+              <p>
+                Dat past bij een hogere activiteit dan de stappen laten zien, of bij een onrustige
+                weegreeks.
+              </p>
+            ) : null}
+          </Uitleg>
+        </Kaart>
+      )}
+
     </>
+  )
+}
+
+/**
+ * WAAR JE NU STAAT — de vraag die het scherm niet beantwoordde
+ *
+ * De kop zegt wat je verbruikt. Wat je éét stond nergens als getal: het zat in
+ * een bijzin van de afleiding ("gemiddeld 2.140 kcal") en verder alleen als
+ * staafjes onderaan het scherm. De vraag "hoe zit het nou met mijn intake" was
+ * daarmee niet te beantwoorden zonder te rekenen.
+ *
+ * Drie getallen, en het derde is het enige waar je iets mee doet: het verschil
+ * tussen wat je logt en wat het doel is.
+ *
+ * WAAROM HIER NIET HET VERBRUIK STAAT
+ *
+ * Dat zou het getal uit de kop tien centimeter lager herhalen, en het zou een
+ * som suggereren die niet klopt. Inname min verbruik is hier geen onafhankelijk
+ * saldo: het verbruik is uít de inname en de weegreeks afgeleid, dus dat
+ * verschil is de weegtrend in andere eenheden. Die trend staat er daarom als
+ * wat hij is — de onafhankelijke controle van de weegschaal, in kilo's.
+ */
+function WaarJeStaat(
+  { a, profiel, gefundeerd }: { a: Analyse; profiel: Profiel; gefundeerd: boolean },
+) {
+  if (a.gemInname == null) return null
+
+  /* Zonder bruikbaar verbruik is er geen gefundeerd doel, en dan hoort er ook
+     geen doelkolom te staan. Wat je logt is wél een feit, en de weegtrend ook;
+     die twee blijven. Een doel van 2.165 naast een verbruik dat de app zojuist
+     heeft afgekeurd is precies het soort getal dat vertrouwen kost. */
+  if (!gefundeerd || a.doel == null) {
+    return (
+      <Kaart>
+        <Kop>Waar je nu staat</Kop>
+        <div className="trio" style={{ marginTop: 8 }}>
+          <div>
+            <div className="mini">Je logt gemiddeld</div>
+            <div className="getal" style={{ fontSize: '1.25rem' }}>
+              {dz(Math.round(a.gemInname))}
+            </div>
+            <div className="mini">kcal per dag</div>
+          </div>
+          <div>
+            <div className="mini">Weegtrend</div>
+            <div className="getal" style={{ fontSize: '1.25rem' }}>
+              {a.hellingWk != null
+                ? (a.hellingWk > 0 ? '+' : '') + dec(a.hellingWk, 2) : '—'}
+            </div>
+            <div className="mini">kg per week</div>
+          </div>
+          <div>
+            <div className="mini">Doel</div>
+            <div className="getal" style={{ fontSize: '1.25rem', color: 'var(--grijs)' }}>—</div>
+            <div className="mini">nog niet te bepalen</div>
+          </div>
+        </div>
+        <p style={{ fontSize: '.88rem', marginTop: 10 }}>
+          Er staat hier nog geen doel, omdat er nog geen bruikbaar verbruik is om het uit af te
+          leiden. Hierboven staat wat er voorlopig van uit te gaan valt.
+        </p>
+      </Kaart>
+    )
+  }
+  const verschil = Math.round(a.gemInname - a.doel)
+  const boven = verschil > 100
+  const onder = verschil < -100
+
+  return (
+    <Kaart toon={boven ? 'let' : undefined}>
+      <Kop>Waar je nu staat</Kop>
+      <div className="trio" style={{ marginTop: 8 }}>
+        <div>
+          <div className="mini">Je logt gemiddeld</div>
+          <div className="getal" style={{ fontSize: '1.25rem' }}>
+            {dz(Math.round(a.gemInname))}
+          </div>
+          <div className="mini">kcal per dag</div>
+        </div>
+        <div>
+          <div className="mini">Doel</div>
+          <div className="getal" style={{ fontSize: '1.25rem' }}>{dz(a.doel)}</div>
+          <div className="mini">kcal per dag</div>
+        </div>
+        <div>
+          <div className="mini">Verschil</div>
+          <div className="getal" style={{ fontSize: '1.25rem',
+                 color: boven ? 'var(--let)' : onder ? 'var(--k)' : 'var(--goed)' }}>
+            {verschil > 0 ? '+' : ''}{dz(verschil)}
+          </div>
+          <div className="mini">kcal per dag</div>
+        </div>
+      </div>
+      <p style={{ fontSize: '.88rem', marginTop: 10 }}>
+        {boven ? (
+          <>Je logt <b>{dz(verschil)} kcal per dag méér</b> dan het doel.</>
+        ) : onder ? (
+          <>Je logt <b>{dz(-verschil)} kcal per dag minder</b> dan het doel.</>
+        ) : (
+          <>Je zit op het doel.</>
+        )}{' '}
+        {a.hellingWk != null ? (
+          <>De weegschaal doet er ondertussen{' '}
+            <b>{(a.hellingWk > 0 ? '+' : '') + dec(a.hellingWk, 2)} kg per week</b> bij of af, en
+            dat is de controle: die meting hangt niet van je logboek af.
+          </>
+        ) : (
+          <>Er is nog geen weegtrend om dit tegen af te zetten.</>
+        )}
+      </p>
+      <p className="mini" style={{ marginTop: 6 }}>
+        Gemiddeld over {a.volledig} bruikbare dag{a.volledig === 1 ? '' : 'en'} in het venster van{' '}
+        {a.venster} dagen. Bij een streeftempo van {dec(profiel.tempo_pct_week, 1)} procent per week.
+      </p>
+    </Kaart>
   )
 }
 
@@ -312,12 +544,35 @@ function Meetgaten(
     g.push('Meet af wat de machine per cappuccino schenkt. Bij vier à vijf op een werkdag de ' +
            'grootste onzichtbare post.')
   }
-  const leeg = Array.from({ length: 7 }, (_, i) => plusDagen(vandaag(), -i - 1))
-    .filter((k) => !dagen[k]?._kcal)
+  const leeg7 = Array.from({ length: 7 }, (_, i) => plusDagen(vandaag(), -i - 1))
+  const leeg = leeg7.filter((k) => !dagen[k]?._kcal)
   if (leeg.length >= 2) {
     g.push(`${leeg.length} van de afgelopen zeven dagen heeft geen registratie. Gaten verbreden ` +
            'het interval sneller dan een onnauwkeurige schatting dat doet: een ruwe D-waarde is ' +
            'beter dan niets.')
+  }
+  /* DE KOPPELING DIE STIL IS GEVALLEN
+   *
+   * Er is geen manier om Apple Gezondheid vanaf een server op te halen — die
+   * gegevens komen alleen van het toestel af, via de opdracht die daar draait.
+   * Valt die opdracht stil, dan merkt de app dat niet: er komt gewoon niets
+   * binnen, en dat ziet er precies zo uit als een dag zonder stappen.
+   *
+   * Vandaar deze regel. Hij kijkt naar de gegevens en niet naar de sleutel: wat
+   * telt is of er íets is aangekomen, niet of de koppeling nog bestaat. En hij
+   * verschijnt alleen als er ooit stappen binnenkwamen — wie hem nooit heeft
+   * ingesteld hoort geen zeven dagen per week te lezen dat er iets stilstaat. */
+  const stappenOoit = Object.values(dagen).some((d) => (d?.stappen ?? 0) > 0)
+  const stappenRecent = leeg7.filter((k) => (dagen[k]?.stappen ?? 0) > 0).length
+  if (stappenOoit && stappenRecent === 0) {
+    g.push('Er komt niets meer binnen uit Gezondheid. De afgelopen zeven dagen staat er geen ' +
+           'enkele stap, terwijl dat eerder wel gebeurde. Kijk of de automatisering op je ' +
+           'telefoon nog draait — onder Profiel, bij Koppelen, staat wanneer er voor het ' +
+           'laatst iets is aangekomen.')
+  } else if (stappenOoit && stappenRecent <= 3) {
+    g.push(`Uit Gezondheid kwam ${stappenRecent} van de afgelopen zeven dagen iets binnen. ` +
+           'Een opdracht die met de hand gestart moet worden slaat dagen over; als automatisering ' +
+           'draait hij elke ochtend vanzelf.')
   }
   if (!labs.length) {
     g.push('De klinische nulmeting staat nog leeg. Bloeddruk, HbA1c, lipiden, ALAT en GGT, TSH, ' +

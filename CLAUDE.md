@@ -61,6 +61,36 @@ database staat. Dat is te controleren zonder te vertrouwen op je geheugen —
 vergelijk de md5 van `prosrc` met die van het bestand, met commentaar en witruimte
 eruit gestript.
 
+## Nooit wegschrijven wat er al staat
+
+De inhoud van de database is met de hand opgebouwd — de gerechtenbibliotheek
+voorop — en dat werk is niet te herhalen. Een bestand dat inhoud toevoegt bouwt
+er dus bíj, en raakt niet aan wat er al ligt. Vier regels, en ze zijn alle vier
+te toetsen:
+
+**Toevoegen is `on conflict do nothing`, nooit `do update`.** Een rij die er al
+is blijft zoals hij is, ook als ik denk het beter te weten. Kinderrijen
+(ingrediënten, porties) worden alleen aangemaakt voor wat de insert zelf net
+heeft neergezet — via `returning`, niet via een opzoeking op naam. Anders krijgt
+een gerecht dat de diëtist heeft bijgewerkt er stilletjes mijn ingrediënten bij.
+
+**Twee keer draaien voegt niets toe en haalt niets weg.** Dat is geen
+eigenschap die je aanneemt maar een proef die je draait.
+
+**Een terugdraairegel raakt alleen wat dít bestand heeft neergezet.** Dus op de
+slugs van het bestand (`slug like 'sur-%'`) en niet op de categorie
+(`cuisine = 'surinaams'`) — die tweede haalt ook weg wat er later door iemand
+anders bij is gezet. Dit stond fout in bestand 24 en 27 en is rechtgezet.
+
+**Een koppeling die uit zichzelf vuurt overschrijft nooit een waarde die een
+mens heeft ingevuld.** Wat de koppeling zelf neerzette mag hij bijwerken, meer
+niet. Die regel staat één keer, in `kal_meting_uit_koppeling`, en wordt
+mutatiegetoetst.
+
+Wat hier níet onder valt is een functie vervangen: `create or replace function`
+is de gewone gang van zaken, want de functies zijn code en geen inhoud. Het gaat
+om rijen.
+
 Na elke wijziging aan `kal_beweging_ontvangen` of `kal_beweging_dag`:
 
 ```sql

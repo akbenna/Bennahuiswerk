@@ -44,6 +44,16 @@ export type Dagenkaart = Record<IsoDatum, DagMetTotalen>
 export type Zekerheid = 'geen' | 'laag' | 'middel' | 'hoog'
 
 /**
+ * Of de uitkomst van de energiebalans fysiologisch kán kloppen.
+ *
+ * Los van `Zekerheid`, en dat onderscheid is het hele punt: "laag" betekent dat
+ * het model het niet nauwkeurig weet, "onder-rust" betekent dat het antwoord
+ * niet waar kan zijn. Het eerste mag je met een brede band tonen, het tweede
+ * niet.
+ */
+export type TdeeOordeel = 'goed' | 'onder-rust' | 'boven-plafond'
+
+/**
  * Mifflin-St Jeor. Aanbevolen bij overgewicht boven Harris-Benedict
  * (Frankenfield 2003). Blijft een prior, geen meting.
  */
@@ -133,6 +143,10 @@ export interface Analyse {
   priorHoog: number
   priorMid: number
   tdee: number | null
+  /** Of die uitkomst fysiologisch kán kloppen; null zolang er geen tdee is. */
+  tdeeOordeel: TdeeOordeel | null
+  /** De ondergrens van de band, afgekapt op de ruststofwisseling. */
+  laagMogelijk: number | null
   laag: number | null
   hoog: number | null
   half: number | null
@@ -232,6 +246,45 @@ export function analyse(dagen: Dagenkaart, pf: Profiel, eind: IsoDatum = vandaag
     else zekerheid = 'laag'
   }
 
+  /* WANNEER HET MODEL ZIJN EIGEN UITKOMST NIET MAG GELOVEN
+   *
+   * tdee is een energiebalans: gemiddelde inname min de energie die het vet in
+   * of uit ging. Die som klopt alleen als de twee invoeren bij elkaar horen.
+   * Doen ze dat niet, dan geeft dezelfde som een onmogelijk antwoord — en hij
+   * geeft het zonder te klagen.
+   *
+   * Dat gebeurde. Een logboek van 1.461 kcal over twaalf dagen naast een
+   * weegreeks die met +2,30 kg per week omhoog liep, gaf een verbruik van
+   * −1.069 kcal per dag, getoond als "−15.786–13.652 kcal". De standaardfout op
+   * die helling was 0,975 kg per dág: de trend was in het geheel niet bepaald,
+   * en toch stond er een getal.
+   *
+   * De grenzen zijn fysiologisch en niet gekozen om deze ene zaak op te lossen.
+   * Onder: niemand verbruikt minder dan zijn ruststofwisseling. Boven:
+   * tweeënhalf keer het rustverbruik is de bovengrens van wat een mens langer
+   * dan een paar dagen volhoudt — de alimentaire limiet uit Thurber 2019, die
+   * ook voor wielrenners in een grote ronde geldt.
+   *
+   * WAT HIER MET OPZET NIET GEBEURT
+   *
+   * De som zelf blijft staan, en `zekerheid` en `doel` ook. Dit veld is een
+   * oordeel naast de uitkomst en geen ingreep erin: de rekenkern blijft melden
+   * wat de balans geeft, en de schermen krijgen één plek om te zien of ze het
+   * mogen beweren. Dat scheelt bovendien het hertekenen van veertig gouden
+   * waarden die niets met deze fout te maken hebben.
+   *
+   * De ondergrens van de band wordt wél afgekapt op het rustverbruik. Een
+   * interval dat onmogelijke waarden bevat is geen interval; afkappen op een
+   * bekende fysieke grens houdt de informatie die er wél in zit — de bovenkant —
+   * overeind. */
+  const PAL_PLAFOND = 2.5
+  const tdeeOordeel: TdeeOordeel | null =
+    tdee == null ? null
+    : tdee < rustBMR ? 'onder-rust'
+    : tdee > rustBMR * PAL_PLAFOND ? 'boven-plafond'
+    : 'goed'
+  const laagMogelijk = laag != null ? Math.max(laag, rustBMR) : null
+
   /* Tempo in procent lichaamsgewicht per week, herberekend op het actuele
      gewicht (Garthe 2011 in combinatie met Forbes 2000). */
   const tempoKgWk = (pf.tempo_pct_week / 100) * gewicht
@@ -252,6 +305,7 @@ export function analyse(dagen: Dagenkaart, pf: Profiel, eind: IsoDatum = vandaag
     gewicht, wPunten, reg, hellingWk, hellingPct, gemInname, sdInname, gemStappen,
     rustBMR, palLaag, palHoog, priorLaag, priorHoog, priorMid,
     tdee, laag, hoog, half, zekerheid, doel, tekort, tempoKgWk, teSnel,
+    tdeeOordeel, laagMogelijk,
     onderrapportage: tdee != null ? priorMid - tdee : null,
     eiwitDoel, eiwitRef, wekenTotDoel,
     gelogd, volledig: innames.length, gemarkeerd, venster: VENSTER,

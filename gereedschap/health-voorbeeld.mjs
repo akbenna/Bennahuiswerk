@@ -55,7 +55,7 @@ const iso = (d) => new Date(d).toISOString().slice(0, 10)
 const NU = Date.parse('2026-08-22T09:00:00Z')
 
 /** Een geloofwaardige reeks: 119 kg zakkend naar 116, met ruis. */
-function reeks(aantalDagen) {
+function reeks(aantalDagen, vorm = 'gewoon') {
   const dagen = []
   const regels = []
   for (let i = aantalDagen - 1; i >= 0; i--) {
@@ -63,7 +63,14 @@ function reeks(aantalDagen) {
     const t = (aantalDagen - 1 - i) / Math.max(1, aantalDagen - 1)
     const ruis = Math.sin(i * 2.7) * 0.45 + Math.cos(i * 1.3) * 0.3
     dagen.push({
-      datum: d, gewicht_kg: Math.round((119.4 - t * 3.1 + ruis) * 10) / 10,
+      datum: d,
+      /* In de tegenspraakvorm loopt het gewicht omhóóg en wordt er maar om de
+         drie dagen gewogen. Dat is de toestand van het schermbeeld waar deze
+         proef uit voortkomt: een trend die niet vastligt naast een halfgevuld
+         logboek. */
+      gewicht_kg: vorm === 'tegenspraak'
+        ? (i % 3 === 0 ? Math.round((116.0 + t * 4.6 + ruis) * 10) / 10 : null)
+        : Math.round((119.4 - t * 3.1 + ruis) * 10) / 10,
       gewicht_bron: 'handmatig', stappen: 4200 + Math.round(Math.abs(Math.sin(i)) * 5200),
       /* Om de dag drie kwartier op de hometrainer. Dat is bewust: zonder
          fietsminuten in de proefgegevens zou het bewegingsscherm nooit zijn
@@ -83,8 +90,18 @@ function reeks(aantalDagen) {
     ]
     /* De laatste dag krijgt alleen ontbijt en lunch: een halve dag is de
        gewone toestand als je 's middags kijkt. */
+    /* Halfgevuld logboek in de tegenspraakvorm: drie maaltijden op twaalf van
+       de achtentwintig dagen, en niets op de rest.
+       De eerste opzet nam de eerste drie regels van het menu en kwam op 930
+       kcal uit. Dat viel onder de 1.200-grens waarmee de rekenkern een dag als
+       onvolledig wegstreept, dus er bleef geen enkele bruikbare dag over en het
+       model kwam niet eens tót een uitspraak — precies niet de toestand die
+       deze proef moet vangen. Vandaar ontbijt, lunch en diner: 1.560 kcal. */
+    if (vorm === 'tegenspraak' && i % 7 >= 3) continue
     const tot = i === 0 ? 4 : menu.length
-    menu.slice(0, tot).forEach(([moment, naam, kcal, eiwit, koolh, vet, conf], j) => {
+    const gekozen = vorm === 'tegenspraak'
+      ? [menu[0], menu[2], menu[4]] : menu.slice(0, tot)
+    gekozen.forEach(([moment, naam, kcal, eiwit, koolh, vet, conf], j) => {
       regels.push({
         id: `${d}-${j}`, datum: d, moment, naam,
         hoeveelheid: null, eenheid: null, gram_equivalent: null,
@@ -161,7 +178,9 @@ function metingen(aantalDagen) {
 }
 
 function alles(aantalDagen, fase = 'afvallen') {
-  const { dagen, regels } = aantalDagen > 0 ? reeks(aantalDagen) : { dagen: [], regels: [] }
+  const vorm = fase === 'tegenspraak' ? 'tegenspraak' : 'gewoon'
+  const { dagen, regels } = aantalDagen > 0
+    ? reeks(aantalDagen, vorm) : { dagen: [], regels: [] }
   const profiel = fase === 'onderhoud'
     ? { ...PROFIEL, fase: 'onderhoud', onderhoud_basis_kg: 115.0 }
     : PROFIEL
@@ -200,6 +219,12 @@ const gevallen = [
   /* De onderhoudsfase is de enige toestand waarin het stoplicht bestaat. Zonder
      dit geval blijft die kop ongezien tot iemand hem in productie tegenkomt. */
   ['onderhoud', 28, 'light', 'onderhoud', ['Profiel']],
+  /* DE ZAAK VAN HET SCHERMBEELD
+     Een halfgevuld logboek naast een weegreeks die omhoog loopt. De balans geeft
+     dan een negatief verbruik, en de app toonde dat: "−15.786–13.652 kcal". Dit
+     geval staat er zodat die toestand een vaste plek heeft en niet pas op een
+     telefoon opduikt. */
+  ['tegenspraak', 28, 'light', 'tegenspraak', ['Inzicht']],
 ]
 
 /** Een tabblad openen en wachten tot de kop er echt staat. */
@@ -363,6 +388,87 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
        stijlkwestie maar een scherm dat zijn eigen vraag niet beantwoordt. */
     if (!kop || !kop.trim()) throw new Error(`${stam}: kop is leeg`)
     console.log(`${stam.padEnd(26)} kop=${JSON.stringify(kop)}`)
+
+    /* DE VOLGORDE VAN HET INZICHTSCHERM
+     *
+     * Het scherm beantwoordt twee vragen — wat verbruik ik, wat eet ik — en de
+     * rest is verantwoording. Die volgorde is een keuze en geen toeval, en ze
+     * is met een grep niet te bewaken: een kaart verplaatsen verandert geen
+     * enkele tekst. Vandaar hier, op de gerenderde pagina.
+     *
+     * Zodra er een band is hoort "Waar je nu staat" bovenaan te staan en zakt
+     * de afleiding naar onderen. Dat is precies de omkering die makkelijk
+     * ongemerkt terugdraait. */
+    if (tab === 'Inzicht') {
+      const koppen = await pagina.locator('.kaart .eyebrow').allTextContents()
+      const i = (t) => koppen.findIndex((x) => x.trim().startsWith(t))
+      const staat = i('Waar je nu staat')
+      const band = i('Waar de band vandaan komt')
+      if (staat < 0) throw new Error(`${stam}: "Waar je nu staat" ontbreekt`)
+
+      const kaart = pagina.locator('.kaart', { hasText: 'Waar je nu staat' }).first()
+      const getallen = await kaart.locator('.trio .getal').allTextContents()
+      if (getallen.length !== 3) {
+        throw new Error(`${stam}: "Waar je nu staat" toont ${getallen.length} getallen, niet 3`)
+      }
+
+      /* GEEN ONMOGELIJK GETAL IN DE KOP, OOIT
+       *
+       * Dit is de proef waar het echt om gaat. De app toonde op een telefoon
+       * "Verbruik per dag −15.786–13.652 kcal": de energiebalans klopte, de
+       * bewering kon niet waar zijn. Een app die één onmogelijk getal toont is
+       * op geen enkel ander getal meer te vertrouwen.
+       *
+       * De regel is niet "geen min in de kop" — een gewichtstrend mag negatief
+       * zijn — maar: in het blok met de kerngetallen staat geen minteken vóór
+       * een cijfer. Daar staan alleen kilocalorieën, en die zijn nooit negatief. */
+      const kern = pagina.locator('.hero .kerngetallen')
+      if (await kern.count()) {
+        const tekst = await kern.first().innerText()
+        if (/[-−–]\s?\d/.test(tekst.replace(/(\d)[–-](\d)/g, '$1|$2'))) {
+          throw new Error(`${stam}: negatief getal in de kop — ${JSON.stringify(tekst)}`)
+        }
+      }
+
+      /* DE POORT ZELF TOETSEN, EN NIET ALLEEN ZIJN GEVOLG
+       *
+       * De eerste versie van deze proef keek alleen of er een negatief getal in
+       * de kop stond. Dat bleek niets te bewijzen: de ondergrens wordt ook
+       * afgekapt op het rustverbruik, en die afkapping verbergt het minteken al.
+       * Een mutant die de hele plausibiliteitspoort weghaalde kwam er dus
+       * ongemerkt doorheen — de app zou weer "Wat je lichaam verbruikt: 2.195 –
+       * 15.000 kcal" tonen bij gegevens die elkaar tegenspreken.
+       *
+       * Daarom deze regel, die aan het gevál hangt en niet aan wat er toevallig
+       * op het scherm staat: in de tegenspraakopstelling mag de kop geen
+       * verbruik beweren. Punt. */
+      if (naam === 'tegenspraak' && kop.startsWith('Wat je lichaam verbruikt')) {
+        throw new Error(`${stam}: de kop beweert een verbruik terwijl logboek en ` +
+                        `weegschaal elkaar tegenspreken — ${JSON.stringify(kop)}`)
+      }
+
+      if (kop.startsWith('Wat je lichaam verbruikt')) {
+        if (band >= 0 && band < staat) {
+          throw new Error(`${stam}: de afleiding staat bóven "Waar je nu staat" — ` +
+                          JSON.stringify(koppen))
+        }
+        console.log(`${''.padEnd(26)} volgorde: waar-je-staat op ${staat}, afleiding op ${band}` +
+                    ` · ${getallen.map((x) => x.trim()).join(' / ')}`)
+      } else {
+        /* Zonder bruikbaar verbruik hoort de kop te zeggen wat er aan de hand
+           is, hoort het rustverbruik genoemd te worden, en hoort er geen doel
+           te staan dat nergens op rust. */
+        if (!/spreken elkaar tegen|Nog niet te berekenen/.test(kop)) {
+          throw new Error(`${stam}: onverwachte kop zonder verbruik — ${JSON.stringify(kop)}`)
+        }
+        const hero = await pagina.locator('.hero').innerText()
+        if (/spreken elkaar tegen/.test(kop) && !/liggend al verbruikt|rustverbruik/.test(hero)) {
+          throw new Error(`${stam}: de kop meldt een tegenspraak maar noemt de grens niet`)
+        }
+        console.log(`${''.padEnd(26)} geen verbruik: ${JSON.stringify(kop)}` +
+                    ` · ${getallen.map((x) => x.trim()).join(' / ')}`)
+      }
+    }
 
     /* De coachkaart staat alleen op Vandaag, en alleen als er een doel is. Hij
        hoort de eiwiteis te noemen én voorstellen te tonen: een kaart die wel
