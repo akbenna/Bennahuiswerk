@@ -1400,6 +1400,73 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
   await traag.close()
 }
 
+/* ----------------------------------------------------- de tekens op de balk -- */
+/* DE RUITEN WAREN AL VERGEVEN
+ *
+ * Op de balk stonden zes losse Unicode-vormen: ◍ ◎ ◇ ◈ ✚ ⋯. Twee daarvan
+ * betekenen in deze app iets: ◇ is "geschat" en ◈ is "opgave van het etiket".
+ * Die staan naast élke waarde op élk scherm, en het is de kortste samenvatting
+ * van waar deze app over gaat. Ze óók als tabblad gebruiken maakt van een
+ * betekenisvol teken een versiering.
+ *
+ * Deze proef houdt twee dingen vast. Elk tabblad draagt een getekend teken — een
+ * <svg> en geen letter, want een letter tekent elk toestel anders. En de ruiten
+ * komen op de balk niet meer voor, terwijl ze op het scherm eronder wél moeten
+ * blijven staan: zonder die tweede helft zou "haal alle herkomsttekens weg" hier
+ * glansrijk doorheen komen.
+ */
+{
+  const pagina = await ctx.newPage()
+  await bedienDb(pagina, 28, 'afvallen')
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.hero', { timeout: 5000 })
+
+  const knoppen = pagina.locator('nav.tabs button')
+  const n = await knoppen.count()
+  const metTeken = await pagina.locator('nav.tabs button .ic > svg').count()
+  if (metTeken !== n) {
+    throw new Error(`balk: ${metTeken} van de ${n} tabbladen heeft een getekend teken`)
+  }
+  const balktekst = await pagina.locator('nav.tabs').innerText()
+  const ruit = balktekst.match(/[◇◈◆]/)
+  if (ruit) throw new Error(`balk: ${ruit[0]} staat nog op de balk — die vorm is al vergeven`)
+
+  /* En de tegenproef: de ruiten horen op het scherm zelf wél te staan. */
+  const opHetScherm = await pagina.locator('.herkomst').count()
+  if (opHetScherm === 0) throw new Error('balk: er staat geen enkel herkomstteken meer op het scherm')
+
+  console.log(`de balk                    ${n} tabbladen, ${metTeken} getekende tekens, ` +
+              `${opHetScherm} herkomsttekens op het scherm`)
+  await pagina.close()
+
+  /* Een afdruk van alleen de balk, vier keer zo scherp. De tekens zijn met de
+     hand getekend en op eenentwintig pixels is een halve eenheid het verschil
+     tussen een voetstap en een acht; dat moet je kunnen zíen. Vandaar een eigen
+     context: de vergroting moet uit de afbeelding komen en niet uit een zoom,
+     want zoom verandert de afronding en dus precies wat je wilt beoordelen. */
+  const scherp = await browser.newContext({
+    viewport: { width: 430, height: 900 }, deviceScaleFactor: 4,
+    locale: 'nl-NL', timezoneId: 'Europe/Amsterdam',
+  })
+  await scherp.addInitScript(`{
+    const echt = Date; const vast = ${NU};
+    class V extends echt {
+      constructor(...a){ super(...(a.length ? a : [vast])) }
+      static now(){ return vast }
+    }
+    window.Date = V;
+    localStorage.setItem('kalibratie.sessie',
+      JSON.stringify({ token: 'proef', account: 'abdelkader' }));
+  }`)
+  const scherpe = await scherp.newPage()
+  await bedienDb(scherpe, 28, 'afvallen')
+  await scherpe.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await scherpe.waitForSelector('nav.tabs', { timeout: 5000 })
+  await scherpe.waitForTimeout(400)
+  await scherpe.locator('nav.tabs').screenshot({ path: 'gereedschap/health-balk.png' })
+  await scherp.close()
+}
+
 /* -------------------------------------------------- dag, nacht en de keuze -- */
 /* TWEE WEGEN NAAR DEZELFDE NACHT
  *

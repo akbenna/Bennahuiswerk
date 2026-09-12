@@ -144,7 +144,9 @@ nav.tabs::-webkit-scrollbar{display:none}
 nav.tabs button{border:0;background:transparent;color:var(--grijs);cursor:pointer;
   padding:6px 10px;border-radius:9px;font-size:.68rem;display:flex;flex-direction:column;
   align-items:center;gap:3px;min-width:56px;line-height:1.1}
-nav.tabs button .ic{font-size:1.05rem;line-height:1}
+/* De tekentjes zijn SVG met een eigen maat; de doos eromheen hoeft alleen te
+   centreren. Zie `tekens.tsx` voor waarom het geen emoji en geen bibliotheek is. */
+nav.tabs button .ic{display:flex;align-items:center;justify-content:center;line-height:1}
 nav.tabs button[aria-selected="true"]{color:var(--k);background:var(--kbg);font-weight:600}
 
 /* --------------------------------------------------------------- kaarten -- */
