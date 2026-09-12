@@ -384,4 +384,10 @@ COMMIT;
 
 -- select cuisine, count(*) from cultural_dishes group by cuisine order by 2 desc;
 
--- Terugdraaien: delete from cultural_dishes where cuisine = 'syrisch';
+-- Terugdraaien — op de slugs van dit bestand en niet op de keuken:
+--
+--   delete from cultural_dishes where slug like 'sy-%';
+--
+-- Zie bestand 24 voor waarom dat verschil ertoe doet: een terugdraairegel op de
+-- keuken haalt ook weg wat er later door iemand anders bij is gezet.
+-- (dish_ingredients en dish_portions gaan mee via on delete cascade)
