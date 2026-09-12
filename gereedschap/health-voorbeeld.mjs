@@ -415,6 +415,50 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
       }
     }
 
+    /* DE VOLGORDE VAN HET VANDAAGSCHERM
+     *
+     * De gewone reden om deze app te openen is loggen. De knop daarvoor stond
+     * drie kaarten naar beneden, onder twee kaarten die je eerst moest lezen.
+     * Hij hoort meteen onder de hero, met "Wat er nog in past" eronder — dat is
+     * de vraag die je daarna stelt — en daarna beweging en slaap.
+     *
+     * Net als bij Inzicht is dit met een grep niet te bewaken: een blok
+     * verplaatsen verandert geen enkele tekst. Vandaar hier, op de gerenderde
+     * pagina, en met de hero erbij — anders bewijst "knop vóór coachkaart" nog
+     * niet dat er niets tussen de hero en de knop is gekropen.
+     */
+    if (tab === 'Vandaag') {
+      const rij = await pagina.evaluate(() =>
+        Array.from(document.querySelectorAll('.hero, .hoofdknop, .kaart')).map((el) => {
+          if (el.classList.contains('hero')) return 'hero'
+          if (el.classList.contains('hoofdknop')) return 'toevoegen'
+          const k = el.querySelector('.eyebrow')
+          return k && k.textContent ? k.textContent.trim() : '?'
+        }))
+      const waar = (t) => rij.findIndex((x) => x.startsWith(t))
+      const hero = waar('hero')
+      const knop = waar('toevoegen')
+      const past = waar('Wat er nog in past')
+      const bew = waar('Beweging en slaap')
+      if (hero !== 0) throw new Error(`${stam}: de hero staat niet bovenaan — ${JSON.stringify(rij)}`)
+      if (knop !== 1) {
+        throw new Error(`${stam}: "Eten toevoegen" staat niet meteen onder de hero — ` +
+                        JSON.stringify(rij))
+      }
+      /* De coachkaart ontbreekt zolang er geen doel is; dan is er niets tussen
+         de knop en beweging, en dat hoort ook zo. */
+      if (past >= 0 && past !== 2) {
+        throw new Error(`${stam}: "Wat er nog in past" staat niet onder de knop — ` +
+                        JSON.stringify(rij))
+      }
+      if (bew < 0) throw new Error(`${stam}: "Beweging en slaap" ontbreekt — ${JSON.stringify(rij)}`)
+      if (bew !== (past >= 0 ? 3 : 2)) {
+        throw new Error(`${stam}: "Beweging en slaap" staat niet direct daaronder — ` +
+                        JSON.stringify(rij))
+      }
+      console.log(`${''.padEnd(26)} volgorde: ${rij.slice(0, 5).join(' → ')}`)
+    }
+
     /* WAT JE KOMT HALEN STAAT BOVEN WAT JE KOMT DOEN
      *
      * Op Gezondheid stond het invoerformulier bovenaan de metingenkaart, dus
@@ -1083,6 +1127,24 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
                    'p_hartslag_rust']) {
     if (!velden.includes(v)) throw new Error(`koppelvel: ${v} ontbreekt in de veldtabel`)
   }
+  /* DE SLAAPINSTRUCTIE MOET DE DUUR NOEMEN
+   *
+   * Hier stond "herhaal actie 1 en 2 voor Slaapanalyse" — zoeken en dan Som.
+   * Dat kan niet werken: slaap is een categorie en geen meetwaarde, dus
+   * Bereken statistiek geeft 0. Het kwam pas aan het licht toen iemand de
+   * opdracht echt had gebouwd en de database de nul weigerde.
+   *
+   * Een instructie die niet kán werken is erger dan een ontbrekende, want je
+   * gaat bij jezelf zoeken. Deze proef houdt vast dat de stap die het wél doet
+   * — de duur van de monsters optellen — er staat. */
+  const vel = await pagina.locator('.venster').innerText()
+  if (!/Duur|Duration/.test(vel)) {
+    throw new Error('koppelvel: de slaapinstructie noemt de duur niet')
+  }
+  if (/Herhaal actie 1 en 2 voor.{0,40}Slaap/s.test(vel)) {
+    throw new Error('koppelvel: de slaapinstructie zegt weer "herhaal actie 1 en 2"')
+  }
+
   console.log(`koppelen                   endpoint=${JSON.stringify(url)}`)
   console.log(`                           velden=${velden.length}`)
   await pagina.close()
