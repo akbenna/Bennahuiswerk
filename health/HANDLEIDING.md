@@ -243,6 +243,12 @@ vastligt, wordt vergeten.
   browseropslag. Geen account, geen naam, geen code.
 - **Je aanmelding** — acht uur, daarna verloopt hij vanzelf. Op een gedeelde
   tablet blijft anders het account van 's ochtends de hele avond openstaan.
+- **Dag of nacht** — alleen op dit toestel, net als de cursussen. Onder *Profiel
+  → Dag of nacht* staan drie standen: **Volg het toestel**, **Dag**, **Nacht**.
+  De eerste is de grondstand en schakelt mee met de schemerstand van iOS; de
+  andere twee zetten hem vast, ook als je telefoon iets anders doet. Er staat
+  bewust geen tuimelschakelaar met twee standen: die kan "volg het toestel" niet
+  uitdrukken, en zodra je hem één keer aanraakt kun je er niet meer terug.
 
 Toegang tot de database loopt altijd via functies met vaste rechten; de tabellen
 zijn niet rechtstreeks te lezen. In de browser komt alleen de publieke sleutel.

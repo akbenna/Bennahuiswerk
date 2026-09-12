@@ -7,12 +7,13 @@
  * De kop draagt nu het oordeel als dat er is, en anders de slaap — met veertien
  * nachten erbij, want één gemiddelde zegt niet of het beter of slechter gaat.
  */
-import { Kaart, Knop, Kop, Rij, Tussen, Uitleg } from '../onderdelen/basis'
+import { Kaart, Keuzechip, Knop, Kop, Rij, Tussen, Uitleg } from '../onderdelen/basis'
 import { Lijntje, Schermkop } from '../hero'
 import { dec } from '@/gedeeld/getal'
 import type { Profiel } from '@/gedeeld/db/tabellen'
 import type { Dagenkaart, Trendpunt } from '../rekenkern'
 import { onderhoudZone } from '../klinisch'
+import { THEMANAMEN, useThemakeuze, zetThema } from '../thema'
 import type { Onderhoudzone } from '../klinisch'
 
 /** De kleur hoort bij het scherm en niet bij de rekenfunctie. Zie klinisch.ts. */
@@ -185,6 +186,8 @@ export function Meer(
         </p>
       </Kaart>
 
+      <Themakeuzes />
+
       <Kaart plat>
         <Kop>Waar de getallen vandaan komen</Kop>
         <p className="mini" style={{ marginTop: 4 }}>
@@ -209,5 +212,39 @@ export function Meer(
         </Rij>
       </Kaart>
     </>
+  )
+}
+
+/**
+ * DAG OF NACHT
+ *
+ * Drie chips en geen tuimelschakelaar. "Volg het toestel" is een eigen stand en
+ * geen afwezigheid van een keuze: die schakelt mee met de schemerstand van iOS,
+ * en dat is iets anders dan dag of nacht. Met twee standen ben je die koppeling
+ * kwijt zodra je hem één keer aanraakt, en kun je er niet meer terug.
+ *
+ * Het staat hier en niet in het profielvenster. Het profiel gaat over jou —
+ * lengte, leeftijd, doel — en dit gaat over het scherm. Bovendien is dit iets
+ * wat je 's avonds even omzet, en dan moet het op het scherm staan en niet
+ * twee vensters diep.
+ */
+function Themakeuzes() {
+  const keuze = useThemakeuze()
+  return (
+    <Kaart plat>
+      <Kop>Dag of nacht</Kop>
+      <Rij style={{ marginTop: 8 }}>
+        {THEMANAMEN.map((t) => (
+          <Keuzechip key={t.keuze} aan={keuze === t.keuze} titel={t.titel}
+                     opKlik={() => zetThema(t.keuze)}>
+            {t.naam}
+          </Keuzechip>
+        ))}
+      </Rij>
+      <p className="mini" style={{ marginTop: 8 }}>
+        De app volgde altijd de schemerstand van je telefoon. Staat die 's avonds op nacht, dan zat
+        je er overdag ook in. Hier zet je hem vast.
+      </p>
+    </Kaart>
   )
 }

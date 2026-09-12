@@ -1400,5 +1400,141 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
   await traag.close()
 }
 
+/* -------------------------------------------------- dag, nacht en de keuze -- */
+/* TWEE WEGEN NAAR DEZELFDE NACHT
+ *
+ * De nachtkleuren stonden in mediaquery's. Nu kan de gebruiker kiezen, en die
+ * keuze staat als `data-thema` op <html>. CSS kent geen of-constructie tussen
+ * een mediaquery en een kenmerk, dus staat elk nachtblok twee keer in de stijl
+ * — en dat is precies het soort verdubbeling waar over een half jaar één helft
+ * van bijgewerkt wordt.
+ *
+ * Deze proef vergelijkt daarom niet de tekst van de stijl maar het beeld. Twee
+ * keer dezelfde app, drie tabbladen diep:
+ *
+ *   A. toestel op nacht, geen keuze  → de mediaquery doet het werk
+ *   B. toestel op dag, keuze "donker" → het kenmerk doet het werk
+ *
+ * Van élk element op de pagina worden zes eigenschappen gelezen. Wijkt er één
+ * af, dan is er een nachtblok waarvan de tweeling achterblijft, en de proef
+ * zegt welk element en welke eigenschap. Welke regel in de stijl het
+ * veroorzaakt hoeft hij niet te weten.
+ *
+ * En de tegenproef: toestel op nacht met keuze "licht" hoort wél te verschillen.
+ * Zonder die helft zou een stijl die het kenmerk volledig negeert er glansrijk
+ * doorheen komen — dan zijn A en B immers ook gelijk.
+ */
+{
+  const TABS = ['Vandaag', 'Inzicht', 'Beweging']
+
+  /** Elk element op de pagina, met wat er aan kleur uit komt. */
+  const meten = async (pagina) => {
+    const uit = []
+    for (const tab of TABS) {
+      await naarTab(pagina, tab)
+      uit.push(await pagina.evaluate(() => [...document.querySelectorAll('*')].map((el) => {
+        const s = getComputedStyle(el)
+        return [
+          el.tagName + '.' + (typeof el.className === 'string' ? el.className : ''),
+          s.backgroundColor, s.color, s.borderTopColor, s.boxShadow, s.outlineColor,
+          s.backgroundImage,
+        ].join(' | ')
+      })))
+    }
+    return uit.flat()
+  }
+
+  const opzetten = async (schema, keuze) => {
+    const pagina = await ctx.newPage()
+    await pagina.emulateMedia({ colorScheme: schema })
+    if (keuze) {
+      await pagina.addInitScript(`localStorage.setItem('kalibratie.thema', ${JSON.stringify(keuze)})`)
+    }
+    await bedienDb(pagina, 28, 'afvallen')
+    await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+    await pagina.waitForSelector('.hero', { timeout: 5000 })
+    return pagina
+  }
+
+  const viaMedia = await opzetten('dark', null)
+  const viaKenmerk = await opzetten('light', 'donker')
+
+  /* Het kenmerk hoort er alleen te staan als er gekozen is. Staat er bij de
+     grondstand `data-thema="systeem"`, dan slaat de mediaquery niet meer aan en
+     licht het scherm bij elke start eerst wit op voordat JavaScript draait. */
+  const grondstand = await viaMedia.evaluate(() => document.documentElement.dataset.thema ?? null)
+  if (grondstand !== null) {
+    throw new Error(`thema: zonder keuze staat er toch een kenmerk (${grondstand})`)
+  }
+  const gedwongen = await viaKenmerk.evaluate(() => document.documentElement.dataset.thema ?? null)
+  if (gedwongen !== 'donker') throw new Error(`thema: het kenmerk staat op ${gedwongen}`)
+
+  const a = await meten(viaMedia)
+  const b = await meten(viaKenmerk)
+  if (a.length !== b.length) {
+    throw new Error(`thema: ${a.length} elementen tegenover ${b.length} — niet te vergelijken`)
+  }
+  const scheef = a.findIndex((x, i) => x !== b[i])
+  if (scheef >= 0) {
+    throw new Error('thema: de nacht via het kenmerk is niet dezelfde nacht als via het toestel\n' +
+                    `  toestel: ${a[scheef]}\n  kenmerk: ${b[scheef]}`)
+  }
+  console.log(`dag en nacht               ${a.length} elementen gelijk in beide nachten`)
+  await viaKenmerk.close()
+
+  /* De tegenproef. Dag afdwingen op een toestel dat op nacht staat hoort een
+     ánder scherm te geven — en hetzelfde scherm als een toestel dat op dag
+     staat. Twee beweringen, want de eerste alleen laat een stijl door die het
+     kenmerk kent en er de verkeerde kleuren aan hangt. */
+  const gedwongenDag = await opzetten('dark', 'licht')
+  const c = await meten(gedwongenDag)
+  if (c.length === a.length && c.every((x, i) => x === a[i])) {
+    throw new Error('thema: "dag" op een toestel dat op nacht staat verandert niets')
+  }
+  await gedwongenDag.close()
+
+  const gewoneDag = await opzetten('light', null)
+  const d = await meten(gewoneDag)
+  const anders = c.findIndex((x, i) => x !== d[i])
+  if (c.length !== d.length || anders >= 0) {
+    throw new Error('thema: de afgedwongen dag is niet dezelfde dag als een toestel op dag\n' +
+                    `  gedwongen: ${c[anders]}\n  toestel:   ${d[anders]}`)
+  }
+  console.log(`${''.padEnd(26)} afgedwongen dag = gewone dag, en ≠ nacht`)
+  await gewoneDag.close()
+
+  /* En de schakelaar zelf. Dat de stijl twee wegen kent zegt nog niet dat er
+     een knop is die ze bewandelt. */
+  await naarTab(viaMedia, 'Profiel')
+  const kaart = viaMedia.locator('.kaart', { hasText: 'Dag of nacht' }).first()
+  if (!(await kaart.count())) throw new Error('thema: er staat geen keuze op Profiel')
+  await kaart.getByRole('button', { name: 'Dag' }).click()
+  await viaMedia.waitForTimeout(400)
+  const naDag = await viaMedia.evaluate(() => ({
+    kenmerk: document.documentElement.dataset.thema ?? null,
+    bewaard: localStorage.getItem('kalibratie.thema'),
+    grond: getComputedStyle(document.body).backgroundColor,
+  }))
+  if (naDag.kenmerk !== 'licht') throw new Error(`thema: na "Dag" staat het kenmerk op ${naDag.kenmerk}`)
+  if (naDag.bewaard !== 'licht') throw new Error('thema: de keuze wordt niet bewaard')
+
+  await kaart.getByRole('button', { name: 'Volg het toestel' }).click()
+  await viaMedia.waitForTimeout(400)
+  const naSysteem = await viaMedia.evaluate(() => ({
+    kenmerk: document.documentElement.dataset.thema ?? null,
+    bewaard: localStorage.getItem('kalibratie.thema'),
+    grond: getComputedStyle(document.body).backgroundColor,
+  }))
+  if (naSysteem.kenmerk !== null) throw new Error('thema: terug naar het toestel laat een kenmerk staan')
+  if (naSysteem.bewaard !== null) throw new Error('thema: terug naar het toestel laat een keuze staan')
+  if (naSysteem.grond === naDag.grond) {
+    throw new Error(`thema: de schakelaar verandert de achtergrond niet (${naDag.grond})`)
+  }
+  console.log(`${''.padEnd(26)} schakelaar: dag=${naDag.grond} · toestel=${naSysteem.grond}`)
+
+  await viaMedia.screenshot({ path: 'gereedschap/health-thema.png' })
+  await viaMedia.close()
+}
+
 await browser.close()
 server.close()

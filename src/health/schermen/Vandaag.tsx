@@ -51,6 +51,7 @@ import { momentNu } from '../vensters/Portie'
 import { meldenNu, tekort, voorstellen } from '../coach'
 import type { Tekort } from '../coach'
 import { herhaalRegel } from '../herhaal'
+import { useDonker } from '../thema'
 
 export interface VandaagEigenschappen {
   a: Analyse
@@ -121,20 +122,6 @@ function heroKleur(uur: number, donker: boolean): { achtergrond: string; glans: 
   const i = uur < 11 ? 0 : uur < 18 ? 1 : 2
   const [achtergrond, glans] = (donker ? HERO.donker : HERO.licht)[i]
   return { achtergrond, glans, groet: GROET[i] }
-}
-
-/** Volgt het thema van het toestel, ook als dat halverwege omslaat. */
-function useDonker(): boolean {
-  const [donker, zet] = useState(
-    () => typeof matchMedia === 'function' && matchMedia('(prefers-color-scheme:dark)').matches)
-  useEffect(() => {
-    if (typeof matchMedia !== 'function') return
-    const vraag = matchMedia('(prefers-color-scheme:dark)')
-    const kijk = (): void => zet(vraag.matches)
-    vraag.addEventListener('change', kijk)
-    return () => vraag.removeEventListener('change', kijk)
-  }, [])
-  return donker
 }
 
 export function Vandaag(p: VandaagEigenschappen) {
