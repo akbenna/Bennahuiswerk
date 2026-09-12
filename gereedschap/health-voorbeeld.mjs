@@ -1083,6 +1083,24 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
                    'p_hartslag_rust']) {
     if (!velden.includes(v)) throw new Error(`koppelvel: ${v} ontbreekt in de veldtabel`)
   }
+  /* DE SLAAPINSTRUCTIE MOET DE DUUR NOEMEN
+   *
+   * Hier stond "herhaal actie 1 en 2 voor Slaapanalyse" — zoeken en dan Som.
+   * Dat kan niet werken: slaap is een categorie en geen meetwaarde, dus
+   * Bereken statistiek geeft 0. Het kwam pas aan het licht toen iemand de
+   * opdracht echt had gebouwd en de database de nul weigerde.
+   *
+   * Een instructie die niet kán werken is erger dan een ontbrekende, want je
+   * gaat bij jezelf zoeken. Deze proef houdt vast dat de stap die het wél doet
+   * — de duur van de monsters optellen — er staat. */
+  const vel = await pagina.locator('.venster').innerText()
+  if (!/Duur|Duration/.test(vel)) {
+    throw new Error('koppelvel: de slaapinstructie noemt de duur niet')
+  }
+  if (/Herhaal actie 1 en 2 voor.{0,40}Slaap/s.test(vel)) {
+    throw new Error('koppelvel: de slaapinstructie zegt weer "herhaal actie 1 en 2"')
+  }
+
   console.log(`koppelen                   endpoint=${JSON.stringify(url)}`)
   console.log(`                           velden=${velden.length}`)
   await pagina.close()

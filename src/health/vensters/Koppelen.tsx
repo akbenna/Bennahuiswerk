@@ -261,8 +261,8 @@ export function KoppelVenster(
 
         <p className="klein" style={{ marginTop: 12 }}>
           <b>Werkt het? Breid dan uit.</b> Herhaal actie 1 en 2 voor{' '}
-          <Menu nl="Actieve energie" en="Active Energy" /> en voor{' '}
-          <Menu nl="Slaapanalyse" en="Sleep Analysis" />, en voeg die als extra regels toe:
+          <Menu nl="Actieve energie" en="Active Energy" />, de rustpols en de saturatie, en voeg
+          die als extra regels toe. <b>Slaap gaat anders</b> — zie hieronder.
         </p>
         <div className="veldtabel">
           <div><code>p_actieve_energie_kcal</code><span>Getal</span><span>kcal</span></div>
@@ -278,8 +278,51 @@ export function KoppelVenster(
           binnen als meting en verschijnt onder <em>Klinisch</em>, met erbij hoeveel hij afwijkt van
           je eigen gemiddelde — want bij die meting is de verandering het signaal en niet de waarde.
         </p>
+        {/* WAAROM SLAAP EEN APARTE UITLEG KRIJGT
+
+            Hier stond tot september 2026 "herhaal actie 1 en 2 voor
+            Slaapanalyse" — dus zoeken en dan Som. Dat kán niet werken, en het
+            kwam pas aan het licht toen iemand de opdracht echt had gebouwd en
+            er nul uit kwam.
+
+            Slaap is in Apple Gezondheid geen meetwaarde maar een categorie: een
+            reeks perioden met een begin en een eind, zonder getal. Bereken
+            statistiek heeft dan niets om op te tellen en geeft 0 terug. Aan het
+            scherm is dat te zien doordat het slaapblok géén rij Eenheid heeft,
+            waar stappen 'aantal' en de rustpols 'aantal/min.' tonen.
+
+            Die stille 0 is precies waar nul_overgeslagen voor bestaat — hij
+            wordt geweigerd in plaats van weggeschreven als een nacht zonder
+            slaap. Maar geweigerd is nog steeds niet binnengekomen, en dus
+            hoort de instructie te kloppen. */}
+        <p className="klein" style={{ marginTop: 12 }}>
+          <b>Slaap: tel de duur, niet de waarde.</b>
+        </p>
+        <p className="mini" style={{ marginTop: 4 }}>
+          Slaap is geen meetwaarde maar een categorie — perioden met een begin en een eind, zonder
+          getal. <Menu nl="Bereken statistiek" en="Calculate Statistics" /> heeft dan niets om op te
+          tellen en geeft <b>0</b> terug. Je ziet het aan het blok zelf: bij stappen staat een rij{' '}
+          <em>Eenheid</em>, bij slaap niet.
+        </p>
+        <ol className="stappen">
+          <li>
+            <Menu nl="Zoek gezondheidswaarden" en="Find Health Samples" /> — type <b>Slaap</b>,
+            en zet het filter op <Menu nl="alle" en="all" /> en niet op{' '}
+            <Menu nl="een of meer" en="any" />: met <em>een of meer</em> komt élk monster van de
+            afgelopen dagen mee, ook stappen en hartslag.
+          </li>
+          <li>
+            <Menu nl="Herhaal met elk" en="Repeat with Each" /> over die monsters, en daarbinnen{' '}
+            <Menu nl="Verkrijg details van gezondheidswaarde" en="Get Details of Health Sample" />{' '}
+            → <b>Duur</b> <span className="anderstalig">(Duration)</span>.
+          </li>
+          <li>
+            <Menu nl="Bereken statistiek" en="Calculate Statistics" /> — <b>Som</b> over de
+            uitkomst van die herhaling. Dát is je slaapduur.
+          </li>
+        </ol>
         <p className="mini" style={{ marginTop: 6 }}>
-          Voor slaap kies je het veld dat past bij wat je opdracht teruggeeft — uren, minuten of
+          Kies daarna het veld dat past bij wat eruit komt — uren, minuten of
           seconden. Zit je ernaast, dan komt er iets van dertig uur slaap uit en dat wordt geweigerd
           in plaats van weggeschreven. In het antwoord staat dan{' '}
           <code>slaap_genegeerd: true</code>. Hetzelfde geldt voor elke waarde buiten haar bereik:
