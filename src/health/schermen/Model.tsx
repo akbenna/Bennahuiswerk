@@ -31,6 +31,11 @@ export function Model(
               : a.zekerheid === 'laag' ? 'var(--let)' : 'var(--k)'
   const trendNu = [...reeks].reverse().find((x) => x.ema != null)
 
+  /* "Er is een uitkomst" en "de uitkomst kan waar zijn" zijn twee dingen, en de
+     schermen verwarden ze. Dit is het enige punt waar dat onderscheid gemaakt
+     wordt; alles eronder kijkt naar `bruikbaar` en niet meer naar a.tdee. */
+  const bruikbaar = a.tdee != null && a.tdeeOordeel === 'goed'
+
   /* De laatste acht weken gewicht: de ruwe wegingen licht, de gladde lijn
      erover. Wie alleen de gladde lijn ziet denkt dat wegen nauwkeuriger is dan
      het is. */
@@ -41,7 +46,9 @@ export function Model(
       <Schermkop
         toon={a.zekerheid === 'hoog' ? 'goed' : a.zekerheid === 'geen' ? 'rust' : 'let'}
         bovenschrift="Het model"
-        titel={a.tdee != null ? 'Wat je lichaam verbruikt' : 'Nog niet te berekenen'}
+        titel={bruikbaar ? 'Wat je lichaam verbruikt'
+          : a.tdeeOordeel != null ? 'Je logboek en je weegschaal spreken elkaar tegen'
+          : 'Nog niet te berekenen'}
         rechts={
           <span className={'vlaggetje ' + (a.zekerheid === 'hoog' ? 'goed'
             : a.zekerheid === 'geen' ? 'rust' : 'let')}>
@@ -49,13 +56,15 @@ export function Model(
           </span>
         }
       >
-        {a.tdee != null && a.laag != null && a.hoog != null ? (
+        {bruikbaar && a.laagMogelijk != null && a.hoog != null ? (
           <>
             <div className="kerngetallen">
               <div>
                 <div className="mini">Verbruik per dag</div>
                 <div>
-                  <span className="getal">{dz(Math.round(a.laag))}–{dz(Math.round(a.hoog))}</span>
+                  <span className="getal">
+                    {dz(Math.round(a.laagMogelijk))}–{dz(Math.round(a.hoog))}
+                  </span>
                   <span className="klein"> kcal</span>
                 </div>
               </div>
@@ -89,6 +98,36 @@ export function Model(
             <p className="mini" style={{ marginTop: 5 }}>
               Gerekend in gelogde calorieën: dit is je verbruik <i>zoals je logboek het
               impliceert</i>, niet je stofwisseling gemeten.
+            </p>
+          </>
+        ) : a.tdeeOordeel != null ? (
+          /* WAAROM HIER GEEN GETAL STAAT
+             Tot dit scherm zo werd, stond hier wél een getal. Bij een logboek
+             van 1.461 kcal naast een weegreeks die omhoog liep, gaf de balans
+             een verbruik van min duizend, getoond als "−15.786–13.652 kcal".
+             Dat is geen brede schatting maar een onmogelijkheid, en een app die
+             onmogelijkheden toont is op geen enkel ander getal te vertrouwen.
+
+             De tekst noemt allebei de invoeren en zegt welke de verdachte is.
+             "Onvoldoende gegevens" zou hier onwaar zijn: de gegevens zijn er,
+             ze passen alleen niet bij elkaar. */
+          <>
+            <p style={{ fontSize: '.9rem', marginTop: 10 }}>
+              Je logt gemiddeld <b>{dz(Math.round(a.gemInname ?? 0))} kcal</b> over{' '}
+              {a.volledig} dag{a.volledig === 1 ? '' : 'en'}, en de weegschaal gaat ondertussen{' '}
+              <b>{(a.hellingWk ?? 0) > 0 ? '+' : ''}{dec(a.hellingWk, 2)} kg per week</b>. Die twee
+              samen geven een verbruik van {dz(Math.round(a.tdee ?? 0))} kcal per dag, en dat is{' '}
+              {a.tdeeOordeel === 'onder-rust'
+                ? `minder dan de ${dz(a.rustBMR)} kcal die je liggend al verbruikt`
+                : `meer dan tweeënhalf keer je rustverbruik van ${dz(a.rustBMR)} kcal`}.
+              Dat kan niet, dus er staat hier niets.
+            </p>
+            <p className="mini" style={{ marginTop: 8 }}>
+              Meestal is de weegreeks de verdachte: met{' '}
+              <b>{a.wPunten.length} weging{a.wPunten.length === 1 ? '' : 'en'}</b> in{' '}
+              {a.venster} dagen ligt de trend nog niet vast, en een trend die er een halve kilo per
+              dag naast zit verschuift dit getal met bijna vierduizend. Weeg een week lang elke
+              ochtend, dan lost dit zichzelf op.
             </p>
           </>
         ) : (
@@ -128,7 +167,7 @@ export function Model(
           is "wat er nog nodig is voordat ik iets kan zeggen" juist het
           belangrijkste van het scherm en staat hij bovenaan. Zodra de band er
           is, is het verantwoording en zakt hij naar onderen. */}
-      {a.tdee == null && (
+      {!bruikbaar && (
       <Kaart>
         <Tussen>
           <Kop>Waar de band vandaan komt</Kop>
@@ -136,7 +175,7 @@ export function Model(
             zekerheid {ZEKERHEID_LABEL[a.zekerheid]}
           </span>
         </Tussen>
-        {a.tdee != null && a.laag != null && a.hoog != null ? (
+        {bruikbaar && a.laag != null && a.hoog != null ? (
           <>
             {/* De band staat al in de kop. Hij hier nóg een keer groot herhalen
                 maakt hem niet waarder; wat deze kaart toevoegt is waar hij
@@ -186,7 +225,7 @@ export function Model(
 
       )}
 
-      <WaarJeStaat a={a} profiel={profiel} />
+      <WaarJeStaat a={a} profiel={profiel} gefundeerd={bruikbaar} />
 
       {a.teSnel && (
         <Kaart toon="let">
@@ -268,7 +307,7 @@ export function Model(
         </p>
       </Kaart>
 
-      {a.tdee != null && (
+      {bruikbaar && (
       <Kaart>
         <Tussen>
           <Kop>Waar de band vandaan komt</Kop>
@@ -276,7 +315,7 @@ export function Model(
             zekerheid {ZEKERHEID_LABEL[a.zekerheid]}
           </span>
         </Tussen>
-        {a.tdee != null && a.laag != null && a.hoog != null ? (
+        {bruikbaar && a.laag != null && a.hoog != null ? (
           <>
             {/* De band staat al in de kop. Hij hier nóg een keer groot herhalen
                 maakt hem niet waarder; wat deze kaart toevoegt is waar hij
@@ -325,7 +364,7 @@ export function Model(
       </Kaart>
       )}
 
-      {a.tdee != null && a.onderrapportage != null && (
+      {bruikbaar && a.tdee != null && a.onderrapportage != null && (
         <Kaart>
           <Kop>Consistentiecheck registratie</Kop>
           {/* Het oordeel eerst en in één zin; de redenering erachter. Dit is de
@@ -391,8 +430,48 @@ export function Model(
  * verschil is de weegtrend in andere eenheden. Die trend staat er daarom als
  * wat hij is — de onafhankelijke controle van de weegschaal, in kilo's.
  */
-function WaarJeStaat({ a, profiel }: { a: Analyse; profiel: Profiel }) {
-  if (a.gemInname == null || a.doel == null) return null
+function WaarJeStaat(
+  { a, profiel, gefundeerd }: { a: Analyse; profiel: Profiel; gefundeerd: boolean },
+) {
+  if (a.gemInname == null) return null
+
+  /* Zonder bruikbaar verbruik is er geen gefundeerd doel, en dan hoort er ook
+     geen doelkolom te staan. Wat je logt is wél een feit, en de weegtrend ook;
+     die twee blijven. Een doel van 2.165 naast een verbruik dat de app zojuist
+     heeft afgekeurd is precies het soort getal dat vertrouwen kost. */
+  if (!gefundeerd || a.doel == null) {
+    return (
+      <Kaart>
+        <Kop>Waar je nu staat</Kop>
+        <div className="trio" style={{ marginTop: 8 }}>
+          <div>
+            <div className="mini">Je logt gemiddeld</div>
+            <div className="getal" style={{ fontSize: '1.25rem' }}>
+              {dz(Math.round(a.gemInname))}
+            </div>
+            <div className="mini">kcal per dag</div>
+          </div>
+          <div>
+            <div className="mini">Weegtrend</div>
+            <div className="getal" style={{ fontSize: '1.25rem' }}>
+              {a.hellingWk != null
+                ? (a.hellingWk > 0 ? '+' : '') + dec(a.hellingWk, 2) : '—'}
+            </div>
+            <div className="mini">kg per week</div>
+          </div>
+          <div>
+            <div className="mini">Doel</div>
+            <div className="getal" style={{ fontSize: '1.25rem', color: 'var(--grijs)' }}>—</div>
+            <div className="mini">nog niet te bepalen</div>
+          </div>
+        </div>
+        <p style={{ fontSize: '.88rem', marginTop: 10 }}>
+          Er staat hier nog geen doel, omdat er nog geen bruikbaar verbruik is om het uit af te
+          leiden. Hierboven staat wat er voorlopig van uit te gaan valt.
+        </p>
+      </Kaart>
+    )
+  }
   const verschil = Math.round(a.gemInname - a.doel)
   const boven = verschil > 100
   const onder = verschil < -100
