@@ -438,6 +438,7 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
       const waar = (t) => rij.findIndex((x) => x.startsWith(t))
       const hero = waar('hero')
       const knop = waar('toevoegen')
+      const vakken = waar('De dag in vier momenten')
       const past = waar('Wat er nog in past')
       const bew = waar('Beweging en slaap')
       if (hero !== 0) throw new Error(`${stam}: de hero staat niet bovenaan — ${JSON.stringify(rij)}`)
@@ -445,18 +446,25 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
         throw new Error(`${stam}: "Eten toevoegen" staat niet meteen onder de hero — ` +
                         JSON.stringify(rij))
       }
-      /* De coachkaart ontbreekt zolang er geen doel is; dan is er niets tussen
-         de knop en beweging, en dat hoort ook zo. */
-      if (past >= 0 && past !== 2) {
-        throw new Error(`${stam}: "Wat er nog in past" staat niet onder de knop — ` +
+      /* De vakken horen tegen de knop aan: ze zijn zelf de ingang, en knop en
+         vakken uit elkaar trekken zet twee helften van één handeling op twee
+         plekken. */
+      if (vakken !== 2) {
+        throw new Error(`${stam}: "De dag in vier momenten" staat niet meteen onder de knop — ` +
+                        JSON.stringify(rij))
+      }
+      /* De coachkaart ontbreekt zolang er geen doel is; dan volgt beweging
+         meteen op de vakken, en dat hoort ook zo. */
+      if (past >= 0 && past !== 3) {
+        throw new Error(`${stam}: "Wat er nog in past" staat niet onder de vakken — ` +
                         JSON.stringify(rij))
       }
       if (bew < 0) throw new Error(`${stam}: "Beweging en slaap" ontbreekt — ${JSON.stringify(rij)}`)
-      if (bew !== (past >= 0 ? 3 : 2)) {
+      if (bew !== (past >= 0 ? 4 : 3)) {
         throw new Error(`${stam}: "Beweging en slaap" staat niet direct daaronder — ` +
                         JSON.stringify(rij))
       }
-      console.log(`${''.padEnd(26)} volgorde: ${rij.slice(0, 5).join(' → ')}`)
+      console.log(`${''.padEnd(26)} volgorde: ${rij.slice(0, 6).join(' → ')}`)
     }
 
     /* WAT JE KOMT HALEN STAAT BOVEN WAT JE KOMT DOEN
