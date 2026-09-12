@@ -38,8 +38,15 @@ export function Kaart(
   return <div className={klas} style={style}>{children}</div>
 }
 
-export function Kop({ children }: { children: ReactNode }) {
-  return <div className="eyebrow">{children}</div>
+/**
+ * De kop van een kaart. Optioneel met een wegwijzer ervoor — een getekend teken
+ * dat zegt wát voor soort ding eronder staat. Welke koppen er één horen te
+ * krijgen en waarom het er anders uitziet dan een herkomstteken, staat in
+ * `tekens.tsx`.
+ */
+export function Kop({ teken: Teken, children }: { teken?: () => ReactNode; children: ReactNode }) {
+  if (!Teken) return <div className="eyebrow">{children}</div>
+  return <div className="eyebrow metteken"><Teken />{children}</div>
 }
 
 export function Tussen(

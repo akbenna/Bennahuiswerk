@@ -16,6 +16,7 @@ import type { IsoDatum, Lab, Meting, Profiel, Vragenlijst } from '@/gedeeld/db/t
 import type { Analyse } from '../rekenkern'
 import { STOPBANG, fib4, nieuwste, rustpols, score2, stopbangScore } from '../klinisch'
 import type { Rustpols, StopbangAntwoorden, StopbangSleutel } from '../klinisch'
+import { WegLab, WegMeting } from '../tekens'
 
 /** code, naam, eenheid, ondergrens, bovengrens */
 const LABS = [
@@ -244,7 +245,7 @@ function MetingInvoer(
 
   return (
     <Kaart>
-      <Kop>Metingen</Kop>
+      <Kop teken={WegMeting}>Metingen</Kop>
       {/* WAAROM DE WAARDEN BOVEN HET FORMULIER STAAN
           Je komt hier kijken, en af en toe iets toevoegen. Het formulier stond
           bovenaan, dus het eerste wat je zag was een leeg invoervak en niet je
@@ -363,7 +364,7 @@ function LabInvoer(
 
   return (
     <Kaart>
-      <Kop>Laboratorium</Kop>
+      <Kop teken={WegLab}>Laboratorium</Kop>
       <Rij style={{ marginTop: 8 }}>
         <select value={code} onChange={(e) => zetCode(e.target.value)}
                 style={{ flex: '1 1 160px', width: 'auto' }}>

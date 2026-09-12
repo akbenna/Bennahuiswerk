@@ -14,6 +14,7 @@ import { dec, dz } from '@/gedeeld/getal'
 import { kortNL, plusDagen, vandaag } from '@/gedeeld/datum'
 import type { Instellingen, Lab, Profiel } from '@/gedeeld/db/tabellen'
 import type { Analyse, Dagenkaart, Trendpunt } from '../rekenkern'
+import { WegPerDag, WegTraject } from '../tekens'
 
 const ZEKERHEID_LABEL = {
   hoog: 'hoog', middel: 'middel', laag: 'laag', geen: 'onvoldoende',
@@ -242,7 +243,7 @@ export function Model(
       <Meetgaten a={a} dagen={dagen} instellingen={profiel.instellingen} labs={labs} />
 
       <Kaart>
-        <Kop>Traject</Kop>
+        <Kop teken={WegTraject}>Traject</Kop>
         <div className="trio" style={{ marginTop: 8 }}>
           {([
             ['Nu', dec(a.gewicht, 1) + ' kg'],
@@ -298,7 +299,7 @@ export function Model(
       </Kaart>
 
       <Kaart>
-        <Kop>Gelogde energie per dag</Kop>
+        <Kop teken={WegPerDag}>Gelogde energie per dag</Kop>
         <InnameFiguur reeks={reeks} doel={a.doel} />
         <p className="mini">
           Oranje staven liggen onder 1.200 kcal en gelden als onvolledig, niet als succes.

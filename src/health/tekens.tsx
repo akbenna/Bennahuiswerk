@@ -85,3 +85,113 @@ export const TekenProfiel = () => teken(
   <><circle cx="12" cy="7.8" r="3.6" />
     <path d="M4.9 20.6a7.3 7.3 0 0 1 14.2 0" /></>,
 )
+
+/* ==========================================================================
+   DE WEGWIJZERS BIJ DE KOPPEN
+   ==========================================================================
+
+   Een tweede soort teken, en het moet als tweede soort te herkennen zijn. Er
+   loopt al een tekensysteem door deze app heen dat iets betekent — ◆ gemeten,
+   ◈ etiket, ◇ geschat — en dat is niet zomaar een setje symbolen: het is
+   hetzelfde teken in drie vullingen, en hoe vol de ruit staat zegt hoeveel er
+   werkelijk bekend is. Dat is het beste stuk van de beeldtaal hier en het
+   verandert dus niet. Wat moet wijken is alles eromheen.
+
+   Vier verschillen, en ze staan los van elkaar, zodat er niet één hoeft te
+   werken maar alle vier tegelijk:
+
+     vorm    wegwijzer is lijn, open, nooit gevuld — herkomst is een gesloten
+             glyph met een vulling. Gevuld is herkomst, lijn is wegwijzer.
+     maat    zestien pixels tegenover 0,72 rem in de tekst
+     plek    links van de kop in een eigen kolom — herkomst staat ín de regel,
+             vlak vóór de waarde waar het over gaat
+     kleur   --dim, de stilste kleur die er is; herkomst erft de tekstkleur
+
+   En één vorm is verboden: geen ruit, nergens, buiten de herkomst. Daarom staat
+   er ook geen ruit meer op de tabbalk.
+
+   WELKE KOPPEN ER ÉÉN KRIJGEN
+
+   Alleen een kop die zegt wát voor soort ding er onder staat. Een kop die een
+   oordeel draagt — "Te snel", "Waar je nu staat", "Wat er nog in past" — krijgt
+   er geen, want dat is een zin en geen etiket, en een tekentje ervoor maakt er
+   een etiket van. Deze app zet het oordeel vooraan; dat mag geen rubriek worden.
+
+   Een uitlegkaart krijgt er ook geen. Dat zijn de voetnoten, en een tekentje
+   zou ze promoveren tot iets waar je langs moet.
+*/
+
+const wegwijzer = (kinderen: ReactNode) => (
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+       strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    {kinderen}
+  </svg>
+)
+
+/** Een weegschaal: het vlak met de wijzer erop. */
+export const WegWeging = () => wegwijzer(
+  <><rect x="3.4" y="3.4" width="17.2" height="17.2" rx="4" />
+    <path d="M8.4 15.4a4.6 4.6 0 0 1 7.2-5.6" /><path d="M12 15.4l3.6-5.6" /></>,
+)
+
+/** Een klok: de dag valt in momenten uiteen. */
+export const WegMomenten = () => wegwijzer(
+  <><circle cx="12" cy="12" r="8.6" /><path d="M12 6.8V12l3.6 2.2" /></>,
+)
+
+/** Een hartslaglijn: de metingen van het lichaam. */
+export const WegMeting = () => wegwijzer(
+  <path d="M2.6 12.4h4.2l2-4.6 3 10 2.4-6.2 1.6 2.8h5.6" />,
+)
+
+/** Een reageerbuis met een vloeistofrand. */
+export const WegLab = () => wegwijzer(
+  /* Breder dan de eerste versie. Een buisje van zes pixels breed las als een
+     batterij; de verhouding telt, niet de aanwezigheid. */
+  <><path d="M8 3v12.4a4 4 0 0 0 8 0V3" /><path d="M6 3h12" />
+    <path d="M8 11.4h8" /></>,
+)
+
+/** Een fiets. */
+export const WegFiets = () => wegwijzer(
+  <><circle cx="5.8" cy="16.6" r="3.8" /><circle cx="18.2" cy="16.6" r="3.8" />
+    <path d="M5.8 16.6 10 8.4h3.4l2.6 8.2" /><path d="M8.6 8.4h3.8" /></>,
+)
+
+/** Een halter. */
+export const WegKracht = () => wegwijzer(
+  /* Eerst vier losse streepjes met een stang ertussen. Op zestien pixels bleven
+     daar twee haartjes van over en las het als een liggend streepje. Twee
+     schijven met een gewicht eraan houden hun vorm. */
+  <><rect x="4" y="7.6" width="3.6" height="8.8" rx="1.4" />
+    <rect x="16.4" y="7.6" width="3.6" height="8.8" rx="1.4" />
+    <path d="M7.6 12h8.8" /></>,
+)
+
+/** Een kalender: een blok weken terug. */
+export const WegWeken = () => wegwijzer(
+  <><rect x="3.4" y="5.2" width="17.2" height="15.4" rx="3" />
+    <path d="M3.4 10.2h17.2" /><path d="M8.2 3.4v3.6" /><path d="M15.8 3.4v3.6" /></>,
+)
+
+/** Schuifregelaars: hier stel je iets in. */
+export const WegInstellen = () => wegwijzer(
+  <><path d="M3.4 8.4h17.2" /><path d="M3.4 15.6h17.2" />
+    <circle cx="9" cy="8.4" r="2.4" /><circle cx="15.6" cy="15.6" r="2.4" /></>,
+)
+
+/** Een maansikkel: de nachtstand, en daarmee de keuze tussen dag en nacht. */
+export const WegThema = () => wegwijzer(
+  <path d="M19.4 15.2A8.2 8.2 0 0 1 8.8 4.6a8.2 8.2 0 1 0 10.6 10.6Z" />,
+)
+
+/** Een vlag: waar je naartoe gaat. */
+export const WegTraject = () => wegwijzer(
+  <><path d="M5.6 21V3.4" /><path d="M5.6 4.6h12.8l-2.6 4.2 2.6 4.2H5.6" /></>,
+)
+
+/** Staafjes: wat je per dag gelogd hebt. */
+export const WegPerDag = () => wegwijzer(
+  <><path d="M4.4 20.4V13" /><path d="M9.4 20.4V6.6" />
+    <path d="M14.6 20.4v-9.8" /><path d="M19.6 20.4V9" /></>,
+)

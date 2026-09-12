@@ -15,6 +15,7 @@ import type { Dagenkaart, Trendpunt } from '../rekenkern'
 import { onderhoudZone } from '../klinisch'
 import { THEMANAMEN, useThemakeuze, zetThema } from '../thema'
 import type { Onderhoudzone } from '../klinisch'
+import { WegInstellen, WegThema } from '../tekens'
 
 /** De kleur hoort bij het scherm en niet bij de rekenfunctie. Zie klinisch.ts. */
 const ZONEKLEUR: Record<Onderhoudzone, string> = {
@@ -172,7 +173,7 @@ export function Meer(
       )}
 
       <Kaart>
-        <Kop>Instellingen</Kop>
+        <Kop teken={WegInstellen}>Instellingen</Kop>
         <Rij style={{ marginTop: 10 }}>
           <Knop opKlik={() => opVenster('profiel')}>Profiel en doelen</Knop>
           <Knop vol opKlik={() => opVenster('koppelen')}>Horloge en telefoon koppelen</Knop>
@@ -232,7 +233,7 @@ function Themakeuzes() {
   const keuze = useThemakeuze()
   return (
     <Kaart plat>
-      <Kop>Dag of nacht</Kop>
+      <Kop teken={WegThema}>Dag of nacht</Kop>
       <Rij style={{ marginTop: 8 }}>
         {THEMANAMEN.map((t) => (
           <Keuzechip key={t.keuze} aan={keuze === t.keuze} titel={t.titel}

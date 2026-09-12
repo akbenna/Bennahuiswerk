@@ -29,6 +29,7 @@ import { dz } from '@/gedeeld/getal'
 import { kortNL, plusDagen, vandaag } from '@/gedeeld/datum'
 import type { IsoDatum, Training } from '@/gedeeld/db/tabellen'
 import type { Analyse, Dagenkaart } from '../rekenkern'
+import { WegFiets, WegKracht, WegWeken } from '../tekens'
 
 const SPIERGROEPEN = ['benen', 'rug', 'borst', 'schouders', 'armen', 'romp'] as const
 
@@ -191,7 +192,7 @@ export function Beweging(
 
       <Kaart>
         <Tussen>
-          <Kop>Fietsen</Kop>
+          <Kop teken={WegFiets}>Fietsen</Kop>
           {haaltFiets && <span className="vlaggetje goed">✓ weekdoel</span>}
         </Tussen>
         <Rij style={{ marginTop: 8, alignItems: 'center' }}>
@@ -231,7 +232,7 @@ export function Beweging(
       <TrainingInvoer datum={datum} bewaar={bewaarTraining} perSpier={perSpier} />
 
       <Kaart>
-        <Kop>Laatste drie weken</Kop>
+        <Kop teken={WegWeken}>Laatste drie weken</Kop>
         <div className="lijst" style={{ marginTop: 4 }}>
           {sleutels.slice().reverse().map((x) => {
             const r = dagen[x]
@@ -296,7 +297,7 @@ function TrainingInvoer(
 
   return (
     <Kaart>
-      <Kop>Krachttraining toevoegen</Kop>
+      <Kop teken={WegKracht}>Krachttraining toevoegen</Kop>
       <Rij style={{ marginTop: 8 }}>
         <input placeholder="oefening" value={oefening} onChange={(e) => zetOefening(e.target.value)}
                style={{ flex: '2 1 130px', width: 'auto' }} />
