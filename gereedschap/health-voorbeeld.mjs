@@ -1445,6 +1445,48 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
 
   console.log(`de balk                    ${n} tabbladen, ${metTeken} getekende tekens, ` +
               `${opHetScherm} herkomsttekens op het scherm`)
+
+  /* TWEE TEKENSYSTEMEN DIE ELKAAR NIET MOGEN BIJTEN
+   *
+   * Er lopen nu twee soorten tekens door de app. De herkomsttekens ◆ ◈ ◇ zijn
+   * hetzelfde teken in drie vullingen: hoe vol de ruit staat zegt hoeveel er
+   * werkelijk bekend is. De wegwijzers bij de koppen zijn lijntekeningen die
+   * zeggen wát voor soort ding eronder staat.
+   *
+   * Ze zijn alleen uit elkaar te houden zolang ze van elkaar wegblijven, en
+   * dat is met een grep niet te bewaken — een `fill` toevoegen verandert geen
+   * tekst die je kunt zoeken. Vandaar hier, op de gerenderde pagina, en drie
+   * regels die alle drie aan de vorm hangen en niet aan de plaats.
+   */
+  const grens = { koppen: 0, herkomst: 0 }
+  for (const tab of ['Vandaag', 'Inzicht', 'Beweging', 'Gezondheid', 'Profiel']) {
+    await naarTab(pagina, tab)
+    const uit = await pagina.evaluate(() => {
+      const wegwijzers = [...document.querySelectorAll('.eyebrow svg')]
+      return {
+        aantal: wegwijzers.length,
+        gevuld: wegwijzers.filter((s) => (s.getAttribute('fill') ?? 'none') !== 'none').length,
+        ruitInKop: [...document.querySelectorAll('.eyebrow')]
+          .filter((e) => /[◆◈◇]/.test(e.textContent ?? '')).length,
+        tekenInHerkomst: document.querySelectorAll('.herkomst svg').length,
+        herkomst: document.querySelectorAll('.herkomst').length,
+        dubbel: [...document.querySelectorAll('.kaart')]
+          .filter((k) => k.querySelectorAll(':scope > .eyebrow svg, :scope > * > .eyebrow svg')
+            .length > 1).length,
+      }
+    })
+    if (uit.gevuld) throw new Error(`${tab}: ${uit.gevuld} wegwijzer(s) met een vulling — ` +
+                                    'gevuld is herkomst, lijn is wegwijzer')
+    if (uit.ruitInKop) throw new Error(`${tab}: een ruit in een kop — die vorm is van de herkomst`)
+    if (uit.tekenInHerkomst) throw new Error(`${tab}: een getekend teken op een herkomstplek`)
+    if (uit.dubbel) throw new Error(`${tab}: ${uit.dubbel} kaart(en) met meer dan één wegwijzer`)
+    grens.koppen += uit.aantal
+    grens.herkomst += uit.herkomst
+  }
+  if (grens.koppen === 0) throw new Error('geen enkele wegwijzer bij een kop gevonden')
+  if (grens.herkomst === 0) throw new Error('geen enkel herkomstteken meer op het scherm')
+  console.log(`${''.padEnd(26)} ${grens.koppen} wegwijzers bij koppen, ` +
+              `${grens.herkomst} herkomsttekens — geen vulling, geen ruit`)
   await pagina.close()
 
   /* Een afdruk van alleen de balk, vier keer zo scherp. De tekens zijn met de

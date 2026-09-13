@@ -57,6 +57,7 @@ import { meldenNu, tekort, voorstellen } from '../coach'
 import type { Tekort } from '../coach'
 import { herhaalRegel } from '../herhaal'
 import { useDonker } from '../thema'
+import { WegMomenten, WegWeging } from '../tekens'
 
 export interface VandaagEigenschappen {
   a: Analyse
@@ -295,7 +296,7 @@ export function Vandaag(p: VandaagEigenschappen) {
 
       <Kaart>
         <Tussen>
-          <Kop>De dag in vier momenten</Kop>
+          <Kop teken={WegMomenten}>De dag in vier momenten</Kop>
           {/* Alleen als er iets te zien is: een knop naar een leeg overzicht is
               een belofte die niet waargemaakt wordt.
 
@@ -481,7 +482,7 @@ function Weging(
     <Kaart zij toon={moetNog ? 'let' : undefined}
            style={moetNog ? undefined : { paddingTop: 13, paddingBottom: 13 }}>
       <Tussen>
-        <Kop>Ochtendweging</Kop>
+        <Kop teken={WegWeging}>Ochtendweging</Kop>
         {gewogen && <span className="vlaggetje goed">✓ gedaan</span>}
       </Tussen>
       <Rij style={{ marginTop: 8, alignItems: 'center' }}>

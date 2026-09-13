@@ -111,6 +111,11 @@ a{color:var(--k)}
    dossierkop en niet als een tussenkopje; het trok bovendien meer
    aandacht dan het getal eronder. Nu gewoon een klein vet woord. */
 .eyebrow{font-size:.78rem;font-weight:640;letter-spacing:0;color:var(--grijs)}
+/* De wegwijzer staat in een eigen kolom links van de kop en nooit in de
+   tekststroom — dat is een van de vier dingen die hem van een herkomstteken
+   onderscheiden. Zie `tekens.tsx`. */
+.eyebrow.metteken{display:flex;align-items:center;gap:7px}
+.eyebrow.metteken>svg{color:var(--dim);flex:0 0 auto}
 .klein{font-size:.84rem;color:var(--grijs);line-height:1.5}
 .mini{font-size:.75rem;color:var(--dim);line-height:1.45}
 .cijfer{font-family:var(--mono);font-variant-numeric:tabular-nums}
