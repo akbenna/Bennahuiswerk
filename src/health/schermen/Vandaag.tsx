@@ -41,14 +41,14 @@
  * is de invoer, en die hoort bij de andere twee metingen — stappen en slaap.
  */
 import { useEffect, useState } from 'react'
-import { Chip, Kaart, Knop, Kop, Rij, Tussen, Uitleg } from '../onderdelen/basis'
+import { Chip, Kaart, Knop, Kop, Rij, Tussen, Uitklap, Uitleg } from '../onderdelen/basis'
 import { Dagenstrook, Doelring } from '../hero'
 import type { Dagstaaf } from '../hero'
 import { dec, dz } from '@/gedeeld/getal'
 import { kortNL, langNL, plusDagen, stapDag, vandaag } from '@/gedeeld/datum'
 import type { IsoDatum, Moment, Regel } from '@/gedeeld/db/tabellen'
 import { roep } from '@/gedeeld/db/rpc'
-import type { EiwitrijkTreffer, NieuweRegel } from '@/gedeeld/db/rpc'
+import type { EiwitrijkTreffer, NieuweRegel, VerzadigingTreffer } from '@/gedeeld/db/rpc'
 import { herkomstVan } from '../herkomst'
 import type { Onderwerp } from '../vensters/Portie'
 import type { Analyse, Dagenkaart, DagMetTotalen } from '../rekenkern'
@@ -57,7 +57,7 @@ import { meldenNu, tekort, voorstellen } from '../coach'
 import type { Tekort } from '../coach'
 import { herhaalRegel } from '../herhaal'
 import { useDonker } from '../thema'
-import { WegMomenten, WegWeging } from '../tekens'
+import { WegMomenten, WegVerzadiging, WegWeging } from '../tekens'
 
 export interface VandaagEigenschappen {
   a: Analyse
@@ -380,6 +380,8 @@ export function Vandaag(p: VandaagEigenschappen) {
       </Kaart>
 
       {isVandaag && <Coachkaart {...p} />}
+
+      {isVandaag && a.doel != null && <WatVult {...p} />}
 
       <Kaart zij>
         <Kop>Beweging en slaap</Kop>
@@ -754,5 +756,143 @@ function UitDeTabel(
         })}
       </div>
     </div>
+  )
+}
+
+/* ==========================================================================
+   WAT VULT HET BEST — de derde laag, en waarom hij dicht begint
+   ==========================================================================
+
+   De coach hierboven beantwoordt "wat past er nog in", en rangschikt op eiwit
+   per calorie. Dat is één vraag. Er is een tweede die minstens zo vaak gesteld
+   wordt: ik ga zo koken, waar heb ik genoeg aan? Dat is een verzadigingsvraag,
+   en die twee lopen uit elkaar — paardenrookvlees heeft een uitstekende
+   eiwitdichtheid en vult niets, want een plak van vijftien gram is op in twee
+   happen.
+
+   Drie dingen zijn ontwerp en geen toeval.
+
+   Hij begint dicht, en de inhoud wordt pas aangemaakt als je hem opent. Dat is
+   niet alleen om het scherm rustig te houden: er hangt een vraag aan de database
+   aan, en wie de kaart nooit opent hoort die niet te betalen. Daarom `Uitklap`
+   en geen kaart die zichzelf alvast vult.
+
+   Het kopgetal is niet de score maar het aantal gram dat je voor honderd
+   kilocalorieën krijgt. Dat is een deling van twee gemeten waarden uit de tabel
+   en verder niets — geen weging, geen aanname, en het is precies wat de keuze
+   maakt als je voor de koelkast staat.
+
+   De score draagt het teken voor "geschat", en dat is geen bescheidenheid maar
+   de waarheid: hij is een voorspelling uit de samenstelling en geen gemeten
+   verzadigingsindex. De drie onderdelen staan er los bij in de uitleg, zodat je
+   hem kunt narekenen in plaats van te moeten geloven.
+*/
+function WatVult(p: VandaagEigenschappen) {
+  const { a, dag } = p
+  const t = tekort(
+    { kcal: dag._kcal, kcalLaag: dag._laag, kcalHoog: dag._hoog, eiwit: dag._eiwit },
+    a.doel, a.eiwitDoel,
+  )
+  const ruimte = Math.round(t.kcalOver)
+  if (ruimte <= 0) return null
+
+  return (
+    <Uitklap id="watvult" kop="Wat vult het best?" teken={WegVerzadiging}
+             dicht={`Wat je voor de ${dz(ruimte)} kcal die nog passen het meeste eten oplevert.`}>
+      <WatVultLijst token={p.token} ruimte={ruimte} opPortie={p.opPortie} />
+    </Uitklap>
+  )
+}
+
+function WatVultLijst(
+  { token, ruimte, opPortie }:
+  { token: string; ruimte: number; opPortie: (o: Onderwerp) => void },
+) {
+  const [lijst, zetLijst] = useState<VerzadigingTreffer[] | null>(null)
+
+  useEffect(() => {
+    let afgebroken = false
+    void (async () => {
+      try {
+        const uit = await roep('kal_verzadiging', {
+          p_token: token, p_max_kcal: ruimte, p_limiet: 5,
+        })
+        if (!afgebroken) zetLijst(Array.isArray(uit) ? uit : [])
+      } catch {
+        /* Draait de app tegen een database waar bestand 28 nog niet gedraaid is,
+           dan hoort daar geen foutmelding over te komen. Deze laag is een
+           toevoeging, geen voorwaarde. */
+        if (!afgebroken) zetLijst([])
+      }
+    })()
+    return () => { afgebroken = true }
+  }, [token, ruimte])
+
+  if (lijst == null) return <p className="mini" style={{ marginTop: 8 }}>Even kijken…</p>
+  if (!lijst.length) {
+    return (
+      <p className="mini" style={{ marginTop: 8 }}>
+        Hier staat niets. Dat kan twee dingen betekenen: er past zo weinig meer in dat er geen
+        portie binnen valt, of deze laag staat nog niet in de database.
+      </p>
+    )
+  }
+
+  async function kies(x: VerzadigingTreffer) {
+    try {
+      opPortie({
+        soort: 'nevo',
+        product: await roep('kal_portiematen', { p_token: token, p_nevo_code: x.nevo_code }),
+      })
+    } catch { /* het venster gaat dan niet open; een melding hier is erger */ }
+  }
+
+  return (
+    <>
+      <div className="lijst" style={{ marginTop: 8 }}>
+        {lijst.map((x) => (
+          <div key={x.nevo_code}>
+            <span className="groei">
+              <span className="knip" style={{ display: 'block' }}>
+                {x.naam}
+                {x.bekend && <span className="vlaggetje rust"> uit je eigen hoek</span>}
+              </span>
+              <span className="mini">
+                <span className="cijfer">{dz(x.gram_per_100kcal)}</span> g voor 100 kcal ·{' '}
+                {x.portie_naam} van <span className="cijfer">{dz(x.portie_gram)}</span> g ·{' '}
+                <span className="cijfer">{dz(x.kcal)}</span> kcal
+              </span>
+            </span>
+            <Knop klein titel="Portie kiezen" opKlik={() => void kies(x)}>＋</Knop>
+          </div>
+        ))}
+      </div>
+      <Uitleg id="verzadiging" label="waar die volgorde vandaan komt">
+        <p>
+          De volgorde komt uit een score van nul tot honderd, en die score is een <b>schatting uit
+          de samenstelling</b> — geen gemeten verzadigingsindex. Hij telt drie dingen bij elkaar op,
+          in de volgorde waarin ze onderbouwd zijn: hoeveel gram je voor honderd kilocalorieën
+          krijgt (45 punten), hoeveel eiwit daarin zit (35) en hoeveel vezel (20).
+        </p>
+        <p>
+          Die volgorde is niet willekeurig. Energiedichtheid is het best onderbouwde gegeven in dit
+          veld — mensen eten grofweg een vast gewicht aan voedsel, niet een vast aantal calorieën.
+          Eiwit is de meest verzadigende macronutriënt per calorie. Vezel doet iets, maar bescheiden
+          en afhankelijk van het soort. De verhouding 45/35/20 volgt die bewijskracht; dat het
+          precies die getallen zijn is een keuze en geen meting.
+        </p>
+        <p>
+          Het getal dat vooropstaat is daarom niet de score maar de grammen per honderd
+          kilocalorieën. Dat is een deling van twee gemeten waarden uit de voedingsmiddelentabel,
+          en dat kun je narekenen.
+        </p>
+        <p>
+          Dranken staan er niet tussen, en smaakmakers ook niet. Vloeibare calorieën verzadigen
+          minder dan vaste bij gelijke energie, en van peterselie of sojasaus eet je de portie niet
+          waar de score op rekent. Zonder die twee zeven stonden ze alle vijf bovenaan; dat is
+          gemeten en staat in `28-wat-vult-het-best.sql`.
+        </p>
+      </Uitleg>
+    </>
   )
 }

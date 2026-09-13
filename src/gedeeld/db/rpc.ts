@@ -103,6 +103,36 @@ export interface EiwitrijkTreffer {
   dichtheid: number
 }
 
+/**
+ * Eén voorstel dat naar verwachting goed vult. Zie kal_verzadiging() en
+ * health/database/28-wat-vult-het-best.sql.
+ *
+ * `score` is een VOORSPELLING uit de samenstelling en geen gemeten
+ * verzadigingsindex — de drie termen komen uit de literatuur, de weging ertussen
+ * is een keuze. Daarom staan de drie onderdelen er los bij: `gram_per_100kcal`
+ * is een deling van twee gemeten waarden uit de tabel en verder niets, en dat is
+ * het getal dat op het scherm vooropstaat.
+ */
+export interface VerzadigingTreffer {
+  nevo_code: string
+  naam: string
+  groep: string | null
+  portie_naam: string
+  portie_gram: number
+  gram_laag: number
+  gram_hoog: number
+  /** Kilocalorieën ván de standaardportie. */
+  kcal: number
+  /** Hoeveel gram je krijgt voor honderd kilocalorieën. Gemeten. */
+  gram_per_100kcal: number
+  eiwit_per_100kcal: number
+  vezel_per_100kcal: number
+  /** Nul tot honderd. Bepaalt de volgorde; zie de waarschuwing hierboven. */
+  score: number
+  /** Komt dit uit een hoek waar je de laatste zestig dagen uit gegeten hebt? */
+  bekend: boolean
+}
+
 export interface Zoekuitslag {
   /* Eerst, want wie 'tonijn' typt bedoelt zijn eigen salade en niet de tabel.
      Er wordt ook in de namen van de onderdelen gezocht, dus 'paprika' vindt de
@@ -411,6 +441,10 @@ export interface RpcKaart {
   kal_eiwitrijk: {
     in: { p_token: string; p_eis: number; p_max_kcal: number; p_limiet?: number }
     uit: EiwitrijkTreffer[]
+  }
+  kal_verzadiging: {
+    in: { p_token: string; p_max_kcal: number; p_limiet?: number }
+    uit: VerzadigingTreffer[]
   }
 
   /* --- de hub en de acht kinder-apps ------------------------------------ */
