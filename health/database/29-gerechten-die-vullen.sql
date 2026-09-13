@@ -107,6 +107,25 @@
 --
 -- En net als in bestand 28 wordt er niet op gesorteerd, om dezelfde reden.
 --
+-- EEN VIEW HEEFT GEEN ZOEKPAD
+--
+-- Elke kal_*-functie draagt `SET search_path TO 'public'` en mag daarom
+-- `cultural_dishes` onversierd noemen. Een view kan dat niet: die heeft geen
+-- zoekpadclausule en lost zijn namen op tegen het zoekpad van de sessie die
+-- hem aanmaakt. Stond het zoekpad daar leeg, dan viel dit bestand om met
+--
+--   ERROR: 42P01: relation "cultural_dishes" does not exist
+--
+-- wat de eerste keer ook precies gebeurde. Vandaar `public.` voor elke tabel
+-- in blok 1 — net als `merk_actief` in bestand 18, de enige andere view hier.
+-- Binnen de functie in blok 2 blijven de namen onversierd: daar doet de
+-- zoekpadclausule het werk.
+--
+-- En daarom staat er ook een `revoke`. Supabase verleent nieuwe objecten in
+-- `public` standaard aan anon en authenticated; zonder die regel was de
+-- gerechtenbibliotheek rechtstreeks te lezen, buiten kal_verzadiging om, en
+-- dat is precies wat hier nergens mag.
+--
 -- PERSOONLIJKE VARIANTEN DOEN NIET MEE
 --
 -- `owner_patient_id is null`, dezelfde regel die kal_zoeken en kal_gerecht al
@@ -133,7 +152,7 @@ CREATE OR REPLACE VIEW public.kal_gerecht_dichtheid AS
          sum(g.gram / 100 * g.kcal100)        as kcal,
          sum(g.gram / 100 * g.eiwit100)       as eiwit,
          sum(g.gram / 100 * g.vezel100)       as vezel
-    from cultural_dishes d
+    from public.cultural_dishes d
     join lateral (
       select coalesce(i.grams_equivalent, 0)
                * case when i.is_preparation_fat
@@ -141,8 +160,8 @@ CREATE OR REPLACE VIEW public.kal_gerecht_dichtheid AS
              coalesce(n.energie_kcal_per_100g, 0) as kcal100,
              coalesce(n.eiwit_g, 0)               as eiwit100,
              coalesce(n.vezels_g, 0)              as vezel100
-        from dish_ingredients i
-        left join nevo_foods n
+        from public.dish_ingredients i
+        left join public.nevo_foods n
           on n.nevo_code = i.external_food_id and i.external_source = 'nevo'
        where i.dish_id = d.id and not i.is_optional
     ) g on true
@@ -152,6 +171,11 @@ CREATE OR REPLACE VIEW public.kal_gerecht_dichtheid AS
 
 comment on view public.kal_gerecht_dichtheid is
   'De zekere som van een gerecht: gram, kcal, eiwit en vezel uit de niet-optionele ingredienten, bereidingsvet naar opnamefractie. Dezelfde som als kal_gerecht() maakt; blok 2 van 29-gerechten-die-vullen.sql toetst dat ze gelijk blijven.';
+
+-- Dichtzetten, net als `merk_actief` in bestand 18. Supabase verleent nieuwe
+-- objecten in `public` standaard aan anon en authenticated; zonder deze regel
+-- was de gerechtenbibliotheek buiten kal_verzadiging om te lezen.
+revoke all on public.kal_gerecht_dichtheid from anon, authenticated;
 
 
 -- ---------------------------------------------------------------------------
