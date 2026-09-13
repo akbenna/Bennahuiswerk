@@ -11,6 +11,20 @@
  * rechtstreeks in de stof springen. Die knoppen zijn nagekeken door
  * `vraagbaak.ts` — er staat nooit een onderwerp op dat niet bestaat.
  *
+ * ER KOMT ALTIJD IETS TERUG
+ *
+ * Dat nakijken kan alles wegvegen: wijst het model naar een onderwerp dat niet
+ * bestaat, dan blijft er geen knop over. Zegt het er dan ook niet bij dat er
+ * niets voor is, dan stond hier een alinea en verder niets — en een kind dat
+ * vastzit las precies de uitleg die het niet zocht en kon geen kant op. Dat
+ * overkwam Amine toen hij op "werkwoord vervoeging" zocht, terwijl er
+ * drieënveertig opgaven werkwoordspelling klaarstonden.
+ *
+ * Daarom zijn er nu drie uitkomsten en niet twee: knoppen, of "dit staat er nog
+ * niet in", of — als het allebei niet lukte — een eerlijke regel die naar de
+ * vakken hieronder wijst. Wat er precies misging hoort in het ouderscherm
+ * thuis; een kind heeft aan "ik kon het niet vinden, kies zelf maar" genoeg.
+ *
  * Het veld leegt zichzelf niet na het antwoord. Een kind dat leest wat er staat
  * en dan bedenkt dat het zijn vraag anders moet stellen, hoeft hem niet opnieuw
  * te typen.
@@ -105,6 +119,12 @@ export function Vraagveld(p: VraagveldProps): ReactNode {
           {uit.gat && (
             <p className="vraaggat">
               Hier staat nog niets over in de app. Papa of mama ziet je vraag en kan het toevoegen.
+            </p>
+          )}
+          {uit.routes.length === 0 && !uit.gat && (
+            <p className="vraaggat">
+              Ik kon er geen onderwerp bij aanwijzen. Kies hieronder zelf een vak, of stel je vraag
+              nog een keer met andere woorden. Papa of mama ziet hem staan.
             </p>
           )}
         </div>

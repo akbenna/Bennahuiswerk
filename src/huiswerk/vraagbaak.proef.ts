@@ -15,7 +15,8 @@ import { describe, expect, it } from 'vitest'
 import { catalogus, sleutelVan, verwerk } from './vraagbaak'
 import type { Ingang } from './vraagbaak'
 import type { Kaart } from './gegevens/soorten'
-import { leegVoortgang, schoonVoortgang } from './opslag'
+import { leegVoortgang, schoonVoortgang, voegSamen } from './opslag'
+import type { Stand, Vraagregel } from './opslag'
 
 const kaart = (id: string, p: string, v: string, t: string, jaar?: 'next'): Kaart =>
   ({ id, p, v, t, q: 'vraag', a: '1', ...(jaar ? { jaar } : {}) }) as Kaart
@@ -133,6 +134,19 @@ describe('het gat', () => {
     expect(u.gat).toBeNull()
     expect(u.verzonnen).toHaveLength(1)
   })
+
+  /* Dit is het geval waar het scherm op stukliep: geen route, geen gat. Het
+     kind zag een alinea en verder niets. `verwerk` hoort hier niets te
+     verzinnen — maar `verzonnen` moet wel blijven staan, want dat is het enige
+     verschil tussen "hier is niets voor" en "de vraagbaak wees ernaast", en
+     `Vraagveld` en het ouderscherm hangen er allebei aan. */
+  it('houdt vast wat het model aanwees toen er niets van overbleef', () => {
+    const u = verwerk({ antwoord: 'Een werkwoord is een doewoord.', routes: ['taal|Vervoeging|nu'] }, cat)
+    expect(u.routes).toEqual([])
+    expect(u.gat).toBeNull()
+    expect(u.verzonnen).toEqual(['taal|Vervoeging|nu'])
+    expect(u.antwoord).not.toBe('')
+  })
 })
 
 describe('rommel uit het antwoord', () => {
@@ -151,5 +165,77 @@ describe('rommel uit het antwoord', () => {
     expect(sleutelVan('rekenen', 'Breuken', 'nu')).toBe('rekenen|Breuken|nu')
     expect(sleutelVan('rekenen', 'Machten', 'next')).toBe('rekenen|Machten|next')
     expect(sleutelVan('rekenen', 'Machten', 'onzin')).toBe('rekenen|Machten|nu')
+  })
+})
+
+
+/**
+ * DE VRAGENLIJST OVERLEEFT HET SAMENVOEGEN
+ *
+ * Het ouderscherm bestaat om te tonen wat de kinderen vroegen. Die lijst stond
+ * in de stand, en `voegSamen` nam alleen de stand van dít toestel over. Dus:
+ * Amine vraagt iets op de tablet, papa opent de app op zijn telefoon, de
+ * samenvoeging gooit de lijst weg — en omdat de uitkomst daarna naar de wolk
+ * wordt teruggeschreven (`wolk.ts`), was hij ook daar verdwenen. Het scherm
+ * wiste zichzelf dus zodra er een tweede toestel meedeed.
+ *
+ * `voegSamen` had geen enkele proef. Dat is hoe dit er zo lang in kon zitten.
+ */
+describe('de vragen bij het samenvoegen van twee toestellen', () => {
+  const vraag = (tijd: number, pid: string, tekst: string): Vraagregel =>
+    ({ tijd, pid, vraag: tekst, raak: [], gat: null })
+
+  const met = (v: Vraagregel[]): Partial<Stand> => ({ vragen: v })
+
+  it('houdt wat er aan de overkant stond', () => {
+    const uit = voegSamen(met([]), met([vraag(2, 'amine', 'werkwoord vervoeging')]))
+    expect(uit.vragen?.map((v) => v.vraag)).toEqual(['werkwoord vervoeging'])
+  })
+
+  it('houdt wat er aan beide kanten stond, nieuwste eerst', () => {
+    const uit = voegSamen(
+      met([vraag(3, 'selma', 'klokkijken')]),
+      met([vraag(1, 'amine', 'breuken'), vraag(5, 'wassima', 'pythagoras')]),
+    )
+    expect(uit.vragen?.map((v) => v.vraag)).toEqual(['pythagoras', 'klokkijken', 'breuken'])
+  })
+
+  it('telt dezelfde vraag één keer, ook als hij van beide kanten komt', () => {
+    const zelfde = vraag(7, 'amine', 'werkwoord vervoeging')
+    const uit = voegSamen(met([zelfde]), met([{ ...zelfde }]))
+    expect(uit.vragen).toHaveLength(1)
+  })
+
+  /* Twee kinderen die toevallig op dezelfde milliseconde dezelfde vraag stellen
+     bestaat niet; twee kinderen met dezelfde vraag op een ander moment wel. */
+  it('houdt dezelfde vraag van twee kinderen apart', () => {
+    const uit = voegSamen(
+      met([vraag(1, 'amine', 'breuken optellen')]),
+      met([vraag(2, 'selma', 'breuken optellen')]),
+    )
+    expect(uit.vragen?.map((v) => v.pid)).toEqual(['selma', 'amine'])
+  })
+
+  it('houdt er honderd, en gooit de oudste weg', () => {
+    const veel = Array.from({ length: 80 }, (_, i) => vraag(i + 1, 'amine', 'vraag ' + i))
+    const meer = Array.from({ length: 80 }, (_, i) => vraag(i + 101, 'selma', 'ander ' + i))
+    const uit = voegSamen(met(veel), met(meer))
+    expect(uit.vragen).toHaveLength(100)
+    expect(uit.vragen?.[0]?.tijd).toBe(180)
+    /* De oudste van de honderd is 61: alles daaronder valt eraf. */
+    expect(uit.vragen?.[99]?.tijd).toBe(61)
+  })
+
+  it('valt niet om als geen van beide kanten vragen heeft', () => {
+    expect(voegSamen({}, {}).vragen).toEqual([])
+  })
+
+  it('neemt mee wat de vraagbaak weggooide, want dat is het hele verschil', () => {
+    const raar: Vraagregel = {
+      tijd: 9, pid: 'amine', vraag: 'werkwoord vervoeging', raak: [], gat: null,
+      verzonnen: ['taal|Vervoeging|nu'],
+    }
+    const uit = voegSamen({}, met([raar]))
+    expect(uit.vragen?.[0]?.verzonnen).toEqual(['taal|Vervoeging|nu'])
   })
 })

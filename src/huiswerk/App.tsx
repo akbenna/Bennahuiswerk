@@ -94,7 +94,14 @@ export function App(): ReactNode {
     t.zet((s) => ({
       ...s,
       vragen: [
-        { tijd: Date.now(), pid: id, vraag, raak: u.routes.map((r) => r.onderwerp), gat: u.gat },
+        {
+          tijd: Date.now(), pid: id, vraag,
+          raak: u.routes.map((r) => r.onderwerp),
+          gat: u.gat,
+          /* Alleen als er iets is weggegooid. Een leeg lijstje bij elke vraag
+             zegt niets en staat wel in ieders opslag. */
+          ...(u.verzonnen.length ? { verzonnen: u.verzonnen } : {}),
+        },
         ...(s.vragen ?? []),
       ].slice(0, 100),
     }))
