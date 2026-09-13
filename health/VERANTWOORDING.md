@@ -502,9 +502,18 @@ bij een verlies onder de tien procent schatten ze de aanpassing op ongeveer vijf
 procent.
 
 Ze tónen ook een band om de verbruikslijn, de *flux range*. En hun eigen
-documentatie zegt erover: *"While it's tempting to think of the flux range as a
-confidence interval, it's not technically accurate"*, en hij staat er *"only for
-fun and curiosity"*. De gebruiker krijgt één getal als antwoord.
+documentatie zegt erover: *"it's tempting to think of flux range as a confidence
+interval, and that's not a harmful simplification, but it's not technically
+accurate"*, en ze tonen hem *"for fun and curiosity"*. De gebruiker krijgt één
+getal als antwoord.
+
+**Nagekeken op 13 september 2026.** In een eerdere versie stond hier een
+parafrase tussen aanhalingstekens — *"While it's tempting to think of the flux
+range as a confidence interval, it's not technically accurate"* — en *"only for
+fun and curiosity"* met een "only" die er niet staat. De weggelaten tussenzin
+deed er bovendien toe: die zegt dat het lezen als betrouwbaarheidsinterval een
+ónschadelijke vereenvoudiging is, en dat maakt hun positie milder dan mijn
+parafrase suggereerde.
 
 Dat is precies het tegenovergestelde van de stelregel van deze app. Het is de
 sterkste aanwijzing die er is dat *geen enkel getal zonder zijn onzekerheid* geen
@@ -529,9 +538,18 @@ voor ons venster van 28 dagen, en staat als open mogelijkheid genoteerd.
 
 Tegen dubbelgelabeld water onderrapporteren 24-uursnavragen de energie-inname
 met tien tot twintig procent en voedselfrequentievragenlijsten met twintig tot
-dertig procent. Een analyse in *Nature Food* (2024) op basis van 6.497
+dertig procent. Een analyse in *Nature Food* (2025;6:58–71,
+doi:10.1038/s43016-024-01089-5) op basis van 6.497
 DLW-metingen, toegepast op NDNS en NHANES, kwam uit op 27,4 procent. De
 afwijking hangt systematisch samen met leeftijd, geslacht en BMI.
+
+**Let op bij het citeren.** Het oorspronkelijke artikel meldde meer dan vijftig
+procent. Dat was een rekenfout: de voorspelde waarden werden naar kilojoule
+omgezet, maar het totale verbruik in kilojoule belandde in de verkeerde
+vergelijking, waardoor de onderrapportage werd overschat. De auteurs corrigeerden
+het in mei 2025 naar 27,4 procent (Author Correction,
+doi:10.1038/s43016-025-01175-2). Hier stond eerst "2024" als jaartal en geen
+verwijzing naar de correctie; wie dat naliep kwam dus bij >50 procent uit.
 
 Daaruit volgt iets over wat dit model eigenlijk berekent. Het verbruik wordt
 afgeleid uit *gelogde* inname. Is die stelselmatig twintig procent te laag, dan
