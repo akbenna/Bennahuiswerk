@@ -54,7 +54,7 @@
    ========================================================================== */
 :root{
   --canvas:#F3F6F5; --vlak:#FFFFFF; --vlak2:#EDF2F0;
-  --ink:#0E1A16; --ink2:#28352F; --grijs:#5B6862; --dim:#8A968F;
+  --ink:#0E1A16; --ink2:#28352F; --grijs:#4A5450; --dim:#59615C;
   --lijn:#E4EAE7; --lijn2:#CBD5D0;
   /* Twee tinten van hetzelfde accent, en dat is geen luxe. --k draagt tekst en
      moet donker genoeg zijn om op wit te lezen; --kfel is de vulkleur van
@@ -78,7 +78,7 @@
 }
 @media (prefers-color-scheme:dark){:root:not([data-thema]){
   --canvas:#080D0C; --vlak:#121A18; --vlak2:#1B2523;
-  --ink:#F1F5F3; --ink2:#DCE4E1; --grijs:#9AA8A2; --dim:#6C7A74;
+  --ink:#F1F5F3; --ink2:#DCE4E1; --grijs:#9AA8A2; --dim:#8A9691;
   --lijn:#243230; --lijn2:#354642;
   --k:#4FD2A6; --kfel:#28BE8E; --kbg:#0F2E26;
   --knopvul:#28BE8E;
@@ -89,7 +89,7 @@
 }}
 :root[data-thema="donker"]{
   --canvas:#080D0C; --vlak:#121A18; --vlak2:#1B2523;
-  --ink:#F1F5F3; --ink2:#DCE4E1; --grijs:#9AA8A2; --dim:#6C7A74;
+  --ink:#F1F5F3; --ink2:#DCE4E1; --grijs:#9AA8A2; --dim:#8A9691;
   --lijn:#243230; --lijn2:#354642;
   --k:#4FD2A6; --kfel:#28BE8E; --kbg:#0F2E26;
   --knopvul:#28BE8E;
@@ -122,6 +122,9 @@ a{color:var(--k)}
 .getal{font-family:var(--kop);font-variant-numeric:tabular-nums;color:var(--ink);line-height:1;
   font-weight:660;letter-spacing:-.03em}
 button,input,select,textarea{font-family:inherit;font-size:1rem;color:inherit}
+/* De tijdelijke tekst had geen eigen kleur en kreeg dus die van de browser —
+   op Safari lichter dan wat hier ook maar ergens staat, en niet te meten. */
+::placeholder{color:var(--dim);opacity:1}
 :focus-visible{outline:2px solid var(--k);outline-offset:2px;border-radius:6px}
 
 /* ---------------------------------------------------------------- header -- */
@@ -209,16 +212,16 @@ label.veld>span{display:block;font-size:.72rem;color:var(--grijs);margin-bottom:
 .conf{display:inline-flex;width:17px;height:17px;border-radius:4px;flex:0 0 auto;
   align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:#FFF8EE}
 .conf.A{background:#2F6B1F}.conf.B{background:#07785C}
-.conf.C{background:#8E9189}.conf.D{background:#8A5A00}
+.conf.C{background:#71746D}.conf.D{background:#8A5A00}
 @media(prefers-color-scheme:dark){:root:not([data-thema]) .conf{color:#080D0C}
   :root:not([data-thema]) .conf.A{background:#8FD268}
   :root:not([data-thema]) .conf.B{background:#4FD2A6}
-  :root:not([data-thema]) .conf.C{background:#71746D}
+  :root:not([data-thema]) .conf.C{background:#787A74}
   :root:not([data-thema]) .conf.D{background:#E9BC55}}
 :root[data-thema="donker"] .conf{color:#080D0C}
 :root[data-thema="donker"] .conf.A{background:#8FD268}
 :root[data-thema="donker"] .conf.B{background:#4FD2A6}
-:root[data-thema="donker"] .conf.C{background:#71746D}
+:root[data-thema="donker"] .conf.C{background:#787A74}
 :root[data-thema="donker"] .conf.D{background:#E9BC55}
 /* Het teken voor de herkomst: ◆ gemeten uit de tabel, ◇ geschat. Een <abbr>
    krijgt in sommige browsers vanzelf een stippellijn eronder; die hoort hier
@@ -544,9 +547,22 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
 /* ------------------------------------------------------------ zoekvak ---- */
 /* Op het voedingsscherm is zoeken de handeling. Hij stond als een gewoon
    invulveld tussen twee andere kaarten; nu is hij het enige veld met gewicht. */
+/* De twee andere manieren, boven de balk waarin je anders zou gaan typen.
+   Ze staan naast elkaar en even breed: het zijn twee gelijkwaardige ingangen en
+   niet een knop met een alternatief eronder. */
+.ingangen{display:flex;gap:8px}
+.ingang{flex:1 1 0;display:flex;align-items:center;justify-content:center;gap:8px;
+  border:1px solid var(--lijn);border-radius:14px;background:var(--vlak);
+  padding:11px 10px;cursor:pointer;color:var(--ink2);font-size:.88rem;font-weight:560;
+  transition:border-color .18s,transform .12s}
+.ingang:hover{border-color:var(--k);color:var(--k)}
+.ingang:active{transform:scale(.985)}
+.ingang>svg{color:var(--grijs);flex:0 0 auto}
+.ingang:hover>svg{color:var(--k)}
+
 .zoekvak{position:relative;margin-top:10px}
-.zoekvak>span{position:absolute;left:14px;top:50%;transform:translateY(-50%);
-  font-size:1.05rem;line-height:1;pointer-events:none;opacity:.75}
+.zoekvak>span{position:absolute;left:13px;top:50%;transform:translateY(-50%);
+  display:flex;line-height:1;pointer-events:none;color:var(--dim)}
 .zoekvak>input{padding:14px 14px 14px 42px;font-size:1rem;border-radius:15px}
 
 /* ------------------------------------------------------- het invoervel ---- */

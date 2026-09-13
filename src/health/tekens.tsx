@@ -195,3 +195,40 @@ export const WegPerDag = () => wegwijzer(
   <><path d="M4.4 20.4V13" /><path d="M9.4 20.4V6.6" />
     <path d="M14.6 20.4v-9.8" /><path d="M19.6 20.4V9" /></>,
 )
+
+/* ==========================================================================
+   DE TEKENS OP EEN KNOP
+   ==========================================================================
+
+   Derde soort, en hij houdt zich aan dezelfde twee regels als de rest: lijn,
+   nooit een vulling, en nooit een ruit. Alleen de maat verschilt — deze staan
+   op een knop naast een woord en niet in een kop.
+
+   Ze zaten er al, als emoji: 🔎 in het zoekveld en 📷 en ✎ op de chips van het
+   beschrijfvak. Emoji tekent elk toestel anders, en op een iPhone kwam er een
+   gekleurd fototoestel te staan naast een lijntekening op de balk. Nu één hand.
+*/
+
+const actie = (kinderen: ReactNode) => (
+  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+       strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    {kinderen}
+  </svg>
+)
+
+/** Een vergrootglas. */
+export const ActieZoek = () => actie(
+  <><circle cx="10.6" cy="10.6" r="6.8" /><path d="M15.6 15.6 20.8 20.8" /></>,
+)
+
+/** Een fototoestel. */
+export const ActieFoto = () => actie(
+  <><path d="M3 8.6a2 2 0 0 1 2-2h2.6l1.6-2.4h5.6l1.6 2.4H19a2 2 0 0 1 2 2v8.8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" />
+    <circle cx="12" cy="12.6" r="3.4" /></>,
+)
+
+/** Een potlood: het in gewone taal opschrijven. */
+export const ActieBeschrijf = () => actie(
+  <><path d="M16.4 3.6a2.4 2.4 0 0 1 3.4 3.4L8.6 18.2l-4.4 1.2 1.2-4.4Z" />
+    <path d="M14.6 5.4 18 8.8" /></>,
+)

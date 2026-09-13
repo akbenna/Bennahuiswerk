@@ -729,6 +729,38 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
     if (!(await aanbod.count())) {
       throw new Error(`${naam}: geen aanbod om een zin te laten herkennen`)
     }
+    /* DE DRIE MANIEREN STAAN BOVEN ELKAAR
+     *
+     * Zoeken, een foto maken en het opschrijven zijn drie manieren om hetzelfde
+     * te doen. Twee ervan zaten in de kop van het beschrijfvak, onder de vouw —
+     * dus wie een bord voor zich had staan moest eerst langs alle
+     * zoekresultaten scrollen om bij de camera te komen.
+     *
+     * Dit is een volgorde en dus met een grep niet te bewaken: de knoppen
+     * verplaatsen verandert hun tekst niet. Vandaar op de gerenderde pagina, en
+     * met de hoogte en niet met de DOM-volgorde — een knop kan in de opmaak
+     * best vóór het zoekveld staan en er op het scherm onder belanden. */
+    const hoogte = async (kies) => {
+      const doos = await pagina.locator(kies).first().boundingBox()
+      if (!doos) throw new Error(`${naam}: ${kies} staat niet op het scherm`)
+      return doos.y
+    }
+    const yBalk = await hoogte('.venster .zoekvak')
+    for (const woord of ['Foto', 'Beschrijven']) {
+      const knop = pagina.locator('.venster .ingang', { hasText: woord }).first()
+      if (!(await knop.count())) throw new Error(`${naam}: er is geen ingang "${woord}"`)
+      const doos = await knop.boundingBox()
+      if (!doos || doos.y >= yBalk) {
+        throw new Error(`${naam}: "${woord}" staat niet bóven het zoekveld ` +
+                        `(${doos ? Math.round(doos.y) : '?'} tegenover ${Math.round(yBalk)})`)
+      }
+    }
+    /* En de camera moet er echt een zijn. Een knop met het woord "Foto" die geen
+       bestandsveld opent doet niets. */
+    const camera = await pagina.locator('.venster .ingang input[type=file]').count()
+    if (camera !== 1) throw new Error(`${naam}: ${camera} fotovelden bij de ingangen, verwacht 1`)
+    console.log(`${''.padEnd(26)} ingangen boven de balk: Foto, Beschrijven`)
+
     /* Het hoort vóór de zoekresultaten te staan. Eronder zie je het pas als je
        de verkeerde weg al bent ingeslagen. */
     const eerste = pagina.locator('.venster .hoofdknop, .venster .lijst, .venster .kaart').first()
@@ -1011,7 +1043,10 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
      die gelopen wordt en die het moment meteen goed zet. */
   await pagina.getByTitle('Iets toevoegen aan je diner').click()
   await pagina.waitForSelector('.venster', { timeout: 5000 })
-  await pagina.getByRole('button', { name: /Tekst/ }).click()
+  /* Via de ingang bovenaan het vel. Die knop heette "Tekst" en zat in de kop van
+     het beschrijfvak, onder de vouw; hij staat nu boven het zoekveld. De proef
+     loopt de weg die gelopen wordt. */
+  await pagina.getByRole('button', { name: 'Beschrijven' }).click()
   await pagina.locator('.venster textarea').fill('een bord tajine met kip en een appel')
   await pagina.getByRole('button', { name: 'Herkennen' }).click()
   await pagina.waitForSelector('.venster .kaart', { timeout: 8000 })
@@ -1406,6 +1441,123 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
   const kop = await traag.locator('.hero h2').textContent()
   console.log(`traag ophalen              wachtregel=ja · opzetpagina=nee · daarna kop=${JSON.stringify(kop)}`)
   await traag.close()
+}
+
+/* ------------------------------------------------------------- het contrast -- */
+/* LEESBAARHEID IS EEN GETAL, GEEN INDRUK
+ *
+ * De stilste kleur van de app, --dim, droeg de kleinste tekst: 0,75 rem, en
+ * daar staan juist de onzekerheidsbanden in. In een app waarvan de stelregel
+ * "geen getal zonder zijn onzekerheid" is, stond de onzekerheid dus in de
+ * slechtst leesbare kleur die er was — 2,71 op een lichte kaart, waar 4,5 de
+ * norm is.
+ *
+ * Dat is met een palettabel half te controleren, en die helft is de makkelijke.
+ * Wat een tabel niet ziet: tekst die op een verloop staat. De hero heeft er vier
+ * en daar staat ook .mini. Deze proef leest daarom van het scherm zelf: voor elk
+ * element met eigen tekst de berekende kleur, en de achtergrond door de ouders
+ * omhoog te lopen tot er een ondoorzichtige is. Staat er een verloop tussen, dan
+ * worden álle kleurstops eruit gehaald en moet het tegen elk daarvan kloppen —
+ * want waar in het verloop de tekst valt weet je niet.
+ *
+ * De norm is die van WCAG AA: 4,5 voor gewone tekst, 3,0 voor grote (24 px, of
+ * 18,66 px vet). Vijf tabbladen, allebei de thema's.
+ */
+{
+  const NORM = 4.5
+  /* Een echte functie en geen tekst. Als string in een template-literal
+     verdwijnt de backslash uit `\d` en `\(` — JavaScript laat een onbekende
+     escape gewoon vallen — en dan leest de regex geen enkel getal meer uit
+     "rgb(255, 255, 255)". De proef vond dan nul elementen en meldde groen. Dat
+     is precies het soort proef dat niets bewijst, en hij kwam er alleen uit
+     doordat het terugzetten van de oude kleur hem niet omver kreeg. */
+  const meet = () => {
+    const nums = (t) => (t.match(/-?[\d.]+/g) ?? []).map(Number)
+    const kleur = (t) => { const n = nums(t); return n.length >= 3 ? n.slice(0, 3) : null }
+    const dekt = (t) => { const n = nums(t); return n.length >= 3 && (n.length < 4 || n[3] >= 0.92) }
+    const lin = (c) => { c /= 255; return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4 }
+    const L = (r) => { const [a, b, c] = r.map(lin); return 0.2126 * a + 0.7152 * b + 0.0722 * c }
+    const R = (a, b) => {
+      const l1 = L(a), l2 = L(b)
+      const [h, l] = l1 > l2 ? [l1, l2] : [l2, l1]
+      return (h + 0.05) / (l + 0.05)
+    }
+    /* De achtergrond waar deze tekst werkelijk op ligt. Omhoog door de ouders
+       tot er een ondoorzichtige is. Staat er een verloop tussen, dan komen álle
+       kleurstops mee: waar in dat verloop de tekst valt weet je niet, dus moet
+       het tegen elk ervan kloppen. */
+    const achter = (el) => {
+      const uit = []
+      for (let n = el; n; n = n.parentElement) {
+        const s = getComputedStyle(n)
+        if (s.backgroundImage && s.backgroundImage !== 'none') {
+          for (const x of s.backgroundImage.match(/rgba?\([^)]*\)/g) ?? []) {
+            const k = kleur(x)
+            if (k && dekt(x)) uit.push(k)
+          }
+          if (uit.length) return uit
+        }
+        if (dekt(s.backgroundColor)) { uit.push(kleur(s.backgroundColor)); return uit }
+      }
+      return uit.length ? uit : null
+    }
+    const slecht = []
+    let bekeken = 0
+    for (const el of document.querySelectorAll('body *')) {
+      if (el.closest('svg')) continue
+      const eigen = [...el.childNodes]
+        .filter((n) => n.nodeType === 3 && n.textContent.trim()).map((n) => n.textContent.trim())
+      if (!eigen.length) continue
+      const doos = el.getBoundingClientRect()
+      if (doos.width < 2 || doos.height < 2) continue
+      const s = getComputedStyle(el)
+      if (s.visibility === 'hidden' || Number(s.opacity) < 0.5) continue
+      const vk = kleur(s.color)
+      const bg = achter(el)
+      if (!vk || !bg) continue
+      bekeken++
+      const px = parseFloat(s.fontSize)
+      const groot = px >= 24 || (px >= 18.66 && Number(s.fontWeight) >= 700)
+      const eis = groot ? 3 : 4.5
+      const laagste = Math.min(...bg.map((b) => R(vk, b)))
+      if (laagste < eis) {
+        slecht.push({
+          tekst: eigen.join(' ').slice(0, 44),
+          klas: (typeof el.className === 'string' ? el.className : '') || el.tagName,
+          px: Math.round(px), eis, ratio: Number(laagste.toFixed(2)),
+        })
+      }
+    }
+    return { bekeken, slecht: slecht.sort((a, b) => a.ratio - b.ratio) }
+  }
+
+  const gezien = []
+  let bekeken = 0
+  for (const [schema, keuze] of [['dark', null], ['light', null]]) {
+    const pagina = await ctx.newPage()
+    await pagina.emulateMedia({ colorScheme: schema })
+    if (keuze) await pagina.addInitScript(`localStorage.setItem('kalibratie.thema', '${keuze}')`)
+    await bedienDb(pagina, 28, 'afvallen')
+    await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+    await pagina.waitForSelector('.hero', { timeout: 5000 })
+    for (const tab of ['Vandaag', 'Inzicht', 'Voeding', 'Beweging', 'Gezondheid', 'Profiel']) {
+      await naarTab(pagina, tab)
+      const uit = await pagina.evaluate(meet)
+      bekeken += uit.bekeken
+      for (const x of uit.slecht) gezien.push({ ...x, waar: `${schema}/${tab}` })
+    }
+    await pagina.close()
+  }
+  if (gezien.length) {
+    const lijst = gezien.slice(0, 10).map(
+      (x) => `  ${x.ratio} (eis ${x.eis}) · ${x.waar} · ${x.px}px · ${x.klas} · ${JSON.stringify(x.tekst)}`)
+    throw new Error(`contrast: ${gezien.length} stuk(ken) tekst onder de norm\n${lijst.join('\n')}`)
+  }
+  /* Een proef die niets bekeek meldt ook groen. Dat is deze proef één keer
+     overkomen, dus telt hij nu hoeveel tekst hij werkelijk gemeten heeft. */
+  if (bekeken < 300) throw new Error(`contrast: maar ${bekeken} stukken tekst bekeken — dat klopt niet`)
+  console.log(`contrast                   ${bekeken} stukken tekst, zes tabbladen, ` +
+              `twee thema's — alles haalt ${NORM}`)
 }
 
 /* ----------------------------------------------------- de tekens op de balk -- */

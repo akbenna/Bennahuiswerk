@@ -48,6 +48,7 @@ import { grootsteOnzekerheid, weegRegel } from '../wegen'
 import { Bron } from '../herkomst'
 import type { Herkenning, HerkendeRegel } from '../ai'
 import type { Onderwerp } from './Portie'
+import { ActieBeschrijf, ActieFoto, ActieZoek } from '../tekens'
 
 /** De vier momenten waar je uit kiest, in de volgorde van de dag. */
 export const MOMENTKEUZE: Array<{ id: Moment; naam: string; klas: string }> = [
@@ -109,17 +110,28 @@ export function InvoerVenster(p: InvoerEigenschappen) {
      het niet gevonden heeft moet erheen geholpen worden. */
   const [beschrijfOpen, zetBeschrijfOpen] = useState(false)
   const [beschrijfTekst, zetBeschrijfTekst] = useState('')
+  /* En om dezelfde reden de foto: de knop staat boven het zoekveld en het
+     herkennen gebeurt in `Beschrijven`. Het bestand reist dus als toestand naar
+     beneden in plaats van dat de knop naar het vak toe moet. */
+  const [beschrijfFoto, zetBeschrijfFoto] = useState<File | null>(null)
   const beschrijfVak = useRef<HTMLDivElement>(null)
+
+  /* Naar het beschrijfvak toe, met of zonder foto. Het staat onder de vouw, dus
+     openklappen alleen is niet genoeg — je moet er ook naartoe. */
+  function naarBeschrijven(foto?: File) {
+    zetBeschrijfOpen(true)
+    if (foto) zetBeschrijfFoto(foto)
+    requestAnimationFrame(
+      () => beschrijfVak.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }))
+  }
 
   /* De overstap van zoeken naar beschrijven. Het zoekveld gaat leeg — anders
      blijven de zoekresultaten eroverheen staan en zie je nog steeds niet waar je
      terechtkwam. En dan naar het vak toe scrollen, want het staat onder de vouw. */
   function laatHerkennen(zin: string) {
     zetBeschrijfTekst(zin)
-    zetBeschrijfOpen(true)
     zetTerm('')
-    requestAnimationFrame(
-      () => beschrijfVak.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }))
+    naarBeschrijven()
   }
 
   const zoekt = term.trim().length >= 2
@@ -157,8 +169,31 @@ export function InvoerVenster(p: InvoerEigenschappen) {
                </div>
              }>
 
-      <div className="zoekvak" style={{ marginTop: 12 }}>
-        <span aria-hidden="true">🔎</span>
+      {/* DE DRIE MANIEREN STAAN BOVEN ELKAAR EN NIET OVER HET VEL VERSPREID
+          Zoeken, een foto maken en het opschrijven zijn drie manieren om
+          hetzelfde te doen. Twee ervan stonden onder de vouw, in de kop van het
+          beschrijfvak — dus wie een bord voor zich had staan moest eerst langs
+          alle zoekresultaten scrollen om bij de camera te komen. Ze horen waar
+          je begint: boven de balk waarin je anders zou gaan typen. */}
+      <div className="ingangen" style={{ marginTop: 12 }}>
+        <label className="ingang">
+          <ActieFoto />
+          <span>Foto</span>
+          <input type="file" accept="image/*" capture="environment" style={{ display: 'none' }}
+                 onChange={(e) => {
+                   const f = e.target.files?.[0]
+                   if (f) naarBeschrijven(f)
+                   e.target.value = ''
+                 }} />
+        </label>
+        <button type="button" className="ingang" onClick={() => naarBeschrijven()}>
+          <ActieBeschrijf />
+          <span>Beschrijven</span>
+        </button>
+      </div>
+
+      <div className="zoekvak" style={{ marginTop: 10 }}>
+        <span aria-hidden="true"><ActieZoek /></span>
         <input placeholder="zoek in de tabel, gerechten en je eigen producten" autoComplete="off"
                aria-label="Zoeken" value={term} onChange={(e) => zetTerm(e.target.value)} />
       </div>
@@ -267,6 +302,7 @@ export function InvoerVenster(p: InvoerEigenschappen) {
               <Beschrijven token={p.token} datum={p.datum} moment={moment}
                            open={beschrijfOpen} zetOpen={zetBeschrijfOpen}
                            tekst={beschrijfTekst} zetTekst={zetBeschrijfTekst}
+                           foto={beschrijfFoto} zetFoto={zetBeschrijfFoto}
                            opToevoegen={(r, n) => voegToe(r, n)} />
             </div>
 
@@ -546,15 +582,18 @@ function Zoekvangst(
  * want het is de langzaamste van de drie — een halve minuut tegenover één tik.
  */
 function Beschrijven(
-  { token, datum, moment, open, zetOpen, tekst, zetTekst, opToevoegen }:
+  { token, datum, moment, open, zetOpen, tekst, zetTekst, foto, zetFoto, opToevoegen }:
   {
     token: string; datum: IsoDatum; moment: Moment
-    /* Open en tekst komen van buiten: het zoekveld kan dit vak openklappen met
-       een zin er al in. Zie `laatHerkennen` in InvoerVenster. */
+    /* Open, tekst en foto komen van buiten: het zoekveld kan dit vak openklappen
+       met een zin er al in, en de fotoknop boven de zoekbalk stuurt er een
+       bestand heen. Zie `naarBeschrijven` in InvoerVenster. */
     open: boolean
     zetOpen: (aan: boolean) => void
     tekst: string
     zetTekst: (t: string | ((oud: string) => string)) => void
+    foto: File | null
+    zetFoto: (f: File | null) => void
     opToevoegen: (r: NieuweRegel[], namen: string[]) => void
   },
 ) {
@@ -579,6 +618,15 @@ function Beschrijven(
     }
   }
 
+  /* De foto van boven de zoekbalk. Hij wordt meteen weer op null gezet, want
+     anders zou dezelfde foto bij elke volgende render opnieuw herkend worden. */
+  useEffect(() => {
+    if (!foto) return
+    zetFoto(null)
+    void doe('foto', foto)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [foto])
+
   /* Welke regel het meest te winnen heeft bij een weging. Zie wegen.ts: bij
      herkenning uit tekst of foto is niet het herkennen de zwakke schakel maar de
      portie, en één weging vervangt precies die post. */
@@ -602,16 +650,10 @@ function Beschrijven(
     <div style={{ marginTop: 16 }}>
       <Tussen>
         <Kop>Of beschrijf het</Kop>
-        <Rij>
-          {/* De foto zit in de kop en niet achter het openklappen: wie een bord
-              voor zich heeft staan wil niet eerst een tekstvak opvouwen. */}
-          <label className="chip" style={{ cursor: 'pointer' }}>
-            📷 Foto
-            <input type="file" accept="image/*" capture="environment" style={{ display: 'none' }}
-                   onChange={(e) => { const f = e.target.files?.[0]; if (f) void doe('foto', f) }} />
-          </label>
-          <Keuzechip aan={open} opKlik={() => zetOpen(!open)}>✎ Tekst</Keuzechip>
-        </Rij>
+        {/* De fotoknop stond hier en staat nu boven het zoekveld, bij de andere
+            twee manieren. Wat hier overblijft is het open- en dichtklappen, en
+            dat is geen ingang maar een schakelaar. */}
+        <Keuzechip aan={open} opKlik={() => zetOpen(!open)}>{open ? 'dicht' : 'open'}</Keuzechip>
       </Tussen>
 
       {open && (
