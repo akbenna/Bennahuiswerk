@@ -119,6 +119,12 @@ export interface Vraagregel {
   raak: string[]
   /** Wat er volgens het model zou moeten komen, als er niets was. */
   gat: string | null
+  /** De sleutels die het model aanwees maar die niet bestaan. Staat er iets in,
+   *  dan wees het model wél ergens heen en is dat bij de controle weggegooid —
+   *  een heel ander geval dan "hier is niets voor", terwijl het kind allebei
+   *  hetzelfde ziet. Zonder dit veld zijn die twee achteraf niet meer uit
+   *  elkaar te houden. Ontbreekt bij oudere regels. */
+  verzonnen?: string[]
 }
 
 /** Het weekbudget waarmee een nieuw kind begint. */
@@ -391,5 +397,18 @@ export function voegSamen(hier: Partial<Stand> | null, ginds: Partial<Stand> | n
   uit.kidacc = { ...(c.kidacc ?? {}), ...(l.kidacc ?? {}) }
   uit.zomer = l.zomer ?? c.zomer ?? uit.zomer
   uit.pin = l.pin || c.pin || '1234'
+
+  /* De vragen van de kinderen komen van beide kanten. Ze liftten tot nu toe mee
+     op `...l` hierboven, en dat is alléén dit toestel: opende papa de app op
+     zijn eigen telefoon, dan viel de vraag die Amine op de tablet had gesteld
+     eruit. En omdat de samengevoegde stand daarna wordt teruggeschreven (zie
+     `wolk.ts`), verdween hij ook uit de wolk. De lijst waar dit scherm voor
+     bestaat wiste zichzelf dus zodra een tweede toestel de app opende. */
+  const zelfde = (a: Vraagregel, b: Vraagregel): boolean =>
+    a.tijd === b.tijd && a.pid === b.pid && a.vraag === b.vraag
+  uit.vragen = [...(l.vragen ?? []), ...(c.vragen ?? [])]
+    .filter((v, i, a) => a.findIndex((w) => zelfde(w, v)) === i)
+    .sort((a, b) => b.tijd - a.tijd)
+    .slice(0, 100)
   return uit
 }

@@ -43,7 +43,7 @@ export function App(): ReactNode {
   const naarWeek = (n: number): void => { zetWeekNr(n); ga('week') }
 
   return (
-    <>
+    <div className="schil">
       <header className="top">
         <div className="top-in">
           <a className="terug" href="/" title="Terug naar BennaHub" aria-label="Terug naar BennaHub">←</a>
@@ -101,6 +101,6 @@ export function App(): ReactNode {
           </div>
         </footer>
       </main>
-    </>
+    </div>
   )
 }

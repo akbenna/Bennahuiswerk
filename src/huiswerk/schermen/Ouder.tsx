@@ -717,13 +717,22 @@ function Opgavenbeheer(
  * waar niets voor gevonden werd is geen fout van het kind en ook niet van de
  * vraagbaak: het is stof die er nog niet is. Die staan daarom apart en bovenaan
  * — ze zijn de werklijst, opgeschreven door de kinderen zelf.
+ *
+ * Met één uitzondering, en die staat er sinds Amine op "werkwoord vervoeging"
+ * zocht en niets terugkreeg terwijl er drieënveertig opgaven werkwoordspelling
+ * klaarstaan. "Niets gevonden" dekt namelijk twee heel verschillende dingen:
+ * het model wees nergens heen, óf het wees ergens heen en de app gooide dat weg
+ * omdat de sleutel niet bestond. Het eerste is een gat in de stof, het tweede is
+ * een storing in de vraagbaak zelf — en die twee horen niet onder één noemer.
+ * Staat er iets bij "verzonnen", dan is het het tweede.
  */
 export function Vragenpaneel(
   { stand, zet }: { stand: Stand; zet: (v: (s: Stand) => Stand) => void },
 ): ReactNode {
   const vragen = stand.vragen ?? []
   if (!vragen.length) return null
-  const gaten = vragen.filter((v) => !v.raak.length)
+  const gaten = vragen.filter((v) => !v.raak.length && !v.verzonnen?.length)
+  const misgelopen = vragen.filter((v) => v.verzonnen?.length)
 
   return (
     <div className="card" style={{ marginBottom: 16 }}>
@@ -737,8 +746,16 @@ export function Vragenpaneel(
 
       {gaten.length > 0 && (
         <p className="muted" style={{ fontSize: 13, marginTop: 6 }}>
-          Bij <b>{gaten.length}</b> van de {vragen.length} vragen vond de app niets. Dat is de
+          Bij <b>{gaten.length}</b> van de {vragen.length} vragen was er niets. Dat is de
           stof die nog gemaakt moet worden.
+        </p>
+      )}
+
+      {misgelopen.length > 0 && (
+        <p className="muted" style={{ fontSize: 13, marginTop: 6 }}>
+          Bij <b>{misgelopen.length}</b> {misgelopen.length === 1 ? 'vraag' : 'vragen'} wees de
+          vraagbaak wél iets aan, maar bestond dat onderwerp niet — dat is weggegooid. Geen
+          ontbrekende stof dus maar een storing; de sleutel die niet klopte staat erbij.
         </p>
       )}
 
@@ -759,7 +776,17 @@ export function Vragenpaneel(
               <div className="raak" style={{ marginTop: 2 }}>
                 {v.raak.length
                   ? '→ ' + v.raak.join(' · ')
-                  : <span><b>niets gevonden</b>{v.gat ? ' — ' + v.gat : ''}</span>}
+                  : v.verzonnen?.length
+                    ? (
+                      <span>
+                        <b>weggegooid</b> — de vraagbaak wees naar{' '}
+                        {v.verzonnen.map((x, n) => (
+                          <span key={x}>{n > 0 && ', '}<code>{x}</code></span>
+                        ))}
+                        , en dat bestaat niet
+                      </span>
+                      )
+                    : <span><b>niets gevonden</b>{v.gat ? ' — ' + v.gat : ''}</span>}
               </div>
             </div>
           )

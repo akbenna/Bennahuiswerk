@@ -13,10 +13,25 @@
  * de app een adres aan waar hij niet meer stond. Dat is verholpen; de stappen
  * staan in `huiswerk/edge/UITROLLEN.md`, mocht het nog eens moeten.
  *
- * Nagekeken langs de weg van de app: een vraag over breuken optellen gaf een
- * antwoord met `routes: ["wis-breuken"]` — een sleutel uit de meegestuurde
- * catalogus, en geen verzonnen onderwerp. De grendel hieronder doet dus wat hij
- * belooft.
+ * WAT ER OVER DE CONTROLE STOND, EN WAAROM DAT NIET KLOPTE
+ *
+ * Hier stond dat de weg was nagekeken en dat een vraag over breuken optellen
+ * `routes: ["wis-breuken"]` opleverde — "een sleutel uit de meegestuurde
+ * catalogus". Dat kan niet: `sleutelVan` in `src/huiswerk/vraagbaak.ts` maakt
+ * `vak|onderwerp|jaar`, dus `rekenen|Breuken|nu`, en die functie is sinds de
+ * eerste commit niet gewijzigd. De app heeft `wis-breuken` nooit verstuurd.
+ *
+ * Het staat er nu bij omdat het uitmaakt: dat was het enige bewijs dat een route
+ * ooit door de grendel is gekomen in productie, en dat bewijs houdt geen stand.
+ * Wijst het model structureel naast de sleutels, dan wordt elke route
+ * weggegooid en ziet een kind alleen de alinea. Amine liep daar tegenaan met
+ * "werkwoord vervoeging", terwijl er drieënveertig opgaven werkwoordspelling
+ * voor hem klaarstonden.
+ *
+ * De app legt nu vast wat er is weggegooid: `verzonnen` gaat mee in de
+ * vragenlijst en staat in het ouderscherm, met de sleutel erbij. De eerstvolgende
+ * vraag die misloopt vertelt dus zelf of het aan het model ligt of aan de stof.
+ * Tot die er is, is dit een open vraag en geen vastgestelde storing.
  *
  * WAAROM DIT OP DE SERVER STAAT
  *
