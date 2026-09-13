@@ -243,3 +243,9 @@ export const WegVerzadiging = () => wegwijzer(
     <path d="M5.4 18.4a6.6 6.6 0 0 1 13.2 0" />
     <path d="M9 21.4h6" /></>,
 )
+
+/** Een doosje: een product dat je zelf hebt vastgelegd. */
+export const WegEigenProduct = () => wegwijzer(
+  <><path d="M12 3.2 20.4 7.6v8.8L12 20.8 3.6 16.4V7.6Z" />
+    <path d="M3.6 7.6 12 12l8.4-4.4" /><path d="M12 12v8.8" /></>,
+)

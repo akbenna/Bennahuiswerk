@@ -1730,8 +1730,27 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
    * regels die alle drie aan de vorm hangen en niet aan de plaats.
    */
   const grens = { koppen: 0, herkomst: 0 }
-  for (const tab of ['Vandaag', 'Inzicht', 'Beweging', 'Gezondheid', 'Profiel']) {
+  for (const tab of ['Vandaag', 'Inzicht', 'Voeding', 'Beweging', 'Gezondheid', 'Profiel']) {
     await naarTab(pagina, tab)
+
+    /* GEEN GEKLEURD TEKEN, NERGENS
+     *
+     * De huisregel is geen emoji: elk toestel tekent ze anders, en naast een
+     * lijntekening staat op een iPhone ineens een gekleurd fototoestel. Die
+     * regel lekte, en hij lekte op de enige plek die geen enkele proef bekeek —
+     * het vergrootglas in het zoekveld van Voeding bleef staan toen dat in het
+     * invoervel al vervangen was.
+     *
+     * Daarom hier, in de lus over alle zes de tabbladen, en niet op één scherm.
+     * `\p{Emoji_Presentation}` is precies de goede zeef: hij vangt de tekens die
+     * standaard in kleur getekend worden en laat de typografische met rust —
+     * ＋, ↺, ›, ★ en ✓ horen hier wél thuis en zijn overal zwart. */
+    const gekleurd = await pagina.evaluate(() =>
+      [...new Set(document.body.innerText.match(/\p{Emoji_Presentation}/gu) ?? [])])
+    if (gekleurd.length) {
+      throw new Error(`${tab}: ${gekleurd.join(' ')} staat op het scherm — de huisregel is getekend`)
+    }
+
     const uit = await pagina.evaluate(() => {
       const wegwijzers = [...document.querySelectorAll('.eyebrow svg')]
       return {
