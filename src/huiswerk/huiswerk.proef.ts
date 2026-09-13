@@ -318,13 +318,26 @@ describe('het herhalen, waar de klacht over ging', () => {
 
   it('noemt rust geen beheersing zolang de doosjes nog laag staan', () => {
     /* Na één goede ronde wacht elke som al een dag, maar beheerst is hij niet.
-       Het scherm hangt hierop: 🏅 "dit beheers je" of 🌱 "je hebt ze gehad". */
+       Het scherm hangt hierop: 🏅 "dit beheers je" of 🌱 "je hebt ze gehad".
+       Hier zonder sjabloon, want die houdt de rust juist tegen — zie hieronder. */
+    const vaste = delen.filter((k) => !('gen' in k))
     const pr = vers()
-    for (const k of delen) pr.cards[k.id] = { box: 2, ok: 1, wrong: 0, last: KLOK }
-    const uit = kiesVolgende(delen, pr, [], KLOK + 3600000, t0)
+    for (const k of vaste) pr.cards[k.id] = { box: 2, ok: 1, wrong: 0, last: KLOK }
+    const uit = kiesVolgende(vaste, pr, [], KLOK + 3600000, t0)
     expect(uit.rust).toBe(true)
     expect(uit.allesBeheerst).toBe(false)
     expect(uit.terugOm).toBe(KLOK + 86400000)
+  })
+
+  it('gaat met een sjabloon door zolang de stof nog niet beheerst is', () => {
+    /* Een sjabloon geeft verse getallen, dus nooit dezelfde vraag. Stoppen
+       omdat de wachttijd nog loopt zou hier oefenstof weggooien die het kind
+       nog nodig heeft. */
+    const pr = vers()
+    for (const k of delen) pr.cards[k.id] = { box: 2, ok: 1, wrong: 0, last: KLOK }
+    const uit = kiesVolgende(delen, pr, [], KLOK + 3600000, t0)
+    expect(uit.rust).toBe(false)
+    expect(uit.kaart && 'gen' in uit.kaart).toBe(true)
   })
 
   it('gaat wel door als het kind of een toets erom vraagt', () => {

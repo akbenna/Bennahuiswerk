@@ -213,6 +213,12 @@ const aanDeBeurt = (prog: Voortgang, k: Kaart, nu: number): boolean => {
  * net geweest, dan wint een sjabloon: die levert verse getallen en dus een
  * vraag die het kind nog niet gezien heeft. Herhalen mag, maar niet als er iets
  * nieuws naast ligt.
+ *
+ * **En een sjabloon houdt de rust tegen zolang de stof nog niet zit.** De klacht
+ * ging over dezelfde vráág, niet over hetzelfde onderwerp. Een sjabloon geeft
+ * nooit dezelfde vraag, dus er is geen reden om te stoppen terwijl het kind de
+ * methode nog aan het leren is. Zodra alles wél beheerst is telt dat niet meer:
+ * dan is doorgaan oefenen wat je al kunt, en daar is het rustscherm voor.
  */
 export function kiesVolgende(
   pool: readonly Kaart[], prog: Voortgang, recent: readonly string[], nu: number, t: Toeval,
@@ -225,7 +231,13 @@ export function kiesVolgende(
     (m, k) => Math.min(m, wanneerTerug(kaartStand(prog, k.id))), Infinity)
   const allesBeheerst = pool.every((k) => isBeheerst(prog, k.id))
   const open = pool.filter((k) => aanDeBeurt(prog, k, nu))
-  if (!open.length && !dwing) return { kaart: null, rust: true, allesBeheerst, terugOm }
+  if (!open.length && !dwing) {
+    const versen = pool.filter(isSjabloon)
+    if (versen.length && !allesBeheerst) {
+      return { kaart: t.pick(versen), rust: false, allesBeheerst, terugOm }
+    }
+    return { kaart: null, rust: true, allesBeheerst, terugOm }
+  }
 
   const bron = open.length ? open : pool
   const gezien = new Set(recent)

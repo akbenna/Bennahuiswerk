@@ -72,4 +72,43 @@ _Zij zit sinds september in 5 vwo. De 4-vwo-stof blijft meedoen als herhaling; v
 2. **Domein-labels**: elk onderwerp rolt op naar het officiële domein, zodat het rapport en de proeftoets herkenbaar het schoolcurriculum volgen.
 3. **Content per kind**: nieuwe oefenstof op het nieuwe niveau, met prioriteit op de gaten hierboven. Omdat elke som klopt moet zijn, doe ik dit in gecontroleerde batches (rekenkundig geverifieerd) en breid ik per kind verder uit — liever correct en stapsgewijs dan veel en slordig.
 
+---
+
+## Naschrift, september 2026: waarom de aanvulling sjablonen werd
+
+De aanpak hierboven — "content per kind, in gecontroleerde batches" — liep tegen
+een grens aan die pas zichtbaar werd toen de kinderen de app echt gingen
+gebruiken. Amine kreeg bij `Delen` tien keer achter elkaar dezelfde som, met
+"beheerst" erboven. De oorzaak was niet de planner maar de voorraad: dat
+onderwerp had drie vaste opgaven, één per niveau, en wie op een vast niveau
+oefent houdt er dan één over.
+
+Losse opgaven bijschrijven lost dat maar half op. Tien sommen zijn na twee
+rondjes ook uit het hoofd geleerd; dan oefent een kind zijn geheugen in plaats
+van de methode. Voor alles wat uit te rekenen valt is een sjabloon daarom het
+betere antwoord: die trekt bij elke beurt nieuwe getallen en raakt niet op. Wat
+overblijft — spelling, woordenschat, lidwoorden, begrippen — kan dat niet met
+getallen, maar wel met een lijst die met de hand is nagelopen: één sjabloon,
+zestien woorden, en een Leitner-kaart die over de regel gaat en niet over één
+woord.
+
+`gegevens/sjablonen-extra.ts` doet dat voor negenentachtig onderwerpen, verdeeld
+over de vier kinderen en gekozen op de gaten die hierboven staan. Het aantal
+onderwerpen met een onuitputtelijke voorraad ging daarmee van vijftig naar
+honderdeenendertig, van de tweehonderdzesenzeventig die de app dit schooljaar
+aanbiedt. Bij Amine ging `Delen` van één herhaalde vraag naar zeventien
+verschillende in twintig beurten.
+
+De rekenkundige sjablonen worden bij elke proefdraai nagerekend, en wel uit de
+getallen die in de vráág staan — dus uit wat het kind leest, niet uit dezelfde
+variabele die de som ook al maakte. De taalsjablonen krijgen de controles die er
+wél zijn: een antwoord dat tussen de opties staat, een afleider die echt
+verschilt, geen dubbele regels. De betekenis zelf is met de hand nagelopen; dat
+kan een proef niet overnemen.
+
+Wat hiermee niet is opgelost: de zaakvakken. Aardrijkskunde, geschiedenis en
+biologie hebben bij Wassima en Amaani nog tientallen onderwerpen met twee of
+drie vragen, en daar helpt geen sjabloon — dat is schrijfwerk, per onderwerp,
+met een bron ernaast.
+
 _Bronnen: SLO referentieniveaus rekenen 1F/1S; SLO tussendoelen/leerlijnen rekenen PO; doorstroomtoets/IEP-onderdelen; examenprogramma & syllabus wiskunde A vwo (examenblad.nl); SLO handreikingen natuurkunde en scheikunde havo/vwo._
