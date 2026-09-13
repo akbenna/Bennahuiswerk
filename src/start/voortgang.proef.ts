@@ -99,22 +99,26 @@ describe('wanneer er niets te melden valt', () => {
   })
 })
 
-describe('de Academie telt drie cursussen bij elkaar', () => {
-  it('telt de afgeronde lessen en de oefendagen over Kompas, Verbind en Podium', () => {
+describe('de drie cursussen van de Academie', () => {
+  it('houdt elke cursus bij zijn eigen tegel', () => {
     zet('kompas_v1', { done: { 0: true, 1: true, 2: false }, oefdagen: ['2026-08-20', '2026-08-21'] })
-    zet('verbind_v2', { done: { 0: true }, oefdagen: ['2026-08-21', '2026-08-24'] })
-    zet('podium_v1', { done: {}, oefdagen: [] })
-    const v = voortgangVan('academie', PAPA)
-    expect(cel(v!.cellen, 'Lessen af')).toBe(3)
-    /* Drie unieke dagen en niet vier: op 21 augustus is er aan twee cursussen
-       gewerkt, en dat is één oefendag. */
-    expect(cel(v!.cellen, 'Oefendagen')).toBe(3)
+    zet('verbind_v2', { done: { 0: true }, oefdagen: ['2026-08-24'] })
+    const k = voortgangVan('kompas', PAPA)
+    /* Twee en niet drie: les 2 staat op `false` — afgevinkt en weer uitgevinkt
+       is niet hetzelfde als nooit begonnen, maar telt ook niet als gedaan. */
+    expect(cel(k!.cellen, 'Lessen af')).toBe(2)
+    expect(k!.laatst).toBe('2026-08-21')
+
+    const v = voortgangVan('verbind', PAPA)
+    expect(cel(v!.cellen, 'Lessen af')).toBe(1)
     expect(v!.laatst).toBe('2026-08-24')
   })
 
-  it('zwijgt als er nog aan geen van de drie iets gedaan is', () => {
-    zet('kompas_v1', { done: {}, oefdagen: [] })
-    expect(voortgangVan('academie', PAPA)).toBeNull()
+  it('zwijgt over een cursus waar nog niets in staat', () => {
+    zet('kompas_v1', { done: { 0: true }, oefdagen: ['2026-08-20'] })
+    zet('podium_v1', { done: {}, oefdagen: [] })
+    expect(voortgangVan('kompas', PAPA)).not.toBeNull()
+    expect(voortgangVan('podium', PAPA)).toBeNull()
   })
 })
 

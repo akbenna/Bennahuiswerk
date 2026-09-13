@@ -67,6 +67,24 @@ const euroTekst = (n: number): string =>
 
 /* -------------------------------------------------------- per app ---------- */
 
+/** Wat een cursus van de Academie bewaart. `done` is per lesnummer een ja of
+ *  nee — een afgevinkte les kan ook weer uitgevinkt worden, dus tellen we de
+ *  waarden die waar zijn en niet de sleutels. */
+const cursus: Uitlezer = (d) => {
+  const dagen = lijst(veld(d, 'oefdagen')).map(tekst).filter((x): x is string => x != null).sort()
+  return [{
+    wie: 'Iedereen',
+    laatst: dagen.length ? (dagen[dagen.length - 1] ?? null) : null,
+    euro: null,
+    regels: [
+      ['Lessen af', waarden(veld(d, 'done')).filter(Boolean).length],
+      ['Oefendagen', dagen.length],
+      ['Kaarten', aantal(veld(d, 'kaarten'))],
+    ],
+  }]
+}
+
+
 export const UITLEZERS: Readonly<Record<string, Uitlezer>> = {
   /* Huiswerk. Deze uitlezer draait op wat er op het toestel zelf staat en niet
      op de centrale opslag: de huiswerkapp heeft nog zijn eigen inlog en zet daar
@@ -92,28 +110,16 @@ export const UITLEZERS: Readonly<Record<string, Uitlezer>> = {
     })
   },
 
-  /* De Academie is niet één opslag maar drie — Kompas, Verbind en Podium hebben
-     elk hun eigen sleutel. Ze komen hier binnen als `delen`. De cursussen kennen
-     geen profielen, dus wat er staat is wat er op dit toestel gedaan is. */
-  academie(d) {
-    const delen = lijst(veld(d, 'delen'))
-    const af = delen.reduce<number>(
-      (n, c) => n + waarden(veld(c, 'done')).filter(Boolean).length, 0)
-    const kaarten = delen.reduce<number>((n, c) => n + aantal(veld(c, 'kaarten')), 0)
-    const dagen = new Set(delen.flatMap(
-      (c) => lijst(veld(c, 'oefdagen')).map(tekst).filter((x): x is string => x != null)))
-    const gesorteerd = [...dagen].sort()
-    return [{
-      wie: 'Iedereen',
-      laatst: gesorteerd.length ? (gesorteerd[gesorteerd.length - 1] ?? null) : null,
-      euro: null,
-      regels: [
-        ['Lessen af', af],
-        ['Oefendagen', dagen.size],
-        ['Kaarten', kaarten],
-      ],
-    }]
-  },
+  /* De drie cursussen — Kompas, Verbind en Podium — zijn gebouwd uit hetzelfde
+     sjabloon en bewaren dus hetzelfde: welke lessen af zijn, op welke dagen er
+     geoefend is, en hoeveel kaarten er open staan. Eén uitlezer voor alle drie;
+     hieronder staat hij drie keer onder de naam van zijn tegel.
+
+     Ze kennen geen profielen, dus wat er staat is wat er op dit toestel gedaan
+     is — vandaar 'Iedereen'. */
+  kompas: cursus,
+  verbind: cursus,
+  podium: cursus,
 
   /* Islam leren: profielen in een lijst, voortgang per profiel-id. */
   bidaya(d) {

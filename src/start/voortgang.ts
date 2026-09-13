@@ -34,16 +34,19 @@ import type { AppTegel } from './apps'
 
 /** Waar elke app zijn stand neerzet. BennaHealth staat er niet bij: die bewaart
  *  alles centraal achter een eigen aanmelding en laat hier niets achter. */
-const SLEUTELS: Readonly<Record<string, readonly string[]>> = {
-  huiswerk: ['oefenapp_v1'],
-  bidaya: ['bidaya.v1'],
-  lisan: ['lisan.v1'],
-  bunyan: ['bunyan.v1'],
-  raha: ['raha.v1'],
-  sanad: ['sanad.v2'],
-  rasikh: ['rasikh.v1'],
-  /* Drie cursussen, drie sleutels; ze komen als `delen` binnen bij de uitlezer. */
-  academie: ['kompas_v1', 'verbind_v2', 'podium_v1'],
+const SLEUTELS: Readonly<Record<string, string>> = {
+  huiswerk: 'oefenapp_v1',
+  bidaya: 'bidaya.v1',
+  lisan: 'lisan.v1',
+  bunyan: 'bunyan.v1',
+  raha: 'raha.v1',
+  sanad: 'sanad.v2',
+  rasikh: 'rasikh.v1',
+  /* De drie cursussen van de Academie staan elk als eigen tegel op het portaal
+     en hebben elk hun eigen sleutel. */
+  kompas: 'kompas_v1',
+  verbind: 'verbind_v2',
+  podium: 'podium_v1',
 }
 
 export interface Voortgang {
@@ -54,21 +57,15 @@ export interface Voortgang {
   wie: string | null
 }
 
-const leesSleutel = (sleutel: string): unknown => {
+/** De opslag van één app, of niets als hij er niet staat of stuk is. */
+function lokaal(app: string): unknown {
+  const sleutel = SLEUTELS[app]
+  if (!sleutel) return null
   try {
     return JSON.parse(localStorage.getItem(sleutel) ?? 'null')
   } catch {
     return null
   }
-}
-
-/** De opslag van één app, in de vorm die zijn uitlezer verwacht. */
-function lokaal(app: string): unknown {
-  const sleutels = SLEUTELS[app]
-  if (!sleutels?.length) return null
-  if (sleutels.length === 1) return leesSleutel(sleutels[0] as string)
-  const delen = sleutels.map(leesSleutel).filter((d) => d != null)
-  return delen.length ? { delen } : null
 }
 
 /** Zegt deze cel iets, of staat er alleen een nul of een streepje? */
