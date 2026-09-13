@@ -11,7 +11,7 @@ import type { ReactNode } from 'react'
 import type { Toestand } from '../toestand'
 import type { Profiel, Stand } from '../opslag'
 import { STANDAARDPIN, leeg } from '../opslag'
-import { SPOORNAAM, bouwPad } from '../leerplan'
+import { bouwPad, spoorHerkomst, SPOORNAAM } from '../leerplan'
 import { vandaag } from '../datum'
 import type { Vocalisatie } from '../tekst'
 import { Cockpit } from './Cockpit'
@@ -118,7 +118,12 @@ function OuderOpen(
                     <b>{x.naam}</b>
                     <div className="klein muted">
                       {x.leeftijd} jaar · spoor {x.spoor} — {SPOORNAAM[x.spoor]}
-                      {x.spoorHandmatig ? ' (handmatig)' : ''}
+                      {/* Waar het spoor vandaan komt hoort erbij: "spoor 2"
+                          zonder herkomst is niet na te kijken, en sinds de
+                          niveaubepaling het spoor zet zijn er drie bronnen. */}
+                      {{ hand: ' (handmatig)', toets: ' (uit de niveaubepaling)',
+                        leeftijd: ' (op leeftijd)' }[
+                        spoorHerkomst(x.spoorHandmatig, x.leeftijd, x.jaar !== null)]}
                     </div>
                   </div>
                 </div>

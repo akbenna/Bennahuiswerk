@@ -18,13 +18,14 @@ import { KORAN100 } from './gegevens/koran'
 import { BLOKKEN, JAAR, METING, METINGNIVEAUS, SESSIE, SESSIEMINUTEN } from './gegevens/jaarplan'
 import { beoordeel, interval, ophaalbaarheid } from './fsrs'
 import type { Kaartstaat, Oordeel } from './fsrs'
+import type { Vocalisatie } from './tekst'
 import {
   AMBIGU, antwoordKlopt, arIn, letterVormen, normAr, normNl, ontdoeTashkil, vocaliseer,
 } from './tekst'
-import type { Vocalisatie } from './tekst'
 import {
-  SPOORLEEFTIJD, SPOORNAAM, alleKaartIds, bouwPad, herhalingsRij, kaartId,
-  spoorBijLeeftijd,
+  alleKaartIds, bouwPad, bovengrensVoor, herhalingsRij, kaartId,
+  metingBepaaltSpoor, spoorBijLeeftijd, spoorHerkomst, SPOORLEEFTIJD, SPOORNAAM,
+  spoorNaMeting,
 } from './leerplan'
 import { leeg, samenvoegen } from './opslag'
 import { bron } from './toeval'
@@ -288,6 +289,75 @@ describe('het leerpad', () => {
     }
     expect(Object.keys(SPOORNAAM)).toEqual(['1', '2', '3', '4'])
     expect(Object.keys(SPOORLEEFTIJD)).toEqual(['1', '2', '3', '4'])
+  })
+})
+
+/**
+ * HET SPOOR NA DE NIVEAUBEPALING
+ *
+ * De meting zette tot nu toe alleen de startweek van het jaarplan; het spoor
+ * bleef staan op de gok uit de leeftijd. Dat is verkeerd om — hoe ver iemand met
+ * Arabisch is heeft niets met zijn leeftijd te maken — maar het is ook niet
+ * zomaar om te draaien: het spoor draagt náást de zwaarte van de stof ook hoe de
+ * app met je omgaat. Vanaf spoor 3 beoordeelt iemand zijn eigen antwoord en
+ * vallen de punten weg; spoor 4 is het volwassen spoor.
+ *
+ * Vandaar de twee regels die hier vastliggen: de meting kiest de stof, de
+ * leeftijd bepaalt hoe ver dat mag gaan.
+ */
+describe('het spoor na de niveaubepaling', () => {
+  it('laat een kind van acht dat vlot leest niet op spoor 1 staan', () => {
+    /* Dit is het geval waar het om begonnen was. Op leeftijd zou hij spoor 1
+       krijgen; met vier van de vier op de meting hoort hij zwaardere woorden. */
+    expect(spoorBijLeeftijd(8)).toBe(1)
+    expect(spoorNaMeting(8, 4)).toBe(2)
+  })
+
+  it('laat een kind van veertien dat nooit Arabisch had bij de letters beginnen', () => {
+    /* En dit is het omgekeerde geval. Op leeftijd zat hij op spoor 3, met
+       zelfbeoordeling en al, terwijl hij de alif nog niet kent. */
+    expect(spoorBijLeeftijd(14)).toBe(3)
+    expect(spoorNaMeting(14, 1)).toBe(1)
+  })
+
+  /* De grens die niet overschreden mag worden. Zelfbeoordeling vraagt dat je
+     kunt inschatten of je het goed had; dat kan een kind van acht niet
+     betrouwbaar, hoe vlot het ook leest. */
+  it('tilt een kind onder de dertien nooit over de zelfbeoordeling heen', () => {
+    for (const leeftijd of [4, 8, 11, 12]) {
+      for (const niveau of [1, 2, 3, 4]) {
+        expect(spoorNaMeting(leeftijd, niveau), `${leeftijd}/${niveau}`).toBeLessThanOrEqual(2)
+      }
+    }
+  })
+
+  it('houdt een volwassene op het volwassen spoor, ook als beginner', () => {
+    for (const niveau of [1, 2, 3, 4]) {
+      expect(spoorNaMeting(40, niveau), String(niveau)).toBe(4)
+      expect(spoorNaMeting(16, niveau), String(niveau)).toBe(4)
+    }
+    expect(metingBepaaltSpoor(40)).toBe(false)
+    expect(metingBepaaltSpoor(12)).toBe(true)
+  })
+
+  it('loopt op met de uitslag en nooit eroverheen', () => {
+    /* Binnen de ruimte die de leeftijd laat, is een betere uitslag nooit een
+       lager spoor. */
+    for (const leeftijd of [8, 12, 14, 15]) {
+      const rij = [1, 2, 3, 4].map((n) => spoorNaMeting(leeftijd, n))
+      expect([...rij].sort(), String(leeftijd)).toEqual(rij)
+      expect(Math.max(...rij), String(leeftijd)).toBeLessThanOrEqual(bovengrensVoor(leeftijd))
+    }
+  })
+
+  it('zegt waar het spoor vandaan komt', () => {
+    /* Het ouderscherm zet dit erbij; zonder herkomst is "spoor 2" niet na te
+       kijken. Een volwassene houdt "op leeftijd", ook met een meting achter de
+       rug — bij hem heeft die er immers niet aan gezeten. */
+    expect(spoorHerkomst(true, 8, true)).toBe('hand')
+    expect(spoorHerkomst(false, 8, true)).toBe('toets')
+    expect(spoorHerkomst(false, 8, false)).toBe('leeftijd')
+    expect(spoorHerkomst(false, 40, true)).toBe('leeftijd')
   })
 })
 

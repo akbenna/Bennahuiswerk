@@ -10,7 +10,7 @@ import { useState } from 'react'
 import type { ReactNode } from 'react'
 import type { Profiel } from '../opslag'
 import { dagdoelVan } from '../opslag'
-import { SPOORNAAM, spoorBijLeeftijd } from '../leerplan'
+import { spoorBijLeeftijd, SPOORNAAM, spoorNaMeting } from '../leerplan'
 import type { Spoor } from '../gegevens/soorten'
 
 const MIN_LEEFTIJD = 4
@@ -31,10 +31,20 @@ export function Bewerken(
   const l = parseInt(lft, 10)
   const geldig = !!naam.trim() && l >= MIN_LEEFTIJD && l <= MAX_LEEFTIJD
 
+  /** Wat de app zelf zou kiezen bij deze leeftijd: de uitslag van de
+   *  niveaubepaling als die er is, anders de gok op leeftijd. */
+  const autoSpoor = (leeftijd: number): Spoor =>
+    (p.jaar ? spoorNaMeting(leeftijd, p.jaar.niveau) : spoorBijLeeftijd(leeftijd))
+
   const opslaan = (): void => {
     if (!geldig) return
     const handmatig = spoor !== 'auto'
-    const nieuwSpoor = (handmatig ? parseInt(spoor, 10) : spoorBijLeeftijd(l)) as Spoor
+    /* "Automatisch" betekent: laat de app het bepalen. Is de niveaubepaling
+       gedaan, dan is dát wat de app bepaalt — anders zou de ouder die uitslag
+       hier ongemerkt terugdraaien naar een gok op leeftijd. */
+    const nieuwSpoor = (handmatig
+      ? parseInt(spoor, 10)
+      : autoSpoor(l)) as Spoor
     bewaar({
       ...p,
       naam: naam.trim(),
@@ -73,7 +83,8 @@ export function Bewerken(
           className="veld" id="bpSpoor" value={spoor} onChange={(e) => zetSpoor(e.target.value)}
         >
           <option value="auto">
-            Automatisch op leeftijd (nu spoor {spoorBijLeeftijd(geldig ? l : p.leeftijd)})
+            {p.jaar ? 'Uit de niveaubepaling' : 'Automatisch op leeftijd'}
+            {' '}(nu spoor {autoSpoor(geldig ? l : p.leeftijd)})
           </option>
           {([1, 2, 3, 4] as Spoor[]).map((s) => (
             <option value={s} key={s}>Spoor {s} — {SPOORNAAM[s]}</option>
