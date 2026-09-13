@@ -729,6 +729,38 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
     if (!(await aanbod.count())) {
       throw new Error(`${naam}: geen aanbod om een zin te laten herkennen`)
     }
+    /* DE DRIE MANIEREN STAAN BOVEN ELKAAR
+     *
+     * Zoeken, een foto maken en het opschrijven zijn drie manieren om hetzelfde
+     * te doen. Twee ervan zaten in de kop van het beschrijfvak, onder de vouw —
+     * dus wie een bord voor zich had staan moest eerst langs alle
+     * zoekresultaten scrollen om bij de camera te komen.
+     *
+     * Dit is een volgorde en dus met een grep niet te bewaken: de knoppen
+     * verplaatsen verandert hun tekst niet. Vandaar op de gerenderde pagina, en
+     * met de hoogte en niet met de DOM-volgorde — een knop kan in de opmaak
+     * best vóór het zoekveld staan en er op het scherm onder belanden. */
+    const hoogte = async (kies) => {
+      const doos = await pagina.locator(kies).first().boundingBox()
+      if (!doos) throw new Error(`${naam}: ${kies} staat niet op het scherm`)
+      return doos.y
+    }
+    const yBalk = await hoogte('.venster .zoekvak')
+    for (const woord of ['Foto', 'Beschrijven']) {
+      const knop = pagina.locator('.venster .ingang', { hasText: woord }).first()
+      if (!(await knop.count())) throw new Error(`${naam}: er is geen ingang "${woord}"`)
+      const doos = await knop.boundingBox()
+      if (!doos || doos.y >= yBalk) {
+        throw new Error(`${naam}: "${woord}" staat niet bóven het zoekveld ` +
+                        `(${doos ? Math.round(doos.y) : '?'} tegenover ${Math.round(yBalk)})`)
+      }
+    }
+    /* En de camera moet er echt een zijn. Een knop met het woord "Foto" die geen
+       bestandsveld opent doet niets. */
+    const camera = await pagina.locator('.venster .ingang input[type=file]').count()
+    if (camera !== 1) throw new Error(`${naam}: ${camera} fotovelden bij de ingangen, verwacht 1`)
+    console.log(`${''.padEnd(26)} ingangen boven de balk: Foto, Beschrijven`)
+
     /* Het hoort vóór de zoekresultaten te staan. Eronder zie je het pas als je
        de verkeerde weg al bent ingeslagen. */
     const eerste = pagina.locator('.venster .hoofdknop, .venster .lijst, .venster .kaart').first()
@@ -1011,7 +1043,10 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
      die gelopen wordt en die het moment meteen goed zet. */
   await pagina.getByTitle('Iets toevoegen aan je diner').click()
   await pagina.waitForSelector('.venster', { timeout: 5000 })
-  await pagina.getByRole('button', { name: /Tekst/ }).click()
+  /* Via de ingang bovenaan het vel. Die knop heette "Tekst" en zat in de kop van
+     het beschrijfvak, onder de vouw; hij staat nu boven het zoekveld. De proef
+     loopt de weg die gelopen wordt. */
+  await pagina.getByRole('button', { name: 'Beschrijven' }).click()
   await pagina.locator('.venster textarea').fill('een bord tajine met kip en een appel')
   await pagina.getByRole('button', { name: 'Herkennen' }).click()
   await pagina.waitForSelector('.venster .kaart', { timeout: 8000 })

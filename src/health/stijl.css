@@ -544,9 +544,22 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
 /* ------------------------------------------------------------ zoekvak ---- */
 /* Op het voedingsscherm is zoeken de handeling. Hij stond als een gewoon
    invulveld tussen twee andere kaarten; nu is hij het enige veld met gewicht. */
+/* De twee andere manieren, boven de balk waarin je anders zou gaan typen.
+   Ze staan naast elkaar en even breed: het zijn twee gelijkwaardige ingangen en
+   niet een knop met een alternatief eronder. */
+.ingangen{display:flex;gap:8px}
+.ingang{flex:1 1 0;display:flex;align-items:center;justify-content:center;gap:8px;
+  border:1px solid var(--lijn);border-radius:14px;background:var(--vlak);
+  padding:11px 10px;cursor:pointer;color:var(--ink2);font-size:.88rem;font-weight:560;
+  transition:border-color .18s,transform .12s}
+.ingang:hover{border-color:var(--k);color:var(--k)}
+.ingang:active{transform:scale(.985)}
+.ingang>svg{color:var(--grijs);flex:0 0 auto}
+.ingang:hover>svg{color:var(--k)}
+
 .zoekvak{position:relative;margin-top:10px}
-.zoekvak>span{position:absolute;left:14px;top:50%;transform:translateY(-50%);
-  font-size:1.05rem;line-height:1;pointer-events:none;opacity:.75}
+.zoekvak>span{position:absolute;left:13px;top:50%;transform:translateY(-50%);
+  display:flex;line-height:1;pointer-events:none;color:var(--dim)}
 .zoekvak>input{padding:14px 14px 14px 42px;font-size:1rem;border-radius:15px}
 
 /* ------------------------------------------------------- het invoervel ---- */
