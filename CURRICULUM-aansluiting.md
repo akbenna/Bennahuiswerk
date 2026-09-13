@@ -1,6 +1,6 @@
 # Curriculum-aansluiting BennaHub
 
-_Opgesteld juli 2026. Doel: de oefenstof laten aansluiten op de gangbare Nederlandse leerlijnen én op het niveau waar de kinderen komend schooljaar (vanaf september 2026) op zitten. De landelijke domeinindeling is leidend; de oefenvragen die ik toevoeg zijn origineel en zelf opgesteld op basis van die openbare domeinstructuur — geen materiaal van uitgevers of Junior Einstein overgenomen._
+_Opgesteld juli 2026, bijgewerkt september 2026 voor schooljaar **2026/27**. Doel: de oefenstof laten aansluiten op de gangbare Nederlandse leerlijnen én op de klas waar elk kind nu werkelijk in zit. De landelijke domeinindeling is leidend; de oefenvragen die ik toevoeg zijn origineel en zelf opgesteld op basis van die openbare domeinstructuur — geen materiaal van uitgevers of Junior Einstein overgenomen._
 
 ## Uitgangspunt: hoe Nederland de leerlijnen indeelt
 
@@ -8,33 +8,47 @@ Voor het basisonderwijs gelden de **referentieniveaus** (1F als fundamenteel, 1S
 
 De app is al grotendeels langs deze lijnen opgebouwd. De aansluiting bestaat dus uit drie dingen: (1) de niveaulabels gelijkzetten met het nieuwe schooljaar, (2) de onderwerpen herkenbaar onder de officiële domeinen hangen, en (3) de resterende gaten vullen met oefenstof op het juiste niveau.
 
+## Hoe het schooljaar doorwerkt
+
+De opgaven in `seed.ts` dragen hun leerjaar ten opzichte van het niveau waarop ze zijn geschreven: geen `jaar` is "dit jaar", `jaar: 'next'` is de klas erna. Welke klas dat nú is, staat in `gegevens/schooljaar.ts` — één bestand dat elk jaar in augustus wordt bijgewerkt. Voor wie is overgegaan wordt de stof van "volgend jaar" de stof van nu; wat daar al stond blijft staan als herhaling, en dat is geen slordigheid: voor de doorstroomtoets en het eindexamen ís de stof van vorig jaar gewoon examenstof.
+
+Twee gevolgen die je moet kennen voordat je iets wijzigt. **Wassima doet 2 havo over** — bij haar schuift er niets, en nieuwe 3-havo-stof zou haar juist een jaar te ver vooruit zetten. En **de schakelaar "Volgend jaar" is dit schooljaar alleen bij haar zichtbaar**: bij de andere drie is die vooruitblik de stof van nu geworden, en de knop verbergt zichzelf als er niets achter zit.
+
+Nieuwe stof komt niet in `seed.ts` maar in `gegevens/schooljaar2627.ts`, met een eigen id-reeks (`nw26_*`). Beide lijsten zijn positioneel genummerd, dus opgaven ertussen schuiven koppelt elke Leitner-kaart los van zijn geschiedenis: nieuwe opgaven horen er áchteraan bij.
+
 ---
 
-## Selma — groep 6 (was groep 5)
+## Selma — groep 5 (dit schooljaar), groep 6 als volgende stap
 
-**Officiële leerlijn rekenen groep 6.** Getallen: rekenen tot en met 100.000, verder automatiseren van de tafels t/m 10, grotere vermenigvuldigingen en delingen (met rest). Verhoudingen: breuken (halven, kwarten, derden, vijfden, zesden, achtsten, tienden) plaatsen op de getallenlijn, vergelijken en eenvoudig vereenvoudigen; eerste stappen met verhoudingstabellen. Meten & Meetkunde: lengte/gewicht/inhoud met kommagetallen, tijd en kalender, oppervlakte via hokjes tellen. Verbanden: aflezen en invullen van tabellen en staafdiagrammen. Kommagetallen worden in groep 6 echt geïntroduceerd (geld en meten).
+_Zij is afgelopen zomer overgegaan naar groep 5. Het complete groep-5-blok dat hier als vooruitblik klaarstond, is daarmee haar hoofdaanbod geworden; het groep-4-werk blijft eronder staan als herhaling._
+
+**Officiële leerlijn rekenen groep 6 — waar ze volgend jaar naartoe werkt.** Getallen: rekenen tot en met 100.000, verder automatiseren van de tafels t/m 10, grotere vermenigvuldigingen en delingen (met rest). Verhoudingen: breuken (halven, kwarten, derden, vijfden, zesden, achtsten, tienden) plaatsen op de getallenlijn, vergelijken en eenvoudig vereenvoudigen; eerste stappen met verhoudingstabellen. Meten & Meetkunde: lengte/gewicht/inhoud met kommagetallen, tijd en kalender, oppervlakte via hokjes tellen. Verbanden: aflezen en invullen van tabellen en staafdiagrammen. Kommagetallen worden in groep 6 echt geïntroduceerd (geld en meten).
 
 **Taal groep 6.** Spelling breidt uit: open/gesloten lettergrepen, verkleinwoorden, samenstellingen, ei/ij en au/ou consolideren, begin werkwoordspelling (tegenwoordige tijd: stam, stam+t). Begrijpend lezen: hoofdgedachte, verwijswoorden, signaalwoorden, feit en mening op eenvoudig niveau.
 
-**Huidige dekking in de app.** Sterk voor groep 5; groep 6 zit deels als vooruitblik. **Gaten om te vullen:** getallen tot 100.000 (nu vooral tot 1000/10.000), breuken op de getallenlijn en vergelijken, kommagetallen bij geld en meten, delen met rest, verhoudingstabellen als eigen onderwerp, staafdiagram aflezen én zelf aanvullen.
+**Huidige dekking in de app.** Groep 5 staat er ruim op: rekenen ± 185 opgaven, taal ± 88, begrijpend lezen ± 53. Een handvol groep-6-onderwerpen (getallen tot 100.000, delen met rest, vermenigvuldigen met grotere getallen, oppervlakte via hokjes) staat daar tussen — die waren als vooruitblik geschreven en zijn met de jaarwissel meegeschoven. Ze blijven waar ze staan: uit de lijst halen zou elke `seed_*`-id erna verschuiven.
+
+**Gaten om te vullen:** begrijpend lezen blijft het dunst van de drie vakken. Open en gesloten lettergreep — dé spellingregel van groep 5 — stond er met twee opgaven op en is in september aangevuld tot acht.
 
 ---
 
-## Amine — groep 7 → groep 8, doorstroomtoets (IEP-stijl)
+## Amine — groep 8, doorstroomtoets (IEP-stijl)
 
-_Dit jaar rondt hij groep 7 af; na de zomer gaat hij naar groep 8, waar de doorstroomtoets wordt afgenomen. De schakelaar "Volgend jaar" toont alvast de groep-8-/brugklas-stof._
+_Hij zit sinds september in groep 8. De doorstroomtoets valt begin 2027. Zijn groep-7-stof blijft meedoen als herhaling — voor deze toets ís dat gewoon toetsstof._
 
 **De drie verplichte onderdelen.** *Rekenen*: de vier domeinen Getallen, Verhoudingen, Meten & Meetkunde, Verbanden, op 1F/1S-niveau (procenten, breuken, kommagetallen, schaal, oppervlakte/omtrek/inhoud, gemiddelde, grafieken). *Taalverzorging*: werkwoordspelling (tegenwoordige/verleden tijd, voltooid deelwoord — het lastige 't kofschip' en 'd/dt'), niet-werkwoordspelling (ei/ij, au/ou, s/z, d/t aan het eind), leestekens en hoofdletters. *Lezen*: leestechniek en woordenschat, begrijpen, interpreteren, evalueren, samenvatten en opzoeken.
 
 **Zijn detailrapport — zwakke punten:** samenvatten, woordenschat, opzoeken, werkwoordspelling. Die krijgen prioriteit.
 
-**Huidige dekking.** Goed uitgelijnd op de IEP-categorieën, inclusief langere leesteksten. **Gaten om te vullen:** meer werkwoordspelling met de voltooide tijd ('t kofschip', d/dt/tt), gerichte woordenschat-in-context, opzoekvragen (register/inhoudsopgave/woordenboek), en samenvatten met kernzin kiezen — precies zijn zwakke punten, met oplopende moeilijkheid.
+**Huidige dekking.** Ruim vierhonderd opgaven, goed uitgelijnd op de IEP-categorieën. Zijn vier zwakke punten staan er inmiddels stevig op: werkwoordspelling ± 43, voltooid deelwoord ± 19, samenvatten ± 12, opzoeken ± 16, woordenschat in context ± 8.
+
+**Gaten om te vullen:** de dunne IEP-leescategorieën — hoofdgedachte, verwijswoorden, soorten teksten en interpreteren stonden op vier, vier, twee en één, en zijn in september aangevuld. Het voltooid deelwoord had zes opgaven op niveau 1 en zeven op niveau 3 en niets ertussen; die middelste trede is gevuld met werkwoorden die al een voorvoegsel hebben (ver-, be-, ont-, her-) en dus géén ge- krijgen.
 
 ---
 
 ## Wassima — 2 havo → 3 havo
 
-De app houdt via de leerjaar-schakelaar beide niveaus vast: **2 havo als "dit jaar"** (dat ze net afrondt) en **3 havo als "volgend jaar"** (waar ze na de zomer naartoe gaat) — ze kan op beide oefenen zonder dat er iets omgezet hoeft te worden.
+**Zij doet 2 havo over.** Van de vier kinderen is zij de enige die niet opschuift, en dat is precies het soort detail dat een volgende hand "gelijktrekt" met de rest omdat het eruitziet als een vergeten regel. Dan ziet een kind dat net is blijven zitten stof die het nooit gehad heeft. De app houdt via de leerjaar-schakelaar beide niveaus vast: **2 havo als "dit jaar"** en **3 havo als vooruitblik** — zij is dit schooljaar de enige bij wie die knop nog verschijnt.
 
 **Referentie/kerndoelen onderbouw havo.** Wiskunde: rekenen met negatieve getallen, breuken en procenten (2F→3F), verhoudingen en schaal, lineaire verbanden en grafieken, oppervlakte/omtrek/inhoud, Pythagoras, eerste stappen algebra (herleiden, haakjes, vergelijkingen). Natuurkunde: grootheden en eenheden, krachten, snelheid, energie, elektriciteit, licht en geluid. Talen en zaakvakken op onderbouwniveau.
 
@@ -42,9 +56,9 @@ De app houdt via de leerjaar-schakelaar beide niveaus vast: **2 havo als "dit ja
 
 ---
 
-## Amaani — 4 vwo → 5 vwo
+## Amaani — 5 vwo
 
-_Dit jaar rondt ze 4 vwo af; na de zomer gaat ze naar 5 vwo. De schakelaar "Volgend jaar" toont alvast de 5-vwo-stof._
+_Zij zit sinds september in 5 vwo. De 4-vwo-stof blijft meedoen als herhaling; voor het eindexamen is dat examenstof._
 
 **Examenprogramma's, kerndomeinen.** *Wiskunde A*: domein B algebra en tellen (rekenregels, machten, procenten/groeifactoren, tellen), domein C verbanden (formules, grafieken, exponentieel en lineair), domein D verandering (toe-/afname, hellingen), domein E **statistiek en kansrekening** (in vwo A het zwaartepunt: centrummaten, spreiding, relatieve frequentie, kansen met en/of-regel, met/zonder terugleggen, verwachtingswaarde). *Natuurkunde*: samengestelde vraagstukken (kinematica, krachten, energie en vermogen, druk, elektriciteit). *Scheikunde*: rekenen aan reacties, molverhoudingen, reactievergelijkingen kloppend maken, reactiesnelheid.
 
@@ -54,7 +68,7 @@ _Dit jaar rondt ze 4 vwo af; na de zomer gaat ze naar 5 vwo. De schakelaar "Volg
 
 ## Aanpak in de app
 
-1. **Profielniveaus** per kind ingesteld als "dit jaar (net afgerond) → volgend jaar (na de zomer)": Selma groep 4 → groep 5, Amine groep 7 → groep 8, Wassima 2 havo → 3 havo, Amaani 4 vwo → 5 vwo. De leerjaar-schakelaar toont per kind het huidige niveau en een vooruitblik naar het volgende.
+1. **Profielniveaus** staan in `gegevens/schooljaar.ts` en gelden voor 2026/27: Selma groep 5, Amine groep 8, Amaani 5 vwo, en Wassima 2 havo (overdoen). Eén bestand bijwerken in augustus, meer niet — het migratieverslag `PROFIELEN_OUD` blijft staan waar het staat, want dat is het bewijs dat de overzetting uit de oude pagina klopte.
 2. **Domein-labels**: elk onderwerp rolt op naar het officiële domein, zodat het rapport en de proeftoets herkenbaar het schoolcurriculum volgen.
 3. **Content per kind**: nieuwe oefenstof op het nieuwe niveau, met prioriteit op de gaten hierboven. Omdat elke som klopt moet zijn, doe ik dit in gecontroleerde batches (rekenkundig geverifieerd) en breid ik per kind verder uit — liever correct en stapsgewijs dan veel en slordig.
 

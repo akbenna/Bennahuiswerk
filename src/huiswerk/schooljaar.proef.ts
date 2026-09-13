@@ -19,6 +19,8 @@ import { PROFIELEN, PROFIELEN_OUD } from './gegevens/profielen'
 import { KLASSEN, SCHOOLJAAR, jaarNu, naarDitJaar } from './gegevens/schooljaar'
 import { NIEUW2627 } from './gegevens/schooljaar2627'
 import { SEED } from './gegevens/seed'
+import { sjablonen } from './gegevens/sjablonen'
+import type { Kaart } from './gegevens/soorten'
 
 describe('wie er dit schooljaar in welke klas zit', () => {
   it('is ingevuld voor 2026/27', () => {
@@ -162,6 +164,68 @@ describe('de nieuwe opgaven voor 2026/27', () => {
 })
 
 /**
+ * DE MIDDELSTE TREDE
+ *
+ * Het niveau van een kind klimt vanzelf: drie keer goed en `autoLvl` gaat een
+ * stap omhoog. `volgendeKaart` zoekt dan de opgave die het dichtst bij dat
+ * doelniveau ligt — en "het dichtst bij" is geen "precies". Staat er bij een
+ * onderwerp wel iets op 1 en op 3 maar niets op 2, dan valt de app daar
+ * zwijgend op terug, en springt het kind van de makkelijkste variant naar de
+ * moeilijkste zonder de stap ertussen.
+ *
+ * Dat gebeurde bij het voltooid deelwoord van Amine: zes opgaven op 1, zeven op
+ * 3, niets op 2 — dus van "gewerkt" rechtstreeks naar "verhuisd". En bij de
+ * verwachtingswaarde van Amaani: van een zuivere dobbelsteen rechtstreeks naar
+ * een spel met inleg.
+ *
+ * Het is geen fout die omvalt; hij is alleen te zien als je telt. Vandaar deze
+ * proef.
+ */
+describe('elk onderwerp heeft zijn middelste trede', () => {
+  /* De sjablonen dragen hun niveau op het sjabloon zelf, dus voor deze telling
+     hoeft er geen som uit te rollen: elke bron van toeval voldoet. */
+  const nep = { ri: (a: number) => a, pick: <T,>(x: readonly T[]) => x[0] as T,
+    shuffle: <T,>(x: readonly T[]) => [...x] }
+  const alles = naarDitJaar([...SEED, ...NIEUW2627, ...sjablonen(nep)] as Kaart[])
+    .filter((e) => (e.jaar ?? 'nu') === 'nu')
+
+  const perOnderwerp = new Map<string, number[]>()
+  for (const e of alles) {
+    const sleutel = `${e.p} · ${e.v} · ${e.t}`
+    const lijst = perOnderwerp.get(sleutel) ?? []
+    lijst.push(e.lvl ?? 1)
+    perOnderwerp.set(sleutel, lijst)
+  }
+
+  it('slaat nergens niveau 2 over terwijl 1 en 3 er wel zijn', () => {
+    const gaten: string[] = []
+    for (const [sleutel, lvls] of perOnderwerp) {
+      const tel = (n: number) => lvls.filter((x) => x === n).length
+      if (tel(1) > 0 && tel(3) > 0 && tel(2) === 0) {
+        gaten.push(`${sleutel} (1:${tel(1)} 2:0 3:${tel(3)})`)
+      }
+    }
+    expect(gaten).toEqual([])
+  })
+
+  /* De twee die de aanleiding waren, apart vastgelegd — een lege lijst hierboven
+     zegt niet wélke gaten er gedicht zijn. */
+  it('heeft het voltooid deelwoord van Amine op alle drie de niveaus', () => {
+    const lvls = perOnderwerp.get('amine · taal · Voltooid deelwoord') ?? []
+    for (const n of [1, 2, 3]) {
+      expect(lvls.filter((x) => x === n).length, `niveau ${n}`).toBeGreaterThan(0)
+    }
+  })
+
+  it('heeft de verwachtingswaarde van Amaani op alle drie de niveaus', () => {
+    const lvls = perOnderwerp.get('amaani · wiskundeA · Verwachtingswaarde') ?? []
+    for (const n of [1, 2, 3]) {
+      expect(lvls.filter((x) => x === n).length, `niveau ${n}`).toBeGreaterThan(0)
+    }
+  })
+})
+
+/**
  * De rekenkundige antwoorden opnieuw narekenen. Alleen de sommen waarvan de
  * uitkomst hier los te herleiden is — de taal- en begripsvragen staan er niet
  * tussen, en dat hoort ook niet: die zijn met de hand nagelopen.
@@ -188,6 +252,7 @@ describe('de sommen kloppen nog steeds', () => {
   it('rekent de kansrekening en groei van Amaani na', () => {
     expect(getal(zoek('zuivere dobbelsteen'))).toBe((1 + 2 + 3 + 4 + 5 + 6) / 6)
     expect(getal(zoek('win je € 5 met kans 0,2'))).toBeCloseTo(0.2 * 5 - 0.8 * 2, 10)
+    expect(getal(zoek('10 punten met kans 0,6'))).toBeCloseTo(0.6 * 10 + 0.4 * 20, 10)
     expect(getal(zoek('groepje van 3'))).toBe((10 * 9 * 8) / 6)
     expect(getal(zoek('5 verschillende boeken'))).toBe(120)
     expect(zoek('allebei rood')).toBe('5/14')
