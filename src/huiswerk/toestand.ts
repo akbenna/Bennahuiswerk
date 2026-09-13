@@ -17,6 +17,7 @@ import { SEED } from './gegevens/seed'
 import { NIEUW2627 } from './gegevens/schooljaar2627'
 import { naarDitJaar } from './gegevens/schooljaar'
 import { sjablonen } from './gegevens/sjablonen'
+import { extraSjablonen } from './gegevens/sjablonen-extra'
 import type { Kaart } from './gegevens/soorten'
 import { ECHT } from './toeval'
 import { dagKort, gisterKort } from './datum'
@@ -33,8 +34,12 @@ export const KINDEREN = Object.keys(PROFIELEN)
 
 /** Alle opgaven: de vaste voorraad, de sjablonen en wat de ouder erbij zette.
  *  De sjablonen worden één keer gebouwd — opnieuw bouwen zou elke hertekening
- *  nieuwe getallen geven midden in een som. */
-const SJABLONEN = sjablonen(ECHT)
+ *  nieuwe getallen geven midden in een som.
+ *
+ *  Twee lijsten, en dat is geen slordigheid: `sjablonen()` staat onder de gouden
+ *  vingerafdruk van de overzetting, `extraSjablonen()` is wat er daarna bij is
+ *  gekomen. Zie de kop van `gegevens/sjablonen-extra.ts`. */
+const SJABLONEN = [...sjablonen(ECHT), ...extraSjablonen(ECHT)]
 
 export interface Toestand {
   stand: Stand
