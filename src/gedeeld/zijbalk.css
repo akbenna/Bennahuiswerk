@@ -1,0 +1,26 @@
+/*
+ * DE KLEUREN VAN DE ZIJBALK
+ *
+ * Ze staan apart van de kleurschema's van de apps, want de zijbalk is in licht
+ * én donker donker. Hij is de omlijsting en niet het papier: een omlijsting die
+ * met de stand van het toestel mee omslaat maakt de pagina onrustig, en je bent
+ * hem bij het wisselen van app telkens opnieuw kwijt.
+ *
+ * De waarden zijn gemeten tegen --zij, niet geschat: de gedempte letter haalt
+ * 6,3:1 en het accent 9,3:1, ruim boven de 4,5:1 die de rest van de kleuren ook
+ * aanhoudt. Het accent is het teal uit het logo en niet de kleur van een van de
+ * negen apps — die zijn in het licht juist donker gekozen en verdwijnen hier.
+ *
+ * Eén bestand, want het staat op twee plekken: de startpagina heeft zijn eigen
+ * zijbalk (`.zij`) en de apps krijgen hem via `schil.css` om hun tabbalk
+ * heen. Twee kopieën van zes kleuren lopen uit elkaar zodra er één verandert.
+ */
+:root{
+  --zij:#191C22; --zij-2:#242832; --zij-line:#2C313B;
+  --zij-ink:#F3F2EE; --zij-muted:#9B9EAA; --zij-aan:#4ED3CB;
+}
+/* In het donker wordt het paneel één tint lichter; anders valt hij weg tegen
+   het doek, dat daar zelf al bijna zwart is. */
+@media (prefers-color-scheme:dark){
+  :root{ --zij:#1E212A; --zij-2:#2A2E39; --zij-line:#343943; }
+}

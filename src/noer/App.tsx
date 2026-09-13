@@ -49,7 +49,8 @@ export function App(): ReactNode {
 
   return (
     <Geluidbron inst={t.stand.instel} meld={zetKortje}>
-      <div data-spoor={spoor} data-view={tab} className={t.stand.instel.groot ? 'groot' : ''}>
+      <div data-spoor={spoor} data-view={tab}
+           className={'schil' + (t.stand.instel.groot ? ' groot' : '')}>
         <header className="top">
           <div className="top-in">
             <a className="terug" href="/" title="Terug naar BennaHub" aria-label="Terug naar BennaHub">←</a>

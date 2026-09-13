@@ -67,7 +67,60 @@ const euroTekst = (n: number): string =>
 
 /* -------------------------------------------------------- per app ---------- */
 
+/** Wat een cursus van de Academie bewaart. `done` is per lesnummer een ja of
+ *  nee — een afgevinkte les kan ook weer uitgevinkt worden, dus tellen we de
+ *  waarden die waar zijn en niet de sleutels. */
+const cursus: Uitlezer = (d) => {
+  const dagen = lijst(veld(d, 'oefdagen')).map(tekst).filter((x): x is string => x != null).sort()
+  return [{
+    wie: 'Iedereen',
+    laatst: dagen.length ? (dagen[dagen.length - 1] ?? null) : null,
+    euro: null,
+    regels: [
+      ['Lessen af', waarden(veld(d, 'done')).filter(Boolean).length],
+      ['Oefendagen', dagen.length],
+      ['Kaarten', aantal(veld(d, 'kaarten'))],
+    ],
+  }]
+}
+
+
 export const UITLEZERS: Readonly<Record<string, Uitlezer>> = {
+  /* Huiswerk. Deze uitlezer draait op wat er op het toestel zelf staat en niet
+     op de centrale opslag: de huiswerkapp heeft nog zijn eigen inlog en zet daar
+     nog niets neer. Zie `voortgang.ts`. Verdiend geld staat er bewust niet in —
+     de app rekent dat uit betalingen en bonussen die hier niet compleet te
+     overzien zijn, en een bedrag dat er net naast zit is erger dan geen bedrag. */
+  huiswerk(d) {
+    return sleutels(veld(d, 'prog')).map((pid): Regel => {
+      const p = veld(veld(d, 'prog'), pid)
+      const beheerst = waarden(veld(p, 'cards'))
+        .filter((c) => (getal(veld(c, 'box')) ?? 0) >= 4).length
+      return {
+        wie: pid,
+        laatst: tekst(veld(p, 'lastDay')),
+        euro: null,
+        regels: [
+          ['Punten', getal(veld(p, 'punten')) ?? 0],
+          ['Dagreeks', getal(veld(p, 'dagstreak')) ?? 0],
+          ['Beheerst', beheerst],
+          ['Insignes', lijst(veld(p, 'badges')).length],
+        ],
+      }
+    })
+  },
+
+  /* De drie cursussen — Kompas, Verbind en Podium — zijn gebouwd uit hetzelfde
+     sjabloon en bewaren dus hetzelfde: welke lessen af zijn, op welke dagen er
+     geoefend is, en hoeveel kaarten er open staan. Eén uitlezer voor alle drie;
+     hieronder staat hij drie keer onder de naam van zijn tegel.
+
+     Ze kennen geen profielen, dus wat er staat is wat er op dit toestel gedaan
+     is — vandaar 'Iedereen'. */
+  kompas: cursus,
+  verbind: cursus,
+  podium: cursus,
+
   /* Islam leren: profielen in een lijst, voortgang per profiel-id. */
   bidaya(d) {
     return lijst(veld(d, 'profielen')).map((p): Regel => {
