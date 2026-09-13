@@ -114,8 +114,14 @@ export interface EiwitrijkTreffer {
  * het getal dat op het scherm vooropstaat.
  */
 export interface VerzadigingTreffer {
-  nevo_code: string
+  /** Een gerecht om te koken, of een product om erbij te nemen. */
+  soort: 'gerecht' | 'product'
+  /** Uniek binnen de lijst: het nevo_code of het dish_id. */
+  sleutel: string
+  nevo_code: string | null
+  dish_id: string | null
   naam: string
+  /** De NEVO-groep bij een product, de keuken bij een gerecht. */
   groep: string | null
   portie_naam: string
   portie_gram: number
@@ -443,7 +449,7 @@ export interface RpcKaart {
     uit: EiwitrijkTreffer[]
   }
   kal_verzadiging: {
-    in: { p_token: string; p_max_kcal: number; p_limiet?: number }
+    in: { p_token: string; p_max_kcal: number; p_gerechten?: number; p_producten?: number }
     uit: VerzadigingTreffer[]
   }
 

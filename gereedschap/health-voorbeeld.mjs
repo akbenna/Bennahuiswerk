@@ -355,15 +355,29 @@ const EIWITRIJK = [
    er níet in, want dat is de tegenhanger: uitstekende eiwitdichtheid, vult
    niets. Zie health/database/28-wat-vult-het-best.sql. */
 const VERZADIGING = [
-  { nevo_code: '001', naam: 'Champignon gekookt', groep: 'Groente',
+  /* Twee gerechten en twee producten, met opzet zo gekozen dat de
+     belangrijkste ontwerpkeuze te toetsen is: het gerecht met de láágste score
+     hoort nog altijd bóven het product met de hóógste te staan. Het zijn twee
+     antwoorden op twee vragen en geen ranglijst. */
+  { soort: 'gerecht', sleutel: 'd-harira', nevo_code: null,
+    dish_id: '11111111-2222-3333-4444-555555555555',
+    naam: 'Harira', groep: 'marokkaans',
+    portie_naam: 'kom', portie_gram: 300, gram_laag: 250, gram_hoog: 400,
+    kcal: 156, gram_per_100kcal: 193, eiwit_per_100kcal: 4.1, vezel_per_100kcal: 3.4,
+    score: 61, bekend: true },
+  { soort: 'gerecht', sleutel: 'd-mercimek', nevo_code: null,
+    dish_id: '11111111-2222-3333-4444-666666666666',
+    naam: 'Mercimek çorbası', groep: 'turks',
+    portie_naam: 'kom', portie_gram: 300, gram_laag: 250, gram_hoog: 400,
+    kcal: 195, gram_per_100kcal: 155, eiwit_per_100kcal: 4.1, vezel_per_100kcal: 3.9,
+    score: 56, bekend: false },
+  { soort: 'product', sleutel: '001', nevo_code: '001', dish_id: null,
+    naam: 'Champignon gekookt', groep: 'Groente',
     portie_naam: 'opscheplepel', portie_gram: 50, gram_laag: 35, gram_hoog: 70,
     kcal: 11, gram_per_100kcal: 476, eiwit_per_100kcal: 18.1, vezel_per_100kcal: 5.2,
     score: 100, bekend: true },
-  { nevo_code: '003', naam: 'Soep heldere m vlees en soepgroente', groep: 'Soepen',
-    portie_naam: 'kom', portie_gram: 250, gram_laag: 200, gram_hoog: 300,
-    kcal: 90, gram_per_100kcal: 278, eiwit_per_100kcal: 11.4, vezel_per_100kcal: 1.4,
-    score: 82, bekend: false },
-  { nevo_code: '004', naam: 'Linzen groene en bruine gekookt', groep: 'Peulvruchten',
+  { soort: 'product', sleutel: '004', nevo_code: '004', dish_id: null,
+    naam: 'Linzen groene en bruine gekookt', groep: 'Peulvruchten',
     portie_naam: 'opscheplepel', portie_gram: 60, gram_laag: 45, gram_hoog: 80,
     kcal: 59, gram_per_100kcal: 101, eiwit_per_100kcal: 8.9, vezel_per_100kcal: 5.4,
     score: 64, bekend: false },
@@ -1639,21 +1653,56 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
 
   const regels = kaart.locator('.lijst > *')
   const n = await regels.count()
-  if (n < 3) throw new Error(`watvult: ${n} voorstellen, verwacht er 3`)
+  if (n !== 4) throw new Error(`watvult: ${n} voorstellen, verwacht er 4`)
 
-  /* Het kopgetal. Op de eerste regel hoort "476 g voor 100 kcal" te staan en
-     nergens de score — die bepaalt de volgorde en is niet wat je narekent. */
-  const eerste = (await regels.first().innerText()).replace(/\s+/g, ' ')
-  if (!/476 g voor 100 kcal/.test(eerste)) {
-    throw new Error(`watvult: het gram-getal staat niet voorop — ${JSON.stringify(eerste)}`)
+  /* TWEE ANTWOORDEN, GEEN RANGLIJST
+   *
+   * Dit is de kern van de kaart en het is precies de regel die bij een
+   * verbouwing sneuvelt. Een gerecht en een opscheplepel champignons zijn niet
+   * hetzelfde soort ding: de champignon wint elke ranglijst op gram per honderd
+   * kilocalorieën, en dan krijgt iemand die staat te bedenken wát hij gaat
+   * koken een bijgerechtenlijst terug.
+   *
+   * De stub is zo gekozen dat de proef hieraan hangt en niet aan de volgorde
+   * die er toevallig uit komt: het gerecht met de laagste score (56) hoort nog
+   * altijd boven het product met de hoogste (100) te staan. */
+  const volgorde = await regels.evaluateAll(
+    (els) => els.map((e) => e.textContent?.split('\n')[0]?.trim() ?? ''))
+  const iLaagsteGerecht = volgorde.findIndex((t) => t.startsWith('Mercimek'))
+  const iBesteProduct = volgorde.findIndex((t) => t.startsWith('Champignon'))
+  if (iLaagsteGerecht < 0 || iBesteProduct < 0) {
+    throw new Error(`watvult: gerecht of product ontbreekt — ${JSON.stringify(volgorde)}`)
   }
-  if (/\b100\b(?!\s*kcal)/.test(eerste.replace('476 g voor 100 kcal', ''))) {
-    throw new Error(`watvult: de score staat op de regel — ${JSON.stringify(eerste)}`)
+  if (iLaagsteGerecht > iBesteProduct) {
+    throw new Error('watvult: het zwakste gerecht staat onder het sterkste product — ' +
+                    `dan is het één ranglijst geworden — ${JSON.stringify(volgorde)}`)
+  }
+  const koppen = await kaart.locator('p.mini').allTextContents()
+  if (!koppen.some((t) => /Om te koken/.test(t))) {
+    throw new Error(`watvult: geen kop "Om te koken" — ${JSON.stringify(koppen)}`)
+  }
+
+  /* Het kopgetal, op de regel waar het over gaat — niet op de eerste, want dat
+     is sinds de gerechten erbij kwamen een gerecht. Op elke regel hoort het
+     aantal gram voor honderd kilocalorieën te staan en nergens de score: dat
+     eerste is een deling van twee gemeten waarden, dat tweede een schatting. */
+  const champ = (await regels.filter({ hasText: 'Champignon' }).first().innerText())
+    .replace(/\s+/g, ' ')
+  if (!/476 g voor 100 kcal/.test(champ)) {
+    throw new Error(`watvult: het gram-getal staat niet voorop — ${JSON.stringify(champ)}`)
+  }
+  if (/\b100\b(?!\s*kcal)/.test(champ.replace('476 g voor 100 kcal', ''))) {
+    throw new Error(`watvult: de score staat op de regel — ${JSON.stringify(champ)}`)
   }
   /* De portie hoort erbij: "een opscheplepel van 50 g, 11 kcal" is bruikbaar,
-     "champignons" niet. */
-  if (!/opscheplepel van 50 g/.test(eerste) || !/11 kcal/.test(eerste)) {
-    throw new Error(`watvult: de portie ontbreekt — ${JSON.stringify(eerste)}`)
+     "champignons" niet. En bij een gerecht net zo goed. */
+  if (!/opscheplepel van 50 g/.test(champ) || !/11 kcal/.test(champ)) {
+    throw new Error(`watvult: de portie ontbreekt — ${JSON.stringify(champ)}`)
+  }
+  const harira = (await regels.filter({ hasText: 'Harira' }).first().innerText())
+    .replace(/\s+/g, ' ')
+  if (!/193 g voor 100 kcal/.test(harira) || !/kom van 300 g/.test(harira)) {
+    throw new Error(`watvult: het gerecht mist zijn getal of zijn portie — ${JSON.stringify(harira)}`)
   }
 
   /* De vlag hangt aan de gegevens en niet aan de plaats: precies één van de
@@ -1673,8 +1722,28 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
     throw new Error('watvult: de uitleg noemt de weging van de drie termen niet')
   }
 
+  /* Als láátste, want dit opent het portievenster en dat legt zich over de
+     kaart heen — elke regel die hierna nog naar de lijst kijkt vindt niets.
+     En een gerecht hoort een ánder venster te openen dan een product: kal_gerecht
+     kal_portiematen. Zonder deze regel zou een gerecht met een leeg
+     portievenster opengaan en dat is aan de lijst niet te zien. */
+  let gevraagdGerecht = 0
+  await pagina.route('**/rest/v1/rpc/kal_gerecht', async (route) => {
+    gevraagdGerecht++
+    await route.fallback()
+  })
+  /* Niet op '＋' zoeken: `Knop` zet zijn `titel` als aria-label, en dat
+     vervángt de zichtbare tekst. Dat de titel "Gerecht openen" is en niet
+     "Portie kiezen" is meteen het tweede wat hier getoetst wordt. */
+  await regels.first().getByRole('button', { name: 'Gerecht openen' }).click()
+  await pagina.waitForTimeout(500)
+  if (gevraagdGerecht !== 1) {
+    throw new Error(`watvult: tik op een gerecht vroeg ${gevraagdGerecht} keer kal_gerecht, verwacht 1`)
+  }
+
+
   console.log(`wat vult het best          dicht=0 aanvragen · open=${gevraagd} · ${n} voorstellen · ` +
-              'kopgetal in gram, score in de uitleg')
+              'gerechten boven producten · gerecht opent kal_gerecht')
   await pagina.screenshot({ path: 'gereedschap/health-watvult.png' })
   await pagina.close()
 }

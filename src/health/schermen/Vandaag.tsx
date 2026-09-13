@@ -815,7 +815,7 @@ function WatVultLijst(
     void (async () => {
       try {
         const uit = await roep('kal_verzadiging', {
-          p_token: token, p_max_kcal: ruimte, p_limiet: 5,
+          p_token: token, p_max_kcal: ruimte, p_gerechten: 3, p_producten: 4,
         })
         if (!afgebroken) zetLijst(Array.isArray(uit) ? uit : [])
       } catch {
@@ -840,33 +840,69 @@ function WatVultLijst(
 
   async function kies(x: VerzadigingTreffer) {
     try {
-      opPortie({
-        soort: 'nevo',
-        product: await roep('kal_portiematen', { p_token: token, p_nevo_code: x.nevo_code }),
-      })
+      if (x.soort === 'gerecht' && x.dish_id) {
+        opPortie({
+          soort: 'gerecht',
+          gerecht: await roep('kal_gerecht', { p_token: token, p_dish_id: x.dish_id }),
+        })
+        return
+      }
+      if (x.nevo_code) {
+        opPortie({
+          soort: 'nevo',
+          product: await roep('kal_portiematen', { p_token: token, p_nevo_code: x.nevo_code }),
+        })
+      }
     } catch { /* het venster gaat dan niet open; een melding hier is erger */ }
   }
 
+  const gerechten = lijst.filter((x) => x.soort === 'gerecht')
+  const producten = lijst.filter((x) => x.soort === 'product')
+
+  const rij = (x: VerzadigingTreffer) => (
+    <div key={x.sleutel}>
+      <span className="groei">
+        <span className="knip" style={{ display: 'block' }}>
+          {x.naam}
+          {x.bekend && (
+            <span className="vlaggetje rust">
+              {x.soort === 'gerecht' ? ' at je al eens' : ' uit je eigen hoek'}
+            </span>
+          )}
+        </span>
+        <span className="mini">
+          <span className="cijfer">{dz(x.gram_per_100kcal)}</span> g voor 100 kcal ·{' '}
+          {x.portie_naam} van <span className="cijfer">{dz(x.portie_gram)}</span> g ·{' '}
+          <span className="cijfer">{dz(x.kcal)}</span> kcal
+        </span>
+      </span>
+      <Knop klein titel={x.soort === 'gerecht' ? 'Gerecht openen' : 'Portie kiezen'}
+            opKlik={() => void kies(x)}>＋</Knop>
+    </div>
+  )
+
   return (
     <>
-      <div className="lijst" style={{ marginTop: 8 }}>
-        {lijst.map((x) => (
-          <div key={x.nevo_code}>
-            <span className="groei">
-              <span className="knip" style={{ display: 'block' }}>
-                {x.naam}
-                {x.bekend && <span className="vlaggetje rust"> uit je eigen hoek</span>}
-              </span>
-              <span className="mini">
-                <span className="cijfer">{dz(x.gram_per_100kcal)}</span> g voor 100 kcal ·{' '}
-                {x.portie_naam} van <span className="cijfer">{dz(x.portie_gram)}</span> g ·{' '}
-                <span className="cijfer">{dz(x.kcal)}</span> kcal
-              </span>
-            </span>
-            <Knop klein titel="Portie kiezen" opKlik={() => void kies(x)}>＋</Knop>
-          </div>
-        ))}
-      </div>
+      {/* TWEE SOORTEN ANTWOORD, EN DUS TWEE LIJSTJES
+          Een gerecht en een opscheplepel champignons zijn niet hetzelfde soort
+          ding. In één ranglijst verdringt de champignon het gerecht, want per
+          honderd kilocalorieën levert hij nu eenmaal meer gram op — en dan
+          krijgt iemand die staat te bedenken wát hij gaat koken een
+          bijgerechtenlijst terug. */}
+      {gerechten.length > 0 && (
+        <>
+          <p className="mini" style={{ marginTop: 10 }}>Om te koken</p>
+          <div className="lijst" style={{ marginTop: 4 }}>{gerechten.map(rij)}</div>
+        </>
+      )}
+      {producten.length > 0 && (
+        <>
+          <p className="mini" style={{ marginTop: gerechten.length ? 14 : 10 }}>
+            {gerechten.length ? 'Of erbij' : 'Om erbij te nemen'}
+          </p>
+          <div className="lijst" style={{ marginTop: 4 }}>{producten.map(rij)}</div>
+        </>
+      )}
       <Uitleg id="verzadiging" label="waar die volgorde vandaan komt">
         <p>
           De volgorde komt uit een score van nul tot honderd, en die score is een <b>schatting uit
@@ -885,6 +921,13 @@ function WatVultLijst(
           Het getal dat vooropstaat is daarom niet de score maar de grammen per honderd
           kilocalorieën. Dat is een deling van twee gemeten waarden uit de voedingsmiddelentabel,
           en dat kun je narekenen.
+        </p>
+        <p>
+          De gerechten staan boven en de losse producten eronder, en die volgorde
+          hangt niet van de score af. Het zijn twee antwoorden op twee vragen: wat
+          zou ik kunnen koken, en wat kan ik erbij nemen. In één ranglijst wint de
+          champignon het altijd van de harira, en dan staat er een bijgerechtenlijst
+          waar een maaltijd hoorde te staan.
         </p>
         <p>
           Dranken staan er niet tussen, en smaakmakers ook niet. Vloeibare calorieën verzadigen
