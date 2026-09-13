@@ -142,7 +142,7 @@ export function Onthaal({ t }: { t: Toestand }): ReactNode {
             <b>Of zet het gezin in één keer klaar</b>
             <p className="small muted" style={{ margin: '6px 0 12px' }}>
               Vijf profielen met de leeftijden zoals doorgegeven. Controleer ze daarna in het
-              ouderscherm — de leeftijd bepaalt welk spoor iemand krijgt, dus die moet kloppen.
+              ouderscherm. De leeftijd is de eerste gok voor het spoor; zodra iemand de niveaubepaling doet, bepaalt die uitslag het.
             </p>
             <p className="small muted" style={{ margin: '0 0 12px' }}>
               {GEZIN.map((g) => g.naam + ' · ' + (g.leeftijd >= 18 ? 'volwassen' : g.leeftijd + ' jaar'))

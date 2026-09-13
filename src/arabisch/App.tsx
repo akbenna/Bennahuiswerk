@@ -16,7 +16,7 @@ import { useArabisch } from './toestand'
 import { LETTERS, TEKENS } from './gegevens/letters'
 import { JAAR, METING, SESSIEMINUTEN } from './gegevens/jaarplan'
 import { vandaag } from './datum'
-import { SPOORNAAM, aantalDue } from './leerplan'
+import { aantalDue, SPOORNAAM, spoorNaMeting } from './leerplan'
 import { Blad, Rijk } from './onderdelen'
 import { LeerInhoud, LetterKaart, Woordblad, blokOmschrijving } from './inhoud'
 import { Blokttoets, Les, Meting, Werkblad, toetsVragen } from './jaarles'
@@ -307,14 +307,30 @@ function Bladinhoud(
   if (blad.soort === 'meting') {
     return (
       <Meting begin={(niveau, week, score) => {
-        t.zetProf((pr) => ({
-          ...pr,
-          jaar: {
-            gestart: vandaag(), niveau, week,
-            meting: { d: vandaag(), score, totaal: METING.length },
-            sessies: {}, toetsen: {},
-          },
-        }))
+        t.zetProf((pr) => {
+          /* De uitslag bepaalt voortaan ook het spoor. Tot nu toe zette de
+             meting alleen de startweek van het jaarplan en bleef het spoor
+             staan op de gok uit de leeftijd — precies verkeerd om, want hoe ver
+             iemand met Arabisch is heeft niets met zijn leeftijd te maken. Zie
+             `spoorNaMeting` voor waarom de leeftijd er tóch nog in zit.
+
+             Heeft de ouder het spoor zelf gezet, dan blijft dat staan: die weet
+             iets wat achttien meerkeuzevragen niet weten. */
+          const spoor = pr.spoorHandmatig ? pr.spoor : spoorNaMeting(pr.leeftijd, niveau)
+          return {
+            ...pr,
+            spoor,
+            /* Een ander spoor is een ander leerpad, dus "drie blokken af" slaat
+               dan nergens meer op. Hetzelfde doet het ouderscherm bij een
+               handmatige wijziging. De herhalingskaarten blijven wél staan. */
+            blok: spoor === pr.spoor ? pr.blok : 0,
+            jaar: {
+              gestart: vandaag(), niveau, week,
+              meting: { d: vandaag(), score, totaal: METING.length },
+              sessies: {}, toetsen: {},
+            },
+          }
+        })
         sluit()
       }} />
     )

@@ -24,12 +24,72 @@ import type { Spoor, Week, Woord } from './gegevens/soorten'
 import type { Kaartstaat } from './fsrs'
 import { dagVerschil } from './datum'
 
-/** Leeftijd bepaalt het spoor. De ouder kan het overschrijven. */
+/** De eerste gok, zolang er nog geen niveaubepaling is gedaan. De ouder kan
+ *  hem overschrijven, en de niveaubepaling vervangt hem — zie hieronder. */
 export function spoorBijLeeftijd(l: number): Spoor {
   if (l <= 9) return 1
   if (l <= 12) return 2
   if (l <= 15) return 3
   return 4
+}
+
+/* ---------------------------------------------------------------------------
+   HET SPOOR NA DE NIVEAUBEPALING
+
+   Arabisch is geen schoolvak dat met je leeftijd meegroeit. Wie op zijn
+   vijftiende begint, begint bij de letters; wie op zijn achtste thuis al leest,
+   hoort niet bij de eerste alif. De niveaubepaling weet dat en de leeftijd niet,
+   dus die uitslag hoort te winnen.
+
+   Maar niet overal. Het spoor draagt twee dingen tegelijk: hoe zwaar de stof is
+   én hoe de app met je omgaat. Vanaf spoor 3 beoordeelt iemand zijn eigen
+   antwoord (`Vandaag.tsx`) en vallen de punten weg (`Ouder.tsx`), en spoor 4
+   heet niet voor niets "het volwassen spoor". Een kind van acht dat vlot leest
+   hoort zwaardere woorden te krijgen — geen zelfbeoordeling, want dat kán het
+   nog niet betrouwbaar.
+
+   Vandaar twee regels in plaats van één: de meting kiest de stof, de leeftijd
+   bepaalt hoe ver dat mag gaan. Een volwassene blijft volwassen, ook als
+   beginner; hij begint dan gewoon bij week 1.
+--------------------------------------------------------------------------- */
+
+/** Het hoogste spoor dat bij deze leeftijd past. Boven twaalf komt de
+ *  zelfbeoordeling erbij, boven vijftien het volwassen spoor. */
+export function bovengrensVoor(leeftijd: number): Spoor {
+  if (leeftijd <= 12) return 2
+  if (leeftijd <= 15) return 3
+  return 4
+}
+
+/** Raakt de niveaubepaling het spoor van deze persoon? Bij een volwassene niet:
+ *  daar gaat het spoor over wie je bent en niet over hoe ver je bent. */
+export const metingBepaaltSpoor = (leeftijd: number): boolean =>
+  bovengrensVoor(leeftijd) !== 4
+
+/** Welk spoor hoort bij de uitslag van de niveaubepaling. De vier niveaus lopen
+ *  van "kent de letters nog niet" tot "leest al aardig"; zie `METINGNIVEAUS`. */
+export function spoorBijMeting(niveau: number): Spoor {
+  if (niveau <= 2) return 1
+  if (niveau === 3) return 2
+  return 3
+}
+
+/** Het spoor ná de niveaubepaling: wat de meting aanwijst, begrensd door wat de
+ *  leeftijd toelaat. */
+export function spoorNaMeting(leeftijd: number, niveau: number): Spoor {
+  const grens = bovengrensVoor(leeftijd)
+  if (grens === 4) return 4
+  const uit = spoorBijMeting(niveau)
+  return (uit < grens ? uit : grens) as Spoor
+}
+
+/** Waar het spoor dat nu geldt vandaan komt. Het ouderscherm zegt het erbij,
+ *  want "spoor 2" zonder herkomst is niet na te kijken. */
+export function spoorHerkomst(
+  spoorHandmatig: boolean, leeftijd: number, heeftJaar: boolean,
+): 'hand' | 'toets' | 'leeftijd' {
+  if (spoorHandmatig) return 'hand'
+  return heeftJaar && metingBepaaltSpoor(leeftijd) ? 'toets' : 'leeftijd'
 }
 
 export const SPOORNAAM: Record<Spoor, string> = {
