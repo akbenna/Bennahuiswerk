@@ -1,7 +1,9 @@
 -- =============================================================================
 -- WAT VULT HET BEST — de derde laag onder de coach
 --
--- Nog niet toegepast.
+-- Toegepast op 13 september 2026. De vijf controlevragen uit blok 2 zijn erna
+-- gedraaid en gaven het antwoord dat eronder staat; de uitslag op de echte
+-- tabel is beoordeeld en goed bevonden.
 --
 -- DE VRAAG
 --
