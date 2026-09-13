@@ -54,7 +54,7 @@
    ========================================================================== */
 :root{
   --canvas:#F3F6F5; --vlak:#FFFFFF; --vlak2:#EDF2F0;
-  --ink:#0E1A16; --ink2:#28352F; --grijs:#5B6862; --dim:#8A968F;
+  --ink:#0E1A16; --ink2:#28352F; --grijs:#4A5450; --dim:#59615C;
   --lijn:#E4EAE7; --lijn2:#CBD5D0;
   /* Twee tinten van hetzelfde accent, en dat is geen luxe. --k draagt tekst en
      moet donker genoeg zijn om op wit te lezen; --kfel is de vulkleur van
@@ -78,7 +78,7 @@
 }
 @media (prefers-color-scheme:dark){:root:not([data-thema]){
   --canvas:#080D0C; --vlak:#121A18; --vlak2:#1B2523;
-  --ink:#F1F5F3; --ink2:#DCE4E1; --grijs:#9AA8A2; --dim:#6C7A74;
+  --ink:#F1F5F3; --ink2:#DCE4E1; --grijs:#9AA8A2; --dim:#8A9691;
   --lijn:#243230; --lijn2:#354642;
   --k:#4FD2A6; --kfel:#28BE8E; --kbg:#0F2E26;
   --knopvul:#28BE8E;
@@ -89,7 +89,7 @@
 }}
 :root[data-thema="donker"]{
   --canvas:#080D0C; --vlak:#121A18; --vlak2:#1B2523;
-  --ink:#F1F5F3; --ink2:#DCE4E1; --grijs:#9AA8A2; --dim:#6C7A74;
+  --ink:#F1F5F3; --ink2:#DCE4E1; --grijs:#9AA8A2; --dim:#8A9691;
   --lijn:#243230; --lijn2:#354642;
   --k:#4FD2A6; --kfel:#28BE8E; --kbg:#0F2E26;
   --knopvul:#28BE8E;
@@ -122,6 +122,9 @@ a{color:var(--k)}
 .getal{font-family:var(--kop);font-variant-numeric:tabular-nums;color:var(--ink);line-height:1;
   font-weight:660;letter-spacing:-.03em}
 button,input,select,textarea{font-family:inherit;font-size:1rem;color:inherit}
+/* De tijdelijke tekst had geen eigen kleur en kreeg dus die van de browser —
+   op Safari lichter dan wat hier ook maar ergens staat, en niet te meten. */
+::placeholder{color:var(--dim);opacity:1}
 :focus-visible{outline:2px solid var(--k);outline-offset:2px;border-radius:6px}
 
 /* ---------------------------------------------------------------- header -- */
@@ -209,16 +212,16 @@ label.veld>span{display:block;font-size:.72rem;color:var(--grijs);margin-bottom:
 .conf{display:inline-flex;width:17px;height:17px;border-radius:4px;flex:0 0 auto;
   align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:#FFF8EE}
 .conf.A{background:#2F6B1F}.conf.B{background:#07785C}
-.conf.C{background:#8E9189}.conf.D{background:#8A5A00}
+.conf.C{background:#71746D}.conf.D{background:#8A5A00}
 @media(prefers-color-scheme:dark){:root:not([data-thema]) .conf{color:#080D0C}
   :root:not([data-thema]) .conf.A{background:#8FD268}
   :root:not([data-thema]) .conf.B{background:#4FD2A6}
-  :root:not([data-thema]) .conf.C{background:#71746D}
+  :root:not([data-thema]) .conf.C{background:#787A74}
   :root:not([data-thema]) .conf.D{background:#E9BC55}}
 :root[data-thema="donker"] .conf{color:#080D0C}
 :root[data-thema="donker"] .conf.A{background:#8FD268}
 :root[data-thema="donker"] .conf.B{background:#4FD2A6}
-:root[data-thema="donker"] .conf.C{background:#71746D}
+:root[data-thema="donker"] .conf.C{background:#787A74}
 :root[data-thema="donker"] .conf.D{background:#E9BC55}
 /* Het teken voor de herkomst: ◆ gemeten uit de tabel, ◇ geschat. Een <abbr>
    krijgt in sommige browsers vanzelf een stippellijn eronder; die hoort hier

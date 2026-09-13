@@ -1443,6 +1443,123 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
   await traag.close()
 }
 
+/* ------------------------------------------------------------- het contrast -- */
+/* LEESBAARHEID IS EEN GETAL, GEEN INDRUK
+ *
+ * De stilste kleur van de app, --dim, droeg de kleinste tekst: 0,75 rem, en
+ * daar staan juist de onzekerheidsbanden in. In een app waarvan de stelregel
+ * "geen getal zonder zijn onzekerheid" is, stond de onzekerheid dus in de
+ * slechtst leesbare kleur die er was — 2,71 op een lichte kaart, waar 4,5 de
+ * norm is.
+ *
+ * Dat is met een palettabel half te controleren, en die helft is de makkelijke.
+ * Wat een tabel niet ziet: tekst die op een verloop staat. De hero heeft er vier
+ * en daar staat ook .mini. Deze proef leest daarom van het scherm zelf: voor elk
+ * element met eigen tekst de berekende kleur, en de achtergrond door de ouders
+ * omhoog te lopen tot er een ondoorzichtige is. Staat er een verloop tussen, dan
+ * worden álle kleurstops eruit gehaald en moet het tegen elk daarvan kloppen —
+ * want waar in het verloop de tekst valt weet je niet.
+ *
+ * De norm is die van WCAG AA: 4,5 voor gewone tekst, 3,0 voor grote (24 px, of
+ * 18,66 px vet). Vijf tabbladen, allebei de thema's.
+ */
+{
+  const NORM = 4.5
+  /* Een echte functie en geen tekst. Als string in een template-literal
+     verdwijnt de backslash uit `\d` en `\(` — JavaScript laat een onbekende
+     escape gewoon vallen — en dan leest de regex geen enkel getal meer uit
+     "rgb(255, 255, 255)". De proef vond dan nul elementen en meldde groen. Dat
+     is precies het soort proef dat niets bewijst, en hij kwam er alleen uit
+     doordat het terugzetten van de oude kleur hem niet omver kreeg. */
+  const meet = () => {
+    const nums = (t) => (t.match(/-?[\d.]+/g) ?? []).map(Number)
+    const kleur = (t) => { const n = nums(t); return n.length >= 3 ? n.slice(0, 3) : null }
+    const dekt = (t) => { const n = nums(t); return n.length >= 3 && (n.length < 4 || n[3] >= 0.92) }
+    const lin = (c) => { c /= 255; return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4 }
+    const L = (r) => { const [a, b, c] = r.map(lin); return 0.2126 * a + 0.7152 * b + 0.0722 * c }
+    const R = (a, b) => {
+      const l1 = L(a), l2 = L(b)
+      const [h, l] = l1 > l2 ? [l1, l2] : [l2, l1]
+      return (h + 0.05) / (l + 0.05)
+    }
+    /* De achtergrond waar deze tekst werkelijk op ligt. Omhoog door de ouders
+       tot er een ondoorzichtige is. Staat er een verloop tussen, dan komen álle
+       kleurstops mee: waar in dat verloop de tekst valt weet je niet, dus moet
+       het tegen elk ervan kloppen. */
+    const achter = (el) => {
+      const uit = []
+      for (let n = el; n; n = n.parentElement) {
+        const s = getComputedStyle(n)
+        if (s.backgroundImage && s.backgroundImage !== 'none') {
+          for (const x of s.backgroundImage.match(/rgba?\([^)]*\)/g) ?? []) {
+            const k = kleur(x)
+            if (k && dekt(x)) uit.push(k)
+          }
+          if (uit.length) return uit
+        }
+        if (dekt(s.backgroundColor)) { uit.push(kleur(s.backgroundColor)); return uit }
+      }
+      return uit.length ? uit : null
+    }
+    const slecht = []
+    let bekeken = 0
+    for (const el of document.querySelectorAll('body *')) {
+      if (el.closest('svg')) continue
+      const eigen = [...el.childNodes]
+        .filter((n) => n.nodeType === 3 && n.textContent.trim()).map((n) => n.textContent.trim())
+      if (!eigen.length) continue
+      const doos = el.getBoundingClientRect()
+      if (doos.width < 2 || doos.height < 2) continue
+      const s = getComputedStyle(el)
+      if (s.visibility === 'hidden' || Number(s.opacity) < 0.5) continue
+      const vk = kleur(s.color)
+      const bg = achter(el)
+      if (!vk || !bg) continue
+      bekeken++
+      const px = parseFloat(s.fontSize)
+      const groot = px >= 24 || (px >= 18.66 && Number(s.fontWeight) >= 700)
+      const eis = groot ? 3 : 4.5
+      const laagste = Math.min(...bg.map((b) => R(vk, b)))
+      if (laagste < eis) {
+        slecht.push({
+          tekst: eigen.join(' ').slice(0, 44),
+          klas: (typeof el.className === 'string' ? el.className : '') || el.tagName,
+          px: Math.round(px), eis, ratio: Number(laagste.toFixed(2)),
+        })
+      }
+    }
+    return { bekeken, slecht: slecht.sort((a, b) => a.ratio - b.ratio) }
+  }
+
+  const gezien = []
+  let bekeken = 0
+  for (const [schema, keuze] of [['dark', null], ['light', null]]) {
+    const pagina = await ctx.newPage()
+    await pagina.emulateMedia({ colorScheme: schema })
+    if (keuze) await pagina.addInitScript(`localStorage.setItem('kalibratie.thema', '${keuze}')`)
+    await bedienDb(pagina, 28, 'afvallen')
+    await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+    await pagina.waitForSelector('.hero', { timeout: 5000 })
+    for (const tab of ['Vandaag', 'Inzicht', 'Voeding', 'Beweging', 'Gezondheid', 'Profiel']) {
+      await naarTab(pagina, tab)
+      const uit = await pagina.evaluate(meet)
+      bekeken += uit.bekeken
+      for (const x of uit.slecht) gezien.push({ ...x, waar: `${schema}/${tab}` })
+    }
+    await pagina.close()
+  }
+  if (gezien.length) {
+    const lijst = gezien.slice(0, 10).map(
+      (x) => `  ${x.ratio} (eis ${x.eis}) · ${x.waar} · ${x.px}px · ${x.klas} · ${JSON.stringify(x.tekst)}`)
+    throw new Error(`contrast: ${gezien.length} stuk(ken) tekst onder de norm\n${lijst.join('\n')}`)
+  }
+  /* Een proef die niets bekeek meldt ook groen. Dat is deze proef één keer
+     overkomen, dus telt hij nu hoeveel tekst hij werkelijk gemeten heeft. */
+  if (bekeken < 300) throw new Error(`contrast: maar ${bekeken} stukken tekst bekeken — dat klopt niet`)
+  console.log(`contrast                   ${bekeken} stukken tekst, zes tabbladen, ` +
+              `twee thema's — alles haalt ${NORM}`)
+}
+
 /* ----------------------------------------------------- de tekens op de balk -- */
 /* DE RUITEN WAREN AL VERGEVEN
  *
