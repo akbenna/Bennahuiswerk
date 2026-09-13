@@ -81,9 +81,17 @@ Het verbruik wordt afgeleid uit *zelfgerapporteerde* inname. En zelfrapportage
 is systematisch te laag. Tegen dubbelgelabeld water onderrapporteren
 24-uursnavragen de energie-inname met tien tot twintig procent en
 voedselfrequentievragenlijsten met twintig tot dertig procent; een analyse in
-*Nature Food* uit 2024, gebaseerd op bijna zesenhalfduizend DLW-metingen, kwam
-uit op 27,4 procent. De afwijking hangt systematisch samen met leeftijd,
+*Nature Food* (2025;6:58–71), gebaseerd op bijna zesenhalfduizend DLW-metingen,
+kwam uit op 27,4 procent. De afwijking hangt systematisch samen met leeftijd,
 geslacht en BMI.
+
+Dat getal verdient één voetnoot, want wie het opzoekt vindt eerst iets anders.
+Het oorspronkelijke artikel meldde meer dan vijftig procent; dat bleek een
+rekenfout — de voorspelde waarden waren naar kilojoule omgezet maar het
+totale verbruik in kilojoule werd in de verkeerde vergelijking gezet. De
+auteurs hebben het in mei 2025 gecorrigeerd naar 27,4 procent. Wie de eerste
+versie citeert, citeert een getal dat bijna twee keer zo hoog is als wat er
+staat.
 
 Daaruit volgt iets wat in elke uitleg hoort te staan. Is de inname
 stelselmatig twintig procent te laag gelogd, dan is het afgeleide verbruik dat
@@ -98,15 +106,30 @@ geen fysiologische maat, en zeker geen bewijs voor of tegen een traag
 metabolisme. Dat onderscheid zouden we in de spreekkamer sowieso scherper moeten
 maken dan we doen.
 
+En één beperking die ik er niet uit wil laten, omdat ze mijn eigen betoog
+raakt. Het interval dat de app om het verbruik zet bevat alleen de ruis in de
+weegreeks, niet de onzekerheid in het logboek. Strikt genomen is die band dus te
+smal. Ik heb dat bewust nog niet aangepast — een tweede foutterm erbij optellen
+verbreedt elke band in de app en werkt door tot in het dagdoel — maar wie een
+instrument bouwt dat over eerlijke onzekerheid gaat, hoort te zeggen waar zijn
+eigen onzekerheid nog niet eerlijk genoeg is.
+
 ## Geen getal zonder zijn onzekerheid
 
 Dit is de kern, en het is een medische houding voordat het een technische is.
 
 MacroFactor is wat het dichtst bij een concurrent komt: gebouwd door Greg
 Nuckols en Eric Trexler, rekent het verbruik uit dezelfde natuurkunde, en toont
-óók een band om de verbruikslijn. Hun eigen documentatie schrijft erbij dat je
-die band niet als betrouwbaarheidsinterval moet lezen, en dat hij er staat
-*"only for fun and curiosity"*. De gebruiker krijgt één getal als antwoord.
+óók een band om de verbruikslijn, de *flux range*. Hun eigen documentatie
+schrijft erbij: *"it's tempting to think of flux range as a confidence interval,
+and that's not a harmful simplification, but it's not technically accurate"*, en
+dat ze hem tonen *"for fun and curiosity"*. De gebruiker krijgt één getal als
+antwoord.
+
+Die tussenzin — dat het een onschadelijke vereenvoudiging is — hoort erbij, want
+hij laat precies zien waar het verschil zit. Zij vinden het onderscheid tussen
+een band en een betrouwbaarheidsinterval niet de moeite van het uitleggen waard.
+Wij zouden dat van een labuitslag nooit zeggen.
 
 Dat is de sterkste aanwijzing die ik ken dat het tonen van onzekerheid geen
 heruitvinding is maar een keuze die de markt bewust niet maakt — vermoedelijk

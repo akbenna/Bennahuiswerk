@@ -21,7 +21,7 @@ import { ONDERWERPICOON, PROFIELEN, VAKNAAM } from '../gegevens/profielen'
 import type { Kaart, Thema } from '../gegevens/soorten'
 import type { Voortgang } from '../opslag'
 import { berekenBeloning, euro, halfRond, weekVerdiend } from '../beloning'
-import { isBeheerst, kaartStand } from '../leitner'
+import { isBeheerst, kaartStand, sterrenVan, sterrenVanStapel } from '../leitner'
 import { INSIGNES, dagMissie, rangVoor } from '../missie'
 import { Klapkaart } from '../onderdelen'
 import { Vraagveld } from './Vraagveld'
@@ -68,6 +68,10 @@ export function Vakken(p: VakkenProps): ReactNode {
       total: exs.length,
       beheerst: exs.filter((e) => isBeheerst(p.prog, e.id)).length,
       begonnen: exs.filter((e) => kaartStand(p.prog, e.id).box > 0).length,
+      /* De sterren komen uit het gemiddelde doosje en niet uit het percentage
+         beheerst. Dat laatste springt pas bij doosje vier: een kind dat drie
+         keer goed had zag niets bewegen. */
+      sterren: sterrenVanStapel(p.prog, exs),
     }))
   }, [p.alle, p.pid, p.vak, p.prog, jaar])
 
@@ -221,16 +225,18 @@ export function Vakken(p: VakkenProps): ReactNode {
         </div>
       )}
 
-      {onderwerpen.map(({ t, total, beheerst }) => {
+      {onderwerpen.map(({ t, total, beheerst, sterren }) => {
         const pct = total ? Math.round(beheerst / total * 100) : 0
-        const sterren = pct >= 100 ? '⭐⭐⭐' : pct >= 60 ? '⭐⭐' : beheerst > 0 ? '⭐' : '☆☆☆'
         return (
           <button type="button" key={t} className="topic" onClick={() => p.naarOnderwerp(t, jaar)}>
             <div className="ico">{ONDERWERPICOON[t] ?? '📘'}</div>
             <div className="grow">
               <div className="tt">{t}</div>
               <div className="muted" style={{ fontSize: 13 }}>
-                {beheerst} / {total} beheerst · <span className="stars">{sterren}</span>
+                {beheerst} / {total} beheerst ·{' '}
+                <span className="stars" title={`${sterren} van 5 sterren`}>
+                  {sterrenVan(sterren)}
+                </span>
               </div>
               <div className="pbar"><i style={{ width: pct + '%' }} /></div>
             </div>
@@ -404,8 +410,8 @@ export function Vakken(p: VakkenProps): ReactNode {
       </div>
 
       <p className="muted center" style={{ marginTop: 14, fontSize: 13 }}>
-        Een som is <b>beheerst</b> als je hem een paar keer achter elkaar goed hebt. Foute sommen
-        komen vaker terug. 🌱
+        Elke goede beurt is een ster erbij; vanaf vier sterren heet een som <b>beheerst</b>. Foute
+        sommen komen vaker terug, beheerste sommen pas na een paar dagen. 🌱
       </p>
     </div>
   )

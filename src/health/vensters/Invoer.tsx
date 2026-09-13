@@ -62,10 +62,14 @@ export const MOMENTKEUZE: Array<{ id: Moment; naam: string; klas: string }> = [
    geschiedenis heeft. Ze vullen het beschrijfvak in plaats van meteen op te
    slaan: bij een nieuwe gebruiker weet de app nog niet wat een cappuccino bij
    hém is. */
+/* Er stond een emoji voor elk woord — een kopje, een brood, een pinda. Die zijn
+   eruit en niet vervangen: op drie chips met een woord erop voegde het plaatje
+   niets toe, en het waren de laatste drie gekleurde tekens in een app waarvan de
+   rest met de hand getekend is. Zie `tekens.tsx`. */
 const SNELLE = [
-  { ico: '☕', naam: 'Koffie', tekst: 'een cappuccino' },
-  { ico: '🍞', naam: 'Brood', tekst: 'twee bruine boterhammen met kaas' },
-  { ico: '🥜', naam: 'Handje', tekst: 'een handje ongezouten noten' },
+  { naam: 'Koffie', tekst: 'een cappuccino' },
+  { naam: 'Brood', tekst: 'twee bruine boterhammen met kaas' },
+  { naam: 'Handje', tekst: 'een handje ongezouten noten' },
 ]
 
 export interface InvoerEigenschappen {
@@ -466,7 +470,7 @@ function Zoekvangst(
       {opHerkennen && (
         <button type="button" className="hoofdknop breed" style={{ marginBottom: 10 }}
                 onClick={opHerkennen}>
-          <span aria-hidden="true">✎</span>
+          <ActieBeschrijf />
           <span>
             Dit klinkt als een hele maaltijd
             <span className="hoofdknopsub">
@@ -663,7 +667,7 @@ function Beschrijven(
           <Rij style={{ marginTop: 8 }}>
             {SNELLE.map((x) => (
               <Keuzechip key={x.naam} opKlik={() => zetTekst((t) => (t ? t + ', ' : '') + x.tekst)}>
-                {x.ico} {x.naam}
+                {x.naam}
               </Keuzechip>
             ))}
           </Rij>

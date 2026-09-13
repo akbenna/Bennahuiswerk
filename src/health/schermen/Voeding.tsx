@@ -21,6 +21,7 @@ import type { Zoekuitslag } from '@/gedeeld/db/rpc'
 import type { EigenProduct, Moment, Regel } from '@/gedeeld/db/tabellen'
 import type { Analyse } from '../rekenkern'
 import type { Onderwerp } from '../vensters/Portie'
+import { ActieZoek, WegEigenProduct } from '../tekens'
 
 export interface VoedingEigenschappen {
   a: Analyse
@@ -160,7 +161,10 @@ function Zoeken({ token, opPortie }: { token: string; opPortie: (o: Onderwerp) =
     <Kaart>
       <Kop>Zoeken in de voedingsmiddelentabel en de gerechten</Kop>
       <div className="zoekvak">
-        <span aria-hidden="true">🔎</span>
+        {/* Het laatste emoji dat nog in de app stond. Het invoervel kreeg hier
+            al een getekend vergrootglas; dit zoekveld was vergeten, en dan staat
+            er op het ene scherm een gekleurd glaasje en op het andere een lijn. */}
+        <span aria-hidden="true"><ActieZoek /></span>
         <input placeholder="stamppot, roti, hummus, olijfolie…" autoComplete="off"
                value={term} onChange={(e) => zetTerm(e.target.value)} />
       </div>
@@ -270,7 +274,7 @@ function EigenProducten(
 
   return (
     <Kaart>
-      <Kop>Eigen producten</Kop>
+      <Kop teken={WegEigenProduct}>Eigen producten</Kop>
       <Rij style={{ marginTop: 8 }}>
         <input placeholder="naam" value={naam} onChange={(e) => zetNaam(e.target.value)}
                style={{ flex: '2 1 140px', width: 'auto' }} />

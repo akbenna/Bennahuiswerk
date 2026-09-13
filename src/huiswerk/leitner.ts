@@ -9,6 +9,13 @@
  *
  * De klok komt als argument binnen zodat een wachttijd te toetsen is zonder de
  * systeemklok te verzetten.
+ *
+ * Onderaan staan drie dingen die erbij horen maar er niet in zaten: de doosjes
+ * als sterren (`sterrenVan`), de voorraad op niveau brengen zonder hem tot één
+ * som terug te snijden (`opNiveau`), en het kiezen van de volgende beurt met de
+ * regel dat wat beheerst is en nog wacht níet terugkomt (`kiesVolgende`).
+ * `volgendeKaart` zelf is onaangeroerd gebleven: die is op de oude pagina
+ * geijkt en heeft een gouden proef.
  */
 import type { Kaart, Opgave, Opgaveinhoud, Sjabloon, Toeval } from './gegevens/soorten'
 import type { Kaartstand, Voortgang } from './opslag'
@@ -93,4 +100,140 @@ export function volgendeKaart(
     .filter((s) => s.c.box === eerste.c.box && dichtbij(s.kaart) === dichtbij(eerste.kaart))
     .slice(0, 3)
   return t.pick(top).kaart
+}
+
+/* ------------------------------------------------------------------ sterren */
+
+/** Hoeveel sterren een som hoogstens kan hebben: één per doosje. */
+export const STERREN = 5
+
+/**
+ * Het doosje als sterren. Vier sterren is de grens: daar heet een som
+ * beheerst, en daar gaat hij ook van tien naar drie punten. Vijf is de
+ * bovenste doos — dezelfde som die na zestien dagen nog goed gaat.
+ *
+ * Dit is geen tweede waarheid naast `box` maar een weergave ervan. Wie de
+ * doosjes verandert, verandert de sterren mee, en dat hoort ook.
+ */
+export const sterrenVan = (box: number): string => {
+  const n = Math.max(0, Math.min(STERREN, Math.round(box)))
+  return '⭐'.repeat(n) + '☆'.repeat(STERREN - n)
+}
+
+/** De sterren van één som. */
+export const sterrenVoor = (prog: Voortgang, id: string): string =>
+  sterrenVan(kaartStand(prog, id).box)
+
+/**
+ * De sterren van een hele stapel: het gemiddelde doosje, naar beneden
+ * afgerond. Naar beneden, want drie sterren horen te betekenen dat het
+ * grootste deel er echt in zit — niet dat het er bijna in zit.
+ *
+ * Dit loopt met kleine stapjes mee, en dat is het verschil met tellen hoeveel
+ * sommen er beheerst zijn: die sprong komt pas bij doosje vier, en tot dat
+ * moment ziet een kind niets bewegen terwijl het wel vooruitgaat.
+ */
+export function sterrenVanStapel(prog: Voortgang, kaarten: readonly Kaart[]): number {
+  if (!kaarten.length) return 0
+  const som = kaarten.reduce((s, k) => s + kaartStand(prog, k.id).box, 0)
+  return Math.floor(som / kaarten.length)
+}
+
+/* ---------------------------------------------------- de voorraad per niveau */
+
+/**
+ * Hoeveel opgaven een voorraad minstens moet houden voordat een vast niveau
+ * hem verder mag inperken.
+ *
+ * Hier zat de klacht. Een vast niveau sneed de voorraad terug tot precies dát
+ * niveau, en bij een onderwerp als `Delen` staan er drie vaste sommen — één
+ * per niveau. Vast op drie betekende dus: één som, eindeloos herhaald, ook als
+ * hij allang beheerst was.
+ */
+export const MIN_VOORRAAD = 6
+
+/**
+ * De voorraad op niveau brengen. Bij `auto` gebeurt er niets; bij een vast
+ * niveau komt eerst dát niveau, en pas als er te weinig overblijft schuiven de
+ * buurniveaus erbij — het dichtstbijzijnde eerst.
+ *
+ * Het niveau blijft daarmee een voorkeur en geen muur: `volgendeKaart` sorteert
+ * nog steeds op de afstand tot het doelniveau, dus wie vast op drie staat
+ * krijgt nog altijd vooral sommen van niveau drie.
+ */
+export function opNiveau(
+  lijst: readonly Kaart[], niveau: Voortgang['niveau'], min: number = MIN_VOORRAAD,
+): Kaart[] {
+  if (!([1, 2, 3] as unknown[]).includes(niveau)) return [...lijst]
+  const doel = niveau as number
+  let uit: Kaart[] = []
+  for (let afstand = 0; afstand <= 2; afstand++) {
+    uit = lijst.filter((k) => Math.abs((k.lvl ?? 1) - doel) <= afstand)
+    if (uit.length >= min) break
+  }
+  return uit.length ? uit : [...lijst]
+}
+
+/* ------------------------------------------------------------- de volgende beurt */
+
+export interface Beurtkeuze {
+  kaart: Kaart | null
+  /**
+   * Alles in deze stapel is net geweest en wacht nog. Geen reden om door te
+   * vragen: dat is precies het herhalen waar de klacht over ging.
+   */
+  rust: boolean
+  /**
+   * En zit alles ook écht vast (doosje vier of hoger)? Dat is iets anders dan
+   * rust. Na één goede ronde wacht een som al een dag, maar dan beheers je hem
+   * nog niet — en dat hoort het scherm niet te zeggen.
+   */
+  allesBeheerst: boolean
+  /** Wanneer de eerstvolgende som weer aan de beurt is, in ms. */
+  terugOm: number
+}
+
+/** Is deze som nu aan de beurt — nooit gezien, of zijn wachttijd is om? */
+const aanDeBeurt = (prog: Voortgang, k: Kaart, nu: number): boolean => {
+  const c = kaartStand(prog, k.id)
+  return c.box === 0 || nu >= wanneerTerug(c)
+}
+
+/**
+ * De volgende beurt kiezen, met twee regels bovenop `volgendeKaart`.
+ *
+ * **Wat beheerst is en nog wacht, komt niet terug.** `volgendeKaart` valt terug
+ * op de hele voorraad zodra er niets aan de beurt is; dan krijg je een som die
+ * je vorige week al vier keer goed had. Hier stopt dat: er komt `rust: true`
+ * uit, en het scherm zegt wanneer het onderwerp terugkomt. Met `dwing` gaat het
+ * alsnog door — bij een toets, die zijn tien vragen nodig heeft, en bij een
+ * kind dat zelf zegt dat het wil doorgaan.
+ *
+ * **Een sjabloon gaat vóór dezelfde som nóg een keer.** Is alles wat overblijft
+ * net geweest, dan wint een sjabloon: die levert verse getallen en dus een
+ * vraag die het kind nog niet gezien heeft. Herhalen mag, maar niet als er iets
+ * nieuws naast ligt.
+ */
+export function kiesVolgende(
+  pool: readonly Kaart[], prog: Voortgang, recent: readonly string[], nu: number, t: Toeval,
+  dwing = false,
+): Beurtkeuze {
+  if (!pool || pool.length === 0) {
+    return { kaart: null, rust: false, allesBeheerst: false, terugOm: 0 }
+  }
+  const terugOm = pool.reduce(
+    (m, k) => Math.min(m, wanneerTerug(kaartStand(prog, k.id))), Infinity)
+  const allesBeheerst = pool.every((k) => isBeheerst(prog, k.id))
+  const open = pool.filter((k) => aanDeBeurt(prog, k, nu))
+  if (!open.length && !dwing) return { kaart: null, rust: true, allesBeheerst, terugOm }
+
+  const bron = open.length ? open : pool
+  const gezien = new Set(recent)
+  if (bron.every((k) => gezien.has(k.id))) {
+    const versen = bron.filter(isSjabloon)
+    if (versen.length) return { kaart: t.pick(versen), rust: false, allesBeheerst, terugOm }
+  }
+  return {
+    kaart: volgendeKaart(bron, prog, recent, nu, t), rust: false, allesBeheerst, terugOm,
+  }
 }
