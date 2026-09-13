@@ -23,7 +23,8 @@ import {
   totaalVerdiend, weekVerdiend, zomerStand,
 } from './beloning'
 import {
-  BOX_DAGEN, beurtVan, doelNiveau, isBeheerst, kaartStand, puntenVoor, volgendeKaart,
+  BOX_DAGEN, MIN_VOORRAAD, STERREN, beurtVan, doelNiveau, isBeheerst, kaartStand, kiesVolgende,
+  opNiveau, puntenVoor, sterrenVan, sterrenVanStapel, volgendeKaart,
 } from './leitner'
 import { beheersStatus, leerprofiel, zwakteAnalyse } from './volgsysteem'
 import { dagMissie, rangVoor, verzilverMissie, weekPuntenNu } from './missie'
@@ -274,6 +275,124 @@ describe('Leitner', () => {
 
   it('geeft niets terug bij een lege voorraad', () => {
     expect(volgendeKaart([], vers(), [], KLOK, toevalUit(bronVanaf(0)))).toBeNull()
+  })
+})
+
+describe('het herhalen, waar de klacht over ging', () => {
+  const SJABLOON = sjablonen(toevalUit(bronVanaf(0)))
+  const alle: Kaart[] = [...SEED, ...SJABLOON]
+  const delen = alle.filter((e) => e.p === 'amine' && e.v === 'rekenen' && e.t === 'Delen')
+  const t0 = toevalUit(bronVanaf(0))
+
+  it('snijdt een klein onderwerp niet terug tot één som op een vast niveau', () => {
+    /* Dit wás de klacht: vast op niveau 3 hield van `Delen` precies de ene som
+       van niveau 3 over, en die kwam dan eindeloos terug. */
+    expect(delen.filter((e) => (e.lvl ?? 1) === 3).length).toBe(1)
+    expect(opNiveau(delen, 3).length).toBe(delen.length)
+    expect(opNiveau(delen, 3).length).toBeGreaterThan(1)
+  })
+
+  it('laat een ruime voorraad wél op het gekozen niveau staan', () => {
+    const ruim: Kaart[] = Array.from({ length: 20 }, (_, i) => ({
+      id: 'r' + i, p: 'x', v: 'v', t: 't', lvl: i % 3 + 1, q: 'q', a: 'a',
+    }))
+    const uit = opNiveau(ruim, 2)
+    expect(uit.length).toBeGreaterThanOrEqual(MIN_VOORRAAD)
+    expect(uit.every((k) => k.lvl === 2)).toBe(true)
+  })
+
+  it('laat bij `auto` de hele voorraad staan', () => {
+    expect(opNiveau(delen, 'auto').length).toBe(delen.length)
+  })
+
+  it('vraagt niet door als alles beheerst is en nog moet wachten', () => {
+    const pr = vers()
+    for (const k of delen) pr.cards[k.id] = { box: 4, ok: 4, wrong: 0, last: KLOK }
+    const uit = kiesVolgende(delen, pr, [], KLOK + 3600000, t0)
+    expect(uit.rust).toBe(true)
+    expect(uit.kaart).toBeNull()
+    expect(uit.allesBeheerst).toBe(true)
+    /* Doosje 4 wacht zeven dagen. */
+    expect(uit.terugOm).toBe(KLOK + 7 * 86400000)
+  })
+
+  it('noemt rust geen beheersing zolang de doosjes nog laag staan', () => {
+    /* Na één goede ronde wacht elke som al een dag, maar beheerst is hij niet.
+       Het scherm hangt hierop: 🏅 "dit beheers je" of 🌱 "je hebt ze gehad". */
+    const pr = vers()
+    for (const k of delen) pr.cards[k.id] = { box: 2, ok: 1, wrong: 0, last: KLOK }
+    const uit = kiesVolgende(delen, pr, [], KLOK + 3600000, t0)
+    expect(uit.rust).toBe(true)
+    expect(uit.allesBeheerst).toBe(false)
+    expect(uit.terugOm).toBe(KLOK + 86400000)
+  })
+
+  it('gaat wel door als het kind of een toets erom vraagt', () => {
+    const pr = vers()
+    for (const k of delen) pr.cards[k.id] = { box: 4, ok: 4, wrong: 0, last: KLOK }
+    const uit = kiesVolgende(delen, pr, [], KLOK + 3600000, t0, true)
+    expect(uit.rust).toBe(false)
+    expect(uit.kaart).toBeTruthy()
+  })
+
+  it('rust niet zolang er nog één som aan de beurt is', () => {
+    const pr = vers()
+    for (const k of delen) pr.cards[k.id] = { box: 4, ok: 4, wrong: 0, last: KLOK }
+    const eerste = delen[0] as Kaart
+    pr.cards[eerste.id] = { box: 1, ok: 1, wrong: 1, last: KLOK }
+    const uit = kiesVolgende(delen, pr, [], KLOK + 3600000, t0)
+    expect(uit.rust).toBe(false)
+    expect(uit.kaart?.id).toBe(eerste.id)
+  })
+
+  it('kiest een sjabloon zodra alles wat overblijft net geweest is', () => {
+    /* Een sjabloon geeft verse getallen; een vaste som geeft dezelfde vraag.
+       Is alles net geweest, dan hoort de verse te winnen. */
+    const sjabloon = delen.find((k) => 'gen' in k)
+    expect(sjabloon).toBeTruthy()
+    const uit = kiesVolgende(delen, vers(), delen.map((k) => k.id), KLOK, t0)
+    expect(uit.kaart?.id).toBe(sjabloon?.id)
+  })
+
+  it('geeft niets terug bij een lege voorraad, en rust dan niet', () => {
+    const uit = kiesVolgende([], vers(), [], KLOK, t0)
+    expect(uit.kaart).toBeNull()
+    expect(uit.rust).toBe(false)
+  })
+})
+
+describe('de sterren', () => {
+  it('zijn precies de doosjes, vijf lang', () => {
+    expect(sterrenVan(0)).toBe('☆☆☆☆☆')
+    expect(sterrenVan(1)).toBe('⭐☆☆☆☆')
+    expect(sterrenVan(4)).toBe('⭐⭐⭐⭐☆')
+    expect(sterrenVan(STERREN)).toBe('⭐⭐⭐⭐⭐')
+    /* Buiten de schaal blijft binnen de schaal. */
+    expect(sterrenVan(-3)).toBe('☆☆☆☆☆')
+    expect(sterrenVan(99)).toBe('⭐⭐⭐⭐⭐')
+  })
+
+  it('geven de vierde ster precies waar een som beheerst heet', () => {
+    const pr = vers()
+    for (let box = 0; box <= STERREN; box++) {
+      pr.cards = { x: { box, ok: box, wrong: 0, last: 0 } }
+      const vol = sterrenVan(box).split('⭐').length - 1
+      expect(vol >= 4, `doosje ${box}`).toBe(isBeheerst(pr, 'x'))
+    }
+  })
+
+  it('bewegen mee met kleine stapjes, anders dan het percentage beheerst', () => {
+    const stapel: Kaart[] = ['a', 'b', 'c', 'd'].map((id) => ({
+      id, p: 'x', v: 'v', t: 't', q: 'q', a: 'a',
+    }))
+    const pr = vers()
+    expect(sterrenVanStapel(pr, stapel)).toBe(0)
+    /* Drie van de vier sommen op doosje 3: nog niets beheerst, maar wel twee
+       sterren. Precies het stuk voortgang dat vroeger onzichtbaar was. */
+    for (const k of stapel.slice(0, 3)) pr.cards[k.id] = { box: 3, ok: 3, wrong: 0, last: 0 }
+    expect(stapel.filter((k) => isBeheerst(pr, k.id)).length).toBe(0)
+    expect(sterrenVanStapel(pr, stapel)).toBe(2)
+    expect(sterrenVanStapel(pr, [])).toBe(0)
   })
 })
 
