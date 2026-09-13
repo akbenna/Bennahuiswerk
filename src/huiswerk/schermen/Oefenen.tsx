@@ -11,6 +11,23 @@
  * Punten: tien als je het zelf hebt, vijf met een hint, drie als je de som al
  * beheerste. Dat laatste is geen straf maar een sturing — herhalen wat je al
  * kunt hoort minder waard te zijn dan leren wat je nog niet kunt.
+ *
+ * EN HET SCHERM STOPT OOK EEN KEER
+ *
+ * De sturing hierboven was te zacht: buiten de toets bleef dit scherm vragen
+ * stellen zolang er iets in de voorraad zat, en bij een klein onderwerp op een
+ * vast niveau was dat één som. Een kind kreeg dan tien keer dezelfde vraag, met
+ * "✓ beheerst" erboven. Twee dingen zijn daarop veranderd, en ze horen bij
+ * elkaar:
+ *
+ *  - de voorraad wordt niet meer tot één niveau teruggesneden (`opNiveau`);
+ *  - is alles net geweest, dan komt er een rustscherm in plaats van nóg een
+ *    beurt (`kiesVolgende`). Een toets gaat wél door — die heeft zijn tien
+ *    vragen nodig — en een kind dat zelf doorwil ook.
+ *
+ * Wat het kind ziet staat in sterren en niet in een vinkje: elk doosje is een
+ * ster, vanaf vier heet een som beheerst. Zo beweegt er iets bij de eerste en
+ * de tweede goede beurt, en niet pas bij de vierde.
  */
 import { useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
@@ -18,7 +35,10 @@ import { PROFIELEN, VAKNAAM } from '../gegevens/profielen'
 import { UITLEG } from '../gegevens/uitleg'
 import type { Kaart, Opgave, Thema, Toeval } from '../gegevens/soorten'
 import type { Voortgang } from '../opslag'
-import { beurtVan, isBeheerst, puntenVoor, volgendeKaart } from '../leitner'
+import {
+  STERREN, beurtVan, kaartStand, kiesVolgende, opNiveau, puntenVoor, sterrenVan,
+  sterrenVanStapel, sterrenVoor,
+} from '../leitner'
 import { antwoordKlopt, diagnoseFout, norm } from '../nakijken'
 import { mmss } from '../datum'
 import { leesVoor, speel } from '../geluid'
@@ -51,6 +71,18 @@ export interface OefenenProps {
 
 interface Toetsfout { t: string; q: string; a: string; u: string }
 
+/** Hoe lang het nog duurt voordat een onderwerp dat rust terugkomt, in woorden.
+ *  Naar boven afgerond: "morgen" is eerlijker dan "vandaag nog" als het pas
+ *  vanavond zover is. */
+function wachtwoorden(ms: number): string {
+  if (!isFinite(ms) || ms <= 0) return 'zo weer'
+  const uren = Math.ceil(ms / 3600000)
+  if (uren <= 1) return 'over een uur'
+  if (uren < 24) return `over ${uren} uur`
+  const dagen = Math.ceil(uren / 24)
+  return dagen === 1 ? 'morgen' : `over ${dagen} dagen`
+}
+
 export function Oefenen(p: OefenenProps): ReactNode {
   const jr = p.jaar || 'nu'
   const isMix = p.onderwerp === '__mix__'
@@ -71,7 +103,13 @@ export function Oefenen(p: OefenenProps): ReactNode {
   const [verdiend, zetVerdiend] = useState(10)
   const [feest, zetFeest] = useState(false)
   const [toonUitleg, zetToonUitleg] = useState(true)
-  const [sessie, zetSessie] = useState({ goed: 0, fout: 0 })
+  const [sessie, zetSessie] = useState({ goed: 0, fout: 0, sterren: 0 })
+  /* Alles in dit onderwerp is net geweest en wacht nog. Dan is doorvragen geen
+     oefening maar herhaling van wat er al zit; het scherm zegt dat, en het kind
+     kiest zelf of het tóch doorgaat. */
+  const [rust, zetRust] = useState<{ tot: number; beheerst: boolean } | null>(null)
+  /* De sterren van de som die net goed ging: ervoor en erna. */
+  const [ster, zetSter] = useState({ voor: 0, na: 0 })
   const [klaar, zetKlaar] = useState(false)
   const [foutTip, zetFoutTip] = useState<string | null>(null)
   const [toets, zetToets] = useState<{ n: number; fout: Toetsfout[] }>({ n: 0, fout: [] })
@@ -92,6 +130,7 @@ export function Oefenen(p: OefenenProps): ReactNode {
         : isToets ? '📝 Oefentoets' : p.onderwerp) + (jr === 'next' ? ' 🔭 volgend jaar' : '')
 
   const toon = (c: Kaart): void => {
+    zetRust(null)
     recent.current = [...recent.current.filter((id) => id !== c.id), c.id].slice(-RECENT)
     zetKaart(c)
     zetBeurt(beurtVan(c))
@@ -116,21 +155,23 @@ export function Oefenen(p: OefenenProps): ReactNode {
       lijst = p.alle.filter((e) => e.p === p.pid && e.v === p.vak && e.t === p.onderwerp
         && (e.jaar ?? 'nu') === jr)
     }
-    /* Bij een vast niveau alleen dát niveau — tenzij er dan niets overblijft. */
-    if (!isFout && [1, 2, 3].includes(nu.current.niveau as number)) {
-      const f = lijst.filter((e) => (e.lvl ?? 1) === nu.current.niveau)
-      if (f.length) lijst = f
-    }
+    /* Een vast niveau is een voorkeur, geen muur. Zie `opNiveau`: pas als dat
+       ene niveau te weinig oplevert schuiven de buurniveaus erbij. Zonder dat
+       bleef er bij een onderwerp als Delen precies één som over. */
+    if (!isFout) lijst = opNiveau(lijst, nu.current.niveau)
     zetPool(lijst)
-    zetSessie({ goed: 0, fout: 0 })
+    zetSessie({ goed: 0, fout: 0, sterren: 0 })
     zetToets({ n: 0, fout: [] })
     zetKlaar(false)
     zetToonUitleg(true)
     zetStart(isExamen ? Date.now() : 0)
     zetSecs(0)
     recent.current = []
-    const eerste = volgendeKaart(lijst, nu.current, [], Date.now(), p.toeval)
-    if (eerste) toon(eerste)
+    /* Een toets moet zijn tien vragen hebben, ook als alles al beheerst is:
+       daar telt `dwing`. Buiten de toets mag de stapel rusten. */
+    const eerste = kiesVolgende(lijst, nu.current, [], Date.now(), p.toeval, isExamen)
+    zetRust(eerste.rust ? { tot: eerste.terugOm, beheerst: eerste.allesBeheerst } : null)
+    if (eerste.kaart) toon(eerste.kaart)
     else { zetKaart(null); zetBeurt(null) }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [p.onderwerp, p.vak, p.pid, jr])
@@ -165,12 +206,17 @@ export function Oefenen(p: OefenenProps): ReactNode {
     }
     zetPogingen((t) => t + 1)
     if (ok) {
+      /* De sterren van vóór het antwoord, want `opUitslag` schuift het doosje
+         meteen op. Het verschil is wat het kind te zien krijgt. */
+      const voor = kaartStand(nu.current, kaart.id).box
+      const na = Math.min(STERREN, voor + 1)
+      zetSter({ voor, na })
       zetVerdiend(puntenVoor(nu.current, kaart.id, hintN > 0))
       zetStand('goed')
       zetFoutTip(null)
       speel('goed', p.geluid)
       p.opUitslag(kaart, beurt, true, hintN > 0)
-      zetSessie((s) => ({ goed: s.goed + 1, fout: s.fout }))
+      zetSessie((s) => ({ goed: s.goed + 1, fout: s.fout, sterren: s.sterren + (na - voor) }))
       zetFeest(true)
       setTimeout(() => zetFeest(false), 1100)
     } else {
@@ -178,7 +224,7 @@ export function Oefenen(p: OefenenProps): ReactNode {
       zetFoutTip(diagnoseFout(beurt, val))
       speel('fout', p.geluid)
       p.opUitslag(kaart, beurt, false, false)
-      zetSessie((s) => ({ goed: s.goed, fout: s.fout + 1 }))
+      zetSessie((s) => ({ goed: s.goed, fout: s.fout + 1, sterren: s.sterren }))
     }
   }
 
@@ -190,8 +236,58 @@ export function Oefenen(p: OefenenProps): ReactNode {
       zetKlaar(true)
       return
     }
-    const n = volgendeKaart(pool, nu.current, recent.current, Date.now(), p.toeval)
-    if (n) toon(n)
+    pak(false)
+  }
+
+  /** De volgende som ophalen. `dwing` zet de rustregel opzij: dat doet een toets
+   *  altijd, en een kind dat op "toch oefenen" tikt één keer. */
+  function pak(dwing: boolean): void {
+    const n = kiesVolgende(pool, nu.current, recent.current, Date.now(), p.toeval,
+      dwing || isExamen)
+    if (n.kaart) toon(n.kaart)
+    else if (n.rust) zetRust({ tot: n.terugOm, beheerst: n.allesBeheerst })
+  }
+
+  if (rust && !isExamen) {
+    const sterren = sterrenVanStapel(p.prog, pool)
+    const hoeveel = `alle ${pool.length} ${pool.length === 1 ? 'som' : 'sommen'}`
+    return (
+      <div>
+        <div className="topbar">
+          <button type="button" className="back" onClick={p.terug}>← overzicht</button>
+          <span className="pill">{label}</span>
+        </div>
+        <div className="card center" style={{ marginTop: 20 }}>
+          <div style={{ fontSize: 44 }}>{rust.beheerst ? '🏅' : '🌱'}</div>
+          <h2>{rust.beheerst ? 'Dit beheers je.' : 'Je hebt ze allemaal gehad.'}</h2>
+          <div className="stars" style={{ fontSize: 26, letterSpacing: 2 }}>
+            {sterrenVan(sterren)}
+          </div>
+          <p style={{ fontSize: 16, marginTop: 8 }}>
+            {rust.beheerst
+              ? `Van ${hoeveel} van dit onderwerp heb je vier sterren of meer.`
+              : `Je bent ${hoeveel} van dit onderwerp net langsgegaan.`}{' '}
+            Ze komen <b>{wachtwoorden(rust.tot - Date.now())}</b> terug om te kijken of het blijft
+            zitten.
+          </p>
+          <p className="muted" style={{ fontSize: 13 }}>
+            Nu doorgaan levert dezelfde sommen op. Even wachten laat ze juist beter blijven zitten —
+            pak zolang iets wat nog niet vastzit. 🌱
+          </p>
+        </div>
+        <div className="wrap center" style={{ marginTop: 16, justifyContent: 'center' }}>
+          <button type="button" className="btn" onClick={p.terug}>← Ander onderwerp</button>
+          {!isFout && !isMix && (
+            <button type="button" className="btn gold" onClick={() => p.naarOnderwerp('__mix__', jr)}>
+              🎲 Mix van dit vak
+            </button>
+          )}
+          <button type="button" className="btn ghost sm" onClick={() => pak(true)}>
+            Toch nog oefenen
+          </button>
+        </div>
+      </div>
+    )
   }
 
   if (!kaart || !beurt) {
@@ -286,6 +382,12 @@ export function Oefenen(p: OefenenProps): ReactNode {
               ? (sessie.goed === 1 ? 'doelpunt' : 'doelpunten')
               : (sessie.goed === 1 ? 'som' : 'sommen')} goed.
           </p>
+          {sessie.sterren > 0 && (
+            <p style={{ fontSize: 16, margin: '2px 0' }}>
+              <span className="stars">⭐</span> {sessie.sterren}{' '}
+              {sessie.sterren === 1 ? 'ster' : 'sterren'} erbij.
+            </p>
+          )}
           <p className="muted">
             Vandaag totaal: {p.prog.todayCount || 0} / {doel} 🎯{' '}
             {gehaald ? '— dagdoel gehaald!' : ''}
@@ -347,8 +449,16 @@ export function Oefenen(p: OefenenProps): ReactNode {
         <span className="muted" style={{ fontSize: 13 }}>
           {isExamen
             ? `⏱ ${mmss(secs)} · vraag ${stand === 'open' ? toets.n + 1 : toets.n} / ${toetsLengte}`
-            : `som ${sessie.goed + 1} · niveau ${beurt.lvl ?? kaart.lvl ?? 1}`
-              + (isBeheerst(p.prog, kaart.id) ? ' · ✓ beheerst' : '')}
+            : (
+              <>
+                som {sessie.goed + 1} · niveau {beurt.lvl ?? kaart.lvl ?? 1} ·{' '}
+                <span
+                  className="stars"
+                  title={`${kaartStand(p.prog, kaart.id).box} van ${STERREN} sterren — `
+                    + 'vanaf 4 heet deze som beheerst'}
+                >{sterrenVoor(p.prog, kaart.id)}</span>
+              </>
+              )}
         </span>
       </div>
       <div className="pbar" style={{ marginBottom: 12 }}>
@@ -426,6 +536,16 @@ export function Oefenen(p: OefenenProps): ReactNode {
             {isExamen
               ? (p.thema.doel === 'doelpunten' ? '⚽ GOAL!' : '✅ Goed!')
               : `${p.thema.goal} +${verdiend} ${p.thema.xp}`}
+            {!isExamen && (
+              <div style={{ fontSize: 15, fontWeight: 600, marginTop: 6 }}>
+                <span className="stars">{sterrenVan(ster.na)}</span>{' '}
+                {ster.na > ster.voor
+                  ? (ster.na === 4 && ster.voor < 4
+                      ? '🏅 nu beheers je deze som!'
+                      : ster.na === STERREN ? 'vol! deze zit er stevig in.' : 'een ster erbij')
+                  : 'al vol — mooi zo'}
+              </div>
+            )}
           </div>
         )}
         {stand === 'fout' && isExamen && (
@@ -500,7 +620,8 @@ export function Oefenen(p: OefenenProps): ReactNode {
         {isExamen
           ? `${isProef ? 'Proeftoets' : 'Oefentoets'}: ${toetsLengte} vragen, gemengd, geen hints. `
             + 'Veel succes! 🍀'
-          : 'Eerst zelf proberen = 10 punten · met hint = 5 · al beheerst = 3 🌟'}
+          : 'Elke goede beurt is een ster erbij; vanaf ⭐⭐⭐⭐ beheers je de som. '
+            + 'Zelf gevonden = 10 punten · met hint = 5 · al beheerst = 3'}
       </p>
     </div>
   )
