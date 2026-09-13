@@ -902,3 +902,132 @@ en niet één keer hier, want je leest het op het moment dat je het getal ziet.
 Alle zes de keukens die het schema toestaat zijn nu gevuld. Van de 73 nieuwe
 draagt elke regel `concept`, `ai_voorstel` en `estimated` — graad D, tot een
 diëtist ernaar heeft gekeken.
+
+---
+
+## 22. Verzadiging — een derde as, en waarom hij een schatting blijft
+
+### 22.1 De vraag die eiwit niet beantwoordt
+
+De coach rangschikt op gram eiwit per kilocalorie. Dat beantwoordt "waar haal ik
+mijn eiwit vandaan" en niet "waar heb ik genoeg aan". Die twee lopen uiteen, en
+het scherpste voorbeeld staat in de tabel zelf: paardenrookvlees heeft 21,1 g
+eiwit per 100 kcal — bijna de hoogste dichtheid die er is — en de standaardportie
+is een plak van vijftien gram. Dat is op in twee happen.
+
+Wie om zes uur voor de koelkast staat, stelt de tweede vraag.
+
+### 22.2 Wat de literatuur zegt, in volgorde van bewijskracht
+
+Drie kenmerken hangen samen met verzadiging, en ze zijn niet even sterk
+onderbouwd.
+
+**Energiedichtheid** is het best onderbouwde gegeven in dit veld. Mensen eten
+grofweg een vast gewicht aan voedsel, niet een vast aantal calorieën; bij gelijk
+gewicht leidt een lagere energiedichtheid tot een lagere energie-inname
+(Ello-Martin JA, Ledikwe JH, Rolls BJ, *Am J Clin Nutr* 2005;82(1 Suppl):236S–241S).
+
+**Eiwit** is de meest verzadigende macronutriënt per kilocalorie. Bij dertig
+procent van de energie uit eiwit daalde de spontane inname met ruim vierhonderd
+kcal per dag (Weigle DS et al., *Am J Clin Nutr* 2005;82:41–8); zie ook het
+overzicht van Halton TL en Hu FB (*J Am Coll Nutr* 2004;23:373–85).
+
+**Vezel** doet iets, maar bescheiden en sterk afhankelijk van het soort; vooral
+viskeuze, gelvormende vezels. De meta-analyse van Wanders AJ et al.
+(*Obes Rev* 2011;12:724–39) vond een klein en inconsistent effect.
+
+### 22.3 Waarom het geen meting is, en wat er dan wél staat
+
+De klassieke méting is de verzadigingsindex van Holt SH, Miller JC, Petocz P en
+Farmakalidis E (*Eur J Clin Nutr* 1995;49:675–90): achtendertig voedingsmiddelen,
+isocalorische porties, wit brood op honderd, gekookte aardappel als hoogste op
+323 procent. Dat zou de beste bron zijn. Maar hij dekt achtendertig producten en
+deze tabel heeft er 2328; elke koppeling daartussen zou voor het overgrote deel
+verzinnen zijn.
+
+Wat er dus staat is een **voorspelling uit de samenstelling**:
+
+```
+45 × min(1, gram per 100 kcal / 240)
+35 × min(1, gram eiwit per 100 kcal / 12,5)
+20 × min(1, gram vezel per 100 kcal / 5)
+```
+
+De verhouding 45/35/20 volgt de bewijskracht hierboven en is verder mijn keuze —
+geen gepubliceerd resultaat. De drie afkappunten zijn dat níet: het zijn de
+negentigste percentielen van de tabel zelf, over de 2224 producten met energie en
+eiwit (gram p90 = 238, eiwit p90 = 12,5, vezel p90 = 5,09). Het afkappen bestaat
+zodat één uitschieter de score niet kan dragen; zonder afkapping wint altijd het
+natste product, ongeacht de rest.
+
+**Daarom staat de score niet voorop op het scherm.** Wat vooropstaat is het
+aantal gram dat je voor honderd kilocalorieën krijgt, en dat is een deling van
+twee gemeten waarden uit de tabel en verder niets. De score bepaalt de volgorde;
+het gram-getal is wat je kunt narekenen en wat de keuze maakt.
+
+### 22.4 Twee zeven, allebei uit een meting voortgekomen
+
+Gerangschikt zonder enige zeef kwam er dit bovenaan de echte tabel:
+
+| | score | gram per 100 kcal |
+|---|---|---|
+| Champignon gekookt | 100 | 476 |
+| Peterselie vers | 95 | 270 |
+| Yoghurtdrank Fristi | 86 | 417 |
+| Saus soja- | 81 | 250 |
+| Sap tomatengroenten- | 66 | 476 |
+| Bier alcoholarm | 54 | 455 |
+| Azijn | 50 | 455 |
+
+Champignons kloppen. De rest niet, en om twee verschillende redenen.
+
+Peterselie, sojasaus en azijn zijn geen voedsel maar smaakmaker: de score rekent
+per honderd kilocalorieën en die hoeveelheid haal je nooit. Fristi, groentesap en
+alcoholarm bier zijn **dranken**, en dat is geen smaakkwestie: vloeibare
+calorieën verzadigen minder dan vaste bij gelijke energie. Een verzadigingslijst
+die drinken aanraadt doet het omgekeerde van wat hij belooft.
+
+Dat werden twee zeven — een groepenlijst en een regexp op de naam — en ze zijn
+allebei dragend. Op een nagebouwde tabel met de echte waarden: groepszeef eruit
+en peterselie, sojasaus en roomboter komen terug; naamzeef eruit en Fristi komt
+terug. Die tweede mutant is het bewijs dat de naamzeef niet overbodig is naast de
+groepen: *Yoghurt*drank staat bij Melk en melkproducten en glipt door elke
+groepszeef heen.
+
+### 22.5 De zeef die ik eerst fout had
+
+Mijn eerste zeef eiste tachtig kilocalorieën per portie, naar het voorbeeld van
+`kal_eiwitrijk`. Daarmee viel de hele groep Groente eruit: een opscheplepel
+gekookte groente is vijftig gram en tien tot twintig kilocalorieën.
+
+Dat is precies de categorie die in een verzadigingslijst thuishoort, en mijn zeef
+gooide hem er als eerste uit. De ondergrens van bestand 23 hoort bij een
+eiwitvraag, waar een portie iets aan een tekort moet bijdragen; bij een
+verzadigingsvraag is een lage portie-energie juist de bedoeling. De zeef op
+smaakmakers moet dus op de groep zitten en niet op de calorieën.
+
+Dit is de derde keer in dit project dat meten vóór bouwen een aanname omkeerde —
+na de drempel van de zoekterugval en de Surinaamse hoek. Het patroon uit §21.2
+geldt hier in een andere vorm: niet mijn schatting van de tabel was te
+pessimistisch, maar mijn gewoonte om een zeef uit een ander bestand over te nemen
+zonder te kijken of de vraag dezelfde is.
+
+### 22.6 Wat je al eet wordt gemarkeerd, niet vooraan gezet
+
+Elke regel draagt een vlag: komt dit uit een groep waar je de afgelopen zestig
+dagen iets uit gelogd hebt? Dat beantwoordt "iets wat in de smaak valt" zonder de
+lijst te vernauwen.
+
+Sorteren op die vlag zou een fout zijn, en wel een bekende. De reden dat bestand
+23 überhaupt bestaat is dat de eigen geschiedenis leegloopt: wie drie weken
+hetzelfde eet krijgt drie weken hetzelfde voorgesteld. Een lijst uit de tabel die
+alsnog op je eigen gewoonten sorteert loopt tegen dezelfde muur. De vlag is er om
+te herkennen, niet om te rangschikken.
+
+### 22.7 De kaart begint dicht, en dat is te tellen
+
+Er hangt een vraag aan de database aan deze lijst. De belofte van een uitklapper
+is dus dat wie hem nooit opent er ook niet voor betaalt, en die belofte is een
+proef: het schermvoorbeeld telt de aanvragen, verwacht er nul zolang de kaart
+dicht is en precies één na het openen. De mutant die de lijst buiten de
+uitklapper hangt valt om met *"dicht en toch 1 keer gevraagd"*.

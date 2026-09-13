@@ -44,7 +44,10 @@ export function Kaart(
  * krijgen en waarom het er anders uitziet dan een herkomstteken, staat in
  * `tekens.tsx`.
  */
-export function Kop({ teken: Teken, children }: { teken?: () => ReactNode; children: ReactNode }) {
+export function Kop(
+  { teken: Teken, children }:
+  { teken?: (() => ReactNode) | undefined; children: ReactNode },
+) {
   if (!Teken) return <div className="eyebrow">{children}</div>
   return <div className="eyebrow metteken"><Teken />{children}</div>
 }
@@ -153,6 +156,52 @@ export function Uitleg(
       <summary>{label ?? 'waarom'}</summary>
       <div className="inhoud mini">{children}</div>
     </details>
+  )
+}
+
+/**
+ * Een blok dat dicht begint, zijn stand onthoudt, en zijn inhoud pas aanmaakt
+ * als hij opengaat.
+ *
+ * Verschilt van `Uitleg` op één punt dat er werkelijk toe doet: onder een
+ * uitlegblok staat tekst die er toch al is, hier hangt wérk aan het opengaan —
+ * een vraag aan de database. Daarom `{open && kinderen}` en geen verborgen
+ * inhoud: wie de kaart nooit opent kost niets.
+ *
+ * De stand wordt bij dezelfde sleutel bewaard als die van `Uitleg`, want het is
+ * hetzelfde soort geheugen en twee sleutels voor één ding lopen uit elkaar.
+ */
+export function Uitklap(
+  { id, kop, teken, dicht, children }:
+  {
+    id: string; kop: string; teken?: (() => ReactNode) | undefined
+    /** De regel onder de kop als hij dicht is: waarom zou je hem openen? */
+    dicht?: string | undefined
+    children: ReactNode
+  },
+) {
+  const [open, zetOpen] = useState(false)
+  useEffect(() => { zetOpen(leesStand()[id] ?? false) }, [id])
+
+  const wissel = useCallback(() => {
+    zetOpen((was) => {
+      const nu = !was
+      try {
+        localStorage.setItem(SLEUTEL_UITLEG, JSON.stringify({ ...leesStand(), [id]: nu }))
+      } catch { /* een browser die opslag weigert mag de app niet stukmaken */ }
+      return nu
+    })
+  }, [id])
+
+  return (
+    <Kaart>
+      <Tussen>
+        <Kop teken={teken}>{kop}</Kop>
+        <Keuzechip aan={open} opKlik={wissel}>{open ? 'dicht' : 'open'}</Keuzechip>
+      </Tussen>
+      {!open && dicht && <p className="mini" style={{ marginTop: 6 }}>{dicht}</p>}
+      {open && children}
+    </Kaart>
   )
 }
 

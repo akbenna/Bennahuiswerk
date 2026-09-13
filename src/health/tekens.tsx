@@ -232,3 +232,14 @@ export const ActieBeschrijf = () => actie(
   <><path d="M16.4 3.6a2.4 2.4 0 0 1 3.4 3.4L8.6 18.2l-4.4 1.2 1.2-4.4Z" />
     <path d="M14.6 5.4 18 8.8" /></>,
 )
+
+/** Een vol bord: veel op het bord voor weinig energie. */
+export const WegVerzadiging = () => wegwijzer(
+  /* Eerst met een streepje boven de koepel en een lijn dwars erdoorheen. Die
+     eerste zweefde los in de lucht — de koepel komt niet hoger dan y 11,8 — en de
+     tweede sneed de koepel juist op zijn top doormidden. Twee vormen die samen
+     één ding moeten zijn: een bord met een volle koepel op een voet. */
+  <><path d="M2.6 18.4h18.8" />
+    <path d="M5.4 18.4a6.6 6.6 0 0 1 13.2 0" />
+    <path d="M9 21.4h6" /></>,
+)

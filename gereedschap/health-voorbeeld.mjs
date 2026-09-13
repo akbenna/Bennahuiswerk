@@ -347,6 +347,28 @@ const EIWITRIJK = [
   },
 ]
 
+/* Wat kal_verzadiging teruggeeft: de derde laag, en een andere as dan eiwit.
+   Drie echte regels uit de tabel, met opzet zo gekozen dat ze de twee dingen
+   tonen die deze lijst moet kunnen. Champignon staat bovenaan met 476 gram per
+   honderd kilocalorieën en een portie van elf kilocalorieën — een
+   verzadigingslijst hoort juist die kant op te wijzen. En paardenrookvlees staat
+   er níet in, want dat is de tegenhanger: uitstekende eiwitdichtheid, vult
+   niets. Zie health/database/28-wat-vult-het-best.sql. */
+const VERZADIGING = [
+  { nevo_code: '001', naam: 'Champignon gekookt', groep: 'Groente',
+    portie_naam: 'opscheplepel', portie_gram: 50, gram_laag: 35, gram_hoog: 70,
+    kcal: 11, gram_per_100kcal: 476, eiwit_per_100kcal: 18.1, vezel_per_100kcal: 5.2,
+    score: 100, bekend: true },
+  { nevo_code: '003', naam: 'Soep heldere m vlees en soepgroente', groep: 'Soepen',
+    portie_naam: 'kom', portie_gram: 250, gram_laag: 200, gram_hoog: 300,
+    kcal: 90, gram_per_100kcal: 278, eiwit_per_100kcal: 11.4, vezel_per_100kcal: 1.4,
+    score: 82, bekend: false },
+  { nevo_code: '004', naam: 'Linzen groene en bruine gekookt', groep: 'Peulvruchten',
+    portie_naam: 'opscheplepel', portie_gram: 60, gram_laag: 45, gram_hoog: 80,
+    kcal: 59, gram_per_100kcal: 101, eiwit_per_100kcal: 8.9, vezel_per_100kcal: 5.4,
+    score: 64, bekend: false },
+]
+
 const NEVO_BENADERD = [
   { nevo_code: '1491', naam: 'Lasagne bolognese koelverse maaltijd',
     groep: 'Samengestelde gerechten', kcal: 162,
@@ -372,6 +394,7 @@ async function bedienDb(pagina, dagen, fase) {
             gerechten: [], eigen: [], merk: MERK,
           }
       : fn === 'kal_eiwitrijk' ? EIWITRIJK
+      : fn === 'kal_verzadiging' ? VERZADIGING
       : fn === 'kal_koppelingen_lijst' ? KOPPELINGEN
       : fn === 'kal_koppeling_maken'
         ? { sleutel: 'kal_' + 'a3f19c7e42b08d5619fa2c3d7e8b04915cad6237'.slice(0, 48),
@@ -440,6 +463,7 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
       const knop = waar('toevoegen')
       const vakken = waar('De dag in vier momenten')
       const past = waar('Wat er nog in past')
+      const vult = waar('Wat vult het best')
       const bew = waar('Beweging en slaap')
       if (hero !== 0) throw new Error(`${stam}: de hero staat niet bovenaan — ${JSON.stringify(rij)}`)
       if (knop !== 1) {
@@ -459,8 +483,15 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
         throw new Error(`${stam}: "Wat er nog in past" staat niet onder de vakken — ` +
                         JSON.stringify(rij))
       }
+      /* "Wat vult het best" hoort direct onder de coachkaart: het is dezelfde
+         vraag vanuit een andere hoek, en allebei gaan ze over de ruimte die er
+         nog is. Hij staat er alleen als er een doel én ruimte is. */
+      if (vult >= 0 && vult !== past + 1) {
+        throw new Error(`${stam}: "Wat vult het best" staat niet onder de coachkaart — ` +
+                        JSON.stringify(rij))
+      }
       if (bew < 0) throw new Error(`${stam}: "Beweging en slaap" ontbreekt — ${JSON.stringify(rij)}`)
-      if (bew !== (past >= 0 ? 4 : 3)) {
+      if (bew !== (past >= 0 ? 5 : 3)) {
         throw new Error(`${stam}: "Beweging en slaap" staat niet direct daaronder — ` +
                         JSON.stringify(rij))
       }
@@ -1558,6 +1589,94 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
   if (bekeken < 300) throw new Error(`contrast: maar ${bekeken} stukken tekst bekeken — dat klopt niet`)
   console.log(`contrast                   ${bekeken} stukken tekst, zes tabbladen, ` +
               `twee thema's — alles haalt ${NORM}`)
+}
+
+/* ------------------------------------------------------- wat vult het best -- */
+/* EEN KAART DIE DICHT BEGINT MOET OOK ÉCHT NIETS DOEN
+ *
+ * De derde coachlaag beantwoordt een andere vraag dan de tweede: niet "waar zit
+ * eiwit in" maar "waar heb ik genoeg aan". Hij begint dicht, en dat is niet
+ * alleen om het scherm rustig te houden — er hangt een vraag aan de database
+ * aan. De belofte is dus dat wie hem nooit opent er ook niet voor betaalt, en
+ * die belofte is te tellen.
+ *
+ * Daarna drie dingen die aan de inhoud hangen en niet aan de plaats. Het
+ * kopgetal is het aantal gram voor honderd kilocalorieën en niet de score: dat
+ * eerste is een deling van twee gemeten waarden, dat tweede een schatting. De
+ * vlag "uit je eigen hoek" hoort alleen bij de regel die hem verdient. En de
+ * uitleg moet zeggen dat de score geschat is — een lijst die zich voordoet als
+ * meting is in deze app erger dan geen lijst.
+ */
+{
+  const pagina = await ctx.newPage()
+  let gevraagd = 0
+  await bedienDb(pagina, 28, 'afvallen')
+  /* Ná bedienDb, niet ervoor: Playwright laat de láátst geregistreerde route
+     eerst aan bod komen, dus een teller die ervoor staat wordt nooit bereikt. */
+  await pagina.route('**/rest/v1/rpc/kal_verzadiging', async (route) => {
+    gevraagd++
+    await route.fallback()
+  })
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.hero', { timeout: 5000 })
+
+  const kaart = pagina.locator('.kaart', { hasText: 'Wat vult het best' }).first()
+  if (!(await kaart.count())) throw new Error('watvult: de kaart staat er niet')
+  await pagina.waitForTimeout(600)
+  if (gevraagd !== 0) {
+    throw new Error(`watvult: dicht en toch ${gevraagd} keer gevraagd — dan is dichtklappen gratis noch nuttig`)
+  }
+  /* Dicht hoort er wél te staan waaróm je hem zou openen. Een kop met niets
+     eronder is een deurtje zonder bordje. */
+  const dichtregel = (await kaart.locator('p.mini').first().textContent()) ?? ''
+  if (!/kcal/.test(dichtregel)) {
+    throw new Error(`watvult: dicht staat er geen reden om te openen — ${JSON.stringify(dichtregel)}`)
+  }
+
+  await kaart.getByRole('button', { name: 'open' }).click()
+  await pagina.waitForTimeout(700)
+  if (gevraagd !== 1) throw new Error(`watvult: na openen ${gevraagd} aanvragen, verwacht 1`)
+
+  const regels = kaart.locator('.lijst > *')
+  const n = await regels.count()
+  if (n < 3) throw new Error(`watvult: ${n} voorstellen, verwacht er 3`)
+
+  /* Het kopgetal. Op de eerste regel hoort "476 g voor 100 kcal" te staan en
+     nergens de score — die bepaalt de volgorde en is niet wat je narekent. */
+  const eerste = (await regels.first().innerText()).replace(/\s+/g, ' ')
+  if (!/476 g voor 100 kcal/.test(eerste)) {
+    throw new Error(`watvult: het gram-getal staat niet voorop — ${JSON.stringify(eerste)}`)
+  }
+  if (/\b100\b(?!\s*kcal)/.test(eerste.replace('476 g voor 100 kcal', ''))) {
+    throw new Error(`watvult: de score staat op de regel — ${JSON.stringify(eerste)}`)
+  }
+  /* De portie hoort erbij: "een opscheplepel van 50 g, 11 kcal" is bruikbaar,
+     "champignons" niet. */
+  if (!/opscheplepel van 50 g/.test(eerste) || !/11 kcal/.test(eerste)) {
+    throw new Error(`watvult: de portie ontbreekt — ${JSON.stringify(eerste)}`)
+  }
+
+  /* De vlag hangt aan de gegevens en niet aan de plaats: precies één van de
+     drie regels komt uit een hoek die deze gebruiker al eet. */
+  const eigenHoek = await kaart.locator('.lijst > * .vlaggetje', { hasText: 'eigen hoek' }).count()
+  if (eigenHoek !== 1) throw new Error(`watvult: ${eigenHoek} keer "uit je eigen hoek", verwacht 1`)
+
+  /* En de eerlijkheid over wat de score is. */
+  /* `innerText` geeft van een dichtgeklapte <details> alleen de samenvatting;
+     de tekst staat er wel maar is verborgen. Daarom textContent. */
+  const uitleg = await kaart.locator('details.uitleg').first()
+    .evaluate((el) => el.textContent ?? '')
+  if (!/schatting uit de samenstelling/i.test(uitleg)) {
+    throw new Error('watvult: de uitleg zegt niet dat de score een schatting is')
+  }
+  if (!/45/.test(uitleg) || !/35/.test(uitleg) || !/20/.test(uitleg)) {
+    throw new Error('watvult: de uitleg noemt de weging van de drie termen niet')
+  }
+
+  console.log(`wat vult het best          dicht=0 aanvragen · open=${gevraagd} · ${n} voorstellen · ` +
+              'kopgetal in gram, score in de uitleg')
+  await pagina.screenshot({ path: 'gereedschap/health-watvult.png' })
+  await pagina.close()
 }
 
 /* ----------------------------------------------------- de tekens op de balk -- */
