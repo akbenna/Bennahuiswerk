@@ -519,7 +519,17 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
      * Toevoegen is de uitzondering. Dit is een volgorde en dus met een grep
      * niet te bewaken. */
     if (tab === 'Gezondheid') {
-      const kaart = pagina.locator('.kaart', { hasText: 'Metingen' }).first()
+      /* De kaart wordt gezocht op zijn tekst én op het feit dat hij het
+         formulier bevat. Dat tweede is er later bij gekomen: sinds het
+         bloeddrukgemiddelde erboven staat is er een tweede kaart op dit scherm
+         waar het woord "metingen" in valt, en die heeft geen formulier. Zonder
+         de `has` pakte `.first()` die kaart en viel de proef om op een kaart die
+         hij nooit bedoeld heeft. De strengheid blijft gelijk: binnen de
+         invoerkaart moeten de waarden nog steeds boven het veld staan. */
+      const kaart = pagina.locator('.kaart')
+        .filter({ hasText: 'Metingen' })
+        .filter({ has: pagina.locator('select') })
+        .first()
       const volgorde = await kaart.evaluate((el) => {
         const waarden = el.querySelector('.trio')
         const veld = el.querySelector('select')

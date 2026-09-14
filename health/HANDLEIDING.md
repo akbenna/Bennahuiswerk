@@ -282,8 +282,10 @@ hij dus niet te doen.
 
 Op **Voeding** staat bij diabetes onder elk product hoeveel koolhydraten en
 vezels erin zitten, naast de energie en het eiwit die er altijd al stonden.
-Zout staat er nog niet bij: dat getal zit niet in de gegevens waar de app uit
-put. Liever niets dan een streepje dat op "bevat geen zout" lijkt.
+Bij hoge bloeddruk staat het zout erbij, in gram — hetzelfde getal als op de
+verpakking. Weet de tabel het voor een product niet, dan staat er een streepje en
+geen 0,0: dat zou beweren dat er geen zout in zit, en dat is iets anders dan
+onbekend.
 
 Onder **Meer** staat *Leren*: korte stukjes over een te lage bloedsuiker, over
 zout en bloeddruk, over thuis meten, over koolhydraten en vezels. Ze staan er

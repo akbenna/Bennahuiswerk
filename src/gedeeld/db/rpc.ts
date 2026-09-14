@@ -56,6 +56,13 @@ export interface NevoTreffer {
   vet_g: number | null
   koolhydraat_g: number | null
   vezel_g: number | null
+  /* Natrium in milligram, zoals het in de tabel staat. Het scherm toont zout in
+     gram; die omrekening staat op één plek, in `src/health/zout.ts`.
+
+     Optioneel, want de database geeft hem pas mee vanaf
+     30-natrium-in-het-zoeken.sql. Tot dat bestand gedraaid is komt hij niet mee
+     en toont het scherm een streepje — en dat is iets anders dan nul. */
+  natrium_mg?: number | null
   /* True als dit product niet gevonden maar benaderd is: het woordzoeken gaf
      niets en de terugval op schrijfvarianten heeft het erbij gehaald. "Lesagna"
      komt zo bij Lasagne uit. Het scherm hoort dat te zeggen in plaats van te
