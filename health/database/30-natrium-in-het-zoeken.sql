@@ -1,9 +1,14 @@
 -- =============================================================================
 -- NATRIUM IN HET ZOEKEN — en de vraag die eerst beantwoord moet worden
 --
--- Stap 1 en 2 zijn gedaan (14-09-2026): de kolom `natrium_mg` bestaat, en de
--- levende kal_zoeken was woordelijk gelijk aan die in bestand 21. Stap 3 staat
--- klaar om te draaien; op het moment van schrijven was hij nog niet toegepast.
+-- Toegepast op 14-09-2026.
+--
+-- Stap 1 gaf `natrium_mg`, numeric, en 2.326 van de 2.328 producten dragen een
+-- waarde — geen lege kolom maar een echte import. Stap 2 liet zien dat de
+-- levende kal_zoeken woordelijk gelijk was aan die in bestand 21. Stap 3 is
+-- gedraaid en nagekeken: een bouillonblokje geeft 19.687 mg natrium per 100 g,
+-- wat neerkomt op ruim 49 gram zout — een blokje is inderdaad ongeveer half
+-- zout, en dat is de uitslag die je wilt zien als je weet dat het klopt.
 --
 -- WAAROM
 --

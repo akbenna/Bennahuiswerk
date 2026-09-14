@@ -249,3 +249,45 @@ export const WegEigenProduct = () => wegwijzer(
   <><path d="M12 3.2 20.4 7.6v8.8L12 20.8 3.6 16.4V7.6Z" />
     <path d="M3.6 7.6 12 12l8.4-4.4" /><path d="M12 12v8.8" /></>,
 )
+
+/* ==========================================================================
+   DE VIER TOESTANDEN
+
+   De geleverde beeldset had hier vier gekleurde rondjes voor: een groen vinkje,
+   een oranje streep, een rood uitroepteken, een blauwe i. Ze zijn niet
+   overgenomen, en om dezelfde reden als de rest van dit bestand: een PNG draagt
+   zijn kleuren ingebakken. In het donkere thema stond er een verzadigd rondje
+   dat niet meebewoog met de rest van het scherm, en hertinten kan niet.
+
+   Wat hier staat neemt de kleur van zijn omgeving over. De vorm bepaalt wat het
+   is, de kleur waar het staat — en die scheiding is precies waarom deze app in
+   twee thema's overeind blijft.
+
+   Geen gevulde vlakken dus, maar dezelfde lijnvoering als de rest. Op zestien
+   pixels is een gevulde cirkel met een tekentje erin een vlek; een omtrek met
+   ruimte eromheen blijft leesbaar.
+   ========================================================================== */
+
+/** Gunstige waarde. Een vinkje in een ring. */
+export const TekenGoed = () => wegwijzer(
+  <><circle cx="12" cy="12" r="8.6" /><path d="M8.3 12.2l2.5 2.5 4.9-5.2" /></>,
+)
+
+/** Let op — aandacht, geen alarm. Een uitroepteken zou te hard zijn. */
+export const TekenLet = () => wegwijzer(
+  <><circle cx="12" cy="12" r="8.6" /><path d="M12 7.9v4.6" /><path d="M12 15.9v.1" /></>,
+)
+
+/**
+ * Waarschuwing. De driehoek is hier de drager en niet de kleur: wie de kleuren
+ * niet onderscheidt moet aan de vorm zien dat dit zwaarder weegt dan "let op".
+ */
+export const TekenFout = () => wegwijzer(
+  <><path d="M12 3.9 21.2 19.6H2.8L12 3.9Z" /><path d="M12 9.6v4.3" />
+    <path d="M12 17.1v.1" /></>,
+)
+
+/** Toelichting. Een i in een ring, en verder niets. */
+export const TekenInfo = () => wegwijzer(
+  <><circle cx="12" cy="12" r="8.6" /><path d="M12 11.2v5" /><path d="M12 8.1v.1" /></>,
+)

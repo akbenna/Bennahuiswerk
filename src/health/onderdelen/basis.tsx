@@ -207,8 +207,21 @@ export function Uitklap(
 
 /** Een venster met sluier. Klikken naast het venster sluit het. */
 export function Venster(
-  { titel, onder, opSluiten, children }:
-  { titel: string; onder?: ReactNode; opSluiten: () => void; children: ReactNode },
+  { titel, boven, onder, opSluiten, children }:
+  {
+    titel: string
+    /**
+     * Een strook die vóór de titel komt en tot de rand doorloopt — een foto,
+     * en verder niets wat gelezen moet worden. Hij staat hier en niet als
+     * eerste kind, omdat hij buiten de binnenmarge van het venster valt: een
+     * beeld dat tot de rand loopt kan een kind van dit onderdeel niet zelf
+     * regelen zonder de marge terug te rekenen, en die som hoort op één plek.
+     */
+    boven?: ReactNode | undefined
+    onder?: ReactNode | undefined
+    opSluiten: () => void
+    children: ReactNode
+  },
 ) {
   useEffect(() => {
     const opToets = (e: KeyboardEvent) => { if (e.key === 'Escape') opSluiten() }
@@ -219,6 +232,7 @@ export function Venster(
   return (
     <div className="sluier" onClick={(e) => { if (e.target === e.currentTarget) opSluiten() }}>
       <div className="venster" role="dialog" aria-modal="true" aria-label={titel}>
+        {boven}
         <div className="tussen">
           <h2 style={{ fontSize: '1.2rem', lineHeight: 1.25 }}>{titel}</h2>
           <Knop klein opKlik={opSluiten} titel="Sluiten">×</Knop>

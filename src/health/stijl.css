@@ -68,6 +68,8 @@
   --fout:#A32F2A; --foutbg:#FAE6E4;
   --goed:#2F6B1F; --goedbg:#E4EFDD;
   --schaduw:0 1px 2px rgba(12,30,24,.03), 0 10px 26px rgba(12,30,24,.06);
+  /* De dekking van het sfeervlak. Hoger kost contrast; zie achtergronden.tsx. */
+  --sfeer:.05;
   --sans:'SF Pro Text',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   /* Koppen en gemeten getallen stonden in een serif. Die stond voor "dit is
      gemeten", maar dat zeggen het interval en de graad er al bij — het was dus
@@ -77,7 +79,7 @@
   --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;
 }
 @media (prefers-color-scheme:dark){:root:not([data-thema]){
-  --canvas:#080D0C; --vlak:#121A18; --vlak2:#1B2523;
+  --canvas:#080D0C; --sfeer:.07; --vlak:#121A18; --vlak2:#1B2523;
   --ink:#F1F5F3; --ink2:#DCE4E1; --grijs:#9AA8A2; --dim:#8A9691;
   --lijn:#243230; --lijn2:#354642;
   --k:#4FD2A6; --kfel:#28BE8E; --kbg:#0F2E26;
@@ -88,7 +90,7 @@
   --schaduw:0 1px 2px rgba(0,0,0,.5), 0 10px 26px rgba(0,0,0,.35);
 }}
 :root[data-thema="donker"]{
-  --canvas:#080D0C; --vlak:#121A18; --vlak2:#1B2523;
+  --canvas:#080D0C; --sfeer:.07; --vlak:#121A18; --vlak2:#1B2523;
   --ink:#F1F5F3; --ink2:#DCE4E1; --grijs:#9AA8A2; --dim:#8A9691;
   --lijn:#243230; --lijn2:#354642;
   --k:#4FD2A6; --kfel:#28BE8E; --kbg:#0F2E26;
@@ -177,6 +179,13 @@ nav.tabs button[aria-selected="true"]{color:var(--k);background:var(--kbg);font-
   padding:8px 14px;border-radius:10px;font-size:.86rem;cursor:pointer;white-space:nowrap}
 .knop:hover{border-color:var(--lijn2)}
 .knop.vol{background:var(--knopvul);border-color:var(--knopvul);color:var(--canvas);font-weight:600}
+/* De subregel op een gevulde knop erfde de grijstint van `.mini`, en die is
+   gekozen om op wit te lezen. Op de groene vulling gaf dat een contrast van
+   1,15 — praktisch onzichtbaar. Het viel in de portiekeuze op: de gram en de
+   kilocalorieën onder de gekozen maat waren weg, precies bij de knop die je net
+   had aangetikt. Kleur meeërven van de knop lost het in één regel op; de
+   dekking blijft eraf, want 80 % haalt 3,81 en dat is opnieuw te weinig. */
+.knop.vol .mini{color:var(--canvas);opacity:1}
 .knop.sm{padding:4px 10px;font-size:.76rem;border-radius:8px}
 .knop:disabled{opacity:.45;cursor:default}
 input,select,textarea{background:var(--vlak);border:1px solid var(--lijn);border-radius:10px;
@@ -264,7 +273,12 @@ label.veld>span{display:block;font-size:.72rem;color:var(--grijs);margin-bottom:
 /* -------------------------------------------------------------- venster --- */
 .sluier{position:fixed;inset:0;background:rgba(10,12,10,.5);display:flex;z-index:50;
   align-items:flex-start;justify-content:center;padding:14px;overflow-y:auto}
-.venster{background:var(--vlak);border-radius:16px;padding:20px;width:100%;max-width:520px;margin:20px 0}
+.venster{background:var(--vlak);border-radius:16px;padding:20px;width:100%;max-width:520px;margin:20px 0;overflow:hidden}
+/* De strook bovenin loopt tot de rand: hij trekt de binnenmarge van het venster
+   terug en de bovenhoeken volgen die van het venster zelf. De `overflow:hidden`
+   hierboven is wat hem daadwerkelijk afknipt. */
+.vensterstrook{display:block;width:calc(100% + 40px);height:118px;object-fit:cover;
+  margin:-20px -20px 14px;border-radius:16px 16px 0 0}
 .regel{display:flex;align-items:center;justify-content:space-between;gap:12px;
   padding:11px 0;border-bottom:1px solid var(--lijn)}
 .regel input,.regel select{width:auto}
@@ -454,6 +468,25 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
 .vlaggetje.let{background:var(--letbg);color:var(--let)}
 .vlaggetje.rust{background:var(--vlak2);color:var(--grijs)}
 .vlaggetje.fout{background:var(--foutbg);color:var(--fout)}
+/* De voedingsvlaggetjes. Ze kregen geen eigen kleuren maar lenen de drie die er
+   al zijn: het accent voor eiwit, oker voor vezels, groen voor het lage
+   natrium. Vier nieuwe tinten erbij zou de betekenis van de bestaande
+   verwateren — en deze drie moeten het in dag én nacht doen, wat een geleverde
+   PNG met ingebakken kleuren niet kan. */
+.vlaggetje.eiwit{background:var(--kbg);color:var(--k)}
+.vlaggetje.vezel{background:var(--letbg);color:var(--let)}
+.vlaggetje.zout{background:var(--goedbg);color:var(--goed)}
+.vlaggetjes{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+.vlaggetjes>span{font-size:.7rem}
+.vlaggetjes svg{width:12px;height:12px;flex:0 0 auto}
+/* HET SFEERVLAK
+   Een getekend motief achter een kaart, in de accentkleur en op een dekking die
+   je niet los ziet. Waarom het geen foto is en waarom de dekking een grens is en
+   geen smaak, staat in `achtergronden.tsx`. */
+.metsfeer{position:relative;overflow:hidden}
+.metsfeer>*{position:relative}
+.sfeer{position:absolute;inset:0;width:100%;height:100%;color:var(--k);
+  opacity:var(--sfeer);pointer-events:none}
 
 /* ---------------------------------------------- de koppen van de schermen -- */
 /* Elk scherm opende met een tabel of een invulveld: je moest lezen om te weten

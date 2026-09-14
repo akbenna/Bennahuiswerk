@@ -17,6 +17,17 @@ Van de 83 bestanden zijn er 37 opgeschoond: onderwerp opgezocht, bijschrift en
 randflarden weg, vierkant gecentreerd. De overige 46 zijn niet meegekomen, en
 waarom staat hieronder.
 
+## Wat er inmiddels in gebruik is
+
+Zes van de tien foto's staan sinds 14-09-2026 in `public/health/eten/` en worden
+getoond in het portievenster: banaan, avocado, zalm, skyr, noten en volkorenbrood.
+De koppeling staat in `src/health/beeld.ts` — een handgemaakte lijst van
+NEVO-code naar bestand, met de reden erbij waarom het geen databasekolom is.
+
+De vier andere zijn samengesteld (eieren met brood, salade met kip, linzensoep)
+of hebben geen passende code (bosbessen). Die liggen hier tot er een plek voor
+is.
+
 ## `eten/` — tien foto's, 384 × 384
 
 Dit is het enige deel dat rechtstreeks bruikbaar is. Let op twee dingen.

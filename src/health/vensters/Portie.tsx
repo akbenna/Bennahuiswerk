@@ -20,6 +20,7 @@ import { vandaag } from '@/gedeeld/datum'
 import type { EigenProduct, Graad, IsoDatum, Moment } from '@/gedeeld/db/tabellen'
 import type { Gerecht, MerkTreffer, NieuweRegel, ProductMetMaten } from '@/gedeeld/db/rpc'
 import { Bron } from '../herkomst'
+import { fotoVoor } from '../beeld'
 
 /** Waar de portiekeuze op dit moment over gaat. */
 export type Onderwerp =
@@ -251,6 +252,10 @@ export function PortieVenster(
   // Niet via `g`: de smalspoorcontrole van TypeScript volgt de discriminant en
   // niet een variabele die eruit is afgeleid.
   const titel = onderwerp.soort === 'gerecht' ? onderwerp.gerecht.naam : onderwerp.product.naam
+  /* Alleen voor de voedingsmiddelentabel: de foto's hangen aan een NEVO-code.
+     Een gerecht, een merkproduct of je eigen product heeft er geen, en krijgt
+     er dus ook geen. */
+  const foto = onderwerp.soort === 'nevo' ? fotoVoor(onderwerp.product.nevo_code) : null
 
   const onzeker = bouwOnzekerheid(onderwerp, k, metOptioneel, aantal)
 
@@ -286,6 +291,9 @@ export function PortieVenster(
   return (
     <Venster
       titel={titel}
+      boven={foto
+        ? <img className="vensterstrook" src={foto} alt="" loading="lazy" aria-hidden="true" />
+        : undefined}
       opSluiten={opSluiten}
       onder={
         g ? (
@@ -301,13 +309,14 @@ export function PortieVenster(
         ) : null
       }
     >
+
       <Kop>Hoeveel</Kop>
       <Rij style={{ marginTop: 6, flexWrap: 'wrap' }}>
         {keuzes.map((keuze, i) => (
           <Knop key={keuze.label + i} vol={i === gekozen} opKlik={() => zetGekozen(i)}
                 style={{ textAlign: 'left', flex: '1 1 140px' }}>
             <span style={{ display: 'block' }}>{keuze.label}</span>
-            <span className="mini" style={{ display: 'block', opacity: 0.8 }}>{keuze.sub}</span>
+            <span className="mini" style={{ display: 'block' }}>{keuze.sub}</span>
           </Knop>
         ))}
       </Rij>

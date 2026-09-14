@@ -21,6 +21,8 @@ import type { Zoekuitslag } from '@/gedeeld/db/rpc'
 import type { EigenProduct, Moment, Profiel, Regel } from '@/gedeeld/db/tabellen'
 import { conditieVan } from '../conditie'
 import { zoutGram } from '../zout'
+import { claims } from '../claims'
+import { Vlaggetjes } from '../vlaggetjes'
 import type { Analyse } from '../rekenkern'
 import type { Onderwerp } from '../vensters/Portie'
 import { ActieZoek, WegEigenProduct } from '../tekens'
@@ -223,6 +225,10 @@ function Zoeken(
                       {' · '}vezel {n.vezel_g == null ? '—' : dec(n.vezel_g, 1) + ' g'}
                     </span>
                   )}
+                  <Vlaggetjes lijst={claims({
+                    kcal: n.kcal, eiwit_g: n.eiwit_g, vezel_g: n.vezel_g,
+                    natrium_mg: n.natrium_mg,
+                  })} />
                   {toonZout && (
                     <span className="mini" style={{ display: 'block' }}>
                       zout {zoutGram(n.natrium_mg) == null
