@@ -28,6 +28,7 @@ import { HoewerktVenster } from './vensters/Hoewerkt'
 import {
   AccountVenster, Aanmelden, ImportVenster, ProfielVenster,
 } from './vensters/Instellingen'
+import { LerenVenster } from './vensters/Leren'
 import { Opzet } from './Opzet'
 import { Kaart, Knop, Spin } from './onderdelen/basis'
 import { useVeeg } from './veeg'
@@ -92,7 +93,7 @@ function Postbus({ token, a }: { token: string; a: Analyse }) {
 }
 
 type Tab = (typeof TABS)[number][0]
-type VensterNaam = 'profiel' | 'import' | 'account' | 'koppelen' | 'overzicht' | 'hoewerkt'
+type VensterNaam = 'profiel' | 'import' | 'account' | 'koppelen' | 'overzicht' | 'hoewerkt' | 'leren'
 
 export function App() {
   const k = useKalibratie()
@@ -210,7 +211,8 @@ export function App() {
         <div id="inhoud" ref={zetVlak}>
           {tab === 'vandaag' && (
             <Vandaag
-              a={a} dag={dag} regels={regelsVandaag} alleRegels={k.alles.regels}
+              a={a} profiel={profiel}
+              dag={dag} regels={regelsVandaag} alleRegels={k.alles.regels}
               dagen={k.dagenkaart} datum={datum}
               eiwitPerKg={profiel.eiwit_g_per_kg}
               token={k.sessie.token}
@@ -235,6 +237,7 @@ export function App() {
           {tab === 'voeding' && (
             <Voeding
               a={a} token={k.sessie.token} producten={k.alles.producten}
+              profiel={profiel}
               regelsVandaag={regelsVandaag}
               opPortie={zetPortie}
               bewaarProduct={(pr) =>
@@ -335,6 +338,9 @@ export function App() {
       )}
 
       {venster === 'hoewerkt' && <HoewerktVenster opSluiten={() => zetVenster(null)} />}
+      {venster === 'leren' && (
+        <LerenVenster profiel={profiel} opSluiten={() => zetVenster(null)} />
+      )}
 
       {venster === 'profiel' && (
         <ProfielVenster

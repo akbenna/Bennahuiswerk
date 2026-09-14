@@ -256,7 +256,58 @@ Waarom dat veilig is, staat uitgelegd in `src/gedeeld/db/verbinding.ts`.
 
 ---
 
-## 7. Wat de app niet weet
+## 7. Als er meer speelt dan je gewicht
+
+Bij je profiel kun je aangeven dat je hoge bloeddruk hebt, diabetes type 2, of
+een hart- of vaatziekte hebt gehad, en welke medicijnen je gebruikt. Dat laatste
+in groepen — insuline, een tablet die suiker uitplast, een bloeddrukpil die op de
+nieren werkt — en niet in merknamen, met bij elke groep een voorbeeld zodat je
+hem kunt aanwijzen.
+
+Vul je niets in, dan verandert er niets. Leeg betekent voor deze app dat hij het
+niet weet, en dan zwijgt hij. Wat je invult is jouw opgave en geen
+medicatieoverzicht uit de praktijk; dat staat er op het scherm ook bij.
+
+### Wat er dan verandert
+
+Er komt geen tabblad bij en er verandert niets aan de manier waarop de app
+rekent. Wat er verandert is wat je ziet.
+
+Op **Vandaag**, onder de knop, kan een kaart verschijnen. Bijvoorbeeld als je
+insuline gebruikt en een afvaldoel hebt: je insulinebehoefte daalt als je
+afvalt, en de dosis die vorige maand klopte kan over een paar weken te hoog zijn.
+De kaart zegt wat je ermee moet — het met je praktijkondersteuner bespreken — en
+de uitleg zit erachter. Hij noemt geen dosis. Dat kan deze app niet en dat hoort
+hij dus niet te doen.
+
+Op **Voeding** staat bij diabetes onder elk product hoeveel koolhydraten en
+vezels erin zitten, naast de energie en het eiwit die er altijd al stonden.
+Zout staat er nog niet bij: dat getal zit niet in de gegevens waar de app uit
+put. Liever niets dan een streepje dat op "bevat geen zout" lijkt.
+
+Onder **Meer** staat *Leren*: korte stukjes over een te lage bloedsuiker, over
+zout en bloeddruk, over thuis meten, over koolhydraten en vezels. Ze staan er
+voor iedereen hetzelfde en met de bron erbij; wat bij jou hoort staat bovenaan.
+Er valt niets weg — je mag lezen over iets wat je niet hebt.
+
+### De bloeddruk telt per week, niet per meting
+
+Meet je thuis je bloeddruk, dan laat **Gezondheid** het gemiddelde over de
+afgelopen week zien, met erbij op hoeveel dagen het rust en hoe ver die dagen
+uiteenliepen. Eén meting van 148 zegt niets; zeven dagen die daar rond uitkomen
+zeggen alles. Dezelfde reden waarom de app naar je gewichtstrend kijkt en niet
+naar de weging van vanochtend.
+
+Elke dag telt daarbij één keer mee, ook als je die dag vier keer mat. Het gaat om
+de week.
+
+Er staat geen oordeel bij en geen kleur. De meting zoals de richtlijn hem
+bedoelt is twee keer voor het ontbijt en twee keer twee uur na het avondeten, een
+week lang — en of je dat zo gedaan hebt kan de app niet zien, want een meting
+draagt hier een datum en geen tijdstip. Wat het getal betekent, hoor je van je
+huisarts of praktijkondersteuner.
+
+## 8. Wat de app niet weet
 
 Dit hoort er net zo goed in te staan.
 
@@ -267,6 +318,10 @@ Dit hoort er net zo goed in te staan.
   lage kant. Dat staat bij de regel en wordt niet weggepoetst.
 - Hij weet niet of er lamsvlees in de harira ging. Dat is geen onzekerheid maar
   een vraag met een antwoord, en die vraag stelt hij.
+- Hij weet niet welke medicijnen je werkelijk gebruikt. Hij weet wat je hebt
+  aangevinkt, en dat is iets anders.
+- Hij weet niet of je bloeddrukmeting thuis of in de praktijk is gedaan, en
+  evenmin of hij 's ochtends of 's avonds was. Alles wat je invult telt mee.
 
 ---
 

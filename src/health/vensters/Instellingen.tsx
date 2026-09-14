@@ -3,14 +3,86 @@
  * Overgezet uit vensterProfiel(), vensterImport() en vensterAccount().
  */
 import { useState } from 'react'
-import { Kaart, Knop, Rij, Spin, Venster } from '../onderdelen/basis'
+import { Kaart, Keuzechip, Knop, Rij, Spin, Venster } from '../onderdelen/basis'
+import { MEDICATIEGROEPEN } from '../conditie'
+import type { Conditie, Medicatiegroep } from '../conditie'
 import { dec, dz } from '@/gedeeld/getal'
 import type { Fase, Geslacht, Profiel } from '@/gedeeld/db/tabellen'
 import type { NieuweDag, NieuweRegel } from '@/gedeeld/db/rpc'
 import { importeer, leesFoto } from '../ai'
 import type { ImportDag } from '../ai'
 
+
 /* ----------------------------------------------------------------- profiel */
+
+/**
+ * WAT ER SPEELT — de conditie en de medicatiegroepen.
+ *
+ * Dit blok staat onderin het profielvenster en niet op een eigen tabblad. Dat
+ * is een keuze: een aparte diabetesmodule naast een aparte hypertensiemodule
+ * bouwt de ziektegebonden keten na waar de zorg juist vanaf wil, en de meeste
+ * mensen in deze praktijk hebben meer dan één aandoening tegelijk. Eén profiel
+ * dat schermen anders wéégt is iets anders dan een app die uitdijt.
+ *
+ * Het staat bewust ná de doelen: wie hier niets invult merkt er niets van, en
+ * dat hoort ook zo. Leeg betekent "we weten het niet".
+ */
+function Conditieblok(
+  { conditie, opZet }: { conditie: Conditie; opZet: (c: Conditie) => void },
+) {
+  const med = conditie.med ?? []
+  const wissel = (g: Medicatiegroep) => opZet({
+    ...conditie,
+    med: med.includes(g) ? med.filter((x) => x !== g) : [...med, g],
+  })
+  const vink = (sleutel: 'hypertensie' | 'dm2' | 'hvz') => (aan: boolean) =>
+    opZet({ ...conditie, [sleutel]: aan })
+
+  const Vinkje = (
+    { sleutel, naam }: { sleutel: 'hypertensie' | 'dm2' | 'hvz'; naam: string },
+  ) => (
+    <div className="regel">
+      <div><b style={{ fontSize: '.87rem' }}>{naam}</b></div>
+      <input type="checkbox" checked={!!conditie[sleutel]} style={{ width: 19, height: 19 }}
+             onChange={(e) => vink(sleutel)(e.target.checked)} />
+    </div>
+  )
+
+  return (
+    <>
+      <div className="tussen" style={{ marginTop: 16 }}>Wat er bij jou speelt</div>
+      <div className="mini" style={{ marginBottom: 6 }}>
+        Vul dit alleen in als het klopt. De app gaat er niets anders van rekenen — hij wijst je op
+        dingen die bij deze middelen horen als je afvalt.
+      </div>
+
+      <Vinkje sleutel="hypertensie" naam="Hoge bloeddruk, of daarvoor behandeld" />
+      <Vinkje sleutel="dm2" naam="Diabetes type 2" />
+      <Vinkje sleutel="hvz" naam="Hart- of vaatziekte gehad" />
+
+      <div className="regel" style={{ display: 'block' }}>
+        <div><b style={{ fontSize: '.87rem' }}>Welke medicijnen gebruik je?</b></div>
+        <div className="mini" style={{ marginBottom: 8 }}>
+          Groepen, geen merken. Weet je het niet zeker, laat het dan leeg en vraag het na bij je
+          praktijkondersteuner.
+        </div>
+        <Rij style={{ gap: 6, flexWrap: 'wrap' }}>
+          {MEDICATIEGROEPEN.map((m) => (
+            <Keuzechip key={m.groep} aan={med.includes(m.groep)} titel={m.voorbeeld}
+                       opKlik={() => wissel(m.groep)}>
+              {m.naam}
+            </Keuzechip>
+          ))}
+        </Rij>
+        <div className="mini" style={{ marginTop: 8 }}>
+          Dit is jouw opgave en geen medicatieoverzicht uit de praktijk.
+        </div>
+      </div>
+    </>
+  )
+}
+
+
 
 export function ProfielVenster(
   { profiel, opSluiten, opBewaren }:
@@ -138,6 +210,8 @@ export function ProfielVenster(
         </div>
         <Nummer waarde={p.onderhoud_basis_kg} opZet={(n) => zet('onderhoud_basis_kg', n)} />
       </div>
+
+      <Conditieblok conditie={i.conditie ?? {}} opZet={(c) => zetI('conditie', c)} />
 
       <Rij style={{ marginTop: 14 }}>
         <Knop vol opKlik={() => opBewaren(p)}>Bewaren</Knop>

@@ -18,7 +18,8 @@ import type { Maalstaaf } from '../hero'
 import { dec, dz } from '@/gedeeld/getal'
 import { roep } from '@/gedeeld/db/rpc'
 import type { Zoekuitslag } from '@/gedeeld/db/rpc'
-import type { EigenProduct, Moment, Regel } from '@/gedeeld/db/tabellen'
+import type { EigenProduct, Moment, Profiel, Regel } from '@/gedeeld/db/tabellen'
+import { conditieVan } from '../conditie'
 import type { Analyse } from '../rekenkern'
 import type { Onderwerp } from '../vensters/Portie'
 import { ActieZoek, WegEigenProduct } from '../tekens'
@@ -26,6 +27,7 @@ import { ActieZoek, WegEigenProduct } from '../tekens'
 export interface VoedingEigenschappen {
   a: Analyse
   token: string
+  profiel: Profiel
   producten: EigenProduct[]
   regelsVandaag: Regel[]
   opPortie: (o: Onderwerp) => void
@@ -81,7 +83,7 @@ export function Voeding(p: VoedingEigenschappen) {
         </div>
       </Schermkop>
 
-      <Zoeken token={p.token} opPortie={p.opPortie} />
+      <Zoeken token={p.token} opPortie={p.opPortie} profiel={p.profiel} />
       <EigenProducten producten={p.producten} bewaar={p.bewaarProduct} wis={p.wisProduct} />
       {/* HET ADVIES BOVEN, DE ONDERBOUWING ERACHTER
 
@@ -115,7 +117,29 @@ export function Voeding(p: VoedingEigenschappen) {
   )
 }
 
-function Zoeken({ token, opPortie }: { token: string; opPortie: (o: Onderwerp) => void }) {
+/**
+ * ZOEKEN — en wat er per treffer te zien is.
+ *
+ * De regel toont energie en eiwit, want dat is waar de app over gaat. Wie
+ * diabetes heeft opgegeven ziet er koolhydraten en vezel bij staan. Dat is geen
+ * ander scherm en geen andere lijst: dezelfde treffers, één regel meer.
+ *
+ * Bewust géén tweede tabblad voor diabetes. Een module per diagnose bouwt de
+ * ziektegebonden keten na waar de zorg juist vanaf wil, en de meeste mensen in
+ * deze praktijk hebben er meer dan één. De redenering staat in
+ * `health/STRATEGIE-CHRONISCHE-ZORG.md`.
+ *
+ * Zout hoort in dit rijtje thuis en staat er niet: natrium zit niet in de
+ * gegevens die `kal_zoeken` teruggeeft. Dat is een gat in het model en geen
+ * keuze; zolang het er niet is, zwijgt het scherm erover in plaats van een leeg
+ * streepje te tonen dat op "bevat geen zout" lijkt.
+ */
+function Zoeken(
+  { token, opPortie, profiel }:
+  { token: string; opPortie: (o: Onderwerp) => void; profiel: Profiel },
+) {
+  const toonKoolhydraten = !!conditieVan(profiel.instellingen).dm2
+
   const [term, zetTerm] = useState('')
   const [uitslag, zetUitslag] = useState<Zoekuitslag | null>(null)
   const [loopt, zetLoopt] = useState(false)
@@ -185,6 +209,12 @@ function Zoeken({ token, opPortie }: { token: string; opPortie: (o: Onderwerp) =
                 <span className="groei">
                   <span className="knip" style={{ fontSize: '.86rem', display: 'block' }}>{n.naam}</span>
                   <span className="mini">per 100 g · {n.groep}</span>
+                  {toonKoolhydraten && (
+                    <span className="mini" style={{ display: 'block' }}>
+                      koolhydraten {n.koolhydraat_g == null ? '—' : dec(n.koolhydraat_g, 1) + ' g'}
+                      {' · '}vezel {n.vezel_g == null ? '—' : dec(n.vezel_g, 1) + ' g'}
+                    </span>
+                  )}
                 </span>
                 <span className="cijfer mini" style={{ textAlign: 'right' }}>
                   {dz(n.kcal)} kcal<br />{dec(n.eiwit_g, 1)} g

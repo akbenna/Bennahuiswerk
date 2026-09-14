@@ -43,10 +43,11 @@
 import { useEffect, useState } from 'react'
 import { Chip, Kaart, Knop, Kop, Rij, Tussen, Uitklap, Uitleg } from '../onderdelen/basis'
 import { Dagenstrook, Doelring } from '../hero'
+import { Signaalkaarten } from '../signalen'
 import type { Dagstaaf } from '../hero'
 import { dec, dz } from '@/gedeeld/getal'
 import { kortNL, langNL, plusDagen, stapDag, vandaag } from '@/gedeeld/datum'
-import type { IsoDatum, Moment, Regel } from '@/gedeeld/db/tabellen'
+import type { IsoDatum, Moment, Profiel, Regel } from '@/gedeeld/db/tabellen'
 import { roep } from '@/gedeeld/db/rpc'
 import type { EiwitrijkTreffer, NieuweRegel, VerzadigingTreffer } from '@/gedeeld/db/rpc'
 import { herkomstVan } from '../herkomst'
@@ -61,6 +62,8 @@ import { WegMomenten, WegVerzadiging, WegWeging } from '../tekens'
 
 export interface VandaagEigenschappen {
   a: Analyse
+  /** Voor de signaalkaarten: de conditie en de fase staan erin. */
+  profiel: Profiel
   dag: DagMetTotalen
   regels: Regel[]
   /** De hele geschiedenis, want de coach stelt voor uit wat je zelf eet. */
@@ -293,6 +296,8 @@ export function Vandaag(p: VandaagEigenschappen) {
         <span aria-hidden="true">＋</span>
         <span>Eten toevoegen</span>
       </button>
+
+      <Signaalkaarten profiel={p.profiel} />
 
       <Kaart>
         <Tussen>

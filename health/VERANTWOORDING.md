@@ -1049,3 +1049,166 @@ is dus dat wie hem nooit opent er ook niet voor betaalt, en die belofte is een
 proef: het schermvoorbeeld telt de aanvragen, verwacht er nul zolang de kaart
 dicht is en precies één na het openen. De mutant die de lijst buiten de
 uitklapper hangt valt om met *"dicht en toch 1 keer gevraagd"*.
+
+## 23. De conditie — signaleren zonder te doseren
+
+Deze app rekent aan energie en verzadiging, en dat is voor de meeste mensen
+genoeg. Voor een deel van de gebruikers is het dat niet: wie insuline spuit en
+afvalt krijgt hypo's zodra de inname daalt en de dosis niet meedaalt. Dat is
+geen zeldzame samenloop maar de gewone gang van zaken in een spreekkamer, en een
+app die mensen laat afvallen zonder het te noemen laat een gat vallen dat hij
+zelf heeft gegraven.
+
+Wat er sinds dit hoofdstuk staat is een conditieprofiel — hoge bloeddruk,
+diabetes type 2, doorgemaakte hart- of vaatziekte, en de medicatie in groepen —
+en drie dingen die de app daarmee doet. De bredere afweging, inclusief de vraag
+onder welk regime dit valt, staat in `STRATEGIE-CHRONISCHE-ZORG.md`; hier staan
+de regels zelf.
+
+### 23.1 Waarom er geen drempels in de signalen staan
+
+De verleiding was een signaal te laten afgaan bij "tekort groter dan zoveel
+kilocalorieën" of "trend steiler dan zoveel kilo per week". Dat zou precisie
+suggereren die er niet is. Zulke drempels staan in geen enkele richtlijn die ik
+kon vinden; ik zou ze hier zelf verzinnen, en dan staat er een getal op het
+scherm dat nergens vandaan komt.
+
+Wat er wél staat is een voorwaarde die geen uitleg nodig heeft: je gebruikt dit
+middel én je hebt een afvaldoel. Drie signalen komen daaruit voort. Insuline of
+een SU-derivaat bij afvallen, omdat de dosis op de oude inname is afgestemd. Een
+SGLT2-remmer bij sterk minder koolhydraten, omdat euglykemische ketoacidose bij
+normale glucosewaarden verloopt en dus niet aan de meter te zien is. En
+kaliumhoudende zoutvervangers naast een RAS-remmer, omdat het zoutadvies en het
+kalium elkaar daar tegenkomen.
+
+Komt er ooit een drempel, dan komt hij uit een richtlijn en met bron in dit
+bestand. Niet andersom.
+
+### 23.2 De grens tussen voorlichten en doseren, als proef
+
+Elk signaal zegt wat er speelt en verwijst naar een mens. Geen dosis, geen
+getal. Dat is geen stijlkeuze: een insulinedosis is een therapeutische
+beslissing, en software die die beslissing voorrekent is iets anders dan deze
+app. Er is ook een reden van binnenuit. De stelregel hier is dat geen enkel
+getal zonder zijn onzekerheid op het scherm komt, en een insulinedosis kán deze
+app niet met een interval leveren — hij weet de gevoeligheid niet, de
+koolhydraat-insulineratio niet en de nierfunctie niet.
+
+Een commentaarblok houdt zo'n grens niet vast. `conditie.proef.ts` leest daarom
+de tekst van élk signaal en valt om zodra er een cijfer in staat, en eist dat
+elke handeling het woord huisarts of praktijkondersteuner bevat.
+
+In `leren.ts` staan wél getallen, en dat is geen tegenspraak. Het verschil is van
+wie het getal is. "Eet zes tabletten druivensuiker" staat letterlijk zo op
+Thuisarts en geldt voor iedereen gelijk; "verlaag je insuline met vier eenheden"
+zou een dosis voor één persoon zijn. Het eerste is een boek, het tweede een
+behandeling. De proef bij dat bestand leest elke tekst twee keer — met een lege
+conditie en met alles aangevinkt — en eist dat er letterlijk hetzelfde staat.
+
+### 23.3 Groepen en geen middelen
+
+De gebruiker kiest een medicatiegroep en niet een merk. Drie redenen. Alles wat
+de app ermee doet hangt van de groep af. Een lijst met losse middelen die
+onvolledig of verouderd is wekt vertrouwen dat hij niet verdient. En een groep is
+met een voorbeeld erbij — "tablet die suiker uitplast · dapagliflozine,
+empagliflozine" — aan te wijzen door iemand die moeizaam leest, wat in deze
+praktijk geen bijzaak is.
+
+Wat er staat is zelfopgave en geen medicatieoverzicht uit het HIS. Dat staat er
+op het scherm ook bij.
+
+### 23.4 Waar de signaalkaarten staan, en waarom niet op Gezondheid
+
+Ze stonden eerst op het klinische scherm, want daar woont de rest van de
+klinische inhoud. Dat was de verkeerde plek om een eenvoudige reden: Gezondheid
+is een tabblad dat je opent als je er iets wilt invullen, en een waarschuwing
+achter een tik die niemand doet is geen waarschuwing.
+
+Ze staan nu op Vandaag, direct onder de knop en boven de maaltijdvakken. Dat is
+de enige plek die de volgorde van dat scherm niet breekt. Die volgorde ligt vast
+met de regel dat wie komt om te doen niet eerst langs wat er te lezen valt hoeft;
+de kaarten bóven de knop zetten zou de knop laten zakken zodra iemand diabetes
+aanvinkt. Eronder blijft de knop staan waar hij stond ten opzichte van de hero,
+en wie leest, leest dit als eerste.
+
+Ze klappen in, met de uitklapper die de app al kent. Een kaart die er elke dag
+hetzelfde bij staat wordt na een week niet meer gelezen. De kop zegt waar het
+over gaat, de regel eronder is de handeling en blijft ook dicht staan, en de
+uitleg zit erachter — het eerste wat je ziet is dus wat je moet doen en niet een
+alinea.
+
+Er zit geen wegklikknop op. Het signaal hangt aan de medicatie en het afvaldoel;
+valt een van beide weg, dan valt de kaart vanzelf weg. Iets kunnen wegklikken wat
+nog geldt zou een toestand maken die de app moet onthouden, en de enige eerlijke
+reden om zo'n kaart te laten verdwijnen is dat hij niet meer waar is.
+
+### 23.5 Leeg is niet hetzelfde als niets aan de hand
+
+Een lege conditie geeft nooit een signaal. Dat lijkt vanzelfsprekend en is het
+niet: zou `heeftMed` ooit een standaardwaarde krijgen, dan gaan er signalen af
+bij mensen die nooit iets hebben ingevuld. Leeg betekent dat we het niet weten,
+en dan zwijgt de app. Dezelfde regel als bij een ontbrekende voedingswaarde, die
+hier ook niet als nul doorgaat.
+
+## 24. De bloeddruk als weekgemiddelde
+
+Het klinische scherm liet de nieuwste bloeddrukmeting zien. Voor deze waarde is
+dat dezelfde fout als één weging voor het gewicht: de dagelijkse schommeling is
+groter dan het verschil dat je probeert te zien. Eén meting van 148 zegt niets;
+zeven dagen die rond de 148 uitkomen zeggen alles. De app rekende al zo over het
+gewicht en deed het hier niet.
+
+### 24.1 Wat de richtlijn vraagt, en wat hiervan te controleren is
+
+De geprotocolleerde thuismeting bij de NHG-Standaard CVRM is twee metingen vóór
+het ontbijt en twee metingen twee uur na het avondeten, een week lang.
+
+Van dat protocol kan deze app de helft nagaan. Een `Meting` draagt hier een datum
+en geen tijdstip, dus of iemand 's ochtends én 's avonds gemeten heeft is niet te
+zien. De app telt dus metingen en dagen, en zegt er met zoveel woorden bij dat
+het ochtend-en-avonddeel buiten zijn bereik ligt. Dat is beter dan een vinkje dat
+"protocol gevolgd" zegt op grond van iets wat het niet gemeten heeft.
+
+Hij weet evenmin of het thuismetingen zijn. Wat je invult telt mee, waar je het
+ook mat. Ook dat staat er.
+
+### 24.2 Eerst per dag, dan pas over de dagen
+
+Wie op dinsdag vier keer meet en de rest van de week één keer, laat dinsdag vier
+keer zo zwaar wegen in een plat gemiddelde. Het protocol vraagt om een week en
+niet om een aantal metingen. Daarom eerst het daggemiddelde en dan het gemiddelde
+daarvan: elke dag telt één keer mee. De proef zet er een geval naast waarin het
+platte gemiddelde 165 geeft en de daggewogen versie 150.
+
+Een dag zonder onderdruk valt weg. Een bovendruk zonder onderdruk is geen
+bloeddruk, en half ingevulde dagen voor vol aanzien is hetzelfde soort fout als
+een ontbrekende waarde als nul behandelen.
+
+### 24.3 Waarom er geen oordeel bij staat
+
+Er komt geen afkapwaarde in deze functie en geen kleur op het scherm. De
+praktische handleiding bij de standaard geeft streefwaarden voor de meting in de
+praktijk; een aparte afkapwaarde voor de thuismeting staat daar niet in, en de
+135/85 die elders circuleert komt uit een andere richtlijn. Zelf een grens kiezen
+zou hier dezelfde stap zijn als een dosis geven: van informeren naar beoordelen.
+Dat oordeel hoort bij de praktijkondersteuner.
+
+Wat er wel bij staat is de spreiding. Een gemiddelde van 132 uit dagen die tussen
+118 en 146 liggen is een ander getal dan hetzelfde gemiddelde uit dagen die
+tussen 130 en 134 liggen, en dat hoort te zien te zijn.
+
+De eerste dag blijft meetellen. Sommige richtlijnen laten hem vervallen omdat hij
+systematisch hoger uitvalt; de handleiding waar dit op steunt schrijft dat niet
+voor. Zolang dat zo is verzint deze app die regel niet zelf.
+
+### 24.4 Bronnen bij dit hoofdstuk en het vorige
+
+Thuisarts.nl, *Mijn bloedsuiker is te laag bij diabetes type 2* — de hypotekst in
+`leren.ts` volgt die bladzijde. NHG-Standaard Cardiovasculair risicomanagement en
+de praktische handleiding daarbij — het meetprotocol en het zoutadvies.
+NHG-Standaard Diabetes mellitus type 2. NDF Voedingsrichtlijn diabetes (2020,
+bewijsupdate 2023) — dat er geen apart diabetesdieet bestaat en dat gezonde
+voeding met persoonsgerichte aanpassing het uitgangspunt is.
+
+De drempels en formuleringen in de signalen zijn bewust gebleven bij wat deze
+bronnen dragen. Waar ze niets zeggen, zegt de app ook niets.
