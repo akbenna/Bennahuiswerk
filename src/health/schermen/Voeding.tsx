@@ -20,6 +20,7 @@ import { roep } from '@/gedeeld/db/rpc'
 import type { Zoekuitslag } from '@/gedeeld/db/rpc'
 import type { EigenProduct, Moment, Profiel, Regel } from '@/gedeeld/db/tabellen'
 import { conditieVan } from '../conditie'
+import { zoutGram } from '../zout'
 import type { Analyse } from '../rekenkern'
 import type { Onderwerp } from '../vensters/Portie'
 import { ActieZoek, WegEigenProduct } from '../tekens'
@@ -129,16 +130,23 @@ export function Voeding(p: VoedingEigenschappen) {
  * deze praktijk hebben er meer dan één. De redenering staat in
  * `health/STRATEGIE-CHRONISCHE-ZORG.md`.
  *
- * Zout hoort in dit rijtje thuis en staat er niet: natrium zit niet in de
- * gegevens die `kal_zoeken` teruggeeft. Dat is een gat in het model en geen
- * keuze; zolang het er niet is, zwijgt het scherm erover in plaats van een leeg
- * streepje te tonen dat op "bevat geen zout" lijkt.
+ * Wie hoge bloeddruk heeft opgegeven ziet het zout. Dat staat er in gram en niet
+ * in milligram natrium, want zout is het woord dat op de verpakking staat en in
+ * de spreekkamer valt; de omrekening gebeurt op één plek, in `zout.ts`.
+ *
+ * Komt er geen natriumwaarde mee — omdat
+ * `health/database/30-natrium-in-het-zoeken.sql` nog niet gedraaid is, of omdat
+ * de tabel het voor dit product niet weet — dan staat er een streepje. Geen
+ * 0,0 g: dat zou "bevat geen zout" beweren over iets wat dat misschien wel
+ * bevat.
  */
 function Zoeken(
   { token, opPortie, profiel }:
   { token: string; opPortie: (o: Onderwerp) => void; profiel: Profiel },
 ) {
-  const toonKoolhydraten = !!conditieVan(profiel.instellingen).dm2
+  const conditie = conditieVan(profiel.instellingen)
+  const toonKoolhydraten = !!conditie.dm2
+  const toonZout = !!conditie.hypertensie
 
   const [term, zetTerm] = useState('')
   const [uitslag, zetUitslag] = useState<Zoekuitslag | null>(null)
@@ -213,6 +221,13 @@ function Zoeken(
                     <span className="mini" style={{ display: 'block' }}>
                       koolhydraten {n.koolhydraat_g == null ? '—' : dec(n.koolhydraat_g, 1) + ' g'}
                       {' · '}vezel {n.vezel_g == null ? '—' : dec(n.vezel_g, 1) + ' g'}
+                    </span>
+                  )}
+                  {toonZout && (
+                    <span className="mini" style={{ display: 'block' }}>
+                      zout {zoutGram(n.natrium_mg) == null
+                        ? '—'
+                        : dec(zoutGram(n.natrium_mg) as number, 2) + ' g'}
                     </span>
                   )}
                 </span>
