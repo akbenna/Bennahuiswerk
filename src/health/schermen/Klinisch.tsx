@@ -14,6 +14,7 @@ import { dec } from '@/gedeeld/getal'
 import { kortNL, vandaag } from '@/gedeeld/datum'
 import type { IsoDatum, Lab, Meting, Profiel, Vragenlijst } from '@/gedeeld/db/tabellen'
 import type { Analyse } from '../rekenkern'
+import { VENSTER_DAGEN, thuisbloeddruk } from '../bloeddruk'
 import { STOPBANG, fib4, nieuwste, rustpols, score2, stopbangScore } from '../klinisch'
 import type { Rustpols, StopbangAntwoorden, StopbangSleutel } from '../klinisch'
 import { WegLab, WegMeting } from '../tekens'
@@ -159,6 +160,8 @@ export function Klinisch(p: KlinischEigenschappen) {
         )}
       </Schermkop>
 
+      <Eigenbloeddruk metingen={metingen} />
+
       <MetingInvoer bewaar={p.bewaarMeting} a={a} sbd={sbd} dbd={dbd} middel={middel}
                     pols={pols} />
       <LabInvoer bewaar={p.bewaarLab} labs={labs} />
@@ -217,6 +220,43 @@ export function Klinisch(p: KlinischEigenschappen) {
 
       <StopbangKaart vragenlijsten={p.vragenlijsten} bewaar={p.bewaarStopbang} />
     </>
+  )
+}
+
+/**
+ * DE BLOEDDRUK ALS WEEKGEMIDDELDE
+ *
+ * Het scherm liet de nieuwste meting zien. Voor deze waarde is dat dezelfde
+ * fout als één weging voor het gewicht: de dagelijkse schommeling is groter dan
+ * het verschil dat je wilt zien. De rekenregel en waarom er geen oordeel bij
+ * staat, staan in `bloeddruk.ts`.
+ */
+function Eigenbloeddruk({ metingen }: { metingen: Meting[] }) {
+  const t = thuisbloeddruk(metingen, vandaag())
+  if (!t) return null
+
+  return (
+    <Kaart>
+      <Kop>Bloeddruk — je eigen metingen</Kop>
+      <Rij style={{ alignItems: 'baseline', marginTop: 4 }}>
+        <span className="getal" style={{ fontSize: '2rem' }}>{t.sys}/{t.dia}</span>
+        <span className="klein">mmHg, gemiddeld over {t.dagen}
+          {t.dagen === 1 ? ' dag' : ' dagen'}</span>
+      </Rij>
+      <p className="mini" style={{ marginTop: 8 }}>
+        {t.metingen} metingen, en de dagen liepen {t.spreidingSys} mmHg uiteen in bovendruk.
+        {t.volledigeWeek
+          ? ' Dat is een hele week, zoals de meting bedoeld is.'
+          : ` Een geprotocolleerde thuismeting loopt ${VENSTER_DAGEN} dagen; hoe meer dagen,`
+            + ' hoe minder het toeval meeweegt.'}
+      </p>
+      <p className="mini" style={{ marginTop: 8 }}>
+        Twee dingen die deze app niet weet. Of je twee keer voor het ontbijt en twee keer na het
+        avondeten gemeten hebt — een meting draagt hier een datum en geen tijdstip. En of dit
+        thuismetingen zijn: wat je hier invult telt mee, waar je het ook mat. Wat dit getal betekent
+        beoordeelt je huisarts of praktijkondersteuner; deze app zet er met opzet geen grens bij.
+      </p>
+    </Kaart>
   )
 }
 

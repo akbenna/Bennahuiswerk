@@ -32,7 +32,7 @@ export function Meer(
   { dagen, reeks, profiel, opVenster }:
   {
     dagen: Dagenkaart; reeks: Trendpunt[]; profiel: Profiel
-    opVenster: (v: 'profiel' | 'import' | 'account' | 'koppelen' | 'hoewerkt') => void
+    opVenster: (v: 'profiel' | 'import' | 'account' | 'koppelen' | 'hoewerkt' | 'leren') => void
   },
 ) {
   const trendNu = [...reeks].reverse().find((x) => x.ema != null)
@@ -209,6 +209,7 @@ export function Meer(
             nutteloos voor ieder ander. De uitleg zelf hoort ook hier te staan,
             achter één tik. */}
         <Rij>
+          <Knop opKlik={() => opVenster('leren')}>Leren over je aandoening</Knop>
           <Knop opKlik={() => opVenster('hoewerkt')}>Hoe deze app werkt</Knop>
         </Rij>
       </Kaart>

@@ -29,6 +29,28 @@ export type RegelBron =
      health/database/19-merkregels.sql voor de bijbehorende constraint. */
   | 'merk'
 
+/**
+ * DE CONDITIE — wat er bij deze gebruiker speelt.
+ *
+ * Deze twee typen staan hier en niet bij de logica in `src/health/conditie.ts`,
+ * omdat ze de vorm van een kolom beschrijven: ze wonen in `instellingen` en
+ * gaan als zodanig over de lijn. De logica die eraan hangt staat wél daar.
+ *
+ * Groepen en geen middelen, en waarom dat zo is, staat in `conditie.ts`.
+ */
+export type Medicatiegroep = 'insuline' | 'su' | 'sglt2' | 'glp1' | 'ras' | 'diureticum'
+
+export interface Conditie {
+  /** Hoge bloeddruk, of daarvoor behandeld. */
+  hypertensie?: boolean
+  /** Diabetes mellitus type 2. */
+  dm2?: boolean
+  /** Doorgemaakte hart- of vaatziekte. */
+  hvz?: boolean
+  /** Zelfopgave, en dus nadrukkelijk geen medicatieoverzicht. */
+  med?: Medicatiegroep[]
+}
+
 export interface Instellingen {
   olie_g?: number
   olie_gewogen?: boolean
@@ -36,6 +58,7 @@ export interface Instellingen {
   melk_soort?: 'mager' | 'half' | 'vol'
   melk_gemeten?: boolean
   rookt?: boolean
+  conditie?: Conditie
 }
 
 export interface Profiel {

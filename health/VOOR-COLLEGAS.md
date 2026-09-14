@@ -235,6 +235,42 @@ Ik noem het niet om te ontmoedigen maar omdat het bepaalt wat dit wel en niet
 kan worden, en omdat een instrument dat zijn eigen beperkingen niet benoemt
 precies dezelfde fout maakt als het getal op dat briefje.
 
+### Die grens is inmiddels dichterbij komen te liggen
+
+Wat hierboven staat schreef ik toen de app alleen over energie en gewicht ging.
+Sindsdien is er een laag bij gekomen die precies tegen die grens aan schuurt, en
+dat hoort hier te staan in plaats van alleen in een technisch bestand.
+
+Je kunt nu opgeven dat je hoge bloeddruk hebt, diabetes, of een hart- of
+vaatziekte hebt gehad, en welke medicatiegroepen je gebruikt. De app gebruikt dat
+voor drie dingen: hij laat bij diabetes de koolhydraten en vezels meelezen op het
+zoekscherm, hij vat zelfgemeten bloeddrukken samen over een week in plaats van
+per meting, en hij wijst je op wat er bij jouw medicatie hoort als je afvalt —
+dat insuline en een SU-derivaat mee omlaag moeten, dat een SGLT2-remmer bij sterk
+minder koolhydraten kan ontregelen zonder dat je het aan je meter ziet, dat een
+kaliumhoudende zoutvervanger naast een RAS-remmer niet vanzelfsprekend is.
+
+Wat hij níet doet is doseren, en dat is geen bescheidenheid maar dezelfde
+grondregel als de rest van deze app. Een insulinedosis kan ik niet met een
+onzekerheidsinterval leveren — ik ken de gevoeligheid niet, de
+koolhydraat-insulineratio niet en de nierfunctie niet. Dus hoort het getal er
+niet te staan. Elk signaal eindigt bij een mens, en er staat een proef op die dat
+vasthoudt: hij leest de tekst van elk signaal en valt om zodra er een cijfer in
+sluipt.
+
+Dat maakt de vraag uit deze paragraaf wel scherper dan hij was. Een app die weet
+dat je insuline gebruikt en daar iets mee doet, is een ander soort ding dan een
+voedingsdagboek — ook als hij niets voorschrijft. Ik heb daarom het beoogd doel
+uitgeschreven in `health/BEOOGD-DOEL.md`, met de vragen erbij die ik zelf niet
+kan beantwoorden, om het te laten toetsen door iemand die dat vak beheerst.
+
+Het zwaarste punt daarin is niet de nieuwe laag maar wat er al stond: SCORE2,
+FIB-4 en STOP-Bang rekenen met wat je zelf invult en tonen jou de uitkomst. Dat
+is precies het geval dat hierboven beschreven staat, en het staat er al een tijd.
+Zolang die toetsing niet gedaan is, blijft gelden wat er in de kop van deze
+paragraaf staat: voor mezelf gebruiken is geen probleem, aan collega's geven voor
+hún patiënten is de grens.
+
 ## Tot slot
 
 Terug naar de vrouw van tweeënvijftig. Wat ik haar zou willen meegeven is niet
