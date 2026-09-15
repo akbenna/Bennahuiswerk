@@ -134,7 +134,9 @@ export function App() {
   if (!k.sessie) {
     return (
       <div className="wrap">
-        <Aanmelden bezig={k.bezig} fout={k.fout} opAanmelden={(a, w, n) => void k.aanmelden(a, w, n)} />
+        <Aanmelden bezig={k.bezig} fout={k.fout}
+                   opAanmelden={(a, w, n) => void k.aanmelden(a, w, n)}
+                   opHerstellen={(a, c, n) => void k.herstellen(a, c, n)} />
       </div>
     )
   }

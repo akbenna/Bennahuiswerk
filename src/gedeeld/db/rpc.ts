@@ -409,6 +409,17 @@ export interface RpcKaart {
      achttien functies, vier edge functions en een pg_cron-taak. */
   kal_registreren: { in: { p_account: string; p_ww: string; p_naam: string }; uit: Sessie }
   kal_aanmelden: { in: { p_account: string; p_ww: string }; uit: Aanmelduitslag }
+  /* Wachtwoord kwijt — zie health/database/33-wachtwoord-kwijt.sql. Alle drie
+     geven een uitslag terug en gooien niet, om dezelfde reden als aanmelden. */
+  kal_ww_wijzigen: {
+    in: { p_token: string; p_oud: string; p_nieuw: string }; uit: Aanmelduitslag
+  }
+  kal_herstelcode_maken: {
+    in: { p_token: string; p_ww: string }; uit: { code: string } | { fout: string }
+  }
+  kal_ww_herstellen: {
+    in: { p_account: string; p_code: string; p_nieuw: string }; uit: Aanmelduitslag
+  }
   kal_afmelden: { in: { p_token: string }; uit: null }
   kal_ophalen: { in: { p_token: string; p_vanaf?: IsoDatum }; uit: Alles }
   kal_profiel_zetten: { in: { p_token: string; p_patch: Partial<Profiel> }; uit: unknown }

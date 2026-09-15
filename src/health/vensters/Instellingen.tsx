@@ -3,11 +3,12 @@
  * Overgezet uit vensterProfiel(), vensterImport() en vensterAccount().
  */
 import { useState } from 'react'
-import { Kaart, Keuzechip, Knop, Rij, Spin, Venster } from '../onderdelen/basis'
+import { Kaart, Keuzechip, Knop, Kop, Rij, Spin, Venster } from '../onderdelen/basis'
 import { MEDICATIEGROEPEN } from '../conditie'
 import type { Conditie, Medicatiegroep } from '../conditie'
 import { dec, dz } from '@/gedeeld/getal'
 import type { Fase, Geslacht, Profiel } from '@/gedeeld/db/tabellen'
+import { roep } from '@/gedeeld/db/rpc'
 import type { NieuweDag, NieuweRegel } from '@/gedeeld/db/rpc'
 import { importeer, leesFoto } from '../ai'
 import type { ImportDag } from '../ai'
@@ -343,11 +344,17 @@ export function AccountVenster(
 ) {
   return (
     <Venster titel="Account" opSluiten={opSluiten}>
+      {/* Dezelfde onwaarheid als onder het aanmeldscherm stond, en die heb ik
+          daar wél rechtgezet en hier niet. Twee plekken die hetzelfde zeggen en
+          los van elkaar bijgewerkt worden — precies het patroon waar dit
+          project elders variabelen voor gebruikt. Hier kan dat niet: het zijn
+          twee verschillende zinnen in twee verschillende schermen. */}
       <p className="klein" style={{ marginTop: 8 }}>
-        Aangemeld als <b>{account}</b>. De sessie blijft dertig dagen staan. Je gegevens staan in eigen
-        tabellen in het Supabase-project van ProVita, afgescheiden van de patiëntgegevens, en zijn
-        alleen via beveiligde databasefuncties met dit wachtwoord bereikbaar.
+        Aangemeld als <b>{account}</b>. De sessie blijft dertig dagen staan. Je gegevens staan in de
+        eigen database van BennaHub, los van de zorggegevens van de praktijk, en zijn alleen via
+        beveiligde databasefuncties met dit wachtwoord bereikbaar.
       </p>
+      <Herstelcode />
       <Rij style={{ marginTop: 14 }}>
         <Knop opKlik={opAfmelden}>Afmelden</Knop>
       </Rij>
@@ -355,15 +362,152 @@ export function AccountVenster(
   )
 }
 
+/**
+ * EEN HERSTELCODE MAKEN
+ *
+ * Zonder deze code is er geen weg terug als je je wachtwoord kwijt bent — er is
+ * geen e-mail in deze app en dus geen herstelmail. Waarom dat zo is staat in
+ * `health/database/33-wachtwoord-kwijt.sql`.
+ *
+ * Het wachtwoord wordt hier opnieuw gevraagd, en dat is geen hinder maar het
+ * punt: een token ligt dertig dagen in localStorage, en wie dat steelt mag
+ * daarmee geen blijvende ingang kunnen maken.
+ *
+ * De code staat maar één keer op het scherm. Hij wordt gehasht opgeslagen, dus
+ * ook de database kan hem daarna niet meer tonen.
+ */
+function Herstelcode() {
+  const [open, zetOpen] = useState(false)
+  const [ww, zetWw] = useState('')
+  const [code, zetCode] = useState<string | null>(null)
+  const [fout, zetFout] = useState<string | null>(null)
+  const [bezig, zetBezig] = useState(false)
+
+  const maak = async () => {
+    zetBezig(true)
+    zetFout(null)
+    try {
+      const s = JSON.parse(localStorage.getItem('kalibratie.sessie') ?? 'null') as
+        { token?: string } | null
+      if (!s?.token) { zetFout('Je bent niet aangemeld'); return }
+      const uit = await roep('kal_herstelcode_maken', { p_token: s.token, p_ww: ww })
+      if ('fout' in uit) { zetFout(uit.fout); return }
+      zetCode(uit.code)
+      zetWw('')
+    } catch (e) {
+      zetFout(e instanceof Error ? e.message : String(e))
+    } finally {
+      zetBezig(false)
+    }
+  }
+
+  if (code) {
+    return (
+      <div className="kaart" style={{ marginTop: 14 }}>
+        <Kop>Schrijf deze code op</Kop>
+        <p className="getal" style={{ fontSize: '1.15rem', marginTop: 8, letterSpacing: '.02em' }}>
+          {code}
+        </p>
+        <p className="mini" style={{ marginTop: 8 }}>
+          Hij staat hier één keer. Bewaar hem ergens waar je hem terugvindt zonder deze app — op
+          papier, of in je wachtwoordbeheerder. Hij werkt één keer; daarna maak je een nieuwe.
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ marginTop: 14 }}>
+      {!open ? (
+        <p className="mini">
+          <button type="button" className="alsLink" onClick={() => zetOpen(true)}>
+            Herstelcode maken
+          </button>
+          {' '}— nodig als je ooit je wachtwoord kwijt bent.
+        </p>
+      ) : (
+        <>
+          <label className="veld">
+            <span>je wachtwoord, nog één keer</span>
+            <input type="password" autoComplete="current-password" value={ww}
+                   onChange={(e) => zetWw(e.target.value)} />
+          </label>
+          <p className="klein" style={{ marginTop: 8, minHeight: '1.3em' }}>
+            {bezig ? <><Spin /> Bezig…</> : fout}
+          </p>
+          <Rij>
+            <Knop vol uit={ww === '' || bezig} opKlik={() => void maak()}>Code maken</Knop>
+            <Knop uit={bezig} opKlik={() => { zetOpen(false); zetWw(''); zetFout(null) }}>
+              Laat maar
+            </Knop>
+          </Rij>
+        </>
+      )}
+    </div>
+  )
+}
+
 /* ------------------------------------------------------------ aanmelden --- */
 
 export function Aanmelden(
-  { bezig, fout, opAanmelden }:
-  { bezig: boolean; fout: string | null; opAanmelden: (a: string, w: string, nieuw: boolean) => void },
+  { bezig, fout, opAanmelden, opHerstellen }:
+  { bezig: boolean; fout: string | null
+    opAanmelden: (a: string, w: string, nieuw: boolean) => void
+    opHerstellen: (a: string, code: string, nieuw: string) => void },
 ) {
   const [account, zetAccount] = useState('')
   const [ww, zetWw] = useState('')
+  /* De herstelweg staat achter een schakelaar en niet naast het gewone veld:
+     wie gewoon inlogt hoort er niet over te struikelen, en wie hem nodig heeft
+     zoekt ernaar. */
+  const [kwijt, zetKwijt] = useState(false)
+  const [code, zetCode] = useState('')
   const kan = account.trim() !== '' && ww !== ''
+  const kanHerstel = account.trim() !== '' && code.trim() !== '' && ww.length >= 8
+
+  if (kwijt) {
+    return (
+      <>
+        <header>
+          <h1>Wachtwoord kwijt</h1>
+          <p className="sub">
+            Met je herstelcode zet je een nieuw wachtwoord. De code werkt één keer; daarna maak je
+            een nieuwe in je account.
+          </p>
+        </header>
+        <Kaart style={{ marginTop: 18 }}>
+          <label className="veld">
+            <span>naam</span>
+            <input autoComplete="username" autoCapitalize="none" value={account}
+                   onChange={(e) => zetAccount(e.target.value)} />
+          </label>
+          <label className="veld" style={{ marginTop: 10 }}>
+            <span>herstelcode</span>
+            <input autoCapitalize="characters" spellCheck={false} value={code}
+                   placeholder="XXXXX-XXXXX-XXXXX-XXXXX"
+                   onChange={(e) => zetCode(e.target.value)} />
+          </label>
+          <label className="veld" style={{ marginTop: 10 }}>
+            <span>nieuw wachtwoord</span>
+            <input type="password" autoComplete="new-password" value={ww}
+                   onChange={(e) => zetWw(e.target.value)} />
+          </label>
+          <p className="klein" style={{ marginTop: 10, minHeight: '1.3em' }}>
+            {bezig ? <><Spin /> Bezig…</> : fout ?? 'Minstens acht tekens.'}
+          </p>
+          <Rij style={{ marginTop: 6 }}>
+            <Knop vol uit={!kanHerstel || bezig}
+                  opKlik={() => opHerstellen(account.trim().toLowerCase(), code.trim(), ww)}>
+              Nieuw wachtwoord zetten
+            </Knop>
+            <Knop uit={bezig} opKlik={() => { zetKwijt(false); zetCode(''); zetWw('') }}>
+              Terug
+            </Knop>
+          </Rij>
+        </Kaart>
+      </>
+    )
+  }
 
   return (
     <>
@@ -401,6 +545,11 @@ export function Aanmelden(
             Nieuw account
           </Knop>
         </Rij>
+        <p className="mini" style={{ marginTop: 12 }}>
+          <button type="button" className="alsLink" onClick={() => { zetKwijt(true); zetWw('') }}>
+            Wachtwoord kwijt?
+          </button>
+        </p>
       </Kaart>
       {/* Hier stond dat de gegevens in het project van ProVita staan, naast de
           patiëntgegevens. Dat klopte tot 26 augustus 2026 en daarna niet meer:
