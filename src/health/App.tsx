@@ -268,6 +268,7 @@ export function App() {
           {tab === 'klinisch' && (
             <Klinisch
               a={a} profiel={profiel} labs={k.alles.labs} metingen={k.alles.metingen}
+              opProfiel={() => zetVenster('profiel')} opLeren={() => zetVenster('leren')}
               vragenlijsten={k.alles.vragenlijsten}
               bewaarMeting={(m) =>
                 void k.wijzig((t) => roep('kal_rij_toevoegen', {

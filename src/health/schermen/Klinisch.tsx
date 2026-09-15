@@ -8,7 +8,7 @@
  * schrikbeeld en geen gegeven.
  */
 import { useState } from 'react'
-import { Kaart, Knop, Kop, Rij, Uitleg } from '../onderdelen/basis'
+import { Kaart, Knop, Kop, Rij, Tussen, Uitleg } from '../onderdelen/basis'
 import { Schermkop } from '../hero'
 import { dec } from '@/gedeeld/getal'
 import { kortNL, vandaag } from '@/gedeeld/datum'
@@ -16,6 +16,7 @@ import type { IsoDatum, Lab, Meting, Profiel, Vragenlijst } from '@/gedeeld/db/t
 import type { Analyse } from '../rekenkern'
 import { VENSTER_DAGEN, thuisbloeddruk } from '../bloeddruk'
 import { LeegGeenGegevens } from '../leegbeeld'
+import { MEDICATIEGROEPEN, conditieGezet, conditieVan } from '../conditie'
 import { STOPBANG, fib4, nieuwste, rustpols, score2, stopbangScore } from '../klinisch'
 import type { Rustpols, StopbangAntwoorden, StopbangSleutel } from '../klinisch'
 import { WegLab, WegMeting } from '../tekens'
@@ -50,6 +51,10 @@ const METINGSOORTEN = [
 export interface KlinischEigenschappen {
   a: Analyse
   profiel: Profiel
+  /** Het profielvenster openen, waar de conditie wordt ingevuld. */
+  opProfiel: () => void
+  /** Het venster Leren openen. */
+  opLeren: () => void
   labs: Lab[]
   metingen: Meting[]
   vragenlijsten: Vragenlijst[]
@@ -164,6 +169,7 @@ export function Klinisch(p: KlinischEigenschappen) {
         )}
       </Schermkop>
 
+      <Conditiekaart profiel={profiel} opProfiel={p.opProfiel} opLeren={p.opLeren} />
       <Eigenbloeddruk metingen={metingen} />
 
       <MetingInvoer bewaar={p.bewaarMeting} a={a} sbd={sbd} dbd={dbd} middel={middel}
@@ -224,6 +230,105 @@ export function Klinisch(p: KlinischEigenschappen) {
 
       <StopbangKaart vragenlijsten={p.vragenlijsten} bewaar={p.bewaarStopbang} />
     </>
+  )
+}
+
+/**
+ * WAT ER BIJ JOU SPEELT — bovenaan Gezondheid en niet onderin een venster
+ *
+ * Deze kaart bestond eerst niet, en dat was een fout die het waard is op te
+ * schrijven. De hele laag voor chronische zorg — de conditie, de
+ * medicatiegroepen, de signalen, de zoutkolom, het venster Leren — was gebouwd
+ * en werkte, maar hij hing af van een veld onderin het profielvenster, achter
+ * het tabblad Meer. Wie dat veld niet vond, zag van de hele laag niets. Op het
+ * tabblad dat Gezondheid heet stond er zelfs geen verwijzing naar.
+ *
+ * Een functie die pas bestaat als je hem al kent, bestaat niet.
+ *
+ * Daarom staat dit nu bovenaan dit scherm, en juist ook — of vooral — als er
+ * niets is ingevuld. Leeg is hier geen reden om te zwijgen maar de plek waar de
+ * uitnodiging hoort: dit is het enige scherm waar iemand naar zijn aandoening
+ * komt zoeken.
+ *
+ * Wat de kaart toont als er wél iets staat, is niet alleen wát je opgaf maar
+ * ook wát de app ermee doet. Anders blijft het een vinkje zonder gevolg.
+ */
+function Conditiekaart(
+  { profiel, opProfiel, opLeren }:
+  { profiel: Profiel; opProfiel: () => void; opLeren: () => void },
+) {
+  const c = conditieVan(profiel.instellingen)
+  const med = (c.med ?? []).map((g) => MEDICATIEGROEPEN.find((m) => m.groep === g)).filter(Boolean)
+  const aandoening = [
+    c.hypertensie && 'hoge bloeddruk',
+    c.dm2 && 'diabetes type 2',
+    c.hvz && 'hart- of vaatziekte',
+  ].filter(Boolean) as string[]
+
+  if (!conditieGezet(c)) {
+    return (
+      <Kaart sfeer="golf">
+        <Kop teken={WegMeting}>Wat er bij jou speelt</Kop>
+        <p style={{ fontSize: '.92rem', marginTop: 8 }}>
+          Heb je hoge bloeddruk, diabetes type 2, of een hart- of vaatziekte gehad? Geef het op,
+          dan past de app zich erop aan: je ziet dan zout bij elk product, koolhydraten en vezels
+          als dat telt, en je krijgt een seintje bij dingen die met je medicijnen te maken hebben.
+        </p>
+        <p className="mini" style={{ marginTop: 8 }}>
+          Vul je niets in, dan verandert er niets. Leeg betekent voor deze app dat hij het niet
+          weet, en dan zwijgt hij.
+        </p>
+        <Rij style={{ marginTop: 12 }}>
+          <Knop vol opKlik={opProfiel}>Invullen</Knop>
+          <Knop opKlik={opLeren}>Leren over je aandoening</Knop>
+        </Rij>
+      </Kaart>
+    )
+  }
+
+  return (
+    <Kaart sfeer="golf">
+      <Kop teken={WegMeting}>Wat er bij jou speelt</Kop>
+      <Rij style={{ marginTop: 8, flexWrap: 'wrap', gap: 6 }}>
+        {aandoening.map((x) => <span key={x} className="vlaggetje let">{x}</span>)}
+        {med.map((m) => <span key={m!.groep} className="vlaggetje rust" title={m!.voorbeeld}>{m!.naam}</span>)}
+      </Rij>
+      <p className="mini" style={{ marginTop: 10 }}>
+        Jouw opgave, geen medicatieoverzicht uit de praktijk.
+      </p>
+
+      <Tussen style={{ marginTop: 14 }}><Kop>Wat de app hiermee doet</Kop></Tussen>
+      <div style={{ fontSize: '.9rem', marginTop: 6 }}>
+        {c.hypertensie && (
+          <p style={{ marginTop: 4 }}>
+            Bij elk product op Voeding staat hoeveel zout erin zit, en hieronder telt je bloeddruk
+            per week in plaats van per meting.
+          </p>
+        )}
+        {c.dm2 && (
+          <p style={{ marginTop: 4 }}>
+            Bij elk product staan de koolhydraten en de vezels, naast de energie en het eiwit.
+          </p>
+        )}
+        {(med.length > 0) && (
+          <p style={{ marginTop: 4 }}>
+            Bij je medicijnen hoort een seintje als je afvalt. Dat verschijnt op Vandaag, onder de
+            knop.
+          </p>
+        )}
+        {!c.hypertensie && !c.dm2 && med.length === 0 && (
+          <p style={{ marginTop: 4 }}>
+            Voor wat je nu hebt opgegeven verandert er nog niets aan de schermen. Vul je ook je
+            medicijnen in, dan let de app mee bij het afvallen.
+          </p>
+        )}
+      </div>
+
+      <Rij style={{ marginTop: 12 }}>
+        <Knop opKlik={opProfiel}>Aanpassen</Knop>
+        <Knop vol opKlik={opLeren}>Leren over je aandoening</Knop>
+      </Rij>
+    </Kaart>
   )
 }
 

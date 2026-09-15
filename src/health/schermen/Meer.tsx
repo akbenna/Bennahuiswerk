@@ -175,7 +175,7 @@ export function Meer(
       <Kaart>
         <Kop teken={WegInstellen}>Instellingen</Kop>
         <Rij style={{ marginTop: 10 }}>
-          <Knop opKlik={() => opVenster('profiel')}>Profiel en doelen</Knop>
+          <Knop opKlik={() => opVenster('profiel')}>Profiel, doelen en je aandoening</Knop>
           <Knop vol opKlik={() => opVenster('koppelen')}>Horloge en telefoon koppelen</Knop>
           <Knop opKlik={() => opVenster('import')}>Importeren uit een andere app</Knop>
           <Knop opKlik={() => opVenster('account')}>Account</Knop>

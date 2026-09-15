@@ -18,13 +18,14 @@
  * Direct eronder kan wel. De knop staat waar hij stond, ten opzichte van de
  * hero; wie komt om te loggen mist er niets. En wie leest, leest dit eerst.
  *
- * WAAROM ZE INKLAPPEN
+ * WAAROM ZE NIET INKLAPPEN
  *
- * Een kaart die er elke dag hetzelfde bij staat wordt na een week niet meer
- * gelezen. Daarom de uitklapper die deze app al kent: de kop zegt waar het over
- * gaat, de regel eronder zegt wat je moet doen — die blijft altijd staan, ook
- * dicht — en de uitleg zit erachter. Zo is het eerste wat je ziet de handeling
- * en niet een alinea.
+ * Ze deden dat eerst wel, tegen de gewenning: een kaart die er elke dag
+ * hetzelfde bij staat wordt na een week niet meer gelezen. Dat argument klopt,
+ * maar het kwam te vroeg. Eerst moet iemand hem één keer zien, en een
+ * ingeklapte kaart onder een knop op een vol scherm wordt niet één keer gezien
+ * maar nul keer. Gewenning is een probleem van de tweede week; zichtbaarheid is
+ * er een van de eerste dag.
  *
  * Er zit geen wegklikknop op. Het signaal hoort bij de medicatie en het
  * afvaldoel; verdwijnt een van beide, dan verdwijnt de kaart vanzelf. Iets
@@ -32,7 +33,7 @@
  * de enige eerlijke reden om hem te laten verdwijnen is dat hij niet meer waar
  * is.
  */
-import { Kaart, Uitklap } from './onderdelen/basis'
+import { Kaart, Kop } from './onderdelen/basis'
 import { conditieVan, signalen } from './conditie'
 import type { Profiel } from '@/gedeeld/db/tabellen'
 
@@ -44,13 +45,13 @@ export function Signaalkaarten({ profiel }: { profiel: Profiel }) {
     <>
       {lijst.map((s) => (
         <Kaart key={s.id} toon="let" style={{ marginBottom: 14 }}>
-          <Uitklap id={'signaal-' + s.id} kop={s.kop} dicht={s.handeling}>
-            <p style={{ fontSize: '.92rem' }}>{s.tekst}</p>
-            <p className="mini" style={{ marginTop: 8 }}>
-              Dit staat er op grond van wat je zelf bij je profiel hebt ingevuld. Voorlichting, geen
-              diagnose. Meer hierover staat onder Meer, bij Leren.
-            </p>
-          </Uitklap>
+          <Kop>{s.kop}</Kop>
+          <p style={{ fontSize: '.92rem', marginTop: 6 }}>{s.tekst}</p>
+          <p style={{ fontSize: '.92rem', marginTop: 8, fontWeight: 500 }}>{s.handeling}</p>
+          <p className="mini" style={{ marginTop: 8 }}>
+            Dit staat er op grond van wat je zelf bij je profiel hebt ingevuld. Voorlichting, geen
+            diagnose.
+          </p>
         </Kaart>
       ))}
     </>

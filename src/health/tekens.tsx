@@ -253,29 +253,37 @@ export const WegEigenProduct = () => wegwijzer(
 /* ==========================================================================
    DE VIER TOESTANDEN
 
-   De geleverde beeldset had hier vier gekleurde rondjes voor: een groen vinkje,
-   een oranje streep, een rood uitroepteken, een blauwe i. Ze zijn niet
-   overgenomen, en om dezelfde reden als de rest van dit bestand: een PNG draagt
-   zijn kleuren ingebakken. In het donkere thema stond er een verzadigd rondje
-   dat niet meebewoog met de rest van het scherm, en hertinten kan niet.
+   Getekend naar een opdracht die één ding hard vastlegde: `currentColor` en
+   geen enkele vaste kleur. Ze nemen dus de kleur van hun omgeving over en
+   kloppen in dag en nacht.
 
-   Wat hier staat neemt de kleur van zijn omgeving over. De vorm bepaalt wat het
-   is, de kleur waar het staat — en die scheiding is precies waarom deze app in
-   twee thema's overeind blijft.
+   WAT DE EERSTE VERSIE LEERDE
 
-   Geen gevulde vlakken dus, maar dezelfde lijnvoering als de rest. Op zestien
-   pixels is een gevulde cirkel met een tekentje erin een vlek; een omtrek met
-   ruimte eromheen blijft leesbaar.
+   Die was gevuld: een dichte cirkel met het teken erin uitgespaard. Op vierentwintig
+   pixels prachtig, op zestien onbruikbaar — de uitsparing verdwijnt als eerste
+   bij het verkleinen, en dan zijn "goed", "let op" en "toelichting" alle drie
+   hetzelfde bolletje. Alleen de waarschuwing overleefde, en niet toevallig: die
+   is een driehoek, en daar draagt de buitenrand de boodschap.
+
+   De tweede versie is daarom open in plaats van gevuld. De ring is dun, het
+   teken erbinnen heeft ruimte, en op zestien pixels blijven het vinkje, de
+   streep en de i uit elkaar te houden — ook in één kleur, wat de toets is die
+   ertoe doet: wie rood en oranje niet onderscheidt moet het aan de vorm zien.
+
+   `toestand-toelichting` zat niet in de herziening; die is hier overgetekend
+   naar dezelfde maatvoering als de andere drie — ring r=8,5 en lijndikte 2.
    ========================================================================== */
 
 /** Gunstige waarde. Een vinkje in een ring. */
 export const TekenGoed = () => wegwijzer(
-  <><circle cx="12" cy="12" r="8.6" /><path d="M8.3 12.2l2.5 2.5 4.9-5.2" /></>,
+  <><circle cx="12" cy="12" r="8.5" strokeWidth="2" />
+    <path d="M8.1 12.1 10.6 14.6 15.9 9.4" strokeWidth="2" /></>,
 )
 
 /** Let op — aandacht, geen alarm. Een uitroepteken zou te hard zijn. */
 export const TekenLet = () => wegwijzer(
-  <><circle cx="12" cy="12" r="8.6" /><path d="M12 7.9v4.6" /><path d="M12 15.9v.1" /></>,
+  <><circle cx="12" cy="12" r="8.5" strokeWidth="2" />
+    <path d="M8.5 12h7" strokeWidth="2.2" /></>,
 )
 
 /**
@@ -283,11 +291,12 @@ export const TekenLet = () => wegwijzer(
  * niet onderscheidt moet aan de vorm zien dat dit zwaarder weegt dan "let op".
  */
 export const TekenFout = () => wegwijzer(
-  <><path d="M12 3.9 21.2 19.6H2.8L12 3.9Z" /><path d="M12 9.6v4.3" />
-    <path d="M12 17.1v.1" /></>,
+  <><path d="M12 3.6 21.6 20.2H2.4L12 3.6Z" strokeWidth="2" strokeLinejoin="round" />
+    <path d="M12 9.6v4.3" strokeWidth="2.2" /><path d="M12 17v.2" strokeWidth="2.4" /></>,
 )
 
 /** Toelichting. Een i in een ring, en verder niets. */
 export const TekenInfo = () => wegwijzer(
-  <><circle cx="12" cy="12" r="8.6" /><path d="M12 11.2v5" /><path d="M12 8.1v.1" /></>,
+  <><circle cx="12" cy="12" r="8.5" strokeWidth="2" />
+    <path d="M12 11.2v5" strokeWidth="2.2" /><path d="M12 7.8v.2" strokeWidth="2.4" /></>,
 )

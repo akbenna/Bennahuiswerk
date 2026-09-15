@@ -1,14 +1,23 @@
-# Beoogd doel van BennaHealth — concept ter toetsing
+# Beoogd doel van BennaHealth
 
-Dit is een concept en geen vaststelling. Het is geschreven om voorgelegd te
-worden aan iemand die MDR-kwalificaties doet, en het bevat met opzet ook de
-vragen die ik zelf niet kan beantwoorden. De bredere afweging staat in
-`STRATEGIE-CHRONISCHE-ZORG.md`; dit bestand is het stuk dat de reviewer nodig
-heeft.
+**Vastgesteld door A. Bennaghmouch als fabrikant op 15 september 2026.** Externe
+toetsing is op dat moment bewust uitgesteld; de verantwoordelijkheid voor die
+keuze ligt bij hem.
+
+Dat besluit verandert niets aan wat er hieronder open staat. De Rijksoverheid
+stelt dat de fabrikant zelf verantwoordelijk is voor de juiste kwalificatie en
+risicoklasse — er is geen instantie die dat vooraf voor je vaststelt — maar die
+verantwoordelijkheid dragen is iets anders dan de vraag beantwoorden. Valt deze
+app onder de MDR, dan blijft dat zo, ongeacht wie het risico aanvaardt. De
+openstaande vragen zijn daarom bewaard en niet weggeschreven: ze staan verderop,
+en ze wachten op het moment dat die toetsing er alsnog komt.
+
+De bredere afweging staat in `STRATEGIE-CHRONISCHE-ZORG.md`; dit bestand is de
+verklaring zelf en het stuk dat een reviewer nodig heeft.
 
 De volgorde is omgedraaid en dat hoort erkend te worden. De strategie zet deze
-verklaring vóór de code; de code van het conditieprofiel staat er inmiddels. Dat
-is een reden om dit nú voor te leggen en niet later.
+verklaring vóór de code; de code van het conditieprofiel stond er al toen zij
+werd vastgesteld.
 
 ## De verklaring zelf
 
@@ -70,7 +79,7 @@ of een ingreep tot gevolg kan hebben.
 Mijn eigen lezing is dat dit het grijze gebied is en niet dat het er duidelijk
 buiten valt. Ik leg het daarom voor in plaats van het zelf te beslissen.
 
-## Vragen aan de reviewer
+## Vragen die open blijven tot de toetsing er is
 
 Valt BennaHealth in zijn huidige vorm onder de MDR, en zo ja onder welke klasse?
 Maakt het verschil of SCORE2, FIB-4 en STOP-Bang alleen aan de gebruiker zelf
@@ -102,6 +111,8 @@ moet uitwijzen.
 
 ---
 
-*Opgesteld als concept, september 2026. De regelgevingsverwijzingen in dit stuk
-en in `STRATEGIE-CHRONISCHE-ZORG.md` zijn een lezing van Verordening (EU)
-2017/745 en de MDCG-richtsnoeren 2019-11 en 2023-1, geen advies.*
+*Vastgesteld september 2026 door de fabrikant, zonder externe toetsing. De
+regelgevingsverwijzingen in dit stuk en in `STRATEGIE-CHRONISCHE-ZORG.md` zijn
+een lezing van Verordening (EU) 2017/745 en de MDCG-richtsnoeren 2019-11 en
+2023-1, geen advies. Wie deze verklaring later toetst, begint bij de vragen
+hierboven — die zijn met opzet blijven staan.*

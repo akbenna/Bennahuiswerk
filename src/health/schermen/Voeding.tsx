@@ -225,10 +225,6 @@ function Zoeken(
                       {' · '}vezel {n.vezel_g == null ? '—' : dec(n.vezel_g, 1) + ' g'}
                     </span>
                   )}
-                  <Vlaggetjes lijst={claims({
-                    kcal: n.kcal, eiwit_g: n.eiwit_g, vezel_g: n.vezel_g,
-                    natrium_mg: n.natrium_mg,
-                  })} />
                   {toonZout && (
                     <span className="mini" style={{ display: 'block' }}>
                       zout {zoutGram(n.natrium_mg) == null
@@ -236,6 +232,10 @@ function Zoeken(
                         : dec(zoutGram(n.natrium_mg) as number, 2) + ' g'}
                     </span>
                   )}
+                  <Vlaggetjes lijst={claims({
+                    kcal: n.kcal, eiwit_g: n.eiwit_g, vezel_g: n.vezel_g,
+                    natrium_mg: n.natrium_mg,
+                  })} />
                 </span>
                 <span className="cijfer mini" style={{ textAlign: 'right' }}>
                   {dz(n.kcal)} kcal<br />{dec(n.eiwit_g, 1)} g
