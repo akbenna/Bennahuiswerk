@@ -111,4 +111,42 @@ describe('de gerechtenlijst zelf', () => {
       expect(gerechtsleutel(sleutel)).toBe(sleutel)
     }
   })
+
+  /* DE NAAM ZOALS HIJ IN DE DATABASE STAAT
+     De vorige toets kijkt of een sleutel genormaliseerd is; die zegt niets over
+     de vraag of hij ooit ergens op slaat. 'kefta tajine met ei' is keurig
+     genormaliseerd en treft niets, want het gerecht heet 'Kefta-tajine met ei
+     en tomaat'. Daarom staan de namen hier voluit, overgenomen uit
+     `cultural_dishes.name_nl`, en rekent de toets de sleutel er zelf uit. Wie
+     een naam in de database verandert, hoort deze regel te zien omvallen. */
+  it('treft de gerechten zoals ze in de bibliotheek heten', () => {
+    const uit_de_database: ReadonlyArray<readonly [string, string]> = [
+      ['Harira', 'harira.jpg'],
+      ['Zaalouk (auberginesalade)', 'zaalouk.jpg'],
+      ['Couscous met zeven groenten en lamsvlees', 'couscous-zeven-groenten.jpg'],
+      ['Kefta-tajine met ei en tomaat', 'kefta-tajine.jpg'],
+      ['Bulgur pilavı', 'bulgur-pilavi.jpg'],
+      ['Mercimek çorbası (rode linzensoep)', 'mercimek-corbasi.jpg'],
+      ['Fattoush', 'fattoush.jpg'],
+      ['Kibbeh', 'kibbeh.jpg'],
+      ['Roti met kip, kousenband en aardappel', 'roti-kip.jpg'],
+      ['Heri heri met bakkeljauw', 'heri-heri.jpg'],
+      ['Erwtensoep met vlees', 'erwtensoep.jpg'],
+    ]
+    for (const [naam, bestand] of uit_de_database) {
+      expect(fotoVoorGerecht(naam), naam).toBe('/health/gerechten/' + bestand)
+    }
+    /* En er is er één die met opzet géén foto heeft: bij 'Kuru fasulye' lag een
+       foto van kikkererwten. Staat hier ooit een pad, dan is die zonder keuring
+       gekoppeld. */
+    expect(fotoVoorGerecht('Kuru fasulye (witte bonen)')).toBeNull()
+  })
+
+  /* Elk gerecht één eigen foto: twee gerechten die naar hetzelfde bestand
+     wijzen is precies de 'ongeveer dit soort ding'-koppeling die de kop van
+     `beeld.ts` verbiedt. Bij producten mag het wel — daar staat waarom. */
+  it('geeft geen twee gerechten dezelfde foto', () => {
+    const bestanden = Object.values(GERECHTFOTOS)
+    expect(new Set(bestanden).size).toBe(bestanden.length)
+  })
 })

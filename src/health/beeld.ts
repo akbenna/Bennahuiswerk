@@ -129,9 +129,39 @@ export function gerechtsleutel(naam: string): string {
  *
  * Elk beeld is voor toevoeging bekeken: is dit het gerecht, ziet het er
  * thuisgekookt uit, staat er geen tekst in. Wie er een toevoegt doet hetzelfde.
+ *
+ * WAT ER BIJ HET KEUREN AFVIEL
+ *
+ * Er lagen er twaalf; er staan er elf. Bij 'Kuru fasulye (witte bonen)' hoorde
+ * een foto van kikkererwten — rond, met het snaveltje, en niet de ovale witte
+ * boon waar het gerecht naar heet. Op het contactblad viel dat niet op, in een
+ * uitsnede van twee keer wel. Dat is precies het geval waar de regel hierboven
+ * voor bedoeld is: liever geen foto dan een foto die bijna klopt. Het gerecht
+ * staat dus zonder beeld tot er een klopt.
+ *
+ * Twee andere zijn wél gekoppeld en verdienen een aantekening. Bij de couscous
+ * is het lamsvlees niet te zien — dat ligt bij dit gerecht onder de berg, zoals
+ * het hoort — en bij de roti ontbreekt de kousenband naast de kip en de
+ * aardappel. Daar gaat het om een onderdeel dat buiten beeld valt, niet om een
+ * ander gerecht.
  */
 export const GERECHTFOTOS: Readonly<Record<string, string>> = {
+  /* marokkaans */
   'harira': 'harira.jpg',
+  'zaalouk auberginesalade': 'zaalouk.jpg',
+  'couscous met zeven groenten en lamsvlees': 'couscous-zeven-groenten.jpg',
+  'kefta tajine met ei en tomaat': 'kefta-tajine.jpg',
+  /* turks */
+  'bulgur pilavi': 'bulgur-pilavi.jpg',
+  'mercimek corbasi rode linzensoep': 'mercimek-corbasi.jpg',
+  /* syrisch */
+  'fattoush': 'fattoush.jpg',
+  'kibbeh': 'kibbeh.jpg',
+  /* surinaams */
+  'roti met kip kousenband en aardappel': 'roti-kip.jpg',
+  'heri heri met bakkeljauw': 'heri-heri.jpg',
+  /* nederlands */
+  'erwtensoep met vlees': 'erwtensoep.jpg',
 }
 
 /**

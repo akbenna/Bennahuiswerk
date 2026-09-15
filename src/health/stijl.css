@@ -284,8 +284,17 @@ label.veld>span{display:block;font-size:.72rem;color:var(--grijs);margin-bottom:
    binnenmarge terug en volgt de bovenhoeken. De hero heeft al `overflow:hidden`,
    dus hij wordt vanzelf afgeknipt.
    Hij staat boven de titel en niet erachter — waarom, staat bij `Schermkop`. */
-.schermstrook{display:block;width:calc(100% + 36px);height:104px;object-fit:cover;
-  margin:-20px -18px 14px;border-radius:20px 20px 0 0;position:relative;z-index:1}
+.schermstrook{display:block;height:104px;object-fit:cover;position:relative;z-index:1;
+  width:calc(100% + 2 * var(--heropad));
+  margin:-20px calc(-1 * var(--heropad)) 14px;
+  border-radius:20px 20px 0 0}
+/* DE HOOGTE LOOPT MEE MET DE BREEDTE, EN DAT IS GEEN SMAAK
+   De bron is 1600 bij 600, dus 8 op 3. Blijft de band 104 hoog terwijl hij op
+   een breed scherm 1320 breed wordt, dan is de uitsnede 12,7 op 1 — een vijfde
+   van de foto, en de fiets waar het om ging valt erbuiten. Deze twee stappen
+   houden de uitsnede tussen ongeveer 4 op 1 en 8 op 1. */
+@media(min-width:720px){.schermstrook{height:132px}}
+@media(min-width:1240px){.schermstrook{height:168px}}
 .regel{display:flex;align-items:center;justify-content:space-between;gap:12px;
   padding:11px 0;border-bottom:1px solid var(--lijn)}
 .regel input,.regel select{width:auto}
@@ -358,7 +367,13 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
 /* Eén blok bovenaan dat de dag samenvat. Het verloop volgt het tijdstip: 's
    ochtends warm, 's avonds koel. Dat is geen effect maar oriëntatie — je ziet
    aan de kleur of je aan het begin of aan het eind van je dag staat. */
-.hero{position:relative;border-radius:20px;padding:20px 18px 18px;overflow:hidden;
+/* `--heropad` is de zijmarge van de hero, en staat er als variabele omdat de
+   sfeerband hem terug moet trekken om de rand te halen. Stonden die twee als
+   losse getallen, dan liepen ze uiteen zodra er één werd aangeraakt — en dat
+   gebeurde ook: op bureaublad ging de marge naar 28 en bleef de band op 18
+   rekenen, met elf punten kier aan weerszijden. Nu is er één getal. */
+.hero{--heropad:18px;
+  position:relative;border-radius:20px;padding:20px var(--heropad) 18px;overflow:hidden;
   background:var(--herobg,linear-gradient(155deg,#EEF3F1,#E3ECE9));
   border:1px solid var(--lijn);margin-bottom:14px}
 /* `:not(.sfeer)` want het motief hoort juist ónder de inhoud te liggen; zonder

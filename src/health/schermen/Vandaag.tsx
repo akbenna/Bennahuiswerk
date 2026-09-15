@@ -113,17 +113,62 @@ const MOMENTEN: Array<{ id: Moment; naam: string; kort: string; klas: string; le
  * naar een media query. Er moeten dus twee sets zijn en de app moet zelf kijken
  * welke geldt; anders staat er in het donkere thema lichte tekst op een lichte
  * achtergrond, en dat is niet lelijk maar onleesbaar.
+ *
+ * WAAROM ER DRIE LAGEN ZIJN EN GEEN ENKELE LIJN
+ *
+ * Hier stond één lineair verloop met drie stops die nauwelijks van elkaar
+ * verschilden — van #FBEEDA naar #EDD7CE is zes procent helderheid. Over een
+ * hero van driehonderd punten hoog leest zoiets als één vlakke kleur: het
+ * verloop was er wel en je zag het niet.
+ *
+ * Nu drie lagen over elkaar. Onderop dezelfde lijn, maar met meer afstand
+ * tussen de stops. Daarboven twee ronde velden in tegenovergestelde hoeken:
+ * licht linksboven waar de groet staat, en een tweede kleur rechtsonder waar de
+ * ring staat. Die tweede kleur is per dagdeel een andere — perzik, het groen
+ * van de app, indigo — en dat is wat het levendig maakt: twee kleuren die
+ * elkaar in de diagonaal ontmoeten in plaats van één die langzaam vervaagt.
+ *
+ * De kleurkeuze zelf is niet veranderd: warm bij het begin, groen in het
+ * midden, koel aan het eind. Alleen de spanning ertussen.
+ *
+ * Dit is een achtergrond waar donkere tekst op staat, dus het heeft een grens.
+ * De contrastproef in `health-voorbeeld.mjs` leest de werkelijke kleur onder
+ * elk stukje tekst — verlopen meegerekend — en houdt AA aan. Wie hier aan
+ * draait, draait die proef.
  */
 const HERO = {
   licht: [
-    ['linear-gradient(155deg,#FBEEDA 0%,#F4E0D2 55%,#EDD7CE 100%)', 'rgba(255,247,235,.75)'],
-    ['linear-gradient(155deg,#EAF1E6 0%,#DFEBE6 55%,#D8E7E4 100%)', 'rgba(255,255,255,.7)'],
-    ['linear-gradient(155deg,#E4E9F1 0%,#DCE2EE 55%,#D6DCEA 100%)', 'rgba(255,255,255,.55)'],
+    [/* ochtend — crème dat naar perzik kantelt, met warmte in de linkerbovenhoek
+        en een rozige gloed rechtsonder waar de ring staat */
+     'radial-gradient(118% 96% at 6% -8%,#FFF8EA 0%,rgba(255,248,234,0) 54%),'
+     + 'radial-gradient(96% 88% at 96% 96%,rgba(232,158,138,.34) 0%,rgba(232,158,138,0) 62%),'
+     + 'linear-gradient(152deg,#FDF1DD 0%,#F6DEC8 52%,#EFD0C1 100%)',
+     'rgba(255,247,235,.75)'],
+    [/* middag — het groen van de app zelf, weggetrokken naar de hoek zodat het
+        een toon is en geen vlak */
+     'radial-gradient(118% 96% at 6% -8%,#F7FBF5 0%,rgba(247,251,245,0) 52%),'
+     + 'radial-gradient(96% 88% at 96% 96%,rgba(16,168,126,.22) 0%,rgba(16,168,126,0) 62%),'
+     + 'linear-gradient(152deg,#EDF5EB 0%,#DBEDE4 52%,#CCE6DD 100%)',
+     'rgba(255,255,255,.7)'],
+    [/* avond — koel, met indigo in dezelfde hoek */
+     'radial-gradient(118% 96% at 6% -8%,#F5F7FE 0%,rgba(245,247,254,0) 52%),'
+     + 'radial-gradient(96% 88% at 96% 96%,rgba(108,128,214,.26) 0%,rgba(108,128,214,0) 62%),'
+     + 'linear-gradient(152deg,#E9EDF6 0%,#DAE0F0 52%,#CFD6EC 100%)',
+     'rgba(255,255,255,.55)'],
   ],
   donker: [
-    ['linear-gradient(155deg,#2A2118 0%,#251C17 55%,#201A16 100%)', 'rgba(255,214,150,.10)'],
-    ['linear-gradient(155deg,#1A2320 0%,#18211E 55%,#161E1D 100%)', 'rgba(180,255,220,.08)'],
-    ['linear-gradient(155deg,#181C26 0%,#171B24 55%,#151821 100%)', 'rgba(160,190,255,.08)'],
+    ['radial-gradient(118% 96% at 6% -8%,rgba(255,196,128,.13) 0%,rgba(255,196,128,0) 54%),'
+     + 'radial-gradient(96% 88% at 96% 96%,rgba(176,88,48,.22) 0%,rgba(176,88,48,0) 62%),'
+     + 'linear-gradient(152deg,#2E2419 0%,#261D16 52%,#1E1712 100%)',
+     'rgba(255,214,150,.10)'],
+    ['radial-gradient(118% 96% at 6% -8%,rgba(88,232,182,.12) 0%,rgba(88,232,182,0) 52%),'
+     + 'radial-gradient(96% 88% at 96% 96%,rgba(12,124,96,.28) 0%,rgba(12,124,96,0) 62%),'
+     + 'linear-gradient(152deg,#18251F 0%,#15201D 52%,#121A19 100%)',
+     'rgba(180,255,220,.08)'],
+    ['radial-gradient(118% 96% at 6% -8%,rgba(150,178,255,.12) 0%,rgba(150,178,255,0) 52%),'
+     + 'radial-gradient(96% 88% at 96% 96%,rgba(64,84,180,.26) 0%,rgba(64,84,180,0) 62%),'
+     + 'linear-gradient(152deg,#171D2A 0%,#151A24 52%,#12151E 100%)',
+     'rgba(160,190,255,.08)'],
   ],
 } as const
 
