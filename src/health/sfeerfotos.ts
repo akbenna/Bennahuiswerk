@@ -1,8 +1,8 @@
 /**
  * DE SFEERFOTO PER TABBLAD
  *
- * Eén foto bovenaan elk scherm. Niet om iets te zeggen — er staat een zalmmoot
- * bij Gezondheid omdat dat een toon zet, niet omdat je vandaag zalm at.
+ * Eén band bovenaan elk scherm. Niet om iets te zeggen — er staat een fiets bij
+ * Beweging omdat dat een toon zet, niet omdat je vandaag gefietst hebt.
  *
  * WAAROM DIT HIER STAAT EN NIET IN ELK SCHERM APART
  *
@@ -11,21 +11,42 @@
  * dat na een half jaar niet meer. Wie hem wil wisselen, wisselt hem hier, en
  * ziet meteen wat er naast staat.
  *
- * DE KEUZE ZELF
+ * WAAROM DEZE ZES EN NIET DE VORIGE ZES
  *
- * Fris en herkenbaar, geen bereide gerechten met saus. Ze staan op een witte
- * ondergrond, dus in het donkere thema is de band een lichte strook — dat is
- * geaccepteerd: hij hoort op te vallen, anders heeft hij geen functie.
+ * Hier stonden productfoto's van 384 bij 384 — een banaan bij Beweging, een
+ * salade bij Voeding. Twee dingen klopten daar niet aan.
  *
- * Er zijn er tien beschikbaar in `health/beeldmateriaal/eten/`; deze zes staan
- * in `public/` en worden dus meegebouwd. Wie er een vervangt, zet het bestand
- * daar neer en verandert alleen de regel hieronder.
+ * Ze waren te klein. De band is over de volle breedte 400 tot 1320 punten
+ * breed, en op een telefoon met drie beeldpunten per punt vraagt dat er 1290.
+ * Een bron van 384 werd dus ruim drie keer opgeblazen, en zo zag hij er ook
+ * uit. Dat is gemeten en staat als proef in `health-voorbeeld.mjs`, met een
+ * grens per maat: op een telefoon en op een gewoon bureaublad hoort de band
+ * verkleind te worden en niet vergroot, en op 1920 punten met twee beeldpunten
+ * per punt staat de grens op 1,7 — daar vraagt de band er 2596 en zijn er 1600.
+ * Dat laatste is met deze bronnen niet op te lossen; het vraagt een levering op
+ * 2400 bij 900.
+ *
+ * En ze waren vierkant. Een vierkant beeld in een band van 8 op 3 wordt tot een
+ * plak door het midden gesneden; wat je overhoudt is de helft van een banaan.
+ * Deze zes zijn als band gemaakt — 1600 bij 600 — en tonen dus wat de fotograaf
+ * er in heeft gezet.
+ *
+ * Elk beeld hoort bij de vraag van zijn scherm: een fiets in de polder bij
+ * Beweging, een weegschaal bij Inzicht, een bloeddrukmeter bij Gezondheid,
+ * groenten bij Voeding, een ontbijt bij Vandaag, de voorraadkast bij Meer.
+ *
+ * De bronbestanden zijn niet in de repo opgenomen: wat hier staat ís het
+ * origineel op zijn volle maat, alleen opnieuw gecodeerd. `LEESMIJ.md` in
+ * `health/beeldmateriaal/` beschrijft hoe.
  */
 export const SFEERFOTO = {
-  vandaag: '/health/eten/food_skyr.png',
-  voeding: '/health/eten/food_salad_chicken.png',
-  inzicht: '/health/eten/food_blueberries.png',
-  beweging: '/health/eten/food_banana.png',
-  gezondheid: '/health/eten/food_salmon.png',
-  meer: '/health/eten/food_nuts.png',
+  vandaag: '/health/koppen/vandaag.jpg',
+  voeding: '/health/koppen/voeding.jpg',
+  inzicht: '/health/koppen/inzicht.jpg',
+  beweging: '/health/koppen/beweging.jpg',
+  gezondheid: '/health/koppen/gezondheid.jpg',
+  meer: '/health/koppen/meer.jpg',
 } as const
+
+/** De maat waarop de banden zijn aangeleverd. De proef rekent hiermee. */
+export const SFEERMAAT = { breedte: 1600, hoogte: 600 } as const

@@ -112,7 +112,7 @@
 
   /* --- de hero ---------------------------------------------------------- */
 
-  .hero{border-radius:24px;padding:26px 28px 24px;
+  .hero{--heropad:28px;border-radius:24px;padding:26px var(--heropad) 24px;
     box-shadow:0 18px 46px rgba(20,60,50,.11);
     /* Een dunne rand van binnen: de lichte verlopen zijn zo bleek dat de kaart
        anders in de achtergrond wegvalt. */
@@ -144,14 +144,37 @@
    alinea. Het gevolg was tekst die na drie woorden afbreekt, wat erger is dan
    één kolom. Onder deze grens blijft de hero dus één kolom; de strook heeft daar
    de volle breedte en houdt zijn maat via het maximum per blok. */
+/* DEZE TWEE KOLOMMEN ZIJN VAN ÉÉN HERO EN NIET VAN ALLE ZES
+   Dit blok stond op `.hero` en gold dus voor alle zes de schermen, terwijl het
+   voor Vandaag geschreven is: het noemt de ring, de veertien dagen en de
+   macrostaven, en die staan alleen daar. Wat de andere vijf kregen was
+   automatische plaatsing, en dat ging twee keer mis.
+
+   De sfeerband werd een kolom in plaats van een band — 582 breed in een hero
+   van 1076, met een harde rand halverwege. En `.hero>.mini` wijst één cel aan,
+   terwijl een schermkop er twee kan hebben: op Inzicht stonden twee alinea's
+   436 bij 17 punten over elkaar heen. Allebei alleen zichtbaar vanaf 1240
+   punten, en op de telefoon dus nergens aan te zien.
+
+   `:has(> .macros)` wijst de hero van Vandaag aan en verder niets — de
+   macrostaven staan nergens anders. De vijf schermkoppen blijven op een breed
+   scherm dus gewoon een blok, en een blok doet precies wat hier bedoeld was:
+   de band over de volle breedte, de alinea's onder elkaar.
+
+   De proef meet beide gevallen op drie maten; de tegenproef legt de oude
+   plaatsing er weer overheen en kijkt of Vandaag onveranderd blijft. */
 @media (min-width:1240px){
-  .hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(380px,.8fr);
+  .hero:has(> .macros){display:grid;grid-template-columns:minmax(0,1fr) minmax(380px,.8fr);
     column-gap:36px;align-items:start}
-  .heroboven{grid-column:1/-1;margin-bottom:20px}
-  .heroring{grid-column:1;grid-row:2/span 3;align-self:center;margin-top:0}
-  .hero>.strook{grid-column:2;grid-row:2;margin-top:2px}
-  .hero>.mini{grid-column:2;grid-row:3}
-  .hero>.macros{grid-column:2;grid-row:4;align-self:end}
+  /* Rij 1 is voor een sfeerband. Vandaag heeft er geen, en een lege rij kost
+     niets: deze grid heeft `column-gap` en geen `row-gap`, dus hij is nul hoog.
+     De regel staat er voor het geval Vandaag er ooit wel een krijgt. */
+  .hero:has(> .macros)>.schermstrook{grid-column:1/-1;grid-row:1}
+  .hero:has(> .macros)>.heroboven{grid-column:1/-1;grid-row:2;margin-bottom:20px}
+  .hero:has(> .macros)>.heroring{grid-column:1;grid-row:3/span 3;align-self:center;margin-top:0}
+  .hero:has(> .macros)>.strook{grid-column:2;grid-row:3;margin-top:2px}
+  .hero:has(> .macros)>.mini{grid-column:2;grid-row:4}
+  .hero:has(> .macros)>.macros{grid-column:2;grid-row:5;align-self:end}
 }
 
 @media (min-width:1280px){

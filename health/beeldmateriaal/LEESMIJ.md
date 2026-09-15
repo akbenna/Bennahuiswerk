@@ -88,3 +88,71 @@ die net zo goed als vectorpad te tekenen zijn.
 Material-groenen. `src/health/stijl.css` draait op `--k #07785C` en
 `--kfel #10A87E`. Eén van de twee moet wijken, anders vloekt elk geleverd groen
 met elke ring die de app zelf tekent.
+
+---
+
+# De tweede levering — achttien foto's, 15-09-2026
+
+De eerste set kon niet wat er van hem gevraagd werd, en dat is te meten. De zes
+sfeerbanden bovenaan de schermen waren productfoto's van 384 bij 384. De band is
+over de volle breedte 400 tot 1320 punten; op een telefoon met drie beeldpunten
+per punt vraagt dat er 1290. De bron werd dus **3,09 keer opgeblazen** op een
+telefoon en 3,73 keer op een breed retinascherm. Dat is geen smaakoordeel maar
+een verhouding, en het is precies wat je zag.
+
+Ze waren bovendien vierkant, terwijl de band 8 op 3 is. Wat er van een vierkante
+banaan in een band past is een plak door het midden.
+
+## Wat er binnenkwam
+
+Achttien JPEG's: zes schermbanden van 1600 bij 600 en twaalf gerechten van 1024
+bij 1024, samen bijna zeven megabyte.
+
+## Wat ermee gedaan is
+
+Hercodeerd met `gereedschap/beeldverpakken.mjs` — geen `sharp` en geen
+imagemagick in deze omgeving, wel een Chromium die er voor de proeven toch al
+staat. Een canvas schaalt en codeert net zo goed.
+
+| | van | naar | per stuk |
+|---|---|---|---|
+| schermbanden | 1600×600, ±330 kB | 1600×600, kwaliteit 80 | 78–142 kB |
+| gerechten | 1024×1024, ±400 kB | 1400×525, kwaliteit 80 | 70–99 kB |
+
+De gerechten zijn vierkant aangeleverd en worden als band getoond, dus ze zijn
+liggend uit het midden gesneden. Samen 1,6 MB in plaats van 7.
+
+De bronbestanden liggen **niet** in de repo. Bij de schermbanden zou dat een
+tweede kopie van hetzelfde beeld zijn — wat er in `public/` staat is het
+origineel op volle maat, alleen opnieuw gecodeerd. Bij de gerechten is het
+verschil de uitsnede, en die is met de regel hierboven opnieuw te maken.
+
+## Wat er is afgekeurd
+
+**`gerecht-kuru-fasulye.jpg`.** Het gerecht heet 'Kuru fasulye (witte bonen)' en
+op de foto staan kikkererwten — rond, met het snaveltje, en niet de ovale witte
+boon. Op het contactblad viel dat niet op, in een uitsnede van twee keer wel.
+`beeld.ts` zegt: liever geen foto dan een foto die bijna klopt. Het gerecht staat
+dus zonder beeld, en er is een vervanging nodig.
+
+Twee andere zijn wél gekoppeld en verdienen een aantekening. Bij de couscous is
+het lamsvlees niet te zien — dat ligt bij dat gerecht onder de berg — en bij de
+roti ontbreekt de kousenband naast de kip en de aardappel. Daar valt een
+onderdeel buiten beeld; het is niet een ander gerecht.
+
+## Wat er nog niet perfect is
+
+Op een scherm van 1920 punten met twee beeldpunten per punt vraagt de band er
+2596 en zijn er 1600 — **1,65 keer opgeblazen**. Op een telefoon (0,74) en op een
+gewoon bureaublad (0,67) wordt hij verkleind en is hij dus scherp. Wie dat
+laatste geval ook wil dichtzetten, laat de zes banden op **2400 bij 900**
+aanleveren; er hoeft dan verder niets te veranderen.
+
+De proef in `health-voorbeeld.mjs` meet die verhouding op alle drie de maten en
+houdt per maat een eigen grens aan.
+
+## De twee die uit `public/` zijn gehaald
+
+`food_blueberries.png` en `food_salad_chicken.png` stonden er alleen als
+sfeerband en hebben geen NEVO-code. Nu de banden eigen foto's hebben, werden ze
+door niets meer aangeroepen. Ze liggen nog in `eten/` hiernaast.

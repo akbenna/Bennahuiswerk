@@ -25,7 +25,8 @@ import { chromium } from 'playwright'
 const vercel = JSON.parse(await readFile('vercel.json', 'utf8'))
 const TYPEN = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css',
-  '.svg': 'image/svg+xml', '.png': 'image/png', '.json': 'application/json',
+  '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg', '.json': 'application/json',
   '.webmanifest': 'application/manifest+json', '.woff2': 'font/woff2', '.map': 'application/json',
 }
 function headersVoor(pad) {
@@ -246,6 +247,69 @@ async function naarTab(pagina, label) {
      een halve. Een screenshot daarvóór laat een halve ring zien en dat is geen
      ijkpunt. */
   await pagina.waitForTimeout(1100)
+}
+
+/**
+ * DE SFEERBAND KEUREN — op elke maat, want hij ging maar op één maat mis.
+ *
+ * Twee dingen zijn hier gemeten en allebei waren ze fout.
+ *
+ * De band werd opgeblazen. De bron was 384 bij 384 en de doos vraagt er op een
+ * telefoon met drie beeldpunten per punt 1290 — ruim drie keer. Vandaar de
+ * verhouding hieronder: doosbreedte maal beeldpunten, gedeeld door de bron.
+ *
+ * En hij spande niet. Vanaf 1240 punten wordt de hero een grid van twee
+ * kolommen, en die grid noemde de band niet; hij werd dus automatisch geplaatst
+ * en was 582 breed in een hero van 1076. Daarna spande hij wél maar haalde hij
+ * de rand niet: de binnenmarge van de hero gaat op bureaublad naar 28 en de
+ * band rekende met 18. Op de telefoon was er geen van beide keren iets te zien.
+ *
+ * De bovengrens verschilt per maat en dat is geen slordigheid. De bronnen zijn
+ * 1600 breed. Op een telefoon en op een gewoon bureaublad is dat ruim genoeg;
+ * op 1920 punten met twee beeldpunten per punt vraagt de band er 2596 en dan
+ * staat er 1,6 keer opblazen. Dat is met deze bronnen niet op te lossen — wie
+ * het weg wil hebben, laat ze op 2400 bij 900 aanleveren. De grens staat dus op
+ * wat er werkelijk haalbaar is en niet op wat er mooi klinkt.
+ */
+async function keurSfeerband(pagina, dpr, maat, grens) {
+  const tabs = ['Inzicht', 'Voeding', 'Beweging', 'Gezondheid', 'Profiel']
+  const gezien = new Set()
+  let ergste = 0
+  for (const tab of tabs) {
+    await naarTab(pagina, tab)
+    const m = await pagina.evaluate(() => {
+      const img = document.querySelector('.schermstrook')
+      if (!img) return null
+      const b = img.getBoundingClientRect()
+      const h = img.closest('.hero').getBoundingClientRect()
+      return {
+        breed: b.width, hoog: Math.round(b.height), bron: img.naturalWidth,
+        linksGat: Math.round(b.left - h.left), rechtsGat: Math.round(h.right - b.right),
+        src: img.getAttribute('src'), compleet: img.complete && img.naturalWidth > 0,
+      }
+    })
+    if (!m) throw new Error(`${maat}: ${tab} heeft geen sfeerband`)
+    if (!m.compleet) throw new Error(`${maat}: ${tab} — ${m.src} is niet geladen`)
+    /* De hero heeft een rand van één punt; meer kier dan dat is een gat. */
+    if (m.linksGat > 2 || m.rechtsGat > 2) {
+      throw new Error(`${maat}: de band bij ${tab} laat ${m.linksGat}/${m.rechtsGat} punten `
+        + 'kier aan de zijkanten — hij haalt de rand van de hero niet')
+    }
+    const blaas = (m.breed * dpr) / m.bron
+    if (blaas > grens) {
+      throw new Error(`${maat}: de band bij ${tab} wordt ${blaas.toFixed(2)}× opgeblazen `
+        + `(doos ${Math.round(m.breed)} × ${dpr} beeldpunten, bron ${m.bron}) — grens is ${grens}`)
+    }
+    ergste = Math.max(ergste, blaas)
+    gezien.add(m.src)
+  }
+  /* Vijf schermen, vijf verschillende foto's. Wijzen er twee naar hetzelfde
+     bestand, dan is er één vergeten bij het wisselen. */
+  if (gezien.size !== tabs.length) {
+    throw new Error(`${maat}: ${gezien.size} verschillende foto's op ${tabs.length} schermen`)
+  }
+  console.log(`${maat.padEnd(26)} sfeerband: ${tabs.length} schermen, `
+    + `hoogste opblazing ${ergste.toFixed(2)}× (grens ${grens}), spant tot de rand`)
 }
 
 /* Twee gekoppelde toestellen, om het koppelvel met inhoud te kunnen zien. */
@@ -638,6 +702,12 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
       console.log(`${''.padEnd(26)} coach=${n} voorstellen`)
     }
   }
+
+  /* De telefoon is het toestel waar deze app op gebruikt wordt, en met drie
+     beeldpunten per punt ook de zwaarste vraag aan een foto. Dit geval bezoekt
+     toch al alle tabbladen, dus de band wordt hier meteen gekeurd. */
+  if (naam === 'na-vier-weken') await keurSfeerband(pagina, 3, 'telefoon 430 dpr3', 1.05)
+
   await pagina.close()
 }
 
@@ -1334,7 +1404,29 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
     throw new Error(`breed: de scheidingslijn is ${maten.streepBreed} van ${maten.inhoudBreed} px breed`)
   }
   console.log(`${''.padEnd(26)} dagblok=${maten.blok}px · zijkolom onder de hero · streep vol`)
+
+  /* De band op de brede indeling. Hier zat de gridfout: de hero wordt vanaf
+     1240 een raster van twee kolommen en de band belandde in de eerste. */
+  await keurSfeerband(pagina, 1, 'breed 1440 dpr1', 1.05)
   await pagina.close()
+
+  /* En dezelfde breedte op een scherm met twee beeldpunten per punt. Dit is de
+     zwaarste vraag die de bronnen krijgen; de grens staat daarom hoger en de
+     reden staat bij `keurSfeerband`. */
+  {
+    const retina = await browser.newContext({
+      viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 2,
+      locale: 'nl-NL', timezoneId: 'Europe/Amsterdam',
+    })
+    await retina.addInitScript(`localStorage.setItem('kalibratie.sessie',
+      JSON.stringify({ token: 'proef', account: 'abdelkader' }))`)
+    const rp = await retina.newPage()
+    await bedienDb(rp, 28, 'afvallen')
+    await rp.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+    await rp.waitForTimeout(1100)
+    await keurSfeerband(rp, 2, 'breed 1920 dpr2', 1.7)
+    await retina.close()
+  }
 
   /* En hetzelfde scherm in het donker. De telefoon staat in het donker en het
      brede scherm heeft eigen regels voor achtergrond, schaduw en de macrotegels
@@ -1374,6 +1466,58 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
   }
   console.log(`${''.padEnd(26)} Inzicht op 1440: ${kolommenDaar} kolommen`)
   await anderpagina.close()
+
+  /* GEEN TWEE STUKKEN TEKST OVER ELKAAR HEEN
+     Een grid plaatst wat je aanwijst, en stapelt zonder klagen als je twee
+     dingen dezelfde cel geeft. `.hero>.mini{grid-row:4}` wees één cel aan
+     terwijl een schermkop twee `.mini`-alinea's kan hebben, en op Inzicht
+     stonden ze 436 bij 17 punten over elkaar. Niets viel om: de pagina was
+     geldig, de tekst stond er, en hij was onleesbaar.
+     Dat is alleen met meten te zien, en alleen op een breed scherm — vandaar
+     hier, en vandaar over alle zes de tabbladen en niet alleen het ene waar het
+     toevallig opviel. */
+  {
+    const overlap = await breed.newPage()
+    await bedienDb(overlap, 28, 'afvallen')
+    await overlap.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+    await overlap.waitForTimeout(900)
+    let gekeken = 0
+    for (const tab of ['Vandaag', 'Inzicht', 'Voeding', 'Beweging', 'Gezondheid', 'Profiel']) {
+      await naarTab(overlap, tab)
+      const bots = await overlap.evaluate(() => {
+        const h = document.querySelector('.hero')
+        if (!h) return { n: 0, botsing: null }
+        const els = [...h.querySelectorAll('p, .mini, .klein, .getal, .eyebrow, h2')]
+          .filter((e) => {
+            const r = e.getBoundingClientRect()
+            return r.height > 0 && r.width > 0 && (e.textContent || '').trim()
+          })
+        for (let i = 0; i < els.length; i++) for (let j = i + 1; j < els.length; j++) {
+          if (els[i].contains(els[j]) || els[j].contains(els[i])) continue
+          const a = els[i].getBoundingClientRect(), b = els[j].getBoundingClientRect()
+          const oy = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top)
+          const ox = Math.min(a.right, b.right) - Math.max(a.left, b.left)
+          /* Vier punten speling: letters mogen elkaar met hun regelhoogte raken,
+             vlakken van veertien punten hoog is stapelen. */
+          if (oy > 4 && ox > 4) {
+            return { n: els.length, botsing: {
+              a: (els[i].textContent || '').trim().slice(0, 44),
+              b: (els[j].textContent || '').trim().slice(0, 44),
+              ox: Math.round(ox), oy: Math.round(oy) } }
+          }
+        }
+        return { n: els.length, botsing: null }
+      })
+      if (bots.botsing) {
+        throw new Error(`breed: op ${tab} liggen twee stukken tekst in de hero over elkaar `
+          + `(${bots.botsing.ox}\u00d7${bots.botsing.oy} punten) — `
+          + `${JSON.stringify(bots.botsing.a)} en ${JSON.stringify(bots.botsing.b)}`)
+      }
+      gekeken += bots.n
+    }
+    console.log(`${''.padEnd(26)} hero op 1440: ${gekeken} stukken tekst, geen enkele over elkaar`)
+    await overlap.close()
+  }
 }
 
 /* ------------------------------------------------ meebewegen met de maat -- */
