@@ -402,10 +402,17 @@ export function Aanmelden(
           </Knop>
         </Rij>
       </Kaart>
+      {/* Hier stond dat de gegevens in het project van ProVita staan, naast de
+          patiëntgegevens. Dat klopte tot 26 augustus 2026 en daarna niet meer:
+          op die dag is BennaHub naar een eigen database verhuisd, en de
+          aanleiding voor die verhuizing was juist dat gezinsgegevens en
+          zorggegevens één back-up en één blusgebied deelden. Een scherm dat de
+          oude situatie blijft beschrijven maakt precies de belofte die toen is
+          rechtgezet. Zie `SUPABASE-scheiding.md`. */}
       <p className="mini">
-        De gegevens staan in je eigen tabellen in het Supabase-project van ProVita, afgescheiden van de
-        patiëntgegevens. Geen enkele tabel is publiek benaderbaar; toegang loopt via beveiligde
-        databasefuncties en het wachtwoord staat gehasht.
+        Je gegevens staan in de eigen database van BennaHub, los van de zorggegevens van de praktijk.
+        Geen enkele tabel is publiek benaderbaar; toegang loopt via beveiligde databasefuncties en het
+        wachtwoord staat gehasht.
       </p>
     </>
   )
