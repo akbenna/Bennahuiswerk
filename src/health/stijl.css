@@ -279,6 +279,13 @@ label.veld>span{display:block;font-size:.72rem;color:var(--grijs);margin-bottom:
    hierboven is wat hem daadwerkelijk afknipt. */
 .vensterstrook{display:block;width:calc(100% + 40px);height:118px;object-fit:cover;
   margin:-20px -20px 14px;border-radius:16px 16px 0 0}
+/* DE SFEERBAND BOVEN EEN SCHERMKOP
+   Zelfde idee als de strook in een venster, maar op de hero: hij trekt de
+   binnenmarge terug en volgt de bovenhoeken. De hero heeft al `overflow:hidden`,
+   dus hij wordt vanzelf afgeknipt.
+   Hij staat boven de titel en niet erachter — waarom, staat bij `Schermkop`. */
+.schermstrook{display:block;width:calc(100% + 36px);height:104px;object-fit:cover;
+  margin:-20px -18px 14px;border-radius:20px 20px 0 0;position:relative;z-index:1}
 .regel{display:flex;align-items:center;justify-content:space-between;gap:12px;
   padding:11px 0;border-bottom:1px solid var(--lijn)}
 .regel input,.regel select{width:auto}

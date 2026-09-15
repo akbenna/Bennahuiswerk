@@ -15,6 +15,7 @@ import { kortNL, plusDagen, vandaag } from '@/gedeeld/datum'
 import type { Instellingen, Lab, Profiel } from '@/gedeeld/db/tabellen'
 import type { Analyse, Dagenkaart, Trendpunt } from '../rekenkern'
 import { WegPerDag, WegTraject } from '../tekens'
+import { SFEERFOTO } from '../sfeerfotos'
 
 const ZEKERHEID_LABEL = {
   hoog: 'hoog', middel: 'middel', laag: 'laag', geen: 'onvoldoende',
@@ -45,6 +46,7 @@ export function Model(
   return (
     <>
       <Schermkop
+        foto={SFEERFOTO.inzicht}
         toon={a.zekerheid === 'hoog' ? 'goed' : a.zekerheid === 'geen' ? 'rust' : 'let'}
         bovenschrift="Het model"
         titel={bruikbaar ? 'Wat je lichaam verbruikt'

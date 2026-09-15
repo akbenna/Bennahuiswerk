@@ -157,13 +157,26 @@ export function Dagenstrook({ dagen, nu }: { dagen: Dagstaaf[]; nu: string }): R
 /** De schil van een schermkop. Eén plek voor het verloop, zodat de vijf
  *  schermen niet uit elkaar lopen zodra er één wordt aangeraakt. */
 export function Schermkop(
-  { toon, bovenschrift, titel, rechts, children }:
+  { toon, bovenschrift, titel, foto, rechts, children }:
   { toon: 'rust' | 'goed' | 'let' | 'fout'; bovenschrift: string; titel: string
+    /**
+     * Een sfeerfoto als band bovenin. Hij staat bóven de titel en niet
+     * erachter: tekst over een foto vraagt om een waas en een waas vraagt om
+     * onderhoud, en dan hangt de leesbaarheid van elk scherm aan een verloop
+     * dat bij de volgende foto weer anders moet.
+     *
+     * Wat hij doet is sfeer en geen informatie. Er staat een bord eten bij
+     * Voeding en een zalmmoot bij Gezondheid omdat dat een toon zet — niet
+     * omdat je dat vandaag gegeten hebt. Daarom draagt hij ook geen `alt`: voor
+     * wie voorleest is hij er niet, en dat klopt.
+     */
+    foto?: string | undefined
     rechts?: ReactNode | undefined; children?: ReactNode | undefined },
 ): ReactNode {
   return (
     <section className={'hero kop-' + toon}>
       <div className="heroglans" />
+      {foto && <img className="schermstrook" src={foto} alt="" loading="lazy" aria-hidden="true" />}
       <div className="heroboven">
         <div>
           <span className="eyebrow">{bovenschrift}</span>
