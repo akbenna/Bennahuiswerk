@@ -264,28 +264,49 @@ async function naarTab(pagina, label) {
  * de rand niet: de binnenmarge van de hero gaat op bureaublad naar 28 en de
  * band rekende met 18. Op de telefoon was er geen van beide keren iets te zien.
  *
- * De bovengrens verschilt per maat en dat is geen slordigheid. De bronnen zijn
- * 1600 breed. Op een telefoon en op een gewoon bureaublad is dat ruim genoeg;
- * op 1920 punten met twee beeldpunten per punt vraagt de band er 2596 en dan
- * staat er 1,6 keer opblazen. Dat is met deze bronnen niet op te lossen — wie
- * het weg wil hebben, laat ze op 2400 bij 900 aanleveren. De grens staat dus op
- * wat er werkelijk haalbaar is en niet op wat er mooi klinkt.
+ * De bovengrens verschilt per maat en dat is geen slordigheid. Er liggen twee
+ * bestanden per band, 1600 en 2400, en de browser kiest. Op een telefoon en op
+ * een gewoon bureaublad pakt hij de 1600 en verkleint hij die nog — daar hoort
+ * dus niets opgeblazen te worden. Op 1920 met twee beeldpunten per punt pakt
+ * hij de 2400 en vraagt de band er 2636: tien procent meer dan er is. Dat is
+ * het laatste restje en op een foto niet te zien; de grens staat daar op 1,15
+ * en niet op 1,05.
+ *
+ * De ondergrens is er ook, en die kijkt de andere kant op: haalt een telefoon
+ * de 2400 op terwijl hij er 1188 kan tonen, dan is er tweehonderd kilobyte per
+ * scherm weggegooid. Een proef die alleen naar scherpte kijkt vindt dat prima.
  */
 async function keurSfeerband(pagina, dpr, maat, grens) {
   const tabs = ['Inzicht', 'Voeding', 'Beweging', 'Gezondheid', 'Profiel']
   const gezien = new Set()
+  const maten = new Set()
   let ergste = 0
   for (const tab of tabs) {
     await naarTab(pagina, tab)
-    const m = await pagina.evaluate(() => {
+    const m = await pagina.evaluate(async () => {
       const img = document.querySelector('.schermstrook')
       if (!img) return null
       const b = img.getBoundingClientRect()
       const h = img.closest('.hero').getBoundingClientRect()
+      /* NIET `img.naturalWidth`, EN DAT IS EEN VAL
+         Zodra er een `srcset` met `w`-beschrijvingen op staat, rekent de
+         browser `naturalWidth` terug naar de dichtheid waarop hij het beeld
+         toont: een bron van 1600 in een doos van 408 punten geeft 408 terug en
+         niet 1600. De proef mat daarna zichzelf — doos gedeeld door doos — en
+         gaf trouw 2,91 keer opblazing op een band die perfect scherp stond.
+         De echte maat komt uit een los beeld zonder srcset. */
+      const kaal = new Image()
+      kaal.src = img.currentSrc
+      await kaal.decode().catch(() => {})
       return {
-        breed: b.width, hoog: Math.round(b.height), bron: img.naturalWidth,
+        breed: b.width, hoog: Math.round(b.height), bron: kaal.naturalWidth,
         linksGat: Math.round(b.left - h.left), rechtsGat: Math.round(h.right - b.right),
         src: img.getAttribute('src'), compleet: img.complete && img.naturalWidth > 0,
+        /* `currentSrc` is wat de browser wérkelijk gehaald heeft, en dat is bij
+           een srcset iets anders dan `src`. Zonder dit meet je de bedoeling en
+           niet de uitkomst. */
+        gekozen: (img.currentSrc || '').split('/').pop(),
+        srcset: img.getAttribute('srcset'),
       }
     })
     if (!m) throw new Error(`${maat}: ${tab} heeft geen sfeerband`)
@@ -300,16 +321,30 @@ async function keurSfeerband(pagina, dpr, maat, grens) {
       throw new Error(`${maat}: de band bij ${tab} wordt ${blaas.toFixed(2)}× opgeblazen `
         + `(doos ${Math.round(m.breed)} × ${dpr} beeldpunten, bron ${m.bron}) — grens is ${grens}`)
     }
+    if (!m.srcset) throw new Error(`${maat}: ${tab} heeft geen srcset — één maat voor elk toestel`)
+    /* Te klein kiezen geeft een zachte band; te groot kiezen kost een telefoon
+       bandbreedte die hij niet kan tonen. Beide kanten dus. */
+    /* 0,55 is gemeten en niet gekozen. Goed gekozen geeft 0,74 op een telefoon
+       en 0,67 op een bureaublad; grijpt de browser mis naar de 2400, dan wordt
+       het 0,49 en 0,45. De grens ligt daartussen. */
+    if (blaas < 0.55) {
+      throw new Error(`${maat}: de band bij ${tab} haalt ${m.gekozen} op terwijl hij `
+        + `${Math.round(m.breed * dpr)} beeldpunten nodig heeft — dat is ${(1 / blaas).toFixed(1)}× `
+        + 'meer dan er getoond wordt')
+    }
     ergste = Math.max(ergste, blaas)
     gezien.add(m.src)
+    maten.add(m.gekozen)
   }
   /* Vijf schermen, vijf verschillende foto's. Wijzen er twee naar hetzelfde
      bestand, dan is er één vergeten bij het wisselen. */
   if (gezien.size !== tabs.length) {
     throw new Error(`${maat}: ${gezien.size} verschillende foto's op ${tabs.length} schermen`)
   }
+  const gekozen = [...maten].map((n) => (n.match(/-(\d+)\.jpg$/) ?? [])[1] ?? '?')
   console.log(`${maat.padEnd(26)} sfeerband: ${tabs.length} schermen, `
-    + `hoogste opblazing ${ergste.toFixed(2)}× (grens ${grens}), spant tot de rand`)
+    + `hoogste opblazing ${ergste.toFixed(2)}× (grens ${grens}), spant tot de rand, `
+    + `browser koos ${[...new Set(gekozen)].join('/')}`)
 }
 
 /* Twee gekoppelde toestellen, om het koppelvel met inhoud te kunnen zien. */
@@ -1424,7 +1459,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
     await bedienDb(rp, 28, 'afvallen')
     await rp.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
     await rp.waitForTimeout(1100)
-    await keurSfeerband(rp, 2, 'breed 1920 dpr2', 1.7)
+    await keurSfeerband(rp, 2, 'breed 1920 dpr2', 1.15)
     await retina.close()
   }
 

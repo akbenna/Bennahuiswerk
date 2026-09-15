@@ -11,42 +11,67 @@
  * dat na een half jaar niet meer. Wie hem wil wisselen, wisselt hem hier, en
  * ziet meteen wat er naast staat.
  *
- * WAAROM DEZE ZES EN NIET DE VORIGE ZES
- *
- * Hier stonden productfoto's van 384 bij 384 — een banaan bij Beweging, een
- * salade bij Voeding. Twee dingen klopten daar niet aan.
- *
- * Ze waren te klein. De band is over de volle breedte 400 tot 1320 punten
- * breed, en op een telefoon met drie beeldpunten per punt vraagt dat er 1290.
- * Een bron van 384 werd dus ruim drie keer opgeblazen, en zo zag hij er ook
- * uit. Dat is gemeten en staat als proef in `health-voorbeeld.mjs`, met een
- * grens per maat: op een telefoon en op een gewoon bureaublad hoort de band
- * verkleind te worden en niet vergroot, en op 1920 punten met twee beeldpunten
- * per punt staat de grens op 1,7 — daar vraagt de band er 2596 en zijn er 1600.
- * Dat laatste is met deze bronnen niet op te lossen; het vraagt een levering op
- * 2400 bij 900.
- *
- * En ze waren vierkant. Een vierkant beeld in een band van 8 op 3 wordt tot een
- * plak door het midden gesneden; wat je overhoudt is de helft van een banaan.
- * Deze zes zijn als band gemaakt — 1600 bij 600 — en tonen dus wat de fotograaf
- * er in heeft gezet.
- *
  * Elk beeld hoort bij de vraag van zijn scherm: een fiets in de polder bij
  * Beweging, een weegschaal bij Inzicht, een bloeddrukmeter bij Gezondheid,
  * groenten bij Voeding, een ontbijt bij Vandaag, de voorraadkast bij Meer.
  *
- * De bronbestanden zijn niet in de repo opgenomen: wat hier staat ís het
- * origineel op zijn volle maat, alleen opnieuw gecodeerd. `LEESMIJ.md` in
- * `health/beeldmateriaal/` beschrijft hoe.
+ * WAAROM ER TWEE MATEN ZIJN
+ *
+ * Hier stonden eerst productfoto's van 384 bij 384, en die werden op een
+ * telefoon ruim drie keer opgeblazen — de band is daar 396 punten breed en een
+ * telefoon zet er drie beeldpunten op elk punt, dus hij vraagt er 1290.
+ *
+ * Eén maat lost dat niet netjes op. Een bureaublad van 1920 met twee
+ * beeldpunten per punt vraagt er 2564; een telefoon vraagt er 1290. Zou er
+ * alleen een band van 2400 liggen, dan haalt elke telefoon tweehonderd kilobyte
+ * per scherm binnen die hij niet kan tonen — en dit is een app die vooral op een
+ * telefoon open staat.
+ *
+ * Dus twee bestanden en een `srcset`: de browser rekent zelf uit welke hij
+ * nodig heeft. Wat hij dan kiest is te meten — `img.naturalWidth` zegt welke
+ * het geworden is — en dat is precies wat de proef in `health-voorbeeld.mjs`
+ * doet, op drie maten.
+ *
+ * `SIZES` zegt hoe breed de band wórdt, want dat kan de browser niet zien
+ * voordat hij de stijl heeft. De getallen zijn gemeten en niet geschat: op een
+ * telefoon van 430 is de band 396 (92%), op 1440 is hij 1074 (75%), op 1920 is
+ * hij 1318 (69%). De 75 procent hierboven schat dus royaal aan de veilige kant:
+ * liever een beeld te groot dan een dat te klein blijkt.
+ *
+ * De bronnen zijn 2400 bij 900 aangeleverd. Dat is gemeten echt detail en geen
+ * opschaling van de vorige levering: de randenergie per beeldpunt ligt 1,32 keer
+ * hoger dan wanneer je diezelfde 1600 zelf naar 2400 trekt. `LEESMIJ.md` in
+ * `health/beeldmateriaal/` beschrijft hoe dat gemeten is.
  */
+
+/** Wat er in `src` gaat: de kleinste maat, en dus ook wat een browser zonder
+ *  `srcset` krijgt. */
 export const SFEERFOTO = {
-  vandaag: '/health/koppen/vandaag.jpg',
-  voeding: '/health/koppen/voeding.jpg',
-  inzicht: '/health/koppen/inzicht.jpg',
-  beweging: '/health/koppen/beweging.jpg',
-  gezondheid: '/health/koppen/gezondheid.jpg',
-  meer: '/health/koppen/meer.jpg',
+  vandaag: '/health/koppen/vandaag-1600.jpg',
+  voeding: '/health/koppen/voeding-1600.jpg',
+  inzicht: '/health/koppen/inzicht-1600.jpg',
+  beweging: '/health/koppen/beweging-1600.jpg',
+  gezondheid: '/health/koppen/gezondheid-1600.jpg',
+  meer: '/health/koppen/meer-1600.jpg',
 } as const
 
-/** De maat waarop de banden zijn aangeleverd. De proef rekent hiermee. */
-export const SFEERMAAT = { breedte: 1600, hoogte: 600 } as const
+/** De twee maten waarin elke band klaarligt. */
+export const SFEERMATEN = [1600, 2400] as const
+
+/**
+ * De `srcset` bij een sfeerfoto: dezelfde naam, de andere maat ernaast.
+ *
+ * Afgeleid uit het pad en niet los opgeschreven, want twee lijsten die
+ * hetzelfde moeten zeggen lopen uiteen zodra er één wordt aangeraakt. Staat er
+ * een pad in dat niet op `-1600.jpg` eindigt, dan komt er niets terug en valt
+ * de browser terug op `src` — een band die iets te zacht is, en geen kapotte.
+ */
+export function sfeerSrcset(pad: string): string | undefined {
+  if (!pad.endsWith('-1600.jpg')) return undefined
+  const stam = pad.slice(0, -'-1600.jpg'.length)
+  return SFEERMATEN.map((m) => `${stam}-${m}.jpg ${m}w`).join(', ')
+}
+
+/** Hoe breed de band wordt, zodat de browser de juiste maat kan kiezen.
+ *  Gemeten, zie de kop van dit bestand. */
+export const SFEER_SIZES = '(min-width: 1240px) 75vw, 95vw'

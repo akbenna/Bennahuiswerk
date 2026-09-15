@@ -132,14 +132,13 @@ describe('de gerechtenlijst zelf', () => {
       ['Roti met kip, kousenband en aardappel', 'roti-kip.jpg'],
       ['Heri heri met bakkeljauw', 'heri-heri.jpg'],
       ['Erwtensoep met vlees', 'erwtensoep.jpg'],
+      /* Deze stond een levering lang zonder beeld omdat er kikkererwten op de
+         foto stonden; de tweede levering bracht de witte bonen. */
+      ['Kuru fasulye (witte bonen)', 'kuru-fasulye.jpg'],
     ]
     for (const [naam, bestand] of uit_de_database) {
       expect(fotoVoorGerecht(naam), naam).toBe('/health/gerechten/' + bestand)
     }
-    /* En er is er één die met opzet géén foto heeft: bij 'Kuru fasulye' lag een
-       foto van kikkererwten. Staat hier ooit een pad, dan is die zonder keuring
-       gekoppeld. */
-    expect(fotoVoorGerecht('Kuru fasulye (witte bonen)')).toBeNull()
   })
 
   /* Elk gerecht één eigen foto: twee gerechten die naar hetzelfde bestand
