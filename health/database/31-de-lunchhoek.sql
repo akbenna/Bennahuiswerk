@@ -56,6 +56,27 @@
 -- Daarom staat er ook een nieuwe groepsmaat bij: "op een broodje", 40 gram,
 -- naast de eetlepel die blijft staan. Wie alleen de salade logt heeft hem ook.
 --
+-- WAT DE TABEL ZELF AFDWINGT
+--
+-- Drie kolommen hier staan onder een check-constraint, en ik liep tegen alle
+-- drie aan omdat mijn eerste opstelling die checks niet had. Ze staan in
+-- `gereedschap/verhuizing/schema-gegenereerd.sql` en dat is de echte tabel.
+--
+--   household_measure  schaal, bord, kom, opscheplepel, eetlepel, stuk,
+--                      handvol, glas, kop, pan, punt
+--   category           groente, fruit, vlees, vis, ei, zuivel, graan,
+--                      peulvrucht, noten, vet, kruiden, suiker, saus, overig
+--   unit               g, ml, stuk, eetlepel, theelepel, kop, snuf, bos,
+--                      teen, blik, handvol
+--
+-- Een broodje is dus `stuk` en geen `broodje` — precies wat bestand 25 bij
+-- 'nl-broodje-gezond' al deed. En een smeersalade heeft geen categorie `beleg`
+-- maar de categorie van waar hij van gemaakt is: tonijnsalade is `vis`,
+-- eiersalade is `ei`, kaassalade is `zuivel`.
+--
+-- Die tweede is geen formaliteit. De categorie is wat een gerecht opdeelt in
+-- waar de energie vandaan komt, en `beleg` zou dat juist verbergen.
+--
 -- TERUGDRAAIEN
 --
 --   delete from dish_portions    where dish_id in
@@ -72,6 +93,34 @@
 -- Twee keer draaien voegt niets toe en haalt niets weg: alles staat op
 -- `on conflict do nothing`, en de kinderrijen komen uit `returning` van de
 -- insert zelf en niet uit een opzoeking op naam.
+--
+-- HOE DIT IS NAGEKEKEN, EN WAAROM DE EERSTE KEER NIET TELDE
+--
+-- Dit bestand is lokaal op Postgres gedraaid tegen het schema uit
+-- `gereedschap/verhuizing/schema-gegenereerd.sql` — de echte tabellen, met hun
+-- checks, hun sleutels en hun unieke indexen erbij.
+--
+-- De eerste ronde ging tegen tabellen die ik zelf had getypt, en die waren
+-- lakser dan de echte. Dat leek te werken en het bewees niets: het bestand viel
+-- in de SQL-editor alsnog om op `household_measure`, en daarachter stonden nog
+-- twee fouten te wachten — `category = 'beleg'` bestaat niet, en `nevo_versie`
+-- is verplicht. Een opstelling die minder eist dan de echte tabel is geen proef
+-- maar een geruststelling.
+--
+-- Wat er nu wél is nagekeken, op het echte schema:
+--
+--   · het bestand loopt door, en alle acht gerechten komen eruit
+--   · elke NEVO-code wijst naar een bestaande regel (nul losse codes)
+--   · drie keer draaien geeft exact dezelfde tellingen
+--   · de terugdraairegel haalt de acht lun-rijen weg, laat een nl-rij van
+--     bestand 25 staan, en laat geen wees-ingredienten of wees-porties achter
+--
+-- En de mutatietoets, die op het echte schema iets ánders laat zien dan op mijn
+-- eigen tabellen: haal de wacht bij blok 1 weg en het bestand valt bij de
+-- tweede keer draaien om op `voeding_portiematen_groep_uniek`. Er is dus een
+-- unieke index die dit al tegenhoudt; de wacht voorkomt geen dubbele rij maar
+-- een foutmelding. Op mijn eigen tabellen ontbrak die index en zag ik een
+-- verdubbeling — een conclusie die alleen in mijn opstelling waar was.
 -- =============================================================================
 
 BEGIN;
@@ -136,32 +185,32 @@ with gerecht(slug, naam, namen, omschrijving, momenten) as (values
 onderdeel(slug, pos, naam, cat, gram, nevo, notitie) as (values
   ('lun-broodje-tonijnsalade',10,'Tarwebroodje wit zacht','graan',60::numeric,'230',
    'Een zacht wit broodje van zestig gram. Bruin of volkoren scheelt hooguit negen kilocalorieen, maar volkoren geeft ruim twee gram vezel meer per broodje. Ruil het broodje in het portievenster om als dat ertoe doet.'::text),
-  ('lun-broodje-tonijnsalade',20,'Tonijnsalade','beleg',40,'3231',
+  ('lun-broodje-tonijnsalade',20,'Tonijnsalade','vis',40,'3231',
    'Veertig gram is geschat: drie eetlepels. De groepsmaat voor smeersalade is een eetlepel van vijftien gram, en dat is een boterham en geen broodje. Dit is de grootste onzekerheid in dit gerecht.'),
 
   ('lun-broodje-zalmsalade',10,'Tarwebroodje wit zacht','graan',60,'230',
    'Een zacht wit broodje van zestig gram. Bruin of volkoren scheelt hooguit negen kilocalorieen, maar volkoren geeft ruim twee gram vezel meer per broodje.'),
-  ('lun-broodje-zalmsalade',20,'Zalmsalade','beleg',40,'3230',
+  ('lun-broodje-zalmsalade',20,'Zalmsalade','vis',40,'3230',
    'Veertig gram is geschat: drie eetlepels.'),
 
   ('lun-broodje-eiersalade',10,'Tarwebroodje wit zacht','graan',60,'230',
    'Een zacht wit broodje van zestig gram. Bruin of volkoren scheelt hooguit negen kilocalorieen, maar volkoren geeft ruim twee gram vezel meer per broodje.'),
-  ('lun-broodje-eiersalade',20,'Eiersalade','beleg',40,'1499',
+  ('lun-broodje-eiersalade',20,'Eiersalade','ei',40,'1499',
    'Veertig gram is geschat: drie eetlepels.'),
 
   ('lun-broodje-kaassalade',10,'Tarwebroodje wit zacht','graan',60,'230',
    'Een zacht wit broodje van zestig gram. Bruin of volkoren scheelt hooguit negen kilocalorieen, maar volkoren geeft ruim twee gram vezel meer per broodje.'),
-  ('lun-broodje-kaassalade',20,'Kaassalade','beleg',40,'5074',
+  ('lun-broodje-kaassalade',20,'Kaassalade','zuivel',40,'5074',
    'Veertig gram is geschat: drie eetlepels.'),
 
   ('lun-broodje-kipkerrie',10,'Tarwebroodje wit zacht','graan',60,'230',
    'Een zacht wit broodje van zestig gram. Bruin of volkoren scheelt hooguit negen kilocalorieen, maar volkoren geeft ruim twee gram vezel meer per broodje.'),
-  ('lun-broodje-kipkerrie',20,'Kip-kerriesalade','beleg',40,'1498',
+  ('lun-broodje-kipkerrie',20,'Kip-kerriesalade','vlees',40,'1498',
    'Veertig gram is geschat: drie eetlepels.'),
 
   ('lun-broodje-vleessalade',10,'Tarwebroodje wit zacht','graan',60,'230',
    'Een zacht wit broodje van zestig gram. Bruin of volkoren scheelt hooguit negen kilocalorieen, maar volkoren geeft ruim twee gram vezel meer per broodje.'),
-  ('lun-broodje-vleessalade',20,'Vleessalade','beleg',40,'1877',
+  ('lun-broodje-vleessalade',20,'Vleessalade','vlees',40,'1877',
    'Veertig gram is geschat: drie eetlepels.'),
 
   ('lun-broodje-kaas',10,'Tarwebroodje wit zacht','graan',60,'230',
@@ -178,22 +227,22 @@ onderdeel(slug, pos, naam, cat, gram, nevo, notitie) as (values
 ),
 
 portie(slug, label, maat, schat, laag, hoog, std, volg, notitie) as (values
-  ('lun-broodje-tonijnsalade','Een broodje','broodje',100::numeric,85::numeric,130::numeric,true,10,null::text),
-  ('lun-broodje-tonijnsalade','Half broodje','half broodje',50,43,65,false,20,null),
-  ('lun-broodje-zalmsalade','Een broodje','broodje',100,85,130,true,10,null),
-  ('lun-broodje-zalmsalade','Half broodje','half broodje',50,43,65,false,20,null),
-  ('lun-broodje-eiersalade','Een broodje','broodje',100,85,130,true,10,null),
-  ('lun-broodje-eiersalade','Half broodje','half broodje',50,43,65,false,20,null),
-  ('lun-broodje-kaassalade','Een broodje','broodje',100,85,130,true,10,null),
-  ('lun-broodje-kaassalade','Half broodje','half broodje',50,43,65,false,20,null),
-  ('lun-broodje-kipkerrie','Een broodje','broodje',100,85,130,true,10,null),
-  ('lun-broodje-kipkerrie','Half broodje','half broodje',50,43,65,false,20,null),
-  ('lun-broodje-vleessalade','Een broodje','broodje',100,85,130,true,10,null),
-  ('lun-broodje-vleessalade','Half broodje','half broodje',50,43,65,false,20,null),
-  ('lun-broodje-kaas','Een broodje','broodje',105,90,135,true,10,null),
-  ('lun-broodje-kaas','Half broodje','half broodje',53,45,68,false,20,null),
-  ('lun-broodje-pate','Een broodje','broodje',85,72,110,true,10,null),
-  ('lun-broodje-pate','Half broodje','half broodje',43,36,55,false,20,null)
+  ('lun-broodje-tonijnsalade','Een broodje','stuk',100::numeric,85::numeric,130::numeric,true,10,null::text),
+  ('lun-broodje-tonijnsalade','Half broodje','stuk',50,43,65,false,20,null),
+  ('lun-broodje-zalmsalade','Een broodje','stuk',100,85,130,true,10,null),
+  ('lun-broodje-zalmsalade','Half broodje','stuk',50,43,65,false,20,null),
+  ('lun-broodje-eiersalade','Een broodje','stuk',100,85,130,true,10,null),
+  ('lun-broodje-eiersalade','Half broodje','stuk',50,43,65,false,20,null),
+  ('lun-broodje-kaassalade','Een broodje','stuk',100,85,130,true,10,null),
+  ('lun-broodje-kaassalade','Half broodje','stuk',50,43,65,false,20,null),
+  ('lun-broodje-kipkerrie','Een broodje','stuk',100,85,130,true,10,null),
+  ('lun-broodje-kipkerrie','Half broodje','stuk',50,43,65,false,20,null),
+  ('lun-broodje-vleessalade','Een broodje','stuk',100,85,130,true,10,null),
+  ('lun-broodje-vleessalade','Half broodje','stuk',50,43,65,false,20,null),
+  ('lun-broodje-kaas','Een broodje','stuk',105,90,135,true,10,null),
+  ('lun-broodje-kaas','Half broodje','stuk',53,45,68,false,20,null),
+  ('lun-broodje-pate','Een broodje','stuk',85,72,110,true,10,null),
+  ('lun-broodje-pate','Half broodje','stuk',43,36,55,false,20,null)
 ),
 nieuw as (
   insert into public.cultural_dishes
