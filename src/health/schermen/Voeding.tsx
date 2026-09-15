@@ -192,7 +192,7 @@ function Zoeken(
   }
 
   return (
-    <Kaart>
+    <Kaart sfeer="blad">
       <Kop>Zoeken in de voedingsmiddelentabel en de gerechten</Kop>
       <div className="zoekvak">
         {/* Het laatste emoji dat nog in de app stond. Het invoervel kreeg hier

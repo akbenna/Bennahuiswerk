@@ -12,12 +12,23 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { useCallback, useEffect, useState } from 'react'
 import type { Graad } from '@/gedeeld/db/tabellen'
+import { Sfeervlak } from '../achtergronden'
+import type { Sfeer } from '../achtergronden'
 
 export function Kaart(
-  { toon, plat, zij, style, children }:
+  { toon, plat, zij, sfeer, style, children }:
   {
     toon?: 'let' | 'fout' | 'goed' | undefined
     plat?: boolean | undefined
+    /**
+     * Een getekend motief achter de inhoud, in de accentkleur en op een dekking
+     * die je niet los ziet. Het staat hier en niet bij de aanroeper omdat het
+     * twee dingen tegelijk moet regelen — de klasse op de kaart en een laag
+     * eronder — en dat is precies het soort verdubbeling dat ergens fout gaat
+     * zodra er een derde kaart bijkomt. Waarom de motieven bestaan en wat de
+     * dekking betekent, staat in `achtergronden.tsx`.
+     */
+    sfeer?: Sfeer | undefined
     /**
      * Op een breed scherm hoort deze kaart in de smalle kolom naast de inhoud.
      * Op de telefoon doet het niets — daar is er maar één kolom.
@@ -33,9 +44,18 @@ export function Kaart(
     children: ReactNode
   },
 ) {
-  const klas = ['kaart', toon ?? '', plat ? 'plat' : '', zij ? 'zijkolom' : '']
-    .filter(Boolean).join(' ')
-  return <div className={klas} style={style}>{children}</div>
+  const klas = ['kaart', toon ?? '', plat ? 'plat' : '', zij ? 'zijkolom' : '',
+    sfeer ? 'metsfeer' : ''].filter(Boolean).join(' ')
+  if (!sfeer) return <div className={klas} style={style}>{children}</div>
+  /* De inhoud krijgt een eigen laag, anders ligt het motief eroverheen. Dat
+     `position:relative` staat in `.metsfeer>*` en niet hier, zodat de stijl op
+     één plek blijft. */
+  return (
+    <div className={klas} style={style}>
+      <Sfeervlak soort={sfeer} />
+      <div>{children}</div>
+    </div>
+  )
 }
 
 /**

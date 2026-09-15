@@ -21,8 +21,10 @@
  *
  * DE DEKKING IS EEN GRENS EN GEEN SMAAK
  *
- * `--sfeer` staat op 0,05 in het licht en 0,07 in het donker. Daarboven begint
- * de kleine tekst eronder contrast te verliezen, en de contrastproef in
+ * `--sfeer` is een vermenigvuldiger en geen absolute waarde: de vormen dragen
+ * zelf al een `fill-opacity` per laag, van 0,10 tot 0,22. Het product van die
+ * twee is wat je ziet, en dat landt rond de acht procent. Daarboven begint de
+ * kleine tekst eronder contrast te verliezen, en de contrastproef in
  * `gereedschap/health-voorbeeld.mjs` meet dat op elk stukje tekst. Wie deze
  * waarde omhoog zet, hoort die proef te draaien en niet alleen te kijken.
  *
@@ -44,29 +46,43 @@ const doek = (kinderen: ReactNode) => (
   </svg>
 )
 
+/* De drie motieven. Ze dragen hun eigen `fill-opacity` per laag — daar zit de
+   diepte in — en `--sfeer` schaalt het geheel nog een keer. De vormen lopen het
+   vlak links en rechts uit: een motief dat helemaal in beeld staat leest als een
+   plaatje, afgesneden leest het als achtergrond. */
 const VORMEN: Record<Sfeer, () => ReactNode> = {
-  /* Twee bladeren die elkaar overlappen, uit de rechterbovenhoek weg. Ze lopen
-     met opzet het vlak uit: een motief dat helemaal in beeld staat leest als een
-     plaatje, een motief dat wordt afgesneden als achtergrond. */
+  /* Een blad met nerven, uit de rechterbovenhoek weg — bij voeding. */
   blad: () => doek(
     <>
-      <path d="M402 8c-62 4-108 30-131 68-18 30-14 62 8 78 26-14 48-36 62-66 14-30 40-58 61-62Z" />
-      <path d="M330 -6c-48 22-78 56-86 96-6 32 8 58 30 64 14-24 22-54 22-86 0-32 14-58 34-74Z"
-            opacity=".6" />
+      <path d="M-20 175C55 126 101 51 185 15c26-11 55-18 86-19-20 47-48 88-84 119-52 45-111 67-207 73Z"
+            fill="currentColor" fillOpacity="0.18" />
+      <path d="M18 194c61-45 109-103 146-176" fill="none" stroke="currentColor" strokeWidth="7"
+            strokeLinecap="round" strokeOpacity="0.22" />
+      <path d="M77 166c36-8 68-24 96-48M105 126c31-1 58-8 83-22M131 87c25-5 44-12 63-23"
+            fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round"
+            strokeOpacity="0.14" />
     </>,
   ),
-  /* Drie golven onder elkaar: een reeks metingen die doorloopt. */
+  /* Golven die doorlopen — bij een reeks metingen. */
   golf: () => doek(
     <>
-      <path d="M0 132c58-26 96-26 152 0s96 26 152 0 96-26 96 0v72H0Z" opacity=".55" />
-      <path d="M0 158c58-22 96-22 152 0s96 22 152 0 96-22 96 0v46H0Z" />
+      <path d="M-20 134C57 78 116 90 178 122c68 35 124 30 242-39v137H-20Z"
+            fill="currentColor" fillOpacity="0.16" />
+      <path d="M-20 154C60 101 120 112 183 143c71 35 126 27 237-35v92H-20Z"
+            fill="currentColor" fillOpacity="0.10" />
+      <path d="M-20 130C58 75 116 89 178 120c69 35 126 31 242-38" fill="none" stroke="currentColor"
+            strokeWidth="8" strokeLinecap="round" strokeOpacity="0.20" />
     </>,
   ),
-  /* Twee heuvelruggen: een trend die daalt, net als het weegtekentje. */
+  /* Een heuvelrug — bij een trend. */
   heuvel: () => doek(
     <>
-      <path d="M0 176 108 86l74 56 70-72 148 106v28H0Z" opacity=".5" />
-      <path d="M0 204 132 122l82 46 88-56 98 62v30H0Z" />
+      <path d="M-20 194 94 88c17-16 40-16 56 2l41 45 54-69c18-23 47-25 66-3l109 131Z"
+            fill="currentColor" fillOpacity="0.12" />
+      <path d="M-20 194 94 88c17-16 40-16 56 2l41 45 54-69c18-23 47-25 66-3l109 131Z"
+            fill="currentColor" fillOpacity="0.10" />
+      <path d="M-20 194 94 88c17-16 40-16 56 2l41 45 54-69c18-23 47-25 66-3" fill="none"
+            stroke="currentColor" strokeWidth="7" strokeLinecap="round" strokeOpacity="0.20" />
     </>,
   ),
 }

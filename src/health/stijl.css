@@ -69,7 +69,7 @@
   --goed:#2F6B1F; --goedbg:#E4EFDD;
   --schaduw:0 1px 2px rgba(12,30,24,.03), 0 10px 26px rgba(12,30,24,.06);
   /* De dekking van het sfeervlak. Hoger kost contrast; zie achtergronden.tsx. */
-  --sfeer:.05;
+  --sfeer:.45;
   --sans:'SF Pro Text',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   /* Koppen en gemeten getallen stonden in een serif. Die stond voor "dit is
      gemeten", maar dat zeggen het interval en de graad er al bij — het was dus
@@ -79,7 +79,7 @@
   --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;
 }
 @media (prefers-color-scheme:dark){:root:not([data-thema]){
-  --canvas:#080D0C; --sfeer:.07; --vlak:#121A18; --vlak2:#1B2523;
+  --canvas:#080D0C; --sfeer:.55; --vlak:#121A18; --vlak2:#1B2523;
   --ink:#F1F5F3; --ink2:#DCE4E1; --grijs:#9AA8A2; --dim:#8A9691;
   --lijn:#243230; --lijn2:#354642;
   --k:#4FD2A6; --kfel:#28BE8E; --kbg:#0F2E26;
@@ -90,7 +90,7 @@
   --schaduw:0 1px 2px rgba(0,0,0,.5), 0 10px 26px rgba(0,0,0,.35);
 }}
 :root[data-thema="donker"]{
-  --canvas:#080D0C; --sfeer:.07; --vlak:#121A18; --vlak2:#1B2523;
+  --canvas:#080D0C; --sfeer:.55; --vlak:#121A18; --vlak2:#1B2523;
   --ink:#F1F5F3; --ink2:#DCE4E1; --grijs:#9AA8A2; --dim:#8A9691;
   --lijn:#243230; --lijn2:#354642;
   --k:#4FD2A6; --kfel:#28BE8E; --kbg:#0F2E26;
@@ -354,7 +354,18 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
 .hero{position:relative;border-radius:20px;padding:20px 18px 18px;overflow:hidden;
   background:var(--herobg,linear-gradient(155deg,#EEF3F1,#E3ECE9));
   border:1px solid var(--lijn);margin-bottom:14px}
-.hero>*{position:relative;z-index:1}
+/* `:not(.sfeer)` want het motief hoort juist ónder de inhoud te liggen; zonder
+   deze uitzondering tilt de z-index hierboven het eroverheen. */
+.hero>*:not(.sfeer){position:relative;z-index:1}
+/* HET MOTIEF OP DE HERO NEEMT DE INKTKLEUR EN NIET HET ACCENT
+   De hero heeft als enige element een eigen kleur die met het uur meebeweegt:
+   warm 's ochtends, groen overdag, blauwig 's avonds. Een groen motief daarop
+   is op twee van de drie momenten een tweede kleur die met de eerste vecht —
+   naast elkaar gezet was dat meteen te zien. In inkt leest dezelfde vorm als
+   textuur en niet als kleur, en dus klopt hij op alle drie.
+   De factor 0,75 dempt hem verder: op een gekleurde ondergrond komt inkt harder
+   aan dan het accent op een neutrale kaart. */
+.hero .sfeer{color:var(--ink);opacity:calc(var(--sfeer) * .75);z-index:0}
 .hero .heroglans{position:absolute;inset:auto -30% -55% -30%;height:220px;z-index:0;
   background:radial-gradient(50% 60% at 50% 0%,var(--heroglow,rgba(255,255,255,.55)),transparent 70%);
   pointer-events:none}
@@ -484,9 +495,16 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
    je niet los ziet. Waarom het geen foto is en waarom de dekking een grens is en
    geen smaak, staat in `achtergronden.tsx`. */
 .metsfeer{position:relative;overflow:hidden}
-.metsfeer>*{position:relative}
+/* `:not(.sfeer)` is geen sierlijkheid. Beide selectors wegen even zwaar — één
+   klasse — dus zonder die uitzondering wint degene die toevallig het laatst in
+   dit bestand staat, en dan ligt het motief bovenop de tekst zodra iemand de
+   regels herschikt. */
+.metsfeer>*:not(.sfeer){position:relative}
 .sfeer{position:absolute;inset:0;width:100%;height:100%;color:var(--k);
   opacity:var(--sfeer);pointer-events:none}
+/* De tekening bij een leeg scherm. Gecentreerd, in het accent, en met genoeg
+   lucht eromheen dat de tekst eronder niet vastplakt. */
+.leegbeeld{display:block;margin:2px auto 12px;color:var(--k);opacity:.85;max-width:100%;height:auto}
 
 /* ---------------------------------------------- de koppen van de schermen -- */
 /* Elk scherm opende met een tabel of een invulveld: je moest lezen om te weten

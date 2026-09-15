@@ -15,6 +15,7 @@ import { kortNL, vandaag } from '@/gedeeld/datum'
 import type { IsoDatum, Lab, Meting, Profiel, Vragenlijst } from '@/gedeeld/db/tabellen'
 import type { Analyse } from '../rekenkern'
 import { VENSTER_DAGEN, thuisbloeddruk } from '../bloeddruk'
+import { LeegGeenGegevens } from '../leegbeeld'
 import { STOPBANG, fib4, nieuwste, rustpols, score2, stopbangScore } from '../klinisch'
 import type { Rustpols, StopbangAntwoorden, StopbangSleutel } from '../klinisch'
 import { WegLab, WegMeting } from '../tekens'
@@ -119,10 +120,13 @@ export function Klinisch(p: KlinischEigenschappen) {
         </span>}
       >
         {gemeten.length === 0 ? (
-          <p style={{ fontSize: '.92rem', marginTop: 10 }}>
-            Vul hieronder in wat er in je laatste uitslag stond. Zonder ASAT, ALAT en trombocyten
-            valt FIB-4 niet te berekenen, en zonder bloeddruk en cholesterol SCORE2 niet.
-          </p>
+          <>
+            <LeegGeenGegevens />
+            <p style={{ fontSize: '.92rem', marginTop: 2, textAlign: 'center' }}>
+              Vul hieronder in wat er in je laatste uitslag stond. Zonder ASAT, ALAT en trombocyten
+              valt FIB-4 niet te berekenen, en zonder bloeddruk en cholesterol SCORE2 niet.
+            </p>
+          </>
         ) : (
           <>
             <div style={{ marginTop: 10 }}>
@@ -236,7 +240,9 @@ function Eigenbloeddruk({ metingen }: { metingen: Meting[] }) {
   if (!t) return null
 
   return (
-    <Kaart>
+    /* De golf hoort bij een reeks: dit getal komt uit zeven dagen en niet uit
+       één meting, en dat is precies wat de kaart wil zeggen. */
+    <Kaart sfeer="golf">
       <Kop>Bloeddruk — je eigen metingen</Kop>
       <Rij style={{ alignItems: 'baseline', marginTop: 4 }}>
         <span className="getal" style={{ fontSize: '2rem' }}>{t.sys}/{t.dia}</span>

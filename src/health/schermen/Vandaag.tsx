@@ -44,6 +44,8 @@ import { useEffect, useState } from 'react'
 import { Chip, Kaart, Knop, Kop, Rij, Tussen, Uitklap, Uitleg } from '../onderdelen/basis'
 import { Dagenstrook, Doelring } from '../hero'
 import { Signaalkaarten } from '../signalen'
+import { LeegGeenMaaltijden } from '../leegbeeld'
+import { Sfeervlak } from '../achtergronden'
 import type { Dagstaaf } from '../hero'
 import { dec, dz } from '@/gedeeld/getal'
 import { kortNL, langNL, plusDagen, stapDag, vandaag } from '@/gedeeld/datum'
@@ -209,6 +211,10 @@ export function Vandaag(p: VandaagEigenschappen) {
       <section className="hero"
                style={{ '--herobg': kleur.achtergrond, '--heroglow': kleur.glans } as React.CSSProperties}>
         <div className="heroglans" />
+        {/* Het blad hoort bij voeding, en de hero gaat over wat je vandaag at.
+            Hij neemt hier de inktkleur; waarom, staat bij `.hero .sfeer` in de
+            stijl. */}
+        <Sfeervlak soort="blad" />
         <div className="heroboven">
           <div>
             <span className="eyebrow">{isVandaag ? kleur.groet : kortNL(datum)}</span>
@@ -377,10 +383,16 @@ export function Vandaag(p: VandaagEigenschappen) {
           })}
         </div>
         {regels.length === 0 && (
-          <p className="mini" style={{ marginTop: 10 }}>
-            Nog niets gelogd op {kortNL(datum)}. Eén regel is genoeg om te beginnen — het model
-            rekent liever met de helft dan met niets. Tik een vak aan, of gebruik de knop hierboven.
-          </p>
+          /* De tekening maakt de leegte draaglijk; de zin eronder zegt nog steeds
+             wat er aan de hand is en wat je kunt doen. Haal je de tekening weg,
+             dan klopt het scherm nog. */
+          <>
+            <LeegGeenMaaltijden />
+            <p className="mini" style={{ marginTop: 2, textAlign: 'center' }}>
+              Nog niets gelogd op {kortNL(datum)}. Eén regel is genoeg om te beginnen — het model
+              rekent liever met de helft dan met niets. Tik een vak aan, of gebruik de knop hierboven.
+            </p>
+          </>
         )}
       </Kaart>
 
