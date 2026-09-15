@@ -127,29 +127,79 @@ tweede kopie van hetzelfde beeld zijn — wat er in `public/` staat is het
 origineel op volle maat, alleen opnieuw gecodeerd. Bij de gerechten is het
 verschil de uitsnede, en die is met de regel hierboven opnieuw te maken.
 
-## Wat er is afgekeurd
+## Wat er is afgekeurd, en daarna goedgekomen
 
 **`gerecht-kuru-fasulye.jpg`.** Het gerecht heet 'Kuru fasulye (witte bonen)' en
-op de foto staan kikkererwten — rond, met het snaveltje, en niet de ovale witte
-boon. Op het contactblad viel dat niet op, in een uitsnede van twee keer wel.
-`beeld.ts` zegt: liever geen foto dan een foto die bijna klopt. Het gerecht staat
-dus zonder beeld, en er is een vervanging nodig.
+op de eerste foto stonden kikkererwten — rond, met het snaveltje, en niet de
+ovale witte boon. Op het contactblad viel dat niet op, in een uitsnede van twee
+keer wel. `beeld.ts` zegt: liever geen foto dan een foto die bijna klopt. Het
+gerecht stond daarom een levering lang zonder beeld.
+
+De tweede levering bracht de goede: witte bonen in tomatensaus met ui en groene
+peper, rijst ernaast, çay erbij. Gekoppeld, en de proef bij de lijst noemt hem
+nu bij naam.
 
 Twee andere zijn wél gekoppeld en verdienen een aantekening. Bij de couscous is
 het lamsvlees niet te zien — dat ligt bij dat gerecht onder de berg — en bij de
 roti ontbreekt de kousenband naast de kip en de aardappel. Daar valt een
 onderdeel buiten beeld; het is niet een ander gerecht.
 
-## Wat er nog niet perfect is
+## Wat er nog niet perfect was — en de derde levering, 15-09-2026
 
-Op een scherm van 1920 punten met twee beeldpunten per punt vraagt de band er
-2596 en zijn er 1600 — **1,65 keer opgeblazen**. Op een telefoon (0,74) en op een
-gewoon bureaublad (0,67) wordt hij verkleind en is hij dus scherp. Wie dat
-laatste geval ook wil dichtzetten, laat de zes banden op **2400 bij 900**
-aanleveren; er hoeft dan verder niets te veranderen.
+Op een scherm van 1920 punten met twee beeldpunten per punt vroeg de band er 2596
+en waren er 1600: **1,65 keer opgeblazen**. Dat is opgelost met een levering op
+2400 bij 900, plus een foto van kuru fasulye die wél witte bonen toont.
 
-De proef in `health-voorbeeld.mjs` meet die verhouding op alle drie de maten en
-houdt per maat een eigen grens aan.
+### Is 2400 echt fijner, of opgeschaald?
+
+Gemeten, want dat verschil is niet met het oog te zien en het bepaalt of de hele
+levering zin heeft. De maat is de gemiddelde absolute Laplaciaan — hoeveel
+randenergie er per beeldpunt in zit. Een opschaling verzint geen detail, dus die
+blijft op het niveau van de bron hangen. IJkpunt: dezelfde 1600 zelf naar 2400
+getrokken.
+
+| scherm | oud, 1600→2400 | nieuw, 2400 | verhouding |
+|---|---|---|---|
+| beweging | 2,03 | 2,68 | 1,32× |
+| gezondheid | 1,52 | 2,02 | 1,33× |
+| inzicht | 1,30 | 1,70 | 1,31× |
+| meer | 1,79 | 2,37 | 1,33× |
+| vandaag | 1,63 | 2,18 | 1,34× |
+| voeding | 2,24 | 3,02 | 1,35× |
+
+Consequent een derde meer randenergie. Dat is echt detail.
+
+### Twee maten en niet één
+
+Eén maat lost het niet netjes op. Een bureaublad van 1920 met twee beeldpunten
+vraagt er 2564, een telefoon 1290. Zou er alleen een band van 2400 liggen, dan
+haalt elke telefoon tweehonderd kilobyte per scherm binnen die hij niet kan
+tonen — en dit is een app die vooral op een telefoon open staat.
+
+Dus 1600 én 2400 per band, met een `srcset`. Wat de browser dan werkelijk kiest
+is gemeten:
+
+| | kiest | opblazing |
+|---|---|---|
+| telefoon 430, 3 beeldpunten | 1600 | 0,74× |
+| bureaublad 1440, 1 beeldpunt | 1600 | 0,67× |
+| breed 1920, 2 beeldpunten | 2400 | **1,10×** (was 1,65) |
+
+### Een val bij het meten
+
+`img.naturalWidth` betekent iets anders zodra er een `srcset` met
+`w`-beschrijvingen op staat: de browser rekent hem terug naar de dichtheid
+waarop hij het beeld toont. Een bron van 1600 in een doos van 408 punten geeft
+dan 408 terug en niet 1600. De proef mat daarmee zichzelf — doos gedeeld door
+doos — en meldde 2,91 keer opblazing op een band die perfect scherp stond. De
+echte maat komt nu uit een los `Image` zonder srcset.
+
+### De proef kijkt nu twee kanten op
+
+Te klein kiezen geeft een zachte band; te groot kiezen kost een telefoon
+bandbreedte die hij niet kan tonen. Een proef die alleen naar scherpte kijkt
+vindt dat laatste prima. De ondergrens staat op 0,55 en dat is gemeten: goed
+gekozen geeft 0,74 en 0,67, misgrijpen naar de 2400 geeft 0,49 en 0,45.
 
 ## De twee die uit `public/` zijn gehaald
 

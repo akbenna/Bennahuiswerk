@@ -17,6 +17,7 @@
  * een 0 met "nog geen doel" eronder.
  */
 import type { ReactNode } from 'react'
+import { SFEER_SIZES, sfeerSrcset } from './sfeerfotos'
 
 /* De ring staat rechtop en laat onderaan een opening: een volle cirkel leest
    als "af", een opening leest als "loopt nog". */
@@ -165,10 +166,14 @@ export function Schermkop(
      * onderhoud, en dan hangt de leesbaarheid van elk scherm aan een verloop
      * dat bij de volgende foto weer anders moet.
      *
-     * Wat hij doet is sfeer en geen informatie. Er staat een bord eten bij
-     * Voeding en een zalmmoot bij Gezondheid omdat dat een toon zet — niet
-     * omdat je dat vandaag gegeten hebt. Daarom draagt hij ook geen `alt`: voor
-     * wie voorleest is hij er niet, en dat klopt.
+     * Wat hij doet is sfeer en geen informatie. Er staat een fiets bij Beweging
+     * en een bloeddrukmeter bij Gezondheid omdat dat een toon zet — niet omdat
+     * je vandaag gefietst hebt. Daarom draagt hij ook geen `alt`: voor wie
+     * voorleest is hij er niet, en dat klopt.
+     *
+     * Geef het pad van de kleinste maat; `sfeerSrcset` zet de grotere ernaast
+     * en de browser kiest. Waarom dat twee bestanden zijn en geen \u00e9\u00e9n, staat in
+     * `sfeerfotos.ts`.
      */
     foto?: string | undefined
     rechts?: ReactNode | undefined; children?: ReactNode | undefined },
@@ -176,7 +181,10 @@ export function Schermkop(
   return (
     <section className={'hero kop-' + toon}>
       <div className="heroglans" />
-      {foto && <img className="schermstrook" src={foto} alt="" loading="lazy" aria-hidden="true" />}
+      {foto && (
+        <img className="schermstrook" src={foto} srcSet={sfeerSrcset(foto)}
+             sizes={SFEER_SIZES} alt="" loading="lazy" aria-hidden="true" />
+      )}
       <div className="heroboven">
         <div>
           <span className="eyebrow">{bovenschrift}</span>

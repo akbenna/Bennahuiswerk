@@ -130,20 +130,19 @@ export function gerechtsleutel(naam: string): string {
  * Elk beeld is voor toevoeging bekeken: is dit het gerecht, ziet het er
  * thuisgekookt uit, staat er geen tekst in. Wie er een toevoegt doet hetzelfde.
  *
- * WAT ER BIJ HET KEUREN AFVIEL
+ * WAT ER BIJ HET KEUREN GEBEURDE
  *
- * Er lagen er twaalf; er staan er elf. Bij 'Kuru fasulye (witte bonen)' hoorde
- * een foto van kikkererwten — rond, met het snaveltje, en niet de ovale witte
- * boon waar het gerecht naar heet. Op het contactblad viel dat niet op, in een
- * uitsnede van twee keer wel. Dat is precies het geval waar de regel hierboven
- * voor bedoeld is: liever geen foto dan een foto die bijna klopt. Het gerecht
- * staat dus zonder beeld tot er een klopt.
+ * Bij 'Kuru fasulye (witte bonen)' lag eerst een foto van kikkererwten — rond,
+ * met het snaveltje, en niet de ovale witte boon waar het gerecht naar heet. Op
+ * het contactblad viel dat niet op, in een uitsnede van twee keer wel. Dat
+ * gerecht stond daarom een levering lang zonder beeld: liever geen foto dan een
+ * foto die bijna klopt. De tweede levering bracht de goede — witte bonen in
+ * tomatensaus met ui en groene peper, rijst ernaast — en nu staat hij er wel.
  *
- * Twee andere zijn wél gekoppeld en verdienen een aantekening. Bij de couscous
- * is het lamsvlees niet te zien — dat ligt bij dit gerecht onder de berg, zoals
- * het hoort — en bij de roti ontbreekt de kousenband naast de kip en de
- * aardappel. Daar gaat het om een onderdeel dat buiten beeld valt, niet om een
- * ander gerecht.
+ * Twee andere verdienen een aantekening. Bij de couscous is het lamsvlees niet
+ * te zien — dat ligt bij dit gerecht onder de berg, zoals het hoort — en bij de
+ * roti ontbreekt de kousenband naast de kip en de aardappel. Daar gaat het om
+ * een onderdeel dat buiten beeld valt, niet om een ander gerecht.
  */
 export const GERECHTFOTOS: Readonly<Record<string, string>> = {
   /* marokkaans */
@@ -154,6 +153,7 @@ export const GERECHTFOTOS: Readonly<Record<string, string>> = {
   /* turks */
   'bulgur pilavi': 'bulgur-pilavi.jpg',
   'mercimek corbasi rode linzensoep': 'mercimek-corbasi.jpg',
+  'kuru fasulye witte bonen': 'kuru-fasulye.jpg',
   /* syrisch */
   'fattoush': 'fattoush.jpg',
   'kibbeh': 'kibbeh.jpg',
