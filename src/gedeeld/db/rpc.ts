@@ -35,6 +35,22 @@ export interface Sessie {
   account: string
 }
 
+/**
+ * Wat `kal_aanmelden` teruggeeft: een sessie, of een reden waarom niet.
+ *
+ * Geen exception dus, en dat is met opzet. De functie houdt een teller bij van
+ * mislukte pogingen, en een exception draait de transactie terug — inclusief de
+ * poging die net was vastgelegd. De rem zou daarmee nooit grijpen. Zie
+ * `health/database/32-aanmelden-met-rem.sql`.
+ *
+ * Voor de aanroeper betekent het één ding: kijk of er een token in zit.
+ */
+export type Aanmelduitslag = Sessie | { fout: string }
+
+export function isSessie(x: Aanmelduitslag): x is Sessie {
+  return typeof (x as Sessie).token === 'string' && (x as Sessie).token !== ''
+}
+
 export interface Alles {
   profiel: Profiel | null
   dagen: Dag[]
@@ -392,7 +408,7 @@ export interface RpcKaart {
      een appnaam is werk met risico en zonder opbrengst: de naam staat in
      achttien functies, vier edge functions en een pg_cron-taak. */
   kal_registreren: { in: { p_account: string; p_ww: string; p_naam: string }; uit: Sessie }
-  kal_aanmelden: { in: { p_account: string; p_ww: string }; uit: Sessie }
+  kal_aanmelden: { in: { p_account: string; p_ww: string }; uit: Aanmelduitslag }
   kal_afmelden: { in: { p_token: string }; uit: null }
   kal_ophalen: { in: { p_token: string; p_vanaf?: IsoDatum }; uit: Alles }
   kal_profiel_zetten: { in: { p_token: string; p_patch: Partial<Profiel> }; uit: unknown }
