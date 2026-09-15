@@ -13,7 +13,7 @@
  */
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { DatabaseFout } from '@/gedeeld/db/verbinding'
-import { roep } from '@/gedeeld/db/rpc'
+import { isSessie, roep } from '@/gedeeld/db/rpc'
 import type { Alles, Sessie } from '@/gedeeld/db/rpc'
 import { bundelDagen } from './bundel'
 import type { Dagenkaart } from './rekenkern'
@@ -104,11 +104,26 @@ export function useKalibratie(): Kalibratie {
     zetBezig(true)
     zetFout(null)
     try {
-      const s = nieuw
-        ? await roep('kal_registreren', { p_account: account, p_ww: ww, p_naam: account })
-        : await roep('kal_aanmelden', { p_account: account, p_ww: ww })
-      try { localStorage.setItem(SLEUTEL_SESSIE, JSON.stringify(s)) } catch { /* mag falen */ }
-      zetSessie(s)
+      /* Registreren gooit nog wel bij een fout; aanmelden geeft er een terug.
+         Waarom die twee verschillen staat bij `Aanmelduitslag` in rpc.ts: de
+         rem op het aanmelden houdt een teller bij, en een exception zou de
+         vastgelegde poging mee terugdraaien. */
+      if (nieuw) {
+        const s = await roep('kal_registreren', { p_account: account, p_ww: ww, p_naam: account })
+        try { localStorage.setItem(SLEUTEL_SESSIE, JSON.stringify(s)) } catch { /* mag falen */ }
+        zetSessie(s)
+        return
+      }
+      const uit = await roep('kal_aanmelden', { p_account: account, p_ww: ww })
+      if (!isSessie(uit)) {
+        /* Geen token betekent niet aangemeld — ook al kwam het antwoord met een
+           200 binnen. Zonder deze regel zou een mislukte aanmelding een lege
+           sessie opleveren die er geslaagd uitziet. */
+        zetFout(uit.fout)
+        return
+      }
+      try { localStorage.setItem(SLEUTEL_SESSIE, JSON.stringify(uit)) } catch { /* mag falen */ }
+      zetSessie(uit)
     } catch (e) {
       zetFout(e instanceof Error ? e.message : String(e))
     } finally {
