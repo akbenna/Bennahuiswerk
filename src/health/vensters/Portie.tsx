@@ -20,7 +20,7 @@ import { vandaag } from '@/gedeeld/datum'
 import type { EigenProduct, Graad, IsoDatum, Moment } from '@/gedeeld/db/tabellen'
 import type { Gerecht, MerkTreffer, NieuweRegel, ProductMetMaten } from '@/gedeeld/db/rpc'
 import { Bron } from '../herkomst'
-import { fotoVoor } from '../beeld'
+import { fotoVoor, fotoVoorGerecht } from '../beeld'
 
 /** Waar de portiekeuze op dit moment over gaat. */
 export type Onderwerp =
@@ -252,10 +252,16 @@ export function PortieVenster(
   // Niet via `g`: de smalspoorcontrole van TypeScript volgt de discriminant en
   // niet een variabele die eruit is afgeleid.
   const titel = onderwerp.soort === 'gerecht' ? onderwerp.gerecht.naam : onderwerp.product.naam
-  /* Alleen voor de voedingsmiddelentabel: de foto's hangen aan een NEVO-code.
-     Een gerecht, een merkproduct of je eigen product heeft er geen, en krijgt
-     er dus ook geen. */
-  const foto = onderwerp.soort === 'nevo' ? fotoVoor(onderwerp.product.nevo_code) : null
+  /* Twee bronnen, allebei met de hand gekoppeld en allebei mogen ze niets
+     opleveren. Een product uit de voedingsmiddelentabel hangt aan zijn
+     NEVO-code; een gerecht uit de bibliotheek aan zijn naam. Een merkproduct en
+     je eigen product hebben geen van beide, en krijgen dus geen foto.
+
+     De volgorde is geen keuze maar een gevolg: de twee soorten sluiten elkaar
+     uit, dus er kan er hooguit één iets teruggeven. */
+  const foto = onderwerp.soort === 'nevo' ? fotoVoor(onderwerp.product.nevo_code)
+             : onderwerp.soort === 'gerecht' ? fotoVoorGerecht(onderwerp.gerecht.naam)
+             : null
 
   const onzeker = bouwOnzekerheid(onderwerp, k, metOptioneel, aantal)
 

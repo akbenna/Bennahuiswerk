@@ -66,3 +66,84 @@ export function fotoVoor(nevoCode: string | null | undefined): string | null {
   if (!nevoCode || !Object.hasOwn(FOTOS, nevoCode)) return null
   return MAP + FOTOS[nevoCode]
 }
+
+/* ────────────────────────────────────────────────────────────────────────────
+   DE FOTO BIJ EEN GERECHT — een tweede lijst, om een andere reden
+   ────────────────────────────────────────────────────────────────────────────
+
+   Hierboven staat waarom er voor de voedingsmiddelentabel bijna geen foto's
+   zijn: 2.328 producten en tien beelden, dus zwijgen is het eerlijkste. Bij de
+   gerechtenbibliotheek ligt dat anders, en dat verschil is het noemen waard.
+
+   De bibliotheek is met de hand samengesteld en telt ruim honderd gerechten uit
+   de Marokkaanse, Turkse, Syrische, Surinaamse en Nederlandse keuken. Juist die
+   gerechten ontbreken in elke beeldbank, terwijl het het eten is dat hier
+   werkelijk gekookt wordt. Een foto per gerecht is hier dus geen versiering
+   maar herkenning: wie 'harira' leest twijfelt misschien, wie de kom ziet niet.
+
+   WAAROM OP NAAM EN NIET OP ID
+
+   De id's van de gerechten staan in de database en niet in dit bestand. Ze hier
+   overtypen zou een tweede waarheid maken die stil kan gaan afwijken. De naam
+   staat wél in het `Gerecht`-object dat het portievenster al in handen heeft,
+   dus daarop koppelen we.
+
+   Dat heeft een prijs, en die moet genoemd worden: wijzigt iemand de naam in de
+   bibliotheek, dan verdwijnt de foto zonder waarschuwing. Dat is het goedkoopste
+   wat hier mis kan gaan — er staat dan geen foto, en nooit de verkeerde.
+
+   WAAROM DE SLEUTEL GENORMALISEERD WORDT
+
+   'Mercimek çorbası', 'Mercimek corbasi' en 'mercimek çorbasi' zijn hetzelfde
+   gerecht en drie verschillende letterreeksen. De sleutel haalt accenten weg,
+   zet alles klein en vervangt elke reeks niet-letters door één spatie. Wat
+   overblijft is stabiel genoeg om met de hand te onderhouden.
+
+   Wat deze sleutel bewust NIET doet is gedeeltelijk matchen. 'Harira met lam'
+   levert geen treffer op 'harira'. Dat is geen tekortkoming maar het punt: een
+   foto hoort te tonen wat er staat, en een gerecht met lam is een ander gerecht
+   dan een gerecht zonder. Liever geen foto dan een foto die bijna klopt. */
+
+/** Waar de gerechtfoto's staan zodra de app gebouwd is. */
+const GERECHTMAP = '/health/gerechten/'
+
+/**
+ * De sleutel waarop een gerechtnaam wordt opgezocht.
+ *
+ * De dotloze Turkse ı (U+0131) valt niet uiteen onder NFD — anders dan ç, ş en
+ * ğ, die dat wel doen — dus die wordt apart afgevangen. Zonder die regel wordt
+ * 'çorbası' tot 'corbas' en zou de sleutel in de lijst hieronder er onleesbaar
+ * uit moeten zien om te kunnen werken.
+ */
+export function gerechtsleutel(naam: string): string {
+  return naam
+    .replace(/ı/g, 'i').replace(/İ/g, 'i')
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
+}
+
+/**
+ * Genormaliseerde gerechtnaam naar bestand.
+ *
+ * Elk beeld is voor toevoeging bekeken: is dit het gerecht, ziet het er
+ * thuisgekookt uit, staat er geen tekst in. Wie er een toevoegt doet hetzelfde.
+ */
+export const GERECHTFOTOS: Readonly<Record<string, string>> = {
+  'harira': 'harira.jpg',
+}
+
+/**
+ * Het pad naar de foto bij een gerecht, of null als er geen is.
+ *
+ * `Object.hasOwn` om dezelfde reden als hierboven: zonder die controle geeft
+ * een gerecht dat toevallig 'constructor' heet de ingebouwde functie terug.
+ * Onwaarschijnlijk, maar de proef bij dit bestand hield het al een keer tegen.
+ */
+export function fotoVoorGerecht(naam: string | null | undefined): string | null {
+  if (!naam) return null
+  const sleutel = gerechtsleutel(naam)
+  if (!Object.hasOwn(GERECHTFOTOS, sleutel)) return null
+  return GERECHTMAP + GERECHTFOTOS[sleutel]
+}
