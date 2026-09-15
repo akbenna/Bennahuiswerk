@@ -30,6 +30,7 @@ import { kortNL, plusDagen, vandaag } from '@/gedeeld/datum'
 import type { IsoDatum, Training } from '@/gedeeld/db/tabellen'
 import type { Analyse, Dagenkaart } from '../rekenkern'
 import { WegFiets, WegKracht, WegWeken } from '../tekens'
+import { SFEERFOTO } from '../sfeerfotos'
 
 const SPIERGROEPEN = ['benen', 'rug', 'borst', 'schouders', 'armen', 'romp'] as const
 
@@ -102,6 +103,7 @@ export function Beweging(
   return (
     <>
       <Schermkop
+        foto={SFEERFOTO.beweging}
         toon={haaltBeweging && haaltKracht ? 'goed'
           : gem7 == null && fiets7 === 0 ? 'rust' : 'let'}
         bovenschrift="Deze week"

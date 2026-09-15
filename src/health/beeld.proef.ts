@@ -10,7 +10,7 @@
  * hoort — en niet iets wat ongemerkt gebeurt.
  */
 import { describe, expect, it } from 'vitest'
-import { FOTOS, fotoVoor } from './beeld'
+import { FOTOS, GERECHTFOTOS, fotoVoor, fotoVoorGerecht, gerechtsleutel } from './beeld'
 
 describe('opzoeken', () => {
   it('geeft een pad voor een code die in de lijst staat', () => {
@@ -44,5 +44,71 @@ describe('de lijst zelf', () => {
 
   it('blijft klein genoeg om met de hand na te lopen', () => {
     expect(Object.keys(FOTOS).length).toBeLessThanOrEqual(20)
+  })
+})
+
+/**
+ * WAT DE TWEEDE LIJST MOET VASTHOUDEN
+ *
+ * Dezelfde belofte als de eerste, plus één die er alleen bij gerechten toe
+ * doet: de sleutel mag niet gedeeltelijk matchen. 'Harira met lam' is een ander
+ * gerecht dan 'Harira', en als de lijst dat verschil laat vallen staat er een
+ * foto zonder lam bij een gerecht met lam.
+ */
+describe('gerechtsleutel', () => {
+  it('haalt accenten en hoofdletters weg', () => {
+    expect(gerechtsleutel('Harira')).toBe('harira')
+    expect(gerechtsleutel('Zaälouk')).toBe('zaalouk')
+  })
+
+  it('behandelt de Turkse dotloze i, die NFD laat staan', () => {
+    expect(gerechtsleutel('Mercimek çorbası')).toBe('mercimek corbasi')
+    expect(gerechtsleutel('Bulgur pilavı')).toBe('bulgur pilavi')
+  })
+
+  it('maakt van elke reeks scheidingstekens één spatie', () => {
+    expect(gerechtsleutel('  Kefta-tajine  (met ei) ')).toBe('kefta tajine met ei')
+  })
+})
+
+describe('opzoeken van een gerechtfoto', () => {
+  it('geeft een pad voor een gerecht dat in de lijst staat', () => {
+    expect(fotoVoorGerecht('Harira')).toBe('/health/gerechten/harira.jpg')
+    expect(fotoVoorGerecht('harira')).toBe('/health/gerechten/harira.jpg')
+  })
+
+  it('geeft null voor alles wat er niet in staat', () => {
+    expect(fotoVoorGerecht('Bestaat niet')).toBeNull()
+    expect(fotoVoorGerecht('')).toBeNull()
+    expect(fotoVoorGerecht(null)).toBeNull()
+    expect(fotoVoorGerecht(undefined)).toBeNull()
+  })
+
+  /* De belangrijkste van allemaal: bijna-goed is fout. */
+  it('matcht niet gedeeltelijk', () => {
+    expect(fotoVoorGerecht('Harira met lam')).toBeNull()
+    expect(fotoVoorGerecht('Har')).toBeNull()
+  })
+
+  it('trapt niet in ingebouwde eigenschappen', () => {
+    expect(fotoVoorGerecht('__proto__')).toBeNull()
+    expect(fotoVoorGerecht('constructor')).toBeNull()
+    expect(fotoVoorGerecht('toString')).toBeNull()
+  })
+})
+
+describe('de gerechtenlijst zelf', () => {
+  it('wijst alleen naar bestanden in de eigen map', () => {
+    for (const bestand of Object.values(GERECHTFOTOS)) {
+      expect(bestand).toMatch(/^[a-z0-9-]+\.jpg$/)
+    }
+  })
+
+  /* Een sleutel die zelf niet genormaliseerd is, kan per definitie nooit
+     getroffen worden. Dat is een typefout die anders stil blijft. */
+  it('heeft uitsluitend genormaliseerde sleutels', () => {
+    for (const sleutel of Object.keys(GERECHTFOTOS)) {
+      expect(gerechtsleutel(sleutel)).toBe(sleutel)
+    }
   })
 })

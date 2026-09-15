@@ -16,6 +16,7 @@ import { onderhoudZone } from '../klinisch'
 import { THEMANAMEN, useThemakeuze, zetThema } from '../thema'
 import type { Onderhoudzone } from '../klinisch'
 import { WegInstellen, WegThema } from '../tekens'
+import { SFEERFOTO } from '../sfeerfotos'
 
 /** De kleur hoort bij het scherm en niet bij de rekenfunctie. Zie klinisch.ts. */
 const ZONEKLEUR: Record<Onderhoudzone, string> = {
@@ -70,6 +71,7 @@ export function Meer(
   return (
     <>
       <Schermkop toon={kopToon} titel={kopTitel}
+        foto={SFEERFOTO.meer}
                  bovenschrift={zone ? 'Onderhoud' : 'De laatste twee weken'}
                  rechts={zone
                    ? <span className={'vlaggetje ' + kopToon}>

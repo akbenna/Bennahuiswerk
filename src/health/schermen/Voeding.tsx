@@ -26,6 +26,7 @@ import { Vlaggetjes } from '../vlaggetjes'
 import type { Analyse } from '../rekenkern'
 import type { Onderwerp } from '../vensters/Portie'
 import { ActieZoek, WegEigenProduct } from '../tekens'
+import { SFEERFOTO } from '../sfeerfotos'
 
 export interface VoedingEigenschappen {
   a: Analyse
@@ -46,6 +47,7 @@ export function Voeding(p: VoedingEigenschappen) {
   return (
     <>
       <Schermkop toon={v.toon} bovenschrift="Eiwit vandaag" titel={v.titel}
+        foto={SFEERFOTO.voeding}
                  rechts={
                    <span className={'vlaggetje ' + (v.toon === 'goed' ? 'goed'
                      : v.toon === 'rust' ? 'rust' : 'let')}>

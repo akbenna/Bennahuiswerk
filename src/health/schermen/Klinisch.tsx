@@ -20,6 +20,7 @@ import { MEDICATIEGROEPEN, conditieGezet, conditieVan } from '../conditie'
 import { STOPBANG, fib4, nieuwste, rustpols, score2, stopbangScore } from '../klinisch'
 import type { Rustpols, StopbangAntwoorden, StopbangSleutel } from '../klinisch'
 import { WegLab, WegMeting } from '../tekens'
+import { SFEERFOTO } from '../sfeerfotos'
 
 /** code, naam, eenheid, ondergrens, bovengrens */
 const LABS = [
@@ -112,6 +113,7 @@ export function Klinisch(p: KlinischEigenschappen) {
   return (
     <>
       <Schermkop
+        foto={SFEERFOTO.gezondheid}
         toon={gemeten.length === 0 ? 'rust' : buiten.length ? 'let' : 'goed'}
         bovenschrift="Klinisch"
         titel={gemeten.length === 0
