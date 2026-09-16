@@ -407,6 +407,31 @@ const MERK = [{
   portie_naam: '15 g',
 }]
 
+/* DE TABELREGEL DIE BIJ 'PINDAKAAS' HOORT
+   Zonder deze regel gaf de mock op elke vraag tonijn terug, ook op 'pindakaas'.
+   De proef verderop vergeleek dan een merkproduct dat precies zo heet met een
+   tabelregel die niets met de vraag te maken had — en concludeerde uit die
+   volgorde iets over de rangorde van herkomst. Dat bewees niets zodra het
+   scherm op naamovereenkomst ging rangschikken.
+   Nu staan er twee regels die allebei 'pindakaas' heten, en dan gaat de proef
+   werkelijk over de regel die hij wil beschermen: bij gelijke overeenkomst
+   staat de tabelwaarde boven het etiket. */
+/* Een gerecht dat bij 'pindakaas' hoort maar minder goed past dan de tabelregel:
+   'pindakaas' staat er niet vooraan in de naam. In de oude indeling stond elk
+   gerecht boven elke tabelregel, dus dit ding kwam eerst. Dat was precies de
+   klacht. */
+const GERECHT_PINDAKAAS = [{
+  id: 'gp1', naam: 'Boterham met pindakaas', keuken: 'nederlands',
+  omschrijving: 'Snee brood met pindakaas.', porties: 1, status: 'concept',
+}]
+
+const NEVO_PINDAKAAS = [
+  { nevo_code: '423', naam: 'Pindakaas', groep: 'Hartig broodbeleg', kcal: 620,
+    eiwit_g: 22.8, vet_g: 51.4, koolhydraat_g: 12.6, vezel_g: 6.5 },
+  { nevo_code: '2417', naam: 'Pindakaas m stukjes pinda', groep: 'Hartig broodbeleg', kcal: 617,
+    eiwit_g: 24.1, vet_g: 50.6, koolhydraat_g: 12.0, vezel_g: 6.9 },
+]
+
 const NEVO_TONIJN = [
   { nevo_code: '1589', naam: 'Tonijn in olie blik', groep: 'Vis', kcal: 206,
     eiwit_g: 27, vet_g: 10.8, koolhydraat_g: 0.1, vezel_g: 0.1 },
@@ -503,8 +528,11 @@ async function bedienDb(pagina, dagen, fase) {
             /* De verkeerd gespelde vraag krijgt de benaderde uitslag terug,
                precies zoals de database hem geeft. Zo is te zien of het scherm
                de vlag ook echt gebruikt en niet altijd dezelfde regel toont. */
-            nevo: /lesagn/i.test(route.request().postData() ?? '') ? NEVO_BENADERD : NEVO_TONIJN,
-            gerechten: [], eigen: [], merk: MERK,
+            nevo: /lesagn/i.test(route.request().postData() ?? '') ? NEVO_BENADERD
+              : /pindakaas/i.test(route.request().postData() ?? '') ? NEVO_PINDAKAAS
+              : NEVO_TONIJN,
+            gerechten: /pindakaas/i.test(route.request().postData() ?? '') ? GERECHT_PINDAKAAS : [],
+            eigen: [], merk: MERK,
           }
       : fn === 'kal_eiwitrijk' ? EIWITRIJK
       : fn === 'kal_verzadiging' ? VERZADIGING
@@ -852,8 +880,25 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
     const iMerk = teksten.findIndex((t) => t.includes('Pindakaas 100%'))
     if (iMerk < 0) throw new Error(`${naam}: het merkproduct staat niet in de uitslag`)
 
-    const iNevo = teksten.findIndex((t) => t.includes('Tonijn'))
-    if (iNevo >= 0 && iMerk < iNevo) {
+    /* De tabelregel die net zo goed bij de vraag past. Stond hier eerst
+       'Tonijn', en die matchte de vraag helemaal niet. */
+    /* Op de groepsnaam en niet op 'Pindakaas': elke regel begint met de letter
+       van zijn graad, en beide regels heten pindakaas. De groep staat alleen bij
+       een tabelwaarde. */
+    const iNevo = teksten.findIndex((t) => t.includes('Hartig broodbeleg'))
+    if (iNevo < 0) throw new Error(`${naam}: de tabelwaarde voor pindakaas ontbreekt`)
+    /* DE RANGSCHIKKING ZELF
+       'Pindakaas' is de naam van de tabelregel en staat middenin die van het
+       gerecht. De tabelregel hoort dus eerst. In de oude indeling kon dat niet:
+       gerechten stonden als blok boven de tabel, wat de vraag ook was. Deze
+       regel valt om zodra het scherm weer emmer voor emmer gaat tonen. */
+    const iGerecht = teksten.findIndex((t) => t.includes('Boterham met pindakaas'))
+    if (iGerecht < 0) throw new Error(`${naam}: het gerecht ontbreekt in de uitslag`)
+    if (iGerecht < iNevo) {
+      throw new Error(`${naam}: het gerecht "Boterham met pindakaas" staat bóven `
+        + 'de tabelregel "Pindakaas", terwijl die laatste precies zo heet')
+    }
+    if (iMerk < iNevo) {
       throw new Error(`${naam}: het merkproduct staat bóven de tabelwaarde`)
     }
     const rij = rijen.nth(iMerk)
@@ -871,7 +916,8 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
     if (!regel.includes('pak van 600 g')) {
       throw new Error(`${naam}: het verpakkingsgewicht staat er niet bij — ${JSON.stringify(regel)}`)
     }
-    console.log(`${''.padEnd(26)} merk: ◈ op plek ${iMerk + 1}, onder de tabel, met pakgewicht`)
+    console.log(`${''.padEnd(26)} pindakaas: tabel op ${iNevo + 1}, gerecht op ${iGerecht + 1}, `
+      + `merk ◈ op ${iMerk + 1} — op naamovereenkomst, niet per emmer`)
     await pagina.getByLabel('Zoeken').fill('')
     await pagina.waitForTimeout(300)
   }
