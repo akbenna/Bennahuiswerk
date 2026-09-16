@@ -80,6 +80,8 @@ export interface VandaagEigenschappen {
   opInvoer: (m: Moment) => void
   /** De dag uitgesplitst, met per regel waar het getal vandaan komt. */
   opOverzicht: () => void
+  /** Het vel waarin je je hele dag vertelt. Zie `vensters/Dagverslag.tsx`. */
+  opVerslag: () => void
   wisRegel: (id: string) => void
   /** Eén tik op een voorstel zet het meteen op de dag. */
   voegToe: (regels: NieuweRegel[]) => void
@@ -342,11 +344,27 @@ export function Vandaag(p: VandaagEigenschappen) {
           loggen — en dat is de gewone reden — hoeft niet te zoeken waar dat
           kan. Het moment wordt uit de klok geraden; in het vel kun je het met
           één tik veranderen. */}
-      <button type="button" className="hoofdknop" style={{ marginBottom: 14 }}
+      <button type="button" className="hoofdknop" style={{ marginBottom: 6 }}
               onClick={() => p.opInvoer(momentNu(datum))}>
         <span aria-hidden="true">＋</span>
         <span>Eten toevoegen</span>
       </button>
+
+      {/* DE TWEEDE WEG, EN WAAROM HIJ KLEIN IS
+
+          De knop erboven is voor de maaltijd die je nú logt; dit is voor de
+          avond waarop je bedenkt dat je vandaag nog niets hebt ingevoerd. Die
+          tweede dag komt minder vaak voor, dus hij krijgt minder gewicht — maar
+          hij hoort hier en niet weggestopt onder Meer, want het is precies het
+          moment waarop je de app opendoet en er geen zin in hebt.
+
+          Hij verdwijnt niet als de dag al vol staat. Je kunt best om acht uur
+          drie maaltijden hebben gelogd en alsnog de rest willen vertellen. */}
+      <div style={{ marginBottom: 14, textAlign: 'center' }}>
+        <button type="button" className="alsLink klein" onClick={p.opVerslag}>
+          of vertel je hele dag in één keer
+        </button>
+      </div>
 
       <Signaalkaarten profiel={p.profiel} />
 

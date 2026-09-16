@@ -2085,6 +2085,228 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
   await pagina.close()
 }
 
+/* ------------------------------------------------------ vertel je hele dag -- */
+/* HET DAGVERSLAG: ÉÉN KEER VERTELLEN, ÉÉN KEER GOEDKEUREN
+ *
+ * Dit vel keur je in één tik goed, en dat is precies waarom het een proef als
+ * deze nodig heeft. Wat er mis kan gaan zonder dat iemand het merkt is niet dat
+ * het scherm leeg blijft — dat zie je — maar dat er iets ánders wordt opgeslagen
+ * dan wat er stond. Twaalf regels ziet niemand na op het aantal.
+ *
+ * Daarom loopt deze proef niet tot aan de knop maar tot voorbij de knop: de
+ * aanroep naar kal_regels_toevoegen wordt onderschept en er wordt gekeken wat
+ * erin zit. Een vel dat er goed uitziet en drie regels op 'tussendoor' wegschrijft
+ * zou hier omvallen en in een schermafdruk niet.
+ *
+ * De herkenning stuurt vijf regels en één ervan heeft geen moment. Die hoort
+ * bovenaan te staan, apart, en hij hoort NIET mee te gaan zolang hij daar staat.
+ * Dat is de afspraak waar het hele vel op rust: de herkenning mag raden, maar
+ * een gok die eruitziet als een zekerheid is het ergste wat dit vel kan doen.
+ */
+{
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: 'light' })
+
+  /* Wat er naar de database gaat, opgevangen in plaats van weggegooid. */
+  const verstuurd = { regels: null, trainingen: [] }
+  await pagina.route('**/rest/v1/rpc/**', async (route) => {
+    const fn = route.request().url().split('/').pop()
+    if (fn === 'kal_regels_toevoegen') {
+      verstuurd.regels = JSON.parse(route.request().postData() ?? '{}').p_regels
+    }
+    if (fn === 'kal_rij_toevoegen') {
+      const lijf = JSON.parse(route.request().postData() ?? '{}')
+      verstuurd.trainingen.push({ tabel: lijf.p_tabel, rij: lijf.p_rij })
+    }
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify(fn === 'kal_ophalen' ? alles(28, 'afvallen') : {}),
+    })
+  })
+
+  const regel = (naam, moment, kcal, eiwit) => ({
+    naam, moment, hoeveelheid: 1, eenheid: 'portie', gram_equivalent: 100,
+    kcal_punt: kcal, kcal_laag: Math.round(kcal * 0.8), kcal_hoog: Math.round(kcal * 1.3),
+    eiwit_g: eiwit, vet_g: 5, koolhydraat_g: 20, vezel_g: 2,
+    conf: 'C', onzekerheidsbronnen: [], bron: 'tekst-ai',
+    nevo_code: '9001', nevo_naam: naam, gram_laag: 80, gram_hoog: 130, ai_model: 'proef',
+  })
+
+  await pagina.route('**/functions/v1/kal-ai', (route) => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({
+      model: 'proef', ms: 1400, opmerking: '', referentieobject: null,
+      regels: [
+        regel('Twee bruine boterhammen', 'ontbijt', 320, 10),
+        regel('Broodje zalm', 'lunch', 410, 22),
+        regel('Tajine met kip', 'diner', 720, 46),
+        regel('Handje amandelen', 'tussendoor', 180, 6),
+        /* De regel waar het om draait: het verslag zei niet wanneer. */
+        regel('Glas sinaasappelsap', 'onbekend', 110, 2),
+      ],
+      trainingen: [
+        { oefening: 'Bankdrukken', spiergroep: 'borst', sets: 3, reps: 10, gewicht_kg: 40 },
+        /* En een die genoemd is zonder aantallen. Het vel hoort dat te zeggen
+           en er geen gebruikelijke drie-maal-tien bij te verzinnen. */
+        { oefening: 'Roeien', spiergroep: 'rug', sets: null, reps: null, gewicht_kg: null },
+      ],
+    }),
+  }))
+
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.hero', { timeout: 5000 })
+
+  process.stdout.write('vertel je dag              ')
+  await pagina.getByRole('button', { name: /vertel je hele dag/i }).click()
+  await pagina.waitForSelector('.venster textarea', { timeout: 5000 })
+  await pagina.locator('.venster textarea')
+    .fill('Vanochtend twee bruine boterhammen, tussen de middag een broodje zalm, '
+          + 'vanavond tajine. En ik heb bankgedrukt.')
+  await pagina.getByRole('button', { name: 'Uitzoeken' }).click()
+  await pagina.waitForSelector('.venster .kaart', { timeout: 8000 })
+  await pagina.waitForTimeout(300)
+
+  const venster = pagina.locator('.venster')
+  const tekst = async () => (await venster.innerText()).replace(/\s+/g, ' ')
+  const voor = await tekst()
+
+  /* 1. De vier momenten staan er als koppen, in de volgorde van de dag, met het
+        onbekende vak vooraan — dat is het enige waar nog iets van je gevraagd
+        wordt. */
+  const koppen = (await venster.locator('.kaart .eyebrow').allTextContents())
+    .map((x) => x.trim()).filter((x) => /Ontbijt|Lunch|Diner|Tussendoor|Waar hoort dit|Getraind/.test(x))
+  const verwacht = ['Waar hoort dit?', 'Ontbijt', 'Lunch', 'Diner', 'Tussendoor', 'Getraind']
+  if (JSON.stringify(koppen) !== JSON.stringify(verwacht)) {
+    throw new Error(`de vakken staan verkeerd: ${JSON.stringify(koppen)}`)
+  }
+
+  /* 2. Het vel zegt hoeveel er ingaat, en dat is vier van de vijf. */
+  if (!/4 van 5 regels gaan erin/.test(voor)) {
+    throw new Error(`het vel telt verkeerd: ${JSON.stringify(voor.slice(0, 220))}`)
+  }
+  if (!/1 wacht nog op een plek/.test(voor)) throw new Error('het vel meldt de losse regel niet')
+
+  /* 3. De training zonder aantallen zegt dat, en verzint er niets bij. */
+  if (!/geen aantallen genoemd/.test(voor)) {
+    throw new Error('een training zonder aantallen zegt dat niet')
+  }
+  if (/Roeien[^×]*\d+ × \d+|Roeien[^×]*\d+ sets|Roeien[^×]*kg/.test(voor)) {
+    throw new Error('er worden aantallen verzonnen bij een training die er geen had')
+  }
+  if (!/Bankdrukken borst · 3 × 10 · 40,0 kg/.test(voor)) {
+    throw new Error(`de genoemde aantallen staan er niet: ${JSON.stringify(voor)}`)
+  }
+
+  await pagina.screenshot({ path: 'gereedschap/health-dagverslag.png', fullPage: true })
+
+  /* 4. Nu de losse regel aanwijzen. Het vak hoort te verdwijnen en de telling
+        hoort mee te lopen. */
+  const losse = venster.locator('.lijst > *', { hasText: 'Glas sinaasappelsap' })
+  await losse.getByRole('button', { name: 'Ontbijt' }).click()
+  await pagina.waitForTimeout(200)
+  const na = await tekst()
+  if (/Waar hoort dit/.test(na)) throw new Error('het onbekende vak blijft staan na het aanwijzen')
+  if (!/5 van 5 regels gaan erin/.test(na)) {
+    throw new Error(`de telling loopt niet mee: ${JSON.stringify(na.slice(0, 220))}`)
+  }
+
+  /* 5. En dan de knop, en dan wat er werkelijk verstuurd is. Dit is het stuk
+        dat een schermafdruk niet laat zien. */
+  await pagina.getByRole('button', { name: 'Alles toevoegen' }).click()
+  await pagina.waitForTimeout(600)
+
+  if (!verstuurd.regels) throw new Error('er is niets naar kal_regels_toevoegen gegaan')
+  if (verstuurd.regels.length !== 5) {
+    throw new Error(`er gingen ${verstuurd.regels.length} regels in plaats van 5 in`)
+  }
+  const plek = Object.fromEntries(verstuurd.regels.map((r) => [r.naam, r.moment]))
+  const hoort = {
+    'Twee bruine boterhammen': 'ontbijt', 'Broodje zalm': 'lunch', 'Tajine met kip': 'diner',
+    'Handje amandelen': 'tussendoor', 'Glas sinaasappelsap': 'ontbijt',
+  }
+  for (const [naam, m] of Object.entries(hoort)) {
+    if (plek[naam] !== m) throw new Error(`${naam} ging naar ${plek[naam]} in plaats van ${m}`)
+  }
+  /* De voedingswaarde en de band gaan ongeschonden mee — dit is de plek waar een
+     spread-fout alles op nul zou zetten zonder dat het scherm verandert. */
+  const tajine = verstuurd.regels.find((r) => r.naam === 'Tajine met kip')
+  if (tajine.kcal_punt !== 720 || tajine.kcal_laag !== 576 || tajine.kcal_hoog !== 936) {
+    throw new Error(`de band gaat niet heel mee: ${JSON.stringify(tajine)}`)
+  }
+  if (tajine.bron !== 'tekst-ai' || tajine.nevo_code !== '9001') {
+    throw new Error('de herkomst gaat niet mee')
+  }
+  if (verstuurd.trainingen.length !== 2) {
+    throw new Error(`er gingen ${verstuurd.trainingen.length} trainingen in plaats van 2 in`)
+  }
+  const roeien = verstuurd.trainingen.find((t) => t.rij.oefening === 'Roeien')
+  if (roeien.tabel !== 'training') throw new Error('de training gaat naar de verkeerde tabel')
+  if (roeien.rij.sets !== null || roeien.rij.reps !== null) {
+    throw new Error(`er worden aantallen weggeschreven die niemand genoemd heeft: ${JSON.stringify(roeien.rij)}`)
+  }
+
+  const eerste = `4 van 5 → 5 van 5 · ${verstuurd.regels.length} regels op `
+    + `${[...new Set(verstuurd.regels.map((r) => r.moment))].sort().join('/')} · `
+    + `${verstuurd.trainingen.length} oefeningen · band heel`
+  await pagina.close()
+
+  /* 6. EN NU ZONDER AANWIJZEN — DE BELOFTE WAAR HET VEL OP RUST
+        Hierboven werd de losse regel eerst aangewezen, en dan gaan er vijf in.
+        Dat bewijst niet dat er vier ingaan als je hem láát staan: een `naarRegels`
+        die niet filtert zou hierboven niets kapotmaken. Dus nog een keer, en nu
+        wordt er meteen op de knop gedrukt.
+
+        Dit is het geval dat in het echt voorkomt. Je keurt in één tik goed, en
+        het vel heeft je verteld dat er vier ingaan. Gaan er dan vijf in, dan
+        staat er iets in je dag wat je nooit hebt aangewezen — en dat zou je pas
+        merken als het dagtotaal er raar uitziet. */
+  const tweede = await ctx.newPage()
+  await tweede.emulateMedia({ colorScheme: 'light' })
+  const los = { regels: null }
+  await tweede.route('**/rest/v1/rpc/**', async (route) => {
+    const fn = route.request().url().split('/').pop()
+    if (fn === 'kal_regels_toevoegen') {
+      los.regels = JSON.parse(route.request().postData() ?? '{}').p_regels
+    }
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify(fn === 'kal_ophalen' ? alles(28, 'afvallen') : {}),
+    })
+  })
+  await tweede.route('**/functions/v1/kal-ai', (route) => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({
+      model: 'proef', ms: 1400, opmerking: '', referentieobject: null, trainingen: [],
+      regels: [
+        regel('Twee bruine boterhammen', 'ontbijt', 320, 10),
+        regel('Glas sinaasappelsap', 'onbekend', 110, 2),
+      ],
+    }),
+  }))
+  await tweede.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await tweede.waitForSelector('.hero', { timeout: 5000 })
+  await tweede.getByRole('button', { name: /vertel je hele dag/i }).click()
+  await tweede.waitForSelector('.venster textarea', { timeout: 5000 })
+  await tweede.locator('.venster textarea').fill('twee boterhammen en een glas sap')
+  await tweede.getByRole('button', { name: 'Uitzoeken' }).click()
+  await tweede.waitForSelector('.venster .kaart', { timeout: 8000 })
+  await tweede.getByRole('button', { name: 'Alles toevoegen' }).click()
+  await tweede.waitForTimeout(600)
+
+  if (!los.regels) throw new Error('er is niets verstuurd bij de tweede doorloop')
+  if (los.regels.length !== 1) {
+    throw new Error(`een regel zonder moment werd tóch opgeslagen: `
+                    + JSON.stringify(los.regels.map((r) => [r.naam, r.moment])))
+  }
+  if (los.regels[0].naam !== 'Twee bruine boterhammen') {
+    throw new Error(`de verkeerde regel ging erin: ${los.regels[0].naam}`)
+  }
+  await tweede.close()
+
+  console.log(`${eerste}
+${''.padEnd(27)}zonder aanwijzen: 1 van 2 — het sap blijft staan`)
+}
+
 /* ----------------------------------------------------- de tekens op de balk -- */
 /* DE RUITEN WAREN AL VERGEVEN
  *
