@@ -753,16 +753,50 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
     /* De coachkaart staat alleen op Vandaag, en alleen als er een doel is. Hij
        hoort de eiwiteis te noemen én voorstellen te tonen: een kaart die wel
        rekent maar niets aanbiedt is de helft van de functie, en dat is aan een
-       screenshot niet te zien. */
+       screenshot niet te zien.
+
+       DE LAT, EN WAAROM HIJ HIER GEKEURD WORDT
+
+       De kaart noemt de lat één keer bovenaan — "de lat ligt op 7,5" — en daarna
+       wijst elke voorstelregel zichzelf aan met "lat zakt naar" of "lat stijgt
+       naar". Dat is een bewering over de richting, en die is met een grep niet
+       te keuren: de oude versie zette een vlaggetje "op tempo" bij de goede
+       gevallen en niets bij de rest, en dat zag er in de tekst net zo goed uit.
+       Hier wordt daarom het getal uit de kop naast de getallen uit de regels
+       gelegd. Draait de vergelijking in het scherm om, dan valt dit om. */
     if (tab === 'Vandaag' && naam !== 'eerste-dag') {
       const kaart = pagina.locator('.kaart', { hasText: 'Wat er nog in past' })
       if (!(await kaart.count())) throw new Error(`${stam}: coachkaart ontbreekt`)
-      const zin = (await kaart.locator('p.klein').first().textContent()) ?? ''
-      if (!/g eiwit per 100 kcal|eiwit is binnen|over je doel/.test(zin)) {
-        throw new Error(`${stam}: coachkaart noemt de eis niet — ${JSON.stringify(zin)}`)
+      const zin = (await kaart.locator('p.klein').allTextContents()).join(' ')
+      if (!/De lat ligt op [\d,.]+ g eiwit\s+per 100 kcal|eiwit is binnen|over je doel/.test(zin)) {
+        throw new Error(`${stam}: coachkaart noemt de lat niet — ${JSON.stringify(zin)}`)
       }
-      const n = await kaart.locator('.lijst > *').count()
-      console.log(`${''.padEnd(26)} coach=${n} voorstellen`)
+      const lat = /De lat ligt op ([\d,.]+) g/.exec(zin)
+      const regels = await kaart.locator('.voorstellen > * .mini').allTextContents()
+      for (const r of regels) {
+        const m = /lat (zakt naar|stijgt naar|blijft op) ([\d,.]+)/.exec(r)
+        if (!m) {
+          /* De enige regel zonder lat is er één die de ruimte precies opmaakt:
+             dan is er niets meer om eiwit in te stoppen. Alles anders is een
+             regel die zwijgt waar hij iets te zeggen had. */
+          if (!lat || /daarna nog\s*0 kcal/.test(r)) continue
+          throw new Error(`${stam}: voorstelregel noemt de lat niet — ${JSON.stringify(r)}`)
+        }
+        if (!lat) throw new Error(`${stam}: regel noemt een lat die de kop niet noemt — ${r}`)
+        const kop = Number(lat[1].replace(',', '.'))
+        const na = Number(m[2].replace(',', '.'))
+        /* De richting wordt op de getoonde getallen bepaald, dus hier ook. Was
+           dat niet zo, dan kon er "stijgt naar 7,3" staan onder "de lat ligt op
+           7,3" — waar, en voor de lezer een tegenspraak. */
+        const hoort = na === kop ? 'blijft op' : na < kop ? 'zakt naar' : 'stijgt naar'
+        if (m[1] !== hoort) {
+          throw new Error(`${stam}: "${m[1]}" klopt niet — lat ${kop} → ${na}`)
+        }
+      }
+      const n = await kaart.locator('.voorstellen > *').count()
+      console.log(`${''.padEnd(26)} coach=${n} voorstellen` +
+                  (lat ? ` · lat ${lat[1]} → ${regels.length ? regels.map((r) =>
+                    (/lat (?:zakt naar|stijgt naar|blijft op) ([\d,.]+)/.exec(r) ?? [, '—'])[1]).join('/') : '—'}` : ''))
     }
   }
 

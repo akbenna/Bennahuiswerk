@@ -641,22 +641,42 @@ function Coachkaart(p: VandaagEigenschappen) {
             </span></>
           )}
           {t.eiwitOver > 0
-            ? <> en <span className="cijfer">{Math.round(t.eiwitOver)}</span> g eiwit te gaan
-                — dat vraagt <span className="cijfer">{dec((t.eis ?? 0) * 100, 1)}</span> g eiwit
-                per 100 kcal in alles wat er nog bij komt.</>
+            ? <> en <span className="cijfer">{Math.round(t.eiwitOver)}</span> g eiwit te gaan.</>
             : <>. Je eiwit is binnen.</>}
         </p>
       )}
 
+      {/* DE LAT, EN WAAROM HIJ ZO HEET
+
+          Hier stond "dat vraagt 7,5 g eiwit per 100 kcal in alles wat er nog bij
+          komt" — een juiste zin die niemand koppelde aan het vlaggetje "op
+          tempo" bij de voorstellen eronder. Dat vlaggetje stond alleen bij de
+          goede gevallen; bij de rest stond niets, en niets leest als "prima".
+
+          Nu draagt één woord het: de lat. Hij wordt hier uitgelegd door het
+          getal dat ernaast staat, en daarna wijst elke regel zichzelf aan —
+          zakt hij of stijgt hij. Daar is geen woordenlijst voor nodig.
+
+          Niet 'balans': dat woord is in deze app de energiebalans, de kern van
+          het hele model. En niet 'verhouding' of 'ratio': die noemen de
+          grootheid en niet het oordeel, dus je zou nog steeds ergens moeten
+          leren welke waarde goed is. */}
+      {!t.erover && t.eiwitOver > 0 && t.eis != null && (
+        <p className="klein" style={{ marginTop: 4 }}>
+          De lat ligt op <span className="cijfer">{dec(t.eis * 100, 1)}</span> g eiwit
+          per 100 kcal: zoveel moet er nog in alles zitten wat er vandaag bij komt.
+        </p>
+      )}
+
+      {/* `voorstellen` is geen opmaak maar een naam: onder deze kaart hangen twee
+          lijsten — deze, uit je eigen geschiedenis, en "Uit de tabel" eronder.
+          Ze zien er hetzelfde uit en beantwoorden een andere vraag. */}
       {lijst.length > 0 && (
-        <div className="lijst" style={{ marginTop: 10 }}>
+        <div className="lijst voorstellen" style={{ marginTop: 10 }}>
           {lijst.map((v) => (
             <div key={v.herhaling.sleutel}>
               <div className="groei">
-                <div className="knip">
-                  {v.naam}
-                  {v.reden === 'eiwit' && <span className="vlaggetje rust"> op tempo</span>}
-                </div>
+                <div className="knip">{v.naam}</div>
                 {/* Eén getal maakt de vier voorstellen vergelijkbaar: eiwit per
                     100 kcal, dezelfde maat waarin de eis staat. "Helpt je eiwit
                     niet" stond hier eerst, en dat is een oordeel op de plek waar
@@ -667,11 +687,27 @@ function Coachkaart(p: VandaagEigenschappen) {
                     nog te gaan is. De dichtheid in g/100 kcal is de grootheid
                     waarop gerangschikt wordt en hoort in de uitleg thuis, niet
                     op elke regel. */}
+                {/* Wat het kost, wat het levert, en waar de lat daarna ligt.
+                    Dat laatste stond hier als "daarna nog 2.087 kcal en 136 g
+                    eiwit" — de twee getallen waaruit je de lat zelf kon delen.
+                    Dat doet niemand. Nu staat de uitkomst er, met de richting
+                    in woorden: zakt of stijgt. De regel zónder goede uitkomst
+                    zegt daarmee ook iets, en dat was precies wat ontbrak.
+
+                    Er is een derde geval en dat is geen bijzaak: de lat kan
+                    bewegen zonder dat je het ziet. Stond er 7,3 en wordt het
+                    7,34, dan zei het scherm "stijgt naar 7,3" — een richting
+                    die de twee getallen tegenspreken. Daarom wordt de richting
+                    bepaald op de getallen zoals ze getoond wórden, niet zoals
+                    ze gerekend zijn, en heet dat geval "blijft op". */}
                 <div className="mini">
                   <span className="cijfer">{dz(v.kcal)}</span> kcal ·{' '}
                   <span className="cijfer">{Math.round(v.eiwit)}</span> g eiwit
-                  {' · daarna nog '}<span className="cijfer">{dz(v.restKcal)}</span> kcal
-                  {v.restEiwit > 0 && <> en <span className="cijfer">{v.restEiwit}</span> g eiwit</>}
+                  {v.eisNa == null
+                    ? <>{' · daarna nog '}<span className="cijfer">{dz(v.restKcal)}</span> kcal</>
+                    : <> · lat {dec(v.eisNa * 100, 1) === dec((t.eis ?? 0) * 100, 1) ? 'blijft op'
+                        : v.eisNa < (t.eis ?? 0) ? 'zakt naar' : 'stijgt naar'}{' '}
+                        <span className="cijfer">{dec(v.eisNa * 100, 1)}</span></>}
                 </div>
               </div>
               <Knop klein opKlik={() => p.voegToe([herhaalRegel(v.herhaling, datum, moment)])}>
