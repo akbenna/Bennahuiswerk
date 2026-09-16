@@ -1555,6 +1555,74 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
   }
 }
 
+/* ------------------------------------------------- wachtwoord kwijt ------ */
+/* HET SCHERM DAT JE ALLEEN ZIET ALS JE VASTZIT
+   De aanmeldschermen komen in geen enkel ander geval hier voorbij: de proef
+   zet een sessie in localStorage en zit dus altijd binnen. Juist het scherm
+   voor wie eruit ligt bleef daarmee ongezien — en dat is het scherm waar een
+   fout het duurst is, want wie hem tegenkomt heeft geen andere weg meer.
+   Vandaar een context zónder sessie. */
+{
+  const uit = await browser.newContext({
+    viewport: { width: 430, height: 1180 }, deviceScaleFactor: 2,
+    locale: 'nl-NL', timezoneId: 'Europe/Amsterdam',
+  })
+  const pagina = await uit.newPage()
+  await bedienDb(pagina, 28, 'afvallen')
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForTimeout(700)
+
+  const kop = await pagina.locator('header h1').first().textContent()
+  if (kop?.trim() !== 'BennaHealth') throw new Error(`kwijt: geen aanmeldscherm, kop=${JSON.stringify(kop)}`)
+  await pagina.screenshot({ path: 'gereedschap/health-aanmelden.png' })
+
+  /* De drie knoppen die er horen te staan. "Wachtwoord kwijt?" is er sinds
+     bestand 33; zonder die knop is de herstelcode onbereikbaar en heeft het
+     hele bestand geen ingang. */
+  for (const naam of ['Aanmelden', 'Nieuw account']) {
+    if (!(await pagina.getByRole('button', { name: naam }).count())) {
+      throw new Error(`kwijt: knop "${naam}" ontbreekt op het aanmeldscherm`)
+    }
+  }
+  const kwijtknop = pagina.getByRole('button', { name: 'Wachtwoord kwijt?' })
+  if (!(await kwijtknop.count())) throw new Error('kwijt: geen ingang naar het herstelpad')
+
+  await kwijtknop.click()
+  await pagina.waitForTimeout(400)
+
+  const kop2 = await pagina.locator('header h1').first().textContent()
+  if (kop2?.trim() !== 'Wachtwoord kwijt') {
+    throw new Error(`kwijt: het herstelpad opent niet, kop=${JSON.stringify(kop2)}`)
+  }
+  /* Drie velden: wie hier een veld vergeet levert een scherm op dat niet werkt
+     en dat er wel uitziet. */
+  const velden = await pagina.locator('.veld > span').allTextContents()
+  const hoort = ['naam', 'herstelcode', 'nieuw wachtwoord']
+  if (velden.join('|') !== hoort.join('|')) {
+    throw new Error(`kwijt: velden zijn ${JSON.stringify(velden)}, verwacht ${JSON.stringify(hoort)}`)
+  }
+  /* De knop hoort dood te zijn tot alle drie gevuld zijn — een herstelpoging
+     met een leeg veld kost een streepje op de rem. */
+  const zetten = pagina.getByRole('button', { name: 'Nieuw wachtwoord zetten' })
+  if (!(await zetten.isDisabled())) throw new Error('kwijt: de knop staat aan met lege velden')
+  await pagina.locator('.veld input').nth(0).fill('abdelkader')
+  await pagina.locator('.veld input').nth(1).fill('ENNH9-2TCNU-X7XLB-VM45A')
+  await pagina.locator('.veld input').nth(2).fill('kort')
+  if (!(await zetten.isDisabled())) throw new Error('kwijt: de knop staat aan bij een te kort wachtwoord')
+  await pagina.locator('.veld input').nth(2).fill('eenlangwachtwoord')
+  if (await zetten.isDisabled()) throw new Error('kwijt: de knop blijft uit terwijl alles gevuld is')
+  await pagina.screenshot({ path: 'gereedschap/health-wachtwoord-kwijt.png' })
+
+  await pagina.getByRole('button', { name: 'Terug' }).click()
+  await pagina.waitForTimeout(300)
+  const kop3 = await pagina.locator('header h1').first().textContent()
+  if (kop3?.trim() !== 'BennaHealth') throw new Error('kwijt: "Terug" komt niet terug')
+
+  console.log(`wachtwoord kwijt         3 knoppen \u00b7 3 velden \u00b7 `
+    + `knop uit bij leeg en bij te kort \u00b7 Terug werkt`)
+  await uit.close()
+}
+
 /* ------------------------------------------------ meebewegen met de maat -- */
 /* De maaltijdvakken stonden op één kolom tot 560 pixels en daarna op twee, en
    daar bleef het bij: op een tablet en op een groot scherm bleven het er twee.

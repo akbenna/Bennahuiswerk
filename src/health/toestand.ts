@@ -58,6 +58,8 @@ export interface Kalibratie {
   fout: string | null
   wisFout: () => void
   aanmelden: (account: string, ww: string, nieuw: boolean) => Promise<void>
+  /** Met de eenmalige herstelcode een nieuw wachtwoord zetten. */
+  herstellen: (account: string, code: string, nieuw: string) => Promise<void>
   afmelden: () => Promise<void>
   /** Voert een wijziging uit en haalt daarna alles opnieuw op. */
   wijzig: (werk: (token: string) => Promise<unknown>) => Promise<void>
@@ -131,6 +133,26 @@ export function useKalibratie(): Kalibratie {
     }
   }, [])
 
+  /* Herstellen is aanmelden met een code in plaats van een wachtwoord, en geeft
+     net zo goed een uitslag terug in plaats van te gooien. De teller in de
+     database telt beide ingangen bij elkaar op; zou dat niet zo zijn, dan was
+     dit een omweg om de rem heen. */
+  const herstellen = useCallback(async (account: string, code: string, nieuw: string) => {
+    zetBezig(true)
+    zetFout(null)
+    try {
+      const uit = await roep('kal_ww_herstellen',
+        { p_account: account, p_code: code, p_nieuw: nieuw })
+      if (!isSessie(uit)) { zetFout(uit.fout); return }
+      try { localStorage.setItem(SLEUTEL_SESSIE, JSON.stringify(uit)) } catch { /* mag falen */ }
+      zetSessie(uit)
+    } catch (e) {
+      zetFout(e instanceof Error ? e.message : String(e))
+    } finally {
+      zetBezig(false)
+    }
+  }, [])
+
   const afmelden = useCallback(async () => {
     const t = sessie?.token
     zetSessie(null)
@@ -168,6 +190,6 @@ export function useKalibratie(): Kalibratie {
   return {
     sessie, alles, dagenkaart, geladen, bezig, fout,
     wisFout: useCallback(() => zetFout(null), []),
-    aanmelden, afmelden, wijzig, herlaad,
+    aanmelden, herstellen, afmelden, wijzig, herlaad,
   }
 }

@@ -127,6 +127,11 @@ button,input,select,textarea{font-family:inherit;font-size:1rem;color:inherit}
 /* De tijdelijke tekst had geen eigen kleur en kreeg dus die van de browser —
    op Safari lichter dan wat hier ook maar ergens staat, en niet te meten. */
 ::placeholder{color:var(--dim);opacity:1}
+/* Een knop die als een verwijzing leest. Het moet een <button> zijn en geen <a>:
+   er wordt niets genavigeerd, er klapt iets open. Een <a href="#"> zou met een
+   schermlezer een link beloven die nergens heen gaat. */
+.alsLink{background:none;border:0;padding:0;font:inherit;color:var(--k);
+  text-decoration:underline;text-underline-offset:2px;cursor:pointer}
 :focus-visible{outline:2px solid var(--k);outline-offset:2px;border-radius:6px}
 
 /* ---------------------------------------------------------------- header -- */
