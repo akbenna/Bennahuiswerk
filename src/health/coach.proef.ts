@@ -108,6 +108,63 @@ describe('voorstellen', () => {
     expect(eerste?.restEiwit).toBe(20)
   })
 
+  /* DE LAT NA HET VOORSTEL
+
+     Het scherm zette hier eerst een vlaggetje "op tempo" bij de voorstellen die
+     de eis haalden, en niets bij de rest. Dat vlaggetje was een oordeel zonder
+     maatstaf: je kon nergens zien waarvandaan, waarheen, of hoeveel. Nu rekent
+     de coach de eis opnieuw uit voor de dag zoals die eruitziet nádat je dit
+     gegeten hebt, en het scherm toont de richting. Die herberekening is de hele
+     bewering, dus die hoort hier bewezen te worden en niet in een scherm. */
+  it('rekent de lat opnieuw uit voor wat er na het voorstel overblijft', () => {
+    /* Nog 500 kcal en 60 g te gaan: de lat ligt op 0,12. */
+    const t = tekort(stand(1500, 100), 2000, 160)
+    expect(t.eis).toBeCloseTo(0.12, 5)
+    const uit = voorstellen(geschiedenis, t, { nu: NU, moment: 'tussendoor' })
+
+    const kwark = uit.find((v) => v.naam === 'Magere kwark met noten')
+    /* 20 g in 200 kcal: de lat zakt van 0,12 naar 0,10. */
+    expect(kwark?.eisNa).toBeCloseTo(0.1, 5)
+    expect(kwark!.eisNa!).toBeLessThan(t.eis!)
+
+    const brood = uit.find((v) => v.naam === 'Twee bruine boterhammen')
+    /* 50 g in 180 kcal: de lat stijgt naar 0,278 — meer dan het dubbele. Dít is
+       wat het scherm eerst verzweeg door alleen de goede gevallen te merken. */
+    expect(brood?.eisNa).toBeCloseTo(50 / 180, 5)
+    expect(brood!.eisNa!).toBeGreaterThan(t.eis!)
+  })
+
+  it('kent geen lat als het eiwit al rond is', () => {
+    const t = tekort(stand(1500, 200), 2000, 160)
+    expect(t.eis).toBeNull()
+    const uit = voorstellen(geschiedenis, t, { nu: NU, moment: 'tussendoor' })
+    expect(uit.length).toBeGreaterThan(0)
+    expect(uit.every((v) => v.eisNa === null)).toBe(true)
+  })
+
+  it('kent geen lat als er na het voorstel geen ruimte meer over is', () => {
+    /* Precies 300 kcal over, en de kwark is precies 300. Er blijft niets over
+       om nog eiwit in te stoppen, dus een eis per kcal is een deling door nul
+       en geen strenge lat. Zonder deze uitzondering zou hier Infinity staan. */
+    const t = tekort(stand(1700, 100), 2000, 160)
+    expect(t.kcalOver).toBe(300)
+    const uit = voorstellen(geschiedenis, t, { nu: NU, moment: 'tussendoor' })
+    expect(uit.map((v) => v.naam)).toEqual(['Magere kwark met noten'])
+    expect(uit[0]?.restKcal).toBe(0)
+    expect(uit[0]?.eisNa).toBeNull()
+  })
+
+  it('zet de lat op nul als het voorstel het eiwit in één keer rondmaakt', () => {
+    /* Nog 20 g te gaan en de kwark levert 40. Wat er daarna nog bij komt hoeft
+       geen eiwit meer te leveren: de lat ligt op nul. Dat is een echte waarde
+       en geen ontbrekende — daarom nul en niet null. */
+    const t = tekort(stand(1500, 140), 2000, 160)
+    expect(t.eiwitOver).toBe(20)
+    const kwark = voorstellen(geschiedenis, t, { nu: NU, moment: 'tussendoor' })
+      .find((v) => v.naam === 'Magere kwark met noten')
+    expect(kwark?.eisNa).toBe(0)
+  })
+
   it('noemt het gewoonte zodra het eiwit rond is', () => {
     const t = tekort(stand(1500, 200), 2000, 160)
     const uit = voorstellen(geschiedenis, t, { nu: NU, moment: 'tussendoor' })

@@ -30,7 +30,7 @@
  * de enige plek waar het kan zonder een tweede invoerscherm: je hebt de
  * maaltijd dan net ingevoerd, dus je weet precies wat erin zat.
  */
-import { Fragment, useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { Chip, Kaart, Keuzechip, Knop, Kop, Rij, Spin, Tussen, Uitleg, Venster } from '../onderdelen/basis'
 import { dec, dz } from '@/gedeeld/getal'
 import { kortNL } from '@/gedeeld/datum'
@@ -44,6 +44,7 @@ import {
 } from '../maaltijd'
 import { herken, leesFoto } from '../ai'
 import { lijktOpZin } from '../zoekzin'
+import { rangschik } from '../zoekvolgorde'
 import { grootsteOnzekerheid, weegRegel } from '../wegen'
 import { Bron } from '../herkomst'
 import type { Herkenning, HerkendeRegel } from '../ai'
@@ -450,6 +451,19 @@ function Zoekvangst(
   const leeg = uitslag && !uitslag.nevo.length && !uitslag.gerechten.length
     && !uitslag.eigen.length && !maaltijden.length
 
+  /* De drie gedeelde emmers tot één gerangschikte lijst. Waarom, staat bij de
+     lijst zelf en uitgebreider in `zoekvolgorde.ts`. `useMemo` omdat er bij elk
+     teken opnieuw gesorteerd wordt en de lijst tot vijftig regels telt. */
+  const gedeeld = useMemo(() => {
+    if (!uitslag) return []
+    const regels = [
+      ...uitslag.gerechten.map((g, i) => ({ soort: 'gerecht' as const, g, bron: 'gerecht' as const, naam: g.naam, plek: i })),
+      ...uitslag.nevo.map((n, i) => ({ soort: 'nevo' as const, n, bron: 'nevo' as const, naam: n.naam, plek: i })),
+      ...(uitslag.merk ?? []).map((m, i) => ({ soort: 'merk' as const, m, bron: 'merk' as const, naam: m.naam, plek: i })),
+    ]
+    return rangschik(regels, term)
+  }, [uitslag, term])
+
   return (
     <div style={{ marginTop: 10 }}>
       {loopt && <p className="klein"><Spin /> Zoeken…</p>}
@@ -506,15 +520,67 @@ function Zoekvangst(
                     opKlik={() => opKies({ soort: 'eigen', product: pr })}>+</Knop>
             </div>
           ))}
-          {uitslag.gerechten.map((g) => (
-            <div key={'g' + g.id}>
-              <Chip graad={g.status === 'validated' ? 'C' : 'D'} />
-              <span className="groei">
-                <span className="knip" style={{ fontSize: '.86rem', display: 'block' }}>{g.naam}</span>
-                <span className="mini">gerecht · {g.keuken}</span>
-              </span>
-              <Knop vol klein titel="Portie kiezen" opKlik={() => void kiesGerecht(g.id)}>+</Knop>
-            </div>
+          {/* WAAROM DEZE DRIE DOOR ELKAAR STAAN EN DE TWEE HIERBOVEN NIET
+
+              Je eigen maaltijden en je eigen producten blijven bovenaan: wie
+              'tonijn' typt bedoelt zijn eigen salade en niet de tabel. Dat is
+              een bewuste keuze en hij staat ook zo in `kal_zoeken`.
+
+              Gerechten, tabel en merk stonden daaronder in drie blokken achter
+              elkaar, en dat las als een ranglijst terwijl het de volgorde was
+              waarin de stukken ooit zijn opgeschreven. Sinds er broodjes in de
+              gerechtenbibliotheek staan viel dat op: 'kaas' gaf eerst 'Broodje
+              kaas' en de kaas zelf stond eronder.
+
+              Nu één lijst, gerangschikt op hoe goed de naam bij de vraag past.
+              De regels blijven zichzelf benoemen — 'gerecht · marokkaans',
+              'kcal per 100 g', '◈ merkproduct' — dus je ziet nog steeds wat je
+              voor je hebt. `zoekvolgorde.ts` legt de treden uit. */}
+          {gedeeld.map((x) => (
+            x.soort === 'gerecht' ? (
+              <div key={'g' + x.g.id}>
+                <Chip graad={x.g.status === 'validated' ? 'C' : 'D'} />
+                <span className="groei">
+                  <span className="knip" style={{ fontSize: '.86rem', display: 'block' }}>
+                    {x.g.naam}
+                  </span>
+                  <span className="mini">gerecht · {x.g.keuken}</span>
+                </span>
+                <Knop vol klein titel="Portie kiezen" opKlik={() => void kiesGerecht(x.g.id)}>+</Knop>
+              </div>
+            ) : x.soort === 'nevo' ? (
+              <div key={'n' + x.n.nevo_code}>
+                <Chip graad="C" />
+                <span className="groei">
+                  <span className="knip" style={{ fontSize: '.86rem', display: 'block' }}>
+                    {x.n.naam}
+                  </span>
+                  <span className="mini">{dz(x.n.kcal)} kcal per 100 g · {x.n.groep}</span>
+                </span>
+                <Knop vol klein titel="Portie kiezen"
+                      opKlik={() => void kiesNevo(x.n.nevo_code)}>+</Knop>
+              </div>
+            ) : (
+              /* Merk houdt graad D. Dat is geen minachting maar de ladder: een
+                 etiket is een opgave van de fabrikant met een wettelijke marge,
+                 geen laboratoriumbepaling. Wat het wél heeft en de tabel niet is
+                 het gewicht van de verpakking — daarom staat dat erbij. */
+              <div key={'m' + x.m.id}>
+                <Chip graad="D" />
+                <span className="groei">
+                  <span className="knip" style={{ fontSize: '.86rem', display: 'block' }}>
+                    {x.m.naam}
+                  </span>
+                  <span className="mini">
+                    <abbr className="herkomst" title="etiketwaarde van de fabrikant">◈</abbr>{' '}
+                    {x.m.merk ?? 'merkproduct'} · {dz(x.m.kcal)} kcal per 100 g
+                    {x.m.verpakking_gram != null && <> · pak van {dz(x.m.verpakking_gram)} g</>}
+                  </span>
+                </span>
+                <Knop vol klein titel="Portie kiezen"
+                      opKlik={() => opKies({ soort: 'merk', product: x.m })}>+</Knop>
+              </div>
+            )
           ))}
           {/* WAAROM DIT ERBOVEN STAAT EN NIET WEGGELATEN IS
 
@@ -531,39 +597,6 @@ function Zoekvangst(
               Niets met precies die spelling. Dit lijkt erop:
             </p>
           )}
-          {uitslag.nevo.map((n) => (
-            <div key={'n' + n.nevo_code}>
-              <Chip graad="C" />
-              <span className="groei">
-                <span className="knip" style={{ fontSize: '.86rem', display: 'block' }}>{n.naam}</span>
-                <span className="mini">{dz(n.kcal)} kcal per 100 g · {n.groep}</span>
-              </span>
-              <Knop vol klein titel="Portie kiezen" opKlik={() => void kiesNevo(n.nevo_code)}>+</Knop>
-            </div>
-          ))}
-
-          {/* Merkproducten onderaan, en met graad D. Dat is geen minachting maar
-              de ladder: een etiket is een opgave van de fabrikant met een
-              wettelijke marge, geen laboratoriumbepaling. Wat het wél heeft en de
-              tabel niet is het gewicht van de verpakking — daarom staat dat er
-              meteen bij. */}
-          {(uitslag.merk ?? []).map((m) => (
-            <div key={'m' + m.id}>
-              <Chip graad="D" />
-              <span className="groei">
-                <span className="knip" style={{ fontSize: '.86rem', display: 'block' }}>
-                  {m.naam}
-                </span>
-                <span className="mini">
-                  <abbr className="herkomst" title="etiketwaarde van de fabrikant">◈</abbr>{' '}
-                  {m.merk ?? 'merkproduct'} · {dz(m.kcal)} kcal per 100 g
-                  {m.verpakking_gram != null && <> · pak van {dz(m.verpakking_gram)} g</>}
-                </span>
-              </span>
-              <Knop vol klein titel="Portie kiezen"
-                    opKlik={() => opKies({ soort: 'merk', product: m })}>+</Knop>
-            </div>
-          ))}
         </div>
       )}
 

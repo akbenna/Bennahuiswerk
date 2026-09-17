@@ -105,6 +105,24 @@ export interface Voorstel {
   /** Hoeveel er van het tekort overblijft als je dit eet. */
   restKcal: number
   restEiwit: number
+  /**
+   * WAAR DE LAT KOMT TE LIGGEN ALS JE DIT EET
+   *
+   * `Tekort.eis` zegt hoeveel gram eiwit er per kcal nodig is in de rest van de
+   * dag — de lat. Dit is diezelfde lat, opnieuw gerekend nadat dit voorstel
+   * eraf is. Zakt hij, dan is de rest van de dag makkelijker geworden; stijgt
+   * hij, dan moet alles wat er daarna komt het goedmaken.
+   *
+   * Waarom dit hier staat en niet in het scherm wordt uitgerekend: het is de
+   * kern van waarom een voorstel in die lijst staat, en het hoort dus in de
+   * laag die daarover gaat — met een proef eraan. Het scherm toonde eerst
+   * alleen een vlaggetje "op tempo" bij de goede gevallen en niets bij de rest,
+   * en dat vroeg om uitleg die er nergens stond.
+   *
+   * Null als er geen lat is (eiwit al rond) of als er na dit voorstel geen
+   * energie meer over is om nog iets in te stoppen.
+   */
+  eisNa: number | null
 }
 
 export interface Coachvraag {
@@ -129,6 +147,26 @@ export interface Coachvraag {
  */
 function past(kcal: number, t: Tekort): boolean {
   return kcal > 0 && kcal <= t.kcalOver
+}
+
+/**
+ * De lat nadat dit voorstel eraf is. Zie `Voorstel.eisNa`.
+ *
+ * Dezelfde deling als in `tekort`, en met dezelfde twee uitzonderingen: geen
+ * eiwit meer nodig is geen lat, en geen ruimte meer over is ook geen lat — je
+ * kunt dan nergens meer eiwit in stoppen, dus een eis per kcal zegt niets.
+ *
+ * Hier stond ook nog `if (restEiwit <= 0) return 0`. Die regel kon niet fout
+ * gaan — nul gedeeld door iets positiefs is al nul — en erger: hij ving het
+ * geval af waarin `Math.max` per ongeluk zou verdwijnen. Dan zou een voorstel
+ * dat méér eiwit levert dan er nodig is een negatieve lat krijgen, en geen
+ * enkele proef zou omvallen. Weg dus; de `Math.max` draagt het nu alleen.
+ */
+function latNa(t: Tekort, kcal: number, eiwit: number): number | null {
+  if (t.eis == null) return null
+  const restKcal = t.kcalOver - kcal
+  if (restKcal <= 0) return null
+  return Math.max(0, t.eiwitOver - eiwit) / restKcal
 }
 
 export function voorstellen(regels: Regel[], t: Tekort, vraag: Coachvraag): Voorstel[] {
@@ -162,6 +200,7 @@ export function voorstellen(regels: Regel[], t: Tekort, vraag: Coachvraag): Voor
       reden,
       restKcal: Math.round(t.kcalOver - kcal),
       restEiwit: Math.round(Math.max(0, t.eiwitOver - eiwit)),
+      eisNa: latNa(t, kcal, eiwit),
     })
   }
 

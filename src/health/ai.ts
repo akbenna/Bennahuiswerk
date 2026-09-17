@@ -10,6 +10,7 @@
  */
 import { DATABASE_URL, DatabaseFout } from '@/gedeeld/db/verbinding'
 import type { Graad, IsoDatum, Moment } from '@/gedeeld/db/tabellen'
+import type { Dagtraining } from './dagverslag'
 
 export interface Foto {
   naam: string
@@ -47,6 +48,18 @@ export interface Herkenning {
   referentieobject: string | null
   model: string
   ms: number
+}
+
+/**
+ * Wat een dagverslag oplevert: dezelfde regels als bij een losse beschrijving,
+ * plus de krachttraining die erin genoemd werd.
+ *
+ * `trainingen` is optioneel in het type en nooit optioneel na `verslag()`. Dat
+ * verschil is er omdat de nu draaiende edge function het veld niet stuurt — zie
+ * daar.
+ */
+export interface Dagherkenning extends Herkenning {
+  trainingen?: Dagtraining[]
 }
 
 export interface ImportDag {
@@ -92,6 +105,26 @@ export async function importeer(
   token: string, tekst: string, fotos: Foto[] = [],
 ): Promise<ImportUitslag> {
   return (await vraag({ token, soort: 'import', tekst, fotos })) as ImportUitslag
+}
+
+/**
+ * Een heel dagverslag in één keer. Zie `dagverslag.ts` voor wat ermee gebeurt.
+ *
+ * WAT ER GEBEURT ALS DE FUNCTIE NOG NIET UITGEROLD IS
+ *
+ * `soort: 'dag'` is nieuw in `health/edge/kal-ai.ts`. De versie die er nu
+ * draait kent hem niet, en valt voor alles wat geen 'foto' of 'import' is terug
+ * op de tekstprompt. Dat is precies het gedrag dat je wilt: het eten wordt
+ * herkend en het moment komt mee zover het model het uit de woorden kan halen —
+ * het veld staat al in het oude schema. Wat ontbreekt is `trainingen`, en die
+ * komt hier als lege lijst terug.
+ *
+ * Er gaat dus niets stuk vóór de uitrol; er komt iets bij ná de uitrol. Dat is
+ * bewust zo gebouwd, want de uitrol is handwerk en het eten is waar het om gaat.
+ */
+export async function verslag(token: string, tekst: string): Promise<Dagherkenning> {
+  const uit = (await vraag({ token, soort: 'dag', tekst })) as Dagherkenning
+  return { ...uit, trainingen: uit.trainingen ?? [] }
 }
 
 /** Een bestand omzetten naar wat de functie verwacht. */

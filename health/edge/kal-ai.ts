@@ -199,6 +199,39 @@ const SCHEMA_RONDE1 = {
   required: ["onderdelen", "opmerking"],
 };
 
+/* Het dagverslag verschilt op twee punten van een losse beschrijving: het moment
+   is verplicht (de hele opzet is dat de regels vanzelf op het juiste vak
+   landen), en er kan krachttraining in staan. De rest is letterlijk hetzelfde
+   schema — vandaar de kopie en niet een tweede definitie die uit elkaar groeit. */
+const SCHEMA_DAG = {
+  ...SCHEMA_RONDE1,
+  properties: {
+    ...SCHEMA_RONDE1.properties,
+    onderdelen: {
+      ...SCHEMA_RONDE1.properties.onderdelen,
+      items: {
+        ...SCHEMA_RONDE1.properties.onderdelen.items,
+        required: [...SCHEMA_RONDE1.properties.onderdelen.items.required, "moment"],
+      },
+    },
+    trainingen: {
+      type: "array",
+      description: "Alleen krachttraining. Leeg laten bij wandelen, fietsen of hardlopen — die komen uit de telefoon.",
+      items: {
+        type: "object",
+        properties: {
+          oefening: { type: "string", description: "De oefening zoals hij genoemd wordt: bankdrukken, squat, lat pulldown." },
+          spiergroep: { type: ["string", "null"], description: "borst, rug, benen, schouders, armen, buik of romp. null als je het niet kunt bepalen." },
+          sets: { type: ["number", "null"], description: "Aantal sets. null als het niet genoemd is — nooit een gebruikelijk aantal invullen." },
+          reps: { type: ["number", "null"], description: "Herhalingen per set. null als het niet genoemd is." },
+          gewicht_kg: { type: ["number", "null"], description: "Gewicht in kilo per set. null als het niet genoemd is." },
+        },
+        required: ["oefening"],
+      },
+    },
+  },
+};
+
 const SCHEMA_RONDE2 = {
   type: "object",
   properties: {
@@ -265,6 +298,26 @@ const REGELS_GEMEEN = `1. ONTLEED SAMENGESTELDE GERECHTEN. Een tajine, een cousc
 const SYS_TEKST = `Je leest wat iemand heeft gegeten en zet het om in losse onderdelen met een portiebereik.
 
 Je werkt voor een Nederlandse arts van 51 jaar met een Marokkaanse achtergrond. Er wordt Marokkaans en Turks gekookt: tajine, harira, couscous, rfissa, msemen, baghrir, zaalouk, menemen, mercimek. Ken die gerechten en ontleed ze.
+
+${REGELS_GEMEEN}`;
+
+const SYS_DAG = `Je leest een verslag van een hele dag — iemand vertelt achter elkaar wat hij gegeten heeft en wat hij gedaan heeft — en zet dat om in losse onderdelen per maaltijdmoment.
+
+Je werkt voor een Nederlandse arts van 51 jaar met een Marokkaanse achtergrond. Er wordt Marokkaans en Turks gekookt: tajine, harira, couscous, rfissa, msemen, baghrir, zaalouk, menemen, mercimek. Ken die gerechten en ontleed ze.
+
+DE TEKST IS INGESPROKEN. Reken op spreektaal: halve zinnen, "eh", herhalingen, een verspreking die daarna wordt rechtgezet. Wordt iets teruggenomen ("nee, geen twee, één"), volg dan de correctie en niet het eerste. Spraakherkenning verhaspelt namen: "kwark" wordt "kwak", "msemen" wordt "meseme". Lees door de verhaspeling heen als de bedoeling duidelijk is, en zeg het in onzekerheid als dat niet zo is.
+
+WAT ER GEGETEN IS
+Elk onderdeel krijgt een moment, en dat veld is hier verplicht. Leid het af uit de woorden: vanochtend, bij het opstaan, als ontbijt → ontbijt. Tussen de middag, op het werk, broodje → lunch. Vanavond, warm gegeten, na het werk → diner. Tussendoor, onderweg, bij de koffie, 's avonds op de bank → tussendoor.
+
+Zegt de tekst het niet en kun je het ook niet afleiden, kies dan "onbekend". Dat is geen fout en geen slecht antwoord — het is de gebruiker die het aanwijst, en dat is beter dan een gok die er stellig uitziet. Gok nooit een moment op grond van wat mensen meestal eten.
+
+De volgorde van het verslag is een aanwijzing maar geen bewijs: mensen springen terug ("oh ja, vanochtend nog").
+
+WAT ER GEDAAN IS
+Noemt de tekst krachttraining — gewichten, sets, herhalingen, een oefening bij naam, de sportschool — zet dat dan in trainingen. Eén regel per oefening. Wat er niet staat laat je leeg; reken sets of herhalingen nooit uit en vul geen gebruikelijke waarde in.
+
+Wandelen, fietsen, hardlopen en stappen horen NIET in trainingen: die komen uit de telefoon en zouden hier dubbel geteld worden. Noemt de tekst alleen dat soort beweging, dan blijft trainingen leeg.
 
 ${REGELS_GEMEEN}`;
 
@@ -480,7 +533,12 @@ Deno.serve(async (req) => {
     }
 
     // ------------------------------------------------------- ronde 1: zien ---
-    const systeem = soort === "foto" ? SYS_FOTO : SYS_TEKST;
+    const systeem = soort === "foto" ? SYS_FOTO : soort === "dag" ? SYS_DAG : SYS_TEKST;
+    /* Een dagverslag is langer dan een losse beschrijving en levert meer regels
+       op — een gewone dag is er al gauw twaalf. Met 6000 breekt het antwoord
+       halverwege af en dat kost de hele avondmaaltijd zonder dat iemand het
+       merkt: het JSON-blok komt dan onvolledig terug en `onderdelen` is leeg. */
+    const schema = soort === "dag" ? SCHEMA_DAG : SCHEMA_RONDE1;
     const inhoud: unknown[] = [];
     if (soort === "foto") {
       for (const f of body.fotos ?? []) {
@@ -490,7 +548,8 @@ Deno.serve(async (req) => {
     } else {
       inhoud.push({ type: "text", text: String(body.tekst ?? "") });
     }
-    const r1 = await claude(key, MODEL, systeem, inhoud, SCHEMA_RONDE1, "onderdelen");
+    const r1 = await claude(key, MODEL, systeem, inhoud, schema, "onderdelen",
+                            soort === "dag" ? 12000 : 6000);
     tokensIn += r1.in; tokensUit += r1.uit;
     const onderdelen: Onderdeel[] = (r1.data as { onderdelen: Onderdeel[] }).onderdelen ?? [];
     if (!onderdelen.length) throw new Error("Ik herken hier geen voedsel in");
@@ -639,6 +698,10 @@ Past geen enkele kandidaat werkelijk, kies dan null. Een verkeerde koppeling is 
     await log(db, gebruiker, soort, MODEL, tokensIn, tokensUit, true, null);
     return json({
       regels,
+      /* Ongemoeid doorgegeven: de server heeft hier niets te rekenen of op te
+         zoeken, en wat het model niet noemde blijft leeg. Het vel laat het zien
+         en de gebruiker keurt het goed, net als bij het eten. */
+      trainingen: (r1.data as { trainingen?: unknown[] }).trainingen ?? [],
       opmerking: (r1.data as { opmerking?: string }).opmerking ?? "",
       referentieobject: (r1.data as { referentieobject?: string }).referentieobject ?? null,
       model: MODEL,

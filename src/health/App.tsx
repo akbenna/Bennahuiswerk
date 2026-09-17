@@ -24,6 +24,7 @@ import type { Onderwerp } from './vensters/Portie'
 import { InvoerVenster } from './vensters/Invoer'
 import { KoppelVenster } from './vensters/Koppelen'
 import { DagoverzichtVenster } from './vensters/Dagoverzicht'
+import { DagverslagVenster } from './vensters/Dagverslag'
 import { HoewerktVenster } from './vensters/Hoewerkt'
 import {
   AccountVenster, Aanmelden, ImportVenster, ProfielVenster,
@@ -93,7 +94,8 @@ function Postbus({ token, a }: { token: string; a: Analyse }) {
 }
 
 type Tab = (typeof TABS)[number][0]
-type VensterNaam = 'profiel' | 'import' | 'account' | 'koppelen' | 'overzicht' | 'hoewerkt' | 'leren'
+type VensterNaam = 'profiel' | 'import' | 'account' | 'koppelen' | 'overzicht'
+  | 'hoewerkt' | 'leren' | 'verslag'
 
 export function App() {
   const k = useKalibratie()
@@ -227,6 +229,7 @@ export function App() {
                 }))}
               opInvoer={zetInvoer}
               opOverzicht={() => zetVenster('overzicht')}
+              opVerslag={() => zetVenster('verslag')}
               wisRegel={(id) =>
                 void k.wijzig((t) => roep('kal_regel_wissen', { p_token: t, p_id: id }))}
             />
@@ -341,6 +344,14 @@ export function App() {
       )}
 
       {venster === 'hoewerkt' && <HoewerktVenster opSluiten={() => zetVenster(null)} />}
+
+      {venster === 'verslag' && (
+        <DagverslagVenster
+          token={k.sessie.token} datum={datum}
+          opSluiten={() => zetVenster(null)}
+          opGedaan={voegRegelsToe}
+        />
+      )}
       {venster === 'leren' && (
         <LerenVenster profiel={profiel} opSluiten={() => zetVenster(null)} />
       )}
