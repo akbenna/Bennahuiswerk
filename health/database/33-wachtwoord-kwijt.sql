@@ -74,6 +74,11 @@
 -- `kal_gebruikers` nu niet heeft, en het is een apart besluit: het betekent dat
 -- één account bij de gegevens van een ander kan. Daarom staat het hier niet in.
 --
+-- Let ook op: de lengtetoets in de twee functies hieronder staat op acht en is
+-- door bestand 39 vervangen door een aanroep van `kal_ww_klacht`. Wat hier staat
+-- is dus niet meer wat er in de database draait; bestand 39 is de nieuwste
+-- versie van `kal_ww_wijzigen` en `kal_ww_herstellen`.
+--
 -- TERUGDRAAIEN
 --
 --   drop function if exists public.kal_ww_herstellen(text, text, text);

@@ -65,6 +65,12 @@
 -- tekens. Dat is weinig; het verhogen ervan is een apart besluit, want het
 -- raakt de mensen die er al zijn.
 --
+-- Dat besluit is inmiddels genomen: bestand 39 zet de eis op twaalf tekens en
+-- toetst bovendien tegen een lijst van veelgebruikte wachtwoorden. Het bezwaar
+-- hierboven is daar opgelost door de regel alleen te laten gelden bij het
+-- zétten van een wachtwoord. `kal_aanmelden` kijkt niet naar lengte en dat moet
+-- zo blijven — wie er al is komt gewoon binnen.
+--
 -- TERUGDRAAIEN
 --
 --   drop table if exists public.kal_aanmeld_poging;

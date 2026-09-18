@@ -8,9 +8,10 @@ import { MEDICATIEGROEPEN } from '../conditie'
 import type { Conditie, Medicatiegroep } from '../conditie'
 import { dec, dz } from '@/gedeeld/getal'
 import type { Fase, Geslacht, Profiel } from '@/gedeeld/db/tabellen'
-import { roep } from '@/gedeeld/db/rpc'
+import { isSessie, roep } from '@/gedeeld/db/rpc'
 import type { NieuweDag, NieuweRegel } from '@/gedeeld/db/rpc'
 import { importeer, leesFoto } from '../ai'
+import { MINIMUM_LENGTE, wachtwoordklacht } from '../wachtwoord'
 import type { ImportDag } from '../ai'
 
 
@@ -354,11 +355,110 @@ export function AccountVenster(
         eigen database van BennaHub, los van de zorggegevens van de praktijk, en zijn alleen via
         beveiligde databasefuncties met dit wachtwoord bereikbaar.
       </p>
+      <WachtwoordWijzigen />
       <Herstelcode />
       <Rij style={{ marginTop: 14 }}>
         <Knop opKlik={opAfmelden}>Afmelden</Knop>
       </Rij>
     </Venster>
+  )
+}
+
+/**
+ * JE WACHTWOORD WIJZIGEN
+ *
+ * `kal_ww_wijzigen` bestond al sinds bestand 33 en stond zelfs getypeerd in
+ * rpc.ts, maar werd nergens aangeroepen: de enige weg naar een nieuw wachtwoord
+ * was de herstelcode. Zolang de eis acht tekens was viel dat niet op. Nu de eis
+ * twaalf is, is het een gat: wie een oud wachtwoord van acht tekens heeft komt
+ * er wel mee binnen, maar had geen enkele manier om het te vervangen. Een
+ * strengere lat zonder ladder is geen strengere lat maar een klem.
+ *
+ * Het oude wachtwoord wordt gevraagd en dat is geen formaliteit: een token ligt
+ * dertig dagen in localStorage, en wie dat steelt mag daarmee niet het slot
+ * kunnen vervangen.
+ *
+ * Alle sessies vliegen eruit, ook dit toestel. Dat doet de database al; wat hier
+ * gebeurt is het nieuwe token opvangen, want zonder dat zou je jezelf uitloggen.
+ */
+function WachtwoordWijzigen() {
+  const [open, zetOpen] = useState(false)
+  const [oud, zetOud] = useState('')
+  const [nieuw, zetNieuw] = useState('')
+  const [fout, zetFout] = useState<string | null>(null)
+  const [klaar, zetKlaar] = useState(false)
+  const [bezig, zetBezig] = useState(false)
+
+  const klacht = wachtwoordklacht(nieuw)
+  const kan = oud !== '' && nieuw !== '' && klacht === null
+
+  const wijzig = async () => {
+    zetBezig(true)
+    zetFout(null)
+    try {
+      const s = JSON.parse(localStorage.getItem('kalibratie.sessie') ?? 'null') as
+        { token?: string } | null
+      if (!s?.token) { zetFout('Je bent niet aangemeld'); return }
+      const uit = await roep('kal_ww_wijzigen', { p_token: s.token, p_oud: oud, p_nieuw: nieuw })
+      if (!isSessie(uit)) { zetFout(uit.fout); return }
+      /* Het nieuwe token moet hier opgeslagen worden: de database heeft zojuist
+         álle sessies weggegooid, dus het token in localStorage is dood. */
+      try { localStorage.setItem('kalibratie.sessie', JSON.stringify(uit)) } catch { /* mag falen */ }
+      zetOud(''); zetNieuw(''); zetKlaar(true); zetOpen(false)
+    } catch (e) {
+      zetFout(e instanceof Error ? e.message : String(e))
+    } finally {
+      zetBezig(false)
+    }
+  }
+
+  if (klaar && !open) {
+    return (
+      <p className="mini" style={{ marginTop: 14 }}>
+        Je wachtwoord is gewijzigd. Andere toestellen die nog openstonden zijn afgemeld.
+      </p>
+    )
+  }
+
+  return (
+    <div style={{ marginTop: 14 }}>
+      {!open ? (
+        <p className="mini">
+          <button type="button" className="alsLink" onClick={() => zetOpen(true)}>
+            Wachtwoord wijzigen
+          </button>
+          {` — minstens ${MINIMUM_LENGTE} tekens.`}
+        </p>
+      ) : (
+        <>
+          <label className="veld">
+            <span>je huidige wachtwoord</span>
+            <input type="password" autoComplete="current-password" value={oud}
+                   onChange={(e) => zetOud(e.target.value)} />
+          </label>
+          <label className="veld" style={{ marginTop: 10 }}>
+            <span>nieuw wachtwoord</span>
+            <input type="password" autoComplete="new-password" value={nieuw}
+                   onChange={(e) => zetNieuw(e.target.value)} />
+          </label>
+          {/* Wat er mis is staat er terwijl je typt en niet pas na een klik: een
+              eis die je pas leert kennen als je hem overtreedt is een valstrik.
+              Bij een leeg veld staat er wat er wél moet. */}
+          <p className="klein" style={{ marginTop: 8, minHeight: '1.3em' }}>
+            {bezig ? <><Spin /> Bezig…</>
+              : fout ?? (nieuw === '' ? `Minstens ${MINIMUM_LENGTE} tekens.`
+                : klacht ?? 'Dit kan ermee door.')}
+          </p>
+          <Rij>
+            <Knop vol uit={!kan || bezig} opKlik={() => void wijzig()}>Wijzigen</Knop>
+            <Knop uit={bezig}
+                  opKlik={() => { zetOpen(false); zetOud(''); zetNieuw(''); zetFout(null) }}>
+              Laat maar
+            </Knop>
+          </Rij>
+        </>
+      )}
+    </div>
   )
 }
 
@@ -462,8 +562,17 @@ export function Aanmelden(
      zoekt ernaar. */
   const [kwijt, zetKwijt] = useState(false)
   const [code, zetCode] = useState('')
+  /* AANMELDEN EN EEN WACHTWOORD ZETTEN ZIJN TWEE VERSCHILLENDE EISEN
+     Wie aanmeldt mag alles intikken: wat hij heeft is wat hij heeft, ook als dat
+     acht tekens uit 2024 zijn. De regel geldt alleen waar een wachtwoord gezet
+     wordt — bij een nieuw account en bij herstellen. Zou hij ook op de
+     aanmeldknop staan, dan sloot een strengere regel met terugwerkende kracht
+     mensen buiten uit hun eigen gegevens. */
   const kan = account.trim() !== '' && ww !== ''
-  const kanHerstel = account.trim() !== '' && code.trim() !== '' && ww.length >= 8
+  const klachtNieuw = wachtwoordklacht(ww, account.trim())
+  const kanNieuw = kan && klachtNieuw === null
+  const kanHerstel = account.trim() !== '' && code.trim() !== ''
+    && wachtwoordklacht(ww, account.trim()) === null
 
   if (kwijt) {
     return (
@@ -493,7 +602,9 @@ export function Aanmelden(
                    onChange={(e) => zetWw(e.target.value)} />
           </label>
           <p className="klein" style={{ marginTop: 10, minHeight: '1.3em' }}>
-            {bezig ? <><Spin /> Bezig…</> : fout ?? 'Minstens acht tekens.'}
+            {bezig ? <><Spin /> Bezig…</>
+              : fout ?? (ww === '' ? `Minstens ${MINIMUM_LENGTE} tekens.`
+                : wachtwoordklacht(ww, account.trim()) ?? 'Dit kan ermee door.')}
           </p>
           <Rij style={{ marginTop: 6 }}>
             <Knop vol uit={!kanHerstel || bezig}
@@ -532,15 +643,20 @@ export function Aanmelden(
                    if (e.key === 'Enter' && kan) opAanmelden(account.trim().toLowerCase(), ww, false)
                  }} />
         </label>
+        {/* De klacht staat er alleen als je er iets aan kunt doen. Bij een leeg
+            veld en tijdens het aanmelden zou hij afleiden van de echte fout, en
+            wie gewoon inlogt gaat de regel niets aan. */}
         <p className="klein" style={{ marginTop: 10, minHeight: '1.3em' }}>
-          {bezig ? <><Spin /> Bezig…</> : fout}
+          {bezig ? <><Spin /> Bezig…</> : fout ?? (ww !== '' && klachtNieuw
+            ? <span className="mini">Voor een nieuw account: {klachtNieuw.toLowerCase()}</span>
+            : null)}
         </p>
         <Rij style={{ marginTop: 6 }}>
           <Knop vol uit={!kan || bezig}
                 opKlik={() => opAanmelden(account.trim().toLowerCase(), ww, false)}>
             Aanmelden
           </Knop>
-          <Knop uit={!kan || bezig}
+          <Knop uit={!kanNieuw || bezig}
                 opKlik={() => opAanmelden(account.trim().toLowerCase(), ww, true)}>
             Nieuw account
           </Knop>

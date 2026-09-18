@@ -1722,9 +1722,25 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
   if (!(await zetten.isDisabled())) throw new Error('kwijt: de knop staat aan met lege velden')
   await pagina.locator('.veld input').nth(0).fill('abdelkader')
   await pagina.locator('.veld input').nth(1).fill('ENNH9-2TCNU-X7XLB-VM45A')
-  await pagina.locator('.veld input').nth(2).fill('kort')
-  if (!(await zetten.isDisabled())) throw new Error('kwijt: de knop staat aan bij een te kort wachtwoord')
-  await pagina.locator('.veld input').nth(2).fill('eenlangwachtwoord')
+  /* DRIE MANIEREN WAAROP EEN WACHTWOORD AFVALT, EN ALLE DRIE HOREN ZE HIER
+     De regel staat in `src/health/wachtwoord.ts` en wordt daar los getoetst.
+     Wat hier bewezen moet worden is iets anders: dat hij het scherm ook echt
+     bereikt. Een regel die alleen in een unittest bestaat houdt geen knop tegen.
+
+     `elftekens12` is het scherpst: onder de oude eis van acht kwam die erdoor.
+     Blijft de knop daarbij aan, dan draait het scherm nog op de oude regel. */
+  for (const [poging, waarom] of [
+    ['kort', 'te kort'],
+    ['elftekens12', 'elf tekens — onder de oude eis van acht kwam dit erdoor'],
+    ['wachtwoord2024', 'staat op de lijst met veelgebruikte wachtwoorden'],
+    ['qwertyuiopas', 'een rechte lijn over het toetsenbord'],
+  ]) {
+    await pagina.locator('.veld input').nth(2).fill(poging)
+    if (!(await zetten.isDisabled())) {
+      throw new Error(`kwijt: de knop staat aan bij "${poging}" (${waarom})`)
+    }
+  }
+  await pagina.locator('.veld input').nth(2).fill('zeilbootkaravaan')
   if (await zetten.isDisabled()) throw new Error('kwijt: de knop blijft uit terwijl alles gevuld is')
   await pagina.screenshot({ path: 'gereedschap/health-wachtwoord-kwijt.png' })
 
@@ -1734,7 +1750,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
   if (kop3?.trim() !== 'BennaHealth') throw new Error('kwijt: "Terug" komt niet terug')
 
   console.log(`wachtwoord kwijt         3 knoppen \u00b7 3 velden \u00b7 `
-    + `knop uit bij leeg en bij te kort \u00b7 Terug werkt`)
+    + `knop uit bij leeg en bij 4 zwakke wachtwoorden \u00b7 Terug werkt`)
   await uit.close()
 }
 
