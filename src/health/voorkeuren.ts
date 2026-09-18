@@ -49,6 +49,10 @@
  * met een vriendelijker naam.
  */
 
+import type { Eetpatroon, Voorkeuren } from '@/gedeeld/db/tabellen'
+
+export type { Eetpatroon, Voorkeuren }
+
 /**
  * De zevenentwintig groepen van NEVO, letterlijk zoals ze in `nevo_foods.groep`
  * staan.
@@ -98,7 +102,6 @@ export type Groep = typeof GROEPEN[number]
  * maken, en omdat het voor de suppletie uitmaakt: wie vis eet heeft de omega-3-
  * vraag niet.
  */
-export type Eetpatroon = 'alles' | 'pescotarisch' | 'vegetarisch' | 'veganistisch'
 
 export const PATROONNAAM: Record<Eetpatroon, string> = {
   'alles': 'Ik eet alles',
@@ -107,15 +110,6 @@ export const PATROONNAAM: Record<Eetpatroon, string> = {
   'veganistisch': 'Veganistisch',
 }
 
-export interface Voorkeuren {
-  patroon: Eetpatroon
-  /** Groepen die nooit voorgesteld worden. Verwijdert. */
-  nooit: readonly string[]
-  /** Groepen die je liever ziet. Verschuift, begrensd. */
-  liever: readonly string[]
-  /** Groepen die je liever niet ziet. Verschuift, begrensd. */
-  minder: readonly string[]
-}
 
 export const GEEN_VOORKEUR: Voorkeuren = {
   patroon: 'alles', nooit: [], liever: [], minder: [],

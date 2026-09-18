@@ -2330,6 +2330,155 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
 ${''.padEnd(27)}zonder aanwijzen: 1 van 2 — het sap blijft staan`)
 }
 
+/* ---------------------------------------------------------- wat je lust -- */
+/* DE VOORKEUREN: HET PATROON VULT DE VINKJES EN FILTERT NIET ZELF
+ *
+ * Dit vel keur je één keer in en daarna bepaalt het maandenlang wat de app je
+ * aanbiedt. Wat hier stil misgaat merk je nooit: je ziet een aangevinkt
+ * eetpatroon en een lijst die er normaal uitziet, en je hebt geen manier om te
+ * zien dat er vlees in staat.
+ *
+ * Deze proef loopt daarom tot voorbij de knop: hij onderschept
+ * `kal_profiel_zetten` en kijkt wat er werkelijk in `instellingen.voorkeuren`
+ * terechtkomt. Een vel dat de goede vinkjes toont en de verkeerde lijst opslaat
+ * valt hier om en op een schermafdruk niet.
+ *
+ * De vier gemengde groepen zijn het eigenlijke onderwerp. Ze moeten meegaan bij
+ * een eetpatroon (want ze bevatten allebei) én terug te halen zijn (want er zit
+ * ook in wat je wél lust).
+ */
+{
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: 'light' })
+
+  const bewaard = { patch: null }
+  await pagina.route('**/rest/v1/rpc/**', async (route) => {
+    const fn = route.request().url().split('/').pop()
+    if (fn === 'kal_profiel_zetten') {
+      bewaard.patch = JSON.parse(route.request().postData() ?? '{}').p_patch
+    }
+    /* De gedeelde fixture heeft `instellingen: {}`, en dan kan stap 5 hieronder
+       niet bewijzen dat de rest van die kolom blijft staan — dan toetst hij de
+       fixture en niet de app. Hier wordt hij dus gevuld, en alleen hier: de
+       olie telt mee in het model, dus dit bij alle gevallen zetten zou de
+       schermafdrukken en de gouden waarden verschuiven. */
+    const lijf = fn === 'kal_ophalen'
+      ? (() => {
+          const a = alles(28, 'afvallen')
+          return { ...a, profiel: { ...a.profiel, instellingen: {
+            olie_g: 25, olie_gewogen: false, melk_ml: 150, melk_soort: 'half',
+            conditie: { hypertensie: true },
+          } } }
+        })()
+      : {}
+    await route.fulfill({
+      status: 200, contentType: 'application/json', body: JSON.stringify(lijf),
+    })
+  })
+
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.hero', { timeout: 5000 })
+
+  process.stdout.write('wat je lust                ')
+  await naarTab(pagina, 'Profiel')
+  await pagina.getByRole('button', { name: 'Wat je lust' }).click()
+  await pagina.waitForSelector('.venster', { timeout: 5000 })
+
+  const venster = pagina.locator('.venster')
+  const tekst = async () => (await venster.innerText()).replace(/\s+/g, ' ')
+
+  /* 1. Alle zevenentwintig staan er, en er gaat niets uit voordat je iets kiest. */
+  const begin = await tekst()
+  if (!/27 van 27 groepen blijven over/.test(begin)) {
+    throw new Error(`het vel begint niet schoon: ${JSON.stringify(begin.slice(0, 200))}`)
+  }
+  if (/Deze krijg je niet voorgesteld/.test(begin)) {
+    throw new Error('er staat iets uit terwijl er nog niets gekozen is')
+  }
+
+  /* 2. Vegetarisch zet vlees én de vier gemengde groepen uit, en de vis. */
+  await venster.getByRole('button', { name: 'Vegetarisch' }).click()
+  await pagina.waitForTimeout(200)
+  const na = await tekst()
+  for (const g of ['Vlees en gevogelte', 'Vleeswaren', 'Vis, schaal- en schelpdieren',
+                   'Samengestelde gerechten', 'Soepen', 'Hartige snacks en zoutjes',
+                   'Hartig broodbeleg']) {
+    if (!na.includes(g)) throw new Error(`"${g}" staat niet in het vel`)
+  }
+  if (!/Deze krijg je niet voorgesteld/.test(na)) {
+    throw new Error('er gaat niets uit bij vegetarisch')
+  }
+  /* En ei en zuivel blijven: dat is het verschil met veganistisch. */
+  if (!/20 van 27 groepen blijven over/.test(na)) {
+    throw new Error(`de telling klopt niet na vegetarisch: `
+                    + JSON.stringify((na.match(/\d+ van 27 groepen blijven over/) ?? [])[0]))
+  }
+
+  /* 3. De gemengde groepen zeggen waaróm ze eruit gaan. Zonder die zin is het
+        een onverklaarde uitsluiting en gaat de gebruiker hem terugzetten zonder
+        te weten wat hij daarmee binnenhaalt. */
+  if (!/bevat allebei — hier staat ook wat je wél lust/.test(na)) {
+    throw new Error('de gemengde groepen leggen niets uit')
+  }
+
+  /* En geen enkele groepsnaam mag afgekapt staan: je zet een vinkje om bij iets
+     waarvan je de naam moet kunnen lezen. Drie chips ernaast maken dat krap, dus
+     dit is precies de plek waar een naam stilletjes tot "Graanproducten en m…"
+     wordt en niemand het merkt.
+
+     Gemeten en niet gelezen: `text-overflow: ellipsis` kapt af in de opmaak en
+     laat de DOM ongemoeid, dus `textContent` geeft de hele naam terug en een
+     zoektocht naar "…" vindt nooit iets. Dat wás de eerste versie van deze
+     proef en hij stond groen bij een scherm dat de namen wél afkapte. Wat het
+     wel verraadt is de meetkunde: scrollWidth groter dan clientWidth. */
+  const afgekapt = await venster.locator('.tussen > .mini').evaluateAll(
+    (els) => els.filter((e) => e.scrollWidth > e.clientWidth + 1).map((e) => e.textContent))
+  if (afgekapt.length) {
+    throw new Error(`groepsnamen staan afgekapt: ${JSON.stringify(afgekapt.slice(0, 3))}`)
+  }
+
+  await pagina.screenshot({ path: 'gereedschap/health-voorkeuren.png', fullPage: true })
+
+  /* 4. Pindakaas terughalen. Dat is de hele reden dat het patroon niet zelf
+        filtert: één tik, en Hartig broodbeleg staat er weer in. */
+  const rij = venster.locator('.tussen', { hasText: 'Hartig broodbeleg' }).first()
+  await rij.getByRole('button', { name: /Hartig broodbeleg weer voorstellen/ }).click()
+  await pagina.waitForTimeout(200)
+  const terug = await tekst()
+  if (!/21 van 27 groepen blijven over/.test(terug)) {
+    throw new Error(`terughalen telt niet mee: `
+                    + JSON.stringify((terug.match(/\d+ van 27 groepen blijven over/) ?? [])[0]))
+  }
+
+  /* 5. En dan bewaren, en kijken wat er werkelijk gaat. */
+  await venster.getByRole('button', { name: 'Bewaren' }).click()
+  await pagina.waitForTimeout(500)
+
+  const v = bewaard.patch?.instellingen?.voorkeuren
+  if (!v) throw new Error('er is geen voorkeur naar kal_profiel_zetten gegaan')
+  if (v.patroon !== 'vegetarisch') throw new Error(`patroon is ${v.patroon}`)
+  for (const g of ['Vlees en gevogelte', 'Vleeswaren', 'Vis, schaal- en schelpdieren']) {
+    if (!v.nooit.includes(g)) throw new Error(`"${g}" staat niet in nooit — er komt vlees door`)
+  }
+  if (v.nooit.includes('Hartig broodbeleg')) {
+    throw new Error('het teruggehaalde broodbeleg staat toch in nooit')
+  }
+  if (v.nooit.includes('Eieren') || v.nooit.includes('Kaas')) {
+    throw new Error('vegetarisch sluit ei of kaas uit, en dat hoort niet')
+  }
+  /* De rest van de instellingen mag niet sneuvelen: het is één jsonb-kolom, dus
+     een patch die alleen de voorkeuren stuurt gooit de olie en de melk weg. */
+  const i = bewaard.patch.instellingen
+  if (i.olie_g !== 25 || i.melk_ml !== 150 || i.conditie?.hypertensie !== true) {
+    throw new Error('de andere instellingen zijn uit de patch verdwenen: '
+                    + JSON.stringify(i))
+  }
+
+  console.log(`27 → 20 na vegetarisch → 21 na terughalen · `
+              + `${v.nooit.length} groepen bewaard, ei en kaas blijven · rest van instellingen heel`)
+  await pagina.close()
+}
+
 /* ----------------------------------------------------- de tekens op de balk -- */
 /* DE RUITEN WAREN AL VERGEVEN
  *
