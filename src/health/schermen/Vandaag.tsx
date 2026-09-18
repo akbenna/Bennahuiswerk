@@ -59,7 +59,8 @@ import { momentNu } from '../vensters/Portie'
 import { meldenNu, tekort, voorstellen } from '../coach'
 import type { Tekort } from '../coach'
 import { VENSTER_DAGEN, adviezen, teWeinigGelogd } from '../suppletie'
-import { GEEN_VOORKEUR } from '../voorkeuren'
+import { GEEN_VOORKEUR, PATROONNAAM, ietsIngesteld } from '../voorkeuren'
+import type { Voorkeuren } from '../voorkeuren'
 import { herhaalRegel } from '../herhaal'
 import { useDonker } from '../thema'
 import { WegMomenten, WegVerzadiging, WegWeging } from '../tekens'
@@ -91,6 +92,42 @@ export interface VandaagEigenschappen {
   token: string
   /** Het portievenster openen, zodat je de hoeveelheid nog kunt bijstellen. */
   opPortie: (o: Onderwerp) => void
+  /**
+   * "Dit nooit meer voorstellen", op NEVO-code. Schrijft in het profiel; de
+   * naam gaat mee zodat "Wat je lust" hem later kan tonen.
+   */
+  opWeigeren: (code: string, naam: string) => void
+  /** "Wat je lust" openen — de verwijzing bovenaan de hero. */
+  opVoorkeuren: () => void
+}
+
+/**
+ * Wat er onder de hero staat over je voorkeuren.
+ *
+ * Twee standen, en het verschil is de bedoeling. Staat er niets, dan is dit een
+ * uitnodiging: de meeste mensen weten niet dat dit bestaat. Staat er wel iets,
+ * dan is het verantwoording — je ziet in één regel waarom bepaalde dingen niet
+ * tussen de voorstellen staan, en dat is precies wat je anders voor domheid van
+ * de app aanziet.
+ *
+ * Er wordt geteld en niet opgesomd. "Vlees en gevogelte, Vleeswaren, Vis" wordt
+ * op een telefoon afgekapt, en een halve opsomming is misleidender dan een
+ * getal: je denkt dat je de hele lijst leest.
+ */
+export function voorkeurzin(v: Voorkeuren | undefined): string {
+  const x = v ?? GEEN_VOORKEUR
+  if (!ietsIngesteld(x)) {
+    return 'De voorstellen uit de tabel weten nog niet wat je lust.'
+  }
+  const delen: string[] = []
+  if (x.patroon !== 'alles') delen.push(PATROONNAAM[x.patroon].toLowerCase())
+  if (x.nooit.length) delen.push(`${x.nooit.length} groepen uit`)
+  if ((x.keukens ?? []).length) delen.push(`${(x.keukens ?? []).length} keukens uit`)
+  if ((x.nietProduct ?? []).length) {
+    delen.push(`${(x.nietProduct ?? []).length} weggeklikt`)
+  }
+  if (x.liever.length) delen.push(`${x.liever.length} liever`)
+  return `Voorstellen houden zich aan: ${delen.join(' · ')}.`
 }
 
 /**
@@ -331,6 +368,28 @@ export function Vandaag(p: VandaagEigenschappen) {
           <b>{strook.filter((x) => x.gelogd).length}×</b> gelogd
           {reeksNu > 1 && <> · <b>{reeksNu} dagen op rij</b></>}
         </div>
+
+        {/* DAT ER MAATWERK IS, HOORT OP HET STARTSCHERM TE STAAN
+
+            "Wat je lust" zit in Profiel → Instellingen, drie tikken diep. Wie
+            het niet toevallig openslaat weet niet dat het bestaat, en denkt dus
+            dat de app hem paardenrookvlees voorstelt omdat hij dom is.
+
+            Daarom staat het hier, onder de hero, en in twee standen. Heb je nog
+            niets ingesteld, dan nodigt het uit. Heb je wel iets ingesteld, dan
+            zegt het wat er geldt — dat is geen reclame meer maar verantwoording:
+            je ziet waaróm er dingen níet tussen staan.
+
+            Eén regel, geen kaart. Dit is een verwijzing en geen onderwerp; een
+            kaart zou het gewicht geven van de dingen erboven, en die gaan over
+            je dag. */}
+        <Tussen style={{ marginTop: 12 }}>
+          <span className="mini">{voorkeurzin(p.profiel.instellingen.voorkeuren)}</span>
+          <Knop klein titel="Wat je lust instellen" opKlik={p.opVoorkeuren}>
+            {ietsIngesteld(p.profiel.instellingen.voorkeuren ?? GEEN_VOORKEUR)
+              ? 'aanpassen' : 'instellen'}
+          </Knop>
+        </Tussen>
 
         <div className="macros">
           <Macro naam="Eiwit" klas="eiwit" gram={dag._eiwit} doel={a.eiwitDoel}
@@ -753,7 +812,8 @@ function Coachkaart(p: VandaagEigenschappen) {
         </p>
       )}
 
-      <UitDeTabel token={p.token} t={t} opPortie={p.opPortie} />
+      <UitDeTabel token={p.token} t={t} opPortie={p.opPortie}
+                  opWeigeren={p.opWeigeren} />
 
       <Uitleg id="coach" label="hoe deze lijst tot stand komt">
         <p>
@@ -820,8 +880,19 @@ function Coachkaart(p: VandaagEigenschappen) {
    gedraaid is, dan hoort daar geen foutmelding over te komen.
 */
 function UitDeTabel(
-  { token, t, opPortie }:
-  { token: string; t: Tekort; opPortie: (o: Onderwerp) => void },
+  { token, t, opPortie, opWeigeren }:
+  { token: string; t: Tekort; opPortie: (o: Onderwerp) => void
+    /**
+     * "Dit nooit meer." De zevenentwintig groepen zijn grof — wie geen
+     * spruitjes lust zou heel "Groente" moeten uitzetten. Dit is de fijne knop
+     * ernaast, en hij staat hier en niet in een vragenlijst: je weet het op het
+     * moment dat het voorstel voor je neus staat, en niet als iemand het je
+     * vraagt.
+     *
+     * De naam gaat mee, zodat "Wat je lust" hem later kan tonen in plaats van
+     * een kale code.
+     */
+    opWeigeren: (code: string, naam: string) => void },
 ) {
   const [lijst, zetLijst] = useState<EiwitrijkTreffer[]>([])
   const eis = t.eis
@@ -877,6 +948,12 @@ function UitDeTabel(
                   <span className="cijfer">{Math.round(x.eiwit_g)}</span> g eiwit
                 </span>
               </span>
+              {/* Alleen bij een tabelproduct: een merkproduct draagt geen
+                  NEVO-code, en zonder code valt er niets te onthouden. */}
+              {x.nevo_code && (
+                <Knop klein titel={`${x.naam} niet meer voorstellen`}
+                      opKlik={() => opWeigeren(x.nevo_code as string, x.naam)}>×</Knop>
+              )}
               <Knop klein titel="Portie kiezen" opKlik={() => void kies(x)}>＋</Knop>
             </div>
           )

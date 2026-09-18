@@ -1948,8 +1948,153 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
     return { bekeken, slecht: slecht.sort((a, b) => a.ratio - b.ratio) }
   }
 
+  /* ------------------------------------------------ tekst op een foto -----
+     WAAROM DE PROEF HIERBOVEN HIER NIET VOLDOET
+
+     `achter()` zoekt de achtergrond door de ouders omhoog te lopen. Dat werkt
+     voor een kleur en voor een verloop, en het werkt niet voor een foto: een
+     `<img>` is geen achtergrond van een ouder, dus de lus loopt er dwars
+     doorheen en komt uit bij de laag erachter. Sinds de hero een foto draagt
+     zou die proef dus groen melden op een scherm dat onleesbaar is — precies
+     het soort proef dat niets bewijst.
+
+     Voor de hero wordt daarom niet geredeneerd maar gekeken. Een schermafdruk
+     van de hero, en onder elk stukje tekst de werkelijke beeldpunten: de
+     donkerste en de lichtste die er liggen. Tegen allebei moet de tekstkleur
+     de norm halen, want waar in dat vlak een letter precies valt weet je niet.
+
+     Dat is strenger dan nodig — een letter van tien punten raakt niet elk
+     beeldpunt onder zijn regel — en dat is met opzet. De foto's rouleren per
+     dag, dus de marge moet tegen de ongelukkigste stand kunnen en niet tegen
+     de stand van vandaag. */
+  const heropixels = async (pagina, waar) => {
+    const hero = await pagina.$('.hero')
+    if (!hero) return []
+    const doos = await hero.boundingBox()
+    if (!doos) return []
+
+    const vakken = await pagina.evaluate(() => {
+      const nums = (t) => (t.match(/-?[\d.]+/g) ?? []).map(Number)
+      const uit = []
+      for (const el of document.querySelectorAll('.hero *')) {
+        if (el.closest('svg')) continue
+        const eigen = [...el.childNodes]
+          .filter((n) => n.nodeType === 3 && n.textContent.trim()).map((n) => n.textContent.trim())
+        if (!eigen.length) continue
+        const r = el.getBoundingClientRect()
+        if (r.width < 2 || r.height < 2) continue
+        const st = getComputedStyle(el)
+        if (st.visibility === 'hidden' || Number(st.opacity) < 0.5) continue
+        const k = nums(st.color)
+        if (k.length < 3) continue
+        const px = parseFloat(st.fontSize)
+        uit.push({
+          tekst: eigen.join(' ').slice(0, 44),
+          klas: (typeof el.className === 'string' ? el.className : '') || el.tagName,
+          kleur: k.slice(0, 3), px,
+          groot: px >= 24 || (px >= 18.66 && Number(st.fontWeight) >= 700),
+          doos: { x: r.x, y: r.y, w: r.width, h: r.height },
+        })
+      }
+      return uit
+    })
+
+    /* DE TEKST GAAT ERAF VOORDAT ER GEMETEN WORDT
+
+       Eerst nam deze proef het vijfde en het vijfennegentigste honderdste van de
+       helderheid binnen elk tekstvak, in de veronderstelling dat de letters
+       daarmee wegvielen. Dat was mis, en de diagnose wees het meteen aan: bij de
+       titel in het donkere thema was de tekstkleur 0,90 helder en het
+       vijfennegentigste honderdste 0,905. De proef mat dus de letters en noemde
+       dat de ondergrond, en kwam op een verhouding van 1,00 uit — tekst die
+       precies zo licht is als zichzelf.
+
+       Letters kunnen makkelijk meer dan vijf procent van hun eigen vak beslaan,
+       dus geen enkel honderdste is veilig. Nu gaat de tekst er echt af: alles in
+       de hero onzichtbaar behalve de foto en de waas, één afdruk, en dan ligt er
+       onder elk vak alleen nog ondergrond. Daarna gaat de tekst weer aan.
+
+       `visibility` en niet `display`: de vakken moeten op hun plek blijven staan,
+       anders meet ik straks op coördinaten die niet meer bestaan. */
+    /* Via de CSSOM en niet via een stijlblad: de proef draait achter de echte
+       CSP-headers, en die staat geen los `<style>` toe. `el.style.x = ...` valt
+       daar niet onder — dat is geen inline stijl in de zin van de policy. Dit
+       viel om op de proef zelf en niet op een gedachte. */
+    const verstopt = () => {
+      const uit = []
+      for (const el of document.querySelectorAll('.hero > *')) {
+        if (el.classList.contains('herofoto') || el.classList.contains('herowaas')
+            || el.classList.contains('heroglans')) continue
+        uit.push([el, el.style.visibility])
+        el.style.visibility = 'hidden'
+      }
+      window.__terug = uit
+      return uit.length
+    }
+    const weg = await pagina.evaluate(verstopt)
+    if (!weg) throw new Error(`heropixels: niets te verbergen in de hero op ${waar}`)
+    const plaat = await hero.screenshot({ type: 'png' })
+    await pagina.evaluate(() => {
+      for (const [el, v] of window.__terug ?? []) el.style.visibility = v
+      delete window.__terug
+    })
+
+    const lees = await pagina.evaluate(async ({ b64, vakken, oorsprong }) => {
+      const img = new Image()
+      img.src = 'data:image/png;base64,' + b64
+      await img.decode()
+      const c = document.createElement('canvas')
+      c.width = img.naturalWidth; c.height = img.naturalHeight
+      c.getContext('2d').drawImage(img, 0, 0)
+      const g = c.getContext('2d')
+      const f = img.naturalWidth / oorsprong.width
+      const lin = (v) => { v /= 255; return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4 }
+      const L = (r) => 0.2126 * lin(r[0]) + 0.7152 * lin(r[1]) + 0.0722 * lin(r[2])
+      const R = (a, b) => {
+        const [h, l] = L(a) > L(b) ? [L(a), L(b)] : [L(b), L(a)]
+        return (h + 0.05) / (l + 0.05)
+      }
+      const grijs = (l) => {
+        const g8 = l <= 0.0031308 ? l * 12.92 : 1.055 * l ** (1 / 2.4) - 0.055
+        const v = Math.round(Math.min(255, Math.max(0, g8 * 255)))
+        return [v, v, v]
+      }
+      const slecht = []
+      let bekeken = 0
+      for (const v of vakken) {
+        const x = Math.max(0, Math.round((v.doos.x - oorsprong.x) * f))
+        const y = Math.max(0, Math.round((v.doos.y - oorsprong.y) * f))
+        const w = Math.min(c.width - x, Math.round(v.doos.w * f))
+        const h = Math.min(c.height - y, Math.round(v.doos.h * f))
+        if (w < 1 || h < 1) continue
+        const px = g.getImageData(x, y, w, h).data
+        /* Nu de letters weg zijn telt het uiterste, en niet een honderdste: de
+           donkerste en de lichtste plek waar een letter op kan vallen. */
+        let min = 1, max = 0
+        for (let i = 0; i < px.length; i += 4) {
+          const l = L([px[i], px[i + 1], px[i + 2]])
+          if (l < min) min = l
+          if (l > max) max = l
+        }
+        bekeken++
+        const eis = v.groot ? 3 : 4.5
+        const laagste = Math.min(R(v.kleur, grijs(min)), R(v.kleur, grijs(max)))
+        if (laagste < eis) {
+          slecht.push({ tekst: v.tekst, klas: v.klas, px: Math.round(v.px), eis,
+                        ratio: Number(laagste.toFixed(2)),
+                        diag: `tekst rgb(${v.kleur}) onder ${min.toFixed(3)}..${max.toFixed(3)}` })
+        }
+      }
+      return { bekeken, slecht }
+    }, { b64: plaat.toString('base64'), vakken, oorsprong: doos })
+    if (!lees.bekeken) throw new Error(`heropixels: nul stukken tekst gemeten op ${waar}`)
+    fotoGemeten += lees.bekeken
+    return lees.slecht.map((x) => ({ ...x, waar: `${waar} (beeldpunten)` }))
+  }
+
   const gezien = []
   let bekeken = 0
+  let fotoGemeten = 0
   for (const [schema, keuze] of [['dark', null], ['light', null]]) {
     const pagina = await ctx.newPage()
     await pagina.emulateMedia({ colorScheme: schema })
@@ -1962,19 +2107,30 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
       const uit = await pagina.evaluate(meet)
       bekeken += uit.bekeken
       for (const x of uit.slecht) gezien.push({ ...x, waar: `${schema}/${tab}` })
+      /* En op de hero: de beeldpunten zelf, want daar liggen verlopen. */
+      for (const x of await heropixels(pagina, `${schema}/${tab}`)) gezien.push(x)
     }
     await pagina.close()
   }
   if (gezien.length) {
     const lijst = gezien.slice(0, 10).map(
-      (x) => `  ${x.ratio} (eis ${x.eis}) · ${x.waar} · ${x.px}px · ${x.klas} · ${JSON.stringify(x.tekst)}`)
+      (x) => `  ${x.ratio} (eis ${x.eis}) · ${x.waar} · ${x.px}px · ${x.klas} · ${JSON.stringify(x.tekst)}${x.diag ? " · " + x.diag : ""}`)
     throw new Error(`contrast: ${gezien.length} stuk(ken) tekst onder de norm\n${lijst.join('\n')}`)
   }
   /* Een proef die niets bekeek meldt ook groen. Dat is deze proef één keer
      overkomen, dus telt hij nu hoeveel tekst hij werkelijk gemeten heeft. */
   if (bekeken < 300) throw new Error(`contrast: maar ${bekeken} stukken tekst bekeken — dat klopt niet`)
+  /* Ook deze telt wat hij werkelijk gezien heeft. Verdwijnt de foto uit de
+     hero, of raakt de klasse `metfoto` zoek, dan meet dit stuk niets meer en
+     hoort dat op te vallen in plaats van stil groen te blijven. */
+  if (fotoGemeten < 40) {
+    throw new Error(`heropixels: maar ${fotoGemeten} stukken tekst op de hero gemeten — `
+                    + 'staat de hero er nog?')
+  }
   console.log(`contrast                   ${bekeken} stukken tekst, zes tabbladen, ` +
               `twee thema's — alles haalt ${NORM}`)
+  console.log(`heropixels                 ${fotoGemeten} stukken tekst op de hero, ` +
+              'gemeten aan de beeldpunten en niet aan de kleurstops')
 }
 
 /* ------------------------------------------------------- wat vult het best -- */
@@ -2488,6 +2644,104 @@ ${''.padEnd(27)}zonder aanwijzen: 1 van 2 — het sap blijft staan`)
 
   console.log(`27 → 20 na vegetarisch → 21 na terughalen · `
               + `${v.nooit.length} groepen bewaard, ei en kaas blijven · rest van instellingen heel`)
+
+  /* 6. DE KEUKENS. Ze staan er alle zes, en uitzetten komt in de patch terecht.
+        Dit is de enige indeling die een gerecht zelf draagt: de uitsluiting van
+        bestand 36 loopt over de ingrediënten en zegt niets over "ik kook nooit
+        Syrisch". */
+  /* Bewaren sluit het venster — dat is het ontwerp en niet een ongelukje, dus
+     hier gaat het gewoon weer open. Dit kostte een ronde: de vorige versie
+     zocht de chips in een venster dat er niet meer was en vond er nul, wat er
+     precies zo uitziet als "de kaart ontbreekt". */
+  await pagina.getByRole('button', { name: 'Wat je lust' }).click()
+  await pagina.waitForSelector('.venster', { timeout: 5000 })
+  const keukenchips = venster.locator('.kaart', { hasText: 'Welke keukens kook je' }).last()
+  const chips = await keukenchips.locator('button').allInnerTexts()
+  if (chips.length !== 6) throw new Error(`zes keukens verwacht, gezien: ${JSON.stringify(chips)}`)
+  await keukenchips.getByRole('button', { name: 'Syrisch' }).click()
+  await pagina.waitForTimeout(150)
+  await venster.getByRole('button', { name: 'Bewaren' }).click()
+  await pagina.waitForTimeout(400)
+  const k = bewaard.patch?.instellingen?.voorkeuren?.keukens
+  if (!k?.includes('syrisch')) {
+    throw new Error(`de uitgezette keuken staat niet in de patch: ${JSON.stringify(k)}`)
+  }
+  if (k.length !== 1) throw new Error(`er gingen meer keukens uit dan aangetikt: ${JSON.stringify(k)}`)
+  console.log(`                           zes keukens · syrisch uit komt in de patch`)
+  await pagina.close()
+}
+
+/* ------------------------------------------------- dit nooit meer, en waar -- */
+/* TWEE DINGEN DIE ELKAAR NODIG HEBBEN
+ *
+ * Het kruisje bij "Uit de tabel" schrijft meteen in het profiel — er is geen
+ * bewaarknop, want je klikt iets weg en verwacht dat het weg is. Wat daar stil
+ * mis kan gaan: de knop doet niets, of hij stuurt een patch die de rest van
+ * `instellingen` wegvaagt. Allebei merk je pas weken later.
+ *
+ * En de regel onder de hero. "Wat je lust" zit drie tikken diep in Profiel;
+ * wie het niet toevallig openslaat weet niet dat het bestaat en denkt dat de
+ * app dom is. Die regel hoort er dus te staan én ergens heen te gaan.
+ */
+{
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: 'light' })
+  const bewaard = { patch: null }
+  await pagina.route('**/rest/v1/rpc/**', async (route) => {
+    const fn = route.request().url().split('/').pop()
+    if (fn === 'kal_profiel_zetten') {
+      bewaard.patch = JSON.parse(route.request().postData() ?? '{}').p_patch
+    }
+    const lijf = fn === 'kal_ophalen'
+      ? (() => {
+          const a = alles(28, 'afvallen')
+          return { ...a, profiel: { ...a.profiel, instellingen: { olie_g: 25 } } }
+        })()
+      : fn === 'kal_eiwitrijk'
+        ? [{ nevo_code: '2731', naam: 'Cherrytomaat', portie_naam: 'handje',
+             portie_gram: 80, kcal: 24, eiwit_g: 1, herkomst: 'nevo' }]
+        : {}
+    await route.fulfill({
+      status: 200, contentType: 'application/json', body: JSON.stringify(lijf),
+    })
+  })
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.hero', { timeout: 5000 })
+
+  process.stdout.write('dit nooit meer             ')
+
+  /* 1. De regel onder de hero nodigt uit zolang er niets staat. */
+  const hero = pagina.locator('.hero').first()
+  const heroTekst = (await hero.innerText()).replace(/\s+/g, ' ')
+  if (!/weten nog niet wat je lust/.test(heroTekst)) {
+    throw new Error(`de hero verwijst niet naar de voorkeuren: ${JSON.stringify(heroTekst.slice(0, 120))}`)
+  }
+
+  /* 2. En hij gaat ergens heen. Een uitnodiging die nergens op klikt is een
+        mededeling, en dan had hij er net zo goed niet kunnen staan. */
+  await hero.getByRole('button', { name: /instellen/ }).click()
+  await pagina.waitForSelector('.venster', { timeout: 5000 })
+  if (!/Wat je lust/.test(await pagina.locator('.venster').innerText())) {
+    throw new Error('de knop onder de hero opent niet "Wat je lust"')
+  }
+  await pagina.getByRole('button', { name: /sluiten|Sluiten/ }).first().click()
+  await pagina.waitForTimeout(300)
+
+  /* 3. Het kruisje bij een tabelvoorstel. */
+  const rij = pagina.locator('.lijst > div', { hasText: 'Cherrytomaat' }).last()
+  await rij.getByRole('button', { name: /niet meer voorstellen/ }).click()
+  await pagina.waitForTimeout(500)
+  const vk = bewaard.patch?.instellingen?.voorkeuren
+  if (!vk?.nietProduct?.includes('2731')) {
+    throw new Error(`het weggeklikte product staat niet in de patch: ${JSON.stringify(vk)}`)
+  }
+  /* Eén jsonb-kolom: een patch die alleen de voorkeuren stuurt gooit de olie weg. */
+  if (bewaard.patch.instellingen.olie_g !== 25) {
+    throw new Error('het wegklikken vaagde de rest van instellingen weg: '
+                    + JSON.stringify(bewaard.patch.instellingen))
+  }
+  console.log(`regel onder de hero verwijst en opent · × schrijft `
+              + `${vk.nietProduct.length} code in het profiel · rest van instellingen heel`)
   await pagina.close()
 }
 

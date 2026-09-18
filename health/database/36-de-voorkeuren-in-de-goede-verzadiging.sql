@@ -1,7 +1,14 @@
 -- =============================================================================
 -- DE VOORKEUREN IN DE GOEDE VERZADIGING — bestand 35 raakte de verkeerde functie
 --
--- Nog niet toegepast.
+-- Toegepast 18 september 2026, en nagekeken met de controle uit blok 3:
+--
+--   kal_eiwitrijk     2736d7fcd1913f12b0c3bdaf33b5a237
+--   kal_hoeken        bda6e4088510345b98b58d73700695af
+--   kal_verzadiging   ae305ba886a359279bda7ba75bbe5e23
+--
+-- Drie regels en niet vier, en de derde is die van dit bestand. De database
+-- draait dus wat hier staat, en "Wat vult het best" houdt zich aan "Wat je lust".
 --
 -- WAT ER MIS WAS
 --
