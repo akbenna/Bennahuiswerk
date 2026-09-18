@@ -1,7 +1,15 @@
 -- =============================================================================
 -- DE NEDERLANDSE HOEK — en wat er wél en niet uit het RIVM-bestand kwam
 --
--- Nog niet toegepast.
+-- Toestand onbekend: de kop zei lang "nog niet toegepast" en dat klopte
+-- vermoedelijk niet meer. Kijk het na voordat je iets doet — het antwoord staat
+-- in de database en niet in dit bestand:
+--
+--   select count(*) from cultural_dishes where slug like 'nl-%';
+--
+-- Staat daar nul, dan is dit bestand nog te draaien. Staat er iets, dan is het
+-- gedraaid en hoort een toevoeging in een nieuw bestand: de terugdraairegel
+-- onderaan raakt alles wat aan dit patroon voldoet.
 --
 -- EERST DE VERWARRING WEG: WAAR ZIJN DE RIVM-BESTANDEN?
 --
