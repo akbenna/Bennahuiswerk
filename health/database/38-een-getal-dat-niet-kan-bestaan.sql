@@ -1,9 +1,22 @@
 -- =============================================================================
 -- EEN GETAL DAT NIET KAN BESTAAN — en waarom het bovenaan stond
 --
--- Toegepast 18 september 2026. Wat daarvan hier is nagekeken: niets — dat rust
--- op een mededeling en niet op een meting. Blok 3 hieronder maakt er een meting
--- van, en de md5 in vraag 2 is het getal dat het beslist.
+-- Toegepast 18 september 2026, en nagekeken met vraag 3 van blok 3. Die gaf
+-- precies vier regels terug, en precies de vier die moesten blijven:
+--
+--   AH Intense mintgum suikervrij   163 kcal, macro s 272
+--   Alcohol vrij bier                13 kcal, macro s  21
+--   Bubble gum                      159 kcal, macro s 260
+--   DROP Pastilles                  239 kcal, macro s 390
+--
+-- Alle vier snoep of drank met polyolen, alle vier geen fout. De zes rijen
+-- hierboven zijn weg en er is niets anders geraakt — dat is een meting en geen
+-- mededeling.
+--
+-- Wat hier nog niet onder ligt is de md5 van vraag 2. Die beantwoordt een andere
+-- vraag dan deze: niet "staan de goede rijen er nog" maar "draait de database
+-- wat er in dit bestand staat". Bij bestand 35 was dat juist het verschil tussen
+-- groen en een functie die door niets werd aangeroepen.
 --
 -- WAT ER AAN DE HAND WAS
 --
