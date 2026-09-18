@@ -1,10 +1,18 @@
 -- =============================================================================
 -- EIWITRIJK UIT DE TABEL — de tweede laag onder de coach
 --
--- Toestand onbekend: de kop zei lang "nog niet toegepast" en dat klopte
--- vermoedelijk niet meer. Dit bestand vervangt functies (`create or replace`),
--- en dat is volgens CLAUDE.md de gewone gang van zaken — opnieuw draaien mag
--- dus. Kijk wel na of wat er staat is wat je verwacht voordat je het doet.
+-- Achterhaald sinds 18 september 2026: bestand 35 heeft `kal_eiwitrijk`
+-- vervangen, zodat de functie ook leest wat er in "Wat je lust" staat. Wat hier
+-- beneden staat is de versie van daarvoor, en dit bestand is vanaf nu alleen
+-- nog de uitleg waarom de functie doet wat hij doet — niet meer de bron.
+--
+-- Draai het dus níet opnieuw: dan zet je de voorkeuren weer uit zonder dat
+-- iemand het merkt. Wat er in de database hoort te staan is de md5 die in de kop
+-- van bestand 35 staat.
+--
+-- Wat hier lang boven stond was "toestand onbekend", en dat is daarmee
+-- beantwoord. Niet door het na te zoeken maar doordat het achterhaald raakte —
+-- de vraag ging weg in plaats van dat hij een antwoord kreeg.
 --
 -- DE VRAAG
 --

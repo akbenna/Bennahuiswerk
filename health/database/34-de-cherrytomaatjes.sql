@@ -1,7 +1,8 @@
 -- =============================================================================
 -- DE CHERRYTOMAATJES — de belofte die in bestand 31 bleef staan
 --
--- Nog niet toegepast.
+-- Toegepast 18 september 2026. Nakijkvraag 3 gaf 1, 1 en 3 terug: het gerecht,
+-- het ingredient en alle drie de porties staan erin.
 --
 -- WAAROM DIT EEN EIGEN BESTAND IS EN GEEN REGEL ERBIJ IN 31
 --
