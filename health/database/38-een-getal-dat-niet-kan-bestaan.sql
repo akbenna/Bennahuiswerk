@@ -13,10 +13,16 @@
 -- hierboven zijn weg en er is niets anders geraakt — dat is een meting en geen
 -- mededeling.
 --
--- Wat hier nog niet onder ligt is de md5 van vraag 2. Die beantwoordt een andere
--- vraag dan deze: niet "staan de goede rijen er nog" maar "draait de database
--- wat er in dit bestand staat". Bij bestand 35 was dat juist het verschil tussen
--- groen en een functie die door niets werd aangeroepen.
+-- En vraag 2 is ook gedraaid. Drie regels, en alle drie gelijk aan wat de
+-- bestanden zeggen:
+--
+--   kal_eiwitrijk     da67ff29517e540dd2c2e20abf789bfa   dit bestand
+--   kal_hoeken        bda6e4088510345b98b58d73700695af   bestand 35
+--   kal_verzadiging   06d1cccc04c19755174d281a789020e8   bestand 37
+--
+-- Die vraag is een andere dan vraag 3: niet "staan de goede rijen er nog" maar
+-- "draait de database wat er in het bestand staat". Bij bestand 35 was dat juist
+-- het verschil tussen groen en een functie die door niets werd aangeroepen.
 --
 -- WAT ER AAN DE HAND WAS
 --
