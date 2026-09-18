@@ -3,11 +3,15 @@
 --
 -- Toegepast 18 september 2026.
 --
--- Wat daarvan hier is nagekeken: niets. De zeven vragen van blok 4 zijn in de
--- echte database gedraaid en hun uitkomst is nooit in dit bestand beland, dus
--- dat "toegepast" rust op een mededeling en niet op een meting. Dat verschil
--- hoort zichtbaar te blijven. Het is te herstellen zonder op iemands geheugen te
--- vertrouwen — vergelijk wat er in de database staat met wat hier staat:
+-- De zeven vragen van blok 4 zijn destijds in de echte database gedraaid en hun
+-- uitkomst is nooit in dit bestand beland. Daar stond een tijd een voorbehoud
+-- over; dat is opgelost door niet op dat geheugen te leunen maar te meten.
+--
+-- Gemeten op 18 september 2026, en de uitslag staat onderaan deze kop. Dat is
+-- ook het moment waarop bleek dat dit bestand de verkeerde `kal_verzadiging`
+-- raakte — zie verderop. `kal_eiwitrijk` en `kal_hoeken` stonden wél goed.
+--
+-- De controle zelf, voor de volgende keer:
 --
 --   select p.proname,
 --          md5(regexp_replace(regexp_replace(p.prosrc, '/\*.*?\*/', '', 'gs'),
