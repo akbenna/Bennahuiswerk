@@ -114,6 +114,24 @@ export function VoorkeurVenster(
         "Wat vult het best". Wat je zelf logt blijft gewoon doorgaan — dit gaat over
         wat de app jóú aanbiedt, niet over wat jij mag eten.
       </p>
+      {/* TWEE DINGEN DIE HIER NIET ONDER VALLEN, EN DIE HOREN ER TE STAAN
+
+          Merkproducten dragen een categorie van Open Food Facts en geen
+          NEVO-groep, en die twee woordenlijsten zijn niet betrouwbaar naar
+          elkaar te vertalen. Er kan er dus één doorheen komen — precies één,
+          want "Uit de tabel" laat hoogstens één merkregel toe.
+
+          En de coach put uit je eigen geschiedenis, waar geen groep bij staat.
+          Die kan alleen vlees voorstellen aan wie zelf vlees gelogd heeft, dus
+          dat loopt binnen zestig dagen vanzelf leeg.
+
+          Allebei staan ze er omdat een belofte die je niet helemaal waarmaakt
+          erger is dan een belofte die kleiner is. */}
+      <p className="mini" style={{ marginTop: 6 }}>
+        Twee uitzonderingen: er kan één merkproduct doorheen komen — die dragen
+        geen tabelgroep — en "Wat er nog in past" put uit je eigen geschiedenis en
+        filtert niet. Die laatste stelt alleen voor wat je zelf ooit hebt gelogd.
+      </p>
 
       <Kaart plat style={{ marginTop: 12 }}>
         <Kop>Eet je alles?</Kop>
