@@ -17,8 +17,8 @@
  */
 import { describe, expect, it } from 'vitest'
 import {
-  DUW, GEEN_VOORKEUR, GeenGroepenBekend, duwtje, ietsIngesteld, mag, pasToe,
-  patroonSluitUit, uitgesloten,
+  DUW, GEEN_VOORKEUR, GEMENGD, GROEPEN, duwtje, groepenOver, ietsIngesteld, mag,
+  pasToe, uitgesloten, voorstel,
 } from './voorkeuren'
 import type { Voorkeuren } from './voorkeuren'
 
@@ -50,24 +50,74 @@ describe('uitsluiten', () => {
     expect(mag(v({ nooit: [SAUS] }), undefined)).toBe(true)
   })
 
-  it('valt om als een eetpatroon geen groepen kent', () => {
-    /* DE BELANGRIJKSTE PROEF VAN DIT BESTAND.
+  it('kent alle zevenentwintig groepen van de tabel', () => {
+    /* Het aantal is de vingerafdruk. Klopt het niet meer, dan is er iets aan
+       nevo_foods veranderd en niet aan deze lijst — en dan hoort iemand hier te
+       kijken voordat een eetpatroon stilzwijgend de verkeerde groep uitzet. */
+    expect(GROEPEN).toHaveLength(27)
+    expect(new Set(GROEPEN).size).toBe(27)
+  })
+})
 
-       PATROON_GROEPEN is nog leeg: de echte NEVO-groepsnamen zijn hiervandaan
-       niet op te vragen. Zolang dat zo is moet "geen vlees" omvallen en niet
-       stilzwijgend niets doen. Een vinkje dat aanstaat en niets uitsluit is de
-       ene fout die deze hele module hoort te voorkomen.
-
-       Valt deze proef om, dan is PATROON_GROEPEN gevuld — en dan hoort dit geval
-       hier weg en vervangen te worden door een proef die de echte groepen
-       nakijkt. */
-    expect(() => patroonSluitUit('geen-vlees')).toThrow(GeenGroepenBekend)
-    expect(() => patroonSluitUit('veganistisch')).toThrow(GeenGroepenBekend)
+describe('voorstel', () => {
+  it('stelt niets voor bij "alles"', () => {
+    expect(voorstel('alles')).toEqual([])
   })
 
-  it('valt niet om bij "alles", want daar valt niets uit te sluiten', () => {
-    expect(patroonSluitUit('alles')).toEqual([])
-    expect(mag(GEEN_VOORKEUR, SAUS)).toBe(true)
+  it('zet bij pescotarisch het vlees uit en de vis niet', () => {
+    const uit = voorstel('pescotarisch')
+    expect(uit).toContain('Vlees en gevogelte')
+    expect(uit).toContain('Vleeswaren')
+    expect(uit).not.toContain('Vis, schaal- en schelpdieren')
+  })
+
+  it('zet bij vegetarisch de vis er ook uit, en ei en zuivel niet', () => {
+    const uit = voorstel('vegetarisch')
+    expect(uit).toContain('Vis, schaal- en schelpdieren')
+    expect(uit).not.toContain('Eieren')
+    expect(uit).not.toContain('Kaas')
+    expect(uit).not.toContain('Melk en melkproducten')
+  })
+
+  it('zet bij veganistisch ook ei, kaas en melk uit', () => {
+    const uit = voorstel('veganistisch')
+    for (const g of ['Eieren', 'Kaas', 'Melk en melkproducten', 'Gebak en koek']) {
+      expect(uit).toContain(g)
+    }
+    /* En juist niet de vervangers — dat is de groep waar een veganist het van
+       moet hebben. Die eruit gooien zou de lijst voor precies deze gebruiker
+       het armst maken. */
+    expect(uit).not.toContain('Vleesvervangers en zuivelvervangers')
+    expect(uit).not.toContain('Peulvruchten')
+    expect(uit).not.toContain('Noten en zaden')
+  })
+
+  it('neemt de vier gemengde groepen mee zodra er iets uitgaat', () => {
+    /* Samengestelde gerechten, Soepen, Hartige snacks en Hartig broodbeleg
+       bevatten allebei. Op de naam filteren is de fout uit bestand 34; ze gaan
+       dus mee uit, zichtbaar, en de gebruiker haalt terug wat hij wil. */
+    for (const p of ['pescotarisch', 'vegetarisch', 'veganistisch'] as const) {
+      for (const g of GEMENGD) expect(voorstel(p)).toContain(g)
+    }
+  })
+
+  it('noemt alleen groepen die werkelijk bestaan', () => {
+    /* DE PROEF DIE DE STILLE FOUT VANGT. Een groepsnaam die net niet klopt
+       sluit niets uit en valt nergens over — de vegetariër krijgt dan vlees. */
+    for (const p of ['pescotarisch', 'vegetarisch', 'veganistisch'] as const) {
+      for (const g of voorstel(p)) {
+        expect(GROEPEN, `"${g}" staat niet in nevo_foods.groep`).toContain(g)
+      }
+    }
+  })
+
+  it('laat genoeg over om een lijst mee te vullen', () => {
+    /* Veganistisch is het strengste patroon. Blijft daar te weinig van over,
+       dan is "Wat vult het best" voor die gebruiker leeg en lijkt de app stuk. */
+    const over = GROEPEN.filter((g) => !voorstel('veganistisch').includes(g))
+    expect(over.length).toBeGreaterThanOrEqual(12)
+    expect(over).toContain('Groente')
+    expect(over).toContain('Peulvruchten')
   })
 })
 
@@ -171,5 +221,18 @@ describe('ietsIngesteld', () => {
     expect(ietsIngesteld(v({ nooit: [SAUS] }))).toBe(true)
     expect(ietsIngesteld(v({ liever: [SAUS] }))).toBe(true)
     expect(ietsIngesteld(v({ minder: [SAUS] }))).toBe(true)
+  })
+})
+
+describe('groepenOver', () => {
+  it('telt de zevenentwintig af', () => {
+    expect(groepenOver(GEEN_VOORKEUR)).toBe(27)
+    expect(groepenOver(v({ nooit: ['Groente', 'Fruit'] }))).toBe(25)
+  })
+
+  it('telt een groep die niet bestaat niet mee', () => {
+    /* Anders zou een typefout in `nooit` het getal omlaag brengen terwijl er
+       niets uitgesloten werd — een waarschuwing die de verkeerde kant op wijst. */
+    expect(groepenOver(v({ nooit: ['Bestaat Niet'] }))).toBe(27)
   })
 })

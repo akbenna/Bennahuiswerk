@@ -40,8 +40,7 @@
  * Daarom zijn er twee mechanismen en niet één schuifje:
  *
  *   NOOIT    verwijdert. Allergie, eetpatroon, iets waar je niet aan wilt.
- *            Absoluut, en een `nooit` kan niet door iets anders overstemd
- *            worden.
+ *            Absoluut, en een `nooit` kan niet door iets anders overstemd worden.
  *   LIEVER   verschuift, begrensd. Een duwtje van hoogstens `DUW` punten op een
  *            score van honderd. Genoeg om bij gelijke geschiktheid te winnen,
  *            te weinig om iets wat aantoonbaar beter is te begraven.
@@ -51,14 +50,62 @@
  */
 
 /**
- * Wat iemand structureel niet eet.
+ * De zevenentwintig groepen van NEVO, letterlijk zoals ze in `nevo_foods.groep`
+ * staan.
  *
- * Dit is geen smaak maar een categorie: het verandert niet per dag en het kent
- * geen uitzonderingen die de app hoort te verzinnen. Daarom een aparte keuze en
- * niet drie vinkjes in de `nooit`-lijst — zo staat er één woord in het profiel
- * waar ook een suppletieregel aan kan hangen.
+ * Letterlijk is hier geen stijlkwestie. Een groepsnaam die net niet klopt sluit
+ * niets uit, valt nergens over, en levert een vegetariër een lijst met vlees —
+ * dezelfde stille fout als een verkeerde NEVO-code die gewoon de voedingswaarde
+ * van iets anders geeft. De aantallen staan erbij als vingerafdruk: wijken die
+ * af, dan is er iets veranderd aan de tabel en niet aan deze lijst.
  */
-export type Eetpatroon = 'alles' | 'geen-vlees' | 'geen-vlees-geen-vis' | 'veganistisch'
+export const GROEPEN = [
+  'Aardappelen en knolgewassen',                 //  49
+  'Alcoholische dranken',                        //  41
+  'Brood',                                       // 124
+  'Diversen',                                    //  18
+  'Eieren',                                      //  13
+  'Flesvoeding en preparaten',                   //  58
+  'Fruit',                                       // 111
+  'Gebak en koek',                               // 170
+  'Graanproducten en meelsoorten',               // 142
+  'Groente',                                     // 230
+  'Hartig broodbeleg',                           //  24
+  'Hartige sauzen',                              //  82
+  'Hartige snacks en zoutjes',                   //  72
+  'Kaas',                                        //  73
+  'Kruiden en specerijen',                       //  51
+  'Melk en melkproducten',                       // 131
+  'Niet-alcoholische dranken',                   // 112
+  'Noten en zaden',                              //  37
+  'Peulvruchten',                                //  39
+  'Samengestelde gerechten',                     //  83
+  'Soepen',                                      //  29
+  'Suiker, snoep, zoet beleg en zoete sauzen',   // 128
+  'Vetten en oliën',                             //  70
+  'Vis, schaal- en schelpdieren',                //  98
+  'Vlees en gevogelte',                          // 216
+  'Vleesvervangers en zuivelvervangers',         //  62
+  'Vleeswaren',                                  //  65
+] as const
+
+export type Groep = typeof GROEPEN[number]
+
+/**
+ * Hoe iemand zich zelf omschrijft.
+ *
+ * `pescotarisch` staat er apart omdat het een echt verschil is dat mensen zelf
+ * maken, en omdat het voor de suppletie uitmaakt: wie vis eet heeft de omega-3-
+ * vraag niet.
+ */
+export type Eetpatroon = 'alles' | 'pescotarisch' | 'vegetarisch' | 'veganistisch'
+
+export const PATROONNAAM: Record<Eetpatroon, string> = {
+  'alles': 'Ik eet alles',
+  'pescotarisch': 'Geen vlees, wel vis',
+  'vegetarisch': 'Vegetarisch',
+  'veganistisch': 'Veganistisch',
+}
 
 export interface Voorkeuren {
   patroon: Eetpatroon
@@ -83,63 +130,65 @@ export const GEEN_VOORKEUR: Voorkeuren = {
  * en haalt niets van boven naar onder. Wie een voorkeur aanzet en er niets van
  * merkt heeft er niets aan; wie hem aanzet en de lijst ziet omslaan heeft een
  * filter gekregen waar hij om een duwtje vroeg.
- *
- * Het getal staat hier één keer, zodat het te verstellen is zonder erachteraan
- * te zoeken — en zodat een proef eraan kan hangen.
  */
 export const DUW = 12
 
-/**
- * De groepen die een eetpatroon uitsluit.
- *
- * LEEG, EN DAT IS MET OPZET
- *
- * Dit hoort gevuld te worden met de groepsnamen zoals ze wérkelijk in
- * `nevo_foods.groep` staan — zevenentwintig stuks. Die zijn hiervandaan niet op
- * te vragen, en ze verzinnen is hier de duurste fout die er is: een groepsnaam
- * die niet bestaat sluit niets uit, valt nergens over, en levert een vegetariër
- * een lijst met vlees. Precies zoals een verkeerde NEVO-code gewoon de
- * voedingswaarde van iets anders geeft.
- *
- * `patroonSluitUit` valt daarom om zolang dit leeg is, in plaats van stilzwijgend
- * niets uit te sluiten. Zie `voorkeuren.proef.ts`.
- */
-export const PATROON_GROEPEN: Record<Eetpatroon, readonly string[]> = {
-  'alles': [],
-  'geen-vlees': [],
-  'geen-vlees-geen-vis': [],
-  'veganistisch': [],
-}
+/* --------------------------------------------------------------------------
+   DE VIER GEMENGDE GROEPEN
+   --------------------------------------------------------------------------
 
-export class GeenGroepenBekend extends Error {
-  constructor(patroon: Eetpatroon) {
-    super(`Voor het eetpatroon "${patroon}" staan er geen NEVO-groepen ingevuld. `
-      + 'Zie PATROON_GROEPEN in voorkeuren.ts.')
-    this.name = 'GeenGroepenBekend'
+   Vier van de zevenentwintig bevatten zowel vlees als niet-vlees, en op
+   groepsniveau is dat niet te scheiden:
+
+     Samengestelde gerechten     83   nasi met kip naast nasi zonder
+     Soepen                      29   kippensoep naast groentesoep
+     Hartige snacks en zoutjes   72   frikandel naast chips
+     Hartig broodbeleg           24   smeerpaté naast pindakaas
+
+   Op de naam filteren zou hier verleidelijk zijn en het is precies de fout die
+   in bestand 34 een gedroogde tomaat opleverde: een naam zegt wat iemand het
+   noemde, niet wat het is. "Nasi rames" bevat kip en zegt dat nergens.
+
+   Dus geen slimmigheid. Het eetpatroon zet deze vier mee uit, en je ziet dat
+   staan — zie `voorstel()` hieronder. Wie zijn pindakaas terug wil haalt het
+   vinkje weg. Dat kost een handeling en het is eerlijk; een regel die stil
+   raadt is dat niet. */
+export const GEMENGD: readonly string[] = [
+  'Samengestelde gerechten', 'Soepen', 'Hartige snacks en zoutjes', 'Hartig broodbeleg',
+]
+
+const VLEES = ['Vlees en gevogelte', 'Vleeswaren']
+const VIS = ['Vis, schaal- en schelpdieren']
+const DIERLIJK = ['Eieren', 'Kaas', 'Melk en melkproducten']
+/* Gebak en koek is bij veganistisch óók gemengd: ei en boter zitten er in het
+   merendeel in en staan niet in de naam. Zelfde afweging als hierboven. */
+const BAKSEL = ['Gebak en koek']
+
+/**
+ * Welke groepen dit patroon vóórstelt uit te zetten.
+ *
+ * VOORSTELT, EN FILTERT NIET ZELF
+ *
+ * Dit is de kern van het ontwerp. Het patroon vult de vinkjes; `nooit` bepaalt
+ * wat er werkelijk wegvalt. Daardoor staat er nooit een regel te filteren die
+ * de gebruiker niet heeft zien staan — en de vier gemengde groepen hierboven
+ * zijn een zichtbare keuze in plaats van een stille versimpeling.
+ *
+ * Wie zich veganistisch noemt en daarna Gebak en koek weer aanzet, heeft dat
+ * gedaan met het vinkje voor zich. Dat is zijn keuze en niet onze fout.
+ */
+export function voorstel(patroon: Eetpatroon): string[] {
+  switch (patroon) {
+    case 'alles': return []
+    case 'pescotarisch': return [...VLEES, ...GEMENGD]
+    case 'vegetarisch': return [...VLEES, ...VIS, ...GEMENGD]
+    case 'veganistisch': return [...VLEES, ...VIS, ...DIERLIJK, ...BAKSEL, ...GEMENGD]
   }
 }
 
-/**
- * Wat dit patroon uitsluit.
- *
- * Gooit als de lijst leeg is voor een patroon dat iets hoort uit te sluiten.
- * Stilzwijgend niets uitsluiten is hier het gevaarlijke antwoord: de gebruiker
- * ziet een aangezet vinkje en krijgt een ongefilterde lijst.
- */
-export function patroonSluitUit(patroon: Eetpatroon): readonly string[] {
-  if (patroon === 'alles') return []
-  const groepen = PATROON_GROEPEN[patroon]
-  if (!groepen.length) throw new GeenGroepenBekend(patroon)
-  return groepen
-}
-
-/**
- * Alles wat verwijderd wordt: het patroon plus wat je zelf hebt uitgezet.
- *
- * Eén verzameling, want voor wat eruit moet doet het er niet toe waaróm.
- */
+/** Alles wat verwijderd wordt. Alleen `nooit` — zie `voorstel()`. */
 export function uitgesloten(v: Voorkeuren): Set<string> {
-  return new Set([...patroonSluitUit(v.patroon), ...v.nooit])
+  return new Set(v.nooit)
 }
 
 /** Verwijderd of niet. Er is geen derde antwoord. */
@@ -199,4 +248,16 @@ export function pasToe<T extends Rangschikbaar>(regels: readonly T[], v: Voorkeu
 export function ietsIngesteld(v: Voorkeuren): boolean {
   return v.patroon !== 'alles' || v.nooit.length > 0
     || v.liever.length > 0 || v.minder.length > 0
+}
+
+/**
+ * Wat er overblijft om uit te kiezen.
+ *
+ * Het scherm waarschuwt hiermee voordat de lijst leegloopt. Zet iemand twintig
+ * van de zevenentwintig groepen uit, dan is een lege verzadigingslijst geen
+ * storing maar het gevolg — en dat hoort hij te lezen vóórdat hij hem leeg ziet.
+ */
+export function groepenOver(v: Voorkeuren): number {
+  const weg = uitgesloten(v)
+  return GROEPEN.filter((g) => !weg.has(g)).length
 }
