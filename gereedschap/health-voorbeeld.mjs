@@ -2644,6 +2644,104 @@ ${''.padEnd(27)}zonder aanwijzen: 1 van 2 — het sap blijft staan`)
 
   console.log(`27 → 20 na vegetarisch → 21 na terughalen · `
               + `${v.nooit.length} groepen bewaard, ei en kaas blijven · rest van instellingen heel`)
+
+  /* 6. DE KEUKENS. Ze staan er alle zes, en uitzetten komt in de patch terecht.
+        Dit is de enige indeling die een gerecht zelf draagt: de uitsluiting van
+        bestand 36 loopt over de ingrediënten en zegt niets over "ik kook nooit
+        Syrisch". */
+  /* Bewaren sluit het venster — dat is het ontwerp en niet een ongelukje, dus
+     hier gaat het gewoon weer open. Dit kostte een ronde: de vorige versie
+     zocht de chips in een venster dat er niet meer was en vond er nul, wat er
+     precies zo uitziet als "de kaart ontbreekt". */
+  await pagina.getByRole('button', { name: 'Wat je lust' }).click()
+  await pagina.waitForSelector('.venster', { timeout: 5000 })
+  const keukenchips = venster.locator('.kaart', { hasText: 'Welke keukens kook je' }).last()
+  const chips = await keukenchips.locator('button').allInnerTexts()
+  if (chips.length !== 6) throw new Error(`zes keukens verwacht, gezien: ${JSON.stringify(chips)}`)
+  await keukenchips.getByRole('button', { name: 'Syrisch' }).click()
+  await pagina.waitForTimeout(150)
+  await venster.getByRole('button', { name: 'Bewaren' }).click()
+  await pagina.waitForTimeout(400)
+  const k = bewaard.patch?.instellingen?.voorkeuren?.keukens
+  if (!k?.includes('syrisch')) {
+    throw new Error(`de uitgezette keuken staat niet in de patch: ${JSON.stringify(k)}`)
+  }
+  if (k.length !== 1) throw new Error(`er gingen meer keukens uit dan aangetikt: ${JSON.stringify(k)}`)
+  console.log(`                           zes keukens · syrisch uit komt in de patch`)
+  await pagina.close()
+}
+
+/* ------------------------------------------------- dit nooit meer, en waar -- */
+/* TWEE DINGEN DIE ELKAAR NODIG HEBBEN
+ *
+ * Het kruisje bij "Uit de tabel" schrijft meteen in het profiel — er is geen
+ * bewaarknop, want je klikt iets weg en verwacht dat het weg is. Wat daar stil
+ * mis kan gaan: de knop doet niets, of hij stuurt een patch die de rest van
+ * `instellingen` wegvaagt. Allebei merk je pas weken later.
+ *
+ * En de regel onder de hero. "Wat je lust" zit drie tikken diep in Profiel;
+ * wie het niet toevallig openslaat weet niet dat het bestaat en denkt dat de
+ * app dom is. Die regel hoort er dus te staan én ergens heen te gaan.
+ */
+{
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: 'light' })
+  const bewaard = { patch: null }
+  await pagina.route('**/rest/v1/rpc/**', async (route) => {
+    const fn = route.request().url().split('/').pop()
+    if (fn === 'kal_profiel_zetten') {
+      bewaard.patch = JSON.parse(route.request().postData() ?? '{}').p_patch
+    }
+    const lijf = fn === 'kal_ophalen'
+      ? (() => {
+          const a = alles(28, 'afvallen')
+          return { ...a, profiel: { ...a.profiel, instellingen: { olie_g: 25 } } }
+        })()
+      : fn === 'kal_eiwitrijk'
+        ? [{ nevo_code: '2731', naam: 'Cherrytomaat', portie_naam: 'handje',
+             portie_gram: 80, kcal: 24, eiwit_g: 1, herkomst: 'nevo' }]
+        : {}
+    await route.fulfill({
+      status: 200, contentType: 'application/json', body: JSON.stringify(lijf),
+    })
+  })
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.hero', { timeout: 5000 })
+
+  process.stdout.write('dit nooit meer             ')
+
+  /* 1. De regel onder de hero nodigt uit zolang er niets staat. */
+  const hero = pagina.locator('.hero').first()
+  const heroTekst = (await hero.innerText()).replace(/\s+/g, ' ')
+  if (!/weten nog niet wat je lust/.test(heroTekst)) {
+    throw new Error(`de hero verwijst niet naar de voorkeuren: ${JSON.stringify(heroTekst.slice(0, 120))}`)
+  }
+
+  /* 2. En hij gaat ergens heen. Een uitnodiging die nergens op klikt is een
+        mededeling, en dan had hij er net zo goed niet kunnen staan. */
+  await hero.getByRole('button', { name: /instellen/ }).click()
+  await pagina.waitForSelector('.venster', { timeout: 5000 })
+  if (!/Wat je lust/.test(await pagina.locator('.venster').innerText())) {
+    throw new Error('de knop onder de hero opent niet "Wat je lust"')
+  }
+  await pagina.getByRole('button', { name: /sluiten|Sluiten/ }).first().click()
+  await pagina.waitForTimeout(300)
+
+  /* 3. Het kruisje bij een tabelvoorstel. */
+  const rij = pagina.locator('.lijst > div', { hasText: 'Cherrytomaat' }).last()
+  await rij.getByRole('button', { name: /niet meer voorstellen/ }).click()
+  await pagina.waitForTimeout(500)
+  const vk = bewaard.patch?.instellingen?.voorkeuren
+  if (!vk?.nietProduct?.includes('2731')) {
+    throw new Error(`het weggeklikte product staat niet in de patch: ${JSON.stringify(vk)}`)
+  }
+  /* Eén jsonb-kolom: een patch die alleen de voorkeuren stuurt gooit de olie weg. */
+  if (bewaard.patch.instellingen.olie_g !== 25) {
+    throw new Error('het wegklikken vaagde de rest van instellingen weg: '
+                    + JSON.stringify(bewaard.patch.instellingen))
+  }
+  console.log(`regel onder de hero verwijst en opent · × schrijft `
+              + `${vk.nietProduct.length} code in het profiel · rest van instellingen heel`)
   await pagina.close()
 }
 

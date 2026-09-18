@@ -112,7 +112,84 @@ export const PATROONNAAM: Record<Eetpatroon, string> = {
 
 
 export const GEEN_VOORKEUR: Voorkeuren = {
-  patroon: 'alles', nooit: [], liever: [], minder: [],
+  patroon: 'alles', nooit: [], liever: [], minder: [], keukens: [], nietProduct: [],
+}
+
+/* --------------------------------------------------------------------------
+   DE TWEE FIJNERE KNOPPEN
+   -------------------------------------------------------------------------- */
+
+/**
+ * DE KEUKENS — de enige indeling die gerechten wél dragen
+ *
+ * De zevenentwintig groepen gaan over producten uit de tabel. Een gerecht draagt
+ * ze niet: `kal_verzadiging` filtert een gerecht via zijn ingrediënten, en dat
+ * is precies goed voor "geen vlees" en precies niets voor "ik kook nooit
+ * Syrisch". Daarvoor is er één veld dat een gerecht wél heeft, en het heeft maar
+ * zes waarden — de CHECK op `cultural_dishes.cuisine`.
+ *
+ * Zes en niet meer. Komt er een keuken bij in de database, dan hoort hij hier
+ * bij te komen en niet stilzwijgend te ontbreken; de proef telt ze.
+ */
+export const KEUKENS = [
+  'marokkaans', 'turks', 'syrisch', 'surinaams', 'nederlands', 'overig',
+] as const
+
+export type Keuken = typeof KEUKENS[number]
+
+export const KEUKENNAAM: Record<Keuken, string> = {
+  marokkaans: 'Marokkaans', turks: 'Turks', syrisch: 'Syrisch',
+  surinaams: 'Surinaams', nederlands: 'Nederlands', overig: 'Overig',
+}
+
+/**
+ * Hoeveel losse producten je kunt weigeren.
+ *
+ * Er moet een grens zijn: dit staat in `instellingen` als jsonb en gaat bij elke
+ * profielwijziging mee over de lijn. Tweehonderd is ruim — wie er tweehonderd
+ * heeft weggeklikt zet beter een groep uit — en het is klein genoeg om niet in
+ * de weg te lopen.
+ *
+ * Vol is niet weigeren maar doorschuiven: de oudste valt eraf. Een knop die
+ * stilletjes niets doet is erger dan een lijst die vergeet, en wie hier aan de
+ * grens zit klikt het volgende product gewoon opnieuw weg.
+ */
+export const MAX_NIET_PRODUCT = 200
+
+/** Mag er uit deze keuken een gerecht voorgesteld worden? */
+export function magKeuken(v: Voorkeuren, keuken: string | null | undefined): boolean {
+  if (!keuken) return true
+  return !(v.keukens ?? []).includes(keuken)
+}
+
+/** Mag dit product voorgesteld worden? Op NEVO-code, niet op naam. */
+export function magProduct(v: Voorkeuren, code: string | null | undefined): boolean {
+  if (!code) return true
+  return !(v.nietProduct ?? []).includes(code)
+}
+
+/**
+ * Een product weigeren. Geeft een nieuwe `Voorkeuren` terug.
+ *
+ * Twee keer hetzelfde product weigeren verandert niets — anders groeit de lijst
+ * met dubbelen en loopt hij vol met één product.
+ */
+export function weigerProduct(v: Voorkeuren, code: string): Voorkeuren {
+  const nu = v.nietProduct ?? []
+  if (nu.includes(code)) return v
+  const uit = [...nu, code]
+  return { ...v, nietProduct: uit.slice(Math.max(0, uit.length - MAX_NIET_PRODUCT)) }
+}
+
+/** Een geweigerd product weer toelaten. */
+export function laatProductToe(v: Voorkeuren, code: string): Voorkeuren {
+  return { ...v, nietProduct: (v.nietProduct ?? []).filter((c) => c !== code) }
+}
+
+/** Een keuken aan- of uitzetten. */
+export function zetKeuken(v: Voorkeuren, keuken: string, aan: boolean): Voorkeuren {
+  const nu = (v.keukens ?? []).filter((k) => k !== keuken)
+  return { ...v, keukens: aan ? nu : [...nu, keuken] }
 }
 
 /**
@@ -242,6 +319,7 @@ export function pasToe<T extends Rangschikbaar>(regels: readonly T[], v: Voorkeu
 export function ietsIngesteld(v: Voorkeuren): boolean {
   return v.patroon !== 'alles' || v.nooit.length > 0
     || v.liever.length > 0 || v.minder.length > 0
+    || (v.keukens ?? []).length > 0 || (v.nietProduct ?? []).length > 0
 }
 
 /**

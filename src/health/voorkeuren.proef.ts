@@ -17,8 +17,9 @@
  */
 import { describe, expect, it } from 'vitest'
 import {
-  DUW, GEEN_VOORKEUR, GEMENGD, GROEPEN, duwtje, groepenOver, ietsIngesteld, mag,
-  pasToe, uitgesloten, voorstel,
+  DUW, GEEN_VOORKEUR, GEMENGD, GROEPEN, KEUKENNAAM, KEUKENS, MAX_NIET_PRODUCT,
+  duwtje, groepenOver, ietsIngesteld, laatProductToe, mag, magKeuken, magProduct,
+  pasToe, uitgesloten, voorstel, weigerProduct, zetKeuken,
 } from './voorkeuren'
 import type { Voorkeuren } from './voorkeuren'
 
@@ -234,5 +235,96 @@ describe('groepenOver', () => {
     /* Anders zou een typefout in `nooit` het getal omlaag brengen terwijl er
        niets uitgesloten werd — een waarschuwing die de verkeerde kant op wijst. */
     expect(groepenOver(v({ nooit: ['Bestaat Niet'] }))).toBe(27)
+  })
+})
+
+/* ==========================================================================
+   DE TWEE FIJNERE KNOPPEN
+   ========================================================================== */
+
+describe('de keukens', () => {
+  it('kent er precies zes, en dezelfde als de database', () => {
+    /* De CHECK op `cultural_dishes.cuisine` laat deze zes toe. Komt er daar een
+       bij en hier niet, dan filtert het vel een keuken die niemand kan uitzetten
+       — en dat merkt niemand, want er komt geen fout van. */
+    expect([...KEUKENS].sort()).toEqual(
+      ['marokkaans', 'nederlands', 'overig', 'surinaams', 'syrisch', 'turks'])
+    for (const k of KEUKENS) expect(KEUKENNAAM[k].length).toBeGreaterThan(2)
+  })
+
+  it('laat alles door zolang er niets uitstaat', () => {
+    for (const k of KEUKENS) expect(magKeuken(GEEN_VOORKEUR, k)).toBe(true)
+    /* Een gerecht zonder keuken hoort niet stilzwijgend te verdwijnen. */
+    expect(magKeuken(GEEN_VOORKEUR, null)).toBe(true)
+  })
+
+  it('houdt tegen wat je uitzet, en verder niets', () => {
+    const v = zetKeuken(GEEN_VOORKEUR, 'syrisch', false)
+    expect(magKeuken(v, 'syrisch')).toBe(false)
+    expect(magKeuken(v, 'surinaams')).toBe(true)
+    /* En weer aan. */
+    expect(magKeuken(zetKeuken(v, 'syrisch', true), 'syrisch')).toBe(true)
+  })
+
+  it('zet een keuken niet twee keer uit', () => {
+    let v = zetKeuken(GEEN_VOORKEUR, 'turks', false)
+    v = zetKeuken(v, 'turks', false)
+    expect(v.keukens).toEqual(['turks'])
+  })
+
+  it('werkt op een profiel van vóór dit veld', () => {
+    /* Wie de app al gebruikte heeft `keukens` niet in zijn instellingen staan.
+       Dat hoort "niets uitgezet" te betekenen en geen storing. */
+    const oud = { patroon: 'alles', nooit: [], liever: [], minder: [] } as Voorkeuren
+    expect(magKeuken(oud, 'turks')).toBe(true)
+    expect(ietsIngesteld(oud)).toBe(false)
+  })
+})
+
+describe('een los product weigeren', () => {
+  it('weigert op code en niet op naam', () => {
+    /* Op naam zoeken is precies de fout waardoor bestand 34 bijna een gedroogde
+       tomaat van 258 kcal voor een verse aanzag. */
+    const v = weigerProduct(GEEN_VOORKEUR, '2731')
+    expect(magProduct(v, '2731')).toBe(false)
+    expect(magProduct(v, '2730')).toBe(true)
+  })
+
+  it('laat een product zonder code met rust', () => {
+    /* Een merkproduct draagt geen NEVO-code. Dat hoort door te komen en niet
+       stilzwijgend te verdwijnen. */
+    expect(magProduct(weigerProduct(GEEN_VOORKEUR, '2731'), null)).toBe(true)
+    expect(magProduct(GEEN_VOORKEUR, '')).toBe(true)
+  })
+
+  it('groeit niet van twee keer hetzelfde wegklikken', () => {
+    let v = weigerProduct(GEEN_VOORKEUR, '2731')
+    v = weigerProduct(v, '2731')
+    expect(v.nietProduct).toEqual(['2731'])
+  })
+
+  it('laat weer toe wat je terugzet', () => {
+    const v = weigerProduct(weigerProduct(GEEN_VOORKEUR, 'a'), 'b')
+    expect(laatProductToe(v, 'a').nietProduct).toEqual(['b'])
+    /* Iets terugzetten dat er niet staat verandert niets. */
+    expect(laatProductToe(v, 'z').nietProduct).toEqual(['a', 'b'])
+  })
+
+  it('loopt niet onbegrensd vol, en vergeet de oudste', () => {
+    /* Dit staat als jsonb in `instellingen` en gaat bij elke profielwijziging
+       mee over de lijn. De grens moet er dus zijn, en hij moet doorschuiven en
+       niet weigeren: een knop die stilletjes niets doet is erger. */
+    let v = GEEN_VOORKEUR
+    for (let i = 0; i < MAX_NIET_PRODUCT + 5; i++) v = weigerProduct(v, `c${i}`)
+    expect(v.nietProduct).toHaveLength(MAX_NIET_PRODUCT)
+    /* De laatste staat erin, de eerste vijf zijn eraf. */
+    expect(magProduct(v, `c${MAX_NIET_PRODUCT + 4}`)).toBe(false)
+    expect(magProduct(v, 'c0')).toBe(true)
+  })
+
+  it('telt mee voor "is er iets ingesteld"', () => {
+    expect(ietsIngesteld(GEEN_VOORKEUR)).toBe(false)
+    expect(ietsIngesteld(weigerProduct(GEEN_VOORKEUR, '2731'))).toBe(true)
+    expect(ietsIngesteld(zetKeuken(GEEN_VOORKEUR, 'turks', false))).toBe(true)
   })
 })

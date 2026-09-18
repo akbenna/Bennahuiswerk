@@ -35,7 +35,8 @@ import { useState } from 'react'
 import { Kaart, Keuzechip, Knop, Kop, Rij, Tussen, Uitleg, Venster } from '../onderdelen/basis'
 import type { Profiel } from '@/gedeeld/db/tabellen'
 import {
-  GEEN_VOORKEUR, GEMENGD, GROEPEN, PATROONNAAM, groepenOver, voorstel,
+  GEEN_VOORKEUR, GEMENGD, GROEPEN, KEUKENNAAM, KEUKENS, PATROONNAAM,
+  groepenOver, laatProductToe, magKeuken, voorstel, zetKeuken,
 } from '../voorkeuren'
 import type { Eetpatroon, Voorkeuren } from '../voorkeuren'
 
@@ -76,8 +77,17 @@ function zetStand(v: Voorkeuren, groep: string, stand: Stand): Voorkeuren {
 }
 
 export function VoorkeurVenster(
-  { profiel, opSluiten, opBewaren }:
-  { profiel: Profiel; opSluiten: () => void; opBewaren: (p: Partial<Profiel>) => void },
+  { profiel, opSluiten, opBewaren, namen = {} }:
+  { profiel: Profiel; opSluiten: () => void; opBewaren: (p: Partial<Profiel>) => void
+    /**
+     * De naam bij een weggeklikte NEVO-code, als de app hem toevallig weet.
+     *
+     * Hij wordt niet opgehaald. Een venster dat bij het openen tweehonderd
+     * codes gaat opzoeken is traag op het moment dat je hem het minst nodig
+     * hebt, en de code eronder is nog steeds een echte verwijzing. Wat de app
+     * al in beeld had, staat er met naam; de rest staat er als code.
+     */
+    namen?: Record<string, string> },
 ) {
   const [v, zetV] = useState<Voorkeuren>(profiel.instellingen.voorkeuren ?? GEEN_VOORKEUR)
 
@@ -175,6 +185,56 @@ export function VoorkeurVenster(
                 </span>
                 <Knop klein titel={`${g} weer voorstellen`}
                       opKlik={() => zetV(zetStand(v, g, 'gewoon'))}>terug</Knop>
+              </Tussen>
+            ))}
+          </div>
+        </Kaart>
+      )}
+
+      {/* DE KEUKENS — het enige wat een gerecht zélf draagt
+
+          De zevenentwintig groepen gaan over producten. Een gerecht wordt
+          gefilterd via zijn ingrediënten, en dat is precies goed voor "geen
+          vlees" en precies niets voor "ik kook nooit Syrisch". Daarvoor is dit
+          er, en het staat op het veld dat er al ligt: zes waarden, vastgelegd
+          met een CHECK in de database. */}
+      <Kaart plat style={{ marginTop: 10 }}>
+        <Kop>Welke keukens kook je?</Kop>
+        <p className="mini" style={{ marginTop: 2 }}>
+          Dit gaat over de gerechten in "Wat vult het best", niet over losse
+          producten. Zet je er een uit, dan komt daar geen gerecht meer uit.
+        </p>
+        <Rij style={{ marginTop: 8 }}>
+          {KEUKENS.map((k) => (
+            <Keuzechip key={k} aan={magKeuken(v, k)}
+                       opKlik={() => zetV(zetKeuken(v, k, !magKeuken(v, k)))}>
+              {KEUKENNAAM[k]}
+            </Keuzechip>
+          ))}
+        </Rij>
+      </Kaart>
+
+      {/* WAT JE ZELF HEBT WEGGEKLIKT
+
+          Deze lijst vult zich niet hier maar bij de voorstellen zelf, op het
+          moment dat je denkt "dit niet". Hier staat hij alleen zodat je hem
+          kunt terugdraaien — een knop die alleen wegneemt en nooit teruggeeft
+          is een knop die je niet durft te gebruiken. */}
+      {(v.nietProduct ?? []).length > 0 && (
+        <Kaart plat style={{ marginTop: 10 }}>
+          <Tussen>
+            <Kop>Producten die je hebt weggeklikt</Kop>
+            <span className="mini cijfer">{(v.nietProduct ?? []).length}</span>
+          </Tussen>
+          <p className="mini" style={{ marginTop: 2 }}>
+            Deze komen niet meer voorbij in "Uit de tabel" en "Wat vult het best".
+          </p>
+          <div style={{ marginTop: 8 }}>
+            {(v.nietProduct ?? []).map((code) => (
+              <Tussen key={code} style={{ marginTop: 6 }}>
+                <span className="mini">{namen[code] ?? `NEVO ${code}`}</span>
+                <Knop klein titel="weer voorstellen"
+                      opKlik={() => zetV(laatProductToe(v, code))}>terug</Knop>
               </Tussen>
             ))}
           </div>

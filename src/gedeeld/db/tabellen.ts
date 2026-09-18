@@ -74,6 +74,21 @@ export interface Voorkeuren {
   liever: readonly string[]
   /** Groepen die je liever niet ziet. Verschuift, begrensd. */
   minder: readonly string[]
+  /**
+   * Keukens waaruit geen gerecht voorgesteld wordt. De zes waarden van
+   * `cultural_dishes.cuisine`, niet de tabelgroepen — dit gaat over gerechten.
+   * Ontbreekt het veld, dan staat er niets uit.
+   */
+  keukens?: readonly string[]
+  /**
+   * Losse producten die je nooit meer voorgesteld wilt krijgen, op NEVO-code.
+   *
+   * De zevenentwintig groepen zijn grof: wie geen spruitjes lust moet anders
+   * heel "Groente" uitzetten. Dit is de fijne knop ernaast, en hij wordt niet
+   * ingevuld in een vragenlijst maar op het moment dat het voorstel voor je
+   * neus staat.
+   */
+  nietProduct?: readonly string[]
 }
 
 export interface Instellingen {

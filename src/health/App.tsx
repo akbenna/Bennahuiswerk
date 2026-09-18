@@ -26,6 +26,7 @@ import { KoppelVenster } from './vensters/Koppelen'
 import { DagoverzichtVenster } from './vensters/Dagoverzicht'
 import { DagverslagVenster } from './vensters/Dagverslag'
 import { VoorkeurVenster } from './vensters/Voorkeuren'
+import { GEEN_VOORKEUR, weigerProduct } from './voorkeuren'
 import { HoewerktVenster } from './vensters/Hoewerkt'
 import {
   AccountVenster, Aanmelden, ImportVenster, ProfielVenster,
@@ -103,6 +104,12 @@ export function App() {
   const [tab, zetTab] = useState<Tab>('vandaag')
   const [datum, zetDatum] = useState<IsoDatum>(vandaag())
   const [venster, zetVenster] = useState<VensterNaam | null>(null)
+  /* De namen bij weggeklikte codes, zolang deze sessie duurt. Ze worden niet
+     bewaard: de code in het profiel is de echte verwijzing, en een naam die
+     meereist zou een tweede waarheid zijn die na een NEVO-versie niet meer
+     klopt. Wat de app deze sessie in beeld had, staat met naam; de rest
+     staat als code. */
+  const [weigernamen, zetWeigernamen] = useState<Record<string, string>>({})
   const [portie, zetPortie] = useState<Onderwerp | null>(null)
   /* Het invoervel. Het moment zit in de toestand en niet in het vel zelf, omdat
      het portievenster erbovenop kan komen en daarna terug moet kunnen vallen op
@@ -229,6 +236,24 @@ export function App() {
                   p_token: t, p_datum: datum, p_patch: { [veld]: waarde },
                 }))}
               opInvoer={zetInvoer}
+              opVoorkeuren={() => zetVenster('voorkeuren')}
+              /* "Dit nooit meer." Schrijft meteen in het profiel — wachten op
+                 een bewaarknop zou betekenen dat je iets wegklikt en het bij de
+                 volgende hertekening terugziet. De naam gaat naast de code mee,
+                 zodat "Wat je lust" hem kan tonen in plaats van een NEVO-nummer. */
+              opWeigeren={(code, naam) => {
+                zetWeigernamen((n) => ({ ...n, [code]: naam }))
+                const nu = profiel.instellingen.voorkeuren ?? GEEN_VOORKEUR
+                void k.wijzig((t) => roep('kal_profiel_zetten', {
+                  p_token: t,
+                  p_patch: {
+                    instellingen: {
+                      ...profiel.instellingen,
+                      voorkeuren: weigerProduct(nu, code),
+                    },
+                  },
+                }))
+              }}
               opOverzicht={() => zetVenster('overzicht')}
               opVerslag={() => zetVenster('verslag')}
               wisRegel={(id) =>
@@ -371,7 +396,7 @@ export function App() {
           voorkeuren in wonen. Zie `Voorkeuren` in tabellen.ts. */}
       {venster === 'voorkeuren' && (
         <VoorkeurVenster
-          profiel={profiel} opSluiten={() => zetVenster(null)}
+          profiel={profiel} opSluiten={() => zetVenster(null)} namen={weigernamen}
           opBewaren={(patch) =>
             void k.wijzig((t) => roep('kal_profiel_zetten', { p_token: t, p_patch: patch }))}
         />
