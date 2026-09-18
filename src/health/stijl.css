@@ -384,6 +384,23 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
 /* `:not(.sfeer)` want het motief hoort juist ónder de inhoud te liggen; zonder
    deze uitzondering tilt de z-index hierboven het eroverheen. */
 .hero>*:not(.sfeer){position:relative;z-index:1}
+
+/* `--dim` IN DE DONKERE HERO, EN WAAROM HIJ HIER ANDERS IS
+
+   De hero legt drie verlopen over elkaar. Wat daaruit komt is lichter dan elke
+   kleurstop afzonderlijk, en daar zit een fout die er lang heeft gestaan zonder
+   dat iemand hem zag: `--dim` — de stilste kleur van de app, en juist degene die
+   de onzekerheidsbanden draagt — haalt op die opgetelde ondergrond 4,31 en niet
+   de 5,5 die je uit de stops afleidt. De eis is 4,5.
+
+   De contrastproef las tot nu toe die stops, dus hij meldde groen. Hij leest nu
+   de werkelijke beeldpunten van de hero, met de tekst eraf; zie
+   `health-voorbeeld.mjs`. Zo kwam dit boven water.
+
+   Alleen in de hero, want alleen de hero heeft dit gestapelde verloop. */
+.hero{--dim:#4F5753}
+@media (prefers-color-scheme:dark){:root:not([data-thema]) .hero{--dim:#9EAAA5}}
+:root[data-thema="donker"] .hero{--dim:#9EAAA5}
 /* HET MOTIEF OP DE HERO NEEMT DE INKTKLEUR EN NIET HET ACCENT
    De hero heeft als enige element een eigen kleur die met het uur meebeweegt:
    warm 's ochtends, groen overdag, blauwig 's avonds. Een groen motief daarop
