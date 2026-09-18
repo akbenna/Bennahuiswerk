@@ -1,7 +1,13 @@
 -- =============================================================================
 -- DE LUNCHHOEK — het broodje van de praktijk, als één ding
 --
--- Nog niet toegepast.
+-- Toegepast op 15 september 2026, na drie fouten op de echte tabellen
+-- (household_measure, category, nevo_versie) die hieronder beschreven staan.
+--
+-- NIET OPNIEUW DRAAIEN OM ER IETS AAN TOE TE VOEGEN. Alles staat op
+-- `on conflict do nothing`, dus draaien op zich is ongevaarlijk — maar de
+-- terugdraairegel onderaan staat op `slug like 'lun-%'` en die haalt intussen
+-- ook bestand 34 weg. Iets erbij hoort in een nieuw bestand.
 --
 -- DE VRAAG
 --

@@ -1,7 +1,15 @@
 -- =============================================================================
 -- DE SURINAAMSE HOEK VAN DE GERECHTENBIBLIOTHEEK
 --
--- Nog niet toegepast.
+-- Toestand onbekend: de kop zei lang "nog niet toegepast" en dat klopte
+-- vermoedelijk niet meer. Kijk het na voordat je iets doet — het antwoord staat
+-- in de database en niet in dit bestand:
+--
+--   select count(*) from cultural_dishes where slug like 'sur-%';
+--
+-- Staat daar nul, dan is dit bestand nog te draaien. Staat er iets, dan is het
+-- gedraaid en hoort een toevoeging in een nieuw bestand: de terugdraairegel
+-- onderaan raakt alles wat aan dit patroon voldoet.
 --
 -- DE VRAAG
 --

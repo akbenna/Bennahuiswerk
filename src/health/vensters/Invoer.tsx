@@ -184,7 +184,23 @@ export function InvoerVenster(p: InvoerEigenschappen) {
         <label className="ingang">
           <ActieFoto />
           <span>Foto</span>
-          <input type="file" accept="image/*" capture="environment" style={{ display: 'none' }}
+          {/* GEEN `capture`, EN DAT IS DE HELE PUNT
+
+              Hier stond `capture="environment"`. Dat attribuut is geen voorkeur
+              maar een dwang: iOS en Android slaan de keuzelijst dan over en
+              openen meteen de achtercamera. Je kon dus alleen loggen wat er op
+              dat moment vóór je stond.
+
+              Dat is de helft van hoe een foto gebruikt wordt. Je maakt een kiekje
+              van je bord en logt het 's avonds; iemand stuurt je een foto van wat
+              jullie gegeten hebben; je fotografeert een etiket in de winkel en
+              zoekt het later op. Zonder `capture` toont het toestel zijn eigen
+              keuze — fotorol, camera, bestanden — en is dat allemaal mogelijk.
+
+              Op een computer verandert er niets: een browser zonder camera-app
+              negeert `capture` en opende altijd al de bestandenkiezer. Dat is
+              ook waarom dit alleen op een telefoon te merken was. */}
+          <input type="file" accept="image/*" style={{ display: 'none' }}
                  onChange={(e) => {
                    const f = e.target.files?.[0]
                    if (f) naarBeschrijven(f)

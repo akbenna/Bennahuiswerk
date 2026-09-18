@@ -1,7 +1,10 @@
 -- =============================================================================
 -- SATURATIE EN BLOEDDRUK UIT DEZELFDE KOPPELING
 --
--- Nog niet toegepast.
+-- Toestand onbekend: de kop zei lang "nog niet toegepast" en dat klopte
+-- vermoedelijk niet meer. Dit bestand vervangt functies (`create or replace`),
+-- en dat is volgens CLAUDE.md de gewone gang van zaken — opnieuw draaien mag
+-- dus. Kijk wel na of wat er staat is wat je verwacht voordat je het doet.
 --
 -- WAT ER AL AUTOMATISCH BINNENKWAM
 --

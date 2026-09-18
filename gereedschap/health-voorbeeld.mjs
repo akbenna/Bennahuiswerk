@@ -997,9 +997,32 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
     }
     /* En de camera moet er echt een zijn. Een knop met het woord "Foto" die geen
        bestandsveld opent doet niets. */
-    const camera = await pagina.locator('.venster .ingang input[type=file]').count()
+    const veld = pagina.locator('.venster .ingang input[type=file]')
+    const camera = await veld.count()
     if (camera !== 1) throw new Error(`${naam}: ${camera} fotovelden bij de ingangen, verwacht 1`)
-    console.log(`${''.padEnd(26)} ingangen boven de balk: Foto, Beschrijven`)
+
+    /* EN HIJ MAG DE FOTOROL NIET BUITENSLUITEN
+
+       Hier stond `capture="environment"` op. Dat is geen voorkeur maar een
+       dwang: een telefoon slaat de keuzelijst dan over en opent meteen de
+       achtercamera, dus je kon alleen loggen wat op dat moment vóór je stond —
+       niet het kiekje van vanmiddag, niet de foto die iemand je stuurde, niet
+       het etiket dat je in de winkel fotografeerde.
+
+       Dit is met een schermafdruk niet te zien en op een computer ook niet te
+       merken: daar negeert de browser `capture` en opende het altijd al de
+       bestandenkiezer. Het staat er dus als eigenschap van het veld, want dat is
+       precies waar het verschil zit. */
+    if (await veld.getAttribute('capture') !== null) {
+      throw new Error(`${naam}: het fotoveld dwingt de camera af en sluit de fotorol uit`)
+    }
+    /* `accept` blijft wél staan: uit je hele fotorol alleen de foto's tonen is
+       een gunst en geen beperking. */
+    if (await veld.getAttribute('accept') !== 'image/*') {
+      throw new Error(`${naam}: het fotoveld filtert niet meer op afbeeldingen`)
+    }
+    console.log(`${''.padEnd(26)} ingangen boven de balk: Foto, Beschrijven · ` +
+                'foto uit de rol mag ook')
 
     /* Het hoort vóór de zoekresultaten te staan. Eronder zie je het pas als je
        de verkeerde weg al bent ingeslagen. */
