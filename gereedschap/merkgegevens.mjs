@@ -183,9 +183,28 @@ export function rij(p) {
 export function naarSql(producten) {
   const rijen = []
   const weg = {}
+  /* DEZELFDE STREEPJESCODE TWEE KEER LAAT DE HELE OPDRACHT OMVALLEN
+ 
+     Niet "de tweede wint" en niet "de tweede wordt genegeerd": Postgres weigert
+     de hele insert met "ON CONFLICT DO UPDATE command cannot affect row a
+     second time". Eén dubbele rij en er komt dus niets binnen.
+ 
+     Dat is geen theorie. Open Food Facts bladert over gegevens die ondertussen
+     veranderen, dus hetzelfde product kan op twee bladzijden staan; en één
+     product kan onder twee merken vallen, wat precies gebeurt bij de
+     huismerken van dezelfde winkel. `haal()` gooit alle bladzijden op één hoop
+     en `--bestand` mag meerdere bestanden aan, dus beide wegen komen hier uit.
+ 
+     De eerste wint. Dat is geen keuze tussen twee goede waarden maar tussen
+     twee keer hetzelfde product; wie ze werkelijk wil vergelijken heeft de
+     bronbestanden nog. */
+  const gezien = new Set()
   for (const p of producten) {
     const reden = bruikbaar(p)
     if (reden) { weg[reden] = (weg[reden] ?? 0) + 1; continue }
+    const code = String(p.code)
+    if (gezien.has(code)) { weg['dezelfde streepjescode al gezien'] = (weg['dezelfde streepjescode al gezien'] ?? 0) + 1; continue }
+    gezien.add(code)
     rijen.push(rij(p))
   }
   const telling = Object.entries(weg).sort((a, b) => b[1] - a[1])
@@ -334,6 +353,14 @@ const VOORBEELD = [
      Daarvoor staat de bodem van vijftig kcal er. */
   { code: '8', product_name_nl: 'Witte champignons gesneden', brands: 'Lidl', product_quantity: 250,
     nutriments: { 'energy-kcal_100g': 15, proteins_100g: 0.5, fat_100g: 0, carbohydrates_100g: 1, fiber_100g: 2 } },
+  /* Dezelfde roomboter nog een keer, met een andere naam. Zo komt het binnen:
+     Open Food Facts bladert over gegevens die ondertussen veranderen, en één
+     product kan onder twee huismerken van dezelfde winkel vallen. Twee rijen
+     met dezelfde streepjescode laten de héle insert omvallen — niet de rij, de
+     opdracht. */
+  { code: '20123456', product_name_nl: 'Roomboter ongezouten', brands: 'Milbona',
+    product_quantity: 250, serving_size: '10 g',
+    nutriments: { 'energy-kcal_100g': 737, proteins_100g: 0.6, fat_100g: 82, carbohydrates_100g: 0.6 } },
 ]
 
 function proef() {
@@ -359,13 +386,14 @@ function proef() {
   eis(q(null) === 'null::text' && q('') === 'null::text', 'leeg wordt een null mét type')
 
   const sql = naarSql(VOORBEELD)
-  /* Veertien producten, zes bruikbaar. Die verhouding staat er met opzet in: valt
-     de zeef ooit weg, dan komen er veertien doorheen en gaat deze proef om. */
-  eis(/14 producten bekeken, 6 bruikbaar/.test(sql), 'zes van de veertien komen erdoor')
+  /* Vijftien producten, zes bruikbaar. Die verhouding staat er met opzet in: valt
+     de zeef ooit weg, dan komen er vijftien doorheen en gaat deze proef om. */
+  eis(/15 producten bekeken, 6 bruikbaar/.test(sql), 'zes van de vijftien komen erdoor')
   for (const [reden, n] of [['geen naam', 1], ['energie buiten bereik', 1],
                             ['geen energie per 100 g', 1], ['geen streepjescode', 1],
                             ['naam is een etiketafdruk', 3],
-                            ["energie klopt niet met de macro's", 1]]) {
+                            ["energie klopt niet met de macro's", 1],
+                            ['dezelfde streepjescode al gezien', 1]]) {
     eis(new RegExp(`${n}  ${reden}`).test(sql), `weggelaten wordt geteld: ${n}× ${reden}`)
   }
   /* En de drie die alleen op hun naam sneuvelen, sneuvelen ook echt: een telling
@@ -391,6 +419,17 @@ function proef() {
      uitvoeren afkeurt. Hij hoort nergens meer in de uitvoer te staan. */
   eis(!/,\s*null\s*[,)]/.test(sql), 'er staat nergens een null zonder type')
 
+  /* DE DUBBELE STREEPJESCODE, EN WAAROM DIT ZO STRENG STAAT
+     Postgres weigert bij twee gelijke codes in één insert de hele opdracht met
+     "ON CONFLICT DO UPDATE command cannot affect row a second time". Eén dubbele
+     rij en er komt dus niets binnen — niet één rij minder, alles. Hier wordt
+     geteld hoe vaak `'20123456'` in de waardenlijst staat: precies één keer. */
+  const keer = (sql.match(/'20123456'/g) ?? []).length
+  eis(keer === 1, `de dubbele streepjescode staat er één keer in, niet ${keer}`)
+  /* En het is de eerste die blijft: de tweede heette anders. */
+  eis(sql.includes("'Roomboter'") && !sql.includes('Roomboter ongezouten'),
+      'bij een dubbele code wint de eerste')
+
   const leeg = naarSql([])
   eis(leeg.includes('Er valt niets in te voeren'), 'een lege oogst zegt dat, in plaats van kale SQL')
 }
@@ -405,9 +444,30 @@ const arg = (naam, standaard) => {
 if (process.argv.includes('--proef')) {
   proef()
 } else if (process.argv.includes('--bestand')) {
+  /* Meer dan één bestand tegelijk, want zo komt het binnen: een merk heeft
+     meerdere bladzijden en een winkel meerdere huismerken. Alles achter
+     `--bestand` tot het volgende streepje telt mee, en het wordt één SQL —
+     dubbele streepjescodes vallen er in `naarSql` vanzelf uit, en dat moet
+     ook, want anders weigert Postgres de hele insert. */
   const { readFileSync } = await import('node:fs')
-  const d = JSON.parse(readFileSync(arg('--bestand'), 'utf8'))
-  process.stdout.write(naarSql(d.products ?? d))
+  const i = process.argv.indexOf('--bestand')
+  const paden = process.argv.slice(i + 1).filter((a) => !a.startsWith('--'))
+  if (!paden.length) {
+    console.error('Geef minstens één bestand op: --bestand a.json b.json')
+    process.exit(1)
+  }
+  const alles = []
+  for (const pad of paden) {
+    const d = JSON.parse(readFileSync(pad, 'utf8'))
+    const uit = d.products ?? d
+    if (!Array.isArray(uit)) {
+      console.error(`${pad} bevat geen lijst producten.`)
+      process.exit(1)
+    }
+    console.error(`  ${pad}: ${uit.length} producten`)
+    alles.push(...uit)
+  }
+  process.stdout.write(naarSql(alles))
 } else {
   const merk = arg('--merk')
   if (!merk) {
