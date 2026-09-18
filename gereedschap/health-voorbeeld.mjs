@@ -605,6 +605,7 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
       const vakken = waar('De dag in vier momenten')
       const past = waar('Wat er nog in past')
       const vult = waar('Wat vult het best')
+      const ontbreekt = waar('Wat ontbreekt er')
       const bew = waar('Beweging en slaap')
       if (hero !== 0) throw new Error(`${stam}: de hero staat niet bovenaan — ${JSON.stringify(rij)}`)
       if (knop !== 1) {
@@ -631,8 +632,19 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
         throw new Error(`${stam}: "Wat vult het best" staat niet onder de coachkaart — ` +
                         JSON.stringify(rij))
       }
+      /* "Wat ontbreekt er" sluit de rij van drie: eerst wat er nog in past, dan
+         wat het best vult, dan wat er structureel buiten beeld blijft. Die derde
+         staat er onder dezelfde voorwaarde als de tweede — zonder doel is er nog
+         geen geschiedenis om iets over te zeggen. */
+      if (ontbreekt >= 0 && ontbreekt !== vult + 1) {
+        throw new Error(`${stam}: "Wat ontbreekt er" staat niet onder "Wat vult het best" — ` +
+                        JSON.stringify(rij))
+      }
       if (bew < 0) throw new Error(`${stam}: "Beweging en slaap" ontbreekt — ${JSON.stringify(rij)}`)
-      if (bew !== (past >= 0 ? 5 : 3)) {
+      /* Direct na de laatste van de drie, en niet op een vast nummer: dat
+         laatste hield geen stand zodra er een kaart bij kwam, terwijl de eis
+         dezelfde bleef. */
+      if (bew !== Math.max(vakken, past, vult, ontbreekt) + 1) {
         throw new Error(`${stam}: "Beweging en slaap" staat niet direct daaronder — ` +
                         JSON.stringify(rij))
       }
@@ -2328,6 +2340,274 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
 
   console.log(`${eerste}
 ${''.padEnd(27)}zonder aanwijzen: 1 van 2 — het sap blijft staan`)
+}
+
+/* ---------------------------------------------------------- wat je lust -- */
+/* DE VOORKEUREN: HET PATROON VULT DE VINKJES EN FILTERT NIET ZELF
+ *
+ * Dit vel keur je één keer in en daarna bepaalt het maandenlang wat de app je
+ * aanbiedt. Wat hier stil misgaat merk je nooit: je ziet een aangevinkt
+ * eetpatroon en een lijst die er normaal uitziet, en je hebt geen manier om te
+ * zien dat er vlees in staat.
+ *
+ * Deze proef loopt daarom tot voorbij de knop: hij onderschept
+ * `kal_profiel_zetten` en kijkt wat er werkelijk in `instellingen.voorkeuren`
+ * terechtkomt. Een vel dat de goede vinkjes toont en de verkeerde lijst opslaat
+ * valt hier om en op een schermafdruk niet.
+ *
+ * De vier gemengde groepen zijn het eigenlijke onderwerp. Ze moeten meegaan bij
+ * een eetpatroon (want ze bevatten allebei) én terug te halen zijn (want er zit
+ * ook in wat je wél lust).
+ */
+{
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: 'light' })
+
+  const bewaard = { patch: null }
+  await pagina.route('**/rest/v1/rpc/**', async (route) => {
+    const fn = route.request().url().split('/').pop()
+    if (fn === 'kal_profiel_zetten') {
+      bewaard.patch = JSON.parse(route.request().postData() ?? '{}').p_patch
+    }
+    /* De gedeelde fixture heeft `instellingen: {}`, en dan kan stap 5 hieronder
+       niet bewijzen dat de rest van die kolom blijft staan — dan toetst hij de
+       fixture en niet de app. Hier wordt hij dus gevuld, en alleen hier: de
+       olie telt mee in het model, dus dit bij alle gevallen zetten zou de
+       schermafdrukken en de gouden waarden verschuiven. */
+    const lijf = fn === 'kal_ophalen'
+      ? (() => {
+          const a = alles(28, 'afvallen')
+          return { ...a, profiel: { ...a.profiel, instellingen: {
+            olie_g: 25, olie_gewogen: false, melk_ml: 150, melk_soort: 'half',
+            conditie: { hypertensie: true },
+          } } }
+        })()
+      : {}
+    await route.fulfill({
+      status: 200, contentType: 'application/json', body: JSON.stringify(lijf),
+    })
+  })
+
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.hero', { timeout: 5000 })
+
+  process.stdout.write('wat je lust                ')
+  await naarTab(pagina, 'Profiel')
+  await pagina.getByRole('button', { name: 'Wat je lust' }).click()
+  await pagina.waitForSelector('.venster', { timeout: 5000 })
+
+  const venster = pagina.locator('.venster')
+  const tekst = async () => (await venster.innerText()).replace(/\s+/g, ' ')
+
+  /* 1. Alle zevenentwintig staan er, en er gaat niets uit voordat je iets kiest. */
+  const begin = await tekst()
+  if (!/27 van 27 groepen blijven over/.test(begin)) {
+    throw new Error(`het vel begint niet schoon: ${JSON.stringify(begin.slice(0, 200))}`)
+  }
+  if (/Deze krijg je niet voorgesteld/.test(begin)) {
+    throw new Error('er staat iets uit terwijl er nog niets gekozen is')
+  }
+
+  /* 2. Vegetarisch zet vlees én de vier gemengde groepen uit, en de vis. */
+  await venster.getByRole('button', { name: 'Vegetarisch' }).click()
+  await pagina.waitForTimeout(200)
+  const na = await tekst()
+  for (const g of ['Vlees en gevogelte', 'Vleeswaren', 'Vis, schaal- en schelpdieren',
+                   'Samengestelde gerechten', 'Soepen', 'Hartige snacks en zoutjes',
+                   'Hartig broodbeleg']) {
+    if (!na.includes(g)) throw new Error(`"${g}" staat niet in het vel`)
+  }
+  if (!/Deze krijg je niet voorgesteld/.test(na)) {
+    throw new Error('er gaat niets uit bij vegetarisch')
+  }
+  /* En ei en zuivel blijven: dat is het verschil met veganistisch. */
+  if (!/20 van 27 groepen blijven over/.test(na)) {
+    throw new Error(`de telling klopt niet na vegetarisch: `
+                    + JSON.stringify((na.match(/\d+ van 27 groepen blijven over/) ?? [])[0]))
+  }
+
+  /* 3. De gemengde groepen zeggen waaróm ze eruit gaan. Zonder die zin is het
+        een onverklaarde uitsluiting en gaat de gebruiker hem terugzetten zonder
+        te weten wat hij daarmee binnenhaalt. */
+  if (!/bevat allebei — hier staat ook wat je wél lust/.test(na)) {
+    throw new Error('de gemengde groepen leggen niets uit')
+  }
+
+  /* En geen enkele groepsnaam mag afgekapt staan: je zet een vinkje om bij iets
+     waarvan je de naam moet kunnen lezen. Drie chips ernaast maken dat krap, dus
+     dit is precies de plek waar een naam stilletjes tot "Graanproducten en m…"
+     wordt en niemand het merkt.
+
+     Gemeten en niet gelezen: `text-overflow: ellipsis` kapt af in de opmaak en
+     laat de DOM ongemoeid, dus `textContent` geeft de hele naam terug en een
+     zoektocht naar "…" vindt nooit iets. Dat wás de eerste versie van deze
+     proef en hij stond groen bij een scherm dat de namen wél afkapte. Wat het
+     wel verraadt is de meetkunde: scrollWidth groter dan clientWidth. */
+  const afgekapt = await venster.locator('.tussen > .mini').evaluateAll(
+    (els) => els.filter((e) => e.scrollWidth > e.clientWidth + 1).map((e) => e.textContent))
+  if (afgekapt.length) {
+    throw new Error(`groepsnamen staan afgekapt: ${JSON.stringify(afgekapt.slice(0, 3))}`)
+  }
+
+  await pagina.screenshot({ path: 'gereedschap/health-voorkeuren.png', fullPage: true })
+
+  /* 4. Pindakaas terughalen. Dat is de hele reden dat het patroon niet zelf
+        filtert: één tik, en Hartig broodbeleg staat er weer in. */
+  const rij = venster.locator('.tussen', { hasText: 'Hartig broodbeleg' }).first()
+  await rij.getByRole('button', { name: /Hartig broodbeleg weer voorstellen/ }).click()
+  await pagina.waitForTimeout(200)
+  const terug = await tekst()
+  if (!/21 van 27 groepen blijven over/.test(terug)) {
+    throw new Error(`terughalen telt niet mee: `
+                    + JSON.stringify((terug.match(/\d+ van 27 groepen blijven over/) ?? [])[0]))
+  }
+
+  /* 5. En dan bewaren, en kijken wat er werkelijk gaat. */
+  await venster.getByRole('button', { name: 'Bewaren' }).click()
+  await pagina.waitForTimeout(500)
+
+  const v = bewaard.patch?.instellingen?.voorkeuren
+  if (!v) throw new Error('er is geen voorkeur naar kal_profiel_zetten gegaan')
+  if (v.patroon !== 'vegetarisch') throw new Error(`patroon is ${v.patroon}`)
+  for (const g of ['Vlees en gevogelte', 'Vleeswaren', 'Vis, schaal- en schelpdieren']) {
+    if (!v.nooit.includes(g)) throw new Error(`"${g}" staat niet in nooit — er komt vlees door`)
+  }
+  if (v.nooit.includes('Hartig broodbeleg')) {
+    throw new Error('het teruggehaalde broodbeleg staat toch in nooit')
+  }
+  if (v.nooit.includes('Eieren') || v.nooit.includes('Kaas')) {
+    throw new Error('vegetarisch sluit ei of kaas uit, en dat hoort niet')
+  }
+  /* De rest van de instellingen mag niet sneuvelen: het is één jsonb-kolom, dus
+     een patch die alleen de voorkeuren stuurt gooit de olie en de melk weg. */
+  const i = bewaard.patch.instellingen
+  if (i.olie_g !== 25 || i.melk_ml !== 150 || i.conditie?.hypertensie !== true) {
+    throw new Error('de andere instellingen zijn uit de patch verdwenen: '
+                    + JSON.stringify(i))
+  }
+
+  console.log(`27 → 20 na vegetarisch → 21 na terughalen · `
+              + `${v.nooit.length} groepen bewaard, ei en kaas blijven · rest van instellingen heel`)
+  await pagina.close()
+}
+
+/* ---------------------------------------------------------- wat ontbreekt -- */
+/* DE SUPPLETIEKAART: ZWIJGEN IS HIER NET ZO BELANGRIJK ALS SPREKEN
+ *
+ * Dit is de enige kaart in de app die een gezondheidsuitspraak doet zonder een
+ * meting eronder: van de 2.328 producten heeft er geen één een micronutrient.
+ * Wat hier stil misgaat is dus erger dan elders, want er is geen getal dat het
+ * tegenspreekt.
+ *
+ * Twee gevallen die er hetzelfde uitzien en dat niet zijn:
+ *
+ *   te weinig gelogd   dan weet de app niets, en een advies zou een uitspraak
+ *                      over je invoergedrag zijn die klinkt als een meting
+ *   genoeg gelogd      dan is het een waarneming over je voeding
+ *
+ * En één die niet mag versloffen: B12 bij veganistisch is "nodig" en niet "te
+ * overwegen". Naast "kan geen kwaad" zetten maakt er een suggestie van.
+ */
+for (const [naam, dagen, patroon, verwacht] of [
+  ['te weinig gelogd', 3, 'veganistisch', 'stil'],
+  ['veganistisch',    24, 'veganistisch', 'b12'],
+  ['alles eet alles', 24, 'alles', 'niets'],
+]) {
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: 'light' })
+
+  let gevraagd = 0
+  await pagina.route('**/rest/v1/rpc/**', async (route) => {
+    const fn = route.request().url().split('/').pop()
+    let lijf = {}
+    if (fn === 'kal_ophalen') {
+      const a = alles(28, 'afvallen')
+      lijf = { ...a, profiel: { ...a.profiel, instellingen: {
+        voorkeuren: { patroon, nooit: [], liever: [], minder: [] },
+      } } }
+    } else if (fn === 'kal_hoeken') {
+      gevraagd++
+      /* Alles gelogd behalve vis: dan hangt het advies alleen nog aan het
+         aantal dagen, en dát is wat deze proef uit elkaar trekt. */
+      lijf = { dagen, groepen: ['Vlees en gevogelte', 'Melk en melkproducten', 'Kaas',
+                                'Groente', 'Fruit', 'Brood'] }
+    }
+    await route.fulfill({
+      status: 200, contentType: 'application/json', body: JSON.stringify(lijf),
+    })
+  })
+
+  /* `Uitklap` onthoudt zijn stand in localStorage, en die is gedeeld binnen één
+     browsercontext. Zonder dit staat de kaart bij het tweede geval al open
+     omdat het eerste hem opendeed, en meet de proef hieronder niets.
+
+     Alleen die ene sleutel, en niet `localStorage.clear()`: daar staat ook de
+     sessie in, en die wissen logt de gebruiker uit — dan komt er helemaal geen
+     scherm. Dat was de eerste versie van deze regel. */
+  await pagina.addInitScript(
+    () => { try { localStorage.removeItem('kalibratie.uitleg') } catch { /* mag */ } })
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.hero', { timeout: 5000 })
+
+  /* Dicht hoort hij niets te vragen: wie er niets aan heeft betaalt de vraag
+     aan de database niet. */
+  if (gevraagd !== 0) throw new Error(`${naam}: kal_hoeken wordt gevraagd terwijl de kaart dicht is`)
+
+  const kaart = pagina.locator('.kaart', { hasText: 'Wat ontbreekt er?' }).first()
+  if (!(await kaart.count())) throw new Error(`${naam}: de suppletiekaart staat er niet`)
+  await kaart.getByRole('button', { name: 'open' }).click()
+  await pagina.waitForTimeout(700)
+  if (gevraagd !== 1) throw new Error(`${naam}: kal_hoeken ${gevraagd}× gevraagd, verwacht 1`)
+
+  const t = (await kaart.innerText()).replace(/\s+/g, ' ')
+
+  if (verwacht === 'stil') {
+    /* DRIE DAGEN GELOGD. Er staat geen vis in de lijst, en tóch hoort er geen
+       omega-3-advies te komen: dat zou gaan over hoe weinig je invulde. Wat er
+       wél hoort te staan is waaróm de app zwijgt. */
+    if (/Omega-3/.test(t)) throw new Error(`${naam}: er komt een advies uit drie dagen log`)
+    if (!/3 van de 28 dagen/.test(t)) {
+      throw new Error(`${naam}: de kaart legt niet uit waarom hij zwijgt — ${JSON.stringify(t)}`)
+    }
+    /* Maar B12 hoort er wél te staan: dat hangt aan je eetpatroon en niet aan
+       je log, en een vinkje is er ook op een dag dat je niets invulde. */
+    if (!/Vitamine B12/.test(t)) {
+      throw new Error(`${naam}: B12 hangt aan het eetpatroon en hoort er te staan`)
+    }
+  }
+
+  if (verwacht === 'b12') {
+    if (!/Vitamine B12/.test(t)) throw new Error(`${naam}: geen B12 bij veganistisch`)
+    /* Het onderscheid dat niet mag versloffen. */
+    /* `.last()` en niet `.first()`: de uitklapkaart omvat de adviezen, dus een
+       filter op de naam vindt er twee — de omhullende en de echte. */
+    const b12 = pagina.locator('.kaart', { hasText: 'Vitamine B12' }).last()
+    const vlag = (await b12.locator('.vlaggetje').innerText()).trim()
+    if (vlag !== 'nodig') throw new Error(`${naam}: B12 staat als "${vlag}" en niet als "nodig"`)
+    /* En omega-3 hoort er nu wél bij, want er is genoeg gelogd en er zat geen vis bij. */
+    if (!/Omega-3/.test(t)) throw new Error(`${naam}: geen omega-3 terwijl er 24 dagen zonder vis zijn`)
+    const omega = pagina.locator('.kaart', { hasText: 'Omega-3' }).last()
+    const ovlag = (await omega.locator('.vlaggetje').innerText()).trim()
+    if (ovlag !== 'te overwegen') throw new Error(`${naam}: omega-3 staat als "${ovlag}"`)
+    /* Elke regel draagt zijn grond: zonder dat moet je het geloven. */
+    if (!/Je gaf aan veganistisch te eten/.test(t)) throw new Error(`${naam}: B12 zonder grond`)
+    if (!/28 dagen niets uit/.test(t)) throw new Error(`${naam}: omega-3 zonder grond`)
+    /* En de kaart zegt zelf dat hij niet meet. */
+    if (!/bevat geen vitamines en mineralen/.test(t)) {
+      throw new Error(`${naam}: de kaart verzwijgt dat er niets gemeten is`)
+    }
+    await pagina.screenshot({ path: 'gereedschap/health-suppletie.png', fullPage: true })
+  }
+
+  if (verwacht === 'niets') {
+    /* Alles eet alles, en er is vis noch niet gelogd... wel 24 dagen. Er zat
+       geen vis bij, dus omega-3 mag. B12 niet. */
+    if (/Vitamine B12/.test(t)) throw new Error(`${naam}: B12 bij iemand die alles eet`)
+  }
+
+  console.log(`wat ontbreekt              ${naam.padEnd(18)} ${
+    (t.match(/Vitamine B12|Omega-3|IJzer|Calcium/g) ?? ['—']).join(', ')}`)
+  await pagina.close()
 }
 
 /* ----------------------------------------------------- de tekens op de balk -- */

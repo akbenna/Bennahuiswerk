@@ -478,6 +478,13 @@ export interface RpcKaart {
   kal_zoeken: { in: { p_token: string; p_q: string; p_limiet?: number }; uit: Zoekuitslag }
   kal_gerecht: { in: { p_token: string; p_dish_id: string }; uit: Gerecht }
   kal_portiematen: { in: { p_token: string; p_nevo_code: string }; uit: ProductMetMaten }
+  /* Uit welke NEVO-groepen er gelogd is, en op hoeveel dagen. `dagen` is het
+     getal dat telt: zonder dat is een lege groepenlijst niet te lezen. Zie
+     health/database/35-de-voorkeuren-in-de-lijsten.sql. */
+  kal_hoeken: {
+    in: { p_token: string; p_dagen?: number }
+    uit: { groepen: string[]; dagen: number }
+  }
   kal_eiwitrijk: {
     in: { p_token: string; p_eis: number; p_max_kcal: number; p_limiet?: number }
     uit: EiwitrijkTreffer[]

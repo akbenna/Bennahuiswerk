@@ -25,6 +25,7 @@ import { InvoerVenster } from './vensters/Invoer'
 import { KoppelVenster } from './vensters/Koppelen'
 import { DagoverzichtVenster } from './vensters/Dagoverzicht'
 import { DagverslagVenster } from './vensters/Dagverslag'
+import { VoorkeurVenster } from './vensters/Voorkeuren'
 import { HoewerktVenster } from './vensters/Hoewerkt'
 import {
   AccountVenster, Aanmelden, ImportVenster, ProfielVenster,
@@ -95,7 +96,7 @@ function Postbus({ token, a }: { token: string; a: Analyse }) {
 
 type Tab = (typeof TABS)[number][0]
 type VensterNaam = 'profiel' | 'import' | 'account' | 'koppelen' | 'overzicht'
-  | 'hoewerkt' | 'leren' | 'verslag'
+  | 'hoewerkt' | 'leren' | 'verslag' | 'voorkeuren'
 
 export function App() {
   const k = useKalibratie()
@@ -363,6 +364,16 @@ export function App() {
             zetVenster(null)
             void k.wijzig((t) => roep('kal_profiel_zetten', { p_token: t, p_patch: patch }))
           }}
+        />
+      )}
+
+      {/* Dezelfde weg als het profiel: een patch op `instellingen`, waar de
+          voorkeuren in wonen. Zie `Voorkeuren` in tabellen.ts. */}
+      {venster === 'voorkeuren' && (
+        <VoorkeurVenster
+          profiel={profiel} opSluiten={() => zetVenster(null)}
+          opBewaren={(patch) =>
+            void k.wijzig((t) => roep('kal_profiel_zetten', { p_token: t, p_patch: patch }))}
         />
       )}
 

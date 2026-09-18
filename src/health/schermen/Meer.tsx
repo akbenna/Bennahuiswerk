@@ -33,7 +33,8 @@ export function Meer(
   { dagen, reeks, profiel, opVenster }:
   {
     dagen: Dagenkaart; reeks: Trendpunt[]; profiel: Profiel
-    opVenster: (v: 'profiel' | 'import' | 'account' | 'koppelen' | 'hoewerkt' | 'leren') => void
+    opVenster: (v: 'profiel' | 'import' | 'account' | 'koppelen' | 'hoewerkt'
+      | 'leren' | 'voorkeuren') => void
   },
 ) {
   const trendNu = [...reeks].reverse().find((x) => x.ema != null)
@@ -178,11 +179,14 @@ export function Meer(
         <Kop teken={WegInstellen}>Instellingen</Kop>
         <Rij style={{ marginTop: 10 }}>
           <Knop opKlik={() => opVenster('profiel')}>Profiel, doelen en je aandoening</Knop>
+          <Knop opKlik={() => opVenster('voorkeuren')}>Wat je lust</Knop>
           <Knop vol opKlik={() => opVenster('koppelen')}>Horloge en telefoon koppelen</Knop>
           <Knop opKlik={() => opVenster('import')}>Importeren uit een andere app</Knop>
           <Knop opKlik={() => opVenster('account')}>Account</Knop>
         </Rij>
         <p className="mini" style={{ marginTop: 8 }}>
+          "Wat je lust" bepaalt waar de voorstellen uit de tabel vandaan mogen komen — niet wat je
+          mag eten, maar wat de app je aanbiedt.
           Koppelen haalt stappen, slaap en fietsminuten elke ochtend vanzelf uit Apple Gezondheid —
           en daarmee ook wat je Garmin daarin schrijft. Importeren is voor een eenmalige overstap uit
           een andere app.

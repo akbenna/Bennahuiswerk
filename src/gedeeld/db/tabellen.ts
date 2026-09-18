@@ -51,6 +51,31 @@ export interface Conditie {
   med?: Medicatiegroep[]
 }
 
+/**
+ * DE VOORKEUREN — wat iemand wel en niet voorgeschoteld wil krijgen.
+ *
+ * Staat hier om dezelfde reden als `Conditie` hierboven: het is de vorm van wat
+ * er in `instellingen` bewaard wordt en over de lijn gaat. De regels — wat een
+ * eetpatroon voorstelt, hoe hard een uitsluiting is, hoeveel een duwtje mag
+ * verschuiven — staan in `src/health/voorkeuren.ts`, met de proeven erbij.
+ *
+ * De groepen zijn `string` en geen opsomming van de zevenentwintig. Dat is
+ * bewust: wat hier binnenkomt is wat er ooit bewaard is, en een tabel kan
+ * veranderen. Een opgeslagen groep die niet meer bestaat hoort geen typefout te
+ * geven maar gewoon niets uit te sluiten — zie `groepenOver` daar.
+ */
+export type Eetpatroon = 'alles' | 'pescotarisch' | 'vegetarisch' | 'veganistisch'
+
+export interface Voorkeuren {
+  patroon: Eetpatroon
+  /** Groepen die nooit voorgesteld worden. Verwijdert. */
+  nooit: readonly string[]
+  /** Groepen die je liever ziet. Verschuift, begrensd. */
+  liever: readonly string[]
+  /** Groepen die je liever niet ziet. Verschuift, begrensd. */
+  minder: readonly string[]
+}
+
 export interface Instellingen {
   olie_g?: number
   olie_gewogen?: boolean
@@ -59,6 +84,7 @@ export interface Instellingen {
   melk_gemeten?: boolean
   rookt?: boolean
   conditie?: Conditie
+  voorkeuren?: Voorkeuren
 }
 
 export interface Profiel {
