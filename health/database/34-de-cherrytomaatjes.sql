@@ -128,15 +128,25 @@
 -- veld maar een verwijzing naar `nevo_versies`, en de kolom heet `meal_moments`
 -- en niet `typical_meal_moments`. Allebei viel om op de echte tabel en allebei
 -- zou het op een eigen opstelling zijn doorgeglipt.
+--
+-- EN WAT ALLEEN IN DE ECHTE EDITOR OMVIEL
+--
+-- Blok 1 gaf zijn vondst eerst door via een tijdelijke tabel. Dat werkte in
+-- psql en niet in de SQL-editor van Supabase: die draait elke opdracht in een
+-- eigen transactie, en `on commit drop` ruimde de tabel dus op voordat blok 2
+-- eraan toe kwam. `relation "_tomaat" does not exist`.
+--
+-- De tijdelijke tabel is weg en komt niet terug. Blok 1 is een wacht en geen
+-- doorgeefluik: hij stopt het bestand, en blok 2 noemt de code zelf. Dat is
+-- ook waarom de blokken hieronder los van elkaar te draaien zijn — wat in een
+-- editor waar je met de muis selecteert geen luxe is maar een eis.
 -- =============================================================================
 
 BEGIN;
 
 -- ---------------------------------------------------------------------------
--- BLOK 1 — DE CODE OPZOEKEN, EN STOPPEN ALS HIJ ER NIET IS
+-- BLOK 1 — DE WACHT: STOPPEN ALS 2731 NIET IS WAT HIJ HOORT TE ZIJN
 -- ---------------------------------------------------------------------------
-
-create temporary table _tomaat (nevo_code text, naam text, kcal numeric) on commit drop;
 
 do $$
 declare
@@ -188,7 +198,6 @@ begin
       'NEVO-code 2731 geeft % kcal per 100 g en dat is geen rauwe tomaat.', v_kcal;
   end if;
 
-  insert into _tomaat (nevo_code, naam, kcal) values ('2731', v_naam, v_kcal);
   raise notice 'Cherrytomaat: 2731 = % (% kcal/100 g)', v_naam, v_kcal;
 end $$;
 
@@ -217,11 +226,16 @@ with nieuw as (
     (dish_id, position, ingredient_name_nl, category, quantity, unit,
      grams_equivalent, external_source, external_food_id, role,
      is_preparation_fat, uncertainty_note)
+  /* De code staat hier letterlijk en komt niet uit blok 1. Dat moet ook wel:
+     de SQL-editor van Supabase draait elke opdracht in een eigen transactie,
+     dus een tijdelijke tabel uit blok 1 bestaat hier niet meer. Blok 1 is de
+     wacht en niet de doorgeefluik — hij stopt het bestand voordat dit blok
+     begint, en nakijkquery 1 hieronder vangt een losse code alsnog. */
   select n.id, 10, 'Cherrytomaat', 'groente', 80, 'g', 80,
-         'nevo', t.nevo_code, 'ingredient', false,
+         'nevo', '2731', 'ingredient', false,
          'Tachtig gram is een handje, geschat en niet gewogen. Een tomaatje weegt '
          'rond de tien gram, tussen acht en vijftien.'
-    from nieuw n cross join _tomaat t
+    from nieuw n
   returning 1
 )
 insert into public.dish_portions
