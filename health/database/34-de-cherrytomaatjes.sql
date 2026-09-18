@@ -37,30 +37,38 @@
 -- verkeerde code valt niet om, hij geeft gewoon de voedingswaarde van iets
 -- anders. Een tomaat van 18 kcal die stiekem een tomatenpuree van 82 is.
 --
--- Dus zoekt blok 1 hem zelf op, en `raise exception` als het er niet precies
--- één is. Dat is strenger dan een hardgecodeerd getal en niet losser: bij een
--- ingetikte code weet je pas iets als je nakijkquery 2 draait, en hier weet je
--- het voordat er een rij staat.
+-- Dus zocht blok 1 hem eerst zelf op, met `raise exception` als het er niet
+-- precies één was. Dat bleek de goede volgorde: in de echte database gaf dat
+-- vijf treffers, en het bestand viel om in plaats van er stilzwijgend een te
+-- kiezen.
 --
--- Opzoeken op naam alleen bleek niet genoeg, en dat is niet bedacht maar
--- gemeten: met een tweede tomaat in de tabel koos het bestand "Cherrytomaat
--- gedroogd" van 258 kcal, en de wacht ging niet af want het was één treffer.
--- Daarom moet de energie er ook bij kloppen — tussen de twaalf en vijfendertig
--- kilocalorieen per honderd gram, wat een rauwe tomaat nu eenmaal is. Dat
--- sluit gedroogd, puree en ketchup in één keer uit zonder dat ik elke bewerking
--- bij naam hoef te kennen.
+--   2730 = Tomaat tros- rauw    22 kcal
+--   2731 = Tomaat kers- rauw    30 kcal      ← deze
+--   2732 = Tomaat vlees- rauw   19 kcal
+--   2734 = Tomaat rauw gem      25 kcal
+--     60 = Tomaat gewoon rauw   20 kcal
 --
--- Vindt hij er meer dan één, dan zegt de fout welke. Kies er zelf een en zet
--- hem in `p_code` van blok 2 — daar is de handmatige weg, zichtbaar, en niet
--- als stilzwijgende eerste treffer.
+-- NEVO schrijft het als "Tomaat kers-" en niet als "kerstomaat"; daarom vond
+-- het eerste patroon er nul en viel het terug op alle rauwe tomaten. Het
+-- verschil tussen 19 en 30 kilocalorieen is anderhalf keer, dus dat was precies
+-- een keuze die niemand namens jou hoort te maken.
+--
+-- Nu de code bekend is staat hij er, net als in alle andere bestanden in deze
+-- reeks. Maar hij wordt nagekeken en niet geloofd: klopt de naam niet meer, of
+-- ligt de energie buiten wat een rauwe tomaat is, dan valt het bestand om. Dat
+-- vangt een nieuwe NEVO-versie af waarin 2731 iets anders geworden is.
 --
 -- WAT ER UITKOMT
 --
--- Rauwe tomaat is rond de 18 kcal per 100 gram en cherrytomaat ligt daar dicht
--- bij. Een handje van tachtig gram is dus een kilocalorie of vijftien. Dat is
--- bijna niets, en dat is geen reden om het niet te loggen: wat je wel eet en
--- niet invult maakt de dag niet lichter, alleen minder waar. En vezel telt het
--- wel mee.
+-- Dertig kilocalorieen per honderd gram, dus een handje van tachtig gram is er
+-- vierentwintig. Dat is bijna niets, en dat is geen reden om het niet te loggen:
+-- wat je wel eet en niet invult maakt de dag niet lichter, alleen minder waar.
+-- En vezel telt het wel mee.
+--
+-- De kerstomaat is zwaarder dan je zou denken — een vleestomaat zit op 19 en
+-- een gewone op 20. Hij is zoeter en bevat minder water. Anderhalf keer het
+-- verschil, op een handje vijf kilocalorieen: het maakt niets uit voor je dag
+-- en het is wel de reden dat de code nagekeken wordt.
 --
 -- DE PORTIES
 --
@@ -99,19 +107,22 @@
 -- van bestand 31 voor waarom dat verschil er een keer toe deed.
 --
 --   · het bestand loopt door: een gerecht, een ingredient, drie porties, en
---     zestien kilocalorieen voor een handje van tachtig gram
+--     vierentwintig kilocalorieen voor een handje van tachtig gram
 --   · drie keer draaien geeft exact dezelfde tellingen (1, 1, 3)
 --   · de terugdraairegel haalt het tomaatje weg, laat een lun-broodje van
 --     bestand 31 staan, en laat geen wees-ingredienten of wees-porties achter
---   · zonder tomaat in nevo_foods valt het om en staat er nul in plaats van
---     een ingredient zonder voedingswaarde
---   · met twee rauwe kandidaten valt het om en noemt het ze allebei
+--   · met alle vijf de rauwe tomaten in de tabel kiest het 2731 en niet de
+--     vleestomaat ernaast
+--   · alle drie de wachten vallen om en laten nul rijen achter: code weg,
+--     code heet iets anders ("Aubergine rauw"), code is gedroogd geworden
 --
--- En de vondst die het bestand veranderd heeft: met "Cherrytomaat gedroogd"
--- (258 kcal) naast de rauwe koos de eerste versie de gedroogde. Eén treffer,
--- dus de wacht ging niet af, en er kwam een handje van 206 kilocalorieen uit.
--- Daar is de energiegrens voor gekomen. Met beide in de tabel kiest het nu de
--- rauwe, en dat is nagekeken en niet aangenomen.
+-- Twee vondsten die het bestand veranderd hebben, allebei uit een proef en niet
+-- uit nadenken. Op de proefdatabase koos de eerste versie "Cherrytomaat
+-- gedroogd" van 258 kcal boven de rauwe: één treffer, dus de wacht ging niet
+-- af, en er kwam een handje van 206 kilocalorieen uit. Daar kwam de
+-- energiegrens vandaan. En op de échte database gaf het opzoeken vijf rauwe
+-- tomaten, waarvan de lichtste 19 en de zwaarste 30 kcal. Dat was het moment
+-- waarop de code bekend werd en de opzoeking kon verdwijnen.
 --
 -- Wat het lokaal draaien verder aan het licht bracht: `nevo_versie` is geen los
 -- veld maar een verwijzing naar `nevo_versies`, en de kolom heet `meal_moments`
@@ -129,67 +140,56 @@ create temporary table _tomaat (nevo_code text, naam text, kcal numeric) on comm
 
 do $$
 declare
-  v_aantal int;
-  v_namen  text;
+  v_naam text;
+  v_kcal numeric;
 begin
-  /* DE NAAM ALLEEN IS NIET GENOEG, EN DAT IS GEMETEN
+  /* DE CODE STAAT ER NU, EN WORDT NOG STEEDS NAGEKEKEN
 
-     Hier stond eerst alleen een naamvergelijking. Op de proefdatabase stonden
-     twee tomaten — "Tomaat cherry rauw" van 20 kcal en "Cherrytomaat gedroogd"
-     van 258 — en het bestand koos zonder morren de gedroogde. Eén treffer, dus
-     de wacht op "meer dan een" ging niet af, en er kwam een handje tomaatjes
-     van 206 kilocalorieen uit. Dat is de fout die dit bestand juist niet mocht
-     maken.
+     Eerst zocht dit blok de tomaat op naam, omdat ik de code niet had. Dat
+     leverde in de echte database vijf treffers op — en precies daarom viel het
+     bestand om in plaats van er een te kiezen:
 
-     Daarom een tweede eis die niets met woorden te maken heeft: de energie moet
-     kloppen met wat een rauwe tomaat ís. Tussen de twaalf en vijfendertig
-     kilocalorieen per honderd gram. Dat sluit in één keer alles uit wat
-     bewerkt is — gedroogd, zongedroogd, in olie, puree, ketchup — en het doet
-     dat zonder dat ik elke bewerking bij naam hoef te kennen.
+       2730 = Tomaat tros- rauw    22 kcal
+       2731 = Tomaat kers- rauw    30 kcal
+       2732 = Tomaat vlees- rauw   19 kcal
+       2734 = Tomaat rauw gem      25 kcal
+         60 = Tomaat gewoon rauw   20 kcal
 
-     Een grens op de uitkomst in plaats van op de naam. De naam zegt wat iemand
-     het noemde; de energie zegt wat het is. */
-  insert into _tomaat (nevo_code, naam, kcal)
-  select n.nevo_code, n.naam_nl, n.energie_kcal_per_100g
-    from public.nevo_foods n
-   where lower(n.naam_nl) like '%tomaat%'
-     and (lower(n.naam_nl) like '%cherry%' or lower(n.naam_nl) like '%kerstomaat%')
-     and n.energie_kcal_per_100g between 12 and 35;
+     NEVO schrijft het als "Tomaat kers-" en niet als "kerstomaat", dus mijn
+     eerste patroon vond er nul en viel terug op alle rauwe tomaten. De wacht
+     deed daar wat hij moest doen: vijf kandidaten is geen keuze om stilzwijgend
+     te maken, en het verschil tussen 19 en 30 kcal is anderhalf keer.
 
-  select count(*), string_agg(nevo_code || ' = ' || naam || ' (' || kcal || ' kcal)',
-                              '; ' order by nevo_code)
-    into v_aantal, v_namen from _tomaat;
+     Nu de code bekend is, staat hij er — net als in alle andere bestanden in
+     deze reeks. Maar hij wordt nagekeken en niet geloofd: klopt de naam niet
+     meer met wat hier verwacht wordt, of ligt de energie buiten wat een rauwe
+     tomaat is, dan valt het bestand om. Dat is het vangnet voor een nieuwe
+     NEVO-versie waarin 2731 iets anders geworden is. */
+  select n.naam_nl, n.energie_kcal_per_100g into v_naam, v_kcal
+    from public.nevo_foods n where n.nevo_code = '2731';
 
-  /* Geen treffer: dan staat cherrytomaat niet apart in de tabel. Rauwe tomaat
-     is dan het eerlijke alternatief — het verschil tussen de twee is kleiner
-     dan de spreiding tussen twee handjes. Dezelfde energiegrens, om dezelfde
-     reden. */
-  if v_aantal = 0 then
-    insert into _tomaat (nevo_code, naam, kcal)
-    select n.nevo_code, n.naam_nl, n.energie_kcal_per_100g
-      from public.nevo_foods n
-     where lower(n.naam_nl) like 'tomaat%'
-       and lower(n.naam_nl) like '%rauw%'
-       and n.energie_kcal_per_100g between 12 and 35;
-    select count(*), string_agg(nevo_code || ' = ' || naam || ' (' || kcal || ' kcal)',
-                                '; ' order by nevo_code)
-      into v_aantal, v_namen from _tomaat;
+  if v_naam is null then
+    raise exception 'NEVO-code 2731 staat niet in nevo_foods.';
   end if;
 
-  if v_aantal = 0 then
+  if lower(v_naam) not like '%tomaat%' or lower(v_naam) not like '%kers%' then
     raise exception
-      'Geen rauwe cherrytomaat of tomaat gevonden tussen 12 en 35 kcal per 100 g. '
-      'Zoek zelf: select nevo_code, naam_nl, energie_kcal_per_100g from nevo_foods '
-      'where lower(naam_nl) like ''%%tomaat%%'' order by 3;';
+      'NEVO-code 2731 heet nu "%" en dat is geen kerstomaat meer. Zoek opnieuw: '
+      'select nevo_code, naam_nl, energie_kcal_per_100g from nevo_foods '
+      'where lower(naam_nl) like ''%%tomaat%%'' order by 1;', v_naam;
   end if;
 
-  if v_aantal > 1 then
+  /* Een rauwe tomaat ligt tussen de twintig en veertig kilocalorieen per honderd
+     gram; de kerstomaat zit met dertig aan de hoge kant, want hij is zoeter en
+     bevat minder water dan een vleestomaat. Valt het erbuiten, dan is het iets
+     bewerkts — gedroogd, puree, ketchup — en dan klopt de portie niet meer. */
+  if v_kcal not between 20 and 40 then
     raise exception
-      'Meer dan een treffer, dus geen keuze om stilzwijgend te maken: %. '
-      'Zet de gekozen code in blok 2 en haal blok 1 weg.', v_namen;
+      'NEVO-code 2731 geeft % kcal per 100 g en dat is geen rauwe tomaat.', v_kcal;
   end if;
 
-  raise notice 'Cherrytomaat: %', v_namen;
+  insert into _tomaat (nevo_code, naam, kcal) values ('2731', v_naam, v_kcal);
+  raise notice 'Cherrytomaat: 2731 = % (% kcal/100 g)', v_naam, v_kcal;
 end $$;
 
 
