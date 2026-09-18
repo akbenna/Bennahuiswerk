@@ -1,7 +1,14 @@
 -- =============================================================================
 -- FIJNER DAN EEN GROEP — één product weigeren, en een keuken uitzetten
 --
--- Nog niet toegepast.
+-- Toegepast, en gemeten op 18 september 2026. De md5-controle van blok 3 gaf
+-- `kal_verzadiging` terug op 06d1cccc04c19755174d281a789020e8 — de versie uit
+-- dit bestand — en `kal_hoeken` op bda6e4088510345b98b58d73700695af.
+--
+-- `kal_eiwitrijk` staat niet meer op de fab85bab uit dit bestand maar op de
+-- da67ff29 van bestand 38: die voegde er een grens aan toe voor merkrijen
+-- waarvan de energie niet met de macro s kan kloppen. De rest van deze functie
+-- is daar ongewijzigd in overgenomen.
 --
 -- WAT ER ONTBRAK
 --
