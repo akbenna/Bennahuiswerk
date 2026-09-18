@@ -1,7 +1,9 @@
 -- =============================================================================
 -- EEN GETAL DAT NIET KAN BESTAAN — en waarom het bovenaan stond
 --
--- Nog niet toegepast.
+-- Toegepast 18 september 2026. Wat daarvan hier is nagekeken: niets — dat rust
+-- op een mededeling en niet op een meting. Blok 3 hieronder maakt er een meting
+-- van, en de md5 in vraag 2 is het getal dat het beslist.
 --
 -- WAT ER AAN DE HAND WAS
 --
