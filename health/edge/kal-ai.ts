@@ -1,6 +1,23 @@
 // =============================================================================
 // KALIBRATIE — maaltijdherkenning uit tekst, foto en Yazio-plaksel.
 //
+// UITROLLEN: ZET DAARNA `verify_jwt` WEER UIT
+//
+// Deze functie staat open (`verify_jwt: false`) en doet niets zonder een geldig
+// sessietoken — dat controleert hij zelf, met `kal_sessie`, vóór er ook maar
+// iets anders gebeurt. De app stuurt alleen een `Content-Type` mee en geen
+// `Authorization`; zie `vraag()` in `src/health/ai.ts`.
+//
+// Een nieuwe uitrol komt terug met `verify_jwt = true`, ook als hij eerder uit
+// stond. Dan krijgt elke aanroep `UNAUTHORIZED_NO_AUTH_HEADER` van de poort
+// voordat deze code draait, en werkt de hele herkenning niet meer — tekst, foto,
+// invoer én het dagverslag. Datzelfde overkwam `kal-prikkel`; zie
+// `health/AUTOMATISERING.md`.
+//
+// Dus na elke uitrol: Edge Functions → kal-ai → "Enforce JWT verification" uit.
+// En daarna één keer iets laten herkennen, want een kapotte poort ziet er in de
+// app uit als een herkenning die het even niet doet.
+//
 // Waarom deze functie er is en chat-ai/photo_analysis niet volstaat: die geeft
 // één getal terug ("totaal_kcal": 600) zonder interval, zonder graad, en uit
 // het geheugen van het model in plaats van uit een voedingsmiddelentabel.
