@@ -84,7 +84,7 @@
 --
 -- HOE DIT IS NAGEKEKEN
 --
--- Zie blok 3 onderaan: zes vragen met het antwoord dat eruit hoort te komen.
+-- Zie blok 4 onderaan: zeven vragen met het antwoord dat eruit hoort te komen.
 -- Draai ze na het toepassen, met je eigen token.
 -- =============================================================================
 
@@ -336,6 +336,69 @@ begin
   ), '[]'::jsonb);
 end $function$;
 
+-- ---------------------------------------------------------------------------
+-- BLOK 3 — UIT WELKE HOEKEN JE WERKELIJK GEGETEN HEBT
+-- ---------------------------------------------------------------------------
+--
+-- Nieuw, en het staat los van de twee hierboven. Het suppletie-advies
+-- (`src/health/suppletie.ts`) heeft twee bronnen: wat je gezegd hebt, en wat je
+-- gelogd hebt. Het tweede is de sterkere van de twee — "je logde de laatste 28
+-- dagen niets uit Vis" is te controleren, "je eet weinig vis" is een oordeel —
+-- en de app kan het niet zelf zien: `kal_ophalen` geeft bij een regel wel een
+-- NEVO-code terug maar geen groep.
+--
+-- DE TWEEDE WAARDE IS DE BELANGRIJKSTE
+--
+-- `dagen` telt op hoeveel dágen er iets gelogd is, en niet hoeveel regels. Zonder
+-- dat getal is een lege groepenlijst niet te lezen: wie vier dagen logde heeft
+-- vier dagen geen vis gelogd, en dat is een waarneming over zijn invoergedrag en
+-- niet over zijn voeding. Een advies daarop is het soort uitspraak dat klinkt
+-- als een meting en er geen is.
+--
+-- `suppletie.ts` legt de grens op veertien dagen en zwijgt daaronder.
+--
+-- Import telt niet mee, net als in `kal_verzadiging`: een overgezette dag uit
+-- een andere app heeft geen NEVO-codes en zou als een lege dag meetellen.
+
+CREATE OR REPLACE FUNCTION public.kal_hoeken(
+  p_token text, p_dagen integer DEFAULT 28)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ STABLE SECURITY DEFINER
+ SET search_path TO 'public'
+AS $function$
+declare
+  v_id uuid;
+  v_vandaag date;
+  v_vanaf date;
+begin
+  v_id := kal_sessie(p_token);
+  v_vandaag := (now() at time zone 'Europe/Amsterdam')::date;
+  v_vanaf := v_vandaag - greatest(1, least(coalesce(p_dagen, 28), 365));
+
+  return jsonb_build_object(
+    'groepen', coalesce((
+      select jsonb_agg(distinct n.groep)
+        from kal_regels r
+        join nevo_actief n on n.nevo_code = r.nevo_code
+       where r.gebruiker_id = v_id
+         and r.datum between v_vanaf and v_vandaag
+         and r.bron <> 'import'
+    ), '[]'::jsonb),
+    'dagen', (
+      select count(distinct r.datum)
+        from kal_regels r
+       where r.gebruiker_id = v_id
+         and r.datum between v_vanaf and v_vandaag
+         and r.bron <> 'import'
+    ));
+end $function$;
+
+comment on function public.kal_hoeken(text, integer) is
+  'Uit welke NEVO-groepen er in het venster gelogd is, en op hoeveel dagen. Voor het '
+  'suppletie-advies. Zie health/database/35-de-voorkeuren-in-de-lijsten.sql.';
+
+
 comment on function public.kal_eiwitrijk(text, numeric, numeric, integer) is
   'Eiwitrijke producten uit NEVO en de merktabel, gefilterd op instellingen->voorkeuren->nooit '
   'en licht herschikt op ->liever. Zie health/database/35-de-voorkeuren-in-de-lijsten.sql.';
@@ -346,7 +409,7 @@ comment on function public.kal_verzadiging(text, numeric, integer) is
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 3 — NAKIJKEN
+-- BLOK 4 — NAKIJKEN
 -- ---------------------------------------------------------------------------
 --
 -- Zet JOUW_TOKEN erin. Vraag 1 en 2 wijzen de fout aan die er het meest toe
@@ -405,3 +468,11 @@ comment on function public.kal_verzadiging(text, numeric, integer) is
 -- Zet daarna je eigen voorkeur terug via het scherm, of:
 --    update kal_profiel set instellingen = instellingen - 'voorkeuren'
 --     where gebruiker_id = (select kal_sessie('JOUW_TOKEN'));
+--
+-- 7. DE HOEKEN. Twee waarden, en de tweede is de belangrijkste.
+--
+--    select kal_hoeken('JOUW_TOKEN', 28);
+--
+--    `dagen` hoort te kloppen met hoeveel dagen je werkelijk iets invulde, en
+--    `groepen` met wat je at. Staat er een groep in die je niet herkent, dan
+--    zit er een regel in je log met een NEVO-code die je niet verwacht.

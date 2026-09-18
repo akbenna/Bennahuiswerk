@@ -58,6 +58,8 @@ import type { Analyse, Dagenkaart, DagMetTotalen } from '../rekenkern'
 import { momentNu } from '../vensters/Portie'
 import { meldenNu, tekort, voorstellen } from '../coach'
 import type { Tekort } from '../coach'
+import { VENSTER_DAGEN, adviezen, teWeinigGelogd } from '../suppletie'
+import { GEEN_VOORKEUR } from '../voorkeuren'
 import { herhaalRegel } from '../herhaal'
 import { useDonker } from '../thema'
 import { WegMomenten, WegVerzadiging, WegWeging } from '../tekens'
@@ -462,6 +464,15 @@ export function Vandaag(p: VandaagEigenschappen) {
       {isVandaag && <Coachkaart {...p} />}
 
       {isVandaag && a.doel != null && <WatVult {...p} />}
+
+      {/* Dezelfde poort als "Wat vult het best" hierboven, en om dezelfde reden:
+          zonder doel is de gebruiker nog aan het kalibreren en heeft hij geen
+          achtentwintig dagen achter zich. Deze kaart zou dan "0 van de 28 dagen
+          gelogd" melden, en dat is ruis op de dag dat je begint.
+
+          Een bestaande proef ving dit — hij eist dat "Beweging en slaap" direct
+          onder de maaltijdvakken staat zolang er geen doel is. */}
+      {isVandaag && a.doel != null && <Suppletiekaart {...p} />}
 
       <Kaart zij>
         <Kop>Beweging en slaap</Kop>
@@ -903,6 +914,97 @@ function UitDeTabel(
    verzadigingsindex. De drie onderdelen staan er los bij in de uitleg, zodat je
    hem kunt narekenen in plaats van te moeten geloven.
 */
+/* ==========================================================================
+   WAT ER ONTBREEKT — en waarom dit de voorzichtigste kaart van de app is
+   ==========================================================================
+
+   Elke andere kaart hier rust op een getal uit de tabel. Deze niet: van de 2.328
+   producten heeft er geen één een micronutrient ingevuld, dus de app kán niet
+   berekenen hoeveel ijzer of B12 er binnenkwam. Wat hier staat rust op twee
+   zwakkere dingen — wat je zelf hebt aangezet, en uit welke hoeken je gelogd
+   hebt — en elke regel zegt op welke van de twee.
+
+   Daarom haalt hij pas iets op als je hem opendoet, net als "Wat vult het best".
+   Wie er niets aan heeft hoort de vraag aan de database niet te betalen, en een
+   kaart die uit zichzelf over vitamines begint is opdringeriger dan deze app
+   hoort te zijn.
+
+   De regels zelf staan in `src/health/suppletie.ts`, met hun proeven.
+*/
+function Suppletiekaart(p: VandaagEigenschappen) {
+  return (
+    <Uitklap id="suppletie" kop="Wat ontbreekt er?" teken={WegVerzadiging}
+             dicht="Wat er volgens je voorkeuren en je log misschien te weinig binnenkomt.">
+      <Suppletielijst token={p.token} profiel={p.profiel} />
+    </Uitklap>
+  )
+}
+
+function Suppletielijst({ token, profiel }: { token: string; profiel: Profiel }) {
+  const [hoeken, zetHoeken] = useState<{ groepen: string[]; dagen: number } | null>(null)
+
+  useEffect(() => {
+    void roep('kal_hoeken', { p_token: token, p_dagen: VENSTER_DAGEN }).then(zetHoeken)
+  }, [token])
+
+  if (!hoeken) return <p className="mini">Even kijken…</p>
+
+  const vraag = {
+    voorkeuren: profiel.instellingen.voorkeuren ?? GEEN_VOORKEUR,
+    gelogdeGroepen: hoeken.groepen,
+    dagenGelogd: hoeken.dagen,
+  }
+  const lijst = adviezen(vraag)
+  /* Staat er altijd als er te weinig gelogd is, ook onder een gevulde lijst.
+     Zie `teWeinigGelogd`: zonder deze regel leest "geen omega-3" als "vis is in
+     orde" terwijl de app het niet kan zien. */
+  const karig = teWeinigGelogd(vraag)
+
+  if (!lijst.length) {
+    return (
+      <p className="klein">
+        {karig ?? 'Uit je voorkeuren en je log volgt niets wat ontbreekt. Dat is geen '
+          + 'garantie — de tabel bevat geen vitamines en mineralen, dus de app kan alleen '
+          + 'zien welke hoeken je overslaat en niet hoeveel er van iets binnenkomt.'}
+      </p>
+    )
+  }
+
+  return (
+    <>
+      {karig && (
+        <Kaart plat style={{ marginTop: 8 }}>
+          <p className="klein">{karig}</p>
+        </Kaart>
+      )}
+      {lijst.map((a) => (
+        <Kaart plat key={a.id} style={{ marginTop: 8 }}
+               toon={a.zwaarte === 'nodig' ? 'let' : undefined}>
+          <Tussen>
+            <Kop>{a.stof}</Kop>
+            {/* Het verschil tussen nodig en te overwegen hoort te zien te zijn:
+                de gebruiker doet er iets anders mee. B12 bij veganisme naast
+                "kan geen kwaad" zetten maakt van het eerste een suggestie. */}
+            <span className={'vlaggetje ' + (a.zwaarte === 'nodig' ? 'let' : 'rust')}>
+              {a.zwaarte === 'nodig' ? 'nodig' : 'te overwegen'}
+            </span>
+          </Tussen>
+          <p className="klein" style={{ marginTop: 4 }}>{a.reden}</p>
+          {/* De grond staat er apart, want dat is wat je kunt narekenen. */}
+          <p className="mini" style={{ marginTop: 4 }}>{a.grond}</p>
+          <p className="mini" style={{ marginTop: 2, opacity: 0.8 }}>{a.bron}</p>
+        </Kaart>
+      ))}
+      <p className="mini" style={{ marginTop: 10 }}>
+        Dit is geen voorschrift maar wat er uit je eigen antwoorden en je log volgt.
+        De tabel bevat geen vitamines en mineralen, dus de app meet niets — hij ziet
+        alleen welke hoeken buiten beeld blijven. Overleg met je huisarts of apotheker
+        voordat je iets gaat slikken.
+      </p>
+    </>
+  )
+}
+
 function WatVult(p: VandaagEigenschappen) {
   const { a, dag } = p
   const t = tekort(
