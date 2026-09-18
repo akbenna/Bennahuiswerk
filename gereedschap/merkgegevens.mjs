@@ -94,6 +94,31 @@ const MACRO_ONDER = 0.5
 const MACRO_BOVEN = 1.4
 const MACRO_VANAF_KCAL = 50
 
+/**
+ * Hoe ver de energie van zijn eigen kilojoules mag afwijken.
+ *
+ * Op het etiket staan kcal en kJ allebei, en het een is het ander gedeeld door
+ * 4,184. Ze kunnen dus niet los van elkaar fout zijn: staan ze ver uit elkaar,
+ * dan heeft iemand er één van de twee verkeerd overgenomen. Dat is een tweede
+ * getuige naast de macro's, en hij vangt iets anders.
+ *
+ * Dat is te meten. Over 415 producten met allebei de velden is de mediaan
+ * afwijking 0,43 %, en boven de 7 % zitten er nog twaalf. Tussen 14,9 % en
+ * 23,6 % ligt níets. Twintig procent staat dus midden in een leeg gat en is
+ * niet op één product afgesteld — daar zit hij met opzet.
+ *
+ * Onder de grens blijft rommel staan die er hoort te blijven: "Italiaanse
+ * Roerbakgroenten" wijkt 12,5 % af, maar dat is 22 kcal tegen 19,2, en op zulke
+ * kleine getallen is afronding alleen al genoeg.
+ *
+ * Wat hij erbij vangt dat de macro's laten lopen is "CHILLI MINI KABANOSSI":
+ * 304 kcal, terwijl de macro's op 379 uitkomen en de kilojoules 1572 zeggen,
+ * dus 376. Twee getuigen wijzen dezelfde kant op, maar de macro-verhouding is
+ * 1,25 en blijft daarmee onder de 1,4.
+ */
+const KJ_PER_KCAL = 4.184
+const KJ_AFWIJKING = 0.2
+
 /** Wat er nodig is voordat een rij de moeite waard is. */
 function bruikbaar(p) {
   const naam = (p.product_name_nl || p.product_name || '').trim()
@@ -115,8 +140,35 @@ function bruikbaar(p) {
     if (deel < MACRO_ONDER && kcal >= MACRO_VANAF_KCAL) {
       return 'energie klopt niet met de macro\'s'
     }
+    const kj = kilojoules(n)
+    if (kj != null && Math.abs(kj / KJ_PER_KCAL - kcal) / kcal > KJ_AFWIJKING) {
+      return 'energie klopt niet met de kilojoules'
+    }
   }
   return null
+}
+
+/**
+ * De kilojoules per 100 g, uit welk veld ze ook komen.
+ *
+ * Meestal staat er `energy-kj_100g`. Staat die er niet, dan draagt `energy_100g`
+ * hem soms, en dan zegt `energy_unit` in welke eenheid. Zonder die eenheid weten
+ * we niets: `energy_100g` kán ook kcal zijn, en die dan door 4,184 delen maakt
+ * van elk product een fout.
+ */
+function kilojoules(n) {
+  const direct = getal(n['energy-kj_100g'])
+  if (direct != null && direct > 0) return direct
+  if (n.energy_unit !== 'kJ') return null
+  const los = getal(n.energy_100g)
+  return los != null && los > 0 ? los : null
+}
+
+/** Het eerste merk uit `brands`, in de schrijfwijze die de oogst het vaakst gebruikt. */
+function merknaam(p, spelling) {
+  const merk = (p.brands || '').split(',')[0]?.trim()
+  if (!merk) return null
+  return spelling?.get(merk.toLowerCase()) ?? merk
 }
 
 function getal(v) {
@@ -169,8 +221,41 @@ function num(v) {
   return n == null ? 'null::numeric' : String(Math.round(n * 100) / 100)
 }
 
+/**
+ * Welke schrijfwijze een merk krijgt als de oogst het niet met zichzelf eens is.
+ *
+ * Open Food Facts neemt het merk over zoals de invuller het typte, en dus stond
+ * er acht keer "Dulano" en één keer "DULANO". Dat zijn in de database twee
+ * merken: wie op het ene filtert mist het andere.
+ *
+ * De regel kiest de schrijfwijze die het vaakst voorkomt, en verzint dus nooit
+ * iets — hij kan alleen een spelling opleveren die in de bron staat. Bij gelijk
+ * spel wint de eerste, want dan is er geen grond om te kiezen. "Chef Select"
+ * blijft "Chef Select": er is niets om tegen af te wegen.
+ */
+export function merkSpelling(producten) {
+  const tellen = new Map()
+  for (const p of producten) {
+    const merk = (p.brands || '').split(',')[0]?.trim()
+    if (!merk) continue
+    const sleutel = merk.toLowerCase()
+    if (!tellen.has(sleutel)) tellen.set(sleutel, new Map())
+    const vormen = tellen.get(sleutel)
+    vormen.set(merk, (vormen.get(merk) ?? 0) + 1)
+  }
+  const uit = new Map()
+  for (const [sleutel, vormen] of tellen) {
+    let beste = null, hoogste = -1
+    for (const [vorm, aantal] of vormen) {
+      if (aantal > hoogste) { beste = vorm; hoogste = aantal }
+    }
+    uit.set(sleutel, beste)
+  }
+  return uit
+}
+
 /** Eén product → één waardenrij, of null als het niet door de zeef komt. */
-export function rij(p) {
+export function rij(p, spelling) {
   if (bruikbaar(p)) return null
   const n = p.nutriments || {}
   const naam = (p.product_name_nl || p.product_name || '').trim()
@@ -179,7 +264,7 @@ export function rij(p) {
   return '  (' + [
     q(String(p.code)),
     q(naam),
-    q((p.brands || '').split(',')[0]?.trim() || null),
+    q(merknaam(p, spelling)),
     q((p.categories_tags || [])[0]?.replace(/^[a-z]{2}:/, '') || null),
     num(n['energy-kcal_100g']),
     num(n.proteins_100g),
@@ -216,13 +301,14 @@ export function naarSql(producten) {
      twee keer hetzelfde product; wie ze werkelijk wil vergelijken heeft de
      bronbestanden nog. */
   const gezien = new Set()
+  const spelling = merkSpelling(producten)
   for (const p of producten) {
     const reden = bruikbaar(p)
     if (reden) { weg[reden] = (weg[reden] ?? 0) + 1; continue }
     const code = String(p.code)
     if (gezien.has(code)) { weg['dezelfde streepjescode al gezien'] = (weg['dezelfde streepjescode al gezien'] ?? 0) + 1; continue }
     gezien.add(code)
-    rijen.push(rij(p))
+    rijen.push(rij(p, spelling))
   }
   const telling = Object.entries(weg).sort((a, b) => b[1] - a[1])
     .map(([r, n]) => `--   ${String(n).padStart(5)}  ${r}`).join('\n')
@@ -387,6 +473,48 @@ const VOORBEELD = [
   { code: '20123456', product_name_nl: 'Roomboter ongezouten', brands: 'Milbona',
     product_quantity: 250, serving_size: '10 g',
     nutriments: { 'energy-kcal_100g': 737, proteins_100g: 0.6, fat_100g: 82, carbohydrates_100g: 0.6 } },
+  /* De kilojoules spreken het kcal-veld tegen, en de macro's merken het niet.
+     Dit is "CHILLI MINI KABANOSSI" van Dulano, letterlijk: 304 kcal, terwijl de
+     macro's op 379 uitkomen (verhouding 1,25, dus onder de 1,4) en de kilojoules
+     1572 zeggen, dus 376. Zonder de kJ-toets komt deze rij erdoor. */
+  { code: '10', product_name_nl: 'Chilli mini kabanossi', brands: 'Dulano', product_quantity: 250,
+    nutriments: { 'energy-kcal_100g': 304, 'energy-kj_100g': 1572,
+                  proteins_100g: 24, fat_100g: 31, carbohydrates_100g: 1, fiber_100g: 0 } },
+  /* En eentje waar de kilojoules het kcal-veld juist bevestigen. Die hoort er
+     gewoon door: anders zou de toets simpelweg alles met een kJ-veld weigeren en
+     zou de proef hierboven niets bewijzen. */
+  { code: '11', product_name_nl: 'Bockworst gerookt', brands: 'Dulano', product_quantity: 550,
+    nutriments: { 'energy-kcal_100g': 221, 'energy-kj_100g': 916,
+                  proteins_100g: 12, fat_100g: 19, carbohydrates_100g: 0.5 } },
+  /* Zonder `energy-kj_100g`, maar met `energy_100g` én de eenheid erbij. Dan zijn
+     de kilojoules alsnog bekend, en spreken ze tegen: 2050 kJ is 490 kcal, niet
+     390. Merk op dat de macro's hier niets zeggen — die komen op 481 uit, wat bij
+     390 een verhouding van 1,23 is. */
+  { code: '12', product_name_nl: 'Fuet extra knoflook', brands: 'Dulano',
+    nutriments: { 'energy-kcal_100g': 390, energy_100g: 2050, energy_unit: 'kJ',
+                  proteins_100g: 28.4, fat_100g: 39.1, carbohydrates_100g: 3.8, fiber_100g: 4.4 } },
+  /* DEZELFDE VELDNAAM, ANDERE EENHEID
+     `energy_100g` draagt niet altijd kilojoules. Staat er geen eenheid bij, of
+     staat er kcal, dan weten we níets en mag er niet gedeeld worden — anders
+     wordt 445 gedeeld door 4,184 en valt elk goed product om. Deze rij hoort er
+     dus gewoon door. */
+  { code: '13', product_name_nl: 'Green canyon oats & honey', brands: 'Crownfield', product_quantity: 252,
+    nutriments: { 'energy-kcal_100g': 445, energy_100g: 445, energy_unit: 'kcal',
+                  proteins_100g: 9.1, fat_100g: 16, carbohydrates_100g: 63 } },
+  /* EN DE ANDERE KANT VAN DE GRENS
+     Deze rij hoort er júist door, en pint de grens vast aan de onderkant. Dit is
+     "Italiaanse Roerbakgroenten", letterlijk: 22 kcal terwijl 80,5 kJ op 19,2
+     uitkomt — twaalf en een half procent ernaast. Op zulke kleine getallen doet
+     afronding dat in haar eentje: een halve kcal is hier al twee procent.
+     Zonder deze rij zou een grens van vijf procent er net zo groen uitzien, en
+     dan zou de proef niet over een grens gaan maar over de kabanossi alleen. */
+  { code: '15', product_name_nl: 'Italiaanse roerbakgroenten', brands: 'Lidl', product_quantity: 750,
+    nutriments: { 'energy-kcal_100g': 22, 'energy-kj_100g': 80.5,
+                  proteins_100g: 1.7, fat_100g: 0.4, carbohydrates_100g: 2.4, fiber_100g: 2.1 } },
+  /* Hetzelfde merk, geschreeuwd. Open Food Facts neemt over wat de invuller
+     typte, en dan staan er twee merken in de database waar er één hoort. */
+  { code: '14', product_name_nl: 'Saucisses de Thuringe', brands: 'DULANO', product_quantity: 500,
+    nutriments: { 'energy-kcal_100g': 265, proteins_100g: 14, fat_100g: 22.6, carbohydrates_100g: 1 } },
 ]
 
 function proef() {
@@ -414,7 +542,7 @@ function proef() {
   const sql = naarSql(VOORBEELD)
   /* Zestien producten, zes bruikbaar. Die verhouding staat er met opzet in: valt
      de zeef ooit weg, dan komen er zestien doorheen en gaat deze proef om. */
-  eis(/16 producten bekeken, 6 bruikbaar/.test(sql), 'zes van de zestien komen erdoor')
+  eis(/22 producten bekeken, 10 bruikbaar/.test(sql), 'tien van de tweeëntwintig komen erdoor')
   for (const [reden, n] of [['geen naam', 1], ['energie buiten bereik', 1],
                             ['geen energie per 100 g', 1], ['geen streepjescode', 1],
                             ['naam is een etiketafdruk', 3],
@@ -463,6 +591,35 @@ function proef() {
 
   const leeg = naarSql([])
   eis(leeg.includes('Er valt niets in te voeren'), 'een lege oogst zegt dat, in plaats van kale SQL')
+
+  /* DE KILOJOULES ALS TWEEDE GETUIGE
+     De macro's en de kilojoules zeggen allebei iets over hetzelfde getal, maar
+     ze vangen niet hetzelfde. Deze vier proeven staan er om dat vast te leggen:
+     wat hij wél pakt, wat hij níet pakt, en waar hij zijn kilojoules vandaan
+     haalt. */
+  eis(/2  energie klopt niet met de kilojoules/.test(sql),
+      'twee rijen vallen af op hun eigen kilojoules')
+  eis(!sql.includes('Chilli mini kabanossi'),
+      'de kabanossi valt af op de kJ, terwijl de macro\'s hem doorlaten')
+  eis(sql.includes('Bockworst gerookt'),
+      'en een rij waar de kJ het kcal-veld bevestigt blijft gewoon staan')
+  eis(!sql.includes('Fuet extra knoflook'),
+      'de kJ worden ook uit energy_100g gelezen als de eenheid erbij staat')
+  eis(sql.includes('Green canyon oats & honey'),
+      'maar energy_100g zonder kJ als eenheid telt niet als kilojoules')
+  eis(sql.includes('Italiaanse roerbakgroenten'),
+      'en een klein getal dat twaalf procent afwijkt blijft staan — dat is afronding')
+
+  /* EEN MERK IS EEN MERK, HOE HET OOK GETYPT IS */
+  eis(!/'DULANO'/.test(sql), 'het geschreeuwde merk staat er niet in')
+  eis((sql.match(/'Dulano'/g) || []).length === 2,
+      'beide Dulano-rijen dragen dezelfde schrijfwijze')
+  eis(merkSpelling([{ brands: 'Aa' }, { brands: 'Aa' }, { brands: 'AA' }]).get('aa') === 'Aa',
+      'de schrijfwijze die het vaakst voorkomt wint')
+  eis(merkSpelling([{ brands: 'BB' }, { brands: 'Bb' }]).get('bb') === 'BB',
+      'bij gelijk spel wint de eerste, want er is niets te kiezen')
+  eis(merkSpelling([{ brands: 'Chef Select, Vemondo' }]).get('chef select') === 'Chef Select',
+      'een merk zonder tegenhanger blijft precies zoals het er staat')
 }
 
 /* ------------------------------------------------------------------ start -- */
