@@ -75,8 +75,20 @@ const AFDRUK = /\d{1,2}:\d{2}|\d{1,2}[-/.]\d{1,2}[-/.]\d{2,4}|\d{6,}/
  *
  * De ondergrens is losser dan de bovengrens, en dat is geen slordigheid: bij
  * bladgroente van vijftien kcal telt vezel mee dat hier buiten de som valt, en
- * telt afronding op 0,6 g dubbel zo hard. Vandaar ook de bodem: onder de vijftig
- * kcal zegt de verhouding meer over het afronden dan over het product.
+ * telt afronding op 0,6 g dubbel zo hard.
+ *
+ * EN DAAROM GELDT DE BODEM ALLEEN NAAR BENEDEN
+ *
+ * Die twee redenen — vezel buiten de som, afronding op kleine getallen — drukken
+ * de som omláág. Ze verklaren dus een lage verhouding en niet een hoge. Eerst
+ * stond de bodem op allebei de grenzen, en toen glipte "Choco Pudding" erdoor:
+ * 45,7 kcal terwijl 10 g eiwit, 1,5 g vet en 6,7 g koolhydraten op 80 uitkomen.
+ * De kilojoules in dezelfde rij zeggen 339, dus 81 — het kcal-veld was verkeerd
+ * uit de kJ gerekend, en dat is precies wat deze zeef hoort te vangen.
+ *
+ * Boven de bodem geldt de bovengrens dus ook: een som die bijna twee keer de
+ * opgegeven energie is, is bij vijfenveertig kcal even onmogelijk als bij
+ * driehonderd.
  */
 const MACRO_ONDER = 0.5
 const MACRO_BOVEN = 1.4
@@ -93,11 +105,16 @@ function bruikbaar(p) {
   if (kcal == null) return 'geen energie per 100 g'
   if (kcal < 0 || kcal > KCAL_MAX) return 'energie buiten bereik'
   if (!p.code) return 'geen streepjescode'
-  if (kcal >= MACRO_VANAF_KCAL) {
+  if (kcal > 0) {
     const uit = 4 * (getal(n.proteins_100g) ?? 0) + 9 * (getal(n.fat_100g) ?? 0)
       + 4 * (getal(n.carbohydrates_100g) ?? 0)
     const deel = uit / kcal
-    if (deel < MACRO_ONDER || deel > MACRO_BOVEN) return 'energie klopt niet met de macro\'s'
+    /* Te hoog kan altijd: daar is geen onschuldige verklaring voor. Te laag
+       alleen boven de bodem — daaronder verklaart vezel en afronding het. */
+    if (deel > MACRO_BOVEN) return 'energie klopt niet met de macro\'s'
+    if (deel < MACRO_ONDER && kcal >= MACRO_VANAF_KCAL) {
+      return 'energie klopt niet met de macro\'s'
+    }
   }
   return null
 }
@@ -353,6 +370,15 @@ const VOORBEELD = [
      Daarvoor staat de bodem van vijftig kcal er. */
   { code: '8', product_name_nl: 'Witte champignons gesneden', brands: 'Lidl', product_quantity: 250,
     nutriments: { 'energy-kcal_100g': 15, proteins_100g: 0.5, fat_100g: 0, carbohydrates_100g: 1, fiber_100g: 2 } },
+  /* Weinig energie én een som die er bijna twee keer boven ligt. Dit is "Choco
+     Pudding" van Milbona, letterlijk: 45,7 kcal terwijl 10 g eiwit, 1,5 g vet en
+     6,7 g koolhydraten op 80 uitkomen. De kilojoules in dezelfde rij zeggen 81,
+     dus het kcal-veld is verkeerd uit de kJ gerekend.
+     Stond de bodem van vijftig kcal op allebei de grenzen, dan glipte hij erdoor
+     — en dat deed hij ook, tot deze rij hier kwam te staan. */
+  { code: '9', product_name_nl: 'Choco Pudding', brands: 'Milbona', product_quantity: 500,
+    nutriments: { 'energy-kcal_100g': 45.7, proteins_100g: 10, fat_100g: 1.5,
+                  carbohydrates_100g: 6.7 } },
   /* Dezelfde roomboter nog een keer, met een andere naam. Zo komt het binnen:
      Open Food Facts bladert over gegevens die ondertussen veranderen, en één
      product kan onder twee huismerken van dezelfde winkel vallen. Twee rijen
@@ -386,13 +412,13 @@ function proef() {
   eis(q(null) === 'null::text' && q('') === 'null::text', 'leeg wordt een null mét type')
 
   const sql = naarSql(VOORBEELD)
-  /* Vijftien producten, zes bruikbaar. Die verhouding staat er met opzet in: valt
-     de zeef ooit weg, dan komen er vijftien doorheen en gaat deze proef om. */
-  eis(/15 producten bekeken, 6 bruikbaar/.test(sql), 'zes van de vijftien komen erdoor')
+  /* Zestien producten, zes bruikbaar. Die verhouding staat er met opzet in: valt
+     de zeef ooit weg, dan komen er zestien doorheen en gaat deze proef om. */
+  eis(/16 producten bekeken, 6 bruikbaar/.test(sql), 'zes van de zestien komen erdoor')
   for (const [reden, n] of [['geen naam', 1], ['energie buiten bereik', 1],
                             ['geen energie per 100 g', 1], ['geen streepjescode', 1],
                             ['naam is een etiketafdruk', 3],
-                            ["energie klopt niet met de macro's", 1],
+                            ["energie klopt niet met de macro's", 2],
                             ['dezelfde streepjescode al gezien', 1]]) {
     eis(new RegExp(`${n}  ${reden}`).test(sql), `weggelaten wordt geteld: ${n}× ${reden}`)
   }
@@ -424,6 +450,11 @@ function proef() {
      "ON CONFLICT DO UPDATE command cannot affect row a second time". Eén dubbele
      rij en er komt dus niets binnen — niet één rij minder, alles. Hier wordt
      geteld hoe vaak `'20123456'` in de waardenlijst staat: precies één keer. */
+  /* De bodem geldt alleen naar beneden. Een lichte rij waarvan de som er ver
+     bóven ligt hoort er net zo goed uit als een zware. */
+  eis(!sql.includes('Choco Pudding'),
+      'een lichte rij die zichzelf tegenspreekt valt ook af, ondanks de bodem')
+
   const keer = (sql.match(/'20123456'/g) ?? []).length
   eis(keer === 1, `de dubbele streepjescode staat er één keer in, niet ${keer}`)
   /* En het is de eerste die blijft: de tweede heette anders. */
