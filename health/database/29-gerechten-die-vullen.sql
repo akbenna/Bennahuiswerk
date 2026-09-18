@@ -1,7 +1,15 @@
 -- =============================================================================
 -- GERECHTEN DIE VULLEN — de verzadigingslijst krijgt er een bovenste helft bij
 --
--- Nog niet toegepast.
+-- Toegepast. De md5-controle van 18 september 2026 vond de functie in de
+-- database terug (d2ed0b391960919e595020f0bf738797), dus de kop hierboven stond
+-- al een tijd verkeerd.
+--
+-- Sinds 18 september 2026 achterhaald: bestand 36 heeft `kal_verzadiging`
+-- vervangen door dezelfde functie met de voorkeuren uit "Wat je lust" erin. De
+-- rest van dit bestand — de view, de som op één plek, de scores — geldt nog
+-- onverkort. Draai blok 2 alleen opnieuw als je de voorkeuren er bewust weer uit
+-- wilt; dat is ook de terugdraairegel van bestand 36.
 --
 -- WAT ER MISTE
 --

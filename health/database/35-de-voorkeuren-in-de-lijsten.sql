@@ -21,12 +21,26 @@
 --
 --   kal_eiwitrijk      2736d7fcd1913f12b0c3bdaf33b5a237
 --   kal_hoeken         bda6e4088510345b98b58d73700695af
---   kal_verzadiging    cc0dc4ccf36ff28184cf6ff9af22a078
+--   kal_verzadiging    ae305ba886a359279bda7ba75bbe5e23   ← uit bestand 36
 --
 -- Drie keer gelijk betekent dat de database draait wat hier staat. Wijkt er een
 -- af, dan is dit bestand niet wat er in de database zit en is het geen verslag
--- meer maar een voornemen. Verandert er iets aan een van de drie functies, dan
--- horen deze drie regels mee te veranderen.
+-- meer maar een voornemen.
+--
+-- EN WAT DIE CONTROLE METEEN VING
+--
+-- Hij gaf vier regels terug in plaats van drie, met twee keer `kal_verzadiging`.
+-- De `kal_verzadiging` hieronder heeft drie argumenten, en dat is de versie van
+-- bestand 28 — bestand 29 had die al vervangen door een versie met vier, en de
+-- oude weggehaald. `create or replace` kijkt naar de handtekening, dus dit
+-- bestand verving niets: het zette de driearguments-versie ernaast terug. De app
+-- roept de vierarguments-versie aan, dus "Wat vult het best" hield zich niet aan
+-- de voorkeuren, zonder fout en zonder waarschuwing.
+--
+-- Bestand 36 zet dat recht: het haalt de driearguments-versie weg en zet de
+-- voorkeuren in de functie die de app wél aanroept. Wat hieronder staat voor
+-- `kal_verzadiging` is dus achterhaald — draai dit bestand niet opnieuw. Voor
+-- `kal_eiwitrijk` en `kal_hoeken` klopt het nog wel.
 --
 --
 -- Vervangt `kal_eiwitrijk` (bestand 23) en `kal_verzadiging` (bestand 28). Beide

@@ -5,10 +5,12 @@
 -- gedraaid en gaven het antwoord dat eronder staat; de uitslag op de echte
 -- tabel is beoordeeld en goed bevonden.
 --
--- Sinds 18 september 2026 achterhaald: bestand 35 heeft `kal_verzadiging`
--- vervangen, zodat hij ook leest wat er in "Wat je lust" staat. Draai dit dus
--- niet opnieuw — dan zet je de voorkeuren weer uit. Wat er in de database hoort
--- te staan is de md5 in de kop van bestand 35.
+-- Sinds 18 september 2026 achterhaald, en in twee stappen. Bestand 29 gaf
+-- `kal_verzadiging` een vierde argument en haalde de versie hieronder weg;
+-- bestand 36 zette daar de voorkeuren uit "Wat je lust" in. Draai dit dus niet
+-- opnieuw — dan staat de oude driearguments-versie er weer naast, en dat is
+-- precies de fout die bestand 35 maakte. Wat er in de database hoort te staan is
+-- de md5 in de kop van bestand 36.
 --
 -- DE VRAAG
 --
