@@ -43,16 +43,62 @@ const VELDEN = 'code,product_name,product_name_nl,brands,quantity,product_quanti
    en is het een invoerfout — meestal kilojoules in het kcal-veld. */
 const KCAL_MAX = 950
 
+/**
+ * Een naam die geen naam is maar een foto van een etiket.
+ *
+ * Open Food Facts vult zich deels met tekstherkenning op een kiekje, en dan komt
+ * de houdbaarheidsdatum mee die ernaast gedrukt staat. Vijf van de honderd Chef
+ * Select-producten heetten zo: "23-12-25 406 56 03:29 chef select serveertip KIP
+ * P" en "IJSBERGOLA gewassen 200ge 10/08/2025".
+ *
+ * Wat ze gemeen hebben is niet dat er cijfers in staan — "0% Griekse yoghurt" en
+ * "7-Up" hebben die ook — maar dat er een klok, een datum of een streepjescode in
+ * staat. Geen van die drie hoort ooit in een productnaam, en juist daarom mag de
+ * regel hierop scherp zijn en niet op cijferdichtheid. Die laatste had ik eerst,
+ * en die gooide "0% Griekse yoghurt 500 g" weg.
+ */
+const AFDRUK = /\d{1,2}:\d{2}|\d{1,2}[-/.]\d{1,2}[-/.]\d{2,4}|\d{6,}/
+
+/**
+ * Hoe ver de energie van zijn eigen macro's mag afwijken.
+ *
+ * Eiwit en koolhydraten leveren 4 kcal per gram, vet 9. Dat is geen schatting
+ * maar de afspraak waarmee het getal op het etiket gemaakt wordt, dus een etiket
+ * hoort binnen een procent of tien uit te komen. Twintig procent wettelijke
+ * speelruimte en afronding erbij, en veertig procent is nog steeds ruim.
+ *
+ * Daarboven is het geen etiket meer maar een invoerfout — iemand die de energie
+ * van de verpakking overnam en de macro's per 100 g, of andersom. In deze honderd
+ * producten was er precies één: "Kipfilet Kanapka", 147 kcal terwijl 9,3 g eiwit,
+ * 10,1 g vet en 25,4 g koolhydraten op 230 uitkomen. Al het andere lag tussen
+ * 0,69 en 1,08.
+ *
+ * De ondergrens is losser dan de bovengrens, en dat is geen slordigheid: bij
+ * bladgroente van vijftien kcal telt vezel mee dat hier buiten de som valt, en
+ * telt afronding op 0,6 g dubbel zo hard. Vandaar ook de bodem: onder de vijftig
+ * kcal zegt de verhouding meer over het afronden dan over het product.
+ */
+const MACRO_ONDER = 0.5
+const MACRO_BOVEN = 1.4
+const MACRO_VANAF_KCAL = 50
+
 /** Wat er nodig is voordat een rij de moeite waard is. */
 function bruikbaar(p) {
   const naam = (p.product_name_nl || p.product_name || '').trim()
   if (!naam) return 'geen naam'
   if (naam.length > 200) return 'naam onwaarschijnlijk lang'
+  if (AFDRUK.test(naam)) return 'naam is een etiketafdruk'
   const n = p.nutriments || {}
   const kcal = getal(n['energy-kcal_100g'])
   if (kcal == null) return 'geen energie per 100 g'
   if (kcal < 0 || kcal > KCAL_MAX) return 'energie buiten bereik'
   if (!p.code) return 'geen streepjescode'
+  if (kcal >= MACRO_VANAF_KCAL) {
+    const uit = 4 * (getal(n.proteins_100g) ?? 0) + 9 * (getal(n.fat_100g) ?? 0)
+      + 4 * (getal(n.carbohydrates_100g) ?? 0)
+    const deel = uit / kcal
+    if (deel < MACRO_ONDER || deel > MACRO_BOVEN) return 'energie klopt niet met de macro\'s'
+  }
   return null
 }
 
@@ -260,6 +306,34 @@ const VOORBEELD = [
   { product_name: 'Zonder streepjescode', nutriments: { 'energy-kcal_100g': 200 } },
   { code: '4', product_name: "Sinaasappelsap 'vers'", brands: 'Lidl', serving_size: '1 pièce',
     nutriments: { 'energy-kcal_100g': 45, carbohydrates_100g: 10 } },
+  /* Tekstherkenning op een kiekje van de verpakking: de houdbaarheidsdatum en de
+     klok staan er letterlijk in. Vijf van de eerste honderd Chef Select-producten
+     heetten zo, en dit zijn drie van die vijf, woord voor woord.
+
+     Ze staan hier apart en niet als één rij die alles tegelijk heeft, want die ene
+     rij bewijst niets: hij sneuvelt ook als er nog maar één van de drie
+     herkenningen over is. Zo sneuvelt elke herkenning aan zijn eigen geval. */
+  { code: '5', product_name: '406 80 14:36 chef select serveertip ZALM SALADE VE', brands: 'Lidl',
+    nutriments: { 'energy-kcal_100g': 200, proteins_100g: 10, fat_100g: 10, carbohydrates_100g: 15 } },
+  { code: '5b', product_name: 'IJSBERGOLA gewassen 200ge 10/08/2025', brands: 'Lidl',
+    nutriments: { 'energy-kcal_100g': 200, proteins_100g: 10, fat_100g: 10, carbohydrates_100g: 15 } },
+  { code: '5c', product_name: 'chaf You 44280651 Beter Leven ED KIP GRILLWORST 2', brands: 'Lidl',
+    nutriments: { 'energy-kcal_100g': 200, proteins_100g: 10, fat_100g: 10, carbohydrates_100g: 15 } },
+  /* De energie van de verpakking naast de macro's per 100 g: 147 kcal terwijl
+     4×9,3 + 9×10,1 + 4×25,4 op 230 uitkomt. */
+  { code: '6', product_name: 'Kipfilet kanapka', brands: 'Lidl',
+    nutriments: { 'energy-kcal_100g': 147, proteins_100g: 9.3, fat_100g: 10.1, carbohydrates_100g: 25.4 } },
+  /* En eentje die er juist wél doorheen hoort: cijfers in een naam zijn gewoon,
+     een klok en een streepjescode niet. Een zeef op cijferdichtheid gooide deze
+     weg, en dat is precies waarom die er niet staat. */
+  { code: '7', product_name_nl: '0% Griekse yoghurt 500 g', brands: 'Lidl', product_quantity: 500,
+    nutriments: { 'energy-kcal_100g': 57, proteins_100g: 10, fat_100g: 0, carbohydrates_100g: 4 } },
+  /* En bladgroente, waar de macro-som niet opgaat zonder dat er iets mis is: de
+     vezel zit niet in de koolhydraten en op 0,5 g telt afronding dubbel. Zes van
+     vijftien kcal is 0,40 — ruim onder de ondergrens, en toch een goede rij.
+     Daarvoor staat de bodem van vijftig kcal er. */
+  { code: '8', product_name_nl: 'Witte champignons gesneden', brands: 'Lidl', product_quantity: 250,
+    nutriments: { 'energy-kcal_100g': 15, proteins_100g: 0.5, fat_100g: 0, carbohydrates_100g: 1, fiber_100g: 2 } },
 ]
 
 function proef() {
@@ -285,13 +359,25 @@ function proef() {
   eis(q(null) === 'null::text' && q('') === 'null::text', 'leeg wordt een null mét type')
 
   const sql = naarSql(VOORBEELD)
-  /* Acht producten, vier bruikbaar. Die verhouding staat er met opzet in: valt
-     de zeef ooit weg, dan komen er acht doorheen en gaat deze proef om. */
-  eis(/8 producten bekeken, 4 bruikbaar/.test(sql), 'vier van de acht komen erdoor')
+  /* Veertien producten, zes bruikbaar. Die verhouding staat er met opzet in: valt
+     de zeef ooit weg, dan komen er veertien doorheen en gaat deze proef om. */
+  eis(/14 producten bekeken, 6 bruikbaar/.test(sql), 'zes van de veertien komen erdoor')
   for (const [reden, n] of [['geen naam', 1], ['energie buiten bereik', 1],
-                            ['geen energie per 100 g', 1], ['geen streepjescode', 1]]) {
+                            ['geen energie per 100 g', 1], ['geen streepjescode', 1],
+                            ['naam is een etiketafdruk', 3],
+                            ["energie klopt niet met de macro's", 1]]) {
     eis(new RegExp(`${n}  ${reden}`).test(sql), `weggelaten wordt geteld: ${n}× ${reden}`)
   }
+  /* En de drie die alleen op hun naam sneuvelen, sneuvelen ook echt: een telling
+     die klopt terwijl de rij er toch in staat is geen zeef maar een boekhouding. */
+  eis(!sql.includes('serveertip') && !sql.includes('IJSBERGOLA') && !sql.includes('44280651'),
+      'alle drie de etiketafdrukken staan er niet in — klok, datum én code')
+  /* De bodem van vijftig kcal: zonder hem valt deze goede rij op 0,40 af. */
+  eis(sql.includes('Witte champignons gesneden'),
+      'bladgroente overleeft de macro-zeef, want daar telt vezel mee dat buiten de som valt')
+  eis(!sql.includes('Kipfilet') && !sql.includes("'6'"), 'de rij die zichzelf tegenspreekt staat er niet in')
+  eis(sql.includes('0% Griekse yoghurt 500 g'),
+      'een naam met cijfers erin blijft — het gaat om klokken en codes, niet om cijfers')
   eis(sql.includes("'20123456'") && !sql.includes("'1900'"), 'de goede rijen staan erin, de rommel niet')
   eis(sql.includes('on conflict (bron, barcode) do update'), 'opnieuw draaien werkt bij in plaats van te verdubbelen')
   eis(!sql.includes("''vers''',") || sql.includes("''vers'''"), 'de ontsnapping komt ook in de uitvoer terecht')
