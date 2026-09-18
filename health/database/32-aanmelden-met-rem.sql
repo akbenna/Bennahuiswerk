@@ -1,7 +1,8 @@
 -- =============================================================================
 -- EEN REM OP HET AANMELDEN — voordat er meer dan één mens in zit
 --
--- Nog niet toegepast.
+-- Toegepast 18 september 2026. Niet hier nagekeken: dat rust op een
+-- mededeling en niet op een meting.
 --
 -- DE VRAAG WAS EEN ANDERE
 --

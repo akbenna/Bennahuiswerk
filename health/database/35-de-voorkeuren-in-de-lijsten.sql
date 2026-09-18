@@ -1,7 +1,33 @@
 -- =============================================================================
 -- DE VOORKEUREN IN DE TWEE TABELLIJSTEN
 --
--- Nog niet toegepast.
+-- Toegepast 18 september 2026.
+--
+-- Wat daarvan hier is nagekeken: niets. De zeven vragen van blok 4 zijn in de
+-- echte database gedraaid en hun uitkomst is nooit in dit bestand beland, dus
+-- dat "toegepast" rust op een mededeling en niet op een meting. Dat verschil
+-- hoort zichtbaar te blijven. Het is te herstellen zonder op iemands geheugen te
+-- vertrouwen — vergelijk wat er in de database staat met wat hier staat:
+--
+--   select p.proname,
+--          md5(regexp_replace(regexp_replace(p.prosrc, '/\*.*?\*/', '', 'gs'),
+--                             '\s+', ' ', 'g')) as in_de_database
+--     from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+--    where n.nspname = 'public' and p.proname in ('kal_eiwitrijk', 'kal_verzadiging', 'kal_hoeken')
+--    order by 1;
+--
+-- Wat dit bestand zegt dat eruit hoort te komen — commentaar en witruimte
+-- gestript, zodat een andere inspringing geen vals alarm geeft:
+--
+--   kal_eiwitrijk      2736d7fcd1913f12b0c3bdaf33b5a237
+--   kal_hoeken         bda6e4088510345b98b58d73700695af
+--   kal_verzadiging    cc0dc4ccf36ff28184cf6ff9af22a078
+--
+-- Drie keer gelijk betekent dat de database draait wat hier staat. Wijkt er een
+-- af, dan is dit bestand niet wat er in de database zit en is het geen verslag
+-- meer maar een voornemen. Verandert er iets aan een van de drie functies, dan
+-- horen deze drie regels mee te veranderen.
+--
 --
 -- Vervangt `kal_eiwitrijk` (bestand 23) en `kal_verzadiging` (bestand 28). Beide
 -- lezen vanaf nu wat de gebruiker in "Wat je lust" heeft gezet. De rest van die
