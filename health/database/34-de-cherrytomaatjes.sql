@@ -266,7 +266,7 @@ COMMIT;
 --     where d.slug = 'lun-cherrytomaatjes'
 --       and not exists (select 1 from nevo_foods n where n.nevo_code = i.external_food_id);
 --
--- 2. Wat komt eruit? Eén regel, rond de 15 kcal voor tachtig gram.
+-- 2. Wat komt eruit? Eén regel: 80 gram, 24 kcal, 1,1 g vezel.
 --
 --    select d.name_nl, i.external_food_id, n.naam_nl,
 --           round(sum(i.grams_equivalent)) as gram,
@@ -279,6 +279,12 @@ COMMIT;
 --     group by d.name_nl, i.external_food_id, n.naam_nl;
 --
 -- 3. Twee keer draaien verandert niets. Draai het hele bestand nog een keer:
+--
+--    Blok 2 zegt dan `INSERT 0 0` en dat is goed, geen fout: `on conflict do
+--    nothing` op de slug laat `returning` leeg, en daarmee blijven de twee
+--    kinderinserts leeg. Staat het gerecht er al van een eerdere poging, dan is
+--    dat ook wat je de eerste keer ziet — kijk dan met de tellingen hieronder of
+--    het er compleet staat, en draai anders eerst de terugdraairegel uit de kop.
 --
 --    select count(*) as hoort_een_te_zijn from cultural_dishes where slug = 'lun-cherrytomaatjes';
 --    select count(*) as hoort_een_te_zijn from dish_ingredients i
