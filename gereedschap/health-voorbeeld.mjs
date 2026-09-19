@@ -1256,21 +1256,64 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
     console.log(`uit de tabel               ${tekens.join(' ')} · ${JSON.stringify(eerste.slice(0, 64))}`)
   }
 
-  /* En de fiets op het bewegingsscherm. */
+  /* En de inspanning op het bewegingsscherm.
+
+     `kal_dagen.fiets_min` blijft bestaan — het is de weg waarlangs de koppeling
+     op de telefoon binnenkomt — en hoort mee te tellen als één matige fietsrit
+     van die dag. Vier van de zeven dagen in de proefreeks hebben er 45, dus 180
+     van de 150. Zou die brug wegvallen, dan staat er 0 en merkt niemand het:
+     het scherm ziet er verder precies hetzelfde uit. */
   {
     await naarTab(pagina, 'Beweging')
     const kop = (await pagina.locator('.hero').innerText()).replace(/\s+/g, ' ')
-    if (!/minuten op de fiets/.test(kop)) {
-      throw new Error(`beweging: de kop noemt de fiets niet — ${JSON.stringify(kop.slice(0, 120))}`)
+    if (!/minuten inspanning/.test(kop)) {
+      throw new Error(`beweging: de kop noemt de inspanning niet — ${JSON.stringify(kop.slice(0, 120))}`)
+    }
+    /* Op de tekst van de balk en niet op de kop: "Inspanning" staat ook in de
+       uitlegteksten van andere kaarten, en `hasText` kijkt naar de hele kaart. */
+    const kaart = pagina.locator('.kaart').filter({ hasText: /van 150 min/ }).first()
+    const week = (await kaart.innerText()).replace(/\s+/g, ' ')
+    if (!/180 van 150 min/.test(week)) {
+      throw new Error(`beweging: het oude veld telt niet mee — ${JSON.stringify(week.slice(0, 160))}`)
     }
     const veld = pagina.getByLabel('Fietsminuten vandaag')
-    if (!(await veld.count())) throw new Error('beweging: er is geen veld voor fietsminuten')
-    const week = (await pagina.locator('.kaart', { hasText: 'Fietsen' }).first().innerText())
-      .replace(/\s+/g, ' ')
-    if (!/van 150 min/.test(week)) throw new Error(`beweging: het weekdoel staat er niet — ${JSON.stringify(week)}`)
+    if (!(await veld.count())) throw new Error('beweging: het oude veld is niet meer te verbeteren')
+
+    /* DE WISSELKOERS, OP HET SCHERM EN IN WAT ER VERSTUURD WORDT
+
+       Veertig minuten hardlopen telt voor honderdvijftig-minutennorm als
+       tachtig. Dat staat als zin onder het invoervel, en het hoort als
+       `intensiteit: 'zwaar'` in de database te belanden. Een scherm dat het
+       eerste zegt en het tweede niet doet, valt nergens anders om. */
+    const verstuurd = []
+    await pagina.route('**/rest/v1/rpc/kal_rij_toevoegen', async (route) => {
+      verstuurd.push(JSON.parse(route.request().postData() ?? '{}'))
+      await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' })
+    })
+    await kaart.getByRole('button', { name: 'Hardlopen' }).click()
+    /* Exact, want `getByLabel` zoekt op deelreeks: "Fietsminuten vandaag"
+       bevat "minuten" en dan staan er twee velden. */
+    await kaart.getByLabel('Minuten', { exact: true }).fill('40')
+    await pagina.waitForTimeout(150)
+    const hint = (await kaart.innerText()).replace(/\s+/g, ' ')
+    if (!/40 minuten tellen als 80/.test(hint)) {
+      throw new Error(`beweging: de wisselkoers staat niet op het scherm — ${JSON.stringify(hint.slice(-220))}`)
+    }
+    if (!/Hardlopen telt als zwaar/.test(hint)) {
+      throw new Error(`beweging: de aanname noemt zichzelf niet — ${JSON.stringify(hint.slice(-220))}`)
+    }
+    await kaart.getByRole('button', { name: 'Toevoegen' }).click()
+    await pagina.waitForTimeout(400)
+    const rij = verstuurd[0]?.p_rij
+    if (!rij || rij.soort !== 'rennen' || rij.minuten !== 40
+        || rij.intensiteit !== 'zwaar' || rij.geschat !== true) {
+      throw new Error(`beweging: er gaat iets anders naar de database — ${JSON.stringify(rij)}`)
+    }
+
     await pagina.screenshot({ path: 'gereedschap/health-beweging-fiets.png', fullPage: true })
     const titel = (await pagina.locator('.hero h2').textContent()) ?? ''
-    console.log(`fiets                      kop=${JSON.stringify(titel)} · ${week.match(/\d+ van 150 min/)?.[0]}`)
+    console.log(`inspanning                 kop=${JSON.stringify(titel)} · ${week.match(/\d+ van 150 min/)?.[0]}`
+      + ` · 40′ rennen → ${rij.intensiteit}, geschat=${rij.geschat}`)
   }
   await pagina.close()
 }
@@ -3228,75 +3271,71 @@ for (const [naam, dagen, patroon, verwacht] of [
 }
 
 /**
- * DE WORK-OUTLIJST DIE BEWEEGMINUTEN WORDT
+ * DE WORK-OUTLIJST DIE EEN LIJST INSPANNINGEN WORDT
  *
  * Apple Gezondheid heeft onder "Work-outs" een lijst van posts: een duur, een
- * datum, de app die hem schreef. Geen soort. Voor wie geen koppeling laat
- * draaien is dat de enige bron van beweegminuten, en het scherm Beweging rekent
- * er de WHO-norm van 150 minuten per week mee uit.
+ * datum, de app die hem schreef, en een kopje dat zegt wat het was. Dat kopje
+ * bepaalt hoe zwaar de minuten tellen — veertig minuten hardlopen is voor de
+ * WHO-richtlijn tachtig matige minuten en veertig wandelen veertig.
  *
  * WAAROM EEN GREP HIER NIET VOLSTAAT
  *
  * Wat hier fout kan gaan is niet dat het scherm leeg blijft — dat zie je. Het is
- * dat er iets ánders wordt weggeschreven dan wat er op het scherm stond. Drie
+ * dat er iets ánders wordt weggeschreven dan wat er op het scherm stond. Vier
  * dingen moeten kloppen en ze zitten elk in een andere laag:
  *
- *   het vinkje        staat uit bij een duur die geen training kán zijn, en dat
- *                     komt uit `aannemelijk()` en niet uit een klasse in de HTML
- *   het optellen      twee ritten op één dag zijn samen één getal, uit
- *                     `minutenPerDag()`
- *   het versturen     wat aangevinkt staat komt als `fiets_min` in de aanroep,
- *                     en een uitgevinkte post sleept de rest van zijn dag niet
- *                     mee
+ *   het vinkje        staat uit bij krachttraining, bij een duur die geen
+ *                     training kán zijn, en bij een post zonder kopje — en dat
+ *                     komt uit `redenUit()` en niet uit een klasse in de HTML
+ *   de soort          is te verbeteren, en een post die een soort krijgt hoort
+ *                     daarmee meteen aangevinkt te staan: die tik heeft de vraag
+ *                     al beantwoord
+ *   de wisselkoers    het scherm noemt twee getallen, echte minuten en matige
+ *                     minuten, en ze horen te verschillen zodra er iets zwaars
+ *                     bij zit
+ *   het versturen     wat aangevinkt staat komt als rij in
+ *                     kal_inspanning_toevoegen, met de intensiteit die bij de
+ *                     soort hoort en `geschat: true`
  *
- * De derde is de enige die telt en de enige die je op een schermafdruk niet
- * ziet. Daarom loopt deze proef tot voorbij de knop: de aanroep naar
- * kal_dagen_importeren wordt onderschept en nagekeken.
- *
- * En één ding dat geen van drieën is: de dag waar al 45 minuten stond hoort dat
- * te laten zien naast het nieuwe getal. Een afdruk knipt, en een import die een
- * goed getal verlaagt hoort dat niet stil te doen.
+ * De laatste is de enige die telt en de enige die je op een schermafdruk niet
+ * ziet. Daarom loopt deze proef tot voorbij de knop: de aanroep wordt
+ * onderschept en nagekeken.
  */
 {
   const pagina = await ctx.newPage()
   await pagina.emulateMedia({ colorScheme: 'light' })
   await bedienDb(pagina, 28, 'afvallen')
 
-  /* Twee dagen uit dezelfde reeks die het scherm ook krijgt: één waar al
-     fietsminuten staan en één waar niets staat. Niet vandaag — die dag is op
-     meer schermen bijzonder en zou de proef aan iets anders koppelen. */
   const { dagen: reeksdagen } = reeks(28)
-  const dagAl = reeksdagen[reeksdagen.length - 3]
-  const dagNiet = reeksdagen[reeksdagen.length - 2]
-  if (dagAl.fiets_min !== 45 || dagNiet.fiets_min !== null) {
-    throw new Error('work-outs: de proefreeks is veranderd — kies twee andere dagen '
-      + `(${dagAl.datum}=${dagAl.fiets_min}, ${dagNiet.datum}=${dagNiet.fiets_min})`)
-  }
+  const dagA = reeksdagen[reeksdagen.length - 3].datum
+  const dagB = reeksdagen[reeksdagen.length - 2].datum
 
-  const verstuurd = { dagen: null }
+  const verstuurd = { rijen: null }
   await pagina.route('**/rest/v1/rpc/**', async (route) => {
-    if (route.request().url().endsWith('kal_dagen_importeren')) {
-      verstuurd.dagen = JSON.parse(route.request().postData() ?? '{}').p_dagen
-      await route.fulfill({ status: 200, contentType: 'application/json', body: '1' })
+    if (route.request().url().endsWith('kal_inspanning_toevoegen')) {
+      verstuurd.rijen = JSON.parse(route.request().postData() ?? '{}').p_rijen
+      await route.fulfill({
+        status: 200, contentType: 'application/json',
+        body: JSON.stringify({ toegevoegd: verstuurd.rijen.length, overgeslagen: 0 }),
+      })
       return
     }
     await route.fallback()
   })
 
-  /* De lijst zoals de herkenning hem teruggeeft. Vier posts: twee ritten op één
-     dag, en op de andere dag een echte rit naast een horloge dat veertien uur
-     als één activiteit heeft weggeschreven. Geen `dagen` erbij — een
-     work-outafdruk bevat geen dagreeks, en dat is meteen de proef dat het blok
-     ook zonder dagen in beeld komt. */
+  /* Vijf posten, en elke reden om een vinkje uit te zetten komt één keer voor.
+     Geen `dagen` erbij — een work-outafdruk bevat geen dagreeks, en dat is
+     meteen de proef dat het blok ook zonder dagen in beeld komt. */
   await pagina.route('**/functions/v1/kal-ai', (route) => route.fulfill({
     status: 200, contentType: 'application/json',
     body: JSON.stringify({
       model: 'proef', opmerking: '', dagen: [], bronnen: [],
       activiteiten: [
-        { datum: dagAl.datum, minuten: 52, bron: 'Garmin', tijd: '07:12' },
-        { datum: dagAl.datum, minuten: 23, bron: 'Garmin', tijd: '18:40' },
-        { datum: dagNiet.datum, minuten: 14 * 60 + 22, bron: 'Garmin', tijd: '00:03' },
-        { datum: dagNiet.datum, minuten: 31, bron: 'Garmin', tijd: '19:05' },
+        { datum: dagA, minuten: 52, soort: 'fietsen', label: 'Buiten fietsen', bron: 'Garmin', tijd: '07:12' },
+        { datum: dagA, minuten: 40, soort: 'rennen', label: 'Hardlopen buiten', bron: 'Garmin', tijd: '18:40' },
+        { datum: dagA, minuten: 45, soort: 'kracht', label: 'Functionele kracht', bron: 'Garmin', tijd: '20:05' },
+        { datum: dagB, minuten: 14 * 60 + 22, soort: 'fietsen', label: 'Buiten fietsen', bron: 'Garmin', tijd: '00:03' },
+        { datum: dagB, minuten: 31, soort: null, label: null, bron: 'Garmin', tijd: '19:05' },
       ],
     }),
   }))
@@ -3315,50 +3354,86 @@ for (const [naam, dagen, patroon, verwacht] of [
 
   process.stdout.write('work-outs                  ')
 
-  /* 1. Vier posts, en het vinkje van de veertien uur staat uit. Dat vinkje is
-        de hele beslissing: hij staat uit omdat `aannemelijk()` hem uit zet en
-        niet omdat er iets in de HTML gemarkeerd is. */
+  /* 1. Vijf posten; drie vinkjes uit, elk om een eigen reden. Die reden hoort
+        erbij te staan: een vinkje dat uit staat zonder uitleg is niet te
+        beoordelen, en dan zet je hem uit gewoonte weer aan. */
   const vinkjes = venster.locator('input[type=checkbox]')
-  if (await vinkjes.count() !== 4) {
-    throw new Error(`work-outs: ${await vinkjes.count()} vinkjes in plaats van 4`)
+  if (await vinkjes.count() !== 5) {
+    throw new Error(`work-outs: ${await vinkjes.count()} vinkjes in plaats van 5`)
   }
   const stand = []
-  for (let i = 0; i < 4; i++) stand.push(await vinkjes.nth(i).isChecked())
-  if (JSON.stringify(stand) !== JSON.stringify([true, true, false, true])) {
+  for (let i = 0; i < 5; i++) stand.push(await vinkjes.nth(i).isChecked())
+  if (JSON.stringify(stand) !== JSON.stringify([true, true, false, false, false])) {
     throw new Error(`work-outs: de vinkjes staan op ${JSON.stringify(stand)}`)
   }
-
-  const plat = (await venster.innerText()).replace(/\s+/g, ' ')
-  if (!plat.includes('14 u 22')) throw new Error('work-outs: de lange post staat er niet')
-
-  /* 2. Wat er overgenomen wordt staat er als som per dag — 52 + 23 — en de dag
-        waar al iets stond zegt wat daar staat. Zonder die tweede helft verlaagt
-        een afgeknipte afdruk stil een goed getal. */
-  if (!/75 min/.test(plat)) throw new Error(`work-outs: 52+23 wordt geen 75\n  ${plat}`)
-  if (!/75 min · nu 45 min/.test(plat)) {
-    throw new Error(`work-outs: er staat niet bij wat er al stond\n  ${plat}`)
+  let plat = (await venster.innerText()).replace(/\s+/g, ' ')
+  for (const moet of [/krachttraining telt apart/, /langer dan 4 uur/, /geen soort te zien/]) {
+    if (!moet.test(plat)) throw new Error(`work-outs: de reden ${moet} staat er niet\n  ${plat}`)
   }
-  /* En op de dag waar niets stond hoort die toevoeging er níet te staan: een
-     "nu 0 min" bij elke lege dag is ruis waar je na twee keer overheen kijkt. */
-  if (/31 min · nu/.test(plat)) {
-    throw new Error(`work-outs: een lege dag krijgt toch een "nu"\n  ${plat}`)
+
+  /* De krachtsessie is niet aan te vinken, en dat is het énige slot: er staat
+     geen tweede zeef achter. Een vinkje dat je wél kunt aanzetten en dat daarna
+     niets doet, is erger dan geen vinkje — dan denk je dat het meetelt. */
+  if (!(await vinkjes.nth(2).isDisabled())) {
+    throw new Error('work-outs: de krachtsessie is aan te vinken')
   }
-  console.log(`4 posts · vinkjes ${stand.map((v) => v ? '✓' : '·').join('')} · 52+23=75 naast de 45 die er stond`)
+  if (await vinkjes.nth(3).isDisabled() || await vinkjes.nth(4).isDisabled()) {
+    throw new Error('work-outs: een post die je zelf mag beoordelen staat op slot')
+  }
+
+  /* En het slot gaat open zodra het kopje verbeterd wordt: "Functionele kracht"
+     kan best een roeisessie geweest zijn. */
+  await venster.getByLabel(`Soort van ${dagA} 45 min`).selectOption('roeien')
+  await pagina.waitForTimeout(150)
+  if (await vinkjes.nth(2).isDisabled()) {
+    throw new Error('work-outs: een andere soort kiezen haalt het slot er niet af')
+  }
+  await venster.getByLabel(`Soort van ${dagA} 45 min`).selectOption('kracht')
+  await pagina.waitForTimeout(150)
+  if (!(await vinkjes.nth(2).isDisabled()) || await vinkjes.nth(2).isChecked()) {
+    throw new Error('work-outs: terug naar kracht laat het vinkje aan staan')
+  }
+
+  /* 2. Twee getallen en ze verschillen: 52 + 40 = 92 gedaan, en 52 + 80 = 132
+        voor de norm. Eén getal zou over een van beide liegen. */
+  if (!/samen 92 minuten — dat telt als 132 matige minuten/.test(plat)) {
+    throw new Error(`work-outs: de wisselkoers staat niet in de samenvatting\n  ${plat}`)
+  }
+
+  /* 3. De post zonder kopje een soort geven beantwoordt de vraag die het vinkje
+        stelde, dus hij hoort meteen aan te staan. Nog een tik vragen is een tik
+        die niets toevoegt. */
+  await venster.getByLabel(`Soort van ${dagB} 31 min`).selectOption('wandelen')
+  await pagina.waitForTimeout(200)
+  if (!(await vinkjes.nth(4).isChecked())) {
+    throw new Error('work-outs: een soort kiezen vinkt de post niet aan')
+  }
+  plat = (await venster.innerText()).replace(/\s+/g, ' ')
+  if (!/samen 123 minuten — dat telt als 163 matige minuten/.test(plat)) {
+    throw new Error(`work-outs: de samenvatting loopt niet mee\n  ${plat}`)
+  }
+  console.log(`5 posten · vinkjes ${stand.map((v) => v ? '✓' : '·').join('')} · 92′ → 132 matige, na de soort 123′ → 163`)
 
   await pagina.screenshot({ path: 'gereedschap/health-import-workouts.png' })
 
-  /* 3. Tot voorbij de knop. Twee dagen, de juiste sommen, en de veertien uur
-        nergens terug te vinden — ook niet opgeteld bij de 31 van diezelfde dag. */
+  /* 4. Tot voorbij de knop. Drie rijen, met de intensiteit die bij de soort
+        hoort en `geschat: true` — de app heeft hem afgeleid en niet gemeten.
+        De krachtsessie en de veertien uur gaan nergens heen. */
   await venster.getByRole('button', { name: 'Overnemen' }).click()
   await pagina.waitForTimeout(600)
-  if (!Array.isArray(verstuurd.dagen)) throw new Error('work-outs: er is niets verstuurd')
-  const gekregen = Object.fromEntries(verstuurd.dagen.map((d) => [d.datum, d.fiets_min]))
-  const moet = { [dagAl.datum]: 75, [dagNiet.datum]: 31 }
-  if (JSON.stringify(gekregen) !== JSON.stringify(moet)) {
+  if (!Array.isArray(verstuurd.rijen)) throw new Error('work-outs: er is niets verstuurd')
+  const kort = verstuurd.rijen.map((r) =>
+    `${r.datum}/${r.soort}/${r.minuten}/${r.intensiteit}/${r.geschat}/${r.bron}`)
+  const moet = [
+    `${dagA}/fietsen/52/matig/true/import`,
+    `${dagA}/rennen/40/zwaar/true/import`,
+    `${dagB}/wandelen/31/matig/true/import`,
+  ]
+  if (JSON.stringify(kort) !== JSON.stringify(moet)) {
     throw new Error('work-outs: er gaat iets anders naar de database dan er op het scherm stond\n'
-      + `  verstuurd: ${JSON.stringify(gekregen)}\n  verwacht:  ${JSON.stringify(moet)}`)
+      + `  verstuurd: ${JSON.stringify(kort, null, 1)}\n  verwacht:  ${JSON.stringify(moet, null, 1)}`)
   }
-  console.log(`${''.padEnd(26)} verstuurd: ${JSON.stringify(gekregen)} — de 14 u 22 gaat nergens heen`)
+  console.log(`${''.padEnd(26)} verstuurd: 3 rijen, de kracht en de 14 u 22 nergens`)
 
   await pagina.close()
 }

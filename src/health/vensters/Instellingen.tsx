@@ -7,11 +7,12 @@ import { Kaart, Keuzechip, Knop, Kop, Rij, Spin, Venster } from '../onderdelen/b
 import { MEDICATIEGROEPEN } from '../conditie'
 import type { Conditie, Medicatiegroep } from '../conditie'
 import { dec, dz } from '@/gedeeld/getal'
-import type { Fase, Geslacht, IsoDatum, Profiel } from '@/gedeeld/db/tabellen'
+import type { Fase, Geslacht, Profiel } from '@/gedeeld/db/tabellen'
 import { isSessie, roep } from '@/gedeeld/db/rpc'
-import type { NieuweDag, NieuweRegel } from '@/gedeeld/db/rpc'
-import { ACTIVITEIT_MAX_MIN, BRONNAAM, aannemelijk, geraden, importeer, leesFoto, minutenPerDag } from '../ai'
+import type { NieuweDag, NieuweInspanning, NieuweRegel } from '@/gedeeld/db/rpc'
+import { BRONNAAM, geraden, importeer, leesFoto, redenUit } from '../ai'
 import { MINIMUM_LENGTE, wachtwoordklacht } from '../wachtwoord'
+import { SOORTEN, equivalent, standaardIntensiteit } from '../inspanning'
 import type { ImportDag, Importactiviteit, Importbron } from '../ai'
 
 
@@ -226,50 +227,50 @@ export function ProfielVenster(
 /* --------------------------------------------------------------- importeren */
 
 /**
- * EEN DUUR IS GEEN SOORT — hoe een work-outlijst beweegminuten wordt.
+ * EEN WORK-OUTLIJST WORDT EEN LIJST INSPANNINGEN
  *
  * De lijst onder "Work-outs" in Apple Gezondheid geeft per post een duur, een
- * datum en de app die hem schreef. Geen soort, geen intensiteit. Voor wie geen
- * koppeling laat draaien is dat de enige bron van beweegminuten, en het scherm
- * Beweging rekent er de WHO-norm van 150 minuten per week mee uit.
+ * datum, de app die hem schreef, en een kopje dat zegt wat het was. Dat kopje
+ * is wat deze rijen bruikbaar maakt: veertig minuten hardlopen telt voor de
+ * richtlijn dubbel zo zwaar als veertig minuten wandelen.
  *
  * WAAROM ER VINKJES STAAN EN GEEN FILTER
  *
- * In de lijst die hiervoor de aanleiding was stonden posts van 9 uur 7 en 14
- * uur 22. Dat zijn geen trainingen maar een horloge dat de stopknop niet gezien
- * heeft. Zou zo'n post als beweegminuten binnenkomen, dan haalt het weekdoel
- * zich in één klap vijf keer op een dag waarop misschien niets gebeurde — een
- * doel dat vanzelf afgaat meet niets meer.
+ * Drie soorten posten beginnen uitgevinkt, en geen van drieën is "fout":
+ * krachttraining (die telt apart en hoort in zijn eigen tabel), een duur van
+ * meer dan vier uur (in de lijst die dit opriep stonden er twee van 9 en 14 uur
+ * — een horloge dat de stopknop niet gezien heeft), en een post zonder kopje.
  *
- * Maar de app wéét niet dat die post fout is; hij is alleen onwaarschijnlijk.
- * Daarom zet `aannemelijk()` het vinkje uit en haalt de post niet weg, en staat
- * de reden erbij. Wie beter weet dan de grens zet hem aan. Dat is het verschil
- * tussen een zeef en een oordeel.
+ * De reden staat er bij elke uitgevinkte post bij. De app wéét namelijk niet dat
+ * zo'n post fout is; hij vindt hem alleen onwaarschijnlijk, en dat is iets
+ * anders. Wie beter weet vinkt hem aan.
  *
- * WAT ER AL STAAT
+ * DE SOORT IS TE VERBETEREN, EN DAAROM STAAT HIJ ER ALS KEUZE
  *
- * Een afdruk knipt, en wat eraf valt is niet te zien aan wat erop staat: twee
- * ritten op de grens van twee afdrukken worden er één. Het getal dat overgenomen
- * wordt kan dus te laag zijn, en het gaat over een bestaande waarde heen —
- * `kal_dagen_importeren` vervangt, want alleen-aanvullen zou de import stil
- * laten vallen op elke dag die de koppeling al aanraakte.
- *
- * Daar is geen rekenregel tegen. Wat er tegen kán: laten zien wat er nu staat,
- * naast wat eroverheen gaat, vóór er iets verstuurd wordt.
+ * Wat de herkenning van het kopje maakte is een vertaling, geen waarneming.
+ * Staat er "Functionele kracht" en werd dat `kracht`, dan hoort dat te zien te
+ * zijn en te veranderen te zijn — niet stil te gebeuren. Een post zonder kopje
+ * heeft geen soort en vraagt er dus om.
  */
 function duur(minuten: number): string {
   const m = Math.round(minuten)
   return m >= 60 ? `${Math.floor(m / 60)} u ${String(m % 60).padStart(2, '0')}` : `${m} min`
 }
 
+/** De soorten in het uitklaplijstje, plus de twee die geen inspanning zijn. */
+const IMPORTSOORTEN: Array<{ sleutel: string; naam: string }> = [
+  ...SOORTEN.map((s) => ({ sleutel: s.sleutel, naam: s.naam })),
+  { sleutel: 'kracht', naam: 'Krachttraining (telt apart)' },
+]
+
 export function ImportVenster(
-  { token, alFiets, opSluiten, opOvernemen }:
+  { token, opSluiten, opOvernemen }:
   {
     token: string
-    /** Wat er nu aan beweegminuten staat, per datum. Alleen om te tonen. */
-    alFiets: Record<string, number | null>
     opSluiten: () => void
-    opOvernemen: (dagen: NieuweDag[], regels: NieuweRegel[]) => void
+    opOvernemen: (
+      dagen: NieuweDag[], regels: NieuweRegel[], inspanning: NieuweInspanning[],
+    ) => void
   },
 ) {
   const [tekst, zetTekst] = useState('')
@@ -280,9 +281,31 @@ export function ImportVenster(
   const [bronnen, zetBronnen] = useState<Importbron[]>([])
   const [werk, zetWerk] = useState<Importactiviteit[]>([])
   const [aan, zetAan] = useState<boolean[]>([])
+  /* De soort staat apart van `werk` omdat hij te veranderen is: `werk` is wat de
+     herkenning zag en blijft dat, `soorten` is wat eruit wordt. */
+  const [soorten, zetSoorten] = useState<string[]>([])
 
-  const gekozen = werk.filter((_, i) => aan[i])
-  const perDag = minutenPerDag(gekozen)
+  /* Geen tweede zeef op 'kracht' hier: het vinkje van zo'n post is uitgezet én
+     niet aan te zetten (zie `disabled` hieronder), en dat is het slot. Stond de
+     zeef er óók, dan was er een regel die niets doet zolang het slot werkt en
+     niemand die merkt wanneer het slot brak — twee halve sloten in plaats van
+     één hele. */
+  const rijen: NieuweInspanning[] = werk
+    .map((a, i) => ({ a, soort: soorten[i] ?? '', aan: !!aan[i] }))
+    .filter((x) => x.aan && x.soort)
+    .map(({ a, soort }) => ({
+      datum: a.datum,
+      soort,
+      minuten: Math.round(a.minuten),
+      intensiteit: standaardIntensiteit(soort),
+      geschat: true,
+      eigennaam: soort === 'anders' ? (a.label ?? null) : null,
+      bron: 'import',
+      ...(a.tijd ? { tijd: a.tijd } : {}),
+    }))
+  const echteMinuten = rijen.reduce((s, r) => s + r.minuten, 0)
+  const matigeMinuten = rijen.reduce(
+    (s, r) => s + equivalent(r.minuten, r.intensiteit ?? 'matig'), 0)
 
   async function uitlezen() {
     zetLoopt(true)
@@ -293,7 +316,8 @@ export function ImportVenster(
       zetBronnen(uit.bronnen ?? [])
       const w = uit.activiteiten ?? []
       zetWerk(w)
-      zetAan(w.map((a) => aannemelijk(a.minuten)))
+      zetSoorten(w.map((a) => a.soort ?? ''))
+      zetAan(w.map((a) => redenUit(a) == null))
       zetMelding(`${uit.dagen.length} dagen gevonden.`
         + (w.length ? ` ${w.length} work-out${w.length === 1 ? '' : 's'}.` : '')
         + (uit.opmerking ? ` ${uit.opmerking}` : ''))
@@ -304,33 +328,29 @@ export function ImportVenster(
     }
   }
 
+  /* Een soort kiezen bij een post die er geen had is meteen het antwoord op de
+     vraag die het vinkje stelde. Hem daarna nóg een keer laten aanvinken is een
+     tik die niets toevoegt. Krachttraining blijft uit: die hoort hier niet. */
+  function kiesSoort(i: number, sleutel: string) {
+    zetSoorten(soorten.map((v, j) => j === i ? sleutel : v))
+    const a = werk[i]
+    if (a && sleutel && sleutel !== 'kracht' && redenUit({ ...a, soort: sleutel }) == null) {
+      zetAan(aan.map((v, j) => j === i ? true : v))
+    }
+    if (sleutel === 'kracht') zetAan(aan.map((v, j) => j === i ? false : v))
+  }
+
   function overnemen() {
     if (!concept) return
-    /* De minuten per dag staan los van `concept`: een dag kan een work-out
-       hebben zonder dat er een rij met stappen of gewicht bij zit, en dan hoort
-       er evengoed een dag geschreven te worden. */
-    const fiets = new Map<IsoDatum, number>(perDag.map((r) => [r.datum, r.minuten]))
-    const datums = [...new Set([...concept.map((d) => d.datum), ...fiets.keys()])].sort()
-    const bij = new Map(concept.map((d) => [d.datum, d]))
-    const dagen: NieuweDag[] = datums
-      .map((datum) => {
-        const d = bij.get(datum)
-        const min = fiets.get(datum)
-        return {
-          datum,
-          ...(d?.gewicht_kg != null ? { gewicht_kg: d.gewicht_kg } : {}),
-          ...(d?.stappen != null ? { stappen: d.stappen } : {}),
-          ...(d?.actieve_energie_kcal != null
-            ? { actieve_energie_kcal: d.actieve_energie_kcal } : {}),
-          ...(min != null ? { fiets_min: min } : {}),
-          bron: 'import',
-        }
-      })
-      /* Een dag met alleen een dagtotaal aan kcal hoort niet in kal_dagen: die
-         wordt hieronder een regel. Een dag zonder énig veld zou een lege rij
-         wegschrijven, en dat is een bewering die nergens op staat. */
-      .filter((d) => d.gewicht_kg != null || d.stappen != null
-        || d.actieve_energie_kcal != null || d.fiets_min != null)
+    const dagen: NieuweDag[] = concept
+      .filter((d) => d.gewicht_kg != null || d.stappen != null || d.actieve_energie_kcal != null)
+      .map((d) => ({
+        datum: d.datum,
+        ...(d.gewicht_kg != null ? { gewicht_kg: d.gewicht_kg } : {}),
+        ...(d.stappen != null ? { stappen: d.stappen } : {}),
+        ...(d.actieve_energie_kcal != null ? { actieve_energie_kcal: d.actieve_energie_kcal } : {}),
+        bron: 'import',
+      }))
     const regels: NieuweRegel[] = concept
       .filter((d): d is ImportDag & { kcal: number } => d.kcal != null && d.kcal > 0)
       .map((d) => ({
@@ -343,7 +363,7 @@ export function ImportVenster(
           'bovengrens ruim genomen wegens de gebruikelijke onderregistratie',
         ],
       }))
-    opOvernemen(dagen, regels)
+    opOvernemen(dagen, regels, rijen)
   }
 
   return (
@@ -428,58 +448,63 @@ export function ImportVenster(
             <>
               <Kop>Work-outs</Kop>
               <p className="klein">
-                De lijst noemt geen soort, alleen een duur. Wat aangevinkt staat telt mee als
-                beweegminuten. Een vinkje staat uit als de duur geen training kán zijn — langer
-                dan {ACTIVITEIT_MAX_MIN / 60} uur is meestal een stopknop die vergeten is. Weet
-                je het beter, zet hem aan.
+                Wat aangevinkt staat komt erbij als inspanning. Een vinkje staat uit als er een
+                reden voor is, en die staat erbij — wie het beter weet zet hem aan. De soort bepaalt
+                hoe zwaar de minuten tellen en is hier te verbeteren.
               </p>
-              <div className="lijst" style={{ marginTop: 6, maxHeight: 200, overflow: 'auto' }}>
-                {werk.map((a, i) => (
-                  <div key={i}>
-                    <input type="checkbox" checked={!!aan[i]} style={{ width: 19, height: 19 }}
-                           aria-label={`${a.datum} · ${duur(a.minuten)}`}
-                           onChange={(e) => zetAan(aan.map((v, j) => j === i ? e.target.checked : v))} />
-                    <span className="cijfer mini groei knip">
-                      {a.datum}{a.tijd ? ` ${a.tijd}` : ''}{a.bron ? ` · ${a.bron}` : ''}
-                    </span>
-                    <span className="cijfer mini" style={!aannemelijk(a.minuten)
-                      ? { color: 'var(--let)' } : undefined}>
-                      {duur(a.minuten)}
-                    </span>
-                  </div>
-                ))}
+              <div className="lijst" style={{ marginTop: 6, maxHeight: 240, overflow: 'auto' }}>
+                {werk.map((a, i) => {
+                  const reden = redenUit({ ...a, soort: soorten[i] ?? '' })
+                  return (
+                    <div key={i} style={{ flexWrap: 'wrap' }}>
+                      {/* Krachttraining is niet aan te vinken, en dat is iets anders
+                          dan hem verbergen. De richtlijn telt hem apart en de
+                          lijst geeft geen sets of reps, dus er valt hier niets
+                          van te maken. Klopte het kopje niet, dan verander je de
+                          soort — en dan mag hij wél mee. */}
+                      <input type="checkbox" checked={!!aan[i]} style={{ width: 19, height: 19 }}
+                             disabled={soorten[i] === 'kracht'}
+                             aria-label={`${a.datum} · ${duur(a.minuten)}`}
+                             onChange={(e) => zetAan(aan.map((v, j) => j === i ? e.target.checked : v))} />
+                      <span className="cijfer mini groei knip">
+                        {a.datum}{a.tijd ? ` ${a.tijd}` : ''}
+                        {a.label ? ` · ${a.label}` : ''}
+                      </span>
+                      <select value={soorten[i] ?? ''} style={{ flex: '0 0 138px' }}
+                              aria-label={`Soort van ${a.datum} ${duur(a.minuten)}`}
+                              onChange={(e) => kiesSoort(i, e.target.value)}>
+                        <option value="">— geen soort —</option>
+                        {IMPORTSOORTEN.map((s) => (
+                          <option key={s.sleutel} value={s.sleutel}>{s.naam}</option>
+                        ))}
+                      </select>
+                      <span className="cijfer mini" style={{ width: 60, textAlign: 'right' }}>
+                        {duur(a.minuten)}
+                      </span>
+                      {reden && (
+                        <span className="mini" style={{ flexBasis: '100%', color: 'var(--let)' }}>
+                          {reden}
+                        </span>
+                      )}
+                    </div>
+                  )
+                })}
               </div>
 
-              {/* Wat er werkelijk verstuurd wordt, en waar het overheen gaat.
-                  Zonder deze regel is een afdruk die net boven een tweede rit is
-                  afgeknipt niet van een echte dag te onderscheiden. */}
-              {perDag.length > 0 && (
-                <>
-                  <p className="klein" style={{ marginTop: 10 }}>
-                    <b>Dit wordt overgenomen als beweegminuten:</b>
-                  </p>
-                  <div className="lijst" style={{ maxHeight: 150, overflow: 'auto' }}>
-                    {perDag.map((r) => {
-                      const nu = alFiets[r.datum]
-                      return (
-                        <div key={r.datum}>
-                          <span className="cijfer mini groei">{r.datum}</span>
-                          <span className="cijfer mini">
-                            {dz(r.minuten)} min
-                            {nu != null && nu > 0 && nu !== r.minuten
-                              && ` · nu ${dz(nu)} min`}
-                          </span>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </>
-              )}
-              {perDag.length === 0 && (
-                <p className="mini" style={{ marginTop: 6 }}>
-                  Niets aangevinkt — er worden geen beweegminuten overgenomen.
-                </p>
-              )}
+              {/* Wat er werkelijk verstuurd wordt, en wat het telt. Twee
+                  getallen, want ze zijn niet hetzelfde: zware minuten tellen
+                  dubbel, en een scherm dat alleen het tweede toont liegt over
+                  wat je gedaan hebt. */}
+              <p className="klein" style={{ marginTop: 10 }}>
+                {rijen.length === 0
+                  ? 'Niets aangevinkt — er komt geen inspanning bij.'
+                  : <>
+                      <b>{rijen.length}</b> {rijen.length === 1 ? 'activiteit' : 'activiteiten'},
+                      samen <b>{dz(echteMinuten)} minuten</b>
+                      {matigeMinuten !== echteMinuten
+                        && <> — dat telt als {dz(matigeMinuten)} matige minuten</>}.
+                    </>}
+              </p>
             </>
           )}
 

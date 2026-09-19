@@ -21,7 +21,7 @@
  * doet staat er daarom een controle omheen; zie `kal.ts`.
  */
 import type {
-  Dag, EigenProduct, Graad, IsoDatum, Lab, Meting, Moment, Profiel,
+  Dag, EigenProduct, Graad, Inspanning, IsoDatum, Lab, Meting, Moment, Profiel,
   Recept, Regel, RegelBron, Training, Vragenlijst,
 } from './tabellen'
 import { verzoek } from './verbinding'
@@ -61,6 +61,9 @@ export interface Alles {
   labs: Lab[]
   vragenlijsten: Vragenlijst[]
   training: Training[]
+  /* Leeg zolang de database bestand 43 nog niet gedraaid heeft: `kal_ophalen`
+     stuurt de sleutel dan niet mee en `{...LEEG, ...o}` laat hem op []. */
+  inspanning: Inspanning[]
 }
 
 export interface NevoTreffer {
@@ -373,15 +376,29 @@ export interface Koppeling {
   actief: boolean
 }
 
+export interface NieuweInspanning {
+  datum: IsoDatum
+  soort: string
+  minuten: number
+  intensiteit?: 'matig' | 'zwaar'
+  /** true = afgeleid uit de soort. Ontbreekt hij, dan neemt de database true. */
+  geschat?: boolean
+  eigennaam?: string | null
+  bron?: string
+  tijd?: string | null
+  notitie?: string | null
+}
+
 export interface NieuweDag {
   datum: IsoDatum
   stappen?: number
   actieve_energie_kcal?: number
   gewicht_kg?: number
   bron?: string
-  /* `fiets_min` komt sinds bestand 42 ook uit een import: de work-outlijst van
-     Apple Gezondheid is de enige bron van beweegminuten voor wie geen koppeling
-     laat draaien. De drie andere stuurt alleen de koppeling. */
+  /* Deze vier stuurt alleen de koppeling. Een work-outlijst uit een import komt
+     hier niet langs maar wordt een rij in `kal_inspanning` — daar past een
+     soort in, en `fiets_min` is één getal per dag zonder soort. Zie
+     health/database/43 en `src/health/inspanning.ts`. */
   fiets_min?: number
   slaap_min?: number
   bedtijd?: string
@@ -398,6 +415,7 @@ export interface NieuweDag {
  * ook de onderdelen wegschrijft — iets wat één rij nooit had gekund.
  */
 export type LosseTabel = 'product' | 'training' | 'meting' | 'lab' | 'vragenlijst'
+  | 'inspanning'
 
 /* -------------------------------------------------------------------------- */
 /*  De kaart: functienaam → wat erin gaat, wat eruit komt                      */
@@ -437,6 +455,13 @@ export interface RpcKaart {
     uit: unknown
   }
   kal_dagen_importeren: { in: { p_token: string; p_dagen: NieuweDag[] }; uit: unknown }
+  /* Een hele lijst inspanningen in één keer — de weg die het importvenster
+     loopt. Een rij die er al staat wordt overgeslagen en geteld; zonder die
+     regel zou twee keer dezelfde afdruk importeren de minuten verdubbelen. */
+  kal_inspanning_toevoegen: {
+    in: { p_token: string; p_rijen: NieuweInspanning[] }
+    uit: { toegevoegd: number; overgeslagen: number }
+  }
   /* De postbus voor de prikkel. De rekenkern draait in de app; de coach die 's
      middags een mail stuurt kan hem niet zelf uitrekenen zonder een tweede
      implementatie van het model, en die zouden uit elkaar gaan lopen. Dus legt

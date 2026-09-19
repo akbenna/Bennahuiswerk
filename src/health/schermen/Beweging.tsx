@@ -33,22 +33,34 @@
  * haalt het weekdoel in één klap vijf keer.
  */
 import { useState } from 'react'
-import { Balk, Kaart, Knop, Kop, Rij, Tussen, Uitleg } from '../onderdelen/basis'
+import { Balk, Kaart, Keuzechip, Knop, Kop, Rij, Tussen, Uitleg } from '../onderdelen/basis'
 import { Bolletjes, Doelring, Schermkop } from '../hero'
 import { dz } from '@/gedeeld/getal'
 import { kortNL, plusDagen, vandaag } from '@/gedeeld/datum'
-import type { IsoDatum, Training } from '@/gedeeld/db/tabellen'
+import type { Inspanning, IsoDatum, Training } from '@/gedeeld/db/tabellen'
 import type { Analyse, Dagenkaart } from '../rekenkern'
 import { WegFiets, WegKracht, WegWeken } from '../tekens'
 import { SFEERFOTO } from '../sfeerfotos'
+import {
+  OUD_VELD, SOORTEN, WEEKDOEL_MIN, naamVan, soortVan, standaardIntensiteit,
+  verdeling, weekposten, weektotaal, zwareMinuten,
+} from '../inspanning'
+import type { Intensiteit, Post } from '../inspanning'
 
 const SPIERGROEPEN = ['benen', 'rug', 'borst', 'schouders', 'armen', 'romp'] as const
 
 export function Beweging(
-  { a, dagen, training, datum, bewaarTraining, zetDagveld }:
+  { a, dagen, training, inspanning, datum, bewaarTraining, bewaarInspanning,
+    wisInspanning, zetDagveld }:
   {
-    a: Analyse; dagen: Dagenkaart; training: Training[]; datum: IsoDatum
+    a: Analyse; dagen: Dagenkaart; training: Training[]; inspanning: Inspanning[]
+    datum: IsoDatum
     zetDagveld: (veld: string, waarde: string | number | boolean | null) => void
+    bewaarInspanning: (r: {
+      datum: IsoDatum; soort: string; eigennaam: string | null
+      minuten: number; intensiteit: Intensiteit; geschat: boolean
+    }) => void
+    wisInspanning: (id: string) => void
     bewaarTraining: (t: {
       datum: IsoDatum; oefening: string; spiergroep: string
       sets: number | null; reps: number | null; gewicht_kg: number | null
@@ -61,13 +73,31 @@ export function Beweging(
   const gem7 = laatste7.length
     ? Math.round(laatste7.reduce((s, b) => s + b, 0) / laatste7.length) : null
 
-  /* De fietsminuten van dezelfde zeven dagen, opgeteld en niet gemiddeld: de
-     WHO-richtlijn staat per week, en drie keer vijftig minuten is hetzelfde als
-     zeven keer eenentwintig. */
-  const fiets7 = sleutels.slice(-7)
-    .reduce((s, x) => s + (dagen[x]?.fiets_min ?? 0), 0)
+  /* DE WEEK IN MATIGE MINUTEN
+     Opgeteld en niet gemiddeld: de WHO-richtlijn staat per week, en drie keer
+     vijftig minuten is hetzelfde als zeven keer eenentwintig. Zware minuten
+     tellen onderweg dubbel — zie `inspanning.ts` voor waar die wisselkoers
+     vandaan komt en waarom de intensiteit een aanname is die zichzelf noemt. */
+  const alleposten = weekposten(
+    sleutels,
+    inspanning.map((r): Post => ({
+      datum: r.datum, soort: r.soort, eigennaam: r.eigennaam,
+      minuten: r.minuten, intensiteit: r.intensiteit, bron: r.bron,
+    })),
+    Object.fromEntries(sleutels.map((d) => [d, dagen[d]?.fiets_min])),
+  )
+  const week = new Set(sleutels.slice(-7))
+  const posten = alleposten.filter((p) => week.has(p.datum))
+  const minuten7 = weektotaal(posten)
+  const zwaar7 = zwareMinuten(posten)
+  const verdeeld = verdeling(posten)
+  const inspanningOoit = alleposten.length > 0
+  const perDatum: Record<string, number> = {}
+  for (const p of alleposten) perDatum[p.datum] = (perDatum[p.datum] ?? 0) + Math.round(p.minuten)
+  /* De posten van de getoonde dag, om ze te kunnen nakijken en weghalen. Het
+     oude dagveld staat er apart bij: dat is geen rij en heeft geen id. */
+  const vandaagRijen = inspanning.filter((r) => r.datum === datum)
   const fietsVandaag = dagen[datum]?.fiets_min ?? null
-  const fietsOoit = sleutels.some((x) => (dagen[x]?.fiets_min ?? 0) > 0)
 
   /* WANNEER KWAM ER VOOR HET LAATST IETS BINNEN
    *
@@ -120,15 +150,13 @@ export function Beweging(
      niet de tienduizend uit een Japanse stappentellerreclame van 1965. */
   const STAPDOEL = 8000
   const KRACHTDOEL = 3
-  /* Honderdvijftig minuten matige inspanning per week: de ondergrens uit de
-     WHO-richtlijn beweging van 2020. Voor wie op een hometrainer zit is dat de
-     bruikbare maat — stappen telt zo'n rit niet mee. */
-  const FIETSDOEL = 150
   const haaltStappen = gem7 != null && gem7 >= STAPDOEL
-  const haaltFiets = fiets7 >= FIETSDOEL
-  /* Eén van de twee is genoeg. Wie fietst hoeft niet óók te lopen, en andersom;
-     het gaat om de belasting, niet om de manier. */
-  const haaltBeweging = haaltStappen || haaltFiets
+  const haaltMinuten = minuten7 >= WEEKDOEL_MIN
+  /* Eén van de twee is genoeg. Wie zwemt hoeft niet óók te lopen, en andersom;
+     het gaat om de belasting, niet om de manier. En dubbel telt het niet: een
+     wandeling levert stappen én minuten, maar de twee zijn alternatieven en
+     geen som. */
+  const haaltBeweging = haaltStappen || haaltMinuten
   const haaltKracht = sessies >= KRACHTDOEL
 
   return (
@@ -136,12 +164,12 @@ export function Beweging(
       <Schermkop
         foto={SFEERFOTO.beweging}
         toon={haaltBeweging && haaltKracht ? 'goed'
-          : gem7 == null && fiets7 === 0 ? 'rust' : 'let'}
+          : gem7 == null && minuten7 === 0 ? 'rust' : 'let'}
         bovenschrift="Deze week"
         titel={haaltBeweging && haaltKracht ? 'Allebei gehaald'
           : haaltBeweging ? 'Beweging staat, kracht nog niet'
           : haaltKracht ? 'Kracht staat, beweging nog niet'
-          : gem7 == null && fiets7 === 0 ? 'Nog niets ingevuld' : 'Nog niet op dreef'}
+          : gem7 == null && minuten7 === 0 ? 'Nog niets ingevuld' : 'Nog niet op dreef'}
         rechts={<span className={'vlaggetje ' + (haaltBeweging && haaltKracht ? 'goed' : 'rust')}>
           {sessies}/{KRACHTDOEL} kracht
         </span>}
@@ -168,18 +196,18 @@ export function Beweging(
                 hij. De ring blijft staan en blijft eerlijk: hij zegt "stappen
                 per dag" en dat is wat hij telt. */}
             <p style={{ fontSize: '.92rem' }}>
-              {gem7 == null && fiets7 === 0
-                ? 'Vul een paar dagen stappen in bij Vandaag, of zet hieronder je fietsminuten neer.'
+              {gem7 == null && minuten7 === 0
+                ? 'Vul een paar dagen stappen in bij Vandaag, of zet hieronder neer wat je gedaan hebt.'
                 : haaltStappen
                   ? `Gemiddeld over zeven dagen, boven de ${dz(STAPDOEL)} waar de winst zit.`
-                  : haaltFiets
-                    ? `Onder de ${dz(STAPDOEL)} stappen, maar de ${dz(fiets7)} minuten op de fiets `
+                  : haaltMinuten
+                    ? `Onder de ${dz(STAPDOEL)} stappen, maar de ${dz(minuten7)} minuten inspanning `
                       + 'halen het weekdoel al.'
                     : gem7 == null
-                      ? `Nog ${dz(FIETSDOEL - fiets7)} minuten fietsen tot ${FIETSDOEL} deze week.`
+                      ? `Nog ${dz(WEEKDOEL_MIN - minuten7)} minuten inspanning tot ${WEEKDOEL_MIN} deze week.`
                       : `Gemiddeld over zeven dagen. Nog ${dz(STAPDOEL - gem7)} per dag tot `
-                        + `${dz(STAPDOEL)}${fiets7 > 0
-                          ? `, of nog ${dz(FIETSDOEL - fiets7)} minuten fietsen tot ${FIETSDOEL}`
+                        + `${dz(STAPDOEL)}${minuten7 > 0
+                          ? `, of nog ${dz(WEEKDOEL_MIN - minuten7)} minuten inspanning tot ${WEEKDOEL_MIN}`
                           : ''}.`}
             </p>
             {energie7 != null && (
@@ -236,39 +264,105 @@ export function Beweging(
 
       <Kaart>
         <Tussen>
-          <Kop teken={WegFiets}>Fietsen</Kop>
-          {haaltFiets && <span className="vlaggetje goed">✓ weekdoel</span>}
+          <Kop teken={WegFiets}>Inspanning</Kop>
+          {haaltMinuten && <span className="vlaggetje goed">✓ weekdoel</span>}
         </Tussen>
-        <Rij style={{ marginTop: 8, alignItems: 'center' }}>
-          <input className="smal" type="number" inputMode="numeric" min="0" step="5" placeholder="—"
-                 key={'fm' + datum} defaultValue={fietsVandaag ?? ''}
-                 aria-label="Fietsminuten vandaag"
-                 onBlur={(e) => zetDagveld('fiets_min', e.target.value || null)} />
-          <span className="klein">minuten vandaag</span>
-        </Rij>
-        <div style={{ marginTop: 10 }}>
+        <div style={{ marginTop: 8 }}>
           <Tussen>
             <span className="mini">Deze week</span>
-            <span className="cijfer mini">{dz(fiets7)} van {FIETSDOEL} min</span>
+            <span className="cijfer mini">{dz(minuten7)} van {WEEKDOEL_MIN} min</span>
           </Tussen>
-          <Balk deel={(fiets7 / FIETSDOEL) * 100} toon={haaltFiets ? 'goed' : undefined} />
+          <Balk deel={(minuten7 / WEEKDOEL_MIN) * 100} toon={haaltMinuten ? 'goed' : undefined} />
         </div>
-        <Uitleg id="fiets" label="waarom minuten en geen kilometers of calorieën">
+        {/* WAT JE GEDAAN HEBT, EN WAT HET TELT
+            Twee verschillende getallen, en daarom twee verschillende regels.
+            De verdeling staat in échte minuten: wie veertig minuten rende ziet
+            daar veertig. De balk erboven staat in matige minuten en telt er
+            tachtig. Zouden ze allebei hetzelfde rekenen, dan loog een van de
+            twee — de balk over de norm, of de lijst over je dag. */}
+        {verdeeld.length > 0 && (
+          <p className="mini" style={{ marginTop: 6 }}>
+            {verdeeld.map((v) => `${v.naam} ${dz(v.minuten)}′`).join(' · ')}
+            {zwaar7 > 0 && ` — waarvan ${dz(zwaar7)} zwaar, en die tellen dubbel.`}
+          </p>
+        )}
+
+        <InspanningInvoer datum={datum} bewaar={bewaarInspanning} />
+
+        {(vandaagRijen.length > 0 || (fietsVandaag ?? 0) > 0) && (
+          <div className="lijst" style={{ marginTop: 8 }}>
+            {vandaagRijen.map((r) => (
+              <div key={r.id}>
+                <span className="klein groei knip">
+                  {naamVan(r.soort, r.eigennaam)}
+                  {/* De intensiteit staat erbij én waar hij vandaan komt.
+                      Een aanname die zichzelf niet noemt is in dit ontwerp een
+                      fout — rennen is niet altijd zwaar en wandelen niet altijd
+                      matig, en wat een horloge daarover weet komt hier niet
+                      langs. */}
+                  <span className="mini" style={{ marginLeft: 6, color: 'var(--dim)' }}>
+                    {r.intensiteit}{r.geschat ? ' (aangenomen)' : ''}
+                    {r.bron !== 'app' && ` · ${r.bron}`}
+                  </span>
+                </span>
+                <span className="cijfer mini">{dz(r.minuten)}′</span>
+                <button type="button" className="ster" aria-label={`${naamVan(r.soort, r.eigennaam)} weghalen`}
+                        onClick={() => wisInspanning(r.id)}>×</button>
+              </div>
+            ))}
+            {/* HET OUDE VELD, EN WAAROM HET BEWERKBAAR BLIJFT
+                `kal_dagen.fiets_min` is geen rij en heeft geen id: hij staat op
+                de dag zelf en is de enige weg waarlangs de koppeling op je
+                telefoon binnenkomt. Die afspraak breken zou betekenen dat de
+                opdracht op het toestel opnieuw moet. Dus telt hij mee als één
+                matige fietsrit, en blijft hij hier te verbeteren — wissen doe je
+                door er nul in te zetten. */}
+            {(fietsVandaag ?? 0) > 0 && (
+              <div>
+                <span className="klein groei knip">
+                  Fietsen
+                  <span className="mini" style={{ marginLeft: 6, color: 'var(--dim)' }}>
+                    matig (aangenomen) · {OUD_VELD}
+                  </span>
+                </span>
+                <input className="smal" type="number" inputMode="numeric" min="0" step="5"
+                       key={'fm' + datum} defaultValue={fietsVandaag ?? ''}
+                       aria-label="Fietsminuten vandaag"
+                       style={{ width: 66 }}
+                       onBlur={(e) => zetDagveld('fiets_min', e.target.value || null)} />
+              </div>
+            )}
+          </div>
+        )}
+
+        <Uitleg id="inspanning" label="waarom zwaar dubbel telt, en waarom er geen calorieën bij staan">
           <p>
-            Afstand zegt op een hometrainer niets — daar is geen afstand. Wat telt is duur maal
-            inspanning, en de duur is het enige daarvan dat je zonder vermogensmeter betrouwbaar
-            weet. Vandaar minuten.
+            De WHO-richtlijn van 2020 noemt twee bedragen en geen één: 150 tot 300 minuten matige
+            inspanning per week, óf 75 tot 150 zware, óf een combinatie waarin een minuut zware
+            voor twee matige telt. Die wisselkoers staat in de richtlijn zelf. Veertig minuten
+            hardlopen is dus niet hetzelfde als veertig minuten wandelen.
+          </p>
+          <p>
+            Hoe zwaar iets is, wordt hier afgeleid uit de soort, en dat is een aanname. Rennen is
+            niet altijd zwaar en wandelen niet altijd matig: dat hangt af van tempo, helling en van
+            wie het doet. Daarom staat er "aangenomen" bij, en staat de schakelaar ernaast voor wie
+            het beter weet.
+          </p>
+          <p>
+            Krachttraining telt hier niet mee. Die staat in de richtlijn apart — twee keer per week
+            spierversterkend, naast deze minuten — en heeft hieronder zijn eigen bolletjes. Zou hij
+            hier ook meetellen, dan haalde één zware sessie de halve week.
           </p>
           <p>
             Calorieën worden er met opzet niet van gemaakt. Een schatting uit hartslag of uit een
-            tabel per fietstype heeft een fout van twintig tot vijftig procent, en die fout zit niet
+            tabel per activiteit heeft een fout van twintig tot vijftig procent, en die fout zit niet
             consistent in één richting — corrigeren kan dus niet. Voor jou zou het om honderden
-            kcal per rit gaan: genoeg om het hele tekort weg te rekenen op een getal dat geraden is.
+            kcal per keer gaan: genoeg om het hele tekort weg te rekenen op een getal dat geraden is.
           </p>
           <p>
-            En het hóéft ook niet: je verbruik wordt gemeten uit de gewichtstrend, en wat je op de
-            fiets verbrandt zit daar al in. Wat dit scherm doet is bijhouden dát je bewoog, en dat
-            is precies waarvoor de richtlijn geschreven is.
+            En het hóéft ook niet: je verbruik wordt gemeten uit de gewichtstrend, en wat je hiermee
+            verbrandt zit daar al in. Wat dit scherm doet is bijhouden dát je bewoog, en dat is
+            precies waarvoor de richtlijn geschreven is.
           </p>
         </Uitleg>
       </Kaart>
@@ -293,11 +387,16 @@ export function Beweging(
                 <span className="cijfer mini" style={{ width: 52, textAlign: 'right' }}>
                   {r?.stappen != null ? dz(r.stappen) : '—'}
                 </span>
-                {/* De fietskolom staat er alleen als er die drie weken ooit
-                    gefietst is. Anders is het een kolom streepjes. */}
-                {fietsOoit && (
+                {/* De minutenkolom staat er alleen als er die drie weken ooit
+                    iets in stond. Anders is het een kolom streepjes.
+
+                    Échte minuten, net als in de verdeling hierboven — niet wat
+                    ze voor de norm waard zijn. Een dag met veertig minuten
+                    hardlopen hoort hier veertig te tonen; tachtig zou over die
+                    dag liegen. */}
+                {inspanningOoit && (
                   <span className="cijfer mini" style={{ width: 44, textAlign: 'right' }}>
-                    {r?.fiets_min ? dz(r.fiets_min) + '′' : '—'}
+                    {perDatum[x] ? dz(perDatum[x]!) + '′' : '—'}
                   </span>
                 )}
                 <span style={{ width: 16, color: 'var(--goed)' }}>{r?.kracht ? '✓' : ''}</span>
@@ -307,6 +406,88 @@ export function Beweging(
         </div>
       </Kaart>
     </>
+  )
+}
+
+/**
+ * WAT JE GEDAAN HEBT, IN DRIE TIKKEN
+ *
+ * Soort, duur, klaar. De intensiteit komt uit de soort en staat er als
+ * schakelaar naast — niet als verplichte keuze, want dan moet je bij elke
+ * wandeling iets beslissen waar je meestal niets over te zeggen hebt.
+ *
+ * Zodra je hem omzet gaat `geschat` op false, en dat blijft bij de rij staan.
+ * Zo is achteraf te zien welke minuten op een aanname rusten en welke op een
+ * oordeel — het verschil verdwijnt anders in de optelling.
+ */
+function InspanningInvoer(
+  { datum, bewaar }:
+  {
+    datum: IsoDatum
+    bewaar: (r: {
+      datum: IsoDatum; soort: string; eigennaam: string | null
+      minuten: number; intensiteit: Intensiteit; geschat: boolean
+    }) => void
+  },
+) {
+  const [soort, zetSoort] = useState(SOORTEN[0]!.sleutel)
+  const [eigennaam, zetEigennaam] = useState('')
+  const [minuten, zetMinuten] = useState('')
+  /* null = nog niet aangeraakt, dus de aanname uit de soort. Een boolean zou
+     dat verschil niet kunnen dragen: "matig" omdat je het koos en "matig"
+     omdat het de standaard is zijn niet hetzelfde. */
+  const [gekozen, zetGekozen] = useState<Intensiteit | null>(null)
+
+  const aanname = standaardIntensiteit(soort)
+  const intensiteit = gekozen ?? aanname
+  const min = parseInt(minuten, 10)
+  const mag = Number.isFinite(min) && min > 0
+
+  function opslaan() {
+    if (!mag) return
+    bewaar({
+      datum, soort,
+      eigennaam: soort === 'anders' ? (eigennaam.trim() || null) : null,
+      minuten: min, intensiteit, geschat: gekozen == null,
+    })
+    zetMinuten(''); zetEigennaam(''); zetGekozen(null)
+  }
+
+  return (
+    <div style={{ marginTop: 12 }}>
+      <div className="mini">Wat heb je gedaan?</div>
+      <Rij style={{ marginTop: 6, flexWrap: 'wrap' }}>
+        {SOORTEN.map((s) => (
+          <Keuzechip key={s.sleutel} aan={soort === s.sleutel} titel={s.waarom}
+                     opKlik={() => { zetSoort(s.sleutel); zetGekozen(null) }}>
+            {s.naam}
+          </Keuzechip>
+        ))}
+      </Rij>
+      {soort === 'anders' && (
+        <Rij style={{ marginTop: 8 }}>
+          <input placeholder="wat was het?" value={eigennaam} aria-label="Naam van de activiteit"
+                 onChange={(e) => zetEigennaam(e.target.value)}
+                 style={{ flex: '1 1 140px', width: 'auto' }} />
+        </Rij>
+      )}
+      <Rij style={{ marginTop: 8, alignItems: 'center' }}>
+        <input className="smal" type="number" inputMode="numeric" min="1" step="5" placeholder="—"
+               value={minuten} aria-label="Minuten" style={{ width: 72 }}
+               onChange={(e) => zetMinuten(e.target.value)} />
+        <span className="klein">minuten</span>
+        <Keuzechip aan={intensiteit === 'matig'} opKlik={() => zetGekozen('matig')}>matig</Keuzechip>
+        <Keuzechip aan={intensiteit === 'zwaar'} opKlik={() => zetGekozen('zwaar')}>zwaar</Keuzechip>
+        <Knop vol uit={!mag} opKlik={opslaan}>Toevoegen</Knop>
+      </Rij>
+      <p className="mini" style={{ marginTop: 6 }}>
+        {gekozen == null
+          ? `${soortVan(soort)?.naam ?? soort} telt als ${aanname} — ${soortVan(soort)?.waarom ?? 'aangenomen'}`
+            + `. Klopt dat niet, zet hem om.`
+          : `Je hebt zelf ${gekozen} gekozen; dat wordt zo bewaard.`}
+        {intensiteit === 'zwaar' && mag && ` Deze ${dz(min)} minuten tellen als ${dz(min * 2)}.`}
+      </p>
+    </div>
   )
 }
 

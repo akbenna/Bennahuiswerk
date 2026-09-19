@@ -11,13 +11,13 @@
  * bereiken — die staat er met opzet buiten.
  */
 import { describe, expect, it } from 'vitest'
-import { ACTIVITEIT_MAX_MIN, aannemelijk, minutenPerDag } from './ai'
+import { ACTIVITEIT_MAX_MIN, aannemelijk, redenUit } from './ai'
 import type { Importactiviteit } from './ai'
 import type { IsoDatum } from '@/gedeeld/db/tabellen'
 
 const d = (s: string) => s as IsoDatum
-const post = (datum: string, minuten: number, bron?: string): Importactiviteit =>
-  ({ datum: d(datum), minuten, ...(bron ? { bron } : {}) })
+const post = (datum: string, minuten: number, soort?: string): Importactiviteit =>
+  ({ datum: d(datum), minuten, soort: soort ?? 'wandelen' })
 
 describe('welke duur er een van een mens is', () => {
   it('een gewone training telt mee', () => {
@@ -56,63 +56,51 @@ describe('welke duur er een van een mens is', () => {
   })
 })
 
-describe('meerdere posts op één dag', () => {
-  it('worden bij elkaar opgeteld', () => {
-    expect(minutenPerDag([post('2026-08-20', 30), post('2026-08-20', 45)]))
-      .toEqual([{ datum: d('2026-08-20'), minuten: 75 }])
+describe('waarom een vinkje uit staat', () => {
+  it('een gewone post heeft geen reden en telt dus mee', () => {
+    expect(redenUit(post('2026-08-20', 45, 'fietsen'))).toBeNull()
   })
 
-  it('en blijven per dag uit elkaar', () => {
-    expect(minutenPerDag([post('2026-08-21', 20), post('2026-08-20', 30)]))
-      .toEqual([
-        { datum: d('2026-08-20'), minuten: 30 },
-        { datum: d('2026-08-21'), minuten: 20 },
-      ])
+  /* Krachttraining staat in de richtlijn apart — twee keer per week
+     spierversterkend, naast de aerobe minuten. Zou een sessie van een uur hier
+     meetellen, dan stond de halve week er al op. En de lijst geeft geen sets of
+     reps, dus er valt ook geen trainingsrij van te maken. */
+  it('krachttraining telt apart', () => {
+    expect(redenUit(post('2026-08-20', 60, 'kracht')))
+      .toMatch(/krachttraining/)
   })
 
-  /* Op datum, niet op de volgorde waarin de afdrukken binnenkwamen. Wie
-     doorscrolt maakt ze van onder naar boven, en dan staat de nieuwste dag
-     vooraan in de invoer. */
-  it('op datum gerangschikt en niet op volgorde van binnenkomst', () => {
-    const uit = minutenPerDag([post('2026-08-22', 10), post('2026-08-19', 10), post('2026-08-21', 10)])
-    expect(uit.map((r) => r.datum)).toEqual([d('2026-08-19'), d('2026-08-21'), d('2026-08-22')])
+  /* De volgorde doet ertoe: een krachtsessie van veertien uur is nog steeds in
+     de eerste plaats een krachtsessie. Zou de duur eerst gekeurd worden, dan
+     kreeg je "een vergeten stopknop?" bij iets wat sowieso niet meetelt. */
+  it('en dat weegt zwaarder dan de duur', () => {
+    expect(redenUit(post('2026-08-20', 14 * 60, 'kracht'))).toMatch(/krachttraining/)
   })
 
-  /* De lijst toont "44 min", maar een post van 44 min 36 s komt als 44,6 binnen
-     als het model uit de seconden rekent. Minuten zijn hele getallen in
-     kal_dagen; ronden en niet afkappen, net als de koppeling doet. */
-  it('een halve minuut wordt afgerond en niet afgekapt', () => {
-    expect(minutenPerDag([post('2026-08-20', 44.6)]))
-      .toEqual([{ datum: d('2026-08-20'), minuten: 45 }])
+  it('een vergeten stopknop noemt zijn duur', () => {
+    expect(redenUit(post('2026-08-20', 9 * 60 + 7, 'fietsen'))).toMatch(/4 uur/)
   })
 
-  it('niets erin is niets eruit', () => {
-    expect(minutenPerDag([])).toEqual([])
+  /* Een post zonder kopje mag mee, maar niet zonder dat je het gezien hebt:
+     zonder soort valt hij op "anders" terug en telt hij als matig, en dat is
+     een aanname bovenop een aanname. */
+  it('een post zonder soort vraagt om een blik', () => {
+    expect(redenUit({ datum: d('2026-08-20'), minuten: 30 })).toMatch(/geen soort/)
+    expect(redenUit(post('2026-08-20', 30, ''))).toMatch(/geen soort/)
   })
 })
 
-describe('de twee samen, zoals het scherm ze gebruikt', () => {
-  /* Wat overgenomen wordt is de som van wat aangevinkt staat. Een vergeten
-     stopknop op dezelfde dag als een echte rit mag die dag niet meeslepen: de
-     rit blijft staan en alleen de post van veertien uur valt eruit. */
-  it('een onaannemelijke post sleept de rest van zijn dag niet mee', () => {
+describe('de lijst zoals het scherm hem vinkt', () => {
+  /* Een onaannemelijke post sleept de rest van zijn dag niet mee: de rit blijft
+     staan en alleen de post van veertien uur valt eruit. */
+  it('haalt alleen de posten met een reden eruit', () => {
     const lijst = [
-      post('2026-08-20', 52, 'Garmin'),
-      post('2026-08-20', 14 * 60 + 22, 'Garmin'),
-      post('2026-08-21', 33, 'Garmin'),
+      post('2026-08-20', 52, 'fietsen'),
+      post('2026-08-20', 14 * 60 + 22, 'fietsen'),
+      post('2026-08-20', 60, 'kracht'),
+      post('2026-08-21', 33, 'wandelen'),
     ]
-    expect(minutenPerDag(lijst.filter((a) => aannemelijk(a.minuten))))
-      .toEqual([
-        { datum: d('2026-08-20'), minuten: 52 },
-        { datum: d('2026-08-21'), minuten: 33 },
-      ])
-  })
-
-  /* Een dag waarop álles onaannemelijk is levert geen regel op, en zeker geen
-     regel met nul minuten: nul beweegminuten wegschrijven is een bewering, en
-     die staat nergens. */
-  it('een dag zonder enige aannemelijke post levert geen regel op', () => {
-    expect(minutenPerDag([post('2026-08-20', 9 * 60 + 7)].filter((a) => aannemelijk(a.minuten))))
-      .toEqual([])
+    expect(lijst.filter((a) => redenUit(a) == null).map((a) => a.minuten))
+      .toEqual([52, 33])
   })
 })

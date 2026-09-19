@@ -465,6 +465,39 @@ hometrainer levert er nul op. De app beoordeelde daarmee iemand die dagelijks
 fietst als inactief — geen strengheid maar blindheid, en het veld `fiets_min`
 stond al die tijd al gevuld in de database.
 
+**Waarom één getal niet genoeg was.** De richtlijn noemt twee bedragen en geen
+één: 150 tot 300 minuten matige inspanning per week, óf 75 tot 150 zware, óf een
+combinatie waarin **een minuut zware voor twee matige telt**. Die wisselkoers
+staat in de richtlijn zelf en is hier niet bedacht. Zolang alles in één kolom
+`fiets_min` stond, zei de app tegen iemand die drie keer per week een halfuur
+hardliep dat hij nog niet op de helft was.
+
+Sinds `health/database/43` staat elke inspanning als eigen rij met een soort en
+een intensiteit. De balk op het scherm telt matige minuten; de lijst eronder
+toont échte minuten. Die twee verschillen zodra er iets zwaars bij zit, en dat
+is met opzet: één getal zou over een van beide liegen.
+
+**De intensiteit is een aanname, en zegt dat zelf.** Welke soort matig heet en
+welke zwaar volgt het Compendium of Physical Activities — matig is 3 tot 6 MET,
+zwaar 6 of meer. Wandelen op 5 km/u is 3,5; hardlopen op 8 km/u is 8,3. Maar
+rennen is niet altijd zwaar en wandelen niet altijd matig: dat hangt af van
+tempo, helling en van wie het doet, en wat een horloge daarover weet — hartslag
+als percentage van de reserve — komt niet mee in een schermafdruk en niet in de
+koppeling.
+
+Daarom staat `geschat` bij de rij, zegt het scherm "aangenomen", en staat de
+schakelaar ernaast. Fietsen ligt op de grens van het Compendium (4 tot 6 MET
+gewoon, 8 tot 10 stevig) en is als **matig** ingedeeld: dat is de voorzichtige
+kant. Wie hard fietst zet hem om; wie dat niet doet krijgt geen weekdoel dat
+zichzelf haalt.
+
+**Krachttraining telt hier niet mee.** De richtlijn noemt die apart — twee keer
+per week spierversterkend, náást de aerobe minuten — en de app houdt hem in
+`kal_training` met zijn eigen drie bolletjes. Zou een krachtsessie van een uur
+als zware inspanning meetellen, dan stond de halve aerobe week er al op zonder
+dat er één aerobe minuut gemaakt was. Een work-outlijst die "Functionele kracht"
+noemt, komt daarom ongevinkt binnen, met die reden erbij.
+
 **Waarom er geen kilocalorieën van gemaakt worden.** Dezelfde reden waarom
 actieve energie uit Apple of Garmin nergens bij het doel wordt opgeteld: de fout
 is twintig tot vijftig procent en niet consistent in één richting, dus
@@ -475,6 +508,15 @@ daar al in.
 
 **Wat er wél mee gebeurt.** De minuten tellen mee in het weekdoel en staan in het
 dagoverzicht. Verder niets.
+
+**Het oude veld blijft bestaan.** `kal_dagen.fiets_min` is de weg waarlangs de
+koppeling op de telefoon binnenkomt, en die afspraak breken zou betekenen dat de
+opdracht op het toestel opnieuw moet. Het scherm leest hem als één matige
+fietsrit van die dag, naast de rijen. De prijs is dat een rit die de koppeling
+doorgeeft én die je met de hand toevoegt twee keer telt — zichtbaar, want beide
+staan in de lijst van die dag met hun herkomst, en met één tik weg te halen. Een
+stille voorkeursregel die er één van de twee laat verdwijnen zou erger zijn: dan
+mis je minuten zonder te weten welke.
 
 ---
 

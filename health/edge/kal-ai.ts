@@ -322,6 +322,14 @@ const SCHEMA_IMPORT = {
         properties: {
           datum: { type: "string", description: "ISO-datum, JJJJ-MM-DD" },
           minuten: { type: "number", description: "Hele minuten; seconden afgerond" },
+          soort: {
+            type: ["string", "null"],
+            enum: ["wandelen", "rennen", "fietsen", "hometrainer", "zwemmen", "roeien",
+                   "crosstrainer", "racket", "team", "dansen", "tuinieren", "kracht",
+                   "anders", null],
+            description: "Waar het kopje op neerkomt; null als er geen kopje te zien is",
+          },
+          label: { type: ["string", "null"], description: "Wat er letterlijk boven de post stond" },
           bron: { type: ["string", "null"], description: "De app die hem leverde, als dat te zien is" },
           tijd: { type: ["string", "null"], description: "Begintijd als die erbij staat, uu:mm" },
         },
@@ -424,7 +432,27 @@ DE WORK-OUTLIJST
 
 Een lijst met tijdsduren ("1 u. 23 min. 37s") bij een datum en een tijdstip is geen dagreeks maar een work-outlijst. Daar horen nooit stappen of kilocalorieën uit te komen.
 
-Zet die rijen in `activiteiten`, niet in `dagen`. Per rij: de datum, de duur in hele minuten, en welke app hem leverde als dat aan het pictogram of de tekst te zien is (bijvoorbeeld "Garmin"). Seconden rond je af naar de dichtstbijzijnde minuut. "9 u. 7 min. 26s" is 547 minuten.
+Zet die rijen in `activiteiten`, niet in `dagen`. Per rij: de datum, de duur in hele minuten, het soort, wat er letterlijk boven stond, en welke app hem leverde als dat aan het pictogram of de tekst te zien is (bijvoorbeeld "Garmin"). Seconden rond je af naar de dichtstbijzijnde minuut. "9 u. 7 min. 26s" is 547 minuten.
+
+Het soort haal je uit het kopje van de post en zet je om naar één van deze sleutels:
+
+  wandelen      Wandelen, Buiten wandelen, Hiken, Nordic walking
+  rennen        Hardlopen, Buiten hardlopen, Loopband, Trailrunnen
+  fietsen       Buiten fietsen, Wielrennen, Mountainbiken
+  hometrainer   Binnen fietsen, Spinning
+  zwemmen       Zwemmen in een bad of in open water
+  roeien        Roeien, roeiapparaat
+  crosstrainer  Crosstrainer, elliptical, steppen
+  racket        Tennis, padel, squash, badminton
+  team          Voetbal, basketbal, hockey en andere veldsporten
+  dansen        Dansen, zumba
+  tuinieren     Tuinieren, spitten, harken
+  kracht        Krachttraining, functionele kracht, gewichtheffen
+  anders        Iets wat er wel staat maar hier niet in past — yoga, boksen, skiën
+
+Staat er geen kopje bij een post, zet `soort` dan op null. Verzin er niets bij: "anders" betekent dat je iets gelézen hebt dat niet in de lijst past, en null dat je niets gelezen hebt. Dat verschil bepaalt wat het scherm vraagt.
+
+`label` is altijd wat er letterlijk stond, ook als je het op een sleutel hebt kunnen leggen.
 
 Beoordeel niet of een duur klopt en laat niets weg omdat het lang lijkt — dat doet de app. Geef terug wat er staat.`;
 

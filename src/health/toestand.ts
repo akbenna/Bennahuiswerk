@@ -25,7 +25,7 @@ const SLEUTEL_SESSIE = 'kalibratie.sessie'
 
 const LEEG: Alles = {
   profiel: null, dagen: [], regels: [], producten: [],
-  recepten: [], metingen: [], labs: [], vragenlijsten: [], training: [],
+  recepten: [], metingen: [], labs: [], vragenlijsten: [], training: [], inspanning: [],
 }
 
 function leesSessie(): Sessie | null {

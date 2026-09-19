@@ -98,13 +98,23 @@ export interface Importbron {
 /**
  * EEN WORK-OUT UIT DE LIJST VAN APPLE GEZONDHEID
  *
- * Duur en datum, en verder niets — de lijst toont geen soort. Dat is precies
- * waarom deze rijen niet vanzelf in een dag belanden: er is geen veld waar een
- * duur zonder soort in past zonder een bewering te doen die er niet staat.
+ * Per post een duur, een datum, de app die hem schreef, en een kopje dat zegt
+ * wat het was: "Buiten fietsen", "Wandelen", "Hardlopen". Dat kopje is wat deze
+ * rijen bruikbaar maakt — veertig minuten hardlopen is voor de richtlijn niet
+ * hetzelfde als veertig minuten wandelen.
+ *
+ * `soort` is de sleutel uit `inspanning.ts` waar de herkenning op uitkwam;
+ * `label` is wat er letterlijk stond. Die twee staan los van elkaar omdat de
+ * eerste een vertaling is en de tweede een waarneming — komt er ooit een soort
+ * bij, dan is aan het label te zien wat er toen van gemaakt is.
  */
 export interface Importactiviteit {
   datum: IsoDatum
   minuten: number
+  /** Sleutel uit SOORTEN, of 'kracht', of null als het kopje niet te zien was. */
+  soort?: string | null
+  /** Wat er letterlijk boven de post stond. */
+  label?: string | null
   bron?: string | null
   tijd?: string | null
 }
@@ -113,8 +123,8 @@ export interface Importactiviteit {
  * De bovengrens waarboven een "work-out" er geen is.
  *
  * Vier uur. Een lange rit of een bergwandeling haalt dat, en die horen mee te
- * tellen. Wat er níet doorheen komt is wat een horloge doet als het een hele dag
- * als één activiteit wegschrijft — in de lijst die dit oproep stond een post van
+ * tellen. Wat er níét doorheen komt is wat een horloge doet als het een hele dag
+ * als één activiteit wegschrijft — in de lijst die dit opriep stond een post van
  * 9 uur 7 en een van 14 uur 22, en dat zijn geen trainingen maar een vergeten
  * stopknop.
  *
@@ -132,17 +142,29 @@ export function aannemelijk(minuten: number): boolean {
   return minuten > 0 && minuten <= ACTIVITEIT_MAX_MIN
 }
 
-/** De minuten per dag opgeteld: twee ritten op één dag zijn samen één getal. */
-export function minutenPerDag(
-  activiteiten: Importactiviteit[],
-): Array<{ datum: IsoDatum; minuten: number }> {
-  const per = new Map<IsoDatum, number>()
-  for (const a of activiteiten) {
-    per.set(a.datum, (per.get(a.datum) ?? 0) + Math.round(a.minuten))
-  }
-  return [...per.entries()]
-    .map(([datum, minuten]) => ({ datum, minuten }))
-    .sort((a, b) => a.datum.localeCompare(b.datum))
+/**
+ * Waarom het vinkje van deze post uit staat, of null als hij gewoon meetelt.
+ *
+ * Drie redenen, en ze zijn alle drie iets anders dan "fout":
+ *
+ *   krachttraining   staat in de richtlijn apart — twee keer per week
+ *                    spierversterkend, naast de aerobe minuten — en hoort in
+ *                    `kal_training`. Zou hij hier meetellen, dan haalde één
+ *                    zware sessie de halve aerobe week. De work-outlijst geeft
+ *                    bovendien geen sets of reps, dus er valt ook niets van te
+ *                    maken.
+ *   te lang          zie `ACTIVITEIT_MAX_MIN`.
+ *   geen kopje       de post stond er zonder soort. Hij mag mee als "anders",
+ *                    maar niet zonder dat je het gezien hebt.
+ *
+ * Alle drie zetten ze een vinkje uit en halen ze niets weg. De tekst is wat op
+ * het scherm komt te staan, dus hij is een zin en geen code.
+ */
+export function redenUit(a: Importactiviteit): string | null {
+  if (a.soort === 'kracht') return 'krachttraining telt apart en hoort niet bij deze minuten'
+  if (!aannemelijk(a.minuten)) return `langer dan ${ACTIVITEIT_MAX_MIN / 60} uur — een vergeten stopknop?`
+  if (!a.soort) return 'geen soort te zien op de afdruk'
+  return null
 }
 
 export interface ImportUitslag {

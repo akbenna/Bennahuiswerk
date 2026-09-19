@@ -2,9 +2,35 @@
 -- 42 — BEWEEGMINUTEN UIT EEN SCHERMAFDRUK
 -- ===========================================================================
 --
--- TOEGEPAST: nee. Tot dit bestand gedraaid is komt er van een work-outlijst
--- niets in de database terecht — zie "WAT ER NU GEBEURT" hieronder, dat is geen
--- halve werking maar helemaal geen.
+-- INGETROKKEN — NIET DRAAIEN. Bestand 43 doet dit beter en dit bestand is nooit
+-- toegepast. Het blijft staan omdat de SQL hier een verslag is en geen
+-- migratiesysteem: een bestand dat er even was en weer wegging hoort na te
+-- lezen te zijn, met de reden erbij.
+--
+-- WAAROM HET WEG IS
+--
+-- Het is geschreven en getoetst op dezelfde dag dat de vraag veranderde. De
+-- vraag was: hoe krijg ik de minuten uit een work-outlijst in `fiets_min`? Het
+-- antwoord hieronder klopt en is met zes mutanten nagekeken.
+--
+-- Maar de vraag was de verkeerde. `fiets_min` is één integer per dag, en een
+-- work-outlijst geeft een soort — wandelen, rennen, fietsen. De WHO-richtlijn
+-- rekent die niet gelijk: een minuut zware inspanning telt voor twee matige.
+-- Eén kolom kan dat verschil niet dragen, en een dag kan bovendien meer dan één
+-- inspanning hebben.
+--
+-- Bestand 43 zet er een tabel neer met een soort en een intensiteit per keer, en
+-- laat `fiets_min` verder met rust: de koppeling op de telefoon blijft hem
+-- sturen en de app leest hem als één matige fietsrit van die dag. Daarmee heeft
+-- de wijziging hieronder geen aanroeper meer — de import schrijft geen
+-- `fiets_min` maar rijen.
+--
+-- Wat hieronder over de omweg via `v_fiets` staat, blijft juist en is de moeite
+-- waard: een expliciete null in een insertlijst wint van `default 0`, en een
+-- `coalesce(..., 0)` in de insert veegt bij een bestaande dag een goed getal weg.
+--
+-- ---------------------------------------------------------------------------
+-- WAT ER HIERONDER STOND
 --
 -- WAAROM
 --
@@ -81,6 +107,13 @@
 -- ===========================================================================
 
 BEGIN;
+
+/* Een slot en geen waarschuwing: wie dit bestand per ongeluk opent en op
+   uitvoeren drukt, zet een functie terug waar niets meer langs komt. De tekst
+   wijst naar het bestand dat wél gedraaid moet worden. */
+do $$ begin
+  raise exception 'Bestand 42 is ingetrokken — draai bestand 43. Zie de kop van dit bestand.';
+end $$;
 
 create or replace function public.kal_dagen_importeren(p_token text, p_dagen jsonb)
  returns integer
