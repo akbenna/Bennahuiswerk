@@ -464,7 +464,17 @@ function BeheerdersHerstelcode() {
         </p>
       ) : (
         <>
-          <label className="veld">
+          {/* HET BLOK HOUDT ZIJN NAAM OOK ALS HET OPENSTAAT
+              Zonder deze regel verdwijnt de naam zodra je hem openklapt, en
+              hangen de twee velden rechtstreeks onder "Herstelcode maken" — een
+              ándere knop, die óók codes maakt. Op de schermafdruk was dat niet
+              uit elkaar te houden. De twee blokken hierboven hebben hetzelfde
+              patroon en komen ermee weg omdat ze alleen staan; dit is het derde
+              en het tweede dat een code maakt. */}
+          <p className="klein" style={{ marginTop: 4, fontWeight: 600 }}>
+            Herstelcode voor iemand anders
+          </p>
+          <label className="veld" style={{ marginTop: 8 }}>
             <span>voor welk account</span>
             <input autoCapitalize="none" spellCheck={false} value={voor}
                    onChange={(e) => zetVoor(e.target.value)} />
