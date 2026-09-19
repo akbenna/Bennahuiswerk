@@ -2,7 +2,8 @@
 -- 41 — DE BEHEERDER OP HET SCHERM
 -- ===========================================================================
 --
--- TOEGEPAST: nee. Draai dit bestand in de SQL-editor, ná bestand 40.
+-- TOEGEPAST: ja, op 19 september 2026. `kal_ben_ik_beheerder` bestaat; de
+-- beheerdersregel staat daarmee in het accountvenster van wie de vlag heeft.
 --
 -- Bestand 40 leverde `kal_herstelcode_voor` en daarmee was de klus half af: de
 -- functie was nergens vanuit de app bereikbaar. Dat klinkt als een detail maar
