@@ -288,6 +288,27 @@ const SCHEMA_IMPORT = {
         required: ["datum"],
       },
     },
+    /* WAAROP DE HERKENNING ZICH BASEERDE
+       Het scherm "Alle gegevens" van Apple Gezondheid toont een kale kolom
+       getallen; welke grootheid dat is staat alleen in een kop die vaak
+       weggescrold is. Zonder dit veld zou een misgok — stappen gelezen als
+       kilocalorieën — stil in de dagen belanden. Nu staat er wat er gelezen is
+       en hoe zeker dat is, en kan het scherm dat tonen vóór er iets wordt
+       overgenomen. */
+    bronnen: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          wat: { type: "string", enum: ["stappen", "actieve_energie_kcal", "kcal", "gewicht_kg", "onbekend"] },
+          hoe: { type: "string", enum: ["kop", "reeks", "grootte"],
+                 description: "kop = op deze afdruk gelezen; reeks = van een andere afdruk van dezelfde lijst; grootte = afgeleid uit hoe groot de getallen zijn, dus een gok" },
+          kop: { type: ["string", "null"], description: "De tekst die je las, als je hem las" },
+          dagen: { type: ["number", "null"], description: "Hoeveel dagen uit deze reeks komen" },
+        },
+        required: ["wat", "hoe"],
+      },
+    },
     opmerking: { type: "string" },
   },
   required: ["dagen"],
@@ -358,7 +379,25 @@ Percentages naar grammen: koolhydraten en eiwit 4 kcal per gram, vet 9 kcal per 
 
 Let op de volgorde waarin de app de macro's toont — bij Yazio is dat koolhydraten, eiwit, vet.
 
-Nederlandse maanden en het formaat "20 augustus 2026" moeten naar 2026-08-20. Duizendtallen staan met een punt: 1.319 kcal is duizenddriehonderdnegentien.`;
+Nederlandse maanden en het formaat "20 augustus 2026" moeten naar 2026-08-20. Duizendtallen staan met een punt: 1.319 kcal is duizenddriehonderdnegentien. Afgekorte maanden ook: "21 aug 2026" is 2026-08-21.
+
+APPLE GEZONDHEID, SCHERM "ALLE GEGEVENS"
+
+Dat scherm is een kale lijst: per rij één getal links en een datum rechts, zonder eenheid. Wélke grootheid het is staat alleen in de kop bovenaan, en die is vaak weggescrold — dan zie je hem niet.
+
+Raad die grootheid nooit stilzwijgend. Zoek hem in deze volgorde:
+
+1. De kop van het scherm, als die zichtbaar is. Ook een half afgesneden woord telt: "Kilocalorie" bovenaan betekent kilocalorieën.
+2. De andere schermafdrukken in dezelfde zending. Iemand die een lange lijst doorscrolt maakt meerdere afdrukken van dezelfde lijst, en de datums sluiten dan op elkaar aan of overlappen. Staat de kop op één ervan, dan geldt hij voor de hele aaneengesloten reeks.
+3. Pas als dat allebei niets oplevert: de grootte van de getallen. Stappen liggen doorgaans tussen 1.000 en 20.000; actieve energie tussen 50 en 1.500. Dit is een gok en geen waarneming.
+
+Zet in `bronnen` per reeks wat je hebt gelezen en hoe je het weet: `hoe` is "kop" als je hem gelezen hebt, "reeks" als hij van een andere afdruk komt, en "grootte" als je het uit de getallen hebt afgeleid. Zet bij "kop" en "reeks" de gelezen tekst in `kop`.
+
+Kun je het ook uit de grootte niet met overtuiging bepalen, laat de waarden dan wég en schrijf in `opmerking` wat je zag. Een verkeerd ingevulde kolom is erger dan een lege.
+
+WAT DIT SCHERM NIET IS
+
+Een lijst met tijdsduren ("1 u. 23 min. 37s") bij datums is een work-outlijst en geen dagreeks. Daar horen geen stappen of kilocalorieën uit te komen. Zet zulke rijen niet in `dagen`; noem ze hooguit in `opmerking`.`;
 
 async function claude(
   key: string,

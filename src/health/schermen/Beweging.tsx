@@ -72,6 +72,27 @@ export function Beweging(
    * De regel staat er alleen als er ooit iets binnenkwam. Wie hem nooit heeft
    * ingesteld leest niet elke dag dat er iets stilstaat wat hij niet heeft. */
   const metStappen = Object.keys(dagen).filter((k) => (dagen[k]?.stappen ?? 0) > 0).sort()
+  /* ACTIEVE ENERGIE TELT NERGENS MEE, MAAR WAS OOK NERGENS TE ZIEN
+     Zie de kop van dit bestand voor het eerste: het verbruik komt uit de
+     gewichtstrend, en wat het horloge schat zou daar dubbel op tellen. Dat
+     besluit staat.
+
+     Het tweede was geen besluit maar een gat. `actieve_energie_kcal` kwam via de
+     koppeling én via de import netjes binnen, werd opgeslagen, en daarna door
+     geen enkel scherm gelezen — nagelopen op elke plek waar het veld voorkomt.
+     Wie zijn Apple-gegevens importeerde vulde dus een kolom die niemand ooit
+     zag, en kreeg geen enkel teken dat het gelukt was.
+
+     Hier staat hij nu, als losse aflezing en met één regel erbij die zegt dat
+     hij niet meetelt. Dat is iets anders dan wegstoppen: het getal is van jou,
+     het klopt zover je horloge klopt, en het hoort niet stilzwijgend te
+     verdwijnen omdat het model er niets mee doet. */
+  const metEnergie = sleutels.slice(-7)
+    .map((x) => dagen[x]?.actieve_energie_kcal)
+    .filter((v): v is number => v != null && v > 0)
+  const energie7 = metEnergie.length
+    ? Math.round(metEnergie.reduce((a, b) => a + b, 0) / metEnergie.length)
+    : null
   const laatsteBinnen = metStappen.length ? metStappen[metStappen.length - 1]! : null
   const dagenStil = laatsteBinnen
     ? Math.round((Date.parse(vandaag()) - Date.parse(laatsteBinnen)) / 86400000) : null
@@ -151,6 +172,17 @@ export function Beweging(
                           ? `, of nog ${dz(FIETSDOEL - fiets7)} minuten fietsen tot ${FIETSDOEL}`
                           : ''}.`}
             </p>
+            {energie7 != null && (
+              /* Losse aflezing, en met opzet niet in de ring. De ring gaat over
+                 een doel dat je kunt halen; dit getal is een waarneming van je
+                 horloge waar dit model niets mee doet. Ze in één beeld zetten
+                 zou suggereren dat ze bij elkaar horen. */
+              <p className="mini" style={{ marginTop: 10 }}>
+                <b>{dz(energie7)} kcal</b> actieve energie per dag, uit Gezondheid. Die telt hier
+                nergens in mee — het verbruik komt uit je gewichtstrend, en daar zit deze beweging
+                al in verwerkt.
+              </p>
+            )}
             <div className="mini" style={{ marginTop: 10 }}>Krachtsessies deze week</div>
             <Bolletjes aantal={sessies} van={KRACHTDOEL} naam="krachtsessies"
                        kleur={haaltKracht ? 'var(--heldergoed)' : undefined} />

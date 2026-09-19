@@ -10,9 +10,9 @@ import { dec, dz } from '@/gedeeld/getal'
 import type { Fase, Geslacht, Profiel } from '@/gedeeld/db/tabellen'
 import { isSessie, roep } from '@/gedeeld/db/rpc'
 import type { NieuweDag, NieuweRegel } from '@/gedeeld/db/rpc'
-import { importeer, leesFoto } from '../ai'
+import { BRONNAAM, geraden, importeer, leesFoto } from '../ai'
 import { MINIMUM_LENGTE, wachtwoordklacht } from '../wachtwoord'
-import type { ImportDag } from '../ai'
+import type { ImportDag, Importbron } from '../ai'
 
 
 /* ----------------------------------------------------------------- profiel */
@@ -238,6 +238,7 @@ export function ImportVenster(
   const [melding, zetMelding] = useState<string | null>(null)
   const [loopt, zetLoopt] = useState(false)
   const [concept, zetConcept] = useState<ImportDag[] | null>(null)
+  const [bronnen, zetBronnen] = useState<Importbron[]>([])
 
   async function uitlezen() {
     zetLoopt(true)
@@ -245,7 +246,9 @@ export function ImportVenster(
     try {
       const uit = await importeer(token, tekst, fotos)
       zetConcept(uit.dagen)
-      zetMelding(`${uit.dagen.length} dagen gevonden.`)
+      zetBronnen(uit.bronnen ?? [])
+      zetMelding(`${uit.dagen.length} dagen gevonden.`
+        + (uit.opmerking ? ` ${uit.opmerking}` : ''))
     } catch (e) {
       zetMelding(e instanceof Error ? e.message : String(e))
     } finally {
@@ -309,6 +312,35 @@ export function ImportVenster(
 
       {concept && concept.length > 0 && (
         <>
+          {/* WAAROP DE HERKENNING ZICH BASEERDE
+              Een "Alle gegevens"-lijst uit Apple Gezondheid is een kale kolom
+              getallen; welke grootheid dat is staat in een kop die vaak
+              weggescrold is. Wat er geraden is hoort hier te staan en niet in de
+              database: een verkeerd geraden kolom ziet er daarna uit als elke
+              andere rij en is niet meer terug te vinden.
+
+              Alleen de gokken, niet alle reeksen. Wie bij elke import een lijstje
+              krijgt waar meestal niets mis mee is, kijkt er na twee keer
+              overheen — en dan staat de waarschuwing er voor niets. */}
+          {geraden(bronnen).length > 0 && (
+            <Kaart toon="let" plat style={{ marginTop: 10 }}>
+              <p className="klein">
+                <b>Kijk dit na.</b> De kop stond niet op de afdruk, dus dit is afgeleid uit hoe
+                groot de getallen zijn:
+              </p>
+              <ul className="mini" style={{ margin: '6px 0 0', paddingLeft: 18 }}>
+                {geraden(bronnen).map((b, i) => (
+                  <li key={i}>
+                    gelezen als <b>{BRONNAAM[b.wat]}</b>
+                    {b.dagen != null && ` · ${b.dagen} dagen`}
+                  </li>
+                ))}
+              </ul>
+              <p className="mini" style={{ marginTop: 6 }}>
+                Klopt dat niet, neem dan niet over: maak een nieuwe afdruk waar de kop op staat.
+              </p>
+            </Kaart>
+          )}
           <div className="lijst" style={{ marginTop: 8, maxHeight: 230, overflow: 'auto' }}>
             {concept.map((d) => (
               <div key={d.datum}>
@@ -317,6 +349,8 @@ export function ImportVenster(
                   {d.kcal != null && `${dz(d.kcal)} kcal`}
                   {d.eiwit_g != null && ` · ${dec(d.eiwit_g, 0)} g eiwit`}
                   {d.stappen != null && ` · ${dz(d.stappen)} stappen`}
+                  {d.actieve_energie_kcal != null
+                    && ` · ${dz(d.actieve_energie_kcal)} kcal actief`}
                   {d.gewicht_kg != null && ` · ${dec(d.gewicht_kg, 1)} kg`}
                 </span>
               </div>

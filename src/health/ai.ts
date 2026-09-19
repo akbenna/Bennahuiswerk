@@ -73,10 +73,59 @@ export interface ImportDag {
   actieve_energie_kcal: number | null
 }
 
+/**
+ * WAAROP DE HERKENNING ZICH BASEERDE
+ *
+ * Het scherm "Alle gegevens" van Apple Gezondheid is een kale lijst: per rij één
+ * getal en een datum, zonder eenheid. Welke grootheid het is staat alleen in de
+ * kop bovenaan, en wie doorscrolt en dan een afdruk maakt heeft die kop niet in
+ * beeld. Dan moet de herkenning kiezen tussen stappen en kilocalorieën op niets
+ * anders dan de grootte van de getallen.
+ *
+ * Dat mag, maar niet stil. `hoe` zegt waar de grootheid vandaan komt, en het
+ * scherm toont dat vóór er iets wordt overgenomen — een misgok is anders niet
+ * terug te vinden: hij ziet eruit als een gewone rij in de database.
+ */
+export interface Importbron {
+  wat: 'stappen' | 'actieve_energie_kcal' | 'kcal' | 'gewicht_kg' | 'onbekend'
+  /** `kop` = op de afdruk gelezen · `reeks` = van een andere afdruk van dezelfde
+   *  lijst · `grootte` = afgeleid uit hoe groot de getallen zijn, dus een gok. */
+  hoe: 'kop' | 'reeks' | 'grootte'
+  kop?: string | null
+  dagen?: number | null
+}
+
 export interface ImportUitslag {
   dagen: ImportDag[]
+  /** Leeg bij de versie van de edge function die dit veld nog niet kent. */
+  bronnen?: Importbron[]
   opmerking: string
   model: string
+}
+
+/**
+ * Welke reeksen op niets anders dan de grootte van de getallen berusten.
+ *
+ * Dit is de enige vorm van onzekerheid die het scherm kan tonen zonder dat
+ * iemand de afdruk erbij pakt, en daarom staat hij hier los: zo kan een proef
+ * hem toetsen zonder browser en zonder verbinding.
+ *
+ * Een lege of ontbrekende lijst geeft niets terug. Dat is met opzet geen fout:
+ * de edge function die nu draait kent `bronnen` nog niet, en dan hoort het
+ * scherm te werken zoals het altijd werkte in plaats van een waarschuwing te
+ * tonen die nergens op slaat.
+ */
+export function geraden(bronnen: Importbron[] | undefined): Importbron[] {
+  return (bronnen ?? []).filter((b) => b.hoe === 'grootte' || b.wat === 'onbekend')
+}
+
+/** Hoe een grootheid heet op het scherm. */
+export const BRONNAAM: Record<Importbron['wat'], string> = {
+  stappen: 'stappen',
+  actieve_energie_kcal: 'actieve energie',
+  kcal: 'gegeten kilocalorieën',
+  gewicht_kg: 'gewicht',
+  onbekend: 'onbekend',
 }
 
 async function vraag(lichaam: Record<string, unknown>): Promise<unknown> {
