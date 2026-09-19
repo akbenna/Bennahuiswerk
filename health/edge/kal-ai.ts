@@ -288,6 +288,54 @@ const SCHEMA_IMPORT = {
         required: ["datum"],
       },
     },
+    /* WAAROP DE HERKENNING ZICH BASEERDE
+       Het scherm "Alle gegevens" van Apple Gezondheid toont een kale kolom
+       getallen; welke grootheid dat is staat alleen in een kop die vaak
+       weggescrold is. Zonder dit veld zou een misgok — stappen gelezen als
+       kilocalorieën — stil in de dagen belanden. Nu staat er wat er gelezen is
+       en hoe zeker dat is, en kan het scherm dat tonen vóór er iets wordt
+       overgenomen. */
+    bronnen: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          wat: { type: "string", enum: ["stappen", "actieve_energie_kcal", "kcal", "gewicht_kg", "onbekend"] },
+          hoe: { type: "string", enum: ["kop", "reeks", "grootte"],
+                 description: "kop = op deze afdruk gelezen; reeks = van een andere afdruk van dezelfde lijst; grootte = afgeleid uit hoe groot de getallen zijn, dus een gok" },
+          kop: { type: ["string", "null"], description: "De tekst die je las, als je hem las" },
+          dagen: { type: ["number", "null"], description: "Hoeveel dagen uit deze reeks komen" },
+        },
+        required: ["wat", "hoe"],
+      },
+    },
+    /* WORK-OUTS ZIJN GEEN DAGREEKS
+       Ze staan apart en niet in `dagen`, want er is geen dagveld waar een duur
+       zonder soort vanzelf in past. Wat ermee gebeurt beslist de app, samen met
+       de gebruiker: een horloge schrijft een hele dag weg als één activiteit van
+       negen uur, en zoiets als beweegminuten overnemen zou een weekdoel in één
+       klap vijf keer halen op een dag waarop er niets gebeurde. */
+    activiteiten: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          datum: { type: "string", description: "ISO-datum, JJJJ-MM-DD" },
+          minuten: { type: "number", description: "Hele minuten; seconden afgerond" },
+          soort: {
+            type: ["string", "null"],
+            enum: ["wandelen", "rennen", "fietsen", "hometrainer", "zwemmen", "roeien",
+                   "crosstrainer", "racket", "team", "dansen", "tuinieren", "kracht",
+                   "anders", null],
+            description: "Waar het kopje op neerkomt; null als er geen kopje te zien is",
+          },
+          label: { type: ["string", "null"], description: "Wat er letterlijk boven de post stond" },
+          bron: { type: ["string", "null"], description: "De app die hem leverde, als dat te zien is" },
+          tijd: { type: ["string", "null"], description: "Begintijd als die erbij staat, uu:mm" },
+        },
+        required: ["datum", "minuten"],
+      },
+    },
     opmerking: { type: "string" },
   },
   required: ["dagen"],
@@ -358,7 +406,55 @@ Percentages naar grammen: koolhydraten en eiwit 4 kcal per gram, vet 9 kcal per 
 
 Let op de volgorde waarin de app de macro's toont — bij Yazio is dat koolhydraten, eiwit, vet.
 
-Nederlandse maanden en het formaat "20 augustus 2026" moeten naar 2026-08-20. Duizendtallen staan met een punt: 1.319 kcal is duizenddriehonderdnegentien.`;
+Nederlandse maanden en het formaat "20 augustus 2026" moeten naar 2026-08-20. Duizendtallen staan met een punt: 1.319 kcal is duizenddriehonderdnegentien. Afgekorte maanden ook: "21 aug 2026" is 2026-08-21.
+
+APPLE GEZONDHEID, SCHERM "ALLE GEGEVENS"
+
+Dat scherm is een kale lijst: per rij één getal links en een datum rechts, zonder eenheid. Wélke grootheid het is staat alleen in de kop bovenaan, en die is vaak weggescrold — dan zie je hem niet.
+
+Raad die grootheid nooit stilzwijgend. Zoek hem in deze volgorde:
+
+1. De kop van het scherm, als die zichtbaar is. Ook een half afgesneden woord telt: "Kilocalorie" bovenaan betekent kilocalorieën.
+2. De andere schermafdrukken in dezelfde zending. Iemand die een lange lijst doorscrolt maakt meerdere afdrukken van dezelfde lijst, en de datums sluiten dan op elkaar aan of overlappen. Staat de kop op één ervan, dan geldt hij voor de hele aaneengesloten reeks.
+3. Pas als dat allebei niets oplevert: de grootte van de getallen. Stappen liggen doorgaans tussen 1.000 en 20.000; actieve energie tussen 50 en 1.500. Dit is een gok en geen waarneming.
+
+Zet in `bronnen` per reeks wat je hebt gelezen en hoe je het weet: `hoe` is "kop" als je hem gelezen hebt, "reeks" als hij van een andere afdruk komt, en "grootte" als je het uit de getallen hebt afgeleid. Zet bij "kop" en "reeks" de gelezen tekst in `kop`.
+
+Kun je het ook uit de grootte niet met overtuiging bepalen, laat de waarden dan wég en schrijf in `opmerking` wat je zag. Een verkeerd ingevulde kolom is erger dan een lege.
+
+HALVE REGELS AAN DE RANDEN
+
+Boven- en onderaan zo'n afdruk staat bijna altijd een regel die maar half in beeld is: afgesneden door de kop of door de balk onderin, en vaak ook vervaagd. Neem die niet over. Een half zichtbaar getal is niet te lezen — 5.585 en 5.585 zien er afgesneden hetzelfde uit als 6.585 — en het is nooit nodig ook: bij een reeks die over meerdere afdrukken loopt staat diezelfde dag verderop nog een keer, dan wel helemaal.
+
+Komt dezelfde datum op twee afdrukken voor, neem dan de regel die volledig zichtbaar is. Verschillen de twee waarden, dan heb je er één verkeerd gelezen; gebruik de volledige en niet het gemiddelde.
+
+DE WORK-OUTLIJST
+
+Een lijst met tijdsduren ("1 u. 23 min. 37s") bij een datum en een tijdstip is geen dagreeks maar een work-outlijst. Daar horen nooit stappen of kilocalorieën uit te komen.
+
+Zet die rijen in `activiteiten`, niet in `dagen`. Per rij: de datum, de duur in hele minuten, het soort, wat er letterlijk boven stond, en welke app hem leverde als dat aan het pictogram of de tekst te zien is (bijvoorbeeld "Garmin"). Seconden rond je af naar de dichtstbijzijnde minuut. "9 u. 7 min. 26s" is 547 minuten.
+
+Het soort haal je uit het kopje van de post en zet je om naar één van deze sleutels:
+
+  wandelen      Wandelen, Buiten wandelen, Hiken, Nordic walking
+  rennen        Hardlopen, Buiten hardlopen, Loopband, Trailrunnen
+  fietsen       Buiten fietsen, Wielrennen, Mountainbiken
+  hometrainer   Binnen fietsen, Spinning
+  zwemmen       Zwemmen in een bad of in open water
+  roeien        Roeien, roeiapparaat
+  crosstrainer  Crosstrainer, elliptical, steppen
+  racket        Tennis, padel, squash, badminton
+  team          Voetbal, basketbal, hockey en andere veldsporten
+  dansen        Dansen, zumba
+  tuinieren     Tuinieren, spitten, harken
+  kracht        Krachttraining, functionele kracht, gewichtheffen
+  anders        Iets wat er wel staat maar hier niet in past — yoga, boksen, skiën
+
+Staat er geen kopje bij een post, zet `soort` dan op null. Verzin er niets bij: "anders" betekent dat je iets gelézen hebt dat niet in de lijst past, en null dat je niets gelezen hebt. Dat verschil bepaalt wat het scherm vraagt.
+
+`label` is altijd wat er letterlijk stond, ook als je het op een sleutel hebt kunnen leggen.
+
+Beoordeel niet of een duur klopt en laat niets weg omdat het lang lijkt — dat doet de app. Geef terug wat er staat.`;
 
 async function claude(
   key: string,
@@ -542,7 +638,11 @@ Deno.serve(async (req) => {
         inhoud.push({ type: "image", source: { type: "base64", media_type: f.type ?? "image/jpeg", data: f.data } });
       }
       if (!inhoud.length) throw new Error("Geen tekst of afbeelding meegestuurd");
-      inhoud.push({ type: "text", text: "Zet dit om in een reeks dagen." });
+      /* "Een reeks dagen" was de hele opdracht, en dat duwt een work-outlijst de
+         verkeerde kant op: het model gaat dan dagen máken uit iets wat er geen
+         is. De tweede zin is er niet om iets nieuws te zeggen — dat staat in
+         SYS_IMPORT — maar om de eerste niet als uitsluiting te laten lezen. */
+      inhoud.push({ type: "text", text: "Zet dit om in een reeks dagen. Staat er een work-outlijst bij, zet die rijen in `activiteiten`; de rest gaat gewoon in `dagen`." });
       const r = await claude(key, MODEL, SYS_IMPORT, inhoud, SCHEMA_IMPORT, "reeks", 10000);
       tokensIn = r.in; tokensUit = r.uit;
       await log(db, gebruiker, soort, MODEL, tokensIn, tokensUit, true, null);

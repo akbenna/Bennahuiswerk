@@ -92,6 +92,8 @@ Ze zijn met opzet niet symmetrisch:
 | Veld | Wie wint | Waarom |
 |---|---|---|
 | `stappen`, `actieve_energie_kcal`, `slaap_min`, `fiets_min`, `bedtijd`, `waaktijd` | wat binnenkomt | Dit zijn metingen. Wat je zelf intikt is een herinnering. |
+
+`fiets_min` blijft na `health/database/43` staan zoals hij is: de koppeling stuurt hem en het scherm leest hem als één matige fietsrit van die dag. Wat je in de app zelf toevoegt gaat niet naar dit veld maar naar `kal_inspanning`, want daar past een soort in — en een soort bepaalt of een minuut enkel of dubbel telt. De koppeling raakt die tabel niet aan.
 | `gewicht_kg` | wat er al staat | Het model rekent op de ochtendweging volgens protocol: nuchter, na het toilet, vóór het eten. Een weegschaal die 's avonds met kleren aan een getal doorgeeft meet iets anders; twee metingen door elkaar geven een helling die nergens op slaat. Lege dagen worden wél aangevuld. |
 | `kracht`, `notitie` | wat er al staat | Een oordeel van jou, geen meting. De functie raakt ze niet aan. |
 | `hartslag_rust` | het toestel, tenzij jij hem invulde | Hij staat niet in `kal_dagen` maar in `kal_metingen`, en heeft daarom zijn eigen regel. Een pols die de koppeling zelf neerzette mag hij bijwerken — die van vanochtend is voorlopig. Eentje die jij hebt ingetikt blijft staan. |

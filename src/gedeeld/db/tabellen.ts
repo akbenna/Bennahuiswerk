@@ -188,6 +188,19 @@ export interface Training {
   sets: number | null; reps: number | null; gewicht_kg: number | null
   rpe: number | null; notitie: string | null
 }
+/**
+ * Eén keer aerobe inspanning: soort, duur en hoe zwaar hij telt.
+ *
+ * `geschat` hoort bij `intensiteit` en niet bij `minuten`: de duur staat er,
+ * de zwaarte is afgeleid uit de soort tenzij iemand hem zelf koos. Zie
+ * `src/health/inspanning.ts` voor waarom dat verschil hier staat en niet in
+ * een opzoektabel.
+ */
+export interface Inspanning {
+  id: string; datum: IsoDatum; soort: string; eigennaam: string | null
+  minuten: number; intensiteit: 'matig' | 'zwaar'; geschat: boolean
+  bron: string; tijd: string | null; notitie: string | null
+}
 export interface Vragenlijst {
   id: string; datum: IsoDatum; soort: string
   antwoorden: Record<string, unknown>; score: number | null; klasse: string | null

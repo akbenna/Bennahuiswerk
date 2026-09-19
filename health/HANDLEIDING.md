@@ -206,10 +206,27 @@ om de manier. Die tweede is er gekomen voor de hometrainer: een halfuur fietsen
 levert geen enkele stap op, en de app zei tot voor kort doodleuk "nog 913 stappen
 te gaan" tegen iemand die net drie kwartier had gefietst.
 
-Wat je invult zijn **minuten**, en verder niets. Geen afstand — op een
-hometrainer is er geen afstand. Geen weerstand, geen fietstype, geen merk: zonder
-vermogensmeter is dat allemaal een gok, en een gok met een bredere marge dan het
-antwoord waard is.
+Wat je invult is een **soort** en een aantal **minuten**: wandelen, hardlopen,
+fietsen, zwemmen, roeien, tennis, dansen, tuinieren, of iets anders met een naam
+die je er zelf bij zet.
+
+De soort bepaalt hoe zwaar de minuten tellen. De WHO-richtlijn noemt namelijk
+twee bedragen: 150 minuten matige inspanning per week, óf 75 zware, waarbij een
+minuut zware voor twee matige telt. Veertig minuten hardlopen telt dus als
+tachtig. Op het scherm staan allebei de getallen — wat je gedaan hebt en wat het
+telt — want één ervan zou over het andere liegen.
+
+Of iets matig of zwaar is, leidt de app af uit de soort, en dat staat er ook zo
+bij: **aangenomen**. Rennen is niet altijd zwaar en wandelen niet altijd matig.
+Klopt het niet, dan zet je de schakelaar om, en dan onthoudt hij dat jíj het
+gekozen hebt.
+
+Krachttraining telt hier níet mee. Die staat in de richtlijn apart — twee keer
+per week — en heeft op datzelfde scherm zijn eigen drie bolletjes.
+
+Wat je verder níet invult: geen afstand — op een hometrainer is er geen afstand.
+Geen weerstand, geen fietstype, geen merk: zonder vermogensmeter is dat allemaal
+een gok, en een gok met een bredere marge dan het antwoord waard is.
 
 En met opzet **geen calorieën**. Een schatting uit hartslag of uit een tabel heeft
 een fout van twintig tot vijftig procent die niet consistent in één richting

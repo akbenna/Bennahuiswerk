@@ -9,10 +9,11 @@ import type { Conditie, Medicatiegroep } from '../conditie'
 import { dec, dz } from '@/gedeeld/getal'
 import type { Fase, Geslacht, Profiel } from '@/gedeeld/db/tabellen'
 import { isSessie, roep } from '@/gedeeld/db/rpc'
-import type { NieuweDag, NieuweRegel } from '@/gedeeld/db/rpc'
-import { importeer, leesFoto } from '../ai'
+import type { NieuweDag, NieuweInspanning, NieuweRegel } from '@/gedeeld/db/rpc'
+import { BRONNAAM, geraden, importeer, leesFoto, redenUit } from '../ai'
 import { MINIMUM_LENGTE, wachtwoordklacht } from '../wachtwoord'
-import type { ImportDag } from '../ai'
+import { SOORTEN, equivalent, standaardIntensiteit } from '../inspanning'
+import type { ImportDag, Importactiviteit, Importbron } from '../ai'
 
 
 /* ----------------------------------------------------------------- profiel */
@@ -225,12 +226,51 @@ export function ProfielVenster(
 
 /* --------------------------------------------------------------- importeren */
 
+/**
+ * EEN WORK-OUTLIJST WORDT EEN LIJST INSPANNINGEN
+ *
+ * De lijst onder "Work-outs" in Apple Gezondheid geeft per post een duur, een
+ * datum, de app die hem schreef, en een kopje dat zegt wat het was. Dat kopje
+ * is wat deze rijen bruikbaar maakt: veertig minuten hardlopen telt voor de
+ * richtlijn dubbel zo zwaar als veertig minuten wandelen.
+ *
+ * WAAROM ER VINKJES STAAN EN GEEN FILTER
+ *
+ * Drie soorten posten beginnen uitgevinkt, en geen van drieën is "fout":
+ * krachttraining (die telt apart en hoort in zijn eigen tabel), een duur van
+ * meer dan vier uur (in de lijst die dit opriep stonden er twee van 9 en 14 uur
+ * — een horloge dat de stopknop niet gezien heeft), en een post zonder kopje.
+ *
+ * De reden staat er bij elke uitgevinkte post bij. De app wéét namelijk niet dat
+ * zo'n post fout is; hij vindt hem alleen onwaarschijnlijk, en dat is iets
+ * anders. Wie beter weet vinkt hem aan.
+ *
+ * DE SOORT IS TE VERBETEREN, EN DAAROM STAAT HIJ ER ALS KEUZE
+ *
+ * Wat de herkenning van het kopje maakte is een vertaling, geen waarneming.
+ * Staat er "Functionele kracht" en werd dat `kracht`, dan hoort dat te zien te
+ * zijn en te veranderen te zijn — niet stil te gebeuren. Een post zonder kopje
+ * heeft geen soort en vraagt er dus om.
+ */
+function duur(minuten: number): string {
+  const m = Math.round(minuten)
+  return m >= 60 ? `${Math.floor(m / 60)} u ${String(m % 60).padStart(2, '0')}` : `${m} min`
+}
+
+/** De soorten in het uitklaplijstje, plus de twee die geen inspanning zijn. */
+const IMPORTSOORTEN: Array<{ sleutel: string; naam: string }> = [
+  ...SOORTEN.map((s) => ({ sleutel: s.sleutel, naam: s.naam })),
+  { sleutel: 'kracht', naam: 'Krachttraining (telt apart)' },
+]
+
 export function ImportVenster(
   { token, opSluiten, opOvernemen }:
   {
     token: string
     opSluiten: () => void
-    opOvernemen: (dagen: NieuweDag[], regels: NieuweRegel[]) => void
+    opOvernemen: (
+      dagen: NieuweDag[], regels: NieuweRegel[], inspanning: NieuweInspanning[],
+    ) => void
   },
 ) {
   const [tekst, zetTekst] = useState('')
@@ -238,6 +278,34 @@ export function ImportVenster(
   const [melding, zetMelding] = useState<string | null>(null)
   const [loopt, zetLoopt] = useState(false)
   const [concept, zetConcept] = useState<ImportDag[] | null>(null)
+  const [bronnen, zetBronnen] = useState<Importbron[]>([])
+  const [werk, zetWerk] = useState<Importactiviteit[]>([])
+  const [aan, zetAan] = useState<boolean[]>([])
+  /* De soort staat apart van `werk` omdat hij te veranderen is: `werk` is wat de
+     herkenning zag en blijft dat, `soorten` is wat eruit wordt. */
+  const [soorten, zetSoorten] = useState<string[]>([])
+
+  /* Geen tweede zeef op 'kracht' hier: het vinkje van zo'n post is uitgezet én
+     niet aan te zetten (zie `disabled` hieronder), en dat is het slot. Stond de
+     zeef er óók, dan was er een regel die niets doet zolang het slot werkt en
+     niemand die merkt wanneer het slot brak — twee halve sloten in plaats van
+     één hele. */
+  const rijen: NieuweInspanning[] = werk
+    .map((a, i) => ({ a, soort: soorten[i] ?? '', aan: !!aan[i] }))
+    .filter((x) => x.aan && x.soort)
+    .map(({ a, soort }) => ({
+      datum: a.datum,
+      soort,
+      minuten: Math.round(a.minuten),
+      intensiteit: standaardIntensiteit(soort),
+      geschat: true,
+      eigennaam: soort === 'anders' ? (a.label ?? null) : null,
+      bron: 'import',
+      ...(a.tijd ? { tijd: a.tijd } : {}),
+    }))
+  const echteMinuten = rijen.reduce((s, r) => s + r.minuten, 0)
+  const matigeMinuten = rijen.reduce(
+    (s, r) => s + equivalent(r.minuten, r.intensiteit ?? 'matig'), 0)
 
   async function uitlezen() {
     zetLoopt(true)
@@ -245,12 +313,31 @@ export function ImportVenster(
     try {
       const uit = await importeer(token, tekst, fotos)
       zetConcept(uit.dagen)
-      zetMelding(`${uit.dagen.length} dagen gevonden.`)
+      zetBronnen(uit.bronnen ?? [])
+      const w = uit.activiteiten ?? []
+      zetWerk(w)
+      zetSoorten(w.map((a) => a.soort ?? ''))
+      zetAan(w.map((a) => redenUit(a) == null))
+      zetMelding(`${uit.dagen.length} dagen gevonden.`
+        + (w.length ? ` ${w.length} work-out${w.length === 1 ? '' : 's'}.` : '')
+        + (uit.opmerking ? ` ${uit.opmerking}` : ''))
     } catch (e) {
       zetMelding(e instanceof Error ? e.message : String(e))
     } finally {
       zetLoopt(false)
     }
+  }
+
+  /* Een soort kiezen bij een post die er geen had is meteen het antwoord op de
+     vraag die het vinkje stelde. Hem daarna nóg een keer laten aanvinken is een
+     tik die niets toevoegt. Krachttraining blijft uit: die hoort hier niet. */
+  function kiesSoort(i: number, sleutel: string) {
+    zetSoorten(soorten.map((v, j) => j === i ? sleutel : v))
+    const a = werk[i]
+    if (a && sleutel && sleutel !== 'kracht' && redenUit({ ...a, soort: sleutel }) == null) {
+      zetAan(aan.map((v, j) => j === i ? true : v))
+    }
+    if (sleutel === 'kracht') zetAan(aan.map((v, j) => j === i ? false : v))
   }
 
   function overnemen() {
@@ -276,7 +363,7 @@ export function ImportVenster(
           'bovengrens ruim genomen wegens de gebruikelijke onderregistratie',
         ],
       }))
-    opOvernemen(dagen, regels)
+    opOvernemen(dagen, regels, rijen)
   }
 
   return (
@@ -307,21 +394,120 @@ export function ImportVenster(
         {loopt ? <><Spin /> Uitlezen…</> : melding}
       </p>
 
-      {concept && concept.length > 0 && (
+      {concept && (concept.length > 0 || werk.length > 0) && (
         <>
-          <div className="lijst" style={{ marginTop: 8, maxHeight: 230, overflow: 'auto' }}>
-            {concept.map((d) => (
-              <div key={d.datum}>
-                <span className="cijfer mini groei">{d.datum}</span>
-                <span className="cijfer mini">
-                  {d.kcal != null && `${dz(d.kcal)} kcal`}
-                  {d.eiwit_g != null && ` · ${dec(d.eiwit_g, 0)} g eiwit`}
-                  {d.stappen != null && ` · ${dz(d.stappen)} stappen`}
-                  {d.gewicht_kg != null && ` · ${dec(d.gewicht_kg, 1)} kg`}
-                </span>
+          {/* WAAROP DE HERKENNING ZICH BASEERDE
+              Een "Alle gegevens"-lijst uit Apple Gezondheid is een kale kolom
+              getallen; welke grootheid dat is staat in een kop die vaak
+              weggescrold is. Wat er geraden is hoort hier te staan en niet in de
+              database: een verkeerd geraden kolom ziet er daarna uit als elke
+              andere rij en is niet meer terug te vinden.
+
+              Alleen de gokken, niet alle reeksen. Wie bij elke import een lijstje
+              krijgt waar meestal niets mis mee is, kijkt er na twee keer
+              overheen — en dan staat de waarschuwing er voor niets. */}
+          {geraden(bronnen).length > 0 && (
+            <Kaart toon="let" plat style={{ marginTop: 10 }}>
+              <p className="klein">
+                <b>Kijk dit na.</b> De kop stond niet op de afdruk, dus dit is afgeleid uit hoe
+                groot de getallen zijn:
+              </p>
+              <ul className="mini" style={{ margin: '6px 0 0', paddingLeft: 18 }}>
+                {geraden(bronnen).map((b, i) => (
+                  <li key={i}>
+                    gelezen als <b>{BRONNAAM[b.wat]}</b>
+                    {b.dagen != null && ` · ${b.dagen} dagen`}
+                  </li>
+                ))}
+              </ul>
+              <p className="mini" style={{ marginTop: 6 }}>
+                Klopt dat niet, neem dan niet over: maak een nieuwe afdruk waar de kop op staat.
+              </p>
+            </Kaart>
+          )}
+
+          {concept.length > 0 && (
+            <div className="lijst" style={{ marginTop: 8, maxHeight: 230, overflow: 'auto' }}>
+              {concept.map((d) => (
+                <div key={d.datum}>
+                  <span className="cijfer mini groei">{d.datum}</span>
+                  <span className="cijfer mini">
+                    {d.kcal != null && `${dz(d.kcal)} kcal`}
+                    {d.eiwit_g != null && ` · ${dec(d.eiwit_g, 0)} g eiwit`}
+                    {d.stappen != null && ` · ${dz(d.stappen)} stappen`}
+                    {d.actieve_energie_kcal != null
+                      && ` · ${dz(d.actieve_energie_kcal)} kcal actief`}
+                    {d.gewicht_kg != null && ` · ${dec(d.gewicht_kg, 1)} kg`}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {werk.length > 0 && (
+            <>
+              <Kop>Work-outs</Kop>
+              <p className="klein">
+                Wat aangevinkt staat komt erbij als inspanning. Een vinkje staat uit als er een
+                reden voor is, en die staat erbij — wie het beter weet zet hem aan. De soort bepaalt
+                hoe zwaar de minuten tellen en is hier te verbeteren.
+              </p>
+              <div className="lijst" style={{ marginTop: 6, maxHeight: 240, overflow: 'auto' }}>
+                {werk.map((a, i) => {
+                  const reden = redenUit({ ...a, soort: soorten[i] ?? '' })
+                  return (
+                    <div key={i} style={{ flexWrap: 'wrap' }}>
+                      {/* Krachttraining is niet aan te vinken, en dat is iets anders
+                          dan hem verbergen. De richtlijn telt hem apart en de
+                          lijst geeft geen sets of reps, dus er valt hier niets
+                          van te maken. Klopte het kopje niet, dan verander je de
+                          soort — en dan mag hij wél mee. */}
+                      <input type="checkbox" checked={!!aan[i]} style={{ width: 19, height: 19 }}
+                             disabled={soorten[i] === 'kracht'}
+                             aria-label={`${a.datum} · ${duur(a.minuten)}`}
+                             onChange={(e) => zetAan(aan.map((v, j) => j === i ? e.target.checked : v))} />
+                      <span className="cijfer mini groei knip">
+                        {a.datum}{a.tijd ? ` ${a.tijd}` : ''}
+                        {a.label ? ` · ${a.label}` : ''}
+                      </span>
+                      <select value={soorten[i] ?? ''} style={{ flex: '0 0 138px' }}
+                              aria-label={`Soort van ${a.datum} ${duur(a.minuten)}`}
+                              onChange={(e) => kiesSoort(i, e.target.value)}>
+                        <option value="">— geen soort —</option>
+                        {IMPORTSOORTEN.map((s) => (
+                          <option key={s.sleutel} value={s.sleutel}>{s.naam}</option>
+                        ))}
+                      </select>
+                      <span className="cijfer mini" style={{ width: 60, textAlign: 'right' }}>
+                        {duur(a.minuten)}
+                      </span>
+                      {reden && (
+                        <span className="mini" style={{ flexBasis: '100%', color: 'var(--let)' }}>
+                          {reden}
+                        </span>
+                      )}
+                    </div>
+                  )
+                })}
               </div>
-            ))}
-          </div>
+
+              {/* Wat er werkelijk verstuurd wordt, en wat het telt. Twee
+                  getallen, want ze zijn niet hetzelfde: zware minuten tellen
+                  dubbel, en een scherm dat alleen het tweede toont liegt over
+                  wat je gedaan hebt. */}
+              <p className="klein" style={{ marginTop: 10 }}>
+                {rijen.length === 0
+                  ? 'Niets aangevinkt — er komt geen inspanning bij.'
+                  : <>
+                      <b>{rijen.length}</b> {rijen.length === 1 ? 'activiteit' : 'activiteiten'},
+                      samen <b>{dz(echteMinuten)} minuten</b>
+                      {matigeMinuten !== echteMinuten
+                        && <> — dat telt als {dz(matigeMinuten)} matige minuten</>}.
+                    </>}
+              </p>
+            </>
+          )}
+
           <Rij style={{ marginTop: 8 }}>
             <Knop vol opKlik={overnemen}>Overnemen</Knop>
           </Rij>

@@ -73,10 +73,132 @@ export interface ImportDag {
   actieve_energie_kcal: number | null
 }
 
+/**
+ * WAAROP DE HERKENNING ZICH BASEERDE
+ *
+ * Het scherm "Alle gegevens" van Apple Gezondheid is een kale lijst: per rij één
+ * getal en een datum, zonder eenheid. Welke grootheid het is staat alleen in de
+ * kop bovenaan, en wie doorscrolt en dan een afdruk maakt heeft die kop niet in
+ * beeld. Dan moet de herkenning kiezen tussen stappen en kilocalorieën op niets
+ * anders dan de grootte van de getallen.
+ *
+ * Dat mag, maar niet stil. `hoe` zegt waar de grootheid vandaan komt, en het
+ * scherm toont dat vóór er iets wordt overgenomen — een misgok is anders niet
+ * terug te vinden: hij ziet eruit als een gewone rij in de database.
+ */
+export interface Importbron {
+  wat: 'stappen' | 'actieve_energie_kcal' | 'kcal' | 'gewicht_kg' | 'onbekend'
+  /** `kop` = op de afdruk gelezen · `reeks` = van een andere afdruk van dezelfde
+   *  lijst · `grootte` = afgeleid uit hoe groot de getallen zijn, dus een gok. */
+  hoe: 'kop' | 'reeks' | 'grootte'
+  kop?: string | null
+  dagen?: number | null
+}
+
+/**
+ * EEN WORK-OUT UIT DE LIJST VAN APPLE GEZONDHEID
+ *
+ * Per post een duur, een datum, de app die hem schreef, en een kopje dat zegt
+ * wat het was: "Buiten fietsen", "Wandelen", "Hardlopen". Dat kopje is wat deze
+ * rijen bruikbaar maakt — veertig minuten hardlopen is voor de richtlijn niet
+ * hetzelfde als veertig minuten wandelen.
+ *
+ * `soort` is de sleutel uit `inspanning.ts` waar de herkenning op uitkwam;
+ * `label` is wat er letterlijk stond. Die twee staan los van elkaar omdat de
+ * eerste een vertaling is en de tweede een waarneming — komt er ooit een soort
+ * bij, dan is aan het label te zien wat er toen van gemaakt is.
+ */
+export interface Importactiviteit {
+  datum: IsoDatum
+  minuten: number
+  /** Sleutel uit SOORTEN, of 'kracht', of null als het kopje niet te zien was. */
+  soort?: string | null
+  /** Wat er letterlijk boven de post stond. */
+  label?: string | null
+  bron?: string | null
+  tijd?: string | null
+}
+
+/**
+ * De bovengrens waarboven een "work-out" er geen is.
+ *
+ * Vier uur. Een lange rit of een bergwandeling haalt dat, en die horen mee te
+ * tellen. Wat er níét doorheen komt is wat een horloge doet als het een hele dag
+ * als één activiteit wegschrijft — in de lijst die dit opriep stond een post van
+ * 9 uur 7 en een van 14 uur 22, en dat zijn geen trainingen maar een vergeten
+ * stopknop.
+ *
+ * Zou zo'n post als beweegminuten binnenkomen, dan haalt het weekdoel van 150
+ * minuten zich in één klap vijf keer op een dag waarop er misschien niets
+ * gebeurde. Dat is erger dan hem missen: een doel dat vanzelf afgaat meet niets.
+ *
+ * De grens haalt niets wég — ze zet het vinkje uit. Wie het beter weet zet hem
+ * aan, en dat is het verschil tussen een filter en een oordeel.
+ */
+export const ACTIVITEIT_MAX_MIN = 240
+
+/** Of deze duur er een van een mens is en niet van een vergeten stopknop. */
+export function aannemelijk(minuten: number): boolean {
+  return minuten > 0 && minuten <= ACTIVITEIT_MAX_MIN
+}
+
+/**
+ * Waarom het vinkje van deze post uit staat, of null als hij gewoon meetelt.
+ *
+ * Drie redenen, en ze zijn alle drie iets anders dan "fout":
+ *
+ *   krachttraining   staat in de richtlijn apart — twee keer per week
+ *                    spierversterkend, naast de aerobe minuten — en hoort in
+ *                    `kal_training`. Zou hij hier meetellen, dan haalde één
+ *                    zware sessie de halve aerobe week. De work-outlijst geeft
+ *                    bovendien geen sets of reps, dus er valt ook niets van te
+ *                    maken.
+ *   te lang          zie `ACTIVITEIT_MAX_MIN`.
+ *   geen kopje       de post stond er zonder soort. Hij mag mee als "anders",
+ *                    maar niet zonder dat je het gezien hebt.
+ *
+ * Alle drie zetten ze een vinkje uit en halen ze niets weg. De tekst is wat op
+ * het scherm komt te staan, dus hij is een zin en geen code.
+ */
+export function redenUit(a: Importactiviteit): string | null {
+  if (a.soort === 'kracht') return 'krachttraining telt apart en hoort niet bij deze minuten'
+  if (!aannemelijk(a.minuten)) return `langer dan ${ACTIVITEIT_MAX_MIN / 60} uur — een vergeten stopknop?`
+  if (!a.soort) return 'geen soort te zien op de afdruk'
+  return null
+}
+
 export interface ImportUitslag {
   dagen: ImportDag[]
+  /** Leeg bij de versie van de edge function die deze velden nog niet kent. */
+  bronnen?: Importbron[]
+  activiteiten?: Importactiviteit[]
   opmerking: string
   model: string
+}
+
+/**
+ * Welke reeksen op niets anders dan de grootte van de getallen berusten.
+ *
+ * Dit is de enige vorm van onzekerheid die het scherm kan tonen zonder dat
+ * iemand de afdruk erbij pakt, en daarom staat hij hier los: zo kan een proef
+ * hem toetsen zonder browser en zonder verbinding.
+ *
+ * Een lege of ontbrekende lijst geeft niets terug. Dat is met opzet geen fout:
+ * de edge function die nu draait kent `bronnen` nog niet, en dan hoort het
+ * scherm te werken zoals het altijd werkte in plaats van een waarschuwing te
+ * tonen die nergens op slaat.
+ */
+export function geraden(bronnen: Importbron[] | undefined): Importbron[] {
+  return (bronnen ?? []).filter((b) => b.hoe === 'grootte' || b.wat === 'onbekend')
+}
+
+/** Hoe een grootheid heet op het scherm. */
+export const BRONNAAM: Record<Importbron['wat'], string> = {
+  stappen: 'stappen',
+  actieve_energie_kcal: 'actieve energie',
+  kcal: 'gegeten kilocalorieën',
+  gewicht_kg: 'gewicht',
+  onbekend: 'onbekend',
 }
 
 async function vraag(lichaam: Record<string, unknown>): Promise<unknown> {

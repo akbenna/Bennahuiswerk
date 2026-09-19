@@ -285,6 +285,11 @@ export function App() {
           {tab === 'beweging' && (
             <Beweging
               a={a} dagen={k.dagenkaart} training={k.alles.training} datum={datum}
+              inspanning={k.alles.inspanning}
+              bewaarInspanning={(r) => void k.wijzig((t) =>
+                roep('kal_rij_toevoegen', { p_token: t, p_tabel: 'inspanning', p_rij: r }))}
+              wisInspanning={(id) => void k.wijzig((t) =>
+                roep('kal_rij_wissen', { p_token: t, p_tabel: 'inspanning', p_id: id }))}
               zetDagveld={(veld, waarde) =>
                 void k.wijzig((t) => roep('kal_dag_zetten', {
                   p_token: t, p_datum: datum, p_patch: { [veld]: waarde },
@@ -405,11 +410,17 @@ export function App() {
       {venster === 'import' && (
         <ImportVenster
           token={k.sessie.token} opSluiten={() => zetVenster(null)}
-          opOvernemen={(dagen, regels) => {
+          opOvernemen={(dagen, regels, inspanning) => {
             zetVenster(null)
             void k.wijzig(async (t) => {
               if (dagen.length) await roep('kal_dagen_importeren', { p_token: t, p_dagen: dagen })
               if (regels.length) await roep('kal_regels_toevoegen', { p_token: t, p_regels: regels })
+              /* Apart en als laatste: deze aanroep slaat rijen over die er al
+                 staan, zodat twee keer dezelfde afdruk importeren de minuten
+                 niet verdubbelt. Zie health/database/43. */
+              if (inspanning.length) {
+                await roep('kal_inspanning_toevoegen', { p_token: t, p_rijen: inspanning })
+              }
             })
           }}
         />
