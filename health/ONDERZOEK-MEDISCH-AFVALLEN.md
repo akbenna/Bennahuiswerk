@@ -252,6 +252,219 @@ zacht, het enige echte verschil.
 
 ---
 
+---
+
+# Deel 2 — de kennisbank van ProVita Care, en wat er in ontbreekt
+
+*Toegevoegd 19 september 2026, na het doorlezen van de repository `akbenna/provita-care`.*
+
+## 9. Wat er al ligt, en het is veel
+
+ProVita Care heeft een kennisbasis die beter georganiseerd is dan de meeste
+klinische software die ik ken.
+
+**`docs/RICHTLIJNEN_REGISTER.md`** — een levend register van elke klinische
+richtlijn in het platform, met per richtlijn de versie die draait, de nieuwste
+versie, de status, en de bestanden die eraan hangen. Inclusief een
+impactanalyse-procedure bij elke update en een tabel met bekende discrepanties
+tussen NHG en ESC, mét de keuze welke het platform volgt en waarom. Laatst
+bijgewerkt 5 februari 2026.
+
+Wat erin staat: NHG-Standaard CVRM 2024 v3.1, ESC SCORE2 / SCORE2-OP /
+SCORE2-Diabetes, ESC/EAS Dyslipidaemie 2019 + focused update 2025, NHG M01 DM2
+met de herziening van december 2024, ADA-EASD consensus 2022, CKD-EPI 2021
+(race-vrij), KDIGO 2024, ESC hartfalen 2021 + FU 2023, ESC hypertensie 2023,
+ESC atriumfibrilleren 2024, PHQ-9, GAD-7, AUDIT-C, eFI2.
+
+**`docs/GLI-PROGRAMMA-ONTWERP.md`** — een programmaontwerp van 24 maanden met
+zeven gedragswetenschappelijke kaders (Self-Determination Theory, COM-B,
+Transtheoretisch Model, Habit Formation, Implementation Intentions, Social
+Cognitive Theory, Motivational Interviewing), **26 gevalideerde BCT's uit de
+Michie-taxonomie** verdeeld over behandel- en onderhoudsfase, drie pathways, en
+een week-voor-week thematische structuur.
+
+**`docs/ProVitaCareScore-Methodologie.md`** — 891 regels met de volledige
+SCORE2-, SCORE2-OP- en SCORE2-Diabetes-coëfficiënten, de Nederlandse
+kalibratieparameters en de verificatiebronnen.
+
+**`src/lib/glp1MedicationReference.js`** — per middel het opbouwschema, de
+bewaarcondities, injectietips, bijwerkingen met waarschuwingssignalen,
+vergoedingsstatus en controleschema.
+
+Dit is geen app met wat gezondheidsteksten erbij. Dit is een klinisch platform.
+
+## 10. Vier gaten, en ze wijzen alle vier dezelfde kant op
+
+### 10.1 De NHG-Standaard Obesitas staat niet in het register
+
+Onder *Obesitas* staan drie regels: EOSS, WHO BMI-classificatie en FINDRISC. Alle
+drie meetinstrumenten. **De NHG-Standaard Obesitas zelf staat er niet in** — niet
+de versie van 2023 en niet de herziening van 13 oktober 2025.
+
+Het register is bijgewerkt op 5 februari 2026, bijna vier maanden ná die
+herziening. De richtlijn die het hele obesitasaanbod bepaalt is dus de enige
+grote die buiten het mechanisme valt dat er juist voor gemaakt is.
+
+Dat verklaart ook hoe §1 kon ontstaan: het register zou de discrepantie hebben
+gevonden, als de richtlijn erin had gestaan.
+
+### 10.2 Drie verschillende versies naast elkaar
+
+| Waar | Wat er staat |
+|---|---|
+| `GLI-PROGRAMMA-ONTWERP.md` §2.2 | "NHG-Standaard Obesitas (2023): BMI ≥ 30 of ≥ 25 + comorbiditeit → GLI-indicatie" |
+| `glp1MedicationReference.js` kop | "NHG-Standaard Obesitas 2025" als bron |
+| `glp1MedicationReference.js` indicatie | de EMA-registratietekst |
+
+De eerste is een **GLI-indicatie** en de tweede zou een **medicatie-indicatie**
+moeten zijn. Dat zijn twee verschillende drempels voor twee verschillende dingen,
+en ze staan nergens naast elkaar.
+
+### 10.3 Pathway C zet de trap in de verkeerde volgorde
+
+`GLI-PROGRAMMA-ONTWERP.md` §4.3:
+
+> **Pathway C: GLI + GLP-1 farmacotherapie**
+> Inclusiecriteria: BMI ≥ 30 + indicatie GLP-1 agonist
+> Duur: 24 maanden (medicatie parallel)
+
+En §7 laat de medicatiemodules op week 0 beginnen: intake, screening, eerste
+injectie in week 2.
+
+De NHG-Standaard vraagt het omgekeerde: **eerst ≥ 1 jaar GLI met < 10 %
+gewichtsverlies, dán pas medicatie.** Parallel starten vanaf week 0 is precies
+wat de standaard niet bedoelt.
+
+Dit is geen detail van bewoording. Het bepaalt of het programma binnen de
+Nederlandse richtlijn valt of ernaast — en daarmee of een huisarts eraan mee wil
+werken.
+
+*Er is een lezing waarin Pathway C wél klopt: voor wie al medicatie heeft vanuit
+de tweede lijn of op eigen kosten. Maar dan hoort dat er te staan.*
+
+### 10.4 De GLP-1-metingen tellen alles behalve spier
+
+§7 noemt: gewicht wekelijks, buikomvang maandelijks, HbA1c per kwartaal, eGFR en
+lipiden halfjaarlijks, schildklier jaarlijks, en B12/D/ijzer halfjaarlijks.
+
+Wat er niet in staat: **lichaamssamenstelling, spierkracht, of enige maat voor
+spierverlies.** Terwijl ongeveer 45 % van het verlies op semaglutide vetvrije
+massa is (§5). Het programma meet zorgvuldig wat er in het bloed gebeurt en kijkt
+niet naar wat er aan het lichaam verdwijnt.
+
+In week 16 staat wél een module *"GLP-1 & Voeding Synergy — eiwitbehoefte ↑"*.
+De kennis is er dus; ze is alleen niet in een meting terechtgekomen.
+
+---
+
+## 11. Extra bewijs: hoe je spierverlies zou meten zonder DEXA
+
+Een DEXA-scan is de maat, maar niet haalbaar in een app of een
+huisartsenpraktijk. De Europese consensus **EWGSOP2** geeft een praktische trap
+die dat wel is.
+
+**Screenen — SARC-F**, vijf vragen: kracht, hulp bij lopen, opstaan uit een
+stoel, traplopen, en vallen. De eerste vier scoren 0 (geen moeite), 1 (enige
+moeite) of 2 (veel moeite); vallen in het afgelopen jaar 0 (geen), 1 (1–3) of 2
+(≥ 4).
+
+De gangbare afkapwaarde **≥ 4** heeft een lage sensitiviteit en hoge
+specificiteit. Wie wíl opsporen in plaats van uitsluiten, gebruikt beter **≥ 1**.
+Voor een app die wil signaleren en niet diagnosticeren is dat de juiste kant van
+de fout.
+
+**Bevestigen — spierkracht:**
+
+| Test | Afkapwaarde (EWGSOP2) |
+|---|---|
+| Handknijpkracht | ≤ 27 kg (man), ≤ 16 kg (vrouw) |
+| Opstaan uit stoel, 5×  | > 15 seconden, of niet kunnen opstaan zonder armen |
+
+De stoeltest vraagt **geen apparaat**. Dat is wat hem bruikbaar maakt in een app:
+een stoel en een telefoon met een stopwatch. Bij geriatrische revalidatie
+presteerde handknijpkracht beter dan de stoeltest, dus als maat is de stoeltest
+de zwakkere — maar hij is de enige die iedereen thuis kan doen.
+
+## 12. Extra bewijs: eiwit, en waar de zekerheid ophoudt
+
+**De hoeveelheid.** 1,2–1,6 g/kg per dag tijdens gewichtsverlies; sommige bronnen
+gaan bij actief spierbehoud naar 1,6–2,4 g/kg.
+
+**De verdeling.** Bij ouderen is ongeveer **2,8 g leucine per maaltijd** nodig om
+spieraanmaak te prikkelen — zo'n 30 g eiwit, en sommige bronnen noemen 35–40 g.
+In een calorietekort is de aanmaak onderdrukt en de afbraak verhoogd, waardoor
+het belangrijker wordt die drempel bij élke maaltijd te halen in plaats van het
+dagtotaal ergens te halen.
+
+**Waar de zekerheid ophoudt, en dat hoort erbij.** Onderzoek vindt een lineaire
+stijging van spieraanmaak van 5 tot 20 g eiwit per maaltijd en géén significante
+stijging tussen 20 en 40 g — de maximale respons is omstreden. Bij
+postmenopauzale vrouwen met opzettelijk gewichtsverlies halveerde 1,2 g/kg het
+verlies van vetvrije massa ten opzichte van 0,6 g/kg (17 % tegenover 37 %). Maar
+in een overzicht toonden **slechts 3 van de 20 studies** een significant verschil
+in verlies van vetvrije massa tussen eiwitgroepen, en maar één daarvan ging over
+mensen boven de vijftig.
+
+Het advies is dus goed onderbouwd in richting en zwak onderbouwd in grootte. Een
+app die "1,6 g/kg behoudt je spieren" zegt, belooft meer dan het bewijs draagt.
+
+**Wat dit betekent voor BennaHealth.** De app rekent al met een eiwitdoel per
+kilo gecorrigeerd gewicht en zegt al *"streef naar drie tot vier maaltijden van
+54 tot 65 g eiwit met minstens drie uur ertussen"*. Dat getal komt nu uit een
+deling van het dagtotaal. De literatuur zegt dat er ook een **ondergrens per
+maaltijd** bestaat die daar los van staat — en dat die ondergrens juist in een
+tekort het meest telt.
+
+## 13. Extra bewijs: bot en micronutriënten
+
+**Bot.** Hier spreekt het bewijs zichzelf tegen en dat hoort gezegd:
+
+- 52 weken semaglutide verlaagde de botdichtheid van de heup met **2,6 %** en van
+  de lendenwervels met **2,1 %** ten opzichte van placebo, met verhoogde
+  botafbraak zonder compenserende aanmaak. Het verlies aan de heup was
+  evenredig met het gewichtsverlies.
+- Een meta-analyse bij diabetes type 2 vond juist een **statistisch significante
+  verbetering** van botdichtheid en enkele botmarkers.
+
+Twee verschillende populaties, twee verschillende uitkomsten. Wat er overblijft
+is dat snel gewichtsverlies bot kost en dat GLP-1 daar mogelijk bovenop komt —
+niet hoeveel.
+
+**Micronutriënten.** Wie fors minder eet, krijgt van alles minder binnen. In
+cohorten onder GLP-1-gebruikers namen diagnoses van mineraaltekorten toe, onder
+meer **zink en selenium**. Calcium en vitamine D zijn de twee waar het meest op
+gelet wordt: 1.000–1.200 mg calcium per dag boven de vijftig, en vitamine D.
+
+**En daar komt iets samen.** Deze app kreeg deze week een vitamine D-regel op
+grond van de Gezondheidsraad — leeftijd, geslacht, zon. Dat advies staat er om
+botten, en het botverhaal hierboven maakt hem tijdens een GLP-1-traject alleen
+maar relevanter. Dezelfde regel, twee onafhankelijke redenen.
+
+---
+
+## 14. Wat de twee samen kunnen dat geen van beide alleen kan
+
+ProVita Care heeft het klinische apparaat: richtlijnen, risicomodellen,
+behandelplannen, een programmaontwerp van 24 maanden, en een arts in de lus.
+
+BennaHealth heeft de dagelijkse meting en één stelregel die het hele ontwerp
+draagt: **geen getal zonder zijn onzekerheid.**
+
+De vier gaten uit §10 zijn precies de vier dingen die BennaHealth al meet of bijna
+meet:
+
+| Gat in ProVita | Wat BennaHealth heeft |
+|---|---|
+| geen maat voor spierverlies | eiwitdoel per kilo, krachtsessies, inspanningsminuten matig/zwaar |
+| eiwitbehoefte als module, niet als meting | eiwit per maaltijd, per dag, met bandbreedte |
+| geen dagelijkse gewichtstrend | EMA-trend met onzekerheidsband, en het verbruik dat eruit volgt |
+| medicatie-indicatie ontbreekt | de trap zelf is nog nergens gebouwd, in geen van beide |
+
+Die laatste rij is de belangrijkste: **niemand heeft hem.** De eerlijke
+Nederlandse trap — waar sta je, wat is de volgende trede, en waarom nog niet de
+trede daarna — bestaat in geen van beide codebases. Dat is geen gat maar de
+opening.
+
 ## Wat er nog na moet vóór er code van gemaakt wordt
 
 1. **De NHG-Standaard Obesitas 2.0 zelf nalezen** op de precieze formulering van
@@ -259,10 +472,18 @@ zacht, het enige echte verschil.
    de bron. Dit is de enige plek in dit bestand waar tweedehands niet genoeg is.
 2. **`glp1MedicationReference.js` rechtzetten**: registratie-indicatie en
    NHG-indicatie zijn twee verschillende velden en horen beide te bestaan.
-3. **provitacare.nl** is van hier niet te bereiken. Wat daar staat aan aanbod,
+3. **De NHG-Standaard Obesitas opnemen in `docs/RICHTLIJNEN_REGISTER.md`** — zie
+   §10.1. Zonder die regel blijft de richtlijn die het hele obesitasaanbod
+   bepaalt buiten het mechanisme dat daarvoor gemaakt is.
+4. **Pathway C herzien of herformuleren** — zie §10.3. Ofwel de volgorde van de
+   standaard volgen, ofwel expliciet maken dat het pad bedoeld is voor wie al
+   medicatie heeft.
+5. **provitacare.nl** is van hier niet te bereiken. Wat daar staat aan aanbod,
    doelgroep en claims moet erbij voordat de koppeling ontworpen wordt.
-4. **Tirzepatide-vergoeding**: het bestand noemt een GVS-advies van maart 2026.
+6. **Tirzepatide-vergoeding**: het bestand noemt een GVS-advies van maart 2026.
    Niet geverifieerd.
+7. **De botuitkomsten** spreken elkaar tegen (§13). Voordat hier iets over op een
+   scherm komt, hoort uitgezocht te worden welke populatie welke uitkomst gaf.
 
 ## Bronnen
 
@@ -279,3 +500,17 @@ zacht, het enige echte verschil.
 - [Lean mass preservation bij GLP-1 — *Metabolites* 2025](https://www.mdpi.com/2218-1989/16/6/364)
 - [Casusreeks behoud vetvrije massa — PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC12536186/)
 - [NWCR — zelfmonitoring en terugval (2025)](https://pubmed.ncbi.nlm.nih.gov/40950752/)
+- [EWGSOP2 — Sarcopenia: revised European consensus](https://pmc.ncbi.nlm.nih.gov/articles/PMC6322506/)
+- [SARC-F sensitiviteit bij afkapwaarde ≥1 (2025)](https://xmed.jmir.org/2025/1/e54475)
+- [Handknijpkracht versus stoeltest — RESORT, *Age and Ageing* 2022](https://academic.oup.com/ageing/article/51/11/afac242/6834150)
+- [Eiwitkwantiteit en -verdeling en lichaamssamenstelling — *Front Nutr* 2024](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11099237/)
+- [Eiwit en behoud vetvrije massa bij postmenopauzale vrouwen — PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC8255642/)
+- [Botdichtheid en botmarkers bij GLP-1 bij ouderen — *Front Aging* 2025](https://www.frontiersin.org/journals/aging/articles/10.3389/fragi.2025.1691007/full)
+- [Meta-analyse botdichtheid GLP-1 bij DM2 (2025)](https://pubmed.ncbi.nlm.nih.gov/39985672/)
+
+### Uit de eigen repository `akbenna/provita-care`
+
+- `docs/RICHTLIJNEN_REGISTER.md` (5 februari 2026)
+- `docs/GLI-PROGRAMMA-ONTWERP.md` v1.0
+- `docs/ProVitaCareScore-Methodologie.md`
+- `src/lib/glp1MedicationReference.js`
