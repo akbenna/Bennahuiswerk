@@ -309,6 +309,25 @@ const SCHEMA_IMPORT = {
         required: ["wat", "hoe"],
       },
     },
+    /* WORK-OUTS ZIJN GEEN DAGREEKS
+       Ze staan apart en niet in `dagen`, want er is geen dagveld waar een duur
+       zonder soort vanzelf in past. Wat ermee gebeurt beslist de app, samen met
+       de gebruiker: een horloge schrijft een hele dag weg als één activiteit van
+       negen uur, en zoiets als beweegminuten overnemen zou een weekdoel in één
+       klap vijf keer halen op een dag waarop er niets gebeurde. */
+    activiteiten: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          datum: { type: "string", description: "ISO-datum, JJJJ-MM-DD" },
+          minuten: { type: "number", description: "Hele minuten; seconden afgerond" },
+          bron: { type: ["string", "null"], description: "De app die hem leverde, als dat te zien is" },
+          tijd: { type: ["string", "null"], description: "Begintijd als die erbij staat, uu:mm" },
+        },
+        required: ["datum", "minuten"],
+      },
+    },
     opmerking: { type: "string" },
   },
   required: ["dagen"],
@@ -401,9 +420,13 @@ Boven- en onderaan zo'n afdruk staat bijna altijd een regel die maar half in bee
 
 Komt dezelfde datum op twee afdrukken voor, neem dan de regel die volledig zichtbaar is. Verschillen de twee waarden, dan heb je er één verkeerd gelezen; gebruik de volledige en niet het gemiddelde.
 
-WAT DIT SCHERM NIET IS
+DE WORK-OUTLIJST
 
-Een lijst met tijdsduren ("1 u. 23 min. 37s") bij datums is een work-outlijst en geen dagreeks. Daar horen geen stappen of kilocalorieën uit te komen. Zet zulke rijen niet in `dagen`; noem ze hooguit in `opmerking`.`;
+Een lijst met tijdsduren ("1 u. 23 min. 37s") bij een datum en een tijdstip is geen dagreeks maar een work-outlijst. Daar horen nooit stappen of kilocalorieën uit te komen.
+
+Zet die rijen in `activiteiten`, niet in `dagen`. Per rij: de datum, de duur in hele minuten, en welke app hem leverde als dat aan het pictogram of de tekst te zien is (bijvoorbeeld "Garmin"). Seconden rond je af naar de dichtstbijzijnde minuut. "9 u. 7 min. 26s" is 547 minuten.
+
+Beoordeel niet of een duur klopt en laat niets weg omdat het lang lijkt — dat doet de app. Geef terug wat er staat.`;
 
 async function claude(
   key: string,
@@ -587,7 +610,11 @@ Deno.serve(async (req) => {
         inhoud.push({ type: "image", source: { type: "base64", media_type: f.type ?? "image/jpeg", data: f.data } });
       }
       if (!inhoud.length) throw new Error("Geen tekst of afbeelding meegestuurd");
-      inhoud.push({ type: "text", text: "Zet dit om in een reeks dagen." });
+      /* "Een reeks dagen" was de hele opdracht, en dat duwt een work-outlijst de
+         verkeerde kant op: het model gaat dan dagen máken uit iets wat er geen
+         is. De tweede zin is er niet om iets nieuws te zeggen — dat staat in
+         SYS_IMPORT — maar om de eerste niet als uitsluiting te laten lezen. */
+      inhoud.push({ type: "text", text: "Zet dit om in een reeks dagen. Staat er een work-outlijst bij, zet die rijen in `activiteiten`; de rest gaat gewoon in `dagen`." });
       const r = await claude(key, MODEL, SYS_IMPORT, inhoud, SCHEMA_IMPORT, "reeks", 10000);
       tokensIn = r.in; tokensUit = r.uit;
       await log(db, gebruiker, soort, MODEL, tokensIn, tokensUit, true, null);

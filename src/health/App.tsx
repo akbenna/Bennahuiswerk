@@ -405,6 +405,11 @@ export function App() {
       {venster === 'import' && (
         <ImportVenster
           token={k.sessie.token} opSluiten={() => zetVenster(null)}
+          /* Alleen om te tonen: het importvenster zet ernaast wat er nu staat,
+             zodat een afdruk die net boven een tweede rit is afgeknipt niet
+             stilzwijgend een goed getal verlaagt. */
+          alFiets={Object.fromEntries(
+            Object.values(k.dagenkaart).map((d) => [d.datum, d.fiets_min ?? null]))}
           opOvernemen={(dagen, regels) => {
             zetVenster(null)
             void k.wijzig(async (t) => {

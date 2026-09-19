@@ -379,10 +379,11 @@ export interface NieuweDag {
   actieve_energie_kcal?: number
   gewicht_kg?: number
   bron?: string
-  /* Alleen de koppeling stuurt deze vier mee; de import uit een screenshot
-     komt er niet aan. */
-  slaap_min?: number
+  /* `fiets_min` komt sinds bestand 42 ook uit een import: de work-outlijst van
+     Apple Gezondheid is de enige bron van beweegminuten voor wie geen koppeling
+     laat draaien. De drie andere stuurt alleen de koppeling. */
   fiets_min?: number
+  slaap_min?: number
   bedtijd?: string
   waaktijd?: string
   gewicht_bron?: string

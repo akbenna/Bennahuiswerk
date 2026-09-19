@@ -95,10 +95,61 @@ export interface Importbron {
   dagen?: number | null
 }
 
+/**
+ * EEN WORK-OUT UIT DE LIJST VAN APPLE GEZONDHEID
+ *
+ * Duur en datum, en verder niets — de lijst toont geen soort. Dat is precies
+ * waarom deze rijen niet vanzelf in een dag belanden: er is geen veld waar een
+ * duur zonder soort in past zonder een bewering te doen die er niet staat.
+ */
+export interface Importactiviteit {
+  datum: IsoDatum
+  minuten: number
+  bron?: string | null
+  tijd?: string | null
+}
+
+/**
+ * De bovengrens waarboven een "work-out" er geen is.
+ *
+ * Vier uur. Een lange rit of een bergwandeling haalt dat, en die horen mee te
+ * tellen. Wat er níet doorheen komt is wat een horloge doet als het een hele dag
+ * als één activiteit wegschrijft — in de lijst die dit oproep stond een post van
+ * 9 uur 7 en een van 14 uur 22, en dat zijn geen trainingen maar een vergeten
+ * stopknop.
+ *
+ * Zou zo'n post als beweegminuten binnenkomen, dan haalt het weekdoel van 150
+ * minuten zich in één klap vijf keer op een dag waarop er misschien niets
+ * gebeurde. Dat is erger dan hem missen: een doel dat vanzelf afgaat meet niets.
+ *
+ * De grens haalt niets wég — ze zet het vinkje uit. Wie het beter weet zet hem
+ * aan, en dat is het verschil tussen een filter en een oordeel.
+ */
+export const ACTIVITEIT_MAX_MIN = 240
+
+/** Of deze duur er een van een mens is en niet van een vergeten stopknop. */
+export function aannemelijk(minuten: number): boolean {
+  return minuten > 0 && minuten <= ACTIVITEIT_MAX_MIN
+}
+
+/** De minuten per dag opgeteld: twee ritten op één dag zijn samen één getal. */
+export function minutenPerDag(
+  activiteiten: Importactiviteit[],
+): Array<{ datum: IsoDatum; minuten: number }> {
+  const per = new Map<IsoDatum, number>()
+  for (const a of activiteiten) {
+    per.set(a.datum, (per.get(a.datum) ?? 0) + Math.round(a.minuten))
+  }
+  return [...per.entries()]
+    .map(([datum, minuten]) => ({ datum, minuten }))
+    .sort((a, b) => a.datum.localeCompare(b.datum))
+}
+
 export interface ImportUitslag {
   dagen: ImportDag[]
-  /** Leeg bij de versie van de edge function die dit veld nog niet kent. */
+  /** Leeg bij de versie van de edge function die deze velden nog niet kent. */
   bronnen?: Importbron[]
+  activiteiten?: Importactiviteit[]
   opmerking: string
   model: string
 }

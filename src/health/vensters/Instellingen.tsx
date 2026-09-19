@@ -7,12 +7,12 @@ import { Kaart, Keuzechip, Knop, Kop, Rij, Spin, Venster } from '../onderdelen/b
 import { MEDICATIEGROEPEN } from '../conditie'
 import type { Conditie, Medicatiegroep } from '../conditie'
 import { dec, dz } from '@/gedeeld/getal'
-import type { Fase, Geslacht, Profiel } from '@/gedeeld/db/tabellen'
+import type { Fase, Geslacht, IsoDatum, Profiel } from '@/gedeeld/db/tabellen'
 import { isSessie, roep } from '@/gedeeld/db/rpc'
 import type { NieuweDag, NieuweRegel } from '@/gedeeld/db/rpc'
-import { BRONNAAM, geraden, importeer, leesFoto } from '../ai'
+import { ACTIVITEIT_MAX_MIN, BRONNAAM, aannemelijk, geraden, importeer, leesFoto, minutenPerDag } from '../ai'
 import { MINIMUM_LENGTE, wachtwoordklacht } from '../wachtwoord'
-import type { ImportDag, Importbron } from '../ai'
+import type { ImportDag, Importactiviteit, Importbron } from '../ai'
 
 
 /* ----------------------------------------------------------------- profiel */
@@ -225,10 +225,49 @@ export function ProfielVenster(
 
 /* --------------------------------------------------------------- importeren */
 
+/**
+ * EEN DUUR IS GEEN SOORT — hoe een work-outlijst beweegminuten wordt.
+ *
+ * De lijst onder "Work-outs" in Apple Gezondheid geeft per post een duur, een
+ * datum en de app die hem schreef. Geen soort, geen intensiteit. Voor wie geen
+ * koppeling laat draaien is dat de enige bron van beweegminuten, en het scherm
+ * Beweging rekent er de WHO-norm van 150 minuten per week mee uit.
+ *
+ * WAAROM ER VINKJES STAAN EN GEEN FILTER
+ *
+ * In de lijst die hiervoor de aanleiding was stonden posts van 9 uur 7 en 14
+ * uur 22. Dat zijn geen trainingen maar een horloge dat de stopknop niet gezien
+ * heeft. Zou zo'n post als beweegminuten binnenkomen, dan haalt het weekdoel
+ * zich in één klap vijf keer op een dag waarop misschien niets gebeurde — een
+ * doel dat vanzelf afgaat meet niets meer.
+ *
+ * Maar de app wéét niet dat die post fout is; hij is alleen onwaarschijnlijk.
+ * Daarom zet `aannemelijk()` het vinkje uit en haalt de post niet weg, en staat
+ * de reden erbij. Wie beter weet dan de grens zet hem aan. Dat is het verschil
+ * tussen een zeef en een oordeel.
+ *
+ * WAT ER AL STAAT
+ *
+ * Een afdruk knipt, en wat eraf valt is niet te zien aan wat erop staat: twee
+ * ritten op de grens van twee afdrukken worden er één. Het getal dat overgenomen
+ * wordt kan dus te laag zijn, en het gaat over een bestaande waarde heen —
+ * `kal_dagen_importeren` vervangt, want alleen-aanvullen zou de import stil
+ * laten vallen op elke dag die de koppeling al aanraakte.
+ *
+ * Daar is geen rekenregel tegen. Wat er tegen kán: laten zien wat er nu staat,
+ * naast wat eroverheen gaat, vóór er iets verstuurd wordt.
+ */
+function duur(minuten: number): string {
+  const m = Math.round(minuten)
+  return m >= 60 ? `${Math.floor(m / 60)} u ${String(m % 60).padStart(2, '0')}` : `${m} min`
+}
+
 export function ImportVenster(
-  { token, opSluiten, opOvernemen }:
+  { token, alFiets, opSluiten, opOvernemen }:
   {
     token: string
+    /** Wat er nu aan beweegminuten staat, per datum. Alleen om te tonen. */
+    alFiets: Record<string, number | null>
     opSluiten: () => void
     opOvernemen: (dagen: NieuweDag[], regels: NieuweRegel[]) => void
   },
@@ -239,6 +278,11 @@ export function ImportVenster(
   const [loopt, zetLoopt] = useState(false)
   const [concept, zetConcept] = useState<ImportDag[] | null>(null)
   const [bronnen, zetBronnen] = useState<Importbron[]>([])
+  const [werk, zetWerk] = useState<Importactiviteit[]>([])
+  const [aan, zetAan] = useState<boolean[]>([])
+
+  const gekozen = werk.filter((_, i) => aan[i])
+  const perDag = minutenPerDag(gekozen)
 
   async function uitlezen() {
     zetLoopt(true)
@@ -247,7 +291,11 @@ export function ImportVenster(
       const uit = await importeer(token, tekst, fotos)
       zetConcept(uit.dagen)
       zetBronnen(uit.bronnen ?? [])
+      const w = uit.activiteiten ?? []
+      zetWerk(w)
+      zetAan(w.map((a) => aannemelijk(a.minuten)))
       zetMelding(`${uit.dagen.length} dagen gevonden.`
+        + (w.length ? ` ${w.length} work-out${w.length === 1 ? '' : 's'}.` : '')
         + (uit.opmerking ? ` ${uit.opmerking}` : ''))
     } catch (e) {
       zetMelding(e instanceof Error ? e.message : String(e))
@@ -258,15 +306,31 @@ export function ImportVenster(
 
   function overnemen() {
     if (!concept) return
-    const dagen: NieuweDag[] = concept
-      .filter((d) => d.gewicht_kg != null || d.stappen != null || d.actieve_energie_kcal != null)
-      .map((d) => ({
-        datum: d.datum,
-        ...(d.gewicht_kg != null ? { gewicht_kg: d.gewicht_kg } : {}),
-        ...(d.stappen != null ? { stappen: d.stappen } : {}),
-        ...(d.actieve_energie_kcal != null ? { actieve_energie_kcal: d.actieve_energie_kcal } : {}),
-        bron: 'import',
-      }))
+    /* De minuten per dag staan los van `concept`: een dag kan een work-out
+       hebben zonder dat er een rij met stappen of gewicht bij zit, en dan hoort
+       er evengoed een dag geschreven te worden. */
+    const fiets = new Map<IsoDatum, number>(perDag.map((r) => [r.datum, r.minuten]))
+    const datums = [...new Set([...concept.map((d) => d.datum), ...fiets.keys()])].sort()
+    const bij = new Map(concept.map((d) => [d.datum, d]))
+    const dagen: NieuweDag[] = datums
+      .map((datum) => {
+        const d = bij.get(datum)
+        const min = fiets.get(datum)
+        return {
+          datum,
+          ...(d?.gewicht_kg != null ? { gewicht_kg: d.gewicht_kg } : {}),
+          ...(d?.stappen != null ? { stappen: d.stappen } : {}),
+          ...(d?.actieve_energie_kcal != null
+            ? { actieve_energie_kcal: d.actieve_energie_kcal } : {}),
+          ...(min != null ? { fiets_min: min } : {}),
+          bron: 'import',
+        }
+      })
+      /* Een dag met alleen een dagtotaal aan kcal hoort niet in kal_dagen: die
+         wordt hieronder een regel. Een dag zonder énig veld zou een lege rij
+         wegschrijven, en dat is een bewering die nergens op staat. */
+      .filter((d) => d.gewicht_kg != null || d.stappen != null
+        || d.actieve_energie_kcal != null || d.fiets_min != null)
     const regels: NieuweRegel[] = concept
       .filter((d): d is ImportDag & { kcal: number } => d.kcal != null && d.kcal > 0)
       .map((d) => ({
@@ -310,7 +374,7 @@ export function ImportVenster(
         {loopt ? <><Spin /> Uitlezen…</> : melding}
       </p>
 
-      {concept && concept.length > 0 && (
+      {concept && (concept.length > 0 || werk.length > 0) && (
         <>
           {/* WAAROP DE HERKENNING ZICH BASEERDE
               Een "Alle gegevens"-lijst uit Apple Gezondheid is een kale kolom
@@ -341,21 +405,84 @@ export function ImportVenster(
               </p>
             </Kaart>
           )}
-          <div className="lijst" style={{ marginTop: 8, maxHeight: 230, overflow: 'auto' }}>
-            {concept.map((d) => (
-              <div key={d.datum}>
-                <span className="cijfer mini groei">{d.datum}</span>
-                <span className="cijfer mini">
-                  {d.kcal != null && `${dz(d.kcal)} kcal`}
-                  {d.eiwit_g != null && ` · ${dec(d.eiwit_g, 0)} g eiwit`}
-                  {d.stappen != null && ` · ${dz(d.stappen)} stappen`}
-                  {d.actieve_energie_kcal != null
-                    && ` · ${dz(d.actieve_energie_kcal)} kcal actief`}
-                  {d.gewicht_kg != null && ` · ${dec(d.gewicht_kg, 1)} kg`}
-                </span>
+
+          {concept.length > 0 && (
+            <div className="lijst" style={{ marginTop: 8, maxHeight: 230, overflow: 'auto' }}>
+              {concept.map((d) => (
+                <div key={d.datum}>
+                  <span className="cijfer mini groei">{d.datum}</span>
+                  <span className="cijfer mini">
+                    {d.kcal != null && `${dz(d.kcal)} kcal`}
+                    {d.eiwit_g != null && ` · ${dec(d.eiwit_g, 0)} g eiwit`}
+                    {d.stappen != null && ` · ${dz(d.stappen)} stappen`}
+                    {d.actieve_energie_kcal != null
+                      && ` · ${dz(d.actieve_energie_kcal)} kcal actief`}
+                    {d.gewicht_kg != null && ` · ${dec(d.gewicht_kg, 1)} kg`}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {werk.length > 0 && (
+            <>
+              <Kop>Work-outs</Kop>
+              <p className="klein">
+                De lijst noemt geen soort, alleen een duur. Wat aangevinkt staat telt mee als
+                beweegminuten. Een vinkje staat uit als de duur geen training kán zijn — langer
+                dan {ACTIVITEIT_MAX_MIN / 60} uur is meestal een stopknop die vergeten is. Weet
+                je het beter, zet hem aan.
+              </p>
+              <div className="lijst" style={{ marginTop: 6, maxHeight: 200, overflow: 'auto' }}>
+                {werk.map((a, i) => (
+                  <div key={i}>
+                    <input type="checkbox" checked={!!aan[i]} style={{ width: 19, height: 19 }}
+                           aria-label={`${a.datum} · ${duur(a.minuten)}`}
+                           onChange={(e) => zetAan(aan.map((v, j) => j === i ? e.target.checked : v))} />
+                    <span className="cijfer mini groei knip">
+                      {a.datum}{a.tijd ? ` ${a.tijd}` : ''}{a.bron ? ` · ${a.bron}` : ''}
+                    </span>
+                    <span className="cijfer mini" style={!aannemelijk(a.minuten)
+                      ? { color: 'var(--let)' } : undefined}>
+                      {duur(a.minuten)}
+                    </span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+
+              {/* Wat er werkelijk verstuurd wordt, en waar het overheen gaat.
+                  Zonder deze regel is een afdruk die net boven een tweede rit is
+                  afgeknipt niet van een echte dag te onderscheiden. */}
+              {perDag.length > 0 && (
+                <>
+                  <p className="klein" style={{ marginTop: 10 }}>
+                    <b>Dit wordt overgenomen als beweegminuten:</b>
+                  </p>
+                  <div className="lijst" style={{ maxHeight: 150, overflow: 'auto' }}>
+                    {perDag.map((r) => {
+                      const nu = alFiets[r.datum]
+                      return (
+                        <div key={r.datum}>
+                          <span className="cijfer mini groei">{r.datum}</span>
+                          <span className="cijfer mini">
+                            {dz(r.minuten)} min
+                            {nu != null && nu > 0 && nu !== r.minuten
+                              && ` · nu ${dz(nu)} min`}
+                          </span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </>
+              )}
+              {perDag.length === 0 && (
+                <p className="mini" style={{ marginTop: 6 }}>
+                  Niets aangevinkt — er worden geen beweegminuten overgenomen.
+                </p>
+              )}
+            </>
+          )}
+
           <Rij style={{ marginTop: 8 }}>
             <Knop vol opKlik={overnemen}>Overnemen</Knop>
           </Rij>

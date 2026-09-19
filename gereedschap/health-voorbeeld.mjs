@@ -3227,5 +3227,141 @@ for (const [naam, dagen, patroon, verwacht] of [
   await viaMedia.close()
 }
 
+/**
+ * DE WORK-OUTLIJST DIE BEWEEGMINUTEN WORDT
+ *
+ * Apple Gezondheid heeft onder "Work-outs" een lijst van posts: een duur, een
+ * datum, de app die hem schreef. Geen soort. Voor wie geen koppeling laat
+ * draaien is dat de enige bron van beweegminuten, en het scherm Beweging rekent
+ * er de WHO-norm van 150 minuten per week mee uit.
+ *
+ * WAAROM EEN GREP HIER NIET VOLSTAAT
+ *
+ * Wat hier fout kan gaan is niet dat het scherm leeg blijft — dat zie je. Het is
+ * dat er iets ánders wordt weggeschreven dan wat er op het scherm stond. Drie
+ * dingen moeten kloppen en ze zitten elk in een andere laag:
+ *
+ *   het vinkje        staat uit bij een duur die geen training kán zijn, en dat
+ *                     komt uit `aannemelijk()` en niet uit een klasse in de HTML
+ *   het optellen      twee ritten op één dag zijn samen één getal, uit
+ *                     `minutenPerDag()`
+ *   het versturen     wat aangevinkt staat komt als `fiets_min` in de aanroep,
+ *                     en een uitgevinkte post sleept de rest van zijn dag niet
+ *                     mee
+ *
+ * De derde is de enige die telt en de enige die je op een schermafdruk niet
+ * ziet. Daarom loopt deze proef tot voorbij de knop: de aanroep naar
+ * kal_dagen_importeren wordt onderschept en nagekeken.
+ *
+ * En één ding dat geen van drieën is: de dag waar al 45 minuten stond hoort dat
+ * te laten zien naast het nieuwe getal. Een afdruk knipt, en een import die een
+ * goed getal verlaagt hoort dat niet stil te doen.
+ */
+{
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: 'light' })
+  await bedienDb(pagina, 28, 'afvallen')
+
+  /* Twee dagen uit dezelfde reeks die het scherm ook krijgt: één waar al
+     fietsminuten staan en één waar niets staat. Niet vandaag — die dag is op
+     meer schermen bijzonder en zou de proef aan iets anders koppelen. */
+  const { dagen: reeksdagen } = reeks(28)
+  const dagAl = reeksdagen[reeksdagen.length - 3]
+  const dagNiet = reeksdagen[reeksdagen.length - 2]
+  if (dagAl.fiets_min !== 45 || dagNiet.fiets_min !== null) {
+    throw new Error('work-outs: de proefreeks is veranderd — kies twee andere dagen '
+      + `(${dagAl.datum}=${dagAl.fiets_min}, ${dagNiet.datum}=${dagNiet.fiets_min})`)
+  }
+
+  const verstuurd = { dagen: null }
+  await pagina.route('**/rest/v1/rpc/**', async (route) => {
+    if (route.request().url().endsWith('kal_dagen_importeren')) {
+      verstuurd.dagen = JSON.parse(route.request().postData() ?? '{}').p_dagen
+      await route.fulfill({ status: 200, contentType: 'application/json', body: '1' })
+      return
+    }
+    await route.fallback()
+  })
+
+  /* De lijst zoals de herkenning hem teruggeeft. Vier posts: twee ritten op één
+     dag, en op de andere dag een echte rit naast een horloge dat veertien uur
+     als één activiteit heeft weggeschreven. Geen `dagen` erbij — een
+     work-outafdruk bevat geen dagreeks, en dat is meteen de proef dat het blok
+     ook zonder dagen in beeld komt. */
+  await pagina.route('**/functions/v1/kal-ai', (route) => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({
+      model: 'proef', opmerking: '', dagen: [], bronnen: [],
+      activiteiten: [
+        { datum: dagAl.datum, minuten: 52, bron: 'Garmin', tijd: '07:12' },
+        { datum: dagAl.datum, minuten: 23, bron: 'Garmin', tijd: '18:40' },
+        { datum: dagNiet.datum, minuten: 14 * 60 + 22, bron: 'Garmin', tijd: '00:03' },
+        { datum: dagNiet.datum, minuten: 31, bron: 'Garmin', tijd: '19:05' },
+      ],
+    }),
+  }))
+
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.hero', { timeout: 5000 })
+  await naarTab(pagina, 'Profiel')
+  await pagina.getByRole('button', { name: 'Importeren uit een andere app' }).click()
+  await pagina.waitForSelector('.venster textarea', { timeout: 5000 })
+  await pagina.locator('.venster textarea').fill('Work-outs uit Apple Gezondheid')
+  await pagina.getByRole('button', { name: 'Uitlezen' }).click()
+
+  const venster = pagina.locator('.venster')
+  await venster.getByText('Work-outs', { exact: true }).waitFor({ timeout: 8000 })
+  await pagina.waitForTimeout(200)
+
+  process.stdout.write('work-outs                  ')
+
+  /* 1. Vier posts, en het vinkje van de veertien uur staat uit. Dat vinkje is
+        de hele beslissing: hij staat uit omdat `aannemelijk()` hem uit zet en
+        niet omdat er iets in de HTML gemarkeerd is. */
+  const vinkjes = venster.locator('input[type=checkbox]')
+  if (await vinkjes.count() !== 4) {
+    throw new Error(`work-outs: ${await vinkjes.count()} vinkjes in plaats van 4`)
+  }
+  const stand = []
+  for (let i = 0; i < 4; i++) stand.push(await vinkjes.nth(i).isChecked())
+  if (JSON.stringify(stand) !== JSON.stringify([true, true, false, true])) {
+    throw new Error(`work-outs: de vinkjes staan op ${JSON.stringify(stand)}`)
+  }
+
+  const plat = (await venster.innerText()).replace(/\s+/g, ' ')
+  if (!plat.includes('14 u 22')) throw new Error('work-outs: de lange post staat er niet')
+
+  /* 2. Wat er overgenomen wordt staat er als som per dag — 52 + 23 — en de dag
+        waar al iets stond zegt wat daar staat. Zonder die tweede helft verlaagt
+        een afgeknipte afdruk stil een goed getal. */
+  if (!/75 min/.test(plat)) throw new Error(`work-outs: 52+23 wordt geen 75\n  ${plat}`)
+  if (!/75 min · nu 45 min/.test(plat)) {
+    throw new Error(`work-outs: er staat niet bij wat er al stond\n  ${plat}`)
+  }
+  /* En op de dag waar niets stond hoort die toevoeging er níet te staan: een
+     "nu 0 min" bij elke lege dag is ruis waar je na twee keer overheen kijkt. */
+  if (/31 min · nu/.test(plat)) {
+    throw new Error(`work-outs: een lege dag krijgt toch een "nu"\n  ${plat}`)
+  }
+  console.log(`4 posts · vinkjes ${stand.map((v) => v ? '✓' : '·').join('')} · 52+23=75 naast de 45 die er stond`)
+
+  await pagina.screenshot({ path: 'gereedschap/health-import-workouts.png' })
+
+  /* 3. Tot voorbij de knop. Twee dagen, de juiste sommen, en de veertien uur
+        nergens terug te vinden — ook niet opgeteld bij de 31 van diezelfde dag. */
+  await venster.getByRole('button', { name: 'Overnemen' }).click()
+  await pagina.waitForTimeout(600)
+  if (!Array.isArray(verstuurd.dagen)) throw new Error('work-outs: er is niets verstuurd')
+  const gekregen = Object.fromEntries(verstuurd.dagen.map((d) => [d.datum, d.fiets_min]))
+  const moet = { [dagAl.datum]: 75, [dagNiet.datum]: 31 }
+  if (JSON.stringify(gekregen) !== JSON.stringify(moet)) {
+    throw new Error('work-outs: er gaat iets anders naar de database dan er op het scherm stond\n'
+      + `  verstuurd: ${JSON.stringify(gekregen)}\n  verwacht:  ${JSON.stringify(moet)}`)
+  }
+  console.log(`${''.padEnd(26)} verstuurd: ${JSON.stringify(gekregen)} — de 14 u 22 gaat nergens heen`)
+
+  await pagina.close()
+}
+
 await browser.close()
 server.close()

@@ -21,6 +21,16 @@
  * Wat er met opzet níet gebeurt is die minuten naar calorieën omrekenen. Zie de
  * uitleg bij de fietskaart: het verbruik komt uit de gewichtstrend, en daar zit
  * de fiets al in.
+ *
+ * WAAR DIE MINUTEN VANDAAN KOMEN
+ *
+ * Drie wegen, en het veld heet in alle drie `fiets_min` — die naam is ouder dan
+ * wat erin zit. Wat er staat zijn minuten matige inspanning, welk apparaat ze
+ * ook opleverde: de koppeling, het vakje op dit scherm, en sinds de work-outlijst
+ * ook het importvenster. Dat laatste is voor wie geen koppeling laat draaien de
+ * enige weg, en het is meteen de enige die een mens per post laat kiezen — een
+ * horloge schrijft een hele dag weg als één activiteit van veertien uur, en zoiets
+ * haalt het weekdoel in één klap vijf keer.
  */
 import { useState } from 'react'
 import { Balk, Kaart, Knop, Kop, Rij, Tussen, Uitleg } from '../onderdelen/basis'
