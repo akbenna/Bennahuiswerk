@@ -1072,6 +1072,12 @@ function Suppletielijst({ token, profiel }: { token: string; profiel: Profiel })
     voorkeuren: profiel.instellingen.voorkeuren ?? GEEN_VOORKEUR,
     gelogdeGroepen: hoeken.groepen,
     dagenGelogd: hoeken.dagen,
+    /* Vitamine D en B12-bij-metformine hangen niet aan de log maar aan het
+       profiel. Zonder deze drie velden zou de grootste suppletieregel van
+       Nederland nooit kunnen vuren. */
+    leeftijd: profiel.leeftijd_jaar,
+    geslacht: profiel.geslacht,
+    conditie: profiel.instellingen.conditie,
   }
   const lijst = adviezen(vraag)
   /* Staat er altijd als er te weinig gelogd is, ook onder een gevulde lijst.

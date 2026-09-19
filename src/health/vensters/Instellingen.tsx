@@ -38,14 +38,19 @@ function Conditieblok(
     ...conditie,
     med: med.includes(g) ? med.filter((x) => x !== g) : [...med, g],
   })
-  const vink = (sleutel: 'hypertensie' | 'dm2' | 'hvz') => (aan: boolean) =>
+  type Vlag = 'hypertensie' | 'dm2' | 'hvz' | 'huid_donker' | 'weinig_zon'
+  const vink = (sleutel: Vlag) => (aan: boolean) =>
     opZet({ ...conditie, [sleutel]: aan })
 
   const Vinkje = (
-    { sleutel, naam }: { sleutel: 'hypertensie' | 'dm2' | 'hvz'; naam: string },
+    { sleutel, naam, toelichting }:
+    { sleutel: Vlag; naam: string; toelichting?: string },
   ) => (
     <div className="regel">
-      <div><b style={{ fontSize: '.87rem' }}>{naam}</b></div>
+      <div>
+        <b style={{ fontSize: '.87rem' }}>{naam}</b>
+        {toelichting && <div className="mini">{toelichting}</div>}
+      </div>
       <input type="checkbox" checked={!!conditie[sleutel]} style={{ width: 19, height: 19 }}
              onChange={(e) => vink(sleutel)(e.target.checked)} />
     </div>
@@ -62,6 +67,28 @@ function Conditieblok(
       <Vinkje sleutel="hypertensie" naam="Hoge bloeddruk, of daarvoor behandeld" />
       <Vinkje sleutel="dm2" naam="Diabetes type 2" />
       <Vinkje sleutel="hvz" naam="Hart- of vaatziekte gehad" />
+
+      {/* TWEE VRAGEN OVER ZON, EN WAAROM ZE APART GESTELD WORDEN
+
+          De Gezondheidsraad adviseert extra vitamine D onder meer bij een
+          getinte of donkere huid en bij weinig buitenkomen of bedekkende
+          kleding. Het profiel kent `etniciteit`, en het zou verleidelijk zijn
+          die ervoor te gebruiken — maar afkomst is geen huidskleur, en een app
+          die dat gelijkstelt doet een aanname over iemand die hij niet mag doen.
+          `etniciteit` gaat in deze app over de afkapwaarde van de middelomtrek
+          en over niets anders.
+
+          Leeg is hier "niet gevraagd" en geen "nee": zolang er niets staat,
+          zwijgt de regel over deze twee gronden. */}
+      <div className="tussen" style={{ marginTop: 14 }}>Zon op je huid</div>
+      <div className="mini" style={{ marginBottom: 6 }}>
+        Voor het vitamine D-advies. De huid maakt vitamine D uit zonlicht, en in Nederland staat
+        de zon van oktober tot maart te laag om daar genoeg van te leveren.
+      </div>
+      <Vinkje sleutel="huid_donker" naam="Getinte of donkere huid"
+              toelichting="Meer zon nodig voor dezelfde aanmaak." />
+      <Vinkje sleutel="weinig_zon" naam="Weinig buiten, of bedekkende kleding"
+              toelichting="Minder dan een kwartier per dag met gezicht en handen onbedekt." />
 
       <div className="regel" style={{ display: 'block' }}>
         <div><b style={{ fontSize: '.87rem' }}>Welke medicijnen gebruik je?</b></div>

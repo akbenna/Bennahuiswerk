@@ -309,6 +309,35 @@ zout en bloeddruk, over thuis meten, over koolhydraten en vezels. Ze staan er
 voor iedereen hetzelfde en met de bron erbij; wat bij jou hoort staat bovenaan.
 Er valt niets weg — je mag lezen over iets wat je niet hebt.
 
+### Wat ontbreekt er, en waarom de app daar voorzichtig in is
+
+Op het dagscherm staat een kaart *Wat ontbreekt er?*. Vijf regels, en ze kijken
+naar twee verschillende dingen.
+
+**Drie kijken naar je logboek.** IJzer, omega-3 en calcium. De
+voedingsmiddelentabel bevat geen vitamines en mineralen, dus de app kan nooit
+zien hoevéél er binnenkomt — alleen welke hoeken je overslaat. Die drie staan
+daarom op *overwegen* en wijzen naar je huisarts, niet naar een potje. En onder
+de veertien gelogde dagen zwijgen ze: vier dagen zonder vis zegt iets over je
+invoer en niets over je voeding.
+
+**Twee kijken naar je profiel.** Die hangen aan geen enkele log.
+
+*Vitamine D* is het meest gegeven suppletieadvies van Nederland. De
+Gezondheidsraad adviseert 20 microgram per dag vanaf 70 jaar, 10 microgram voor
+vrouwen van 50 tot en met 69, en 10 microgram op elke leeftijd bij een getinte of
+donkere huid of bij weinig buitenkomen of bedekkende kleding. Die laatste twee
+vraagt de app apart bij *Wat er bij jou speelt* — hij leidt ze niet af uit je
+afkomst, want afkomst is geen huidskleur. Staat er geen leeftijd in je profiel,
+dan zegt de app daarover niets in plaats van te gokken.
+
+*B12 bij metformine.* Langdurig metformine verlaagt de opname van B12. Dat is een
+reden om het te laten prikken en niet om te gaan slikken. Vul je metformine in
+bij je medicijnen, dan komt die regel vanzelf.
+
+**Is de lijst leeg, dan noemt hij wat hij nagekeken heeft** — met per regel wat
+hij zag. Leeg zonder die opsomming is niet te onderscheiden van kapot.
+
 ### De bloeddruk telt per week, niet per meting
 
 Meet je thuis je bloeddruk, dan laat **Gezondheid** het gemiddelde over de

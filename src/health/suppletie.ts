@@ -61,6 +61,7 @@
  * enige vorm waarin een app dit hoort te doen.
  */
 import type { Eetpatroon, Voorkeuren } from './voorkeuren'
+import type { Conditie } from '@/gedeeld/db/tabellen'
 
 export type Zwaarte = 'nodig' | 'overwegen'
 
@@ -89,6 +90,11 @@ export interface Suppletievraag {
   gelogdeGroepen: readonly string[]
   /** Hoeveel dagen er werkelijk iets gelogd is in het venster. */
   dagenGelogd: number
+  /** Null = onbekend. Dan zwijgen de leeftijdsregels; ze gokken niet. */
+  leeftijd?: number | null | undefined
+  geslacht?: 'm' | 'v' | null | undefined
+  /** Wat er bij "Wat er bij jou speelt" is ingevuld. */
+  conditie?: Conditie | undefined
 }
 
 /**
@@ -231,6 +237,67 @@ export function adviezen(v: Suppletievraag): Advies[] {
     })
   }
 
+  /* VITAMINE D — de grootste die er niet in stond
+     Dit is het meest gegeven suppletieadvies van Nederland, en het hing aan
+     geen enkele log: de Gezondheidsraad adviseert het op grond van leeftijd,
+     geslacht en hoeveel zon er op je huid valt. Daarom staat het hier met
+     `zwaarte: 'nodig'` — dat is geen afweging die de app maakt maar een
+     advies dat er al ligt.
+
+     De grenzen: vanaf 70 jaar 20 µg per dag; vrouwen van 50 tot en met 69 jaar
+     10 µg; en op elke leeftijd 10 µg bij een getinte of donkere huid of bij
+     weinig buitenkomen of bedekkende kleding. Staat er geen leeftijd in het
+     profiel, dan vuren de eerste twee niet — een leeftijd raden zou hier een
+     advies over iemands botten worden. */
+  const c = v.conditie ?? {}
+  const zon = c.huid_donker === true || c.weinig_zon === true
+  const leeftijd = v.leeftijd ?? null
+  const oud70 = leeftijd != null && leeftijd >= 70
+  const vrouw50 = v.geslacht === 'v' && leeftijd != null && leeftijd >= 50 && leeftijd < 70
+  if (oud70 || vrouw50 || zon) {
+    const hoeveel = oud70 ? '20 microgram' : '10 microgram'
+    const gronden: string[] = []
+    if (oud70) gronden.push('je bent 70 of ouder')
+    if (vrouw50) gronden.push('je bent een vrouw van 50 tot 70')
+    if (c.huid_donker === true) gronden.push('je gaf een getinte of donkere huid op')
+    if (c.weinig_zon === true) gronden.push('je gaf aan weinig buiten te komen of bedekkend gekleed te gaan')
+    uit.push({
+      id: 'vitd',
+      stof: 'Vitamine D',
+      zwaarte: 'nodig',
+      reden: `De Gezondheidsraad adviseert ${hoeveel} per dag. De huid maakt vitamine D `
+        + 'uit zonlicht, en in Nederland staat de zon van oktober tot maart te laag om '
+        + 'daar genoeg van te leveren — voeding levert maar een klein deel.',
+      grond: `Uit je profiel: ${gronden.join(' en ')}.`,
+      bron: 'Gezondheidsraad, Evaluatie voedingsnormen vitamine D. Dit is een staand '
+        + 'advies en geen bevinding uit jouw log.',
+    })
+  }
+
+  /* B12 BIJ METFORMINE
+     Langdurig metformine verlaagt de opname van B12; bij een deel van de
+     gebruikers loopt de spiegel daardoor omlaag. Dat is een reden om het te
+     laten meten en geen reden om te gaan slikken — precies de lijn die dit
+     bestand bij ijzer ook aanhoudt.
+
+     Deze regel kan naast de veganistische B12-regel staan. Dat is geen
+     dubbeling maar twee verschillende dingen: de ene gaat over wat er binnenkomt
+     en deze over wat ervan opgenomen wordt. Ze krijgen daarom een eigen id en
+     een eigen grond. */
+  if ((c.med ?? []).includes('metformine')) {
+    uit.push({
+      id: 'b12-metformine',
+      stof: 'Vitamine B12',
+      zwaarte: 'overwegen',
+      reden: 'Metformine verlaagt bij langdurig gebruik de opname van B12. Dat is een '
+        + 'reden om het te laten prikken, niet om alvast te gaan slikken: een tekort '
+        + 'hoor je vast te stellen en niet te vermoeden.',
+      grond: 'Je gaf metformine op bij Wat er bij jou speelt.',
+      bron: 'NHG-Standaard Diabetes mellitus type 2: overweeg B12-bepaling bij langdurig '
+        + 'metforminegebruik, zeker bij tintelingen of een doof gevoel in handen of voeten.',
+    })
+  }
+
   return uit
 }
 
@@ -277,10 +344,23 @@ export function nagekeken(v: Suppletievraag): Array<{ wat: string; stand: string
       : !genoegGelogd(v) ? 'nog te weinig gelogd om iets over te zeggen'
       : groepen.some((g) => at(v, g)) ? 'komt in je log voor'
       : 'niet in je log'
+  const c = v.conditie ?? {}
+  const leeftijd = v.leeftijd ?? null
   return [
+    {
+      wat: 'Vitamine D',
+      /* Deze regel leest het profiel en niet de log, en dat hoort eruit te
+         blijken. Zonder leeftijd kan hij twee van zijn drie gronden niet
+         wegen — en dat is iets anders dan "in orde". */
+      stand: leeftijd == null && c.huid_donker == null && c.weinig_zon == null
+        ? 'leeftijd en zon staan nog niet in je profiel'
+        : leeftijd == null ? 'geen leeftijd in je profiel'
+        : 'leeftijd en zon geven geen reden',
+    },
     {
       wat: 'Vitamine B12',
       stand: p === 'veganistisch' ? 'plantaardig patroon'
+        : (c.med ?? []).includes('metformine') ? 'metformine — laat het prikken'
         : `je eet ${p === 'alles' ? 'alles' : p}, dus er komt B12 binnen`,
     },
     { wat: 'IJzer', stand: hoek(VLEES) },

@@ -1092,6 +1092,97 @@ proef: het schermvoorbeeld telt de aanvragen, verwacht er nul zolang de kaart
 dicht is en precies één na het openen. De mutant die de lijst buiten de
 uitklapper hangt valt om met *"dicht en toch 1 keer gevraagd"*.
 
+## 22b. Suppletie — wat de app wél en niet kan zien
+
+De kaart *Wat ontbreekt er?* op het dagscherm. Vijf regels, en ze rusten op twee
+verschillende soorten grond — dat onderscheid is het belangrijkste van dit
+hoofdstuk.
+
+### Wat er uit je log volgt, en waarom dat maar beperkt is
+
+De voedingsmiddelentabel bevat **geen vitamines en mineralen**. De app kan dus
+nooit zeggen hoeveel ijzer of calcium er binnenkomt; hij kan alleen zien welke
+NEVO-groepen in je log voorkomen en welke je hebt uitgezet. Drie regels werken zo:
+
+| Regel | Vuurt bij | Zwaarte |
+|---|---|---|
+| IJzer | vegetarisch of veganistisch, of geen vlees in je log | overwegen |
+| Omega-3 (EPA/DHA) | geen vis in je log of vis uitgezet | overwegen |
+| Calcium | geen zuivel in je log of zuivel uitgezet | overwegen |
+
+Alle drie staan op *overwegen* en niet op *nodig*, en alle drie wijzen naar de
+huisarts in plaats van naar een potje. Een tekort hoor je te laten prikken en
+niet te vermoeden.
+
+**Onder de veertien gelogde dagen zwijgen ze.** Vier dagen zonder vis betekent
+dat je vier dagen lang geen vis logde, en dat zegt niets over je voeding. Die
+drempel staat in `GENOEG_DAGEN`; de melding erover staat er ook bóven een gevulde
+lijst, want wie B12 en ijzer te zien krijgt en niets over vis leest dat als "vis
+is in orde".
+
+### Wat uit je profiel volgt, en waarom dat zwaarder weegt
+
+Twee regels hangen aan geen enkele log. Ze komen uit staand Nederlands advies, en
+staan daarom op *nodig* respectievelijk met een harde bron erbij.
+
+**Vitamine D — het meest gegeven suppletieadvies van Nederland.** De huid maakt
+vitamine D uit zonlicht, en tussen oktober en maart staat de zon hier te laag om
+daar genoeg van te leveren; voeding levert maar een klein deel. De Gezondheidsraad
+adviseert:
+
+| Wie | Hoeveel |
+|---|---|
+| iedereen vanaf 70 jaar | 20 microgram per dag |
+| vrouwen van 50 tot en met 69 | 10 microgram per dag |
+| getinte of donkere huid, of weinig buiten / bedekkende kleding — elke leeftijd | 10 microgram per dag |
+
+*Staat er geen leeftijd in het profiel, dan vuren de eerste twee niet.* Een
+leeftijd raden zou hier een uitspraak over iemands botten worden op een getal dat
+niemand heeft ingevuld.
+
+**De twee zonvragen worden apart gesteld, en niet afgeleid uit `etniciteit`.**
+Dat is een bewuste keuze en geen omissie. Afkomst is geen huidskleur, en een app
+die dat gelijkstelt doet een aanname over iemand die hij niet mag doen — en die
+hij bovendien nergens opschrijft. `etniciteit` gaat in deze app over de
+afkapwaarde van de middelomtrek (zie hoofdstuk 5) en over niets anders. Een leeg
+vinkje betekent "niet gevraagd" en niet "nee": zolang er niets staat, zwijgt de
+regel over die grond.
+
+**B12 bij metformine.** Langdurig metforminegebruik verlaagt de opname van B12.
+Dat is een reden om het te laten meten en geen reden om te gaan slikken — dezelfde
+lijn als bij ijzer. De NHG-Standaard Diabetes mellitus type 2 adviseert een
+B12-bepaling te overwegen bij langdurig gebruik, zeker bij tintelingen of een
+doof gevoel in handen of voeten.
+
+Deze regel staat **naast** de veganistische B12-regel en niet in plaats daarvan.
+Dat is geen dubbeling: de ene gaat over wat er binnenkomt, deze over wat ervan
+opgenomen wordt. Twee gronden, dus twee regels, met twee id's — anders verdwijnt
+er stilletjes één.
+
+`metformine` stond eerst niet in de medicatiegroepen, en dat zegt iets over
+waarvoor die lijst gemaakt was: de andere zes zijn gekozen op hypo-risico en op
+nier- en vochtbelasting, en metformine doet geen van beide. Voor de suppletievraag
+is hij juist de belangrijkste.
+
+### Een lege lijst zegt wat er nagekeken is
+
+Dat was er eerst niet, en de eerste vraag die erover gesteld werd was precies de
+twijfel die het opriep: *"Wat ontbreekt is leeg?"* Een lege uitslag met alleen een
+voorbehoud eronder is niet te onderscheiden van een lijst die stuk is.
+
+De kaart noemt daarom alle vijf de regels bij naam met wat er per regel gezien
+is, en elke regel geeft zijn eigen reden. *Uitgezet in Wat je lust*, *niet in je
+log* en *nog te weinig gelogd* lezen alle drie anders — zou dat niet zo zijn, dan
+was de lijst een sierrand en geen afleiding.
+
+### Wat er nadrukkelijk niet gebeurt
+
+Geen doseringen boven wat de richtlijn zelf noemt. Geen merknamen. Geen advies
+dat zonder arts uitgevoerd hoort te worden. De app wijst en verwijst; hij
+schrijft niet voor.
+
+---
+
 ## 23. De conditie — signaleren zonder te doseren
 
 Deze app rekent aan energie en verzadiging, en dat is voor de meeste mensen

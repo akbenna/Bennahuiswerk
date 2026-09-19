@@ -25,6 +25,7 @@ import {
 import type { Suppletievraag } from './suppletie'
 import { GEEN_VOORKEUR } from './voorkeuren'
 import type { Voorkeuren } from './voorkeuren'
+import type { Conditie } from '@/gedeeld/db/tabellen'
 
 const VIS = 'Vis, schaal- en schelpdieren'
 const ALLE_HOEKEN = [
@@ -36,12 +37,20 @@ interface Deelvraag {
   voorkeuren?: Partial<Voorkeuren>
   gelogdeGroepen?: readonly string[]
   dagenGelogd?: number
+  leeftijd?: number | null
+  geslacht?: 'm' | 'v' | null
+  conditie?: Conditie
 }
 
 const vraag = (p: Deelvraag = {}): Suppletievraag => ({
   voorkeuren: { ...GEEN_VOORKEUR, ...p.voorkeuren },
   gelogdeGroepen: p.gelogdeGroepen ?? ALLE_HOEKEN,
   dagenGelogd: p.dagenGelogd ?? 28,
+  /* Met opzet géén standaardleeftijd: wie hem niet noemt, hoort de
+     leeftijdsregels niet te laten vuren. */
+  leeftijd: p.leeftijd ?? null,
+  geslacht: p.geslacht ?? null,
+  conditie: p.conditie ?? {},
 })
 
 describe('genoeg gelogd', () => {
@@ -181,11 +190,27 @@ describe('wat er nagekeken is als er niets uit kwam', () => {
   /* De aanleiding stond niet in de code maar in de vraag die erover gesteld
      werd: "Wat ontbreekt is leeg?" Een lege lijst met alleen een voorbehoud
      eronder is niet te onderscheiden van een kapotte lijst. */
-  it('noemt alle vier de regels, ook als er niets gevonden is', () => {
+  it('noemt elke regel, ook als er niets gevonden is', () => {
     const v = vraag({ dagenGelogd: 20, gelogdeGroepen: ALLE_HOEKEN })
     expect(adviezen(v)).toEqual([])
     expect(nagekeken(v).map((r) => r.wat))
-      .toEqual(['Vitamine B12', 'IJzer', 'Omega-3', 'Calcium'])
+      .toEqual(['Vitamine D', 'Vitamine B12', 'IJzer', 'Omega-3', 'Calcium'])
+  })
+
+  /* De lijst hoort élke regel te noemen die `adviezen` kent. Komt er ooit een
+     regel bij zonder dat hij hier landt, dan belooft het scherm een controle
+     die niet gedaan is — en dat is precies de twijfel die deze lijst moest
+     wegnemen. */
+  it('en laat geen enkele stof uit adviezen() ongenoemd', () => {
+    const alleStoffen = new Set<string>()
+    for (const geval of [
+      vraag({ voorkeuren: { patroon: 'veganistisch' }, gelogdeGroepen: [] }),
+      vraag({ leeftijd: 80, geslacht: 'v', conditie: { med: ['metformine'] } }),
+    ]) for (const a of adviezen(geval)) alleStoffen.add(a.stof)
+    const genoemd = new Set(nagekeken(vraag()).map((r) => r.wat))
+    for (const stof of alleStoffen) {
+      expect([...genoemd].some((g) => stof.startsWith(g)), stof).toBe(true)
+    }
   })
 
   /* Elke regel moet zijn éigen reden geven. Zouden ze allemaal hetzelfde
@@ -219,12 +244,133 @@ describe('wat er nagekeken is als er niets uit kwam', () => {
      anders te zeggen dan de andere drie, anders belooft hij een controle die
      er niet is. */
   it('B12 leest je eetpatroon en niet je log', () => {
-    const alles = nagekeken(vraag({ dagenGelogd: 20, gelogdeGroepen: [] }))[0]!
-    expect(alles.stand).not.toMatch(/log/)
-    const vegan = nagekeken(vraag({
+    const b12 = (v: Suppletievraag) => nagekeken(v).find((r) => r.wat === 'Vitamine B12')!
+    expect(b12(vraag({ dagenGelogd: 20, gelogdeGroepen: [] })).stand).not.toMatch(/log/)
+    expect(b12(vraag({
       dagenGelogd: 20, gelogdeGroepen: ALLE_HOEKEN,
       voorkeuren: { patroon: 'veganistisch' },
-    }))[0]!
-    expect(vegan.stand).toMatch(/plantaardig/)
+    })).stand).toMatch(/plantaardig/)
+    /* En metformine hoort hier óók door te komen: de regel bestaat, dus de
+       lijst mag niet zeggen dat B12 in orde is omdat je alles eet. */
+    expect(b12(vraag({ conditie: { med: ['metformine'] } })).stand).toMatch(/prikken/)
+  })
+})
+
+/**
+ * VITAMINE D — het meest gegeven suppletieadvies van Nederland, en het stond er
+ * niet in.
+ *
+ * Deze regel hangt aan geen enkele log: de Gezondheidsraad adviseert hem op
+ * grond van leeftijd, geslacht en hoeveel zon er op je huid valt. Dat maakt hem
+ * anders dan alle andere in dit bestand, en dat verschil is wat hier getoetst
+ * wordt — niet of hij bestaat, maar of hij de goede grenzen aanhoudt en de
+ * goede dingen leest.
+ */
+describe('vitamine D', () => {
+  const vitd = (p: Deelvraag) => adviezen(vraag(p)).find((a) => a.id === 'vitd')
+
+  it('vanaf zeventig jaar, en niet daarvoor', () => {
+    expect(vitd({ leeftijd: 70, geslacht: 'm' })?.reden).toMatch(/20 microgram/)
+    expect(vitd({ leeftijd: 69, geslacht: 'm' })).toBeUndefined()
+  })
+
+  /* De vrouwenregel loopt van 50 tot en met 69. Beide randen, want een grens
+     die zijn eigen waarde uitsluit is een andere grens dan hij zegt te zijn. */
+  it('vrouwen van vijftig tot zeventig krijgen tien microgram', () => {
+    expect(vitd({ leeftijd: 50, geslacht: 'v' })?.reden).toMatch(/10 microgram/)
+    expect(vitd({ leeftijd: 69, geslacht: 'v' })?.reden).toMatch(/10 microgram/)
+    expect(vitd({ leeftijd: 49, geslacht: 'v' })).toBeUndefined()
+  })
+
+  /* Boven de zeventig gaat de vrouwenregel over in de leeftijdsregel: twintig
+     en niet tien. Zonder dit geval zou een verkeerde volgorde van de twee
+     takken een vrouw van tachtig de halve dosis geven.
+
+     En de grond hoort mee over te gaan. Een mutatieproef zette hier de bovengrens
+     van de vrouwenregel weg, en toen kreeg een vrouw van tachtig te lezen dat ze
+     "een vrouw van 50 tot 70" is. De dosis klopte; de zin loog. */
+  it('en een vrouw van tachtig krijgt twintig en niet tien', () => {
+    const a = vitd({ leeftijd: 80, geslacht: 'v' })
+    expect(a?.reden).toMatch(/20 microgram/)
+    expect(a?.grond).toMatch(/70 of ouder/)
+    expect(a?.grond).not.toMatch(/50 tot 70/)
+  })
+
+  it('een man van zestig krijgt niets uit de leeftijd', () => {
+    expect(vitd({ leeftijd: 60, geslacht: 'm' })).toBeUndefined()
+  })
+
+  /* De twee zonvragen gelden op elke leeftijd. Ze staan los van elkaar: één
+     van de twee is genoeg. */
+  it('een getinte of donkere huid telt op elke leeftijd', () => {
+    expect(vitd({ leeftijd: 30, geslacht: 'm', conditie: { huid_donker: true } })?.reden)
+      .toMatch(/10 microgram/)
+  })
+
+  it('weinig buiten komen ook', () => {
+    expect(vitd({ leeftijd: 30, geslacht: 'm', conditie: { weinig_zon: true } })?.reden)
+      .toMatch(/10 microgram/)
+  })
+
+  /* GEEN LEEFTIJD IS GEEN ADVIES. Een leeftijd raden zou hier een uitspraak
+     over iemands botten worden op een getal dat niemand heeft ingevuld. */
+  it('zonder leeftijd zwijgen de leeftijdsregels', () => {
+    expect(vitd({ leeftijd: null, geslacht: 'v' })).toBeUndefined()
+    /* Maar de zonvraag werkt wél zonder leeftijd — die hangt er niet aan. */
+    expect(vitd({ leeftijd: null, geslacht: null, conditie: { huid_donker: true } }))
+      .toBeDefined()
+  })
+
+  /* Een leeg vinkje is "niet gevraagd" en geen "nee". Dat mag geen advies
+     opleveren, maar het mag er ook niet toe leiden dat de app doet alsof hij
+     het weet. Het eerste staat hier; het tweede staat in `nagekeken`. */
+  it('een niet-ingevulde zonvraag levert geen advies', () => {
+    expect(vitd({ leeftijd: 30, geslacht: 'm', conditie: {} })).toBeUndefined()
+    expect(vitd({ leeftijd: 30, geslacht: 'm', conditie: { huid_donker: false } }))
+      .toBeUndefined()
+  })
+
+  /* De grond hoort te zeggen wáárom, en bij twee redenen allebei. Een advies
+     dat alleen zegt dát het geldt is in dit ontwerp geen advies. */
+  it('noemt elke grond die meetelde', () => {
+    const a = vitd({ leeftijd: 75, geslacht: 'v', conditie: { huid_donker: true } })
+    expect(a?.grond).toMatch(/70 of ouder/)
+    expect(a?.grond).toMatch(/donkere huid/)
+  })
+
+  it('en heet nodig, want het is een staand advies en geen afweging', () => {
+    expect(vitd({ leeftijd: 75, geslacht: 'm' })?.zwaarte).toBe('nodig')
+    expect(vitd({ leeftijd: 75, geslacht: 'm' })?.bron).toMatch(/Gezondheidsraad/)
+  })
+})
+
+describe('B12 bij metformine', () => {
+  const b12m = (p: Deelvraag) => adviezen(vraag(p)).find((a) => a.id === 'b12-metformine')
+
+  it('komt er bij metformine, en niet bij een andere pil', () => {
+    expect(b12m({ conditie: { med: ['metformine'] } })).toBeDefined()
+    expect(b12m({ conditie: { med: ['insuline', 'ras'] } })).toBeUndefined()
+    expect(b12m({})).toBeUndefined()
+  })
+
+  /* Laten prikken en niet gaan slikken — dezelfde lijn als bij ijzer. Een
+     tekort hoor je vast te stellen en niet te vermoeden. */
+  it('stuurt naar de prik en niet naar het potje', () => {
+    const a = b12m({ conditie: { med: ['metformine'] } })
+    expect(a?.zwaarte).toBe('overwegen')
+    expect(a?.reden).toMatch(/prikken/)
+  })
+
+  /* Naast de veganistische B12-regel, niet in plaats daarvan: de ene gaat over
+     wat er binnenkomt en deze over wat ervan opgenomen wordt. Twee gronden, dus
+     twee regels — en twee verschillende id's, anders verdwijnt er één. */
+  it('staat naast de veganistische B12-regel en overschrijft hem niet', () => {
+    const uit = adviezen(vraag({
+      voorkeuren: { patroon: 'veganistisch' },
+      conditie: { med: ['metformine'] },
+    }))
+    const b12 = uit.filter((a) => a.stof === 'Vitamine B12')
+    expect(b12).toHaveLength(2)
+    expect(new Set(b12.map((a) => a.id)).size).toBe(2)
   })
 })
