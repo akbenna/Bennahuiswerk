@@ -418,9 +418,9 @@ Raad die grootheid nooit stilzwijgend. Zoek hem in deze volgorde:
 2. De andere schermafdrukken in dezelfde zending. Iemand die een lange lijst doorscrolt maakt meerdere afdrukken van dezelfde lijst, en de datums sluiten dan op elkaar aan of overlappen. Staat de kop op één ervan, dan geldt hij voor de hele aaneengesloten reeks.
 3. Pas als dat allebei niets oplevert: de grootte van de getallen. Stappen liggen doorgaans tussen 1.000 en 20.000; actieve energie tussen 50 en 1.500. Dit is een gok en geen waarneming.
 
-Zet in `bronnen` per reeks wat je hebt gelezen en hoe je het weet: `hoe` is "kop" als je hem gelezen hebt, "reeks" als hij van een andere afdruk komt, en "grootte" als je het uit de getallen hebt afgeleid. Zet bij "kop" en "reeks" de gelezen tekst in `kop`.
+Zet in \`bronnen\` per reeks wat je hebt gelezen en hoe je het weet: \`hoe\` is "kop" als je hem gelezen hebt, "reeks" als hij van een andere afdruk komt, en "grootte" als je het uit de getallen hebt afgeleid. Zet bij "kop" en "reeks" de gelezen tekst in \`kop\`.
 
-Kun je het ook uit de grootte niet met overtuiging bepalen, laat de waarden dan wég en schrijf in `opmerking` wat je zag. Een verkeerd ingevulde kolom is erger dan een lege.
+Kun je het ook uit de grootte niet met overtuiging bepalen, laat de waarden dan wég en schrijf in \`opmerking\` wat je zag. Een verkeerd ingevulde kolom is erger dan een lege.
 
 HALVE REGELS AAN DE RANDEN
 
@@ -432,7 +432,7 @@ DE WORK-OUTLIJST
 
 Een lijst met tijdsduren ("1 u. 23 min. 37s") bij een datum en een tijdstip is geen dagreeks maar een work-outlijst. Daar horen nooit stappen of kilocalorieën uit te komen.
 
-Zet die rijen in `activiteiten`, niet in `dagen`. Per rij: de datum, de duur in hele minuten, het soort, wat er letterlijk boven stond, en welke app hem leverde als dat aan het pictogram of de tekst te zien is (bijvoorbeeld "Garmin"). Seconden rond je af naar de dichtstbijzijnde minuut. "9 u. 7 min. 26s" is 547 minuten.
+Zet die rijen in \`activiteiten\`, niet in \`dagen\`. Per rij: de datum, de duur in hele minuten, het soort, wat er letterlijk boven stond, en welke app hem leverde als dat aan het pictogram of de tekst te zien is (bijvoorbeeld "Garmin"). Seconden rond je af naar de dichtstbijzijnde minuut. "9 u. 7 min. 26s" is 547 minuten.
 
 Het soort haal je uit het kopje van de post en zet je om naar één van deze sleutels:
 
@@ -450,9 +450,9 @@ Het soort haal je uit het kopje van de post en zet je om naar één van deze sle
   kracht        Krachttraining, functionele kracht, gewichtheffen
   anders        Iets wat er wel staat maar hier niet in past — yoga, boksen, skiën
 
-Staat er geen kopje bij een post, zet `soort` dan op null. Verzin er niets bij: "anders" betekent dat je iets gelézen hebt dat niet in de lijst past, en null dat je niets gelezen hebt. Dat verschil bepaalt wat het scherm vraagt.
+Staat er geen kopje bij een post, zet \`soort\` dan op null. Verzin er niets bij: "anders" betekent dat je iets gelézen hebt dat niet in de lijst past, en null dat je niets gelezen hebt. Dat verschil bepaalt wat het scherm vraagt.
 
-`label` is altijd wat er letterlijk stond, ook als je het op een sleutel hebt kunnen leggen.
+\`label\` is altijd wat er letterlijk stond, ook als je het op een sleutel hebt kunnen leggen.
 
 Beoordeel niet of een duur klopt en laat niets weg omdat het lang lijkt — dat doet de app. Geef terug wat er staat.`;
 

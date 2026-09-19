@@ -9,12 +9,22 @@ zetten waren.
 ## De poort
 
 ```
-npm run controle     typen → proeven → bouw → CSP-proef
+npm run controle     typen → edge → proeven → bouw → CSP-proef
 ```
 
-Vier poorten, één opdracht. Ze horen alle vier groen te zijn vóór een commit —
-niet erna. De CSP-proef laadt elke app in een echte Chromium achter de headers
-uit `vercel.json`; in deze omgeving heeft hij het pad nodig:
+Vijf poorten, één opdracht. Ze horen alle vijf groen te zijn vóór een commit —
+niet erna.
+
+`edge` is er sinds de dag dat een uitrol weigerde. `health/edge/` valt buiten
+`tsc -b` — die bestanden draaien op Deno en importeren van https-adressen die van
+hier niet te halen zijn — en viel daarmee ook buiten élke controle. In de
+systeemprompt van kal-ai stonden veldnamen tussen backticks, en een backtick
+sluit een template-literal. Drie commits lang stond daar een bestand dat Deno
+niet kon inlezen, en niets merkte het. De poort ontleedt ze nu met de parser van
+TypeScript zelf: geen typecontrole, wel de zekerheid dat het bestand te lezen is.
+
+De CSP-proef laadt elke app in een echte Chromium achter de headers uit
+`vercel.json`; in deze omgeving heeft hij het pad nodig:
 
 ```
 CHROOM=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npm run controle
