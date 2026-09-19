@@ -395,6 +395,12 @@ Zet in `bronnen` per reeks wat je hebt gelezen en hoe je het weet: `hoe` is "kop
 
 Kun je het ook uit de grootte niet met overtuiging bepalen, laat de waarden dan wég en schrijf in `opmerking` wat je zag. Een verkeerd ingevulde kolom is erger dan een lege.
 
+HALVE REGELS AAN DE RANDEN
+
+Boven- en onderaan zo'n afdruk staat bijna altijd een regel die maar half in beeld is: afgesneden door de kop of door de balk onderin, en vaak ook vervaagd. Neem die niet over. Een half zichtbaar getal is niet te lezen — 5.585 en 5.585 zien er afgesneden hetzelfde uit als 6.585 — en het is nooit nodig ook: bij een reeks die over meerdere afdrukken loopt staat diezelfde dag verderop nog een keer, dan wel helemaal.
+
+Komt dezelfde datum op twee afdrukken voor, neem dan de regel die volledig zichtbaar is. Verschillen de twee waarden, dan heb je er één verkeerd gelezen; gebruik de volledige en niet het gemiddelde.
+
 WAT DIT SCHERM NIET IS
 
 Een lijst met tijdsduren ("1 u. 23 min. 37s") bij datums is een work-outlijst en geen dagreeks. Daar horen geen stappen of kilocalorieën uit te komen. Zet zulke rijen niet in `dagen`; noem ze hooguit in `opmerking`.`;
