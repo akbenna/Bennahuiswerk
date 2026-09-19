@@ -3654,5 +3654,95 @@ for (const [naam, dagen, patroon, verwacht] of [
   await pagina.close()
 }
 
+/**
+ * HET BOEKJE OVER AFVALLEN
+ *
+ * Acht stukken, en de belofte zit in de vorm: elk stuk zegt ook wat het níét
+ * weet, en dat staat in een eigen vak vóór het nut in plaats van als kleine
+ * letter eronder.
+ *
+ * WAAROM DIT NIET MET EEN PROEF IN VITEST AF IS
+ *
+ * Die controleert dat het veld `nietWeten` gevuld is. Hij kan niet zien of het
+ * scherm het tóónt. Een venster dat alleen `weten` rendert komt daar ongemerkt
+ * doorheen — en dan staat er precies het soort tekst dat dit boekje niet wil
+ * zijn: zeker klinkende beweringen zonder hun grens.
+ *
+ * En de grens die voor de klant het meest uitmaakt: geen enkel stuk mag een
+ * getal van de lezer bevatten. Dat is niet alleen stijl. Onder MDCG 2019-11 is
+ * een boekje geen medisch hulpmiddel zolang het geen patiëntgegevens verwerkt;
+ * dezelfde tekst met jouw gewicht erin zou de app een categorie op schuiven waar
+ * hij niet thuishoort. Deze proef leest daarom het echte scherm en zoekt naar
+ * de cijfers uit de proefgegevens.
+ */
+{
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: 'light' })
+  await bedienDb(pagina, 28, 'afvallen')
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.hero', { timeout: 5000 })
+  await naarTab(pagina, 'Profiel')
+  await pagina.getByRole('button', { name: 'Verdiepen: afvallen en medicatie' }).click()
+
+  const venster = pagina.locator('.venster')
+  await venster.waitFor({ timeout: 5000 })
+
+  process.stdout.write('verdiepen                  ')
+
+  /* 1. Acht stukken, en ze staan dicht: wie hier komt kiest wat hij leest.
+        De knop heet "open" en niet zoals het stuk — `Uitklap` zet de kop in een
+        `Kop` en de schakelaar ernaast. */
+  const dichte = venster.getByRole('button', { name: 'open', exact: true })
+  const aantal = await dichte.count()
+  if (aantal !== 8) throw new Error(`verdiepen: ${aantal} stukken in plaats van 8`)
+
+  /* 2. Eén openen, en dan moeten alle vier de delen er staan. */
+  await venster.locator('.kaart').filter({ hasText: 'Wat er gebeurt als je stopt' })
+    .getByRole('button', { name: 'open', exact: true }).click()
+  await pagina.waitForTimeout(250)
+  const plat = (await venster.innerText()).replace(/\s+/g, ' ')
+
+  if (!/tweederde van het verloren gewicht/.test(plat)) {
+    throw new Error('verdiepen: het stuk gaat niet open, of het getal staat er niet')
+  }
+  if (!/Wat we niet weten/.test(plat)) {
+    throw new Error(`verdiepen: het voorbehoud staat niet op het scherm\n  ${plat.slice(0, 300)}`)
+  }
+  if (!/verantwoord afbouwt is niet onderzocht/.test(plat)) {
+    throw new Error('verdiepen: het voorbehoud staat er als kop maar zonder inhoud')
+  }
+  if (!/Waar je dit terugziet/.test(plat)) throw new Error('verdiepen: de verwijzing ontbreekt')
+  if (!/Bron: Wilding/.test(plat)) throw new Error('verdiepen: de bron ontbreekt')
+
+  /* 3. HET BOEKJE BLIJFT EEN BOEKJE.
+        Open álle stukken en kijk of er ergens een getal van deze gebruiker in
+        staat. De proefreeks heeft een gewicht rond de 116-119 kg, een eiwitdoel
+        van 161 g en een dagdoel van 3.690 kcal; geen van die getallen hoort hier
+        voor te komen. */
+  for (let i = 0; i < 10; i++) {
+    const nog = venster.getByRole('button', { name: 'open', exact: true })
+    if (!(await nog.count())) break
+    await nog.first().click()
+    await pagina.waitForTimeout(80)
+  }
+  await pagina.waitForTimeout(300)
+  const alles = (await venster.innerText()).replace(/\s+/g, ' ')
+  for (const getal of ['116,6', '118,0', '3.690', '161 g', '7.468']) {
+    if (alles.includes(getal)) {
+      throw new Error(`verdiepen: "${getal}" komt uit de gebruiker en staat in het boekje — `
+        + 'dan is het geen boekje meer')
+    }
+  }
+
+  /* 4. En de slotregel die zegt wat dit niet is. */
+  if (!/schrijft geen medicijnen voor/.test(alles)) {
+    throw new Error('verdiepen: de slotregel over voorlichting ontbreekt')
+  }
+
+  await pagina.screenshot({ path: 'gereedschap/health-verdiepen.png', fullPage: true })
+  console.log(`${aantal} stukken · vier delen per stuk · geen enkel getal van de lezer erin`)
+  await pagina.close()
+}
+
 await browser.close()
 server.close()

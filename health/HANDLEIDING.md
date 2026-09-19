@@ -309,6 +309,22 @@ zout en bloeddruk, over thuis meten, over koolhydraten en vezels. Ze staan er
 voor iedereen hetzelfde en met de bron erbij; wat bij jou hoort staat bovenaan.
 Er valt niets weg — je mag lezen over iets wat je niet hebt.
 
+### Verdiepen: acht stukken om te lezen
+
+Op Profiel staat *Verdiepen: afvallen en medicatie*. Acht stukken over de
+Nederlandse trap, wat GLP-1 doet, wat er gebeurt als je stopt, waarom eiwit nu
+zwaarder telt, wat je naast vet verliest, bot, de nieuwe definitie van obesitas,
+en wat volhouden voorspelt.
+
+Bij elk stuk staat hetzelfde rijtje: **wat we weten**, **wat we niet weten**,
+**waar je het in de app terugziet**, en **de bron**. Dat tweede vak staat er
+altijd en nooit onderaan in kleine letters. Er is geen stuk zonder.
+
+De teksten staan er voor iedereen hetzelfde. Ze lezen niets van jou en rekenen
+niets uit — dat gebeurt op de schermen zelf, en elk stuk zegt welk scherm dat is.
+Het is voorlichting: de app schrijft geen medicijnen voor en zegt niet of iets
+voor jou geschikt is.
+
 ### Wat je spieren vasthoudt
 
 Bij snel afvallen verdwijnt er naast vet ook spier — bij semaglutide was dat in

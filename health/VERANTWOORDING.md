@@ -1272,6 +1272,68 @@ al.
 
 ---
 
+## 22d. Verdiepen — het boekje over afvallen, en waarom het een boekje blijft
+
+Acht stukken op het scherm Profiel, onder *Verdiepen: afvallen en medicatie*.
+Over de Nederlandse trap, wat GLP-1 doet, wat er gebeurt als je stopt, waarom
+eiwit nu zwaarder telt, wat je naast vet verliest, bot, de herdefinitie van
+obesitas, en wat volhouden voorspelt.
+
+### Elk stuk heeft vier delen, en de volgorde is een besluit
+
+**Wat we weten** — het getal, met het onderzoek en waar het vandaan komt.
+**Wat we niet weten** — in een eigen vak, vóór het nut.
+**Waar je dit terugziet** — een verwijzing naar een scherm.
+**Bron** — klikbaar in het onderzoeksbestand.
+
+Dat tweede deel staat dus niet als kleine letter onderaan. In deze markt zijn de
+claims hard en het bewijs zacht; wie het voorbehoud onderaan zet weet dat niemand
+het leest. Een proef eist dat `nietWeten` nooit leeg is, en de armatuur leest het
+echte scherm om te zien dat het ook getóónd wordt — die twee zijn niet hetzelfde,
+en een venster dat alleen `weten` rendert zou door de eerste heen komen.
+
+### Het blijft een boekje, en dat is een grens en geen stijl
+
+Net als `leren.ts`: onder MDCG 2019-11 is software die uitsluitend informatie
+ontsluit, zonder patiëntspecifieke verwerking, geen medisch hulpmiddel. "Bij
+semaglutide is ongeveer 45 procent van het verlies vetvrije massa" als vaste
+tekst mag. Diezelfde zin met jóuw cijfers erin zou de app een categorie op
+schuiven waar hij niet thuishoort. Zie `health/STRATEGIE-CHRONISCHE-ZORG.md`.
+
+Hier is die garantie sterker af te dwingen dan bij `leren.ts`. Die functie krijgt
+nog een conditie mee om de volgorde te bepalen; **deze lijst krijgt niets**. Er is
+geen invoer, dus er valt niets te verwerken.
+
+Het oorspronkelijke voorstel had per stuk een *"wat jij eraan hebt"* met de eigen
+getallen van de lezer erin. Dat is bij het schrijven rechtgezet naar een
+verwijzing: hier staat wáár in de app je het terugziet, en het rekenen gebeurt
+dáár. Het verschil tussen die twee is precies het verschil tussen een boekje en
+een hulpmiddel.
+
+De armatuur opent alle acht stukken en zoekt naar de getallen van de proef­
+gebruiker — gewicht, eiwitdoel, kcal-doel, stappen. Komt er één van voor, dan valt
+hij om.
+
+### Waarom het stuk over de trap geen BMI-grenzen noemt
+
+Het draagt de volgorde van het Nederlandse traject en de constatering dat de lat
+voor de huisarts hoger ligt dan de bijsluiter — maar geen getallen. De criteria
+komen uit samenvattingen van de NHG-Standaard en niet uit de standaard zelf:
+genoeg om de volgorde uit te leggen, niet genoeg om een getal op te schrijven
+waar iemand zijn verwachting op bouwt.
+
+Een proef houdt dat vast. Komen de grenzen er ooit in, dan valt hij om en kijkt
+iemand na of de bron inmiddels wél deugt. Zo blijft het een besluit in plaats van
+een vergetelheid.
+
+### Wat het boekje niet doet
+
+Geen dosering in milligrammen — een proef zoekt daarop. Geen oordeel of iets
+voor jou geschikt is. Het GLP-1-stuk noemt de alarmsignalen en stuurt daarbij
+naar een arts; dat is de grens tussen voorlichting en behandeling.
+
+---
+
 ## 23. De conditie — signaleren zonder te doseren
 
 Deze app rekent aan energie en verzadiging, en dat is voor de meeste mensen

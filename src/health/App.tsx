@@ -32,6 +32,7 @@ import {
   AccountVenster, Aanmelden, ImportVenster, ProfielVenster,
 } from './vensters/Instellingen'
 import { LerenVenster } from './vensters/Leren'
+import { VerdiepVenster } from './vensters/Verdiepen'
 import { Opzet } from './Opzet'
 import { Kaart, Knop, Spin } from './onderdelen/basis'
 import { useVeeg } from './veeg'
@@ -97,7 +98,7 @@ function Postbus({ token, a }: { token: string; a: Analyse }) {
 
 type Tab = (typeof TABS)[number][0]
 type VensterNaam = 'profiel' | 'import' | 'account' | 'koppelen' | 'overzicht'
-  | 'hoewerkt' | 'leren' | 'verslag' | 'voorkeuren'
+  | 'hoewerkt' | 'leren' | 'verdiepen' | 'verslag' | 'voorkeuren'
 
 export function App() {
   const k = useKalibratie()
@@ -395,6 +396,10 @@ export function App() {
       )}
       {venster === 'leren' && (
         <LerenVenster profiel={profiel} opSluiten={() => zetVenster(null)} />
+      )}
+
+      {venster === 'verdiepen' && (
+        <VerdiepVenster opSluiten={() => zetVenster(null)} />
       )}
 
       {venster === 'profiel' && (

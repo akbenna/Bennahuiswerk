@@ -35,7 +35,7 @@ export function Meer(
   { dagen, reeks, profiel, opVenster }:
   {
     dagen: Dagenkaart; reeks: Trendpunt[]; profiel: Profiel
-    opVenster: (v: 'profiel' | 'import' | 'account' | 'koppelen' | 'hoewerkt'
+    opVenster: (v: 'profiel' | 'import' | 'account' | 'koppelen' | 'hoewerkt' | 'verdiepen'
       | 'leren' | 'voorkeuren') => void
   },
 ) {
@@ -224,6 +224,7 @@ export function Meer(
             achter één tik. */}
         <Rij>
           <Knop opKlik={() => opVenster('leren')}>Leren over je aandoening</Knop>
+          <Knop opKlik={() => opVenster('verdiepen')}>Verdiepen: afvallen en medicatie</Knop>
           <Knop opKlik={() => opVenster('hoewerkt')}>Hoe deze app werkt</Knop>
         </Rij>
       </Kaart>
