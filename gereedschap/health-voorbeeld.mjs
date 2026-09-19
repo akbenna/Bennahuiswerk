@@ -3002,7 +3002,7 @@ for (const [naam, dagen, patroon, verwacht] of [
   }
 
   console.log(`wat ontbreekt              ${naam.padEnd(18)} ${
-    (t.match(/Vitamine B12|Omega-3|IJzer|Calcium/g) ?? ['—']).join(', ')}`)
+    [...new Set(t.match(/Vitamine B12|Omega-3|IJzer|Calcium/g) ?? ['—'])].join(', ')}`)
   await pagina.close()
 }
 

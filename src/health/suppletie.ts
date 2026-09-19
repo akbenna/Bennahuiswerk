@@ -252,3 +252,39 @@ export function teWeinigGelogd(v: Suppletievraag): string | null {
     + `${GENOEG_DAGEN} dagen kan de app ook zien welke hoeken je overslaat; tot dan `
     + 'zou dat een uitspraak over je invoer zijn en niet over je voeding.'
 }
+
+/**
+ * WAT ER NAGEKEKEN IS, ALS ER NIETS UIT KWAM
+ *
+ * Een lege lijst met alleen een voorbehoud eronder is niet te onderscheiden van
+ * een kapotte lijst. Dat is geen bedacht bezwaar: de eerste vraag die erover
+ * gesteld werd was "Wat ontbreekt is leeg?" — precies de twijfel die een scherm
+ * hoort weg te nemen in plaats van op te roepen.
+ *
+ * Dus noemt hij de vier regels bij naam, met wat hij per regel zag. Een
+ * uitkomst zonder zijn afleiding is in dit ontwerp geen uitkomst.
+ *
+ * Elke regel krijgt de reden waaróm hij niet vuurde, en dat is niet overal
+ * dezelfde: B12 hangt aan je eetpatroon, de andere drie aan de vraag of die
+ * hoek in je log voorkomt. Dat verschil hoort zichtbaar te blijven — anders
+ * leest "vis: in orde" als een uitspraak over hoevéél vis, en dat weet de app
+ * niet.
+ */
+export function nagekeken(v: Suppletievraag): Array<{ wat: string; stand: string }> {
+  const p = v.voorkeuren.patroon
+  const hoek = (groepen: string[]): string =>
+    groepen.some((g) => uitgezet(v, g)) ? 'uitgezet in Wat je lust'
+      : !genoegGelogd(v) ? 'nog te weinig gelogd om iets over te zeggen'
+      : groepen.some((g) => at(v, g)) ? 'komt in je log voor'
+      : 'niet in je log'
+  return [
+    {
+      wat: 'Vitamine B12',
+      stand: p === 'veganistisch' ? 'plantaardig patroon'
+        : `je eet ${p === 'alles' ? 'alles' : p}, dus er komt B12 binnen`,
+    },
+    { wat: 'IJzer', stand: hoek(VLEES) },
+    { wat: 'Omega-3', stand: hoek([VIS]) },
+    { wat: 'Calcium', stand: hoek(ZUIVEL) },
+  ]
+}

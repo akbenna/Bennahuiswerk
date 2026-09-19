@@ -59,7 +59,7 @@ import type { Analyse, Dagenkaart, DagMetTotalen } from '../rekenkern'
 import { momentNu } from '../vensters/Portie'
 import { meldenNu, tekort, voorstellen } from '../coach'
 import type { Tekort } from '../coach'
-import { VENSTER_DAGEN, adviezen, teWeinigGelogd } from '../suppletie'
+import { VENSTER_DAGEN, adviezen, nagekeken, teWeinigGelogd } from '../suppletie'
 import { GEEN_VOORKEUR, PATROONNAAM, ietsIngesteld } from '../voorkeuren'
 import type { Voorkeuren } from '../voorkeuren'
 import { herhaalRegel } from '../herhaal'
@@ -1079,13 +1079,28 @@ function Suppletielijst({ token, profiel }: { token: string; profiel: Profiel })
      orde" terwijl de app het niet kan zien. */
   const karig = teWeinigGelogd(vraag)
 
+  /* EEN LEGE LIJST MOET ZEGGEN WAT ER NAGEKEKEN IS
+     Anders is "niets gevonden" niet te onderscheiden van "de lijst is stuk" —
+     en dat was letterlijk de eerste vraag die erover gesteld werd. */
   if (!lijst.length) {
     return (
-      <p className="klein">
-        {karig ?? 'Uit je voorkeuren en je log volgt niets wat ontbreekt. Dat is geen '
-          + 'garantie — de tabel bevat geen vitamines en mineralen, dus de app kan alleen '
-          + 'zien welke hoeken je overslaat en niet hoeveel er van iets binnenkomt.'}
-      </p>
+      <>
+        <p className="klein">
+          {karig ?? 'Uit je voorkeuren en je log volgt niets wat ontbreekt.'}
+        </p>
+        <div className="lijst" style={{ marginTop: 6 }}>
+          {nagekeken(vraag).map((r) => (
+            <div key={r.wat}>
+              <span className="klein groei">{r.wat}</span>
+              <span className="mini" style={{ color: 'var(--dim)' }}>{r.stand}</span>
+            </div>
+          ))}
+        </div>
+        <p className="mini" style={{ marginTop: 8 }}>
+          Dat is geen garantie — de tabel bevat geen vitamines en mineralen, dus de app kan
+          alleen zien welke hoeken je overslaat en niet hoeveel er van iets binnenkomt.
+        </p>
+      </>
     )
   }
 

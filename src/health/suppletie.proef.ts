@@ -19,7 +19,9 @@
  *    "ik weet het niet" bedoelt.
  */
 import { describe, expect, it } from 'vitest'
-import { GENOEG_DAGEN, VENSTER_DAGEN, adviezen, genoegGelogd, teWeinigGelogd } from './suppletie'
+import {
+  GENOEG_DAGEN, VENSTER_DAGEN, adviezen, genoegGelogd, nagekeken, teWeinigGelogd,
+} from './suppletie'
 import type { Suppletievraag } from './suppletie'
 import { GEEN_VOORKEUR } from './voorkeuren'
 import type { Voorkeuren } from './voorkeuren'
@@ -172,5 +174,57 @@ describe('de adviezen zelf', () => {
       gelogdeGroepen: [],
     }))
     expect(alles.map((a) => a.id).sort()).toEqual(['b12', 'calcium', 'ijzer', 'omega3'])
+  })
+})
+
+describe('wat er nagekeken is als er niets uit kwam', () => {
+  /* De aanleiding stond niet in de code maar in de vraag die erover gesteld
+     werd: "Wat ontbreekt is leeg?" Een lege lijst met alleen een voorbehoud
+     eronder is niet te onderscheiden van een kapotte lijst. */
+  it('noemt alle vier de regels, ook als er niets gevonden is', () => {
+    const v = vraag({ dagenGelogd: 20, gelogdeGroepen: ALLE_HOEKEN })
+    expect(adviezen(v)).toEqual([])
+    expect(nagekeken(v).map((r) => r.wat))
+      .toEqual(['Vitamine B12', 'IJzer', 'Omega-3', 'Calcium'])
+  })
+
+  /* Elke regel moet zijn éigen reden geven. Zouden ze allemaal hetzelfde
+     zeggen, dan is de lijst een sierrand en geen afleiding. */
+  it('en geeft per regel wat hij zag', () => {
+    const v = vraag({ dagenGelogd: 20, gelogdeGroepen: ALLE_HOEKEN })
+    for (const r of nagekeken(v)) expect(r.stand, r.wat).toBeTruthy()
+    expect(nagekeken(v).find((r) => r.wat === 'Omega-3')?.stand).toMatch(/in je log/)
+  })
+
+  /* Een hoek die je hebt uitgezet is iets anders dan een hoek die je niet logde,
+     en allebei zijn iets anders dan te weinig gegevens. Alle drie moeten
+     verschillend lezen — anders zegt de regel niets. */
+  it('onderscheidt uitgezet, niet gelogd en te weinig gelogd', () => {
+    const uitgezet = nagekeken(vraag({
+      dagenGelogd: 20, gelogdeGroepen: ALLE_HOEKEN,
+      voorkeuren: { nooit: [VIS] },
+    })).find((r) => r.wat === 'Omega-3')?.stand
+    const nietGelogd = nagekeken(vraag({
+      dagenGelogd: 20, gelogdeGroepen: ALLE_HOEKEN.filter((g) => !/^Vis/.test(g)),
+    })).find((r) => r.wat === 'Omega-3')?.stand
+    const teWeinig = nagekeken(vraag({ dagenGelogd: 3, gelogdeGroepen: [] }))
+      .find((r) => r.wat === 'Omega-3')?.stand
+    expect(uitgezet).toMatch(/uitgezet/)
+    expect(nietGelogd).toMatch(/niet in je log/)
+    expect(teWeinig).toMatch(/te weinig gelogd/)
+    expect(new Set([uitgezet, nietGelogd, teWeinig]).size).toBe(3)
+  })
+
+  /* B12 hangt aan je eetpatroon en niet aan je log. Die regel hoort dus iets
+     anders te zeggen dan de andere drie, anders belooft hij een controle die
+     er niet is. */
+  it('B12 leest je eetpatroon en niet je log', () => {
+    const alles = nagekeken(vraag({ dagenGelogd: 20, gelogdeGroepen: [] }))[0]!
+    expect(alles.stand).not.toMatch(/log/)
+    const vegan = nagekeken(vraag({
+      dagenGelogd: 20, gelogdeGroepen: ALLE_HOEKEN,
+      voorkeuren: { patroon: 'veganistisch' },
+    }))[0]!
+    expect(vegan.stand).toMatch(/plantaardig/)
   })
 })
