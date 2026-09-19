@@ -286,6 +286,16 @@ export function App() {
             <Beweging
               a={a} dagen={k.dagenkaart} training={k.alles.training} datum={datum}
               inspanning={k.alles.inspanning}
+              /* Voor de spierkaart: de stoeltest is een meting, de vijf vragen
+                 zijn een vragenlijst, en het eiwit per maaltijd komt uit de
+                 regels van vandaag. Alle drie bestonden al — deze kaart vraagt
+                 geen enkele databasewijziging. */
+              metingen={k.alles.metingen} vragenlijsten={k.alles.vragenlijsten}
+              regelsVandaag={regelsVandaag}
+              bewaarMeting={(m) => void k.wijzig((t) =>
+                roep('kal_rij_toevoegen', { p_token: t, p_tabel: 'meting', p_rij: m }))}
+              bewaarVragenlijst={(v) => void k.wijzig((t) =>
+                roep('kal_rij_toevoegen', { p_token: t, p_tabel: 'vragenlijst', p_rij: v }))}
               bewaarInspanning={(r) => void k.wijzig((t) =>
                 roep('kal_rij_toevoegen', { p_token: t, p_tabel: 'inspanning', p_rij: r }))}
               wisInspanning={(id) => void k.wijzig((t) =>

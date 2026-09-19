@@ -309,6 +309,34 @@ zout en bloeddruk, over thuis meten, over koolhydraten en vezels. Ze staan er
 voor iedereen hetzelfde en met de bron erbij; wat bij jou hoort staat bovenaan.
 Er valt niets weg — je mag lezen over iets wat je niet hebt.
 
+### Wat je spieren vasthoudt
+
+Bij snel afvallen verdwijnt er naast vet ook spier — bij semaglutide was dat in
+onderzoek ongeveer 45 procent van wat je kwijtraakt. Geen app kan dat meten. Wat
+deze wel doet, op het scherm Beweging, is de drie dingen naast elkaar zetten
+waarvan bekend is dat ze het tegengaan.
+
+**Eiwit per maaltijd.** Niet je dagtotaal — dat staat al bij Voeding — maar of
+elke maaltijd boven de 30 gram uitkomt. Daaronder komt de spieraanmaak
+nauwelijks op gang, en in een calorietekort telt dat zwaarder dan je dagtotaal.
+Ligt je dagdoel gedeeld door drie ónder die 30 gram, dan zegt de app dat, met het
+antwoord erbij: verdeel het over twee grotere maaltijden in plaats van drie.
+
+**Krachttraining.** Die telt al mee op hetzelfde scherm.
+
+**Opstaan uit een stoel.** Vijf keer opstaan en gaan zitten zonder je armen te
+gebruiken, met de klok van je telefoon. Boven de vijftien seconden is dat een
+aanwijzing om te bespreken — geen diagnose.
+
+Daarnaast kun je vijf vragen invullen over kracht, lopen, opstaan, traplopen en
+vallen. Eén genoemde klacht levert al een regel op. Dat is met opzet: deze lijst
+hoort dingen op te sporen, niet uit te sluiten.
+
+**Er komt geen score uit.** De drie meten elk iets anders, met een eigen
+onzekerheid; er één cijfer van maken zou nauwkeurigheid suggereren die er niet
+is. En de richting van dit advies is goed onderbouwd, de grootte niet — de app
+zegt dat er zelf bij.
+
 ### Wat ontbreekt er, en waarom de app daar voorzichtig in is
 
 Op het dagscherm staat een kaart *Wat ontbreekt er?*. Vijf regels, en ze kijken

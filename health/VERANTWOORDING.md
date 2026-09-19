@@ -1183,6 +1183,95 @@ schrijft niet voor.
 
 ---
 
+## 22c. Spierbehoud — drie hefbomen, en waarom er geen cijfer uit komt
+
+Een weegschaal telt kilo's en zegt niet waar ze vandaan komen. Bij snel
+gewichtsverlies is dat verschil groot: in de lichaamssamenstellingssubstudie van
+STEP-1 was ongeveer **45 %** van wat er op semaglutide verdween vetvrije massa;
+in de SURMOUNT-1-substudie bij tirzepatide ongeveer **25 %**.
+
+Geen app meet lichaamssamenstelling. Wat deze wel kan is de drie dingen naast
+elkaar zetten waarvan bekend is dat ze spierverlies tegengaan, en zeggen welke
+er staan.
+
+### De drie, in de volgorde waarin je er iets aan kunt doen
+
+**Eiwit per maaltijd.** Niet het dagtotaal — dat staat al op Voeding. Naast de
+dagmaat bestaat een tweede, onafhankelijke grens: bij ouderen is ongeveer 2,8 g
+leucine per maaltijd nodig om spieraanmaak te prikkelen, zo'n **30 g eiwit**. In
+een calorietekort is de aanmaak onderdrukt en de afbraak verhoogd, en dan telt
+het halen van die drempel bij élke maaltijd zwaarder dan het dagtotaal.
+
+*Waar de twee uit elkaar lopen.* Het scherm Voeding zet een stippellijn op het
+dagdoel gedeeld door drie. Bij een dagdoel van 161 g is dat 54 — ruim boven de
+drempel, en dan valt er niets te zien. Bij een dagdoel van 75 g is het 25, en
+dan ligt de stippellijn eronder: Voeding zegt "op peil" terwijl er van
+spieraanmaak weinig terechtkomt. De kaart zegt dat dan, met het antwoord erbij —
+dat is geen reden het dagdoel te verhogen maar om het over **twee grotere
+maaltijden** te verdelen.
+
+*Wat een maaltijd is.* Alleen ontbijt, lunch en diner, en alleen als er
+werkelijk iets gelogd is. Een handje amandelen is geen maaltijd: zou
+"tussendoor" meetellen, dan leest drie maaltijden op peil plus een tussendoortje
+als "3 van de 4" — een oordeel over het tussendoortje vermomd als een oordeel
+over spieren. Een diner dat er niet was telt evenmin als gemiste drempel.
+
+**Krachttraining.** Al geteld op dit scherm, tegen hetzelfde doel van drie
+sessies per week.
+
+**Opstaan uit een stoel.** Vijf keer opstaan en gaan zitten zonder je armen.
+Boven de **15 seconden** geldt als aanwijzing voor verminderde spierkracht
+(EWGSOP2). De Europese consensus laat de keuze tussen handknijpkracht en deze
+test; knijpkracht is aantoonbaar de betere maat, maar vraagt een dynamometer.
+Een maat die niemand thuis kan doen meet niets — daarom deze, met erbij dat hij
+de zwakkere is.
+
+Onder de **2 seconden** is het geen meting maar een dubbele tik op de knop, en
+dan leest hij als *niet gedaan*. Die ondergrens kwam uit de armatuur: die zet de
+klok vast, dus een stopwatch op `Date.now()` stond stil en er ging nul seconden
+de database in — wat daarna als "snel" las. De stopwatch gebruikt nu
+`performance.now()`, die monotoon doorloopt.
+
+### De screener, en waarom de lage afkapwaarde
+
+**SARC-F**: vijf vragen, geen apparaat. De gangbare afkapwaarde is 4. Die heeft
+een hoge specificiteit en een **lage sensitiviteit**: goed in uitsluiten, slecht
+in opsporen. Voor een screener in een app is dat de verkeerde kant van de fout —
+die hoort te signaleren, niet te diagnosticeren. Deze app gebruikt daarom **≥ 1**
+en bewaart beide betekenissen: één genoemde klacht is een regel op het scherm,
+vier of meer is "genoeg om het na te laten kijken".
+
+### Waarom er geen score uit komt
+
+Elk van de drie meet iets anders met een eigen onzekerheid. Ze optellen tot één
+spiergetal zou een nauwkeurigheid suggereren die geen van de drie heeft. Er komen
+drie regels uit die zeggen wat er staat en wat er ontbreekt, en "onbekend" is
+daarbij een eigen uitkomst.
+
+Een goede stoeltest van ouder dan drie maanden vervalt naar onbekend; een **tráge**
+uitslag doet dat niet. Verouderen in de richting van geruststelling mag, in de
+richting van wegkijken niet.
+
+### Wat hier niet bewezen is
+
+De richting is goed onderbouwd: meer eiwit en krachttraining behouden meer
+vetvrije massa dan minder. **De grootte niet.** In een overzicht van twintig
+studies naar eiwit en vetvrije massa vonden er drie een duidelijk verschil, en
+maar één daarvan ging over mensen boven de vijftig.
+
+Een app die zegt "1,6 g/kg behoudt je spieren" belooft daarom meer dan het bewijs
+draagt. Die zin staat als losse tekst in `spier.ts`, zodat het scherm hem moet
+tonen en niet kan vergeten.
+
+### Waar het opgeslagen wordt
+
+Nergens nieuw. De stoeltest is een rij in `kal_metingen` (`soort: 'stoeltest'`,
+eenheid seconden), de vragenlijst een rij in `kal_vragenlijsten` naast STOP-BANG.
+Deze hele module vroeg **geen enkele databasewijziging** — beide vormen bestonden
+al.
+
+---
+
 ## 23. De conditie — signaleren zonder te doseren
 
 Deze app rekent aan energie en verzadiging, en dat is voor de meeste mensen

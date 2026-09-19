@@ -3529,5 +3529,130 @@ for (const [naam, dagen, patroon, verwacht] of [
   await pagina.close()
 }
 
+/**
+ * DE DRIE HEFBOMEN DIE SPIER VASTHOUDEN
+ *
+ * Bij snel afvallen verdwijnt er naast vet ook spier — in de substudie van
+ * STEP-1 was ongeveer 45 procent van het verlies op semaglutide vetvrije massa.
+ * Geen app meet dat. Wat deze kaart doet is de drie dingen naast elkaar zetten
+ * waarvan bekend is dat ze het tegengaan.
+ *
+ * WAT HIER NIET MET EEN GREP TE ZIEN IS
+ *
+ * Twee dingen gaan de database in via een weg die al bestond: de stoeltest als
+ * meting, de vijf vragen als vragenlijst. Dat is precies waarom deze module
+ * geen enkele databasewijziging nodig had — en ook precies waarom het mis kan
+ * gaan zonder dat het scherm er anders uitziet. Een stoeltest die als
+ * `soort: 'middelomtrek'` wegschrijft staat er even netjes bij.
+ *
+ * Daarom loopt deze proef tot voorbij allebei de knoppen en kijkt hij wat er
+ * verstuurd wordt.
+ *
+ * En één ding dat er juist níét hoort te staan: bij een eiwitdoel van 161 gram
+ * is een derde daarvan 54 gram, ruim boven de drempel van dertig. De
+ * waarschuwing over de verdeling hoort dan weg te blijven. Een waarschuwing die
+ * bij iedereen staat, wordt door niemand gelezen.
+ */
+{
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: 'light' })
+  await bedienDb(pagina, 28, 'afvallen')
+
+  const verstuurd = []
+  await pagina.route('**/rest/v1/rpc/kal_rij_toevoegen', async (route) => {
+    verstuurd.push(JSON.parse(route.request().postData() ?? '{}'))
+    await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' })
+  })
+
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.hero', { timeout: 5000 })
+  await naarTab(pagina, 'Beweging')
+
+  const kaart = pagina.locator('.kaart').filter({ hasText: 'Wat je spieren vasthoudt' }).first()
+  await kaart.waitFor({ timeout: 5000 })
+  const plat = (await kaart.innerText()).replace(/\s+/g, ' ')
+
+  process.stdout.write('spierbehoud                ')
+
+  /* 1. De drie hefbomen staan er, in de volgorde waarin je er iets aan kunt
+        doen: eiwit eerst, want dat is de enige die vandaag te veranderen valt. */
+  const namen = await kaart.locator('.lijst > div .groei').allTextContents()
+  const kort = namen.map((n) => n.split('  ')[0].trim().split('\n')[0])
+  for (const moet of ['Eiwit per maaltijd', 'Krachttraining', 'Opstaan uit een stoel']) {
+    if (!kort.some((n) => n.startsWith(moet))) {
+      throw new Error(`spier: "${moet}" staat niet op de kaart — ${JSON.stringify(kort)}`)
+    }
+  }
+  if (!kort[0].startsWith('Eiwit')) {
+    throw new Error(`spier: eiwit staat niet voorop — ${JSON.stringify(kort)}`)
+  }
+
+  /* 2. De drempel staat in échte grammen, en telt alleen de hoofdmaaltijden die
+        werkelijk gelogd zijn.
+
+        De laatste dag van de proefreeks heeft alleen ontbijt en lunch — de
+        toestand van iemand die 's middags kijkt. Ontbijt is havermout plus
+        cappuccino: 18 + 5 = 23 gram eiwit, onder de drempel. Lunch is kaas plus
+        amandelen: 24 + 6 = 30, precies erop, en precies erop telt mee.
+
+        Dus "1 van de 2". Zou hier "2 van de 3" staan, dan telde de kaart een
+        maaltijd mee die er niet was — en dat is erger dan te weinig tellen: een
+        niet-gegeten diner van nul gram zou als gemiste drempel lezen. */
+  if (!/1 van de 2 boven 30 g/.test(plat)) {
+    throw new Error(`spier: de eiwitdrempel telt verkeerd — ${JSON.stringify(plat.slice(0, 260))}`)
+  }
+
+  /* 3. En de verdelingswaarschuwing blijft wég bij dit eiwitdoel. */
+  if (/onder de 30 g waarop de spieraanmaak/.test(plat)) {
+    throw new Error('spier: de verdelingswaarschuwing staat er terwijl 161/3 = 54')
+  }
+
+  /* 4. De stoeltest, tot voorbij de knop. */
+  await kaart.getByRole('button', { name: 'Stoeltest doen' }).click()
+  await kaart.getByRole('button', { name: 'Starten' }).click()
+  /* Ruim boven de ondergrens van twee seconden. Dat die grens bestaat, kwam
+     uit deze proef: de armatuur zet de klok vast, dus een stopwatch op
+     `Date.now()` stond stil en er ging nul seconden de database in — en nul
+     seconden las daarna als "snel". De stopwatch gebruikt nu
+     `performance.now()`, die loopt door omdat hij monotoon is en niet aan de
+     kalenderklok hangt. */
+  await pagina.waitForTimeout(2600)
+  await kaart.getByRole('button', { name: 'Klaar' }).click()
+  await kaart.getByRole('button', { name: 'Bewaren' }).click()
+  await pagina.waitForTimeout(400)
+
+  const meting = verstuurd.find((v) => v.p_tabel === 'meting')?.p_rij
+  if (!meting || meting.soort !== 'stoeltest' || meting.eenheid !== 's'
+      || !(meting.waarde >= 2)) {
+    throw new Error(`spier: de stoeltest gaat verkeerd de database in — ${JSON.stringify(meting)}`)
+  }
+
+  /* 5. De vijf vragen, met één genoemde klacht. Dat is er één, en de lage
+        afkapwaarde hoort hem als signaal te bewaren — niet als "geen". Bij de
+        gangbare grens van vier zou hier 'geen' staan, en dan zwijgt het scherm
+        precies bij de mensen voor wie de lijst bedoeld is. */
+  await kaart.getByRole('button', { name: 'Vijf vragen' }).click()
+  /* Op de groep en niet op de tekst: vijf vragen met dezelfde drie antwoorden
+     eronder zijn anders niet uit elkaar te houden — niet voor deze proef en
+     niet voor een schermlezer. */
+  const vraag = kaart.getByRole('group', { name: /tien traptreden/ })
+  await vraag.getByRole('button', { name: 'enige' }).click()
+  await pagina.waitForTimeout(150)
+  await kaart.getByRole('button', { name: 'Bewaren' }).click()
+  await pagina.waitForTimeout(400)
+
+  const lijst = verstuurd.find((v) => v.p_tabel === 'vragenlijst')?.p_rij
+  if (!lijst || lijst.soort !== 'sarcf' || lijst.score !== 1 || lijst.klasse !== 'signaal') {
+    throw new Error(`spier: de vragenlijst gaat verkeerd de database in — ${JSON.stringify(lijst)}`)
+  }
+  if (lijst.antwoorden?.traplopen !== 1) {
+    throw new Error(`spier: het antwoord komt niet mee — ${JSON.stringify(lijst.antwoorden)}`)
+  }
+
+  await pagina.screenshot({ path: 'gereedschap/health-spier.png', fullPage: true })
+  console.log(`3 hefbomen · stoeltest ${meting.waarde}s → meting · 1 klacht → score ${lijst.score}, ${lijst.klasse}`)
+  await pagina.close()
+}
+
 await browser.close()
 server.close()
