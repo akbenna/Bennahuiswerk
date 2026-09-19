@@ -2,7 +2,11 @@
 -- 43 — INSPANNING KRIJGT EEN SOORT
 -- ===========================================================================
 --
--- TOEGEPAST: nee.
+-- TOEGEPAST: ja, op 19 september 2026, samen met een nieuwe uitrol van
+-- `health/edge/kal-ai.ts`. Die twee horen bij elkaar: zonder de uitrol geeft de
+-- herkenning geen `soort` terug en komt elke work-out als "geen soort te zien"
+-- binnen — de tabel werkt dan wel, maar er valt niets in te zetten dan met de
+-- hand.
 --
 -- WAAROM
 --
