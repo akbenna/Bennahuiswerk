@@ -4,6 +4,19 @@
 --  Het is één keer gebruikt, op 26 augustus 2026, om het schema op een lége
 --  nieuwe database neer te zetten. Zie `SUPABASE-scheiding.md`.
 --
+--  ⚠  EN HET IS DAARNA NIET BIJGEWERKT. Wat de bestanden 26 tot en met 43 in
+--  `health/database/` hebben toegevoegd staat hier níet in: onder meer
+--  `kal_inspanning`, `kal_herstel_log`, `kal_ww_veelgebruikt`,
+--  `kal_ben_ik_beheerder`, `kal_eiwitrijk`, `kal_verzadiging` en `kal_hoeken`,
+--  en de nieuwere versies van `kal_ophalen`, `kal_rij_toevoegen` en
+--  `kal_rij_wissen`.
+--
+--  Dat is geen slordigheid maar het gevolg van wat dit bestand ís: een foto van
+--  één dag. Het staat hier omdat het de enige plek is waar de héle vorm van de
+--  database in één keer te lezen is, en dat blijft nuttig. Maar wie wil weten
+--  wat er nú draait, leest `health/database/` erbij — de latere bestanden
+--  vervangen wat hier staat, en de kop van elk bestand zegt of het toegepast is.
+--
 --  Draai je het op een database waar de tabellen al staan, dan valt het om:
 --
 --      ERROR: 42P16: multiple primary keys for table "bennahub_gezin"

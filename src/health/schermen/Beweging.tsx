@@ -42,8 +42,8 @@ import type { Analyse, Dagenkaart } from '../rekenkern'
 import { WegFiets, WegKracht, WegWeken } from '../tekens'
 import { SFEERFOTO } from '../sfeerfotos'
 import {
-  OUD_VELD, SOORTEN, WEEKDOEL_MIN, naamVan, soortVan, standaardIntensiteit,
-  verdeling, weekposten, weektotaal, zwareMinuten,
+  OUD_VELD, SOORTEN, WEEKDOEL_MIN, dagvenster, naamVan, soortVan,
+  standaardIntensiteit, verdeling, weekposten, weektotaal, zwareMinuten,
 } from '../inspanning'
 import type { Intensiteit, Post } from '../inspanning'
 
@@ -67,7 +67,13 @@ export function Beweging(
     }) => void
   },
 ) {
-  const sleutels = Object.keys(dagen).sort().slice(-21)
+  /* Een kalendervenster en niet de sleutels van de dagenkaart. Die kaart kent
+     alleen dagen waarvoor een meting of een maaltijd bestaat, en een
+     work-outafdruk importeren maakt zo'n rij niet — je rit stond dan wél in de
+     database en nergens op het scherm. En de zeven laatste sleutels zijn niet
+     de zeven laatste dagen: bij een gat reikte "deze week" stilletjes verder
+     terug. Zie `dagvenster` in `inspanning.ts`. */
+  const sleutels = dagvenster(vandaag(), 21)
   const laatste7 = sleutels.slice(-7)
     .map((x) => dagen[x]?.stappen).filter((v): v is number => v != null)
   const gem7 = laatste7.length

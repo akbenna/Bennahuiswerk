@@ -115,6 +115,12 @@ export interface VandaagEigenschappen {
  * op een telefoon afgekapt, en een halve opsomming is misleidender dan een
  * getal: je denkt dat je de hele lijst leest.
  */
+/** Enkelvoud bij één, meervoud bij de rest. Nul komt hier niet: een deel dat
+ *  leeg is wordt helemaal niet genoemd. */
+function telwoord(n: number, enkel: string, meer: string): string {
+  return n === 1 ? enkel : meer
+}
+
 export function voorkeurzin(v: Voorkeuren | undefined): string {
   const x = v ?? GEEN_VOORKEUR
   if (!ietsIngesteld(x)) {
@@ -122,8 +128,14 @@ export function voorkeurzin(v: Voorkeuren | undefined): string {
   }
   const delen: string[] = []
   if (x.patroon !== 'alles') delen.push(PATROONNAAM[x.patroon].toLowerCase())
-  if (x.nooit.length) delen.push(`${x.nooit.length} groepen uit`)
-  if ((x.keukens ?? []).length) delen.push(`${(x.keukens ?? []).length} keukens uit`)
+  /* "1 groepen uit" stond er maandenlang, en de proef eronder legde het vast in
+     plaats van het te vangen: er stond `toContain('1 groepen uit')`. Een proef
+     die de fout opschrijft is erger dan geen proef — hij houdt hem tegen. */
+  if (x.nooit.length) delen.push(`${x.nooit.length} ${telwoord(x.nooit.length, 'groep', 'groepen')} uit`)
+  if ((x.keukens ?? []).length) {
+    const n = (x.keukens ?? []).length
+    delen.push(`${n} ${telwoord(n, 'keuken', 'keukens')} uit`)
+  }
   if ((x.nietProduct ?? []).length) {
     delen.push(`${(x.nietProduct ?? []).length} weggeklikt`)
   }

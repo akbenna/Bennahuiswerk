@@ -8,7 +8,7 @@ startpagina. Er is geen router en geen enkele app weet van de andere.
 ```
 npm install
 npm run dev        de ontwikkelserver
-npm run controle   typen, proeven, bouw en de CSP-proef achter elkaar
+npm run controle   typen, edge, proeven, bouw en de CSP-proef achter elkaar
 ```
 
 ## De losse opdrachten
@@ -16,6 +16,7 @@ npm run controle   typen, proeven, bouw en de CSP-proef achter elkaar
 | | |
 |---|---|
 | `npm run typen` | `tsc --noEmit` over alles in `src/`. Levert niets op, controleert alles. |
+| `npm run edge` | Ontleedt elk bestand in `health/edge/` met de parser van TypeScript. Die map valt buiten `tsc -b` — de functies draaien op Deno en importeren van https-adressen die hier niet te halen zijn — en viel daarmee ook buiten elke andere controle. Geen typecontrole; wel de zekerheid dat Deno het bestand kan inlezen. Hij staat er sinds een uitrol weigerde op een backtick midden in een systeemprompt, die daar drie commits had gestaan. |
 | `npm run proef` | Vitest. Onder meer de gouden waarden van de rekenkern. |
 | `npm run build` | Typen én bouw; het resultaat staat in `dist/`. |
 | `npm run csp` | Zet `dist/` achter een server die de headers uit `vercel.json` meestuurt en laadt elke omgebouwde app in Chromium. Meldt elke CSP-overtreding, en speelt bij Spelletjes een potje, loopt bij Koran uit je hoofd een aya door, bij Geloofsstudie een hele week plus een kaart, bij Computers & Code een Python-les van begin tot eind plus de zandbak, bij Islam leren een profiel met een hele les en de gebedstijden, bij Arabisch een profiel met de eerste oefening, het alfabet en het zoeken, en bij Huiswerk een kind dat inlogt, een som maakt en de ouder-modus opent, om te zien of het ook wérkt. |

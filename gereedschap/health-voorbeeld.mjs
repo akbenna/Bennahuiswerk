@@ -3438,5 +3438,96 @@ for (const [naam, dagen, patroon, verwacht] of [
   await pagina.close()
 }
 
+/**
+ * DE DAG DIE ER NIET WAS
+ *
+ * De dagenkaart wordt gebouwd uit `kal_dagen` en `kal_regels`. Een dag waarop
+ * niets gemeten en niets gelogd is, staat er niet in — en daar zat de fout.
+ *
+ * Het bewegingsscherm nam zijn venster uit die kaart: de laatste eenentwintig
+ * sleutels. Een work-outafdruk importeren schrijft alleen in `kal_inspanning`
+ * en maakt geen dagrij. Je rit van zo'n dag stond dus wél in de database, kwam
+ * nergens op het scherm, en telde niet mee voor de norm. Dezelfde fout als
+ * `actieve_energie_kcal`, dat maandenlang netjes werd opgeslagen en door niets
+ * werd gelezen — en net zo onzichtbaar, want het scherm ziet er verder precies
+ * hetzelfde uit.
+ *
+ * Daarom een eigen reeks met een gat erin. Dat gat is het hele punt: met de
+ * gewone proefgegevens, waar elke dag een rij heeft, valt hier niets te zien.
+ */
+{
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: 'light' })
+
+  const grond = alles(28, 'afvallen')
+  /* Twee dagen terug bestaat niet: geen meting, geen maaltijd. Precies de
+     toestand van een dag van vóór de koppeling.
+
+     Met opzet een dag die fietsminuten hád: zo laat het totaal twee dingen
+     tegelijk zien — dat de 45 van die dag wegvalt mét de dagrij, en dat de rit
+     uit `kal_inspanning` er los van blijft staan. Was het een dag zonder
+     fietsminuten, dan bewees het totaal maar de helft. */
+  const gatdag = grond.dagen[grond.dagen.length - 3]
+  const gat = gatdag.datum
+  if (gatdag.fiets_min !== 45) {
+    throw new Error(`gatendag: de proefreeks is veranderd — ${gat} heeft ${gatdag.fiets_min} fietsminuten`)
+  }
+  const gaten = {
+    ...grond,
+    dagen: grond.dagen.filter((d) => d.datum !== gat),
+    regels: grond.regels.filter((r) => r.datum !== gat),
+    /* Eén rit, op precies die dag, en zwaar zodat hij ook in de wisselkoers
+       zichtbaar is: 60 echte minuten horen als 120 te tellen. */
+    inspanning: [{
+      id: 'proef-1', datum: gat, soort: 'rennen', eigennaam: null, minuten: 60,
+      intensiteit: 'zwaar', geschat: true, bron: 'import', tijd: null, notitie: null,
+    }],
+  }
+  await pagina.route('**/rest/v1/rpc/**', async (route) => {
+    const fn = route.request().url().split('/').pop()
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify(fn === 'kal_ophalen' ? gaten : {}),
+    })
+  })
+
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.hero', { timeout: 5000 })
+  await naarTab(pagina, 'Beweging')
+
+  const kaart = pagina.locator('.kaart').filter({ hasText: /van 150 min/ }).first()
+  const plat = (await kaart.innerText()).replace(/\s+/g, ' ')
+
+  /* De vier fietsdagen van de reeks leveren 180; de dag met het gat is er één
+     van, dus die valt weg en er blijven er drie over: 135. Daar bovenop de rit
+     van 60 zware minuten, die als 120 telt. Samen 255. */
+  if (!/255 van 150 min/.test(plat)) {
+    throw new Error(`gatendag: het weektotaal is niet 255 — ${JSON.stringify(plat.slice(0, 200))}`)
+  }
+  /* En hij staat in de verdeling, in échte minuten. */
+  if (!/Hardlopen 60′/.test(plat)) {
+    throw new Error(`gatendag: de rit staat niet in de verdeling — ${JSON.stringify(plat.slice(0, 260))}`)
+  }
+  if (!/waarvan 60 zwaar/.test(plat)) {
+    throw new Error(`gatendag: de zware minuten worden niet genoemd — ${JSON.stringify(plat.slice(0, 260))}`)
+  }
+
+  /* En in de lijst van drie weken staat de dag er met zijn minuten, náást de
+     streepjes voor de stappen die er niet zijn. Zonder die regel is een dag
+     zonder meting op dit scherm onvindbaar. */
+  const weken = pagina.locator('.kaart').filter({ hasText: 'Laatste drie weken' }).first()
+  const regel = weken.locator('.lijst > div').filter({ hasText: '60′' })
+  if (!(await regel.count())) {
+    throw new Error('gatendag: de dag zonder meting staat niet in de driewekenlijst')
+  }
+  const tekst = (await regel.first().innerText()).replace(/\s+/g, ' ')
+  if (!/—/.test(tekst)) {
+    throw new Error(`gatendag: de dag toont stappen die er niet zijn — ${JSON.stringify(tekst)}`)
+  }
+
+  console.log(`gatendag                   ${gat} zonder dagrij · 135 + 60 zwaar = 255 van 150 · ${JSON.stringify(tekst)}`)
+  await pagina.close()
+}
+
 await browser.close()
 server.close()

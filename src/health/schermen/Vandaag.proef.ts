@@ -28,7 +28,7 @@ describe('voorkeurzin', () => {
     const zin = voorkeurzin(v({ patroon: 'vegetarisch', nooit: ['Vis, schaal- en schelpdieren'] }))
     expect(zin).toMatch(/houden zich aan/)
     expect(zin).toContain('vegetarisch')
-    expect(zin).toContain('1 groepen uit')
+    expect(zin).toContain('1 groep uit')
   })
 
   it('telt en somt niet op', () => {
@@ -41,8 +41,24 @@ describe('voorkeurzin', () => {
 
   it('noemt de keukens en de weggeklikte producten apart', () => {
     const zin = voorkeurzin(v({ keukens: ['turks'], nietProduct: ['2731', '2730'] }))
-    expect(zin).toContain('1 keukens uit')
+    expect(zin).toContain('1 keuken uit')
     expect(zin).toContain('2 weggeklikt')
+  })
+
+  /* EEN TELWOORD IS GEEN DETAIL
+     "1 groepen uit" stond op het dagscherm, en de proef hierboven schreef het
+     op in plaats van het te vangen. Dit geval staat er daarom apart: de grens
+     tussen één en twee, aan beide kanten, voor allebei de woorden. */
+  it('zegt "groep" bij één en "groepen" bij twee', () => {
+    expect(voorkeurzin(v({ nooit: ['Kaas'] }))).toContain('1 groep uit')
+    expect(voorkeurzin(v({ nooit: ['Kaas'] }))).not.toContain('groepen')
+    expect(voorkeurzin(v({ nooit: ['Kaas', 'Vleeswaren'] }))).toContain('2 groepen uit')
+  })
+
+  it('en "keuken" bij één en "keukens" bij twee', () => {
+    expect(voorkeurzin(v({ keukens: ['turks'] }))).toContain('1 keuken uit')
+    expect(voorkeurzin(v({ keukens: ['turks'] }))).not.toContain('keukens')
+    expect(voorkeurzin(v({ keukens: ['turks', 'syrisch'] }))).toContain('2 keukens uit')
   })
 
   it('noemt alleen wat er is', () => {
