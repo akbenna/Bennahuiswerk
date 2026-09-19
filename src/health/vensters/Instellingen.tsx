@@ -2,7 +2,7 @@
  * DRIE VENSTERS: profiel, importeren en account.
  * Overgezet uit vensterProfiel(), vensterImport() en vensterAccount().
  */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Kaart, Keuzechip, Knop, Kop, Rij, Spin, Venster } from '../onderdelen/basis'
 import { MEDICATIEGROEPEN } from '../conditie'
 import type { Conditie, Medicatiegroep } from '../conditie'
@@ -357,10 +357,144 @@ export function AccountVenster(
       </p>
       <WachtwoordWijzigen />
       <Herstelcode />
+      <BeheerdersHerstelcode />
       <Rij style={{ marginTop: 14 }}>
         <Knop opKlik={opAfmelden}>Afmelden</Knop>
       </Rij>
     </Venster>
+  )
+}
+
+/**
+ * EEN HERSTELCODE VOOR IEMAND ANDERS
+ *
+ * Alleen zichtbaar voor een beheerder. Wat dat is en waarom de vlag met de hand
+ * aangaat staat in `health/database/40-een-beheerder-die-niet-stilletjes-kan.sql`.
+ *
+ * WAT HIER NIET STAAT, EN DAT IS HET BELANGRIJKSTE
+ *
+ * Er staat geen belofte dat de beheerder er niet mee binnenkomt. Dat zou niet
+ * waar zijn: wie een code doorgeeft heeft hem gezien en kan hem zelf inwisselen.
+ * De tekst op het scherm zegt dat ook, want een schermbelofte die niet klopt is
+ * erger dan geen belofte.
+ *
+ * Wat de regeling wél geeft is dat het niet stil kan: het slachtoffer merkt het
+ * meteen, en elke uitgifte staat in `kal_herstel_log`.
+ *
+ * DE KNOP IS GEEN SLOT
+ *
+ * `kal_ben_ik_beheerder` bepaalt alleen of dit blok er staat. Wie dat antwoord
+ * in zijn browser vervalst krijgt een formulier te zien dat bij het indrukken
+ * alsnog geweigerd wordt — de grens ligt in de database en niet hier.
+ */
+function BeheerdersHerstelcode() {
+  const [mag, zetMag] = useState(false)
+  const [open, zetOpen] = useState(false)
+  const [voor, zetVoor] = useState('')
+  const [ww, zetWw] = useState('')
+  const [uitslag, zetUitslag] = useState<{ code: string; account: string } | null>(null)
+  const [fout, zetFout] = useState<string | null>(null)
+  const [bezig, zetBezig] = useState(false)
+
+  const token = () => {
+    try {
+      const s = JSON.parse(localStorage.getItem('kalibratie.sessie') ?? 'null') as
+        { token?: string } | null
+      return s?.token ?? null
+    } catch { return null }
+  }
+
+  useEffect(() => {
+    let afgebroken = false
+    void (async () => {
+      const t = token()
+      if (!t) return
+      try {
+        const uit = await roep('kal_ben_ik_beheerder', { p_token: t })
+        if (!afgebroken) zetMag(uit?.beheerder === true)
+      } catch { /* geen beheerdersrecht, geen regel — dit is geen fout */ }
+    })()
+    return () => { afgebroken = true }
+  }, [])
+
+  const maak = async () => {
+    zetBezig(true)
+    zetFout(null)
+    try {
+      const t = token()
+      if (!t) { zetFout('Je bent niet aangemeld'); return }
+      const uit = await roep('kal_herstelcode_voor',
+        { p_token: t, p_ww: ww, p_account: voor.trim().toLowerCase() })
+      if ('fout' in uit) { zetFout(uit.fout); return }
+      zetUitslag(uit)
+      zetWw('')
+      zetVoor('')
+    } catch (e) {
+      zetFout(e instanceof Error ? e.message : String(e))
+    } finally {
+      zetBezig(false)
+    }
+  }
+
+  if (!mag) return null
+
+  if (uitslag) {
+    return (
+      <div className="kaart" style={{ marginTop: 14 }}>
+        <Kop>Code voor {uitslag.account}</Kop>
+        <p className="getal" style={{ fontSize: '1.15rem', marginTop: 8, letterSpacing: '.02em' }}>
+          {uitslag.code}
+        </p>
+        <p className="mini" style={{ marginTop: 8 }}>
+          Geef hem door en bewaar hem zelf niet. Hij werkt één keer, en de oude code van{' '}
+          {uitslag.account} werkt niet meer. Deze uitgifte staat vastgelegd.
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ marginTop: 14 }}>
+      {!open ? (
+        <p className="mini">
+          <button type="button" className="alsLink" onClick={() => zetOpen(true)}>
+            Herstelcode voor iemand anders
+          </button>
+          {' '}— voor wie zijn wachtwoord én zijn code kwijt is.
+        </p>
+      ) : (
+        <>
+          <label className="veld">
+            <span>voor welk account</span>
+            <input autoCapitalize="none" spellCheck={false} value={voor}
+                   onChange={(e) => zetVoor(e.target.value)} />
+          </label>
+          <label className="veld" style={{ marginTop: 10 }}>
+            <span>je eigen wachtwoord</span>
+            <input type="password" autoComplete="current-password" value={ww}
+                   onChange={(e) => zetWw(e.target.value)} />
+          </label>
+          {/* Eerlijk over wat dit is. Zie de kop van deze component. */}
+          <p className="mini" style={{ marginTop: 8 }}>
+            Diegene zet er zelf een nieuw wachtwoord mee. Je kent dat wachtwoord niet — maar je hebt
+            de code wel gezien, dus je zou hem ook zelf kunnen gebruiken. Daarom wordt elke uitgifte
+            vastgelegd, en merkt diegene het onmiddellijk.
+          </p>
+          <p className="klein" style={{ marginTop: 8, minHeight: '1.3em' }}>
+            {bezig ? <><Spin /> Bezig…</> : fout}
+          </p>
+          <Rij>
+            <Knop vol uit={voor.trim() === '' || ww === '' || bezig} opKlik={() => void maak()}>
+              Code maken
+            </Knop>
+            <Knop uit={bezig}
+                  opKlik={() => { zetOpen(false); zetVoor(''); zetWw(''); zetFout(null) }}>
+              Laat maar
+            </Knop>
+          </Rij>
+        </>
+      )}
+    </div>
   )
 }
 

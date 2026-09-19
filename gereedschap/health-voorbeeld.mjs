@@ -536,6 +536,9 @@ async function bedienDb(pagina, dagen, fase) {
           }
       : fn === 'kal_eiwitrijk' ? EIWITRIJK
       : fn === 'kal_verzadiging' ? VERZADIGING
+      : fn === 'kal_ben_ik_beheerder' ? { beheerder: pagina.__beheerder === true }
+      : fn === 'kal_herstelcode_voor'
+        ? { code: 'QQQQQ-WWWWW-EEEEE-RRRRR', account: 'fatima' }
       : fn === 'kal_koppelingen_lijst' ? KOPPELINGEN
       : fn === 'kal_koppeling_maken'
         ? { sleutel: 'kal_' + 'a3f19c7e42b08d5619fa2c3d7e8b04915cad6237'.slice(0, 48),
@@ -1752,6 +1755,86 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
   console.log(`wachtwoord kwijt         3 knoppen \u00b7 3 velden \u00b7 `
     + `knop uit bij leeg en bij 4 zwakke wachtwoorden \u00b7 Terug werkt`)
   await uit.close()
+}
+
+/* ------------------------------------------------- het accountvenster ---- */
+/* DE BEHEERDERSREGEL HOORT ER ALLEEN TE STAAN VOOR EEN BEHEERDER
+   `kal_herstelcode_voor` bestond sinds bestand 40 maar was nergens vanuit de app
+   bereikbaar — en daarmee hielp hij alleen wie de SQL-editor al openheeft, dus
+   precies de persoon die hem niet nodig heeft. Bestand 41 en dit scherm maken
+   dat af.
+
+   Wat hier bewezen moet worden zijn twee dingen tegelijk, en het tweede is het
+   belangrijkste: dat de regel er stáát voor een beheerder, én dat hij er niet
+   staat voor een ander. Een proef die alleen het eerste doet gaat groen bij een
+   knop die bij iedereen staat. */
+{
+  const meten = async (beheerder) => {
+    const c = await browser.newContext({
+      viewport: { width: 430, height: 1180 }, deviceScaleFactor: 2,
+      locale: 'nl-NL', timezoneId: 'Europe/Amsterdam',
+    })
+    const pagina = await c.newPage()
+    pagina.__beheerder = beheerder
+    await bedienDb(pagina, 28, 'afvallen')
+    await pagina.addInitScript(() => {
+      localStorage.setItem('kalibratie.sessie',
+        JSON.stringify({ token: 'proeftoken', account: 'abdelkader' }))
+    })
+    await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+    await pagina.waitForTimeout(700)
+    /* Het accountvenster hangt aan de ronde knop met de initialen, rechtsboven
+       in de kop. Er is geen tabblad voor. */
+    await pagina.getByRole('button', { name: /^Account van/ }).click()
+    await pagina.waitForTimeout(500)
+
+    const eigen = await pagina.getByRole('button', { name: 'Herstelcode maken', exact: true }).count()
+    const wijzig = await pagina.getByRole('button', { name: 'Wachtwoord wijzigen', exact: true }).count()
+    const ander = await pagina
+      .getByRole('button', { name: 'Herstelcode voor iemand anders', exact: true }).count()
+    return { pagina, c, eigen, wijzig, ander }
+  }
+
+  const gewoon = await meten(false)
+  const baas = await meten(true)
+
+  /* De twee regels die er voor iedereen horen te staan. Staan die er niet, dan
+     is het venster stuk en zegt het verschil hieronder niets. */
+  for (const [wie, uit] of [['gewoon', gewoon], ['beheerder', baas]]) {
+    if (uit.eigen !== 1) throw new Error(`account (${wie}): "Herstelcode maken" ontbreekt`)
+    if (uit.wijzig !== 1) throw new Error(`account (${wie}): "Wachtwoord wijzigen" ontbreekt`)
+  }
+  if (gewoon.ander !== 0) {
+    throw new Error('account: de beheerdersregel staat er voor wie geen beheerder is')
+  }
+  if (baas.ander !== 1) {
+    throw new Error('account: de beheerdersregel ontbreekt voor een beheerder')
+  }
+
+  /* En het formulier erachter. De tekst die eerlijk is over wat dit is hoort
+     erin te staan; verdwijnt die, dan belooft het scherm iets dat niet waar is. */
+  await baas.pagina.getByRole('button', { name: 'Herstelcode voor iemand anders', exact: true }).click()
+  await baas.pagina.waitForTimeout(300)
+  /* `exact` is hier nodig en niet netjesheid: Playwright zoekt op deelreeks, en
+     "Herstelcode maken" van het blok erboven bevat "Code maken". Zonder exact
+     vindt hij er twee en valt de proef om op iets dat niets met het scherm te
+     maken heeft. */
+  const knop = baas.pagina.getByRole('button', { name: 'Code maken', exact: true })
+  if (!(await knop.isDisabled())) throw new Error('account: "Code maken" staat aan met lege velden')
+  const uitleg = await baas.pagina.locator('.venster').innerText()
+  if (!/zou hem ook zelf kunnen gebruiken/.test(uitleg)) {
+    throw new Error('account: de waarschuwing over de eigen inzage staat er niet')
+  }
+  const velden = await baas.pagina.locator('.veld > span').allTextContents()
+  if (!velden.includes('voor welk account') || !velden.includes('je eigen wachtwoord')) {
+    throw new Error(`account: velden zijn ${JSON.stringify(velden)}`)
+  }
+  await baas.pagina.screenshot({ path: 'gereedschap/health-beheerder.png' })
+
+  console.log(`het accountvenster        beheerdersregel: 1 voor de beheerder, 0 voor de rest · `
+    + `2 eigen regels bij allebei · knop uit bij leeg · waarschuwing staat er`)
+  await gewoon.c.close()
+  await baas.c.close()
 }
 
 /* ------------------------------------------------ meebewegen met de maat -- */

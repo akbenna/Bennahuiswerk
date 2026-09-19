@@ -417,6 +417,14 @@ export interface RpcKaart {
   kal_herstelcode_maken: {
     in: { p_token: string; p_ww: string }; uit: { code: string } | { fout: string }
   }
+  /* De beheerdersweg — zie health/database/40 en 41. `kal_ben_ik_beheerder`
+     bepaalt alleen of de knop er staat; de echte grens ligt in
+     `kal_herstelcode_voor`, die zelf nog eens het wachtwoord vraagt. */
+  kal_ben_ik_beheerder: { in: { p_token: string }; uit: { beheerder: boolean } }
+  kal_herstelcode_voor: {
+    in: { p_token: string; p_ww: string; p_account: string }
+    uit: { code: string; account: string } | { fout: string }
+  }
   kal_ww_herstellen: {
     in: { p_account: string; p_code: string; p_nieuw: string }; uit: Aanmelduitslag
   }
