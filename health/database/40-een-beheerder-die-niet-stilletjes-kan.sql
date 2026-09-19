@@ -2,7 +2,8 @@
 -- 40 — EEN BEHEERDER DIE HET NIET STILLETJES KAN
 -- ===========================================================================
 --
--- TOEGEPAST: nee. Draai dit bestand in de SQL-editor, ná bestand 39.
+-- TOEGEPAST: ja, op 19 september 2026. De vlag `beheerder` en de tabel `kal_herstel_log`
+-- bestaan. Wie beheerder is, is een handmatig besluit; zie NAKIJKEN onderaan.
 --
 -- Het probleem staat al beschreven in de kop van bestand 33: wie zijn wachtwoord
 -- kwijt is én zijn herstelcode niet bewaard heeft, komt er niet meer in. Dat is
