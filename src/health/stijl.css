@@ -398,7 +398,13 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
    `health-voorbeeld.mjs`. Zo kwam dit boven water.
 
    Alleen in de hero, want alleen de hero heeft dit gestapelde verloop. */
-.hero{--dim:#4F5753}
+/* EN NOG EEN TINT DONKERDER, TOEN HET VERLOOP VOLLER WERD
+   De hero draagt sinds september een foto boven de tekst en een voller verloop
+   eronder; het aqua van de middag bracht "36% van de energie" op 4,36. Dezelfde
+   hefboom als hierboven, en hij is gemeten: een tint donkerder koopt ongeveer
+   0,6 aan contrast. Dat is geen verlies — juist deze regels dragen de
+   onzekerheidsbanden, en die horen leesbaar te zijn. */
+.hero{--dim:#454D49}
 @media (prefers-color-scheme:dark){:root:not([data-thema]) .hero{--dim:#9EAAA5}}
 :root[data-thema="donker"] .hero{--dim:#9EAAA5}
 /* HET MOTIEF OP DE HERO NEEMT DE INKTKLEUR EN NIET HET ACCENT

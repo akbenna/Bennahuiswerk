@@ -46,6 +46,7 @@ import { Dagenstrook, Doelring } from '../hero'
 import { Signaalkaarten } from '../signalen'
 import { LeegGeenMaaltijden } from '../leegbeeld'
 import { Sfeervlak } from '../achtergronden'
+import { SFEERFOTO, SFEER_SIZES, sfeerSrcset } from '../sfeerfotos'
 import type { Dagstaaf } from '../hero'
 import { dec, dz } from '@/gedeeld/getal'
 import { kortNL, langNL, plusDagen, stapDag, vandaag } from '@/gedeeld/datum'
@@ -177,39 +178,53 @@ const MOMENTEN: Array<{ id: Moment; naam: string; kort: string; klas: string; le
  * elk stukje tekst — verlopen meegerekend — en houdt AA aan. Wie hier aan
  * draait, draait die proef.
  */
+/* DE KLEUREN ZIJN VOLLER GEWORDEN, EN DAT HAD EEN REDEN EN EEN REM
+
+   De reden: ze irriteerden. Wat er stond was crème dat naar perzik kantelde —
+   over driehonderd punten hoogte leest dat als stof, niet als ochtend.
+
+   De rem is de kleine grijze tekst eronder, die op de werkelijke beeldpunten
+   4,5 moet halen. Elke keer dat de kleur voller wordt, zakt die regel. Dat is
+   precies waarom het hier zo bleek stond.
+
+   Wat er nu staat is gemeten en niet gekozen: per dagdeel de volste variant die
+   de contrastproef in `health-voorbeeld.mjs` nog haalt. De avond is met opzet
+   lichter dan de andere twee — violet in de rechteronderhoek landt precies waar
+   de grijze regels staan, en die combinatie zakte als eerste. Wie hier aan
+   draait, draait die proef. */
 const HERO = {
   licht: [
-    [/* ochtend — crème dat naar perzik kantelt, met warmte in de linkerbovenhoek
-        en een rozige gloed rechtsonder waar de ring staat */
-     'radial-gradient(118% 96% at 6% -8%,#FFF8EA 0%,rgba(255,248,234,0) 54%),'
-     + 'radial-gradient(96% 88% at 96% 96%,rgba(232,158,138,.34) 0%,rgba(232,158,138,0) 62%),'
-     + 'linear-gradient(152deg,#FDF1DD 0%,#F6DEC8 52%,#EFD0C1 100%)',
-     'rgba(255,247,235,.75)'],
-    [/* middag — het groen van de app zelf, weggetrokken naar de hoek zodat het
-        een toon is en geen vlak */
-     'radial-gradient(118% 96% at 6% -8%,#F7FBF5 0%,rgba(247,251,245,0) 52%),'
-     + 'radial-gradient(96% 88% at 96% 96%,rgba(16,168,126,.22) 0%,rgba(16,168,126,0) 62%),'
-     + 'linear-gradient(152deg,#EDF5EB 0%,#DBEDE4 52%,#CCE6DD 100%)',
-     'rgba(255,255,255,.7)'],
-    [/* avond — koel, met indigo in dezelfde hoek */
-     'radial-gradient(118% 96% at 6% -8%,#F5F7FE 0%,rgba(245,247,254,0) 52%),'
-     + 'radial-gradient(96% 88% at 96% 96%,rgba(108,128,214,.26) 0%,rgba(108,128,214,0) 62%),'
-     + 'linear-gradient(152deg,#E9EDF6 0%,#DAE0F0 52%,#CFD6EC 100%)',
-     'rgba(255,255,255,.55)'],
+    [/* ochtend — mango: goud linksboven, warm oranje in de hoek waar de ring staat */
+     'radial-gradient(118% 96% at 6% -8%,#FFFCEB 0%,rgba(255,252,235,0) 54%),'
+     + 'radial-gradient(96% 88% at 96% 96%,rgba(255,164,30,.44) 0%,rgba(255,164,30,0) 64%),'
+     + 'linear-gradient(152deg,#FFF6D6 0%,#FFE9A8 52%,#FFD98A 100%)',
+     'rgba(255,252,236,.8)'],
+    [/* middag — aqua, helder en koel zonder grijs te worden */
+     'radial-gradient(118% 96% at 6% -8%,#EFFDFF 0%,rgba(239,253,255,0) 52%),'
+     + 'radial-gradient(96% 88% at 96% 96%,rgba(0,190,205,.40) 0%,rgba(0,190,205,0) 64%),'
+     + 'linear-gradient(152deg,#E2FAFC 0%,#BFF1F6 52%,#A2E8F0 100%)',
+     'rgba(255,255,255,.78)'],
+    [/* avond — violet, en met opzet lichter dan de andere twee: deze kleur landt
+        in de hoek waar de grijze regels staan, en zakte daar als eerste door de
+        ondergrens. Gemeten en niet geschat. */
+     'radial-gradient(118% 96% at 6% -8%,#FFF8FD 0%,rgba(255,248,253,0) 52%),'
+     + 'radial-gradient(96% 88% at 96% 96%,rgba(206,96,190,.24) 0%,rgba(206,96,190,0) 64%),'
+     + 'linear-gradient(152deg,#FDF3FA 0%,#F6E4F4 52%,#EED6EE 100%)',
+     'rgba(255,255,255,.72)'],
   ],
   donker: [
-    ['radial-gradient(118% 96% at 6% -8%,rgba(255,196,128,.13) 0%,rgba(255,196,128,0) 54%),'
-     + 'radial-gradient(96% 88% at 96% 96%,rgba(176,88,48,.22) 0%,rgba(176,88,48,0) 62%),'
-     + 'linear-gradient(152deg,#2E2419 0%,#261D16 52%,#1E1712 100%)',
-     'rgba(255,214,150,.10)'],
-    ['radial-gradient(118% 96% at 6% -8%,rgba(88,232,182,.12) 0%,rgba(88,232,182,0) 52%),'
-     + 'radial-gradient(96% 88% at 96% 96%,rgba(12,124,96,.28) 0%,rgba(12,124,96,0) 62%),'
-     + 'linear-gradient(152deg,#18251F 0%,#15201D 52%,#121A19 100%)',
-     'rgba(180,255,220,.08)'],
-    ['radial-gradient(118% 96% at 6% -8%,rgba(150,178,255,.12) 0%,rgba(150,178,255,0) 52%),'
-     + 'radial-gradient(96% 88% at 96% 96%,rgba(64,84,180,.26) 0%,rgba(64,84,180,0) 62%),'
-     + 'linear-gradient(152deg,#171D2A 0%,#151A24 52%,#12151E 100%)',
-     'rgba(160,190,255,.08)'],
+    ['radial-gradient(118% 96% at 6% -8%,rgba(255,206,110,.15) 0%,rgba(255,206,110,0) 54%),'
+     + 'radial-gradient(96% 88% at 96% 96%,rgba(190,110,20,.26) 0%,rgba(190,110,20,0) 64%),'
+     + 'linear-gradient(152deg,#2F2617 0%,#271F14 52%,#1F1810 100%)',
+     'rgba(255,220,150,.11)'],
+    ['radial-gradient(118% 96% at 6% -8%,rgba(96,226,240,.13) 0%,rgba(96,226,240,0) 52%),'
+     + 'radial-gradient(96% 88% at 96% 96%,rgba(0,130,145,.30) 0%,rgba(0,130,145,0) 64%),'
+     + 'linear-gradient(152deg,#13262A 0%,#112126 52%,#0F1B20 100%)',
+     'rgba(170,240,255,.09)'],
+    ['radial-gradient(118% 96% at 6% -8%,rgba(226,150,220,.12) 0%,rgba(226,150,220,0) 52%),'
+     + 'radial-gradient(96% 88% at 96% 96%,rgba(140,60,130,.26) 0%,rgba(140,60,130,0) 64%),'
+     + 'linear-gradient(152deg,#271A26 0%,#221721 52%,#1C131C 100%)',
+     'rgba(240,180,235,.09)'],
   ],
 } as const
 
@@ -297,6 +312,21 @@ export function Vandaag(p: VandaagEigenschappen) {
       <section className="hero"
                style={{ '--herobg': kleur.achtergrond, '--heroglow': kleur.glans } as React.CSSProperties}>
         <div className="heroglans" />
+        {/* DE FOTO STAAT BOVEN DE TEKST EN NIET ERACHTER
+            Dat is geen voorzichtigheid maar wat eruit kwam toen het gemeten
+            werd. Erachter kán: met een waas van 0,76 en het stille grijs één
+            tint donkerder haalt de krapste regel nog 4,74. Maar wat je dan ziet
+            is geen foto meer — bij die dichtheid is de fruitschaal een beige
+            waas, en juist de Vandaag-hero staat zo vol tekst dat er geen open
+            vlak is waar het beeld zichzelf kan zijn.
+
+            Boven de tekst blijft hij een foto, op volle kleur, en kan het
+            verloop eronder tegelijk voller worden. Het is dezelfde band die de
+            vijf andere schermen al dragen — Vandaag was het enige scherm dat uit
+            de toon viel. */}
+        <img className="schermstrook" src={SFEERFOTO.vandaag}
+             srcSet={sfeerSrcset(SFEERFOTO.vandaag)} sizes={SFEER_SIZES}
+             alt="" loading="lazy" aria-hidden="true" />
         {/* Het blad hoort bij voeding, en de hero gaat over wat je vandaag at.
             Hij neemt hier de inktkleur; waarom, staat bij `.hero .sfeer` in de
             stijl. */}
