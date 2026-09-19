@@ -2,7 +2,9 @@
 -- 39 — EEN WACHTWOORD DAT STANDHOUDT
 -- ===========================================================================
 --
--- TOEGEPAST: nee. Draai dit bestand in de SQL-editor.
+-- TOEGEPAST: ja, op 19 september 2026. De ondergrens staat op twaalf tekens en de lijst
+-- telt 155 woorden. Nakijken kan zonder je geheugen te vertrouwen — zie
+-- NAKIJKEN onderaan.
 --
 -- De eis stond op acht tekens, op vier plaatsen los van elkaar ingetikt:
 -- `kal_registreren`, `kal_ww_wijzigen`, `kal_ww_herstellen` en één regel in
