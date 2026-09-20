@@ -1,7 +1,7 @@
 /**
  * VERDIEPEN: het boekje over afvallen, medicatie en wat je vasthoudt
  *
- * Acht stukken, en ze staan er voor iedereen hetzelfde. Net als `leren.ts` is
+ * Negen stukken, en ze staan er voor iedereen hetzelfde. Net als `leren.ts` is
  * dit een boek en geen behandeling: er wordt niets van de gebruiker gelezen,
  * niets uitgerekend, en niets aangepast aan wie je bent.
  *
@@ -97,9 +97,19 @@ export const VERDIEPINGEN: readonly Verdieping[] = [
       'Een paar signalen zijn geen gewenning en horen dezelfde dag bij je arts te komen: hevige '
         + 'buikpijn die naar je rug uitstraalt, aanhoudend braken, geel worden van je huid of '
         + 'oogwit, of tekenen van uitdroging.',
-      'Bij de erkende middelen voor gewichtsbehandeling is in onderzoek gemiddeld 15 tot ruim 20 '
-        + 'procent gewichtsverlies gezien over ruim een jaar (68 tot 72 weken), met '
-        + 'leefstijlbegeleiding erbij.',
+      'De getallen uit het onderzoek, alle met leefstijlbegeleiding erbij. Semaglutide gaf in '
+        + 'STEP-1 gemiddeld 17,3 procent gewichtsverlies over 68 weken. Tirzepatide, dat op twee '
+        + 'hormoonroutes werkt, gaf in SURMOUNT-1 ongeveer 22,5 procent over 72 weken, waarbij '
+        + 'meer dan de helft van de deelnemers minstens 20 procent verloor. In SURMOUNT-5 zijn de '
+        + 'twee rechtstreeks vergeleken en kwam tirzepatide er beter uit. De tablet met '
+        + 'semaglutide haalt 5 tot 10 procent; de NHG-Standaard raadt die niet aan.',
+      'En wat het kost, want dat hoort erbij. Bij obesitas zonder diabetes type 2 worden deze '
+        + 'middelen in Nederland niet vergoed: je betaalt ze zelf, in de orde van honderdvijftig '
+        + 'tot driehonderdvijftig euro per maand. Het Zorginstituut adviseerde in juli 2024 tegen '
+        + 'opname in het basispakket en de minister nam dat over. Niet omdat het middel niet '
+        + 'werkt, dat noemde het instituut bewezen, maar omdat niet vast te stellen is bij wie het '
+        + 'de meeste gezondheidswinst geeft, er geen onderzoek is naar verantwoord afbouwen, en '
+        + 'het onbekend is of langdurig gebruik blijvend helpt.',
     ],
     nietWeten: [
       'Die percentages komen uit onderzoek bij geselecteerde deelnemers die allemaal ook '
@@ -152,7 +162,15 @@ export const VERDIEPINGEN: readonly Verdieping[] = [
       'Voor de dag als geheel wordt tijdens afvallen 1,2 tot 1,6 gram eiwit per kilo lichaams'
         + 'gewicht genoemd, en bij actief spierbehoud soms meer.',
       'Praktisch: liever twee of drie maaltijden die de drempel ruim halen dan vier die er net '
-        + 'onder blijven.',
+        + 'onder blijven. Wat er ongeveer in zit: honderd gram bereide kipfilet komt rond de 30 '
+        + 'gram uit, honderd gram kabeljauw rond de 24, een schep wei-eiwit van dertig gram rond '
+        + 'de 27, een schaaltje magere kwark van 250 gram rond de 25, drie eieren rond de 19, en '
+        + 'een schaaltje Griekse yoghurt van 150 gram rond de 12. Eén bron haalt de drempel dus '
+        + 'lang niet altijd alleen.',
+      'Waar dat per kilo op slaat, maakt uit. Bij obesitas rekenen met je actuele gewicht geeft '
+        + 'een doel dat te hoog is; de Amsterdamse groep die hier onderzoek naar doet houdt aan '
+        + 'dat je het gewicht maximeert op wat bij een BMI van 30 hoort. Deze app rekent zo, en '
+        + 'op Profiel staat welke uitkomst dat voor jou geeft.',
     ],
     nietWeten: [
       'De richting van dit advies is goed onderbouwd, de grootte niet. In een overzicht van '
@@ -162,11 +180,18 @@ export const VERDIEPINGEN: readonly Verdieping[] = [
         + 'overtuigend aangetoond.',
       'En waar de drempel precies ligt, verschilt per persoon en per eiwitbron. Dertig gram is '
         + 'een richtgetal en geen schakelaar.',
+      'De verklaring die je overal leest, dat het om de hoeveelheid leucine in een maaltijd '
+        + 'gaat, is een werkhypothese. Een systematisch overzicht vond wel verband tussen '
+        + 'leucine en spieraanmaak bij ouderen, maar kon geen enkele drempelwaarde vaststellen en '
+        + 'geen maat in het bloed die voorspelt wie reageert.',
+      'Er bestaat trouwens geen enkel onderzoek dat de eiwitbehoefte bij obesitas rechtstreeks '
+        + 'heeft bepaald. Alles wat hierboven staat is afgeleid uit ander bewijs.',
     ],
     inDeApp: 'Op Beweging, bij "Wat je spieren vasthoudt", staat per maaltijd of je erboven '
       + 'uitkwam. Ligt je dagdoel gedeeld door drie onder de drempel, dan zegt de app dat erbij.',
-    bron: 'Onderzoek naar eiwitverdeling en lichaamssamenstelling (Frontiers in Nutrition, 2024) '
-      + 'en naar eiwit en vetvrije massa bij gewichtsverlies.',
+    bron: 'Onderzoek naar eiwitverdeling en lichaamssamenstelling (Frontiers in Nutrition, 2024); '
+      + 'Weijs, Current Opinion in Clinical Nutrition and Metabolic Care, 2025; Wilkinson e.a., '
+      + 'Physiological Reports, 2023, over de leucinedrempel.',
   },
   {
     id: 'spier',
@@ -185,6 +210,15 @@ export const VERDIEPINGEN: readonly Verdieping[] = [
         + 'houden. In kleine reeksen bij mensen die drie tot vijf keer per week krachttraining '
         + 'deden en op hun eiwit letten, bleef de vetvrije massa vrijwel gelijk of nam zelfs toe, '
         + 'bij een gewichtsverlies van 13 tot 33 procent.',
+      'Voor krachttraining is het bewijs harder dan voor de rest. In een samenvatting van zes '
+        + 'gelote onderzoeken hield krachttraining 93,5 procent tegen van het verlies aan '
+        + 'vetvrije massa dat door de caloriebeperking kwam, zonder dat het vetverlies eronder '
+        + 'leed. Het schema in alle zes was hetzelfde: drie keer per week, twaalf tot '
+        + 'vierentwintig weken.',
+      'En andersom: zonder beweging erbij verloor 81 procent van de onderzochte groepen meer dan '
+        + 'een zesde van het gewichtsverlies als vetvrije massa, tegen 39 procent van de groepen '
+        + 'die wél bewogen. Het gaat dus niet om hoe snel je afvalt alleen, maar om wat je '
+        + 'ondertussen van je lichaam vraagt.',
     ],
     nietWeten: [
       'Die reeksen zijn klein en niet geloot: mensen die uit zichzelf drie keer per week trainen '
@@ -195,7 +229,45 @@ export const VERDIEPINGEN: readonly Verdieping[] = [
     ],
     inDeApp: 'Op Beweging staat "Wat je spieren vasthoudt": eiwit per maaltijd, krachtsessies, en '
       + 'een test waarbij je vijf keer uit een stoel opstaat.',
-    bron: 'Substudies van STEP-1 en SURMOUNT-1; casusreeksen over behoud van vetvrije massa (2025).',
+    bron: 'Substudies van STEP-1 en SURMOUNT-1; casusreeksen over behoud van vetvrije massa '
+      + '(2025); Sardeli e.a., Nutrients, 2018 (zes gelote onderzoeken); Weinheimer e.a., '
+      + 'Nutrition Reviews, 2010.',
+  },
+  {
+    id: 'slaap',
+    titel: 'Slaap, en waar je gewichtsverlies vandaan komt',
+    kort: 'Bij te weinig slaap verschuift het verlies van vet naar spier, bij precies hetzelfde eten.',
+    weten: [
+      'Slaap staat niet naast het afvallen maar erin. In een onderzoek volgden dezelfde mensen '
+        + 'twee keer veertien dagen hetzelfde caloriearme dieet: één keer met 8,5 uur '
+        + 'slaapgelegenheid per nacht, één keer met 5,5 uur. Ze verloren allebei de keren '
+        + 'evenveel gewicht.',
+      'Alleen kwam dat gewicht ergens anders vandaan. Bij de korte nachten daalde het aandeel '
+        + 'vet in het verlies met 55 procent en steeg het verlies aan vetvrije massa met 60 '
+        + 'procent. Dezelfde kilo’s op de weegschaal, een andere uitkomst in je lichaam. De '
+        + 'deelnemers hadden bij de korte nachten ook meer honger.',
+      'Snurken en slaapapneu zijn een apart verhaal, en daar wijst het bewijs de andere kant op '
+        + 'dan vaak gedacht wordt. Afvallen helpt tegen apneu: bij ongeveer tien kilo '
+        + 'gewichtsverlies daalde het aantal ademstops met bijna tien per uur. Andersom werkt '
+        + 'het niet. Twee samenvattingen van onderzoek vinden dat mensen die met CPAP beginnen '
+        + 'gemiddeld iets aankomen in plaats van af te vallen.',
+      'Daaruit volgt een volgorde: behandel de apneu om de apneu, en het gewicht daarnaast. Niet '
+        + 'het een in de verwachting dat het ander vanzelf meekomt.',
+    ],
+    nietWeten: [
+      'Dat slaaponderzoek ging over tien mensen, in een laboratorium, veertien dagen per keer. '
+        + 'Strak opgezet, en een heel kleine groep. Of thuis een uur langer slapen hetzelfde doet, '
+        + 'is er niet mee aangetoond.',
+      'Het was bovendien opgelegd slaaptekort. Of iemand die uit zichzelf kort slaapt dezelfde '
+        + 'verschuiving laat zien, en of die terugdraait zodra hij meer gaat slapen, is niet '
+        + 'onderzocht.',
+    ],
+    inDeApp: 'Op Gezondheid staat de STOP-BANG-vragenlijst voor slaapapneu, met wat de uitslag '
+      + 'wel en niet betekent. Je slaapuren vul je in op Vandaag; ze staan naast je stappen op '
+      + 'Beweging.',
+    bron: 'Nedeltcheva e.a., Annals of Internal Medicine, 2010 (n=10); Foster e.a., Sleep AHEAD, '
+      + 'Archives of Internal Medicine, 2009; meta-analyses over CPAP en gewicht (Thorax, 2015; '
+      + 'Annals of the American Thoracic Society, 2021).',
   },
   {
     id: 'bot',

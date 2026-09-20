@@ -279,6 +279,46 @@ label.veld>span{display:block;font-size:.72rem;color:var(--grijs);margin-bottom:
 .sluier{position:fixed;inset:0;background:rgba(10,12,10,.5);display:flex;z-index:50;
   align-items:flex-start;justify-content:center;padding:14px;overflow-y:auto}
 .venster{background:var(--vlak);border-radius:16px;padding:20px;width:100%;max-width:520px;margin:20px 0;overflow:hidden}
+
+/* HET NASLAGVENSTER IS BREDER, EN DAT IS GEEN SMAAK
+
+   Vijfhonderdtwintig punten is de maat van een venster waar je iets invult of
+   één ding leest. Verdiepen is iets anders: acht stukken van vier alinea's die
+   je opzoekt en waar je in terugleest. Op een tablet stonden die in een kolom
+   van dezelfde breedte als een invulveld, met regels van veertig aanslagen en
+   een titel in de maat van een onderschrift. Dan lijkt naslagwerk een melding.
+
+   Breder mag niet eindeloos: voorbij ongeveer vijfentachtig aanslagen per regel
+   raakt het oog de volgende regel kwijt. Vandaar 780 en niet meer, en pas vanaf
+   een scherm dat het heeft. */
+@media(min-width:820px){
+  .venster.breed{max-width:780px;padding:30px 34px}
+  .venster.breed .vensterstrook{width:calc(100% + 68px);margin:-30px -34px 18px}
+}
+
+/* De maat binnen het naslagvenster. Alleen daar, want dit is de enige plek in
+   de app waar je langer dan een alinea achter elkaar leest. */
+.naslag p{font-size:.95rem;line-height:1.62}
+.naslag .klein{font-size:.88rem;line-height:1.56}
+.naslag .mini{font-size:.8rem;line-height:1.5}
+/* De titel van een stuk is een titel en geen bovenschrift: in de kleur van de
+   tekst, in de maat van een kop. De `Kop` in het voorbehoud eronder is wél een
+   bovenschrift en blijft dus zoals hij was. */
+.naslag .kaart>.tussen>.eyebrow{font-size:1.04rem;font-weight:680;color:var(--ink)}
+@media(min-width:820px){
+  .naslag p{font-size:1rem;line-height:1.66}
+  .naslag .kaart>.tussen>.eyebrow{font-size:1.12rem}
+}
+
+/* Een hoeveelheid in een lopende tekst. Zie `nadruk.tsx` voor wat er wel en
+   niet onder valt.
+
+   NIET `.cijfer`, EN DAT WAS EEN FOUT DIE ER EERST IN ZAT
+   Die klasse bestaat al en zet mono met tabelcijfers. Dat is goed voor een
+   getal in een vakje, waar cijfers onder elkaar horen te staan, en fout in een
+   lopende zin: dan leest "5,5 uur" als een stuk code midden in de tekst. Een
+   hoeveelheid in proza blijft dus in dezelfde letter en wordt alleen zwaarder. */
+b.hoeveelheid{font-weight:660;color:var(--ink)}
 /* De strook bovenin loopt tot de rand: hij trekt de binnenmarge van het venster
    terug en de bovenhoeken volgen die van het venster zelf. De `overflow:hidden`
    hierboven is wat hem daadwerkelijk afknipt. */

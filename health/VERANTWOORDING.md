@@ -2071,3 +2071,107 @@ lijn die niet gemeten is; de tweede zonder de eerste geeft de lege strook terug.
 Drie mutanten, alle drie gedood: het lijnstuk naar zichzelf weghalen (drie
 gevallen vallen om), het gat niet meer als gat behandelen (drie), en élk punt een
 stip geven in plaats van alleen het losse (vier).
+
+## 29. Het naslagvenster: breder, en met de getallen eruit
+
+Verdiepen is het enige venster van deze app waar je in leest in plaats van iets
+invult. Het had wel de vorm van alle andere: een kolom van 520 punten, titels in
+de maat van een onderschrift, en alinea's in de maat van een bijschrift. Op een
+tablet stonden daar regels van veertig aanslagen in, met de getallen middenin
+weggezakt. Zo leest naslagwerk als een melding.
+
+Drie dingen veranderd, en ze hangen samen.
+
+**Breder, maar niet eindeloos.** Het venster kent nu een stand `breed`: 780
+punten vanaf een scherm van 820. De bovengrens is geen smaak. Voorbij ongeveer
+vijfentachtig aanslagen per regel raakt het oog bij de terugsprong de volgende
+regel kwijt, en dat is precies wat je bij naslagwerk niet wilt. Alle andere
+vensters blijven zoals ze waren: daar vul je iets in, en daar is smal juist
+goed.
+
+**Een titel is een titel.** De kop van een stuk stond in `eyebrow`, grijs en op
+0,78 rem, dezelfde stijl als het bovenschrift "Wat we niet weten" eronder. Nu
+staat hij in de kleur van de tekst op 1,12 rem. Het bovenschrift in het
+voorbehoud blijft wat het was, want dat ís een bovenschrift.
+
+**De hoeveelheden springen eruit.** Wie opzoekt hoeveel er na een jaar
+terugkwam, hoort dat getal te zien voordat hij de zin eromheen leest. Dat
+gebeurt bij het tekenen en niet met de hand in de tekst, want teksten worden
+bijgewerkt en dan staat de nadruk op het vorige getal.
+
+### Waarom dat laatste een eigen bestand en een eigen proef kreeg
+
+Een cijfer is niet hetzelfde als een getal. In deze teksten staan `STEP-1`,
+`GLP-1`, `Keer Diabetes2 Om` en `augustus 2026`, en geen van vieren is een
+hoeveelheid. Vet gezet zouden ze de aandacht trekken van precies de getallen
+waar het om gaat. Vandaar drie voorwaarden: geen letter, cijfer of koppelteken
+tegen het getal aan (dat haalt `STEP-1` en `Diabetes2` eruit), de eenheid hoort
+bij het getal (anders staat "40" dik en "procent" dun), en een kaal jaartal telt
+niet mee. Een getal van vier cijfers mét eenheid wel, want 2000 kcal is geen
+jaar.
+
+Eén ding ging bij het bouwen mis en is het vermelden waard. De nadruk kreeg
+eerst de klasse `cijfer`, die al bestond: mono met tabelcijfers, precies goed
+voor een getal in een vakje waar cijfers onder elkaar horen te staan. In een
+lopende zin leest datzelfde als een stuk code midden in de tekst. Een
+hoeveelheid in proza blijft dus in dezelfde letter en wordt alleen zwaarder.
+
+De eigenschap die er het meest toe doet is een andere: **de tekst blijft
+letterlijk dezelfde.** Wat erin gaat komt eruit, alleen in stukken geknipt. Een
+nadrukregel die onderweg een spatie of een woord opeet is in een medische tekst
+erger dan geen nadruk, en op het scherm is dat bijna niet te zien: er staat
+gewoon een zin, en er ontbreekt iets. Die eigenschap staat als eerste proef in
+`src/health/nadruk.proef.ts`.
+
+Vier mutanten, alle vier gedood: de jaartalwacht weghalen, de terugblik in de
+uitdrukking weghalen (dan wordt `STEP-1` dik), de eenheid niet meenemen, en één
+teken te weinig afknippen (dan verdwijnt er stilletjes een letter uit de tekst).
+
+## 30. Wat er aan het boekje bij is gekomen
+
+Het was acht stukken en het zijn er negen. Wat er bij kwam en wat er aangevuld
+is, staat hieronder; de bronnen staan bij de stukken zelf.
+
+**Slaap, en waar je gewichtsverlies vandaan komt.** Dit ontbrak, en het is een
+van de weinige dingen in dit dossier waar het bewijs scherp is en de uitkomst
+onverwacht. Dezelfde mensen, twee keer veertien dagen hetzelfde caloriearme
+dieet, één keer met 8,5 uur slaapgelegenheid en één keer met 5,5 uur: even veel
+gewicht eraf, maar bij de korte nachten daalde het aandeel vet in dat verlies
+met 55 procent en steeg het verlies aan vetvrije massa met 60 procent
+(Nedeltcheva e.a., 2010). Het voorbehoud hoort er even hard bij: tien mensen, in
+een laboratorium, opgelegd slaaptekort.
+
+Daar hoort de apneukant naast, omdat de richting van dat bewijs tegen de
+intuïtie in gaat. Afvallen helpt tegen slaapapneu (tien kilo eraf gaf bijna tien
+ademstops per uur minder), maar CPAP helpt niet tegen het gewicht: twee
+meta-analyses vinden een kleine toename. Vandaar de volgorde in het stuk:
+behandel de apneu om de apneu, en het gewicht daarnaast.
+
+**Wat GLP-1 doet** stond er met één samengevat bereik ("15 tot ruim 20
+procent"). Dat is nu per middel, met de studie erbij, en er staat bij wat het
+kost: bij obesitas zonder diabetes type 2 wordt er in Nederland niets vergoed.
+Dat is voor de lezer geen bijzaak.
+
+**Wat je verliest naast vet** had de casusreeksen wel en het hardere bewijs
+niet. Krachttraining hield in een samenvatting van zes gelote onderzoeken 93,5
+procent tegen van het verlies aan vetvrije massa dat door de caloriebeperking
+kwam, bij drie keer per week gedurende twaalf tot vierentwintig weken. En
+andersom: zonder beweging erbij verloor 81 procent van de groepen meer dan een
+zesde van het gewichtsverlies als vetvrije massa, tegen 39 procent met beweging.
+
+**Waarom eiwit nu zwaarder telt** noemde een drempel zonder te zeggen hoe je
+die haalt. Er staan nu porties bij (honderd gram bereide kipfilet rond de 30
+gram, een schep wei-eiwit van dertig gram rond de 27, drie eieren rond de 19),
+en het gewicht waarop het doel per kilo slaat: gemaximeerd op wat bij een BMI
+van 30 hoort, zoals de app zelf rekent. Bij het voorbehoud zijn twee dingen
+gekomen die in de reclame voor eiwit nooit staan: de leucinedrempel is een
+werkhypothese waarvoor geen afkappunt is vast te stellen, en er bestaat geen
+enkel onderzoek dat de eiwitbehoefte bij obesitas rechtstreeks heeft bepaald.
+
+### Eén getal rechtgezet in het onderzoeksdossier
+
+`ONDERZOEK-MEDISCH-AFVALLEN.md` gaf voor de STEP-1-extensie nog ~43 procent voor
+de groep die minstens 5 procent verlies vasthield. Bij de naloop van 20
+september bleek de extensie zelf 48,2 procent te geven; dat was toen in het
+boekje rechtgezet maar niet in het dossier, dus daar stonden twee getallen in
+één repo. Nu gelijkgetrokken, met de reden erbij.

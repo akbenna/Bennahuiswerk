@@ -3760,12 +3760,12 @@ for (const [naam, dagen, patroon, verwacht] of [
 
   process.stdout.write('verdiepen                  ')
 
-  /* 1. Acht stukken, en ze staan dicht: wie hier komt kiest wat hij leest.
+  /* 1. Negen stukken, en ze staan dicht: wie hier komt kiest wat hij leest.
         De knop heet "open" en niet zoals het stuk, `Uitklap` zet de kop in een
         `Kop` en de schakelaar ernaast. */
   const dichte = venster.getByRole('button', { name: 'open', exact: true })
   const aantal = await dichte.count()
-  if (aantal !== 8) throw new Error(`verdiepen: ${aantal} stukken in plaats van 8`)
+  if (aantal !== 9) throw new Error(`verdiepen: ${aantal} stukken in plaats van 9`)
 
   /* 2. Eén openen, en dan moeten alle vier de delen er staan. */
   await venster.locator('.kaart').filter({ hasText: 'Wat er gebeurt als je stopt' })
