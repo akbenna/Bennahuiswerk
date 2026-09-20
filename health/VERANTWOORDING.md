@@ -2751,3 +2751,71 @@ staat in vier andere bestanden opgeschreven en bij kal_gerecht in geen enkel.
 staat, met bij kal_gerecht de poort erin. Het bestand is niet overgetikt maar
 uit de bestanden geknipt, en dat is te zien: van de zeven veranderde er maar één
 md5, die van kal_gerecht. De andere zes zijn byte voor byte wat er al stond.
+
+## 43. De tweede helft van een belofte die maar half bestond
+
+De app merkt een weging aan die niet bij de reeks past en gooit hem niet weg.
+Dat is hoofdstuk 1 en het klopt: de app kan niet weten of er een tweede persoon
+op de weegschaal stond of dat er een toets misging. Maar eronder stond "klopt
+het niet, zet hem dan recht op de dag zelf", en dat betekende: zoek zelf uit
+welke dag het was, blader erheen, typ het over.
+
+Voor één weging gaat dat. Wie eerst een maand met de app heeft zitten spelen
+voordat hij hem echt ging gebruiken, heeft er tien, en dan blijft er een reeks
+staan met een 190 erin die de trend, het verbruik, de BMI en het eiwitdoel
+scheeftrekt.
+
+Het venster "Je wegingen" zet ze op een rij: elke dag waarop gewogen is, met de
+opvallende bovenaan, elk getal in een vakje dat je kunt overschrijven, en een
+knop om de weging weg te halen.
+
+### Wat hier met opzet niet in zit
+
+**Geen grens waarbuiten een weging vanzelf weggaat.** De verleiding is groot en
+hij is verkeerd. Wie weet dat hij rond de 119 weegt kan zeggen "alles buiten 117
+tot 121 is fout", en voor de reeks van vandaag klopt dat. Maar dit is een app om
+af te vallen. Wie tien kilo kwijtraakt weegt straks 109, en dan gooit die grens
+precies het resultaat weg dat de app moet meten. Een vaste band is hetzelfde als
+het model vertellen wat eruit moet komen.
+
+**Geen scherm dat doet alsof.** Na het weghalen blijft de regel staan tot de
+database hem werkelijk kwijt is. Een scherm dat de regel meteen doorstreept
+liegt op de dag dat het verzoek niet aankomt, en dan denkt iemand dat zijn 190
+weg is terwijl hij in de trend blijft staan.
+
+**Wel een weg terug.** Zolang het venster openstaat is een weggehaalde weging
+met één tik terug te zetten, met de waarde die erin stond. Zonder dat is één
+misgetikte rij een getal dat je nooit meer terugvindt.
+
+De proef op de gerenderde pagina leest mee wat er naar de database gaat: dat
+weghalen `gewicht_kg: null` stuurt, en op de dag van díe weging en niet op de
+dag die bovenaan het scherm staat.
+
+## 44. Zes vakjes in plaats van een uitrolmenu
+
+De metingen op Gezondheid gingen via een uitrolmenu met één waardeveld ernaast.
+Voor het geval waar het hier het vaakst om gaat is dat de verkeerde vorm: een
+bloeddruk is twee getallen die bij elkaar horen, en die kostte zo twee keer
+kiezen, twee keer typen en twee keer opslaan.
+
+Nu staan er zes open vakjes met de naam erboven, in twee kolommen op een
+telefoon en drie zodra het past. Eén knop bewaart alles wat je hebt ingevuld, en
+hij zegt hoeveel dat er zijn. De datum staat ernaast en is te veranderen, want
+een meting van gisteren invoeren was tot nu toe niet mogelijk.
+
+Eén ding dat het scherm erbij zegt: vul je maar één van de twee bloeddrukken in,
+dan telt die dag niet mee in het weekgemiddelde. Dat is geen blokkade maar een
+mededeling; wie werkelijk maar één getal heeft mag het bewaren.
+
+## 45. De kennisbank, en waarom hij niet Academie heet
+
+De elf stukken stonden onderaan Profiel in een kaart over de herkomst van de
+getallen. Ze staan nu bovenaan, als eerste kaart onder de schermkop, met de
+inhoudsopgave zichtbaar en twee planken ernaast: je aandoening, en hoe deze app
+rekent. Dertien regels, allemaal aan te tikken, en je komt binnen op het stuk
+dat je aanwees.
+
+De naam is Kennisbank en niet Academie, en dat is een keuze. Academie betekent
+op dit portaal al iets: de drie cursussen van BennaHuiswerk, met hun eigen
+tegels en hun eigen proef. Twee dingen op één portaal die allebei Academie heten
+is een verwarring die je later niet meer uit de teksten krijgt.

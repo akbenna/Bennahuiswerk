@@ -15,7 +15,7 @@ import type { Dagenkaart, Trendpunt } from '../rekenkern'
 import { onderhoudZone } from '../klinisch'
 import { THEMANAMEN, useThemakeuze, zetThema } from '../thema'
 import type { Onderhoudzone } from '../klinisch'
-import { WegInstellen, WegThema } from '../tekens'
+import { WegInstellen, WegLezen, WegThema } from '../tekens'
 import { SFEERFOTO } from '../sfeerfotos'
 import {
   COMORBIDITEIT, DREMPELS, GLI_TOTAAL_MAANDEN, MEDICATIE, glivoortgang, medicatiecriteria,
@@ -128,6 +128,9 @@ export function Meer(
         )}
       </Schermkop>
 
+      <Naslagkaart opLeren={() => opVenster('leren')} opVerdiepen={opVerdiepen}
+                   opHoewerkt={() => opVenster('hoewerkt')} />
+
       <Kaart plat>
         <Kop>Waarom slaap hier staat</Kop>
         <p className="mini" style={{ marginTop: 4 }}>
@@ -205,8 +208,6 @@ export function Meer(
         </Kaart>
       )}
 
-      <Naslagkaart opLeren={() => opVenster('leren')} opVerdiepen={opVerdiepen} />
-
       <Kaart>
         <Kop teken={WegInstellen}>Instellingen</Kop>
         <Rij style={{ marginTop: 10 }}>
@@ -282,16 +283,22 @@ export function Meer(
  * stukken bestaan voor wie er niet naar op zoek was.
  */
 function Naslagkaart(
-  { opLeren, opVerdiepen }: { opLeren: () => void; opVerdiepen: (stuk?: string) => void },
+  { opLeren, opVerdiepen, opHoewerkt }:
+  { opLeren: () => void; opVerdiepen: (stuk?: string) => void; opHoewerkt: () => void },
 ) {
   return (
     <Kaart sfeer="golf">
-      <Kop>Lezen</Kop>
+      <Kop teken={WegLezen}>Kennisbank</Kop>
       <p style={{ fontSize: '.92rem', marginTop: 6 }}>
-        Wat er bekend is over afvallen, medicatie en wat je onderweg vasthoudt. Bij elk stuk staat
-        ook wat we <i>niet</i> weten, en waar het vandaan komt.
+        Wat er bekend is over afvallen, over je aandoening en over de manier waarop deze app
+        rekent. Bij elk stuk staat ook wat we <i>niet</i> weten, en waar het vandaan komt.
       </p>
-      <div className="lijst" style={{ marginTop: 10 }}>
+
+      <Tussen style={{ marginTop: 14 }}>
+        <Kop>Afvallen, medicatie en wat je vasthoudt</Kop>
+        <span className="vlaggetje rust">{VERDIEPINGEN.length} stukken</span>
+      </Tussen>
+      <div className="lijst" style={{ marginTop: 4 }}>
         {VERDIEPINGEN.map((v) => (
           <button type="button" className="naslagregel" key={v.id}
                   onClick={() => opVerdiepen(v.id)}>
@@ -300,11 +307,26 @@ function Naslagkaart(
           </button>
         ))}
       </div>
-      <Rij style={{ marginTop: 12 }}>
-        <Knop vol opKlik={() => opVerdiepen()}>Open het boekje</Knop>
-        <Knop opKlik={opLeren}>Leren over je aandoening</Knop>
-      </Rij>
-      <p className="mini" style={{ marginTop: 8 }}>
+
+      <Tussen style={{ marginTop: 16 }}>
+        <Kop>De rest van de kast</Kop>
+      </Tussen>
+      <div className="lijst" style={{ marginTop: 4 }}>
+        <button type="button" className="naslagregel" onClick={opLeren}>
+          <span className="groei knip" style={{ fontSize: '.88rem' }}>
+            Je aandoening: hoge bloeddruk, diabetes, hart en vaten
+          </span>
+          <span className="pijl" aria-hidden="true">›</span>
+        </button>
+        <button type="button" className="naslagregel" onClick={opHoewerkt}>
+          <span className="groei knip" style={{ fontSize: '.88rem' }}>
+            Hoe deze app rekent, en wat hij niet weet
+          </span>
+          <span className="pijl" aria-hidden="true">›</span>
+        </button>
+      </div>
+
+      <p className="mini" style={{ marginTop: 12 }}>
         Deze stukken zijn voor iedereen hetzelfde: er wordt niets van jouw gegevens in verwerkt en
         er staat geen advies in. Waar je het in de app terugziet, staat er wel bij.
       </p>
