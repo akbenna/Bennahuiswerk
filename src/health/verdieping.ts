@@ -1,7 +1,7 @@
 /**
  * VERDIEPEN: het boekje over afvallen, medicatie en wat je vasthoudt
  *
- * Negen stukken, en ze staan er voor iedereen hetzelfde. Net als `leren.ts` is
+ * Elf stukken, en ze staan er voor iedereen hetzelfde. Net als `leren.ts` is
  * dit een boek en geen behandeling: er wordt niets van de gebruiker gelezen,
  * niets uitgerekend, en niets aangepast aan wie je bent.
  *
@@ -314,6 +314,21 @@ export const VERDIEPINGEN: readonly Verdieping[] = [
         + 'functioneren beperkt is. Preklinische obesitas is overmaat vet zonder die schade, wel '
         + 'met een verhoogd risico voor later.',
       'De bedoeling is behandeling te richten op wie er nú last van heeft, en niet op een getal.',
+      'Waaróm hetzelfde gewicht bij de een wel en bij de ander geen schade geeft, gaat over de '
+        + 'opslag. Onderhuids vetweefsel kan meegroeien door nieuwe vetcellen aan te maken of door '
+        + 'de bestaande te laten uitzetten. Die tweede weg loopt vast: uitgezette vetcellen komen '
+        + 'zuurstof tekort, trekken ontstekingscellen aan, en zodra de opslag vol is stroomt het '
+        + 'overschot door naar de buikholte, de lever, de spier en de alvleesklier. Daar geeft het '
+        + 'wél insulineresistentie. Metabool gezonde obesitas is in dit beeld niets anders dan '
+        + 'opslagcapaciteit die nog niet op is.',
+      'Dat is geen theorie op papier. Bij paren met dezelfde BMI, dezelfde leeftijd, hetzelfde '
+        + 'geslacht en dezelfde totale vetmassa, waarvan de een niets mankeerde en de ander '
+        + 'diabetes, te hoge triglyceriden en hoge bloeddruk had, zat het verschil in twee dingen: '
+        + 'vet in de buikholte op de MRI, en uitgezette vetcellen met ontstekingsmarkers in het '
+        + 'weefsel zelf.',
+      'Praktisch kun je daar één ding van meten zonder scanner: waar je omvang zit. De '
+        + 'middelomtrek gedeeld door je lengte heeft één grens voor iedereen, 0,5, en is daarmee '
+        + 'eerlijker dan een afkapwaarde in centimeters die voor elke lengte hetzelfde is.',
     ],
     nietWeten: [
       'Deze definitie is nieuw en nog niet overal overgenomen. De Nederlandse richtlijnen en de '
@@ -322,9 +337,108 @@ export const VERDIEPINGEN: readonly Verdieping[] = [
         + 'moet zich nog bewijzen.',
     ],
     inDeApp: 'Op Gezondheid staan je middelomtrek en bloeddruk naast je BMI, met de grenzen die '
-      + 'daarbij horen. Meer maten naast elkaar is precies waar deze definitie om vraagt.',
+      + 'daarbij horen, en sinds kort ook je middel gedeeld door je lengte. Meer maten naast '
+      + 'elkaar is precies waar deze definitie om vraagt.',
     bron: 'Lancet Diabetes & Endocrinology Commission, Definition and diagnostic criteria of '
       + 'clinical obesity, januari 2025.',
+  },
+  {
+    id: 'heterogeen',
+    titel: 'Waarom dezelfde behandeling bij de een wel werkt en bij de ander niet',
+    kort: 'Obesitas is niet één ziekte. Bij elke behandeling bestaan superresponders en non-responders.',
+    weten: [
+      'Bij elke vorm van behandeling, van leefstijl tot medicatie tot chirurgie, zijn er mensen '
+        + 'bij wie het uitzonderlijk goed werkt en mensen bij wie er vrijwel niets gebeurt. Voor '
+        + 'de incretines wordt non-respons meestal gelegd bij minder dan 5 procent '
+        + 'gewichtsverlies. In een overzicht dat in september 2026 op een nascholing werd '
+        + 'gepresenteerd ging het om ongeveer 13 procent van de volwassenen op semaglutide, '
+        + 'ongeveer 27 procent van de jongeren, minder dan 10 procent bij de hoogste dosering '
+        + 'tirzepatide, en over alles samen 15 tot 20 procent.',
+      'De verklaring die daarvoor gezocht wordt is dat er niet één obesitas is maar een handvol '
+        + 'verschillende, met een verschillende motor eronder. In Leipzig werd bij ongeveer 1.500 '
+        + 'mensen weefsel uit de buikholte en van onder de huid onderzocht, en liet men de computer '
+        + 'zonder vooraf opgelegde indeling groepen zoeken. Er kwamen er vijf uit: een kleine '
+        + 'groep die metabool niets mankeerde, een grote groep waar alles tegelijk misging, en drie '
+        + 'die niemand had voorspeld. Bij één daarvan bleef het cortisol de hele dag hoog in plaats '
+        + 'van te dalen; bij een andere was een te hoog nuchter insuline het eerste dat afweek.',
+      'Van een andere kant benaderd komen er vier eetprofielen uit, gemeten met een ochtend vol '
+        + 'testmaaltijden en scans. Een hongerig brein: pas na veel calorieën vol raken. Een '
+        + 'hongerige darm: normaal vol na een normale portie, maar binnen een uur of twee weer '
+        + 'honger omdat de maag snel leegt. Emotionele honger: eten bij spanning en verlangen, niet '
+        + 'bij honger. En een trage verbranding: weinig spiermassa en een laag verbruik.',
+      'Het aantrekkelijke van die indeling is dat er per profiel een andere behandeling bij hoort, '
+        + 'en dat sommige gegevens die kant op wijzen. Hetzelfde kenmerk voorspelde bij twee '
+        + 'middelen met een verschillend aangrijpingspunt de respons in tégengestelde richting. Dat '
+        + 'is precies wat je van een mechanistische voorspeller verwacht en het is moeilijk toeval '
+        + 'te noemen.',
+    ],
+    nietWeten: [
+      'Bijna alles hierboven is samenhang en groepsindeling, geen bewezen oorzaak. De vijf '
+        + 'weefselgroepen zijn nog niet gepubliceerd, en één ervan kon zelfs niet geduid worden. Of '
+        + 'een te hoog nuchter insuline de motor is of het gevolg, is met die gegevens niet uit te '
+        + 'maken; de onderzoeker noemt het zelf een hypothese.',
+      'De trials achter de eetprofielen zijn klein, en de uitsplitsing naar profiel is meestal '
+        + 'achteraf gedaan binnen een studie van enkele tientallen mensen. Dat is een aanwijzing '
+        + 'waarop je een volgende studie bouwt, geen grond om nu een middel te kiezen.',
+      'En dan de herkomst. Die nascholing werd betaald door een bedrijf dat een van de besproken '
+        + 'middelen in de Benelux verkoopt, en alle drie de sprekers kwamen langs een eigen route '
+        + 'bij dat middel uit. Dat maakt het niet onwaar. Het betekent dat je op herhaling door een '
+        + 'groep zonder dat belang wacht voordat je het als vaststaand aanneemt.',
+    ],
+    inDeApp: 'Nergens, en dat is met opzet. Deze app kent jouw profiel niet en gaat er ook niet '
+      + 'naar raden. Wat er wel staat is wat er werkelijk te meten valt: je middelomtrek en de '
+      + 'verhouding met je lengte op Gezondheid, en je eigen trend op Inzicht.',
+    bron: 'Nascholing over de behandeling van obesitas, september 2026, georganiseerd door Good '
+      + 'Life Pharma, met M. Blüher (Universiteit Leipzig), R. Vangoitsenhoven (UZ Leuven) en '
+      + 'A. Acosta (Mayo Clinic); Acosta e.a. over appetijtfenotypes.',
+  },
+  {
+    id: 'foodnoise',
+    titel: 'Food noise: waarom honger niet hetzelfde is als behoefte',
+    kort: 'Er gaan twee systemen over eten, en het ene kan het andere overstemmen.',
+    weten: [
+      'Het eerste systeem houdt je energie in balans. Ghreline uit een lege maag meldt honger, '
+        + 'leptine uit je vetweefsel meldt hoeveel voorraad er is, en in een kern onderin je '
+        + 'hersenen sturen die twee een rem en een gaspedaal aan. Dat systeem past bij het beeld '
+        + 'van calorieën erin en calorieën eruit.',
+      'Het tweede gaat over beloning en loopt op dopamine. Dat het bestaat merk je met kerst: '
+        + 'twee dagen achter elkaar vier gangen heeft niets met energiebehoefte te maken, en als '
+        + 'niemand nog een hap kan komen de zelfgebakken koekjes en eten we door. Het tweede '
+        + 'systeem kan het eerste overstemmen, en dat is de kern van wat food noise heet.',
+      'Beloning werkt bovendien vooruit. Na een paar herhalingen verschuift de dopaminereactie van '
+        + 'het eten zelf naar het signaal dat het aankondigt, en blijft de beloning dan uit, dan '
+        + 'zakt dopamine juist onder de rustwaarde. Dat negatieve signaal is krachtig, en het is de '
+        + 'reden dat "gewoon nee zeggen" iets anders is dan het lijkt.',
+      'En je voorkeur is niet vast. In een onderzoek kregen mensen acht weken lang dagelijks een '
+        + 'tussendoortje. Bij een vetarm tussendoortje bleef hun waardering van vetarm eten gelijk; '
+        + 'bij een vet en zoet tussendoortje gingen ze vetarm eten mínder lekker vinden. De '
+        + 'omgeving verandert dus niet alleen hoeveel je eet maar ook wat je lekker vindt.',
+      'Dat het ook in calorieën doortelt, liet een onderzoek op een afdeling zien waar alles '
+        + 'gewogen werd. Twintig mensen kregen in wisselende volgorde twee weken bewerkt en twee '
+        + 'weken onbewerkt eten, gelijkgemaakt op aangeboden calorieën, energiedichtheid, '
+        + 'macronutriënten, suiker, vezels en zout, en ze mochten eten wat ze wilden. Op het '
+        + 'bewerkte eten aten ze ongeveer 508 kcal per dag meer, kwamen ze 0,9 kg aan, en op het '
+        + 'onbewerkte vielen ze 0,9 kg af.',
+    ],
+    nietWeten: [
+      'Waar je dit zou moeten meten, weet niemand. Een PET-scan is duur, en bij de gebruikte '
+        + 'tracers meet hij hoeveel receptoren er vrij zijn en niet hoeveel dopamine er vrijkomt: '
+        + 'een lager signaal kan betekenen dat er minder receptoren zijn óf dat er meer eigen '
+        + 'dopamine op zit. Die dubbelzinnigheid verklaart een flink deel van de literatuur die '
+        + 'elkaar tegenspreekt.',
+      'In bloed of urine meten helpt niet. Het dopamine dat je daar vindt komt grotendeels uit de '
+        + 'nieren en de darm, en dopamine komt de bloed-hersenbarrière niet over. Een perifere '
+        + 'maat meet vrijwel zeker iets anders dan het systeem waar het om gaat.',
+      'De beeldvormende studies bij mensen zijn oud en klein, en de twee onderzoeken hierboven '
+        + 'gaan over twintig mensen gedurende vier weken en enkele tientallen gedurende acht. De '
+        + 'richting is consistent, de grootte van het effect staat niet vast.',
+    ],
+    inDeApp: 'Op Vandaag leg je vast wát je at, niet waaróm. Deze app vraagt niet of je uit honger '
+      + 'of uit spanning at: dat is een oordeel dat een scherm niet kan maken. Wat hij wel laat '
+      + 'zien is de verdeling over de dag en wat er nog in past.',
+    bron: 'Onderzoek naar dopamine bij inname (Cell Metabolism, 2019) en naar voorkeur na acht '
+      + 'weken (Cell Metabolism, 2023); Hall e.a. over bewerkt voedsel (Cell Metabolism, 2019, '
+      + 'n=20); nascholing september 2026.',
   },
   {
     id: 'volhouden',

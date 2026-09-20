@@ -34,8 +34,8 @@ import { MEDICATIE } from './trap'
 import { VERDIEPINGEN } from './verdieping'
 
 describe('de vorm van elk stuk', () => {
-  it('er zijn negen stukken en geen twee delen een id', () => {
-    expect(VERDIEPINGEN).toHaveLength(9)
+  it('er zijn elf stukken en geen twee delen een id', () => {
+    expect(VERDIEPINGEN).toHaveLength(11)
     expect(new Set(VERDIEPINGEN.map((v) => v.id)).size).toBe(VERDIEPINGEN.length)
   })
 

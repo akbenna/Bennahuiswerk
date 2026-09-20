@@ -3760,12 +3760,12 @@ for (const [naam, dagen, patroon, verwacht] of [
 
   process.stdout.write('verdiepen                  ')
 
-  /* 1. Negen stukken, en ze staan dicht: wie hier komt kiest wat hij leest.
+  /* 1. Elf stukken, en ze staan dicht: wie hier komt kiest wat hij leest.
         De knop heet "open" en niet zoals het stuk, `Uitklap` zet de kop in een
         `Kop` en de schakelaar ernaast. */
   const dichte = venster.getByRole('button', { name: 'open', exact: true })
   const aantal = await dichte.count()
-  if (aantal !== 9) throw new Error(`verdiepen: ${aantal} stukken in plaats van 9`)
+  if (aantal !== 11) throw new Error(`verdiepen: ${aantal} stukken in plaats van 11`)
 
   /* 2. Eén openen, en dan moeten alle vier de delen er staan. */
   await venster.locator('.kaart').filter({ hasText: 'Wat er gebeurt als je stopt' })
@@ -3790,7 +3790,7 @@ for (const [naam, dagen, patroon, verwacht] of [
         staat. De proefreeks heeft een gewicht rond de 116-119 kg, een eiwitdoel
         van 161 g en een dagdoel van 3.690 kcal; geen van die getallen hoort hier
         voor te komen. */
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 14; i++) {
     const nog = venster.getByRole('button', { name: 'open', exact: true })
     if (!(await nog.count())) break
     await nog.first().click()

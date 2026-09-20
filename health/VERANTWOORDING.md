@@ -2224,3 +2224,91 @@ De regel "doel 100 kg ligt onder deze uitsnede" stond rechtsboven en zei altijd
 as, naast de datumregel (daar ligt het doel immers ook: buiten beeld), en hij
 zegt welke kant het op is. Rechtsboven botste hij bovendien letterlijk met het
 getal van een weging op de rand.
+
+## 32. Wat er uit een nascholing van september 2026 is overgenomen, en wat niet
+
+Een avond met drie sprekers over de behandeling van obesitas: Blüher (Leipzig)
+over heterogeniteit, Vangoitsenhoven (UZ Leuven) over dopamine, Acosta (Mayo
+Clinic) over fenotypering. Veel van wat daar langskwam is het opschrijven waard.
+Eén ding staat daarom bovenaan en niet onderaan: **de avond werd betaald door
+Good Life Pharma, en alle drie de sprekers kwamen langs een eigen route uit bij
+naltrexon-bupropion, precies het middel dat die organisator in de Benelux
+voert.** Dat maakt de inhoud niet onwaar; het bepaalt wel hoe hard je hem mag
+brengen.
+
+### Wat er in de app is gekomen
+
+**Eén maat erbij, en het is de maat die de sprekers zelf meten.** De
+middelomtrek stond er al met de afkappunten van 94 en 102 cm. Die zijn
+centimeters voor iedereen, en dat is hun zwakte: 102 cm bij 1,70 m is iets
+anders dan bij 1,96 m. De verhouding met de lengte lost dat op met één deling
+en kent één grens voor iedereen, 0,5. NICE beveelt hem naast de BMI aan, en in
+de kliniek is hij vaak het enige wat er werkelijk gemeten wordt: DEXA mag daar
+alleen binnen onderzoek, en een MRI-scanner houdt rond de 140 kilo op, precies
+bij de patiënten waar het om gaat.
+
+De grens is een zone en geen streep. De meetfout van het lint loopt in de
+literatuur van 0,7 tot 15 cm; bij een lengte van 1,90 m is twee centimeter al
+0,01 in de verhouding. Wie op 0,50 uitkomt weet met één meting niet aan welke
+kant hij staat, en dat zegt het scherm in plaats van te kiezen. Dat is dezelfde
+regel als overal: geen getal zonder zijn onzekerheid.
+
+Een overlevende mutant heeft hier iets opgeleverd. De functie had eerst een
+losse null-controle vóór de controle op groter dan nul, en een mutant die de
+eerste wegnam bleef leven: de tweede wacht ving hetzelfde geval al op. Twee
+regels die hetzelfde bewaken zijn er één te veel; het is nu één wacht.
+
+**Twee stukken erbij in het boekje.** Het eerste gaat over waarom dezelfde
+behandeling bij de een wel werkt en bij de ander niet: de non-responscijfers
+(ongeveer 13 procent van de volwassenen op semaglutide, ongeveer 27 procent van
+de jongeren, minder dan 10 procent op de hoogste dosering tirzepatide, samen 15
+tot 20 procent), de vijf weefselgroepen uit Leipzig, en de vier eetprofielen.
+Het tweede gaat over food noise: het homeostatische systeem naast het
+hedonische, de verschuiving van de beloning naar het signaal dat haar
+aankondigt, de acht weken waarin een vet en zoet tussendoortje de voorkeur voor
+vetarm eten verlaagde, en het metabole-afdelingsonderzoek waarin twintig mensen
+op bewerkt eten ongeveer 508 kcal per dag meer aten.
+
+**En het mechanisme dat "Meer dan een BMI" miste.** Waarom hetzelfde gewicht bij
+de een wel en bij de ander geen schade geeft, gaat over opslagcapaciteit:
+onderhuids vet dat meegroeit door nieuwe cellen tegenover vetcellen die uitzetten
+tot ze zuurstof tekortkomen, ontstekingscellen aantrekken, en het overschot
+doorsturen naar buikholte, lever, spier en alvleesklier. De gematchte paren met
+dezelfde BMI, leeftijd, sekse en vetmassa, waarvan de een niets mankeerde en de
+ander diabetes en hypertensie had, maken dat concreet: het verschil zat in vet
+in de buikholte en in het weefsel zelf.
+
+### Wat er niet in is gekomen, en waarom
+
+**De naam van het middel.** Het mechanistische verhaal eromheen is fraai (een
+POMC-neuron dat zichzelf via β-endorfine afremt, een blokkade die die rem
+weghaalt) en het klinische signaal is interessant: angst en depressie vóór start
+voorspelden wél de respons op dat middel en niet op de incretines. Maar een
+boekje voor een patiënt dat een middel bij naam aanprijst op grond van een
+gesponsorde avond is een advertentie, hoe goed het mechanisme ook klinkt. Het
+stuk beschrijft daarom wél dat er verschillende motoren onder obesitas zitten en
+dat dezelfde marker voor twee middelen tegengesteld kan voorspellen, en noemt
+geen merk. Wil de eigenaar het er alsnog in, dan is dat een bewuste keuze en
+geen omissie.
+
+**Geen vragenlijst voor angst en depressie.** Acosta triageert met de PHQ-2 en
+meet met de GAD-7 en de PHQ-9. Dat zijn bruikbare, vrij beschikbare instrumenten
+en het zou technisch een halve dag werk zijn. Het is niet gedaan omdat vraag 9
+van de PHQ-9 over suïcidale gedachten gaat. Een app die die vraag stelt moet een
+route hebben voor het antwoord, en die route is geen tekstje maar een afspraak
+met een mens. Zolang die er niet is, hoort de vraag er niet te staan.
+
+**Geen fenotype-indeling.** De vier eetprofielen zijn aantrekkelijk en de
+gegevens erachter zijn dun: kleine trials, uitsplitsing achteraf, en de
+genetische score die ze schaalbaar zou maken is binnen één groep ontwikkeld en
+gevalideerd. Een app die je op grond daarvan een etiket geeft, doet precies wat
+deze app nergens doet: een oordeel vellen dat de gegevens niet dragen.
+
+### De regel die daaruit volgt, en die nu getoetst wordt
+
+Noemt de bron van een stuk een sponsor, dan staat het belang in datzelfde stuk
+onder "wat we niet weten", waar de lezer het ziet. Niet in een voetnoot, niet in
+de bronvermelding alleen. Dat staat als proef in
+`src/health/belangenverstrengeling.proef.ts`, naast de regel over merken in de
+voedingslijst, met een tweede regel die omvalt zodra er geen stuk meer is waarop
+de eis slaat: een eis die geruisloos verdwijnt bewaakt niets.

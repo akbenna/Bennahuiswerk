@@ -17,7 +17,7 @@ import type { Analyse } from '../rekenkern'
 import { VENSTER_DAGEN, thuisbloeddruk } from '../bloeddruk'
 import { LeegGeenGegevens } from '../leegbeeld'
 import { MEDICATIEGROEPEN, conditieGezet, conditieVan } from '../conditie'
-import { STOPBANG, fib4, nieuwste, rustpols, score2, stopbangScore } from '../klinisch'
+import { STOPBANG, fib4, middelLengte, nieuwste, rustpols, score2, stopbangScore } from '../klinisch'
 import type { Rustpols, StopbangAntwoorden, StopbangSleutel } from '../klinisch'
 import { WegLab, WegMeting } from '../tekens'
 import { SFEERFOTO } from '../sfeerfotos'
@@ -175,6 +175,7 @@ export function Klinisch(p: KlinischEigenschappen) {
       <Eigenbloeddruk metingen={metingen} />
 
       <MetingInvoer bewaar={p.bewaarMeting} a={a} sbd={sbd} dbd={dbd} middel={middel}
+                    lengteCm={profiel.lengte_cm}
                     pols={pols} />
       <LabInvoer bewaar={p.bewaarLab} labs={labs} />
 
@@ -379,13 +380,15 @@ function Eigenbloeddruk({ metingen }: { metingen: Meting[] }) {
 }
 
 function MetingInvoer(
-  { bewaar, a, sbd, dbd, middel, pols }:
+  { bewaar, a, sbd, dbd, middel, pols, lengteCm }:
   {
     bewaar: KlinischEigenschappen['bewaarMeting']; a: Analyse
     sbd: Meting | null; dbd: Meting | null; middel: Meting | null
     pols: Rustpols<Meting> | null
+    lengteCm: number | null
   },
 ) {
+  const mlv = middelLengte(middel ? Number(middel.waarde) : null, lengteCm)
   const [soort, zetSoort] = useState<string>(METINGSOORTEN[0][0])
   const [waarde, zetWaarde] = useState('')
 
@@ -467,6 +470,24 @@ function MetingInvoer(
            : 'Onder 94 cm.'}
         </p>
       )}
+      {/* DEZELFDE OMTREK ZEGT IETS ANDERS BIJ EEN ANDERE LENGTE
+          De afkappunten hierboven zijn centimeters voor iedereen, en dat is hun
+          zwakte: 102 cm bij 1,70 m is iets anders dan 102 cm bij 1,96 m. De
+          verhouding lost dat op met één deling en zonder tabel, en het is ook
+          wat een kliniek werkelijk meet zodra een MRI-scanner bij 140 kilo
+          ophoudt. */}
+      {mlv && (
+        <p className="mini" style={{ marginTop: 4 }}>
+          Gedeeld door je lengte: <b className="hoeveelheid">{dec(mlv.ratio, 2)}</b>.{' '}
+          {mlv.zone === 'boven'
+            ? 'Boven 0,5. Die grens is voor elke lengte dezelfde: je middel hoort minder dan de '
+              + 'helft van je lengte te zijn.'
+            : mlv.zone === 'rond'
+              ? 'Rond de grens van 0,5. Aan welke kant precies is met één lintmeting niet te '
+                + 'zeggen: twee centimeter verschil is hier al 0,01.'
+              : 'Onder 0,5, de grens die voor elke lengte dezelfde is.'}
+        </p>
+      )}
       {/* De meetinstructie stond altijd in beeld zolang er geen middelomtrek
           was, een stuk grijze tekst over ribben en bekkenkammen op een scherm
           waar je je bloeddruk kwam bekijken. Hij hoort er wel te staan, want
@@ -483,6 +504,19 @@ function MetingInvoer(
           en de Nederlandse richtlijn 2023 verwijzen alle drie naar de Europese afkappunten. Alleen
           voor Aziatische afkomst liggen ze lager. Meetfout in de literatuur 0,7 tot 15 cm, dus twee
           centimeter verschil is ruis.
+        </p>
+        <p>
+          De verhouding met je lengte staat er sinds kort naast, en die kent maar één grens: 0,5,
+          voor iedereen en voor elke lengte. NICE beveelt hem naast de BMI aan, en in een
+          obesitaskliniek is hij vaak het enige wat er werkelijk gemeten wordt: DEXA mag daar
+          alleen binnen onderzoek en een MRI-scanner houdt rond de 140 kilo op, precies bij de
+          patiënten waar het om gaat.
+        </p>
+        <p>
+          Wat deze maat zegt is wáár het vet zit en niet hoeveel het er is. Dat is de vraag die
+          ertoe doet: onderhuids vet doet weinig, vet om de organen geeft insulineresistentie. Hij
+          vervangt de BMI dus niet, hij staat ernaast. En hij erft de meetfout van het lint, dus
+          hier staan twee cijfers achter de komma en geen drie.
         </p>
       </Uitleg>
       <Rij style={{ marginTop: 12 }}>

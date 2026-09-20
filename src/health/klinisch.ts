@@ -120,6 +120,52 @@ export function stopbangScore(a: StopbangAntwoorden): { score: number; klasse: R
   return { score: n, klasse }
 }
 
+/**
+ * DE MIDDEL-LENGTEVERHOUDING
+ *
+ * De middelomtrek staat al op het scherm met de afkappunten van 94 en 102 cm.
+ * Die zijn er voor een Europese man van gemiddelde lengte, en dat is precies
+ * hun zwakte: dezelfde 102 cm betekent iets anders bij 1,70 m dan bij 1,96 m.
+ *
+ * De verhouding lost dat op met één deling en zonder tabel. De grens ligt op
+ * 0,5 voor iedereen: je middel hoort minder dan de helft van je lengte te zijn.
+ * Dat is de maat die NICE aanbeveelt naast de BMI, en het is ook wat een
+ * obesitaskliniek in de praktijk werkelijk meet wanneer een MRI-scanner bij 140
+ * kilo ophoudt en DEXA alleen binnen onderzoek mag.
+ *
+ * WAT HIJ WEL EN NIET ZEGT
+ *
+ * Hij zegt iets over waar het vet zit, en dat is de vraag die ertoe doet:
+ * hetzelfde gewicht kan onderhuids zitten (waar het weinig kwaad doet) of om de
+ * organen (waar het insulineresistentie geeft). Hij zegt niets over hóéveel vet
+ * er is, en hij vervangt de BMI niet.
+ *
+ * En hij erft de meetfout van de middelomtrek. Die loopt in de literatuur van
+ * 0,7 tot 15 cm; bij een lengte van 1,90 m is twee centimeter goed voor 0,01 in
+ * de verhouding. Daarom staat er één cijfer achter de komma en niet twee, en
+ * daarom heet de zone rond de grens uitdrukkelijk een zone.
+ */
+export type Middelzone = 'onder' | 'rond' | 'boven'
+
+export function middelLengte(
+  middelCm: number | null, lengteCm: number | null,
+): { ratio: number; zone: Middelzone } | null {
+  /* Eén wacht voor drie gevallen, en dat is geen bezuiniging maar het gevolg
+     van een mutatieproef: met een losse null-controle ervóór bleef een mutant
+     die haar wegnam in leven, want de tweede wacht ving hetzelfde geval al op.
+     Twee regels die hetzelfde bewaken zijn er één te veel. `null` is niet
+     groter dan nul, dus hij valt hier vanzelf onder. */
+  const m = middelCm ?? NaN
+  const l = lengteCm ?? NaN
+  if (!(m > 0) || !(l > 0)) return null
+  const ratio = Math.round((m / l) * 100) / 100
+  /* De grens is 0,5. De band eromheen is de meetfout, niet een tussencategorie:
+     wie op 0,50 uitkomt weet met één lintmeting niet of hij erboven of eronder
+     zit, en dat hoort het scherm te zeggen in plaats van te kiezen. */
+  const zone: Middelzone = ratio < 0.49 ? 'onder' : ratio > 0.51 ? 'boven' : 'rond'
+  return { ratio, zone }
+}
+
 export type Onderhoudzone = 'groen' | 'geel' | 'rood'
 
 /**
