@@ -71,6 +71,13 @@ database staat. Dat is te controleren zonder te vertrouwen op je geheugen,
 vergelijk de md5 van `prosrc` met die van het bestand, met commentaar en witruimte
 eruit gestript.
 
+Die vergelijking staat kant en klaar in `health/database/controle-md5.sql`. Dat
+bestand heeft geen nummer, want het is geen verslag maar een vraag: het verandert
+niets, je plakt het in de SQL-editor en er komt één tabel uit met per functie
+*gelijk*, *VERSCHILT*, *STAAT NIET IN DE DATABASE* of *STAAT NIET IN DE REPO*. De
+verwachte waarden staan erin en zijn uit de bestanden gerekend; verandert er een
+functie, dan hoort dat bestand opnieuw gemaakt te worden.
+
 ## Nooit wegschrijven wat er al staat
 
 De inhoud van de database is met de hand opgebouwd (de gerechtenbibliotheek
