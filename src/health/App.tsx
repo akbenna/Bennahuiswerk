@@ -315,6 +315,7 @@ export function App() {
           {tab === 'klinisch' && (
             <Klinisch
               a={a} profiel={profiel} labs={k.alles.labs} metingen={k.alles.metingen}
+              reeks={reeks}
               opProfiel={() => zetVenster('profiel')} opLeren={() => zetVenster('leren')}
               vragenlijsten={k.alles.vragenlijsten}
               bewaarMeting={(m) =>

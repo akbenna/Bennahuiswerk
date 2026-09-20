@@ -2369,3 +2369,71 @@ terug met "You do not have permission to perform this action". Daardoor is de
 md5-controle uit `CLAUDE.md` (de `prosrc` van elke functie tegen het genummerde
 bestand) nog steeds niet zelf te draaien. Tot dat lukt geldt voor elk genummerd
 bestand: toegepast is wat de eigenaar zegt, niet wat deze sessie heeft gezien.
+
+## 34. Twee dingen die de app al wist maar niet gebruikte
+
+Beide komen uit de lijst die na de nascholing van september is opgeschreven, en
+beide gebruiken uitsluitend gegevens die er al stonden.
+
+### Vier van de acht STOP-BANG-vragen
+
+De vragenlijst vraagt naar geslacht, leeftijd, BMI en nekomtrek. Die vier staan
+al in deze app, en de nekomtrek stond er zelfs twee keer: als meting in het
+lijstje, en als vinkje dat je zelf moest zetten. Twee plekken voor hetzelfde
+getal is één plek waar het fout kan gaan, en in een score waar drie punten al
+"matig risico" heet telt één verkeerd vinkje mee.
+
+De app vult die vier nu in, maar alleen de eerste keer. Wie de lijst al eens
+bewaard heeft, heeft antwoorden gegeven, en die overschrijven met een berekening
+zou zijn oordeel weggooien. Onder elk van de vier staat waar het antwoord
+vandaan komt (*uit je profiel*, *uit je geboortedatum*, *uit je lengte en je
+laatste weging*, *uit je laatste nekomtrek*), en zet je het vinkje anders dan de
+gegevens zeggen, dan zegt het scherm dat de twee uit elkaar lopen zonder je
+tegen te spreken.
+
+**Niet gemeten is geen nee.** Een ontbrekende waarde levert géén sleutel op en
+zeker geen `false`. Op het scherm zien die twee er hetzelfde uit, een vinkje dat
+uit staat, en juist daarom moet het verschil in de gegevens wél bestaan. Zonder
+geslacht valt de nekvraag niet te beantwoorden (de grens is 43 cm bij mannen en
+41 bij vrouwen) en dan komt hij er dus niet uit.
+
+De grenzen zijn die van de officiële vragenlijst en niet die van het gemak:
+ouder dan 50 en BMI boven 35 zijn strikt. Vier mutanten gedood, waaronder de
+twee die ertoe doen: een ontbrekende waarde als nee behandelen, en de nekgrens
+voor iedereen op 43 zetten.
+
+### Wat er veranderd is sinds je begon
+
+Dit is de kaart die de app het langst miste. Elk scherm toonde een
+momentopname, terwijl de vraag die ertoe doet is of er iets beter van geworden
+is. Het slotwoord van de nascholing ging daarover: beoordeel respons niet op de
+weegschaal maar op de comorbiditeit. De gegevens daarvoor stonden er al, met
+datum en al.
+
+De kaart zet per maat de eerste meting naast de laatste: gewicht, middelomtrek,
+boven- en onderdruk, en zes labwaarden. Drie regels, en ze volgen alle drie uit
+de rest van deze app.
+
+**Twee metingen op verschillende dagen, of de maat komt er niet in.** Eén
+waarde is geen beloop, en twee waarden op dezelfde dag zijn één meetmoment. Een
+verschil van nul tonen omdat er maar één moment is, suggereert dat er niets
+veranderd is terwijl er niets gemeten is.
+
+**Het gewicht komt uit de gladde lijn en niet van de weegschaal.** Het verschil
+tussen twee losse wegingen is voor een flink deel vocht. De proef zet dat vast
+met een reeks waarin de eerste en de laatste weging toevallig gelijk zijn
+terwijl de trend wél daalt: wie de ruwe waarden pakt komt op nul uit.
+
+**Er staat een verschil en geen oordeel.** Geen kleur, geen pijl die "goed"
+betekent. Of een daling van 0,3 in het HbA1c iets betekent hangt af van dingen
+die deze app niet weet.
+
+Vijf mutanten gedood, waaronder twee die op het scherm niet op zouden vallen:
+niet op datum sorteren (de database geeft rijen in de volgorde die hij toevallig
+heeft) en het verschil de verkeerde kant op berekenen.
+
+De proefgegevens hebben er een tweede, oudere meetdag bij gekregen. Zonder die
+dag heeft de kaart niets te vergelijken en zou de schermproef een kaart tonen
+die op de telefoon van de gebruiker vol staat en hier altijd leeg blijft. De
+proef kijkt nu of alle vier de maten er staan en of de verschillen kloppen: 114
+naar 108 is zes centimeter eraf, 146 naar 128 is achttien punten.

@@ -13,11 +13,15 @@ import { Schermkop } from '../hero'
 import { dec } from '@/gedeeld/getal'
 import { kortNL, vandaag } from '@/gedeeld/datum'
 import type { IsoDatum, Lab, Meting, Profiel, Vragenlijst } from '@/gedeeld/db/tabellen'
-import type { Analyse } from '../rekenkern'
+import type { Analyse, Trendpunt } from '../rekenkern'
 import { VENSTER_DAGEN, thuisbloeddruk } from '../bloeddruk'
 import { LeegGeenGegevens } from '../leegbeeld'
 import { MEDICATIEGROEPEN, conditieGezet, conditieVan } from '../conditie'
-import { STOPBANG, fib4, middelLengte, nieuwste, rustpols, score2, stopbangScore } from '../klinisch'
+import {
+  STOPBANG, fib4, middelLengte, nieuwste, rustpols, score2, stopbangScore, stopbangUitGegevens,
+} from '../klinisch'
+import { veranderingen } from '../verandering'
+import type { Verandering } from '../verandering'
 import type { Rustpols, StopbangAntwoorden, StopbangSleutel } from '../klinisch'
 import { WegLab, WegMeting } from '../tekens'
 import { SFEERFOTO } from '../sfeerfotos'
@@ -58,6 +62,8 @@ export interface KlinischEigenschappen {
   opLeren: () => void
   labs: Lab[]
   metingen: Meting[]
+  /** De hele reeks, voor de kaart met wat er veranderd is. */
+  reeks: readonly Trendpunt[]
   vragenlijsten: Vragenlijst[]
   bewaarMeting: (m: { datum: IsoDatum; soort: string; waarde: number; eenheid: string }) => void
   bewaarLab: (l: {
@@ -78,6 +84,7 @@ export function Klinisch(p: KlinischEigenschappen) {
 
   const sbd = meting('bloeddruk_sys'), dbd = meting('bloeddruk_dia')
   const middel = meting('middelomtrek')
+  const nek = meting('nekomtrek')
   const pols = rustpols(metingen)
   const tc = lab('tc'), hdl = lab('hdl')
 
@@ -172,6 +179,7 @@ export function Klinisch(p: KlinischEigenschappen) {
       </Schermkop>
 
       <Conditiekaart profiel={profiel} opProfiel={p.opProfiel} opLeren={p.opLeren} />
+      <Veranderingkaart rijen={veranderingen(p.reeks, metingen, labs)} />
       <Eigenbloeddruk metingen={metingen} />
 
       <MetingInvoer bewaar={p.bewaarMeting} a={a} sbd={sbd} dbd={dbd} middel={middel}
@@ -231,7 +239,14 @@ export function Klinisch(p: KlinischEigenschappen) {
         )}
       </Kaart>
 
-      <StopbangKaart vragenlijsten={p.vragenlijsten} bewaar={p.bewaarStopbang} />
+      <StopbangKaart vragenlijsten={p.vragenlijsten} bewaar={p.bewaarStopbang}
+                     uitGegevens={stopbangUitGegevens({
+                       geslacht: profiel.geslacht === 'm' || profiel.geslacht === 'v'
+                         ? profiel.geslacht : null,
+                       leeftijdJaar: profiel.leeftijd_jaar,
+                       bmi: a.bmi,
+                       nekCm: nek ? Number(nek.waarde) : null,
+                     })} />
     </>
   )
 }
@@ -343,6 +358,55 @@ function Conditiekaart(
  * het verschil dat je wilt zien. De rekenregel en waarom er geen oordeel bij
  * staat, staan in `bloeddruk.ts`.
  */
+/**
+ * WAT ER VERANDERD IS SINDS JE BEGON
+ *
+ * De rest van dit scherm is een momentopname: dit is de enige kaart die twee
+ * momenten naast elkaar zet. Dat is met opzet de eerste kaart onder de kop,
+ * want het is de vraag waarvoor je hier komt zodra je langer dan een paar weken
+ * bezig bent.
+ *
+ * Er staat een verschil en geen oordeel: geen kleur, geen pijl die "goed"
+ * betekent. Wat de rekenregels zijn en waarom, staat in `verandering.ts`.
+ */
+function Veranderingkaart({ rijen }: { rijen: Verandering[] }) {
+  if (!rijen.length) return null
+  return (
+    <Kaart>
+      <Kop>Wat er veranderd is</Kop>
+      <div style={{ marginTop: 6 }}>
+        {rijen.map((r) => (
+          <div key={r.naam} className="labrij">
+            <span className="naam" style={{ fontSize: '.86rem' }}>{r.naam}</span>
+            <span className="mini">
+              {dec(r.vanWaarde, r.decimalen)} → {dec(r.totWaarde, r.decimalen)} {r.eenheid}
+            </span>
+            <span className="cijfer" style={{ fontSize: '.86rem' }}>
+              {r.verschil > 0 ? '+' : ''}{dec(r.verschil, r.decimalen)}
+            </span>
+          </div>
+        ))}
+      </div>
+      <p className="mini" style={{ marginTop: 10 }}>
+        Van je eerste meting tot je laatste, per maat. Hier staat alleen wat er verschoven is;
+        wat dat betekent hoor je van je huisarts.
+      </p>
+      <Uitleg id="verandering" label="waarom hier geen kleur bij staat">
+        <p>
+          Het gewicht komt uit de gladde lijn en niet van de weegschaal: het verschil tussen twee
+          losse wegingen is voor een flink deel vocht. De middelomtrek erft de meetfout van het lint,
+          die in de literatuur van 0,7 tot 15 cm loopt, dus twee centimeter verschil is ruis. En een
+          bloedwaarde schommelt ook zonder dat er iets veranderd is.
+        </p>
+        <p>
+          Een maat komt hier pas te staan als hij op twee verschillende dagen gemeten is. Eén meting
+          is geen beloop, en twee op dezelfde dag zijn één meetmoment.
+        </p>
+      </Uitleg>
+    </Kaart>
+  )
+}
+
 function Eigenbloeddruk({ metingen }: { metingen: Meting[] }) {
   const t = thuisbloeddruk(metingen, vandaag())
   if (!t) return null
@@ -633,13 +697,30 @@ function LabInvoer(
   )
 }
 
+/** Wat de app zelf al weet, per vraag, in gewone taal onder het vinkje. */
+const UIT_GEGEVENS_LABEL: Partial<Record<StopbangSleutel, string>> = {
+  man: 'uit je profiel',
+  leeftijd: 'uit je geboortedatum',
+  bmi: 'uit je lengte en je laatste weging',
+  nek: 'uit je laatste nekomtrek',
+}
+
 function StopbangKaart(
-  { vragenlijsten, bewaar }:
-  { vragenlijsten: Vragenlijst[]; bewaar: KlinischEigenschappen['bewaarStopbang'] },
+  { vragenlijsten, bewaar, uitGegevens }:
+  {
+    vragenlijsten: Vragenlijst[]; bewaar: KlinischEigenschappen['bewaarStopbang']
+    /** De vier vragen die niemand hoeft te schatten. Zie `stopbangUitGegevens`. */
+    uitGegevens: StopbangAntwoorden
+  },
 ) {
   const laatste = nieuwste(vragenlijsten, (x) => x.soort === 'stopbang')
+  /* DE EERSTE KEER VULT DE APP IN WAT HIJ WEET, DAARNA NOOIT MEER
+     Wie de lijst al eens bewaard heeft, heeft antwoorden gegeven; die
+     overschrijven met een berekening zou zijn oordeel weggooien. Vandaar alleen
+     bij een lege lijst, en altijd met de herkomst erbij zodat zichtbaar is wat
+     er niet door jou is aangetikt. */
   const [antwoorden, zetAntwoorden] = useState<StopbangAntwoorden>(
-    () => (laatste?.antwoorden ?? {}) as StopbangAntwoorden)
+    () => (laatste?.antwoorden ?? uitGegevens) as StopbangAntwoorden)
   const r = stopbangScore(antwoorden)
 
   return (
@@ -654,7 +735,22 @@ function StopbangKaart(
                    style={{ width: 19, height: 19, flex: '0 0 19px', marginTop: 2 }}
                    onChange={(e) =>
                      zetAntwoorden((a) => ({ ...a, [k]: e.target.checked }))} />
-            <span style={{ fontSize: '.85rem', lineHeight: 1.35 }}>{l}</span>
+            <span style={{ fontSize: '.85rem', lineHeight: 1.35 }}>
+              {l}
+              {k in uitGegevens && (
+                <span className="mini" style={{ display: 'block', marginTop: 2 }}>
+                  {UIT_GEGEVENS_LABEL[k as StopbangSleutel]}:{' '}
+                  {uitGegevens[k as StopbangSleutel] ? 'ja' : 'nee'}
+                  {/* Wie het vinkje anders zet dan de gegevens zeggen, heeft
+                      daar meestal een reden voor. Het scherm spreekt dat niet
+                      tegen, het zegt alleen dat de twee uit elkaar lopen. */}
+                  {!!antwoorden[k as StopbangSleutel] !== uitGegevens[k as StopbangSleutel]
+                    && (antwoorden[k as StopbangSleutel]
+                      ? ', jij zegt van wel'
+                      : ', jij zegt van niet')}
+                </span>
+              )}
+            </span>
           </label>
         ))}
       </div>
