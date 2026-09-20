@@ -1,4 +1,4 @@
-# BennaHealth en de chronische zorg — waar de grens ligt en hoe we eroverheen komen
+# BennaHealth en de chronische zorg, waar de grens ligt en hoe we eroverheen komen
 
 Dit stuk staat er omdat de vraag "kunnen we diabetes en hypertensie erbij doen"
 niet met ja of nee te beantwoorden is. Het antwoord hangt af van wat de app
@@ -28,17 +28,17 @@ IIb-hulpmiddel met aangemelde instantie, ISO 13485 en klinische evaluatie.
 Dat is geen reden om te stoppen. Het is de reden om de dienstenlijst niet per
 ziekte te ordenen maar per claim, in drie ringen.
 
-## Ring 1 — het meetinstrument
+## Ring 1: het meetinstrument
 
 Wat er nu staat: energiebalans met onzekerheid, verzadiging, gewichtstrend,
 beweging, slaap. Leefstijl, geen ziekte. Dit is de identiteit van de app en het
 blijft voor iedereen hetzelfde scherm. Wie hier iets aan toevoegt moet kunnen
 uitleggen waarom het bij álle gebruikers hoort.
 
-## Ring 2 — de context
+## Ring 2: de context
 
 De gebruiker zegt zelf wat er speelt: hypertensie, diabetes type 2, doorgemaakte
-hart- of vaatziekte. En zijn medicatie, maar dan in *groepen* — insuline,
+hart- of vaatziekte. En zijn medicatie, maar dan in *groepen*, insuline,
 SU-derivaat, SGLT2-remmer, GLP-1-agonist, RAS-remmer, diureticum. Geen losse
 middelen en geen ATC-codes: groepen volstaan voor alles wat de app ermee doet, en
 ze zijn voor wie moeizaam leest aanwijsbaar met een foto van het doosje. Dat
@@ -50,14 +50,14 @@ thuisbloeddruk op Gezondheid het meetprotocol uit de NHG-Standaard CVRM in plaat
 van een los getal. Bij diabetes komen koolhydraatkwaliteit en vezel naast eiwit
 en verzadiging te staan. Dat laatste kan omdat de NDF Voedingsrichtlijn diabetes
 (2020, bewijsupdate 2023) geen apart diabetesdieet kent maar uitgaat van gezonde
-voeding met persoonsgerichte aanpassing — het bouwwerk dat er staat hoeft dus
+voeding met persoonsgerichte aanpassing, het bouwwerk dat er staat hoeft dus
 niet verdubbeld te worden, alleen anders gewogen.
 
 Het belangrijkste in ring 2 is niet advies maar **veiligheid**, en dat argument
 staat los van de MDR. Een app die mensen laat afvallen, gebruikt door iemand op
 insuline of gliclazide, veroorzaakt hypo's zodra de inname daalt en de dosis
 niet. Iemand op een SGLT2-remmer die fors minder koolhydraten eet loopt risico op
-euglykemische ketoacidose — normale glucose, wél ketoacidose, en dus een gevaar
+euglykemische ketoacidose, normale glucose, wél ketoacidose, en dus een gevaar
 dat de gebruiker niet aan zijn meter ziet. En wie een RAS-remmer slikt en op
 advies van de app naar een kaliumhoudende zoutvervanger grijpt, riskeert
 hyperkaliëmie.
@@ -70,7 +70,7 @@ ook het enige eerlijke antwoord van een app die geen getal zonder onzekerheid
 geeft: een insulinedosis kán deze app niet met een onzekerheidsinterval leveren,
 en dus hoort hij hem niet te geven.
 
-## Ring 3 — de behandeling
+## Ring 3: de behandeling
 
 Titratie op maat, hypo- en hypermanagement berekend voor deze patiënt, een
 koolhydraat-insulineratio. Dat is een klasse IIb-product en hoort niet in een
@@ -100,7 +100,7 @@ er zijn.
 
 De patiënt logt in BennaHealth. De POH kijkt in een praktijkdashboard: de
 gewichtstrend met band, de gemiddelde thuisbloeddruk volgens protocol, het
-natriumpatroon, en wat de patiënt zelf aan medicatiegroepen opgaf — met de
+natriumpatroon, en wat de patiënt zelf aan medicatiegroepen opgaf, met de
 herkomst erbij, want zelfopgave is geen medicatieoverzicht uit het HIS.
 
 Dat dashboard hoort in ProVita Care en niet hier. Daar zit de risico-engine en de
@@ -123,7 +123,7 @@ huisartsenpraktijk kwalificeert als *zorginstelling* in de zin van deze
 uitzondering. De definitie in de MDR spreekt van een organisatie die primair
 patiëntenzorg of volksgezondheid tot doel heeft, wat een praktijk lijkt te
 dekken, maar de voorbeelden in MDCG 2023-1 noemen ziekenhuizen, laboratoria en
-volksgezondheidsinstituten — geen huisartsenpraktijken. Dit is dus een optie om
+volksgezondheidsinstituten, geen huisartsenpraktijken. Dit is dus een optie om
 te laten toetsen, geen route om op te plannen.
 
 ## Volgorde
@@ -132,7 +132,7 @@ Eerst de **intended-purpose-verklaring**, vóór er één regel code bij komt. E
 alinea: BennaHealth ondersteunt leefstijl en zelfmeting, signaleert wanneer een
 behandelaar geraadpleegd moet worden, stelt geen diagnose en doseert geen
 medicatie. Laat die alinea één keer toetsen door iemand die MDR-kwalificaties
-doet, en laat de bestaande risicoscores in diezelfde toets meegaan — die vraag
+doet, en laat de bestaande risicoscores in diezelfde toets meegaan, die vraag
 staat nu al open, met of zonder chronische zorg. Daarnaast een DPIA: een
 conditieprofiel maakt de bijzondere persoonsgegevens expliciet die de app nu
 impliciet al verwerkt.

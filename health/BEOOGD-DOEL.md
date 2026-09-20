@@ -6,7 +6,7 @@ keuze ligt bij hem.
 
 Dat besluit verandert niets aan wat er hieronder open staat. De Rijksoverheid
 stelt dat de fabrikant zelf verantwoordelijk is voor de juiste kwalificatie en
-risicoklasse — er is geen instantie die dat vooraf voor je vaststelt — maar die
+risicoklasse (er is geen instantie die dat vooraf voor je vaststelt) maar die
 verantwoordelijkheid dragen is iets anders dan de vraag beantwoorden. Valt deze
 app onder de MDR, dan blijft dat zo, ongeacht wie het risico aanvaardt. De
 openstaande vragen zijn daarom bewaard en niet weggeschreven: ze staan verderop,
@@ -42,8 +42,8 @@ bloeddrukmetingen over een week, met het aantal dagen en de spreiding erbij. Er
 wordt geen afkapwaarde toegepast en geen oordeel gegeven.
 
 **Signaleren.** Wie zelf opgeeft dat hij bepaalde medicatiegroepen gebruikt en een
-afvaldoel heeft, krijgt de informatie die daarbij hoort — bijvoorbeeld dat de
-insulinebehoefte daalt bij gewichtsverlies — met de verwijzing om het met zijn
+afvaldoel heeft, krijgt de informatie die daarbij hoort (bijvoorbeeld dat de
+insulinebehoefte daalt bij gewichtsverlies) met de verwijzing om het met zijn
 behandelaar te bespreken. Er wordt geen dosis genoemd en geen waarde berekend.
 
 **Voorlichten.** Vaste teksten over hypoglykemie, zout en bloeddruk, thuis meten,
@@ -58,7 +58,7 @@ terugkoppeling naar een behandelaar: de app schrijft niet in een dossier en er
 kijkt niemand mee.
 
 Waar gegevens ontbreken wordt dat benoemd in plaats van als nul behandeld, en
-waar de app iets niet kan vaststellen zegt hij dat — bijvoorbeeld dat hij niet
+waar de app iets niet kan vaststellen zegt hij dat, bijvoorbeeld dat hij niet
 kan zien of bloeddrukmetingen 's ochtends en 's avonds zijn gedaan, omdat een
 meting hier een datum draagt en geen tijdstip.
 
@@ -72,7 +72,7 @@ invult en tonen hem de uitkomst.
 Dit is naar mijn inschatting het zwaarste punt van het hele dossier, en het staat
 los van alles wat er sinds het conditieprofiel bij is gekomen. Een risicoscore is
 niet hetzelfde als een voedingsdagboek. De vraag die voorgelegd moet worden is of
-deze modules de app onder regel 11 brengen, en zo ja in welke klasse — de
+deze modules de app onder regel 11 brengen, en zo ja in welke klasse, de
 standaard is IIa, met IIb zodra een verkeerde beslissing ernstige verslechtering
 of een ingreep tot gevolg kan hebben.
 
@@ -115,4 +115,4 @@ moet uitwijzen.
 regelgevingsverwijzingen in dit stuk en in `STRATEGIE-CHRONISCHE-ZORG.md` zijn
 een lezing van Verordening (EU) 2017/745 en de MDCG-richtsnoeren 2019-11 en
 2023-1, geen advies. Wie deze verklaring later toetst, begint bij de vragen
-hierboven — die zijn met opzet blijven staan.*
+hierboven, die zijn met opzet blijven staan.*
