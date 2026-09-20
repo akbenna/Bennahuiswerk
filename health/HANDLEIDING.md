@@ -49,22 +49,22 @@ probeert niet te vertellen.
 
 Typ je iets in het zoekveld, dan gebeurt er dit, in deze volgorde.
 
-**Stap 1 — de woorden.** Je zin wordt in woorden geknipt. Vulwoorden gaan eruit:
+**Stap 1, de woorden.** Je zin wordt in woorden geknipt. Vulwoorden gaan eruit:
 `met`, `van`, `de`, `een`, en ook de telwoorden `twee` tot en met `tien`. Dat
 laatste is geen kosmetiek. Zoeken op "twee boterhammen met mayonaise" zette ooit
 een graanreep bovenaan, omdat in de merknaam `b'tween` achter de apostrof een
-nieuw woord begint waar `twee` op past — en omdat "twee" in vrijwel geen
+nieuw woord begint waar `twee` op past, en omdat "twee" in vrijwel geen
 productnaam voorkomt, woog het ook nog eens het zwaarst.
 
-**Stap 2 — zeldzame woorden wegen zwaarder.** Wie "tonijn in water" zoekt, wordt
+**Stap 2, zeldzame woorden wegen zwaarder.** Wie "tonijn in water" zoekt, wordt
 geholpen door "tonijn" en nauwelijks door "water". De app rekent dat uit in plaats
 van het aan te nemen.
 
-**Stap 3 — synoniemen.** NEVO schrijft niet zoals mensen praten. Er staat geen
+**Stap 3, synoniemen.** NEVO schrijft niet zoals mensen praten. Er staat geen
 boterham maar Tarwebrood, geen patat maar Frites, geen kipfilet maar "Kip filet".
 Die woorden zijn er los aan gehangen, zodat je vindt wat je bedoelt.
 
-**Stap 4 — en pas als dat allemaal niets oplevert: de benadering.**
+**Stap 4, en pas als dat allemaal niets oplevert: de benadering.**
 
 ### Wat "Niets met precies die spelling" betekent
 
@@ -96,7 +96,7 @@ dezelfde volgorde.
 **Waarom hij alleen naar namen kijkt.** Een eerdere versie liet ook
 gelijkenis-op-letterniveau meetellen, en zocht bovendien in de synoniemenvelden
 mee. Het resultaat was dat "harira" Haring en Bokking gaf (Engels: *herring*) en
-sperziebonen (Frans: *haricots*), en dat "doner" Pepermunt gaf — want NEVO zet
+sperziebonen (Frans: *haricots*), en dat "doner" Pepermunt gaf, want NEVO zet
 daar "after dinner mints" bij, en `dinner` heeft hetzelfde skelet als `doner`.
 Allemaal netjes onder de kop "dit lijkt erop". **Een fout antwoord, netjes
 ingepakt, is erger dan een leeg scherm.** Daarom: alleen op wat NEVO zelf een naam
@@ -104,7 +104,7 @@ noemt, en niet op een synoniem dat zelf al een benadering is.
 
 ### Namen in je eigen taal
 
-De gerechtenbibliotheek bewaart per gerecht ook de namen in andere talen —
+De gerechtenbibliotheek bewaart per gerecht ook de namen in andere talen:
 Nederlands, Darija, Tarifit, Arabisch, Turks en Sranan. Die worden meegezocht.
 "Mercimek" vindt de Turkse linzensoep, ook al staat dat woord in geen enkele
 Nederlandse naam.
@@ -121,7 +121,7 @@ smaakt, en de getallen zijn overgenomen in plaats van geschat.
 
 **Daarna uit de tabel**, onder het kopje *Uit de tabel*. Die verschijnt alleen
 als het eiwit knelt, en toont wat het meeste eiwit per calorie levert binnen wat
-er nog past — met de portie erbij waarin het gewoonlijk gegeten wordt, zodat er
+er nog past, met de portie erbij waarin het gewoonlijk gegeten wordt, zodat er
 niet "kwark" staat maar "een glas skyr, 90 kcal, 16 gram eiwit". Eiwitshakes en
 eiwitrepen staan daar gewoon tussen, met ◈ ervoor: het zijn etiketwaarden en
 geen metingen, en dat blijft te zien.
@@ -144,7 +144,7 @@ verpakking. Wat je niet zeker weet, is hoeveel kilocalorieën daarin zitten.
 
 Dus: bij een merkproduct krijg je de fabrikantportie als eerste keuze, met het
 gewicht als een hard getal en de energie met een marge eromheen. Bij een
-huishoudmaat ("een eetlepel", "een schaaltje") ligt het andersom — dán is het
+huishoudmaat ("een eetlepel", "een schaaltje") ligt het andersom: dán is het
 gewicht de onzekere kant, en staat er een band omheen.
 
 ### De breedste band smaller maken
@@ -154,7 +154,7 @@ lijst regels terug met elk een band: *"720 kcal (520–980)"*. Onder de regel me
 de **breedste** band staat een weegveld.
 
 Dat staat daar om een reden. Bij herkenning uit tekst of foto is niet het
-herkennen de zwakke schakel maar de portie — het product benoemen is makkelijk,
+herkennen de zwakke schakel maar de portie: het product benoemen is makkelijk,
 de hoeveelheid schatten niet. Eén weging vervangt precies die post. In het
 voorbeeld hierboven: 300 gram intikken maakt van 520–980 een band van 497–583.
 
@@ -163,21 +163,21 @@ maar de voedingswaarde komt nog steeds uit de tabel, en die draagt zijn eigen
 marge van ongeveer acht procent. Een app die na het wegen een kaal getal toont,
 beweert dat de tabel exact is.
 
-De graad gaat hoogstens naar C. Niet naar A — dat is voorbehouden aan een etiket
+De graad gaat hoogstens naar C. Niet naar A, want dat is voorbehouden aan een etiket
 dat je zelf overnam, en dat is iets anders dan een tabelwaarde met een gewogen
 portie.
 
 ### De tabel heeft gezag over het model
 
 Vraag je de app om een maaltijd in gewone taal te herkennen, dan schat het model
-wat er in zit. Maar hoeveel een eetlepel weegt, schat het model **niet** — dat
+wat er in zit. Maar hoeveel een eetlepel weegt, schat het model **niet**; dat
 staat in de portietabel, en die wint. Als de tabel zegt dat een eetlepel 15 g is
 (met 10–20 g als band), dan is het 15 g, en de app zegt erbij dat dat uit de tabel
 komt en niet geschat is.
 
 Deze regel gold al voor voedingsstoffen en geldt sinds kort ook voor
-portiegewichten. Hij is er gekomen omdat één schaaltje cornflakes op 180 g stond
-— dat is 672 kcal. Het is 54 g.
+portiegewichten. Hij is er gekomen omdat één schaaltje cornflakes op 180 g stond,
+en dat is 672 kcal. Het is 54 g.
 
 ---
 
@@ -189,7 +189,7 @@ en wat de weegschaal deed, en leidt daaruit af hoeveel je verbrandt.
 Dat is meer werk dan een formule invullen, en het is om één reden beter: door te
 meten worden adaptieve thermogenese (je verbranding zakt als je afvalt) en je
 persoonlijke activiteitsniveau **automatisch meegenomen**. Die hoeven niet
-gemodelleerd te worden — ze zitten al in de meting.
+gemodelleerd te worden: ze zitten al in de meting.
 
 De prijs is dat het even duurt. De eerste weken leunt de app nog op een
 formuleschatting en is het interval breed. Dat is geen storing; dat is het
@@ -201,7 +201,7 @@ De volledige onderbouwing, inclusief wat er níet te verifiëren viel, staat in
 ### Bewegen: stappen of minuten, en geen calorieën
 
 Beweging telt als gehaald bij **8.000 stappen per dag** of **150 minuten matige
-inspanning per week**. Eén van de twee is genoeg — het gaat om de belasting, niet
+inspanning per week**. Eén van de twee is genoeg; het gaat om de belasting, niet
 om de manier. Die tweede is er gekomen voor de hometrainer: een halfuur fietsen
 levert geen enkele stap op, en de app zei tot voor kort doodleuk "nog 913 stappen
 te gaan" tegen iemand die net drie kwartier had gefietst.
@@ -213,18 +213,18 @@ die je er zelf bij zet.
 De soort bepaalt hoe zwaar de minuten tellen. De WHO-richtlijn noemt namelijk
 twee bedragen: 150 minuten matige inspanning per week, óf 75 zware, waarbij een
 minuut zware voor twee matige telt. Veertig minuten hardlopen telt dus als
-tachtig. Op het scherm staan allebei de getallen — wat je gedaan hebt en wat het
-telt — want één ervan zou over het andere liegen.
+tachtig. Op het scherm staan allebei de getallen (wat je gedaan hebt en wat het
+telt) want één ervan zou over het andere liegen.
 
 Of iets matig of zwaar is, leidt de app af uit de soort, en dat staat er ook zo
 bij: **aangenomen**. Rennen is niet altijd zwaar en wandelen niet altijd matig.
 Klopt het niet, dan zet je de schakelaar om, en dan onthoudt hij dat jíj het
 gekozen hebt.
 
-Krachttraining telt hier níet mee. Die staat in de richtlijn apart — twee keer
-per week — en heeft op datzelfde scherm zijn eigen drie bolletjes.
+Krachttraining telt hier níet mee. Die staat in de richtlijn apart (twee keer
+per week) en heeft op datzelfde scherm haar eigen drie bolletjes.
 
-Wat je verder níet invult: geen afstand — op een hometrainer is er geen afstand.
+Wat je verder níet invult: geen afstand, want op een hometrainer is er geen afstand.
 Geen weerstand, geen fietstype, geen merk: zonder vermogensmeter is dat allemaal
 een gok, en een gok met een bredere marge dan het antwoord waard is.
 
@@ -241,7 +241,7 @@ doet is bijhouden dát je bewoog.
 Twee bronnen liggen achter een schakelaar die uit staat tenzij iemand hem
 bewust omzet.
 
-**NEVO.** De brontabel zelf staat niet in deze repo — dat mag niet van de
+**NEVO.** De brontabel zelf staat niet in deze repo; dat mag niet van de
 licentie. Wat er staat is wat eruit is afgeleid en in de database zit. Staat de
 licentie van de actieve versie niet op "gecontroleerd", dan vindt het zoeken
 niets. Dat is geen storing maar het slot dat werkt.
@@ -255,12 +255,12 @@ vastligt, wordt vergeten.
 
 ## 6. Wat waar bewaard wordt
 
-- **Je dagen, je gewicht, je maaltijden** — centraal, achter je eigen aanmelding.
-- **De cursussen van de Academie** — alleen op het toestel waar je ze doet, in de
+- **Je dagen, je gewicht, je maaltijden**: centraal, achter je eigen aanmelding.
+- **De cursussen van de Academie**: alleen op het toestel waar je ze doet, in de
   browseropslag. Geen account, geen naam, geen code.
-- **Je aanmelding** — acht uur, daarna verloopt hij vanzelf. Op een gedeelde
+- **Je aanmelding**: acht uur, daarna verloopt hij vanzelf. Op een gedeelde
   tablet blijft anders het account van 's ochtends de hele avond openstaan.
-- **Dag of nacht** — alleen op dit toestel, net als de cursussen. Onder *Profiel
+- **Dag of nacht**: alleen op dit toestel, net als de cursussen. Onder *Profiel
   → Dag of nacht* staan drie standen: **Volg het toestel**, **Dag**, **Nacht**.
   De eerste is de grondstand en schakelt mee met de schemerstand van iOS; de
   andere twee zetten hem vast, ook als je telefoon iets anders doet. Er staat
@@ -277,8 +277,8 @@ Waarom dat veilig is, staat uitgelegd in `src/gedeeld/db/verbinding.ts`.
 
 Bij je profiel kun je aangeven dat je hoge bloeddruk hebt, diabetes type 2, of
 een hart- of vaatziekte hebt gehad, en welke medicijnen je gebruikt. Dat laatste
-in groepen — insuline, een tablet die suiker uitplast, een bloeddrukpil die op de
-nieren werkt — en niet in merknamen, met bij elke groep een voorbeeld zodat je
+in groepen (insuline, een tablet die suiker uitplast, een bloeddrukpil die op de
+nieren werkt) en niet in merknamen, met bij elke groep een voorbeeld zodat je
 hem kunt aanwijzen.
 
 Vul je niets in, dan verandert er niets. Leeg betekent voor deze app dat hij het
@@ -293,13 +293,13 @@ rekent. Wat er verandert is wat je ziet.
 Op **Vandaag**, onder de knop, kan een kaart verschijnen. Bijvoorbeeld als je
 insuline gebruikt en een afvaldoel hebt: je insulinebehoefte daalt als je
 afvalt, en de dosis die vorige maand klopte kan over een paar weken te hoog zijn.
-De kaart zegt wat je ermee moet — het met je praktijkondersteuner bespreken — en
+De kaart zegt wat je ermee moet (het met je praktijkondersteuner bespreken) en
 de uitleg zit erachter. Hij noemt geen dosis. Dat kan deze app niet en dat hoort
 hij dus niet te doen.
 
 Op **Voeding** staat bij diabetes onder elk product hoeveel koolhydraten en
 vezels erin zitten, naast de energie en het eiwit die er altijd al stonden.
-Bij hoge bloeddruk staat het zout erbij, in gram — hetzelfde getal als op de
+Bij hoge bloeddruk staat het zout erbij, in gram: hetzelfde getal als op de
 verpakking. Weet de tabel het voor een product niet, dan staat er een streepje en
 geen 0,0: dat zou beweren dat er geen zout in zit, en dat is iets anders dan
 onbekend.
@@ -307,7 +307,7 @@ onbekend.
 Onder **Meer** staat *Leren*: korte stukjes over een te lage bloedsuiker, over
 zout en bloeddruk, over thuis meten, over koolhydraten en vezels. Ze staan er
 voor iedereen hetzelfde en met de bron erbij; wat bij jou hoort staat bovenaan.
-Er valt niets weg — je mag lezen over iets wat je niet hebt.
+Er valt niets weg; je mag lezen over iets wat je niet hebt.
 
 ### Verdiepen: acht stukken om te lezen
 
@@ -321,7 +321,7 @@ Bij elk stuk staat hetzelfde rijtje: **wat we weten**, **wat we niet weten**,
 altijd en nooit onderaan in kleine letters. Er is geen stuk zonder.
 
 De teksten staan er voor iedereen hetzelfde. Ze lezen niets van jou en rekenen
-niets uit — dat gebeurt op de schermen zelf, en elk stuk zegt welk scherm dat is.
+niets uit: dat gebeurt op de schermen zelf, en elk stuk zegt welk scherm dat is.
 Het is voorlichting: de app schrijft geen medicijnen voor en zegt niet of iets
 voor jou geschikt is.
 
@@ -332,14 +332,14 @@ welk programma en wanneer je begon. Op Profiel verschijnt dan de kaart *Je
 traject*.
 
 Die telt in hele kalendermaanden hoe lang je bezig bent, van de vierentwintig
-die een GLI in Nederland duurt, en zegt in welke fase je zit — behandelfase of
+die een GLI in Nederland duurt, en zegt in welke fase je zit: behandelfase of
 onderhoudsfase. Van sommige programma's is de lengte van de behandelfase hier
 niet vastgelegd; dan staat er hoeveel maanden je bezig bent en verder niets.
 Liever een duur zonder fase dan een fase die niet klopt.
 
 Daaronder staat de trede erboven: gewichtsreducerende medicatie. De
 NHG-Standaard Obesitas stelt daar vier voorwaarden aan, en die staan er alle
-vier — maar de app beoordeelt er maar twee.
+vier, maar de app beoordeelt er maar twee.
 
 **Wat de app beoordeelt**, omdat het feiten uit je eigen dossier zijn: of je een
 jaar leefstijlbegeleiding achter de rug hebt, en of je onder de 76 bent.
@@ -347,7 +347,7 @@ jaar leefstijlbegeleiding achter de rug hebt, en of je onder de 76 bent.
 **Wat de app niet beoordeelt**, omdat je huisarts dat weegt: of je BMI boven de
 drempel ligt, en of er gewichtsgerelateerde comorbiditeit is. Die twee staan
 altijd op *niet bekend*, en er staat bij waarom. Je gewicht is hier zelf
-ingetikt; en wat je niet hebt aangevinkt kan er wél zijn — een leeg vinkje is
+ingetikt; en wat je niet hebt aangevinkt kan er wél zijn, want een leeg vinkje is
 geen "nee".
 
 Daaruit volgt iets dat je moet weten voor je de kaart leest: **hij kan nooit
@@ -364,7 +364,7 @@ twee sets:
 | Aziatische (incl. Hindostaanse), Midden-Oosterse, Afrikaanse of Afrikaans-Caribische achtergrond | BMI 32,5 | BMI 37,5 |
 
 Die tweede rij staat in vrijwel geen samenvatting van de standaard, en hij
-scheelt ongeveer 2,5 BMI-punt. Welke rij voor jou geldt bepaalt deze app niet —
+scheelt ongeveer 2,5 BMI-punt. Welke rij voor jou geldt bepaalt deze app niet:
 daar vraagt hij niet naar. Zie je een rij die op jou van toepassing zou kunnen
 zijn, dan is dat een vraag voor je huisarts.
 
@@ -373,7 +373,7 @@ hoger dan wat in de bijsluiter staat, er gaat minstens een jaar
 leefstijlbegeleiding met onvoldoende resultaat aan vooraf, boven de 75 wordt het
 niet voorgeschreven, en als het na twaalf weken op de hoogste dosis die je
 verdraagt minder dan vijf procent oplevert, schrijft de standaard voor om te
-stoppen. En dit: de standaard noemt het *extra aanbod en daarom facultatief* —
+stoppen. En dit: de standaard noemt het *extra aanbod en daarom facultatief*,
 geen huisarts is verplicht het te leveren. Krijg je nul op het rekest, dan is dat
 de richtlijn en niet iets wat jou persoonlijk onthouden wordt.
 
@@ -382,12 +382,12 @@ erboven belooft iets.
 
 ### Wat je spieren vasthoudt
 
-Bij snel afvallen verdwijnt er naast vet ook spier — bij semaglutide was dat in
+Bij snel afvallen verdwijnt er naast vet ook spier: bij semaglutide was dat in
 onderzoek ongeveer 40 procent van wat je kwijtraakt. Geen app kan dat meten. Wat
 deze wel doet, op het scherm Beweging, is de drie dingen naast elkaar zetten
 waarvan bekend is dat ze het tegengaan.
 
-**Eiwit per maaltijd.** Niet je dagtotaal — dat staat al bij Voeding — maar of
+**Eiwit per maaltijd.** Niet je dagtotaal (dat staat al bij Voeding) maar of
 elke maaltijd boven de 30 gram uitkomt. Daaronder komt de spieraanmaak
 nauwelijks op gang, en in een calorietekort telt dat zwaarder dan je dagtotaal.
 Ligt je dagdoel gedeeld door drie ónder die 30 gram, dan zegt de app dat, met het
@@ -397,7 +397,7 @@ antwoord erbij: verdeel het over twee grotere maaltijden in plaats van drie.
 
 **Opstaan uit een stoel.** Vijf keer opstaan en gaan zitten zonder je armen te
 gebruiken, met de klok van je telefoon. Boven de vijftien seconden is dat een
-aanwijzing om te bespreken — geen diagnose.
+aanwijzing om te bespreken, geen diagnose.
 
 Daarnaast kun je vijf vragen invullen over kracht, lopen, opstaan, traplopen en
 vallen. Eén genoemde klacht levert al een regel op. Dat is met opzet: deze lijst
@@ -405,7 +405,7 @@ hoort dingen op te sporen, niet uit te sluiten.
 
 **Er komt geen score uit.** De drie meten elk iets anders, met een eigen
 onzekerheid; er één cijfer van maken zou nauwkeurigheid suggereren die er niet
-is. En de richting van dit advies is goed onderbouwd, de grootte niet — de app
+is. En de richting van dit advies is goed onderbouwd, de grootte niet, en de app
 zegt dat er zelf bij.
 
 ### Wat ontbreekt er, en waarom de app daar voorzichtig in is
@@ -415,7 +415,7 @@ naar twee verschillende dingen.
 
 **Drie kijken naar je logboek.** IJzer, omega-3 en calcium. De
 voedingsmiddelentabel bevat geen vitamines en mineralen, dus de app kan nooit
-zien hoevéél er binnenkomt — alleen welke hoeken je overslaat. Die drie staan
+zien hoevéél er binnenkomt, alleen welke hoeken je overslaat. Die drie staan
 daarom op *overwegen* en wijzen naar je huisarts, niet naar een potje. En onder
 de veertien gelogde dagen zwijgen ze: vier dagen zonder vis zegt iets over je
 invoer en niets over je voeding.
@@ -426,7 +426,7 @@ invoer en niets over je voeding.
 Gezondheidsraad adviseert 20 microgram per dag vanaf 70 jaar, 10 microgram voor
 vrouwen van 50 tot en met 69, en 10 microgram op elke leeftijd bij een getinte of
 donkere huid of bij weinig buitenkomen of bedekkende kleding. Die laatste twee
-vraagt de app apart bij *Wat er bij jou speelt* — hij leidt ze niet af uit je
+vraagt de app apart bij *Wat er bij jou speelt*; hij leidt ze niet af uit je
 afkomst, want afkomst is geen huidskleur. Staat er geen leeftijd in je profiel,
 dan zegt de app daarover niets in plaats van te gokken.
 
@@ -434,7 +434,7 @@ dan zegt de app daarover niets in plaats van te gokken.
 reden om het te laten prikken en niet om te gaan slikken. Vul je metformine in
 bij je medicijnen, dan komt die regel vanzelf.
 
-**Is de lijst leeg, dan noemt hij wat hij nagekeken heeft** — met per regel wat
+**Is de lijst leeg, dan noemt hij wat hij nagekeken heeft**, met per regel wat
 hij zag. Leeg zonder die opsomming is niet te onderscheiden van kapot.
 
 ### De bloeddruk telt per week, niet per meting
@@ -448,9 +448,14 @@ naar de weging van vanochtend.
 Elke dag telt daarbij één keer mee, ook als je die dag vier keer mat. Het gaat om
 de week.
 
+**Je eerste meetdag telt niet mee.** Op die dag ben je nog aan het apparaat aan
+het wennen en valt de meting meestal hoger uit; het protocol laat hem daarom
+vervallen. Ben je eenmaal aan het meten, dan telt elke dag gewoon mee. Staat de
+eerste dag erbuiten, dan zegt het scherm dat erbij.
+
 Er staat geen oordeel bij en geen kleur. De meting zoals de richtlijn hem
 bedoelt is twee keer voor het ontbijt en twee keer twee uur na het avondeten, een
-week lang — en of je dat zo gedaan hebt kan de app niet zien, want een meting
+week lang, en of je dat zo gedaan hebt kan de app niet zien, want een meting
 draagt hier een datum en geen tijdstip. Wat het getal betekent, hoor je van je
 huisarts of praktijkondersteuner.
 
@@ -480,5 +485,5 @@ terugblik met de fouten erin die onderweg gemaakt zijn.
 
 Eén gewoonte is belangrijker dan alle vier: **meten voordat je verandert.** In
 deze app is bijna elke aanname die vanzelfsprekend leek, bij nameten onjuist
-gebleken — de mayonaise die "stuk" was, de eetlepel die "ontbrak", de macaroni die
+gebleken: de mayonaise die "stuk" was, de eetlepel die "ontbrak", de macaroni die
 niet bestaat, en de haring die voor harira doorging.
