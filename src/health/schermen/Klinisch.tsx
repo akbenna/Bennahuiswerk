@@ -375,6 +375,30 @@ function Eigenbloeddruk({ metingen }: { metingen: Meting[] }) {
         thuismetingen zijn: wat je hier invult telt mee, waar je het ook mat. Wat dit getal betekent
         beoordeelt je huisarts of praktijkondersteuner; deze app zet er met opzet geen grens bij.
       </p>
+      {/* WAAROM EEN WEEK THUIS METEN BESTAAT
+          Deze twee getallen komen uit het NHG-protocol bloeddruk meten zelf en
+          zijn het sterkste argument voor deze kaart: bij een op de vijf mensen
+          zegt de spreekkamer iets anders dan de week erbuiten, en dat geldt
+          beide kanten op. */}
+      <Uitleg id="thuisversusspreekkamer" label="waarom dit iets zegt wat de spreekkamer niet zegt">
+        <p>
+          Bij <b className="hoeveelheid">15 tot 20 procent</b> van de mensen is de bloeddruk alleen
+          in de spreekkamer verhoogd, en bij <b className="hoeveelheid">10 tot 15 procent</b> juist
+          alleen daarbuiten. Daarom staat in het protocol dat je bij een indicatie voor behandeling
+          naast de spreekkamermeting ook een meting over langere tijd doet.
+        </p>
+        <p>
+          In de spreekkamer geldt bovendien een andere grens dan thuis. Daar wordt een verhoogde
+          bloeddruk vastgesteld op het gemiddelde van de geregistreerde bovendrukken over drie
+          verschillende momenten, bij 140 mmHg of hoger. Voor de week thuis geldt een lagere grens,
+          en die zet deze app met opzet niet neer.
+        </p>
+        <p className="mini">
+          Bron: NHG, Protocol bloeddruk meten, 2022, versie 1.1. Dat protocol gaat over de meting
+          in de spreekkamer. De opzet van de week thuis staat in een eigen protocol, dat hier nog
+          niet is nagelopen.
+        </p>
+      </Uitleg>
     </Kaart>
   )
 }
@@ -493,6 +517,24 @@ function MetingInvoer(
           waar je je bloeddruk kwam bekijken. Hij hoort er wel te staan, want
           verkeerd meten geeft centimeters verschil, maar achter de uitklapper
           waar alle andere onderbouwing in deze app ook staat. */}
+      {/* De meetinstructie voor de bloeddruk hoort bij het invoerveld en niet in
+          een boekje: wie hier een getal intikt, bepaalt op dat moment hoe goed
+          het getal is. Alles hieronder staat letterlijk in het protocol. */}
+      <Uitleg id="bloeddrukmeten" label="hoe je een bloeddruk meet die iets waard is">
+        <p>
+          Vijf minuten rustig zitten voordat je meet, in een rustige omgeving, en niet praten
+          tijdens de meting. Voeten naast elkaar op de grond, benen niet over elkaar, geen vuist
+          maken. De onderarm ontspannen op tafel, de manchet ter hoogte van het midden van je
+          borstbeen.
+        </p>
+        <p>
+          Meet twee keer, met een of twee minuten ertussen, en laat de manchet daartussen helemaal
+          leeg lopen. Noteer het gemiddelde van de laatste twee metingen: één losse meting is geen
+          bloeddruk. Verschillen die twee meer dan 10 mmHg boven of 5 mmHg onder, meet dan door tot
+          twee opeenvolgende metingen dichter bij elkaar liggen.
+        </p>
+        <p className="mini">Bron: NHG, Protocol bloeddruk meten, 2022, versie 1.1.</p>
+      </Uitleg>
       <Uitleg id="middelomtrek"
               label={middel ? 'waar die grenzen vandaan komen' : 'hoe je de middelomtrek meet'}>
         <p>

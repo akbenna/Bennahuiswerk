@@ -2312,3 +2312,60 @@ de bronvermelding alleen. Dat staat als proef in
 `src/health/belangenverstrengeling.proef.ts`, naast de regel over merken in de
 voedingslijst, met een tweede regel die omvalt zodra er geen stuk meer is waarop
 de eis slaat: een eis die geruisloos verdwijnt bewaakt niets.
+
+## 33. Het bloeddrukprotocol nagelopen, en wat het wel en niet bevestigt
+
+Er lag een vraag open sinds de medische naloop: de thuisbloeddrukregel in deze
+app (zeven dagen, twee metingen 's ochtends en twee 's avonds, eerste dag eraf,
+grens 135/85) kwam uit drie onafhankelijke weergaven en niet uit het protocol
+zelf, want nhg.org is vanaf deze machine niet te bereiken.
+
+Er is nu een protocol op tafel gekomen: **NHG, Protocol bloeddruk meten, 2022,
+versie 1.1.** Dat is een ander document dan waar de vraag over ging. Het gaat
+over de méting in de spreekkamer en niet over de week thuis, en het bevestigt de
+7-2-2-opzet, de gewenningsdag en de 135/85 dus niet. Die drie staan nog steeds
+als "uit secundaire bronnen" in de kop van `bloeddruk.ts`. Dat is de eerlijke
+uitkomst en niet de gewenste.
+
+### Wat het wél bevestigt, en wat daarvan in de app is gekomen
+
+Het document geeft de meetregels zelf, en die zijn in deze app niets waard als
+ze in een boekje blijven staan. Ze staan nu bij het invoerveld, want daar wordt
+bepaald hoe goed het getal wordt dat je intikt: vijf minuten rustig zitten, niet
+praten, voeten naast elkaar, de manchet ter hoogte van het midden van het
+borstbeen, en twee metingen met een of twee minuten ertussen waarbij de manchet
+helemaal leeg moet. Wat je noteert is het gemiddelde van de laatste twee.
+Verschillen die twee meer dan 10 mmHg systolisch of 5 diastolisch, dan meet je
+door tot twee opeenvolgende metingen dichter bij elkaar liggen.
+
+En het geeft het sterkste argument voor de kaart die er al stond. Bij 15 tot 20
+procent van de mensen is de bloeddruk alleen in de spreekkamer verhoogd, en bij
+10 tot 15 procent juist alleen daarbuiten. Dat is precies waarom een week thuis
+iets zegt wat de spreekkamer niet zegt, en het staat nu in de app met de bron
+erbij. De spreekkamergrens (gemiddelde van de geregistreerde bovendrukken over
+drie momenten, 140 mmHg of hoger) staat er ook, met de opmerking dat thuis een
+lagere grens geldt die deze app met opzet niet neerzet.
+
+### Eén verschil dat daardoor zichtbaar werd
+
+Het spreekkamerprotocol zegt: noteer het gemiddelde van de láátste twee
+metingen. `thuisbloeddruk` middelt alles wat er op een dag staat. Dat verschil
+is blijven staan, en met reden: die rekenregel overnemen op gezag van een
+document dat niet over de thuismeting gaat, zou precies de fout zijn die dit
+hoofdstuk rechtzet. Het verschil staat nu in de kop van `bloeddruk.ts` én in een
+proef (een dag met drie metingen geeft 137/88 en niet 130/85), zodat het niet
+stilletjes kan verschuiven.
+
+### De stand van de andere open punten
+
+Bestand 44 is toegepast. Module D blijft rusten. De twee fixes in de
+ProVita-repo vervallen: `Bennahuiswerk` is de repo die telt. "Wat ontbreekt er"
+op Vandaag blijft zoals het is, over voedingsstoffen en niet over producten.
+
+Eén punt is níet opgelost, ondanks dat het geregeld leek: toegang tot de
+database van BennaHealth. De Supabase-koppeling van deze sessie ziet twee
+projecten, en `huiuvnjrvvoybbzwfrfp` zit er niet bij; een leesvraag erop komt
+terug met "You do not have permission to perform this action". Daardoor is de
+md5-controle uit `CLAUDE.md` (de `prosrc` van elke functie tegen het genummerde
+bestand) nog steeds niet zelf te draaien. Tot dat lukt geldt voor elk genummerd
+bestand: toegepast is wat de eigenaar zegt, niet wat deze sessie heeft gezien.

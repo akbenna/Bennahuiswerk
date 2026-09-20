@@ -72,13 +72,49 @@
  * zet hem toch niet neer, omdat de stap van informeren naar beoordelen bij de
  * huisarts of praktijkondersteuner hoort.
  *
- * BRON, EN WAT ERAAN ONTBREEKT
+ * BRON, EN WAT ER OP 20 SEPTEMBER 2026 WEL EN NIET IS NAGELOPEN
  *
- * NHG, Protocol thuisbloeddrukmeting, en de praktische handleiding bij de
- * NHG-Standaard CVRM. Beide zijn vanaf deze machine niet op te halen; wat
- * hierboven staat komt uit drie onafhankelijke weergaven van dat protocol en
- * niet uit het protocol zelf. Dat hoort iemand met het protocol op zijn bureau
- * na te lopen voordat dit als gecontroleerd geldt.
+ * Er liggen twee NHG-protocollen naast elkaar en ze gaan over verschillende
+ * dingen. Dat onderscheid is hier het hele punt.
+ *
+ * **Nagelopen tegen het document zelf:** NHG, Protocol bloeddruk meten, 2022,
+ * versie 1.1. Dat gaat over de méting in de spreekkamer en niet over de week
+ * thuis. Wat het zegt en wat deze app ervan overneemt:
+ *
+ *   - Elke bloeddrukwaarde die in het dossier komt rust op ten minste twee
+ *     metingen, en wat je noteert is het gemiddelde van de laatste twee.
+ *   - Vijf minuten rustig zitten vooraf, stil zijn tijdens de meting, voeten
+ *     naast elkaar op de grond, de manchet ter hoogte van het midden van het
+ *     borstbeen. De manchet moet tussen twee metingen helemaal leeg.
+ *   - Verschillen twee metingen meer dan 10 mmHg systolisch of 5 mmHg
+ *     diastolisch, dan meet je door tot twee opeenvolgende metingen binnen die
+ *     marge liggen. Lukt dat na vier metingen niet, dan overleg je.
+ *   - Een verhoogde bloeddruk stel je vast op het gemiddelde van de
+ *     geregistreerde bovendrukken over drie verschillende momenten, bij 140
+ *     mmHg of hoger.
+ *   - En de reden dat een week thuis meten überhaupt bestaat: 15 tot 20 procent
+ *     van de mensen heeft alleen in de spreekkamer een verhoogde bloeddruk, en
+ *     10 tot 15 procent juist andersom.
+ *
+ * EN ÉÉN VERSCHIL DAT DAARUIT ZICHTBAAR WERD
+ *
+ * Het spreekkamerprotocol zegt: noteer het gemiddelde van de láátste twee
+ * metingen. Wie drie keer meet omdat de eerste twee te ver uit elkaar lagen,
+ * registreert dus de laatste twee en niet alle drie.
+ *
+ * Deze functie doet iets anders: zij middelt alles wat er op een dag staat. Dat
+ * is met opzet blijven staan. Het spreekkamerprotocol gaat over één meting in
+ * de spreekkamer, niet over een week thuis, en de rekenregel daarvan overnemen
+ * op grond van een document dat er niet over gaat zou precies de fout zijn die
+ * hierboven wordt rechtgezet. Het verschil staat hier opgeschreven en wordt
+ * vastgehouden door een proef, zodat het niet stilletjes kan verschuiven.
+ *
+ * **Niet nagelaten tegen het document zelf:** het protocol thuisbloeddrukmeting.
+ * De 7-2-2-opzet, het vervallen van de eerste dag en de grens van 135/85 mmHg
+ * komen nog steeds uit drie onafhankelijke weergaven en niet uit dat protocol.
+ * Het document dat hierboven is nagelopen gaat daar niet over en bevestigt ze
+ * dus niet. Wie het protocol thuisbloeddrukmeting op zijn bureau heeft, hoort
+ * die drie nog na te lopen voordat ze als gecontroleerd gelden.
  */
 import type { IsoDatum, Meting } from '@/gedeeld/db/tabellen'
 import { dagenTussen } from './klinisch'
