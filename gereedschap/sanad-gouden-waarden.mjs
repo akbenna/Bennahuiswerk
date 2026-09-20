@@ -26,6 +26,7 @@ process.env.TZ = 'UTC'
 import fs from 'node:fs'
 import vm from 'node:vm'
 import crypto from 'node:crypto'
+import { woordgelijk } from './woordgelijk.mjs'
 
 const NU = '2026-08-22'
 const KLOK = Date.parse(NU + 'T10:00:00Z')
@@ -69,7 +70,10 @@ vm.createContext(ctx)
 vm.runInContext(js, ctx)
 const O = ctx.__
 
-const vinger = (x) => crypto.createHash('sha256').update(JSON.stringify(x)).digest('hex').slice(0, 16)
+/* De vinger loopt over de wóórden en niet over de leestekens. Waarom,
+   staat in `gereedschap/woordgelijk.mjs`. */
+const vinger = (x) =>
+  crypto.createHash('sha256').update(JSON.stringify(woordgelijk(x))).digest('hex').slice(0, 16)
 
 /* ---------- 1. de leerstof ---------- */
 const stof = {
@@ -144,7 +148,7 @@ const paren = [
 ]
 /* JSON kent geen `undefined`: waar het oude samenvoegen niets teruggaf, zou het
    veld anders stilletjes uit de gouden waarden verdwijnen en de vergelijking
-   met de nieuwe code — die daar `null` of de standaardwaarde zet — alsnog
+   met de nieuwe code (die daar `null` of de standaardwaarde zet) alsnog
    slagen. Aanvullen gebeurt daarom hier, in de opwekker, en niet in de toets. */
 const LEEG = { start: null, dag: '4', klaar: {}, cards: {}, notities: {}, alles: false, last: null, dagreeks: 0 }
 const aanvullen = (o) => ({ ...LEEG, ...o, start: o.start ?? null, last: o.last ?? null })
@@ -175,4 +179,4 @@ const uit = {
   stof, programma, roosters, reeksen, samen, openstaand, planning,
 }
 fs.writeFileSync('src/sanad/gouden-waarden.json', JSON.stringify(uit, null, 1) + '\n')
-console.log(`${O.TOT} weken, ${O.KAARTEN.length} kaarten, ${roosters.length} roosters, ${reeksen.length} reeksen — src/sanad/gouden-waarden.json`)
+console.log(`${O.TOT} weken, ${O.KAARTEN.length} kaarten, ${roosters.length} roosters, ${reeksen.length} reeksen, src/sanad/gouden-waarden.json`)

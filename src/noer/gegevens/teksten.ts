@@ -1,7 +1,7 @@
 import type { Zegtekst } from './soorten'
 
 /* =============================================================================
-   HET GEBED — de losse onderdelen, met wat je doet en wat je zegt.
+   HET GEBED, de losse onderdelen, met wat je doet en wat je zegt.
 ============================================================================= */
 export const T: Record<string, Zegtekst> = {
   takbir:{aid:'t:takbir', ar:'اللَّهُ أَكْبَرُ', tr:'Allahu akbar', uit:'al-LAA-hoe AK-bar', nl:'Allah is groter'},
@@ -40,7 +40,7 @@ export const T: Record<string, Zegtekst> = {
     nl:'Ik zoek bescherming bij Allah tegen de vervloekte duivel'},
 
   /* Na de slotgroet. Deze stonden wel in de les over dhikr, maar niet in het
-     gebedsonderdeel zelf — en juist hier hoor je ze te leren. */
+     gebedsonderdeel zelf, en juist hier hoor je ze te leren. */
   istighfar:{aid:'t:istighfar', ar:'أَسْتَغْفِرُ اللَّهَ', tr:'Astaghfiru llah', uit:'as-tagh-FI-roe l-LAAH',
     nl:'Ik vraag Allah om vergeving', keer:'3×'},
   naSalam:{aid:'t:na-salam', ar:'اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ',
@@ -79,7 +79,7 @@ export const T: Record<string, Zegtekst> = {
     uit:'al-LAA-hoem-ma DJ‘AL-hoe FA-ra-tan wa DZOEKH-ran li-waa-li-DAYH, wa sja-FIE-‘an moe-DJAA-baa',
     nl:'Allah, maak hem tot iemand die vooruitgaat en tot een schat voor zijn ouders, en tot een voorspreker die verhoord wordt.'},
 
-  /* Wat je zegt zodra je het slechte nieuws hoort — de woorden staan in de Koran
+  /* Wat je zegt zodra je het slechte nieuws hoort, de woorden staan in de Koran
      zelf (2:156), en de tweede du'a leerde de Profeet ﷺ aan Umm Salama. */
   istirja:{aid:'t:istirja', ar:'إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ',
     tr:'Inna lillahi wa inna ilayhi raji\'un', uit:'IN-naa lil-LAA-hi wa IN-naa i-LAY-hi RAA-dji-‘oen',

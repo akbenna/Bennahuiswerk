@@ -1,5 +1,5 @@
 /**
- * LEERPAD — de kaart van wat je hebt doorgewerkt
+ * LEERPAD: de kaart van wat je hebt doorgewerkt
  *
  * Bij een kind gaat het over punten en veroverde letters; bij een volwassene
  * over de stappen zelf. Dezelfde voortgang, andere maat.

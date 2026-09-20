@@ -1,5 +1,5 @@
 /**
- * BENNAHUB — de startpagina.
+ * BENNAHUB: de startpagina.
  *
  * Iedereen meldt zich hier. Je kiest je eigen tegel, typt je eigen code, en
  * krijgt daarna de apps te zien die voor jou bedoeld zijn. Wie ouder is, krijgt
@@ -13,7 +13,7 @@
  * Achter de poort is dit geen lijst kaarten meer maar een werkblad: een vaste
  * zijbalk links met het merk en de weg naar alles, en rechts het onthaal met de
  * klok, de twee groepen apps en de snelkoppelingen. De zijbalk vervangt de
- * balk die hier vroeger bovenaan plakte — die zei precies hetzelfde.
+ * balk die hier vroeger bovenaan plakte, die zei precies hetzelfde.
  */
 import { useCallback, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
@@ -40,7 +40,7 @@ type Scherm =
   | { naam: 'ouder' }
 
 /** Een leeg lijstje bij een lid betekent "alles wat bij je rol hoort". Staat er
- *  wel iets in, dan is dat de hele lijst — zo kun je Amaani alleen Kompas geven
+ *  wel iets in, dan is dat de hele lijst, zo kun je Amaani alleen Kompas geven
  *  zonder de andere kinderen erbij. */
 function zichtbareApps(wie: Ik): readonly AppTegel[] {
   if (wie.apps.length) return APPS.filter((a) => wie.apps.includes(a.id))
@@ -91,7 +91,7 @@ export function App() {
     ) : null
 
   /** Het werkblad: zijbalk links, wat je meegeeft rechts. Alleen de zichtbare
-   *  groepen komen in het menu — wie geen apps voor de groten heeft, hoort daar
+   *  groepen komen in het menu, wie geen apps voor de groten heeft, hoort daar
    *  ook geen regel voor te zien staan. */
   const werkblad = (lijst: readonly AppTegel[], boven?: ReactNode) => {
     const groepen = GROEPEN.filter((g) => lijst.some((a) => a.groep === g.groep))
@@ -120,7 +120,7 @@ export function App() {
     case 'laden':
       return <div className="wrap poort"><p className="meta">Even kijken wie er zijn…</p></div>
 
-    /* Zonder internet kun je niet aanmelden — de codes staan centraal. Dat is
+    /* Zonder internet kun je niet aanmelden, de codes staan centraal. Dat is
        geen fijne boodschap, dus hij komt met een uitweg: de apps zelf werken
        offline gewoon door, dus we laten de kaarten alsnog zien met een eerlijke
        waarschuwing erboven in plaats van een doodlopende foutmelding. */
@@ -131,7 +131,7 @@ export function App() {
           <div className="welkomtekst">
             <h1>Geen verbinding</h1>
             <p className="lede">
-              Aanmelden lukt nu niet — de codes staan centraal en die zijn even niet te bereiken
+              Aanmelden lukt nu niet: de codes staan centraal en die zijn even niet te bereiken
               ({scherm.fout}). De apps zelf werken zonder internet gewoon door; wat je doet wordt
               bewaard en later gelijkgetrokken.
             </p>

@@ -1,5 +1,5 @@
 /**
- * VOEDING — zoeken in de voedingsmiddelentabel, de gerechten en je eigen producten.
+ * VOEDING: zoeken in de voedingsmiddelentabel, de gerechten en je eigen producten.
  *
  * Overgezet uit vwVoeding(). Twee dingen die in de oude versie fout stonden en
  * hier goed: de gerechten hadden geen knop, dus je kon een tajine wél vinden en
@@ -7,8 +7,8 @@
  * hitsHTML had er geen tak voor, dus ze waren onvindbaar in het zoekveld.
  *
  * En één ding dat pas bij het herontwerp opviel: dit scherm opende met een leeg
- * invulveld. Het antwoord op de vraag die het scherm stelt — is mijn eiwit over
- * de dag verdeeld — stond onderaan, onder twee kaarten door. Dat staat nu
+ * invulveld. Het antwoord op de vraag die het scherm stelt (is mijn eiwit over
+ * de dag verdeeld) stond onderaan, onder twee kaarten door. Dat staat nu
  * bovenaan, en het zoeken eronder als de handeling die het is.
  */
 import { useEffect, useRef, useState } from 'react'
@@ -69,7 +69,7 @@ export function Voeding(p: VoedingEigenschappen) {
               <>
                 <Maalstaven staven={v.staven} doel={v.doelPerMaaltijd} />
                 <p className="mini" style={{ marginTop: 9 }}>
-                  De stippellijn ligt op {v.doelPerMaaltijd} g — je dagdoel gedeeld door drie.
+                  De stippellijn ligt op {v.doelPerMaaltijd} g: je dagdoel gedeeld door drie.
                 </p>
               </>
             ) : v.totaal > 0 ? (
@@ -95,7 +95,7 @@ export function Voeding(p: VoedingEigenschappen) {
           Hier stonden zes regels met een studie, een steekproefgrootte en een
           voorbehoud, op het scherm waar je iets komt loggen. Wat je moet weten
           is één zin lang; de rest is verantwoording en die staat achter de
-          uitklapper. Weggelaten is er niets — een getal zonder zijn herkomst
+          uitklapper. Weggelaten is er niets: een getal zonder zijn herkomst
           zou in deze app een fout zijn. */}
       <Kaart plat>
         <Kop>Waarom de verdeling telt</Kop>
@@ -106,7 +106,7 @@ export function Voeding(p: VoedingEigenschappen) {
         <Uitleg id="eiwitverdeling" label="waar dat vandaan komt">
           <p>
             Gelijkmatige verdeling gaf in Mamerow 2014 een 25 procent hogere spiereiwitsynthese dan
-            een scheve verdeling — al ging dat om acht deelnemers van gemiddeld 37 jaar, dus behandel
+            een scheve verdeling, al ging dat om acht deelnemers van gemiddeld 37 jaar, dus behandel
             het als richting, niet als wet. Het ontbijt is de maaltijd waar de scheve verdeling
             vrijwel altijd ontstaat.
           </p>
@@ -123,7 +123,7 @@ export function Voeding(p: VoedingEigenschappen) {
 }
 
 /**
- * ZOEKEN — en wat er per treffer te zien is.
+ * ZOEKEN, en wat er per treffer te zien is.
  *
  * De regel toont energie en eiwit, want dat is waar de app over gaat. Wie
  * diabetes heeft opgegeven ziet er koolhydraten en vezel bij staan. Dat is geen
@@ -138,9 +138,9 @@ export function Voeding(p: VoedingEigenschappen) {
  * in milligram natrium, want zout is het woord dat op de verpakking staat en in
  * de spreekkamer valt; de omrekening gebeurt op één plek, in `zout.ts`.
  *
- * Komt er geen natriumwaarde mee — omdat
+ * Komt er geen natriumwaarde mee (omdat
  * `health/database/30-natrium-in-het-zoeken.sql` nog niet gedraaid is, of omdat
- * de tabel het voor dit product niet weet — dan staat er een streepje. Geen
+ * de tabel het voor dit product niet weet) dan staat er een streepje. Geen
  * 0,0 g: dat zou "bevat geen zout" beweren over iets wat dat misschien wel
  * bevat.
  */
@@ -223,14 +223,14 @@ function Zoeken(
                   <span className="mini">per 100 g · {n.groep}</span>
                   {toonKoolhydraten && (
                     <span className="mini" style={{ display: 'block' }}>
-                      koolhydraten {n.koolhydraat_g == null ? '—' : dec(n.koolhydraat_g, 1) + ' g'}
-                      {' · '}vezel {n.vezel_g == null ? '—' : dec(n.vezel_g, 1) + ' g'}
+                      koolhydraten {n.koolhydraat_g == null ? '–' : dec(n.koolhydraat_g, 1) + ' g'}
+                      {' · '}vezel {n.vezel_g == null ? '–' : dec(n.vezel_g, 1) + ' g'}
                     </span>
                   )}
                   {toonZout && (
                     <span className="mini" style={{ display: 'block' }}>
                       zout {zoutGram(n.natrium_mg) == null
-                        ? '—'
+                        ? '–'
                         : dec(zoutGram(n.natrium_mg) as number, 2) + ' g'}
                     </span>
                   )}
@@ -294,7 +294,7 @@ function Zoeken(
       {leeg && !loopt && (
         <p className="klein" style={{ marginTop: 10 }}>
           Niets gevonden voor “{term.trim()}”. Probeer het losse product zonder de bereiding erbij, of
-          zeg het in gewone taal onder Vandaag — dan ontleedt de herkenning het voor je.
+          zeg het in gewone taal onder Vandaag, dan ontleedt de herkenning het voor je.
         </p>
       )}
     </Kaart>
@@ -344,7 +344,7 @@ function EigenProducten(
       </Rij>
       <Uitleg id="eigenproduct" label="waarom dit de beste soort waarde is">
         <p>
-          Wat je van het etiket overneemt en zelf afweegt is een A-waarde — de enige categorie in
+          Wat je van het etiket overneemt en zelf afweegt is een A-waarde, de enige categorie in
           deze app zonder schatting. De fabrikant staat voor het getal en jij voor de hoeveelheid;
           er wordt niets geraden.
         </p>

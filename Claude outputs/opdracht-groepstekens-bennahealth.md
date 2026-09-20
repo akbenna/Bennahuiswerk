@@ -1,7 +1,7 @@
 # Opdracht: 27 groepstekens voor BennaHealth
 
 *Plak dit hele bericht in ChatGPT. Vraag om één teken eerst; pas als dat goed is,
-de rest — dat werkte de vorige keer.*
+de rest, dat werkte de vorige keer.*
 
 ---
 
@@ -14,7 +14,7 @@ Dat is met opzet een groepsteken en geen productfoto. Een tekening die zegt *"di
 is zuivel"* kan nooit het verkeerde beweren; een foto van gemengde noten bij een
 zakje pistaches wel. Teken dus de categorie, niet het exemplaar.
 
-## Leveringsvorm — hier is geen speelruimte
+## Leveringsvorm: hier is geen speelruimte
 
 **Lever SVG-broncode, geen PNG en geen JPG.** Eén codeblok per bestand, met de
 bestandsnaam erboven. Geen ZIP, geen afbeelding van een SVG, geen gegenereerd
@@ -33,7 +33,7 @@ Vlakke vormen, attributen op het element zelf.
 ## De kleurregel
 
 **Uitsluitend `currentColor`.** Elke `fill` en elke `stroke` is `currentColor`.
-Diepte maak je met `fill-opacity` — bijvoorbeeld 1 voor de hoofdvorm, 0,45 voor
+Diepte maak je met `fill-opacity`, bijvoorbeeld 1 voor de hoofdvorm, 0,45 voor
 een tweede laag, 0,2 voor een derde. Dat geeft een duotoon-effect dat rijk oogt
 en toch in elke kleur werkt.
 
@@ -43,7 +43,7 @@ thema; een vaste kleur breekt er één van.
 Toets zelf: leest hij als hij helemaal `#07785C` is op wit (`#F3F6F5`), én als hij
 helemaal `#4FD2A6` is op bijna-zwart (`#080D0C`)?
 
-## Formaat en leesbaarheid — de les van de vorige ronde
+## Formaat en leesbaarheid: de les van de vorige ronde
 
 `viewBox="0 0 48 48"` voor alle 27.
 
@@ -60,7 +60,7 @@ Dat is de toets.
 ## De stijl
 
 Illustratiever dan een lijnpictogram: gevulde vormen, herkenbare silhouetten, een
-beetje karakter. Maar rustig — dit is een medische app en geen spel. Geen
+beetje karakter. Maar rustig: dit is een medische app en geen spel. Geen
 perspectief, geen 3D, geen glans, geen gezichtjes. Ronde hoeken mogen.
 
 Alle 27 moeten als één familie ogen: dezelfde lijndikte, dezelfde mate van
@@ -69,7 +69,7 @@ alleen omdat zijn vorm toevallig voller is.
 
 ## De 27, met het aantal producten en een suggestie
 
-De bestandsnaam staat links. Het getal is hoeveel producten in die groep vallen —
+De bestandsnaam staat links. Het getal is hoeveel producten in die groep vallen,
 de grote groepen zijn de belangrijkste, begin daar.
 
 | bestand | groep | n | suggestie |

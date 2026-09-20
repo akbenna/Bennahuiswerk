@@ -2,7 +2,7 @@
  * DE TEKENTJES VAN DE TABBALK
  *
  * Dezelfde keuze als in `src/start/tekens.tsx`, en om dezelfde redenen. Geen
- * emoji — dat tekent elk toestel anders. Geen icoonbibliotheek — dat is
+ * emoji: dat tekent elk toestel anders. Geen icoonbibliotheek: dat is
  * honderd kilobyte voor zes vormpjes, en een strikte Content-Security-Policy
  * laat er toch geen van een CDN binnen. Dit zijn lijnen die de kleur van hun
  * omgeving overnemen (`currentColor`), dus ze kloppen in het lichte thema, in
@@ -12,7 +12,7 @@
  *
  * Er stonden zes losse Unicode-vormen op de balk: ◍ ◎ ◇ ◈ ✚ ⋯. Twee daarvan
  * waren al vergeven. ◇ betekent in deze app "geschat" en ◈ betekent "opgave van
- * het etiket" — dat staat op élk scherm naast élke waarde, en het is de
+ * het etiket", dat staat op élk scherm naast élke waarde, en het is de
  * kortste samenvatting van waar deze app over gaat. Diezelfde ruiten óók als
  * tabblad gebruiken maakt van een betekenisvol teken een versiering.
  *
@@ -21,7 +21,7 @@
  *
  * DE ZES
  *
- * Vandaag      de doelring — het beeld dat op dat scherm zelf de dag draagt
+ * Vandaag      de doelring: het beeld dat op dat scherm zelf de dag draagt
  * Inzicht      een lijn die daalt: de weegtrend, waar het verbruik uit komt
  * Voeding      een kom: eten opzoeken en toevoegen
  * Beweging     twee voetstappen
@@ -66,7 +66,7 @@ export const TekenVoeding = () => teken(
  * Twee voetstappen, uit elkaar gezet zoals ze in een spoor staan.
  *
  * De eerste versie tekende per voet een bal en een hiel als twee losse bogen.
- * Op de balk — eenentwintig pixels — vielen die uit elkaar en stond er "8 8".
+ * Op de balk (eenentwintig pixels) vielen die uit elkaar en stond er "8 8".
  * Dezelfde les als bij de bāʾ in `public/iconen/LEESMIJ.md`: één gestreken
  * contour houdt zijn vorm, twee losse delen lopen dood.
  */
@@ -91,8 +91,8 @@ export const TekenProfiel = () => teken(
    ==========================================================================
 
    Een tweede soort teken, en het moet als tweede soort te herkennen zijn. Er
-   loopt al een tekensysteem door deze app heen dat iets betekent — ◆ gemeten,
-   ◈ etiket, ◇ geschat — en dat is niet zomaar een setje symbolen: het is
+   loopt al een tekensysteem door deze app heen dat iets betekent (◆ gemeten,
+   ◈ etiket, ◇ geschat) en dat is niet zomaar een setje symbolen: het is
    hetzelfde teken in drie vullingen, en hoe vol de ruit staat zegt hoeveel er
    werkelijk bekend is. Dat is het beste stuk van de beeldtaal hier en het
    verandert dus niet. Wat moet wijken is alles eromheen.
@@ -100,10 +100,10 @@ export const TekenProfiel = () => teken(
    Vier verschillen, en ze staan los van elkaar, zodat er niet één hoeft te
    werken maar alle vier tegelijk:
 
-     vorm    wegwijzer is lijn, open, nooit gevuld — herkomst is een gesloten
+     vorm    wegwijzer is lijn, open, nooit gevuld, herkomst is een gesloten
              glyph met een vulling. Gevuld is herkomst, lijn is wegwijzer.
      maat    zestien pixels tegenover 0,72 rem in de tekst
-     plek    links van de kop in een eigen kolom — herkomst staat ín de regel,
+     plek    links van de kop in een eigen kolom, herkomst staat ín de regel,
              vlak vóór de waarde waar het over gaat
      kleur   --dim, de stilste kleur die er is; herkomst erft de tekstkleur
 
@@ -113,7 +113,7 @@ export const TekenProfiel = () => teken(
    WELKE KOPPEN ER ÉÉN KRIJGEN
 
    Alleen een kop die zegt wát voor soort ding er onder staat. Een kop die een
-   oordeel draagt — "Te snel", "Waar je nu staat", "Wat er nog in past" — krijgt
+   oordeel draagt ("Te snel", "Waar je nu staat", "Wat er nog in past") krijgt
    er geen, want dat is een zin en geen etiket, en een tekentje ervoor maakt er
    een etiket van. Deze app zet het oordeel vooraan; dat mag geen rubriek worden.
 
@@ -201,7 +201,7 @@ export const WegPerDag = () => wegwijzer(
    ==========================================================================
 
    Derde soort, en hij houdt zich aan dezelfde twee regels als de rest: lijn,
-   nooit een vulling, en nooit een ruit. Alleen de maat verschilt — deze staan
+   nooit een vulling, en nooit een ruit. Alleen de maat verschilt: deze staan
    op een knop naast een woord en niet in een kop.
 
    Ze zaten er al, als emoji: 🔎 in het zoekveld en 📷 en ✎ op de chips van het
@@ -236,7 +236,7 @@ export const ActieBeschrijf = () => actie(
 /** Een vol bord: veel op het bord voor weinig energie. */
 export const WegVerzadiging = () => wegwijzer(
   /* Eerst met een streepje boven de koepel en een lijn dwars erdoorheen. Die
-     eerste zweefde los in de lucht — de koepel komt niet hoger dan y 11,8 — en de
+     eerste zweefde los in de lucht (de koepel komt niet hoger dan y 11,8) en de
      tweede sneed de koepel juist op zijn top doormidden. Twee vormen die samen
      één ding moeten zijn: een bord met een volle koepel op een voet. */
   <><path d="M2.6 18.4h18.8" />
@@ -260,18 +260,18 @@ export const WegEigenProduct = () => wegwijzer(
    WAT DE EERSTE VERSIE LEERDE
 
    Die was gevuld: een dichte cirkel met het teken erin uitgespaard. Op vierentwintig
-   pixels prachtig, op zestien onbruikbaar — de uitsparing verdwijnt als eerste
+   pixels prachtig, op zestien onbruikbaar, de uitsparing verdwijnt als eerste
    bij het verkleinen, en dan zijn "goed", "let op" en "toelichting" alle drie
    hetzelfde bolletje. Alleen de waarschuwing overleefde, en niet toevallig: die
    is een driehoek, en daar draagt de buitenrand de boodschap.
 
    De tweede versie is daarom open in plaats van gevuld. De ring is dun, het
    teken erbinnen heeft ruimte, en op zestien pixels blijven het vinkje, de
-   streep en de i uit elkaar te houden — ook in één kleur, wat de toets is die
+   streep en de i uit elkaar te houden, ook in één kleur, wat de toets is die
    ertoe doet: wie rood en oranje niet onderscheidt moet het aan de vorm zien.
 
    `toestand-toelichting` zat niet in de herziening; die is hier overgetekend
-   naar dezelfde maatvoering als de andere drie — ring r=8,5 en lijndikte 2.
+   naar dezelfde maatvoering als de andere drie, ring r=8,5 en lijndikte 2.
    ========================================================================== */
 
 /** Gunstige waarde. Een vinkje in een ring. */
@@ -280,7 +280,7 @@ export const TekenGoed = () => wegwijzer(
     <path d="M8.1 12.1 10.6 14.6 15.9 9.4" strokeWidth="2" /></>,
 )
 
-/** Let op — aandacht, geen alarm. Een uitroepteken zou te hard zijn. */
+/** Let op: aandacht, geen alarm. Een uitroepteken zou te hard zijn. */
 export const TekenLet = () => wegwijzer(
   <><circle cx="12" cy="12" r="8.5" strokeWidth="2" />
     <path d="M8.5 12h7" strokeWidth="2.2" /></>,

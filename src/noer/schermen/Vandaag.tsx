@@ -1,5 +1,5 @@
 /**
- * VANDAAG — waar je staat, wat er hierna komt, en de opdracht van de dag
+ * VANDAAG: waar je staat, wat er hierna komt, en de opdracht van de dag
  *
  * Het eerste wat een kind ziet. Vandaar de volgorde: eerst wie je bent en hoe
  * ver je bent, dan het eerstvolgende gebed met de klok erbij, dan de drie
@@ -26,7 +26,7 @@ export const HELD = (
   <div className="held">
     <div className="naam">Islam leren<em lang="ar">نور الإسلام</em></div>
     <p className="zin">
-      De basis van de islam: geloven, mooi leven, en leren bidden — stap voor stap, in je eigen tempo.
+      De basis van de islam: geloven, mooi leven, en leren bidden, stap voor stap, in je eigen tempo.
     </p>
     <div className="streep" />
   </div>

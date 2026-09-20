@@ -15,7 +15,7 @@ ProVita-database. In datzelfde project staan 1,1 miljoen declaratieregels
 Er was dus geen scheiding. De gezinsapps en de zorggegevens deelden één
 database, één anon-sleutel, één back-up en één compute-instantie.
 
-De anon-sleutel staat — bewust en terecht uitgelegd — in
+De anon-sleutel staat (bewust en terecht uitgelegd) in
 `src/gedeeld/db/verbinding.ts`, en komt daarmee in elke browserbundel terecht.
 De redenering in dat bestand klopt voor de hub-tabellen zelf: `kal_*`,
 `bennahub_*` en `oefenapp_*` zijn niet rechtstreeks benaderbaar en alle toegang
@@ -36,8 +36,8 @@ Gemeten met diezelfde publieke sleutel, op 26 augustus:
 | `dc_declarations` | geen rijen, maar wél een scan over 1,1 miljoen regels |
 
 Die laatste is de vervelendste. De policy op `dc_declarations` geldt formeel
-voor `public` en hangt aan `auth.uid()`. Voor anon levert dat nooit een rij op —
-de gegevens waren veilig — maar de vraag werd wel uitgevoerd. Het antwoord was
+voor `public` en hangt aan `auth.uid()`. Voor anon levert dat nooit een rij op (
+de gegevens waren veilig) maar de vraag werd wel uitgevoerd. Het antwoord was
 geen weigering maar een time-out. Een buitenstaander met de sleutel uit de
 huiswerkapp kon daarmee databasetijd laten verbranden.
 
@@ -52,7 +52,7 @@ Migratie `anon_rechten_intrekken_zonder_beleid`, toegepast op het gedeelde
 project:
 
 1. Op elke publieke tabel zonder één enkele policy voor `anon` of `public` is
-   `revoke all ... from anon` uitgevoerd — 138 tabellen. Op die tabellen weigerde
+   `revoke all ... from anon` uitgevoerd: 138 tabellen. Op die tabellen weigerde
    RLS de rol anon al; het recht bestond alleen nog om te mogen aankloppen. Het
    gedrag verandert dus niet, de tabellen verdwijnen wel uit het
    PostgREST-oppervlak.
@@ -75,7 +75,7 @@ Nagemeten: `dc_declarations`, `patients`, `sz_patient_classifications`,
   rijen bijschrijven. Hoort bij ProVita, niet bij deze repo.
 - **Nieuwe tabellen** krijgen opnieuw rechten voor anon: de default privileges
   in het schema `public` staan nog zo. Wie dat wil sluiten moet
-  `alter default privileges` aanpassen — dat raakt de ProVita-werkwijze en is
+  `alter default privileges` aanpassen, dat raakt de ProVita-werkwijze en is
   hier bewust niet gedaan.
 - **De cronjob `rsd_kv_opruimen`** draait nog in het gedeelde project, terwijl
   Het Roosendael inmiddels een eigen project heeft. Ook `rsd_kv` staat nog op
@@ -85,7 +85,7 @@ Nagemeten: `dc_declarations`, `patients`, `sz_patient_classifications`,
 ## De verhuizing van de hub
 
 Uitgevoerd op 26 augustus 2026. De eigen database is `huiuvnjrvvoybbzwfrfp`, in
-een aparte organisatie — en, zo bleek onderweg, onder een **ander Supabase-account**
+een aparte organisatie, en, zo bleek onderweg, onder een **ander Supabase-account**
 dan het betaalde project. Twee logins dus, wat voor de scheiding strenger is dan
 gevraagd maar iets is om te onthouden.
 
@@ -131,16 +131,16 @@ Het gezin: 1 gezin, 6 leden, 2 appstanden, 4 huishoudens in de oefenapp.
 
 Bewust niet mee: de persoonlijke gerechtvarianten van patiënten
 (`owner_patient_id is not null`). De verwijzingen naar `patients`, `clinicians`
-en `auth.users` zijn vervallen — die tabellen bestaan hier niet.
+en `auth.users` zijn vervallen, die tabellen bestaan hier niet.
 
-`kal_proef_koppeling()` — de eigen 41-gevallenproef — draait op de nieuwe
+`kal_proef_koppeling()` (de eigen 41-gevallenproef) draait op de nieuwe
 database en geeft groen.
 
 ### De edge functions en de cron
 
 `kal-ai` en `kal-prikkel` draaien in het nieuwe project, met dezelfde
 `verify_jwt` als in het oude (false respectievelijk true). Hun broncode staat nu
-óók in de repo, in `health/edge/` — dat stond er voor `kal-ai` nog niet, en
+óók in de repo, in `health/edge/`, dat stond er voor `kal-ai` nog niet, en
 uitgerolde code zonder bron in de repo is een gat.
 
 `kal-modellen` is niet meeverhuisd: die was al uitgezet en gaf `410`.
@@ -150,13 +150,13 @@ De vier cronjobs staan er: `kalibratie-prikkel` (0 6,7 * * *) en
 service-sleutel staat in de Vault onder `service_role_key`, precies zoals in het
 oude project. De hele keten is getoetst met een proefaanroep langs exact de weg
 van de cron: die kwam door de JWT-poort, langs de geheimcontrole, en strandde op
-`503 RESEND_API_KEY ontbreekt` — het enige dat nog mist.
+`503 RESEND_API_KEY ontbreekt`, het enige dat nog mist.
 
 ### Wat er op naam zoeken miste
 
 De generator koos functies op hun naam: alles wat met `kal_`, `bennahub_` of
 `oefenapp` begint. Dat leek volledig en was het niet. `bh_ouder_ok` heet niet
-naar de hub maar hoort er wel bij — zeven bennahub-functies vragen hem of het
+naar de hub maar hoort er wel bij, zeven bennahub-functies vragen hem of het
 ouderwachtwoord klopt. Hij ging dus niet mee, en omdat Postgres het lichaam van
 een functie niet controleert bij het aanmaken, viel dat bij de verhuizing niet
 op. Het zou zijn opgevallen op de dag dat iemand het ouderoverzicht opende.
@@ -177,7 +177,7 @@ Uitgerold op 27 augustus 2026, commit 8115ec9 op main.
 Nagemeten aan de productiesite, niet aan de bouw op de eigen machine:
 
 - de CSP-kop die Vercel meestuurt noemt alleen `huiuvnjrvvoybbzwfrfp`
-- de uitgeserveerde bundel `rpc-*.js` bevat één databaseadres — het nieuwe —
+- de uitgeserveerde bundel `rpc-*.js` bevat één databaseadres (het nieuwe) 
   de `sb_publishable_`-sleutel, nul JWT-sleutels en nul keer `Bearer`
 - de andere bundels noemen het oude project nergens meer
 - `bennahub_leden_lijst` levert via de publieke sleutel het gezin terug: zes
@@ -197,7 +197,7 @@ opgeheven; de zeven van ProVita draaien door. `kal-ai` en `kal-prikkel` geven
 Dat archief is er niet meer. Op verzoek is `oud_bennahub` diezelfde dag
 weggegooid, na een laatste telling waarin elke van de 23 tabellen tegen de
 nieuwe database is gelegd: alle tellingen gelijk, op `kal_ai_log` na, die er
-daarginds één meer heeft — de proefaanroep van de coach, die zichzelf netjes
+daarginds één meer heeft, de proefaanroep van de coach, die zichzelf netjes
 logde.
 
 Nagemeten na afloop: geen schema `oud_bennahub`, geen `kal_`-, `bennahub_`- of
@@ -206,7 +206,7 @@ ongeschonden naast: 369 tabellen, 1.111.937 declaratieregels, 6.133
 SignaalZorg-classificaties, 10.891 zorgzwaarte-uitkomsten, 2.328 NEVO-producten,
 zeven draaiende cronjobs.
 
-De enige plek waar de hub nu nog staat is zijn eigen database — en, als tekst,
+De enige plek waar de hub nu nog staat is zijn eigen database, en, als tekst,
 de SQL in `gereedschap/verhuizing/`.
 
 ### Wat er nog open blijft
@@ -224,7 +224,7 @@ de SQL in `gereedschap/verhuizing/`.
   en drie van de twintig edge functions zijn met de hub meeverhuisd.
 ### Het Roosendael, ook afgemaakt
 
-Op 27 augustus 2026 nagelopen en opgeruimd. Het portaal was al verhuisd — dat
+Op 27 augustus 2026 nagelopen en opgeruimd. Het portaal was al verhuisd: dat
 bleek uit de klok en niet uit een aanname: in het eigen project stond verkeer van
 21:36, in het gedeelde niets meer na 13:44. Wat hier nog stond was een
 stilstaande kopie.
@@ -235,13 +235,13 @@ doorgeteld, en niet een tweede boekhouding: home 39 tegen 64, de dagteller 59
 tegen 97. Er ging dus niets verloren door hier weg te gooien.
 
 Weg uit het gedeelde project: `rsd_kv`, de functies `rsd_kv_incr`,
-`rsd_kv_schrijf_indien` en `rsd_kv_opruimen`, en de cronjob `rsd_kv_opruimen` —
+`rsd_kv_schrijf_indien` en `rsd_kv_opruimen`, en de cronjob `rsd_kv_opruimen`,
 die draaide op hetzelfde uur als de taak in het eigen project, dus twee
 opruimtaken op twee databases voor één tabel.
 
 **Wat hier bleef staan: `rsd_is_behandelaar` en `rsd_is_beheerder`.** Die heten
 wel `rsd_`, maar ze lezen `public.user_roles` en worden gebruikt door zes
-ProVita-functies — `get_all_users_with_details`, `delete_user_cascade`,
+ProVita-functies, `get_all_users_with_details`, `delete_user_cascade`,
 `get_pending_review_patients`, `update_patient_risk_profile`,
 `add_lab_values_to_patient` en `soft_delete_user`. Ze horen bij ProVita; alleen
 de naam suggereert iets anders. Dezelfde les als bij `bh_ouder_ok`, nu andersom:

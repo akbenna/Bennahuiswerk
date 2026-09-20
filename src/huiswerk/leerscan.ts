@@ -21,7 +21,7 @@
  * De zwakste dimensie, en bij gelijke stand de dimensie die het meeste oplevert.
  * Die volgorde is niet willekeurig: van de vijf heeft jezelf overhoren het
  * grootste effect, daarna spreiden. Beginnen staat achteraan omdat het geen
- * leertechniek is maar een voorwaarde — al helpt de beste techniek niets als een
+ * leertechniek is maar een voorwaarde, al helpt de beste techniek niets als een
  * kind niet begint, dus als dát het zwakst is komt het alsnog bovenaan.
  *
  * EN ÉÉN DING TEGELIJK
@@ -92,7 +92,7 @@ export interface Advies {
   tekst: string
   /** Waar in de app het meteen kan. */
   inDeApp: string
-  /** Wat al goed gaat — één ding, om mee te openen. */
+  /** Wat al goed gaat: één ding, om mee te openen. */
   sterk: Uitkomst | null
 }
 

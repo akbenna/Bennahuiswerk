@@ -1,10 +1,10 @@
 /**
- * KLINISCH — metingen, lab, SCORE2, FIB-4 en STOP-BANG.
+ * KLINISCH: metingen, lab, SCORE2, FIB-4 en STOP-BANG.
  *
  * De vraag van dit scherm is: staat er iets buiten de grens. Die vraag was
  * alleen te beantwoorden door zestien labwaarden na te lopen en ze zelf tegen
  * hun referentie te houden. Nu telt de kop dat voor je, en toont hij metéén
- * wélke — met de referentie erbij, want "afwijkend" zonder grens is een
+ * wélke, met de referentie erbij, want "afwijkend" zonder grens is een
  * schrikbeeld en geen gegeven.
  */
 import { useState } from 'react'
@@ -179,7 +179,7 @@ export function Klinisch(p: KlinischEigenschappen) {
       <LabInvoer bewaar={p.bewaarLab} labs={labs} />
 
       <Kaart toon={sc?.klasse === 'hoog' ? 'let' : undefined}>
-        <Kop>SCORE2 — tienjaarsrisico hart- en vaatziekten</Kop>
+        <Kop>SCORE2: tienjaarsrisico hart- en vaatziekten</Kop>
         {sc ? (
           <>
             <Rij style={{ alignItems: 'baseline', marginTop: 4 }}>
@@ -196,22 +196,22 @@ export function Klinisch(p: KlinischEigenschappen) {
         ) : (
           <p className="klein" style={{ marginTop: 4 }}>
             Nog niet te berekenen. Nodig: systolische bloeddruk, totaal cholesterol en HDL. Het
-            algoritme rekent met totaal en HDL apart, terwijl de NHG-tabellen non-HDL gebruiken — bij
+            algoritme rekent met totaal en HDL apart, terwijl de NHG-tabellen non-HDL gebruiken. Bij
             gelijk non-HDL kunnen die uiteenlopen.
           </p>
         )}
       </Kaart>
 
       <Kaart toon={f?.klasse === 'verwijzen' ? 'let' : undefined}>
-        <Kop>FIB-4 — leverfibrose bij MASLD</Kop>
+        <Kop>FIB-4: leverfibrose bij MASLD</Kop>
         {f ? (
           <>
             <Rij style={{ alignItems: 'baseline', marginTop: 4 }}>
               <span className="getal" style={{ fontSize: '2rem' }}>{dec(f.waarde, 2)}</span>
               <span className="klein">
                 {f.klasse === 'uitgesloten' ? 'fibrose praktisch uitgesloten'
-                 : f.klasse === 'grijs' ? 'grijze zone — tweede test (FibroScan of ELF)'
-                 : 'boven 2,67 — verwijzing MDL overwegen'}
+                 : f.klasse === 'grijs' ? 'grijze zone, tweede test (FibroScan of ELF)'
+                 : 'boven 2,67, verwijzing MDL overwegen'}
               </span>
             </Rij>
             <p className="mini" style={{ marginTop: 8 }}>
@@ -219,7 +219,7 @@ export function Klinisch(p: KlinischEigenschappen) {
               fibrose uitgesloten bij jouw leeftijd, tot 2,67 volgt een tweede test. Geen enkele
               niet-invasieve test haalt sensitiviteit én specificiteit boven de tachtig procent; dit is
               een uitsluittest, geen stadiëring. Bij BMI {dec(a.bmi, 1)} is het cardiometabole criterium
-              voor MASLD al vervuld — maar de diagnose vraagt aangetoonde steatose, en die stelt deze
+              voor MASLD al vervuld, maar de diagnose vraagt aangetoonde steatose, en die stelt deze
               app niet.
             </p>
           </>
@@ -236,18 +236,18 @@ export function Klinisch(p: KlinischEigenschappen) {
 }
 
 /**
- * WAT ER BIJ JOU SPEELT — bovenaan Gezondheid en niet onderin een venster
+ * WAT ER BIJ JOU SPEELT: bovenaan Gezondheid en niet onderin een venster
  *
  * Deze kaart bestond eerst niet, en dat was een fout die het waard is op te
- * schrijven. De hele laag voor chronische zorg — de conditie, de
- * medicatiegroepen, de signalen, de zoutkolom, het venster Leren — was gebouwd
+ * schrijven. De hele laag voor chronische zorg (de conditie, de
+ * medicatiegroepen, de signalen, de zoutkolom, het venster Leren) was gebouwd
  * en werkte, maar hij hing af van een veld onderin het profielvenster, achter
  * het tabblad Meer. Wie dat veld niet vond, zag van de hele laag niets. Op het
  * tabblad dat Gezondheid heet stond er zelfs geen verwijzing naar.
  *
  * Een functie die pas bestaat als je hem al kent, bestaat niet.
  *
- * Daarom staat dit nu bovenaan dit scherm, en juist ook — of vooral — als er
+ * Daarom staat dit nu bovenaan dit scherm, en juist ook (of vooral) als er
  * niets is ingevuld. Leeg is hier geen reden om te zwijgen maar de plek waar de
  * uitnodiging hoort: dit is het enige scherm waar iemand naar zijn aandoening
  * komt zoeken.
@@ -350,7 +350,7 @@ function Eigenbloeddruk({ metingen }: { metingen: Meting[] }) {
     /* De golf hoort bij een reeks: dit getal komt uit zeven dagen en niet uit
        één meting, en dat is precies wat de kaart wil zeggen. */
     <Kaart sfeer="golf">
-      <Kop>Bloeddruk — je eigen metingen</Kop>
+      <Kop>Bloeddruk: je eigen metingen</Kop>
       <Rij style={{ alignItems: 'baseline', marginTop: 4 }}>
         <span className="getal" style={{ fontSize: '2rem' }}>{t.sys}/{t.dia}</span>
         <span className="klein">mmHg, gemiddeld over {t.dagen}
@@ -362,10 +362,15 @@ function Eigenbloeddruk({ metingen }: { metingen: Meting[] }) {
           ? ' Dat is een hele week, zoals de meting bedoeld is.'
           : ` Een geprotocolleerde thuismeting loopt ${VENSTER_DAGEN} dagen; hoe meer dagen,`
             + ' hoe minder het toeval meeweegt.'}
+        {/* Een dag die stilzwijgend wegvalt is een dag waarvan de lezer denkt dat
+            hij meetelt. Wie zijn eigen getallen natelt hoort uit te komen. */}
+        {t.gewenningsdagWeg
+          && ' Je eerste meetdag telt niet mee: op die dag ben je nog aan het apparaat aan het'
+             + ' wennen en valt de meting meestal hoger uit. Dat schrijft het protocol zo voor.'}
       </p>
       <p className="mini" style={{ marginTop: 8 }}>
         Twee dingen die deze app niet weet. Of je twee keer voor het ontbijt en twee keer na het
-        avondeten gemeten hebt — een meting draagt hier een datum en geen tijdstip. En of dit
+        avondeten gemeten hebt: een meting draagt hier een datum en geen tijdstip. En of dit
         thuismetingen zijn: wat je hier invult telt mee, waar je het ook mat. Wat dit getal betekent
         beoordeelt je huisarts of praktijkondersteuner; deze app zet er met opzet geen grens bij.
       </p>
@@ -407,13 +412,13 @@ function MetingInvoer(
         <div>
           <div className="mini">Bloeddruk</div>
           <div className="getal" style={{ fontSize: '1.2rem' }}>
-            {sbd && dbd ? `${Math.round(sbd.waarde)}/${Math.round(dbd.waarde)}` : '—'}
+            {sbd && dbd ? `${Math.round(sbd.waarde)}/${Math.round(dbd.waarde)}` : '–'}
           </div>
         </div>
         <div>
           <div className="mini">Middelomtrek</div>
           <div className="getal" style={{ fontSize: '1.2rem' }}>
-            {middel ? dec(middel.waarde, 0) + ' cm' : '—'}
+            {middel ? dec(middel.waarde, 0) + ' cm' : '–'}
           </div>
         </div>
         <div>
@@ -423,7 +428,7 @@ function MetingInvoer(
         <div>
           <div className="mini">Rustpols</div>
           <div className="getal" style={{ fontSize: '1.2rem' }}>
-            {pols ? Math.round(pols.nu.waarde) + ' /min' : '—'}
+            {pols ? Math.round(pols.nu.waarde) + ' /min' : '–'}
           </div>
         </div>
       </div>
@@ -441,7 +446,7 @@ function MetingInvoer(
                     + `van de afgelopen maand (${dec(pols.basis, 0)}). `
                     + (d > 0
                       ? 'Omhoog wijst op slechter herstel, een naderende infectie of te zware '
-                        + 'belasting — meestal tijdelijk.'
+                        + 'belasting, meestal tijdelijk.'
                       : 'Omlaag gaat meestal samen met een betere conditie.')
               })()}
         </p>
@@ -457,13 +462,13 @@ function MetingInvoer(
       )}
       {middel && (
         <p className="mini" style={{ marginTop: 8 }}>
-          {middel.waarde >= 102 ? 'Boven 102 cm — de grens waarbij gewichtsafname wordt aanbevolen.'
-           : middel.waarde >= 94 ? 'Tussen 94 en 102 cm — de grens waarbij het gewicht niet meer mag toenemen.'
+          {middel.waarde >= 102 ? 'Boven 102 cm, de grens waarbij gewichtsafname wordt aanbevolen.'
+           : middel.waarde >= 94 ? 'Tussen 94 en 102 cm, de grens waarbij het gewicht niet meer mag toenemen.'
            : 'Onder 94 cm.'}
         </p>
       )}
       {/* De meetinstructie stond altijd in beeld zolang er geen middelomtrek
-          was — een stuk grijze tekst over ribben en bekkenkammen op een scherm
+          was, een stuk grijze tekst over ribben en bekkenkammen op een scherm
           waar je je bloeddruk kwam bekijken. Hij hoort er wel te staan, want
           verkeerd meten geeft centimeters verschil, maar achter de uitklapper
           waar alle andere onderbouwing in deze app ook staat. */}
@@ -476,7 +481,7 @@ function MetingInvoer(
         <p>
           Voor Noord-Afrikaanse afkomst gelden dezelfde waarden als voor Europese mannen: IDF, WHO
           en de Nederlandse richtlijn 2023 verwijzen alle drie naar de Europese afkappunten. Alleen
-          voor Aziatische afkomst liggen ze lager. Meetfout in de literatuur 0,7 tot 15 cm — twee
+          voor Aziatische afkomst liggen ze lager. Meetfout in de literatuur 0,7 tot 15 cm, dus twee
           centimeter verschil is ruis.
         </p>
       </Uitleg>
@@ -563,7 +568,7 @@ function StopbangKaart(
 
   return (
     <Kaart toon={laatste && r.klasse === 'hoog' ? 'let' : undefined}>
-      <Kop>STOP-BANG — obstructieve slaapapneu</Kop>
+      <Kop>STOP-BANG: obstructieve slaapapneu</Kop>
       <div style={{ marginTop: 8 }}>
         {STOPBANG.map(([k, l]) => (
           <label key={k} style={{
@@ -582,7 +587,7 @@ function StopbangKaart(
           datum: vandaag(), soort: 'stopbang', antwoorden,
           score: r.score, klasse: r.klasse,
         })}>Berekenen en bewaren</Knop>
-        <span className="klein"><b>{r.score} van 8</b> — {r.klasse} risico</span>
+        <span className="klein"><b>{r.score} van 8</b>, {r.klasse} risico</span>
       </Rij>
       <Uitleg id="stopbang" label="wat deze score wél en niet zegt">
         <p>
@@ -593,7 +598,7 @@ function StopbangKaart(
         </p>
         <p>
           En de richting van het bewijs is anders dan vaak wordt aangenomen. CPAP maakt afvallen niet
-          makkelijker — twee meta-analyses vinden een kleine gewichts<i>toename</i>. Omgekeerd wél: tien
+          makkelijker: twee meta-analyses vinden een kleine gewichts<i>toename</i>. Omgekeerd wél: tien
           kilo afvallen verlaagde in Sleep AHEAD de AHI met bijna tien events per uur. Behandel OSA om
           de OSA, en het gewicht apart.
         </p>

@@ -1,5 +1,5 @@
 -- =============================================================================
--- KOPPELSLEUTELS — bewegingsgegevens van buiten binnenlaten
+-- KOPPELSLEUTELS: bewegingsgegevens van buiten binnenlaten
 --
 -- Toegepast op 23 augustus 2026. Deze drie migraties staan hier zodat het
 -- schema in de repo staat en niet alleen in Supabase; ze zijn daar al gedraaid.

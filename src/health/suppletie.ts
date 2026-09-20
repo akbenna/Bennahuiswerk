@@ -1,5 +1,5 @@
 /**
- * DE SUPPLETIE — wat er ontbreekt, en hoe zeker dat is
+ * DE SUPPLETIE: wat er ontbreekt, en hoe zeker dat is
  *
  * Deze app heeft één stelregel die alles eronder bepaalt: geen enkel getal
  * zonder zijn onzekerheid. Bij suppletie botst dat op een ongemakkelijk feit,
@@ -9,7 +9,7 @@
  * WAT DE TABEL NIET WEET
  *
  * Van de 2.328 producten in het voedingsstoffenbestand heeft er níét één een
- * micronutriënt ingevuld — `overige_nutrienten` is overal `{}`. Er staat
+ * micronutriënt ingevuld, `overige_nutrienten` is overal `{}`. Er staat
  * energie, eiwit, vet, verzadigd vet, koolhydraten, suikers, vezel en natrium,
  * en verder niets.
  *
@@ -23,7 +23,7 @@
  * Twee bronnen, en ze zijn van verschillende sterkte:
  *
  *   GEZEGD    wat je in "Wat je lust" hebt aangezet, en wat er in je profiel
- *             staat. Veganistisch is veganistisch — daar valt niets aan te
+ *             staat. Veganistisch is veganistisch: daar valt niets aan te
  *             meten en het hoeft ook niet.
  *   GEZIEN    uit welke NEVO-groepen je de laatste achtentwintig dagen iets
  *             hebt gelogd. Dat is een wáárneming uit je eigen gegevens: niet
@@ -72,7 +72,7 @@ export interface Advies {
   zwaarte: Zwaarte
   /** Eén zin: waaróm. */
   reden: string
-  /** Waarop deze regel rust — te controleren, niet te geloven. */
+  /** Waarop deze regel rust: te controleren, niet te geloven. */
   grond: string
   /** De richtlijn of het onderzoek erachter. */
   bron: string
@@ -85,7 +85,7 @@ export interface Suppletievraag {
    * NEVO-groepen waaruit in het venster iets gelogd is.
    *
    * Leeg betekent hier niet "je at niets uit die groepen" maar "er is te weinig
-   * gelogd om iets te zien" — zie `genoegGelogd`.
+   * gelogd om iets te zien", zie `genoegGelogd`.
    */
   gelogdeGroepen: readonly string[]
   /** Hoeveel dagen er werkelijk iets gelogd is in het venster. */
@@ -126,7 +126,7 @@ function uitgezet(v: Suppletievraag, groep: string): boolean {
 }
 
 /**
- * Of een groep buiten beeld is — gezegd óf gezien.
+ * Of een groep buiten beeld is, gezegd óf gezien.
  *
  * Uitgezet telt altijd; niet gelogd telt alleen als er genoeg gelogd is. Die
  * asymmetrie is het hele verschil tussen de twee bronnen: een vinkje is er, ook
@@ -151,10 +151,10 @@ const VLEES = ['Vlees en gevogelte', 'Vleeswaren']
  * DE VOLGORDE VAN DE BLOKKEN HIERONDER IS DRAGEND
  *
  * Wat nodig is staat boven wat te overwegen is, en dat komt uit de volgorde
- * waarin ze worden toegevoegd — B12 als eerste. Hier stond een `sort` die
+ * waarin ze worden toegevoegd, B12 als eerste. Hier stond een `sort` die
  * hetzelfde nog eens deed, en die kon niet fout gaan: met één "nodig" dat als
  * eerste wordt toegevoegd verandert sorteren nooit iets. Een mutatieproef liet
- * dat zien — hem weghalen brak geen enkele proef.
+ * dat zien, hem weghalen brak geen enkele proef.
  *
  * Dus weg. Komt er ooit een tweede "nodig" bij, dan hoort die bovenaan in deze
  * functie te staan en niet onderaan met een sortering die het rechttrekt.
@@ -167,7 +167,7 @@ export function adviezen(v: Suppletievraag): Advies[] {
   /* DE ENIGE DIE NODIG IS
 
      B12 komt uitsluitend uit dierlijke producten en uit verrijkte voeding. Een
-     veganistisch voedingspatroon zonder aanvulling leidt tot een tekort — niet
+     veganistisch voedingspatroon zonder aanvulling leidt tot een tekort, niet
      misschien, en niet afhankelijk van hoe goed de rest is. Dit is het enige
      advies in dit bestand waar geen afweging bij hoort. */
   if (p === 'veganistisch') {
@@ -178,7 +178,7 @@ export function adviezen(v: Suppletievraag): Advies[] {
       reden: 'B12 zit alleen in dierlijke producten en in verrijkte voeding. '
         + 'Zonder aanvulling ontstaat er een tekort, ook bij verder goede voeding.',
       grond: 'Je gaf aan veganistisch te eten.',
-      bron: 'Gezondheidsraad, Voedingsnormen B12 — aanvulling geadviseerd bij een '
+      bron: 'Gezondheidsraad, Voedingsnormen B12. Aanvulling geadviseerd bij een '
         + 'volledig plantaardig voedingspatroon.',
     })
   }
@@ -199,7 +199,7 @@ export function adviezen(v: Suppletievraag): Advies[] {
         ? grondVan(v, VLEES[0]!)
         : 'Je gaf aan geen vlees te eten.',
       bron: 'Gezondheidsraad, Voedingsnormen ijzer. Een tekort hoor je te laten '
-        + 'prikken en niet te vermoeden — vraag het na bij je huisarts.',
+        + 'prikken en niet te vermoeden. Vraag het na bij je huisarts.',
     })
   }
 
@@ -237,17 +237,17 @@ export function adviezen(v: Suppletievraag): Advies[] {
     })
   }
 
-  /* VITAMINE D — de grootste die er niet in stond
+  /* VITAMINE D: de grootste die er niet in stond
      Dit is het meest gegeven suppletieadvies van Nederland, en het hing aan
      geen enkele log: de Gezondheidsraad adviseert het op grond van leeftijd,
      geslacht en hoeveel zon er op je huid valt. Daarom staat het hier met
-     `zwaarte: 'nodig'` — dat is geen afweging die de app maakt maar een
+     `zwaarte: 'nodig'`: dat is geen afweging die de app maakt maar een
      advies dat er al ligt.
 
      De grenzen: vanaf 70 jaar 20 µg per dag; vrouwen van 50 tot en met 69 jaar
      10 µg; en op elke leeftijd 10 µg bij een getinte of donkere huid of bij
      weinig buitenkomen of bedekkende kleding. Staat er geen leeftijd in het
-     profiel, dan vuren de eerste twee niet — een leeftijd raden zou hier een
+     profiel, dan vuren de eerste twee niet, een leeftijd raden zou hier een
      advies over iemands botten worden. */
   const c = v.conditie ?? {}
   const zon = c.huid_donker === true || c.weinig_zon === true
@@ -267,7 +267,7 @@ export function adviezen(v: Suppletievraag): Advies[] {
       zwaarte: 'nodig',
       reden: `De Gezondheidsraad adviseert ${hoeveel} per dag. De huid maakt vitamine D `
         + 'uit zonlicht, en in Nederland staat de zon van oktober tot maart te laag om '
-        + 'daar genoeg van te leveren — voeding levert maar een klein deel.',
+        + 'daar genoeg van te leveren, en voeding levert maar een klein deel.',
       grond: `Uit je profiel: ${gronden.join(' en ')}.`,
       bron: 'Gezondheidsraad, Evaluatie voedingsnormen vitamine D. Dit is een staand '
         + 'advies en geen bevinding uit jouw log.',
@@ -277,7 +277,7 @@ export function adviezen(v: Suppletievraag): Advies[] {
   /* B12 BIJ METFORMINE
      Langdurig metformine verlaagt de opname van B12; bij een deel van de
      gebruikers loopt de spiegel daardoor omlaag. Dat is een reden om het te
-     laten meten en geen reden om te gaan slikken — precies de lijn die dit
+     laten meten en geen reden om te gaan slikken, precies de lijn die dit
      bestand bij ijzer ook aanhoudt.
 
      Deze regel kan naast de veganistische B12-regel staan. Dat is geen
@@ -306,8 +306,8 @@ export function adviezen(v: Suppletievraag): Advies[] {
  *
  * Los van de lijst, en dat is met opzet. Dit stond eerst alleen bij een lége
  * lijst, en toen liet een schermproef zien wat daar mis mee was: wie
- * veganistisch eet en drie dagen logt krijgt B12 en ijzer te zien — die hangen
- * aan zijn eetpatroon — en hoort niets over vis. Hij leest dat als "vis is in
+ * veganistisch eet en drie dagen logt krijgt B12 en ijzer te zien (die hangen
+ * aan zijn eetpatroon) en hoort niets over vis. Hij leest dat als "vis is in
  * orde", terwijl de app het simpelweg niet kan zien.
  *
  * Dus staat het er altijd als er te weinig gelogd is, ook onder een gevulde
@@ -325,7 +325,7 @@ export function teWeinigGelogd(v: Suppletievraag): string | null {
  *
  * Een lege lijst met alleen een voorbehoud eronder is niet te onderscheiden van
  * een kapotte lijst. Dat is geen bedacht bezwaar: de eerste vraag die erover
- * gesteld werd was "Wat ontbreekt is leeg?" — precies de twijfel die een scherm
+ * gesteld werd was "Wat ontbreekt is leeg?", precies de twijfel die een scherm
  * hoort weg te nemen in plaats van op te roepen.
  *
  * Dus noemt hij de vier regels bij naam, met wat hij per regel zag. Een
@@ -333,7 +333,7 @@ export function teWeinigGelogd(v: Suppletievraag): string | null {
  *
  * Elke regel krijgt de reden waaróm hij niet vuurde, en dat is niet overal
  * dezelfde: B12 hangt aan je eetpatroon, de andere drie aan de vraag of die
- * hoek in je log voorkomt. Dat verschil hoort zichtbaar te blijven — anders
+ * hoek in je log voorkomt. Dat verschil hoort zichtbaar te blijven, anders
  * leest "vis: in orde" als een uitspraak over hoevéél vis, en dat weet de app
  * niet.
  */
@@ -351,7 +351,7 @@ export function nagekeken(v: Suppletievraag): Array<{ wat: string; stand: string
       wat: 'Vitamine D',
       /* Deze regel leest het profiel en niet de log, en dat hoort eruit te
          blijken. Zonder leeftijd kan hij twee van zijn drie gronden niet
-         wegen — en dat is iets anders dan "in orde". */
+         wegen, en dat is iets anders dan "in orde". */
       stand: leeftijd == null && c.huid_donker == null && c.weinig_zon == null
         ? 'leeftijd en zon staan nog niet in je profiel'
         : leeftijd == null ? 'geen leeftijd in je profiel'
@@ -360,7 +360,7 @@ export function nagekeken(v: Suppletievraag): Array<{ wat: string; stand: string
     {
       wat: 'Vitamine B12',
       stand: p === 'veganistisch' ? 'plantaardig patroon'
-        : (c.med ?? []).includes('metformine') ? 'metformine — laat het prikken'
+        : (c.med ?? []).includes('metformine') ? 'metformine: laat het prikken'
         : `je eet ${p === 'alles' ? 'alles' : p}, dus er komt B12 binnen`,
     },
     { wat: 'IJzer', stand: hoek(VLEES) },

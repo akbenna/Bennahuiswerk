@@ -3,7 +3,7 @@
    Haalt recitatie per aya op voor Rasikh.
 
    Zonder opties pakt het script het gebied waar je waarschijnlijk begint,
-   juz 'amma — soera 78 tot en met 114:
+   juz 'amma, soera 78 tot en met 114:
 
      node rasikh/audio/haal-audio.mjs
 
@@ -30,7 +30,7 @@ const TEKST = join(HIER, '..', 'tekst');
 
 /* Dezelfde volgorde als in Noer: Warsh eerst, want dat is de lezing van de
    Maghreb. Lukt geen van de Warsh-bronnen, dan een Hafs-lezing, en dan staat
-   het er ook bij — je wilt niet ongemerkt in een andere lezing memoriseren. */
+   het er ook bij, je wilt niet ongemerkt in een andere lezing memoriseren. */
 const BRONNEN = [
   { id:'warsh-dosary',  lezing:'Warsh', naam:'Ibrahim al-Dosary',
     basis:'https://everyayah.com/data/warsh/warsh_ibrahim_aldosary_128kbps' },
@@ -97,7 +97,7 @@ if (!opnieuw) {
 }
 const teDoen = totaal - alAanwezig;
 
-console.log('\nSoera ' + van + ' tot en met ' + tot + ' — ' + totaal + ' aya' +
+console.log('\nSoera ' + van + ' tot en met ' + tot + ', ' + totaal + ' aya' +
   (alAanwezig ? ', waarvan ' + alAanwezig + ' al opgehaald' : '') + '.');
 console.log('Nog te halen: ' + teDoen + ' fragmenten, ruwweg ' +
   (teDoen < 1000 ? Math.round(teDoen / 10) + ' MB' : Math.round(teDoen / 100) / 10 + ' GB') + '.\n');
@@ -146,7 +146,7 @@ if (!bron) {
     'Probeer het anders met een eigen archief: --basis="https://…/map"\n');
   process.exit(1);
 }
-console.log('\nGekozen: ' + bron.naam + ' — lezing ' + bron.lezing + '\n');
+console.log('\nGekozen: ' + bron.naam + ': lezing ' + bron.lezing + '\n');
 
 /* Vier tegelijk. Sneller dan dit is niet netjes tegenover een gratis archief. */
 const TEGELIJK = 4;
@@ -203,5 +203,5 @@ if (mislukt.length) console.log('Mislukt:\n  ' + mislukt.slice(0, 20).join('\n  
   '\nDraai het script nog eens; wat er al staat wordt overgeslagen.');
 console.log('\nLuister eerst naar ' + rij[0].nr + '-1.mp3 en kijk of het klopt met de tekst in de app.');
 console.log('Daarna: git add rasikh/audio && git commit -m "Recitatie voor Rasikh"');
-console.log('\nLet op: mp3\'s zijn groot. Zet je de hele Koran in git, dan wordt de map zwaar —');
+console.log('\nLet op: mp3\'s zijn groot. Zet je de hele Koran in git, dan wordt de map zwaar,');
 console.log('overweeg dan om rasikh/audio/*.mp3 in .gitignore te zetten en lokaal te houden.\n');

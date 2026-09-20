@@ -1,5 +1,5 @@
 /**
- * FSRS — de herhalingsplanner
+ * FSRS: de herhalingsplanner
  *
  * Compacte implementatie van de rekenkern van FSRS-4.5/5. Aannames, expliciet
  * gemaakt omdat ze afwijken van een volledige Anki-implementatie:

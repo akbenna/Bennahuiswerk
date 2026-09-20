@@ -3,7 +3,7 @@
  *
  * Wat er te halen valt op een dag. Drie taken, niet meer: het dagdoel, netjes
  * werken, en één oefentoets. Alle drie samen geeft een bonus, en dat is één
- * keer per dag — een missie die je vijf keer kunt afronden is geen missie.
+ * keer per dag, een missie die je vijf keer kunt afronden is geen missie.
  *
  * De klok komt als argument binnen; anders is een dagreeks niet te toetsen.
  */
@@ -68,7 +68,7 @@ export function dagMissie(prog: Voortgang, nu: Date): { taken: Missietaak[]; kla
 export const MISSIEBONUS = 25
 
 /** De dagmissie verzilveren, hoogstens één keer per dag. Geeft niets terug als
- *  er niets te verzilveren viel — dan blijft de voortgang zoals hij was. */
+ *  er niets te verzilveren viel, dan blijft de voortgang zoals hij was. */
 export function verzilverMissie(pr: Voortgang, nu: Date): Voortgang | null {
   const vandaag = dagKort(nu)
   if (pr.missieLaatst === vandaag) return null

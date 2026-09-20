@@ -1,5 +1,5 @@
 /**
- * HERHALING — vijf tot tien minuten per dag
+ * HERHALING: vijf tot tien minuten per dag
  *
  * De rij wordt één keer opgebouwd uit wat vandaag aan de beurt is, en daarna
  * afgewerkt. Een kaart die je "opnieuw" geeft gaat achteraan in dezelfde rij en

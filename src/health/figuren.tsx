@@ -3,7 +3,7 @@
  *
  * Drie SVG's, met de hand getekend en zonder grafiekbibliotheek. Dat is geen
  * zuinigheid: elke bibliotheek die dit zou kunnen weegt meer dan de hele app en
- * geen enkele tekent standaard wat hier nodig is — een interval naast een
+ * geen enkele tekent standaard wat hier nodig is, een interval naast een
  * formuleschatting, een weeglijn met de losse metingen eronder, en staven die
  * van kleur wisselen op een drempel die iets betekent.
  *
@@ -27,7 +27,7 @@ export function IntervalFiguur({ a }: { a: Analyse }) {
       <svg
         className="fig" viewBox="0 0 100 18" preserveAspectRatio="none"
         style={{ height: 48, marginTop: 10 }} role="img"
-        aria-label={`Interval ${Math.round(a.laag)} tot ${Math.round(a.hoog)} kcal, doel ${a.doel ?? '—'}`}
+        aria-label={`Interval ${Math.round(a.laag)} tot ${Math.round(a.hoog)} kcal, doel ${a.doel ?? '–'}`}
       >
         <rect x={p(a.priorLaag)} y={7.5} width={p(a.priorHoog) - p(a.priorLaag)} height={3}
               fill="var(--dim)" opacity={0.28} />
@@ -129,7 +129,7 @@ export function GewichtFiguur(
           <polyline points={pad} fill="none" stroke="var(--k)" strokeWidth={2.2} strokeLinejoin="round" />
         )}
         {eerste && (
-          <text x={L} y={H - 4} fontSize={9.5} fill="var(--grijs)">{kortNL(eerste.d)} —</text>
+          <text x={L} y={H - 4} fontSize={9.5} fill="var(--grijs)">{kortNL(eerste.d)} –</text>
         )}
         {laatste && (
           <text x={L + 34} y={H - 4} fontSize={9.5} fill="var(--grijs)">{kortNL(laatste.d)}</text>
@@ -137,7 +137,7 @@ export function GewichtFiguur(
       </svg>
       {teWeinig && (
         <p className="mini" style={{ marginTop: 6 }}>
-          {punten.length === 1 ? 'Eén weging' : `${punten.length} wegingen`} — nog {3 - punten.length}{' '}
+          {punten.length === 1 ? 'Eén weging' : `${punten.length} wegingen`}, nog {3 - punten.length}{' '}
           voordat er een lijn te trekken valt, en zeven voordat de helling meer is dan ruis.
         </p>
       )}

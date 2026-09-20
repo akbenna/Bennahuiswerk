@@ -1,5 +1,5 @@
 -- =============================================================================
--- SYNONIEMEN — woorden die jij gebruikt en NEVO niet
+-- SYNONIEMEN: woorden die jij gebruikt en NEVO niet
 --
 -- Toegepast 29 augustus 2026, in twee stappen.
 --
@@ -7,7 +7,7 @@
 --
 -- De zoekregel doet twee dingen: woorden tot vier letters op woordbegin, woorden
 -- van vijf letters of meer letterlijk als tekenreeks. Dat tweede gaat op twee
--- manieren mis. Samenstellingen die NEVO los schrijft — jij typt "kipfilet", er
+-- manieren mis. Samenstellingen die NEVO los schrijft, jij typt "kipfilet", er
 -- staat "Kip filet". En huishoudwoorden die nergens op lijken: boterham tegen
 -- Tarwebrood, patat tegen Frites.
 --
@@ -26,13 +26,13 @@
 -- niets.
 --
 -- Maar hij telt treffers en leest ze niet, en daar liep het mis bij "pasta". Dat
--- woord vond al van alles — chocoladepasta, speculoospasta, kruidenpasta — want
+-- woord vond al van alles (chocoladepasta, speculoospasta, kruidenpasta) want
 -- in het Nederlands zijn dat twee woorden die hetzelfde geschreven worden. De
 -- zelfsnoei zag treffers, zag geen gat, en sloeg het over.
 --
 -- Toen dacht ik dat macaroni ontbrak. Ook mis: er ís geen macaroni. NEVO noemt
 -- álles "Pasta ...", tot "Manti gevulde pasta gekookt Turks" aan toe. Het gat zat
--- andersom — "spaghetti", "macaroni" en "penne" vonden niets, en dat zijn juist
+-- andersom: "spaghetti", "macaroni" en "penne" vonden niets, en dat zijn juist
 -- de woorden die een kind gebruikt.
 --
 -- Blok 3 hangt die drie aan de pastaproducten, met de voorwaarde op de groep.
@@ -43,7 +43,7 @@
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 1 — WAT ELK WOORD NU DOET EN ZOU GAAN DOEN. Verandert niets.
+-- BLOK 1: WAT ELK WOORD NU DOET EN ZOU GAAN DOEN. Verandert niets.
 -- ---------------------------------------------------------------------------
 --
 -- Drie kolommen om naar te kijken:
@@ -84,13 +84,13 @@ order by vindt_nu, raakt desc, p.woord;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 2 — DE KOPPELING
+-- BLOK 2: DE KOPPELING
 -- ---------------------------------------------------------------------------
 --
 -- Het snoeien gebeurt hier vanzelf. De laatste voorwaarde eist dat het woord nú
 -- niets vindt: een synoniem toevoegen voor iets wat al vindbaar is voegt niets
 -- toe behalve ruis, en op deze proefgegevens gold dat al voor "pindakaas",
--- "slagroom" en "koffiemelk" — NEVO schrijft die gewoon aan elkaar.
+-- "slagroom" en "koffiemelk": NEVO schrijft die gewoon aan elkaar.
 --
 -- Dat `kal_nevo_zoek` STABLE is maakt dit veilig: hij kijkt naar de toestand aan
 -- het begin van de opdracht, dus de drie patronen van "pasta" zien alle drie nog
@@ -110,7 +110,7 @@ order by vindt_nu, raakt desc, p.woord;
    ook als er meerdere bronrijen op passen: "Tarwebrood wit" kreeg dan wel
    `boterham` óf `boterhammen`, niet allebei. Twee keer draaien vulde de rest
    aan, en dat is precies het soort fout dat je alleen ziet door twee keer te
-   draaien — de eerste keer zag er goed uit.
+   draaien, de eerste keer zag er goed uit.
 
    Nu worden de woorden per product eerst verzameld en dan in één keer
    toegevoegd. Eén doorloop is genoeg, en de tweede verandert niets meer. */
@@ -144,7 +144,7 @@ where f.id = nieuw.id;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 3 — SPAGHETTI, MACARONI EN PENNE
+-- BLOK 3: SPAGHETTI, MACARONI EN PENNE
 -- ---------------------------------------------------------------------------
 --
 -- Alleen op de graangroep. Chocoladepasta en speculoospasta staan in "Suiker,

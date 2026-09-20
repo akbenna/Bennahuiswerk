@@ -1,5 +1,5 @@
 /**
- * HET JAAR — de les, het werkblad, de niveaubepaling en de blokttoets
+ * HET JAAR: de les, het werkblad, de niveaubepaling en de blokttoets
  *
  * Zesendertig weken van anderhalf uur, één vast moment per week. De les loopt
  * in zeven onderdelen met de klok erbij; die klok is een hulpmiddel en geen
@@ -116,7 +116,7 @@ function Lesonderdeel(
             </p>
             )}
         <p className="klein muted" style={{ marginTop: 12 }}>
-          Daarna: doe een ronde in <b>Herhaling</b> — die kaarten komen precies terug op het
+          Daarna: doe een ronde in <b>Herhaling</b>: die kaarten komen precies terug op het
           moment dat je ze dreigt te vergeten.
         </p>
       </>
@@ -141,7 +141,7 @@ function Lesonderdeel(
             <div className="kaart dun" style={{ marginTop: 10 }} key={l}>
               <div className="rij tussen">
                 <div>
-                  <b>{L ? `${L.n} — ${L.tr}` : l}</b>
+                  <b>{L ? `${L.n}: ${L.tr}` : l}</b>
                   <div className="klein muted">klank: {L ? L.k : ''}</div>
                 </div>
                 <span className="ar" style={{ fontSize: '2.6rem' }}>{l}</span>
@@ -255,7 +255,7 @@ export function Werkblad({ week, sluit }: { week: number; sluit: () => void }): 
           return (
             <div className="wbblok" key={l + n}>
               <div className="rij tussen">
-                <b>{L ? `${L.n} — ${L.tr}` : l}</b>
+                <b>{L ? `${L.n}: ${L.tr}` : l}</b>
                 <span className="klein muted">{L ? L.k : ''}</span>
               </div>
               <div className="rij" style={{ justifyContent: 'space-around', margin: '6px 0' }}>
@@ -295,7 +295,7 @@ export function Werkblad({ week, sluit }: { week: number; sluit: () => void }): 
 /* -------------------------------------------------------- de niveaubepaling */
 
 /** Achttien vragen. Ze bepalen niet wie het knapst is, maar op welke week het
- *  programma begint — wie de eerste letters al kent hoeft die niet nog eens. */
+ *  programma begint, wie de eerste letters al kent hoeft die niet nog eens. */
 export function Meting(
   { begin }: { begin: (niveau: number, week: number, score: number) => void },
 ): ReactNode {
@@ -311,7 +311,7 @@ export function Meting(
       <>
         <span className="label">Niveaubepaling</span>
         <h2 style={{ margin: '6px 0' }}>{goed} van de {METING.length} goed</h2>
-        <p><b>{nv.t}</b> — {nv.u}</p>
+        <p><b>{nv.t}</b>: {nv.u}</p>
         <div className="kaart dun" style={{ marginTop: 12 }}>
           {Object.keys(per).map((g) => (
             <div className="rij tussen" style={{ padding: '5px 0' }} key={g}>
@@ -322,7 +322,7 @@ export function Meting(
         </div>
         <p className="klein muted" style={{ marginTop: 12 }}>
           Het programma begint voor jou bij week {nv.week}. Je kunt altijd terug naar een
-          eerdere week — in het jaarplan tik je gewoon op het weeknummer.
+          eerdere week: in het jaarplan tik je gewoon op het weeknummer.
         </p>
         <div className="rij" style={{ marginTop: 16 }}>
           <button
@@ -427,7 +427,7 @@ export function Blokttoets(
           {pct >= 80 ? 'Dat zit goed. Ga door naar het volgende blok.'
             : pct >= 60 ? 'De basis staat. Loop de letters die misgingen nog een keer na in het '
               + 'alfabet voordat je verdergaat.'
-              : 'Nog niet. Doe de weken van dit blok nog een keer — dat is geen straf maar '
+              : 'Nog niet. Doe de weken van dit blok nog een keer; dat is geen straf maar '
                 + 'precies hoe leren werkt.'}
         </p>
         <div className="rij" style={{ marginTop: 16 }}>

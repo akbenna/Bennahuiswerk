@@ -1,4 +1,4 @@
-/* Noer Islam werkt zonder internet. De app is één bestand, dus die bewaren we —
+/* Noer Islam werkt zonder internet. De app is één bestand, dus die bewaren we,
    en bij het openen halen we hem opnieuw op zodat een nieuwe versie meteen
    binnenkomt; lukt dat niet, dan draait de bewaarde versie gewoon door. */
 const CACHE = 'noer-v2';

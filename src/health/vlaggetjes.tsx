@@ -8,7 +8,7 @@
  * bestanden te maken. Deze tekeningen nemen de kleur van hun omgeving over, dus
  * ze kloppen in beide thema's en bij elk toekomstig palet.
  *
- * De vorm volgt de geleverde set — een pil met een tekentje en een woord — want
+ * De vorm volgt de geleverde set (een pil met een tekentje en een woord) want
  * die was goed. Alleen de uitvoering is anders.
  *
  * Welke vlaggen er zijn en waarom er maar drie soorten overbleven, staat in
@@ -23,7 +23,7 @@ const teken = (kinderen: React.ReactNode) => (
 
 /* Een opgeheven arm voor eiwit, een korenaar voor vezels, en een druppel met
    een streep erdoor voor het lage natrium. Alle drie in één gestreken contour
-   waar het kan — losse delen lopen dood op twaalf pixels, de les uit
+   waar het kan, losse delen lopen dood op twaalf pixels, de les uit
    `public/iconen/LEESMIJ.md`. */
 const TEKENS: Record<Claimsoort, () => React.ReactNode> = {
   eiwit: () => teken(

@@ -7,7 +7,7 @@
  * je het mist.
  *
  * De kern van de regel: bij bijna elk spel wint het hóógste, maar bij het
- * geheugenspel juist het laagste — minder beurten is beter. Eén verkeerd teken
+ * geheugenspel juist het laagste, minder beurten is beter. Eén verkeerd teken
  * daar en het beste resultaat van een kind verdwijnt bij de volgende
  * synchronisatie.
  */

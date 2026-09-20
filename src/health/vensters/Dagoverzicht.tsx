@@ -2,13 +2,13 @@
  * DE DAG IN DETAIL
  *
  * Het dagscherm is een samenvatting: vier vakken, een totaal per vak, en per
- * regel een naam met calorieën. Dat is met opzet weinig — je opent de app om te
+ * regel een naam met calorieën. Dat is met opzet weinig: je opent de app om te
  * loggen, niet om te lezen.
  *
  * Maar soms wil je wél weten waarom er 2.140 kcal staat. Dan is elk getal een
  * vraag: waar komt het vandaan, hoe zeker is het, welke portie was dat ook
  * alweer, en wat is er precies geschat. Dat antwoord past niet in een tegel van
- * vier kolommen breed, en het hoort er ook niet in — dan zou de tegel elke dag
+ * vier kolommen breed, en het hoort er ook niet in, dan zou de tegel elke dag
  * onleesbaar zijn voor het geval je het een keer wilt weten.
  *
  * Dus staat het hier, achter één tik, en staat het er dan ook volledig.
@@ -83,7 +83,7 @@ export function DagoverzichtVenster(
               : <>Nog <b>{dz(Math.round(a.doel - o.totaal.kcal))}</b> kcal tot je doel
                   van {dz(a.doel)}.</>}
             {/* Alleen als het model een interval heeft. Zonder die twee zou hier
-                "tussen — en —" staan, en dat is een zin die niets zegt. */}
+                "tussen (en) " staan, en dat is een zin die niets zegt. */}
             {a.laag != null && a.hoog != null && (
               <> Je doel ligt zelf tussen {dz(Math.round(a.laag))} en{' '}
                 {dz(Math.round(a.hoog))} kcal verbruik.</>
@@ -99,7 +99,7 @@ export function DagoverzichtVenster(
         {o.totaal.vezel.gram > 0 && (
           <p className="mini" style={{ marginTop: 8 }}>
             Vezel: <span className="cijfer">{Math.round(o.totaal.vezel.gram)}</span> g
-            {o.totaal.vezel.ontbreekt > 0 && ` — van ${o.aantal - o.totaal.vezel.ontbreekt} van de `
+            {o.totaal.vezel.ontbreekt > 0 && `, van ${o.aantal - o.totaal.vezel.ontbreekt} van de `
               + `${o.aantal} regels bekend`}
           </p>
         )}
@@ -107,7 +107,7 @@ export function DagoverzichtVenster(
 
       {o.aantal === 0 ? (
         <p className="klein" style={{ marginTop: 12 }}>
-          Op deze dag is niets gelogd. Er valt dus ook niets uit te splitsen — dat is geen fout van
+          Op deze dag is niets gelogd. Er valt dus ook niets uit te splitsen, en dat is geen fout van
           de app, alleen een lege dag.
         </p>
       ) : (

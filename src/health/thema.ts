@@ -1,5 +1,5 @@
 /**
- * THEMA — dag of nacht, en wie dat bepaalt.
+ * THEMA: dag of nacht, en wie dat bepaalt.
  *
  * De app volgde alleen het toestel: `prefers-color-scheme` en verder niets. Dat
  * is een goede grondstand en een slecht eindstation. Wie zijn iPhone op nacht
@@ -7,7 +7,7 @@
  * een scherm vol grafieken en lichte cijfers op bijna-zwart precies verkeerd om.
  *
  * Drie standen dus, en niet twee. "Volg het toestel" moet blijven bestaan als
- * eigen keuze: die doet iets anders dan dag of nacht — hij schakelt mee met de
+ * eigen keuze: die doet iets anders dan dag of nacht, hij schakelt mee met de
  * schemerstand van iOS. Een tuimelschakelaar met twee standen kan dat niet
  * uitdrukken, want zodra je hem aanraakt ben je die koppeling kwijt en kun je er
  * niet meer terug.
@@ -16,7 +16,7 @@
  *
  * Eén kenmerk op <html>: `data-thema="licht"` of `data-thema="donker"`. Bij
  * "volg het toestel" staat het er niet. De stijl leest dat kenmerk en verder
- * niemand — zie de toelichting boven in `stijl.css`.
+ * niemand, zie de toelichting boven in `stijl.css`.
  *
  * Dat het kenmerk er bij de grondstand níet staat is de hele truc. De
  * mediaquery blijft dan gewoon gelden, dus een toestel dat op nacht staat krijgt
@@ -77,7 +77,7 @@ export function zetThema(nieuw: Themakeuze): void {
 
 /**
  * Eén abonnement voor allebei de haken. Er zijn twee dingen die de uitkomst
- * kunnen veranderen — de keuze hier, en de schemerstand van het toestel — en
+ * kunnen veranderen (de keuze hier, en de schemerstand van het toestel) en
  * wie op het één let moet ook op het ander letten: bij "volg het toestel"
  * verandert de kleur zonder dat er hier iets gebeurt.
  */
@@ -103,7 +103,7 @@ function donkerNu(): boolean {
 
 /**
  * Of het nú donker is. Alleen nodig waar een kleur niet uit de stijl komt maar
- * uit JavaScript — het verloop van de hero op Vandaag is de enige plek. Inline
+ * uit JavaScript, het verloop van de hero op Vandaag is de enige plek. Inline
  * stijl luistert niet naar een mediaquery, dus daar moet de app zelf kijken.
  */
 export function useDonker(): boolean {

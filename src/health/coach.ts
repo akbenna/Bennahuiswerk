@@ -1,5 +1,5 @@
 /**
- * DE COACH — wat er nog nodig is, en wat dat kan vullen
+ * DE COACH: wat er nog nodig is, en wat dat kan vullen
  *
  * Twee lagen, en de volgorde is het ontwerp.
  *
@@ -7,13 +7,13 @@
  * en hoeveel van de dag is er nog om het in te doen. Daar komt geen model aan
  * te pas, en dat hoort ook niet: het is aftrekken, en aftrekken hoort te
  * kloppen. Wél draagt de uitkomst zijn onzekerheid, want de invoer draagt die
- * ook — wat je logde ligt tussen `_laag` en `_hoog`, dus wat je nog overhebt
+ * ook, wat je logde ligt tussen `_laag` en `_hoog`, dus wat je nog overhebt
  * ligt tussen `doel - _hoog` en `doel - _laag`. Een coach die "nog 640 kcal"
  * zegt terwijl het 480 tot 800 is, verzint precisie.
  *
  * De tweede laag stelt voor, en doet dat uit je eigen geschiedenis. Dat is geen
  * bezuiniging op de AI maar de betere bron: wat je vorige week at ken je, je
- * hebt het in huis, en de portie is de jouwe — de getallen zijn overgenomen en
+ * hebt het in huis, en de portie is de jouwe, de getallen zijn overgenomen en
  * niet geschat. Een voorstel als "eet 180 gram magere kwark" is voor een app
  * makkelijk te verzinnen en voor een mens moeilijk uit te voeren.
  *
@@ -34,7 +34,7 @@ import type { Herhaling } from './herhaal'
 import type { IsoDatum, Moment, Regel } from '@/gedeeld/db/tabellen'
 
 /* ==========================================================================
-   LAAG 1 — WAT ER NOG OVER IS
+   LAAG 1, WAT ER NOG OVER IS
    ========================================================================== */
 
 export interface Dagstand {
@@ -82,7 +82,7 @@ export function tekort(stand: Dagstand, doelKcal: number | null, doelEiwit: numb
 }
 
 /* ==========================================================================
-   LAAG 2 — WAT DAT KAN VULLEN, UIT JE EIGEN GESCHIEDENIS
+   LAAG 2, WAT DAT KAN VULLEN, UIT JE EIGEN GESCHIEDENIS
    ========================================================================== */
 
 /** Waarom een voorstel in de lijst staat. Er staat altijd een reden bij. */
@@ -109,13 +109,13 @@ export interface Voorstel {
    * WAAR DE LAT KOMT TE LIGGEN ALS JE DIT EET
    *
    * `Tekort.eis` zegt hoeveel gram eiwit er per kcal nodig is in de rest van de
-   * dag — de lat. Dit is diezelfde lat, opnieuw gerekend nadat dit voorstel
+   * dag, de lat. Dit is diezelfde lat, opnieuw gerekend nadat dit voorstel
    * eraf is. Zakt hij, dan is de rest van de dag makkelijker geworden; stijgt
    * hij, dan moet alles wat er daarna komt het goedmaken.
    *
    * Waarom dit hier staat en niet in het scherm wordt uitgerekend: het is de
    * kern van waarom een voorstel in die lijst staat, en het hoort dus in de
-   * laag die daarover gaat — met een proef eraan. Het scherm toonde eerst
+   * laag die daarover gaat, met een proef eraan. Het scherm toonde eerst
    * alleen een vlaggetje "op tempo" bij de goede gevallen en niets bij de rest,
    * en dat vroeg om uitleg die er nergens stond.
    *
@@ -141,8 +141,8 @@ export interface Coachvraag {
  * dan geschat, dan is er misschien meer ruimte. Dat klinkt redelijk en het is
  * het niet. De proef liet zien wat het oplevert: met nog 100 kcal over als punt
  * en 385 als bovengrens werd een boterham van 320 kcal voorgesteld, met een
- * rest van −220. De band mag het bericht breder maken — "nog 800, tussen 620
- * en 980" — maar hij is geen vergunning om erover te gaan. Dezelfde asymmetrie
+ * rest van −220. De band mag het bericht breder maken ("nog 800, tussen 620
+ * en 980") maar hij is geen vergunning om erover te gaan. Dezelfde asymmetrie
  * als elders in deze app: onzekerheid pleit niet in je voordeel.
  */
 function past(kcal: number, t: Tekort): boolean {
@@ -153,11 +153,11 @@ function past(kcal: number, t: Tekort): boolean {
  * De lat nadat dit voorstel eraf is. Zie `Voorstel.eisNa`.
  *
  * Dezelfde deling als in `tekort`, en met dezelfde twee uitzonderingen: geen
- * eiwit meer nodig is geen lat, en geen ruimte meer over is ook geen lat — je
+ * eiwit meer nodig is geen lat, en geen ruimte meer over is ook geen lat, je
  * kunt dan nergens meer eiwit in stoppen, dus een eis per kcal zegt niets.
  *
  * Hier stond ook nog `if (restEiwit <= 0) return 0`. Die regel kon niet fout
- * gaan — nul gedeeld door iets positiefs is al nul — en erger: hij ving het
+ * gaan (nul gedeeld door iets positiefs is al nul) en erger: hij ving het
  * geval af waarin `Math.max` per ongeluk zou verdwijnen. Dan zou een voorstel
  * dat méér eiwit levert dan er nodig is een negatieve lat krijgen, en geen
  * enkele proef zou omvallen. Weg dus; de `Math.max` draagt het nu alleen.
@@ -204,7 +204,7 @@ export function voorstellen(regels: Regel[], t: Tekort, vraag: Coachvraag): Voor
     })
   }
 
-  /* Eerst wat de eis haalt, en daarbinnen op dichtheid — niet op absoluut
+  /* Eerst wat de eis haalt, en daarbinnen op dichtheid, niet op absoluut
      eiwit. Dat verschil is niet academisch: bij een eis van 0,10 g/kcal en nog
      1.110 kcal te gaan zette de sortering op absoluut eiwit een tajine van 720
      kcal bovenaan, goed voor bijna je hele resterende ruimte in één keer. Op

@@ -1,5 +1,5 @@
 /**
- * RASIKH — de Koran vastzetten.
+ * RASIKH: de Koran vastzetten.
  *
  * Voor een volwassene met weinig tijd en veel geheugen. Het uitgangspunt is
  * omgekeerd aan de meeste apps: niet "hoeveel leer je erbij" maar "hoeveel houd
@@ -86,7 +86,7 @@ export function App() {
   }, [index, wolk.aan])
 
   /* Bij het wegleggen van de telefoon nog één keer wegschrijven, zonder de
-     gebruikelijke wachttijd — anders gaat de laatste beoordeling verloren. */
+     gebruikelijke wachttijd, anders gaat de laatste beoordeling verloren. */
   useEffect(() => {
     const weg = () => { if (wolk.aan) wolk.bewaar(nu.current, true) }
     addEventListener('pagehide', weg)
@@ -200,11 +200,11 @@ export function App() {
 
         <footer>
           <p>
-            Deze app stuurt op behoud. Nieuwe stof komt er pas bij als de herhalingen bij zijn — dat
+            Deze app stuurt op behoud. Nieuwe stof komt er pas bij als de herhalingen bij zijn. Dat
             is geen strengheid maar de enige manier waarop memoriseren op de lange duur standhoudt.
           </p>
           <p>
-            De Arabische tekst is de druk van het King Fahd-complex — Warsh en Hafs — met de
+            De Arabische tekst is de druk van het King Fahd-complex (Warsh en Hafs) met de
             vertaling van Fred Leemhuis. De recitatie komt uit Islam leren, aan te vullen met het
             script in <span style={{ whiteSpace: 'nowrap' }}>rasikh/audio/</span>. Leg de tekst één
             keer naast een moshaf voordat je iets vastzet.

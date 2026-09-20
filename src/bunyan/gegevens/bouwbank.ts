@@ -1,7 +1,7 @@
 import type { Deel, Game, Scherm, Soortdeel } from './soorten'
 
 /* =============================================================================
-   DE BOUWBANK — onderdelen om mee te oefenen
+   DE BOUWBANK, onderdelen om mee te oefenen
 
    punten = een ruwe maat voor snelheid, alleen bedoeld om te vergelijken.
    watt   = wat het onderdeel ongeveer trekt onder belasting.
@@ -60,7 +60,7 @@ export const DEELNAMEN: Record<Soortdeel, string> = { cpu:'Processor', mobo:'Moe
 
 /* De spellen waarop je bouw getoetst wordt. `zwaarte` is hoeveel de game vraagt;
    het getal is zo gekozen dat de uitkomsten in de buurt komen van wat je in
-   echte tests ziet. Het is een schatting om mee te leren kiezen — geen belofte. */
+   echte tests ziet. Het is een schatting om mee te leren kiezen, geen belofte. */
 export const GAMES: Game[] = [
  {id:'fifa',    n:'EA FC',           ico:'⚽', zwaarte:1.1, cpuDeel:.35},
  {id:'fortnite',n:'Fortnite',        ico:'🏝️', zwaarte:1.5, cpuDeel:.35},

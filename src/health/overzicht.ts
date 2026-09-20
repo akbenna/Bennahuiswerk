@@ -7,7 +7,7 @@
  *
  * Waarom het los staat van het scherm: hier zitten optellingen in die stil fout
  * kunnen gaan. Een macro die als nul telt in plaats van als onbekend, een band
- * die smaller wordt door hem verkeerd op te tellen — dat ziet er allemaal
+ * die smaller wordt door hem verkeerd op te tellen, dat ziet er allemaal
  * plausibel uit. Los ervan is het te toetsen.
  *
  * DE BAND TELT OP ALS SOM, NIET ALS WORTEL
@@ -70,7 +70,7 @@ function som(regels: Regel[]): Omit<Vaksom, 'moment'> {
   return {
     regels,
     kcal: regels.reduce((n, r) => n + r.kcal_punt, 0),
-    /* Ontbreekt de band, dan is de puntschatting het beste wat er is — en niet
+    /* Ontbreekt de band, dan is de puntschatting het beste wat er is, en niet
        nul, want dan zou een regel zonder band het interval naar beneden trekken
        en de dag zekerder laten lijken dan hij is. */
     laag: regels.reduce((n, r) => n + (r.kcal_laag ?? r.kcal_punt), 0),
@@ -102,7 +102,7 @@ export function dagoverzicht(regels: readonly Regel[]): Dagoverzicht {
 }
 
 /**
- * Hoe de portie er stond toen hij ingevoerd werd — "2 sneden · 70 g", "150 g".
+ * Hoe de portie er stond toen hij ingevoerd werd, "2 sneden · 70 g", "150 g".
  *
  * Leeg als er niets over te zeggen valt. Een lege string is hier beter dan een
  * streepje: het scherm laat de regel dan gewoon weg in plaats van een vakje te

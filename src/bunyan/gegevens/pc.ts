@@ -15,7 +15,7 @@ export const PC: Blok[] = [
 
  {id:'p1-1', t:'Wat is een computer', d:'Vier dingen, meer niet',
   uitleg:[
-   'Elke computer — een pc, een telefoon, een PlayStation, de chip in een wasmachine — doet vier dingen: iets binnenkrijgen, het onthouden, het uitrekenen, en het weer laten zien.',
+   'Elke computer (een pc, een telefoon, een PlayStation, de chip in een wasmachine) doet vier dingen: iets binnenkrijgen, het onthouden, het uitrekenen, en het weer laten zien.',
    'Binnenkrijgen doet je toetsenbord en muis. Onthouden doet het geheugen en de schijf. Uitrekenen doet de processor. Laten zien doet de videokaart via je scherm.',
    'Alle onderdelen die je straks koopt vallen in een van die vier hokjes. Als je twijfelt waar iets voor is, vraag je jezelf af in welk hokje het valt.',
    'Belangrijk verschil: <b>geheugen</b> (RAM) is wat de computer nu vasthoudt en vergeet zodra hij uitgaat. De <b>schijf</b> (SSD) onthoudt het ook als hij uit is. Mensen halen die twee constant door elkaar.'
@@ -27,12 +27,12 @@ export const PC: Blok[] = [
     u:'Hij rekent wel, maar zijn werk is het beeld.'}
   ]},
 
- {id:'p1-2', t:'De processor', d:'CPU — het brein',
+ {id:'p1-2', t:'De processor', d:'CPU: het brein',
   uitleg:[
    'De processor doet de berekeningen. Hij is klein, wordt heet, en zit in een voetje op het moederbord met honderden pinnetjes.',
    'Twee getallen tellen. <b>Kernen</b> (cores) is hoeveel dingen hij tegelijk kan doen; 6 tot 8 is voor gamen prima, meer heb je nodig bij video bewerken. <b>Kloksnelheid</b> in GHz is hoe snel elke kern werkt.',
    'Meer kernen is niet automatisch beter. Een spel gebruikt er vaak maar vier echt goed; dan is een snelle 6-kerner beter dan een langzame 16-kerner.',
-   'Er zijn twee merken: Intel en AMD. Ze zijn allebei goed, maar ze passen in verschillende voetjes — daarover meer bij het moederbord.'
+   'Er zijn twee merken: Intel en AMD. Ze zijn allebei goed, maar ze passen in verschillende voetjes; daarover meer bij het moederbord.'
   ],
   vragen:[
    {v:'Wat betekent 6 kernen?', o:['Zes keer zo snel','Zes dingen tegelijk','Zes GHz'], j:1,
@@ -41,10 +41,10 @@ export const PC: Blok[] = [
     u:'Voor gamen telt de snelheid per kern zwaarder dan het aantal.'}
   ]},
 
- {id:'p1-3', t:'De videokaart', d:'GPU — waar je fps vandaan komt',
+ {id:'p1-3', t:'De videokaart', d:'GPU: waar je fps vandaan komt',
   uitleg:[
    'De videokaart tekent het beeld. Bij gamen is dit veruit het belangrijkste onderdeel: hij bepaalt bijna in zijn eentje hoeveel fps je haalt.',
-   'Waarom hij zo goed is in beeld: een processor heeft 8 sterke kernen, een videokaart heeft er duizenden zwakke. Voor een miljoen keer dezelfde kleine som — één per beeldpunt — is dat precies goed.',
+   'Waarom hij zo goed is in beeld: een processor heeft 8 sterke kernen, een videokaart heeft er duizenden zwakke. Voor een miljoen keer dezelfde kleine som (één per beeldpunt) is dat precies goed.',
    '<b>VRAM</b> is het eigen geheugen van de kaart, waar de texturen in staan. 8 GB is het minimum dat je nu nog moet willen, 12 GB is comfortabel. Te weinig VRAM zie je niet aan een laag gemiddelde maar aan haperingen: alles loopt en dan opeens niet.',
    'Dit is ook het duurste onderdeel. In een gamepc gaat er vaak veertig procent van je budget naartoe, en dat is een verstandige verdeling.'
   ],
@@ -55,12 +55,12 @@ export const PC: Blok[] = [
     u:'Het gemiddelde blijft goed; het zijn de stotters die het verraden.'}
   ]},
 
- {id:'p1-4', t:'Het geheugen', d:'RAM — de werkbank',
+ {id:'p1-4', t:'Het geheugen', d:'RAM: de werkbank',
   uitleg:[
    'RAM is de werkbank van de computer: alles waar hij nu mee bezig is ligt erop. Groter betekent niet sneller, maar wel dat er meer tegelijk op past.',
    '16 GB is nu de norm voor gamen. 8 GB kan nog net maar loopt vol zodra je een spel, Discord en een browser tegelijk open hebt. 32 GB heb je pas nodig bij video bewerken of streamen.',
    'Zet altijd <b>twee reepjes</b> in plaats van één grote. Het geheugen kan dan via twee banen tegelijk werken (dual channel) en dat scheelt in spellen zomaar tien procent. Twee keer 8 GB is dus beter dan één keer 16 GB.',
-   'DDR4 en DDR5 zijn generaties. Ze passen niet in elkaars sleuven — het moederbord bepaalt welke je nodig hebt.'
+   'DDR4 en DDR5 zijn generaties. Ze passen niet in elkaars sleuven; het moederbord bepaalt welke je nodig hebt.'
   ],
   vragen:[
    {v:'Wat is beter: 1×16 GB of 2×8 GB?', o:['1×16','2×8','Maakt niet uit'], j:1,
@@ -86,7 +86,7 @@ export const PC: Blok[] = [
  {id:'p1-6', t:'Het moederbord', d:'Waar alles op samenkomt',
   uitleg:[
    'Het moederbord verbindt alles. Zelf maakt het je pc niet sneller, maar het bepaalt wél wat erop past en wat je later nog kunt bijzetten.',
-   'Het <b>voetje</b> (socket) bepaalt welke processors passen: AM5 voor de nieuwe AMD\'s, LGA1700 en LGA1851 voor Intel. Een processor die niet bij het voetje hoort past fysiek niet — en dat is maar goed ook.',
+   'Het <b>voetje</b> (socket) bepaalt welke processors passen: AM5 voor de nieuwe AMD\'s, LGA1700 en LGA1851 voor Intel. Een processor die niet bij het voetje hoort past fysiek niet, en dat is maar goed ook.',
    'Verder bepaalt het bord welk geheugen erin kan (DDR4 of DDR5), hoeveel NVMe-reepjes erop kunnen, en welke aansluitingen je achterop krijgt: usb, netwerk, geluid.',
    'De <b>maat</b> heet de vormfactor. ATX is de gewone grote, micro-ATX iets kleiner, mini-ITX heel klein. De kast moet die maat aankunnen.'
   ],
@@ -97,7 +97,7 @@ export const PC: Blok[] = [
     u:'De vormfactor. De kast moet hem aankunnen.'}
   ]},
 
- {id:'p1-7', t:'De voeding', d:'PSU — het onderdeel waarop je niet bezuinigt',
+ {id:'p1-7', t:'De voeding', d:'PSU: het onderdeel waarop je niet bezuinigt',
   uitleg:[
    'De voeding maakt van de 230 volt uit het stopcontact de lage spanningen die de onderdelen willen. Hij is saai, hij maakt niets sneller, en hij is het enige onderdeel dat bij falen de rest kan meeslepen.',
    'Tel op hoeveel je onderdelen samen trekken en neem daar ruim boven. Een videokaart die 200 watt gebruikt met een processor van 120 watt zit rond de 400 watt totaal; een voeding van 650 watt is dan verstandig. Ruimte is geen verspilling: een voeding is het zuinigst rond de helft van zijn maximum.',
@@ -113,9 +113,9 @@ export const PC: Blok[] = [
 
  {id:'p1-8', t:'Koeling en de kast', d:'Warmte moet weg',
   uitleg:[
-   'Alle stroom die erin gaat komt er als warmte weer uit. Blijft die hangen, dan gaat je pc zichzelf afremmen om niet stuk te gaan — dat heet <em>throttling</em>, en je merkt het als fps die na tien minuten inzakt.',
+   'Alle stroom die erin gaat komt er als warmte weer uit. Blijft die hangen, dan gaat je pc zichzelf afremmen om niet stuk te gaan: dat heet <em>throttling</em>, en je merkt het als fps die na tien minuten inzakt.',
    'De processor heeft een eigen koeler: een blok metaal met een ventilator, of een waterkoeler met een radiator. Voor de meeste bouwen is een goede luchtkoeler genoeg, goedkoper en stiller dan mensen denken.',
-   'Tussen de processor en de koeler hoort <b>koelpasta</b>. Een klodder ter grootte van een erwt in het midden is genoeg — meer werkt averechts.',
+   'Tussen de processor en de koeler hoort <b>koelpasta</b>. Een klodder ter grootte van een erwt in het midden is genoeg; meer werkt averechts.',
    'De kast moet lucht kunnen doorlaten: voor naar binnen, achter en boven naar buiten. Een mooie kast met glas rondom en nauwelijks gaten ziet er goed uit en is warm.'
   ],
   vragen:[
@@ -131,9 +131,9 @@ export const PC: Blok[] = [
  {id:'p2-1', t:'GHz, kernen en threads', d:'De cijfers op een processor',
   uitleg:[
    'Op de doos van een processor staat bijvoorbeeld: 6 cores, 12 threads, 4.7 GHz boost. Wat betekent dat.',
-   '<b>Cores</b> zijn echte rekeneenheden. <b>Threads</b> zijn de banen erlangs: veel processors doen twee taken per kern, dus 6 cores geeft 12 threads. Dat is geen twaalf kernen — het vult alleen de gaatjes op.',
+   '<b>Cores</b> zijn echte rekeneenheden. <b>Threads</b> zijn de banen erlangs: veel processors doen twee taken per kern, dus 6 cores geeft 12 threads. Dat is geen twaalf kernen; het vult alleen de gaatjes op.',
    '<b>GHz</b> is hoeveel miljard stappen per seconde. Boost is de snelheid die hij haalt als hij het even druk heeft en koud genoeg is; de basissnelheid is lager.',
-   'Vergelijk GHz alleen binnen dezelfde generatie en hetzelfde merk. Een nieuwe processor van 4 GHz is meestal sneller dan een oude van 5 GHz, omdat hij per stap meer werk doet. Dat heet IPC, en dat staat nergens op de doos — daarom kijk je naar tests in plaats van naar getallen.'
+   'Vergelijk GHz alleen binnen dezelfde generatie en hetzelfde merk. Een nieuwe processor van 4 GHz is meestal sneller dan een oude van 5 GHz, omdat hij per stap meer werk doet. Dat heet IPC, en dat staat nergens op de doos; daarom kijk je naar tests in plaats van naar getallen.'
   ],
   vragen:[
    {v:'Is 6 cores / 12 threads hetzelfde als 12 cores?', o:['Ja','Nee, threads zijn banen langs dezelfde kernen','Threads zijn sneller'], j:1,
@@ -172,7 +172,7 @@ export const PC: Blok[] = [
 
  {id:'p2-4', t:'De bottleneck', d:'De rem zit altijd ergens',
   uitleg:[
-   'Een computer is zo snel als zijn traagste onderdeel voor die ene taak. Dat onderdeel heet de bottleneck — de flessenhals.',
+   'Een computer is zo snel als zijn traagste onderdeel voor die ene taak. Dat onderdeel heet de bottleneck, de flessenhals.',
    'Bij gamen op hoge instellingen is dat bijna altijd de videokaart. Speel je op lage instellingen of op 1080p met een hele snelle kaart, dan wordt de processor de rem: hij kan de beelden niet snel genoeg klaarzetten.',
    'Een dure videokaart naast een zwakke processor is dus weggegooid geld, en andersom net zo goed. Een pc van 900 euro die in verhouding is klopt beter dan een van 1300 waarin één onderdeel alles ophoudt.',
    'Twijfel je waar de rem zit? Kijk tijdens het spelen naar het gebruik van beide. Zit de videokaart op 99% en de processor op 40%, dan is het goed. Andersom betekent dat je processor het niet bijhoudt.'
@@ -180,7 +180,7 @@ export const PC: Blok[] = [
   vragen:[
    {v:'Wat is meestal de bottleneck bij gamen op hoge instellingen?', o:['De processor','De videokaart','De SSD'], j:1,
     u:'Daarom gaat het grootste deel van het budget daarheen.'},
-   {v:'Videokaart op 99%, processor op 40% — is dat goed?', o:['Ja, zo hoort het','Nee, de processor is de rem','Nee, de kaart is stuk'], j:0,
+   {v:'Videokaart op 99%, processor op 40%: is dat goed?', o:['Ja, zo hoort het','Nee, de processor is de rem','Nee, de kaart is stuk'], j:0,
     u:'De kaart werkt vol, dat is precies wat je wilt.'}
   ]},
 
@@ -208,8 +208,8 @@ export const PC: Blok[] = [
   uitleg:[
    'Twee gevaren: statische elektriciteit voor je onderdelen, en netstroom voor jou.',
    '<b>Statisch:</b> de vonk die je voelt bij een deurklink is duizenden volts. Voor jou onschuldig, voor een chip niet. Trek de stekker eruit, en raak voordat je begint even iets metalen van de kast aan om je te ontladen. Doe dat opnieuw na elk rondje lopen over tapijt. Een polsbandje mag, maar dat metalen aanraken is het belangrijkst.',
-   '<b>Stroom:</b> altijd de stekker eruit voordat je iets aanraakt binnenin. En de voeding gaat nooit open — daar zit spanning in die er uren na het uittrekken nog staat.',
-   'Verder: werk op een tafel en niet op je bed of een kleed, doe het bij daglicht, en neem er de tijd voor. Bijna alle schade bij een eerste bouw ontstaat door kracht zetten waar iets gewoon moest glijden. Als het niet past, past het niet — kijk nog eens in plaats van harder te duwen.'
+   '<b>Stroom:</b> altijd de stekker eruit voordat je iets aanraakt binnenin. En de voeding gaat nooit open: daar zit spanning in die er uren na het uittrekken nog staat.',
+   'Verder: werk op een tafel en niet op je bed of een kleed, doe het bij daglicht, en neem er de tijd voor. Bijna alle schade bij een eerste bouw ontstaat door kracht zetten waar iets gewoon moest glijden. Als het niet past, past het niet: kijk nog eens in plaats van harder te duwen.'
   ],
   vragen:[
    {v:'Wat doe je voordat je iets binnenin aanraakt?', o:['Stekker eruit en jezelf ontladen','Handschoenen aan','Niets'], j:0,
@@ -223,7 +223,7 @@ export const PC: Blok[] = [
    'De volgorde die het minste gedoe geeft: eerst het moederbord op tafel klaarmaken, dan pas in de kast.',
    'Op tafel: processor in het voetje, geheugen in de sleuven, NVMe op zijn plek, koeler erop. Al die dingen zitten op plekken waar je in een dichte kast nauwelijks bij komt.',
    'Daarna: bord in de kast, videokaart erin, voeding erin, kabels aansluiten, en pas op het eind alles netjes wegwerken.',
-   'Leg de doos van het moederbord onder het bord als je op tafel werkt — dat is precies waar hij voor bedoeld is, en het scheelt krassen.',
+   'Leg de doos van het moederbord onder het bord als je op tafel werkt: dat is precies waar hij voor bedoeld is, en het scheelt krassen.',
    'Handig tussenstapje dat bijna niemand doet: als het bord klaar is, sluit dan buiten de kast even de voeding aan en start hem. Werkt het niet, dan hoef je niet alles weer uit te bouwen om te zoeken.'
   ],
   vragen:[
@@ -235,9 +235,9 @@ export const PC: Blok[] = [
 
  {id:'p3-3', t:'Processor, geheugen, NVMe', d:'De drie dingen op het bord',
   uitleg:[
-   '<b>Processor:</b> de hendel naast het voetje omhoog, het klepje open. Op de processor en op het voetje staat een klein driehoekje in een hoek — die twee moeten bij elkaar. Leg hem erin, niet duwen, en doe de hendel dicht. Die voelt zwaar; dat hoort.',
-   '<b>Koeler:</b> een erwt koelpasta in het midden, koeler erop, en de schroeven <em>kruislings</em> beetje bij beetje aandraaien. Dus niet één schroef helemaal vast en dan de volgende — dan staat hij scheef. Vergeet de kabel van de ventilator niet: die gaat op <code>CPU_FAN</code>.',
-   '<b>Geheugen:</b> de clips open, kijk naar het keepje in het reepje zodat je weet welke kant voor is, en druk aan beide uiteinden tot de clips vanzelf dichtklikken. Dit is het onderdeel waar je écht kracht op zet. Twee reepjes horen meestal in sleuf 2 en 4 — het boekje zegt welke.',
+   '<b>Processor:</b> de hendel naast het voetje omhoog, het klepje open. Op de processor en op het voetje staat een klein driehoekje in een hoek: die twee moeten bij elkaar. Leg hem erin, niet duwen, en doe de hendel dicht. Die voelt zwaar; dat hoort.',
+   '<b>Koeler:</b> een erwt koelpasta in het midden, koeler erop, en de schroeven <em>kruislings</em> beetje bij beetje aandraaien. Dus niet één schroef helemaal vast en dan de volgende, dan staat hij scheef. Vergeet de kabel van de ventilator niet: die gaat op <code>CPU_FAN</code>.',
+   '<b>Geheugen:</b> de clips open, kijk naar het keepje in het reepje zodat je weet welke kant voor is, en druk aan beide uiteinden tot de clips vanzelf dichtklikken. Dit is het onderdeel waar je écht kracht op zet. Twee reepjes horen meestal in sleuf 2 en 4; het boekje zegt welke.',
    '<b>NVMe:</b> schroefje eruit, reepje schuin in de sleuf, plat drukken, schroefje erin. Zit er een koelplaatje bij, denk dan aan het folie dat eraf moet.'
   ],
   vragen:[
@@ -253,7 +253,7 @@ export const PC: Blok[] = [
   uitleg:[
    'Eerst het <b>achterplaatje</b> van het moederbord in de kast klikken, als het niet al aan het bord vastzit. Dit is het onderdeel dat iedereen vergeet en dat je dwingt alles weer los te halen.',
    'Dan de <b>afstandsbusjes</b> (standoffs): kleine messing schroefjes die het bord van de kast af houden. Er moet er precies één onder elk schroefgat zitten en nergens anders. Een losse standoff onder het bord maakt kortsluiting.',
-   'Bord erop, schroeven er los in, dan pas aandraaien — en niet met kracht. Bij printplaten geldt: vast is vast genoeg.',
+   'Bord erop, schroeven er los in, dan pas aandraaien, en niet met kracht. Bij printplaten geldt: vast is vast genoeg.',
    'De <b>videokaart</b> gaat in de bovenste lange sleuf (PCIe x16). Slotplaatjes achteruit de kast, kaart erin tot de clip klikt, en vastschroeven. Grote kaarten hangen door: er zijn steuntjes voor, en die zijn geen luxe.'
   ],
   vragen:[
@@ -266,7 +266,7 @@ export const PC: Blok[] = [
  {id:'p3-5', t:'Kabels', d:'Het saaiste en het belangrijkste stuk',
   uitleg:[
    'Vier kabels moeten er sowieso in. De <b>24-pins</b> naar het moederbord, de <b>8-pins CPU-stroom</b> naar linksboven op het bord, de <b>PCIe-stroom</b> naar de videokaart, en eventueel <b>SATA</b> naar een gewone schijf.',
-   'Die 8-pins bovenaan is de meest vergeten kabel die er is. Zonder hem gebeurt er bij het aanzetten helemaal niets — geen beeld, geen piep — en denk je dat je bord stuk is.',
+   'Die 8-pins bovenaan is de meest vergeten kabel die er is. Zonder hem gebeurt er bij het aanzetten helemaal niets (geen beeld, geen piep) en denk je dat je bord stuk is.',
    'Dan de <b>frontpaneel-kabeltjes</b>: aan/uit, reset, ledjes, usb en audio. Dat zijn losse pinnetjes rechtsonder op het bord en het is het vervelendste klusje van de hele bouw. Het boekje van het moederbord heeft er een tekening van. Het aan/uit-knopje kan niet verkeerd om: dat is een simpel contact.',
    'Werk kabels weg achter de plaat achter het moederbord. Dat is niet alleen mooi: lucht die vrij kan stromen houdt je onderdelen koeler.'
   ],
@@ -280,7 +280,7 @@ export const PC: Blok[] = [
  {id:'p3-6', t:'De eerste start', d:'En de BIOS',
   uitleg:[
    'Voor je aanzet: kijk of alle stroomkabels vastzitten, of het geheugen echt is doorgeklikt en of er geen schroefje los in de kast ligt. Zet dan pas de stekker erin en de schakelaar achter op de voeding aan.',
-   'Gaat hij aan en zie je beeld, dan kom je in de <b>BIOS</b> (of UEFI) — het scherm van het moederbord zelf, nog vóór Windows. Daar staat of hij je processor, je geheugen en je schijf ziet. Klopt dat, dan is je bouw goed.',
+   'Gaat hij aan en zie je beeld, dan kom je in de <b>BIOS</b> (of UEFI): het scherm van het moederbord zelf, nog vóór Windows. Daar staat of hij je processor, je geheugen en je schijf ziet. Klopt dat, dan is je bouw goed.',
    'Zet daar één ding aan: <b>XMP</b> of <b>EXPO</b>. Zonder dat draait je geheugen op de trage standaardsnelheid in plaats van waarvoor je betaald hebt. Eén klik, zomaar een paar procent fps.',
    'Geen beeld? Ga rustig langs deze lijst: zit de 8-pins bovenaan erin, zit de monitor aan de <b>videokaart</b> en niet aan het moederbord, klikt het geheugen echt vast (haal het eruit en druk het opnieuw in), en zit de 24-pins goed. Dat is samen negen van de tien keer het probleem.'
   ],
@@ -326,15 +326,15 @@ export const PC: Blok[] = [
  {id:'p4-2', t:'Drivers en updates', d:'Software die bij je hardware hoort',
   uitleg:[
    'Een driver is het stukje software dat Windows vertelt hoe het met een onderdeel moet praten. De belangrijkste is die van je videokaart.',
-   'Haal die altijd bij de bron: <code>nvidia.com</code> of <code>amd.com</code>. Nooit van een site die "driver updater" heet — dat is bijna altijd rommel of erger.',
+   'Haal die altijd bij de bron: <code>nvidia.com</code> of <code>amd.com</code>. Nooit van een site die "driver updater" heet; dat is bijna altijd rommel of erger.',
    'Verder werken de meeste drivers vanzelf bij via Windows Update. De chipset-driver van je moederbord haal je één keer bij de fabrikant van het bord.',
-   'Nieuwe drivers geven bij nieuwe spellen soms echt fps erbij. Draait alles goed, dan hoef je niet elke week bij te werken — "als het werkt, laat het werken" is een prima regel.'
+   'Nieuwe drivers geven bij nieuwe spellen soms echt fps erbij. Draait alles goed, dan hoef je niet elke week bij te werken; "als het werkt, laat het werken" is een prima regel.'
   ],
   vragen:[
    {v:'Waar haal je de driver van je videokaart?', o:['Bij nvidia.com of amd.com','Bij een driver-updatesite','Uit de Microsoft Store'], j:0,
     u:'Altijd bij de bron; de rest is rommel of malware.'},
    {v:'Moet je alles altijd meteen bijwerken?', o:['Ja','Nee, als het goed draait mag het wachten','Nooit bijwerken'], j:1,
-    u:'Behalve beveiligingsupdates — die wel.'}
+    u:'Behalve beveiligingsupdates: die wel.'}
   ]},
 
  {id:'p4-3', t:'Als het niet werkt', d:'Zoeken met systeem in plaats van gokken',
@@ -342,7 +342,7 @@ export const PC: Blok[] = [
    'Als iets kapot is, is de verleiding groot om van alles tegelijk te proberen. Doe dat niet: dan weet je achteraf niet wat het was en kun je het niet nog eens oplossen.',
    'De methode: verander <b>één ding tegelijk</b> en kijk of het verschil maakt. Werkt het niet, zet het dan terug voordat je het volgende probeert.',
    'Kom je er niet uit, haal dan alles eruit behalve wat hij minimaal nodig heeft: moederbord, processor, koeler, één reepje geheugen, voeding. Start hij dan? Zet er dan één ding tegelijk bij tot het misgaat. Dan wéét je welk onderdeel het is.',
-   'Veelvoorkomend, en de eerste dingen om na te lopen: geen beeld is meestal het geheugen dat niet doorgeklikt is of de vergeten 8-pins. Willekeurige herstarts zijn meestal de voeding of oververhitting. Piepjes bij het opstarten zijn een code — kijk in het boekje van het moederbord wat het patroon betekent.'
+   'Veelvoorkomend, en de eerste dingen om na te lopen: geen beeld is meestal het geheugen dat niet doorgeklikt is of de vergeten 8-pins. Willekeurige herstarts zijn meestal de voeding of oververhitting. Piepjes bij het opstarten zijn een code: kijk in het boekje van het moederbord wat het patroon betekent.'
   ],
   vragen:[
    {v:'Wat is de regel bij zoeken naar een fout?', o:['Alles tegelijk proberen','Eén ding tegelijk veranderen','Meteen nieuwe onderdelen kopen'], j:1,
@@ -354,7 +354,7 @@ export const PC: Blok[] = [
  {id:'p4-4', t:'Slim upgraden', d:'Wat je later bijzet',
   uitleg:[
    'Een pc die je zelf bouwt gooi je niet weg maar bouw je uit. De vraag is alleen: wat als eerste.',
-   'De volgorde die het meest oplevert per euro: <b>meer RAM</b> als je er 8 GB in hebt, dan een <b>NVMe</b> als je nog van een gewone schijf start, dan een <b>videokaart</b> als je fps tekortkomt, en pas als laatste de <b>processor</b> — want daarvoor moet vaak het moederbord ook mee, en dan bouw je eigenlijk opnieuw.',
+   'De volgorde die het meest oplevert per euro: <b>meer RAM</b> als je er 8 GB in hebt, dan een <b>NVMe</b> als je nog van een gewone schijf start, dan een <b>videokaart</b> als je fps tekortkomt, en pas als laatste de <b>processor</b>, want daarvoor moet vaak het moederbord ook mee, en dan bouw je eigenlijk opnieuw.',
    'Denk daar bij het kopen al aan. Een voeding met marge en een moederbord met een sleuf over maken een upgrade over twee jaar tot een middag werk in plaats van een nieuwe pc.',
    'En kijk naar wat je écht doet. Als je spellen op 1080p speelt en 90 fps haalt, levert een duurdere kaart je niets op zolang je scherm 60 Hz is. Dan is een beter scherm de betere upgrade.'
   ],
@@ -370,7 +370,7 @@ export const PC: Blok[] = [
    'Je bouwt een mooie pc en dan verlies je je account aan iemand die je een gratis skin belooft. Dit hoort erbij.',
    '<b>Wachtwoorden:</b> voor elke site een andere. Dat kan alleen met een wachtwoordmanager (Bitwarden is gratis) of met een vast trucje dat per site verschilt. Zet <b>tweestapsverificatie</b> aan op je Google-, Steam- en Discord-account. Dan kan iemand met je wachtwoord er nog steeds niet in.',
    '<b>Downloads:</b> alleen van de officiële site of uit Steam. Gekraakte spellen en "gratis V-Bucks"-programma\'s zijn de nummer één manier waarop mensen van jouw leeftijd hun account kwijtraken.',
-   '<b>Mensen:</b> niemand van Steam, Discord of een game vraagt ooit je wachtwoord of je code — als iemand dat doet is het altijd oplichterij, ook als het account van een vriend lijkt te zijn. Een link die je moet openen "om je prijs te claimen" is dat ook.',
+   '<b>Mensen:</b> niemand van Steam, Discord of een game vraagt ooit je wachtwoord of je code: als iemand dat doet is het altijd oplichterij, ook als het account van een vriend lijkt te zijn. Een link die je moet openen "om je prijs te claimen" is dat ook.',
    'En het belangrijkste: als er toch iets misgaat, vertel het meteen thuis. Er is niets zo erg dat je het alleen moet oplossen, en snel handelen scheelt vaak alles.'
   ],
   vragen:[

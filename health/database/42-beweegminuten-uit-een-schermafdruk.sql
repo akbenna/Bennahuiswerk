@@ -1,8 +1,8 @@
 -- ===========================================================================
--- 42 — BEWEEGMINUTEN UIT EEN SCHERMAFDRUK
+-- 42: BEWEEGMINUTEN UIT EEN SCHERMAFDRUK
 -- ===========================================================================
 --
--- INGETROKKEN — NIET DRAAIEN. Bestand 43 doet dit beter en dit bestand is nooit
+-- INGETROKKEN, NIET DRAAIEN. Bestand 43 doet dit beter en dit bestand is nooit
 -- toegepast. Het blijft staan omdat de SQL hier een verslag is en geen
 -- migratiesysteem: een bestand dat er even was en weer wegging hoort na te
 -- lezen te zijn, met de reden erbij.
@@ -14,7 +14,7 @@
 -- antwoord hieronder klopt en is met zes mutanten nagekeken.
 --
 -- Maar de vraag was de verkeerde. `fiets_min` is één integer per dag, en een
--- work-outlijst geeft een soort — wandelen, rennen, fietsen. De WHO-richtlijn
+-- work-outlijst geeft een soort, wandelen, rennen, fietsen. De WHO-richtlijn
 -- rekent die niet gelijk: een minuut zware inspanning telt voor twee matige.
 -- Eén kolom kan dat verschil niet dragen, en een dag kan bovendien meer dan één
 -- inspanning hebben.
@@ -22,7 +22,7 @@
 -- Bestand 43 zet er een tabel neer met een soort en een intensiteit per keer, en
 -- laat `fiets_min` verder met rust: de koppeling op de telefoon blijft hem
 -- sturen en de app leest hem als één matige fietsrit van die dag. Daarmee heeft
--- de wijziging hieronder geen aanroeper meer — de import schrijft geen
+-- de wijziging hieronder geen aanroeper meer, de import schrijft geen
 -- `fiets_min` maar rijen.
 --
 -- Wat hieronder over de omweg via `v_fiets` staat, blijft juist en is de moeite
@@ -44,7 +44,7 @@
 -- `kal_dagen_importeren` kent vier velden: datum, gewicht, stappen en actieve
 -- energie. `fiets_min` staat wél in het type dat de app verstuurt
 -- (`NieuweDag` in `src/gedeeld/db/rpc.ts`) maar niet in de insert. Postgres
--- klaagt daar niet over — een sleutel in een jsonb-object die niemand uitleest
+-- klaagt daar niet over: een sleutel in een jsonb-object die niemand uitleest
 -- verdwijnt geruisloos. De import zou dus melden dat er dagen zijn overgenomen
 -- en de minuten onderweg laten vallen. Dat is het soort fout dat pas opvalt als
 -- iemand er weken later achter komt dat zijn week leeg is.
@@ -57,7 +57,7 @@
 -- DE OMWEG VIA EEN VARIABELE, EN WAAROM HIJ NODIG IS
 --
 -- `kal_dagen.fiets_min` heeft `default 0`. Die standaard geldt alleen als de
--- kolom niet in de insertlijst staat — zet je hem er wél in met de waarde null,
+-- kolom niet in de insertlijst staat, zet je hem er wél in met de waarde null,
 -- dan wint die null. Een nieuwe dag uit een import zonder work-outs zou daarmee
 -- van 0 naar null gaan. Dat leest de app weliswaar hetzelfde (overal `?? 0`),
 -- maar het is een verandering die niemand gevraagd heeft en die pas opvalt bij
@@ -78,7 +78,7 @@
 --
 -- Het verschil is wie er aan de knop zit. De koppeling vuurt uit zichzelf en
 -- mag daarom nooit over een met de hand ingevuld gewicht heen. Een import is
--- een mens die schermafdrukken kiest en op Overnemen drukt — die heeft het
+-- een mens die schermafdrukken kiest en op Overnemen drukt, die heeft het
 -- gevraagd.
 --
 -- En er is geen alternatief dat werkt: laat je een bestaande waarde staan, dan
@@ -94,7 +94,7 @@
 -- over de 75 heen.
 --
 -- Daar is geen SQL tegen: de database kan niet zien dat een afdruk incompleet
--- was. Wat er wél tegen gedaan is, staat in het scherm — het toont per dag wat
+-- was. Wat er wél tegen gedaan is, staat in het scherm, het toont per dag wat
 -- er overgenomen wordt én wat er al staat, met een vinkje per post, vóór er iets
 -- verstuurd wordt. Zie `ImportVenster` in `src/health/vensters/Instellingen.tsx`.
 --
@@ -112,7 +112,7 @@ BEGIN;
    uitvoeren drukt, zet een functie terug waar niets meer langs komt. De tekst
    wijst naar het bestand dat wél gedraaid moet worden. */
 do $$ begin
-  raise exception 'Bestand 42 is ingetrokken — draai bestand 43. Zie de kop van dit bestand.';
+  raise exception 'Bestand 42 is ingetrokken, draai bestand 43. Zie de kop van dit bestand.';
 end $$;
 
 create or replace function public.kal_dagen_importeren(p_token text, p_dagen jsonb)
@@ -161,7 +161,7 @@ COMMIT;
 -- ===========================================================================
 --
 -- De zes vragen hieronder zijn precies de zes die in de proef van dit bestand
--- staan. Ze draaien op jouw eigen token en laten rijen achter — draai ze op een
+-- staan. Ze draaien op jouw eigen token en laten rijen achter, draai ze op een
 -- datum waar niets staat, of draai ze binnen een transactie die je terugrolt.
 --
 --   begin;

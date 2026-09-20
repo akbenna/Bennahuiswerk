@@ -1,18 +1,18 @@
 -- ===========================================================================
--- 43 — INSPANNING KRIJGT EEN SOORT
+-- 43: INSPANNING KRIJGT EEN SOORT
 -- ===========================================================================
 --
 -- TOEGEPAST: ja, op 19 september 2026, samen met een nieuwe uitrol van
 -- `health/edge/kal-ai.ts`. Die twee horen bij elkaar: zonder de uitrol geeft de
 -- herkenning geen `soort` terug en komt elke work-out als "geen soort te zien"
--- binnen — de tabel werkt dan wel, maar er valt niets in te zetten dan met de
+-- binnen: de tabel werkt dan wel, maar er valt niets in te zetten dan met de
 -- hand.
 --
 -- WAAROM
 --
 -- Er was één veld voor beweging buiten de stappen om: `kal_dagen.fiets_min`.
--- Die naam was altijd al te smal — wie zwemt of hardloopt zette zijn minuten in
--- een vakje dat "fietsen" heet — maar het werd pas echt fout bij het rekenen.
+-- Die naam was altijd al te smal, wie zwemt of hardloopt zette zijn minuten in
+-- een vakje dat "fietsen" heet, maar het werd pas echt fout bij het rekenen.
 --
 -- De WHO-richtlijn van 2020 noemt twee bedragen en geen één: 150 tot 300 minuten
 -- matige inspanning per week, óf 75 tot 150 zware, óf een combinatie waarin een
@@ -25,7 +25,7 @@
 -- naast een rit van drie kwartier zijn twee dingen, en in één kolom worden ze
 -- één getal waarvan je niet meer ziet waar het vandaan komt.
 --
--- WAT ER MET `fiets_min` GEBEURT — en dat is met opzet niets
+-- WAT ER MET `fiets_min` GEBEURT, en dat is met opzet niets
 --
 -- Hij blijft staan en blijft tellen. De app leest hem als één fietsrit van die
 -- dag, matig, naast wat er in deze nieuwe tabel staat.
@@ -38,15 +38,15 @@
 -- een schema dat er netter uitziet.
 --
 -- De prijs staat in het scherm: een rit die de koppeling doorgeeft én die je
--- met de hand als rij toevoegt telt twee keer. Dat is zichtbaar — beide staan in
--- de lijst van die dag, met hun herkomst — en met één tik weg te halen. Een
+-- met de hand als rij toevoegt telt twee keer. Dat is zichtbaar: beide staan in
+-- de lijst van die dag, met hun herkomst, en met één tik weg te halen. Een
 -- stille voorkeursregel die er één van de twee laat verdwijnen zou erger zijn:
 -- dan mis je minuten zonder te weten welke.
 --
 -- WAT ER NIET IN DEZE TABEL HOORT
 --
--- Krachttraining. Die telt in de richtlijn apart — twee keer per week
--- spierversterkend, naast de aerobe minuten — en heeft in `kal_training` zijn
+-- Krachttraining. Die telt in de richtlijn apart: twee keer per week
+-- spierversterkend, naast de aerobe minuten, en heeft in `kal_training` zijn
 -- eigen tabel en op het scherm zijn eigen drie bolletjes. Zou hij hier ook
 -- meetellen, dan haalde één zware sessie de halve aerobe week.
 --
@@ -67,9 +67,9 @@
 -- Vier daarvan gingen over de buurman, en die hadden er eerst niet gestaan: met
 -- één gebruiker in de proef kan een vergeten `gebruiker_id = v_id` nergens uit
 -- komen. Toen dat geval erbij kwam, bleken drie mutaties die er tot dan toe
--- doorheen liepen — `kal_ophalen` dat de lijst van een ander meestuurt,
+-- doorheen liepen: `kal_ophalen` dat de lijst van een ander meestuurt,
 -- `kal_rij_wissen` dat de rij van een ander wist, en een dubbelvergelijking die
--- over de gebruikersgrens heen kijkt — alle drie zichtbaar. RLS staat aan
+-- over de gebruikersgrens heen kijkt, alle drie zichtbaar. RLS staat aan
 -- zonder policies, dus deze functies zíjn de grens; er is geen tweede slot dat
 -- een fout hier opvangt.
 --
@@ -93,7 +93,7 @@ create table if not exists public.kal_inspanning (
   datum         date not null,
   soort         text not null,
   /* Alleen gevuld bij soort 'anders'. Deze lijst is nooit af, en "Anders" in de
-     lijst is geen naam — dan staat er drie keer hetzelfde. */
+     lijst is geen naam, dan staat er drie keer hetzelfde. */
   eigennaam     text,
   /* Meer dan een etmaal kan niet, en nul minuten is geen inspanning maar een
      afgebroken invoer. De grens waarboven een post onaannemelijk wórdt (vier
@@ -199,18 +199,18 @@ begin
 end $function$;
 
 -- --------------------------------------------------------------------------
--- Een hele lijst in één keer — de weg die het importvenster loopt.
+-- Een hele lijst in één keer: de weg die het importvenster loopt.
 --
 -- WAAROM DIT NIET GEWOON EEN LUS OVER kal_rij_toevoegen IS
 --
 -- Omdat twee keer dezelfde afdruk importeren niet twee keer mag tellen. Een
--- rij die er al staat — zelfde dag, zelfde soort, zelfde duur, zelfde herkomst
--- — wordt overgeslagen, en het antwoord zegt hoeveel dat er waren.
+-- rij die er al staat: zelfde dag, zelfde soort, zelfde duur, zelfde herkomst
+--: wordt overgeslagen, en het antwoord zegt hoeveel dat er waren.
 --
 -- Wat die regel kost: twee werkelijk identieke ritten op één dag, allebei uit
 -- dezelfde import, worden er één. Dat is zeldzaam en het is te zien (de lijst
 -- van die dag toont wat er staat); de tweede is met de hand toe te voegen. Het
--- omgekeerde — stilzwijgend verdubbelen bij een herhaalde import — is niet te
+-- omgekeerde (stilzwijgend verdubbelen bij een herhaalde import) is niet te
 -- zien en niet terug te vinden.
 --
 -- De vergelijking gaat niet over `tijd`: de work-outlijst geeft die lang niet
@@ -325,7 +325,7 @@ COMMIT;
 --     -- verwacht: {"toegevoegd": 1, "overgeslagen": 1}
 --   select kal_inspanning_toevoegen('<token>',
 --     '[{"datum":"2015-01-02","soort":"wandelen","minuten":30}]');
---     -- verwacht: {"toegevoegd": 0, "overgeslagen": 1} — nog eens draaien doet niets
+--     -- verwacht: {"toegevoegd": 0, "overgeslagen": 1}: nog eens draaien doet niets
 --   select soort, minuten, intensiteit, geschat, bron from kal_inspanning
 --    where datum = '2015-01-02' order by created_at;
 --     -- verwacht: rennen 40 zwaar f app · wandelen 30 matig t import

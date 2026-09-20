@@ -1,10 +1,10 @@
 /**
- * DE ACHTERGRONDEN — getekend, en bijna onzichtbaar
+ * DE ACHTERGRONDEN: getekend, en bijna onzichtbaar
  *
  * De geleverde set had er vier: bladeren, heuvels, zonsopgang, golven. Ze zijn
  * niet overgenomen als bestand, en de reden was op het scherm te zien. Een
  * lichte bladerenfoto op 55 procent achter de hero maakte in het donkere thema
- * de zin over de bandbreedte onleesbaar — en dat is nu net de zin die uitlegt
+ * de zin over de bandbreedte onleesbaar, en dat is nu net de zin die uitlegt
  * waarom de ring van deze app anders werkt dan die van elke andere.
  *
  * Een foto kan dat probleem niet oplossen. Hij draagt zijn eigen helderheid mee,
@@ -15,7 +15,7 @@
  * WAT HIER STAAT
  *
  * Dezelfde motieven, maar getekend en in `currentColor`. Ze nemen de kleur van
- * hun omgeving over en staan op een dekking die je niet los ziet — je merkt ze
+ * hun omgeving over en staan op een dekking die je niet los ziet, je merkt ze
  * pas als je ze weghaalt. Dat is de bedoeling: een achtergrond die je opvalt
  * concurreert met het getal ervoor.
  *
@@ -32,8 +32,8 @@
  *
  * Dat kan en het is goedkoper. Maar een verloop is een kleurvlak en geen motief:
  * het voegt niets toe aan wat de kaart al zegt. Deze vormen verwijzen ergens
- * naar — een blad bij voeding, een golf bij een reeks metingen, een heuvel bij
- * een trend — en dat is het enige argument om een achtergrond te hebben.
+ * naar (een blad bij voeding, een golf bij een reeks metingen, een heuvel bij
+ * een trend) en dat is het enige argument om een achtergrond te hebben.
  */
 import type { ReactNode } from 'react'
 
@@ -46,12 +46,12 @@ const doek = (kinderen: ReactNode) => (
   </svg>
 )
 
-/* De drie motieven. Ze dragen hun eigen `fill-opacity` per laag — daar zit de
-   diepte in — en `--sfeer` schaalt het geheel nog een keer. De vormen lopen het
+/* De drie motieven. Ze dragen hun eigen `fill-opacity` per laag (daar zit de
+   diepte in) en `--sfeer` schaalt het geheel nog een keer. De vormen lopen het
    vlak links en rechts uit: een motief dat helemaal in beeld staat leest als een
    plaatje, afgesneden leest het als achtergrond. */
 const VORMEN: Record<Sfeer, () => ReactNode> = {
-  /* Een blad met nerven, uit de rechterbovenhoek weg — bij voeding. */
+  /* Een blad met nerven, uit de rechterbovenhoek weg, bij voeding. */
   blad: () => doek(
     <>
       <path d="M-20 175C55 126 101 51 185 15c26-11 55-18 86-19-20 47-48 88-84 119-52 45-111 67-207 73Z"
@@ -63,7 +63,7 @@ const VORMEN: Record<Sfeer, () => ReactNode> = {
             strokeOpacity="0.14" />
     </>,
   ),
-  /* Golven die doorlopen — bij een reeks metingen. */
+  /* Golven die doorlopen: bij een reeks metingen. */
   golf: () => doek(
     <>
       <path d="M-20 134C57 78 116 90 178 122c68 35 124 30 242-39v137H-20Z"
@@ -74,7 +74,7 @@ const VORMEN: Record<Sfeer, () => ReactNode> = {
             strokeWidth="8" strokeLinecap="round" strokeOpacity="0.20" />
     </>,
   ),
-  /* Een heuvelrug — bij een trend. */
+  /* Een heuvelrug: bij een trend. */
   heuvel: () => doek(
     <>
       <path d="M-20 194 94 88c17-16 40-16 56 2l41 45 54-69c18-23 47-25 66-3l109 131Z"

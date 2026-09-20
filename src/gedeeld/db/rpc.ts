@@ -17,7 +17,7 @@
  * parameternaam een fout bij het bouwen en niet meer een raadsel in productie.
  *
  * De vormen die de database teruggeeft staan hieronder als `interface`. Dat is
- * een belofte die TypeScript niet kan afdwingen — json is json. Waar het ertoe
+ * een belofte die TypeScript niet kan afdwingen, json is json. Waar het ertoe
  * doet staat er daarom een controle omheen; zie `kal.ts`.
  */
 import type {
@@ -39,7 +39,7 @@ export interface Sessie {
  * Wat `kal_aanmelden` teruggeeft: een sessie, of een reden waarom niet.
  *
  * Geen exception dus, en dat is met opzet. De functie houdt een teller bij van
- * mislukte pogingen, en een exception draait de transactie terug — inclusief de
+ * mislukte pogingen, en een exception draait de transactie terug, inclusief de
  * poging die net was vastgelegd. De rem zou daarmee nooit grijpen. Zie
  * `health/database/32-aanmelden-met-rem.sql`.
  *
@@ -80,7 +80,7 @@ export interface NevoTreffer {
 
      Optioneel, want de database geeft hem pas mee vanaf
      30-natrium-in-het-zoeken.sql. Tot dat bestand gedraaid is komt hij niet mee
-     en toont het scherm een streepje — en dat is iets anders dan nul. */
+     en toont het scherm een streepje, en dat is iets anders dan nul. */
   natrium_mg?: number | null
   /* True als dit product niet gevonden maar benaderd is: het woordzoeken gaf
      niets en de terugval op schrijfvarianten heeft het erbij gehaald. "Lesagna"
@@ -108,7 +108,7 @@ export interface GerechtTreffer {
  * health/database/23-eiwitrijk-uit-de-tabel.sql.
  *
  * `merk` is gevuld als dit een merkproduct is, en dan staat er een volledige
- * MerkTreffer in — genoeg om het portievenster mee te openen zonder nog een
+ * MerkTreffer in, genoeg om het portievenster mee te openen zonder nog een
  * keer de database te hoeven vragen.
  */
 export interface EiwitrijkTreffer {
@@ -125,7 +125,7 @@ export interface EiwitrijkTreffer {
   /** Kilocalorieën en eiwit ván die portie, niet per honderd gram. */
   kcal: number
   eiwit_g: number
-  /** Gram eiwit per kcal — dezelfde maat als de eis van de coach. */
+  /** Gram eiwit per kcal: dezelfde maat als de eis van de coach. */
   dichtheid: number
 }
 
@@ -134,7 +134,7 @@ export interface EiwitrijkTreffer {
  * health/database/28-wat-vult-het-best.sql.
  *
  * `score` is een VOORSPELLING uit de samenstelling en geen gemeten
- * verzadigingsindex — de drie termen komen uit de literatuur, de weging ertussen
+ * verzadigingsindex, de drie termen komen uit de literatuur, de weging ertussen
  * is een keuze. Daarom staan de drie onderdelen er los bij: `gram_per_100kcal`
  * is een deling van twee gemeten waarden uit de tabel en verder niets, en dat is
  * het getal dat op het scherm vooropstaat.
@@ -396,7 +396,7 @@ export interface NieuweDag {
   gewicht_kg?: number
   bron?: string
   /* Deze vier stuurt alleen de koppeling. Een work-outlijst uit een import komt
-     hier niet langs maar wordt een rij in `kal_inspanning` — daar past een
+     hier niet langs maar wordt een rij in `kal_inspanning`, daar past een
      soort in, en `fiets_min` is één getal per dag zonder soort. Zie
      health/database/43 en `src/health/inspanning.ts`. */
   fiets_min?: number
@@ -412,7 +412,7 @@ export interface NieuweDag {
  * `recept` stond hier ook, en dat was een belofte die de database niet doet:
  * kal_rij_toevoegen kent die tak niet en zou 'Onbekende tabel recept' roepen.
  * Eigen maaltijden gaan sinds 24 augustus 2026 via kal_maaltijd_bewaren, dat
- * ook de onderdelen wegschrijft — iets wat één rij nooit had gekund.
+ * ook de onderdelen wegschrijft, iets wat één rij nooit had gekund.
  */
 export type LosseTabel = 'product' | 'training' | 'meting' | 'lab' | 'vragenlijst'
   | 'inspanning'
@@ -428,7 +428,7 @@ export interface RpcKaart {
      achttien functies, vier edge functions en een pg_cron-taak. */
   kal_registreren: { in: { p_account: string; p_ww: string; p_naam: string }; uit: Sessie }
   kal_aanmelden: { in: { p_account: string; p_ww: string }; uit: Aanmelduitslag }
-  /* Wachtwoord kwijt — zie health/database/33-wachtwoord-kwijt.sql. Alle drie
+  /* Wachtwoord kwijt: zie health/database/33-wachtwoord-kwijt.sql. Alle drie
      geven een uitslag terug en gooien niet, om dezelfde reden als aanmelden. */
   kal_ww_wijzigen: {
     in: { p_token: string; p_oud: string; p_nieuw: string }; uit: Aanmelduitslag
@@ -436,7 +436,7 @@ export interface RpcKaart {
   kal_herstelcode_maken: {
     in: { p_token: string; p_ww: string }; uit: { code: string } | { fout: string }
   }
-  /* De beheerdersweg — zie health/database/40 en 41. `kal_ben_ik_beheerder`
+  /* De beheerdersweg: zie health/database/40 en 41. `kal_ben_ik_beheerder`
      bepaalt alleen of de knop er staat; de echte grens ligt in
      `kal_herstelcode_voor`, die zelf nog eens het wachtwoord vraagt. */
   kal_ben_ik_beheerder: { in: { p_token: string }; uit: { beheerder: boolean } }
@@ -455,7 +455,7 @@ export interface RpcKaart {
     uit: unknown
   }
   kal_dagen_importeren: { in: { p_token: string; p_dagen: NieuweDag[] }; uit: unknown }
-  /* Een hele lijst inspanningen in één keer — de weg die het importvenster
+  /* Een hele lijst inspanningen in één keer, de weg die het importvenster
      loopt. Een rij die er al staat wordt overgeslagen en geteld; zonder die
      regel zou twee keer dezelfde afdruk importeren de minuten verdubbelen. */
   kal_inspanning_toevoegen: {

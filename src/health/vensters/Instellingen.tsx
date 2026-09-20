@@ -21,7 +21,7 @@ import type { ImportDag, Importactiviteit, Importbron } from '../ai'
 /* ----------------------------------------------------------------- profiel */
 
 /**
- * WAT ER SPEELT — de conditie en de medicatiegroepen.
+ * WAT ER SPEELT: de conditie en de medicatiegroepen.
  *
  * Dit blok staat onderin het profielvenster en niet op een eigen tabblad. Dat
  * is een keuze: een aparte diabetesmodule naast een aparte hypertensiemodule
@@ -62,7 +62,7 @@ function Conditieblok(
     <>
       <div className="tussen" style={{ marginTop: 16 }}>Wat er bij jou speelt</div>
       <div className="mini" style={{ marginBottom: 6 }}>
-        Vul dit alleen in als het klopt. De app gaat er niets anders van rekenen — hij wijst je op
+        Vul dit alleen in als het klopt. De app gaat er niets anders van rekenen, maar hij wijst je op
         dingen die bij deze middelen horen als je afvalt.
       </div>
 
@@ -75,7 +75,7 @@ function Conditieblok(
           De Gezondheidsraad adviseert extra vitamine D onder meer bij een
           getinte of donkere huid en bij weinig buitenkomen of bedekkende
           kleding. Het profiel kent `etniciteit`, en het zou verleidelijk zijn
-          die ervoor te gebruiken — maar afkomst is geen huidskleur, en een app
+          die ervoor te gebruiken, maar afkomst is geen huidskleur, en een app
           die dat gelijkstelt doet een aanname over iemand die hij niet mag doen.
           `etniciteit` gaat in deze app over de afkapwaarde van de middelomtrek
           en over niets anders.
@@ -243,7 +243,7 @@ export function ProfielVenster(
         <Nummer waarde={p.onderhoud_basis_kg} opZet={(n) => zet('onderhoud_basis_kg', n)} />
       </div>
 
-      {/* DE TRAP — waar je staat in het Nederlandse traject
+      {/* DE TRAP: waar je staat in het Nederlandse traject
           Twee velden, en ze zijn er niet om vast te leggen dat je iets doet
           maar om te kunnen tonen waar je bent. Wat ermee gebeurt staat op
           Profiel bij "Je traject"; waarom de medicatietrede daar op slot zit,
@@ -262,7 +262,7 @@ export function ProfielVenster(
                 onChange={(e) => zetI('gli', e.target.value
                   ? { ...i.gli, programma: e.target.value }
                   : undefined)}>
-          <option value="">— geen —</option>
+          <option value="">geen</option>
           {GLI_PROGRAMMAS.map((g) => (
             <option key={g.sleutel} value={g.sleutel}>{g.naam}</option>
           ))}
@@ -273,7 +273,7 @@ export function ProfielVenster(
           <div><b style={{ fontSize: '.87rem' }}>Begonnen op</b></div>
           {/* `max` op vandaag: een startdatum in de toekomst is een typefout in
               het jaartal en geen keuze. De kaart vangt hem ook op, maar liever
-              hier — daar leest hij als een mededeling, hier als een grens. */}
+              hier, daar leest hij als een mededeling, hier als een grens. */}
           <input type="date" value={i.gli?.begonnen ?? ''} aria-label="Startdatum GLI"
                  max={vandaag()} style={{ flex: '0 0 150px' }}
                  onChange={(e) => {
@@ -310,7 +310,7 @@ export function ProfielVenster(
  * Drie soorten posten beginnen uitgevinkt, en geen van drieën is "fout":
  * krachttraining (die telt apart en hoort in zijn eigen tabel), een duur van
  * meer dan vier uur (in de lijst die dit opriep stonden er twee van 9 en 14 uur
- * — een horloge dat de stopknop niet gezien heeft), en een post zonder kopje.
+ *, een horloge dat de stopknop niet gezien heeft), en een post zonder kopje.
  *
  * De reden staat er bij elke uitgevinkte post bij. De app wéét namelijk niet dat
  * zo'n post fout is; hij vindt hem alleen onwaarschijnlijk, en dat is iets
@@ -320,7 +320,7 @@ export function ProfielVenster(
  *
  * Wat de herkenning van het kopje maakte is een vertaling, geen waarneming.
  * Staat er "Functionele kracht" en werd dat `kracht`, dan hoort dat te zien te
- * zijn en te veranderen te zijn — niet stil te gebeuren. Een post zonder kopje
+ * zijn en te veranderen te zijn, niet stil te gebeuren. Een post zonder kopje
  * heeft geen soort en vraagt er dus om.
  */
 function duur(minuten: number): string {
@@ -359,7 +359,7 @@ export function ImportVenster(
   /* Geen tweede zeef op 'kracht' hier: het vinkje van zo'n post is uitgezet én
      niet aan te zetten (zie `disabled` hieronder), en dat is het slot. Stond de
      zeef er óók, dan was er een regel die niets doet zolang het slot werkt en
-     niemand die merkt wanneer het slot brak — twee halve sloten in plaats van
+     niemand die merkt wanneer het slot brak, twee halve sloten in plaats van
      één hele. */
   const rijen: NieuweInspanning[] = werk
     .map((a, i) => ({ a, soort: soorten[i] ?? '', aan: !!aan[i] }))
@@ -476,7 +476,7 @@ export function ImportVenster(
 
               Alleen de gokken, niet alle reeksen. Wie bij elke import een lijstje
               krijgt waar meestal niets mis mee is, kijkt er na twee keer
-              overheen — en dan staat de waarschuwing er voor niets. */}
+              overheen, en dan staat de waarschuwing er voor niets. */}
           {geraden(bronnen).length > 0 && (
             <Kaart toon="let" plat style={{ marginTop: 10 }}>
               <p className="klein">
@@ -520,7 +520,7 @@ export function ImportVenster(
               <Kop>Work-outs</Kop>
               <p className="klein">
                 Wat aangevinkt staat komt erbij als inspanning. Een vinkje staat uit als er een
-                reden voor is, en die staat erbij — wie het beter weet zet hem aan. De soort bepaalt
+                reden voor is, en die staat erbij. Wie het beter weet zet hem aan. De soort bepaalt
                 hoe zwaar de minuten tellen en is hier te verbeteren.
               </p>
               <div className="lijst" style={{ marginTop: 6, maxHeight: 240, overflow: 'auto' }}>
@@ -532,7 +532,7 @@ export function ImportVenster(
                           dan hem verbergen. De richtlijn telt hem apart en de
                           lijst geeft geen sets of reps, dus er valt hier niets
                           van te maken. Klopte het kopje niet, dan verander je de
-                          soort — en dan mag hij wél mee. */}
+                          soort, en dan mag hij wél mee. */}
                       <input type="checkbox" checked={!!aan[i]} style={{ width: 19, height: 19 }}
                              disabled={soorten[i] === 'kracht'}
                              aria-label={`${a.datum} · ${duur(a.minuten)}`}
@@ -544,7 +544,7 @@ export function ImportVenster(
                       <select value={soorten[i] ?? ''} style={{ flex: '0 0 138px' }}
                               aria-label={`Soort van ${a.datum} ${duur(a.minuten)}`}
                               onChange={(e) => kiesSoort(i, e.target.value)}>
-                        <option value="">— geen soort —</option>
+                        <option value="">geen soort</option>
                         {IMPORTSOORTEN.map((s) => (
                           <option key={s.sleutel} value={s.sleutel}>{s.naam}</option>
                         ))}
@@ -568,12 +568,12 @@ export function ImportVenster(
                   wat je gedaan hebt. */}
               <p className="klein" style={{ marginTop: 10 }}>
                 {rijen.length === 0
-                  ? 'Niets aangevinkt — er komt geen inspanning bij.'
+                  ? 'Niets aangevinkt: er komt geen inspanning bij.'
                   : <>
                       <b>{rijen.length}</b> {rijen.length === 1 ? 'activiteit' : 'activiteiten'},
                       samen <b>{dz(echteMinuten)} minuten</b>
                       {matigeMinuten !== echteMinuten
-                        && <> — dat telt als {dz(matigeMinuten)} matige minuten</>}.
+                        && <>, en dat telt als {dz(matigeMinuten)} matige minuten</>}.
                     </>}
               </p>
             </>
@@ -604,7 +604,7 @@ export function AccountVenster(
     <Venster titel="Account" opSluiten={opSluiten}>
       {/* Dezelfde onwaarheid als onder het aanmeldscherm stond, en die heb ik
           daar wél rechtgezet en hier niet. Twee plekken die hetzelfde zeggen en
-          los van elkaar bijgewerkt worden — precies het patroon waar dit
+          los van elkaar bijgewerkt worden, precies het patroon waar dit
           project elders variabelen voor gebruikt. Hier kan dat niet: het zijn
           twee verschillende zinnen in twee verschillende schermen. */}
       <p className="klein" style={{ marginTop: 8 }}>
@@ -642,7 +642,7 @@ export function AccountVenster(
  *
  * `kal_ben_ik_beheerder` bepaalt alleen of dit blok er staat. Wie dat antwoord
  * in zijn browser vervalst krijgt een formulier te zien dat bij het indrukken
- * alsnog geweigerd wordt — de grens ligt in de database en niet hier.
+ * alsnog geweigerd wordt, de grens ligt in de database en niet hier.
  */
 function BeheerdersHerstelcode() {
   const [mag, zetMag] = useState(false)
@@ -669,7 +669,7 @@ function BeheerdersHerstelcode() {
       try {
         const uit = await roep('kal_ben_ik_beheerder', { p_token: t })
         if (!afgebroken) zetMag(uit?.beheerder === true)
-      } catch { /* geen beheerdersrecht, geen regel — dit is geen fout */ }
+      } catch { /* geen beheerdersrecht, geen regel, dit is geen fout */ }
     })()
     return () => { afgebroken = true }
   }, [])
@@ -717,13 +717,13 @@ function BeheerdersHerstelcode() {
           <button type="button" className="alsLink" onClick={() => zetOpen(true)}>
             Herstelcode voor iemand anders
           </button>
-          {' '}— voor wie zijn wachtwoord én zijn code kwijt is.
+          {' '}, voor wie zijn wachtwoord én zijn code kwijt is.
         </p>
       ) : (
         <>
           {/* HET BLOK HOUDT ZIJN NAAM OOK ALS HET OPENSTAAT
               Zonder deze regel verdwijnt de naam zodra je hem openklapt, en
-              hangen de twee velden rechtstreeks onder "Herstelcode maken" — een
+              hangen de twee velden rechtstreeks onder "Herstelcode maken", een
               ándere knop, die óók codes maakt. Op de schermafdruk was dat niet
               uit elkaar te houden. De twee blokken hierboven hebben hetzelfde
               patroon en komen ermee weg omdat ze alleen staan; dit is het derde
@@ -743,7 +743,7 @@ function BeheerdersHerstelcode() {
           </label>
           {/* Eerlijk over wat dit is. Zie de kop van deze component. */}
           <p className="mini" style={{ marginTop: 8 }}>
-            Diegene zet er zelf een nieuw wachtwoord mee. Je kent dat wachtwoord niet — maar je hebt
+            Diegene zet er zelf een nieuw wachtwoord mee. Je kent dat wachtwoord niet, maar je hebt
             de code wel gezien, dus je zou hem ook zelf kunnen gebruiken. Daarom wordt elke uitgifte
             vastgelegd, en merkt diegene het onmiddellijk.
           </p>
@@ -828,7 +828,7 @@ function WachtwoordWijzigen() {
           <button type="button" className="alsLink" onClick={() => zetOpen(true)}>
             Wachtwoord wijzigen
           </button>
-          {` — minstens ${MINIMUM_LENGTE} tekens.`}
+          {`, minstens ${MINIMUM_LENGTE} tekens.`}
         </p>
       ) : (
         <>
@@ -866,7 +866,7 @@ function WachtwoordWijzigen() {
 /**
  * EEN HERSTELCODE MAKEN
  *
- * Zonder deze code is er geen weg terug als je je wachtwoord kwijt bent — er is
+ * Zonder deze code is er geen weg terug als je je wachtwoord kwijt bent, er is
  * geen e-mail in deze app en dus geen herstelmail. Waarom dat zo is staat in
  * `health/database/33-wachtwoord-kwijt.sql`.
  *
@@ -910,7 +910,7 @@ function Herstelcode() {
           {code}
         </p>
         <p className="mini" style={{ marginTop: 8 }}>
-          Hij staat hier één keer. Bewaar hem ergens waar je hem terugvindt zonder deze app — op
+          Hij staat hier één keer. Bewaar hem ergens waar je hem terugvindt zonder deze app: op
           papier, of in je wachtwoordbeheerder. Hij werkt één keer; daarna maak je een nieuwe.
         </p>
       </div>
@@ -924,7 +924,7 @@ function Herstelcode() {
           <button type="button" className="alsLink" onClick={() => zetOpen(true)}>
             Herstelcode maken
           </button>
-          {' '}— nodig als je ooit je wachtwoord kwijt bent.
+          {' '}, nodig als je ooit je wachtwoord kwijt bent.
         </p>
       ) : (
         <>
@@ -966,7 +966,7 @@ export function Aanmelden(
   /* AANMELDEN EN EEN WACHTWOORD ZETTEN ZIJN TWEE VERSCHILLENDE EISEN
      Wie aanmeldt mag alles intikken: wat hij heeft is wat hij heeft, ook als dat
      acht tekens uit 2024 zijn. De regel geldt alleen waar een wachtwoord gezet
-     wordt — bij een nieuw account en bij herstellen. Zou hij ook op de
+     wordt, bij een nieuw account en bij herstellen. Zou hij ook op de
      aanmeldknop staan, dan sloot een strengere regel met terugwerkende kracht
      mensen buiten uit hun eigen gegevens. */
   const kan = account.trim() !== '' && ww !== ''

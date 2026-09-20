@@ -7,7 +7,7 @@
  *
  * Verder dat de lijst kort blijft. Groeit hij ooit voorbij een handvol, dan is
  * dat het moment om de vraag opnieuw te stellen of hij niet in de database
- * hoort — en niet iets wat ongemerkt gebeurt.
+ * hoort, en niet iets wat ongemerkt gebeurt.
  */
 import { describe, expect, it } from 'vitest'
 import { FOTOS, GERECHTFOTOS, fotoVoor, fotoVoorGerecht, gerechtsleutel } from './beeld'
@@ -143,7 +143,7 @@ describe('de gerechtenlijst zelf', () => {
 
   /* Elk gerecht één eigen foto: twee gerechten die naar hetzelfde bestand
      wijzen is precies de 'ongeveer dit soort ding'-koppeling die de kop van
-     `beeld.ts` verbiedt. Bij producten mag het wel — daar staat waarom. */
+     `beeld.ts` verbiedt. Bij producten mag het wel: daar staat waarom. */
   it('geeft geen twee gerechten dezelfde foto', () => {
     const bestanden = Object.values(GERECHTFOTOS)
     expect(new Set(bestanden).size).toBe(bestanden.length)

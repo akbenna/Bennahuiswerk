@@ -1,5 +1,5 @@
 /* Amiri staat als bestand in de repo en niet bij Google. De Warsh-druk gebruikt
-   tekens — de kleine hoge nul boven de hamzat wasl voorop — die de meeste
+   tekens (de kleine hoge nul boven de hamzat wasl voorop) die de meeste
    systeemletters niet kennen; die laten dan lege vakken achter midden in een
    woord. Zie fonts/LEESMIJ.md. */
 @font-face{font-family:'Amiri';font-style:normal;font-weight:400;font-display:swap;
@@ -7,7 +7,7 @@
 @font-face{font-family:'Amiri';font-style:normal;font-weight:700;font-display:swap;
   src:url('/fonts/amiri-700.woff2') format('woff2')}
 /* ============================================================
-   LISAN — stijlblad
+   LISAN, stijlblad
    Mobiel eerst. Alles wat aantikbaar is haalt 44px.
    ============================================================ */
 :root{
@@ -27,7 +27,7 @@
 }
 /* Donker thema is een expliciete stand op <html>. De app zet hem bij
    het opstarten op grond van de systeemvoorkeur, tenzij de gebruiker
-   zelf gekozen heeft — zo blijft er één bron van waarheid. */
+   zelf gekozen heeft, zo blijft er één bron van waarheid. */
 [data-thema="donker"]{
   --canvas:#15140F; --surface:#1E1C17; --surface-2:#252219;
   --ink:#F3EFE7; --ink-2:#DFD9CD; --muted:#9C9484;
@@ -83,7 +83,7 @@ hr.regel{border:0;border-top:1px solid var(--line);margin:26px 0}
 .tr{font-style:italic;color:var(--muted);font-size:.92em}
 /* Arabisch dat middenin een Nederlandse zin staat. Zonder eigen
    isolatie klapt de bidi-volgorde om zodra er een leesteken, cijfer
-   of streepje naast staat — een wortel als ك-ت-ب brak dan over twee
+   of streepje naast staat, een wortel als ك-ت-ب brak dan over twee
    regels in de verkeerde volgorde. Korte stukken breken niet af;
    lange (hele zinnen, die al in een eigen blok staan) wel. */
 .arin{font-family:var(--ar);direction:rtl;unicode-bidi:isolate;white-space:nowrap}

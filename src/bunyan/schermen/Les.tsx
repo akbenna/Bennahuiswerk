@@ -1,5 +1,5 @@
 /**
- * DE LES — uitleg, zelf doen, en vragen
+ * DE LES: uitleg, zelf doen, en vragen
  *
  * De knop "Ik ben klaar" gaat pas aan als de opdracht is nagekeken én alle
  * vragen zijn beantwoord. Dat is geen pesterij: de score die eruit komt telt
@@ -7,7 +7,7 @@
  * evenveel waard zijn als een les die je maakt.
  *
  * De score is het aandeel vragen dat in één keer goed ging. Wie een vraag
- * misgokt kan hem niet nog eens proberen — het juiste antwoord staat er dan bij
+ * misgokt kan hem niet nog eens proberen, het juiste antwoord staat er dan bij
  * met de uitleg erbij, en dat is waar het om gaat.
  */
 import { useRef, useState } from 'react'
@@ -248,7 +248,7 @@ function Klaar({
           <div className="card plat">
             <p className="meta">Verdiend</p>
             <p className="cijfer" style={{ color: 'var(--goed)' }}>
-              {beloning.geld > 0 ? euro(beloning.geld) : '—'}
+              {beloning.geld > 0 ? euro(beloning.geld) : '–'}
             </p>
             <p className="klein">
               {beloning.geld > 0

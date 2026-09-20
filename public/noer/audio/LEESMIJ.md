@@ -9,7 +9,7 @@ audio/
   haal-recitatie.mjs   haalt de recitatiefragmenten op
   zet-eigen.mjs        zet de opnames van thuis vast in de app
   quran/
-    lijst.json         welke fragmenten er zijn — de app leest dit
+    lijst.json         welke fragmenten er zijn, de app leest dit
     h-fatiha-1.mp3     al-Fatiha, eerste regel
     h-ikhlas-3.mp3     al-Ikhlas, derde regel
     …
@@ -32,7 +32,7 @@ Het script haalt precies de achtenvijftig regels op die in de app staan, zet ze
 neer onder de naam die de app verwacht, en schrijft `lijst.json`. Wat mislukt,
 meldt het; die regel valt in de app terug op de stem van het toestel.
 
-**Warsh.** Zoek een map van een reciteerder in de riwāya van Warsh — dat is de
+**Warsh.** Zoek een map van een reciteerder in de riwāya van Warsh, dat is de
 lezing die in Marokko en de rest van de Maghreb gebruikt wordt, en dus wat de
 kinderen in de moskee horen. Op everyayah.com staan die onder `data/warsh/…`.
 Krijg je alleen maar 404's, dan klopt de mapnaam niet; probeer een andere.
@@ -44,7 +44,7 @@ Draai het script dus af en luister daarna naar `quran/h-fatiha-1.mp3`: hoor je
 "bismillahi r-rahmani r-rahim"? Zo niet, draai opnieuw met `--fatiha=madani`.
 
 Het script waarschuwt ook wanneer een soera in het archief méér aya's blijkt te
-hebben dan het aantal regels in de app — dan houdt dat archief een andere
+hebben dan het aantal regels in de app, dan houdt dat archief een andere
 telling aan en moet de indeling van die soera nagekeken worden.
 
 ## De tekst en de lezing
@@ -52,7 +52,7 @@ telling aan en moet de indeling van die soera nagekeken worden.
 De Arabische tekst in de app staat in de gebruikelijke Hafs-schrijfwijze, omdat
 die overal online en in de meeste drukken staat en omdat de klankweergave in
 Nederlandse letters daarop aansluit. Wie een Warsh-recitatie meelevert, hoort op
-een enkele plek iets anders dan er staat — het bekendste geval is
+een enkele plek iets anders dan er staat, het bekendste geval is
 `مَالِكِ يَوْمِ الدِّينِ` (Hafs) tegenover `مَلِكِ يَوْمِ الدِّينِ` (Warsh) in
 al-Fatiha. Dat is geen fout van de een of de ander; het zijn twee overgeleverde
 lezingen. Leg het een keer uit aan tafel, dan is het meteen een les.
@@ -72,7 +72,7 @@ node noer/audio/zet-eigen.mjs ~/Downloads/noer-stem-2026-08-15.json
 ```
 
 Dat pakt ze uit naar `audio/eigen/` en schrijft `audio/eigen/lijst.json`. Commit
-die map, en vanaf dat moment heeft elk toestel de stem van thuis — ook een
+die map, en vanaf dat moment heeft elk toestel de stem van thuis, ook een
 telefoon die de app voor het eerst opent, en ook zonder internet. Draai het
 gerust nog eens met een nieuw bestand: bestaande opnames worden vervangen, de
 rest blijft staan.
@@ -89,7 +89,7 @@ Voorlezen door de stem van het toestel*; dan blijft het stil waar niets is.
 **Formaten.** Elk toestel neemt op in zijn eigen formaat: Safari levert `m4a`,
 Chrome en Firefox leveren `webm`. Het script neemt dat over uit het bestand zelf.
 Een opname verkeerd benoemen betekent dat hij wel wordt opgeslagen maar niet
-afspeelt — dat was de fout die hier in zat.
+afspeelt, dat was de fout die hier in zat.
 
 ## Herkomst
 

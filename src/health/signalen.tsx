@@ -1,5 +1,5 @@
 /**
- * DE SIGNAALKAARTEN — en waar ze staan
+ * DE SIGNAALKAARTEN, en waar ze staan
  *
  * Ze stonden eerst op Gezondheid, omdat dat het klinische scherm is. Dat was de
  * verkeerde plek en om een eenvoudige reden: wie insuline spuit en afvalt hoort
@@ -12,7 +12,7 @@
  * De volgorde van Vandaag ligt vast met een reden die in de kop van dat bestand
  * staat: hero, dan de knop, dan de maaltijdvakken. "Wie komt om te doen moet
  * niet eerst langs wat er te lezen valt." Deze kaarten boven de knop zetten zou
- * precies die regel breken — de knop zou naar beneden schuiven zodra iemand
+ * precies die regel breken, de knop zou naar beneden schuiven zodra iemand
  * diabetes aanvinkt.
  *
  * Direct eronder kan wel. De knop staat waar hij stond, ten opzichte van de

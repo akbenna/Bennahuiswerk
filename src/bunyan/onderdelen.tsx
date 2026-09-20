@@ -3,7 +3,7 @@
  *
  * De uitleg in de lessen draagt opmaak: <code> om een stukje Python, <b> om een
  * begrip. Die komt via dangerouslySetInnerHTML op het scherm, en dat mag omdat
- * de herkomst vaststaat — die teksten staan in de repo en gaan langs een
+ * de herkomst vaststaat, die teksten staan in de repo en gaan langs een
  * review. Alles wat het kind zélf typt gaat als gewone tekst door React heen.
  */
 import type { ReactNode } from 'react'
@@ -42,7 +42,7 @@ export const Tag = (
   <span className={soort ? `tag ${soort}` : 'tag'}>{children}</span>
 )
 
-/** Een getal met een label eronder — het blokje dat overal terugkomt. */
+/** Een getal met een label eronder, het blokje dat overal terugkomt. */
 export function Cijfer(
   { kop, waarde, onder, kleur }:
   { kop: string; waarde: ReactNode; onder?: ReactNode; kleur?: string },

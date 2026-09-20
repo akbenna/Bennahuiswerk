@@ -4,7 +4,7 @@
  * Het duurste aan loggen is niet het typen maar het opnieuw uitzoeken. Wie elke
  * ochtend dezelfde havermout eet, doorloopt elke ochtend dezelfde vier stappen:
  * tabblad, zoekveld, treffer, portie. Terwijl het antwoord al in de eigen
- * geschiedenis staat — inclusief de portie die je toen gekozen hebt.
+ * geschiedenis staat, inclusief de portie die je toen gekozen hebt.
  *
  * Dit bestand leidt uit de gelogde regels twee lijsten af: wat je het laatst at
  * en wat je het vaakst eet. Twee lijsten en niet één gemengde ranglijst, omdat
@@ -12,7 +12,7 @@
  * "vaak" zijn allebei in één zin uit te leggen.
  *
  * Er wordt niets nieuws geschat. Een herhaling neemt de getallen van de vorige
- * keer letterlijk over — inclusief de band eromheen — en zegt erbij dát ze
+ * keer letterlijk over (inclusief de band eromheen) en zegt erbij dát ze
  * overgenomen zijn. Dat is een aanname (je schept vandaag niet exact hetzelfde
  * op) en die hoort in de regel te staan, niet weggelaten te worden omdat hij
  * onhandig is.
@@ -53,7 +53,7 @@ export function sleutelVan(naam: string): string {
 }
 
 /** Het aantal dagen tussen twee ISO-datums. Beide zijn kale datums, dus de
- *  tijdzone doet niet mee — daarom Date.UTC en niet Date.parse van de string. */
+ *  tijdzone doet niet mee, daarom Date.UTC en niet Date.parse van de string. */
 function dagenTussen(van: IsoDatum, tot: IsoDatum): number {
   const t = (s: string): number => {
     const [j, m, d] = s.split('-').map(Number)
@@ -119,7 +119,7 @@ function groepeer(regels: Regel[]): Map<string, Herhaling> {
  *
  * 'recent' is puur op datum: wat je gisteren at staat boven wat je vorige week
  * at, hoe vaak het ook was. 'vaak' telt binnen het venster, met de recentste
- * bovenaan bij gelijk aantal — anders blijft een gerecht dat je een half jaar
+ * bovenaan bij gelijk aantal, anders blijft een gerecht dat je een half jaar
  * geleden veertig keer at eeuwig bovenaan staan.
  */
 export function herhalingen(regels: Regel[], vraag: Herhaalvraag): Herhaling[] {

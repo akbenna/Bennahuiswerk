@@ -1,5 +1,5 @@
 -- =============================================================================
--- DE HUISHOUDMATEN VERDIEPEN — en één die aantoonbaar fout uitpakte
+-- DE HUISHOUDMATEN VERDIEPEN, en één die aantoonbaar fout uitpakte
 --
 -- Toegepast 29 augustus 2026.
 --
@@ -16,8 +16,8 @@
 -- "niet geschat".
 --
 -- Daarom is dit bestand voorzichtiger dan het zou kunnen zijn. Alles wat er in
--- staat is een maat waarvan de spraakgebruikelijke betekenis vastligt — een snee,
--- een plak, een kopje — met een band die eerlijk breed is. Wat ik niet zeker weet
+-- staat is een maat waarvan de spraakgebruikelijke betekenis vastligt, een snee,
+-- een plak, een kopje: met een band die eerlijk breed is. Wat ik niet zeker weet
 -- staat er niet in.
 --
 -- DE FOUT DIE ER AL IN ZIT
@@ -34,8 +34,8 @@
 -- te veel, zo'n vijfhonderd kilocalorieën op één regel.
 --
 -- Dit is de zwakke plek van maten op groepsniveau: ze breken zodra een groep
--- zowel zware als luchtige producten bevat. De tabel kan dat aan — een maat mag
--- ook aan één product hangen — maar dan moet die er wel staan.
+-- zowel zware als luchtige producten bevat. De tabel kan dat aan: een maat mag
+-- ook aan één product hangen, maar dan moet die er wel staan.
 --
 -- HOE EEN PRODUCTMAAT WINT
 --
@@ -47,7 +47,7 @@
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 1 — WELKE PRODUCTEN RAAKT DIT? Verandert niets.
+-- BLOK 1: WELKE PRODUCTEN RAAKT DIT? Verandert niets.
 -- ---------------------------------------------------------------------------
 --
 -- Kijk deze lijst na vóór blok 2. Staat er iets tussen wat géén luchtig
@@ -64,7 +64,7 @@ order by naam_nl;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 2 — EEN SCHAALTJE ONTBIJTGRAAN, OP HET PRODUCT
+-- BLOK 2: EEN SCHAALTJE ONTBIJTGRAAN, OP HET PRODUCT
 -- ---------------------------------------------------------------------------
 --
 -- 40 g met band 25–60. Cornflakes zitten aan de onderkant, muesli en granola aan
@@ -98,7 +98,7 @@ where n.groep = 'Graanproducten en meelsoorten'
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 3 — DE MATEN DIE ONTBRAKEN
+-- BLOK 3: DE MATEN DIE ONTBRAKEN
 -- ---------------------------------------------------------------------------
 --
 -- Elk van deze is een woord waarvan iedereen hetzelfde verstaat. De banden zijn
@@ -106,7 +106,7 @@ where n.groep = 'Graanproducten en meelsoorten'
 -- 200 gram de waarheid en niet de gemakzucht.
 --
 -- Wat er met opzet NIET in staat: maten voor groepen waar het woord te veel
--- kanten op kan. "Diversen" krijgt niets, en "Samengestelde gerechten" ook niet —
+-- kanten op kan. "Diversen" krijgt niets, en "Samengestelde gerechten" ook niet,
 -- daar is een portie al de enige zinvolle eenheid.
 
 insert into voeding_portiematen
@@ -135,7 +135,7 @@ where exists (select 1 from nevo_actief n where n.groep = v.groep)
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 4 — EEN SLORDIGHEID VAN MEZELF
+-- BLOK 4: EEN SLORDIGHEID VAN MEZELF
 -- ---------------------------------------------------------------------------
 --
 -- Bij de hartige sauzen kreeg de theelepel volgorde 1, net als de eetlepel. Dat
@@ -148,7 +148,7 @@ update voeding_portiematen
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 5 — DE PRODUCTMAAT LATEN WINNEN
+-- BLOK 5: DE PRODUCTMAAT LATEN WINNEN
 -- ---------------------------------------------------------------------------
 --
 -- Dit blok kwam er pas na het draaien van blok 2, en dat is precies waarom het
@@ -227,7 +227,7 @@ $function$
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 6 — NAKIJKEN
+-- BLOK 6: NAKIJKEN
 -- ---------------------------------------------------------------------------
 
 -- Cornflakes: het schaaltje van 40 g hoort nu bovenaan te staan, vóór de

@@ -1,8 +1,8 @@
 -- =============================================================================
--- DE NEDERLANDSE HOEK — en wat er wél en niet uit het RIVM-bestand kwam
+-- DE NEDERLANDSE HOEK, en wat er wél en niet uit het RIVM-bestand kwam
 --
 -- Toestand onbekend: de kop zei lang "nog niet toegepast" en dat klopte
--- vermoedelijk niet meer. Kijk het na voordat je iets doet — het antwoord staat
+-- vermoedelijk niet meer. Kijk het na voordat je iets doet, het antwoord staat
 -- in de database en niet in dit bestand:
 --
 --   select count(*) from cultural_dishes where slug like 'nl-%';
@@ -23,7 +23,7 @@
 --
 -- Het hele bestand is die dag ingelezen met scripts/import-nevo.mjs --apply,
 -- 2328 van 2328 rijen bruikbaar, nul overgeslagen. Er is dus niets zoek. De
--- CSV zelf staat niet in de repo — dat is de afspraak in CLAUDE.md — maar wat
+-- CSV zelf staat niet in de repo (dat is de afspraak in CLAUDE.md) maar wat
 -- eruit volgt staat in `nevo_foods` en is doorzoekbaar.
 --
 -- Wat leeg was, is iets anders: de gerechtenbibliotheek. Dat zijn twee
@@ -39,19 +39,19 @@
 --                       intikken en een pórtie in huishoudmaten.
 --
 -- De bibliotheek is handwerk en had geen Nederlandse hoek. Het RIVM-bestand
--- had die wel — er stond stamppot, hachee, erwtensoep, tosti en kroket in,
+-- had die wel: er stond stamppot, hachee, erwtensoep, tosti en kroket in,
 -- allemaal doorgemeten, en de app kwam er niet bij omdat niemand ze een naam
 -- en een portie had gegeven. Dat is wat dit bestand doet.
 --
 -- WAT ONDERBOUWD IS EN WAT NIET
 --
 -- Onderbouwd: alle voedingswaarden. Elk gerecht hieronder wijst naar één
--- NEVO-regel waarin het hele gerecht is gemeten — niet naar een optelsom van
+-- NEVO-regel waarin het hele gerecht is gemeten, niet naar een optelsom van
 -- ingrediënten die ik heb geschat. kal_gerecht() rekent daarmee; in dit
 -- bestand staat geen enkel voedingsgetal.
 --
--- Niet onderbouwd: de portiegewichten. Waar de maat voor de hand ligt — een
--- kroket, een tosti, een oliebol — is dat mijn schatting. Waar het om
+-- Niet onderbouwd: de portiegewichten. Waar de maat voor de hand ligt: een
+-- kroket, een tosti, een oliebol, is dat mijn schatting. Waar het om
 -- opscheppen gaat, staat de maat van `voeding_portiematen` voor de NEVO-groep
 -- waar het gerecht in valt: "Samengestelde gerechten" kent portie 250 g
 -- (175–350) en "Soepen" kom 250 g (200–350). Die maten zijn er eerder gezet en
@@ -67,13 +67,13 @@
 --
 -- Bij een recept is `default_servings` de opbrengst van de pan. Hier is er
 -- geen pan: de regel is één kilo gerecht zoals NEVO het gemeten heeft. Het
--- getal is daarom uitgerekend en niet ingevuld — hoeveel standaardporties er
+-- getal is daarom uitgerekend en niet ingevuld, hoeveel standaardporties er
 -- in een kilo gaan. Dat zegt iets, en het doet niet alsof het een recept is.
 --
 -- WAT ER NIET BIJ ZIT
 --
 -- Hutspot mét vlees. NEVO 1485 is de stamppot van wortel en ui zónder vlees,
--- en een versie mét bestaat niet in het bestand — anders dan bij boerenkool
+-- en een versie mét bestaat niet in het bestand, anders dan bij boerenkool
 -- en andijvie, waar beide varianten er staan. Dat is geen omissie hier maar
 -- een gat in de bron, en het is beter dat gat te laten zien dan hem te vullen
 -- met een getal dat ik zelf optel.
@@ -81,7 +81,7 @@
 -- BLOK 2 is niet Nederlands en staat er apart om: bami, nasi, saté, pizza. Wat
 -- er wekelijks gegeten wordt en wat uit de Nederlandse keuken komt zijn twee
 -- lijsten. Ze hier door elkaar zetten zou de keuken `nederlands` onbruikbaar
--- maken als filter. Wie dit blok niet wil, laat het weg — blok 1 staat los.
+-- maken als filter. Wie dit blok niet wil, laat het weg, blok 1 staat los.
 --
 -- Draaien mag meer dan eens: wat er al staat wordt overgeslagen, ook als de
 -- diëtist het intussen heeft bijgewerkt.
@@ -90,7 +90,7 @@
 BEGIN;
 
 -- ---------------------------------------------------------------------------
--- BLOK 1 — DE NEDERLANDSE KEUKEN
+-- BLOK 1: DE NEDERLANDSE KEUKEN
 -- ---------------------------------------------------------------------------
 
 with portie(slug, label, maat, icoon, schat, laag, hoog, std, volg, notitie) as (values
@@ -393,7 +393,7 @@ select n.id, p.label, p.maat, p.icoon, p.schat, p.laag, p.hoog,
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 2 — WAT ER IN NEDERLAND OP TAFEL STAAT MAAR NIET NEDERLANDS IS
+-- BLOK 2: WAT ER IN NEDERLAND OP TAFEL STAAT MAAR NIET NEDERLANDS IS
 -- ---------------------------------------------------------------------------
 --
 -- Keuken `overig`, en dat is geen restcategorie maar een weigering om het
@@ -498,7 +498,7 @@ COMMIT;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 3 — NAKIJKEN
+-- BLOK 3: NAKIJKEN
 -- ---------------------------------------------------------------------------
 --
 -- 1. Wijst elke code naar een bestaande tabelregel? Nul rijen is goed. Dit is
@@ -545,7 +545,7 @@ COMMIT;
 --     nl-kroket                      stuk  70 g      190
 --     nl-patat-speciaal              bakje 175 g     436
 --
--- Wijkt een van deze af, dan is er een code verschoven — niet een afronding.
+-- Wijkt een van deze af, dan is er een code verschoven, niet een afronding.
 
 -- select d.slug, p.label_nl, p.grams_estimate,
 --        round(n.energie_kcal_per_100g / 100 * p.grams_estimate) as kcal

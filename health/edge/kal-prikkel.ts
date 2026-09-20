@@ -1,5 +1,5 @@
 // =============================================================================
-// KALIBRATIE — de prikkel op de post.
+// KALIBRATIE: de prikkel op de post.
 //
 // SQL bouwt de berichten en weet niets van HTTP; deze functie haalt ze op en
 // verstuurt ze. Aanroep gebeurt door pg_cron met een gedeeld geheim uit
@@ -22,13 +22,13 @@
 // het in huis.
 //
 // De volgorde is OpenAI, dan Claude. Faalt er één, dan probeert de ander. Falen
-// ze allebei, dan gaat het bericht zonder suggestie de deur uit — een prikkel
+// ze allebei, dan gaat het bericht zonder suggestie de deur uit, een prikkel
 // zonder idee is nog steeds een prikkel, een uitgebleven prikkel is niets.
 //
 // Modelnamen staan in kal_config en niet hier, om dezelfde reden als in kal-ai:
 // namen verlopen, en dan valt een functie stil zonder dat iemand het merkt. Eén
 // regel in de database wisselt hem. Staat er geen `model_coach_openai`, dan
-// wordt OpenAI overgeslagen — er wordt hier geen modelnaam geraden die niemand
+// wordt OpenAI overgeslagen: er wordt hier geen modelnaam geraden die niemand
 // heeft nagekeken.
 // =============================================================================
 
@@ -68,7 +68,7 @@ Deno.serve(async (req) => {
     }
 
     /* Een proefstand voor de modellaag. Zonder dit is de eerste echte toets pas
-       op de dag dat er toevallig niets meer in je geschiedenis past — dat kan
+       op de dag dat er toevallig niets meer in je geschiedenis past, dat kan
        weken duren, en dan blijkt de sleutel verkeerd te staan. Deze weg stuurt
        niets, schrijft niets en zegt per aanbieder wat er gebeurde. */
     if (body.proef_model === true) {
@@ -193,7 +193,7 @@ async function modelNaam(
 }
 
 /* De uitleg is er alleen voor de proefstand. In het echte pad wordt een fout
-   stil opgevangen en valt hij terug op Claude — dat is daar juist, want een
+   stil opgevangen en valt hij terug op Claude, dat is daar juist, want een
    uitgebleven prikkel is erger dan een prikkel zonder idee. Maar bij het
    instellen wil je weten wát er misging: een verkeerde modelnaam, een verlopen
    sleutel en een opgebruikt tokenbudget geven alle drie "geen antwoord", en dat
@@ -215,7 +215,7 @@ async function viaOpenAI(
   try {
     /* Chat Completions en niet de nieuwere Responses-vorm: deze weg werkt op
        elke sleutel en elk model, en er is hier geen manier om een aanroep te
-       proberen — het netwerk van de ontwikkelomgeving laat deze host niet door. */
+       proberen, het netwerk van de ontwikkelomgeving laat deze host niet door. */
     const r = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${sleutel}` },

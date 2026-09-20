@@ -43,7 +43,7 @@ export function CodeWijzigen({ ik, naarHub }: { ik: Ik; naarHub: () => void }) {
         <h2 style={{ marginTop: 16 }}>Je wachtwoord wijzigen</h2>
         <p className="klein" style={{ marginTop: 8 }}>
           Je huidige wachtwoord is genoeg; je hebt er niemand anders bij nodig. Nu staat iedereen nog
-          op hetzelfde — zet hier je eigen.
+          op hetzelfde. Zet hier je eigen.
         </p>
         <input type="password" placeholder="huidig wachtwoord" autoComplete="current-password"
                value={oud} onChange={(e) => zetOud(e.target.value)} />

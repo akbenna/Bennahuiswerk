@@ -1,5 +1,5 @@
 /**
- * DE CONDITIE — wat er bij deze gebruiker speelt, en wat de app daarmee mag
+ * DE CONDITIE: wat er bij deze gebruiker speelt, en wat de app daarmee mag
  *
  * Deze app rekent aan energie en verzadiging, en dat is voor de meeste mensen
  * genoeg. Voor een deel van de gebruikers is het dat niet: wie insuline spuit
@@ -18,7 +18,7 @@
  *
  * Er is nog een tweede reden, en die is van deze app zelf. De stelregel is dat
  * geen enkel getal zonder zijn onzekerheid op het scherm komt. Een
- * insulinedosis kán deze app niet met een interval leveren — hij weet de
+ * insulinedosis kán deze app niet met een interval leveren, hij weet de
  * gevoeligheid niet, de koolhydraat-insulineratio niet en de nierfunctie niet.
  * Dus hoort hij het getal niet te geven.
  *
@@ -28,7 +28,7 @@
  * kilocalorieën" of "trend steiler dan zoveel kilo per week". Dat zou precisie
  * suggereren die er niet is: zulke drempels staan in geen enkele richtlijn en
  * ik zou ze hier zelf verzinnen. Wat er wél staat is een voorwaarde die geen
- * uitleg nodig heeft — je gebruikt dit middel én je hebt een afvaldoel — en
+ * uitleg nodig heeft (je gebruikt dit middel én je hebt een afvaldoel) en
  * dan één keer de informatie die erbij hoort. Komt er ooit een drempel, dan
  * komt hij uit een richtlijn en met bron in `VERANTWOORDING.md`.
  *
@@ -38,7 +38,7 @@
  * ermee doet hangt van de groep af en niet van het merk. Een lijst met losse
  * middelen die onvolledig of verouderd is wekt vertrouwen dat hij niet
  * verdient. En een groep is met een voorbeeld erbij aan te wijzen door iemand
- * die moeizaam leest — in deze praktijk geen bijzaak.
+ * die moeizaam leest, in deze praktijk geen bijzaak.
  *
  * Wat er is opgegeven is zelfopgave en geen medicatieoverzicht. Waar het op het
  * scherm komt hoort dat erbij te staan.

@@ -19,7 +19,7 @@
 --    transactioneel.
 --
 -- 2. De proef is zelf getoetst met een mutatieproef: met de gewichtsregel
---    omgedraaid — `coalesce(nieuw, oud)` in plaats van `coalesce(oud, nieuw)` —
+--    omgedraaid (`coalesce(nieuw, oud)` in plaats van `coalesce(oud, nieuw)`) 
 --    slaan er twee gevallen om. Een proef die nooit rood wordt is erger dan
 --    geen proef, want hij geeft dekking die er niet is.
 --
@@ -230,7 +230,7 @@ begin
 
     /* ---------------------------- de rustpols --------------------------- */
     /* Hij woont in kal_metingen en niet in kal_dagen, dus hij heeft zijn eigen
-       botsingsregels — en die zijn net anders: een meting die de koppeling zelf
+       botsingsregels, en die zijn net anders: een meting die de koppeling zelf
        neerzette mag hij bijwerken, want de rustpols van vanochtend is voorlopig. */
     v_ant := kal_beweging_dag(v_sa, p_dagen_terug := '0', p_hartslag_rust := '58');
     select waarde into v_d from kal_metingen

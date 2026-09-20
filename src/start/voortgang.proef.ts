@@ -1,7 +1,7 @@
 /**
  * DE VOORTGANG OP DE STARTPAGINA
  *
- * Wat hier getoetst wordt is niet het rekenen — er wordt niets gerekend — maar
+ * Wat hier getoetst wordt is niet het rekenen (er wordt niets gerekend) maar
  * de vier vragen die stil fout kunnen gaan: lees ik de goede sleutel, pak ik de
  * regel van de goede persoon, laat ik iemand anders zijn cijfers niet per
  * ongeluk zien, en houd ik mijn mond als er nog niets gedaan is.
@@ -104,7 +104,7 @@ describe('de drie cursussen van de Academie', () => {
     zet('kompas_v1', { done: { 0: true, 1: true, 2: false }, oefdagen: ['2026-08-20', '2026-08-21'] })
     zet('verbind_v2', { done: { 0: true }, oefdagen: ['2026-08-24'] })
     const k = voortgangVan('kompas', PAPA)
-    /* Twee en niet drie: les 2 staat op `false` — afgevinkt en weer uitgevinkt
+    /* Twee en niet drie: les 2 staat op `false`: afgevinkt en weer uitgevinkt
        is niet hetzelfde als nooit begonnen, maar telt ook niet als gedaan. */
     expect(cel(k!.cellen, 'Lessen af')).toBe(2)
     expect(k!.laatst).toBe('2026-08-21')

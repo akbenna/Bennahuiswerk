@@ -3,7 +3,7 @@
  *
  * Eén plek waar de voortgang woont, en drie kanten waar zij heen gaat: het
  * scherm, de opslag van dit toestel, en de centrale kopie. Lokaal blijft de
- * bron waarop de app draait — snel, en werkt zonder internet; de wolk is de
+ * bron waarop de app draait, snel, en werkt zonder internet; de wolk is de
  * kopie die toestellen met elkaar delen.
  *
  * Gelijktrekken is altijd ophalen, samenvoegen, terugschrijven, in die

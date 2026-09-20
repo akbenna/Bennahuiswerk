@@ -1,5 +1,5 @@
 /**
- * WAT JE LUST — het vel waar de voorstellen zich aan houden
+ * WAT JE LUST: het vel waar de voorstellen zich aan houden
  *
  * "Uit de tabel" en "Wat vult het best" putten uit alle 2.328 producten van het
  * voedingsstoffenbestand en weten niet wat jij eet. Ze stellen paardenrookvlees
@@ -10,13 +10,13 @@
  *
  * Bovenaan het eetpatroon: één keuze die de rest invult. Daaronder de
  * zevenentwintig groepen van de tabel, waar je per groep zegt wat je ermee wilt.
- * Dat is de enige lijst die telt — het patroon zet de vinkjes en beslist niets.
+ * Dat is de enige lijst die telt, het patroon zet de vinkjes en beslist niets.
  *
  * WAAROM HET PATROON NIET ZELF FILTERT
  *
  * Vier van de zevenentwintig groepen zijn gemengd: in "Samengestelde gerechten"
  * staat nasi met kip naast nasi zonder, in "Hartig broodbeleg" smeerpaté naast
- * pindakaas. Op de naam scheiden kan niet — dat is precies de fout waardoor
+ * pindakaas. Op de naam scheiden kan niet: dat is precies de fout waardoor
  * bestand 34 bijna een gedroogde tomaat van 258 kcal voor een verse aanzag.
  *
  * Dus zet het patroon die vier mee uit, en zie je dat staan. Wil je je pindakaas
@@ -26,7 +26,7 @@
  * DE VIERDE KOLOM DIE ER NIET IS
  *
  * Er staat geen schuifje van "heel graag" tot "liever niet". Er zijn drie
- * standen — gewoon, liever, nooit — en dat is geen versimpeling maar het
+ * standen (gewoon, liever, nooit) en dat is geen versimpeling maar het
  * ontwerp: "liever niet" verschuift hoogstens twaalf punten op honderd, en
  * "nooit" verwijdert. Daartussen zit niets zinnigs, en een schuifje zou doen
  * alsof dat wel zo is.
@@ -92,7 +92,7 @@ export function VoorkeurVenster(
   const [v, zetV] = useState<Voorkeuren>(profiel.instellingen.voorkeuren ?? GEEN_VOORKEUR)
 
   /* Het patroon vult de vinkjes en wist niets wat je zelf hebt aangezet. Ging
-     je van vegetarisch naar alles, dan blijven jouw uitsluitingen staan — die
+     je van vegetarisch naar alles, dan blijven jouw uitsluitingen staan, die
      heb je zelf gekozen en het patroon gaat daar niet over. */
   function kiesPatroon(patroon: Eetpatroon) {
     const erbij = voorstel(patroon).filter((g) => !v.nooit.includes(g))
@@ -121,14 +121,14 @@ export function VoorkeurVenster(
     >
       <p className="klein">
         Voorstellen uit de tabel houden zich hieraan: "Uit de tabel" op Vandaag en
-        "Wat vult het best". Wat je zelf logt blijft gewoon doorgaan — dit gaat over
+        "Wat vult het best". Wat je zelf logt blijft gewoon doorgaan; dit gaat over
         wat de app jóú aanbiedt, niet over wat jij mag eten.
       </p>
       {/* TWEE DINGEN DIE HIER NIET ONDER VALLEN, EN DIE HOREN ER TE STAAN
 
           Merkproducten dragen een categorie van Open Food Facts en geen
           NEVO-groep, en die twee woordenlijsten zijn niet betrouwbaar naar
-          elkaar te vertalen. Er kan er dus één doorheen komen — precies één,
+          elkaar te vertalen. Er kan er dus één doorheen komen, precies één,
           want "Uit de tabel" laat hoogstens één merkregel toe.
 
           En de coach put uit je eigen geschiedenis, waar geen groep bij staat.
@@ -138,8 +138,8 @@ export function VoorkeurVenster(
           Allebei staan ze er omdat een belofte die je niet helemaal waarmaakt
           erger is dan een belofte die kleiner is. */}
       <p className="mini" style={{ marginTop: 6 }}>
-        Twee uitzonderingen: er kan één merkproduct doorheen komen — die dragen
-        geen tabelgroep — en "Wat er nog in past" put uit je eigen geschiedenis en
+        Twee uitzonderingen: er kan één merkproduct doorheen komen (die dragen
+        geen tabelgroep) en "Wat er nog in past" put uit je eigen geschiedenis en
         filtert niet. Die laatste stelt alleen voor wat je zelf ooit hebt gelogd.
       </p>
 
@@ -154,7 +154,7 @@ export function VoorkeurVenster(
         </Rij>
         <p className="mini" style={{ marginTop: 8 }}>
           {v.patroon === 'alles'
-            ? 'Dan hoef je hieronder niets te doen — tenzij er iets is wat je niet lust.'
+            ? 'Dan hoef je hieronder niets te doen, tenzij er iets is wat je niet lust.'
             : `Dit zet ${voorstel(v.patroon).length} groepen hieronder uit. Kijk ze na: `
               + 'vier ervan bevatten allebei, en die gaan mee uit.'}
         </p>
@@ -164,7 +164,7 @@ export function VoorkeurVenster(
 
           Een lijst van zevenentwintig waarin je moet zoeken welke er uit staan,
           is een lijst waarin je het niet ziet. Wat uitstaat krijgt zijn eigen
-          kopje, en daar staat ook hoeveel producten je ermee misloopt — want dat
+          kopje, en daar staat ook hoeveel producten je ermee misloopt, want dat
           is het getal dat de keuze maakt en niet het aantal groepen. */}
       {uit.length > 0 && (
         <Kaart plat style={{ marginTop: 10 }} toon="let">
@@ -179,7 +179,7 @@ export function VoorkeurVenster(
                   {g}
                   {GEMENGD.includes(g) && (
                     <span className="mini" style={{ display: 'block', opacity: 0.8 }}>
-                      bevat allebei — hier staat ook wat je wél lust
+                      bevat allebei; hier staat ook wat je wél lust
                     </span>
                   )}
                 </span>
@@ -191,7 +191,7 @@ export function VoorkeurVenster(
         </Kaart>
       )}
 
-      {/* DE KEUKENS — het enige wat een gerecht zélf draagt
+      {/* DE KEUKENS: het enige wat een gerecht zélf draagt
 
           De zevenentwintig groepen gaan over producten. Een gerecht wordt
           gefilterd via zijn ingrediënten, en dat is precies goed voor "geen
@@ -218,7 +218,7 @@ export function VoorkeurVenster(
 
           Deze lijst vult zich niet hier maar bij de voorstellen zelf, op het
           moment dat je denkt "dit niet". Hier staat hij alleen zodat je hem
-          kunt terugdraaien — een knop die alleen wegneemt en nooit teruggeeft
+          kunt terugdraaien, een knop die alleen wegneemt en nooit teruggeeft
           is een knop die je niet durft te gebruiken. */}
       {(v.nietProduct ?? []).length > 0 && (
         <Kaart plat style={{ marginTop: 10 }}>
@@ -279,7 +279,7 @@ export function VoorkeurVenster(
         <Kaart plat style={{ marginTop: 10 }} toon="let">
           <p className="klein">
             Er blijven nog <span className="cijfer">{over}</span> groepen over. Onder de
-            tien wordt "Wat vult het best" vaak leeg — niet omdat er iets stuk is, maar
+            tien wordt "Wat vult het best" vaak leeg, niet omdat er iets stuk is, maar
             omdat er niets meer past binnen wat je nog wilt zien.
           </p>
         </Kaart>
@@ -294,7 +294,7 @@ export function VoorkeurVenster(
         </p>
         <p>
           Wat je hier instelt is iets anders. Het is niet afgeleid uit wat je at
-          maar door jou gezegd, en het vernauwt niet over tijd — het is een grens
+          maar door jou gezegd, en het vernauwt niet over tijd: het is een grens
           en geen lus. Daarom mag het wél meetellen, en daarom verwijdert "nooit"
           echt terwijl "liever" hooguit een duwtje geeft.
         </p>

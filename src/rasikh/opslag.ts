@@ -1,8 +1,8 @@
 /**
  * WAT ER BEWAARD WORDT, EN HOE TWEE TOESTELLEN SAMENKOMEN
  *
- * Dit is het gevoeligste bestand van de app. Wat hier staat — wat vast is,
- * wanneer het terugkomt, waar je haperde — is een reeks van jaren. Eén verkeerd
+ * Dit is het gevoeligste bestand van de app. Wat hier staat (wat vast is,
+ * wanneer het terugkomt, waar je haperde) is een reeks van jaren. Eén verkeerd
  * samengevoegd veld en een halve juz komt morgen tegelijk terug, of erger: valt
  * stil uit de planning omdat de due-datum van het andere toestel won.
  *
@@ -113,7 +113,7 @@ const nieuwste = (a: string | null | undefined, b: string | null | undefined): s
   !a ? (b ?? null) : !b ? a : a >= b ? a : b
 
 /**
- * Twee standen van dezelfde aya. De jóngste beoordeling wint — die weet het
+ * Twee standen van dezelfde aya. De jóngste beoordeling wint: die weet het
  * best hoe het er nu voor staat. Maar `vast` gaat nooit terug naar niet-vast,
  * en `begonnen` houdt de vroegste datum: dat is geschiedenis en geen mening.
  */

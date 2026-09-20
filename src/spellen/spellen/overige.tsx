@@ -26,7 +26,7 @@ export function Memory(p: SpelEigenschappen) {
 
   const stand = (
     <>Beurten <b>{beurten}</b> · record{' '}
-      <b>{p.record === undefined ? '—' : `${p.record} (minst)`}</b></>
+      <b>{p.record === undefined ? '–' : `${p.record} (minst)`}</b></>
   )
 
   function tik(i: number) {

@@ -3,7 +3,7 @@
  *
  * De uitleg in deze app draagt opmaak: <b> om een begrip, <span class="ar"> om
  * Arabisch dat middenin een Nederlandse zin staat. Die gaat via
- * dangerouslySetInnerHTML naar binnen, en dat mag omdat de herkomst vaststaat —
+ * dangerouslySetInnerHTML naar binnen, en dat mag omdat de herkomst vaststaat,
  * die teksten staan in de repo, in gegevens/. Alles wat een ouder of een kind
  * zélf intikt (een naam, een afspraak, een zoekterm) gaat als gewone tekst door
  * React heen en komt hier nooit langs.

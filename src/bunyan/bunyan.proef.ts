@@ -20,6 +20,7 @@ import { leeg, samenvoegen } from './opslag'
 import type { Losse } from './opslag'
 import { bouwFouten, bouwPrijs, bouwWatt, deelById, fpsVan } from './bouwbank'
 import type { Bouwstand } from './bouwbank'
+import { woordgelijk } from '@/gedeeld/woordgelijk'
 
 const KLOK = { vandaag: '2026-08-22', gisteren: '2026-08-21', week: '2026-34' }
 
@@ -34,7 +35,7 @@ describe('de leerstof', () => {
         vragen: (l.vragen ?? []).map((v) => ({ j: v.j, opties: v.o.length })),
       })),
     }))
-    expect(zien(CODE)).toEqual(gouden.stof.code)
+    expect(woordgelijk(zien(CODE))).toEqual(woordgelijk(gouden.stof.code))
     const zienPc = PC.map((x) => ({
       id: x.id, n: x.n, u: x.u,
       lessen: x.lessen.map((l) => ({
@@ -43,7 +44,7 @@ describe('de leerstof', () => {
         vragen: (l.vragen ?? []).map((v) => ({ j: v.j, opties: v.o.length })),
       })),
     }))
-    expect(zienPc).toEqual(gouden.stof.pc)
+    expect(woordgelijk(zienPc)).toEqual(woordgelijk(gouden.stof.pc))
   })
 
   it('geeft elke les een eigen id', () => {

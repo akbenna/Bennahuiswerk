@@ -1,16 +1,16 @@
 // =============================================================================
-// KALIBRATIE — maaltijdherkenning uit tekst, foto en Yazio-plaksel.
+// KALIBRATIE: maaltijdherkenning uit tekst, foto en Yazio-plaksel.
 //
 // UITROLLEN: ZET DAARNA `verify_jwt` WEER UIT
 //
 // Deze functie staat open (`verify_jwt: false`) en doet niets zonder een geldig
-// sessietoken — dat controleert hij zelf, met `kal_sessie`, vóór er ook maar
+// sessietoken: dat controleert hij zelf, met `kal_sessie`, vóór er ook maar
 // iets anders gebeurt. De app stuurt alleen een `Content-Type` mee en geen
 // `Authorization`; zie `vraag()` in `src/health/ai.ts`.
 //
 // Een nieuwe uitrol komt terug met `verify_jwt = true`, ook als hij eerder uit
 // stond. Dan krijgt elke aanroep `UNAUTHORIZED_NO_AUTH_HEADER` van de poort
-// voordat deze code draait, en werkt de hele herkenning niet meer — tekst, foto,
+// voordat deze code draait, en werkt de hele herkenning niet meer, tekst, foto,
 // invoer én het dagverslag. Datzelfde overkwam `kal-prikkel`; zie
 // `health/AUTOMATISERING.md`.
 //
@@ -37,7 +37,7 @@
 //
 // Die vijfde stap is later toegevoegd, en de reden is het waard om op te
 // schrijven. Het beginsel van deze app is dat het model kiest en de server met
-// de tabel rekent — maar dat gold alleen voor de voedingsstoffen. Het
+// de tabel rekent, maar dat gold alleen voor de voedingsstoffen. Het
 // portiegewicht kwam nog volledig van het model, terwijl in dezelfde database
 // `voeding_portiematen` staat: een eetlepel hartige saus is 15 g, band 10 tot
 // 20. Zei het model "eetlepel, 40 gram", dan rekende de server met 40 en keek
@@ -147,7 +147,7 @@ export function normaliseerEenheid(eenheid: string): string {
  * aanroeper vangt "g" en "ml" al af, en zou hij dat niet doen, dan vindt de
  * lus hieronder toch geen maat die zo heet. Een mutatieproef kreeg hem dan ook
  * niet om. Hij blijft staan omdat hij de bedoeling uitspreekt en omdat hij wél
- * gaat bijten zodra iemand ooit een portiemaat "gram" noemt — maar hij is
+ * gaat bijten zodra iemand ooit een portiemaat "gram" noemt, maar hij is
  * bescherming, geen dragende regel, en dat is iets anders.
  */
 export function kiesMaat(
@@ -194,7 +194,7 @@ const SCHEMA_RONDE1 = {
           zoekterm: { type: "string", description: "HET PRODUCT ZELF, in één of twee woorden, om mee in het Nederlands Voedingsstoffenbestand te zoeken. Dus 'cappuccino', 'ei gekookt', 'couscous gekookt', 'olijfolie', 'tarwebrood bruin', 'kwark magere'. NIET de omschrijving en NIET de ingrediënten: een cappuccino zoek je op als 'cappuccino' en niet als 'cappuccino halfvolle melk', want dan vindt de tabel de melk in plaats van de koffie. Voeg alleen een tweede woord toe wanneer dat in een voedingstabel een echt onderscheid is: gekookt tegenover rauw, mager tegenover vol, bruin tegenover wit. Geen merknaam en geen gerechtnaam." },
           hoeveelheid: { type: "number", description: "Het AANTAL eenheden. Twee sneetjes brood is 2. Bij eenheid g of ml is dit het aantal grammen of milliliters zelf." },
           eenheid: { type: "string", description: "g, ml, stuk, snee, kopje, glas, portie, eetlepel. De eenheid moet bij de hoeveelheid horen: twee kopjes is hoeveelheid 2 met eenheid 'kopje', niet 2 ml." },
-          gram_per_eenheid: { type: "number", description: "Gewicht in gram (of ml) van ÉÉN eenheid. Bij eenheid g of ml vul je hier 1 in. Bij 'snee' het gewicht van één snee, bij 'kopje' de inhoud van één kopje. NIET het totaal — de server vermenigvuldigt zelf met hoeveelheid." },
+          gram_per_eenheid: { type: "number", description: "Gewicht in gram (of ml) van ÉÉN eenheid. Bij eenheid g of ml vul je hier 1 in. Bij 'snee' het gewicht van één snee, bij 'kopje' de inhoud van één kopje. NIET het totaal: de server vermenigvuldigt zelf met hoeveelheid." },
           gram_laag: { type: "number", description: "Ondergrens van gram_per_eenheid, dus ook per één eenheid. Bij een gefotografeerde portie ruim nemen." },
           gram_hoog: { type: "number", description: "Bovengrens van gram_per_eenheid, per één eenheid. Neem deze ruimer dan de ondergrens wanneer de portie groot is: taalmodellen onderschatten grote porties stelselmatig." },
           gewogen: { type: "boolean", description: "true alleen als de gebruiker expliciet een gewogen gewicht noemt" },
@@ -219,7 +219,7 @@ const SCHEMA_RONDE1 = {
 /* Het dagverslag verschilt op twee punten van een losse beschrijving: het moment
    is verplicht (de hele opzet is dat de regels vanzelf op het juiste vak
    landen), en er kan krachttraining in staan. De rest is letterlijk hetzelfde
-   schema — vandaar de kopie en niet een tweede definitie die uit elkaar groeit. */
+   schema, vandaar de kopie en niet een tweede definitie die uit elkaar groeit. */
 const SCHEMA_DAG = {
   ...SCHEMA_RONDE1,
   properties: {
@@ -233,13 +233,13 @@ const SCHEMA_DAG = {
     },
     trainingen: {
       type: "array",
-      description: "Alleen krachttraining. Leeg laten bij wandelen, fietsen of hardlopen — die komen uit de telefoon.",
+      description: "Alleen krachttraining. Leeg laten bij wandelen, fietsen of hardlopen, die komen uit de telefoon.",
       items: {
         type: "object",
         properties: {
           oefening: { type: "string", description: "De oefening zoals hij genoemd wordt: bankdrukken, squat, lat pulldown." },
           spiergroep: { type: ["string", "null"], description: "borst, rug, benen, schouders, armen, buik of romp. null als je het niet kunt bepalen." },
-          sets: { type: ["number", "null"], description: "Aantal sets. null als het niet genoemd is — nooit een gebruikelijk aantal invullen." },
+          sets: { type: ["number", "null"], description: "Aantal sets. null als het niet genoemd is: nooit een gebruikelijk aantal invullen." },
           reps: { type: ["number", "null"], description: "Herhalingen per set. null als het niet genoemd is." },
           gewicht_kg: { type: ["number", "null"], description: "Gewicht in kilo per set. null als het niet genoemd is." },
         },
@@ -291,8 +291,8 @@ const SCHEMA_IMPORT = {
     /* WAAROP DE HERKENNING ZICH BASEERDE
        Het scherm "Alle gegevens" van Apple Gezondheid toont een kale kolom
        getallen; welke grootheid dat is staat alleen in een kop die vaak
-       weggescrold is. Zonder dit veld zou een misgok — stappen gelezen als
-       kilocalorieën — stil in de dagen belanden. Nu staat er wat er gelezen is
+       weggescrold is. Zonder dit veld zou een misgok (stappen gelezen als
+       kilocalorieën) stil in de dagen belanden. Nu staat er wat er gelezen is
        en hoe zeker dat is, en kan het scherm dat tonen vóór er iets wordt
        overgenomen. */
     bronnen: {
@@ -345,7 +345,7 @@ const REGELS_GEMEEN = `1. ONTLEED SAMENGESTELDE GERECHTEN. Een tajine, een cousc
 
 2. GEEF ALTIJD EEN BEREIK. Nooit één getal. Als iemand "een bord couscous" zegt, is dat 150 tot 350 gram gekookt, geen 250. Het bereik is het antwoord, niet het gemiddelde ervan.
 
-3. REKEN PORTIES NIET ZELF UIT. Vul hoeveelheid in met het aantal eenheden en gram_per_eenheid met het gewicht van één daarvan. Twee sneetjes brood is hoeveelheid 2, eenheid 'snee', gram_per_eenheid 35 — niet 70. Twee kopjes koffie is hoeveelheid 2, eenheid 'kopje', gram_per_eenheid 150. De server vermenigvuldigt.
+3. REKEN PORTIES NIET ZELF UIT. Vul hoeveelheid in met het aantal eenheden en gram_per_eenheid met het gewicht van één daarvan. Twee sneetjes brood is hoeveelheid 2, eenheid 'snee', gram_per_eenheid 35, niet 70. Twee kopjes koffie is hoeveelheid 2, eenheid 'kopje', gram_per_eenheid 150. De server vermenigvuldigt.
 
 4. BENOEM HET BEREIDINGSVET. In een tajine gaat 30 tot 80 ml olie die je niet ziet en die de gebruiker vrijwel nooit meldt. In couscous, in de pan gebakken msemen, in een roerbak: hetzelfde. Zet dat in bereidingsvet_g van het gerecht zelf en noem het in onzekerheid. Maak er GEEN aparte regel van: dan telt de olie twee keer. Een losse regel olie maak je alleen wanneer de gebruiker de olie apart noemt, bijvoorbeeld over een salade; zet bereidingsvet_g dan op 0. Dit is stelselmatig de grootste ontbrekende post van de dag.
 
@@ -358,7 +358,9 @@ const REGELS_GEMEEN = `1. ONTLEED SAMENGESTELDE GERECHTEN. Een tajine, een cousc
 
 6. VUL ALTIJD DE VOEDINGSWAARDE PER 100 GRAM IN, ook wanneer je denkt dat de tabel het onderdeel kent. Dat is het vangnet: staat het er niet in, dan valt de regel anders uit het dagtotaal weg, en een stilzwijgend verdwenen maaltijd is erger dan een ruwe schatting die zichzelf D noemt.
 
-7. DE ZOEKTERM IS HET PRODUCT, NIET DE OMSCHRIJVING. Een cappuccino met halfvolle melk heeft zoekterm 'cappuccino'. Zet je de melk erbij, dan vindt de tabel de melk en niet de koffie, en dat scheelt een factor drie. Hetzelfde geldt voor thee met suiker, yoghurt met muesli, brood met kaas: dat zijn twee regels met elk hun eigen éénwoordige zoekterm, niet één regel met een zin erin.`;
+7. DE ZOEKTERM IS HET PRODUCT, NIET DE OMSCHRIJVING. Een cappuccino met halfvolle melk heeft zoekterm 'cappuccino'. Zet je de melk erbij, dan vindt de tabel de melk en niet de koffie, en dat scheelt een factor drie. Hetzelfde geldt voor thee met suiker, yoghurt met muesli, brood met kaas: dat zijn twee regels met elk hun eigen éénwoordige zoekterm, niet één regel met een zin erin.
+
+8. GEEN GEDACHTESTREEPJES. Schrijf onzekerheid en opmerking met gewone leestekens: een komma, een dubbele punt, een punt, haakjes. Geen \u2014 en geen \u2013. Die zinnen komen letterlijk op het scherm van de gebruiker en de rest van de app gebruikt ze nergens.`;
 
 const SYS_TEKST = `Je leest wat iemand heeft gegeten en zet het om in losse onderdelen met een portiebereik.
 
@@ -366,7 +368,7 @@ Je werkt voor een Nederlandse arts van 51 jaar met een Marokkaanse achtergrond. 
 
 ${REGELS_GEMEEN}`;
 
-const SYS_DAG = `Je leest een verslag van een hele dag — iemand vertelt achter elkaar wat hij gegeten heeft en wat hij gedaan heeft — en zet dat om in losse onderdelen per maaltijdmoment.
+const SYS_DAG = `Je leest een verslag van een hele dag (iemand vertelt achter elkaar wat hij gegeten heeft en wat hij gedaan heeft) en zet dat om in losse onderdelen per maaltijdmoment.
 
 Je werkt voor een Nederlandse arts van 51 jaar met een Marokkaanse achtergrond. Er wordt Marokkaans en Turks gekookt: tajine, harira, couscous, rfissa, msemen, baghrir, zaalouk, menemen, mercimek. Ken die gerechten en ontleed ze.
 
@@ -375,12 +377,12 @@ DE TEKST IS INGESPROKEN. Reken op spreektaal: halve zinnen, "eh", herhalingen, e
 WAT ER GEGETEN IS
 Elk onderdeel krijgt een moment, en dat veld is hier verplicht. Leid het af uit de woorden: vanochtend, bij het opstaan, als ontbijt → ontbijt. Tussen de middag, op het werk, broodje → lunch. Vanavond, warm gegeten, na het werk → diner. Tussendoor, onderweg, bij de koffie, 's avonds op de bank → tussendoor.
 
-Zegt de tekst het niet en kun je het ook niet afleiden, kies dan "onbekend". Dat is geen fout en geen slecht antwoord — het is de gebruiker die het aanwijst, en dat is beter dan een gok die er stellig uitziet. Gok nooit een moment op grond van wat mensen meestal eten.
+Zegt de tekst het niet en kun je het ook niet afleiden, kies dan "onbekend". Dat is geen fout en geen slecht antwoord, het is de gebruiker die het aanwijst, en dat is beter dan een gok die er stellig uitziet. Gok nooit een moment op grond van wat mensen meestal eten.
 
 De volgorde van het verslag is een aanwijzing maar geen bewijs: mensen springen terug ("oh ja, vanochtend nog").
 
 WAT ER GEDAAN IS
-Noemt de tekst krachttraining — gewichten, sets, herhalingen, een oefening bij naam, de sportschool — zet dat dan in trainingen. Eén regel per oefening. Wat er niet staat laat je leeg; reken sets of herhalingen nooit uit en vul geen gebruikelijke waarde in.
+Noemt de tekst krachttraining (gewichten, sets, herhalingen, een oefening bij naam, de sportschool) zet dat dan in trainingen. Eén regel per oefening. Wat er niet staat laat je leeg; reken sets of herhalingen nooit uit en vul geen gebruikelijke waarde in.
 
 Wandelen, fietsen, hardlopen en stappen horen NIET in trainingen: die komen uit de telefoon en zouden hier dubbel geteld worden. Noemt de tekst alleen dat soort beweging, dan blijft trainingen leeg.
 
@@ -392,7 +394,7 @@ Je werkt voor een Nederlandse arts van 51 jaar met een Marokkaanse achtergrond; 
 
 Wat je moet weten over je eigen betrouwbaarheid, want dat bepaalt hoe je antwoordt: uit validatiestudies blijkt dat taalmodellen bij het schatten van porties uit foto's een gemiddelde absolute fout van ongeveer 35 procent maken, en dat die fout systematisch de kant van ONDERschatting op gaat naarmate de portie groter is. Corrigeer daarvoor: leg je bovengrens ruimer dan je ondergrens, en trek bij een royaal gevuld bord de bovengrens flink op.
 
-Bepaal de schaal aan een herkenbaar voorwerp — bord, bestek, glas, hand. Noem in referentieobject welk voorwerp je gebruikt hebt. Zie je niets waarmee je kunt schalen, zeg dat dan in opmerking en verbreed het bereik fors.
+Bepaal de schaal aan een herkenbaar voorwerp, bord, bestek, glas, hand. Noem in referentieobject welk voorwerp je gebruikt hebt. Zie je niets waarmee je kunt schalen, zeg dat dan in opmerking en verbreed het bereik fors.
 
 Vet dat in de bereiding is opgegaan zie je niet op een foto. Schat het toch. Een gefotografeerd bord is nooit graad A of B: C wanneer het één herkenbaar product in een duidelijke portie is, D bij alles wat samengesteld is.
 
@@ -404,13 +406,13 @@ Neem alleen over wat er echt staat. Reken niets uit wat er niet staat, en vul ge
 
 Percentages naar grammen: koolhydraten en eiwit 4 kcal per gram, vet 9 kcal per gram. Staan er percentages bij een dagtotaal, reken die dan om; staan er alleen percentages zonder dagtotaal, laat de grammen dan leeg.
 
-Let op de volgorde waarin de app de macro's toont — bij Yazio is dat koolhydraten, eiwit, vet.
+Let op de volgorde waarin de app de macro's toont, bij Yazio is dat koolhydraten, eiwit, vet.
 
 Nederlandse maanden en het formaat "20 augustus 2026" moeten naar 2026-08-20. Duizendtallen staan met een punt: 1.319 kcal is duizenddriehonderdnegentien. Afgekorte maanden ook: "21 aug 2026" is 2026-08-21.
 
 APPLE GEZONDHEID, SCHERM "ALLE GEGEVENS"
 
-Dat scherm is een kale lijst: per rij één getal links en een datum rechts, zonder eenheid. Wélke grootheid het is staat alleen in de kop bovenaan, en die is vaak weggescrold — dan zie je hem niet.
+Dat scherm is een kale lijst: per rij één getal links en een datum rechts, zonder eenheid. Wélke grootheid het is staat alleen in de kop bovenaan, en die is vaak weggescrold, dan zie je hem niet.
 
 Raad die grootheid nooit stilzwijgend. Zoek hem in deze volgorde:
 
@@ -424,7 +426,7 @@ Kun je het ook uit de grootte niet met overtuiging bepalen, laat de waarden dan 
 
 HALVE REGELS AAN DE RANDEN
 
-Boven- en onderaan zo'n afdruk staat bijna altijd een regel die maar half in beeld is: afgesneden door de kop of door de balk onderin, en vaak ook vervaagd. Neem die niet over. Een half zichtbaar getal is niet te lezen — 5.585 en 5.585 zien er afgesneden hetzelfde uit als 6.585 — en het is nooit nodig ook: bij een reeks die over meerdere afdrukken loopt staat diezelfde dag verderop nog een keer, dan wel helemaal.
+Boven- en onderaan zo'n afdruk staat bijna altijd een regel die maar half in beeld is: afgesneden door de kop of door de balk onderin, en vaak ook vervaagd. Neem die niet over. Een half zichtbaar getal is niet te lezen (5.585 en 5.585 zien er afgesneden hetzelfde uit als 6.585) en het is nooit nodig ook: bij een reeks die over meerdere afdrukken loopt staat diezelfde dag verderop nog een keer, dan wel helemaal.
 
 Komt dezelfde datum op twee afdrukken voor, neem dan de regel die volledig zichtbaar is. Verschillen de twee waarden, dan heb je er één verkeerd gelezen; gebruik de volledige en niet het gemiddelde.
 
@@ -448,13 +450,13 @@ Het soort haal je uit het kopje van de post en zet je om naar één van deze sle
   dansen        Dansen, zumba
   tuinieren     Tuinieren, spitten, harken
   kracht        Krachttraining, functionele kracht, gewichtheffen
-  anders        Iets wat er wel staat maar hier niet in past — yoga, boksen, skiën
+  anders        Iets wat er wel staat maar hier niet in past, yoga, boksen, skiën
 
 Staat er geen kopje bij een post, zet \`soort\` dan op null. Verzin er niets bij: "anders" betekent dat je iets gelézen hebt dat niet in de lijst past, en null dat je niets gelezen hebt. Dat verschil bepaalt wat het scherm vraagt.
 
 \`label\` is altijd wat er letterlijk stond, ook als je het op een sleutel hebt kunnen leggen.
 
-Beoordeel niet of een duur klopt en laat niets weg omdat het lang lijkt — dat doet de app. Geef terug wat er staat.`;
+Beoordeel niet of een duur klopt en laat niets weg omdat het lang lijkt, dat doet de app. Geef terug wat er staat.`;
 
 async function claude(
   key: string,
@@ -488,7 +490,7 @@ async function claude(
   return { data: blok.input, in: d.usage?.input_tokens ?? 0, uit: d.usage?.output_tokens ?? 0 };
 }
 
-/* Het rangschikken staat in de database, in kal_nevo_zoek — dezelfde functie die
+/* Het rangschikken staat in de database, in kal_nevo_zoek, dezelfde functie die
    het zoekveld van de app gebruikt. Dat is geen netheid maar noodzaak: zolang
    die twee los van elkaar stonden, kon de gebruiker een product opzoeken dat de
    herkenning even later niet vond.
@@ -496,8 +498,8 @@ async function claude(
    Hier gebeurt één ding bovenop: naast de volledige zoekterm gaat ook het
    langste losse woord apart de tabel in, en beide uitkomsten worden samengevoegd.
    De reden is dat ophalen en kiezen verschillende taken zijn. Een rangschikking
-   weet niet welk woord in "cappuccino halfvolle melk" het hoofdwoord is — twee
-   rake woorden wegen daar nu eenmaal zwaarder dan één — maar het model weet dat
+   weet niet welk woord in "cappuccino halfvolle melk" het hoofdwoord is (twee
+   rake woorden wegen daar nu eenmaal zwaarder dan één) maar het model weet dat
    wel, mits het de koffie én de melk allebei voorgelegd krijgt. Dus: ruim ophalen,
    scherp laten kiezen. */
 async function zoekNevo(db: ReturnType<typeof createClient>, term: string) {
@@ -532,7 +534,7 @@ async function zoekNevo(db: ReturnType<typeof createClient>, term: string) {
 /**
  * De huishoudmaten voor een stel gekoppelde producten, in één vraag.
  *
- * Maten hangen aan een product of aan een productgroep — de tabel dwingt af dat
+ * Maten hangen aan een product of aan een productgroep, de tabel dwingt af dat
  * het precies één van de twee is. De groepsmaten zijn de nuttigste: één keer
  * vastleggen dat een eetlepel hartige saus 15 gram is, en elke saus heeft hem.
  *
@@ -640,8 +642,8 @@ Deno.serve(async (req) => {
       if (!inhoud.length) throw new Error("Geen tekst of afbeelding meegestuurd");
       /* "Een reeks dagen" was de hele opdracht, en dat duwt een work-outlijst de
          verkeerde kant op: het model gaat dan dagen máken uit iets wat er geen
-         is. De tweede zin is er niet om iets nieuws te zeggen — dat staat in
-         SYS_IMPORT — maar om de eerste niet als uitsluiting te laten lezen. */
+         is. De tweede zin is er niet om iets nieuws te zeggen (dat staat in
+         SYS_IMPORT) maar om de eerste niet als uitsluiting te laten lezen. */
       inhoud.push({ type: "text", text: "Zet dit om in een reeks dagen. Staat er een work-outlijst bij, zet die rijen in `activiteiten`; de rest gaat gewoon in `dagen`." });
       const r = await claude(key, MODEL, SYS_IMPORT, inhoud, SCHEMA_IMPORT, "reeks", 10000);
       tokensIn = r.in; tokensUit = r.uit;
@@ -652,7 +654,7 @@ Deno.serve(async (req) => {
     // ------------------------------------------------------- ronde 1: zien ---
     const systeem = soort === "foto" ? SYS_FOTO : soort === "dag" ? SYS_DAG : SYS_TEKST;
     /* Een dagverslag is langer dan een losse beschrijving en levert meer regels
-       op — een gewone dag is er al gauw twaalf. Met 6000 breekt het antwoord
+       op, een gewone dag is er al gauw twaalf. Met 6000 breekt het antwoord
        halverwege af en dat kost de hele avondmaaltijd zonder dat iemand het
        merkt: het JSON-blok komt dan onvolledig terug en `onderdelen` is leeg. */
     const schema = soort === "dag" ? SCHEMA_DAG : SCHEMA_RONDE1;
@@ -686,7 +688,7 @@ Deno.serve(async (req) => {
     if (teKiezen.length) {
       const lijst = teKiezen.map(({ i, o, k }) =>
         `${i}. ${o.naam} (${o.hoeveelheid ?? 1} ${o.eenheid})\n` +
-        k.map((c) => `   - ${c.nevo_code}: ${c.naam_nl} — ${c.energie_kcal_per_100g} kcal, ${c.eiwit_g} g eiwit per 100 g`).join("\n")
+        k.map((c) => `   - ${c.nevo_code}: ${c.naam_nl}: ${c.energie_kcal_per_100g} kcal, ${c.eiwit_g} g eiwit per 100 g`).join("\n")
       ).join("\n\n");
       const r2 = await claude(
         key,
@@ -697,7 +699,7 @@ Kies per onderdeel de kandidaat die het dichtst bij de werkelijke bereiding ligt
 
 De kandidatenlijst is ruim opgehaald en bevat opzettelijk ook zijpaden. Bij een cappuccino kan er zowel "Koffie cappuccino" als "Melk halfvolle" in staan; kies dan de drank en niet het ingrediënt. Kies het product dat de gebruiker daadwerkelijk at of dronk.
 
-Past geen enkele kandidaat werkelijk, kies dan null. Een verkeerde koppeling is erger dan geen koppeling — bij null rekent de app met een eigen schatting en zegt dat er ook bij.`,
+Past geen enkele kandidaat werkelijk, kies dan null. Een verkeerde koppeling is erger dan geen koppeling, bij null rekent de app met een eigen schatting en zegt dat er ook bij.`,
         [{ type: "text", text: lijst }],
         SCHEMA_RONDE2,
         "keuzes",
@@ -725,7 +727,7 @@ Past geen enkele kandidaat werkelijk, kies dan null. Een verkeerde koppeling is 
       const eh = (o.eenheid || "").toLowerCase();
       const isMaat = eh === "g" || eh === "ml";
 
-      /* Kent de tabel deze huishoudmaat, dan wint zij van het model — voor het
+      /* Kent de tabel deze huishoudmaat, dan wint zij van het model, voor het
          gewicht én voor de band eromheen. Die band is niet altijd smaller: een
          eetlepel is nu eenmaal 10 tot 20 gram, en dat hoort er te staan in
          plaats van het ene getal waar het model zich op vastlegde. */

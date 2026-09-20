@@ -3,7 +3,7 @@
  *
  * Waarom dit een apart bestand is, en geen aanvulling op `sjablonen.ts`: die
  * lijst is het verslag van de overzetting uit de oude pagina en ligt onder een
- * vingerafdruk in de gouden waarden — aantal én volgorde van de id's. Nieuwe
+ * vingerafdruk in de gouden waarden, aantal én volgorde van de id's. Nieuwe
  * sjablonen daartussen zetten betekent dat bewijs weggooien. Dezelfde reden
  * waarom `schooljaar2627.ts` naast `seed.ts` staat.
  *
@@ -23,7 +23,7 @@
  * DE PROEF
  *
  * `sjablonen-extra.proef.ts` draait elk sjabloon hieronder honderden keren en
- * rekent het antwoord terug uit de getallen die in de vraag staan — dus uit wat
+ * rekent het antwoord terug uit de getallen die in de vraag staan, dus uit wat
  * het kind leest, niet uit dezelfde variabele. Wie hier een som verandert, moet
  * daar de narekening meeveranderen; dat is precies de bedoeling.
  *
@@ -58,7 +58,7 @@ const klok = (u: number, m: number): string => `${u}:${String(m).padStart(2, '0'
 
 /* --------------------------------------------------------------- woordlijsten
    Alles hieronder is met de hand nagelopen. De proef controleert wat er
-   mechanisch aan te controleren valt — geen dubbele regels, een antwoord dat
+   mechanisch aan te controleren valt, geen dubbele regels, een antwoord dat
    tussen de opties staat, een afleider die niet toevallig ook goed is. */
 
 /** Woorden met ei of ij. De afleider ontstaat door het ene in het andere om te
@@ -74,7 +74,7 @@ const AUOU = ['blauw', 'goud', 'pauw', 'koud', 'nauw', 'vrouw', 'saus', 'hout',
   'flauw', 'zout', 'schouder', 'kabouter', 'lauw', 'auto', 'kous', 'woud'] as const
 
 /** Een d of een t aan het eind, met het meervoud erbij. Het meervoud staat in de
- *  vraag: dat ís de regel — verleng het woord en je hoort welke letter het is. */
+ *  vraag: dat ís de regel: verleng het woord en je hoort welke letter het is. */
 const DOFT: ReadonlyArray<readonly [string, string]> = [
   ['hond', 'honden'], ['kat', 'katten'], ['hand', 'handen'], ['gat', 'gaten'],
   ['bed', 'bedden'], ['pet', 'petten'], ['hoed', 'hoeden'], ['voet', 'voeten'],
@@ -107,7 +107,7 @@ const KLANK: ReadonlyArray<readonly [string, 'korte klank' | 'lange klank']> = [
   ['deur', 'lange klank'], ['zon', 'korte klank'], ['boot', 'lange klank'],
 ]
 
-/** ng of nk, altijd in een zin — los zijn het vaak twee bestaande woorden, en
+/** ng of nk, altijd in een zin, los zijn het vaak twee bestaande woorden, en
  *  dan is er geen goed antwoord. */
 const NGNK: ReadonlyArray<readonly [string, string, string]> = [
   ['Ik ben ... voor de grote hond.', 'bang', 'bank'],
@@ -230,7 +230,7 @@ const ALFABET = ['meeuw', 'meel', 'meisje', 'maan', 'modder', 'mist', 'markt', '
  * De woordlijsten, bij elkaar, voor de proef. Die controleert wat er mechanisch
  * aan te controleren valt: geen dubbele regels, een afleider die echt verschilt,
  * een antwoord dat tussen de opties staat. De betekenis zelf is met de hand
- * nagelopen — dat kan een proef niet voor je doen.
+ * nagelopen, dat kan een proef niet voor je doen.
  */
 export const LIJSTEN = {
   EIIJ, AUOU, DOFT, KLEIN, MEERVOUD, KLANK, NGNK, CHT, HAK, SAMEN,
@@ -509,7 +509,7 @@ export function extraSjablonen(R: Toeval): Sjabloon[] {
   {id:'xa_woordsoort',p:'amine',v:'taal',t:'Woordsoorten',lvl:2,gen:()=>{
     const r=pick(WOORDSOORT);
     const anders=shuffle(WOORDSOORTEN.filter((w)=>w!==r[2])).slice(0,2);
-    return {q:`"${r[0]}" — welke woordsoort is "${r[1]}" in deze zin?`,a:r[2],
+    return {q:`"${r[0]}": welke woordsoort is "${r[1]}" in deze zin?`,a:r[2],
       opties:shuffle([r[2],...anders]),
       h:['Vraag je af wat het woord doet: noemt het een ding, een handeling of een eigenschap?'],
       s:`"${r[1]}" is hier een ${r[2]}.`};
@@ -518,7 +518,7 @@ export function extraSjablonen(R: Toeval): Sjabloon[] {
     const r=pick(ONDERWERP);
     return {q:`Wat is het onderwerp in deze zin? "${r[0]}"`,a:r[1],opties:shuffle([r[1],r[2],r[3]]),
       h:[`Zoek eerst het werkwoord: "${r[3]}".`,`Vraag dan: wie of wat ${r[3]}?`],
-      s:`Het werkwoord is "${r[3]}".\nWie of wat ${r[3]}? — ${r[1]}. Dat is het onderwerp.`};
+      s:`Het werkwoord is "${r[3]}".\nWie of wat ${r[3]}? Dat is ${r[1]}.`};
   }},
   {id:'xa_engelsgetal',p:'amine',v:'engels',t:'Getallen',lvl:2,gen:()=>{
     const r=pick(ENGELS_GETAL);
@@ -535,7 +535,7 @@ export function extraSjablonen(R: Toeval): Sjabloon[] {
   {id:'xa_eeuw',p:'amine',v:'studievaardigheden',t:'Tijdlijn',lvl:2,gen:()=>{
     const j=ri(1101,2000), eeuw=Math.ceil(j/100);
     return {q:`In welke eeuw valt het jaar ${j}? Geef alleen het getal.`,a:String(eeuw),
-      h:['De jaren 1 tot en met 100 zijn de 1e eeuw.','Neem de eerste twee cijfers en tel er 1 bij op — behalve bij een rond honderdtal.'],
+      h:['De jaren 1 tot en met 100 zijn de 1e eeuw.','Neem de eerste twee cijfers en tel er 1 bij op, behalve bij een rond honderdtal.'],
       s:`${j} valt tussen ${(eeuw-1)*100+1} en ${eeuw*100}.\nDat is de ${eeuw}e eeuw.`};
   }},
   /* ==================================================== Wassima · 2 havo === */
@@ -626,19 +626,19 @@ export function extraSjablonen(R: Toeval): Sjabloon[] {
     const r=pick(DUITS_LIDWOORD);
     return {q:`Welk lidwoord hoort bij "${r[0]}" (${r[2]})?`,a:r[1],opties:['der','die','das'],
       h:['Het lidwoord leer je bij het woord, niet uit een regel.'],
-      s:`Het is ${r[1]} ${r[0]} — Nederlands: de/het ${r[2]}.`};
+      s:`Het is ${r[1]} ${r[0]}, Nederlands: de/het ${r[2]}.`};
   }},
   {id:'xw_franslidwoord',p:'wassima',v:'frans',t:'Lidwoorden (le/la)',lvl:2,gen:()=>{
     const r=pick(FRANS_LIDWOORD);
     return {q:`Welk lidwoord hoort bij "${r[0]}" (${r[2]})?`,a:r[1],opties:['le','la'],
       h:['Le is mannelijk, la is vrouwelijk.'],
-      s:`Het is ${r[1]} ${r[0]} — Nederlands: de/het ${r[2]}.`};
+      s:`Het is ${r[1]} ${r[0]}, Nederlands: de/het ${r[2]}.`};
   }},
   {id:'xw_zinsdeel',p:'wassima',v:'nederlands',t:'Zinsdelen',lvl:2,gen:()=>{
     const r=pick(ONDERWERP);
     return {q:`Wat is het onderwerp in deze zin? "${r[0]}"`,a:r[1],opties:shuffle([r[1],r[2],r[3]]),
       h:[`Zoek eerst de persoonsvorm: "${r[3]}".`,`Vraag dan: wie of wat ${r[3]}?`],
-      s:`De persoonsvorm is "${r[3]}".\nWie of wat ${r[3]}? — ${r[1]}.`};
+      s:`De persoonsvorm is "${r[3]}".\nWie of wat ${r[3]}? Dat is ${r[1]}.`};
   }},
   /* ===================================================== Amaani · 5 vwo === */
   {id:'xm_groeifactor',p:'amaani',v:'wiskundeA',t:'Procenten & groeifactor',lvl:1,gen:()=>{

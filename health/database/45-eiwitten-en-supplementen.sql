@@ -1,5 +1,5 @@
 -- =============================================================================
--- EIWITTEN EN SUPPLEMENTEN — vier merken die je hier werkelijk koopt
+-- EIWITTEN EN SUPPLEMENTEN: vier merken die je hier werkelijk koopt
 --
 -- Nog niet toegepast.
 --
@@ -7,7 +7,7 @@
 --
 -- De voedingslijst kende wel de supermarkt en niet de sportvoeding. Wie een
 -- shake drinkt kon hem nergens terugvinden, en wat je niet kunt invoeren telt
--- niet mee — niet in de dag, niet in het eiwit, niet in "wat ontbreekt". Voor
+-- niet mee, niet in de dag, niet in het eiwit, niet in "wat ontbreekt". Voor
 -- iemand die aan een gewichtstraject bezig is is dat nu juist de post die er
 -- het meest toe doet.
 --
@@ -16,8 +16,8 @@
 -- 359 bruikbaar. De 45 die afvielen staan geteld in de kop van het blok
 -- hieronder, met de reden erbij.
 --
--- Het zijn niet alleen shakes. Upfront voert een heel assortiment — olijfolie,
--- roomboter, mayonaise, zonnebloempitten — en dat gaat mee. Een lijst die
+-- Het zijn niet alleen shakes. Upfront voert een heel assortiment, olijfolie,
+-- roomboter, mayonaise, zonnebloempitten, en dat gaat mee. Een lijst die
 -- alleen de eiwitpoeders van een merk kent laat iemand die de rest ook koopt
 -- halverwege staan.
 --
@@ -31,7 +31,7 @@
 -- WAT IK ZELF HET SCHERPST IN DE GATEN HOU
 --
 -- Upfront is het merk dat de eigenaar van deze app zelf verkoopt. Dat is geen
--- reden om het eruit te laten — het bestaat en mensen drinken het — maar wel om
+-- reden om het eruit te laten (het bestaat en mensen drinken het) maar wel om
 -- het op precies dezelfde voet binnen te laten als de andere drie. Geen eigen
 -- sortering, geen badge, geen uitzondering in de zeef. Die belofte is niet aan
 -- mijn woord overgelaten: `src/health/belangenverstrengeling.proef.ts` toetst

@@ -3,7 +3,7 @@
  *
  * De stukken die op vier of vijf schermen terugkomen. Geen enkele hiervan zet
  * HTML uit gegevens rechtstreeks in de pagina: alle opgavetekst gaat als gewone
- * tekst door React heen. Dat is niet alleen veiliger maar ook eerlijker — de
+ * tekst door React heen. Dat is niet alleen veiliger maar ook eerlijker, de
  * ouder mag zelf opgaven toevoegen, en die zijn geen code.
  */
 import type { CSSProperties, ReactNode } from 'react'

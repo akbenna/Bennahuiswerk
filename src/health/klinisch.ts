@@ -98,7 +98,7 @@ export function fib4(
  * geslachtsspecifieke nekomtrek van 43 en 41 cm.
  */
 export const STOPBANG = [
-  ['snurken', 'Luid snurken — hoorbaar door een gesloten deur'],
+  ['snurken', 'Luid snurken, hoorbaar door een gesloten deur'],
   ['moe', 'Overdag vaak moe of slaperig'],
   ['apneu', 'Waargenomen ademstops, stikken of naar adem happen'],
   ['bloeddruk', 'Hoge bloeddruk, of daarvoor behandeld'],
@@ -124,7 +124,7 @@ export type Onderhoudzone = 'groen' | 'geel' | 'rood'
 
 /**
  * Onderhoud: het stoplicht uit STOP Regain (Wing 2006). Triggert op het
- * voortschrijdend gemiddelde, niet op de dagmeting — anders vuurt rood op
+ * voortschrijdend gemiddelde, niet op de dagmeting, anders vuurt rood op
  * dagelijkse schommelingen van een tot twee kilo.
  */
 export function onderhoudZone(
@@ -143,7 +143,7 @@ export function onderhoudZone(
    ========================================================================== */
 
 /**
- * De nieuwste van een reeks — en wat er gebeurt bij gelijke datums.
+ * De nieuwste van een reeks, en wat er gebeurt bij gelijke datums.
  *
  * De vergelijking hier was `x.datum < y.datum ? 1 : -1`. Voor twee gelijke
  * datums geeft dat -1 in beide richtingen: a hoort vóór b én b hoort vóór a.
@@ -191,7 +191,7 @@ export interface Rustpols<M> { nu: M; basis: number | null; n: number }
  * De rustpols: de laatste meting, en hoe hij zich verhoudt tot de maand ervoor.
  *
  * Bij deze meting is de verandering het signaal en niet de waarde. Een pols van
- * 58 zegt op zichzelf weinig — bij de een is dat hoog, bij de ander laag. Vier
+ * 58 zegt op zichzelf weinig, bij de een is dat hoog, bij de ander laag. Vier
  * slagen omhoog ten opzichte van je eigen gemiddelde zegt wel iets.
  *
  * De vergelijking gebruikt de dagen ervóór en niet de hele reeks: anders trekt

@@ -1,5 +1,5 @@
 /**
- * HET EXAMEN — de stappen op volgorde zetten
+ * HET EXAMEN: de stappen op volgorde zetten
  *
  * Eén fout mag. Dat is geen mildheid maar een keuze: wie de volgorde kent maar
  * één keer misklikt heeft het geleerd, en een examen dat op één tik afketst

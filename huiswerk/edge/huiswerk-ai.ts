@@ -1,5 +1,5 @@
 /**
- * DE VRAAGBAAK — van de vraag van een kind naar de stof in de app
+ * DE VRAAGBAAK: van de vraag van een kind naar de stof in de app
  *
  * Dit is een verslag van wat er in de edge function `huiswerk-ai` draait, zoals
  * `health/edge/kal-prikkel.ts` dat is voor BennaHealth. Wijzigt er iets, dan
@@ -16,7 +16,7 @@
  * WAT ER OVER DE CONTROLE STOND, EN WAAROM DAT NIET KLOPTE
  *
  * Hier stond dat de weg was nagekeken en dat een vraag over breuken optellen
- * `routes: ["wis-breuken"]` opleverde — "een sleutel uit de meegestuurde
+ * `routes: ["wis-breuken"]` opleverde: "een sleutel uit de meegestuurde
  * catalogus". Dat kan niet: `sleutelVan` in `src/huiswerk/vraagbaak.ts` maakt
  * `vak|onderwerp|jaar`, dus `rekenen|Breuken|nu`, en die functie is sinds de
  * eerste commit niet gewijzigd. De app heeft `wis-breuken` nooit verstuurd.
@@ -45,7 +45,7 @@
  * Het model kiest, het verzint niet. Het krijgt de complete lijst onderwerpen
  * van dít kind mee, elk met een sleutel, en mag alleen sleutels uit die lijst
  * teruggeven. De app controleert daarna nog eens of elke sleutel echt bestaat en
- * gooit weg wat er niet in staat — dezelfde afspraak als bij BennaHealth, waar
+ * gooit weg wat er niet in staat, dezelfde afspraak als bij BennaHealth, waar
  * het model de NEVO-regel kiest en de server met de tabelwaarde rekent.
  *
  * Dat is ook de reden dat hier geen `strict`-gereedschap of afgedwongen
@@ -104,7 +104,7 @@ Regels:
 
 Het veld "antwoord" is voor het kind zelf:
 - Twee of drie korte zinnen, in gewone taal, tutoyeren.
-- Geef één concreet houvast bij de vraag — een ezelsbruggetje, de eerste stap, waar de fout meestal zit. Niet het hele antwoord voorkauwen; het kind gaat het zelf oefenen.
+- Geef één concreet houvast bij de vraag, een ezelsbruggetje, de eerste stap, waar de fout meestal zit. Niet het hele antwoord voorkauwen; het kind gaat het zelf oefenen.
 - Geen opsommingstekens, geen kopjes, geen emoji.
 - Wijs je niets aan, zeg dan eerlijk dat dit nog niet in de app staat en wat het kind intussen kan doen.
 

@@ -1,5 +1,5 @@
 /**
- * GELOOFSSTUDIE — achtentwintig weken Malikitische fiqh
+ * GELOOFSSTUDIE: achtentwintig weken Malikitische fiqh
  *
  * Een leerprogramma voor een volwassene met een beroep: vijftig minuten op een
  * vaste avond, en vijf tot tien minuten kaarten op de andere dagen. Het ritme

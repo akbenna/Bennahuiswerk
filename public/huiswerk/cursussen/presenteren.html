@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Podium · Presenteren & Spreken</title>
 <meta name="theme-color" content="#f97316">
-<meta name="description" content="Podium — training in presenteren, pitchen en spreken voor publiek. 20 lessen, kenniskaarten en een presentatie-simulator.">
+<meta name="description" content="Podium, training in presenteren, pitchen en spreken voor publiek. 20 lessen, kenniskaarten en een presentatie-simulator.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmI5MjNjIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZTExZDQ4Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiByeD0iMTUiIGZpbGw9InVybCgjZykiLz48cmVjdCB4PSIyNiIgeT0iMTMiIHdpZHRoPSIxMiIgaGVpZ2h0PSIyNCIgcng9IjYiIGZpbGw9IiNmZmYiLz48cGF0aCBkPSJNMjAgMzFhMTIgMTIgMCAwIDAgMjQgMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxsaW5lIHgxPSIzMiIgeTE9IjQzIiB4Mj0iMzIiIHkyPSI1MCIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxsaW5lIHgxPSIyNSIgeTE9IjUwIiB4Mj0iMzkiIHkyPSI1MCIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==">
 <style>
   :root{
@@ -112,7 +112,7 @@
 <script>
 "use strict";
 /* ============================================================
-   PODIUM — training in presenteren, pitchen & spreken voor publiek
+   PODIUM, training in presenteren, pitchen & spreken voor publiek
    Zelfstandige, offline werkende app (geen externe afhankelijkheden).
    Voortgang in localStorage. Onderdeel van de Bennaghmouch Academie.
    ============================================================ */
@@ -139,7 +139,7 @@ const MOD=Object.fromEntries(MODULES.map(m=>[m.id,m]));
 
 /* ---------------- LESSEN ---------------- */
 const LESSONS=[
-  {m:'fundament', t:"Spreekangst overwinnen", d:"Zenuwen zijn geen fout — het is energie. Leer ze omzetten in aanwezigheid.",
+  {m:'fundament', t:"Spreekangst overwinnen", d:"Zenuwen zijn geen fout, het is energie. Leer ze omzetten in aanwezigheid.",
    min:11, principe:"Goede sprekers zijn niet zenuwloos; ze zetten de spanning om in aanwezigheid. Zenuwen zijn brandstof, geen bewijs dat er iets mis is.",
    waarom:"De lichamelijke reactie bij zenuwen (hartslag, adrenaline) is bijna identiek aan die bij opwinding. Wie tegen zichzelf zegt 'ik ben er klaar voor' i.p.v. 'ik moet kalmeren', presteert aantoonbaar beter.",
    tech:[
@@ -154,7 +154,7 @@ const LESSONS=[
 
   {m:'fundament', t:"Ademhaling & je lijf kalmeren", d:"Je adem is de afstandsbediening van je zenuwen.",
    min:9, principe:"Rustig en laag ademen vertelt je lichaam: er is geen gevaar. Je adem stuurt je zenuwstelsel direct.",
-   waarom:"Een lange uitademing activeert je parasympathische zenuwstelsel — het 'rust'-systeem. Daardoor daalt je hartslag en klinkt je stem voller en rustiger.",
+   waarom:"Een lange uitademing activeert je parasympathische zenuwstelsel, het 'rust'-systeem. Daardoor daalt je hartslag en klinkt je stem voller en rustiger.",
    tech:[
      ["De 4-6 ademhaling","Adem vier tellen in, zes tellen uit. De lange uitademing kalmeert direct. Doe dit vlak voor je begint."],
      ["Adem laag (buik)","Laat je buik uitzetten, niet je borst. Buikademhaling geeft een stabiele, volle stem."],
@@ -174,12 +174,12 @@ const LESSONS=[
      ["Pauzeer vóór je begint","Loop rustig naar je plek, kijk het publiek aan, adem, en begin pas dan. Die stilte straalt controle uit."]
    ],
    lines:[],
-   fout:"Meteen beginnen te praten terwijl je nog loopt of je spullen sorteert. Neem eerst je plek en de stilte — dan begin je.",
+   fout:"Meteen beginnen te praten terwijl je nog loopt of je spullen sorteert. Neem eerst je plek en de stilte, dan begin je.",
    oef:"Oefen vandaag je 'opkomst': loop naar je plek, plant je voeten, kijk rond, adem, en begin pas dan met je openingszin.",
    check:{v:"Wat doe je het best vlak vóór je eerste woord?", o:["Meteen praten terwijl je loopt","Je plek innemen, kijken, ademen, dan beginnen","Naar je slides kijken"], a:1, u:"Een korte pauze waarin je je plek inneemt straalt rust en controle uit."}},
 
-  {m:'structuur', t:"Je kernboodschap — de één-zin", d:"Als het publiek maar één zin onthoudt, welke moet dat zijn?",
-   min:11, principe:"Bepaal die ene zin eerst — al het andere ondersteunt hem. Zonder kernboodschap voelt je verhaal als een lijst zonder richting.",
+  {m:'structuur', t:"Je kernboodschap (de één-zin", d:"Als het publiek maar één zin onthoudt, welke moet dat zijn?",
+   min:11, principe:"Bepaal die ene zin eerst) al het andere ondersteunt hem. Zonder kernboodschap voelt je verhaal als een lijst zonder richting.",
    waarom:"Mensen onthouden geen tien punten, maar één heldere boodschap. Een presentatie zonder kernboodschap voelt voor het publiek als dwalen zonder bestemming.",
    tech:[
      ["De 'één-ding'-test","Vat je hele verhaal samen in één zin van maximaal 12 woorden. Lukt dat niet, dan is je boodschap nog niet scherp."],
@@ -189,7 +189,7 @@ const LESSONS=[
    lines:["Als je vandaag één ding meeneemt, laat het dit zijn: …","De kern van mijn verhaal is simpel: …"],
    fout:"Te veel willen vertellen. Vijf goede punten worden onthouden als nul; één scherpe boodschap blijft hangen.",
    oef:"Schrijf de kernboodschap van je volgende presentatie in één zin van max 12 woorden. Test 'm op iemand: snappen ze 'm meteen?",
-   check:{v:"Hoeveel kernboodschappen heeft een sterke presentatie?", o:["Zoveel mogelijk","Precies één, herhaald","Minstens vijf"], a:1, u:"Eén heldere kernboodschap, herhaald, blijft hangen — een lijst punten niet."}},
+   check:{v:"Hoeveel kernboodschappen heeft een sterke presentatie?", o:["Zoveel mogelijk","Precies één, herhaald","Minstens vijf"], a:1, u:"Eén heldere kernboodschap, herhaald, blijft hangen, een lijst punten niet."}},
 
   {m:'structuur', t:"Een krachtige opening", d:"De eerste 30 seconden bepalen of het publiek luistert of afhaakt.",
    min:11, principe:"Open met een haak, niet met een agenda. Je eerste zin koopt de aandacht voor de rest.",
@@ -225,10 +225,10 @@ const LESSONS=[
      ["Herhaal de kernboodschap","Sluit af met die ene zin die je wilt dat ze onthouden."],
      ["Geef een call-to-action","Vertel concreet wat je van hen wilt: 'Begin deze week met…'. Een presentatie zonder actie verdampt."]
    ],
-   lines:["We begonnen met [vraag] — het antwoord is: …","Als je één ding doet na vandaag, doe dan dit: …","Dank jullie wel."],
+   lines:["We begonnen met [vraag], het antwoord is: …","Als je één ding doet na vandaag, doe dan dit: …","Dank jullie wel."],
    fout:"Wegsterven met 'eh, ja, dat was het eigenlijk' of doorpraten na je sterke slot. Stop op je hoogtepunt.",
    oef:"Schrijf de laatste twee zinnen van je volgende presentatie uit: de herhaalde kernboodschap + één concrete call-to-action.",
-   check:{v:"Hoe sluit je het best af?", o:["Met 'ja, dat was het'","Met de kernboodschap + een concrete call-to-action","Door nog wat extra punten toe te voegen"], a:1, u:"Herhaal je kern en geef een concrete actie — het einde weegt zwaar (peak-end)."}},
+   check:{v:"Hoe sluit je het best af?", o:["Met 'ja, dat was het'","Met de kernboodschap + een concrete call-to-action","Door nog wat extra punten toe te voegen"], a:1, u:"Herhaal je kern en geef een concrete actie, het einde weegt zwaar (peak-end)."}},
 
   {m:'uitvoering', t:"Je stem inzetten", d:"Je stem is je belangrijkste instrument. Variatie houdt de aandacht vast.",
    min:11, principe:"Variatie in tempo, volume en toon houdt de aandacht vast; monotoon praten verliest het publiek, hoe goed je inhoud ook is.",
@@ -243,7 +243,7 @@ const LESSONS=[
    oef:"Neem 60 sec van je presentatie op. Luister: waar is het monotoon? Doe het opnieuw met bewuste variatie in tempo en volume.",
    check:{v:"Wat houdt de aandacht het best vast?", o:["Een constant, rustig tempo","Variatie in tempo, volume en toon","Zo snel mogelijk praten"], a:1, u:"Variatie signaleert wat belangrijk is en houdt het brein alert."}},
 
-  {m:'uitvoering', t:"Pauzes & stiltes", d:"Een stilte is geen leegte — het is een uitroepteken.",
+  {m:'uitvoering', t:"Pauzes & stiltes", d:"Een stilte is geen leegte, het is een uitroepteken.",
    min:9, principe:"Durf te pauzeren; het geeft je woorden gewicht en jezelf rust. Sprekers overschatten hoe lang een stilte voelt.",
    waarom:"Een pauze geeft het publiek tijd om een punt te verwerken en trekt de aandacht juist naar wat je net zei. Wat voor jou lang voelt, is voor de zaal precies goed.",
    tech:[
@@ -283,7 +283,7 @@ const LESSONS=[
    check:{v:"Hoe geef je het best oogcontact aan een zaal?", o:["Boven de hoofden kijken","Eén persoon per zin, verdeeld over de zaal","Naar je slides kijken"], a:1, u:"Eén persoon per zin maakt van je monoloog persoonlijke mini-gesprekjes."}},
 
   {m:'beeld', t:"Slides die werken", d:"Slides ondersteunen jou, ze vervangen je niet.",
-   min:11, principe:"Minder tekst, meer beeld — jij bent de presentatie, niet de dia's.",
+   min:11, principe:"Minder tekst, meer beeld, jij bent de presentatie, niet de dia's.",
    waarom:"Mensen kunnen niet tegelijk lezen én luisteren. Volle tekstslides laten het publiek lezen in plaats van naar jou luisteren.",
    tech:[
      ["Eén idee per slide","Elke dia maakt één punt. Geen muren van tekst of bullets vol zinnen."],
@@ -322,27 +322,27 @@ const LESSONS=[
    check:{v:"Hoe maak je een cijfer overtuigend?", o:["Zoveel mogelijk cijfers tonen","Het vertalen naar een tastbare vergelijking","In een grote tabel zetten"], a:1, u:"Een vergelijking of beeld maakt een abstract getal invoelbaar."}},
 
   {m:'publiek', t:"Je publiek lezen & betrekken", d:"Een presentatie is geen eenrichtingsverkeer.",
-   min:11, principe:"Lees de zaal en betrek ze — dan blijven ze wakker en aan jouw kant.",
+   min:11, principe:"Lees de zaal en betrek ze, dan blijven ze wakker en aan jouw kant.",
    waarom:"Actieve betrokkenheid (een vraag, een handopsteker) houdt de aandacht veel langer vast dan passief luisteren, en je ziet meteen of je boodschap landt.",
    tech:[
      ["Stel een vraag","'Wie herkent dit?' of een handopsteker haalt het publiek erbij en geeft jou informatie."],
      ["Lees de signalen","Fronsende blikken? Vat samen of vertraag. Knikken? Ga door. Pas je aan wat je ziet."],
      ["Spreek 'jij' aan","Praat tegen 'jij' i.p.v. 'men'. Directe aanspreking maakt het persoonlijk."]
    ],
-   lines:["Wie van jullie heeft dit weleens meegemaakt?","Steek je hand op als…","Even checken — volgen jullie me nog?"],
+   lines:["Wie van jullie heeft dit weleens meegemaakt?","Steek je hand op als…","Even checken, volgen jullie me nog?"],
    fout:"Strak je verhaal afdraaien zonder de zaal aan te kijken of te betrekken. Je mist de signalen en verliest ze.",
    oef:"Bouw in je volgende presentatie één interactiemoment in: een vraag of handopsteker in de eerste 5 minuten.",
    check:{v:"Hoe houd je de aandacht van een zaal het langst vast?", o:["Passief laten luisteren","Ze betrekken met vragen en interactie","Sneller praten"], a:1, u:"Actieve betrokkenheid houdt de aandacht veel langer vast dan passief luisteren."}},
 
-  {m:'publiek', t:"Vragen beantwoorden — ook lastige", d:"De vragenronde is een kans, geen bedreiging.",
+  {m:'publiek', t:"Vragen beantwoorden, ook lastige", d:"De vragenronde is een kans, geen bedreiging.",
    min:12, principe:"Rust, luister volledig, en het is oké om iets niet te weten. Hoe je met vragen omgaat, bepaalt of je overkomt als expert.",
    waarom:"Hoe je met vragen omgaat, bepaalt of je overkomt als iemand die stevig staat. Verdedigend of ontwijkend reageren ondermijnt juist je geloofwaardigheid.",
    tech:[
-     ["Luister de vraag helemaal af","Val niet in de rede. Herhaal de vraag kort ('Je vraagt of…') — zo wint iedereen tijd en helderheid."],
-     ["Eerlijk als je iets niet weet","'Goede vraag, dat weet ik niet uit mijn hoofd — ik zoek het voor je op.' Dat is sterker dan bluffen."],
+     ["Luister de vraag helemaal af","Val niet in de rede. Herhaal de vraag kort ('Je vraagt of…') (zo wint iedereen tijd en helderheid."],
+     ["Eerlijk als je iets niet weet","'Goede vraag, dat weet ik niet uit mijn hoofd) ik zoek het voor je op.' Dat is sterker dan bluffen."],
      ["Blijf rustig bij kritiek","Erken eerst ('Terecht punt'), dan je antwoord. Word niet defensief; dat leest als zwakte."]
    ],
-   lines:["Goede vraag — als ik het goed begrijp, vraag je…?","Dat weet ik niet zeker; ik kom er bij je op terug.","Terecht punt. Zo kijk ik ernaar: …"],
+   lines:["Goede vraag, als ik het goed begrijp, vraag je…?","Dat weet ik niet zeker; ik kom er bij je op terug.","Terecht punt. Zo kijk ik ernaar: …"],
    fout:"Defensief of geïrriteerd reageren op een kritische vraag, of bluffen als je het antwoord niet weet. Beide kosten je geloofwaardigheid.",
    oef:"Bedenk vóór je volgende presentatie de drie lastigste vragen die kunnen komen, en formuleer een rustig antwoord.",
    check:{v:"Wat doe je als je een antwoord niet weet?", o:["Iets verzinnen dat plausibel klinkt","Eerlijk zeggen dat je erop terugkomt","De vraag negeren"], a:1, u:"Eerlijk 'ik kom erop terug' is sterker en geloofwaardiger dan bluffen."}},
@@ -355,7 +355,7 @@ const LESSONS=[
      ["Vat samen om terug te komen","'Waar het op neerkomt is…' brengt je terug op de rode draad en overbrugt het gat."],
      ["Wees luchtig over een misser","Bij een zichtbare fout: een korte glimlach ('daar ging ik even') ontwapent. Niet uitgebreid excuseren."]
    ],
-   lines:["Even kijken waar ik was…","Waar het op neerkomt, is dit: …","Daar ging ik even — waar waren we?"],
+   lines:["Even kijken waar ik was…","Waar het op neerkomt, is dit: …","Daar ging ik even: waar waren we?"],
    fout:"In paniek raken, je excuses blijven aanbieden of hardop zeggen hoe zenuwachtig je bent. Dat vergroot juist de hapering.",
    oef:"Spreek met jezelf een 'reddingszin' af ('Waar het op neerkomt is…') die je gebruikt zodra je de draad kwijt bent.",
    check:{v:"Wat doe je het best bij een black-out?", o:["Je excuses blijven aanbieden","Pauzeren, ademen en samenvatten om terug te komen","Stoppen"], a:1, u:"Een rustige pauze + samenvatting oogt als controle; het publiek merkt het nauwelijks."}},
@@ -368,7 +368,7 @@ const LESSONS=[
      ["Houd het onder 30 seconden","Schrap alles wat niet essentieel is. Eindig met een haakje, niet met alle details."],
      ["Sluit met een vraag of vervolg","'Zal ik je laten zien hoe?' Een pitch nodigt uit tot een volgende stap."]
    ],
-   lines:["Weet je wat veel [wie] tegenhoudt? …","Wij zorgen dat [resultaat] — zal ik het je laten zien?","In één zin: wij helpen [wie] om [waarde]."],
+   lines:["Weet je wat veel [wie] tegenhoudt? …","Wij zorgen dat [resultaat]: zal ik het je laten zien?","In één zin: wij helpen [wie] om [waarde]."],
    fout:"Alles in één keer willen vertellen. Een pitch verkoopt het gesprek, niet het hele verhaal.",
    oef:"Schrijf je pitch in de vorm probleem-oplossing-resultaat en breng 'm terug tot onder 30 seconden. Oefen hardop.",
    check:{v:"Wat is het doel van een elevator pitch?", o:["Alles vertellen wat je weet","Nieuwsgierig maken en het gesprek openen","Zoveel mogelijk details geven"], a:1, u:"Een pitch verkoopt het volgende gesprek, niet het hele verhaal."}},
@@ -388,13 +388,13 @@ const LESSONS=[
 
   {m:'bijzonder', t:"Improviseren & spontaan spreken", d:"Niet elk spreekmoment is voorbereid.",
    min:11, principe:"Met een simpel raamwerk klink je ook onvoorbereid gestructureerd en zeker.",
-   waarom:"Zonder structuur dwaalt een spontane bijdrage af. Een klein mentaal sjabloon geeft je meteen een begin, midden en eind — ook zonder voorbereiding.",
+   waarom:"Zonder structuur dwaalt een spontane bijdrage af. Een klein mentaal sjabloon geeft je meteen een begin, midden en eind, ook zonder voorbereiding.",
    tech:[
      ["De PREP-formule","Point (stelling) → Reason (waarom) → Example (voorbeeld) → Point (herhaal). In seconden een compleet antwoord."],
      ["Koop tijd met een herhaling","Herhaal of herformuleer de vraag terwijl je je antwoord ordent. 'Wat je eigenlijk vraagt, is…'."],
      ["Houd het kort","Eén helder punt met een voorbeeld is sterker dan lang doorpraten. Stop als je punt gemaakt is."]
    ],
-   lines:["Mijn punt is dit… — en dat komt doordat… — bijvoorbeeld… — dus…","Als ik één ding mag zeggen, is het dit: …"],
+   lines:["Mijn punt is dit…, en dat komt doordat…, bijvoorbeeld…, dus…","Als ik één ding mag zeggen, is het dit: …"],
    fout:"Meteen beginnen te praten zonder richting en maar blijven doorpraten in de hoop dat er een punt uitkomt.",
    oef:"Oefen vandaag de PREP-formule: pak een willekeurig onderwerp en geef in 30 sec een Point-Reason-Example-Point-antwoord.",
    check:{v:"Waar staat PREP voor bij improviseren?", o:["Plan, Rust, Energie, Pauze","Point, Reason, Example, Point","Praten, Rustig, Even, Punt"], a:1, u:"Point → Reason → Example → Point geeft je spontaan een complete structuur."}}
@@ -421,7 +421,7 @@ const TECHVDDAG=[
   ["Herlabel je zenuwen","Zeg 'ik ben opgewonden' i.p.v. 'ik ben bang'. Dezelfde energie, betere richting."],
   ["4-6 ademhaling","Adem 4 tellen in, 6 uit. De lange uitademing kalmeert direct."],
   ["De één-zin","Als ze maar één zin onthouden, welke? Bouw je verhaal daaromheen."],
-  ["Open met een haak","Begin met een vraag, cijfer of verhaal — nooit met een agenda."],
+  ["Open met een haak","Begin met een vraag, cijfer of verhaal, nooit met een agenda."],
   ["Regel van drie","Deel je verhaal in drie punten. Rijk genoeg, toch te onthouden."],
   ["Pauzeer","Een stilte na een kernzin is een uitroepteken. Durf te zwijgen."],
   ["Eén idee per slide","Minder tekst, meer beeld. Jij bent de presentatie, niet de dia."],
@@ -432,30 +432,30 @@ const TECHVDDAG=[
 const MATERIAAL={
   "Openingen":["Stel je voor dat…","Wat als ik je vertel dat…?","[X] jaar geleden maakte ik een fout die alles veranderde…","Eén cijfer om mee te beginnen: …","Wie van jullie heeft weleens…?"],
   "Overgangen":["Dat brengt me bij mijn tweede punt…","Even samenvattend: …","Nu we [X] gezien hebben, kijken we naar…","Maar er is meer…","Onthoud vooral dit…"],
-  "Publiek betrekken":["Wie herkent dit? Steek je hand op.","Even checken — volgen jullie me nog?","Draai je even naar je buurman en…","Wat zou jij doen in deze situatie?"],
-  "Lastige vragen":["Goede vraag — als ik je goed begrijp, vraag je…?","Dat weet ik niet uit mijn hoofd; ik kom erop terug.","Terecht punt. Zo kijk ik ernaar: …","Daar verschillen we van mening, en dat is prima — mijn redenering is…"],
-  "Herpakken":["Even kijken waar ik was…","Waar het op neerkomt, is dit: …","Daar ging ik even — waar waren we?"],
-  "Afsluitingen":["We begonnen met [vraag] — het antwoord is: …","Als je één ding meeneemt vandaag, dan dit: …","Mijn vraag aan jullie: begin deze week met…","Dank jullie wel."]
+  "Publiek betrekken":["Wie herkent dit? Steek je hand op.","Even checken (volgen jullie me nog?","Draai je even naar je buurman en…","Wat zou jij doen in deze situatie?"],
+  "Lastige vragen":["Goede vraag) als ik je goed begrijp, vraag je…?","Dat weet ik niet uit mijn hoofd; ik kom erop terug.","Terecht punt. Zo kijk ik ernaar: …","Daar verschillen we van mening, en dat is prima, mijn redenering is…"],
+  "Herpakken":["Even kijken waar ik was…","Waar het op neerkomt, is dit: …","Daar ging ik even (waar waren we?"],
+  "Afsluitingen":["We begonnen met [vraag]) het antwoord is: …","Als je één ding meeneemt vandaag, dan dit: …","Mijn vraag aan jullie: begin deze week met…","Dank jullie wel."]
 };
 const KAARTEN=[
   ["Wat werkt het best tegen spreekangst?","Je zenuwen herlabelen als energie/opwinding ('ik ben er klaar voor')."],
   ["Welk deel van de ademhaling kalmeert het meest?","Een lange uitademing (bijv. 4 tellen in, 6 uit)."],
-  ["Wat doe je vlak vóór je eerste woord?","Je plek innemen, het publiek aankijken, ademen — dán pas beginnen."],
+  ["Wat doe je vlak vóór je eerste woord?","Je plek innemen, het publiek aankijken, ademen, dán pas beginnen."],
   ["Hoeveel kernboodschappen heeft een sterke presentatie?","Eén, herhaald in opening, midden en slot."],
-  ["Waarmee open je het best?","Met een haak: een vraag, cijfer of kort verhaal — geen agenda of excuus."],
+  ["Waarmee open je het best?","Met een haak: een vraag, cijfer of kort verhaal, geen agenda of excuus."],
   ["Waarom werkt de regel van drie?","Drie punten passen in het werkgeheugen: rijk genoeg, toch te onthouden."],
   ["Hoe sluit je een presentatie af?","Herhaal de kernboodschap + geef een concrete call-to-action (peak-end)."],
-  ["Wat houdt de aandacht vast bij je stem?","Variatie in tempo, volume en toon — niet monotoon."],
+  ["Wat houdt de aandacht vast bij je stem?","Variatie in tempo, volume en toon, niet monotoon."],
   ["Wat doe je in plaats van 'uh' zeggen?","Even stil zijn; een pauze klinkt zelfverzekerder."],
-  ["Welke gebaren werken?","Open, bewuste gebaren die je punten illustreren — geen gefriemel."],
+  ["Welke gebaren werken?","Open, bewuste gebaren die je punten illustreren, geen gefriemel."],
   ["Hoe geef je oogcontact aan een zaal?","Eén persoon per zin, verdeeld over links, midden en rechts."],
   ["Wat maakt een slide sterk?","Eén idee, weinig tekst (~6 woorden), een sterk beeld."],
   ["Hoe maak je een abstract punt onthoudbaar?","Met een concreet verhaal of voorbeeld."],
   ["Hoe maak je een cijfer overtuigend?","Vertaal het naar een tastbare vergelijking of beeld."],
   ["Hoe houd je een zaal het langst wakker?","Door ze te betrekken met vragen en interactie."],
-  ["Wat doe je als je een antwoord niet weet?","Eerlijk zeggen dat je erop terugkomt — niet bluffen."],
+  ["Wat doe je als je een antwoord niet weet?","Eerlijk zeggen dat je erop terugkomt, niet bluffen."],
   ["Wat doe je bij een black-out?","Pauzeren, ademen en samenvatten ('waar het op neerkomt is…')."],
-  ["Wat is het doel van een elevator pitch?","Nieuwsgierig maken en het volgende gesprek openen — niet alles vertellen."],
+  ["Wat is het doel van een elevator pitch?","Nieuwsgierig maken en het volgende gesprek openen, niet alles vertellen."],
   ["Waar kijk je bij online presenteren?","In de cameralens, met ~20% meer energie."],
   ["Waar staat PREP voor?","Point → Reason → Example → Point (structuur voor improviseren)."],
   ["Wat straalt een zelfverzekerde houding uit?","Stevig geplante voeten, open schouders, de ruimte innemen."],
@@ -470,8 +470,8 @@ const SIM=[
   {s:"Iemand stelt een kritische, bijna vijandige vraag.", aanpak:"Erken, herhaal de vraag, antwoord rustig.", zin:"Terecht punt. Als ik je goed begrijp, vraag je…?"},
   {s:"Je slide met cijfers oogt als een muur van getallen.", aanpak:"Highlight één cijfer + een vergelijking.", zin:"Eén getal om te onthouden: dat is drie keer zoveel als vorig jaar."},
   {s:"De aandacht in de zaal zakt zichtbaar weg.", aanpak:"Betrek ze met een vraag of handopsteker.", zin:"Wie van jullie heeft dit weleens meegemaakt? Handen omhoog."},
-  {s:"Je hebt maar 30 seconden voor je idee bij een beslisser.", aanpak:"Probleem → oplossing → resultaat + haakje.", zin:"Veel teams verliezen uren aan [X]. Wij lossen dat op, zodat [resultaat] — zal ik het laten zien?"},
-  {s:"Je moet online presenteren via video.", aanpak:"Kijk in de lens, meer energie, techniek vooraf checken.", zin:"(kijk in de lens, glimlach) Fijn dat jullie er zijn — we duiken er meteen in."},
+  {s:"Je hebt maar 30 seconden voor je idee bij een beslisser.", aanpak:"Probleem → oplossing → resultaat + haakje.", zin:"Veel teams verliezen uren aan [X]. Wij lossen dat op, zodat [resultaat] (zal ik het laten zien?"},
+  {s:"Je moet online presenteren via video.", aanpak:"Kijk in de lens, meer energie, techniek vooraf checken.", zin:"(kijk in de lens, glimlach) Fijn dat jullie er zijn) we duiken er meteen in."},
   {s:"Je wordt onverwacht gevraagd 'even iets te zeggen'.", aanpak:"Gebruik de PREP-formule, kort en helder.", zin:"Mijn punt is [X], want [reden]. Bijvoorbeeld [voorbeeld]. Dus [punt]."},
   {s:"Je moet je presentatie krachtig afsluiten.", aanpak:"Cirkel terug + kernboodschap + call-to-action.", zin:"We begonnen met een vraag. Het antwoord is [kern]. Begin deze week met [actie]."}
 ];
@@ -526,16 +526,16 @@ function tabVandaag(){
   <div class="hero">
     <div class="eyebrow">Podium · Dagtraining</div>
     <h1>Elke dag zekerder op het podium</h1>
-    <p>Presenteren, pitchen & spreken voor publiek — één oefening per dag maakt het verschil.</p>
+    <p>Presenteren, pitchen & spreken voor publiek, één oefening per dag maakt het verschil.</p>
     <div class="stats"><span class="chip">🔥 ${s} dag${s===1?'':'en'} streak</span><span class="chip">✅ ${af}/${LESSONS.length} lessen</span><span class="chip">🗓️ ${store.oefdagen.length} oefendagen</span></div>
   </div>
 
   <div class="card">
     <span class="tag">Uitdaging van vandaag</span>
     <h2 style="margin-top:8px">${esc(uit)}</h2>
-    <p class="sub" style="margin-top:6px">Klein en concreet. Doe 'm vandaag en vink af — zo bouw je je streak.</p>
+    <p class="sub" style="margin-top:6px">Klein en concreet. Doe 'm vandaag en vink af: zo bouw je je streak.</p>
     ${gedaan
-      ? `<button class="btn ok block" style="margin-top:12px" disabled>✅ Vandaag gedaan — sterk!</button>`
+      ? `<button class="btn ok block" style="margin-top:12px" disabled>✅ Vandaag gedaan, sterk!</button>`
       : `<button class="btn ok block" data-act="oefdone" style="margin-top:12px">Ik heb 'm gedaan ✅</button>`}
   </div>
 
@@ -559,7 +559,7 @@ function tabVandaag(){
   </div>
 
   <div class="card center">
-    <p class="sub">${due>0?`🎯 ${due} kenniskaart${due===1?'':'en'} klaar om te herhalen.`:'✨ Alle kaarten voor nu herhaald — kom morgen terug.'}</p>
+    <p class="sub">${due>0?`🎯 ${due} kenniskaart${due===1?'':'en'} klaar om te herhalen.`:'✨ Alle kaarten voor nu herhaald, kom morgen terug.'}</p>
     <button class="btn block" data-tab="oefenen" style="margin-top:10px">🎯 Naar oefenen</button>
   </div>`;
 }
@@ -617,7 +617,7 @@ function lesDetail(i){
     <div class="oef"><b>🎯 Oefening van vandaag</b><p style="margin-top:4px">${esc(l.oef)}</p></div>
     ${quizHTML(i)}
     ${done
-      ? `<button class="btn ok block" data-act="undone" data-les="${i}" style="margin-top:16px">✅ Afgerond — tik om te herzien</button>`
+      ? `<button class="btn ok block" data-act="undone" data-les="${i}" style="margin-top:16px">✅ Afgerond, tik om te herzien</button>`
       : `<button class="btn block" data-act="done" data-les="${i}" style="margin-top:16px">Markeer als afgerond</button>`}
   </div>
   ${i<LESSONS.length-1?`<button class="btn ghost block" data-les="${i+1}" style="margin-top:12px">Volgende les › ${esc(LESSONS[i+1].t)}</button>`:`<div class="card center"><b>🎉 Laatste les!</b><p class="sub">Herhaal dagelijks in het tabblad Vandaag en oefen met de kenniskaarten.</p></div>`}`;
@@ -641,7 +641,7 @@ function oefKaarten(){
     return `<div class="card center">
       <p class="big">🧠</p>
       <b>Alles herhaald!</b>
-      <p class="sub" style="margin-top:6px">Je hebt alle kaarten voor nu gehad. Kaarten komen automatisch terug volgens spaced repetition — kom later terug.</p>
+      <p class="sub" style="margin-top:6px">Je hebt alle kaarten voor nu gehad. Kaarten komen automatisch terug volgens spaced repetition, kom later terug.</p>
       <div class="kv" style="margin-top:12px"><span>Beheerst</span><b>${beheerst} / ${KAARTEN.length}</b></div>
     </div>`;
   }
@@ -672,7 +672,7 @@ function oefSimulator(){
       <p class="quote" style="margin-top:12px;text-align:left"><b>Situatie:</b> ${esc(sc.s)}</p>
       <p class="sub" style="margin-top:10px;text-align:left"><b>Aanpak:</b> ${esc(sc.aanpak)}</p>
       ${view.simModel
-        ? `<div class="oef" style="text-align:left"><b>🎙️ Modelzin</b><p style="margin-top:4px">“${esc(sc.zin)}”</p><p class="sub" style="margin-top:6px">Dit is één manier — jouw eigen woorden werken vaak beter. Zeg 'm hardop.</p></div>`
+        ? `<div class="oef" style="text-align:left"><b>🎙️ Modelzin</b><p style="margin-top:4px">“${esc(sc.zin)}”</p><p class="sub" style="margin-top:6px">Dit is één manier, jouw eigen woorden werken vaak beter. Zeg 'm hardop.</p></div>`
         : `<button class="btn ghost block" data-act="simmodel" style="margin-top:12px">Toon een modelzin</button>`}
     `:`<p class="quote" style="margin-top:12px">Tik op de knop voor een willekeurige oefensituatie. Bedenk je opening, je aanpak en je eerste zin.</p>`}
     <button class="btn block" data-act="sim" style="margin-top:12px">🎲 ${sc?'Nieuwe situatie':'Geef me een oefensituatie'}</button>
@@ -731,7 +731,7 @@ function tabIk(){
   </div>`:''}
   <div class="card center">
     <p class="big">${store.oefdagen.length===0?'🎤':'⭐'}</p>
-    <p class="sub">${store.oefdagen.length===0?'Begin vandaag met de uitdaging van de dag — de eerste stap is de belangrijkste.':'Sterk bezig. Kom morgen terug voor je volgende oefening.'}</p>
+    <p class="sub">${store.oefdagen.length===0?'Begin vandaag met de uitdaging van de dag, de eerste stap is de belangrijkste.':'Sterk bezig. Kom morgen terug voor je volgende oefening.'}</p>
   </div>
   <a class="backhome" href="../index.html">‹ Terug naar de Bennaghmouch Academie</a>`;
 }
@@ -767,7 +767,7 @@ function quizAnswer(i,opt,btn){
     fb.style.display='block'; fb.className='quizfb goodfb'; fb.innerHTML='✅ Klopt! '+esc(l.check.u);
   } else {
     btn.classList.add('bad'); btn.disabled=true;
-    fb.style.display='block'; fb.className='quizfb badfb'; fb.textContent='Nog niet — probeer een andere.';
+    fb.style.display='block'; fb.className='quizfb badfb'; fb.textContent='Nog niet, probeer een andere.';
   }
 }
 function act(a,ds){
@@ -793,7 +793,7 @@ function act(a,ds){
 }
 /* Deze cursus stond achter een slot met een cijfercode. Dat slot is eraf: het
    is lesstof voor volwassenen en er staat niets in dat afgeschermd hoeft te
-   worden — geen gegevens van een kind, geen account, geen naam. Wat je hier
+   worden, geen gegevens van een kind, geen account, geen naam. Wat je hier
    doet blijft net als eerst in localStorage op dit toestel staan. */
 render();
 </script>

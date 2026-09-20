@@ -6,8 +6,8 @@
  * komen en niet in wat er daarna gebeurt, dus ze delen dit scherm.
  *
  * Wat hier niet meer staat is prompt('Hoeveel gram?'). Die vraag kan een mens
- * niet beantwoorden — een snee brood is vijfentwintig tot vijfenveertig gram en
- * dat weet niemand uit het hoofd — terwijl "hoeveel sneetjes" wél te
+ * niet beantwoorden (een snee brood is vijfentwintig tot vijfenveertig gram en
+ * dat weet niemand uit het hoofd) terwijl "hoeveel sneetjes" wél te
  * beantwoorden is. De vijfendertig huishoudmaten staan per productgroep in de
  * database en dekken alle zevenentwintig groepen; er is dus geen product zonder
  * maat. En elke maat brengt zijn eigen band mee: het getal dat je vroeger
@@ -125,7 +125,7 @@ export function bouwKeuzes(o: Onderwerp, metOptioneel: boolean, gram: string): K
  * DE PORTIES VAN EEN MERKPRODUCT
  *
  * Drie manieren om te zeggen hoeveel, en ze komen uit drie verschillende
- * bronnen — vandaar dat ze niet dezelfde band krijgen.
+ * bronnen, vandaar dat ze niet dezelfde band krijgen.
  *
  *   100 g            de maat waarin de voedingswaarde op het etiket staat
  *   één portie       wat de fabrikant een portie noemt
@@ -145,7 +145,7 @@ export function bouwKeuzes(o: Onderwerp, metOptioneel: boolean, gram: string): K
  * staan.
  *
  * De portie van de fabrikant krijgt daarbovenop niets extra's. "Eén portie" is
- * hún keuze en niet die van jou — wie een dubbele schep neemt kiest gewoon twee.
+ * hún keuze en niet die van jou, wie een dubbele schep neemt kiest gewoon twee.
  */
 export function keuzesVoorMerk(p: MerkTreffer): Keuze[] {
   const per = (waarde: number | null, gram: number) => ((Number(waarde) || 0) * gram) / 100
@@ -207,7 +207,7 @@ export function bouwOnzekerheid(
   } else if (o.soort === 'nevo') {
     uit.push(k.gewogen
       ? 'gewicht afgewogen; alleen de onzekerheid van de voedingsmiddelentabel resteert'
-      : `huishoudmaat, niet gewogen — ${dz(k.gram_laag)}–${dz(k.gram_hoog)} g per ${k.kaal}`)
+      : `huishoudmaat, niet gewogen: ${dz(k.gram_laag)}–${dz(k.gram_hoog)} g per ${k.kaal}`)
   } else if (o.soort === 'merk') {
     uit.push(`etiketwaarde van ${o.product.merk ?? 'de fabrikant'}, geen tabelwaarde`)
     uit.push('de wettelijke marge op een etiket is voor energie ongeveer tien procent')

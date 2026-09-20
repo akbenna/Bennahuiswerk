@@ -16,6 +16,7 @@
  */
 import fs from 'node:fs'
 import vm from 'node:vm'
+import { woordgelijk } from './woordgelijk.mjs'
 
 const html = fs.readFileSync('gereedschap/oud/rasikh-index.html', 'utf8')
 let js = html.match(/<script[^>]*>([\s\S]*?)<\/script>/)[1]

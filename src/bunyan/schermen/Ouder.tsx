@@ -1,7 +1,7 @@
 /**
- * HET OUDERSCHERM — voortgang, uitbetalen en instellingen
+ * HET OUDERSCHERM: voortgang, uitbetalen en instellingen
  *
- * Altijd op slot, ook zonder ingestelde code — dan geldt de standaardcode.
+ * Altijd op slot, ook zonder ingestelde code, dan geldt de standaardcode.
  * Anders zet degene voor wie de beloning bedoeld is zijn eigen tarief, en dat
  * is het enige scherm in de app waar dat werkelijk uitmaakt.
  *
@@ -113,7 +113,7 @@ function Binnen({ t }: { t: Toestand }): ReactNode {
       <div className="card">
         <h3>Uitbetalen</h3>
         <p className="klein" style={{ marginTop: 6 }}>
-          De app rekent alleen. Betaal je uit, druk dan hier — dan gaat het saldo naar nul en
+          De app rekent alleen. Betaal je uit, druk dan hier: dan gaat het saldo naar nul en
           blijft het totaal bewaard.
         </p>
         <p className="klein" style={{ marginTop: 8 }}>
@@ -191,7 +191,7 @@ function Binnen({ t }: { t: Toestand }): ReactNode {
           <h3>Centrale opslag</h3>
           <p className="klein" style={{ marginTop: 5 }}>
             Met een account staat de voortgang op elk toestel gelijk. Zonder internet werkt
-            alles door; bij de volgende verbinding wordt het samengevoegd — er gaat nooit iets
+            alles door; bij de volgende verbinding wordt het samengevoegd; er gaat nooit iets
             verloren.
           </p>
           <p className="klein" style={{ marginTop: 9 }}>

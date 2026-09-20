@@ -1,5 +1,5 @@
 /**
- * HERHALEN — zelf beoordelen.
+ * HERHALEN: zelf beoordelen.
  * Wees streng: een hapering nu is beter dan een gat over een maand.
  */
 import { useEffect, useState } from 'react'
@@ -47,7 +47,7 @@ export function Herhalen(
         <Kaart>
           <h3>Niets open</h3>
           <p className="klein" style={{ marginTop: 6 }}>
-            Je bent bij. Oefen desnoods de <b>verwarpunten</b> — dat mag altijd.
+            Je bent bij. Oefen desnoods de <b>verwarpunten</b>; dat mag altijd.
           </p>
         </Kaart>
       )}

@@ -8,7 +8,7 @@
  * Twee beslissingen zitten hier, en ze zijn allebei te toetsen zonder browser:
  * welke duur aannemelijk is, en hoe meerdere posts op één dag één getal worden.
  * De herkenning zelf draait in een edge function en is van hier niet te
- * bereiken — die staat er met opzet buiten.
+ * bereiken, die staat er met opzet buiten.
  */
 import { describe, expect, it } from 'vitest'
 import { ACTIVITEIT_MAX_MIN, aannemelijk, redenUit } from './ai'
@@ -49,7 +49,7 @@ describe('welke duur er een van een mens is', () => {
   })
 
   /* Nul minuten is geen work-out maar een post die is afgebroken, en een
-     negatieve duur bestaat niet — die zou uit een misgelezen regel komen. */
+     negatieve duur bestaat niet, die zou uit een misgelezen regel komen. */
   it('en nul of minder ook niet', () => {
     expect(aannemelijk(0)).toBe(false)
     expect(aannemelijk(-30)).toBe(false)
@@ -61,7 +61,7 @@ describe('waarom een vinkje uit staat', () => {
     expect(redenUit(post('2026-08-20', 45, 'fietsen'))).toBeNull()
   })
 
-  /* Krachttraining staat in de richtlijn apart — twee keer per week
+  /* Krachttraining staat in de richtlijn apart, twee keer per week
      spierversterkend, naast de aerobe minuten. Zou een sessie van een uur hier
      meetellen, dan stond de halve week er al op. En de lijst geeft geen sets of
      reps, dus er valt ook geen trainingsrij van te maken. */

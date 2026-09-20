@@ -6,7 +6,7 @@
  * antwoord en niet in de statuscode.** Een verkeerd wachtwoord levert
  * HTTP 200 op met `{"error":"Dat wachtwoord klopt niet."}` erin.
  *
- * Dat is geen slordigheid maar een keuze in de database — een foutmelding voor
+ * Dat is geen slordigheid maar een keuze in de database, een foutmelding voor
  * een kind hoort een zin te zijn, niet een 401. Maar het betekent wel dat de
  * gewone `roep()` zo'n antwoord voor geslaagd aanziet en een leeg object
  * doorgeeft. Vandaar deze laag: hij pakt het antwoord uit en gooit alsnog.

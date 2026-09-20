@@ -1,11 +1,11 @@
 -- =============================================================================
--- EIGEN MAALTIJDEN — een samengesteld gerecht één keer invoeren
+-- EIGEN MAALTIJDEN: een samengesteld gerecht één keer invoeren
 --
 -- Toegepast 24 augustus 2026.
 --
 -- Het probleem in één zin: een tonijnsalade is één gerecht en zeven producten.
 -- Wie hem logt zoekt zeven keer in NEVO, kiest zeven keer een portie, en doet
--- dat elke keer opnieuw — met elke keer een net iets ander antwoord. Dat is
+-- dat elke keer opnieuw: met elke keer een net iets ander antwoord. Dat is
 -- geen luiheid maar een meetfout: dezelfde salade hoort niet de ene dag 690 en
 -- de andere dag 810 kcal te zijn omdat je een andere tomaat aanklikte.
 --
@@ -31,7 +31,7 @@
 -- van het eerste. `kal_recepten` blijft precies zoals hij was. `kal_recept_regels`
 -- krijgt de vorm die hij nodig heeft: een momentopname van een gelogde regel,
 -- inclusief de band. Dat laatste is de reden dat de oude kolommen niet voldeden
--- — per 100 gram is geen band, en een getal zonder band is in deze app een fout.
+--: per 100 gram is geen band, en een getal zonder band is in deze app een fout.
 --
 -- Rijen gaan hierbij niet verloren; de tabel was leeg. Dat is nagekeken vóór
 -- het uitvoeren, niet aangenomen.
@@ -72,7 +72,7 @@ alter table public.kal_recept_regels
 alter table public.kal_recept_regels alter column kcal_punt drop default;
 
 comment on table public.kal_recept_regels is
-  'De onderdelen van een eigen maaltijd, als momentopname van gelogde regels — met band.';
+  'De onderdelen van een eigen maaltijd, als momentopname van gelogde regels, met band.';
 
 alter table public.kal_recept_regels enable row level security;
 alter table public.kal_recepten      enable row level security;

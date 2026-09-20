@@ -1,5 +1,5 @@
 /* Amiri staat als bestand in de repo en niet bij Google. De Warsh-druk gebruikt
-   tekens — de kleine hoge nul boven de hamzat wasl voorop — die de meeste
+   tekens (de kleine hoge nul boven de hamzat wasl voorop) die de meeste
    systeemletters niet kennen; die laten dan lege vakken achter midden in een
    woord. Zie fonts/LEESMIJ.md. */
 @font-face{font-family:'Amiri';font-style:normal;font-weight:400;font-display:swap;

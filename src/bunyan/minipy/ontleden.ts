@@ -1,5 +1,5 @@
 /**
- * ONTLEDEN — van woorden naar een boom
+ * ONTLEDEN: van woorden naar een boom
  *
  * De voorrang loopt van laag naar hoog precies zoals in Python zelf: of, en,
  * niet, vergelijken, optellen, vermenigvuldigen, machtsverheffen, unair,

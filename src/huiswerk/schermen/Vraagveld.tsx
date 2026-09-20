@@ -9,19 +9,19 @@
  *
  * Wat er terugkomt zijn twee dingen: een paar zinnen houvast, en knoppen die
  * rechtstreeks in de stof springen. Die knoppen zijn nagekeken door
- * `vraagbaak.ts` — er staat nooit een onderwerp op dat niet bestaat.
+ * `vraagbaak.ts`, er staat nooit een onderwerp op dat niet bestaat.
  *
  * ER KOMT ALTIJD IETS TERUG
  *
  * Dat nakijken kan alles wegvegen: wijst het model naar een onderwerp dat niet
  * bestaat, dan blijft er geen knop over. Zegt het er dan ook niet bij dat er
- * niets voor is, dan stond hier een alinea en verder niets — en een kind dat
+ * niets voor is, dan stond hier een alinea en verder niets, en een kind dat
  * vastzit las precies de uitleg die het niet zocht en kon geen kant op. Dat
  * overkwam Amine toen hij op "werkwoord vervoeging" zocht, terwijl er
  * drieënveertig opgaven werkwoordspelling klaarstonden.
  *
  * Daarom zijn er nu drie uitkomsten en niet twee: knoppen, of "dit staat er nog
- * niet in", of — als het allebei niet lukte — een eerlijke regel die naar de
+ * niet in", of (als het allebei niet lukte) een eerlijke regel die naar de
  * vakken hieronder wijst. Wat er precies misging hoort in het ouderscherm
  * thuis; een kind heeft aan "ik kon het niet vinden, kies zelf maar" genoeg.
  *

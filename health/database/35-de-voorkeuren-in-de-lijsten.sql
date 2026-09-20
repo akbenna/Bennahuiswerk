@@ -9,7 +9,7 @@
 --
 -- Gemeten op 18 september 2026, en de uitslag staat onderaan deze kop. Dat is
 -- ook het moment waarop bleek dat dit bestand de verkeerde `kal_verzadiging`
--- raakte — zie verderop. `kal_eiwitrijk` en `kal_hoeken` stonden wél goed.
+-- raakte: zie verderop. `kal_eiwitrijk` en `kal_hoeken` stonden wél goed.
 --
 -- De controle zelf, voor de volgende keer:
 --
@@ -20,7 +20,7 @@
 --    where n.nspname = 'public' and p.proname in ('kal_eiwitrijk', 'kal_verzadiging', 'kal_hoeken')
 --    order by 1;
 --
--- Wat dit bestand zegt dat eruit hoort te komen — commentaar en witruimte
+-- Wat dit bestand zegt dat eruit hoort te komen, commentaar en witruimte
 -- gestript, zodat een andere inspringing geen vals alarm geeft:
 --
 --   kal_eiwitrijk      2736d7fcd1913f12b0c3bdaf33b5a237
@@ -35,7 +35,7 @@
 --
 -- Hij gaf vier regels terug in plaats van drie, met twee keer `kal_verzadiging`.
 -- De `kal_verzadiging` hieronder heeft drie argumenten, en dat is de versie van
--- bestand 28 — bestand 29 had die al vervangen door een versie met vier, en de
+-- bestand 28: bestand 29 had die al vervangen door een versie met vier, en de
 -- oude weggehaald. `create or replace` kijkt naar de handtekening, dus dit
 -- bestand verving niets: het zette de driearguments-versie ernaast terug. De app
 -- roept de vierarguments-versie aan, dus "Wat vult het best" hield zich niet aan
@@ -43,7 +43,7 @@
 --
 -- Bestand 36 zet dat recht: het haalt de driearguments-versie weg en zet de
 -- voorkeuren in de functie die de app wél aanroept. Wat hieronder staat voor
--- `kal_verzadiging` is dus achterhaald — draai dit bestand niet opnieuw. Voor
+-- `kal_verzadiging` is dus achterhaald, draai dit bestand niet opnieuw. Voor
 -- `kal_eiwitrijk` en `kal_hoeken` klopt het nog wel.
 --
 --
@@ -52,7 +52,7 @@
 -- twee functies is letterlijk ongewijzigd; wie wil zien wát er veranderd is
 -- zoekt op `v_nooit` en `v_liever`.
 --
--- Functies vervangen mag — dat staat in CLAUDE.md en het is de gewone gang van
+-- Functies vervangen mag: dat staat in CLAUDE.md en het is de gewone gang van
 -- zaken. Dit bestand raakt geen enkele rij aan.
 --
 -- WAAROM DIT IN SQL MOET EN NIET IN HET SCHERM KAN
@@ -60,7 +60,7 @@
 -- De rekenlaag `src/health/voorkeuren.ts` kan een lijst filteren, en dat is
 -- precies niet genoeg. Beide functies doen eerst "één per groep" en daarna
 -- `limit`. Filteren ná die limiet betekent dat een vegetariër wiens beste acht
--- allemaal vlees zijn een lege lijst overhoudt — de app lijkt dan stuk terwijl
+-- allemaal vlees zijn een lege lijst overhoudt, de app lijkt dan stuk terwijl
 -- er honderden geschikte producten in de tabel staan.
 --
 -- Dus vóór de limiet, en dus hier.
@@ -69,9 +69,9 @@
 --
 -- `nooit` verwijdert. Een `where not (groep = any(v_nooit))` en verder niets.
 --
--- `liever` verschuift, met een plafond. De bedoeling is overal dezelfde —
+-- `liever` verschuift, met een plafond. De bedoeling is overal dezelfde,
 -- ongeveer twaalf procent, genoeg om bij gelijke geschiktheid te winnen en te
--- weinig om iets aantoonbaar beters te begraven — maar de twee lijsten
+-- weinig om iets aantoonbaar beters te begraven, maar de twee lijsten
 -- rangschikken op verschillende grootheden:
 --
 --   kal_verzadiging   score van 0 tot 100      →  score + 12
@@ -99,7 +99,7 @@
 -- EN DE COACH DAN
 --
 -- "Wat er nog in past" op Vandaag stelt alleen voor uit wat je zélf gelogd hebt.
--- Daar staat geen groep bij — `kal_ophalen` geeft die niet terug — dus filteren
+-- Daar staat geen groep bij (`kal_ophalen` geeft die niet terug) dus filteren
 -- kan daar niet zonder een derde functie te veranderen.
 --
 -- Dat is minder erg dan het klinkt, en het is geen smoes. De coach kan alleen
@@ -112,7 +112,7 @@
 -- Wie niets heeft ingesteld heeft geen `voorkeuren` in `instellingen`, en dan
 -- zijn beide arrays leeg. `groep = any('{}')` is altijd onwaar, dus `not (...)`
 -- is altijd waar en er valt niets weg. Een gebruiker zonder voorkeur krijgt
--- daarmee exact dezelfde lijst als vóór dit bestand — dat is nagekeken en niet
+-- daarmee exact dezelfde lijst als vóór dit bestand, dat is nagekeken en niet
 -- aangenomen, zie blok 3.
 --
 -- Er staat een `jsonb_typeof(...) = 'array'` omheen. Dat is geen paranoia maar
@@ -133,7 +133,7 @@
 -- =============================================================================
 
 -- ---------------------------------------------------------------------------
--- BLOK 1 — EIWITRIJK UIT DE TABEL, MET DE VOORKEUR ERIN
+-- BLOK 1: EIWITRIJK UIT DE TABEL, MET DE VOORKEUR ERIN
 -- ---------------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION public.kal_eiwitrijk(
@@ -259,7 +259,7 @@ end $function$;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 2 — WAT VULT HET BEST, MET DE VOORKEUR ERIN
+-- BLOK 2: WAT VULT HET BEST, MET DE VOORKEUR ERIN
 -- ---------------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION public.kal_verzadiging(
@@ -300,7 +300,7 @@ begin
     with mijn_groepen as (
       -- Ongewijzigd, en nog steeds alleen om te markeren. Dit is wat je gezien
       -- bent te eten; de voorkeur hieronder is wat je gezegd hebt. Sorteren op
-      -- het eerste is een lus, op het tweede een grens — zie de kop van dit
+      -- het eerste is een lus, op het tweede een grens, zie de kop van dit
       -- bestand en `src/health/voorkeuren.ts`.
       select distinct n.groep
         from kal_regels r
@@ -381,13 +381,13 @@ begin
 end $function$;
 
 -- ---------------------------------------------------------------------------
--- BLOK 3 — UIT WELKE HOEKEN JE WERKELIJK GEGETEN HEBT
+-- BLOK 3: UIT WELKE HOEKEN JE WERKELIJK GEGETEN HEBT
 -- ---------------------------------------------------------------------------
 --
 -- Nieuw, en het staat los van de twee hierboven. Het suppletie-advies
 -- (`src/health/suppletie.ts`) heeft twee bronnen: wat je gezegd hebt, en wat je
--- gelogd hebt. Het tweede is de sterkere van de twee — "je logde de laatste 28
--- dagen niets uit Vis" is te controleren, "je eet weinig vis" is een oordeel —
+-- gelogd hebt. Het tweede is de sterkere van de twee, "je logde de laatste 28
+-- dagen niets uit Vis" is te controleren, "je eet weinig vis" is een oordeel,
 -- en de app kan het niet zelf zien: `kal_ophalen` geeft bij een regel wel een
 -- NEVO-code terug maar geen groep.
 --
@@ -453,14 +453,14 @@ comment on function public.kal_verzadiging(text, numeric, integer) is
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 4 — NAKIJKEN
+-- BLOK 4: NAKIJKEN
 -- ---------------------------------------------------------------------------
 --
 -- Zet JOUW_TOKEN erin. Vraag 1 en 2 wijzen de fout aan die er het meest toe
 -- doet: een uitsluiting die niet uitsluit.
 --
 -- 1. ZONDER VOORKEUR VERANDERT ER NIETS. Zet de voorkeur even leeg en vergelijk
---    met wat je gewend bent — evenveel regels, dezelfde volgorde.
+--    met wat je gewend bent: evenveel regels, dezelfde volgorde.
 --
 --    update kal_profiel set instellingen = instellingen - 'voorkeuren'
 --     where gebruiker_id = (select kal_sessie('JOUW_TOKEN'));
@@ -499,7 +499,7 @@ comment on function public.kal_verzadiging(text, numeric, integer) is
 --    select e->>'naam', e->>'groep', e->>'score'
 --      from jsonb_array_elements(kal_verzadiging('JOUW_TOKEN', 600, 10)) e;
 --
---    De getoonde score hoort onveranderd te zijn — alleen de volgorde schuift.
+--    De getoonde score hoort onveranderd te zijn, alleen de volgorde schuift.
 --
 -- 6. EEN KAPOTTE VOORKEUR BREEKT DE LIJST NIET. Dit is het geval waarvoor de
 --    typecontrole er staat.

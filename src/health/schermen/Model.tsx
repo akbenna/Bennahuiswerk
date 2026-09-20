@@ -1,5 +1,5 @@
 /**
- * MODEL — waar het geschatte verbruik vandaan komt, en hoe zeker het is.
+ * MODEL: waar het geschatte verbruik vandaan komt, en hoe zeker het is.
  *
  * De zekerheid stond hier als drie woorden in kleine letters rechtsboven, en
  * dat is het verkeerde formaat voor het belangrijkste wat dit scherm te melden
@@ -86,7 +86,7 @@ export function Model(
                 logboek mee: log je stelselmatig twintig procent te laag, dan
                 staat hier een verbruik dat twintig procent te laag is.
 
-                Dat maakt het getal niet minder bruikbaar — het voorspelt jouw
+                Dat maakt het getal niet minder bruikbaar, het voorspelt jouw
                 gewichtsverloop juist goed, want die afwijking is persoonlijk en
                 stabiel. Maar "wat je lichaam verbruikt" en "wat je lichaam
                 verbruikt volgens jouw logboek" zijn twee verschillende
@@ -95,7 +95,7 @@ export function Model(
 
                 Dat stond er tot voor kort, in de voetregel onder elk scherm.
                 Bij het opruimen van de tekst is die verdwenen en bleef alleen de
-                uitleg in de consistentiekaart over — die dichtgeklapt is, en die
+                uitleg in de consistentiekaart over, die dichtgeklapt is, en die
                 alleen verschijnt bij een verschil boven de driehonderd. Hier
                 hoort hij, altijd zichtbaar, onder het getal waar hij over gaat. */}
             <p className="mini" style={{ marginTop: 5 }}>
@@ -157,8 +157,8 @@ export function Model(
       {/* WAAROM DEZE VOLGORDE, EN WAAROM HIJ VERSPRINGT
 
           Het scherm beantwoordt twee vragen en de rest is verantwoording. De
-          eerste — wat verbruik ik — staat in de kop. De tweede — wat eet ik, en
-          hoe verhoudt zich dat tot het doel — stond nergens: de gemiddelde
+          eerste (wat verbruik ik) staat in de kop. De tweede (wat eet ik, en
+          hoe verhoudt zich dat tot het doel) stond nergens: de gemiddelde
           inname zat verstopt in een bijzin van de afleiding, en de staafjes
           stonden onderaan. Die staat nu hier.
 
@@ -182,11 +182,11 @@ export function Model(
           <>
             {/* De band staat al in de kop. Hij hier nóg een keer groot herhalen
                 maakt hem niet waarder; wat deze kaart toevoegt is waar hij
-                vandaan komt — de figuur en de afleiding eronder. */}
+                vandaan komt, de figuur en de afleiding eronder. */}
             <IntervalFiguur a={a} />
             <p style={{ fontSize: '.88rem', marginTop: 10 }}>
-              Afgeleid uit {a.volledig} bruikbare registratiedagen — gemiddeld{' '}
-              {dz(Math.round(a.gemInname ?? 0))} kcal — en een gewichtstrend van{' '}
+              Afgeleid uit {a.volledig} bruikbare registratiedagen: gemiddeld{' '}
+              {dz(Math.round(a.gemInname ?? 0))} kcal, en een gewichtstrend van{' '}
               {(a.hellingWk ?? 0) > 0 ? '+' : ''}{dec(a.hellingWk, 2)} kg per week, ofwel{' '}
               {dec(a.hellingPct, 2)} procent van je lichaamsgewicht. Bij een streeftempo van{' '}
               {dec(profiel.tempo_pct_week, 1)} procent hoort een inname van <b>{dz(a.doel)} kcal</b>.
@@ -234,7 +234,7 @@ export function Model(
         <Kaart toon="let">
           <Kop>Te snel</Kop>
           <p style={{ fontSize: '.88rem', marginTop: 4 }}>
-            De trend is {dec(a.hellingWk, 2)} kg per week, ofwel {dec(a.hellingPct, 2)} procent —
+            De trend is {dec(a.hellingWk, 2)} kg per week, ofwel {dec(a.hellingPct, 2)} procent,
             steiler dan één procent. Dat gaat ten koste van vetvrije massa en is slecht vol te houden.
             Het advies is hier <b>méér</b> eten, niet minder
             {a.doel != null && `: het doel van ${dz(a.doel)} kcal ligt boven wat je nu gemiddeld logt`}.
@@ -249,8 +249,8 @@ export function Model(
         <div className="trio" style={{ marginTop: 8 }}>
           {([
             ['Nu', dec(a.gewicht, 1) + ' kg'],
-            ['Trend', trendNu ? dec(trendNu.ema, 1) + ' kg' : '—'],
-            ['Doel', (profiel.doel_gewicht_kg ?? '—') + ' kg'],
+            ['Trend', trendNu ? dec(trendNu.ema, 1) + ' kg' : '–'],
+            ['Doel', (profiel.doel_gewicht_kg ?? '–') + ' kg'],
           ] as const).map(([l, v]) => (
             <div key={l}>
               <div className="mini">{l}</div>
@@ -262,14 +262,14 @@ export function Model(
           {a.wekenTotDoel != null ? (
             <>
               Bij het huidige tempo is {profiel.doel_gewicht_kg} kg over ongeveer{' '}
-              <b>{a.wekenTotDoel} weken</b> in zicht — rond{' '}
+              <b>{a.wekenTotDoel} weken</b> in zicht, rond{' '}
               {kortNL(plusDagen(vandaag(), a.wekenTotDoel * 7))}. Plateaus zitten daar niet in; reken
               op tien tot twintig procent langer.
             </>
           ) : (
             <>
               Zonder gemeten helling is elke einddatum verzonnen. Bij {dec(profiel.tempo_pct_week, 1)}{' '}
-              procent per week — nu {dec(a.tempoKgWk, 2)} kg — duurt{' '}
+              procent per week (nu {dec(a.tempoKgWk, 2)} kg) duurt{' '}
               {dec(a.gewicht - (profiel.doel_gewicht_kg ?? a.gewicht), 0)} kg ongeveer{' '}
               {Math.round((a.gewicht - (profiel.doel_gewicht_kg ?? a.gewicht)) / Math.max(0.1, a.tempoKgWk))}{' '}
               weken.
@@ -295,7 +295,7 @@ export function Model(
           <p>
             Punten zijn losse wegingen, de lijn is een exponentieel gewogen gemiddelde met een
             halfwaardetijd van ongeveer een week. Dagelijkse schommelingen van één tot twee kilo zijn
-            vocht, glycogeen en darminhoud — de helling is het signaal, niet de meting.
+            vocht, glycogeen en darminhoud. De helling is het signaal, niet de meting.
           </p>
         </Uitleg>
       </Kaart>
@@ -322,11 +322,11 @@ export function Model(
           <>
             {/* De band staat al in de kop. Hij hier nóg een keer groot herhalen
                 maakt hem niet waarder; wat deze kaart toevoegt is waar hij
-                vandaan komt — de figuur en de afleiding eronder. */}
+                vandaan komt, de figuur en de afleiding eronder. */}
             <IntervalFiguur a={a} />
             <p style={{ fontSize: '.88rem', marginTop: 10 }}>
-              Afgeleid uit {a.volledig} bruikbare registratiedagen — gemiddeld{' '}
-              {dz(Math.round(a.gemInname ?? 0))} kcal — en een gewichtstrend van{' '}
+              Afgeleid uit {a.volledig} bruikbare registratiedagen: gemiddeld{' '}
+              {dz(Math.round(a.gemInname ?? 0))} kcal, en een gewichtstrend van{' '}
               {(a.hellingWk ?? 0) > 0 ? '+' : ''}{dec(a.hellingWk, 2)} kg per week, ofwel{' '}
               {dec(a.hellingPct, 2)} procent van je lichaamsgewicht. Bij een streeftempo van{' '}
               {dec(profiel.tempo_pct_week, 1)} procent hoort een inname van <b>{dz(a.doel)} kcal</b>.
@@ -371,7 +371,7 @@ export function Model(
         <Kaart>
           <Kop>Consistentiecheck registratie</Kop>
           {/* Het oordeel eerst en in één zin; de redenering erachter. Dit is de
-              kaart die het meeste uitlegde en het minste zei — acht regels tekst
+              kaart die het meeste uitlegde en het minste zei, acht regels tekst
               waarvan de uitkomst "de registratie is intern consistent" was, of
               niet. Die uitkomst hoort vooraan te staan. */}
           <p style={{ fontSize: '.88rem', marginTop: 4 }}>
@@ -395,7 +395,7 @@ export function Model(
             {a.onderrapportage > 300 ? (
               <p>
                 Een verschil van deze omvang is te groot voor toeval en past bij onderregistratie van
-                twintig tot dertig procent — de best gedocumenteerde systematische fout in de
+                twintig tot dertig procent, de best gedocumenteerde systematische fout in de
                 voedingswetenschap. Dat maakt het advies niet ongeldig: de bias is proportioneel en
                 stabiel binnen een persoon, dus zolang je op dezelfde manier blijft loggen klopt het
                 doel in gelogde eenheden.
@@ -415,7 +415,7 @@ export function Model(
 }
 
 /**
- * WAAR JE NU STAAT — de vraag die het scherm niet beantwoordde
+ * WAAR JE NU STAAT: de vraag die het scherm niet beantwoordde
  *
  * De kop zegt wat je verbruikt. Wat je éét stond nergens als getal: het zat in
  * een bijzin van de afleiding ("gemiddeld 2.140 kcal") en verder alleen als
@@ -431,7 +431,7 @@ export function Model(
  * som suggereren die niet klopt. Inname min verbruik is hier geen onafhankelijk
  * saldo: het verbruik is uít de inname en de weegreeks afgeleid, dus dat
  * verschil is de weegtrend in andere eenheden. Die trend staat er daarom als
- * wat hij is — de onafhankelijke controle van de weegschaal, in kilo's.
+ * wat hij is, de onafhankelijke controle van de weegschaal, in kilo's.
  */
 function WaarJeStaat(
   { a, profiel, gefundeerd }: { a: Analyse; profiel: Profiel; gefundeerd: boolean },
@@ -458,13 +458,13 @@ function WaarJeStaat(
             <div className="mini">Weegtrend</div>
             <div className="getal" style={{ fontSize: '1.25rem' }}>
               {a.hellingWk != null
-                ? (a.hellingWk > 0 ? '+' : '') + dec(a.hellingWk, 2) : '—'}
+                ? (a.hellingWk > 0 ? '+' : '') + dec(a.hellingWk, 2) : '–'}
             </div>
             <div className="mini">kg per week</div>
           </div>
           <div>
             <div className="mini">Doel</div>
-            <div className="getal" style={{ fontSize: '1.25rem', color: 'var(--grijs)' }}>—</div>
+            <div className="getal" style={{ fontSize: '1.25rem', color: 'var(--grijs)' }}>–</div>
             <div className="mini">nog niet te bepalen</div>
           </div>
         </div>
@@ -556,21 +556,21 @@ function Meetgaten(
   }
   /* DE KOPPELING DIE STIL IS GEVALLEN
    *
-   * Er is geen manier om Apple Gezondheid vanaf een server op te halen — die
+   * Er is geen manier om Apple Gezondheid vanaf een server op te halen, die
    * gegevens komen alleen van het toestel af, via de opdracht die daar draait.
    * Valt die opdracht stil, dan merkt de app dat niet: er komt gewoon niets
    * binnen, en dat ziet er precies zo uit als een dag zonder stappen.
    *
    * Vandaar deze regel. Hij kijkt naar de gegevens en niet naar de sleutel: wat
    * telt is of er íets is aangekomen, niet of de koppeling nog bestaat. En hij
-   * verschijnt alleen als er ooit stappen binnenkwamen — wie hem nooit heeft
+   * verschijnt alleen als er ooit stappen binnenkwamen, wie hem nooit heeft
    * ingesteld hoort geen zeven dagen per week te lezen dat er iets stilstaat. */
   const stappenOoit = Object.values(dagen).some((d) => (d?.stappen ?? 0) > 0)
   const stappenRecent = leeg7.filter((k) => (dagen[k]?.stappen ?? 0) > 0).length
   if (stappenOoit && stappenRecent === 0) {
     g.push('Er komt niets meer binnen uit Gezondheid. De afgelopen zeven dagen staat er geen ' +
            'enkele stap, terwijl dat eerder wel gebeurde. Kijk of de automatisering op je ' +
-           'telefoon nog draait — onder Profiel, bij Koppelen, staat wanneer er voor het ' +
+           'telefoon nog draait. Onder Profiel, bij Koppelen, staat wanneer er voor het ' +
            'laatst iets is aangekomen.')
   } else if (stappenOoit && stappenRecent <= 3) {
     g.push(`Uit Gezondheid kwam ${stappenRecent} van de afgelopen zeven dagen iets binnen. ` +
@@ -579,7 +579,7 @@ function Meetgaten(
   }
   if (!labs.length) {
     g.push('De klinische nulmeting staat nog leeg. Bloeddruk, HbA1c, lipiden, ALAT en GGT, TSH, ' +
-           'vitamine D en middelomtrek — zonder uitgangswaarde is beloop niet te beoordelen.')
+           'vitamine D en middelomtrek: zonder uitgangswaarde is beloop niet te beoordelen.')
   }
   if (!g.length) return null
 

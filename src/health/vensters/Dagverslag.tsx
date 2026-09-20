@@ -1,9 +1,9 @@
 /**
- * VERTEL JE DAG — het vel voor de dagen dat je er geen zin in hebt
+ * VERTEL JE DAG: het vel voor de dagen dat je er geen zin in hebt
  *
  * Het invoervel is gebouwd voor de maaltijd die je nú logt: één moment, zoeken,
  * een portie kiezen. Dat is de goede vorm voor het gewone geval en de verkeerde
- * voor het geval dat dit vel bedient — de avond waarop je bedenkt dat je vandaag
+ * voor het geval dat dit vel bedient, de avond waarop je bedenkt dat je vandaag
  * nog niets hebt ingevoerd en er nu geen zin in hebt om drie maaltijden
  * afzonderlijk op te zoeken.
  *
@@ -95,7 +95,7 @@ export function DagverslagVenster(
 
      De trainingen gaan eerst en één voor één, want `kal_rij_toevoegen` neemt één
      rij. Het eten gaat daarna in één keer via `opGedaan`, dat het venster ook
-     sluit — anders zou de gebruiker het vel al dicht zien terwijl de trainingen
+     sluit, anders zou de gebruiker het vel al dicht zien terwijl de trainingen
      nog onderweg zijn. */
   async function bewaar() {
     const rijen = naarTrainingen(trainingen, datum)
@@ -123,7 +123,7 @@ export function DagverslagVenster(
       {!uitslag ? (
         <>
           <p className="klein">
-            Schrijf of spreek in wat je vandaag gegeten hebt — in gewone woorden, in
+            Schrijf of spreek in wat je vandaag gegeten hebt, in gewone woorden, in
             de volgorde waarin het je te binnen schiet. De microfoonknop op je eigen
             toetsenbord doet het inspreken; deze app neemt zelf niets op.
           </p>
@@ -155,7 +155,7 @@ export function DagverslagVenster(
           <p className="klein">
             <span className="cijfer">{gaan.length}</span> van{' '}
             <span className="cijfer">{keuzes.length}</span> regels gaan erin
-            {los > 0 && <> — <span className="cijfer">{los}</span> wacht{los === 1 ? '' : 'en'} nog op een plek</>}
+            {los > 0 && <>, <span className="cijfer">{los}</span> wacht{los === 1 ? '' : 'en'} nog op een plek</>}
             {trainingen.length > 0 && (
               <>, en <span className="cijfer">{trainingen.length}</span>{' '}
                 {trainingen.length === 1 ? 'oefening' : 'oefeningen'}</>
@@ -171,7 +171,7 @@ export function DagverslagVenster(
               </Tussen>
               {vak.moment === 'onbekend' && (
                 <p className="mini" style={{ marginTop: 2 }}>
-                  Uit je verslag bleek niet wanneer je dit at. Wijs het aan, of laat het weg —
+                  Uit je verslag bleek niet wanneer je dit at. Wijs het aan, of laat het weg:
                   onaangewezen gaat het niet mee.
                 </p>
               )}
@@ -279,7 +279,7 @@ export function DagverslagVenster(
  *
  * De spiergroep en de aantallen staan hier los van elkaar, en dat is niet
  * netheid. Eerst stonden ze in één lijst waar het lege eruit gefilterd werd,
- * met "geen aantallen genoemd" als de lijst leeg bleef — en bij een oefening
+ * met "geen aantallen genoemd" als de lijst leeg bleef, en bij een oefening
  * mét spiergroep en zónder aantallen bleef die lijst niet leeg. Er stond dan
  * alleen "rug", wat leest als een complete regel. De schermproef viel erover.
  *

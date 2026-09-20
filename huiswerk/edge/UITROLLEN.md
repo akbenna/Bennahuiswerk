@@ -2,7 +2,7 @@
 
 **Gedaan op 29 augustus 2026.** `huiswerk-ai` draait op `huiuvnjrvvoybbzwfrfp`
 en de vraagbaak werkt. Dit blijft staan als de procedure, voor als hij ooit
-opnieuw uitgerold moet worden — naar een ander project, of na een grote
+opnieuw uitgerold moet worden, naar een ander project, of na een grote
 wijziging.
 
 De aanleiding was dit: de function stond op het oude, gedeelde project, en toen
@@ -27,7 +27,7 @@ af, dan klopt het verslag niet meer en is dat een gat.
 
 In de instellingen van de function. Dit moet, en het is geen slordigheid:
 
-De app stuurt bij deze aanroep **geen** `apikey`-kopregel mee — kijk maar in
+De app stuurt bij deze aanroep **geen** `apikey`-kopregel mee, kijk maar in
 `src/huiswerk/vraagbaak.ts`, er gaat alleen een `Content-Type` mee. Staat
 `verify_jwt` aan, dan weigert de poort het verzoek voordat de function ook maar
 draait, en zie je een 401 die niets met je vraag te maken heeft.
@@ -39,7 +39,7 @@ beschermd moet worden is de sleutel, en die staat aan de andere kant.
 ## 3. `ANTHROPIC_API_KEY` in de secrets
 
 Edge Functions → Secrets. Zonder deze sleutel geeft de function netjes "De
-vraagbaak is nog niet ingesteld" en gebeurt er verder niets — dat is met opzet de
+vraagbaak is nog niet ingesteld" en gebeurt er verder niets, dat is met opzet de
 veilige kant om op te falen, maar het werkt dan natuurlijk niet.
 
 Plak die sleutel nergens anders. Niet in de repo, niet in een chat, niet in de
@@ -61,11 +61,11 @@ curl -sS -X POST 'https://huiuvnjrvvoybbzwfrfp.supabase.co/functions/v1/huiswerk
 
 Wat je terug hoort te zien:
 
-- **200 met JSON** — klaar. Draai daarna de app en stel dezelfde vraag.
-- **401** — `verify_jwt` staat nog aan (stap 2).
-- **404** — de naam klopt niet (stap 1).
-- **500 "De vraagbaak is nog niet ingesteld"** — de sleutel ontbreekt (stap 3).
-- **502** — de function draait, maar Anthropic weigerde. Kijk in de logs van de
+- **200 met JSON**: klaar. Draai daarna de app en stel dezelfde vraag.
+- **401**: `verify_jwt` staat nog aan (stap 2).
+- **404**: de naam klopt niet (stap 1).
+- **500 "De vraagbaak is nog niet ingesteld"**, de sleutel ontbreekt (stap 3).
+- **502**: de function draait, maar Anthropic weigerde. Kijk in de logs van de
   function; daar staat de status en het antwoord.
 
 ## 5. Opruimen
@@ -74,5 +74,5 @@ Zodra dit werkt kan de kopie op `jnlvvdaisyerhxucxnuu` weg. Twee exemplaren van
 dezelfde function op twee projecten is precies hoe je later niet meer weet welke
 van de twee je aan het bijwerken bent.
 
-En dan hoort de waarschuwing bovenaan `huiswerk/edge/huiswerk-ai.ts` eruit — die
+En dan hoort de waarschuwing bovenaan `huiswerk/edge/huiswerk-ai.ts` eruit, die
 zegt nu dat het nog niet uitgerold is, en dat klopt dan niet meer.

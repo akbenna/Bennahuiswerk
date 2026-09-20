@@ -43,8 +43,8 @@ export interface Kalibratie {
   dagenkaart: Dagenkaart
   /* WAAROM DIT ER APART BIJ STAAT
 
-     Zonder deze vlag kent de app twee toestanden — er is een profiel en er is er
-     geen — en niet de derde: ik ben nog aan het ophalen. De sessie komt uit
+     Zonder deze vlag kent de app twee toestanden (er is een profiel en er is er
+     geen) en niet de derde: ik ben nog aan het ophalen. De sessie komt uit
      localStorage en is er dus meteen, terwijl `alles` nog LEEG is. Het scherm
      concludeerde in die halve seconde dat je nieuw bent en zette de
      opzetpagina neer, die daarna vanzelf weer verdween.
@@ -118,7 +118,7 @@ export function useKalibratie(): Kalibratie {
       }
       const uit = await roep('kal_aanmelden', { p_account: account, p_ww: ww })
       if (!isSessie(uit)) {
-        /* Geen token betekent niet aangemeld — ook al kwam het antwoord met een
+        /* Geen token betekent niet aangemeld, ook al kwam het antwoord met een
            200 binnen. Zonder deze regel zou een mislukte aanmelding een lege
            sessie opleveren die er geslaagd uitziet. */
         zetFout(uit.fout)

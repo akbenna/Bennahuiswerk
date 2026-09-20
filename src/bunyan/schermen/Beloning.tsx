@@ -1,8 +1,8 @@
 /**
- * BELONING — punten voor wat je leert, geld voor wat je afmaakt
+ * BELONING: punten voor wat je leert, geld voor wat je afmaakt
  *
  * Het weekplafond staat er zodat een goede week niet in een salaris verandert.
- * Als het budget op is lopen de punten, de rangen en de insignes gewoon door —
+ * Als het budget op is lopen de punten, de rangen en de insignes gewoon door,
  * anders zou leren stoppen zodra het geld stopt, en dat is precies de verkeerde
  * les om een kind van elf mee te geven.
  */
@@ -49,7 +49,7 @@ export function Beloning({ stand }: { stand: Stand }): ReactNode {
         <p className="klein" style={{ marginTop: 8 }}>
           {volg
             ? `Nog ${volg[0] - stand.punten} punten tot ${volg[2]} ${volg[1]}.`
-            : 'Je hebt de hoogste rang. Er valt hier weinig meer te halen — tijd voor eigen projecten.'}
+            : 'Je hebt de hoogste rang. Er valt hier weinig meer te halen: tijd voor eigen projecten.'}
         </p>
       </div>
 
@@ -82,7 +82,7 @@ export function Beloning({ stand }: { stand: Stand }): ReactNode {
         </div>
         <p className="klein" style={{ marginTop: 12 }}>
           Er kan hoogstens {euro(stand.instel.weekbudget)} per week bij. Daarna blijf je punten
-          en insignes verdienen — leren stopt niet als het geld stopt.
+          en insignes verdienen; leren stopt niet als het geld stopt.
         </p>
       </div>
 

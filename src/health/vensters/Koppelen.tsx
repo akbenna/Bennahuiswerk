@@ -1,5 +1,5 @@
 /**
- * KOPPELEN — bewegingsgegevens van je horloge en je telefoon binnenhalen.
+ * KOPPELEN: bewegingsgegevens van je horloge en je telefoon binnenhalen.
  *
  * Waarom dit er zo uitziet en niet als een knop met "Verbind met Garmin":
  *
@@ -12,7 +12,7 @@
  * Wat wél werkt en geen toestemming van iemand nodig heeft: de Opdrachten-app
  * op de iPhone leest Gezondheid uit en mag zelf een verzoek versturen. En de
  * Garmin Connect-app schrijft zijn stappen, slaap, trainingen en gewicht in
- * Apple Gezondheid. Eén weg dekt dus allebei de bronnen — het horloge meet, de
+ * Apple Gezondheid. Eén weg dekt dus allebei de bronnen, het horloge meet, de
  * Garmin-app zet het in Gezondheid, en de opdracht stuurt het elke ochtend
  * hierheen.
  *
@@ -78,7 +78,7 @@ export function KoppelVenster(
     try {
       const uit = await roep('kal_koppelingen_lijst', { p_token: token })
       /* De functie geeft een json-lijst terug. Een server die iets anders
-         teruggeeft mag het scherm niet omver halen — dan liever geen lijst. */
+         teruggeeft mag het scherm niet omver halen, dan liever geen lijst. */
       zetLijst(Array.isArray(uit) ? uit : [])
     } catch (e) {
       zetLijst([])
@@ -122,7 +122,7 @@ export function KoppelVenster(
   return (
     <Venster titel="Koppelen met je horloge en telefoon" opSluiten={() => { opVernieuwen(); opSluiten() }}>
       <p className="klein" style={{ marginTop: 8 }}>
-        Stappen, slaap, fietsminuten en actieve energie kunnen hier vanzelf binnenkomen — elke
+        Stappen, slaap, fietsminuten en actieve energie kunnen hier vanzelf binnenkomen, elke
         ochtend, zonder dat je iets overtikt. Je gewicht niet: zie onderaan waarom.
       </p>
 
@@ -161,7 +161,7 @@ export function KoppelVenster(
 
       {nieuw && (
         <Kaart toon="let" style={{ marginTop: 12 }}>
-          <Kop>Je sleutel — je ziet hem één keer</Kop>
+          <Kop>Je sleutel: je ziet hem één keer</Kop>
           <p className="mini" style={{ marginTop: 4 }}>
             Er staat alleen een hash van deze sleutel in de database. Sluit je dit venster, dan is hij
             weg en maak je een nieuwe. Dat is bewust: een sleutel die terug te lezen valt is een
@@ -190,7 +190,7 @@ export function KoppelVenster(
 
         <p className="klein" style={{ marginTop: 12 }}>
           <b>Zet hem op 23:45 en niet op 's ochtends.</b> Dan is de dag af, en hoeft de opdracht
-          alleen maar <em>vandaag</em> uit te lezen — dat is één keuze in een menu.
+          alleen maar <em>vandaag</em> uit te lezen, en dat is één keuze in een menu.
         </p>
 
         <p className="klein" style={{ marginTop: 12 }}>
@@ -198,20 +198,20 @@ export function KoppelVenster(
         </p>
         <ol className="stappen">
           <li>
-            <Menu nl="Zoek gezondheidsmonsters" en="Find Health Samples" /> — type{' '}
+            <Menu nl="Zoek gezondheidsmonsters" en="Find Health Samples" />: type{' '}
             <b>Stappen</b>, filter <Menu nl="Startdatum is vandaag" en="Start Date is today" />
           </li>
           <li>
-            <Menu nl="Bereken statistiek" en="Calculate Statistics" /> — <b>Som</b> over de
+            <Menu nl="Bereken statistiek" en="Calculate Statistics" />: <b>Som</b> over de
             waarden. Dit is je stappentotaal.
           </li>
           <li>
-            <Menu nl="Verkrijg inhoud van URL" en="Get Contents of URL" /> — met de velden hieronder.
+            <Menu nl="Verkrijg inhoud van URL" en="Get Contents of URL" />: met de velden hieronder.
           </li>
         </ol>
         <p className="mini" style={{ marginTop: 6 }}>
           Hier stonden eerst vijf acties: <em>Huidige datum</em> en <em>Formatteer datum</em>{' '}
-          hoorden de dag als <code>2026-08-22</code> aanleveren. Dat liep vast — <em>Huidige
+          hoorden de dag als <code>2026-08-22</code> aanleveren. Dat liep vast: <em>Huidige
           datum</em> staat niet in de variabelenkiezer waar de instructie hem beloofde. Daarom
           rekent de database de dag nu zelf uit en stuur je alleen nog een getal:{' '}
           <code>p_dagen_terug</code>, 0 voor vandaag.
@@ -222,32 +222,32 @@ export function KoppelVenster(
         </p>
         <ol className="stappen">
           <li>
-            <b>URL</b> — <Kopieer waarde={ENDPOINT} label="Endpoint" />
+            <b>URL</b>: <Kopieer waarde={ENDPOINT} label="Endpoint" />
           </li>
-          <li><b>Methode</b> <span className="anderstalig">(Method)</span> — POST</li>
+          <li><b>Methode</b> <span className="anderstalig">(Method)</span>: POST</li>
           <li>
-            <b>Kopteksten</b> <span className="anderstalig">(Headers)</span> — precies één, met de
+            <b>Kopteksten</b> <span className="anderstalig">(Headers)</span>: precies één, met de
             sleutel <code>apikey</code>:
             <Kopieer waarde={ANON_SLEUTEL} label="apikey" />
             <p className="mini" style={{ marginTop: 4 }}>
-              Deze sleutel is openbaar en geeft uit zichzelf nergens toegang toe — die van jou
+              Deze sleutel is openbaar en geeft uit zichzelf nergens toegang toe; die van jou
               hierboven wel. En &ldquo;sleutel&rdquo; betekent hier iets anders dan jouw
               koppelsleutel: in dit scherm is het gewoon de naam van het veld.
             </p>
             <p className="mini" style={{ marginTop: 6 }}>
               <b>Voeg er geen <code>Content-Type</code> aan toe.</b> Die zet de Opdrachten-app zelf
               al, omdat de hoofdtekst op JSON staat; doe je het met de hand, dan staat hij er twee
-              keer in en weigert iOS het verzoek — met de melding dat de netwerkverbinding is
+              keer in en weigert iOS het verzoek, met de melding dat de netwerkverbinding is
               verbroken, die nergens naar de echte oorzaak wijst. Een <code>Authorization</code>
               hoeft ook niet: <code>apikey</code> alleen is genoeg.
             </p>
           </li>
           <li>
-            <b>Verzoektekst</b> <span className="anderstalig">(Request Body)</span> —{' '}
+            <b>Verzoektekst</b> <span className="anderstalig">(Request Body)</span>:{' '}
             <b>JSON</b>, en dan drie regels toevoegen:
             <div className="veldtabel">
               <div><code>p_sleutel</code><span>Tekst</span><span>je sleutel hierboven</span></div>
-              <div><code>p_dagen_terug</code><span>Getal</span><span>0 — vandaag</span></div>
+              <div><code>p_dagen_terug</code><span>Getal</span><span>0 is vandaag</span></div>
               <div><code>p_stappen</code><span>Getal</span><span>de uitkomst van actie 2</span></div>
             </div>
             <p className="mini" style={{ marginTop: 6 }}>
@@ -262,7 +262,7 @@ export function KoppelVenster(
         <p className="klein" style={{ marginTop: 12 }}>
           <b>Werkt het? Breid dan uit.</b> Herhaal actie 1 en 2 voor{' '}
           <Menu nl="Actieve energie" en="Active Energy" />, de rustpols en de saturatie, en voeg
-          die als extra regels toe. <b>Slaap gaat anders</b> — zie hieronder.
+          die als extra regels toe. <b>Slaap gaat anders</b>: zie hieronder.
         </p>
         <div className="veldtabel">
           <div><code>p_actieve_energie_kcal</code><span>Getal</span><span>kcal</span></div>
@@ -270,18 +270,18 @@ export function KoppelVenster(
           <div><code>p_slaap_uur</code><span>Getal</span><span>of <code>p_slaap_min</code>, of{' '}
             <code>p_slaap_sec</code></span></div>
           <div><code>p_fiets_min</code><span>Getal</span><span>minuten</span></div>
-          <div><code>p_saturatie</code><span>Getal</span><span>procent — <Menu nl="Bloedzuurstof" en="Blood Oxygen" /></span></div>
+          <div><code>p_saturatie</code><span>Getal</span><span>procent, uit <Menu nl="Bloedzuurstof" en="Blood Oxygen" /></span></div>
         </div>
         <p className="mini" style={{ marginTop: 6 }}>
           De rustpols is van deze vier de moeite waard om er als eerste bij te zetten: hij daalt als
           je conditie verbetert en stijgt bij ziekte, slechte slaap of te zware belasting. Hij komt
           binnen als meting en verschijnt onder <em>Klinisch</em>, met erbij hoeveel hij afwijkt van
-          je eigen gemiddelde — want bij die meting is de verandering het signaal en niet de waarde.
+          je eigen gemiddelde, want bij die meting is de verandering het signaal en niet de waarde.
         </p>
         {/* WAAROM SLAAP EEN APARTE UITLEG KRIJGT
 
             Hier stond tot september 2026 "herhaal actie 1 en 2 voor
-            Slaapanalyse" — dus zoeken en dan Som. Dat kán niet werken, en het
+            Slaapanalyse", dus zoeken en dan Som. Dat kán niet werken, en het
             kwam pas aan het licht toen iemand de opdracht echt had gebouwd en
             er nul uit kwam.
 
@@ -291,7 +291,7 @@ export function KoppelVenster(
             scherm is dat te zien doordat het slaapblok géén rij Eenheid heeft,
             waar stappen 'aantal' en de rustpols 'aantal/min.' tonen.
 
-            Die stille 0 is precies waar nul_overgeslagen voor bestaat — hij
+            Die stille 0 is precies waar nul_overgeslagen voor bestaat, hij
             wordt geweigerd in plaats van weggeschreven als een nacht zonder
             slaap. Maar geweigerd is nog steeds niet binnengekomen, en dus
             hoort de instructie te kloppen. */}
@@ -299,14 +299,14 @@ export function KoppelVenster(
           <b>Slaap: tel de duur, niet de waarde.</b>
         </p>
         <p className="mini" style={{ marginTop: 4 }}>
-          Slaap is geen meetwaarde maar een categorie — perioden met een begin en een eind, zonder
+          Slaap is geen meetwaarde maar een categorie: perioden met een begin en een eind, zonder
           getal. <Menu nl="Bereken statistiek" en="Calculate Statistics" /> heeft dan niets om op te
           tellen en geeft <b>0</b> terug. Je ziet het aan het blok zelf: bij stappen staat een rij{' '}
           <em>Eenheid</em>, bij slaap niet.
         </p>
         <ol className="stappen">
           <li>
-            <Menu nl="Zoek gezondheidswaarden" en="Find Health Samples" /> — type <b>Slaap</b>,
+            <Menu nl="Zoek gezondheidswaarden" en="Find Health Samples" />: type <b>Slaap</b>,
             en zet het filter op <Menu nl="alle" en="all" /> en niet op{' '}
             <Menu nl="een of meer" en="any" />: met <em>een of meer</em> komt élk monster van de
             afgelopen dagen mee, ook stappen en hartslag.
@@ -317,12 +317,12 @@ export function KoppelVenster(
             → <b>Duur</b> <span className="anderstalig">(Duration)</span>.
           </li>
           <li>
-            <Menu nl="Bereken statistiek" en="Calculate Statistics" /> — <b>Som</b> over de
+            <Menu nl="Bereken statistiek" en="Calculate Statistics" />: <b>Som</b> over de
             uitkomst van die herhaling. Dát is je slaapduur.
           </li>
         </ol>
         <p className="mini" style={{ marginTop: 6 }}>
-          Kies daarna het veld dat past bij wat eruit komt — uren, minuten of
+          Kies daarna het veld dat past bij wat eruit komt: uren, minuten of
           seconden. Zit je ernaast, dan komt er iets van dertig uur slaap uit en dat wordt geweigerd
           in plaats van weggeschreven. In het antwoord staat dan{' '}
           <code>slaap_genegeerd: true</code>. Hetzelfde geldt voor elke waarde buiten haar bereik:
@@ -332,7 +332,7 @@ export function KoppelVenster(
           iets is meegestuurd en wat ermee gebeurde.
         </p>
         <p className="klein" style={{ marginTop: 12 }}>
-          <b>En de bloeddruk, als je hem meet.</b> Die komt niet van je horloge — een horloge meet
+          <b>En de bloeddruk, als je hem meet.</b> Die komt niet van je horloge; een horloge meet
           geen bloeddruk. Wat hem in Gezondheid zet is een meter met een manchet om je arm, van
           welk merk dan ook. Voor de opdracht maakt dat niets uit: die leest Gezondheid en niet het
           horloge. Het verschil is dat deze twee er alleen staan op de dagen dat je hebt gemeten.
@@ -343,7 +343,7 @@ export function KoppelVenster(
         </div>
         <p className="mini" style={{ marginTop: 6 }}>
           Wat jij zelf hebt ingevuld wordt nooit overschreven. De opdracht mag zijn eigen meting van
-          vanochtend bijwerken — die is voorlopig — maar een waarde die jij hebt ingetikt blijft
+          vanochtend bijwerken (die is voorlopig) maar een waarde die jij hebt ingetikt blijft
           staan, ook als het horloge iets anders denkt. In het antwoord heet dat{' '}
           <em>die van jou blijft staan</em>.
         </p>
@@ -354,7 +354,7 @@ export function KoppelVenster(
         <p className="mini" style={{ marginTop: 6 }}>
           <b>Krijg je een 0 waar een getal hoort?</b> Dan vond de zoekactie niets:{' '}
           <Menu nl="Bereken statistiek" en="Calculate Statistics" /> geeft over nul monsters een 0
-          terug en niet leeg. Zo'n 0 wordt niet opgeslagen — hij is niet te onderscheiden van
+          terug en niet leeg. Zo'n 0 wordt niet opgeslagen: hij is niet te onderscheiden van
           &ldquo;niets gemeten&rdquo;, en als meting onmogelijk: wie zijn telefoon bij zich draagt
           komt niet op nul stappen of nul actieve energie uit. In het antwoord staat dan{' '}
           <code>nul_overgeslagen</code> met dat veld erin. Kijk dan bij{' '}
@@ -371,7 +371,7 @@ export function KoppelVenster(
         <p className="mini" style={{ marginTop: 6 }}>
           <code>p_dagen_terug</code> telt vanaf vandaag: <code>0</code> is vandaag,{' '}
           <code>1</code> is gisteren. Laat je zowel <code>p_dagen_terug</code> als{' '}
-          <code>p_datum</code> weg, dan wordt het gisteren — bedoeld voor wie de opdracht 's
+          <code>p_datum</code> weg, dan wordt het gisteren, bedoeld voor wie de opdracht 's
           ochtends laat vuren. Wil je toch een vaste dag insturen, dan mag{' '}
           <code>p_datum</code> als <code>2026-08-22</code>; die wint dan van het getal.
         </p>
@@ -384,7 +384,7 @@ export function KoppelVenster(
         <Uitleg id="inhaalslag" label="meerdere dagen tegelijk insturen">
           <p>
             Voor een inhaalslag is er een tweede ingang die een hele lijst aanneemt. Die vraagt wel
-            een tekstveld met json erin, en is dus omslachtiger — maar hij doet er vierhonderd dagen
+            een tekstveld met json erin, en is dus omslachtiger, maar hij doet er vierhonderd dagen
             in één keer:
           </p>
           <Kopieer waarde={ENDPOINT_LIJST} label="Lijst-endpoint" />
@@ -415,7 +415,7 @@ export function KoppelVenster(
         </p>
         <Uitleg id="garminapi" label="waarom niet rechtstreeks op de Garmin-API">
           <p>
-            Die bestaat en doet precies wat je wilt — dagelijkse totalen, slaap, activiteiten — maar
+            Die bestaat en doet precies wat je wilt (dagelijkse totalen, slaap, activiteiten) maar
             hij zit achter het Garmin Connect Developer Program. Dat vraagt een aanvraag namens een
             rechtspersoon en goedkeuring per partij, en het programma neemt op dit moment geen nieuwe
             aanmeldingen aan. Voor één huishouden is dat geen begaanbare weg.
@@ -439,14 +439,14 @@ export function KoppelVenster(
         <p className="klein" style={{ marginTop: 8 }}>
           Je <b>gewicht</b> gaat precies andersom. Een dag waar al een weging staat wordt nooit
           overschreven; alleen lege dagen worden aangevuld. Het model rekent op de ochtendweging
-          volgens protocol — nuchter, na het toilet, vóór het eten — en een weegschaal die 's avonds
+          volgens protocol (nuchter, na het toilet, vóór het eten) en een weegschaal die 's avonds
           met kleren aan een getal doorgeeft meet iets anders. Twee metingen door elkaar geven een
           helling die nergens op slaat.
         </p>
         <p className="mini" style={{ marginTop: 8 }}>
           Krachttraining en je notities blijven ook onaangeraakt: dat is een oordeel van jou en geen
           meting. En actieve energie komt binnen als volume-indicator, maar telt nergens mee in het
-          verbruik — zie het scherm Beweging voor waarom.
+          verbruik; zie het scherm Beweging voor waarom.
         </p>
       </Kaart>
     </Venster>
@@ -458,7 +458,7 @@ export function KoppelVenster(
  *
  * Op een telefoon is een sleutel van achtenveertig tekens overtikken geen optie
  * en selecteren met je vinger nauwelijks. De knop valt terug op selecteren als
- * het klembord niet mag — dat mag namelijk alleen in een beveiligde context.
+ * het klembord niet mag, dat mag namelijk alleen in een beveiligde context.
  */
 function Kopieer(
   { waarde, label, meerregelig }: { waarde: string; label: string; meerregelig?: boolean },

@@ -1,5 +1,5 @@
 /**
- * TEKST — nakijken, vocaliseren, en de vier letterVormen
+ * TEKST: nakijken, vocaliseren, en de vier letterVormen
  *
  * OVER HET NAKIJKEN
  *
@@ -71,7 +71,7 @@ const AR_RUN = new RegExp('[' + AR_TEKENS + '](?:[' + AR_TEKENS + '‍ ]*[' + AR
 /**
  * Wikkelt losse Arabische stukken die middenin Nederlandse tekst staan in een
  * eigen isolatie-element. Zonder dat springen de leestekens rond een Arabisch
- * woord naar de verkeerde kant — een punt die vóór de zin belandt.
+ * woord naar de verkeerde kant, een punt die vóór de zin belandt.
  */
 export const arIn = (html: string | null | undefined): string =>
   String(html ?? '').replace(AR_RUN, (m) => `<span class="arin${m.length > 16 ? ' lang' : ''}">${m}</span>`)

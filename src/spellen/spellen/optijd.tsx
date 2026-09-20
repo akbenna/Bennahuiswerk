@@ -1,8 +1,8 @@
 /**
  * DE VIJF SPELLEN OP TIJD
  *
- * Elk is niet meer dan een opgave, een weergave en een controle. Wat ze delen —
- * de klok, de score, het record, de volgende opgave — staat in TijdSpel.
+ * Elk is niet meer dan een opgave, een weergave en een controle. Wat ze delen (
+ * de klok, de score, het record, de volgende opgave) staat in TijdSpel.
  */
 import { Antwoordveld, Keuzeknoppen, TijdSpel } from './TijdSpel'
 import type { SpelEigenschappen } from './kader'
@@ -79,7 +79,7 @@ export function EvenOfOneven(p: SpelEigenschappen) {
 const zeg = (u: number, m: number): string => `${(u % 12) || 12}:${String(m).padStart(2, '0')}`
 
 /** Een klok met wijzers die echt kloppen, ook de uurwijzer die met de minuten
- *  meeschuift — anders leert een kind hem verkeerd lezen. */
+ *  meeschuift, anders leert een kind hem verkeerd lezen. */
 export function Klok({ u, m }: { u: number; m: number }) {
   const hoekM = m * 6 - 90
   const hoekU = ((u % 12) + m / 60) * 30 - 90

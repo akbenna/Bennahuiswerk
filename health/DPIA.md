@@ -1,4 +1,4 @@
-# DPIA BennaHealth — gegevensbeschermingseffectbeoordeling
+# DPIA BennaHealth: gegevensbeschermingseffectbeoordeling
 
 Concept van 15 september 2026. Een DPIA is een proces en geen formulier: dit
 stuk beschrijft wat er nu werkelijk gebeurt met welke gegevens, en het benoemt
@@ -9,7 +9,7 @@ Een DPIA is hier verplicht en niet optioneel. De AVG schrijft er een voor bij
 grootschalige verwerking van bijzondere persoonsgegevens, en ook zonder die
 drempel geldt dat gezondheidsgegevens plus geautomatiseerde verwerking plus een
 nieuwe technologie samen ruim boven de criteria van de EDPB uitkomen. Blijft de
-app beperkt tot de maker zelf, dan is hij er niet toe verplicht — maar dan is
+app beperkt tot de maker zelf, dan is hij er niet toe verplicht, maar dan is
 dit stuk de voorbereiding op het moment dat dat verandert, en dat moment is de
 reden dat het er nu ligt.
 
@@ -33,7 +33,7 @@ het fout kan gaan.
 | Categorie | Voorbeelden | AVG |
 |---|---|---|
 | Voeding | wat, hoeveel, welk moment, eigen producten en maaltijden | gewoon, maar verweven met de rest |
-| Lichaam | gewicht, middelomtrek, lengte, leeftijd, geslacht | art. 9 — gezondheid |
+| Lichaam | gewicht, middelomtrek, lengte, leeftijd, geslacht | art. 9: gezondheid |
 | Metingen | bloeddruk, rustpols, slaap, stappen, training | art. 9 |
 | Laboratorium | ASAT, ALAT, trombocyten, cholesterol, HDL | art. 9 |
 | Conditie | hypertensie, diabetes type 2, doorgemaakte hart- of vaatziekte | art. 9 |
@@ -46,8 +46,8 @@ gezicht, een keuken of een medicijndoosje bevatten dat de gebruiker er niet bij
 bedoelde. En de afgeleide waarden zijn geen invoer maar uitkomst: een
 tienjaarsrisico is een nieuw gezondheidsgegeven dat de app zelf maakt.
 
-Het conditieprofiel heeft niets toegevoegd aan de categorie — er stond al
-gezondheidsdata in — maar het heeft wel expliciet gemaakt wat impliciet was. Dat
+Het conditieprofiel heeft niets toegevoegd aan de categorie (er stond al
+gezondheidsdata in) maar het heeft wel expliciet gemaakt wat impliciet was. Dat
 is precies waarom dit stuk nu geschreven wordt en niet een jaar geleden.
 
 ## Waar het heen gaat
@@ -84,7 +84,7 @@ zeggen. Twee ontwerpkeuzes beperken haar verder, en het is de moeite ze hier te
 noemen omdat ze ook privacymaatregelen zijn en niet alleen goede smaak.
 
 Medicatie wordt in groepen gevraagd en niet als middel. Dat is minder gegeven
-voor hetzelfde doel — dataminimalisatie in de praktijk.
+voor hetzelfde doel, dataminimalisatie in de praktijk.
 
 En de app haalt niets uit het HIS. Wat erin staat is zelfopgave. Dat beperkt de
 verwerking en het beperkt ook wat er bij een lek te halen valt.
@@ -119,7 +119,7 @@ maar wel een risico voor de gebruiker.
 
 ## Wat er nog beslist moet worden
 
-Wie verwerkingsverantwoordelijke is — en dus of dit stuk een voorbereiding is of
+Wie verwerkingsverantwoordelijke is, en dus of dit stuk een voorbereiding is of
 een verplichting.
 
 De grondslag. Bij een app die patiënten vrijwillig gebruiken ligt uitdrukkelijke

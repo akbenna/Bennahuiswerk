@@ -1,5 +1,5 @@
 /**
- * ONTHAAL — profiel kiezen of aanmaken
+ * ONTHAAL: profiel kiezen of aanmaken
  *
  * Bij het aanmaken vragen we alleen naam en leeftijd; de app kiest daarop het
  * spoor. Daarnaast één zin over wanneer en waar. Dat laatste is geen
@@ -72,7 +72,7 @@ export function NieuwProfiel(
       </div>
       {s && (
         <div className="melding" style={{ marginBottom: 16 }}>
-          Spoor {s} — <b>{SPOORNAAM[s]}</b> ({SPOORLEEFTIJD[s]})
+          Spoor {s}: <b>{SPOORNAAM[s]}</b> ({SPOORLEEFTIJD[s]})
         </div>
       )}
 

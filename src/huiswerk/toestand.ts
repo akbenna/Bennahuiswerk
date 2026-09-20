@@ -33,7 +33,7 @@ const WACHT_MS = 1500
 export const KINDEREN = Object.keys(PROFIELEN)
 
 /** Alle opgaven: de vaste voorraad, de sjablonen en wat de ouder erbij zette.
- *  De sjablonen worden één keer gebouwd — opnieuw bouwen zou elke hertekening
+ *  De sjablonen worden één keer gebouwd, opnieuw bouwen zou elke hertekening
  *  nieuwe getallen geven midden in een som.
  *
  *  Twee lijsten, en dat is geen slordigheid: `sjablonen()` staat onder de gouden
@@ -126,7 +126,7 @@ export function useHuiswerk(): Toestand {
   }, [zet])
 
   /* Bij het openen één keer: het toernooi afrekenen, de kind-accounts ophalen,
-     en als er een familiecode is ook de hele stand. Alle drie stil — als er
+     en als er een familiecode is ook de hele stand. Alle drie stil: als er
      geen verbinding is werkt de app gewoon door. */
   const gestart = useRef(false)
   useEffect(() => {

@@ -3,8 +3,8 @@
  *
  * WAT ER MIS WAS
  *
- * De uitslag komt in vijf emmers uit de database — eigen maaltijden, eigen
- * producten, gerechten, de voedingsmiddelentabel, merkproducten — en het scherm
+ * De uitslag komt in vijf emmers uit de database (eigen maaltijden, eigen
+ * producten, gerechten, de voedingsmiddelentabel, merkproducten) en het scherm
  * zette ze achter elkaar in die volgorde. Dat leest als één ranglijst en was het
  * niet: het was de volgorde waarin de stukken ooit zijn opgeschreven.
  *
@@ -34,12 +34,12 @@
  * Omdat een treffer zonder naamovereenkomst niet fout is. `kal_nevo_zoek` kent
  * synoniemen: 'tonijnsalade' vindt 'Salade tonijn- lunch/borrel', waar het
  * woord tonijnsalade nergens in staat. Datzelfde geldt voor een gerecht dat via
- * zijn omschrijving matcht. Die treffers horen er te zijn — alleen niet bóven
+ * zijn omschrijving matcht. Die treffers horen er te zijn: alleen niet bóven
  * een regel die letterlijk zo heet.
  *
  * Binnen dezelfde trede telt de lengte van de naam: korter is specifieker.
  * 'Kaas 30+ oud' staat dus boven 'Kaas 30+ jong belegen', en beide boven een
- * gerecht. Bij gelijke lengte blijft de volgorde staan die de database gaf —
+ * gerecht. Bij gelijke lengte blijft de volgorde staan die de database gaf,
  * dáár zit de relevantie van `kal_nevo_zoek` in, en die gooi ik niet weg.
  */
 
@@ -81,7 +81,7 @@ export function naamtrede(naam: string, vraag: string): number {
   if (n === v) return 0
   if (n.startsWith(v + ' ')) return 1
   /* Een woordgrens, zodat 'kaas' wel 'Broodje kaas' vindt maar niet ineens
-     'Geitenkaas' als woordbegin telt — die hoort een trede lager. */
+     'Geitenkaas' als woordbegin telt, die hoort een trede lager. */
   if (n.includes(' ' + v)) return 2
   if (n.includes(v)) return 3
   return 4

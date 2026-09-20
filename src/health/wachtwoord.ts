@@ -21,7 +21,7 @@
  *
  * EN DAAROM IS LENGTE NIET WAAR HET GEVAAR ZIT
  *
- * Niemand kiest twaalf willekeurige letters. Iemand kiest `abdelkader2019` —
+ * Niemand kiest twaalf willekeurige letters. Iemand kiest `abdelkader2019`:
  * veertien tekens, en in een woordenboekaanval binnen een seconde gevonden. Een
  * lengte-eis alleen verplaatst het probleem dus; hij lost het niet op. De drie
  * regels hieronder staan in die volgorde van belangrijkheid omgekeerd: de lengte
@@ -30,8 +30,8 @@
  * WAT HIER MET OPZET NIET STAAT
  *
  * Geen eis aan hoofdletters, cijfers of leestekens. Die regel is niet neutraal
- * maar schadelijk: hij levert `Wachtwoord1!` op — precies de vorm die elke
- * aanvaller als eerste probeert — en hij maakt een lange zin, het enige dat
+ * maar schadelijk: hij levert `Wachtwoord1!` op (precies de vorm die elke
+ * aanvaller als eerste probeert) en hij maakt een lange zin, het enige dat
  * werkelijk helpt, onnodig lastig. NIST liet die eis in 2017 vallen en raadt
  * sindsdien aan wat hier staat: lengte, en toetsen tegen wat veel voorkomt.
  *
@@ -52,7 +52,7 @@ export const MINIMUM_LENGTE = 12
  *
  * Een blokkeerlijst van veelgebruikte wachtwoorden lijkt op het eerste gezicht
  * zinloos naast een eis van twaalf tekens: `password` is er acht en `123456`
- * zes, dus die vallen al af op lengte. Wat er overblijft is juist het gevaar —
+ * zes, dus die vallen al af op lengte. Wat er overblijft is juist het gevaar,
  * `password1234`, `Passw0rd!!!!`, `passwordpassword`. Twaalf tekens, en alle
  * drie staan ze boven aan elke lijst die ooit uit een datalek kwam.
  *
@@ -73,13 +73,13 @@ export function grondvorm(ww: string): string[] {
   }
   /* HET UITROEPTEKEN STAAT ER MET OPZET NIET IN
      Als leet voor een `i` bestaat het, maar als opvulling achteraan komt het
-     veel vaker voor — en dan is het schadelijk om het te vertalen. Stond het
+     veel vaker voor, en dan is het schadelijk om het te vertalen. Stond het
      erin, dan werd `p4ssw0rd!!!!` de grondvorm `passwordiiii`, dat in geen
      enkele lijst staat, en glipte het er dus juist doorheen. Nu valt het als
      leesteken weg en blijft `password` over. De proef ving dit. */
   /* Alle omkeringen tegelijk, maar niet uitputtend: bij vijf leetcijfers zouden
      dat al tweeëndertig varianten zijn en bij tien duizend. Twee vormen volstaan
-     — alles vervangen, en niets vervangen — plus de `1`-splitsing, want dat is
+ (alles vervangen, en niets vervangen) plus de `1`-splitsing, want dat is
      de enige waar de keuze er echt toe doet. */
   const vormen = new Set<string>([klein])
   for (const keuze of ['i', 'l']) {
@@ -165,7 +165,7 @@ export function langsteRij(ww: string): number {
  * weten (het staat in een lijst). Iemand die drie klachten tegelijk krijgt leest
  * er geen van.
  *
- * `account` mag leeg zijn — bij een herstel weet het scherm soms nog niet wie
+ * `account` mag leeg zijn: bij een herstel weet het scherm soms nog niet wie
  * het is. Dan vervalt die ene regel en de rest niet.
  */
 export function wachtwoordklacht(ww: string, account = '', lijst = VEELGEBRUIKT): string | null {
@@ -178,7 +178,7 @@ export function wachtwoordklacht(ww: string, account = '', lijst = VEELGEBRUIKT)
   /* Drie tekens is te kort om iets te betekenen: wie "ali" heet mag "kwaliteit"
      gebruiken. Vanaf vier wordt het een aanwijzing. */
   if (naam.length >= 4 && klein.includes(naam)) {
-    return 'Je accountnaam staat erin — dat raadt iemand meteen'
+    return 'Je accountnaam staat erin, en dat raadt iemand meteen'
   }
 
   /* Minder dan vijf verschillende tekens over twaalf posities: dat is
@@ -186,7 +186,7 @@ export function wachtwoordklacht(ww: string, account = '', lijst = VEELGEBRUIKT)
      regel. */
   const verschillend = new Set(klein).size
   if (verschillend < 5) {
-    return 'Te weinig verschillende tekens — dit is een patroon, geen wachtwoord'
+    return 'Te weinig verschillende tekens: dit is een patroon, geen wachtwoord'
   }
 
   if (langsteRij(ww) > ww.length / 2) {
@@ -209,7 +209,7 @@ export function wachtwoordklacht(ww: string, account = '', lijst = VEELGEBRUIKT)
  * boven komt drijven, en is met opzet klein gehouden: door `grondvorm` bijt een
  * korte lijst ook op lange varianten, en dat is waar hij hier voor dient.
  *
- * Deze lijst is niet geverifieerd tegen een echte top-duizend — die is van hier
+ * Deze lijst is niet geverifieerd tegen een echte top-duizend, die is van hier
  * niet te bereiken. Hij is dus een ondergrens en geen bewijs: wat erin staat
  * wordt geweigerd, en wat er niet in staat is daarmee niet goedgekeurd. Zeg dat
  * ook zo tegen wie het vraagt.

@@ -15,7 +15,7 @@
 --
 -- Uit NEVO, per gram, met een join. Er staat hieronder geen enkele calorie die
 -- is ingetypt: er staan grammen, en die worden vermenigvuldigd met wat de tabel
--- per honderd gram zegt. Dat is niet netter maar controleerbaarder — een getypt
+-- per honderd gram zegt. Dat is niet netter maar controleerbaarder, een getypt
 -- getal is niet na te rekenen, een gram maal een tabelregel wel.
 --
 -- WAT ERBIJ STAAT IS DE HUISHOUDELIJKE MAAT
@@ -35,14 +35,14 @@
 -- verzonnen heeft.
 --
 -- De olijfolie is de reden dat dit zo moet. Uit de analyse: "een paar grote
--- lepels olijfolie kan net zo goed 40 als 70 gram zijn — een verschil van 270
+-- lepels olijfolie kan net zo goed 40 als 70 gram zijn, een verschil van 270
 -- kcal", en: vet is de enige post die er echt toe doet en tegelijk de enige die
 -- niet gewogen wordt. Zijn ondergrens staat daarom op 30 en zijn bovengrens op
 -- 70 gram, en zijn graad op D. Omdat de maaltijd de slechtste graad van zijn
 -- onderdelen krijgt, is de hele salade D zolang die olie niet gewogen is. Dat
 -- hoort zo: één keer wegen maakt van deze maaltijd een B.
 --
--- DE DRESSING — waarom dit bestand herzien is
+-- DE DRESSING: waarom dit bestand herzien is
 --
 -- Eerst stond er `Dressing olijfolie-azijn` (NEVO 2605, 607 kcal/100 g), en dat
 -- gaf 798 kcal voor de schaal tegen de ≈750 uit de tabel van de analyse. Dat
@@ -51,7 +51,7 @@
 -- met 300 kcal per honderd gram, en dat is `Dressing honing/mosterd-` (2468).
 --
 -- Met die correctie komen drie onafhankelijke optellingen exact uit: 55,7 gram
--- vet, 26,9 gram koolhydraten en 10,0 gram vezels — dezelfde getallen als in de
+-- vet, 26,9 gram koolhydraten en 10,0 gram vezels, dezelfde getallen als in de
 -- doorrekening die van buiten kwam. Dat is de reden om het te veranderen: niet
 -- omdat een ander getal mooier is, maar omdat drie sommen die los van elkaar
 -- gemaakt zijn nu op de komma overeenkomen.
@@ -64,7 +64,7 @@
 --   lezen is op het moment dat je het logt.
 --
 --   Twee porties voor de salade, één voor het stokbrood. Zo staan ze op tafel.
---   Wat je ervan eet kies je bij het loggen — één portie ís de halve schaal — en
+--   Wat je ervan eet kies je bij het loggen (één portie ís de halve schaal) en
 --   de app zegt er dan bij dat een deelportie niet apart gewogen is.
 --
 --   Komijn en zout staan er wél in, met nul calorieën. Ze doen niets voor de
@@ -87,7 +87,7 @@ begin
 end $$;
 
 -- -----------------------------------------------------------------------------
--- 1. De tonijnsalade — twee porties, favoriet
+-- 1. De tonijnsalade: twee porties, favoriet
 -- -----------------------------------------------------------------------------
 with mij as (select id from public.kal_gebruikers limit 1),
 weg as (
@@ -98,7 +98,7 @@ weg as (
 nieuw as (
   insert into public.kal_recepten(gebruiker_id, naam, toelichting, porties, volgt_profiel, favoriet)
   select id, 'Tonijnsalade',
-         'Staat voor twee porties; één portie is de halve schaal. Tonijn op water — op olie '
+         'Staat voor twee porties; één portie is de halve schaal. Tonijn op water: op olie '
          || 'komt er ongeveer 50 kcal per portie bij. De olie is de enige post die er echt toe '
          || 'doet en de enige die niet gewogen is: weeg hem één week en deze maaltijd gaat van '
          || 'D naar B.',
@@ -132,7 +132,7 @@ select
 from ing i join public.nevo_actief n on n.nevo_code = i.nevo_code;
 
 -- -----------------------------------------------------------------------------
--- 2. Half stokbrood belegd — één portie
+-- 2. Half stokbrood belegd: één portie
 -- -----------------------------------------------------------------------------
 with mij as (select id from public.kal_gebruikers limit 1),
 weg as (

@@ -13,7 +13,7 @@
 --  `alter table ... add primary key` verderop proberen daarna een tweede
 --  sleutel toe te voegen aan een tabel die er al een heeft.
 --
---  Dat is niet gevaarlijk — er staat geen enkele `drop`, `truncate` of
+--  Dat is niet gevaarlijk: er staat geen enkele `drop`, `truncate` of
 --  losse `delete` in, en de `update`-regels die je bij het zoeken tegenkomt
 --  staan alle binnen functielichamen die op dat moment nog niet eens
 --  bestaan. Maar het levert ook niets op.
@@ -23,7 +23,7 @@
 --  Nakijken hoe een tabel er werkelijk uitziet: welke kolommen verplicht
 --  zijn, en welke waarden een check-constraint toelaat. Dat is de enige
 --  betrouwbare bron daarvoor, en een handgeschreven proefopstelling is dat
---  niet — zie de kop van `health/database/31-de-lunchhoek.sql`.
+--  niet: zie de kop van `health/database/31-de-lunchhoek.sql`.
 --
 --  Wil je een lokale proefopstelling met de echte constraints erin, knip er
 --  dan de tabellen uit die je nodig hebt plus hun sleutels en indexen. Dat

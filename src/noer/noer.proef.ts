@@ -3,7 +3,7 @@
  *
  * De gebedstijden hebben hun eigen toets. Hier staat wat eromheen zit: de
  * leerstof, de niveaus, de oefenkaarten, de dagmissie, de insignes, het
- * weekbudget en het samenvoegen tussen toestellen — alles vergeleken met
+ * weekbudget en het samenvoegen tussen toestellen, alles vergeleken met
  * src/noer/gouden-waarden.json, gedraaid uit de oude pagina zelf.
  */
 import { describe, expect, it } from 'vitest'
@@ -24,9 +24,12 @@ import {
 import { TARIEF, leeg, leegProg, samenvoegen } from './opslag'
 import type { Losse, Profiel, Stand, Voortgang } from './opslag'
 import type { Spoor } from './gegevens/soorten'
+import { woordgelijk } from '@/gedeeld/woordgelijk'
 
+/* De vinger loopt over de wóórden en niet over de leestekens. Waarom,
+   staat in `src/gedeeld/woordgelijk.ts`. */
 const vinger = (x: unknown): string =>
-  createHash('sha256').update(JSON.stringify(x)).digest('hex').slice(0, 16)
+  createHash('sha256').update(JSON.stringify(woordgelijk(x))).digest('hex').slice(0, 16)
 
 const NU = gouden.nu
 const KLOK = Date.parse(NU + 'T10:00:00Z')

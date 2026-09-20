@@ -55,7 +55,7 @@ export interface Herkenning {
  * plus de krachttraining die erin genoemd werd.
  *
  * `trainingen` is optioneel in het type en nooit optioneel na `verslag()`. Dat
- * verschil is er omdat de nu draaiende edge function het veld niet stuurt — zie
+ * verschil is er omdat de nu draaiende edge function het veld niet stuurt, zie
  * daar.
  */
 export interface Dagherkenning extends Herkenning {
@@ -83,7 +83,7 @@ export interface ImportDag {
  * anders dan de grootte van de getallen.
  *
  * Dat mag, maar niet stil. `hoe` zegt waar de grootheid vandaan komt, en het
- * scherm toont dat vóór er iets wordt overgenomen — een misgok is anders niet
+ * scherm toont dat vóór er iets wordt overgenomen, een misgok is anders niet
  * terug te vinden: hij ziet eruit als een gewone rij in de database.
  */
 export interface Importbron {
@@ -100,12 +100,12 @@ export interface Importbron {
  *
  * Per post een duur, een datum, de app die hem schreef, en een kopje dat zegt
  * wat het was: "Buiten fietsen", "Wandelen", "Hardlopen". Dat kopje is wat deze
- * rijen bruikbaar maakt — veertig minuten hardlopen is voor de richtlijn niet
+ * rijen bruikbaar maakt, veertig minuten hardlopen is voor de richtlijn niet
  * hetzelfde als veertig minuten wandelen.
  *
  * `soort` is de sleutel uit `inspanning.ts` waar de herkenning op uitkwam;
  * `label` is wat er letterlijk stond. Die twee staan los van elkaar omdat de
- * eerste een vertaling is en de tweede een waarneming — komt er ooit een soort
+ * eerste een vertaling is en de tweede een waarneming, komt er ooit een soort
  * bij, dan is aan het label te zien wat er toen van gemaakt is.
  */
 export interface Importactiviteit {
@@ -124,7 +124,7 @@ export interface Importactiviteit {
  *
  * Vier uur. Een lange rit of een bergwandeling haalt dat, en die horen mee te
  * tellen. Wat er níét doorheen komt is wat een horloge doet als het een hele dag
- * als één activiteit wegschrijft — in de lijst die dit opriep stond een post van
+ * als één activiteit wegschrijft, in de lijst die dit opriep stond een post van
  * 9 uur 7 en een van 14 uur 22, en dat zijn geen trainingen maar een vergeten
  * stopknop.
  *
@@ -132,7 +132,7 @@ export interface Importactiviteit {
  * minuten zich in één klap vijf keer op een dag waarop er misschien niets
  * gebeurde. Dat is erger dan hem missen: een doel dat vanzelf afgaat meet niets.
  *
- * De grens haalt niets wég — ze zet het vinkje uit. Wie het beter weet zet hem
+ * De grens haalt niets wég: ze zet het vinkje uit. Wie het beter weet zet hem
  * aan, en dat is het verschil tussen een filter en een oordeel.
  */
 export const ACTIVITEIT_MAX_MIN = 240
@@ -147,8 +147,8 @@ export function aannemelijk(minuten: number): boolean {
  *
  * Drie redenen, en ze zijn alle drie iets anders dan "fout":
  *
- *   krachttraining   staat in de richtlijn apart — twee keer per week
- *                    spierversterkend, naast de aerobe minuten — en hoort in
+ *   krachttraining   staat in de richtlijn apart (twee keer per week
+ *                    spierversterkend, naast de aerobe minuten) en hoort in
  *                    `kal_training`. Zou hij hier meetellen, dan haalde één
  *                    zware sessie de halve aerobe week. De work-outlijst geeft
  *                    bovendien geen sets of reps, dus er valt ook niets van te
@@ -162,7 +162,7 @@ export function aannemelijk(minuten: number): boolean {
  */
 export function redenUit(a: Importactiviteit): string | null {
   if (a.soort === 'kracht') return 'krachttraining telt apart en hoort niet bij deze minuten'
-  if (!aannemelijk(a.minuten)) return `langer dan ${ACTIVITEIT_MAX_MIN / 60} uur — een vergeten stopknop?`
+  if (!aannemelijk(a.minuten)) return `langer dan ${ACTIVITEIT_MAX_MIN / 60} uur. Een vergeten stopknop?`
   if (!a.soort) return 'geen soort te zien op de afdruk'
   return null
 }
@@ -237,7 +237,7 @@ export async function importeer(
  * `soort: 'dag'` is nieuw in `health/edge/kal-ai.ts`. De versie die er nu
  * draait kent hem niet, en valt voor alles wat geen 'foto' of 'import' is terug
  * op de tekstprompt. Dat is precies het gedrag dat je wilt: het eten wordt
- * herkend en het moment komt mee zover het model het uit de woorden kan halen —
+ * herkend en het moment komt mee zover het model het uit de woorden kan halen,
  * het veld staat al in het oude schema. Wat ontbreekt is `trainingen`, en die
  * komt hier als lege lijst terug.
  *

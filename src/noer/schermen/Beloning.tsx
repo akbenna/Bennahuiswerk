@@ -1,12 +1,12 @@
 /**
- * BELONING — punten voor alles, euro's voor wat je écht leert
+ * BELONING: punten voor alles, euro's voor wat je écht leert
  *
  * Een les halen, een tekst uit je hoofd kennen, een examen halen en de
  * dagopdracht afmaken. Het gebed zelf staat er standaard buiten: dat is een
  * keuze, en de uitleg staat bij het ouderscherm.
  *
  * De stickerkaart loopt van maandag tot en met zondag en eindigt in de week van
- * vandaag. Vier volle weken, netjes uitgelijnd — een rij die halverwege begint
+ * vandaag. Vier volle weken, netjes uitgelijnd, een rij die halverwege begint
  * leest een kind niet als een kalender.
  */
 import type { ReactNode } from 'react'

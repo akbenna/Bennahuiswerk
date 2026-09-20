@@ -3,7 +3,7 @@
  *
  * Deze app is de enige in de hub met meer dan één kind erin: elk profiel heeft
  * zijn eigen voortgang, en het gezin deelt de plaats, de gebedsmethode en de
- * instellingen. Bij het samenvoegen gaat het dus per profiel — en de regel
+ * instellingen. Bij het samenvoegen gaat het dus per profiel, en de regel
  * blijft dezelfde als overal: niets weggooien. Bij een botsing wint de hoogste
  * waarde of de nieuwste datum, nooit "leeg".
  */

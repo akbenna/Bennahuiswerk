@@ -68,7 +68,7 @@ export interface Zwakteregel {
 }
 
 /** De vijf zwakste en drie sterkste onderwerpen. Alleen wat al geoefend is doet
- *  mee — een onderwerp waar nog nooit aan begonnen is, is niet zwak maar nieuw. */
+ *  mee, een onderwerp waar nog nooit aan begonnen is, is niet zwak maar nieuw. */
 export function zwakteAnalyse(
   prog: Voortgang, alle: readonly Kaart[], pid: string,
 ): { zwak: Zwakteregel[]; sterk: Zwakteregel[]; geoefendAantal: number } {

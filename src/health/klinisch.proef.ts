@@ -2,7 +2,7 @@
  * WELKE METING HET SCHERM LAAT ZIEN
  *
  * Deze proef bestaat om één reden. De sortering die hier onder ligt gaf voor
- * twee gelijke datums -1 terug in beide richtingen — a vóór b én b vóór a. Dat
+ * twee gelijke datums -1 terug in beide richtingen, a vóór b én b vóór a. Dat
  * is geen ordening maar een tegenspraak, en de uitkomst hing af van de
  * sorteerfunctie van de browser. Zolang niemand twee metingen op één dag had
  * viel dat niemand op.

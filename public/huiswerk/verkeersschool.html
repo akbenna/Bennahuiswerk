@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Verkeersles">
-<title>Verkeersschool — familie</title>
+<title>Verkeersschool, familie</title>
 <style>
   :root{--geel:#ffd100;--rood:#e23b32;--groen:#2fbf5a;--blauw:#1155a5;--tekst:#eef1f4;}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -386,11 +386,11 @@ function shuffle(a){for(let i=a.length-1;i>0;i--){const j=(Math.random()*(i+1))|
 function quizNew(){qAnswered=false;qexpl.textContent='';qnext.classList.add('hidden');qCur=SIGNS[(Math.random()*SIGNS.length)|0];
   qcanvasWrap.innerHTML='';const cv=makeSignCanvas(qCur.id,240);qcanvasWrap.appendChild(cv);
   const others=shuffle(SIGNS.filter(s=>s.id!==qCur.id)).slice(0,3);const opts=shuffle([qCur,...others]);
-  qopts.innerHTML='';opts.forEach(o=>{const b=document.createElement('button');b.className='qopt';b.textContent=o.name+' — '+o.meaning;b.onclick=()=>quizAnswer(b,o);qopts.appendChild(b);});
+  qopts.innerHTML='';opts.forEach(o=>{const b=document.createElement('button');b.className='qopt';b.textContent=o.name+', '+o.meaning;b.onclick=()=>quizAnswer(b,o);qopts.appendChild(b);});
   qscore.textContent='Score '+qScore+' / '+qTotal;}
 function quizAnswer(btn,opt){if(qAnswered)return;qAnswered=true;qTotal++;const bs=qopts.querySelectorAll('.qopt');bs.forEach(b=>b.style.pointerEvents='none');
   if(opt.id===qCur.id){qScore++;btn.classList.add('good');qexpl.textContent='Goed! '+qCur.meaning+'.';}
-  else{btn.classList.add('bad');bs.forEach(b=>{if(b.textContent.startsWith(qCur.name+' —'))b.classList.add('good');});qexpl.textContent='Juist is: '+qCur.name+' — '+qCur.meaning+'.';}
+  else{btn.classList.add('bad');bs.forEach(b=>{if(b.textContent.startsWith(qCur.name+','))b.classList.add('good');});qexpl.textContent='Juist is: '+qCur.name+': '+qCur.meaning+'.';}
   qscore.textContent='Score '+qScore+' / '+qTotal;qnext.classList.remove('hidden');}
 qnext.onclick=quizNew;
 
@@ -412,7 +412,7 @@ const THEORY=[
  {cat:'algemeen',q:'De autogordel is…',opts:['Voor bestuurder én alle passagiers verplicht','Alleen voorin verplicht','Een advies','In de stad niet nodig'],a:0,expl:'Iedereen in de auto is verplicht de gordel te dragen.'},
  {cat:'algemeen',q:'Een goede vuistregel voor volgafstand bij droog weer is minstens…',opts:['Twee seconden','Een halve seconde','Eén autolengte','Tien meter, altijd'],a:0,expl:'De 2-secondenregel; bij nat of glad wegdek houd je méér afstand.'},
  {cat:'algemeen',q:'Wie is de “Bob”?',opts:['Degene die nuchter blijft en rijdt','De snelste chauffeur','Een type auto','De bijrijder met de kaart'],a:0,expl:'Bob = de bewuste, nuchtere bestuurder.'},
- {cat:'algemeen',q:'Voordat je afslaat of van rijstrook wisselt, controleer je…',opts:['De dode hoek door over je schouder te kijken','Alleen je spiegel','Niets, spiegels zijn genoeg','Alleen je snelheid'],a:0,expl:'Spiegels tonen de dode hoek niet volledig — kijk over je schouder.'},
+ {cat:'algemeen',q:'Voordat je afslaat of van rijstrook wisselt, controleer je…',opts:['De dode hoek door over je schouder te kijken','Alleen je spiegel','Niets, spiegels zijn genoeg','Alleen je snelheid'],a:0,expl:'Spiegels tonen de dode hoek niet volledig, kijk over je schouder.'},
  {cat:'algemeen',q:'Bij een rijstrook die eindigt (file bij een versmalling) hoor je…',opts:['Vlak voor de versmalling om beurten in te voegen (ritsen)','Zo vroeg mogelijk in te voegen','De andere strook te blokkeren','Stil te blijven staan'],a:0,expl:'Ritsen: om en om invoegen vlak vóór de versmalling houdt de doorstroming het beste.'},
  {cat:'algemeen',q:'Bij gladheid of regen pas je je rijstijl aan door…',opts:['Meer afstand te houden en rustig te remmen','Harder te rijden','Dichter op je voorganger','Fel te sturen'],a:0,expl:'Minder grip vraagt om meer afstand en rustige, geleidelijke bewegingen.'},
  {cat:'algemeen',q:'Je mag het mistachterlicht gebruiken als het zicht minder is dan…',opts:['50 meter','200 meter','100 meter','20 meter'],a:0,expl:'Mistachterlicht is toegestaan bij een zicht van minder dan 50 meter.'},
@@ -420,7 +420,7 @@ const THEORY=[
  {cat:'gevaar',q:'Een voetganger stapt de zebra op terwijl jij nadert. Je…',opts:['Laat de voetganger voorgaan','Toetert en rijdt door','Rijdt er snel langs','Mag doorrijden als je licht groen is'],a:0,expl:'Voetgangers op (of duidelijk bij) een zebrapad hebben voorrang.'},
  {cat:'gevaar',q:'Het verkeerslicht springt op geel terwijl je het nadert. Je…',opts:['Stopt als dat veilig kan','Geeft gas om nog te halen','Mag altijd doorrijden','Maakt altijd een noodstop'],a:0,expl:'Bij geel stop je, tenzij stoppen niet meer veilig kan.'},
  {cat:'gevaar',q:'Je rijdt in een woonstraat langs geparkeerde auto’s. Het grootste risico is…',opts:['Een openslaand portier of overstekend kind','Dat je te langzaam rijdt','Je benzineverbruik','Niets bijzonders'],a:0,expl:'Reken op onverwachte voetgangers/portieren; matig je snelheid.'},
- {cat:'gevaar',q:'Je rijdt langs een school en kinderen spelen op de stoep. Je…',opts:['Mindert snelheid en let extra op','Rijdt gewoon door op 50','Toetert zodat ze opzij gaan','Rijdt midden op de weg'],a:0,expl:'Kinderen zijn onvoorspelbaar — anticipeer en rijd rustig.'},
+ {cat:'gevaar',q:'Je rijdt langs een school en kinderen spelen op de stoep. Je…',opts:['Mindert snelheid en let extra op','Rijdt gewoon door op 50','Toetert zodat ze opzij gaan','Rijdt midden op de weg'],a:0,expl:'Kinderen zijn onvoorspelbaar, anticipeer en rijd rustig.'},
  {cat:'gevaar',q:'Achter je nadert een ambulance met zwaailicht en sirene. Je…',opts:['Maakt zo snel mogelijk veilig ruimte','Blijft rustig doorrijden','Stopt midden op de weg','Rijdt harder om weg te komen'],a:0,expl:'Ga rustig maar tijdig opzij en maak ruimte voor het voorrangsvoertuig.'},
  {cat:'verkeersborden',sign:'C2',q:'Dit bord betekent…',opts:['Eenrichtingsweg: inrijden verboden','Voorrangsweg','Doodlopende weg','Parkeren'],a:0,expl:'Rond, rood met witte balk: inrijden verboden.'},
  {cat:'verkeersborden',sign:'E4',q:'Dit blauwe bord met witte P betekent…',opts:['Parkeergelegenheid','Parkeerverbod','Politiepost','Pechhaven'],a:0,expl:'Blauw bord met P = hier mag je parkeren.'},
@@ -552,7 +552,7 @@ const CAPS=[30,50,0];let capIdx=1,capHintShown=false;
 const capBtn=document.getElementById('capBtn'),capNum=document.getElementById('capNum'),capSub=document.getElementById('capSub');
 function updateCapBtn(){const c=CAPS[capIdx];if(c===0){capBtn.classList.add('max');capNum.textContent='MAX';capSub.textContent='vrij';}
   else{capBtn.classList.remove('max');capNum.textContent=c;capSub.textContent='max km/h';}}
-function cycleCap(){capIdx=(capIdx+1)%CAPS.length;updateCapBtn();const c=CAPS[capIdx];toast('Snelheidslimiet '+(c===0?'MAX':c),c===0?'Vrij rijden — jij bepaalt de snelheid.':'Geef gas: de auto blijft rustig op '+c+' km/u.','good');}
+function cycleCap(){capIdx=(capIdx+1)%CAPS.length;updateCapBtn();const c=CAPS[capIdx];toast('Snelheidslimiet '+(c===0?'MAX':c),c===0?'Vrij rijden, jij bepaalt de snelheid.':'Geef gas: de auto blijft rustig op '+c+' km/u.','good');}
 capBtn.addEventListener('click',e=>{e.preventDefault();cycleCap();});
 updateCapBtn();
 function setPressed(id,on){const el=document.getElementById(id);if(el)el.classList.toggle('pressed',on);}
@@ -572,7 +572,7 @@ window.addEventListener('pointerup',()=>{rotating=false;steerHeld=false;});windo
 const toastEl=document.getElementById('toast'),tH=document.getElementById('toastHead'),tB=document.getElementById('toastBody');let toastTimer=null,warnCd=0;
 function toast(h,b,k){tH.textContent=h;tB.textContent=b;toastEl.className='toast show '+(k||'');if(toastTimer)clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastEl.className='toast '+(k||''),2400);}
 const bordEl=document.getElementById('bordlabel');let bordTimer=null;
-function showBord(id){const s=SIGNMAP[id];bordEl.innerHTML='<b>'+s.name+'</b> — '+s.meaning;bordEl.classList.add('show');if(bordTimer)clearTimeout(bordTimer);bordTimer=setTimeout(()=>bordEl.classList.remove('show'),2400);}
+function showBord(id){const s=SIGNMAP[id];bordEl.innerHTML='<b>'+s.name+'</b>, '+s.meaning;bordEl.classList.add('show');if(bordTimer)clearTimeout(bordTimer);bordTimer=setTimeout(()=>bordEl.classList.remove('show'),2400);}
 const TIPS={rood:'Bij rood stop je altijd vóór de stopstreep.',voetganger:'Voetgangers op een zebrapad hebben voorrang.',snelheid:'Houd je aan de aangegeven snelheid.',botsing:'Kijk of de kruising vrij is en houd afstand.',voorrang:'Verleen voorrang aan verkeer van rechts / bij een driehoek.',stopbord:'Bij een stopbord altijd volledig stilstaan.'};
 const KOP={rood:'Door rood!',voetganger:'Voetganger gemist!',snelheid:'Te hard!',botsing:'Botsing!',voorrang:'Geen voorrang!',stopbord:'Niet gestopt!'};
 let state='fam',speed=0,distM=0,steer=0,carX=0,currentLimit=50,fouten=0,goed=0,punten=0,tally,pxSpawn=0,nextGap=0,last=0,judgedFinish=false;
@@ -649,7 +649,7 @@ function showProfiles(){hideAllScreens();hideDriveUI(true);renderProfiles();prof
 function showMenu(){hideAllScreens();hideDriveUI(true);const m=fam.members[cur];document.getElementById('menuHi').textContent='Hoi '+m.name+'! 👋';
   const av=document.getElementById('menuAva');av.textContent=m.name.charAt(0).toUpperCase();av.style.background=m.color;
   const ex=(m.bestExam!==null&&m.bestExam!==undefined)?' · examen best '+m.bestExam+'/20':'';
-  document.getElementById('menuStats').textContent=m.runs? (m.geslaagd+'× geslaagd · top '+(m.bestPunten||0)+' pnt · '+(m.bestAfstand||0)+' m'+ex) : (m.bestExam!=null?('examen best '+m.bestExam+'/20 — rijd je eerste rit!'):'Nog geen ritten — veel plezier!');
+  document.getElementById('menuStats').textContent=m.runs? (m.geslaagd+'× geslaagd · top '+(m.bestPunten||0)+' pnt · '+(m.bestAfstand||0)+' m'+ex) : (m.bestExam!=null?('examen best '+m.bestExam+'/20 (rijd je eerste rit!'):'Nog geen ritten) veel plezier!');
   menuScreen.classList.remove('hidden');state='menu';setDiffButtons();}
 function setDiffButtons(){document.querySelectorAll('#diffSeg button').forEach(b=>b.classList.toggle('on',b.dataset.d===diff));}
 
@@ -785,7 +785,7 @@ function examFinish(){stopExamTimer();examClock.classList.add('hidden');let corr
   const pct=document.createElement('div');pct.className='small';pct.textContent='Slagen vanaf '+EXAM_PASS+'/'+examQ.length+' ('+Math.round(EXAM_PASS/examQ.length*100)+'%). Jij: '+Math.round(correct/examQ.length*100)+'%.';examBody.appendChild(pct);
   const rv=document.createElement('div');rv.className='review';
   examQ.forEach((q,i)=>{const ok=examAns[i]===q.a;const it=document.createElement('div');it.className='rvitem '+(ok?'good':'bad');
-    const jouw=examAns[i]>=0?q.opts[examAns[i]]:'— niet beantwoord —';
+    const jouw=examAns[i]>=0?q.opts[examAns[i]]:' (niet beantwoord) ';
     it.innerHTML='<div class="q">'+(ok?'✅ ':'❌ ')+esc(q.q)+'</div><div class="ans">Jouw antwoord: <b>'+esc(jouw)+'</b></div>'+(ok?'':'<div class="ans">Juist: <b>'+esc(q.opts[q.a])+'</b></div>')+'<div class="ans" style="margin-top:4px">'+esc(q.expl)+'</div>';rv.appendChild(it);});
   examBody.appendChild(rv);
   const nav=document.createElement('div');nav.className='examnav';
@@ -803,7 +803,7 @@ function makeIconURL(sz){const c=document.createElement('canvas');c.width=c.heig
   try{return c.toDataURL('image/png');}catch(_){return '';}}
 function injectPWA(){try{const i192=makeIconURL(192),i512=makeIconURL(512);
   let al=document.querySelector('link[rel="apple-touch-icon"]');if(!al){al=document.createElement('link');al.rel='apple-touch-icon';document.head.appendChild(al);}al.href=i192;
-  const manifest={name:(fam?fam.name+' — Verkeersles':'Verkeersles'),short_name:'Verkeersles',start_url:'.',scope:'.',display:'standalone',orientation:'portrait',background_color:'#0c0f14',theme_color:'#0c0f14',icons:[{src:i192,sizes:'192x192',type:'image/png',purpose:'any maskable'},{src:i512,sizes:'512x512',type:'image/png',purpose:'any maskable'}]};
+  const manifest={name:(fam?fam.name+', Verkeersles':'Verkeersles'),short_name:'Verkeersles',start_url:'.',scope:'.',display:'standalone',orientation:'portrait',background_color:'#0c0f14',theme_color:'#0c0f14',icons:[{src:i192,sizes:'192x192',type:'image/png',purpose:'any maskable'},{src:i512,sizes:'512x512',type:'image/png',purpose:'any maskable'}]};
   const blob=new Blob([JSON.stringify(manifest)],{type:'application/json'});const url=URL.createObjectURL(blob);
   let ml=document.querySelector('link[rel="manifest"]');if(!ml){ml=document.createElement('link');ml.rel='manifest';document.head.appendChild(ml);}ml.href=url;}catch(_){}}
 

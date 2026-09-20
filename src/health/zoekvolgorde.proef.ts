@@ -62,7 +62,7 @@ describe('rangschik', () => {
   /* DE REGEL DIE DEZE PROEF MOET BESCHERMEN
      `kal_nevo_zoek` kent synoniemen: 'tonijnsalade' vindt 'Salade tonijn-
      lunch/borrel', waar dat woord nergens in staat. Zo'n treffer is goed en
-     mag niet verdwijnen — hij hoort alleen niet bovenaan. */
+     mag niet verdwijnen, hij hoort alleen niet bovenaan. */
   it('gooit een treffer zonder naamovereenkomst niet weg', () => {
     const uit = rangschik([
       r('nevo', 'Salade tonijn- lunch/borrel', 0),

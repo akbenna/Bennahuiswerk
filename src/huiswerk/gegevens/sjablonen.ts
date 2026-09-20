@@ -1,5 +1,5 @@
 /**
- * DE SJABLONEN — opgaven met wisselende getallen
+ * DE SJABLONEN: opgaven met wisselende getallen
  *
  * Elke sjabloon-som krijgt bij elke beurt nieuwe getallen, zodat de méthode
  * geoefend wordt en niet het antwoord uit het hoofd geleerd wordt. `gen()`
@@ -27,7 +27,7 @@ const EXP: Record<number, string> = { 1: '', 2: '²', 3: '³', 4: '⁴' }
  *
  * `ri`, `pick` en `shuffle` komen uit `R` en niet uit `Math.random`. Ze staan
  * hier als gewone namen in bereik, zodat elke sjabloonbody letterlijk is wat
- * hij in de oude pagina was — en dat is precies de bedoeling: honderdtwintig
+ * hij in de oude pagina was, en dat is precies de bedoeling: honderdtwintig
  * met de hand nagerekende sommen wil je niet overtypen.
  */
 export function sjablonen(R: Toeval): Sjabloon[] {

@@ -1,5 +1,5 @@
 /**
- * OEFENEN — de kern van de app
+ * OEFENEN: de kern van de app
  *
  * Vier soorten sessies door één scherm: een onderwerp, een mix, het
  * foutenschrift, en een toets (oefen- of proeftoets). Het verschil zit vooral
@@ -9,7 +9,7 @@
  * verboden zijn.
  *
  * Punten: tien als je het zelf hebt, vijf met een hint, drie als je de som al
- * beheerste. Dat laatste is geen straf maar een sturing — herhalen wat je al
+ * beheerste. Dat laatste is geen straf maar een sturing, herhalen wat je al
  * kunt hoort minder waard te zijn dan leren wat je nog niet kunt.
  *
  * EN HET SCHERM STOPT OOK EEN KEER
@@ -22,8 +22,8 @@
  *
  *  - de voorraad wordt niet meer tot één niveau teruggesneden (`opNiveau`);
  *  - is alles net geweest, dan komt er een rustscherm in plaats van nóg een
- *    beurt (`kiesVolgende`). Een toets gaat wél door — die heeft zijn tien
- *    vragen nodig — en een kind dat zelf doorwil ook.
+ *    beurt (`kiesVolgende`). Een toets gaat wél door (die heeft zijn tien
+ *    vragen nodig) en een kind dat zelf doorwil ook.
  *
  * Wat het kind ziet staat in sterren en niet in een vinkje: elk doosje is een
  * ster, vanaf vier heet een som beheerst. Zo beweegt er iets bij de eerste en
@@ -118,7 +118,7 @@ export function Oefenen(p: OefenenProps): ReactNode {
   const invoer = useRef<HTMLInputElement>(null)
   const recent = useRef<string[]>([])
   /* De voortgang van dit moment. De sessie werkt hem elke beurt bij, en
-     `volgendeKaart` moet met de nieuwste stand rekenen — anders krijg je de som
+     `volgendeKaart` moet met de nieuwste stand rekenen, anders krijg je de som
      die je net goed had meteen weer terug. */
   const nu = useRef(p.prog)
   nu.current = p.prog
@@ -271,7 +271,7 @@ export function Oefenen(p: OefenenProps): ReactNode {
             zitten.
           </p>
           <p className="muted" style={{ fontSize: 13 }}>
-            Nu doorgaan levert dezelfde sommen op. Even wachten laat ze juist beter blijven zitten —
+            Nu doorgaan levert dezelfde sommen op. Even wachten laat ze juist beter blijven zitten;
             pak zolang iets wat nog niet vastzit. 🌱
           </p>
         </div>
@@ -300,7 +300,7 @@ export function Oefenen(p: OefenenProps): ReactNode {
         <div className="card center" style={{ marginTop: 20 }}>
           <div style={{ fontSize: 40 }}>✅</div>
           <p style={{ fontSize: 18 }}>
-            {isFout ? 'Geen fouten om te herhalen — top!' : 'Nog geen opgaven hier.'}
+            {isFout ? 'Geen fouten om te herhalen, top!' : 'Nog geen opgaven hier.'}
           </p>
           <button type="button" className="btn ghost" onClick={p.terug} style={{ marginTop: 10 }}>
             Terug naar overzicht
@@ -325,7 +325,7 @@ export function Oefenen(p: OefenenProps): ReactNode {
           <div className="pbar" style={{ margin: '10px 0' }}><i style={{ width: pct + '%' }} /></div>
           <p className="muted">
             {pct >= 80 ? 'Knap gedaan!'
-              : pct >= 50 ? 'Goed bezig — nog even oefenen.'
+              : pct >= 50 ? 'Goed bezig, nog even oefenen.'
                 : 'Blijf oefenen, je komt er!'}
           </p>
           <p className="muted" style={{ fontSize: 14, marginTop: 4 }}>
@@ -334,7 +334,7 @@ export function Oefenen(p: OefenenProps): ReactNode {
         </div>
         {toets.fout.length > 0 && (
           <div className="card" style={{ marginTop: 12 }}>
-            <b>Nakijken — deze gingen mis ({toets.fout.length}):</b>
+            <b>Nakijken: deze gingen mis ({toets.fout.length}):</b>
             <div style={{ marginTop: 8 }}>
               {toets.fout.map((f, i) => (
                 <div key={i} style={{ padding: '7px 0', borderTop: '1px solid var(--line)', fontSize: 14 }}>
@@ -390,7 +390,7 @@ export function Oefenen(p: OefenenProps): ReactNode {
           )}
           <p className="muted">
             Vandaag totaal: {p.prog.todayCount || 0} / {doel} 🎯{' '}
-            {gehaald ? '— dagdoel gehaald!' : ''}
+            {gehaald ? '✓  dagdoel gehaald!' : ''}
           </p>
         </div>
         {fouten.length > 0
@@ -398,7 +398,7 @@ export function Oefenen(p: OefenenProps): ReactNode {
             <div className="card" style={{ marginTop: 12 }}>
               <b>📕 Nog even herhalen ({fouten.length})</b>
               <p className="muted" style={{ fontSize: 13, marginTop: 4 }}>
-                Deze gingen mis. Pak ze nog een keer — daar leer je het meest van. 💪
+                Deze gingen mis. Pak ze nog een keer: daar leer je het meest van. 💪
               </p>
               <div style={{ marginTop: 8 }}>
                 {fouten.slice(0, 8).map((f, i) => (
@@ -417,7 +417,7 @@ export function Oefenen(p: OefenenProps): ReactNode {
             )
           : (
             <div className="card center" style={{ marginTop: 12 }}>
-              Geen openstaande fouten meer — helemaal top! ✅
+              Geen openstaande fouten meer, helemaal top! ✅
             </div>
             )}
         <div className="center" style={{ marginTop: 16 }}>
@@ -454,7 +454,7 @@ export function Oefenen(p: OefenenProps): ReactNode {
                 som {sessie.goed + 1} · niveau {beurt.lvl ?? kaart.lvl ?? 1} ·{' '}
                 <span
                   className="stars"
-                  title={`${kaartStand(p.prog, kaart.id).box} van ${STERREN} sterren — `
+                  title={`${kaartStand(p.prog, kaart.id).box} van ${STERREN} sterren, `
                     + 'vanaf 4 heet deze som beheerst'}
                 >{sterrenVoor(p.prog, kaart.id)}</span>
               </>
@@ -543,7 +543,7 @@ export function Oefenen(p: OefenenProps): ReactNode {
                   ? (ster.na === 4 && ster.voor < 4
                       ? '🏅 nu beheers je deze som!'
                       : ster.na === STERREN ? 'vol! deze zit er stevig in.' : 'een ster erbij')
-                  : 'al vol — mooi zo'}
+                  : 'al vol, mooi zo'}
               </div>
             )}
           </div>
@@ -555,7 +555,7 @@ export function Oefenen(p: OefenenProps): ReactNode {
         )}
         {stand === 'fout' && !isExamen && (
           <div className="feedback no">
-            Nog niet — kijk nog eens, of open een hint. Je kunt het! 💪
+            Nog niet: kijk nog eens, of open een hint. Je kunt het! 💪
             {foutTip && <div style={{ marginTop: 8, fontWeight: 600 }}>💡 {foutTip}</div>}
           </div>
         )}
@@ -612,7 +612,7 @@ export function Oefenen(p: OefenenProps): ReactNode {
       {!isExamen && (
         <div className="center" style={{ marginTop: 14 }}>
           <button type="button" className="btn ghost sm" onClick={() => zetKlaar(true)}>
-            ⏹ Stoppen — toon samenvatting
+            ⏹ Stoppen: toon samenvatting
           </button>
         </div>
       )}

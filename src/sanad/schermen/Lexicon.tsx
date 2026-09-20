@@ -1,4 +1,4 @@
-/** NEGENENZESTIG KERNBEGRIPPEN — wie de termen kent, kan de discussie volgen. */
+/** NEGENENZESTIG KERNBEGRIPPEN, wie de termen kent, kan de discussie volgen. */
 import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { LEXICON } from '../gegevens/lexicon'

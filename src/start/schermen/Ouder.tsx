@@ -103,7 +103,7 @@ function VraagWachtwoord(
           <h2>Overzicht</h2>
           <p className="klein" style={{ marginTop: 8 }}>
             Hier staat wat iedereen in alle apps heeft gedaan en wat er openstaat. Typ je
-            ouderwachtwoord — dat is iets anders dan je eigen wachtwoord als je dat hebt gewijzigd.
+            ouderwachtwoord, en dat is iets anders dan je eigen wachtwoord als je dat hebt gewijzigd.
           </p>
           <input type="password" placeholder="Ouderwachtwoord" autoComplete="current-password"
                  autoFocus value={ww} onChange={(e) => zetWw(e.target.value)}
@@ -206,7 +206,7 @@ function Tabel(
               </table>
             </div>
             <p className="klein" style={{ marginTop: 10 }}>
-              "Resetten" wist alleen het wachtwoord van dat kind — zijn lessen, punten en spaarpot
+              "Resetten" wist alleen het wachtwoord van dat kind; zijn lessen, punten en spaarpot
               blijven staan. Bij de volgende keer kiest hij zelf een nieuw wachtwoord, dus jij hoeft
               er niets voor te onthouden.
             </p>
@@ -242,7 +242,7 @@ function AppBlok(
   const regels = stand ? leesVeilig(tegel.id, stand) : []
 
   /* Kent een app geen uitlezer of staat er nog niets in, dan zeggen we dat
-     gewoon — een lege tabel laat je raden of het niet werkt of dat er niets is. */
+     gewoon, een lege tabel laat je raden of het niet werkt of dat er niets is. */
   let inhoud
   if (tegel.id === 'huiswerk' || CURSUSSEN.includes(tegel.id)) {
     inhoud = (
@@ -285,7 +285,7 @@ function AppBlok(
                 <tr key={i}>
                   <td><b>{hoofd(r.wie)}</b></td>
                   {r.regels.map((x, j) => <td key={j}>{x[1]}</td>)}
-                  <td className="geld">{r.euro == null ? '—' : euro(r.euro)}</td>
+                  <td className="geld">{r.euro == null ? '–' : euro(r.euro)}</td>
                   <td><span className={'speld ' + st.klasse}>{st.tekst}</span></td>
                 </tr>
               )

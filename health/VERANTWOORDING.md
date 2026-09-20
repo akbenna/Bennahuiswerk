@@ -1,4 +1,4 @@
-# Kalibratie — verantwoording van de algoritmen
+# Kalibratie: verantwoording van de algoritmen
 
 *Versie 1, 21 augustus 2026. Bij elke rekenregel in de app staat hier waar hij vandaan komt, hoe hard de onderbouwing is, en waar hij breekt. Waar een bron niet te openen was of niet bestaat, staat dat er expliciet bij. Er staan geen verzonnen referenties in dit document.*
 
@@ -8,7 +8,7 @@
 
 Elke bestaande app toont een caloriedoel dat uit een formule rolt. Dat getal oogt als een meting, met twee decimalen en zonder voorbehoud, terwijl het een gok is met een spreiding van vele honderden kilocalorieën. Wie er zijn dag op inricht en niets ziet gebeuren, concludeert dat er iets mis is met hém in plaats van met het getal.
 
-Het gebruikelijke argument tegen formules is dat ze onnauwkeurig zijn. Het sterkere argument is dit: door te *meten* absorbeert het model de twee grootste onbekenden — adaptieve thermogenese en de individuele activiteitsfactor — automatisch, zonder ze te modelleren of zelfs maar te kennen. Mifflin-St Jeor "weet" niet dat iemand vijftien kilo is afgevallen en daardoor 250 kcal per dag onder de voorspelling zit. Een gemeten verbruik weet dat wel, want het meet precies dat.
+Het gebruikelijke argument tegen formules is dat ze onnauwkeurig zijn. Het sterkere argument is dit: door te *meten* absorbeert het model de twee grootste onbekenden (adaptieve thermogenese en de individuele activiteitsfactor) automatisch, zonder ze te modelleren of zelfs maar te kennen. Mifflin-St Jeor "weet" niet dat iemand vijftien kilo is afgevallen en daardoor 250 kcal per dag onder de voorspelling zit. Een gemeten verbruik weet dat wel, want het meet precies dat.
 
 De kern is één vergelijking, toegepast op een venster van 28 dagen:
 
@@ -24,15 +24,15 @@ De rest van dit document gaat over wat elk van die drie termen waard is.
 
 **Wat de app doet.** 7.700 kcal/kg (32,2 MJ/kg) wordt gebruikt als conversiefactor op de gemeten trend, nooit als voorspeller.
 
-Dat onderscheid is het hele punt. Als voorspellende regel — "eet 500 kcal minder en je verliest blijvend een pond per week" — is de regel aantoonbaar fout: een statisch model negeert dat de ruststofwisseling daalt en de energiekost van bewegen met de massa meekrimpt, waardoor het gewichtsverlies in jaar één ruwweg met honderd procent wordt overschat (Hall KD et al., *Lancet* 2011;378:826–37, doi:10.1016/S0140-6736(11)60812-X; Thomas DM et al., *Int J Obes* 2013;37:1611–3, doi:10.1038/ijo.2013.51).
+Dat onderscheid is het hele punt. Als voorspellende regel ("eet 500 kcal minder en je verliest blijvend een pond per week") is de regel aantoonbaar fout: een statisch model negeert dat de ruststofwisseling daalt en de energiekost van bewegen met de massa meekrimpt, waardoor het gewichtsverlies in jaar één ruwweg met honderd procent wordt overschat (Hall KD et al., *Lancet* 2011;378:826–37, doi:10.1016/S0140-6736(11)60812-X; Thomas DM et al., *Int J Obes* 2013;37:1611–3, doi:10.1038/ijo.2013.51).
 
 Als conversiefactor achteráf houdt de regel wél stand, en dat zeggen Hall en Chow zelf: het ernstige probleem is het statisch veronderstellen van de energiebalans, en "when ΔEB is accurately estimated over time, then the above equation provides a reasonable estimate of weight change" (*Int J Obes* 2013;37:1614, doi:10.1038/ijo.2013.112).
 
 **Waarom de factor voor deze gebruiker gunstig uitpakt.** De vereiste energie per verloren kilo hangt af van de verhouding vet tot vetvrij weefsel, en die hangt weer af van de initiële vetmassa. Hall's analyse met de Forbes-relatie laat zien dat bij een initiële vetmassa boven ongeveer 30 kg de vereiste waarde de 7.700 kcal/kg benadert; bij slankere mensen overschat de regel het tekort (Hall KD, *Int J Obes* 2008;32:573–6, doi:10.1038/sj.ijo.0803720). Bij 120 kg en een BMI van 31 zit deze gebruiker ruim in dat gunstige regime.
 
-**Waar het wél misgaat: de watertransiënt.** Glycogeen wordt opgeslagen met ongeveer 2,7 gram water per gram, bij een voorraad van rond de 500 gram. De effectieve energiedichtheid van glycogeen-met-water is daarmee ruwweg 1.100 kcal/kg — een factor zeven lager dan 7.700 (parameters uit de webappendix bij Hall 2011, NIDDK). Een eenmalige verschuiving van een kilo aan de start van een dieet, of na een refeed, of bij een verandering in koolhydraat- of natriuminname, vertaalt zich dus in een forse fout wanneer het venster over die overgang heen ligt.
+**Waar het wél misgaat: de watertransiënt.** Glycogeen wordt opgeslagen met ongeveer 2,7 gram water per gram, bij een voorraad van rond de 500 gram. De effectieve energiedichtheid van glycogeen-met-water is daarmee ruwweg 1.100 kcal/kg, een factor zeven lager dan 7.700 (parameters uit de webappendix bij Hall 2011, NIDDK). Een eenmalige verschuiving van een kilo aan de start van een dieet, of na een refeed, of bij een verandering in koolhydraat- of natriuminname, vertaalt zich dus in een forse fout wanneer het venster over die overgang heen ligt.
 
-Een rekensom met Hall's eigen parameters — mijn afleiding, geen gepubliceerd resultaat — maakt de orde van grootte concreet: bij een venster van 28 dagen met een echt tekort van 750 kcal per dag en een eenmalige waterverschuiving van 1,2 kg wordt het tekort met ongeveer 44 procent overschat, ofwel circa 330 kcal per dag te hoge TDEE. Bij acht weken halveert dat; bij twaalf weken is het ongeveer 110 kcal per dag.
+Een rekensom met Hall's eigen parameters (mijn afleiding, geen gepubliceerd resultaat) maakt de orde van grootte concreet: bij een venster van 28 dagen met een echt tekort van 750 kcal per dag en een eenmalige waterverschuiving van 1,2 kg wordt het tekort met ongeveer 44 procent overschat, ofwel circa 330 kcal per dag te hoge TDEE. Bij acht weken halveert dat; bij twaalf weken is het ongeveer 110 kcal per dag.
 
 **Wat de app daarmee doet.** De eerste zeven tot veertien dagen na een verandering in dieetsamenstelling worden gemarkeerd en tellen niet mee in het venster. Verder ligt het venster op 28 dagen, en dat is een compromis dat in §3 wordt onderbouwd.
 
@@ -40,15 +40,15 @@ Een rekensom met Hall's eigen parameters — mijn afleiding, geen gepubliceerd r
 
 ## 3. De adaptieve schatting zelf
 
-**De validatie die er is.** De onderliggende methode — energiebalans plus herhaalde gewichtsmetingen — is gevalideerd tegen doubly labelled water bij 140 deelnemers aan de CALERIE-studie, over twee jaar. De gemiddelde afwijking bleef binnen 40 kcal per dag; op individueel niveau was de RMSD 215 kcal per dag (Sanghvi A, Redman LM, Martin CK, Ravussin E, Hall KD, *Am J Clin Nutr* 2015;102:353–8, doi:10.3945/ajcn.115.111070). De bredere methodologie is beoordeeld door Ravelli & Schoeller (*Int J Obes* 2021;45:725–32, doi:10.1038/s41366-021-00738-0): accuraat tot binnen ongeveer 2 procent, met een precisie tussen 4 en 37 procent afhankelijk van methode en meetinterval.
+**De validatie die er is.** De onderliggende methode (energiebalans plus herhaalde gewichtsmetingen) is gevalideerd tegen doubly labelled water bij 140 deelnemers aan de CALERIE-studie, over twee jaar. De gemiddelde afwijking bleef binnen 40 kcal per dag; op individueel niveau was de RMSD 215 kcal per dag (Sanghvi A, Redman LM, Martin CK, Ravussin E, Hall KD, *Am J Clin Nutr* 2015;102:353–8, doi:10.3945/ajcn.115.111070). De bredere methodologie is beoordeeld door Ravelli & Schoeller (*Int J Obes* 2021;45:725–32, doi:10.1038/s41366-021-00738-0): accuraat tot binnen ongeveer 2 procent, met een precisie tussen 4 en 37 procent afhankelijk van methode en meetinterval.
 
 **Wat er níet is.** Voor de commerciële implementaties (MacroFactor, RP) bestaat geen peer-reviewed validatie. MacroFactor publiceert een eigen analyse op 748 gebruikers met een mediane fout van circa 135 kcal per dag tegenover circa 335 voor een standaardformule. Bruikbaar als indicatie, niet als bewijs.
 
-**Twee eerlijke beperkingen die in de app horen te staan.** Sanghvi valideerde een *verandering* in inname, niet een absolute TDEE — systematische fouten in de uitgangswaarde blijven staan. En belangrijker: deze app draait de vergelijking om en gebruikt *zelfgerapporteerde* inname als invoer. Alles wat de gebruiker te weinig logt, komt eruit als een te láge TDEE-schatting, en het algoritme kan dat niet onderscheiden van een echt laag metabolisme. De schatting is dus bruikbaar om doelen bij te sturen, niet als fysiologische maat, en zeker niet als bewijs voor of tegen een "traag metabolisme".
+**Twee eerlijke beperkingen die in de app horen te staan.** Sanghvi valideerde een *verandering* in inname, niet een absolute TDEE, systematische fouten in de uitgangswaarde blijven staan. En belangrijker: deze app draait de vergelijking om en gebruikt *zelfgerapporteerde* inname als invoer. Alles wat de gebruiker te weinig logt, komt eruit als een te láge TDEE-schatting, en het algoritme kan dat niet onderscheiden van een echt laag metabolisme. De schatting is dus bruikbaar om doelen bij te sturen, niet als fysiologische maat, en zeker niet als bewijs voor of tegen een "traag metabolisme".
 
 **De vensterlengte.** De literatuur geeft geen expliciete aanbeveling; Sanghvi's intervallen liepen over maanden. Wat de ondergrens bepaalt is de ruis. Bij een dag-tot-dagspreiding van rond de 0,8 kg en kleinste-kwadratenregressie over *n* dagelijkse metingen geldt SE(helling) = σ/√(n(n²−1)/12). Dat geeft ongeveer 410 kcal per dag bij veertien metingen, 145 bij achtentwintig, en 80 bij tweeënveertig. Omdat dagelijkse gewichten geautocorreleerd zijn, is dat nog een optimistische ondergrens.
 
-**Daarom:** minimaal veertien dagen voordat er iets getoond wordt, achtentwintig als standaardvenster, en pas na drie tot vier weken wordt een getal als betrouwbaar gepresenteerd. Aanvullend een dekkingseis — minstens zeven wegingen en zeven bruikbare registratiedagen — en altijd een interval in beeld, nooit alleen een puntschatting.
+**Daarom:** minimaal veertien dagen voordat er iets getoond wordt, achtentwintig als standaardvenster, en pas na drie tot vier weken wordt een getal als betrouwbaar gepresenteerd. Aanvullend een dekkingseis (minstens zeven wegingen en zeven bruikbare registratiedagen) en altijd een interval in beeld, nooit alleen een puntschatting.
 
 **Het venster is een veelvoud van zeven dagen, en dat is geen detail.** Lichaamsgewicht kent een systematisch weekritme: hoogste waarden op zondag en maandag, dalend richting het weekeinde, met een amplitude van grofweg 0,5 tot 1 procent van het lichaamsgewicht (Orsama AL et al., *Obes Facts* 2014;7:36–47, doi:10.1159/000356147). Bij 120 kg is dat 0,6 tot 1,2 kg puur ritme. Een venster dat geen veelvoud van zeven is, laat dat ritme in de helling lekken, en dat is een fout van honderden kilocalorieën per dag.
 
@@ -56,9 +56,9 @@ Een rekensom met Hall's eigen parameters — mijn afleiding, geen gepubliceerd r
 
 ## 4. Het filteren van de weegreeks
 
-Tien imputatiestrategieën en meerdere berekeningsmethoden zijn vergeleken bij vijftig deelnemers met slimme weegschalen. De winnaars waren structural modeling met Kalman-smoothing en het exponentieel gewogen voortschrijdend gemiddelde, met een fout van 0,62 tot 0,64 procent — praktisch gelijk (Turicchi J et al., *JMIR Mhealth Uhealth* 2020;8:e17977, doi:10.2196/17977). Nevenbevinding: ontbrekende dagen kun je beter overslaan dan imputeren; de schatters blijven redelijk tot tachtig procent ontbrekende data.
+Tien imputatiestrategieën en meerdere berekeningsmethoden zijn vergeleken bij vijftig deelnemers met slimme weegschalen. De winnaars waren structural modeling met Kalman-smoothing en het exponentieel gewogen voortschrijdend gemiddelde, met een fout van 0,62 tot 0,64 procent, praktisch gelijk (Turicchi J et al., *JMIR Mhealth Uhealth* 2020;8:e17977, doi:10.2196/17977). Nevenbevinding: ontbrekende dagen kun je beter overslaan dan imputeren; de schatters blijven redelijk tot tachtig procent ontbrekende data.
 
-**Wat de app doet.** Een EWMA met een halfwaardetijd van ongeveer zeven tot tien dagen (α ≈ 0,1) voor de getoonde trendlijn, en een gewone kleinste-kwadratenregressie over het venster voor de hélling — die laatste omdat je daar direct een standaardfout uit krijgt, en die standaardfout is precies wat het betrouwbaarheidsinterval op de TDEE voedt. Metingen die meer dan drie standaarddeviaties van de verwachte EWMA afwijken worden aangemerkt als mogelijke uitbijter, maar niet automatisch verwijderd: bij snelle koolhydraatwisselingen zijn sprongen van een tot twee kilo fysiologisch.
+**Wat de app doet.** Een EWMA met een halfwaardetijd van ongeveer zeven tot tien dagen (α ≈ 0,1) voor de getoonde trendlijn, en een gewone kleinste-kwadratenregressie over het venster voor de hélling, die laatste omdat je daar direct een standaardfout uit krijgt, en die standaardfout is precies wat het betrouwbaarheidsinterval op de TDEE voedt. Metingen die meer dan drie standaarddeviaties van de verwachte EWMA afwijken worden aangemerkt als mogelijke uitbijter, maar niet automatisch verwijderd: bij snelle koolhydraatwisselingen zijn sprongen van een tot twee kilo fysiologisch.
 
 Een filter met een halfwaardetijd van zeven tot tien dagen loopt inherent anderhalve week achter op de werkelijkheid. Dat is de prijs van ruisonderdrukking, het is onvermijdelijk, en het staat in de app: wie gisteren streng is gaan diëten mag vandaag geen reactie verwachten.
 
@@ -79,11 +79,11 @@ vrouwen: 10·W + 6,25·H − 5·A − 161
 
 Bij een strenger criterium van ±5 procent zakt élke formule in: gemiddelde absolute verschillen van 132 ± 138 kcal per dag (Amaro-Gahete FJ et al., *Nutrients* 2018;10:1635, doi:10.3390/nu10111635). De spreiding tussen individuen is groter dan het verschil tussen formules.
 
-**Beperking die ik niet heb kunnen wegnemen:** voor mannen boven de vijftig heb ik geen bevredigende validatiecijfers gevonden — de relevante bronnen waren niet toegankelijk. Leeftijd zit in Mifflin alleen als lineaire term van −5 kcal per jaar, terwijl de werkelijke daling grotendeels via verlies van vetvrije massa loopt. Behandel de prior daarom als een startwaarde met ruime onzekerheid, niet als een getal met twee significante cijfers.
+**Beperking die ik niet heb kunnen wegnemen:** voor mannen boven de vijftig heb ik geen bevredigende validatiecijfers gevonden, de relevante bronnen waren niet toegankelijk. Leeftijd zit in Mifflin alleen als lineaire term van −5 kcal per jaar, terwijl de werkelijke daling grotendeels via verlies van vetvrije massa loopt. Behandel de prior daarom als een startwaarde met ruime onzekerheid, niet als een getal met twee significante cijfers.
 
-**De activiteitsfactor uit stappen is het zwakste onderdeel van de hele app, en dat staat er ook bij.** Een gevalideerde stappen-naar-PAL-conversie bestaat niet, voor zover ik heb kunnen vinden. Wat er wel is: tienduizend stappen per dag komt ruwweg overeen met 300 tot 400 kcal, afhankelijk van loopsnelheid en lichaamsgrootte (Tudor-Locke C, Bassett DR, *Sports Med* 2004;34:1–8) — een koppeling aan energieverbruik, niet aan PAL. En Westerterp waarschuwt onomwonden: "Adding accelerometer output to the equation as an independent variable, often does not explain any additional variation" (*Front Physiol* 2013;4:90, doi:10.3389/fphys.2013.00090).
+**De activiteitsfactor uit stappen is het zwakste onderdeel van de hele app, en dat staat er ook bij.** Een gevalideerde stappen-naar-PAL-conversie bestaat niet, voor zover ik heb kunnen vinden. Wat er wel is: tienduizend stappen per dag komt ruwweg overeen met 300 tot 400 kcal, afhankelijk van loopsnelheid en lichaamsgrootte (Tudor-Locke C, Bassett DR, *Sports Med* 2004;34:1–8), een koppeling aan energieverbruik, niet aan PAL. En Westerterp waarschuwt onomwonden: "Adding accelerometer output to the equation as an independent variable, often does not explain any additional variation" (*Front Physiol* 2013;4:90, doi:10.3389/fphys.2013.00090).
 
-De app gebruikt stappen daarom uitsluitend voor de startschatting vóórdat de gemeten TDEE beschikbaar is, en verder als kwalitatieve terugkoppeling. Zodra het model draait, is de stapdata voor de rekenkern overbodig — en dat is precies de kracht van de adaptieve aanpak.
+De app gebruikt stappen daarom uitsluitend voor de startschatting vóórdat de gemeten TDEE beschikbaar is, en verder als kwalitatieve terugkoppeling. Zodra het model draait, is de stapdata voor de rekenkern overbodig, en dat is precies de kracht van de adaptieve aanpak.
 
 ---
 
@@ -93,9 +93,9 @@ De overdrachtsbrief stelde dat activiteitscalorieën uit Garmin en Apple "bij la
 
 Geen enkel polsapparaat haalde een fout onder twintig procent in energieverbruik, met medianen van 27,4 procent (de beste) tot 92,6 procent (de slechtste), terwijl dezelfde apparaten de hartslag tot op 2 procent nauwkeurig meten (Shcherbina A et al., *J Pers Med* 2017;7:3, doi:10.3390/jpm7020003). Een recente levende meta-analyse van de Apple Watch vond een MAPE van 9,7 procent bij hardlopen tot 151,7 procent bij wandelen, en **geen consistente richting van de bias** (Lambe R et al., *npj Digit Med* 2026;9:63, doi:10.1038/s41746-025-02238-1). De grootste meta-analyse over alle apparaten vond voor *totaal* energieverbruik juist een significante **onder**schatting (O'Driscoll R et al., *Br J Sports Med* 2020;54:332–40, doi:10.1136/bjsports-2018-099643).
 
-De juiste formulering, en die staat nu in de app: de fout in energieverbruik is groot — typisch twintig tot vijftig procent, bij wandelen extremer — en apparaat-, persoons- en activiteitsafhankelijk, maar niet systematisch in één richting. Dat is een sterker argument dan het oorspronkelijke: een bias in bekende richting zou je kunnen corrigeren; een grote fout in onbekende richting niet.
+De juiste formulering, en die staat nu in de app: de fout in energieverbruik is groot (typisch twintig tot vijftig procent, bij wandelen extremer) en apparaat-, persoons- en activiteitsafhankelijk, maar niet systematisch in één richting. Dat is een sterker argument dan het oorspronkelijke: een bias in bekende richting zou je kunnen corrigeren; een grote fout in onbekende richting niet.
 
-Actieve energie wordt daarom bewaard als volume-indicator en verschijnt nergens in de rekenkern. Voor deze gebruiker gaat het om 633 kcal per dag gemiddeld over zes maanden — genoeg om het hele tekort weg te eten als je het zou bijtellen.
+Actieve energie wordt daarom bewaard als volume-indicator en verschijnt nergens in de rekenkern. Voor deze gebruiker gaat het om 633 kcal per dag gemiddeld over zes maanden, genoeg om het hele tekort weg te eten als je het zou bijtellen.
 
 ---
 
@@ -103,7 +103,7 @@ Actieve energie wordt daarom bewaard als volume-indicator en verschijnt nergens 
 
 Handhaving van een gewicht tien procent of meer onder het uitgangsgewicht ging gepaard met een daling van het totale energieverbruik van 6 ± 3 kcal per kilo vetvrije massa per dag, bovenop wat de veranderde samenstelling voorspelt (Leibel RL, Rosenbaum M, Hirsch J, *N Engl J Med* 1995;332:621–8, doi:10.1056/NEJM199503093321001). Bij circa 65 kg vetvrije massa is dat grofweg 400 kcal per dag. De reviewliteratuur komt uit op 100 tot 300 kcal per dag bij tien tot twintig procent gewichtsverlies, met grote individuele spreiding (Egan AM, Collins AL, *Proc Nutr Soc* 2021;81:199–212, doi:10.1017/S0029665121003669).
 
-De extreme casus is de Biggest Loser-follow-up: metabole adaptatie van −275 ± 207 kcal per dag op week 30 en −499 ± 207 kcal per dag na zes jaar, ondanks 41 kg gewichtstoename (Fothergill E et al., *Obesity* 2016;24:1612–9, doi:10.1002/oby.21538). Die cijfers zijn niet representatief — extreme snelheid, extreme trainingsvolumes, veertien deelnemers — en er loopt wetenschappelijke discussie over de herinterpretatie ervan.
+De extreme casus is de Biggest Loser-follow-up: metabole adaptatie van −275 ± 207 kcal per dag op week 30 en −499 ± 207 kcal per dag na zes jaar, ondanks 41 kg gewichtstoename (Fothergill E et al., *Obesity* 2016;24:1612–9, doi:10.1002/oby.21538). Die cijfers zijn niet representatief (extreme snelheid, extreme trainingsvolumes, veertien deelnemers) en er loopt wetenschappelijke discussie over de herinterpretatie ervan.
 
 **Waarom dit voor de app juist rustgevend is.** Een app die het verbruik telkens opnieuw méét, hoeft adaptieve thermogenese niet te modelleren: die zit per definitie al in de meting. Wat wel volgt uit Hall's modelparameters (β_AT ≈ 0,14 met een tijdconstante van veertien dagen) is de minimale reactietijd van het systeem: na een verandering in inname duurt het twee tot zes weken voordat het verbruik zich heeft ingesteld. Een venster korter dan dat meet een transiënt, geen evenwicht.
 
@@ -111,7 +111,7 @@ En de klinische boodschap die de app uitspreekt: bij tien procent gewichtsverlie
 
 ---
 
-## 8. Onderrapportage — de centrale aanname, herzien
+## 8. Onderrapportage: de centrale aanname, herzien
 
 De app rekent bewust in *gelogde* calorieën en gaat ervan uit dat een constante bias het advies niet ongeldig maakt. Die aanname houdt stand, maar met een belangrijke herformulering.
 
@@ -119,7 +119,7 @@ De app rekent bewust in *gelogde* calorieën en gaat ervan uit dat een constante
 
 **De omvang.** Twintig tot dertig procent is een redelijke centrale schatting bij obesitas; het bereik over methoden loopt van tien tot vijfendertig procent. De vaak geciteerde 47 procent van Lichtman betreft tien geselecteerde dieet-resistente patiënten en is geen populatiegemiddelde (*N Engl J Med* 1992;327:1893–8, doi:10.1056/NEJM199212313272701). In de OPEN-studie onderrapporteerden mannen twaalf tot veertien procent bij 24-uursrecalls en eenendertig tot zesendertig procent bij voedselfrequentievragenlijsten (Subar AF et al., *Am J Epidemiol* 2003;158:1–13, doi:10.1093/aje/kwg092).
 
-**De herformulering.** De bias is **proportioneel, niet additief** — modelleer `werkelijk ≈ gelogd / (1 − b)`, niet `gelogd + X`. En hij neemt mogelijk toe tijdens overgangen tussen niveaus van energieverbruik (Ambler C et al., *Int J Obes* 1998;22:354–62, doi:10.1038/sj.ijo.0800595) — precies bij de start van een dieet.
+**De herformulering.** De bias is **proportioneel, niet additief**, modelleer `werkelijk ≈ gelogd / (1 − b)`, niet `gelogd + X`. En hij neemt mogelijk toe tijdens overgangen tussen niveaus van energieverbruik (Ambler C et al., *Int J Obes* 1998;22:354–62, doi:10.1038/sj.ijo.0800595), precies bij de start van een dieet.
 
 De veilige constructie, en die zit nu in de app: **gebruik gelogde calorieën voor verandering ten opzichte van de eigen basislijn, en kalibreer het absolute niveau op de gemeten gewichtscurve.** Het gewicht op de weegschaal is het enige onbevooroordeelde signaal in het systeem. Laat dat de logs corrigeren, niet andersom.
 
@@ -127,7 +127,7 @@ De veilige constructie, en die zit nu in de app: **gebruik gelogde calorieën vo
 
 ---
 
-## 9. Eiwit — twee verschillende referentiegewichten
+## 9. Eiwit: twee verschillende referentiegewichten
 
 Dit is de belangrijkste inhoudelijke bevinding voor deze gebruiker, en het punt waar de app het meest afwijkt van de gangbare berekening.
 
@@ -140,11 +140,11 @@ referentiegewicht = min(actueel gewicht, 30 × lengte²)
 eiwitdoel = 1,2 tot 1,5 g/kg referentiegewicht
 ```
 
-Voor 1,96 m en 120 kg: plafond 115,2 kg, dus **138 tot 173 g per dag**. De drie benaderingen — gecorrigeerd gewicht, streefgewicht, en geschatte vetvrije massa — convergeren rond 135 tot 150 g. Dat is het operationele doel.
+Voor 1,96 m en 120 kg: plafond 115,2 kg, dus **138 tot 173 g per dag**. De drie benaderingen (gecorrigeerd gewicht, streefgewicht, en geschatte vetvrije massa) convergeren rond 135 tot 150 g. Dat is het operationele doel.
 
-**Verdeling.** Gelijkmatige verdeling over drie maaltijden gaf een 25 procent hogere 24-uurs spiereiwitsynthese dan een scheve verdeling (Mamerow MM et al., *J Nutr* 2014;144:876–80, doi:10.3945/jn.113.185280 — let op: n=8, gemiddelde leeftijd 37, BMI 25,7; dit is niet de doelgroep). De dosis waarbij de synthese plateaut ligt bij ouderen op 0,40 ± 0,19 g/kg per maaltijd tegenover 0,24 ± 0,06 bij jongeren (Moore DR et al., *J Gerontol A* 2015;70:57–62, doi:10.1093/gerona/glu103 — retrospectieve heranalyse, brede intervallen).
+**Verdeling.** Gelijkmatige verdeling over drie maaltijden gaf een 25 procent hogere 24-uurs spiereiwitsynthese dan een scheve verdeling (Mamerow MM et al., *J Nutr* 2014;144:876–80, doi:10.3945/jn.113.185280, let op: n=8, gemiddelde leeftijd 37, BMI 25,7; dit is niet de doelgroep). De dosis waarbij de synthese plateaut ligt bij ouderen op 0,40 ± 0,19 g/kg per maaltijd tegenover 0,24 ± 0,06 bij jongeren (Moore DR et al., *J Gerontol A* 2015;70:57–62, doi:10.1093/gerona/glu103, retrospectieve heranalyse, brede intervallen).
 
-Praktisch: drie tot vier maaltijden van 35 tot 45 g eiwit, met minstens drie uur ertussen, en het ontbijt bewaken — dat is de maaltijd waar de scheve verdeling vrijwel altijd ontstaat.
+Praktisch: drie tot vier maaltijden van 35 tot 45 g eiwit, met minstens drie uur ertussen, en het ontbijt bewaken, dat is de maaltijd waar de scheve verdeling vrijwel altijd ontstaat.
 
 **Over de leucinedrempel ben ik terughoudender dan gebruikelijk.** Een systematische review vond wel een verband tussen leucinedosis en spiereiwitsynthese bij ouderen, maar kon **geen drempelwaarde vaststellen** en vond geen enkele plasma-leucinevariabele die de respons voorspelde (Wilkinson K et al., *Physiol Rep* 2023;11:e15775, doi:10.14814/phy2.15775). De app noemt het daarom een werkhypothese, geen afkappunt.
 
@@ -158,7 +158,7 @@ Garthe randomiseerde 24 topsporters naar 0,7 versus 1,4 procent lichaamsgewicht 
 
 Dat mag niet één-op-één worden overgezet. Forbes toonde een omgekeerd curvilineair verband tussen initieel vetpercentage en het aandeel vetvrij weefsel in het verlies: bij obesitas is dat aandeel aanzienlijk kleiner (*Ann N Y Acad Sci* 2000;904:359–65, doi:10.1111/j.1749-6632.2000.tb06482.x). Iemand met dertig procent vetmassa heeft dus meer buffer dan Garthe's sporters.
 
-**De app hanteert 0,5 tot 1,0 procent lichaamsgewicht per week met 0,7 procent als richtwaarde, herberekend op het actuele gewicht.** Bij 120 kg is dat 0,84 kg per week; bij 100 kg nog 0,70. Van 120 naar 100 kg duurt daarmee ongeveer zesentwintig weken — een half jaar. Dat getal staat vanaf dag één in beeld, omdat de verwachting van sneller verlies de belangrijkste reden is om af te haken.
+**De app hanteert 0,5 tot 1,0 procent lichaamsgewicht per week met 0,7 procent als richtwaarde, herberekend op het actuele gewicht.** Bij 120 kg is dat 0,84 kg per week; bij 100 kg nog 0,70. Van 120 naar 100 kg duurt daarmee ongeveer zesentwintig weken, een half jaar. Dat getal staat vanaf dag één in beeld, omdat de verwachting van sneller verlies de belangrijkste reden is om af te haken.
 
 Boven 1,0 procent per week waarschuwt de app dat het advies **méér** eten is, niet minder. En het tempo alleen is niet het werkzame bestanddeel: Garthe's langzame groep tráinde vier keer per week.
 
@@ -172,27 +172,27 @@ Boven 1,0 procent per week waarschuwt de app dat het advies **méér** eten is, 
 
 **Wat wél helpt, en dat is kwantitatief onderbouwd.** Het toevoegen van fysieke schaalinformatie verlaagde de MAPE van 56,6 naar 39,5 procent; met het werkelijke voedselgewicht erbij zakte hij naar 20,2 procent (Mu Y, Sun J, He J, *ACM BCB* 2025;2025:65, doi:10.1145/3765612.3767255). En koppeling aan een gezaghebbende voedingsmiddelendatabase gaf een MAE-reductie van 63 procent (Yan R et al., *Commun Med* 2025;5:458, doi:10.1038/s43856-025-01159-0).
 
-**Hoe de app dat vertaalt.** In vier stappen: het model benoemt de onderdelen en schat een portiebereik; de server zoekt kandidaten in NEVO; het model kiest de best passende tabelregel; de server rékent met de tabelwaarde, niet met het geheugen van het model. Het model doet alleen wat het kan — herkennen en portioneren.
+**Hoe de app dat vertaalt.** In vier stappen: het model benoemt de onderdelen en schat een portiebereik; de server zoekt kandidaten in NEVO; het model kiest de best passende tabelregel; de server rékent met de tabelwaarde, niet met het geheugen van het model. Het model doet alleen wat het kan, herkennen en portioneren.
 
 Daarbovenop drie harde regels in de code:
 
 1. **Een minimale intervalbreedte per bron**: ±35 procent voor een foto, ±25 procent voor een beschreven portie, ±8 procent voor een gewogen portie. Een model dat "200 tot 210 gram" zegt over een gefotografeerd bord beweert een nauwkeurigheid die uit geen enkele validatiestudie volgt.
 2. **Asymmetrische intervallen**, met de bovengrens ruimer dan de ondergrens, vanwege de gedocumenteerde onderschatting van grote porties.
-3. **Niets valt uit het totaal.** Wordt een onderdeel niet in NEVO gevonden, dan rekent de app met de eigen schatting van het model, zakt de regel naar graad D, en staat de reden erbij. Een stilzwijgend verdwenen maaltijd is gevaarlijker dan een ruwe schatting die zichzelf D noemt — in de eerste test verdween zo een hele tajine, ruim achthonderd kilocalorieën, uit de dagtelling.
+3. **Niets valt uit het totaal.** Wordt een onderdeel niet in NEVO gevonden, dan rekent de app met de eigen schatting van het model, zakt de regel naar graad D, en staat de reden erbij. Een stilzwijgend verdwenen maaltijd is gevaarlijker dan een ruwe schatting die zichzelf D noemt, in de eerste test verdween zo een hele tajine, ruim achthonderd kilocalorieën, uit de dagtelling.
 
-**De zwakste schakel bleek het zoeken, niet het schatten.** De tweede stap — de server zoekt kandidaten in NEVO — was aanvankelijk één `LIKE` op de hele zoekterm. Op NEVO-namen werkt dat niet, want die staan in telegramstijl met het onderscheidende woord achteraan: *Kaas Goudse 48+ gem*, *Melk halfvolle*, *Ei kippen- gekookt gem*. Gemeten gedrag van die eerste opzet: "bruin brood", "magere kwark" en "gekookte couscous" gaven nul treffers, "goudse kaas" gaf alleen de plantaardige imitaties, en "ei" gaf Madeira, Meringue, Marsepein, Aardbeien en Prei — allemaal namen waarin de letterreeks e-i voorkomt. Het gevolg was niet zichtbaar als fout: het model kreeg onbruikbare kandidaten voorgelegd, koos daaruit terecht niets, en een gekookt ei kreeg een eigen schatting terwijl NEVO het gewoon kent (code 84, 128 kcal per 100 g).
+**De zwakste schakel bleek het zoeken, niet het schatten.** De tweede stap (de server zoekt kandidaten in NEVO) was aanvankelijk één `LIKE` op de hele zoekterm. Op NEVO-namen werkt dat niet, want die staan in telegramstijl met het onderscheidende woord achteraan: *Kaas Goudse 48+ gem*, *Melk halfvolle*, *Ei kippen- gekookt gem*. Gemeten gedrag van die eerste opzet: "bruin brood", "magere kwark" en "gekookte couscous" gaven nul treffers, "goudse kaas" gaf alleen de plantaardige imitaties, en "ei" gaf Madeira, Meringue, Marsepein, Aardbeien en Prei, allemaal namen waarin de letterreeks e-i voorkomt. Het gevolg was niet zichtbaar als fout: het model kreeg onbruikbare kandidaten voorgelegd, koos daaruit terecht niets, en een gekookt ei kreeg een eigen schatting terwijl NEVO het gewoon kent (code 84, 128 kcal per 100 g).
 
-Het zoeken is daarom verplaatst naar de database, naar één functie die ook het zoekveld van de app bedient — anders kan de gebruiker een product opzoeken dat de herkenning even later niet vindt. Die functie knipt de vraag in woorden en eist dat elk woord terugkomt, waarbij de strengheid meeschaalt met de woordlengte: twee letters tellen alleen als heel woord, drie tot vier aan het begin van een woord, vijf of meer overal. Een sluitende -e gaat eraf, zodat "gekookte couscous" ook *Couscous gekookt* vindt. Bereidingswoorden zijn bewust géén stopwoorden, want in NEVO is juist dat het onderscheid dat er het meest toe doet: gekookte couscous heeft ongeveer een derde van de energiedichtheid van droge. En bij een gedeeltelijke treffer wegen woorden naar hun zeldzaamheid in de tabel — inverse document frequency, de standaardmaat uit het zoekvak — omdat "melk" in 135 namen voorkomt en "cappuccino" in drie.
+Het zoeken is daarom verplaatst naar de database, naar één functie die ook het zoekveld van de app bedient, anders kan de gebruiker een product opzoeken dat de herkenning even later niet vindt. Die functie knipt de vraag in woorden en eist dat elk woord terugkomt, waarbij de strengheid meeschaalt met de woordlengte: twee letters tellen alleen als heel woord, drie tot vier aan het begin van een woord, vijf of meer overal. Een sluitende -e gaat eraf, zodat "gekookte couscous" ook *Couscous gekookt* vindt. Bereidingswoorden zijn bewust géén stopwoorden, want in NEVO is juist dat het onderscheid dat er het meest toe doet: gekookte couscous heeft ongeveer een derde van de energiedichtheid van droge. En bij een gedeeltelijke treffer wegen woorden naar hun zeldzaamheid in de tabel (inverse document frequency, de standaardmaat uit het zoekvak) omdat "melk" in 135 namen voorkomt en "cappuccino" in drie.
 
-Eén ding kan een rangschikking principieel niet: weten welk woord in "cappuccino met halfvolle melk" het hoofdwoord is. Twee rake woorden wegen daar altijd zwaarder dan één, en dus won *Melk halfvolle* van *Koffie cappuccino vers bereid*. Twee kopjes werden zo 330 kcal in plaats van ongeveer honderd, en 21 gram eiwit in plaats van vijf. De oplossing is niet een slimmere rangschikking maar een scheiding van taken: de zoekstap haalt ruim op — de volledige zoekterm én het hoofdwoord apart, samengevoegd tot één lijst — en het model kiest daaruit. Ophalen is een kwestie van niets missen, kiezen is een kwestie van begrijpen; die twee horen niet in dezelfde functie. Daarnaast is het model geïnstrueerd dat de zoekterm het product is en niet de omschrijving ervan: een cappuccino zoek je op als "cappuccino", niet als "cappuccino halfvolle melk".
+Eén ding kan een rangschikking principieel niet: weten welk woord in "cappuccino met halfvolle melk" het hoofdwoord is. Twee rake woorden wegen daar altijd zwaarder dan één, en dus won *Melk halfvolle* van *Koffie cappuccino vers bereid*. Twee kopjes werden zo 330 kcal in plaats van ongeveer honderd, en 21 gram eiwit in plaats van vijf. De oplossing is niet een slimmere rangschikking maar een scheiding van taken: de zoekstap haalt ruim op (de volledige zoekterm én het hoofdwoord apart, samengevoegd tot één lijst) en het model kiest daaruit. Ophalen is een kwestie van niets missen, kiezen is een kwestie van begrijpen; die twee horen niet in dezelfde functie. Daarnaast is het model geïnstrueerd dat de zoekterm het product is en niet de omschrijving ervan: een cappuccino zoek je op als "cappuccino", niet als "cappuccino halfvolle melk".
 
-Dat dit gevonden is, komt niet door de code te lezen maar door hem te draaien. Alle vier de fouten in dit hoofdstuk — de verdwenen tajine, de verdubbelde olie, de halve cappuccino en de melk die de koffie verdrong — zijn zichtbaar geworden door de herkenning op gewone Nederlandse ontbijtzinnen los te laten en de uitkomst met de tabel na te rekenen.
+Dat dit gevonden is, komt niet door de code te lezen maar door hem te draaien. Alle vier de fouten in dit hoofdstuk (de verdwenen tajine, de verdubbelde olie, de halve cappuccino en de melk die de koffie verdrong) zijn zichtbaar geworden door de herkenning op gewone Nederlandse ontbijtzinnen los te laten en de uitkomst met de tabel na te rekenen.
 
 **Waar de app het slechtst is, en dat is ongemakkelijk.** Onder gecontroleerde condities haalden zowel diëtisten als de beste modellen praktische nauwkeurigheid voor energie en koolhydraten, maar was de nauwkeurigheid voor **eiwit en vet significant lager**, met een systematische overschatting van vet bij alle AI-modellen (Isobe T et al., *Nutrients* 2026;18:966, doi:10.3390/nu18060966). Een foto-app is dus het onbetrouwbaarst voor precies de voedingsstof waarop hier gestuurd wordt.
 
 En: voor samengestelde Marokkaanse gerechten bestaat **geen validatiedata**. De fout is daar vrijwel zeker groter, omdat juist samengestelde gerechten met onzichtbare vetten het slechtst worden geschat. Vandaar dat het bereidingsvet een apart veld is dat het model verplicht moet invullen en dat altijd als onzekerheid wordt gemeld.
 
-**De praktische conclusie die de app uitspreekt:** een keukenweegschaal voor de drie meest gegeten basisproducten — olijfolie, couscous, brood — levert meer nauwkeurigheidswinst op dan welke modelverbetering dan ook.
+**De praktische conclusie die de app uitspreekt:** een keukenweegschaal voor de drie meest gegeten basisproducten (olijfolie, couscous, brood) levert meer nauwkeurigheidswinst op dan welke modelverbetering dan ook.
 
 ---
 
@@ -200,17 +200,17 @@ En: voor samengestelde Marokkaanse gerechten bestaat **geen validatiedata**. De 
 
 Naast NEVO staat er in dezelfde database een tweede soort kennis, die niet over losse producten gaat maar over gerechten: zesentwintig samengestelde gerechten uit de Marokkaanse en Turkse keuken, met tweehonderdvijfenzeventig ingrediëntregels, waarvan er zesentachtig door een diëtist zijn bevestigd. Vijfentwintig ervan zijn hier zichtbaar; de zesentwintigste is de persoonlijke variant van een patiënt in provita-care en die hoort in deze app niet thuis. Zesendertig van die regels zijn bereidingsvet, elk met een vetsoort en een opnamefractie. Daarnaast zesenvijftig porties met bandbreedte, en vijfendertig huishoudmaten verdeeld over de zevenentwintig NEVO-groepen.
 
-Die kennis lag er en werd niet gebruikt. De app kon een tajine wel vínden — het zoekveld toonde hem — maar er zat geen knop op, dus loggen ging alsnog via de herkenning uit tekst, die hetzelfde gerecht opnieuw moest ontleden en het bereidingsvet blind moest schatten.
+Die kennis lag er en werd niet gebruikt. De app kon een tajine wel vínden (het zoekveld toonde hem) maar er zat geen knop op, dus loggen ging alsnog via de herkenning uit tekst, die hetzelfde gerecht opnieuw moest ontleden en het bereidingsvet blind moest schatten.
 
-**Hoe een portie wordt doorgerekend.** Per ingrediënt: grammen maal de NEVO-waarde per honderd gram. Bereidingsvet telt mee naar zijn opnamefractie — bij een tajine is dat alles, bij frituren een deel. Dat levert een energiedichtheid voor het gerecht op, en die gaat maal de portiegrootte.
+**Hoe een portie wordt doorgerekend.** Per ingrediënt: grammen maal de NEVO-waarde per honderd gram. Bereidingsvet telt mee naar zijn opnamefractie, bij een tajine is dat alles, bij frituren een deel. Dat levert een energiedichtheid voor het gerecht op, en die gaat maal de portiegrootte.
 
 Niet andersom, en dat is een keuze die uitleg verdient. De voor de hand liggende weg is een portie te behandelen als een deel van het recept: zes porties, dus een zesde per persoon. Die weg klopt niet. Harira staat op zes porties en weegt bijna vier kilo, maar een kom harira is driehonderd gram en geen zeshonderdvierentwintig; een kom is nu eenmaal geen zesde van de pan, want er wordt brood bij gegeten. Bij msemen valt het wél samen: acht stuks van honderdvijfentwintig gram op duizend gram deeg. De dichtheid is het enige dat over beide gevallen klopt.
 
 **Wat deze rekenwijze niet weet.** De dichtheid staat op het gewicht zoals de ingrediënten de pan in gaan. Wat indampt verdwijnt uit het gerecht maar niet uit die noemer, dus voor een gerecht dat lang stooft valt de uitkomst aan de lage kant. Hoeveel precies is niet bekend en wordt daarom niet verzonnen; het staat als onzekerheid bij elke regel die uit de bibliotheek komt. De orde van grootte is af te lezen aan de gerechten waar het recept zelf een deel van de schaal benoemt: bij de kiptajine ligt de portieschatting elf procent boven het ruwe gewicht gedeeld door vier, bij de couscous zesentwintig procent eronder, bij msemen precies gelijk. De afwijkingen gaan dus beide kanten op en blijven binnen de bandbreedte van de portie zelf, die ongeveer ±25 procent is.
 
-**Optionele ingrediënten zijn een vraag, geen onzekerheid.** In vier van de vijfentwintig gerechten staat een ingrediënt als optioneel: het lamsvlees in de harira, de sucuk in kuru fasulye, de ui in menemen, de harissa in de kefta-tajine. De eerste opzet liet die meelopen in de bovengrens. Dat leverde voor een kom harira 124 tot 227 kilocalorieën op — een band van tachtig procent die niets over de portie zegt en alles over een vraag die de gebruiker gewoon kan beantwoorden. Het staat nu als aanvinkhokje in het venster: zonder lamsvlees 155 kcal, met lamsvlees 179, en de band blijft in beide gevallen over de portie gaan.
+**Optionele ingrediënten zijn een vraag, geen onzekerheid.** In vier van de vijfentwintig gerechten staat een ingrediënt als optioneel: het lamsvlees in de harira, de sucuk in kuru fasulye, de ui in menemen, de harissa in de kefta-tajine. De eerste opzet liet die meelopen in de bovengrens. Dat leverde voor een kom harira 124 tot 227 kilocalorieën op, een band van tachtig procent die niets over de portie zegt en alles over een vraag die de gebruiker gewoon kan beantwoorden. Het staat nu als aanvinkhokje in het venster: zonder lamsvlees 155 kcal, met lamsvlees 179, en de band blijft in beide gevallen over de portie gaan.
 
-**De graad.** Een gerecht uit de bibliotheek krijgt C wanneer het gevalideerd is en al zijn ingrediënten een tabelwaarde hebben, en anders D. Dat is één trede beter dan wat de herkenning uit tekst of foto van hetzelfde gerecht maakt, en het verschil zit niet in de portie — die blijft een schatting — maar in het bereidingsvet en de samenstelling. Die zijn hier per gerecht uitgezocht in plaats van per keer geschat.
+**De graad.** Een gerecht uit de bibliotheek krijgt C wanneer het gevalideerd is en al zijn ingrediënten een tabelwaarde hebben, en anders D. Dat is één trede beter dan wat de herkenning uit tekst of foto van hetzelfde gerecht maakt, en het verschil zit niet in de portie (die blijft een schatting) maar in het bereidingsvet en de samenstelling. Die zijn hier per gerecht uitgezocht in plaats van per keer geschat.
 
 **De huishoudmaten vervangen een onbeantwoordbare vraag.** Wie in het zoekveld een product aantikte, kreeg tot nu toe `prompt('Hoeveel gram?')`. Dat is een vraag die een mens niet kan beantwoorden: een snee brood is vijfentwintig tot vijfenveertig gram en niemand weet dat uit het hoofd. Erger is dat het antwoord geen marge had en daarmee deed alsof het gewogen was. De vijfendertig maten hangen aan de NEVO-groep en dekken alle zevenentwintig groepen, dus er is geen product zonder maat. "Drie sneetjes" wordt honderdvijf gram met een band van vijfenzeventig tot honderdvijfendertig, en die band gaat mee de regel in. Afwegen kan nog steeds en is de enige optie waarbij de portie geen schatting meer is; dan resteert alleen de tabelonzekerheid van NEVO zelf.
 
@@ -238,7 +238,7 @@ Deze implementatie is gecontroleerd tegen de vier gepubliceerde rekenvoorbeelden
 
 Afkapwaarden voor 50 tot 69 jaar volgens NHG-CVRM: laag onder 5 procent, matig 5 tot 10, hoog vanaf 10 procent.
 
-Drie waarschuwingen die in de app staan. De NHG-tabellen werken met non-HDL-cholesterol terwijl het model TC en HDL apart gebruikt — bij gelijk non-HDL kunnen die uiteenlopen. SCORE2 onderschat in Nederland: een observed/predicted-ratio van 1,3 bij mannen, oplopend tot 1,5 à 1,6 bij lage sociaaleconomische status en 1,9 bij Surinaamse afkomst (Kist JM et al., *EClinicalMedicine* 2023;57:101862, doi:10.1016/j.eclinm.2023.101862) — etniciteit en SES zitten niet in het model. En de C-index is 0,65 tot 0,72: dit is een gespreksinstrument, geen individuele voorspelling.
+Drie waarschuwingen die in de app staan. De NHG-tabellen werken met non-HDL-cholesterol terwijl het model TC en HDL apart gebruikt, bij gelijk non-HDL kunnen die uiteenlopen. SCORE2 onderschat in Nederland: een observed/predicted-ratio van 1,3 bij mannen, oplopend tot 1,5 à 1,6 bij lage sociaaleconomische status en 1,9 bij Surinaamse afkomst (Kist JM et al., *EClinicalMedicine* 2023;57:101862, doi:10.1016/j.eclinm.2023.101862), etniciteit en SES zitten niet in het model. En de C-index is 0,65 tot 0,72: dit is een gespreksinstrument, geen individuele voorspelling.
 
 **SCORE2-OP is bewust niet geïmplementeerd.** De coëfficiëntenset die ik vond reproduceert het gepubliceerde voorbeeld niet. Voor deze gebruiker niet relevant; voor de app een openstaand punt.
 
@@ -250,13 +250,13 @@ FIB-4 = (leeftijd × ASAT) / (trombocyten[10⁹/L] × √ALAT)
 
 Afkapwaarden volgens de **Richtlijn MASLD/MASH (NVMDL, 4 april 2024)**, waaraan het NHG deelnam: onder 65 jaar sluit FIB-4 < 1,3 fibrose praktisch uit; boven 65 jaar geldt < 2,0. Tussen die grens en 2,67 volgt een tweede test (VCTE of ELF); boven 2,67 verwijzing naar de MDL. De leeftijdscorrectie is onderbouwd: bij 65-plussers zakt de specificiteit van de afkap 1,3 naar 35 procent, en herstelt bij afkap 2,0 naar 70 procent bij een sensitiviteit van 77 procent (McPherson S et al., *Am J Gastroenterol* 2017;112:740–51, doi:10.1038/ajg.2016.453).
 
-MASLD zelf vraagt steatose plus minstens één cardiometabool criterium (Rinella ME et al., *Hepatology* 2023;78:1966–86, doi:10.1097/HEP.0000000000000520). Bij BMI 31 is het adipositascriterium al vervuld. De app stelt geen diagnose — steatose moet met beeldvorming zijn aangetoond — en positioneert FIB-4 uitdrukkelijk als triagesignaal.
+MASLD zelf vraagt steatose plus minstens één cardiometabool criterium (Rinella ME et al., *Hepatology* 2023;78:1966–86, doi:10.1097/HEP.0000000000000520). Bij BMI 31 is het adipositascriterium al vervuld. De app stelt geen diagnose (steatose moet met beeldvorming zijn aangetoond) en positioneert FIB-4 uitdrukkelijk als triagesignaal.
 
 ### STOP-BANG
 
 De acht items met de officiële afkapwaarden: luid snurken, vermoeidheid overdag, waargenomen apneu, hypertensie, BMI **boven 35** (niet 30), leeftijd boven 50, nekomtrek ≥ 43 cm bij mannen en ≥ 41 cm bij vrouwen, en mannelijk geslacht. Laag risico 0–2, matig 3–4, hoog 5–8, met de verfijningsregels voor de matige groep (Chung F et al., *Anesthesiology* 2008;108:812–21, doi:10.1097/ALN.0b013e31816d83e4; Chung F, Abdullah HR, Liao P, *Chest* 2016;149:631–8, doi:10.1378/chest.15-0903).
 
-Bij score ≥ 3 is de sensitiviteit voor matig-ernstig OSA 94 procent in slaapklinieken, maar de **specificiteit slechts 34 procent** (Nagappa M et al., *PLOS One* 2015;10:e0143697, doi:10.1371/journal.pone.0143697). Voor deze gebruiker betekent dat: man boven de vijftig levert al twee punten op zonder één klacht. De app zegt dat er expliciet bij — in een populatie van vijftigplusmannen met obesitas is bijna iedereen "matig risico", en dat is informatie over de vragenlijst, niet over de persoon.
+Bij score ≥ 3 is de sensitiviteit voor matig-ernstig OSA 94 procent in slaapklinieken, maar de **specificiteit slechts 34 procent** (Nagappa M et al., *PLOS One* 2015;10:e0143697, doi:10.1371/journal.pone.0143697). Voor deze gebruiker betekent dat: man boven de vijftig levert al twee punten op zonder één klacht. De app zegt dat er expliciet bij, in een populatie van vijftigplusmannen met obesitas is bijna iedereen "matig risico", en dat is informatie over de vragenlijst, niet over de persoon.
 
 **En hier gaat het bewijs de andere kant op dan meestal wordt aangenomen.** CPAP maakt afvallen niet makkelijker; twee meta-analyses vinden een kleine gewichts**toename** (Drager LF et al., *Thorax* 2015;70:258–64, doi:10.1136/thoraxjnl-2014-205361, Hedges' g = 0,17; Chen B et al., *Ann Am Thorac Soc* 2021;18:1717–27, doi:10.1513/AnnalsATS.202101-060OC, ΔBMI +0,148). De omgekeerde richting is wél sterk: tien kilo afvallen verlaagde de AHI met 9,7 events per uur (Foster GD et al., Sleep AHEAD, *Arch Intern Med* 2009;169:1619–26, doi:10.1001/archinternmed.2009.266).
 
@@ -274,7 +274,7 @@ Dit is waar de meeste trajecten stranden, en het ontbrak in de oorspronkelijke o
 
 In de trial kwam 72,4 procent van de controlegroep 2,3 kg of meer aan, tegen 45,7 procent in de face-to-face-arm; dagelijks wegen nam toe in beide interventiearmen en hing samen met een lager risico op terugval, p < 0,001 (Wing RR et al., *N Engl J Med* 2006;355:1563–71, doi:10.1056/NEJMoa061883).
 
-Twee eerlijke kanttekeningen. De randomisatie betrof het *programma*, niet het wegen zelf — dagelijks wegen zónder actieregel heeft veel zwakker bewijs. En de internet-arm presteerde nauwelijks beter dan de controlegroep: een app die alleen digitaal is, repliceert de zwakste arm. Onderhoudsinterventies halen gemiddeld geen significant effect (Flore G et al., *Nutrients* 2022;14:1259, doi:10.3390/nu14061259); ongeveer een kwart houdt het resultaat langdurig vast. De app zegt dat plafond hardop.
+Twee eerlijke kanttekeningen. De randomisatie betrof het *programma*, niet het wegen zelf, dagelijks wegen zónder actieregel heeft veel zwakker bewijs. En de internet-arm presteerde nauwelijks beter dan de controlegroep: een app die alleen digitaal is, repliceert de zwakste arm. Onderhoudsinterventies halen gemiddeld geen significant effect (Flore G et al., *Nutrients* 2022;14:1259, doi:10.3390/nu14061259); ongeveer een kwart houdt het resultaat langdurig vast. De app zegt dat plafond hardop.
 
 De zones triggeren op het voortschrijdend gemiddelde en niet op de dagmeting, anders vuurt rood vals op dagelijkse schommelingen van een tot twee kilo.
 
@@ -307,7 +307,7 @@ Volledigheidshalve, want een verantwoording die alleen zijn sterke punten noemt 
 - De constante van 0,5 kcal/kg/km voor de netto energiekost van lopen: niet tegen een primaire bron bevestigd.
 - De fout van de 7.700-regel over twee tot vier weken bij 120 kg: niet als zodanig gepubliceerd. De rekensom in §2 gebruikt gepubliceerde parameters maar is een eigen afleiding.
 - Een formele replicatie of gepubliceerde kritiek van Holt's verzadigingsindex: niet gevonden. De app gebruikt daarom energiedichtheid als continue proxy in plaats van een SI-tabel.
-- Een gevalideerde leucinedrempel bij ouderen: bestaat niet — Wilkinson 2023 vond die expliciet níet.
+- Een gevalideerde leucinedrempel bij ouderen: bestaat niet, Wilkinson 2023 vond die expliciet níet.
 - Een direct vastgesteld omslagpunt in procent per week bij obesitas: bestaat niet.
 - Validatiedata voor foto-gebaseerde schatting van Marokkaanse samengestelde gerechten: bestaat niet.
 - De coëfficiënten van SCORE2-OP: gevonden maar niet reproduceerbaar; daarom niet geïmplementeerd.
@@ -316,7 +316,7 @@ Volledigheidshalve, want een verantwoording die alleen zijn sterke punten noemt 
 
 ## 15. Wat dit alles betekent voor de eerste weken
 
-De zwakste schakel is niet de wiskunde maar de invoer. Elke foutbron die hierboven gekwantificeerd is — de watertransiënt van enkele honderden kilocalorieën in ongunstige gevallen, de weegruis van circa 145 kcal per dag bij achtentwintig metingen — valt in het niet bij systematische onderrapportage van twintig tot dertig procent.
+De zwakste schakel is niet de wiskunde maar de invoer. Elke foutbron die hierboven gekwantificeerd is (de watertransiënt van enkele honderden kilocalorieën in ongunstige gevallen, de weegruis van circa 145 kcal per dag bij achtentwintig metingen) valt in het niet bij systematische onderrapportage van twintig tot dertig procent.
 
 Daarom zijn dit de vier dingen die de app actief blijft vragen, op volgorde van hoeveel ze opleveren:
 
@@ -329,9 +329,9 @@ En twee getallen die permanent in beeld horen te staan, niet alleen in de code: 
 
 ---
 
-## 16. Eigen maaltijden — één gerecht, zeven producten, één regel
+## 16. Eigen maaltijden: één gerecht, zeven producten, één regel
 
-Dit hoofdstuk is later toegevoegd dan de rest, en om een reden die niet in de literatuur staat maar in de praktijk: *"ik vind het moeilijk invoeren van mijn favoriete maaltijden."* Een tonijnsalade is één ding om te eten en zeven dingen om op te zoeken, en wie hem wekelijks logt zoekt hem wekelijks opnieuw op — met wekelijks een net iets ander antwoord.
+Dit hoofdstuk is later toegevoegd dan de rest, en om een reden die niet in de literatuur staat maar in de praktijk: *"ik vind het moeilijk invoeren van mijn favoriete maaltijden."* Een tonijnsalade is één ding om te eten en zeven dingen om op te zoeken, en wie hem wekelijks logt zoekt hem wekelijks opnieuw op, met wekelijks een net iets ander antwoord.
 
 Dat is geen ongemak maar een meetfout, en wel de duurste soort. De app leidt het verbruik af uit de hélling van gelogde inname tegen gewicht (§3). Ruis in de invoer die niets met de werkelijke inname te maken heeft gaat rechtstreeks de standaardfout van die helling in, en verbreedt dus het interval waarbinnen het model iets durft te zeggen. Dezelfde salade twee keer verschillend invoeren kost meetbaar zekerheid.
 
@@ -339,11 +339,11 @@ De oplossing is de gewone: zoek het één keer uit, bewaar het, log het daarna a
 
 **Eén regel en niet zeven.** De onderdelen blijven in het recept staan en de gelogde regel wijst er met `recept_id` naar terug, maar in het dagoverzicht is een salade één salade. Dat is niet alleen netjes: de coach (§ AUTOMATISERING) stelt voor uit wat je eerder at, en met losse onderdelen stelt hij "olijfolie, veertig gram" voor als tussendoortje. Een voorstel dat niemand eet is erger dan geen voorstel.
 
-**De band telt op zijn breedst op.** Laag bij laag, hoog bij hoog — de aanname dat alle fouten dezelfde kant op wijzen. Statistisch is dat te ruim: bij onafhankelijke fouten hoort de wortel uit de kwadratensom, en die is smaller. Hier is te ruim precies goed. De fouten in een recept zijn aantoonbaar níét onafhankelijk — wie ruim opschept doet dat met alles tegelijk — en bovenal geldt in deze app dat onzekerheid nooit in je voordeel pleit. Een smallere band zou een nauwkeurigheid claimen die uit een optelling van zeven schattingen niet te halen valt.
+**De band telt op zijn breedst op.** Laag bij laag, hoog bij hoog, de aanname dat alle fouten dezelfde kant op wijzen. Statistisch is dat te ruim: bij onafhankelijke fouten hoort de wortel uit de kwadratensom, en die is smaller. Hier is te ruim precies goed. De fouten in een recept zijn aantoonbaar níét onafhankelijk (wie ruim opschept doet dat met alles tegelijk) en bovenal geldt in deze app dat onzekerheid nooit in je voordeel pleit. Een smallere band zou een nauwkeurigheid claimen die uit een optelling van zeven schattingen niet te halen valt.
 
 **De graad is de slechtste van de onderdelen, niet het gemiddelde.** Zes gewogen ingrediënten en één geschat scheutje olie maken samen een geschatte maaltijd. Middelen zou dat scheutje wegpoetsen, en juist dat scheutje is bij deze gebruiker de grootste post van de dag (§8, en de vier prioriteiten in §15).
 
-**Delen door porties kost een trede.** Wat je afgewogen in de pan doet is A; wat je daarna over twee borden verdeelt is dat niet meer, want die twee borden zijn niet gelijk. A zakt daarom naar B zodra er verdeeld wordt. Lager dan B zakt hij niet: het verdelen voegt onzekerheid toe, het wist niet wat er al bekend was. De aanname staat bovendien uitgeschreven in de regel zelf — "1 van 2 porties, niet apart gewogen" — en niet in de kleine lettertjes, conform de regel die de hele app draagt.
+**Delen door porties kost een trede.** Wat je afgewogen in de pan doet is A; wat je daarna over twee borden verdeelt is dat niet meer, want die twee borden zijn niet gelijk. A zakt daarom naar B zodra er verdeeld wordt. Lager dan B zakt hij niet: het verdelen voegt onzekerheid toe, het wist niet wat er al bekend was. De aanname staat bovendien uitgeschreven in de regel zelf ("1 van 2 porties, niet apart gewogen") en niet in de kleine lettertjes, conform de regel die de hele app draagt.
 
 ### De band komt uit grammen, niet uit een percentage
 
@@ -351,7 +351,7 @@ De twee maaltijden die bij de oplevering al klaarstonden (`health/database/08-de
 
 Dat is het eerlijke model van deze onzekerheid. De tabelwaarde van tomaat is niet onzeker; het aantal tomaten is dat. "Drie middelgrote tomaten" is alles tussen 280 en 440 gram, en dat verschil hoort in de band te staan en niet in een percentage dat iemand gekozen heeft omdat het redelijk voelde.
 
-De olijfolie is waarom dit zo moet. Zijn ondergrens staat op 30 en zijn bovengrens op 70 gram — een verschil van 360 kcal in de kom — en zijn graad op D. Omdat de maaltijd de slechtste graad van zijn onderdelen erft, is de hele salade D zolang die olie niet gewogen is. Dat is geen defect van de weergave maar de boodschap zelf: één keer wegen maakt van deze maaltijd een B en haalt de breedste band van de dag weg. Het is dezelfde aansporing als prioriteit 2 in §15, maar nu op de plek waar hij ertoe doet — op het moment dat je logt, en niet in een lijstje achteraf.
+De olijfolie is waarom dit zo moet. Zijn ondergrens staat op 30 en zijn bovengrens op 70 gram (een verschil van 360 kcal in de kom) en zijn graad op D. Omdat de maaltijd de slechtste graad van zijn onderdelen erft, is de hele salade D zolang die olie niet gewogen is. Dat is geen defect van de weergave maar de boodschap zelf: één keer wegen maakt van deze maaltijd een B en haalt de breedste band van de dag weg. Het is dezelfde aansporing als prioriteit 2 in §15, maar nu op de plek waar hij ertoe doet, op het moment dat je logt, en niet in een lijstje achteraf.
 
 ### Wat dit niet is
 
@@ -361,13 +361,13 @@ Geen nieuwe schatting. Er komt hier geen enkel getal bij dat niet al ergens vand
 
 Bij de oplevering stond er alleen wat erin zat. Wat het bétekent is een andere vraag, en bij deze gebruiker is het de hele vraag: 752 kcal zegt niets zonder te weten waar die kilocalorieën vandaan komen.
 
-Drie maten staan daarom bij elk gerecht, alle drie verhoudingen en dus onafhankelijk van hoeveel je opschept — een halve portie van een schaal met vier gram eiwit per honderd kilocalorieën heeft nog steeds vier gram eiwit per honderd kilocalorieën.
+Drie maten staan daarom bij elk gerecht, alle drie verhoudingen en dus onafhankelijk van hoeveel je opschept, een halve portie van een schaal met vier gram eiwit per honderd kilocalorieën heeft nog steeds vier gram eiwit per honderd kilocalorieën.
 
-- **Energiedichtheid** (kcal per gram). Onder de 1,0 vult het meer dan het aantelt; boven de 2,0 andersom. De tonijnsalade zit op 0,96 en het halve stokbrood op 2,25 — bijna dezelfde energie, minder dan de helft van het volume.
+- **Energiedichtheid** (kcal per gram). Onder de 1,0 vult het meer dan het aantelt; boven de 2,0 andersom. De tonijnsalade zit op 0,96 en het halve stokbrood op 2,25, bijna dezelfde energie, minder dan de helft van het volume.
 - **Gram eiwit per 100 kcal.** Dit is de maat die telt bij een tekort (§9). De salade komt op 4,0, en dat is de bevinding uit §8 nu zichtbaar op gerechtniveau: qua groente uitstekend, qua eiwit een lege huls.
 - **De energieprocenten**, die expres niet optellen tot honderd. Ze worden berekend uit macro's die per onderdeel op één decimaal zijn afgerond, en vezels leveren zelf ook nog ongeveer twee kilocalorieën per gram. Normaliseren zou het beeld netter maken en de afwijking verbergen; die afwijking is informatie over hoe grof de invoer is.
 
-Daaronder staan twee hefbomen, en die worden afgeleid en niet ingetypt: **halveer wat de meeste energie levert** en **verdubbel wat de hoogste eiwitdichtheid heeft**. De eerste geldt alleen bij een onderdeel dat ten minste een kwart van de energie levert — daaronder is halveren een gebaar. De tweede geldt alleen bij een onderdeel boven het eiwitgemiddelde van de maaltijd, en dat is geen vuistregel maar een identiteit: verdubbelen van iets boven het gemiddelde trekt het gemiddelde per definitie omhoog. Ligt niets erboven, dan valt er niets te verdubbelen dat iets oplevert, en zwijgt de app.
+Daaronder staan twee hefbomen, en die worden afgeleid en niet ingetypt: **halveer wat de meeste energie levert** en **verdubbel wat de hoogste eiwitdichtheid heeft**. De eerste geldt alleen bij een onderdeel dat ten minste een kwart van de energie levert, daaronder is halveren een gebaar. De tweede geldt alleen bij een onderdeel boven het eiwitgemiddelde van de maaltijd, en dat is geen vuistregel maar een identiteit: verdubbelen van iets boven het gemiddelde trekt het gemiddelde per definitie omhoog. Ligt niets erboven, dan valt er niets te verdubbelen dat iets oplevert, en zwijgt de app.
 
 Voor de tonijnsalade komen die twee uit op de olijfolie (48 procent van de energie) en de tonijn. De vier uitkomsten naast elkaar:
 
@@ -392,29 +392,29 @@ Er staat een derde gerecht in, en dat is geen illustratie maar het resultaat van
 
 Het verschil zit niet in wat erbij is gekomen maar in wat er níét in zit: één theelepel olie in plaats van anderhalve eetlepel, en dat scheelt 135 kcal. De tonijn levert 24,9 van de 43,6 gram eiwit voor 109 kcal.
 
-En dit gerecht is een C waar de andere twee een D zijn. Dezelfde onzekerheid over dezelfde handeling — een lepel olie die niet gewogen wordt — maar hier loopt de schatting van 3 tot 10 gram en dat is 63 kcal, tegen 30 tot 70 gram en 360 kcal bij de salade. Dat is precies wat een graad hoort uit te drukken: niet of je slordig bent geweest, maar hoeveel die slordigheid kost.
+En dit gerecht is een C waar de andere twee een D zijn. Dezelfde onzekerheid over dezelfde handeling (een lepel olie die niet gewogen wordt) maar hier loopt de schatting van 3 tot 10 gram en dat is 63 kcal, tegen 30 tot 70 gram en 360 kcal bij de salade. Dat is precies wat een graad hoort uit te drukken: niet of je slordig bent geweest, maar hoeveel die slordigheid kost.
 
 Dit gerecht dekt bovendien een tak van de rekenregels die de andere twee niet raken. Bij de salade is de grootste energiepost toevallig ook het vet; hier is het het brood. Een regel die simpelweg "het vet" aanwijst zou op de salade niet stukgaan en hier wel, en daarom staat dit geval als tweede ijkpunt in `maaltijd.proef.ts`.
 
 ### Een variant vastleggen, en waarom de graad dan omhoog mag
 
-De onderste rij van de variantentabel — olie halveren én tonijn verdubbelen — staat als eigen gerecht in de app: *Tonijnsalade licht*, 341 kcal per portie met 27,6 gram eiwit, oftewel 8,1 gram per 100 kcal tegen 4,0. Voor mínder energie het dubbele aan eiwit per calorie.
+De onderste rij van de variantentabel (olie halveren én tonijn verdubbelen) staat als eigen gerecht in de app: *Tonijnsalade licht*, 341 kcal per portie met 27,6 gram eiwit, oftewel 8,1 gram per 100 kcal tegen 4,0. Voor mínder energie het dubbele aan eiwit per calorie.
 
 Dat schept een risico dat het benoemen waard is: hetzelfde getal staat nu op twee plekken, in de tabel in het scherm en in de rij in de database, en twee plekken met hetzelfde getal lopen uiteen zodra iemand er één aanraakt. Er staat daarom een proef tussen die eist dat het punt, het eiwit en de eiwitdichtheid exact gelijk zijn aan wat `varianten()` uitrekent.
 
 **Eén ding is met opzet níét gelijk: de band.** `varianten()` halveert de band van de olie mee en houdt daarmee de onzekerheid van een slordige gieting; het vastgelegde gerecht heeft een smallere marge. Dat verschil is de hele reden dat deze variant een gerecht is en geen tabelregel.
 
-Dat raakt aan wat een graad betekent. *Tonijnsalade licht* is een C waar het origineel een D is, en niet omdat er minder olie in gaat — een kleinere hoeveelheid van iets onbekends blijft onbekend. Het is een C omdat de olie wordt **afgemeten**: anderhalve gestreken eetlepel is een huishoudmaat met een tabelwaarde, terwijl "drie ruime lepels" aantoonbaar onbepaald is (de bronanalyse schrijft letterlijk dat het 40 of 70 gram kan zijn). Die voorwaarde staat in de toelichting van het gerecht, waar je hem leest op het moment dat je logt: giet je hem vrij, dan klopt de band niet meer en is het weer een D.
+Dat raakt aan wat een graad betekent. *Tonijnsalade licht* is een C waar het origineel een D is, en niet omdat er minder olie in gaat, een kleinere hoeveelheid van iets onbekends blijft onbekend. Het is een C omdat de olie wordt **afgemeten**: anderhalve gestreken eetlepel is een huishoudmaat met een tabelwaarde, terwijl "drie ruime lepels" aantoonbaar onbepaald is (de bronanalyse schrijft letterlijk dat het 40 of 70 gram kan zijn). Die voorwaarde staat in de toelichting van het gerecht, waar je hem leest op het moment dat je logt: giet je hem vrij, dan klopt de band niet meer en is het weer een D.
 
-Het gevolg is zichtbaar in de band en niet alleen in de letter: 273 tot 437 kcal per portie tegen 289 tot 580. Het punt zakt met 35 kcal en de band wordt honderdvijftig kcal smaller. Dat tweede is de grotere winst — een smalle band is wat het model nodig heeft om iets te durven zeggen (§3).
+Het gevolg is zichtbaar in de band en niet alleen in de letter: 273 tot 437 kcal per portie tegen 289 tot 580. Het punt zakt met 35 kcal en de band wordt honderdvijftig kcal smaller. Dat tweede is de grotere winst, een smalle band is wat het model nodig heeft om iets te durven zeggen (§3).
 
 Het origineel blijft staan. Dit is geen verbeterde versie die de oude vervangt maar een tweede gerecht ernaast: wat er op tafel staat hangt af van wie er meeeet, en een app die dat invult heeft het mis.
 
 ### Vindbaar, en het sterretje
 
-Twee dingen die pas opvielen bij gebruik. Wie "tonijn" typte kreeg de tonijnregels van NEVO en niet zijn eigen salade — de app had het antwoord al en liet het niet zien. `kal_zoeken` doorzoekt nu ook de eigen maaltijden, en dan niet alleen op de titel maar ook op de namen van de onderdelen: "paprika" vindt zo het gerecht waar paprika in zit zonder dat dat woord in de naam staat. Dat is precies waar een samengesteld gerecht zich anders gedraagt dan een product.
+Twee dingen die pas opvielen bij gebruik. Wie "tonijn" typte kreeg de tonijnregels van NEVO en niet zijn eigen salade, de app had het antwoord al en liet het niet zien. `kal_zoeken` doorzoekt nu ook de eigen maaltijden, en dan niet alleen op de titel maar ook op de namen van de onderdelen: "paprika" vindt zo het gerecht waar paprika in zit zonder dat dat woord in de naam staat. Dat is precies waar een samengesteld gerecht zich anders gedraagt dan een product.
 
-Het sterretje bepaalt de volgorde, in de lijst en in het zoekveld. Handmatig, en niet afgeleid uit hoe vaak iets gegeten is: die afleiding straft precies het gerecht af dat je nét bewaard hebt. Bij opnieuw bewaren onder dezelfde naam blijft het staan — anders verlies je het op het moment dat je de olie eindelijk gewogen hebt, en dat is nu juist het moment waarop je het gerecht het meest gebruikt.
+Het sterretje bepaalt de volgorde, in de lijst en in het zoekveld. Handmatig, en niet afgeleid uit hoe vaak iets gegeten is: die afleiding straft precies het gerecht af dat je nét bewaard hebt. Bij opnieuw bewaren onder dezelfde naam blijft het staan, anders verlies je het op het moment dat je de olie eindelijk gewogen hebt, en dat is nu juist het moment waarop je het gerecht het meest gebruikt.
 
 ---
 
@@ -423,7 +423,7 @@ Het sterretje bepaalt de volgorde, in de lijst en in het zoekveld. Handmatig, en
 Twee toevoegingen van september 2026. Allebei raken ze de vraag wat er wél en
 niet in de rekenkern mag.
 
-### 17.1 Eiwitrijke voorstellen uit de tabel — `kal_eiwitrijk`
+### 17.1 Eiwitrijke voorstellen uit de tabel, `kal_eiwitrijk`
 
 **Wat het doet.** Binnen een energiegrens de producten zoeken met de hoogste
 verhouding eiwit per kilocalorie, met hun gebruikelijke portie erbij, één per
@@ -432,7 +432,7 @@ productgroep.
 **Waarom per kcal en niet per 100 gram.** De coach drukt zijn tekort uit als een
 eis: nog 45 gram eiwit in 500 kcal is 0,09 g/kcal. Een voorstel helpt pas als het
 die dichtheid haalt. Rangschikken op absoluut eiwit zet de grootste portie
-bovenaan — op de proefgegevens een tajine van 720 kcal, goed voor bijna de hele
+bovenaan, op de proefgegevens een tajine van 720 kcal, goed voor bijna de hele
 resterende ruimte in één keer.
 
 **De vier filters, en wat elk ervan aantoonbaar tegenhield.** Gemeten op de
@@ -440,7 +440,7 @@ volledige tabel van 2.328 producten:
 
 | filter | wat het tegenhield |
 |---|---|
-| geen `rauw`, `onbereid`, `poeder`, `extract` | "Kipfilet rauw" — staat in de tabel, op geen bord |
+| geen `rauw`, `onbereid`, `poeder`, `extract` | "Kipfilet rauw", staat in de tabel, op geen bord |
 | minstens 12 g eiwit per portie | strooikaas, de hóógste dichtheid van de tabel (0,241), maar een plak van 20 g is 11 g eiwit |
 | minstens 40 kcal per portie | een plak vleeswaar van 15 g: 3 g eiwit |
 | één per productgroep | zonder dit zijn de eerste vijftien allemaal magere vis |
@@ -462,7 +462,7 @@ en niet in plaats daarvan: één van de twee halen is genoeg.
 
 **Waarom een tweede maat nodig was.** Stappen meten wandelen. Een uur op een
 hometrainer levert er nul op. De app beoordeelde daarmee iemand die dagelijks
-fietst als inactief — geen strengheid maar blindheid, en het veld `fiets_min`
+fietst als inactief, geen strengheid maar blindheid, en het veld `fiets_min`
 stond al die tijd al gevuld in de database.
 
 **Waarom één getal niet genoeg was.** De richtlijn noemt twee bedragen en geen
@@ -478,11 +478,11 @@ toont échte minuten. Die twee verschillen zodra er iets zwaars bij zit, en dat
 is met opzet: één getal zou over een van beide liegen.
 
 **De intensiteit is een aanname, en zegt dat zelf.** Welke soort matig heet en
-welke zwaar volgt het Compendium of Physical Activities — matig is 3 tot 6 MET,
+welke zwaar volgt het Compendium of Physical Activities, matig is 3 tot 6 MET,
 zwaar 6 of meer. Wandelen op 5 km/u is 3,5; hardlopen op 8 km/u is 8,3. Maar
 rennen is niet altijd zwaar en wandelen niet altijd matig: dat hangt af van
-tempo, helling en van wie het doet, en wat een horloge daarover weet — hartslag
-als percentage van de reserve — komt niet mee in een schermafdruk en niet in de
+tempo, helling en van wie het doet, en wat een horloge daarover weet (hartslag
+als percentage van de reserve) komt niet mee in een schermafdruk en niet in de
 koppeling.
 
 Daarom staat `geschat` bij de rij, zegt het scherm "aangenomen", en staat de
@@ -491,8 +491,8 @@ gewoon, 8 tot 10 stevig) en is als **matig** ingedeeld: dat is de voorzichtige
 kant. Wie hard fietst zet hem om; wie dat niet doet krijgt geen weekdoel dat
 zichzelf haalt.
 
-**Krachttraining telt hier niet mee.** De richtlijn noemt die apart — twee keer
-per week spierversterkend, náást de aerobe minuten — en de app houdt hem in
+**Krachttraining telt hier niet mee.** De richtlijn noemt die apart (twee keer
+per week spierversterkend, náást de aerobe minuten) en de app houdt hem in
 `kal_training` met zijn eigen drie bolletjes. Zou een krachtsessie van een uur
 als zware inspanning meetellen, dan stond de halve aerobe week er al op zonder
 dat er één aerobe minuut gemaakt was. Een work-outlijst die "Functionele kracht"
@@ -502,7 +502,7 @@ noemt, komt daarom ongevinkt binnen, met die reden erbij.
 actieve energie uit Apple of Garmin nergens bij het doel wordt opgeteld: de fout
 is twintig tot vijftig procent en niet consistent in één richting, dus
 corrigeren is onmogelijk. Bij dit lichaamsgewicht zou een rit van dertig minuten
-ergens tussen 210 en 410 kcal liggen — een factor twee, en precies daarom hoort
+ergens tussen 210 en 410 kcal liggen, een factor twee, en precies daarom hoort
 het getal niet in de som. Het verbruik komt uit de gewichtstrend, en de fiets zit
 daar al in.
 
@@ -513,7 +513,7 @@ dagoverzicht. Verder niets.
 koppeling op de telefoon binnenkomt, en die afspraak breken zou betekenen dat de
 opdracht op het toestel opnieuw moet. Het scherm leest hem als één matige
 fietsrit van die dag, naast de rijen. De prijs is dat een rit die de koppeling
-doorgeeft én die je met de hand toevoegt twee keer telt — zichtbaar, want beide
+doorgeeft én die je met de hand toevoegt twee keer telt, zichtbaar, want beide
 staan in de lijst van die dag met hun herkomst, en met één tik weg te halen. Een
 stille voorkeursregel die er één van de twee laat verdwijnen zou erger zijn: dan
 mis je minuten zonder te weten welke.
@@ -539,7 +539,7 @@ komt.
 **MacroFactor** (Greg Nuckols en Eric Trexler) berekent het verbruik uit dezelfde
 natuurkunde: over een voldoende lang venster is inname min gewichtsverandering
 gelijk aan verbruik. Ze gladden het gewicht met een voortschrijdend gemiddelde,
-convergeren in twee tot vier weken, en verwerpen "je stofwisseling is kapot" —
+convergeren in twee tot vier weken, en verwerpen "je stofwisseling is kapot",
 bij een verlies onder de tien procent schatten ze de aanpassing op ongeveer vijf
 procent.
 
@@ -550,8 +550,8 @@ accurate"*, en ze tonen hem *"for fun and curiosity"*. De gebruiker krijgt één
 getal als antwoord.
 
 **Nagekeken op 13 september 2026.** In een eerdere versie stond hier een
-parafrase tussen aanhalingstekens — *"While it's tempting to think of the flux
-range as a confidence interval, it's not technically accurate"* — en *"only for
+parafrase tussen aanhalingstekens (*"While it's tempting to think of the flux
+range as a confidence interval, it's not technically accurate"*) en *"only for
 fun and curiosity"* met een "only" die er niet staat. De weggelaten tussenzin
 deed er bovendien toe: die zegt dat het lezen als betrouwbaarheidsinterval een
 ónschadelijke vereenvoudiging is, en dat maakt hun positie milder dan mijn
@@ -559,10 +559,10 @@ parafrase suggereerde.
 
 Dat is precies het tegenovergestelde van de stelregel van deze app. Het is de
 sterkste aanwijzing die er is dat *geen enkel getal zonder zijn onzekerheid* geen
-heruitvinding is maar een keuze die de markt bewust niet maakt — vermoedelijk
+heruitvinding is maar een keuze die de markt bewust niet maakt, vermoedelijk
 omdat een puntschatting makkelijker verkoopt en makkelijker naar te handelen is.
 
-### 18.2 Stappen als vertrouwen, niet als calorieën — onafhankelijke bevestiging
+### 18.2 Stappen als vertrouwen, niet als calorieën, onafhankelijke bevestiging
 
 MacroFactor voegde in 2025 *Expenditure Modifiers* toe met daarin
 *Step-Informed Updates*, en zegt er expliciet bij dat ze **geen calorische waarde
@@ -572,8 +572,8 @@ heeft een redelijke stappenteller, en niemand heeft een betrouwbare omrekening
 naar calorieën.
 
 Dat is dezelfde conclusie als in §17.2, langs dezelfde redenering, door een
-ander team. Het patroon dat zij eraan toevoegen — een stappentrend het *interval
-sneller laten versmallen* in plaats van het doel te verschuiven — is bruikbaar
+ander team. Het patroon dat zij eraan toevoegen (een stappentrend het *interval
+sneller laten versmallen* in plaats van het doel te verschuiven) is bruikbaar
 voor ons venster van 28 dagen, en staat als open mogelijkheid genoteerd.
 
 ### 18.3 De grootste ongemodelleerde fout is onderrapportage, niet weegruis
@@ -598,7 +598,7 @@ afgeleid uit *gelogde* inname. Is die stelselmatig twintig procent te laag, dan
 is het afgeleide verbruik dat ook. Het getal is dus geen schatting van de
 stofwisseling maar van **het verbruik zoals het logboek het impliceert**.
 
-Dat maakt het niet minder bruikbaar — omdat de afwijking persoonlijk en
+Dat maakt het niet minder bruikbaar, omdat de afwijking persoonlijk en
 betrekkelijk stabiel is, voorspelt het getal het gewichtsverloop van déze
 gebruiker juist goed. Maar het zijn twee verschillende beweringen, en de app
 hoort te zeggen welke van de twee hij doet. Dat staat sinds deze ronde onder het
@@ -621,13 +621,13 @@ procent.
 
 Dat is een negatieve uitkomst die deze app aangaat. De dagcoach mag dus niet
 verantwoord worden als iets wat het gewichtsverlies vergroot, want daar is geen
-bewijs voor. Zijn rechtvaardiging is dat hij het loggen goedkoper maakt —
-voorstellen uit je eigen geschiedenis, het eiwitgat zichtbaar — en dat is een
+bewijs voor. Zijn rechtvaardiging is dat hij het loggen goedkoper maakt (
+voorstellen uit je eigen geschiedenis, het eiwitgat zichtbaar) en dat is een
 argument over volhouden, niet over uitkomst. Zo hoort het benoemd te worden.
 
 ### 18.5 Eenvoudig loggen is niet de mindere variant
 
-Pilot-trials met een *stoplichtaanpak* — alleen de "rode" producten loggen —
+Pilot-trials met een *stoplichtaanpak* (alleen de "rode" producten loggen) 
 vonden een vergelijkbare inname-daling en gewichtsverlies over zes maanden als
 volledig calorieën tellen (−403 tegen −364 kcal per dag), en in de eenvoudige arm
 gingen deelnemers daarnaast méér bewegen. Volledig opgezette vergelijkingen zijn
@@ -640,14 +640,14 @@ concessies zijn maar een verdedigbare vorm, en dat ze zo beschreven mogen worden
 
 Een systematische review van beeldgebaseerde voedingsanalyse vond relatieve
 fouten van 0,1 tot 38,3 procent op energie. Een studie uit 2025 met GPT-4o op
-maaltijdfoto's vond de grootste fouten bij vet in samengestelde gerechten — en
+maaltijdfoto's vond de grootste fouten bij vet in samengestelde gerechten, en
 een duidelijke verbetering zodra er context werd meegegeven.
 
 Daaruit volgt iets concreets: **één verhelderende vraag over de portie of de
 bereiding verkleint de fout meetbaar.**
 
 Dat is gebouwd, en dan in de vorm die het minste vraagt. Niet een vraag terug aan
-het model — dat is een tweede aanroep met een tweede schatting erin — maar een
+het model (dat is een tweede aanroep met een tweede schatting erin) maar een
 weegveld onder de regel met de breedste band. De gebruiker heeft de weegschaal al
 in huis; wat ontbrak was de plek om het getal kwijt te kunnen.
 
@@ -669,7 +669,7 @@ gebruiker zelf overnam; een tabelwaarde met een gewogen portie is iets anders.
 Omlaag gaat de graad nooit.
 
 Wat er níet gebeurt is de oude onzekerheidsopmerking weggooien. Die is vrije
-tekst van het model en niet betrouwbaar te classificeren — een opmerking over het
+tekst van het model en niet betrouwbaar te classificeren, een opmerking over het
 bereidingsvet is na het wegen van de portie even geldig als ervoor. De nieuwe
 opmerking staat daarom vooraan en zegt met zoveel woorden dat hij de schatting
 eronder vervangt.
@@ -683,7 +683,7 @@ bestand 18 om die producten als eigen, lagere herkomst te merken en niet met de
 tabelwaarden te mengen.
 
 **LEDA**, de Levensmiddelendatabank waar het Voedingscentrum zijn Mijn Eetmeter
-mee vult, is een Nederlandse, samengestelde bron voor merkproducten — niet
+mee vult, is een Nederlandse, samengestelde bron voor merkproducten, niet
 crowdsourced. Of hij buiten het Voedingscentrum te gebruiken is, en onder welke
 voorwaarden, is niet nagegaan. Als hoger gegradeerde herkomst voor Nederlandse
 supermarktproducten is dat het uitzoeken waard.
@@ -705,7 +705,7 @@ een omissie.
   jasje. Dat is een waarschuwing waard: personalisatie die niet op een meting
   rust, is presentatie.
 
-## 19. De bibliotheek uitgebreid — Surinaams, Nederlands, en het verschil met NEVO
+## 19. De bibliotheek uitgebreid: Surinaams, Nederlands, en het verschil met NEVO
 
 ### 19.1 Twee dingen die op elkaar lijken en het niet zijn
 
@@ -722,20 +722,20 @@ schrijven, want hij komt terug.
 
 Het RIVM-bestand is compleet en is dat sinds 12 augustus 2026: 2328 van 2328
 rijen, nul overgeslagen, vastgelegd in `nevo_versies`. Er ontbrak niets aan de
-bron. Wat ontbrak was de bibliotheek — en dat is handwerk, geen import.
+bron. Wat ontbrak was de bibliotheek, en dat is handwerk, geen import.
 
 Het gevolg was scheef op een manier die niemand bedacht had: er stond
 stamppot, hachee, erwtensoep, tosti en kroket in het RIVM-bestand, allemaal
 doorgemeten, en de app kwam er niet fatsoenlijk bij omdat niemand ze een naam
 en een portie had gegeven. Zoeken op "roti" gaf nul uit de bibliotheek en een
-roti-vél uit de tabel — wat klopt en niet is wat er op het bord ligt.
+roti-vél uit de tabel, wat klopt en niet is wat er op het bord ligt.
 
 ### 19.2 Wat ik verwachtte en wat er bleek
 
 Ik ging ervan uit dat een Surinaamse hoek verzonnen zou moeten worden:
 ingrediëntenlijsten die niemand heeft nagewogen. Dat bleek maar voor een deel
 te kloppen. NEVO heeft een eigen Surinaamse afdeling, en zes gerechten staan er
-als geheel gemeten in — bruine bonen met rijst, pom, moksi alesi, dahl, bojo en
+als geheel gemeten in, bruine bonen met rijst, pom, moksi alesi, dahl, bojo en
 bara. Voor die zes is de energie per gram een méting van precies dát gerecht,
 en dus beter onderbouwd dan de Marokkaanse hoek, waar de dichtheid uit een
 optelling van losse ingrediënten komt.
@@ -747,7 +747,7 @@ databasebestanden); dit is de tweede.
 ### 19.3 De scheidslijn die in elk bestand terugkomt
 
 **Onderbouwd:** alle voedingswaarden. In bestand 24 en 25 staat geen enkel
-voedingsgetal — `kal_gerecht()` rekent ze uit de tabel. De identiteit van elk
+voedingsgetal, `kal_gerecht()` rekent ze uit de tabel. De identiteit van elk
 ingrediënt en zijn NEVO-code is per stuk uit `nevo_foods` gehaald, niet uit het
 geheugen opgeschreven.
 
@@ -758,7 +758,7 @@ portiegewichten. Dat is oordeel en is uit geen bron hier te controleren.
 Daarom draagt elke laag het merkteken dat het schema ervoor heeft:
 `validation_status = 'concept'`, `mapping_status = 'ai_voorstel'`,
 `measurement_basis = 'estimated'`. De app toont ze als graad D. Dat is geen
-tijdelijke slordigheid maar de juiste graad — ze zijn niet nagekeken. Naar
+tijdelijke slordigheid maar de juiste graad, ze zijn niet nagekeken. Naar
 'validated' mag pas als een diëtist de porties heeft nagelopen, en het schema
 weigert dat ook zonder beoordelaar en datum.
 
@@ -770,18 +770,18 @@ verzonnen is.
 
 ### 19.4 Hoe het getoetst is
 
-Beide bestanden zijn tegen het échte schema gedraaid — de tabellen met al hun
+Beide bestanden zijn tegen het échte schema gedraaid, de tabellen met al hun
 checks nagebouwd in een lokale Postgres, `nevo_foods` gevuld met de 73 regels
 waar ze naar wijzen. Vijf proeven:
 
-1. elke `external_food_id` wijst naar een bestaande NEVO-regel — 0 wezen;
+1. elke `external_food_id` wijst naar een bestaande NEVO-regel, 0 wezen;
 2. elk gerecht heeft precies één ingrediënt en precies één standaardportie;
 3. alle drie de merktekens staan goed, bij alle 61 gerechten;
 4. veertien ijkpunten kloppen met wat er met de hand uit valt te rekenen;
-5. twee keer draaien voegt niets toe — 61 gerechten blijven 61.
+5. twee keer draaien voegt niets toe, 61 gerechten blijven 61.
 
 Proef 1 vond meteen twee gerechten waarvan de code ontbrak in de gevulde
-tabel — terecht, want de proef hoort dat te vinden — en proef 1 vond ook een
+tabel (terecht, want de proef hoort dat te vinden) en proef 1 vond ook een
 voorrangsfout in mijn eigen nakijkvraag: `where a or b and c` leest als
 `a or (b and c)`. Een nakijkvraag die stilzwijgend de helft overslaat is
 gevaarlijker dan geen nakijkvraag.
@@ -812,7 +812,7 @@ en zelf een verzoek mag versturen. Eén weg dekt beide bronnen, want de Garmin
 Connect-app schrijft zijn metingen in Gezondheid.
 
 Langs die weg kwamen al automatisch binnen: stappen, slaap, actieve energie,
-fietsminuten, gewicht en de rustpols. Saturatie en bloeddruk niet — terwijl ze
+fietsminuten, gewicht en de rustpols. Saturatie en bloeddruk niet, terwijl ze
 allebei al bestonden als meting die je met de hand kon invullen. Dat is precies
 het overtikwerk dat een koppeling hoort weg te nemen.
 
@@ -820,7 +820,7 @@ het overtikwerk dat een koppeling hoort weg te nemen.
 
 Het blok dat de rustpols wegschrijft was twintig regels: een grens, een
 botsingsregel, een bijwerken-of-invoegen. Dat drie keer overschrijven zou drie
-plekken opleveren waar de botsingsregel uit elkaar kan gaan lopen — en juist die
+plekken opleveren waar de botsingsregel uit elkaar kan gaan lopen, en juist die
 regel hoort overal dezelfde te zijn. Hij staat nu één keer, in
 `kal_meting_uit_koppeling`, en de rustpols gebruikt hem ook.
 
@@ -843,14 +843,14 @@ geen meting; onder de zeventig meet een polssensor geen mens meer.
 De ondergrenzen vangen daarnaast de fout af waar bestand 04 voor stappen en
 energie een aparte regel voor nodig had: `Bereken statistiek` in de
 Opdrachten-app geeft over nul monsters een 0 terug en niet leeg. Voor deze vier
-velden is die extra regel overbodig — een 0 valt vanzelf buiten elk bereik, en
+velden is die extra regel overbodig, een 0 valt vanzelf buiten elk bereik, en
 wordt gemeld als *onmogelijk, genegeerd* in plaats van stil weggeschreven.
 
 ### 20.4 Wat een horloge niet meet
 
 Bloeddruk komt niet van een horloge. Wat hem in Gezondheid zet is een meter met
-een manchet. Voor de opdracht maakt dat niets uit — die leest Gezondheid, niet
-het horloge — maar het is het verschil tussen een waarde die er elke dag staat
+een manchet. Voor de opdracht maakt dat niets uit (die leest Gezondheid, niet
+het horloge) maar het is het verschil tussen een waarde die er elke dag staat
 en een waarde die er staat op de dagen dat je hebt gemeten. Dat staat er ook zo
 bij, want een lege grafiek die je als een verslechtering leest is erger dan geen
 grafiek.
@@ -873,7 +873,7 @@ andere functie loopt dan gisteren. Als die verhuizing iets gebroken heeft, hoort
 dat hier zichtbaar te worden en niet pas op een telefoon.
 
 
-## 21. De Syrische hoek — en een patroon in mijn eigen schattingen
+## 21. De Syrische hoek, en een patroon in mijn eigen schattingen
 
 ### 21.1 De aanname die ik in hoofdstuk 19 opschreef
 
@@ -882,7 +882,7 @@ gelden wat nu alleen voor roti en heri heri geldt: verzonnen grammenlijsten."
 
 Nagemeten klopt dat half. Samengestelde Syrische gerechten heeft NEVO inderdaad
 niet. Maar hij heeft wél een reeks Levantijnse onderdelen die als heel product
-zijn doorgemeten — hummus (320 kcal/100 g), baklava (461), falafelmengsel (231),
+zijn doorgemeten, hummus (320 kcal/100 g), baklava (461), falafelmengsel (231),
 tahin (585), gekookte bulgur (80), rode linzen (110), lamsgehakt gebakken (252),
 Turks witbrood (250). Hummus en baklava zijn daarmee complete gerechten met een
 gemeten waarde; de rest is de bouwdoos.
@@ -893,15 +893,15 @@ Dat is een betere uitgangspositie dan de Marokkaanse hoek had.
 
 Dit is de derde keer dat meten vóór bouwen een aanname van mij omkeert:
 
-1. de drempel van de zoekterugval — de trigram-zeef haalde onzin binnen waar ik
+1. de drempel van de zoekterugval, de trigram-zeef haalde onzin binnen waar ik
    dacht dat hij zou werken (databasebestand 21);
-2. de Surinaamse hoek — ik dacht dat hij verzonnen moest worden; NEVO had zes
+2. de Surinaamse hoek: ik dacht dat hij verzonnen moest worden; NEVO had zes
    gerechten als geheel gemeten;
-3. de Syrische hoek — idem, met negen bruikbare onderdelen.
+3. de Syrische hoek: idem, met negen bruikbare onderdelen.
 
 Twee van de drie gaan over hetzelfde: **mijn schatting van wat er in de tabel
 staat is systematisch te pessimistisch.** Dat is geen toeval en het is goedkoop
-te verhelpen — één query voordat ik concludeer dat iets er niet is. Die regel
+te verhelpen, één query voordat ik concludeer dat iets er niet is. Die regel
 staat hier omdat hij het soort ding is dat je een volgende keer weer vergeet.
 
 ### 21.3 Twaalf gerechten, en twee getallen die alles bepalen
@@ -914,7 +914,7 @@ In deze hoek zijn twee soorten getallen doorslaggevend, en allebei zijn het
 schattingen die met zoveel woorden in de regel staan.
 
 **Het frituurvet.** `absorbed_fraction` zegt hoeveel van het vet dat de pan in
-gaat in het gerecht achterblijft. Bij een tajine is dat 1,0 — er wordt in
+gaat in het gerecht achterblijft. Bij een tajine is dat 1,0: er wordt in
 gestoofd. Bij frituren is het een fractie die in deze tabel niet te meten is. Ik
 heb hem gekozen en daarna gecontroleerd waar hij uitkomt, en die volgorde hoort
 er eerlijk bij: 0,12 geeft gefrituurde falafel van 303 kcal per 100 g en dat
@@ -923,7 +923,7 @@ dus geen meting maar een **ijking**.
 
 **Het water.** Water heeft geen energie en wel gewicht, dus het staat in de
 noemer van de dichtheid en verder nergens. De rode linzensoep gaf met een liter
-water 54 kcal per 100 g — dat is bouillon met linzen erin. Met 700 ml komt hij
+water 54 kcal per 100 g, dat is bouillon met linzen erin. Met 700 ml komt hij
 op 64. Eén getal, en het verschil tussen een gerecht en iets anders.
 
 Allebei zijn tijdens het schrijven bijgesteld omdat de uitkomst buiten haar
@@ -934,7 +934,7 @@ zitten voor wie het straks nakijkt.
 
 **Shoarmavlees is varkensvlees.** NEVO 2906 en 3027 zijn de enige
 shoarma-regels en allebei van varken. Voor een Syrisch gerecht is dat de
-verkeerde regel, en niet een beetje. Het broodje is daarom met kip gebouwd —
+verkeerde regel, en niet een beetje. Het broodje is daarom met kip gebouwd,
 kipshawarma bestaat, is gangbaar, en staat gemeten in de tabel.
 
 **Ful medames ontbreekt.** Ful is de gedroogde bruine tuinboon, gekookt; NEVO
@@ -960,19 +960,19 @@ en niet één keer hier, want je leest het op het moment dat je het getal ziet.
 | **totaal** | **100** |
 
 Alle zes de keukens die het schema toestaat zijn nu gevuld. Van de 73 nieuwe
-draagt elke regel `concept`, `ai_voorstel` en `estimated` — graad D, tot een
+draagt elke regel `concept`, `ai_voorstel` en `estimated`, graad D, tot een
 diëtist ernaar heeft gekeken.
 
 ---
 
-## 22. Verzadiging — een derde as, en waarom hij een schatting blijft
+## 22. Verzadiging: een derde as, en waarom hij een schatting blijft
 
 ### 22.1 De vraag die eiwit niet beantwoordt
 
 De coach rangschikt op gram eiwit per kilocalorie. Dat beantwoordt "waar haal ik
 mijn eiwit vandaan" en niet "waar heb ik genoeg aan". Die twee lopen uiteen, en
 het scherpste voorbeeld staat in de tabel zelf: paardenrookvlees heeft 21,1 g
-eiwit per 100 kcal — bijna de hoogste dichtheid die er is — en de standaardportie
+eiwit per 100 kcal (bijna de hoogste dichtheid die er is) en de standaardportie
 is een plak van vijftien gram. Dat is op in twee happen.
 
 Wie om zes uur voor de koelkast staat, stelt de tweede vraag.
@@ -1013,7 +1013,7 @@ Wat er dus staat is een **voorspelling uit de samenstelling**:
 20 × min(1, gram vezel per 100 kcal / 5)
 ```
 
-De verhouding 45/35/20 volgt de bewijskracht hierboven en is verder mijn keuze —
+De verhouding 45/35/20 volgt de bewijskracht hierboven en is verder mijn keuze,
 geen gepubliceerd resultaat. De drie afkappunten zijn dat níet: het zijn de
 negentigste percentielen van de tabel zelf, over de 2224 producten met energie en
 eiwit (gram p90 = 238, eiwit p90 = 12,5, vezel p90 = 5,09). Het afkappen bestaat
@@ -1047,7 +1047,7 @@ alcoholarm bier zijn **dranken**, en dat is geen smaakkwestie: vloeibare
 calorieën verzadigen minder dan vaste bij gelijke energie. Een verzadigingslijst
 die drinken aanraadt doet het omgekeerde van wat hij belooft.
 
-Dat werden twee zeven — een groepenlijst en een regexp op de naam — en ze zijn
+Dat werden twee zeven (een groepenlijst en een regexp op de naam) en ze zijn
 allebei dragend. Op een nagebouwde tabel met de echte waarden: groepszeef eruit
 en peterselie, sojasaus en roomboter komen terug; naamzeef eruit en Fristi komt
 terug. Die tweede mutant is het bewijs dat de naamzeef niet overbodig is naast de
@@ -1066,7 +1066,7 @@ eiwitvraag, waar een portie iets aan een tekort moet bijdragen; bij een
 verzadigingsvraag is een lage portie-energie juist de bedoeling. De zeef op
 smaakmakers moet dus op de groep zitten en niet op de calorieën.
 
-Dit is de derde keer in dit project dat meten vóór bouwen een aanname omkeerde —
+Dit is de derde keer in dit project dat meten vóór bouwen een aanname omkeerde,
 na de drempel van de zoekterugval en de Surinaamse hoek. Het patroon uit §21.2
 geldt hier in een andere vorm: niet mijn schatting van de tabel was te
 pessimistisch, maar mijn gewoonte om een zeef uit een ander bestand over te nemen
@@ -1092,10 +1092,10 @@ proef: het schermvoorbeeld telt de aanvragen, verwacht er nul zolang de kaart
 dicht is en precies één na het openen. De mutant die de lijst buiten de
 uitklapper hangt valt om met *"dicht en toch 1 keer gevraagd"*.
 
-## 22b. Suppletie — wat de app wél en niet kan zien
+## 22b. Suppletie: wat de app wél en niet kan zien
 
 De kaart *Wat ontbreekt er?* op het dagscherm. Vijf regels, en ze rusten op twee
-verschillende soorten grond — dat onderscheid is het belangrijkste van dit
+verschillende soorten grond, dat onderscheid is het belangrijkste van dit
 hoofdstuk.
 
 ### Wat er uit je log volgt, en waarom dat maar beperkt is
@@ -1125,7 +1125,7 @@ is in orde".
 Twee regels hangen aan geen enkele log. Ze komen uit staand Nederlands advies, en
 staan daarom op *nodig* respectievelijk met een harde bron erbij.
 
-**Vitamine D — het meest gegeven suppletieadvies van Nederland.** De huid maakt
+**Vitamine D: het meest gegeven suppletieadvies van Nederland.** De huid maakt
 vitamine D uit zonlicht, en tussen oktober en maart staat de zon hier te laag om
 daar genoeg van te leveren; voeding levert maar een klein deel. De Gezondheidsraad
 adviseert:
@@ -1134,7 +1134,7 @@ adviseert:
 |---|---|
 | iedereen vanaf 70 jaar | 20 microgram per dag |
 | vrouwen van 50 tot en met 69 | 10 microgram per dag |
-| getinte of donkere huid, of weinig buiten / bedekkende kleding — elke leeftijd | 10 microgram per dag |
+| getinte of donkere huid, of weinig buiten / bedekkende kleding, elke leeftijd | 10 microgram per dag |
 
 *Staat er geen leeftijd in het profiel, dan vuren de eerste twee niet.* Een
 leeftijd raden zou hier een uitspraak over iemands botten worden op een getal dat
@@ -1142,21 +1142,21 @@ niemand heeft ingevuld.
 
 **De twee zonvragen worden apart gesteld, en niet afgeleid uit `etniciteit`.**
 Dat is een bewuste keuze en geen omissie. Afkomst is geen huidskleur, en een app
-die dat gelijkstelt doet een aanname over iemand die hij niet mag doen — en die
+die dat gelijkstelt doet een aanname over iemand die hij niet mag doen, en die
 hij bovendien nergens opschrijft. `etniciteit` gaat in deze app over de
 afkapwaarde van de middelomtrek (zie hoofdstuk 5) en over niets anders. Een leeg
 vinkje betekent "niet gevraagd" en niet "nee": zolang er niets staat, zwijgt de
 regel over die grond.
 
 **B12 bij metformine.** Langdurig metforminegebruik verlaagt de opname van B12.
-Dat is een reden om het te laten meten en geen reden om te gaan slikken — dezelfde
+Dat is een reden om het te laten meten en geen reden om te gaan slikken, dezelfde
 lijn als bij ijzer. De NHG-Standaard Diabetes mellitus type 2 adviseert een
 B12-bepaling te overwegen bij langdurig gebruik, zeker bij tintelingen of een
 doof gevoel in handen of voeten.
 
 Deze regel staat **naast** de veganistische B12-regel en niet in plaats daarvan.
 Dat is geen dubbeling: de ene gaat over wat er binnenkomt, deze over wat ervan
-opgenomen wordt. Twee gronden, dus twee regels, met twee id's — anders verdwijnt
+opgenomen wordt. Twee gronden, dus twee regels, met twee id's, anders verdwijnt
 er stilletjes één.
 
 `metformine` stond eerst niet in de medicatiegroepen, en dat zegt iets over
@@ -1172,7 +1172,7 @@ voorbehoud eronder is niet te onderscheiden van een lijst die stuk is.
 
 De kaart noemt daarom alle vijf de regels bij naam met wat er per regel gezien
 is, en elke regel geeft zijn eigen reden. *Uitgezet in Wat je lust*, *niet in je
-log* en *nog te weinig gelogd* lezen alle drie anders — zou dat niet zo zijn, dan
+log* en *nog te weinig gelogd* lezen alle drie anders, zou dat niet zo zijn, dan
 was de lijst een sierrand en geen afleiding.
 
 ### Wat er nadrukkelijk niet gebeurt
@@ -1183,11 +1183,11 @@ schrijft niet voor.
 
 ---
 
-## 22c. Spierbehoud — drie hefbomen, en waarom er geen cijfer uit komt
+## 22c. Spierbehoud: drie hefbomen, en waarom er geen cijfer uit komt
 
 Een weegschaal telt kilo's en zegt niet waar ze vandaan komen. Bij snel
 gewichtsverlies is dat verschil groot: in de lichaamssamenstellingssubstudie van
-STEP-1 was ongeveer **45 %** van wat er op semaglutide verdween vetvrije massa;
+STEP-1 was ongeveer **40 %** van wat er op semaglutide verdween vetvrije massa;
 in de SURMOUNT-1-substudie bij tirzepatide ongeveer **25 %**.
 
 Geen app meet lichaamssamenstelling. Wat deze wel kan is de drie dingen naast
@@ -1196,24 +1196,24 @@ er staan.
 
 ### De drie, in de volgorde waarin je er iets aan kunt doen
 
-**Eiwit per maaltijd.** Niet het dagtotaal — dat staat al op Voeding. Naast de
+**Eiwit per maaltijd.** Niet het dagtotaal, dat staat al op Voeding. Naast de
 dagmaat bestaat een tweede, onafhankelijke grens: bij ouderen is ongeveer 2,8 g
 leucine per maaltijd nodig om spieraanmaak te prikkelen, zo'n **30 g eiwit**. In
 een calorietekort is de aanmaak onderdrukt en de afbraak verhoogd, en dan telt
 het halen van die drempel bij élke maaltijd zwaarder dan het dagtotaal.
 
 *Waar de twee uit elkaar lopen.* Het scherm Voeding zet een stippellijn op het
-dagdoel gedeeld door drie. Bij een dagdoel van 161 g is dat 54 — ruim boven de
+dagdoel gedeeld door drie. Bij een dagdoel van 161 g is dat 54, ruim boven de
 drempel, en dan valt er niets te zien. Bij een dagdoel van 75 g is het 25, en
 dan ligt de stippellijn eronder: Voeding zegt "op peil" terwijl er van
-spieraanmaak weinig terechtkomt. De kaart zegt dat dan, met het antwoord erbij —
+spieraanmaak weinig terechtkomt. De kaart zegt dat dan, met het antwoord erbij,
 dat is geen reden het dagdoel te verhogen maar om het over **twee grotere
 maaltijden** te verdelen.
 
 *Wat een maaltijd is.* Alleen ontbijt, lunch en diner, en alleen als er
 werkelijk iets gelogd is. Een handje amandelen is geen maaltijd: zou
 "tussendoor" meetellen, dan leest drie maaltijden op peil plus een tussendoortje
-als "3 van de 4" — een oordeel over het tussendoortje vermomd als een oordeel
+als "3 van de 4", een oordeel over het tussendoortje vermomd als een oordeel
 over spieren. Een diner dat er niet was telt evenmin als gemiste drempel.
 
 **Krachttraining.** Al geteld op dit scherm, tegen hetzelfde doel van drie
@@ -1223,20 +1223,20 @@ sessies per week.
 Boven de **15 seconden** geldt als aanwijzing voor verminderde spierkracht
 (EWGSOP2). De Europese consensus laat de keuze tussen handknijpkracht en deze
 test; knijpkracht is aantoonbaar de betere maat, maar vraagt een dynamometer.
-Een maat die niemand thuis kan doen meet niets — daarom deze, met erbij dat hij
+Een maat die niemand thuis kan doen meet niets, daarom deze, met erbij dat hij
 de zwakkere is.
 
 Onder de **2 seconden** is het geen meting maar een dubbele tik op de knop, en
 dan leest hij als *niet gedaan*. Die ondergrens kwam uit de armatuur: die zet de
 klok vast, dus een stopwatch op `Date.now()` stond stil en er ging nul seconden
-de database in — wat daarna als "snel" las. De stopwatch gebruikt nu
+de database in, wat daarna als "snel" las. De stopwatch gebruikt nu
 `performance.now()`, die monotoon doorloopt.
 
 ### De screener, en waarom de lage afkapwaarde
 
 **SARC-F**: vijf vragen, geen apparaat. De gangbare afkapwaarde is 4. Die heeft
 een hoge specificiteit en een **lage sensitiviteit**: goed in uitsluiten, slecht
-in opsporen. Voor een screener in een app is dat de verkeerde kant van de fout —
+in opsporen. Voor een screener in een app is dat de verkeerde kant van de fout,
 die hoort te signaleren, niet te diagnosticeren. Deze app gebruikt daarom **≥ 1**
 en bewaart beide betekenissen: één genoemde klacht is een regel op het scherm,
 vier of meer is "genoeg om het na te laten kijken".
@@ -1267,12 +1267,12 @@ tonen en niet kan vergeten.
 
 Nergens nieuw. De stoeltest is een rij in `kal_metingen` (`soort: 'stoeltest'`,
 eenheid seconden), de vragenlijst een rij in `kal_vragenlijsten` naast STOP-BANG.
-Deze hele module vroeg **geen enkele databasewijziging** — beide vormen bestonden
+Deze hele module vroeg **geen enkele databasewijziging**, beide vormen bestonden
 al.
 
 ---
 
-## 22d. Verdiepen — het boekje over afvallen, en waarom het een boekje blijft
+## 22d. Verdiepen: het boekje over afvallen, en waarom het een boekje blijft
 
 Acht stukken op het scherm Profiel, onder *Verdiepen: afvallen en medicatie*.
 Over de Nederlandse trap, wat GLP-1 doet, wat er gebeurt als je stopt, waarom
@@ -1281,22 +1281,22 @@ obesitas, en wat volhouden voorspelt.
 
 ### Elk stuk heeft vier delen, en de volgorde is een besluit
 
-**Wat we weten** — het getal, met het onderzoek en waar het vandaan komt.
-**Wat we niet weten** — in een eigen vak, vóór het nut.
-**Waar je dit terugziet** — een verwijzing naar een scherm.
-**Bron** — klikbaar in het onderzoeksbestand.
+**Wat we weten**: het getal, met het onderzoek en waar het vandaan komt.
+**Wat we niet weten**: in een eigen vak, vóór het nut.
+**Waar je dit terugziet**: een verwijzing naar een scherm.
+**Bron**: klikbaar in het onderzoeksbestand.
 
 Dat tweede deel staat dus niet als kleine letter onderaan. In deze markt zijn de
 claims hard en het bewijs zacht; wie het voorbehoud onderaan zet weet dat niemand
 het leest. Een proef eist dat `nietWeten` nooit leeg is, en de armatuur leest het
-echte scherm om te zien dat het ook getóónd wordt — die twee zijn niet hetzelfde,
+echte scherm om te zien dat het ook getóónd wordt, die twee zijn niet hetzelfde,
 en een venster dat alleen `weten` rendert zou door de eerste heen komen.
 
 ### Het blijft een boekje, en dat is een grens en geen stijl
 
 Net als `leren.ts`: onder MDCG 2019-11 is software die uitsluitend informatie
 ontsluit, zonder patiëntspecifieke verwerking, geen medisch hulpmiddel. "Bij
-semaglutide is ongeveer 45 procent van het verlies vetvrije massa" als vaste
+semaglutide is ongeveer 40 procent van het verlies vetvrije massa" als vaste
 tekst mag. Diezelfde zin met jóuw cijfers erin zou de app een categorie op
 schuiven waar hij niet thuishoort. Zie `health/STRATEGIE-CHRONISCHE-ZORG.md`.
 
@@ -1311,13 +1311,13 @@ dáár. Het verschil tussen die twee is precies het verschil tussen een boekje e
 een hulpmiddel.
 
 De armatuur opent alle acht stukken en zoekt naar de getallen van de proef­
-gebruiker — gewicht, eiwitdoel, kcal-doel, stappen. Komt er één van voor, dan valt
+gebruiker, gewicht, eiwitdoel, kcal-doel, stappen. Komt er één van voor, dan valt
 hij om.
 
 ### Waarom het stuk over de trap geen BMI-grenzen noemt
 
 Het draagt de volgorde van het Nederlandse traject en de constatering dat de lat
-voor de huisarts hoger ligt dan de bijsluiter — maar geen getallen. De criteria
+voor de huisarts hoger ligt dan de bijsluiter, maar geen getallen. De criteria
 komen uit samenvattingen van de NHG-Standaard en niet uit de standaard zelf:
 genoeg om de volgorde uit te leggen, niet genoeg om een getal op te schrijven
 waar iemand zijn verwachting op bouwt.
@@ -1328,17 +1328,17 @@ een vergetelheid.
 
 ### Wat het boekje niet doet
 
-Geen dosering in milligrammen — een proef zoekt daarop. Geen oordeel of iets
+Geen dosering in milligrammen: een proef zoekt daarop. Geen oordeel of iets
 voor jou geschikt is. Het GLP-1-stuk noemt de alarmsignalen en stuurt daarbij
 naar een arts; dat is de grens tussen voorlichting en behandeling.
 
 ---
 
-## 22e. De trap — je traject, en de trede die op slot staat
+## 22e. De trap: je traject, en de trede die op slot staat
 
 Op het scherm Profiel staat een kaart *Je traject*, en die komt er alleen als je
 in je profiel een gecombineerde leefstijlinterventie hebt opgegeven. Hij toont
-twee treden. De eerste kan de app vullen, de tweede niet — en dat verschil is de
+twee treden. De eerste kan de app vullen, de tweede niet, en dat verschil is de
 hele kaart.
 
 ### Wat de app wél weet: de GLI
@@ -1351,7 +1351,7 @@ hun behandelfase waar die vaststaat en `null` waar niet.
 Die `null` is geen gat maar een derde antwoord. Van X-Fittt en Keer Diabetes2 Om
 staat de lengte van de behandelfase hier niet vast, en dan leest de kaart
 "*14 maanden bezig; van dit programma is de lengte van de behandelfase hier niet
-vastgelegd*" — een duur zonder fase. Dat is iets anders dan niets weten, en
+vastgelegd*", een duur zonder fase. Dat is iets anders dan niets weten, en
 het hoort ook anders te lezen.
 
 ### Hele kalendermaanden, en waarom dat uitmaakt
@@ -1362,7 +1362,7 @@ dagen, en 730 gedeeld door 30,44 is 23,98. Wie zijn tweejarige programma op de
 dag af had doorlopen kreeg te lezen dat hij nog in de onderhoudsfase zat.
 
 Het telt nu in kalendermaanden: 10 juni plus drie maanden is 10 september,
-ongeacht hoeveel dagen daar tussen zitten, en de dag van de maand telt mee — op
+ongeacht hoeveel dagen daar tussen zitten, en de dag van de maand telt mee, op
 de negende is die maand nog niet vol. Dat kost iets: het antwoord is een heel
 getal, dus de zes-en-een-halve maand behandelfase van SLIMMER valt op maand
 zeven. Een halve maand onnauwkeurigheid in een fase-indeling weegt niet op tegen
@@ -1371,7 +1371,7 @@ een jaargrens die niet klopt.
 Twee datums kunnen hier misgaan, en ze krijgen niet dezelfde zin. Een onleesbare
 datum leest als "de startdatum is niet te lezen"; een datum in de toekomst als
 "die startdatum ligt in de toekomst". Eerst stonden ze op één hoop, en dan stuurt
-de app iemand zijn invoer nakijken die zich enkel in het jaartal vergist heeft —
+de app iemand zijn invoer nakijken die zich enkel in het jaartal vergist heeft,
 hij vindt dan niets, want er is niets mis met wat hij heeft ingetikt. Het
 datumveld draagt daarnaast een `max` op vandaag, zodat het meestal niet zover
 komt.
@@ -1383,7 +1383,7 @@ criteria kwamen uit samenvattingen van de NHG-Standaard, en `medicatiecriteria()
 gaf daarom uitsluitend `niet bekend` terug, hoeveel er verder ook van iemand
 bekend was.
 
-Op 20 september 2026 leverde Abdelkader de standaard zelf aan — **NHG-Standaard
+Op 20 september 2026 leverde Abdelkader de standaard zelf aan, **NHG-Standaard
 Obesitas, augustus 2026, bladzijde 28–29**. Het slot is eraf, en het heeft zijn
 nut bewezen. De standaard bevatte drie dingen die in geen enkele samenvatting
 stonden:
@@ -1396,7 +1396,7 @@ stonden:
 
 Die eerste rij is niet een detail maar de reden dat het slot er hoorde. Een app
 die alleen 35 en 40 had getoond, had iemand met een Marokkaanse of Surinaamse
-achtergrond en een BMI van 38 verteld dat hij er nog niet aan toe was — terwijl
+achtergrond en een BMI van 38 verteld dat hij er nog niet aan toe was, terwijl
 de standaard hem er wél onder brengt. Voor de mensen voor wie deze app gebouwd
 is, en voor de praktijk van ProVitaCare, is dat niet het uitzonderingsgeval.
 
@@ -1405,7 +1405,7 @@ is, en voor de praktijk van ProVitaCare, is dat niet het uitzonderingsgeval.
 Een criterium is een **feit uit je eigen dossier** of een **klinisch oordeel**.
 
 Feit uit je dossier: hoe lang je GLI loopt, en je leeftijd. Die staan in je
-profiel, er valt niets aan te wegen, en die beoordeelt de app — met `gehaald`,
+profiel, er valt niets aan te wegen, en die beoordeelt de app, met `gehaald`,
 `niet gehaald` of `niet bekend` als er niets is ingevuld.
 
 Klinisch oordeel: of je BMI boven de drempel ligt, en of er
@@ -1426,8 +1426,8 @@ Drie redenen, en geen ervan is voorzichtigheid:
   aanwezig" door elkaar halen is hier de gevaarlijkste fout die er is, want hij
   wijst iemand af.
 
-De drempels staan er dus wél — allebei de sets, met de getallen en de
-achtergronden die de standaard noemt — maar als inhoud en niet als oordeel.
+De drempels staan er dus wél (allebei de sets, met de getallen en de
+achtergronden die de standaard noemt) maar als inhoud en niet als oordeel.
 Precies de grens uit `leren.ts`: welke bladzijde bovenaan komt is bladeren, de
 tekst zelf verandert niet.
 
@@ -1439,8 +1439,8 @@ tonen waarop alles groen is.** Dat is geen tekortkoming maar de kern: het oordee
 is van de huisarts, en de standaard laat die uitdrukkelijk vrij dit aanbod niet
 te leveren.
 
-De proef in `trap.proef.ts` loopt honderdvijftig profielen af — alle combinaties
-van programma, startdatum en leeftijd, inclusief de gunstigste — en eist dat er
+De proef in `trap.proef.ts` loopt honderdvijftig profielen af (alle combinaties
+van programma, startdatum en leeftijd, inclusief de gunstigste) en eist dat er
 altijd minstens één `niet bekend` tussen zit.
 
 Die bewaakt de functie, niet het scherm. En dáár zit het risico: een component
@@ -1452,21 +1452,21 @@ staan juist bij een gebruiker die op allebei de beoordeelbare criteria groen
 staat, en valt om zodra er een totaaloordeel opduikt.
 
 De enige zin waarin "in aanmerking" mag voorkomen is die waarin de app zegt dat
-hij er niet over gaat. Die wordt er in de proef uitgeknipt vóór het zoeken —
+hij er niet over gaat. Die wordt er in de proef uitgeknipt vóór het zoeken,
 anders zou het voorbehoud zichzelf aangeven.
 
 ### Wat er niet in staat
 
 Geen dosering, geen middelkeuze, geen contra-indicaties per middel. Wat er wél
 staat is dat tirzepatide door de standaard wordt **afgeraden** en orale
-semaglutide **niet aanbevolen** — dat is voorlichting die iemand behoedt voor een
+semaglutide **niet aanbevolen**, dat is voorlichting die iemand behoedt voor een
 aanbod dat hij elders tegenkomt, en het is geen behandeladvies.
 
-## 22f. Sportvoeding in de lijst — en het merk van de eigenaar
+## 22f. Sportvoeding in de lijst, en het merk van de eigenaar
 
 De voedingslijst kende de supermarkt en niet de sportvoeding. Wie een shake
 drinkt kon hem nergens terugvinden, en wat je niet kunt invoeren telt nergens
-mee — niet in de dag, niet in het eiwit, niet in "wat ontbreekt". Voor iemand
+mee, niet in de dag, niet in het eiwit, niet in "wat ontbreekt". Voor iemand
 die aan een gewichtstraject bezig is is dat juist de post die er het meest toe
 doet: bij een energiebeperking is eiwit de enige macro waar je níet op wilt
 bezuinigen (§22c), en poeders zijn de manier waarop die post in de praktijk
@@ -1475,7 +1475,7 @@ gehaald wordt.
 Vier merken, gekozen op wat er in Nederland werkelijk verkocht wordt: Upfront,
 Body&Fit, XXL Nutrition en Orangefit. 404 producten bekeken, 359 bruikbaar; de
 45 die afvielen staan geteld in `health/database/45-eiwitten-en-supplementen.sql`
-mét de reden. Het gaat niet alleen om shakes — Upfront voert een heel
+mét de reden. Het gaat niet alleen om shakes, Upfront voert een heel
 assortiment, tot olijfolie en roomboter aan toe, en dat gaat mee. Een lijst die
 alleen de eiwitpoeders van een merk kent laat iemand die de rest ook koopt
 halverwege staan.
@@ -1499,16 +1499,16 @@ voedingslijst die het verzwijgt is minder waard en niet eerlijker. Het is wél
 een reden om het op precies dezelfde voet binnen te laten als de andere drie.
 Zodra de app een product voortrekt dat de eigenaar verkoopt, wordt élk ander
 getal erin verdacht: de lezer kan van buitenaf niet meer zien waar het advies
-ophoudt en de verkoop begint. Dat is hetzelfde vertrouwen waar §22e op teert —
-de app die níet zegt of je in aanmerking komt — en het is met dezelfde munt te
+ophoudt en de verkoop begint. Dat is hetzelfde vertrouwen waar §22e op teert (
+de app die níet zegt of je in aanmerking komt) en het is met dezelfde munt te
 verspelen.
 
 De belofte is daarom niet aan mijn woord overgelaten.
 `src/health/belangenverstrengeling.proef.ts` toetst dat geen van deze vier
 merknamen ergens in de code voorkomt: niet in `src/`, niet in de overige
 SQL-bestanden. Ze komen binnen als rij en verlaten de database als rij, op
-dezelfde voet als een pak melk van de Lidl. Een voorkeursregel — een
-sorteersleutel, een uitzondering in de zeef, een badge op een scherm — is niet
+dezelfde voet als een pak melk van de Lidl. Een voorkeursregel (een
+sorteersleutel, een uitzondering in de zeef, een badge op een scherm) is niet
 te schrijven zonder de naam te noemen, en dus niet te schrijven zonder dat deze
 proef omvalt.
 
@@ -1518,9 +1518,9 @@ geldt omzeil je door een tweede merk te beginnen. Hij zondert alleen bestand 45
 uit, want dáár is de naam inhoud in plaats van code. En hij toetst er als derde
 bij dát de merken in bestand 45 stáán: zonder die regel zou hij ook groen zijn
 als het invoerbestand verdwenen was, en een proef die groen is omdat er niets te
-toetsen valt is geen proef. Alle drie zijn mutatiegetoetst — een voorkeursregel
+toetsen valt is geen proef. Alle drie zijn mutatiegetoetst (een voorkeursregel
 in de volgorde van bestand 21, een `HUISMERK`-constante in een scherm, en een
-verdwenen bestand 45 — en elk mutant werd gedood door precies de regel die
+verdwenen bestand 45) en elk mutant werd gedood door precies de regel die
 ervoor bedoeld is.
 
 ### Twee keer draaien verandert niets, nu werkelijk
@@ -1529,12 +1529,12 @@ De import werkt bij op streepjescode (`on conflict do update`), zodat opnieuw
 draaien niet verdubbelt. Daar zat een gat in: de `set` zet ook
 `geimporteerd_op = now()`, dus een tweede run raakte élke rij, ook als er bij de
 bron niets veranderd was. Daarmee was "twee keer draaien voegt niets toe en
-haalt niets weg" een bewering in plaats van een eigenschap — gebroken door de
+haalt niets weg" een bewering in plaats van een eigenschap, gebroken door de
 tijdstempel alleen.
 
 `gereedschap/merkgegevens.mjs` zet er nu een `where` onder: bijwerken gebeurt
 alleen als de rij werkelijk verschilt van wat binnenkomt. De proef daarop toetst
-niet dát er een `where` staat maar dat hij **volledig** is — elke kolom die de
+niet dát er een `where` staat maar dat hij **volledig** is, elke kolom die de
 `set` bijwerkt staat ook in de vergelijking, want een kolom die wel bijgewerkt
 wordt maar niet meevergeleken zou stilletjes nooit meer bijwerken. `synoniemen`
 staat met opzet in geen van beide: die kolom vult een mens, en wat een mens
@@ -1544,9 +1544,9 @@ invulde overschrijft een import niet.
 
 Op de 359 streepjescodes van het bestand zelf, niet op het merk.
 `where merk = 'Upfront'` zou ook weghalen wat er later door iemand anders bij is
-gezet — dezelfde fout die in bestand 24 en 27 rechtgezet moest worden.
+gezet, dezelfde fout die in bestand 24 en 27 rechtgezet moest worden.
 
-## 23. De conditie — signaleren zonder te doseren
+## 23. De conditie: signaleren zonder te doseren
 
 Deze app rekent aan energie en verzadiging, en dat is voor de meeste mensen
 genoeg. Voor een deel van de gebruikers is het dat niet: wie insuline spuit en
@@ -1555,8 +1555,8 @@ geen zeldzame samenloop maar de gewone gang van zaken in een spreekkamer, en een
 app die mensen laat afvallen zonder het te noemen laat een gat vallen dat hij
 zelf heeft gegraven.
 
-Wat er sinds dit hoofdstuk staat is een conditieprofiel — hoge bloeddruk,
-diabetes type 2, doorgemaakte hart- of vaatziekte, en de medicatie in groepen —
+Wat er sinds dit hoofdstuk staat is een conditieprofiel (hoge bloeddruk,
+diabetes type 2, doorgemaakte hart- of vaatziekte, en de medicatie in groepen) 
 en drie dingen die de app daarmee doet. De bredere afweging, inclusief de vraag
 onder welk regime dit valt, staat in `STRATEGIE-CHRONISCHE-ZORG.md`; hier staan
 de regels zelf.
@@ -1587,7 +1587,7 @@ getal. Dat is geen stijlkeuze: een insulinedosis is een therapeutische
 beslissing, en software die die beslissing voorrekent is iets anders dan deze
 app. Er is ook een reden van binnenuit. De stelregel hier is dat geen enkel
 getal zonder zijn onzekerheid op het scherm komt, en een insulinedosis kán deze
-app niet met een interval leveren — hij weet de gevoeligheid niet, de
+app niet met een interval leveren, hij weet de gevoeligheid niet, de
 koolhydraat-insulineratio niet en de nierfunctie niet.
 
 Een commentaarblok houdt zo'n grens niet vast. `conditie.proef.ts` leest daarom
@@ -1598,16 +1598,16 @@ In `leren.ts` staan wél getallen, en dat is geen tegenspraak. Het verschil is v
 wie het getal is. "Eet zes tabletten druivensuiker" staat letterlijk zo op
 Thuisarts en geldt voor iedereen gelijk; "verlaag je insuline met vier eenheden"
 zou een dosis voor één persoon zijn. Het eerste is een boek, het tweede een
-behandeling. De proef bij dat bestand leest elke tekst twee keer — met een lege
-conditie en met alles aangevinkt — en eist dat er letterlijk hetzelfde staat.
+behandeling. De proef bij dat bestand leest elke tekst twee keer (met een lege
+conditie en met alles aangevinkt) en eist dat er letterlijk hetzelfde staat.
 
 ### 23.3 Groepen en geen middelen
 
 De gebruiker kiest een medicatiegroep en niet een merk. Drie redenen. Alles wat
 de app ermee doet hangt van de groep af. Een lijst met losse middelen die
 onvolledig of verouderd is wekt vertrouwen dat hij niet verdient. En een groep is
-met een voorbeeld erbij — "tablet die suiker uitplast · dapagliflozine,
-empagliflozine" — aan te wijzen door iemand die moeizaam leest, wat in deze
+met een voorbeeld erbij ("tablet die suiker uitplast · dapagliflozine,
+empagliflozine") aan te wijzen door iemand die moeizaam leest, wat in deze
 praktijk geen bijzaak is.
 
 Wat er staat is zelfopgave en geen medicatieoverzicht uit het HIS. Dat staat er
@@ -1630,7 +1630,7 @@ en wie leest, leest dit als eerste.
 Ze klappen in, met de uitklapper die de app al kent. Een kaart die er elke dag
 hetzelfde bij staat wordt na een week niet meer gelezen. De kop zegt waar het
 over gaat, de regel eronder is de handeling en blijft ook dicht staan, en de
-uitleg zit erachter — het eerste wat je ziet is dus wat je moet doen en niet een
+uitleg zit erachter, het eerste wat je ziet is dus wat je moet doen en niet een
 alinea.
 
 Er zit geen wegklikknop op. Het signaal hangt aan de medicatie en het afvaldoel;
@@ -1699,12 +1699,243 @@ voor. Zolang dat zo is verzint deze app die regel niet zelf.
 
 ### 24.4 Bronnen bij dit hoofdstuk en het vorige
 
-Thuisarts.nl, *Mijn bloedsuiker is te laag bij diabetes type 2* — de hypotekst in
+Thuisarts.nl, *Mijn bloedsuiker is te laag bij diabetes type 2*, de hypotekst in
 `leren.ts` volgt die bladzijde. NHG-Standaard Cardiovasculair risicomanagement en
-de praktische handleiding daarbij — het meetprotocol en het zoutadvies.
+de praktische handleiding daarbij, het meetprotocol en het zoutadvies.
 NHG-Standaard Diabetes mellitus type 2. NDF Voedingsrichtlijn diabetes (2020,
-bewijsupdate 2023) — dat er geen apart diabetesdieet bestaat en dat gezonde
+bewijsupdate 2023), dat er geen apart diabetesdieet bestaat en dat gezonde
 voeding met persoonsgerichte aanpassing het uitgangspunt is.
 
 De drempels en formuleringen in de signalen zijn bewust gebleven bij wat deze
 bronnen dragen. Waar ze niets zeggen, zegt de app ook niets.
+
+---
+
+## 25. De naloop van 20 september 2026, wat er niet klopte
+
+Op verzoek is elke medische bewering in de app nagelopen tegen de bron waar hij
+naar verwijst. Het meeste hield stand. Wat hieronder staat is wat niet hield,
+plus twee dingen die de app onderling tegensprak.
+
+### 25.1 Vijfenveertig procent was veertig
+
+De app zei op drie plaatsen dat in de lichaamssamenstellingssubstudie van STEP-1
+ongeveer **45 %** van het verloren gewicht vetvrije massa was, waarvan twee
+plaatsen in het boekje dat de gebruiker leest. De gepubliceerde uitkomst is
+ongeveer **40 %**: in de DXA-deelgroep verloren 95 deelnemers op semaglutide
+6,9 kg vetvrij weefsel naast 10,4 kg vetmassa, wat op 39,9 % uitkomt. Twee
+onafhankelijke weergaven van de studie geven hetzelfde getal.
+
+Rechtgezet in `verdieping.ts`, `spier.ts`, `HANDLEIDING.md`,
+`ONDERZOEK-MEDISCH-AFVALLEN.md`, `VOORSTEL-MEDISCH-AFVALLEN.md` en hierboven.
+De 25 % voor tirzepatide in SURMOUNT-1 klopt wel (5,6 kg vetvrij naast 15,9 kg
+vet, ofwel 26 %).
+
+### 25.2 Drieënveertig procent was achtenveertig
+
+In het boekje stond dat een jaar na het staken van semaglutide nog ongeveer
+43 % van de deelnemers minstens 5 % gewichtsverlies vasthield. De STEP-1-extensie
+geeft **48,2 %** op week 120. Rechtgezet.
+
+Twee andere getallen uit diezelfde tabel (het aandeel dat ≥ 10 % vasthield en
+het aandeel op of boven het startgewicht) zijn vanaf deze machine niet na te
+kijken: de uitgever, PubMed Central en de repositories zijn alle geblokkeerd
+door de uitgaande proxy. Ze zijn daarom vervangen door een zin die zegt wat er
+wél vaststaat. Wie de tabel bij de hand heeft kan ze terugzetten; dan met het
+getal erbij.
+
+### 25.3 Wishnofsky, niet Wichmann
+
+`rekenkern.ts` schreef de 7.700 kcal per kilo toe aan "Wichmann". De regel komt
+van **Max Wishnofsky**, *Caloric equivalents of gained or lost weight*, Am J Clin
+Nutr 1958. Alleen commentaar, maar een verkeerde naam in de bron van een
+medische app is precies het soort fout dat deze naloop moest vinden.
+
+### 25.4 De eerste meetdag van de bloeddruk telde ten onrechte mee
+
+Dit is de zwaarste bevinding, want hier veranderde een rekenregel.
+
+`bloeddruk.ts` liet de eerste meetdag meetellen in het weekgemiddelde, met als
+opgeschreven reden dat de handleiding het laten vervallen niet voorschrijft. Dat
+klopt niet. Het NHG-protocol thuisbloeddrukmeting is 7-2-2 (zeven dagen, twee
+keer per dag, twee metingen per keer) en laat de eerste dag uitdrukkelijk
+vervallen, omdat iemand dan nog aan het apparaat went en de meting systematisch
+hoger uitvalt. Er blijven zes dagen over.
+
+Het gevolg van de oude regel was een gemiddelde dat te hoog uitviel. Dat is de
+veilige kant van de fout, maar het was er wel een, en hij hing aan een verkeerd
+gelezen protocol.
+
+**Wat er anders is dan in het protocol.** Het protocol beschrijft één meetweek
+met een begin; deze app rekent over een schuivend venster van zeven dagen op een
+reeks die kan doorlopen. De oudste dag in dat venster is dus niet vanzelf iemands
+eerste meetdag. De gewenningsdag vervalt daarom alleen als er geen enkele eerdere
+bloeddrukmeting staat, en nooit als er anders niets overblijft. Het scherm zegt
+erbij dát die dag is overgeslagen; een dag die stilzwijgend wegvalt is een dag
+waarvan de lezer denkt dat hij meetelt.
+
+**En de afkapwaarde.** Hier stond dat het protocol geen eigen grens voor de
+thuismeting geeft en dat de 135/85 die elders circuleert uit een andere richtlijn
+komt. Ook dat klopt niet: 135/85 is de grens voor de thuismeting. De app zet hem
+nog steeds niet op het scherm, maar dat is nu een keuze en geen leemte, en zo
+staat het er ook.
+
+**Wat hieraan ontbreekt.** `nhg.org`, de richtlijnendatabase en de praktische
+handleiding zijn vanaf deze machine geen van drieën op te halen. Het bovenstaande
+komt uit drie onafhankelijke weergaven van het protocol en niet uit het protocol
+zelf. Dat hoort nagelopen te worden door iemand die het op zijn bureau heeft
+voordat dit als gecontroleerd geldt.
+
+### 25.5 De app sprak zichzelf tegen over de standaard
+
+`trap.ts` citeert de NHG-Standaard Obesitas van **augustus 2026**, de uitgave
+die er als pdf ligt. Het boekje in `verdieping.ts` noemde nog de herziening van
+**oktober 2025**, "via samenvattingen". Twee bestanden, twee data, en niemand die
+het zag omdat ze nergens naast elkaar stonden.
+
+Het boekje volgt nu dezelfde uitgave. De zin dat de criteria uit samenvattingen
+komen is vervallen, want dat is niet meer waar. En de reden dat er geen
+BMI-grenzen in dat stuk staan is herschreven: ze stonden er niet omdat de bron
+tweedehands was, ze staan er nu niet omdat ze op Profiel horen, bij je traject,
+met beide drempelsets en met het voorbehoud erbij.
+
+`verdieping.proef.ts` hield de oude reden vast en viel om zodra de tekst
+veranderde. Dat is precies waarvoor die regel er stond. Hij toetst nu twee
+dingen: dat het stuk geen BMI-getallen draagt, en dat het dezelfde uitgave van de
+standaard noemt als `trap.ts`.
+
+### 25.6 Wat wél hield
+
+Nagelopen en in orde bevonden: de WHO-richtlijn van 2020 (150 tot 300 matige of
+75 tot 150 zware minuten, twee keer per week spierversterkend, één zware minuut
+voor twee matige); de MET-waarden van de inspanningssoorten tegen het Compendium
+of Physical Activities; SARC-F met afkapwaarde 4 en de vijf-keer-opstaantest
+boven vijftien seconden uit EWGSOP2; de leucinedrempel van rond 30 g eiwit per
+maaltijd; de suppletieadviezen van de Gezondheidsraad voor vitamine D (20 µg
+vanaf 70 jaar, 10 µg voor vrouwen van 50 tot 70 en bij een getinte of donkere
+huid); de vijf drempels voor voedingsclaims uit Verordening (EG) 1924/2006; zout
+is natrium maal 2,5 uit Verordening (EU) 1169/2011; de botdichtheidscijfers
+(2,6 % heup en 2,1 % onderrug over 52 weken); de STEP-1-extensie (n=327,
+tweederde terug, netto −5,6 %); de hypotekst tegen Thuisarts.nl; Mamerow 2014
+voor de eiwitverdeling; en de Lancet-commissie van januari 2025.
+
+Bij de botstudie is erbij gezet wat er stond maar niet bij: 64 deelnemers, allen
+met een verhoogd risico op botbreuken, en een lagere dosering dan bij
+gewichtsbehandeling gebruikelijk is. En de duur van de middelenstudies is van
+"anderhalf jaar" naar "ruim een jaar (68 tot 72 weken)" gegaan, want dat is wat
+de studies liepen.
+
+De leeftijdsklassen bij SCORE2 leken een fout: de richtlijn kent drie banden
+(onder 50, 50 tot 69, vanaf 70) en de app twee. Hij kent er twee omdat
+`score2()` buiten 40 tot 69 jaar `null` geeft, SCORE2-OP is bewust niet
+geïmplementeerd. De derde band kan dus nooit vuren. Geen fout.
+
+---
+
+## 26. Geen gedachtestreepjes in schermtekst
+
+Een verzoek, en een dat meer is dan smaak.
+
+Het gedachtestreepje is goed Nederlands. In grote hoeveelheid is het ook een
+herkenbaar spoor van tekst die een taalmodel schreef, en deze app hoort eruit te
+zien als het werk van de arts die hem maakte. Een lezer die de vorm wantrouwt,
+wantrouwt ook de getallen, en dan is de hele onzekerheidsdiscipline hierboven
+voor niets geweest.
+
+Alle 203 streepjes in schermtekst van BennaHealth zijn met de hand vervangen:
+een komma waar het een bijstelling was, een dubbele punt waar het een uitleg
+inleidde, een punt waar er twee hoofdzinnen stonden, haakjes waar het een
+tussenzin was. Losse streepjes in een tabelcel waar niets te melden valt zijn een
+half streepje geworden.
+
+`src/health/schermtekst.proef.ts` houdt het vast. Die proef gebruikt de parser
+van TypeScript en geen grep, en dat is geen overdaad: een grep op het bestand
+keurt elk commentaarblok af, en een zelfgeschreven ontleding struikelt over de
+apostrof, in JSX is `zo'n` gewoon tekst, en wie daar een string ziet beginnen
+leest de rest van het bestand verkeerd. Die fout heeft de eerste versie van deze
+proef ook gemaakt. De parser die de edge-poort al gebruikt weet het verschil wel.
+
+### En de andere apps
+
+Die zijn nu ook om: 886 streepjes in Noer, Sanad, Arabisch, Bunyan, Huiswerk,
+Rasikh, Spelletjes, het startscherm en de gedeelde laag.
+
+Een regelgestuurde vervanging was de eerste poging en die maakte brokken. Van
+`"Vrijheid, gelijkheid, broederschap", iedereen even vrij` maakte hij een zin
+met een half streepje tegen het aanhalingsteken, en van een tussenzin bleef één
+sluithaakje over. De fout zat in het venster: hij keek honderdtachtig tekens om
+zich heen en zag het tweede streepje van een paar daardoor soms wel en soms
+niet.
+
+Wat wél werkte is de tekst eerst in zinnen knippen en dan pas tellen. Twee
+streepjes in dezelfde zin zijn een tussenzin en krijgen haakjes; een los
+streepje krijgt een komma als het vervolg de verbinding zelf al draagt ("en",
+"maar", "dus"), een dubbele punt na een kort label, en anders een komma. De
+schermen en de kortere teksten zijn daarnaast met de hand gedaan.
+
+Eén ding zat daarbij lelijk verstopt. Sanad schrijft het streepje in zijn bron
+als `\u2014`, en zowel mijn gereedschap als de proef sloegen bestanden over die
+het teken niet in hun bytes droegen. Vierendertig streepjes stonden er dus nog
+terwijl alles groen was. Die snelle uitweg is eruit.
+
+### Wat het de gouden waarden kostte
+
+Elf proeven vielen om, en dat was geen hindernis maar het punt van die proeven.
+
+De gouden waarden van de zes leer-apps worden gedraaid uit de oude
+HTML-pagina's in `gereedschap/oud/`. Ze bewijzen dat de overzetting naar
+TypeScript woordgetrouw was. Die pagina's bijwerken om een proef groen te
+krijgen zou het bewijsstuk vervalsen, en dat gebeurt hier niet.
+
+Wat er wél kon: de vinger over de wóórden laten lopen in plaats van over de
+tekens. `src/gedeeld/woordgelijk.ts` gooit hoofdletters en alles wat geen letter
+of cijfer is weg, aan beide kanten van de vergelijking. Daarmee ziet de proef de
+leestekens niet meer, en blijft ze zien wat ze hoort te zien: een woord dat
+verdwijnt, een getal dat verschuift, een les die van plaats wisselt.
+
+Dat is een versoepeling, en een versoepeling zonder proef is een gat. Daarom
+staat `src/gedeeld/woordgelijk.proef.ts` ernaast, met beide helften: wat er
+wegvalt (streepje, komma, dubbele punt en haakjes zijn gelijk; een punt met een
+hoofdletter erna ook) en wat er blijft (een verdwenen woord, een ander getal,
+een andere volgorde, een leeg geworden tekst). Plus de regel dat Arabisch en
+andere schriften blijven staan, werden die als leesteken weggegooid, dan kwam
+de halve leerstof op één lege tekst uit en stond alles groen om de verkeerde
+reden.
+
+De opwekkers draaien als los script zonder de padaliassen van de app en hebben
+daarom hun eigen kopie in `gereedschap/woordgelijk.mjs`. Twee kopieën die
+uiteenlopen geven een vinger die aan beide kanten anders gerekend wordt; de
+laatste regel van die proef draait ze allebei en legt ze naast elkaar.
+
+`schermtekst.proef.ts` is meeverhuisd naar `src/gedeeld/` en dekt nu alle negen
+apps.
+
+### En daarna de rest
+
+Op verzoek is het daar niet bij gebleven. Alle handleidingen, het
+onderzoeksdossier, deze verantwoording, het codecommentaar, de SQL, de opmaak,
+de cursuspagina's en de manifesten zijn meegegaan: nog eens 2.725 streepjes.
+Buiten vier plekken staat het teken nergens meer in de repo, en
+`src/gedeeld/schermtekst.proef.ts` houdt dat vast met een `git grep` over alles
+wat in versiebeheer staat.
+
+Die vier: het archief `gereedschap/oud/`, de gouden waarden die eruit gedraaid
+zijn, en de twee proeven die over het teken gáán.
+
+### De fout die dit bijna stil had gemaakt
+
+In `src/huiswerk/nakijken.ts` stond het streepje in een reguliere expressie die
+min-tekens gelijktrekt, zodat een kind dat een lang streepje typt niet ten
+onrechte fout krijgt. De opruiming las dat als tekst en maakte er een komma van.
+
+Twee proeven vielen om en dat was geluk, geen ontwerp. Een streepje in code is
+noch een tekst noch commentaar, en geen van beide regels keek ernaar. De
+expressie schrijft de drie tekens nu als ontsnapping, en de proef bevat een
+regel die alle drie de streepjes daadwerkelijk door de functie haalt.
+
+Dezelfde ontsnapping staat in regel 8 van de systeemprompt in
+`health/edge/kal-ai.ts`. Die regel is er nieuw bij en verbiedt het model
+gedachtestreepjes te gebruiken in de zinnen die het zelf schrijft. Zonder die
+regel zou de app ze bij elke herkenning opnieuw op het scherm zetten, en geen
+enkele statische proef zou dat zien.
+

@@ -30,7 +30,7 @@ export type RegelBron =
   | 'merk'
 
 /**
- * DE CONDITIE — wat er bij deze gebruiker speelt.
+ * DE CONDITIE: wat er bij deze gebruiker speelt.
  *
  * Deze twee typen staan hier en niet bij de logica in `src/health/conditie.ts`,
  * omdat ze de vorm van een kolom beschrijven: ze wonen in `instellingen` en
@@ -41,7 +41,7 @@ export type RegelBron =
 /* `metformine` kwam er later bij, en dat zegt iets over waarvoor deze lijst
    eerst gemaakt was: de groepen hierboven zijn gekozen op hypo-risico en op
    nier- en vochtbelasting, en metformine doet geen van beide. Voor de
-   suppletievraag is hij juist de belangrijkste van allemaal — langdurig gebruik
+   suppletievraag is hij juist de belangrijkste van allemaal, langdurig gebruik
    verlaagt de B12-opname. Zie `suppletie.ts`. */
 export type Medicatiegroep = 'insuline' | 'su' | 'sglt2' | 'glp1' | 'ras' | 'diureticum'
   | 'metformine'
@@ -66,7 +66,7 @@ export interface Conditie {
    * Het profiel kent `etniciteit`, en het zou verleidelijk zijn die te
    * gebruiken. Dat gebeurt hier met opzet niet: afkomst is geen huidskleur, en
    * een app die dat gelijkstelt doet een aanname over iemand die hij niet mag
-   * doen — en die hij bovendien niet opschrijft. `etniciteit` gaat in deze app
+   * doen, en die hij bovendien niet opschrijft. `etniciteit` gaat in deze app
    * over de afkapwaarde van de middelomtrek en over niets anders.
    *
    * Dus twee eigen vragen. Leeg is hier "niet gevraagd" en geen "nee": zolang
@@ -77,17 +77,17 @@ export interface Conditie {
 }
 
 /**
- * DE VOORKEUREN — wat iemand wel en niet voorgeschoteld wil krijgen.
+ * DE VOORKEUREN: wat iemand wel en niet voorgeschoteld wil krijgen.
  *
  * Staat hier om dezelfde reden als `Conditie` hierboven: het is de vorm van wat
- * er in `instellingen` bewaard wordt en over de lijn gaat. De regels — wat een
+ * er in `instellingen` bewaard wordt en over de lijn gaat. De regels (wat een
  * eetpatroon voorstelt, hoe hard een uitsluiting is, hoeveel een duwtje mag
- * verschuiven — staan in `src/health/voorkeuren.ts`, met de proeven erbij.
+ * verschuiven) staan in `src/health/voorkeuren.ts`, met de proeven erbij.
  *
  * De groepen zijn `string` en geen opsomming van de zevenentwintig. Dat is
  * bewust: wat hier binnenkomt is wat er ooit bewaard is, en een tabel kan
  * veranderen. Een opgeslagen groep die niet meer bestaat hoort geen typefout te
- * geven maar gewoon niets uit te sluiten — zie `groepenOver` daar.
+ * geven maar gewoon niets uit te sluiten, zie `groepenOver` daar.
  */
 export type Eetpatroon = 'alles' | 'pescotarisch' | 'vegetarisch' | 'veganistisch'
 
@@ -101,7 +101,7 @@ export interface Voorkeuren {
   minder: readonly string[]
   /**
    * Keukens waaruit geen gerecht voorgesteld wordt. De zes waarden van
-   * `cultural_dishes.cuisine`, niet de tabelgroepen — dit gaat over gerechten.
+   * `cultural_dishes.cuisine`, niet de tabelgroepen, dit gaat over gerechten.
    * Ontbreekt het veld, dan staat er niets uit.
    */
   keukens?: readonly string[]
@@ -120,7 +120,7 @@ export interface Voorkeuren {
  * Of er een gecombineerde leefstijlinterventie loopt, en sinds wanneer.
  *
  * Twee velden en geen derde: of je erin zit blijkt uit het programma, en de
- * einddatum volgt uit de start — een programma duurt twee jaar. Zie `trap.ts`.
+ * einddatum volgt uit de start, een programma duurt twee jaar. Zie `trap.ts`.
  */
 export interface Glistand {
   /** Sleutel uit `GLI_PROGRAMMAS`. Leeg = geen GLI opgegeven. */

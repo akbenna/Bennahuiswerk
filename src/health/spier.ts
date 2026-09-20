@@ -1,13 +1,13 @@
 /**
- * SPIERBEHOUD — wat er naast het vet verdwijnt, en wat ertegen helpt
+ * SPIERBEHOUD: wat er naast het vet verdwijnt, en wat ertegen helpt
  *
  * Een weegschaal telt kilo's en zegt niet waar ze vandaan komen. Bij snel
  * gewichtsverlies is dat verschil groot: in de lichaamssamenstellingssubstudie
- * van STEP-1 was ongeveer 45 % van wat er op semaglutide verdween vetvrije
+ * van STEP-1 was ongeveer 40 % van wat er op semaglutide verdween vetvrije
  * massa, bij tirzepatide in SURMOUNT-1 ongeveer 25 %.
  *
  * Wat daartegen helpt is niet omstreden: genoeg eiwit, krachttraining, en het
- * in de gaten houden. Wat wél omstreden is, is hoevéél het helpt — zie de
+ * in de gaten houden. Wat wél omstreden is, is hoevéél het helpt, zie de
  * waarschuwing onderaan dit bestand en hoofdstuk 12 van
  * `health/ONDERZOEK-MEDISCH-AFVALLEN.md`.
  *
@@ -30,7 +30,7 @@
  *
  * De gangbare grens is 4. Die heeft een hoge specificiteit en een láge
  * sensitiviteit: hij is goed in uitsluiten en slecht in opsporen. Voor een
- * screener in een app is dat de verkeerde kant van de fout — die hoort te
+ * screener in een app is dat de verkeerde kant van de fout, die hoort te
  * signaleren, niet te diagnosticeren. Daarom staat hier ook de grens van 1, en
  * gebruikt het scherm die.
  *
@@ -85,8 +85,8 @@ export function sarcfsignaal(a: Sarcfantwoorden): boolean {
  * VIJF KEER OPSTAAN, MET EEN STOEL EN EEN STOPWATCH
  *
  * EWGSOP2 laat de keuze tussen handknijpkracht en de stoeltest. Knijpkracht is
- * de betere maat — bij geriatrische revalidatie presteerde hij aantoonbaar
- * beter — maar hij vraagt een dynamometer, en die heeft niemand thuis.
+ * de betere maat (bij geriatrische revalidatie presteerde hij aantoonbaar
+ * beter) maar hij vraagt een dynamometer, en die heeft niemand thuis.
  *
  * De stoeltest vraagt een keukenstoel en de klok van je telefoon. Dat is waarom
  * hij hier staat en de knijpkracht niet: een maat die niemand doet, meet niets.
@@ -103,7 +103,7 @@ export const STOELTEST_GRENS_S = 15
  * Vijf keer volledig opstaan en gaan zitten kost een mens minstens een paar
  * seconden; onder de twee is het geen meting maar een dubbele tik op de knop.
  * Zonder deze grens bewaart de app zo'n uitslag zonder te klagen, en leest hij
- * daarna als "snel" — de vleiendste uitkomst op de zwakste gegevens.
+ * daarna als "snel", de vleiendste uitkomst op de zwakste gegevens.
  *
  * Dat is geen bedacht geval: de armatuur vond hem. Die zet de klok vast, dus
  * `Date.now()` stond stil en er werd nul seconden opgeslagen. De stopwatch
@@ -132,13 +132,13 @@ export function stoeltestTraag(seconden: number | null | undefined): boolean | n
  * de spieraanmaak op gang".
  *
  * Want er is een tweede, onafhankelijke grens. Bij ouderen is ongeveer 2,8 g
- * leucine per maaltijd nodig om spieraanmaak te prikkelen — zo'n 30 gram eiwit.
+ * leucine per maaltijd nodig om spieraanmaak te prikkelen, zo'n 30 gram eiwit.
  * In een calorietekort is de aanmaak onderdrukt en de afbraak verhoogd, en dan
  * telt het halen van die drempel bij élke maaltijd zwaarder dan het dagtotaal.
  *
  * WAAR DE TWEE UIT ELKAAR LOPEN
  *
- * Bij een dagdoel van 161 g is een derde daarvan 54 g — ruim boven de drempel,
+ * Bij een dagdoel van 161 g is een derde daarvan 54 g, ruim boven de drempel,
  * en dan valt er niets te zien. Bij een dagdoel van 75 g is een derde 25 g, en
  * dan ligt de stippellijn ónder de drempel. Het scherm zegt dan "op peil"
  * terwijl er van spieraanmaak weinig terechtkomt.
@@ -150,7 +150,7 @@ export function stoeltestTraag(seconden: number | null | undefined): boolean | n
 export const LEUCINEDREMPEL_G = 30
 
 export interface Maaltijdverdeling {
-  /** Het dagdoel gedeeld door drie — de stippellijn op Voeding. */
+  /** Het dagdoel gedeeld door drie, de stippellijn op Voeding. */
   gedeeld: number
   /** De drempel waarboven spieraanmaak op gang komt. */
   drempel: number
@@ -235,7 +235,7 @@ export interface Spiervraag {
  * De drie hefbomen naast elkaar, in de volgorde waarin je er iets aan kunt doen.
  *
  * Eiwit staat voorop omdat het de enige is die vandaag te veranderen valt.
- * De screener staat achteraan omdat hij het traagst beweegt — en omdat hij,
+ * De screener staat achteraan omdat hij het traagst beweegt, en omdat hij,
  * anders dan de andere twee, niets is waar je op kunt sturen.
  */
 export function spierbeeld(v: Spiervraag): Spierregel[] {
@@ -280,7 +280,7 @@ export function spierbeeld(v: Spiervraag): Spierregel[] {
   if (traag == null) {
     uit.push({
       wat: 'Opstaan uit een stoel', stand: 'onbekend', waarde: '',
-      toelichting: 'nog niet gedaan — vijf keer opstaan, met een stopwatch',
+      toelichting: 'nog niet gedaan: vijf keer opstaan, met een stopwatch',
     })
   } else {
     const oud = (v.stoeltestDagenGeleden ?? 0) > 90
@@ -289,7 +289,7 @@ export function spierbeeld(v: Spiervraag): Spierregel[] {
       stand: traag ? 'let' : oud ? 'onbekend' : 'goed',
       waarde: `${Math.round(v.stoeltestSeconden as number)} seconden`,
       toelichting: traag
-        ? `boven de ${STOELTEST_GRENS_S} seconden — bespreek dit met je huisarts`
+        ? `boven de ${STOELTEST_GRENS_S} seconden. Bespreek dit met je huisarts`
         : oud ? 'ouder dan drie maanden; doe hem opnieuw'
         : `onder de ${STOELTEST_GRENS_S} seconden`,
     })

@@ -8,13 +8,13 @@
  *
  * `PROFIELEN_OUD` is het verslag van de overzetting: regel voor regel wat er in
  * de oude pagina stond. De gouden waarden leggen daar een vingerafdruk op, en
- * dat is geen sier — het is het bewijs dat er bij het ombouwen geen letter is
+ * dat is geen sier, het is het bewijs dat er bij het ombouwen geen letter is
  * verschoven. Die lijst hoort dus nooit meer te veranderen.
  *
  * `PROFIELEN` is waar de kinderen nu zitten. Elk jaar in augustus schuift die op
  * en de andere niet. Zou het één lijst zijn, dan moest je bij elke
  * septemberwijziging het migratiebewijs weggooien om de app kloppend te krijgen
- * — en dan bewijst het niets meer.
+ *, en dan bewijst het niets meer.
  *
  * Het jaar zelf staat in `schooljaar.ts`, met daarbij wie er is overgegaan en
  * wie niet.
@@ -55,7 +55,7 @@ export const VAKNAAM: Record<string, string> = {wiskunde:'Wiskunde', natuurkunde
 
 /* Onderwerp → teken. Zeven onderwerpen stonden hier twee keer in, elke keer met
    hetzelfde teken; JavaScript hield stilzwijgend de laatste aan. TypeScript
-   wijst ze aan, dus de eerdere kopieën zijn eruit — de uitkomst is regel voor
+   wijst ze aan, dus de eerdere kopieën zijn eruit, de uitkomst is regel voor
    regel dezelfde. */
 export const ONDERWERPICOON: Record<string, string> = {
   'Procenten':'％','Vergelijkingen':'⚖️','Lineaire formules':'📈','Oppervlakte & omtrek':'⬛',

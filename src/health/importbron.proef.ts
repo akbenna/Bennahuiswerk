@@ -12,7 +12,7 @@
  * scherm toont daarom vóór het overnemen wat er geraden is.
  *
  * Deze proef gaat over die ene beslissing, en met opzet niet over de herkenning
- * zelf — die draait in een edge function en is van hier niet te bereiken.
+ * zelf, die draait in een edge function en is van hier niet te bereiken.
  */
 import { describe, expect, it } from 'vitest'
 import { BRONNAAM, geraden } from './ai'
@@ -31,7 +31,7 @@ describe('welke reeksen een gok zijn', () => {
   /* Een kop die van een ándere afdruk van dezelfde lijst komt is net zo goed
      gelezen. Wie doorscrolt maakt meerdere afdrukken, en de kop staat dan op de
      eerste. Zou dit als gok tellen, dan kreeg je bij elke lange lijst een
-     waarschuwing die nergens op slaat — en daar kijk je na twee keer overheen. */
+     waarschuwing die nergens op slaat, en daar kijk je na twee keer overheen. */
   it('een kop van een andere afdruk van dezelfde lijst ook niet', () => {
     expect(geraden([reeks])).toEqual([])
   })
@@ -70,7 +70,7 @@ describe('de namen op het scherm', () => {
     }
   })
 
-  /* De twee die door elkaar gehaald worden zijn stappen en actieve energie —
+  /* De twee die door elkaar gehaald worden zijn stappen en actieve energie,
      dat is precies de verwarring waar dit hele veld voor bestaat. Ze mogen op
      het scherm dus nooit hetzelfde heten. */
   it('stappen en actieve energie heten niet hetzelfde', () => {

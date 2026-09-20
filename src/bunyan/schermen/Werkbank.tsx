@@ -1,5 +1,5 @@
 /**
- * DE WERKBANK — hier hoeft niets
+ * DE WERKBANK: hier hoeft niets
  *
  * Geen opdracht, geen nakijken, geen punten. Typ wat je wilt, draai het, en
  * bewaar het als het iets werd. Dat is de plek waar het leren begint te lijken

@@ -1,8 +1,8 @@
 /**
- * VERDIEPEN — het boekje over afvallen, medicatie en wat je vasthoudt
+ * VERDIEPEN: het boekje over afvallen, medicatie en wat je vasthoudt
  *
  * Zelfde vorm als het venster Leren, ander onderwerp. Leren gaat over je
- * aandoening; dit gaat over wat er gebeurt als je afvalt — met of zonder
+ * aandoening; dit gaat over wat er gebeurt als je afvalt, met of zonder
  * medicijn.
  *
  * ELK STUK HEEFT VIER DELEN, EN DE VOLGORDE IS EEN BESLUIT

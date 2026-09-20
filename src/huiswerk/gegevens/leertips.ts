@@ -2,7 +2,7 @@
  * LEERTIPS
  *
  * Herzien en geordend naar wat er in het onderzoek daadwerkelijk uitkomt. De
- * volgorde van de categorieën is de volgorde van hoeveel het oplevert — de
+ * volgorde van de categorieën is de volgorde van hoeveel het oplevert, de
  * eerste twee, jezelf overhoren en spreiden, halen het van alle andere samen.
  *
  * Twee dingen zijn met opzet zo geschreven:
@@ -28,10 +28,10 @@ export const TIP_VAN_DE_DAG: string[] = [
   'Maak de eerste stap belachelijk klein. Vijf sommen, niet "leren voor de toets". 🚀',
   'Leg het uit aan iemand anders. Waar je gaat haperen, zit het gat. 🗣️',
   'Telefoon in een andere kamer. Naast je op stil kost ook aandacht. 📵',
-  'Vastgelopen? Maak een tekening — de helft lost zichzelf op. ✏️',
+  'Vastgelopen? Maak een tekening: de helft lost zichzelf op. ✏️',
   'Controleer je antwoord: is het logisch? Een auto van 4000 km/u klopt niet. 🤔',
   'Reken bij natuurkunde eerst alles om naar m, s en kg. Daar zitten de meeste fouten. ⚖️',
-  'Een fout is geen falen. Het is "nog niet" — en precies de plek waar je iets leert. 💪',
+  'Een fout is geen falen. Het is "nog niet", en precies de plek waar je iets leert. 💪',
   'Werk 25 minuten, pauzeer 5. Je brein leert in blokjes. 🍅',
   'Vergelijk jezelf met jezelf van gisteren, niet met de klas. 🌱',
   'Sla een dag over en haal het dan op. Dat vergeten tussendoor maakt het juist sterker. 🔁',
@@ -39,7 +39,7 @@ export const TIP_VAN_DE_DAG: string[] = [
 
 export const TIPS_CATS: Tipcategorie[] = [
   {
-    kop: 'Jezelf overhoren — dit levert het meeste op', emoji: '🧠',
+    kop: 'Jezelf overhoren: dit levert het meeste op', emoji: '🧠',
     tips: [
       ['Dicht en opzeggen',
         'Lees een stukje, klap het boek dicht en vertel het na. Wat er dan niet uitkomt, ken je '
@@ -64,7 +64,7 @@ export const TIPS_CATS: Tipcategorie[] = [
         'Vier keer een kwartier over de week levert meer blijvende kennis op dan één uur op de '
         + 'avond ervoor. Dezelfde tijd, ander resultaat.'],
       ['Vergeten hoort erbij',
-        'Juist doordat je tussendoor een beetje vergeet, wordt het ophalen daarna zwaarder — en '
+        'Juist doordat je tussendoor een beetje vergeet, wordt het ophalen daarna zwaarder, en '
         + 'daardoor blijft het beter zitten. Elke dag herhalen is minder nuttig dan om de dag.'],
       ['Begin een week eerder',
         'Niet om langer te werken, maar om dezelfde uren te verdelen.'],
@@ -98,7 +98,7 @@ export const TIPS_CATS: Tipcategorie[] = [
       ['Eén zin per fout',
         '"Ik vergat de eenheid." Meer hoeft niet. Lees vlak voor de toets alleen die zinnen.'],
       ['Maak hem later opnieuw',
-        'Niet meteen — dan weet je het antwoord nog. Over een paar dagen.'],
+        'Niet meteen: dan weet je het antwoord nog. Over een paar dagen.'],
       ['Kijk verder dan het cijfer',
         'Een toets terug is gratis informatie over wat je nog niet kunt. Het cijfer zegt daar '
         + 'niets over.'],
@@ -127,14 +127,14 @@ export const TIPS_CATS: Tipcategorie[] = [
         'Niet "leren voor de toets" maar "vijf sommen". Uitstel komt zelden door luiheid; meestal '
         + 'is de eerste stap te groot gemaakt.'],
       ['Telefoon uit de kamer',
-        'Naast je op stil kost ook aandacht — je weet dat hij er ligt.'],
+        'Naast je op stil kost ook aandacht: je weet dat hij er ligt.'],
       ['25 en 5',
         'Vijfentwintig minuten werken, vijf pauze. Korte blokjes houden langer vol dan uren door.'],
       ['Eerst zelf, dan hulp',
         'Een paar minuten zelf worstelen maakt de uitleg daarna veel effectiever. Meteen hulp '
         + 'vragen slaat dat stuk over.'],
       ['Geen knobbel nodig',
-        'Je hebt geen wiskundeknobbel nodig — wel een vaste routine. Die leert iedereen.'],
+        'Je hebt geen wiskundeknobbel nodig, wel een vaste routine. Die leert iedereen.'],
     ],
   },
   {
@@ -148,9 +148,9 @@ export const TIPS_CATS: Tipcategorie[] = [
         + 'overhoren verslaat vier keer lezen ruimschoots.'],
       ['Samenvatten terwijl je leest',
         'Overschrijven met het boek open is vooral kopiëren. Doe het boek dicht en schrijf op wat '
-        + 'je nog weet — dan wordt het wél oefening.'],
+        + 'je nog weet, dan wordt het wél oefening.'],
       ['Leren "in jouw leerstijl"',
-        'Het idee dat je beter leert als de uitleg bij je type past — beeld, geluid, doen — is '
+        'Het idee dat je beter leert als de uitleg bij je type past (beeld, geluid, doen) is '
         + 'goed onderzocht en het houdt geen stand. Je hebt wel voorkeuren, maar leren gaat er '
         + 'niet beter van. Wat wél telt is wat je doet.'],
       ['De hele avond doorwerken',

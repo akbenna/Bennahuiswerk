@@ -2,12 +2,12 @@
  * VERWARPUNTEN
  *
  * Niet met de hand bedacht maar berekend: alle aya's die woordelijk gelijk zijn
- * of hetzelfde beginnen, over de hele Koran. Dat is precies waar hifz omvalt —
+ * of hetzelfde beginnen, over de hele Koran. Dat is precies waar hifz omvalt,
  * niet bij moeilijke woorden.
  *
  * Het refrein van ar-Rahman staat eenendertig keer in dezelfde soera.
  * "Ya ayyuha lladhina amanu" opent zevenentwintig aya's. Wie zulke plekken niet
- * apart oefent, springt vroeg of laat van de ene naar de andere — meestal
+ * apart oefent, springt vroeg of laat van de ene naar de andere, meestal
  * midden in het gebed.
  */
 import { useEffect, useMemo, useState } from 'react'
@@ -53,7 +53,7 @@ export function Verwarring(
       <div>
         <h1>Verwarpunten</h1>
         <p className="klein" style={{ marginTop: 5 }}>
-          Aya's die woordelijk gelijk zijn of hetzelfde beginnen. Dit is waar hifz omvalt — niet bij
+          Aya's die woordelijk gelijk zijn of hetzelfde beginnen. Dit is waar hifz omvalt, niet bij
           moeilijke woorden.
         </p>
       </div>
@@ -97,7 +97,7 @@ export function Verwarring(
       <Kader kop="Waarom dit apart getraind wordt">
         Het refrein van ar-Rahman staat eenendertig keer in dezelfde soera. "Ya ayyuha lladhina
         amanu" opent zevenentwintig aya's. Wie zulke plekken niet apart oefent, springt vroeg of laat
-        van de ene naar de andere — meestal midden in het gebed.
+        van de ene naar de andere, meestal midden in het gebed.
       </Kader>
 
       {lijst && (
@@ -112,7 +112,7 @@ export function Verwarring(
               </p>
             </Kaart>
           )) : (
-            <p style={{ marginTop: 10 }}>Nog niets — dat komt zodra je meer hebt vastgezet.</p>
+            <p style={{ marginTop: 10 }}>Nog niets; dat komt zodra je meer hebt vastgezet.</p>
           )}
         </Blad>
       )}
@@ -235,7 +235,7 @@ function Ronde(
         <>
           <Kader toon={ok ? undefined : 'let'} kop={ok ? 'Goed' : 'Let op'}>
             Deze tekst staat op {vraag.groep.p.length} plaatsen:{' '}
-            {vraag.groep.p.map(([c, v]) => `${naam(c)} ${v}`).join(', ')}. Wat erná komt verschilt —
+            {vraag.groep.p.map(([c, v]) => `${naam(c)} ${v}`).join(', ')}. Wat erná komt verschilt,
             dat is het enige dat je uit elkaar houdt.
           </Kader>
           <p className="klein" style={{ marginTop: 8 }}>

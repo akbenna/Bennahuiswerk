@@ -2,7 +2,7 @@
  * DE GEBEDSTIJDEN BEWEZEN
  *
  * 1344 combinaties van datum, plaats, methode, asr-schaduw en hogebreedteregel,
- * vergeleken met wat de oude app werkelijk uitrekende — tot op de seconde.
+ * vergeleken met wat de oude app werkelijk uitrekende, tot op de seconde.
  * Zeven plaatsen van Nairobi tot Tromsø en acht dagen, waaronder beide
  * zonnewendes: dat is waar het rekenwerk het snelst uit elkaar valt.
  */
@@ -105,7 +105,7 @@ describe('de klok en het volgende gebed', () => {
     expect(klok(6.5)).toBe('06:30')
     expect(klok(12.755)).toBe('12:45')
     expect(klok(23.999)).toBe('00:00')
-    expect(klok(NaN)).toBe('—')
+    expect(klok(NaN)).toBe(',')
   })
 
   it('wijst het eerstvolgende gebed aan', () => {

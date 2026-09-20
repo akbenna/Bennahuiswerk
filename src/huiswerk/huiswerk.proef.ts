@@ -31,9 +31,12 @@ import { dagMissie, rangVoor, verzilverMissie, weekPuntenNu } from './missie'
 import { leesDag, mmss, weekNummer, weekSleutel } from './datum'
 import { leegVoortgang, schoonVoortgang, voegVoortgangSamen } from './opslag'
 import type { Voortgang } from './opslag'
+import { woordgelijk } from '@/gedeeld/woordgelijk'
 
+/* De vinger loopt over de wóórden en niet over de leestekens. Waarom,
+   staat in `src/gedeeld/woordgelijk.ts`. */
 const vinger = (x: unknown): string =>
-  createHash('sha256').update(JSON.stringify(x)).digest('hex').slice(0, 16)
+  createHash('sha256').update(JSON.stringify(woordgelijk(x))).digest('hex').slice(0, 16)
 
 /* Dezelfde vaste reeks als in de generator: `nepToeval` daar pakt REEKS[tik++]
    en `zetToeval(n)` zet de teller op n. Zonder dezelfde reeks in dezelfde
@@ -64,7 +67,7 @@ describe('de leerstof', () => {
 
   it('houdt de profielen en de thema’s ongeschonden', () => {
     /* Het migratiebewijs zit op de vaste lijst. `PROFIELEN` schuift elk jaar in
-       augustus op — zie gegevens/schooljaar.ts — en die verschuiving heeft een
+       augustus op (zie gegevens/schooljaar.ts) en die verschuiving heeft een
        eigen proef in schooljaar.proef.ts. */
     expect(vinger(PROFIELEN_OUD)).toBe(gouden.stof.vingerProfielen)
     expect(vinger(THEMAS)).toBe(gouden.stof.vingerThemas)
@@ -137,7 +140,8 @@ describe('het nakijken', () => {
 
   it('geeft dezelfde gerichte tip bij een fout', () => {
     for (const g of gouden.diagnoses) {
-      expect(diagnoseFout({ a: g.a }, g.val), `${g.a} ← ${g.val}`).toBe(g.tip)
+      expect(woordgelijk(diagnoseFout({ a: g.a }, g.val) ?? ''),
+        `${g.a} ← ${g.val}`).toBe(woordgelijk(g.tip ?? ''))
     }
   })
 })
@@ -158,7 +162,7 @@ describe('het zakgeld', () => {
       expect(Math.round(b.nauw * 1e6) / 1e6, naam).toBe(g.uit.nauw)
       expect(b.genoeg, naam).toBe(g.uit.genoeg)
       expect(b.factor, naam).toBe(g.uit.factor)
-      expect(b.poort, naam).toBe(g.uit.poort)
+      expect(woordgelijk(b.poort ?? ''), naam).toBe(woordgelijk(g.uit.poort ?? ''))
       expect(b.werkEuro, naam).toBe(g.uit.werkEuro)
       expect(b.toetsEuro, naam).toBe(g.uit.toetsEuro)
       expect(b.restWeek, naam).toBe(g.uit.restWeek)
@@ -319,7 +323,7 @@ describe('het herhalen, waar de klacht over ging', () => {
   it('noemt rust geen beheersing zolang de doosjes nog laag staan', () => {
     /* Na één goede ronde wacht elke som al een dag, maar beheerst is hij niet.
        Het scherm hangt hierop: 🏅 "dit beheers je" of 🌱 "je hebt ze gehad".
-       Hier zonder sjabloon, want die houdt de rust juist tegen — zie hieronder. */
+       Hier zonder sjabloon, want die houdt de rust juist tegen, zie hieronder. */
     const vaste = delen.filter((k) => !('gen' in k))
     const pr = vers()
     for (const k of vaste) pr.cards[k.id] = { box: 2, ok: 1, wrong: 0, last: KLOK }
@@ -545,7 +549,7 @@ describe('het samenvoegen', () => {
     }
   })
 
-  it('telt niets op — twee toestellen die dezelfde sessie zagen', () => {
+  it('telt niets op: twee toestellen die dezelfde sessie zagen', () => {
     const pr = vers()
     pr.punten = 120
     pr.cards = { a: { box: 3, ok: 3, wrong: 1, last: 500 } }

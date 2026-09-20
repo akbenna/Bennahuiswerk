@@ -3,8 +3,8 @@
  *
  * `kal-ai.ts` draait op Deno en is hier niet uit te voeren: hij haalt zijn
  * bibliotheken van een URL en praat met een database. Maar het stuk dat kán
- * misgaan zonder dat iemand het merkt is puur — welke huishoudmaat hoort bij
- * welk woord — en dat is wel te toetsen.
+ * misgaan zonder dat iemand het merkt is puur (welke huishoudmaat hoort bij
+ * welk woord) en dat is wel te toetsen.
  *
  * Dus wordt dat blok uit de échte bron geknipt en gedraaid. Niet uit een kopie:
  * een kopie loopt uiteen met het origineel en dan toetst deze proef iets wat
@@ -66,7 +66,7 @@ eis(kiesMaat('theelepel', false, SAUS)?.gram_schatting === 5, 'de theelepel ook'
 /* Deze drie leggen gedrag vast en geen regel: haal je de gram-controle uit
    kiesMaat weg, dan blijven ze groen, want er is toch geen maat die 'gram'
    heet. Ze staan er om te betrappen wie ooit zo'n maat of alias toevoegt. Zie
-   het commentaar bij kiesMaat — daar staat hetzelfde, en waarom. */
+   het commentaar bij kiesMaat, daar staat hetzelfde, en waarom. */
 eis(kiesMaat('gram', false, SAUS) === null, 'gram voluit is geen huishoudmaat')
 eis(kiesMaat('milliliter', false, SAUS) === null, 'milliliter voluit ook niet')
 eis(kiesMaat('g', false, SAUS) === null, 'en de korte vorm evenmin')

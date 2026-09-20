@@ -12,12 +12,12 @@ zetten waren.
 npm run controle     typen → edge → proeven → bouw → CSP-proef
 ```
 
-Vijf poorten, één opdracht. Ze horen alle vijf groen te zijn vóór een commit —
+Vijf poorten, één opdracht. Ze horen alle vijf groen te zijn vóór een commit,
 niet erna.
 
 `edge` is er sinds de dag dat een uitrol weigerde. `health/edge/` valt buiten
-`tsc -b` — die bestanden draaien op Deno en importeren van https-adressen die van
-hier niet te halen zijn — en viel daarmee ook buiten élke controle. In de
+`tsc -b` (die bestanden draaien op Deno en importeren van https-adressen die van
+hier niet te halen zijn) en viel daarmee ook buiten élke controle. In de
 systeemprompt van kal-ai stonden veldnamen tussen backticks, en een backtick
 sluit een template-literal. Drie commits lang stond daar een bestand dat Deno
 niet kon inlezen, en niets merkte het. De poort ontleedt ze nu met de parser van
@@ -43,7 +43,7 @@ Hij gaat over de ingangen van de startpagina: dat de drie cursussen van de
 Academie zonder code opengaan, dat ze elk een eigen tegel hebben, en dat
 BennaHealth een eigen ingang op de poort heeft die niet langs het gezinsprofiel
 gaat. Een grep zou hier niet volstaan: het slot was gedrag, geen
-markering — het riep `render()` pas ná het ontgrendelen aan, dus een half
+markering, het riep `render()` pas ná het ontgrendelen aan, dus een half
 verwijderd slot geeft een leeg scherm dat er in de tekst prima uitziet.
 
 ## Wat er nooit in mag
@@ -62,26 +62,26 @@ codecommentaar.
 
 Alle toegang loopt via `SECURITY DEFINER`-functies met een vastgezet
 `search_path`. RLS staat aan zonder policies: dat is geen vergissing maar het
-ontwerp — de tabellen zijn niet rechtstreeks te lezen, de functies bepalen wat
+ontwerp, de tabellen zijn niet rechtstreeks te lezen, de functies bepalen wat
 er uit mag. Functies van BennaHealth heten `kal_*`.
 
 De SQL die bij de app hoort staat genummerd in `health/database/`. Die bestanden
 zijn een verslag, geen migratiesysteem: ze horen te kloppen met wat er in de
-database staat. Dat is te controleren zonder te vertrouwen op je geheugen —
+database staat. Dat is te controleren zonder te vertrouwen op je geheugen,
 vergelijk de md5 van `prosrc` met die van het bestand, met commentaar en witruimte
 eruit gestript.
 
 ## Nooit wegschrijven wat er al staat
 
-De inhoud van de database is met de hand opgebouwd — de gerechtenbibliotheek
-voorop — en dat werk is niet te herhalen. Een bestand dat inhoud toevoegt bouwt
+De inhoud van de database is met de hand opgebouwd (de gerechtenbibliotheek
+voorop) en dat werk is niet te herhalen. Een bestand dat inhoud toevoegt bouwt
 er dus bíj, en raakt niet aan wat er al ligt. Vier regels, en ze zijn alle vier
 te toetsen:
 
 **Toevoegen is `on conflict do nothing`, nooit `do update`.** Een rij die er al
 is blijft zoals hij is, ook als ik denk het beter te weten. Kinderrijen
 (ingrediënten, porties) worden alleen aangemaakt voor wat de insert zelf net
-heeft neergezet — via `returning`, niet via een opzoeking op naam. Anders krijgt
+heeft neergezet, via `returning`, niet via een opzoeking op naam. Anders krijgt
 een gerecht dat de diëtist heeft bijgewerkt er stilletjes mijn ingrediënten bij.
 
 **Twee keer draaien voegt niets toe en haalt niets weg.** Dat is geen
@@ -89,7 +89,7 @@ eigenschap die je aanneemt maar een proef die je draait.
 
 **Een terugdraairegel raakt alleen wat dít bestand heeft neergezet.** Dus op de
 slugs van het bestand (`slug like 'sur-%'`) en niet op de categorie
-(`cuisine = 'surinaams'`) — die tweede haalt ook weg wat er later door iemand
+(`cuisine = 'surinaams'`), die tweede haalt ook weg wat er later door iemand
 anders bij is gezet. Dit stond fout in bestand 24 en 27 en is rechtgezet.
 
 **Een koppeling die uit zichzelf vuurt overschrijft nooit een waarde die een
@@ -115,7 +115,7 @@ getoetst met een mutatieproef; waarom dat nodig was staat in
 
 De code is Nederlands: `regels`, `proef`, `venster`, `scherm`. Engelse namen
 sluipen er via bibliotheken in, en daar houdt het op. Commentaar legt uit
-*waarom*, niet *wat* — wat er staat is te lezen.
+*waarom*, niet *wat*: wat er staat is te lezen.
 
 BennaHealth heeft één stelregel die alles eronder bepaalt: **geen enkel getal
 zonder zijn onzekerheid.** Een puntschatting zonder interval is in dit ontwerp

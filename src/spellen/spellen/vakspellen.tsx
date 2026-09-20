@@ -143,7 +143,7 @@ export function Simon(p: SpelEigenschappen) {
   const [licht, zetLicht] = useState(-1)
   const later = useLater()
 
-  /* De reeks afspelen. Zolang dit loopt mag er niet getikt worden — anders telt
+  /* De reeks afspelen. Zolang dit loopt mag er niet getikt worden, anders telt
      een tik tijdens het voorspelen mee als antwoord. */
   useEffect(() => {
     zetToont(true)

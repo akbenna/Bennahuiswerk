@@ -1,5 +1,5 @@
 /**
- * INSTELLINGEN — waar je voortgang staat, en wie er meeleest
+ * INSTELLINGEN: waar je voortgang staat, en wie er meeleest
  *
  * Vier kaarten: de centrale opslag, de eigen sleutel voor het model, de back-up
  * en het wisknopje. Wat ze delen is dat ze alle vier over vertrouwen gaan, en
@@ -39,9 +39,9 @@ function Opslag({ t }: { t: Toestand }): ReactNode {
   const { wolk } = t
 
   const kop = !wolk.aan
-    ? 'Centrale opslag — alleen dit toestel'
+    ? 'Centrale opslag: alleen dit toestel'
     : wolk.bezig ? 'Bezig met gelijktrekken…'
-      : wolk.fout ? 'Centrale opslag — storing' : 'Centrale opslag — verbonden'
+      : wolk.fout ? 'Centrale opslag (storing' : 'Centrale opslag) verbonden'
 
   const trek = async (): Promise<void> => {
     zetBericht({ tekst: 'Bezig…', soort: undefined })
@@ -61,7 +61,7 @@ function Opslag({ t }: { t: Toestand }): ReactNode {
         Met een account staat je voortgang niet op dit toestel maar centraal: afgeronde weken,
         kaarten en je logboek vind je terug op je telefoon, je laptop en de computer in de
         praktijk. Zonder internet werkt de app gewoon door en wordt er bij de eerstvolgende
-        verbinding samengevoegd — nooit overschreven.
+        verbinding samengevoegd, nooit overschreven.
       </p>
 
       {wolk.aan ? (
@@ -160,7 +160,7 @@ function Sleutel(): ReactNode {
       <p className="small" style={{ marginTop: 10, maxWidth: '62ch' }}>
         Bij elke module kun je doorvragen, en je uitwerking van de toepassingsopdracht laten
         meelezen. Daarvoor is een eigen sleutel van Anthropic nodig. Die blijft in de browser van
-        dit toestel staan en wordt niet centraal opgeslagen — op een ander toestel vul je hem
+        dit toestel staan en wordt niet centraal opgeslagen: op een ander toestel vul je hem
         opnieuw in. Zonder sleutel werkt de rest van de app volledig; alleen die twee knoppen
         geven dan een melding.
       </p>

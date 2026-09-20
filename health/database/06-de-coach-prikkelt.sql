@@ -23,7 +23,7 @@
 --
 -- Dus draait het om: de app rékent en publiceert de uitkomst; de prikkel léést
 -- die. `kal_modelstand` is een postbus, geen tweede model. Er staat bij wanneer
--- hij gevuld is, en dat veld is dragend — een doel van vorige week is geen doel
+-- hij gevuld is, en dat veld is dragend, een doel van vorige week is geen doel
 -- meer, en een prikkel die daarop stoelt zou een verzonnen getal versturen.
 -- Staat er niets vers in de bus, dan zwijgt de coach. Dat is meteen de juiste
 -- uitkomst om een tweede reden: als de app twee dagen niet open is geweest, is
@@ -92,7 +92,7 @@ grant execute on function public.kal_modelstand_zetten(text, numeric, numeric, n
 -- Dit is de SQL-tweelingbroer van `src/health/coach.ts`. Twee dingen zijn daar
 -- bewezen en staan hier expres in dezelfde vorm: het tekort draagt zijn band
 -- (at je aan de bovenkant van de schatting, dan hou je aan de ónderkant over),
--- en de rangschikking gaat op eiwit per kcal en niet op absoluut eiwit — anders
+-- en de rangschikking gaat op eiwit per kcal en niet op absoluut eiwit, anders
 -- staat het zwaarste gerecht bovenaan en eet je je hele resterende ruimte op.
 --
 -- Waarom er tóch twee zijn: het scherm moet reageren terwijl je typt, zonder
@@ -140,7 +140,7 @@ begin
 
   /* De voorstellen: wat je de afgelopen zestig dagen at, samengevat per naam,
      dat binnen de resterende ruimte past. De laatste portie telt, want die neem
-     je over — niet een gemiddelde van iets wat je nooit zo gegeten hebt.
+     je over, niet een gemiddelde van iets wat je nooit zo gegeten hebt.
 
      Importregels vallen af, en dat is niet cosmetisch. Tegen het echte logboek
      stelde deze functie "Dagtotaal uit Yazio" voor: 1.319 kcal, 76 gram eiwit,
@@ -200,7 +200,7 @@ revoke all on function public.kal_coach_stand(uuid) from public, anon, authentic
 -- Het bericht. Zelfde vorm als `kal_prikkel_bouwen`, zodat de edge function er
 -- niets nieuws voor hoeft te leren: een lijst met to, subject, tekst en html.
 --
--- De soort draagt het tijdvak — 'coach-12', 'coach-15', 'coach-18' — zodat de
+-- De soort draagt het tijdvak ('coach-12', 'coach-15', 'coach-18') zodat de
 -- ontdubbeling per dag én per moment werkt. Zonder dat zou de eerste prikkel van
 -- de dag de rest van de dag blokkeren.
 --
@@ -254,22 +254,22 @@ begin
     v_lijst := '';
     for v_v in select * from jsonb_array_elements(v_s->'voorstellen') loop
       v_lijst := v_lijst || '<li style="margin:0 0 6px">' || (v_v->>'naam')
-        || ' — ' || (v_v->>'kcal') || ' kcal, ' || (v_v->>'eiwit') || ' g eiwit ('
+        || ', ' || (v_v->>'kcal') || ' kcal, ' || (v_v->>'eiwit') || ' g eiwit ('
         || replace(round((v_v->>'dichtheid')::numeric * 100, 1)::text, '.', ',')
         || ' g per 100 kcal)</li>';
     end loop;
 
     if v_reden = 'bijna-op' then
-      v_ond := 'BennaHealth — je ruimte is bijna op';
+      v_ond := 'BennaHealth, je ruimte is bijna op';
       v_tekst := 'Er is nog ' || (v_s->>'kcal_over') || ' kcal over en het is pas ' || v_uur
         || ' uur. Niet dramatisch, wel het weten waard: de rest van de dag moet daarin passen.';
     elsif v_reden = 'ruimte-over' then
-      v_ond := 'BennaHealth — er is nog veel ruimte';
+      v_ond := 'BennaHealth, er is nog veel ruimte';
       v_tekst := 'Er staat nog ' || (v_s->>'kcal_over') || ' kcal open. Structureel onder je doel '
         || 'eten ondermijnt het model net zo goed als eroverheen gaan: de weegreeks gaat dan dalen '
         || 'om een reden die niet in de logboeken staat.';
     else
-      v_ond := 'BennaHealth — je eiwit loopt achter';
+      v_ond := 'BennaHealth, je eiwit loopt achter';
       v_tekst := 'Nog ' || (v_s->>'eiwit_over') || ' g eiwit te gaan in ' || (v_s->>'kcal_over')
         || ' kcal. Dat vraagt ' || replace((v_s->>'eis_per_100'), '.', ',')
         || ' g eiwit per 100 kcal in alles wat er nog bij komt.';

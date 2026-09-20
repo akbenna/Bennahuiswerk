@@ -1,5 +1,5 @@
 -- =============================================================================
--- WACHTWOORD KWIJT — een weg terug, zonder e-mail
+-- WACHTWOORD KWIJT: een weg terug, zonder e-mail
 --
 -- Toegepast 18 september 2026. Niet hier nagekeken: dat rust op een
 -- mededeling en niet op een meting.
@@ -21,7 +21,7 @@
 --     nu toe niet nodig had. Voor een app die zegt dat hij bewaart wat hij
 --     nodig heeft is dat een besluit en geen detail. Zie `health/DPIA.md`.
 --   · Versturen vraagt een externe dienst, een sleutel in de vault, een edge
---     function en een adres dat bevestigd moet worden — vier dingen die stuk
+--     function en een adres dat bevestigd moet worden, vier dingen die stuk
 --     kunnen op het moment dat iemand ze het hardst nodig heeft.
 --
 -- Dus een herstelcode: eenmalig, zelf te bewaren, en hij verlaat de database
@@ -49,7 +49,7 @@
 --
 -- 3. DE CODE IS OP NA GEBRUIK.
 --    `herstel_hash` gaat op null. Wie een nieuwe wil maakt er een. Zo kan een
---    code die ooit ergens is blijven staan — in een notitie, in een chat — niet
+--    code die ooit ergens is blijven staan (in een notitie, in een chat) niet
 --    twee keer werken.
 --
 -- DE REM GELDT HIER OOK
@@ -69,7 +69,7 @@
 -- geval bij een gezin: niemand bewaart codes.
 --
 -- De aanvulling die dat wél dekt is een beheerder die voor een ander kan
--- herstellen — precies wat `bennahub_lid_reset` in de gezinsapp doet, waar een
+-- herstellen: precies wat `bennahub_lid_reset` in de gezinsapp doet, waar een
 -- ouder de code van een kind terugzet. Dat vraagt een beheerdersbegrip dat
 -- `kal_gebruikers` nu niet heeft, en het is een apart besluit: het betekent dat
 -- één account bij de gegevens van een ander kan. Daarom staat het hier niet in.
@@ -95,7 +95,7 @@
 BEGIN;
 
 -- ---------------------------------------------------------------------------
--- BLOK 1 — WAAR DE CODE IN STAAT
+-- BLOK 1: WAAR DE CODE IN STAAT
 -- ---------------------------------------------------------------------------
 --
 -- Gehasht, net als het wachtwoord, en met dezelfde kostenfactor. De code
@@ -110,7 +110,7 @@ comment on column public.kal_gebruikers.herstel_hash is
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 2 — JE WACHTWOORD WIJZIGEN
+-- BLOK 2: JE WACHTWOORD WIJZIGEN
 -- ---------------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION public.kal_ww_wijzigen(
@@ -154,7 +154,7 @@ COMMENT ON FUNCTION public.kal_ww_wijzigen(text, text, text) IS
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 3 — EEN HERSTELCODE MAKEN
+-- BLOK 3: EEN HERSTELCODE MAKEN
 -- ---------------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION public.kal_herstelcode_maken(p_token text, p_ww text)
@@ -164,7 +164,7 @@ CREATE OR REPLACE FUNCTION public.kal_herstelcode_maken(p_token text, p_ww text)
  SET search_path TO 'public', 'extensions'
 AS $function$
 declare
-  /* Tweeëndertig tekens, zonder I, O, nul en één — die worden overgeschreven
+  /* Tweeëndertig tekens, zonder I, O, nul en één, die worden overgeschreven
      als elkaar. Precies tweeëndertig, dus vijf bits per teken en geen
      modulo-scheefheid: 256 is deelbaar door 32. Twintig tekens is honderd bits. */
   c_alfabet constant text := 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -201,7 +201,7 @@ COMMENT ON FUNCTION public.kal_herstelcode_maken(text, text) IS
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 4 — MET DE CODE TERUG NAAR BINNEN
+-- BLOK 4: MET DE CODE TERUG NAAR BINNEN
 -- ---------------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION public.kal_ww_herstellen(
@@ -248,7 +248,7 @@ begin
 
   if v_id is null then
     insert into kal_aanmeld_poging(account) values (v_account);
-    /* Eén boodschap voor alle drie de gevallen — account bestaat niet, er is
+    /* Eén boodschap voor alle drie de gevallen, account bestaat niet, er is
        geen code, de code klopt niet. Het verschil zou verklappen welke
        accounts er zijn en welke een code hebben klaarstaan. */
     return jsonb_build_object('fout', 'Die combinatie klopt niet');
@@ -282,7 +282,7 @@ COMMIT;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 5 — NAKIJKEN
+-- BLOK 5: NAKIJKEN
 -- ---------------------------------------------------------------------------
 --
 -- Met je eigen account, en let op: elke geslaagde stap meldt je overal af.

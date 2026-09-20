@@ -1,5 +1,5 @@
 /**
- * DE COCKPIT — het jaarplan van alle kinderen naast elkaar
+ * DE COCKPIT: het jaarplan van alle kinderen naast elkaar
  *
  * Wat een ouder wil weten past op één scherm: waar staat ieder kind, wanneer
  * was de laatste les, hoe gingen de toetsen, en wat komt er zaterdag.
@@ -25,7 +25,7 @@ export function Cockpit(
 
   return (
     <>
-      <h3 style={{ marginTop: 22 }}>Jaarplan — de cockpit</h3>
+      <h3 style={{ marginTop: 22 }}>Jaarplan: de cockpit</h3>
       <p className="small muted" style={{ margin: '4px 0 0' }}>
         Zesendertig weken van {SESSIEMINUTEN} minuten per kind. Hier zie je waar iedereen staat,
         wanneer de laatste les was en hoe de toetsen gingen.
@@ -43,7 +43,7 @@ export function Cockpit(
         : <div className="kaart" style={{ marginTop: 10 }}>Nog geen profielen.</div>}
       {metJaar.length > 1 && (
         <p className="klein muted" style={{ marginTop: 10 }}>
-          Tip: laat de kinderen tegelijk beginnen maar niet per se op dezelfde week — het
+          Tip: laat de kinderen tegelijk beginnen maar niet per se op dezelfde week: het
           programma is per kind. Wie verder is, helpt de ander; dat is het beste wat er is voor
           allebei.
         </p>
@@ -90,7 +90,7 @@ function Rij(
         <span className="statvak"><b>{af}</b><span>lessen</span></span>
         <span className="statvak"><b>{uren(minuten)}</b><span>uur les</span></span>
         <span className="statvak">
-          <b>{j.meting ? `${j.meting.score}/${j.meting.totaal}` : '—'}</b>
+          <b>{j.meting ? `${j.meting.score}/${j.meting.totaal}` : '–'}</b>
           <span>niveaubepaling</span>
         </span>
         <span className="statvak"><b>{toetsen.length}</b><span>toetsen</span></span>

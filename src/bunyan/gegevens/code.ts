@@ -17,7 +17,7 @@ export const CODE: Blok[] = [
 
  {id:'c1-1', t:'Hallo wereld', d:'De computer iets laten zeggen',
   uitleg:[
-   'Een programma is een lijstje opdrachten. De computer leest ze van boven naar beneden en doet precies wat er staat — niet wat je bedoelde. Dat laatste is het hele vak.',
+   'Een programma is een lijstje opdrachten. De computer leest ze van boven naar beneden en doet precies wat er staat, niet wat je bedoelde. Dat laatste is het hele vak.',
    'De eerste opdracht die iedereen leert is <code>print</code>. Die zet iets op het scherm. Wat tussen de haakjes en de aanhalingstekens staat komt eruit.',
    'Aanhalingstekens betekenen: dit is tekst, kijk er verder niet naar. Zonder aanhalingstekens denkt Python dat het een naam is van iets, en dan klaagt hij.'
   ],
@@ -51,7 +51,7 @@ export const CODE: Blok[] = [
     u:'Een naam die zegt wat erin zit scheelt je later uren zoeken.'}
   ]},
 
- {id:'c1-3', t:'Rekenen', d:'Plus, min, keer, delen — en twee rare',
+ {id:'c1-3', t:'Rekenen', d:'Plus, min, keer, delen, en twee rare',
   uitleg:[
    'Python rekent met <code>+</code>, <code>-</code>, <code>*</code> (keer) en <code>/</code> (delen). Haakjes werken zoals op school: wat tussen haakjes staat gaat eerst.',
    'Er zijn twee die je op school niet ziet. <code>//</code> deelt en gooit de rest weg: <code>7 // 2</code> is 3. En <code>%</code> geeft juist alleen de rest: <code>7 % 2</code> is 1.',
@@ -73,7 +73,7 @@ export const CODE: Blok[] = [
   uitleg:[
    'Tekst heet in Python een <em>string</em>. Je plakt twee stukken aan elkaar met <code>+</code>, en je herhaalt tekst met <code>*</code>.',
    'Met <code>len(woord)</code> tel je hoeveel tekens erin zitten. Met <code>.upper()</code> maak je er hoofdletters van en met <code>.lower()</code> kleine letters. Zo\'n punt-ding heet een <em>methode</em>: iets dat een stuk tekst zelf kan.',
-   'Let op: tekst en getallen plak je niet zomaar aan elkaar. <code>"score: " + 5</code> geeft een fout. Je zet het getal eerst om met <code>str(5)</code> — of je gebruikt een f-string, die komt zo.'
+   'Let op: tekst en getallen plak je niet zomaar aan elkaar. <code>"score: " + 5</code> geeft een fout. Je zet het getal eerst om met <code>str(5)</code>, of je gebruikt een f-string, die komt zo.'
   ],
   voorbeeld:'naam = "amine"\nprint(naam.upper())\nprint(len(naam))\nprint("=" * 20)\nprint("Doel! " * 3)',
   opdracht:{ vraag:'Maak een variabele met de naam van je club. Print hem in hoofdletters, met een streep van 20 tekens eronder.',
@@ -127,7 +127,7 @@ export const CODE: Blok[] = [
  {id:'c1-7', t:'Project: je spelerskaart', d:'Alles uit blok 1 bij elkaar', project:true,
   uitleg:[
    'Tijd om het bij elkaar te zetten. Je maakt een spelerskaart zoals in FIFA of FC: een kop, een streep, wat gegevens en een berekening.',
-   'Dit is meteen de eerste keer dat je iets maakt dat niet in een les staat voorgeschreven. Dat voelt anders — en dat hoort.'
+   'Dit is meteen de eerste keer dat je iets maakt dat niet in een les staat voorgeschreven. Dat voelt anders, en dat hoort.'
   ],
   voorbeeld:'# zoiets moet eruit komen:\n# ====================\n# HAALAND  ·  9\n# ====================\n# Doelpunten : 27\n# Wedstrijden: 31\n# Gemiddelde : 0.87 per wedstrijd',
   opdracht:{ vraag:'Maak een spelerskaart. Nodig: een naam in hoofdletters, een rugnummer, twee strepen van minstens 20 tekens, de doelpunten, de wedstrijden en het gemiddelde met twee cijfers achter de komma.',
@@ -138,22 +138,22 @@ export const CODE: Blok[] = [
   vragen:[]}
 ]},
 
-{id:'c2', n:'Keuzes en herhalen', ico:'🔀', u:'if, while en for — hier begint het echt', lessen:[
+{id:'c2', n:'Keuzes en herhalen', ico:'🔀', u:'if, while en for: hier begint het echt', lessen:[
 
  {id:'c2-1', t:'if', d:'Een keuze maken',
   uitleg:[
    'Tot nu toe deed je programma altijd hetzelfde. Met <code>if</code> gaat het nadenken: doe dit alleen <em>als</em> er iets waar is.',
-   'Achter de <code>if</code> staat een test, en daarachter een dubbele punt. De regels die erbij horen springen in met vier spaties. Die inspringing is in Python geen opmaak maar echte betekenis — daaraan ziet Python wat er bij de if hoort.',
+   'Achter de <code>if</code> staat een test, en daarachter een dubbele punt. De regels die erbij horen springen in met vier spaties. Die inspringing is in Python geen opmaak maar echte betekenis; daaraan ziet Python wat er bij de if hoort.',
    'Vergeet je de dubbele punt of de inspringing, dan werkt het niet. Dat is de meest gemaakte fout van iedereen die begint, ook van mensen die het al twintig jaar doen.'
   ],
   voorbeeld:'punten = 82\n\nif punten > 75:\n    print("Je bent door!")\n    print("Goed gedaan.")\n\nprint("Dit komt er altijd uit")',
   opdracht:{ vraag:'Een speler is een topscorer als hij meer dan 20 doelpunten heeft. Print "Topscorer!" als dat zo is.',
-   start:'doelpunten = 27\n\n', hint:'if doelpunten > 20: — en de regel eronder vier spaties inspringen.',
+   start:'doelpunten = 27\n\n', hint:'if doelpunten > 20: en de regel eronder vier spaties inspringen.',
    check:r => r.uit.join(' ').toLowerCase().includes('topscorer'),
    fout:'Met 27 doelpunten moet er "Topscorer!" uit komen.' },
   vragen:[
    {v:'Wat hoort er aan het eind van een if-regel?', o:['Een puntkomma','Een dubbele punt','Niets'], j:1,
-    u:'Altijd een : — daarna springt het blok eronder in.'},
+    u:'Altijd een :, daarna springt het blok eronder in.'},
    {v:'Hoe weet Python welke regels bij de if horen?', o:['Aan de accolades','Aan de inspringing','Aan het woord end'], j:1,
     u:'Python gebruikt inspringing waar andere talen accolades gebruiken.'}
   ]},
@@ -162,13 +162,13 @@ export const CODE: Blok[] = [
   uitleg:[
    'In de test achter een <code>if</code> vergelijk je twee dingen. Dat kan met <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, <code>&lt;=</code>, <code>==</code> (is gelijk) en <code>!=</code> (is niet gelijk).',
    'Let op die dubbele <code>==</code>. Eén <code>=</code> betekent "stop erin", twee betekent "is dit hetzelfde?". Dit is de tweede meest gemaakte fout.',
-   'Zo\'n vergelijking geeft <code>True</code> of <code>False</code> terug. Dat zijn echte waardes in Python — je kunt ze in een variabele stoppen en printen.'
+   'Zo\'n vergelijking geeft <code>True</code> of <code>False</code> terug. Dat zijn echte waardes in Python: je kunt ze in een variabele stoppen en printen.'
   ],
   voorbeeld:'fps = 58\nprint(fps > 60)\nprint(fps >= 58)\nprint(fps == 60)\nprint(fps != 60)\n\nsoepel = fps >= 60\nprint(f"Loopt het soepel? {soepel}")',
   opdracht:{ vraag:'Print of 144 groter is dan 60, en of "Ajax" hetzelfde is als "ajax".',
    start:'', hint:'print(144 > 60) en print("Ajax" == "ajax"). Let op de hoofdletter.',
    check:r => r.uit.join(' ').includes('True') && r.uit.join(' ').includes('False'),
-   fout:'Er moet één True en één False uit komen — hoofdletters tellen mee bij tekst.' },
+   fout:'Er moet één True en één False uit komen; hoofdletters tellen mee bij tekst.' },
   vragen:[
    {v:'Wat is het verschil tussen <code>=</code> en <code>==</code>?', o:['Geen','= stopt erin, == vergelijkt','== stopt erin, = vergelijkt'], j:1,
     u:'Één = geeft een waarde, twee == stelt een vraag.'},
@@ -179,7 +179,7 @@ export const CODE: Blok[] = [
  {id:'c2-3', t:'else en elif', d:'En anders dan?',
   uitleg:[
    'Met <code>else</code> zeg je wat er moet gebeuren als de test níet waar is. Het is de andere kant van de weg.',
-   'Wil je meer dan twee kanten op, dan gebruik je <code>elif</code> — kort voor "else if". Python loopt ze van boven naar beneden af en pakt de eerste die klopt. De rest slaat hij over, ook als die ook zou kloppen.',
+   'Wil je meer dan twee kanten op, dan gebruik je <code>elif</code>, kort voor "else if". Python loopt ze van boven naar beneden af en pakt de eerste die klopt. De rest slaat hij over, ook als die ook zou kloppen.',
    'Daarom is de volgorde belangrijk. Zet je <code>if punten > 10</code> boven <code>if punten > 100</code>, dan komt de tweede nooit aan de beurt.'
   ],
   voorbeeld:'fps = 45\n\nif fps >= 120:\n    print("Vloeiend")\nelif fps >= 60:\n    print("Prima")\nelif fps >= 30:\n    print("Speelbaar")\nelse:\n    print("Zet je instellingen lager")',
@@ -227,7 +227,7 @@ export const CODE: Blok[] = [
    {v:'Wat gebeurt er als je vergeet de teller op te hogen?', o:['Hij stopt na één ronde','Hij blijft eeuwig doorgaan','Er komt een fout'], j:1,
     u:'De test blijft dan altijd waar. Dat heet een oneindige lus.'},
    {v:'Wanneer kijkt Python of de test nog waar is?', o:['Alleen aan het begin','Voor elke ronde opnieuw','Aan het eind'], j:1,
-    u:'Elke ronde opnieuw — daarom kun je hem tijdens de lus onwaar maken.'}
+    u:'Elke ronde opnieuw, daarom kun je hem tijdens de lus onwaar maken.'}
   ]},
 
  {id:'c2-6', t:'for en range', d:'Precies zo vaak',
@@ -304,7 +304,7 @@ export const CODE: Blok[] = [
  {id:'c3-3', t:'Lijsten veranderen', d:'append, sort en de rest',
   uitleg:[
    'Een lijst kan groeien en krimpen. <code>.append(x)</code> plakt er iets achter, <code>.pop()</code> haalt het laatste eraf, <code>.remove(x)</code> haalt een bepaald ding weg.',
-   '<code>.sort()</code> zet de lijst op volgorde — klein naar groot bij getallen, alfabetisch bij tekst. Let op: dat verandert de lijst zelf. Wil je de oude houden, gebruik dan <code>sorted(lijst)</code>, dat geeft een nieuwe.',
+   '<code>.sort()</code> zet de lijst op volgorde: klein naar groot bij getallen, alfabetisch bij tekst. Let op: dat verandert de lijst zelf. Wil je de oude houden, gebruik dan <code>sorted(lijst)</code>, dat geeft een nieuwe.',
    'Verder: <code>.reverse()</code> draait om, <code>.count(x)</code> telt hoe vaak iets erin zit en <code>.index(x)</code> zegt op welke plek het staat.'
   ],
   voorbeeld:'scores = [88, 45, 120]\nscores.append(61)\nscores.sort()\nprint(scores)\n\nscores.reverse()\nprint(scores)\nprint(f"De hoogste is {scores[0]}")',
@@ -314,7 +314,7 @@ export const CODE: Blok[] = [
    fout:'Er moet [1, 4, 9, 16, 25] uit komen.' },
   vragen:[
    {v:'Wat doet <code>.append()</code>?', o:['Plakt er iets achteraan','Haalt iets weg','Sorteert'], j:0,
-    u:'Achteraan erbij — het meest gebruikte lijstding dat er is.'},
+    u:'Achteraan erbij: het meest gebruikte lijstding dat er is.'},
    {v:'Wat is het verschil tussen <code>.sort()</code> en <code>sorted()</code>?', o:['Geen','.sort() verandert de lijst zelf, sorted() maakt een nieuwe','Andersom'], j:1,
     u:'Belangrijk verschil zodra je de oude volgorde nog nodig hebt.'}
   ]},
@@ -327,7 +327,7 @@ export const CODE: Blok[] = [
   ],
   voorbeeld:'stand = {"Ajax": 68, "PSV": 71, "Feyenoord": 64}\nprint(stand["PSV"])\nprint(stand.get("Twente", 0))\n\nstand["Ajax"] = stand["Ajax"] + 3\n\nfor club in stand:\n    print(f"{club}: {stand[club]}")',
   opdracht:{ vraag:'Maak een woordenboek met drie pc-onderdelen en hun prijs. Print de totaalprijs.',
-   start:'delen = {"processor": 220, "videokaart": 340, "geheugen": 70}\n\n', hint:'Loop met for door delen en tel delen[naam] bij een totaal op — of gebruik sum(delen.values()).',
+   start:'delen = {"processor": 220, "videokaart": 340, "geheugen": 70}\n\n', hint:'Loop met for door delen en tel delen[naam] bij een totaal op, of gebruik sum(delen.values()).',
    check:r => r.uit.join(' ').includes('630'),
    fout:'De drie prijzen samen zijn 630. Dat getal moet eruit komen.' },
   vragen:[
@@ -352,7 +352,7 @@ export const CODE: Blok[] = [
    {v:'Wat is <code>[[1,2],[3,4]][1][0]</code>?', o:['1','2','3'], j:2,
     u:'Rij 1 is [3,4], en daarvan plek 0 is 3.'},
    {v:'Waarvoor gebruik je een lijst met lijsten?', o:['Een tabel of speelveld','Alleen voor getallen','Nooit'], j:0,
-    u:'Elke rij een lijstje — dat is een tabel.'}
+    u:'Elke rij een lijstje: dat is een tabel.'}
   ]},
 
  {id:'c3-6', t:'Rekenen met lijsten', d:'sum, min, max en len',
@@ -384,7 +384,7 @@ export const CODE: Blok[] = [
    start:'uitslagen = [\n    ["Ajax", 3, "PSV", 1],\n    ["PSV", 2, "Feyenoord", 2],\n    ["Feyenoord", 0, "Ajax", 1],\n    ["Ajax", 2, "Feyenoord", 2]\n]\nstand = {"Ajax": 0, "PSV": 0, "Feyenoord": 0}\n\n',
    hint:'Loop door uitslagen. Vergelijk wed[1] met wed[3] en tel punten op bij stand[wed[0]] of stand[wed[2]].',
    check:r => { const t=r.uit.join(' '); return /Ajax\D*7/.test(t) && /PSV\D*1/.test(t) && /Feyenoord\D*2/.test(t); },
-   fout:'Ajax hoort op 7 te komen, PSV op 1 en Feyenoord op 2. Kijk of je het gelijkspel goed telt — dan krijgen ze allebei een punt.' },
+   fout:'Ajax hoort op 7 te komen, PSV op 1 en Feyenoord op 2. Kijk of je het gelijkspel goed telt: dan krijgen ze allebei een punt.' },
   vragen:[]}
 ]},
 
@@ -393,7 +393,7 @@ export const CODE: Blok[] = [
  {id:'c4-1', t:'Functies', d:'Een eigen opdracht maken',
   uitleg:[
    'Als je hetzelfde stuk code drie keer typt, doe je iets fout. Een functie is een stuk code met een naam eraan, dat je zo vaak kunt gebruiken als je wilt.',
-   'Je maakt hem met <code>def</code>, een naam, haakjes en een dubbele punt. Alles wat erbij hoort springt in. Bij het maken gebeurt er nog niets — pas als je hem <em>aanroept</em> met zijn naam en haakjes gaat hij draaien.',
+   'Je maakt hem met <code>def</code>, een naam, haakjes en een dubbele punt. Alles wat erbij hoort springt in. Bij het maken gebeurt er nog niets; pas als je hem <em>aanroept</em> met zijn naam en haakjes gaat hij draaien.',
    'Een goede functie doet één ding en heeft een naam die dat zegt. <code>bereken_fps</code> is goed, <code>doe_dingen</code> niet.'
   ],
   voorbeeld:'def welkom():\n    print("=" * 25)\n    print("  BUNYAN")\n    print("=" * 25)\n\nwelkom()\nprint("Klaar om te beginnen")\nwelkom()',
@@ -411,11 +411,11 @@ export const CODE: Blok[] = [
  {id:'c4-2', t:'Iets meegeven', d:'Argumenten',
   uitleg:[
    'Een functie wordt pas echt nuttig als je hem iets kunt meegeven. Zet namen tussen de haakjes bij <code>def</code>, dan mag je die binnenin gebruiken.',
-   'Bij het aanroepen geef je de echte waarden mee, in dezelfde volgorde. Geef je er te weinig of te veel, dan klaagt Python meteen — dat is maar goed ook.',
+   'Bij het aanroepen geef je de echte waarden mee, in dezelfde volgorde. Geef je er te weinig of te veel, dan klaagt Python meteen, en dat is maar goed ook.',
    'Wat er binnenin een functie gebeurt met die namen blijft binnenin. Dat is precies de bedoeling: je kunt een functie gebruiken zonder te weten hoe hij werkt.'
   ],
   voorbeeld:'def begroet(naam, club):\n    print(f"Hoi {naam}, hup {club}!")\n\nbegroet("Amine", "Ajax")\nbegroet("Sami", "PSV")\n\ndef balk(teken, lengte):\n    print(teken * lengte)\n\nbalk("#", 20)\nbalk("-", 10)',
-  opdracht:{ vraag:'Maak een functie <code>kaart(naam, doelpunten)</code> die een regel print als "HAALAND — 27 doelpunten". Roep hem twee keer aan.',
+  opdracht:{ vraag:'Maak een functie <code>kaart(naam, doelpunten)</code> die een regel print als "HAALAND: 27 doelpunten". Roep hem twee keer aan.',
    start:'def kaart(naam, doelpunten):\n    ', hint:'Gebruik .upper() en een f-string in de functie.',
    check:r => r.uit.length>=2 && r.uit.every(x=>/[A-Z]{3,}/.test(x)),
    fout:'Twee regels, allebei met de naam in hoofdletters.' },
@@ -433,7 +433,7 @@ export const CODE: Blok[] = [
    'Vuistregel: <code>print</code> is voor een mens die kijkt, <code>return</code> is voor de rest van je programma.'
   ],
   voorbeeld:'def fps(gpu, zwaarte):\n    if zwaarte == 0:\n        return 0\n    return round(gpu / zwaarte)\n\nsnelheid = fps(190, 2.2)\nprint(f"Ongeveer {snelheid} fps")\n\nif fps(190, 2.2) > 60:\n    print("Speelbaar")',
-  opdracht:{ vraag:'Maak een functie <code>gemiddelde(getallen)</code> die het gemiddelde teruggeeft — en 0 als de lijst leeg is. Print het gemiddelde van twee verschillende lijsten.',
+  opdracht:{ vraag:'Maak een functie <code>gemiddelde(getallen)</code> die het gemiddelde teruggeeft, en 0 als de lijst leeg is. Print het gemiddelde van twee verschillende lijsten.',
    start:'def gemiddelde(getallen):\n    ', hint:'Eerst if len(getallen) == 0: return 0. Daarna return sum(...) / len(...).',
    check:(r,code)=> /return/.test(code) && r.uit.length>=2,
    fout:'Gebruik return in je functie en print twee gemiddeldes.' },
@@ -447,7 +447,7 @@ export const CODE: Blok[] = [
  {id:'c4-4', t:'Toeval', d:'random',
   uitleg:[
    'Zonder toeval is een spel na één keer saai. Bovenaan je programma zet je <code>import random</code>, en daarna heb je er drie nodig.',
-   '<code>random.randint(1, 6)</code> geeft een heel getal van 1 tot en met 6 — een dobbelsteen. <code>random.choice(lijst)</code> pakt er willekeurig eentje uit. <code>random.shuffle(lijst)</code> husselt een lijst door elkaar.',
+   '<code>random.randint(1, 6)</code> geeft een heel getal van 1 tot en met 6: een dobbelsteen. <code>random.choice(lijst)</code> pakt er willekeurig eentje uit. <code>random.shuffle(lijst)</code> husselt een lijst door elkaar.',
    'Dat "import" betekent: haal er een kist gereedschap bij. Python heeft er honderden; random is de eerste die je nodig hebt.'
   ],
   voorbeeld:'import random\n\nprint(random.randint(1, 6))\n\nclubs = ["Ajax", "PSV", "Feyenoord", "AZ"]\nprint(f"Je speelt tegen {random.choice(clubs)}")\n\nrandom.shuffle(clubs)\nprint(clubs)',
@@ -465,7 +465,7 @@ export const CODE: Blok[] = [
  {id:'c4-5', t:'Fouten lezen', d:'De beste vaardigheid die er is',
   uitleg:[
    'Iedereen die programmeert maakt de hele dag fouten. Het verschil tussen iemand die het kan en iemand die het niet kan, is hoe snel hij ze vindt.',
-   'Lees altijd eerst het <b>regelnummer</b>. Staat de fout op regel 7, kijk dan ook op regel 6 — een vergeten haakje merkt Python vaak pas een regel later.',
+   'Lees altijd eerst het <b>regelnummer</b>. Staat de fout op regel 7, kijk dan ook op regel 6: een vergeten haakje merkt Python vaak pas een regel later.',
    'De drie fouten die je het vaakst maakt: de dubbele punt vergeten, verkeerd inspringen, en <code>=</code> gebruiken waar <code>==</code> hoort. Als iets niet werkt, kijk die drie eerst na.',
    'Werkt het nog steeds niet? Zet dan <code>print</code>-regels tussen je code om te zien wat er echt in je variabelen zit. Negen van de tien keer is dat iets anders dan je dacht.'
   ],
@@ -485,7 +485,7 @@ export const CODE: Blok[] = [
  {id:'c4-6', t:'Project: dobbelspel', d:'Twee spelers, tien rondes', project:true,
   uitleg:[
    'Een compleet spelletje met alles erin: functies, toeval, een lus, een woordenboek en een winnaar aan het eind.',
-   'De regels: twee spelers, tien rondes. Elke ronde gooien ze allebei één keer. Wie het hoogst gooit krijgt een punt; bij gelijk krijgt niemand iets. Na tien rondes zeg je wie gewonnen heeft — of dat het gelijk is.',
+   'De regels: twee spelers, tien rondes. Elke ronde gooien ze allebei één keer. Wie het hoogst gooit krijgt een punt; bij gelijk krijgt niemand iets. Na tien rondes zeg je wie gewonnen heeft, of dat het gelijk is.',
    'Bouw het in stukjes en draai na elk stukje. Eerst één ronde, dan tien, dan pas de winnaar.'
   ],
   voorbeeld:'import random\n\ndef gooi():\n    return random.randint(1, 6)',
@@ -543,7 +543,7 @@ export const CODE: Blok[] = [
  {id:'c5-3', t:'JavaScript', d:'De taal van de browser',
   uitleg:[
    'JavaScript lijkt op Python maar ziet er anders uit. Accolades in plaats van inspringing, een puntkomma aan het eind, en <code>let</code> of <code>const</code> voor een variabele.',
-   'Het grote verschil met Python: JavaScript zit ingebouwd in elke browser. Je hoeft niets te installeren — daarom draait de app die je nu gebruikt erin.',
+   'Het grote verschil met Python: JavaScript zit ingebouwd in elke browser. Je hoeft niets te installeren; daarom draait de app die je nu gebruikt erin.',
    'Wat je in Python geleerd hebt geldt gewoon: variabelen, if, lussen, functies. Alleen de schrijfwijze verandert. Dat is meteen de belangrijkste les over programmeertalen: de tweede kost een tiende van de tijd van de eerste.'
   ],
   voorbeeld:'let score = 0;\nconst naam = "Amine";\n\nfor (let i = 0; i < 3; i++) {\n  score = score + 10;\n  console.log("Ronde " + i + ": " + score);\n}\n\nfunction dubbel(n) {\n  return n * 2;\n}\nconsole.log(dubbel(21));',
@@ -563,7 +563,7 @@ export const CODE: Blok[] = [
  {id:'c5-4', t:'De pagina veranderen', d:'De DOM',
   uitleg:[
    'Het leuke begint als JavaScript de pagina zelf gaat veranderen. Die pagina heet in code de DOM: een boom van alle tags.',
-   'Je pakt een stuk beet met <code>document.querySelector("#score")</code> — dezelfde selectors als bij CSS. Daarna verander je de inhoud met <code>.textContent</code> of de opmaak met <code>.style</code>.',
+   'Je pakt een stuk beet met <code>document.querySelector("#score")</code>, dezelfde selectors als bij CSS. Daarna verander je de inhoud met <code>.textContent</code> of de opmaak met <code>.style</code>.',
    'Dit is hoe elke website waarop iets verandert zonder herladen werkt: van je scorebord tot je YouTube-teller.'
   ],
   voorbeeld:'<p id="score">0</p>\n<script>\n  const p = document.querySelector("#score");\n  p.textContent = "42 punten";\n  p.style.color = "#0B6E6E";\n<\/script>',
@@ -583,7 +583,7 @@ export const CODE: Blok[] = [
  {id:'c5-5', t:'Klikken', d:'Events',
   uitleg:[
    'Een <em>event</em> is iets dat gebeurt: een klik, een toets, de muis die beweegt. Je zegt tegen de browser: als dit gebeurt, doe dan dat.',
-   'Dat gaat met <code>addEventListener("click", functie)</code>. De functie die je meegeeft draait niet meteen — hij wacht tot het gebeurt. Dat is nieuw: code die op een moment draait dat jij niet kiest.',
+   'Dat gaat met <code>addEventListener("click", functie)</code>. De functie die je meegeeft draait niet meteen; hij wacht tot het gebeurt. Dat is nieuw: code die op een moment draait dat jij niet kiest.',
    'Hiermee kun je alles maken wat op een knop reageert: een teller, een spel, een quiz.'
   ],
   voorbeeld:'<button id="knop">Doelpunt</button>\n<p id="tel">0</p>\n<script>\n  let score = 0;\n  document.querySelector("#knop").addEventListener("click", function () {\n    score = score + 1;\n    document.querySelector("#tel").textContent = score;\n  });\n<\/script>',
@@ -623,7 +623,7 @@ export const CODE: Blok[] = [
  {id:'c5-7', t:'Project: klikspel', d:'Een spel in de browser', project:true,
   uitleg:[
    'Je maakt een spel waarin een doelwit steeds op een andere plek verschijnt en je zo snel mogelijk moet klikken. Alles zit erin: HTML voor het scherm, CSS voor het uiterlijk, JavaScript voor het spel.',
-   'Nieuw hierbij is <code>Math.random()</code>, dat een getal tussen 0 en 1 geeft — de JavaScript-versie van <code>random.random()</code>. Vermenigvuldig het om een plek op je veld te krijgen.',
+   'Nieuw hierbij is <code>Math.random()</code>, dat een getal tussen 0 en 1 geeft, de JavaScript-versie van <code>random.random()</code>. Vermenigvuldig het om een plek op je veld te krijgen.',
    'Dit is een echt project. Neem er de tijd voor en probeer dingen uit die hier niet staan.'
   ],
   voorbeeld:'// een willekeurige plek tussen 0 en 250:\nconst x = Math.floor(Math.random() * 250);',
@@ -640,13 +640,13 @@ export const CODE: Blok[] = [
 
  {id:'c6-1', t:'Welke taal waarvoor', d:'Er zijn er honderden; dit zijn de zeven die ertoe doen',
   uitleg:[
-   '<b>Python</b> — waar je mee begon. Voor het leren, voor data, voor kunstmatige intelligentie, voor scriptjes die iets voor je regelen. Traag voor spellen, en dat maakt meestal niets uit.',
-   '<b>JavaScript</b> — de taal van de browser. Alles wat op een website beweegt. Met Node.js draait het ook buiten de browser.',
-   '<b>C#</b> — de taal van Unity, waarmee een groot deel van de games gemaakt wordt die jij speelt. Lijkt op Java en op JavaScript.',
-   '<b>Lua</b> — klein en snel, de taal van Roblox. Als je in Roblox wilt bouwen begin je hier.',
-   '<b>GDScript</b> — hoort bij Godot, een gratis game-engine. Lijkt sprekend op Python, dus voor jou de kortste weg naar een echte game.',
-   '<b>C++</b> — de taal waarin de zware dingen gemaakt worden: game-engines, besturingssystemen, browsers. Moeilijk, snel, en niet waar je begint.',
-   '<b>SQL</b> — geen taal om programma\'s in te schrijven maar om dingen te vragen aan een database. Kort te leren, altijd nuttig.'
+   '<b>Python</b>: waar je mee begon. Voor het leren, voor data, voor kunstmatige intelligentie, voor scriptjes die iets voor je regelen. Traag voor spellen, en dat maakt meestal niets uit.',
+   '<b>JavaScript</b>: de taal van de browser. Alles wat op een website beweegt. Met Node.js draait het ook buiten de browser.',
+   '<b>C#</b>: de taal van Unity, waarmee een groot deel van de games gemaakt wordt die jij speelt. Lijkt op Java en op JavaScript.',
+   '<b>Lua</b>: klein en snel, de taal van Roblox. Als je in Roblox wilt bouwen begin je hier.',
+   '<b>GDScript</b>: hoort bij Godot, een gratis game-engine. Lijkt sprekend op Python, dus voor jou de kortste weg naar een echte game.',
+   '<b>C++</b>: de taal waarin de zware dingen gemaakt worden: game-engines, besturingssystemen, browsers. Moeilijk, snel, en niet waar je begint.',
+   '<b>SQL</b>: geen taal om programma\'s in te schrijven maar om dingen te vragen aan een database. Kort te leren, altijd nuttig.'
   ],
   vragen:[
    {v:'Je wilt een game maken in Roblox. Welke taal?', o:['Python','Lua','C++'], j:1,
@@ -660,7 +660,7 @@ export const CODE: Blok[] = [
  {id:'c6-2', t:'Python op je eigen pc', d:'Van deze app naar het echte werk',
   uitleg:[
    'De Python hier is met de hand gebouwd zodat hij in je browser past. Hij kent genoeg voor alles wat je tot nu toe deed, maar de echte kan meer: bestanden lezen, internet op, plaatjes maken, spellen bouwen.',
-   'Installeren doe je zo. Ga naar <code>python.org</code>, download de laatste versie, en zet bij het installeren op Windows een vinkje bij <b>"Add Python to PATH"</b>. Vergeet je dat vinkje, dan werkt het commando straks niet — dat is de klassieke eerste hobbel.',
+   'Installeren doe je zo. Ga naar <code>python.org</code>, download de laatste versie, en zet bij het installeren op Windows een vinkje bij <b>"Add Python to PATH"</b>. Vergeet je dat vinkje, dan werkt het commando straks niet; dat is de klassieke eerste hobbel.',
    'Daarna heb je een <em>editor</em> nodig. VS Code is gratis en wat bijna iedereen gebruikt. Installeer daarin de Python-uitbreiding en je kunt je programma draaien met één toets.',
    'Test of het gelukt is: open de terminal en typ <code>python --version</code>. Komt er een versienummer, dan staat het goed.'
   ],
@@ -688,8 +688,8 @@ export const CODE: Blok[] = [
  {id:'c6-4', t:'Hoe je verder leert', d:'De enige manier die werkt',
   uitleg:[
    'Je leert programmeren niet door lessen te lezen maar door dingen te maken die je zelf wilt hebben. Een lijstje wat je nu al kunt bouwen: een quiz over voetbal, een rekenmachine, een programma dat een elftal opstelt, een dobbelspel, een klikspel.',
-   'Kies iets dat net iets te moeilijk is. Te makkelijk is saai, veel te moeilijk is frustrerend — er zit een smalle strook tussen waar je het snelst leert.',
-   'Vast? Dan zijn er drie stappen, in deze volgorde. Eén: lees de foutmelding echt. Twee: zet prints neer om te zien wat er in je variabelen zit. Drie: pas dan vraag je hulp — en dan met de foutmelding erbij en wat je al geprobeerd hebt.',
+   'Kies iets dat net iets te moeilijk is. Te makkelijk is saai, veel te moeilijk is frustrerend; er zit een smalle strook tussen waar je het snelst leert.',
+   'Vast? Dan zijn er drie stappen, in deze volgorde. Eén: lees de foutmelding echt. Twee: zet prints neer om te zien wat er in je variabelen zit. Drie: pas dan vraag je hulp, en dan met de foutmelding erbij en wat je al geprobeerd hebt.',
    'En stop op tijd. Bijna elke bug die je \'s avonds niet vindt, vind je de volgende ochtend in twee minuten. Dat is geen grap; dat is het bekendste verschijnsel in het vak.'
   ],
   vragen:[

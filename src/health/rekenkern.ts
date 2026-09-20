@@ -5,7 +5,7 @@
  * erbij en zonder één getal te veranderen. Dat is met opzet: elke keuze
  * hieronder is verantwoord in VERANTWOORDING.md tegen literatuur, en de
  * verwijzing staat erbij zodat een getal in het scherm terugvindbaar is. Wat
- * verantwoord is en werkt, herschrijf je niet — dat til je eruit.
+ * verantwoord is en werkt, herschrijf je niet, dat til je eruit.
  *
  * TWEE DINGEN ZIJN WÉL VERANDERD, EN DAAROM STAAN ZE HIER
  *
@@ -20,7 +20,9 @@
 import { dagVerschil, plusDagen, vandaag as vandaagNu } from '@/gedeeld/datum'
 import type { Dag, IsoDatum, Profiel } from '@/gedeeld/db/tabellen'
 
-/** Wichmann's constante: 7.700 kcal per kilo lichaamsweefsel. Zie hoofdstuk 2. */
+/** De vuistregel van Wishnofsky (1958): 7.700 kcal per kilo lichaamsweefsel.
+ *  Hier alleen als omrekenfactor achteraf, nooit als voorspeller, zie
+ *  hoofdstuk 2, dat uitlegt waarom dat onderscheid het hele punt is. */
 export const KCAL_PER_KG = 7700
 
 /** Veelvoud van zeven: anders lekt het weekritme in de helling (Orsama 2014). */
@@ -168,7 +170,7 @@ export interface Analyse {
 
 /**
  * Het hart. Leest de weegreeks en de gelogde energie over een venster van
- * achtentwintig dagen en leidt daar een verbruik uit af — met een interval,
+ * achtentwintig dagen en leidt daar een verbruik uit af, met een interval,
  * nooit als punt alleen.
  *
  * `eind` is standaard vandaag. Zie de kop van dit bestand voor waarom dat een
@@ -250,7 +252,7 @@ export function analyse(dagen: Dagenkaart, pf: Profiel, eind: IsoDatum = vandaag
    *
    * tdee is een energiebalans: gemiddelde inname min de energie die het vet in
    * of uit ging. Die som klopt alleen als de twee invoeren bij elkaar horen.
-   * Doen ze dat niet, dan geeft dezelfde som een onmogelijk antwoord — en hij
+   * Doen ze dat niet, dan geeft dezelfde som een onmogelijk antwoord, en hij
    * geeft het zonder te klagen.
    *
    * Dat gebeurde. Een logboek van 1.461 kcal over twaalf dagen naast een
@@ -262,7 +264,7 @@ export function analyse(dagen: Dagenkaart, pf: Profiel, eind: IsoDatum = vandaag
    * De grenzen zijn fysiologisch en niet gekozen om deze ene zaak op te lossen.
    * Onder: niemand verbruikt minder dan zijn ruststofwisseling. Boven:
    * tweeënhalf keer het rustverbruik is de bovengrens van wat een mens langer
-   * dan een paar dagen volhoudt — de alimentaire limiet uit Thurber 2019, die
+   * dan een paar dagen volhoudt, de alimentaire limiet uit Thurber 2019, die
    * ook voor wielrenners in een grote ronde geldt.
    *
    * WAT HIER MET OPZET NIET GEBEURT
@@ -275,7 +277,7 @@ export function analyse(dagen: Dagenkaart, pf: Profiel, eind: IsoDatum = vandaag
    *
    * De ondergrens van de band wordt wél afgekapt op het rustverbruik. Een
    * interval dat onmogelijke waarden bevat is geen interval; afkappen op een
-   * bekende fysieke grens houdt de informatie die er wél in zit — de bovenkant —
+   * bekende fysieke grens houdt de informatie die er wél in zit (de bovenkant) 
    * overeind. */
   const PAL_PLAFOND = 2.5
   const tdeeOordeel: TdeeOordeel | null =

@@ -1,5 +1,5 @@
 /**
- * DE PUZZEL — de woorden van een regel in de goede volgorde
+ * DE PUZZEL: de woorden van een regel in de goede volgorde
  *
  * Elk woord krijgt zijn eigen plek in de rij mee. Zonder dat gaat het mis bij
  * een regel waarin hetzelfde woord twee keer staat: dan zou de tweede al goed

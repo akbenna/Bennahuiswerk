@@ -72,7 +72,7 @@ function initialen(account: string): string {
  * Dus legt de app zijn uitkomst neer met een tijdstempel, en zwijgt de coach
  * zodra die ouder is dan twee dagen. De datum zit in de sleutel omdat het
  * tijdstempel anders blijft staan op de dag dat het doel toevallig niet
- * verandert — en dan valt de coach stil terwijl er niets aan de hand is.
+ * verandert, en dan valt de coach stil terwijl er niets aan de hand is.
  *
  * Mislukt het, dan komen er geen prikkels en gebeurt er verder niets. Dat is de
  * veilige kant om op te falen, en het is aan de gebruiker te merken; een
@@ -157,7 +157,7 @@ export function App() {
      De sessie komt uit localStorage en is er dus meteen; `alles` komt van de
      server en is er een halve seconde later. In die halve seconde is `profiel`
      nog null, en zonder deze poort las het scherm dat als "deze gebruiker is
-     nieuw" en zette het de opzetpagina neer — die daarna vanzelf weer verdween.
+     nieuw" en zette het de opzetpagina neer, die daarna vanzelf weer verdween.
 
      Dat was niet alleen lelijk. Op die pagina staan twee knoppen die een profiel
      zetten en de augustusreeks kunnen inladen; één tik in dat raampje schreef
@@ -238,7 +238,7 @@ export function App() {
                 }))}
               opInvoer={zetInvoer}
               opVoorkeuren={() => zetVenster('voorkeuren')}
-              /* "Dit nooit meer." Schrijft meteen in het profiel — wachten op
+              /* "Dit nooit meer." Schrijft meteen in het profiel, wachten op
                  een bewaarknop zou betekenen dat je iets wegklikt en het bij de
                  volgende hertekening terugziet. De naam gaat naast de code mee,
                  zodat "Wat je lust" hem kan tonen in plaats van een NEVO-nummer. */
@@ -289,7 +289,7 @@ export function App() {
               inspanning={k.alles.inspanning}
               /* Voor de spierkaart: de stoeltest is een meting, de vijf vragen
                  zijn een vragenlijst, en het eiwit per maaltijd komt uit de
-                 regels van vandaag. Alle drie bestonden al — deze kaart vraagt
+                 regels van vandaag. Alle drie bestonden al: deze kaart vraagt
                  geen enkele databasewijziging. */
               metingen={k.alles.metingen} vragenlijsten={k.alles.vragenlijsten}
               regelsVandaag={regelsVandaag}
@@ -338,7 +338,7 @@ export function App() {
         </div>
 
         {/* De legenda blijft: die verklaart een teken dat op elk scherm staat.
-            De zin over ruisonderdrukking is weg — die stond onder élk scherm en
+            De zin over ruisonderdrukking is weg, die stond onder élk scherm en
             hoort bij het model, waar hij ook al staat. */}
         <footer>
           <b>A</b> etiket en gewogen · <b>B</b> etiket, portie geschat · <b>C</b> tabelwaarde ·{' '}

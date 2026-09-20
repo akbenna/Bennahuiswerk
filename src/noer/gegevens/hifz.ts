@@ -1,7 +1,7 @@
 import type { Dua, Hifz } from './soorten'
 
 /* =============================================================================
-   UIT JE HOOFD LEREN — de korte soera's en de vaste teksten van het gebed.
+   UIT JE HOOFD LEREN, de korte soera's en de vaste teksten van het gebed.
    Per regel: Arabisch, klank in Nederlandse letters, en de betekenis.
    De betekenis is een weergave in het Nederlands; de Koran zelf is het Arabisch.
 ============================================================================= */
@@ -115,12 +115,12 @@ export const HIFZ: Hifz[] = [
      ['فِي الْعَالَمِينَ إِنَّكَ حَمِيدٌ مَجِيدٌ','Fi l-\'alamina innaka hamidun majid','In alle werelden. U bent de Geprezene, de Verhevene']]},
 
  {id:'h-dhikr', naam:'De woorden in het gebed', ar:'أذكار الصلاة', soort:'gebed', waarom:'Wat je zegt in de buiging, bij het opkomen en in de knieval.',
-  r:[['سُبْحَانَ رَبِّيَ الْعَظِيمِ','Subhana rabbiya l-\'azim','Volmaakt is mijn Heer, de Geweldige — in de buiging','soeb-HAA-na RAB-bi-ya l-‘a-DHIEM'],
-     ['سَمِعَ اللَّهُ لِمَنْ حَمِدَهُ','Sami\'a llahu liman hamidah','Allah hoort wie Hem prijst — bij het opkomen','sa-MI-‘a l-LAA-hoe LI-man HA-mi-dah'],
-     ['رَبَّنَا وَلَكَ الْحَمْدُ','Rabbana wa laka l-hamd','Onze Heer, aan U komt alle lof toe — als je rechtop staat','RAB-ba-naa wa LA-ka l-HAMD'],
-     ['سُبْحَانَ رَبِّيَ الْأَعْلَى','Subhana rabbiya l-a\'la','Volmaakt is mijn Heer, de Allerhoogste — in de knieval','soeb-HAA-na RAB-bi-ya l-A‘-laa'],
-     ['رَبِّ اغْفِرْ لِي','Rabbi ghfir li','Heer, vergeef mij — tussen de twee knievallen','RAB-bigh-FIR lie']]},
- {id:'h-iqama', naam:'De iqama', ar:'الإقامة', soort:'gebed', waarom:'De oproep vlak voordat het gebed begint. Tien zinnen, elk één keer — behalve de takbir.',
+  r:[['سُبْحَانَ رَبِّيَ الْعَظِيمِ','Subhana rabbiya l-\'azim','Volmaakt is mijn Heer, de Geweldige, in de buiging','soeb-HAA-na RAB-bi-ya l-‘a-DHIEM'],
+     ['سَمِعَ اللَّهُ لِمَنْ حَمِدَهُ','Sami\'a llahu liman hamidah','Allah hoort wie Hem prijst, bij het opkomen','sa-MI-‘a l-LAA-hoe LI-man HA-mi-dah'],
+     ['رَبَّنَا وَلَكَ الْحَمْدُ','Rabbana wa laka l-hamd','Onze Heer, aan U komt alle lof toe, als je rechtop staat','RAB-ba-naa wa LA-ka l-HAMD'],
+     ['سُبْحَانَ رَبِّيَ الْأَعْلَى','Subhana rabbiya l-a\'la','Volmaakt is mijn Heer, de Allerhoogste, in de knieval','soeb-HAA-na RAB-bi-ya l-A‘-laa'],
+     ['رَبِّ اغْفِرْ لِي','Rabbi ghfir li','Heer, vergeef mij, tussen de twee knievallen','RAB-bigh-FIR lie']]},
+ {id:'h-iqama', naam:'De iqama', ar:'الإقامة', soort:'gebed', waarom:'De oproep vlak voordat het gebed begint. Tien zinnen, elk één keer, behalve de takbir.',
   r:[['اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ','Allahu akbar, Allahu akbar','Allah is groter, Allah is groter','al-LAA-hoe AK-bar · al-LAA-hoe AK-bar'],
      ['أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ','Ashhadu an la ilaha illa llah','Ik getuig dat er geen god is dan Allah','asj-HA-doe an laa i-LAA-ha il-la l-LAAH'],
      ['أَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ','Ashhadu anna Muhammadan rasulu llah','Ik getuig dat Mohammed de boodschapper van Allah is','asj-HA-doe AN-na moe-HAM-ma-dan ra-SOE-loe l-LAAH'],
@@ -130,12 +130,12 @@ export const HIFZ: Hifz[] = [
      ['اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ','Allahu akbar, Allahu akbar','Allah is groter, Allah is groter','al-LAA-hoe AK-bar · al-LAA-hoe AK-bar'],
      ['لَا إِلَٰهَ إِلَّا اللَّهُ','La ilaha illa llah','Er is geen god dan Allah','laa i-LAA-ha il-la l-LAAH']]},
  {id:'h-nagebed', naam:'Na het gebed', ar:'أذكار بعد الصلاة', soort:'gebed', waarom:'Wat je zegt als je na de slotgroet nog even blijft zitten.',
-  r:[['أَسْتَغْفِرُ اللَّهَ','Astaghfiru llah','Ik vraag Allah om vergeving — drie keer','as-tagh-FI-roe l-LAAH'],
+  r:[['أَسْتَغْفِرُ اللَّهَ','Astaghfiru llah','Ik vraag Allah om vergeving, drie keer','as-tagh-FI-roe l-LAAH'],
      ['اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ','Allahumma anta s-salamu wa minka s-salam, tabarakta ya dha l-jalali wa l-ikram','Allah, U bent de Vrede en van U komt de vrede; gezegend bent U, Bezitter van majesteit en eer'],
-     ['سُبْحَانَ اللَّهِ','Subhana llah','Volmaakt is Allah — 33 keer','soeb-HAA-na l-LAAH'],
-     ['الْحَمْدُ لِلَّهِ','Alhamdu lillah','Alle lof is voor Allah — 33 keer','al-HAM-doe lil-LAAH'],
-     ['اللَّهُ أَكْبَرُ','Allahu akbar','Allah is groter — 33 keer','al-LAA-hoe AK-bar'],
-     ['لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ','La ilaha illa llahu wahdahu la sharika lah, lahu l-mulku wa lahu l-hamdu wa huwa \'ala kulli shay\'in qadir','Er is geen god dan Allah alleen, zonder deelgenoot — als honderdste']]},
+     ['سُبْحَانَ اللَّهِ','Subhana llah','Volmaakt is Allah, 33 keer','soeb-HAA-na l-LAAH'],
+     ['الْحَمْدُ لِلَّهِ','Alhamdu lillah','Alle lof is voor Allah, 33 keer','al-HAM-doe lil-LAAH'],
+     ['اللَّهُ أَكْبَرُ','Allahu akbar','Allah is groter, 33 keer','al-LAA-hoe AK-bar'],
+     ['لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ','La ilaha illa llahu wahdahu la sharika lah, lahu l-mulku wa lahu l-hamdu wa huwa \'ala kulli shay\'in qadir','Er is geen god dan Allah alleen, zonder deelgenoot, als honderdste']]},
  {id:'h-dua-salam', naam:'De du\'a vóór de slotgroet', ar:'دعاء قبل السلام', soort:'gebed', waarom:'Het laatste dat je zegt terwijl je nog in het gebed zit.',
   r:[['اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ عَذَابِ جَهَنَّمَ','Allahumma inni a\'udhu bika min \'adhabi jahannam','Allah, ik zoek bij U bescherming tegen de straf van de hel'],
      ['وَمِنْ عَذَابِ الْقَبْرِ','wa min \'adhabi l-qabr','en tegen de straf van het graf'],

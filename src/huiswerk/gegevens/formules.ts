@@ -39,19 +39,19 @@ export const FORMULEBLOKKEN: Formuleblok[] = [
     ['Exponentieel','N = beginwaarde × groeifactorᵗ'],
     ['Statistiek','gemiddelde = som ÷ aantal · mediaan = middelste · modus = meest voorkomend'],
   ]},
-  {kop:'Wiskunde A — verandering & afgeleide', items:[
+  {kop:'Wiskunde A: verandering & afgeleide', items:[
     ['Differentiequotiënt','(f(b) − f(a)) ÷ (b − a)   (gemiddelde verandering op [a,b])'],
     ['Afgeleide van xⁿ','f(x) = xⁿ  →  f′(x) = n·xⁿ⁻¹'],
     ['Helling in een punt','de helling van de grafiek in x is f′(x)'],
     ['Exponentiële groei','per n perioden: groeifactor = gⁿ   ·   procent = (g − 1) × 100%'],
   ]},
-  {kop:'Wiskunde A — kans & statistiek', items:[
+  {kop:'Wiskunde A: kans & statistiek', items:[
     ['Kans','P = aantal gunstig ÷ aantal mogelijk'],
     ['Faculteit','n! = n × (n−1) × … × 2 × 1   (aantal volgordes)'],
     ['Verwachtingswaarde','E = som van (kans × waarde)'],
     ['Centrummaten','gemiddelde = som ÷ aantal · mediaan = middelste · modus = vaakst'],
   ]},
-  {kop:'Natuurkunde — beweging & kracht', items:[
+  {kop:'Natuurkunde: beweging & kracht', items:[
     ['Snelheid','v = s / t   (km/u → m/s: ÷ 3,6)'],
     ['Versnelling','a = Δv / t'],
     ['Eenparig versneld','v = v₀ + a·t   ·   vanuit stilstand: s = ½·a·t²'],
@@ -60,7 +60,7 @@ export const FORMULEBLOKKEN: Formuleblok[] = [
     ['Zwaartekracht','Fz = m × g   (g ≈ 9,81 N/kg)'],
     ['Nettokracht','tel krachten met richting op (rechts − links)'],
   ]},
-  {kop:'Natuurkunde — energie & warmte', items:[
+  {kop:'Natuurkunde: energie & warmte', items:[
     ['Arbeid','W = F × s'],
     ['Kinetische energie','Ek = ½ × m × v²'],
     ['Zwaarte-energie','Ez = m × g × h'],
@@ -70,7 +70,7 @@ export const FORMULEBLOKKEN: Formuleblok[] = [
     ['Rendement','η = (nuttig ÷ toegevoerd) × 100%'],
     ['Warmte','Q = c × m × ΔT'],
   ]},
-  {kop:'Natuurkunde — elektriciteit', items:[
+  {kop:'Natuurkunde: elektriciteit', items:[
     ['Wet van Ohm','U = I × R'],
     ['Elektrisch vermogen','P = U × I'],
     ['Lading','Q = I × t   (in coulomb)'],

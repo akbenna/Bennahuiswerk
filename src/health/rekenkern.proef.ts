@@ -8,7 +8,7 @@
  * het geeft een ander getal.
  *
  * Daarom controleert deze proef niet tegen wat ik dacht dat eruit moest komen,
- * maar tegen wat er werkelijk uit de oude code kwam — over veertig
+ * maar tegen wat er werkelijk uit de oude code kwam, over veertig
  * dagenreeksen, dertig SCORE2-gevallen, twintig FIB-4's, vijfentwintig
  * STOP-BANG-invullingen en vijftien onderhoudszones. Zie
  * gereedschap/gouden-waarden-maken.mjs.
@@ -41,7 +41,7 @@ describe('constanten', () => {
 /** Velden die de oude rekenkern niet had. Zie de toelichting in de proef. */
 const NA_DE_OVERZETTING = ['tdeeOordeel', 'laagMogelijk']
 
-describe('analyse — veertig dagenreeksen', () => {
+describe('analyse: veertig dagenreeksen', () => {
   gevallen.forEach((g, i) => {
     it(`geval ${i}: ${Object.keys(g.dagen).length} dagen, ${g.profiel.geslacht}${g.profiel.leeftijd_jaar}`, () => {
       const nu = analyse(g.dagen, g.profiel, peildag) as unknown as Record<string, unknown>
@@ -71,7 +71,7 @@ describe('trendReeks', () => {
 /* SCORE2 is de enige van deze vijf die niet op de bit af vergeleken wordt, en
    dat is geen verzachting maar een correctie. De formule ketent exponentiëlen:
    `Math.exp` en `Math.pow` mogen per implementatie in de laatste bit afwijken,
-   en dat doen ze ook — op Node 24 vielen twee van de dertig gevallen om op het
+   en dat doen ze ook, op Node 24 vielen twee van de dertig gevallen om op het
    vijftiende significante cijfer (12.86730793710429 tegen 12.8673079371043).
    Dat is geen overzettingsfout maar het gedrag van een `double`.
 
@@ -137,7 +137,7 @@ describe('onderhoudZone', () => {
  * van 1.461 kcal over twaalf dagen en een weegtrend van +2,30 kg per week. De
  * som klopte; de bewering kon niet waar zijn.
  *
- * De proeven hieronder gaan over het oordeel en niet over de som — die blijft
+ * De proeven hieronder gaan over het oordeel en niet over de som, die blijft
  * met opzet staan zoals hij was.
  */
 describe('tdeeOordeel', () => {
@@ -171,10 +171,10 @@ describe('tdeeOordeel', () => {
 
   it('keurt ook het onmogelijke aan de bovenkant af', () => {
     /* Drieënhalve kilo per week eraf op 2.000 kcal vraagt een verbruik van
-       5.850 kcal per dag — tweeënhalf keer het rustverbruik van deze persoon
+       5.850 kcal per dag, tweeënhalf keer het rustverbruik van deze persoon
        is 5.488. Twee kilo per week haalt die grens nog níet (4.200), en dat is
        terecht: dat tempo is ongezond maar niet onmogelijk. Deze proef ging bij
-       het schrijven dan ook eerst op twee kilo en viel om — op mijn
+       het schrijven dan ook eerst op twee kilo en viel om, op mijn
        verwachting, niet op de code. */
     const a = analyse(reeks(2000, -3.5 / 7, 119), pf, peil)
     expect(a.tdee!).toBeGreaterThan(a.rustBMR * 2.5)

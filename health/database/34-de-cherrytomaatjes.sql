@@ -1,5 +1,5 @@
 -- =============================================================================
--- DE CHERRYTOMAATJES — de belofte die in bestand 31 bleef staan
+-- DE CHERRYTOMAATJES: de belofte die in bestand 31 bleef staan
 --
 -- Toegepast 18 september 2026. Nakijkvraag 3 gaf 1, 1 en 3 terug: het gerecht,
 -- het ingredient en alle drie de porties staan erin.
@@ -21,7 +21,7 @@
 --
 -- Dat was de andere mogelijkheid, en die is fout om twee redenen. De eerste
 -- staat in CLAUDE.md: kinderrijen aanmaken bij gerechten die er al staan, op
--- naam opgezocht, is precies wat er niet mag — dan krijgt een gerecht dat de
+-- naam opgezocht, is precies wat er niet mag, dan krijgt een gerecht dat de
 -- diëtist heeft bijgewerkt er stilletjes iets bij.
 --
 -- De tweede is inhoudelijk: ze horen er niet altijd bij. Soms liggen ze erbij en
@@ -31,7 +31,7 @@
 --
 -- DE CODE WORDT OPGEZOCHT EN NIET INGETIKT
 --
--- Elk ander bestand in deze reeks heeft zijn NEVO-codes hard staan — '230' voor
+-- Elk ander bestand in deze reeks heeft zijn NEVO-codes hard staan, '230' voor
 -- het broodje, '3231' voor de tonijnsalade. Die kwamen uit de tabel, opgezocht
 -- toen er een database bij de hand was. Die is er nu niet, en een code intikken
 -- die ik niet heb nagekeken is het ergste wat je in dit bestand kunt doen: een
@@ -66,7 +66,7 @@
 -- wat je wel eet en niet invult maakt de dag niet lichter, alleen minder waar.
 -- En vezel telt het wel mee.
 --
--- De kerstomaat is zwaarder dan je zou denken — een vleestomaat zit op 19 en
+-- De kerstomaat is zwaarder dan je zou denken, een vleestomaat zit op 19 en
 -- een gewone op 20. Hij is zoeter en bevat minder water. Anderhalf keer het
 -- verschil, op een handje vijf kilocalorieen: het maakt niets uit voor je dag
 -- en het is wel de reden dat de code nagekeken wordt.
@@ -92,7 +92,7 @@
 --     (select id from cultural_dishes where slug = 'lun-cherrytomaatjes');
 --   delete from cultural_dishes  where slug = 'lun-cherrytomaatjes';
 --
--- Op de slug van dít bestand. Niet op `slug like 'lun-%'` — die haalt de acht
+-- Op de slug van dít bestand. Niet op `slug like 'lun-%'`: die haalt de acht
 -- broodjes van bestand 31 mee.
 --
 -- Twee keer draaien voegt niets toe en haalt niets weg: `on conflict do
@@ -103,7 +103,7 @@
 -- HOE DIT IS NAGEKEKEN
 --
 -- Lokaal op Postgres 16, tegen het schema uit
--- `gereedschap/verhuizing/schema-gegenereerd.sql` — de echte tabellen met hun
+-- `gereedschap/verhuizing/schema-gegenereerd.sql`, de echte tabellen met hun
 -- checks en unieke indexen, niet een eigen opstelling die lakser is. Zie de kop
 -- van bestand 31 voor waarom dat verschil er een keer toe deed.
 --
@@ -139,14 +139,14 @@
 --
 -- De tijdelijke tabel is weg en komt niet terug. Blok 1 is een wacht en geen
 -- doorgeefluik: hij stopt het bestand, en blok 2 noemt de code zelf. Dat is
--- ook waarom de blokken hieronder los van elkaar te draaien zijn — wat in een
+-- ook waarom de blokken hieronder los van elkaar te draaien zijn, wat in een
 -- editor waar je met de muis selecteert geen luxe is maar een eis.
 -- =============================================================================
 
 BEGIN;
 
 -- ---------------------------------------------------------------------------
--- BLOK 1 — DE WACHT: STOPPEN ALS 2731 NIET IS WAT HIJ HOORT TE ZIJN
+-- BLOK 1: DE WACHT: STOPPEN ALS 2731 NIET IS WAT HIJ HOORT TE ZIJN
 -- ---------------------------------------------------------------------------
 
 do $$
@@ -157,7 +157,7 @@ begin
   /* DE CODE STAAT ER NU, EN WORDT NOG STEEDS NAGEKEKEN
 
      Eerst zocht dit blok de tomaat op naam, omdat ik de code niet had. Dat
-     leverde in de echte database vijf treffers op — en precies daarom viel het
+     leverde in de echte database vijf treffers op, en precies daarom viel het
      bestand om in plaats van er een te kiezen:
 
        2730 = Tomaat tros- rauw    22 kcal
@@ -171,7 +171,7 @@ begin
      deed daar wat hij moest doen: vijf kandidaten is geen keuze om stilzwijgend
      te maken, en het verschil tussen 19 en 30 kcal is anderhalf keer.
 
-     Nu de code bekend is, staat hij er — net als in alle andere bestanden in
+     Nu de code bekend is, staat hij er, net als in alle andere bestanden in
      deze reeks. Maar hij wordt nagekeken en niet geloofd: klopt de naam niet
      meer met wat hier verwacht wordt, of ligt de energie buiten wat een rauwe
      tomaat is, dan valt het bestand om. Dat is het vangnet voor een nieuwe
@@ -193,7 +193,7 @@ begin
   /* Een rauwe tomaat ligt tussen de twintig en veertig kilocalorieen per honderd
      gram; de kerstomaat zit met dertig aan de hoge kant, want hij is zoeter en
      bevat minder water dan een vleestomaat. Valt het erbuiten, dan is het iets
-     bewerkts — gedroogd, puree, ketchup — en dan klopt de portie niet meer. */
+     bewerkts (gedroogd, puree, ketchup) en dan klopt de portie niet meer. */
   if v_kcal not between 20 and 40 then
     raise exception
       'NEVO-code 2731 geeft % kcal per 100 g en dat is geen rauwe tomaat.', v_kcal;
@@ -204,7 +204,7 @@ end $$;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 2 — HET GERECHT
+-- BLOK 2: HET GERECHT
 -- ---------------------------------------------------------------------------
 
 with nieuw as (
@@ -230,7 +230,7 @@ with nieuw as (
   /* De code staat hier letterlijk en komt niet uit blok 1. Dat moet ook wel:
      de SQL-editor van Supabase draait elke opdracht in een eigen transactie,
      dus een tijdelijke tabel uit blok 1 bestaat hier niet meer. Blok 1 is de
-     wacht en niet de doorgeefluik — hij stopt het bestand voordat dit blok
+     wacht en niet de doorgeefluik, hij stopt het bestand voordat dit blok
      begint, en nakijkquery 1 hieronder vangt een losse code alsnog. */
   select n.id, 10, 'Cherrytomaat', 'groente', 80, 'g', 80,
          'nevo', '2731', 'ingredient', false,
@@ -257,7 +257,7 @@ COMMIT;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 3 — NAKIJKEN
+-- BLOK 3: NAKIJKEN
 -- ---------------------------------------------------------------------------
 --
 -- 1. Wijst de code naar een bestaande tabelregel? Nul rijen is goed.
@@ -284,7 +284,7 @@ COMMIT;
 --    Blok 2 zegt dan `INSERT 0 0` en dat is goed, geen fout: `on conflict do
 --    nothing` op de slug laat `returning` leeg, en daarmee blijven de twee
 --    kinderinserts leeg. Staat het gerecht er al van een eerdere poging, dan is
---    dat ook wat je de eerste keer ziet — kijk dan met de tellingen hieronder of
+--    dat ook wat je de eerste keer ziet, kijk dan met de tellingen hieronder of
 --    het er compleet staat, en draai anders eerst de terugdraairegel uit de kop.
 --
 --    select count(*) as hoort_een_te_zijn from cultural_dishes where slug = 'lun-cherrytomaatjes';

@@ -16,7 +16,7 @@ import { claims } from './claims'
 
 const namen = (v: Parameters<typeof claims>[0]) => claims(v).map((c) => c.id)
 
-describe('eiwit — 12 % en 20 % van de energie', () => {
+describe('eiwit: 12 % en 20 % van de energie', () => {
   /* 100 kcal, 5 g eiwit = 20 kcal = 20 %. */
   it('geeft eiwitrijk op precies 20 %', () => {
     expect(namen({ kcal: 100, eiwit_g: 5 })).toContain('eiwitrijk')
@@ -36,13 +36,13 @@ describe('eiwit — 12 % en 20 % van de energie', () => {
     expect(ids.filter((x) => x.startsWith('eiwit'))).toHaveLength(1)
   })
 
-  /* Skyr: 60 kcal en 11 g eiwit per 100 g — 44 kcal uit eiwit, ruim 70 %. */
+  /* Skyr: 60 kcal en 11 g eiwit per 100 g, 44 kcal uit eiwit, ruim 70 %. */
   it('herkent skyr als eiwitrijk', () => {
     expect(namen({ kcal: 60, eiwit_g: 11 })).toContain('eiwitrijk')
   })
 })
 
-describe('vezels — 3 en 6 gram, of per 100 kcal', () => {
+describe('vezels: 3 en 6 gram, of per 100 kcal', () => {
   it('geeft vezelrijk vanaf 6 g per 100 g', () => {
     expect(namen({ kcal: 300, vezel_g: 6 })).toContain('vezelrijk')
   })
@@ -60,7 +60,7 @@ describe('vezels — 3 en 6 gram, of per 100 kcal', () => {
   })
 })
 
-describe('natrium — alleen de lage kant', () => {
+describe('natrium: alleen de lage kant', () => {
   it('vlagt een laag natriumgehalte', () => {
     expect(namen({ kcal: 50, natrium_mg: 120 })).toContain('zoutarm')
   })

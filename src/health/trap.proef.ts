@@ -6,13 +6,13 @@
  *
  * Tot 20 september 2026 stond hier iets anders: zolang de criteria uit
  * samenvattingen kwamen, mocht er hélemaal geen "gehaald" uit komen. Dat slot
- * heeft gedaan waar het voor stond — de standaard zelf bleek drie dingen te
- * bevatten die in geen samenvatting stonden — en is er nu af.
+ * heeft gedaan waar het voor stond (de standaard zelf bleek drie dingen te
+ * bevatten die in geen samenvatting stonden) en is er nu af.
  *
  * Wat ervoor in de plaats komt is geen zwakkere eis maar een scherpere. De
  * criteria zijn nu de echte, en twee ervan zijn klinische oordelen: of de BMI
  * boven de drempel ligt, en of er gewichtsgerelateerde comorbiditeit is. Die
- * twee beoordeelt deze app niet en kán hij niet beoordelen — het gewicht is
+ * twee beoordeelt deze app niet en kán hij niet beoordelen, het gewicht is
  * zelf ingevoerd, de drempelset hangt af van een vraag die hij niet stelt, en
  * een leeg vinkje bij comorbiditeit is geen "nee".
  *
@@ -61,7 +61,7 @@ describe('de criteria van de medicatietrede', () => {
     expect(gezien).toBe(programmas.length * data.length * leeftijden.length)
   })
 
-  /* En de twee die altijd op "niet bekend" staan, staan er met hun reden — niet
+  /* En de twee die altijd op "niet bekend" staan, staan er met hun reden, niet
      als leeg vakje. Een criterium zonder uitleg leest als een gebrek van de
      app; mét uitleg leest het als wat het is. */
   it('de twee klinische criteria staan er altijd, met hun reden', () => {
@@ -92,7 +92,7 @@ describe('de criteria van de medicatietrede', () => {
       .toBe('niet bekend')
   })
 
-  /* De leeftijdsgrens, op de dag. 75 mag, 76 niet — en zonder geboortedatum
+  /* De leeftijdsgrens, op de dag. 75 mag, 76 niet, en zonder geboortedatum
      staat er niet "je bent te oud" maar "dat weten we niet". */
   it('de leeftijdsgrens ligt op 75 en niet op 76', () => {
     const leeftijd = (l: number | undefined) => medicatiecriteria(vraag({ leeftijd: l }))
@@ -111,7 +111,7 @@ describe('de criteria van de medicatietrede', () => {
   })
 
   /* Wat er vaststaat bevat geen BMI-grens. Die staan in DREMPELS, waar ze
-     inhoud zijn en geen criterium — het verschil tussen een boekje en een
+     inhoud zijn en geen criterium, het verschil tussen een boekje en een
      oordeel, en dat verschil hoort niet te vervagen. */
   it('wat vaststaat bevat geen BMI-grens', () => {
     expect(MEDICATIE.vast.length).toBeGreaterThan(0)
@@ -125,7 +125,7 @@ describe('de criteria van de medicatietrede', () => {
  * DE DREMPELS
  *
  * De vondst die het slot rechtvaardigde. De tweede set hoort er te zijn, en hij
- * hoort láger te liggen dan de eerste — anders is de hele reden dat hij er staat
+ * hoort láger te liggen dan de eerste, anders is de hele reden dat hij er staat
  * weg. Deze proef zou omvallen als iemand de tweede rij ooit weghaalt of
  * gelijktrekt.
  */
@@ -192,7 +192,7 @@ describe('waar je in je GLI staat', () => {
     glivoortgang(programma, begonnen as IsoDatum, '2026-09-19' as IsoDatum)
 
   it('binnen de behandelfase', () => {
-    /* CooL: acht maanden behandelfase. Drie kalendermaanden geleden begonnen —
+    /* CooL: acht maanden behandelfase. Drie kalendermaanden geleden begonnen,
        19 juni plus drie is 19 september, precies. */
     const g = v('2026-06-19')
     expect(g.fase).toBe('behandelfase')
@@ -211,7 +211,7 @@ describe('waar je in je GLI staat', () => {
 
   /* PRECIES OP DE GRENS VAN TWEE JAAR.
      Hier viel de eerste versie om. Die rekende met een gemiddelde maand van
-     30,44 dagen, en twee kalenderjaren zijn 730 dagen — gedeeld door 30,44 is
+     30,44 dagen, en twee kalenderjaren zijn 730 dagen, gedeeld door 30,44 is
      dat 23,98. Wie zijn tweejarige programma op de dag af had doorlopen, las
      dat hij nog in de onderhoudsfase zat. Nu wordt er in kalendermaanden
      geteld. */
@@ -240,7 +240,7 @@ describe('waar je in je GLI staat', () => {
 
   /* Allebei 'onbekend', maar niet dezelfde zin. "Niet te lezen" bij een datum
      die prima leesbaar is stuurt iemand zijn invoer nakijken die zich enkel in
-     het jaar vergist heeft — en dan vindt hij niets. */
+     het jaar vergist heeft, en dan vindt hij niets. */
   it('en een onleesbare of toekomstige datum ook, maar met een andere reden', () => {
     const onleesbaar = glivoortgang('cool', 'geen datum' as IsoDatum, '2026-09-19' as IsoDatum)
     expect(onleesbaar.fase).toBe('onbekend')

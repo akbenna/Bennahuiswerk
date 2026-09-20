@@ -3,7 +3,7 @@
  *
  * Uitspraak komt van het toestel zelf, met de eerste stem die Arabisch spreekt.
  * Heeft het toestel er geen, dan verdwijnen de luisterknoppen in plaats van dat
- * ze niets doen — een knop die zwijgt is erger dan geen knop. Datzelfde geldt
+ * ze niets doen, een knop die zwijgt is erger dan geen knop. Datzelfde geldt
  * voor geluid dat in het ouderscherm is uitgezet: de oude app liet de knoppen
  * dan staan en liet `zeg()` er stilletjes uit lopen, wat op één na alle schermen
  * een dode knop opleverde. Hier zit die voorkeur in `beschikbaar`.

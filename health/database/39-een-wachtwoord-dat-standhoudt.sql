@@ -1,9 +1,9 @@
 -- ===========================================================================
--- 39 — EEN WACHTWOORD DAT STANDHOUDT
+-- 39: EEN WACHTWOORD DAT STANDHOUDT
 -- ===========================================================================
 --
 -- TOEGEPAST: ja, op 19 september 2026. De ondergrens staat op twaalf tekens en de lijst
--- telt 155 woorden. Nakijken kan zonder je geheugen te vertrouwen — zie
+-- telt 155 woorden. Nakijken kan zonder je geheugen te vertrouwen, zie
 -- NAKIJKEN onderaan.
 --
 -- De eis stond op acht tekens, op vier plaatsen los van elkaar ingetikt:
@@ -27,7 +27,7 @@
 --
 -- EN DAAROM IS LENGTE NIET WAAR HET GEVAAR ZIT
 --
--- Niemand kiest twaalf willekeurige letters. Iemand kiest `abdelkader2019` —
+-- Niemand kiest twaalf willekeurige letters. Iemand kiest `abdelkader2019`:
 -- veertien tekens, en in een woordenboekaanval binnen een seconde gevonden.
 -- Een lengte-eis alleen verplaatst het probleem; hij lost het niet op.
 --
@@ -46,8 +46,8 @@
 -- WAT HIER MET OPZET NIET STAAT
 --
 -- Geen eis aan hoofdletters, cijfers of leestekens. Die regel is niet neutraal
--- maar schadelijk: hij levert `Wachtwoord1!` op — precies de vorm die elke
--- aanvaller als eerste probeert — en hij maakt een lange zin, het enige dat
+-- maar schadelijk: hij levert `Wachtwoord1!` op: precies de vorm die elke
+-- aanvaller als eerste probeert, en hij maakt een lange zin, het enige dat
 -- werkelijk helpt, onnodig lastig. NIST liet die eis in 2017 vallen.
 --
 -- WIE ER AL IS BLIJFT BINNENKOMEN
@@ -72,11 +72,11 @@
 BEGIN;
 
 -- ---------------------------------------------------------------------------
--- BLOK 1 — DE LIJST
+-- BLOK 1: DE LIJST
 -- ---------------------------------------------------------------------------
 --
 -- Wat hier staat is samengesteld uit wat er in gepubliceerde datalekken telkens
--- boven komt drijven. Het is géén geverifieerde top-duizend — die is van de
+-- boven komt drijven. Het is géén geverifieerde top-duizend, die is van de
 -- bouwomgeving niet te bereiken. De lijst is dus een ondergrens en geen bewijs:
 -- wat erin staat wordt geweigerd, en wat er niet in staat is daarmee niet
 -- goedgekeurd.
@@ -134,7 +134,7 @@ on conflict do nothing;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 2 — DE GRONDVORM
+-- BLOK 2: DE GRONDVORM
 -- ---------------------------------------------------------------------------
 --
 -- Waarom een blokkeerlijst naast een eis van twaalf tekens niet zinloos is.
@@ -184,11 +184,11 @@ declare
 begin
   /* HET UITROEPTEKEN STAAT MET OPZET NIET IN DE OMKERING
      Als leet voor een `i` bestaat het, maar als opvulling achteraan komt het
-     veel vaker voor — en dan is vertalen schadelijk. Stond het erin, dan werd
+     veel vaker voor, en dan is vertalen schadelijk. Stond het erin, dan werd
      `p4ssw0rd!!!!` de grondvorm `passwordiiii`, dat in geen enkele lijst staat,
      en glipte het er juist doorheen. Nu valt het als leesteken weg.
 
-     De `1` kan een `i` of een `l` zijn en welke het is verschilt per woord —
+     De `1` kan een `i` of een `l` zijn en welke het is verschilt per woord,
      `passw1rd` bestaat niet, `adm1n` wel. Daarom allebei de lezingen. */
   foreach v_vorm in array array[
     v_klein,
@@ -258,7 +258,7 @@ end $function$;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 3 — DE KLACHT
+-- BLOK 3: DE KLACHT
 -- ---------------------------------------------------------------------------
 --
 -- Eén klacht tegelijk, en in deze volgorde: eerst wat je zelf ziet (te kort),
@@ -287,13 +287,13 @@ begin
   /* Drie tekens is te kort om iets te betekenen: wie "ali" heet mag
      "kwaliteit" gebruiken. Vanaf vier wordt het een aanwijzing. */
   if length(v_naam) >= 4 and position(v_naam in v_klein) > 0 then
-    return 'Je accountnaam staat erin — dat raadt iemand meteen';
+    return 'Je accountnaam staat erin, dat raadt iemand meteen';
   end if;
 
   select count(distinct c) into v_verschillend
     from regexp_split_to_table(v_klein, '') c;
   if v_verschillend < 5 then
-    return 'Te weinig verschillende tekens — dit is een patroon, geen wachtwoord';
+    return 'Te weinig verschillende tekens, dit is een patroon, geen wachtwoord';
   end if;
 
   v_rij := kal_ww_rijlengte(v_klein);
@@ -314,14 +314,14 @@ comment on function public.kal_ww_klacht(text, text) is
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 4 — DE DRIE PLAATSEN WAAR EEN WACHTWOORD GEZET WORDT
+-- BLOK 4: DE DRIE PLAATSEN WAAR EEN WACHTWOORD GEZET WORDT
 -- ---------------------------------------------------------------------------
 --
 -- Alle drie krijgen dezelfde regel, en verder verandert er niets aan ze. De
 -- bodies hieronder zijn die uit bestand 33 en uit de dump, met precies één
 -- blok vervangen: de losse lengtetoets wordt een aanroep van `kal_ww_klacht`.
 --
--- Een functie vervangen is de gewone gang van zaken — functies zijn code en
+-- Een functie vervangen is de gewone gang van zaken, functies zijn code en
 -- geen inhoud, en `create or replace` raakt geen enkele rij aan.
 --
 -- `kal_registreren` blijft gooien waar de andere twee `{fout}` teruggeven. Dat
@@ -442,7 +442,7 @@ begin
 
   if v_id is null then
     insert into kal_aanmeld_poging(account) values (v_account);
-    /* Eén boodschap voor alle drie de gevallen — account bestaat niet, er is
+    /* Eén boodschap voor alle drie de gevallen, account bestaat niet, er is
        geen code, de code klopt niet. Het verschil zou verklappen welke
        accounts er zijn en welke een code hebben klaarstaan. */
     return jsonb_build_object('fout', 'Die combinatie klopt niet');

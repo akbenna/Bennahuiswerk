@@ -1,13 +1,13 @@
 -- =============================================================================
--- NATRIUM IN HET ZOEKEN — en de vraag die eerst beantwoord moet worden
+-- NATRIUM IN HET ZOEKEN, en de vraag die eerst beantwoord moet worden
 --
 -- Toegepast op 14-09-2026.
 --
 -- Stap 1 gaf `natrium_mg`, numeric, en 2.326 van de 2.328 producten dragen een
--- waarde — geen lege kolom maar een echte import. Stap 2 liet zien dat de
+-- waarde: geen lege kolom maar een echte import. Stap 2 liet zien dat de
 -- levende kal_zoeken woordelijk gelijk was aan die in bestand 21. Stap 3 is
 -- gedraaid en nagekeken: een bouillonblokje geeft 19.687 mg natrium per 100 g,
--- wat neerkomt op ruim 49 gram zout — een blokje is inderdaad ongeveer half
+-- wat neerkomt op ruim 49 gram zout, een blokje is inderdaad ongeveer half
 -- zout, en dat is de uitslag die je wilt zien als je weet dat het klopt.
 --
 -- WAAROM
@@ -28,18 +28,18 @@
 --     eiwit_g, vet_g, koolhydraten_g, vezels_g, benadering
 --
 -- Vier voedingsstoffen dus. Nergens in de hele map wordt een natriumkolom
--- genoemd — niet in het zoeken, niet in de portiematen, niet in de
+-- genoemd, niet in het zoeken, niet in de portiematen, niet in de
 -- verzadigingsscore. Dat is het vermoeden dat stap 1 moet toetsen: het is goed
 -- mogelijk dat de import destijds alleen die vier stoffen heeft meegenomen en
 -- dat natrium in de brontabel helemaal niet bestaat.
 --
 -- Dat verschil bepaalt welk werk het is. Staat de kolom er, dan is dit een
 -- kwestie van één functie aanvullen. Staat hij er niet, dan is het een import
--- uit het NEVO-bestand, en dat is een heel ander soort klus — de CSV blijft
+-- uit het NEVO-bestand, en dat is een heel ander soort klus, de CSV blijft
 -- buiten de repo, dus die stap gebeurt met de hand en niet vanuit een bestand.
 --
 -- =============================================================================
--- STAP 1 — bestaat de kolom?
+-- STAP 1: bestaat de kolom?
 --
 -- Draai dit eerst. Verder lezen heeft geen zin voordat je de uitslag hebt.
 
@@ -57,7 +57,7 @@ select column_name, data_type
 -- vergissing die je later ontdekt, maar één die het zoeken meteen breekt.
 
 -- =============================================================================
--- STAP 2 — is de levende functie nog dezelfde als bestand 21?
+-- STAP 2: is de levende functie nog dezelfde als bestand 21?
 --
 -- Alleen uitvoeren als stap 1 een kolom gaf.
 --
@@ -77,7 +77,7 @@ select pg_get_functiondef(p.oid)
  where n.nspname = 'public' and p.proname = 'kal_zoeken';
 
 -- =============================================================================
--- STAP 3 — de verandering zelf
+-- STAP 3: de verandering zelf
 --
 -- Alleen uitvoeren als stap 1 een kolom gaf én stap 2 liet zien dat de levende
 -- functie gelijk is aan die in 21-de-zeef-en-de-volgorde.sql. Op 14 september
@@ -89,7 +89,7 @@ select pg_get_functiondef(p.oid)
 -- Stap 1 gaf op 14 september 2026: `natrium_mg`, numeric. Die naam staat
 -- hieronder ingevuld en de sleutel heet net zo, dus de eenheid in de naam klopt
 -- met wat erin zit. Zou de kolom ooit grammen gaan dragen, dan moet de sleutel
--- mee veranderen — een veld dat 'natrium_mg' heet met grammen erin is het soort
+-- mee veranderen: een veld dat 'natrium_mg' heet met grammen erin is het soort
 -- fout dat er jaren in blijft zitten.
 --
 -- EN ZOUT IS GEEN NATRIUM: zout = natrium x 2,5. Welke van de twee op het scherm
@@ -162,8 +162,8 @@ begin
     -- DE GERECHTEN, MET TWEE DINGEN ERBIJ
     --
     -- Ten eerste: `names` wordt nu meegezocht. Die kolom staat er vanaf het
-    -- begin — alternatieve namen per taal, met sleutels nl, darija_lat,
-    -- darija_ar, tarifit_lat, ar, tr en srn — en werd door het zoeken
+    -- begin: alternatieve namen per taal, met sleutels nl, darija_lat,
+    -- darija_ar, tarifit_lat, ar, tr en srn, en werd door het zoeken
     -- doodleuk overgeslagen. Wie zijn eten in het Darija of het Turks noemt
     -- vond niets, terwijl het antwoord al in de rij stond. Dat is geen nieuwe
     -- inhoud maar inhoud die er lag en niet bereikbaar was.
@@ -171,7 +171,7 @@ begin
     -- Ten tweede: dezelfde terugval als bij NEVO, en om dezelfde reden alleen
     -- op het skelet. De trigram-zeef haalde hier net zo goed onzin binnen.
     -- `jsonb_agg` geeft NULL bij een lege verzameling, dus een `coalesce` met
-    -- drie takken doet precies wat er nodig is — de tweede tak wordt alleen
+    -- drie takken doet precies wat er nodig is, de tweede tak wordt alleen
     -- berekend als de eerste niets opleverde, en de derde alleen als beide
     -- niets gaven.
     'gerechten', coalesce(
@@ -242,7 +242,7 @@ begin
 end $function$;
 
 -- =============================================================================
--- STAP 4 — nakijken
+-- STAP 4: nakijken
 --
 -- Na het toepassen, met een product waarvan je de zoutwaarde kent:
 

@@ -4,15 +4,15 @@
  * Een sjabloon dat een verkeerd antwoord geeft is erger dan een ontbrekende
  * opgave: het kind rekent goed, krijgt "fout", en leert dat het het niet kan.
  * Vandaar dat elk rekenkundig sjabloon hier honderden keren draait en het
- * antwoord wordt teruggerekend uit de getallen die in de vráág staan — dus uit
+ * antwoord wordt teruggerekend uit de getallen die in de vráág staan, dus uit
  * wat het kind leest, en niet uit dezelfde variabele die de som ook al maakte.
  * Wie hier een som verandert, moet deze narekening meeveranderen; dat is precies
  * de bedoeling.
  *
  * Voor de taal- en kennissjablonen kan dat niet: dat "meeuw" vóór "meisje" staat
  * is te herleiden, dat "das Haus" das is niet. Die krijgen daarom de controles
- * die er wél zijn — een antwoord dat tussen de opties staat, een afleider die
- * echt verschilt, geen dubbele regels in de lijst — en zijn verder met de hand
+ * die er wél zijn (een antwoord dat tussen de opties staat, een afleider die
+ * echt verschilt, geen dubbele regels in de lijst) en zijn verder met de hand
  * nagelopen. Het alfabetiseren en het samenstellen staan wél bij de narekening,
  * want die zijn uit de vraag af te leiden.
  */
@@ -222,7 +222,7 @@ describe('de tweede voorraad sjablonen', () => {
   })
 
   it('keurt zijn eigen antwoord goed', () => {
-    /* Het antwoord moet ook door `antwoordKlopt` komen — een komma, een euro of
+    /* Het antwoord moet ook door `antwoordKlopt` komen, een komma, een euro of
        een spatie te veel maakt een goed antwoord anders fout. */
     const vast = extraSjablonen(toevalUit(vasteBron()))
     for (const t of vast) {

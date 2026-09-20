@@ -46,7 +46,7 @@ describe('tekort', () => {
   it('trekt af, en draait de band daarbij om', () => {
     const t = tekort(stand(1200, 60), 2000, 160)
     expect(t.kcalOver).toBe(800)
-    /* At je 1380 (de bovenkant), dan hou je 620 over — dat is de óndergrens. */
+    /* At je 1380 (de bovenkant), dan hou je 620 over, dat is de óndergrens. */
     expect(t.kcalOverLaag).toBe(620)
     expect(t.kcalOverHoog).toBe(980)
     expect(t.eiwitOver).toBe(100)
@@ -128,7 +128,7 @@ describe('voorstellen', () => {
     expect(kwark!.eisNa!).toBeLessThan(t.eis!)
 
     const brood = uit.find((v) => v.naam === 'Twee bruine boterhammen')
-    /* 50 g in 180 kcal: de lat stijgt naar 0,278 — meer dan het dubbele. Dít is
+    /* 50 g in 180 kcal: de lat stijgt naar 0,278: meer dan het dubbele. Dít is
        wat het scherm eerst verzweeg door alleen de goede gevallen te merken. */
     expect(brood?.eisNa).toBeCloseTo(50 / 180, 5)
     expect(brood!.eisNa!).toBeGreaterThan(t.eis!)
@@ -157,7 +157,7 @@ describe('voorstellen', () => {
   it('zet de lat op nul als het voorstel het eiwit in één keer rondmaakt', () => {
     /* Nog 20 g te gaan en de kwark levert 40. Wat er daarna nog bij komt hoeft
        geen eiwit meer te leveren: de lat ligt op nul. Dat is een echte waarde
-       en geen ontbrekende — daarom nul en niet null. */
+       en geen ontbrekende, daarom nul en niet null. */
     const t = tekort(stand(1500, 140), 2000, 160)
     expect(t.eiwitOver).toBe(20)
     const kwark = voorstellen(geschiedenis, t, { nu: NU, moment: 'tussendoor' })
@@ -185,7 +185,7 @@ describe('voorstellen', () => {
 
   it('rangschikt op dichtheid en niet op de grootste portie', () => {
     /* Dit ging mis op het scherm. Haalt niets de eis, dan zette de sortering op
-       absoluut eiwit het grootste gerecht bovenaan — bijna je hele resterende
+       absoluut eiwit het grootste gerecht bovenaan, bijna je hele resterende
        ruimte in één keer. De eis is uitgedrukt per kcal, dus daarop hoort ook
        gerangschikt te worden. */
     const zwaar = [

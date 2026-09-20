@@ -1,9 +1,9 @@
 /**
- * INSPANNING — wandelen, rennen, fietsen, en waarom ze niet hetzelfde tellen
+ * INSPANNING: wandelen, rennen, fietsen, en waarom ze niet hetzelfde tellen
  *
  * Dit scherm had één veld voor beweging buiten de stappen om: `fiets_min`. Die
- * naam was altijd al te smal — wie zwemt of hardloopt zette zijn minuten in een
- * vakje dat "fietsen" heette — maar het werd pas echt fout bij het rekenen.
+ * naam was altijd al te smal (wie zwemt of hardloopt zette zijn minuten in een
+ * vakje dat "fietsen" heette) maar het werd pas echt fout bij het rekenen.
  *
  * WAT DE RICHTLIJN WERKELIJK ZEGT
  *
@@ -20,8 +20,8 @@
  *
  * De intensiteit wordt afgeleid uit de soort, en dat is een aanname. Rennen is
  * niet altijd zwaar en wandelen niet altijd matig: dat hangt af van tempo,
- * helling en van wie het doet. Wat een horloge daarover weet — hartslag als
- * percentage van de reserve — komt niet mee in een schermafdruk en niet in de
+ * helling en van wie het doet. Wat een horloge daarover weet (hartslag als
+ * percentage van de reserve) komt niet mee in een schermafdruk en niet in de
  * koppeling.
  *
  * Dus staat het er als aanname en niet als meting. `geschat` blijft bij de rij
@@ -30,8 +30,8 @@
  *
  * WAT HIER NIET IN ZIT
  *
- * Krachttraining. Die telt in de richtlijn apart — twee keer per week
- * spierversterkend, naast de aerobe minuten — en heeft in deze app zijn eigen
+ * Krachttraining. Die telt in de richtlijn apart (twee keer per week
+ * spierversterkend, naast de aerobe minuten) en heeft in deze app zijn eigen
  * tabel en zijn eigen drie bolletjes. Zou hij hier ook meetellen, dan haalde
  * één zware sessie de halve week aerobe norm en dat is precies wat de richtlijn
  * níet zegt.
@@ -45,7 +45,7 @@ export type Intensiteit = 'matig' | 'zwaar'
 export interface Soort {
   sleutel: string
   naam: string
-  /** Wat deze soort meestal is. Een aanname, geen meting — zie de kop. */
+  /** Wat deze soort meestal is. Een aanname, geen meting: zie de kop. */
   intensiteit: Intensiteit
   /** Waar die aanname op rust, in de taal van het scherm. */
   waarom: string
@@ -97,8 +97,8 @@ export function soortVan(sleutel: string): Soort | null {
 /**
  * Wat een soort meestal is.
  *
- * Een sleutel die deze app niet kent — uit een oudere rij, of uit een import
- * die iets nieuws zag — telt als matig. Dat is de kant waarop een fout het
+ * Een sleutel die deze app niet kent (uit een oudere rij, of uit een import
+ * die iets nieuws zag) telt als matig. Dat is de kant waarop een fout het
  * minst kwaad doet: te laag rekenen laat je doorgaan, te hoog rekenen zegt dat
  * je klaar bent.
  */
@@ -162,8 +162,8 @@ export function verdeling(
  * half uur in de nieuwe lijst telt 75 matige minuten, en beide staan er.
  *
  * De prijs: een rit die de koppeling doorgeeft én die je met de hand toevoegt
- * telt twee keer. Dat is zichtbaar — ze staan allebei in de lijst van die dag,
- * met hun herkomst erbij — en met één tik weg te halen. Een stille
+ * telt twee keer. Dat is zichtbaar (ze staan allebei in de lijst van die dag,
+ * met hun herkomst erbij) en met één tik weg te halen. Een stille
  * voorkeursregel die er één van de twee laat verdwijnen zou erger zijn: dan mis
  * je minuten zonder te weten welke.
  */
@@ -188,7 +188,7 @@ export function weekposten(
   for (const d of datums) {
     const m = fiets[d]
     /* Nul is geen rit. `kal_dagen.fiets_min` heeft `default 0`, dus elke dag die
-       ooit is aangeraakt heeft er een — zonder deze regel stond er bij iedereen
+       ooit is aangeraakt heeft er een, zonder deze regel stond er bij iedereen
        een kolom nullen in de lijst. */
     if (m != null && m > 0) {
       uit.push({ datum: d, soort: 'fietsen', minuten: m, intensiteit: 'matig', bron: OUD_VELD })
@@ -204,7 +204,7 @@ export function zwareMinuten(rijen: readonly Post[]): number {
 }
 
 /**
- * WELKE DAGEN "DEZE WEEK" ZIJN — en waarom dat geen vanzelfsprekende vraag was
+ * WELKE DAGEN "DEZE WEEK" ZIJN, en waarom dat geen vanzelfsprekende vraag was
  *
  * Dit scherm nam de dagen uit de gegevens: de sleutels van de dagenkaart,
  * gesorteerd, de laatste eenentwintig. Dat leest logisch en het is op twee
@@ -215,7 +215,7 @@ export function zwareMinuten(rijen: readonly Post[]): number {
  * De dagenkaart heeft alleen dagen waarvoor een rij in `kal_dagen` bestaat, of
  * waarop iets gelogd is. Een work-outafdruk importeren maakt zo'n rij níet: die
  * schrijft alleen in `kal_inspanning`. Op een dag zonder stappen en zonder eten
- * — een dag van voordat de koppeling draaide, bijvoorbeeld — stond je rit dus
+ * (een dag van voordat de koppeling draaide, bijvoorbeeld) stond je rit dus
  * wél in de database en nergens op het scherm, en telde hij ook niet mee voor
  * de norm. Precies dezelfde fout als `actieve_energie_kcal`, dat maanden lang
  * netjes werd opgeslagen en door niets werd gelezen.
