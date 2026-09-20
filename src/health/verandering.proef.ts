@@ -15,9 +15,14 @@
  * **De volgorde komt uit de datums en niet uit de rij.** Metingen komen uit de
  * database in de volgorde waarin ze toevallig staan; het eerste element van een
  * array is niet de oudste meting.
+ *
+ * **En er hoort een tijd bij het verschil.** Zes centimeter eraf in vier maanden
+ * is iets anders dan zes centimeter eraf in drie jaar. De proef zet de grenzen
+ * vast waar de eenheid wisselt, want juist daar kan een verkeerde deler
+ * onopgemerkt blijven: rond de twee weken schelen dagen en weken weinig.
  */
 import { describe, expect, it } from 'vitest'
-import { veranderingen } from './verandering'
+import { tijdspanne, veranderingen } from './verandering'
 import type { Lab, Meting } from '@/gedeeld/db/tabellen'
 import type { Trendpunt } from './rekenkern'
 
@@ -125,5 +130,54 @@ describe('de labwaarden', () => {
     const zonder: Lab = { ...lab('2026-08-01', 'hba1c', 0), waarde: null }
     const uit = veranderingen([], [], [lab('2026-01-01', 'hba1c', 41), zonder])
     expect(vind(uit, 'HbA1c')).toBeUndefined()
+  })
+})
+
+describe('hoe lang ertussen zit', () => {
+  it('telt de dagen van de eerste tot de laatste meting', () => {
+    const uit = veranderingen([], [
+      meting('2026-10-01', 'middelomtrek', 104),
+      meting('2026-09-01', 'middelomtrek', 108),
+    ], [])
+    expect(vind(uit, 'Middelomtrek')?.dagen).toBe(30)
+  })
+
+  it('en doet dat ook voor het gewicht uit de gladde lijn', () => {
+    const reeks = [
+      punt('2026-08-01', null, null),
+      punt('2026-08-02', 118.0, 118.0),
+      punt('2026-08-20', 117.0, 117.4),
+    ]
+    expect(vind(veranderingen(reeks, [], []), 'Gewicht (trend)')?.dagen).toBe(18)
+  })
+})
+
+describe('de eenheid waarin die tijd op het scherm komt', () => {
+  it('houdt het onder de twee weken bij dagen', () => {
+    expect(tijdspanne(1)).toBe('1 d')
+    expect(tijdspanne(13)).toBe('13 d')
+  })
+
+  /* DE PROEVEN WAAR DIT STUK VOOR BESTAAT: precies op de grenzen. Een deler die
+     verspringt van zeven naar dertig valt hier om, en nergens anders. Dat de
+     maand op 30,44 dagen staat en niet op 30 valt hier niet om, en dat hoort
+     ook niet: op hele maanden afgerond geven ze hetzelfde antwoord. */
+  it('en stapt op veertien dagen over naar weken', () => {
+    expect(tijdspanne(14)).toBe('2 wk')
+    expect(tijdspanne(69)).toBe('10 wk')
+  })
+
+  it('op zeventig dagen naar maanden', () => {
+    expect(tijdspanne(70)).toBe('2 mnd')
+    expect(tijdspanne(111)).toBe('4 mnd')
+    expect(tijdspanne(365)).toBe('12 mnd')
+  })
+
+  /* Anderhalf jaar leest als 18 mnd en niet als 2 jr: daar is de maand nog de
+     eenheid die het verschil draagt. */
+  it('en pas op twee jaar naar jaren', () => {
+    expect(tijdspanne(729)).toBe('24 mnd')
+    expect(tijdspanne(730)).toBe('2 jr')
+    expect(tijdspanne(1000)).toBe('3 jr')
   })
 })

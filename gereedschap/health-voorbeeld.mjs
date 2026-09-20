@@ -735,7 +735,16 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
           throw new Error(`${stam}: ${verwacht} ontbreekt in wat er veranderd is\n  ${platte}`)
         }
       }
-      console.log(`${''.padEnd(26)} veranderd: ${platte.slice(0, 96)}`)
+      /* En hoe lang erover gedaan is. Het gewicht komt uit de reeks van
+         achtentwintig dagen en de metingen liggen honderdelf dagen uit elkaar,
+         dus deze kaart hoort twee verschillende eenheden te tonen. Staat er
+         overal dezelfde, dan volgt de eenheid de tijd niet. */
+      for (const spanne of ['· 4 wk', '· 4 mnd']) {
+        if (!platte.includes(spanne)) {
+          throw new Error(`${stam}: "${spanne}" ontbreekt in wat er veranderd is\n  ${platte}`)
+        }
+      }
+      console.log(`${''.padEnd(26)} veranderd: ${platte.slice(0, 110)}`)
     }
 
     /* DE VOLGORDE VAN HET INZICHTSCHERM

@@ -25,8 +25,16 @@
  * "goed" betekent. Of een daling van 0,3 in je HbA1c iets betekent hangt af van
  * dingen die deze app niet weet, en de grens tussen informeren en beoordelen
  * ligt in deze app overal op dezelfde plek.
+ *
+ * EN ER STAAT BIJ HOE LANG EROVER GEDAAN IS
+ *
+ * Een verschil zonder tijd erbij is niet te lezen. Zes centimeter eraf in vier
+ * maanden is iets anders dan zes centimeter eraf in drie jaar, en het getal is
+ * in beide gevallen hetzelfde. De datums stonden er al; ze stonden alleen niet
+ * op het scherm.
  */
 import type { Lab, Meting } from '@/gedeeld/db/tabellen'
+import { dagenTussen } from './klinisch'
 import type { Trendpunt } from './rekenkern'
 
 export interface Verandering {
@@ -41,6 +49,31 @@ export interface Verandering {
   verschil: number
   /** Hoeveel cijfers achter de komma dit getal verdraagt. */
   decimalen: number
+  /** Dagen tussen die twee meetmomenten. Altijd minstens één. */
+  dagen: number
+}
+
+/** Een maand is 365,25/12 dagen, want een kalendermaand bestaat hier niet. */
+const MAAND = 365.25 / 12
+
+/**
+ * Hoe lang ertussen zit, in de eenheid die bij die afstand past.
+ *
+ * Onder de twee weken staan de dagen er los; daarboven zou "17 dagen" preciezer
+ * klinken dan het is, want de meetmomenten liggen zelf al niet op een vaste
+ * dag. Vanaf twee jaar worden het jaren, en daaronder blijven het maanden:
+ * "18 mnd" zegt meer dan "1,5 jr".
+ *
+ * Hoe lang een maand of een jaar precies duurt doet hier niet toe: op hele
+ * maanden en hele jaren afgerond geeft elke redelijke waarde hetzelfde antwoord.
+ * Wat wel toedoet zijn de grenzen, en dat een span niet in de verkeerde eenheid
+ * belandt. Dat is wat de proef vasthoudt.
+ */
+export function tijdspanne(dagen: number): string {
+  if (dagen < 14) return `${dagen} d`
+  if (dagen < 70) return `${Math.round(dagen / 7)} wk`
+  if (dagen < 730) return `${Math.round(dagen / MAAND)} mnd`
+  return `${Math.round(dagen / (MAAND * 12))} jr`
 }
 
 /** Twee metingen op verschillende dagen, of niets. */
@@ -71,6 +104,7 @@ function regel(
     totDatum: b.tot.datum,
     verschil: rond(b.tot.waarde - b.van.waarde, decimalen),
     decimalen,
+    dagen: dagenTussen(b.van.datum, b.tot.datum),
   }
 }
 

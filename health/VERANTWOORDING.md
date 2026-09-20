@@ -2480,3 +2480,41 @@ Zes mutanten gedood. Twee ervan zijn het vermelden waard: vooruitkijken in de
 gewichtsreeks (dan hangt er een gewicht naast een omtrek die maanden ouder is)
 en twee metingen op één dag als twee punten tellen (dan telt een dag waarop je
 twee keer mat dubbel mee in het beeld).
+
+## 36. Een verschil zonder tijd erbij is niet te lezen
+
+De kaart "Wat er veranderd is" zette twee momenten naast elkaar en noemde het
+verschil: `114 → 108 cm`, `-6`. Wat er niet bij stond is hoe lang daar over
+gedaan is, en dat is precies het getal dat bepaalt wat je van de zes vindt. Zes
+centimeter eraf in vier maanden is een beloop; zes centimeter eraf in drie jaar
+is ruis met een lange aanloop. Het verschil op het scherm is in beide gevallen
+hetzelfde.
+
+De datums stonden er al. `Verandering` droeg `vanDatum` en `totDatum` vanaf het
+begin, want de kaart heeft ze nodig om te weten of er wel twee meetdagen zijn.
+Ze stonden alleen niet op het scherm. Er is dus niets bij gemeten en niets bij
+geschat: er staat nu `118,9 → 117,3 kg · 4 wk` waar eerst alleen het eerste deel
+stond.
+
+### De eenheid wisselt mee, en waarom daar grenzen bij horen
+
+Onder de twee weken staan er dagen, daarboven weken, vanaf tien weken maanden en
+vanaf twee jaar jaren. Twee keuzes daarin zijn geen afronding maar een oordeel.
+
+**Boven de twee weken geen dagen meer.** "Zeventien dagen" klinkt preciezer dan
+het is. De meetmomenten zelf liggen niet op een vaste dag; je meet je middel
+wanneer je eraan denkt. De dag erbij zetten suggereert een nauwkeurigheid die in
+de meting niet zit.
+
+**Onder de twee jaar geen jaren.** Anderhalf jaar leest als `18 mnd` en niet als
+`2 jr`. Daar is de maand nog de eenheid die het verschil draagt, en afronden naar
+hele jaren gooit een half jaar weg.
+
+Hoe lang een maand of een jaar precies duurt doet hier niet toe. Op hele maanden
+afgerond geeft 30, 30,44 of 31 dagen hetzelfde antwoord, en dat is ook wat de
+mutatieproef laat zien: de maand van 30,44 naar 30 zetten doodt geen enkele
+proef, en dat is terecht. Wat wél omvalt zijn de grenzen (veertien, zeventig,
+zevenhonderddertig) en de deler die van de ene eenheid naar de andere springt.
+Zes mutanten gedood, één overlevende die na onderzoek een equivalente bleek: het
+jaar stond als tweede constante in de code en is nu `MAAND * 12`, zodat de vraag
+zich niet nog eens stelt.
