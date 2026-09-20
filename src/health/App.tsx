@@ -33,6 +33,7 @@ import {
 } from './vensters/Instellingen'
 import { LerenVenster } from './vensters/Leren'
 import { VerdiepVenster } from './vensters/Verdiepen'
+import { WegingVenster } from './vensters/Wegingen'
 import { Opzet } from './Opzet'
 import { Kaart, Knop, Spin } from './onderdelen/basis'
 import { useVeeg } from './veeg'
@@ -98,7 +99,7 @@ function Postbus({ token, a }: { token: string; a: Analyse }) {
 
 type Tab = (typeof TABS)[number][0]
 type VensterNaam = 'profiel' | 'import' | 'account' | 'koppelen' | 'overzicht'
-  | 'hoewerkt' | 'leren' | 'verdiepen' | 'verslag' | 'voorkeuren'
+  | 'hoewerkt' | 'leren' | 'verdiepen' | 'verslag' | 'voorkeuren' | 'wegingen'
 
 export function App() {
   const k = useKalibratie()
@@ -144,6 +145,17 @@ export function App() {
         rechts: () => zetDatum(plusDagen(datum, -1)),
       }
     : {})
+
+  /* Een dagveld op een dag die je níet aan het bekijken bent. Het venster met
+     je wegingen loopt de hele reeks langs, dus daar is de datum van de regel de
+     datum die telt en niet de dag die bovenaan staat. */
+  const zetDagveldOp = useCallback((
+    d: IsoDatum, veld: string, waarde: string | number | boolean | null,
+  ) => {
+    void k.wijzig((t) => roep('kal_dag_zetten', {
+      p_token: t, p_datum: d, p_patch: { [veld]: waarde },
+    }))
+  }, [k])
 
   const voegRegelsToe = useCallback((regels: NieuweRegel[]) => {
     if (!regels.length) return
@@ -271,7 +283,8 @@ export function App() {
           )}
 
           {tab === 'model' && (
-            <Model a={a} dagen={k.dagenkaart} reeks={reeks} profiel={profiel} labs={k.alles.labs} />
+            <Model a={a} dagen={k.dagenkaart} reeks={reeks} profiel={profiel} labs={k.alles.labs}
+                   opWegingen={() => zetVenster('wegingen')} />
           )}
 
           {tab === 'voeding' && (
@@ -411,6 +424,11 @@ export function App() {
 
       {venster === 'verdiepen' && (
         <VerdiepVenster begin={verdiepStuk} opSluiten={() => zetVenster(null)} />
+      )}
+
+      {venster === 'wegingen' && (
+        <WegingVenster reeks={reeks} opSluiten={() => zetVenster(null)}
+                       zetGewicht={(d, kg) => zetDagveldOp(d, 'gewicht_kg', kg)} />
       )}
 
       {venster === 'profiel' && (

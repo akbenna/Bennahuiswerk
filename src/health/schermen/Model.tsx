@@ -22,10 +22,12 @@ const ZEKERHEID_LABEL = {
 } as const
 
 export function Model(
-  { a, dagen, reeks, profiel, labs }:
+  { a, dagen, reeks, profiel, labs, opWegingen }:
   {
     a: Analyse; dagen: Dagenkaart; reeks: Trendpunt[]
     profiel: Profiel; labs: Lab[]
+    /** Het venster waarin je je wegingen naloopt. */
+    opWegingen: () => void
   },
 ) {
   const trap = { geen: 0, laag: 1, middel: 2, hoog: 3 }[a.zekerheid]
@@ -309,9 +311,19 @@ export function Model(
                 + uitbijters.map((u) => kortNL(u.d)).join(', ') + '.'}
             {' '}Hij telt gewoon mee, want deze app gooit geen metingen weg. In de figuur staat hij
             op de rand met zijn eigen getal erbij: zo bepaalt hij de uitsnede niet en blijft de
-            rest van de reeks leesbaar. Klopt het niet, zet hem dan recht op de dag zelf.
+            rest van de reeks leesbaar. Klopt het niet, dan zet jij hem recht.
           </p>
         )}
+        {/* DE TWEEDE HELFT VAN DEZELFDE BELOFTE
+            "Zet hem recht op de dag zelf" betekende: zoek uit welke dag het was,
+            blader erheen, typ het over. Voor één weging gaat dat. Voor iemand
+            die eerst een maand met de app heeft zitten spelen niet, en dan
+            blijft er een reeks staan met een 190 erin. */}
+        <Rij style={{ marginTop: 10 }}>
+          <Knop opKlik={opWegingen}>
+            {uitbijters.length > 0 ? 'Loop je wegingen na' : 'Je wegingen'}
+          </Knop>
+        </Rij>
         <Uitleg id="weeglijn" label="wat je hier ziet">
           <p>
             Punten zijn losse wegingen, de lijn is een exponentieel gewogen gemiddelde met een

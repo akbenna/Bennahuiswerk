@@ -214,6 +214,14 @@ label.veld>span{display:block;font-size:.72rem;color:var(--grijs);margin-bottom:
   transition:transform .15s ease;display:inline-block}
 .uitleg[open]>summary::before{transform:rotate(90deg)}
 .uitleg>summary:hover{color:var(--ink)}
+/* De zes meetvakjes op Gezondheid. Een uitrolmenu met één waardeveld ernaast
+   kostte bij een bloeddruk twee keer kiezen, twee keer typen en twee keer
+   opslaan, en een bloeddruk is nu juist twee getallen die bij elkaar horen.
+   Twee kolommen op een telefoon, drie zodra het past. */
+.meetvelden{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 10px;margin-top:8px}
+@media (min-width:560px){.meetvelden{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.meetvelden input{width:100%}
+
 /* Een verwijzing midden in een zin: een knop die eruitziet als tekst, want dat
    is wat hij is. Dezelfde kleur als een 'waarom', zodat een lezer die kleur één
    ding leert betekenen: hier staat meer. */

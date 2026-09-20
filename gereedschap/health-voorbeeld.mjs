@@ -186,6 +186,11 @@ function metingen(aantalDagen) {
      is" niets te vergelijken, en dan zou de proef een kaart tonen die op de
      telefoon van de gebruiker wél vol staat en hier altijd leeg blijft. */
   const toen = iso(NU - 120 * DAG)
+  /* Een tweede dag binnen dezelfde week als `toen`. Zonder die dag rust het
+     begin van de bloeddrukreeks op één meting, en dan is op het scherm niet te
+     zien of de kaart het weekgemiddelde neemt of de eerste de beste waarde. Met
+     deze dag erbij zijn de twee antwoorden verschillend: 146 tegen 148. */
+  const toenOok = iso(NU - 118 * DAG)
   return [
     { id: 'm1', datum: d, soort: 'bloeddruk_sys', waarde: 128, eenheid: 'mmHg', notitie: null },
     { id: 'm2', datum: d, soort: 'bloeddruk_dia', waarde: 82, eenheid: 'mmHg', notitie: null },
@@ -193,6 +198,8 @@ function metingen(aantalDagen) {
     { id: 'm4', datum: toen, soort: 'bloeddruk_sys', waarde: 146, eenheid: 'mmHg', notitie: null },
     { id: 'm5', datum: toen, soort: 'bloeddruk_dia', waarde: 92, eenheid: 'mmHg', notitie: null },
     { id: 'm6', datum: toen, soort: 'middelomtrek', waarde: 114, eenheid: 'cm', notitie: null },
+    { id: 'm7', datum: toenOok, soort: 'bloeddruk_sys', waarde: 150, eenheid: 'mmHg', notitie: null },
+    { id: 'm8', datum: toenOok, soort: 'bloeddruk_dia', waarde: 94, eenheid: 'mmHg', notitie: null },
   ]
 }
 
@@ -686,19 +693,34 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
          waar het woord "metingen" in valt, en die heeft geen formulier. Zonder
          de `has` pakte `.first()` die kaart en viel de proef om op een kaart die
          hij nooit bedoeld heeft. De strengheid blijft gelijk: binnen de
-         invoerkaart moeten de waarden nog steeds boven het veld staan. */
+         invoerkaart moeten de waarden nog steeds boven de velden staan.
+
+         Het formulier was een uitrolmenu met één waardeveld; nu zijn het zes
+         open vakjes, want een bloeddruk is twee getallen die bij elkaar horen
+         en die kostten zo twee keer kiezen en twee keer opslaan. */
       const kaart = pagina.locator('.kaart')
         .filter({ hasText: 'Metingen' })
-        .filter({ has: pagina.locator('select') })
+        .filter({ has: pagina.locator('.meetvelden') })
         .first()
       const volgorde = await kaart.evaluate((el) => {
         const waarden = el.querySelector('.trio')
-        const veld = el.querySelector('select')
+        const veld = el.querySelector('.meetvelden')
         if (!waarden || !veld) return null
         return waarden.compareDocumentPosition(veld) & Node.DOCUMENT_POSITION_FOLLOWING ? 'goed' : 'fout'
       })
       if (volgorde !== 'goed') {
-        throw new Error(`${stam}: het invoerveld staat boven de waarden (${volgorde})`)
+        throw new Error(`${stam}: de invoervelden staan boven de waarden (${volgorde})`)
+      }
+      /* Zes vakjes, met boven elk wat erin hoort. Een vakje zonder eigen naam
+         is een vakje waar je in gokt. */
+      const vakjes = await kaart.locator('.meetvelden label').count()
+      if (vakjes !== 6) throw new Error(`${stam}: ${vakjes} meetvakjes in plaats van 6`)
+      const namen = (await kaart.locator('.meetvelden').innerText()).replace(/\s+/g, ' ')
+      for (const naam of ['Bovendruk', 'Onderdruk', 'Rustpols', 'Middelomtrek',
+                          'Nekomtrek', 'Saturatie']) {
+        if (!namen.includes(naam)) {
+          throw new Error(`${stam}: "${naam}" staat niet boven een vakje\n  ${namen}`)
+        }
       }
       /* DE MIDDELOMTREK ALS REEKS
          De app toonde alleen de nieuwste waarde. Met twee meetdagen hoort de
@@ -727,10 +749,11 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
           throw new Error(`${stam}: "${maat}" staat niet in wat er veranderd is\n  ${platte}`)
         }
       }
-      /* 114 naar 108 is zes centimeter eraf, en 146 naar 128 is achttien punten.
-         Staat daar iets anders, dan wordt er niet op datum gesorteerd of wordt
-         de verkeerde kant afgetrokken. */
-      for (const verwacht of ['-6', '-18', '-10']) {
+      /* 114 naar 108 is zes centimeter eraf. En de bloeddruk begint op het
+         gemiddelde van twee meetdagen, 146 en 150, dus op 148: dat is twintig
+         punten eraf en niet achttien. Staat er -18, dan pakt de kaart de eerste
+         de beste meting in plaats van de week eromheen. */
+      for (const verwacht of ['-6', '-20', '-11']) {
         if (!platte.includes(verwacht)) {
           throw new Error(`${stam}: ${verwacht} ontbreekt in wat er veranderd is\n  ${platte}`)
         }
@@ -739,6 +762,10 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
          achtentwintig dagen en de metingen liggen honderdelf dagen uit elkaar,
          dus deze kaart hoort twee verschillende eenheden te tonen. Staat er
          overal dezelfde, dan volgt de eenheid de tijd niet. */
+      if (!/gemiddelde van de meetdagen/.test(platte)) {
+        throw new Error(`${stam}: de kaart zegt niet dat de bloeddruk uit meetdagen komt`
+          + `\n  ${platte}`)
+      }
       for (const spanne of ['· 4 wk', '· 4 mnd']) {
         if (!platte.includes(spanne)) {
           throw new Error(`${stam}: "${spanne}" ontbreekt in wat er veranderd is\n  ${platte}`)
@@ -3845,28 +3872,38 @@ for (const [naam, dagen, patroon, verwacht] of [
         de getallen: elf stukken die je moest kénnen om ze te vinden. Nu staan
         de titels er. Deze proef telt ze, want een lijst die stilletjes leeg
         raakt ziet er in de code prima uit. */
-  const index = pagina.locator('.kaart').filter({ hasText: 'Lezen' })
-    .locator('button.naslagregel')
+  const kast = pagina.locator('.kaart').filter({ hasText: 'Kennisbank' })
+  const index = kast.locator('button.naslagregel')
+  /* Elf stukken plus twee planken ernaast: je aandoening en hoe de app rekent. */
   const titels = await index.count()
-  if (titels !== 11) throw new Error(`verdiepen: ${titels} titels op het scherm in plaats van 11`)
+  if (titels !== 13) throw new Error(`verdiepen: ${titels} regels in de kast in plaats van 13`)
   const eersteTitel = (await index.first().innerText()).replace(/\s+/g, ' ').trim()
   if (!eersteTitel.startsWith('De Nederlandse trap')) {
     throw new Error(`verdiepen: de eerste titel is "${eersteTitel}"`)
   }
 
-  await pagina.getByRole('button', { name: 'Open het boekje' }).click()
+  await index.first().click()
 
   const venster = pagina.locator('.venster')
   await venster.waitFor({ timeout: 5000 })
 
   process.stdout.write('verdiepen                  ')
 
-  /* 1. Elf stukken, en ze staan dicht: wie hier komt kiest wat hij leest.
-        De knop heet "open" en niet zoals het stuk, `Uitklap` zet de kop in een
-        `Kop` en de schakelaar ernaast. */
+  /* 1. Elf stukken. Er staat er één open, want er is op een titel getikt, en
+        dat hoort precies dát stuk te openen. De rest staat dicht: wie hier komt
+        kiest wat hij leest. De knop heet "open" en niet zoals het stuk,
+        `Uitklap` zet de kop in een `Kop` en de schakelaar ernaast. */
   const dichte = venster.getByRole('button', { name: 'open', exact: true })
-  const aantal = await dichte.count()
+  const open = venster.getByRole('button', { name: 'dicht', exact: true })
+  const aantal = await dichte.count() + await open.count()
   if (aantal !== 11) throw new Error(`verdiepen: ${aantal} stukken in plaats van 11`)
+  if (await open.count() !== 1) {
+    throw new Error(`verdiepen: ${await open.count()} stukken open na een tik op een titel`)
+  }
+  const geopend = (await venster.locator('#stuk-trap').innerText()).replace(/\s+/g, ' ')
+  if (!/trap|GLI|leefstijlinterventie/i.test(geopend)) {
+    throw new Error(`verdiepen: de aangetikte titel opent het verkeerde stuk\n  ${geopend.slice(0, 160)}`)
+  }
 
   /* 2. Eén openen, en dan moeten alle vier de delen er staan. */
   await venster.locator('.kaart').filter({ hasText: 'Wat er gebeurt als je stopt' })
@@ -4145,6 +4182,59 @@ for (const [naam, dagen, patroon, verwacht] of [
   }
 
   await pagina.screenshot({ path: 'gereedschap/health-uitbijter.png', fullPage: true })
+
+  /* EN WAT JE ERMEE KUNT
+     De markering is de helft van de belofte; de andere helft is dat jij hem
+     kunt rechtzetten. Die helft bestond niet: "zet hem recht op de dag zelf"
+     betekende zelf uitzoeken welke dag het was en erheen bladeren.
+
+     Deze proef leest mee wat er naar de database gaat. Dat is het enige wat
+     hier te bewijzen valt: het scherm kan niet laten zien dat een weging weg
+     is, want de proefgegevens komen bij elke ophaalslag weer terug. */
+  const gezet = []
+  await pagina.route('**/rest/v1/rpc/kal_dag_zetten', async (route) => {
+    gezet.push(JSON.parse(route.request().postData() ?? '{}'))
+    await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' })
+  })
+
+  await pagina.getByRole('button', { name: /wegingen/i }).first().click()
+  const wegvenster = pagina.locator('.venster').filter({ hasText: 'Je wegingen' })
+  await wegvenster.waitFor({ timeout: 5000 })
+
+  /* Hij opent op de opvallende wegingen, want daarvoor kom je hier. */
+  const opvallend = (await wegvenster.innerText()).replace(/\s+/g, ' ')
+  if (!/om na te lopen/.test(opvallend)) {
+    throw new Error(`wegingen: het venster opent niet op de opvallende\n  ${opvallend.slice(0, 200)}`)
+  }
+  if (!/190/.test(opvallend)) {
+    throw new Error(`wegingen: de uitbijter staat niet in de lijst\n  ${opvallend.slice(0, 200)}`)
+  }
+
+  await wegvenster.getByRole('button', { name: /weghalen/ }).first().click()
+  await pagina.waitForTimeout(200)
+  const weg = gezet[gezet.length - 1]
+  if (!weg || weg.p_patch?.gewicht_kg !== null) {
+    throw new Error(`wegingen: weghalen stuurt geen lege weging\n  ${JSON.stringify(gezet)}`)
+  }
+  /* En op de dag van die weging, niet op de dag die bovenaan het scherm staat. */
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(weg.p_datum ?? '')) {
+    throw new Error(`wegingen: weghalen stuurt geen datum\n  ${JSON.stringify(weg)}`)
+  }
+
+  /* Wat hier NIET te proeven valt, en waarom dat goed is.
+
+     Na het weghalen staat de regel er weer, met zijn oude waarde. Dat komt
+     doordat deze proef een database naspeelt die altijd hetzelfde antwoordt:
+     het scherm leest de reeks opnieuw en krijgt de weging terug. Het venster
+     toont dus wat de database zegt en niet wat het zelf verstuurde.
+
+     Dat is met opzet zo gebouwd. Een scherm dat de regel meteen als weggehaald
+     toont, liegt op de dag dat de database het verzoek niet uitvoert, en dan
+     denkt iemand dat zijn 190 weg is terwijl hij in de trend blijft staan. Het
+     terugzetknopje is daarom pas te zien als er werkelijk iets weg is. */
+  await pagina.screenshot({ path: 'gereedschap/health-wegingen.png', fullPage: true })
+  console.log(`${'je wegingen nalopen'.padEnd(26)} weghalen -> ${weg.p_datum} gewicht_kg=null, `
+    + `en de regel blijft staan zolang de database hem teruggeeft`)
   await pagina.close()
 
   /* De andere kant: bij een gewone reeks staat er niets. */

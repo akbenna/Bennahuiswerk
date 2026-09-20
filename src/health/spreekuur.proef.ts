@@ -54,6 +54,7 @@ const vol: Spreekuurbron = {
   veranderingen: [{
     naam: 'Middelomtrek', eenheid: 'cm', vanWaarde: 114, vanDatum: '2026-05-23',
     totWaarde: 108, totDatum: '2026-09-11', verschil: -6, decimalen: 0, dagen: 111,
+    vanDagen: 1, totDagen: 1,
   }],
   labs: [{
     naam: 'HbA1c', waarde: 39, eenheid: 'mmol/mol', lo: null, hi: 42, datum: '2026-08-07',
@@ -83,6 +84,21 @@ describe('waar de getallen vandaan komen', () => {
 
   it('zet bij elke verandering de tijd die ertussen zit', () => {
     expect(spreekuurtekst(vol)).toContain('van 114 naar 108 cm in 4 mnd')
+  })
+
+  /* Een weekgemiddelde en een losse meting zien er in platte tekst hetzelfde
+     uit, en dat verschil bepaalt hoe zwaar het getal weegt. */
+  it('zegt het als een uiteinde op meer dan één meetdag rust', () => {
+    const met = {
+      ...vol,
+      veranderingen: [{
+        naam: 'Bovendruk', eenheid: 'mmHg', vanWaarde: 148, vanDatum: '2026-05-23',
+        totWaarde: 128, totDatum: '2026-09-11', verschil: -20, decimalen: 0, dagen: 111,
+        vanDagen: 3, totDagen: 4,
+      }],
+    }
+    expect(spreekuurtekst(met)).toContain('gemiddelden van 3 en 4 meetdagen')
+    expect(spreekuurtekst(vol)).not.toContain('meetdagen')
   })
 })
 

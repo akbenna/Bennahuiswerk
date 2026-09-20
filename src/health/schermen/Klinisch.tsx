@@ -48,14 +48,25 @@ const LABS = [
   ['kreat', 'Kreatinine', 'µmol/L', null, 110],
 ] as const satisfies ReadonlyArray<readonly [string, string, string, number | null, number | null]>
 
+/**
+ * DE METINGEN DIE JE ZELF INVULT.
+ *
+ * Code, wat er boven het vakje staat, de eenheid en de stap van het vakje.
+ *
+ * Dit was een uitrolmenu met één waardeveld ernaast, en dat is voor precies het
+ * geval waar het hier het vaakst om gaat de verkeerde vorm: een bloeddruk is
+ * twee getallen die bij elkaar horen, en die kostte zo twee keer kiezen, twee
+ * keer typen en twee keer opslaan. Zes open vakjes passen op één scherm, dus
+ * staan ze er alle zes.
+ */
 const METINGSOORTEN = [
-  ['bloeddruk_sys', 'bloeddruk systolisch'],
-  ['bloeddruk_dia', 'bloeddruk diastolisch'],
-  ['middelomtrek', 'middelomtrek'],
-  ['nekomtrek', 'nekomtrek'],
-  ['hartslag_rust', 'hartslag in rust'],
-  ['saturatie', 'zuurstofsaturatie'],
-] as const
+  ['bloeddruk_sys', 'Bovendruk', 'mmHg', 1],
+  ['bloeddruk_dia', 'Onderdruk', 'mmHg', 1],
+  ['hartslag_rust', 'Rustpols', '/min', 1],
+  ['middelomtrek', 'Middelomtrek', 'cm', 0.5],
+  ['nekomtrek', 'Nekomtrek', 'cm', 0.5],
+  ['saturatie', 'Saturatie', '%', 1],
+] as const satisfies ReadonlyArray<readonly [string, string, string, number]>
 
 export interface KlinischEigenschappen {
   a: Analyse
@@ -536,6 +547,9 @@ function Veranderingkaart({ rijen }: { rijen: Verandering[] }) {
       <p className="mini" style={{ marginTop: 10 }}>
         Van je eerste meting tot je laatste, per maat, met de tijd die ertussen zit. Hier staat
         alleen wat er verschoven is; wat dat betekent hoor je van je huisarts.
+        {rijen.some((r) => r.vanDagen > 1 || r.totDagen > 1)
+          && ' Bij de bloeddruk staat aan beide kanten het gemiddelde van de meetdagen in die week,'
+             + ' en niet één losse meting.'}
       </p>
       <Uitleg id="verandering" label="waarom hier geen kleur bij staat">
         <p>
@@ -547,6 +561,13 @@ function Veranderingkaart({ rijen }: { rijen: Verandering[] }) {
         <p>
           Een maat komt hier pas te staan als hij op twee verschillende dagen gemeten is. Eén meting
           is geen beloop, en twee op dezelfde dag zijn één meetmoment.
+        </p>
+        <p>
+          De bloeddruk heeft daarbovenop een venster van een week aan elke kant, om dezelfde reden
+          als de kaart hierboven: één meting is geen bloeddruk. De twee vensters delen nooit een
+          dag, want anders zou bij een korte reeks dezelfde dag aan beide kanten meetellen en
+          vergelijk je een getal met zichzelf. Ligt een dag precies tussen het begin en het eind in,
+          dan telt hij nergens mee.
         </p>
       </Uitleg>
     </Kaart>
@@ -635,19 +656,22 @@ function MetingInvoer(
 ) {
   const mlv = middelLengte(middel ? Number(middel.waarde) : null, lengteCm)
   const beloop = middelbeloop(alleMetingen, reeks)
-  const [soort, zetSoort] = useState<string>(METINGSOORTEN[0][0])
-  const [waarde, zetWaarde] = useState('')
+  const [velden, zetVelden] = useState<Record<string, string>>({})
+  const [datum, zetDatum] = useState<string>(vandaag())
+
+  const getal = (code: string): number => parseFloat((velden[code] ?? '').replace(',', '.'))
+  const ingevuld = METINGSOORTEN.filter(([c]) => Number.isFinite(getal(c)))
+  /* Een bloeddruk is twee getallen die bij elkaar horen. Eén ervan bewaren mag,
+     maar dan valt die dag buiten het weekgemiddelde, en dat hoort de app te
+     zeggen in plaats van het stil te laten gebeuren. */
+  const halveBloeddruk = Number.isFinite(getal('bloeddruk_sys'))
+    !== Number.isFinite(getal('bloeddruk_dia'))
 
   function opslaan() {
-    const w = parseFloat(waarde)
-    if (!Number.isFinite(w)) return
-    bewaar({
-      datum: vandaag(), soort, waarde: w,
-      eenheid: soort.includes('bloeddruk') ? 'mmHg'
-             : soort.includes('omtrek') ? 'cm'
-             : soort === 'saturatie' ? '%' : '/min',
-    })
-    zetWaarde('')
+    for (const [code, , eenheid] of ingevuld) {
+      bewaar({ datum: datum as IsoDatum, soort: code, waarde: getal(code), eenheid })
+    }
+    zetVelden({})
   }
 
   return (
@@ -830,14 +854,37 @@ function MetingInvoer(
           hier staan twee cijfers achter de komma en geen drie.
         </p>
       </Uitleg>
+      <Tussen style={{ marginTop: 14 }}>
+        <Kop>Zelf meten</Kop>
+        <label className="veld" style={{ flex: '0 0 auto' }}>
+          <input type="date" value={datum} max={vandaag()}
+                 aria-label="datum van de meting"
+                 onChange={(e) => zetDatum(e.target.value || vandaag())} />
+        </label>
+      </Tussen>
+      <div className="meetvelden">
+        {METINGSOORTEN.map(([code, label, eenheid, stap]) => (
+          <label className="veld" key={code}>
+            <span>{label} <span className="mini">{eenheid}</span></span>
+            <input type="number" step={stap} inputMode="decimal"
+                   value={velden[code] ?? ''}
+                   onChange={(e) => zetVelden((v) => ({ ...v, [code]: e.target.value }))} />
+          </label>
+        ))}
+      </div>
+      {halveBloeddruk && (
+        <p className="mini" style={{ marginTop: 8 }}>
+          Bij een bloeddruk horen twee getallen. Met maar één van de twee telt deze dag niet mee in
+          je weekgemiddelde hieronder.
+        </p>
+      )}
       <Rij style={{ marginTop: 12 }}>
-        <select value={soort} onChange={(e) => zetSoort(e.target.value)}
-                style={{ flex: '1 1 150px', width: 'auto' }}>
-          {METINGSOORTEN.map(([k, l]) => <option key={k} value={k}>{l}</option>)}
-        </select>
-        <input type="number" step="0.1" placeholder="waarde" value={waarde}
-               onChange={(e) => zetWaarde(e.target.value)} style={{ flex: '0 0 96px' }} />
-        <Knop vol opKlik={opslaan}>Opslaan</Knop>
+        <Knop vol uit={ingevuld.length === 0} opKlik={opslaan}>
+          {ingevuld.length > 1 ? `${ingevuld.length} metingen opslaan` : 'Opslaan'}
+        </Knop>
+        {datum !== vandaag() && (
+          <span className="mini">op {kortNL(datum as IsoDatum)}</span>
+        )}
       </Rij>
     </Kaart>
   )

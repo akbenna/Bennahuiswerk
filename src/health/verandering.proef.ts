@@ -16,6 +16,13 @@
  * database in de volgorde waarin ze toevallig staan; het eerste element van een
  * array is niet de oudste meting.
  *
+ * **De bloeddruk komt uit twee weken en niet uit twee metingen.** Dezelfde
+ * regel als overal in deze app: één meting is geen bloeddruk. Aan elk uiteinde
+ * staat het gemiddelde van de meetdagen binnen een week van dat uiteinde, en de
+ * twee vensters delen geen dag. Die laatste regel is de reden dat deze proef
+ * bestaat: zonder hem telt bij een korte reeks dezelfde dag aan beide kanten
+ * mee, en vergelijkt het verschil een getal met zichzelf.
+ *
  * **En er hoort een tijd bij het verschil.** Zes centimeter eraf in vier maanden
  * is iets anders dan zes centimeter eraf in drie jaar. De proef zet de grenzen
  * vast waar de eenheid wisselt, want juist daar kan een verkeerde deler
@@ -179,5 +186,95 @@ describe('de eenheid waarin die tijd op het scherm komt', () => {
     expect(tijdspanne(729)).toBe('24 mnd')
     expect(tijdspanne(730)).toBe('2 jr')
     expect(tijdspanne(1000)).toBe('3 jr')
+  })
+})
+
+describe('de bloeddruk komt uit een venster en niet uit twee metingen', () => {
+  const bd = (datum: string, waarde: number) => meting(datum, 'bloeddruk_sys', waarde)
+
+  /* DE PROEF WAAR DIT STUK VOOR BESTAAT. Vier dagen aan het begin en vier aan
+     het eind, met binnen elke week een uitschieter. Wie de eerste en de laatste
+     méting pakt, komt op 160 naar 120 uit: veertig punten die er niet zijn. */
+  it('middelt de meetdagen aan elk uiteinde', () => {
+    const uit = veranderingen([], [
+      bd('2026-01-01', 160), bd('2026-01-02', 140), bd('2026-01-03', 150),
+      bd('2026-06-01', 120), bd('2026-06-02', 140), bd('2026-06-03', 130),
+    ], [])
+    const b = vind(uit, 'Bovendruk')
+    expect(b?.vanWaarde).toBe(150)
+    expect(b?.totWaarde).toBe(130)
+    expect(b?.verschil).toBe(-20)
+    expect(b?.vanDagen).toBe(3)
+    expect(b?.totDagen).toBe(3)
+  })
+
+  it('telt twee metingen op één dag als één dag', () => {
+    const uit = veranderingen([], [
+      bd('2026-01-01', 160), bd('2026-01-01', 140),
+      bd('2026-06-01', 120),
+    ], [])
+    const b = vind(uit, 'Bovendruk')
+    expect(b?.vanWaarde).toBe(150)
+    expect(b?.vanDagen).toBe(1)
+  })
+
+  /* Zonder deze regel zou 2026-01-04 in beide vensters vallen: hij ligt binnen
+     zeven dagen van het begin én van het eind. Dan staat hetzelfde getal aan
+     allebei de kanten. */
+  it('laat de twee vensters geen dag delen', () => {
+    const uit = veranderingen([], [
+      bd('2026-01-01', 160), bd('2026-01-02', 160),
+      bd('2026-01-06', 120), bd('2026-01-07', 120),
+    ], [])
+    const b = vind(uit, 'Bovendruk')
+    expect(b?.vanWaarde).toBe(160)
+    expect(b?.totWaarde).toBe(120)
+    expect(b?.vanDagen).toBe(2)
+    expect(b?.totDagen).toBe(2)
+  })
+
+  /* Een dag die precies even ver van beide uiteinden ligt, zegt over geen van
+     beide iets. Hij telt nergens mee, en dat is een keuze: hem bij één kant
+     leggen zou die kant een halve reeks geven. */
+  it('laat een dag die precies in het midden ligt buiten beide vensters', () => {
+    const uit = veranderingen([], [
+      bd('2026-01-01', 160), bd('2026-01-03', 100), bd('2026-01-05', 120),
+    ], [])
+    const b = vind(uit, 'Bovendruk')
+    expect(b?.vanWaarde).toBe(160)
+    expect(b?.totWaarde).toBe(120)
+    expect(b?.vanDagen).toBe(1)
+  })
+
+  it('houdt buiten het venster alleen de dagen die er dicht genoeg bij liggen', () => {
+    const uit = veranderingen([], [
+      bd('2026-01-01', 160), bd('2026-01-20', 100), bd('2026-06-01', 120),
+    ], [])
+    const b = vind(uit, 'Bovendruk')
+    expect(b?.vanWaarde).toBe(160)
+    expect(b?.totWaarde).toBe(120)
+    expect(b?.vanDagen).toBe(1)
+    expect(b?.totDagen).toBe(1)
+  })
+
+  /* De andere maten houden hun eigen regel: één waarde per dag, en het eerste
+     tegen het laatste. Een labuitslag van april middelen met een van mei zou
+     twee bloedafnames op één hoop gooien. */
+  it('laat de labwaarden ongemoeid', () => {
+    const uit = veranderingen([], [], [
+      lab('2026-01-01', 'hba1c', 44), lab('2026-01-08', 'hba1c', 40),
+      lab('2026-08-01', 'hba1c', 38),
+    ])
+    const h = vind(uit, 'HbA1c')
+    expect(h?.vanWaarde).toBe(44)
+    expect(h?.vanDagen).toBe(1)
+  })
+
+  it('en middelt de middelomtrek wel per dag', () => {
+    const uit = veranderingen([], [
+      meting('2026-01-01', 'middelomtrek', 115), meting('2026-01-01', 'middelomtrek', 113),
+      meting('2026-06-01', 'middelomtrek', 108),
+    ], [])
+    expect(vind(uit, 'Middelomtrek')?.vanWaarde).toBe(114)
   })
 })
