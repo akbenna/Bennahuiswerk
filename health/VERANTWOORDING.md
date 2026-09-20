@@ -1462,6 +1462,90 @@ staat is dat tirzepatide door de standaard wordt **afgeraden** en orale
 semaglutide **niet aanbevolen** — dat is voorlichting die iemand behoedt voor een
 aanbod dat hij elders tegenkomt, en het is geen behandeladvies.
 
+## 22f. Sportvoeding in de lijst — en het merk van de eigenaar
+
+De voedingslijst kende de supermarkt en niet de sportvoeding. Wie een shake
+drinkt kon hem nergens terugvinden, en wat je niet kunt invoeren telt nergens
+mee — niet in de dag, niet in het eiwit, niet in "wat ontbreekt". Voor iemand
+die aan een gewichtstraject bezig is is dat juist de post die er het meest toe
+doet: bij een energiebeperking is eiwit de enige macro waar je níet op wilt
+bezuinigen (§22c), en poeders zijn de manier waarop die post in de praktijk
+gehaald wordt.
+
+Vier merken, gekozen op wat er in Nederland werkelijk verkocht wordt: Upfront,
+Body&Fit, XXL Nutrition en Orangefit. 404 producten bekeken, 359 bruikbaar; de
+45 die afvielen staan geteld in `health/database/45-eiwitten-en-supplementen.sql`
+mét de reden. Het gaat niet alleen om shakes — Upfront voert een heel
+assortiment, tot olijfolie en roomboter aan toe, en dat gaat mee. Een lijst die
+alleen de eiwitpoeders van een merk kent laat iemand die de rest ook koopt
+halverwege staan.
+
+### De getallen zijn etiketopgaven
+
+Zoals alles in `merk_producten`: een opgave van de fabrikant met de wettelijke
+speelruimte die daarbij hoort, niet een laboratoriumbepaling. Dat verschil is
+zichtbaar (◈ tegenover ◆) en die beslissing staat in §18.7 en in de kop van
+bestand 18. Ze verandert hier niet, ook niet nu het om producten gaat waarvan
+het eiwitgehalte de reden is dat iemand ze koopt. Juist dán niet: 80 g eiwit per
+100 g met twintig procent speelruimte is 64 tot 96, en dat is het verschil
+tussen de dagbehoefte halen en hem missen.
+
+### Wat ik zelf het scherpst in de gaten hou
+
+Upfront is het merk dat de eigenaar van deze app zelf verkoopt.
+
+Dat is geen reden om het eruit te laten. Het bestaat, mensen drinken het, en een
+voedingslijst die het verzwijgt is minder waard en niet eerlijker. Het is wél
+een reden om het op precies dezelfde voet binnen te laten als de andere drie.
+Zodra de app een product voortrekt dat de eigenaar verkoopt, wordt élk ander
+getal erin verdacht: de lezer kan van buitenaf niet meer zien waar het advies
+ophoudt en de verkoop begint. Dat is hetzelfde vertrouwen waar §22e op teert —
+de app die níet zegt of je in aanmerking komt — en het is met dezelfde munt te
+verspelen.
+
+De belofte is daarom niet aan mijn woord overgelaten.
+`src/health/belangenverstrengeling.proef.ts` toetst dat geen van deze vier
+merknamen ergens in de code voorkomt: niet in `src/`, niet in de overige
+SQL-bestanden. Ze komen binnen als rij en verlaten de database als rij, op
+dezelfde voet als een pak melk van de Lidl. Een voorkeursregel — een
+sorteersleutel, een uitzondering in de zeef, een badge op een scherm — is niet
+te schrijven zonder de naam te noemen, en dus niet te schrijven zonder dat deze
+proef omvalt.
+
+Drie dingen maken die proef meer dan een formaliteit. Hij noemt alle vier de
+merken en niet alleen het eigen merk, want een regel die alleen voor Upfront
+geldt omzeil je door een tweede merk te beginnen. Hij zondert alleen bestand 45
+uit, want dáár is de naam inhoud in plaats van code. En hij toetst er als derde
+bij dát de merken in bestand 45 stáán: zonder die regel zou hij ook groen zijn
+als het invoerbestand verdwenen was, en een proef die groen is omdat er niets te
+toetsen valt is geen proef. Alle drie zijn mutatiegetoetst — een voorkeursregel
+in de volgorde van bestand 21, een `HUISMERK`-constante in een scherm, en een
+verdwenen bestand 45 — en elk mutant werd gedood door precies de regel die
+ervoor bedoeld is.
+
+### Twee keer draaien verandert niets, nu werkelijk
+
+De import werkt bij op streepjescode (`on conflict do update`), zodat opnieuw
+draaien niet verdubbelt. Daar zat een gat in: de `set` zet ook
+`geimporteerd_op = now()`, dus een tweede run raakte élke rij, ook als er bij de
+bron niets veranderd was. Daarmee was "twee keer draaien voegt niets toe en
+haalt niets weg" een bewering in plaats van een eigenschap — gebroken door de
+tijdstempel alleen.
+
+`gereedschap/merkgegevens.mjs` zet er nu een `where` onder: bijwerken gebeurt
+alleen als de rij werkelijk verschilt van wat binnenkomt. De proef daarop toetst
+niet dát er een `where` staat maar dat hij **volledig** is — elke kolom die de
+`set` bijwerkt staat ook in de vergelijking, want een kolom die wel bijgewerkt
+wordt maar niet meevergeleken zou stilletjes nooit meer bijwerken. `synoniemen`
+staat met opzet in geen van beide: die kolom vult een mens, en wat een mens
+invulde overschrijft een import niet.
+
+### En de terugdraairegel
+
+Op de 359 streepjescodes van het bestand zelf, niet op het merk.
+`where merk = 'Upfront'` zou ook weghalen wat er later door iemand anders bij is
+gezet — dezelfde fout die in bestand 24 en 27 rechtgezet moest worden.
+
 ## 23. De conditie — signaleren zonder te doseren
 
 Deze app rekent aan energie en verzadiging, en dat is voor de meeste mensen

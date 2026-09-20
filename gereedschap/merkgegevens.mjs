@@ -119,6 +119,40 @@ const MACRO_VANAF_KCAL = 50
 const KJ_PER_KCAL = 4.184
 const KJ_AFWIJKING = 0.2
 
+/**
+ * Hoeveel gram er in honderd gram past.
+ *
+ * DE DERDE GETUIGE, EN WAAROM DE EERSTE TWEE HEM NIET VERVANGEN
+ *
+ * Die twee vergelijken de energie met iets anders: met de macro's, en met de
+ * kilojoules. Ze vangen dus elke fout waarbij één getal uit de pas loopt. Waar
+ * ze blind voor zijn is een rij waarin álle getallen mét elkaar kloppen en
+ * samen toch niet kunnen bestaan.
+ *
+ * Zo'n rij zat in het eerste wat ik van Upfront ophaalde. "Eiwit Granola",
+ * streepjescode 8720986893725: 819,4 kcal, 39,1 g vet, 80,58 g koolhydraten,
+ * 42,5 g eiwit, 12,58 g vezel. De macro's komen uit op 844 kcal — verhouding
+ * 1,03, ruim binnen de grens. De kilojoules zeggen 870, zes procent ernaast,
+ * ook goed. Beide getuigen knikken.
+ *
+ * Maar tel de grammen: 174,8 gram in honderd gram product. Dat is geen
+ * onnauwkeurigheid, dat is een onmogelijkheid — en zonder deze zeef was het als
+ * geloofwaardige granola de database in gegaan, met twee keurige vinkjes erbij.
+ *
+ * WAAR DE GRENS LIGT
+ *
+ * Honderd gram is de natuurkundige bovengrens: vet, koolhydraten, eiwit en
+ * vezel zijn in de Europese etiketteringsregels vier gescheiden posten (vezel
+ * telt níét mee in koolhydraten), en daar komen water, zout en as nog naast. De
+ * som kan dus nooit boven de honderd.
+ *
+ * Er staat 105 en niet 100, en dat is afronding en geen coulance. Een etiket dat
+ * vier posten elk op hele grammen afrondt kan er vier keer een halve gram naast
+ * zitten. Twee gram speling plus wat marge is genoeg; alles daarboven is geen
+ * afronding meer.
+ */
+const MASSA_MAX_G = 105
+
 /** Wat er nodig is voordat een rij de moeite waard is. */
 function bruikbaar(p) {
   const naam = (p.product_name_nl || p.product_name || '').trim()
@@ -145,6 +179,11 @@ function bruikbaar(p) {
       return 'energie klopt niet met de kilojoules'
     }
   }
+  /* Buiten het `kcal > 0`-blok: dit is een massa en geen energie, dus het geldt
+     ook voor een product dat nul kilocalorieën opgeeft. */
+  const massa = (getal(n.fat_100g) ?? 0) + (getal(n.carbohydrates_100g) ?? 0)
+    + (getal(n.proteins_100g) ?? 0) + (getal(n.fiber_100g) ?? 0)
+  if (massa > MASSA_MAX_G) return 'de macro\'s wegen samen meer dan 100 g'
   return null
 }
 
@@ -278,9 +317,25 @@ export function rij(p, spelling) {
   ].join(', ') + ')'
 }
 
+/* De kolommen die een herimport mag bijwerken. Eén lijst, twee keer gebruikt:
+   in de `set` en in de `where` eronder. Twee lijsten die uiteen kunnen lopen zou
+   betekenen dat een veld stilletjes buiten de vergelijking valt en dus nooit een
+   bijwerking uitlokt. `synoniemen` staat er met opzet niet bij: die kolom vult
+   een mens, en wat een mens invulde overschrijft een import niet. */
+const KOLOMMEN = [
+  'naam', 'merk', 'groep', 'energie_kcal_per_100g', 'eiwit_g', 'vet_g',
+  'koolhydraten_g', 'vezels_g', 'suikers_g', 'verpakking_gram',
+  'portie_gram', 'portie_naam',
+]
+
 /**
  * De hele SQL. Eén insert met `on conflict do update`, zodat opnieuw draaien
  * bijwerkt en niet verdubbelt — dezelfde afspraak als in de SQL-bestanden zelf.
+ *
+ * De `where` onder de `set` is wat die afspraak waarmaakt: zonder hem zet een
+ * tweede run de tijdstempel van elke rij opnieuw, en dan is "twee keer draaien
+ * verandert niets" een bewering in plaats van een eigenschap. Mét hem raakt een
+ * herimport alleen de rijen waarvan bij de bron werkelijk iets veranderd is.
  */
 export function naarSql(producten) {
   const rijen = []
@@ -326,7 +381,7 @@ export function naarSql(producten) {
   if (!rijen.length) return kop + '-- Geen bruikbare rijen. Er valt niets in te voeren.\n'
 
   return kop + [
-    'insert into merk_producten',
+    'insert into merk_producten as p',
     '  (bron, barcode, naam, merk, groep, energie_kcal_per_100g, eiwit_g, vet_g,',
     '   koolhydraten_g, vezels_g, suikers_g, verpakking_gram, portie_gram, portie_naam)',
     "select 'openfoodfacts', v.* from (values",
@@ -339,7 +394,10 @@ export function naarSql(producten) {
     '  koolhydraten_g = excluded.koolhydraten_g, vezels_g = excluded.vezels_g,',
     '  suikers_g = excluded.suikers_g, verpakking_gram = excluded.verpakking_gram,',
     '  portie_gram = excluded.portie_gram, portie_naam = excluded.portie_naam,',
-    '  geimporteerd_op = now();',
+    '  geimporteerd_op = now()',
+    'where (' + KOLOMMEN.map((k) => 'p.' + k).join(', ') + ')',
+    '   is distinct from',
+    '      (' + KOLOMMEN.map((k) => 'excluded.' + k).join(', ') + ');',
     '',
     '-- Nakijken:',
     "select count(*) as producten, count(verpakking_gram) as met_gewicht from merk_producten where bron = 'openfoodfacts';",
@@ -421,6 +479,23 @@ const VOORBEELD = [
   { code: '20777222', product_name_nl: "Pindakaas 100% pinda's", brands: 'Lidl',
     product_quantity: 350, serving_size: '1 portie (15 g)',
     nutriments: { 'energy-kcal_100g': 621, proteins_100g: 26, fat_100g: 51, carbohydrates_100g: 11, fiber_100g: 8 } },
+  /* DE DERDE GETUIGE — een rij waarin alles mét elkaar klopt en niets kán.
+     Dit is "Eiwit Granola" van Upfront, streepjescode 8720986893725, letterlijk
+     zoals Open Food Facts hem geeft. De macro's komen uit op 844 kcal tegen de
+     opgegeven 819,4 (verhouding 1,03), de kilojoules op 870 (zes procent af):
+     beide bestaande zeven laten hem door. De grammen tellen op tot 174,8 per
+     honderd. */
+  { code: '8720986893725', product_name_nl: 'Eiwit Granola', brands: 'Upfront',
+    product_quantity: 300, serving_size: '10.0g',
+    nutriments: { 'energy-kcal_100g': 819.4, 'energy-kj_100g': 3639.7, proteins_100g: 42.5,
+                  fat_100g: 39.1, carbohydrates_100g: 80.58, fiber_100g: 12.58 } },
+  /* En de tegenhanger, want een zeef die alleen maar wegneemt bewijst niets.
+     Clear Whey van hetzelfde merk: 80 g eiwit per 100 g is extreem en volkomen
+     echt — het is nagenoeg zuiver poeder. Samen 82,3 g, dus hij blijft. */
+  { code: '8720986891554', product_name_nl: 'Clear Whey Tropical', brands: 'Upfront',
+    serving_size: '25 g',
+    nutriments: { 'energy-kcal_100g': 338, 'energy-kj_100g': 1414, proteins_100g: 80,
+                  fat_100g: 1.8, carbohydrates_100g: 0.5, fiber_100g: 0 } },
   /* Rommel die eruit hoort te vallen. */
   { code: '1', product_name: '', nutriments: { 'energy-kcal_100g': 100 } },
   { code: '2', product_name: 'Kilojoules in het verkeerde veld', nutriments: { 'energy-kcal_100g': 1900 } },
@@ -542,12 +617,13 @@ function proef() {
   const sql = naarSql(VOORBEELD)
   /* Zestien producten, zes bruikbaar. Die verhouding staat er met opzet in: valt
      de zeef ooit weg, dan komen er zestien doorheen en gaat deze proef om. */
-  eis(/22 producten bekeken, 10 bruikbaar/.test(sql), 'tien van de tweeëntwintig komen erdoor')
+  eis(/24 producten bekeken, 11 bruikbaar/.test(sql), 'elf van de vierentwintig komen erdoor')
   for (const [reden, n] of [['geen naam', 1], ['energie buiten bereik', 1],
                             ['geen energie per 100 g', 1], ['geen streepjescode', 1],
                             ['naam is een etiketafdruk', 3],
                             ["energie klopt niet met de macro's", 2],
-                            ['dezelfde streepjescode al gezien', 1]]) {
+                            ['dezelfde streepjescode al gezien', 1],
+                            ["de macro's wegen samen meer dan 100 g", 1]]) {
     eis(new RegExp(`${n}  ${reden}`).test(sql), `weggelaten wordt geteld: ${n}× ${reden}`)
   }
   /* En de drie die alleen op hun naam sneuvelen, sneuvelen ook echt: een telling
@@ -562,6 +638,30 @@ function proef() {
       'een naam met cijfers erin blijft — het gaat om klokken en codes, niet om cijfers')
   eis(sql.includes("'20123456'") && !sql.includes("'1900'"), 'de goede rijen staan erin, de rommel niet')
   eis(sql.includes('on conflict (bron, barcode) do update'), 'opnieuw draaien werkt bij in plaats van te verdubbelen')
+  /* TWEE KEER DRAAIEN VERANDERT NIETS — EN DAT IS DEZE REGEL
+
+     De `set` zet `geimporteerd_op = now()`. Zonder de `where` eronder raakt een
+     tweede run dus elke rij, ook als er bij de bron niets veranderd is, en dan
+     is de afspraak uit CLAUDE.md gebroken door de tijdstempel alleen.
+
+     Er wordt hier niet alleen op het bestaan van die `where` getoetst maar op
+     zijn volledigheid: elke kolom die de `set` bijwerkt hoort ook in de
+     vergelijking te staan. Een kolom die wel bijgewerkt wordt maar niet
+     meevergeleken zou stilletjes nooit meer bijwerken. */
+  const setblok = sql.slice(sql.indexOf('do update set'), sql.indexOf('where ('))
+  const whereblok = sql.slice(sql.indexOf('where ('), sql.indexOf('-- Nakijken:'))
+  eis(/\nwhere \(p\./.test(sql) && whereblok.includes('is distinct from'),
+      'een herimport die niets verandert laat de rijen met rust')
+  for (const kolom of ['naam', 'merk', 'groep', 'energie_kcal_per_100g', 'eiwit_g',
+                       'vet_g', 'koolhydraten_g', 'vezels_g', 'suikers_g',
+                       'verpakking_gram', 'portie_gram', 'portie_naam']) {
+    eis(setblok.includes(kolom + ' = excluded.' + kolom), `de set werkt ${kolom} bij`)
+    eis(whereblok.includes('p.' + kolom) && whereblok.includes('excluded.' + kolom),
+        `${kolom} telt mee in de vergelijking die de bijwerking tegenhoudt`)
+  }
+  /* `synoniemen` vult een mens. Een import die hem aanraakt — in de set of in de
+     vergelijking — zou handwerk overschrijven of eraan gaan tornen. */
+  eis(!sql.includes('synoniemen'), 'de import raakt de synoniemen niet aan')
   eis(!sql.includes("''vers''',") || sql.includes("''vers'''"), 'de ontsnapping komt ook in de uitvoer terecht')
 
   /* De melk heeft serving_size in milliliter: hij hoort erin te staan, maar
@@ -582,6 +682,17 @@ function proef() {
      bóven ligt hoort er net zo goed uit als een zware. */
   eis(!sql.includes('Choco Pudding'),
       'een lichte rij die zichzelf tegenspreekt valt ook af, ondanks de bodem')
+
+  /* DE DERDE GETUIGE, IN TWEE RICHTINGEN
+     De granola valt af hoewel zijn energie met zowel de macro's als de
+     kilojoules klopt — daar is deze zeef voor. En het eiwitpoeder blijft, want
+     tachtig gram eiwit per honderd gram is geen fout maar een poeder. Zonder
+     dat tweede geval zou "gooi alles met veel eiwit weg" deze proef halen, en
+     dan was er van de hele eiwitlijst niets overgebleven. */
+  eis(!sql.includes('Eiwit Granola'),
+      'honderdvijfenzeventig gram in honderd gram valt af, ook met twee kloppende getuigen')
+  eis(sql.includes('Clear Whey Tropical'),
+      'tachtig gram eiwit per honderd gram blijft — dat is een poeder, geen fout')
 
   const keer = (sql.match(/'20123456'/g) ?? []).length
   eis(keer === 1, `de dubbele streepjescode staat er één keer in, niet ${keer}`)
