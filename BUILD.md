@@ -20,8 +20,9 @@ npm run controle   typen, edge, proeven, bouw en de CSP-proef achter elkaar
 | `npm run proef` | Vitest. Onder meer de gouden waarden van de rekenkern. |
 | `npm run build` | Typen én bouw; het resultaat staat in `dist/`. |
 | `npm run csp` | Zet `dist/` achter een server die de headers uit `vercel.json` meestuurt en laadt elke omgebouwde app in Chromium. Meldt elke CSP-overtreding, en speelt bij Spelletjes een potje, loopt bij Koran uit je hoofd een aya door, bij Geloofsstudie een hele week plus een kaart, bij Computers & Code een Python-les van begin tot eind plus de zandbak, bij Islam leren een profiel met een hele les en de gebedstijden, bij Arabisch een profiel met de eerste oefening, het alfabet en het zoeken, en bij Huiswerk een kind dat inlogt, een som maakt en de ouder-modus opent, om te zien of het ook wérkt. |
-| `node gereedschap/health-voorbeeld.mjs` | Zet `dist/` achter de echte headers, onderschept de databaseaanroepen en vult ze met een verzonnen maar geloofwaardige reeks van achtentwintig dagen. Levert drie foto's van het startscherm van BennaHealth: de eerste dag, na vier weken, en het donkere thema. Het scherm is niet te beoordelen zonder gegevens erin, leeg ziet elk ontwerp er hetzelfde uit. |
-| `npm run gouden-waarden` | Genereert de gouden waarden opnieuw uit de oude code: de rekenkern, de herhalingsplanner, de kaartplanner van Geloofsstudie, de Python-vertaler van Computers & Code, de gebedstijden van Islam leren, de FSRS-planner van Arabisch en het zakgeld, Leitner en de sjablonen van Huiswerk. Alleen nodig als die veranderen, en dat hoort niet te gebeuren. |
+| `node gereedschap/health-voorbeeld.mjs` | Zet `dist/` achter de echte headers, onderschept de databaseaanroepen en vult ze met een verzonnen maar geloofwaardige reeks van achtentwintig dagen, met de klok vastgezet. Het scherm is niet te beoordelen zonder gegevens erin: leeg ziet elk ontwerp er hetzelfde uit. Hij maakt de schermafdrukken én is zelf een proef. Hij valt om bij een lege schermkop, een verkeerd endpoint, een veldnaam die uit de koppelinstructie verdwenen is, maaltijdtegels die niet meebewegen, een sfeerband die wordt opgeblazen of de rand niet haalt, contrast onder 4,5, een kaart die op een breed scherm een gat laat vallen, en een getal van de lezer dat in het naslagvenster opduikt. Hij leest `dist/`, dus **eerst bouwen**. |
+| `node gereedschap/cursus-proef.mjs` | Ook over `dist/`. Gaat over de ingangen van de startpagina: de drie cursussen van de Academie gaan zonder code open, ze hebben elk een eigen tegel, en BennaHealth heeft een eigen ingang die niet langs het gezinsprofiel loopt. Een grep zou hier niet volstaan: het slot was gedrag en geen markering. |
+| `npm run gouden-waarden` | Genereert de gouden waarden opnieuw uit de oude code: de rekenkern, de herhalingsplanner, de kaartplanner van Geloofsstudie, de Python-vertaler van Computers & Code, de gebedstijden van Islam leren, de FSRS-planner van Arabisch en het zakgeld, Leitner en de sjablonen van Huiswerk. Alleen nodig als die veranderen, en dat hoort niet te gebeuren. De vingerafdruk van de schermteksten loopt sinds september over wóórden en niet over tekens (`src/gedeeld/woordgelijk.ts`, met een tweelingbestand voor de generatoren): leestekens rechtzetten mag, een woord of een getal veranderen niet. |
 
 ## De verbouwing is klaar, en dat staat in de code
 
@@ -115,5 +116,20 @@ Daarom staat de oude code er nog, in `gereedschap/oud/`, en genereert
 `gereedschap/gouden-waarden-maken.mjs` daaruit de uitkomsten over veertig
 dagenreeksen, dertig SCORE2-gevallen, twintig FIB-4's, vijfentwintig
 STOP-BANG-invullingen en vijftien onderhoudszones. `rekenkern.proef.ts`
-controleert de TypeScript-versie daartegen: 171 vergelijkingen, allemaal tegen
-wat er wérkelijk uit kwam en niet tegen wat ik dacht dat eruit moest komen.
+controleert de TypeScript-versie daartegen: honderddertig gevallen uit het
+archief, allemaal tegen wat er wérkelijk uit kwam en niet tegen wat ik dacht dat
+eruit moest komen.
+
+**Het archief is bewijs.** Toen elf van die vergelijkingen omvielen bij het
+rechtzetten van de leestekens, was `gereedschap/oud/` aanpassen de snelste weg
+naar groen geweest, en precies daarmee was het bewijs weg. De vergelijking is
+toen losser gemaakt (over woorden in plaats van tekens) en die versoepeling is
+zélf getoetst: een verdwenen woord, een veranderd getal of een andere volgorde
+valt nog steeds om. Regel: het archief wordt nooit aangepast om een proef groen
+te krijgen.
+
+Wat er op de reeks bij is gekomen ná de overzetting staat apart, want het staat
+niet in het archief: `afwijkingKg` en `uitbijter` per weging (§27 van de
+verantwoording) en de schaal van de gewichtsfiguur (§31). De gouden vergelijking
+kijkt daarom naar de sleutels die het archief zelf kende, met een extra regel die
+omvalt zodra een van die oude sleutels verdwijnt of hernoemd wordt.

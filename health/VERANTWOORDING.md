@@ -58,7 +58,7 @@ Een rekensom met Hall's eigen parameters (mijn afleiding, geen gepubliceerd resu
 
 Tien imputatiestrategieën en meerdere berekeningsmethoden zijn vergeleken bij vijftig deelnemers met slimme weegschalen. De winnaars waren structural modeling met Kalman-smoothing en het exponentieel gewogen voortschrijdend gemiddelde, met een fout van 0,62 tot 0,64 procent, praktisch gelijk (Turicchi J et al., *JMIR Mhealth Uhealth* 2020;8:e17977, doi:10.2196/17977). Nevenbevinding: ontbrekende dagen kun je beter overslaan dan imputeren; de schatters blijven redelijk tot tachtig procent ontbrekende data.
 
-**Wat de app doet.** Een EWMA met een halfwaardetijd van ongeveer zeven tot tien dagen (α ≈ 0,1) voor de getoonde trendlijn, en een gewone kleinste-kwadratenregressie over het venster voor de hélling, die laatste omdat je daar direct een standaardfout uit krijgt, en die standaardfout is precies wat het betrouwbaarheidsinterval op de TDEE voedt. Metingen die meer dan drie standaarddeviaties van de verwachte EWMA afwijken worden aangemerkt als mogelijke uitbijter, maar niet automatisch verwijderd: bij snelle koolhydraatwisselingen zijn sprongen van een tot twee kilo fysiologisch.
+**Wat de app doet.** Een EWMA met een halfwaardetijd van ongeveer zeven tot tien dagen (α ≈ 0,1) voor de getoonde trendlijn, en een gewone kleinste-kwadratenregressie over het venster voor de hélling, die laatste omdat je daar direct een standaardfout uit krijgt, en die standaardfout is precies wat het betrouwbaarheidsinterval op de TDEE voedt. Een weging die te ver van de verwachting ligt wordt aangemerkt als mogelijke uitbijter, maar niet verwijderd: bij snelle koolhydraatwisselingen zijn sprongen van een tot twee kilo fysiologisch. Hoe die markering werkt staat in §27.
 
 Een filter met een halfwaardetijd van zeven tot tien dagen loopt inherent anderhalve week achter op de werkelijkheid. Dat is de prijs van ruisonderdrukking, het is onvermijdelijk, en het staat in de app: wie gisteren streng is gaan diëten mag vandaag geen reactie verwachten.
 
@@ -1939,3 +1939,288 @@ gedachtestreepjes te gebruiken in de zinnen die het zelf schrijft. Zonder die
 regel zou de app ze bij elke herkenning opnieuw op het scherm zetten, en geen
 enkele statische proef zou dat zien.
 
+---
+
+## 27. De uitbijter die beloofd was en er niet stond
+
+Hoofdstuk 1 zei dat een weging die te ver van de verwachting ligt wordt
+aangemerkt. Dat stond er sinds de eerste versie, en het klopte niet: het woord
+uitbijter kwam in de hele code niet voor. `trendReeks` rekende de EWMA en verder
+niets.
+
+Dat is precies het soort gat waar een naloop voor is. De aanleiding was een
+schermafdruk waarop de y-as van de gewichtsgrafiek tot 191 liep terwijl de
+gebruiker rond de 118 weegt: één weging van 190,2 in een reeks van achtentwintig
+dagen. Zo'n getal trekt de trend, het verbruik, de BMI en het eiwitdoel scheef,
+en dan staat er op vier schermen een uitkomst waar niemand iets aan heeft.
+
+### Wat er nu gebeurt
+
+Elke weging krijgt een `afwijkingKg`: het verschil met de mediaan van de
+buurwegingen, drie aan elke kant, zichzelf niet meegerekend. Ligt die afwijking
+boven de grens, dan is `uitbijter` waar. De grens is drie keer de eigen
+spreiding, met een vloer van drie kilo.
+
+Drie getallen, en alle drie om een reden.
+
+**De mediaan van de buren, en niet de EWMA.** Dat was de eerste opzet en die
+maakte van één fout er drie. Een EWMA lóópt naar een uitbijter toe, dus na die
+190,2 weken ook de twee wegingen erná ver van de verwachting af en werden ze
+evengoed aangemerkt. Eén verkeerde toets besmette drie dagen. Een mediaan
+verschuift niet van één wild getal, dus de buren blijven schoon.
+
+**De spreiding als mediane absolute afwijking.** Met een gewone
+standaarddeviatie verstopt een grove uitbijter zich achter zijn eigen invloed:
+die 190,2 tilt de spreiding zó ver op dat hij er zelf binnen drie ervan valt. De
+proef rekent dat na en laat zien dat de gewone standaarddeviatie hem inderdaad
+mist.
+
+**De vloer van drie kilo.** Wie elke ochtend binnen tweehonderd gram weegt heeft
+een spreiding van tweehonderd gram, en drie keer dat is zeshonderd. Een kilo na
+een zoute maaltijd zou dan een uitbijter zijn, en dat is precies wat hoofdstuk 1
+fysiologisch noemt. Drie kilo lichaamsweefsel komt er in één nacht niet bij; wat
+er wél kan is vocht, een andere weegschaal, een ander mens erop, of een
+verkeerde toets.
+
+### Wat er niet gebeurt
+
+De weging blijft staan, telt mee in de EWMA en telt mee in de regressie. Er
+wordt niets weggegooid en niets gecorrigeerd. Wie op de weegschaal stond weet of
+het een tweede persoon was of een verkeerde toets; de app weet dat niet en zegt
+het dus ook niet.
+
+Op Inzicht staat onder de grafiek welke weging het is, hoeveel hij afwijkt, en
+dat hij gewoon meetelt. Een markering die de gebruiker niet ziet is geen
+markering.
+
+### De regel die een mutant afdwong
+
+Vier mutanten werden gedood: de mediane absolute afwijking vervangen door een
+gewone standaarddeviatie, de vloer van drie kilo weghalen, de drempel van vijf
+wegingen op één zetten, en de verwachting terugzetten op de EWMA.
+
+Eén overleefde: de weging meelaten tellen in zijn eigen verwachting. Dat is
+logisch, want bij een mediaan verschuift één waarde er nauwelijks iets, en de
+meeste reeksen geven hetzelfde antwoord met of zonder die uitzondering. Er is nu
+een reeks die het wél laat zien: zes buren die zich splitsen in drie van 100 en
+drie van 110, dus mediaan 105 en afwijking vijf. Telt de weging zelf mee, dan
+zijn het zeven waarden, ligt de mediaan op 110 en is de afwijking nul, een
+weging die zichzelf gelijk geeft.
+
+En de belangrijkste regel van het blok gaat niet over uitbijters maar over de
+gewone gang van zaken: achtentwintig dagen op streeftempo, met dagelijkse ruis,
+levert geen enkele markering op. Deze app is er voor iemand die afvalt, en een
+waarschuwing over precies dat gedrag zou het scherm met ruis vullen.
+
+### Wat hier openstond, en hoe het is opgelost
+
+De grafiek schaalde mee met de uitbijter: de y-as liep tot 191 en de echte reeks
+werd een streepje. Dat is opgelost zoals hieronder in §31 staat: de as kijkt
+naar de reeks, de weging staat op de rand.
+
+
+## 28. De sparkline die niets tekende
+
+In de kop van het inzichtscherm staat een strookje van acht weken gewicht: de
+ruwe wegingen licht, de gladde lijn erover. Op de schermafdruk van 20 september
+stond daar het kopje "Gewicht, laatste acht weken" met daaronder een paar losse
+streepjes in een verder lege strook. Dat las als een kapotte figuur.
+
+### Wat er misging
+
+Het pad werd opgebouwd als `M` voor het eerste punt van een stuk en `L` voor
+elk volgend punt, en bij een ontbrekende dag begon er een nieuw stuk. Een reeks
+waarin geen twee wegingen naast elkaar liggen levert dan een pad op dat
+uitsluitend uit verplaatsingen bestaat, en zo'n pad heeft geen lengte: er wordt
+niets getekend. Gemeten in een echte Chromium, met een reeks die om de drie
+dagen een weging heeft:
+
+```
+paden: [{ M: 10, L: 0, lengte: 0.0 }, { M: 10, L: 0, lengte: 0.0 }]
+```
+
+Tien wegingen, twee paden, nul beeldpunten. Bij zestien wegingen in
+achtentwintig dagen (de toestand van de schermafdruk) valt het deels wél uit
+elkaar en deels niet, en dat geeft de losse streepjes.
+
+Het is geen rekenfout: het getal klopte, de figuur eronder toonde het niet. Maar
+een lege strook onder een kopje zegt de gebruiker iets anders dan "je weegt
+dun", namelijk "hier is iets stuk".
+
+### Wat eraan gedaan is
+
+Een punt dat helemaal alleen staat krijgt een lijnstuk naar zichzelf. Met een
+ronde streepdop is dat een stip. De dop staat nu op allebei de paden en niet
+alleen op de gladde; zonder dop tekent een lijnstuk van nul lengte namelijk
+evenmin iets, en dan was een losse weging weer onzichtbaar geweest.
+
+Wat er uitdrukkelijk **niet** gebeurd is: doortrekken over de gaten heen. Dat
+zou de figuur een verloop laten tonen over dagen waarop niet gewogen is, en dat
+is een meting verzinnen. Een gat blijft een gat, en dun wegen ziet er nu dun
+uit in plaats van kapot.
+
+### De proef
+
+`src/health/lijntje.proef.ts`, tien gevallen. De twee eisen wijzen tegen elkaar
+in en staan er allebei: elke waarde wordt getekend, ook een losse, én er wordt
+nooit doorgetrokken over een gat. De eerste zonder de tweede geeft een vloeiende
+lijn die niet gemeten is; de tweede zonder de eerste geeft de lege strook terug.
+
+Drie mutanten, alle drie gedood: het lijnstuk naar zichzelf weghalen (drie
+gevallen vallen om), het gat niet meer als gat behandelen (drie), en élk punt een
+stip geven in plaats van alleen het losse (vier).
+
+## 29. Het naslagvenster: breder, en met de getallen eruit
+
+Verdiepen is het enige venster van deze app waar je in leest in plaats van iets
+invult. Het had wel de vorm van alle andere: een kolom van 520 punten, titels in
+de maat van een onderschrift, en alinea's in de maat van een bijschrift. Op een
+tablet stonden daar regels van veertig aanslagen in, met de getallen middenin
+weggezakt. Zo leest naslagwerk als een melding.
+
+Drie dingen veranderd, en ze hangen samen.
+
+**Breder, maar niet eindeloos.** Het venster kent nu een stand `breed`: 780
+punten vanaf een scherm van 820. De bovengrens is geen smaak. Voorbij ongeveer
+vijfentachtig aanslagen per regel raakt het oog bij de terugsprong de volgende
+regel kwijt, en dat is precies wat je bij naslagwerk niet wilt. Alle andere
+vensters blijven zoals ze waren: daar vul je iets in, en daar is smal juist
+goed.
+
+**Een titel is een titel.** De kop van een stuk stond in `eyebrow`, grijs en op
+0,78 rem, dezelfde stijl als het bovenschrift "Wat we niet weten" eronder. Nu
+staat hij in de kleur van de tekst op 1,12 rem. Het bovenschrift in het
+voorbehoud blijft wat het was, want dat ís een bovenschrift.
+
+**De hoeveelheden springen eruit.** Wie opzoekt hoeveel er na een jaar
+terugkwam, hoort dat getal te zien voordat hij de zin eromheen leest. Dat
+gebeurt bij het tekenen en niet met de hand in de tekst, want teksten worden
+bijgewerkt en dan staat de nadruk op het vorige getal.
+
+### Waarom dat laatste een eigen bestand en een eigen proef kreeg
+
+Een cijfer is niet hetzelfde als een getal. In deze teksten staan `STEP-1`,
+`GLP-1`, `Keer Diabetes2 Om` en `augustus 2026`, en geen van vieren is een
+hoeveelheid. Vet gezet zouden ze de aandacht trekken van precies de getallen
+waar het om gaat. Vandaar drie voorwaarden: geen letter, cijfer of koppelteken
+tegen het getal aan (dat haalt `STEP-1` en `Diabetes2` eruit), de eenheid hoort
+bij het getal (anders staat "40" dik en "procent" dun), en een kaal jaartal telt
+niet mee. Een getal van vier cijfers mét eenheid wel, want 2000 kcal is geen
+jaar.
+
+Eén ding ging bij het bouwen mis en is het vermelden waard. De nadruk kreeg
+eerst de klasse `cijfer`, die al bestond: mono met tabelcijfers, precies goed
+voor een getal in een vakje waar cijfers onder elkaar horen te staan. In een
+lopende zin leest datzelfde als een stuk code midden in de tekst. Een
+hoeveelheid in proza blijft dus in dezelfde letter en wordt alleen zwaarder.
+
+De eigenschap die er het meest toe doet is een andere: **de tekst blijft
+letterlijk dezelfde.** Wat erin gaat komt eruit, alleen in stukken geknipt. Een
+nadrukregel die onderweg een spatie of een woord opeet is in een medische tekst
+erger dan geen nadruk, en op het scherm is dat bijna niet te zien: er staat
+gewoon een zin, en er ontbreekt iets. Die eigenschap staat als eerste proef in
+`src/health/nadruk.proef.ts`.
+
+Vier mutanten, alle vier gedood: de jaartalwacht weghalen, de terugblik in de
+uitdrukking weghalen (dan wordt `STEP-1` dik), de eenheid niet meenemen, en één
+teken te weinig afknippen (dan verdwijnt er stilletjes een letter uit de tekst).
+
+## 30. Wat er aan het boekje bij is gekomen
+
+Het was acht stukken en het zijn er negen. Wat er bij kwam en wat er aangevuld
+is, staat hieronder; de bronnen staan bij de stukken zelf.
+
+**Slaap, en waar je gewichtsverlies vandaan komt.** Dit ontbrak, en het is een
+van de weinige dingen in dit dossier waar het bewijs scherp is en de uitkomst
+onverwacht. Dezelfde mensen, twee keer veertien dagen hetzelfde caloriearme
+dieet, één keer met 8,5 uur slaapgelegenheid en één keer met 5,5 uur: even veel
+gewicht eraf, maar bij de korte nachten daalde het aandeel vet in dat verlies
+met 55 procent en steeg het verlies aan vetvrije massa met 60 procent
+(Nedeltcheva e.a., 2010). Het voorbehoud hoort er even hard bij: tien mensen, in
+een laboratorium, opgelegd slaaptekort.
+
+Daar hoort de apneukant naast, omdat de richting van dat bewijs tegen de
+intuïtie in gaat. Afvallen helpt tegen slaapapneu (tien kilo eraf gaf bijna tien
+ademstops per uur minder), maar CPAP helpt niet tegen het gewicht: twee
+meta-analyses vinden een kleine toename. Vandaar de volgorde in het stuk:
+behandel de apneu om de apneu, en het gewicht daarnaast.
+
+**Wat GLP-1 doet** stond er met één samengevat bereik ("15 tot ruim 20
+procent"). Dat is nu per middel, met de studie erbij, en er staat bij wat het
+kost: bij obesitas zonder diabetes type 2 wordt er in Nederland niets vergoed.
+Dat is voor de lezer geen bijzaak.
+
+**Wat je verliest naast vet** had de casusreeksen wel en het hardere bewijs
+niet. Krachttraining hield in een samenvatting van zes gelote onderzoeken 93,5
+procent tegen van het verlies aan vetvrije massa dat door de caloriebeperking
+kwam, bij drie keer per week gedurende twaalf tot vierentwintig weken. En
+andersom: zonder beweging erbij verloor 81 procent van de groepen meer dan een
+zesde van het gewichtsverlies als vetvrije massa, tegen 39 procent met beweging.
+
+**Waarom eiwit nu zwaarder telt** noemde een drempel zonder te zeggen hoe je
+die haalt. Er staan nu porties bij (honderd gram bereide kipfilet rond de 30
+gram, een schep wei-eiwit van dertig gram rond de 27, drie eieren rond de 19),
+en het gewicht waarop het doel per kilo slaat: gemaximeerd op wat bij een BMI
+van 30 hoort, zoals de app zelf rekent. Bij het voorbehoud zijn twee dingen
+gekomen die in de reclame voor eiwit nooit staan: de leucinedrempel is een
+werkhypothese waarvoor geen afkappunt is vast te stellen, en er bestaat geen
+enkel onderzoek dat de eiwitbehoefte bij obesitas rechtstreeks heeft bepaald.
+
+### Eén getal rechtgezet in het onderzoeksdossier
+
+`ONDERZOEK-MEDISCH-AFVALLEN.md` gaf voor de STEP-1-extensie nog ~43 procent voor
+de groep die minstens 5 procent verlies vasthield. Bij de naloop van 20
+september bleek de extensie zelf 48,2 procent te geven; dat was toen in het
+boekje rechtgezet maar niet in het dossier, dus daar stonden twee getallen in
+één repo. Nu gelijkgetrokken, met de reden erbij.
+
+
+## 31. De as kijkt naar de reeks, de weging staat op de rand
+
+De uitbijter uit §27 werd wél aangewezen in de tekst, maar de figuur eronder
+bleef onleesbaar: één weging van 190,2 in een reeks rond de 118 liet de as van
+107 tot 191 lopen, en tweeëntwintig echte wegingen werden daardoor een streepje
+van een paar punten hoog. Letterlijk waar, en precies daardoor nutteloos: je zag
+alleen nog de fout.
+
+Dat stond hier als ontwerpkeuze open. Hij is nu gemaakt, en het is niet de keuze
+tussen eerlijk en leesbaar geworden maar allebei.
+
+**De as kijkt naar de reeks.** Een weging die als uitschieter is aangemerkt
+bepaalt de uitsnede niet meer.
+
+**De weging verdwijnt niet.** Hij staat op de rand van de figuur, met een ring
+eromheen zodat hij niet voor een gewone meting wordt aangezien, met een gestreept
+streepje dat naar buiten wijst, en met zijn eigen getal ernaast. Zonder dat getal
+zou de rand suggereren dat hij er net buiten ligt. Deze app gooit geen metingen
+weg, ook niet uit een plaatje.
+
+**Het voortschrijdend gemiddelde telt wél mee voor de as.** Dat is de uitkomst
+van het model en niet de meting. Bij alfa 0,1 loopt de lijn na zo'n weging een
+paar kilo mee omhoog en zakt daarna terug; dat hóórt zichtbaar te zijn, anders
+lijkt de trend kalmer dan hij is en verbergt de figuur juist de fout die de tekst
+eronder benoemt. Gemeten in de proefreeks: de as loopt nu van 115 tot 127 in
+plaats van 107 tot 191, met de piek van het gemiddelde erin.
+
+**En een gemarkeerde weging die gewoon binnen de uitsnede valt, blijft op zijn
+plek staan.** Op de rand zetten wat er niet buiten ligt zou liegen over waar het
+ligt. Een weging van 119 in een reeks rond de 118 kan aangemerkt zijn zonder ver
+weg te liggen.
+
+**Blijft er te weinig over om op te schalen, dan gebeurt er niets bijzonders.**
+Twee wegingen waarvan er één afwijkt hebben geen "rest" om je op te richten, en
+een as op één punt is geen as. Dan schaalt de figuur op alles, zoals altijd.
+
+De schaal zit in `gewichtSchaal()` en niet in de tekening, zodat hij te toetsen
+is zonder een browser. Zeven gevallen, vijf mutanten gedood: de uitbijter toch
+mee laten tellen voor de as, `buitenBeeld` altijd leeg maken, het gemiddelde
+níét meerekenen, de terugval weghalen, en élke uitbijter op de rand zetten in
+plaats van alleen die erbuiten valt.
+
+### Twee dingen die bij dezelfde figuur opvielen
+
+De regel "doel 100 kg ligt onder deze uitsnede" stond rechtsboven en zei altijd
+"onder", ook wanneer het doel er juist bóven zou liggen. Hij staat nu onder de
+as, naast de datumregel (daar ligt het doel immers ook: buiten beeld), en hij
+zegt welke kant het op is. Rechtsboven botste hij bovendien letterlijk met het
+getal van een weging op de rand.

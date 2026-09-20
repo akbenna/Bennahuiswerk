@@ -15,11 +15,11 @@
  */
 import { describe, expect, it } from 'vitest'
 import gouden from './gouden-waarden.json'
+import type { Dagenkaart, Trendpunt } from './rekenkern'
 import { KCAL_PER_KG, VENSTER, analyse, trendReeks } from './rekenkern'
-import type { Dagenkaart } from './rekenkern'
 import { fib4, onderhoudZone, score2, stopbangScore } from './klinisch'
 import type { Fib4Invoer, Score2Invoer, StopbangAntwoorden } from './klinisch'
-import type { Geslacht, Profiel } from '@/gedeeld/db/tabellen'
+import type { Geslacht, IsoDatum, Profiel } from '@/gedeeld/db/tabellen'
 
 /** De gouden waarden zijn json en dus ongetypt; hier gaan ze de typen in. */
 interface Geval {
@@ -61,10 +61,38 @@ describe('analyse: veertig dagenreeksen', () => {
 })
 
 describe('trendReeks', () => {
+  /* OP DE VELDEN DIE DE OUDE PAGINA KÉNDE, EN NIET MEER DAN DIE
+ 
+     De gouden waarden komen uit `gereedschap/oud/health-index.html`. Die versie
+     kende `afwijkingKg` en `uitbijter` nog niet, dus een strikte vergelijking
+     valt om zodra er een veld bij komt, en dan zegt ze niets meer over de
+     velden die er al waren.
+ 
+     Daarom wordt er vergeleken op de sleutels die de gouden waarde zélf draagt.
+     Een veld dat verdwijnt valt nog steeds om, een waarde die verandert ook.
+     Alleen een nieuw veld glipt erdoor, en dat is precies de vrijheid die een
+     uitbreiding nodig heeft. De nieuwe velden hebben hun eigen proef, onderaan
+     dit bestand. */
+  const zoalsVroeger = (punten: readonly Trendpunt[], gouden: readonly object[]): object[] =>
+    punten.map((p, i) => Object.fromEntries(
+      Object.keys(gouden[i] ?? {}).map((k) => [k, (p as unknown as Record<string, unknown>)[k]])))
+
   gevallen.forEach((g, i) => {
     it(`geval ${i}`, () => {
-      expect(trendReeks(g.dagen)).toEqual(g.trend)
+      const goud = g.trend as readonly object[]
+      expect(zoalsVroeger(trendReeks(g.dagen), goud)).toEqual(goud)
     })
+  })
+
+  /* En dat de oude velden er allémaal nog zijn. Zonder deze regel zou een
+     hernoemd veld groen staan: de vergelijking hierboven zou er dan overal
+     `undefined` voor invullen aan beide kanten. */
+  it('draagt nog elk veld dat de oude pagina kende', () => {
+    const punt = trendReeks(gevallen[0]!.dagen)[0]!
+    const eerste = (gevallen[0]!.trend as readonly object[])[0] ?? {}
+    for (const sleutel of Object.keys(eerste)) {
+      expect(punt, sleutel).toHaveProperty(sleutel)
+    }
   })
 })
 
@@ -195,5 +223,105 @@ describe('tdeeOordeel', () => {
   it('raakt een band die al boven het rustverbruik ligt niet aan', () => {
     const a = analyse(reeks(2000, -0.7 / 7, 119), pf, peil)
     if (a.laag! > a.rustBMR) expect(a.laagMogelijk).toBe(a.laag)
+  })
+})
+
+describe('de uitbijtermarkering', () => {
+  /* Hoofdstuk 1 van VERANTWOORDING.md beloofde deze markering al terwijl het
+     woord uitbijter nergens in de code stond. Wat hier vastligt is niet alleen
+     dát er gemarkeerd wordt maar ook hoe weinig: de app gooit niets weg. */
+  const reeks = (gewichten: Array<number | null>): Trendpunt[] => {
+    const dagen: Dagenkaart = {}
+    gewichten.forEach((g, i) => {
+      const d = `2026-08-${String(i + 1).padStart(2, '0')}` as IsoDatum
+      dagen[d] = { datum: d, gewicht_kg: g, _kcal: 0, _eiwit: 0, _laag: 0, _hoog: 0 }
+    })
+    return trendReeks(dagen)
+  }
+
+  it('wijst de weging aan die niet bij de reeks past', () => {
+    const r = reeks([118, 117.8, 118.2, 117.9, 118.1, 190.2, 118, 117.7])
+    expect(r.filter((p) => p.uitbijter).map((p) => p.w)).toEqual([190.2])
+  })
+
+  /* DE REDEN DAT HIER DE MEDIAAN STAAT EN NIET HET GEMIDDELDE
+     Eén weging van 190 in een reeks rond 118 tilt een gewone standaarddeviatie
+     zo ver op dat de 190 er binnen drie ervan valt. Deze regel valt om zodra
+     iemand de mediane absolute afwijking door een gewone sd vervangt. */
+  it('verstopt een grove uitbijter niet achter zijn eigen invloed', () => {
+    const w = [118, 117.8, 118.2, 117.9, 118.1, 190.2, 118, 117.7]
+    const afw = reeks(w).map((p) => p.afwijkingKg).filter((x): x is number => x != null)
+    const gem = afw.reduce((a, b) => a + b, 0) / afw.length
+    const sd = Math.sqrt(afw.reduce((a, x) => a + (x - gem) ** 2, 0) / (afw.length - 1))
+    const grofste = Math.max(...afw.map((x) => Math.abs(x - gem)))
+    expect(grofste).toBeLessThan(3 * sd)          // een gewone sd ziet hem niet
+    expect(reeks(w).some((p) => p.uitbijter)).toBe(true)   // deze wel
+  })
+
+  it('laat gewone schommelingen met rust, ook bij een heel stabiele weger', () => {
+    /* Tweehonderd gram spreiding maakt drie sd zeshonderd gram. Zonder de vloer
+       van drie kilo zou een kilo na een zoute maaltijd hier een uitbijter zijn,
+       en dat is precies wat hoofdstuk 1 fysiologisch noemt. */
+    const r = reeks([100, 100.2, 99.9, 100.1, 100, 101, 100.1, 99.8])
+    expect(r.some((p) => p.uitbijter)).toBe(false)
+  })
+
+  /* DE BELANGRIJKSTE REGEL VAN DIT BLOK
+     Deze app is er voor iemand die afvalt. Een markering die afgaat op de
+     gewone daling waar het hele traject om draait zou het scherm vullen met
+     waarschuwingen over precies het gedrag dat de bedoeling is. Achtentwintig
+     dagen op streeftempo, met de dagelijkse ruis erbij: geen enkele markering. */
+  it('gaat niet af op een gestage daling, ook niet na vier weken', () => {
+    const ruis = [0.4, -0.3, 0.1, -0.5, 0.2, 0.3, -0.2]
+    const w = Array.from({ length: 28 }, (_, i) =>
+      Math.round((118 - i * (0.8 / 7) + ruis[i % 7]!) * 10) / 10)
+    const r = reeks(w)
+    expect(r.filter((p) => p.uitbijter).map((p) => p.w)).toEqual([])
+  })
+
+  it('markeert niets zolang er te weinig wegingen zijn voor een spreiding', () => {
+    expect(reeks([118, 190]).some((p) => p.uitbijter)).toBe(false)
+    expect(reeks([118, 190, 118, 118]).some((p) => p.uitbijter)).toBe(false)
+  })
+
+  it('gooit niets weg: de uitbijter blijft staan en telt mee in de trend', () => {
+    const r = reeks([118, 117.8, 118.2, 117.9, 118.1, 190.2, 118, 117.7])
+    expect(r.filter((p) => p.w != null)).toHaveLength(8)
+    const na = r[5]!
+    expect(na.w).toBe(190.2)
+    expect(na.ema).not.toBeNull()
+    /* De EWMA loopt na die weging omhoog. Dat hoort zo: niet weggooien
+       betekent ook niet stilletjes buiten de som houden. */
+    expect(na.ema!).toBeGreaterThan(r[4]!.ema!)
+  })
+
+  it('meet de afwijking tegen de buren en niet tegen de weging zelf', () => {
+    const r = reeks([100, 100, 100, 100, 100, 110])
+    /* De buren van de laatste staan alle vijf op 100, dus de afwijking is tien. */
+    expect(r[5]!.afwijkingKg).toBe(10)
+  })
+
+  /* DEZE REGEL IS ER OMDAT EEN MUTANT HEM OVERLEEFDE
+     De weging telt niet mee in zijn eigen verwachting. Dat stond er wel, maar
+     geen enkele regel hield het vast: bij een mediaan verschuift één waarde er
+     nauwelijks iets, dus de meeste reeksen geven hetzelfde antwoord met of
+     zonder die uitzondering.
+ 
+     Hier niet. Zes buren splitsen zich in drie van 100 en drie van 110, dus hun
+     mediaan is 105 en de afwijking vijf. Telt de weging zelf mee, dan zijn het
+     zeven waarden, ligt de mediaan op 110, en is de afwijking nul: een weging
+     die zichzelf gelijk geeft. */
+  it('laat een weging niet over zijn eigen verwachting meebeslissen', () => {
+    const r = reeks([100, 100, 100, 110, 110, 110, 110])
+    expect(r[3]!.afwijkingKg).toBe(5)
+  })
+
+  /* DE REGEL DIE DE EERSTE OPZET AFKEURDE
+     Toen de verwachting nog de EWMA van ervoor was, maakte één verkeerde toets
+     er drie: de EWMA loopt naar de uitbijter toe, dus de twee wegingen erna
+     weken ook ver af en werden evengoed aangemerkt. */
+  it('besmet de wegingen ná een uitbijter niet', () => {
+    const r = reeks([118, 117.8, 118.2, 117.9, 118.1, 190.2, 118, 117.7, 118, 117.9])
+    expect(r.filter((p) => p.uitbijter).map((p) => p.w)).toEqual([190.2])
   })
 })

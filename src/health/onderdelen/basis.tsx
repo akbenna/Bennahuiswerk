@@ -227,7 +227,7 @@ export function Uitklap(
 
 /** Een venster met sluier. Klikken naast het venster sluit het. */
 export function Venster(
-  { titel, boven, onder, opSluiten, children }:
+  { titel, boven, onder, breed, opSluiten, children }:
   {
     titel: string
     /**
@@ -239,6 +239,11 @@ export function Venster(
      */
     boven?: ReactNode | undefined
     onder?: ReactNode | undefined
+    /**
+     * Voor een venster waar je in leest in plaats van iets invult: breder, met
+     * meer lucht. Waarom dat geen smaak is, staat bij `.venster.breed`.
+     */
+    breed?: boolean | undefined
     opSluiten: () => void
     children: ReactNode
   },
@@ -251,10 +256,11 @@ export function Venster(
 
   return (
     <div className="sluier" onClick={(e) => { if (e.target === e.currentTarget) opSluiten() }}>
-      <div className="venster" role="dialog" aria-modal="true" aria-label={titel}>
+      <div className={'venster' + (breed ? ' breed' : '')} role="dialog" aria-modal="true"
+           aria-label={titel}>
         {boven}
         <div className="tussen">
-          <h2 style={{ fontSize: '1.2rem', lineHeight: 1.25 }}>{titel}</h2>
+          <h2 style={{ fontSize: breed ? '1.4rem' : '1.2rem', lineHeight: 1.25 }}>{titel}</h2>
           <Knop klein opKlik={opSluiten} titel="Sluiten">×</Knop>
         </div>
         {onder}

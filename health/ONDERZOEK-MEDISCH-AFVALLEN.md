@@ -187,8 +187,13 @@ deelnemers, één jaar na staken):
 
 - Deelnemers wonnen **tweederde van het verloren gewicht terug**.
 - Netto van start tot week 120: **−5,6 %** (was −17,3 % op week 68).
-- Van de deelnemers hield **~43 %** nog ≥ 5 % verlies vast, **~24 %** nog ≥ 10 %.
+- Van de deelnemers hield **48,2 %** op week 120 nog ≥ 5 % verlies vast.
 - **17,7 %** zat op of boven het startgewicht.
+
+> Hier stond eerst ~43 % voor de ≥ 5 %-groep, en ~24 % voor ≥ 10 %. Bij de naloop van
+> 20 september 2026 bleek de extensie zelf 48,2 % te geven; dat is rechtgezet in het
+> boekje en hier. Het getal voor ≥ 10 % is bij die naloop niet opnieuw tegen de bron
+> gelegd en staat daarom niet meer in de app. Zie `VERANTWOORDING.md` §25.
 
 Cardiometabole verbeteringen liepen mee terug.
 

@@ -257,6 +257,45 @@ export function Bolletjes(
  * op vocht alleen, en wie alleen de gladde lijn ziet denkt dat het meten
  * nauwkeuriger is dan het is.
  */
+export const LIJNTJE_BREEDTE = 300
+
+/**
+ * Het pad van één reeks, met gaten die gaten blijven.
+ *
+ * WAAROM EEN LOS PUNT EEN LIJNSTUK NAAR ZICHZELF KRIJGT
+ *
+ * Wie om de drie dagen weegt heeft geen enkel punt met een buurman. Elk punt
+ * werd dan een `M` zonder `L`, en een pad dat alleen uit verplaatsingen bestaat
+ * tekent niets: het scherm toonde "Gewicht, laatste acht weken" met een lege
+ * strook eronder. Dat leest als een kapotte figuur terwijl de reeks gewoon dun
+ * is. Een los punt krijgt daarom een lijnstuk naar zichzelf; met een ronde
+ * streepdop is dat een stip, en dun wegen ziet er dun uit in plaats van kapot.
+ *
+ * Doorverbinden over de gaten heen zou de dagen ertussen verzinnen. Dat doet
+ * deze app niet, dus een gat blijft een gat.
+ */
+export function lijnpad(
+  reeks: Array<number | null>,
+  lo: number, hi: number, hoogte: number, breedte: number = LIJNTJE_BREEDTE,
+): string {
+  const spanne = hi - lo || 1
+  const n = reeks.length
+  const px = (i: number): number => (n <= 1 ? 0 : (i / (n - 1)) * breedte)
+  const py = (v: number): number => hoogte - 4 - ((v - lo) / spanne) * (hoogte - 10)
+  const stukken: string[] = []
+  let open = false
+  reeks.forEach((v, i) => {
+    if (v == null) { open = false; return }
+    const x = px(i).toFixed(1)
+    const y = py(v).toFixed(1)
+    if (open) { stukken.push(`L ${x} ${y}`); return }
+    const alleen = i + 1 >= n || reeks[i + 1] == null
+    stukken.push(alleen ? `M ${x} ${y} L ${x} ${y}` : `M ${x} ${y}`)
+    open = true
+  })
+  return stukken.join(' ')
+}
+
 export function Lijntje(
   { ruw, glad, hoogte = 46, kleur = 'var(--k)' }:
   { ruw: Array<number | null>; glad: Array<number | null>; hoogte?: number; kleur?: string },
@@ -265,30 +304,18 @@ export function Lijntje(
   if (alles.length < 2) return null
   const lo = Math.min(...alles)
   const hi = Math.max(...alles)
-  const spanne = hi - lo || 1
-  const B = 300
-  const px = (i: number, n: number): number => (n <= 1 ? 0 : (i / (n - 1)) * B)
-  const py = (v: number): number => hoogte - 4 - ((v - lo) / spanne) * (hoogte - 10)
-
-  const pad = (reeks: Array<number | null>): string => {
-    const stukken: string[] = []
-    let open = false
-    reeks.forEach((v, i) => {
-      if (v == null) { open = false; return }
-      stukken.push(`${open ? 'L' : 'M'} ${px(i, reeks.length).toFixed(1)} ${py(v).toFixed(1)}`)
-      open = true
-    })
-    return stukken.join(' ')
-  }
 
   return (
-    <svg className="fig" viewBox={`0 0 ${B} ${hoogte}`} preserveAspectRatio="none"
+    <svg className="fig" viewBox={`0 0 ${LIJNTJE_BREEDTE} ${hoogte}`} preserveAspectRatio="none"
          style={{ height: hoogte }} role="img"
          aria-label={`Verloop van ${dec1(lo)} tot ${dec1(hi)}`}>
-      <path d={pad(ruw)} fill="none" stroke={kleur} strokeWidth="1.2" opacity=".3"
-            vectorEffect="non-scaling-stroke" />
-      <path d={pad(glad)} fill="none" stroke={kleur} strokeWidth="2.4" strokeLinecap="round"
-            strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+      {/* De ronde streepdop staat op allebei de paden en niet alleen op de
+          gladde: zonder dop tekent een lijnstuk van nul lengte niets, en dan is
+          een losse weging weer onzichtbaar. */}
+      <path d={lijnpad(ruw, lo, hi, hoogte)} fill="none" stroke={kleur} strokeWidth="1.2"
+            opacity=".3" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+      <path d={lijnpad(glad, lo, hi, hoogte)} fill="none" stroke={kleur} strokeWidth="2.4"
+            strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
     </svg>
   )
 }
