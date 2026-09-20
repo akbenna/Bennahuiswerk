@@ -2518,3 +2518,49 @@ zevenhonderddertig) en de deler die van de ene eenheid naar de andere springt.
 Zes mutanten gedood, één overlevende die na onderzoek een equivalente bleek: het
 jaar stond als tweede constante in de code en is nu `MAAND * 12`, zodat de vraag
 zich niet nog eens stelt.
+
+## 37. De controle op de database controleerde zichzelf niet
+
+`controle-md5.sql` vergelijkt elke functie in de database met het genummerde
+bestand dat haar het laatst neerzet. Onder in dat bestand stond een belofte:
+"verandert er een functie, dan hoort dit bestand opnieuw gemaakt te worden." Er
+was niets dat dat deed, en niets dat het controleerde. De verwachte waarden
+waren met de hand uitgerekend.
+
+Dat is een controle die na de eerste de beste wijziging het verkeerde antwoord
+geeft, en nog het gevaarlijkste soort ook: hij zou *VERSCHILT* melden op een
+functie die in de database volkomen in orde is, en dan ga je in de database
+zoeken naar een verschil dat aan deze kant zit.
+
+Nu rekent `gereedschap/db-md5.mjs` de waarden uit, schrijft
+`gereedschap/md5-verslag.mjs --schrijf` ze weg, en houdt
+`src/health/dbverslag.proef.ts` bij elke poort vast dat ze nog kloppen met de
+bestanden. De proef kan de database niet zien, en zegt dat ook: hij bewaakt de
+helft die hier ligt.
+
+### Twee dingen waar deze code over kon struikelen, en allebei stil
+
+**Niet trimmen.** Postgres bewaart in `prosrc` wat er tussen de dollartekens
+stond, inclusief de regelovergang meteen na `$$`. De SQL-kant trekt witruimte
+samen tot één spatie en haalt hem dus niet weg. Wie aan deze kant trimt krijgt
+op élke functie *VERSCHILT* te zien.
+
+**Op nummer sorteren en niet op naam.** Een functie mag in meer dan één bestand
+staan, want `create or replace function` is de gewone gang van zaken. Wat er
+draait is wat er het laatst is neergezet. Alfabetisch komt bestand 9 ná 10, en
+dan wijst de controle het verkeerde bestand aan zodra er een tiende bijkomt.
+
+Beide staan als proef vast, en beide doden een mutant.
+
+### Wat de eerste echte uitslag liet zien
+
+Zeven functies verschillen van hun bestand, en tien draaien er zonder dat er
+ergens een bestand over gaat: `kal_sessie`, `kal_afmelden`, `kal_profiel_zetten`,
+`kal_dagstand`, `kal_dag_zetten`, `kal_regels_toevoegen`, `kal_regel_wissen`,
+`kal_weekcijfers`, `kal_prikkel_bouwen` en `kal_prikkel_gelogd`. Dat zijn de
+sessie, het profiel en het wegschrijven van een dag: de bodem van de app.
+
+Die tien zijn van hieruit niet te schrijven, want hun tekst staat alleen in de
+database. `health/database/uitlezen-functies.sql` haalt hem op. Wat er niet
+gebeurt is ze uit het hoofd reconstrueren: een verslag dat lijkt op wat er
+draait is erger dan geen verslag, want het wordt geloofd.
