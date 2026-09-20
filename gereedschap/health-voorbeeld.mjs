@@ -189,9 +189,15 @@ function alles(aantalDagen, fase = 'afvallen') {
     : fase === 'leeg-vandaag' ? 'leeg-vandaag' : 'gewoon'
   const { dagen, regels } = aantalDagen > 0
     ? reeks(aantalDagen, vorm) : { dagen: [], regels: [] }
+  /* De GLI staat in de instellingen en niet in een eigen kolom: het is een
+     opgave van de gebruiker, geen gemeten waarde. Begonnen op 10 juni 2025,
+     dus op de vastgezette klok veertien maanden geleden — ruim voorbij de acht
+     maanden behandelfase van CooL en nog niet aan de twee jaar toe. */
   const profiel = fase === 'onderhoud'
     ? { ...PROFIEL, fase: 'onderhoud', onderhoud_basis_kg: 115.0 }
-    : PROFIEL
+    : fase === 'gli'
+      ? { ...PROFIEL, instellingen: { gli: { programma: 'cool', begonnen: '2025-06-10' } } }
+      : PROFIEL
   return {
     profiel, dagen, regels, producten: [], recepten: [], vragenlijsten: [],
     metingen: metingen(aantalDagen), labs: labs(aantalDagen), training: training(aantalDagen),
@@ -3742,6 +3748,103 @@ for (const [naam, dagen, patroon, verwacht] of [
   await pagina.screenshot({ path: 'gereedschap/health-verdiepen.png', fullPage: true })
   console.log(`${aantal} stukken · vier delen per stuk · geen enkel getal van de lezer erin`)
   await pagina.close()
+}
+
+/* ------------------------------------------------------------ je traject -- */
+/**
+ * DE TRAP, EN DE TREDE DIE OP SLOT STAAT
+ *
+ * Deze app kent het Nederlandse traject: leefstijl, dan de gecombineerde
+ * leefstijlinterventie, en daarboven een trede waar medicatie hoort. Van die
+ * bovenste trede kent hij de criteria niet — ze staan in de NHG-Standaard
+ * Obesitas 2.0 en zijn hier niet uit de standaard zelf overgenomen. Daarom
+ * geeft `medicatiecriteria` uitsluitend "niet bekend" terug.
+ *
+ * WAAROM DIT NIET MET EEN PROEF IN VITEST AF IS
+ *
+ * Die controleert de functie. Hij kan niet zien wat het scherm ernaast zet. Het
+ * scherm heeft `glivoortgang` óók in handen, en veertien maanden GLI is precies
+ * het getal waaruit een component in één regel zijn eigen oordeel zou kunnen
+ * afleiden — "je hebt het jaar gehaald". Dan staat het slot in de functie nog
+ * keurig dicht en leest de gebruiker toch een uitspraak die deze app niet mag
+ * doen. Deze proef leest daarom het echte scherm en zoekt naar het oordeel.
+ */
+{
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: 'light' })
+  await bedienDb(pagina, 28, 'gli')
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.hero', { timeout: 5000 })
+  await naarTab(pagina, 'Profiel')
+
+  process.stdout.write('je traject                 ')
+
+  const kaart = pagina.locator('.kaart').filter({ hasText: 'Je traject' }).first()
+  await kaart.waitFor({ timeout: 5000 })
+  const plat = (await kaart.innerText()).replace(/\s+/g, ' ')
+
+  /* 1. De GLI-trede: het programma bij naam, de duur in maanden, en de fase.
+        Veertien maanden ligt voorbij de acht van CooL en voor de vierentwintig
+        van het hele traject. */
+  if (!/CooL/.test(plat)) throw new Error(`traject: het programma staat er niet\n  ${plat}`)
+  if (!/14 van de 24 mnd/.test(plat)) {
+    throw new Error(`traject: de voortgang klopt niet\n  ${plat}`)
+  }
+  if (!/behandelfase afgerond, nu in de onderhoudsfase/.test(plat)) {
+    throw new Error(`traject: de fase staat er niet\n  ${plat}`)
+  }
+
+  /* 2. HET SLOT. De medicatieregel staat er, en hij staat op "niet bekend". */
+  if (!/Medicatie niet bekend/.test(plat)) {
+    throw new Error(`traject: de medicatieregel ontbreekt of staat niet op slot\n  ${plat}`)
+  }
+
+  /* 3. EN ER LEKT NIETS LANGS. Geen enkel oordeel, ook niet als losse regel
+        ernaast, ook niet in het uitlegblok. Open alles wat open kan. */
+  const samenvatting = kaart.locator('details.uitleg > summary')
+  for (let i = 0; i < (await samenvatting.count()); i++) await samenvatting.nth(i).click()
+  await pagina.waitForTimeout(200)
+  const alles = (await kaart.innerText()).replace(/\s+/g, ' ')
+
+  /* Waar het om gaat is het woord "gehaald": dat is de enige andere stand die
+     een `Criterium` kan dragen, en dus wat een lek eruit zou laten zien. Breder
+     zoeken werkt averechts — "in aanmerking" staat er juist wél, in de zin die
+     zegt dat de app er niet over gaat. */
+  if (/\bgehaald\b/.test(alles)) {
+    throw new Error(`traject: er staat een beoordeeld criterium op het scherm — `
+      + `dan is de trede niet meer op slot\n  ${alles}`)
+  }
+  if (!/zegt niet of je in aanmerking komt/.test(alles)) {
+    throw new Error(`traject: de zin die zegt dat de app niet oordeelt ontbreekt\n  ${alles}`)
+  }
+
+  /* 4. Wat er wél vaststaat, staat er voluit. Drie zinnen, alle drie. */
+  for (const zin of [
+    'hoger dan de Europese registratietekst',
+    'minstens een jaar leefstijlbegeleiding',
+    'geen huisarts is verplicht',
+  ]) {
+    if (!alles.includes(zin)) {
+      throw new Error(`traject: "${zin}" ontbreekt in het uitlegblok\n  ${alles}`)
+    }
+  }
+
+  await pagina.screenshot({ path: 'gereedschap/health-traject.png', fullPage: true })
+  await pagina.close()
+
+  /* 5. ZONDER GLI GEEN KAART. Een lege doos met een kop erboven is erger dan
+        geen doos: hij belooft iets. */
+  const leeg = await ctx.newPage()
+  await leeg.emulateMedia({ colorScheme: 'light' })
+  await bedienDb(leeg, 28, 'afvallen')
+  await leeg.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await leeg.waitForSelector('.hero', { timeout: 5000 })
+  await naarTab(leeg, 'Profiel')
+  const zonder = await leeg.locator('.kaart').filter({ hasText: 'Je traject' }).count()
+  if (zonder !== 0) throw new Error(`traject: de kaart staat er ${zonder}× zonder GLI`)
+  await leeg.close()
+
+  console.log('CooL · 14 van de 24 mnd · medicatie op slot · geen kaart zonder GLI')
 }
 
 await browser.close()

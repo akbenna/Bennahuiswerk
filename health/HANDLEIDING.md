@@ -325,6 +325,35 @@ niets uit — dat gebeurt op de schermen zelf, en elk stuk zegt welk scherm dat 
 Het is voorlichting: de app schrijft geen medicijnen voor en zegt niet of iets
 voor jou geschikt is.
 
+### Je traject: waar je staat, en waar de app ophoudt
+
+Volg je een gecombineerde leefstijlinterventie (GLI), geef dan bij je profiel op
+welk programma en wanneer je begon. Op Profiel verschijnt dan de kaart *Je
+traject*.
+
+Die telt in hele kalendermaanden hoe lang je bezig bent, van de vierentwintig
+die een GLI in Nederland duurt, en zegt in welke fase je zit — behandelfase of
+onderhoudsfase. Van sommige programma's is de lengte van de behandelfase hier
+niet vastgelegd; dan staat er hoeveel maanden je bezig bent en verder niets.
+Liever een duur zonder fase dan een fase die niet klopt.
+
+Daaronder staat één regel over medicatie, en die staat op **niet bekend**. Dat is
+geen storing. De criteria waarop een huisarts dit beoordeelt staan in de
+NHG-Standaard Obesitas 2.0, en die zijn hier niet uit de standaard zelf
+overgenomen maar uit samenvattingen ervan. Zolang dat zo is beoordeelt de app ze
+niet — want wie niet zeker weet wat de eis is, weet ook niet of iemand eraan
+voldoet.
+
+Wat er wél vaststaat lees je door het uitlegblok open te klappen: de lat ligt
+hoger dan wat in de bijsluiter staat, er gaat minstens een jaar
+leefstijlbegeleiding met onvoldoende resultaat aan vooraf, en de standaard noemt
+dit *aanvullend aanbod* — geen huisarts is verplicht het te leveren. Dat laatste
+is geen kleine letter: krijg je nul op het rekest, dan is dat de richtlijn en
+niet iets wat jou persoonlijk onthouden wordt.
+
+De kaart komt er niet als je geen GLI hebt opgegeven. Een lege doos met een kop
+erboven belooft iets.
+
 ### Wat je spieren vasthoudt
 
 Bij snel afvallen verdwijnt er naast vet ook spier — bij semaglutide was dat in

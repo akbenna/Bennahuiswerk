@@ -1334,6 +1334,108 @@ naar een arts; dat is de grens tussen voorlichting en behandeling.
 
 ---
 
+## 22e. De trap — je traject, en de trede die op slot staat
+
+Op het scherm Profiel staat een kaart *Je traject*, en die komt er alleen als je
+in je profiel een gecombineerde leefstijlinterventie hebt opgegeven. Hij toont
+twee treden. De eerste kan de app vullen, de tweede niet — en dat verschil is de
+hele kaart.
+
+### Wat de app wél weet: de GLI
+
+Een GLI duurt in Nederland twee jaar: een behandelfase en daarna een
+onderhoudsfase. Hoe lang die behandelfase duurt verschilt per programma, en die
+duur is openbaar. `GLI_PROGRAMMAS` in `src/health/trap.ts` draagt er acht, met
+hun behandelfase waar die vaststaat en `null` waar niet.
+
+Die `null` is geen gat maar een derde antwoord. Van X-Fittt en Keer Diabetes2 Om
+staat de lengte van de behandelfase hier niet vast, en dan leest de kaart
+"*14 maanden bezig; van dit programma is de lengte van de behandelfase hier niet
+vastgelegd*" — een duur zonder fase. Dat is iets anders dan niets weten, en
+het hoort ook anders te lezen.
+
+### Hele kalendermaanden, en waarom dat uitmaakt
+
+Eerst stond er een deling door 30,44 dagen: de gemiddelde maandlengte. Bijna
+goed, en precies verkeerd op de plek waar het telt. Twee kalenderjaren zijn 730
+dagen, en 730 gedeeld door 30,44 is 23,98. Wie zijn tweejarige programma op de
+dag af had doorlopen kreeg te lezen dat hij nog in de onderhoudsfase zat.
+
+Het telt nu in kalendermaanden: 10 juni plus drie maanden is 10 september,
+ongeacht hoeveel dagen daar tussen zitten, en de dag van de maand telt mee — op
+de negende is die maand nog niet vol. Dat kost iets: het antwoord is een heel
+getal, dus de zes-en-een-halve maand behandelfase van SLIMMER valt op maand
+zeven. Een halve maand onnauwkeurigheid in een fase-indeling weegt niet op tegen
+een jaargrens die niet klopt.
+
+Twee datums kunnen hier misgaan, en ze krijgen niet dezelfde zin. Een onleesbare
+datum leest als "de startdatum is niet te lezen"; een datum in de toekomst als
+"die startdatum ligt in de toekomst". Eerst stonden ze op één hoop, en dan stuurt
+de app iemand zijn invoer nakijken die zich enkel in het jaartal vergist heeft —
+hij vindt dan niets, want er is niets mis met wat hij heeft ingetikt. Het
+datumveld draagt daarnaast een `max` op vandaag, zodat het meestal niet zover
+komt.
+
+### Wat de app níét weet: de medicatietrede
+
+Boven de GLI staat een trede waar medicatie hoort. De criteria daarvoor staan in
+de NHG-Standaard Obesitas 2.0, en die heb ik hier niet gehad. Wat ik had zijn
+samenvattingen ervan.
+
+Daarom staat er in `trap.ts` één vlag:
+
+```ts
+export const MEDICATIE = { bevestigd: false, ... }
+```
+
+Zolang die uit staat geeft `medicatiecriteria()` precies één ding terug: één
+criterium, stand `niet bekend`, met de reden erbij. Geen deellijst, geen "dit heb
+je in elk geval al wel" — want een half beoordeelde eis leest als een halve
+toezegging. En het is niet eens voorzichtigheid: als je niet zeker weet wat de
+eis is, wéét je ook niet of iemand eraan voldoet. `niet bekend` is het juiste
+antwoord, niet het veilige.
+
+Wat er wél met zekerheid over te zeggen valt staat er voluit, in `MEDICATIE.vast`:
+de lat ligt hoger dan de Europese registratietekst in de bijsluiter, er gaat
+minstens een jaar leefstijlbegeleiding met onvoldoende resultaat aan vooraf, en
+de standaard noemt het *aanvullend aanbod* — geen huisarts is verplicht het te
+leveren. Dat laatste hoort erbij: wie het niet weet en nul op het rekest krijgt,
+denkt dat hem iets onthouden wordt.
+
+Dat "minstens een jaar" is zelf een getal, en dat vraagt om uitleg naast de vlag
+die zegt dat de criteria niet nagekeken zijn. Het verschil zit in wat het getal
+draagt. De BMI-grenzen en de tien procent bepalen óf iemand erdoor komt; die
+staan er daarom niet. De volgorde — eerst een jaar leefstijlbegeleiding, dán pas
+dit gesprek — bepaalt alleen wat je als eerste moet doen, en dáárover zijn alle
+samenvattingen het eens. Wie op grond van die zin aan zijn GLI begint, doet het
+goede, ook als het exacte cijfer straks anders blijkt te liggen. Wie op grond van
+een BMI-grens naar de huisarts stapt, kan bot vangen.
+
+### Twee proeven, en waarom er twee nodig zijn
+
+De proef in `trap.proef.ts` loopt langs een reeks profielen — geen GLI, een
+GLI van veertien maanden, een afgeronde van dertig — en eist dat élke uitkomst
+`niet bekend` is zolang de vlag uit staat. Dat bewaakt de functie.
+
+Hij bewaakt niet wat het scherm ernaast zet, en dáár zit het risico. De kaart
+heeft `glivoortgang` óók in handen, en veertien maanden GLI is precies het getal
+waar een component in één regel zijn eigen oordeel uit zou kunnen afleiden: *je
+hebt het jaar gehaald*. Dan staat het slot in de functie nog keurig dicht en
+leest de gebruiker toch een uitspraak die deze app niet mag doen. De armatuur
+leest daarom het echte scherm, opent alles wat open kan, en valt om zodra het
+woord "gehaald" er staat — de enige andere stand die een criterium kan dragen.
+
+Die tweede proef is met een mutant getoetst: een regel die het oordeel er wél bij
+zet komt door de eerste proef heen en wordt door de tweede gedood.
+
+### Wat er moet gebeuren om het slot open te zetten
+
+De medicatieparagraaf van de NHG-Standaard Obesitas 2.0 letterlijk ernaast
+leggen. Dan kan `bevestigd` op `true` en komen de echte criteria in
+`medicatiecriteria()`, stuk voor stuk met hun eigen stand, en `niet bekend` voor
+alles wat het profiel niet weet. Tot die dag is deze kaart eerlijker dan een
+kaart die het wél zou beweren.
+
 ## 23. De conditie — signaleren zonder te doseren
 
 Deze app rekent aan energie en verzadiging, en dat is voor de meeste mensen

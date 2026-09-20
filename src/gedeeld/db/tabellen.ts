@@ -116,7 +116,20 @@ export interface Voorkeuren {
   nietProduct?: readonly string[]
 }
 
+/**
+ * Of er een gecombineerde leefstijlinterventie loopt, en sinds wanneer.
+ *
+ * Twee velden en geen derde: of je erin zit blijkt uit het programma, en de
+ * einddatum volgt uit de start — een programma duurt twee jaar. Zie `trap.ts`.
+ */
+export interface Glistand {
+  /** Sleutel uit `GLI_PROGRAMMAS`. Leeg = geen GLI opgegeven. */
+  programma?: string
+  begonnen?: IsoDatum
+}
+
 export interface Instellingen {
+  gli?: Glistand
   olie_g?: number
   olie_gewogen?: boolean
   melk_ml?: number

@@ -10,13 +10,16 @@
 import { Kaart, Keuzechip, Knop, Kop, Rij, Tussen, Uitleg } from '../onderdelen/basis'
 import { Lijntje, Schermkop } from '../hero'
 import { dec } from '@/gedeeld/getal'
-import type { Profiel } from '@/gedeeld/db/tabellen'
+import type { Glistand, Profiel } from '@/gedeeld/db/tabellen'
 import type { Dagenkaart, Trendpunt } from '../rekenkern'
 import { onderhoudZone } from '../klinisch'
 import { THEMANAMEN, useThemakeuze, zetThema } from '../thema'
 import type { Onderhoudzone } from '../klinisch'
 import { WegInstellen, WegThema } from '../tekens'
 import { SFEERFOTO } from '../sfeerfotos'
+import {
+  GLI_TOTAAL_MAANDEN, MEDICATIE, glivoortgang, medicatiecriteria, programmaVan,
+} from '../trap'
 import { dagvenster } from '../inspanning'
 import { vandaag } from '@/gedeeld/datum'
 
@@ -183,6 +186,17 @@ export function Meer(
         </Kaart>
       )}
 
+      {/* JE TRAJECT — waar je staat in het Nederlandse traject
+          De kaart staat er alleen als er een GLI is opgegeven. Bij wie er geen
+          heeft zou hij een lege doos zijn, en het profielvenster vraagt er al
+          naar. */}
+      {profiel.instellingen.gli?.programma && (
+        <Kaart>
+          <Kop teken={WegInstellen}>Je traject</Kop>
+          <Traject gli={profiel.instellingen.gli} />
+        </Kaart>
+      )}
+
       <Kaart>
         <Kop teken={WegInstellen}>Instellingen</Kop>
         <Rij style={{ marginTop: 10 }}>
@@ -263,5 +277,57 @@ function Themakeuzes() {
         je er overdag ook in. Hier zet je hem vast.
       </p>
     </Kaart>
+  )
+}
+
+/**
+ * JE TRAJECT — de trap, voor zover de app hem kent
+ *
+ * Twee treden. De GLI-trede kan de app vullen: het programma en de startdatum
+ * staan in je profiel, en de duur van de fasen is openbaar. De medicatietrede
+ * niet — zie `trap.ts` voor waarom die op slot staat en wat er moet gebeuren om
+ * hem open te zetten.
+ *
+ * Dat er een trede op slot staat is hier informatie en geen gebrek. Wie leest
+ * dat de app de criteria niet beoordeelt, weet meteen dat hij ze bij zijn
+ * huisarts moet halen — en dat is precies waar ze horen.
+ */
+function Traject({ gli }: { gli: Glistand }) {
+  const v = glivoortgang(gli.programma, gli.begonnen, vandaag())
+  const p = programmaVan(gli.programma)
+  const criteria = medicatiecriteria({
+    gliProgramma: gli.programma, gliBegonnen: gli.begonnen, vandaag: vandaag(),
+  })
+
+  return (
+    <>
+      <div className="lijst" style={{ marginTop: 6 }}>
+        <div style={{ flexWrap: 'wrap' }}>
+          <span className="klein groei"><b>{p?.naam ?? 'Leefstijlprogramma'}</b></span>
+          <span className="cijfer mini">
+            {v.maanden != null ? `${v.maanden} van de ${GLI_TOTAAL_MAANDEN} mnd` : '—'}
+          </span>
+          <span className="mini" style={{ flexBasis: '100%', color: 'var(--dim)' }}>{v.tekst}</span>
+        </div>
+        {criteria.map((c) => (
+          <div key={c.wat} style={{ flexWrap: 'wrap' }}>
+            <span className="klein groei">Medicatie</span>
+            <span className="cijfer mini" style={{ color: 'var(--dim)' }}>{c.stand}</span>
+            <span className="mini" style={{ flexBasis: '100%', color: 'var(--dim)' }}>
+              {c.toelichting}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <Uitleg id="traject" label="wat er wél vaststaat over die volgende trede">
+        {MEDICATIE.vast.map((zin, i) => <p key={i} className="klein">{zin}</p>)}
+        <p className="klein">
+          Deze app zegt niet of je in aanmerking komt. Dat is een oordeel van je huisarts, en de
+          richtlijn laat die uitdrukkelijk vrij dit aanbod niet te leveren. Meer erover staat onder
+          Verdiepen.
+        </p>
+      </Uitleg>
+    </>
   )
 }
