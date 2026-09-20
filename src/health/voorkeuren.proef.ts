@@ -8,7 +8,7 @@
  *    vinkje staan, en krijgt vlees voorgesteld. Dit is het ergste geval, want
  *    het vinkje is de belofte en de lijst de leugen.
  * 2. Een zachte voorkeur die hard blijkt. Als "liever niet" iets permanent
- *    onderaan zet, verdwijnt het uit beeld — dezelfde vernauwing waar bestand 28
+ *    onderaan zet, verdwijnt het uit beeld, dezelfde vernauwing waar bestand 28
  *    in de database over gaat, langs een andere weg binnengekomen.
  * 3. Een voorkeur die de rangschikking van de database omgooit waar hij niets
  *    zegt. Dan verlies je de verzadigingsscore als ordening en krijg je in de
@@ -27,7 +27,7 @@ const v = (p: Partial<Voorkeuren>): Voorkeuren => ({ ...GEEN_VOORKEUR, ...p })
 
 /* Groepsnamen zoals ze in bestand 28 letterlijk voorkomen, plus twee die daar
    niet in staan. Deze proef gaat over de regels en niet over de tabel, dus de
-   namen zijn hier willekeurig — behalve dat ze niet verzonnen mogen lijken. */
+   namen zijn hier willekeurig, behalve dat ze niet verzonnen mogen lijken. */
 const SAUS = 'Hartige sauzen'
 const DRANK = 'Niet-alcoholische dranken'
 const KRUID = 'Kruiden en specerijen'
@@ -53,7 +53,7 @@ describe('uitsluiten', () => {
 
   it('kent alle zevenentwintig groepen van de tabel', () => {
     /* Het aantal is de vingerafdruk. Klopt het niet meer, dan is er iets aan
-       nevo_foods veranderd en niet aan deze lijst — en dan hoort iemand hier te
+       nevo_foods veranderd en niet aan deze lijst, en dan hoort iemand hier te
        kijken voordat een eetpatroon stilzwijgend de verkeerde groep uitzet. */
     expect(GROEPEN).toHaveLength(27)
     expect(new Set(GROEPEN).size).toBe(27)
@@ -85,7 +85,7 @@ describe('voorstel', () => {
     for (const g of ['Eieren', 'Kaas', 'Melk en melkproducten', 'Gebak en koek']) {
       expect(uit).toContain(g)
     }
-    /* En juist niet de vervangers — dat is de groep waar een veganist het van
+    /* En juist niet de vervangers: dat is de groep waar een veganist het van
        moet hebben. Die eruit gooien zou de lijst voor precies deze gebruiker
        het armst maken. */
     expect(uit).not.toContain('Vleesvervangers en zuivelvervangers')
@@ -104,7 +104,7 @@ describe('voorstel', () => {
 
   it('noemt alleen groepen die werkelijk bestaan', () => {
     /* DE PROEF DIE DE STILLE FOUT VANGT. Een groepsnaam die net niet klopt
-       sluit niets uit en valt nergens over — de vegetariër krijgt dan vlees. */
+       sluit niets uit en valt nergens over, de vegetariër krijgt dan vlees. */
     for (const p of ['pescotarisch', 'vegetarisch', 'veganistisch'] as const) {
       for (const g of voorstel(p)) {
         expect(GROEPEN, `"${g}" staat niet in nevo_foods.groep`).toContain(g)
@@ -166,7 +166,7 @@ describe('pasToe', () => {
 
        a staat twintig punten boven c. Eén duwtje is twaalf, dus zelfs a omlaag
        én c omhoog tegelijk (vierentwintig verschil) mag niet meer doen dan ze
-       verwisselen — en nooit a helemaal uit beeld duwen. Wat hier bewezen wordt
+       verwisselen, en nooit a helemaal uit beeld duwen. Wat hier bewezen wordt
        is dat er niets verdwijnt: de lijst blijft even lang. */
     const uit = pasToe(lijst, v({ minder: [DRANK], liever: [KRUID] }))
     expect(uit).toHaveLength(3)
@@ -205,7 +205,7 @@ describe('pasToe', () => {
   })
 
   it('rekent met nul waar geen score staat', () => {
-    /* `kal_eiwitrijk` geeft geen score terug — die lijst gaat op dichtheid. Dan
+    /* `kal_eiwitrijk` geeft geen score terug, die lijst gaat op dichtheid. Dan
        hoort een duwtje nog steeds te werken en niet op NaN uit te komen. */
     const zonder = [{ naam: 'a', groep: DRANK }, { naam: 'b', groep: SAUS }]
     expect(pasToe(zonder, v({ liever: [SAUS] })).map((x) => x.naam)).toEqual(['b', 'a'])
@@ -233,7 +233,7 @@ describe('groepenOver', () => {
 
   it('telt een groep die niet bestaat niet mee', () => {
     /* Anders zou een typefout in `nooit` het getal omlaag brengen terwijl er
-       niets uitgesloten werd — een waarschuwing die de verkeerde kant op wijst. */
+       niets uitgesloten werd, een waarschuwing die de verkeerde kant op wijst. */
     expect(groepenOver(v({ nooit: ['Bestaat Niet'] }))).toBe(27)
   })
 })
@@ -246,7 +246,7 @@ describe('de keukens', () => {
   it('kent er precies zes, en dezelfde als de database', () => {
     /* De CHECK op `cultural_dishes.cuisine` laat deze zes toe. Komt er daar een
        bij en hier niet, dan filtert het vel een keuken die niemand kan uitzetten
-       — en dat merkt niemand, want er komt geen fout van. */
+, en dat merkt niemand, want er komt geen fout van. */
     expect([...KEUKENS].sort()).toEqual(
       ['marokkaans', 'nederlands', 'overig', 'surinaams', 'syrisch', 'turks'])
     for (const k of KEUKENS) expect(KEUKENNAAM[k].length).toBeGreaterThan(2)

@@ -67,7 +67,7 @@ describe('de leerstof', () => {
 
   it('houdt de profielen en de thema’s ongeschonden', () => {
     /* Het migratiebewijs zit op de vaste lijst. `PROFIELEN` schuift elk jaar in
-       augustus op — zie gegevens/schooljaar.ts — en die verschuiving heeft een
+       augustus op (zie gegevens/schooljaar.ts) en die verschuiving heeft een
        eigen proef in schooljaar.proef.ts. */
     expect(vinger(PROFIELEN_OUD)).toBe(gouden.stof.vingerProfielen)
     expect(vinger(THEMAS)).toBe(gouden.stof.vingerThemas)
@@ -323,7 +323,7 @@ describe('het herhalen, waar de klacht over ging', () => {
   it('noemt rust geen beheersing zolang de doosjes nog laag staan', () => {
     /* Na één goede ronde wacht elke som al een dag, maar beheerst is hij niet.
        Het scherm hangt hierop: 🏅 "dit beheers je" of 🌱 "je hebt ze gehad".
-       Hier zonder sjabloon, want die houdt de rust juist tegen — zie hieronder. */
+       Hier zonder sjabloon, want die houdt de rust juist tegen, zie hieronder. */
     const vaste = delen.filter((k) => !('gen' in k))
     const pr = vers()
     for (const k of vaste) pr.cards[k.id] = { box: 2, ok: 1, wrong: 0, last: KLOK }

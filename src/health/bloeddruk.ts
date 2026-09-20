@@ -1,5 +1,5 @@
 /**
- * DE THUISBLOEDDRUK — één getal uit een week metingen, en wat dat getal niet is
+ * DE THUISBLOEDDRUK: één getal uit een week metingen, en wat dat getal niet is
  *
  * Op het klinische scherm stond de nieuwste bloeddrukmeting. Dat is voor deze
  * waarde precies de verkeerde keuze, en om dezelfde reden als bij het gewicht:
@@ -61,7 +61,7 @@
  *
  * De gewenningsdag vervalt daarom alleen als het werkelijk de eerste is: er
  * staat geen enkele eerdere bloeddrukmeting. En hij vervalt niet als er anders
- * niets overblijft — één dag minder is beter dan geen getal.
+ * niets overblijft, één dag minder is beter dan geen getal.
  *
  * WAT DE APP NOG STEEDS NIET DOET
  *

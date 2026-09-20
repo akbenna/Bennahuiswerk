@@ -1,5 +1,5 @@
 /**
- * RASIKH — de Koran vastzetten.
+ * RASIKH: de Koran vastzetten.
  *
  * Voor een volwassene met weinig tijd en veel geheugen. Het uitgangspunt is
  * omgekeerd aan de meeste apps: niet "hoeveel leer je erbij" maar "hoeveel houd
@@ -86,7 +86,7 @@ export function App() {
   }, [index, wolk.aan])
 
   /* Bij het wegleggen van de telefoon nog één keer wegschrijven, zonder de
-     gebruikelijke wachttijd — anders gaat de laatste beoordeling verloren. */
+     gebruikelijke wachttijd, anders gaat de laatste beoordeling verloren. */
   useEffect(() => {
     const weg = () => { if (wolk.aan) wolk.bewaar(nu.current, true) }
     addEventListener('pagehide', weg)

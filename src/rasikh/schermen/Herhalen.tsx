@@ -1,5 +1,5 @@
 /**
- * HERHALEN — zelf beoordelen.
+ * HERHALEN: zelf beoordelen.
  * Wees streng: een hapering nu is beter dan een gat over een maand.
  */
 import { useEffect, useState } from 'react'

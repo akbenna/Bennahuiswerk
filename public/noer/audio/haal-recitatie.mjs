@@ -12,7 +12,7 @@
    Opnieuw ophalen wat er al staat:      --opnieuw
 
    Er wordt per aya één bestand verwacht met de gebruikelijke naamgeving
-   SSSAAA.mp3 — 001001.mp3 is soera 1, aya 1.
+   SSSAAA.mp3, 001001.mp3 is soera 1, aya 1.
 ============================================================================= */
 import { writeFile, mkdir, access, readFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
@@ -23,7 +23,7 @@ const DOEL = join(HIER, 'quran');
 
 /* De lezing van Warsh staat bovenaan: dat is de lezing van Marokko en de rest
    van de Maghreb, en dus wat de kinderen in de moskee horen. Werkt geen van de
-   Warsh-bronnen, dan pakt het script een Hafs-lezing — beter een goede stem in
+   Warsh-bronnen, dan pakt het script een Hafs-lezing, beter een goede stem in
    de verkeerde lezing dan een robot. Het meldt altijd wát het gepakt heeft. */
 const BRONNEN = [
   { id:'warsh-dosary',  lezing:'Warsh', naam:'Ibrahim al-Dosary',
@@ -108,7 +108,7 @@ if (!bron) {
     'Probeer het anders met een eigen archief: --basis="https://…/map"\n');
   process.exit(1);
 }
-console.log('\nGekozen: ' + bron.naam + ' — lezing ' + bron.lezing + '\n');
+console.log('\nGekozen: ' + bron.naam + ': lezing ' + bron.lezing + '\n');
 
 await mkdir(DOEL, { recursive: true });
 const opnieuw = vlag('opnieuw');

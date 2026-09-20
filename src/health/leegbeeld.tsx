@@ -7,14 +7,14 @@
  *
  * Ze zijn getekend naar een opdracht die één ding hard vastlegde: `currentColor`
  * en geen enkele vaste kleur. Wat je hieronder ziet is dan ook geen plaatje maar
- * vorm — de kleur komt van buiten, en dus kloppen ze in dag en nacht en bij elk
+ * vorm, de kleur komt van buiten, en dus kloppen ze in dag en nacht en bij elk
  * palet dat er later nog komt. Diepte zit in `fill-opacity`, niet in een tweede
  * kleur.
  *
  * WAAROM ZE HIER STAAN EN NIET IN `public/`
  *
  * Als bestand in `public/` zouden ze via `<img>` binnenkomen, en dan is
- * `currentColor` weg — een `<img>` weet niets van de kleur van zijn omgeving.
+ * `currentColor` weg, een `<img>` weet niets van de kleur van zijn omgeving.
  * Inline in de pagina werkt het wel, en het scheelt drie verzoeken. Dezelfde
  * afweging als bij `tekens.tsx`.
  *

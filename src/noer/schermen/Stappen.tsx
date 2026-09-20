@@ -7,7 +7,7 @@
  * sunna kunt vergeten en gewoon door kunt gaan.
  *
  * Onderaan staan drie dingen die in deze school niet bij het verplichte gebed
- * horen. Kennen is wel nuttig — je staat vroeg of laat achter een imam die het
+ * horen. Kennen is wel nuttig: je staat vroeg of laat achter een imam die het
  * wél doet.
  */
 import { useEffect, useState } from 'react'

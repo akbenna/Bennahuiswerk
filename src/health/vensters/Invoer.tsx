@@ -1,5 +1,5 @@
 /**
- * HET INVOERVEL — alles wat met eten loggen te maken heeft, op één plek.
+ * HET INVOERVEL: alles wat met eten loggen te maken heeft, op één plek.
  *
  * Hoe het was: het tekstvak stond op Vandaag, het zoeken op Voeding, de porties
  * in een derde venster. Wie zijn lunch wilde loggen wisselde van tabblad, zocht,
@@ -9,7 +9,7 @@
  *
  * Hoe het nu is: één vel dat opengaat vanaf het maaltijdvak dat je aantikt. Het
  * moment staat er al goed in, en het eerste dat je ziet is niet een leeg
- * zoekveld maar wat je zelf al eens gegeten hebt — met één tik erop staat het
+ * zoekveld maar wat je zelf al eens gegeten hebt, met één tik erop staat het
  * erin. Zoeken kan in hetzelfde vel, beschrijven ook, en het vel blijft open
  * zodat een maaltijd van drie dingen drie tikken is en geen drie keer opnieuw
  * beginnen.
@@ -22,7 +22,7 @@
  * DE VIERDE MANIER: JE EIGEN MAALTIJDEN
  *
  * De drie hierboven werken per product. Een tonijnsalade is geen product maar
- * zeven producten, en die zoek je bij elke keer opnieuw op — met elke keer een
+ * zeven producten, en die zoek je bij elke keer opnieuw op, met elke keer een
  * net iets ander antwoord. Vandaar de bovenste strook: wat je één keer hebt
  * uitgezocht staat daar als één tegel, met een portiekeuze erbij.
  *
@@ -63,7 +63,7 @@ export const MOMENTKEUZE: Array<{ id: Moment; naam: string; klas: string }> = [
    geschiedenis heeft. Ze vullen het beschrijfvak in plaats van meteen op te
    slaan: bij een nieuwe gebruiker weet de app nog niet wat een cappuccino bij
    hém is. */
-/* Er stond een emoji voor elk woord — een kopje, een brood, een pinda. Die zijn
+/* Er stond een emoji voor elk woord, een kopje, een brood, een pinda. Die zijn
    eruit en niet vervangen: op drie chips met een woord erop voegde het plaatje
    niets toe, en het waren de laatste drie gekleurde tekens in een app waarvan de
    rest met de hand getekend is. Zie `tekens.tsx`. */
@@ -88,7 +88,7 @@ export interface InvoerEigenschappen {
  * Waar het vel op opent.
  *
  * Voor vandaag raadt de klok het moment. Voor een oudere dag zegt de klok
- * niets, en dan is het eerste vak dat nog leeg staat de beste gok — dat is
+ * niets, en dan is het eerste vak dat nog leeg staat de beste gok, dat is
  * doorgaans precies wat je komt aanvullen.
  */
 function beginMoment(start: Moment, regels: Regel[], datum: IsoDatum): Moment {
@@ -104,7 +104,7 @@ export function InvoerVenster(p: InvoerEigenschappen) {
   const [soort, zetSoort] = useState<Lijstsoort>('vaak')
   const [term, zetTerm] = useState('')
   /* Wat er in dit vel is toegevoegd. Het vel blijft open, dus zonder deze regel
-     zie je niet of je tik is aangekomen — en tik je hem nog een keer. */
+     zie je niet of je tik is aangekomen, en tik je hem nog een keer. */
   const [gedaan, zetGedaan] = useState<string[]>([])
 
   const [maaltijden, zetMaaltijden] = useState<Maaltijd[]>([])
@@ -122,7 +122,7 @@ export function InvoerVenster(p: InvoerEigenschappen) {
   const beschrijfVak = useRef<HTMLDivElement>(null)
 
   /* Naar het beschrijfvak toe, met of zonder foto. Het staat onder de vouw, dus
-     openklappen alleen is niet genoeg — je moet er ook naartoe. */
+     openklappen alleen is niet genoeg, je moet er ook naartoe. */
   function naarBeschrijven(foto?: File) {
     zetBeschrijfOpen(true)
     if (foto) zetBeschrijfFoto(foto)
@@ -130,7 +130,7 @@ export function InvoerVenster(p: InvoerEigenschappen) {
       () => beschrijfVak.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }))
   }
 
-  /* De overstap van zoeken naar beschrijven. Het zoekveld gaat leeg — anders
+  /* De overstap van zoeken naar beschrijven. Het zoekveld gaat leeg: anders
      blijven de zoekresultaten eroverheen staan en zie je nog steeds niet waar je
      terechtkwam. En dan naar het vak toe scrollen, want het staat onder de vouw. */
   function laatHerkennen(zin: string) {
@@ -177,7 +177,7 @@ export function InvoerVenster(p: InvoerEigenschappen) {
       {/* DE DRIE MANIEREN STAAN BOVEN ELKAAR EN NIET OVER HET VEL VERSPREID
           Zoeken, een foto maken en het opschrijven zijn drie manieren om
           hetzelfde te doen. Twee ervan stonden onder de vouw, in de kop van het
-          beschrijfvak — dus wie een bord voor zich had staan moest eerst langs
+          beschrijfvak, dus wie een bord voor zich had staan moest eerst langs
           alle zoekresultaten scrollen om bij de camera te komen. Ze horen waar
           je begint: boven de balk waarin je anders zou gaan typen. */}
       <div className="ingangen" style={{ marginTop: 12 }}>
@@ -195,7 +195,7 @@ export function InvoerVenster(p: InvoerEigenschappen) {
               van je bord en logt het 's avonds; iemand stuurt je een foto van wat
               jullie gegeten hebben; je fotografeert een etiket in de winkel en
               zoekt het later op. Zonder `capture` toont het toestel zijn eigen
-              keuze — fotorol, camera, bestanden — en is dat allemaal mogelijk.
+              keuze (fotorol, camera, bestanden) en is dat allemaal mogelijk.
 
               Op een computer verandert er niets: een browser zonder camera-app
               negeert `capture` en opende altijd al de bestandenkiezer. Dat is
@@ -308,8 +308,8 @@ export function InvoerVenster(p: InvoerEigenschappen) {
               </p>
             ) : (
               /* `suggesties` staat naast `lijst` zodat deze lijst aan te wijzen is.
-                 Er staan er inmiddels drie in dit vel — suggesties, zoekresultaten
-                 en de duiding van een maaltijd — en "de eerste .lijst" is dan geen
+                 Er staan er inmiddels drie in dit vel (suggesties, zoekresultaten
+                 en de duiding van een maaltijd) en "de eerste .lijst" is dan geen
                  aanwijzing meer maar een gok. */
               <div className="lijst suggesties" style={{ marginTop: 6 }}>
                 {suggesties.map((h) => (
@@ -376,8 +376,8 @@ function Weegveld(
 /**
  * Eén suggestie: naam, wat het de vorige keer was, en een tik om het te doen.
  *
- * De onderregel is kort gehouden. Hij stond er eerst voluit — "28× gelogd,
- * laatst 22 aug (meestal ontbijt)" — en liep dan over twee regels, waardoor de
+ * De onderregel is kort gehouden. Hij stond er eerst voluit ("28× gelogd,
+ * laatst 22 aug (meestal ontbijt)") en liep dan over twee regels, waardoor de
  * lijst half zo lang werd en je dus moest scrollen voor iets wat één tik hoorde
  * te zijn.
  */
@@ -549,8 +549,8 @@ function Zoekvangst(
               kaas' en de kaas zelf stond eronder.
 
               Nu één lijst, gerangschikt op hoe goed de naam bij de vraag past.
-              De regels blijven zichzelf benoemen — 'gerecht · marokkaans',
-              'kcal per 100 g', '◈ merkproduct' — dus je ziet nog steeds wat je
+              De regels blijven zichzelf benoemen ('gerecht · marokkaans',
+              'kcal per 100 g', '◈ merkproduct') dus je ziet nog steeds wat je
               voor je hebt. `zoekvolgorde.ts` legt de treden uit. */}
           {gedeeld.map((x) => (
             x.soort === 'gerecht' ? (
@@ -580,7 +580,7 @@ function Zoekvangst(
               /* Merk houdt graad D. Dat is geen minachting maar de ladder: een
                  etiket is een opgave van de fabrikant met een wettelijke marge,
                  geen laboratoriumbepaling. Wat het wél heeft en de tabel niet is
-                 het gewicht van de verpakking — daarom staat dat erbij. */
+                 het gewicht van de verpakking, daarom staat dat erbij. */
               <div key={'m' + x.m.id}>
                 <Chip graad="D" />
                 <span className="groei">
@@ -603,7 +603,7 @@ function Zoekvangst(
               De database valt terug op schrijfvarianten als het gewone zoeken
               niets vond: "lesagna" komt zo bij Lasagne uit. Dat is precies de
               bedoeling, maar het stilzwijgend tonen zou hetzelfde zijn als een
-              getal zonder zijn onzekerheid geven — je zou denken dat je het
+              getal zonder zijn onzekerheid geven, je zou denken dat je het
               gevonden hebt terwijl er geraden is naar wat je bedoelde.
 
               Eén regel, en alleen als het echt een benadering is. Bij een gewone
@@ -632,7 +632,7 @@ function Zoekvangst(
  * Stond als eigen kaart op Vandaag, tussen de weging en de maaltijdvakken. Dat
  * is de verkeerde plek: het is geen apart onderwerp maar de derde manier om
  * hetzelfde te doen, en het hoort dus naast de andere twee te staan. Ingeklapt,
- * want het is de langzaamste van de drie — een halve minuut tegenover één tik.
+ * want het is de langzaamste van de drie, een halve minuut tegenover één tik.
  */
 function Beschrijven(
   { token, datum, moment, open, zetOpen, tekst, zetTekst, foto, zetFoto, opToevoegen }:
@@ -803,7 +803,7 @@ function Beschrijven(
  *
  * INGEKLAPT, MET ÉÉN TIK OM TE LOGGEN
  *
- * Uitgeklapt was elke tegel een blok van tien regels — naam, band, vier
+ * Uitgeklapt was elke tegel een blok van tien regels, naam, band, vier
  * portieknopjes, zes onzekerheidsbronnen, een toelichting en een uitklapje. Bij
  * vier bewaarde maaltijden vulde dat het hele vel, en dan moet je scrollen langs
  * dingen die je al weet om bij het zoekveld te komen dat je nodig hebt.
@@ -817,11 +817,11 @@ function Beschrijven(
  * De graad en de band blijven staan, ook ingeklapt. Dat is geen detail maar de
  * afspraak van deze app: geen enkel getal zonder zijn onzekerheid. De letter en
  * de twee grenzen ná het punt zíjn die onzekerheid, samengevat; wat achter het
- * uitklapje verdwijnt is waar die vandaan komt — welk onderdeel niet gewogen is
+ * uitklapje verdwijnt is waar die vandaan komt, welk onderdeel niet gewogen is
  * en hoe erg dat is. Een samenvatting mag inklappen, de uitkomst niet.
  *
  * De portiekeuze verandert de kop mee. Staat er een halve portie gekozen, dan
- * zegt de kop dat, ook als de tegel weer dichtgaat — anders log je met één tik
+ * zegt de kop dat, ook als de tegel weer dichtgaat, anders log je met één tik
  * iets anders dan wat er staat.
  */
 function Maaltijdtegel(
@@ -884,8 +884,8 @@ function Maaltijdtegel(
             ))}
           </Rij>
 
-          {/* Waar de onzekerheid vandaan komt. De uitkomst ervan — de graad en
-              de band — staat hierboven en gaat nooit weg. */}
+          {/* Waar de onzekerheid vandaan komt. De uitkomst ervan (de graad en
+              de band) staat hierboven en gaat nooit weg. */}
           {a.onzeker.map((o, i) => (
             <span className="mini" style={{ display: 'block', marginTop: 3 }} key={i}>· {o}</span>
           ))}
@@ -903,7 +903,7 @@ function Maaltijdtegel(
 /**
  * Wat het gerecht bétekent, achter een uitklapje.
  *
- * Achter een uitklapje omdat dit niet is wat je komt doen — je komt loggen. Maar
+ * Achter een uitklapje omdat dit niet is wat je komt doen, je komt loggen. Maar
  * wél in het gerecht en niet op een apart scherm, want de vraag "kan dit beter"
  * komt precies op het moment dat je ernaar kijkt.
  *

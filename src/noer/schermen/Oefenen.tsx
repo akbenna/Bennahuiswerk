@@ -1,9 +1,9 @@
 /**
- * OEFENEN — herhalen met tussenpozen
+ * OEFENEN: herhalen met tussenpozen
  *
  * Wat je goed hebt komt later terug, wat je fout hebt morgen weer. Zo blijft
  * het zitten zonder dat er geblokt hoeft te worden. Een ronde is tien kaarten:
- * eerst wat herhaald moet worden, dan iets nieuws — in die volgorde, want
+ * eerst wat herhaald moet worden, dan iets nieuws, in die volgorde, want
  * vergeten stof kost minder moeite dan nieuwe.
  */
 import { useState } from 'react'

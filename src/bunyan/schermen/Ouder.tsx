@@ -1,7 +1,7 @@
 /**
- * HET OUDERSCHERM — voortgang, uitbetalen en instellingen
+ * HET OUDERSCHERM: voortgang, uitbetalen en instellingen
  *
- * Altijd op slot, ook zonder ingestelde code — dan geldt de standaardcode.
+ * Altijd op slot, ook zonder ingestelde code, dan geldt de standaardcode.
  * Anders zet degene voor wie de beloning bedoeld is zijn eigen tarief, en dat
  * is het enige scherm in de app waar dat werkelijk uitmaakt.
  *

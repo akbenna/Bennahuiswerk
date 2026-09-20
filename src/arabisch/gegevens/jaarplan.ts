@@ -6,8 +6,8 @@ import type { Blok, Metingniveau, Metingvraag, Sessiestap, Week } from './soorte
    Zesendertig zaterdagen van anderhalf uur. Elke week dezelfde
    opbouw, zodat een kind na drie weken weet wat er komt: openen,
    herhalen, nieuwe letters, lezen, schrijven, een stuk geloof, en
-   afsluiten. De letters lopen cumulatief — wat er staat blijft
-   terugkomen — en het geloofsdeel haakt waar het kan aan de letter
+   afsluiten. De letters lopen cumulatief (wat er staat blijft
+   terugkomen) en het geloofsdeel haakt waar het kan aan de letter
    of het woord van die week.
    ============================================================ */
 export const SESSIE: Sessiestap[] = [
@@ -22,7 +22,7 @@ export const SESSIE: Sessiestap[] = [
 export const SESSIEMINUTEN: number = SESSIE.reduce((n,x)=>n+x.min,0);
 
 /* Vier blokken van negen weken. De negende week van elk blok is
-   herhaling met een toets — geen nieuwe stof. */
+   herhaling met een toets, geen nieuwe stof. */
 export const BLOKKEN: Blok[] = [
   {n:1, weken:[1,9],   t:'De eerste zestien letters', u:'Van alif tot ta, met de korte klinkers erbij.'},
   {n:2, weken:[10,18], t:'Het alfabet compleet',      u:'De laatste twaalf letters, en de tekens die je nodig hebt om te lezen.'},

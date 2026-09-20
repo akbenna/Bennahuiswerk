@@ -1,7 +1,7 @@
 import type { Extrateken, Letter, Teken } from './soorten'
 
 /* ============================================================
-   LETTERS — de 28 letters van het Arabische alfabet
+   LETTERS, de 28 letters van het Arabische alfabet
    ------------------------------------------------------------
    De vier schrijfvormen worden NIET als losse tekens opgeslagen
    maar met zero-width joiner (U+200D) afgedwongen. Reden: de
@@ -9,7 +9,7 @@ import type { Extrateken, Letter, Teken } from './soorten'
    die door sommige fonts slecht worden gedekt, terwijl ZWJ door
    elke shaping-engine correct wordt afgehandeld. Bijkomend
    voordeel: letters die niet naar links verbinden (ا د ذ ر ز و)
-   worden vanzelf juist getoond — een ZWJ links van zo'n letter
+   worden vanzelf juist getoond, een ZWJ links van zo'n letter
    levert simpelweg geen verbinding op, precies zoals in echte
    tekst.
    ------------------------------------------------------------
@@ -18,7 +18,7 @@ import type { Extrateken, Letter, Teken } from './soorten'
    n   naam in het Arabisch (gevocaliseerd)
    tr  transcriptie van de naam
    k   klank (korte aanduiding)
-   u   uitspraakhulp in het Nederlands — eerlijk over wat het
+   u   uitspraakhulp in het Nederlands, eerlijk over wat het
        Nederlands niet kent
    zon true = zonsletter (14 stuks), false = maansletter
    vl  verbindt naar links (false voor ا د ذ ر ز و)

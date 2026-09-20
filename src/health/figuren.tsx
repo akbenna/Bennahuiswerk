@@ -3,7 +3,7 @@
  *
  * Drie SVG's, met de hand getekend en zonder grafiekbibliotheek. Dat is geen
  * zuinigheid: elke bibliotheek die dit zou kunnen weegt meer dan de hele app en
- * geen enkele tekent standaard wat hier nodig is — een interval naast een
+ * geen enkele tekent standaard wat hier nodig is, een interval naast een
  * formuleschatting, een weeglijn met de losse metingen eronder, en staven die
  * van kleur wisselen op een drempel die iets betekent.
  *

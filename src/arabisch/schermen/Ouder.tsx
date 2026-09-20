@@ -1,5 +1,5 @@
 /**
- * OUDER — profielen, sporen, weergave en beheer
+ * OUDER: profielen, sporen, weergave en beheer
  *
  * Dit scherm zit op slot. Hier staan de profielen, de sporen en de knop die
  * alles wist; dat is geen scherm waar een kind per ongeluk in hoort te komen.

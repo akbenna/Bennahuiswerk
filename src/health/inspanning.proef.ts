@@ -3,7 +3,7 @@
  *
  * Eén ding: dat een minuut zware inspanning voor twee matige telt, en dat dat
  * overal doorwerkt. De rest van dit bestand is er om die ene regel niet stil te
- * laten verdwijnen — een factor die per ongeluk op 1 komt te staan geeft geen
+ * laten verdwijnen, een factor die per ongeluk op 1 komt te staan geeft geen
  * foutmelding, alleen een weekdoel dat niet meer gehaald wordt.
  *
  * En één die net zo belangrijk is en makkelijker over het hoofd te zien: de
@@ -194,7 +194,7 @@ describe('het oude veld telt mee', () => {
   })
 
   /* Een dag buiten het venster hoort niet mee te tellen, ook niet als hij in de
-     rijen zit — de lijst gaat over drie weken en de norm over zeven dagen. */
+     rijen zit, de lijst gaat over drie weken en de norm over zeven dagen. */
   it('een rij van buiten de week valt eraf', () => {
     expect(weekposten(week, [post('2026-09-01', 'rennen', 40, 'zwaar')], {})).toEqual([])
   })
@@ -239,7 +239,7 @@ describe('welke dagen "deze week" zijn', () => {
       ['2026-09-29', '2026-09-30', '2026-10-01', '2026-10-02'])
   })
 
-  /* EN OVER DE ZOMERTIJDGRENS — met de klok van de gebruiker, niet die van de
+  /* EN OVER DE ZOMERTIJDGRENS: met de klok van de gebruiker, niet die van de
      proefmachine.
 
      Op 25 oktober 2026 gaat de klok in Amsterdam een uur terug. Wie in lokale
@@ -277,7 +277,7 @@ describe('welke dagen "deze week" zijn', () => {
     const rijen = [
       { datum: '2026-09-16', soort: 'rennen', minuten: 60, intensiteit: 'zwaar' as const, bron: 'import' },
     ]
-    /* Niets in `fiets` en niets in de dagenkaart — precies de toestand na een
+    /* Niets in `fiets` en niets in de dagenkaart, precies de toestand na een
        import van alleen een work-outlijst. */
     expect(weektotaal(weekposten(week, rijen, {}))).toBe(120)
   })

@@ -1,8 +1,8 @@
 /**
- * VANDAAG — waar je staat en wat de eerstvolgende stap is
+ * VANDAAG: waar je staat en wat de eerstvolgende stap is
  *
  * Eén les per dag is genoeg. Wie een uur achter elkaar doet en dan vier dagen
- * niets, onthoudt minder dan wie elke dag tien minuten doet — daarom staan hier
+ * niets, onthoudt minder dan wie elke dag tien minuten doet, daarom staan hier
  * twee knoppen en niet een hele lijst.
  */
 import type { ReactNode } from 'react'

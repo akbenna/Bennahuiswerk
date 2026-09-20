@@ -21,7 +21,7 @@
  * WAT ER DAARNA OVERBLIJFT
  *
  * Niet nul. De voedingswaarde komt nog steeds uit de tabel, en die draagt zijn
- * eigen onzekerheid — dezelfde acht procent die `kal-ai` aanhoudt voor een
+ * eigen onzekerheid, dezelfde acht procent die `kal-ai` aanhoudt voor een
  * gewogen portie. Een gewogen regel krijgt hier dus een band van ±8 procent en
  * geen punt. Een app die na het wegen een kaal getal toont zou beweren dat de
  * tabel exact is.
@@ -59,7 +59,7 @@ export function spreiding(r: HerkendeRegel): number {
  * kleiner dan de fout die je met de weegschaal zelf nog maakt, en dan is de
  * vraag stellen erger dan hem niet stellen.
  *
- * Al gewogen regels doen niet mee — te herkennen aan een band die al niet
+ * Al gewogen regels doen niet mee, te herkennen aan een band die al niet
  * breder is dan de tabelband. Anders zou de app je vragen nog eens te wegen wat
  * je net gewogen hebt.
  */
@@ -83,7 +83,7 @@ export function grootsteOnzekerheid(
  *
  * Er wordt geschaald vanaf wat er stond: de voedingswaarde per gram verandert
  * niet door te wegen, alleen het aantal grammen. Dat is ook waarom dit hier kan
- * en niet opnieuw langs het model hoeft — er valt niets te herkennen, alleen te
+ * en niet opnieuw langs het model hoeft, er valt niets te herkennen, alleen te
  * vermenigvuldigen.
  *
  * Geeft de regel ongewijzigd terug als er niets te schalen valt: nul of een
@@ -117,7 +117,7 @@ export function weegRegel(r: HerkendeRegel, gram: number): HerkendeRegel {
     koolhydraat_g: (r.koolhydraat_g || 0) * f,
     vezel_g: (r.vezel_g || 0) * f,
     conf,
-    /* De oude opmerkingen blijven staan — over het bereidingsvet bijvoorbeeld,
+    /* De oude opmerkingen blijven staan, over het bereidingsvet bijvoorbeeld,
        dat na het wegen van de portie nog even onzeker is. Maar een opmerking
        die zegt dat de portie geschat is, is nu onwaar, en er is geen
        betrouwbare manier om die eruit te vissen: het is vrije tekst van het

@@ -1,5 +1,5 @@
 /**
- * WOORDEN — de hele woordenschat, doorzoekbaar
+ * WOORDEN: de hele woordenschat, doorzoekbaar
  *
  * Zoeken gaat op Nederlands, transcriptie én Arabisch. Dat laatste met de
  * tekens eraf: wie zelf Arabisch tikt zet er zelden klinkertekens bij, en dan

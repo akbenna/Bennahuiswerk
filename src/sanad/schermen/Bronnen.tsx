@@ -1,4 +1,4 @@
-/** DE WERKEN ZELF — wat het is, wie het schreef, en of je eraan kunt komen. */
+/** DE WERKEN ZELF: wat het is, wie het schreef, en of je eraan kunt komen. */
 import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { BRONNEN } from '../gegevens/bronnen'

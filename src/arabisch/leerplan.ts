@@ -1,5 +1,5 @@
 /**
- * HET LEERPAD — een vaste reeks blokken, één blok is één sessie
+ * HET LEERPAD: een vaste reeks blokken, één blok is één sessie
  *
  * Er is bewust geen streak en geen achterstand. De kalender wordt bij elke
  * opening opnieuw op vandaag verankerd: het eerstvolgende blok dat je nog niet
@@ -9,7 +9,7 @@
  * verlaagt het vervolggedrag; een schema dat altijd op vandaag staat kan niet
  * breken.)
  *
- * Binnen een blok wordt alleen gemengd wat verward kan worden — ba/ta/tha bij
+ * Binnen een blok wordt alleen gemengd wat verward kan worden, ba/ta/tha bij
  * elkaar, sin/shin bij elkaar. Letters, woordenschat en grammatica zitten
  * nooit in dezelfde sessie; dat is versnippering, geen interleaving.
  */
@@ -25,7 +25,7 @@ import type { Kaartstaat } from './fsrs'
 import { dagVerschil } from './datum'
 
 /** De eerste gok, zolang er nog geen niveaubepaling is gedaan. De ouder kan
- *  hem overschrijven, en de niveaubepaling vervangt hem — zie hieronder. */
+ *  hem overschrijven, en de niveaubepaling vervangt hem, zie hieronder. */
 export function spoorBijLeeftijd(l: number): Spoor {
   if (l <= 9) return 1
   if (l <= 12) return 2
@@ -45,7 +45,7 @@ export function spoorBijLeeftijd(l: number): Spoor {
    én hoe de app met je omgaat. Vanaf spoor 3 beoordeelt iemand zijn eigen
    antwoord (`Vandaag.tsx`) en vallen de punten weg (`Ouder.tsx`), en spoor 4
    heet niet voor niets "het volwassen spoor". Een kind van acht dat vlot leest
-   hoort zwaardere woorden te krijgen — geen zelfbeoordeling, want dat kán het
+   hoort zwaardere woorden te krijgen, geen zelfbeoordeling, want dat kán het
    nog niet betrouwbaar.
 
    Vandaar twee regels in plaats van één: de meting kiest de stof, de leeftijd

@@ -242,7 +242,7 @@ function AppBlok(
   const regels = stand ? leesVeilig(tegel.id, stand) : []
 
   /* Kent een app geen uitlezer of staat er nog niets in, dan zeggen we dat
-     gewoon — een lege tabel laat je raden of het niet werkt of dat er niets is. */
+     gewoon, een lege tabel laat je raden of het niet werkt of dat er niets is. */
   let inhoud
   if (tegel.id === 'huiswerk' || CURSUSSEN.includes(tegel.id)) {
     inhoud = (

@@ -1,7 +1,7 @@
 import type { Insigne, Niveau, Spoor } from './soorten'
 
 /* =============================================================================
-   BELONING — niveaus, insignes en tarieven.
+   BELONING, niveaus, insignes en tarieven.
    Geld verdien je met leren: lessen, memoriseren, oefenkaarten en de examens.
    Het bidden zelf staat standaard buiten de beloning; zie de uitleg bij Ouder.
 ============================================================================= */

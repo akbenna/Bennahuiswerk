@@ -1,5 +1,5 @@
 /**
- * WOORDEN — de bron in stukjes
+ * WOORDEN: de bron in stukjes
  *
  * Inspringen wordt hier al tot INSPRING- en UIT-tekens gemaakt, want dat is wat
  * Python van andere talen onderscheidt: het blok zit in de witruimte. Binnen

@@ -3,12 +3,12 @@
  *
  * `kal_aanmelden` gooit sinds bestand 32 geen exception meer bij een mislukking
  * maar geeft `{fout}` terug. De reden staat daar: de functie houdt een teller
- * bij van mislukte pogingen, en een exception draait de transactie terug —
+ * bij van mislukte pogingen, en een exception draait de transactie terug,
  * inclusief die teller. De rem zou nooit grijpen.
  *
  * Dat verplaatst een risico naar deze kant. Een mislukte aanmelding komt nu
  * binnen met een 200 en zonder token. Wie daar niet op let, bewaart een lege
- * sessie in localStorage en de app denkt dat je binnen bent — een scherm vol
+ * sessie in localStorage en de app denkt dat je binnen bent, een scherm vol
  * nullen zonder uitleg, en geen weg terug behalve je opslag wissen.
  *
  * `isSessie` is de enige plek waar dat onderscheid wordt gemaakt, en deze proef
@@ -32,7 +32,7 @@ describe('isSessie', () => {
 
   /* DE VORM DIE ALLES STUKMAAKT
      Een leeg token is geen token. Zonder deze regel zou `{token: ''}` als een
-     geslaagde aanmelding tellen — en dat is precies wat er overblijft als er
+     geslaagde aanmelding tellen, en dat is precies wat er overblijft als er
      ooit iets misgaat in de functie of onderweg. */
   it('rekent een leeg token niet als aangemeld', () => {
     expect(isSessie({ token: '', account: 'abdelkader' } as Aanmelduitslag)).toBe(false)

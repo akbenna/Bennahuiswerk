@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Kompas · Slim Leren & Focus</title>
 <meta name="theme-color" content="#16a34a">
-<meta name="description" content="Kompas — studievaardigheden & focus voor kinderen. Slim leren, plannen, onthouden, toetsen en doorzetten. 20 lessen, kenniskaarten en een leer-simulator.">
+<meta name="description" content="Kompas, studievaardigheden & focus voor kinderen. Slim leren, plannen, onthouden, toetsen en doorzetten. 20 lessen, kenniskaarten en een leer-simulator.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMzRkMzk5Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDZiNmQ0Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiByeD0iMTUiIGZpbGw9InVybCgjZykiLz48Y2lyY2xlIGN4PSIzMiIgY3k9IjMyIiByPSIxOSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjMiLz48cG9seWdvbiBwb2ludHM9IjMyLDE2IDM4LDMzIDMyLDI5IDI2LDMzIiBmaWxsPSIjZmZmIi8+PHBvbHlnb24gcG9pbnRzPSIzMiw0OCAyNiwzMSAzMiwzNSAzOCwzMSIgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iMC42NSIvPjxjaXJjbGUgY3g9IjMyIiBjeT0iMzIiIHI9IjIuNiIgZmlsbD0iI2ZmZiIvPjwvc3ZnPg==">
 <style>
   :root{
@@ -112,7 +112,7 @@
 <script>
 "use strict";
 /* ============================================================
-   KOMPAS — slim leren, focus & studievaardigheden (voor de kinderen)
+   KOMPAS, slim leren, focus & studievaardigheden (voor de kinderen)
    Zelfstandige, offline werkende app (geen externe afhankelijkheden).
    Voortgang in localStorage. Onderdeel van de Bennaghmouch Academie.
    ============================================================ */
@@ -140,7 +140,7 @@ const MOD=Object.fromEntries(MODULES.map(m=>[m.id,m]));
 /* ---------------- LESSEN ---------------- */
 const LESSONS=[
   {m:'focus', t:"Eén ding tegelijk", d:"Multitasken bestaat niet echt. Eén taak per keer is sneller én beter.",
-   min:8, principe:"Je hersenen kunnen niet echt twee dingen tegelijk. 'Multitasken' is snel wisselen — en daardoor maak je meer fouten en duurt alles langer.",
+   min:8, principe:"Je hersenen kunnen niet echt twee dingen tegelijk. 'Multitasken' is snel wisselen, en daardoor maak je meer fouten en duurt alles langer.",
    waarom:"Elke keer dat je wisselt tussen je huiswerk en je telefoon, moet je brein opnieuw opstarten. Dat kost tijd en energie. Eén ding tegelijk is juist sneller.",
    tech:[
      ["Kies één taak","Leg vast wat je nú gaat doen (bijvoorbeeld '10 sommen'). Alleen dat, niks anders."],
@@ -154,10 +154,10 @@ const LESSONS=[
 
   {m:'focus', t:"De Pomodoro-techniek", d:"Werk in blokjes van 25 minuten met een pauze. Zo blijft je focus fris.",
    min:9, principe:"Werk in korte blokken van 25 minuten met een pauze ertussen. Zo blijft je concentratie fris en lijkt leren minder zwaar.",
-   waarom:"Je aandacht kan niet uren aan één stuk. Korte blokken met pauzes houden je scherp — en de wekker helpt je om te beginnen.",
+   waarom:"Je aandacht kan niet uren aan één stuk. Korte blokken met pauzes houden je scherp, en de wekker helpt je om te beginnen.",
    tech:[
      ["25 + 5","Zet een wekker op 25 minuten werken, daarna 5 minuten pauze. Na 4 blokken een langere pauze."],
-     ["Pauze is echt pauze","Sta op, drink water, beweeg even. Geen scherm — dan rust je brein pas echt."],
+     ["Pauze is echt pauze","Sta op, drink water, beweeg even. Geen scherm: dan rust je brein pas echt."],
      ["Begin klein","Zeg 'ik doe één blok van 25 minuten'. Beginnen is het moeilijkst; de wekker maakt het makkelijk."]
    ],
    lines:[],
@@ -167,7 +167,7 @@ const LESSONS=[
 
   {m:'focus', t:"Je werkplek & afleiding wegzetten", d:"Waar je leert, bepaalt hoe goed je leert.",
    min:8, principe:"Een opgeruimde plek zonder afleiding maakt focussen veel makkelijker.",
-   waarom:"Je brein wordt afgeleid door alles wat het ziet. Ligt je telefoon naast je, dan denkt een deel van je hoofd de hele tijd aan die telefoon — ook als je 'm niet gebruikt.",
+   waarom:"Je brein wordt afgeleid door alles wat het ziet. Ligt je telefoon naast je, dan denkt een deel van je hoofd de hele tijd aan die telefoon, ook als je 'm niet gebruikt.",
    tech:[
      ["Telefoon uit zicht","Leg 'm in een la of andere kamer. Uit het zicht = uit je hoofd."],
      ["Ruim je bureau op","Alleen wat je nodig hebt. Rommel is afleiding."],
@@ -176,7 +176,7 @@ const LESSONS=[
    lines:[],
    fout:"Leren op bed met de telefoon binnen handbereik. Je wordt slaperig én afgeleid.",
    oef:"Ruim vandaag vóór je begint je werkplek op en leg je telefoon in een andere kamer.",
-   check:{v:"Waarom leg je je telefoon uit het zicht?", o:["Zodat hij oplaadt","Omdat je brein er anders steeds aan denkt","Dat maakt niet uit"], a:1, u:"Alleen al zichtbaar liggen leidt je af — uit het zicht helpt je focussen."}},
+   check:{v:"Waarom leg je je telefoon uit het zicht?", o:["Zodat hij oplaadt","Omdat je brein er anders steeds aan denkt","Dat maakt niet uit"], a:1, u:"Alleen al zichtbaar liggen leidt je af, uit het zicht helpt je focussen."}},
 
   {m:'plannen', t:"Je huiswerk opdelen in stukjes", d:"Een grote taak is eng. Knip 'm klein, dan wordt hij te doen.",
    min:9, principe:"Knip een grote taak in kleine stapjes, dan wordt hij ineens te doen.",
@@ -192,17 +192,17 @@ const LESSONS=[
    check:{v:"Wat helpt tegen een grote, enge taak?", o:["Wachten tot je zin hebt","Hem opknippen in kleine stapjes","Alles in één keer doen"], a:1, u:"Kleine stapjes maken een grote taak te doen en zetten je aan het werk."}},
 
   {m:'plannen', t:"Plannen met een weekoverzicht", d:"Wat je opschrijft, vergeet je niet.",
-   min:10, principe:"Een simpel weekoverzicht laat zien wat wanneer moet — geen verrassingen meer.",
+   min:10, principe:"Een simpel weekoverzicht laat zien wat wanneer moet, geen verrassingen meer.",
    waarom:"Je hoofd is slecht in het onthouden van álle deadlines. Op papier of in je agenda heb je overzicht en rust in je hoofd.",
    tech:[
-     ["Schrijf alles op","Toetsen, huiswerk, deadlines — meteen in je agenda zodra je ze hoort."],
+     ["Schrijf alles op","Toetsen, huiswerk, deadlines, meteen in je agenda zodra je ze hoort."],
      ["Kijk vooruit","Begin je week met even kijken: wat komt eraan? Verdeel het werk over de dagen."],
      ["Plan ook ontspanning","Zet ook sport, spelen en rust in je planning. Dan houd je het vol."]
    ],
    lines:[],
    fout:"Alles in je hoofd willen houden. Dan vergeet je een toets of begin je te laat.",
    oef:"Maak vandaag een kort overzicht van deze week: welke toetsen en huiswerk komen eraan, en op welke dag doe je wat?",
-   check:{v:"Waarom schrijf je je planning op?", o:["Dat moet van de juf","Zodat je overzicht hebt en niets vergeet","Om je agenda vol te maken"], a:1, u:"Opschrijven geeft overzicht en rust — je hoeft het niet allemaal te onthouden."}},
+   check:{v:"Waarom schrijf je je planning op?", o:["Dat moet van de juf","Zodat je overzicht hebt en niets vergeet","Om je agenda vol te maken"], a:1, u:"Opschrijven geeft overzicht en rust, je hoeft het niet allemaal te onthouden."}},
 
   {m:'plannen', t:"Eerst het vervelendste (prioriteiten)", d:"Doe de moeilijkste taak eerst. Daarna voelt de rest licht.",
    min:8, principe:"Doe de moeilijkste of vervelendste taak als eerste. Daarna voelt de rest licht.",
@@ -215,7 +215,7 @@ const LESSONS=[
    lines:[],
    fout:"Beginnen met het makkelijke en het moeilijke steeds uitstellen. Dan blijft het aan je knagen.",
    oef:"Begin je huiswerk vandaag met de taak waar je het meest tegenop ziet. Merk hoe de rest daarna meevalt.",
-   check:{v:"Met welke taak kun je het best beginnen?", o:["De makkelijkste","De leukste","De moeilijkste of vervelendste"], a:2, u:"Met de meeste energie pak je het zwaarste eerst — daarna voelt de rest licht."}},
+   check:{v:"Met welke taak kun je het best beginnen?", o:["De makkelijkste","De leukste","De moeilijkste of vervelendste"], a:2, u:"Met de meeste energie pak je het zwaarste eerst, daarna voelt de rest licht."}},
 
   {m:'leren', t:"Overhoor jezelf (actief herhalen)", d:"Jezelf overhoren leert veel meer dan de tekst nog eens lezen.",
    min:10, principe:"Je leert veel meer door jezelf te overhoren dan door de tekst nog eens te lezen. Ophalen uit je hoofd maakt het sterk.",
@@ -260,14 +260,14 @@ const LESSONS=[
    min:9, principe:"Struikel je bij het uitleggen? Dan weet je precies wat je nog moet leren.",
    waarom:"Uitleggen dwingt je om de stof helder te ordenen. Waar je vastloopt, zit je gat. Zo vind je vanzelf wat je nog niet snapt.",
    tech:[
-     ["Speel de juf","Leg de stof uit aan een broer, zus of ouder — of aan je knuffel of de spiegel."],
+     ["Speel de juf","Leg de stof uit aan een broer, zus of ouder, of aan je knuffel of de spiegel."],
      ["Simpel = snap","Kun je het simpel uitleggen, dan snap je het. Moeilijke woorden verbergen vaak onbegrip."],
      ["Zoek je gaten op","Waar je hapert, lees je nog eens na. Dan opnieuw uitleggen tot het wél vloeiend gaat."]
    ],
    lines:[],
    fout:"Denken dat je het snapt zonder het ooit hardop uit te leggen. Op de toets blijkt dan het gat.",
    oef:"Leg vandaag één onderwerp uit aan iemand (of hardop aan jezelf). Waar je hapert, leer je opnieuw.",
-   check:{v:"Waarom helpt iets uitleggen aan een ander?", o:["Het is gezellig","Je merkt precies wat je nog niet snapt","Je hoeft dan zelf niet te leren"], a:1, u:"Uitleggen laat je gaten zien — precies wat je nog moet leren."}},
+   check:{v:"Waarom helpt iets uitleggen aan een ander?", o:["Het is gezellig","Je merkt precies wat je nog niet snapt","Je hoeft dan zelf niet te leren"], a:1, u:"Uitleggen laat je gaten zien, precies wat je nog moet leren."}},
 
   {m:'leren', t:"Ezelsbruggetjes & geheugentrucs", d:"Je brein houdt van gek en grappig.",
    min:8, principe:"Moeilijk te onthouden lijstjes? Maak er een gek zinnetje, plaatje of rijmpje van.",
@@ -280,15 +280,15 @@ const LESSONS=[
    lines:[],
    fout:"Een saai lijstje honderd keer overlezen. Zonder trucje glijdt het zo weer weg.",
    oef:"Bedenk vandaag voor één lastig lijstje een ezelsbruggetje of een gek plaatje.",
-   check:{v:"Waarom werken ezelsbruggetjes?", o:["Ze zijn kort","Je brein onthoudt gekke, grappige dingen beter","Ze staan in het boek"], a:1, u:"Gekke, kleurrijke trucs geven je brein een handvat — zo onthoud je lijstjes beter."}},
+   check:{v:"Waarom werken ezelsbruggetjes?", o:["Ze zijn kort","Je brein onthoudt gekke, grappige dingen beter","Ze staan in het boek"], a:1, u:"Gekke, kleurrijke trucs geven je brein een handvat, zo onthoud je lijstjes beter."}},
 
   {m:'lezen', t:"Begrijpend lezen: eerst overzicht", d:"Duik niet meteen de tekst in.",
-   min:9, principe:"Kijk eerst naar de titel, kopjes en plaatjes — dan weet je waar het over gaat en snap je meer.",
+   min:9, principe:"Kijk eerst naar de titel, kopjes en plaatjes, dan weet je waar het over gaat en snap je meer.",
    waarom:"Als je brein vooraf weet waar een tekst over gaat, kan het de nieuwe info makkelijker een plekje geven. Overzicht eerst maakt de details begrijpelijker.",
    tech:[
      ["Scan eerst","Lees titel, tussenkopjes en dikgedrukte woorden en bekijk plaatjes vóór je begint."],
      ["Vraag je af","'Waar zal dit over gaan?' Een verwachting maakt lezen actiever."],
-     ["Lees dan pas","Nu je het overzicht hebt, lees je de tekst — en snap je meer."]
+     ["Lees dan pas","Nu je het overzicht hebt, lees je de tekst, en snap je meer."]
    ],
    lines:[],
    fout:"Meteen woord voor woord beginnen zonder te weten waar het heen gaat. Dan verdwaal je.",
@@ -296,10 +296,10 @@ const LESSONS=[
    check:{v:"Wat doe je het best vóór je een tekst leest?", o:["Meteen woord voor woord beginnen","Eerst titel, kopjes en plaatjes bekijken","De tekst overslaan"], a:1, u:"Eerst overzicht maken helpt je brein de details een plek te geven."}},
 
   {m:'lezen', t:"Moeilijke woorden aanpakken", d:"Een moeilijk woord hoeft je niet te stoppen.",
-   min:8, principe:"Vaak snap je een moeilijk woord uit de zin eromheen — of je zoekt het snel op.",
+   min:8, principe:"Vaak snap je een moeilijk woord uit de zin eromheen, of je zoekt het snel op.",
    waarom:"Bij elk moeilijk woord stoppen haalt je uit de tekst. Vaak geeft de rest van de zin een hint, en anders helpt even opzoeken je verder.",
    tech:[
-     ["Lees door","Lees de zin af — soms wordt het woord verderop vanzelf duidelijk."],
+     ["Lees door","Lees de zin af, soms wordt het woord verderop vanzelf duidelijk."],
      ["Kijk naar de zin","Wat zou passen? De woorden eromheen geven vaak een hint."],
      ["Zoek op & noteer","Snap je het echt niet? Zoek het op en schrijf lastige woorden in een eigen woordenlijst."]
    ],
@@ -314,7 +314,7 @@ const LESSONS=[
    tech:[
      ["Zoek de kernzin","Vaak staat het belangrijkste in de eerste of laatste zin van een alinea."],
      ["Wat is de boodschap?","Wat zou je aan een vriend vertellen als samenvatting van deze alinea?"],
-     ["Markeer met mate","Onderstreep alleen de kern — niet de halve tekst. Anders valt niets meer op."]
+     ["Markeer met mate","Onderstreep alleen de kern, niet de halve tekst. Anders valt niets meer op."]
    ],
    lines:[],
    fout:"De halve tekst geel markeren. Dan is alles 'belangrijk' en dus niets.",
@@ -323,7 +323,7 @@ const LESSONS=[
 
   {m:'toetsen', t:"Een toets voorbereiden", d:"Een toets haal je niet de avond ervoor.",
    min:10, principe:"Bereid een toets voor met een klein beetje elke dag én een oefentoets vooraf.",
-   waarom:"Gespreid leren en jezelf testen (een oefentoets) laten je zien wat je al kunt en wat nog niet — precies wat je nodig hebt om gericht te leren.",
+   waarom:"Gespreid leren en jezelf testen (een oefentoets) laten je zien wat je al kunt en wat nog niet, precies wat je nodig hebt om gericht te leren.",
    tech:[
      ["Plan terug vanaf de toets","Weet wat je moet kennen en verdeel het over de dagen ervoor."],
      ["Maak een oefentoets","Test jezelf met oude toetsen of eigen vragen. Zo weet je waar je staat."],
@@ -336,7 +336,7 @@ const LESSONS=[
 
   {m:'toetsen', t:"Zenuwen & faalangst bij toetsen", d:"Een beetje zenuwen is normaal en zelfs handig.",
    min:9, principe:"Met ademhalen en goede voorbereiding houd je je zenuwen klein.",
-   waarom:"Zenuwen geven je energie om scherp te zijn. Ze worden pas een probleem als ze je blokkeren — en dat kun je trainen met ademhaling en een goede voorbereiding.",
+   waarom:"Zenuwen geven je energie om scherp te zijn. Ze worden pas een probleem als ze je blokkeren, en dat kun je trainen met ademhaling en een goede voorbereiding.",
    tech:[
      ["Adem rustig","Adem 4 tellen in en 6 tellen uit. Dat maakt je lijf en hoofd rustiger."],
      ["Denk helpend","Zeg tegen jezelf 'ik heb geoefend, ik doe mijn best' i.p.v. 'ik kan het niet'."],
@@ -358,24 +358,24 @@ const LESSONS=[
    lines:[],
    fout:"Te lang blijven hangen bij één moeilijke vraag, waardoor de tijd op is voor de rest.",
    oef:"Oefen bij je volgende oefentoets: doe eerst alle makkelijke vragen, sla moeilijke over, kom er daarna op terug.",
-   check:{v:"Wat doe je met een moeilijke vraag tijdens een toets?", o:["Net zo lang blijven proberen","Overslaan en later terugkomen","Meteen opgeven"], a:1, u:"Sla 'm over, pak de makkelijke punten, en kom later terug — zo laat je niets liggen."}},
+   check:{v:"Wat doe je met een moeilijke vraag tijdens een toets?", o:["Net zo lang blijven proberen","Overslaan en later terugkomen","Meteen opgeven"], a:1, u:"Sla 'm over, pak de makkelijke punten, en kom later terug, zo laat je niets liggen."}},
 
-  {m:'mindset', t:"Groeimindset: fouten helpen je leren", d:"Je bent niet 'slim' of 'dom' — je brein groeit door oefenen.",
+  {m:'mindset', t:"Groeimindset: fouten helpen je leren", d:"Je bent niet 'slim' of 'dom', je brein groeit door oefenen.",
    min:9, principe:"Fouten zijn geen mislukking, maar de manier waarop je leert.",
-   waarom:"Elke keer dat je iets moeilijks oefent, worden verbindingen in je brein sterker. Fouten laten zien wát je nog moet oefenen — ze horen bij leren.",
+   waarom:"Elke keer dat je iets moeilijks oefent, worden verbindingen in je brein sterker. Fouten laten zien wát je nog moet oefenen, ze horen bij leren.",
    tech:[
      ["Zeg 'nog niet'","'Ik kan dit nóg niet' i.p.v. 'ik kan dit niet'. Het woordje 'nog' verandert alles."],
      ["Fout = les","Kijk bij een fout: wat kan ik hiervan leren? Dan word je er beter van."],
      ["Vergelijk met jezelf","Kijk of jíj vooruitgaat, niet of je beter bent dan een ander."]
    ],
-   lines:["Ik kan dit nóg niet — maar met oefenen lukt het.","Een fout betekent: hier kan ik nog groeien."],
+   lines:["Ik kan dit nóg niet, maar met oefenen lukt het.","Een fout betekent: hier kan ik nog groeien."],
    fout:"Denken 'ik ben gewoon slecht in wiskunde'. Dat is geen feit, maar een gedachte die je tegenhoudt.",
    oef:"Kijk vandaag naar één fout die je maakte en schrijf op wat je ervan geleerd hebt. Zeg 'nóg niet' i.p.v. 'niet'.",
    check:{v:"Wat betekent een fout maken?", o:["Dat je dom bent","Dat je iets leert en kunt groeien","Dat je moet stoppen"], a:1, u:"Fouten horen bij leren; ze laten zien wat je nog kunt oefenen."}},
 
   {m:'mindset', t:"Motivatie & jezelf belonen", d:"Motivatie komt vaak pas ná het beginnen.",
    min:8, principe:"Begin klein, en beloon jezelf voor wat je doet.",
-   waarom:"Wachten op zin werkt zelden — juist door te beginnen komt de zin. En een kleine beloning geeft je brein een fijn gevoel dat je wilt herhalen.",
+   waarom:"Wachten op zin werkt zelden, juist door te beginnen komt de zin. En een kleine beloning geeft je brein een fijn gevoel dat je wilt herhalen.",
    tech:[
      ["Begin 2 minuten","Zeg 'ik doe het maar 2 minuten'. Meestal ga je vanzelf door zodra je begint."],
      ["Beloon jezelf","Klaar met een taak? Iets leuks als beloning (spelen, snack, sport). Zo blijft leren fijn."],
@@ -384,19 +384,19 @@ const LESSONS=[
    lines:[],
    fout:"Wachten tot je 'zin hebt' om te beginnen. Die zin komt vaak nooit vanzelf.",
    oef:"Begin je huiswerk vandaag met de '2-minuten-truc' en beloon jezelf met iets leuks als je klaar bent.",
-   check:{v:"Wanneer komt de motivatie meestal?", o:["Altijd vóór je begint","Vaak pas nadat je bent begonnen","Nooit"], a:1, u:"Beginnen brengt de motivatie — daarom helpt de 2-minuten-truc."}},
+   check:{v:"Wanneer komt de motivatie meestal?", o:["Altijd vóór je begint","Vaak pas nadat je bent begonnen","Nooit"], a:1, u:"Beginnen brengt de motivatie, daarom helpt de 2-minuten-truc."}},
 
   {m:'mindset', t:"Doorzetten als het moeilijk wordt", d:"Moeilijk betekent niet onmogelijk.",
    min:9, principe:"Als iets moeilijk voelt, is je brein aan het groeien. Volhouden maakt het verschil.",
    waarom:"Precies wanneer iets moeilijk voelt, leer je het meest. Wie doorzet als het even niet lukt, wordt uiteindelijk het sterkst.",
    tech:[
-     ["Neem een korte pauze","Vast? Even weglopen, water, adem — en dan met frisse blik terug."],
+     ["Neem een korte pauze","Vast? Even weglopen, water, adem, en dan met frisse blik terug."],
      ["Vraag hulp","Doorzetten is niet alles alleen doen. Vraag uitleg aan de juf, meester of thuis."],
      ["Deel het op","Te moeilijk in één keer? Terug naar een kleiner stapje dat wél lukt, en bouw op."]
    ],
-   lines:["Dit is moeilijk — dus ik ben aan het leren.","Even pauze, dan probeer ik het opnieuw."],
+   lines:["Dit is moeilijk, dus ik ben aan het leren.","Even pauze, dan probeer ik het opnieuw."],
    fout:"Bij de eerste tegenslag meteen opgeven of denken 'dit kan ik niet'. Juist dan zit je vaak vlak bij de doorbraak.",
-   oef:"Als iets vandaag niet lukt: neem een korte pauze, deel het op in een kleiner stapje, of vraag hulp — en probeer opnieuw.",
+   oef:"Als iets vandaag niet lukt: neem een korte pauze, deel het op in een kleiner stapje, of vraag hulp, en probeer opnieuw.",
    check:{v:"Wat betekent het als iets moeilijk voelt?", o:["Dat je moet stoppen","Dat je brein aan het groeien is","Dat je het nooit kunt"], a:1, u:"Moeilijk = leren; doorzetten (evt. met pauze of hulp) brengt de doorbraak."}}
 ];
 
@@ -430,19 +430,19 @@ const TECHVDDAG=[
   ["Fout = les","Een fout laat zien wat je nog kunt leren. Zo groei je."]
 ];
 const MATERIAAL={
-  "Focus-trucs":["Telefoon in een andere kamer.","Zet een wekker op 25 minuten (Pomodoro).","Eén taak tegelijk — schrijf op wat je nú doet.","Ruim je bureau op vóór je begint.","Zet meldingen uit."],
+  "Focus-trucs":["Telefoon in een andere kamer.","Zet een wekker op 25 minuten (Pomodoro).","Eén taak tegelijk, schrijf op wat je nú doet.","Ruim je bureau op vóór je begint.","Zet meldingen uit."],
   "Plan-stappen":["Schrijf toetsen en deadlines meteen in je agenda.","Hak grote taken in kleine stapjes.","Doe de vervelendste taak eerst.","Plan ook pauzes en iets leuks in.","Kijk aan het begin van de week vooruit."],
   "Onthoud-trucs":["Overhoor jezelf (boek dicht, navertellen).","Spreid je herhalingen over meerdere dagen.","Vat samen in je eigen woorden.","Leg het uit aan iemand anders.","Maak een ezelsbruggetje of gek plaatje."],
   "Lees-stappen":["Bekijk eerst titel, kopjes en plaatjes.","Raad waar de tekst over gaat.","Zoek de kernzin per alinea.","Moeilijk woord? Lees door of zoek het op.","Onderstreep alleen de hoofdzaken."],
   "Toets-checklist":["Begin een paar dagen van tevoren.","Maak een oefentoets.","Leer vooral wat je nog niet kunt.","Rustig ademen: 4 in, 6 uit.","Makkelijke vragen eerst, moeilijke later."],
-  "Motivatie-boost":["Begin 2 minuten — de zin komt vanzelf.","Beloon jezelf na een taak.","Zeg 'ik kan dit nóg niet'.","Vier elke afgemaakte taak.","Vraag hulp als je vastzit."]
+  "Motivatie-boost":["Begin 2 minuten (de zin komt vanzelf.","Beloon jezelf na een taak.","Zeg 'ik kan dit nóg niet'.","Vier elke afgemaakte taak.","Vraag hulp als je vastzit."]
 };
 const KAARTEN=[
-  ["Kun je echt twee dingen tegelijk?","Nee — je brein wisselt snel, en daardoor maak je meer fouten. Eén ding tegelijk is beter."],
+  ["Kun je echt twee dingen tegelijk?","Nee) je brein wisselt snel, en daardoor maak je meer fouten. Eén ding tegelijk is beter."],
   ["Hoe werkt de Pomodoro-techniek?","25 minuten werken, 5 minuten pauze, en dat herhalen."],
-  ["Waar leg je je telefoon tijdens huiswerk?","In een andere kamer of la — uit het zicht, uit je hoofd."],
+  ["Waar leg je je telefoon tijdens huiswerk?","In een andere kamer of la (uit het zicht, uit je hoofd."],
   ["Wat doe je met een grote, enge taak?","In kleine stapjes hakken en met stap 1 beginnen."],
-  ["Waarom schrijf je je planning op?","Voor overzicht en rust — je hoeft het niet allemaal te onthouden."],
+  ["Waarom schrijf je je planning op?","Voor overzicht en rust) je hoeft het niet allemaal te onthouden."],
   ["Met welke taak begin je het best?","De moeilijkste of vervelendste ('eet de kikker')."],
   ["Wat werkt beter dan herlezen?","Jezelf overhoren: uit je hoofd ophalen wat je weet."],
   ["Stampen of spreiden?","Spreiden: een beetje over meerdere dagen blijft veel beter plakken."],
@@ -450,20 +450,20 @@ const KAARTEN=[
   ["Waarom iets uitleggen aan een ander?","Dan merk je precies waar je gaten zitten."],
   ["Waarom werken ezelsbruggetjes?","Je brein onthoudt gekke, grappige dingen beter."],
   ["Wat doe je vóór je een tekst leest?","Eerst titel, kopjes en plaatjes bekijken voor overzicht."],
-  ["Wat doe je met een moeilijk woord?","Uit de zin raden of even opzoeken — niet stoppen met lezen."],
+  ["Wat doe je met een moeilijk woord?","Uit de zin raden of even opzoeken, niet stoppen met lezen."],
   ["Waar staat de hoofdzaak vaak?","In de eerste of laatste zin van een alinea."],
   ["Hoe bereid je een toets goed voor?","Gespreid leren + een oefentoets maken."],
   ["Wat helpt tegen toetszenuwen?","Rustig ademen (4 in, 6 uit) en beginnen met een makkelijke vraag."],
   ["Wat doe je met een moeilijke toetsvraag?","Overslaan, de makkelijke punten pakken, en later terugkomen."],
-  ["Wat betekent een fout maken?","Dat je aan het leren bent — een fout laat zien wat je nog kunt oefenen."],
+  ["Wat betekent een fout maken?","Dat je aan het leren bent, een fout laat zien wat je nog kunt oefenen."],
   ["Wanneer komt motivatie meestal?","Vaak pas nadat je begonnen bent (2-minuten-truc)."],
-  ["Wat betekent het als iets moeilijk voelt?","Dat je brein aan het groeien is — doorzetten loont."]
+  ["Wat betekent het als iets moeilijk voelt?","Dat je brein aan het groeien is, doorzetten loont."]
 ];
 const KINTERVAL=[0,1,2,4,8,15];
 
 const SIM=[
   {s:"Je moet leren, maar je telefoon blijft trekken.", aanpak:"Telefoon uit het zicht + Pomodoro.", zin:"Telefoon in de andere kamer. Ik doe 25 minuten, dan pauze."},
-  {s:"Je hebt een groot werkstuk en weet niet waar je moet beginnen.", aanpak:"Hak het in kleine stapjes.", zin:"Stap 1: onderwerp kiezen. Meer nog niet — gewoon stap 1."},
+  {s:"Je hebt een groot werkstuk en weet niet waar je moet beginnen.", aanpak:"Hak het in kleine stapjes.", zin:"Stap 1: onderwerp kiezen. Meer nog niet: gewoon stap 1."},
   {s:"Je hebt de tekst 3× gelezen maar onthoudt niks.", aanpak:"Stop met herlezen, ga jezelf overhoren.", zin:"Boek dicht. Wat weet ik nog? Ik vertel het hardop."},
   {s:"Over 4 dagen heb je een grote toets.", aanpak:"Spreid het leren + maak een oefentoets.", zin:"Elke dag een stukje, en morgen maak ik een mini-oefentoets."},
   {s:"Je zit vast op een moeilijke som en wordt boos op jezelf.", aanpak:"Pauze, opdelen, of hulp vragen.", zin:"Even pauze. Ik knip de som op of vraag zo uitleg."},
@@ -524,16 +524,16 @@ function tabVandaag(){
   <div class="hero">
     <div class="eyebrow">Kompas · Dagtraining</div>
     <h1>Elke dag een beetje slimmer leren</h1>
-    <p>Focus, plannen en slim onthouden — één trucje per dag maakt je een leerbaas.</p>
+    <p>Focus, plannen en slim onthouden, één trucje per dag maakt je een leerbaas.</p>
     <div class="stats"><span class="chip">🔥 ${s} dag${s===1?'':'en'} streak</span><span class="chip">✅ ${af}/${LESSONS.length} lessen</span><span class="chip">🗓️ ${store.oefdagen.length} oefendagen</span></div>
   </div>
 
   <div class="card">
     <span class="tag">Uitdaging van vandaag</span>
     <h2 style="margin-top:8px">${esc(uit)}</h2>
-    <p class="sub" style="margin-top:6px">Klein en concreet. Doe 'm vandaag en vink af — zo bouw je je streak.</p>
+    <p class="sub" style="margin-top:6px">Klein en concreet. Doe 'm vandaag en vink af: zo bouw je je streak.</p>
     ${gedaan
-      ? `<button class="btn ok block" style="margin-top:12px" disabled>✅ Vandaag gedaan — knap!</button>`
+      ? `<button class="btn ok block" style="margin-top:12px" disabled>✅ Vandaag gedaan, knap!</button>`
       : `<button class="btn ok block" data-act="oefdone" style="margin-top:12px">Ik heb 'm gedaan ✅</button>`}
   </div>
 
@@ -557,7 +557,7 @@ function tabVandaag(){
   </div>
 
   <div class="card center">
-    <p class="sub">${due>0?`🎯 ${due} kenniskaart${due===1?'':'en'} klaar om te herhalen.`:'✨ Alle kaarten voor nu herhaald — kom morgen terug.'}</p>
+    <p class="sub">${due>0?`🎯 ${due} kenniskaart${due===1?'':'en'} klaar om te herhalen.`:'✨ Alle kaarten voor nu herhaald, kom morgen terug.'}</p>
     <button class="btn block" data-tab="oefenen" style="margin-top:10px">🎯 Naar oefenen</button>
   </div>`;
 }
@@ -615,7 +615,7 @@ function lesDetail(i){
     <div class="oef"><b>🎯 Doe dit vandaag</b><p style="margin-top:4px">${esc(l.oef)}</p></div>
     ${quizHTML(i)}
     ${done
-      ? `<button class="btn ok block" data-act="undone" data-les="${i}" style="margin-top:16px">✅ Afgerond — tik om te herzien</button>`
+      ? `<button class="btn ok block" data-act="undone" data-les="${i}" style="margin-top:16px">✅ Afgerond, tik om te herzien</button>`
       : `<button class="btn block" data-act="done" data-les="${i}" style="margin-top:16px">Markeer als afgerond</button>`}
   </div>
   ${i<LESSONS.length-1?`<button class="btn ghost block" data-les="${i+1}" style="margin-top:12px">Volgende les › ${esc(LESSONS[i+1].t)}</button>`:`<div class="card center"><b>🎉 Laatste les!</b><p class="sub">Herhaal dagelijks in het tabblad Vandaag en oefen met de kenniskaarten.</p></div>`}`;
@@ -639,7 +639,7 @@ function oefKaarten(){
     return `<div class="card center">
       <p class="big">🧠</p>
       <b>Alles herhaald!</b>
-      <p class="sub" style="margin-top:6px">Je hebt alle kaarten voor nu gehad. Kaarten komen vanzelf terug volgens slim herhalen — kom later terug.</p>
+      <p class="sub" style="margin-top:6px">Je hebt alle kaarten voor nu gehad. Kaarten komen vanzelf terug volgens slim herhalen, kom later terug.</p>
       <div class="kv" style="margin-top:12px"><span>Beheerst</span><b>${beheerst} / ${KAARTEN.length}</b></div>
     </div>`;
   }
@@ -670,7 +670,7 @@ function oefSimulator(){
       <p class="quote" style="margin-top:12px;text-align:left"><b>Situatie:</b> ${esc(sc.s)}</p>
       <p class="sub" style="margin-top:10px;text-align:left"><b>Slimme aanpak:</b> ${esc(sc.aanpak)}</p>
       ${view.simModel
-        ? `<div class="oef" style="text-align:left"><b>💡 Wat je tegen jezelf zegt</b><p style="margin-top:4px">“${esc(sc.zin)}”</p><p class="sub" style="margin-top:6px">Dit is één manier — jouw eigen woorden werken ook. Probeer het echt vandaag.</p></div>`
+        ? `<div class="oef" style="text-align:left"><b>💡 Wat je tegen jezelf zegt</b><p style="margin-top:4px">“${esc(sc.zin)}”</p><p class="sub" style="margin-top:6px">Dit is één manier, jouw eigen woorden werken ook. Probeer het echt vandaag.</p></div>`
         : `<button class="btn ghost block" data-act="simmodel" style="margin-top:12px">Toon een slimme aanpak</button>`}
     `:`<p class="quote" style="margin-top:12px">Tik op de knop voor een willekeurige leer-situatie. Bedenk: wat is hier de slimme aanpak?</p>`}
     <button class="btn block" data-act="sim" style="margin-top:12px">🎲 ${sc?'Nieuwe situatie':'Geef me een situatie'}</button>
@@ -729,7 +729,7 @@ function tabIk(){
   </div>`:''}
   <div class="card center">
     <p class="big">${store.oefdagen.length===0?'🚀':'⭐'}</p>
-    <p class="sub">${store.oefdagen.length===0?'Begin vandaag met de uitdaging van de dag — de eerste stap is de belangrijkste.':'Knap bezig! Kom morgen terug voor je volgende oefening.'}</p>
+    <p class="sub">${store.oefdagen.length===0?'Begin vandaag met de uitdaging van de dag, de eerste stap is de belangrijkste.':'Knap bezig! Kom morgen terug voor je volgende oefening.'}</p>
   </div>
   <a class="backhome" href="../index.html">‹ Terug naar de Bennaghmouch Academie</a>`;
 }
@@ -765,7 +765,7 @@ function quizAnswer(i,opt,btn){
     fb.style.display='block'; fb.className='quizfb goodfb'; fb.innerHTML='✅ Klopt! '+esc(l.check.u);
   } else {
     btn.classList.add('bad'); btn.disabled=true;
-    fb.style.display='block'; fb.className='quizfb badfb'; fb.textContent='Nog niet — probeer een andere.';
+    fb.style.display='block'; fb.className='quizfb badfb'; fb.textContent='Nog niet, probeer een andere.';
   }
 }
 function act(a,ds){
@@ -791,7 +791,7 @@ function act(a,ds){
 }
 /* Deze cursus stond achter een slot met een cijfercode. Dat slot is eraf: het
    is lesstof voor volwassenen en er staat niets in dat afgeschermd hoeft te
-   worden — geen gegevens van een kind, geen account, geen naam. Wat je hier
+   worden, geen gegevens van een kind, geen account, geen naam. Wat je hier
    doet blijft net als eerst in localStorage op dit toestel staan. */
 render();
 </script>

@@ -3,7 +3,7 @@
  *
  * De uitleg in de lessen draagt opmaak: <b> om een begrip, <span class="ar">
  * om Arabisch. Die gaat via dangerouslySetInnerHTML naar binnen, en dat mag
- * omdat de herkomst vaststaat — die teksten staan in de repo. Alles wat een
+ * omdat de herkomst vaststaat, die teksten staan in de repo. Alles wat een
  * kind of een ouder zélf intikt gaat als gewone tekst door React heen.
  */
 import { useEffect, useState } from 'react'
@@ -43,7 +43,7 @@ export const Melding = (
 
 /**
  * Een kort berichtje onderin beeld. Bedoeld voor dingen die misgaan terwijl er
- * geen scherm is om het in te zetten — beter dan stilte.
+ * geen scherm is om het in te zetten, beter dan stilte.
  */
 export function Kortje({ tekst }: { tekst: string }): ReactNode {
   const [zicht, zetZicht] = useState(false)

@@ -1,5 +1,5 @@
 /**
- * LEREN — vaste teksten, en waarom dat het hele ontwerp is
+ * LEREN: vaste teksten, en waarom dat het hele ontwerp is
  *
  * Wat hier staat is een boekje. Elke tekst is een constante: hij leest niets van
  * de gebruiker, rekent niets uit, en staat er voor iedereen hetzelfde. Dat is
@@ -12,7 +12,7 @@
  * `health/STRATEGIE-CHRONISCHE-ZORG.md`.
  *
  * De conditie bepaalt hooguit welke bladzijden bovenaan komen. Dat is bladeren
- * en geen verwerken — de tekst zelf verandert er niet van, en dat is precies wat
+ * en geen verwerken, de tekst zelf verandert er niet van, en dat is precies wat
  * de proef bewaakt.
  *
  * WAAROM ER HIER WÉL GETALLEN IN STAAN
@@ -145,7 +145,7 @@ export const BLADZIJDEN: readonly Bladzijde[] = [
 /**
  * De bladzijden, die eerst die bij deze conditie horen.
  *
- * Er valt niets weg. Wie wil lezen over iets wat hij niet heeft, mag dat —
+ * Er valt niets weg. Wie wil lezen over iets wat hij niet heeft, mag dat,
  * verbergen zou suggereren dat de app weet wat er bij iemand speelt, en het
  * enige wat hij weet is wat er is aangevinkt.
  */

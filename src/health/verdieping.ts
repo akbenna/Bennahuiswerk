@@ -1,5 +1,5 @@
 /**
- * VERDIEPEN — het boekje over afvallen, medicatie en wat je vasthoudt
+ * VERDIEPEN: het boekje over afvallen, medicatie en wat je vasthoudt
  *
  * Acht stukken, en ze staan er voor iedereen hetzelfde. Net als `leren.ts` is
  * dit een boek en geen behandeling: er wordt niets van de gebruiker gelezen,
@@ -23,7 +23,7 @@
  *
  * Elk stuk heeft een veld `nietWeten`, en dat mag nooit leeg zijn. In deze markt
  * zijn de claims hard en het bewijs zacht; het enige echte onderscheid is zeggen
- * waar de zekerheid ophoudt. Een proef houdt dat vast — niet als stijlregel maar
+ * waar de zekerheid ophoudt. Een proef houdt dat vast, niet als stijlregel maar
  * omdat een stuk zonder dat veld het soort tekst is dat dit boekje juist niet
  * wil zijn.
  *
@@ -37,7 +37,7 @@ export interface Verdieping {
   kort: string
   /** Wat we weten, met het getal en waar het vandaan komt. */
   weten: string[]
-  /** Wat we niet weten. Nooit leeg — zie de kop. */
+  /** Wat we niet weten. Nooit leeg: zie de kop. */
   nietWeten: string[]
   /** Waar in de app je dit terugziet. Een verwijzing, geen berekening. */
   inDeApp: string

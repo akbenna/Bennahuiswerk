@@ -1,4 +1,4 @@
-/* Bennaghmouch Oefenclub — service worker voor offline gebruik.
+/* Bennaghmouch Oefenclub: service worker voor offline gebruik.
    Cachet de app-shell (huiswerk-app, spellen en de Academie-cursussen)
    zodat alles zonder netwerk blijft werken. Cloud-sync (Supabase) en
    fonts gaan naar het netwerk en falen offline stilletjes (de app werkt

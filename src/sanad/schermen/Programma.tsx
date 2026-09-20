@@ -1,4 +1,4 @@
-/** HET PROGRAMMA — achtentwintig weken in vijf blokken, en waar je staat. */
+/** HET PROGRAMMA: achtentwintig weken in vijf blokken, en waar je staat. */
 import type { ReactNode } from 'react'
 import { CURRICULUM } from '../gegevens/curriculum'
 import { PROGRAMMA, weekTitel } from '../programma'

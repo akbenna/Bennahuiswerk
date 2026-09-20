@@ -2,7 +2,7 @@
  * DE GEBEDSTIJDEN BEWEZEN
  *
  * 1344 combinaties van datum, plaats, methode, asr-schaduw en hogebreedteregel,
- * vergeleken met wat de oude app werkelijk uitrekende — tot op de seconde.
+ * vergeleken met wat de oude app werkelijk uitrekende, tot op de seconde.
  * Zeven plaatsen van Nairobi tot Tromsø en acht dagen, waaronder beide
  * zonnewendes: dat is waar het rekenwerk het snelst uit elkaar valt.
  */

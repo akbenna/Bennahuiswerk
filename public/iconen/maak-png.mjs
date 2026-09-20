@@ -9,7 +9,7 @@
    Draaien:  node iconen/maak-png.mjs
 
    Er is een browser voor nodig; Playwright zit in deze omgeving al. Verander je
-   een SVG, draai dit dan opnieuw en commit beide bestanden samen — anders wijst
+   een SVG, draai dit dan opnieuw en commit beide bestanden samen, anders wijst
    de telefoon nog naar het oude plaatje en de browser al naar het nieuwe.
 ============================================================================= */
 import { readdir, readFile } from 'node:fs/promises';
@@ -38,7 +38,7 @@ if (!svgs.length) { console.error('Geen SVG gevonden in ' + HIER); process.exit(
 /* Dezelfde schakelaar als de rest van het gereedschap in deze repo. Zonder deze
    regel zoekt Playwright zijn eigen gedownloade browser, en in een omgeving waar
    Chromium ergens anders staat breekt dit script af met "Executable doesn't
-   exist" — terwijl de browser er wel degelijk is. */
+   exist", terwijl de browser er wel degelijk is. */
 const browser = await chromium.launch(
   process.env.CHROOM ? { executablePath: process.env.CHROOM } : {});
 const pagina = await browser.newPage({ viewport: { width: MAAT, height: MAAT }, deviceScaleFactor: 1 });

@@ -3,7 +3,7 @@
  *
  * Dit bestand begon als de proef op de cursussen en is meegegroeid: het gaat
  * over waar de startpagina je heen laat gaan zonder eerst ergens langs te
- * moeten. Twee gevallen, allebei om dezelfde reden ontstaan — iets stond
+ * moeten. Twee gevallen, allebei om dezelfde reden ontstaan, iets stond
  * onnodig diep.
  *
  * DE CURSUSSEN ZIJN VRIJ TOEGANKELIJK
@@ -58,7 +58,7 @@ const poort = server.address().port
 
 const browser = await chromium.launch({ executablePath: process.env.CHROOM })
 let stuk = 0
-const val = (m) => { console.log(`  FOUT — ${m}`); stuk++ }
+const val = (m) => { console.log(`  FOUT, ${m}`); stuk++ }
 
 /* ------------------------------------------------------------------ 1 */
 const CURSUSSEN = [['kompas', 'KOMPAS'], ['communicatie', 'VERBIND'], ['presenteren', 'PODIUM']]
@@ -110,7 +110,7 @@ for (const [bestand, merk] of CURSUSSEN) {
   process.stdout.write('tegels        ')
   /* Elk van de drie hoort een eigen tegel te zijn met een eigen toelichting. Eén
      verzameltegel die "Kompas, Verbind, Podium" zegt, zegt niet waar er een van
-     drieën over gaat — dat was juist de reden om het te veranderen. */
+     drieën over gaat, dat was juist de reden om het te veranderen. */
   const namen = await pg.locator('.appt h3').allTextContents()
   const mist = ['Kompas', 'Verbind', 'Podium'].filter((n) => !namen.some((t) => t.trim() === n))
   const snelbalk = await pg.locator('.snelbalk').count()
@@ -137,7 +137,7 @@ for (const [bestand, merk] of CURSUSSEN) {
 /* DE EIGEN INGANG VAN BENNAHEALTH
    ------------------------------------------------------------------------
    BennaHealth heeft zijn eigen aanmelding onder zijn eigen sleutel, los van het
-   gezinsprofiel. Hij hoefde dus nooit achter de poort te staan — en stond er wel,
+   gezinsprofiel. Hij hoefde dus nooit achter de poort te staan, en stond er wel,
    drie stappen diep: kiezen wie je bent, een code typen, en dan op de hub de
    tegel zoeken.
 
@@ -170,7 +170,7 @@ for (const [bestand, merk] of CURSUSSEN) {
       await pg.waitForLoadState('networkidle')
       await pg.waitForTimeout(400)
       const waar = new URL(pg.url()).pathname
-      /* En er mag onderweg geen gezinscode gevraagd worden — dat is het hele
+      /* En er mag onderweg geen gezinscode gevraagd worden, dat is het hele
          punt. De eigen aanmelding van BennaHealth zelf is iets anders. */
       const gezinscode = await pg.locator('.persoon').count()
       if (!waar.startsWith('/health')) val(`één tik komt uit op ${waar}`)

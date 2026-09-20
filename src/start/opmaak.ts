@@ -32,7 +32,7 @@ export function stilte(d: string | null | undefined): { tekst: string; klasse: S
 export interface Nu { dag: string; datum: string; tijd: string }
 
 /** De klok op de startpagina. Los van de opmaak van de rest, want hier hoort de
- *  dag voluit ("Woensdag") en niet "25 jun" — het is een begroeting en geen
+ *  dag voluit ("Woensdag") en niet "25 jun", het is een begroeting en geen
  *  tabelcel. */
 export const nu = (t: Date = new Date()): Nu => ({
   dag: hoofd(t.toLocaleDateString('nl-NL', { weekday: 'long' })),

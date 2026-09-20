@@ -21,7 +21,7 @@
 --
 -- DE REGEL
 --
--- Niet "pepermunt uitzonderen" — dat is een pleister, en morgen staat er een
+-- Niet "pepermunt uitzonderen", dat is een pleister, en morgen staat er een
 -- ander woord. De regel is: **benaderen mag alleen op wat NEVO zelf een naam
 -- noemt**, dus `naam_nl` en `naam_en`. Niet op de synoniemenvelden, want die
 -- bevatten losse woorden en zelfs plaksels als "mintsdinnerafterminttic-tac".
@@ -30,9 +30,9 @@
 --
 -- WAT HET KOST
 --
--- Niets dat gemeten is. Elk woord dat na bestand 21 werkte — lesagna, spagetti,
+-- Niets dat gemeten is. Elk woord dat na bestand 21 werkte, lesagna, spagetti,
 -- komkomer, yoghurd, havermoud, bannaan, papprika, brocoli, broot, koeskoes,
--- felafel, lasagna, bulgar, tagliatelli — vindt zijn treffer in `naam_nl` of
+-- felafel, lasagna, bulgar, tagliatelli, vindt zijn treffer in `naam_nl` of
 -- `naam_en`. En wat alleen via een synoniem te vinden is (sjoarma, shawarma,
 -- houmous, roti, nasi, bami, ketjap, pide, kwarktaart) gaat via het gewone
 -- woordzoeken, en dat leest alle velden gewoon door.
@@ -81,7 +81,7 @@ AS $function$
   bron as (
     -- nevo_actief en niet nevo_foods: dit is de licentiepoort. Staat de licentie
     -- van de actieve versie niet op gecontroleerd, dan is deze bron leeg en
-    -- vindt het zoeken niets — precies wat de schakelaar hoort te doen. Dat geldt
+    -- vindt het zoeken niets: precies wat de schakelaar hoort te doen. Dat geldt
     -- ook voor de terugval hieronder: die leest dezelfde bron.
     select n.nevo_code, n.naam_nl, n.groep, n.energie_kcal_per_100g,
            n.eiwit_g, n.vet_g, n.koolhydraten_g, n.vezels_g,
@@ -146,7 +146,7 @@ AS $function$
     from geteld g, totaal t, vraag v
     where t.n > 0 and g.woorden_raak > 0
   ),
-  -- DE TERUGVAL — OP DE NAMEN, EN OP NIETS ANDERS
+  -- DE TERUGVAL: OP DE NAMEN, EN OP NIETS ANDERS
   --
   -- Waarom `b.namen` en niet `b.tekst`: `tekst` bevat ook de synoniemenvelden,
   -- en daar staat losse woordenbrij in. NEVO zet bij Pepermunt in
@@ -156,7 +156,7 @@ AS $function$
   --
   -- "dinner" heeft skelet `tnr`, net als "doner". Dus wie shoarma zocht en
   -- "doner" typte kreeg Pepermunt. En dat terwijl NEVO helemaal geen döner of
-  -- kebab kent — nagezocht in de Nederlandse én de Engelse namen: er zijn twee
+  -- kebab kent: nagezocht in de Nederlandse én de Engelse namen: er zijn twee
   -- shoarmaproducten en verder niets. Het goede antwoord op "doner" is nul.
   --
   -- De regel die daaruit volgt is niet "pepermunt uitzonderen" maar: benaderen
@@ -180,7 +180,7 @@ AS $function$
   --
   -- De goede treffers en de ruis liggen in dezelfde band. Er is geen drempel die
   -- ze scheidt: op 0,7 verdwijnen lasagne, falafel en spaghetti, op 0,5 komen
-  -- haring en donut binnen. Het scherm liet dat ook zien — wie "harira" zocht
+  -- haring en donut binnen. Het scherm liet dat ook zien: wie "harira" zocht
   -- kreeg vier haringen en drie sperziebonen (Frans: haricots) onder de kop
   -- "dit lijkt erop". Dat is erger dan een leeg scherm.
   --
@@ -193,7 +193,7 @@ AS $function$
   --     skeletlengte 5   92% uniek
   --
   -- Dus: het skelet is de zeef. Maar een korte botsing kan wel veel producten
-  -- raken — `brt` (brood, bereid, bread, broad) zit in 285 producten — en dan
+  -- raken (`brt` (brood, bereid, bread, broad) zit in 285 producten) en dan
   -- staat het goede antwoord er wel tussen maar niet bovenaan.
   --
   -- Daar komt de trigram alsnog van pas, niet als zeef maar als volgorde. Wie
@@ -255,7 +255,7 @@ union all select 'halfvolle melk', count(*) from kal_nevo_zoek('halfvolle melk',
 union all select 'halvarine',      count(*) from kal_nevo_zoek('halvarine', 20)
 union all select 'tonijn',         count(*) from kal_nevo_zoek('tonijn', 20);
 
--- 2. Waar het om ging. Hier hoort niets te staan — geen pepermunt, en ook niets
+-- 2. Waar het om ging. Hier hoort niets te staan: geen pepermunt, en ook niets
 --    anders, want NEVO kent geen döner.
 select naam_nl, groep, benadering from kal_nevo_zoek('doner', 8);
 

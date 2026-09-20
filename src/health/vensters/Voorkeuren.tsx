@@ -1,5 +1,5 @@
 /**
- * WAT JE LUST — het vel waar de voorstellen zich aan houden
+ * WAT JE LUST: het vel waar de voorstellen zich aan houden
  *
  * "Uit de tabel" en "Wat vult het best" putten uit alle 2.328 producten van het
  * voedingsstoffenbestand en weten niet wat jij eet. Ze stellen paardenrookvlees
@@ -10,13 +10,13 @@
  *
  * Bovenaan het eetpatroon: één keuze die de rest invult. Daaronder de
  * zevenentwintig groepen van de tabel, waar je per groep zegt wat je ermee wilt.
- * Dat is de enige lijst die telt — het patroon zet de vinkjes en beslist niets.
+ * Dat is de enige lijst die telt, het patroon zet de vinkjes en beslist niets.
  *
  * WAAROM HET PATROON NIET ZELF FILTERT
  *
  * Vier van de zevenentwintig groepen zijn gemengd: in "Samengestelde gerechten"
  * staat nasi met kip naast nasi zonder, in "Hartig broodbeleg" smeerpaté naast
- * pindakaas. Op de naam scheiden kan niet — dat is precies de fout waardoor
+ * pindakaas. Op de naam scheiden kan niet: dat is precies de fout waardoor
  * bestand 34 bijna een gedroogde tomaat van 258 kcal voor een verse aanzag.
  *
  * Dus zet het patroon die vier mee uit, en zie je dat staan. Wil je je pindakaas
@@ -26,7 +26,7 @@
  * DE VIERDE KOLOM DIE ER NIET IS
  *
  * Er staat geen schuifje van "heel graag" tot "liever niet". Er zijn drie
- * standen — gewoon, liever, nooit — en dat is geen versimpeling maar het
+ * standen (gewoon, liever, nooit) en dat is geen versimpeling maar het
  * ontwerp: "liever niet" verschuift hoogstens twaalf punten op honderd, en
  * "nooit" verwijdert. Daartussen zit niets zinnigs, en een schuifje zou doen
  * alsof dat wel zo is.
@@ -92,7 +92,7 @@ export function VoorkeurVenster(
   const [v, zetV] = useState<Voorkeuren>(profiel.instellingen.voorkeuren ?? GEEN_VOORKEUR)
 
   /* Het patroon vult de vinkjes en wist niets wat je zelf hebt aangezet. Ging
-     je van vegetarisch naar alles, dan blijven jouw uitsluitingen staan — die
+     je van vegetarisch naar alles, dan blijven jouw uitsluitingen staan, die
      heb je zelf gekozen en het patroon gaat daar niet over. */
   function kiesPatroon(patroon: Eetpatroon) {
     const erbij = voorstel(patroon).filter((g) => !v.nooit.includes(g))
@@ -128,7 +128,7 @@ export function VoorkeurVenster(
 
           Merkproducten dragen een categorie van Open Food Facts en geen
           NEVO-groep, en die twee woordenlijsten zijn niet betrouwbaar naar
-          elkaar te vertalen. Er kan er dus één doorheen komen — precies één,
+          elkaar te vertalen. Er kan er dus één doorheen komen, precies één,
           want "Uit de tabel" laat hoogstens één merkregel toe.
 
           En de coach put uit je eigen geschiedenis, waar geen groep bij staat.
@@ -164,7 +164,7 @@ export function VoorkeurVenster(
 
           Een lijst van zevenentwintig waarin je moet zoeken welke er uit staan,
           is een lijst waarin je het niet ziet. Wat uitstaat krijgt zijn eigen
-          kopje, en daar staat ook hoeveel producten je ermee misloopt — want dat
+          kopje, en daar staat ook hoeveel producten je ermee misloopt, want dat
           is het getal dat de keuze maakt en niet het aantal groepen. */}
       {uit.length > 0 && (
         <Kaart plat style={{ marginTop: 10 }} toon="let">
@@ -191,7 +191,7 @@ export function VoorkeurVenster(
         </Kaart>
       )}
 
-      {/* DE KEUKENS — het enige wat een gerecht zélf draagt
+      {/* DE KEUKENS: het enige wat een gerecht zélf draagt
 
           De zevenentwintig groepen gaan over producten. Een gerecht wordt
           gefilterd via zijn ingrediënten, en dat is precies goed voor "geen
@@ -218,7 +218,7 @@ export function VoorkeurVenster(
 
           Deze lijst vult zich niet hier maar bij de voorstellen zelf, op het
           moment dat je denkt "dit niet". Hier staat hij alleen zodat je hem
-          kunt terugdraaien — een knop die alleen wegneemt en nooit teruggeeft
+          kunt terugdraaien, een knop die alleen wegneemt en nooit teruggeeft
           is een knop die je niet durft te gebruiken. */}
       {(v.nietProduct ?? []).length > 0 && (
         <Kaart plat style={{ marginTop: 10 }}>

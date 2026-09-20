@@ -2,7 +2,7 @@ import type { Koranwoord } from './soorten'
 
 
 /* ============================================================
-   KORANWOORDEN — de honderd meest voorkomende woorden
+   KORANWOORDEN, de honderd meest voorkomende woorden
    ------------------------------------------------------------
    Alleen zichtbaar in het volwassen spoor. Het idee achter deze
    lijst is bekend en goed onderbouwd: een kleine kern van woorden

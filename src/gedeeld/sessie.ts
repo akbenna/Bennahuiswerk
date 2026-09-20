@@ -1,12 +1,12 @@
 /**
- * WIE ER AAN STAAT — gelezen vanuit elke app
+ * WIE ER AAN STAAT: gelezen vanuit elke app
  *
  * Het portaal schrijft hier wie er binnenkwam; de losse apps lezen het. Ze
  * draaien op dezelfde herkomst en delen dus dezelfde localStorage.
  *
  * Waarom dit in `gedeeld` staat en niet in `start`: de sleutelnaam en de
  * houdbaarheid zijn één feit. Zou de huiswerk-app zijn eigen kopie van
- * `bennahub.wie` en van die acht uur bijhouden, dan lopen de twee ooit uiteen —
+ * `bennahub.wie` en van die acht uur bijhouden, dan lopen de twee ooit uiteen,
  * en dat merkt niemand, tot een kind ineens toch weer moet inloggen terwijl het
  * portaal hem nog als aangemeld ziet.
  */

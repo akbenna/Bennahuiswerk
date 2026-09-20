@@ -72,7 +72,7 @@ export function RecordRegel({ spel, record }: { spel: Spelbeschrijving; record: 
 
 /**
  * Een aftellende klok die zichzelf opruimt. Elk spel op tijd gebruikt hem, en
- * geen enkel spel houdt zijn eigen `setInterval` meer bij — dat was in de oude
+ * geen enkel spel houdt zijn eigen `setInterval` meer bij, dat was in de oude
  * app de reden dat er een lijst met lopende timers moest worden bijgehouden om
  * ze bij het sluiten allemaal te kunnen stoppen.
  */

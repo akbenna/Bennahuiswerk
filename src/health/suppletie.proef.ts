@@ -2,14 +2,14 @@
  * DE SUPPLETIE BEWIJZEN
  *
  * Dit is het enige deel van de app dat een gezondheidsuitspraak doet zonder dat
- * er een meting onder ligt — de tabel heeft geen micronutriënten. Wat hier stil
+ * er een meting onder ligt, de tabel heeft geen micronutriënten. Wat hier stil
  * misgaat is dus erger dan elders, want er is geen getal dat het tegenspreekt.
  *
  * Vier dingen die kapot kunnen zonder een fout te geven:
  *
  * 1. Een advies dat verschijnt terwijl er niets gelogd is. Dan is het een
  *    uitspraak over je invoergedrag die zich voordoet als een uitspraak over je
- *    voeding — de ergste soort, want hij klinkt als een meting.
+ *    voeding, de ergste soort, want hij klinkt als een meting.
  * 2. B12 die van "nodig" naar "overwegen" zakt. Dat is het enige advies hier
  *    waar geen afweging bij hoort, en het naast "kan geen kwaad" zetten maakt er
  *    een suggestie van.
@@ -79,7 +79,7 @@ describe('genoeg gelogd', () => {
     /* En zwijgt zodra er genoeg gelogd is. */
     expect(teWeinigGelogd(vraag())).toBeNull()
     /* Maar niet zodra er wél adviezen zijn: wie veganistisch eet en drie dagen
-       logt ziet B12 staan en hoort niets over vis — en dan hoort hij te lezen
+       logt ziet B12 staan en hoort niets over vis, en dan hoort hij te lezen
        dat de app dat niet kan zien, en niet te denken dat vis in orde is. */
     const weinig = vraag({ voorkeuren: { patroon: 'veganistisch' }, dagenGelogd: 3 })
     expect(adviezen(weinig).length).toBeGreaterThan(0)
@@ -199,7 +199,7 @@ describe('wat er nagekeken is als er niets uit kwam', () => {
 
   /* De lijst hoort élke regel te noemen die `adviezen` kent. Komt er ooit een
      regel bij zonder dat hij hier landt, dan belooft het scherm een controle
-     die niet gedaan is — en dat is precies de twijfel die deze lijst moest
+     die niet gedaan is, en dat is precies de twijfel die deze lijst moest
      wegnemen. */
   it('en laat geen enkele stof uit adviezen() ongenoemd', () => {
     const alleStoffen = new Set<string>()
@@ -223,7 +223,7 @@ describe('wat er nagekeken is als er niets uit kwam', () => {
 
   /* Een hoek die je hebt uitgezet is iets anders dan een hoek die je niet logde,
      en allebei zijn iets anders dan te weinig gegevens. Alle drie moeten
-     verschillend lezen — anders zegt de regel niets. */
+     verschillend lezen, anders zegt de regel niets. */
   it('onderscheidt uitgezet, niet gelogd en te weinig gelogd', () => {
     const uitgezet = nagekeken(vraag({
       dagenGelogd: 20, gelogdeGroepen: ALLE_HOEKEN,
@@ -257,13 +257,13 @@ describe('wat er nagekeken is als er niets uit kwam', () => {
 })
 
 /**
- * VITAMINE D — het meest gegeven suppletieadvies van Nederland, en het stond er
+ * VITAMINE D: het meest gegeven suppletieadvies van Nederland, en het stond er
  * niet in.
  *
  * Deze regel hangt aan geen enkele log: de Gezondheidsraad adviseert hem op
  * grond van leeftijd, geslacht en hoeveel zon er op je huid valt. Dat maakt hem
  * anders dan alle andere in dit bestand, en dat verschil is wat hier getoetst
- * wordt — niet of hij bestaat, maar of hij de goede grenzen aanhoudt en de
+ * wordt, niet of hij bestaat, maar of hij de goede grenzen aanhoudt en de
  * goede dingen leest.
  */
 describe('vitamine D', () => {
@@ -316,7 +316,7 @@ describe('vitamine D', () => {
      over iemands botten worden op een getal dat niemand heeft ingevuld. */
   it('zonder leeftijd zwijgen de leeftijdsregels', () => {
     expect(vitd({ leeftijd: null, geslacht: 'v' })).toBeUndefined()
-    /* Maar de zonvraag werkt wél zonder leeftijd — die hangt er niet aan. */
+    /* Maar de zonvraag werkt wél zonder leeftijd, die hangt er niet aan. */
     expect(vitd({ leeftijd: null, geslacht: null, conditie: { huid_donker: true } }))
       .toBeDefined()
   })
@@ -353,7 +353,7 @@ describe('B12 bij metformine', () => {
     expect(b12m({})).toBeUndefined()
   })
 
-  /* Laten prikken en niet gaan slikken — dezelfde lijn als bij ijzer. Een
+  /* Laten prikken en niet gaan slikken, dezelfde lijn als bij ijzer. Een
      tekort hoor je vast te stellen en niet te vermoeden. */
   it('stuurt naar de prik en niet naar het potje', () => {
     const a = b12m({ conditie: { med: ['metformine'] } })
@@ -363,7 +363,7 @@ describe('B12 bij metformine', () => {
 
   /* Naast de veganistische B12-regel, niet in plaats daarvan: de ene gaat over
      wat er binnenkomt en deze over wat ervan opgenomen wordt. Twee gronden, dus
-     twee regels — en twee verschillende id's, anders verdwijnt er één. */
+     twee regels, en twee verschillende id's, anders verdwijnt er één. */
   it('staat naast de veganistische B12-regel en overschrijft hem niet', () => {
     const uit = adviezen(vraag({
       voorkeuren: { patroon: 'veganistisch' },

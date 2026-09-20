@@ -1,5 +1,5 @@
 /**
- * DE TRAP — waar je staat in het Nederlandse traject
+ * DE TRAP: waar je staat in het Nederlandse traject
  *
  * Afvallen loopt in Nederland langs treden: wat je zelf doet, de gecombineerde
  * leefstijlinterventie, medicatie, en de operatie. Elke trede heeft
@@ -14,7 +14,7 @@
  *
  * 1. Deze module zegt nooit dat iemand in aanmerking komt. Hij zegt wat de
  *    richtlijn vraagt en wat de app van je weet. Het oordeel is van de
- *    huisarts — de NHG-Standaard laat die uitdrukkelijk vrij dit aanbod niet
+ *    huisarts, de NHG-Standaard laat die uitdrukkelijk vrij dit aanbod niet
  *    te leveren.
  * 2. Registratie-indicatie en NHG-indicatie zijn twee verschillende dingen en
  *    horen naast elkaar te staan. Dat verschil ís de informatie.
@@ -24,15 +24,15 @@
  *
  * WAT HIER NOG NIET IN STAAT, EN WAAROM DAT EEN SLOT HEEFT
  *
- * De exacte criteria van de medicatietrede — BMI-grenzen, welke comorbiditeit,
- * hoeveel maanden GLI — staan hier niet. Ze zijn bekend uit samenvattingen van
+ * De exacte criteria van de medicatietrede (BMI-grenzen, welke comorbiditeit,
+ * hoeveel maanden GLI) staan hier niet. Ze zijn bekend uit samenvattingen van
  * de NHG-Standaard Obesitas 2.0, maar de standaard zelf is van deze omgeving
  * niet te bereiken: de netwerkproxy blokkeert `nhg.org`.
  *
  * Voor een tekst in een onderzoeksbestand is tweedehands genoeg. Voor een regel
  * die op iemands scherm bepaalt of hij naar zijn huisarts stapt, niet. Daarom
  * draagt `MEDICATIE` een vlag `bevestigd`, staat die op `false`, en levert de
- * hele trede zolang uitsluitend `niet bekend` — ongeacht wat er verder van
+ * hele trede zolang uitsluitend `niet bekend`, ongeacht wat er verder van
  * iemand bekend is. Een proef houdt dat vast.
  */
 import type { IsoDatum } from '@/gedeeld/db/tabellen'
@@ -46,7 +46,7 @@ export type Tredenaam = 'leefstijl' | 'gli' | 'medicatie' | 'operatie'
  *
  * De totale duur is bij alle 24 maanden: een behandelfase en daarna een
  * onderhoudsfase. Wat verschilt is waar de knip ligt. `behandelfaseMaanden` is
- * null waar ik de lengte niet geverifieerd heb — dat is iets anders dan nul, en
+ * null waar ik de lengte niet geverifieerd heb, dat is iets anders dan nul, en
  * het scherm hoort dat verschil te tonen.
  *
  * CooL is het enige programma dat door één persoon wordt gegeven: een
@@ -94,7 +94,7 @@ function ontleed(d: string): [number, number, number] | null {
 /**
  * HELE KALENDERMAANDEN TUSSEN TWEE DATUMS
  *
- * Eerst stond hier een deling door 30,44 dagen — de gemiddelde maandlengte. Dat
+ * Eerst stond hier een deling door 30,44 dagen, de gemiddelde maandlengte. Dat
  * is bijna goed en precies verkeerd op de plek waar het telt: twee kalenderjaren
  * zijn 730 dagen, en 730 gedeeld door 30,44 is 23,98. Iemand die zijn tweejarige
  * programma op de dag af had doorlopen, kreeg te lezen dat hij nog in de
@@ -105,7 +105,7 @@ function ontleed(d: string): [number, number, number] | null {
  *
  * Wat dat kost: het antwoord is een heel getal. De behandelfase van SLIMMER
  * duurt zes en een halve maand, en die halve maand is in hele maanden niet te
- * tonen — de overgang valt daardoor op maand zeven. Een halve maand
+ * tonen, de overgang valt daardoor op maand zeven. Een halve maand
  * nauwkeurigheid in een fase-indeling weegt niet op tegen een jaargrens die
  * niet klopt.
  *
@@ -114,8 +114,8 @@ function ontleed(d: string): [number, number, number] | null {
  * Bij een onleesbare datum, en bij een datum die ná `tot` ligt. Die twee zijn
  * van buitenaf niet te onderscheiden, en `glivoortgang` vangt ze daarom allebei
  * apart af vóór hij hier komt. Door elkaar halen levert een zin op die niet
- * klopt — "niet te lezen" bij een datum die prima leesbaar is, alleen in de
- * toekomst — en dan gaat iemand zijn invoer nakijken die zich enkel in het jaar
+ * klopt ("niet te lezen" bij een datum die prima leesbaar is, alleen in de
+ * toekomst) en dan gaat iemand zijn invoer nakijken die zich enkel in het jaar
  * vergist heeft.
  */
 function maandenTussen(van: string, tot: string): number | null {
@@ -179,7 +179,7 @@ export interface Criterium {
  *
  * Dit stond tot 20 september 2026 op slot. De criteria kwamen uit
  * samenvattingen, en zolang dat zo was gaf deze functie uitsluitend
- * `niet bekend` — want als je niet zeker weet wat de eis is, weet je ook niet of
+ * `niet bekend`, want als je niet zeker weet wat de eis is, weet je ook niet of
  * iemand eraan voldoet.
  *
  * Het slot heeft zijn nut bewezen. De standaard zelf bleek drie dingen te
@@ -213,7 +213,7 @@ export const MEDICATIE = {
  * De standaard geeft twee sets referentiewaarden. Welke voor jou geldt hangt af
  * van je migratieachtergrond, en dáár zit het probleem: deze app vraagt daar
  * niet naar. Het profiel kent `etniciteit`, maar dat is een vrij tekstveld dat
- * alleen over de afkapwaarde van de middelomtrek gaat — zie de kop van
+ * alleen over de afkapwaarde van de middelomtrek gaat, zie de kop van
  * `Conditie` in `tabellen.ts`, waar om dezelfde reden twee aparte vragen staan
  * in plaats van een afleiding uit afkomst.
  *
@@ -224,7 +224,7 @@ export const MEDICATIE = {
  * zijn huisarts te stellen. Een app die dat voor hem invult, geeft hem een
  * antwoord dat op een aanname rust.
  *
- * Dit is dus inhoud en geen oordeel — dezelfde grens als in `leren.ts`.
+ * Dit is dus inhoud en geen oordeel, dezelfde grens als in `leren.ts`.
  */
 export interface Drempelset {
   naam: string
@@ -270,7 +270,7 @@ export interface Trapvraag {
  * **klinisch oordeel**. Het eerste beoordeelt deze app; het tweede nooit.
  *
  * Feit uit je dossier: hoe lang je GLI loopt (de startdatum staat in je profiel)
- * en je leeftijd. Daar valt niets aan te wegen — het staat er of het staat er
+ * en je leeftijd. Daar valt niets aan te wegen: het staat er of het staat er
  * niet.
  *
  * Klinisch oordeel: of je BMI boven de drempel ligt, en of er
@@ -289,7 +289,7 @@ export interface Trapvraag {
  *
  * Er is geen invoer denkbaar waarbij alle criteria op `gehaald` staan. Er zit er
  * altijd minstens één op `niet bekend`, want de klinische twee staan er altijd
- * op. Deze app kan dus nooit een scherm tonen waarop alles groen is — en dat is
+ * op. Deze app kan dus nooit een scherm tonen waarop alles groen is, en dat is
  * precies de bedoeling: het oordeel is van de huisarts, en de standaard laat die
  * uitdrukkelijk vrij dit aanbod niet te leveren.
  */
@@ -340,7 +340,7 @@ export function medicatiecriteria(v: Trapvraag): Criterium[] {
  * Op welke trede iemand staat.
  *
  * Alleen op grond van wat er ingevuld is, en niet van een oordeel. Wie geen GLI
- * heeft opgegeven staat op `leefstijl` — dat betekent "hier is niets over
+ * heeft opgegeven staat op `leefstijl`, dat betekent "hier is niets over
  * bekend" en niet "je hoort hier thuis".
  */
 export function trede(v: Trapvraag): Tredenaam {

@@ -14,7 +14,7 @@
 --  Dat is geen slordigheid maar het gevolg van wat dit bestand ís: een foto van
 --  één dag. Het staat hier omdat het de enige plek is waar de héle vorm van de
 --  database in één keer te lezen is, en dat blijft nuttig. Maar wie wil weten
---  wat er nú draait, leest `health/database/` erbij — de latere bestanden
+--  wat er nú draait, leest `health/database/` erbij, de latere bestanden
 --  vervangen wat hier staat, en de kop van elk bestand zegt of het toegepast is.
 --
 --  Draai je het op een database waar de tabellen al staan, dan valt het om:
@@ -26,7 +26,7 @@
 --  `alter table ... add primary key` verderop proberen daarna een tweede
 --  sleutel toe te voegen aan een tabel die er al een heeft.
 --
---  Dat is niet gevaarlijk — er staat geen enkele `drop`, `truncate` of
+--  Dat is niet gevaarlijk: er staat geen enkele `drop`, `truncate` of
 --  losse `delete` in, en de `update`-regels die je bij het zoeken tegenkomt
 --  staan alle binnen functielichamen die op dat moment nog niet eens
 --  bestaan. Maar het levert ook niets op.
@@ -36,7 +36,7 @@
 --  Nakijken hoe een tabel er werkelijk uitziet: welke kolommen verplicht
 --  zijn, en welke waarden een check-constraint toelaat. Dat is de enige
 --  betrouwbare bron daarvoor, en een handgeschreven proefopstelling is dat
---  niet — zie de kop van `health/database/31-de-lunchhoek.sql`.
+--  niet: zie de kop van `health/database/31-de-lunchhoek.sql`.
 --
 --  Wil je een lokale proefopstelling met de echte constraints erin, knip er
 --  dan de tabellen uit die je nodig hebt plus hun sleutels en indexen. Dat
@@ -1232,22 +1232,22 @@ begin
     v_lijst := '';
     for v_v in select * from jsonb_array_elements(v_s->'voorstellen') loop
       v_lijst := v_lijst || '<li style="margin:0 0 6px">' || (v_v->>'naam')
-        || ' — ' || (v_v->>'kcal') || ' kcal, ' || (v_v->>'eiwit') || ' g eiwit ('
+        || ', ' || (v_v->>'kcal') || ' kcal, ' || (v_v->>'eiwit') || ' g eiwit ('
         || replace(round((v_v->>'dichtheid')::numeric * 100, 1)::text, '.', ',')
         || ' g per 100 kcal)</li>';
     end loop;
 
     if v_reden = 'bijna-op' then
-      v_ond := 'BennaHealth — je ruimte is bijna op';
+      v_ond := 'BennaHealth, je ruimte is bijna op';
       v_tekst := 'Er is nog ' || (v_s->>'kcal_over') || ' kcal over en het is pas ' || v_uur
         || ' uur. Niet dramatisch, wel het weten waard: de rest van de dag moet daarin passen.';
     elsif v_reden = 'ruimte-over' then
-      v_ond := 'BennaHealth — er is nog veel ruimte';
+      v_ond := 'BennaHealth, er is nog veel ruimte';
       v_tekst := 'Er staat nog ' || (v_s->>'kcal_over') || ' kcal open. Structureel onder je doel '
         || 'eten ondermijnt het model net zo goed als eroverheen gaan: de weegreeks gaat dan dalen '
         || 'om een reden die niet in de logboeken staat.';
     else
-      v_ond := 'BennaHealth — je eiwit loopt achter';
+      v_ond := 'BennaHealth, je eiwit loopt achter';
       v_tekst := 'Nog ' || (v_s->>'eiwit_over') || ' g eiwit te gaan in ' || (v_s->>'kcal_over')
         || ' kcal. Dat vraagt ' || replace((v_s->>'eis_per_100'), '.', ',')
         || ' g eiwit per 100 kcal in alles wat er nog bij komt.';
@@ -1901,7 +1901,7 @@ AS $function$
   bron as (
     -- nevo_actief en niet nevo_foods: dit is de licentiepoort. Staat de licentie
     -- van de actieve versie niet op gecontroleerd, dan is deze bron leeg en
-    -- vindt het zoeken niets — precies wat de schakelaar hoort te doen.
+    -- vindt het zoeken niets: precies wat de schakelaar hoort te doen.
     select n.nevo_code, n.naam_nl, n.groep, n.energie_kcal_per_100g,
            n.eiwit_g, n.vet_g, n.koolhydraten_g, n.vezels_g,
            lower(n.naam_nl) as nm,
@@ -2111,13 +2111,13 @@ begin
 
     if not (v_st->>'gewogen_vandaag')::boolean then
       if coalesce((v_st->>'dagen_zonder_weging')::integer, 999) >= 7 then
-        v_ond := 'Kalibratie — de weegreeks staat stil';
+        v_ond := 'Kalibratie, de weegreeks staat stil';
         v_tekst := 'Er is ' || coalesce((v_st->>'dagen_zonder_weging')::text, 'lang') ||
           ' dagen niet gewogen. Zonder die reeks rekent het model niets uit: het is de enige invoer ' ||
           'die niet te schatten valt, en het enige onbevooroordeelde signaal in het systeem. ' ||
           'Eén weging vanochtend zet hem weer in beweging.';
       else
-        v_ond := 'Kalibratie — nog niet gewogen vanochtend';
+        v_ond := 'Kalibratie, nog niet gewogen vanochtend';
         v_tekst := case when (v_st->>'model_klaar')::boolean
           then 'Nuchter, na het toilet, vóór het eten. De reeks loopt; één ontbrekende dag verbreedt het interval meer dan een onnauwkeurige schatting dat doet.'
           else 'Nuchter, na het toilet, vóór het eten. Nog ' || (v_st->>'wegingen_te_gaan') ||
@@ -2125,7 +2125,7 @@ begin
           end;
       end if;
     else
-      v_ond := 'Kalibratie — gaten in de registratie';
+      v_ond := 'Kalibratie, gaten in de registratie';
       v_tekst := (v_st->>'gaten_7') || ' van de afgelopen zeven dagen heeft geen registratie. ' ||
         'Een ruwe schatting is beter dan niets: een ontbrekende dag verbreedt het interval sneller ' ||
         'dan een onnauwkeurige waarde dat doet.';
@@ -2356,7 +2356,7 @@ begin
 
     /* ---------------------------- de rustpols --------------------------- */
     /* Hij woont in kal_metingen en niet in kal_dagen, dus hij heeft zijn eigen
-       botsingsregels — en die zijn net anders: een meting die de koppeling zelf
+       botsingsregels, en die zijn net anders: een meting die de koppeling zelf
        neerzette mag hij bijwerken, want de rustpols van vanochtend is voorlopig. */
     v_ant := kal_beweging_dag(v_sa, p_dagen_terug := '0', p_hartslag_rust := '58');
     select waarde into v_d from kal_metingen
@@ -2914,7 +2914,7 @@ end $function$
 comment on table public.cultural_dishes is 'Gerechtenbibliotheek. owner_patient_id NULL = gevalideerd basisrecept, gevuld = persoonlijke variant.';
 comment on table public.kal_koppelingen is 'Sleutels waarmee een telefoon of dienst bewegingsgegevens mag insturen. De sleutel zelf staat er niet in, alleen de sha256 ervan.';
 comment on table public.kal_modelstand is 'Wat de rekenkern in de app het laatst uitrekende. Een postbus, geen tweede model.';
-comment on table public.kal_recept_regels is 'De onderdelen van een eigen maaltijd, als momentopname van gelogde regels — met band.';
+comment on table public.kal_recept_regels is 'De onderdelen van een eigen maaltijd, als momentopname van gelogde regels, met band.';
 comment on table public.nevo_foods is 'Permanente spiegel van het Nederlands Voedingsstoffenbestand. Geen cache: NEVO is een download, geen API-respons, en kent daarom geen TTL.';
 comment on table public.nevo_versies is 'Versiebeheer NEVO. Een versie kan pas actief worden nadat de licentievoorwaarden zijn gecontroleerd en vastgelegd.';
 comment on table public.oefenapp_state is 'Bennahuiswerk oefenapp: cross-device opslag per huishouden (familiecode + pincode). Toegang uitsluitend via edge function oefenapp met service role. Geïsoleerd van de rest van het project.';

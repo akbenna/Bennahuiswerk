@@ -12,13 +12,13 @@
  * tientallen dagstanden, tot op de halve cent.
  *
  * Het tweede is Leitner. Welke som er als volgende komt hangt af van doosje,
- * doelniveau, wachttijd en wat er net geweest is — vier sorteersleutels achter
+ * doelniveau, wachttijd en wat er net geweest is, vier sorteersleutels achter
  * elkaar. Hier draaien hele reeksen doorheen, met de klok en het toeval vast.
  *
  * Het derde zijn de sjablonen. Honderdtwintig sommen met wisselende getallen,
  * elk met een antwoord, hints en een uitwerking die met de hand zijn
  * nagerekend. Met een vaste toevalsbron rolt er per sjabloon steeds dezelfde
- * som uit, en die ligt hier vast — vraag, antwoord, eenheid en al.
+ * som uit, en die ligt hier vast, vraag, antwoord, eenheid en al.
  *
  * Verder: het nakijken, de foutdiagnose, het samenvoegen, het leerprofiel, de
  * dagmissie, de rangen en de weeksleutel.
@@ -223,7 +223,7 @@ for (const box of [0, 1, 2, 3, 4, 5]) {
 }
 
 /* Twintig keer achter elkaar de volgende kaart kiezen, met de doosjes die
-   meeschuiven — precies zoals in een sessie. */
+   meeschuiven, precies zoals in een sessie. */
 function reeks(pid, vak, onderwerp, aantal, goedPatroon) {
   const pool = O.SEED.filter((e) => e.p === pid && e.v === vak && e.t === onderwerp)
   const pr = O.normalizeProg(O.blankProg())
@@ -388,5 +388,5 @@ const uit = {
 }
 fs.writeFileSync('src/huiswerk/gouden-waarden.json', JSON.stringify(uit, null, 1) + '\n')
 console.log(`${stof.opgaven} opgaven, ${stof.sjablonen} sjablonen, ${dagstanden.length} dagstanden, `
-  + `${nakijken.length} nakijkgevallen — src/huiswerk/gouden-waarden.json`)
+  + `${nakijken.length} nakijkgevallen, src/huiswerk/gouden-waarden.json`)
 process.exit(0)

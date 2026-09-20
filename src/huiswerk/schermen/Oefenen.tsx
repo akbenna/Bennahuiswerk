@@ -1,5 +1,5 @@
 /**
- * OEFENEN — de kern van de app
+ * OEFENEN: de kern van de app
  *
  * Vier soorten sessies door één scherm: een onderwerp, een mix, het
  * foutenschrift, en een toets (oefen- of proeftoets). Het verschil zit vooral
@@ -9,7 +9,7 @@
  * verboden zijn.
  *
  * Punten: tien als je het zelf hebt, vijf met een hint, drie als je de som al
- * beheerste. Dat laatste is geen straf maar een sturing — herhalen wat je al
+ * beheerste. Dat laatste is geen straf maar een sturing, herhalen wat je al
  * kunt hoort minder waard te zijn dan leren wat je nog niet kunt.
  *
  * EN HET SCHERM STOPT OOK EEN KEER
@@ -22,8 +22,8 @@
  *
  *  - de voorraad wordt niet meer tot één niveau teruggesneden (`opNiveau`);
  *  - is alles net geweest, dan komt er een rustscherm in plaats van nóg een
- *    beurt (`kiesVolgende`). Een toets gaat wél door — die heeft zijn tien
- *    vragen nodig — en een kind dat zelf doorwil ook.
+ *    beurt (`kiesVolgende`). Een toets gaat wél door (die heeft zijn tien
+ *    vragen nodig) en een kind dat zelf doorwil ook.
  *
  * Wat het kind ziet staat in sterren en niet in een vinkje: elk doosje is een
  * ster, vanaf vier heet een som beheerst. Zo beweegt er iets bij de eerste en
@@ -118,7 +118,7 @@ export function Oefenen(p: OefenenProps): ReactNode {
   const invoer = useRef<HTMLInputElement>(null)
   const recent = useRef<string[]>([])
   /* De voortgang van dit moment. De sessie werkt hem elke beurt bij, en
-     `volgendeKaart` moet met de nieuwste stand rekenen — anders krijg je de som
+     `volgendeKaart` moet met de nieuwste stand rekenen, anders krijg je de som
      die je net goed had meteen weer terug. */
   const nu = useRef(p.prog)
   nu.current = p.prog

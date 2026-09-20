@@ -1,9 +1,9 @@
 /**
- * JAARPLAN — zesendertig weken, anderhalf uur per week
+ * JAARPLAN: zesendertig weken, anderhalf uur per week
  *
  * Het loopt cumulatief: wat je in week drie leert komt in week twintig nog
  * terug. Waar het programma begint bepaalt de niveaubepaling, niet de leeftijd
- * — wie de eerste letters al kent hoeft die niet nog eens.
+ *, wie de eerste letters al kent hoeft die niet nog eens.
  */
 import type { ReactNode } from 'react'
 import type { Toestand } from '../toestand'

@@ -8,7 +8,7 @@
  * hele week overstemmen. Het protocol vraagt om een week.
  *
  * Dan: een dag zonder onderdruk telt niet mee. Half ingevulde dagen stilzwijgend
- * voor vol aanzien is precies waar deze app niet aan hoort te doen — dat is
+ * voor vol aanzien is precies waar deze app niet aan hoort te doen, dat is
  * hetzelfde als een ontbrekende waarde als nul behandelen.
  *
  * En: het venster is een venster. Metingen van vorige maand horen er niet bij,
@@ -17,7 +17,7 @@
  * Daar is een vierde bij gekomen, en dat was een correctie en geen uitbreiding:
  * de eerste meetdag vervalt. Het NHG-protocol schrijft dat voor en deze app
  * telde hem mee. De regels hieronder houden niet alleen vast dát hij vervalt
- * maar ook wanneer hij dat níet doet — want dat is de kant waar het mis kan
+ * maar ook wanneer hij dat níet doet, want dat is de kant waar het mis kan
  * gaan: wie al weken meet heeft geen gewenningsdag, en dan zou dit goede
  * gegevens weggooien.
  */
@@ -101,7 +101,7 @@ describe('de gewenningsdag', () => {
   /* DE REGEL DIE DE FOUT AAN DE ANDERE KANT VANGT
      Wie al drie weken meet is gewend. De oudste dag in het venster is dan geen
      gewenningsdag maar een gewone dag, en weggooien is dan gegevens weggooien.
-     Een meting van vóór het venster — dus eentje die zelf niet meetelt — is
+     Een meting van vóór het venster (dus eentje die zelf niet meetelt) is
      genoeg om dat te weten. */
   it('vervalt niet als er al eerder gemeten is, ook van buiten het venster', () => {
     const t = thuisbloeddruk(
@@ -114,7 +114,7 @@ describe('de gewenningsdag', () => {
   })
 
   /* Een halve dag is geen meetdag. Een losse bovendruk van eergisteren maakt
-     iemand dus niet 'gewend' — anders zou een onvolledige invoer de
+     iemand dus niet 'gewend', anders zou een onvolledige invoer de
      gewenningsdag van de echte reeks laten staan. */
   it('geldt één meetdag als een dag die niet vervalt', () => {
     const t = thuisbloeddruk(paar('2026-09-14', 130, 80), '2026-09-14')
@@ -165,7 +165,7 @@ describe('wat er niet meetelt', () => {
 describe('de spreiding', () => {
   /* Twaalf en niet zestien: de gewenningsdag van 140 telt ook hier niet mee.
      Een spreiding die de weggelaten dag wél meenam zou de lezer een streek
-     leveren — een getal dat niet uit dezelfde dagen komt als het gemiddelde
+     leveren, een getal dat niet uit dezelfde dagen komt als het gemiddelde
      eronder. */
   it('is het verschil tussen de hoogste en de laagste tellende dag', () => {
     expect(thuisbloeddruk(week, '2026-09-14')?.spreidingSys).toBe(12)

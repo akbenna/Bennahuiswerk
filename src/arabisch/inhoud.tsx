@@ -3,8 +3,8 @@
  *
  * Wat een blok van het leerpad laat zien, en de losse kaarten die daarin
  * terugkomen: een letter met haar vier vormen, een woordregel, een leestekst.
- * Deze stukken staan hier los omdat ze op vier plekken gebruikt worden — in de
- * sessie, in het leerpad, in het alfabet en in de woordenlijst — en drie
+ * Deze stukken staan hier los omdat ze op vier plekken gebruikt worden (in de
+ * sessie, in het leerpad, in het alfabet en in de woordenlijst) en drie
  * kopieën die uiteenlopen is precies wat we hier weg aan het halen zijn.
  */
 import { useState } from 'react'

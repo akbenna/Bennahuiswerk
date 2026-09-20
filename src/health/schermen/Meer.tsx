@@ -1,10 +1,10 @@
 /**
- * MEER — slaap, de onderhoudsfase en de instellingen.
+ * MEER: slaap, de onderhoudsfase en de instellingen.
  *
  * Overgezet uit vwMeer(). Bij het herontwerp bleek dit scherm twee dingen te
  * doen die niets met elkaar te maken hebben: het toont een variabele die je
  * kunt bijsturen (slaap) en een oordeel over waar je staat (het stoplicht).
- * De kop draagt nu het oordeel als dat er is, en anders de slaap — met veertien
+ * De kop draagt nu het oordeel als dat er is, en anders de slaap, met veertien
  * nachten erbij, want één gemiddelde zegt niet of het beter of slechter gaat.
  */
 import { Kaart, Keuzechip, Knop, Kop, Rij, Tussen, Uitleg } from '../onderdelen/basis'
@@ -52,7 +52,7 @@ export function Meer(
 
      Een kalendervenster en niet de laatste veertien sleutels van de dagenkaart:
      die kaart kent alleen dagen waarvoor een rij bestaat, dus een nacht waarop
-     er niets binnenkwam viel er stil uit in plaats van een gat te worden — en
+     er niets binnenkwam viel er stil uit in plaats van een gat te worden, en
      dan reikten "veertien nachten" ongemerkt verder terug dan veertien dagen.
      Precies de bewering die de regel hierboven doet. Zie `dagvenster`. */
   const nachten = dagvenster(vandaag(), 14)
@@ -187,7 +187,7 @@ export function Meer(
         </Kaart>
       )}
 
-      {/* JE TRAJECT — waar je staat in het Nederlandse traject
+      {/* JE TRAJECT: waar je staat in het Nederlandse traject
           De kaart staat er alleen als er een GLI is opgegeven. Bij wie er geen
           heeft zou hij een lege doos zijn, en het profielvenster vraagt er al
           naar. */}
@@ -255,8 +255,8 @@ export function Meer(
  * en dat is iets anders dan dag of nacht. Met twee standen ben je die koppeling
  * kwijt zodra je hem één keer aanraakt, en kun je er niet meer terug.
  *
- * Het staat hier en niet in het profielvenster. Het profiel gaat over jou —
- * lengte, leeftijd, doel — en dit gaat over het scherm. Bovendien is dit iets
+ * Het staat hier en niet in het profielvenster. Het profiel gaat over jou (
+ * lengte, leeftijd, doel) en dit gaat over het scherm. Bovendien is dit iets
  * wat je 's avonds even omzet, en dan moet het op het scherm staan en niet
  * twee vensters diep.
  */
@@ -282,12 +282,12 @@ function Themakeuzes() {
 }
 
 /**
- * JE TRAJECT — de trap, en wat de app ervan beoordeelt
+ * JE TRAJECT: de trap, en wat de app ervan beoordeelt
  *
  * Twee treden. De GLI vult de app uit je profiel. Van de trede erboven toont hij
  * de criteria van de NHG-Standaard, en beoordeelt hij er precies twee: het jaar
  * leefstijlbegeleiding en je leeftijd. Dat zijn feiten uit je eigen dossier. De
- * andere twee — de BMI-drempel en de comorbiditeit — zijn klinische oordelen en
+ * andere twee (de BMI-drempel en de comorbiditeit) zijn klinische oordelen en
  * blijven `niet bekend`; waarom, staat in `trap.ts`.
  *
  * DE EIGENSCHAP DIE DIT SCHERM NIET MAG VERLIEZEN

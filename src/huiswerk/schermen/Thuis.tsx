@@ -1,5 +1,5 @@
 /**
- * THUIS — kiezen wie er gaat oefenen
+ * THUIS: kiezen wie er gaat oefenen
  *
  * Dit scherm was de landingspagina van de app: een banier, de ranglijst, het
  * toernooi en de week-uitslag, en pas daaronder de vier profielen. Sinds de app
@@ -8,7 +8,7 @@
  * ervoor.
  *
  * Dus: één regel als kop, vier namen om te kiezen, en al het puntenwerk in één
- * kaart die dicht begint. Dat er een ranglijst ís blijft een keuze — vier
+ * kaart die dicht begint. Dat er een ranglijst ís blijft een keuze, vier
  * kinderen van groep 4 tot 4 vwo kunnen alleen eerlijk naast elkaar staan omdat
  * de punten al meeschalen met moeilijkheid. Maar hij hoeft niet als eerste in
  * beeld te staan, en hij hoort niet op de naamknoppen: daar las je vroeger de

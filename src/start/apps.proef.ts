@@ -3,7 +3,7 @@
  *
  * Het startportaal zet per groep één app groot: `Appgroep` neemt daarvoor het
  * eerste element van de lijst. Dat betekent dat de volgorde in `apps.ts` een
- * ontwerpkeuze is en niet een toevalligheid van hoe het bestand gegroeid is —
+ * ontwerpkeuze is en niet een toevalligheid van hoe het bestand gegroeid is,
  * maar er staat in de code niets wat dat afdwingt. Wie een app toevoegt plakt
  * hem onderaan, of ertussen, en verschuift zo ongemerkt wat er groot op de
  * voorpagina staat.
@@ -36,7 +36,7 @@ describe('de volgorde van de apps', () => {
 
   it('houdt de twee groepen bij elkaar', () => {
     /* De groepen worden apart gefilterd, dus door elkaar staan zou niets breken
-       — maar een lijst waarin de groepen door elkaar lopen leest als een
+, maar een lijst waarin de groepen door elkaar lopen leest als een
        vergissing, en dan wordt hij er ook een. */
     const groepen = APPS.map((a) => a.groep)
     const wissels = groepen.filter((g, i) => i > 0 && g !== groepen[i - 1]).length

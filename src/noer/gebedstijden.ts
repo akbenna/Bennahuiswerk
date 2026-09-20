@@ -1,9 +1,9 @@
 /**
- * GEBEDSTIJDEN — berekend uit de stand van de zon
+ * GEBEDSTIJDEN: berekend uit de stand van de zon
  *
  * Dezelfde methode die de bekende gebedstijdenprogramma's gebruiken:
  * juliaanse dag, declinatie en tijdvereffening van de zon, en daaruit per
- * gebed een uurhoek. Voor Nederland is de hoge breedtegraad het lastige punt —
+ * gebed een uurhoek. Voor Nederland is de hoge breedtegraad het lastige punt,
  * in de zomer wordt het 's nachts niet donker genoeg voor de gebruikelijke
  * hoeken. Daarom is er een regel voor: de nacht in zevenen delen, of in
  * tweeën. Berekend blijft berekend; houd de kalender van je eigen moskee aan.
@@ -14,7 +14,7 @@
  * van uit `datum.getTimezoneOffset()` en uit de globale instellingen. Daarmee
  * is de berekening zuiver: dezelfde invoer geeft altijd dezelfde uitkomst, op
  * elke machine. Dat is wat de 1344 gouden waarden uit de oude app toetsbaar
- * maakt — anders zou dezelfde toets in Roermond en op een server in Ierland
+ * maakt, anders zou dezelfde toets in Roermond en op een server in Ierland
  * verschillende antwoorden geven.
  *
  * De uitkomsten zijn uren sinds middernacht, als kommagetal. `NaN` betekent:
@@ -129,7 +129,7 @@ export function gebedstijden(datum: Kalenderdag, plek: Plek, opt: Opties): Tijde
     maghrib: bij(ruw.onder),
   }
 
-  /* Hoge breedtegraad: als de hoek niet gehaald wordt — of pas veel te laat —
+  /* Hoge breedtegraad: als de hoek niet gehaald wordt (of pas veel te laat) 
      nemen we een deel van de nacht. Zonder deze regel valt fajr in juni weg. */
   if (opt.hoog !== 'geen') {
     const nacht = vastUur(t.op - t.onder)

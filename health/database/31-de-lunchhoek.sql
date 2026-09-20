@@ -1,11 +1,11 @@
 -- =============================================================================
--- DE LUNCHHOEK — het broodje van de praktijk, als één ding
+-- DE LUNCHHOEK: het broodje van de praktijk, als één ding
 --
 -- Toegepast op 15 september 2026, na drie fouten op de echte tabellen
 -- (household_measure, category, nevo_versie) die hieronder beschreven staan.
 --
 -- NIET OPNIEUW DRAAIEN OM ER IETS AAN TOE TE VOEGEN. Alles staat op
--- `on conflict do nothing`, dus draaien op zich is ongevaarlijk — maar de
+-- `on conflict do nothing`, dus draaien op zich is ongevaarlijk, maar de
 -- terugdraairegel onderaan staat op `slug like 'lun-%'` en die haalt intussen
 -- ook bestand 34 weg. Iets erbij hoort in een nieuw bestand.
 --
@@ -13,7 +13,7 @@
 --
 -- In de praktijk gaat er elke dag hetzelfde op tafel: witte broodjes met een
 -- smeersalade uit het schap, kaas, paté, cherrytomaatjes erbij. Dat loggen kost
--- nu drie regels per persoon per dag — het broodje, de salade, de kaas — en
+-- nu drie regels per persoon per dag (het broodje, de salade, de kaas) en
 -- daarom gebeurt het niet.
 --
 -- WAAROM DIT GÉÉN MERKPRODUCTEN ZIJN
@@ -25,7 +25,7 @@
 -- Wat op een etiket staat is een opgave van de fabrikant met een wettelijke
 -- speelruimte die voor de meeste voedingswaarden rond de twintig procent ligt.
 -- Wat in NEVO staat is een laboratoriumbepaling. De app toont dat verschil ook
--- — ◆ tegen ◇ — en voor "een wit broodje" en "tonijnsalade" is het gemeten
+-- (◆ tegen ◇) en voor "een wit broodje" en "tonijnsalade" is het gemeten
 -- getal gewoon het betere getal. Er is geen Lidl-tonijnsalade die wezenlijk
 -- anders is dan de tonijnsalade die het RIVM gemeten heeft.
 --
@@ -46,8 +46,8 @@
 --   volkoren zacht 247             →  148        7,3               →  4,4
 --
 -- Negen kilocalorieën verschil tussen de uiterste twee; dat valt binnen de
--- onzekerheid van de salade erop. De vezel verschilt wél echt — ruim twee gram
--- per broodje — en dat staat daarom in de notitie bij het broodje zelf, waar je
+-- onzekerheid van de salade erop. De vezel verschilt wél echt: ruim twee gram
+-- per broodje, en dat staat daarom in de notitie bij het broodje zelf, waar je
 -- het ziet als je het gerecht openklapt. Wie volkoren eet en dat precies wil,
 -- ruilt het broodje in het portievenster om.
 --
@@ -75,7 +75,7 @@
 --   unit               g, ml, stuk, eetlepel, theelepel, kop, snuf, bos,
 --                      teen, blik, handvol
 --
--- Een broodje is dus `stuk` en geen `broodje` — precies wat bestand 25 bij
+-- Een broodje is dus `stuk` en geen `broodje`, precies wat bestand 25 bij
 -- 'nl-broodje-gezond' al deed. En een smeersalade heeft geen categorie `beleg`
 -- maar de categorie van waar hij van gemaakt is: tonijnsalade is `vis`,
 -- eiersalade is `ei`, kaassalade is `zuivel`.
@@ -93,7 +93,7 @@
 --   delete from voeding_portiematen where nevo_groep = 'Hartig broodbeleg'
 --     and naam = 'op een broodje';
 --
--- Op de slugs van dít bestand en niet op `cuisine = 'nederlands'` — die tweede
+-- Op de slugs van dít bestand en niet op `cuisine = 'nederlands'`, die tweede
 -- haalt ook bestand 25 weg. Zie CLAUDE.md.
 --
 -- Twee keer draaien voegt niets toe en haalt niets weg: alles staat op
@@ -103,13 +103,13 @@
 -- HOE DIT IS NAGEKEKEN, EN WAAROM DE EERSTE KEER NIET TELDE
 --
 -- Dit bestand is lokaal op Postgres gedraaid tegen het schema uit
--- `gereedschap/verhuizing/schema-gegenereerd.sql` — de echte tabellen, met hun
+-- `gereedschap/verhuizing/schema-gegenereerd.sql`, de echte tabellen, met hun
 -- checks, hun sleutels en hun unieke indexen erbij.
 --
 -- De eerste ronde ging tegen tabellen die ik zelf had getypt, en die waren
 -- lakser dan de echte. Dat leek te werken en het bewees niets: het bestand viel
 -- in de SQL-editor alsnog om op `household_measure`, en daarachter stonden nog
--- twee fouten te wachten — `category = 'beleg'` bestaat niet, en `nevo_versie`
+-- twee fouten te wachten: `category = 'beleg'` bestaat niet, en `nevo_versie`
 -- is verplicht. Een opstelling die minder eist dan de echte tabel is geen proef
 -- maar een geruststelling.
 --
@@ -126,13 +126,13 @@
 -- tweede keer draaien om op `voeding_portiematen_groep_uniek`. Er is dus een
 -- unieke index die dit al tegenhoudt; de wacht voorkomt geen dubbele rij maar
 -- een foutmelding. Op mijn eigen tabellen ontbrak die index en zag ik een
--- verdubbeling — een conclusie die alleen in mijn opstelling waar was.
+-- verdubbeling: een conclusie die alleen in mijn opstelling waar was.
 -- =============================================================================
 
 BEGIN;
 
 -- ---------------------------------------------------------------------------
--- BLOK 1 — DE MAAT DIE ONTBRAK
+-- BLOK 1: DE MAAT DIE ONTBRAK
 -- ---------------------------------------------------------------------------
 --
 -- De eetlepel blijft de standaard; dit is de tweede keuze ernaast.
@@ -148,7 +148,7 @@ select null, 'Hartig broodbeleg', 'op een broodje', 40, 25, 60, false, 2
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 2 — DE BROODJES
+-- BLOK 2: DE BROODJES
 -- ---------------------------------------------------------------------------
 
 with gerecht(slug, naam, namen, omschrijving, momenten) as (values
@@ -282,7 +282,7 @@ COMMIT;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 3 — NAKIJKEN
+-- BLOK 3: NAKIJKEN
 -- ---------------------------------------------------------------------------
 --
 -- 1. Wijst elke code naar een bestaande tabelregel? Nul rijen is goed.

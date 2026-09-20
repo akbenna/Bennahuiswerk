@@ -5,7 +5,7 @@
  * gebleven bent stond erachter, in de app zelf, en dat is precies het getal
  * waarvoor je hem opent.
  *
- * De negen apps wonen alle op dezelfde herkomst — /noer/, /rasikh/, /huiswerk/ —
+ * De negen apps wonen alle op dezelfde herkomst (/noer/, /rasikh/, /huiswerk/) 
  * en delen daarmee één localStorage. De stand van elke app is hier dus gewoon te
  * lezen, zonder netwerk en zonder ouderwachtwoord. Uitlezen doen de uitlezers
  * die er voor het ouderoverzicht al waren; hier komt alleen bij welke sleutel
@@ -14,7 +14,7 @@
  * DRIE DINGEN DIE HIER NIET GEBEUREN
  *
  * Er wordt niets geschreven. Dit bestand leest, en als het niet lukt geeft het
- * niets terug — een kaart zonder cijfers is een kaart zoals hij eerst was, en
+ * niets terug, een kaart zonder cijfers is een kaart zoals hij eerst was, en
  * dat is geen storing.
  *
  * Er wordt niets geraden. Staat er nergens een getal dat boven nul uitkomt, dan
@@ -23,7 +23,7 @@
  *
  * En er wordt niets van iemand anders getoond zonder erbij te zeggen van wie
  * het is. Een kind ziet zijn eigen regel; wat er niet op zijn naam staat blijft
- * weg. Een ouder ziet wie er het laatst bezig was, mét die naam erbij — die
+ * weg. Een ouder ziet wie er het laatst bezig was, mét die naam erbij, die
  * heeft het ouderoverzicht toch al, en een getal zonder naam zou hij voor het
  * zijne aanzien.
  */
@@ -91,7 +91,7 @@ function mijnRegel(regels: Regel[], ik: Ik): Regel | null {
   const iedereen = regels.find(vanIedereen)
   if (iedereen) return iedereen
   /* Een ouder krijgt de regel van wie er het laatst bezig was. Dat is bij apps
-     met één gebruiker die ene — Amine bij het coderen, papa bij de Koran — en
+     met één gebruiker die ene (Amine bij het coderen, papa bij de Koran) en
      bij het huiswerk het kind dat er als laatste zat. De naam gaat mee, want
      zonder naam leest het als je eigen voortgang. */
   return ik.rol === 'ouder' ? (meestRecent(regels) ?? null) : null

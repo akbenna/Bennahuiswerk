@@ -1,18 +1,18 @@
 /**
- * VAKKEN — het scherm van één kind
+ * VAKKEN: het scherm van één kind
  *
  * Alles wat een kind nodig heeft om te kiezen wat het gaat doen. De volgorde is
  * omgedraaid ten opzichte van de eerste opzet, en daar zit de hele gedachte in.
  *
- * Vroeger stond bovenaan wat er al bereikt was — rang, dagmissie, dagdoel,
- * verdiend geld, niveau — en pas na zeven kaarten de vakken. De redenering was
+ * Vroeger stond bovenaan wat er al bereikt was (rang, dagmissie, dagdoel,
+ * verdiend geld, niveau) en pas na zeven kaarten de vakken. De redenering was
  * dat een kind eerst hoort te zien dat het ergens staat. In de praktijk betekende
  * het scrollen: wie kwam oefenen moest eerst langs alles wat leuk is aan
  * oefenen voordat hij kon beginnen.
  *
  * Nu staat het werk vooraan: de weektaak van de ouder, dan de vakken en de
  * onderwerpen. Wat er te halen valt staat eronder in één kaart die dicht begint.
- * Alleen het dagdoel blijft als smalle strook zichtbaar — dat is geen beloning
+ * Alleen het dagdoel blijft als smalle strook zichtbaar, dat is geen beloning
  * maar de opdracht van vandaag.
  */
 import { useMemo, useState } from 'react'

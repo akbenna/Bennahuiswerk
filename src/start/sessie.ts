@@ -1,7 +1,7 @@
 /**
  * DE AANMELDING VAN HET PORTAAL
  *
- * Wie er aan staat wordt bewaard en gelezen in `@/gedeeld/sessie` — daar staat
+ * Wie er aan staat wordt bewaard en gelezen in `@/gedeeld/sessie`, daar staat
  * ook waarom. Hier staat alleen wat van het portaal zelf is: het omzetten van
  * een aanmelding naar een sessie, en het ouderwachtwoord.
  */

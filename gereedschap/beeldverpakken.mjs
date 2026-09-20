@@ -20,7 +20,7 @@
  * WAAROM DIT VIA DE BROWSER GAAT
  *
  * Er is geen `sharp` en geen imagemagick in deze omgeving, en er is wel een
- * Chromium — die voor de proeven toch al geïnstalleerd staat. Een canvas doet
+ * Chromium, die voor de proeven toch al geïnstalleerd staat. Een canvas doet
  * precies hetzelfde werk: schalen met `imageSmoothingQuality: 'high'` en
  * coderen met `toDataURL`. Eén afhankelijkheid minder om te onderhouden.
  *
@@ -77,7 +77,7 @@ if (TAAK === 'blad') {
     return c.toDataURL('image/png').split(',')[1]
   }, { bestanden })
   await writeFile(`${UIT}/contactblad-${process.argv[5] || 'alles'}.png`, Buffer.from(png, 'base64'))
-  console.log(`contactblad-${process.argv[5] || 'alles'}.png — ${bestanden.length} beelden`)
+  console.log(`contactblad-${process.argv[5] || 'alles'}.png, ${bestanden.length} beelden`)
 }
 
 if (TAAK === 'verpak') {

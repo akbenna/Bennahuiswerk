@@ -1,5 +1,5 @@
 /**
- * WEDSTRIJD — één vriend uitdagen via een link
+ * WEDSTRIJD: één vriend uitdagen via een link
  *
  * Beide spelers krijgen exact dezelfde tien vragen; de sjablonen krijgen hun
  * getallen dus één keer, bij het maken. Meeste goed wint, bij gelijkspel de

@@ -35,7 +35,7 @@
 --   meting van de dag maar van een moment erin.
 --
 --   Hij rekent niet mee in het model. Stappen zitten sowieso niet in de
---   verbruiksschatting — zie hoofdstuk 6 van VERANTWOORDING.md — en een advies
+--   verbruiksschatting (zie hoofdstuk 6 van VERANTWOORDING.md) en een advies
 --   om te wandelen is hier dus nooit een calorieënhandel ("dit gegeten, dat
 --   eraf lopen"). Het is een uitspraak over je eigen patroon, meer niet.
 -- =============================================================================

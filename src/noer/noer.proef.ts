@@ -3,7 +3,7 @@
  *
  * De gebedstijden hebben hun eigen toets. Hier staat wat eromheen zit: de
  * leerstof, de niveaus, de oefenkaarten, de dagmissie, de insignes, het
- * weekbudget en het samenvoegen tussen toestellen — alles vergeleken met
+ * weekbudget en het samenvoegen tussen toestellen, alles vergeleken met
  * src/noer/gouden-waarden.json, gedraaid uit de oude pagina zelf.
  */
 import { describe, expect, it } from 'vitest'

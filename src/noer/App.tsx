@@ -1,5 +1,5 @@
 /**
- * ISLAM LEREN — de basis van de islam, voor het hele gezin
+ * ISLAM LEREN: de basis van de islam, voor het hele gezin
  *
  * Vier kinderen van zeven tot vijftien in één app, elk met een eigen profiel en
  * een eigen leerlijn. Wat het spoor bepaalt is de leeftijd: dezelfde module

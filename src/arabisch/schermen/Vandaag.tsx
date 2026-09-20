@@ -1,5 +1,5 @@
 /**
- * VANDAAG — de sessie
+ * VANDAAG: de sessie
  *
  * Er is bewust geen streak en geen achterstand. De kalender wordt bij elke
  * opening opnieuw op vandaag verankerd: het eerstvolgende blok dat je nog niet
@@ -7,7 +7,7 @@
  * niets doet vindt dus geen zeven sessies terug maar precies één.
  *
  * De sessie loopt in vier stappen: leren, oefenen, herhalen, klaar. Wie stopt
- * verliest wat er nog aan kwam maar houdt alles wat al beoordeeld is — elke
+ * verliest wat er nog aan kwam maar houdt alles wat al beoordeeld is, elke
  * vraag schrijft meteen weg.
  */
 import { useEffect, useRef, useState } from 'react'
@@ -244,7 +244,7 @@ function Sessieloop(
 
   const beoordeeldeKaart = (oef: Oefening, goed: boolean, oordeel: Oordeel, zelf: boolean): void => {
     /* De uitgangsstaat van deze kaart. Bij een zelfoordeel is `p` alweer
-       bijgewerkt door de eerste beoordeling, dus die staat komt uit de ref —
+       bijgewerkt door de eerste beoordeling, dus die staat komt uit de ref,
        anders zou het oordeel bovenop het automatische stapelen in plaats van
        ervoor in de plaats te komen. */
     const basis = zelf ? vorige.current : (oef.id ? p.kaarten[oef.id] ?? null : null)

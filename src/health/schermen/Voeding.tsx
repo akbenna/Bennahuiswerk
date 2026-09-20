@@ -1,5 +1,5 @@
 /**
- * VOEDING — zoeken in de voedingsmiddelentabel, de gerechten en je eigen producten.
+ * VOEDING: zoeken in de voedingsmiddelentabel, de gerechten en je eigen producten.
  *
  * Overgezet uit vwVoeding(). Twee dingen die in de oude versie fout stonden en
  * hier goed: de gerechten hadden geen knop, dus je kon een tajine wél vinden en
@@ -7,8 +7,8 @@
  * hitsHTML had er geen tak voor, dus ze waren onvindbaar in het zoekveld.
  *
  * En één ding dat pas bij het herontwerp opviel: dit scherm opende met een leeg
- * invulveld. Het antwoord op de vraag die het scherm stelt — is mijn eiwit over
- * de dag verdeeld — stond onderaan, onder twee kaarten door. Dat staat nu
+ * invulveld. Het antwoord op de vraag die het scherm stelt (is mijn eiwit over
+ * de dag verdeeld) stond onderaan, onder twee kaarten door. Dat staat nu
  * bovenaan, en het zoeken eronder als de handeling die het is.
  */
 import { useEffect, useRef, useState } from 'react'
@@ -95,7 +95,7 @@ export function Voeding(p: VoedingEigenschappen) {
           Hier stonden zes regels met een studie, een steekproefgrootte en een
           voorbehoud, op het scherm waar je iets komt loggen. Wat je moet weten
           is één zin lang; de rest is verantwoording en die staat achter de
-          uitklapper. Weggelaten is er niets — een getal zonder zijn herkomst
+          uitklapper. Weggelaten is er niets: een getal zonder zijn herkomst
           zou in deze app een fout zijn. */}
       <Kaart plat>
         <Kop>Waarom de verdeling telt</Kop>
@@ -123,7 +123,7 @@ export function Voeding(p: VoedingEigenschappen) {
 }
 
 /**
- * ZOEKEN — en wat er per treffer te zien is.
+ * ZOEKEN, en wat er per treffer te zien is.
  *
  * De regel toont energie en eiwit, want dat is waar de app over gaat. Wie
  * diabetes heeft opgegeven ziet er koolhydraten en vezel bij staan. Dat is geen
@@ -138,9 +138,9 @@ export function Voeding(p: VoedingEigenschappen) {
  * in milligram natrium, want zout is het woord dat op de verpakking staat en in
  * de spreekkamer valt; de omrekening gebeurt op één plek, in `zout.ts`.
  *
- * Komt er geen natriumwaarde mee — omdat
+ * Komt er geen natriumwaarde mee (omdat
  * `health/database/30-natrium-in-het-zoeken.sql` nog niet gedraaid is, of omdat
- * de tabel het voor dit product niet weet — dan staat er een streepje. Geen
+ * de tabel het voor dit product niet weet) dan staat er een streepje. Geen
  * 0,0 g: dat zou "bevat geen zout" beweren over iets wat dat misschien wel
  * bevat.
  */

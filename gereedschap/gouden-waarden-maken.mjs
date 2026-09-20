@@ -3,8 +3,8 @@
  * GOUDEN WAARDEN UIT DE OUDE REKENKERN
  *
  * De oude app verdwijnt, maar zijn uitkomsten mogen niet verdwijnen. Dit script
- * draait de rekenkern uit gereedschap/oud/health-index.html — de versie die tegen
- * literatuur is verantwoord en maanden heeft gedraaid — over een reeks
+ * draait de rekenkern uit gereedschap/oud/health-index.html (de versie die tegen
+ * literatuur is verantwoord en maanden heeft gedraaid) over een reeks
  * verzonnen maar vaste gevallen, en legt de uitkomsten vast.
  *
  * rekenkern.proef.ts controleert daarna de TypeScript-versie tegen dit
@@ -78,7 +78,7 @@ function maakGeval(i) {
     /* Ontbrekende waarden staan er als null en niet als een ontbrekende sleutel.
        Dat is geen kosmetiek: JSON kan `undefined` niet vasthouden, dus anders
        zou de gouden waarde het verschil tussen "niet gewogen" en "veld bestaat
-       niet" verliezen — precies het verschil waar dit bestand over gaat. */
+       niet" verliezen, precies het verschil waar dit bestand over gaat. */
     const d = { datum: k, gewicht_kg: null, stappen: null, _kcal: 0, _eiwit: 0, _laag: 0, _hoog: 0 }
     if (kans() < wegKans) {
       d.gewicht_kg = Math.round((basisGewicht + helling * (nDagen - n) + tussen(-0.9, 0.9)) * 10) / 10

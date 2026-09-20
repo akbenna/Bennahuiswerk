@@ -14,7 +14,7 @@
  *
  * Hier is dat sterker af te dwingen dan bij `leren.ts`: die functie krijgt nog
  * een conditie mee om de volgorde te bepalen. Deze lijst krijgt niets. Er ís
- * geen invoer, dus er valt niets te verwerken — en dat is precies wat hieronder
+ * geen invoer, dus er valt niets te verwerken, en dat is precies wat hieronder
  * staat.
  *
  * ELK STUK ZEGT WAT HET NIET WEET
@@ -87,15 +87,15 @@ describe('het blijft een boekje', () => {
     const lijst = VERDIEPINGEN as unknown as Array<Record<string, unknown>>
     const voor = lijst.length
     expect(() => { lijst.push({ id: 'smokkel' }) }).toBeTypeOf('function')
-    /* De push mag mislukken of slagen — waar het om gaat is dat de proef hem
+    /* De push mag mislukken of slagen, waar het om gaat is dat de proef hem
        ziet als hij slaagt. Daarom telt hij terug. */
     if (lijst.length !== voor) lijst.pop()
     expect(lijst.length).toBe(voor)
   })
 
   /* Geen enkel stuk mag een persoonlijk getal bevatten dat eruitziet als een
-     berekening. Deze proef is grof — hij zoekt naar de tekens waarmee een
-     sjabloon zou worden ingevuld — maar hij vangt de fout die telt: iemand die
+     berekening. Deze proef is grof (hij zoekt naar de tekens waarmee een
+     sjabloon zou worden ingevuld) maar hij vangt de fout die telt: iemand die
      later een template-literal met een waarde erin plakt. */
   it('geen enkel stuk draagt een ingevuld sjabloon', () => {
     for (const v of VERDIEPINGEN) {
@@ -110,7 +110,7 @@ describe('de trap zegt niet wat hij niet weet', () => {
 
      Hij hield vast dat dit stuk geen BMI-grenzen noemt, met als reden dat de
      criteria uit samenvattingen kwamen en niet uit de standaard zelf. De
-     standaard is er inmiddels wel — augustus 2026, in `trap.ts` — en toen de
+     standaard is er inmiddels wel (augustus 2026, in `trap.ts`) en toen de
      tekst dat rechtzette viel deze regel om. Precies zoals bedoeld: hij dwong
      iemand na te kijken of de bron inmiddels deugde.
 
@@ -145,7 +145,7 @@ describe('de trap zegt niet wat hij niet weet', () => {
 
 describe('het boekje schrijft niets voor', () => {
   /* De app wijst en verwijst. Een stuk dat in de gebiedende wijs een dosis of
-     een middel aanraadt hoort hier niet te staan — dat is de grens tussen
+     een middel aanraadt hoort hier niet te staan, dat is de grens tussen
      voorlichting en behandeling. */
   it('geen enkel stuk noemt een dosering in milligram', () => {
     for (const v of VERDIEPINGEN) {

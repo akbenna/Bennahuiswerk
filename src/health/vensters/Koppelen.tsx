@@ -1,5 +1,5 @@
 /**
- * KOPPELEN — bewegingsgegevens van je horloge en je telefoon binnenhalen.
+ * KOPPELEN: bewegingsgegevens van je horloge en je telefoon binnenhalen.
  *
  * Waarom dit er zo uitziet en niet als een knop met "Verbind met Garmin":
  *
@@ -12,7 +12,7 @@
  * Wat wél werkt en geen toestemming van iemand nodig heeft: de Opdrachten-app
  * op de iPhone leest Gezondheid uit en mag zelf een verzoek versturen. En de
  * Garmin Connect-app schrijft zijn stappen, slaap, trainingen en gewicht in
- * Apple Gezondheid. Eén weg dekt dus allebei de bronnen — het horloge meet, de
+ * Apple Gezondheid. Eén weg dekt dus allebei de bronnen, het horloge meet, de
  * Garmin-app zet het in Gezondheid, en de opdracht stuurt het elke ochtend
  * hierheen.
  *
@@ -78,7 +78,7 @@ export function KoppelVenster(
     try {
       const uit = await roep('kal_koppelingen_lijst', { p_token: token })
       /* De functie geeft een json-lijst terug. Een server die iets anders
-         teruggeeft mag het scherm niet omver halen — dan liever geen lijst. */
+         teruggeeft mag het scherm niet omver halen, dan liever geen lijst. */
       zetLijst(Array.isArray(uit) ? uit : [])
     } catch (e) {
       zetLijst([])
@@ -281,7 +281,7 @@ export function KoppelVenster(
         {/* WAAROM SLAAP EEN APARTE UITLEG KRIJGT
 
             Hier stond tot september 2026 "herhaal actie 1 en 2 voor
-            Slaapanalyse" — dus zoeken en dan Som. Dat kán niet werken, en het
+            Slaapanalyse", dus zoeken en dan Som. Dat kán niet werken, en het
             kwam pas aan het licht toen iemand de opdracht echt had gebouwd en
             er nul uit kwam.
 
@@ -291,7 +291,7 @@ export function KoppelVenster(
             scherm is dat te zien doordat het slaapblok géén rij Eenheid heeft,
             waar stappen 'aantal' en de rustpols 'aantal/min.' tonen.
 
-            Die stille 0 is precies waar nul_overgeslagen voor bestaat — hij
+            Die stille 0 is precies waar nul_overgeslagen voor bestaat, hij
             wordt geweigerd in plaats van weggeschreven als een nacht zonder
             slaap. Maar geweigerd is nog steeds niet binnengekomen, en dus
             hoort de instructie te kloppen. */}
@@ -458,7 +458,7 @@ export function KoppelVenster(
  *
  * Op een telefoon is een sleutel van achtenveertig tekens overtikken geen optie
  * en selecteren met je vinger nauwelijks. De knop valt terug op selecteren als
- * het klembord niet mag — dat mag namelijk alleen in een beveiligde context.
+ * het klembord niet mag, dat mag namelijk alleen in een beveiligde context.
  */
 function Kopieer(
   { waarde, label, meerregelig }: { waarde: string; label: string; meerregelig?: boolean },

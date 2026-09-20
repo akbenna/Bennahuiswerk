@@ -2,7 +2,7 @@ import type { Zin } from './soorten'
 
 
 /* ============================================================
-   ZINNEN — nuttige zinnen, oplopend in complexiteit
+   ZINNEN, nuttige zinnen, oplopend in complexiteit
    ------------------------------------------------------------
    a  Arabisch, gevocaliseerd
    t  transcriptie

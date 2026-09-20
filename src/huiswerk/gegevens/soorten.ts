@@ -2,14 +2,14 @@
  * WAT ER IN DE GEGEVENS ZIT
  *
  * Eén plek voor de vormen die overal terugkomen. De velden houden hun korte
- * namen — `p`, `v`, `t`, `q`, `a` — omdat ze zo in zestienhonderd opgaven staan
+ * namen (`p`, `v`, `t`, `q`, `a`) omdat ze zo in zestienhonderd opgaven staan
  * en in ieders opslag; hernoemen kost hier niets en levert daar een migratie op
  * die niemand wil.
  */
 
 /** Een tekening bij een opgave. Welke velden meedoen hangt af van `type`; de
  *  figuurcomponent kijkt zelf wat hij nodig heeft, en wat ontbreekt tekent hij
- *  als een vraagteken — dat is precies de bedoeling bij "hoe lang is deze
+ *  als een vraagteken, dat is precies de bedoeling bij "hoe lang is deze
  *  zijde?". */
 export interface Illustratie {
   type: string

@@ -1,5 +1,5 @@
 /**
- * DE VOORKEUREN — wat je wél en niet voorgeschoteld wilt krijgen
+ * DE VOORKEUREN: wat je wél en niet voorgeschoteld wilt krijgen
  *
  * Drie lijsten in deze app doen voorstellen. De coach put uit je eigen
  * geschiedenis; "Uit de tabel" en "Wat vult het best" putten uit het hele
@@ -7,7 +7,7 @@
  * stellen dus paardenrookvlees voor aan iemand die geen vlees eet.
  *
  * Hier staat wat iemand over zijn eten heeft gezegd, en hoe dat doorwerkt in een
- * lijst. Niet het scherm en niet de database — alleen de regels, zodat ze een
+ * lijst. Niet het scherm en niet de database, alleen de regels, zodat ze een
  * proef kunnen hebben die niet door een browser of een verbinding heen hoeft.
  *
  * HET ONDERSCHEID DAT ALLES DRAAGT: GEZEGD TEGENOVER GEZIEN
@@ -26,7 +26,7 @@
  *            dus krijg je het voorgesteld, dus eet je het. De lijst vernauwt
  *            zichzelf zonder dat iemand dat gekozen heeft.
  *   GEZEGD   door jou aangezet, met opzet. "Ik eet geen vlees" vernauwt niets
- *            over tijd — het is een grens, geen lus. Een vegetariër alleen
+ *            over tijd, het is een grens, geen lus. Een vegetariër alleen
  *            vegetarische voorstellen tonen is geen bubbel maar juistheid.
  *
  * Wat hier staat is uitsluitend het tweede soort.
@@ -58,7 +58,7 @@ export type { Eetpatroon, Voorkeuren }
  * staan.
  *
  * Letterlijk is hier geen stijlkwestie. Een groepsnaam die net niet klopt sluit
- * niets uit, valt nergens over, en levert een vegetariër een lijst met vlees —
+ * niets uit, valt nergens over, en levert een vegetariër een lijst met vlees,
  * dezelfde stille fout als een verkeerde NEVO-code die gewoon de voedingswaarde
  * van iets anders geeft. De aantallen staan erbij als vingerafdruk: wijken die
  * af, dan is er iets veranderd aan de tabel en niet aan deze lijst.
@@ -120,13 +120,13 @@ export const GEEN_VOORKEUR: Voorkeuren = {
    -------------------------------------------------------------------------- */
 
 /**
- * DE KEUKENS — de enige indeling die gerechten wél dragen
+ * DE KEUKENS: de enige indeling die gerechten wél dragen
  *
  * De zevenentwintig groepen gaan over producten uit de tabel. Een gerecht draagt
  * ze niet: `kal_verzadiging` filtert een gerecht via zijn ingrediënten, en dat
  * is precies goed voor "geen vlees" en precies niets voor "ik kook nooit
  * Syrisch". Daarvoor is er één veld dat een gerecht wél heeft, en het heeft maar
- * zes waarden — de CHECK op `cultural_dishes.cuisine`.
+ * zes waarden, de CHECK op `cultural_dishes.cuisine`.
  *
  * Zes en niet meer. Komt er een keuken bij in de database, dan hoort hij hier
  * bij te komen en niet stilzwijgend te ontbreken; de proef telt ze.
@@ -146,8 +146,8 @@ export const KEUKENNAAM: Record<Keuken, string> = {
  * Hoeveel losse producten je kunt weigeren.
  *
  * Er moet een grens zijn: dit staat in `instellingen` als jsonb en gaat bij elke
- * profielwijziging mee over de lijn. Tweehonderd is ruim — wie er tweehonderd
- * heeft weggeklikt zet beter een groep uit — en het is klein genoeg om niet in
+ * profielwijziging mee over de lijn. Tweehonderd is ruim (wie er tweehonderd
+ * heeft weggeklikt zet beter een groep uit) en het is klein genoeg om niet in
  * de weg te lopen.
  *
  * Vol is niet weigeren maar doorschuiven: de oudste valt eraf. Een knop die
@@ -171,7 +171,7 @@ export function magProduct(v: Voorkeuren, code: string | null | undefined): bool
 /**
  * Een product weigeren. Geeft een nieuwe `Voorkeuren` terug.
  *
- * Twee keer hetzelfde product weigeren verandert niets — anders groeit de lijst
+ * Twee keer hetzelfde product weigeren verandert niets, anders groeit de lijst
  * met dubbelen en loopt hij vol met één product.
  */
 export function weigerProduct(v: Voorkeuren, code: string): Voorkeuren {
@@ -221,7 +221,7 @@ export const DUW = 12
    noemde, niet wat het is. "Nasi rames" bevat kip en zegt dat nergens.
 
    Dus geen slimmigheid. Het eetpatroon zet deze vier mee uit, en je ziet dat
-   staan — zie `voorstel()` hieronder. Wie zijn pindakaas terug wil haalt het
+   staan, zie `voorstel()` hieronder. Wie zijn pindakaas terug wil haalt het
    vinkje weg. Dat kost een handeling en het is eerlijk; een regel die stil
    raadt is dat niet. */
 export const GEMENGD: readonly string[] = [
@@ -242,7 +242,7 @@ const BAKSEL = ['Gebak en koek']
  *
  * Dit is de kern van het ontwerp. Het patroon vult de vinkjes; `nooit` bepaalt
  * wat er werkelijk wegvalt. Daardoor staat er nooit een regel te filteren die
- * de gebruiker niet heeft zien staan — en de vier gemengde groepen hierboven
+ * de gebruiker niet heeft zien staan, en de vier gemengde groepen hierboven
  * zijn een zichtbare keuze in plaats van een stille versimpeling.
  *
  * Wie zich veganistisch noemt en daarna Gebak en koek weer aanzet, heeft dat
@@ -257,7 +257,7 @@ export function voorstel(patroon: Eetpatroon): string[] {
   }
 }
 
-/** Alles wat verwijderd wordt. Alleen `nooit` — zie `voorstel()`. */
+/** Alles wat verwijderd wordt. Alleen `nooit`: zie `voorstel()`. */
 export function uitgesloten(v: Voorkeuren): Set<string> {
   return new Set(v.nooit)
 }
@@ -276,7 +276,7 @@ export function mag(v: Voorkeuren, groep: string | null | undefined): boolean {
  * niet": de gebruiker heeft zichzelf tegengesproken en de app hoort niet te
  * kiezen welke helft ze gelooft.
  *
- * Een uitgesloten groep krijgt ook nul — niet omdat het niet uitmaakt, maar
+ * Een uitgesloten groep krijgt ook nul, niet omdat het niet uitmaakt, maar
  * omdat hij er al uit is en een duwtje op iets wat niet bestaat een getal is dat
  * nergens over gaat.
  */
@@ -296,7 +296,7 @@ export interface Rangschikbaar {
 /**
  * Een lijst filteren en herschikken naar de voorkeuren.
  *
- * Eerst verwijderen, dan verschuiven — in die volgorde, want een uitgesloten
+ * Eerst verwijderen, dan verschuiven, in die volgorde, want een uitgesloten
  * regel hoort nergens meer aan mee te doen. De oorspronkelijke volgorde blijft
  * de tiebreak: bij een gelijke aangepaste score wint wie er al boven stond. Dat
  * houdt de rangschikking van de database intact waar de voorkeur niets zegt.
@@ -327,7 +327,7 @@ export function ietsIngesteld(v: Voorkeuren): boolean {
  *
  * Het scherm waarschuwt hiermee voordat de lijst leegloopt. Zet iemand twintig
  * van de zevenentwintig groepen uit, dan is een lege verzadigingslijst geen
- * storing maar het gevolg — en dat hoort hij te lezen vóórdat hij hem leeg ziet.
+ * storing maar het gevolg, en dat hoort hij te lezen vóórdat hij hem leeg ziet.
  */
 export function groepenOver(v: Voorkeuren): number {
   const weg = uitgesloten(v)

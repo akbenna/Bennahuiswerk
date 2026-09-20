@@ -1,5 +1,5 @@
 /**
- * DE BOUWBANK — een pc samenstellen en zien of hij klopt
+ * DE BOUWBANK: een pc samenstellen en zien of hij klopt
  *
  * De controles zijn die je in het echt ook doet voordat je bestelt: past het
  * voetje, past het geheugen, past het bord in de kast, past de kaart in de

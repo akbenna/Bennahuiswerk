@@ -1,10 +1,10 @@
 /**
- * KLINISCH — metingen, lab, SCORE2, FIB-4 en STOP-BANG.
+ * KLINISCH: metingen, lab, SCORE2, FIB-4 en STOP-BANG.
  *
  * De vraag van dit scherm is: staat er iets buiten de grens. Die vraag was
  * alleen te beantwoorden door zestien labwaarden na te lopen en ze zelf tegen
  * hun referentie te houden. Nu telt de kop dat voor je, en toont hij metéén
- * wélke — met de referentie erbij, want "afwijkend" zonder grens is een
+ * wélke, met de referentie erbij, want "afwijkend" zonder grens is een
  * schrikbeeld en geen gegeven.
  */
 import { useState } from 'react'
@@ -236,18 +236,18 @@ export function Klinisch(p: KlinischEigenschappen) {
 }
 
 /**
- * WAT ER BIJ JOU SPEELT — bovenaan Gezondheid en niet onderin een venster
+ * WAT ER BIJ JOU SPEELT: bovenaan Gezondheid en niet onderin een venster
  *
  * Deze kaart bestond eerst niet, en dat was een fout die het waard is op te
- * schrijven. De hele laag voor chronische zorg — de conditie, de
- * medicatiegroepen, de signalen, de zoutkolom, het venster Leren — was gebouwd
+ * schrijven. De hele laag voor chronische zorg (de conditie, de
+ * medicatiegroepen, de signalen, de zoutkolom, het venster Leren) was gebouwd
  * en werkte, maar hij hing af van een veld onderin het profielvenster, achter
  * het tabblad Meer. Wie dat veld niet vond, zag van de hele laag niets. Op het
  * tabblad dat Gezondheid heet stond er zelfs geen verwijzing naar.
  *
  * Een functie die pas bestaat als je hem al kent, bestaat niet.
  *
- * Daarom staat dit nu bovenaan dit scherm, en juist ook — of vooral — als er
+ * Daarom staat dit nu bovenaan dit scherm, en juist ook (of vooral) als er
  * niets is ingevuld. Leeg is hier geen reden om te zwijgen maar de plek waar de
  * uitnodiging hoort: dit is het enige scherm waar iemand naar zijn aandoening
  * komt zoeken.
@@ -468,7 +468,7 @@ function MetingInvoer(
         </p>
       )}
       {/* De meetinstructie stond altijd in beeld zolang er geen middelomtrek
-          was — een stuk grijze tekst over ribben en bekkenkammen op een scherm
+          was, een stuk grijze tekst over ribben en bekkenkammen op een scherm
           waar je je bloeddruk kwam bekijken. Hij hoort er wel te staan, want
           verkeerd meten geeft centimeters verschil, maar achter de uitklapper
           waar alle andere onderbouwing in deze app ook staat. */}

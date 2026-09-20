@@ -2,12 +2,12 @@
  * VERWARPUNTEN
  *
  * Niet met de hand bedacht maar berekend: alle aya's die woordelijk gelijk zijn
- * of hetzelfde beginnen, over de hele Koran. Dat is precies waar hifz omvalt —
+ * of hetzelfde beginnen, over de hele Koran. Dat is precies waar hifz omvalt,
  * niet bij moeilijke woorden.
  *
  * Het refrein van ar-Rahman staat eenendertig keer in dezelfde soera.
  * "Ya ayyuha lladhina amanu" opent zevenentwintig aya's. Wie zulke plekken niet
- * apart oefent, springt vroeg of laat van de ene naar de andere — meestal
+ * apart oefent, springt vroeg of laat van de ene naar de andere, meestal
  * midden in het gebed.
  */
 import { useEffect, useMemo, useState } from 'react'

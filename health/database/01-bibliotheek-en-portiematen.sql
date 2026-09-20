@@ -4,7 +4,7 @@
 -- De kennis stond er al, in dezelfde database, ongebruikt: 275 ingrediëntregels
 -- verdeeld over 26 gerechten, 56 porties met bandbreedte, en 35 huishoudmaten
 -- die alle 27 NEVO-groepen dekken. De app kon een tajine wel vínden en niet
--- loggen, en vroeg voor een los product om een aantal grammen — precies wat die
+-- loggen, en vroeg voor een los product om een aantal grammen, precies wat die
 -- 35 maten moeten wegnemen.
 --
 -- Dit bestand voegt twee leesfuncties toe en verruimt één check. Er wordt geen
@@ -39,7 +39,7 @@ ALTER TABLE public.kal_regels ADD  CONSTRAINT kal_regels_bron_check
 -- HOE ER GEREKEND WORDT, EN WAAROM ZO
 --
 -- Per ingrediënt: grammen maal de NEVO-waarde per honderd gram. Bereidingsvet
--- telt mee naar de mate waarin het in het gerecht achterblijft — absorbed_
+-- telt mee naar de mate waarin het in het gerecht achterblijft, absorbed_
 -- fraction. Bij een tajine is dat alles (1,0), bij frituren een fractie. Dat is
 -- de post die de herkenning uit tekst en foto nu blind moet schatten en die
 -- hier per gerecht is uitgezocht: 36 vetregels over 26 gerechten.
@@ -59,7 +59,7 @@ ALTER TABLE public.kal_regels ADD  CONSTRAINT kal_regels_bron_check
 -- Optionele ingrediënten zitten niet in de band. Of er lamsvlees in de harira
 -- ging is geen onzekerheid maar een vraag met een antwoord, en die vraag stelt
 -- de app apart. Elke portie krijgt daarom een tweede set onder 'met'. Zou het
--- in de bovengrens verdwijnen, dan werd een kom harira 124 tot 227 kcal — een
+-- in de bovengrens verdwijnen, dan werd een kom harira 124 tot 227 kcal, een
 -- band van tachtig procent die niets over de portie zegt.
 
 CREATE OR REPLACE FUNCTION public.kal_gerecht(p_token text, p_dish_id uuid)

@@ -1,7 +1,7 @@
 import type { Module } from './soorten'
 
 /* =============================================================================
-   HET LEERPAD — de basis van de islam in tien modules.
+   HET LEERPAD, de basis van de islam in tien modules.
    Per les: `tk` is de gewone tekst, `jr` de kortere versie voor de jongsten
    (7–9 jaar) en `dp` de verdieping voor de oudsten (13–15). `sp` zegt vanaf
    welk spoor een les meedoet. `q` zijn de vragen, `kt` de oefenkaarten.

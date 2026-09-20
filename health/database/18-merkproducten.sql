@@ -1,5 +1,5 @@
 -- =============================================================================
--- MERKPRODUCTEN — de winkel erbij, zonder te doen alsof het metingen zijn
+-- MERKPRODUCTEN: de winkel erbij, zonder te doen alsof het metingen zijn
 --
 -- Toegepast 29 augustus 2026.
 --
@@ -9,7 +9,7 @@
 -- omdat ze geen energiewaarde of geen naam hadden.
 --
 -- De controle op onwaarschijnlijke waarden gaf zestien treffers boven 800 kcal
--- per 100 g, en die waren alle zestien olie — 900 voor pure olijfolie, 828 voor
+-- per 100 g, en die waren alle zestien olie, 900 voor pure olijfolie, 828 voor
 -- zonnebloem. Geen enkele invoerfout. Er is dus niets weggegooid.
 --
 -- Wat die controle níet ving: een naam als "SCORE CDE Milbona Smeerkaas Naturel
@@ -19,7 +19,7 @@
 -- =============================================================================
 
 -- ===========================================================================
--- B. MERKPRODUCTEN — de winkel erbij, zonder te doen alsof het metingen zijn
+-- B. MERKPRODUCTEN: de winkel erbij, zonder te doen alsof het metingen zijn
 -- ===========================================================================
 --
 -- Nog niet toegepast. Zie de kop van bestand A voor waarom dit hier staat en
@@ -28,7 +28,7 @@
 -- DE VRAAG
 --
 -- Yazio kan zeggen: dit is het product van de Lidl, en zoveel weegt de
--- verpakking. Dat is prettig, en wij kunnen het ook — Open Food Facts heeft die
+-- verpakking. Dat is prettig, en wij kunnen het ook, Open Food Facts heeft die
 -- gegevens, met streepjescode, merk en gewicht.
 --
 -- WAAROM ZE NIET IN `nevo_foods` MOGEN
@@ -66,7 +66,7 @@
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 1 — DE BRONNENTABEL
+-- BLOK 1: DE BRONNENTABEL
 -- ---------------------------------------------------------------------------
 
 create table if not exists public.merk_bronnen (
@@ -100,7 +100,7 @@ comment on table public.merk_bronnen is
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 2 — DE PRODUCTEN
+-- BLOK 2: DE PRODUCTEN
 -- ---------------------------------------------------------------------------
 
 create table if not exists public.merk_producten (
@@ -157,7 +157,7 @@ create or replace view public.merk_actief as
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 3 — DICHTZETTEN
+-- BLOK 3: DICHTZETTEN
 -- ---------------------------------------------------------------------------
 --
 -- Zoals alles hier: RLS aan, geen policies, geen rechten voor anon. De toegang
@@ -172,11 +172,11 @@ revoke all on public.merk_actief    from anon, authenticated;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 4 — DE BRON AANMELDEN
+-- BLOK 4: DE BRON AANMELDEN
 -- ---------------------------------------------------------------------------
 --
 -- Zet `licentie_gecontroleerd` pas op true als je het zelf hebt nagekeken. De
--- constraint dwingt af dat er dan ook staat wie en wanneer — vul je eigen naam
+-- constraint dwingt af dat er dan ook staat wie en wanneer, vul je eigen naam
 -- in, niet de mijne, want jij bent degene die het gecontroleerd heeft.
 --
 -- Zolang `is_actief` op false staat is `merk_actief` leeg en verandert er niets
@@ -222,18 +222,18 @@ select bron, is_actief, licentie_gecontroleerd, bronvermelding from merk_bronnen
 --
 -- DEZE TEKST IS AFGELEID EN NIET OVERGETYPT
 --
--- `kal_zoeken` hieronder is de versie uit 12-telwoorden-uit-het-zoeken.sql — dus
--- mét de telwoorden in de vulwoordenlijst — met alleen de merk-emmer erbij. Zou
+-- `kal_zoeken` hieronder is de versie uit 12-telwoorden-uit-het-zoeken.sql, dus
+-- mét de telwoorden in de vulwoordenlijst, met alleen de merk-emmer erbij. Zou
 -- ik hem uit schema-gegenereerd.sql halen, dan draaide ik die correctie
 -- stilletjes terug.
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 0 — EERST B, DAN DIT
+-- BLOK 0: EERST B, DAN DIT
 -- ---------------------------------------------------------------------------
 --
 -- Dit bestand leunt op `merk_actief` uit B-merkproducten.sql. Draai je het los,
--- dan krijg je `type "public.merk_actief" does not exist` — een melding die
+-- dan krijg je `type "public.merk_actief" does not exist`, een melding die
 -- klopt maar niet zegt wat je eraan moet doen. Vandaar dit slot: het staat er
 -- omdat een kop geen slot is.
 
@@ -247,7 +247,7 @@ end $$;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 1 — ZOEKEN IN DE MERKPRODUCTEN
+-- BLOK 1: ZOEKEN IN DE MERKPRODUCTEN
 -- ---------------------------------------------------------------------------
 --
 -- Simpeler dan `kal_nevo_zoek`: geen woordweging, want deze tabel bevat
@@ -279,7 +279,7 @@ $function$
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 2 — DE EMMER IN kal_zoeken
+-- BLOK 2: DE EMMER IN kal_zoeken
 -- ---------------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION public.kal_zoeken(p_token text, p_q text, p_limiet integer DEFAULT 25)
@@ -380,7 +380,7 @@ end $function$
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 3 — RECHTEN
+-- BLOK 3: RECHTEN
 -- ---------------------------------------------------------------------------
 --
 -- `kal_merk_zoek` is een hulpfunctie voor `kal_zoeken` en hoeft niet van buiten
@@ -390,7 +390,7 @@ revoke all on function public.kal_merk_zoek(text, integer) from public, anon, au
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 4 — NAKIJKEN
+-- BLOK 4: NAKIJKEN
 -- ---------------------------------------------------------------------------
 --
 -- Zolang de bron niet actief is hoort dit leeg te zijn. Dat is geen storing maar

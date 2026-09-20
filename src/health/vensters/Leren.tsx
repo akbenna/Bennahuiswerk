@@ -1,5 +1,5 @@
 /**
- * HET VENSTER LEREN — het boekje bij de conditie
+ * HET VENSTER LEREN: het boekje bij de conditie
  *
  * Een venster en geen tabblad. De balk heeft er zes en dat is genoeg; een
  * zevende erbij zou zeggen dat lezen even vaak gebeurt als loggen, en dat is

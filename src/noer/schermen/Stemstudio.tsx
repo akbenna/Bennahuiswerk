@@ -1,5 +1,5 @@
 /**
- * DE STEMSTUDIO — de teksten thuis zelf inspreken
+ * DE STEMSTUDIO: de teksten thuis zelf inspreken
  *
  * De opnames blijven in dít toestel; met de knop onderaan zet je ze over naar
  * de telefoon van een kind, of voorgoed in de app zelf. Geluid hoort niet in de

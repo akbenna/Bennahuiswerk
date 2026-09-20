@@ -1,5 +1,5 @@
 /**
- * VOORTGANG — punten, niveaus, kaarten, missie, insignes en geld
+ * VOORTGANG: punten, niveaus, kaarten, missie, insignes en geld
  *
  * Alles hier is zuiver gemaakt: een stand erin, een nieuwe stand eruit, en de
  * dag komt als argument binnen in plaats van uit de klok. De oude versie
@@ -7,7 +7,7 @@
  * was er geen manier om na te gaan of de punten en de dagenreeks nog bij
  * elkaar hoorden zonder de halve app op te tuigen.
  *
- * Over het geld: het hoort bij het leren — lessen, memoriseren, oefenen en de
+ * Over het geld: het hoort bij het leren: lessen, memoriseren, oefenen en de
  * examens. Het gebed zelf staat er standaard buiten. Dat is een keuze en de
  * ouder kan hem omzetten; de uitleg staat bij het ouderscherm. Er is een hard
  * weekbudget, en dat is precies waarom de verdiensten met datum bewaard worden

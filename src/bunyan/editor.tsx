@@ -1,5 +1,5 @@
 /**
- * DE EDITOR — één vak voor drie talen
+ * DE EDITOR: één vak voor drie talen
  *
  * Python draait in MINIPY, hier in de app, met een stappenteller tegen de
  * oneindige lus. JavaScript en HTML gaan naar public/bunyan/zandbak.html, een
@@ -101,7 +101,7 @@ export function Editor({
     zetUit([])
     zetFout(null)
     frame.current?.contentWindow?.postMessage({ soort: 'bunyan-draai', merk: m, code, taal }, '*')
-    /* Het frame zegt niet wanneer het klaar is — een script kan blijven lopen.
+    /* Het frame zegt niet wanneer het klaar is, een script kan blijven lopen.
        Na de wachttijd nemen we wat er binnen is en gaan we door. */
     setTimeout(() => {
       if (lopend.current !== staat) return

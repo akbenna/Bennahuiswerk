@@ -7,7 +7,7 @@
  *
  * Die laatste zijn het punt. Een vertaler die werkt maar "regel 4" zegt waar
  * de oude "regel 3" zei, of die "de naam x kent Python nog niet" anders
- * formuleert, is stiller kapot dan een die niet start — het kind leest dan een
+ * formuleert, is stiller kapot dan een die niet start, het kind leest dan een
  * aanwijzing die naar de verkeerde regel wijst.
  */
 import { describe, expect, it } from 'vitest'

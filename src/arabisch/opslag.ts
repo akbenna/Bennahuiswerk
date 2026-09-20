@@ -2,7 +2,7 @@
  * WAT ER BEWAARD WORDT
  *
  * Eén stand voor het gezin, met daarin een profiel per persoon. Bij het
- * samenvoegen wint per kaart de kant die het laatst beoordeeld heeft — niet de
+ * samenvoegen wint per kaart de kant die het laatst beoordeeld heeft, niet de
  * hoogste stabiliteit, want een kaart die je vandaag fout had hóórt terug te
  * vallen, en de nieuwste beoordeling is de ware.
  */
@@ -126,7 +126,7 @@ export function samenvoegenProfiel(a: Profiel | undefined, b: Profiel | undefine
     blok: max(a.blok, b.blok),
     punten: max(a.punten, b.punten),
     /* De instellingen volgen de kant die ze het laatst bewust gezet heeft;
-       bij twijfel die van b — de kopie die zojuist binnenkwam. */
+       bij twijfel die van b, de kopie die zojuist binnenkwam. */
     voorkeur: { ...a.voorkeur, ...b.voorkeur },
   }
 }

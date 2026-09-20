@@ -4,8 +4,8 @@
  * Twee dingen die niet met het oog te zien zijn.
  *
  * Het eerste: dat de zwakste gewoonte bovenaan komt en niet toevallig de eerste
- * in de lijst. Bij gelijke stand wint de dimensie waar het meeste te halen is —
- * jezelf overhoren vóór spreiden vóór de rest — en dat is een keuze die je
+ * in de lijst. Bij gelijke stand wint de dimensie waar het meeste te halen is (
+ * jezelf overhoren vóór spreiden vóór de rest) en dat is een keuze die je
  * alleen ziet als je hem toetst.
  *
  * Het tweede: dat de vragen zelf kloppen. Drie per dimensie, elk drie opties,
@@ -86,7 +86,7 @@ describe('de uitkomst', () => {
 
   /* Bij gelijke stand wint de gewoonte waar het meeste te halen valt.
      Let op het gekozen paar: `mengen` staat in de vragenlijst vóór `nakijken`,
-     maar levert minder op. Alleen met dit paar zegt de proef iets — bij elk
+     maar levert minder op. Alleen met dit paar zegt de proef iets, bij elk
      ander paar geeft stabiel sorteren toevallig hetzelfde antwoord, en dan
      toets je niets. Dat bleek uit een mutatieproef: de regel weghalen liet de
      eerdere versie van deze proef gewoon groen. */

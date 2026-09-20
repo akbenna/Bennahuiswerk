@@ -1,20 +1,24 @@
 /**
  * NAKIJKEN
  *
- * Wat telt als goed. Ruimhartig waar het om schrijfwijze gaat — een komma of
+ * Wat telt als goed. Ruimhartig waar het om schrijfwijze gaat (een komma of
  * een punt, een euroteken, een spatie, een liggend streepje in plaats van een
- * minteken — en streng waar het om de wiskunde gaat.
+ * minteken) en streng waar het om de wiskunde gaat.
  *
  * Twee dingen worden bewust niét getolereerd. Breuken (3/4) en tijden (3:00)
  * moeten letterlijk kloppen: `parseFloat('3/4')` is 3, en dan zou "3" goed
  * gerekend worden op een vraag naar een breuk. En het antwoord mag hoogstens
- * een half procent afwijken, met een ondergrens van 0,01 — genoeg voor een
+ * een half procent afwijken, met een ondergrens van 0,01, genoeg voor een
  * afronding, te weinig om te gokken.
  */
 
 export function norm(x: unknown): string {
   return String(x ?? '').toLowerCase().trim()
-    .replace(/[−–—]/g, '-')
+    /* De drie liggende streepjes die voor een min-teken doorgaan, als
+       ontsnapping geschreven: hetzelfde teken, maar niet in de bron. Zo valt
+       deze regel niet onder de opruiming die alle streepjes uit de teksten
+       haalde, en die hem hier één keer in een komma veranderde. */
+    .replace(/[\u2212\u2013\u2014]/g, '-')
     .replace(/\s+/g, '')
     .replace(/€|%/g, '')
     .replace(/,/g, '.')
@@ -42,7 +46,7 @@ export function antwoordKlopt(ex: TeToetsen, val: string): boolean {
  * Gerichte foutfeedback. Herkent de fouten die een methode verraden in plaats
  * van een rekenslip: een omgedraaid teken, een verkeerde eenheid, een komma op
  * de verkeerde plek, of km/u waar m/s hoort. Geeft niets terug als het antwoord
- * nergens op slaat — dan is een algemene tip nuttiger dan een verkeerde gok.
+ * nergens op slaat, dan is een algemene tip nuttiger dan een verkeerde gok.
  */
 export function diagnoseFout(inst: { a: string }, val: string): string | null {
   const nv = norm(val)

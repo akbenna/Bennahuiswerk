@@ -9,7 +9,7 @@
  *
  * 1. Een regel zonder moment die tóch wordt opgeslagen. Hij landt dan op een
  *    plek die niemand heeft aangewezen, en daarmee is de hele belofte van dit
- *    vel weg — je keurde iets goed wat je niet gezien hebt.
+ *    vel weg, je keurde iets goed wat je niet gezien hebt.
  * 2. Een regel die bij het verschuiven verdwijnt of zich verdubbelt. Twaalf
  *    regels ziet niemand na op het aantal.
  * 3. De band die bij het optellen wegvalt, of die het punt niet meer omsluit.
@@ -99,7 +99,7 @@ describe('verplaats en weglaten', () => {
     const k = verplaats(beginKeuzes(DAG), 2, 'lunch')
     expect(k).toHaveLength(DAG.length)
     expect(k.find((x) => x.sleutel === 2)?.moment).toBe('lunch')
-    /* En de rest staat nog waar hij stond — een verschuiving die de buren
+    /* En de rest staat nog waar hij stond, een verschuiving die de buren
        meeneemt zou je bij twaalf regels niet zien. */
     expect(k.filter((x) => x.sleutel !== 2).map((x) => x.moment))
       .toEqual(['ontbijt', 'lunch', 'tussendoor', 'onbekend'])

@@ -1,8 +1,8 @@
 /**
  * DE BOUWSTENEN
  *
- * De oude app bouwde elk scherm op met dezelfde vier of vijf vormen — kaart,
- * knop, chip, balk, inklapbare uitleg — maar telkens opnieuw uitgeschreven als
+ * De oude app bouwde elk scherm op met dezelfde vier of vijf vormen (kaart,
+ * knop, chip, balk, inklapbare uitleg) maar telkens opnieuw uitgeschreven als
  * string met de klassenamen erin. Hier staan ze één keer.
  *
  * Ze zijn met opzet dun: ze zetten een klasse en geven kinderen door. De stijl
@@ -23,15 +23,15 @@ export function Kaart(
     /**
      * Een getekend motief achter de inhoud, in de accentkleur en op een dekking
      * die je niet los ziet. Het staat hier en niet bij de aanroeper omdat het
-     * twee dingen tegelijk moet regelen — de klasse op de kaart en een laag
-     * eronder — en dat is precies het soort verdubbeling dat ergens fout gaat
+     * twee dingen tegelijk moet regelen (de klasse op de kaart en een laag
+     * eronder) en dat is precies het soort verdubbeling dat ergens fout gaat
      * zodra er een derde kaart bijkomt. Waarom de motieven bestaan en wat de
      * dekking betekent, staat in `achtergronden.tsx`.
      */
     sfeer?: Sfeer | undefined
     /**
      * Op een breed scherm hoort deze kaart in de smalle kolom naast de inhoud.
-     * Op de telefoon doet het niets — daar is er maar één kolom.
+     * Op de telefoon doet het niets, daar is er maar één kolom.
      *
      * Dit staat hier en niet in de CSS omdat de volgorde in de code de volgorde
      * op de telefoon ís, en die klopt. Welke kaart naar de zijkolom mag is een
@@ -59,7 +59,7 @@ export function Kaart(
 }
 
 /**
- * De kop van een kaart. Optioneel met een wegwijzer ervoor — een getekend teken
+ * De kop van een kaart. Optioneel met een wegwijzer ervoor, een getekend teken
  * dat zegt wát voor soort ding eronder staat. Welke koppen er één horen te
  * krijgen en waarom het er anders uitziet dan een herkomstteken, staat in
  * `tekens.tsx`.
@@ -117,7 +117,7 @@ export function Chip({ graad }: { graad: Graad }) {
 
 /**
  * Een aantikbaar chipje: een keuze uit een klein rijtje, zonder de zwaarte van
- * een knop. Bewust iets anders dan `Chip` hierboven — die is een label voor de
+ * een knop. Bewust iets anders dan `Chip` hierboven, die is een label voor de
  * betrouwbaarheidsgraad en nooit aantikbaar. Twee dingen die er hetzelfde
  * uitzien maar niet hetzelfde doen zouden een vergissing zijn.
  */
@@ -143,7 +143,7 @@ export function Balk({ deel, toon }: { deel: number; toon?: 'goed' | 'let' | und
  * Inklapbare onderbouwing. De stand staat per blok in localStorage: het scherm
  * werd vroeger bij elke wijziging opnieuw getekend en een <details> klapte dan
  * dicht terwijl je aan het lezen was. React hertekent niet meer op die manier,
- * maar de stand hoort ook een bezoek later nog te kloppen — dus hij blijft.
+ * maar de stand hoort ook een bezoek later nog te kloppen, dus hij blijft.
  */
 /* Ook deze sleutel blijft: welke uitleg je open had staan hoort niet te
    verdwijnen omdat de app anders gaat heten. */
@@ -184,7 +184,7 @@ export function Uitleg(
  * als hij opengaat.
  *
  * Verschilt van `Uitleg` op één punt dat er werkelijk toe doet: onder een
- * uitlegblok staat tekst die er toch al is, hier hangt wérk aan het opengaan —
+ * uitlegblok staat tekst die er toch al is, hier hangt wérk aan het opengaan,
  * een vraag aan de database. Daarom `{open && kinderen}` en geen verborgen
  * inhoud: wie de kaart nooit opent kost niets.
  *
@@ -231,7 +231,7 @@ export function Venster(
   {
     titel: string
     /**
-     * Een strook die vóór de titel komt en tot de rand doorloopt — een foto,
+     * Een strook die vóór de titel komt en tot de rand doorloopt, een foto,
      * en verder niets wat gelezen moet worden. Hij staat hier en niet als
      * eerste kind, omdat hij buiten de binnenmarge van het venster valt: een
      * beeld dat tot de rand loopt kan een kind van dit onderdeel niet zelf

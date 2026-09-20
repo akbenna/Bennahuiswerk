@@ -1,5 +1,5 @@
 -- =============================================================================
--- GERECHTEN DIE VULLEN — de verzadigingslijst krijgt er een bovenste helft bij
+-- GERECHTEN DIE VULLEN: de verzadigingslijst krijgt er een bovenste helft bij
 --
 -- Toegepast. De md5-controle van 18 september 2026 vond de functie in de
 -- database terug (d2ed0b391960919e595020f0bf738797), dus de kop hierboven stond
@@ -7,7 +7,7 @@
 --
 -- Sinds 18 september 2026 achterhaald: bestand 36 heeft `kal_verzadiging`
 -- vervangen door dezelfde functie met de voorkeuren uit "Wat je lust" erin. De
--- rest van dit bestand — de view, de som op één plek, de scores — geldt nog
+-- rest van dit bestand (de view, de som op één plek, de scores) geldt nog
 -- onverkort. Draai blok 2 alleen opnieuw als je de voorkeuren er bewust weer uit
 -- wilt; dat is ook de terugdraairegel van bestand 36.
 --
@@ -15,7 +15,7 @@
 --
 -- Bestand 28 beantwoordt "waar heb ik genoeg aan" met producten uit de
 -- voedingsmiddelentabel: champignons, heldere soep, linzen, bulgur. Bruikbaar
--- voor "wat neem ik erbij", en geen antwoord op de vraag die er onder lag —
+-- voor "wat neem ik erbij", en geen antwoord op de vraag die er onder lag,
 -- iemand staat om zes uur te bedenken wat hij gaat kóken.
 --
 -- De gerechtenbibliotheek deed niet mee. Honderd gerechten over zes keukens, met
@@ -56,14 +56,14 @@
 -- Dat is een uitslag die klopt met wat je zou verwachten en die ik niet gestuurd
 -- heb: de soepen en de bonenschotels staan boven, de tajines met olie eronder.
 -- Met dezelfde ondergrens van 45 halen alleen de eerste vier het. Dat is de
--- bedoeling — een tajine is een goed gerecht en het is geen verzadigingsadvies.
+-- bedoeling: een tajine is een goed gerecht en het is geen verzadigingsadvies.
 --
 -- EEN FOUT DIE IK ONDERWEG MAAKTE, EN DIE HET METEN AAN HET LICHT BRACHT
 --
 -- Mijn eerste som gaf 10.062 gram per honderd kilocalorieën voor kuru fasulye.
 -- Een factor honderd mis: ik deelde het totale aantal kilocalorieën van het
 -- gerecht alsof het de energie per honderd gram was. Het gemene eraan was dat de
--- score er niet raar van werd — de dichtheidsterm kapt af op 240, dus élk
+-- score er niet raar van werd: de dichtheidsterm kapt af op 240, dus élk
 -- gerecht kreeg de volle vijfenveertig punten en de ranglijst zag er plausibel
 -- uit. Alleen het gram-getal zelf was zichtbaar onmogelijk.
 --
@@ -125,7 +125,7 @@
 --   ERROR: 42P01: relation "cultural_dishes" does not exist
 --
 -- wat de eerste keer ook precies gebeurde. Vandaar `public.` voor elke tabel
--- in blok 1 — net als `merk_actief` in bestand 18, de enige andere view hier.
+-- in blok 1, net als `merk_actief` in bestand 18, de enige andere view hier.
 -- Binnen de functie in blok 2 blijven de namen onversierd: daar doet de
 -- zoekpadclausule het werk.
 --
@@ -151,7 +151,7 @@
 -- =============================================================================
 
 -- ---------------------------------------------------------------------------
--- BLOK 1 — DE SOM OP ÉÉN PLEK
+-- BLOK 1: DE SOM OP ÉÉN PLEK
 -- ---------------------------------------------------------------------------
 
 CREATE OR REPLACE VIEW public.kal_gerecht_dichtheid AS
@@ -187,7 +187,7 @@ revoke all on public.kal_gerecht_dichtheid from anon, authenticated;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 2 — DE FUNCTIE, NU MET TWEE SOORTEN
+-- BLOK 2: DE FUNCTIE, NU MET TWEE SOORTEN
 -- ---------------------------------------------------------------------------
 
 drop function if exists public.kal_verzadiging(text, numeric, integer);
@@ -241,7 +241,7 @@ begin
              -- 100 en niet 10000. `g.kcal` is de energie van het héle gerecht,
              -- niet die per honderd gram: gram per 100 kcal is dus gram/(kcal/100).
              -- Deze fout maakte ik twee keer, en allebei de keren viel hij op aan
-             -- het gram-getal en niet aan de score — die kapt af op 240 en merkt
+             -- het gram-getal en niet aan de score, die kapt af op 240 en merkt
              -- er niets van. Zie de toelichting bovenaan.
              100.0 * g.gram / g.kcal          as gram100,
              100.0 * g.eiwit / g.kcal         as eiwit100,
@@ -344,7 +344,7 @@ grant execute on function public.kal_verzadiging(text, numeric, integer, integer
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 3 — NAKIJKEN
+-- BLOK 3: NAKIJKEN
 -- ---------------------------------------------------------------------------
 --
 -- 1. DE SOM STAAT OP ÉÉN PLEK EN BLIJFT DAAR.

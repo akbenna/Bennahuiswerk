@@ -2,7 +2,7 @@ import type { Woord } from './soorten'
 
 
 /* ============================================================
-   WOORDEN — thematische woordenschat, Modern Standaardarabisch
+   WOORDEN, thematische woordenschat, Modern Standaardarabisch
    ------------------------------------------------------------
    a   Arabisch, volledig gevocaliseerd (de app kan de vocalisatie
        naar wens afpellen; opslaan doen we altijd volledig, want
@@ -10,10 +10,10 @@ import type { Woord } from './soorten'
    t   transcriptie
    n   Nederlands
    th  thema
-   b   beeldanker (emoji) — leeg waar geen eerlijk beeld bestaat
+   b   beeldanker (emoji), leeg waar geen eerlijk beeld bestaat
    g   grammaticaal geslacht: m of v ('' bij woorden zonder geslacht)
    mv  meervoud, gevocaliseerd (leeg waar niet zinvol)
-   d   terzijde over het Marokkaans (Darija) — alleen waar het
+   d   terzijde over het Marokkaans (Darija), alleen waar het
        sterk afwijkt; het is een terzijde, geen leerlijn
    s   vanaf welk spoor: 1 = jongste kinderen, 2, 3, 4
    ============================================================ */

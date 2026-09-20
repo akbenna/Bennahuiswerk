@@ -5,7 +5,7 @@
    Voor de Koran gebruiken we een mens: die fragmenten haalt haal-recitatie.mjs
    op. Voor de takbir, de tashahhud, de salawat, de woorden in de buiging en de
    knieval en de du'a's van de dag bestaat geen archief. Dit script laat die
-   inspreken door een van de neurale Arabische stemmen van Microsoft — een stuk
+   inspreken door een van de neurale Arabische stemmen van Microsoft, een stuk
    beter dan de stem die in een telefoon zit, en op elk toestel hetzelfde.
 
    Het blijft een machine. Neemt iemand thuis of in de moskee ze later echt in,
@@ -53,7 +53,7 @@ const draai = (cmd, args) => new Promise((res, rej) => {
    Commentaar moet het net zo goed overslaan, en dat is geen luxe: in het
    Nederlands staat er zo "de du'a" in een uitleg, en zo'n losse apostrof laat
    een naïeve lezer denken dat er een string begint. Alles tot de vólgende
-   apostrof — soms honderden regels verderop — telt dan niet meer mee, en de
+   apostrof (soms honderden regels verderop) telt dan niet meer mee, en de
    lijst loopt scheef af met een foutmelding die nergens naar wijst. */
 function haalLiteral(bron, naam) {
   const start = bron.indexOf('const ' + naam + ' = ');
@@ -96,7 +96,7 @@ const WERK = [
   ...regelsVan('h-nagebed').map((r, i)   => ({ id:'q:h-nagebed:' + (i+1),   ar:r[0], wat:'Na het gebed ' + (i+1) })),
   { id:'t:istiftah', ar:T.istiftah.ar, wat:"De openingsdu'a" },
   { id:'t:taawwudh', ar:T.taawwudh.ar, wat:'Bescherming zoeken' },
-  /* De gebeden die zelden langskomen — en die je juist dán niet wilt opzoeken. */
+  /* De gebeden die zelden langskomen, en die je juist dán niet wilt opzoeken. */
   { id:'t:takbir-eid',   ar:T.takbirEid.ar,  wat:'Takbir van het feest' },
   { id:'t:janaza',       ar:T.janazaDua.ar,  wat:"Du'a bij een overledene" },
   { id:'t:janaza-kind',  ar:T.janazaKind.ar, wat:"Du'a bij een overleden kind" },
@@ -144,7 +144,7 @@ if (vlag('proef')) {
 }
 
 if (!EDGE) {
-  console.error('\nedge-tts is niet gevonden — niet als opdracht en niet als Python-module.\n\n' +
+  console.error('\nedge-tts is niet gevonden, niet als opdracht en niet als Python-module.\n\n' +
     'Installeer het eenmalig. Op een Mac heet pip niet "pip" maar zit hij in Python:\n' +
     '  python3 -m pip install --user edge-tts\n\n' +
     'Weigert dat met "externally managed environment", gebruik dan pipx:\n' +
@@ -177,5 +177,5 @@ await writeFile(join(DOEL, 'lijst.json'), JSON.stringify({
 }, null, 1));
 
 console.log('\n' + n + ' gemaakt, ' + over + ' stonden er al, ' + fout + ' mislukt.');
-console.log('Luister er een paar na — een voorleesstem legt de klemtoon soms verkeerd.');
+console.log('Luister er een paar na, een voorleesstem legt de klemtoon soms verkeerd.');
 console.log('Daarna: git add noer/audio/stem && git commit -m "Stemmen erbij"');

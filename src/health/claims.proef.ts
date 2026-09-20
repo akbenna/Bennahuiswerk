@@ -36,7 +36,7 @@ describe('eiwit: 12 % en 20 % van de energie', () => {
     expect(ids.filter((x) => x.startsWith('eiwit'))).toHaveLength(1)
   })
 
-  /* Skyr: 60 kcal en 11 g eiwit per 100 g — 44 kcal uit eiwit, ruim 70 %. */
+  /* Skyr: 60 kcal en 11 g eiwit per 100 g, 44 kcal uit eiwit, ruim 70 %. */
   it('herkent skyr als eiwitrijk', () => {
     expect(namen({ kcal: 60, eiwit_g: 11 })).toContain('eiwitrijk')
   })

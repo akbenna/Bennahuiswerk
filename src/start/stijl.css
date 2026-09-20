@@ -10,7 +10,7 @@
  * zit -- dat is de voorwaarde voor een strikte Content-Security-Policy.
  */
 /* Amiri staat als bestand in de repo en niet bij Google. De Warsh-druk gebruikt
-   tekens — de kleine hoge nul boven de hamzat wasl voorop — die de meeste
+   tekens (de kleine hoge nul boven de hamzat wasl voorop) die de meeste
    systeemletters niet kennen; die laten dan lege vakken achter midden in een
    woord. Zie fonts/LEESMIJ.md. */
 /* Absoluut pad en niet relatief: dit bestand belandt na de bouw onder /assets/
@@ -24,7 +24,7 @@
 
 /* Kleuren zijn gekozen op contrast, niet op sfeer. Elke accentkleur haalt
    minstens 4,5:1 tegen zowel het kaartvlak als zijn eigen chip-achtergrond,
-   in licht én donker — gemeten, niet geschat. Licht en donker hebben daarom
+   in licht én donker, gemeten, niet geschat. Licht en donker hebben daarom
    verschillende accentwaarden: een kleur die op wit werkt verdwijnt op
    antraciet, en andersom. */
 :root{
@@ -97,8 +97,8 @@ header{padding:56px 0 0}
 .merk{font-family:var(--serif);font-size:2.6rem;color:var(--ink);letter-spacing:-.032em;line-height:1}
 .merk .b{font-weight:600}
 /* Een streep in de negen kleuren van de app-families, in dezelfde volgorde als
-   ze hieronder staan. Het zijn geen negen tegels meer — de Academie is er drie
-   geworden — maar wel negen kleuren, want die drie horen bij elkaar en delen er
+   ze hieronder staan. Het zijn geen negen tegels meer (de Academie is er drie
+   geworden) maar wel negen kleuren, want die drie horen bij elkaar en delen er
    één. De streep gaat over waar iets bij hoort, niet over hoeveel het er zijn. */
 .regenboog{height:5px;border-radius:9999px;margin-top:16px;max-width:280px;
   background:linear-gradient(90deg,var(--huiswerk) 0 11.11%,var(--islam) 11.11% 22.22%,var(--arabisch) 22.22% 33.33%,var(--code) 33.33% 44.44%,var(--spel) 44.44% 55.56%,var(--geloof) 55.56% 66.67%,var(--koran) 66.67% 77.78%,var(--health) 77.78% 88.89%,var(--academie) 88.89% 100%)}
@@ -109,7 +109,7 @@ header{padding:56px 0 0}
 
    Achter de poort is de startpagina geen lijst meer maar een werkblad: een
    vaste zijbalk links en de inhoud rechts. De zijbalk is in licht én donker
-   donker — hij is de omlijsting en niet het papier, en een omlijsting die per
+   donker, hij is de omlijsting en niet het papier, en een omlijsting die per
    stand van kleur wisselt maakt de pagina onrustig. Zijn kleuren staan daarom
    apart en niet in het schema hieronder; ze zijn tegen hetzelfde contrast
    gemeten als de rest.
@@ -123,7 +123,7 @@ header{padding:56px 0 0}
 @media (min-width:1000px){
   /* De kolom draagt de kleur van de zijbalk zelf. De zijbalk plakt namelijk met
      100dvh aan de bovenkant, en op een lange pagina is hij korter dan de rij
-     waar hij in staat — zonder dit staat er onder hem een streep doek. */
+     waar hij in staat, zonder dit staat er onder hem een streep doek. */
   .hub{grid-template-columns:266px minmax(0,1fr);
        background:linear-gradient(90deg,var(--zij) 0 266px,transparent 266px)}
   .romp{padding:0 34px}
@@ -163,7 +163,7 @@ header{padding:56px 0 0}
 .zijvoet svg{flex:0 0 auto;margin-top:2px}
 .zijvoet p{font-size:.78rem;line-height:1.45}
 /* Op een telefoon is er geen kolom naast de inhoud. Dan wordt de zijbalk een
-   kop met een menu dat opzij schuift — dezelfde regels, dezelfde volgorde. */
+   kop met een menu dat opzij schuift, dezelfde regels, dezelfde volgorde. */
 @media (max-width:999px){
   .zijkop{display:flex;align-items:center;gap:12px;text-align:left;padding-bottom:14px;margin-bottom:12px}
   .zijkop img{margin:0;width:38px;height:38px}
@@ -181,7 +181,7 @@ header{padding:56px 0 0}
 }
 
 /* ---------------------------------------------------------------------------
-   HET ONTHAAL — wie je bent, welke dag het is, en waar je heen kunt.
+   HET ONTHAAL, wie je bent, welke dag het is, en waar je heen kunt.
 --------------------------------------------------------------------------- */
 .welkom{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start;justify-content:space-between;
   padding:34px 0 0}
@@ -212,7 +212,7 @@ header{padding:56px 0 0}
 
    Per groep één grote kaart en een raster met de rest. Welke er groot staat
    bepaalt de volgorde in apps.ts: bij de kinderen het huiswerk, bij de groten
-   de geloofsstudie. Dat is geen ranglijst maar een ingang — de andere staan er
+   de geloofsstudie. Dat is geen ranglijst maar een ingang, de andere staan er
    direct naast en niet eronder.
 --------------------------------------------------------------------------- */
 main{flex:1;padding:34px 0 0}
@@ -230,7 +230,7 @@ main{flex:1;padding:34px 0 0}
 @media (min-width:860px){ .groeplijf{grid-template-columns:minmax(268px,1fr) minmax(0,1.2fr)} }
 
 /* De grote kaart draagt de kleur van zijn app als vlak. In het licht is die
-   kleur donker — dus lichte tekst erop; in het donker is dezelfde naam een
+   kleur donker, dus lichte tekst erop; in het donker is dezelfde naam een
    pastel, en dan zou lichte tekst verdwijnen. Vandaar dat de donkere stand
    terugvalt op hetzelfde recept als de kleine tegels: donker vlak, lichte
    letter, de kleur alleen als accent. */
@@ -254,7 +254,7 @@ main{flex:1;padding:34px 0 0}
   box-shadow:0 10px 26px rgba(0,0,0,.25)}
 .uitgelicht h3{font-size:1.66rem;color:#FFF8EE}
 /* De oude naam blijft staan, klein onder de nieuwe. Hij verdwijnt niet uit de
-   app zelf en hij staat in elk gesprek dat we er tot nu toe over hadden — maar
+   app zelf en hij staat in elk gesprek dat we er tot nu toe over hadden, maar
    hij is niet meer het eerste wat je moet lezen om de juiste kaart te vinden. */
 .uitoud{margin-top:5px;font-family:var(--mono);font-size:.64rem;letter-spacing:.07em;
   text-transform:uppercase;color:#FFF8EE;opacity:.75}
@@ -267,7 +267,7 @@ main{flex:1;padding:34px 0 0}
   background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.26)}
 /* De cijfers op de grote kaart. Ze staan waar eerst de kenmerken stonden: zodra
    er iets te melden is over waar je gebleven bent, is dát het antwoord waar je
-   voor kijkt, en niet meer wat de app kan. Wikkelt netjes op een telefoon —
+   voor kijkt, en niet meer wat de app kan. Wikkelt netjes op een telefoon:
    drie getallen naast elkaar zolang het past, daarna onder elkaar. */
 .uitstand{margin-top:16px;display:flex;align-items:flex-end;gap:10px 20px;flex-wrap:wrap;
   padding-top:15px;border-top:1px solid rgba(255,255,255,.22)}
@@ -300,7 +300,7 @@ main{flex:1;padding:34px 0 0}
    je er doet. Hetzelfde beeld als op het beginscherm van de telefoon, dus wie
    het hier aanwijst herkent het daar terug. */
 /* Twee kolommen zodra de tegels naast de grote kaart staan. Ze houden hun eigen
-   hoogte in plaats van zich uit te rekken tot de grote kaart — een tegel van
+   hoogte in plaats van zich uit te rekken tot de grote kaart, een tegel van
    twee regels die tot een halve pagina wordt opgeblazen leest als een fout.
    Bij een oneven aantal krijgt de laatste de hele rij; dat is netter dan een
    gat middenin het raster. */
@@ -325,8 +325,8 @@ main{flex:1;padding:34px 0 0}
 .apptico{width:44px;height:44px;border-radius:13px;display:block;margin:0 auto;
   box-shadow:0 3px 10px color-mix(in srgb,var(--k) 32%,transparent)}
 .appt h3{margin-top:12px;text-align:center;font-size:1.05rem;line-height:1.25}
-/* Twee cijfers onder de naam, met het label ervoor: "Punten 240". Andersom —
-   het getal voorop — leest scheef zodra een waarde zelf een woord is, zoals het
+/* Twee cijfers onder de naam, met het label ervoor: "Punten 240". Andersom (
+   het getal voorop) leest scheef zodra een waarde zelf een woord is, zoals het
    spoor bij Arabisch. Ze wikkelen, want op een smalle tegel past er één per
    regel en dat is beter dan afgeknipt. */
 .apptcijfers{margin-top:9px;display:flex;justify-content:center;flex-wrap:wrap;
@@ -349,7 +349,7 @@ footer p + p{margin-top:9px}
 footer .meta{margin-top:16px}
 
 /* ---------------------------------------------------------------------------
-   DE POORT — het scherm waar je je meldt.
+   DE POORT, het scherm waar je je meldt.
 
    Alles hierachter is van iemand: zijn voortgang, zijn punten, zijn spaarpot.
    Daarom kom je er niet meer per ongeluk in door op een kaart te klikken. Je
@@ -407,7 +407,7 @@ input.code{text-align:center;font-family:var(--mono);font-size:1.6rem;letter-spa
    HET OUDEROVERZICHT
 --------------------------------------------------------------------------- */
 /* min-width:0 is hier geen detail. Een rasterkolom is standaard minstens zo
-   breed als zijn inhoud, en de tabel binnenin heeft een min-width — zonder dit
+   breed als zijn inhoud, en de tabel binnenin heeft een min-width, zonder dit
    duwt die de hele kolom breder dan het scherm en schuift de pagina opzij,
    ondanks de overflow-x op de wikkel eromheen. */
 .kaart{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--schaduw);min-width:0}

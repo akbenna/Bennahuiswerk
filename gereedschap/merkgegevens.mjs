@@ -40,7 +40,7 @@ const API = 'https://world.openfoodfacts.org/api/v2/search'
 const VELDEN = 'code,product_name,product_name_nl,brands,quantity,product_quantity,serving_size,nutriments,categories_tags'
 
 /* Een pak boter is 735 kcal per 100 g; olie zit rond 900. Daarboven bestaat niet
-   en is het een invoerfout — meestal kilojoules in het kcal-veld. */
+   en is het een invoerfout, meestal kilojoules in het kcal-veld. */
 const KCAL_MAX = 950
 
 /**
@@ -51,8 +51,8 @@ const KCAL_MAX = 950
  * Select-producten heetten zo: "23-12-25 406 56 03:29 chef select serveertip KIP
  * P" en "IJSBERGOLA gewassen 200ge 10/08/2025".
  *
- * Wat ze gemeen hebben is niet dat er cijfers in staan — "0% Griekse yoghurt" en
- * "7-Up" hebben die ook — maar dat er een klok, een datum of een streepjescode in
+ * Wat ze gemeen hebben is niet dat er cijfers in staan ("0% Griekse yoghurt" en
+ * "7-Up" hebben die ook) maar dat er een klok, een datum of een streepjescode in
  * staat. Geen van die drie hoort ooit in een productnaam, en juist daarom mag de
  * regel hierop scherp zijn en niet op cijferdichtheid. Die laatste had ik eerst,
  * en die gooide "0% Griekse yoghurt 500 g" weg.
@@ -67,7 +67,7 @@ const AFDRUK = /\d{1,2}:\d{2}|\d{1,2}[-/.]\d{1,2}[-/.]\d{2,4}|\d{6,}/
  * hoort binnen een procent of tien uit te komen. Twintig procent wettelijke
  * speelruimte en afronding erbij, en veertig procent is nog steeds ruim.
  *
- * Daarboven is het geen etiket meer maar een invoerfout — iemand die de energie
+ * Daarboven is het geen etiket meer maar een invoerfout, iemand die de energie
  * van de verpakking overnam en de macro's per 100 g, of andersom. In deze honderd
  * producten was er precies één: "Kipfilet Kanapka", 147 kcal terwijl 9,3 g eiwit,
  * 10,1 g vet en 25,4 g koolhydraten op 230 uitkomen. Al het andere lag tussen
@@ -79,11 +79,11 @@ const AFDRUK = /\d{1,2}:\d{2}|\d{1,2}[-/.]\d{1,2}[-/.]\d{2,4}|\d{6,}/
  *
  * EN DAAROM GELDT DE BODEM ALLEEN NAAR BENEDEN
  *
- * Die twee redenen — vezel buiten de som, afronding op kleine getallen — drukken
+ * Die twee redenen (vezel buiten de som, afronding op kleine getallen) drukken
  * de som omláág. Ze verklaren dus een lage verhouding en niet een hoge. Eerst
  * stond de bodem op allebei de grenzen, en toen glipte "Choco Pudding" erdoor:
  * 45,7 kcal terwijl 10 g eiwit, 1,5 g vet en 6,7 g koolhydraten op 80 uitkomen.
- * De kilojoules in dezelfde rij zeggen 339, dus 81 — het kcal-veld was verkeerd
+ * De kilojoules in dezelfde rij zeggen 339, dus 81, het kcal-veld was verkeerd
  * uit de kJ gerekend, en dat is precies wat deze zeef hoort te vangen.
  *
  * Boven de bodem geldt de bovengrens dus ook: een som die bijna twee keer de
@@ -105,7 +105,7 @@ const MACRO_VANAF_KCAL = 50
  * Dat is te meten. Over 415 producten met allebei de velden is de mediaan
  * afwijking 0,43 %, en boven de 7 % zitten er nog twaalf. Tussen 14,9 % en
  * 23,6 % ligt níets. Twintig procent staat dus midden in een leeg gat en is
- * niet op één product afgesteld — daar zit hij met opzet.
+ * niet op één product afgesteld, daar zit hij met opzet.
  *
  * Onder de grens blijft rommel staan die er hoort te blijven: "Italiaanse
  * Roerbakgroenten" wijkt 12,5 % af, maar dat is 22 kcal tegen 19,2, en op zulke
@@ -131,12 +131,12 @@ const KJ_AFWIJKING = 0.2
  *
  * Zo'n rij zat in het eerste wat ik van Upfront ophaalde. "Eiwit Granola",
  * streepjescode 8720986893725: 819,4 kcal, 39,1 g vet, 80,58 g koolhydraten,
- * 42,5 g eiwit, 12,58 g vezel. De macro's komen uit op 844 kcal — verhouding
+ * 42,5 g eiwit, 12,58 g vezel. De macro's komen uit op 844 kcal, verhouding
  * 1,03, ruim binnen de grens. De kilojoules zeggen 870, zes procent ernaast,
  * ook goed. Beide getuigen knikken.
  *
  * Maar tel de grammen: 174,8 gram in honderd gram product. Dat is geen
- * onnauwkeurigheid, dat is een onmogelijkheid — en zonder deze zeef was het als
+ * onnauwkeurigheid, dat is een onmogelijkheid, en zonder deze zeef was het als
  * geloofwaardige granola de database in gegaan, met twee keurige vinkjes erbij.
  *
  * WAAR DE GRENS LIGT
@@ -169,7 +169,7 @@ function bruikbaar(p) {
       + 4 * (getal(n.carbohydrates_100g) ?? 0)
     const deel = uit / kcal
     /* Te hoog kan altijd: daar is geen onschuldige verklaring voor. Te laag
-       alleen boven de bodem — daaronder verklaart vezel en afronding het. */
+       alleen boven de bodem: daaronder verklaart vezel en afronding het. */
     if (deel > MACRO_BOVEN) return 'energie klopt niet met de macro\'s'
     if (deel < MACRO_ONDER && kcal >= MACRO_VANAF_KCAL) {
       return 'energie klopt niet met de macro\'s'
@@ -228,7 +228,7 @@ export function porties(tekst) {
   const s = String(tekst).trim()
   /* "gram" voluit hoort er ook bij, en dat stond er eerst niet in: `g\b`
      mislukt op "10 gram", want na de g komt een letter. Vier van de eerste
-     twintig Lidl-producten verloren daardoor hun portiegewicht — Open Food
+     twintig Lidl-producten verloren daardoor hun portiegewicht, Open Food
      Facts schrijft het vaker voluit dan afgekort.
 
      De langste vorm staat vooraan uit gewoonte, niet uit noodzaak: een
@@ -248,7 +248,7 @@ export function porties(tekst) {
  * álle rijen van een `values`-lijst op null, dan raadt Postgres er `text` van, en
  * dan weigert hij de invoer met "column is of type numeric but expression is of
  * type text". Dat gebeurde hier echt, en het viel pas op toen de gegenereerde SQL
- * werkelijk werd uitgevoerd — niet toen hij er goed uitzag.
+ * werkelijk werd uitgevoerd, niet toen hij er goed uitzag.
  */
 export function q(v) {
   if (v === null || v === undefined || v === '') return 'null::text'
@@ -268,7 +268,7 @@ function num(v) {
  * merken: wie op het ene filtert mist het andere.
  *
  * De regel kiest de schrijfwijze die het vaakst voorkomt, en verzint dus nooit
- * iets — hij kan alleen een spelling opleveren die in de bron staat. Bij gelijk
+ * iets, hij kan alleen een spelling opleveren die in de bron staat. Bij gelijk
  * spel wint de eerste, want dan is er geen grond om te kiezen. "Chef Select"
  * blijft "Chef Select": er is niets om tegen af te wegen.
  */
@@ -330,7 +330,7 @@ const KOLOMMEN = [
 
 /**
  * De hele SQL. Eén insert met `on conflict do update`, zodat opnieuw draaien
- * bijwerkt en niet verdubbelt — dezelfde afspraak als in de SQL-bestanden zelf.
+ * bijwerkt en niet verdubbelt, dezelfde afspraak als in de SQL-bestanden zelf.
  *
  * De `where` onder de `set` is wat die afspraak waarmaakt: zonder hem zet een
  * tweede run de tijdstempel van elke rij opnieuw, en dan is "twee keer draaien
@@ -479,7 +479,7 @@ const VOORBEELD = [
   { code: '20777222', product_name_nl: "Pindakaas 100% pinda's", brands: 'Lidl',
     product_quantity: 350, serving_size: '1 portie (15 g)',
     nutriments: { 'energy-kcal_100g': 621, proteins_100g: 26, fat_100g: 51, carbohydrates_100g: 11, fiber_100g: 8 } },
-  /* DE DERDE GETUIGE — een rij waarin alles mét elkaar klopt en niets kán.
+  /* DE DERDE GETUIGE: een rij waarin alles mét elkaar klopt en niets kán.
      Dit is "Eiwit Granola" van Upfront, streepjescode 8720986893725, letterlijk
      zoals Open Food Facts hem geeft. De macro's komen uit op 844 kcal tegen de
      opgegeven 819,4 (verhouding 1,03), de kilojoules op 870 (zes procent af):
@@ -491,7 +491,7 @@ const VOORBEELD = [
                   fat_100g: 39.1, carbohydrates_100g: 80.58, fiber_100g: 12.58 } },
   /* En de tegenhanger, want een zeef die alleen maar wegneemt bewijst niets.
      Clear Whey van hetzelfde merk: 80 g eiwit per 100 g is extreem en volkomen
-     echt — het is nagenoeg zuiver poeder. Samen 82,3 g, dus hij blijft. */
+     echt, het is nagenoeg zuiver poeder. Samen 82,3 g, dus hij blijft. */
   { code: '8720986891554', product_name_nl: 'Clear Whey Tropical', brands: 'Upfront',
     serving_size: '25 g',
     nutriments: { 'energy-kcal_100g': 338, 'energy-kj_100g': 1414, proteins_100g: 80,
@@ -527,7 +527,7 @@ const VOORBEELD = [
     nutriments: { 'energy-kcal_100g': 57, proteins_100g: 10, fat_100g: 0, carbohydrates_100g: 4 } },
   /* En bladgroente, waar de macro-som niet opgaat zonder dat er iets mis is: de
      vezel zit niet in de koolhydraten en op 0,5 g telt afronding dubbel. Zes van
-     vijftien kcal is 0,40 — ruim onder de ondergrens, en toch een goede rij.
+     vijftien kcal is 0,40: ruim onder de ondergrens, en toch een goede rij.
      Daarvoor staat de bodem van vijftig kcal er. */
   { code: '8', product_name_nl: 'Witte champignons gesneden', brands: 'Lidl', product_quantity: 250,
     nutriments: { 'energy-kcal_100g': 15, proteins_100g: 0.5, fat_100g: 0, carbohydrates_100g: 1, fiber_100g: 2 } },
@@ -536,14 +536,14 @@ const VOORBEELD = [
      6,7 g koolhydraten op 80 uitkomen. De kilojoules in dezelfde rij zeggen 81,
      dus het kcal-veld is verkeerd uit de kJ gerekend.
      Stond de bodem van vijftig kcal op allebei de grenzen, dan glipte hij erdoor
-     — en dat deed hij ook, tot deze rij hier kwam te staan. */
+, en dat deed hij ook, tot deze rij hier kwam te staan. */
   { code: '9', product_name_nl: 'Choco Pudding', brands: 'Milbona', product_quantity: 500,
     nutriments: { 'energy-kcal_100g': 45.7, proteins_100g: 10, fat_100g: 1.5,
                   carbohydrates_100g: 6.7 } },
   /* Dezelfde roomboter nog een keer, met een andere naam. Zo komt het binnen:
      Open Food Facts bladert over gegevens die ondertussen veranderen, en één
      product kan onder twee huismerken van dezelfde winkel vallen. Twee rijen
-     met dezelfde streepjescode laten de héle insert omvallen — niet de rij, de
+     met dezelfde streepjescode laten de héle insert omvallen, niet de rij, de
      opdracht. */
   { code: '20123456', product_name_nl: 'Roomboter ongezouten', brands: 'Milbona',
     product_quantity: 250, serving_size: '10 g',
@@ -563,14 +563,14 @@ const VOORBEELD = [
                   proteins_100g: 12, fat_100g: 19, carbohydrates_100g: 0.5 } },
   /* Zonder `energy-kj_100g`, maar met `energy_100g` én de eenheid erbij. Dan zijn
      de kilojoules alsnog bekend, en spreken ze tegen: 2050 kJ is 490 kcal, niet
-     390. Merk op dat de macro's hier niets zeggen — die komen op 481 uit, wat bij
+     390. Merk op dat de macro's hier niets zeggen, die komen op 481 uit, wat bij
      390 een verhouding van 1,23 is. */
   { code: '12', product_name_nl: 'Fuet extra knoflook', brands: 'Dulano',
     nutriments: { 'energy-kcal_100g': 390, energy_100g: 2050, energy_unit: 'kJ',
                   proteins_100g: 28.4, fat_100g: 39.1, carbohydrates_100g: 3.8, fiber_100g: 4.4 } },
   /* DEZELFDE VELDNAAM, ANDERE EENHEID
      `energy_100g` draagt niet altijd kilojoules. Staat er geen eenheid bij, of
-     staat er kcal, dan weten we níets en mag er niet gedeeld worden — anders
+     staat er kcal, dan weten we níets en mag er niet gedeeld worden, anders
      wordt 445 gedeeld door 4,184 en valt elk goed product om. Deze rij hoort er
      dus gewoon door. */
   { code: '13', product_name_nl: 'Green canyon oats & honey', brands: 'Crownfield', product_quantity: 252,
@@ -579,7 +579,7 @@ const VOORBEELD = [
   /* EN DE ANDERE KANT VAN DE GRENS
      Deze rij hoort er júist door, en pint de grens vast aan de onderkant. Dit is
      "Italiaanse Roerbakgroenten", letterlijk: 22 kcal terwijl 80,5 kJ op 19,2
-     uitkomt — twaalf en een half procent ernaast. Op zulke kleine getallen doet
+     uitkomt, twaalf en een half procent ernaast. Op zulke kleine getallen doet
      afronding dat in haar eentje: een halve kcal is hier al twee procent.
      Zonder deze rij zou een grens van vijf procent er net zo groen uitzien, en
      dan zou de proef niet over een grens gaan maar over de kabanossi alleen. */
@@ -596,7 +596,7 @@ function proef() {
   const eis = (goed, wat) => { if (!goed) { console.error('MIS: ' + wat); process.exitCode = 1 } else console.log('ok  ' + wat) }
 
   eis(porties('30 g').gram === 30, 'een portie in gram wordt gelezen')
-  eis(porties('10 gram').gram === 10, '"gram" voluit ook — anders valt een kwart weg')
+  eis(porties('10 gram').gram === 10, '"gram" voluit ook, anders valt een kwart weg')
   eis(porties('35g').gram === 35, 'zonder spatie ook')
   eis(porties('500 mg').gram === null, 'milligram is geen gram')
   eis(porties('1 portie (15 g)').gram === 15, 'gram tussen haakjes ook')
@@ -629,16 +629,16 @@ function proef() {
   /* En de drie die alleen op hun naam sneuvelen, sneuvelen ook echt: een telling
      die klopt terwijl de rij er toch in staat is geen zeef maar een boekhouding. */
   eis(!sql.includes('serveertip') && !sql.includes('IJSBERGOLA') && !sql.includes('44280651'),
-      'alle drie de etiketafdrukken staan er niet in — klok, datum én code')
+      'alle drie de etiketafdrukken staan er niet in, klok, datum én code')
   /* De bodem van vijftig kcal: zonder hem valt deze goede rij op 0,40 af. */
   eis(sql.includes('Witte champignons gesneden'),
       'bladgroente overleeft de macro-zeef, want daar telt vezel mee dat buiten de som valt')
   eis(!sql.includes('Kipfilet') && !sql.includes("'6'"), 'de rij die zichzelf tegenspreekt staat er niet in')
   eis(sql.includes('0% Griekse yoghurt 500 g'),
-      'een naam met cijfers erin blijft — het gaat om klokken en codes, niet om cijfers')
+      'een naam met cijfers erin blijft, het gaat om klokken en codes, niet om cijfers')
   eis(sql.includes("'20123456'") && !sql.includes("'1900'"), 'de goede rijen staan erin, de rommel niet')
   eis(sql.includes('on conflict (bron, barcode) do update'), 'opnieuw draaien werkt bij in plaats van te verdubbelen')
-  /* TWEE KEER DRAAIEN VERANDERT NIETS — EN DAT IS DEZE REGEL
+  /* TWEE KEER DRAAIEN VERANDERT NIETS, EN DAT IS DEZE REGEL
 
      De `set` zet `geimporteerd_op = now()`. Zonder de `where` eronder raakt een
      tweede run dus elke rij, ook als er bij de bron niets veranderd is, en dan
@@ -659,8 +659,8 @@ function proef() {
     eis(whereblok.includes('p.' + kolom) && whereblok.includes('excluded.' + kolom),
         `${kolom} telt mee in de vergelijking die de bijwerking tegenhoudt`)
   }
-  /* `synoniemen` vult een mens. Een import die hem aanraakt — in de set of in de
-     vergelijking — zou handwerk overschrijven of eraan gaan tornen. */
+  /* `synoniemen` vult een mens. Een import die hem aanraakt (in de set of in de
+     vergelijking) zou handwerk overschrijven of eraan gaan tornen. */
   eis(!sql.includes('synoniemen'), 'de import raakt de synoniemen niet aan')
   eis(!sql.includes("''vers''',") || sql.includes("''vers'''"), 'de ontsnapping komt ook in de uitvoer terecht')
 
@@ -676,7 +676,7 @@ function proef() {
   /* DE DUBBELE STREEPJESCODE, EN WAAROM DIT ZO STRENG STAAT
      Postgres weigert bij twee gelijke codes in één insert de hele opdracht met
      "ON CONFLICT DO UPDATE command cannot affect row a second time". Eén dubbele
-     rij en er komt dus niets binnen — niet één rij minder, alles. Hier wordt
+     rij en er komt dus niets binnen, niet één rij minder, alles. Hier wordt
      geteld hoe vaak `'20123456'` in de waardenlijst staat: precies één keer. */
   /* De bodem geldt alleen naar beneden. Een lichte rij waarvan de som er ver
      bóven ligt hoort er net zo goed uit als een zware. */
@@ -685,14 +685,14 @@ function proef() {
 
   /* DE DERDE GETUIGE, IN TWEE RICHTINGEN
      De granola valt af hoewel zijn energie met zowel de macro's als de
-     kilojoules klopt — daar is deze zeef voor. En het eiwitpoeder blijft, want
+     kilojoules klopt, daar is deze zeef voor. En het eiwitpoeder blijft, want
      tachtig gram eiwit per honderd gram is geen fout maar een poeder. Zonder
      dat tweede geval zou "gooi alles met veel eiwit weg" deze proef halen, en
      dan was er van de hele eiwitlijst niets overgebleven. */
   eis(!sql.includes('Eiwit Granola'),
       'honderdvijfenzeventig gram in honderd gram valt af, ook met twee kloppende getuigen')
   eis(sql.includes('Clear Whey Tropical'),
-      'tachtig gram eiwit per honderd gram blijft — dat is een poeder, geen fout')
+      'tachtig gram eiwit per honderd gram blijft, dat is een poeder, geen fout')
 
   const keer = (sql.match(/'20123456'/g) ?? []).length
   eis(keer === 1, `de dubbele streepjescode staat er één keer in, niet ${keer}`)
@@ -719,7 +719,7 @@ function proef() {
   eis(sql.includes('Green canyon oats & honey'),
       'maar energy_100g zonder kJ als eenheid telt niet als kilojoules')
   eis(sql.includes('Italiaanse roerbakgroenten'),
-      'en een klein getal dat twaalf procent afwijkt blijft staan — dat is afronding')
+      'en een klein getal dat twaalf procent afwijkt blijft staan, dat is afronding')
 
   /* EEN MERK IS EEN MERK, HOE HET OOK GETYPT IS */
   eis(!/'DULANO'/.test(sql), 'het geschreeuwde merk staat er niet in')
@@ -745,7 +745,7 @@ if (process.argv.includes('--proef')) {
 } else if (process.argv.includes('--bestand')) {
   /* Meer dan één bestand tegelijk, want zo komt het binnen: een merk heeft
      meerdere bladzijden en een winkel meerdere huismerken. Alles achter
-     `--bestand` tot het volgende streepje telt mee, en het wordt één SQL —
+     `--bestand` tot het volgende streepje telt mee, en het wordt één SQL,
      dubbele streepjescodes vallen er in `naarSql` vanzelf uit, en dat moet
      ook, want anders weigert Postgres de hele insert. */
   const { readFileSync } = await import('node:fs')

@@ -1,5 +1,5 @@
 /**
- * DEZE WEEK — vijf stappen
+ * DEZE WEEK: vijf stappen
  *
  * Kernvraag, brontekst, uitleg, toepassing, toets. De volgorde is de didactiek:
  * eerst de vraag zonder het antwoord, dan de bron vóór de uitleg erover, en pas
@@ -227,7 +227,7 @@ export function Week({ stand, nu, zet, nr, zetNr, naarHerhaling }: Props): React
     )
   }
 
-  /* De knop om af te ronden verschijnt pas als de toets beantwoord is — of
+  /* De knop om af te ronden verschijnt pas als de toets beantwoord is, of
      meteen, bij een consolidatieweek en bij een week die je overdoet. */
   const magAfronden = fase === 4 && (w.type === 'cons' || af || gekozen !== null)
 

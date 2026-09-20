@@ -1,5 +1,5 @@
 /**
- * INSTELLINGEN — tempo, doel, tekst, klank, opslag en gegevens.
+ * INSTELLINGEN: tempo, doel, tekst, klank, opslag en gegevens.
  */
 import { useRef, useState } from 'react'
 import { Kaart, Melding, Tag } from '../onderdelen'

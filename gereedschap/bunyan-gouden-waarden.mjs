@@ -4,7 +4,7 @@
  *
  * Hier zit de zwaarste overzetting van de hele verbouwing: MINIPY, een kleine
  * Python van zevenhonderd regels die in de browser draait. Niet de taal is het
- * kwetsbare deel maar de fóutmeldingen — "regel 3: je bent de dubbele punt
+ * kwetsbare deel maar de fóutmeldingen, "regel 3: je bent de dubbele punt
  * vergeten" is het halve onderwijs, en een overzetting die per ongeluk het
  * regelnummer één opschuift of "de naam x kent Python nog niet" anders
  * formuleert, is stiller kapot dan een die niet start.
@@ -20,7 +20,7 @@
  * geraakt.
  *
  * Verder gaan de puntentelling, de rangen, de insignes, het samenvoegen en de
- * bouwbank erdoorheen — dat laatste omdat een verkeerd overgezette wattberekening
+ * bouwbank erdoorheen, dat laatste omdat een verkeerd overgezette wattberekening
  * een kind een voeding laat kiezen die niet past.
  *
  *   node gereedschap/bunyan-gouden-waarden.mjs
@@ -171,7 +171,7 @@ const paren = [
   [{ bouw: { cpu: 'r5-5600' } }, { bouw: { cpu: 'i5-12400', gpu: 'rtx4060' } }],
 ]
 /* Beide kanten eerst aanvullen tot een volledige momentopname. Zo werkt de app
-   ook — wat er van een toestel binnenkomt gaat door leegS() heen — en het oude
+   ook (wat er van een toestel binnenkomt gaat door leegS() heen) en het oude
    samenvoegen rekende met kale objecten een NaN-saldo uit dat in het echt nooit
    voorkomt. */
 const vol = (o) => Object.assign(O.leegS(), o)
@@ -237,4 +237,4 @@ const uit = {
 }
 fs.writeFileSync('src/bunyan/gouden-waarden.json', JSON.stringify(uit, null, 1) + '\n')
 const fouten = python.filter((p) => !p.uit.ok).length
-console.log(`${python.length} programma's (${fouten} met een foutmelding), ${bank.length} bouwsels — src/bunyan/gouden-waarden.json`)
+console.log(`${python.length} programma's (${fouten} met een foutmelding), ${bank.length} bouwsels, src/bunyan/gouden-waarden.json`)

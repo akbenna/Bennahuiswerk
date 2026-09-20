@@ -7,7 +7,7 @@
  * uit vercel.json meestuurt, opent de app in Chromium, en meldt elke overtreding
  * en elke fout in de console.
  *
- * De app praat in deze proef niet met de database — er is geen sessie — maar
+ * De app praat in deze proef niet met de database (er is geen sessie) maar
  * alles wat de pagina zelf laadt komt wel langs de policy: het script, de stijl,
  * het lettertype, de iconen.
  *
@@ -114,7 +114,7 @@ const fouten = []
 const buitenBereik = []
 
 /* Google Fonts en Supabase zijn vanuit deze omgeving niet bereikbaar. Dat is
-   geen fout in de app en geen CSP-overtreding — het is de sandbox. Zulke
+   geen fout in de app en geen CSP-overtreding, het is de sandbox. Zulke
    verzoeken worden apart geteld en genoemd, niet stilzwijgend weggefilterd.
 
    Sterker: dat het verzoek überhaupt de deur uit ging en pas op het netwerk
@@ -131,7 +131,7 @@ pagina.on('console', (m) => {
 })
 pagina.on('pageerror', (e) => fouten.push(String(e)))
 pagina.on('requestfailed', (r) => {
-  const regel = `${r.url()} — ${r.failure()?.errorText}`
+  const regel = `${r.url()}, ${r.failure()?.errorText}`
   if (isBuitenBereik(r.url())) buitenBereik.push(regel)
   else fouten.push(regel)
 })
@@ -180,7 +180,7 @@ const PAGINAS = [
     pad: '/sanad/', kop: 'Geloofsstudie', minKnoppen: 7, plaat: 'sanad',
     /* De hele weekgang in het klein: instellen, door de vijf stappen, de toets
        beantwoorden, de week afronden en dan een kaart beoordelen. Dat raakt de
-       drie dingen die bij het ombouwen stuk hadden kunnen gaan — het programma
+       drie dingen die bij het ombouwen stuk hadden kunnen gaan, het programma
        uit drie gegevensbestanden, de faseovergang, en de kaartplanner. */
     async doe(pagina) {
       await pagina.getByRole('button', { name: 'Beginnen' }).click()
@@ -225,7 +225,7 @@ const PAGINAS = [
       if (!/Klopt/.test(oordeel ?? '')) return `de opdracht werd niet goedgekeurd: ${oordeel}`
 
       /* Beide vragen goed beantwoorden; het juiste antwoord staat in de data
-         maar de proef mag het niet kennen — dus alle knoppen langs tot er
+         maar de proef mag het niet kennen, dus alle knoppen langs tot er
          "Goed" staat is hier niet eerlijk. We nemen wat er staat en kijken of
          de knop opengaat. */
       const kaarten = blad.locator('#vragen .card, .card.plat')
@@ -262,7 +262,7 @@ const PAGINAS = [
     pad: '/noer/', kop: 'Islam leren', minKnoppen: 7, plaat: 'noer',
     /* Een profiel aanmaken, een les afronden, en de gebedstijden bekijken. Dat
        raakt het ouderscherm, het spoor per leeftijd, de lesflow met vragen én
-       de zonneberekening — de vier dingen die bij het ombouwen stuk hadden
+       de zonneberekening, de vier dingen die bij het ombouwen stuk hadden
        kunnen gaan. */
     async doe(pagina) {
       await pagina.getByRole('tab', { name: 'Ouder' }).click()
@@ -298,7 +298,7 @@ const PAGINAS = [
     /* Een profiel aanmaken, de sessie van vandaag doorlopen tot de eerste
        oefening beantwoord is, en dan het alfabet en de woordenlijst aanraken.
        Dat raakt het onthaal, het spoor per leeftijd, het leerpad, de
-       oefeningenmotor met zijn terugkoppeling en het zoeken — de dingen die bij
+       oefeningenmotor met zijn terugkoppeling en het zoeken, de dingen die bij
        het ombouwen stuk hadden kunnen gaan. */
     async doe(pagina) {
       await pagina.getByPlaceholder('Bijvoorbeeld Yasmina').fill('Proef')
@@ -341,7 +341,7 @@ const PAGINAS = [
     pad: '/huiswerk/', kop: 'Huiswerk', minKnoppen: 8, plaat: 'huiswerk',
     /* Een kind kiezen, een som maken en nakijken, en de ouder-modus openen. Dat
        raakt de landingspagina, de oefeningenmotor met Leitner en punten, en het
-       ouderscherm met de beloning — de dingen die bij het ombouwen stuk hadden
+       ouderscherm met de beloning, de dingen die bij het ombouwen stuk hadden
        kunnen gaan. En het legt vast dat er nergens meer een wachtwoordscherm
        tussen zit. */
     async doe(pagina) {
@@ -379,7 +379,7 @@ const PAGINAS = [
 
       /* En dan het doorlopen vanaf het portaal: wie daar zijn profiel al koos
          hoort meteen op zijn eigen scherm te staan. Dat is niet met het oog te
-         controleren — je ziet alleen dát er een scherm is, niet dat er twee
+         controleren, je ziet alleen dát er een scherm is, niet dat er twee
          schermen zijn overgeslagen. Dus: de aanmelding neerzetten zoals het
          portaal hem schrijft, herladen, en kijken wat er staat. */
       await pagina.evaluate(() => {
@@ -407,7 +407,7 @@ const PAGINAS = [
       await pagina.screenshot({ path: 'gereedschap/pagina-huiswerk-kind.png' })
 
       /* De leerscan helemaal doorlopen. Vijftien vragen, en aan het eind hoort er
-         precies één ding uit te komen waar dit kind aan moet werken — geen cijfer
+         precies één ding uit te komen waar dit kind aan moet werken, geen cijfer
          en geen leertype. */
       await pagina.getByRole('button', { name: /Hoe leer jij/ }).click()
       for (let n = 0; n < 15; n++) {

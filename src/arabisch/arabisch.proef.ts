@@ -2,8 +2,8 @@
  * ARABISCH, BEWEZEN
  *
  * Twee dingen die je niet met het oog controleert, en die daarom het zwaarst
- * getoetst worden: FSRS — de herhalingsplanner met negentien gepubliceerde
- * gewichten — en het nakijken van getypte antwoorden. Alles vergeleken met
+ * getoetst worden: FSRS (de herhalingsplanner met negentien gepubliceerde
+ * gewichten) en het nakijken van getypte antwoorden. Alles vergeleken met
  * src/arabisch/gouden-waarden.json, gedraaid uit de oude pagina zelf.
  */
 import { describe, expect, it } from 'vitest'
@@ -178,7 +178,7 @@ describe('de vocalisatie', () => {
   })
 
   it('houdt de tekens waar het woord zonder die tekens dubbelzinnig is', () => {
-    /* كتب kan kataba, kutiba, kutub of kutub zijn — daar blijven de tekens. */
+    /* كتب kan kataba, kutiba, kutub of kutub zijn, daar blijven de tekens. */
     expect(AMBIGU.has('كتب')).toBe(true)
     expect(vocaliseer('كَتَبَ', 'selectief')).toBe('كَتَبَ')
     expect(vocaliseer('بَيْت', 'selectief')).toBe('بيت')
@@ -299,8 +299,8 @@ describe('het leerpad', () => {
  * HET SPOOR NA DE NIVEAUBEPALING
  *
  * De meting zette tot nu toe alleen de startweek van het jaarplan; het spoor
- * bleef staan op de gok uit de leeftijd. Dat is verkeerd om — hoe ver iemand met
- * Arabisch is heeft niets met zijn leeftijd te maken — maar het is ook niet
+ * bleef staan op de gok uit de leeftijd. Dat is verkeerd om (hoe ver iemand met
+ * Arabisch is heeft niets met zijn leeftijd te maken) maar het is ook niet
  * zomaar om te draaien: het spoor draagt náást de zwaarte van de stof ook hoe de
  * app met je omgaat. Vanaf spoor 3 beoordeelt iemand zijn eigen antwoord en
  * vallen de punten weg; spoor 4 is het volwassen spoor.
@@ -356,7 +356,7 @@ describe('het spoor na de niveaubepaling', () => {
   it('zegt waar het spoor vandaan komt', () => {
     /* Het ouderscherm zet dit erbij; zonder herkomst is "spoor 2" niet na te
        kijken. Een volwassene houdt "op leeftijd", ook met een meting achter de
-       rug — bij hem heeft die er immers niet aan gezeten. */
+       rug, bij hem heeft die er immers niet aan gezeten. */
     expect(spoorHerkomst(true, 8, true)).toBe('hand')
     expect(spoorHerkomst(false, 8, true)).toBe('toets')
     expect(spoorHerkomst(false, 8, false)).toBe('leeftijd')

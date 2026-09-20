@@ -5,7 +5,7 @@
  * foutenschrift, automatisch niveau, insignes, dagmissie, verdiensten en de
  * wekelijkse momentopname horen bij elkaar en mogen niet uit de pas raken.
  *
- * Alles is puur — de voortgang gaat erin en er komt een nieuwe uit. Zo is de
+ * Alles is puur: de voortgang gaat erin en er komt een nieuwe uit. Zo is de
  * hele keten te toetsen zonder scherm, zonder opslag en zonder klok.
  */
 import { dagKort, weekSleutel } from './datum'
@@ -25,7 +25,7 @@ function nieuweWeek(pr: Voortgang, nuMs: number): Voortgang {
   return { ...pr, weekKey: wk, weekPunten: 0, weekBasis: pr.punten || 0 }
 }
 
-/** Bij een nieuwe dag begint de eerlijke dagteller opnieuw — die telt wat er
+/** Bij een nieuwe dag begint de eerlijke dagteller opnieuw, die telt wat er
  *  vandáág verdiend is en mag niets van gisteren meenemen. */
 function nieuweDag(pr: Voortgang, nu: Date): Voortgang {
   const vandaag = dagKort(nu)
@@ -47,7 +47,7 @@ export interface Antwoord {
  *
  * De punten: tien voor een som die nog niet beheerst was, vijf als er een hint
  * bij is gebruikt, drie als de som al beheerst was. Dat laatste is geen straf
- * maar een sturing — herhalen wat je al kunt is minder waard dan leren wat je
+ * maar een sturing, herhalen wat je al kunt is minder waard dan leren wat je
  * nog niet kunt.
  */
 export function verwerkAntwoord(vorig: Voortgang, a: Antwoord, nu: Date): Voortgang {

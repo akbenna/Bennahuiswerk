@@ -1,5 +1,5 @@
 /**
- * DE LEERSCAN — hoe leer jij eigenlijk?
+ * DE LEERSCAN: hoe leer jij eigenlijk?
  *
  * WAT DIT NIET IS
  *
@@ -17,13 +17,13 @@
  * te veranderen, en de technieken die werken zijn voor iedereen dezelfde. De
  * vijf dingen hieronder zijn de best onderbouwde die er zijn:
  *
- *   ophalen   — jezelf toetsen in plaats van herlezen (retrieval practice)
- *   spreiden  — verdelen over dagen in plaats van één avond (spaced practice)
- *   mengen    — door elkaar oefenen in plaats van per soort (interleaving)
- *   nakijken  — uitzoeken wáárom iets fout ging, niet alleen dát
- *   beginnen  — starten, doorzetten, aandacht vasthouden
+ *   ophalen: jezelf toetsen in plaats van herlezen (retrieval practice)
+ *   spreiden, verdelen over dagen in plaats van één avond (spaced practice)
+ *   mengen, door elkaar oefenen in plaats van per soort (interleaving)
+ *   nakijken, uitzoeken wáárom iets fout ging, niet alleen dát
+ *   beginnen, starten, doorzetten, aandacht vasthouden
  *
- * Deze app is toevallig precies op de eerste vier gebouwd — Leitner is
+ * Deze app is toevallig precies op de eerste vier gebouwd, Leitner is
  * ophalen én spreiden, de mix-oefening is mengen, en het foutenlogboek is
  * nakijken. De scan wijst een kind dus naar knoppen die er al zitten.
  *
@@ -31,7 +31,7 @@
  *
  * Situaties, geen zelfbeoordeling. "Wat doe je meestal de avond voor een toets"
  * levert eerlijker antwoorden op dan "ben jij een planner". Volledig eerlijk
- * wordt het nooit — een kind voelt welk antwoord braaf klinkt — en daarom staat
+ * wordt het nooit (een kind voelt welk antwoord braaf klinkt) en daarom staat
  * er in het ouderscherm bij dat dit een gespreksopening is en geen meting.
  */
 
@@ -51,7 +51,7 @@ export interface Dimensiekaart {
   emoji: string
   /** Wat deze gewoonte is, in één zin voor het kind. */
   wat: string
-  /** Waarom het werkt — voor de ouder, en voor een kind dat wil weten waarom. */
+  /** Waarom het werkt: voor de ouder, en voor een kind dat wil weten waarom. */
   waarom: string
   /** Advies per band: zwak, midden, sterk. */
   advies: [string, string, string]

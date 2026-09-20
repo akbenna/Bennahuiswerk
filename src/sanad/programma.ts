@@ -1,10 +1,10 @@
 /**
- * HET PROGRAMMA — achtentwintig weken uit drie gegevensbestanden
+ * HET PROGRAMMA: achtentwintig weken uit drie gegevensbestanden
  *
  * De weeklijst is geen gegeven maar een afleiding: per spoor eerst de modules
  * uit het curriculum, daarna de consolidatieweek die op dat spoor volgt. Dat
  * die volgorde hier één keer wordt vastgelegd, is precies waarom hij nergens
- * anders herhaald hoeft te worden — het weeknummer is overal hetzelfde getal,
+ * anders herhaald hoeft te worden, het weeknummer is overal hetzelfde getal,
  * ook in wat er al bewaard staat.
  */
 import { CURRICULUM } from './gegevens/curriculum'

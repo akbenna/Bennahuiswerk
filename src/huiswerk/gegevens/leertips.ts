@@ -2,7 +2,7 @@
  * LEERTIPS
  *
  * Herzien en geordend naar wat er in het onderzoek daadwerkelijk uitkomt. De
- * volgorde van de categorieën is de volgorde van hoeveel het oplevert — de
+ * volgorde van de categorieën is de volgorde van hoeveel het oplevert, de
  * eerste twee, jezelf overhoren en spreiden, halen het van alle andere samen.
  *
  * Twee dingen zijn met opzet zo geschreven:

@@ -1,8 +1,8 @@
 /**
- * BELONING — punten voor wat je leert, geld voor wat je afmaakt
+ * BELONING: punten voor wat je leert, geld voor wat je afmaakt
  *
  * Het weekplafond staat er zodat een goede week niet in een salaris verandert.
- * Als het budget op is lopen de punten, de rangen en de insignes gewoon door —
+ * Als het budget op is lopen de punten, de rangen en de insignes gewoon door,
  * anders zou leren stoppen zodra het geld stopt, en dat is precies de verkeerde
  * les om een kind van elf mee te geven.
  */

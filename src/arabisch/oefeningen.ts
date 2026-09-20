@@ -2,8 +2,8 @@
  * DE OEFENINGEN
  *
  * Uitgangspunt: ophalen boven herkennen. Meerkeuze wordt alleen ingezet waar
- * onderscheiden zélf de vaardigheid is — welke van deze drie lijkende letters
- * hoor je? — en waar intypen onredelijk zou zijn. Overal elders typt, bouwt of
+ * onderscheiden zélf de vaardigheid is, welke van deze drie lijkende letters
+ * hoor je?, en waar intypen onredelijk zou zijn. Overal elders typt, bouwt of
  * stelt de leerling samen.
  *
  * Tweede uitgangspunt: bij élk antwoord volgt terugkoppeling, ook bij een goed
@@ -30,7 +30,7 @@ export interface Oefening {
   /** Het kaart-id, als de oefening in de herhaling meedoet. Twee soorten
    *  hebben er geen: de vormherkenning en de zons-/maansletter. Die horen bij
    *  de groep waarin ze gesteld worden en niet bij één losse letter, en ze
-   *  wisselen van vraagstelling — een kaart daarvan zou elke keer iets anders
+   *  wisselen van vraagstelling, een kaart daarvan zou elke keer iets anders
    *  toetsen dan de vorige keer. Zonder id worden ze niet ingepland. */
   id?: string | undefined
   soort: Oefensoort
@@ -132,12 +132,12 @@ export function oefLetters(letters: string[], t: Toeval): Oefening[] {
       t, { ar: v[welke[0]], arGroot: true }))
   }
 
-  /* Zonsletter of maansletter — alleen de vraag stellen als de groep beide
+  /* Zonsletter of maansletter: alleen de vraag stellen als de groep beide
      soorten bevat, anders is het geen onderscheid maar een weetje. */
   if (groep.some((l) => l.zon) && groep.some((l) => !l.zon)) {
     const L = willekeurig(groep, t)
     /* De transcriptie kent digrafen (th, dh, sh, kh, gh); die moeten als één
-       klank worden verdubbeld — ash-sh…, niet as-s…. */
+       klank worden verdubbeld, ash-sh…, niet as-s…. */
     const klank = (L.tr.match(/^(th|dh|sh|kh|gh|.)/) ?? [L.tr[0]])[0] as string
     uit.push(maakKies(
       undefined,
@@ -213,7 +213,7 @@ export function oefWoorden(
         })
       }
     }
-    /* Luisteren en kiezen — alleen als er echt een Arabische stem is. */
+    /* Luisteren en kiezen: alleen als er echt een Arabische stem is. */
     if (magLuisteren && n === 1) {
       uit.push(maakKies(
         kaartId('W', i, 'luister'),
@@ -288,7 +288,7 @@ export function oefTekst(id: string, t: Toeval): Oefening[] {
     id: kaartId('X', T.id), soort: 'kies',
     vraag: T.vraag.v, opties: T.vraag.o.slice(), juistIndex: T.vraag.j, uitleg: T.vraag.u,
   }]
-  /* Twee woorden uit de glossen terugvragen — die zijn tijdens het lezen
+  /* Twee woorden uit de glossen terugvragen, die zijn tijdens het lezen
      alleen achter een tik zichtbaar geweest. */
   husselen(T.gloss, t).slice(0, 2).forEach((g, n) => {
     uit.push({

@@ -1,5 +1,5 @@
 -- ===========================================================================
--- 40 — EEN BEHEERDER DIE HET NIET STILLETJES KAN
+-- 40: EEN BEHEERDER DIE HET NIET STILLETJES KAN
 -- ===========================================================================
 --
 -- TOEGEPAST: ja, op 19 september 2026. De vlag `beheerder` en de tabel `kal_herstel_log`
@@ -9,8 +9,8 @@
 -- kwijt is én zijn herstelcode niet bewaard heeft, komt er niet meer in. Dat is
 -- bij een gezin het waarschijnlijke geval, want niemand bewaart codes.
 --
--- Datzelfde bestand noemde ook de aanvulling die dat wél dekt — een beheerder
--- die voor een ander kan herstellen — en zette er meteen het bezwaar bij:
+-- Datzelfde bestand noemde ook de aanvulling die dat wél dekt, een beheerder
+-- die voor een ander kan herstellen, en zette er meteen het bezwaar bij:
 --
 --     "het betekent dat één account bij de gegevens van een ander kan"
 --
@@ -41,7 +41,7 @@
 -- in te loggen. Tegen een echte database gedraaid geeft dat gewoon een token.
 --
 -- Dat is geen fout in dit ontwerp maar een eigenschap van het probleem. Wie een
--- wachtwoord van een ander kan terugzetten, kan dat account overnemen — bij de
+-- wachtwoord van een ander kan terugzetten, kan dat account overnemen, bij de
 -- gezinsapp net zo goed, en bij elke helpdesk ter wereld ook. Er is in deze app
 -- geen e-mail en geen tweede kanaal, dus de beheerder ís de koerier. Wie de
 -- code overbrengt heeft hem gezien.
@@ -50,7 +50,7 @@
 -- "dat kan niet gebeuren" maar "dat kan niet stilletjes gebeuren":
 --
 --   * het slachtoffer merkt het onmiddellijk. Zijn eigen wachtwoord werkt niet
---     meer en al zijn sessies zijn eruit gegooid — dat doet `kal_ww_herstellen`.
+--     meer en al zijn sessies zijn eruit gegooid, dat doet `kal_ww_herstellen`.
 --     Overname zonder dat de ander het doorheeft is er niet bij.
 --   * blok 3 schrijft elke uitgifte weg: wie, voor wie, wanneer. Een beheerder
 --     kan het dus doen, maar niet ontkennen.
@@ -96,7 +96,7 @@
 BEGIN;
 
 -- ---------------------------------------------------------------------------
--- BLOK 1 — DE VLAG
+-- BLOK 1: DE VLAG
 -- ---------------------------------------------------------------------------
 
 alter table public.kal_gebruikers
@@ -107,7 +107,7 @@ comment on column public.kal_gebruikers.beheerder is
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 2 — HET LOGBOEK
+-- BLOK 2: HET LOGBOEK
 -- ---------------------------------------------------------------------------
 --
 -- Voorkomen kan niet, ontkennen wel. Wie een code voor een ander maakt, laat
@@ -115,12 +115,12 @@ comment on column public.kal_gebruikers.beheerder is
 -- beheerdersrecht draaglijk maakt zonder e-mail of tweede kanaal.
 --
 -- Er staat met opzet geen code in, ook niet gehasht. De code zelf hoort maar op
--- één plek te staan — `kal_gebruikers.herstel_hash` — en daar verdwijnt hij bij
+-- één plek te staan (`kal_gebruikers.herstel_hash`) en daar verdwijnt hij bij
 -- gebruik. Een logboek dat codes bewaart zou de uitgifte juist gevaarlijker
 -- maken dan hij is.
 --
 -- Geen `delete`-recht, ook niet voor de functie: de tabel is alleen aan te
--- vullen. Dat is niet waterdicht — wie bij de database kan, kan alles — maar het
+-- vullen. Dat is niet waterdicht (wie bij de database kan, kan alles) maar het
 -- betekent dat het wissen van een spoor een handeling is die je moet wíllen.
 
 create table if not exists public.kal_herstel_log (
@@ -142,7 +142,7 @@ revoke all on public.kal_herstel_log from anon, authenticated;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 3 — EEN CODE VOOR EEN ANDER
+-- BLOK 3: EEN CODE VOOR EEN ANDER
 -- ---------------------------------------------------------------------------
 
 create or replace function public.kal_herstelcode_voor(
@@ -173,7 +173,7 @@ begin
   if not exists (select 1 from kal_gebruikers
                   where id = v_id and ww_hash = crypt(p_ww, ww_hash)
                     and beheerder) then
-    /* Eén boodschap voor twee gevallen — geen beheerder, of het wachtwoord
+    /* Eén boodschap voor twee gevallen, geen beheerder, of het wachtwoord
        klopt niet. Het verschil zou verklappen wie beheerder is. */
     return jsonb_build_object('fout', 'Dat mag niet met dit wachtwoord');
   end if;
@@ -206,14 +206,14 @@ begin
   values (v_id, v_doel, v_naam);
 
   /* De enige keer dat deze code de database verlaat. Er staat met opzet geen
-     token in dit antwoord — maar wie hem doorgeeft heeft hem gezien, en kan hem
+     token in dit antwoord, maar wie hem doorgeeft heeft hem gezien, en kan hem
      dus ook zelf inwisselen. Zie de kop: dat is geen gat maar de aard van het
      probleem, en daarom staat het in het logboek hierboven. */
   return jsonb_build_object('code', v_code, 'account', v_naam);
 end $function$;
 
 comment on function public.kal_herstelcode_voor(text, text, text) is
-  'Maakt een eenmalige herstelcode voor een ander account. Alleen voor een beheerder, en alleen met diens eigen wachtwoord. Let op: wie de code maakt kan hem ook zelf inwisselen — elke uitgifte staat daarom in kal_herstel_log.';
+  'Maakt een eenmalige herstelcode voor een ander account. Alleen voor een beheerder, en alleen met diens eigen wachtwoord. Let op: wie de code maakt kan hem ook zelf inwisselen, elke uitgifte staat daarom in kal_herstel_log.';
 
 grant execute on function public.kal_herstelcode_voor(text, text, text) to anon, authenticated;
 
@@ -231,7 +231,7 @@ COMMIT;
 --
 --    Verwacht: UPDATE 1. Komt er UPDATE 0, dan bestaat dat account niet.
 --
--- 2. Wie zijn er nu beheerder? Houd dit kort — het is een lijst die je moet
+-- 2. Wie zijn er nu beheerder? Houd dit kort: het is een lijst die je moet
 --    kunnen overzien.
 --
 --      select account, beheerder from kal_gebruikers order by beheerder desc, account;
@@ -276,6 +276,6 @@ COMMIT;
 --
 --    Verwacht: één regel per geslaagde uitgifte uit stap 3, en géén regels voor
 --    de geweigerde pogingen uit stap 4. Staat er een regel die jij niet hebt
---    gemaakt, dan heeft een beheerder een code voor iemand aangevraagd — en dan
+--    gemaakt, dan heeft een beheerder een code voor iemand aangevraagd, en dan
 --    is dat een gesprek en geen bug.
 -- ===========================================================================

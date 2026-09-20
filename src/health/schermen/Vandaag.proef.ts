@@ -7,7 +7,7 @@
  *
  * Wat hier stil mis kan gaan: een zin die zegt dat de voorstellen zich ergens
  * aan houden terwijl er niets is ingesteld. Dat is geen lelijke tekst maar een
- * onwaarheid over wat de app doet — en het is precies wat er gebeurt als iemand
+ * onwaarheid over wat de app doet, en het is precies wat er gebeurt als iemand
  * een veld toevoegt aan `Voorkeuren` en `ietsIngesteld` vergeet.
  */
 import { describe, expect, it } from 'vitest'

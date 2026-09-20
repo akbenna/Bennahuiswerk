@@ -5,7 +5,7 @@
    In de app maak je de opnames onder Ouder → Eigen stem opnemen en sla je ze op
    als één bestand. Dat bestand komt hier binnen; dit script pakt het uit naar
    losse geluidsbestanden en schrijft het lijstje dat de app leest. Commit de map
-   daarna, en vanaf dat moment heeft elk toestel de stem van thuis — ook een
+   daarna, en vanaf dat moment heeft elk toestel de stem van thuis, ook een
    telefoon die de app voor het eerst opent, en ook zonder internet.
 
    Gebruik:
@@ -34,11 +34,11 @@ if (!bron) {
 const EXT = { 'audio/mp4':'m4a', 'audio/x-m4a':'m4a', 'audio/aac':'m4a',
               'audio/mpeg':'mp3', 'audio/webm':'webm', 'audio/ogg':'ogg', 'audio/wav':'wav' };
 
-/* `q:h-dhikr:1` wordt `q-h-dhikr-1` — leesbaar, en veilig als bestandsnaam. */
+/* `q:h-dhikr:1` wordt `q-h-dhikr-1`, leesbaar, en veilig als bestandsnaam. */
 const veilig = id => id.replace(/[^a-zA-Z0-9-]+/g, '-').replace(/^-|-$/g, '');
 
 /* Een browser neemt op in webm (Chrome) of m4a (Safari). Webm speelt niet op een
-   iPhone en m4a niet overal even soepel — mp3 speelt overal. Staat ffmpeg op deze
+   iPhone en m4a niet overal even soepel, mp3 speelt overal. Staat ffmpeg op deze
    computer, dan zetten we alles om; zo niet, dan houden we het origineel en
    zeggen we erbij dat het op sommige toestellen stil kan blijven. */
 const draai = (cmd, args) => new Promise((res, rej) => {

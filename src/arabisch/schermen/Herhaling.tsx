@@ -1,5 +1,5 @@
 /**
- * HERHALING — de wachtrij en wat eraan komt
+ * HERHALING: de wachtrij en wat eraan komt
  *
  * Het staafje van veertien dagen is er om te laten zien dat een rustige dag
  * geen achterstand is maar een vooruitzicht: je ziet vooraf wanneer het druk

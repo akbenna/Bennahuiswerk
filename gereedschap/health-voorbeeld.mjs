@@ -3,7 +3,7 @@
  * DE SCHERMEN VAN BENNAHEALTH BEKIJKEN
  *
  * Het scherm is pas te beoordelen met gegevens erin. Zonder sessie toont de app
- * het aanmeldscherm, en met een lege sessie een scherm vol nullen — precies wat
+ * het aanmeldscherm, en met een lege sessie een scherm vol nullen, precies wat
  * er mis was. Dit script zet dist/ neer achter de echte headers, onderschept de
  * databaseaanroepen en geeft er een verzonnen maar geloofwaardige reeks voor
  * terug: achtentwintig dagen wegen en loggen.
@@ -11,7 +11,7 @@
  * Er komen vier toestanden uit als plaatje, want ze zijn allemaal het bekijken
  * waard: de eerste dag (nog geen doel, het model kalibreert), een dag na enkele
  * weken (band, ring, maaltijden), diezelfde dag in het donker, en de
- * onderhoudsfase — de enige toestand waarin het stoplicht bestaat. Van de dag
+ * onderhoudsfase, de enige toestand waarin het stoplicht bestaat. Van de dag
  * na vier weken gaan alle zes de tabbladen mee.
  *
  *   node gereedschap/health-voorbeeld.mjs
@@ -96,11 +96,11 @@ function reeks(aantalDagen, vorm = 'gewoon') {
        De eerste opzet nam de eerste drie regels van het menu en kwam op 930
        kcal uit. Dat viel onder de 1.200-grens waarmee de rekenkern een dag als
        onvolledig wegstreept, dus er bleef geen enkele bruikbare dag over en het
-       model kwam niet eens tót een uitspraak — precies niet de toestand die
+       model kwam niet eens tót een uitspraak, precies niet de toestand die
        deze proef moet vangen. Vandaar ontbijt, lunch en diner: 1.560 kcal. */
     if (vorm === 'tegenspraak' && i % 7 >= 3) continue
     /* Vandaag niets gelogd, de dagen ervoor wel. Dat is de toestand van iemand
-       die 's ochtends de app opent — en de enige toestand waarin de app "tussen
+       die 's ochtends de app opent, en de enige toestand waarin de app "tussen
        0 en 0 kcal" kon zeggen. Zonder dit geval bestond die dag in de hele
        proefopstelling niet, en kwam een mutant die de nulband terugzet er
        ongemerkt doorheen. Dat is precies wat er gebeurde. */
@@ -131,7 +131,7 @@ const PROFIEL = {
 }
 
 /** Twee krachtsessies in de afgelopen week: het doel is drie, dus dit is de
- *  toestand die de bolletjes moeten kunnen tonen — bijna, niet gehaald. */
+ *  toestand die de bolletjes moeten kunnen tonen, bijna, niet gehaald. */
 function training(aantalDagen) {
   if (aantalDagen < 7) return []
   const uit = []
@@ -191,7 +191,7 @@ function alles(aantalDagen, fase = 'afvallen') {
     ? reeks(aantalDagen, vorm) : { dagen: [], regels: [] }
   /* De GLI staat in de instellingen en niet in een eigen kolom: het is een
      opgave van de gebruiker, geen gemeten waarde. Begonnen op 10 juni 2025,
-     dus op de vastgezette klok veertien maanden geleden — ruim voorbij de acht
+     dus op de vastgezette klok veertien maanden geleden, ruim voorbij de acht
      maanden behandelfase van CooL en nog niet aan de twee jaar toe. */
   const profiel = fase === 'onderhoud'
     ? { ...PROFIEL, fase: 'onderhoud', onderhoud_basis_kg: 115.0 }
@@ -256,12 +256,12 @@ async function naarTab(pagina, label) {
 }
 
 /**
- * DE SFEERBAND KEUREN — op elke maat, want hij ging maar op één maat mis.
+ * DE SFEERBAND KEUREN: op elke maat, want hij ging maar op één maat mis.
  *
  * Twee dingen zijn hier gemeten en allebei waren ze fout.
  *
  * De band werd opgeblazen. De bron was 384 bij 384 en de doos vraagt er op een
- * telefoon met drie beeldpunten per punt 1290 — ruim drie keer. Vandaar de
+ * telefoon met drie beeldpunten per punt 1290, ruim drie keer. Vandaar de
  * verhouding hieronder: doosbreedte maal beeldpunten, gedeeld door de bron.
  *
  * En hij spande niet. Vanaf 1240 punten wordt de hero een grid van twee
@@ -272,7 +272,7 @@ async function naarTab(pagina, label) {
  *
  * De bovengrens verschilt per maat en dat is geen slordigheid. Er liggen twee
  * bestanden per band, 1600 en 2400, en de browser kiest. Op een telefoon en op
- * een gewoon bureaublad pakt hij de 1600 en verkleint hij die nog — daar hoort
+ * een gewoon bureaublad pakt hij de 1600 en verkleint hij die nog, daar hoort
  * dus niets opgeblazen te worden. Op 1920 met twee beeldpunten per punt pakt
  * hij de 2400 en vraagt de band er 2636: tien procent meer dan er is. Dat is
  * het laatste restje en op een foto niet te zien; de grens staat daar op 1,15
@@ -298,7 +298,7 @@ async function keurSfeerband(pagina, dpr, maat, grens) {
          Zodra er een `srcset` met `w`-beschrijvingen op staat, rekent de
          browser `naturalWidth` terug naar de dichtheid waarop hij het beeld
          toont: een bron van 1600 in een doos van 408 punten geeft 408 terug en
-         niet 1600. De proef mat daarna zichzelf — doos gedeeld door doos — en
+         niet 1600. De proef mat daarna zichzelf (doos gedeeld door doos) en
          gaf trouw 2,91 keer opblazing op een band die perfect scherp stond.
          De echte maat komt uit een los beeld zonder srcset. */
       const kaal = new Image()
@@ -316,18 +316,18 @@ async function keurSfeerband(pagina, dpr, maat, grens) {
       }
     })
     if (!m) throw new Error(`${maat}: ${tab} heeft geen sfeerband`)
-    if (!m.compleet) throw new Error(`${maat}: ${tab} — ${m.src} is niet geladen`)
+    if (!m.compleet) throw new Error(`${maat}: ${tab}: ${m.src} is niet geladen`)
     /* De hero heeft een rand van één punt; meer kier dan dat is een gat. */
     if (m.linksGat > 2 || m.rechtsGat > 2) {
       throw new Error(`${maat}: de band bij ${tab} laat ${m.linksGat}/${m.rechtsGat} punten `
-        + 'kier aan de zijkanten — hij haalt de rand van de hero niet')
+        + 'kier aan de zijkanten, hij haalt de rand van de hero niet')
     }
     const blaas = (m.breed * dpr) / m.bron
     if (blaas > grens) {
       throw new Error(`${maat}: de band bij ${tab} wordt ${blaas.toFixed(2)}× opgeblazen `
-        + `(doos ${Math.round(m.breed)} × ${dpr} beeldpunten, bron ${m.bron}) — grens is ${grens}`)
+        + `(doos ${Math.round(m.breed)} × ${dpr} beeldpunten, bron ${m.bron}), grens is ${grens}`)
     }
-    if (!m.srcset) throw new Error(`${maat}: ${tab} heeft geen srcset — één maat voor elk toestel`)
+    if (!m.srcset) throw new Error(`${maat}: ${tab} heeft geen srcset: één maat voor elk toestel`)
     /* Te klein kiezen geeft een zachte band; te groot kiezen kost een telefoon
        bandbreedte die hij niet kan tonen. Beide kanten dus. */
     /* 0,55 is gemeten en niet gekozen. Goed gekozen geeft 0,74 op een telefoon
@@ -335,7 +335,7 @@ async function keurSfeerband(pagina, dpr, maat, grens) {
        het 0,49 en 0,45. De grens ligt daartussen. */
     if (blaas < 0.55) {
       throw new Error(`${maat}: de band bij ${tab} haalt ${m.gekozen} op terwijl hij `
-        + `${Math.round(m.breed * dpr)} beeldpunten nodig heeft — dat is ${(1 / blaas).toFixed(1)}× `
+        + `${Math.round(m.breed * dpr)} beeldpunten nodig heeft, dat is ${(1 / blaas).toFixed(1)}× `
         + 'meer dan er getoond wordt')
     }
     ergste = Math.max(ergste, blaas)
@@ -416,7 +416,7 @@ const MERK = [{
 /* DE TABELREGEL DIE BIJ 'PINDAKAAS' HOORT
    Zonder deze regel gaf de mock op elke vraag tonijn terug, ook op 'pindakaas'.
    De proef verderop vergeleek dan een merkproduct dat precies zo heet met een
-   tabelregel die niets met de vraag te maken had — en concludeerde uit die
+   tabelregel die niets met de vraag te maken had, en concludeerde uit die
    volgorde iets over de rangorde van herkomst. Dat bewees niets zodra het
    scherm op naamovereenkomst ging rangschikken.
    Nu staan er twee regels die allebei 'pindakaas' heten, en dan gaat de proef
@@ -454,7 +454,7 @@ const NEVO_TONIJN = [
    regel bij te zetten. Zie health/database/20-zoeken-met-alternatieven.sql. */
 /* Wat kal_eiwitrijk teruggeeft: de tweede laag van de coach, uit de tabel in
    plaats van uit je geschiedenis. Eén gemeten product en één merkproduct, want
-   juist de combinatie van die twee moet het herkomstteken laten zien — ◆ naast
+   juist de combinatie van die twee moet het herkomstteken laten zien, ◆ naast
    ◈ in dezelfde lijst. Zie health/database/23-eiwitrijk-uit-de-tabel.sql. */
 const EIWITRIJK = [
   {
@@ -480,7 +480,7 @@ const EIWITRIJK = [
 /* Wat kal_verzadiging teruggeeft: de derde laag, en een andere as dan eiwit.
    Drie echte regels uit de tabel, met opzet zo gekozen dat ze de twee dingen
    tonen die deze lijst moet kunnen. Champignon staat bovenaan met 476 gram per
-   honderd kilocalorieën en een portie van elf kilocalorieën — een
+   honderd kilocalorieën en een portie van elf kilocalorieën, een
    verzadigingslijst hoort juist die kant op te wijzen. En paardenrookvlees staat
    er níet in, want dat is de tegenhanger: uitstekende eiwitdichtheid, vult
    niets. Zie health/database/28-wat-vult-het-best.sql. */
@@ -574,7 +574,7 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
     /* EEN BAND DIE GEEN BAND IS
      *
      * Op een lege dag stond in de kop "Wat je logde ligt tussen 0 en 0 kcal" en
-     * in de coachregel "(2.165–2.165)". Allebei waar, allebei geen informatie —
+     * in de coachregel "(2.165–2.165)". Allebei waar, allebei geen informatie,
      * en allebei doen ze alsof er onzekerheid gemeten is waar niets gemeten is.
      * In een app waarvan de stelregel "geen getal zonder zijn onzekerheid" is,
      * is het omgekeerde net zo fout. */
@@ -584,7 +584,7 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
       if (nulband) throw new Error(`${stam}: marge van 0 tot 0 in beeld`)
       const puntband = scherm.match(/\((\d[\d.]*)[–-](\d[\d.]*)\)/)
       if (puntband && puntband[1] === puntband[2]) {
-        throw new Error(`${stam}: band met twee gelijke grenzen — ${puntband[0]}`)
+        throw new Error(`${stam}: band met twee gelijke grenzen: ${puntband[0]}`)
       }
     }
 
@@ -592,12 +592,12 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
      *
      * De gewone reden om deze app te openen is loggen. De knop daarvoor stond
      * drie kaarten naar beneden, onder twee kaarten die je eerst moest lezen.
-     * Hij hoort meteen onder de hero, met "Wat er nog in past" eronder — dat is
-     * de vraag die je daarna stelt — en daarna beweging en slaap.
+     * Hij hoort meteen onder de hero, met "Wat er nog in past" eronder (dat is
+     * de vraag die je daarna stelt) en daarna beweging en slaap.
      *
      * Net als bij Inzicht is dit met een grep niet te bewaken: een blok
      * verplaatsen verandert geen enkele tekst. Vandaar hier, op de gerenderde
-     * pagina, en met de hero erbij — anders bewijst "knop vóór coachkaart" nog
+     * pagina, en met de hero erbij, anders bewijst "knop vóór coachkaart" nog
      * niet dat er niets tussen de hero en de knop is gekropen.
      */
     if (tab === 'Vandaag') {
@@ -616,45 +616,45 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
       const vult = waar('Wat vult het best')
       const ontbreekt = waar('Wat ontbreekt er')
       const bew = waar('Beweging en slaap')
-      if (hero !== 0) throw new Error(`${stam}: de hero staat niet bovenaan — ${JSON.stringify(rij)}`)
+      if (hero !== 0) throw new Error(`${stam}: de hero staat niet bovenaan: ${JSON.stringify(rij)}`)
       if (knop !== 1) {
-        throw new Error(`${stam}: "Eten toevoegen" staat niet meteen onder de hero — ` +
+        throw new Error(`${stam}: "Eten toevoegen" staat niet meteen onder de hero, ` +
                         JSON.stringify(rij))
       }
       /* De vakken horen tegen de knop aan: ze zijn zelf de ingang, en knop en
          vakken uit elkaar trekken zet twee helften van één handeling op twee
          plekken. */
       if (vakken !== 2) {
-        throw new Error(`${stam}: "De dag in vier momenten" staat niet meteen onder de knop — ` +
+        throw new Error(`${stam}: "De dag in vier momenten" staat niet meteen onder de knop, ` +
                         JSON.stringify(rij))
       }
       /* De coachkaart ontbreekt zolang er geen doel is; dan volgt beweging
          meteen op de vakken, en dat hoort ook zo. */
       if (past >= 0 && past !== 3) {
-        throw new Error(`${stam}: "Wat er nog in past" staat niet onder de vakken — ` +
+        throw new Error(`${stam}: "Wat er nog in past" staat niet onder de vakken, ` +
                         JSON.stringify(rij))
       }
       /* "Wat vult het best" hoort direct onder de coachkaart: het is dezelfde
          vraag vanuit een andere hoek, en allebei gaan ze over de ruimte die er
          nog is. Hij staat er alleen als er een doel én ruimte is. */
       if (vult >= 0 && vult !== past + 1) {
-        throw new Error(`${stam}: "Wat vult het best" staat niet onder de coachkaart — ` +
+        throw new Error(`${stam}: "Wat vult het best" staat niet onder de coachkaart, ` +
                         JSON.stringify(rij))
       }
       /* "Wat ontbreekt er" sluit de rij van drie: eerst wat er nog in past, dan
          wat het best vult, dan wat er structureel buiten beeld blijft. Die derde
-         staat er onder dezelfde voorwaarde als de tweede — zonder doel is er nog
+         staat er onder dezelfde voorwaarde als de tweede, zonder doel is er nog
          geen geschiedenis om iets over te zeggen. */
       if (ontbreekt >= 0 && ontbreekt !== vult + 1) {
-        throw new Error(`${stam}: "Wat ontbreekt er" staat niet onder "Wat vult het best" — ` +
+        throw new Error(`${stam}: "Wat ontbreekt er" staat niet onder "Wat vult het best", ` +
                         JSON.stringify(rij))
       }
-      if (bew < 0) throw new Error(`${stam}: "Beweging en slaap" ontbreekt — ${JSON.stringify(rij)}`)
+      if (bew < 0) throw new Error(`${stam}: "Beweging en slaap" ontbreekt: ${JSON.stringify(rij)}`)
       /* Direct na de laatste van de drie, en niet op een vast nummer: dat
          laatste hield geen stand zodra er een kaart bij kwam, terwijl de eis
          dezelfde bleef. */
       if (bew !== Math.max(vakken, past, vult, ontbreekt) + 1) {
-        throw new Error(`${stam}: "Beweging en slaap" staat niet direct daaronder — ` +
+        throw new Error(`${stam}: "Beweging en slaap" staat niet direct daaronder, ` +
                         JSON.stringify(rij))
       }
       console.log(`${''.padEnd(26)} volgorde: ${rij.slice(0, 6).join(' → ')}`)
@@ -692,7 +692,7 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
 
     /* DE VOLGORDE VAN HET INZICHTSCHERM
      *
-     * Het scherm beantwoordt twee vragen — wat verbruik ik, wat eet ik — en de
+     * Het scherm beantwoordt twee vragen (wat verbruik ik, wat eet ik) en de
      * rest is verantwoording. Die volgorde is een keuze en geen toeval, en ze
      * is met een grep niet te bewaken: een kaart verplaatsen verandert geen
      * enkele tekst. Vandaar hier, op de gerenderde pagina.
@@ -720,14 +720,14 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
        * bewering kon niet waar zijn. Een app die één onmogelijk getal toont is
        * op geen enkel ander getal meer te vertrouwen.
        *
-       * De regel is niet "geen min in de kop" — een gewichtstrend mag negatief
-       * zijn — maar: in het blok met de kerngetallen staat geen minteken vóór
+       * De regel is niet "geen min in de kop" (een gewichtstrend mag negatief
+       * zijn) maar: in het blok met de kerngetallen staat geen minteken vóór
        * een cijfer. Daar staan alleen kilocalorieën, en die zijn nooit negatief. */
       const kern = pagina.locator('.hero .kerngetallen')
       if (await kern.count()) {
         const tekst = await kern.first().innerText()
         if (/[-−–]\s?\d/.test(tekst.replace(/(\d)[–-](\d)/g, '$1|$2'))) {
-          throw new Error(`${stam}: negatief getal in de kop — ${JSON.stringify(tekst)}`)
+          throw new Error(`${stam}: negatief getal in de kop: ${JSON.stringify(tekst)}`)
         }
       }
 
@@ -737,7 +737,7 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
        * de kop stond. Dat bleek niets te bewijzen: de ondergrens wordt ook
        * afgekapt op het rustverbruik, en die afkapping verbergt het minteken al.
        * Een mutant die de hele plausibiliteitspoort weghaalde kwam er dus
-       * ongemerkt doorheen — de app zou weer "Wat je lichaam verbruikt: 2.195 –
+       * ongemerkt doorheen, de app zou weer "Wat je lichaam verbruikt: 2.195 –
        * 15.000 kcal" tonen bij gegevens die elkaar tegenspreken.
        *
        * Daarom deze regel, die aan het gevál hangt en niet aan wat er toevallig
@@ -745,12 +745,12 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
        * verbruik beweren. Punt. */
       if (naam === 'tegenspraak' && kop.startsWith('Wat je lichaam verbruikt')) {
         throw new Error(`${stam}: de kop beweert een verbruik terwijl logboek en ` +
-                        `weegschaal elkaar tegenspreken — ${JSON.stringify(kop)}`)
+                        `weegschaal elkaar tegenspreken, ${JSON.stringify(kop)}`)
       }
 
       if (kop.startsWith('Wat je lichaam verbruikt')) {
         if (band >= 0 && band < staat) {
-          throw new Error(`${stam}: de afleiding staat bóven "Waar je nu staat" — ` +
+          throw new Error(`${stam}: de afleiding staat bóven "Waar je nu staat", ` +
                           JSON.stringify(koppen))
         }
         console.log(`${''.padEnd(26)} volgorde: waar-je-staat op ${staat}, afleiding op ${band}` +
@@ -760,7 +760,7 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
            is, hoort het rustverbruik genoemd te worden, en hoort er geen doel
            te staan dat nergens op rust. */
         if (!/spreken elkaar tegen|Nog niet te berekenen/.test(kop)) {
-          throw new Error(`${stam}: onverwachte kop zonder verbruik — ${JSON.stringify(kop)}`)
+          throw new Error(`${stam}: onverwachte kop zonder verbruik, ${JSON.stringify(kop)}`)
         }
         const hero = await pagina.locator('.hero').innerText()
         if (/spreken elkaar tegen/.test(kop) && !/liggend al verbruikt|rustverbruik/.test(hero)) {
@@ -778,7 +778,7 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
 
        DE LAT, EN WAAROM HIJ HIER GEKEURD WORDT
 
-       De kaart noemt de lat één keer bovenaan — "de lat ligt op 7,5" — en daarna
+       De kaart noemt de lat één keer bovenaan ("de lat ligt op 7,5") en daarna
        wijst elke voorstelregel zichzelf aan met "lat zakt naar" of "lat stijgt
        naar". Dat is een bewering over de richting, en die is met een grep niet
        te keuren: de oude versie zette een vlaggetje "op tempo" bij de goede
@@ -790,7 +790,7 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
       if (!(await kaart.count())) throw new Error(`${stam}: coachkaart ontbreekt`)
       const zin = (await kaart.locator('p.klein').allTextContents()).join(' ')
       if (!/De lat ligt op [\d,.]+ g eiwit\s+per 100 kcal|eiwit is binnen|over je doel/.test(zin)) {
-        throw new Error(`${stam}: coachkaart noemt de lat niet — ${JSON.stringify(zin)}`)
+        throw new Error(`${stam}: coachkaart noemt de lat niet: ${JSON.stringify(zin)}`)
       }
       const lat = /De lat ligt op ([\d,.]+) g/.exec(zin)
       const regels = await kaart.locator('.voorstellen > * .mini').allTextContents()
@@ -801,23 +801,23 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
              dan is er niets meer om eiwit in te stoppen. Alles anders is een
              regel die zwijgt waar hij iets te zeggen had. */
           if (!lat || /daarna nog\s*0 kcal/.test(r)) continue
-          throw new Error(`${stam}: voorstelregel noemt de lat niet — ${JSON.stringify(r)}`)
+          throw new Error(`${stam}: voorstelregel noemt de lat niet, ${JSON.stringify(r)}`)
         }
-        if (!lat) throw new Error(`${stam}: regel noemt een lat die de kop niet noemt — ${r}`)
+        if (!lat) throw new Error(`${stam}: regel noemt een lat die de kop niet noemt, ${r}`)
         const kop = Number(lat[1].replace(',', '.'))
         const na = Number(m[2].replace(',', '.'))
         /* De richting wordt op de getoonde getallen bepaald, dus hier ook. Was
            dat niet zo, dan kon er "stijgt naar 7,3" staan onder "de lat ligt op
-           7,3" — waar, en voor de lezer een tegenspraak. */
+           7,3", waar, en voor de lezer een tegenspraak. */
         const hoort = na === kop ? 'blijft op' : na < kop ? 'zakt naar' : 'stijgt naar'
         if (m[1] !== hoort) {
-          throw new Error(`${stam}: "${m[1]}" klopt niet — lat ${kop} → ${na}`)
+          throw new Error(`${stam}: "${m[1]}" klopt niet: lat ${kop} → ${na}`)
         }
       }
       const n = await kaart.locator('.voorstellen > *').count()
       console.log(`${''.padEnd(26)} coach=${n} voorstellen` +
                   (lat ? ` · lat ${lat[1]} → ${regels.length ? regels.map((r) =>
-                    (/lat (?:zakt naar|stijgt naar|blijft op) ([\d,.]+)/.exec(r) ?? [, '—'])[1]).join('/') : '—'}` : ''))
+                    (/lat (?:zakt naar|stijgt naar|blijft op) ([\d,.]+)/.exec(r) ?? [, ':'])[1]).join('/') : ':'}` : ''))
     }
   }
 
@@ -868,7 +868,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
     }
     const kop = (await tegel.locator('.mini').first().textContent()) ?? ''
     if (!/\(\d[\d.]*–\d[\d.]*\)/.test(kop)) {
-      throw new Error(`${naam}: ingeklapt staat er geen band — ${JSON.stringify(kop)}`)
+      throw new Error(`${naam}: ingeklapt staat er geen band: ${JSON.stringify(kop)}`)
     }
     if (!(await tegel.locator('.conf').count())) {
       throw new Error(`${naam}: ingeklapt staat er geen graad`)
@@ -877,7 +877,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
     const kcal = async () => {
       const t = (await tegel.locator('.mini').first().textContent()) ?? ''
       const m = t.match(/([\d.]+) kcal/)
-      if (!m) throw new Error(`${naam}: geen kcal op de maaltijdtegel — ${JSON.stringify(t)}`)
+      if (!m) throw new Error(`${naam}: geen kcal op de maaltijdtegel: ${JSON.stringify(t)}`)
       return Number(m[1].replace(/\./g, ''))
     }
     const heel = await kcal()
@@ -969,10 +969,10 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
     }
     const regel = teksten[iMerk] ?? ''
     if (!regel.includes('pak van 600 g')) {
-      throw new Error(`${naam}: het verpakkingsgewicht staat er niet bij — ${JSON.stringify(regel)}`)
+      throw new Error(`${naam}: het verpakkingsgewicht staat er niet bij, ${JSON.stringify(regel)}`)
     }
     console.log(`${''.padEnd(26)} pindakaas: tabel op ${iNevo + 1}, gerecht op ${iGerecht + 1}, `
-      + `merk ◈ op ${iMerk + 1} — op naamovereenkomst, niet per emmer`)
+      + `merk ◈ op ${iMerk + 1}, op naamovereenkomst, niet per emmer`)
     await pagina.getByLabel('Zoeken').fill('')
     await pagina.waitForTimeout(300)
   }
@@ -993,13 +993,13 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
     /* DE DRIE MANIEREN STAAN BOVEN ELKAAR
      *
      * Zoeken, een foto maken en het opschrijven zijn drie manieren om hetzelfde
-     * te doen. Twee ervan zaten in de kop van het beschrijfvak, onder de vouw —
+     * te doen. Twee ervan zaten in de kop van het beschrijfvak, onder de vouw,
      * dus wie een bord voor zich had staan moest eerst langs alle
      * zoekresultaten scrollen om bij de camera te komen.
      *
      * Dit is een volgorde en dus met een grep niet te bewaken: de knoppen
      * verplaatsen verandert hun tekst niet. Vandaar op de gerenderde pagina, en
-     * met de hoogte en niet met de DOM-volgorde — een knop kan in de opmaak
+     * met de hoogte en niet met de DOM-volgorde, een knop kan in de opmaak
      * best vóór het zoekveld staan en er op het scherm onder belanden. */
     const hoogte = async (kies) => {
       const doos = await pagina.locator(kies).first().boundingBox()
@@ -1026,7 +1026,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
 
        Hier stond `capture="environment"` op. Dat is geen voorkeur maar een
        dwang: een telefoon slaat de keuzelijst dan over en opent meteen de
-       achtercamera, dus je kon alleen loggen wat op dat moment vóór je stond —
+       achtercamera, dus je kon alleen loggen wat op dat moment vóór je stond,
        niet het kiekje van vanmiddag, niet de foto die iemand je stuurde, niet
        het etiket dat je in de winkel fotografeerde.
 
@@ -1061,7 +1061,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
     if (!(await vak.count())) throw new Error(`${naam}: het beschrijfvak ging niet open`)
     const inhoud = await vak.inputValue()
     if (inhoud !== 'twee boterhammen met mayonaise') {
-      throw new Error(`${naam}: de zin is niet overgenomen — ${JSON.stringify(inhoud)}`)
+      throw new Error(`${naam}: de zin is niet overgenomen: ${JSON.stringify(inhoud)}`)
     }
     await pagina.screenshot({ path: `gereedschap/health-${naam}-herkenaanbod.png` })
     console.log(`${''.padEnd(26)} zin → beschrijfvak: ${JSON.stringify(inhoud)}`)
@@ -1147,7 +1147,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
    is stille rekenfout, en die ziet er op een plaatje net zo uit als de goede.
 
    Twee dingen worden dus echt nagerekend. De band van de dag hoort de som te zijn
-   van de banden van de vakken — niet de wortel daarvan, want dan zou de app
+   van de banden van de vakken, niet de wortel daarvan, want dan zou de app
    beloven dat de fouten elkaar wegstrepen, en dat mag alleen bij onafhankelijke
    fouten. En elke regel hoort te zeggen waar zijn getal vandaan komt: sinds dat
    een teken is (◆ gemeten, ◇ geschat) is het makkelijker om stilletjes te
@@ -1171,7 +1171,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
   const punt = getal(await kop.locator('.getal').first().textContent())
   const band = (await kop.locator('.cijfer').first().textContent()) ?? ''
   const m = band.match(/([\d.]+)–([\d.]+)/)
-  if (!m) throw new Error(`dagoverzicht: geen band bij het dagtotaal — ${JSON.stringify(band)}`)
+  if (!m) throw new Error(`dagoverzicht: geen band bij het dagtotaal: ${JSON.stringify(band)}`)
   const [laag, hoog] = [getal(m[1]), getal(m[2])]
   if (!(laag <= punt && punt <= hoog)) {
     throw new Error(`dagoverzicht: ${punt} ligt niet in ${laag}–${hoog}`)
@@ -1185,7 +1185,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
   for (let i = 0; i < n; i++) {
     const t = (await vakken.nth(i).locator('.tussen .cijfer').first().textContent()) ?? ''
     const v = t.match(/([\d.]+) kcal\s*\(([\d.]+)–([\d.]+)\)/)
-    if (!v) throw new Error(`dagoverzicht: vak ${i} zonder band — ${JSON.stringify(t)}`)
+    if (!v) throw new Error(`dagoverzicht: vak ${i} zonder band: ${JSON.stringify(t)}`)
     somPunt += getal(v[1]); somLaag += getal(v[2]); somHoog += getal(v[3])
   }
   /* Één kcal speling: elk getal wordt apart afgerond voordat het op het scherm
@@ -1210,7 +1210,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
     throw new Error(`dagoverzicht: onbekend herkomstteken ${JSON.stringify(teken)}`)
   }
   if (!/tabel|geschat/.test(titel)) {
-    throw new Error(`dagoverzicht: het teken heeft geen uitleg — ${JSON.stringify(titel)}`)
+    throw new Error(`dagoverzicht: het teken heeft geen uitleg: ${JSON.stringify(titel)}`)
   }
   /* En het woord waar dit teken voor in de plaats kwam hoort nergens meer als
      kale kop op het scherm te staan. */
@@ -1229,7 +1229,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
    `fiets_min` stond al in elke dag en kwam via de koppeling binnen, maar het
    bewegingsscherm keek er niet naar: het zei "nog 913 stappen per dag tot 8.000"
    op een dag waarop er drie kwartier gefietst was. Er is niets aan de gegevens
-   veranderd om dit te repareren — alleen aan het scherm.
+   veranderd om dit te repareren, alleen aan het scherm.
 
    En de coach stelde alleen voor uit je eigen geschiedenis. Die loopt leeg, en
    dan stond er niets. Nu komt er een tweede lijst uit de voedingsmiddelentabel,
@@ -1264,8 +1264,8 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
 
   /* En de inspanning op het bewegingsscherm.
 
-     `kal_dagen.fiets_min` blijft bestaan — het is de weg waarlangs de koppeling
-     op de telefoon binnenkomt — en hoort mee te tellen als één matige fietsrit
+     `kal_dagen.fiets_min` blijft bestaan (het is de weg waarlangs de koppeling
+     op de telefoon binnenkomt) en hoort mee te tellen als één matige fietsrit
      van die dag. Vier van de zeven dagen in de proefreeks hebben er 45, dus 180
      van de 150. Zou die brug wegvallen, dan staat er 0 en merkt niemand het:
      het scherm ziet er verder precies hetzelfde uit. */
@@ -1273,14 +1273,14 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
     await naarTab(pagina, 'Beweging')
     const kop = (await pagina.locator('.hero').innerText()).replace(/\s+/g, ' ')
     if (!/minuten inspanning/.test(kop)) {
-      throw new Error(`beweging: de kop noemt de inspanning niet — ${JSON.stringify(kop.slice(0, 120))}`)
+      throw new Error(`beweging: de kop noemt de inspanning niet, ${JSON.stringify(kop.slice(0, 120))}`)
     }
     /* Op de tekst van de balk en niet op de kop: "Inspanning" staat ook in de
        uitlegteksten van andere kaarten, en `hasText` kijkt naar de hele kaart. */
     const kaart = pagina.locator('.kaart').filter({ hasText: /van 150 min/ }).first()
     const week = (await kaart.innerText()).replace(/\s+/g, ' ')
     if (!/180 van 150 min/.test(week)) {
-      throw new Error(`beweging: het oude veld telt niet mee — ${JSON.stringify(week.slice(0, 160))}`)
+      throw new Error(`beweging: het oude veld telt niet mee: ${JSON.stringify(week.slice(0, 160))}`)
     }
     const veld = pagina.getByLabel('Fietsminuten vandaag')
     if (!(await veld.count())) throw new Error('beweging: het oude veld is niet meer te verbeteren')
@@ -1303,17 +1303,17 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
     await pagina.waitForTimeout(150)
     const hint = (await kaart.innerText()).replace(/\s+/g, ' ')
     if (!/40 minuten tellen als 80/.test(hint)) {
-      throw new Error(`beweging: de wisselkoers staat niet op het scherm — ${JSON.stringify(hint.slice(-220))}`)
+      throw new Error(`beweging: de wisselkoers staat niet op het scherm, ${JSON.stringify(hint.slice(-220))}`)
     }
     if (!/Hardlopen telt als zwaar/.test(hint)) {
-      throw new Error(`beweging: de aanname noemt zichzelf niet — ${JSON.stringify(hint.slice(-220))}`)
+      throw new Error(`beweging: de aanname noemt zichzelf niet: ${JSON.stringify(hint.slice(-220))}`)
     }
     await kaart.getByRole('button', { name: 'Toevoegen' }).click()
     await pagina.waitForTimeout(400)
     const rij = verstuurd[0]?.p_rij
     if (!rij || rij.soort !== 'rennen' || rij.minuten !== 40
         || rij.intensiteit !== 'zwaar' || rij.geschat !== true) {
-      throw new Error(`beweging: er gaat iets anders naar de database — ${JSON.stringify(rij)}`)
+      throw new Error(`beweging: er gaat iets anders naar de database, ${JSON.stringify(rij)}`)
     }
 
     await pagina.screenshot({ path: 'gereedschap/health-beweging-fiets.png', fullPage: true })
@@ -1328,12 +1328,12 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
 /* NA HET HERKENNEN KUN JE DE GROOTSTE ONZEKERHEID WEGWERKEN
 
    Bij herkenning uit tekst of foto is niet het herkennen de zwakke schakel maar
-   de portie — zie VERANTWOORDING.md §18.6. Je kon zo'n regel wel weggooien en
+   de portie, zie VERANTWOORDING.md §18.6. Je kon zo'n regel wel weggooien en
    niet aanscherpen. Nu krijgt de regel met de breedste band een weegveld.
 
    Deze proef doet de hele weg: de herkenning wordt onderschept met twee regels
    waarvan er één een brede band heeft, en dan wordt er echt een gewicht
-   ingetikt. Waar het om gaat is wat er daarna staat — een smallere band, maar
+   ingetikt. Waar het om gaat is wat er daarna staat, een smallere band, maar
    géén kaal getal, want de tabel blijft zijn eigen marge houden. */
 {
   const pagina = await ctx.newPage()
@@ -1499,14 +1499,14 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
   }
   /* DE SLAAPINSTRUCTIE MOET DE DUUR NOEMEN
    *
-   * Hier stond "herhaal actie 1 en 2 voor Slaapanalyse" — zoeken en dan Som.
+   * Hier stond "herhaal actie 1 en 2 voor Slaapanalyse", zoeken en dan Som.
    * Dat kan niet werken: slaap is een categorie en geen meetwaarde, dus
    * Bereken statistiek geeft 0. Het kwam pas aan het licht toen iemand de
    * opdracht echt had gebouwd en de database de nul weigerde.
    *
    * Een instructie die niet kán werken is erger dan een ontbrekende, want je
    * gaat bij jezelf zoeken. Deze proef houdt vast dat de stap die het wél doet
-   * — de duur van de monsters optellen — er staat. */
+   * (de duur van de monsters optellen) er staat. */
   const vel = await pagina.locator('.venster').innerText()
   if (!/Duur|Duration/.test(vel)) {
     throw new Error('koppelvel: de slaapinstructie noemt de duur niet')
@@ -1523,7 +1523,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
 /* --------------------------------------------- het brede scherm ------------ */
 /* Sinds de Medical-Intelligence-laag wordt de tabbalk boven 960 pixels een
    zijbalk, met de merknaam en een onderschrift als ::before en ::after. Die
-   staan in CSS en niet in de app, dus geen enkele proef raakte ze aan — terwijl
+   staan in CSS en niet in de app, dus geen enkele proef raakte ze aan, terwijl
    ze wél naar tokens verwijzen die de app kan hernoemen.
    Dat is precies wat er gebeurde: `--serif` bestaat niet meer sinds de koppen
    naar één familie gingen, en een `var()` naar een token dat niet bestaat is
@@ -1577,7 +1577,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
 
      De tweede is erger, want hij verandert wat er staat: met `grid-auto-flow:
      dense` mag het raster achteruit zoeken naar een gat, en dan springt de
-     weegkaart boven de hero uit. De pagina klopt dan nog steeds — alleen de
+     weegkaart boven de hero uit. De pagina klopt dan nog steeds: alleen de
      leesvolgorde niet meer. Een screenshot laat dat zien; een proef die alleen
      naar kleuren kijkt niet. */
   const maten = await pagina.evaluate(() => {
@@ -1595,10 +1595,10 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
     }
   })
   if (maten.blok == null || maten.blok > 30) {
-    throw new Error(`breed: een dagblok is ${maten.blok}px breed — de strook is een staafdiagram geworden`)
+    throw new Error(`breed: een dagblok is ${maten.blok}px breed, de strook is een staafdiagram geworden`)
   }
   if (maten.zijBoven == null || maten.heroBoven == null || maten.zijBoven < maten.heroBoven) {
-    throw new Error(`breed: de zijkolom begint op ${maten.zijBoven} en de hero op ${maten.heroBoven} — `
+    throw new Error(`breed: de zijkolom begint op ${maten.zijBoven} en de hero op ${maten.heroBoven}, `
       + 'de leesvolgorde staat op zijn kop')
   }
   if (maten.streepBreed != null && maten.inhoudBreed != null
@@ -1632,7 +1632,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
 
   /* En hetzelfde scherm in het donker. De telefoon staat in het donker en het
      brede scherm heeft eigen regels voor achtergrond, schaduw en de macrotegels
-     — precies de plek waar een vergeten donkere variant licht op licht geeft. */
+, precies de plek waar een vergeten donkere variant licht op licht geeft. */
   const donkerpagina = await breed.newPage()
   await donkerpagina.emulateMedia({ colorScheme: 'dark' })
   await bedienDb(donkerpagina, 28, 'afvallen')
@@ -1682,7 +1682,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
      te zijn en niets meer.
 
      Twee dingen zijn met opzet uitgezonderd. Een kaart over de volle breedte
-     (de hero, een `.duo`) breekt de stroom af — wat eronder begint staat niet
+     (de hero, een `.duo`) breekt de stroom af, wat eronder begint staat niet
      in dezelfde kolomloop, dus daar meet afstand niets. En de laatste kaart van
      een kolom heeft geen opvolger; die leegte staat onderaan en is de prijs van
      twee kolommen, niet een gat ertussen. */
@@ -1718,7 +1718,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
     if (!ruimte || ruimte.kaarten < 2) throw new Error(`breed: ${tab} heeft geen kaarten om te meten`)
     if (ruimte.ergste > RUIMTE_MAX) {
       throw new Error(`breed: op ${tab} staat ${ruimte.ergste}px lege ruimte tussen twee kaarten `
-        + `in dezelfde kolom — hoogstens ${RUIMTE_MAX} hoort erin te passen`)
+        + `in dezelfde kolom, hoogstens ${RUIMTE_MAX} hoort erin te passen`)
     }
     console.log(`${''.padEnd(26)} ${tab.padEnd(11)} ${ruimte.kolommen} kolommen, `
       + `grootste gat ${ruimte.ergste}px`)
@@ -1731,7 +1731,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
      terwijl een schermkop twee `.mini`-alinea's kan hebben, en op Inzicht
      stonden ze 436 bij 17 punten over elkaar. Niets viel om: de pagina was
      geldig, de tekst stond er, en hij was onleesbaar.
-     Dat is alleen met meten te zien, en alleen op een breed scherm — vandaar
+     Dat is alleen met meten te zien, en alleen op een breed scherm, vandaar
      hier, en vandaar over alle zes de tabbladen en niet alleen het ene waar het
      toevallig opviel. */
   {
@@ -1768,7 +1768,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
       })
       if (bots.botsing) {
         throw new Error(`breed: op ${tab} liggen twee stukken tekst in de hero over elkaar `
-          + `(${bots.botsing.ox}\u00d7${bots.botsing.oy} punten) — `
+          + `(${bots.botsing.ox}\u00d7${bots.botsing.oy} punten), `
           + `${JSON.stringify(bots.botsing.a)} en ${JSON.stringify(bots.botsing.b)}`)
       }
       gekeken += bots.n
@@ -1782,7 +1782,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
 /* HET SCHERM DAT JE ALLEEN ZIET ALS JE VASTZIT
    De aanmeldschermen komen in geen enkel ander geval hier voorbij: de proef
    zet een sessie in localStorage en zit dus altijd binnen. Juist het scherm
-   voor wie eruit ligt bleef daarmee ongezien — en dat is het scherm waar een
+   voor wie eruit ligt bleef daarmee ongezien, en dat is het scherm waar een
    fout het duurst is, want wie hem tegenkomt heeft geen andere weg meer.
    Vandaar een context zónder sessie. */
 {
@@ -1824,7 +1824,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
   if (velden.join('|') !== hoort.join('|')) {
     throw new Error(`kwijt: velden zijn ${JSON.stringify(velden)}, verwacht ${JSON.stringify(hoort)}`)
   }
-  /* De knop hoort dood te zijn tot alle drie gevuld zijn — een herstelpoging
+  /* De knop hoort dood te zijn tot alle drie gevuld zijn, een herstelpoging
      met een leeg veld kost een streepje op de rem. */
   const zetten = pagina.getByRole('button', { name: 'Nieuw wachtwoord zetten' })
   if (!(await zetten.isDisabled())) throw new Error('kwijt: de knop staat aan met lege velden')
@@ -1839,7 +1839,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
      Blijft de knop daarbij aan, dan draait het scherm nog op de oude regel. */
   for (const [poging, waarom] of [
     ['kort', 'te kort'],
-    ['elftekens12', 'elf tekens — onder de oude eis van acht kwam dit erdoor'],
+    ['elftekens12', 'elf tekens, onder de oude eis van acht kwam dit erdoor'],
     ['wachtwoord2024', 'staat op de lijst met veelgebruikte wachtwoorden'],
     ['qwertyuiopas', 'een rechte lijn over het toetsenbord'],
   ]) {
@@ -1865,7 +1865,7 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
 /* ------------------------------------------------- het accountvenster ---- */
 /* DE BEHEERDERSREGEL HOORT ER ALLEEN TE STAAN VOOR EEN BEHEERDER
    `kal_herstelcode_voor` bestond sinds bestand 40 maar was nergens vanuit de app
-   bereikbaar — en daarmee hielp hij alleen wie de SQL-editor al openheeft, dus
+   bereikbaar, en daarmee hielp hij alleen wie de SQL-editor al openheeft, dus
    precies de persoon die hem niet nodig heeft. Bestand 41 en dit scherm maken
    dat af.
 
@@ -1983,7 +1983,7 @@ for (const breedte of breedtes) {
   kolommen.push(`${breedte}px→${links}kol`)
 
   /* De dagenstrook op elke brede maat. Op 1440 knijpt de rechterkolom van de
-     hero hem vanzelf al klein — daar bewees de proef dus niets. Tussen 960 en
+     hero hem vanzelf al klein, daar bewees de proef dus niets. Tussen 960 en
      1100 staat de hero op één kolom en heeft de strook de volle breedte, en
      precies daar wordt het een staafdiagram als het maximum ontbreekt. */
   if (breedte >= 960) {
@@ -1992,14 +1992,14 @@ for (const breedte of breedtes) {
       return i ? Math.round(i.getBoundingClientRect().width) : null
     })
     if (blok == null || blok > 30) {
-      throw new Error(`${breedte}px: een dagblok is ${blok}px breed — de strook is een staafdiagram`)
+      throw new Error(`${breedte}px: een dagblok is ${blok}px breed: de strook is een staafdiagram`)
     }
     strookmaten.push(`${breedte}px→${blok}px`)
 
     /* En of de inhoud niet ónder de zijbalk begint. De zijbalk staat vast en de
        inhoud houdt afstand met padding; die twee getallen staan los van elkaar
        in de stijl en kunnen dus uit elkaar lopen. Gebeurt dat, dan valt de
-       linkerrand van elke kaart weg achter de balk — geen foutmelding, alleen
+       linkerrand van elke kaart weg achter de balk, geen foutmelding, alleen
        tekst die halverwege een woord begint. */
     const rand = await pagina.evaluate(() => {
       const nav = document.querySelector('nav.tabs')
@@ -2011,11 +2011,11 @@ for (const breedte of breedtes) {
     })
     if (!rand || rand.kaartLinks < rand.navRechts) {
       throw new Error(`${breedte}px: de inhoud begint op ${rand?.kaartLinks} en de zijbalk `
-        + `loopt tot ${rand?.navRechts} — de kaarten liggen eronder`)
+        + `loopt tot ${rand?.navRechts}, de kaarten liggen eronder`)
     }
     if (rand.navHoog < rand.viewport - 2) {
       throw new Error(`${breedte}px: de zijbalk is ${rand.navHoog} hoog in een venster van `
-        + `${rand.viewport} — hij loopt niet door`)
+        + `${rand.viewport}, hij loopt niet door`)
     }
   }
 
@@ -2034,7 +2034,7 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
    ------------------------------------------------------------------------
    De sessie komt uit localStorage en is er meteen; `kal_ophalen` doet er even
    over. Zolang de app die twee niet uit elkaar hield, las hij een profiel dat er
-   nog niet was als "deze gebruiker is nieuw" en zette hij de opzetpagina neer —
+   nog niet was als "deze gebruiker is nieuw" en zette hij de opzetpagina neer,
    die daarna vanzelf weer verdween. Op die pagina staan twee knoppen die een
    profiel zetten en de augustusreeks kunnen inladen.
 
@@ -2053,7 +2053,7 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
 
   const wacht = await traag.locator('text=Je gegevens ophalen').count()
   const eerste = await traag.locator('h1', { hasText: 'Eerste keer' }).count()
-  if (eerste) throw new Error('tijdens het ophalen staat de opzetpagina er — één tik en je profiel is weg')
+  if (eerste) throw new Error('tijdens het ophalen staat de opzetpagina er, één tik en je profiel is weg')
   if (!wacht) throw new Error('tijdens het ophalen staat er niets; een leeg scherm zegt ook niets')
 
   /* En daarna hoort de gewone app er te staan. Zonder deze helft zou een scherm
@@ -2070,7 +2070,7 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
  * De stilste kleur van de app, --dim, droeg de kleinste tekst: 0,75 rem, en
  * daar staan juist de onzekerheidsbanden in. In een app waarvan de stelregel
  * "geen getal zonder zijn onzekerheid" is, stond de onzekerheid dus in de
- * slechtst leesbare kleur die er was — 2,71 op een lichte kaart, waar 4,5 de
+ * slechtst leesbare kleur die er was, 2,71 op een lichte kaart, waar 4,5 de
  * norm is.
  *
  * Dat is met een palettabel half te controleren, en die helft is de makkelijke.
@@ -2078,7 +2078,7 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
  * en daar staat ook .mini. Deze proef leest daarom van het scherm zelf: voor elk
  * element met eigen tekst de berekende kleur, en de achtergrond door de ouders
  * omhoog te lopen tot er een ondoorzichtige is. Staat er een verloop tussen, dan
- * worden álle kleurstops eruit gehaald en moet het tegen elk daarvan kloppen —
+ * worden álle kleurstops eruit gehaald en moet het tegen elk daarvan kloppen,
  * want waar in het verloop de tekst valt weet je niet.
  *
  * De norm is die van WCAG AA: 4,5 voor gewone tekst, 3,0 voor grote (24 px, of
@@ -2087,8 +2087,8 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
 {
   const NORM = 4.5
   /* Een echte functie en geen tekst. Als string in een template-literal
-     verdwijnt de backslash uit `\d` en `\(` — JavaScript laat een onbekende
-     escape gewoon vallen — en dan leest de regex geen enkel getal meer uit
+     verdwijnt de backslash uit `\d` en `\(` (JavaScript laat een onbekende
+     escape gewoon vallen) en dan leest de regex geen enkel getal meer uit
      "rgb(255, 255, 255)". De proef vond dan nul elementen en meldde groen. Dat
      is precies het soort proef dat niets bewijst, en hij kwam er alleen uit
      doordat het terugzetten van de oude kleur hem niet omver kreeg. */
@@ -2159,7 +2159,7 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
      voor een kleur en voor een verloop, en het werkt niet voor een foto: een
      `<img>` is geen achtergrond van een ouder, dus de lus loopt er dwars
      doorheen en komt uit bij de laag erachter. Sinds de hero een foto draagt
-     zou die proef dus groen melden op een scherm dat onleesbaar is — precies
+     zou die proef dus groen melden op een scherm dat onleesbaar is, precies
      het soort proef dat niets bewijst.
 
      Voor de hero wordt daarom niet geredeneerd maar gekeken. Een schermafdruk
@@ -2167,8 +2167,8 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
      donkerste en de lichtste die er liggen. Tegen allebei moet de tekstkleur
      de norm halen, want waar in dat vlak een letter precies valt weet je niet.
 
-     Dat is strenger dan nodig — een letter van tien punten raakt niet elk
-     beeldpunt onder zijn regel — en dat is met opzet. De foto's rouleren per
+     Dat is strenger dan nodig (een letter van tien punten raakt niet elk
+     beeldpunt onder zijn regel) en dat is met opzet. De foto's rouleren per
      dag, dus de marge moet tegen de ongelukkigste stand kunnen en niet tegen
      de stand van vandaag. */
   const heropixels = async (pagina, waar) => {
@@ -2210,7 +2210,7 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
        daarmee wegvielen. Dat was mis, en de diagnose wees het meteen aan: bij de
        titel in het donkere thema was de tekstkleur 0,90 helder en het
        vijfennegentigste honderdste 0,905. De proef mat dus de letters en noemde
-       dat de ondergrond, en kwam op een verhouding van 1,00 uit — tekst die
+       dat de ondergrond, en kwam op een verhouding van 1,00 uit, tekst die
        precies zo licht is als zichzelf.
 
        Letters kunnen makkelijk meer dan vijf procent van hun eigen vak beslaan,
@@ -2222,7 +2222,7 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
        anders meet ik straks op coördinaten die niet meer bestaan. */
     /* Via de CSSOM en niet via een stijlblad: de proef draait achter de echte
        CSP-headers, en die staat geen los `<style>` toe. `el.style.x = ...` valt
-       daar niet onder — dat is geen inline stijl in de zin van de policy. Dit
+       daar niet onder, dat is geen inline stijl in de zin van de policy. Dit
        viel om op de proef zelf en niet op een gedachte. */
     const verstopt = () => {
       const uit = []
@@ -2323,16 +2323,16 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
   }
   /* Een proef die niets bekeek meldt ook groen. Dat is deze proef één keer
      overkomen, dus telt hij nu hoeveel tekst hij werkelijk gemeten heeft. */
-  if (bekeken < 300) throw new Error(`contrast: maar ${bekeken} stukken tekst bekeken — dat klopt niet`)
+  if (bekeken < 300) throw new Error(`contrast: maar ${bekeken} stukken tekst bekeken, dat klopt niet`)
   /* Ook deze telt wat hij werkelijk gezien heeft. Verdwijnt de foto uit de
      hero, of raakt de klasse `metfoto` zoek, dan meet dit stuk niets meer en
      hoort dat op te vallen in plaats van stil groen te blijven. */
   if (fotoGemeten < 40) {
-    throw new Error(`heropixels: maar ${fotoGemeten} stukken tekst op de hero gemeten — `
+    throw new Error(`heropixels: maar ${fotoGemeten} stukken tekst op de hero gemeten (`
                     + 'staat de hero er nog?')
   }
   console.log(`contrast                   ${bekeken} stukken tekst, zes tabbladen, ` +
-              `twee thema's — alles haalt ${NORM}`)
+              `twee thema's) alles haalt ${NORM}`)
   console.log(`heropixels                 ${fotoGemeten} stukken tekst op de hero, ` +
               'gemeten aan de beeldpunten en niet aan de kleurstops')
 }
@@ -2342,7 +2342,7 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
  *
  * De derde coachlaag beantwoordt een andere vraag dan de tweede: niet "waar zit
  * eiwit in" maar "waar heb ik genoeg aan". Hij begint dicht, en dat is niet
- * alleen om het scherm rustig te houden — er hangt een vraag aan de database
+ * alleen om het scherm rustig te houden, er hangt een vraag aan de database
  * aan. De belofte is dus dat wie hem nooit opent er ook niet voor betaalt, en
  * die belofte is te tellen.
  *
@@ -2350,7 +2350,7 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
  * kopgetal is het aantal gram voor honderd kilocalorieën en niet de score: dat
  * eerste is een deling van twee gemeten waarden, dat tweede een schatting. De
  * vlag "uit je eigen hoek" hoort alleen bij de regel die hem verdient. En de
- * uitleg moet zeggen dat de score geschat is — een lijst die zich voordoet als
+ * uitleg moet zeggen dat de score geschat is, een lijst die zich voordoet als
  * meting is in deze app erger dan geen lijst.
  */
 {
@@ -2370,13 +2370,13 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
   if (!(await kaart.count())) throw new Error('watvult: de kaart staat er niet')
   await pagina.waitForTimeout(600)
   if (gevraagd !== 0) {
-    throw new Error(`watvult: dicht en toch ${gevraagd} keer gevraagd — dan is dichtklappen gratis noch nuttig`)
+    throw new Error(`watvult: dicht en toch ${gevraagd} keer gevraagd, dan is dichtklappen gratis noch nuttig`)
   }
   /* Dicht hoort er wél te staan waaróm je hem zou openen. Een kop met niets
      eronder is een deurtje zonder bordje. */
   const dichtregel = (await kaart.locator('p.mini').first().textContent()) ?? ''
   if (!/kcal/.test(dichtregel)) {
-    throw new Error(`watvult: dicht staat er geen reden om te openen — ${JSON.stringify(dichtregel)}`)
+    throw new Error(`watvult: dicht staat er geen reden om te openen, ${JSON.stringify(dichtregel)}`)
   }
 
   await kaart.getByRole('button', { name: 'open' }).click()
@@ -2403,38 +2403,38 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
   const iLaagsteGerecht = volgorde.findIndex((t) => t.startsWith('Mercimek'))
   const iBesteProduct = volgorde.findIndex((t) => t.startsWith('Champignon'))
   if (iLaagsteGerecht < 0 || iBesteProduct < 0) {
-    throw new Error(`watvult: gerecht of product ontbreekt — ${JSON.stringify(volgorde)}`)
+    throw new Error(`watvult: gerecht of product ontbreekt: ${JSON.stringify(volgorde)}`)
   }
   if (iLaagsteGerecht > iBesteProduct) {
-    throw new Error('watvult: het zwakste gerecht staat onder het sterkste product — ' +
-                    `dan is het één ranglijst geworden — ${JSON.stringify(volgorde)}`)
+    throw new Error('watvult: het zwakste gerecht staat onder het sterkste product (' +
+                    `dan is het één ranglijst geworden) ${JSON.stringify(volgorde)}`)
   }
   const koppen = await kaart.locator('p.mini').allTextContents()
   if (!koppen.some((t) => /Om te koken/.test(t))) {
-    throw new Error(`watvult: geen kop "Om te koken" — ${JSON.stringify(koppen)}`)
+    throw new Error(`watvult: geen kop "Om te koken": ${JSON.stringify(koppen)}`)
   }
 
-  /* Het kopgetal, op de regel waar het over gaat — niet op de eerste, want dat
+  /* Het kopgetal, op de regel waar het over gaat, niet op de eerste, want dat
      is sinds de gerechten erbij kwamen een gerecht. Op elke regel hoort het
      aantal gram voor honderd kilocalorieën te staan en nergens de score: dat
      eerste is een deling van twee gemeten waarden, dat tweede een schatting. */
   const champ = (await regels.filter({ hasText: 'Champignon' }).first().innerText())
     .replace(/\s+/g, ' ')
   if (!/476 g voor 100 kcal/.test(champ)) {
-    throw new Error(`watvult: het gram-getal staat niet voorop — ${JSON.stringify(champ)}`)
+    throw new Error(`watvult: het gram-getal staat niet voorop, ${JSON.stringify(champ)}`)
   }
   if (/\b100\b(?!\s*kcal)/.test(champ.replace('476 g voor 100 kcal', ''))) {
-    throw new Error(`watvult: de score staat op de regel — ${JSON.stringify(champ)}`)
+    throw new Error(`watvult: de score staat op de regel: ${JSON.stringify(champ)}`)
   }
   /* De portie hoort erbij: "een opscheplepel van 50 g, 11 kcal" is bruikbaar,
      "champignons" niet. En bij een gerecht net zo goed. */
   if (!/opscheplepel van 50 g/.test(champ) || !/11 kcal/.test(champ)) {
-    throw new Error(`watvult: de portie ontbreekt — ${JSON.stringify(champ)}`)
+    throw new Error(`watvult: de portie ontbreekt: ${JSON.stringify(champ)}`)
   }
   const harira = (await regels.filter({ hasText: 'Harira' }).first().innerText())
     .replace(/\s+/g, ' ')
   if (!/193 g voor 100 kcal/.test(harira) || !/kom van 300 g/.test(harira)) {
-    throw new Error(`watvult: het gerecht mist zijn getal of zijn portie — ${JSON.stringify(harira)}`)
+    throw new Error(`watvult: het gerecht mist zijn getal of zijn portie, ${JSON.stringify(harira)}`)
   }
 
   /* De vlag hangt aan de gegevens en niet aan de plaats: precies één van de
@@ -2455,7 +2455,7 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
   }
 
   /* Als láátste, want dit opent het portievenster en dat legt zich over de
-     kaart heen — elke regel die hierna nog naar de lijst kijkt vindt niets.
+     kaart heen, elke regel die hierna nog naar de lijst kijkt vindt niets.
      En een gerecht hoort een ánder venster te openen dan een product: kal_gerecht
      kal_portiematen. Zonder deze regel zou een gerecht met een leeg
      portievenster opengaan en dat is aan de lijst niet te zien. */
@@ -2485,7 +2485,7 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
  *
  * Dit vel keur je in één tik goed, en dat is precies waarom het een proef als
  * deze nodig heeft. Wat er mis kan gaan zonder dat iemand het merkt is niet dat
- * het scherm leeg blijft — dat zie je — maar dat er iets ánders wordt opgeslagen
+ * het scherm leeg blijft (dat zie je) maar dat er iets ánders wordt opgeslagen
  * dan wat er stond. Twaalf regels ziet niemand na op het aantal.
  *
  * Daarom loopt deze proef niet tot aan de knop maar tot voorbij de knop: de
@@ -2566,7 +2566,7 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
   const voor = await tekst()
 
   /* 1. De vier momenten staan er als koppen, in de volgorde van de dag, met het
-        onbekende vak vooraan — dat is het enige waar nog iets van je gevraagd
+        onbekende vak vooraan, dat is het enige waar nog iets van je gevraagd
         wordt. */
   const koppen = (await venster.locator('.kaart .eyebrow').allTextContents())
     .map((x) => x.trim()).filter((x) => /Ontbijt|Lunch|Diner|Tussendoor|Waar hoort dit|Getraind/.test(x))
@@ -2622,7 +2622,7 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
   for (const [naam, m] of Object.entries(hoort)) {
     if (plek[naam] !== m) throw new Error(`${naam} ging naar ${plek[naam]} in plaats van ${m}`)
   }
-  /* De voedingswaarde en de band gaan ongeschonden mee — dit is de plek waar een
+  /* De voedingswaarde en de band gaan ongeschonden mee, dit is de plek waar een
      spread-fout alles op nul zou zetten zonder dat het scherm verandert. */
   const tajine = verstuurd.regels.find((r) => r.naam === 'Tajine met kip')
   if (tajine.kcal_punt !== 720 || tajine.kcal_laag !== 576 || tajine.kcal_hoog !== 936) {
@@ -2645,7 +2645,7 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
     + `${verstuurd.trainingen.length} oefeningen · band heel`
   await pagina.close()
 
-  /* 6. EN NU ZONDER AANWIJZEN — DE BELOFTE WAAR HET VEL OP RUST
+  /* 6. EN NU ZONDER AANWIJZEN: DE BELOFTE WAAR HET VEL OP RUST
         Hierboven werd de losse regel eerst aangewezen, en dan gaan er vijf in.
         Dat bewijst niet dat er vier ingaan als je hem láát staan: een `naarRegels`
         die niet filtert zou hierboven niets kapotmaken. Dus nog een keer, en nu
@@ -2653,7 +2653,7 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
 
         Dit is het geval dat in het echt voorkomt. Je keurt in één tik goed, en
         het vel heeft je verteld dat er vier ingaan. Gaan er dan vijf in, dan
-        staat er iets in je dag wat je nooit hebt aangewezen — en dat zou je pas
+        staat er iets in je dag wat je nooit hebt aangewezen, en dat zou je pas
         merken als het dagtotaal er raar uitziet. */
   const tweede = await ctx.newPage()
   await tweede.emulateMedia({ colorScheme: 'light' })
@@ -2699,7 +2699,7 @@ if (kolommen[0] === kolommen[kolommen.length - 1]) {
   await tweede.close()
 
   console.log(`${eerste}
-${''.padEnd(27)}zonder aanwijzen: 1 van 2 — het sap blijft staan`)
+${''.padEnd(27)}zonder aanwijzen: 1 van 2: het sap blijft staan`)
 }
 
 /* ---------------------------------------------------------- wat je lust -- */
@@ -2730,7 +2730,7 @@ ${''.padEnd(27)}zonder aanwijzen: 1 van 2 — het sap blijft staan`)
       bewaard.patch = JSON.parse(route.request().postData() ?? '{}').p_patch
     }
     /* De gedeelde fixture heeft `instellingen: {}`, en dan kan stap 5 hieronder
-       niet bewijzen dat de rest van die kolom blijft staan — dan toetst hij de
+       niet bewijzen dat de rest van die kolom blijft staan, dan toetst hij de
        fixture en niet de app. Hier wordt hij dus gevuld, en alleen hier: de
        olie telt mee in het model, dus dit bij alle gevallen zetten zou de
        schermafdrukken en de gouden waarden verschuiven. */
@@ -2830,7 +2830,7 @@ ${''.padEnd(27)}zonder aanwijzen: 1 van 2 — het sap blijft staan`)
   if (!v) throw new Error('er is geen voorkeur naar kal_profiel_zetten gegaan')
   if (v.patroon !== 'vegetarisch') throw new Error(`patroon is ${v.patroon}`)
   for (const g of ['Vlees en gevogelte', 'Vleeswaren', 'Vis, schaal- en schelpdieren']) {
-    if (!v.nooit.includes(g)) throw new Error(`"${g}" staat niet in nooit — er komt vlees door`)
+    if (!v.nooit.includes(g)) throw new Error(`"${g}" staat niet in nooit, er komt vlees door`)
   }
   if (v.nooit.includes('Hartig broodbeleg')) {
     throw new Error('het teruggehaalde broodbeleg staat toch in nooit')
@@ -2853,7 +2853,7 @@ ${''.padEnd(27)}zonder aanwijzen: 1 van 2 — het sap blijft staan`)
         Dit is de enige indeling die een gerecht zelf draagt: de uitsluiting van
         bestand 36 loopt over de ingrediënten en zegt niets over "ik kook nooit
         Syrisch". */
-  /* Bewaren sluit het venster — dat is het ontwerp en niet een ongelukje, dus
+  /* Bewaren sluit het venster: dat is het ontwerp en niet een ongelukje, dus
      hier gaat het gewoon weer open. Dit kostte een ronde: de vorige versie
      zocht de chips in een venster dat er niet meer was en vond er nul, wat er
      precies zo uitziet als "de kaart ontbreekt". */
@@ -2878,7 +2878,7 @@ ${''.padEnd(27)}zonder aanwijzen: 1 van 2 — het sap blijft staan`)
 /* ------------------------------------------------- dit nooit meer, en waar -- */
 /* TWEE DINGEN DIE ELKAAR NODIG HEBBEN
  *
- * Het kruisje bij "Uit de tabel" schrijft meteen in het profiel — er is geen
+ * Het kruisje bij "Uit de tabel" schrijft meteen in het profiel, er is geen
  * bewaarknop, want je klikt iets weg en verwacht dat het weg is. Wat daar stil
  * mis kan gaan: de knop doet niets, of hij stuurt een patch die de rest van
  * `instellingen` wegvaagt. Allebei merk je pas weken later.
@@ -3000,7 +3000,7 @@ for (const [naam, dagen, patroon, verwacht] of [
      omdat het eerste hem opendeed, en meet de proef hieronder niets.
 
      Alleen die ene sleutel, en niet `localStorage.clear()`: daar staat ook de
-     sessie in, en die wissen logt de gebruiker uit — dan komt er helemaal geen
+     sessie in, en die wissen logt de gebruiker uit, dan komt er helemaal geen
      scherm. Dat was de eerste versie van deze regel. */
   await pagina.addInitScript(
     () => { try { localStorage.removeItem('kalibratie.uitleg') } catch { /* mag */ } })
@@ -3025,7 +3025,7 @@ for (const [naam, dagen, patroon, verwacht] of [
        wél hoort te staan is waaróm de app zwijgt. */
     if (/Omega-3/.test(t)) throw new Error(`${naam}: er komt een advies uit drie dagen log`)
     if (!/3 van de 28 dagen/.test(t)) {
-      throw new Error(`${naam}: de kaart legt niet uit waarom hij zwijgt — ${JSON.stringify(t)}`)
+      throw new Error(`${naam}: de kaart legt niet uit waarom hij zwijgt, ${JSON.stringify(t)}`)
     }
     /* Maar B12 hoort er wél te staan: dat hangt aan je eetpatroon en niet aan
        je log, en een vinkje is er ook op een dag dat je niets invulde. */
@@ -3038,7 +3038,7 @@ for (const [naam, dagen, patroon, verwacht] of [
     if (!/Vitamine B12/.test(t)) throw new Error(`${naam}: geen B12 bij veganistisch`)
     /* Het onderscheid dat niet mag versloffen. */
     /* `.last()` en niet `.first()`: de uitklapkaart omvat de adviezen, dus een
-       filter op de naam vindt er twee — de omhullende en de echte. */
+       filter op de naam vindt er twee, de omhullende en de echte. */
     const b12 = pagina.locator('.kaart', { hasText: 'Vitamine B12' }).last()
     const vlag = (await b12.locator('.vlaggetje').innerText()).trim()
     if (vlag !== 'nodig') throw new Error(`${naam}: B12 staat als "${vlag}" en niet als "nodig"`)
@@ -3064,7 +3064,7 @@ for (const [naam, dagen, patroon, verwacht] of [
   }
 
   console.log(`wat ontbreekt              ${naam.padEnd(18)} ${
-    [...new Set(t.match(/Vitamine B12|Omega-3|IJzer|Calcium/g) ?? ['—'])].join(', ')}`)
+    [...new Set(t.match(/Vitamine B12|Omega-3|IJzer|Calcium/g) ?? [':'])].join(', ')}`)
   await pagina.close()
 }
 
@@ -3077,7 +3077,7 @@ for (const [naam, dagen, patroon, verwacht] of [
  * van waar deze app over gaat. Ze óók als tabblad gebruiken maakt van een
  * betekenisvol teken een versiering.
  *
- * Deze proef houdt twee dingen vast. Elk tabblad draagt een getekend teken — een
+ * Deze proef houdt twee dingen vast. Elk tabblad draagt een getekend teken, een
  * <svg> en geen letter, want een letter tekent elk toestel anders. En de ruiten
  * komen op de balk niet meer voor, terwijl ze op het scherm eronder wél moeten
  * blijven staan: zonder die tweede helft zou "haal alle herkomsttekens weg" hier
@@ -3097,7 +3097,7 @@ for (const [naam, dagen, patroon, verwacht] of [
   }
   const balktekst = await pagina.locator('nav.tabs').innerText()
   const ruit = balktekst.match(/[◇◈◆]/)
-  if (ruit) throw new Error(`balk: ${ruit[0]} staat nog op de balk — die vorm is al vergeven`)
+  if (ruit) throw new Error(`balk: ${ruit[0]} staat nog op de balk, die vorm is al vergeven`)
 
   /* En de tegenproef: de ruiten horen op het scherm zelf wél te staan. */
   const opHetScherm = await pagina.locator('.herkomst').count()
@@ -3114,7 +3114,7 @@ for (const [naam, dagen, patroon, verwacht] of [
    * zeggen wát voor soort ding eronder staat.
    *
    * Ze zijn alleen uit elkaar te houden zolang ze van elkaar wegblijven, en
-   * dat is met een grep niet te bewaken — een `fill` toevoegen verandert geen
+   * dat is met een grep niet te bewaken, een `fill` toevoegen verandert geen
    * tekst die je kunt zoeken. Vandaar hier, op de gerenderde pagina, en drie
    * regels die alle drie aan de vorm hangen en niet aan de plaats.
    */
@@ -3126,18 +3126,18 @@ for (const [naam, dagen, patroon, verwacht] of [
      *
      * De huisregel is geen emoji: elk toestel tekent ze anders, en naast een
      * lijntekening staat op een iPhone ineens een gekleurd fototoestel. Die
-     * regel lekte, en hij lekte op de enige plek die geen enkele proef bekeek —
+     * regel lekte, en hij lekte op de enige plek die geen enkele proef bekeek,
      * het vergrootglas in het zoekveld van Voeding bleef staan toen dat in het
      * invoervel al vervangen was.
      *
      * Daarom hier, in de lus over alle zes de tabbladen, en niet op één scherm.
      * `\p{Emoji_Presentation}` is precies de goede zeef: hij vangt de tekens die
-     * standaard in kleur getekend worden en laat de typografische met rust —
+     * standaard in kleur getekend worden en laat de typografische met rust,
      * ＋, ↺, ›, ★ en ✓ horen hier wél thuis en zijn overal zwart. */
     const gekleurd = await pagina.evaluate(() =>
       [...new Set(document.body.innerText.match(/\p{Emoji_Presentation}/gu) ?? [])])
     if (gekleurd.length) {
-      throw new Error(`${tab}: ${gekleurd.join(' ')} staat op het scherm — de huisregel is getekend`)
+      throw new Error(`${tab}: ${gekleurd.join(' ')} staat op het scherm, de huisregel is getekend`)
     }
 
     const uit = await pagina.evaluate(() => {
@@ -3154,9 +3154,9 @@ for (const [naam, dagen, patroon, verwacht] of [
             .length > 1).length,
       }
     })
-    if (uit.gevuld) throw new Error(`${tab}: ${uit.gevuld} wegwijzer(s) met een vulling — ` +
+    if (uit.gevuld) throw new Error(`${tab}: ${uit.gevuld} wegwijzer(s) met een vulling, ` +
                                     'gevuld is herkomst, lijn is wegwijzer')
-    if (uit.ruitInKop) throw new Error(`${tab}: een ruit in een kop — die vorm is van de herkomst`)
+    if (uit.ruitInKop) throw new Error(`${tab}: een ruit in een kop: die vorm is van de herkomst`)
     if (uit.tekenInHerkomst) throw new Error(`${tab}: een getekend teken op een herkomstplek`)
     if (uit.dubbel) throw new Error(`${tab}: ${uit.dubbel} kaart(en) met meer dan één wegwijzer`)
     grens.koppen += uit.aantal
@@ -3165,7 +3165,7 @@ for (const [naam, dagen, patroon, verwacht] of [
   if (grens.koppen === 0) throw new Error('geen enkele wegwijzer bij een kop gevonden')
   if (grens.herkomst === 0) throw new Error('geen enkel herkomstteken meer op het scherm')
   console.log(`${''.padEnd(26)} ${grens.koppen} wegwijzers bij koppen, ` +
-              `${grens.herkomst} herkomsttekens — geen vulling, geen ruit`)
+              `${grens.herkomst} herkomsttekens, geen vulling, geen ruit`)
   await pagina.close()
 
   /* Een afdruk van alleen de balk, vier keer zo scherp. De tekens zijn met de
@@ -3202,7 +3202,7 @@ for (const [naam, dagen, patroon, verwacht] of [
  * De nachtkleuren stonden in mediaquery's. Nu kan de gebruiker kiezen, en die
  * keuze staat als `data-thema` op <html>. CSS kent geen of-constructie tussen
  * een mediaquery en een kenmerk, dus staat elk nachtblok twee keer in de stijl
- * — en dat is precies het soort verdubbeling waar over een half jaar één helft
+ *, en dat is precies het soort verdubbeling waar over een half jaar één helft
  * van bijgewerkt wordt.
  *
  * Deze proef vergelijkt daarom niet de tekst van de stijl maar het beeld. Twee
@@ -3218,7 +3218,7 @@ for (const [naam, dagen, patroon, verwacht] of [
  *
  * En de tegenproef: toestel op nacht met keuze "licht" hoort wél te verschillen.
  * Zonder die helft zou een stijl die het kenmerk volledig negeert er glansrijk
- * doorheen komen — dan zijn A en B immers ook gelijk.
+ * doorheen komen, dan zijn A en B immers ook gelijk.
  */
 {
   const TABS = ['Vandaag', 'Inzicht', 'Beweging']
@@ -3268,7 +3268,7 @@ for (const [naam, dagen, patroon, verwacht] of [
   const a = await meten(viaMedia)
   const b = await meten(viaKenmerk)
   if (a.length !== b.length) {
-    throw new Error(`thema: ${a.length} elementen tegenover ${b.length} — niet te vergelijken`)
+    throw new Error(`thema: ${a.length} elementen tegenover ${b.length}, niet te vergelijken`)
   }
   const scheef = a.findIndex((x, i) => x !== b[i])
   if (scheef >= 0) {
@@ -3279,7 +3279,7 @@ for (const [naam, dagen, patroon, verwacht] of [
   await viaKenmerk.close()
 
   /* De tegenproef. Dag afdwingen op een toestel dat op nacht staat hoort een
-     ánder scherm te geven — en hetzelfde scherm als een toestel dat op dag
+     ánder scherm te geven, en hetzelfde scherm als een toestel dat op dag
      staat. Twee beweringen, want de eerste alleen laat een stijl door die het
      kenmerk kent en er de verkeerde kleuren aan hangt. */
   const gedwongenDag = await opzetten('dark', 'licht')
@@ -3337,17 +3337,17 @@ for (const [naam, dagen, patroon, verwacht] of [
  *
  * Apple Gezondheid heeft onder "Work-outs" een lijst van posts: een duur, een
  * datum, de app die hem schreef, en een kopje dat zegt wat het was. Dat kopje
- * bepaalt hoe zwaar de minuten tellen — veertig minuten hardlopen is voor de
+ * bepaalt hoe zwaar de minuten tellen, veertig minuten hardlopen is voor de
  * WHO-richtlijn tachtig matige minuten en veertig wandelen veertig.
  *
  * WAAROM EEN GREP HIER NIET VOLSTAAT
  *
- * Wat hier fout kan gaan is niet dat het scherm leeg blijft — dat zie je. Het is
+ * Wat hier fout kan gaan is niet dat het scherm leeg blijft, dat zie je. Het is
  * dat er iets ánders wordt weggeschreven dan wat er op het scherm stond. Vier
  * dingen moeten kloppen en ze zitten elk in een andere laag:
  *
  *   het vinkje        staat uit bij krachttraining, bij een duur die geen
- *                     training kán zijn, en bij een post zonder kopje — en dat
+ *                     training kán zijn, en bij een post zonder kopje, en dat
  *                     komt uit `redenUit()` en niet uit een klasse in de HTML
  *   de soort          is te verbeteren, en een post die een soort krijgt hoort
  *                     daarmee meteen aangevinkt te staan: die tik heeft de vraag
@@ -3386,7 +3386,7 @@ for (const [naam, dagen, patroon, verwacht] of [
   })
 
   /* Vijf posten, en elke reden om een vinkje uit te zetten komt één keer voor.
-     Geen `dagen` erbij — een work-outafdruk bevat geen dagreeks, en dat is
+     Geen `dagen` erbij: een work-outafdruk bevat geen dagreeks, en dat is
      meteen de proef dat het blok ook zonder dagen in beeld komt. */
   await pagina.route('**/functions/v1/kal-ai', (route) => route.fulfill({
     status: 200, contentType: 'application/json',
@@ -3435,7 +3435,7 @@ for (const [naam, dagen, patroon, verwacht] of [
 
   /* De krachtsessie is niet aan te vinken, en dat is het énige slot: er staat
      geen tweede zeef achter. Een vinkje dat je wél kunt aanzetten en dat daarna
-     niets doet, is erger dan geen vinkje — dan denk je dat het meetelt. */
+     niets doet, is erger dan geen vinkje, dan denk je dat het meetelt. */
   if (!(await vinkjes.nth(2).isDisabled())) {
     throw new Error('work-outs: de krachtsessie is aan te vinken')
   }
@@ -3479,7 +3479,7 @@ for (const [naam, dagen, patroon, verwacht] of [
   await pagina.screenshot({ path: 'gereedschap/health-import-workouts.png' })
 
   /* 4. Tot voorbij de knop. Drie rijen, met de intensiteit die bij de soort
-        hoort en `geschat: true` — de app heeft hem afgeleid en niet gemeten.
+        hoort en `geschat: true`: de app heeft hem afgeleid en niet gemeten.
         De krachtsessie en de veertien uur gaan nergens heen. */
   await venster.getByRole('button', { name: 'Overnemen' }).click()
   await pagina.waitForTimeout(600)
@@ -3504,14 +3504,14 @@ for (const [naam, dagen, patroon, verwacht] of [
  * DE DAG DIE ER NIET WAS
  *
  * De dagenkaart wordt gebouwd uit `kal_dagen` en `kal_regels`. Een dag waarop
- * niets gemeten en niets gelogd is, staat er niet in — en daar zat de fout.
+ * niets gemeten en niets gelogd is, staat er niet in, en daar zat de fout.
  *
  * Het bewegingsscherm nam zijn venster uit die kaart: de laatste eenentwintig
  * sleutels. Een work-outafdruk importeren schrijft alleen in `kal_inspanning`
  * en maakt geen dagrij. Je rit van zo'n dag stond dus wél in de database, kwam
  * nergens op het scherm, en telde niet mee voor de norm. Dezelfde fout als
  * `actieve_energie_kcal`, dat maandenlang netjes werd opgeslagen en door niets
- * werd gelezen — en net zo onzichtbaar, want het scherm ziet er verder precies
+ * werd gelezen, en net zo onzichtbaar, want het scherm ziet er verder precies
  * hetzelfde uit.
  *
  * Daarom een eigen reeks met een gat erin. Dat gat is het hele punt: met de
@@ -3526,13 +3526,13 @@ for (const [naam, dagen, patroon, verwacht] of [
      toestand van een dag van vóór de koppeling.
 
      Met opzet een dag die fietsminuten hád: zo laat het totaal twee dingen
-     tegelijk zien — dat de 45 van die dag wegvalt mét de dagrij, en dat de rit
+     tegelijk zien, dat de 45 van die dag wegvalt mét de dagrij, en dat de rit
      uit `kal_inspanning` er los van blijft staan. Was het een dag zonder
      fietsminuten, dan bewees het totaal maar de helft. */
   const gatdag = grond.dagen[grond.dagen.length - 3]
   const gat = gatdag.datum
   if (gatdag.fiets_min !== 45) {
-    throw new Error(`gatendag: de proefreeks is veranderd — ${gat} heeft ${gatdag.fiets_min} fietsminuten`)
+    throw new Error(`gatendag: de proefreeks is veranderd: ${gat} heeft ${gatdag.fiets_min} fietsminuten`)
   }
   const gaten = {
     ...grond,
@@ -3564,14 +3564,14 @@ for (const [naam, dagen, patroon, verwacht] of [
      van, dus die valt weg en er blijven er drie over: 135. Daar bovenop de rit
      van 60 zware minuten, die als 120 telt. Samen 255. */
   if (!/255 van 150 min/.test(plat)) {
-    throw new Error(`gatendag: het weektotaal is niet 255 — ${JSON.stringify(plat.slice(0, 200))}`)
+    throw new Error(`gatendag: het weektotaal is niet 255: ${JSON.stringify(plat.slice(0, 200))}`)
   }
   /* En hij staat in de verdeling, in échte minuten. */
   if (!/Hardlopen 60′/.test(plat)) {
-    throw new Error(`gatendag: de rit staat niet in de verdeling — ${JSON.stringify(plat.slice(0, 260))}`)
+    throw new Error(`gatendag: de rit staat niet in de verdeling, ${JSON.stringify(plat.slice(0, 260))}`)
   }
   if (!/waarvan 60 zwaar/.test(plat)) {
-    throw new Error(`gatendag: de zware minuten worden niet genoemd — ${JSON.stringify(plat.slice(0, 260))}`)
+    throw new Error(`gatendag: de zware minuten worden niet genoemd, ${JSON.stringify(plat.slice(0, 260))}`)
   }
 
   /* En in de lijst van drie weken staat de dag er met zijn minuten, náást de
@@ -3597,7 +3597,7 @@ for (const [naam, dagen, patroon, verwacht] of [
 /**
  * DE DRIE HEFBOMEN DIE SPIER VASTHOUDEN
  *
- * Bij snel afvallen verdwijnt er naast vet ook spier — in de substudie van
+ * Bij snel afvallen verdwijnt er naast vet ook spier, in de substudie van
  * STEP-1 was ongeveer 45 procent van het verlies op semaglutide vetvrije massa.
  * Geen app meet dat. Wat deze kaart doet is de drie dingen naast elkaar zetten
  * waarvan bekend is dat ze het tegengaan.
@@ -3606,7 +3606,7 @@ for (const [naam, dagen, patroon, verwacht] of [
  *
  * Twee dingen gaan de database in via een weg die al bestond: de stoeltest als
  * meting, de vijf vragen als vragenlijst. Dat is precies waarom deze module
- * geen enkele databasewijziging nodig had — en ook precies waarom het mis kan
+ * geen enkele databasewijziging nodig had, en ook precies waarom het mis kan
  * gaan zonder dat het scherm er anders uitziet. Een stoeltest die als
  * `soort: 'middelomtrek'` wegschrijft staat er even netjes bij.
  *
@@ -3645,26 +3645,26 @@ for (const [naam, dagen, patroon, verwacht] of [
   const kort = namen.map((n) => n.split('  ')[0].trim().split('\n')[0])
   for (const moet of ['Eiwit per maaltijd', 'Krachttraining', 'Opstaan uit een stoel']) {
     if (!kort.some((n) => n.startsWith(moet))) {
-      throw new Error(`spier: "${moet}" staat niet op de kaart — ${JSON.stringify(kort)}`)
+      throw new Error(`spier: "${moet}" staat niet op de kaart, ${JSON.stringify(kort)}`)
     }
   }
   if (!kort[0].startsWith('Eiwit')) {
-    throw new Error(`spier: eiwit staat niet voorop — ${JSON.stringify(kort)}`)
+    throw new Error(`spier: eiwit staat niet voorop: ${JSON.stringify(kort)}`)
   }
 
   /* 2. De drempel staat in échte grammen, en telt alleen de hoofdmaaltijden die
         werkelijk gelogd zijn.
 
-        De laatste dag van de proefreeks heeft alleen ontbijt en lunch — de
+        De laatste dag van de proefreeks heeft alleen ontbijt en lunch, de
         toestand van iemand die 's middags kijkt. Ontbijt is havermout plus
         cappuccino: 18 + 5 = 23 gram eiwit, onder de drempel. Lunch is kaas plus
         amandelen: 24 + 6 = 30, precies erop, en precies erop telt mee.
 
         Dus "1 van de 2". Zou hier "2 van de 3" staan, dan telde de kaart een
-        maaltijd mee die er niet was — en dat is erger dan te weinig tellen: een
+        maaltijd mee die er niet was, en dat is erger dan te weinig tellen: een
         niet-gegeten diner van nul gram zou als gemiste drempel lezen. */
   if (!/1 van de 2 boven 30 g/.test(plat)) {
-    throw new Error(`spier: de eiwitdrempel telt verkeerd — ${JSON.stringify(plat.slice(0, 260))}`)
+    throw new Error(`spier: de eiwitdrempel telt verkeerd: ${JSON.stringify(plat.slice(0, 260))}`)
   }
 
   /* 3. En de verdelingswaarschuwing blijft wég bij dit eiwitdoel. */
@@ -3677,7 +3677,7 @@ for (const [naam, dagen, patroon, verwacht] of [
   await kaart.getByRole('button', { name: 'Starten' }).click()
   /* Ruim boven de ondergrens van twee seconden. Dat die grens bestaat, kwam
      uit deze proef: de armatuur zet de klok vast, dus een stopwatch op
-     `Date.now()` stond stil en er ging nul seconden de database in — en nul
+     `Date.now()` stond stil en er ging nul seconden de database in, en nul
      seconden las daarna als "snel". De stopwatch gebruikt nu
      `performance.now()`, die loopt door omdat hij monotoon is en niet aan de
      kalenderklok hangt. */
@@ -3689,16 +3689,16 @@ for (const [naam, dagen, patroon, verwacht] of [
   const meting = verstuurd.find((v) => v.p_tabel === 'meting')?.p_rij
   if (!meting || meting.soort !== 'stoeltest' || meting.eenheid !== 's'
       || !(meting.waarde >= 2)) {
-    throw new Error(`spier: de stoeltest gaat verkeerd de database in — ${JSON.stringify(meting)}`)
+    throw new Error(`spier: de stoeltest gaat verkeerd de database in, ${JSON.stringify(meting)}`)
   }
 
   /* 5. De vijf vragen, met één genoemde klacht. Dat is er één, en de lage
-        afkapwaarde hoort hem als signaal te bewaren — niet als "geen". Bij de
+        afkapwaarde hoort hem als signaal te bewaren, niet als "geen". Bij de
         gangbare grens van vier zou hier 'geen' staan, en dan zwijgt het scherm
         precies bij de mensen voor wie de lijst bedoeld is. */
   await kaart.getByRole('button', { name: 'Vijf vragen' }).click()
   /* Op de groep en niet op de tekst: vijf vragen met dezelfde drie antwoorden
-     eronder zijn anders niet uit elkaar te houden — niet voor deze proef en
+     eronder zijn anders niet uit elkaar te houden, niet voor deze proef en
      niet voor een schermlezer. */
   const vraag = kaart.getByRole('group', { name: /tien traptreden/ })
   await vraag.getByRole('button', { name: 'enige' }).click()
@@ -3708,10 +3708,10 @@ for (const [naam, dagen, patroon, verwacht] of [
 
   const lijst = verstuurd.find((v) => v.p_tabel === 'vragenlijst')?.p_rij
   if (!lijst || lijst.soort !== 'sarcf' || lijst.score !== 1 || lijst.klasse !== 'signaal') {
-    throw new Error(`spier: de vragenlijst gaat verkeerd de database in — ${JSON.stringify(lijst)}`)
+    throw new Error(`spier: de vragenlijst gaat verkeerd de database in, ${JSON.stringify(lijst)}`)
   }
   if (lijst.antwoorden?.traplopen !== 1) {
-    throw new Error(`spier: het antwoord komt niet mee — ${JSON.stringify(lijst.antwoorden)}`)
+    throw new Error(`spier: het antwoord komt niet mee: ${JSON.stringify(lijst.antwoorden)}`)
   }
 
   await pagina.screenshot({ path: 'gereedschap/health-spier.png', fullPage: true })
@@ -3730,7 +3730,7 @@ for (const [naam, dagen, patroon, verwacht] of [
  *
  * Die controleert dat het veld `nietWeten` gevuld is. Hij kan niet zien of het
  * scherm het tóónt. Een venster dat alleen `weten` rendert komt daar ongemerkt
- * doorheen — en dan staat er precies het soort tekst dat dit boekje niet wil
+ * doorheen, en dan staat er precies het soort tekst dat dit boekje niet wil
  * zijn: zeker klinkende beweringen zonder hun grens.
  *
  * En de grens die voor de klant het meest uitmaakt: geen enkel stuk mag een
@@ -3755,7 +3755,7 @@ for (const [naam, dagen, patroon, verwacht] of [
   process.stdout.write('verdiepen                  ')
 
   /* 1. Acht stukken, en ze staan dicht: wie hier komt kiest wat hij leest.
-        De knop heet "open" en niet zoals het stuk — `Uitklap` zet de kop in een
+        De knop heet "open" en niet zoals het stuk, `Uitklap` zet de kop in een
         `Kop` en de schakelaar ernaast. */
   const dichte = venster.getByRole('button', { name: 'open', exact: true })
   const aantal = await dichte.count()
@@ -3794,7 +3794,7 @@ for (const [naam, dagen, patroon, verwacht] of [
   const alles = (await venster.innerText()).replace(/\s+/g, ' ')
   for (const getal of ['116,6', '118,0', '3.690', '161 g', '7.468']) {
     if (alles.includes(getal)) {
-      throw new Error(`verdiepen: "${getal}" komt uit de gebruiker en staat in het boekje — `
+      throw new Error(`verdiepen: "${getal}" komt uit de gebruiker en staat in het boekje, `
         + 'dan is het geen boekje meer')
     }
   }
@@ -3824,8 +3824,8 @@ for (const [naam, dagen, patroon, verwacht] of [
  *
  * Die controleert dat `medicatiecriteria` er altijd minstens één op "niet
  * bekend" laat staan. Hij kan niet zien wat het scherm ermee doet. Een component
- * die de vier regels optelt tot één uitkomst — "drie van de vier", een groen
- * vinkje, "je komt er waarschijnlijk voor in aanmerking" — komt daar ongemerkt
+ * die de vier regels optelt tot één uitkomst ("drie van de vier", een groen
+ * vinkje, "je komt er waarschijnlijk voor in aanmerking") komt daar ongemerkt
  * doorheen, en dan staat er precies de uitspraak die deze app niet mag doen.
  *
  * Deze proef leest daarom het echte scherm en eist dat het onbeoordeelde deel
@@ -3874,7 +3874,7 @@ for (const [naam, dagen, patroon, verwacht] of [
     throw new Error(`traject: de leeftijd wordt niet beoordeeld\n  ${plat}`)
   }
 
-  /* 4. HET INVARIANT. Wat de app niet weet, blijft zichtbaar onbeoordeeld —
+  /* 4. HET INVARIANT. Wat de app niet weet, blijft zichtbaar onbeoordeeld,
         ook bij deze gebruiker, die op allebei de beoordeelbare criteria groen
         staat. Dat is precies het geval waarin een optelsom zou verleiden. */
   if (!/De BMI-drempel niet bekend/.test(plat)) {
@@ -3898,7 +3898,7 @@ for (const [naam, dagen, patroon, verwacht] of [
     /in aanmerking/, /\bje voldoet\b/, /\d\s*van de\s*4\b/, /waarschijnlijk in/,
   ]) {
     if (oordeel.test(zonderVoorbehoud)) {
-      throw new Error(`traject: ${oordeel} staat op het scherm — dat is een totaaloordeel\n`
+      throw new Error(`traject: ${oordeel} staat op het scherm: dat is een totaaloordeel\n`
         + `  ${zonderVoorbehoud}`)
     }
   }
@@ -3910,12 +3910,12 @@ for (const [naam, dagen, patroon, verwacht] of [
         enkele samenvatting van de standaard stond, en wat voor een groot deel
         van de gebruikers van deze app het verschil maakt. */
   /* Niet alleen dát de vier getallen er staan, maar ook bij welke drempel. Met
-     losse getallen zou het verwisselen van "mét" en "zonder" — de comorbiditeit
-     op 40 en de kale drempel op 35 — er hetzelfde uitzien, en dat is precies de
+     losse getallen zou het verwisselen van "mét" en "zonder" (de comorbiditeit
+     op 40 en de kale drempel op 35) er hetzelfde uitzien, en dat is precies de
      verwisseling die iemand ten onrechte afwijst. */
   for (const paar of ['35,0 mét · 40,0 zonder', '32,5 mét · 37,5 zonder']) {
     if (!alles.includes(paar)) {
-      throw new Error(`traject: "${paar}" staat niet op het scherm — de drempels staan er niet, `
+      throw new Error(`traject: "${paar}" staat niet op het scherm, de drempels staan er niet, `
         + `of niet bij de juiste voorwaarde\n  ${alles}`)
     }
   }

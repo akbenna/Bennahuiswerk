@@ -1,7 +1,7 @@
 /**
  * HET OUDERSCHERM
  *
- * Op slot, ook als er geen code is ingesteld — dan geldt de standaardcode.
+ * Op slot, ook als er geen code is ingesteld, dan geldt de standaardcode.
  * Zonder slot zet een kind hier in vijf minuten de stemmen, het weekbudget en
  * de gebedstijden om, en dat is precies wat dit scherm niet moet toelaten.
  */

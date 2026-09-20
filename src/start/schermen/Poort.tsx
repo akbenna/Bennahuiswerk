@@ -1,5 +1,5 @@
 /**
- * DE POORT — opzetten, kiezen wie je bent, en je code typen.
+ * DE POORT: opzetten, kiezen wie je bent, en je code typen.
  * Overgezet uit schermOpzetten(), schermKiezen() en schermCode().
  */
 import { useState } from 'react'

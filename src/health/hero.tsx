@@ -1,5 +1,5 @@
 /**
- * DE HERO — het eerste wat je ziet
+ * DE HERO: het eerste wat je ziet
  *
  * Elke calorie-app tekent een ring. Die ring liegt: hij zet een streep op
  * 2.100 kcal alsof dat een gemeten grens is, terwijl het een schatting is met
@@ -8,7 +8,7 @@
  *
  * Dus: de ring heeft een bándzone. De lichte boog is het gebied waarbinnen het
  * doel ligt; de volle boog is wat er gelogd is. Zit je in de band, dan zit je
- * goed — er is geen streep om net overheen te gaan. Dat is de hele stelling van
+ * goed, er is geen streep om net overheen te gaan. Dat is de hele stelling van
  * de app, maar dan als plaatje in plaats van als voetnoot.
  *
  * Voordat er zeven wegingen zijn, is er geen doel en dus geen band. De ring
@@ -44,7 +44,7 @@ export interface RingEigenschappen {
   /** Wat er gelogd is: het puntgetal. */
   waarde: number
   /** De onder- en bovenkant van wat er gelogd is. Dít is de onzekerheid die de
-   *  band toont — niet die van het doel. Wat je at is geschat; het doel is een
+   *  band toont, niet die van het doel. Wat je at is geschat; het doel is een
    *  streep die de app zelf trekt. */
   laag?: number | null
   hoog?: number | null
@@ -124,7 +124,7 @@ export function Doelring(
 /**
  * Veertien dagen naast elkaar. Eén dag zegt niets; een strook laat zien of er
  * een gewoonte in zit. De hoogte is het aandeel van het doel, de kleur zegt wat
- * er die dag gebeurd is — gewogen, gelogd, of allebei.
+ * er die dag gebeurd is, gewogen, gelogd, of allebei.
  */
 export interface Dagstaaf { d: string; gewogen: boolean; gelogd: boolean; deel: number }
 
@@ -167,7 +167,7 @@ export function Schermkop(
      * dat bij de volgende foto weer anders moet.
      *
      * Wat hij doet is sfeer en geen informatie. Er staat een fiets bij Beweging
-     * en een bloeddrukmeter bij Gezondheid omdat dat een toon zet — niet omdat
+     * en een bloeddrukmeter bij Gezondheid omdat dat een toon zet, niet omdat
      * je vandaag gefietst hebt. Daarom draagt hij ook geen `alt`: voor wie
      * voorleest is hij er niet, en dat klopt.
      *
@@ -200,7 +200,7 @@ export function Schermkop(
 /**
  * Een trapmeter: hoeveel van de treden gehaald zijn.
  *
- * Bedoeld voor dingen die in stappen komen en niet in procenten — de zekerheid
+ * Bedoeld voor dingen die in stappen komen en niet in procenten, de zekerheid
  * van het model, het aantal krachtsessies. Een percentage suggereert daar een
  * precisie die er niet is; vier vakjes waarvan er twee vol staan liegt niet.
  */
@@ -231,7 +231,7 @@ export function Trapmeter(
 /**
  * Een reeks bolletjes: n van m gehaald.
  *
- * Voor kleine, telbare aantallen — drie krachtsessies per week, zeven wegingen.
+ * Voor kleine, telbare aantallen, drie krachtsessies per week, zeven wegingen.
  * Bij zulke getallen is tellen sneller dan lezen, en dat is precies wat een
  * balk je afneemt.
  */
@@ -299,7 +299,7 @@ const dec1 = (x: number): string => (Math.round(x * 10) / 10).toString().replace
  * Vier staven naast elkaar: hoeveel eiwit er per maaltijd binnenkwam.
  *
  * Dit stond als vier horizontale balken onderaan het voedingsscherm, en de
- * schaal liep mee met de hoogste maaltijd — waardoor één goede maaltijd de
+ * schaal liep mee met de hoogste maaltijd, waardoor één goede maaltijd de
  * andere drie klein maakte en het er slechter uitzag dan het was. Verticaal
  * naast elkaar met één streep op het richtgetal laat je in één blik zien wat
  * de vraag is: welke maaltijd blijft achter. De kleuren zijn dezelfde als die

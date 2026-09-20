@@ -1,5 +1,5 @@
 -- ===========================================================================
--- 44 — DE SLEUTEL DIE IK VERGETEN WAS
+-- 44: DE SLEUTEL DIE IK VERGETEN WAS
 -- ===========================================================================
 --
 -- TOEGEPAST: nee.
@@ -23,8 +23,8 @@
 --
 -- Een gebruiker wissen laat zijn inspanningsrijen staan. Overal elders ruimt
 -- `on delete cascade` ze op; hier blijven ze liggen met een `gebruiker_id` die
--- nergens meer naar wijst. Dat is geen lek — de functies vragen altijd naar een
--- sessie, en die bestaat dan niet meer — maar het is wel bewaarde gezondheids-
+-- nergens meer naar wijst. Dat is geen lek: de functies vragen altijd naar een
+-- sessie, en die bestaat dan niet meer, maar het is wel bewaarde gezondheids-
 -- informatie van iemand die verwijderd is. Dat is precies wat je níet wilt.
 --
 -- En een typfout in een `gebruiker_id` wordt nergens tegengehouden. Overal

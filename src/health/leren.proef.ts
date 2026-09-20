@@ -4,7 +4,7 @@
  * De bladzijden zijn vaste teksten, en dat is geen eigenschap die je aanneemt
  * maar één die stil sneuvelt. Zodra iemand ooit een gewicht, een dosis of een
  * naam in een tekst weeft, is dit boekje geen boekje meer maar software die
- * patiëntgegevens verwerkt — en dan schuift de app een categorie op waar hij
+ * patiëntgegevens verwerkt, en dan schuift de app een categorie op waar hij
  * niet thuishoort. Zie de kop van `leren.ts`.
  *
  * De proef doet daarom twee dingen. Hij leest elke tekst twee keer, met twee

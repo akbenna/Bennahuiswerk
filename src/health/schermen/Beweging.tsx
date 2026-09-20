@@ -1,10 +1,10 @@
 /**
- * BEWEGING — stappen, fietsen, kracht, en waarom actieve energie nergens meetelt.
+ * BEWEGING: stappen, fietsen, kracht, en waarom actieve energie nergens meetelt.
  *
  * Dit scherm opende met drie kale getallen naast elkaar. Een getal met "doel
  * 8.000" eronder zegt niet of je het haalt; daar moet je zelf voor rekenen. Nu
  * staat de staat vooraan: de ring vergelijkt de week met het doel, en de drie
- * krachtsessies zijn drie bolletjes — bij zulke kleine aantallen is tellen
+ * krachtsessies zijn drie bolletjes, bij zulke kleine aantallen is tellen
  * sneller dan lezen.
  *
  * DE FIETS STOND ER NIET, EN DAT WAS EEN FOUT
@@ -15,7 +15,7 @@
  * er een half uur gefietst was. Dat is niet streng, dat is blind.
  *
  * Nu telt beweging als gehaald bij 8.000 stappen per dag óf 150 minuten matige
- * inspanning per week — de ondergrens van de WHO-richtlijn van 2020, en de enige
+ * inspanning per week, de ondergrens van de WHO-richtlijn van 2020, en de enige
  * van de twee die op een hometrainer haalbaar is.
  *
  * Wat er met opzet níet gebeurt is die minuten naar calorieën omrekenen. Zie de
@@ -24,11 +24,11 @@
  *
  * WAAR DIE MINUTEN VANDAAN KOMEN
  *
- * Drie wegen, en het veld heet in alle drie `fiets_min` — die naam is ouder dan
+ * Drie wegen, en het veld heet in alle drie `fiets_min`, die naam is ouder dan
  * wat erin zit. Wat er staat zijn minuten matige inspanning, welk apparaat ze
  * ook opleverde: de koppeling, het vakje op dit scherm, en sinds de work-outlijst
  * ook het importvenster. Dat laatste is voor wie geen koppeling laat draaien de
- * enige weg, en het is meteen de enige die een mens per post laat kiezen — een
+ * enige weg, en het is meteen de enige die een mens per post laat kiezen, een
  * horloge schrijft een hele dag weg als één activiteit van veertien uur, en zoiets
  * haalt het weekdoel in één klap vijf keer.
  */
@@ -83,7 +83,7 @@ export function Beweging(
 ) {
   /* Een kalendervenster en niet de sleutels van de dagenkaart. Die kaart kent
      alleen dagen waarvoor een meting of een maaltijd bestaat, en een
-     work-outafdruk importeren maakt zo'n rij niet — je rit stond dan wél in de
+     work-outafdruk importeren maakt zo'n rij niet, je rit stond dan wél in de
      database en nergens op het scherm. En de zeven laatste sleutels zijn niet
      de zeven laatste dagen: bij een gat reikte "deze week" stilletjes verder
      terug. Zie `dagvenster` in `inspanning.ts`. */
@@ -96,7 +96,7 @@ export function Beweging(
   /* DE WEEK IN MATIGE MINUTEN
      Opgeteld en niet gemiddeld: de WHO-richtlijn staat per week, en drie keer
      vijftig minuten is hetzelfde als zeven keer eenentwintig. Zware minuten
-     tellen onderweg dubbel — zie `inspanning.ts` voor waar die wisselkoers
+     tellen onderweg dubbel, zie `inspanning.ts` voor waar die wisselkoers
      vandaan komt en waarom de intensiteit een aanname is die zichzelf noemt. */
   const alleposten = weekposten(
     sleutels,
@@ -126,7 +126,7 @@ export function Beweging(
    * het merkt: er komt niets, en dat ziet eruit als een dag zonder stappen.
    *
    * Dit leest de gegevens en niet de sleutel. Wat je wilt weten is of er íets
-   * is aangekomen, niet of de koppeling nog bestaat — een sleutel die geldig is
+   * is aangekomen, niet of de koppeling nog bestaat, een sleutel die geldig is
    * en waar niets doorheen komt is geen geruststelling.
    *
    * De regel staat er alleen als er ooit iets binnenkwam. Wie hem nooit heeft
@@ -139,7 +139,7 @@ export function Beweging(
 
      Het tweede was geen besluit maar een gat. `actieve_energie_kcal` kwam via de
      koppeling én via de import netjes binnen, werd opgeslagen, en daarna door
-     geen enkel scherm gelezen — nagelopen op elke plek waar het veld voorkomt.
+     geen enkel scherm gelezen, nagelopen op elke plek waar het veld voorkomt.
      Wie zijn Apple-gegevens importeerde vulde dus een kolom die niemand ooit
      zag, en kreeg geen enkel teken dat het gelukt was.
 
@@ -208,7 +208,7 @@ export function Beweging(
                 Die twee kunnen uit elkaar lopen zodra er gefietst wordt, en dan
                 staat er een onvolle ring onder een kop die zegt dat het goed
                 gaat. De eerste versie loste dat niet op: daar stond "nog 913 per
-                dag tot 8.000" pal boven "daarmee is het weekdoel gehaald" —
+                dag tot 8.000" pal boven "daarmee is het weekdoel gehaald",
                 twee tegengestelde beweringen naast elkaar.
 
                 De regel hieronder overbrugt ze. Zodra de fiets het doel draagt,
@@ -299,7 +299,7 @@ export function Beweging(
             De verdeling staat in échte minuten: wie veertig minuten rende ziet
             daar veertig. De balk erboven staat in matige minuten en telt er
             tachtig. Zouden ze allebei hetzelfde rekenen, dan loog een van de
-            twee — de balk over de norm, of de lijst over je dag. */}
+            twee, de balk over de norm, of de lijst over je dag. */}
         {verdeeld.length > 0 && (
           <p className="mini" style={{ marginTop: 6 }}>
             {verdeeld.map((v) => `${v.naam} ${dz(v.minuten)}′`).join(' · ')}
@@ -317,7 +317,7 @@ export function Beweging(
                   {naamVan(r.soort, r.eigennaam)}
                   {/* De intensiteit staat erbij én waar hij vandaan komt.
                       Een aanname die zichzelf niet noemt is in dit ontwerp een
-                      fout — rennen is niet altijd zwaar en wandelen niet altijd
+                      fout, rennen is niet altijd zwaar en wandelen niet altijd
                       matig, en wat een horloge daarover weet komt hier niet
                       langs. */}
                   <span className="mini" style={{ marginLeft: 6, color: 'var(--dim)' }}>
@@ -434,13 +434,13 @@ export function Beweging(
 }
 
 /**
- * SPIERBEHOUD — de drie hefbomen, en wat ervan bekend is
+ * SPIERBEHOUD: de drie hefbomen, en wat ervan bekend is
  *
  * Een weegschaal telt kilo's en zegt niet waar ze vandaan komen. Bij snel
  * gewichtsverlies is dat verschil groot: in de substudie van STEP-1 was
  * ongeveer 45 procent van wat er op semaglutide verdween vetvrije massa.
  *
- * Deze kaart meet dat niet — dat kan geen app. Wat ze doet is de drie dingen
+ * Deze kaart meet dat niet: dat kan geen app. Wat ze doet is de drie dingen
  * naast elkaar zetten waarvan bekend is dat ze het tegengaan, met per stuk wat
  * er staat en wat er ontbreekt. Waarom er geen samengesteld cijfer uit komt,
  * staat in `spier.ts`.
@@ -515,7 +515,7 @@ function Spierkaart(
 
       <div className="lijst" style={{ marginTop: 8 }}>
         {/* De toelichting op een eigen regel en niet achter de naam. Hij stond
-            eerst op dezelfde regel met `knip` eromheen, en werd dan afgekapt —
+            eerst op dezelfde regel met `knip` eromheen, en werd dan afgekapt,
             precies het deel dat zegt wat je eraan kunt doen. */}
         {regels.map((r) => (
           <div key={r.wat} style={{ flexWrap: 'wrap' }}>
@@ -602,7 +602,7 @@ function Stoeltest({ bewaar }: { bewaar: (seconden: number) => void }) {
       <Rij style={{ marginTop: 8, alignItems: 'center' }}>
         {/* `performance.now()` en niet `Date.now()`: die eerste loopt monotoon
             door en is niet te verzetten. Een klok die tijdens de test verspringt
-            — zomertijd, een synchronisatie, of een armatuur die hem vastzet —
+ (zomertijd, een synchronisatie, of een armatuur die hem vastzet) 
             mag de uitslag niet veranderen. */}
         {gestart == null ? (
           <Knop vol opKlik={() => { zetUitslag(null); zetGestart(performance.now()) }}>
@@ -619,7 +619,7 @@ function Stoeltest({ bewaar }: { bewaar: (seconden: number) => void }) {
           <>
             <span className="cijfer">{dec(uitslag, 1)} s</span>
             {/* Onder de ondergrens is er niets te bewaren. Dat is geen foutmelding
-                maar een knop die er niet staat — zie `STOELTEST_MIN_S`. */}
+                maar een knop die er niet staat, zie `STOELTEST_MIN_S`. */}
             {stoeltestTraag(uitslag) != null
               ? <Knop opKlik={() => bewaar(uitslag)}>Bewaren</Knop>
               : <span className="klein">te kort om een meting te zijn. Doe hem opnieuw</span>}
@@ -631,7 +631,7 @@ function Stoeltest({ bewaar }: { bewaar: (seconden: number) => void }) {
 }
 
 /**
- * SARC-F — vijf vragen, en de lage afkapwaarde
+ * SARC-F: vijf vragen, en de lage afkapwaarde
  *
  * Waarom deze lijst signaleert op één punt in plaats van op vier staat in
  * `spier.ts`. Kort: bij vier is hij goed in uitsluiten en slecht in opsporen,
@@ -672,12 +672,12 @@ function Sarcfvragen({ bewaar }: { bewaar: (a: Sarcfantwoorden) => void }) {
  * WAT JE GEDAAN HEBT, IN DRIE TIKKEN
  *
  * Soort, duur, klaar. De intensiteit komt uit de soort en staat er als
- * schakelaar naast — niet als verplichte keuze, want dan moet je bij elke
+ * schakelaar naast, niet als verplichte keuze, want dan moet je bij elke
  * wandeling iets beslissen waar je meestal niets over te zeggen hebt.
  *
  * Zodra je hem omzet gaat `geschat` op false, en dat blijft bij de rij staan.
  * Zo is achteraf te zien welke minuten op een aanname rusten en welke op een
- * oordeel — het verschil verdwijnt anders in de optelling.
+ * oordeel, het verschil verdwijnt anders in de optelling.
  */
 function InspanningInvoer(
   { datum, bewaar }:

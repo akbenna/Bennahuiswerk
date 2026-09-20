@@ -6,7 +6,7 @@
  *   de SARC-F-grens   staat op 1 en niet op 4, omdat een screener hoort op te
  *                     sporen en niet uit te sluiten. Schuift hij naar 4, dan
  *                     zwijgt het scherm precies bij de mensen voor wie hij
- *                     bedoeld is — en niets valt daarvan om.
+ *                     bedoeld is, en niets valt daarvan om.
  *   de stoeltest      vijftien seconden, en "niet gedaan" is een eigen uitkomst
  *                     naast snel en traag.
  *   de leucinedrempel dertig gram per maaltijd, náást het dagdoel gedeeld door
@@ -79,7 +79,7 @@ describe('vijf keer opstaan uit een stoel', () => {
   })
 
   /* NIET GEDAAN IS EEN EIGEN UITKOMST. Zou dit `false` geven, dan leest een
-     lege meting als "gaat goed" — en dat is precies de fout die dit hele
+     lege meting als "gaat goed", en dat is precies de fout die dit hele
      project probeert te vermijden. */
   it('niet gedaan is niet hetzelfde als snel', () => {
     expect(stoeltestTraag(null)).toBeNull()
@@ -175,7 +175,7 @@ describe('het drieluik', () => {
   })
 
   /* Een goede uitslag van een jaar geleden zegt niets over nu. Hij hoort niet
-     als "goed" te blijven staan — dat is dezelfde fout als een lege meting die
+     als "goed" te blijven staan, dat is dezelfde fout als een lege meting die
      als goed leest, alleen langzamer. */
   it('een oude goede stoeltest vervalt naar onbekend', () => {
     const vers = spierbeeld(vraag({ stoeltestSeconden: 9, stoeltestDagenGeleden: 10 }))[2]!
@@ -222,7 +222,7 @@ describe('het voorbehoud', () => {
 describe('de ondergrens van de stoeltest', () => {
   /* Vijf keer volledig opstaan kost minstens een paar seconden. Onder de twee
      is het geen meting maar een dubbele tik. Zonder deze grens bewaarde de app
-     een nulmeting zonder te klagen, en las die daarna als "snel" — de
+     een nulmeting zonder te klagen, en las die daarna als "snel", de
      vleiendste uitkomst op de zwakste gegevens.
 
      De armatuur vond dit: die zet de klok vast, dus `Date.now()` stond stil en
@@ -266,7 +266,7 @@ describe('welke eetmomenten een maaltijd zijn', () => {
   })
 
   /* Een diner dat er niet is, is geen maaltijd van nul gram. Zou het als 0
-     meetellen, dan leest "twee maaltijden op peil" als "2 van de 3" — een
+     meetellen, dan leest "twee maaltijden op peil" als "2 van de 3", een
      gemiste drempel voor een maaltijd die niet bestond. */
   it('een niet-gegeten maaltijd telt niet mee als gemist', () => {
     expect(hoofdmaaltijden({ ontbijt: 23, lunch: 30 })).toEqual([23, 30])

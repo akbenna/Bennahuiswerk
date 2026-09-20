@@ -1,5 +1,5 @@
 -- =============================================================================
--- EEN GETAL DAT NIET KAN BESTAAN — en waarom het bovenaan stond
+-- EEN GETAL DAT NIET KAN BESTAAN, en waarom het bovenaan stond
 --
 -- Toegepast 18 september 2026, en nagekeken met vraag 3 van blok 3. Die gaf
 -- precies vier regels terug, en precies de vier die moesten blijven:
@@ -10,7 +10,7 @@
 --   DROP Pastilles                  239 kcal, macro s 390
 --
 -- Alle vier snoep of drank met polyolen, alle vier geen fout. De zes rijen
--- hierboven zijn weg en er is niets anders geraakt — dat is een meting en geen
+-- hierboven zijn weg en er is niets anders geraakt, dat is een meting en geen
 -- mededeling.
 --
 -- En vraag 2 is ook gedraaid. Drie regels, en alle drie gelijk aan wat de
@@ -32,7 +32,7 @@
 -- Dat getal kan niet bestaan. Eiwit levert 4 kcal per gram, dus meer dan 25 g
 -- per 100 kcal betekent dat het eiwit alleen al meer energie levert dan het hele
 -- product heeft. De energie in die rij stond op 24 kcal per 100 g waar de macro
--- s 58 zeggen — en kwark zit rond de 52.
+-- s 58 zeggen, en kwark zit rond de 52.
 --
 -- En daar zit de gemeenheid: de lijst rangschikt op eiwit per kcal, dus een te
 -- lage energie zet een product niet ergens in de lijst maar vooráán. Hoe erger
@@ -41,8 +41,8 @@
 -- HOE HET GEVONDEN IS
 --
 -- Niet door ernaar te kijken. De zeef die sinds kort in
--- `gereedschap/merkgegevens.mjs` zit — de energie moet kunnen kloppen met de
--- macro s — bestond nog niet toen bestand 18 zijn 854 producten laadde. Dezelfde
+-- `gereedschap/merkgegevens.mjs` zit, de energie moet kunnen kloppen met de
+-- macro s: bestond nog niet toen bestand 18 zijn 854 producten laadde. Dezelfde
 -- regel als query op de bestaande tabel gedraaid gaf tien treffers.
 --
 -- WAT ER WEG GAAT, EN WAT NADRUKKELIJK NIET
@@ -71,7 +71,7 @@
 -- De macro s zeggen wat de energie zou moeten zijn, dus die getallen zijn in te
 -- vullen. Dat is hier niet gedaan, en met opzet.
 --
--- Een merkproduct draagt het teken ◈ — etiketopgave. Zou ik de energie uit de
+-- Een merkproduct draagt het teken ◈, etiketopgave. Zou ik de energie uit de
 -- macro s herrekenen, dan staat er een afgeleid getal met een etiketteken
 -- erboven, en dat is precies het soort stille onwaarheid waar deze app tegen
 -- gebouwd is. Wat er niet klopt gaat eruit; komt het bij Open Food Facts goed,
@@ -81,7 +81,7 @@
 --
 -- Weghalen lost deze zes op en niet de volgende. `kal_eiwitrijk` weigert daarom
 -- vanaf nu elke merkrij waarvan de macro s meer dan veertig procent boven de
--- opgegeven energie uitkomen — dezelfde grens en hetzelfde getal als de zeef in
+-- opgegeven energie uitkomen: dezelfde grens en hetzelfde getal als de zeef in
 -- de omzetter.
 --
 -- Alleen in de merktak. NEVO-waarden zijn laboratoriumbepalingen en dragen dit
@@ -89,7 +89,7 @@
 -- onzeker zijn, en dat is precies het verschil dat ◆ en ◈ maken.
 --
 -- En alleen in `kal_eiwitrijk`. `kal_verzadiging` put uit `nevo_actief` en
--- `kal_gerecht_dichtheid` en ziet geen merkproducten — daar valt niets te
+-- `kal_gerecht_dichtheid` en ziet geen merkproducten, daar valt niets te
 -- weren.
 --
 -- TERUGDRAAIEN
@@ -113,7 +113,7 @@
 -- =============================================================================
 
 -- ---------------------------------------------------------------------------
--- BLOK 1 — DE ZES RIJEN WEG
+-- BLOK 1: DE ZES RIJEN WEG
 -- ---------------------------------------------------------------------------
 --
 -- Op streepjescode, en niet op naam of merk: die tweede zou ook weghalen wat er
@@ -135,7 +135,7 @@ delete from public.merk_producten
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 2 — EN DE VOLGENDE KOMT ER NIET IN
+-- BLOK 2, EN DE VOLGENDE KOMT ER NIET IN
 -- ---------------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION public.kal_eiwitrijk(
@@ -224,7 +224,7 @@ begin
 
             Eiwit en koolhydraten leveren 4 kcal per gram, vet 9. Meer dan
             veertig procent daarboven is geen etiketspeling meer maar een fout
-            in het getal — en juist die fout zet een product bovenaan, want te
+            in het getal, en juist die fout zet een product bovenaan, want te
             weinig energie bij hetzelfde eiwit blaast de dichtheid op.
 
             Dat was geen theorie: "Franse Kwark Mager" stond met 24 kcal per
@@ -298,7 +298,7 @@ grant execute on function public.kal_eiwitrijk(text, numeric, numeric, integer) 
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 3 — NAKIJKEN
+-- BLOK 3: NAKIJKEN
 -- ---------------------------------------------------------------------------
 --
 -- 1. STAAT ER NOG PRECIES ÉÉN `kal_eiwitrijk`?

@@ -1,8 +1,8 @@
 /**
- * DE WOLK — aanmelden en bewaren, voor de apps die dat delen
+ * DE WOLK: aanmelden en bewaren, voor de apps die dat delen
  *
- * Zes apps — Islam leren, Arabisch, Computers & Code, Spelletjes,
- * Geloofsstudie en Koran uit je hoofd — hadden hier elk hun eigen kopie van:
+ * Zes apps (Islam leren, Arabisch, Computers & Code, Spelletjes,
+ * Geloofsstudie en Koran uit je hoofd) hadden hier elk hun eigen kopie van:
  * dezelfde vier databasefuncties, dezelfde sleutel in localStorage, dezelfde
  * uitgestelde opslag van 2.500 ms, zesmaal overgetypt. Verbetering aan één
  * ervan bereikte de andere vijf niet, en dat is precies hoe die kopieën uit
@@ -56,7 +56,7 @@ export interface Wolk {
   bezig: boolean
   /** De laatste fout, of niets. */
   fout: string | null
-  /** De accountnamen die deze app kent. Geeft een lege lijst bij problemen —
+  /** De accountnamen die deze app kent. Geeft een lege lijst bij problemen,
    *  je moet je kunnen aanmelden ook als de lijst niet opkomt. */
   accounts: () => Promise<string[]>
   registreren: (account: string, wachtwoord: string, beginData?: unknown) => Promise<void>

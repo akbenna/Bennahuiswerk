@@ -1,12 +1,12 @@
 /**
- * ARABISCH — lezen, begrijpen en spreken, voor het hele gezin
+ * ARABISCH: lezen, begrijpen en spreken, voor het hele gezin
  *
  * Vier sporen naast elkaar op één toestel: een kind van acht dat de letters
  * leert en een volwassene die aan grammatica toe is, elk met een eigen profiel,
  * een eigen leerpad en een eigen kaartenbak. Wat het spoor bepaalt is de
  * leeftijd; de ouder kan het overschrijven.
  *
- * Naast het leerpad — dat op eigen tempo loopt en altijd op vandaag staat —
+ * Naast het leerpad (dat op eigen tempo loopt en altijd op vandaag staat) 
  * loopt een jaarplan van zesendertig weken voor wie het gestructureerd wil
  * doen. De twee delen dezelfde kaartenbak.
  */
@@ -60,7 +60,7 @@ export function App(): ReactNode {
   const p = t.profiel
 
   /* Het thema. "auto" volgt het toestel en luistert mee als dat halverwege
-     omslaat — een telefoon die 's avonds naar donker gaat hoort de app mee te
+     omslaat, een telefoon die 's avonds naar donker gaat hoort de app mee te
      nemen zonder dat je hem opnieuw opent. */
   useEffect(() => {
     const keuze = t.stand.thema ?? 'auto'
@@ -310,7 +310,7 @@ function Bladinhoud(
         t.zetProf((pr) => {
           /* De uitslag bepaalt voortaan ook het spoor. Tot nu toe zette de
              meting alleen de startweek van het jaarplan en bleef het spoor
-             staan op de gok uit de leeftijd — precies verkeerd om, want hoe ver
+             staan op de gok uit de leeftijd, precies verkeerd om, want hoe ver
              iemand met Arabisch is heeft niets met zijn leeftijd te maken. Zie
              `spoorNaMeting` voor waarom de leeftijd er tóch nog in zit.
 

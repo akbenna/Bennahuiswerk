@@ -56,7 +56,7 @@ export const HOUDING: Record<string, string> = {
     <path class="fig-mark" d="M198 82 A30 30 0 0 1 211 104"/>`
 };
 export const TAFEREEL: Record<string, string> = {
-  /* Adam — een tuin met één boom apart */
+  /* Adam: een tuin met één boom apart */
   l1501:`<rect class="t-lucht" x="0" y="0" width="400" height="150"/>
     <path class="t-grond" d="M0 150 h400 v70 H0 z"/>
     <path class="t-vorm" d="M70 150 v-34 M56 116 a14 14 0 0 1 28 0 a14 14 0 0 1-28 0" />
@@ -65,7 +65,7 @@ export const TAFEREEL: Record<string, string> = {
     <path class="t-vorm" d="M300 150 v-52 M274 98 a26 26 0 0 1 52 0 a26 26 0 0 1-52 0"/>
     <circle class="t-accent" cx="288" cy="96" r="5"/><circle class="t-accent" cx="310" cy="104" r="5"/>
     <path class="t-lijn" d="M0 176 C120 168 260 184 400 174"/>`,
-  /* Nuh — een ark op hoog water, met regen */
+  /* Nuh: een ark op hoog water, met regen */
   l1502:`<rect class="t-lucht" x="0" y="0" width="400" height="150"/>
     ${[...Array(16)].map((_,i)=>`<path class="t-lijn" d="M${18+i*24} 14 l-6 26"/>`).join('')}
     <path class="t-vlak" d="M0 150 c40-10 70 10 110 0 s70-12 110 0 s70 10 110 0 s60-8 70-2 V220 H0 z"/>
@@ -73,7 +73,7 @@ export const TAFEREEL: Record<string, string> = {
     <path class="t-vorm" d="M168 146 v-30 h68 v30"/>
     <path class="t-vorm" d="M202 116 v-26"/>
     <path class="t-lijn" d="M0 186 c60-8 110 8 170 0 s110-10 230 0"/>`,
-  /* Ibrahim — een vuur dat koel bleef: de vlam laait, het hart is koel */
+  /* Ibrahim: een vuur dat koel bleef: de vlam laait, het hart is koel */
   l1503:`<rect class="t-lucht" x="0" y="0" width="400" height="150"/>
     <path class="t-grond" d="M0 150 h400 v70 H0 z"/>
     <path class="t-vlak" d="M200 30 c8 30 30 40 34 66 a34 34 0 0 1-68 0 c0-16 10-24 14-40 c10 12 12 22 12 22 c4-20-2-34 8-48 z"/>
@@ -84,7 +84,7 @@ export const TAFEREEL: Record<string, string> = {
     <path class="t-lijn" d="M262 68 c5 18 19 26 19 42 a19 19 0 0 1-38 0 c0-10 6-15 9-24 c6 8 7 13 7 13 c3-12-1-20 3-31 z"/>
     <path class="t-accent" d="M200 92 c5 12 12 17 12 25 a12 12 0 0 1-24 0 c0-8 7-13 12-25 z" opacity=".35"/>
     <path class="t-lijn" d="M96 150 h208"/>`,
-  /* Hajar — twee heuvels met een bron ertussen */
+  /* Hajar: twee heuvels met een bron ertussen */
   l1504:`<rect class="t-lucht" x="0" y="0" width="400" height="150"/>
     <path class="t-vlak" d="M0 150 L96 62 L176 150 z"/><path class="t-vorm" d="M0 150 L96 62 L176 150"/>
     <path class="t-vlak" d="M224 150 L304 76 L400 150 z"/><path class="t-vorm" d="M224 150 L304 76 L400 150"/>
@@ -93,7 +93,7 @@ export const TAFEREEL: Record<string, string> = {
     <ellipse class="t-vlak" cx="200" cy="192" rx="46" ry="12"/>
     <ellipse class="t-vorm" cx="200" cy="192" rx="46" ry="12"/>
     <path class="t-lijn" d="M96 62 v-14 M304 76 v-14"/>`,
-  /* Yusuf — een put onder elf sterren, de zon en de maan */
+  /* Yusuf: een put onder elf sterren, de zon en de maan */
   l1505:`<rect class="t-lucht" x="0" y="0" width="400" height="150"/>
     ${[[40,34],[78,20],[116,40],[150,22],[188,36],[226,20],[262,40],[298,26],[330,44],[358,24],[64,58]]
       .map(([x,y])=>`<circle class="t-accent" cx="${x}" cy="${y}" r="3"/>`).join('')}
@@ -109,7 +109,7 @@ export const TAFEREEL: Record<string, string> = {
     <ellipse class="t-vorm" cx="200" cy="150" rx="42" ry="9"/>
     <path class="t-vorm" d="M186 102 v-6 h28 v6"/>
     <path class="t-accent" d="M200 112 v30"/>`,
-  /* Musa — de zee die openging */
+  /* Musa: de zee die openging */
   l1506:`<rect class="t-lucht" x="0" y="0" width="400" height="150"/>
     <path class="t-vlak" d="M0 118 c40-8 70 6 100 2 c26-4 36 8 40 18 v82 H0 z"/>
     <path class="t-vlak" d="M400 118 c-40-8-70 6-100 2 c-26-4-36 8-40 18 v82 h140 z"/>
@@ -117,7 +117,7 @@ export const TAFEREEL: Record<string, string> = {
     <path class="t-grond" d="M140 220 h120 v-82 h-120 z"/>
     <path class="t-lijn" d="M170 214 v-58 M200 216 v-64 M230 214 v-58"/>
     <circle class="t-accent" cx="200" cy="46" r="16"/>`,
-  /* Al-Khidr — de boot met het gat, en de muur */
+  /* Al-Khidr: de boot met het gat, en de muur */
   l1507:`<rect class="t-lucht" x="0" y="0" width="400" height="150"/>
     <path class="t-vlak" d="M0 150 c50-8 90 8 140 0 s90-10 140 0 s90 8 120 0 V220 H0 z"/>
     <path class="t-vorm" d="M40 142 h130 l-16 26 H56 z"/>
@@ -127,7 +127,7 @@ export const TAFEREEL: Record<string, string> = {
     <path class="t-vlak" d="M250 176 h110 v44 H250 z"/>
     <path class="t-vorm" d="M250 176 h110 v44 H250 z M250 198 h110 M286 176 v22 M322 198 v22"/>
     <path class="t-accent" d="M300 214 a10 10 0 0 1 20 0" opacity=".6"/>`,
-  /* Yunus — drie duisternissen: de nacht, de zee, en daaronder */
+  /* Yunus: drie duisternissen: de nacht, de zee, en daaronder */
   l1508:`<rect class="t-lucht" x="0" y="0" width="400" height="88"/>
     <path class="t-vlak" d="M324 22 A19 19 0 1 0 324 60 A15 15 0 1 1 324 22 Z"/>
     <path class="t-vorm" d="M324 22 A19 19 0 1 0 324 60 A15 15 0 1 1 324 22 Z"/>
@@ -136,7 +136,7 @@ export const TAFEREEL: Record<string, string> = {
     <path class="t-grond" d="M0 186 h400 v34 H0 z" opacity=".7"/>
     <path class="t-lijn" d="M0 118 c60 8 110-6 170 0 s110 8 230 0 M0 158 c60 6 110-6 170 0 s110 8 230 0"/>
     <circle class="t-accent" cx="200" cy="200" r="4"/>`,
-  /* Ayyub — een kale boom, en water bij de wortel */
+  /* Ayyub: een kale boom, en water bij de wortel */
   l1509:`<rect class="t-lucht" x="0" y="0" width="400" height="150"/>
     <path class="t-grond" d="M0 150 h400 v70 H0 z"/>
     <path class="t-vorm" d="M200 150 V70 M200 108 l-30-24 M200 96 l30-26 M200 128 l-24-16 M200 84 l16-20"/>
@@ -144,7 +144,7 @@ export const TAFEREEL: Record<string, string> = {
     <ellipse class="t-vorm" cx="200" cy="182" rx="54" ry="13"/>
     <circle class="t-accent" cx="330" cy="52" r="18"/>
     <path class="t-lijn" d="M290 52 h-14 M330 12 v-8"/>`,
-  /* Sulayman — een wijd dal met een smal pad */
+  /* Sulayman: een wijd dal met een smal pad */
   l1510:`<rect class="t-lucht" x="0" y="0" width="400" height="126"/>
     <path class="t-vlak" d="M0 126 c60-30 110 12 180-10 s130-28 220 6 V220 H0 z"/>
     <path class="t-vorm" d="M0 126 c60-30 110 12 180-10 s130-28 220 6"/>
@@ -152,7 +152,7 @@ export const TAFEREEL: Record<string, string> = {
     <path class="t-lijn" d="M60 220 C120 190 150 186 200 176 S300 166 360 150"/>
     <circle class="t-accent" cx="212" cy="188" r="3"/>
     <path class="t-lijn" d="M196 196 c8-4 16-6 26-8 M188 202 c10-5 22-8 34-10" opacity=".55"/>`,
-  /* Maryam — de palm met dadels, en het beekje eronder */
+  /* Maryam: de palm met dadels, en het beekje eronder */
   l1511:`<rect class="t-lucht" x="0" y="0" width="400" height="150"/>
     <path class="t-grond" d="M0 150 h400 v70 H0 z"/>
     <path class="t-vorm" d="M200 150 C196 120 198 96 200 74"/>
@@ -160,7 +160,7 @@ export const TAFEREEL: Record<string, string> = {
     <circle class="t-accent" cx="190" cy="86" r="4"/><circle class="t-accent" cx="208" cy="90" r="4"/><circle class="t-accent" cx="199" cy="98" r="4"/>
     <path class="t-vlak" d="M0 190 c60-10 110 10 170 4 s110-12 230-2 V220 H0 z"/>
     <path class="t-lijn" d="M0 194 c60-10 110 10 170 4 s110-12 230-2"/>`,
-  /* De grot — een opening in de rots met licht dat naar binnen valt */
+  /* De grot: een opening in de rots met licht dat naar binnen valt */
   l1512:`<rect class="t-lucht" x="0" y="0" width="400" height="220"/>
     <path class="t-vlak" d="M0 0 h400 v220 H0 z" opacity=".5"/>
     <path class="t-grond" d="M0 0 h400 v220 H0 z" opacity=".55"/>
@@ -168,7 +168,7 @@ export const TAFEREEL: Record<string, string> = {
     <path class="t-vorm" d="M200 46 c46 0 84 40 84 92 c0 34-18 62-42 76 h-84 c-24-14-42-42-42-76 c0-52 38-92 84-92 z"/>
     <path class="t-accent" d="M172 214 l28-96 l28 96 z" opacity=".35"/>
     <path class="t-lijn" d="M60 214 h280"/>`,
-  /* Luqman — een opengeslagen boek onder een lamp, met het mosterdzaadje */
+  /* Luqman: een opengeslagen boek onder een lamp, met het mosterdzaadje */
   l1513:`<rect class="t-lucht" x="0" y="0" width="400" height="150"/>
     <path class="t-grond" d="M0 150 h400 v70 H0 z"/>
     <path class="t-vorm" d="M200 16 v26 M182 42 h36 l10 22 h-56 z"/>

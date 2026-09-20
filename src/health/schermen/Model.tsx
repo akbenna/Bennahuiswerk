@@ -1,5 +1,5 @@
 /**
- * MODEL — waar het geschatte verbruik vandaan komt, en hoe zeker het is.
+ * MODEL: waar het geschatte verbruik vandaan komt, en hoe zeker het is.
  *
  * De zekerheid stond hier als drie woorden in kleine letters rechtsboven, en
  * dat is het verkeerde formaat voor het belangrijkste wat dit scherm te melden
@@ -86,7 +86,7 @@ export function Model(
                 logboek mee: log je stelselmatig twintig procent te laag, dan
                 staat hier een verbruik dat twintig procent te laag is.
 
-                Dat maakt het getal niet minder bruikbaar — het voorspelt jouw
+                Dat maakt het getal niet minder bruikbaar, het voorspelt jouw
                 gewichtsverloop juist goed, want die afwijking is persoonlijk en
                 stabiel. Maar "wat je lichaam verbruikt" en "wat je lichaam
                 verbruikt volgens jouw logboek" zijn twee verschillende
@@ -95,7 +95,7 @@ export function Model(
 
                 Dat stond er tot voor kort, in de voetregel onder elk scherm.
                 Bij het opruimen van de tekst is die verdwenen en bleef alleen de
-                uitleg in de consistentiekaart over — die dichtgeklapt is, en die
+                uitleg in de consistentiekaart over, die dichtgeklapt is, en die
                 alleen verschijnt bij een verschil boven de driehonderd. Hier
                 hoort hij, altijd zichtbaar, onder het getal waar hij over gaat. */}
             <p className="mini" style={{ marginTop: 5 }}>
@@ -157,8 +157,8 @@ export function Model(
       {/* WAAROM DEZE VOLGORDE, EN WAAROM HIJ VERSPRINGT
 
           Het scherm beantwoordt twee vragen en de rest is verantwoording. De
-          eerste — wat verbruik ik — staat in de kop. De tweede — wat eet ik, en
-          hoe verhoudt zich dat tot het doel — stond nergens: de gemiddelde
+          eerste (wat verbruik ik) staat in de kop. De tweede (wat eet ik, en
+          hoe verhoudt zich dat tot het doel) stond nergens: de gemiddelde
           inname zat verstopt in een bijzin van de afleiding, en de staafjes
           stonden onderaan. Die staat nu hier.
 
@@ -182,7 +182,7 @@ export function Model(
           <>
             {/* De band staat al in de kop. Hij hier nóg een keer groot herhalen
                 maakt hem niet waarder; wat deze kaart toevoegt is waar hij
-                vandaan komt — de figuur en de afleiding eronder. */}
+                vandaan komt, de figuur en de afleiding eronder. */}
             <IntervalFiguur a={a} />
             <p style={{ fontSize: '.88rem', marginTop: 10 }}>
               Afgeleid uit {a.volledig} bruikbare registratiedagen: gemiddeld{' '}
@@ -322,7 +322,7 @@ export function Model(
           <>
             {/* De band staat al in de kop. Hij hier nóg een keer groot herhalen
                 maakt hem niet waarder; wat deze kaart toevoegt is waar hij
-                vandaan komt — de figuur en de afleiding eronder. */}
+                vandaan komt, de figuur en de afleiding eronder. */}
             <IntervalFiguur a={a} />
             <p style={{ fontSize: '.88rem', marginTop: 10 }}>
               Afgeleid uit {a.volledig} bruikbare registratiedagen: gemiddeld{' '}
@@ -371,7 +371,7 @@ export function Model(
         <Kaart>
           <Kop>Consistentiecheck registratie</Kop>
           {/* Het oordeel eerst en in één zin; de redenering erachter. Dit is de
-              kaart die het meeste uitlegde en het minste zei — acht regels tekst
+              kaart die het meeste uitlegde en het minste zei, acht regels tekst
               waarvan de uitkomst "de registratie is intern consistent" was, of
               niet. Die uitkomst hoort vooraan te staan. */}
           <p style={{ fontSize: '.88rem', marginTop: 4 }}>
@@ -415,7 +415,7 @@ export function Model(
 }
 
 /**
- * WAAR JE NU STAAT — de vraag die het scherm niet beantwoordde
+ * WAAR JE NU STAAT: de vraag die het scherm niet beantwoordde
  *
  * De kop zegt wat je verbruikt. Wat je éét stond nergens als getal: het zat in
  * een bijzin van de afleiding ("gemiddeld 2.140 kcal") en verder alleen als
@@ -431,7 +431,7 @@ export function Model(
  * som suggereren die niet klopt. Inname min verbruik is hier geen onafhankelijk
  * saldo: het verbruik is uít de inname en de weegreeks afgeleid, dus dat
  * verschil is de weegtrend in andere eenheden. Die trend staat er daarom als
- * wat hij is — de onafhankelijke controle van de weegschaal, in kilo's.
+ * wat hij is, de onafhankelijke controle van de weegschaal, in kilo's.
  */
 function WaarJeStaat(
   { a, profiel, gefundeerd }: { a: Analyse; profiel: Profiel; gefundeerd: boolean },
@@ -556,14 +556,14 @@ function Meetgaten(
   }
   /* DE KOPPELING DIE STIL IS GEVALLEN
    *
-   * Er is geen manier om Apple Gezondheid vanaf een server op te halen — die
+   * Er is geen manier om Apple Gezondheid vanaf een server op te halen, die
    * gegevens komen alleen van het toestel af, via de opdracht die daar draait.
    * Valt die opdracht stil, dan merkt de app dat niet: er komt gewoon niets
    * binnen, en dat ziet er precies zo uit als een dag zonder stappen.
    *
    * Vandaar deze regel. Hij kijkt naar de gegevens en niet naar de sleutel: wat
    * telt is of er íets is aangekomen, niet of de koppeling nog bestaat. En hij
-   * verschijnt alleen als er ooit stappen binnenkwamen — wie hem nooit heeft
+   * verschijnt alleen als er ooit stappen binnenkwamen, wie hem nooit heeft
    * ingesteld hoort geen zeven dagen per week te lezen dat er iets stilstaat. */
   const stappenOoit = Object.values(dagen).some((d) => (d?.stappen ?? 0) > 0)
   const stappenRecent = leeg7.filter((k) => (dagen[k]?.stappen ?? 0) > 0).length

@@ -3,7 +3,7 @@
  *
  * Twee tonen, zelfgemaakt met Web Audio: geen bestanden, dus het werkt ook
  * offline en het kost niets aan laadtijd. Goed is een tweeklank omhoog, fout
- * één lage blokgolf — kort genoeg om niet te vertragen.
+ * één lage blokgolf, kort genoeg om niet te vertragen.
  *
  * Het voorlezen gaat via de stem van het toestel. Wiskundige tekens moeten
  * eerst uitgesproken worden: "√" leest een stem niet voor, "wortel" wel.

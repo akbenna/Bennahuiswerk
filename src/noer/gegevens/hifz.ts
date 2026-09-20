@@ -1,7 +1,7 @@
 import type { Dua, Hifz } from './soorten'
 
 /* =============================================================================
-   UIT JE HOOFD LEREN — de korte soera's en de vaste teksten van het gebed.
+   UIT JE HOOFD LEREN, de korte soera's en de vaste teksten van het gebed.
    Per regel: Arabisch, klank in Nederlandse letters, en de betekenis.
    De betekenis is een weergave in het Nederlands; de Koran zelf is het Arabisch.
 ============================================================================= */

@@ -1,5 +1,5 @@
 /**
- * NIEUW — de zes stappen waarmee een aya vastgezet wordt.
+ * NIEUW: de zes stappen waarmee een aya vastgezet wordt.
  *
  * Betekenis staat vóór klank, en dat is een keuze: wie op zijn eenenvijftigste
  * begint heeft geen tekort aan begrip maar aan herhaaltijd. De haak waar de
@@ -47,7 +47,7 @@ export function Nieuw(
   const p = plan(stand, index, dag)
   /* `volgende` geeft elke keer een nieuw object terug. Dat object rechtstreeks
      in de afhankelijkheden zetten laat het effect bij élke hertekening opnieuw
-     lopen, waarbij het zichzelf opruimt vóórdat de aya binnen is — en dan komt
+     lopen, waarbij het zichzelf opruimt vóórdat de aya binnen is, en dan komt
      er nooit iets op het scherm. Vandaar de sleutel op de waarden. */
   const doel = volgende(stand, index)
   const doelSleutel = doel ? `${doel.nr}:${doel.n}` : null
@@ -153,7 +153,7 @@ function Leerflow(
   }, [a, lezing])
 
   /* Welke woorden verborgen zijn hangt af van het niveau; dat wordt één keer
-     per niveau geloot en niet bij elke hertekening opnieuw — anders springt de
+     per niveau geloot en niet bij elke hertekening opnieuw, anders springt de
      tekst onder je handen weg. */
   const niveau = [0, 0.35, 0.7, 1][Math.min(3, v.verberg)] ?? 0
   const woorden = useMemo(() => a.ar.split(' '), [a.ar])

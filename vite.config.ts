@@ -8,10 +8,10 @@ import { fileURLToPath } from 'node:url'
 const hier = dirname(fileURLToPath(import.meta.url))
 
 /**
- * BennaHub — negen apps, één bouw.
+ * BennaHub: negen apps, één bouw.
  *
  * Elke app houdt zijn eigen map en dus zijn eigen adres: /health/, /noer/,
- * /rasikh/. Dat is geen esthetiek maar noodzaak — die adressen staan in
+ * /rasikh/. Dat is geen esthetiek maar noodzaak, die adressen staan in
  * bladwijzers, in negen service workers en in de tegels op de startpagina.
  * Vite draait daarom in meerpagina-stand: één ingang per app, geen router.
  */
@@ -21,7 +21,7 @@ const hier = dirname(fileURLToPath(import.meta.url))
  * naam hier staat, draait die app nog als los HTML-bestand en raakt de bouw hem
  * niet aan. De lijst is daarmee de stand van de verbouwing: leeg is klaar.
  *
- * Dit is bewust geen tijdelijke steiger die later opgeruimd moet worden — het
+ * Dit is bewust geen tijdelijke steiger die later opgeruimd moet worden, het
  * is de enige manier om negen apps te verbouwen zonder de site ooit stuk te
  * hebben staan.
  */

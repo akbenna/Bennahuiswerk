@@ -1,5 +1,5 @@
 /**
- * DE COCKPIT — het jaarplan van alle kinderen naast elkaar
+ * DE COCKPIT: het jaarplan van alle kinderen naast elkaar
  *
  * Wat een ouder wil weten past op één scherm: waar staat ieder kind, wanneer
  * was de laatste les, hoe gingen de toetsen, en wat komt er zaterdag.

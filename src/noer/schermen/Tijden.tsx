@@ -30,7 +30,7 @@ export function Tijden({ t, ga }: { t: Toestand; ga: (v: Tab) => void }): ReactN
   const qh = qiblaHoek(g.lat, g.lon)
 
   /* Het kompas van de telefoon. Op iOS moet er eerst om toestemming gevraagd
-     worden, en dat mag alleen vanuit een aanraking — vandaar de knop. */
+     worden, en dat mag alleen vanuit een aanraking, vandaar de knop. */
   useEffect(() => () => { /* de luisteraar wordt in startKompas opgeruimd */ }, [])
 
   const startKompas = (): void => {

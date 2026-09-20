@@ -1,6 +1,6 @@
 # Amiri
 
-`amiri-400.woff2` en `amiri-700.woff2` — het Arabische lettertype van alle apps in
+`amiri-400.woff2` en `amiri-700.woff2`, het Arabische lettertype van alle apps in
 BennaHub, hier als bestand in plaats van via Google Fonts.
 
 ## Waarom in de repo
@@ -11,7 +11,7 @@ aya, en een letter die hem niet heeft laat een leeg vak achter. Dan vallen er
 gaten midden in woorden en klopt de tekst niet meer met wat er staat.
 
 Zolang Amiri van Google Fonts kwam, gold dat bij elke eerste opening zonder
-verbinding — precies de situatie waarin je in de trein een soera wilt nakijken.
+verbinding, precies de situatie waarin je in de trein een soera wilt nakijken.
 Nu staat het lettertype naast de app en is er geen extra adres meer nodig.
 
 Newsreader, Figtree en de andere Latijnse letters komen nog wél van Google. Die
@@ -27,14 +27,14 @@ blijft leesbaar.
 | `OFL.txt` | de licentie | |
 
 Ze zijn niet uitgedund. Dat scheelde maar zo'n 25 kB en Amiri leunt zwaar op
-contextuele vervangingen om Arabisch goed aan elkaar te schrijven — bij het
+contextuele vervangingen om Arabisch goed aan elkaar te schrijven, bij het
 wegsnijden van glyphs gaat dat stilletjes stuk, en dat merk je pas als een
 kind een woord verkeerd overneemt.
 
 ## Herkomst en licentie
 
 Amiri van het Alif Type-project, opgehaald uit `google/fonts` (`ofl/amiri`) en
-met fontTools omgezet naar woff2. SIL Open Font License 1.1 — zie `OFL.txt`.
+met fontTools omgezet naar woff2. SIL Open Font License 1.1: zie `OFL.txt`.
 Vrij te gebruiken en mee te leveren; de naam Amiri mag niet op een gewijzigde
 versie blijven staan. Wij wijzigen niets, alleen het bestandsformaat.
 

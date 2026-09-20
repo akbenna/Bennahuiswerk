@@ -1,7 +1,7 @@
 /**
  * WAT DEZE PROEF VASTHOUDT
  *
- * Niet dat de teksten kloppen — dat kan een proef niet weten. Wel de twee
+ * Niet dat de teksten kloppen: dat kan een proef niet weten. Wel de twee
  * regels die er echt toe doen en die bij een latere wijziging stil kunnen
  * sneuvelen.
  *

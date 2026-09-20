@@ -1,5 +1,5 @@
 /**
- * GELUID — tonen, stem en opnames
+ * GELUID: tonen, stem en opnames
  *
  * Drie dingen die niets met elkaar te maken hebben behalve dat ze allemaal uit
  * de luidspreker komen.
@@ -141,7 +141,7 @@ export const STEM = new Stemmen()
    Er zijn drie bronnen, in deze volgorde:
      1. een opname die thuis zelf is ingesproken (staat in dit toestel);
      2. een meegeleverd recitatie- of stemfragment uit public/noer/audio/;
-     3. de stem van het toestel — het noodvangnet, standaard uit.
+     3. de stem van het toestel: het noodvangnet, standaard uit.
    Elk stukje tekst heeft een eigen kenmerk: `q:<tekst>:<regel>` voor de Koran
    en de gebedsteksten, `t:<naam>` voor de losse zinnen, `d:<nummer>` voor de
    du'a's van de dag. */
@@ -287,7 +287,7 @@ class Fragmenten {
     }
     /* De stem van de telefoon is nadrukkelijk niet de bedoeling bij Arabisch:
        hij legt klemtonen verkeerd en leest de Koran als een voorleesrobot.
-       Zolang `alleenEcht` aanstaat — en dat is standaard — blijft het liever
+       Zolang `alleenEcht` aanstaat (en dat is standaard) blijft het liever
        stil, met een regel erbij die zegt wat eraan te doen is. */
     if (inst.alleenEcht) {
       meld?.('Van dit stukje is nog geen opname. Neem het in bij Ouder → Eigen stem opnemen.')
@@ -330,7 +330,7 @@ class Opnemer {
 
   /* Elk toestel neemt in zijn eigen formaat op: Safari levert mp4, Chrome en
      Firefox leveren webm. Welk formaat het is, moet je van de recorder zélf
-     overnemen — noem je het verkeerd, dan slaat het bestand wel op maar weigert
+     overnemen, noem je het verkeerd, dan slaat het bestand wel op maar weigert
      de speler het af te spelen. */
   async start(): Promise<void> {
     const stroom = await navigator.mediaDevices.getUserMedia({ audio: true })

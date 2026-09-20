@@ -6,7 +6,7 @@
  * beveiliging tegen een indringer maar tegen een kind dat nieuwsgierig is; dat
  * is precies wat hier nodig is.
  *
- * Alle bedragen komen uit `beloning.ts` en worden hier alleen getoond — het
+ * Alle bedragen komen uit `beloning.ts` en worden hier alleen getoond, het
  * scherm rekent zelf niets uit. Uitbetalen is één handeling van de ouder: de
  * app houdt bij wat er verdiend is, en wie er wanneer betaalt is mensenwerk.
  */
@@ -716,14 +716,14 @@ function Opgavenbeheer(
  * Dit is het enige scherm in de app dat vertelt wat er *ontbreekt*. Een vraag
  * waar niets voor gevonden werd is geen fout van het kind en ook niet van de
  * vraagbaak: het is stof die er nog niet is. Die staan daarom apart en bovenaan
- * — ze zijn de werklijst, opgeschreven door de kinderen zelf.
+ *, ze zijn de werklijst, opgeschreven door de kinderen zelf.
  *
  * Met één uitzondering, en die staat er sinds Amine op "werkwoord vervoeging"
  * zocht en niets terugkreeg terwijl er drieënveertig opgaven werkwoordspelling
  * klaarstaan. "Niets gevonden" dekt namelijk twee heel verschillende dingen:
  * het model wees nergens heen, óf het wees ergens heen en de app gooide dat weg
  * omdat de sleutel niet bestond. Het eerste is een gat in de stof, het tweede is
- * een storing in de vraagbaak zelf — en die twee horen niet onder één noemer.
+ * een storing in de vraagbaak zelf, en die twee horen niet onder één noemer.
  * Staat er iets bij "verzonnen", dan is het het tweede.
  */
 export function Vragenpaneel(
@@ -802,7 +802,7 @@ export function Vragenpaneel(
  * De leerscan per kind, voor de ouder.
  *
  * Wat hier bewust níét staat is een cijfer of een type. De scan meet gewoontes,
- * geen aanleg, en het nut zit in het gesprek dat erop volgt — vandaar dat er per
+ * geen aanleg, en het nut zit in het gesprek dat erop volgt, vandaar dat er per
  * kind één ding uitspringt en niet vijf.
  *
  * En de waarschuwing eronder hoort erbij: een kind voelt welk antwoord braaf

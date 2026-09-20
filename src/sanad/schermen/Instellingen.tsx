@@ -1,5 +1,5 @@
 /**
- * INSTELLINGEN — waar je voortgang staat, en wie er meeleest
+ * INSTELLINGEN: waar je voortgang staat, en wie er meeleest
  *
  * Vier kaarten: de centrale opslag, de eigen sleutel voor het model, de back-up
  * en het wisknopje. Wat ze delen is dat ze alle vier over vertrouwen gaan, en

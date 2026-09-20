@@ -1,8 +1,8 @@
 /**
- * COMPUTERS & CODE — een pc bouwen en leren programmeren
+ * COMPUTERS & CODE: een pc bouwen en leren programmeren
  *
- * Twee sporen naast elkaar voor een jongen van elf. Het eerste — wat er in een
- * computer zit — is een middag werk; het tweede — hem iets laten doen — een
+ * Twee sporen naast elkaar voor een jongen van elf. Het eerste: wat er in een
+ * computer zit, is een middag werk; het tweede, hem iets laten doen, een
  * paar jaar. Daarom staat er elke dag maar één stap op het scherm.
  */
 import { useState } from 'react'

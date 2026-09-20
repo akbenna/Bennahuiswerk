@@ -2,7 +2,7 @@ import type { Grammatica } from './soorten'
 
 
 /* ============================================================
-   GRAMMATICA — korte modules, verdeeld over de vier sporen
+   GRAMMATICA, korte modules, verdeeld over de vier sporen
    ------------------------------------------------------------
    De uitleg staat bewust in doorlopend proza. Opsommingen laten
    zich makkelijk overslaan en geven de illusie dat je het snapt;

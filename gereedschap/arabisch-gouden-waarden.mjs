@@ -234,5 +234,5 @@ const uit = {
   stof, sporen, kaartlijsten, rijen, paden, vocalisaties, samen, datums, verschillen,
 }
 fs.writeFileSync('src/arabisch/gouden-waarden.json', JSON.stringify(uit, null, 1) + '\n')
-console.log(`${fsrs.length} FSRS-reeksen, ${nakijken.length} antwoorden, ${stof.woorden.length} woorden — src/arabisch/gouden-waarden.json`)
+console.log(`${fsrs.length} FSRS-reeksen, ${nakijken.length} antwoorden, ${stof.woorden.length} woorden, src/arabisch/gouden-waarden.json`)
 process.exit(0)

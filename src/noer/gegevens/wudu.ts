@@ -1,7 +1,7 @@
 import type { Wudustap } from './soorten'
 
 /* =============================================================================
-   DE WASSING — stap voor stap.
+   DE WASSING, stap voor stap.
    `deel` bepaalt welk lichaamsdeel oplicht in de tekening. `soort` zegt of het
    onderdeel verplicht is (fard) of iets wat de Profeet ﷺ deed (sunna).
    De indeling volgt de Malikitische school.

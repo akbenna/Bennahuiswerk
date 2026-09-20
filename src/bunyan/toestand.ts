@@ -3,7 +3,7 @@
  *
  * Eén plek waar de voortgang woont, en drie kanten waar zij heen gaat: het
  * scherm, de opslag van dit toestel, en de centrale kopie. Gelijktrekken is
- * altijd ophalen, samenvoegen, terugschrijven — in die volgorde, want alleen zo
+ * altijd ophalen, samenvoegen, terugschrijven, in die volgorde, want alleen zo
  * krijgt het ándere toestel ook wat hier gebeurd is.
  */
 import { useCallback, useEffect, useRef, useState } from 'react'

@@ -1,5 +1,5 @@
 /**
- * VANDAAG — wat er te doen is, en in welke volgorde.
+ * VANDAAG: wat er te doen is, en in welke volgorde.
  * Herhalen gaat vóór. Wat je vandaag laat liggen kost volgende week het dubbele.
  */
 import { Balk, Kaart, Kader, Tag } from '../onderdelen'

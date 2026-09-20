@@ -4,8 +4,8 @@
  * De app rekent zélf uit wat een dag oefenen waard is; de ouder betaalt pas
  * uit. Alleen wat écht bewezen is telt mee:
  *
- *  - alleen "sterk goed" — eerste keer, zónder hint, op een som die nog niet
- *    beheerst was — en gewogen naar moeilijkheid: niveau 1 telt 1, niveau 3
+ *  - alleen "sterk goed" (eerste keer, zónder hint, op een som die nog niet
+ *    beheerst was) en gewogen naar moeilijkheid: niveau 1 telt 1, niveau 3
  *    telt 3. Hoger niveau is meer waard;
  *  - een nauwkeurigheidspoort tegen gok- en haastwerk: onder de 70 procent
  *    telt een dag helemaal niet mee, daartussen half tarief;
@@ -16,7 +16,7 @@
  * begrenzing is er niet om te knijpen maar om het eerlijk te houden: zonder
  * bovengrens loont het om een makkelijke som honderd keer te herhalen.
  *
- * De klok komt als argument binnen — anders is geen enkele uitkomst hier te
+ * De klok komt als argument binnen, anders is geen enkele uitkomst hier te
  * toetsen zonder de systeemklok te verzetten.
  */
 import { dagKort, leesDag, weekSleutel } from './datum'
@@ -130,7 +130,7 @@ export function berekenBeloning(pr: Voortgang, nuMs: number): Beloningstand {
 }
 
 /**
- * Wat er vandaag verdiend is blijvend vastleggen — net als de punten, zodat het
+ * Wat er vandaag verdiend is blijvend vastleggen, net als de punten, zodat het
  * niet verdwijnt bij een nieuwe dag en meesynchroniseert naar de andere
  * toestellen. Geeft een nieuwe voortgang terug; muteert niets.
  */
@@ -151,7 +151,7 @@ export function weekVerdiend(pr: Voortgang, nuMs: number): number {
   return Math.max(0, Math.min(weekbudgetVan(pr), halfRond(som)))
 }
 
-/** Alles bij elkaar, blijvend. Het werk telt per wéék gecapt op het budget —
+/** Alles bij elkaar, blijvend. Het werk telt per wéék gecapt op het budget,
  *  anders zou een kind dat drie weken niets deed en daarna één dag alles
  *  inhaalt, drie budgetten tegelijk opstrijken. De toernooibonus en een
  *  handmatige bijstelling komen daar bovenop. */

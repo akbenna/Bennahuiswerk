@@ -1,5 +1,5 @@
 /**
- * HOE DEZE APP WERKT — de uitleg in de app zelf
+ * HOE DEZE APP WERKT: de uitleg in de app zelf
  *
  * De uitleg stond al ergens: `health/HANDLEIDING.md` legt de logica volledig uit,
  * met de meetuitkomsten erbij. Maar dat bestand staat in een repo op GitHub, en
@@ -8,7 +8,7 @@
  *
  * Dit is met opzet de korte versie. Niet de samenvatting van het document maar de
  * vier dingen die je moet weten om te snappen waarom de app zich gedraagt zoals
- * hij doet — en die alle vier terugkomen op dezelfde grondregel. Wie meer wil,
+ * hij doet, en die alle vier terugkomen op dezelfde grondregel. Wie meer wil,
  * krijgt onderaan te horen waar dat staat.
  *
  * De uitklappers zitten er zodat dit scherm bij openen leesbaar kort is. De stand

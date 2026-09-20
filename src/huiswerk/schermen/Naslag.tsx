@@ -1,8 +1,8 @@
 /**
- * NASLAG — formules en leertips
+ * NASLAG: formules en leertips
  *
  * Twee schermen die niets bijhouden: ze staan er om op te zoeken. De
- * formulekaart begint met het vierstappenplan, want dat is wat er misgaat —
+ * formulekaart begint met het vierstappenplan, want dat is wat er misgaat,
  * niet de formule maar de gewoonte om eerst op te schrijven wat je weet.
  */
 import type { ReactNode } from 'react'

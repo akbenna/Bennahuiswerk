@@ -45,7 +45,7 @@ export const STAPPEN: Gebedstap[] = [
  {k:'salam', t:'De slotgroet', h:'salam', merk:null, soort:'fard', zeg:'salam',
   doe:['Draai je hoofd naar rechts en zeg: as-salamu \'alaykum.','Daarmee is het gebed klaar.'],
   let:'Volgens de Malikitische school is die ene groet naar rechts het verplichte deel. Bid je achter een imam, dan geef je er nog een naar links en één als antwoord aan de imam.'},
- /* De dhikr ná het gebed stond wel in de les over dhikr, maar niet hier — en
+ /* De dhikr ná het gebed stond wel in de les over dhikr, maar niet hier, en
     hier hoort hij: het is het staartje van het gebed, niet een los onderwerp.
     Hij telt niet mee in het examen over de volgorde, want hij valt erbuiten. */
  {k:'nagebed', t:'Blijven zitten na het gebed', h:'zitten', merk:null, soort:'na', zeg:'istighfar', zeg2:'naSalam',
@@ -56,7 +56,7 @@ export const STAPPEN: Gebedstap[] = [
 
 /* Naast de volgorde: wat in deze school niet in het verplichte gebed wordt
    gezegd, maar wel in een vrijwillig gebed en in andere scholen. Kennen is
-   nuttig — je staat vroeg of laat achter een imam die het wél zegt. */
+   nuttig: je staat vroeg of laat achter een imam die het wél zegt. */
 export const NAAST: Naast[] = [
  {zeg:'istiftah', t:'De openingsdu\'a', w:'Na de openingstakbir, vóór al-Fatiha',
   u:'In de Malikitische school niet in het verplichte gebed. In een vrijwillig gebed mag hij wel, en de meeste andere scholen zeggen hem altijd.'},

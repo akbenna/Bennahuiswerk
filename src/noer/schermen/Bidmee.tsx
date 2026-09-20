@@ -1,5 +1,5 @@
 /**
- * BID MEE — de app loopt met je mee
+ * BID MEE: de app loopt met je mee
  *
  * Elke houding, elke tekst, met de tijd erbij. Zet hem op vanzelf en volg mee,
  * of tik zelf door zodat je je eigen tempo houdt. Doe dit eerst een paar keer

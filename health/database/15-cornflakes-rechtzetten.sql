@@ -30,7 +30,7 @@
 -- WAT ER NIET GEBEURT
 --
 -- Er wordt niet geschaald. De oude getallen worden weggegooid en opnieuw
--- uitgerekend uit de tabelwaarde bij het nieuwe gewicht — dezelfde weg die de
+-- uitgerekend uit de tabelwaarde bij het nieuwe gewicht, dezelfde weg die de
 -- server neemt bij een nieuwe regel. Een oud getal maal een factor zou de fout
 -- meenemen die er misschien nog meer in zat.
 --
@@ -41,7 +41,7 @@
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 1 — DE REGEL, VOLLEDIG. Verandert niets.
+-- BLOK 1: DE REGEL, VOLLEDIG. Verandert niets.
 -- ---------------------------------------------------------------------------
 --
 -- BEWAAR DEZE UITKOMST. Het is de enige weg terug: een update laat geen kopie
@@ -55,7 +55,7 @@ order by created_at desc;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 2 — RECHTZETTEN
+-- BLOK 2: RECHTZETTEN
 -- ---------------------------------------------------------------------------
 --
 -- Alleen regels die aan alle drie voldoen: cornflakes in de naam, een koppeling
@@ -95,7 +95,7 @@ update kal_regels r
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 3 — NAKIJKEN
+-- BLOK 3: NAKIJKEN
 -- ---------------------------------------------------------------------------
 --
 -- Verwacht: 54 g, ongeveer 200 kcal in plaats van 672, en een band die dat

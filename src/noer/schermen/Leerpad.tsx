@@ -1,9 +1,9 @@
 /**
- * HET LEERPAD — vijftien modules, met de les als venster erover
+ * HET LEERPAD: vijftien modules, met de les als venster erover
  *
  * Welke lessen je ziet hangt af van je leeftijd: het spoor. Een module waarvan
  * op jouw spoor nog geen enkele les meedoet, staat er grijs bij met "vanaf tien
- * jaar" erop — zichtbaar, want dat er meer komt is zelf ook een boodschap.
+ * jaar" erop, zichtbaar, want dat er meer komt is zelf ook een boodschap.
  *
  * Een les is eerst lezen, dan drie vragen. Bij twee of meer goed is hij
  * gehaald; hij overdoen mag altijd, maar levert dan een kwart van de punten en

@@ -8,7 +8,7 @@
  * WAT ER GEBEURDE
  *
  * De systeemprompt van kal-ai is een template-literal, en daarin kwamen
- * verwijzingen als `bronnen` en `activiteiten` te staan — met backticks, want zo
+ * verwijzingen als `bronnen` en `activiteiten` te staan, met backticks, want zo
  * schrijft dit project een veldnaam op. Een backtick sluit een template-literal.
  * De prompt eindigde dus halverwege en de rest van het bestand werd onzin.
  *
@@ -21,14 +21,14 @@
  *
  * WAT DEZE PROEF WEL EN NIET DOET
  *
- * Hij ontleedt elk bestand met de parser van TypeScript zelf — dezelfde die
+ * Hij ontleedt elk bestand met de parser van TypeScript zelf, dezelfde die
  * `tsc` gebruikt, maar zonder typen op te zoeken. Dat is precies wat hier kan:
  * de imports wijzen naar https-adressen die van hier niet te halen zijn, dus
  * typecontrole is uitgesloten, maar of het bestand te lezen ís hangt daar niet
  * van af.
  *
  * Hij zegt dus niets over of de functie werkt. Alleen dat Deno hem kan
- * inlezen — en dat is exact de fout die hier drie commits lang heeft gestaan.
+ * inlezen, en dat is exact de fout die hier drie commits lang heeft gestaan.
  */
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'

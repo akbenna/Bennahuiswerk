@@ -3,13 +3,13 @@
  *
  * In `health/database/45-eiwitten-en-supplementen.sql` komen vier merken de
  * voedingslijst in. Eén ervan, Upfront, verkoopt de eigenaar van deze app zelf.
- * Dat is geen bezwaar om het product op te nemen — het bestaat, mensen drinken
+ * Dat is geen bezwaar om het product op te nemen, het bestaat, mensen drinken
  * het, en een voedingslijst die het verzwijgt is minder waard, niet eerlijker.
  *
  * Het is wél een bezwaar om het voor te trekken. Zodra de app een product
  * voortrekt dat de eigenaar verkoopt, wordt élk ander getal erin verdacht: de
  * lezer kan van buitenaf niet meer zien waar het advies ophoudt en de verkoop
- * begint. En dat is precies het vertrouwen waar de rest van deze app op teert —
+ * begint. En dat is precies het vertrouwen waar de rest van deze app op teert,
  * geen getal zonder zijn onzekerheid, geen oordeel dat de huisarts toekomt.
  *
  * Vandaar deze regel, en hij is scherper dan "niet voortrekken": de code mag
@@ -32,7 +32,7 @@ import { describe, expect, it } from 'vitest'
  *  is een regel die je omzeilt door een tweede merk te beginnen. */
 const MERKEN = ['Upfront', 'Body&Fit', 'XXL Nutrition', 'Orangefit']
 
-/** Het bestand dat de rijen neerzet. Dáár hoort de naam te staan — dat is de
+/** Het bestand dat de rijen neerzet. Dáár hoort de naam te staan: dat is de
  *  inhoud zelf. Overal elders is hij code die het merk kent. */
 const INVOERBESTAND = '45-eiwitten-en-supplementen.sql'
 

@@ -4,7 +4,7 @@
  * Vijf soorten vragen door één component: kiezen, typen in het Nederlands,
  * typen in het Arabisch, een woord bouwen uit letters en een zin bouwen uit
  * woorden. Ze delen de terugkoppeling, en dat is met opzet: terugkoppeling is
- * verplicht en staat er altijd — ook bij goed, want dan bevestigt hij de
+ * verplicht en staat er altijd, ook bij goed, want dan bevestigt hij de
  * redenering in plaats van alleen de uitkomst.
  *
  * De component beoordeelt en toont; wat er met het oordeel gebeurt (de FSRS-
@@ -233,7 +233,7 @@ export function Oefenvak({ oef, spraak, zelfOordeel, beoordeeld, klaar }: Oefenv
 }
 
 /** Het bouwvak: tegels aantikken zet ze erin, een tegel in het vak haalt hem
- *  er weer uit. Een tegel die al gebruikt is vergrijst maar blijft staan —
+ *  er weer uit. Een tegel die al gebruikt is vergrijst maar blijft staan,
  *  dezelfde letter kan twee keer in een woord voorkomen. */
 export function Bouwvak(
   { tegels, bouwsel, zetBouwsel, zin, vast, controleer }:

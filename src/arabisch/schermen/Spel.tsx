@@ -1,5 +1,5 @@
 /**
- * SPEL — alleen voor de kinderen
+ * SPEL: alleen voor de kinderen
  *
  * Vier spellen op dezelfde woordenschat als het leerpad, zodat oefenen en
  * spelen niet twee losse voorraden worden. Het luisterspel verschijnt alleen

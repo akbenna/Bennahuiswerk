@@ -1,5 +1,5 @@
 /**
- * UIT JE HOOFD LEREN — vier oefeningen per tekst
+ * UIT JE HOOFD LEREN: vier oefeningen per tekst
  *
  * Meelezen, woorden wegstoppen, de puzzel, de toets. Die volgorde is de hele
  * didactiek: eerst zien en horen, dan zelf aanvullen, dan de volgorde zonder

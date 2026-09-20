@@ -1,8 +1,8 @@
 /**
- * SPELLETJES — de speelhoek, los van de huiswerkapp.
+ * SPELLETJES: de speelhoek, los van de huiswerkapp.
  *
  * Even afschakelen: dertien spelletjes plus de twee grote. Vrije tijd is een
- * gunst — dus: even pauze, en daarna weer verder.
+ * gunst, dus: even pauze, en daarna weer verder.
  */
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { SPELLEN } from './spellen'
@@ -262,8 +262,8 @@ function Uitslag(
 }
 
 /**
- * Het geluid mag je zelf aan- en uitzetten; de rest — inloggen en records
- * wissen — zit achter de oudercode.
+ * Het geluid mag je zelf aan- en uitzetten; de rest (inloggen en records
+ * wissen) zit achter de oudercode.
  */
 function Instellingenkaart(
   { stand, zetInstel, wolk, melding, zetMelding, opGelijktrekken, opWissen }:

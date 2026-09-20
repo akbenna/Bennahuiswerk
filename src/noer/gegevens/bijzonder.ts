@@ -10,10 +10,10 @@ import type { Fout, Onderwerp, Regelsoort, Rouwstap } from './soorten'
    wat er wél en niet moet.
 
    Per gebed staat de regel erbij:
-     fard    — verplicht voor wie eraan toe is
-     kifaya  — plicht van de gemeenschap: doet een groep het, dan is het gedaan
+     fard (verplicht voor wie eraan toe is
+     kifaya) plicht van de gemeenschap: doet een groep het, dan is het gedaan
                voor iedereen; doet niemand het, dan draagt de hele buurt de schuld
-     sunna   — sterk aanbevolen, niet verplicht
+     sunna, sterk aanbevolen, niet verplicht
 ============================================================================= */
 export const REGELS: Record<string, Regelsoort> = {
   fard:  {t:'Verplicht',                  c:'fout'},

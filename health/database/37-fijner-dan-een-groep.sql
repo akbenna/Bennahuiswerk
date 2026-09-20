@@ -1,9 +1,9 @@
 -- =============================================================================
--- FIJNER DAN EEN GROEP — één product weigeren, en een keuken uitzetten
+-- FIJNER DAN EEN GROEP: één product weigeren, en een keuken uitzetten
 --
 -- Toegepast, en gemeten op 18 september 2026. De md5-controle van blok 3 gaf
--- `kal_verzadiging` terug op 06d1cccc04c19755174d281a789020e8 — de versie uit
--- dit bestand — en `kal_hoeken` op bda6e4088510345b98b58d73700695af.
+-- `kal_verzadiging` terug op 06d1cccc04c19755174d281a789020e8, de versie uit
+-- dit bestand, en `kal_hoeken` op bda6e4088510345b98b58d73700695af.
 --
 -- `kal_eiwitrijk` staat niet meer op de fab85bab uit dit bestand maar op de
 -- da67ff29 van bestand 38: die voegde er een grens aan toe voor merkrijen
@@ -29,7 +29,7 @@
 --
 -- `keukens` is een lijst uit `cultural_dishes.cuisine`, en dat veld heeft een
 -- CHECK met precies zes waarden: marokkaans, turks, syrisch, surinaams,
--- nederlands, overig. Er wordt hier dus niets verzonnen — het veld ligt er en
+-- nederlands, overig. Er wordt hier dus niets verzonnen, het veld ligt er en
 -- de functie leest het.
 --
 -- WAAR ZE STAAN, EN WAAROM DAAR
@@ -40,8 +40,8 @@
 --
 -- WAT ER NIET IS, EN WAAROM NIET
 --
--- Geen boom onder fruit en groente. NEVO heeft geen subgroep — `nevo_foods`
--- draagt `groep` en verder niets — dus "geen citrus" zou een indeling zijn die
+-- Geen boom onder fruit en groente. NEVO heeft geen subgroep: `nevo_foods`
+-- draagt `groep` en verder niets, dus "geen citrus" zou een indeling zijn die
 -- ik zelf verzin en op productnamen toepas. Dat is dezelfde naamzeef die
 -- hierboven al een keer misging. Een vinkje dat de helft van de citrus laat
 -- staan is erger dan geen vinkje, en `nietProduct` doet hetzelfde werk zonder
@@ -54,7 +54,7 @@
 -- Alles behalve de vier regels die hieronder als commentaar zijn aangewezen.
 -- De scores, de afkappunten, de zeven uitgesloten groepen, de naamzeef, het
 -- duwtje van twaalf punten, en dat `mijn_groepen` alleen markeert en nooit
--- sorteert — dat is allemaal letterlijk hetzelfde als in 35 en 36.
+-- sorteert: dat is allemaal letterlijk hetzelfde als in 35 en 36.
 --
 -- TERUGDRAAIEN
 --
@@ -68,7 +68,7 @@
 -- bestand 36 is nagekeken:
 --
 --   · een profiel zonder deze twee velden krijgt exact dezelfde lijst als onder
---     35 en 36 — wie de app al gebruikte merkt niets
+--     35 en 36: wie de app al gebruikte merkt niets
 --   · een geweigerd product verdwijnt uit allebei de lijsten, en het product
 --     ernaast in dezelfde groep blijft staan
 --   · een uitgezette keuken haalt het gerecht weg en laat de producten staan
@@ -80,7 +80,7 @@
 -- =============================================================================
 
 -- ---------------------------------------------------------------------------
--- BLOK 1 — UIT DE TABEL
+-- BLOK 1: UIT DE TABEL
 -- ---------------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION public.kal_eiwitrijk(
@@ -221,13 +221,13 @@ end $function$;
 
 
 comment on function public.kal_eiwitrijk(text, numeric, numeric, integer) is
-  'De eiwitrijkste producten per kcal binnen wat er nog past, en binnen wat de gebruiker in "Wat je lust" heeft aangegeven — inclusief losse producten die hij heeft weggeklikt. Zie 23, 35 en 37.';
+  'De eiwitrijkste producten per kcal binnen wat er nog past, en binnen wat de gebruiker in "Wat je lust" heeft aangegeven, inclusief losse producten die hij heeft weggeklikt. Zie 23, 35 en 37.';
 
 grant execute on function public.kal_eiwitrijk(text, numeric, numeric, integer) to anon, authenticated;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 2 — WAT VULT HET BEST
+-- BLOK 2: WAT VULT HET BEST
 -- ---------------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION public.kal_verzadiging(
@@ -256,7 +256,7 @@ begin
   end if;
 
   /* De voorkeuren uit "Wat je lust". Ontbreken ze, of staat er iets anders dan
-     een lijst, dan blijven het lege lijsten en verandert er niets — een profiel
+     een lijst, dan blijven het lege lijsten en verandert er niets, een profiel
      zonder voorkeuren hoort exact te krijgen wat het onder bestand 29 kreeg. */
   select
     case when jsonb_typeof(pr.instellingen->'voorkeuren'->'nooit') = 'array'
@@ -329,7 +329,7 @@ begin
        /* DE UITSLUITING BIJ EEN GERECHT, over de ingrediënten en niet over de
           groep: `g.keuken` is "surinaams" en geen tabelgroep. Eén ingrediënt uit
           een uitgezette groep is genoeg. Een ingrediënt zonder NEVO-koppeling
-          telt niet mee — daar is geen groep van te weten. */
+          telt niet mee, daar is geen groep van te weten. */
        where not exists (
          select 1
            from dish_ingredients di
@@ -391,7 +391,7 @@ begin
                 de keuken en zegt `liever` er niets over; over de ingrediënten
                 gaan zou bijna elk gerecht optillen, en wat alles optilt
                 verschuift niets. Twaalf punten op honderd is de bedoelde
-                verschuiving — een paar plaatsen, niet bovenaan. */
+                verschuiving, een paar plaatsen, niet bovenaan. */
              round((45 * least(1, a.gram100 / 240.0)
                   + 35 * least(1, a.eiwit100 / 12.5)
                   + 20 * least(1, a.vezel100 / 5.0)
@@ -442,13 +442,13 @@ end $function$;
 
 
 comment on function public.kal_verzadiging(text, numeric, integer, integer) is
-  'Gerechten om te koken en producten om erbij te nemen, met de hoogste voorspelde verzadiging binnen een kcal-grens, en binnen wat de gebruiker in "Wat je lust" heeft aangegeven — groepen, keukens en weggeklikte producten. Zie 28, 29, 36 en 37.';
+  'Gerechten om te koken en producten om erbij te nemen, met de hoogste voorspelde verzadiging binnen een kcal-grens, en binnen wat de gebruiker in "Wat je lust" heeft aangegeven, groepen, keukens en weggeklikte producten. Zie 28, 29, 36 en 37.';
 
 grant execute on function public.kal_verzadiging(text, numeric, integer, integer) to anon, authenticated;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 3 — NAKIJKEN
+-- BLOK 3: NAKIJKEN
 -- ---------------------------------------------------------------------------
 --
 -- 1. STAAT ER VAN ALLEBEI NOG PRECIES ÉÉN?
@@ -458,7 +458,7 @@ grant execute on function public.kal_verzadiging(text, numeric, integer, integer
 --     order by 1;
 --
 --    → twee regels. `kal_eiwitrijk` met vier argumenten, `kal_verzadiging` met
---      vier. Meer regels betekent dat er een oude versie naast staat — dat is
+--      vier. Meer regels betekent dat er een oude versie naast staat, dat is
 --      precies wat er met bestand 35 misging.
 --
 -- 2. DRAAIT DE DATABASE WAT HIER STAAT?

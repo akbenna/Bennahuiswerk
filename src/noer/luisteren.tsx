@@ -1,5 +1,5 @@
 /**
- * LUISTEREN — de tekstblokken met hun knoppen
+ * LUISTEREN: de tekstblokken met hun knoppen
  *
  * Elk stukje tekst dat je kunt horen ziet er hetzelfde uit: het Arabisch groot,
  * de klank eronder, de betekenis eronder, en rechts twee knoppen. Het bolletje

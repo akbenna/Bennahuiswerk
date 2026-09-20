@@ -5,7 +5,7 @@
  * en dat is met opzet: die lijst is het verslag van de overzetting uit de oude
  * pagina en staat onder een vingerafdruk in de gouden waarden. Zou nieuwe stof
  * daar tussen komen, dan moest dat bewijs elk jaar opnieuw weggegooid worden om
- * de app kloppend te krijgen — en dan bewijst het niets meer.
+ * de app kloppend te krijgen, en dan bewijst het niets meer.
  *
  * Eigen id-reeks (`nw26_*`), dus geen enkele `seed_*` verschuift en geen
  * Leitner-kaart raakt los van zijn geschiedenis.
@@ -253,7 +253,7 @@ const RUW: Omit<Opgave, 'id'>[] = [
      Er stonden zes opgaven op niveau 1 (’t kofschip recht toe recht aan) en
      zeven op niveau 3 (een stam met een verborgen z of v). Op niveau 2 stond
      niets. Dat is geen schoonheidsfoutje: het Auto-niveau klimt van 1 naar 2
-     naar 3, en `volgendeKaart` pakt bij niveau 2 dan maar iets van 1 of 3 —
+     naar 3, en `volgendeKaart` pakt bij niveau 2 dan maar iets van 1 of 3,
      dus sprong hij van "gewerkt" rechtstreeks naar "verhuisd".
 
      Deze zes vullen die trede met één regel: een werkwoord dat al met een
@@ -283,7 +283,7 @@ const RUW: Omit<Opgave, 'id'>[] = [
   {p:'amine',v:'lezen',t:'Interpreteren',lvl:3,q:'Lees: "Het is hier wel érg netjes", zei papa, terwijl hij naar de lege koekjestrommel keek. Wat bedoelt papa waarschijnlijk?',a:'Hij vermoedt dat er gesnoept is',opties:['Hij vermoedt dat er gesnoept is','Hij vindt de kamer echt goed opgeruimd','Hij wil zelf een koekje pakken'],h:['Let op waar hij naar kijkt terwijl hij het zegt.'],s:'Papa zegt iets anders dan hij bedoelt.\nDat hij naar de lége trommel kijkt, verraadt waar het hem werkelijk om gaat.'},
 
   /* ---- Selma · open en gesloten lettergreep --------------------------------
-     De spellingregel van groep 5, en hij stond er met twee opgaven op — allebei
+     De spellingregel van groep 5, en hij stond er met twee opgaven op, allebei
      over meervoud, waardoor de regel zelf nergens geoefend werd. Deze zes gaan
      over het hakken en over wat je aan de klankgroep ziet, want dáár zit de
      keuze tussen één en twee medeklinkers. */
@@ -297,7 +297,7 @@ const RUW: Omit<Opgave, 'id'>[] = [
   /* ---- Selma · begrijpend lezen -------------------------------------------
      Rekenen stond op honderdvijfentachtig opgaven en taal op tweeëntachtig;
      lezen had er zevenenveertig, waarvan drieëntwintig in de lange teksten.
-     Woordbetekenis, volgorde en hoofdgedachte hadden er twee tot vier — te
+     Woordbetekenis, volgorde en hoofdgedachte hadden er twee tot vier, te
      weinig om een onderwerp mee te vullen. */
   {p:'selma',v:'lezen',t:'Woordbetekenis',lvl:2,q:'Lees: "De soep was flauw." Wat betekent "flauw"?',a:'er zit weinig smaak in',opties:['er zit weinig smaak in','het is erg heet','het is heel zout'],h:['Lees de zin nog een keer en denk aan hoe het zou smaken.'],s:'Flauw eten is eten waar weinig smaak in zit: er kan bijvoorbeeld te weinig zout bij.'},
   {p:'selma',v:'lezen',t:'Woordbetekenis',lvl:2,q:'Lees: "Youssef liep aarzelend naar voren." Wat betekent "aarzelend"?',a:'een beetje twijfelend',opties:['een beetje twijfelend','heel erg snel','boos'],h:['Lees de zin nog een keer en denk aan hoe hij loopt.'],s:'Wie aarzelt, twijfelt nog en doet het daarom langzaam en voorzichtig.'},

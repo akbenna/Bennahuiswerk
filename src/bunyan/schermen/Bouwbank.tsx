@@ -1,5 +1,5 @@
 /**
- * DE BOUWBANK — een pc samenstellen binnen een budget
+ * DE BOUWBANK: een pc samenstellen binnen een budget
  *
  * Het punt is niet dat er een lijstje onderdelen uitkomt maar dat de vijf
  * controles zichtbaar worden: past het voetje, past het geheugen, past het bord

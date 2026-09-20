@@ -5,7 +5,7 @@
  * getal dat er goed uitziet.
  *
  * 1. De band kan meeschalen vergeten. Een halve portie met de band van een
- *    hele is een maaltijd die twee keer zo onzeker lijkt als hij is — en, erger,
+ *    hele is een maaltijd die twee keer zo onzeker lijkt als hij is, en, erger,
  *    een hele portie met de band van een halve lijkt twee keer zo zeker.
  * 2. De slechtste graad kan een gemiddelde worden. Dan verdwijnt het geschatte
  *    scheutje olie tussen zes gewogen ingrediënten, en dat scheutje is bij deze
@@ -261,7 +261,7 @@ describe('duiding', () => {
     expect(d.eiwitPer100).toBe(4.0)     // en dít is waarom het toch te weinig is
     expect(d.vezel).toBe(10)
     /* De band hoort er ook bij te kloppen, en die is breed: 577 tot 1159 voor de
-       schaal. Bijna al die breedte komt uit één regel — de olie loopt van 270
+       schaal. Bijna al die breedte komt uit één regel, de olie loopt van 270
        tot 630 kcal. */
     const a = aggregaat(echt, echt.porties)
     expect(a.kcalLaag).toBe(577)
@@ -316,7 +316,7 @@ describe('hefbomen', () => {
   it('noemt niets om te verdubbelen als alles even eiwitrijk is', () => {
     /* Verdubbelen werkt alleen als het onderdeel de dichtheid omhoog trekt.
        Ligt alles op het gemiddelde, dan levert elke verdubbeling precies
-       hetzelfde getal op — en dan hoort de app te zwijgen in plaats van een
+       hetzelfde getal op, en dan hoort de app te zwijgen in plaats van een
        knop te tonen die niets doet. */
     const vlak: Maaltijd = {
       ...echt, porties: 1,
@@ -380,7 +380,7 @@ describe('aandelen', () => {
 /*  HET TWEEDE IJKPUNT                                                       */
 /*                                                                           */
 /*  De salade laat de hefbomen zien in het makkelijke geval: de grootste post */
-/*  is het vet. Dit gerecht doet dat niet — daar is het brood de grootste     */
+/*  is het vet. Dit gerecht doet dat niet: daar is het brood de grootste     */
 /*  post en het vet een theelepel. Zonder dit geval zou een rekenregel die    */
 /*  simpelweg "het vet" aanwijst er even goed doorheen komen.                 */
 /*                                                                           */
@@ -412,8 +412,8 @@ describe('het stokbroodtonijn als tweede ijkpunt', () => {
   })
 
   it('is een C en niet een D, omdat de olie hier een theelepel is', () => {
-    /* Dezelfde onzekerheid over dezelfde handeling — een lepel olie die niet
-       gewogen wordt — maar hier is het gevolg 63 kcal en bij de salade 360.
+    /* Dezelfde onzekerheid over dezelfde handeling (een lepel olie die niet
+       gewogen wordt) maar hier is het gevolg 63 kcal en bij de salade 360.
        Dat verschil hoort de graad uit te drukken, en dat doet hij. */
     expect(aggregaat(brood, 1).conf).toBe('C')
     expect(aggregaat(echt, echt.porties).conf).toBe('D')
@@ -462,7 +462,7 @@ describe('het stokbroodtonijn als tweede ijkpunt', () => {
 /*                                                                            */
 /*  "Tonijnsalade licht" is de onderste rij van de variantentabel, opgeslagen  */
 /*  als gerecht. Dat betekent dat er nu twee plekken zijn waar hetzelfde       */
-/*  getal vandaan komt — de tabel in het scherm en de rij in de database — en  */
+/*  getal vandaan komt (de tabel in het scherm en de rij in de database) en  */
 /*  twee plekken met hetzelfde getal lopen uiteen zodra iemand er één          */
 /*  aanraakt. Deze proef is het touwtje ertussen.                             */
 /* ------------------------------------------------------------------------- */
@@ -483,7 +483,7 @@ const licht: Maaltijd = {
 describe('Tonijnsalade licht', () => {
   it('is exact de vierde rij van de variantentabel', () => {
     /* Het touwtje. Verandert er een ingrediënt in het recept zonder dat het
-       origineel meeverandert — of andersom — dan valt dit om. */
+       origineel meeverandert (of andersom) dan valt dit om. */
     const vier = varianten(echt)[3]
     expect(vier?.label).toBe('allebei')
     expect(aggregaat(licht, licht.porties).kcal).toBe(vier?.kcal)

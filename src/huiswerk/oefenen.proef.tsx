@@ -2,7 +2,7 @@
  * HET OEFENSCHERM, OP GEDRAG GETOETST
  *
  * De klacht die hier beantwoord wordt: de app bleef dezelfde som stellen, ook
- * als die allang beheerst was. Dat was geen tekst maar gedrag — het scherm zag
+ * als die allang beheerst was. Dat was geen tekst maar gedrag: het scherm zag
  * er goed uit, er kwam alleen niets anders meer uit de voorraad. Een grep zou
  * het dus niet gevonden hebben, en een proef op `kiesVolgende` alleen ook niet:
  * de vernauwing zat in het scherm, dat bij een vast niveau de voorraad eerst
@@ -23,7 +23,7 @@ import { leegVoortgang, schoonVoortgang } from './opslag'
 import { verwerkAntwoord } from './uitslag'
 import { ECHT } from './toeval'
 
-/** Vier sommen in één onderwerp, verdeeld over drie niveaus — de vorm waarin
+/** Vier sommen in één onderwerp, verdeeld over drie niveaus, de vorm waarin
  *  `Delen` bij Amine in de voorraad staat, met kenbare antwoorden. */
 const STAPEL: Opgave[] = [
   { id: 'd1', p: 'amine', v: 'rekenen', t: 'Delen', lvl: 1, q: '6 ÷ 3', a: '2' },

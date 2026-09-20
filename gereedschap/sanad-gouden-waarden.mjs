@@ -148,7 +148,7 @@ const paren = [
 ]
 /* JSON kent geen `undefined`: waar het oude samenvoegen niets teruggaf, zou het
    veld anders stilletjes uit de gouden waarden verdwijnen en de vergelijking
-   met de nieuwe code — die daar `null` of de standaardwaarde zet — alsnog
+   met de nieuwe code (die daar `null` of de standaardwaarde zet) alsnog
    slagen. Aanvullen gebeurt daarom hier, in de opwekker, en niet in de toets. */
 const LEEG = { start: null, dag: '4', klaar: {}, cards: {}, notities: {}, alles: false, last: null, dagreeks: 0 }
 const aanvullen = (o) => ({ ...LEEG, ...o, start: o.start ?? null, last: o.last ?? null })
@@ -179,4 +179,4 @@ const uit = {
   stof, programma, roosters, reeksen, samen, openstaand, planning,
 }
 fs.writeFileSync('src/sanad/gouden-waarden.json', JSON.stringify(uit, null, 1) + '\n')
-console.log(`${O.TOT} weken, ${O.KAARTEN.length} kaarten, ${roosters.length} roosters, ${reeksen.length} reeksen — src/sanad/gouden-waarden.json`)
+console.log(`${O.TOT} weken, ${O.KAARTEN.length} kaarten, ${roosters.length} roosters, ${reeksen.length} reeksen, src/sanad/gouden-waarden.json`)

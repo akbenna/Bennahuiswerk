@@ -1,7 +1,7 @@
 -- =============================================================================
 -- EEN REGEL MAG UIT EEN MERKPRODUCT KOMEN
 --
--- Nog niet toegepast — draai dit vóór de app-versie die merkproducten toont.
+-- Nog niet toegepast: draai dit vóór de app-versie die merkproducten toont.
 --
 -- `kal_regels.bron` staat op een vaste lijst: handmatig, recept, bibliotheek,
 -- tekst-ai, foto-ai, import, nevo. Een regel die uit een merkproduct komt past
@@ -11,7 +11,7 @@
 -- laboratoriumbepaling achter zit, en juist dat onderscheid is de reden dat
 -- merkproducten een eigen tabel kregen. Hem als 'handmatig' wegschrijven kan
 -- wel, maar dan is een maand later niet meer te zien waar het getal vandaan
--- kwam — en dan staat er in het detailvenster ◇ waar ◈ hoort.
+-- kwam, en dan staat er in het detailvenster ◇ waar ◈ hoort.
 --
 -- Dus een achtste waarde. Eén regel, en niets bestaands verandert eraan.
 --

@@ -1,5 +1,5 @@
-/* Bunyan werkt zonder internet. De app is één bestand — de Python die erin
-   draait zit er gewoon in — dus die bewaren we, en bij het openen halen we hem
+/* Bunyan werkt zonder internet. De app is één bestand (de Python die erin
+   draait zit er gewoon in) dus die bewaren we, en bij het openen halen we hem
    opnieuw op zodat een nieuwe versie meteen binnenkomt; lukt dat niet, dan
    draait de bewaarde versie door. */
 const CACHE = 'bunyan-v2';

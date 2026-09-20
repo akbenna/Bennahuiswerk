@@ -7,7 +7,7 @@
  *
  * De laatste proef hieronder dekt een fout die in de oude code zat: `bewaar()`
  * zette een timer van tweeënhalve seconde en verder niets. Sloot je het tabblad
- * binnen die tijd, dan was wat je had gedaan weg — zonder melding, want er was
+ * binnen die tijd, dan was wat je had gedaan weg, zonder melding, want er was
  * niets misgegaan.
  */
 import { act, renderHook } from '@testing-library/react'

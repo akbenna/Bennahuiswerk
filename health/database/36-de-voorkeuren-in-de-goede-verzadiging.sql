@@ -1,5 +1,5 @@
 -- =============================================================================
--- DE VOORKEUREN IN DE GOEDE VERZADIGING — bestand 35 raakte de verkeerde functie
+-- DE VOORKEUREN IN DE GOEDE VERZADIGING, bestand 35 raakte de verkeerde functie
 --
 -- Toegepast 18 september 2026, en nagekeken met de controle uit blok 3:
 --
@@ -13,11 +13,11 @@
 -- WAT ER MIS WAS
 --
 -- Bestand 35 zette de voorkeuren in `kal_verzadiging`. Het zette ze in een
--- `kal_verzadiging` — niet in degene die de app aanroept.
+-- `kal_verzadiging`, niet in degene die de app aanroept.
 --
 -- De keten liep zo. Bestand 28 maakte `kal_verzadiging(text, numeric, integer)`:
 -- alleen producten, met een limiet. Bestand 29 gaf hem een bovenste helft met
--- gerechten erbij, en daarvoor was een vierde argument nodig — `p_gerechten` en
+-- gerechten erbij, en daarvoor was een vierde argument nodig, `p_gerechten` en
 -- `p_producten` in plaats van één `p_limiet`. Bestand 29 haalde de oude dus weg:
 --
 --   drop function if exists public.kal_verzadiging(text, numeric, integer);
@@ -32,7 +32,7 @@
 --
 -- Gevolg: "Wat vult het best" hield zich niet aan "Wat je lust". De functie die
 -- dat wel deed stond erin en werd door niets aangeroepen. Er kwam geen fout, geen
--- waarschuwing en geen leeg scherm — het werkte gewoon zoals eerst.
+-- waarschuwing en geen leeg scherm, het werkte gewoon zoals eerst.
 --
 -- HOE HET AAN HET LICHT KWAM
 --
@@ -54,7 +54,7 @@
 -- aangeroepen en staat alleen maar in de weg.
 --
 -- Twee: de vierarguments-versie van bestand 29 vervangen door dezelfde functie
--- mét de voorkeuren erin. De rest van die functie is letterlijk ongewijzigd —
+-- mét de voorkeuren erin. De rest van die functie is letterlijk ongewijzigd,
 -- de scores, de afkappunten, de zeven uitgesloten groepen, de naamzeef en de
 -- som die op één plek staat.
 --
@@ -102,7 +102,7 @@
 --
 -- Eerlijk erbij: die voorwaarde `a.soort = 'product'` doet op dit moment niets.
 -- Een keuken is 'marokkaans', 'turks', 'syrisch', 'surinaams', 'nederlands' of
--- 'overig' — dat staat als CHECK op `cultural_dishes` — en geen van die zes is
+-- 'overig' (dat staat als CHECK op `cultural_dishes`) en geen van die zes is
 -- een NEVO-groep. `groep = any(v_liever)` kan bij een gerecht dus nooit waar
 -- zijn, met of zonder die voorwaarde. De mutatieproef bevestigde dat: hem
 -- weghalen verandert niets.
@@ -118,8 +118,8 @@
 --
 -- `mijn_groepen` en `mijn_gerechten` markeren nog steeds alleen en sorteren
 -- nooit. Dat is wat je gezíen bent te eten; de voorkeur is wat je gezégd hebt.
--- Sorteren op het eerste is een lus — wie drie weken hetzelfde eet krijgt drie
--- weken hetzelfde voorgesteld — en op het tweede een grens. Zie de kop van
+-- Sorteren op het eerste is een lus, wie drie weken hetzelfde eet krijgt drie
+-- weken hetzelfde voorgesteld, en op het tweede een grens. Zie de kop van
 -- bestand 28 en `src/health/voorkeuren.ts`.
 --
 -- De drempel `score >= 45` blijft op de échte score staan en niet op de geduwde.
@@ -129,7 +129,7 @@
 --
 -- TERUGDRAAIEN
 --
--- Er valt niets terug te draaien aan inhoud — dit bestand raakt geen enkele rij.
+-- Er valt niets terug te draaien aan inhoud, dit bestand raakt geen enkele rij.
 -- Wil je terug naar de toestand van vóór de voorkeuren, draai dan blok 2 van
 -- bestand 29 opnieuw. Dan staat de vierarguments-versie er weer zonder
 -- voorkeuren, en de driearguments-versie blijft weg waar hij hoort.
@@ -148,7 +148,7 @@
 --     vlees eruit, en laat de rest staan
 --   · een gerecht met een ingrediënt zonder koppeling blijft staan
 --   · een gerecht met een FatSecret-id dat botst met de NEVO-code van vlees
---     blijft óók staan — dat is geen vlees
+--     blijft óók staan: dat is geen vlees
 --   · een gerecht met optioneel vlees valt wél af
 --   · "Vis" op liever zet zalm van de derde naar de tweede plaats, en de
 --     getoonde score blijft 48
@@ -168,7 +168,7 @@
 -- =============================================================================
 
 -- ---------------------------------------------------------------------------
--- BLOK 1 — DE OVERBODIGE FUNCTIE WEG
+-- BLOK 1: DE OVERBODIGE FUNCTIE WEG
 -- ---------------------------------------------------------------------------
 --
 -- Dit is de driearguments-versie die bestand 35 terugzette. Niets roept hem aan.
@@ -179,7 +179,7 @@ drop function if exists public.kal_verzadiging(text, numeric, integer);
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 2 — DE FUNCTIE DIE DE APP WÉL AANROEPT
+-- BLOK 2: DE FUNCTIE DIE DE APP WÉL AANROEPT
 -- ---------------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION public.kal_verzadiging(
@@ -206,7 +206,7 @@ begin
   end if;
 
   /* De voorkeuren uit "Wat je lust". Ontbreken ze, of staat er iets anders dan
-     een lijst, dan blijven het lege lijsten en verandert er niets — een profiel
+     een lijst, dan blijven het lege lijsten en verandert er niets, een profiel
      zonder voorkeuren hoort exact te krijgen wat het onder bestand 29 kreeg. */
   select
     case when jsonb_typeof(pr.instellingen->'voorkeuren'->'nooit') = 'array'
@@ -270,7 +270,7 @@ begin
        /* DE UITSLUITING BIJ EEN GERECHT, over de ingrediënten en niet over de
           groep: `g.keuken` is "surinaams" en geen tabelgroep. Eén ingrediënt uit
           een uitgezette groep is genoeg. Een ingrediënt zonder NEVO-koppeling
-          telt niet mee — daar is geen groep van te weten. */
+          telt niet mee, daar is geen groep van te weten. */
        where not exists (
          select 1
            from dish_ingredients di
@@ -324,7 +324,7 @@ begin
                 de keuken en zegt `liever` er niets over; over de ingrediënten
                 gaan zou bijna elk gerecht optillen, en wat alles optilt
                 verschuift niets. Twaalf punten op honderd is de bedoelde
-                verschuiving — een paar plaatsen, niet bovenaan. */
+                verschuiving, een paar plaatsen, niet bovenaan. */
              round((45 * least(1, a.gram100 / 240.0)
                   + 35 * least(1, a.eiwit100 / 12.5)
                   + 20 * least(1, a.vezel100 / 5.0)
@@ -381,10 +381,10 @@ grant execute on function public.kal_verzadiging(text, numeric, integer, integer
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 3 — NAKIJKEN
+-- BLOK 3: NAKIJKEN
 -- ---------------------------------------------------------------------------
 --
--- 1. STAAT ER NOG PRECIES ÉÉN? Dit is de belangrijkste van de vier — het is de
+-- 1. STAAT ER NOG PRECIES ÉÉN? Dit is de belangrijkste van de vier, het is de
 --    vraag die bestand 35 verkeerd beantwoordde.
 --
 --    select proname, pg_get_function_identity_arguments(oid) as argumenten
@@ -417,6 +417,6 @@ grant execute on function public.kal_verzadiging(text, numeric, integer, integer
 --      from jsonb_array_elements(kal_verzadiging('JOUW_TOKEN', 600, 3, 4)) e;
 --
 -- 4. EN LAAT HIJ DE REST STAAN? Een profiel zonder voorkeuren hoort exact te
---    krijgen wat het onder bestand 29 kreeg — zelfde volgorde, zelfde scores.
+--    krijgen wat het onder bestand 29 kreeg, zelfde volgorde, zelfde scores.
 --
 --    select jsonb_array_length(kal_verzadiging('JOUW_TOKEN', 600, 3, 4)) as aantal;

@@ -1,9 +1,9 @@
 /**
- * ZOUT — één omrekening, en waarom hij op één plek hoort
+ * ZOUT: één omrekening, en waarom hij op één plek hoort
  *
  * De database levert natrium in milligram; op een etiket staat zout in gram. Dat
  * zijn twee schrijfwijzen van hetzelfde, en wie ze door elkaar haalt zit er een
- * factor tweeënhalf naast — ruim genoeg om een advies om te draaien.
+ * factor tweeënhalf naast, ruim genoeg om een advies om te draaien.
  *
  * De omrekening is vastgelegd in de Europese etiketteringsverordening
  * 1169/2011, bijlage I: het zoutgehalte is het natriumgehalte maal 2,5. Dat is
@@ -14,7 +14,7 @@
  *
  * WAT ER OP HET SCHERM KOMT
  *
- * Zout, niet natrium. Niet omdat het nauwkeuriger is — het is dezelfde waarde —
+ * Zout, niet natrium. Niet omdat het nauwkeuriger is (het is dezelfde waarde) 
  * maar omdat het het woord is dat op de verpakking staat en in de spreekkamer
  * valt. "Twee gram zout" zegt iemand iets; "achthonderd milligram natrium" niet.
  *
@@ -35,7 +35,7 @@ export const ZOUTFACTOR = 2.5
  * Milligram natrium naar gram zout.
  *
  * Null blijft null. Een product waarvan het natrium niet bekend is heeft geen
- * zoutwaarde van nul — het heeft er geen, en dat is iets anders. Het scherm
+ * zoutwaarde van nul, het heeft er geen, en dat is iets anders. Het scherm
  * hoort daar een streepje te tonen en geen 0,0.
  */
 export function zoutGram(natriumMg: number | null | undefined): number | null {

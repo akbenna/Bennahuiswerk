@@ -1,5 +1,5 @@
 /**
- * DE VLAGGETJES BIJ EEN PRODUCT — en waarom er maar drie zijn
+ * DE VLAGGETJES BIJ EEN PRODUCT, en waarom er maar drie zijn
  *
  * De geleverde beeldset had er zes: rijk aan eiwit, rijk aan vezels, gezonde
  * keuze, goed voor je hart, voordelig, favoriet. Drie daarvan haalden het niet,
@@ -8,7 +8,7 @@
  * "Goed voor je hart" is een gezondheidsclaim. Die zijn in de EU alleen
  * toegestaan als ze op de toegelaten lijst staan, met een precies voorgeschreven
  * formulering en voorwaarden per stof. Een app die dat zinnetje onder een
- * willekeurig product zet doet een uitspraak die hij niet mag doen — en in deze
+ * willekeurig product zet doet een uitspraak die hij niet mag doen, en in deze
  * app zou hij bovendien uit niets volgen.
  *
  * "Gezonde keuze" is erger, want het klinkt onschuldig. Het is een oordeel over
@@ -34,7 +34,7 @@
  * van deze app ligt.
  *
  * Een vlaggetje verschijnt alleen als de waarde er is. Ontbreekt het vezel- of
- * natriumgehalte, dan staat er niets — en niet "bevat weinig", want dat is een
+ * natriumgehalte, dan staat er niets, en niet "bevat weinig", want dat is een
  * uitspraak over iets wat we niet weten.
  */
 

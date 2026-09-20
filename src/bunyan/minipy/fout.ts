@@ -1,7 +1,7 @@
 /**
  * DE FOUT ZELF
  *
- * Dit is het hart van MINIPY. Niet dat de taal werkt — dat doet elke vertaler —
+ * Dit is het hart van MINIPY. Niet dat de taal werkt (dat doet elke vertaler) 
  * maar dat een kind van elf begrijpt wát er misging. `SyntaxError: invalid
  * syntax` leert niemand iets; "regel 3: je bent de dubbele punt vergeten aan
  * het eind van de if-regel" is het halve onderwijs.

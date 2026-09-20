@@ -8,7 +8,7 @@
  * antwoord?" een vraag die niemand beantwoordt.
  *
  * De drie functies zijn letterlijk die van de oude app, inclusief de
- * volgorde waarin ze uit de bron putten — anders rolt er bij hetzelfde zaad
+ * volgorde waarin ze uit de bron putten, anders rolt er bij hetzelfde zaad
  * een andere som uit en is de vergelijking waardeloos.
  */
 import type { Toeval } from './gegevens/soorten'

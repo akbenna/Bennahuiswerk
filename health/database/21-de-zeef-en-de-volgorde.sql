@@ -33,7 +33,7 @@
 -- spaghetti en shoarma; op 0,5 krijg je haring en donut. De trigram-maat kan
 -- deze klus niet doen, en dat had ik moeten meten vóór ik hem erin zette in
 -- plaats van erna. De proef in bestand 20 keek naar aantallen en naar één
--- onzinwoord, en niet naar wat er in de rijen stond — precies de fout die aan
+-- onzinwoord, en niet naar wat er in de rijen stond, precies de fout die aan
 -- het begin van deze hele reeks bij "mayonaise" gemaakt werd.
 --
 -- WAT ER NU GEBEURT
@@ -47,7 +47,7 @@
 --
 -- Maar een kort skelet kan veel producten raken: `brt` staat voor brood, bereid,
 -- bread en broad samen, en die zitten in 285 producten. Daar is de trigram wél
--- goed voor — als sorteersleutel binnen wat het skelet doorlaat:
+-- goed voor: als sorteersleutel binnen wat het skelet doorlaat:
 --
 --     broot     -> Glutenvrij brood ...    0,67   (bereid zakt weg)
 --     yoghurd   -> Yoghurt volle/magere    0,75   (gort zakt weg)
@@ -55,7 +55,7 @@
 --
 -- WAT ER DAARDOOR VERANDERT AAN BLOK 2
 --
--- Zonder de trigram-zeef vindt "sjoarma" niets meer — het skelet `sgrm` is niet
+-- Zonder de trigram-zeef vindt "sjoarma" niets meer, het skelet `sgrm` is niet
 -- `srm`, want de sj en de sh worden verschillend behandeld. Dat is geen verlies
 -- maar een verplaatsing: zo'n woord hoort een synoniem te zijn en geen toevallige
 -- gelijkenis. Blok 2 draait de koppeling uit bestand 20 opnieuw; die is
@@ -64,7 +64,7 @@
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 1 — DE TWEE FUNCTIES
+-- BLOK 1: DE TWEE FUNCTIES
 -- ---------------------------------------------------------------------------
 --
 -- `kal_woordskelet` blijft zoals hij is; die stond niet ter discussie.
@@ -99,7 +99,7 @@ AS $function$
   bron as (
     -- nevo_actief en niet nevo_foods: dit is de licentiepoort. Staat de licentie
     -- van de actieve versie niet op gecontroleerd, dan is deze bron leeg en
-    -- vindt het zoeken niets — precies wat de schakelaar hoort te doen. Dat geldt
+    -- vindt het zoeken niets: precies wat de schakelaar hoort te doen. Dat geldt
     -- ook voor de terugval hieronder: die leest dezelfde bron.
     select n.nevo_code, n.naam_nl, n.groep, n.energie_kcal_per_100g,
            n.eiwit_g, n.vet_g, n.koolhydraten_g, n.vezels_g,
@@ -177,7 +177,7 @@ AS $function$
   --
   -- De goede treffers en de ruis liggen in dezelfde band. Er is geen drempel die
   -- ze scheidt: op 0,7 verdwijnen lasagne, falafel en spaghetti, op 0,5 komen
-  -- haring en donut binnen. Het scherm liet dat ook zien — wie "harira" zocht
+  -- haring en donut binnen. Het scherm liet dat ook zien: wie "harira" zocht
   -- kreeg vier haringen en drie sperziebonen (Frans: haricots) onder de kop
   -- "dit lijkt erop". Dat is erger dan een leeg scherm.
   --
@@ -190,7 +190,7 @@ AS $function$
   --     skeletlengte 5   92% uniek
   --
   -- Dus: het skelet is de zeef. Maar een korte botsing kan wel veel producten
-  -- raken — `brt` (brood, bereid, bread, broad) zit in 285 producten — en dan
+  -- raken (`brt` (brood, bereid, bread, broad) zit in 285 producten) en dan
   -- staat het goede antwoord er wel tussen maar niet bovenaan.
   --
   -- Daar komt de trigram alsnog van pas, niet als zeef maar als volgorde. Wie
@@ -296,8 +296,8 @@ begin
     -- DE GERECHTEN, MET TWEE DINGEN ERBIJ
     --
     -- Ten eerste: `names` wordt nu meegezocht. Die kolom staat er vanaf het
-    -- begin — alternatieve namen per taal, met sleutels nl, darija_lat,
-    -- darija_ar, tarifit_lat, ar, tr en srn — en werd door het zoeken
+    -- begin: alternatieve namen per taal, met sleutels nl, darija_lat,
+    -- darija_ar, tarifit_lat, ar, tr en srn, en werd door het zoeken
     -- doodleuk overgeslagen. Wie zijn eten in het Darija of het Turks noemt
     -- vond niets, terwijl het antwoord al in de rij stond. Dat is geen nieuwe
     -- inhoud maar inhoud die er lag en niet bereikbaar was.
@@ -305,7 +305,7 @@ begin
     -- Ten tweede: dezelfde terugval als bij NEVO, en om dezelfde reden alleen
     -- op het skelet. De trigram-zeef haalde hier net zo goed onzin binnen.
     -- `jsonb_agg` geeft NULL bij een lege verzameling, dus een `coalesce` met
-    -- drie takken doet precies wat er nodig is — de tweede tak wordt alleen
+    -- drie takken doet precies wat er nodig is, de tweede tak wordt alleen
     -- berekend als de eerste niets opleverde, en de derde alleen als beide
     -- niets gaven.
     'gerechten', coalesce(
@@ -377,7 +377,7 @@ end $function$
 ;
 
 -- ---------------------------------------------------------------------------
--- BLOK 2 — DE SYNONIEMEN OPNIEUW, NU DE ZEEF STRENGER IS
+-- BLOK 2: DE SYNONIEMEN OPNIEUW, NU DE ZEEF STRENGER IS
 -- ---------------------------------------------------------------------------
 --
 -- Dezelfde lijst als in bestand 20, met twee toevoegingen: `%kebab%` naast
@@ -425,7 +425,7 @@ where f.id = nieuw.id;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 3 — NAKIJKEN, EN NU WÉL NAAR DE RIJEN
+-- BLOK 3: NAKIJKEN, EN NU WÉL NAAR DE RIJEN
 -- ---------------------------------------------------------------------------
 
 -- 1. De vier controlewoorden. Ongeschonden: mayonaise 4 · halfvolle melk 20 ·
@@ -444,7 +444,7 @@ from unnest(array['lesagna','spagetti','komkomer','yoghurd','havermoud',
 order by treffers, w;
 
 -- 3. DE BELANGRIJKSTE. Deze twee gaven de ruis, en horen nu leeg te zijn of het
---    goede product te geven — geen haring en geen donut. Kijk naar de námen,
+--    goede product te geven: geen haring en geen donut. Kijk naar de námen,
 --    niet naar het aantal. Dat was de fout in bestand 20.
 select 'harira' as term, naam_nl, groep, benadering from kal_nevo_zoek('harira', 8)
 union all

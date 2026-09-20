@@ -1,5 +1,5 @@
 -- =============================================================================
--- WAT VULT HET BEST — de derde laag onder de coach
+-- WAT VULT HET BEST: de derde laag onder de coach
 --
 -- Toegepast op 13 september 2026. De vijf controlevragen uit blok 2 zijn erna
 -- gedraaid en gaven het antwoord dat eronder staat; de uitslag op de echte
@@ -8,7 +8,7 @@
 -- Sinds 18 september 2026 achterhaald, en in twee stappen. Bestand 29 gaf
 -- `kal_verzadiging` een vierde argument en haalde de versie hieronder weg;
 -- bestand 36 zette daar de voorkeuren uit "Wat je lust" in. Draai dit dus niet
--- opnieuw — dan staat de oude driearguments-versie er weer naast, en dat is
+-- opnieuw: dan staat de oude driearguments-versie er weer naast, en dat is
 -- precies de fout die bestand 35 maakte. Wat er in de database hoort te staan is
 -- de md5 in de kop van bestand 36.
 --
@@ -48,7 +48,7 @@
 -- De klassieke meting is de verzadigingsindex van Holt SH, Miller JC, Petocz P,
 -- Farmakalidis E (Eur J Clin Nutr 1995;49:675-90): achtendertig voedingsmiddelen,
 -- isocalorische porties, wit brood op honderd, gekookte aardappel als hoogste op
--- 323 procent. Dat is een méting en het zou de beste bron zijn — maar hij dekt
+-- 323 procent. Dat is een méting en het zou de beste bron zijn, maar hij dekt
 -- achtendertig producten en deze tabel heeft er 2328. Er is geen koppeling te
 -- maken die niet grotendeels verzinnen is.
 --
@@ -102,7 +102,7 @@
 --
 -- Daarom twee zeven, en ze zijn allebei te toetsen. Een lijst met groepen die
 -- eruit gaan, en een regexp op de naam voor de drankwoorden die binnen een
--- andere groep zitten — "Yoghurtdrank" staat bij Melk en melkproducten en komt
+-- andere groep zitten: "Yoghurtdrank" staat bij Melk en melkproducten en komt
 -- er dus niet via de groep uit.
 --
 -- EEN ZEEF DIE IK EERST FOUT HAD
@@ -137,7 +137,7 @@
 --
 -- Op het scherm staat niet de score voorop maar het aantal gram dat je voor
 -- honderd kilocalorieën krijgt. Dat is een deling van twee gemeten waarden uit
--- de tabel en verder niets — geen weging, geen aanname. De score bepaalt de
+-- de tabel en verder niets: geen weging, geen aanname. De score bepaalt de
 -- volgorde; het gram-getal is wat je kunt narekenen en wat de keuze maakt.
 --
 -- WAT JE AL EET WORDT GEMARKEERD, NIET VOORAAN GEZET
@@ -167,7 +167,7 @@
 -- =============================================================================
 
 -- ---------------------------------------------------------------------------
--- BLOK 1 — DE FUNCTIE
+-- BLOK 1: DE FUNCTIE
 -- ---------------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION public.kal_verzadiging(
@@ -193,7 +193,7 @@ begin
   return coalesce((
     with mijn_groepen as (
       -- De hoeken waar deze gebruiker werkelijk uit eet. Alleen om te
-      -- markeren, nooit om op te sorteren — zie de toelichting bovenaan.
+      -- markeren, nooit om op te sorteren, zie de toelichting bovenaan.
       select distinct n.groep
         from kal_regels r
         join nevo_actief n on n.nevo_code = r.nevo_code
@@ -275,7 +275,7 @@ grant execute on function public.kal_verzadiging(text, numeric, integer) to anon
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 2 — NAKIJKEN
+-- BLOK 2: NAKIJKEN
 -- ---------------------------------------------------------------------------
 --
 -- Draai deze vier na het toepassen. Ze horen alle vier het antwoord onder de
@@ -316,8 +316,8 @@ grant execute on function public.kal_verzadiging(text, numeric, integer) to anon
 --
 -- DE TWEE ZEVEN ZIJN ALLEBEI DRAGEND, EN DAT IS GEMETEN
 --
--- Op een nagebouwde tabel in een lokale Postgres — twaalf producten met hun
--- echte waarden plus de vijf die er met opzet niet in horen — geeft de functie
+-- Op een nagebouwde tabel in een lokale Postgres, twaalf producten met hun
+-- echte waarden plus de vijf die er met opzet niet in horen, geeft de functie
 -- tien voorstellen, met groente erin, een per groep, en geen smaakmaker of
 -- drank. Daarna twee mutanten:
 --

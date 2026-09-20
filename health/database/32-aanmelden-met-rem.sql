@@ -1,5 +1,5 @@
 -- =============================================================================
--- EEN REM OP HET AANMELDEN — voordat er meer dan één mens in zit
+-- EEN REM OP HET AANMELDEN: voordat er meer dan één mens in zit
 --
 -- Toegepast 18 september 2026. Niet hier nagekeken: dat rust op een
 -- mededeling en niet op een meting.
@@ -16,8 +16,8 @@
 --
 -- ER ZAT GEEN REM OP
 --
--- `kal_aanmelden` staat open voor `anon` — dat moet ook, anders kan niemand
--- inloggen — en telde niets. Wie een accountnaam kent mag onbeperkt raden.
+-- `kal_aanmelden` staat open voor `anon`, dat moet ook, anders kan niemand
+-- inloggen, en telde niets. Wie een accountnaam kent mag onbeperkt raden.
 --
 -- Met bcrypt op kostenfactor 10 duurt één poging ergens rond de vijftig
 -- milliseconde. Dat is traag genoeg om een lange zin veilig te houden en ruim
@@ -31,7 +31,7 @@
 -- De voor de hand liggende bouw is: mislukte poging wegschrijven, teller
 -- ophogen, en `raise exception` als de teller vol is.
 --
--- Die werkt niet. `raise exception` draait de transactie terug — inclusief de
+-- Die werkt niet. `raise exception` draait de transactie terug, inclusief de
 -- rij die net was weggeschreven. De teller blijft dus eeuwig op nul staan en de
 -- rem grijpt nooit. Het is een rem die er ís, die getest lijkt, en die niets
 -- doet.
@@ -43,7 +43,7 @@
 -- Dat is een verandering in het contract, en de app is in dezelfde commit
 -- meeveranderd: `toestand.ts` kijkt nu of er een token in het antwoord zit.
 -- Zou iemand dat vergeten, dan lijkt een mislukte aanmelding op een geslaagde
--- zonder token — vandaar dat daar een proef op staat.
+-- zonder token: vandaar dat daar een proef op staat.
 --
 -- `kal_registreren` blijft wél gooien. Daar is geen teller die moet overleven,
 -- en "dat account bestaat al" hoort een fout te zijn.
@@ -56,8 +56,8 @@
 -- Wie jouw accountnaam kent kan je daarmee een kwartier buitensluiten. Dat is
 -- de prijs, en hij is bewust betaald: de rem telt per account en niet per
 -- afzender, want een `SECURITY DEFINER`-functie achter PostgREST ziet geen
--- betrouwbaar afzenderadres. Tien is daarom ruim — een mens die zich vertypt
--- komt er niet aan — en het blokkeren is tijdelijk en niet blijvend.
+-- betrouwbaar afzenderadres. Tien is daarom ruim: een mens die zich vertypt
+-- komt er niet aan, en het blokkeren is tijdelijk en niet blijvend.
 --
 -- Wat de rem níet is: bescherming tegen iemand die duizend verschillende
 -- accounts probeert met één veelgebruikt wachtwoord. Daar helpt alleen een
@@ -69,7 +69,7 @@
 -- toetst bovendien tegen een lijst van veelgebruikte wachtwoorden. Het bezwaar
 -- hierboven is daar opgelost door de regel alleen te laten gelden bij het
 -- zétten van een wachtwoord. `kal_aanmelden` kijkt niet naar lengte en dat moet
--- zo blijven — wie er al is komt gewoon binnen.
+-- zo blijven: wie er al is komt gewoon binnen.
 --
 -- TERUGDRAAIEN
 --
@@ -84,12 +84,12 @@
 BEGIN;
 
 -- ---------------------------------------------------------------------------
--- BLOK 1 — WAAR DE POGINGEN IN STAAN
+-- BLOK 1: WAAR DE POGINGEN IN STAAN
 -- ---------------------------------------------------------------------------
 --
 -- Alleen de accountnaam en het moment. Geen wachtwoord, ook niet gehasht, en
 -- geen afzender: wat je niet bewaart kan niet uitlekken. De tabel is bovendien
--- niet leesbaar voor anon — net als elke andere tabel hier.
+-- niet leesbaar voor anon, net als elke andere tabel hier.
 
 create table if not exists public.kal_aanmeld_poging (
   account text not null,
@@ -107,7 +107,7 @@ revoke all on public.kal_aanmeld_poging from anon, authenticated;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 2 — AANMELDEN, MET DE REM EROP
+-- BLOK 2: AANMELDEN, MET DE REM EROP
 -- ---------------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION public.kal_aanmelden(p_account text, p_ww text)
@@ -174,7 +174,7 @@ COMMIT;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 3 — NAKIJKEN
+-- BLOK 3: NAKIJKEN
 -- ---------------------------------------------------------------------------
 --
 -- 1. Een verkeerd wachtwoord geeft een fout en géén token, en laat een poging

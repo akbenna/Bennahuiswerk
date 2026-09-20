@@ -1,5 +1,5 @@
 /**
- * KAART — niet hoeveel je kent, maar hoe stevig het staat.
+ * KAART, niet hoeveel je kent, maar hoe stevig het staat.
  */
 import { useState } from 'react'
 import { Blad, BladKop, Kaart as Blok } from '../onderdelen'
@@ -153,7 +153,7 @@ export function Kaart(
 
 /**
  * Een vakje op de kaart zegt zonder naam niets, en op een telefoon is er geen
- * muisaanwijzer om hem uit te lezen. Aantikken opent daarom de gegevens — en
+ * muisaanwijzer om hem uit te lezen. Aantikken opent daarom de gegevens, en
  * meteen de enige handeling die je daar wilt doen: dit tot je doel maken.
  */
 function SoeraBlad(

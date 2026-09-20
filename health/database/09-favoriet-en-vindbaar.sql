@@ -11,7 +11,7 @@
 -- Een lijst op alfabet is een lijst waarin je zoekt. Wie twee of drie gerechten
 -- bewaart merkt dat niet; wie er vijftien heeft wel. Het sterretje is de
 -- goedkoopste sortering die er is: jij zegt wat er bovenaan hoort, in plaats
--- van dat de app het afleidt uit hoe vaak je iets gegeten hebt — want dat laatste
+-- van dat de app het afleidt uit hoe vaak je iets gegeten hebt, want dat laatste
 -- straft precies het gerecht af dat je nét bewaard hebt.
 --
 -- Bij het opnieuw bewaren onder dezelfde naam blijft het sterretje staan. Anders
@@ -21,7 +21,7 @@
 -- HET ZOEKVELD
 --
 -- Dit is de belangrijkste van de twee. Wie "tonijn" typt zoekt niet naar de
--- vierentwintig tonijnregels van NEVO maar naar zíjn tonijnsalade — en die stond
+-- vierentwintig tonijnregels van NEVO maar naar zíjn tonijnsalade, en die stond
 -- er niet tussen, want kal_zoeken keek in NEVO, in de gerechtenbibliotheek en in
 -- de eigen producten, en niet in de eigen maaltijden. Het gevolg was een app die
 -- het antwoord al had en het niet liet zien.

@@ -3,7 +3,7 @@
  *
  * Waarom dit een apart bestand is, en geen aanvulling op `sjablonen.ts`: die
  * lijst is het verslag van de overzetting uit de oude pagina en ligt onder een
- * vingerafdruk in de gouden waarden — aantal én volgorde van de id's. Nieuwe
+ * vingerafdruk in de gouden waarden, aantal én volgorde van de id's. Nieuwe
  * sjablonen daartussen zetten betekent dat bewijs weggooien. Dezelfde reden
  * waarom `schooljaar2627.ts` naast `seed.ts` staat.
  *
@@ -23,7 +23,7 @@
  * DE PROEF
  *
  * `sjablonen-extra.proef.ts` draait elk sjabloon hieronder honderden keren en
- * rekent het antwoord terug uit de getallen die in de vraag staan — dus uit wat
+ * rekent het antwoord terug uit de getallen die in de vraag staan, dus uit wat
  * het kind leest, niet uit dezelfde variabele. Wie hier een som verandert, moet
  * daar de narekening meeveranderen; dat is precies de bedoeling.
  *
@@ -58,7 +58,7 @@ const klok = (u: number, m: number): string => `${u}:${String(m).padStart(2, '0'
 
 /* --------------------------------------------------------------- woordlijsten
    Alles hieronder is met de hand nagelopen. De proef controleert wat er
-   mechanisch aan te controleren valt — geen dubbele regels, een antwoord dat
+   mechanisch aan te controleren valt, geen dubbele regels, een antwoord dat
    tussen de opties staat, een afleider die niet toevallig ook goed is. */
 
 /** Woorden met ei of ij. De afleider ontstaat door het ene in het andere om te
@@ -74,7 +74,7 @@ const AUOU = ['blauw', 'goud', 'pauw', 'koud', 'nauw', 'vrouw', 'saus', 'hout',
   'flauw', 'zout', 'schouder', 'kabouter', 'lauw', 'auto', 'kous', 'woud'] as const
 
 /** Een d of een t aan het eind, met het meervoud erbij. Het meervoud staat in de
- *  vraag: dat ís de regel — verleng het woord en je hoort welke letter het is. */
+ *  vraag: dat ís de regel: verleng het woord en je hoort welke letter het is. */
 const DOFT: ReadonlyArray<readonly [string, string]> = [
   ['hond', 'honden'], ['kat', 'katten'], ['hand', 'handen'], ['gat', 'gaten'],
   ['bed', 'bedden'], ['pet', 'petten'], ['hoed', 'hoeden'], ['voet', 'voeten'],
@@ -107,7 +107,7 @@ const KLANK: ReadonlyArray<readonly [string, 'korte klank' | 'lange klank']> = [
   ['deur', 'lange klank'], ['zon', 'korte klank'], ['boot', 'lange klank'],
 ]
 
-/** ng of nk, altijd in een zin — los zijn het vaak twee bestaande woorden, en
+/** ng of nk, altijd in een zin, los zijn het vaak twee bestaande woorden, en
  *  dan is er geen goed antwoord. */
 const NGNK: ReadonlyArray<readonly [string, string, string]> = [
   ['Ik ben ... voor de grote hond.', 'bang', 'bank'],
@@ -230,7 +230,7 @@ const ALFABET = ['meeuw', 'meel', 'meisje', 'maan', 'modder', 'mist', 'markt', '
  * De woordlijsten, bij elkaar, voor de proef. Die controleert wat er mechanisch
  * aan te controleren valt: geen dubbele regels, een afleider die echt verschilt,
  * een antwoord dat tussen de opties staat. De betekenis zelf is met de hand
- * nagelopen — dat kan een proef niet voor je doen.
+ * nagelopen, dat kan een proef niet voor je doen.
  */
 export const LIJSTEN = {
   EIIJ, AUOU, DOFT, KLEIN, MEERVOUD, KLANK, NGNK, CHT, HAK, SAMEN,

@@ -8,13 +8,13 @@
 
   Hier draait de JavaScript en de HTML die het kind zelf typt. Dat kan niet in
   de app zelf: een oneindige lus zou het scherm bevriezen, en een typefout zou
-  de app kunnen platleggen — en dan is er voor een kind van elf geen verschil
+  de app kunnen platleggen, en dan is er voor een kind van elf geen verschil
   meer tussen "mijn programma klopt niet" en "de computer is stuk".
 
   Waarom een eigen bestand en geen srcdoc, zoals vroeger: een srcdoc-frame erft
   de policy van de pagina eromheen, en die verbiedt losse scripts. Dit bestand
-  heeft zijn eigen policy in vercel.json, met precies één uitzondering — losse
-  scripts mogen hier — en het frame staat in `sandbox="allow-scripts"`. Zonder
+  heeft zijn eigen policy in vercel.json, met precies één uitzondering (losse
+  scripts mogen hier) en het frame staat in `sandbox="allow-scripts"`. Zonder
   allow-same-origin krijgt het een eigen herkomst: wat hier draait kan niet bij
   de opslag, de sleutels of het scherm van de app.
 

@@ -179,7 +179,7 @@ describe('wat er gewoon doorheen hoort', () => {
  * langs het scherm heen.
  *
  * Twee kopieën lopen uit elkaar zodra iemand er één aanpast. Deze proef leest
- * het SQL-bestand en legt het ernaast. Wat hij níet kan is plpgsql uitvoeren —
+ * het SQL-bestand en legt het ernaast. Wat hij níet kan is plpgsql uitvoeren,
  * daarvoor is een database nodig en die staat niet in de poort. Wat hij dus
  * bewaakt is de lijst en het getal, de twee dingen die je in één van beide
  * bestanden zou veranderen en in het andere vergeten.

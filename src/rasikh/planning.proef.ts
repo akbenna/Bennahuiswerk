@@ -2,7 +2,7 @@
  * DE PLANNER BEWEZEN
  *
  * Niet tegen wat ik dacht dat eruit moest komen, maar tegen wat de oude,
- * gedraaide code wérkelijk teruggaf — over dertig planningen, veertig
+ * gedraaide code wérkelijk teruggaf, over dertig planningen, veertig
  * beoordelingen, tien vastzettingen en vijfentwintig samenvoegingen. Zie
  * gereedschap/rasikh-gouden-waarden.mjs.
  *

@@ -3,7 +3,7 @@
 /** Een heel getal van a tot en met b. */
 export const ri = (a: number, b: number): number => Math.floor(Math.random() * (b - a + 1)) + a
 
-/** Eén willekeurig element. Werpt niet bij een lege lijst maar geeft undefined —
+/** Eén willekeurig element. Werpt niet bij een lege lijst maar geeft undefined,
  *  de aanroepers hieronder geven altijd een gevulde lijst mee. */
 export const pak = <T,>(a: readonly T[]): T | undefined => a[Math.floor(Math.random() * a.length)]
 

@@ -1,5 +1,5 @@
 /**
- * HET DAGVERSLAG — één keer vertellen, één keer goedkeuren
+ * HET DAGVERSLAG: één keer vertellen, één keer goedkeuren
  *
  * Het invoervel logt per moment: je tikt een vak aan, zoekt, kiest een portie.
  * Dat werkt, en op een dag dat je er geen zin in hebt werkt het niet, want dan
@@ -8,8 +8,8 @@
  * zonder regels niet als "onbekend" maar telt hem mee als een dag waarop er
  * weinig gegeten is.
  *
- * Dus deze weg: je vertelt je dag in één keer — ingesproken met de microfoon
- * van je eigen toetsenbord, of getypt — en de herkenning verdeelt hem over de
+ * Dus deze weg: je vertelt je dag in één keer (ingesproken met de microfoon
+ * van je eigen toetsenbord, of getypt) en de herkenning verdeelt hem over de
  * vier momenten. Jij kijkt na en keurt in één keer goed.
  *
  * WAT HIER STAAT EN WAT NIET
@@ -24,7 +24,7 @@
  * DE REGEL DIE ALLES DRAAGT
  *
  * Een regel zonder moment wordt niet opgeslagen. Niet in 'tussendoor' gedumpt,
- * niet op goed geluk bij het diner gezet — hij blijft staan tot jij hem
+ * niet op goed geluk bij het diner gezet, hij blijft staan tot jij hem
  * aanwijst. Dat lijkt streng en het is de hele reden dat dit vel te vertrouwen
  * is: de herkenning mag raden, maar een gok die er net zo uitziet als een
  * zekerheid is precies wat je niet wilt in iets wat je in één tik goedkeurt.
@@ -70,7 +70,7 @@ export interface Optelling {
  * Van de herkenning naar keuzes.
  *
  * Het moment dat het model noemt wordt overgenomen, en anders wordt het
- * 'onbekend'. Hier wint het model dus wél — anders dan in het invoervel, waar
+ * 'onbekend'. Hier wint het model dus wél: anders dan in het invoervel, waar
  * het moment van het vel voorgaat. Dat is geen inconsequentie maar hetzelfde
  * principe: het vel weet het daar beter omdat jij het net hebt aangetikt, en
  * hier heb je niets aangetikt. Het verslag is het enige dat het weet.
@@ -120,12 +120,12 @@ export function weglaten(keuzes: readonly Keuze[], sleutel: number): Keuze[] {
  *
  * Niet alleen het punt: de ondergrens en de bovengrens tellen op tot de
  * ondergrens en de bovengrens van het geheel. Dat is de stelregel van deze app
- * op de plek waar hij het makkelijkst sneuvelt — een totaal is precies het
+ * op de plek waar hij het makkelijkst sneuvelt, een totaal is precies het
  * getal waarvan je denkt dat het wel exact zal zijn.
  *
  * Dit is optellen en geen foutenvoortplanting: de grenzen worden bij elkaar
  * opgeteld en niet in kwadratuur. Dat geeft een bredere band dan statistisch
- * nodig, en dat is hier de goede kant om fout te zitten — de porties van één
+ * nodig, en dat is hier de goede kant om fout te zitten, de porties van één
  * dag zijn niet onafhankelijk (wie royaal opschept doet dat de hele dag), dus
  * de fouten heffen elkaar niet uit zoals kwadratuur aanneemt.
  */
@@ -159,7 +159,7 @@ export function nogTePlaatsen(keuzes: readonly Keuze[]): number {
    DE TRAININGEN
    --------------------------------------------------------------------------
 
-   Een andere tabel en een ander pad — `kal_rij_toevoegen` per rij, terwijl het
+   Een andere tabel en een ander pad, `kal_rij_toevoegen` per rij, terwijl het
    eten in één keer via `kal_regels_toevoegen` gaat. Voor de gebruiker is het
    één knop; dat de database er twee wegen voor heeft is niet zijn probleem.
 

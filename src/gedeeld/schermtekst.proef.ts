@@ -37,10 +37,12 @@
  *
  * Wat hij niet dekt is commentaar, en dat is met opzet. Zie hierboven.
  */
+import { execFileSync } from 'node:child_process'
 import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import ts from 'typescript'
 import { describe, expect, it } from 'vitest'
+import { norm } from '@/huiswerk/nakijken'
 
 const EM = '\u2014'
 
@@ -117,5 +119,69 @@ describe('geen gedachtestreepjes in wat de lezer ziet', () => {
   it('leest een sjabloon met een waarde erin in stukken, en ziet ze alle drie', () => {
     const t = schermteksten('p.ts', 'const a = `kop ' + EM + ' ${x} ' + EM + ' staart`')
     expect(t.filter((x) => x.tekst.includes(EM))).toHaveLength(2)
+  })
+})
+
+/**
+ * EN DE REST VAN DE REPO
+ *
+ * Het begon bij de schermen, ging door de lesteksten en eindigde bij het
+ * commentaar, de SQL, de opmaak, de cursuspagina's en de handleidingen. Wat
+ * hieronder staat is de eenvoudigste vorm van dezelfde regel: het teken komt
+ * nergens meer voor, behalve op de vier plekken waar het er hoort.
+ *
+ * WAT ER WÉL MAG, EN WAAROM
+ *
+ * `gereedschap/oud/` is het archief van de oude HTML-pagina's waaruit de zes
+ * leer-apps zijn overgezet. Daar staat de tekst zoals hij wás. Dat archief
+ * bijwerken om een proef groen te krijgen zou het bewijsstuk vervalsen, dus
+ * blijft het zoals het is.
+ *
+ * De gouden waarden zijn uit dat archief gedraaid en dragen daarom diezelfde
+ * oude tekst. Ze worden sinds deze naloop op hun wóórden vergeleken; zie
+ * `woordgelijk.ts`.
+ *
+ * En deze twee proeven noemen het teken omdat ze erover gaan.
+ */
+describe('nergens anders in de repo', () => {
+  const MAG = [
+    'gereedschap/oud/',
+    'gouden-waarden.json',
+    'src/gedeeld/schermtekst.proef.ts',
+    'src/gedeeld/woordgelijk.proef.ts',
+  ]
+
+  /* Twee plekken hébben het teken nodig en staan er tóch niet bij: de reguliere
+     expressie in `huiswerk/nakijken.ts` die min-tekens gelijktrekt, en regel 8
+     van de systeemprompt in `health/edge/kal-ai.ts` die het model verbiedt het
+     te gebruiken. Allebei schrijven het als `\u2014`: hetzelfde teken zodra het
+     draait, maar niet in de bron. Zo hoeft er geen bestand uitgezonderd te
+     worden, en blijft de regel hieronder scherp over die hele bestanden. */
+
+  it('staat het teken alleen nog in het archief en in deze twee proeven', () => {
+    /* `git grep` en niet een eigen wandeling door de mappen: dan telt precies
+       wat er in versiebeheer staat, en niet wat er toevallig in node_modules
+       of in een bouwmap ligt. */
+    let regels: string[] = []
+    try {
+      regels = execFileSync('git', ['grep', '-I', '-l', EM], { encoding: 'utf8' })
+        .split('\n').filter(Boolean)
+    } catch (e) {
+      /* Niets gevonden is bij git grep een foutstatus en geen fout. */
+      if ((e as { status?: number }).status !== 1) throw e
+    }
+    expect(regels.filter((p) => !MAG.some((m) => p.includes(m)))).toEqual([])
+  })
+
+  /* DE FOUT DIE DIT BIJNA HAD GEMIST
+     In `huiswerk/nakijken.ts` stond het streepje in een reguliere expressie die
+     min-tekens gelijktrekt: `/[\u2212\u2013\u2014]/`. Dat is geen tekst maar
+     code, en de opruiming maakte er een komma van. Twee proeven vielen om en
+     dat was geluk, geen ontwerp: een streepje in code is noch een tekst noch
+     commentaar, en geen van beide regels hierboven keek ernaar. */
+  it('trekt alle drie de streepjes nog gelijk bij het nakijken', () => {
+    expect(norm('\u2212 5')).toBe(norm('-5'))
+    expect(norm('\u2013 5')).toBe(norm('-5'))
+    expect(norm('\u2014 5')).toBe(norm('-5'))
   })
 })

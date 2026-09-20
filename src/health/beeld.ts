@@ -1,5 +1,5 @@
 /**
- * DE FOTO BIJ EEN PRODUCT — een korte lijst, met opzet
+ * DE FOTO BIJ EEN PRODUCT: een korte lijst, met opzet
  *
  * Er liggen tien foto's in `health/beeldmateriaal/`, en de voedingsmiddelentabel
  * heeft er 2.328 regels. Die verhouding bepaalt het hele ontwerp.
@@ -28,7 +28,7 @@
  * niet als levendig.
  *
  * De codes komen uit de tabel zelf en niet uit mijn hoofd. Klopt er ooit een
- * niet meer, dan is het gevolg dat er geen foto verschijnt — het duurste wat
+ * niet meer, dan is het gevolg dat er geen foto verschijnt, het duurste wat
  * deze lijst kan misgaan.
  */
 
@@ -37,7 +37,7 @@ const MAP = '/health/eten/'
 
 /**
  * NEVO-code naar bestand. Meerdere codes mogen naar dezelfde foto wijzen als
- * het werkelijk hetzelfde beeld is — grof en fijn volkorenbrood zien er op een
+ * het werkelijk hetzelfde beeld is, grof en fijn volkorenbrood zien er op een
  * foto niet anders uit.
  */
 export const FOTOS: Readonly<Record<string, string>> = {
@@ -56,7 +56,7 @@ export const FOTOS: Readonly<Record<string, string>> = {
  *
  * `Object.hasOwn` en niet gewoon `FOTOS[code]`, en dat is geen overdaad. Een
  * objectliteral erft van `Object.prototype`, dus `FOTOS['constructor']` geeft de
- * ingebouwde functie terug en `FOTOS['__proto__']` het prototype — allebei
+ * ingebouwde functie terug en `FOTOS['__proto__']` het prototype, allebei
  * waarheidsgetrouw genoeg om door een `if` te komen. Er zou dan een `<img>` op
  * het scherm staan met de broncode van een functie als adres. De proef bij dit
  * bestand viel er meteen over; zonder die proef was het er stil in gebleven,
@@ -68,7 +68,7 @@ export function fotoVoor(nevoCode: string | null | undefined): string | null {
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
-   DE FOTO BIJ EEN GERECHT — een tweede lijst, om een andere reden
+   DE FOTO BIJ EEN GERECHT, een tweede lijst, om een andere reden
    ────────────────────────────────────────────────────────────────────────────
 
    Hierboven staat waarom er voor de voedingsmiddelentabel bijna geen foto's
@@ -90,7 +90,7 @@ export function fotoVoor(nevoCode: string | null | undefined): string | null {
 
    Dat heeft een prijs, en die moet genoemd worden: wijzigt iemand de naam in de
    bibliotheek, dan verdwijnt de foto zonder waarschuwing. Dat is het goedkoopste
-   wat hier mis kan gaan — er staat dan geen foto, en nooit de verkeerde.
+   wat hier mis kan gaan, er staat dan geen foto, en nooit de verkeerde.
 
    WAAROM DE SLEUTEL GENORMALISEERD WORDT
 
@@ -110,8 +110,8 @@ const GERECHTMAP = '/health/gerechten/'
 /**
  * De sleutel waarop een gerechtnaam wordt opgezocht.
  *
- * De dotloze Turkse ı (U+0131) valt niet uiteen onder NFD — anders dan ç, ş en
- * ğ, die dat wel doen — dus die wordt apart afgevangen. Zonder die regel wordt
+ * De dotloze Turkse ı (U+0131) valt niet uiteen onder NFD (anders dan ç, ş en
+ * ğ, die dat wel doen) dus die wordt apart afgevangen. Zonder die regel wordt
  * 'çorbası' tot 'corbas' en zou de sleutel in de lijst hieronder er onleesbaar
  * uit moeten zien om te kunnen werken.
  */
@@ -132,15 +132,15 @@ export function gerechtsleutel(naam: string): string {
  *
  * WAT ER BIJ HET KEUREN GEBEURDE
  *
- * Bij 'Kuru fasulye (witte bonen)' lag eerst een foto van kikkererwten — rond,
+ * Bij 'Kuru fasulye (witte bonen)' lag eerst een foto van kikkererwten, rond,
  * met het snaveltje, en niet de ovale witte boon waar het gerecht naar heet. Op
  * het contactblad viel dat niet op, in een uitsnede van twee keer wel. Dat
  * gerecht stond daarom een levering lang zonder beeld: liever geen foto dan een
- * foto die bijna klopt. De tweede levering bracht de goede — witte bonen in
- * tomatensaus met ui en groene peper, rijst ernaast — en nu staat hij er wel.
+ * foto die bijna klopt. De tweede levering bracht de goede (witte bonen in
+ * tomatensaus met ui en groene peper, rijst ernaast) en nu staat hij er wel.
  *
  * Twee andere verdienen een aantekening. Bij de couscous is het lamsvlees niet
- * te zien — dat ligt bij dit gerecht onder de berg, zoals het hoort — en bij de
+ * te zien (dat ligt bij dit gerecht onder de berg, zoals het hoort) en bij de
  * roti ontbreekt de kousenband naast de kip en de aardappel. Daar gaat het om
  * een onderdeel dat buiten beeld valt, niet om een ander gerecht.
  */

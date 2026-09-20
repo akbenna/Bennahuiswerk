@@ -2,7 +2,7 @@
  * WAT ER BEWAARD WORDT, EN HOE TWEE KOPIEËN SAMENKOMEN
  *
  * Eén regel bij het samenvoegen: niets gaat weg. Wie op de laptop week zeven
- * afrondt en op de telefoon week acht, heeft ze allebei afgerond — niet de
+ * afrondt en op de telefoon week acht, heeft ze allebei afgerond, niet de
  * laatste die toevallig verstuurde. Bij een botsing wint daarom altijd de
  * verste stand, de langste tekst of de nieuwste datum, nooit "leeg".
  */
@@ -57,7 +57,7 @@ function perId<T>(
   return uit
 }
 
-/** Een binnengekomen momentopname is niet te vertrouwen op vorm — hij komt uit
+/** Een binnengekomen momentopname is niet te vertrouwen op vorm, hij komt uit
  *  een backupbestand of uit een oudere versie van de app. */
 export type Losse = Partial<Stand>
 

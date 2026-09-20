@@ -3,7 +3,7 @@
  *
  * Naam, leeftijd, spoor, dagplafond en de afspraak. Het spoor mag handmatig:
  * een kind van zestien dat pas begint hoort niet in het volwassen spoor, en
- * omgekeerd. Wie het handmatig zet, houdt het — de app rekent dan niet meer
+ * omgekeerd. Wie het handmatig zet, houdt het, de app rekent dan niet meer
  * terug op de leeftijd.
  */
 import { useState } from 'react'
@@ -40,7 +40,7 @@ export function Bewerken(
     if (!geldig) return
     const handmatig = spoor !== 'auto'
     /* "Automatisch" betekent: laat de app het bepalen. Is de niveaubepaling
-       gedaan, dan is dát wat de app bepaalt — anders zou de ouder die uitslag
+       gedaan, dan is dát wat de app bepaalt, anders zou de ouder die uitslag
        hier ongemerkt terugdraaien naar een gok op leeftijd. */
     const nieuwSpoor = (handmatig
       ? parseInt(spoor, 10)

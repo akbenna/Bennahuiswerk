@@ -1,5 +1,5 @@
 /**
- * DE NASLAG — alle gebeden, de bijzondere, de du'a's en wat er misgaat
+ * DE NASLAG: alle gebeden, de bijzondere, de du'a's en wat er misgaat
  *
  * Vier schermen die niets van je vragen: je zoekt iets op, je leest het, je
  * gaat weer weg. Vandaar de tabellen en de uitklappers in plaats van

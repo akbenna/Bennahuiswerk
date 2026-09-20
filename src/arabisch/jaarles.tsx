@@ -1,5 +1,5 @@
 /**
- * HET JAAR — de les, het werkblad, de niveaubepaling en de blokttoets
+ * HET JAAR: de les, het werkblad, de niveaubepaling en de blokttoets
  *
  * Zesendertig weken van anderhalf uur, één vast moment per week. De les loopt
  * in zeven onderdelen met de klok erbij; die klok is een hulpmiddel en geen
@@ -295,7 +295,7 @@ export function Werkblad({ week, sluit }: { week: number; sluit: () => void }): 
 /* -------------------------------------------------------- de niveaubepaling */
 
 /** Achttien vragen. Ze bepalen niet wie het knapst is, maar op welke week het
- *  programma begint — wie de eerste letters al kent hoeft die niet nog eens. */
+ *  programma begint, wie de eerste letters al kent hoeft die niet nog eens. */
 export function Meting(
   { begin }: { begin: (niveau: number, week: number, score: number) => void },
 ): ReactNode {

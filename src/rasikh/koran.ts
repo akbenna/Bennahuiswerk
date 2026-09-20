@@ -4,7 +4,7 @@
  * Honderdveertien bestanden in public/rasikh/tekst/, samen 6.236 aya's, in de
  * Warsh- en de Hafs-lezing, met de vertaling van Leemhuis en een klankweergave.
  * Ze worden per soera geladen op het moment dat ze nodig zijn, en daarna
- * onthouden — een soera opnieuw ophalen bij elke aya zou het herhalen onbruikbaar
+ * onthouden, een soera opnieuw ophalen bij elke aya zou het herhalen onbruikbaar
  * traag maken.
  */
 import type { Lezing } from './opslag'
@@ -33,7 +33,7 @@ interface RuweAya {
  * op de plek van het aantal, waarna React een object probeerde te tekenen.
  *
  * Vandaar dat het bestand hieronder zijn eigen type heeft en de SoeraInfo uit
- * de index komt — die is de enige met de juz erin.
+ * de index komt, die is de enige met de juz erin.
  */
 interface Soerabestand {
   nr: number
@@ -61,7 +61,7 @@ export interface Aya {
 const cache = new Map<number, Soerabestand>()
 
 /** De index staat hier zodra hij geladen is; `aya()` heeft hem nodig om de
- *  juiste SoeraInfo — met juz — aan een aya te hangen. */
+ *  juiste SoeraInfo (met juz) aan een aya te hangen. */
 let index: readonly SoeraInfo[] = []
 
 export async function laadIndex(): Promise<{ index: SoeraInfo[]; bron: string }> {
@@ -140,7 +140,7 @@ export async function laadVerwarring(): Promise<Mutashabihat> {
 
 /**
  * De groepen die jóuw stof raken: minstens één plaats staat vast, en de groep
- * heeft meer dan één plaats — een tekst die maar op één plek staat kan niet
+ * heeft meer dan één plaats, een tekst die maar op één plek staat kan niet
  * verwarren.
  */
 export function relevanteVerwarring(
@@ -154,7 +154,7 @@ export function relevanteVerwarring(
   ].filter(raakt)
 }
 
-/** Bij de keuzes hoort niet de hele aya — sommige zijn een half scherm lang.
+/** Bij de keuzes hoort niet de hele aya, sommige zijn een half scherm lang.
  *  Het gaat om herkennen hoe het verdergaat, en dat zit in de eerste woorden. */
 export const aanhef = (t: string, n = 9): string => {
   const w = String(t).split(/\s+/)

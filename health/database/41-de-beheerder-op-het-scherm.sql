@@ -1,5 +1,5 @@
 -- ===========================================================================
--- 41 — DE BEHEERDER OP HET SCHERM
+-- 41: DE BEHEERDER OP HET SCHERM
 -- ===========================================================================
 --
 -- TOEGEPAST: ja, op 19 september 2026. `kal_ben_ik_beheerder` bestaat; de
@@ -12,7 +12,7 @@
 -- WAAROM EEN FUNCTIE ZONDER SCHERM HIER NIETS TOEVOEGT
 --
 -- De enige manier om hem aan te roepen was de SQL-editor. Wie die openheeft, kan
--- al bij álles in de database — die heeft geen functie nodig om een herstelcode
+-- al bij álles in de database: die heeft geen functie nodig om een herstelcode
 -- te maken, die kan de kolom zo overschrijven. De functie bestaat juist voor een
 -- beheerder die géén databasetoegang heeft. Zonder scherm hielp hij dus precies
 -- de ene persoon die hem niet nodig had.
@@ -26,14 +26,14 @@
 -- WAAROM DIT NIETS VERKLAPT
 --
 -- Bestand 40 geeft met opzet dezelfde foutmelding voor "je bent geen beheerder"
--- en "je wachtwoord klopt niet" — het verschil zou verklappen wie beheerder is.
+-- en "je wachtwoord klopt niet", het verschil zou verklappen wie beheerder is.
 -- Deze functie doet dat niet alsnog: ze antwoordt alleen over de houder van het
 -- token, en die weet het al. Er is geen vorm van deze vraag die iets over een
 -- ander zegt, want er gaat geen accountnaam in.
 --
 -- Wat ze ook niet doet is toegang geven. Ze leest één boolean en raakt niets aan.
 -- Wie het antwoord vervalst in zijn browser krijgt een knop te zien die bij het
--- indrukken alsnog door `kal_herstelcode_voor` geweigerd wordt — de echte grens
+-- indrukken alsnog door `kal_herstelcode_voor` geweigerd wordt, de echte grens
 -- ligt daar en niet hier.
 --
 -- TERUGDRAAIEN

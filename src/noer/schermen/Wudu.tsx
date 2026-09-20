@@ -1,5 +1,5 @@
 /**
- * DE WASSING — tien stappen, en het examen op volgorde
+ * DE WASSING: tien stappen, en het examen op volgorde
  *
  * Bij elke stap licht het lichaamsdeel op dat aan de beurt is. De kleur zegt
  * of het moet of dat het een gewoonte van de Profeet ﷺ is; dat onderscheid is
