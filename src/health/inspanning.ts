@@ -202,3 +202,39 @@ export function zwareMinuten(rijen: readonly Post[]): number {
   return rijen.filter((r) => r.intensiteit === 'zwaar')
     .reduce((s, r) => s + Math.round(r.minuten), 0)
 }
+
+/**
+ * WELKE DAGEN "DEZE WEEK" ZIJN — en waarom dat geen vanzelfsprekende vraag was
+ *
+ * Dit scherm nam de dagen uit de gegevens: de sleutels van de dagenkaart,
+ * gesorteerd, de laatste eenentwintig. Dat leest logisch en het is op twee
+ * manieren fout.
+ *
+ * DE MINUTEN DIE NIEMAND ZAG
+ *
+ * De dagenkaart heeft alleen dagen waarvoor een rij in `kal_dagen` bestaat, of
+ * waarop iets gelogd is. Een work-outafdruk importeren maakt zo'n rij níet: die
+ * schrijft alleen in `kal_inspanning`. Op een dag zonder stappen en zonder eten
+ * — een dag van voordat de koppeling draaide, bijvoorbeeld — stond je rit dus
+ * wél in de database en nergens op het scherm, en telde hij ook niet mee voor
+ * de norm. Precies dezelfde fout als `actieve_energie_kcal`, dat maanden lang
+ * netjes werd opgeslagen en door niets werd gelezen.
+ *
+ * DE WEEK DIE UITDIJDE
+ *
+ * En de zeven laatste sléútels zijn niet de zeven laatste dágen. Bij een gat in
+ * de gegevens reikte "deze week" stilletjes drie weken terug, en dan staat er
+ * een weektotaal onder een kop die "Deze week" zegt.
+ *
+ * Een kalendervenster heeft geen van beide problemen: het bestaat los van wat
+ * er toevallig gemeten is, en dat is precies wat een norm per week nodig heeft.
+ */
+export function dagvenster(tot: string, aantal: number): string[] {
+  const eind = Date.parse(tot + 'T12:00:00Z')
+  if (!Number.isFinite(eind) || aantal < 1) return []
+  const uit: string[] = []
+  for (let i = aantal - 1; i >= 0; i--) {
+    uit.push(new Date(eind - i * 86400000).toISOString().slice(0, 10))
+  }
+  return uit
+}

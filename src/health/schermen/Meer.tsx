@@ -17,6 +17,8 @@ import { THEMANAMEN, useThemakeuze, zetThema } from '../thema'
 import type { Onderhoudzone } from '../klinisch'
 import { WegInstellen, WegThema } from '../tekens'
 import { SFEERFOTO } from '../sfeerfotos'
+import { dagvenster } from '../inspanning'
+import { vandaag } from '@/gedeeld/datum'
 
 /** De kleur hoort bij het scherm en niet bij de rekenfunctie. Zie klinisch.ts. */
 const ZONEKLEUR: Record<Onderhoudzone, string> = {
@@ -33,7 +35,7 @@ export function Meer(
   { dagen, reeks, profiel, opVenster }:
   {
     dagen: Dagenkaart; reeks: Trendpunt[]; profiel: Profiel
-    opVenster: (v: 'profiel' | 'import' | 'account' | 'koppelen' | 'hoewerkt'
+    opVenster: (v: 'profiel' | 'import' | 'account' | 'koppelen' | 'hoewerkt' | 'verdiepen'
       | 'leren' | 'voorkeuren') => void
   },
 ) {
@@ -42,8 +44,14 @@ export function Meer(
     ? onderhoudZone(trendNu?.ema ?? null, profiel.onderhoud_basis_kg) : null
 
   /* Veertien nachten, met de gaten erin. Een nacht zonder gegevens is geen nacht
-     van nul uur, dus hij hoort een gat te zijn en geen punt op de bodem. */
-  const nachten = Object.keys(dagen).sort().slice(-14)
+     van nul uur, dus hij hoort een gat te zijn en geen punt op de bodem.
+
+     Een kalendervenster en niet de laatste veertien sleutels van de dagenkaart:
+     die kaart kent alleen dagen waarvoor een rij bestaat, dus een nacht waarop
+     er niets binnenkwam viel er stil uit in plaats van een gat te worden — en
+     dan reikten "veertien nachten" ongemerkt verder terug dan veertien dagen.
+     Precies de bewering die de regel hierboven doet. Zie `dagvenster`. */
+  const nachten = dagvenster(vandaag(), 14)
     .map((k) => { const m = dagen[k]?.slaap_min; return m != null ? m / 60 : null })
   const gemeten = nachten.filter((v): v is number => v != null)
   const gemSlaap = gemeten.length
@@ -216,6 +224,7 @@ export function Meer(
             achter één tik. */}
         <Rij>
           <Knop opKlik={() => opVenster('leren')}>Leren over je aandoening</Knop>
+          <Knop opKlik={() => opVenster('verdiepen')}>Verdiepen: afvallen en medicatie</Knop>
           <Knop opKlik={() => opVenster('hoewerkt')}>Hoe deze app werkt</Knop>
         </Rij>
       </Kaart>

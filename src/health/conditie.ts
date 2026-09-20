@@ -60,6 +60,7 @@ export const MEDICATIEGROEPEN: ReadonlyArray<{
   { groep: 'glp1', naam: 'Prik voor de suiker of het gewicht', voorbeeld: 'semaglutide, dulaglutide' },
   { groep: 'ras', naam: 'Bloeddrukpil die op de nieren werkt', voorbeeld: 'enalapril, losartan, perindopril' },
   { groep: 'diureticum', naam: 'Plaspil', voorbeeld: 'hydrochloorthiazide, furosemide' },
+  { groep: 'metformine', naam: 'Metformine', voorbeeld: 'de meest voorgeschreven suikerpil' },
 ]
 
 export interface Signaal {

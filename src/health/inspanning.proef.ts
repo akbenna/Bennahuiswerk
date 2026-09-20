@@ -11,9 +11,9 @@
  * hetzelfde rekenen, dan staat er bij veertig minuten hardlopen tachtig in de
  * lijst, en dan liegt het scherm over wat je gedaan hebt.
  */
-import { describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import {
-  FACTOR, OUD_VELD, SOORTEN, WEEKDOEL_MIN, equivalent, naamVan, soortVan,
+  FACTOR, OUD_VELD, SOORTEN, WEEKDOEL_MIN, dagvenster, equivalent, naamVan, soortVan,
   standaardIntensiteit, verdeling, weekposten, weektotaal, zwareMinuten,
 } from './inspanning'
 
@@ -217,5 +217,74 @@ describe('hoeveel er zwaar was', () => {
 
   it('een week zonder zware inspanning is nul', () => {
     expect(zwareMinuten([p(30, 'matig')])).toBe(0)
+  })
+})
+
+describe('welke dagen "deze week" zijn', () => {
+  it('geeft de laatste zeven kalenderdagen, oudste eerst', () => {
+    expect(dagvenster('2026-09-19', 7)).toEqual([
+      '2026-09-13', '2026-09-14', '2026-09-15', '2026-09-16',
+      '2026-09-17', '2026-09-18', '2026-09-19',
+    ])
+  })
+
+  it('en de dag zelf hoort erbij', () => {
+    expect(dagvenster('2026-09-19', 1)).toEqual(['2026-09-19'])
+  })
+
+  /* Over een maandgrens heen, want een venster dat op de eerste van de maand
+     stilvalt zou precies in de week waarin het uitkomt fout zijn. */
+  it('loopt over een maandgrens', () => {
+    expect(dagvenster('2026-10-02', 4)).toEqual(
+      ['2026-09-29', '2026-09-30', '2026-10-01', '2026-10-02'])
+  })
+
+  /* EN OVER DE ZOMERTIJDGRENS — met de klok van de gebruiker, niet die van de
+     proefmachine.
+
+     Op 25 oktober 2026 gaat de klok in Amsterdam een uur terug. Wie in lokale
+     middernacht rekent en er 24 uur van aftrekt, komt dan op de 24ste uit en
+     slaat de 25ste over. Deze functie rekent daarom op het middaguur in UTC:
+     een uur schuiven raakt dat niet.
+
+     Dit geval stond er eerst zónder de tijdzone eromheen, en toen overleefde de
+     mutatie naar lokale middernacht: vitest draait hier in UTC, en daar ís geen
+     zomertijd. Een proef die alleen groen kan zijn is geen proef. */
+  const echteTZ = process.env.TZ
+  beforeAll(() => { process.env.TZ = 'Europe/Amsterdam' })
+  afterAll(() => { process.env.TZ = echteTZ })
+
+  it('en over de overgang naar wintertijd', () => {
+    expect(new Date('2026-10-26T00:00:00').toString(), 'de proef draait niet in Amsterdam')
+      .toContain('GMT+0100')
+    expect(dagvenster('2026-10-26', 4)).toEqual(
+      ['2026-10-23', '2026-10-24', '2026-10-25', '2026-10-26'])
+  })
+
+  /* En de andere kant op: eind maart gaat de klok vooruit. Daar valt niets weg
+     maar wordt een dag dubbel geteld, en dat is net zo fout. */
+  it('en over de overgang naar zomertijd', () => {
+    expect(dagvenster('2026-03-30', 4)).toEqual(
+      ['2026-03-27', '2026-03-28', '2026-03-29', '2026-03-30'])
+  })
+
+  /* HET GAT, EN WAAROM DIT VENSTER ER IS
+     De dagenkaart kent alleen dagen met een rij. Een work-outafdruk importeren
+     maakt die rij niet. Zou het venster uit de gegevens komen, dan viel 16
+     september eruit en telden die zestig minuten nergens mee. */
+  it('bevat ook een dag waarvoor geen enkele meting bestaat', () => {
+    const week = dagvenster('2026-09-19', 7)
+    const rijen = [
+      { datum: '2026-09-16', soort: 'rennen', minuten: 60, intensiteit: 'zwaar' as const, bron: 'import' },
+    ]
+    /* Niets in `fiets` en niets in de dagenkaart — precies de toestand na een
+       import van alleen een work-outlijst. */
+    expect(weektotaal(weekposten(week, rijen, {}))).toBe(120)
+  })
+
+  it('een lege of onzinnige datum geeft geen venster en geen uitzondering', () => {
+    expect(dagvenster('', 7)).toEqual([])
+    expect(dagvenster('geen datum', 7)).toEqual([])
+    expect(dagvenster('2026-09-19', 0)).toEqual([])
   })
 })

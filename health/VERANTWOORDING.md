@@ -1092,6 +1092,248 @@ proef: het schermvoorbeeld telt de aanvragen, verwacht er nul zolang de kaart
 dicht is en precies één na het openen. De mutant die de lijst buiten de
 uitklapper hangt valt om met *"dicht en toch 1 keer gevraagd"*.
 
+## 22b. Suppletie — wat de app wél en niet kan zien
+
+De kaart *Wat ontbreekt er?* op het dagscherm. Vijf regels, en ze rusten op twee
+verschillende soorten grond — dat onderscheid is het belangrijkste van dit
+hoofdstuk.
+
+### Wat er uit je log volgt, en waarom dat maar beperkt is
+
+De voedingsmiddelentabel bevat **geen vitamines en mineralen**. De app kan dus
+nooit zeggen hoeveel ijzer of calcium er binnenkomt; hij kan alleen zien welke
+NEVO-groepen in je log voorkomen en welke je hebt uitgezet. Drie regels werken zo:
+
+| Regel | Vuurt bij | Zwaarte |
+|---|---|---|
+| IJzer | vegetarisch of veganistisch, of geen vlees in je log | overwegen |
+| Omega-3 (EPA/DHA) | geen vis in je log of vis uitgezet | overwegen |
+| Calcium | geen zuivel in je log of zuivel uitgezet | overwegen |
+
+Alle drie staan op *overwegen* en niet op *nodig*, en alle drie wijzen naar de
+huisarts in plaats van naar een potje. Een tekort hoor je te laten prikken en
+niet te vermoeden.
+
+**Onder de veertien gelogde dagen zwijgen ze.** Vier dagen zonder vis betekent
+dat je vier dagen lang geen vis logde, en dat zegt niets over je voeding. Die
+drempel staat in `GENOEG_DAGEN`; de melding erover staat er ook bóven een gevulde
+lijst, want wie B12 en ijzer te zien krijgt en niets over vis leest dat als "vis
+is in orde".
+
+### Wat uit je profiel volgt, en waarom dat zwaarder weegt
+
+Twee regels hangen aan geen enkele log. Ze komen uit staand Nederlands advies, en
+staan daarom op *nodig* respectievelijk met een harde bron erbij.
+
+**Vitamine D — het meest gegeven suppletieadvies van Nederland.** De huid maakt
+vitamine D uit zonlicht, en tussen oktober en maart staat de zon hier te laag om
+daar genoeg van te leveren; voeding levert maar een klein deel. De Gezondheidsraad
+adviseert:
+
+| Wie | Hoeveel |
+|---|---|
+| iedereen vanaf 70 jaar | 20 microgram per dag |
+| vrouwen van 50 tot en met 69 | 10 microgram per dag |
+| getinte of donkere huid, of weinig buiten / bedekkende kleding — elke leeftijd | 10 microgram per dag |
+
+*Staat er geen leeftijd in het profiel, dan vuren de eerste twee niet.* Een
+leeftijd raden zou hier een uitspraak over iemands botten worden op een getal dat
+niemand heeft ingevuld.
+
+**De twee zonvragen worden apart gesteld, en niet afgeleid uit `etniciteit`.**
+Dat is een bewuste keuze en geen omissie. Afkomst is geen huidskleur, en een app
+die dat gelijkstelt doet een aanname over iemand die hij niet mag doen — en die
+hij bovendien nergens opschrijft. `etniciteit` gaat in deze app over de
+afkapwaarde van de middelomtrek (zie hoofdstuk 5) en over niets anders. Een leeg
+vinkje betekent "niet gevraagd" en niet "nee": zolang er niets staat, zwijgt de
+regel over die grond.
+
+**B12 bij metformine.** Langdurig metforminegebruik verlaagt de opname van B12.
+Dat is een reden om het te laten meten en geen reden om te gaan slikken — dezelfde
+lijn als bij ijzer. De NHG-Standaard Diabetes mellitus type 2 adviseert een
+B12-bepaling te overwegen bij langdurig gebruik, zeker bij tintelingen of een
+doof gevoel in handen of voeten.
+
+Deze regel staat **naast** de veganistische B12-regel en niet in plaats daarvan.
+Dat is geen dubbeling: de ene gaat over wat er binnenkomt, deze over wat ervan
+opgenomen wordt. Twee gronden, dus twee regels, met twee id's — anders verdwijnt
+er stilletjes één.
+
+`metformine` stond eerst niet in de medicatiegroepen, en dat zegt iets over
+waarvoor die lijst gemaakt was: de andere zes zijn gekozen op hypo-risico en op
+nier- en vochtbelasting, en metformine doet geen van beide. Voor de suppletievraag
+is hij juist de belangrijkste.
+
+### Een lege lijst zegt wat er nagekeken is
+
+Dat was er eerst niet, en de eerste vraag die erover gesteld werd was precies de
+twijfel die het opriep: *"Wat ontbreekt is leeg?"* Een lege uitslag met alleen een
+voorbehoud eronder is niet te onderscheiden van een lijst die stuk is.
+
+De kaart noemt daarom alle vijf de regels bij naam met wat er per regel gezien
+is, en elke regel geeft zijn eigen reden. *Uitgezet in Wat je lust*, *niet in je
+log* en *nog te weinig gelogd* lezen alle drie anders — zou dat niet zo zijn, dan
+was de lijst een sierrand en geen afleiding.
+
+### Wat er nadrukkelijk niet gebeurt
+
+Geen doseringen boven wat de richtlijn zelf noemt. Geen merknamen. Geen advies
+dat zonder arts uitgevoerd hoort te worden. De app wijst en verwijst; hij
+schrijft niet voor.
+
+---
+
+## 22c. Spierbehoud — drie hefbomen, en waarom er geen cijfer uit komt
+
+Een weegschaal telt kilo's en zegt niet waar ze vandaan komen. Bij snel
+gewichtsverlies is dat verschil groot: in de lichaamssamenstellingssubstudie van
+STEP-1 was ongeveer **45 %** van wat er op semaglutide verdween vetvrije massa;
+in de SURMOUNT-1-substudie bij tirzepatide ongeveer **25 %**.
+
+Geen app meet lichaamssamenstelling. Wat deze wel kan is de drie dingen naast
+elkaar zetten waarvan bekend is dat ze spierverlies tegengaan, en zeggen welke
+er staan.
+
+### De drie, in de volgorde waarin je er iets aan kunt doen
+
+**Eiwit per maaltijd.** Niet het dagtotaal — dat staat al op Voeding. Naast de
+dagmaat bestaat een tweede, onafhankelijke grens: bij ouderen is ongeveer 2,8 g
+leucine per maaltijd nodig om spieraanmaak te prikkelen, zo'n **30 g eiwit**. In
+een calorietekort is de aanmaak onderdrukt en de afbraak verhoogd, en dan telt
+het halen van die drempel bij élke maaltijd zwaarder dan het dagtotaal.
+
+*Waar de twee uit elkaar lopen.* Het scherm Voeding zet een stippellijn op het
+dagdoel gedeeld door drie. Bij een dagdoel van 161 g is dat 54 — ruim boven de
+drempel, en dan valt er niets te zien. Bij een dagdoel van 75 g is het 25, en
+dan ligt de stippellijn eronder: Voeding zegt "op peil" terwijl er van
+spieraanmaak weinig terechtkomt. De kaart zegt dat dan, met het antwoord erbij —
+dat is geen reden het dagdoel te verhogen maar om het over **twee grotere
+maaltijden** te verdelen.
+
+*Wat een maaltijd is.* Alleen ontbijt, lunch en diner, en alleen als er
+werkelijk iets gelogd is. Een handje amandelen is geen maaltijd: zou
+"tussendoor" meetellen, dan leest drie maaltijden op peil plus een tussendoortje
+als "3 van de 4" — een oordeel over het tussendoortje vermomd als een oordeel
+over spieren. Een diner dat er niet was telt evenmin als gemiste drempel.
+
+**Krachttraining.** Al geteld op dit scherm, tegen hetzelfde doel van drie
+sessies per week.
+
+**Opstaan uit een stoel.** Vijf keer opstaan en gaan zitten zonder je armen.
+Boven de **15 seconden** geldt als aanwijzing voor verminderde spierkracht
+(EWGSOP2). De Europese consensus laat de keuze tussen handknijpkracht en deze
+test; knijpkracht is aantoonbaar de betere maat, maar vraagt een dynamometer.
+Een maat die niemand thuis kan doen meet niets — daarom deze, met erbij dat hij
+de zwakkere is.
+
+Onder de **2 seconden** is het geen meting maar een dubbele tik op de knop, en
+dan leest hij als *niet gedaan*. Die ondergrens kwam uit de armatuur: die zet de
+klok vast, dus een stopwatch op `Date.now()` stond stil en er ging nul seconden
+de database in — wat daarna als "snel" las. De stopwatch gebruikt nu
+`performance.now()`, die monotoon doorloopt.
+
+### De screener, en waarom de lage afkapwaarde
+
+**SARC-F**: vijf vragen, geen apparaat. De gangbare afkapwaarde is 4. Die heeft
+een hoge specificiteit en een **lage sensitiviteit**: goed in uitsluiten, slecht
+in opsporen. Voor een screener in een app is dat de verkeerde kant van de fout —
+die hoort te signaleren, niet te diagnosticeren. Deze app gebruikt daarom **≥ 1**
+en bewaart beide betekenissen: één genoemde klacht is een regel op het scherm,
+vier of meer is "genoeg om het na te laten kijken".
+
+### Waarom er geen score uit komt
+
+Elk van de drie meet iets anders met een eigen onzekerheid. Ze optellen tot één
+spiergetal zou een nauwkeurigheid suggereren die geen van de drie heeft. Er komen
+drie regels uit die zeggen wat er staat en wat er ontbreekt, en "onbekend" is
+daarbij een eigen uitkomst.
+
+Een goede stoeltest van ouder dan drie maanden vervalt naar onbekend; een **tráge**
+uitslag doet dat niet. Verouderen in de richting van geruststelling mag, in de
+richting van wegkijken niet.
+
+### Wat hier niet bewezen is
+
+De richting is goed onderbouwd: meer eiwit en krachttraining behouden meer
+vetvrije massa dan minder. **De grootte niet.** In een overzicht van twintig
+studies naar eiwit en vetvrije massa vonden er drie een duidelijk verschil, en
+maar één daarvan ging over mensen boven de vijftig.
+
+Een app die zegt "1,6 g/kg behoudt je spieren" belooft daarom meer dan het bewijs
+draagt. Die zin staat als losse tekst in `spier.ts`, zodat het scherm hem moet
+tonen en niet kan vergeten.
+
+### Waar het opgeslagen wordt
+
+Nergens nieuw. De stoeltest is een rij in `kal_metingen` (`soort: 'stoeltest'`,
+eenheid seconden), de vragenlijst een rij in `kal_vragenlijsten` naast STOP-BANG.
+Deze hele module vroeg **geen enkele databasewijziging** — beide vormen bestonden
+al.
+
+---
+
+## 22d. Verdiepen — het boekje over afvallen, en waarom het een boekje blijft
+
+Acht stukken op het scherm Profiel, onder *Verdiepen: afvallen en medicatie*.
+Over de Nederlandse trap, wat GLP-1 doet, wat er gebeurt als je stopt, waarom
+eiwit nu zwaarder telt, wat je naast vet verliest, bot, de herdefinitie van
+obesitas, en wat volhouden voorspelt.
+
+### Elk stuk heeft vier delen, en de volgorde is een besluit
+
+**Wat we weten** — het getal, met het onderzoek en waar het vandaan komt.
+**Wat we niet weten** — in een eigen vak, vóór het nut.
+**Waar je dit terugziet** — een verwijzing naar een scherm.
+**Bron** — klikbaar in het onderzoeksbestand.
+
+Dat tweede deel staat dus niet als kleine letter onderaan. In deze markt zijn de
+claims hard en het bewijs zacht; wie het voorbehoud onderaan zet weet dat niemand
+het leest. Een proef eist dat `nietWeten` nooit leeg is, en de armatuur leest het
+echte scherm om te zien dat het ook getóónd wordt — die twee zijn niet hetzelfde,
+en een venster dat alleen `weten` rendert zou door de eerste heen komen.
+
+### Het blijft een boekje, en dat is een grens en geen stijl
+
+Net als `leren.ts`: onder MDCG 2019-11 is software die uitsluitend informatie
+ontsluit, zonder patiëntspecifieke verwerking, geen medisch hulpmiddel. "Bij
+semaglutide is ongeveer 45 procent van het verlies vetvrije massa" als vaste
+tekst mag. Diezelfde zin met jóuw cijfers erin zou de app een categorie op
+schuiven waar hij niet thuishoort. Zie `health/STRATEGIE-CHRONISCHE-ZORG.md`.
+
+Hier is die garantie sterker af te dwingen dan bij `leren.ts`. Die functie krijgt
+nog een conditie mee om de volgorde te bepalen; **deze lijst krijgt niets**. Er is
+geen invoer, dus er valt niets te verwerken.
+
+Het oorspronkelijke voorstel had per stuk een *"wat jij eraan hebt"* met de eigen
+getallen van de lezer erin. Dat is bij het schrijven rechtgezet naar een
+verwijzing: hier staat wáár in de app je het terugziet, en het rekenen gebeurt
+dáár. Het verschil tussen die twee is precies het verschil tussen een boekje en
+een hulpmiddel.
+
+De armatuur opent alle acht stukken en zoekt naar de getallen van de proef­
+gebruiker — gewicht, eiwitdoel, kcal-doel, stappen. Komt er één van voor, dan valt
+hij om.
+
+### Waarom het stuk over de trap geen BMI-grenzen noemt
+
+Het draagt de volgorde van het Nederlandse traject en de constatering dat de lat
+voor de huisarts hoger ligt dan de bijsluiter — maar geen getallen. De criteria
+komen uit samenvattingen van de NHG-Standaard en niet uit de standaard zelf:
+genoeg om de volgorde uit te leggen, niet genoeg om een getal op te schrijven
+waar iemand zijn verwachting op bouwt.
+
+Een proef houdt dat vast. Komen de grenzen er ooit in, dan valt hij om en kijkt
+iemand na of de bron inmiddels wél deugt. Zo blijft het een besluit in plaats van
+een vergetelheid.
+
+### Wat het boekje niet doet
+
+Geen dosering in milligrammen — een proef zoekt daarop. Geen oordeel of iets
+voor jou geschikt is. Het GLP-1-stuk noemt de alarmsignalen en stuurt daarbij
+naar een arts; dat is de grens tussen voorlichting en behandeling.
+
+---
+
 ## 23. De conditie — signaleren zonder te doseren
 
 Deze app rekent aan energie en verzadiging, en dat is voor de meeste mensen

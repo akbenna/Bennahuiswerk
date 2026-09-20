@@ -35,26 +35,40 @@
 import { useState } from 'react'
 import { Balk, Kaart, Keuzechip, Knop, Kop, Rij, Tussen, Uitleg } from '../onderdelen/basis'
 import { Bolletjes, Doelring, Schermkop } from '../hero'
-import { dz } from '@/gedeeld/getal'
+import { dec, dz } from '@/gedeeld/getal'
 import { kortNL, plusDagen, vandaag } from '@/gedeeld/datum'
-import type { Inspanning, IsoDatum, Training } from '@/gedeeld/db/tabellen'
+import type { Inspanning, IsoDatum, Meting, Regel, Training, Vragenlijst } from '@/gedeeld/db/tabellen'
 import type { Analyse, Dagenkaart } from '../rekenkern'
 import { WegFiets, WegKracht, WegWeken } from '../tekens'
 import { SFEERFOTO } from '../sfeerfotos'
 import {
-  OUD_VELD, SOORTEN, WEEKDOEL_MIN, naamVan, soortVan, standaardIntensiteit,
-  verdeling, weekposten, weektotaal, zwareMinuten,
+  OUD_VELD, SOORTEN, WEEKDOEL_MIN, dagvenster, naamVan, soortVan,
+  standaardIntensiteit, verdeling, weekposten, weektotaal, zwareMinuten,
 } from '../inspanning'
 import type { Intensiteit, Post } from '../inspanning'
+import {
+  SARCF_VRAGEN, SPIER_VOORBEHOUD, STOELTEST_GRENS_S, maaltijdverdeling,
+  hoofdmaaltijden, sarcfscore, sarcfsignaal, spierbeeld, stoeltestTraag,
+} from '../spier'
+import type { Sarcfantwoorden, Sarcfpunt } from '../spier'
 
 const SPIERGROEPEN = ['benen', 'rug', 'borst', 'schouders', 'armen', 'romp'] as const
 
 export function Beweging(
-  { a, dagen, training, inspanning, datum, bewaarTraining, bewaarInspanning,
-    wisInspanning, zetDagveld }:
+  { a, dagen, training, inspanning, metingen, vragenlijsten, regelsVandaag, datum,
+    bewaarTraining, bewaarInspanning, wisInspanning, bewaarMeting, bewaarVragenlijst,
+    zetDagveld }:
   {
     a: Analyse; dagen: Dagenkaart; training: Training[]; inspanning: Inspanning[]
+    metingen: Meting[]; vragenlijsten: Vragenlijst[]; regelsVandaag: Regel[]
     datum: IsoDatum
+    bewaarMeting: (m: {
+      datum: IsoDatum; soort: string; waarde: number; eenheid: string
+    }) => void
+    bewaarVragenlijst: (v: {
+      datum: IsoDatum; soort: string; antwoorden: Record<string, unknown>
+      score: number; klasse: string
+    }) => void
     zetDagveld: (veld: string, waarde: string | number | boolean | null) => void
     bewaarInspanning: (r: {
       datum: IsoDatum; soort: string; eigennaam: string | null
@@ -67,7 +81,13 @@ export function Beweging(
     }) => void
   },
 ) {
-  const sleutels = Object.keys(dagen).sort().slice(-21)
+  /* Een kalendervenster en niet de sleutels van de dagenkaart. Die kaart kent
+     alleen dagen waarvoor een meting of een maaltijd bestaat, en een
+     work-outafdruk importeren maakt zo'n rij niet — je rit stond dan wél in de
+     database en nergens op het scherm. En de zeven laatste sleutels zijn niet
+     de zeven laatste dagen: bij een gat reikte "deze week" stilletjes verder
+     terug. Zie `dagvenster` in `inspanning.ts`. */
+  const sleutels = dagvenster(vandaag(), 21)
   const laatste7 = sleutels.slice(-7)
     .map((x) => dagen[x]?.stappen).filter((v): v is number => v != null)
   const gem7 = laatste7.length
@@ -369,6 +389,10 @@ export function Beweging(
 
       <TrainingInvoer datum={datum} bewaar={bewaarTraining} perSpier={perSpier} />
 
+      <Spierkaart a={a} metingen={metingen} vragenlijsten={vragenlijsten}
+                  regelsVandaag={regelsVandaag} sessies={sessies} krachtdoel={KRACHTDOEL}
+                  bewaarMeting={bewaarMeting} bewaarVragenlijst={bewaarVragenlijst} />
+
       <Kaart>
         <Kop teken={WegWeken}>Laatste drie weken</Kop>
         <div className="lijst" style={{ marginTop: 4 }}>
@@ -406,6 +430,241 @@ export function Beweging(
         </div>
       </Kaart>
     </>
+  )
+}
+
+/**
+ * SPIERBEHOUD — de drie hefbomen, en wat ervan bekend is
+ *
+ * Een weegschaal telt kilo's en zegt niet waar ze vandaan komen. Bij snel
+ * gewichtsverlies is dat verschil groot: in de substudie van STEP-1 was
+ * ongeveer 45 procent van wat er op semaglutide verdween vetvrije massa.
+ *
+ * Deze kaart meet dat niet — dat kan geen app. Wat ze doet is de drie dingen
+ * naast elkaar zetten waarvan bekend is dat ze het tegengaan, met per stuk wat
+ * er staat en wat er ontbreekt. Waarom er geen samengesteld cijfer uit komt,
+ * staat in `spier.ts`.
+ *
+ * DE KAART STAAT ER ALTIJD, OOK LEEG
+ *
+ * Drie regels op "onbekend" is informatie: het zegt dat er drie dingen zijn
+ * waar je iets aan kunt doen en dat er van geen enkele iets bekend is. Zou de
+ * kaart pas verschijnen als er gemeten is, dan weet wie niets meet ook niet
+ * dat er iets te meten valt.
+ */
+function Spierkaart(
+  { a, metingen, vragenlijsten, regelsVandaag, sessies, krachtdoel,
+    bewaarMeting, bewaarVragenlijst }:
+  {
+    a: Analyse; metingen: Meting[]; vragenlijsten: Vragenlijst[]
+    regelsVandaag: Regel[]; sessies: number; krachtdoel: number
+    bewaarMeting: (m: {
+      datum: IsoDatum; soort: string; waarde: number; eenheid: string
+    }) => void
+    bewaarVragenlijst: (v: {
+      datum: IsoDatum; soort: string; antwoorden: Record<string, unknown>
+      score: number; klasse: string
+    }) => void
+  },
+) {
+  const [open, zetOpen] = useState<'geen' | 'stoel' | 'vragen'>('geen')
+
+  /* Eiwit per hoofdmaaltijd van vandaag. Tussendoor en "onbekend" tellen niet
+     mee: de drempel gaat over een maaltijd en niet over een handje noten. */
+  const perMoment: Record<string, number> = {}
+  for (const r of regelsVandaag) {
+    const m = r.moment ?? 'onbekend'
+    perMoment[m] = (perMoment[m] ?? 0) + (Number(r.eiwit_g) || 0)
+  }
+  const gelogd = hoofdmaaltijden(perMoment)
+
+  const stoel = metingen.filter((m) => m.soort === 'stoeltest')
+    .sort((x, y) => y.datum.localeCompare(x.datum))[0]
+  const laatsteSarcf = vragenlijsten.filter((v) => v.soort === 'sarcf')
+    .sort((x, y) => y.datum.localeCompare(x.datum))[0]
+
+  const regels = spierbeeld({
+    ...(gelogd.length ? { eiwitPerMaaltijd: gelogd } : {}),
+    krachtsessies: sessies,
+    krachtdoel,
+    ...(stoel ? {
+      stoeltestSeconden: Number(stoel.waarde),
+      stoeltestDagenGeleden:
+        Math.round((Date.parse(vandaag()) - Date.parse(stoel.datum)) / 86400000),
+    } : {}),
+    ...(laatsteSarcf ? { sarcf: laatsteSarcf.antwoorden as unknown as Sarcfantwoorden } : {}),
+  })
+
+  /* HET DAGDOEL GEDEELD DOOR DRIE IS NIET DE DREMPEL
+     Het scherm Voeding zet een stippellijn op een derde van je dagdoel. Dat is
+     een goede maat voor "haal ik mijn dag" en geen maat voor "komt de aanmaak
+     op gang". Bij een laag dagdoel ligt die stippellijn ónder de drempel, en
+     dan zegt Voeding "op peil" terwijl er weinig gebeurt. Dat hoort hier te
+     staan, want hier gaat het over spier. */
+  const verd = maaltijdverdeling(a.eiwitDoel)
+
+  return (
+    <Kaart>
+      <Tussen>
+        <Kop teken={WegKracht}>Wat je spieren vasthoudt</Kop>
+      </Tussen>
+      <p className="mini" style={{ marginTop: 4 }}>
+        Bij snel afvallen verdwijnt er naast vet ook spier. Dit zijn de drie dingen waarvan
+        bekend is dat ze dat tegengaan.
+      </p>
+
+      <div className="lijst" style={{ marginTop: 8 }}>
+        {/* De toelichting op een eigen regel en niet achter de naam. Hij stond
+            eerst op dezelfde regel met `knip` eromheen, en werd dan afgekapt —
+            precies het deel dat zegt wat je eraan kunt doen. */}
+        {regels.map((r) => (
+          <div key={r.wat} style={{ flexWrap: 'wrap' }}>
+            <span className="klein groei">{r.wat}</span>
+            <span className="cijfer mini"
+                  style={r.stand === 'let' ? { color: 'var(--let)' } : undefined}>
+              {r.waarde || '—'}
+            </span>
+            <span className="mini" style={{ flexBasis: '100%', color: 'var(--dim)' }}>
+              {r.toelichting}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {!verd.drieHaaltDrempel && (
+        <Kaart toon="let" plat style={{ marginTop: 10 }}>
+          <p className="klein">
+            Je eiwitdoel gedeeld door drie is <b>{verd.gedeeld} g</b> — onder de {verd.drempel} g
+            waarop de spieraanmaak op gang komt. Dat is geen reden om je doel te verhogen, maar
+            wel om het anders te verdelen: <b>{verd.maaltijdenDieHalen} grotere maaltijden</b>
+            {' '}halen de drempel wel.
+          </p>
+        </Kaart>
+      )}
+
+      <Rij style={{ marginTop: 10 }}>
+        <Knop opKlik={() => zetOpen(open === 'stoel' ? 'geen' : 'stoel')}>
+          Stoeltest doen
+        </Knop>
+        <Knop opKlik={() => zetOpen(open === 'vragen' ? 'geen' : 'vragen')}>
+          {laatsteSarcf ? 'Vragenlijst opnieuw' : 'Vijf vragen'}
+        </Knop>
+      </Rij>
+
+      {open === 'stoel' && <Stoeltest bewaar={(s) => {
+        bewaarMeting({ datum: vandaag(), soort: 'stoeltest', waarde: s, eenheid: 's' })
+        zetOpen('geen')
+      }} />}
+      {open === 'vragen' && <Sarcfvragen bewaar={(antw) => {
+        bewaarVragenlijst({
+          datum: vandaag(), soort: 'sarcf', antwoorden: { ...antw },
+          score: sarcfscore(antw), klasse: sarcfsignaal(antw) ? 'signaal' : 'geen',
+        })
+        zetOpen('geen')
+      }} />}
+
+      <Uitleg id="spier" label="hoe zeker dit is, en waarom er geen score uit komt">
+        <p>{SPIER_VOORBEHOUD}</p>
+        <p>
+          Er komt met opzet geen samengesteld spiergetal uit deze drie. Elk van de drie meet iets
+          anders met een eigen onzekerheid; ze optellen tot één cijfer zou een nauwkeurigheid
+          suggereren die geen van de drie heeft.
+        </p>
+        <p>
+          De stoeltest is de zwakkere van de twee krachtmaten die de Europese consensus noemt —
+          handknijpkracht presteert beter, maar die vraagt een dynamometer. Een maat die niemand
+          thuis kan doen, meet niets. Boven de {STOELTEST_GRENS_S} seconden, of niet kunnen opstaan
+          zonder je armen, geldt als aanwijzing voor verminderde spierkracht. Dat is een reden om
+          het te bespreken, geen diagnose.
+        </p>
+      </Uitleg>
+    </Kaart>
+  )
+}
+
+/**
+ * VIJF KEER OPSTAAN, MET DE KLOK VAN JE TELEFOON
+ *
+ * De app telt zelf, want een stopwatch bedienen terwijl je opstaat gaat niet.
+ * Starten, vijf keer opstaan en gaan zitten, stoppen.
+ */
+function Stoeltest({ bewaar }: { bewaar: (seconden: number) => void }) {
+  const [gestart, zetGestart] = useState<number | null>(null)
+  const [uitslag, zetUitslag] = useState<number | null>(null)
+
+  return (
+    <Kaart plat style={{ marginTop: 8 }}>
+      <p className="klein">
+        Ga op een stevige stoel zitten met je armen over elkaar. Sta vijf keer zo snel als je
+        kunt helemaal op en ga weer zitten — zonder je armen te gebruiken. Lukt dat niet zonder
+        armen, stop dan: dat is op zichzelf al het antwoord.
+      </p>
+      <Rij style={{ marginTop: 8, alignItems: 'center' }}>
+        {/* `performance.now()` en niet `Date.now()`: die eerste loopt monotoon
+            door en is niet te verzetten. Een klok die tijdens de test verspringt
+            — zomertijd, een synchronisatie, of een armatuur die hem vastzet —
+            mag de uitslag niet veranderen. */}
+        {gestart == null ? (
+          <Knop vol opKlik={() => { zetUitslag(null); zetGestart(performance.now()) }}>
+            Starten
+          </Knop>
+        ) : (
+          <Knop vol opKlik={() => {
+            const s = Math.round((performance.now() - gestart) / 100) / 10
+            zetGestart(null); zetUitslag(s)
+          }}>Klaar</Knop>
+        )}
+        {gestart != null && <span className="klein">de klok loopt</span>}
+        {uitslag != null && (
+          <>
+            <span className="cijfer">{dec(uitslag, 1)} s</span>
+            {/* Onder de ondergrens is er niets te bewaren. Dat is geen foutmelding
+                maar een knop die er niet staat — zie `STOELTEST_MIN_S`. */}
+            {stoeltestTraag(uitslag) != null
+              ? <Knop opKlik={() => bewaar(uitslag)}>Bewaren</Knop>
+              : <span className="klein">te kort om een meting te zijn — doe hem opnieuw</span>}
+          </>
+        )}
+      </Rij>
+    </Kaart>
+  )
+}
+
+/**
+ * SARC-F — vijf vragen, en de lage afkapwaarde
+ *
+ * Waarom deze lijst signaleert op één punt in plaats van op vier staat in
+ * `spier.ts`. Kort: bij vier is hij goed in uitsluiten en slecht in opsporen,
+ * en een screener in een app hoort de andere kant op te falen.
+ */
+function Sarcfvragen({ bewaar }: { bewaar: (a: Sarcfantwoorden) => void }) {
+  const [antw, zetAntw] = useState<Sarcfantwoorden>({
+    kracht: 0, lopen: 0, opstaan: 0, traplopen: 0, vallen: 0,
+  })
+
+  return (
+    <Kaart plat style={{ marginTop: 8 }}>
+      {/* Elke vraag is een eigen groep met de vraag als naam. Zonder dat staan
+          er vijf identieke rijen "geen · enige · veel" onder elkaar, en hoort
+          een schermlezer vijf keer hetzelfde zonder te weten waarbij. */}
+      {SARCF_VRAGEN.map((v) => (
+        <div key={v.sleutel} style={{ marginTop: 8 }} role="group" aria-label={v.vraag}>
+          <div className="klein">{v.vraag}</div>
+          <Rij style={{ marginTop: 4, flexWrap: 'wrap' }}>
+            {v.schaal.map((label, punt) => (
+              <Keuzechip key={label} aan={antw[v.sleutel] === punt}
+                         opKlik={() => zetAntw({ ...antw, [v.sleutel]: punt as Sarcfpunt })}>
+                {label}
+              </Keuzechip>
+            ))}
+          </Rij>
+        </div>
+      ))}
+      <Rij style={{ marginTop: 10 }}>
+        <Knop vol opKlik={() => bewaar(antw)}>Bewaren</Knop>
+        <span className="klein"><b>{sarcfscore(antw)} van de 10</b></span>
+      </Rij>
+    </Kaart>
   )
 }
 

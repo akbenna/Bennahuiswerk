@@ -38,7 +38,13 @@ export type RegelBron =
  *
  * Groepen en geen middelen, en waarom dat zo is, staat in `conditie.ts`.
  */
+/* `metformine` kwam er later bij, en dat zegt iets over waarvoor deze lijst
+   eerst gemaakt was: de groepen hierboven zijn gekozen op hypo-risico en op
+   nier- en vochtbelasting, en metformine doet geen van beide. Voor de
+   suppletievraag is hij juist de belangrijkste van allemaal — langdurig gebruik
+   verlaagt de B12-opname. Zie `suppletie.ts`. */
 export type Medicatiegroep = 'insuline' | 'su' | 'sglt2' | 'glp1' | 'ras' | 'diureticum'
+  | 'metformine'
 
 export interface Conditie {
   /** Hoge bloeddruk, of daarvoor behandeld. */
@@ -49,6 +55,25 @@ export interface Conditie {
   hvz?: boolean
   /** Zelfopgave, en dus nadrukkelijk geen medicatieoverzicht. */
   med?: Medicatiegroep[]
+  /**
+   * TWEE VRAGEN VOOR DE VITAMINE D-REGEL, EN WAAROM ZE GEVRAAGD WORDEN
+   *
+   * De Gezondheidsraad adviseert extra vitamine D onder meer aan mensen met een
+   * getinte of donkere huid en aan mensen die weinig buitenkomen of bedekkende
+   * kleding dragen. Dat is een uitspraak over hoeveel zon er op de huid valt en
+   * hoe goed die er vitamine D van maakt.
+   *
+   * Het profiel kent `etniciteit`, en het zou verleidelijk zijn die te
+   * gebruiken. Dat gebeurt hier met opzet niet: afkomst is geen huidskleur, en
+   * een app die dat gelijkstelt doet een aanname over iemand die hij niet mag
+   * doen — en die hij bovendien niet opschrijft. `etniciteit` gaat in deze app
+   * over de afkapwaarde van de middelomtrek en over niets anders.
+   *
+   * Dus twee eigen vragen. Leeg is hier "niet gevraagd" en geen "nee": zolang
+   * er niets staat, zwijgt de regel over deze twee gronden.
+   */
+  huid_donker?: boolean
+  weinig_zon?: boolean
 }
 
 /**

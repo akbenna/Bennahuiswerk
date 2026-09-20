@@ -3002,7 +3002,7 @@ for (const [naam, dagen, patroon, verwacht] of [
   }
 
   console.log(`wat ontbreekt              ${naam.padEnd(18)} ${
-    (t.match(/Vitamine B12|Omega-3|IJzer|Calcium/g) ?? ['—']).join(', ')}`)
+    [...new Set(t.match(/Vitamine B12|Omega-3|IJzer|Calcium/g) ?? ['—'])].join(', ')}`)
   await pagina.close()
 }
 
@@ -3435,6 +3435,312 @@ for (const [naam, dagen, patroon, verwacht] of [
   }
   console.log(`${''.padEnd(26)} verstuurd: 3 rijen, de kracht en de 14 u 22 nergens`)
 
+  await pagina.close()
+}
+
+/**
+ * DE DAG DIE ER NIET WAS
+ *
+ * De dagenkaart wordt gebouwd uit `kal_dagen` en `kal_regels`. Een dag waarop
+ * niets gemeten en niets gelogd is, staat er niet in — en daar zat de fout.
+ *
+ * Het bewegingsscherm nam zijn venster uit die kaart: de laatste eenentwintig
+ * sleutels. Een work-outafdruk importeren schrijft alleen in `kal_inspanning`
+ * en maakt geen dagrij. Je rit van zo'n dag stond dus wél in de database, kwam
+ * nergens op het scherm, en telde niet mee voor de norm. Dezelfde fout als
+ * `actieve_energie_kcal`, dat maandenlang netjes werd opgeslagen en door niets
+ * werd gelezen — en net zo onzichtbaar, want het scherm ziet er verder precies
+ * hetzelfde uit.
+ *
+ * Daarom een eigen reeks met een gat erin. Dat gat is het hele punt: met de
+ * gewone proefgegevens, waar elke dag een rij heeft, valt hier niets te zien.
+ */
+{
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: 'light' })
+
+  const grond = alles(28, 'afvallen')
+  /* Twee dagen terug bestaat niet: geen meting, geen maaltijd. Precies de
+     toestand van een dag van vóór de koppeling.
+
+     Met opzet een dag die fietsminuten hád: zo laat het totaal twee dingen
+     tegelijk zien — dat de 45 van die dag wegvalt mét de dagrij, en dat de rit
+     uit `kal_inspanning` er los van blijft staan. Was het een dag zonder
+     fietsminuten, dan bewees het totaal maar de helft. */
+  const gatdag = grond.dagen[grond.dagen.length - 3]
+  const gat = gatdag.datum
+  if (gatdag.fiets_min !== 45) {
+    throw new Error(`gatendag: de proefreeks is veranderd — ${gat} heeft ${gatdag.fiets_min} fietsminuten`)
+  }
+  const gaten = {
+    ...grond,
+    dagen: grond.dagen.filter((d) => d.datum !== gat),
+    regels: grond.regels.filter((r) => r.datum !== gat),
+    /* Eén rit, op precies die dag, en zwaar zodat hij ook in de wisselkoers
+       zichtbaar is: 60 echte minuten horen als 120 te tellen. */
+    inspanning: [{
+      id: 'proef-1', datum: gat, soort: 'rennen', eigennaam: null, minuten: 60,
+      intensiteit: 'zwaar', geschat: true, bron: 'import', tijd: null, notitie: null,
+    }],
+  }
+  await pagina.route('**/rest/v1/rpc/**', async (route) => {
+    const fn = route.request().url().split('/').pop()
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify(fn === 'kal_ophalen' ? gaten : {}),
+    })
+  })
+
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.hero', { timeout: 5000 })
+  await naarTab(pagina, 'Beweging')
+
+  const kaart = pagina.locator('.kaart').filter({ hasText: /van 150 min/ }).first()
+  const plat = (await kaart.innerText()).replace(/\s+/g, ' ')
+
+  /* De vier fietsdagen van de reeks leveren 180; de dag met het gat is er één
+     van, dus die valt weg en er blijven er drie over: 135. Daar bovenop de rit
+     van 60 zware minuten, die als 120 telt. Samen 255. */
+  if (!/255 van 150 min/.test(plat)) {
+    throw new Error(`gatendag: het weektotaal is niet 255 — ${JSON.stringify(plat.slice(0, 200))}`)
+  }
+  /* En hij staat in de verdeling, in échte minuten. */
+  if (!/Hardlopen 60′/.test(plat)) {
+    throw new Error(`gatendag: de rit staat niet in de verdeling — ${JSON.stringify(plat.slice(0, 260))}`)
+  }
+  if (!/waarvan 60 zwaar/.test(plat)) {
+    throw new Error(`gatendag: de zware minuten worden niet genoemd — ${JSON.stringify(plat.slice(0, 260))}`)
+  }
+
+  /* En in de lijst van drie weken staat de dag er met zijn minuten, náást de
+     streepjes voor de stappen die er niet zijn. Zonder die regel is een dag
+     zonder meting op dit scherm onvindbaar. */
+  const weken = pagina.locator('.kaart').filter({ hasText: 'Laatste drie weken' }).first()
+  const regel = weken.locator('.lijst > div').filter({ hasText: '60′' })
+  if (!(await regel.count())) {
+    throw new Error('gatendag: de dag zonder meting staat niet in de driewekenlijst')
+  }
+  const tekst = (await regel.first().innerText()).replace(/\s+/g, ' ')
+  if (!/—/.test(tekst)) {
+    throw new Error(`gatendag: de dag toont stappen die er niet zijn — ${JSON.stringify(tekst)}`)
+  }
+
+  console.log(`gatendag                   ${gat} zonder dagrij · 135 + 60 zwaar = 255 van 150 · ${JSON.stringify(tekst)}`)
+  await pagina.close()
+}
+
+/**
+ * DE DRIE HEFBOMEN DIE SPIER VASTHOUDEN
+ *
+ * Bij snel afvallen verdwijnt er naast vet ook spier — in de substudie van
+ * STEP-1 was ongeveer 45 procent van het verlies op semaglutide vetvrije massa.
+ * Geen app meet dat. Wat deze kaart doet is de drie dingen naast elkaar zetten
+ * waarvan bekend is dat ze het tegengaan.
+ *
+ * WAT HIER NIET MET EEN GREP TE ZIEN IS
+ *
+ * Twee dingen gaan de database in via een weg die al bestond: de stoeltest als
+ * meting, de vijf vragen als vragenlijst. Dat is precies waarom deze module
+ * geen enkele databasewijziging nodig had — en ook precies waarom het mis kan
+ * gaan zonder dat het scherm er anders uitziet. Een stoeltest die als
+ * `soort: 'middelomtrek'` wegschrijft staat er even netjes bij.
+ *
+ * Daarom loopt deze proef tot voorbij allebei de knoppen en kijkt hij wat er
+ * verstuurd wordt.
+ *
+ * En één ding dat er juist níét hoort te staan: bij een eiwitdoel van 161 gram
+ * is een derde daarvan 54 gram, ruim boven de drempel van dertig. De
+ * waarschuwing over de verdeling hoort dan weg te blijven. Een waarschuwing die
+ * bij iedereen staat, wordt door niemand gelezen.
+ */
+{
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: 'light' })
+  await bedienDb(pagina, 28, 'afvallen')
+
+  const verstuurd = []
+  await pagina.route('**/rest/v1/rpc/kal_rij_toevoegen', async (route) => {
+    verstuurd.push(JSON.parse(route.request().postData() ?? '{}'))
+    await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' })
+  })
+
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.hero', { timeout: 5000 })
+  await naarTab(pagina, 'Beweging')
+
+  const kaart = pagina.locator('.kaart').filter({ hasText: 'Wat je spieren vasthoudt' }).first()
+  await kaart.waitFor({ timeout: 5000 })
+  const plat = (await kaart.innerText()).replace(/\s+/g, ' ')
+
+  process.stdout.write('spierbehoud                ')
+
+  /* 1. De drie hefbomen staan er, in de volgorde waarin je er iets aan kunt
+        doen: eiwit eerst, want dat is de enige die vandaag te veranderen valt. */
+  const namen = await kaart.locator('.lijst > div .groei').allTextContents()
+  const kort = namen.map((n) => n.split('  ')[0].trim().split('\n')[0])
+  for (const moet of ['Eiwit per maaltijd', 'Krachttraining', 'Opstaan uit een stoel']) {
+    if (!kort.some((n) => n.startsWith(moet))) {
+      throw new Error(`spier: "${moet}" staat niet op de kaart — ${JSON.stringify(kort)}`)
+    }
+  }
+  if (!kort[0].startsWith('Eiwit')) {
+    throw new Error(`spier: eiwit staat niet voorop — ${JSON.stringify(kort)}`)
+  }
+
+  /* 2. De drempel staat in échte grammen, en telt alleen de hoofdmaaltijden die
+        werkelijk gelogd zijn.
+
+        De laatste dag van de proefreeks heeft alleen ontbijt en lunch — de
+        toestand van iemand die 's middags kijkt. Ontbijt is havermout plus
+        cappuccino: 18 + 5 = 23 gram eiwit, onder de drempel. Lunch is kaas plus
+        amandelen: 24 + 6 = 30, precies erop, en precies erop telt mee.
+
+        Dus "1 van de 2". Zou hier "2 van de 3" staan, dan telde de kaart een
+        maaltijd mee die er niet was — en dat is erger dan te weinig tellen: een
+        niet-gegeten diner van nul gram zou als gemiste drempel lezen. */
+  if (!/1 van de 2 boven 30 g/.test(plat)) {
+    throw new Error(`spier: de eiwitdrempel telt verkeerd — ${JSON.stringify(plat.slice(0, 260))}`)
+  }
+
+  /* 3. En de verdelingswaarschuwing blijft wég bij dit eiwitdoel. */
+  if (/onder de 30 g waarop de spieraanmaak/.test(plat)) {
+    throw new Error('spier: de verdelingswaarschuwing staat er terwijl 161/3 = 54')
+  }
+
+  /* 4. De stoeltest, tot voorbij de knop. */
+  await kaart.getByRole('button', { name: 'Stoeltest doen' }).click()
+  await kaart.getByRole('button', { name: 'Starten' }).click()
+  /* Ruim boven de ondergrens van twee seconden. Dat die grens bestaat, kwam
+     uit deze proef: de armatuur zet de klok vast, dus een stopwatch op
+     `Date.now()` stond stil en er ging nul seconden de database in — en nul
+     seconden las daarna als "snel". De stopwatch gebruikt nu
+     `performance.now()`, die loopt door omdat hij monotoon is en niet aan de
+     kalenderklok hangt. */
+  await pagina.waitForTimeout(2600)
+  await kaart.getByRole('button', { name: 'Klaar' }).click()
+  await kaart.getByRole('button', { name: 'Bewaren' }).click()
+  await pagina.waitForTimeout(400)
+
+  const meting = verstuurd.find((v) => v.p_tabel === 'meting')?.p_rij
+  if (!meting || meting.soort !== 'stoeltest' || meting.eenheid !== 's'
+      || !(meting.waarde >= 2)) {
+    throw new Error(`spier: de stoeltest gaat verkeerd de database in — ${JSON.stringify(meting)}`)
+  }
+
+  /* 5. De vijf vragen, met één genoemde klacht. Dat is er één, en de lage
+        afkapwaarde hoort hem als signaal te bewaren — niet als "geen". Bij de
+        gangbare grens van vier zou hier 'geen' staan, en dan zwijgt het scherm
+        precies bij de mensen voor wie de lijst bedoeld is. */
+  await kaart.getByRole('button', { name: 'Vijf vragen' }).click()
+  /* Op de groep en niet op de tekst: vijf vragen met dezelfde drie antwoorden
+     eronder zijn anders niet uit elkaar te houden — niet voor deze proef en
+     niet voor een schermlezer. */
+  const vraag = kaart.getByRole('group', { name: /tien traptreden/ })
+  await vraag.getByRole('button', { name: 'enige' }).click()
+  await pagina.waitForTimeout(150)
+  await kaart.getByRole('button', { name: 'Bewaren' }).click()
+  await pagina.waitForTimeout(400)
+
+  const lijst = verstuurd.find((v) => v.p_tabel === 'vragenlijst')?.p_rij
+  if (!lijst || lijst.soort !== 'sarcf' || lijst.score !== 1 || lijst.klasse !== 'signaal') {
+    throw new Error(`spier: de vragenlijst gaat verkeerd de database in — ${JSON.stringify(lijst)}`)
+  }
+  if (lijst.antwoorden?.traplopen !== 1) {
+    throw new Error(`spier: het antwoord komt niet mee — ${JSON.stringify(lijst.antwoorden)}`)
+  }
+
+  await pagina.screenshot({ path: 'gereedschap/health-spier.png', fullPage: true })
+  console.log(`3 hefbomen · stoeltest ${meting.waarde}s → meting · 1 klacht → score ${lijst.score}, ${lijst.klasse}`)
+  await pagina.close()
+}
+
+/**
+ * HET BOEKJE OVER AFVALLEN
+ *
+ * Acht stukken, en de belofte zit in de vorm: elk stuk zegt ook wat het níét
+ * weet, en dat staat in een eigen vak vóór het nut in plaats van als kleine
+ * letter eronder.
+ *
+ * WAAROM DIT NIET MET EEN PROEF IN VITEST AF IS
+ *
+ * Die controleert dat het veld `nietWeten` gevuld is. Hij kan niet zien of het
+ * scherm het tóónt. Een venster dat alleen `weten` rendert komt daar ongemerkt
+ * doorheen — en dan staat er precies het soort tekst dat dit boekje niet wil
+ * zijn: zeker klinkende beweringen zonder hun grens.
+ *
+ * En de grens die voor de klant het meest uitmaakt: geen enkel stuk mag een
+ * getal van de lezer bevatten. Dat is niet alleen stijl. Onder MDCG 2019-11 is
+ * een boekje geen medisch hulpmiddel zolang het geen patiëntgegevens verwerkt;
+ * dezelfde tekst met jouw gewicht erin zou de app een categorie op schuiven waar
+ * hij niet thuishoort. Deze proef leest daarom het echte scherm en zoekt naar
+ * de cijfers uit de proefgegevens.
+ */
+{
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: 'light' })
+  await bedienDb(pagina, 28, 'afvallen')
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.hero', { timeout: 5000 })
+  await naarTab(pagina, 'Profiel')
+  await pagina.getByRole('button', { name: 'Verdiepen: afvallen en medicatie' }).click()
+
+  const venster = pagina.locator('.venster')
+  await venster.waitFor({ timeout: 5000 })
+
+  process.stdout.write('verdiepen                  ')
+
+  /* 1. Acht stukken, en ze staan dicht: wie hier komt kiest wat hij leest.
+        De knop heet "open" en niet zoals het stuk — `Uitklap` zet de kop in een
+        `Kop` en de schakelaar ernaast. */
+  const dichte = venster.getByRole('button', { name: 'open', exact: true })
+  const aantal = await dichte.count()
+  if (aantal !== 8) throw new Error(`verdiepen: ${aantal} stukken in plaats van 8`)
+
+  /* 2. Eén openen, en dan moeten alle vier de delen er staan. */
+  await venster.locator('.kaart').filter({ hasText: 'Wat er gebeurt als je stopt' })
+    .getByRole('button', { name: 'open', exact: true }).click()
+  await pagina.waitForTimeout(250)
+  const plat = (await venster.innerText()).replace(/\s+/g, ' ')
+
+  if (!/tweederde van het verloren gewicht/.test(plat)) {
+    throw new Error('verdiepen: het stuk gaat niet open, of het getal staat er niet')
+  }
+  if (!/Wat we niet weten/.test(plat)) {
+    throw new Error(`verdiepen: het voorbehoud staat niet op het scherm\n  ${plat.slice(0, 300)}`)
+  }
+  if (!/verantwoord afbouwt is niet onderzocht/.test(plat)) {
+    throw new Error('verdiepen: het voorbehoud staat er als kop maar zonder inhoud')
+  }
+  if (!/Waar je dit terugziet/.test(plat)) throw new Error('verdiepen: de verwijzing ontbreekt')
+  if (!/Bron: Wilding/.test(plat)) throw new Error('verdiepen: de bron ontbreekt')
+
+  /* 3. HET BOEKJE BLIJFT EEN BOEKJE.
+        Open álle stukken en kijk of er ergens een getal van deze gebruiker in
+        staat. De proefreeks heeft een gewicht rond de 116-119 kg, een eiwitdoel
+        van 161 g en een dagdoel van 3.690 kcal; geen van die getallen hoort hier
+        voor te komen. */
+  for (let i = 0; i < 10; i++) {
+    const nog = venster.getByRole('button', { name: 'open', exact: true })
+    if (!(await nog.count())) break
+    await nog.first().click()
+    await pagina.waitForTimeout(80)
+  }
+  await pagina.waitForTimeout(300)
+  const alles = (await venster.innerText()).replace(/\s+/g, ' ')
+  for (const getal of ['116,6', '118,0', '3.690', '161 g', '7.468']) {
+    if (alles.includes(getal)) {
+      throw new Error(`verdiepen: "${getal}" komt uit de gebruiker en staat in het boekje — `
+        + 'dan is het geen boekje meer')
+    }
+  }
+
+  /* 4. En de slotregel die zegt wat dit niet is. */
+  if (!/schrijft geen medicijnen voor/.test(alles)) {
+    throw new Error('verdiepen: de slotregel over voorlichting ontbreekt')
+  }
+
+  await pagina.screenshot({ path: 'gereedschap/health-verdiepen.png', fullPage: true })
+  console.log(`${aantal} stukken · vier delen per stuk · geen enkel getal van de lezer erin`)
   await pagina.close()
 }
 

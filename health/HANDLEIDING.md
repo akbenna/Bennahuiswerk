@@ -309,6 +309,79 @@ zout en bloeddruk, over thuis meten, over koolhydraten en vezels. Ze staan er
 voor iedereen hetzelfde en met de bron erbij; wat bij jou hoort staat bovenaan.
 Er valt niets weg — je mag lezen over iets wat je niet hebt.
 
+### Verdiepen: acht stukken om te lezen
+
+Op Profiel staat *Verdiepen: afvallen en medicatie*. Acht stukken over de
+Nederlandse trap, wat GLP-1 doet, wat er gebeurt als je stopt, waarom eiwit nu
+zwaarder telt, wat je naast vet verliest, bot, de nieuwe definitie van obesitas,
+en wat volhouden voorspelt.
+
+Bij elk stuk staat hetzelfde rijtje: **wat we weten**, **wat we niet weten**,
+**waar je het in de app terugziet**, en **de bron**. Dat tweede vak staat er
+altijd en nooit onderaan in kleine letters. Er is geen stuk zonder.
+
+De teksten staan er voor iedereen hetzelfde. Ze lezen niets van jou en rekenen
+niets uit — dat gebeurt op de schermen zelf, en elk stuk zegt welk scherm dat is.
+Het is voorlichting: de app schrijft geen medicijnen voor en zegt niet of iets
+voor jou geschikt is.
+
+### Wat je spieren vasthoudt
+
+Bij snel afvallen verdwijnt er naast vet ook spier — bij semaglutide was dat in
+onderzoek ongeveer 45 procent van wat je kwijtraakt. Geen app kan dat meten. Wat
+deze wel doet, op het scherm Beweging, is de drie dingen naast elkaar zetten
+waarvan bekend is dat ze het tegengaan.
+
+**Eiwit per maaltijd.** Niet je dagtotaal — dat staat al bij Voeding — maar of
+elke maaltijd boven de 30 gram uitkomt. Daaronder komt de spieraanmaak
+nauwelijks op gang, en in een calorietekort telt dat zwaarder dan je dagtotaal.
+Ligt je dagdoel gedeeld door drie ónder die 30 gram, dan zegt de app dat, met het
+antwoord erbij: verdeel het over twee grotere maaltijden in plaats van drie.
+
+**Krachttraining.** Die telt al mee op hetzelfde scherm.
+
+**Opstaan uit een stoel.** Vijf keer opstaan en gaan zitten zonder je armen te
+gebruiken, met de klok van je telefoon. Boven de vijftien seconden is dat een
+aanwijzing om te bespreken — geen diagnose.
+
+Daarnaast kun je vijf vragen invullen over kracht, lopen, opstaan, traplopen en
+vallen. Eén genoemde klacht levert al een regel op. Dat is met opzet: deze lijst
+hoort dingen op te sporen, niet uit te sluiten.
+
+**Er komt geen score uit.** De drie meten elk iets anders, met een eigen
+onzekerheid; er één cijfer van maken zou nauwkeurigheid suggereren die er niet
+is. En de richting van dit advies is goed onderbouwd, de grootte niet — de app
+zegt dat er zelf bij.
+
+### Wat ontbreekt er, en waarom de app daar voorzichtig in is
+
+Op het dagscherm staat een kaart *Wat ontbreekt er?*. Vijf regels, en ze kijken
+naar twee verschillende dingen.
+
+**Drie kijken naar je logboek.** IJzer, omega-3 en calcium. De
+voedingsmiddelentabel bevat geen vitamines en mineralen, dus de app kan nooit
+zien hoevéél er binnenkomt — alleen welke hoeken je overslaat. Die drie staan
+daarom op *overwegen* en wijzen naar je huisarts, niet naar een potje. En onder
+de veertien gelogde dagen zwijgen ze: vier dagen zonder vis zegt iets over je
+invoer en niets over je voeding.
+
+**Twee kijken naar je profiel.** Die hangen aan geen enkele log.
+
+*Vitamine D* is het meest gegeven suppletieadvies van Nederland. De
+Gezondheidsraad adviseert 20 microgram per dag vanaf 70 jaar, 10 microgram voor
+vrouwen van 50 tot en met 69, en 10 microgram op elke leeftijd bij een getinte of
+donkere huid of bij weinig buitenkomen of bedekkende kleding. Die laatste twee
+vraagt de app apart bij *Wat er bij jou speelt* — hij leidt ze niet af uit je
+afkomst, want afkomst is geen huidskleur. Staat er geen leeftijd in je profiel,
+dan zegt de app daarover niets in plaats van te gokken.
+
+*B12 bij metformine.* Langdurig metformine verlaagt de opname van B12. Dat is een
+reden om het te laten prikken en niet om te gaan slikken. Vul je metformine in
+bij je medicijnen, dan komt die regel vanzelf.
+
+**Is de lijst leeg, dan noemt hij wat hij nagekeken heeft** — met per regel wat
+hij zag. Leeg zonder die opsomming is niet te onderscheiden van kapot.
+
 ### De bloeddruk telt per week, niet per meting
 
 Meet je thuis je bloeddruk, dan laat **Gezondheid** het gemiddelde over de

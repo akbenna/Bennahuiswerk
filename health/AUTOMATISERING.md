@@ -181,7 +181,7 @@ Twee dingen daaraan zijn niet vanzelfsprekend en dus het vermelden waard.
 
 **De proef is zelf getoetst.** Met de gewichtsregel expres omgedraaid — `coalesce(nieuw, oud)` in plaats van `coalesce(oud, nieuw)` — slaan er precies twee gevallen om: *"GEWICHT WORDT NOOIT OVERSCHREVEN"* en *"lege dag krijgt het gewicht wel"*. Die mutatie liep in een transactie die is teruggedraaid; de kapotte versie heeft nooit gecommit. Een proef die nooit rood wordt is erger dan geen proef, want hij geeft dekking die er niet is.
 
-Waarom dit geen vijfde poort in `npm run controle` is: die poorten draaien zonder database. Dit is dus een script dat je zelf draait, na elke wijziging aan `kal_beweging_ontvangen` of `kal_beweging_dag`.
+Waarom dit geen poort in `npm run controle` is: die poorten draaien zonder database. Dit is dus een script dat je zelf draait, na elke wijziging aan `kal_beweging_ontvangen` of `kal_beweging_dag`.
 
 ### Als de Garmin-API ooit wel kan
 
