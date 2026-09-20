@@ -70,7 +70,7 @@ describe('geen merk in de code', () => {
   /* Zonder deze regel zou de proef hierboven ook groen staan als bestand 45
      verdwenen was, of als de merken er nooit in gekomen waren. Een proef die
      groen is omdat er niets te toetsen valt is geen proef. */
-  it('en de merken staan wél in het invoerbestand — anders toetst dit niets', () => {
+  it('en de merken staan wél in het invoerbestand, anders toetst dit niets', () => {
     const sql = readFileSync(join('health/database', INVOERBESTAND), 'utf8')
     for (const merk of MERKEN) expect(sql).toContain(merk)
   })

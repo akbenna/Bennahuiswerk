@@ -383,7 +383,7 @@ erboven belooft iets.
 ### Wat je spieren vasthoudt
 
 Bij snel afvallen verdwijnt er naast vet ook spier — bij semaglutide was dat in
-onderzoek ongeveer 45 procent van wat je kwijtraakt. Geen app kan dat meten. Wat
+onderzoek ongeveer 40 procent van wat je kwijtraakt. Geen app kan dat meten. Wat
 deze wel doet, op het scherm Beweging, is de drie dingen naast elkaar zetten
 waarvan bekend is dat ze het tegengaan.
 

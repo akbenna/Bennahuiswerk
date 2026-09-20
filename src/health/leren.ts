@@ -57,7 +57,7 @@ export const BLADZIJDEN: readonly Bladzijde[] = [
       'Krijg je vaker een hypo, dan is dat een reden om de medicijnen na te lopen met je '
         + 'huisarts of praktijkondersteuner. Vaker een hypo hoort er niet bij.',
     ],
-    bron: 'Thuisarts.nl — Mijn bloedsuiker is te laag bij diabetes type 2',
+    bron: 'Thuisarts.nl, "Ik heb diabetes type 2 en mijn bloedsuiker is te laag"',
     bij: (c) => heeftMed(c, 'insuline') || heeftMed(c, 'su'),
   },
   {
@@ -66,7 +66,7 @@ export const BLADZIJDEN: readonly Bladzijde[] = [
     tekst: [
       'Insuline en tabletten die de alvleesklier aanzetten zijn afgestemd op wat je nu eet en '
         + 'weegt. Ga je minder eten of val je af, dan kan dezelfde dosis te veel worden. Dat is '
-        + 'geen reden om niet af te vallen — het is een reden om het samen te doen.',
+        + 'geen reden om niet af te vallen. Het is een reden om het samen te doen.',
       'Spreek daarom af met je praktijkondersteuner wanneer je vaker meet en wanneer de dosis '
         + 'opnieuw bekeken wordt. Verander je medicijnen nooit op eigen houtje, ook niet als je '
         + 'ziet dat je waarden lager worden.',
@@ -102,7 +102,7 @@ export const BLADZIJDEN: readonly Bladzijde[] = [
         + 'begint. De manchet hoort om je bovenarm, op harthoogte. Meet niet vlak na koffie, '
         + 'roken of inspanning.',
       'Het gemiddelde van die week is het getal waar het om gaat. Wat dat getal betekent, bespreek '
-        + 'je met je huisarts of praktijkondersteuner — deze app zet er met opzet geen grens bij.',
+        + 'je met je huisarts of praktijkondersteuner. Deze app zet er met opzet geen grens bij.',
     ],
     bron: 'NHG-Standaard Cardiovasculair risicomanagement',
     bij: (c) => !!c.hypertensie,

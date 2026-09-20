@@ -202,7 +202,7 @@ tijdens en na de behandeling gebeurt. Precies dáár zit ruimte voor een app.
 
 Wat er verloren gaat bij snel gewichtsverlies is niet alleen vet.
 
-- **STEP-1 lichaamssamenstellingssubstudie**: ongeveer **45 %** van het verloren
+- **STEP-1 lichaamssamenstellingssubstudie**: ongeveer **40 %** van het verloren
   gewicht op semaglutide was vetvrije massa.
 - **SURMOUNT-1 substudie**: ongeveer **25 %** bij tirzepatide.
 
@@ -396,7 +396,7 @@ de tweede lijn of op eigen kosten. Maar dan hoort dat er te staan.*
 lipiden halfjaarlijks, schildklier jaarlijks, en B12/D/ijzer halfjaarlijks.
 
 Wat er niet in staat: **lichaamssamenstelling, spierkracht, of enige maat voor
-spierverlies.** Terwijl ongeveer 45 % van het verlies op semaglutide vetvrije
+spierverlies.** Terwijl ongeveer 40 % van het verlies op semaglutide vetvrije
 massa is (§5). Het programma meet zorgvuldig wat er in het bloed gebeurt en kijkt
 niet naar wat er aan het lichaam verdwijnt.
 

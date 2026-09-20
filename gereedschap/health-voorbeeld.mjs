@@ -2789,7 +2789,7 @@ ${''.padEnd(27)}zonder aanwijzen: 1 van 2 — het sap blijft staan`)
   /* 3. De gemengde groepen zeggen waaróm ze eruit gaan. Zonder die zin is het
         een onverklaarde uitsluiting en gaat de gebruiker hem terugzetten zonder
         te weten wat hij daarmee binnenhaalt. */
-  if (!/bevat allebei — hier staat ook wat je wél lust/.test(na)) {
+  if (!/bevat allebei; hier staat ook wat je wél lust/.test(na)) {
     throw new Error('de gemengde groepen leggen niets uit')
   }
 
@@ -3458,7 +3458,7 @@ for (const [naam, dagen, patroon, verwacht] of [
 
   /* 2. Twee getallen en ze verschillen: 52 + 40 = 92 gedaan, en 52 + 80 = 132
         voor de norm. Eén getal zou over een van beide liegen. */
-  if (!/samen 92 minuten — dat telt als 132 matige minuten/.test(plat)) {
+  if (!/samen 92 minuten, en dat telt als 132 matige minuten/.test(plat)) {
     throw new Error(`work-outs: de wisselkoers staat niet in de samenvatting\n  ${plat}`)
   }
 
@@ -3471,7 +3471,7 @@ for (const [naam, dagen, patroon, verwacht] of [
     throw new Error('work-outs: een soort kiezen vinkt de post niet aan')
   }
   plat = (await venster.innerText()).replace(/\s+/g, ' ')
-  if (!/samen 123 minuten — dat telt als 163 matige minuten/.test(plat)) {
+  if (!/samen 123 minuten, en dat telt als 163 matige minuten/.test(plat)) {
     throw new Error(`work-outs: de samenvatting loopt niet mee\n  ${plat}`)
   }
   console.log(`5 posten · vinkjes ${stand.map((v) => v ? '✓' : '·').join('')} · 92′ → 132 matige, na de soort 123′ → 163`)
@@ -3583,8 +3583,11 @@ for (const [naam, dagen, patroon, verwacht] of [
     throw new Error('gatendag: de dag zonder meting staat niet in de driewekenlijst')
   }
   const tekst = (await regel.first().innerText()).replace(/\s+/g, ' ')
-  if (!/—/.test(tekst)) {
-    throw new Error(`gatendag: de dag toont stappen die er niet zijn — ${JSON.stringify(tekst)}`)
+  /* Een half streepje (U+2013) en niet een gedachtestreepje: dat laatste komt
+     sinds de tekstnaloop nergens meer in schermtekst voor. Zie
+     `src/health/schermtekst.proef.ts`. */
+  if (!/–/.test(tekst)) {
+    throw new Error(`gatendag: de dag toont stappen die er niet zijn: ${JSON.stringify(tekst)}`)
   }
 
   console.log(`gatendag                   ${gat} zonder dagrij · 135 + 60 zwaar = 255 van 150 · ${JSON.stringify(tekst)}`)

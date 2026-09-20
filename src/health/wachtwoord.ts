@@ -178,7 +178,7 @@ export function wachtwoordklacht(ww: string, account = '', lijst = VEELGEBRUIKT)
   /* Drie tekens is te kort om iets te betekenen: wie "ali" heet mag "kwaliteit"
      gebruiken. Vanaf vier wordt het een aanwijzing. */
   if (naam.length >= 4 && klein.includes(naam)) {
-    return 'Je accountnaam staat erin — dat raadt iemand meteen'
+    return 'Je accountnaam staat erin, en dat raadt iemand meteen'
   }
 
   /* Minder dan vijf verschillende tekens over twaalf posities: dat is
@@ -186,7 +186,7 @@ export function wachtwoordklacht(ww: string, account = '', lijst = VEELGEBRUIKT)
      regel. */
   const verschillend = new Set(klein).size
   if (verschillend < 5) {
-    return 'Te weinig verschillende tekens — dit is een patroon, geen wachtwoord'
+    return 'Te weinig verschillende tekens: dit is een patroon, geen wachtwoord'
   }
 
   if (langsteRij(ww) > ww.length / 2) {

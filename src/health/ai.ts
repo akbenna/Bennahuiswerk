@@ -162,7 +162,7 @@ export function aannemelijk(minuten: number): boolean {
  */
 export function redenUit(a: Importactiviteit): string | null {
   if (a.soort === 'kracht') return 'krachttraining telt apart en hoort niet bij deze minuten'
-  if (!aannemelijk(a.minuten)) return `langer dan ${ACTIVITEIT_MAX_MIN / 60} uur — een vergeten stopknop?`
+  if (!aannemelijk(a.minuten)) return `langer dan ${ACTIVITEIT_MAX_MIN / 60} uur. Een vergeten stopknop?`
   if (!a.soort) return 'geen soort te zien op de afdruk'
   return null
 }

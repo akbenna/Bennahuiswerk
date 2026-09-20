@@ -98,7 +98,7 @@ export function fib4(
  * geslachtsspecifieke nekomtrek van 43 en 41 cm.
  */
 export const STOPBANG = [
-  ['snurken', 'Luid snurken — hoorbaar door een gesloten deur'],
+  ['snurken', 'Luid snurken, hoorbaar door een gesloten deur'],
   ['moe', 'Overdag vaak moe of slaperig'],
   ['apneu', 'Waargenomen ademstops, stikken of naar adem happen'],
   ['bloeddruk', 'Hoge bloeddruk, of daarvoor behandeld'],

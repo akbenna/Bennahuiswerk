@@ -69,7 +69,7 @@ export function Voeding(p: VoedingEigenschappen) {
               <>
                 <Maalstaven staven={v.staven} doel={v.doelPerMaaltijd} />
                 <p className="mini" style={{ marginTop: 9 }}>
-                  De stippellijn ligt op {v.doelPerMaaltijd} g — je dagdoel gedeeld door drie.
+                  De stippellijn ligt op {v.doelPerMaaltijd} g: je dagdoel gedeeld door drie.
                 </p>
               </>
             ) : v.totaal > 0 ? (
@@ -106,7 +106,7 @@ export function Voeding(p: VoedingEigenschappen) {
         <Uitleg id="eiwitverdeling" label="waar dat vandaan komt">
           <p>
             Gelijkmatige verdeling gaf in Mamerow 2014 een 25 procent hogere spiereiwitsynthese dan
-            een scheve verdeling — al ging dat om acht deelnemers van gemiddeld 37 jaar, dus behandel
+            een scheve verdeling, al ging dat om acht deelnemers van gemiddeld 37 jaar, dus behandel
             het als richting, niet als wet. Het ontbijt is de maaltijd waar de scheve verdeling
             vrijwel altijd ontstaat.
           </p>
@@ -223,14 +223,14 @@ function Zoeken(
                   <span className="mini">per 100 g · {n.groep}</span>
                   {toonKoolhydraten && (
                     <span className="mini" style={{ display: 'block' }}>
-                      koolhydraten {n.koolhydraat_g == null ? '—' : dec(n.koolhydraat_g, 1) + ' g'}
-                      {' · '}vezel {n.vezel_g == null ? '—' : dec(n.vezel_g, 1) + ' g'}
+                      koolhydraten {n.koolhydraat_g == null ? '–' : dec(n.koolhydraat_g, 1) + ' g'}
+                      {' · '}vezel {n.vezel_g == null ? '–' : dec(n.vezel_g, 1) + ' g'}
                     </span>
                   )}
                   {toonZout && (
                     <span className="mini" style={{ display: 'block' }}>
                       zout {zoutGram(n.natrium_mg) == null
-                        ? '—'
+                        ? '–'
                         : dec(zoutGram(n.natrium_mg) as number, 2) + ' g'}
                     </span>
                   )}
@@ -294,7 +294,7 @@ function Zoeken(
       {leeg && !loopt && (
         <p className="klein" style={{ marginTop: 10 }}>
           Niets gevonden voor “{term.trim()}”. Probeer het losse product zonder de bereiding erbij, of
-          zeg het in gewone taal onder Vandaag — dan ontleedt de herkenning het voor je.
+          zeg het in gewone taal onder Vandaag, dan ontleedt de herkenning het voor je.
         </p>
       )}
     </Kaart>
@@ -344,7 +344,7 @@ function EigenProducten(
       </Rij>
       <Uitleg id="eigenproduct" label="waarom dit de beste soort waarde is">
         <p>
-          Wat je van het etiket overneemt en zelf afweegt is een A-waarde — de enige categorie in
+          Wat je van het etiket overneemt en zelf afweegt is een A-waarde, de enige categorie in
           deze app zonder schatting. De fabrikant staat voor het getal en jij voor de hoeveelheid;
           er wordt niets geraden.
         </p>

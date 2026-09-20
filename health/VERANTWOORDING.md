@@ -1187,7 +1187,7 @@ schrijft niet voor.
 
 Een weegschaal telt kilo's en zegt niet waar ze vandaan komen. Bij snel
 gewichtsverlies is dat verschil groot: in de lichaamssamenstellingssubstudie van
-STEP-1 was ongeveer **45 %** van wat er op semaglutide verdween vetvrije massa;
+STEP-1 was ongeveer **40 %** van wat er op semaglutide verdween vetvrije massa;
 in de SURMOUNT-1-substudie bij tirzepatide ongeveer **25 %**.
 
 Geen app meet lichaamssamenstelling. Wat deze wel kan is de drie dingen naast
@@ -1296,7 +1296,7 @@ en een venster dat alleen `weten` rendert zou door de eerste heen komen.
 
 Net als `leren.ts`: onder MDCG 2019-11 is software die uitsluitend informatie
 ontsluit, zonder patiëntspecifieke verwerking, geen medisch hulpmiddel. "Bij
-semaglutide is ongeveer 45 procent van het verlies vetvrije massa" als vaste
+semaglutide is ongeveer 40 procent van het verlies vetvrije massa" als vaste
 tekst mag. Diezelfde zin met jóuw cijfers erin zou de app een categorie op
 schuiven waar hij niet thuishoort. Zie `health/STRATEGIE-CHRONISCHE-ZORG.md`.
 
@@ -1708,3 +1708,169 @@ voeding met persoonsgerichte aanpassing het uitgangspunt is.
 
 De drempels en formuleringen in de signalen zijn bewust gebleven bij wat deze
 bronnen dragen. Waar ze niets zeggen, zegt de app ook niets.
+
+---
+
+## 25. De naloop van 20 september 2026 — wat er niet klopte
+
+Op verzoek is elke medische bewering in de app nagelopen tegen de bron waar hij
+naar verwijst. Het meeste hield stand. Wat hieronder staat is wat niet hield,
+plus twee dingen die de app onderling tegensprak.
+
+### 25.1 Vijfenveertig procent was veertig
+
+De app zei op drie plaatsen dat in de lichaamssamenstellingssubstudie van STEP-1
+ongeveer **45 %** van het verloren gewicht vetvrije massa was, waarvan twee
+plaatsen in het boekje dat de gebruiker leest. De gepubliceerde uitkomst is
+ongeveer **40 %**: in de DXA-deelgroep verloren 95 deelnemers op semaglutide
+6,9 kg vetvrij weefsel naast 10,4 kg vetmassa, wat op 39,9 % uitkomt. Twee
+onafhankelijke weergaven van de studie geven hetzelfde getal.
+
+Rechtgezet in `verdieping.ts`, `spier.ts`, `HANDLEIDING.md`,
+`ONDERZOEK-MEDISCH-AFVALLEN.md`, `VOORSTEL-MEDISCH-AFVALLEN.md` en hierboven.
+De 25 % voor tirzepatide in SURMOUNT-1 klopt wel (5,6 kg vetvrij naast 15,9 kg
+vet, ofwel 26 %).
+
+### 25.2 Drieënveertig procent was achtenveertig
+
+In het boekje stond dat een jaar na het staken van semaglutide nog ongeveer
+43 % van de deelnemers minstens 5 % gewichtsverlies vasthield. De STEP-1-extensie
+geeft **48,2 %** op week 120. Rechtgezet.
+
+Twee andere getallen uit diezelfde tabel — het aandeel dat ≥ 10 % vasthield en
+het aandeel op of boven het startgewicht — zijn vanaf deze machine niet na te
+kijken: de uitgever, PubMed Central en de repositories zijn alle geblokkeerd
+door de uitgaande proxy. Ze zijn daarom vervangen door een zin die zegt wat er
+wél vaststaat. Wie de tabel bij de hand heeft kan ze terugzetten; dan met het
+getal erbij.
+
+### 25.3 Wishnofsky, niet Wichmann
+
+`rekenkern.ts` schreef de 7.700 kcal per kilo toe aan "Wichmann". De regel komt
+van **Max Wishnofsky**, *Caloric equivalents of gained or lost weight*, Am J Clin
+Nutr 1958. Alleen commentaar, maar een verkeerde naam in de bron van een
+medische app is precies het soort fout dat deze naloop moest vinden.
+
+### 25.4 De eerste meetdag van de bloeddruk telde ten onrechte mee
+
+Dit is de zwaarste bevinding, want hier veranderde een rekenregel.
+
+`bloeddruk.ts` liet de eerste meetdag meetellen in het weekgemiddelde, met als
+opgeschreven reden dat de handleiding het laten vervallen niet voorschrijft. Dat
+klopt niet. Het NHG-protocol thuisbloeddrukmeting is 7-2-2 — zeven dagen, twee
+keer per dag, twee metingen per keer — en laat de eerste dag uitdrukkelijk
+vervallen, omdat iemand dan nog aan het apparaat went en de meting systematisch
+hoger uitvalt. Er blijven zes dagen over.
+
+Het gevolg van de oude regel was een gemiddelde dat te hoog uitviel. Dat is de
+veilige kant van de fout, maar het was er wel een, en hij hing aan een verkeerd
+gelezen protocol.
+
+**Wat er anders is dan in het protocol.** Het protocol beschrijft één meetweek
+met een begin; deze app rekent over een schuivend venster van zeven dagen op een
+reeks die kan doorlopen. De oudste dag in dat venster is dus niet vanzelf iemands
+eerste meetdag. De gewenningsdag vervalt daarom alleen als er geen enkele eerdere
+bloeddrukmeting staat, en nooit als er anders niets overblijft. Het scherm zegt
+erbij dát die dag is overgeslagen; een dag die stilzwijgend wegvalt is een dag
+waarvan de lezer denkt dat hij meetelt.
+
+**En de afkapwaarde.** Hier stond dat het protocol geen eigen grens voor de
+thuismeting geeft en dat de 135/85 die elders circuleert uit een andere richtlijn
+komt. Ook dat klopt niet: 135/85 is de grens voor de thuismeting. De app zet hem
+nog steeds niet op het scherm, maar dat is nu een keuze en geen leemte, en zo
+staat het er ook.
+
+**Wat hieraan ontbreekt.** `nhg.org`, de richtlijnendatabase en de praktische
+handleiding zijn vanaf deze machine geen van drieën op te halen. Het bovenstaande
+komt uit drie onafhankelijke weergaven van het protocol en niet uit het protocol
+zelf. Dat hoort nagelopen te worden door iemand die het op zijn bureau heeft
+voordat dit als gecontroleerd geldt.
+
+### 25.5 De app sprak zichzelf tegen over de standaard
+
+`trap.ts` citeert de NHG-Standaard Obesitas van **augustus 2026** — de uitgave
+die er als pdf ligt. Het boekje in `verdieping.ts` noemde nog de herziening van
+**oktober 2025**, "via samenvattingen". Twee bestanden, twee data, en niemand die
+het zag omdat ze nergens naast elkaar stonden.
+
+Het boekje volgt nu dezelfde uitgave. De zin dat de criteria uit samenvattingen
+komen is vervallen, want dat is niet meer waar. En de reden dat er geen
+BMI-grenzen in dat stuk staan is herschreven: ze stonden er niet omdat de bron
+tweedehands was, ze staan er nu niet omdat ze op Profiel horen, bij je traject,
+met beide drempelsets en met het voorbehoud erbij.
+
+`verdieping.proef.ts` hield de oude reden vast en viel om zodra de tekst
+veranderde. Dat is precies waarvoor die regel er stond. Hij toetst nu twee
+dingen: dat het stuk geen BMI-getallen draagt, en dat het dezelfde uitgave van de
+standaard noemt als `trap.ts`.
+
+### 25.6 Wat wél hield
+
+Nagelopen en in orde bevonden: de WHO-richtlijn van 2020 (150 tot 300 matige of
+75 tot 150 zware minuten, twee keer per week spierversterkend, één zware minuut
+voor twee matige); de MET-waarden van de inspanningssoorten tegen het Compendium
+of Physical Activities; SARC-F met afkapwaarde 4 en de vijf-keer-opstaantest
+boven vijftien seconden uit EWGSOP2; de leucinedrempel van rond 30 g eiwit per
+maaltijd; de suppletieadviezen van de Gezondheidsraad voor vitamine D (20 µg
+vanaf 70 jaar, 10 µg voor vrouwen van 50 tot 70 en bij een getinte of donkere
+huid); de vijf drempels voor voedingsclaims uit Verordening (EG) 1924/2006; zout
+is natrium maal 2,5 uit Verordening (EU) 1169/2011; de botdichtheidscijfers
+(2,6 % heup en 2,1 % onderrug over 52 weken); de STEP-1-extensie (n=327,
+tweederde terug, netto −5,6 %); de hypotekst tegen Thuisarts.nl; Mamerow 2014
+voor de eiwitverdeling; en de Lancet-commissie van januari 2025.
+
+Bij de botstudie is erbij gezet wat er stond maar niet bij: 64 deelnemers, allen
+met een verhoogd risico op botbreuken, en een lagere dosering dan bij
+gewichtsbehandeling gebruikelijk is. En de duur van de middelenstudies is van
+"anderhalf jaar" naar "ruim een jaar (68 tot 72 weken)" gegaan, want dat is wat
+de studies liepen.
+
+De leeftijdsklassen bij SCORE2 leken een fout: de richtlijn kent drie banden
+(onder 50, 50 tot 69, vanaf 70) en de app twee. Hij kent er twee omdat
+`score2()` buiten 40 tot 69 jaar `null` geeft — SCORE2-OP is bewust niet
+geïmplementeerd. De derde band kan dus nooit vuren. Geen fout.
+
+---
+
+## 26. Geen gedachtestreepjes in schermtekst
+
+Een verzoek, en een dat meer is dan smaak.
+
+Het gedachtestreepje is goed Nederlands. In grote hoeveelheid is het ook een
+herkenbaar spoor van tekst die een taalmodel schreef, en deze app hoort eruit te
+zien als het werk van de arts die hem maakte. Een lezer die de vorm wantrouwt,
+wantrouwt ook de getallen, en dan is de hele onzekerheidsdiscipline hierboven
+voor niets geweest.
+
+Alle 203 streepjes in schermtekst van BennaHealth zijn met de hand vervangen:
+een komma waar het een bijstelling was, een dubbele punt waar het een uitleg
+inleidde, een punt waar er twee hoofdzinnen stonden, haakjes waar het een
+tussenzin was. Losse streepjes in een tabelcel waar niets te melden valt zijn een
+half streepje geworden.
+
+`src/health/schermtekst.proef.ts` houdt het vast. Die proef gebruikt de parser
+van TypeScript en geen grep, en dat is geen overdaad: een grep op het bestand
+keurt elk commentaarblok af, en een zelfgeschreven ontleding struikelt over de
+apostrof — in JSX is `zo'n` gewoon tekst, en wie daar een string ziet beginnen
+leest de rest van het bestand verkeerd. Die fout heeft de eerste versie van deze
+proef ook gemaakt. De parser die de edge-poort al gebruikt weet het verschil wel.
+
+### Waarom de andere apps nog niet om zijn
+
+In Noer, Sanad, Arabisch, Bunyan, Huiswerk, Rasikh en het startscherm staan er
+nog 697 in schermtekst.
+
+Een regelgestuurde vervanging haalde daar 139 van weg en maakte er onderweg
+brokken van: `"Vrijheid, gelijkheid, broederschap" — iedereen even vrij` werd een
+zin met een half streepje tegen het aanhalingsteken, en van een tussenzin bleef
+één sluithaakje over. Na aanscherping bleven er 98 over die aantoonbaar kloppen —
+alleen de gevallen waarin het vervolg de verbinding zelf al draagt ("en", "maar",
+"dus") en er geen tweede streepje in dezelfde zin staat. De overige 599 zijn een
+afweging per zin.
+
+Belangrijker: die apps dragen hun lesteksten in gouden waarden, en elf proeven
+vielen om op de leestof. Dat is geen hindernis maar het punt van die proeven —
+ze bestaan zodat lesmateriaal niet ongemerkt verandert. Het opnieuw ijken kan
+(`npm run gouden-waarden`), maar het is een besluit over andermans lesteksten en
+niet over opmaak. Daarom staat het stil tot iemand er ja op zegt.
+

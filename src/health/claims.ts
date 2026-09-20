@@ -65,11 +65,11 @@ export function claims(v: Voedingswaarden): Claim[] {
     const deel = (v.eiwit_g * KCAL_PER_GRAM_EIWIT) / v.kcal
     if (deel >= 0.2) {
       uit.push({ id: 'eiwitrijk', soort: 'eiwit', naam: 'Eiwitrijk',
-        grond: 'Minstens 20 % van de energie komt uit eiwit — de drempel voor "eiwitrijk" '
+        grond: 'Minstens 20 % van de energie komt uit eiwit, de drempel voor "eiwitrijk" '
           + 'in de Europese verordening voor voedingsclaims.' })
     } else if (deel >= 0.12) {
       uit.push({ id: 'eiwitbron', soort: 'eiwit', naam: 'Bron van eiwit',
-        grond: 'Minstens 12 % van de energie komt uit eiwit — de drempel voor "bron van '
+        grond: 'Minstens 12 % van de energie komt uit eiwit, de drempel voor "bron van '
           + 'eiwitten" in de Europese verordening voor voedingsclaims.' })
     }
   }
@@ -90,7 +90,7 @@ export function claims(v: Voedingswaarden): Claim[] {
      dit vlaggetje niet. De zoutwaarde zelf staat er bij hoge bloeddruk al. */
   if (v.natrium_mg != null && v.natrium_mg <= 120) {
     uit.push({ id: 'zoutarm', soort: 'zout', naam: 'Laag natriumgehalte',
-      grond: 'Hoogstens 0,12 g natrium per 100 g — de drempel uit de Europese verordening '
+      grond: 'Hoogstens 0,12 g natrium per 100 g, de drempel uit de Europese verordening '
         + 'voor voedingsclaims.' })
   }
 

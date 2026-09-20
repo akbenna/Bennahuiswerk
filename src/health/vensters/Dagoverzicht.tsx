@@ -99,7 +99,7 @@ export function DagoverzichtVenster(
         {o.totaal.vezel.gram > 0 && (
           <p className="mini" style={{ marginTop: 8 }}>
             Vezel: <span className="cijfer">{Math.round(o.totaal.vezel.gram)}</span> g
-            {o.totaal.vezel.ontbreekt > 0 && ` — van ${o.aantal - o.totaal.vezel.ontbreekt} van de `
+            {o.totaal.vezel.ontbreekt > 0 && `, van ${o.aantal - o.totaal.vezel.ontbreekt} van de `
               + `${o.aantal} regels bekend`}
           </p>
         )}
@@ -107,7 +107,7 @@ export function DagoverzichtVenster(
 
       {o.aantal === 0 ? (
         <p className="klein" style={{ marginTop: 12 }}>
-          Op deze dag is niets gelogd. Er valt dus ook niets uit te splitsen — dat is geen fout van
+          Op deze dag is niets gelogd. Er valt dus ook niets uit te splitsen, en dat is geen fout van
           de app, alleen een lege dag.
         </p>
       ) : (

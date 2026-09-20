@@ -123,7 +123,7 @@ export function DagverslagVenster(
       {!uitslag ? (
         <>
           <p className="klein">
-            Schrijf of spreek in wat je vandaag gegeten hebt — in gewone woorden, in
+            Schrijf of spreek in wat je vandaag gegeten hebt, in gewone woorden, in
             de volgorde waarin het je te binnen schiet. De microfoonknop op je eigen
             toetsenbord doet het inspreken; deze app neemt zelf niets op.
           </p>
@@ -155,7 +155,7 @@ export function DagverslagVenster(
           <p className="klein">
             <span className="cijfer">{gaan.length}</span> van{' '}
             <span className="cijfer">{keuzes.length}</span> regels gaan erin
-            {los > 0 && <> — <span className="cijfer">{los}</span> wacht{los === 1 ? '' : 'en'} nog op een plek</>}
+            {los > 0 && <>, <span className="cijfer">{los}</span> wacht{los === 1 ? '' : 'en'} nog op een plek</>}
             {trainingen.length > 0 && (
               <>, en <span className="cijfer">{trainingen.length}</span>{' '}
                 {trainingen.length === 1 ? 'oefening' : 'oefeningen'}</>
@@ -171,7 +171,7 @@ export function DagverslagVenster(
               </Tussen>
               {vak.moment === 'onbekend' && (
                 <p className="mini" style={{ marginTop: 2 }}>
-                  Uit je verslag bleek niet wanneer je dit at. Wijs het aan, of laat het weg —
+                  Uit je verslag bleek niet wanneer je dit at. Wijs het aan, of laat het weg:
                   onaangewezen gaat het niet mee.
                 </p>
               )}

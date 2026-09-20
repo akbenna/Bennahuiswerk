@@ -198,7 +198,7 @@ export function Beweging(
           <Doelring waarde={gem7 ?? 0} doel={STAPDOEL} maat={118}
                     kind={<>
                       <span className="getal" style={{ fontSize: '1.35rem' }}>
-                        {gem7 != null ? dz(gem7) : '—'}
+                        {gem7 != null ? dz(gem7) : '–'}
                       </span>
                       <span className="mini">stappen<br />per dag</span>
                     </>} />
@@ -237,7 +237,7 @@ export function Beweging(
                  zou suggereren dat ze bij elkaar horen. */
               <p className="mini" style={{ marginTop: 10 }}>
                 <b>{dz(energie7)} kcal</b> actieve energie per dag, uit Gezondheid. Die telt hier
-                nergens in mee — het verbruik komt uit je gewichtstrend, en daar zit deze beweging
+                nergens in mee: het verbruik komt uit je gewichtstrend, en daar zit deze beweging
                 al in verwerkt.
               </p>
             )}
@@ -249,7 +249,7 @@ export function Beweging(
                 {dagenStil === 0 ? 'Uit Gezondheid vandaag binnengekomen.'
                  : dagenStil === 1 ? 'Uit Gezondheid gisteren binnengekomen.'
                  : dagenStil <= 2 ? `Uit Gezondheid ${dagenStil} dagen geleden binnengekomen.`
-                 : `Uit Gezondheid al ${dagenStil} dagen niets binnengekomen — kijk of de `
+                 : `Uit Gezondheid al ${dagenStil} dagen niets binnengekomen. Kijk of de `
                    + 'automatisering op je telefoon nog draait.'}
               </p>
             )}
@@ -264,10 +264,10 @@ export function Beweging(
         <Kop>Over het hele venster</Kop>
         <Rij style={{ alignItems: 'baseline', marginTop: 4 }}>
           <span className="getal" style={{ fontSize: '1.6rem' }}>
-            {a.gemStappen != null ? dz(Math.round(a.gemStappen)) : '—'}
+            {a.gemStappen != null ? dz(Math.round(a.gemStappen)) : '–'}
           </span>
           <span className="klein">
-            stappen per dag over {a.venster} dagen — de reeks waar het model op rekent, en niet de
+            stappen per dag over {a.venster} dagen, de reeks waar het model op rekent, en niet de
             week hierboven.
           </span>
         </Rij>
@@ -276,7 +276,7 @@ export function Beweging(
             Actieve energie uit Apple of Garmin wordt bewaard als volume-indicator maar verschijnt
             nergens in de rekenkern. De fout in energieverbruik is twintig tot vijftig procent en niet
             consistent in één richting; een bias die je niet kent kun je niet corrigeren. Voor jou gaat
-            het om zo'n 633 kcal per dag — genoeg om het hele tekort weg te eten als je het zou
+            het om zo'n 633 kcal per dag, genoeg om het hele tekort weg te eten als je het zou
             bijtellen.
           </p>
         </Uitleg>
@@ -303,7 +303,7 @@ export function Beweging(
         {verdeeld.length > 0 && (
           <p className="mini" style={{ marginTop: 6 }}>
             {verdeeld.map((v) => `${v.naam} ${dz(v.minuten)}′`).join(' · ')}
-            {zwaar7 > 0 && ` — waarvan ${dz(zwaar7)} zwaar, en die tellen dubbel.`}
+            {zwaar7 > 0 && `, waarvan ${dz(zwaar7)} zwaar, en die tellen dubbel.`}
           </p>
         )}
 
@@ -335,7 +335,7 @@ export function Beweging(
                 de dag zelf en is de enige weg waarlangs de koppeling op je
                 telefoon binnenkomt. Die afspraak breken zou betekenen dat de
                 opdracht op het toestel opnieuw moet. Dus telt hij mee als één
-                matige fietsrit, en blijft hij hier te verbeteren — wissen doe je
+                matige fietsrit, en blijft hij hier te verbeteren. Wissen doe je
                 door er nul in te zetten. */}
             {(fietsVandaag ?? 0) > 0 && (
               <div>
@@ -369,14 +369,14 @@ export function Beweging(
             het beter weet.
           </p>
           <p>
-            Krachttraining telt hier niet mee. Die staat in de richtlijn apart — twee keer per week
-            spierversterkend, naast deze minuten — en heeft hieronder zijn eigen bolletjes. Zou hij
+            Krachttraining telt hier niet mee. Die staat in de richtlijn apart: twee keer per week
+            spierversterkend, naast deze minuten. Ze heeft hieronder haar eigen bolletjes. Zou hij
             hier ook meetellen, dan haalde één zware sessie de halve week.
           </p>
           <p>
             Calorieën worden er met opzet niet van gemaakt. Een schatting uit hartslag of uit een
             tabel per activiteit heeft een fout van twintig tot vijftig procent, en die fout zit niet
-            consistent in één richting — corrigeren kan dus niet. Voor jou zou het om honderden
+            consistent in één richting. Corrigeren kan dus niet. Voor jou zou het om honderden
             kcal per keer gaan: genoeg om het hele tekort weg te rekenen op een getal dat geraden is.
           </p>
           <p>
@@ -409,18 +409,18 @@ export function Beweging(
                   }} />
                 </span>
                 <span className="cijfer mini" style={{ width: 52, textAlign: 'right' }}>
-                  {r?.stappen != null ? dz(r.stappen) : '—'}
+                  {r?.stappen != null ? dz(r.stappen) : '–'}
                 </span>
                 {/* De minutenkolom staat er alleen als er die drie weken ooit
                     iets in stond. Anders is het een kolom streepjes.
 
-                    Échte minuten, net als in de verdeling hierboven — niet wat
+                    Échte minuten, net als in de verdeling hierboven, niet wat
                     ze voor de norm waard zijn. Een dag met veertig minuten
                     hardlopen hoort hier veertig te tonen; tachtig zou over die
                     dag liegen. */}
                 {inspanningOoit && (
                   <span className="cijfer mini" style={{ width: 44, textAlign: 'right' }}>
-                    {perDatum[x] ? dz(perDatum[x]!) + '′' : '—'}
+                    {perDatum[x] ? dz(perDatum[x]!) + '′' : '–'}
                   </span>
                 )}
                 <span style={{ width: 16, color: 'var(--goed)' }}>{r?.kracht ? '✓' : ''}</span>
@@ -522,7 +522,7 @@ function Spierkaart(
             <span className="klein groei">{r.wat}</span>
             <span className="cijfer mini"
                   style={r.stand === 'let' ? { color: 'var(--let)' } : undefined}>
-              {r.waarde || '—'}
+              {r.waarde || '–'}
             </span>
             <span className="mini" style={{ flexBasis: '100%', color: 'var(--dim)' }}>
               {r.toelichting}
@@ -534,7 +534,7 @@ function Spierkaart(
       {!verd.drieHaaltDrempel && (
         <Kaart toon="let" plat style={{ marginTop: 10 }}>
           <p className="klein">
-            Je eiwitdoel gedeeld door drie is <b>{verd.gedeeld} g</b> — onder de {verd.drempel} g
+            Je eiwitdoel gedeeld door drie is <b>{verd.gedeeld} g</b>, onder de {verd.drempel} g
             waarop de spieraanmaak op gang komt. Dat is geen reden om je doel te verhogen, maar
             wel om het anders te verdelen: <b>{verd.maaltijdenDieHalen} grotere maaltijden</b>
             {' '}halen de drempel wel.
@@ -571,7 +571,7 @@ function Spierkaart(
           suggereren die geen van de drie heeft.
         </p>
         <p>
-          De stoeltest is de zwakkere van de twee krachtmaten die de Europese consensus noemt —
+          De stoeltest is de zwakkere van de twee krachtmaten die de Europese consensus noemt:
           handknijpkracht presteert beter, maar die vraagt een dynamometer. Een maat die niemand
           thuis kan doen, meet niets. Boven de {STOELTEST_GRENS_S} seconden, of niet kunnen opstaan
           zonder je armen, geldt als aanwijzing voor verminderde spierkracht. Dat is een reden om
@@ -596,7 +596,7 @@ function Stoeltest({ bewaar }: { bewaar: (seconden: number) => void }) {
     <Kaart plat style={{ marginTop: 8 }}>
       <p className="klein">
         Ga op een stevige stoel zitten met je armen over elkaar. Sta vijf keer zo snel als je
-        kunt helemaal op en ga weer zitten — zonder je armen te gebruiken. Lukt dat niet zonder
+        kunt helemaal op en ga weer zitten, zonder je armen te gebruiken. Lukt dat niet zonder
         armen, stop dan: dat is op zichzelf al het antwoord.
       </p>
       <Rij style={{ marginTop: 8, alignItems: 'center' }}>
@@ -622,7 +622,7 @@ function Stoeltest({ bewaar }: { bewaar: (seconden: number) => void }) {
                 maar een knop die er niet staat — zie `STOELTEST_MIN_S`. */}
             {stoeltestTraag(uitslag) != null
               ? <Knop opKlik={() => bewaar(uitslag)}>Bewaren</Knop>
-              : <span className="klein">te kort om een meting te zijn — doe hem opnieuw</span>}
+              : <span className="klein">te kort om een meting te zijn. Doe hem opnieuw</span>}
           </>
         )}
       </Rij>
@@ -731,7 +731,7 @@ function InspanningInvoer(
         </Rij>
       )}
       <Rij style={{ marginTop: 8, alignItems: 'center' }}>
-        <input className="smal" type="number" inputMode="numeric" min="1" step="5" placeholder="—"
+        <input className="smal" type="number" inputMode="numeric" min="1" step="5" placeholder="–"
                value={minuten} aria-label="Minuten" style={{ width: 72 }}
                onChange={(e) => zetMinuten(e.target.value)} />
         <span className="klein">minuten</span>
@@ -741,7 +741,7 @@ function InspanningInvoer(
       </Rij>
       <p className="mini" style={{ marginTop: 6 }}>
         {gekozen == null
-          ? `${soortVan(soort)?.naam ?? soort} telt als ${aanname} — ${soortVan(soort)?.waarom ?? 'aangenomen'}`
+          ? `${soortVan(soort)?.naam ?? soort} telt als ${aanname}: ${soortVan(soort)?.waarom ?? 'aangenomen'}`
             + `. Klopt dat niet, zet hem om.`
           : `Je hebt zelf ${gekozen} gekozen; dat wordt zo bewaard.`}
         {intensiteit === 'zwaar' && mag && ` Deze ${dz(min)} minuten tellen als ${dz(min * 2)}.`}

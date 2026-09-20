@@ -92,8 +92,8 @@ export function Opzet(
       <Kaart>
         <Kop>Klaarzetten</Kop>
         <p style={{ fontSize: '.9rem', marginTop: 6 }}>
-          Ik kan het profiel van Abdelkader invullen — 196 cm, 51 jaar, 120 naar 100 kg, streeftempo
-          0,7 procent per week, eiwit 1,4 g/kg op gecorrigeerd gewicht — en de augustusreeks uit Yazio
+          Ik kan het profiel van Abdelkader invullen: 196 cm, 51 jaar, 120 naar 100 kg, streeftempo
+          0,7 procent per week, eiwit 1,4 g/kg op gecorrigeerd gewicht, en de augustusreeks uit Yazio
           en Apple Gezondheid meteen inladen: zestien dagen stappen en actieve energie, vijftien dagen
           energie met macro's.
         </p>

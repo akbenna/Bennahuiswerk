@@ -30,6 +30,7 @@
  * voedingswaarde zonder bron.
  */
 import { describe, expect, it } from 'vitest'
+import { MEDICATIE } from './trap'
 import { VERDIEPINGEN } from './verdieping'
 
 describe('de vorm van elk stuk', () => {
@@ -105,20 +106,35 @@ describe('het blijft een boekje', () => {
 })
 
 describe('de trap zegt niet wat hij niet weet', () => {
-  /* Het stuk over de Nederlandse trap draagt met opzet géén BMI-grenzen. De
-     criteria komen uit samenvattingen en niet uit de standaard zelf — genoeg om
-     de volgorde uit te leggen, niet genoeg om een getal op te schrijven waar
-     iemand zijn verwachting op bouwt.
+  /* DEZE PROEF HEEFT GEDAAN WAARVOOR HIJ STOND, EN IS DAARNA HERSCHREVEN
 
-     Deze proef staat er zodat dat een besluit blijft en geen vergetelheid:
-     komen de grenzen er ooit in, dan valt hij om en kijkt iemand na of de bron
-     inmiddels wél deugt. */
-  it('bevat geen BMI-getallen zolang de bron tweedehands is', () => {
+     Hij hield vast dat dit stuk geen BMI-grenzen noemt, met als reden dat de
+     criteria uit samenvattingen kwamen en niet uit de standaard zelf. De
+     standaard is er inmiddels wel — augustus 2026, in `trap.ts` — en toen de
+     tekst dat rechtzette viel deze regel om. Precies zoals bedoeld: hij dwong
+     iemand na te kijken of de bron inmiddels deugde.
+
+     Wat blijft is de andere helft van het besluit. De grenzen stáán nu in de
+     app, op Profiel, met beide drempelsets en met de reden waarom de app niet
+     zegt of jij eroverheen komt. Ze horen niet óók in dit boekje: hier gaat het
+     om de volgorde van de trap, en een los getal in een verhaal is precies het
+     getal waar iemand zijn verwachting op bouwt. */
+  it('bevat geen BMI-getallen, want die horen bij je traject en niet in een verhaal', () => {
     const trap = VERDIEPINGEN.find((v) => v.id === 'trap')!
     const alles = [...trap.weten, ...trap.nietWeten].join(' ')
     expect(alles).not.toMatch(/BMI\s*(van\s*)?[≥>]?\s*\d/)
-    /* En het zégt dat het ze niet noemt, met de reden. */
-    expect(trap.nietWeten.join(' ')).toMatch(/samenvattingen/)
+    /* En het zégt waar ze dan wél staan, zodat het geen verzwijgen wordt. */
+    expect(trap.nietWeten.join(' ')).toMatch(/Profiel/)
+  })
+
+  /* De bron hoort de standaard te zijn die de app werkelijk gelezen heeft, en
+     niet de vorige. Deze twee regels stonden op verschillende data en niemand
+     zag het, want ze staan in verschillende bestanden. */
+  it('noemt dezelfde uitgave van de standaard als trap.ts', () => {
+    const trap = VERDIEPINGEN.find((v) => v.id === 'trap')!
+    expect([...trap.weten, trap.bron].join(' ')).toContain('augustus 2026')
+    expect([...trap.weten, trap.bron].join(' ')).not.toMatch(/oktober 2025/)
+    expect(MEDICATIE.bron).toContain('augustus 2026')
   })
 
   it('en stuurt naar de huisarts in plaats van een oordeel te vellen', () => {

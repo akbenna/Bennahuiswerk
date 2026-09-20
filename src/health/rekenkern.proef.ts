@@ -41,7 +41,7 @@ describe('constanten', () => {
 /** Velden die de oude rekenkern niet had. Zie de toelichting in de proef. */
 const NA_DE_OVERZETTING = ['tdeeOordeel', 'laagMogelijk']
 
-describe('analyse — veertig dagenreeksen', () => {
+describe('analyse: veertig dagenreeksen', () => {
   gevallen.forEach((g, i) => {
     it(`geval ${i}: ${Object.keys(g.dagen).length} dagen, ${g.profiel.geslacht}${g.profiel.leeftijd_jaar}`, () => {
       const nu = analyse(g.dagen, g.profiel, peildag) as unknown as Record<string, unknown>

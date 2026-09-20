@@ -32,7 +32,7 @@ iets wat alleen jij kunt leveren.
 
 ## Module B — Spierbehoud *(eerst, want niets blokkeert)*
 
-**Het gat.** Ongeveer 45 % van wat je op semaglutide verliest is vetvrije massa
+**Het gat.** Ongeveer 40 % van wat je op semaglutide verliest is vetvrije massa
 (§5). ProVita's GLP-1-traject meet gewicht, buikomvang en zeven labwaarden en
 kijkt naar geen enkele maat voor spier (§10.4). Een DEXA-scan is de maat maar
 niet haalbaar.

@@ -303,7 +303,7 @@ export function InvoerVenster(p: InvoerEigenschappen) {
 
             {suggesties.length === 0 ? (
               <p className="klein" style={{ marginTop: 8 }}>
-                Nog niets om te herhalen. Zoek hierboven, of beschrijf het hieronder in gewone taal —
+                Nog niets om te herhalen. Zoek hierboven, of beschrijf het hieronder in gewone taal:
                 vanaf de tweede keer staat het hier en is het één tik.
               </p>
             ) : (
@@ -619,7 +619,7 @@ function Zoekvangst(
       {leeg && !loopt && (
         <p className="klein">
           Niets gevonden. Probeer het losse product zonder de bereiding erbij, of beschrijf de hele
-          maaltijd in gewone taal — leeg het zoekveld, dan staat dat vak er weer.
+          maaltijd in gewone taal: leeg het zoekveld, dan staat dat vak er weer.
         </p>
       )}
     </div>
@@ -712,7 +712,7 @@ function Beschrijven(
       {open && (
         <>
           <textarea style={{ marginTop: 8 }} value={tekst} onChange={(e) => zetTekst(e.target.value)}
-                    placeholder="Schrijf het zoals je het zou vertellen — een bord tajine met kip, twee cappuccino's, een handje amandelen." />
+                    placeholder="Schrijf het zoals je het zou vertellen: een bord tajine met kip, twee cappuccino's, een handje amandelen." />
           <Rij style={{ marginTop: 8 }}>
             {SNELLE.map((x) => (
               <Keuzechip key={x.naam} opKlik={() => zetTekst((t) => (t ? t + ', ' : '') + x.tekst)}>
@@ -736,7 +736,7 @@ function Beschrijven(
       {concept && totaal && (
         <Kaart plat style={{ marginTop: 12 }}>
           <Tussen>
-            <Kop>Herkend — nakijken vóór opslaan</Kop>
+            <Kop>Herkend, nakijken vóór opslaan</Kop>
             <span className="mini">{concept.model}</span>
           </Tussen>
           <div className="lijst" style={{ marginTop: 6 }}>
@@ -923,7 +923,7 @@ function Duidingsvak({ m }: { m: Maaltijd }) {
       <p>
         De hele schaal is {dz(d.kcal)} kcal
         {d.gram != null && ` op ${dz(d.gram)} gram`}
-        {d.dichtheid != null && ` — ${dec(d.dichtheid, 2)} kcal per gram`}.
+        {d.dichtheid != null && `, ofwel ${dec(d.dichtheid, 2)} kcal per gram`}.
         {d.eiwitPer100 != null && (
           <> Eiwit: <b>{dec(d.eiwitPer100, 1)} gram per 100 kcal</b>. Dát is de maat die telt
           bij een tekort; alles onder de vijf is mager.</>
@@ -934,7 +934,7 @@ function Duidingsvak({ m }: { m: Maaltijd }) {
         {d.ePct.vet != null && `${dec(d.ePct.vet, 0)}% uit vet en `}
         {d.ePct.koolhydraat != null && `${dec(d.ePct.koolhydraat, 0)}% uit koolhydraten`}.
         {d.vezel != null && d.vezel > 0 && ` Vezels: ${dec(d.vezel, 1)} gram.`}
-        {' '}Die percentages tellen niet op tot honderd — dat gat is de afronding per
+        {' '}Die percentages tellen niet op tot honderd: dat gat is de afronding per
         onderdeel plus de energie uit vezels, en het staat er omdat het iets zegt over hoe
         grof de invoer is.
       </p>
@@ -949,7 +949,7 @@ function Duidingsvak({ m }: { m: Maaltijd }) {
 
       {v.length > 0 && (
         <>
-          <p style={{ marginTop: 10, marginBottom: 4 }}><b>Als je aan twee knoppen draait — per portie</b></p>
+          <p style={{ marginTop: 10, marginBottom: 4 }}><b>Als je aan twee knoppen draait, per portie</b></p>
           {v.map((x) => (
             <div className="duidingrij" key={x.label}>
               <span>{x.label}</span>
@@ -1028,7 +1028,7 @@ function Bewaren(
         <Kaart plat style={{ marginTop: 8 }}>
           <p className="klein" style={{ marginTop: 0 }}>
             De {onderdelen.length} regels van je {moment} worden één maaltijd. De volgende keer is
-            dat één tik in plaats van {onderdelen.length} keer zoeken — en dan met dezelfde getallen,
+            dat één tik in plaats van {onderdelen.length} keer zoeken, en dan met dezelfde getallen,
             wat het verschil is tussen variatie in wat je at en ruis in hoe je het invoerde.
           </p>
           <label className="veld" style={{ display: 'block', marginTop: 8 }}>
@@ -1045,7 +1045,7 @@ function Bewaren(
           <p className="mini" style={{ marginTop: 6 }}>
             {dz(Math.round(totaal))} kcal in totaal, dus{' '}
             {dz(Math.round(totaal / Math.max(porties, 0.5)))} kcal per portie. Vul in wat er nu in de
-            kom zit, niet wat je ervan opeet — dat kies je bij het loggen.
+            kom zit, niet wat je ervan opeet; dat kies je bij het loggen.
           </p>
           <Knop vol style={{ marginTop: 10 }} uit={loopt} opKlik={() => void bewaar()}>
             {loopt ? <><Spin /> Bewaren…</> : 'Bewaren'}

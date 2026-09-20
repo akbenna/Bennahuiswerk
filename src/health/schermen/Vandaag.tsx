@@ -291,7 +291,7 @@ export function Vandaag(p: VandaagEigenschappen) {
     const doel = a.doel ?? 0
     if (dag._kcal === 0) return { zin: 'Nog niets gelogd vandaag. Eén regel is genoeg om te beginnen.' }
     if (dag._kcal > doel * 1.08) {
-      return { zin: 'Boven de streep van vandaag. Eén dag zegt niets — de weegreeks corrigeert het vanzelf.' }
+      return { zin: 'Boven de streep van vandaag. Eén dag zegt niets: de weegreeks corrigeert het vanzelf.' }
     }
     if (dag._kcal >= doel * 0.9) return { zin: 'Je zit er precies op.' }
     return { zin: `Nog ${dz(Math.max(0, Math.round(doel - dag._kcal)))} kcal te gaan.` }
@@ -355,7 +355,7 @@ export function Vandaag(p: VandaagEigenschappen) {
             </h2>
           </div>
           <span className={'vlaggetje ' + (gewogen ? 'goed' : 'rust')}>
-            {gewogen ? '✓ gewogen' : '— niet gewogen'}
+            {gewogen ? '✓ gewogen' : '– niet gewogen'}
           </span>
         </div>
 
@@ -381,7 +381,7 @@ export function Vandaag(p: VandaagEigenschappen) {
             {kalibreert ? (
               <p style={{ fontSize: '.9rem' }}>
                 Nog <b>{nogNodig}</b> ochtendweging{nogNodig === 1 ? '' : 'en'}, dan zegt het model
-                wat jouw lichaam werkelijk verbruikt — gemeten aan jou, niet uit een formule.
+                wat jouw lichaam werkelijk verbruikt, gemeten aan jou en niet uit een formule.
               </p>
             ) : (
               <>
@@ -555,7 +555,7 @@ export function Vandaag(p: VandaagEigenschappen) {
           <>
             <LeegGeenMaaltijden />
             <p className="mini" style={{ marginTop: 2, textAlign: 'center' }}>
-              Nog niets gelogd op {kortNL(datum)}. Eén regel is genoeg om te beginnen — het model
+              Nog niets gelogd op {kortNL(datum)}. Eén regel is genoeg om te beginnen: het model
               rekent liever met de helft dan met niets. Tik een vak aan, of gebruik de knop hierboven.
             </p>
           </>
@@ -605,7 +605,7 @@ export function Vandaag(p: VandaagEigenschappen) {
           </p>
           <p>
             Wat stappen wél doen, doen ze via de weegschaal. Beweeg je structureel meer, dan verschuift
-            de helling, en dat ziet het model vanzelf — zonder dat er iets bij opgeteld hoeft te worden.
+            de helling, en dat ziet het model vanzelf, zonder dat er iets bij opgeteld hoeft te worden.
           </p>
         </Uitleg>
       </Kaart>
@@ -617,7 +617,7 @@ export function Vandaag(p: VandaagEigenschappen) {
           Het eiwitdoel staat op gecorrigeerd gewicht en niet op je werkelijke gewicht: vetmassa
           vraagt nauwelijks eiwit, dus rekenen op {dec(a.gewicht, 0)} kilo geeft een doel dat niemand
           haalt en dat nergens op slaat. De correctie kapt het referentiegewicht af op BMI 30, wat
-          voor jou {dec(a.eiwitRef, 0)} kilo geeft — {dec(p.eiwitPerKg, 1)} g/kg maakt {a.eiwitDoel} g.
+          voor jou {dec(a.eiwitRef, 0)} kilo geeft, en {dec(p.eiwitPerKg, 1)} g/kg maakt {a.eiwitDoel} g.
         </p>
         <p>
           Waarom het hoog staat: bij een tekort is eiwit wat bepaalt of je gewichtsverlies uit vet
@@ -659,7 +659,7 @@ function Macro(
       <div className="mini" style={{ marginTop: 3 }}>
         {heeftDoel
           ? `${Math.round(deel)}% van je doel`
-          : kcalTotaal > 0 ? `${Math.round(aandeel)}% van de energie` : '—'}
+          : kcalTotaal > 0 ? `${Math.round(aandeel)}% van de energie` : '–'}
       </div>
     </div>
   )
@@ -680,7 +680,7 @@ function Weging(
         {gewogen && <span className="vlaggetje goed">✓ gedaan</span>}
       </Tussen>
       <Rij style={{ marginTop: 8, alignItems: 'center' }}>
-        <input className="smal" type="number" step="0.1" inputMode="decimal" placeholder="—"
+        <input className="smal" type="number" step="0.1" inputMode="decimal" placeholder="–"
                key={'gw' + datum} defaultValue={dag.gewicht_kg ?? ''}
                aria-label="Gewicht in kilo"
                onBlur={(e) => zetDagveld('gewicht_kg', e.target.value || null)}
@@ -701,7 +701,7 @@ function Weging(
           het systeem. Alles wat je eet gaat door een schatting heen; de weegschaal niet.
         </p>
         <p>
-          Nuchter, na het toilet, vóór het eten — steeds op dezelfde manier, want het gaat om het
+          Nuchter, na het toilet, vóór het eten, en steeds op dezelfde manier, want het gaat om het
           verschil tussen dagen en niet om de absolute waarde. Dagelijkse schommelingen van één tot
           twee kilo zijn vocht, glycogeen en darminhoud. Daarom leest het model de helling en niet de
           meting.
@@ -758,7 +758,7 @@ function Coachkaart(p: VandaagEigenschappen) {
       {t.erover ? (
         <p className="klein" style={{ marginTop: 6 }}>
           Je zit <span className="cijfer">{dz(Math.abs(Math.round(t.kcalOver)))}</span> kcal over je
-          doel. Eén dag is geen trend — de weegreeks van morgen zegt meer dan dit getal.
+          doel. Eén dag is geen trend: de weegreeks van morgen zegt meer dan dit getal.
         </p>
       ) : (
         <p className="klein" style={{ marginTop: 6 }}>
@@ -859,7 +859,7 @@ function Coachkaart(p: VandaagEigenschappen) {
 
       <Uitleg id="coach" label="hoe deze lijst tot stand komt">
         <p>
-          De voorstellen komen uit je eigen geschiedenis, met de portie die jij toen at — er wordt
+          De voorstellen komen uit je eigen geschiedenis, met de portie die jij toen at. Er wordt
           niets geschat en niets verzonnen.
         </p>
         {t.eis != null && (
@@ -874,13 +874,13 @@ function Coachkaart(p: VandaagEigenschappen) {
         {t.eis != null && (
           <p>
             Bij elk voorstel is te zien wat het kost en wat het levert. Waarop gerangschikt wordt is
-            het quotiënt daarvan — gram eiwit per honderd kcal — want dat is de grootheid waarin de
+            het quotiënt daarvan, gram eiwit per honderd kcal, want dat is de grootheid waarin de
             eis hierboven staat. Bovenaan staat dus niet de grootste portie maar de zuinigste.
           </p>
         )}
         <p>
           Het bereik tussen haakjes komt van wat je logde: die getallen zijn geschat, dus wat je
-          overhoudt is dat ook. Voorgesteld wordt er alleen binnen de puntschatting — onzekerheid
+          overhoudt is dat ook. Voorgesteld wordt er alleen binnen de puntschatting: onzekerheid
           is geen vergunning om erover te gaan.
         </p>
       </Uitleg>
@@ -974,7 +974,7 @@ function UitDeTabel(
     <div style={{ marginTop: 14 }}>
       <Kop>Uit de tabel</Kop>
       <p className="mini" style={{ marginTop: 2 }}>
-        Het meeste eiwit per calorie binnen wat er nog past — niet wat je meestal eet.
+        Het meeste eiwit per calorie binnen wat er nog past, niet wat je meestal eet.
       </p>
       <div className="lijst" style={{ marginTop: 6 }}>
         {lijst.map((x) => {
@@ -1103,7 +1103,7 @@ function Suppletielijst({ token, profiel }: { token: string; profiel: Profiel })
           ))}
         </div>
         <p className="mini" style={{ marginTop: 8 }}>
-          Dat is geen garantie — de tabel bevat geen vitamines en mineralen, dus de app kan
+          Dat is geen garantie: de tabel bevat geen vitamines en mineralen, dus de app kan
           alleen zien welke hoeken je overslaat en niet hoeveel er van iets binnenkomt.
         </p>
       </>
@@ -1137,7 +1137,7 @@ function Suppletielijst({ token, profiel }: { token: string; profiel: Profiel })
       ))}
       <p className="mini" style={{ marginTop: 10 }}>
         Dit is geen voorschrift maar wat er uit je eigen antwoorden en je log volgt.
-        De tabel bevat geen vitamines en mineralen, dus de app meet niets — hij ziet
+        De tabel bevat geen vitamines en mineralen, dus de app meet niets. Hij ziet
         alleen welke hoeken buiten beeld blijven. Overleg met je huisarts of apotheker
         voordat je iets gaat slikken.
       </p>
@@ -1264,13 +1264,13 @@ function WatVultLijst(
       <Uitleg id="verzadiging" label="waar die volgorde vandaan komt">
         <p>
           De volgorde komt uit een score van nul tot honderd, en die score is een <b>schatting uit
-          de samenstelling</b> — geen gemeten verzadigingsindex. Hij telt drie dingen bij elkaar op,
+          de samenstelling</b>, geen gemeten verzadigingsindex. Hij telt drie dingen bij elkaar op,
           in de volgorde waarin ze onderbouwd zijn: hoeveel gram je voor honderd kilocalorieën
           krijgt (45 punten), hoeveel eiwit daarin zit (35) en hoeveel vezel (20).
         </p>
         <p>
           Die volgorde is niet willekeurig. Energiedichtheid is het best onderbouwde gegeven in dit
-          veld — mensen eten grofweg een vast gewicht aan voedsel, niet een vast aantal calorieën.
+          veld: mensen eten grofweg een vast gewicht aan voedsel, niet een vast aantal calorieën.
           Eiwit is de meest verzadigende macronutriënt per calorie. Vezel doet iets, maar bescheiden
           en afhankelijk van het soort. De verhouding 45/35/20 volgt die bewijskracht; dat het
           precies die getallen zijn is een keuze en geen meting.

@@ -23,7 +23,7 @@ export function HoewerktVenster({ opSluiten }: { opSluiten: () => void }) {
         <Kop>De grondregel</Kop>
         <p className="mini" style={{ marginTop: 4 }}>
           <b>Geen getal zonder zijn onzekerheid.</b> Staat er 1.847 kcal, dan staat erbij
-          dat het tussen 1.610 en 2.084 ligt. Niet uit bescheidenheid — een deel van je eten
+          dat het tussen 1.610 en 2.084 ligt. Niet uit bescheidenheid: een deel van je eten
           is gewogen en een deel is geschat, en dat verschil hoort niet te verdwijnen zodra
           er een getal op het scherm komt. Alles hieronder volgt daaruit.
         </p>
@@ -35,15 +35,15 @@ export function HoewerktVenster({ opSluiten }: { opSluiten: () => void }) {
           <tbody>
             <tr>
               <td><abbr className="herkomst" title="gemeten waarde uit de voedingsmiddelentabel">◆</abbr></td>
-              <td className="mini"><b>gemeten</b> — bepaald in een laboratorium, uit de Nederlandse voedingsmiddelentabel</td>
+              <td className="mini"><b>gemeten</b>: bepaald in een laboratorium, uit de Nederlandse voedingsmiddelentabel</td>
             </tr>
             <tr>
               <td><abbr className="herkomst" title="etiketwaarde van de fabrikant">◈</abbr></td>
-              <td className="mini"><b>etiket</b> — de opgave van een fabrikant, met een wettelijke marge van rond tien procent</td>
+              <td className="mini"><b>etiket</b>: de opgave van een fabrikant, met een wettelijke marge van rond tien procent</td>
             </tr>
             <tr>
               <td><abbr className="herkomst" title="geschat, geen tabelwaarde">◇</abbr></td>
-              <td className="mini"><b>geschat</b> — het model, een gerecht, of je eigen product</td>
+              <td className="mini"><b>geschat</b>: het model, een gerecht, of je eigen product</td>
             </tr>
           </tbody>
         </table>
@@ -65,7 +65,7 @@ export function HoewerktVenster({ opSluiten }: { opSluiten: () => void }) {
         <Kop>Waarom er soms “dit lijkt erop” staat</Kop>
         <p className="mini" style={{ marginTop: 4 }}>
           Vindt het zoeken helemaal niets, dan probeert de app het nog één keer op klank in
-          plaats van op spelling — en zegt dat er dan ook bij. Zo vindt “lesagna” toch de
+          plaats van op spelling, en zegt dat er dan ook bij. Zo vindt “lesagna” toch de
           lasagne, en “koeskoes” de couscous.
         </p>
         <Uitleg id="hoe-zoeken" label="Hoe dat werkt, en waarom pas als laatste">
@@ -81,7 +81,7 @@ export function HoewerktVenster({ opSluiten }: { opSluiten: () => void }) {
           </p>
           <p className="mini">
             En hij kijkt alleen naar echte productnamen. Een eerdere versie keek ruimer en gaf
-            op “harira” een haring — een fout antwoord, netjes ingepakt onder “dit lijkt erop”.
+            op “harira” een haring: een fout antwoord, netjes ingepakt onder “dit lijkt erop”.
             Dat is erger dan een leeg scherm.
           </p>
         </Uitleg>
@@ -92,7 +92,7 @@ export function HoewerktVenster({ opSluiten }: { opSluiten: () => void }) {
         <p className="mini" style={{ marginTop: 4 }}>
           De onzekerheid staat op de wáárde, nooit op het gewicht. Een pak van 200 gram ís
           200 gram; wat je niet zeker weet is hoeveel calorieën erin zitten. Bij een eetlepel
-          ligt het andersom — dan is het gewicht de onzekere kant.
+          ligt het andersom, en dan is het gewicht de onzekere kant.
         </p>
         <Uitleg id="hoe-porties" label="De tabel wint van het model">
           <p className="mini">
@@ -110,7 +110,7 @@ export function HoewerktVenster({ opSluiten }: { opSluiten: () => void }) {
       <Kaart plat>
         <Kop>Wat de app niet weet</Kop>
         <p className="mini" style={{ marginTop: 4 }}>
-          Hij weet niet of je alles hebt ingevoerd — dat is in elk voedingsdagboek de grootste
+          Hij weet niet of je alles hebt ingevoerd, en dat is in elk voedingsdagboek de grootste
           foutenbron. Hij weet bij een gerecht niet wat er is ingedampt, dus bij lang stoven
           valt de uitkomst aan de lage kant. En of er lamsvlees in de harira ging weet hij
           niet; dat is geen onzekerheid maar een vraag, en die stelt hij.

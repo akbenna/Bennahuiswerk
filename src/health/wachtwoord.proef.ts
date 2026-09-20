@@ -22,7 +22,7 @@ describe('de lengte', () => {
     expect(wachtwoordklacht('elftekens12')).toMatch(/minstens 12 tekens/)
   })
 
-  it('laat precies de ondergrens toe — een grens hoort inclusief te zijn', () => {
+  it('laat precies de ondergrens toe, want een grens hoort inclusief te zijn', () => {
     const twaalf = 'druifmolen7'
     expect(twaalf.length).toBe(MINIMUM_LENGTE - 1)
     expect(wachtwoordklacht(twaalf)).not.toBeNull()
@@ -79,7 +79,7 @@ describe('patronen die geen wachtwoord zijn', () => {
   })
 })
 
-describe('de grondvorm — waarom een korte lijst op lange wachtwoorden bijt', () => {
+describe('de grondvorm: waarom een korte lijst op lange wachtwoorden bijt', () => {
   it('haalt een aangeplakt jaartal eraf', () => {
     expect(grondvorm('password2019')).toContain('password')
   })

@@ -149,7 +149,7 @@ export function glivoortgang(
   const p = programmaVan(programma)
 
   if (m >= GLI_TOTAAL_MAANDEN) {
-    return { fase: 'afgerond', maanden, tekst: `de twee jaar zitten erop — ${maanden} maanden geleden begonnen` }
+    return { fase: 'afgerond', maanden, tekst: `de twee jaar zitten erop, ${maanden} maanden geleden begonnen` }
   }
   /* Zonder bekende behandelfase valt er geen fase te noemen, wél een duur. Dat
      is iets anders dan niets weten, en het hoort ook anders te lezen. */

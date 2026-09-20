@@ -62,7 +62,7 @@ function Conditieblok(
     <>
       <div className="tussen" style={{ marginTop: 16 }}>Wat er bij jou speelt</div>
       <div className="mini" style={{ marginBottom: 6 }}>
-        Vul dit alleen in als het klopt. De app gaat er niets anders van rekenen — hij wijst je op
+        Vul dit alleen in als het klopt. De app gaat er niets anders van rekenen, maar hij wijst je op
         dingen die bij deze middelen horen als je afvalt.
       </div>
 
@@ -262,7 +262,7 @@ export function ProfielVenster(
                 onChange={(e) => zetI('gli', e.target.value
                   ? { ...i.gli, programma: e.target.value }
                   : undefined)}>
-          <option value="">— geen —</option>
+          <option value="">geen</option>
           {GLI_PROGRAMMAS.map((g) => (
             <option key={g.sleutel} value={g.sleutel}>{g.naam}</option>
           ))}
@@ -520,7 +520,7 @@ export function ImportVenster(
               <Kop>Work-outs</Kop>
               <p className="klein">
                 Wat aangevinkt staat komt erbij als inspanning. Een vinkje staat uit als er een
-                reden voor is, en die staat erbij — wie het beter weet zet hem aan. De soort bepaalt
+                reden voor is, en die staat erbij. Wie het beter weet zet hem aan. De soort bepaalt
                 hoe zwaar de minuten tellen en is hier te verbeteren.
               </p>
               <div className="lijst" style={{ marginTop: 6, maxHeight: 240, overflow: 'auto' }}>
@@ -544,7 +544,7 @@ export function ImportVenster(
                       <select value={soorten[i] ?? ''} style={{ flex: '0 0 138px' }}
                               aria-label={`Soort van ${a.datum} ${duur(a.minuten)}`}
                               onChange={(e) => kiesSoort(i, e.target.value)}>
-                        <option value="">— geen soort —</option>
+                        <option value="">geen soort</option>
                         {IMPORTSOORTEN.map((s) => (
                           <option key={s.sleutel} value={s.sleutel}>{s.naam}</option>
                         ))}
@@ -568,12 +568,12 @@ export function ImportVenster(
                   wat je gedaan hebt. */}
               <p className="klein" style={{ marginTop: 10 }}>
                 {rijen.length === 0
-                  ? 'Niets aangevinkt — er komt geen inspanning bij.'
+                  ? 'Niets aangevinkt: er komt geen inspanning bij.'
                   : <>
                       <b>{rijen.length}</b> {rijen.length === 1 ? 'activiteit' : 'activiteiten'},
                       samen <b>{dz(echteMinuten)} minuten</b>
                       {matigeMinuten !== echteMinuten
-                        && <> — dat telt als {dz(matigeMinuten)} matige minuten</>}.
+                        && <>, en dat telt als {dz(matigeMinuten)} matige minuten</>}.
                     </>}
               </p>
             </>
@@ -717,7 +717,7 @@ function BeheerdersHerstelcode() {
           <button type="button" className="alsLink" onClick={() => zetOpen(true)}>
             Herstelcode voor iemand anders
           </button>
-          {' '}— voor wie zijn wachtwoord én zijn code kwijt is.
+          {' '}, voor wie zijn wachtwoord én zijn code kwijt is.
         </p>
       ) : (
         <>
@@ -743,7 +743,7 @@ function BeheerdersHerstelcode() {
           </label>
           {/* Eerlijk over wat dit is. Zie de kop van deze component. */}
           <p className="mini" style={{ marginTop: 8 }}>
-            Diegene zet er zelf een nieuw wachtwoord mee. Je kent dat wachtwoord niet — maar je hebt
+            Diegene zet er zelf een nieuw wachtwoord mee. Je kent dat wachtwoord niet, maar je hebt
             de code wel gezien, dus je zou hem ook zelf kunnen gebruiken. Daarom wordt elke uitgifte
             vastgelegd, en merkt diegene het onmiddellijk.
           </p>
@@ -828,7 +828,7 @@ function WachtwoordWijzigen() {
           <button type="button" className="alsLink" onClick={() => zetOpen(true)}>
             Wachtwoord wijzigen
           </button>
-          {` — minstens ${MINIMUM_LENGTE} tekens.`}
+          {`, minstens ${MINIMUM_LENGTE} tekens.`}
         </p>
       ) : (
         <>
@@ -910,7 +910,7 @@ function Herstelcode() {
           {code}
         </p>
         <p className="mini" style={{ marginTop: 8 }}>
-          Hij staat hier één keer. Bewaar hem ergens waar je hem terugvindt zonder deze app — op
+          Hij staat hier één keer. Bewaar hem ergens waar je hem terugvindt zonder deze app: op
           papier, of in je wachtwoordbeheerder. Hij werkt één keer; daarna maak je een nieuwe.
         </p>
       </div>
@@ -924,7 +924,7 @@ function Herstelcode() {
           <button type="button" className="alsLink" onClick={() => zetOpen(true)}>
             Herstelcode maken
           </button>
-          {' '}— nodig als je ooit je wachtwoord kwijt bent.
+          {' '}, nodig als je ooit je wachtwoord kwijt bent.
         </p>
       ) : (
         <>

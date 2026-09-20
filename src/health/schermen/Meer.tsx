@@ -74,7 +74,7 @@ export function Meer(
     : slaapToon
   const kopTitel = zone
     ? (zone.zone === 'groen' ? 'Je houdt het vast'
-      : zone.zone === 'geel' ? 'Het loopt op — nu bijsturen'
+      : zone.zone === 'geel' ? 'Het loopt op: nu bijsturen'
       : 'Terug naar de actieve fase')
     : gemSlaap == null ? 'Nog geen slaapgegevens'
     : gemSlaap >= 7 ? 'Je slaapt genoeg'
@@ -107,7 +107,7 @@ export function Meer(
           <div>
             <div className="mini">Slaap, gemiddeld per nacht</div>
             <div>
-              <span className="getal">{gemSlaap != null ? dec(gemSlaap, 1) : '—'}</span>
+              <span className="getal">{gemSlaap != null ? dec(gemSlaap, 1) : '–'}</span>
               <span className="klein">
                 {' '}uur over {gemeten.length} nacht{gemeten.length === 1 ? '' : 'en'}
               </span>
@@ -118,7 +118,7 @@ export function Meer(
           <div style={{ marginTop: 10 }}>
             <Lijntje ruw={nachten} glad={glad} hoogte={44} />
             <p className="mini" style={{ marginTop: 2 }}>
-              Per nacht licht, het gemiddelde over drie nachten donker —{' '}
+              Per nacht licht, het gemiddelde over drie nachten donker,{' '}
               {dec(Math.min(...gemeten), 1)} tot {dec(Math.max(...gemeten), 1)} uur.
             </p>
           </div>
@@ -135,7 +135,7 @@ export function Meer(
           <p>
             Bij 5,5 tegenover 8,5 uur slaapgelegenheid daalde in Nedeltcheva 2010 het aandeel
             gewichtsverlies als vet met 55 procent en steeg het verlies van vetvrije massa met 60
-            procent, bij identieke caloriebeperking — met meer honger erbij. Tien deelnemers, dus
+            procent, bij identieke caloriebeperking, met meer honger erbij. Tien deelnemers, dus
             klein, maar het mechanisme is plausibel en de richting eenduidig.
           </p>
         </Uitleg>
@@ -144,7 +144,7 @@ export function Meer(
       {profiel.fase === 'onderhoud' ? (
         <Kaart style={{ borderLeft: `3px solid ${zone ? ZONEKLEUR[zone.zone] : 'var(--lijn)'}` }}>
           <Tussen>
-            <Kop>Onderhoud — stoplicht</Kop>
+            <Kop>Onderhoud: stoplicht</Kop>
             {zone && <span className="stoplicht" style={{ background: ZONEKLEUR[zone.zone] }} />}
           </Tussen>
           {zone ? (
@@ -156,20 +156,20 @@ export function Meer(
                 {zone.zone === 'groen'
                   ? 'Groen: binnen 1,4 kg van je basisgewicht. Doorgaan.'
                   : zone.zone === 'geel'
-                  ? 'Geel: 1,4 tot 2,3 kg erboven. Zoek de oorzaak en stel eten en bewegen bij — dit is het moment, niet volgende maand.'
+                  ? 'Geel: 1,4 tot 2,3 kg erboven. Zoek de oorzaak en stel eten en bewegen bij. Dit is het moment, niet volgende maand.'
                   : 'Rood: 2,3 kg of meer erboven. Herstart de actieve afvalfase.'}
               </p>
             </>
           ) : (
             <p className="klein" style={{ marginTop: 4 }}>
-              Stel eerst een basisgewicht in bij de instellingen — dat is het laagste stabiele gewicht
+              Stel eerst een basisgewicht in bij de instellingen: dat is het laagste stabiele gewicht
               waar je op wilt blijven.
             </p>
           )}
           <p className="mini" style={{ marginTop: 10 }}>
             De drempels komen uit STOP Regain (Wing 2006): in die trial kwam 72 procent van de
             controlegroep 2,3 kg of meer aan tegen 46 procent in de begeleide groep. Twee eerlijke
-            kanttekeningen. De randomisatie betrof het prógramma, niet het wegen zelf — dagelijks wegen
+            kanttekeningen. De randomisatie betrof het prógramma, niet het wegen zelf, en dagelijks wegen
             zonder actieregel heeft veel zwakker bewijs. En de internet-arm presteerde nauwelijks beter
             dan de controlegroep; een app die alleen digitaal is repliceert de zwakste arm. Het
             stoplicht triggert op het voortschrijdend gemiddelde en niet op de dagmeting, anders vuurt
@@ -181,7 +181,7 @@ export function Meer(
           <Kop>Onderhoudsfase</Kop>
           <p className="klein" style={{ marginTop: 4 }}>
             Nog niet actief. Twintig kilo verliezen zonder gedefinieerd onderhoudsprotocol is waar de
-            meeste trajecten stranden — niet in de afvalfase. Zet de fase om zodra je op gewicht bent;
+            meeste trajecten stranden, niet in de afvalfase. Zet de fase om zodra je op gewicht bent;
             dan verschijnt hier het stoplicht met een vaste actieregel per zone.
           </p>
         </Kaart>
@@ -208,9 +208,9 @@ export function Meer(
           <Knop opKlik={() => opVenster('account')}>Account</Knop>
         </Rij>
         <p className="mini" style={{ marginTop: 8 }}>
-          "Wat je lust" bepaalt waar de voorstellen uit de tabel vandaan mogen komen — niet wat je
+          "Wat je lust" bepaalt waar de voorstellen uit de tabel vandaan mogen komen, niet wat je
           mag eten, maar wat de app je aanbiedt.
-          Koppelen haalt stappen, slaap en fietsminuten elke ochtend vanzelf uit Apple Gezondheid —
+          Koppelen haalt stappen, slaap en fietsminuten elke ochtend vanzelf uit Apple Gezondheid:
           en daarmee ook wat je Garmin daarin schrijft. Importeren is voor een eenmalige overstap uit
           een andere app.
         </p>
@@ -225,7 +225,7 @@ export function Meer(
         </p>
         <Uitleg id="waaromgemeten" label="waarom dat beter is dan rekenen">
           <p>
-            Door te meten worden adaptieve thermogenese — je verbranding zakt als je afvalt — en je
+            Door te meten worden adaptieve thermogenese (je verbranding zakt als je afvalt) en je
             persoonlijke activiteitsniveau automatisch meegenomen. Die hoeven niet gemodelleerd te
             worden: ze zitten al in de meting.
           </p>
@@ -311,7 +311,7 @@ function Traject({ gli, leeftijd }: { gli: Glistand; leeftijd: number | null }) 
         <div style={{ flexWrap: 'wrap' }}>
           <span className="klein groei"><b>{p?.naam ?? 'Leefstijlprogramma'}</b></span>
           <span className="cijfer mini">
-            {v.maanden != null ? `${v.maanden} van de ${GLI_TOTAAL_MAANDEN} mnd` : '—'}
+            {v.maanden != null ? `${v.maanden} van de ${GLI_TOTAAL_MAANDEN} mnd` : '–'}
           </span>
           <span className="mini" style={{ flexBasis: '100%', color: 'var(--dim)' }}>{v.tekst}</span>
         </div>
@@ -320,7 +320,7 @@ function Traject({ gli, leeftijd }: { gli: Glistand; leeftijd: number | null }) 
       <Tussen>De trede erboven: gewichtsreducerende medicatie</Tussen>
       <p className="mini" style={{ marginTop: 2 }}>
         Wat de NHG-Standaard vraagt, en wat deze app ervan weet. De onderste twee weegt je
-        huisarts — die staan hier niet leeg maar met de reden erbij.
+        huisarts. Die staan hier niet leeg maar met de reden erbij.
       </p>
       <div className="lijst" style={{ marginTop: 6 }}>
         {criteria.map((c) => (
@@ -355,7 +355,7 @@ function Traject({ gli, leeftijd }: { gli: Glistand; leeftijd: number | null }) 
           ))}
         </div>
         <p className="klein" style={{ marginTop: 8 }}>
-          "Mét" betekent: met gewichtsgerelateerde comorbiditeit — {COMORBIDITEIT.join(', ')}.
+          "Mét" betekent: met gewichtsgerelateerde comorbiditeit, oftewel {COMORBIDITEIT.join(', ')}.
         </p>
         <p className="klein" style={{ marginTop: 8 }}>
           Welke van de twee rijen voor jou geldt, hangt af van je achtergrond. Deze app vraagt daar

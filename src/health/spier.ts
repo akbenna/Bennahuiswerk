@@ -3,7 +3,7 @@
  *
  * Een weegschaal telt kilo's en zegt niet waar ze vandaan komen. Bij snel
  * gewichtsverlies is dat verschil groot: in de lichaamssamenstellingssubstudie
- * van STEP-1 was ongeveer 45 % van wat er op semaglutide verdween vetvrije
+ * van STEP-1 was ongeveer 40 % van wat er op semaglutide verdween vetvrije
  * massa, bij tirzepatide in SURMOUNT-1 ongeveer 25 %.
  *
  * Wat daartegen helpt is niet omstreden: genoeg eiwit, krachttraining, en het
@@ -280,7 +280,7 @@ export function spierbeeld(v: Spiervraag): Spierregel[] {
   if (traag == null) {
     uit.push({
       wat: 'Opstaan uit een stoel', stand: 'onbekend', waarde: '',
-      toelichting: 'nog niet gedaan — vijf keer opstaan, met een stopwatch',
+      toelichting: 'nog niet gedaan: vijf keer opstaan, met een stopwatch',
     })
   } else {
     const oud = (v.stoeltestDagenGeleden ?? 0) > 90
@@ -289,7 +289,7 @@ export function spierbeeld(v: Spiervraag): Spierregel[] {
       stand: traag ? 'let' : oud ? 'onbekend' : 'goed',
       waarde: `${Math.round(v.stoeltestSeconden as number)} seconden`,
       toelichting: traag
-        ? `boven de ${STOELTEST_GRENS_S} seconden — bespreek dit met je huisarts`
+        ? `boven de ${STOELTEST_GRENS_S} seconden. Bespreek dit met je huisarts`
         : oud ? 'ouder dan drie maanden; doe hem opnieuw'
         : `onder de ${STOELTEST_GRENS_S} seconden`,
     })

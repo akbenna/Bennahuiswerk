@@ -185,8 +185,8 @@ export function Model(
                 vandaan komt — de figuur en de afleiding eronder. */}
             <IntervalFiguur a={a} />
             <p style={{ fontSize: '.88rem', marginTop: 10 }}>
-              Afgeleid uit {a.volledig} bruikbare registratiedagen — gemiddeld{' '}
-              {dz(Math.round(a.gemInname ?? 0))} kcal — en een gewichtstrend van{' '}
+              Afgeleid uit {a.volledig} bruikbare registratiedagen: gemiddeld{' '}
+              {dz(Math.round(a.gemInname ?? 0))} kcal, en een gewichtstrend van{' '}
               {(a.hellingWk ?? 0) > 0 ? '+' : ''}{dec(a.hellingWk, 2)} kg per week, ofwel{' '}
               {dec(a.hellingPct, 2)} procent van je lichaamsgewicht. Bij een streeftempo van{' '}
               {dec(profiel.tempo_pct_week, 1)} procent hoort een inname van <b>{dz(a.doel)} kcal</b>.
@@ -234,7 +234,7 @@ export function Model(
         <Kaart toon="let">
           <Kop>Te snel</Kop>
           <p style={{ fontSize: '.88rem', marginTop: 4 }}>
-            De trend is {dec(a.hellingWk, 2)} kg per week, ofwel {dec(a.hellingPct, 2)} procent —
+            De trend is {dec(a.hellingWk, 2)} kg per week, ofwel {dec(a.hellingPct, 2)} procent,
             steiler dan één procent. Dat gaat ten koste van vetvrije massa en is slecht vol te houden.
             Het advies is hier <b>méér</b> eten, niet minder
             {a.doel != null && `: het doel van ${dz(a.doel)} kcal ligt boven wat je nu gemiddeld logt`}.
@@ -249,8 +249,8 @@ export function Model(
         <div className="trio" style={{ marginTop: 8 }}>
           {([
             ['Nu', dec(a.gewicht, 1) + ' kg'],
-            ['Trend', trendNu ? dec(trendNu.ema, 1) + ' kg' : '—'],
-            ['Doel', (profiel.doel_gewicht_kg ?? '—') + ' kg'],
+            ['Trend', trendNu ? dec(trendNu.ema, 1) + ' kg' : '–'],
+            ['Doel', (profiel.doel_gewicht_kg ?? '–') + ' kg'],
           ] as const).map(([l, v]) => (
             <div key={l}>
               <div className="mini">{l}</div>
@@ -262,14 +262,14 @@ export function Model(
           {a.wekenTotDoel != null ? (
             <>
               Bij het huidige tempo is {profiel.doel_gewicht_kg} kg over ongeveer{' '}
-              <b>{a.wekenTotDoel} weken</b> in zicht — rond{' '}
+              <b>{a.wekenTotDoel} weken</b> in zicht, rond{' '}
               {kortNL(plusDagen(vandaag(), a.wekenTotDoel * 7))}. Plateaus zitten daar niet in; reken
               op tien tot twintig procent langer.
             </>
           ) : (
             <>
               Zonder gemeten helling is elke einddatum verzonnen. Bij {dec(profiel.tempo_pct_week, 1)}{' '}
-              procent per week — nu {dec(a.tempoKgWk, 2)} kg — duurt{' '}
+              procent per week (nu {dec(a.tempoKgWk, 2)} kg) duurt{' '}
               {dec(a.gewicht - (profiel.doel_gewicht_kg ?? a.gewicht), 0)} kg ongeveer{' '}
               {Math.round((a.gewicht - (profiel.doel_gewicht_kg ?? a.gewicht)) / Math.max(0.1, a.tempoKgWk))}{' '}
               weken.
@@ -295,7 +295,7 @@ export function Model(
           <p>
             Punten zijn losse wegingen, de lijn is een exponentieel gewogen gemiddelde met een
             halfwaardetijd van ongeveer een week. Dagelijkse schommelingen van één tot twee kilo zijn
-            vocht, glycogeen en darminhoud — de helling is het signaal, niet de meting.
+            vocht, glycogeen en darminhoud. De helling is het signaal, niet de meting.
           </p>
         </Uitleg>
       </Kaart>
@@ -325,8 +325,8 @@ export function Model(
                 vandaan komt — de figuur en de afleiding eronder. */}
             <IntervalFiguur a={a} />
             <p style={{ fontSize: '.88rem', marginTop: 10 }}>
-              Afgeleid uit {a.volledig} bruikbare registratiedagen — gemiddeld{' '}
-              {dz(Math.round(a.gemInname ?? 0))} kcal — en een gewichtstrend van{' '}
+              Afgeleid uit {a.volledig} bruikbare registratiedagen: gemiddeld{' '}
+              {dz(Math.round(a.gemInname ?? 0))} kcal, en een gewichtstrend van{' '}
               {(a.hellingWk ?? 0) > 0 ? '+' : ''}{dec(a.hellingWk, 2)} kg per week, ofwel{' '}
               {dec(a.hellingPct, 2)} procent van je lichaamsgewicht. Bij een streeftempo van{' '}
               {dec(profiel.tempo_pct_week, 1)} procent hoort een inname van <b>{dz(a.doel)} kcal</b>.
@@ -395,7 +395,7 @@ export function Model(
             {a.onderrapportage > 300 ? (
               <p>
                 Een verschil van deze omvang is te groot voor toeval en past bij onderregistratie van
-                twintig tot dertig procent — de best gedocumenteerde systematische fout in de
+                twintig tot dertig procent, de best gedocumenteerde systematische fout in de
                 voedingswetenschap. Dat maakt het advies niet ongeldig: de bias is proportioneel en
                 stabiel binnen een persoon, dus zolang je op dezelfde manier blijft loggen klopt het
                 doel in gelogde eenheden.
@@ -458,13 +458,13 @@ function WaarJeStaat(
             <div className="mini">Weegtrend</div>
             <div className="getal" style={{ fontSize: '1.25rem' }}>
               {a.hellingWk != null
-                ? (a.hellingWk > 0 ? '+' : '') + dec(a.hellingWk, 2) : '—'}
+                ? (a.hellingWk > 0 ? '+' : '') + dec(a.hellingWk, 2) : '–'}
             </div>
             <div className="mini">kg per week</div>
           </div>
           <div>
             <div className="mini">Doel</div>
-            <div className="getal" style={{ fontSize: '1.25rem', color: 'var(--grijs)' }}>—</div>
+            <div className="getal" style={{ fontSize: '1.25rem', color: 'var(--grijs)' }}>–</div>
             <div className="mini">nog niet te bepalen</div>
           </div>
         </div>
@@ -570,7 +570,7 @@ function Meetgaten(
   if (stappenOoit && stappenRecent === 0) {
     g.push('Er komt niets meer binnen uit Gezondheid. De afgelopen zeven dagen staat er geen ' +
            'enkele stap, terwijl dat eerder wel gebeurde. Kijk of de automatisering op je ' +
-           'telefoon nog draait — onder Profiel, bij Koppelen, staat wanneer er voor het ' +
+           'telefoon nog draait. Onder Profiel, bij Koppelen, staat wanneer er voor het ' +
            'laatst iets is aangekomen.')
   } else if (stappenOoit && stappenRecent <= 3) {
     g.push(`Uit Gezondheid kwam ${stappenRecent} van de afgelopen zeven dagen iets binnen. ` +
@@ -579,7 +579,7 @@ function Meetgaten(
   }
   if (!labs.length) {
     g.push('De klinische nulmeting staat nog leeg. Bloeddruk, HbA1c, lipiden, ALAT en GGT, TSH, ' +
-           'vitamine D en middelomtrek — zonder uitgangswaarde is beloop niet te beoordelen.')
+           'vitamine D en middelomtrek: zonder uitgangswaarde is beloop niet te beoordelen.')
   }
   if (!g.length) return null
 

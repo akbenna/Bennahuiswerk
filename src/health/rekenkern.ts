@@ -20,7 +20,9 @@
 import { dagVerschil, plusDagen, vandaag as vandaagNu } from '@/gedeeld/datum'
 import type { Dag, IsoDatum, Profiel } from '@/gedeeld/db/tabellen'
 
-/** Wichmann's constante: 7.700 kcal per kilo lichaamsweefsel. Zie hoofdstuk 2. */
+/** De vuistregel van Wishnofsky (1958): 7.700 kcal per kilo lichaamsweefsel.
+ *  Hier alleen als omrekenfactor achteraf, nooit als voorspeller — zie
+ *  hoofdstuk 2, dat uitlegt waarom dat onderscheid het hele punt is. */
 export const KCAL_PER_KG = 7700
 
 /** Veelvoud van zeven: anders lekt het weekritme in de helling (Orsama 2014). */

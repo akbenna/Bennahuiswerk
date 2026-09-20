@@ -124,7 +124,7 @@ export function weegRegel(r: HerkendeRegel, gram: number): HerkendeRegel {
        model. Vandaar dat de nieuwe opmerking vooraan staat en met zoveel
        woorden zegt dat hij de schatting vervangt. */
     onzekerheidsbronnen: [
-      `portie door jou gewogen: ${gram} g — dat vervangt de schatting hieronder`,
+      `portie door jou gewogen: ${gram} g. Dat vervangt de schatting hieronder`,
       ...r.onzekerheidsbronnen,
     ],
   }

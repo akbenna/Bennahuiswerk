@@ -207,7 +207,7 @@ export function bouwOnzekerheid(
   } else if (o.soort === 'nevo') {
     uit.push(k.gewogen
       ? 'gewicht afgewogen; alleen de onzekerheid van de voedingsmiddelentabel resteert'
-      : `huishoudmaat, niet gewogen — ${dz(k.gram_laag)}–${dz(k.gram_hoog)} g per ${k.kaal}`)
+      : `huishoudmaat, niet gewogen: ${dz(k.gram_laag)}–${dz(k.gram_hoog)} g per ${k.kaal}`)
   } else if (o.soort === 'merk') {
     uit.push(`etiketwaarde van ${o.product.merk ?? 'de fabrikant'}, geen tabelwaarde`)
     uit.push('de wettelijke marge op een etiket is voor energie ongeveer tien procent')

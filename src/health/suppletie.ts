@@ -178,7 +178,7 @@ export function adviezen(v: Suppletievraag): Advies[] {
       reden: 'B12 zit alleen in dierlijke producten en in verrijkte voeding. '
         + 'Zonder aanvulling ontstaat er een tekort, ook bij verder goede voeding.',
       grond: 'Je gaf aan veganistisch te eten.',
-      bron: 'Gezondheidsraad, Voedingsnormen B12 — aanvulling geadviseerd bij een '
+      bron: 'Gezondheidsraad, Voedingsnormen B12. Aanvulling geadviseerd bij een '
         + 'volledig plantaardig voedingspatroon.',
     })
   }
@@ -199,7 +199,7 @@ export function adviezen(v: Suppletievraag): Advies[] {
         ? grondVan(v, VLEES[0]!)
         : 'Je gaf aan geen vlees te eten.',
       bron: 'Gezondheidsraad, Voedingsnormen ijzer. Een tekort hoor je te laten '
-        + 'prikken en niet te vermoeden — vraag het na bij je huisarts.',
+        + 'prikken en niet te vermoeden. Vraag het na bij je huisarts.',
     })
   }
 
@@ -267,7 +267,7 @@ export function adviezen(v: Suppletievraag): Advies[] {
       zwaarte: 'nodig',
       reden: `De Gezondheidsraad adviseert ${hoeveel} per dag. De huid maakt vitamine D `
         + 'uit zonlicht, en in Nederland staat de zon van oktober tot maart te laag om '
-        + 'daar genoeg van te leveren — voeding levert maar een klein deel.',
+        + 'daar genoeg van te leveren, en voeding levert maar een klein deel.',
       grond: `Uit je profiel: ${gronden.join(' en ')}.`,
       bron: 'Gezondheidsraad, Evaluatie voedingsnormen vitamine D. Dit is een staand '
         + 'advies en geen bevinding uit jouw log.',
@@ -360,7 +360,7 @@ export function nagekeken(v: Suppletievraag): Array<{ wat: string; stand: string
     {
       wat: 'Vitamine B12',
       stand: p === 'veganistisch' ? 'plantaardig patroon'
-        : (c.med ?? []).includes('metformine') ? 'metformine — laat het prikken'
+        : (c.med ?? []).includes('metformine') ? 'metformine: laat het prikken'
         : `je eet ${p === 'alles' ? 'alles' : p}, dus er komt B12 binnen`,
     },
     { wat: 'IJzer', stand: hoek(VLEES) },
