@@ -21,6 +21,15 @@
  * het begin en het eind van de gladde lijn is wat er werkelijk af is. De rest
  * van de app rekent al zo, dit hoort daarbij.
  *
+ * **En de bloeddruk komt uit twee weken en niet uit twee metingen.** Diezelfde
+ * regel gold hier aanvankelijk niet, en dat was een gat: de kaart zette twee
+ * losse bloeddrukmetingen naast elkaar en noemde het verschil, terwijl de
+ * kaart eronder met zoveel woorden uitlegt dat één meting geen bloeddruk is.
+ * Nu staat aan elk uiteinde het gemiddelde van de meetdagen binnen een week
+ * van dat uiteinde, en dragen de twee vensters elkaars dagen niet. Wie maar
+ * twee dagen heeft gemeten, houdt twee dagen: het venster maakt het beter waar
+ * het kan en verzint niets waar het niet kan.
+ *
  * **Er staat een verschil, geen oordeel.** Geen kleur, geen pijl omhoog die
  * "goed" betekent. Of een daling van 0,3 in je HbA1c iets betekent hangt af van
  * dingen die deze app niet weet, en de grens tussen informeren en beoordelen
@@ -34,6 +43,7 @@
  * op het scherm.
  */
 import type { Lab, Meting } from '@/gedeeld/db/tabellen'
+import { VENSTER_DAGEN } from './bloeddruk'
 import { dagenTussen } from './klinisch'
 import type { Trendpunt } from './rekenkern'
 
@@ -51,6 +61,9 @@ export interface Verandering {
   decimalen: number
   /** Dagen tussen die twee meetmomenten. Altijd minstens één. */
   dagen: number
+  /** Hoeveel meetdagen er achter elk uiteinde zitten. Eén is een los moment. */
+  vanDagen: number
+  totDagen: number
 }
 
 /** Een maand is 365,25/12 dagen, want een kalendermaand bestaat hier niet. */
@@ -76,24 +89,74 @@ export function tijdspanne(dagen: number): string {
   return `${Math.round(dagen / (MAAND * 12))} jr`
 }
 
-/** Twee metingen op verschillende dagen, of niets. */
-function beloop(
-  punten: Array<{ datum: string; waarde: number }>,
-): { van: { datum: string; waarde: number }; tot: { datum: string; waarde: number } } | null {
-  const op = [...punten].sort((a, b) => a.datum.localeCompare(b.datum))
-  const van = op[0]
-  const tot = op[op.length - 1]
-  if (!van || !tot || van.datum === tot.datum) return null
-  return { van, tot }
+interface Punt { datum: string; waarde: number }
+interface Uiteinde { datum: string; waarde: number; dagen: number }
+
+const gemiddelde = (xs: number[]): number => xs.reduce((a, b) => a + b, 0) / xs.length
+
+/** Eén waarde per dag: twee metingen op één dag zijn één meetmoment. */
+function perDag(punten: readonly Punt[]): Punt[] {
+  const bak = new Map<string, number[]>()
+  for (const p of punten) bak.set(p.datum, [...(bak.get(p.datum) ?? []), p.waarde])
+  return [...bak.entries()]
+    .map(([datum, ws]) => ({ datum, waarde: gemiddelde(ws) }))
+    .sort((a, b) => a.datum.localeCompare(b.datum))
+}
+
+/**
+ * De twee uiteinden van een reeks, elk over een venster van zoveel dagen.
+ *
+ * Met `venster` op 1 is dit de eerste meetdag tegen de laatste. Groter dan 1
+ * betekent: het gemiddelde van de meetdagen binnen zoveel dagen van dat
+ * uiteinde. Dat is wat de bloeddruk nodig heeft en wat een losse meting niet
+ * kan geven.
+ *
+ * ELKE DAG HOORT BIJ HET UITEINDE WAAR HIJ HET DICHTST BIJ LIGT
+ *
+ * Anders zou bij een reeks die korter is dan twee vensters dezelfde dag aan
+ * beide kanten meetellen, en dan vergelijkt het verschil een getal met
+ * zichzelf. Ligt een dag precies even ver van beide uiteinden, dan telt hij
+ * nergens mee: hij zegt over geen van beide kanten iets.
+ */
+function uiteinden(punten: readonly Punt[], venster: number): {
+  van: Uiteinde; tot: Uiteinde
+} | null {
+  const op = perDag(punten)
+  const eerste = op[0]
+  const laatste = op[op.length - 1]
+  /* Eén meetmoment is geen beloop. Zie de kop. */
+  if (!eerste || !laatste || eerste.datum === laatste.datum) return null
+
+  const vanKant: Punt[] = []
+  const totKant: Punt[] = []
+  for (const p of op) {
+    const voor = dagenTussen(eerste.datum, p.datum)
+    const na = dagenTussen(p.datum, laatste.datum)
+    if (voor < venster && voor < na) vanKant.push(p)
+    else if (na < venster && na < voor) totKant.push(p)
+  }
+
+  return {
+    van: {
+      datum: eerste.datum,
+      waarde: gemiddelde(vanKant.map((p) => p.waarde)),
+      dagen: vanKant.length,
+    },
+    tot: {
+      datum: laatste.datum,
+      waarde: gemiddelde(totKant.map((p) => p.waarde)),
+      dagen: totKant.length,
+    },
+  }
 }
 
 const rond = (x: number, n: number): number => Math.round(x * 10 ** n) / 10 ** n
 
 function regel(
   naam: string, eenheid: string, decimalen: number,
-  punten: Array<{ datum: string; waarde: number }>,
+  punten: readonly Punt[], venster = 1,
 ): Verandering | null {
-  const b = beloop(punten)
+  const b = uiteinden(punten, venster)
   if (!b) return null
   return {
     naam,
@@ -105,6 +168,8 @@ function regel(
     verschil: rond(b.tot.waarde - b.van.waarde, decimalen),
     decimalen,
     dagen: dagenTussen(b.van.datum, b.tot.datum),
+    vanDagen: b.van.dagen,
+    totDagen: b.tot.dagen,
   }
 }
 
@@ -133,8 +198,10 @@ export function veranderingen(
     .map((m) => ({ datum: m.datum as string, waarde: Number(m.waarde) }))
 
   uit.push(regel('Middelomtrek', 'cm', 0, soort('middelomtrek')))
-  uit.push(regel('Bovendruk', 'mmHg', 0, soort('bloeddruk_sys')))
-  uit.push(regel('Onderdruk', 'mmHg', 0, soort('bloeddruk_dia')))
+  /* De enige twee maten met een venster. Zie de kop: één bloeddrukmeting is
+     geen bloeddruk, en dat is precies wat de kaart eronder uitlegt. */
+  uit.push(regel('Bovendruk', 'mmHg', 0, soort('bloeddruk_sys'), VENSTER_DAGEN))
+  uit.push(regel('Onderdruk', 'mmHg', 0, soort('bloeddruk_dia'), VENSTER_DAGEN))
 
   for (const [code, naam, eenheid, dec] of LABS) {
     uit.push(regel(naam, eenheid, dec, labs

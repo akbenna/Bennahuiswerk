@@ -2685,3 +2685,69 @@ ooit dichtklapte en daarna op een verwijzing ernaartoe tikt, zou het boekje open
 krijgen met dat ene stuk dicht: je klikt, en er gebeurt zichtbaar niets. Een
 verwijzing wint daarom van de onthouden stand, en alleen die kant op. De proef
 op de gerenderde pagina zet die stand met opzet op dicht voordat hij klikt.
+
+## 41. Dezelfde fout, een kaart lager
+
+Bij §38 stond de fout in SCORE2: die rekende met één losse thuismeting, terwijl
+de kaart eronder met zoveel woorden uitlegt dat één meting geen bloeddruk is. Bij
+het rechtzetten daarvan bleek de kaart "Wat er veranderd is" hetzelfde te doen.
+Die zette de eerste bloeddrukmeting naast de laatste en noemde het verschil.
+
+Nu staat aan elk uiteinde het gemiddelde van de meetdagen binnen een week van
+dat uiteinde. Dezelfde week als bij de thuisbloeddruk, en om dezelfde reden.
+
+### Drie regels, en twee ervan zijn alleen op papier te zien
+
+**Twee metingen op één dag zijn één dag.** Anders weegt een dag waarop je twee
+keer mat dubbel mee. Dat gold al voor de middelomtrek en geldt nu voor alles.
+
+**De twee vensters delen nooit een dag.** Bij een reeks die korter is dan twee
+weken zou dezelfde dag aan beide kanten meetellen, en dan vergelijkt het
+verschil een getal met zichzelf. Elke dag hoort bij het uiteinde waar hij het
+dichtst bij ligt.
+
+**Een dag die er precies tussenin ligt telt nergens mee.** Hij zegt over geen
+van beide kanten iets. Hem bij één kant leggen zou die kant een halve reeks
+geven.
+
+**De labwaarden houden hun eigen regel.** Daar blijft het de eerste uitslag
+tegen de laatste: twee bloedafnames van weken uit elkaar middelen zou twee
+metingen op één hoop gooien die niets met elkaar te maken hebben.
+
+Vier mutanten gedood, en de proef op de gerenderde pagina heeft er een meetdag
+bij gekregen zodat de twee antwoorden uit elkaar liggen: met het venster staat
+er -20, zonder -18. Was die dag er niet, dan zou de proef groen blijven met de
+oude rekenwijze.
+
+## 42. Wat de eerste md5-uitslag werkelijk was
+
+De controle meldde zeven keer VERSCHILT. Drie daarvan zijn gedrag, vier alleen
+commentaar, en dat onderscheid vertelt hoe het scheefgroeide.
+
+**Twee keer een gedachtestreepje dat nooit is toegepast.** `kal_ww_klacht` zegt
+in de database nog "Je accountnaam staat erin - dat raadt iemand meteen", met
+het teken dat in september uit de hele repo is gehaald. Datzelfde geldt voor de
+drie e-mailonderwerpen in `kal_coach_bouwen`. De opruiming liep over de
+bestanden en niet over de database, en daar stond het dus nog op het scherm van
+wie zich aanmeldt en in de post die de app verstuurt.
+
+**Eén keer een bestand dat geschreven is en nooit gedraaid.** Bestand 42 voegt
+`fiets_min` toe aan `kal_dagen_importeren`. De database kent dat veld daar niet,
+dus een import uit een schermafdruk liet de fietsminuten vallen zonder iets te
+zeggen.
+
+**Vier keer alleen commentaar.** `kal_nevo_zoek`, `kal_zoeken`,
+`kal_proef_koppeling` en `kal_gerecht` dragen in hun toelichting nog
+gedachtestreepjes. Het gedrag is gelijk.
+
+### En één verschil de andere kant op
+
+`kal_gerecht` leest in de database `nevo_actief` en in bestand 01 `nevo_foods`.
+Dat is de licentiepoort, en de database heeft gelijk: valt de licentie weg, dan
+hoort niet het gerecht te verdwijnen maar de voedingswaarde erachter. Die regel
+staat in vier andere bestanden opgeschreven en bij kal_gerecht in geen enkel.
+
+`46-zeven-functies-gelijktrekken.sql` zet alle zeven op de tekst die in deze map
+staat, met bij kal_gerecht de poort erin. Het bestand is niet overgetikt maar
+uit de bestanden geknipt, en dat is te zien: van de zeven veranderde er maar één
+md5, die van kal_gerecht. De andere zes zijn byte voor byte wat er al stond.

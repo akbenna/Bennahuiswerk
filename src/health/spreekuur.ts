@@ -186,6 +186,12 @@ export function spreekuurtekst(b: Spreekuurbron): string {
     for (const v of b.veranderingen) {
       uit.push(regel(v.naam, `van ${dec(v.vanWaarde, v.decimalen)} naar `
         + `${dec(v.totWaarde, v.decimalen)} ${v.eenheid} in ${tijdspanne(v.dagen)}`))
+      /* Een weekgemiddelde en een losse meting zien er in platte tekst
+         hetzelfde uit, en dat verschil bepaalt hoe zwaar het getal weegt. */
+      if (v.vanDagen > 1 || v.totDagen > 1) {
+        uit.push(erbij(`gemiddelden van ${v.vanDagen} en ${v.totDagen} meetdagen, `
+          + 'niet twee losse metingen'))
+      }
     }
   }
 

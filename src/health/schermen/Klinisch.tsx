@@ -536,6 +536,9 @@ function Veranderingkaart({ rijen }: { rijen: Verandering[] }) {
       <p className="mini" style={{ marginTop: 10 }}>
         Van je eerste meting tot je laatste, per maat, met de tijd die ertussen zit. Hier staat
         alleen wat er verschoven is; wat dat betekent hoor je van je huisarts.
+        {rijen.some((r) => r.vanDagen > 1 || r.totDagen > 1)
+          && ' Bij de bloeddruk staat aan beide kanten het gemiddelde van de meetdagen in die week,'
+             + ' en niet één losse meting.'}
       </p>
       <Uitleg id="verandering" label="waarom hier geen kleur bij staat">
         <p>
@@ -547,6 +550,13 @@ function Veranderingkaart({ rijen }: { rijen: Verandering[] }) {
         <p>
           Een maat komt hier pas te staan als hij op twee verschillende dagen gemeten is. Eén meting
           is geen beloop, en twee op dezelfde dag zijn één meetmoment.
+        </p>
+        <p>
+          De bloeddruk heeft daarbovenop een venster van een week aan elke kant, om dezelfde reden
+          als de kaart hierboven: één meting is geen bloeddruk. De twee vensters delen nooit een
+          dag, want anders zou bij een korte reeks dezelfde dag aan beide kanten meetellen en
+          vergelijk je een getal met zichzelf. Ligt een dag precies tussen het begin en het eind in,
+          dan telt hij nergens mee.
         </p>
       </Uitleg>
     </Kaart>

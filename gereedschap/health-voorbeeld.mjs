@@ -186,6 +186,11 @@ function metingen(aantalDagen) {
      is" niets te vergelijken, en dan zou de proef een kaart tonen die op de
      telefoon van de gebruiker wél vol staat en hier altijd leeg blijft. */
   const toen = iso(NU - 120 * DAG)
+  /* Een tweede dag binnen dezelfde week als `toen`. Zonder die dag rust het
+     begin van de bloeddrukreeks op één meting, en dan is op het scherm niet te
+     zien of de kaart het weekgemiddelde neemt of de eerste de beste waarde. Met
+     deze dag erbij zijn de twee antwoorden verschillend: 146 tegen 148. */
+  const toenOok = iso(NU - 118 * DAG)
   return [
     { id: 'm1', datum: d, soort: 'bloeddruk_sys', waarde: 128, eenheid: 'mmHg', notitie: null },
     { id: 'm2', datum: d, soort: 'bloeddruk_dia', waarde: 82, eenheid: 'mmHg', notitie: null },
@@ -193,6 +198,8 @@ function metingen(aantalDagen) {
     { id: 'm4', datum: toen, soort: 'bloeddruk_sys', waarde: 146, eenheid: 'mmHg', notitie: null },
     { id: 'm5', datum: toen, soort: 'bloeddruk_dia', waarde: 92, eenheid: 'mmHg', notitie: null },
     { id: 'm6', datum: toen, soort: 'middelomtrek', waarde: 114, eenheid: 'cm', notitie: null },
+    { id: 'm7', datum: toenOok, soort: 'bloeddruk_sys', waarde: 150, eenheid: 'mmHg', notitie: null },
+    { id: 'm8', datum: toenOok, soort: 'bloeddruk_dia', waarde: 94, eenheid: 'mmHg', notitie: null },
   ]
 }
 
@@ -727,10 +734,11 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
           throw new Error(`${stam}: "${maat}" staat niet in wat er veranderd is\n  ${platte}`)
         }
       }
-      /* 114 naar 108 is zes centimeter eraf, en 146 naar 128 is achttien punten.
-         Staat daar iets anders, dan wordt er niet op datum gesorteerd of wordt
-         de verkeerde kant afgetrokken. */
-      for (const verwacht of ['-6', '-18', '-10']) {
+      /* 114 naar 108 is zes centimeter eraf. En de bloeddruk begint op het
+         gemiddelde van twee meetdagen, 146 en 150, dus op 148: dat is twintig
+         punten eraf en niet achttien. Staat er -18, dan pakt de kaart de eerste
+         de beste meting in plaats van de week eromheen. */
+      for (const verwacht of ['-6', '-20', '-11']) {
         if (!platte.includes(verwacht)) {
           throw new Error(`${stam}: ${verwacht} ontbreekt in wat er veranderd is\n  ${platte}`)
         }
@@ -739,6 +747,10 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
          achtentwintig dagen en de metingen liggen honderdelf dagen uit elkaar,
          dus deze kaart hoort twee verschillende eenheden te tonen. Staat er
          overal dezelfde, dan volgt de eenheid de tijd niet. */
+      if (!/gemiddelde van de meetdagen/.test(platte)) {
+        throw new Error(`${stam}: de kaart zegt niet dat de bloeddruk uit meetdagen komt`
+          + `\n  ${platte}`)
+      }
       for (const spanne of ['· 4 wk', '· 4 mnd']) {
         if (!platte.includes(spanne)) {
           throw new Error(`${stam}: "${spanne}" ontbreekt in wat er veranderd is\n  ${platte}`)
