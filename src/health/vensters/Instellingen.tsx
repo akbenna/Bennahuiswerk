@@ -7,12 +7,14 @@ import { Kaart, Keuzechip, Knop, Kop, Rij, Spin, Venster } from '../onderdelen/b
 import { MEDICATIEGROEPEN } from '../conditie'
 import type { Conditie, Medicatiegroep } from '../conditie'
 import { dec, dz } from '@/gedeeld/getal'
-import type { Fase, Geslacht, Profiel } from '@/gedeeld/db/tabellen'
+import type { Fase, Geslacht, IsoDatum, Profiel } from '@/gedeeld/db/tabellen'
 import { isSessie, roep } from '@/gedeeld/db/rpc'
 import type { NieuweDag, NieuweInspanning, NieuweRegel } from '@/gedeeld/db/rpc'
 import { BRONNAAM, geraden, importeer, leesFoto, redenUit } from '../ai'
 import { MINIMUM_LENGTE, wachtwoordklacht } from '../wachtwoord'
 import { SOORTEN, equivalent, standaardIntensiteit } from '../inspanning'
+import { GLI_PROGRAMMAS } from '../trap'
+import { vandaag } from '@/gedeeld/datum'
 import type { ImportDag, Importactiviteit, Importbron } from '../ai'
 
 
@@ -240,6 +242,48 @@ export function ProfielVenster(
         </div>
         <Nummer waarde={p.onderhoud_basis_kg} opZet={(n) => zet('onderhoud_basis_kg', n)} />
       </div>
+
+      {/* DE TRAP — waar je staat in het Nederlandse traject
+          Twee velden, en ze zijn er niet om vast te leggen dat je iets doet
+          maar om te kunnen tonen waar je bent. Wat ermee gebeurt staat op
+          Profiel bij "Je traject"; waarom de medicatietrede daar op slot zit,
+          staat in `trap.ts`. */}
+      <div className="tussen" style={{ marginTop: 16 }}>Gecombineerde leefstijlinterventie</div>
+      <div className="mini" style={{ marginBottom: 6 }}>
+        Het tweejarige programma dat via je huisarts loopt en volledig vergoed wordt. Vul het in
+        als je erin zit, dan kan de app laten zien waar je bent.
+      </div>
+      <div className="regel">
+        <div><b style={{ fontSize: '.87rem' }}>Welk programma</b></div>
+        <select value={i.gli?.programma ?? ''} style={{ flex: '0 0 190px' }}
+                aria-label="GLI-programma"
+                /* Geen programma betekent: het hele veld weg, niet een lege
+                   sleutel. Een startdatum zonder programma zegt niets. */
+                onChange={(e) => zetI('gli', e.target.value
+                  ? { ...i.gli, programma: e.target.value }
+                  : undefined)}>
+          <option value="">— geen —</option>
+          {GLI_PROGRAMMAS.map((g) => (
+            <option key={g.sleutel} value={g.sleutel}>{g.naam}</option>
+          ))}
+        </select>
+      </div>
+      {i.gli?.programma && (
+        <div className="regel">
+          <div><b style={{ fontSize: '.87rem' }}>Begonnen op</b></div>
+          {/* `max` op vandaag: een startdatum in de toekomst is een typefout in
+              het jaartal en geen keuze. De kaart vangt hem ook op, maar liever
+              hier — daar leest hij als een mededeling, hier als een grens. */}
+          <input type="date" value={i.gli?.begonnen ?? ''} aria-label="Startdatum GLI"
+                 max={vandaag()} style={{ flex: '0 0 150px' }}
+                 onChange={(e) => {
+                   const g = { ...i.gli }
+                   if (e.target.value) g.begonnen = e.target.value as IsoDatum
+                   else delete g.begonnen
+                   zetI('gli', g)
+                 }} />
+        </div>
+      )}
 
       <Conditieblok conditie={i.conditie ?? {}} opZet={(c) => zetI('conditie', c)} />
 

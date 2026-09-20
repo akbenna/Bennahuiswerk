@@ -10,13 +10,17 @@
 import { Kaart, Keuzechip, Knop, Kop, Rij, Tussen, Uitleg } from '../onderdelen/basis'
 import { Lijntje, Schermkop } from '../hero'
 import { dec } from '@/gedeeld/getal'
-import type { Profiel } from '@/gedeeld/db/tabellen'
+import type { Glistand, Profiel } from '@/gedeeld/db/tabellen'
 import type { Dagenkaart, Trendpunt } from '../rekenkern'
 import { onderhoudZone } from '../klinisch'
 import { THEMANAMEN, useThemakeuze, zetThema } from '../thema'
 import type { Onderhoudzone } from '../klinisch'
 import { WegInstellen, WegThema } from '../tekens'
 import { SFEERFOTO } from '../sfeerfotos'
+import {
+  COMORBIDITEIT, DREMPELS, GLI_TOTAAL_MAANDEN, MEDICATIE, glivoortgang, medicatiecriteria,
+  programmaVan,
+} from '../trap'
 import { dagvenster } from '../inspanning'
 import { vandaag } from '@/gedeeld/datum'
 
@@ -183,6 +187,17 @@ export function Meer(
         </Kaart>
       )}
 
+      {/* JE TRAJECT — waar je staat in het Nederlandse traject
+          De kaart staat er alleen als er een GLI is opgegeven. Bij wie er geen
+          heeft zou hij een lege doos zijn, en het profielvenster vraagt er al
+          naar. */}
+      {profiel.instellingen.gli?.programma && (
+        <Kaart>
+          <Kop teken={WegInstellen}>Je traject</Kop>
+          <Traject gli={profiel.instellingen.gli} leeftijd={profiel.leeftijd_jaar} />
+        </Kaart>
+      )}
+
       <Kaart>
         <Kop teken={WegInstellen}>Instellingen</Kop>
         <Rij style={{ marginTop: 10 }}>
@@ -263,5 +278,100 @@ function Themakeuzes() {
         je er overdag ook in. Hier zet je hem vast.
       </p>
     </Kaart>
+  )
+}
+
+/**
+ * JE TRAJECT — de trap, en wat de app ervan beoordeelt
+ *
+ * Twee treden. De GLI vult de app uit je profiel. Van de trede erboven toont hij
+ * de criteria van de NHG-Standaard, en beoordeelt hij er precies twee: het jaar
+ * leefstijlbegeleiding en je leeftijd. Dat zijn feiten uit je eigen dossier. De
+ * andere twee — de BMI-drempel en de comorbiditeit — zijn klinische oordelen en
+ * blijven `niet bekend`; waarom, staat in `trap.ts`.
+ *
+ * DE EIGENSCHAP DIE DIT SCHERM NIET MAG VERLIEZEN
+ *
+ * Er staat hier nooit een totaaloordeel. Geen "je komt in aanmerking", geen
+ * optelsom van vinkjes, geen kleur die groen wordt als er genoeg gehaald is. Dat
+ * is niet uit voorzichtigheid: er is per constructie altijd minstens één
+ * criterium op `niet bekend`, dus élke optelsom zou een gok zijn. De armatuur
+ * leest dit scherm en valt om zodra er een totaaloordeel op verschijnt.
+ */
+function Traject({ gli, leeftijd }: { gli: Glistand; leeftijd: number | null }) {
+  const v = glivoortgang(gli.programma, gli.begonnen, vandaag())
+  const p = programmaVan(gli.programma)
+  const criteria = medicatiecriteria({
+    gliProgramma: gli.programma, gliBegonnen: gli.begonnen, leeftijd, vandaag: vandaag(),
+  })
+
+  return (
+    <>
+      <div className="lijst" style={{ marginTop: 6 }}>
+        <div style={{ flexWrap: 'wrap' }}>
+          <span className="klein groei"><b>{p?.naam ?? 'Leefstijlprogramma'}</b></span>
+          <span className="cijfer mini">
+            {v.maanden != null ? `${v.maanden} van de ${GLI_TOTAAL_MAANDEN} mnd` : '—'}
+          </span>
+          <span className="mini" style={{ flexBasis: '100%', color: 'var(--dim)' }}>{v.tekst}</span>
+        </div>
+      </div>
+
+      <Tussen>De trede erboven: gewichtsreducerende medicatie</Tussen>
+      <p className="mini" style={{ marginTop: 2 }}>
+        Wat de NHG-Standaard vraagt, en wat deze app ervan weet. De onderste twee weegt je
+        huisarts — die staan hier niet leeg maar met de reden erbij.
+      </p>
+      <div className="lijst" style={{ marginTop: 6 }}>
+        {criteria.map((c) => (
+          <div key={c.wat} style={{ flexWrap: 'wrap' }}>
+            <span className="klein groei">{c.wat}</span>
+            <span className="cijfer mini"
+                  style={{ color: c.stand === 'gehaald' ? 'var(--goed)' : 'var(--dim)' }}>
+              {c.stand}
+            </span>
+            <span className="mini" style={{ flexBasis: '100%', color: 'var(--dim)' }}>
+              {c.toelichting}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <Uitleg id="traject" label="de drempels die de standaard noemt">
+        {/* DE VONDST. De tweede set ligt ongeveer 2,5 punt lager, en stond in
+            geen enkele samenvatting van deze standaard. Hij staat hier als
+            inhoud en niet als oordeel: deze app vraagt niet naar je
+            migratieachtergrond, dus hij kan en mag niet kiezen welke rij voor
+            jou geldt. Zie de kop van DREMPELS in `trap.ts`. */}
+        <p className="klein">De standaard geeft twee sets BMI-drempels.</p>
+        <div className="lijst" style={{ marginTop: 4 }}>
+          {DREMPELS.map((d) => (
+            <div key={d.naam} style={{ flexWrap: 'wrap' }}>
+              <span className="klein groei">{d.naam}</span>
+              <span className="cijfer mini">
+                {dec(d.metComorbiditeit, 1)} mét · {dec(d.zonder, 1)} zonder
+              </span>
+            </div>
+          ))}
+        </div>
+        <p className="klein" style={{ marginTop: 8 }}>
+          "Mét" betekent: met gewichtsgerelateerde comorbiditeit — {COMORBIDITEIT.join(', ')}.
+        </p>
+        <p className="klein" style={{ marginTop: 8 }}>
+          Welke van de twee rijen voor jou geldt, hangt af van je achtergrond. Deze app vraagt daar
+          niet naar en kiest er dus geen. Zie je een rij die op jou van toepassing zou kunnen zijn,
+          dan is dat een vraag voor je huisarts en geen antwoord van deze app.
+        </p>
+        {MEDICATIE.vast.map((zin, i) => (
+          <p key={i} className="klein" style={{ marginTop: i === 0 ? 10 : 6 }}>{zin}</p>
+        ))}
+        <p className="klein" style={{ marginTop: 8 }}>
+          Deze app zegt niet of je in aanmerking komt. Dat is een oordeel van je huisarts, en de
+          standaard laat die uitdrukkelijk vrij dit aanbod niet te leveren. Meer erover staat onder
+          Verdiepen.
+        </p>
+        <p className="mini" style={{ marginTop: 8 }}>Bron: {MEDICATIE.bron}</p>
+      </Uitleg>
+    </>
   )
 }

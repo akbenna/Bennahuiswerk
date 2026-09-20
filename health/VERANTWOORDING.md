@@ -1334,6 +1334,134 @@ naar een arts; dat is de grens tussen voorlichting en behandeling.
 
 ---
 
+## 22e. De trap — je traject, en de trede die op slot staat
+
+Op het scherm Profiel staat een kaart *Je traject*, en die komt er alleen als je
+in je profiel een gecombineerde leefstijlinterventie hebt opgegeven. Hij toont
+twee treden. De eerste kan de app vullen, de tweede niet — en dat verschil is de
+hele kaart.
+
+### Wat de app wél weet: de GLI
+
+Een GLI duurt in Nederland twee jaar: een behandelfase en daarna een
+onderhoudsfase. Hoe lang die behandelfase duurt verschilt per programma, en die
+duur is openbaar. `GLI_PROGRAMMAS` in `src/health/trap.ts` draagt er acht, met
+hun behandelfase waar die vaststaat en `null` waar niet.
+
+Die `null` is geen gat maar een derde antwoord. Van X-Fittt en Keer Diabetes2 Om
+staat de lengte van de behandelfase hier niet vast, en dan leest de kaart
+"*14 maanden bezig; van dit programma is de lengte van de behandelfase hier niet
+vastgelegd*" — een duur zonder fase. Dat is iets anders dan niets weten, en
+het hoort ook anders te lezen.
+
+### Hele kalendermaanden, en waarom dat uitmaakt
+
+Eerst stond er een deling door 30,44 dagen: de gemiddelde maandlengte. Bijna
+goed, en precies verkeerd op de plek waar het telt. Twee kalenderjaren zijn 730
+dagen, en 730 gedeeld door 30,44 is 23,98. Wie zijn tweejarige programma op de
+dag af had doorlopen kreeg te lezen dat hij nog in de onderhoudsfase zat.
+
+Het telt nu in kalendermaanden: 10 juni plus drie maanden is 10 september,
+ongeacht hoeveel dagen daar tussen zitten, en de dag van de maand telt mee — op
+de negende is die maand nog niet vol. Dat kost iets: het antwoord is een heel
+getal, dus de zes-en-een-halve maand behandelfase van SLIMMER valt op maand
+zeven. Een halve maand onnauwkeurigheid in een fase-indeling weegt niet op tegen
+een jaargrens die niet klopt.
+
+Twee datums kunnen hier misgaan, en ze krijgen niet dezelfde zin. Een onleesbare
+datum leest als "de startdatum is niet te lezen"; een datum in de toekomst als
+"die startdatum ligt in de toekomst". Eerst stonden ze op één hoop, en dan stuurt
+de app iemand zijn invoer nakijken die zich enkel in het jaartal vergist heeft —
+hij vindt dan niets, want er is niets mis met wat hij heeft ingetikt. Het
+datumveld draagt daarnaast een `max` op vandaag, zodat het meestal niet zover
+komt.
+
+### De medicatietrede, en het slot dat eraf ging
+
+Boven de GLI staat een trede waar medicatie hoort. Die stond op slot: de
+criteria kwamen uit samenvattingen van de NHG-Standaard, en `medicatiecriteria()`
+gaf daarom uitsluitend `niet bekend` terug, hoeveel er verder ook van iemand
+bekend was.
+
+Op 20 september 2026 leverde Abdelkader de standaard zelf aan — **NHG-Standaard
+Obesitas, augustus 2026, bladzijde 28–29**. Het slot is eraf, en het heeft zijn
+nut bewezen. De standaard bevatte drie dingen die in geen enkele samenvatting
+stonden:
+
+| | |
+|---|---|
+| **de belangrijkste** | Afwijkende BMI-drempels voor mensen met een Aziatische (inclusief Hindostaanse), Midden-Oosterse, Afrikaanse of Afrikaans-Caribische migratieachtergrond: 32,5 mét comorbiditeit en 37,5 zonder, in plaats van 35 en 40. |
+| | Geen medicatie boven de 75 jaar, en niet tijdens zwangerschap of borstvoeding. |
+| | Stoppen bij minder dan 5% gewichtsverlies na twaalf weken op de maximaal verdraagbare dosis. |
+
+Die eerste rij is niet een detail maar de reden dat het slot er hoorde. Een app
+die alleen 35 en 40 had getoond, had iemand met een Marokkaanse of Surinaamse
+achtergrond en een BMI van 38 verteld dat hij er nog niet aan toe was — terwijl
+de standaard hem er wél onder brengt. Voor de mensen voor wie deze app gebouwd
+is, en voor de praktijk van ProVitaCare, is dat niet het uitzonderingsgeval.
+
+### Twee soorten criterium, en de app beoordeelt er maar één
+
+Een criterium is een **feit uit je eigen dossier** of een **klinisch oordeel**.
+
+Feit uit je dossier: hoe lang je GLI loopt, en je leeftijd. Die staan in je
+profiel, er valt niets aan te wegen, en die beoordeelt de app — met `gehaald`,
+`niet gehaald` of `niet bekend` als er niets is ingevuld.
+
+Klinisch oordeel: of je BMI boven de drempel ligt, en of er
+gewichtsgerelateerde comorbiditeit is. Die twee blijven altijd `niet bekend`.
+Drie redenen, en geen ervan is voorzichtigheid:
+
+- **Het gewicht in deze app is zelf ingevoerd en ongebonden.** In het dossier van
+  de bouwer staan wegingen van 107 én 190 kilo. Een drempeloordeel op zulke
+  getallen is geen oordeel.
+- **Welke drempelset geldt, hangt af van een vraag die deze app niet stelt.** Het
+  profiel kent `etniciteit`, maar dat is een vrij tekstveld dat over de
+  afkapwaarde van de middelomtrek gaat. Het zou verleidelijk zijn er de
+  drempelset uit af te leiden; dat is dezelfde verleiding die bij de
+  vitamine D-regel al is afgeslagen, en om dezelfde reden. Afkomst is geen
+  antwoord op een vraag die je niet gesteld hebt.
+- **Een leeg vinkje bij comorbiditeit is geen "nee".** Wie niets heeft aangevinkt
+  kan slaapapneu hebben dat hij nooit heeft ingevoerd. "Niet aangevinkt" en "niet
+  aanwezig" door elkaar halen is hier de gevaarlijkste fout die er is, want hij
+  wijst iemand af.
+
+De drempels staan er dus wél — allebei de sets, met de getallen en de
+achtergronden die de standaard noemt — maar als inhoud en niet als oordeel.
+Precies de grens uit `leren.ts`: welke bladzijde bovenaan komt is bladeren, de
+tekst zelf verandert niet.
+
+### De eigenschap die hieruit volgt, en die twee proeven bewaken
+
+Er bestaat geen invoer waarbij alle criteria op `gehaald` staan. De twee
+klinische staan er altijd op `niet bekend`, dus **deze app kan nooit een scherm
+tonen waarop alles groen is.** Dat is geen tekortkoming maar de kern: het oordeel
+is van de huisarts, en de standaard laat die uitdrukkelijk vrij dit aanbod niet
+te leveren.
+
+De proef in `trap.proef.ts` loopt honderdvijftig profielen af — alle combinaties
+van programma, startdatum en leeftijd, inclusief de gunstigste — en eist dat er
+altijd minstens één `niet bekend` tussen zit.
+
+Die bewaakt de functie, niet het scherm. En dáár zit het risico: een component
+die de vier regels optelt tot één uitkomst ("drie van de vier", een groen vinkje,
+"je komt er waarschijnlijk voor in aanmerking") komt door de eerste proef heen,
+terwijl er dan precies staat wat deze app niet mag zeggen. De armatuur leest
+daarom het echte scherm, eist dat de twee onbeoordeelde regels zichtbaar blijven
+staan juist bij een gebruiker die op allebei de beoordeelbare criteria groen
+staat, en valt om zodra er een totaaloordeel opduikt.
+
+De enige zin waarin "in aanmerking" mag voorkomen is die waarin de app zegt dat
+hij er niet over gaat. Die wordt er in de proef uitgeknipt vóór het zoeken —
+anders zou het voorbehoud zichzelf aangeven.
+
+### Wat er niet in staat
+
+Geen dosering, geen middelkeuze, geen contra-indicaties per middel. Wat er wél
+staat is dat tirzepatide door de standaard wordt **afgeraden** en orale
+semaglutide **niet aanbevolen** — dat is voorlichting die iemand behoedt voor een
+aanbod dat hij elders tegenkomt, en het is geen behandeladvies.
+
 ## 23. De conditie — signaleren zonder te doseren
 
 Deze app rekent aan energie en verzadiging, en dat is voor de meeste mensen
