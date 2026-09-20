@@ -317,9 +317,25 @@ export function rij(p, spelling) {
   ].join(', ') + ')'
 }
 
+/* De kolommen die een herimport mag bijwerken. Eén lijst, twee keer gebruikt:
+   in de `set` en in de `where` eronder. Twee lijsten die uiteen kunnen lopen zou
+   betekenen dat een veld stilletjes buiten de vergelijking valt en dus nooit een
+   bijwerking uitlokt. `synoniemen` staat er met opzet niet bij: die kolom vult
+   een mens, en wat een mens invulde overschrijft een import niet. */
+const KOLOMMEN = [
+  'naam', 'merk', 'groep', 'energie_kcal_per_100g', 'eiwit_g', 'vet_g',
+  'koolhydraten_g', 'vezels_g', 'suikers_g', 'verpakking_gram',
+  'portie_gram', 'portie_naam',
+]
+
 /**
  * De hele SQL. Eén insert met `on conflict do update`, zodat opnieuw draaien
  * bijwerkt en niet verdubbelt — dezelfde afspraak als in de SQL-bestanden zelf.
+ *
+ * De `where` onder de `set` is wat die afspraak waarmaakt: zonder hem zet een
+ * tweede run de tijdstempel van elke rij opnieuw, en dan is "twee keer draaien
+ * verandert niets" een bewering in plaats van een eigenschap. Mét hem raakt een
+ * herimport alleen de rijen waarvan bij de bron werkelijk iets veranderd is.
  */
 export function naarSql(producten) {
   const rijen = []
@@ -365,7 +381,7 @@ export function naarSql(producten) {
   if (!rijen.length) return kop + '-- Geen bruikbare rijen. Er valt niets in te voeren.\n'
 
   return kop + [
-    'insert into merk_producten',
+    'insert into merk_producten as p',
     '  (bron, barcode, naam, merk, groep, energie_kcal_per_100g, eiwit_g, vet_g,',
     '   koolhydraten_g, vezels_g, suikers_g, verpakking_gram, portie_gram, portie_naam)',
     "select 'openfoodfacts', v.* from (values",
@@ -378,7 +394,10 @@ export function naarSql(producten) {
     '  koolhydraten_g = excluded.koolhydraten_g, vezels_g = excluded.vezels_g,',
     '  suikers_g = excluded.suikers_g, verpakking_gram = excluded.verpakking_gram,',
     '  portie_gram = excluded.portie_gram, portie_naam = excluded.portie_naam,',
-    '  geimporteerd_op = now();',
+    '  geimporteerd_op = now()',
+    'where (' + KOLOMMEN.map((k) => 'p.' + k).join(', ') + ')',
+    '   is distinct from',
+    '      (' + KOLOMMEN.map((k) => 'excluded.' + k).join(', ') + ');',
     '',
     '-- Nakijken:',
     "select count(*) as producten, count(verpakking_gram) as met_gewicht from merk_producten where bron = 'openfoodfacts';",
@@ -619,6 +638,30 @@ function proef() {
       'een naam met cijfers erin blijft — het gaat om klokken en codes, niet om cijfers')
   eis(sql.includes("'20123456'") && !sql.includes("'1900'"), 'de goede rijen staan erin, de rommel niet')
   eis(sql.includes('on conflict (bron, barcode) do update'), 'opnieuw draaien werkt bij in plaats van te verdubbelen')
+  /* TWEE KEER DRAAIEN VERANDERT NIETS — EN DAT IS DEZE REGEL
+
+     De `set` zet `geimporteerd_op = now()`. Zonder de `where` eronder raakt een
+     tweede run dus elke rij, ook als er bij de bron niets veranderd is, en dan
+     is de afspraak uit CLAUDE.md gebroken door de tijdstempel alleen.
+
+     Er wordt hier niet alleen op het bestaan van die `where` getoetst maar op
+     zijn volledigheid: elke kolom die de `set` bijwerkt hoort ook in de
+     vergelijking te staan. Een kolom die wel bijgewerkt wordt maar niet
+     meevergeleken zou stilletjes nooit meer bijwerken. */
+  const setblok = sql.slice(sql.indexOf('do update set'), sql.indexOf('where ('))
+  const whereblok = sql.slice(sql.indexOf('where ('), sql.indexOf('-- Nakijken:'))
+  eis(/\nwhere \(p\./.test(sql) && whereblok.includes('is distinct from'),
+      'een herimport die niets verandert laat de rijen met rust')
+  for (const kolom of ['naam', 'merk', 'groep', 'energie_kcal_per_100g', 'eiwit_g',
+                       'vet_g', 'koolhydraten_g', 'vezels_g', 'suikers_g',
+                       'verpakking_gram', 'portie_gram', 'portie_naam']) {
+    eis(setblok.includes(kolom + ' = excluded.' + kolom), `de set werkt ${kolom} bij`)
+    eis(whereblok.includes('p.' + kolom) && whereblok.includes('excluded.' + kolom),
+        `${kolom} telt mee in de vergelijking die de bijwerking tegenhoudt`)
+  }
+  /* `synoniemen` vult een mens. Een import die hem aanraakt — in de set of in de
+     vergelijking — zou handwerk overschrijven of eraan gaan tornen. */
+  eis(!sql.includes('synoniemen'), 'de import raakt de synoniemen niet aan')
   eis(!sql.includes("''vers''',") || sql.includes("''vers'''"), 'de ontsnapping komt ook in de uitvoer terecht')
 
   /* De melk heeft serving_size in milliliter: hij hoort erin te staan, maar
