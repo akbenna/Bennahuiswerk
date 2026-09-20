@@ -1667,6 +1667,62 @@ for (const [naam, dagen, thema] of [['invoervel', 28, 'light'], ['invoervel-leeg
     throw new Error(`breed: Inzicht zet alle ${kolommenDaar} kaarten in één kolom`)
   }
   console.log(`${''.padEnd(26)} Inzicht op 1440: ${kolommenDaar} kolommen`)
+
+  /* DE GATEN TUSSEN DE KAARTEN
+
+     Twee kolommen hébben was niet genoeg, en dat bleek pas toen iemand ernaar
+     keek. Een raster geeft elk item een eigen rij, dus een korte kaart naast
+     een lange laat de hoogte van de lange over als lege lucht: op Beweging een
+     gat van bijna zeshonderd punten onder "Over het hele venster", op Inzicht
+     eenzelfde gat onder "Te snel". De pagina klopte, de proeven stonden groen,
+     en het scherm was half leeg.
+
+     Dit meet het enige wat dat aantoont: de verticale afstand tussen twee
+     kaarten die in dezelfde kolom onder elkaar staan. Die hoort de tussenruimte
+     te zijn en niets meer.
+
+     Twee dingen zijn met opzet uitgezonderd. Een kaart over de volle breedte
+     (de hero, een `.duo`) breekt de stroom af — wat eronder begint staat niet
+     in dezelfde kolomloop, dus daar meet afstand niets. En de laatste kaart van
+     een kolom heeft geen opvolger; die leegte staat onderaan en is de prijs van
+     twee kolommen, niet een gat ertussen. */
+  const RUIMTE_MAX = 28
+  for (const tab of ['Inzicht', 'Voeding', 'Beweging', 'Gezondheid', 'Profiel']) {
+    await naarTab(anderpagina, tab)
+    await anderpagina.waitForTimeout(450)
+    const ruimte = await anderpagina.evaluate(() => {
+      const inhoud = document.querySelector('#inhoud')
+      if (!inhoud) return null
+      const vol = Math.round(inhoud.getBoundingClientRect().width)
+      const maten = [...inhoud.children]
+        .map((e) => e.getBoundingClientRect())
+        .filter((r) => r.height > 1 && r.width > 1)
+      const overBeide = maten.filter((r) => Math.round(r.width) >= vol - 4)
+      const perKolom = new Map()
+      for (const r of maten.filter((x) => Math.round(x.width) < vol - 4)) {
+        const k = Math.round(r.left)
+        if (!perKolom.has(k)) perKolom.set(k, [])
+        perKolom.get(k).push(r)
+      }
+      let ergste = 0
+      for (const rij of perKolom.values()) {
+        rij.sort((a, b) => a.top - b.top)
+        for (let i = 0; i + 1 < rij.length; i++) {
+          const boven = rij[i].bottom, onder = rij[i + 1].top
+          if (overBeide.some((b) => b.top >= boven - 1 && b.bottom <= onder + 1)) continue
+          ergste = Math.max(ergste, Math.round(onder - boven))
+        }
+      }
+      return { ergste, kolommen: perKolom.size, kaarten: maten.length }
+    })
+    if (!ruimte || ruimte.kaarten < 2) throw new Error(`breed: ${tab} heeft geen kaarten om te meten`)
+    if (ruimte.ergste > RUIMTE_MAX) {
+      throw new Error(`breed: op ${tab} staat ${ruimte.ergste}px lege ruimte tussen twee kaarten `
+        + `in dezelfde kolom — hoogstens ${RUIMTE_MAX} hoort erin te passen`)
+    }
+    console.log(`${''.padEnd(26)} ${tab.padEnd(11)} ${ruimte.kolommen} kolommen, `
+      + `grootste gat ${ruimte.ergste}px`)
+  }
   await anderpagina.close()
 
   /* GEEN TWEE STUKKEN TEKST OVER ELKAAR HEEN

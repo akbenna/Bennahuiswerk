@@ -181,33 +181,60 @@
   .wrap{padding-left:310px;padding-right:54px}
   nav.tabs{width:270px}
 
-  /* Geen `dense`. Dat leek de juiste keuze — het vult de lege rijen die de
-     zijkolom overhoudt — maar het vult ze met de eerstvolgende kaart die past,
-     en dat was de weegkaart, boven de hero uit. Een raster dat achteruit mag
-     zoeken zet de leesvolgorde op zijn kop. De gewone, vooruitlopende plaatsing
-     doet precies wat de bedoeling is: de weging komt naast de coach, de
-     bewegingskaart naast de maaltijdvakken, en een gaatje in de zijkolom is
-     goedkoper dan een kaart die op de verkeerde plek opduikt. */
-  #inhoud{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,.72fr);
-    gap:20px;align-items:start}
+  /* TWEE LAY-OUTS, EN WAAROM DAT GEEN LUIHEID IS
+
+     Een scherm dat zélf zegt wat er terzijde hoort (Vandaag, via `.zijkolom`)
+     krijgt een raster met vaste kolommen: de weging naast de coach, de
+     bewegingskaart naast de maaltijdvakken. Dat is een plaatsing die iets
+     betékent en die hoort niet te verschuiven omdat een kaart een regel langer
+     werd.
+
+     Alle andere schermen — Inzicht, Voeding, Beweging, Gezondheid, Profiel —
+     hebben zo'n bedoeling niet. Daar stonden de kaarten om en om in datzelfde
+     raster, en dat kostte precies wat een raster kost: elk item krijgt een eigen
+     rij, dus een korte kaart naast een lange laat de hoogte van de lange over
+     als lege lucht. Op Beweging was dat een gat van een halve schermhoogte
+     onder "Over het hele venster", op Inzicht net zo'n gat onder "Te snel".
+
+     Voor die schermen dus geen raster maar kolomstroom: de kaarten lopen door
+     tot de kolom vol is en beginnen dan aan de volgende, zoals tekst in een
+     krant. Een korte kaart laat niets achter. Dat is ook meteen waarom dit niet
+     vóór Vandaag gezet kan worden: kolomstroom kán niet zeggen "deze kaart naar
+     rechts". */
+
+  /* Het raster, voor het scherm met een zijkolom. */
+  #inhoud:has(.zijkolom){display:grid;
+    grid-template-columns:minmax(0,1.6fr) minmax(300px,.72fr);
+    gap:16px;align-items:start}
   /* Rasteritems rekken standaard mee met de hoogte van hun rij. Dat maakte van
      "Eten toevoegen" een groen blok van een halve schermhoogte. */
-  #inhoud>*{align-self:start}
-
-  /* De vaste kolomindeling geldt alleen op een scherm dat zélf zegt wat er
-     terzijde hoort. Zonder deze voorwaarde zou `grid-column:1` ook gelden op
-     Inzicht, Voeding, Beweging, Gezondheid en Profiel — schermen zonder
-     zijkolom — en die zouden dan alles in de linkerkolom stapelen met een lege
-     strook van veertig procent ernaast. Daar blijft de gewone plaatsing staan,
-     die de kaarten om en om verdeelt. */
-  #inhoud:has(.zijkolom)>*{grid-column:1}
-  #inhoud>.hero,#inhoud>.duo,#inhoud>.trio,#inhoud>footer{grid-column:1/-1}
-  #inhoud>.zijkolom{grid-column:2}
+  #inhoud:has(.zijkolom)>*{align-self:start;grid-column:1}
+  #inhoud:has(.zijkolom)>.hero,
+  #inhoud:has(.zijkolom)>.duo,
+  #inhoud:has(.zijkolom)>.trio,
+  #inhoud:has(.zijkolom)>footer{grid-column:1/-1}
+  #inhoud:has(.zijkolom)>.zijkolom{grid-column:2}
   /* Een ::before op een rastercontainer is zélf een rasteritem. Zonder deze
      regel spant de scheidingslijn maar één kolom en houdt hij op halverwege het
      scherm — een streep die nergens naartoe loopt. */
-  #inhoud:before{grid-column:1/-1}
-  #inhoud>.kaart{margin-bottom:0}
+  #inhoud:has(.zijkolom):before{grid-column:1/-1}
+  #inhoud:has(.zijkolom)>.kaart{margin-bottom:0}
+
+  /* De kolomstroom, voor de schermen zonder zijkolom. */
+  #inhoud:not(:has(.zijkolom)){column-count:2;column-gap:16px}
+  /* Een kaart die over de kolomgrens heen breekt is twee halve kaarten met een
+     rand ertussendoor. `break-inside` is hier dus geen verfraaiing. */
+  #inhoud:not(:has(.zijkolom))>*{break-inside:avoid;margin-bottom:16px}
+  /* Wat in het raster over beide kolommen liep, loopt hier over beide kolommen.
+     `column-span:all` breekt de stroom af, zet het element over de volle
+     breedte en begint eronder opnieuw te verdelen — dus de hero blijft boven en
+     de kaarten eronder sluiten weer aan. */
+  #inhoud:not(:has(.zijkolom)):before,
+  #inhoud:not(:has(.zijkolom))>.hero,
+  #inhoud:not(:has(.zijkolom))>.duo,
+  #inhoud:not(:has(.zijkolom))>.trio,
+  #inhoud:not(:has(.zijkolom))>footer{column-span:all}
+
   /* Een knop van zeshonderd pixels breed is geen knop meer maar een balk. */
   #inhoud>.hoofdknop{max-width:340px}
 }
