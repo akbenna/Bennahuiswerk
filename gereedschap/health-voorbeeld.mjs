@@ -3752,22 +3752,25 @@ for (const [naam, dagen, patroon, verwacht] of [
 
 /* ------------------------------------------------------------ je traject -- */
 /**
- * DE TRAP, EN DE TREDE DIE OP SLOT STAAT
+ * DE TRAP, EN WAT DE APP ERVAN BEOORDEELT
  *
- * Deze app kent het Nederlandse traject: leefstijl, dan de gecombineerde
- * leefstijlinterventie, en daarboven een trede waar medicatie hoort. Van die
- * bovenste trede kent hij de criteria niet — ze staan in de NHG-Standaard
- * Obesitas 2.0 en zijn hier niet uit de standaard zelf overgenomen. Daarom
- * geeft `medicatiecriteria` uitsluitend "niet bekend" terug.
+ * Deze app kent het Nederlandse traject: leefstijl, de gecombineerde
+ * leefstijlinterventie, en daarboven gewichtsreducerende medicatie. Van die
+ * bovenste trede toont hij de criteria van de NHG-Standaard Obesitas (augustus
+ * 2026) en beoordeelt hij er twee: het jaar leefstijlbegeleiding en de leeftijd.
+ * Dat zijn feiten uit het eigen dossier. De BMI-drempel en de comorbiditeit zijn
+ * klinische oordelen en blijven "niet bekend".
  *
  * WAAROM DIT NIET MET EEN PROEF IN VITEST AF IS
  *
- * Die controleert de functie. Hij kan niet zien wat het scherm ernaast zet. Het
- * scherm heeft `glivoortgang` óók in handen, en veertien maanden GLI is precies
- * het getal waaruit een component in één regel zijn eigen oordeel zou kunnen
- * afleiden — "je hebt het jaar gehaald". Dan staat het slot in de functie nog
- * keurig dicht en leest de gebruiker toch een uitspraak die deze app niet mag
- * doen. Deze proef leest daarom het echte scherm en zoekt naar het oordeel.
+ * Die controleert dat `medicatiecriteria` er altijd minstens één op "niet
+ * bekend" laat staan. Hij kan niet zien wat het scherm ermee doet. Een component
+ * die de vier regels optelt tot één uitkomst — "drie van de vier", een groen
+ * vinkje, "je komt er waarschijnlijk voor in aanmerking" — komt daar ongemerkt
+ * doorheen, en dan staat er precies de uitspraak die deze app niet mag doen.
+ *
+ * Deze proef leest daarom het echte scherm en eist dat het onbeoordeelde deel
+ * zichtbaar blijft staan.
  */
 {
   const pagina = await ctx.newPage()
@@ -3794,45 +3797,97 @@ for (const [naam, dagen, patroon, verwacht] of [
     throw new Error(`traject: de fase staat er niet\n  ${plat}`)
   }
 
-  /* 2. HET SLOT. De medicatieregel staat er, en hij staat op "niet bekend". */
-  if (!/Medicatie niet bekend/.test(plat)) {
-    throw new Error(`traject: de medicatieregel ontbreekt of staat niet op slot\n  ${plat}`)
+  /* 2. De vier criteria staan er, elk bij naam. */
+  for (const wat of [
+    'Een jaar leefstijlbegeleiding', 'Leeftijd onder de 76',
+    'De BMI-drempel', 'Gewichtsgerelateerde comorbiditeit',
+  ]) {
+    if (!plat.includes(wat)) throw new Error(`traject: criterium "${wat}" ontbreekt\n  ${plat}`)
   }
 
-  /* 3. EN ER LEKT NIETS LANGS. Geen enkel oordeel, ook niet als losse regel
-        ernaast, ook niet in het uitlegblok. Open alles wat open kan. */
+  /* 3. Wat de app wél weet, beoordeelt hij ook. Veertien maanden is meer dan
+        een jaar, en de proefgebruiker is 41. Zonder dit zou "zet alles op niet
+        bekend" er net zo uitzien als een eerlijke kaart. */
+  if (!/Een jaar leefstijlbegeleiding gehaald/.test(plat)) {
+    throw new Error(`traject: het GLI-jaar wordt niet beoordeeld\n  ${plat}`)
+  }
+  if (!/Leeftijd onder de 76 gehaald/.test(plat)) {
+    throw new Error(`traject: de leeftijd wordt niet beoordeeld\n  ${plat}`)
+  }
+
+  /* 4. HET INVARIANT. Wat de app niet weet, blijft zichtbaar onbeoordeeld —
+        ook bij deze gebruiker, die op allebei de beoordeelbare criteria groen
+        staat. Dat is precies het geval waarin een optelsom zou verleiden. */
+  if (!/De BMI-drempel niet bekend/.test(plat)) {
+    throw new Error(`traject: de BMI-drempel staat niet op "niet bekend"\n  ${plat}`)
+  }
+  if (!/Gewichtsgerelateerde comorbiditeit niet bekend/.test(plat)) {
+    throw new Error(`traject: de comorbiditeit staat niet op "niet bekend"\n  ${plat}`)
+  }
+
+  /* 5. EN ER STAAT GEEN TOTAALOORDEEL. Geen optelsom, geen "waarschijnlijk",
+        geen uitspraak over in aanmerking komen. De enige zin waarin "in
+        aanmerking" mag voorkomen is die waarin de app zegt dat hij er niet over
+        gaat; die wordt er hieronder uit geknipt voordat er gezocht wordt. */
   const samenvatting = kaart.locator('details.uitleg > summary')
   for (let i = 0; i < (await samenvatting.count()); i++) await samenvatting.nth(i).click()
   await pagina.waitForTimeout(200)
   const alles = (await kaart.innerText()).replace(/\s+/g, ' ')
 
-  /* Waar het om gaat is het woord "gehaald": dat is de enige andere stand die
-     een `Criterium` kan dragen, en dus wat een lek eruit zou laten zien. Breder
-     zoeken werkt averechts — "in aanmerking" staat er juist wél, in de zin die
-     zegt dat de app er niet over gaat. */
-  if (/\bgehaald\b/.test(alles)) {
-    throw new Error(`traject: er staat een beoordeeld criterium op het scherm — `
-      + `dan is de trede niet meer op slot\n  ${alles}`)
+  const zonderVoorbehoud = alles.replace(/Deze app zegt niet of je in aanmerking komt\./g, '')
+  for (const oordeel of [
+    /in aanmerking/, /\bje voldoet\b/, /\d\s*van de\s*4\b/, /waarschijnlijk in/,
+  ]) {
+    if (oordeel.test(zonderVoorbehoud)) {
+      throw new Error(`traject: ${oordeel} staat op het scherm — dat is een totaaloordeel\n`
+        + `  ${zonderVoorbehoud}`)
+    }
   }
   if (!/zegt niet of je in aanmerking komt/.test(alles)) {
     throw new Error(`traject: de zin die zegt dat de app niet oordeelt ontbreekt\n  ${alles}`)
   }
 
-  /* 4. Wat er wél vaststaat, staat er voluit. Drie zinnen, alle drie. */
+  /* 6. DE VONDST. Twee drempelsets, en de tweede ligt lager. Dit is wat in geen
+        enkele samenvatting van de standaard stond, en wat voor een groot deel
+        van de gebruikers van deze app het verschil maakt. */
+  /* Niet alleen dát de vier getallen er staan, maar ook bij welke drempel. Met
+     losse getallen zou het verwisselen van "mét" en "zonder" — de comorbiditeit
+     op 40 en de kale drempel op 35 — er hetzelfde uitzien, en dat is precies de
+     verwisseling die iemand ten onrechte afwijst. */
+  for (const paar of ['35,0 mét · 40,0 zonder', '32,5 mét · 37,5 zonder']) {
+    if (!alles.includes(paar)) {
+      throw new Error(`traject: "${paar}" staat niet op het scherm — de drempels staan er niet, `
+        + `of niet bij de juiste voorwaarde\n  ${alles}`)
+    }
+  }
+  for (const woord of ['Aziatische', 'Hindostaanse', 'Afrikaans-Caribische']) {
+    if (!alles.includes(woord)) {
+      throw new Error(`traject: "${woord}" ontbreekt bij de tweede drempelset\n  ${alles}`)
+    }
+  }
+  if (!/slaapapneu/.test(alles)) {
+    throw new Error(`traject: de comorbiditeit staat niet voluit\n  ${alles}`)
+  }
+
+  /* 7. Wat er vaststaat, en waar het vandaan komt. */
   for (const zin of [
     'hoger dan de Europese registratietekst',
     'minstens een jaar leefstijlbegeleiding',
     'geen huisarts is verplicht',
+    'Boven de 75 jaar niet',
   ]) {
     if (!alles.includes(zin)) {
       throw new Error(`traject: "${zin}" ontbreekt in het uitlegblok\n  ${alles}`)
     }
   }
+  if (!/Bron: NHG-Standaard Obesitas/.test(alles)) {
+    throw new Error(`traject: de bron ontbreekt\n  ${alles}`)
+  }
 
   await pagina.screenshot({ path: 'gereedschap/health-traject.png', fullPage: true })
   await pagina.close()
 
-  /* 5. ZONDER GLI GEEN KAART. Een lege doos met een kop erboven is erger dan
+  /* 8. ZONDER GLI GEEN KAART. Een lege doos met een kop erboven is erger dan
         geen doos: hij belooft iets. */
   const leeg = await ctx.newPage()
   await leeg.emulateMedia({ colorScheme: 'light' })
@@ -3844,7 +3899,7 @@ for (const [naam, dagen, patroon, verwacht] of [
   if (zonder !== 0) throw new Error(`traject: de kaart staat er ${zonder}× zonder GLI`)
   await leeg.close()
 
-  console.log('CooL · 14 van de 24 mnd · medicatie op slot · geen kaart zonder GLI')
+  console.log('CooL 14/24 mnd · 2 beoordeeld, 2 open · drempels 35/40 en 32,5/37,5 · geen optelsom')
 }
 
 await browser.close()

@@ -337,19 +337,45 @@ onderhoudsfase. Van sommige programma's is de lengte van de behandelfase hier
 niet vastgelegd; dan staat er hoeveel maanden je bezig bent en verder niets.
 Liever een duur zonder fase dan een fase die niet klopt.
 
-Daaronder staat één regel over medicatie, en die staat op **niet bekend**. Dat is
-geen storing. De criteria waarop een huisarts dit beoordeelt staan in de
-NHG-Standaard Obesitas 2.0, en die zijn hier niet uit de standaard zelf
-overgenomen maar uit samenvattingen ervan. Zolang dat zo is beoordeelt de app ze
-niet — want wie niet zeker weet wat de eis is, weet ook niet of iemand eraan
-voldoet.
+Daaronder staat de trede erboven: gewichtsreducerende medicatie. De
+NHG-Standaard Obesitas stelt daar vier voorwaarden aan, en die staan er alle
+vier — maar de app beoordeelt er maar twee.
 
-Wat er wél vaststaat lees je door het uitlegblok open te klappen: de lat ligt
+**Wat de app beoordeelt**, omdat het feiten uit je eigen dossier zijn: of je een
+jaar leefstijlbegeleiding achter de rug hebt, en of je onder de 76 bent.
+
+**Wat de app niet beoordeelt**, omdat je huisarts dat weegt: of je BMI boven de
+drempel ligt, en of er gewichtsgerelateerde comorbiditeit is. Die twee staan
+altijd op *niet bekend*, en er staat bij waarom. Je gewicht is hier zelf
+ingetikt; en wat je niet hebt aangevinkt kan er wél zijn — een leeg vinkje is
+geen "nee".
+
+Daaruit volgt iets dat je moet weten voor je de kaart leest: **hij kan nooit
+helemaal groen worden.** Dat is geen storing en geen afwijzing. Het oordeel is
+van je huisarts, en de standaard laat die uitdrukkelijk vrij dit aanbod niet te
+leveren.
+
+Klap het uitlegblok open en je ziet de drempels zelf. De standaard geeft er
+twee sets:
+
+| voor wie | mét comorbiditeit | zonder |
+|---|---|---|
+| de meeste mensen | BMI 35 | BMI 40 |
+| Aziatische (incl. Hindostaanse), Midden-Oosterse, Afrikaanse of Afrikaans-Caribische achtergrond | BMI 32,5 | BMI 37,5 |
+
+Die tweede rij staat in vrijwel geen samenvatting van de standaard, en hij
+scheelt ongeveer 2,5 BMI-punt. Welke rij voor jou geldt bepaalt deze app niet —
+daar vraagt hij niet naar. Zie je een rij die op jou van toepassing zou kunnen
+zijn, dan is dat een vraag voor je huisarts.
+
+In hetzelfde blok staat verder wat er over deze trede vaststaat: de lat ligt
 hoger dan wat in de bijsluiter staat, er gaat minstens een jaar
-leefstijlbegeleiding met onvoldoende resultaat aan vooraf, en de standaard noemt
-dit *aanvullend aanbod* — geen huisarts is verplicht het te leveren. Dat laatste
-is geen kleine letter: krijg je nul op het rekest, dan is dat de richtlijn en
-niet iets wat jou persoonlijk onthouden wordt.
+leefstijlbegeleiding met onvoldoende resultaat aan vooraf, boven de 75 wordt het
+niet voorgeschreven, en als het na twaalf weken op de hoogste dosis die je
+verdraagt minder dan vijf procent oplevert, schrijft de standaard voor om te
+stoppen. En dit: de standaard noemt het *extra aanbod en daarom facultatief* —
+geen huisarts is verplicht het te leveren. Krijg je nul op het rekest, dan is dat
+de richtlijn en niet iets wat jou persoonlijk onthouden wordt.
 
 De kaart komt er niet als je geen GLI hebt opgegeven. Een lege doos met een kop
 erboven belooft iets.

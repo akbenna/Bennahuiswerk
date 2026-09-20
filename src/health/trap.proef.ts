@@ -1,74 +1,159 @@
 /**
  * WAT DEZE PROEF VASTHOUDT
  *
- * Eén ding boven alles: **zolang de criteria niet nagekeken zijn, mag er geen
- * enkele "gehaald" uit komen.**
+ * Eén ding boven alles: **er bestaat geen invoer waarbij alle criteria op
+ * "gehaald" staan.**
  *
- * Dat is geen stijlregel. De criteria van de medicatietrede komen uit
- * samenvattingen van de NHG-Standaard en niet uit de standaard zelf. Wie niet
- * zeker weet wat de eis is, weet ook niet of iemand eraan voldoet — en een
- * scherm dat dan tóch "gehaald" zegt, stuurt iemand met een verwachting naar
- * zijn huisarts die daar stukloopt.
+ * Tot 20 september 2026 stond hier iets anders: zolang de criteria uit
+ * samenvattingen kwamen, mocht er hélemaal geen "gehaald" uit komen. Dat slot
+ * heeft gedaan waar het voor stond — de standaard zelf bleek drie dingen te
+ * bevatten die in geen samenvatting stonden — en is er nu af.
  *
- * De vlag `MEDICATIE.bevestigd` is het slot. Deze proef gaat over het slot en
- * niet over de criteria erachter: als iemand hem ooit omzet zonder de standaard
- * na te lezen, valt hier niets om — dat kan geen proef vangen. Wat hij wél
- * vangt is de omgekeerde fout: criteria die langs het slot heen lekken.
+ * Wat ervoor in de plaats komt is geen zwakkere eis maar een scherpere. De
+ * criteria zijn nu de echte, en twee ervan zijn klinische oordelen: of de BMI
+ * boven de drempel ligt, en of er gewichtsgerelateerde comorbiditeit is. Die
+ * twee beoordeelt deze app niet en kán hij niet beoordelen — het gewicht is
+ * zelf ingevoerd, de drempelset hangt af van een vraag die hij niet stelt, en
+ * een leeg vinkje bij comorbiditeit is geen "nee".
+ *
+ * Daaruit volgt de eigenschap die deze proef vasthoudt: welk profiel je ook
+ * verzint, er staat altijd minstens één criterium op `niet bekend`. Deze app kan
+ * dus nooit een scherm tonen waarop alles groen is. Dat is geen tekortkoming
+ * maar de kern: het oordeel is van de huisarts, en de standaard laat die
+ * uitdrukkelijk vrij dit aanbod niet te leveren.
  */
 import { describe, expect, it } from 'vitest'
 import {
-  GLI_PROGRAMMAS, GLI_TOTAAL_MAANDEN, MEDICATIE, glivoortgang, medicatiecriteria,
-  programmaVan, trede,
+  COMORBIDITEIT, DREMPELS, GLI_PROGRAMMAS, GLI_TOTAAL_MAANDEN, MEDICATIE, glivoortgang,
+  medicatiecriteria, programmaVan, trede,
 } from './trap'
-import type { Trapvraag } from './trap'
+import type { Drempelset, Trapvraag } from './trap'
 import type { IsoDatum } from '@/gedeeld/db/tabellen'
 
 const vraag = (p: Partial<Trapvraag> = {}): Trapvraag =>
   ({ vandaag: '2026-09-19' as IsoDatum, ...p })
 
-describe('het slot op de medicatietrede', () => {
-  /* DE BELANGRIJKSTE PROEF VAN DIT BESTAND. */
-  it('geeft uitsluitend "niet bekend" zolang de criteria niet bevestigd zijn', () => {
-    expect(MEDICATIE.bevestigd).toBe(false)
-    for (const v of [
-      vraag(),
-      vraag({ gliProgramma: 'cool', gliBegonnen: '2020-01-01' as IsoDatum }),
-      vraag({ gliProgramma: 'beweegkuur', gliBegonnen: '2026-09-18' as IsoDatum }),
-    ]) {
-      const c = medicatiecriteria(v)
-      expect(c.every((x) => x.stand === 'niet bekend'), JSON.stringify(v)).toBe(true)
+describe('de criteria van de medicatietrede', () => {
+  /* DE BELANGRIJKSTE PROEF VAN DIT BESTAND.
+     Alle combinaties van wat het profiel kan bevatten, ook de gunstigste. Als
+     er ooit één doorheen komt waarbij alles groen is, staat er een scherm dat
+     zegt wat deze app niet mag zeggen. */
+  it('laat nooit alle criteria op "gehaald" staan, wat je ook invult', () => {
+    const programmas = [undefined, 'cool', 'beweegkuur', 'xfittt', 'onzin']
+    const data = [undefined, '2015-01-01', '2020-09-19', '2025-09-19', '2026-09-18', 'geen datum']
+    const leeftijden = [undefined, 18, 40, 75, 76, 90]
+    let gezien = 0
+    for (const pr of programmas) {
+      for (const d of data) {
+        for (const l of leeftijden) {
+          const v = vraag({
+            gliProgramma: pr, gliBegonnen: d as IsoDatum | undefined, leeftijd: l,
+          })
+          const c = medicatiecriteria(v)
+          expect(c.length, JSON.stringify(v)).toBeGreaterThan(0)
+          expect(
+            c.some((x) => x.stand === 'niet bekend'), JSON.stringify(v),
+          ).toBe(true)
+          gezien++
+        }
+      }
+    }
+    expect(gezien).toBe(programmas.length * data.length * leeftijden.length)
+  })
+
+  /* En de twee die altijd op "niet bekend" staan, staan er met hun reden — niet
+     als leeg vakje. Een criterium zonder uitleg leest als een gebrek van de
+     app; mét uitleg leest het als wat het is. */
+  it('de twee klinische criteria staan er altijd, met hun reden', () => {
+    for (const l of [undefined, 40, 90]) {
+      const c = medicatiecriteria(vraag({
+        gliProgramma: 'cool', gliBegonnen: '2015-01-01' as IsoDatum, leeftijd: l,
+      }))
+      const bmi = c.find((x) => /BMI/.test(x.wat))
+      const co = c.find((x) => /comorbiditeit/i.test(x.wat))
+      expect(bmi?.stand).toBe('niet bekend')
+      expect(co?.stand).toBe('niet bekend')
+      expect(bmi?.toelichting).toMatch(/huisarts/)
+      expect(co?.toelichting).toMatch(/huisarts/)
     }
   })
 
-  /* Ook bij iemand die er op élk denkbaar criterium doorheen zou komen. Zonder
-     dit geval zou een slot dat alleen bij lege gegevens werkt er net zo
-     uitzien. */
-  it('ook bij iemand die zes jaar in een programma zit', () => {
-    const c = medicatiecriteria(vraag({
-      gliProgramma: 'cool', gliBegonnen: '2020-09-19' as IsoDatum,
-    }))
-    expect(c.map((x) => x.stand)).toEqual(['niet bekend'])
+  /* Het GLI-jaar is wél een feit uit je dossier, en wordt dus wél beoordeeld.
+     Zonder deze proef zou "zet alles op niet bekend" de vorige proef halen. */
+  it('het jaar leefstijlbegeleiding wordt wél beoordeeld', () => {
+    const jaar = (d: string) => medicatiecriteria(vraag({
+      gliProgramma: 'cool', gliBegonnen: d as IsoDatum,
+    })).find((x) => /leefstijlbegeleiding/.test(x.wat))!
+
+    expect(jaar('2025-09-19').stand).toBe('gehaald')
+    expect(jaar('2025-09-20').stand).toBe('niet gehaald')
+    expect(jaar('2015-01-01').stand).toBe('gehaald')
+    expect(medicatiecriteria(vraag()).find((x) => /leefstijlbegeleiding/.test(x.wat))!.stand)
+      .toBe('niet bekend')
   })
 
-  /* Eén regel en geen deellijst: een half beoordeelde eis leest als een halve
-     toezegging. */
-  it('geeft één regel en geen deellijst', () => {
-    expect(medicatiecriteria(vraag())).toHaveLength(1)
+  /* De leeftijdsgrens, op de dag. 75 mag, 76 niet — en zonder geboortedatum
+     staat er niet "je bent te oud" maar "dat weten we niet". */
+  it('de leeftijdsgrens ligt op 75 en niet op 76', () => {
+    const leeftijd = (l: number | undefined) => medicatiecriteria(vraag({ leeftijd: l }))
+      .find((x) => /Leeftijd/.test(x.wat))!
+
+    expect(leeftijd(75).stand).toBe('gehaald')
+    expect(leeftijd(76).stand).toBe('niet gehaald')
+    expect(leeftijd(undefined).stand).toBe('niet bekend')
+    expect(leeftijd(undefined).toelichting).not.toMatch(/te oud|niet voor/)
   })
 
-  it('en zegt waaróm hij niets beoordeelt', () => {
-    expect(medicatiecriteria(vraag())[0]!.toelichting).toMatch(/samenvattingen/)
-    expect(MEDICATIE.waarom).toMatch(/NHG-Standaard/)
+  it('draagt zijn bron, en die is de standaard zelf', () => {
+    expect(MEDICATIE.bevestigd).toBe(true)
+    expect(MEDICATIE.bron).toMatch(/NHG-Standaard Obesitas/)
+    expect(MEDICATIE.bron).toMatch(/2026/)
   })
 
-  /* Wat er wél vaststaat, staat er los bij — en is geen van drieën een getal.
-     Zodra hier een BMI-grens in sluipt, is de scheiding tussen "dit weten we"
-     en "dit is nog niet nagekeken" weg. */
-  it('wat vaststaat bevat geen enkel criterium met een getal', () => {
+  /* Wat er vaststaat bevat geen BMI-grens. Die staan in DREMPELS, waar ze
+     inhoud zijn en geen criterium — het verschil tussen een boekje en een
+     oordeel, en dat verschil hoort niet te vervagen. */
+  it('wat vaststaat bevat geen BMI-grens', () => {
     expect(MEDICATIE.vast.length).toBeGreaterThan(0)
     for (const zin of MEDICATIE.vast) {
       expect(zin, zin).not.toMatch(/BMI\s*[≥>]?\s*\d/)
     }
+  })
+})
+
+/**
+ * DE DREMPELS
+ *
+ * De vondst die het slot rechtvaardigde. De tweede set hoort er te zijn, en hij
+ * hoort láger te liggen dan de eerste — anders is de hele reden dat hij er staat
+ * weg. Deze proef zou omvallen als iemand de tweede rij ooit weghaalt of
+ * gelijktrekt.
+ */
+describe('de BMI-drempels uit de standaard', () => {
+  it('er zijn twee sets, en de tweede ligt lager', () => {
+    expect(DREMPELS).toHaveLength(2)
+    const [gewoon, lager] = DREMPELS as [Drempelset, Drempelset]
+    expect(lager.metComorbiditeit).toBeLessThan(gewoon.metComorbiditeit)
+    expect(lager.zonder).toBeLessThan(gewoon.zonder)
+  })
+
+  it('en ze staan op de getallen die de standaard noemt', () => {
+    expect(DREMPELS[0]).toMatchObject({ metComorbiditeit: 35, zonder: 40 })
+    expect(DREMPELS[1]).toMatchObject({ metComorbiditeit: 32.5, zonder: 37.5 })
+  })
+
+  it('de tweede set noemt de achtergronden die de standaard noemt', () => {
+    for (const woord of ['Aziatische', 'Hindostaanse', 'Midden-Oosterse', 'Afrikaans-Caribische']) {
+      expect(DREMPELS[1]!.naam).toContain(woord)
+    }
+  })
+
+  /* De zes aandoeningen uit de standaard, voluit. Zodra er eentje uit valt,
+     leest iemand dat zijn slaapapneu niet meetelt. */
+  it('de comorbiditeit staat er voluit', () => {
+    expect(COMORBIDITEIT).toHaveLength(6)
+    expect(COMORBIDITEIT.join(' ')).toMatch(/slaapapneu/)
+    expect(COMORBIDITEIT.join(' ')).toMatch(/artrose van een dragend gewricht/)
   })
 })
 

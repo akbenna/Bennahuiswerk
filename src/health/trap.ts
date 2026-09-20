@@ -175,59 +175,165 @@ export interface Criterium {
 }
 
 /**
- * De medicatietrede, en het slot erop.
+ * DE MEDICATIETREDE, NAGELEZEN IN DE STANDAARD ZELF
  *
- * `bevestigd: false` betekent dat de criteria hier níét uit de NHG-Standaard
- * zelf zijn overgenomen maar uit samenvattingen ervan. Zolang die vlag uit
- * staat, geeft `medicatiecriteria` uitsluitend `niet bekend` terug — hoeveel er
- * verder ook van iemand bekend is.
+ * Dit stond tot 20 september 2026 op slot. De criteria kwamen uit
+ * samenvattingen, en zolang dat zo was gaf deze functie uitsluitend
+ * `niet bekend` — want als je niet zeker weet wat de eis is, weet je ook niet of
+ * iemand eraan voldoet.
  *
- * Dat is geen voorzichtigheid maar de enige juiste uitkomst: als je niet zeker
- * weet wat de eis is, weet je ook niet of iemand eraan voldoet.
+ * Het slot heeft zijn nut bewezen. De standaard zelf bleek drie dingen te
+ * bevatten die in géén samenvatting stonden, waarvan één die er werkelijk toe
+ * doet: **afwijkende BMI-drempels** voor mensen met een Aziatische (inclusief
+ * Hindostaanse), Midden-Oosterse, Afrikaanse of Afrikaans-Caribische
+ * migratieachtergrond. Die liggen ongeveer 2,5 punt lager. Een app die alleen de
+ * standaarddrempels had getoond, had een groot deel van de mensen voor wie hij
+ * gebouwd is verteld dat ze er nog niet aan toe waren.
  */
 export const MEDICATIE = {
-  bevestigd: false,
-  waarom: 'De criteria komen uit samenvattingen van de NHG-Standaard Obesitas 2.0 en niet '
-    + 'uit de standaard zelf. Tot dat nagekeken is, beoordeelt deze app ze niet.',
-  /** Wat er wél met zekerheid over te zeggen valt. */
+  bevestigd: true,
+  bron: 'NHG-Standaard Obesitas, Nederlands Huisartsen Genootschap, augustus 2026, blz. 28–29',
+  /** Wat er over deze trede vaststaat, in de bewoording van de standaard. */
   vast: [
     'De lat ligt hoger dan de Europese registratietekst in de bijsluiter.',
-    'Er gaat minstens een jaar leefstijlbegeleiding aan vooraf, met onvoldoende resultaat.',
-    'De NHG-Standaard noemt het "aanvullend aanbod": geen huisarts is verplicht het te leveren.',
+    'Er gaat minstens een jaar leefstijlbegeleiding aan vooraf, met onvoldoende resultaat '
+      + '(minder dan tien procent gewichtsverlies), én je blijft eraan deelnemen.',
+    'De standaard noemt het "extra aanbod en daarom facultatief": geen huisarts is verplicht '
+      + 'het te leveren. Doet die het niet zelf, dan loopt de route via een obesitascentrum of '
+      + 'een internist.',
+    'Boven de 75 jaar niet, en niet tijdens zwangerschap of borstvoeding.',
+    'Levert het na twaalf weken op de hoogste dosis die je verdraagt minder dan vijf procent '
+      + 'op, dan schrijft de standaard voor om te stoppen.',
   ],
 } as const
+
+/**
+ * DE BMI-DREMPELS, EN WAAROM DE APP ZE TOONT IN PLAATS VAN TOEPAST
+ *
+ * De standaard geeft twee sets referentiewaarden. Welke voor jou geldt hangt af
+ * van je migratieachtergrond, en dáár zit het probleem: deze app vraagt daar
+ * niet naar. Het profiel kent `etniciteit`, maar dat is een vrij tekstveld dat
+ * alleen over de afkapwaarde van de middelomtrek gaat — zie de kop van
+ * `Conditie` in `tabellen.ts`, waar om dezelfde reden twee aparte vragen staan
+ * in plaats van een afleiding uit afkomst.
+ *
+ * Er zijn twee manieren om daarmee om te gaan. De ene is gokken welke set geldt.
+ * De andere is ze allebei laten zien en de lezer zelf laten kijken. Alleen de
+ * tweede is eerlijk, en hij is bovendien nuttiger: wie ziet dat er een lagere
+ * drempel bestaat en dat die misschien voor hem geldt, heeft een vraag om aan
+ * zijn huisarts te stellen. Een app die dat voor hem invult, geeft hem een
+ * antwoord dat op een aanname rust.
+ *
+ * Dit is dus inhoud en geen oordeel — dezelfde grens als in `leren.ts`.
+ */
+export interface Drempelset {
+  naam: string
+  /** Vanaf deze BMI mét gewichtsgerelateerde comorbiditeit. */
+  metComorbiditeit: number
+  /** Vanaf deze BMI ook zonder. */
+  zonder: number
+}
+
+export const DREMPELS: readonly Drempelset[] = [
+  { naam: 'De meeste mensen', metComorbiditeit: 35, zonder: 40 },
+  {
+    naam: 'Aziatische (inclusief Hindostaanse), Midden-Oosterse, Afrikaanse of '
+      + 'Afrikaans-Caribische achtergrond',
+    metComorbiditeit: 32.5,
+    zonder: 37.5,
+  },
+]
+
+/** De comorbiditeit die de standaard bij deze drempels noemt. */
+export const COMORBIDITEIT = [
+  'coronaire hartziekten', 'beroerte', 'perifeer arterieel vaatlijden',
+  'diabetes mellitus type 2', 'obstructief slaapapneu',
+  'artrose van een dragend gewricht',
+] as const
+
+/** De bovengrens waarboven de standaard niet voorschrijft. */
+export const LEEFTIJDGRENS = 75
 
 export interface Trapvraag {
   /** Of er een GLI loopt, en sinds wanneer. */
   gliProgramma?: string | null | undefined
   gliBegonnen?: IsoDatum | null | undefined
+  /** Uit het profiel. Leeg is "niet ingevuld" en niet "jong". */
+  leeftijd?: number | null | undefined
   vandaag: IsoDatum
 }
 
 /**
- * De criteria voor de medicatietrede.
+ * DE CRITERIA, EN DE REGEL DIE BEPAALT WELKE DE APP BEOORDEELT
  *
- * Zolang `MEDICATIE.bevestigd` uit staat is er precies één uitkomst: één
- * criterium, `niet bekend`, met de reden. Geen deellijst, geen "dit heb je al
- * wel" — want een half beoordeelde eis leest als een halve toezegging.
+ * Twee soorten. Een criterium is een **feit uit je eigen dossier** of een
+ * **klinisch oordeel**. Het eerste beoordeelt deze app; het tweede nooit.
+ *
+ * Feit uit je dossier: hoe lang je GLI loopt (de startdatum staat in je profiel)
+ * en je leeftijd. Daar valt niets aan te wegen — het staat er of het staat er
+ * niet.
+ *
+ * Klinisch oordeel: of je BMI boven de drempel ligt, en of er
+ * gewichtsgerelateerde comorbiditeit is. Die twee blijven `niet bekend`, en niet
+ * uit voorzichtigheid:
+ *
+ * - Het gewicht in deze app is zelf ingevoerd en ongebonden. In het dossier van
+ *   de bouwer staan wegingen van 107 én 190 kilo. Een drempeloordeel op zulke
+ *   getallen is geen oordeel.
+ * - Welke drempelset geldt hangt af van een vraag die deze app niet stelt.
+ * - Bij comorbiditeit is een leeg vinkje géén "nee". Wie niets heeft aangevinkt
+ *   kan slaapapneu hebben dat hij nooit heeft ingevoerd. "Niet aangevinkt" en
+ *   "niet aanwezig" door elkaar halen is hier de gevaarlijkste fout die er is.
+ *
+ * DAARUIT VOLGT EEN EIGENSCHAP DIE EEN PROEF BEWAAKT
+ *
+ * Er is geen invoer denkbaar waarbij alle criteria op `gehaald` staan. Er zit er
+ * altijd minstens één op `niet bekend`, want de klinische twee staan er altijd
+ * op. Deze app kan dus nooit een scherm tonen waarop alles groen is — en dat is
+ * precies de bedoeling: het oordeel is van de huisarts, en de standaard laat die
+ * uitdrukkelijk vrij dit aanbod niet te leveren.
  */
 export function medicatiecriteria(v: Trapvraag): Criterium[] {
-  if (!MEDICATIE.bevestigd) {
-    return [{
-      wat: 'De criteria van de huisarts',
-      stand: 'niet bekend',
-      toelichting: MEDICATIE.waarom,
-    }]
-  }
-  /* Zodra de standaard nagekeken is, komen de echte criteria hier. Ze horen
-     stuk voor stuk hun eigen stand te krijgen, met `niet bekend` voor alles wat
-     het profiel niet weet. */
   const g = glivoortgang(v.gliProgramma, v.gliBegonnen, v.vandaag)
-  return [{
+  const uit: Criterium[] = []
+
+  uit.push({
     wat: 'Een jaar leefstijlbegeleiding',
     stand: g.maanden == null ? 'niet bekend' : g.maanden >= 12 ? 'gehaald' : 'niet gehaald',
-    toelichting: g.tekst,
-  }]
+    toelichting: g.maanden == null
+      ? 'Vul bij je profiel in welk programma je volgt en wanneer je begon, dan telt de app mee.'
+      : g.tekst,
+  })
+
+  /* De leeftijdsgrens is een uitsluiting en geen eis, maar hij leest alleen goed
+     als hij positief staat: "onder de 76" is te halen, "boven de 75" niet. */
+  uit.push({
+    wat: `Leeftijd onder de ${LEEFTIJDGRENS + 1}`,
+    stand: v.leeftijd == null ? 'niet bekend'
+      : v.leeftijd > LEEFTIJDGRENS ? 'niet gehaald' : 'gehaald',
+    toelichting: v.leeftijd == null
+      ? 'Je geboortedatum staat niet in je profiel.'
+      : v.leeftijd > LEEFTIJDGRENS
+        ? `De standaard schrijft boven de ${LEEFTIJDGRENS} jaar niet voor.`
+        : `Je bent ${v.leeftijd}; de standaard schrijft boven de ${LEEFTIJDGRENS} niet voor.`,
+  })
+
+  uit.push({
+    wat: 'De BMI-drempel',
+    stand: 'niet bekend',
+    toelichting: 'Dit weegt je huisarts. Deze app rekent het niet uit: je gewicht is hier zelf '
+      + 'ingevoerd, en welke van de twee drempelsets voor jou geldt hangt af van een vraag die '
+      + 'deze app niet stelt.',
+  })
+
+  uit.push({
+    wat: 'Gewichtsgerelateerde comorbiditeit',
+    stand: 'niet bekend',
+    toelichting: 'Ook dit weegt je huisarts. Wat je hier niet hebt aangevinkt kan er wél zijn, '
+      + 'en die twee door elkaar halen zou hier de gevaarlijkste fout zijn.',
+  })
+
+  return uit
 }
 
 /**

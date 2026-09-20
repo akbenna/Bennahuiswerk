@@ -1376,65 +1376,91 @@ hij vindt dan niets, want er is niets mis met wat hij heeft ingetikt. Het
 datumveld draagt daarnaast een `max` op vandaag, zodat het meestal niet zover
 komt.
 
-### Wat de app níét weet: de medicatietrede
+### De medicatietrede, en het slot dat eraf ging
 
-Boven de GLI staat een trede waar medicatie hoort. De criteria daarvoor staan in
-de NHG-Standaard Obesitas 2.0, en die heb ik hier niet gehad. Wat ik had zijn
-samenvattingen ervan.
+Boven de GLI staat een trede waar medicatie hoort. Die stond op slot: de
+criteria kwamen uit samenvattingen van de NHG-Standaard, en `medicatiecriteria()`
+gaf daarom uitsluitend `niet bekend` terug, hoeveel er verder ook van iemand
+bekend was.
 
-Daarom staat er in `trap.ts` één vlag:
+Op 20 september 2026 leverde Abdelkader de standaard zelf aan — **NHG-Standaard
+Obesitas, augustus 2026, bladzijde 28–29**. Het slot is eraf, en het heeft zijn
+nut bewezen. De standaard bevatte drie dingen die in geen enkele samenvatting
+stonden:
 
-```ts
-export const MEDICATIE = { bevestigd: false, ... }
-```
+| | |
+|---|---|
+| **de belangrijkste** | Afwijkende BMI-drempels voor mensen met een Aziatische (inclusief Hindostaanse), Midden-Oosterse, Afrikaanse of Afrikaans-Caribische migratieachtergrond: 32,5 mét comorbiditeit en 37,5 zonder, in plaats van 35 en 40. |
+| | Geen medicatie boven de 75 jaar, en niet tijdens zwangerschap of borstvoeding. |
+| | Stoppen bij minder dan 5% gewichtsverlies na twaalf weken op de maximaal verdraagbare dosis. |
 
-Zolang die uit staat geeft `medicatiecriteria()` precies één ding terug: één
-criterium, stand `niet bekend`, met de reden erbij. Geen deellijst, geen "dit heb
-je in elk geval al wel" — want een half beoordeelde eis leest als een halve
-toezegging. En het is niet eens voorzichtigheid: als je niet zeker weet wat de
-eis is, wéét je ook niet of iemand eraan voldoet. `niet bekend` is het juiste
-antwoord, niet het veilige.
+Die eerste rij is niet een detail maar de reden dat het slot er hoorde. Een app
+die alleen 35 en 40 had getoond, had iemand met een Marokkaanse of Surinaamse
+achtergrond en een BMI van 38 verteld dat hij er nog niet aan toe was — terwijl
+de standaard hem er wél onder brengt. Voor de mensen voor wie deze app gebouwd
+is, en voor de praktijk van ProVitaCare, is dat niet het uitzonderingsgeval.
 
-Wat er wél met zekerheid over te zeggen valt staat er voluit, in `MEDICATIE.vast`:
-de lat ligt hoger dan de Europese registratietekst in de bijsluiter, er gaat
-minstens een jaar leefstijlbegeleiding met onvoldoende resultaat aan vooraf, en
-de standaard noemt het *aanvullend aanbod* — geen huisarts is verplicht het te
-leveren. Dat laatste hoort erbij: wie het niet weet en nul op het rekest krijgt,
-denkt dat hem iets onthouden wordt.
+### Twee soorten criterium, en de app beoordeelt er maar één
 
-Dat "minstens een jaar" is zelf een getal, en dat vraagt om uitleg naast de vlag
-die zegt dat de criteria niet nagekeken zijn. Het verschil zit in wat het getal
-draagt. De BMI-grenzen en de tien procent bepalen óf iemand erdoor komt; die
-staan er daarom niet. De volgorde — eerst een jaar leefstijlbegeleiding, dán pas
-dit gesprek — bepaalt alleen wat je als eerste moet doen, en dáárover zijn alle
-samenvattingen het eens. Wie op grond van die zin aan zijn GLI begint, doet het
-goede, ook als het exacte cijfer straks anders blijkt te liggen. Wie op grond van
-een BMI-grens naar de huisarts stapt, kan bot vangen.
+Een criterium is een **feit uit je eigen dossier** of een **klinisch oordeel**.
 
-### Twee proeven, en waarom er twee nodig zijn
+Feit uit je dossier: hoe lang je GLI loopt, en je leeftijd. Die staan in je
+profiel, er valt niets aan te wegen, en die beoordeelt de app — met `gehaald`,
+`niet gehaald` of `niet bekend` als er niets is ingevuld.
 
-De proef in `trap.proef.ts` loopt langs een reeks profielen — geen GLI, een
-GLI van veertien maanden, een afgeronde van dertig — en eist dat élke uitkomst
-`niet bekend` is zolang de vlag uit staat. Dat bewaakt de functie.
+Klinisch oordeel: of je BMI boven de drempel ligt, en of er
+gewichtsgerelateerde comorbiditeit is. Die twee blijven altijd `niet bekend`.
+Drie redenen, en geen ervan is voorzichtigheid:
 
-Hij bewaakt niet wat het scherm ernaast zet, en dáár zit het risico. De kaart
-heeft `glivoortgang` óók in handen, en veertien maanden GLI is precies het getal
-waar een component in één regel zijn eigen oordeel uit zou kunnen afleiden: *je
-hebt het jaar gehaald*. Dan staat het slot in de functie nog keurig dicht en
-leest de gebruiker toch een uitspraak die deze app niet mag doen. De armatuur
-leest daarom het echte scherm, opent alles wat open kan, en valt om zodra het
-woord "gehaald" er staat — de enige andere stand die een criterium kan dragen.
+- **Het gewicht in deze app is zelf ingevoerd en ongebonden.** In het dossier van
+  de bouwer staan wegingen van 107 én 190 kilo. Een drempeloordeel op zulke
+  getallen is geen oordeel.
+- **Welke drempelset geldt, hangt af van een vraag die deze app niet stelt.** Het
+  profiel kent `etniciteit`, maar dat is een vrij tekstveld dat over de
+  afkapwaarde van de middelomtrek gaat. Het zou verleidelijk zijn er de
+  drempelset uit af te leiden; dat is dezelfde verleiding die bij de
+  vitamine D-regel al is afgeslagen, en om dezelfde reden. Afkomst is geen
+  antwoord op een vraag die je niet gesteld hebt.
+- **Een leeg vinkje bij comorbiditeit is geen "nee".** Wie niets heeft aangevinkt
+  kan slaapapneu hebben dat hij nooit heeft ingevoerd. "Niet aangevinkt" en "niet
+  aanwezig" door elkaar halen is hier de gevaarlijkste fout die er is, want hij
+  wijst iemand af.
 
-Die tweede proef is met een mutant getoetst: een regel die het oordeel er wél bij
-zet komt door de eerste proef heen en wordt door de tweede gedood.
+De drempels staan er dus wél — allebei de sets, met de getallen en de
+achtergronden die de standaard noemt — maar als inhoud en niet als oordeel.
+Precies de grens uit `leren.ts`: welke bladzijde bovenaan komt is bladeren, de
+tekst zelf verandert niet.
 
-### Wat er moet gebeuren om het slot open te zetten
+### De eigenschap die hieruit volgt, en die twee proeven bewaken
 
-De medicatieparagraaf van de NHG-Standaard Obesitas 2.0 letterlijk ernaast
-leggen. Dan kan `bevestigd` op `true` en komen de echte criteria in
-`medicatiecriteria()`, stuk voor stuk met hun eigen stand, en `niet bekend` voor
-alles wat het profiel niet weet. Tot die dag is deze kaart eerlijker dan een
-kaart die het wél zou beweren.
+Er bestaat geen invoer waarbij alle criteria op `gehaald` staan. De twee
+klinische staan er altijd op `niet bekend`, dus **deze app kan nooit een scherm
+tonen waarop alles groen is.** Dat is geen tekortkoming maar de kern: het oordeel
+is van de huisarts, en de standaard laat die uitdrukkelijk vrij dit aanbod niet
+te leveren.
+
+De proef in `trap.proef.ts` loopt honderdvijftig profielen af — alle combinaties
+van programma, startdatum en leeftijd, inclusief de gunstigste — en eist dat er
+altijd minstens één `niet bekend` tussen zit.
+
+Die bewaakt de functie, niet het scherm. En dáár zit het risico: een component
+die de vier regels optelt tot één uitkomst ("drie van de vier", een groen vinkje,
+"je komt er waarschijnlijk voor in aanmerking") komt door de eerste proef heen,
+terwijl er dan precies staat wat deze app niet mag zeggen. De armatuur leest
+daarom het echte scherm, eist dat de twee onbeoordeelde regels zichtbaar blijven
+staan juist bij een gebruiker die op allebei de beoordeelbare criteria groen
+staat, en valt om zodra er een totaaloordeel opduikt.
+
+De enige zin waarin "in aanmerking" mag voorkomen is die waarin de app zegt dat
+hij er niet over gaat. Die wordt er in de proef uitgeknipt vóór het zoeken —
+anders zou het voorbehoud zichzelf aangeven.
+
+### Wat er niet in staat
+
+Geen dosering, geen middelkeuze, geen contra-indicaties per middel. Wat er wél
+staat is dat tirzepatide door de standaard wordt **afgeraden** en orale
+semaglutide **niet aanbevolen** — dat is voorlichting die iemand behoedt voor een
+aanbod dat hij elders tegenkomt, en het is geen behandeladvies.
 
 ## 23. De conditie — signaleren zonder te doseren
 

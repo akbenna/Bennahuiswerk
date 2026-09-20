@@ -20,6 +20,30 @@ formulering van de medicatiecriteria hoort nagelezen te worden in de standaard
 zelf voordat er een regel in code van gemaakt wordt.** Dat staat onderaan bij
 "Wat er nog na moet".
 
+### NAGELEZEN — 20 september 2026
+
+Abdelkader heeft de standaard zelf aangeleverd: **NHG-Standaard Obesitas,
+augustus 2026**, uitgegeven door het Nederlands Huisartsen Genootschap, 60
+bladzijden. De medicatieparagraaf staat op bladzijde 28–29, tabel H5 op bladzijde
+25. Wat hieronder staat over de criteria is daaruit overgenomen en niet meer uit
+samenvattingen.
+
+**Drie dingen die de samenvattingen niet hadden, en één die ze verkeerd hadden.**
+
+| | |
+|---|---|
+| **gemist** | De afwijkende BMI-drempels voor mensen met een Aziatische (inclusief Hindostaanse), Midden-Oosterse, Afrikaanse of Afrikaans-Caribische migratieachtergrond. Dat is geen voetnoot: het verschuift de drempel van 40 naar 37,5 en van 35 naar 32,5. |
+| **gemist** | Geen medicatie boven de 75 jaar, en niet tijdens zwangerschap of borstvoeding. |
+| **gemist** | De stopregel: stoppen bij < 5% gewichtsverlies na 12 weken op de maximaal verdraagbare dosis. |
+| **fout** | Ik schreef "aanvullend aanbod". De standaard zegt **"extra aanbod en daarom facultatief"**. |
+
+Dat is precies waarom de medicatietrede in `src/health/trap.ts` een slot had. Een
+app die de eerste rij had gemist, had iemand met een Marokkaanse of Surinaamse
+achtergrond en een BMI van 38 verteld dat hij er nog niet aan toe was — terwijl
+de standaard hem er wél onder brengt. In de praktijk van deze app, en van
+ProVitaCare, is dat niet het uitzonderingsgeval maar een groot deel van de
+mensen.
+
 ---
 
 ## 1. De vondst die het meest uitmaakt: registratie is geen indicatie
@@ -33,26 +57,50 @@ Wegovy:
 Dat is juist — als **EMA-registratietekst**. Het is niet de grens waarop een
 Nederlandse huisarts mag starten.
 
-De herziene **NHG-Standaard Obesitas (versie 2.0, 13 oktober 2025)** zet die
-grens veel hoger. Gewichtsreducerende medicatie komt in beeld bij:
+De **NHG-Standaard Obesitas (augustus 2026)** zet die grens veel hoger. Dit is de
+tekst van bladzijde 28–29, letterlijk:
 
-| | |
-|---|---|
-| **BMI 35–39,9** | mét gewichtsgerelateerde comorbiditeit: coronaire hartziekte, beroerte, perifeer arterieel vaatlijden, DM2, slaapapneu, of artrose van een gewichtdragend gewricht |
-| **BMI ≥ 40** | zonder aanvullende eis aan comorbiditeit |
+> **Overweeg medicatie bij:**
+> - patiënten met BMI 35-39,9 en gewichtsgerelateerde comorbiditeit (coronaire
+>   hartziekten, beroerte, perifeer arterieel vaatlijden, diabetes mellitus type
+>   2, obstructief slaapapneu of artrose van een dragend gewricht)
+> - patiënten met BMI ≥ 40
+> - patiënten met een Aziatische (inclusief Hindostaanse), Midden-Oosterse,
+>   Afrikaanse of Afrikaans-Caribische achtergrond met BMI 32,5-37,4 en
+>   bovengenoemde gewichtsgerelateerde comorbiditeit, of een BMI ≥ 37,5
+>
+> **Schrijf alleen medicatie voor bij patiënten die:**
+> - ≥ 1 jaar gemotiveerd hebben deelgenomen aan een (gecombineerde)
+>   leefstijlinterventie met onvoldoende gewichtsreductie (< 10% gewichtsverlies
+>   vanaf extreem verhoogde GGR, zie tabel h5) **én**
+> - blijven deelnemen aan deze leefstijlinterventie, of na afronding van het
+>   2-jarige GLI-programma gemotiveerd zijn voor continuering van de gezonde
+>   leefstijl
+>
+> **Stop** met medicatie bij een gewichtsverlies < 5% na 12 weken gebruik van de
+> maximaal verdraagbare dosis.
+>
+> Schrijf medicatie **niet** voor bij patiënten > 75 jaar en tijdens zwangerschap
+> of lactatie.
 
-En daarbovenop een voorwaarde die in geen enkel registratiedocument staat:
+De derde rij is de rij die in elke samenvatting ontbrak. Hij verschuift de
+drempel met ongeveer 2,5 BMI-punt omlaag voor een groep die in Nederland — en
+zeker in de praktijk van ProVitaCare — groot is. De standaard licht dat elders
+toe: dezelfde correctie geldt voor de hele indeling, want bij een gelijke BMI
+ligt het gezondheidsrisico bij deze groepen hoger.
 
-> Alleen voorschrijven aan patiënten die **≥ 1 jaar gemotiveerd hebben
-> deelgenomen aan een (G)LI met onvoldoende gewichtsreductie (< 10 %)** en die
-> aan die (G)LI blijven deelnemen — of die ná het tweejarige GLI-programma
-> gemotiveerd zijn een gezonde leefstijl voort te zetten.
+De standaard noemt medicatie nadrukkelijk **"extra aanbod en daarom
+facultatief"**: de huisarts is niet verplicht het te leveren en het is geen
+onderdeel van de basiszorg. Wordt het niet door de huisarts zelf voorgeschreven,
+dan is de route een verwijzing naar de tweede lijn — bij voorkeur een
+obesitascentrum of een internist gespecialiseerd in obesitas.
 
-De standaard noemt medicatie nadrukkelijk **"aanvullend aanbod"**: de huisarts is
-niet verplicht het te leveren en het is geen onderdeel van de basiszorg.
-Aanbevolen middelen zijn liraglutide 3 mg, semaglutide 2,4 mg en
-naltrexon/bupropion. Orale semaglutide wordt **niet** aanbevolen wegens beperkt
-bewijs.
+Aanbevolen middelen zijn liraglutide 3 mg subcutaan, semaglutide 2,4 mg
+subcutaan en naltrexon/bupropion. Semaglutide 2,4 mg lijkt effectiever dan de
+andere twee. **Niet** aanbevolen: orale semaglutide (beperkt bewijs), metformine
+(beperkt effect en niet geregistreerd voor deze indicatie), en tirzepatide — dat
+wordt uitdrukkelijk **afgeraden** wegens te weinig ervaring, te veel
+onzekerheid over de veiligheid en zeer hoge kosten.
 
 **Waarom dit ertoe doet voor een commercieel product.** Het verschil tussen
 BMI ≥ 27-met-comorbiditeit en BMI ≥ 35-met-comorbiditeit-ná-een-jaar-GLI is het
@@ -74,7 +122,7 @@ het enige product in de markt dat de gebruiker vooraf vertelt wáár hij staat.
         ↓  verwijzing huisarts nodig
   GLI — gecombineerde leefstijlinterventie          ← volledig vergoed
         ↓  ≥ 1 jaar, < 10 % gewichtsverlies
-  medicatie (aanvullend aanbod)                     ← niet vergoed
+  medicatie (extra aanbod, facultatief)             ← niet vergoed
         ↓
   bariatrische chirurgie (BMI ≥ 40, of ≥ 35 + comorbiditeit)
 ```
