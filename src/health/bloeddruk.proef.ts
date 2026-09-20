@@ -23,7 +23,7 @@
  */
 import { describe, expect, it } from 'vitest'
 import { thuisbloeddruk } from './bloeddruk'
-import type { Meting } from '@/gedeeld/db/tabellen'
+import type { IsoDatum, Meting } from '@/gedeeld/db/tabellen'
 
 let teller = 0
 const m = (datum: string, soort: string, waarde: number): Meting => ({
@@ -175,5 +175,30 @@ describe('de spreiding', () => {
     const t = thuisbloeddruk(paar('2026-09-14', 130, 80), '2026-09-14')
     expect(t?.spreidingSys).toBe(0)
     expect(t?.volledigeWeek).toBe(false)
+  })
+})
+
+/**
+ * HET VERSCHIL MET DE SPREEKKAMER, VASTGEHOUDEN
+ *
+ * Het NHG-protocol bloeddruk meten (2022) zegt voor de spreekkamer: noteer het
+ * gemiddelde van de láátste twee metingen. Deze functie middelt alles wat er op
+ * een dag staat, en dat is een keuze en geen slordigheid: dat protocol gaat
+ * over de meting in de spreekkamer en niet over een week thuis.
+ *
+ * Deze proef houdt dat verschil vast. Verschuift het ooit, dan hoort dat een
+ * besluit te zijn dat iemand neemt, niet iets wat gebeurt.
+ */
+describe('een dag met meer dan twee metingen', () => {
+  it('middelt alles van die dag, en niet alleen de laatste twee', () => {
+    const drie = [
+      ...paar('2026-09-10', 150, 95),
+      ...paar('2026-09-10', 130, 85),
+      ...paar('2026-09-10', 130, 85),
+    ]
+    const t = thuisbloeddruk(drie, '2026-09-10' as IsoDatum)
+    /* De laatste twee zouden 130/85 geven; alle drie geeft 137/88. */
+    expect(t?.sys).toBe(137)
+    expect(t?.dia).toBe(88)
   })
 })

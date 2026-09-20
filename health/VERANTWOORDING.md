@@ -2224,3 +2224,148 @@ De regel "doel 100 kg ligt onder deze uitsnede" stond rechtsboven en zei altijd
 as, naast de datumregel (daar ligt het doel immers ook: buiten beeld), en hij
 zegt welke kant het op is. Rechtsboven botste hij bovendien letterlijk met het
 getal van een weging op de rand.
+
+## 32. Wat er uit een nascholing van september 2026 is overgenomen, en wat niet
+
+Een avond met drie sprekers over de behandeling van obesitas: Blüher (Leipzig)
+over heterogeniteit, Vangoitsenhoven (UZ Leuven) over dopamine, Acosta (Mayo
+Clinic) over fenotypering. Veel van wat daar langskwam is het opschrijven waard.
+Eén ding staat daarom bovenaan en niet onderaan: **de avond werd betaald door
+Good Life Pharma, en alle drie de sprekers kwamen langs een eigen route uit bij
+naltrexon-bupropion, precies het middel dat die organisator in de Benelux
+voert.** Dat maakt de inhoud niet onwaar; het bepaalt wel hoe hard je hem mag
+brengen.
+
+### Wat er in de app is gekomen
+
+**Eén maat erbij, en het is de maat die de sprekers zelf meten.** De
+middelomtrek stond er al met de afkappunten van 94 en 102 cm. Die zijn
+centimeters voor iedereen, en dat is hun zwakte: 102 cm bij 1,70 m is iets
+anders dan bij 1,96 m. De verhouding met de lengte lost dat op met één deling
+en kent één grens voor iedereen, 0,5. NICE beveelt hem naast de BMI aan, en in
+de kliniek is hij vaak het enige wat er werkelijk gemeten wordt: DEXA mag daar
+alleen binnen onderzoek, en een MRI-scanner houdt rond de 140 kilo op, precies
+bij de patiënten waar het om gaat.
+
+De grens is een zone en geen streep. De meetfout van het lint loopt in de
+literatuur van 0,7 tot 15 cm; bij een lengte van 1,90 m is twee centimeter al
+0,01 in de verhouding. Wie op 0,50 uitkomt weet met één meting niet aan welke
+kant hij staat, en dat zegt het scherm in plaats van te kiezen. Dat is dezelfde
+regel als overal: geen getal zonder zijn onzekerheid.
+
+Een overlevende mutant heeft hier iets opgeleverd. De functie had eerst een
+losse null-controle vóór de controle op groter dan nul, en een mutant die de
+eerste wegnam bleef leven: de tweede wacht ving hetzelfde geval al op. Twee
+regels die hetzelfde bewaken zijn er één te veel; het is nu één wacht.
+
+**Twee stukken erbij in het boekje.** Het eerste gaat over waarom dezelfde
+behandeling bij de een wel werkt en bij de ander niet: de non-responscijfers
+(ongeveer 13 procent van de volwassenen op semaglutide, ongeveer 27 procent van
+de jongeren, minder dan 10 procent op de hoogste dosering tirzepatide, samen 15
+tot 20 procent), de vijf weefselgroepen uit Leipzig, en de vier eetprofielen.
+Het tweede gaat over food noise: het homeostatische systeem naast het
+hedonische, de verschuiving van de beloning naar het signaal dat haar
+aankondigt, de acht weken waarin een vet en zoet tussendoortje de voorkeur voor
+vetarm eten verlaagde, en het metabole-afdelingsonderzoek waarin twintig mensen
+op bewerkt eten ongeveer 508 kcal per dag meer aten.
+
+**En het mechanisme dat "Meer dan een BMI" miste.** Waarom hetzelfde gewicht bij
+de een wel en bij de ander geen schade geeft, gaat over opslagcapaciteit:
+onderhuids vet dat meegroeit door nieuwe cellen tegenover vetcellen die uitzetten
+tot ze zuurstof tekortkomen, ontstekingscellen aantrekken, en het overschot
+doorsturen naar buikholte, lever, spier en alvleesklier. De gematchte paren met
+dezelfde BMI, leeftijd, sekse en vetmassa, waarvan de een niets mankeerde en de
+ander diabetes en hypertensie had, maken dat concreet: het verschil zat in vet
+in de buikholte en in het weefsel zelf.
+
+### Wat er niet in is gekomen, en waarom
+
+**De naam van het middel.** Het mechanistische verhaal eromheen is fraai (een
+POMC-neuron dat zichzelf via β-endorfine afremt, een blokkade die die rem
+weghaalt) en het klinische signaal is interessant: angst en depressie vóór start
+voorspelden wél de respons op dat middel en niet op de incretines. Maar een
+boekje voor een patiënt dat een middel bij naam aanprijst op grond van een
+gesponsorde avond is een advertentie, hoe goed het mechanisme ook klinkt. Het
+stuk beschrijft daarom wél dat er verschillende motoren onder obesitas zitten en
+dat dezelfde marker voor twee middelen tegengesteld kan voorspellen, en noemt
+geen merk. Wil de eigenaar het er alsnog in, dan is dat een bewuste keuze en
+geen omissie.
+
+**Geen vragenlijst voor angst en depressie.** Acosta triageert met de PHQ-2 en
+meet met de GAD-7 en de PHQ-9. Dat zijn bruikbare, vrij beschikbare instrumenten
+en het zou technisch een halve dag werk zijn. Het is niet gedaan omdat vraag 9
+van de PHQ-9 over suïcidale gedachten gaat. Een app die die vraag stelt moet een
+route hebben voor het antwoord, en die route is geen tekstje maar een afspraak
+met een mens. Zolang die er niet is, hoort de vraag er niet te staan.
+
+**Geen fenotype-indeling.** De vier eetprofielen zijn aantrekkelijk en de
+gegevens erachter zijn dun: kleine trials, uitsplitsing achteraf, en de
+genetische score die ze schaalbaar zou maken is binnen één groep ontwikkeld en
+gevalideerd. Een app die je op grond daarvan een etiket geeft, doet precies wat
+deze app nergens doet: een oordeel vellen dat de gegevens niet dragen.
+
+### De regel die daaruit volgt, en die nu getoetst wordt
+
+Noemt de bron van een stuk een sponsor, dan staat het belang in datzelfde stuk
+onder "wat we niet weten", waar de lezer het ziet. Niet in een voetnoot, niet in
+de bronvermelding alleen. Dat staat als proef in
+`src/health/belangenverstrengeling.proef.ts`, naast de regel over merken in de
+voedingslijst, met een tweede regel die omvalt zodra er geen stuk meer is waarop
+de eis slaat: een eis die geruisloos verdwijnt bewaakt niets.
+
+## 33. Het bloeddrukprotocol nagelopen, en wat het wel en niet bevestigt
+
+Er lag een vraag open sinds de medische naloop: de thuisbloeddrukregel in deze
+app (zeven dagen, twee metingen 's ochtends en twee 's avonds, eerste dag eraf,
+grens 135/85) kwam uit drie onafhankelijke weergaven en niet uit het protocol
+zelf, want nhg.org is vanaf deze machine niet te bereiken.
+
+Er is nu een protocol op tafel gekomen: **NHG, Protocol bloeddruk meten, 2022,
+versie 1.1.** Dat is een ander document dan waar de vraag over ging. Het gaat
+over de méting in de spreekkamer en niet over de week thuis, en het bevestigt de
+7-2-2-opzet, de gewenningsdag en de 135/85 dus niet. Die drie staan nog steeds
+als "uit secundaire bronnen" in de kop van `bloeddruk.ts`. Dat is de eerlijke
+uitkomst en niet de gewenste.
+
+### Wat het wél bevestigt, en wat daarvan in de app is gekomen
+
+Het document geeft de meetregels zelf, en die zijn in deze app niets waard als
+ze in een boekje blijven staan. Ze staan nu bij het invoerveld, want daar wordt
+bepaald hoe goed het getal wordt dat je intikt: vijf minuten rustig zitten, niet
+praten, voeten naast elkaar, de manchet ter hoogte van het midden van het
+borstbeen, en twee metingen met een of twee minuten ertussen waarbij de manchet
+helemaal leeg moet. Wat je noteert is het gemiddelde van de laatste twee.
+Verschillen die twee meer dan 10 mmHg systolisch of 5 diastolisch, dan meet je
+door tot twee opeenvolgende metingen dichter bij elkaar liggen.
+
+En het geeft het sterkste argument voor de kaart die er al stond. Bij 15 tot 20
+procent van de mensen is de bloeddruk alleen in de spreekkamer verhoogd, en bij
+10 tot 15 procent juist alleen daarbuiten. Dat is precies waarom een week thuis
+iets zegt wat de spreekkamer niet zegt, en het staat nu in de app met de bron
+erbij. De spreekkamergrens (gemiddelde van de geregistreerde bovendrukken over
+drie momenten, 140 mmHg of hoger) staat er ook, met de opmerking dat thuis een
+lagere grens geldt die deze app met opzet niet neerzet.
+
+### Eén verschil dat daardoor zichtbaar werd
+
+Het spreekkamerprotocol zegt: noteer het gemiddelde van de láátste twee
+metingen. `thuisbloeddruk` middelt alles wat er op een dag staat. Dat verschil
+is blijven staan, en met reden: die rekenregel overnemen op gezag van een
+document dat niet over de thuismeting gaat, zou precies de fout zijn die dit
+hoofdstuk rechtzet. Het verschil staat nu in de kop van `bloeddruk.ts` én in een
+proef (een dag met drie metingen geeft 137/88 en niet 130/85), zodat het niet
+stilletjes kan verschuiven.
+
+### De stand van de andere open punten
+
+Bestand 44 is toegepast. Module D blijft rusten. De twee fixes in de
+ProVita-repo vervallen: `Bennahuiswerk` is de repo die telt. "Wat ontbreekt er"
+op Vandaag blijft zoals het is, over voedingsstoffen en niet over producten.
+
+Eén punt is níet opgelost, ondanks dat het geregeld leek: toegang tot de
+database van BennaHealth. De Supabase-koppeling van deze sessie ziet twee
+projecten, en `huiuvnjrvvoybbzwfrfp` zit er niet bij; een leesvraag erop komt
+terug met "You do not have permission to perform this action". Daardoor is de
+md5-controle uit `CLAUDE.md` (de `prosrc` van elke functie tegen het genummerde
+bestand) nog steeds niet zelf te draaien. Tot dat lukt geldt voor elk genummerd
+bestand: toegepast is wat de eigenaar zegt, niet wat deze sessie heeft gezien.

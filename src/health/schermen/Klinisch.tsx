@@ -17,7 +17,7 @@ import type { Analyse } from '../rekenkern'
 import { VENSTER_DAGEN, thuisbloeddruk } from '../bloeddruk'
 import { LeegGeenGegevens } from '../leegbeeld'
 import { MEDICATIEGROEPEN, conditieGezet, conditieVan } from '../conditie'
-import { STOPBANG, fib4, nieuwste, rustpols, score2, stopbangScore } from '../klinisch'
+import { STOPBANG, fib4, middelLengte, nieuwste, rustpols, score2, stopbangScore } from '../klinisch'
 import type { Rustpols, StopbangAntwoorden, StopbangSleutel } from '../klinisch'
 import { WegLab, WegMeting } from '../tekens'
 import { SFEERFOTO } from '../sfeerfotos'
@@ -175,6 +175,7 @@ export function Klinisch(p: KlinischEigenschappen) {
       <Eigenbloeddruk metingen={metingen} />
 
       <MetingInvoer bewaar={p.bewaarMeting} a={a} sbd={sbd} dbd={dbd} middel={middel}
+                    lengteCm={profiel.lengte_cm}
                     pols={pols} />
       <LabInvoer bewaar={p.bewaarLab} labs={labs} />
 
@@ -374,18 +375,44 @@ function Eigenbloeddruk({ metingen }: { metingen: Meting[] }) {
         thuismetingen zijn: wat je hier invult telt mee, waar je het ook mat. Wat dit getal betekent
         beoordeelt je huisarts of praktijkondersteuner; deze app zet er met opzet geen grens bij.
       </p>
+      {/* WAAROM EEN WEEK THUIS METEN BESTAAT
+          Deze twee getallen komen uit het NHG-protocol bloeddruk meten zelf en
+          zijn het sterkste argument voor deze kaart: bij een op de vijf mensen
+          zegt de spreekkamer iets anders dan de week erbuiten, en dat geldt
+          beide kanten op. */}
+      <Uitleg id="thuisversusspreekkamer" label="waarom dit iets zegt wat de spreekkamer niet zegt">
+        <p>
+          Bij <b className="hoeveelheid">15 tot 20 procent</b> van de mensen is de bloeddruk alleen
+          in de spreekkamer verhoogd, en bij <b className="hoeveelheid">10 tot 15 procent</b> juist
+          alleen daarbuiten. Daarom staat in het protocol dat je bij een indicatie voor behandeling
+          naast de spreekkamermeting ook een meting over langere tijd doet.
+        </p>
+        <p>
+          In de spreekkamer geldt bovendien een andere grens dan thuis. Daar wordt een verhoogde
+          bloeddruk vastgesteld op het gemiddelde van de geregistreerde bovendrukken over drie
+          verschillende momenten, bij 140 mmHg of hoger. Voor de week thuis geldt een lagere grens,
+          en die zet deze app met opzet niet neer.
+        </p>
+        <p className="mini">
+          Bron: NHG, Protocol bloeddruk meten, 2022, versie 1.1. Dat protocol gaat over de meting
+          in de spreekkamer. De opzet van de week thuis staat in een eigen protocol, dat hier nog
+          niet is nagelopen.
+        </p>
+      </Uitleg>
     </Kaart>
   )
 }
 
 function MetingInvoer(
-  { bewaar, a, sbd, dbd, middel, pols }:
+  { bewaar, a, sbd, dbd, middel, pols, lengteCm }:
   {
     bewaar: KlinischEigenschappen['bewaarMeting']; a: Analyse
     sbd: Meting | null; dbd: Meting | null; middel: Meting | null
     pols: Rustpols<Meting> | null
+    lengteCm: number | null
   },
 ) {
+  const mlv = middelLengte(middel ? Number(middel.waarde) : null, lengteCm)
   const [soort, zetSoort] = useState<string>(METINGSOORTEN[0][0])
   const [waarde, zetWaarde] = useState('')
 
@@ -467,11 +494,47 @@ function MetingInvoer(
            : 'Onder 94 cm.'}
         </p>
       )}
+      {/* DEZELFDE OMTREK ZEGT IETS ANDERS BIJ EEN ANDERE LENGTE
+          De afkappunten hierboven zijn centimeters voor iedereen, en dat is hun
+          zwakte: 102 cm bij 1,70 m is iets anders dan 102 cm bij 1,96 m. De
+          verhouding lost dat op met één deling en zonder tabel, en het is ook
+          wat een kliniek werkelijk meet zodra een MRI-scanner bij 140 kilo
+          ophoudt. */}
+      {mlv && (
+        <p className="mini" style={{ marginTop: 4 }}>
+          Gedeeld door je lengte: <b className="hoeveelheid">{dec(mlv.ratio, 2)}</b>.{' '}
+          {mlv.zone === 'boven'
+            ? 'Boven 0,5. Die grens is voor elke lengte dezelfde: je middel hoort minder dan de '
+              + 'helft van je lengte te zijn.'
+            : mlv.zone === 'rond'
+              ? 'Rond de grens van 0,5. Aan welke kant precies is met één lintmeting niet te '
+                + 'zeggen: twee centimeter verschil is hier al 0,01.'
+              : 'Onder 0,5, de grens die voor elke lengte dezelfde is.'}
+        </p>
+      )}
       {/* De meetinstructie stond altijd in beeld zolang er geen middelomtrek
           was, een stuk grijze tekst over ribben en bekkenkammen op een scherm
           waar je je bloeddruk kwam bekijken. Hij hoort er wel te staan, want
           verkeerd meten geeft centimeters verschil, maar achter de uitklapper
           waar alle andere onderbouwing in deze app ook staat. */}
+      {/* De meetinstructie voor de bloeddruk hoort bij het invoerveld en niet in
+          een boekje: wie hier een getal intikt, bepaalt op dat moment hoe goed
+          het getal is. Alles hieronder staat letterlijk in het protocol. */}
+      <Uitleg id="bloeddrukmeten" label="hoe je een bloeddruk meet die iets waard is">
+        <p>
+          Vijf minuten rustig zitten voordat je meet, in een rustige omgeving, en niet praten
+          tijdens de meting. Voeten naast elkaar op de grond, benen niet over elkaar, geen vuist
+          maken. De onderarm ontspannen op tafel, de manchet ter hoogte van het midden van je
+          borstbeen.
+        </p>
+        <p>
+          Meet twee keer, met een of twee minuten ertussen, en laat de manchet daartussen helemaal
+          leeg lopen. Noteer het gemiddelde van de laatste twee metingen: één losse meting is geen
+          bloeddruk. Verschillen die twee meer dan 10 mmHg boven of 5 mmHg onder, meet dan door tot
+          twee opeenvolgende metingen dichter bij elkaar liggen.
+        </p>
+        <p className="mini">Bron: NHG, Protocol bloeddruk meten, 2022, versie 1.1.</p>
+      </Uitleg>
       <Uitleg id="middelomtrek"
               label={middel ? 'waar die grenzen vandaan komen' : 'hoe je de middelomtrek meet'}>
         <p>
@@ -483,6 +546,19 @@ function MetingInvoer(
           en de Nederlandse richtlijn 2023 verwijzen alle drie naar de Europese afkappunten. Alleen
           voor Aziatische afkomst liggen ze lager. Meetfout in de literatuur 0,7 tot 15 cm, dus twee
           centimeter verschil is ruis.
+        </p>
+        <p>
+          De verhouding met je lengte staat er sinds kort naast, en die kent maar één grens: 0,5,
+          voor iedereen en voor elke lengte. NICE beveelt hem naast de BMI aan, en in een
+          obesitaskliniek is hij vaak het enige wat er werkelijk gemeten wordt: DEXA mag daar
+          alleen binnen onderzoek en een MRI-scanner houdt rond de 140 kilo op, precies bij de
+          patiënten waar het om gaat.
+        </p>
+        <p>
+          Wat deze maat zegt is wáár het vet zit en niet hoeveel het er is. Dat is de vraag die
+          ertoe doet: onderhuids vet doet weinig, vet om de organen geeft insulineresistentie. Hij
+          vervangt de BMI dus niet, hij staat ernaast. En hij erft de meetfout van het lint, dus
+          hier staan twee cijfers achter de komma en geen drie.
         </p>
       </Uitleg>
       <Rij style={{ marginTop: 12 }}>
