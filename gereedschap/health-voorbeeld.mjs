@@ -182,10 +182,17 @@ function labs(aantalDagen) {
 function metingen(aantalDagen) {
   if (aantalDagen < 7) return []
   const d = iso(NU - 9 * DAG)
+  /* Een tweede, oudere meetdag. Zonder die dag heeft de kaart "Wat er veranderd
+     is" niets te vergelijken, en dan zou de proef een kaart tonen die op de
+     telefoon van de gebruiker wél vol staat en hier altijd leeg blijft. */
+  const toen = iso(NU - 120 * DAG)
   return [
     { id: 'm1', datum: d, soort: 'bloeddruk_sys', waarde: 128, eenheid: 'mmHg', notitie: null },
     { id: 'm2', datum: d, soort: 'bloeddruk_dia', waarde: 82, eenheid: 'mmHg', notitie: null },
     { id: 'm3', datum: d, soort: 'middelomtrek', waarde: 108, eenheid: 'cm', notitie: null },
+    { id: 'm4', datum: toen, soort: 'bloeddruk_sys', waarde: 146, eenheid: 'mmHg', notitie: null },
+    { id: 'm5', datum: toen, soort: 'bloeddruk_dia', waarde: 92, eenheid: 'mmHg', notitie: null },
+    { id: 'm6', datum: toen, soort: 'middelomtrek', waarde: 114, eenheid: 'cm', notitie: null },
   ]
 }
 
@@ -694,6 +701,30 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
         throw new Error(`${stam}: het invoerveld staat boven de waarden (${volgorde})`)
       }
       console.log(`${''.padEnd(26)} metingen: waarden boven het formulier`)
+
+      /* WAT ER VERANDERD IS
+         De enige kaart op dit scherm die twee momenten naast elkaar zet. Hij
+         hoort er alleen te staan als er werkelijk twee meetdagen zijn, en het
+         gewicht hoort uit de gladde lijn te komen en niet van de weegschaal. */
+      const verandering = pagina.locator('.kaart').filter({ hasText: 'Wat er veranderd is' })
+      if (!(await verandering.count())) {
+        throw new Error(`${stam}: de kaart met wat er veranderd is ontbreekt`)
+      }
+      const platte = (await verandering.first().innerText()).replace(/\s+/g, ' ')
+      for (const maat of ['Gewicht (trend)', 'Middelomtrek', 'Bovendruk', 'Onderdruk']) {
+        if (!platte.includes(maat)) {
+          throw new Error(`${stam}: "${maat}" staat niet in wat er veranderd is\n  ${platte}`)
+        }
+      }
+      /* 114 naar 108 is zes centimeter eraf, en 146 naar 128 is achttien punten.
+         Staat daar iets anders, dan wordt er niet op datum gesorteerd of wordt
+         de verkeerde kant afgetrokken. */
+      for (const verwacht of ['-6', '-18', '-10']) {
+        if (!platte.includes(verwacht)) {
+          throw new Error(`${stam}: ${verwacht} ontbreekt in wat er veranderd is\n  ${platte}`)
+        }
+      }
+      console.log(`${''.padEnd(26)} veranderd: ${platte.slice(0, 96)}`)
     }
 
     /* DE VOLGORDE VAN HET INZICHTSCHERM

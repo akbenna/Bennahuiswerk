@@ -111,6 +111,45 @@ export const STOPBANG = [
 export type StopbangSleutel = (typeof STOPBANG)[number][0]
 export type StopbangAntwoorden = Partial<Record<StopbangSleutel, boolean>>
 
+/**
+ * VIER VAN DE ACHT VRAGEN KENT DEZE APP AL
+ *
+ * STOP-BANG vraagt naar vier dingen die niemand hoeft te schatten: geslacht,
+ * leeftijd, BMI en nekomtrek. Die staan alle vier al in deze app, en tot nu toe
+ * stond de nekomtrek er zelfs twee keer: als meting in het lijstje, en als
+ * vinkje dat je zelf moest zetten. Twee plekken voor hetzelfde getal is één
+ * plek waar het fout kan gaan.
+ *
+ * Wat hier terugkomt is alleen wat vaststaat. Een ontbrekende meting geeft
+ * géén sleutel terug en geen `false`: "niet gemeten" is geen "nee", en dat
+ * onderscheid is in deze app de hele tijd hetzelfde onderscheid. Een vinkje dat
+ * uit staat omdat er niets gemeten is, ziet er op het scherm precies zo uit als
+ * een vinkje dat uit staat omdat het antwoord nee is, en juist daarom vertelt
+ * het scherm ernaast wát de app weet en waar het vandaan komt.
+ *
+ * De grenzen zijn die van de officiële vragenlijst en niet die van het gemak:
+ * ouder dan 50 en BMI boven 35 zijn strikt, de nekomtrek is 43 cm of meer bij
+ * mannen en 41 of meer bij vrouwen. Zonder geslacht valt die laatste niet te
+ * beantwoorden, en dan komt hij er dus niet uit.
+ */
+export const NEK_GRENS = { m: 43, v: 41 } as const
+
+export function stopbangUitGegevens(
+  g: {
+    geslacht: 'm' | 'v' | null
+    leeftijdJaar: number | null
+    bmi: number | null
+    nekCm: number | null
+  },
+): StopbangAntwoorden {
+  const uit: StopbangAntwoorden = {}
+  if (g.geslacht != null) uit.man = g.geslacht === 'm'
+  if (g.leeftijdJaar != null) uit.leeftijd = g.leeftijdJaar > 50
+  if (g.bmi != null) uit.bmi = g.bmi > 35
+  if (g.nekCm != null && g.geslacht != null) uit.nek = g.nekCm >= NEK_GRENS[g.geslacht]
+  return uit
+}
+
 export function stopbangScore(a: StopbangAntwoorden): { score: number; klasse: Risicoklasse } {
   const n = STOPBANG.filter(([k]) => a[k]).length
   const stop = (['snurken', 'moe', 'apneu', 'bloeddruk'] as const).filter((k) => a[k]).length
