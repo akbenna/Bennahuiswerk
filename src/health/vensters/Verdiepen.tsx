@@ -28,6 +28,7 @@
  * getallen erin zou dat wel zijn. Het veld "waar je dit terugziet" verwijst
  * daarom naar een scherm en rekent zelf niets uit.
  */
+import { useEffect } from 'react'
 import { metNadruk } from '../nadruk'
 import { Kaart, Kop, Uitklap, Venster } from '../onderdelen/basis'
 import { VERDIEPINGEN } from '../verdieping'
@@ -37,8 +38,17 @@ import { VERDIEPINGEN } from '../verdieping'
 const TELWOORD = ['Geen', 'Eén', 'Twee', 'Drie', 'Vier', 'Vijf', 'Zes', 'Zeven',
                   'Acht', 'Negen', 'Tien', 'Elf', 'Twaalf']
 
-export function VerdiepVenster({ opSluiten }: { opSluiten: () => void }) {
+export function VerdiepVenster(
+  { opSluiten, begin }: { opSluiten: () => void; begin?: string | null },
+) {
   const aantal = TELWOORD[VERDIEPINGEN.length] ?? String(VERDIEPINGEN.length)
+
+  /* Openklappen alleen is niet genoeg: bij het achtste stuk staat het open
+     onder de vouw en lijkt er niets gebeurd. Daarom ook ernaartoe. */
+  useEffect(() => {
+    if (!begin) return
+    document.getElementById('stuk-' + begin)?.scrollIntoView({ block: 'start' })
+  }, [begin])
 
   return (
     <Venster titel="Verdiepen" breed opSluiten={opSluiten}>
@@ -52,8 +62,9 @@ export function VerdiepVenster({ opSluiten }: { opSluiten: () => void }) {
         {/* Geen kaart om de Uitklap heen: die levert er zelf al een. Een kaart in
             een kaart geeft een doos in een doos. */}
         {VERDIEPINGEN.map((v) => (
-          <div key={v.id} style={{ marginTop: 12 }}>
-            <Uitklap id={'verdiep-' + v.id} kop={v.titel} dicht={v.kort}>
+          <div key={v.id} id={'stuk-' + v.id} style={{ marginTop: 12 }}>
+            <Uitklap id={'verdiep-' + v.id} kop={v.titel} dicht={v.kort}
+                     beginOpen={v.id === begin}>
               {v.weten.map((alinea, i) => (
                 <p key={i} style={{ marginTop: 10 }}>{metNadruk(alinea)}</p>
               ))}

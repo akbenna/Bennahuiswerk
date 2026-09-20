@@ -74,9 +74,18 @@ eruit gestript.
 Die vergelijking staat kant en klaar in `health/database/controle-md5.sql`. Dat
 bestand heeft geen nummer, want het is geen verslag maar een vraag: het verandert
 niets, je plakt het in de SQL-editor en er komt één tabel uit met per functie
-*gelijk*, *VERSCHILT*, *STAAT NIET IN DE DATABASE* of *STAAT NIET IN DE REPO*. De
-verwachte waarden staan erin en zijn uit de bestanden gerekend; verandert er een
-functie, dan hoort dat bestand opnieuw gemaakt te worden.
+*gelijk*, *VERSCHILT*, *STAAT NIET IN DE DATABASE* of *STAAT NIET IN DE REPO*.
+
+De verwachte waarden erin worden uitgerekend, niet ingetikt:
+
+```
+node gereedschap/md5-verslag.mjs --schrijf
+```
+
+Verandert er een functie, dan hoort dat te draaien, en `src/health/dbverslag.proef.ts`
+valt om zolang het niet gedraaid is. Meldt de controle daarna *VERSCHILT* of
+*STAAT NIET IN DE REPO*, dan haalt `health/database/uitlezen-functies.sql` de
+tekst op zoals de database hem kent.
 
 ## Nooit wegschrijven wat er al staat
 

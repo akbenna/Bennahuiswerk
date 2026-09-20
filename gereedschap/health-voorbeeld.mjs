@@ -745,6 +745,41 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
         }
       }
       console.log(`${''.padEnd(26)} veranderd: ${platte.slice(0, 110)}`)
+
+      /* MEE NAAR HET SPREEKUUR
+         Dit is de enige tekst in deze app die het scherm verlaat. Wat er
+         weggelaten wordt is weg: de lezer kan niet doorklikken en heeft de app
+         niet. De voorbehouden horen dus mee te reizen, en of ze dat doen is
+         alleen op het echte scherm te zien, want de kaart stelt het vel samen
+         uit wat hierboven berekend is. */
+      const vel = pagina.locator('.kaart').filter({ hasText: 'Mee naar het spreekuur' })
+      if (!(await vel.count())) throw new Error(`${stam}: de spreekuurkaart ontbreekt`)
+      await vel.first().getByText('lees eerst wat erin staat').click()
+      await pagina.waitForTimeout(200)
+      const tekst = await pagina.locator('#spreekuurvel').innerText()
+      for (const stuk of [
+        'zelf gemeten en zelf ingevoerd',    // waar het vandaan komt
+        'niet de weging van vandaag',        // het gewicht is de gladde lijn
+        'factor 1,3',                        // het voorbehoud bij SCORE2
+        'C-index is 0,65 tot 0,72',
+        'gerekend met',                      // met wélke bloeddruk
+        'WAT HIER NIET IN STAAT',            // wat ontbreekt, ontbreekt niet stil
+      ]) {
+        if (!tekst.includes(stuk)) {
+          throw new Error(`${stam}: "${stuk}" ontbreekt in het spreekuurvel`
+            + `\n  ${tekst.replace(/\s+/g, ' ').slice(0, 400)}`)
+        }
+      }
+      /* En er staat geen oordeel in. Deze app zegt nergens of een getal goed is,
+         en juist in een tekst die naar een mailbox gaat is dat het verschil
+         tussen informeren en behandelen. */
+      for (const oordeel of ['te hoog', 'te laag', 'goed bezig', 'ongezond', 'gezond gewicht']) {
+        if (tekst.toLowerCase().includes(oordeel)) {
+          throw new Error(`${stam}: "${oordeel}" staat in het spreekuurvel`)
+        }
+      }
+      console.log(`${''.padEnd(26)} spreekuurvel: ${tekst.split('\n').length} regels, `
+        + 'voorbehouden mee, geen oordeel')
     }
 
     /* DE VOLGORDE VAN HET INZICHTSCHERM
@@ -3804,7 +3839,22 @@ for (const [naam, dagen, patroon, verwacht] of [
   await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
   await pagina.waitForSelector('.hero', { timeout: 5000 })
   await naarTab(pagina, 'Profiel')
-  await pagina.getByRole('button', { name: 'Verdiepen: afvallen en medicatie' }).click()
+
+  /* 0. DE INHOUDSOPGAVE STAAT OP HET SCHERM, EN NIET ALLEEN IN DE DOOS
+        Het boekje stond als één knop onderaan een kaart over de herkomst van
+        de getallen: elf stukken die je moest kénnen om ze te vinden. Nu staan
+        de titels er. Deze proef telt ze, want een lijst die stilletjes leeg
+        raakt ziet er in de code prima uit. */
+  const index = pagina.locator('.kaart').filter({ hasText: 'Lezen' })
+    .locator('button.naslagregel')
+  const titels = await index.count()
+  if (titels !== 11) throw new Error(`verdiepen: ${titels} titels op het scherm in plaats van 11`)
+  const eersteTitel = (await index.first().innerText()).replace(/\s+/g, ' ').trim()
+  if (!eersteTitel.startsWith('De Nederlandse trap')) {
+    throw new Error(`verdiepen: de eerste titel is "${eersteTitel}"`)
+  }
+
+  await pagina.getByRole('button', { name: 'Open het boekje' }).click()
 
   const venster = pagina.locator('.venster')
   await venster.waitFor({ timeout: 5000 })
@@ -3862,6 +3912,25 @@ for (const [naam, dagen, patroon, verwacht] of [
   }
 
   await pagina.screenshot({ path: 'gereedschap/health-verdiepen.png', fullPage: true })
+
+  /* 6. DE VERWIJZING VANAF EEN KAART KOMT BINNEN OP HÉT STUK
+        Een verwijzing die het boekje bovenaan opent, is een verwijzing die niet
+        werkt: je staat dan in een boekje van elf stukken zonder te weten welk
+        stuk bedoeld was. Erger nog, wie dat stuk ooit dichtklapte krijgt een
+        onthouden stand terug en ziet niets gebeuren. Vandaar hier, met een
+        stand die met opzet dicht is gezet. */
+  await pagina.keyboard.press('Escape')
+  await pagina.waitForTimeout(200)
+  await pagina.evaluate(() => {
+    localStorage.setItem('kalibratie.uitleg', JSON.stringify({ 'verdiep-slaap': false }))
+  })
+  await pagina.getByRole('button', { name: 'Lees het hele stuk' }).click()
+  await pagina.waitForTimeout(400)
+  const slaapstuk = (await pagina.locator('#stuk-slaap').innerText()).replace(/\s+/g, ' ')
+  if (!/Nedeltcheva|veertien nachten|vetvrije massa/.test(slaapstuk)) {
+    throw new Error(`verdiepen: de verwijzing opent het slaapstuk niet\n  ${slaapstuk.slice(0, 200)}`)
+  }
+  console.log(`${''.padEnd(26)} inhoudsopgave: ${titels} titels · verwijzing opent het stuk zelf`)
   console.log(`${aantal} stukken · vier delen per stuk · geen enkel getal van de lezer erin`)
   await pagina.close()
 }
