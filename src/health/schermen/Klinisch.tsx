@@ -21,7 +21,7 @@ import {
   STOPBANG, fib4, middelLengte, nieuwste, rustpols, score2, stopbangScore, stopbangUitGegevens,
 } from '../klinisch'
 import { middelbeloop } from '../middelbeloop'
-import { veranderingen } from '../verandering'
+import { tijdspanne, veranderingen } from '../verandering'
 import type { Verandering } from '../verandering'
 import type { Rustpols, StopbangAntwoorden, StopbangSleutel } from '../klinisch'
 import { WegLab, WegMeting } from '../tekens'
@@ -381,6 +381,8 @@ function Veranderingkaart({ rijen }: { rijen: Verandering[] }) {
             <span className="naam" style={{ fontSize: '.86rem' }}>{r.naam}</span>
             <span className="mini">
               {dec(r.vanWaarde, r.decimalen)} → {dec(r.totWaarde, r.decimalen)} {r.eenheid}
+              {' · '}
+              <span className="tijd">{tijdspanne(r.dagen)}</span>
             </span>
             <span className="cijfer" style={{ fontSize: '.86rem' }}>
               {r.verschil > 0 ? '+' : ''}{dec(r.verschil, r.decimalen)}
@@ -389,8 +391,8 @@ function Veranderingkaart({ rijen }: { rijen: Verandering[] }) {
         ))}
       </div>
       <p className="mini" style={{ marginTop: 10 }}>
-        Van je eerste meting tot je laatste, per maat. Hier staat alleen wat er verschoven is;
-        wat dat betekent hoor je van je huisarts.
+        Van je eerste meting tot je laatste, per maat, met de tijd die ertussen zit. Hier staat
+        alleen wat er verschoven is; wat dat betekent hoor je van je huisarts.
       </p>
       <Uitleg id="verandering" label="waarom hier geen kleur bij staat">
         <p>

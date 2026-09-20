@@ -659,6 +659,9 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
 .labrij .waarde{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:600}
 .labrij .waarde.buiten{color:var(--let)}
 .labrij .waarde.binnen{color:var(--goed)}
+/* De tijd tussen twee metingen breekt nooit af: "4 mnd" over twee regels leest
+   als twee dingen. De rest van de regel mag wel krimpen. */
+.labrij .tijd{white-space:nowrap}
 
 /* ----------------------------------------------------- de eiwitstaven ---- */
 /* Vier maaltijden naast elkaar met één streep op het richtgetal. De streep is
