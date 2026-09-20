@@ -2020,3 +2020,54 @@ meting stáát er) maar slecht leesbaar. Het alternatief is de as op de rest
 schalen en de uitbijter als los gemarkeerd punt aan de rand tonen. Dat is een
 ontwerpkeuze en geen rekenregel, en die staat daarom nog open.
 
+
+## 28. De sparkline die niets tekende
+
+In de kop van het inzichtscherm staat een strookje van acht weken gewicht: de
+ruwe wegingen licht, de gladde lijn erover. Op de schermafdruk van 20 september
+stond daar het kopje "Gewicht, laatste acht weken" met daaronder een paar losse
+streepjes in een verder lege strook. Dat las als een kapotte figuur.
+
+### Wat er misging
+
+Het pad werd opgebouwd als `M` voor het eerste punt van een stuk en `L` voor
+elk volgend punt, en bij een ontbrekende dag begon er een nieuw stuk. Een reeks
+waarin geen twee wegingen naast elkaar liggen levert dan een pad op dat
+uitsluitend uit verplaatsingen bestaat, en zo'n pad heeft geen lengte: er wordt
+niets getekend. Gemeten in een echte Chromium, met een reeks die om de drie
+dagen een weging heeft:
+
+```
+paden: [{ M: 10, L: 0, lengte: 0.0 }, { M: 10, L: 0, lengte: 0.0 }]
+```
+
+Tien wegingen, twee paden, nul beeldpunten. Bij zestien wegingen in
+achtentwintig dagen (de toestand van de schermafdruk) valt het deels wél uit
+elkaar en deels niet, en dat geeft de losse streepjes.
+
+Het is geen rekenfout: het getal klopte, de figuur eronder toonde het niet. Maar
+een lege strook onder een kopje zegt de gebruiker iets anders dan "je weegt
+dun", namelijk "hier is iets stuk".
+
+### Wat eraan gedaan is
+
+Een punt dat helemaal alleen staat krijgt een lijnstuk naar zichzelf. Met een
+ronde streepdop is dat een stip. De dop staat nu op allebei de paden en niet
+alleen op de gladde; zonder dop tekent een lijnstuk van nul lengte namelijk
+evenmin iets, en dan was een losse weging weer onzichtbaar geweest.
+
+Wat er uitdrukkelijk **niet** gebeurd is: doortrekken over de gaten heen. Dat
+zou de figuur een verloop laten tonen over dagen waarop niet gewogen is, en dat
+is een meting verzinnen. Een gat blijft een gat, en dun wegen ziet er nu dun
+uit in plaats van kapot.
+
+### De proef
+
+`src/health/lijntje.proef.ts`, tien gevallen. De twee eisen wijzen tegen elkaar
+in en staan er allebei: elke waarde wordt getekend, ook een losse, én er wordt
+nooit doorgetrokken over een gat. De eerste zonder de tweede geeft een vloeiende
+lijn die niet gemeten is; de tweede zonder de eerste geeft de lege strook terug.
+
+Drie mutanten, alle drie gedood: het lijnstuk naar zichzelf weghalen (drie
+gevallen vallen om), het gat niet meer als gat behandelen (drie), en élk punt een
+stip geven in plaats van alleen het losse (vier).
