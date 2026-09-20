@@ -32,6 +32,7 @@ export function Model(
   const kleur = a.zekerheid === 'hoog' ? 'var(--goed)'
               : a.zekerheid === 'laag' ? 'var(--let)' : 'var(--k)'
   const trendNu = [...reeks].reverse().find((x) => x.ema != null)
+  const uitbijters = reeks.filter((x) => x.uitbijter)
 
   /* "Er is een uitkomst" en "de uitkomst kan waar zijn" zijn twee dingen, en de
      schermen verwarden ze. Dit is het enige punt waar dat onderscheid gemaakt
@@ -291,11 +292,36 @@ export function Model(
       <Kaart>
         <Kop>Gewicht en voortschrijdend gemiddelde</Kop>
         <GewichtFiguur reeks={reeks} doelGewicht={profiel.doel_gewicht_kg} />
+        {/* EEN WEGING DIE NIET BIJ DE REEKS PAST
+            Het model rekent hem gewoon mee, want de app gooit geen metingen weg.
+            Maar een reeks rond de 118 met daarin één 190 trekt de trend, het
+            verbruik, de BMI en het eiwitdoel scheef, en dan staat er overal een
+            getal waar niemand iets aan heeft. Wie op de weegschaal stond weet of
+            het een tweede persoon was of een verkeerde toets; de app weet dat
+            niet en zegt het dus ook niet. */}
+        {uitbijters.length > 0 && (
+          <p className="mini" style={{ marginTop: 8 }}>
+            {uitbijters.length === 1
+              ? `De weging van ${kortNL(uitbijters[0]!.d)} past niet bij de rest van je reeks: `
+                + `${dec(Math.abs(uitbijters[0]!.afwijkingKg!), 1)} kg `
+                + `${uitbijters[0]!.afwijkingKg! > 0 ? 'boven' : 'onder'} wat de dagen eromheen zeggen.`
+              : `${uitbijters.length} wegingen passen niet bij de rest van je reeks: `
+                + uitbijters.map((u) => kortNL(u.d)).join(', ') + '.'}
+            {' '}Hij telt gewoon mee, want deze app gooit geen metingen weg. Klopt het niet, zet hem
+            dan recht op de dag zelf.
+          </p>
+        )}
         <Uitleg id="weeglijn" label="wat je hier ziet">
           <p>
             Punten zijn losse wegingen, de lijn is een exponentieel gewogen gemiddelde met een
             halfwaardetijd van ongeveer een week. Dagelijkse schommelingen van één tot twee kilo zijn
             vocht, glycogeen en darminhoud. De helling is het signaal, niet de meting.
+          </p>
+          <p>
+            Een weging die er ver naast ligt wordt aangewezen en niet weggehaald. De grens is drie
+            kilo, of drie keer je eigen spreiding als die groter is. Zoveel lichaamsweefsel komt er
+            niet in één nacht bij; wat er wél kan is vocht, een andere weegschaal, een ander mens
+            erop, of een verkeerde toets. Welke van de vier het is weet de app niet.
           </p>
         </Uitleg>
       </Kaart>

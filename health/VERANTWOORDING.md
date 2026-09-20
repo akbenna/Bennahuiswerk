@@ -58,7 +58,7 @@ Een rekensom met Hall's eigen parameters (mijn afleiding, geen gepubliceerd resu
 
 Tien imputatiestrategieën en meerdere berekeningsmethoden zijn vergeleken bij vijftig deelnemers met slimme weegschalen. De winnaars waren structural modeling met Kalman-smoothing en het exponentieel gewogen voortschrijdend gemiddelde, met een fout van 0,62 tot 0,64 procent, praktisch gelijk (Turicchi J et al., *JMIR Mhealth Uhealth* 2020;8:e17977, doi:10.2196/17977). Nevenbevinding: ontbrekende dagen kun je beter overslaan dan imputeren; de schatters blijven redelijk tot tachtig procent ontbrekende data.
 
-**Wat de app doet.** Een EWMA met een halfwaardetijd van ongeveer zeven tot tien dagen (α ≈ 0,1) voor de getoonde trendlijn, en een gewone kleinste-kwadratenregressie over het venster voor de hélling, die laatste omdat je daar direct een standaardfout uit krijgt, en die standaardfout is precies wat het betrouwbaarheidsinterval op de TDEE voedt. Metingen die meer dan drie standaarddeviaties van de verwachte EWMA afwijken worden aangemerkt als mogelijke uitbijter, maar niet automatisch verwijderd: bij snelle koolhydraatwisselingen zijn sprongen van een tot twee kilo fysiologisch.
+**Wat de app doet.** Een EWMA met een halfwaardetijd van ongeveer zeven tot tien dagen (α ≈ 0,1) voor de getoonde trendlijn, en een gewone kleinste-kwadratenregressie over het venster voor de hélling, die laatste omdat je daar direct een standaardfout uit krijgt, en die standaardfout is precies wat het betrouwbaarheidsinterval op de TDEE voedt. Een weging die te ver van de verwachting ligt wordt aangemerkt als mogelijke uitbijter, maar niet verwijderd: bij snelle koolhydraatwisselingen zijn sprongen van een tot twee kilo fysiologisch. Hoe die markering werkt staat in §27.
 
 Een filter met een halfwaardetijd van zeven tot tien dagen loopt inherent anderhalve week achter op de werkelijkheid. Dat is de prijs van ruisonderdrukking, het is onvermijdelijk, en het staat in de app: wie gisteren streng is gaan diëten mag vandaag geen reactie verwachten.
 
@@ -1938,4 +1938,85 @@ Dezelfde ontsnapping staat in regel 8 van de systeemprompt in
 gedachtestreepjes te gebruiken in de zinnen die het zelf schrijft. Zonder die
 regel zou de app ze bij elke herkenning opnieuw op het scherm zetten, en geen
 enkele statische proef zou dat zien.
+
+---
+
+## 27. De uitbijter die beloofd was en er niet stond
+
+Hoofdstuk 1 zei dat een weging die te ver van de verwachting ligt wordt
+aangemerkt. Dat stond er sinds de eerste versie, en het klopte niet: het woord
+uitbijter kwam in de hele code niet voor. `trendReeks` rekende de EWMA en verder
+niets.
+
+Dat is precies het soort gat waar een naloop voor is. De aanleiding was een
+schermafdruk waarop de y-as van de gewichtsgrafiek tot 191 liep terwijl de
+gebruiker rond de 118 weegt: één weging van 190,2 in een reeks van achtentwintig
+dagen. Zo'n getal trekt de trend, het verbruik, de BMI en het eiwitdoel scheef,
+en dan staat er op vier schermen een uitkomst waar niemand iets aan heeft.
+
+### Wat er nu gebeurt
+
+Elke weging krijgt een `afwijkingKg`: het verschil met de mediaan van de
+buurwegingen, drie aan elke kant, zichzelf niet meegerekend. Ligt die afwijking
+boven de grens, dan is `uitbijter` waar. De grens is drie keer de eigen
+spreiding, met een vloer van drie kilo.
+
+Drie getallen, en alle drie om een reden.
+
+**De mediaan van de buren, en niet de EWMA.** Dat was de eerste opzet en die
+maakte van één fout er drie. Een EWMA lóópt naar een uitbijter toe, dus na die
+190,2 weken ook de twee wegingen erná ver van de verwachting af en werden ze
+evengoed aangemerkt. Eén verkeerde toets besmette drie dagen. Een mediaan
+verschuift niet van één wild getal, dus de buren blijven schoon.
+
+**De spreiding als mediane absolute afwijking.** Met een gewone
+standaarddeviatie verstopt een grove uitbijter zich achter zijn eigen invloed:
+die 190,2 tilt de spreiding zó ver op dat hij er zelf binnen drie ervan valt. De
+proef rekent dat na en laat zien dat de gewone standaarddeviatie hem inderdaad
+mist.
+
+**De vloer van drie kilo.** Wie elke ochtend binnen tweehonderd gram weegt heeft
+een spreiding van tweehonderd gram, en drie keer dat is zeshonderd. Een kilo na
+een zoute maaltijd zou dan een uitbijter zijn, en dat is precies wat hoofdstuk 1
+fysiologisch noemt. Drie kilo lichaamsweefsel komt er in één nacht niet bij; wat
+er wél kan is vocht, een andere weegschaal, een ander mens erop, of een
+verkeerde toets.
+
+### Wat er niet gebeurt
+
+De weging blijft staan, telt mee in de EWMA en telt mee in de regressie. Er
+wordt niets weggegooid en niets gecorrigeerd. Wie op de weegschaal stond weet of
+het een tweede persoon was of een verkeerde toets; de app weet dat niet en zegt
+het dus ook niet.
+
+Op Inzicht staat onder de grafiek welke weging het is, hoeveel hij afwijkt, en
+dat hij gewoon meetelt. Een markering die de gebruiker niet ziet is geen
+markering.
+
+### De regel die een mutant afdwong
+
+Vier mutanten werden gedood: de mediane absolute afwijking vervangen door een
+gewone standaarddeviatie, de vloer van drie kilo weghalen, de drempel van vijf
+wegingen op één zetten, en de verwachting terugzetten op de EWMA.
+
+Eén overleefde: de weging meelaten tellen in zijn eigen verwachting. Dat is
+logisch, want bij een mediaan verschuift één waarde er nauwelijks iets, en de
+meeste reeksen geven hetzelfde antwoord met of zonder die uitzondering. Er is nu
+een reeks die het wél laat zien: zes buren die zich splitsen in drie van 100 en
+drie van 110, dus mediaan 105 en afwijking vijf. Telt de weging zelf mee, dan
+zijn het zeven waarden, ligt de mediaan op 110 en is de afwijking nul, een
+weging die zichzelf gelijk geeft.
+
+En de belangrijkste regel van het blok gaat niet over uitbijters maar over de
+gewone gang van zaken: achtentwintig dagen op streeftempo, met dagelijkse ruis,
+levert geen enkele markering op. Deze app is er voor iemand die afvalt, en een
+waarschuwing over precies dat gedrag zou het scherm met ruis vullen.
+
+### Wat hier nog open staat
+
+De grafiek schaalt mee met de uitbijter. Op de schermafdruk loopt de y-as tot
+191 en wordt de echte reeks tot een streepje samengedrukt. Dat is eerlijk (de
+meting stáát er) maar slecht leesbaar. Het alternatief is de as op de rest
+schalen en de uitbijter als los gemarkeerd punt aan de rand tonen. Dat is een
+ontwerpkeuze en geen rekenregel, en die staat daarom nog open.
 

@@ -69,8 +69,13 @@ function reeks(aantalDagen, vorm = 'gewoon') {
          drie dagen gewogen. Dat is de toestand van het schermbeeld waar deze
          proef uit voortkomt: een trend die niet vastligt naast een halfgevuld
          logboek. */
+      /* De uitbijtervorm is de gewone reeks met één weging van 190,2 erin, op
+         de veertiende dag. Dat is het geval uit het echte logboek: een reeks
+         rond de 118 met daartussen één getal dat er niet kan staan. */
       gewicht_kg: vorm === 'tegenspraak'
         ? (i % 3 === 0 ? Math.round((116.0 + t * 4.6 + ruis) * 10) / 10 : null)
+        : vorm === 'uitbijter' && i === 14
+        ? 190.2
         : Math.round((119.4 - t * 3.1 + ruis) * 10) / 10,
       gewicht_bron: 'handmatig', stappen: 4200 + Math.round(Math.abs(Math.sin(i)) * 5200),
       /* Om de dag drie kwartier op de hometrainer. Dat is bewust: zonder
@@ -186,6 +191,7 @@ function metingen(aantalDagen) {
 
 function alles(aantalDagen, fase = 'afvallen') {
   const vorm = fase === 'tegenspraak' ? 'tegenspraak'
+    : fase === 'uitbijter' ? 'uitbijter'
     : fase === 'leeg-vandaag' ? 'leeg-vandaag' : 'gewoon'
   const { dagen, regels } = aantalDagen > 0
     ? reeks(aantalDagen, vorm) : { dagen: [], regels: [] }
@@ -3959,6 +3965,86 @@ for (const [naam, dagen, patroon, verwacht] of [
   await leeg.close()
 
   console.log('CooL 14/24 mnd · 2 beoordeeld, 2 open · drempels 35/40 en 32,5/37,5 · geen optelsom')
+}
+
+/**
+ * DE WEGING DIE ER NIET KAN STAAN
+ *
+ * Hoofdstuk 1 van VERANTWOORDING.md beloofde deze markering al terwijl ze
+ * nergens stond. Nu ze er is, hoort ze ook op het scherm te komen, want een
+ * markering die de gebruiker niet ziet is geen markering.
+ *
+ * Twee kanten, en de tweede is de belangrijkste. Bij een reeks met een weging
+ * van 190,2 hoort de zin er te staan, mét de datum en het verschil. Bij een
+ * gewone reeks hoort hij er niet te staan: deze app is er voor iemand die
+ * afvalt, en een waarschuwing over precies dat gedrag zou het scherm vullen
+ * met ruis.
+ */
+{
+  const ctx = await browser.newContext({
+    viewport: { width: 430, height: 1180 }, deviceScaleFactor: 2,
+    locale: 'nl-NL', timezoneId: 'Europe/Amsterdam',
+  })
+  await ctx.addInitScript(`{
+    const echt = Date; const vast = ${NU};
+    class V extends echt {
+      constructor(...a){ super(...(a.length ? a : [vast])) }
+      static now(){ return vast }
+    }
+    window.Date = V;
+    localStorage.setItem('kalibratie.sessie',
+      JSON.stringify({ token: 'proef', account: 'abdelkader' }));
+  }`)
+
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: 'light' })
+  await bedienDb(pagina, 28, 'uitbijter')
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.hero', { timeout: 5000 })
+  await naarTab(pagina, 'Inzicht')
+  await pagina.waitForTimeout(600)
+
+  const kaart = pagina.locator('.kaart').filter({ hasText: 'Gewicht en voortschrijdend' }).first()
+  if (!(await kaart.count())) throw new Error('uitbijter: de weegkaart staat er niet')
+  const tekst = (await kaart.innerText()).replace(/\s+/g, ' ')
+
+  if (!/past niet bij de rest van je reeks/.test(tekst)) {
+    throw new Error(`uitbijter: de markering staat er niet\n  ${tekst}`)
+  }
+  /* Het verschil hoort erbij te staan en niet alleen de mededeling. Zonder
+     getal is het een waarschuwing waar je niets mee kunt. */
+  const verschil = /(\d+[,.]\d) kg (boven|onder)/.exec(tekst)
+  if (!verschil) throw new Error(`uitbijter: het verschil staat er niet bij\n  ${tekst}`)
+  if (Number(verschil[1].replace(',', '.')) < 60) {
+    throw new Error(`uitbijter: het verschil is ${verschil[1]} kg, dat kan niet kloppen`)
+  }
+  /* En de belofte dat er niets weggegooid wordt. Die staat niet voor de sier:
+     hij is de reden dat de markering geen ingreep is. */
+  if (!/gooit geen metingen weg/.test(tekst)) {
+    throw new Error(`uitbijter: de app belooft niet dat hij de meting laat staan\n  ${tekst}`)
+  }
+
+  await pagina.screenshot({ path: 'gereedschap/health-uitbijter.png', fullPage: true })
+  await pagina.close()
+
+  /* De andere kant: bij een gewone reeks staat er niets. */
+  const gewoon = await ctx.newPage()
+  await gewoon.emulateMedia({ colorScheme: 'light' })
+  await bedienDb(gewoon, 28, 'afvallen')
+  await gewoon.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await gewoon.waitForSelector('.hero', { timeout: 5000 })
+  await naarTab(gewoon, 'Inzicht')
+  await gewoon.waitForTimeout(600)
+  const schoon = (await gewoon.locator('.kaart')
+    .filter({ hasText: 'Gewicht en voortschrijdend' }).first().innerText()).replace(/\s+/g, ' ')
+  if (/past niet bij de rest/.test(schoon)) {
+    throw new Error(`uitbijter: de markering gaat af op een gewone daling\n  ${schoon}`)
+  }
+  await gewoon.close()
+  await ctx.close()
+
+  console.log(`${'de weging die niet past'.padEnd(26)} 190,2 aangewezen, `
+    + `${verschil[1]} kg ${verschil[2]}, en stil bij een gewone reeks`)
 }
 
 await browser.close()
