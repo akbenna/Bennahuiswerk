@@ -102,19 +102,19 @@ export const SPOORLEEFTIJD: Record<Spoor, string> = {
 /* Verwarparen: letters die op elkaar lijken in vorm of klank staan in dezelfde
    groep, zodat je ze naast elkaar leert onderscheiden. */
 export const LETTERGROEPEN: Array<{ l: string[]; t: string }> = [
-  { l: ['ا', 'ب'], t: 'Alif en ba — de eerste twee' },
-  { l: ['ت', 'ث'], t: 'Ta en tha — twee punten of drie' },
-  { l: ['ج', 'ح', 'خ'], t: 'Jim, ha en kha — één vorm, drie klanken' },
+  { l: ['ا', 'ب'], t: 'Alif en ba: de eerste twee' },
+  { l: ['ت', 'ث'], t: 'Ta en tha: twee punten of drie' },
+  { l: ['ج', 'ح', 'خ'], t: 'Jim, ha en kha: één vorm, drie klanken' },
   { l: ['د', 'ذ'], t: 'Dal en dhal' },
   { l: ['ر', 'ز'], t: 'Ra en zay' },
   { l: ['س', 'ش'], t: 'Sin en shin' },
-  { l: ['ص', 'ض'], t: 'Sad en dad — de zware s en d' },
-  { l: ['ط', 'ظ'], t: 'Ta en za — de zware t en dh' },
-  { l: ['ع', 'غ'], t: 'Ayn en ghayn — de keelletters' },
-  { l: ['ف', 'ق'], t: 'Fa en qaf — één punt of twee' },
+  { l: ['ص', 'ض'], t: 'Sad en dad: de zware s en d' },
+  { l: ['ط', 'ظ'], t: 'Ta en za: de zware t en dh' },
+  { l: ['ع', 'غ'], t: 'Ayn en ghayn: de keelletters' },
+  { l: ['ف', 'ق'], t: 'Fa en qaf: één punt of twee' },
   { l: ['ك', 'ل'], t: 'Kaf en lam' },
   { l: ['م', 'ن'], t: 'Mim en nun' },
-  { l: ['ه', 'و', 'ي'], t: 'Ha, waw en ya — de laatste drie' },
+  { l: ['ه', 'و', 'ي'], t: 'Ha, waw en ya: de laatste drie' },
 ]
 
 function hakInStukken<T>(arr: T[], n: number): T[][] {
@@ -177,7 +177,7 @@ export function bouwPad(spoor: Spoor): Padstap[] {
   if (spoor === 1) {
     const stroomL: Padstap[] = LETTERGROEPEN.map((g) => ({ k: 'letters', titel: g.t, letters: g.l }))
     const stroomTk: Padstap[] = TEKENS.map((t, i) => ({
-      k: 'teken', titel: 'Teken: ' + t.tr + ' — ' + t.n, idx: i,
+      k: 'teken', titel: 'Teken: ' + t.tr + ': ' + t.n, idx: i,
     }))
     return rondgang({ L: stroomL, T: stroomTk, W: stroomW, Z: stroomZ },
       ['L', 'L', 'T', 'W', 'L', 'W', 'Z'])

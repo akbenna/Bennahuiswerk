@@ -86,7 +86,7 @@ export function oefBouwWoord(kaal: string, gevocaliseerd: string, nl: string, id
     hint: gevocaliseerd,
     doel: kaal,
     tegels: husselen(letters.concat(vulling), t),
-    uitleg: '<span class="ar klein-ar">' + gevocaliseerd + '</span>' + (nl ? ' — ' + esc(nl) : '')
+    uitleg: '<span class="ar klein-ar">' + gevocaliseerd + '</span>' + (nl ? ': ' + esc(nl) : '')
       + '. Let op de volgorde: de eerste letter staat het meest rechts.',
   }
 }
@@ -104,7 +104,7 @@ export function oefLetters(letters: string[], t: Toeval): Oefening[] {
       vraag: 'Welke klank heeft deze letter? Typ de naam of de klank.',
       ar: L.l, arGroot: true, spreek: L.n,
       juist: [L.tr, L.k, L.tr.replace(/[ʾʿ]/g, ''), L.n],
-      uitleg: '<b>' + esc(L.n) + '</b> — ' + esc(L.tr) + ', klank <b>' + esc(L.k) + '</b>. ' + L.u,
+      uitleg: '<b>' + esc(L.n) + '</b>: ' + esc(L.tr) + ', klank <b>' + esc(L.k) + '</b>. ' + L.u,
     })
     /* Onderscheiden binnen de verwargroep: hier is meerkeuze juist wél de
        goede vorm, want het gáát om het uit elkaar houden. */
@@ -141,7 +141,7 @@ export function oefLetters(letters: string[], t: Toeval): Oefening[] {
     const klank = (L.tr.match(/^(th|dh|sh|kh|gh|.)/) ?? [L.tr[0]])[0] as string
     uit.push(maakKies(
       undefined,
-      'Hoe spreek je <span class="ar klein-ar">ال' + L.l + '</span> uit — versmelt de l of niet?',
+      'Hoe spreek je <span class="ar klein-ar">ال' + L.l + '</span> uit: versmelt de l of niet?',
       L.zon ? 'De l versmelt: a' + klank + '-' + klank + '…' : 'De l blijft: al-…',
       [L.zon ? 'De l blijft: al-…' : 'De l versmelt'],
       L.zon
@@ -168,7 +168,7 @@ export function oefTeken(idx: number, t: Toeval): Oefening[] {
       vraag: 'Hoe heet dit teken?',
       ar: T.demo, arGroot: true,
       juist: [T.tr, T.n, T.tr.replace(/-/g, ' ')],
-      uitleg: '<b>' + esc(T.n) + '</b> — ' + esc(T.tr) + '. ' + T.u,
+      uitleg: '<b>' + esc(T.n) + '</b>: ' + esc(T.tr) + '. ' + T.u,
     },
     maakKies(
       kaartId('T', idx, 'wat'),
@@ -193,7 +193,7 @@ export function oefWoorden(
       vraag: 'Wat betekent dit?',
       ar: vocaliseer(w.a, stand), arGroot: true, spreek: w.a,
       juist: w.n.split(/[,(]/).map((s) => s.trim()).filter(Boolean).concat([w.n]),
-      uitleg: '<span class="ar klein-ar">' + w.a + '</span> — <b>' + esc(w.n) + '</b> (' + esc(w.t) + ')'
+      uitleg: '<span class="ar klein-ar">' + w.a + '</span>: <b>' + esc(w.n) + '</b> (' + esc(w.t) + ')'
         + (w.mv ? '<br>Meervoud: <span class="ar klein-ar">' + w.mv + '</span>' : '')
         + (w.g ? '<br>Geslacht: ' + (w.g === 'v' ? 'vrouwelijk' : 'mannelijk') : '')
         + (w.d ? '<br><span class="muted">' + esc(w.d) + '</span>' : ''),
@@ -208,7 +208,7 @@ export function oefWoorden(
           id: kaartId('W', i, 'ar'), soort: 'typ-ar',
           vraag: 'Schrijf in het Arabisch: <b>' + esc(w.n) + '</b>',
           juist: [w.a, ontdoeTashkil(w.a)],
-          uitleg: '<span class="ar klein-ar">' + w.a + '</span> — ' + esc(w.t)
+          uitleg: '<span class="ar klein-ar">' + w.a + '</span>: ' + esc(w.t)
             + '. Klinkertekens hoef je niet mee te typen.',
         })
       }
@@ -220,7 +220,7 @@ export function oefWoorden(
         'Luister en kies het juiste woord.',
         w.n,
         afleiders(WOORDEN.filter((x) => x.th === w.th), w.n, 3, 'n', t).map((x) => x.n),
-        'Je hoorde <span class="ar klein-ar">' + w.a + '</span> — ' + esc(w.n) + '.',
+        'Je hoorde <span class="ar klein-ar">' + w.a + '</span>: ' + esc(w.n) + '.',
         t, { spreekNu: w.a, luister: true }))
     }
   })
@@ -296,7 +296,7 @@ export function oefTekst(id: string, t: Toeval): Oefening[] {
       vraag: 'Uit de tekst: wat betekent dit woord?',
       ar: g[0], arGroot: true,
       juist: g[1].split(/[,(]/).map((s) => s.trim()).filter(Boolean).concat([g[1]]),
-      uitleg: '<span class="ar klein-ar">' + g[0] + '</span> — <b>' + esc(g[1]) + '</b>',
+      uitleg: '<span class="ar klein-ar">' + g[0] + '</span>: <b>' + esc(g[1]) + '</b>',
     })
   })
   return uit
@@ -312,16 +312,16 @@ export function oefKoran(items: Koranplek[], t: Toeval): Oefening[] {
       vraag: 'Wat betekent dit woord?',
       ar: k.a, arGroot: true, spreek: k.a,
       juist: k.n.split(/[,;]/).map((s) => s.trim()).filter(Boolean).concat([k.n]),
-      uitleg: '<span class="ar klein-ar">' + k.a + '</span> — <b>' + esc(k.n) + '</b> (' + esc(k.t) + ')'
-        + (k.r !== '—' ? '<br>Wortel: <span class="ar klein-ar">' + k.r + '</span>' : '')
+      uitleg: '<span class="ar klein-ar">' + k.a + '</span>: <b>' + esc(k.n) + '</b> (' + esc(k.t) + ')'
+        + (k.r !== '–' ? '<br>Wortel: <span class="ar klein-ar">' + k.r + '</span>' : '')
         + '<br><span class="muted">Ongeveer ' + k.f + ' keer in de Koran.</span>',
     })
-    if (n % 3 === 0 && k.r !== '—') {
+    if (n % 3 === 0 && k.r !== '–') {
       uit.push(maakKies(
         kaartId('K', i, 'wortel'),
         'Welke wortel zit in <span class="ar klein-ar">' + k.a + '</span>?',
         k.r,
-        afleiders(KORAN100.filter((x) => x.r !== '—'), k.r, 3, 'r', t).map((x) => x.r),
+        afleiders(KORAN100.filter((x) => x.r !== '–'), k.r, 3, 'r', t).map((x) => x.r),
         '<span class="ar klein-ar">' + k.a + '</span> komt van <span class="ar klein-ar">' + k.r
         + '</span>. Wie de wortel kent, herkent alle woorden die eruit voortkomen.',
         t, { optiesArabisch: true }))

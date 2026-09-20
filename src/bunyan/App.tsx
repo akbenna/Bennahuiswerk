@@ -168,7 +168,7 @@ export function App(): ReactNode {
         <footer>
           <p>
             Deze app leert twee dingen tegelijk: hoe je een computer in elkaar zet en hoe je hem
-            iets laat doen. Het eerste is een middag werk, het tweede een paar jaar — daarom
+            iets laat doen. Het eerste is een middag werk, het tweede een paar jaar, daarom
             staat hier elke dag maar één stap.
           </p>
           <p>

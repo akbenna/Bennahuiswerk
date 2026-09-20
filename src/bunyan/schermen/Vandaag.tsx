@@ -51,7 +51,7 @@ export function Vandaag(
         />
         <Cijfer
           kop="Vandaag" waarde={vandaag?.lessen ?? 0}
-          onder={vandaag?.lessen ? 'lessen gedaan — mooi' : 'nog niets gedaan'}
+          onder={vandaag?.lessen ? 'lessen gedaan, mooi' : 'nog niets gedaan'}
         />
       </div>
 
@@ -107,7 +107,7 @@ export function Vandaag(
 
       <Kader kop="Hoe dit werkt">
         Elke les heeft uitleg, iets om zelf te doen en een paar vragen. Je krijgt punten voor
-        elke les die je afmaakt en geld voor het werk — tot een vast bedrag per week. Daarna
+        elke les die je afmaakt en geld voor het werk, tot een vast bedrag per week. Daarna
         lopen de punten door, want leren stopt niet als het geld stopt.
       </Kader>
     </>

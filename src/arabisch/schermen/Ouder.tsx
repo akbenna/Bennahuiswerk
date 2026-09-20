@@ -18,9 +18,9 @@ import { Cockpit } from './Cockpit'
 import { Wolkvak } from './Wolkvak'
 
 const VOCALISATIES: Array<[Vocalisatie, string]> = [
-  ['vol', 'Volledig — alles gevocaliseerd'],
-  ['selectief', 'Selectief — alleen waar het woord anders dubbelzinnig is'],
-  ['kaal', 'Geen — zoals in een gewone tekst'],
+  ['vol', 'Volledig: alles gevocaliseerd'],
+  ['selectief', 'Selectief: alleen waar het woord anders dubbelzinnig is'],
+  ['kaal', 'Geen: zoals in een gewone tekst'],
 ]
 
 const THEMAS: Array<[string, string]> = [
@@ -117,7 +117,7 @@ function OuderOpen(
                   <div>
                     <b>{x.naam}</b>
                     <div className="klein muted">
-                      {x.leeftijd} jaar · spoor {x.spoor} — {SPOORNAAM[x.spoor]}
+                      {x.leeftijd} jaar · spoor {x.spoor}: {SPOORNAAM[x.spoor]}
                       {/* Waar het spoor vandaan komt hoort erbij: "spoor 2"
                           zonder herkomst is niet na te kijken, en sinds de
                           niveaubepaling het spoor zet zijn er drie bronnen. */}
@@ -231,7 +231,7 @@ function OuderOpen(
         {(t.stand.ouderPin || STANDAARDPIN) === STANDAARDPIN
           ? (
             <p className="small" style={{ marginTop: 8, color: 'var(--fout)' }}>
-              Hij staat nog op <b>{STANDAARDPIN}</b>. Verander hem — dat is het enige dat dit
+              Hij staat nog op <b>{STANDAARDPIN}</b>. Verander hem: dat is het enige dat dit
               scherm dichthoudt.
             </p>
             )
@@ -303,7 +303,7 @@ function OuderOpen(
         <p>
           De herhaling gebruikt FSRS met een gewenste retentie van 0,90: per kaart wordt geschat
           hoe waarschijnlijk het is dat je hem nog weet, en hij komt terug op het moment dat die
-          kans naar 90 procent zakt. Er is bewust geen streak — een gebroken reeks verlaagt het
+          kans naar 90 procent zakt. Er is bewust geen streak: een gebroken reeks verlaagt het
           vervolggedrag, en dit schema kan niet breken omdat het altijd op vandaag staat.
         </p>
         <p>
@@ -312,7 +312,7 @@ function OuderOpen(
           goed antwoord.
         </p>
         <p style={{ marginBottom: 0 }}>
-          Alleen verwarbare dingen worden door elkaar geoefend — ba, ta en tha bij elkaar, sin en
+          Alleen verwarbare dingen worden door elkaar geoefend: ba, ta en tha bij elkaar, sin en
           shin bij elkaar. Letters, woorden en grammatica zitten nooit in dezelfde sessie.
         </p>
       </div>

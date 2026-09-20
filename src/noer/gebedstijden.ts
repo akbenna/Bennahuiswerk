@@ -162,7 +162,7 @@ export function hijri(d: Date): string {
 
 /** "07:32" uit een kommagetal aan uren. */
 export const klok = (uren: number): string => {
-  if (Number.isNaN(uren)) return '—'
+  if (Number.isNaN(uren)) return ','
   const t = Math.round(uren * 60)
   return String(Math.floor(t / 60) % 24).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0')
 }

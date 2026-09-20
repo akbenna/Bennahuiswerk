@@ -87,7 +87,7 @@ export function bouwFouten(bouw: Bouwstand): Bouwfout[] {
     if (w > levert) {
       f.push({ z: 'Alles samen trekt ongeveer ' + w + ' W en je voeding levert ' + levert + ' W. Te weinig.', hard: true })
     } else if (w > levert * 0.8) {
-      f.push({ z: 'Je zit op ' + w + ' W van de ' + levert + ' W. Dat kan net, maar er is geen marge — neem een maat groter.', hard: false })
+      f.push({ z: 'Je zit op ' + w + ' W van de ' + levert + ' W. Dat kan net, maar er is geen marge: neem een maat groter.', hard: false })
     }
   }
   if (r && !r.duo) {

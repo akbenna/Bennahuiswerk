@@ -50,7 +50,7 @@ export function diagnoseFout(inst: { a: string }, val: string): string | null {
   const numV = parseFloat(nv)
   const numA = parseFloat(norm(inst.a))
   if (isNaN(numV) || isNaN(numA) || numA === 0 || numV === 0) return null
-  if (numV === -numA) return 'Let op het minteken — je antwoord heeft het verkeerde teken (+ of −).'
+  if (numV === -numA) return 'Let op het minteken: je antwoord heeft het verkeerde teken (+ of −).'
   const r = numV / numA
   if (Math.abs(r - 3.6) < 1e-6 || Math.abs(r - 1 / 3.6) < 1e-6) {
     return 'Bijna! Denk aan km/u ↔ m/s: dat is delen (of juist vermenigvuldigen) met 3,6.'
@@ -58,11 +58,11 @@ export function diagnoseFout(inst: { a: string }, val: string): string | null {
   for (const f of [1000, 100, 10, 0.1, 0.01, 0.001]) {
     if (Math.abs(r - f) < 1e-9) {
       return 'Je hebt het juiste getal, maar een factor ' + (f >= 1 ? f : '1/' + Math.round(1 / f))
-        + ' ernaast — controleer de eenheid of de plaats van de komma.'
+        + ' ernaast: controleer de eenheid of de plaats van de komma.'
     }
   }
   if (Math.abs(numV - numA) <= Math.abs(numA) * 0.1) {
-    return 'Je zit er heel dichtbij — kijk je rekenwerk of afronding nog even na.'
+    return 'Je zit er heel dichtbij: kijk je rekenwerk of afronding nog even na.'
   }
   return null
 }

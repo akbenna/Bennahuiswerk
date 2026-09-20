@@ -15,6 +15,7 @@ import gouden from './gouden-waarden.json'
 import { draai } from './minipy'
 import { lees } from './minipy/lezen'
 import { ontleed } from './minipy/ontleden'
+import { woordgelijk } from '@/gedeeld/woordgelijk'
 
 interface GoudenProgramma {
   naam: string
@@ -40,8 +41,12 @@ describe('MINIPY meldt de fouten zoals vroeger', () => {
     const r = draai(p.bron, { invoer: p.invoer.slice(), zaad: 12345 })
     expect(r.ok).toBe(false)
     if (r.ok) return
-    expect({ regel: r.regel, fout: r.fout, tip: r.tip })
-      .toEqual({ regel: p.uit.regel, fout: p.uit.fout, tip: p.uit.tip })
+    /* De tip is tekst voor een kind en is sinds de leestekennaloop anders
+       geformuleerd. De wóórden horen dezelfde te zijn; zie
+       `src/gedeeld/woordgelijk.ts`. Regelnummer en foutsoort blijven strikt. */
+    expect(r.regel).toBe(p.uit.regel)
+    expect(r.fout).toBe(p.uit.fout)
+    expect(woordgelijk(r.tip ?? '')).toBe(woordgelijk(p.uit.tip ?? ''))
     /* Wat er vóór de fout al geprint was, hoort er nog te staan: dat is voor
        een kind de helft van het zoeken. */
     expect(r.uit).toEqual(p.uit.uit)

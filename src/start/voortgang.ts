@@ -70,7 +70,7 @@ function lokaal(app: string): unknown {
 
 /** Zegt deze cel iets, of staat er alleen een nul of een streepje? */
 const zinvol = ([, waarde]: Cel): boolean =>
-  waarde !== '—' && waarde !== 0 && waarde !== '' && waarde !== '0'
+  waarde !== '–' && waarde !== 0 && waarde !== '' && waarde !== '0'
 
 /** Hoort deze regel bij niemand in het bijzonder? Spelletjes en de Academie
  *  bewaren geen profielen, dus wat daar staat is van het hele gezin. */

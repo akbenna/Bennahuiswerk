@@ -21,9 +21,12 @@ import type { Kaartstand, Oordeel } from './kaartplanner'
 import { LEEG, reeksNa, samenvoegen } from './opslag'
 import type { Stand } from './opslag'
 import type { IsoDatum } from '../gedeeld/db/tabellen'
+import { woordgelijk } from '@/gedeeld/woordgelijk'
 
+/* De vinger loopt over de wóórden en niet over de leestekens. Waarom,
+   staat in `src/gedeeld/woordgelijk.ts`. */
 const vinger = (x: unknown): string =>
-  createHash('sha256').update(JSON.stringify(x)).digest('hex').slice(0, 16)
+  createHash('sha256').update(JSON.stringify(woordgelijk(x))).digest('hex').slice(0, 16)
 
 const NU = gouden.nu as IsoDatum
 
@@ -45,10 +48,10 @@ describe('de leerstof is ongeschonden overgekomen', () => {
     expect(modules).toHaveLength(g.length)
     modules.forEach((m, i) => {
       const w = g[i]!
-      expect({ titel: m.titel, tijd: m.tijd, secties: m.secties.length,
-        juist: m.check.j, opties: m.check.o.length })
-        .toEqual({ titel: w.titel, tijd: w.tijd, secties: w.secties,
-          juist: w.juist, opties: w.opties })
+      expect(woordgelijk({ titel: m.titel, tijd: m.tijd, secties: m.secties.length,
+        juist: m.check.j, opties: m.check.o.length }))
+        .toEqual(woordgelijk({ titel: w.titel, tijd: w.tijd, secties: w.secties,
+          juist: w.juist, opties: w.opties }))
       expect(vinger(m), `module ${m.id}`).toBe(w.vinger)
     })
   })
@@ -102,8 +105,8 @@ describe('de leerstof is ongeschonden overgekomen', () => {
     const sporen = new Set(CURRICULUM.map((s) => s.id))
     CONSOLIDATIE.forEach((c, i) => {
       const g = gouden.stof.consolidatie[i]!
-      expect({ na: c.na, titel: c.titel, taken: c.taken.length })
-        .toEqual({ na: g.na, titel: g.titel, taken: g.taken })
+      expect(woordgelijk({ na: c.na, titel: c.titel, taken: c.taken.length }))
+        .toEqual(woordgelijk({ na: g.na, titel: g.titel, taken: g.taken }))
       expect(vinger(c), c.na).toBe(g.vinger)
       expect(sporen.has(c.na), c.na).toBe(true)
     })
@@ -114,10 +117,10 @@ describe('de leerstof is ongeschonden overgekomen', () => {
 describe('het programma', () => {
   it('telt achtentwintig weken in dezelfde volgorde als vroeger', () => {
     expect(TOT).toBe(gouden.totaal)
-    expect(PROGRAMMA.map((w) => ({
+    expect(woordgelijk(PROGRAMMA.map((w) => ({
       nr: w.nr, type: w.type, spoor: w.sp.id, titel: weekTitel(w),
       module: w.type === 'les' ? w.m.id : null,
-    }))).toEqual(gouden.programma)
+    })))).toEqual(woordgelijk(gouden.programma))
   })
 
   it('nummert aaneengesloten vanaf één', () => {

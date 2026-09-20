@@ -126,7 +126,7 @@ function Wuduloop({ i, t, ga, sluit, naarExamen }: {
       <>
         <h2>De wassing is klaar</h2>
         <p style={{ marginTop: 10 }}>
-          Kijk omhoog en zeg de shahada. Ga daarna meteen bidden — dat is het mooiste moment.
+          Kijk omhoog en zeg de shahada. Ga daarna meteen bidden: dat is het mooiste moment.
         </p>
         <div className="rij" style={{ marginTop: 18 }}>
           <button className="btn" onClick={naarExamen}>Doe het examen</button>

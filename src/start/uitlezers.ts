@@ -60,7 +60,7 @@ export interface Regel {
 
 type Uitlezer = (d: unknown) => Regel[]
 
-const streep = (n: number | null): string | number => n ?? '—'
+const streep = (n: number | null): string | number => n ?? '–'
 
 const euroTekst = (n: number): string =>
   '€ ' + (Math.round(n * 100) / 100).toFixed(2).replace('.', ',')
@@ -144,7 +144,7 @@ export const UITLEZERS: Readonly<Record<string, Uitlezer>> = {
   /* Arabisch: profielen als object, met de sleutel als id. */
   lisan(d) {
     return waarden(veld(d, 'profielen')).map((p): Regel => ({
-      wie: tekst(veld(p, 'naam')) ?? tekst(veld(p, 'id')) ?? '—',
+      wie: tekst(veld(p, 'naam')) ?? tekst(veld(p, 'id')) ?? '–',
       laatst: tekst(veld(p, 'laatst')) ?? tekst(veld(p, 'laatsteDag')),
       euro: null,
       regels: [
@@ -228,9 +228,9 @@ export const UITLEZERS: Readonly<Record<string, Uitlezer>> = {
       laatst: alles.length ? (alles[alles.length - 1] ?? null) : null,
       euro: null,
       regels: [
-        ['Gewicht', laatsteW == null ? '—' : String(laatsteW).replace('.', ',') + ' kg'],
+        ['Gewicht', laatsteW == null ? '–' : String(laatsteW).replace('.', ',') + ' kg'],
         ['Te gaan', laatsteW == null || doel == null
-          ? '—' : (laatsteW - doel).toFixed(1).replace('.', ',') + ' kg'],
+          ? '–' : (laatsteW - doel).toFixed(1).replace('.', ',') + ' kg'],
         ['Wegingen', wegingen.length],
         ['Dagen gelogd', gelogd.length],
       ],

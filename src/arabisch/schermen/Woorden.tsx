@@ -59,7 +59,7 @@ export function Woorden({ t, openWoord }: { t: Toestand; openWoord: (i: number) 
               ))}
               {lijst.length > PLAFOND && (
                 <p className="klein muted mid" style={{ marginTop: 10 }}>
-                  {lijst.length - PLAFOND} meer — verfijn je zoekopdracht.
+                  {lijst.length - PLAFOND} meer: verfijn je zoekopdracht.
                 </p>
               )}
             </>

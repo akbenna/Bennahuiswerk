@@ -25,6 +25,7 @@ process.env.TZ = 'Europe/Amsterdam'
 import fs from 'node:fs'
 import vm from 'node:vm'
 import crypto from 'node:crypto'
+import { woordgelijk } from './woordgelijk.mjs'
 
 const NU = '2026-08-22'
 const KLOK = Date.parse(NU + 'T10:00:00Z')
@@ -77,7 +78,10 @@ vm.createContext(ctx)
 vm.runInContext(js, ctx)
 const O = ctx.__
 
-const vinger = (x) => crypto.createHash('sha256').update(JSON.stringify(x)).digest('hex').slice(0, 16)
+/* De vinger loopt over de wóórden en niet over de leestekens. Waarom,
+   staat in `gereedschap/woordgelijk.mjs`. */
+const vinger = (x) =>
+  crypto.createHash('sha256').update(JSON.stringify(woordgelijk(x))).digest('hex').slice(0, 16)
 const rond = (x) => (typeof x === 'number' && !Number.isNaN(x) ? Math.round(x * 3600) / 3600 : null)
 
 /* ------------------------------------------------- 1. de gebedstijden ----- */

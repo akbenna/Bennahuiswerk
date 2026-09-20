@@ -74,7 +74,7 @@ export function Spel({ t }: { t: Toestand }): ReactNode {
         type: 'kies',
         kop: `Welke letter is <b>${L.n}</b>?`,
         opties: husselen([L, ...fout], tv).map((x) => ({ tekst: x.l, ar: true, goed: x.l === L.l })),
-        uitleg: `<span class="ar klein-ar">${L.l}</span> — <b>${L.tr}</b>, klank ${L.k}`
+        uitleg: `<span class="ar klein-ar">${L.l}</span>: <b>${L.tr}</b>, klank ${L.k}`
           + (L.moeilijk ? ' (een klank die het Nederlands niet kent)' : ''),
         letter: L.l,
       }
@@ -89,7 +89,7 @@ export function Spel({ t }: { t: Toestand }): ReactNode {
         opties: husselen([w, ...fout], tv).map((x) => ({
           tekst: vocaliseer(x.a, p.voorkeur.vocalisatie), ar: true, goed: x.a === w.a,
         })),
-        uitleg: `<span class="ar klein-ar">${w.a}</span> — ${w.n}`,
+        uitleg: `<span class="ar klein-ar">${w.a}</span>: ${w.n}`,
       }
     }
     if (id === 'bouwen') {
@@ -102,7 +102,7 @@ export function Spel({ t }: { t: Toestand }): ReactNode {
         toon: w.b,
         doel: ontdoeTashkil(w.a),
         tegels: husselen(Array.from(ontdoeTashkil(w.a)), tv),
-        uitleg: `<span class="ar klein-ar">${w.a}</span> — ${w.n}`,
+        uitleg: `<span class="ar klein-ar">${w.a}</span>: ${w.n}`,
       }
     }
     /* Luisteren: de afleiders komen bij voorkeur uit hetzelfde thema, want
@@ -119,7 +119,7 @@ export function Spel({ t }: { t: Toestand }): ReactNode {
       opties: husselen([w, ...fout], tv).map((x) => ({
         tekst: x.n + ' ' + (x.b || ''), ar: false, goed: x.a === w.a,
       })),
-      uitleg: `<span class="ar klein-ar">${w.a}</span> — ${w.n}`,
+      uitleg: `<span class="ar klein-ar">${w.a}</span>: ${w.n}`,
     }
   }
 

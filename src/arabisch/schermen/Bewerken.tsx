@@ -87,7 +87,7 @@ export function Bewerken(
             {' '}(nu spoor {autoSpoor(geldig ? l : p.leeftijd)})
           </option>
           {([1, 2, 3, 4] as Spoor[]).map((s) => (
-            <option value={s} key={s}>Spoor {s} — {SPOORNAAM[s]}</option>
+            <option value={s} key={s}>Spoor {s}: {SPOORNAAM[s]}</option>
           ))}
         </select>
         <p className="klein muted" style={{ margin: '6px 0 0' }}>
@@ -107,7 +107,7 @@ export function Bewerken(
         </p>
       </div>
       <div className="veldje">
-        <label className="lbl" htmlFor="bpIntentie">Afspraak — wanneer en waar</label>
+        <label className="lbl" htmlFor="bpIntentie">Afspraak: wanneer en waar</label>
         <input
           className="veld" id="bpIntentie" maxLength={140} value={intentie}
           onChange={(e) => zetIntentie(e.target.value)}

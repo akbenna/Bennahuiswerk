@@ -31,9 +31,12 @@ import { dagMissie, rangVoor, verzilverMissie, weekPuntenNu } from './missie'
 import { leesDag, mmss, weekNummer, weekSleutel } from './datum'
 import { leegVoortgang, schoonVoortgang, voegVoortgangSamen } from './opslag'
 import type { Voortgang } from './opslag'
+import { woordgelijk } from '@/gedeeld/woordgelijk'
 
+/* De vinger loopt over de wóórden en niet over de leestekens. Waarom,
+   staat in `src/gedeeld/woordgelijk.ts`. */
 const vinger = (x: unknown): string =>
-  createHash('sha256').update(JSON.stringify(x)).digest('hex').slice(0, 16)
+  createHash('sha256').update(JSON.stringify(woordgelijk(x))).digest('hex').slice(0, 16)
 
 /* Dezelfde vaste reeks als in de generator: `nepToeval` daar pakt REEKS[tik++]
    en `zetToeval(n)` zet de teller op n. Zonder dezelfde reeks in dezelfde
@@ -137,7 +140,8 @@ describe('het nakijken', () => {
 
   it('geeft dezelfde gerichte tip bij een fout', () => {
     for (const g of gouden.diagnoses) {
-      expect(diagnoseFout({ a: g.a }, g.val), `${g.a} ← ${g.val}`).toBe(g.tip)
+      expect(woordgelijk(diagnoseFout({ a: g.a }, g.val) ?? ''),
+        `${g.a} ← ${g.val}`).toBe(woordgelijk(g.tip ?? ''))
     }
   })
 })
@@ -158,7 +162,7 @@ describe('het zakgeld', () => {
       expect(Math.round(b.nauw * 1e6) / 1e6, naam).toBe(g.uit.nauw)
       expect(b.genoeg, naam).toBe(g.uit.genoeg)
       expect(b.factor, naam).toBe(g.uit.factor)
-      expect(b.poort, naam).toBe(g.uit.poort)
+      expect(woordgelijk(b.poort ?? ''), naam).toBe(woordgelijk(g.uit.poort ?? ''))
       expect(b.werkEuro, naam).toBe(g.uit.werkEuro)
       expect(b.toetsEuro, naam).toBe(g.uit.toetsEuro)
       expect(b.restWeek, naam).toBe(g.uit.restWeek)
@@ -545,7 +549,7 @@ describe('het samenvoegen', () => {
     }
   })
 
-  it('telt niets op — twee toestellen die dezelfde sessie zagen', () => {
+  it('telt niets op: twee toestellen die dezelfde sessie zagen', () => {
     const pr = vers()
     pr.punten = 120
     pr.cards = { a: { box: 3, ok: 3, wrong: 1, last: 500 } }

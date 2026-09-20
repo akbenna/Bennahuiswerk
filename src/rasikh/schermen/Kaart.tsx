@@ -112,7 +112,7 @@ export function Kaart(
             return (
               <button key={s.nr} type="button"
                       className={'vak' + (inDoel(stand.instel, s.nr) ? ' doel' : '')}
-                      title={`${s.naam} — ${st.vast}/${st.totaal}`}
+                      title={`${s.naam}: ${st.vast}/${st.totaal}`}
                       aria-label={`${s.naam}, ${st.vast} van ${st.totaal} vast`}
                       style={{ background: kleur }} onClick={() => zetOpen(s.nr)} />
             )
@@ -128,7 +128,7 @@ export function Kaart(
         {tempo > 0 && dagen != null ? (
           <p style={{ marginTop: 8 }}>
             Je zet gemiddeld <b>{Math.round(tempo * 10) / 10}</b> aya per dag vast. In dit tempo staan
-            de resterende {rest} aya's van je doel er over ongeveer <b>{dagen} dagen</b> — rond{' '}
+            de resterende {rest} aya's van je doel er over ongeveer <b>{dagen} dagen</b>, rond{' '}
             {datum(dag + dagen)}.
           </p>
         ) : (
@@ -137,8 +137,8 @@ export function Kaart(
           </p>
         )}
         <p className="klein" style={{ marginTop: 8 }}>
-          Die schatting gaat uit van doorgaan zoals nu. Ga je sneller, dan groeit het herhaalwerk mee
-          — en dáár loopt het meestal vast.
+          Die schatting gaat uit van doorgaan zoals nu. Ga je sneller, dan groeit het herhaalwerk mee,
+          en dáár loopt het meestal vast.
         </p>
       </Blok>
 

@@ -61,14 +61,14 @@ export function Leerpad({ t, ga }: { t: Toestand; ga: (v: Tab) => void }): React
     ? 'Korte teksten, veel beeld, en drie vragen na elke les. De zwaardere onderwerpen komen vanzelf als je ouder wordt.'
     : spoor === 2
       ? 'De volledige uitleg, met de achtergrond erbij: waar iets vandaan komt en waarom het zo is.'
-      : 'De volledige uitleg plus een blok verdieping bij elke les — met de fiqh-termen, het verschil van mening en de vragen waar niet iedereen een makkelijk antwoord op heeft.'
+      : 'De volledige uitleg plus een blok verdieping bij elke les (met de fiqh-termen, het verschil van mening en de vragen waar niet iedereen een makkelijk antwoord op heeft.'
 
   return (
     <>
       <div>
         <h1>Het leerpad</h1>
         <p className="klein" style={{ marginTop: 6 }}>
-          Alles wat een moslim moet weten, in veertien modules — van wie Allah is tot de vragen
+          Alles wat een moslim moet weten, in veertien modules) van wie Allah is tot de vragen
           die je op je vijftiende krijgt. Het gebed is daarvan één onderdeel; de rest gaat over
           geloven, gedrag, de Koran, de geschiedenis en het leven hier.
         </p>
@@ -277,7 +277,7 @@ function Lesblad({ id, t, sluit, naar }: {
         <h2 style={{ marginTop: 6 }}>{gehaald ? 'Gehaald' : 'Nog een keer'}</h2>
         <p style={{ marginTop: 8 }}>
           {fase.goed} van de {fase.totaal} goed.
-          {!gehaald && ' Je hebt er twee nodig — lees het nog een keer rustig door, dan lukt het.'}
+          {!gehaald && ' Je hebt er twee nodig, lees het nog een keer rustig door, dan lukt het.'}
         </p>
         {fase.verdiend > 0 && (
           <div className="kader" style={{ marginTop: 14 }}>

@@ -6,9 +6,9 @@ export const euro = (n: number | null | undefined): string =>
   '€ ' + (Math.round((Number(n) || 0) * 100) / 100).toFixed(2).replace('.', ',')
 
 export function datum(d: string | null | undefined): string {
-  if (!d) return '—'
+  if (!d) return '–'
   const t = new Date(d)
-  if (Number.isNaN(t.getTime())) return '—'
+  if (Number.isNaN(t.getTime())) return '–'
   const dagen = Math.floor((Date.now() - t.getTime()) / 86_400_000)
   if (dagen <= 0) return 'vandaag'
   if (dagen === 1) return 'gisteren'

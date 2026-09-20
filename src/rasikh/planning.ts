@@ -131,7 +131,7 @@ export function plan(stand: Stand, index: readonly SoeraInfo[], dag: number): Da
   } else if (over < SEC_NIEUW) {
     reden = due.length
       ? 'Vandaag geen nieuwe aya: de herhalingen vullen je tijd al. Dat is precies zoals het ' +
-        'hoort — eerst vasthouden, dan uitbreiden.'
+        'hoort: eerst vasthouden, dan uitbreiden.'
       : 'Zet je tijd iets ruimer; onder de zes minuten past er geen nieuwe aya in.'
   } else {
     nieuw = Math.min(i.maxNieuw || 3, Math.floor(over / SEC_NIEUW), rest)

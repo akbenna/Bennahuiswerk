@@ -97,13 +97,13 @@ export function berekenBeloning(pr: Voortgang, nuMs: number): Beloningstand {
     poort = 'Doe eerst minstens ' + BELONING.drempel + ' sommen om mee te tellen.'
   } else if (nauw >= BELONING.hoog) {
     factor = 1
-    poort = 'Top nauwkeurig 💯 — vol tarief'
+    poort = 'Top nauwkeurig 💯: vol tarief'
   } else if (nauw >= BELONING.mid) {
     factor = 0.5
-    poort = 'Redelijk — half tarief. Werk nog wat rustiger.'
+    poort = 'Redelijk: half tarief. Werk nog wat rustiger.'
   } else {
     factor = 0
-    poort = 'Te veel fouten — dit telt nog niet. Rustig en goed = beloning.'
+    poort = 'Te veel fouten: dit telt nog niet. Rustig en goed = beloning.'
   }
 
   /* Naar moeilijkheid, niet naar aantal: honderd makkelijke sommen horen minder

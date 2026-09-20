@@ -372,7 +372,7 @@ function Bladinhoud(
       <>
         <div className="mid">
           <div className="ar reus">أَحْسَنْت</div>
-          <p className="tr">Ahsant — goed gedaan</p>
+          <p className="tr">Ahsant, goed gedaan</p>
         </div>
         <h2 style={{ marginTop: 12 }}>Week {blad.week} is af</h2>
         <p style={{ marginTop: 6 }}>{w?.doel}</p>

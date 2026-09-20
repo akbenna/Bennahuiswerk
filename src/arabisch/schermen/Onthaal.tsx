@@ -72,7 +72,7 @@ export function NieuwProfiel(
       </div>
       {s && (
         <div className="melding" style={{ marginBottom: 16 }}>
-          Spoor {s} — <b>{SPOORNAAM[s]}</b> ({SPOORLEEFTIJD[s]})
+          Spoor {s}: <b>{SPOORNAAM[s]}</b> ({SPOORLEEFTIJD[s]})
         </div>
       )}
 

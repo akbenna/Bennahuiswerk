@@ -256,7 +256,7 @@ export function Bouwvak(
             ))
           : (
             <span className="muted small" style={{ direction: 'ltr' }}>
-              Tik de stukken in de goede volgorde aan — van rechts naar links.
+              Tik de stukken in de goede volgorde aan: van rechts naar links.
             </span>
             )}
       </div>

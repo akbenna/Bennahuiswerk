@@ -28,6 +28,7 @@
 process.env.TZ = 'UTC'
 import fs from 'node:fs'
 import vm from 'node:vm'
+import { woordgelijk } from './woordgelijk.mjs'
 
 const NU = '2026-08-22'
 const KLOK = Date.parse(NU + 'T10:00:00Z')

@@ -249,7 +249,7 @@ export function Zijbalk(
 
       <div className="zijvoet">
         <TekenHulp />
-        <p>Loop je vast? Vraag papa of mama — zij komen overal bij.</p>
+        <p>Loop je vast? Vraag papa of mama; zij komen overal bij.</p>
       </div>
     </aside>
   )
@@ -283,7 +283,7 @@ export function Onthaal(
         {/* Een harde spatie voor het zwaaien: anders valt de hand op een smal
             scherm op een eigen regel onder de naam. */}
         <h1>Hallo {hoofd(ik.naam)}!{'\u00A0'}<span className="zwaai" aria-hidden="true">👋</span></h1>
-        <p className="lede">Kies waar je mee verder wilt — alles wat je doet, komt op jouw naam te staan.</p>
+        <p className="lede">Kies waar je mee verder wilt. Alles wat je doet, komt op jouw naam te staan.</p>
       </div>
       <div className="welkomkaarten">
         <div className="mkaart">
@@ -299,7 +299,7 @@ export function Onthaal(
           <span className="mtekst">
             <strong>{hoofd(ik.naam)}</strong>
             <span className="klein">
-              {ouder ? 'Ouder — jij ziet alle apps en alle voortgang' : 'Jouw eigen plek, met jouw eigen code'}
+              {ouder ? 'Ouder: jij ziet alle apps en alle voortgang' : 'Jouw eigen plek, met jouw eigen code'}
             </span>
             <button type="button" className="mlink"
                     onClick={ouder ? naarOverzicht : naarWachtwoord}>
@@ -347,7 +347,7 @@ export function Voet() {
         terug; zonder internet werkt alles gewoon door en wordt er later gelijkgetrokken.
       </p>
       <p>
-        De cijfers op de kaarten komen van dit toestel — van het account dat hier het laatst in die
+        De cijfers op de kaarten komen van dit toestel, van het account dat hier het laatst in die
         app aanstond. Op een ander toestel staat er dus wat daar gedaan is, tot beide bij zijn.
       </p>
       <p className="meta">Gebouwd voor het gezin Benna</p>

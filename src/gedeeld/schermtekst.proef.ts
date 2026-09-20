@@ -27,18 +27,22 @@
  * edge-poort gebruikt hem om te controleren of die bestanden te lezen zijn.
  * Hier levert hij precies de drie soorten knopen die tekst dragen.
  *
- * WAT HIJ NIET DEKT
+ * WAT HIJ DÉKT
  *
- * De andere apps in deze repo. Die dragen hun lesteksten in gouden waarden, dus
- * daar is dit geen opmaakwijziging maar een nieuwe ijking. Zie hoofdstuk 25 van
- * `VERANTWOORDING.md`.
+ * Alle negen apps, want dat was de opdracht. Voor de zes leer-apps betekende
+ * het meer dan opmaak: hun lesteksten hangen aan gouden waarden die uit de
+ * oude HTML-pagina's gedraaid worden, en elke tekenwijziging liet die omvallen.
+ * Die vinger loopt sinds deze naloop over de wóórden en niet over de
+ * leestekens; zie `src/gedeeld/woordgelijk.ts` en de proef ernaast.
+ *
+ * Wat hij niet dekt is commentaar, en dat is met opzet. Zie hierboven.
  */
 import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import ts from 'typescript'
 import { describe, expect, it } from 'vitest'
 
-const EM = '—'
+const EM = '\u2014'
 
 /** Elke stuk zichtbare tekst in een bestand, met het regelnummer erbij. */
 export function schermteksten(pad: string, bron: string): Array<{ regel: number; tekst: string }> {
@@ -71,12 +75,16 @@ function bestanden(map: string): string[] {
 }
 
 describe('geen gedachtestreepjes in wat de lezer ziet', () => {
-  it('nergens in BennaHealth', () => {
+  it('nergens in een van de negen apps', () => {
     const gevonden: string[] = []
-    for (const pad of bestanden('src/health')) {
-      if (pad.endsWith('schermtekst.proef.ts')) continue
+    for (const pad of bestanden('src')) {
+      /* Twee bestanden noemen het teken omdat ze erover gáán. */
+      if (pad.endsWith('schermtekst.proef.ts') || pad.endsWith('woordgelijk.proef.ts')) continue
+      /* Geen snelle uitweg op `bron.includes(EM)`. Die stond hier en was fout:
+         een bestand dat het streepje ontsnapt schrijft, als \u+2014, draagt het
+         teken wél in zijn tekst maar niet in zijn bytes, en werd dus
+         overgeslagen. In Sanad staan vierendertig van die ontsnappingen. */
       const bron = readFileSync(pad, 'utf8')
-      if (!bron.includes(EM)) continue
       for (const s of schermteksten(pad, bron)) {
         if (s.tekst.includes(EM)) gevonden.push(`${pad}:${s.regel}: ${s.tekst.trim().slice(0, 80)}`)
       }

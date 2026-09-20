@@ -24,7 +24,7 @@ export function AlleGebeden({ naar }: { naar: (k: Gebedtab) => void }): ReactNod
       <div className="card">
         <h2>Alle gebeden op een rij</h2>
         <p className="klein" style={{ marginTop: 6 }}>
-          Eerst de vijf verplichte. Daaronder wat er vrijwillig bij hoort — sommige daarvan zijn
+          Eerst de vijf verplichte. Daaronder wat er vrijwillig bij hoort, sommige daarvan zijn
           zo sterk aanbevolen dat je ze bijna nooit overslaat.
         </p>
         <div className="tblwrap" style={{ marginTop: 14 }}>
@@ -183,7 +183,7 @@ export function Bijzonder({ t }: { t: Toestand }): ReactNode {
         <div className="kader" style={{ marginTop: 14 }}>
           <h4>Wat betekenen de kleuren</h4>
           <p className="klein" style={{ marginTop: 4 }}>
-            <Tag soort="fout">Verplicht</Tag> geldt voor wie eraan toe is — het vrijdaggebed
+            <Tag soort="fout">Verplicht</Tag> geldt voor wie eraan toe is, het vrijdaggebed
             bijvoorbeeld voor volwassen mannen die thuis zijn.{' '}
             <Tag soort="let">Plicht van de gemeenschap</Tag> is <i>fard kifaya</i>: doet een
             groep het, dan is het gedaan voor iedereen; doet niemand het, dan valt het de hele
@@ -296,7 +296,7 @@ export function Fouten(): ReactNode {
           <div className="kader let">
             <h4>Iets te veel gedaan</h4>
             <p>
-              Heb je iets toegevoegd — een rak'a te veel, een extra buiging — dan doe je twee
+              Heb je iets toegevoegd (een rak'a te veel, een extra buiging) dan doe je twee
               knievallen <b>na</b> de slotgroet, en geef je daarna opnieuw de groet.
             </p>
           </div>

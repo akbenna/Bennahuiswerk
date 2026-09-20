@@ -21,10 +21,10 @@ export function Formules({ terug }: { terug: () => void }): ReactNode {
       <div className="card" style={{ marginTop: 12, borderLeft: '4px solid var(--accent)' }}>
         <b style={{ color: 'var(--accent)' }}>Bij elke som: het 4-stappenplan (GGFU)</b>
         <div style={{ marginTop: 8, fontSize: 15, lineHeight: 1.7 }}>
-          <b>1. Gegeven</b> — schrijf op wat je weet, mét eenheid.<br />
-          <b>2. Gevraagd</b> — wat moet je uitrekenen?<br />
-          <b>3. Formule</b> — kies de formule, schrijf hem eerst leeg op.<br />
-          <b>4. Uitwerking</b> — invullen, uitrekenen, eenheid erachter, en vraag:{' '}
+          <b>1. Gegeven</b>: schrijf op wat je weet, mét eenheid.<br />
+          <b>2. Gevraagd</b>: wat moet je uitrekenen?<br />
+          <b>3. Formule</b>: kies de formule, schrijf hem eerst leeg op.<br />
+          <b>4. Uitwerking</b>: invullen, uitrekenen, eenheid erachter, en vraag:{' '}
           <i>&ldquo;is dit logisch?&rdquo;</i>
         </div>
       </div>
@@ -50,7 +50,7 @@ export function Formules({ terug }: { terug: () => void }): ReactNode {
       ))}
 
       <p className="muted center" style={{ marginTop: 16, fontSize: 13 }}>
-        Tip: leer formules niet uit je hoofd door staren — schrijf ze één keer over en hoor jezelf
+        Tip: leer formules niet uit je hoofd door staren: schrijf ze één keer over en hoor jezelf
         elke dag 5 minuten één blokje over. 🌟
       </p>
     </div>
@@ -66,7 +66,7 @@ export function Leertips({ terug }: { terug: () => void }): ReactNode {
       </div>
       <h1 style={{ fontSize: 24 }}>💡 Leertips</h1>
       <p className="muted" style={{ marginTop: 4 }}>
-        Kleine gewoontes, groot verschil. Lees er af en toe één — niet alles tegelijk.
+        Kleine gewoontes, groot verschil. Lees er af en toe één, niet alles tegelijk.
       </p>
       {TIPS_CATS.map((cat) => (
         <div key={cat.kop} className="card" style={{ marginTop: 12 }}>

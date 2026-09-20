@@ -244,7 +244,7 @@ export function Week({ stand, nu, zet, nr, zetNr, naarHerhaling }: Props): React
         <p className="small muted" style={{ marginTop: 10 }}>
           Volgens je planning zou je nu in week {pw} zitten.{' '}
           {pw > w.nr
-            ? 'Geen probleem — doorlopen is belangrijker dan bijblijven.'
+            ? 'Geen probleem: doorlopen is belangrijker dan bijblijven.'
             : 'Je loopt voor; je kunt de tijd ook in de kaarten steken.'}
         </p>
       )}
@@ -308,7 +308,7 @@ function Beginnen({ nu, zet }: { nu: string; zet: (f: (s: Stand) => Stand) => vo
       <h1>Geloofsstudie</h1>
       <p className="lede" style={{ marginTop: 12, maxWidth: '54ch' }}>
         Een leerprogramma van achtentwintig weken in Malikitische fiqh, usul al-fiqh,
-        Ash‘aritische geloofsleer, bronnenkritiek en medische ethiek — met elke week een
+        Ash‘aritische geloofsleer, bronnenkritiek en medische ethiek, met elke week een
         fragment uit de oorspronkelijke tekst.
       </p>
       <div className="card" style={{ marginTop: 26 }}>

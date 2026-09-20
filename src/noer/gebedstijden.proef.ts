@@ -105,7 +105,7 @@ describe('de klok en het volgende gebed', () => {
     expect(klok(6.5)).toBe('06:30')
     expect(klok(12.755)).toBe('12:45')
     expect(klok(23.999)).toBe('00:00')
-    expect(klok(NaN)).toBe('—')
+    expect(klok(NaN)).toBe(',')
   })
 
   it('wijst het eerstvolgende gebed aan', () => {

@@ -50,7 +50,7 @@ export function Opzetten({ opKlaar }: { opKlaar: (ouderWw: string) => void }) {
         <div className="regenboog" style={{ margin: '16px auto 0' }} />
         <h2 style={{ marginTop: 26, fontSize: '1.5rem' }}>Eén keer instellen</h2>
         <p className="klein" style={{ marginTop: 8 }}>
-          Er is nog geen gezin aangemaakt. Kies een ouderwachtwoord — daarmee kom jij bij het
+          Er is nog geen gezin aangemaakt. Kies een ouderwachtwoord: daarmee kom jij bij het
           overzicht van alle apps, en daarmee meld jij en Hanae je straks aan. De kinderen kiezen bij
           hun eerste keer zelf een code.
         </p>
@@ -84,7 +84,7 @@ export function Kiezen({ leden, opKies }: { leden: Lid[]; opKies: (l: Lid) => vo
       <Merk />
       <div className="regenboog" />
       <p className="lede">
-        Wie ben je? Alles hierachter — je lessen, je punten, je spaarpot — staat op jouw eigen naam.
+        Wie ben je? Alles hierachter (je lessen, je punten, je spaarpot) staat op jouw eigen naam.
       </p>
       <div className="tegels">{leden.filter((l) => l.rol === 'kind').map(tegel)}</div>
       <p className="meta" style={{ marginTop: 30 }}>Papa en mama</p>
@@ -96,8 +96,8 @@ export function Kiezen({ leden, opKies }: { leden: Lid[]; opKies: (l: Lid) => vo
 
           Deze poort vraagt wie je bent omdat alles erachter op naam staat: je
           lessen, je punten, je spaarpot. BennaHealth hoort daar niet bij. Die
-          app heeft zijn eigen aanmelding — een eigen token onder een eigen
-          sleutel, los van het gezinsprofiel — en had dus nooit achter dit slot
+          app heeft zijn eigen aanmelding (een eigen token onder een eigen
+          sleutel, los van het gezinsprofiel) en had dus nooit achter dit slot
           hoeven staan.
 
           Toch stond hij er wel, en drie stappen diep: kiezen wie je bent, een
@@ -111,7 +111,7 @@ export function Kiezen({ leden, opKies }: { leden: Lid[]; opKies: (l: Lid) => vo
         <img src="/iconen/health.svg" alt="" width={38} height={38} />
         <span className="groei">
           <b>BennaHealth</b>
-          <span className="mini">eigen aanmelding — je hoeft hier niet langs</span>
+          <span className="mini">eigen aanmelding, je hoeft hier niet langs</span>
         </span>
         <span className="pijl" aria-hidden="true">→</span>
       </a>
@@ -152,7 +152,7 @@ export function Code(
         <h2 style={{ marginTop: 16, fontSize: '1.7rem' }}>Hallo {hoofd(lid.naam)}</h2>
         <p className="klein" style={{ marginTop: 8 }}>
           {nieuw
-            ? 'Je bent hier voor het eerst. Verzin een wachtwoord van minstens vier tekens en onthoud het — dat heb je elke keer nodig. Vertel het aan niemand; is het toch weg, dan zet papa of mama het opnieuw open.'
+            ? 'Je bent hier voor het eerst. Verzin een wachtwoord van minstens vier tekens en onthoud het, want dat heb je elke keer nodig. Vertel het aan niemand; is het toch weg, dan zet papa of mama het opnieuw open.'
             : 'Typ je wachtwoord. Hetzelfde als in de huiswerkapp.'}
         </p>
         <input type="password" autoFocus value={code} onChange={(e) => zetCode(e.target.value)}
@@ -172,7 +172,7 @@ export function Code(
           <button type="button" className="btn ghost sm" onClick={opTerug}>← Iemand anders</button>
         </div>
         <p className="klein" style={{ marginTop: 14 }}>
-          Weet je het niet meer? Vraag papa — hij kan het openzetten zonder dat je iets kwijtraakt.
+          Weet je het niet meer? Vraag papa; hij kan het openzetten zonder dat je iets kwijtraakt.
         </p>
       </Codekaart>
     </div>

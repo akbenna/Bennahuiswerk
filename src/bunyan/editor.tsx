@@ -161,7 +161,7 @@ export function Editor({
         >
           {tekst || (gedraaid
             ? 'Geen uitvoer.'
-            : taal === 'py' ? 'Nog niets — druk op Uitvoeren.' : 'Console: nog niets.')}
+            : taal === 'py' ? 'Nog niets. Druk op Uitvoeren.' : 'Console: nog niets.')}
         </pre>
         {fout && (
           <div className="foutbalk">

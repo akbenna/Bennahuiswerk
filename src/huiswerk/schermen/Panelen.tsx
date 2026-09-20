@@ -57,7 +57,7 @@ export function KindAccounts(
       <p className="muted" style={{ fontSize: 13, marginTop: 4 }}>
         Elk kind heeft een eigen account in de cloud, met wachtwoord{' '}
         <b>&ldquo;{STANDAARD_WACHTWOORD}&rdquo;</b>. Daar staan zijn scores, dus op elk toestel
-        gelijk. Er wordt hier niet meer mee ingelogd — dat gebeurt op de startpagina van
+        gelijk. Er wordt hier niet meer mee ingelogd: dat gebeurt op de startpagina van
         BennaHub; dit wachtwoord is alleen nog de sleutel van het account zelf.
       </p>
       <div className="wrap" style={{ marginTop: 6 }}>
@@ -82,7 +82,7 @@ export function KindAccounts(
             zetBezig(true)
             void ververs()
               .then(() => zeg('Nieuwste scores opgehaald ✓'))
-              .catch(() => zeg('Kon niet ophalen — probeer opnieuw.'))
+              .catch(() => zeg('Kon niet ophalen, probeer opnieuw.'))
               .finally(() => zetBezig(false))
           }}
         >🔄 Nieuwste scores ophalen</button>
@@ -115,7 +115,7 @@ export function Leerprofielpaneel({ stand, alle }: { stand: Stand; alle: Kaart[]
     <div className="card" style={{ marginBottom: 16, background: '#eef6f0', borderLeftColor: '#2c7a2c' }}>
       <Klapkop
         open={open} zet={() => zetOpen(!open)}
-        titel="📊 Leerprofiel — wat wordt goed beheerst, wat nog niet"
+        titel="📊 Leerprofiel: wat wordt goed beheerst, wat nog niet"
         dicht="▲ inklappen" uit="▼ bekijk beheersing per kind, vak en onderwerp"
       />
       {open && (
@@ -166,7 +166,7 @@ export function Leerprofielpaneel({ stand, alle }: { stand: Stand; alle: Kaart[]
                 {trend.length >= 2 && (
                   <div style={{ margin: '4px 0 8px' }}>
                     <div className="muted" style={{ fontSize: 12 }}>
-                      Trend — beheerste onderdelen per week (laatste {trend.length}):
+                      Trend: beheerste onderdelen per week (laatste {trend.length}):
                     </div>
                     <Figuur ill={{
                       type: 'lijngrafiek',
@@ -204,7 +204,7 @@ export function Leerprofielpaneel({ stand, alle }: { stand: Stand; alle: Kaart[]
                               <span>{o.status.emoji} {o.t}{o.jaar === 'next' ? ' · volgend jaar' : ''}</span>
                               <span className="muted">
                                 {o.geoefend > 0
-                                  ? `${o.pct}% · ${o.nauw != null ? o.nauw + '% goed' : '—'}`
+                                  ? `${o.pct}% · ${o.nauw != null ? o.nauw + '% goed' : '–'}`
                                     + (o.wrong > 0 ? ` · ${o.wrong}× fout` : '')
                                   : 'nog niet begonnen'}
                               </span>
@@ -260,7 +260,7 @@ export function Leerlijnpaneel({ stand }: { stand: Stand }): ReactNode {
             </div>
             {reken.length > 0 && (
               <div className="muted" style={{ fontSize: 12, marginTop: 4 }}>
-                Rekenen/wiskunde — landelijke domeinen
+                Rekenen/wiskunde: landelijke domeinen
               </div>
             )}
             {DOMEINVOLGORDE.filter((d) => domeinen[d]).map((d) => {
@@ -374,7 +374,7 @@ export function Weektaakbeheer(
                 }
                 return { ...s, weektaak: wt }
               })
-              zetMelding('✅ Weektaken opgeslagen — de kinderen zien ze meteen.')
+              zetMelding('✅ Weektaken opgeslagen: de kinderen zien ze meteen.')
               setTimeout(() => zetMelding(''), 3500)
             }}
           >💾 Weektaken opslaan</button>

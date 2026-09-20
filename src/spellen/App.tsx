@@ -178,7 +178,7 @@ export function App() {
           <p className="klein" style={{ marginTop: 5 }}>
             {SPELLEN.length} spellen plus twee grote.{' '}
             {gespeeld ? `Je speelde er tot nu toe ${gespeeld}.`
-                      : 'Nog niets gespeeld — begin waar je zin in hebt.'}
+                      : 'Nog niets gespeeld. Begin waar je zin in hebt.'}
           </p>
         </div>
 
@@ -220,8 +220,8 @@ export function App() {
       <footer>
         <p>{grap}</p>
         <p>
-          Deze hoek heette eerst <b lang="ar">رَاحَة</b> — <i>raha</i>, rust. Vrije tijd is een gunst
-          waar volgens de overlevering veel mensen zich in vergissen — dus: even pauze, en daarna
+          Deze hoek heette eerst <b lang="ar">رَاحَة</b>, <i>raha</i>, rust. Vrije tijd is een gunst
+          waar volgens de overlevering veel mensen zich in vergissen. Dus: even pauze, en daarna
           weer verder. De app helpt daarbij door niets te doen wat je hier langer houdt dan je van
           plan was: geen meldingen, geen dagelijkse beloning, geen reclame.
         </p>
@@ -295,8 +295,8 @@ function Instellingenkaart(
         </button>
       </div>
       <p className="klein" style={{ marginTop: 8 }}>
-        Records staan op dit toestel. Het geluid mag je zelf aan- en uitzetten; de rest — inloggen en
-        records wissen — zit achter de oudercode.
+        Records staan op dit toestel. Het geluid mag je zelf aan- en uitzetten; de rest (inloggen en
+        records wissen) zit achter de oudercode.
       </p>
 
       {!open ? (
@@ -374,7 +374,7 @@ function Instellingenkaart(
           </label>
           {oudercode === '1234' && (
             <p className="klein" style={{ marginTop: 6, color: 'var(--fout)' }}>
-              Hij staat nog op <b>1234</b> — verander hem.
+              Hij staat nog op <b>1234</b>. Verander hem.
             </p>
           )}
           {Object.keys(stand.records).length > 0 && (

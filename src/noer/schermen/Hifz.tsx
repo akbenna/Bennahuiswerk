@@ -43,7 +43,7 @@ export function Hifz({ t, ga }: { t: Toestand; ga: (v: Tab) => void }): ReactNod
         <p className="klein" style={{ marginTop: 8 }}>
           Twaalf korte soera's en de vaste teksten van het gebed. Elke tekst heeft vier
           oefeningen: meelezen, woorden wegstoppen, de puzzel, en de toets. Haal je de toets, dan
-          telt hij als gekend — en dat levert {euro(TARIEF.hifz)} op.
+          telt hij als gekend, en dat levert {euro(TARIEF.hifz)} op.
         </p>
         <div className="rij" style={{ marginTop: 12 }}>
           <Tag soort="k">{klaar} van de {HIFZ.length} gekend</Tag>
@@ -306,7 +306,7 @@ function Toets({ h, t, toets, terug, naarToets }: {
       <>
         <h2>{af.gehaald ? 'Gekend!' : 'Nog niet helemaal'}</h2>
         <p style={{ marginTop: 10 }}>
-          {af.fouten} keer misgetikt{af.gehaald ? '' : ` — dat mocht er hoogstens ${grens} zijn`}.{' '}
+          {af.fouten} keer misgetikt{af.gehaald ? '' : `: dat mocht er hoogstens ${grens} zijn`}.{' '}
           {af.gehaald
             ? 'Herhaal hem morgen nog een keer, dan blijft hij zitten.'
             : 'Doe de puzzel nog een paar keer en probeer het opnieuw.'}

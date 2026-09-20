@@ -50,7 +50,7 @@ export function opnameGroepen(): Opnamegroep[] {
     },
     {
       g: 'De bijzondere gebeden',
-      klein: 'Het feest, een overlijden, een keuze, droogte. Ze komen zelden langs — juist daarom is het fijn als ze klaarstaan.',
+      klein: 'Het feest, een overlijden, een keuze, droogte. Ze komen zelden langs, juist daarom is het fijn als ze klaarstaan.',
       items: BIJZONDER.flatMap((b) => b.zeg.flatMap((k) => uitT(k, b.n))),
     },
     {

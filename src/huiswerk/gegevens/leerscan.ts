@@ -68,10 +68,10 @@ export const DIMENSIES: Dimensiekaart[] = [
       + 'je weet dan dat je het gezien hebt, niet dat je het kunt.',
     advies: [
       'Dit is waar je het meeste te winnen hebt. Doe het boek dicht en zeg hardop wat je nog '
-      + 'weet — dat voelt zwaarder dan overlezen, en dat is precies het punt.',
+      + 'weet: dat voelt zwaarder dan overlezen, en dat is precies het punt.',
       'Je toetst jezelf al af en toe. Maak er een vaste stap van: elk stukje dat je gelezen '
       + 'hebt eerst dichtklappen en navertellen voordat je verder gaat.',
-      'Je toetst jezelf uit jezelf. Houd dat vast — dit is de gewoonte die het meest oplevert.',
+      'Je toetst jezelf uit jezelf. Houd dat vast: dit is de gewoonte die het meest oplevert.',
     ],
     inDeApp: 'De hele app werkt zo: je krijgt de vraag, jij haalt het antwoord op. '
       + 'De oefentoets is de zwaarste vorm ervan.',
@@ -83,7 +83,7 @@ export const DIMENSIES: Dimensiekaart[] = [
       + 'in één keer. Juist het stukje vergeten tussendoor maakt het ophalen daarna sterker.',
     advies: [
       'Hier zit je grootste winst. Vier keer een kwartier over de week levert meer op dan één '
-      + 'uur op de avond ervoor — dezelfde tijd, veel beter resultaat.',
+      + 'uur op de avond ervoor: dezelfde tijd, veel beter resultaat.',
       'Je begint niet op het laatste moment, maar het mag gelijkmatiger. Zet een klein dagdoel '
       + 'en haal dat élke dag; dat werkt beter dan twee grote sessies.',
       'Je verdeelt je werk goed. Dat is de gewoonte waar je later, met echte examenstof, '
@@ -100,7 +100,7 @@ export const DIMENSIES: Dimensiekaart[] = [
       + 'dat oefen je alleen als ze door elkaar staan.',
     advies: [
       'Dit verklaart waarschijnlijk waarom oefenen thuis goed gaat en de toets tegenvalt. Oefen '
-      + 'vaker door elkaar — het voelt moeilijker en het werkt beter.',
+      + 'vaker door elkaar: het voelt moeilijker en het werkt beter.',
       'Je mengt af en toe. Sluit je oefenronde voortaan af met een mix: eerst het soort oefenen, '
       + 'dan door elkaar.',
       'Je oefent al door elkaar. Dat is de vorm die het dichtst bij een echte toets komt.',
@@ -114,8 +114,8 @@ export const DIMENSIES: Dimensiekaart[] = [
       + 'nieuws. Wie alleen het juiste antwoord overneemt, maakt dezelfde fout over twee weken '
       + 'opnieuw.',
     advies: [
-      'Hier laat je het meeste liggen. Bij elke fout één zin opschrijven — "ik vergat de eenheid" '
-      + '— en die fout later nog eens maken. Dat is de snelste manier om vooruit te gaan.',
+      'Hier laat je het meeste liggen. Bij elke fout één zin opschrijven: "ik vergat de eenheid", '
+      + 'en die fout later nog eens maken. Dat is de snelste manier om vooruit te gaan.',
       'Je kijkt naar je fouten, maar vaak alleen naar het goede antwoord. Zoek er de oorzaak bij: '
       + 'rekenfout, verkeerde formule, of vraag verkeerd gelezen?',
       'Je gebruikt je fouten. Dat is precies wat het verschil maakt tussen oefenen en leren.',
@@ -125,12 +125,12 @@ export const DIMENSIES: Dimensiekaart[] = [
   {
     dim: 'beginnen', kop: 'Beginnen en volhouden', emoji: '🚀',
     wat: 'Op gang komen, afleiding wegleggen, doorgaan als het tegenzit.',
-    waarom: 'De beste techniek doet niets als je niet begint. Uitstel komt zelden door luiheid — '
+    waarom: 'De beste techniek doet niets als je niet begint. Uitstel komt zelden door luiheid, '
       + 'meestal is de eerste stap te groot gemaakt. Een telefoon binnen handbereik kost al '
       + 'aandacht als je er niet naar kijkt.',
     advies: [
       'Maak de eerste stap belachelijk klein: vijf sommen, niet "leren voor de toets". En leg '
-      + 'je telefoon in een andere kamer — naast je, op stil, is niet genoeg.',
+      + 'je telefoon in een andere kamer; naast je, op stil, is niet genoeg.',
       'Je komt op gang, maar met moeite. Werk in blokjes van 25 minuten met 5 minuten pauze, '
       + 'en zet die eerste 25 minuten zonder telefoon.',
       'Je begint gewoon. Dat is minder vanzelfsprekend dan het lijkt en scheelt je veel tijd.',
@@ -220,7 +220,7 @@ export const SCANVRAGEN: Scanvraag[] = [
     id: 'm2', dim: 'mengen',
     vraag: 'Op een toets staan verschillende soorten sommen door elkaar. Hoe gaat dat?',
     opties: [
-      'Lastig — ik zie vaak niet meteen welk soort het is',
+      'Lastig: ik zie vaak niet meteen welk soort het is',
       'Soms twijfel ik even',
       'Meestal zie ik meteen wat voor som het is',
     ],
@@ -263,7 +263,7 @@ export const SCANVRAGEN: Scanvraag[] = [
   },
   {
     id: 's3', dim: 'spreiden',
-    vraag: 'Iets wat je vorige maand geleerd hebt — hoe zit dat er nu bij?',
+    vraag: 'Iets wat je vorige maand geleerd hebt: hoe zit dat er nu bij?',
     opties: [
       'Dat ben ik meestal weer kwijt',
       'Het komt terug als ik het teruglees',

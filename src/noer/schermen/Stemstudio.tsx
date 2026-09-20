@@ -42,7 +42,7 @@ export function Stemstudio({ nu, sluit }: { nu: string; sluit: () => void }): Re
     const blob = await OPNAME.stop()
     zetLoopt(null)
     if (!blob) {
-      zetMeld({ tekst: 'Er is niets opgenomen — probeer het nog een keer.', soort: 'fout' })
+      zetMeld({ tekst: 'Er is niets opgenomen, probeer het nog een keer.', soort: 'fout' })
       return
     }
     await AUDIO.zet(id, blob)
@@ -99,7 +99,7 @@ export function Stemstudio({ nu, sluit }: { nu: string; sluit: () => void }): Re
         Zelf ingesproken: <b>{gedaan}</b> van de {nodig.length}.
       </p>
       <p className="klein" style={{ marginTop: 6 }}>
-        Houd de telefoon een handbreedte van je mond, spreek rustig, en luister meteen terug — je
+        Houd de telefoon een handbreedte van je mond, spreek rustig, en luister meteen terug, je
         hoort zelf wanneer het goed is. Het hoeft niet in één keer: een paar per dag is genoeg.
       </p>
       <div style={{ marginTop: 10 }}>

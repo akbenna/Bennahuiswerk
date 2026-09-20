@@ -128,7 +128,7 @@ export function App(): ReactNode {
       t.zetWolkmelding('Bezig met inloggen…')
       const samen = await familieInloggen(code, wachtwoord, t.stand, KINDEREN)
       t.zet(() => samen)
-      t.zetWolkmelding('Ingelogd — samengevoegd ✓')
+      t.zetWolkmelding('Ingelogd, samengevoegd ✓')
     },
     gelijktrekken: async (): Promise<void> => {
       t.zetWolkmelding('Bezig met samenvoegen…')
@@ -136,7 +136,7 @@ export function App(): ReactNode {
       if (!samen) { t.zetWolkmelding('Koppel eerst een familiecode.'); return }
       t.zet(() => samen)
       await familieBewaren(samen)
-      t.zetWolkmelding('Alles samengevoegd — elk toestel toont nu dezelfde score ✓')
+      t.zetWolkmelding('Alles samengevoegd: elk toestel toont nu dezelfde score ✓')
     },
     uploaden: async (): Promise<void> => {
       await familieBewaren(t.stand)

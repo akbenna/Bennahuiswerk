@@ -315,7 +315,7 @@ describe('de sommen kloppen nog steeds', () => {
     expect(getal(zoek('prijs stijgt met 10%'))).toBe(-2)
   })
 
-  it('rekent de stof van Wassima na — op 2 havo, niet hoger', () => {
+  it('rekent de stof van Wassima na: op 2 havo, niet hoger', () => {
     expect(getal(zoek('150 exclusief btw'))).toBeCloseTo(150 * 1.21, 10)
     expect(getal(zoek('12 in en verkoopt het voor'))).toBe(8)
     expect(getal(zoek('procent is de brutowinst'))).toBe(40)

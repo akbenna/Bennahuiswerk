@@ -200,11 +200,11 @@ export function App() {
 
         <footer>
           <p>
-            Deze app stuurt op behoud. Nieuwe stof komt er pas bij als de herhalingen bij zijn — dat
+            Deze app stuurt op behoud. Nieuwe stof komt er pas bij als de herhalingen bij zijn. Dat
             is geen strengheid maar de enige manier waarop memoriseren op de lange duur standhoudt.
           </p>
           <p>
-            De Arabische tekst is de druk van het King Fahd-complex — Warsh en Hafs — met de
+            De Arabische tekst is de druk van het King Fahd-complex (Warsh en Hafs) met de
             vertaling van Fred Leemhuis. De recitatie komt uit Islam leren, aan te vullen met het
             script in <span style={{ whiteSpace: 'nowrap' }}>rasikh/audio/</span>. Leg de tekst één
             keer naast een moshaf voordat je iets vastzet.

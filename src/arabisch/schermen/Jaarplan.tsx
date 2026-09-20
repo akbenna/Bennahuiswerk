@@ -38,7 +38,7 @@ export function Jaarplan(
           </p>
           <p>
             We beginnen met een korte niveaubepaling van achttien vragen. Die bepaalt niet wie
-            het knapst is, maar op welke week jouw programma begint — wie de eerste letters al
+            het knapst is, maar op welke week jouw programma begint: wie de eerste letters al
             kent, hoeft die niet nog eens.
           </p>
           <div className="rij" style={{ marginTop: 14 }}>
@@ -71,7 +71,7 @@ export function Jaarplan(
         </div>
         <Balk pct={pct} style={{ marginTop: 8 }} />
         <p className="klein muted" style={{ marginTop: 8 }}>
-          {blok ? `Blok ${blok.n} — ${blok.t}` : ''}
+          {blok ? `Blok ${blok.n}: ${blok.t}` : ''}
         </p>
       </div>
 
@@ -108,7 +108,7 @@ export function Jaarplan(
         return (
           <div className="kaart" style={{ marginTop: 10 }} key={b.n}>
             <div className="rij tussen">
-              <b>Blok {b.n} — {b.t}</b>
+              <b>Blok {b.n}: {b.t}</b>
               {gemaakt && <span className="vlag acc">toets {gemaakt.score}/{gemaakt.totaal}</span>}
             </div>
             <p className="klein muted" style={{ margin: '2px 0 8px' }}>{b.u}</p>
@@ -121,7 +121,7 @@ export function Jaarplan(
                 return (
                   <button
                     type="button" key={x.n} className={nu ? 'k rand vol' : 'k rand'}
-                    title={`Week ${x.n} — ${x.t}`}
+                    title={`Week ${x.n}: ${x.t}`}
                     onClick={() => kiesWeek(x.n)}
                     style={{
                       display: 'inline-block', width: 'auto', padding: '6px 10px', fontSize: '.82rem',

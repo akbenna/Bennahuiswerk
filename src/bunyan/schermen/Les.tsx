@@ -248,7 +248,7 @@ function Klaar({
           <div className="card plat">
             <p className="meta">Verdiend</p>
             <p className="cijfer" style={{ color: 'var(--goed)' }}>
-              {beloning.geld > 0 ? euro(beloning.geld) : '—'}
+              {beloning.geld > 0 ? euro(beloning.geld) : '–'}
             </p>
             <p className="klein">
               {beloning.geld > 0

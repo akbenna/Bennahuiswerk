@@ -17,7 +17,7 @@ import type { Recitatie } from '../audio'
 
 export const STAPPEN = [
   { t: 'Horen', u: 'Luister drie keer mee terwijl je meeleest. Nog niets uit je hoofd.' },
-  { t: 'Begrijpen', u: 'Wat staat er. Betekenis is de haak waar de klank aan blijft hangen — dat is het voordeel dat een volwassene heeft.' },
+  { t: 'Begrijpen', u: 'Wat staat er. Betekenis is de haak waar de klank aan blijft hangen. Dat is het voordeel dat een volwassene heeft.' },
   { t: 'Inprenten', u: 'Vijf keer hardop, mét de tekst voor je.' },
   { t: 'Losmaken', u: 'De tekst verdwijnt in stappen. Tik op een grijs vlak als je vastloopt.' },
   { t: 'Vastzetten', u: 'Uit het hoofd, drie keer vlekkeloos achter elkaar. Eén hapering en de teller gaat terug.' },
@@ -112,7 +112,7 @@ export function Nieuw(
 
       <div className="rij">
         <button type="button" className="btn groot" onClick={() => zetBezig(true)}>
-          Begin bij stap 1 — horen
+          Begin bij stap 1: horen
         </button>
       </div>
 
@@ -166,7 +166,7 @@ function Leerflow(
       <Blad opSluiten={opSluiten}>
         <h2>{a.soera.naam} {a.n} staat vast</h2>
         <p style={{ marginTop: 8 }}>
-          Hij komt morgen terug, daarna over twee dagen, vier, acht — steeds verder uit elkaar zolang
+          Hij komt morgen terug, daarna over twee dagen, vier, acht, steeds verder uit elkaar zolang
           het goed gaat. Dat terugkomen is het werk; het leren was het makkelijke deel.
         </p>
         <AyaBlok a={a} />
@@ -212,7 +212,7 @@ function Leerflow(
           ) : (
             <Kader kop="Nog geen recitatie">
               Voor deze aya is nog geen recitatie opgehaald. Lees hem hardop mee met je eigen opname,
-              of haal de recitatie op — zie Instellingen.
+              of haal de recitatie op; zie Instellingen.
             </Kader>
           )}
         </>

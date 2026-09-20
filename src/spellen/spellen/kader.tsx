@@ -67,7 +67,7 @@ export function Kader(
 
 /** De vaste staart van de standregel. */
 export function RecordRegel({ spel, record }: { spel: Spelbeschrijving; record: number | undefined }) {
-  return <>record <b>{record === undefined ? '—' : `${record} ${spel.eenh}`}</b></>
+  return <>record <b>{record === undefined ? '–' : `${record} ${spel.eenh}`}</b></>
 }
 
 /**

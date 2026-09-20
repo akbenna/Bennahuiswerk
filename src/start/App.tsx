@@ -131,7 +131,7 @@ export function App() {
           <div className="welkomtekst">
             <h1>Geen verbinding</h1>
             <p className="lede">
-              Aanmelden lukt nu niet — de codes staan centraal en die zijn even niet te bereiken
+              Aanmelden lukt nu niet: de codes staan centraal en die zijn even niet te bereiken
               ({scherm.fout}). De apps zelf werken zonder internet gewoon door; wat je doet wordt
               bewaard en later gelijkgetrokken.
             </p>

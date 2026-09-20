@@ -66,7 +66,7 @@ export function Programma(
         </p>
         <p className="small" style={{ marginBottom: 0 }}>
           Het weekritme is bewust traag. Achtentwintig weken van vijftig minuten is minder dan
-          twintig uur — maar gespreid over zeven maanden, en dat is wat het verschil maakt.
+          twintig uur, maar gespreid over zeven maanden, en dat is wat het verschil maakt.
         </p>
       </div>
     </>

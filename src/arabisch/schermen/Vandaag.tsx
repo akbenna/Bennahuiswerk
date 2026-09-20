@@ -195,7 +195,7 @@ export function Vandaag(
       </div>
       <p className="klein muted" style={{ marginTop: 12 }}>
         De kalender schuift met je mee. Sla je een paar dagen over, dan staat er geen stapel
-        klaar — het pad begint gewoon weer bij vandaag.
+        klaar: het pad begint gewoon weer bij vandaag.
       </p>
     </div>
   )
@@ -364,7 +364,7 @@ function Sessieloop(
         <Statvak n={st.herhaald} wat="herhaald" />
       </div>
       <p className="small muted" style={{ marginTop: 16 }}>
-        Morgen staat de volgende stap klaar. Kom je er niet aan toe, dan schuift alles mee — er
+        Morgen staat de volgende stap klaar. Kom je er niet aan toe, dan schuift alles mee: er
         ontstaat geen achterstand.
       </p>
       <button type="button" className="k vol" style={{ marginTop: 14 }} onClick={stop}>

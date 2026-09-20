@@ -99,7 +99,7 @@ describe('het nakijken van wat het model aanwijst', () => {
     expect(u.routes).toHaveLength(1)
   })
 
-  it('houdt het bij drie — een lijstje van tien is weer een keuze', () => {
+  it('houdt het bij drie: een lijstje van tien is weer een keuze', () => {
     const u = verwerk({
       routes: ['rekenen|Breuken|nu', 'rekenen|Procenten|nu', 'taal|Werkwoordspelling|nu',
         'rekenen|Machten|next'],

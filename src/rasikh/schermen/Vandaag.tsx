@@ -39,7 +39,7 @@ export function Vandaag(
         <Kaart>
           <p className="meta">Nieuw vandaag</p>
           <p className="cijfer">{p.nieuw}</p>
-          <p className="klein">{p.nieuw ? `${Math.round((p.nieuw * SEC_NIEUW) / 60)} min` : '—'}</p>
+          <p className="klein">{p.nieuw ? `${Math.round((p.nieuw * SEC_NIEUW) / 60)} min` : '–'}</p>
         </Kaart>
         <Kaart>
           <p className="meta">Staat vast</p>
@@ -73,7 +73,7 @@ export function Vandaag(
         <Kaart>
           <h3>Je bent bij</h3>
           <p className="klein" style={{ marginTop: 6 }}>
-            Er staat niets open. Dat is het doel — niet dat je veel kent, maar dat wat je kent blijft
+            Er staat niets open. Dat is het doel: niet dat je veel kent, maar dat wat je kent blijft
             staan.
           </p>
         </Kaart>

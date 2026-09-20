@@ -113,7 +113,7 @@ export function Thuis(p: ThuisProps): ReactNode {
         zij={leider ? `aan kop: ${leider.p.emoji} ${leider.p.naam}` : 'nog geen punten deze week'}
       >
         <div className="card">
-          <b>Ranglijst — alle punten bij elkaar</b>
+          <b>Ranglijst: alle punten bij elkaar</b>
           {ranglijst.map((k, i) => (
             <div key={k.id} className="rankrow">
               <span className="medal">{MEDAILLES[i] ?? '⭐'}</span>
@@ -132,7 +132,7 @@ export function Thuis(p: ThuisProps): ReactNode {
 
         <div className="card">
           <div className="row" style={{ justifyContent: 'space-between' }}>
-            <b>Toernooi van de week — € 10 voor de winnaar</b>
+            <b>Toernooi van de week: € 10 voor de winnaar</b>
             <span className="muted" style={{ fontSize: 12 }}>
               nieuwe ronde over {dagenTot} {dagenTot === 1 ? 'dag' : 'dagen'}
             </span>
@@ -162,7 +162,7 @@ export function Thuis(p: ThuisProps): ReactNode {
             <b>Week-uitslag</b>
             <span className="muted" style={{ fontSize: 12 }}>
               {nu.getDay() === 0
-                ? 'Het is zondag — tijd voor de uitslag! 🎉'
+                ? 'Het is zondag, tijd voor de uitslag! 🎉'
                 : 'samen ' + euro(weektotaal)}
             </span>
           </div>
@@ -199,7 +199,7 @@ export function Thuis(p: ThuisProps): ReactNode {
                 <Balk pct={z.pct} kleur="#e08a2b" achter="rgba(0,0,0,.08)" />
                 <div className="muted" style={{ fontSize: 12, marginTop: 2 }}>
                   {z.gehaald
-                    ? <span>🎉 Zomerdoel gehaald — verdien je bonus van {euro(z.bonus)}!</span>
+                    ? <span>🎉 Zomerdoel gehaald: verdien je bonus van {euro(z.bonus)}!</span>
                     : (
                       <span>
                         Nog {euro(Math.max(0, z.doel - z.verdiend))} tot je doel · dan{' '}

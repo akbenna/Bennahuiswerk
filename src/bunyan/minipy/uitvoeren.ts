@@ -268,7 +268,7 @@ export class Uitvoerder {
         if (INGEBOUWD.has(e.w)) return { ib: true, naam: e.w }
         if (e.w === 'random') return { mod: 'random' }
         throw fout(e.r, 'de naam "' + e.w + '" kent Python nog niet',
-          'Je gebruikt hem voordat je hem gemaakt hebt — of er zit een typefout in.')
+          'Je gebruikt hem voordat je hem gemaakt hebt, of er zit een typefout in.')
       }
       case 'min': {
         const w = this.ev(e.w, o)

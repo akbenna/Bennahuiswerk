@@ -90,7 +90,7 @@ function Binnen({ t }: { t: Toestand }): ReactNode {
       <div>
         <h1>Ouderscherm</h1>
         <p className="klein" style={{ marginTop: 6 }}>
-          Hier stel je de kinderen, het weekbudget, de gebedstijden en de synchronisatie in — en
+          Hier stel je de kinderen, het weekbudget, de gebedstijden en de synchronisatie in, en
           hier betaal je uit.
         </p>
       </div>
@@ -213,9 +213,9 @@ function Binnen({ t }: { t: Toestand }): ReactNode {
               value={g.gebedTelt ? 'ja' : 'nee'}
               onChange={(e) => zetGezin({ gebedTelt: e.target.value === 'ja' })}
             >
-              <option value="nee">Nee — alleen leren levert geld op</option>
+              <option value="nee">Nee (alleen leren levert geld op</option>
               <option value="ja">
-                Ja — {euro(TARIEF.gebed)} per gebed, max {euro(TARIEF.gebedDagMax)} per dag
+                Ja) {euro(TARIEF.gebed)} per gebed, max {euro(TARIEF.gebedDagMax)} per dag
               </option>
             </select>
           </label>
@@ -226,7 +226,7 @@ function Binnen({ t }: { t: Toestand }): ReactNode {
               kennen, een examen doen. Dat is meetbaar en het went niet snel. Het gebed zelf is
               aanbidding; als daar een tarief aan hangt, verschuift de reden waarom een kind
               bidt. Voor het gebed werkt de stickerkaart, de reeks en een compliment beter. Wil
-              je het toch anders, dan zet je het hier om — het is jouw keuze en de app rekent
+              je het toch anders, dan zet je het hier om; het is jouw keuze en de app rekent
               gewoon mee.
             </p>
           </div>
@@ -308,8 +308,8 @@ function Binnen({ t }: { t: Toestand }): ReactNode {
               value={stand.instel.stem ? '1' : '0'}
               onChange={(e) => zetInstel({ stem: e.target.value === '1' })}
             >
-              <option value="1">Aan — ook waar geen opname is</option>
-              <option value="0">Uit — alleen echte opnames</option>
+              <option value="1">Aan (ook waar geen opname is</option>
+              <option value="0">Uit) alleen echte opnames</option>
             </select>
           </label>
           <p className="klein" style={{ marginTop: 6 }}>
@@ -366,8 +366,8 @@ function Binnen({ t }: { t: Toestand }): ReactNode {
                   value={stand.instel.harakat ? '1' : '0'}
                   onChange={(e) => zetInstel({ harakat: e.target.value === '1' })}
                 >
-                  <option value="1">Ja — met de tekens (meestal beter)</option>
-                  <option value="0">Nee — zonder de tekens</option>
+                  <option value="1">Ja (met de tekens (meestal beter)</option>
+                  <option value="0">Nee) zonder de tekens</option>
                 </select>
               </label>
               <div className="kader let" style={{ marginTop: 12 }}>
@@ -378,7 +378,7 @@ function Binnen({ t }: { t: Toestand }): ReactNode {
                   vaak verkeerd. Download de verbeterde versie via <b>Instellingen →
                   Toegankelijkheid → Gesproken materiaal → Stemmen → Arabisch</b> en kies daar de
                   variant met de grootste download. Helpt dat niet genoeg, zet dan de
-                  klinkertekens uit — sommige stemmen struikelen erover.
+                  klinkertekens uit; sommige stemmen struikelen erover.
                 </p>
                 <p style={{ marginTop: 8 }}>
                   Blijft het onvoldoende, en dat is het meestal: zet hierboven "alleen echte
@@ -419,7 +419,7 @@ function Binnen({ t }: { t: Toestand }): ReactNode {
               <h4>Verander deze code</h4>
               <p>
                 Hij staat nog op <b>1234</b>, en dat raadt een kind binnen een minuut. Vul
-                hierboven iets anders in — dat is het enige dat dit scherm dichthoudt.
+                hierboven iets anders in: dat is het enige dat dit scherm dichthoudt.
               </p>
             </div>
           )}
@@ -434,7 +434,7 @@ function Binnen({ t }: { t: Toestand }): ReactNode {
           <h3>Centrale opslag</h3>
           <p className="klein" style={{ marginTop: 5 }}>
             Met een gezinsaccount staat de voortgang op elk toestel gelijk. Zonder internet werkt
-            alles gewoon door; bij de volgende verbinding wordt het samengevoegd — er gaat nooit
+            alles gewoon door; bij de volgende verbinding wordt het samengevoegd; er gaat nooit
             iets verloren.
           </p>
           <p className="klein" style={{ marginTop: 9 }}>
@@ -526,7 +526,7 @@ function Binnen({ t }: { t: Toestand }): ReactNode {
         </p>
         <p className="klein" style={{ marginTop: 8 }}>
           De Arabische teksten zijn met zorg overgenomen, maar controleer ze een keer naast een
-          moshaf of met de imam voordat een kind ze uit het hoofd leert — dat is nooit verkeerd.
+          moshaf of met de imam voordat een kind ze uit het hoofd leert; dat is nooit verkeerd.
         </p>
         <div className="rij" style={{ marginTop: 14 }}>
           <button className="btn" onClick={() => zetStudio(true)}>🎙 Eigen stem opnemen</button>

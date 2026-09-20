@@ -263,7 +263,7 @@ export function Vakken(p: VakkenProps): ReactNode {
 
         <div className="card">
           <div className="row" style={{ justifyContent: 'space-between' }}>
-            <b>⭐ Dagmissie {missie.klaar ? '— gehaald! 🎉' : ''}</b>
+            <b>⭐ Dagmissie {missie.klaar ? '✓  gehaald! 🎉' : ''}</b>
             <span className="muted" style={{ fontSize: 13 }}>
               🔥 missie-streak: {p.prog.missieStreak || 0}
             </span>
@@ -301,7 +301,7 @@ export function Vakken(p: VakkenProps): ReactNode {
                     {' '}→ bonus {euro(b.toetsEuro)}
                   </span>
                   )
-                : <span>💡 Haal een oefentoets voor een bonus — hoe hoger je score, hoe meer.</span>}
+                : <span>💡 Haal een oefentoets voor een bonus: hoe hoger je score, hoe meer.</span>}
             </div>
             <div className="row" style={{ justifyContent: 'space-between', marginTop: 8, fontSize: 12 }}>
               <span className="muted">Deze week verdiend: <b>{euro(wv)}</b> van {euro(b.weekbudget)}</span>
@@ -378,12 +378,12 @@ export function Vakken(p: VakkenProps): ReactNode {
       <div className="center" style={{ marginTop: 14 }}>
         <button
           type="button" className="btn gold" onClick={() => p.naarOnderwerp('__proeftoets__', jaar)}
-        >📝 Proeftoets — 20 vragen, alle vakken door elkaar</button>
+        >📝 Proeftoets: 20 vragen, alle vakken door elkaar</button>
       </div>
 
       <div className="center" style={{ marginTop: 10 }}>
         <button type="button" className="btn ghost" onClick={p.naarLeerscan}>
-          🔎 {p.prog.leerscan ? 'Zo leer jij' : 'Hoe leer jij? — 15 korte vragen'}
+          🔎 {p.prog.leerscan ? 'Zo leer jij' : 'Hoe leer jij?: 15 korte vragen'}
         </button>
       </div>
 
@@ -399,7 +399,7 @@ export function Vakken(p: VakkenProps): ReactNode {
         {spelOpSlot
           ? (
             <button type="button" className="btn ghost" disabled title="Haal eerst je dagdoel">
-              🔒 Spelletjes — haal eerst je dagdoel
+              🔒 Spelletjes: haal eerst je dagdoel
             </button>
             )
           : (

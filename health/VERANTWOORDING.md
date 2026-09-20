@@ -1855,22 +1855,59 @@ apostrof — in JSX is `zo'n` gewoon tekst, en wie daar een string ziet beginnen
 leest de rest van het bestand verkeerd. Die fout heeft de eerste versie van deze
 proef ook gemaakt. De parser die de edge-poort al gebruikt weet het verschil wel.
 
-### Waarom de andere apps nog niet om zijn
+### En de andere apps
 
-In Noer, Sanad, Arabisch, Bunyan, Huiswerk, Rasikh en het startscherm staan er
-nog 697 in schermtekst.
+Die zijn nu ook om: 886 streepjes in Noer, Sanad, Arabisch, Bunyan, Huiswerk,
+Rasikh, Spelletjes, het startscherm en de gedeelde laag.
 
-Een regelgestuurde vervanging haalde daar 139 van weg en maakte er onderweg
-brokken van: `"Vrijheid, gelijkheid, broederschap" — iedereen even vrij` werd een
-zin met een half streepje tegen het aanhalingsteken, en van een tussenzin bleef
-één sluithaakje over. Na aanscherping bleven er 98 over die aantoonbaar kloppen —
-alleen de gevallen waarin het vervolg de verbinding zelf al draagt ("en", "maar",
-"dus") en er geen tweede streepje in dezelfde zin staat. De overige 599 zijn een
-afweging per zin.
+Een regelgestuurde vervanging was de eerste poging en die maakte brokken. Van
+`"Vrijheid, gelijkheid, broederschap" — iedereen even vrij` maakte hij een zin
+met een half streepje tegen het aanhalingsteken, en van een tussenzin bleef één
+sluithaakje over. De fout zat in het venster: hij keek honderdtachtig tekens om
+zich heen en zag het tweede streepje van een paar daardoor soms wel en soms
+niet.
 
-Belangrijker: die apps dragen hun lesteksten in gouden waarden, en elf proeven
-vielen om op de leestof. Dat is geen hindernis maar het punt van die proeven —
-ze bestaan zodat lesmateriaal niet ongemerkt verandert. Het opnieuw ijken kan
-(`npm run gouden-waarden`), maar het is een besluit over andermans lesteksten en
-niet over opmaak. Daarom staat het stil tot iemand er ja op zegt.
+Wat wél werkte is de tekst eerst in zinnen knippen en dan pas tellen. Twee
+streepjes in dezelfde zin zijn een tussenzin en krijgen haakjes; een los
+streepje krijgt een komma als het vervolg de verbinding zelf al draagt ("en",
+"maar", "dus"), een dubbele punt na een kort label, en anders een komma. De
+schermen en de kortere teksten zijn daarnaast met de hand gedaan.
+
+Eén ding zat daarbij lelijk verstopt. Sanad schrijft het streepje in zijn bron
+als `\u2014`, en zowel mijn gereedschap als de proef sloegen bestanden over die
+het teken niet in hun bytes droegen. Vierendertig streepjes stonden er dus nog
+terwijl alles groen was. Die snelle uitweg is eruit.
+
+### Wat het de gouden waarden kostte
+
+Elf proeven vielen om, en dat was geen hindernis maar het punt van die proeven.
+
+De gouden waarden van de zes leer-apps worden gedraaid uit de oude
+HTML-pagina's in `gereedschap/oud/`. Ze bewijzen dat de overzetting naar
+TypeScript woordgetrouw was. Die pagina's bijwerken om een proef groen te
+krijgen zou het bewijsstuk vervalsen, en dat gebeurt hier niet.
+
+Wat er wél kon: de vinger over de wóórden laten lopen in plaats van over de
+tekens. `src/gedeeld/woordgelijk.ts` gooit hoofdletters en alles wat geen letter
+of cijfer is weg, aan beide kanten van de vergelijking. Daarmee ziet de proef de
+leestekens niet meer, en blijft ze zien wat ze hoort te zien: een woord dat
+verdwijnt, een getal dat verschuift, een les die van plaats wisselt.
+
+Dat is een versoepeling, en een versoepeling zonder proef is een gat. Daarom
+staat `src/gedeeld/woordgelijk.proef.ts` ernaast, met beide helften: wat er
+wegvalt (streepje, komma, dubbele punt en haakjes zijn gelijk; een punt met een
+hoofdletter erna ook) en wat er blijft (een verdwenen woord, een ander getal,
+een andere volgorde, een leeg geworden tekst). Plus de regel dat Arabisch en
+andere schriften blijven staan — werden die als leesteken weggegooid, dan kwam
+de halve leerstof op één lege tekst uit en stond alles groen om de verkeerde
+reden.
+
+De opwekkers draaien als los script zonder de padaliassen van de app en hebben
+daarom hun eigen kopie in `gereedschap/woordgelijk.mjs`. Twee kopieën die
+uiteenlopen geven een vinger die aan beide kanten anders gerekend wordt; de
+laatste regel van die proef draait ze allebei en legt ze naast elkaar.
+
+`schermtekst.proef.ts` is meeverhuisd naar `src/gedeeld/` en dekt nu alle negen
+apps.
+
 

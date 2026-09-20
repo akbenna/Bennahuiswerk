@@ -24,9 +24,12 @@ import {
 import { TARIEF, leeg, leegProg, samenvoegen } from './opslag'
 import type { Losse, Profiel, Stand, Voortgang } from './opslag'
 import type { Spoor } from './gegevens/soorten'
+import { woordgelijk } from '@/gedeeld/woordgelijk'
 
+/* De vinger loopt over de wóórden en niet over de leestekens. Waarom,
+   staat in `src/gedeeld/woordgelijk.ts`. */
 const vinger = (x: unknown): string =>
-  createHash('sha256').update(JSON.stringify(x)).digest('hex').slice(0, 16)
+  createHash('sha256').update(JSON.stringify(woordgelijk(x))).digest('hex').slice(0, 16)
 
 const NU = gouden.nu
 const KLOK = Date.parse(NU + 'T10:00:00Z')
