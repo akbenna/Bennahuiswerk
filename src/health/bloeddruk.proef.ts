@@ -22,7 +22,7 @@
  * gegevens weggooien.
  */
 import { describe, expect, it } from 'vitest'
-import { thuisbloeddruk } from './bloeddruk'
+import { spreekkamerUitThuis, thuisbloeddruk } from './bloeddruk'
 import type { IsoDatum, Meting } from '@/gedeeld/db/tabellen'
 
 let teller = 0
@@ -200,5 +200,44 @@ describe('een dag met meer dan twee metingen', () => {
     /* De laatste twee zouden 130/85 geven; alle drie geeft 137/88. */
     expect(t?.sys).toBe(137)
     expect(t?.dia).toBe(88)
+  })
+})
+
+/**
+ * DE SCHATTING VAN DE SPREEKKAMERWAARDE
+ *
+ * SCORE2 verwacht een spreekkamermeting; deze app meet thuis. De richtlijn zegt
+ * allebei: dat een thuiswaarde niet rechtstreeks in de risicotabel mag, en hoe
+ * je hem dan wel gebruikt. Wat deze proef vasthoudt zijn de twee ijkpunten uit
+ * tabel 1 en de regel dat de schatting nooit onder de thuiswaarde zakt.
+ */
+describe('van thuis naar de spreekkamer', () => {
+  /* DE TWEE GETALLEN DIE UIT DE RICHTLIJN KOMEN. Verandert hier iets, dan
+     verandert er iets aan de bron en niet aan de code. */
+  it('staat op de ijkpunten van tabel 1', () => {
+    expect(spreekkamerUitThuis(135)).toBe(140)
+    expect(spreekkamerUitThuis(170)).toBe(180)
+  })
+
+  it('ligt ertussenin op de lijn tussen die twee', () => {
+    expect(spreekkamerUitThuis(152)).toBe(159)
+    expect(spreekkamerUitThuis(146)).toBe(153)
+  })
+
+  it('telt er ook boven het bovenste ijkpunt bij op', () => {
+    expect(spreekkamerUitThuis(180)).toBe(191)
+  })
+
+  /* Zonder deze regel geeft de rechte lijn onder de 100 een spreekkamerwaarde
+     die láger is dan wat er thuis gemeten is. Dat is een uitloper van de
+     rekensom en geen bevinding. */
+  it('zakt nooit onder de thuiswaarde zelf', () => {
+    expect(spreekkamerUitThuis(100)).toBe(100)
+    expect(spreekkamerUitThuis(90)).toBe(90)
+  })
+
+  it('geeft niets terug bij een waarde die geen bloeddruk is', () => {
+    expect(spreekkamerUitThuis(0)).toBeNull()
+    expect(spreekkamerUitThuis(Number.NaN)).toBeNull()
   })
 })

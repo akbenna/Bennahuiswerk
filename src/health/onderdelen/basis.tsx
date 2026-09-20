@@ -192,16 +192,25 @@ export function Uitleg(
  * hetzelfde soort geheugen en twee sleutels voor één ding lopen uit elkaar.
  */
 export function Uitklap(
-  { id, kop, teken, dicht, children }:
+  { id, kop, teken, dicht, beginOpen, children }:
   {
     id: string; kop: string; teken?: (() => ReactNode) | undefined
     /** De regel onder de kop als hij dicht is: waarom zou je hem openen? */
     dicht?: string | undefined
+    /**
+     * Open bij het openen van het venster, wat er ook onthouden is.
+     *
+     * Dat "wat er ook onthouden is" is het punt: wie hier via een verwijzing
+     * binnenkomt, komt voor dít stuk. Een eerder dichtgeklapte stand hoort die
+     * bedoeling niet te overrulen, want dan klik je op een verwijzing en
+     * gebeurt er zichtbaar niets.
+     */
+    beginOpen?: boolean | undefined
     children: ReactNode
   },
 ) {
   const [open, zetOpen] = useState(false)
-  useEffect(() => { zetOpen(leesStand()[id] ?? false) }, [id])
+  useEffect(() => { zetOpen(beginOpen ? true : leesStand()[id] ?? false) }, [id, beginOpen])
 
   const wissel = useCallback(() => {
     zetOpen((was) => {

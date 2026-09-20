@@ -2564,3 +2564,124 @@ Die tien zijn van hieruit niet te schrijven, want hun tekst staat alleen in de
 database. `health/database/uitlezen-functies.sql` haalt hem op. Wat er niet
 gebeurt is ze uit het hoofd reconstrueren: een verslag dat lijkt op wat er
 draait is erger dan geen verslag, want het wordt geloofd.
+
+## 38. Wat de richtlijnmodule bevestigde, en het getal dat daardoor fout stond
+
+Bij §33 is het protocol bloeddruk meten nagelopen en stond eronder wat er niet
+mee bevestigd was: de 7-2-2-opzet, het vervallen van de eerste dag, en de grens
+van 135/85. Die drie hingen aan weergaven van derden.
+
+De richtlijnmodule Bloeddrukmeting bij CVRM (NHG en NIV, 17 oktober 2018,
+geldigheid beoordeeld 1 juni 2021) gaat wél over de ambulante metingen, en
+bevestigt er twee van:
+
+- **De opzet.** "Een week lang volgens protocol 2x per dag." Zeven dagen en twee
+  meetmomenten per dag staan daarmee vast.
+- **De grens.** Tabel 1 zet een spreekkamermeting van 140 mmHg naast een
+  geprotocolleerde thuismeting van 135, en 180 naast 170.
+
+Wat er níet in staat, en dus tweedehands blijft: de twee metingen per
+meetmoment, de gewenningsdag, en de 85 diastolisch. Tabel 1 gaat alleen over de
+bovendruk.
+
+### Het getal dat daardoor fout stond
+
+Diezelfde module zegt iets wat deze app negeerde: ambulante metingen kunnen niet
+rechtstreeks in de risicotabel, want het uitgangspunt van die tabel zijn
+gestandaardiseerde spreekkamermetingen. Wie er een thuiswaarde in stopt, krijgt
+een risico dat te laag uitvalt.
+
+En dat deed de app. SCORE2 rekende met `nieuwste('bloeddruk_sys')`: de laatste
+losse meting, thuis gedaan. Twee fouten in één getal. Eén meting is geen
+bloeddruk, en dat weet deze app als geen ander, want de kaart eronder rekent al
+over een week. En een thuiswaarde valt lager uit dan de spreekkamerwaarde waar
+de tabel op rust.
+
+Nu gaat het weekgemiddelde erin, omgerekend met tabel 1. Wat erin ging staat op
+het scherm, met het risico zonder die stap ernaast, zodat te zien is hoeveel de
+correctie uitmaakt. Er is geen tweede getal bijgekomen: er staat één risico, en
+eronder waar het op rust.
+
+### Waarom de schatting nooit onder de thuiswaarde zakt
+
+De lijn door de twee ijkpunten snijdt de diagonaal rond de 100 mmHg. Daaronder
+zou hij een spreekkamerwaarde geven die láger is dan wat er thuis gemeten is, en
+dat is een uitloper van de rekensom en geen bevinding. Daar houdt de schatting
+op bij de thuiswaarde zelf. Zes proeven, waarvan twee op de ijkpunten: verandert
+daar iets, dan verandert er iets aan de bron en niet aan de code.
+
+En één ding dat de module toevoegt en dat nu op het scherm staat: een
+24-uursmeting heeft de voorkeur boven de week thuis, omdat de nachtelijke
+bloeddruk een sterkere voorspeller is dan die overdag. Deze app meet thuis. Dat
+is de tweede keus, en dat hoort er te staan.
+
+## 39. Het overzicht dat je meeneemt naar het spreekuur
+
+Een consult duurt tien minuten. Alles wat in deze app staat, staat er dan niet:
+voorlezen van een telefoon kost meer tijd dan er is, en de helft komt er
+verkeerd uit. Op Gezondheid staat nu één knop die er één tekst van maakt, om te
+plakken in een mail of een bericht aan de praktijk.
+
+Platte tekst en geen bestand: tekst overleeft elke overdracht en een PDF niet.
+
+### Vijf regels, en ze volgen alle vijf uit de rest van deze app
+
+**Er wordt niets nieuws uitgerekend.** Elk getal in het vel staat al op het
+scherm en wordt aangereikt, niet opnieuw berekend. Anders konden het scherm en
+het briefje verschillende dingen zeggen over dezelfde dag.
+
+**De voorbehouden reizen mee.** Een SCORE2 van 6,4 procent zonder de
+onderschatting van 1,3 en zonder de C-index is in de inbox van een huisarts een
+ander getal. Wat op het scherm onder het getal staat, staat in het vel onder het
+getal. Vijf mutanten gedood, en ze gingen alle vijf over weglaten: het voorbehoud
+bij SCORE2, dat bij FIB-4, de datum bij een labwaarde, de bloeddruk waarmee
+gerekend is, en een maat die ontbreekt.
+
+**Er staat waar het vandaan komt.** Bovenaan staat dat het zelfgemeten en zelf
+ingevoerde waarden zijn. In platte tekst ziet een overgetikt getal er precies
+hetzelfde uit als een labuitslag.
+
+**Wat ontbreekt krijgt een regel.** Onderaan staat wat er niet in staat en
+waarom: welke labwaarden leeg zijn, dat FIB-4 zonder ASAT niet te berekenen is,
+dat de vragenlijst niet is ingevuld. Leeg betekent in deze app niet gemeten, en
+dat is iets anders dan goed.
+
+**Er staat geen oordeel in.** De proef op de gerenderde pagina zoekt naar "te
+hoog", "te laag" en "goed bezig" en valt om als ze er staan.
+
+### Twee dingen aan de vorm
+
+**Het vel is zichtbaar vóór je het kopieert.** Wat je verstuurt, hoor je gelezen
+te hebben. Een knop die stilletjes iets over je gezondheid op je klembord zet, en
+daarmee op de volgende plek waar je plakt, is hier de verkeerde vorm.
+
+**Een kop komt alleen als er iets onder staat.** Een kop boven niets leest als
+een gegeven dat is weggevallen, en dat is erger dan de regel onderaan waar hij
+dan wél staat.
+
+## 40. Elf stukken die je moest kennen om ze te vinden
+
+Het boekje Verdiepen stond als één knop onderaan Profiel, in een kaart die over
+de herkomst van de getallen gaat. Elf stukken met bronnen, en je moest weten dat
+ze bestonden om ze te vinden.
+
+Dat is dezelfde fout als met de conditiekaart, en die staat in dit bestand al
+opgeschreven: een functie die pas bestaat als je hem al kent, bestaat niet.
+
+Nu staat de inhoudsopgave op het scherm en niet de doos. Elf titels, aan te
+tikken, en je komt binnen op het stuk dat je aanwees. Wat het kost is elf regels
+op een scherm dat toch al scrollt; wat het oplevert is dat die stukken bestaan
+voor wie er niet naar op zoek was.
+
+Daarnaast staan er nu verwijzingen op de plek waar de vraag opkomt: bij de
+slaapkaart naar het stuk over slaap, bij je traject naar het stuk over de trap,
+en op Gezondheid, waar iemand met een aandoening binnenkomt, naast "Leren over
+je aandoening".
+
+### Eén regel code die het verschil maakt tussen werken en niet werken
+
+Een uitklapper onthoudt per blok of jij hem open of dicht zette. Wie een stuk
+ooit dichtklapte en daarna op een verwijzing ernaartoe tikt, zou het boekje open
+krijgen met dat ene stuk dicht: je klikt, en er gebeurt zichtbaar niets. Een
+verwijzing wint daarom van de onthouden stand, en alleen die kant op. De proef
+op de gerenderde pagina zet die stand met opzet op dicht voordat hij klikt.

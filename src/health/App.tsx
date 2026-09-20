@@ -105,6 +105,14 @@ export function App() {
   const [tab, zetTab] = useState<Tab>('vandaag')
   const [datum, zetDatum] = useState<IsoDatum>(vandaag())
   const [venster, zetVenster] = useState<VensterNaam | null>(null)
+  /* Welk stuk van het boekje open moet staan als het venster opengaat. Een
+     verwijzing vanaf een kaart komt hier binnen; zonder stuk gaat het boekje
+     gewoon bovenaan open. */
+  const [verdiepStuk, zetVerdiepStuk] = useState<string | null>(null)
+  const opVerdiepen = (stuk?: string): void => {
+    zetVerdiepStuk(stuk ?? null)
+    zetVenster('verdiepen')
+  }
   /* De namen bij weggeklikte codes, zolang deze sessie duurt. Ze worden niet
      bewaard: de code in het profiel is de echte verwijzing, en een naam die
      meereist zou een tweede waarheid zijn die na een NEVO-versie niet meer
@@ -317,6 +325,7 @@ export function App() {
               a={a} profiel={profiel} labs={k.alles.labs} metingen={k.alles.metingen}
               reeks={reeks}
               opProfiel={() => zetVenster('profiel')} opLeren={() => zetVenster('leren')}
+              opVerdiepen={opVerdiepen}
               vragenlijsten={k.alles.vragenlijsten}
               bewaarMeting={(m) =>
                 void k.wijzig((t) => roep('kal_rij_toevoegen', {
@@ -334,7 +343,8 @@ export function App() {
           )}
 
           {tab === 'meer' && (
-            <Meer dagen={k.dagenkaart} reeks={reeks} profiel={profiel} opVenster={zetVenster} />
+            <Meer dagen={k.dagenkaart} reeks={reeks} profiel={profiel} opVenster={zetVenster}
+                  opVerdiepen={opVerdiepen} />
           )}
         </div>
 
@@ -400,7 +410,7 @@ export function App() {
       )}
 
       {venster === 'verdiepen' && (
-        <VerdiepVenster opSluiten={() => zetVenster(null)} />
+        <VerdiepVenster begin={verdiepStuk} opSluiten={() => zetVenster(null)} />
       )}
 
       {venster === 'profiel' && (

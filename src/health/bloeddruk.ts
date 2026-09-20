@@ -109,12 +109,26 @@
  * hierboven wordt rechtgezet. Het verschil staat hier opgeschreven en wordt
  * vastgehouden door een proef, zodat het niet stilletjes kan verschuiven.
  *
- * **Niet nagelaten tegen het document zelf:** het protocol thuisbloeddrukmeting.
- * De 7-2-2-opzet, het vervallen van de eerste dag en de grens van 135/85 mmHg
- * komen nog steeds uit drie onafhankelijke weergaven en niet uit dat protocol.
- * Het document dat hierboven is nagelopen gaat daar niet over en bevestigt ze
- * dus niet. Wie het protocol thuisbloeddrukmeting op zijn bureau heeft, hoort
- * die drie nog na te lopen voordat ze als gecontroleerd gelden.
+ * **Nagelopen op 20 september 2026:** de richtlijnmodule Bloeddrukmeting bij
+ * CVRM (NHG en NIV, 17 oktober 2018, geldigheid beoordeeld 1 juni 2021). Die
+ * gaat wél over de ambulante metingen, en bevestigt er twee van de drie:
+ *
+ *   - De opzet van de week thuis: "een week lang volgens protocol 2x per dag".
+ *     Zeven dagen en twee meetmomenten per dag staan daarmee vast.
+ *   - De grens: tabel 1 zet een spreekkamermeting van 140 mmHg gelijk aan een
+ *     geprotocolleerde thuismeting van 135 mmHg, en 180 aan 170. De 135
+ *     systolisch rust dus niet langer op weergaven van derden.
+ *
+ * Wat die module níet bevestigt, en wat dus tweedehands blijft: de twee
+ * metingen per meetmoment (de tweede 2 van 7-2-2), het vervallen van de eerste
+ * dag als gewenningsdag, en de 85 diastolisch. Tabel 1 gaat alleen over de
+ * bovendruk.
+ *
+ * En één ding dat de module toevoegt en dat de app op het scherm zegt: een
+ * 24-uursmeting heeft de voorkeur boven de week thuis, omdat de bloeddruk over
+ * de nacht een sterkere voorspeller is dan die overdag en een thuismeting daar
+ * niets over zegt. Deze app meet thuis; dat is de tweede keuze en niet de
+ * eerste, en dat hoort er te staan.
  */
 import type { IsoDatum, Meting } from '@/gedeeld/db/tabellen'
 import { dagenTussen } from './klinisch'
@@ -196,4 +210,47 @@ export function thuisbloeddruk(
     spreidingSys: Math.round(Math.max(...dagSys) - Math.min(...dagSys)),
     gewenningsdagWeg,
   }
+}
+
+/**
+ * VAN EEN THUISMETING NAAR DE SPREEKKAMERWAARDE DIE SCORE2 VERWACHT
+ *
+ * SCORE2 rekent met een spreekkamermeting. Dat staat er met zoveel woorden in
+ * de richtlijnmodule: ambulante metingen kunnen niet rechtstreeks in de
+ * risicotabel, want het uitgangspunt van die tabel zijn gestandaardiseerde
+ * spreekkamerbloeddrukmetingen. Wie er een thuiswaarde in stopt, krijgt een
+ * risico dat te laag uitvalt, en dat is de verkeerde kant om fout te zitten.
+ *
+ * Diezelfde module zegt ook wat je dan wél doet: schat de spreekkamerwaarde uit
+ * de ambulante meting, met tabel 1. Die tabel geeft twee ijkpunten voor de
+ * geprotocolleerde thuismeting, 135 bij 140 en 170 bij 180, en daartussen ligt
+ * hier een rechte lijn.
+ *
+ * DRIE DINGEN DIE HIERBIJ HOREN TE STAAN
+ *
+ * **Het is een schatting en geen omrekening.** De richtlijn zegt zelf dat het
+ * hogere ijkpunt op een schatting berust, mede op de Amerikaanse richtlijn en
+ * op consensus van experts. Alleen het punt bij 140 is werkelijk onderbouwd.
+ *
+ * **De lijn loopt nooit de verkeerde kant op.** Op beide ijkpunten ligt de
+ * spreekkamerwaarde hóger dan de thuiswaarde. Ver onder het onderste ijkpunt
+ * zou de rechte lijn daar doorheen zakken en een spreekkamerwaarde geven die
+ * lager is dan wat er thuis gemeten is. Dat is een rekenkundige uitloper en
+ * geen bevinding, dus daar houdt de schatting op bij de thuiswaarde zelf.
+ *
+ * **Dit is het enige wat de app met die grens doet.** Er komt geen oordeel uit
+ * en geen kleur; de omrekening bestaat alleen zodat het getal dat in SCORE2
+ * gaat van de juiste soort is.
+ */
+export const TABEL1 = {
+  thuisLaag: 135, spreekkamerLaag: 140,
+  thuisHoog: 170, spreekkamerHoog: 180,
+} as const
+
+export function spreekkamerUitThuis(thuisSys: number): number | null {
+  if (!Number.isFinite(thuisSys) || thuisSys <= 0) return null
+  const helling = (TABEL1.spreekkamerHoog - TABEL1.spreekkamerLaag)
+    / (TABEL1.thuisHoog - TABEL1.thuisLaag)
+  const schatting = TABEL1.spreekkamerLaag + (thuisSys - TABEL1.thuisLaag) * helling
+  return Math.round(Math.max(schatting, thuisSys))
 }

@@ -14,13 +14,16 @@ import { dec } from '@/gedeeld/getal'
 import { kortNL, vandaag } from '@/gedeeld/datum'
 import type { IsoDatum, Lab, Meting, Profiel, Vragenlijst } from '@/gedeeld/db/tabellen'
 import type { Analyse, Trendpunt } from '../rekenkern'
-import { VENSTER_DAGEN, thuisbloeddruk } from '../bloeddruk'
+import { VENSTER_DAGEN, spreekkamerUitThuis, thuisbloeddruk } from '../bloeddruk'
+import type { Thuisbloeddruk } from '../bloeddruk'
 import { LeegGeenGegevens } from '../leegbeeld'
 import { MEDICATIEGROEPEN, conditieGezet, conditieVan } from '../conditie'
 import {
   STOPBANG, fib4, middelLengte, nieuwste, rustpols, score2, stopbangScore, stopbangUitGegevens,
 } from '../klinisch'
 import { middelbeloop } from '../middelbeloop'
+import { spreekuurtekst } from '../spreekuur'
+import type { Spreekuurbron } from '../spreekuur'
 import { tijdspanne, veranderingen } from '../verandering'
 import type { Verandering } from '../verandering'
 import type { Rustpols, StopbangAntwoorden, StopbangSleutel } from '../klinisch'
@@ -61,6 +64,8 @@ export interface KlinischEigenschappen {
   opProfiel: () => void
   /** Het venster Leren openen. */
   opLeren: () => void
+  /** Het boekje Verdiepen openen, eventueel meteen op één stuk. */
+  opVerdiepen: (stuk?: string) => void
   labs: Lab[]
   metingen: Meting[]
   /** De hele reeks, voor de kaart met wat er veranderd is. */
@@ -89,13 +94,34 @@ export function Klinisch(p: KlinischEigenschappen) {
   const pols = rustpols(metingen)
   const tc = lab('tc'), hdl = lab('hdl')
 
-  const sc = sbd?.waarde != null && tc?.waarde != null && hdl?.waarde != null
+  /* SCORE2 REKENT MET DE SPREEKKAMER, EN DEZE APP MEET THUIS
+   *
+   * Hier stond de nieuwste losse bloeddrukmeting in de risicoschatting. Dat is
+   * twee keer de verkeerde waarde. Eén meting is geen bloeddruk, en dat weet
+   * deze app: de kaart eronder rekent al over een week. En een thuismeting mag
+   * volgens de richtlijnmodule niet rechtstreeks in de risicotabel, want die
+   * tabel gaat uit van gestandaardiseerde spreekkamermetingen. Een thuiswaarde
+   * valt lager uit, dus het risico viel te laag uit.
+   *
+   * Nu gaat de week erin, omgerekend naar de spreekkamerwaarde die de tabel
+   * verwacht. Hoe die schatting loopt staat in `bloeddruk.ts`; wat er ingegaan
+   * is staat op het scherm, met het risico zonder correctie ernaast. */
+  const thuis = thuisbloeddruk(metingen, vandaag())
+  const sysThuis = thuis?.sys ?? (sbd?.waarde != null ? Number(sbd.waarde) : null)
+  const sysSpreekkamer = sysThuis != null ? spreekkamerUitThuis(sysThuis) : null
+
+  const risico = (sys: number) => (tc?.waarde != null && hdl?.waarde != null
     ? score2(profiel.geslacht, {
         leeftijd: profiel.leeftijd_jaar ?? 0,
         rook: !!profiel.instellingen.rookt,
-        sbd: Number(sbd.waarde), tc: Number(tc.waarde), hdl: Number(hdl.waarde), dm: false,
+        sbd: sys, tc: Number(tc.waarde), hdl: Number(hdl.waarde), dm: false,
       })
-    : null
+    : null)
+
+  const sc = sysSpreekkamer != null ? risico(sysSpreekkamer) : null
+  /* Wat er gestaan zou hebben zonder de omrekening. Niet om te kiezen, maar
+     omdat een lezer hoort te zien hoeveel die stap uitmaakt. */
+  const scZonder = sysThuis != null ? risico(sysThuis) : null
 
   const f = fib4({
     leeftijd: profiel.leeftijd_jaar ?? 0,
@@ -117,6 +143,44 @@ export function Klinisch(p: KlinischEigenschappen) {
   })
   const gemeten = gekeurd.filter((g) => g.x != null)
   const buiten = gemeten.filter((g) => g.buiten)
+
+  /* HET VEL VOOR HET SPREEKUUR
+     Alles wat hierboven al is uitgerekend, en niets nieuws. Zie de kop van
+     `spreekuur.ts`: zou dit vel zelf rekenen, dan konden het scherm en het
+     briefje verschillende dingen zeggen over dezelfde dag.
+     De STOP-BANG komt uit de bewaarde vragenlijst en niet uit de vinkjes op het
+     scherm: wat je nog niet bewaard hebt, heb je nog niet ingevuld. */
+  const sbLijst = nieuwste(p.vragenlijsten, (x) => x.soort === 'stopbang')
+  /* De laatste waarde van de gladde lijn, niet `a.gewicht`: dat is de weging
+     zelf, en die verschilt van dag tot dag voor een flink deel door vocht. */
+  const trendKg = [...p.reeks].reverse().find((x) => x.ema != null)?.ema ?? null
+  const spreekuur: Spreekuurbron = {
+    vandaag: vandaag(),
+    gewichtKg: trendKg,
+    bmi: a.bmi,
+    middelCm: middel?.waarde != null ? Number(middel.waarde) : null,
+    middelDatum: middel?.datum ?? null,
+    middelLengte: middelLengte(middel ? Number(middel.waarde) : null, profiel.lengte_cm),
+    middelbeloop: middelbeloop(metingen, p.reeks),
+    thuis,
+    sysSpreekkamer,
+    veranderingen: veranderingen(p.reeks, metingen, labs),
+    labs: gemeten.map((g) => ({
+      naam: g.naam, waarde: Number(g.x?.waarde), eenheid: g.eenheid,
+      lo: g.lo, hi: g.hi, datum: g.x?.datum ?? '',
+    })),
+    labsLeeg: gekeurd.filter((g) => g.x == null).map((g) => g.naam),
+    score2: sc ? { risico: sc.risico, klasse: sc.klasse } : null,
+    fib4: f ? {
+      waarde: f.waarde,
+      klasse: f.klasse === 'uitgesloten' ? 'fibrose praktisch uitgesloten'
+        : f.klasse === 'grijs' ? 'grijze zone, een tweede test hoort erbij'
+        : 'boven 2,67, verwijzing MDL overwegen',
+    } : null,
+    stopbang: sbLijst?.score != null && sbLijst.klasse
+      ? { score: sbLijst.score, klasse: `${sbLijst.klasse} risico` }
+      : null,
+  }
 
   return (
     <>
@@ -179,9 +243,10 @@ export function Klinisch(p: KlinischEigenschappen) {
         )}
       </Schermkop>
 
-      <Conditiekaart profiel={profiel} opProfiel={p.opProfiel} opLeren={p.opLeren} />
+      <Conditiekaart profiel={profiel} opProfiel={p.opProfiel} opLeren={p.opLeren}
+                     opVerdiepen={p.opVerdiepen} />
       <Veranderingkaart rijen={veranderingen(p.reeks, metingen, labs)} />
-      <Eigenbloeddruk metingen={metingen} />
+      <Eigenbloeddruk t={thuis} />
 
       <MetingInvoer bewaar={p.bewaarMeting} a={a} sbd={sbd} dbd={dbd} middel={middel}
                     lengteCm={profiel.lengte_cm} alleMetingen={metingen} reeks={p.reeks}
@@ -196,6 +261,16 @@ export function Klinisch(p: KlinischEigenschappen) {
               <span className="getal" style={{ fontSize: '2rem' }}>{dec(sc.risico, 1)}%</span>
               <span className="klein">{sc.klasse} risico volgens NHG-CVRM</span>
             </Rij>
+            <p className="mini" style={{ marginTop: 8 }}>
+              Gerekend met <b className="hoeveelheid">{sysSpreekkamer} mmHg</b> bovendruk:
+              {thuis
+                ? ` de geschatte spreekkamerwaarde bij je thuisgemiddelde van ${sysThuis} over `
+                  + `${thuis.dagen} ${thuis.dagen === 1 ? 'dag' : 'dagen'}.`
+                : ` de geschatte spreekkamerwaarde bij je laatste meting van ${sysThuis}.`}
+              {' '}De risicotabel gaat uit van een meting in de spreekkamer, en die valt hoger uit
+              dan een meting thuis; de omrekening komt uit tabel 1 van de richtlijnmodule.
+              {scZonder ? ` Zonder die stap zou hier ${dec(scZonder.risico, 1)}% staan.` : ''}
+            </p>
             <p className="mini" style={{ marginTop: 8 }}>
               Berekend met het gepubliceerde ESC-algoritme voor de laag-risicoregio, niet met de tabel.
               Twee kanttekeningen die erbij horen: SCORE2 onderschat in Nederland met een factor 1,3 bij
@@ -248,7 +323,70 @@ export function Klinisch(p: KlinischEigenschappen) {
                        bmi: a.bmi,
                        nekCm: nek ? Number(nek.waarde) : null,
                      })} />
+
+      <Spreekuurkaart bron={spreekuur} />
     </>
+  )
+}
+
+/**
+ * MEE NAAR HET SPREEKUUR
+ *
+ * Een consult duurt tien minuten. Alles wat op dit scherm staat, staat er dan
+ * niet: voorlezen van een telefoon kost meer tijd dan er is, en de helft komt
+ * er verkeerd uit. Dit maakt er één tekst van om te plakken.
+ *
+ * WAAROM HET VEL ZICHTBAAR IS VOORDAT JE HET KOPIEERT
+ *
+ * Wat je verstuurt, hoor je gelezen te hebben. Een knop die stilletjes iets
+ * over je gezondheid naar je klembord zet, en dus naar de volgende plek waar je
+ * plakt, is in deze app de verkeerde vorm. Vandaar de tekst erbij, in dezelfde
+ * regels als waarin hij vertrekt.
+ */
+function Spreekuurkaart({ bron }: { bron: Spreekuurbron }) {
+  const tekst = spreekuurtekst(bron)
+  const [gedaan, zetGedaan] = useState(false)
+
+  async function kopieer() {
+    try {
+      await navigator.clipboard.writeText(tekst)
+      zetGedaan(true)
+      setTimeout(() => zetGedaan(false), 2400)
+    } catch {
+      /* Het klembord mag alleen in een beveiligde context. Dan maar selecteren:
+         beter dan een knop die niets doet en niets zegt. */
+      const el = document.getElementById('spreekuurvel')
+      if (el) {
+        const bereik = document.createRange()
+        bereik.selectNodeContents(el)
+        getSelection()?.removeAllRanges()
+        getSelection()?.addRange(bereik)
+      }
+    }
+  }
+
+  return (
+    <Kaart>
+      <Kop teken={WegMeting}>Mee naar het spreekuur</Kop>
+      <p style={{ fontSize: '.92rem', marginTop: 8 }}>
+        Alles van dit scherm in één tekst: je gewicht uit de trend, de week bloeddruk, je
+        middelomtrek met de datum, de labwaarden zoals je ze overnam, en wat de app daaruit
+        berekent. De voorbehouden gaan mee, want een getal zonder die zinnen is in een mailbox
+        een ander getal.
+      </p>
+      <Rij style={{ marginTop: 12 }}>
+        <Knop vol opKlik={() => void kopieer()}>
+          {gedaan ? 'Gekopieerd' : 'Kopieer het overzicht'}
+        </Knop>
+      </Rij>
+      <p className="mini" style={{ marginTop: 8 }}>
+        Er wordt niets verstuurd en niets opgeslagen: de tekst gaat naar je klembord en verder
+        nergens heen. Wat je ermee doet is aan jou.
+      </p>
+      <Uitleg id="spreekuurvel-toon" label="lees eerst wat erin staat">
+        <pre id="spreekuurvel" className="spreekuurvel">{tekst}</pre>
+      </Uitleg>
+    </Kaart>
   )
 }
 
@@ -273,8 +411,11 @@ export function Klinisch(p: KlinischEigenschappen) {
  * ook wát de app ermee doet. Anders blijft het een vinkje zonder gevolg.
  */
 function Conditiekaart(
-  { profiel, opProfiel, opLeren }:
-  { profiel: Profiel; opProfiel: () => void; opLeren: () => void },
+  { profiel, opProfiel, opLeren, opVerdiepen }:
+  {
+    profiel: Profiel; opProfiel: () => void; opLeren: () => void
+    opVerdiepen: (stuk?: string) => void
+  },
 ) {
   const c = conditieVan(profiel.instellingen)
   const med = (c.med ?? []).map((g) => MEDICATIEGROEPEN.find((m) => m.groep === g)).filter(Boolean)
@@ -300,6 +441,7 @@ function Conditiekaart(
         <Rij style={{ marginTop: 12 }}>
           <Knop vol opKlik={opProfiel}>Invullen</Knop>
           <Knop opKlik={opLeren}>Leren over je aandoening</Knop>
+          <Knop opKlik={() => opVerdiepen()}>Lezen over afvallen</Knop>
         </Rij>
       </Kaart>
     )
@@ -346,6 +488,7 @@ function Conditiekaart(
       <Rij style={{ marginTop: 12 }}>
         <Knop opKlik={opProfiel}>Aanpassen</Knop>
         <Knop vol opKlik={opLeren}>Leren over je aandoening</Knop>
+        <Knop opKlik={() => opVerdiepen()}>Lezen over afvallen</Knop>
       </Rij>
     </Kaart>
   )
@@ -410,8 +553,7 @@ function Veranderingkaart({ rijen }: { rijen: Verandering[] }) {
   )
 }
 
-function Eigenbloeddruk({ metingen }: { metingen: Meting[] }) {
-  const t = thuisbloeddruk(metingen, vandaag())
+function Eigenbloeddruk({ t }: { t: Thuisbloeddruk | null }) {
   if (!t) return null
 
   return (
@@ -457,13 +599,22 @@ function Eigenbloeddruk({ metingen }: { metingen: Meting[] }) {
         <p>
           In de spreekkamer geldt bovendien een andere grens dan thuis. Daar wordt een verhoogde
           bloeddruk vastgesteld op het gemiddelde van de geregistreerde bovendrukken over drie
-          verschillende momenten, bij 140 mmHg of hoger. Voor de week thuis geldt een lagere grens,
-          en die zet deze app met opzet niet neer.
+          verschillende momenten, bij 140 mmHg of hoger. De richtlijn zet daar een thuismeting van
+          135 mmHg naast, en een spreekkamermeting van 180 naast een thuismeting van 170. Wat jouw
+          getal betekent zet deze app met opzet niet neer.
+        </p>
+        <p>
+          En de week thuis is niet de eerste keus. Een 24-uursmeting heeft de voorkeur, omdat de
+          bloeddruk over de nacht een sterkere voorspeller is dan die overdag, en daar zegt een
+          thuismeting niets over. Wat de thuismeting wél heeft: hij is minder belastend, en hij
+          vraagt van jou dat je een week lang twee keer per dag meet.
         </p>
         <p className="mini">
-          Bron: NHG, Protocol bloeddruk meten, 2022, versie 1.1. Dat protocol gaat over de meting
-          in de spreekkamer. De opzet van de week thuis staat in een eigen protocol, dat hier nog
-          niet is nagelopen.
+          Bronnen: NHG, Protocol bloeddruk meten, 2022, versie 1.1, voor de meting zelf. En de
+          richtlijnmodule Bloeddrukmeting bij CVRM (NHG en NIV, 17 oktober 2018, geldigheid
+          beoordeeld 1 juni 2021) voor de vergelijking tussen de meetmethodes, tabel 1. Wat daar
+          niet in staat, en hier dus tweedehands blijft: de twee metingen per meetmoment, het
+          vervallen van de eerste dag, en de 85 onderdruk.
         </p>
       </Uitleg>
     </Kaart>
@@ -641,7 +792,17 @@ function MetingInvoer(
           bloeddruk. Verschillen die twee meer dan 10 mmHg boven of 5 mmHg onder, meet dan door tot
           twee opeenvolgende metingen dichter bij elkaar liggen.
         </p>
-        <p className="mini">Bron: NHG, Protocol bloeddruk meten, 2022, versie 1.1.</p>
+        <p>
+          Voel bij het meten ook even je pols. Een onregelmatige hartslag kan op boezemfibrilleren
+          wijzen, en automatische bloeddrukmeters zijn daar niet voor goedgekeurd: de waarde die er
+          dan uitkomt is onbetrouwbaar. Voelt het onregelmatig, meld het dan bij je huisarts in
+          plaats van het getal te geloven.
+        </p>
+        <p className="mini">
+          Bronnen: NHG, Protocol bloeddruk meten, 2022, versie 1.1. Het voelen van de pols en de
+          beperking van automatische meters bij boezemfibrilleren staan in de richtlijnmodule
+          Bloeddrukmeting bij CVRM (NHG en NIV, 2018, beoordeeld 2021).
+        </p>
       </Uitleg>
       <Uitleg id="middelomtrek"
               label={middel ? 'waar die grenzen vandaan komen' : 'hoe je de middelomtrek meet'}>
