@@ -48,6 +48,8 @@ De regressie gebruikt de ingebouwde `regr_*`-aggregaten; de standaardfout van de
 
 **De opdracht schrijft voor wat er niet mag.** Nooit het puntgetal zonder interval. Geen waarschuwing over de trend onder de zeven wegingen, want daaronder is de helling ruis. Bij `te_snel`: het advies is méér eten. Geen aanmoediging, geen uitroeptekens, één concrete verandering per week en niet drie. Draait de Supabase-koppeling niet in die sessie, dan meldt hij dat in één zin en stopt, er wordt niet gegokt.
 
+**Wat er nooit uit mag komen: een gedachtestreepje.** Sinds 20 september staat dat als regel in `REGELS_GEMEEN` van `health/edge/kal-ai.ts`, de regels die elke aanroep van het model meekrijgt. De reden staat in de regel zelf: die zinnen komen letterlijk op het scherm van de gebruiker, en een `\u2014` midden in een zin is het duidelijkste spoor dat een tekst niet met de hand geschreven is. Onzekerheid en tussenzinnen dus met een komma, een dubbele punt, een punt of haakjes. Dit is de enige plek waar de repo-brede regel niet met een proef af te dwingen is (het model schrijft die tekst pas als hij draait), dus hij staat in de opdracht zelf. De regel is in de bron als `\u2014` geschreven en niet als het teken, anders zou het bestand zelf de repo-brede proef laten omvallen.
+
 **Eén ongemak, expliciet.** `kal_weekcijfers` is de rekenkern een tweede keer, nu in SQL. Twee implementaties kunnen uit elkaar lopen. Het alternatief (een geplande sessie die zelf gaat rekenen) is minder reproduceerbaar, dus dit is de minste van twee kwaden. **Wijzig je de kern in `kalibratie/index.html`, wijzig hem dan hier ook.** De ijkpunten staan in `VERANTWOORDING.md`.
 
 ---

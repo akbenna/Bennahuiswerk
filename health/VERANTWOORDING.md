@@ -2012,13 +2012,11 @@ gewone gang van zaken: achtentwintig dagen op streeftempo, met dagelijkse ruis,
 levert geen enkele markering op. Deze app is er voor iemand die afvalt, en een
 waarschuwing over precies dat gedrag zou het scherm met ruis vullen.
 
-### Wat hier nog open staat
+### Wat hier openstond, en hoe het is opgelost
 
-De grafiek schaalt mee met de uitbijter. Op de schermafdruk loopt de y-as tot
-191 en wordt de echte reeks tot een streepje samengedrukt. Dat is eerlijk (de
-meting stáát er) maar slecht leesbaar. Het alternatief is de as op de rest
-schalen en de uitbijter als los gemarkeerd punt aan de rand tonen. Dat is een
-ontwerpkeuze en geen rekenregel, en die staat daarom nog open.
+De grafiek schaalde mee met de uitbijter: de y-as liep tot 191 en de echte reeks
+werd een streepje. Dat is opgelost zoals hieronder in §31 staat: de as kijkt
+naar de reeks, de weging staat op de rand.
 
 
 ## 28. De sparkline die niets tekende
@@ -2175,3 +2173,54 @@ de groep die minstens 5 procent verlies vasthield. Bij de naloop van 20
 september bleek de extensie zelf 48,2 procent te geven; dat was toen in het
 boekje rechtgezet maar niet in het dossier, dus daar stonden twee getallen in
 één repo. Nu gelijkgetrokken, met de reden erbij.
+
+
+## 31. De as kijkt naar de reeks, de weging staat op de rand
+
+De uitbijter uit §27 werd wél aangewezen in de tekst, maar de figuur eronder
+bleef onleesbaar: één weging van 190,2 in een reeks rond de 118 liet de as van
+107 tot 191 lopen, en tweeëntwintig echte wegingen werden daardoor een streepje
+van een paar punten hoog. Letterlijk waar, en precies daardoor nutteloos: je zag
+alleen nog de fout.
+
+Dat stond hier als ontwerpkeuze open. Hij is nu gemaakt, en het is niet de keuze
+tussen eerlijk en leesbaar geworden maar allebei.
+
+**De as kijkt naar de reeks.** Een weging die als uitschieter is aangemerkt
+bepaalt de uitsnede niet meer.
+
+**De weging verdwijnt niet.** Hij staat op de rand van de figuur, met een ring
+eromheen zodat hij niet voor een gewone meting wordt aangezien, met een gestreept
+streepje dat naar buiten wijst, en met zijn eigen getal ernaast. Zonder dat getal
+zou de rand suggereren dat hij er net buiten ligt. Deze app gooit geen metingen
+weg, ook niet uit een plaatje.
+
+**Het voortschrijdend gemiddelde telt wél mee voor de as.** Dat is de uitkomst
+van het model en niet de meting. Bij alfa 0,1 loopt de lijn na zo'n weging een
+paar kilo mee omhoog en zakt daarna terug; dat hóórt zichtbaar te zijn, anders
+lijkt de trend kalmer dan hij is en verbergt de figuur juist de fout die de tekst
+eronder benoemt. Gemeten in de proefreeks: de as loopt nu van 115 tot 127 in
+plaats van 107 tot 191, met de piek van het gemiddelde erin.
+
+**En een gemarkeerde weging die gewoon binnen de uitsnede valt, blijft op zijn
+plek staan.** Op de rand zetten wat er niet buiten ligt zou liegen over waar het
+ligt. Een weging van 119 in een reeks rond de 118 kan aangemerkt zijn zonder ver
+weg te liggen.
+
+**Blijft er te weinig over om op te schalen, dan gebeurt er niets bijzonders.**
+Twee wegingen waarvan er één afwijkt hebben geen "rest" om je op te richten, en
+een as op één punt is geen as. Dan schaalt de figuur op alles, zoals altijd.
+
+De schaal zit in `gewichtSchaal()` en niet in de tekening, zodat hij te toetsen
+is zonder een browser. Zeven gevallen, vijf mutanten gedood: de uitbijter toch
+mee laten tellen voor de as, `buitenBeeld` altijd leeg maken, het gemiddelde
+níét meerekenen, de terugval weghalen, en élke uitbijter op de rand zetten in
+plaats van alleen die erbuiten valt.
+
+### Twee dingen die bij dezelfde figuur opvielen
+
+De regel "doel 100 kg ligt onder deze uitsnede" stond rechtsboven en zei altijd
+"onder", ook wanneer het doel er juist bóven zou liggen. Hij staat nu onder de
+as, naast de datumregel (daar ligt het doel immers ook: buiten beeld), en hij
+zegt welke kant het op is. Rechtsboven botste hij bovendien letterlijk met het
+getal van een weging op de rand.

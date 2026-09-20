@@ -121,6 +121,39 @@ BennaHealth heeft één stelregel die alles eronder bepaalt: **geen enkel getal
 zonder zijn onzekerheid.** Een puntschatting zonder interval is in dit ontwerp
 een fout, geen vereenvoudiging. Wat overgenomen of geschat is, zegt dat zelf.
 
+**Geen gedachtestreepjes in schermtekst.** Niet in de apps, niet in de
+edge-functies, niet in de handleidingen. Een `\u2014` of `\u2013` midden in een
+zin is het duidelijkste spoor dat een tekst niet met de hand geschreven is, en
+dit zijn teksten die een huisarts aan patiënten en collega's laat zien. Gebruik
+een komma, een dubbele punt, een punt of haakjes. Wat blijft is het bereikstreepje
+tussen twee getallen (`2.903–3.514 kcal`) en de `–` waar een waarde ontbreekt:
+dat is typografie en geen spoor.
+
+De regel wordt repo-breed getoetst door `src/gedeeld/schermtekst.proef.ts`, met
+de parser van TypeScript zelf, zodat een apostrof in JSX geen fantoomstring
+opent. Op drie plekken staat het teken er wél: in `gereedschap/oud/` (dat is
+archief), in de gouden waarden, en in de twee proeven die het teken bij naam
+noemen. Moet een regel code het teken kennen, zoals de regexp die minustekens
+gelijkschakelt, schrijf het dan als `\u2014`: hetzelfde teken bij het draaien,
+afwezig in de bytes, dus geen uitzondering nodig.
+
+## Bewijs, en wat je er niet mee doet
+
+**Het archief in `gereedschap/oud/` wordt nooit aangepast om een proef groen te
+krijgen.** Die bestanden zijn de oude apps, en de gouden waarden bewijzen dat de
+overzetting naar TypeScript woordgetrouw was. Een proef die omvalt is dan een
+vraag over de nieuwe code, niet een reden om het bewijsstuk bij te werken. Valt
+een vergelijking om op iets wat er niet toe doet (leestekens bijvoorbeeld), maak
+de vergelijking dan losser en toets die versoepeling zelf: `woordgelijk` laat
+leestekens vallen en houdt woorden, getallen en volgorde vast.
+
+**Elke bewering krijgt een mutant.** Een proef die groen blijft terwijl je de
+regel die hij zou bewaken kapot maakt, bewaakt niets. Een overlevende mutant is
+een vraag en geen ergernis: meestal betekent hij dat het geval dat ertoe doet
+niet in de proef staat. Voorbeelden die dat opleverden staan in
+`health/VERANTWOORDING.md` §27 (de uitbijter die zichzelf gelijk gaf), §29 (de
+nadrukregel die een letter opat) en §31 (de figuur die de weging verzweeg).
+
 ## Git
 
 Ontwikkelen op de tak die de opdracht noemt, nooit rechtstreeks op `main`.

@@ -307,8 +307,9 @@ export function Model(
                 + `${uitbijters[0]!.afwijkingKg! > 0 ? 'boven' : 'onder'} wat de dagen eromheen zeggen.`
               : `${uitbijters.length} wegingen passen niet bij de rest van je reeks: `
                 + uitbijters.map((u) => kortNL(u.d)).join(', ') + '.'}
-            {' '}Hij telt gewoon mee, want deze app gooit geen metingen weg. Klopt het niet, zet hem
-            dan recht op de dag zelf.
+            {' '}Hij telt gewoon mee, want deze app gooit geen metingen weg. In de figuur staat hij
+            op de rand met zijn eigen getal erbij: zo bepaalt hij de uitsnede niet en blijft de
+            rest van de reeks leesbaar. Klopt het niet, zet hem dan recht op de dag zelf.
           </p>
         )}
         <Uitleg id="weeglijn" label="wat je hier ziet">

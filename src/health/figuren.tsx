@@ -66,6 +66,51 @@ export function IntervalFiguur({ a }: { a: Analyse }) {
   )
 }
 
+/**
+ * DE AS SCHAALT OP DE REEKS EN NIET OP DE UITSCHIETER
+ *
+ * Eén weging van 190,2 in een reeks rond de 118 liet de as tot 191 lopen en
+ * drukte tweeëntwintig echte wegingen samen tot een streepje van vier punten
+ * hoog. Die figuur was letterlijk waar en tegelijk onbruikbaar: je zag alleen
+ * nog de fout.
+ *
+ * De weging wordt niet weggelaten, want deze app gooit geen metingen weg. Hij
+ * komt terug als `buitenBeeld` en wordt op de rand getekend, gemarkeerd en met
+ * zijn eigen getal erbij. Dat is het verschil tussen een meting verzwijgen en
+ * hem niet de hele figuur laten bepalen.
+ *
+ * WAAROM HET GEMIDDELDE WÉL MEETELT VOOR DE AS
+ *
+ * Dat is de uitkomst van het model en niet de meting. Bij een weging die zeventig
+ * kilo te hoog is loopt de lijn met alfa 0,1 een paar kilo mee omhoog, en dat
+ * hóórt zichtbaar te zijn: anders lijkt de trend kalmer dan hij is en zou de
+ * figuur de fout verbergen die de tekst eronder juist benoemt.
+ *
+ * Blijft er na het weglaten te weinig over om op te schalen, dan gebeurt er
+ * niets bijzonders en schaalt de figuur op alles. Een reeks van twee wegingen
+ * waarvan er één afwijkt heeft geen "rest" om je op te richten.
+ */
+export function gewichtSchaal(
+  reeks: readonly Trendpunt[],
+): { lo: number; hi: number; buitenBeeld: Trendpunt[] } {
+  const alles = [...reeks.map((x) => x.w), ...reeks.map((x) => x.ema)]
+    .filter((v): v is number => v != null)
+  const opSchaal = [
+    ...reeks.filter((x) => !x.uitbijter).map((x) => x.w),
+    ...reeks.map((x) => x.ema),
+  ].filter((v): v is number => v != null)
+  const genoeg = opSchaal.length >= 2
+  const waarden = genoeg ? opSchaal : alles
+  const lo = Math.min(...waarden) - 0.8
+  const hi = Math.max(...waarden) + 0.8
+  /* Een gemarkeerde weging die toevallig binnen de uitsnede valt, hoort gewoon
+     als punt op zijn plek: op de rand zetten zou liegen over waar hij ligt. */
+  const buitenBeeld = genoeg
+    ? reeks.filter((x) => x.uitbijter && x.w != null && (x.w < lo || x.w > hi))
+    : []
+  return { lo, hi, buitenBeeld }
+}
+
 /** Losse wegingen als punten, het voortschrijdend gemiddelde als lijn. */
 export function GewichtFiguur(
   { reeks, doelGewicht }: { reeks: readonly Trendpunt[]; doelGewicht: number | null },
@@ -80,10 +125,8 @@ export function GewichtFiguur(
   }
   const teWeinig = punten.length < 3
   const W = 330, H = 140, L = 32, B = 18
-  const waarden = [...reeks.map((x) => x.w), ...reeks.map((x) => x.ema)]
-    .filter((v): v is number => v != null)
-  const lo = Math.min(...waarden) - 0.8
-  const hi = Math.max(...waarden) + 0.8
+
+  const { lo, hi, buitenBeeld } = gewichtSchaal(reeks)
   /* Bij een smalle as zegt afronden op hele kilo's niets: drie lijnen kregen
      dan twee keer hetzelfde getal. */
   const decim = hi - lo < 3 ? 1 : 0
@@ -119,12 +162,41 @@ export function GewichtFiguur(
             </text>
           </>
         ) : doelGewicht != null ? (
-          <text x={W} y={10} fontSize={9} fill="var(--grijs)" textAnchor="end">
-            doel {doelGewicht} kg ligt onder deze uitsnede
+          /* De regel stond rechtsboven en zei altijd "onder", ook als het doel
+             er juist bóven lag. Nu staat hij aan de kant waar het doel ligt, en
+             zegt hij welke kant dat is. Rechtsboven botste hij bovendien met
+             het getal van een weging die op de rand staat. Onder de as, naast de
+             datumregel, want daar ligt het doel ook: buiten beeld. */
+          <text x={W} y={doelGewicht > hi ? 10 : H - 4} fontSize={9} fill="var(--grijs)"
+                textAnchor="end">
+            doel {doelGewicht} kg ligt {doelGewicht > hi ? 'boven' : 'onder'} deze uitsnede
           </text>
         ) : null}
         {reeks.map((x, i) =>
-          x.w != null ? <circle key={x.d} cx={X(i)} cy={Y(x.w)} r={2} fill="var(--dim)" /> : null)}
+          x.w != null && !buitenBeeld.includes(x)
+            ? <circle key={x.d} cx={X(i)} cy={Y(x.w)} r={2} fill="var(--dim)" />
+            : null)}
+        {/* De weging die buiten de uitsnede valt: op de rand, met een ring
+            eromheen zodat hij niet voor een gewone meting wordt aangezien, en
+            met zijn eigen getal erbij. Zonder dat getal zou de rand suggereren
+            dat hij er net buiten ligt. */}
+        {buitenBeeld.map((x) => {
+          const i = reeks.indexOf(x)
+          const boven = x.w! > hi
+          const y = boven ? 10 : H - B
+          const naarLinks = X(i) > W - 46
+          return (
+            <g key={'uit-' + x.d}>
+              <circle cx={X(i)} cy={y} r={3.4} fill="none" stroke="var(--let)" strokeWidth={1.6} />
+              <line x1={X(i)} y1={boven ? y + 4 : y - 4} x2={X(i)} y2={boven ? y + 9 : y - 9}
+                    stroke="var(--let)" strokeWidth={1.2} strokeDasharray="2 2" />
+              <text x={naarLinks ? X(i) - 6 : X(i) + 6} y={y + 3.5} fontSize={9}
+                    fill="var(--let)" textAnchor={naarLinks ? 'end' : 'start'}>
+                {dec(x.w!, 1)}
+              </text>
+            </g>
+          )
+        })}
         {pad && (
           <polyline points={pad} fill="none" stroke="var(--k)" strokeWidth={2.2} strokeLinejoin="round" />
         )}
