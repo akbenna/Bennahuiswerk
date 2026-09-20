@@ -2437,3 +2437,46 @@ dag heeft de kaart niets te vergelijken en zou de schermproef een kaart tonen
 die op de telefoon van de gebruiker vol staat en hier altijd leeg blijft. De
 proef kijkt nu of alle vier de maten er staan en of de verschillen kloppen: 114
 naar 108 is zes centimeter eraf, 146 naar 128 is achttien punten.
+
+## 35. De middelomtrek als reeks
+
+De app bewaarde elke middelomtrek met een datum en toonde er één: de nieuwste.
+Daarmee is de vraag die ertoe doet niet te beantwoorden. Niet "hoeveel is het",
+maar "gaat het de goede kant op, en gaat het mee met het gewicht".
+
+Dat laatste is het punt. Valt het gewicht terwijl de omtrek gelijk blijft, dan
+gaat er iets anders weg dan buikvet. Valt de omtrek terwijl de weegschaal
+stilstaat, dan gebeurt er juist wél iets. Die twee naast elkaar zeggen samen
+meer dan allebei apart, en beide getallen stonden er al.
+
+Onder de laatste waarde staat nu de reeks: per meetdag de datum, de waarde en
+het verschil met de vorige, en daaronder het geheel in één zin. Staat het
+gewicht van beide dagen bekend, dan staat de gewichtstrend van diezelfde twee
+dagen erachter.
+
+### Vier keuzes, en ze volgen uit de rest van deze app
+
+**Geen lijntje.** Een sparkline zet zijn punten even ver uit elkaar, en
+middelomtrekmetingen liggen dat nooit: twee in mei en één in september zouden er
+uitzien als een gelijkmatig verloop. Bij een handvol metingen is de datum erbij
+zetten eerlijker dan een lijn die de tijd ertussen platslaat.
+
+**Geen trendlijn met een helling.** Bij vier metingen over een half jaar is een
+helling met standaardfout schijnnauwkeurigheid. Er staat wat er staat.
+
+**Een verschil onder de meetfout heet geen verandering.** De fout van het lint
+loopt in de literatuur van 0,7 tot 15 cm. Onder de twee centimeter zegt de app
+dat er nog niets uit af te lezen valt, in plaats van een daling van één
+centimeter als vooruitgang te presenteren.
+
+**Het gewicht ernaast komt uit de gladde lijn, en van de juiste dag.** Niet de
+weging van die ochtend, want dat is voor een deel vocht, en niet de nieuwste
+waarde uit de hele reeks, want dan vergelijk je een omtrek van april met een
+gewicht van september. Het is het voortschrijdend gemiddelde op of vóór de dag
+van die meting, en is er op dat moment nog niet gewogen, dan komt die zin er
+niet.
+
+Zes mutanten gedood. Twee ervan zijn het vermelden waard: vooruitkijken in de
+gewichtsreeks (dan hangt er een gewicht naast een omtrek die maanden ouder is)
+en twee metingen op één dag als twee punten tellen (dan telt een dag waarop je
+twee keer mat dubbel mee in het beeld).

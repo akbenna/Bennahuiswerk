@@ -700,7 +700,18 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
       if (volgorde !== 'goed') {
         throw new Error(`${stam}: het invoerveld staat boven de waarden (${volgorde})`)
       }
-      console.log(`${''.padEnd(26)} metingen: waarden boven het formulier`)
+      /* DE MIDDELOMTREK ALS REEKS
+         De app toonde alleen de nieuwste waarde. Met twee meetdagen hoort de
+         reeks eronder te staan, met per stap het verschil, en met het verschil
+         over het geheel in gewone taal eronder. */
+      const platMeting = (await kaart.innerText()).replace(/\s+/g, ' ')
+      for (const stuk of ['Je metingen', '114 cm', '108 cm', 'Van 114 naar 108 cm']) {
+        if (!platMeting.includes(stuk)) {
+          throw new Error(`${stam}: "${stuk}" ontbreekt in de reeks van de middelomtrek`
+            + `\n  ${platMeting.slice(0, 300)}`)
+        }
+      }
+      console.log(`${''.padEnd(26)} metingen: waarden boven het formulier, reeks van 2 dagen eronder`)
 
       /* WAT ER VERANDERD IS
          De enige kaart op dit scherm die twee momenten naast elkaar zet. Hij

@@ -20,6 +20,7 @@ import { MEDICATIEGROEPEN, conditieGezet, conditieVan } from '../conditie'
 import {
   STOPBANG, fib4, middelLengte, nieuwste, rustpols, score2, stopbangScore, stopbangUitGegevens,
 } from '../klinisch'
+import { middelbeloop } from '../middelbeloop'
 import { veranderingen } from '../verandering'
 import type { Verandering } from '../verandering'
 import type { Rustpols, StopbangAntwoorden, StopbangSleutel } from '../klinisch'
@@ -183,7 +184,7 @@ export function Klinisch(p: KlinischEigenschappen) {
       <Eigenbloeddruk metingen={metingen} />
 
       <MetingInvoer bewaar={p.bewaarMeting} a={a} sbd={sbd} dbd={dbd} middel={middel}
-                    lengteCm={profiel.lengte_cm}
+                    lengteCm={profiel.lengte_cm} alleMetingen={metingen} reeks={p.reeks}
                     pols={pols} />
       <LabInvoer bewaar={p.bewaarLab} labs={labs} />
 
@@ -468,15 +469,19 @@ function Eigenbloeddruk({ metingen }: { metingen: Meting[] }) {
 }
 
 function MetingInvoer(
-  { bewaar, a, sbd, dbd, middel, pols, lengteCm }:
+  { bewaar, a, sbd, dbd, middel, pols, lengteCm, alleMetingen, reeks }:
   {
     bewaar: KlinischEigenschappen['bewaarMeting']; a: Analyse
     sbd: Meting | null; dbd: Meting | null; middel: Meting | null
     pols: Rustpols<Meting> | null
     lengteCm: number | null
+    /** Voor de reeks van de middelomtrek, die meer zegt dan de laatste waarde. */
+    alleMetingen: Meting[]
+    reeks: readonly Trendpunt[]
   },
 ) {
   const mlv = middelLengte(middel ? Number(middel.waarde) : null, lengteCm)
+  const beloop = middelbeloop(alleMetingen, reeks)
   const [soort, zetSoort] = useState<string>(METINGSOORTEN[0][0])
   const [waarde, zetWaarde] = useState('')
 
@@ -558,6 +563,43 @@ function MetingInvoer(
            : 'Onder 94 cm.'}
         </p>
       )}
+      {/* DE REEKS, EN WAAROM ER GEEN LIJNTJE BIJ STAAT
+          Een sparkline zet zijn punten even ver uit elkaar, en
+          middelomtrekmetingen liggen dat nooit: twee in mei en één in
+          september zouden er uitzien als een gelijkmatig verloop. Bij een
+          handvol metingen is de datum erbij zetten eerlijker dan een lijn die
+          de tijd ertussen platslaat. */}
+      {beloop && (
+        <div style={{ marginTop: 10 }}>
+          <div className="mini">Je metingen</div>
+          {beloop.punten.map((punt, i) => {
+            const vorige = beloop.punten[i - 1]
+            const stap = vorige ? Math.round((punt.cm - vorige.cm) * 10) / 10 : null
+            return (
+              <div key={punt.datum} className="labrij">
+                <span className="naam mini">{kortNL(punt.datum as IsoDatum)}</span>
+                <span className="cijfer" style={{ fontSize: '.86rem' }}>{dec(punt.cm, 0)} cm</span>
+                <span className="mini" style={{ minWidth: 48, textAlign: 'right' }}>
+                  {stap == null ? '' : stap === 0 ? 'gelijk' : (stap > 0 ? '+' : '') + dec(stap, 0)}
+                </span>
+              </div>
+            )
+          })}
+          <p className="mini" style={{ marginTop: 8 }}>
+            {beloop.binnenRuis
+              ? `Van ${dec(beloop.eerste.cm, 0)} naar ${dec(beloop.laatste.cm, 0)} cm. Dat verschil `
+                + 'valt binnen de meetfout van het lint, dus er is nog niets uit af te lezen.'
+              : `Van ${dec(beloop.eerste.cm, 0)} naar ${dec(beloop.laatste.cm, 0)} cm, `
+                + `${dec(Math.abs(beloop.verschilCm), 0)} cm `
+                + `${beloop.verschilCm < 0 ? 'eraf' : 'erbij'}.`}
+            {beloop.gewichtVan != null && beloop.gewichtTot != null && (
+              ` In dezelfde periode ging je gewichtstrend van ${dec(beloop.gewichtVan, 1)} naar `
+              + `${dec(beloop.gewichtTot, 1)} kg. Die twee naast elkaar zeggen meer dan allebei `
+              + 'apart: gaat de omtrek mee omlaag met het gewicht, of niet.')}
+          </p>
+        </div>
+      )}
+
       {/* DEZELFDE OMTREK ZEGT IETS ANDERS BIJ EEN ANDERE LENGTE
           De afkappunten hierboven zijn centimeters voor iedereen, en dat is hun
           zwakte: 102 cm bij 1,70 m is iets anders dan 102 cm bij 1,96 m. De
