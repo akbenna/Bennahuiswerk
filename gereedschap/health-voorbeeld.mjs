@@ -773,6 +773,43 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
       }
       console.log(`${''.padEnd(26)} veranderd: ${platte.slice(0, 110)}`)
 
+      /* WAT ALS
+         De rekensom staat in `watals.ts` en is daar ook geproefd. Wat hier te
+         bewijzen valt is dat de schuif het scherm werkelijk beweegt, en in de
+         goede richting: kilo's eraf hoort het risico omlaag te brengen en niet
+         omhoog. En dat nul kilo hetzelfde getal geeft als de kaart erboven,
+         want dat is de enige plek waar de twee elkaar kunnen tegenspreken. */
+      const watals = pagina.locator('.kaart').filter({ hasText: 'Wat als' }).first()
+      if (!(await watals.count())) throw new Error(`${stam}: de wat-als-kaart ontbreekt`)
+      const schuif = watals.locator('input[type=range]')
+      const risico = async () => {
+        const t = (await watals.innerText()).replace(/\s+/g, ' ')
+        const m = /([\d,]+)% in plaats van ([\d,]+)%/.exec(t)
+        if (!m) throw new Error(`${stam}: geen risico in de wat-als-kaart\n  ${t.slice(0, 300)}`)
+        return { straks: Number(m[1].replace(',', '.')), nu: Number(m[2].replace(',', '.')) }
+      }
+      await schuif.fill('0')
+      await pagina.waitForTimeout(150)
+      const opNul = await risico()
+      if (opNul.straks !== opNul.nu) {
+        throw new Error(`${stam}: op nul kilo staat er ${opNul.straks} tegen ${opNul.nu}`)
+      }
+      await schuif.fill('10')
+      await pagina.waitForTimeout(150)
+      const opTien = await risico()
+      if (!(opTien.straks < opNul.nu)) {
+        throw new Error(`${stam}: tien kilo eraf verlaagt het risico niet `
+          + `(${opTien.straks} tegen ${opNul.nu})`)
+      }
+      const watalsTekst = (await watals.innerText()).replace(/\s+/g, ' ')
+      for (const stuk of ['Stap 1', 'Stap 2', 'Hartleeftijd', 'band', 'geen voorspelling voor jou']) {
+        if (!watalsTekst.includes(stuk)) {
+          throw new Error(`${stam}: "${stuk}" ontbreekt in de wat-als-kaart\n  ${watalsTekst.slice(0, 300)}`)
+        }
+      }
+      console.log(`${''.padEnd(26)} wat als: 10 kg -> ${opTien.straks}% van ${opNul.nu}%, `
+        + 'beide stappen in beeld')
+
       /* MEE NAAR HET SPREEKUUR
          Dit is de enige tekst in deze app die het scherm verlaat. Wat er
          weggelaten wordt is weg: de lezer kan niet doorklikken en heeft de app
