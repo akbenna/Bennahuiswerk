@@ -1,61 +1,27 @@
--- DE TIEN ZONDER VERSLAG, ÉÉN VOOR ÉÉN
+-- DE TIEN ZONDER VERSLAG, IN ÉÉN OPDRACHT
 --
--- `uitlezen-functies.sql` haalt ze in één keer op, en dat is voor de SQL-editor
--- te veel: tien functies van een paar honderd regels in één cel wordt afgekapt,
--- en een afgekapte functie in een verslagbestand is erger dan geen verslag.
+-- WAAROM DIT BESTAND ÉÉN SELECT IS EN GEEN TIEN
 --
--- Hier staat dezelfde vraag in tien losse regels. Draai er één, plak de
--- uitkomst, draai de volgende. Niets hiervan verandert iets.
+-- De SQL-editor van Supabase toont het resultaat van de láátste opdracht in
+-- het venster. Staan er tien selects, dan zie je de tiende en verdwijnen de
+-- negen ervoor zonder melding. Dat is twee keer misgegaan: de eerste versie
+-- van `uitlezen-functies.sql` had twee vragen en leverde alleen de tweede op,
+-- en de versie erna had er tien en leverde alleen `kal_prikkel_gelogd`.
 --
--- Wat er per functie te zien hoort te zijn en waarom het ertoe doet:
+-- Vandaar één vraag met tien rijen. Draai hem, en plak de hele tabel.
 --
---   kal_sessie             de poort waar élke andere functie doorheen gaat
---   kal_dag_zetten         hoe een `null` in de patch behandeld wordt. Het
---                          venster "Je wegingen" stuurt `gewicht_kg: null` om
---                          een weging weg te halen, en of dat werkelijk wist of
---                          stilletjes de oude waarde laat staan, is alleen hier
---                          af te lezen
---   kal_profiel_zetten     dezelfde vraag voor het profiel
---   kal_regels_toevoegen   wat er gebeurt met een regel die er al staat
---   kal_weekcijfers        het enige wat AUTOMATISERING.md beschrijft en
---                          nergens in SQL staat
+-- Dit bestand verandert niets. Het heeft daarom geen nummer: het is geen
+-- verslag maar een vraag.
 
-select pg_get_functiondef(p.oid) from pg_proc p
+select p.proname::text                             as functie,
+       pg_get_function_identity_arguments(p.oid)   as argumenten,
+       pg_get_functiondef(p.oid)                   as definitie
+from pg_proc p
 join pg_namespace n on n.oid = p.pronamespace
-where n.nspname = 'public' and p.proname = 'kal_sessie';
-
-select pg_get_functiondef(p.oid) from pg_proc p
-join pg_namespace n on n.oid = p.pronamespace
-where n.nspname = 'public' and p.proname = 'kal_dag_zetten';
-
-select pg_get_functiondef(p.oid) from pg_proc p
-join pg_namespace n on n.oid = p.pronamespace
-where n.nspname = 'public' and p.proname = 'kal_profiel_zetten';
-
-select pg_get_functiondef(p.oid) from pg_proc p
-join pg_namespace n on n.oid = p.pronamespace
-where n.nspname = 'public' and p.proname = 'kal_regels_toevoegen';
-
-select pg_get_functiondef(p.oid) from pg_proc p
-join pg_namespace n on n.oid = p.pronamespace
-where n.nspname = 'public' and p.proname = 'kal_regel_wissen';
-
-select pg_get_functiondef(p.oid) from pg_proc p
-join pg_namespace n on n.oid = p.pronamespace
-where n.nspname = 'public' and p.proname = 'kal_dagstand';
-
-select pg_get_functiondef(p.oid) from pg_proc p
-join pg_namespace n on n.oid = p.pronamespace
-where n.nspname = 'public' and p.proname = 'kal_weekcijfers';
-
-select pg_get_functiondef(p.oid) from pg_proc p
-join pg_namespace n on n.oid = p.pronamespace
-where n.nspname = 'public' and p.proname = 'kal_afmelden';
-
-select pg_get_functiondef(p.oid) from pg_proc p
-join pg_namespace n on n.oid = p.pronamespace
-where n.nspname = 'public' and p.proname = 'kal_prikkel_bouwen';
-
-select pg_get_functiondef(p.oid) from pg_proc p
-join pg_namespace n on n.oid = p.pronamespace
-where n.nspname = 'public' and p.proname = 'kal_prikkel_gelogd';
+where n.nspname = 'public'
+  and p.proname = any (array[
+    'kal_sessie', 'kal_afmelden', 'kal_profiel_zetten', 'kal_dagstand',
+    'kal_dag_zetten', 'kal_regels_toevoegen', 'kal_regel_wissen',
+    'kal_weekcijfers', 'kal_prikkel_bouwen', 'kal_prikkel_gelogd'
+  ])
+order by p.proname;

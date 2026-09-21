@@ -3004,3 +3004,29 @@ stonden eerst op 0,84 en 0,75 en verschilden dus nauwelijks.
 
 De contrastproef loopt nu over 1408 stukken tekst in zes tabbladen en twee
 thema's, en alles haalt nog steeds 4,5.
+
+
+## 49. De editor toont alleen de laatste vraag
+
+Twee keer kwam er een andere tabel terug dan ik verwachtte, en twee keer heb ik
+dat aan het plakken geweten. Het lag aan het bestand.
+
+De SQL-editor van Supabase toont het resultaat van de **laatste** opdracht in
+het venster. `uitlezen-functies.sql` had er twee, dus kwam alleen de tweede
+terug en verdween de eerste zonder melding. De versie erna had tien losse
+selects, en leverde alleen de tiende op.
+
+Dat is precies het soort fout waar deze hele controle over gaat: niet iets dat
+kapot is, maar iets dat stil weggelaten wordt. Beide bestanden zeggen het nu,
+en `uitlezen-tien.sql` staat met opzet in één opdracht die tien rijen geeft.
+
+### En de eerste van de tien staat op papier
+
+`47-de-bodem-op-papier.sql` bevat `kal_prikkel_gelogd`, letterlijk zoals de
+database hem kent. Dat het letterlijk is, is geen belofte maar een meting: de
+md5 die uit dit bestand rolt is `713ef4d7`, en dat is exact wat de controle uit
+`pg_proc` las. Eén afwijkende spatie in een regelcommentaar zou een ander getal
+geven.
+
+De negen die nog ontbreken staan in de kop van dat bestand, en de controle
+blijft ze melden tot ze er zijn. Het gat is pas dicht als het dicht is.

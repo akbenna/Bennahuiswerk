@@ -75,6 +75,7 @@ with verwacht (functie, uit_bestand, md5_repo) as (
     ('kal_ophalen', '43-inspanning-krijgt-een-soort.sql', '57fd6bdea1ad93546829ab45c03c32ae'),
     ('kal_peiling_vastleggen', '05-peilingen-van-de-dag.sql', '893f196d4272174ffa16dad25aab511a'),
     ('kal_portiematen', '14-huishoudmaten-verdiepen.sql', '875f959ec7e89f6899b95592057e1e0d'),
+    ('kal_prikkel_gelogd', '47-de-bodem-op-papier.sql', '713ef4d7fd017ae4b9b87f60cc08bd89'),
     ('kal_proef_koppeling', '46-zeven-functies-gelijktrekken.sql', '2c3860d35f55b2f1907d1523181ba489'),
     ('kal_proef_lichaamsparameters', '26-lichaamsparameters-uit-de-koppeling.sql', '57fb4f69be7545c5bff3969cd3777743'),
     ('kal_registreren', '39-een-wachtwoord-dat-standhoudt.sql', 'aee59c9d0fec9e0cc5ec572fbcc153ad'),
