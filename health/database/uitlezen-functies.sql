@@ -15,7 +15,14 @@
 -- `security definer` en mét het vastgezette `search_path`. Dat is precies wat
 -- `prosrc` níet laat zien en wat de md5-vergelijking dus ook niet vergelijkt.
 --
--- De uitvoer is lang. Draai hem per groepje als de editor er moeite mee heeft.
+-- LET OP: DE EDITOR TOONT ALLEEN DE LAATSTE OPDRACHT
+--
+-- Hieronder staan twee vragen, en de SQL-editor van Supabase laat alleen het
+-- resultaat van de tweede zien. Selecteer er dus één en draai die apart, of
+-- gebruik `uitlezen-tien.sql`, dat staat met opzet in één opdracht.
+--
+-- Dit is twee keer misgegaan voordat het opviel: er kwam telkens de tweede
+-- tabel terug en de eerste verdween zonder melding.
 
 -- 1. DE FUNCTIES DIE NERGENS IN DE REPO STAAN
 --    Tien stuks op 20 september 2026, en ze dragen samen de hele sessie, het
