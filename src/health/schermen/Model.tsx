@@ -9,11 +9,15 @@
  */
 import { Kaart, Knop, Kop, Rij, Tussen, Uitleg } from '../onderdelen/basis'
 import { Lijntje, Schermkop, Trapmeter } from '../hero'
-import { GewichtFiguur, InnameFiguur, IntervalFiguur } from '../figuren'
+import { GewichtFiguur, InnameFiguur, IntervalFiguur, VerschilFiguur } from '../figuren'
 import { dec, dz } from '@/gedeeld/getal'
 import { kortNL, plusDagen, vandaag } from '@/gedeeld/datum'
 import type { Instellingen, Lab, Profiel } from '@/gedeeld/db/tabellen'
+import { VENSTER } from '../rekenkern'
 import type { Analyse, Dagenkaart, Trendpunt } from '../rekenkern'
+import { aanpassing } from '../aanpassing'
+import type { Uitslag } from '../aanpassing'
+import { tijdspanne } from '../verandering'
 import { WegPerDag, WegTraject } from '../tekens'
 import { SFEERFOTO } from '../sfeerfotos'
 
@@ -232,6 +236,8 @@ export function Model(
       )}
 
       <WaarJeStaat a={a} profiel={profiel} gefundeerd={bruikbaar} />
+
+      <Verbruikbeloop uitslag={aanpassing(dagen, profiel, vandaag())} />
 
       {a.teSnel && (
         <Kaart toon="let">
@@ -640,3 +646,103 @@ function Meetgaten(
 }
 
 export { Knop }
+
+/**
+ * IS JE VERBRUIK MEEGEZAKT?
+ *
+ * De vraag die alleen te beantwoorden is als je meet. Een formule zegt per
+ * definitie dat je verbruik precies zoveel gezakt is als je lichter bent
+ * geworden, want lichter is het enige wat hij van je weet. Deze app heeft twee
+ * metingen en kan het verschil laten zien.
+ *
+ * Waarom het een verschil is en geen tweede getal, en waarom er twee
+ * verwachtingen staan in plaats van één, staat in `aanpassing.ts`.
+ */
+function Verbruikbeloop({ uitslag }: { uitslag: Uitslag }) {
+  if ('ontbreekt' in uitslag) {
+    /* Alleen bij te weinig reeks staat hier iets. Bij de andere redenen zegt
+       de kaart erboven al dat er geen bruikbare band is, en dat twee keer
+       zeggen maakt het scherm langer en niet duidelijker. */
+    if (uitslag.ontbreekt !== 'te-kort') return null
+    return (
+      <Kaart plat>
+        <Kop>Is je verbruik meegezakt?</Kop>
+        <p style={{ fontSize: '.88rem', marginTop: 4 }}>
+          Daarvoor zijn twee vensters van {VENSTER} dagen nodig die elkaar niet raken, dus een
+          reeks van ruim vier maanden. Dan vergelijkt de app wat hij toen mat met wat hij nu meet,
+          en zegt hij of je verbruik verder gezakt is dan je lagere gewicht verklaart.
+        </p>
+      </Kaart>
+    )
+  }
+
+  const x = uitslag.aanpassing
+  const laagste = Math.min(x.verschilMee, x.verschilRust)
+  const hoogste = Math.max(x.verschilMee, x.verschilRust)
+  const kop = x.richting === 'lager' ? 'Je verbruik is verder gezakt dan je gewicht verklaart'
+            : x.richting === 'hoger' ? 'Je verbruik is minder gezakt dan je gewicht verklaart'
+            : 'Geen verschil dat uit de ruis komt'
+
+  return (
+    <Kaart>
+      <Tussen>
+        <Kop>Is je verbruik meegezakt?</Kop>
+        <span className="eyebrow" style={{ color: x.richting ? 'var(--k)' : 'var(--grijs)' }}>
+          {tijdspanne(x.dagenTussen)} ertussen
+        </span>
+      </Tussen>
+      <p style={{
+        fontFamily: 'var(--kop)', fontWeight: 640, fontSize: '1.12rem',
+        marginTop: 4, color: x.richting ? 'var(--ink)' : 'var(--grijs)',
+      }}>
+        {kop}
+      </p>
+
+      <VerschilFiguur laagste={laagste} hoogste={hoogste} half={x.half}
+                      uitspraak={x.richting != null} />
+
+      <p style={{ fontSize: '.88rem', marginTop: 10 }}>
+        {x.richting == null ? (
+          <>
+            Het verschil komt uit op {dz(laagste)} tot {dz(hoogste)} kcal per dag, met een marge van{' '}
+            {dz(x.half)} eromheen. Die marge is groter dan het verschil, dus er staat hier niets:
+            een langere reeks maakt de marge smaller, een kortere nooit.
+          </>
+        ) : (
+          <>
+            Toen mat de app <b>{dz(Math.round(x.toen.tdee))} kcal</b> per dag bij{' '}
+            {dec(x.toen.gewichtKg, 1)} kg, nu <b>{dz(Math.round(x.nu.tdee))} kcal</b> bij{' '}
+            {dec(x.nu.gewichtKg, 1)} kg. Alleen op je lagere gewicht zou{' '}
+            {dz(Math.min(x.verwachtMee, x.verwachtRust))} tot{' '}
+            {dz(Math.max(x.verwachtMee, x.verwachtRust))} kcal horen. Het verschil is{' '}
+            <b>{dz(laagste)} tot {dz(hoogste)} kcal</b> per dag, en dat is meer dan de marge
+            van {dz(x.half)}.
+          </>
+        )}
+      </p>
+
+      <Uitleg id="aanpassing" label="waarom een verschil eerlijker is dan twee losse getallen">
+        <p>
+          Het gemeten verbruik is je inname min de energie die het vet in of uit ging, en een
+          logboek zit er altijd naast. In een verschil valt die fout weg zolang hij dezelfde blijft:
+          wie zijn boterham al een jaar tweehonderd kcal te licht opschrijft, doet dat in beide
+          vensters. Wat er niet uit wegvalt is een fout die verandert. Ben je sinds{' '}
+          {kortNL(x.toen.eind)} anders gaan wegen of loggen, lees dit getal dan niet.
+        </p>
+        <p>
+          Er staan twee verwachtingen omdat er twee verdedigbare antwoorden zijn op de vraag wat
+          een lichter lichaam minder verbruikt: alles zakt mee met de massa, of alleen het
+          rustverbruik zakt en wat je aan beweging kwijt bent blijft gelijk. Welke klopt is met
+          deze gegevens niet uit te maken, dus staan ze er allebei, en een uitspraak komt er alleen
+          als hij onder allebei overeind blijft.
+        </p>
+        <p>
+          Minder verbruiken dan je gewicht verklaart heet metabole adaptatie, maar dat is niet de
+          enige verklaring en de app kan ze niet uit elkaar houden. Minder zijn gaan bewegen zonder
+          het te merken geeft hetzelfde getal. Het venster van toen liep van {kortNL(x.toen.van)}{' '}
+          tot {kortNL(x.toen.eind)}, dat van nu van {kortNL(x.nu.van)} tot {kortNL(x.nu.eind)}.
+        </p>
+      </Uitleg>
+    </Kaart>
+  )
+}

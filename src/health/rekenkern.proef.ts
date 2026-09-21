@@ -224,6 +224,30 @@ describe('tdeeOordeel', () => {
     const a = analyse(reeks(2000, -0.7 / 7, 119), pf, peil)
     if (a.laag! > a.rustBMR) expect(a.laagMogelijk).toBe(a.laag)
   })
+
+  /* WAT `eind` MOET AFSNIJDEN
+   *
+   * `eind` knipte het venster af maar niet het referentiegewicht: dat werd
+   * gezocht in de hele dagenkaart. Bij de gewone aanroep valt dat niet op,
+   * want dan houdt de kaart bij vandaag op. Zodra er een venster van vroeger
+   * wordt nagerekend, zoals `aanpassing.ts` doet, rekende de analyse van juli
+   * zijn rustverbruik op de weging van september.
+   *
+   * De proef laat het verschil groot genoeg zijn om niet in afrondruis te
+   * verdwijnen: twintig kilo na afloop van het venster. */
+  it('laat een weging van ná het venster het rustverbruik niet bepalen', () => {
+    const dagen = reeks(2000, -0.7 / 7, 119)
+    const alleen = analyse(dagen, pf, peil)
+    const later = { ...dagen }
+    const na = '2026-09-20'
+    later[na] = { datum: na, gewicht_kg: 99, stappen: 6000 } as Dagenkaart[string]
+
+    expect(analyse(later, pf, peil).rustBMR).toBe(alleen.rustBMR)
+    /* En zonder de grens zou dít eruit zijn gekomen. Staat de proef er los
+       bij, dan is te zien dat de twee uitkomsten werkelijk verschillen en de
+       bewering hierboven dus iets vasthoudt. */
+    expect(analyse(later, pf, na).rustBMR).toBeLessThan(alleen.rustBMR)
+  })
 })
 
 describe('de uitbijtermarkering', () => {
