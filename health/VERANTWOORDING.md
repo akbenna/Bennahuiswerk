@@ -3030,3 +3030,122 @@ geven.
 
 De negen die nog ontbreken staan in de kop van dat bestand, en de controle
 blijft ze melden tot ze er zijn. Het gat is pas dicht als het dicht is.
+
+## 50. Is je verbruik meegezakt?
+
+Deze app zegt op elk scherm dat hij het verbruik **meet** en niet schat. Dat is
+waar, en tot vandaag deed hij er niet het enige mee waar meten voor nodig is.
+
+Een formule kent alleen lengte, gewicht, leeftijd en geslacht. Die zegt dus per
+definitie dat je verbruik precies zoveel gezakt is als je lichter bent geworden.
+De vraag of er méér gezakt is dan je gewicht verklaart, de vraag waar iedereen
+die een plateau meemaakt mee zit, is met een formule niet te stellen. Met twee
+metingen wel.
+
+De rekenkern nam al een venster van achtentwintig dagen, en `eind` was er al een
+argument. Er was dus niets nieuws nodig om hem een tweede keer te laten rekenen,
+op het vroegste venster dat de reeks toelaat. Het verschil tussen die twee is
+wat er nu op het Inzicht-scherm staat.
+
+### Waarom een verschil schoner is dan de twee getallen zelf
+
+Het gemeten verbruik is inname min de energie die het vet in of uit ging. De
+inname komt uit een logboek, en een logboek zit ernaast: onderrapportage is de
+regel en niet de uitzondering, en de app rekent dat verschil zelfs uit. Elk
+niveau dat hier op het scherm staat draagt die fout mee.
+
+In een verschil valt hij weg, zolang hij dezelfde blijft. Wie zijn boterham al
+een jaar tweehonderd kcal te licht opschrijft, doet dat in beide vensters, en
+tweehonderd min tweehonderd is nul. Dat is een prettige eigenschap en hij gaat
+tegen de intuïtie in: het afgeleide getal is hier betrouwbaarder dan de twee
+getallen waar het uit komt.
+
+Precies nul is het alleen onder het model dat optelt. Onder het model dat
+vermenigvuldigt blijft er een restje staan ter grootte van de fout maal het
+stukje dat je lichter bent, bij driehonderd kcal en acht kilo eraf zo'n acht
+kcal. Dat staat zo in de proef, met een grens erop, in plaats van dat ik de
+bewering rond maak.
+
+Wat er niet uit wegvalt is een fout die verándert. Wie sinds juni nauwkeuriger
+weegt en logt, ziet zijn gemeten verbruik stijgen zonder dat er aan hem iets
+veranderd is. Dat is de enige manier waarop dit getal er flink naast kan zitten
+zonder dat iets het verraadt, en het staat daarom in de uitklap met de datum van
+het vroege venster erbij: ben je sinds die dag anders gaan loggen, lees dit getal
+dan niet.
+
+### Twee verwachtingen, omdat er twee antwoorden zijn
+
+Om te zeggen dat er méér gezakt is dan het gewicht verklaart, moet er staan wat
+het gewicht dan verklaart. Daar bestaan twee verdedigbare antwoorden:
+
+**Alles zakt mee.** Een lichter lichaam verbruikt minder in rust én minder bij
+elke stap, want er is minder te dragen. Het hele verbruik schaalt dan met het
+rustverbruik.
+
+**Alleen de rust zakt.** Het rustverbruik daalt met de massa, maar wat je aan
+beweging kwijt bent blijft in absolute zin gelijk.
+
+Welke klopt is met de gegevens die deze app heeft niet uit te maken. De verleiding
+is om er één te kiezen en het niet te noemen; dan staat er één getal en klinkt het
+alsof de keuze niet bestaat. Nu staan ze er allebei, het scherm toont het bereik
+ertussen, en een uitspraak komt er alleen als die onder béide modellen overeind
+blijft.
+
+### Wat de mutatieproef hierover leerde
+
+Die strengheid leek eerst niets te doen. De versie die alleen naar het ene model
+keek overleefde elke proef, en de reden bleek wiskundig: bij afvallen staan de
+twee modellen altijd in dezelfde volgorde, dus is "de strengste van de twee"
+vanzelf dat ene model. De mutant was niet fout, het geval dat hem zou betrappen
+ontbrak.
+
+Bij aankomen wisselen ze van plaats, en dan doet het er wel toe. Een reeks met
+ruim acht kilo erbij in twaalf weken zet de afwijking onder het ene model net
+buiten de band (−157 bij een band van 143) en onder het andere net erbinnen
+(−136). Eén model kiezen levert daar "je verbruik is lager" op, en dat berust
+dan op de modelkeuze en niet op de meting. Er staan nu twee proeven, één voor
+elke kant, want de code toetst de twee kanten met twee verschillende velden en
+een versie die er maar één goed doet kwam anders langs de ene proef heen.
+
+### Een grens die `eind` al had moeten hebben
+
+`analyse(dagen, profiel, eind)` knipte het venster af op `eind`, maar zocht het
+referentiegewicht in de hele dagenkaart. Bij de gewone aanroep valt dat niet op,
+want dan houdt de kaart bij vandaag op, en de veertig gouden waarden merkten er
+dus niets van. Zodra er een venster van vroeger wordt nagerekend, rekende de
+analyse van april zijn rustverbruik op de weging van augustus, en dat is precies
+het verschil dat hier gemeten wordt.
+
+De grens staat er nu, de gouden waarden bleven ongemoeid, en er staat een proef
+bij die omvalt zodra hij weggaat. Die proef bewijst allebei de kanten: dat het
+rustverbruik niet meeschuift met een latere weging, én dat de twee uitkomsten
+werkelijk verschillen, zodat de eerste bewering ergens over gaat.
+
+### Wat er met opzet niet staat
+
+**Niet "metabole adaptatie".** Dat is één verklaring voor een verbruik dat verder
+zakt dan het gewicht verklaart, en de app kan hem niet onderscheiden van minder
+zijn gaan bewegen zonder het te merken, of van anders zijn gaan loggen. Het
+bestand heet daarom `aanpassing.ts` en niet `adaptatie.ts`, en de uitklap noemt
+de andere verklaringen bij naam.
+
+**Geen kleur die zegt of het goed nieuws is.** Een lager verbruik is lastig voor
+wie afvalt en gunstig voor wie wil aankomen, en de app weet niet aan welke kant
+de lezer staat. De kleur zegt alleen of er iets staat: grijs zolang de nul in de
+band valt, geaccentueerd zodra hij eruit ligt. Dat is een eigenschap van de
+meting en geen oordeel over de lezer.
+
+**Geen uitkomst uit één venster.** Twee vensters die elkaar raken zouden dezelfde
+dagen aan beide kanten van het minteken zetten. Vandaar de eis van ruim vier
+maanden reeks, en vandaar dat de kaart tot die tijd alleen zegt vanaf wanneer hij
+iets te melden heeft. Dat is hier geen vormfout maar de hele zaak: leeg betekent
+in deze app niet gemeten, en dat is iets anders dan niets aan de hand.
+
+De maat om dit tegenaan te leggen staat in §2: in de Biggest Loser-follow-up
+−275 ± 207 kcal per dag op week 30 en −499 ± 207 na zes jaar. Dat is een uiterste,
+bij een extreem tempo en veertien deelnemers, en het staat hier als ordegrootte
+en niet als verwachting. Bij de marges die een reeks van vier maanden oplevert,
+rond de honderdvijftig tot tweehonderd kcal, is een verschil van die omvang
+zichtbaar en een verschil van vijftig kcal niet. Dat is geen tekortkoming van de
+meting maar de meting zelf, en het scherm zegt het met zoveel woorden: een
+langere reeks maakt de marge smaller, een kortere nooit.

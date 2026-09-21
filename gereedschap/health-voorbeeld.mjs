@@ -76,7 +76,19 @@ function reeks(aantalDagen, vorm = 'gewoon') {
          opent en nog op de weegschaal moet. Elke andere vorm heeft die dag al
          gewogen, dus de kop "Stap op de weegschaal" en het weegveld in de hero
          kwamen in de hele proefopstelling niet voor. */
-      gewicht_kg: vorm === 'niet-gewogen' && i === 0
+      /* De vorm waarin het afvallen stilvalt zonder dat het logboek verandert:
+         eerst ruim negen weken vlot eraf, daarna bijna stil. Niet helemaal
+         stil, want met het logboek van deze proefpersoon zou een echt plateau
+         een verbruik onder het rustverbruik betekenen, en dat weigert de
+         rekenkern terecht. Dit is de enige vorm die lang genoeg is voor twee
+         vensters, en dus de enige waarin de kaart over het verbruiksbeloop
+         iets te zeggen heeft. */
+      gewicht_kg: vorm === 'gezakt'
+        ? Math.round((124
+            - 0.10 * Math.min(aantalDagen - 1 - i, 64)
+            - 0.03 * Math.max(aantalDagen - 1 - i - 64, 0)
+            + ruis * 0.9) * 10) / 10
+        : vorm === 'niet-gewogen' && i === 0
         ? null
         : vorm === 'tegenspraak'
         ? (i % 3 === 0 ? Math.round((116.0 + t * 4.6 + ruis) * 10) / 10 : null)
@@ -213,7 +225,8 @@ function alles(aantalDagen, fase = 'afvallen') {
   const vorm = fase === 'tegenspraak' ? 'tegenspraak'
     : fase === 'uitbijter' ? 'uitbijter'
     : fase === 'leeg-vandaag' ? 'leeg-vandaag'
-    : fase === 'niet-gewogen' ? 'niet-gewogen' : 'gewoon'
+    : fase === 'niet-gewogen' ? 'niet-gewogen'
+    : fase === 'gezakt' ? 'gezakt' : 'gewoon'
   const { dagen, regels } = aantalDagen > 0
     ? reeks(aantalDagen, vorm) : { dagen: [], regels: [] }
   /* De GLI staat in de instellingen en niet in een eigen kolom: het is een
@@ -4334,6 +4347,82 @@ for (const [naam, dagen, patroon, verwacht] of [
 
   console.log(`${'de weging die niet past'.padEnd(26)} 190,2 aangewezen, `
     + `${verschil[1]} kg ${verschil[2]}, en stil bij een gewone reeks`)
+}
+
+/* IS JE VERBRUIK MEEGEZAKT?
+   De enige kaart die twee vensters nodig heeft, dus de enige die in een
+   proefopstelling van achtentwintig dagen nooit te zien is. Zonder dit blok
+   stond hij in geen enkele afdruk en had hij ook stuk kunnen zijn.
+
+   Er worden twee reeksen bekeken en de tweede doet het echte werk: bij een
+   gewone gestage daling hoort hier niets te staan. Een kaart die altijd iets
+   beweert is geen meting. */
+{
+  const ctx = await browser.newContext({
+    viewport: { width: 430, height: 2600 }, deviceScaleFactor: 2,
+    locale: 'nl-NL', timezoneId: 'Europe/Amsterdam',
+  })
+  await ctx.addInitScript(`{
+    const echt = Date; const vast = ${NU};
+    class Vast extends echt {
+      constructor(...a) { if (a.length === 0) super(vast); else super(...a) }
+      static now() { return vast }
+    }
+    globalThis.Date = Vast;
+    localStorage.setItem('kalibratie.sessie', JSON.stringify({ token: 'proef', account: 'abdelkader' }));
+  }`)
+
+  async function kaartTekst(fase) {
+    const p = await ctx.newPage()
+    await p.emulateMedia({ colorScheme: 'light' })
+    await bedienDb(p, 120, fase)
+    await p.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+    await p.waitForSelector('.hero', { timeout: 5000 })
+    await naarTab(p, 'Inzicht')
+    const kaart = p.locator('.kaart').filter({ hasText: 'Is je verbruik meegezakt' }).first()
+    if (!(await kaart.count())) throw new Error(`verbruiksbeloop: de kaart staat er niet bij ${fase}`)
+    for (const knop of await kaart.locator('summary').all()) await knop.click()
+    const tekst = (await kaart.innerText()).replace(/\s+/g, ' ')
+    return { p, kaart, tekst }
+  }
+
+  const gezakt = await kaartTekst('gezakt')
+  if (!/verder gezakt dan je gewicht verklaart/.test(gezakt.tekst)) {
+    throw new Error(`verbruiksbeloop: geen uitspraak bij een reeks die stilvalt\n  ${gezakt.tekst}`)
+  }
+  /* Nooit één getal. Twee verwachtingen, een verschil als bereik, en de marge
+     erbij: dat is de hele belofte van deze kaart en het is in platte tekst na
+     te lezen. */
+  const bereik = /Het verschil is (-?\d[\d.]*) tot (-?\d[\d.]*) kcal per dag, en dat is meer dan de marge van ([\d.]*\d)/
+    .exec(gezakt.tekst)
+  if (!bereik) throw new Error(`verbruiksbeloop: geen verschil met marge\n  ${gezakt.tekst}`)
+  const getal = (x) => Number(x.replace(/\./g, ''))
+  if (!(getal(bereik[1]) < 0 && getal(bereik[2]) < 0)) {
+    throw new Error(`verbruiksbeloop: het bereik wijst niet omlaag: ${bereik[1]} tot ${bereik[2]}`)
+  }
+  if (!(Math.abs(getal(bereik[2])) > getal(bereik[3]))) {
+    throw new Error(`verbruiksbeloop: de marge is groter dan het verschil en er staat toch iets`)
+  }
+  /* En de voorbehouden reizen mee. Ze staan in de uitklap, en een uitklap die
+     dichtgaat is hier hetzelfde als een voorbehoud dat verdwijnt. */
+  for (const stuk of ['logboek zit er altijd naast', 'een fout die verandert',
+                      'twee verdedigbare antwoorden', 'metabole adaptatie']) {
+    if (!gezakt.tekst.includes(stuk)) {
+      throw new Error(`verbruiksbeloop: "${stuk}" staat niet in de kaart\n  ${gezakt.tekst}`)
+    }
+  }
+  await gezakt.p.screenshot({ path: 'gereedschap/health-verbruiksbeloop.png', fullPage: true })
+  await gezakt.p.close()
+
+  const stil = await kaartTekst('afvallen')
+  if (!/Geen verschil dat uit de ruis komt/.test(stil.tekst)) {
+    throw new Error(`verbruiksbeloop: een gestage daling levert toch een uitspraak op\n  ${stil.tekst}`)
+  }
+  await stil.p.close()
+  await ctx.close()
+
+  console.log(`${'is je verbruik meegezakt'.padEnd(26)} ${bereik[1]} tot ${bereik[2]} kcal `
+    + `bij een marge van ${bereik[3]}, en stil bij een gestage daling`)
 }
 
 await browser.close()

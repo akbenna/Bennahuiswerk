@@ -404,3 +404,68 @@ export function Risicoband(
     </svg>
   )
 }
+
+/**
+ * HET VERSCHIL TEGENOVER NUL
+ *
+ * Eén figuur met één vraag erin: ligt de nul binnen of buiten de band. Alles
+ * eromheen is schaal.
+ *
+ * De nul is hier de verwachting, en er staan twee verwachtingen, dus staat er
+ * geen streep maar een strookje: het stuk waar de twee modellen elkaar niet
+ * raken. Wie dat als één lijn tekent, verbergt precies de onzekerheid die de
+ * rest van deze kaart benoemt.
+ *
+ * DE KLEUR ZEGT NIET OF HET GOED NIEUWS IS
+ *
+ * Een verbruik dat lager uitkomt dan verwacht is lastig voor wie afvalt en
+ * gunstig voor wie wil aankomen, en de app weet niet aan welke kant van die
+ * twee de lezer staat. Wat de kleur wél zegt is of er iets staat: grijs zolang
+ * de nul in de band valt, geaccentueerd zodra hij eruit ligt. Dat is een
+ * eigenschap van de meting en geen oordeel over de lezer.
+ */
+export function VerschilFiguur(
+  { laagste, hoogste, half, uitspraak }:
+  { laagste: number; hoogste: number; half: number; uitspraak: boolean },
+) {
+  const van = Math.min(laagste - half, 0)
+  const tot = Math.max(hoogste + half, 0)
+  const rand = Math.max((tot - van) * 0.12, 25)
+  const min = van - rand
+  const max = tot + rand
+  const p = (v: number) => ((v - min) / (max - min)) * 100
+  const kleur = uitspraak ? 'var(--k)' : 'var(--dim)'
+
+  return (
+    <>
+      <svg
+        className="fig" viewBox="0 0 100 18" preserveAspectRatio="none"
+        style={{ height: 44, marginTop: 10 }} role="img"
+        aria-label={
+          `Verschil ${Math.round(laagste)} tot ${Math.round(hoogste)} kcal per dag, `
+          + `met een marge van ${Math.round(half)}`
+        }
+      >
+        <line x1={0} y1={9} x2={100} y2={9} stroke="var(--lijn)" strokeWidth={0.35} />
+        <rect x={p(laagste - half)} y={4} width={p(hoogste + half) - p(laagste - half)}
+              height={10} fill={kleur} opacity={0.2} />
+        <line x1={p(laagste - half)} y1={4} x2={p(laagste - half)} y2={14}
+              stroke={kleur} strokeWidth={0.4} />
+        <line x1={p(hoogste + half)} y1={4} x2={p(hoogste + half)} y2={14}
+              stroke={kleur} strokeWidth={0.4} />
+        <rect x={p(laagste)} y={6.5} width={Math.max(p(hoogste) - p(laagste), 0.6)} height={5}
+              fill={kleur} opacity={0.75} />
+        <line x1={p(0)} y1={1.5} x2={p(0)} y2={16.5} stroke="var(--ink)" strokeWidth={0.7} />
+      </svg>
+      <div className="tussen mini cijfer" style={{ marginTop: 2 }}>
+        <span>{dz(Math.round(min))}</span>
+        <span>{dz(Math.round(max))}</span>
+      </div>
+      <div className="figlegenda mini">
+        <span><i className="staand" style={{ background: 'var(--ink)' }} /> verwacht</span>
+        <span><i style={{ background: kleur, opacity: 0.8 }} /> gemeten</span>
+        <span><i style={{ background: kleur, opacity: 0.25 }} /> marge</span>
+      </div>
+    </>
+  )
+}

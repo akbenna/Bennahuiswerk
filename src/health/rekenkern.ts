@@ -294,7 +294,12 @@ export function analyse(dagen: Dagenkaart, pf: Profiel, eind: IsoDatum = vandaag
     if (d.stappen != null) stappen.push(+d.stappen)
   }
 
-  const alleW = Object.keys(dagen).filter((k) => dagen[k]?.gewicht_kg != null).sort()
+  /* Ook hier telt `eind` mee. Zonder die grens pakte deze regel de laatste
+     weging uit de hele kaart, dus ook een die ná het venster ligt, en dan
+     rekende een teruggezette analyse zijn rustverbruik op het gewicht van
+     vandaag. Bij de gewone aanroep (eind is vandaag) verandert er niets. */
+  const alleW = Object.keys(dagen)
+    .filter((k) => k <= eind && dagen[k]?.gewicht_kg != null).sort()
   const laatste = alleW.length ? alleW[alleW.length - 1] : undefined
   const gewicht = laatste
     ? +(dagen[laatste]?.gewicht_kg ?? 0)
