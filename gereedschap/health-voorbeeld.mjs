@@ -784,9 +784,19 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
       const schuif = watals.locator('input[type=range]')
       const risico = async () => {
         const t = (await watals.innerText()).replace(/\s+/g, ' ')
-        const m = /([\d,]+)% in plaats van ([\d,]+)%/.exec(t)
+        const m = /([\d,]+)% nu, ([\d,]+)% met dit scenario/.exec(t)
         if (!m) throw new Error(`${stam}: geen risico in de wat-als-kaart\n  ${t.slice(0, 300)}`)
-        return { straks: Number(m[1].replace(',', '.')), nu: Number(m[2].replace(',', '.')) }
+        return { nu: Number(m[1].replace(',', '.')), straks: Number(m[2].replace(',', '.')) }
+      }
+      /* DE BAND MET DE GRENZEN VAN DE RICHTLIJN
+         Een percentage zegt weinig zonder zijn grenzen, en die verschuiven met
+         de leeftijd. De figuur hoort ze allebei te tekenen; staat er maar één
+         getal onder de band, dan is er een zone weggevallen. */
+      const bandtekst = await watals.locator('svg.fig').first()
+        .evaluate((el) => [...el.querySelectorAll('text')].map((t) => t.textContent).join(' '))
+      const grenzen = bandtekst.split(' ').filter((x) => /^\d+,\d%$/.test(x))
+      if (grenzen.length < 4) {
+        throw new Error(`${stam}: de risicoband mist een grens of een stip (${bandtekst})`)
       }
       await schuif.fill('0')
       await pagina.waitForTimeout(150)
@@ -802,7 +812,8 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
           + `(${opTien.straks} tegen ${opNul.nu})`)
       }
       const watalsTekst = (await watals.innerText()).replace(/\s+/g, ' ')
-      for (const stuk of ['Stap 1', 'Stap 2', 'Hartleeftijd', 'band', 'geen voorspelling voor jou']) {
+      for (const stuk of ['Stap 1', 'Stap 2', 'Hartleeftijd', 'marge',
+                          'geen voorspelling voor jou', 'NHG-CVRM']) {
         if (!watalsTekst.includes(stuk)) {
           throw new Error(`${stam}: "${stuk}" ontbreekt in de wat-als-kaart\n  ${watalsTekst.slice(0, 300)}`)
         }

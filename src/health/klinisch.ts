@@ -63,12 +63,28 @@ export function score2(
   if (u <= 0 || u >= 1) return null
   const risico = (1 - Math.exp(-Math.exp(s1 + s2 * Math.log(-Math.log(1 - u))))) * 100
 
-  // NHG-CVRM, leeftijdsafhankelijk
-  const klasse: Risicoklasse =
-    leeftijd < 50
-      ? risico < 2.5 ? 'laag' : risico < 7.5 ? 'matig' : 'hoog'
-      : risico < 5 ? 'laag' : risico < 10 ? 'matig' : 'hoog'
-  return { risico, klasse }
+  return { risico, klasse: score2Klasse(leeftijd, risico) }
+}
+
+/**
+ * DE TWEE GRENZEN VAN NHG-CVRM, EN WAAROM ZE APART STAAN
+ *
+ * Ze stonden binnen `score2` als twee regels met vier getallen erin. Dat was
+ * genoeg zolang alleen die functie ze nodig had. Sinds de risicoband op het
+ * scherm dezelfde grenzen tekent, staan ze op twee plekken, en twee plekken met
+ * dezelfde getallen lopen uit elkaar zonder dat iemand het ziet: dan kleurt de
+ * band oranje bij een uitkomst die de app "laag" noemt.
+ *
+ * Vandaar één bron. De grenzen zijn leeftijdsafhankelijk, en dat is geen detail:
+ * dezelfde 6 procent heet onder de vijftig matig en daarboven hoog.
+ */
+export function score2Grenzen(leeftijd: number): { matig: number; hoog: number } {
+  return leeftijd < 50 ? { matig: 2.5, hoog: 7.5 } : { matig: 5, hoog: 10 }
+}
+
+export function score2Klasse(leeftijd: number, risico: number): Risicoklasse {
+  const g = score2Grenzen(leeftijd)
+  return risico < g.matig ? 'laag' : risico < g.hoog ? 'matig' : 'hoog'
 }
 
 export interface Fib4Invoer {
