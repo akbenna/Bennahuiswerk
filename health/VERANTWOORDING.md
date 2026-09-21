@@ -2819,3 +2819,77 @@ De naam is Kennisbank en niet Academie, en dat is een keuze. Academie betekent
 op dit portaal al iets: de drie cursussen van BennaHuiswerk, met hun eigen
 tegels en hun eigen proef. Twee dingen op één portaal die allebei Academie heten
 is een verwarring die je later niet meer uit de teksten krijgt.
+
+## 46. Wat als: van kilo's naar een risico, en waarom dat twee stappen zijn
+
+De vraag is oud en goed: wat levert het op als ik tien kilo kwijtraak. Het
+eerlijke antwoord begint bij wat er niet kan.
+
+**SCORE2 kent geen gewicht.** De invoer is leeftijd, geslacht, roken,
+systolische bloeddruk, totaal cholesterol en HDL. Meer niet. "Wat wordt mijn
+SCORE2 als ik afval" is dus niet rechtstreeks te berekenen, en een app die het
+tóch in één getal geeft, verzint de weg ertussen.
+
+Daarom staat die weg hier in twee stappen, en staan ze allebei op het scherm:
+
+1. **Van kilo's naar je waarden.** Wat doet gewichtsverlies gemiddeld met je
+   bloeddruk en je lipiden? Dat is gemeten, in meta-analyses.
+2. **Van je waarden naar het risico.** Die geschatte waarden gaan door hetzelfde
+   SCORE2 dat op het scherm staat, mét de omrekening van thuis naar spreekkamer
+   uit §38.
+
+Wie de eerste stap niet gelooft, ziet meteen waar hij niet in meegaat. Eén pijl
+van kilo's naar een percentage zou verbergen dat er een aanname tussen zit.
+
+### De effectmaten, en wat eraan mankeert
+
+**Bloeddruk: ongeveer 1 mmHg systolisch per kilo.** Neter en anderen,
+Hypertension 2003, vijfentwintig trials.
+
+**Lipiden: per kilo ongeveer 0,05 mmol/L totaal cholesterol eraf en 0,009 mmol/L
+HDL erbij.** Dattilo en Kris-Etherton, Am J Clin Nutr 1992. Die HDL-stijging
+geldt bij een stabiel gewicht; tijdens het afvallen zelf daalt HDL in die
+analyse juist licht, en dat staat op het scherm, want wie halverwege meet ziet
+anders iets wat hij niet verwacht.
+
+Geen van beide is tegen het artikel zelf nagelopen. Ze komen uit weergaven van
+derden, net als de 7-2-2 bij de thuisbloeddruk voordat die werd nagelopen, en
+dat staat er met zoveel woorden bij. De banden zijn daarom ruim genomen (0,5 tot
+1,5 mmHg per kilo) en heten geen betrouwbaarheidsinterval, want dat zijn ze
+niet.
+
+### Drie dingen die deze motor begrenzen
+
+**Elke uitkomst draagt zijn band.** Het risico wordt drie keer gerekend: met het
+zwakste effect, het middelste en het sterkste. Daarbij wisselen de randen van
+plaats, want het sterkste effect op de bloeddruk geeft het láágste risico. Wie
+die twee verwisselt toont een band die de verkeerde kant op staat, en dat ziet
+er precies zo geloofwaardig uit. Er staat een proef op.
+
+**Geen gewonnen levensjaren.** Die stap vraagt aannames die veel verder gaan dan
+waar deze app zich aan houdt. Wat er staat is wat SCORE2 leest, en dat gaat over
+tien jaar en over hart en vaten.
+
+**Het is een gemiddelde en geen voorspelling.** De helft van de mensen wijkt er
+fors van af. Dat staat op de kaart, met een verwijzing naar het stuk over
+responders in de kennisbank.
+
+### De hartleeftijd
+
+De leeftijd waarop iemand met ideale waarden hetzelfde tienjaarsrisico heeft als
+jij. Meer is het niet: er hangt geen behandelgrens aan en het is geen
+biologische leeftijd. Het is een manier om een percentage te zeggen waar mensen
+wel iets bij voelen.
+
+Wat hier ideaal heet is een keuze en staat erbij: niet roken, geen diabetes,
+bovendruk 120, totaal cholesterol 5,0 en HDL 1,4. Die set komt uit de
+Framingham-traditie van de heart age en niet uit de SCORE2-publicatie, die het
+begrip niet kent. Een andere ideale set geeft een andere hartleeftijd.
+
+Buiten 40 tot 69 zegt de app dat het ophoudt in plaats van de lijn door te
+trekken. Daar geeft SCORE2 zelf niets meer terug, en een hartleeftijd van 78 zou
+precies het getal zijn dat in een spreekkamer blijft hangen.
+
+Zeven mutanten gedood. De sterkste proef is de omkering: wie precies de ideale
+waarden heeft, krijgt zijn eigen leeftijd terug. Die gebruikt dezelfde functie in
+twee richtingen en valt om zodra er aan één kant iets schuift.

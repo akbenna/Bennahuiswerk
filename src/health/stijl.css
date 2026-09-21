@@ -214,6 +214,18 @@ label.veld>span{display:block;font-size:.72rem;color:var(--grijs);margin-bottom:
   transition:transform .15s ease;display:inline-block}
 .uitleg[open]>summary::before{transform:rotate(90deg)}
 .uitleg>summary:hover{color:var(--ink)}
+/* De schuif van "wat als". Een bereikveld erft anders de rand en de binnenmarge
+   van de gewone invoervelden, en dan staat de knop in een doosje. */
+.schuif{-webkit-appearance:none;appearance:none;background:none;border:0;padding:0;
+  width:100%;height:26px;cursor:pointer}
+.schuif::-webkit-slider-runnable-track{height:5px;border-radius:3px;background:var(--vlak2)}
+.schuif::-moz-range-track{height:5px;border-radius:3px;background:var(--vlak2)}
+.schuif::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;
+  margin-top:-8.5px;border-radius:50%;background:var(--knopvul);border:2px solid var(--vlak)}
+.schuif::-moz-range-thumb{width:22px;height:22px;border-radius:50%;
+  background:var(--knopvul);border:2px solid var(--vlak)}
+.schuif:focus-visible{outline:2px solid var(--k);outline-offset:3px}
+
 /* De zes meetvakjes op Gezondheid. Een uitrolmenu met één waardeveld ernaast
    kostte bij een bloeddruk twee keer kiezen, twee keer typen en twee keer
    opslaan, en een bloeddruk is nu juist twee getallen die bij elkaar horen.

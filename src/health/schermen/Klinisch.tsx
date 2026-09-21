@@ -8,7 +8,7 @@
  * schrikbeeld en geen gegeven.
  */
 import { useState } from 'react'
-import { Kaart, Knop, Kop, Rij, Tussen, Uitleg } from '../onderdelen/basis'
+import { Kaart, Keuzechip, Knop, Kop, Rij, Tussen, Uitleg } from '../onderdelen/basis'
 import { Schermkop } from '../hero'
 import { dec } from '@/gedeeld/getal'
 import { kortNL, vandaag } from '@/gedeeld/datum'
@@ -22,12 +22,14 @@ import {
   STOPBANG, fib4, middelLengte, nieuwste, rustpols, score2, stopbangScore, stopbangUitGegevens,
 } from '../klinisch'
 import { middelbeloop } from '../middelbeloop'
+import { hartleeftijd, watals } from '../watals'
+import type { Hartleeftijd, WatalsInvoer } from '../watals'
 import { spreekuurtekst } from '../spreekuur'
 import type { Spreekuurbron } from '../spreekuur'
 import { tijdspanne, veranderingen } from '../verandering'
 import type { Verandering } from '../verandering'
 import type { Rustpols, StopbangAntwoorden, StopbangSleutel } from '../klinisch'
-import { WegLab, WegMeting } from '../tekens'
+import { WegLab, WegMeting, WegTraject } from '../tekens'
 import { SFEERFOTO } from '../sfeerfotos'
 
 /** code, naam, eenheid, ondergrens, bovengrens */
@@ -298,6 +300,19 @@ export function Klinisch(p: KlinischEigenschappen) {
         )}
       </Kaart>
 
+      {sc && sysSpreekkamer != null && tc?.waarde != null && hdl?.waarde != null
+        && profiel.leeftijd_jaar != null && trendKg != null
+        && (profiel.geslacht === 'm' || profiel.geslacht === 'v') && (
+        <WatalsKaart
+          nu={{
+            geslacht: profiel.geslacht, leeftijd: profiel.leeftijd_jaar,
+            rookt: !!profiel.instellingen.rookt, dm: false,
+            gewichtKg: trendKg, sbd: sysSpreekkamer,
+            tc: Number(tc.waarde), hdl: Number(hdl.waarde),
+          }}
+          lengteCm={profiel.lengte_cm} doelKg={profiel.doel_gewicht_kg} />
+      )}
+
       <Kaart toon={f?.klasse === 'verwijzen' ? 'let' : undefined}>
         <Kop>FIB-4: leverfibrose bij MASLD</Kop>
         {f ? (
@@ -501,6 +516,137 @@ function Conditiekaart(
         <Knop vol opKlik={opLeren}>Leren over je aandoening</Knop>
         <Knop opKlik={() => opVerdiepen()}>Lezen over afvallen</Knop>
       </Rij>
+    </Kaart>
+  )
+}
+
+/**
+ * WAT ALS: de schuif, en wat eronder hoort te staan
+ *
+ * De rekensom staat in `watals.ts`, met de bronnen en met wat eraan mankeert.
+ * Hier staat alleen hoe het op het scherm komt, en daar zijn twee keuzes in
+ * gemaakt die het verschil uitmaken tussen een hulpmiddel en een goocheltruc.
+ *
+ * **De twee stappen staan er allebei.** Eerst wat er met je bloeddruk en je
+ * cholesterol gebeurt, dan pas wat SCORE2 daarvan leest. Wie de eerste stap niet
+ * gelooft, ziet meteen waar hij niet in meegaat. Eén pijl van kilo's naar een
+ * risicopercentage zou verbergen dat er een aanname tussen zit.
+ *
+ * **De band staat naast het getal en niet eronder.** Het middelste effect is een
+ * gemiddelde uit studies; de helft van de mensen zit erbuiten. Een kaart die
+ * "2,7 procent" zegt en de spreiding in de kleine letters zet, zegt iets anders
+ * dan hij waarmaakt.
+ */
+function WatalsKaart(
+  { nu, lengteCm, doelKg }:
+  { nu: WatalsInvoer; lengteCm: number | null; doelKg: number | null },
+) {
+  /* Tot een BMI van 20 en niet verder: dat is geen advies maar de onderkant van
+     het bereik waarbinnen de vraag zinnig is. Zonder lengte dertig kilo. */
+  const bodem = lengteCm ? Math.round(20 * (lengteCm / 100) ** 2) : nu.gewichtKg - 30
+  const max = Math.max(1, Math.min(30, Math.round(nu.gewichtKg - bodem)))
+  /* De schuif begint op je eigen doel als dat er is, en anders op vijf kilo.
+     Op nul beginnen zou een kaart geven die zegt dat er niets verandert. */
+  const begin = doelKg != null && doelKg < nu.gewichtKg
+    ? Math.min(max, Math.round(nu.gewichtKg - doelKg)) : Math.min(max, 5)
+  const [kilos, zetKilos] = useState(begin)
+  const [stopt, zetStopt] = useState(false)
+
+  const uit = watals(nu, { kilosEraf: kilos, stoptMetRoken: stopt })
+  if (!uit) return null
+  const hNu = hartleeftijd(nu.geslacht, uit.nu.risico)
+  const hStraks = hartleeftijd(nu.geslacht, uit.straks.risico)
+  const jaren = (h: Hartleeftijd | null): string =>
+    h == null ? '–' : 'jaren' in h ? `${h.jaren} jaar` : h.grens === 'onder' ? 'onder de 40' : 'boven de 69'
+
+  return (
+    <Kaart sfeer="golf">
+      <Kop teken={WegTraject}>Wat als</Kop>
+      <p style={{ fontSize: '.92rem', marginTop: 6 }}>
+        Wat gewichtsverlies gemiddeld doet met je bloeddruk en je cholesterol, en wat SCORE2 daar
+        vervolgens van leest. Twee stappen, allebei zichtbaar.
+      </p>
+
+      <label className="veld" style={{ marginTop: 14 }}>
+        <span>
+          <b className="hoeveelheid">{kilos} kg</b> eraf: van {dec(nu.gewichtKg, 1)} naar{' '}
+          {dec(uit.straks.waarden.gewichtKg, 1)} kg
+        </span>
+        <input type="range" className="schuif" min={0} max={max} step={1} value={kilos}
+               aria-label="hoeveel kilo eraf"
+               onChange={(e) => zetKilos(Number(e.target.value))} />
+      </label>
+      {nu.rookt && (
+        <Rij style={{ marginTop: 8 }}>
+          <Keuzechip aan={stopt} opKlik={() => zetStopt((x) => !x)}>en ik stop met roken</Keuzechip>
+        </Rij>
+      )}
+
+      <Tussen style={{ marginTop: 14 }}><Kop>Stap 1: je waarden</Kop></Tussen>
+      <div className="trio" style={{ marginTop: 6 }}>
+        <div>
+          <div className="mini">Bovendruk</div>
+          <div className="getal" style={{ fontSize: '1.2rem' }}>
+            {Math.round(uit.straks.waarden.sbd)}
+          </div>
+          <div className="mini">was {Math.round(nu.sbd)} mmHg</div>
+        </div>
+        <div>
+          <div className="mini">Totaal cholesterol</div>
+          <div className="getal" style={{ fontSize: '1.2rem' }}>
+            {dec(uit.straks.waarden.tc, 1)}
+          </div>
+          <div className="mini">was {dec(nu.tc, 1)} mmol/L</div>
+        </div>
+        <div>
+          <div className="mini">HDL</div>
+          <div className="getal" style={{ fontSize: '1.2rem' }}>
+            {dec(uit.straks.waarden.hdl, 2)}
+          </div>
+          <div className="mini">was {dec(nu.hdl, 2)} mmol/L</div>
+        </div>
+      </div>
+
+      <Tussen style={{ marginTop: 14 }}><Kop>Stap 2: wat SCORE2 daarvan leest</Kop></Tussen>
+      <Rij style={{ alignItems: 'baseline', marginTop: 4 }}>
+        <span className="getal" style={{ fontSize: '2rem' }}>{dec(uit.straks.risico, 1)}%</span>
+        <span className="klein">
+          in plaats van {dec(uit.nu.risico, 1)}%, band {dec(uit.laagste.risico, 1)} tot{' '}
+          {dec(uit.hoogste.risico, 1)}
+        </span>
+      </Rij>
+      <p className="mini" style={{ marginTop: 8 }}>
+        Hartleeftijd {jaren(hNu)} nu, {jaren(hStraks)} dan. Dat is de leeftijd waarop iemand met
+        ideale waarden hetzelfde tienjaarsrisico heeft als jij; er hangt geen behandelgrens aan.
+      </p>
+      <p className="mini" style={{ marginTop: 8 }}>
+        Dit is het gemiddelde van studies en geen voorspelling voor jou: de helft van de mensen
+        wijkt er fors van af, en waarom dat zo is staat in de kennisbank bij het stuk over
+        responders. Er staat ook geen gewonnen levensjaar bij, want dat vraagt aannames die deze
+        app niet doet.
+      </p>
+
+      <Uitleg id="watals" label="waar deze effecten vandaan komen">
+        <p>
+          <b>Bloeddruk:</b> ongeveer één mmHg systolisch per kilo, uit de meta-analyse van Neter
+          en anderen (Hypertension 2003, vijfentwintig trials).
+        </p>
+        <p>
+          <b>Cholesterol:</b> per kilo ongeveer 0,05 mmol/L totaal cholesterol eraf en 0,009
+          mmol/L HDL erbij, uit de meta-analyse van Dattilo en Kris-Etherton (Am J Clin Nutr
+          1992). Die HDL-stijging geldt bij een stábiel gewicht; tijdens het afvallen zelf daalt
+          HDL in die analyse juist licht, dus wie halverwege meet ziet iets anders.
+        </p>
+        <p>
+          Geen van beide schattingen is tegen het artikel zelf nagelopen; ze komen uit weergaven
+          van derden. Daarom is de band hier ruim genomen, en daarom is het geen gepubliceerd
+          betrouwbaarheidsinterval maar een marge.
+        </p>
+        <p>
+          Stoppen met roken telt in SCORE2 als een schakelaar: aan of uit. In het echt zakt dat
+          risico over jaren en niet op de dag dat je stopt.
+        </p>
+      </Uitleg>
     </Kaart>
   )
 }
