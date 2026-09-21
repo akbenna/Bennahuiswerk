@@ -113,6 +113,35 @@ a{color:var(--k)}
    dossierkop en niet als een tussenkopje; het trok bovendien meer
    aandacht dan het getal eronder. Nu gewoon een klein vet woord. */
 .eyebrow{font-size:.78rem;font-weight:640;letter-spacing:0;color:var(--grijs)}
+/* DE TITEL VAN EEN KAART LEEST ALS EEN TITEL
+   Alles op een scherm had bijna hetzelfde gewicht: de kop van een kaart stond
+   in .78rem grijs, de regel eronder in .84 en de toelichting in .75. Dat leest
+   als één lange labtekst waarin niets begint of eindigt, en dan motiveert een
+   scherm vol goede informatie niemand om te lezen.
+
+   Alleen de eerste kop van een kaart groeit. Een tussenkop verderop in dezelfde
+   kaart ("Stap 1", "De rest van de kast") blijft klein, en juist daardoor is er
+   nu een rangorde in plaats van één vlak. De vier selectors dekken de twee
+   vormen die `Kaart` oplevert, met en zonder sfeermotief; dat motief zet er een
+   laag tussen. */
+.kaart > .eyebrow:first-child,
+.kaart > .tussen:first-child > .eyebrow,
+.kaart.metsfeer > div > .eyebrow:first-child,
+.kaart.metsfeer > div > .tussen:first-child > .eyebrow{
+  font-size:.97rem;font-weight:700;color:var(--ink);letter-spacing:-.012em}
+.kaart > .eyebrow:first-child,
+.kaart.metsfeer > div > .eyebrow:first-child{margin-bottom:2px}
+/* De wegwijzer hoort bij de titel en krijgt daarom de accentkleur: één blik en
+   je ziet waar een tegel over gaat. Verderop in de kaart blijft hij grijs. */
+.kaart > .eyebrow:first-child > svg,
+.kaart > .tussen:first-child > .eyebrow > svg,
+.kaart.metsfeer > div > .eyebrow:first-child > svg,
+.kaart.metsfeer > div > .tussen:first-child > .eyebrow > svg{color:var(--k)}
+
+/* De titel van een regel in een lijst, met zijn toelichting eronder. Die twee
+   stonden op .84 en .75 en verschilden dus nauwelijks; nu draagt de eerste het
+   gewicht en de tweede niet. */
+.rijkop{font-size:.88rem;font-weight:600;color:var(--ink);line-height:1.4}
 /* De wegwijzer staat in een eigen kolom links van de kop en nooit in de
    tekststroom, dat is een van de vier dingen die hem van een herkomstteken
    onderscheiden. Zie `tekens.tsx`. */
@@ -214,6 +243,21 @@ label.veld>span{display:block;font-size:.72rem;color:var(--grijs);margin-bottom:
   transition:transform .15s ease;display:inline-block}
 .uitleg[open]>summary::before{transform:rotate(90deg)}
 .uitleg>summary:hover{color:var(--ink)}
+/* HET WEEGVELD IN DE HERO
+   Het stond onderaan het dagscherm, en dat is de verkeerde plek voor de eerste
+   handeling van de dag: je moest langs zes kaarten scrollen om het ene getal in
+   te vullen waar de hele app op rust. Een eigen vlak en geen doorzichtige rand,
+   want hij ligt op een foto: wat je intikt moet leesbaar blijven, welke foto er
+   ook achter staat. */
+.heroweeg{display:inline-flex;align-items:center;gap:4px;flex:0 0 auto;
+  background:var(--vlak);border:1px solid var(--lijn);border-radius:999px;
+  padding:4px 12px 4px 13px;box-shadow:var(--schaduw)}
+.heroweeg>.wat{font-size:.72rem;color:var(--grijs);white-space:nowrap}
+.heroweeg input{width:62px;padding:3px 4px;font-size:1.02rem;text-align:right;
+  border:0;background:none;font-variant-numeric:tabular-nums;color:var(--ink)}
+.heroweeg input:focus{outline:2px solid var(--k);outline-offset:1px;border-radius:7px}
+.heroweeg>.eh{font-size:.78rem;color:var(--grijs)}
+
 /* De schuif van "wat als". Een bereikveld erft anders de rand en de binnenmarge
    van de gewone invoervelden, en dan staat de knop in een doosje. */
 .schuif{-webkit-appearance:none;appearance:none;background:none;border:0;padding:0;

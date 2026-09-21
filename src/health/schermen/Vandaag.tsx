@@ -354,9 +354,30 @@ export function Vandaag(p: VandaagEigenschappen) {
                 : 'Je dag tot nu toe'}
             </h2>
           </div>
-          <span className={'vlaggetje ' + (gewogen ? 'goed' : 'rust')}>
-            {gewogen ? '✓ gewogen' : '– niet gewogen'}
-          </span>
+          {/* HET WEEGVELD STAAT IN DE HERO EN NIET ONDERAAN
+              Het stond onderaan het dagscherm, achter alles langs. Dat is de
+              verkeerde plek voor de eerste handeling van de dag: je moest langs
+              zes kaarten scrollen om het ene getal in te vullen waar de hele
+              app op rust, en de kop erboven zei ondertussen "stap op de
+              weegschaal".
+
+              Zodra er gewogen is, verdwijnt het veld en staat er wat er staat.
+              De kaart onderaan blijft bestaan om te corrigeren en om uit te
+              leggen waarom dit de kern is; die hoeft niet bovenaan. */}
+          {isVandaag && !gewogen ? (
+            <label className="heroweeg">
+              <span className="wat">weeg je even?</span>
+              <input type="number" step="0.1" inputMode="decimal" placeholder="–"
+                     key={'hero-gw' + datum}
+                     aria-label="Gewicht in kilo"
+                     onBlur={(e) => p.zetDagveld('gewicht_kg', e.target.value || null)} />
+              <span className="eh">kg</span>
+            </label>
+          ) : (
+            <span className={'vlaggetje ' + (gewogen ? 'goed' : 'rust')}>
+              {gewogen ? `✓ ${dec(dag.gewicht_kg, 1)} kg` : '– niet gewogen'}
+            </span>
+          )}
         </div>
 
         <div className="heroring">
@@ -1097,7 +1118,7 @@ function Suppletielijst({ token, profiel }: { token: string; profiel: Profiel })
         <div className="lijst" style={{ marginTop: 6 }}>
           {nagekeken(vraag).map((r) => (
             <div key={r.wat}>
-              <span className="klein groei">{r.wat}</span>
+              <span className="rijkop groei">{r.wat}</span>
               <span className="mini" style={{ color: 'var(--dim)' }}>{r.stand}</span>
             </div>
           ))}
