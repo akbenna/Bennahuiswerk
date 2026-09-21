@@ -72,7 +72,13 @@ function reeks(aantalDagen, vorm = 'gewoon') {
       /* De uitbijtervorm is de gewone reeks met één weging van 190,2 erin, op
          de veertiende dag. Dat is het geval uit het echte logboek: een reeks
          rond de 118 met daartussen één getal dat er niet kan staan. */
-      gewicht_kg: vorm === 'tegenspraak'
+      /* En de vorm zonder weging van vandaag: de ochtend waarop je de app
+         opent en nog op de weegschaal moet. Elke andere vorm heeft die dag al
+         gewogen, dus de kop "Stap op de weegschaal" en het weegveld in de hero
+         kwamen in de hele proefopstelling niet voor. */
+      gewicht_kg: vorm === 'niet-gewogen' && i === 0
+        ? null
+        : vorm === 'tegenspraak'
         ? (i % 3 === 0 ? Math.round((116.0 + t * 4.6 + ruis) * 10) / 10 : null)
         : vorm === 'uitbijter' && i === 14
         ? 190.2
@@ -206,7 +212,8 @@ function metingen(aantalDagen) {
 function alles(aantalDagen, fase = 'afvallen') {
   const vorm = fase === 'tegenspraak' ? 'tegenspraak'
     : fase === 'uitbijter' ? 'uitbijter'
-    : fase === 'leeg-vandaag' ? 'leeg-vandaag' : 'gewoon'
+    : fase === 'leeg-vandaag' ? 'leeg-vandaag'
+    : fase === 'niet-gewogen' ? 'niet-gewogen' : 'gewoon'
   const { dagen, regels } = aantalDagen > 0
     ? reeks(aantalDagen, vorm) : { dagen: [], regels: [] }
   /* De GLI staat in de instellingen en niet in een eigen kolom: het is een
@@ -261,6 +268,10 @@ const gevallen = [
   ['tegenspraak', 28, 'light', 'tegenspraak', ['Inzicht']],
   /* De ochtend waarop er nog niets in staat. */
   ['leeg-vandaag', 28, 'light', 'leeg-vandaag', ['Vandaag']],
+  /* En de ochtend waarop er nog niet gewogen is. Zie de kop van dit bestand:
+     elk ander geval heeft vandaag al gewogen, dus het weegveld in de hero stond
+     in geen enkele afdruk. */
+  ['niet-gewogen', 28, 'light', 'niet-gewogen', ['Vandaag']],
 ]
 
 /** Een tabblad openen en wachten tot de kop er echt staat. */
@@ -678,6 +689,26 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
                         JSON.stringify(rij))
       }
       console.log(`${''.padEnd(26)} volgorde: ${rij.slice(0, 6).join(' → ')}`)
+
+      /* HET WEEGVELD STAAT IN DE HERO
+         Het stond onderaan, achter zes kaarten langs, terwijl de kop erboven
+         "Stap op de weegschaal" zei. Deze proef houdt vast dat kop en handeling
+         bij elkaar staan: zegt de hero dat je moet wegen, dan staat het veld er
+         ook. En zodra er gewogen is verdwijnt het en staat het getal er. */
+      const heroTekst = (await pagina.locator('.hero').first().innerText()).replace(/\s+/g, ' ')
+      const veld = await pagina.locator('.hero .heroweeg input').count()
+      if (/Stap op de weegschaal/.test(heroTekst)) {
+        if (veld !== 1) {
+          throw new Error(`${stam}: de hero vraagt om een weging en heeft geen weegveld`)
+        }
+        const laag = await pagina.locator('.kaart').filter({ hasText: 'Ochtendweging' }).count()
+        if (laag !== 1) throw new Error(`${stam}: de weegkaart eronder is verdwenen`)
+        console.log(`${''.padEnd(26)} weegveld in de hero, en de kaart eronder blijft`)
+      } else if (veld !== 0) {
+        throw new Error(`${stam}: er staat een weegveld in de hero terwijl er al gewogen is`)
+      } else if (!/kg/.test(heroTekst)) {
+        throw new Error(`${stam}: het vlaggetje noemt het gewicht niet\n  ${heroTekst.slice(0, 160)}`)
+      }
     }
 
     /* WAT JE KOMT HALEN STAAT BOVEN WAT JE KOMT DOEN

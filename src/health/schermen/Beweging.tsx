@@ -519,7 +519,7 @@ function Spierkaart(
             precies het deel dat zegt wat je eraan kunt doen. */}
         {regels.map((r) => (
           <div key={r.wat} style={{ flexWrap: 'wrap' }}>
-            <span className="klein groei">{r.wat}</span>
+            <span className="rijkop groei">{r.wat}</span>
             <span className="cijfer mini"
                   style={r.stand === 'let' ? { color: 'var(--let)' } : undefined}>
               {r.waarde || '–'}
@@ -714,7 +714,7 @@ function InspanningInvoer(
 
   return (
     <div style={{ marginTop: 12 }}>
-      <div className="mini">Wat heb je gedaan?</div>
+      <div className="rijkop" style={{ marginTop: 2 }}>Wat heb je gedaan?</div>
       <Rij style={{ marginTop: 6, flexWrap: 'wrap' }}>
         {SOORTEN.map((s) => (
           <Keuzechip key={s.sleutel} aan={soort === s.sleutel} titel={s.waarom}

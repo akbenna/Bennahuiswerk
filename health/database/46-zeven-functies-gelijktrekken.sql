@@ -1,5 +1,10 @@
 -- ZEVEN FUNCTIES GELIJKTREKKEN MET DE BESTANDEN
 --
+-- GEDRAAID OP 21 SEPTEMBER 2026. `controle-md5.sql` meldt sindsdien 44 keer
+-- gelijk en geen enkele keer VERSCHILT; de zeven hieronder staan er met dit
+-- bestand als bron. Wat er nog openstaat zijn de tien functies die in geen
+-- enkel bestand beschreven zijn, en die staan onderaan VERANTWOORDING 42.
+--
 -- Dit bestand voegt niets toe en haalt niets weg. Het vervangt zeven functies
 -- door de tekst die in deze map staat, en daarmee is het verslag weer waar.
 --

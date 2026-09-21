@@ -386,7 +386,7 @@ function Traject(
     <>
       <div className="lijst" style={{ marginTop: 6 }}>
         <div style={{ flexWrap: 'wrap' }}>
-          <span className="klein groei"><b>{p?.naam ?? 'Leefstijlprogramma'}</b></span>
+          <span className="rijkop groei">{p?.naam ?? 'Leefstijlprogramma'}</span>
           <span className="cijfer mini">
             {v.maanden != null ? `${v.maanden} van de ${GLI_TOTAAL_MAANDEN} mnd` : '–'}
           </span>
@@ -405,7 +405,7 @@ function Traject(
       <div className="lijst" style={{ marginTop: 6 }}>
         {criteria.map((c) => (
           <div key={c.wat} style={{ flexWrap: 'wrap' }}>
-            <span className="klein groei">{c.wat}</span>
+            <span className="rijkop groei">{c.wat}</span>
             <span className="cijfer mini"
                   style={{ color: c.stand === 'gehaald' ? 'var(--goed)' : 'var(--dim)' }}>
               {c.stand}
@@ -427,7 +427,7 @@ function Traject(
         <div className="lijst" style={{ marginTop: 4 }}>
           {DREMPELS.map((d) => (
             <div key={d.naam} style={{ flexWrap: 'wrap' }}>
-              <span className="klein groei">{d.naam}</span>
+              <span className="rijkop groei">{d.naam}</span>
               <span className="cijfer mini">
                 {dec(d.metComorbiditeit, 1)} mét · {dec(d.zonder, 1)} zonder
               </span>

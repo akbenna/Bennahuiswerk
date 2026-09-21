@@ -2752,6 +2752,21 @@ staat, met bij kal_gerecht de poort erin. Het bestand is niet overgetikt maar
 uit de bestanden geknipt, en dat is te zien: van de zeven veranderde er maar één
 md5, die van kal_gerecht. De andere zes zijn byte voor byte wat er al stond.
 
+### Gedraaid op 21 september 2026
+
+De controle meldt sindsdien **44 keer gelijk** en geen enkele keer VERSCHILT.
+Daarmee is de belofte onder in `controle-md5.sql` voor het eerst waar: de
+genummerde bestanden in deze map beschrijven wat er draait.
+
+Wat er nog openstaat zijn de tien functies die in geen enkel bestand beschreven
+zijn: `kal_sessie`, `kal_afmelden`, `kal_profiel_zetten`, `kal_dagstand`,
+`kal_dag_zetten`, `kal_regels_toevoegen`, `kal_regel_wissen`, `kal_weekcijfers`,
+`kal_prikkel_bouwen` en `kal_prikkel_gelogd`. Dat zijn de sessie, het profiel en
+het wegschrijven van een dag: de bodem waar de hele app op staat. Ze zijn van
+hieruit niet te schrijven, want hun tekst staat alleen in de database, en ze uit
+het hoofd reconstrueren gebeurt niet: een verslag dat lijkt op wat er draait is
+erger dan geen verslag, want het wordt geloofd.
+
 ## 43. De tweede helft van een belofte die maar half bestond
 
 De app merkt een weging aan die niet bij de reeks past en gooit hem niet weg.
@@ -2941,3 +2956,51 @@ factor. Hier ligt een echte SCORE2 met gepubliceerde coëfficiënten; een tweede
 eenvoudiger score ernaast zou twee antwoorden op dezelfde vraag geven. En de
 uitroep ("word je vier jaar jonger!") blijft weg: er staat wat er staat, en of
 dat goed nieuws is hoor je van je huisarts.
+
+## 48. Het weegveld stond onderaan, en drie tekstniveaus die er twee bleken
+
+Twee dingen die op dezelfde dag opvielen en allebei over leesbaarheid gaan.
+
+### Het ene getal waar de app op rust, stond achter zes kaarten
+
+De ochtendweging is de eerste handeling van de dag en het enige signaal in deze
+app dat niet te schatten valt. Het invoervak stond onderaan het dagscherm, terwijl
+de kop bovenaan "Stap op de weegschaal" zei. Je moest dus langs alles heen
+scrollen om te doen wat er boven aan het scherm van je gevraagd werd.
+
+Het veld staat nu in de hero, op de plek van het vlaggetje, als een witte pil
+met een eigen vlak: hij ligt op een foto, en wat je intikt hoort leesbaar te
+blijven welke foto er ook achter staat. Zodra er gewogen is verdwijnt het veld en
+staat het getal er in plaats van het woord: `✓ 116,6 kg` en niet `✓ gewogen`.
+
+De kaart onderaan blijft bestaan, om te corrigeren en om uit te leggen waarom dit
+de kern is. Dat hoeft niet bovenaan.
+
+**Er was geen enkel proefgeval waarin vandaag nog niet gewogen was.** Elke vorm
+in de proefopstelling had die dag al een weging, dus de kop "Stap op de
+weegschaal" en alles eromheen stonden in geen enkele afdruk. Dat geval heet nu
+`niet-gewogen` en staat in de rij, en de proef houdt vast dat kop en handeling
+bij elkaar staan: zegt de hero dat je moet wegen, dan staat het veld er ook, en
+zegt hij dat niet, dan staat het er niet.
+
+### Drie tekstniveaus die er in de praktijk twee waren
+
+Een kaartkop stond in 0,78 rem grijs, de regel eronder in 0,84 en de toelichting
+in 0,75. Op papier drie niveaus, op het scherm één lange labtekst waarin niets
+begint of eindigt. Een scherm vol goede informatie motiveert dan niemand om te
+lezen.
+
+Wat er veranderd is:
+
+**Alleen de eerste kop van een kaart groeit**, naar 0,97 rem, vet, in inktkleur,
+met de wegwijzer ernaast in de accentkleur. Een tussenkop verderop in dezelfde
+kaart ("Stap 1", "De rest van de kast") blijft klein, en juist daardoor is er nu
+een rangorde in plaats van één vlak. De vier selectors dekken de twee vormen die
+`Kaart` oplevert, met en zonder sfeermotief.
+
+**Een regel in een lijst krijgt een echte titel.** `.rijkop` is 0,88 rem en
+halfvet in inktkleur; de toelichting eronder blijft 0,75 in grijs. Die twee
+stonden eerst op 0,84 en 0,75 en verschilden dus nauwelijks.
+
+De contrastproef loopt nu over 1408 stukken tekst in zes tabbladen en twee
+thema's, en alles haalt nog steeds 4,5.
