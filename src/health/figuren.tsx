@@ -278,3 +278,129 @@ export function Cijfer(
 }
 
 export { dec, dz }
+
+/**
+ * TWEE GETALLEN DIE ELKAAR OVERSCHRIJVEN ZIJN ÉÉN ONLEESBAAR GETAL
+ *
+ * Bij een klein verschil staan de twee stippen van de risicoband vlak bij
+ * elkaar, en dan schuiven hun percentages over elkaar heen. De stippen blijven
+ * staan waar ze horen, want die dragen de betekenis; alleen de bijschriften
+ * worden uit elkaar geduwd, en elk de kant op waar hij toch al stond.
+ *
+ * Staat er geen tweede stip, dan is er niets te duwen. En geen van beide
+ * bijschriften loopt de figuur uit: aan de randen houdt het duwen op.
+ */
+export const LABELRUIMTE = 38
+
+export function uitElkaar(
+  nu: number, straks: number | null, breedte: number, ruimte = LABELRUIMTE,
+): { nu: number; straks: number } {
+  const binnen = (x: number) => Math.max(13, Math.min(breedte - 13, x))
+  if (straks == null) return { nu: binnen(nu), straks: 0 }
+  const duw = Math.max(0, (ruimte - Math.abs(nu - straks)) / 2)
+  const naarRechts = nu >= straks
+  return {
+    nu: binnen(nu + (naarRechts ? duw : -duw)),
+    straks: binnen(straks + (naarRechts ? -duw : duw)),
+  }
+}
+
+/**
+ * DE RISICOBAND: waar je staat, waar je heen zou gaan, en waar de grenzen liggen
+ *
+ * Een percentage zegt weinig zonder zijn grenzen. Twee procent is laag bij een
+ * vijftiger en matig bij een veertiger, want NHG-CVRM legt de grens anders. Op
+ * het scherm stond dat woord er wel ("laag risico volgens NHG-CVRM") maar niet
+ * de afstand tot de volgende grens, en dat is juist wat een gesprek stuurt.
+ *
+ * Deze band zet ze naast elkaar: de drie zones in hun kleur, de twee grenzen met
+ * hun getal, waar je nu staat, en waar het scenario je brengt. De kleur is niet
+ * die van deze app maar die van de richtlijn: groen, oranje en rood staan voor
+ * laag, matig en hoog zoals NHG-CVRM ze noemt, en de grenzen komen uit dezelfde
+ * functie die de klasse bepaalt. Zie `score2Grenzen` voor waarom dat één bron is.
+ *
+ * WAT DE BAND ERBIJ TEKENT
+ *
+ * De onzekerheid van het scenario, als een lichtere balk rond de nieuwe stip.
+ * De schatting van wat gewichtsverlies met je bloeddruk doet heeft een marge, en
+ * een stip zonder die marge belooft een precisie die er niet is.
+ *
+ * WAT ER NIET IN ZIT
+ *
+ * Geen pijl die "goed zo" zegt en geen kleur die de app zelf kiest. De zones
+ * zijn de zones van de richtlijn; wat jouw plek erin betekent, hoor je van je
+ * huisarts.
+ */
+export function Risicoband(
+  { nu, straks, laagste, hoogste, matig, hoog }:
+  {
+    nu: number
+    straks?: number | undefined
+    laagste?: number | undefined
+    hoogste?: number | undefined
+    matig: number
+    hoog: number
+  },
+) {
+  const W = 330, H = 62
+  const top = Math.max(hoog * 1.2, nu * 1.15, (straks ?? 0) * 1.15, (hoogste ?? 0) * 1.1)
+  const X = (v: number) => Math.max(0, Math.min(W, (v / top) * W))
+  const Y = 30, HOOG = 13
+
+  const label = uitElkaar(X(nu), straks == null ? null : X(straks), W)
+
+  return (
+    <svg className="fig" viewBox={`0 0 ${W} ${H}`} style={{ marginTop: 8 }} role="img"
+         aria-label={straks == null
+           ? `Risico ${dec(nu, 1)} procent, grenzen ${dec(matig, 1)} en ${dec(hoog, 1)}`
+           : `Risico van ${dec(nu, 1)} naar ${dec(straks, 1)} procent, `
+             + `grenzen ${dec(matig, 1)} en ${dec(hoog, 1)}`}>
+      {/* De drie zones van de richtlijn. */}
+      <rect x={0} y={Y} width={X(matig)} height={HOOG} fill="var(--goed)" opacity={0.3} rx={2} />
+      <rect x={X(matig)} y={Y} width={X(hoog) - X(matig)} height={HOOG} fill="var(--let)"
+            opacity={0.3} />
+      <rect x={X(hoog)} y={Y} width={W - X(hoog)} height={HOOG} fill="var(--fout)"
+            opacity={0.3} rx={2} />
+
+      {/* De twee grenzen, met hun getal eronder. */}
+      {[matig, hoog].map((g) => (
+        <g key={g}>
+          <line x1={X(g)} y1={Y - 2} x2={X(g)} y2={Y + HOOG + 2} stroke="var(--vlak)"
+                strokeWidth={2} />
+          <text x={X(g)} y={Y + HOOG + 13} fontSize={9} fill="var(--grijs)" textAnchor="middle">
+            {dec(g, 1)}%
+          </text>
+        </g>
+      ))}
+
+      {/* De marge van het scenario: een lichtere balk onder de stippen door. */}
+      {laagste != null && hoogste != null && (
+        <rect x={X(laagste)} y={Y + 3} width={Math.max(1.5, X(hoogste) - X(laagste))}
+              height={HOOG - 6} fill="var(--ink)" opacity={0.18} rx={2} />
+      )}
+
+      {/* En waar het scenario je brengt: dicht, en met de weg ernaartoe. */}
+      {straks != null && (
+        <>
+          <line x1={X(nu)} y1={Y + HOOG / 2} x2={X(straks)} y2={Y + HOOG / 2}
+                stroke="var(--k)" strokeWidth={2} strokeDasharray="3 2" />
+          <circle cx={X(straks)} cy={Y + HOOG / 2} r={5.5} fill="var(--k)" />
+          <text x={label.straks} y={Y - 7} fontSize={10} fill="var(--k)" textAnchor="middle"
+                fontWeight={700}>
+            {dec(straks, 1)}%
+          </text>
+        </>
+      )}
+
+      {/* Waar je nu staat: open, want dat is gemeten en niet gekozen. Ná de
+          andere stip getekend, zodat hij er bij een klein verschil bovenop ligt
+          en niet eronder verdwijnt. */}
+      <circle cx={X(nu)} cy={Y + HOOG / 2} r={5} fill="var(--vlak)" stroke="var(--ink)"
+              strokeWidth={2} />
+      <text x={label.nu} y={Y - 7} fontSize={10} fill="var(--ink)" textAnchor="middle"
+            fontWeight={600}>
+        {dec(nu, 1)}%
+      </text>
+    </svg>
+  )
+}

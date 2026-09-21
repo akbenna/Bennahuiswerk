@@ -8,8 +8,10 @@
  * schrikbeeld en geen gegeven.
  */
 import { useState } from 'react'
+import type { CSSProperties } from 'react'
 import { Kaart, Keuzechip, Knop, Kop, Rij, Tussen, Uitleg } from '../onderdelen/basis'
 import { Schermkop } from '../hero'
+import { Risicoband } from '../figuren'
 import { dec } from '@/gedeeld/getal'
 import { kortNL, vandaag } from '@/gedeeld/datum'
 import type { IsoDatum, Lab, Meting, Profiel, Vragenlijst } from '@/gedeeld/db/tabellen'
@@ -19,7 +21,8 @@ import type { Thuisbloeddruk } from '../bloeddruk'
 import { LeegGeenGegevens } from '../leegbeeld'
 import { MEDICATIEGROEPEN, conditieGezet, conditieVan } from '../conditie'
 import {
-  STOPBANG, fib4, middelLengte, nieuwste, rustpols, score2, stopbangScore, stopbangUitGegevens,
+  STOPBANG, fib4, middelLengte, nieuwste, rustpols, score2, score2Grenzen, stopbangScore,
+  stopbangUitGegevens,
 } from '../klinisch'
 import { middelbeloop } from '../middelbeloop'
 import { hartleeftijd, watals } from '../watals'
@@ -547,17 +550,58 @@ function WatalsKaart(
   const max = Math.max(1, Math.min(30, Math.round(nu.gewichtKg - bodem)))
   /* De schuif begint op je eigen doel als dat er is, en anders op vijf kilo.
      Op nul beginnen zou een kaart geven die zegt dat er niets verandert. */
-  const begin = doelKg != null && doelKg < nu.gewichtKg
-    ? Math.min(max, Math.round(nu.gewichtKg - doelKg)) : Math.min(max, 5)
-  const [kilos, zetKilos] = useState(begin)
+  const naarDoel = doelKg != null && doelKg < nu.gewichtKg
+    ? Math.min(max, Math.round(nu.gewichtKg - doelKg)) : null
+  const [kilos, zetKilos] = useState(naarDoel ?? Math.min(max, 5))
   const [stopt, zetStopt] = useState(false)
 
   const uit = watals(nu, { kilosEraf: kilos, stoptMetRoken: stopt })
   if (!uit) return null
+  const grenzen = score2Grenzen(nu.leeftijd)
   const hNu = hartleeftijd(nu.geslacht, uit.nu.risico)
   const hStraks = hartleeftijd(nu.geslacht, uit.straks.risico)
   const jaren = (h: Hartleeftijd | null): string =>
-    h == null ? '–' : 'jaren' in h ? `${h.jaren} jaar` : h.grens === 'onder' ? 'onder de 40' : 'boven de 69'
+    h == null ? '–' : 'jaren' in h ? `${h.jaren}` : h.grens === 'onder' ? 'onder de 40' : 'boven de 69'
+  const jonger = hNu != null && hStraks != null && 'jaren' in hNu && 'jaren' in hStraks
+    ? hNu.jaren - hStraks.jaren : null
+
+  const bmi = (kg: number): number | null =>
+    lengteCm ? kg / (lengteCm / 100) ** 2 : null
+  const bmiNu = bmi(nu.gewichtKg)
+  const bmiStraks = bmi(uit.straks.waarden.gewichtKg)
+
+  /* DE BAAN VAN DE SCHUIF DRAAGT DE BMI-GRENZEN
+     Links staat je gewicht van nu, rechts het uiterste. De kleur zegt waar 30
+     en 25 liggen, de twee grenzen die in elke richtlijn terugkomen. Zonder
+     lengte is er geen BMI en blijft de baan grijs; een gekleurde baan zonder
+     betekenis is erger dan een grijze. */
+  const kilosBij = (doelBmi: number): number | null =>
+    lengteCm ? nu.gewichtKg - doelBmi * (lengteCm / 100) ** 2 : null
+  const pct = (k: number | null): number | null =>
+    k == null ? null : Math.max(0, Math.min(100, (k / max) * 100))
+  const p30 = pct(kilosBij(30))
+  const p25 = pct(kilosBij(25))
+  const baan = p30 != null && p25 != null && p25 > p30
+    ? `linear-gradient(90deg, var(--foutbg) 0 ${p30}%, var(--letbg) ${p30}% ${p25}%, `
+      + `var(--goedbg) ${p25}% 100%)`
+    : undefined
+
+  const pijl = (verschil: number, omlaagIsGoed: boolean): string =>
+    verschil === 0 ? 'var(--grijs)'
+      : (verschil < 0) === omlaagIsGoed ? 'var(--goed)' : 'var(--let)'
+
+  const stap = (naam: string, van: number, tot: number, dec_: number, eenheid: string,
+                omlaagIsGoed: boolean) => (
+    <div>
+      <div className="mini">{naam}</div>
+      <div className="getal" style={{ fontSize: '1.2rem', color: pijl(tot - van, omlaagIsGoed) }}>
+        {dec(tot, dec_)}
+      </div>
+      <div className="mini">
+        was {dec(van, dec_)} {eenheid}
+      </div>
+    </div>
+  )
 
   return (
     <Kaart sfeer="golf">
@@ -571,53 +615,71 @@ function WatalsKaart(
         <span>
           <b className="hoeveelheid">{kilos} kg</b> eraf: van {dec(nu.gewichtKg, 1)} naar{' '}
           {dec(uit.straks.waarden.gewichtKg, 1)} kg
+          {bmiNu != null && bmiStraks != null
+            && `, BMI ${dec(bmiNu, 1)} naar ${dec(bmiStraks, 1)}`}
         </span>
         <input type="range" className="schuif" min={0} max={max} step={1} value={kilos}
                aria-label="hoeveel kilo eraf"
+               style={baan ? ({ '--baan': baan } as CSSProperties) : undefined}
                onChange={(e) => zetKilos(Number(e.target.value))} />
       </label>
-      {nu.rookt && (
-        <Rij style={{ marginTop: 8 }}>
+      <Rij style={{ marginTop: 4 }}>
+        {[5, 10, 15].filter((k) => k <= max).map((k) => (
+          <Keuzechip key={k} aan={kilos === k} opKlik={() => zetKilos(k)}>{k} kg</Keuzechip>
+        ))}
+        {naarDoel != null && (
+          <Keuzechip aan={kilos === naarDoel} opKlik={() => zetKilos(naarDoel)}>
+            naar je doel
+          </Keuzechip>
+        )}
+        {nu.rookt && (
           <Keuzechip aan={stopt} opKlik={() => zetStopt((x) => !x)}>en ik stop met roken</Keuzechip>
-        </Rij>
-      )}
+        )}
+      </Rij>
 
-      <Tussen style={{ marginTop: 14 }}><Kop>Stap 1: je waarden</Kop></Tussen>
+      <Tussen style={{ marginTop: 16 }}><Kop>Stap 1: je waarden</Kop></Tussen>
       <div className="trio" style={{ marginTop: 6 }}>
-        <div>
-          <div className="mini">Bovendruk</div>
-          <div className="getal" style={{ fontSize: '1.2rem' }}>
-            {Math.round(uit.straks.waarden.sbd)}
-          </div>
-          <div className="mini">was {Math.round(nu.sbd)} mmHg</div>
-        </div>
-        <div>
-          <div className="mini">Totaal cholesterol</div>
-          <div className="getal" style={{ fontSize: '1.2rem' }}>
-            {dec(uit.straks.waarden.tc, 1)}
-          </div>
-          <div className="mini">was {dec(nu.tc, 1)} mmol/L</div>
-        </div>
-        <div>
-          <div className="mini">HDL</div>
-          <div className="getal" style={{ fontSize: '1.2rem' }}>
-            {dec(uit.straks.waarden.hdl, 2)}
-          </div>
-          <div className="mini">was {dec(nu.hdl, 2)} mmol/L</div>
-        </div>
+        {stap('Bovendruk', nu.sbd, uit.straks.waarden.sbd, 0, 'mmHg', true)}
+        {stap('Totaal cholesterol', nu.tc, uit.straks.waarden.tc, 1, 'mmol/L', true)}
+        {stap('HDL', nu.hdl, uit.straks.waarden.hdl, 2, 'mmol/L', false)}
       </div>
 
-      <Tussen style={{ marginTop: 14 }}><Kop>Stap 2: wat SCORE2 daarvan leest</Kop></Tussen>
-      <Rij style={{ alignItems: 'baseline', marginTop: 4 }}>
-        <span className="getal" style={{ fontSize: '2rem' }}>{dec(uit.straks.risico, 1)}%</span>
+      <Tussen style={{ marginTop: 16 }}><Kop>Stap 2: wat SCORE2 daarvan leest</Kop></Tussen>
+      <Risicoband nu={uit.nu.risico} straks={uit.straks.risico}
+                  laagste={uit.laagste.risico} hoogste={uit.hoogste.risico}
+                  matig={grenzen.matig} hoog={grenzen.hoog} />
+      <Rij style={{ alignItems: 'center', marginTop: 2, flexWrap: 'wrap' }}>
+        <span className={'vlaggetje ' + (uit.straks.klasse === 'laag' ? 'goed'
+          : uit.straks.klasse === 'matig' ? 'let' : 'fout')}>
+          {uit.straks.klasse} risico
+        </span>
         <span className="klein">
-          in plaats van {dec(uit.nu.risico, 1)}%, band {dec(uit.laagste.risico, 1)} tot{' '}
-          {dec(uit.hoogste.risico, 1)}
+          {dec(uit.nu.risico, 1)}% nu, {dec(uit.straks.risico, 1)}% met dit scenario, en de marge
+          loopt van {dec(uit.laagste.risico, 1)} tot {dec(uit.hoogste.risico, 1)}. De grenzen
+          eronder zijn die van NHG-CVRM bij jouw leeftijd.
         </span>
       </Rij>
-      <p className="mini" style={{ marginTop: 8 }}>
-        Hartleeftijd {jaren(hNu)} nu, {jaren(hStraks)} dan. Dat is de leeftijd waarop iemand met
-        ideale waarden hetzelfde tienjaarsrisico heeft als jij; er hangt geen behandelgrens aan.
+      <Rij style={{ alignItems: 'baseline', marginTop: 10, flexWrap: 'wrap' }}>
+        <span className="klein">Hartleeftijd</span>
+        <span className={hNu != null && 'jaren' in hNu ? 'getal' : 'klein'}
+              style={hNu != null && 'jaren' in hNu ? { fontSize: '1.2rem' } : undefined}>
+          {jaren(hNu)}{hNu != null && 'jaren' in hNu ? ' jaar' : ''}
+        </span>
+        <span className="klein">naar</span>
+        <span className={hStraks != null && 'jaren' in hStraks ? 'getal' : 'klein'}
+              style={{ color: 'var(--k)',
+                       ...(hStraks != null && 'jaren' in hStraks ? { fontSize: '1.2rem' } : {}) }}>
+          {jaren(hStraks)}{hStraks != null && 'jaren' in hStraks ? ' jaar' : ''}
+        </span>
+        {jonger != null && jonger !== 0 && (
+          <span className={'vlaggetje ' + (jonger > 0 ? 'goed' : 'let')}>
+            {jonger > 0 ? `${jonger} jaar jonger` : `${-jonger} jaar ouder`}
+          </span>
+        )}
+      </Rij>
+      <p className="mini" style={{ marginTop: 6 }}>
+        De hartleeftijd is de leeftijd waarop iemand met ideale waarden hetzelfde tienjaarsrisico
+        heeft als jij; er hangt geen behandelgrens aan.
       </p>
       <p className="mini" style={{ marginTop: 8 }}>
         Dit is het gemiddelde van studies en geen voorspelling voor jou: de helft van de mensen
@@ -645,6 +707,11 @@ function WatalsKaart(
         <p>
           Stoppen met roken telt in SCORE2 als een schakelaar: aan of uit. In het echt zakt dat
           risico over jaren en niet op de dag dat je stopt.
+        </p>
+        <p>
+          De kleuren zijn niet van deze app maar van de richtlijn: groen, oranje en rood staan
+          voor laag, matig en hoog zoals NHG-CVRM ze noemt, en de twee grenzen verschuiven met je
+          leeftijd. Op de schuif staan ze voor een BMI van 30 en 25.
         </p>
       </Uitleg>
     </Kaart>

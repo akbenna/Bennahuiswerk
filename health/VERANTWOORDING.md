@@ -2893,3 +2893,51 @@ precies het getal zijn dat in een spreekkamer blijft hangen.
 Zeven mutanten gedood. De sterkste proef is de omkering: wie precies de ideale
 waarden heeft, krijgt zijn eigen leeftijd terug. Die gebruikt dezelfde functie in
 twee richtingen en valt om zodra er aan één kant iets schuift.
+
+## 47. Kleur die iets betekent
+
+De wat-als-kaart stond er in cijfers: 1,9 procent nu, 1,1 procent straks, band
+0,9 tot 1,4. Alles klopte en niemand zag het. Een percentage zegt weinig zonder
+zijn grenzen, en juist die grenzen sturen een gesprek: dezelfde 6 procent heet
+onder de vijftig matig en daarboven hoog.
+
+Er staat nu een band onder. Drie zones in hun kleur, de twee grenzen met hun
+getal, een open stip waar je nu staat en een dichte waar het scenario je brengt,
+met de weg ertussen gestippeld en de marge als een lichtere balk eromheen.
+
+### Drie regels, en ze zijn alle drie het verschil met een gekleurd plaatje
+
+**De kleur is die van de richtlijn en niet die van deze app.** Groen, oranje en
+rood staan voor laag, matig en hoog zoals NHG-CVRM ze noemt. De app kleurt niets
+op eigen gezag; hij tekent de zones die de richtlijn al heeft.
+
+**De grenzen komen uit één bron.** Ze stonden als vier getallen binnen `score2`,
+en de band zou ze een tweede keer hebben gehad. Twee plekken met dezelfde
+getallen lopen uit elkaar zonder dat iemand het ziet, en dan kleurt de band
+oranje bij een uitkomst die de app "laag" noemt. Nu staat er één
+`score2Grenzen(leeftijd)`, en een proef rekent een echte SCORE2 uit en houdt
+zijn klasse ernaast.
+
+**De schuif draagt de BMI-grenzen.** De baan loopt van je gewicht van nu naar
+het uiterste, en de kleur zegt waar 30 en 25 liggen. Zonder lengte is er geen
+BMI en blijft de baan grijs: een gekleurde baan zonder betekenis is erger dan
+een grijze.
+
+### Twee getallen die elkaar overschrijven zijn één onleesbaar getal
+
+Bij een klein verschil staan de twee stippen vlak bij elkaar en schoven hun
+percentages over elkaar heen. De stippen blijven staan waar ze horen, want die
+dragen de betekenis; alleen de bijschriften wijken, elk de kant op waar hij toch
+al stond, en geen van beide loopt de figuur uit.
+
+Zes mutanten gedood, waaronder de twee die er het geloofwaardigst uitzien: een
+grens die een punt verschuift, en twee bijschriften die allebei dezelfde kant op
+wijken.
+
+### Wat er uit de ProVita-simulator niet is overgenomen
+
+Die kaart rekent met een eigen risicoscore van nul tot honderd, met punten per
+factor. Hier ligt een echte SCORE2 met gepubliceerde coëfficiënten; een tweede,
+eenvoudiger score ernaast zou twee antwoorden op dezelfde vraag geven. En de
+uitroep ("word je vier jaar jonger!") blijft weg: er staat wat er staat, en of
+dat goed nieuws is hoor je van je huisarts.
