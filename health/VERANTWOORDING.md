@@ -3149,3 +3149,208 @@ rond de honderdvijftig tot tweehonderd kcal, is een verschil van die omvang
 zichtbaar en een verschil van vijftig kcal niet. Dat is geen tekortkoming van de
 meting maar de meting zelf, en het scherm zegt het met zoveel woorden: een
 langere reeks maakt de marge smaller, een kortere nooit.
+
+## 51. De app gaat naar testers, en daarmee verandert er iets aan wat hij is
+
+Tot vandaag was dit een app van één mens met een gezin erbij. Wat er nu bij komt
+is niet een functie maar een positie: er komen mensen in die ik niet ken, met
+hun eigen gewicht, hun eigen bloeddruk en hun eigen labwaarden.
+
+### De audit, en wat er werkelijk fout aan stond
+
+Wat al goed stond: geen sleutel in de repo (ik heb erop gescand, en wat op een
+sleutel lijkt zijn voorbeeldpatronen plus publieke anon-sleutels van het oude
+project in het archief), bcrypt op kostenfactor 10 met een rem op het raden,
+alle toegang via `SECURITY DEFINER` met een vastgezet `search_path`, een edge
+function die zijn eigen sessietoken controleert in plaats van de client te
+geloven, en per gebruiker een logboek met tokens en kosten.
+
+Wat er fout aan stond was één ding, en het was groot: **`kal_registreren` stond
+wagenwijd open.** Wie de URL had maakte een account en mocht meteen dertig
+AI-aanroepen per uur doen op de Anthropic-sleutel van de eigenaar. Dat is geen
+theoretisch lek maar de rekening van één mens.
+
+Daarnaast: geen beheerscherm (de vlag bestond, de lijst niet), en geen
+`robots.txt`, dus een besloten test die een zoekmachine kon indexeren.
+
+### Waarom het budget in aanroepen staat en niet in euro
+
+`kal_ai_log` heeft een kolom `kosten_usd`, dus een budget in euro lag voor de
+hand. Maar die kolom wordt in de edge function uitgerekend met een vast
+Sonnet-tarief, terwijl het model uit een instelling komt en dus een ander kan
+zijn. Een grens leggen op een getal dat stilletjes de verkeerde prijs gebruikt,
+is een grens die pas op de rekening zichtbaar wordt.
+
+Aanroepen tellen klopt altijd. Het bedrag staat er wel bij op het beheerscherm,
+met het voorbehoud erbij, en de proefopstelling toetst dat dat voorbehoud er
+staat.
+
+### Twee remmen, en waarom niet één
+
+De maand begrenst wat het kost. Het uur begrenst wat een lek kan aanrichten
+voordat iemand het merkt. Eén rem van duizend per maand laat een losgeslagen
+script op één avond duizend aanroepen doen: binnen budget en toch fout.
+
+Alleen geslaagde aanroepen tellen mee voor de maand. Wie zijn budget kwijtraakt
+aan storingen aan mijn kant krijgt een rekening voor mijn fout. Voor de rem per
+uur tellen ze wél mee, want daar gaat het niet om kosten maar om een hollende
+aanroeper.
+
+### Wat een slot is en wat een scherm is
+
+Dit onderscheid staat in drie bestanden en het hoort er te staan.
+
+De AI-poort is een slot. Hij ligt in `kal_ai_toegestaan`, de edge function roept
+hem aan met de service-role-sleutel, en daar komt niemand omheen. Dat is de
+poort die geld kost.
+
+De afwijzing is een scherm. Wie is afgewezen krijgt in de app een bericht in
+plaats van de app, maar wie de RPC's rechtstreeks aanroept komt nog steeds bij
+zijn eigen gegevens. Dat is te verdedigen, want het zijn zijn eigen gegevens en
+niet die van een ander, maar het is geen slot en het staat nergens als slot
+beschreven. Een echt slot vraagt een regel in `kal_sessie`, en die functie is
+één van de negen waarvan de brontekst nog niet in deze repo staat. Een functie
+vervangen die je niet kunt nalezen, is hem overschrijven met een gok.
+
+`robots.txt` is ook een scherm en zegt dat zelf.
+
+### De truc met de standaardwaarde
+
+Een kolom toevoegen vult alle bestaande rijen met de standaard. Zou die meteen
+op `wacht` staan, dan stond het gezin buiten zijn eigen app; zou het budget
+meteen op honderd staan, dan had de eigenaar sinds vandaag een limiet die hij
+nooit gekozen heeft. Dus: erin met de ruime waarde, en daarna de standaard
+verschuiven voor wie nog komt. Twee regels, en ze horen in deze volgorde.
+
+### Geen antwoord is geen afwijzing
+
+De app roept `kal_mijn_toegang` aan, en die functie bestaat pas nadat bestand 48
+gedraaid is. Wie in de trein zit krijgt helemaal niets terug.
+
+In allebei die gevallen blijft de app open. Een app die zichzelf dichtzet omdat
+een RPC ontbreekt, zet zich dicht bij precies degene die er het minste aan kan
+doen, en de echte grens staat toch in de edge function.
+
+Maar een status die er wél is en die deze versie niet kent, telt níet als goed.
+Dat lijkt hetzelfde en het is het tegenovergestelde: dat is geen ruis maar een
+nieuwere database, en zo'n waarde stilletjes als toegelaten lezen is opnieuw de
+fout die pas op de rekening zichtbaar wordt. Beide staan in
+`src/health/toegang.proef.ts` en allebei met een mutant erop.
+
+### Twee proeven die vacuüm langsgingen
+
+Dit hoort erbij omdat het twee keer gebeurde in één dag.
+
+De eerste: een mutant op `aanpassing.ts` gaf "overleeft" terwijl de bouw op die
+mutant stilletjes was omgevallen. De proef draaide op de vorige `dist/`. Een
+mutant die niet compileert is geen overlevende mutant maar een mislukte meting.
+
+De tweede: de proefopstelling zocht de testerslijst met
+`getByRole('heading', { name: 'Testers' })`, en `Kop` rendert een `div`. Nul
+treffers bij de gewone gebruiker las daardoor als een geslaagde afwezigheid,
+terwijl er in het geheel niets gezocht werd. Die proef bewees niets en zag er
+groen uit, precies de soort proef waar hoofdstuk 26 van dit document over gaat.
+
+### Wat er nog niet staat
+
+Er is geen privacyverklaring in de app en geen weg om je gegevens te
+verwijderen. Zolang het om de eigenaar en zijn gezin ging was dat te dragen;
+bij testers die hun bloeddruk invoeren is het dat niet. De DPIA die er ligt is
+geschreven voor één gebruiker. Dat is de volgende stap en het is er geen die je
+in code oplost.
+
+## 52. Een proefrit, en daarna je eigen sleutel
+
+Hoofdstuk 51 zette de wachtkamer neer met een budget van honderd herkenningen.
+Dit hoofdstuk maakt er vijfentwintig van en geeft er een vervolg aan.
+
+Vijfentwintig is geen zuinigheid maar een bedoeling: het is een proefrit. Genoeg
+om te voelen wat het model met een foto van je bord doet, niet genoeg om er
+maanden op te draaien. Wie verder wil geeft zijn eigen sleutel op, en dan
+vervalt het budget van de eigenaar, want dat budget beschermt een portemonnee
+die dan niet meer meedoet.
+
+### De sleutel staat in de vault en nergens anders
+
+Een API-sleutel in een gewone kolom is leesbaar voor iedereen die bij de tabel
+kan: een back-up, een export, een kwartier in de SQL-editor. `CLAUDE.md` had er
+al een regel over, en die geldt hier onverkort. In `kal_gebruikers` staat dus
+niet de sleutel maar zijn nummer in de vault, plus de laatste vier tekens.
+
+De laatste vier en niet de eerste, want de tester moet kunnen zien wélke sleutel
+erin staat en de eerste tekens van een OpenAI-projectsleutel dragen het
+projectnummer.
+
+Er is geen functie die de sleutel teruggeeft aan de gebruiker. Niet aan de
+gebruiker zelf, niet aan de beheerder. `kal_sleutel_voor` is de enige weg naar
+buiten en staat alleen open voor de service-role. Wie zijn sleutel kwijt is
+maakt een nieuwe bij zijn aanbieder, en dat is het juiste ongemak: een app die
+je sleutel kan laten zien, kan hem ook aan iemand anders laten zien.
+
+En dit hoort hardop gezegd, want het is de keerzijde van de hele opzet: vanaf nu
+bewaart deze database de betaalsleutels van andere mensen. Daar staan drie
+dingen tegenover en meer niet, en die staan alle drie op het scherm bij het vak
+waar de tester hem invult.
+
+### Twee aanbieders, één pijplijn, en één ervan is ongetoetst
+
+Anthropic en OpenAI kunnen allebei hetzelfde: een schema meegeven en het
+antwoord gestructureerd terugkrijgen. Bij Anthropic heet dat een tool met
+`input_schema`, bij OpenAI een function met `parameters`. `vraagModel` is de
+enige plek waar dat verschil staat; de hele herkenning eromheen blijft zoals hij
+was, met de twee rondes langs NEVO.
+
+Het OpenAI-pad is nooit tegen een echte sleutel gedraaid. De vorm van het
+verzoek en het uitpakken van het antwoord zijn na te lezen, maar of GPT bij een
+foto van een Nederlands bord even bruikbare porties geeft als Claude is een
+vraag die alleen een echte aanroep beantwoordt, en de gouden waarden van deze
+app zijn op Claude tot stand gekomen. Dat staat in de kop van de edge function
+én op het scherm bij de keuze, en `kal_ai_log` bewaart per aanroep welk model
+hem deed, zodat een rare uitkomst naar zijn aanbieder terug te leiden is.
+
+### De poort die alleen kon lezen
+
+`npm run edge` ontleedde de twee edge-functies met de parser van TypeScript,
+zonder typen, en de reden daarvoor stond in de kop en klopte: de imports wijzen
+naar https-adressen die van hier niet te halen zijn.
+
+Maar dat geldt voor de imports en niet voor de rest. Toen `claude(key, MODEL,
+...)` een `vraagModel(aanbieder, sleutel, MODEL, ...)` werd, bleef de oude `key`
+op de tweede ronde staan. Het bestand bleef leesbaar, de poort bleef groen, en
+het model zou de sleutel als systeemprompt hebben gekregen.
+
+Een eigen compilerhost die elk https-adres beantwoordt met een stuk stub lost
+dat op: wat van buiten komt heet `any`, wat in het bestand zelf staat wordt
+nagekeken. Wat daarmee genegeerd blijft is alles over de buitenwereld
+(onbekende modules, namen die de module niet kent, `Deno`, impliciet `any`), en
+wat overblijft zijn de fouten die binnen het bestand te zien zijn. Dat is minder
+dan een echte typecontrole en veel meer dan niets.
+
+De poort is getoetst op de fout waarvoor hij gebouwd is: met het argument terug
+meldt hij "Expected 7-8 arguments, but got 9", en met een verschreven naam
+meldt hij die.
+
+### En een cache met één sleuf en twee gebruikers
+
+Onderweg gevonden, en het stond er al langer. `modelNaam` werd aangeroepen met
+`model_herkenning` en met `model_import`, en beide antwoorden gingen in dezelfde
+`modelCache`. Wie als eerste vroeg bepaalde dus vijf minuten lang wat de ander
+kreeg: een import die met het herkenningsmodel draaide, of andersom, zonder dat
+iets dat meldde. Met de OpenAI-namen erbij zouden het er vier zijn geweest. De
+cache staat nu per naam.
+
+### Wat het scherm belooft en wat het niet belooft
+
+Het vak zegt waar de sleutel heen gaat, dat hij nooit terugkomt, en dat hij hier
+niet uitgeprobeerd wordt: deze database belt niet naar buiten, dus of de sleutel
+werkt blijkt bij de eerste herkenning. Zonder die laatste zin is "opgeslagen"
+een belofte die de app niet gedaan heeft.
+
+De handleiding staat ernaast, voor beide aanbieders, met de val erin die de
+meeste mensen maken: een ChatGPT-abonnement is geen API-toegang en geeft geen
+sleutel.
+
+En de proef die er het minst naar uitziet en het meest toe doet: het invoervak
+is leeg na het bewaren, en de sleutel staat nergens meer op het scherm. Een vak
+dat zijn inhoud vasthoudt is een sleutel die de volgende die meekijkt gewoon
+leest.

@@ -567,6 +567,25 @@ const NEVO_BENADERD = [
 ]
 
 /** De databaseaanroepen onderscheppen voor één pagina. */
+/* Drie testers, en de volgorde in dit blok is met opzet niet de volgorde die
+   het scherm hoort te tonen: wie wacht hoort bovenaan te komen, en dat is
+   precies wat er te bewijzen valt. Er staat geen enkel gegeven uit de app zelf
+   in, want `kal_testers` geeft dat niet terug; zie de kop van bestand 48. */
+const TESTERS = [
+  { account: 'abdelkader', naam: 'Abdelkader', status: 'toegelaten', beheerder: true,
+    budget: 100000, notitie: null, aangemaakt_op: '2026-06-01T09:00:00Z',
+    beoordeeld_op: null, maand_aanroepen: 212, maand_tokens: 980000, maand_usd: 4.21,
+    laatst_actief: '2026-08-22T08:10:00Z' },
+  { account: 'zineb', naam: 'Zineb', status: 'toegelaten', beheerder: false,
+    budget: 100, notitie: null, aangemaakt_op: '2026-08-02T09:00:00Z',
+    beoordeeld_op: '2026-08-02T10:00:00Z', maand_aanroepen: 31, maand_tokens: 120000,
+    maand_usd: 0.52, laatst_actief: '2026-08-21T19:30:00Z' },
+  { account: 'karim', naam: 'Karim', status: 'wacht', beheerder: false,
+    budget: 100, notitie: null, aangemaakt_op: '2026-08-20T09:00:00Z',
+    beoordeeld_op: null, maand_aanroepen: 0, maand_tokens: 0, maand_usd: 0,
+    laatst_actief: null },
+];
+
 async function bedienDb(pagina, dagen, fase) {
   await pagina.route('**/rest/v1/rpc/**', async (route) => {
     const fn = route.request().url().split('/').pop()
@@ -587,6 +606,36 @@ async function bedienDb(pagina, dagen, fase) {
       : fn === 'kal_eiwitrijk' ? EIWITRIJK
       : fn === 'kal_verzadiging' ? VERZADIGING
       : fn === 'kal_ben_ik_beheerder' ? { beheerder: pagina.__beheerder === true }
+      /* De wachtkamer en het budget, bestand 48. `__toegang` staat standaard op
+         toegelaten, want elk ander geval in deze opstelling gaat over iets
+         anders en hoort niet ineens achter een wachtscherm te komen. */
+      : fn === 'kal_mijn_toegang'
+        ? { mag: true, status: 'toegelaten', reden: 'goed', gebruikt: 12, budget: 100,
+            uur: 0, beheerder: pagina.__beheerder === true, maand_tot: '2026-09-01',
+            ...(pagina.__toegang ?? {}) }
+      : fn === 'kal_testers'
+        ? (pagina.__beheerder === true ? TESTERS : { fout: 'Dat kan niet' })
+      /* De eigen sleutel, bestand 49. De stub doet precies wat de database doet
+         en niets meer: hij keurt het voorvoegsel en geeft de staart terug. De
+         sleutel zelf komt nergens terug, ook hier niet. */
+      : fn === 'kal_sleutel_zetten'
+        ? (() => {
+            const p = JSON.parse(route.request().postData() ?? '{}')
+            ;(pagina.__sleutels ??= []).push({ aanbieder: p.p_aanbieder, lengte: p.p_sleutel.length })
+            const goed = p.p_aanbieder === 'anthropic'
+              ? p.p_sleutel.startsWith('sk-ant-')
+              : p.p_sleutel.startsWith('sk-') && !p.p_sleutel.startsWith('sk-ant-')
+            return goed
+              ? { aanbieder: p.p_aanbieder, staart: p.p_sleutel.slice(-4) }
+              : { fout: 'Een sleutel van Anthropic begint met sk-ant-.' }
+          })()
+      : fn === 'kal_sleutel_weghalen' ? { weg: true }
+      : fn === 'kal_tester_zetten'
+        ? (() => {
+            const p = JSON.parse(route.request().postData() ?? '{}')
+            ;(pagina.__gezet ??= []).push(p)
+            return { account: p.p_account, status: p.p_status ?? 'wacht', budget: p.p_budget ?? 100 }
+          })()
       : fn === 'kal_herstelcode_voor'
         ? { code: 'QQQQQ-WWWWW-EEEEE-RRRRR', account: 'fatima' }
       : fn === 'kal_koppelingen_lijst' ? KOPPELINGEN
@@ -4423,6 +4472,170 @@ for (const [naam, dagen, patroon, verwacht] of [
 
   console.log(`${'is je verbruik meegezakt'.padEnd(26)} ${bereik[1]} tot ${bereik[2]} kcal `
     + `bij een marge van ${bereik[3]}, en stil bij een gestage daling`)
+}
+
+/* ------------------------------------------------------- de testerslijst ---- */
+/* DE WACHTKAMER, BESTAND 48
+   Twee dingen tegelijk, en het tweede weegt het zwaarst: de lijst staat er voor
+   een beheerder, én hij staat er niet voor een ander. Een proef die alleen het
+   eerste doet gaat groen bij een lijst die bij iedereen staat, en die lijst
+   bevat de namen van alle testers.
+
+   Wat er verder in moet: wie wacht hoort bovenaan, want dat is het enige waar
+   iets van de beheerder moet gebeuren, en "toelaten" moet werkelijk naar de
+   database gaan en niet alleen het scherm verzetten. */
+{
+  const kijk = async (beheerder) => {
+    const c = await browser.newContext({
+      viewport: { width: 430, height: 1600 }, deviceScaleFactor: 2,
+      locale: 'nl-NL', timezoneId: 'Europe/Amsterdam',
+    })
+    const pagina = await c.newPage()
+    pagina.__beheerder = beheerder
+    await bedienDb(pagina, 28, 'afvallen')
+    await pagina.addInitScript(() => {
+      localStorage.setItem('kalibratie.sessie',
+        JSON.stringify({ token: 'proeftoken', account: 'abdelkader' }))
+    })
+    await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+    await pagina.waitForTimeout(700)
+    await pagina.getByRole('button', { name: /^Account van/ }).click()
+    await pagina.waitForTimeout(500)
+    return { pagina, c }
+  }
+
+  const gewoon = await kijk(false)
+  /* `Kop` rendert een div en geen heading. Deze proef stond er eerst met
+     getByRole('heading') en ging daarmee aan bêide kanten vacuüm langs: nul
+     treffers bij de gewone gebruiker leek een geslaagde afwezigheid. */
+  if (await gewoon.pagina.getByText('Testers', { exact: true }).count() !== 0) {
+    throw new Error('testers: de lijst staat er voor wie geen beheerder is')
+  }
+  await gewoon.c.close()
+
+  const baas = await kijk(true)
+  const p = baas.pagina
+  if (await p.getByText('Testers', { exact: true }).count() !== 1) {
+    throw new Error('testers: de lijst ontbreekt voor een beheerder')
+  }
+
+  /* Wie wacht staat bovenaan. De stub geeft ze in een andere volgorde terug,
+     dus dit gaat over het sorteren en niet over het doorgeven. */
+  const velden = p.locator('input[aria-label^="budget van "]')
+  const drie = []
+  for (let i = 0; i < await velden.count(); i++) {
+    drie.push((await velden.nth(i).getAttribute('aria-label')).replace('budget van ', ''))
+  }
+  if (drie.length !== 3) throw new Error(`testers: ${drie.length} regels in plaats van 3`)
+  if (drie[0] !== 'karim') {
+    throw new Error(`testers: wie wacht staat niet bovenaan, de volgorde is ${drie.join(', ')}`)
+  }
+
+  /* Er hoort te staan hoeveel er wachten, want dat is waar de beheerder voor
+     kijkt. En de lijst mag geen enkel gegeven uit de app zelf tonen. */
+  const blok = (await p.locator('.venster, .scherm, body').first().innerText()).replace(/\s+/g, ' ')
+  if (!/1 wacht op je/.test(blok)) throw new Error('testers: het aantal wachtenden staat er niet')
+  if (!/Sonnet-tarief/.test(blok)) {
+    throw new Error('testers: het voorbehoud bij het bedrag staat er niet')
+  }
+
+  /* En toelaten gaat werkelijk naar de database. Zonder deze regel zou een knop
+     die alleen het scherm verzet er precies hetzelfde uitzien. */
+  await p.getByRole('button', { name: 'toelaten', exact: true }).first().click()
+  await p.waitForTimeout(400)
+  const uit = baas.pagina.__gezet ?? []
+  if (!uit.some((x) => x.p_account === 'karim' && x.p_status === 'toegelaten')) {
+    throw new Error(`testers: "toelaten" bereikte de database niet, verstuurd: ${JSON.stringify(uit)}`)
+  }
+
+  await p.screenshot({ path: 'gereedschap/health-testers.png', fullPage: true })
+  await baas.c.close()
+
+  console.log(`${'de testers'.padEnd(26)} lijst alleen voor de beheerder · `
+    + `karim bovenaan · toelaten -> kal_tester_zetten`)
+}
+
+/* ------------------------------------------------------- de eigen sleutel ---- */
+/* DE PROEFRIT HEEFT EEN VERVOLG, BESTAND 49
+   Wat hier bewezen moet worden is niet dat er een vak staat. Het is dat het vak
+   zegt waar de sleutel terechtkomt, dat hij er ook werkelijk heen gaat met de
+   aanbieder erbij, en dat een sleutel die bij de verkeerde aanbieder hoort
+   geweigerd wordt zonder dat de app hem toch doorzet.
+
+   En het belangrijkste: dat de sleutel nergens op het scherm terugkomt. Een
+   invoervak dat zijn inhoud vasthoudt is een sleutel die de volgende die op die
+   telefoon kijkt gewoon kan lezen. */
+{
+  const c = await browser.newContext({
+    viewport: { width: 430, height: 1900 }, deviceScaleFactor: 2,
+    locale: 'nl-NL', timezoneId: 'Europe/Amsterdam',
+  })
+  const p = await c.newPage()
+  await bedienDb(p, 28, 'afvallen')
+  await p.addInitScript(() => {
+    localStorage.setItem('kalibratie.sessie',
+      JSON.stringify({ token: 'proeftoken', account: 'abdelkader' }))
+  })
+  await p.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await p.waitForTimeout(700)
+  await p.getByRole('button', { name: /^Account van/ }).click()
+  await p.waitForTimeout(500)
+
+  await p.getByRole('button', { name: 'Je eigen AI-sleutel gebruiken' }).click()
+  await p.waitForTimeout(300)
+
+  /* De twee uitklappen horen erbij te staan: waar hij terechtkomt, en hoe je er
+     een maakt. Zonder de eerste vraag je iemand een betaalsleutel af zonder te
+     zeggen waar hij heen gaat. */
+  /* Op naam en niet op `summary`: het scherm eronder heeft er ook, en die zijn
+     niet zichtbaar zolang het accountvenster openstaat. */
+  for (const naam of ['waar je sleutel terechtkomt', 'hoe je er een maakt, en wat het kost']) {
+    await p.getByText(naam, { exact: true }).click()
+  }
+  await p.waitForTimeout(200)
+  const tekst = (await p.locator('body').innerText()).replace(/\s+/g, ' ')
+  for (const stuk of ['versleuteld de database', 'geen knop die hem laat zien',
+                      'console.anthropic.com', 'platform.openai.com',
+                      'ChatGPT-abonnement hier niet voor telt', 'maandlimiet']) {
+    if (!tekst.includes(stuk)) throw new Error(`sleutel: "${stuk}" staat niet op het scherm`)
+  }
+
+  const vak = p.getByLabel('Je API-sleutel')
+
+  /* Eerst de verkeerde: een OpenAI-sleutel terwijl Anthropic aanstaat. */
+  await vak.fill('sk-proj-' + 'q'.repeat(40))
+  await p.getByRole('button', { name: 'Bewaren', exact: true }).click()
+  await p.waitForTimeout(400)
+  if (!(await p.locator('body').innerText()).includes('begint met sk-ant-')) {
+    throw new Error('sleutel: de weigering van de database komt niet op het scherm')
+  }
+
+  /* En dan de goede, bij de andere aanbieder. */
+  await p.getByRole('button', { name: 'OpenAI', exact: true }).click()
+  await vak.fill('sk-proj-' + 'q'.repeat(40))
+  await p.getByRole('button', { name: 'Bewaren', exact: true }).click()
+  await p.waitForTimeout(500)
+
+  const heen = p.__sleutels ?? []
+  if (heen.length !== 2) throw new Error(`sleutel: ${heen.length} verzoeken in plaats van 2`)
+  if (heen[0].aanbieder !== 'anthropic' || heen[1].aanbieder !== 'openai') {
+    throw new Error(`sleutel: de aanbieder gaat niet mee: ${JSON.stringify(heen)}`)
+  }
+
+  /* En het vak is leeg. Dit is de proef die er het meest toe doet en het minst
+     naar uitziet: een sleutel die in het invoervak blijft staan is een sleutel
+     die de volgende die meekijkt gewoon leest. */
+  if (await vak.count() && (await vak.inputValue()) !== '') {
+    throw new Error('sleutel: het invoervak houdt de sleutel vast')
+  }
+  const na = (await p.locator('body').innerText())
+  if (na.includes('qqqq')) throw new Error('sleutel: de sleutel staat op het scherm')
+
+  await p.screenshot({ path: 'gereedschap/health-sleutel.png', fullPage: true })
+  await c.close()
+
+  console.log(`${'je eigen sleutel'.padEnd(26)} twee uitklappen \u00b7 verkeerd voorvoegsel geweigerd \u00b7 `
+    + `aanbieder gaat mee \u00b7 vak leeg na bewaren`)
 }
 
 await browser.close()
