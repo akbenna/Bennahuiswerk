@@ -440,6 +440,23 @@ export interface RpcKaart {
      bepaalt alleen of de knop er staat; de echte grens ligt in
      `kal_herstelcode_voor`, die zelf nog eens het wachtwoord vraagt. */
   kal_ben_ik_beheerder: { in: { p_token: string }; uit: { beheerder: boolean } }
+  /* DE WACHTKAMER EN HET BUDGET: zie health/database/48.
+
+     `kal_mijn_toegang` gaat over jezelf en vraagt geen beheerdersrecht. De twee
+     eronder wel, en net als bij de herstelcode ligt die grens in de database:
+     `kal_testers` geeft `{fout}` terug aan wie hem niet mag zien, en zegt niet
+     waarom. Wat er níet in die lijst staat is even belangrijk als wat er wel in
+     staat: geen gewicht, geen bloeddruk, geen labwaarde. Alleen wie er is,
+     welke status hij heeft en wat hij deze maand aan AI verbruikt heeft. */
+  kal_mijn_toegang: { in: { p_token: string }; uit: Toegang }
+  kal_testers: { in: { p_token: string }; uit: Tester[] | { fout: string } }
+  kal_tester_zetten: {
+    in: {
+      p_token: string; p_account: string
+      p_status?: string | null; p_budget?: number | null; p_notitie?: string | null
+    }
+    uit: { account: string; status: string; budget: number } | { fout: string }
+  }
   kal_herstelcode_voor: {
     in: { p_token: string; p_ww: string; p_account: string }
     uit: { code: string; account: string } | { fout: string }
@@ -609,4 +626,33 @@ export async function roep<K extends keyof RpcKaart>(
   argumenten: RpcKaart[K]['in'],
 ): Promise<RpcKaart[K]['uit']> {
   return (await verzoek('/rest/v1/rpc/' + functie, argumenten)) as RpcKaart[K]['uit']
+}
+
+/** Wat `kal_mijn_toegang` teruggeeft. Zie `src/health/toegang.ts`. */
+export interface Toegang {
+  mag?: boolean
+  status?: string
+  reden?: string
+  gebruikt?: number
+  budget?: number
+  uur?: number
+  beheerder?: boolean
+  maand_tot?: string
+}
+
+/** Eén regel uit `kal_testers`. Geen enkel gegeven uit de app zelf. */
+export interface Tester {
+  account: string
+  naam: string | null
+  status: string
+  beheerder: boolean
+  budget: number
+  notitie: string | null
+  aangemaakt_op: string
+  beoordeeld_op: string | null
+  maand_aanroepen: number
+  maand_tokens: number
+  /** Gerekend met een vast Sonnet-tarief; zie de kop van bestand 48. */
+  maand_usd: number
+  laatst_actief: string | null
 }

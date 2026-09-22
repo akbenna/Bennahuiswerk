@@ -3,7 +3,7 @@
  * Overgezet uit vensterProfiel(), vensterImport() en vensterAccount().
  */
 import { useEffect, useState } from 'react'
-import { Kaart, Keuzechip, Knop, Kop, Rij, Spin, Venster } from '../onderdelen/basis'
+import { Kaart, Keuzechip, Knop, Kop, Rij, Spin, Tussen, Venster } from '../onderdelen/basis'
 import { MEDICATIEGROEPEN } from '../conditie'
 import type { Conditie, Medicatiegroep } from '../conditie'
 import { dec, dz } from '@/gedeeld/getal'
@@ -14,7 +14,10 @@ import { BRONNAAM, geraden, importeer, leesFoto, redenUit } from '../ai'
 import { MINIMUM_LENGTE, wachtwoordklacht } from '../wachtwoord'
 import { SOORTEN, equivalent, standaardIntensiteit } from '../inspanning'
 import { GLI_PROGRAMMAS } from '../trap'
-import { vandaag } from '@/gedeeld/datum'
+import { kortNL, vandaag } from '@/gedeeld/datum'
+import type { Tester } from '@/gedeeld/db/rpc'
+import { ONBEKEND, leesToegang, restZin, uitlegAi } from '../toegang'
+import type { Toegang } from '../toegang'
 import type { ImportDag, Importactiviteit, Importbron } from '../ai'
 
 
@@ -612,9 +615,11 @@ export function AccountVenster(
         eigen database van BennaHub, los van de zorggegevens van de praktijk, en zijn alleen via
         beveiligde databasefuncties met dit wachtwoord bereikbaar.
       </p>
+      <JouwToegang />
       <WachtwoordWijzigen />
       <Herstelcode />
       <BeheerdersHerstelcode />
+      <Testerbeheer />
       <Rij style={{ marginTop: 14 }}>
         <Knop opKlik={opAfmelden}>Afmelden</Knop>
       </Rij>
@@ -644,6 +649,16 @@ export function AccountVenster(
  * in zijn browser vervalst krijgt een formulier te zien dat bij het indrukken
  * alsnog geweigerd wordt, de grens ligt in de database en niet hier.
  */
+/* Het sessietoken uit de opslag. Drie blokken hieronder hebben het nodig en
+   stonden elk op het punt hun eigen kopie te maken. */
+function sessietoken(): string | null {
+  try {
+    const s = JSON.parse(localStorage.getItem('kalibratie.sessie') ?? 'null') as
+      { token?: string } | null
+    return s?.token ?? null
+  } catch { return null }
+}
+
 function BeheerdersHerstelcode() {
   const [mag, zetMag] = useState(false)
   const [open, zetOpen] = useState(false)
@@ -653,18 +668,10 @@ function BeheerdersHerstelcode() {
   const [fout, zetFout] = useState<string | null>(null)
   const [bezig, zetBezig] = useState(false)
 
-  const token = () => {
-    try {
-      const s = JSON.parse(localStorage.getItem('kalibratie.sessie') ?? 'null') as
-        { token?: string } | null
-      return s?.token ?? null
-    } catch { return null }
-  }
-
   useEffect(() => {
     let afgebroken = false
     void (async () => {
-      const t = token()
+      const t = sessietoken()
       if (!t) return
       try {
         const uit = await roep('kal_ben_ik_beheerder', { p_token: t })
@@ -678,7 +685,7 @@ function BeheerdersHerstelcode() {
     zetBezig(true)
     zetFout(null)
     try {
-      const t = token()
+      const t = sessietoken()
       if (!t) { zetFout('Je bent niet aangemeld'); return }
       const uit = await roep('kal_herstelcode_voor',
         { p_token: t, p_ww: ww, p_account: voor.trim().toLowerCase() })
@@ -1081,5 +1088,187 @@ export function Aanmelden(
         wachtwoord staat gehasht.
       </p>
     </>
+  )
+}
+
+/**
+ * WAT JE ZELF MAG
+ *
+ * Eén regel in het accountvenster, en hij staat er voor iedereen: de eigenaar
+ * leest er "toegelaten" en verder niets, een tester leest waar hij aan toe is.
+ *
+ * Hij staat hier en niet op het hoofdscherm omdat het geen dagelijks gegeven
+ * is. Wie wacht, merkt dat vanzelf op het moment dat hij iets wil laten
+ * herkennen, en dáár staat dezelfde uitleg.
+ */
+function JouwToegang() {
+  const [t, zetT] = useState<Toegang>(ONBEKEND)
+
+  useEffect(() => {
+    let afgebroken = false
+    void (async () => {
+      const tk = sessietoken()
+      if (!tk) return
+      try {
+        const uit = await roep('kal_mijn_toegang', { p_token: tk })
+        if (!afgebroken) zetT(leesToegang(uit))
+      } catch { /* zie de kop van toegang.ts: geen antwoord is geen afwijzing */ }
+    })()
+    return () => { afgebroken = true }
+  }, [])
+
+  if (t.status === 'onbekend') return null
+  const rest = restZin(t)
+  const uitleg = uitlegAi(t)
+
+  return (
+    <p className="mini" style={{ marginTop: 10 }}>
+      <b>
+        {t.status === 'toegelaten' ? 'Toegelaten tot de test'
+         : t.status === 'wacht' ? 'Je aanmelding wacht op toelating'
+         : 'Niet toegelaten'}
+      </b>
+      {rest && <>. {rest}</>}
+      {uitleg && <>. {uitleg}</>}
+    </p>
+  )
+}
+
+/**
+ * DE TESTERS
+ *
+ * Wie zich heeft aangemeld, wie er in mag, en wat het kost.
+ *
+ * WAT HIER NIET STAAT
+ *
+ * Geen gewicht, geen bloeddruk, geen labwaarde, geen maaltijd. `kal_testers`
+ * geeft dat niet terug en dat is geen zuinigheid: het is de medische informatie
+ * van iemand anders, en een beheerder die wil weten of zijn app gebruikt wordt
+ * heeft er niets van nodig. Wat er wél staat is wanneer iemand voor het laatst
+ * iets liet herkennen, en daarmee is de vraag "doet hij nog mee" te
+ * beantwoorden zonder over zijn schouder mee te kijken.
+ *
+ * WAAROM HET BUDGET IN AANROEPEN STAAT EN NIET IN EURO
+ *
+ * Het bedrag in deze lijst wordt in de edge function uitgerekend met een vast
+ * Sonnet-tarief. Draait er een ander model, dan klopt het niet meer, en dat
+ * staat erbij. Het aantal aanroepen klopt altijd, dus dáár ligt de grens.
+ *
+ * DE KNOPPEN ZIJN GEEN SLOT
+ *
+ * Net als bij de herstelcode hierboven: dit blok verschijnt op grond van een
+ * antwoord uit de database, en wie dat antwoord in zijn browser vervalst krijgt
+ * een lijst te zien die leeg blijft en knoppen die weigeren. De grens ligt in
+ * `kal_testers` en `kal_tester_zetten`.
+ */
+function Testerbeheer() {
+  const [lijst, zetLijst] = useState<Tester[] | null>(null)
+  const [bezig, zetBezig] = useState<string | null>(null)
+  const [fout, zetFout] = useState<string | null>(null)
+
+  const haal = async () => {
+    const tk = sessietoken()
+    if (!tk) return
+    try {
+      const uit = await roep('kal_testers', { p_token: tk })
+      zetLijst(Array.isArray(uit) ? uit : null)
+    } catch { /* geen beheerder, of bestand 48 is nog niet gedraaid */ }
+  }
+
+  useEffect(() => { void haal() }, [])
+
+  const zet = async (account: string, velden: {
+    p_status?: string; p_budget?: number
+  }) => {
+    const tk = sessietoken()
+    if (!tk) return
+    zetBezig(account)
+    zetFout(null)
+    try {
+      const uit = await roep('kal_tester_zetten', { p_token: tk, p_account: account, ...velden })
+      if (uit && 'fout' in uit) { zetFout(uit.fout); return }
+      await haal()
+    } catch (e) {
+      zetFout(e instanceof Error ? e.message : String(e))
+    } finally {
+      zetBezig(null)
+    }
+  }
+
+  if (!lijst) return null
+
+  /* Wie wacht staat bovenaan, want dat is het enige waar iets van jou moet
+     gebeuren. De rest op naam, zodat de lijst niet danst bij elke wijziging. */
+  const orde = { wacht: 0, toegelaten: 1, afgewezen: 2 } as Record<string, number>
+  const op = [...lijst].sort((a, b) =>
+    (orde[a.status] ?? 3) - (orde[b.status] ?? 3) || a.account.localeCompare(b.account))
+  const wachtend = op.filter((x) => x.status === 'wacht').length
+  const usd = op.reduce((s, x) => s + (Number(x.maand_usd) || 0), 0)
+
+  return (
+    <div style={{ marginTop: 18 }}>
+      <Tussen>
+        <Kop>Testers</Kop>
+        <span className="eyebrow" style={{ color: wachtend ? 'var(--let)' : 'var(--grijs)' }}>
+          {wachtend === 0 ? 'niemand wacht'
+           : wachtend === 1 ? '1 wacht op je' : `${wachtend} wachten op je`}
+        </span>
+      </Tussen>
+      <p className="mini" style={{ marginTop: 4 }}>
+        Wie wacht kan de app al gebruiken: wegen, loggen en alle figuren. Alleen het herkennen van
+        maaltijden uit tekst of foto loopt op jouw sleutel, en dat is wat je hier toelaat. Het
+        budget is een aantal herkenningen per kalendermaand.
+      </p>
+
+      {fout && <p className="mini" style={{ color: 'var(--let)', marginTop: 6 }}>{fout}</p>}
+
+      <Kaart plat style={{ marginTop: 8 }}>
+        <div className="lijst">
+          {op.map((x) => (
+            <div key={x.account} style={{ flexWrap: 'wrap', gap: 6 }}>
+              <span className="klein" style={{ flex: '0 0 96px', fontWeight: 600 }}>
+                {x.account}
+              </span>
+              <span className={'vlaggetje ' + (x.status === 'toegelaten' ? 'goed'
+                : x.status === 'wacht' ? 'let' : 'rust')}>
+                {x.status}
+              </span>
+              <span className="mini groei">
+                {x.maand_aanroepen} van {x.budget} deze maand
+                {x.laatst_actief && <> · laatst {kortNL(x.laatst_actief.slice(0, 10) as IsoDatum)}</>}
+              </span>
+              {x.status !== 'toegelaten' && (
+                <Knop klein uit={bezig === x.account}
+                      opKlik={() => void zet(x.account, { p_status: 'toegelaten' })}>
+                  toelaten
+                </Knop>
+              )}
+              {x.status !== 'afgewezen' && !x.beheerder && (
+                <Knop klein uit={bezig === x.account}
+                      opKlik={() => void zet(x.account, { p_status: 'afgewezen' })}>
+                  afwijzen
+                </Knop>
+              )}
+              {/* Breder dan `.smal`, want de eigenaar staat op honderdduizend en
+                  dat past niet in een vak dat voor kilo's gemaakt is. */}
+              <input type="number" step="10" min="0" className="smal" defaultValue={x.budget}
+                     style={{ width: 88 }} aria-label={`budget van ${x.account}`}
+                     onBlur={(e) => {
+                       const n = Number(e.target.value)
+                       if (Number.isFinite(n) && n >= 0 && n !== x.budget) {
+                         void zet(x.account, { p_budget: n })
+                       }
+                     }} />
+            </div>
+          ))}
+        </div>
+      </Kaart>
+
+      <p className="mini" style={{ marginTop: 8 }}>
+        Deze maand ging er ${usd.toFixed(2)} doorheen over alle accounts samen. Dat bedrag rekent
+        met een vast Sonnet-tarief; draait er een ander model, dan is het een onderschatting. Het
+        aantal herkenningen klopt wel altijd, en daarom staat het budget daarin.
+      </p>
+    </div>
   )
 }

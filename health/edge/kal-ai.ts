@@ -624,11 +624,48 @@ Deno.serve(async (req) => {
     if (!key) throw new Error("Geen ANTHROPIC_API_KEY ingesteld in de Supabase-secrets");
     const MODEL = await modelNaam(db, soort === "import" ? "model_import" : "model_herkenning");
 
-    // Eenvoudige begrenzing: dertig aanroepen per uur per gebruiker.
-    const sinds = new Date(Date.now() - 3600_000).toISOString();
-    const { count } = await db.from("kal_ai_log").select("id", { count: "exact", head: true })
-      .eq("gebruiker_id", gebruiker).gte("created_at", sinds);
-    if ((count ?? 0) >= 30) throw new Error("Maximum van dertig herkenningen per uur bereikt");
+    // ------------------------------------------------------------- de poort --
+    // De begrenzing zat hier als één regel: dertig aanroepen per uur, voor
+    // iedereen hetzelfde. Zolang de app van één mens was klopte dat. Met
+    // testers erop is het de verkeerde vraag: wie mag hier eigenlijk iets, en
+    // hoeveel mag hij deze maand.
+    //
+    // Dat antwoord komt nu uit `kal_ai_toegestaan` (bestand 48). Daar staat het
+    // ene oordeel, en het staat in de database en niet hier: de app kan het
+    // niet omzeilen en een tweede aanroeper zou dezelfde grens krijgen.
+    //
+    // DE TERUGVAL, EN WANNEER HIJ WEG MAG
+    //
+    // Zolang bestand 48 niet gedraaid is bestaat die functie niet. Dan valt
+    // deze code terug op de oude telling, want een uitrol die vóór de SQL
+    // aankomt hoort de herkenning niet stil te zetten. Zodra 48 in de database
+    // staat is deze terugval dood hout en mag het blok weg.
+    const grens = await db.rpc("kal_ai_toegestaan", { p_gebruiker: gebruiker });
+    if (grens.error) {
+      console.warn("kal_ai_toegestaan ontbreekt, terugval op de oude telling", grens.error.message);
+      const sinds = new Date(Date.now() - 3600_000).toISOString();
+      const { count } = await db.from("kal_ai_log").select("id", { count: "exact", head: true })
+        .eq("gebruiker_id", gebruiker).gte("created_at", sinds);
+      if ((count ?? 0) >= 30) throw new Error("Maximum van dertig herkenningen per uur bereikt");
+    } else {
+      const g = grens.data as {
+        mag: boolean; reden: string; gebruikt: number; budget: number;
+      };
+      // Eén reden per geval, in gewone taal, want dit is wat de gebruiker leest.
+      if (!g.mag) {
+        throw new Error(
+          g.reden === "wacht"
+            ? "Je aanmelding wacht nog op toelating. Zodra de beheerder je toelaat werkt de herkenning; de rest van de app kun je nu al gebruiken."
+            : g.reden === "afgewezen"
+            ? "Dit account is niet toegelaten tot de test."
+            : g.reden === "maand-op"
+            ? `Je hebt je ${g.budget} herkenningen van deze maand gebruikt. Op de eerste van de volgende maand springt de teller terug.`
+            : g.reden === "uur-vol"
+            ? "Maximum van dertig herkenningen per uur bereikt"
+            : "Deze herkenning is niet toegestaan",
+        );
+      }
+    }
 
     let tokensIn = 0, tokensUit = 0;
 
