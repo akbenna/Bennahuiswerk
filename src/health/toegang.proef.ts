@@ -37,6 +37,7 @@ describe('wat de database terugstuurt', () => {
   it('leest een gewone uitslag over', () => {
     expect(toegelaten).toEqual({
       status: 'toegelaten', reden: 'goed', gebruikt: 12, budget: 100,
+      eigenSleutel: false, aanbieder: null, staart: null,
       beheerder: false, maandTot: '2026-10-01',
     })
   })
@@ -120,6 +121,46 @@ describe('wat de app ermee doet', () => {
     const zin = uitlegAi(uit({ status: 'toegelaten', reden: 'maand-op', budget: 100 }))!
     expect(zin).toContain('100')
     expect(zin).not.toContain('springt')
+  })
+})
+
+/**
+ * DE EIGEN SLEUTEL
+ *
+ * Het maandbudget bestaat om de rekening van de eigenaar te begrenzen. Wie zijn
+ * eigen sleutel geeft betaalt zelf, en dan is die grens geen bescherming maar
+ * een rem op iemand anders zijn geld. Dat staat in de database (bestand 49) en
+ * het hoort ook op het scherm te kloppen, want een teller die niets begrenst
+ * leest als een grens.
+ */
+describe('de eigen sleutel', () => {
+  const eigen = uit({
+    status: 'toegelaten', reden: 'goed', gebruikt: 320, budget: 25,
+    eigen_sleutel: true, aanbieder: 'openai', staart: 'a91f',
+  })
+
+  it('leest de aanbieder en de staart over, en niets meer', () => {
+    expect(eigen.eigenSleutel).toBe(true)
+    expect(eigen.aanbieder).toBe('openai')
+    expect(eigen.staart).toBe('a91f')
+  })
+
+  it('vertrouwt een aanbieder niet die het niet kent', () => {
+    expect(uit({ status: 'toegelaten', aanbieder: 'mistral' }).aanbieder).toBeNull()
+  })
+
+  /* DE PROEF WAAR DIT BLOK VOOR BESTAAT. Driehonderdtwintig aanroepen op een
+     budget van vijfentwintig, en er hoort geen woord over een teller te staan. */
+  it('telt niet af op een budget dat niet meer geldt', () => {
+    expect(restZin(eigen)).toBeNull()
+  })
+
+  it('en zegt tegen wie zonder eigen sleutel door zijn maand heen is hoe het verder kan', () => {
+    const zin = uitlegAi(uit({
+      status: 'toegelaten', reden: 'maand-op', budget: 25, maand_tot: '2026-10-01',
+    }))!
+    expect(zin).toMatch(/eigen sleutel/i)
+    expect(zin).toMatch(/eigen rekening/i)
   })
 })
 

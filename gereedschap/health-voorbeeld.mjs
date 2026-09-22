@@ -615,6 +615,21 @@ async function bedienDb(pagina, dagen, fase) {
             ...(pagina.__toegang ?? {}) }
       : fn === 'kal_testers'
         ? (pagina.__beheerder === true ? TESTERS : { fout: 'Dat kan niet' })
+      /* De eigen sleutel, bestand 49. De stub doet precies wat de database doet
+         en niets meer: hij keurt het voorvoegsel en geeft de staart terug. De
+         sleutel zelf komt nergens terug, ook hier niet. */
+      : fn === 'kal_sleutel_zetten'
+        ? (() => {
+            const p = JSON.parse(route.request().postData() ?? '{}')
+            ;(pagina.__sleutels ??= []).push({ aanbieder: p.p_aanbieder, lengte: p.p_sleutel.length })
+            const goed = p.p_aanbieder === 'anthropic'
+              ? p.p_sleutel.startsWith('sk-ant-')
+              : p.p_sleutel.startsWith('sk-') && !p.p_sleutel.startsWith('sk-ant-')
+            return goed
+              ? { aanbieder: p.p_aanbieder, staart: p.p_sleutel.slice(-4) }
+              : { fout: 'Een sleutel van Anthropic begint met sk-ant-.' }
+          })()
+      : fn === 'kal_sleutel_weghalen' ? { weg: true }
       : fn === 'kal_tester_zetten'
         ? (() => {
             const p = JSON.parse(route.request().postData() ?? '{}')
@@ -4538,6 +4553,89 @@ for (const [naam, dagen, patroon, verwacht] of [
 
   console.log(`${'de testers'.padEnd(26)} lijst alleen voor de beheerder · `
     + `karim bovenaan · toelaten -> kal_tester_zetten`)
+}
+
+/* ------------------------------------------------------- de eigen sleutel ---- */
+/* DE PROEFRIT HEEFT EEN VERVOLG, BESTAND 49
+   Wat hier bewezen moet worden is niet dat er een vak staat. Het is dat het vak
+   zegt waar de sleutel terechtkomt, dat hij er ook werkelijk heen gaat met de
+   aanbieder erbij, en dat een sleutel die bij de verkeerde aanbieder hoort
+   geweigerd wordt zonder dat de app hem toch doorzet.
+
+   En het belangrijkste: dat de sleutel nergens op het scherm terugkomt. Een
+   invoervak dat zijn inhoud vasthoudt is een sleutel die de volgende die op die
+   telefoon kijkt gewoon kan lezen. */
+{
+  const c = await browser.newContext({
+    viewport: { width: 430, height: 1900 }, deviceScaleFactor: 2,
+    locale: 'nl-NL', timezoneId: 'Europe/Amsterdam',
+  })
+  const p = await c.newPage()
+  await bedienDb(p, 28, 'afvallen')
+  await p.addInitScript(() => {
+    localStorage.setItem('kalibratie.sessie',
+      JSON.stringify({ token: 'proeftoken', account: 'abdelkader' }))
+  })
+  await p.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await p.waitForTimeout(700)
+  await p.getByRole('button', { name: /^Account van/ }).click()
+  await p.waitForTimeout(500)
+
+  await p.getByRole('button', { name: 'Je eigen AI-sleutel gebruiken' }).click()
+  await p.waitForTimeout(300)
+
+  /* De twee uitklappen horen erbij te staan: waar hij terechtkomt, en hoe je er
+     een maakt. Zonder de eerste vraag je iemand een betaalsleutel af zonder te
+     zeggen waar hij heen gaat. */
+  /* Op naam en niet op `summary`: het scherm eronder heeft er ook, en die zijn
+     niet zichtbaar zolang het accountvenster openstaat. */
+  for (const naam of ['waar je sleutel terechtkomt', 'hoe je er een maakt, en wat het kost']) {
+    await p.getByText(naam, { exact: true }).click()
+  }
+  await p.waitForTimeout(200)
+  const tekst = (await p.locator('body').innerText()).replace(/\s+/g, ' ')
+  for (const stuk of ['versleuteld de database', 'geen knop die hem laat zien',
+                      'console.anthropic.com', 'platform.openai.com',
+                      'ChatGPT-abonnement hier niet voor telt', 'maandlimiet']) {
+    if (!tekst.includes(stuk)) throw new Error(`sleutel: "${stuk}" staat niet op het scherm`)
+  }
+
+  const vak = p.getByLabel('Je API-sleutel')
+
+  /* Eerst de verkeerde: een OpenAI-sleutel terwijl Anthropic aanstaat. */
+  await vak.fill('sk-proj-' + 'q'.repeat(40))
+  await p.getByRole('button', { name: 'Bewaren', exact: true }).click()
+  await p.waitForTimeout(400)
+  if (!(await p.locator('body').innerText()).includes('begint met sk-ant-')) {
+    throw new Error('sleutel: de weigering van de database komt niet op het scherm')
+  }
+
+  /* En dan de goede, bij de andere aanbieder. */
+  await p.getByRole('button', { name: 'OpenAI', exact: true }).click()
+  await vak.fill('sk-proj-' + 'q'.repeat(40))
+  await p.getByRole('button', { name: 'Bewaren', exact: true }).click()
+  await p.waitForTimeout(500)
+
+  const heen = p.__sleutels ?? []
+  if (heen.length !== 2) throw new Error(`sleutel: ${heen.length} verzoeken in plaats van 2`)
+  if (heen[0].aanbieder !== 'anthropic' || heen[1].aanbieder !== 'openai') {
+    throw new Error(`sleutel: de aanbieder gaat niet mee: ${JSON.stringify(heen)}`)
+  }
+
+  /* En het vak is leeg. Dit is de proef die er het meest toe doet en het minst
+     naar uitziet: een sleutel die in het invoervak blijft staan is een sleutel
+     die de volgende die meekijkt gewoon leest. */
+  if (await vak.count() && (await vak.inputValue()) !== '') {
+    throw new Error('sleutel: het invoervak houdt de sleutel vast')
+  }
+  const na = (await p.locator('body').innerText())
+  if (na.includes('qqqq')) throw new Error('sleutel: de sleutel staat op het scherm')
+
+  await p.screenshot({ path: 'gereedschap/health-sleutel.png', fullPage: true })
+  await c.close()
+
+  console.log(`${'je eigen sleutel'.padEnd(26)} twee uitklappen \u00b7 verkeerd voorvoegsel geweigerd \u00b7 `
+    + `aanbieder gaat mee \u00b7 vak leeg na bewaren`)
 }
 
 await browser.close()

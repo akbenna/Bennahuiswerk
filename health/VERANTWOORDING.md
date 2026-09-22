@@ -3258,3 +3258,99 @@ verwijderen. Zolang het om de eigenaar en zijn gezin ging was dat te dragen;
 bij testers die hun bloeddruk invoeren is het dat niet. De DPIA die er ligt is
 geschreven voor één gebruiker. Dat is de volgende stap en het is er geen die je
 in code oplost.
+
+## 52. Een proefrit, en daarna je eigen sleutel
+
+Hoofdstuk 51 zette de wachtkamer neer met een budget van honderd herkenningen.
+Dit hoofdstuk maakt er vijfentwintig van en geeft er een vervolg aan.
+
+Vijfentwintig is geen zuinigheid maar een bedoeling: het is een proefrit. Genoeg
+om te voelen wat het model met een foto van je bord doet, niet genoeg om er
+maanden op te draaien. Wie verder wil geeft zijn eigen sleutel op, en dan
+vervalt het budget van de eigenaar, want dat budget beschermt een portemonnee
+die dan niet meer meedoet.
+
+### De sleutel staat in de vault en nergens anders
+
+Een API-sleutel in een gewone kolom is leesbaar voor iedereen die bij de tabel
+kan: een back-up, een export, een kwartier in de SQL-editor. `CLAUDE.md` had er
+al een regel over, en die geldt hier onverkort. In `kal_gebruikers` staat dus
+niet de sleutel maar zijn nummer in de vault, plus de laatste vier tekens.
+
+De laatste vier en niet de eerste, want de tester moet kunnen zien wélke sleutel
+erin staat en de eerste tekens van een OpenAI-projectsleutel dragen het
+projectnummer.
+
+Er is geen functie die de sleutel teruggeeft aan de gebruiker. Niet aan de
+gebruiker zelf, niet aan de beheerder. `kal_sleutel_voor` is de enige weg naar
+buiten en staat alleen open voor de service-role. Wie zijn sleutel kwijt is
+maakt een nieuwe bij zijn aanbieder, en dat is het juiste ongemak: een app die
+je sleutel kan laten zien, kan hem ook aan iemand anders laten zien.
+
+En dit hoort hardop gezegd, want het is de keerzijde van de hele opzet: vanaf nu
+bewaart deze database de betaalsleutels van andere mensen. Daar staan drie
+dingen tegenover en meer niet, en die staan alle drie op het scherm bij het vak
+waar de tester hem invult.
+
+### Twee aanbieders, één pijplijn, en één ervan is ongetoetst
+
+Anthropic en OpenAI kunnen allebei hetzelfde: een schema meegeven en het
+antwoord gestructureerd terugkrijgen. Bij Anthropic heet dat een tool met
+`input_schema`, bij OpenAI een function met `parameters`. `vraagModel` is de
+enige plek waar dat verschil staat; de hele herkenning eromheen blijft zoals hij
+was, met de twee rondes langs NEVO.
+
+Het OpenAI-pad is nooit tegen een echte sleutel gedraaid. De vorm van het
+verzoek en het uitpakken van het antwoord zijn na te lezen, maar of GPT bij een
+foto van een Nederlands bord even bruikbare porties geeft als Claude is een
+vraag die alleen een echte aanroep beantwoordt, en de gouden waarden van deze
+app zijn op Claude tot stand gekomen. Dat staat in de kop van de edge function
+én op het scherm bij de keuze, en `kal_ai_log` bewaart per aanroep welk model
+hem deed, zodat een rare uitkomst naar zijn aanbieder terug te leiden is.
+
+### De poort die alleen kon lezen
+
+`npm run edge` ontleedde de twee edge-functies met de parser van TypeScript,
+zonder typen, en de reden daarvoor stond in de kop en klopte: de imports wijzen
+naar https-adressen die van hier niet te halen zijn.
+
+Maar dat geldt voor de imports en niet voor de rest. Toen `claude(key, MODEL,
+...)` een `vraagModel(aanbieder, sleutel, MODEL, ...)` werd, bleef de oude `key`
+op de tweede ronde staan. Het bestand bleef leesbaar, de poort bleef groen, en
+het model zou de sleutel als systeemprompt hebben gekregen.
+
+Een eigen compilerhost die elk https-adres beantwoordt met een stuk stub lost
+dat op: wat van buiten komt heet `any`, wat in het bestand zelf staat wordt
+nagekeken. Wat daarmee genegeerd blijft is alles over de buitenwereld
+(onbekende modules, namen die de module niet kent, `Deno`, impliciet `any`), en
+wat overblijft zijn de fouten die binnen het bestand te zien zijn. Dat is minder
+dan een echte typecontrole en veel meer dan niets.
+
+De poort is getoetst op de fout waarvoor hij gebouwd is: met het argument terug
+meldt hij "Expected 7-8 arguments, but got 9", en met een verschreven naam
+meldt hij die.
+
+### En een cache met één sleuf en twee gebruikers
+
+Onderweg gevonden, en het stond er al langer. `modelNaam` werd aangeroepen met
+`model_herkenning` en met `model_import`, en beide antwoorden gingen in dezelfde
+`modelCache`. Wie als eerste vroeg bepaalde dus vijf minuten lang wat de ander
+kreeg: een import die met het herkenningsmodel draaide, of andersom, zonder dat
+iets dat meldde. Met de OpenAI-namen erbij zouden het er vier zijn geweest. De
+cache staat nu per naam.
+
+### Wat het scherm belooft en wat het niet belooft
+
+Het vak zegt waar de sleutel heen gaat, dat hij nooit terugkomt, en dat hij hier
+niet uitgeprobeerd wordt: deze database belt niet naar buiten, dus of de sleutel
+werkt blijkt bij de eerste herkenning. Zonder die laatste zin is "opgeslagen"
+een belofte die de app niet gedaan heeft.
+
+De handleiding staat ernaast, voor beide aanbieders, met de val erin die de
+meeste mensen maken: een ChatGPT-abonnement is geen API-toegang en geeft geen
+sleutel.
+
+En de proef die er het minst naar uitziet en het meest toe doet: het invoervak
+is leeg na het bewaren, en de sleutel staat nergens meer op het scherm. Een vak
+dat zijn inhoud vasthoudt is een sleutel die de volgende die meekijkt gewoon
+leest.

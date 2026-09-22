@@ -39,9 +39,16 @@ export type Status = 'wacht' | 'toegelaten' | 'afgewezen' | 'onbekend'
 export type Reden =
   | 'goed' | 'wacht' | 'afgewezen' | 'maand-op' | 'uur-vol' | 'onbekend'
 
+export type Aanbieder = 'anthropic' | 'openai'
+
 export interface Toegang {
   status: Status
   reden: Reden
+  /** Draait deze gebruiker op zijn eigen sleutel? Dan geldt het budget niet. */
+  eigenSleutel: boolean
+  aanbieder: Aanbieder | null
+  /** De laatste vier tekens van de sleutel, nooit meer. Zie bestand 49. */
+  staart: string | null
   /** Geslaagde AI-aanroepen deze maand, en hoeveel er in totaal mogen. */
   gebruikt: number
   budget: number
@@ -53,7 +60,15 @@ export interface Toegang {
 /** Wat de app aanhoudt zolang de database nog niets teruggaf. */
 export const ONBEKEND: Toegang = {
   status: 'onbekend', reden: 'onbekend',
+  eigenSleutel: false, aanbieder: null, staart: null,
   gebruikt: 0, budget: 0, beheerder: false, maandTot: null,
+}
+
+const AANBIEDERS: readonly string[] = ['anthropic', 'openai']
+
+/** Zoals de aanbieder op het scherm heet. */
+export const AANBIEDERNAAM: Record<Aanbieder, string> = {
+  anthropic: 'Anthropic', openai: 'OpenAI',
 }
 
 const STATUSSEN: readonly string[] = ['wacht', 'toegelaten', 'afgewezen']
@@ -70,9 +85,14 @@ export function leesToegang(uit: RpcToegang | null | undefined): Toegang {
   if (!uit || typeof uit !== 'object') return ONBEKEND
   const status = STATUSSEN.includes(String(uit.status)) ? (uit.status as Status) : 'onbekend'
   const reden = REDENEN.includes(String(uit.reden)) ? (uit.reden as Reden) : 'onbekend'
+  const aanbieder = AANBIEDERS.includes(String(uit.aanbieder))
+    ? (uit.aanbieder as Aanbieder) : null
   return {
     status,
     reden,
+    eigenSleutel: uit.eigen_sleutel === true,
+    aanbieder,
+    staart: typeof uit.staart === 'string' ? uit.staart : null,
     gebruikt: Number.isFinite(uit.gebruikt) ? Number(uit.gebruikt) : 0,
     budget: Number.isFinite(uit.budget) ? Number(uit.budget) : 0,
     beheerder: uit.beheerder === true,
@@ -102,7 +122,9 @@ export function uitlegAi(t: Toegang): string | null {
   if (t.reden === 'maand-op') {
     return `Je ${t.budget} herkenningen van deze maand zijn op`
       + (t.maandTot ? `. Op ${t.maandTot} springt de teller terug.` : '.')
-      + ' Invoeren met de hand werkt gewoon door.'
+      + ' Wil je nu verder, geef dan je eigen sleutel op onder Account; dan loopt het'
+      + ' op je eigen rekening en geldt dit budget niet meer. Invoeren met de hand'
+      + ' werkt hoe dan ook gewoon door.'
   }
   if (t.reden === 'uur-vol') {
     return 'Dertig herkenningen in een uur is het maximum. Over een uur kan het weer.'
@@ -117,6 +139,9 @@ export function uitlegAi(t: Toegang): string | null {
  * honderdduizend en die hoeft niet te lezen dat hij er nog 99.987 heeft.
  */
 export function restZin(t: Toegang, drempel = 1000): string | null {
+  /* Op je eigen sleutel is er niets af te tellen: het budget van de eigenaar
+     geldt dan niet meer, en een teller die niets begrenst leest als een grens. */
+  if (t.eigenSleutel) return null
   if (t.status !== 'toegelaten' || t.budget <= 0 || t.budget >= drempel) return null
   const over = Math.max(t.budget - t.gebruikt, 0)
   return `${over} van je ${t.budget} herkenningen over deze maand`

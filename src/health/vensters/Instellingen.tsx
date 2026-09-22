@@ -3,7 +3,7 @@
  * Overgezet uit vensterProfiel(), vensterImport() en vensterAccount().
  */
 import { useEffect, useState } from 'react'
-import { Kaart, Keuzechip, Knop, Kop, Rij, Spin, Tussen, Venster } from '../onderdelen/basis'
+import { Kaart, Keuzechip, Knop, Kop, Rij, Spin, Tussen, Uitleg, Venster } from '../onderdelen/basis'
 import { MEDICATIEGROEPEN } from '../conditie'
 import type { Conditie, Medicatiegroep } from '../conditie'
 import { dec, dz } from '@/gedeeld/getal'
@@ -16,8 +16,8 @@ import { SOORTEN, equivalent, standaardIntensiteit } from '../inspanning'
 import { GLI_PROGRAMMAS } from '../trap'
 import { kortNL, vandaag } from '@/gedeeld/datum'
 import type { Tester } from '@/gedeeld/db/rpc'
-import { ONBEKEND, leesToegang, restZin, uitlegAi } from '../toegang'
-import type { Toegang } from '../toegang'
+import { AANBIEDERNAAM, ONBEKEND, leesToegang, restZin, uitlegAi } from '../toegang'
+import type { Aanbieder, Toegang } from '../toegang'
 import type { ImportDag, Importactiviteit, Importbron } from '../ai'
 
 
@@ -1103,6 +1103,9 @@ export function Aanmelden(
  */
 function JouwToegang() {
   const [t, zetT] = useState<Toegang>(ONBEKEND)
+  /* Een teller die na het bewaren van een sleutel blijft staan zoals hij was,
+     leest als een sleutel die niet is aangekomen. */
+  const [ronde, zetRonde] = useState(0)
 
   useEffect(() => {
     let afgebroken = false
@@ -1115,14 +1118,15 @@ function JouwToegang() {
       } catch { /* zie de kop van toegang.ts: geen antwoord is geen afwijzing */ }
     })()
     return () => { afgebroken = true }
-  }, [])
+  }, [ronde])
 
   if (t.status === 'onbekend') return null
   const rest = restZin(t)
   const uitleg = uitlegAi(t)
 
   return (
-    <p className="mini" style={{ marginTop: 10 }}>
+    <>
+      <p className="mini" style={{ marginTop: 10 }}>
       <b>
         {t.status === 'toegelaten' ? 'Toegelaten tot de test'
          : t.status === 'wacht' ? 'Je aanmelding wacht op toelating'
@@ -1130,7 +1134,9 @@ function JouwToegang() {
       </b>
       {rest && <>. {rest}</>}
       {uitleg && <>. {uitleg}</>}
-    </p>
+      </p>
+      <EigenSleutel t={t} opnieuw={() => zetRonde((x) => x + 1)} />
+    </>
   )
 }
 
@@ -1269,6 +1275,187 @@ function Testerbeheer() {
         met een vast Sonnet-tarief; draait er een ander model, dan is het een onderschatting. Het
         aantal herkenningen klopt wel altijd, en daarom staat het budget daarin.
       </p>
+    </div>
+  )
+}
+
+/**
+ * JE EIGEN SLEUTEL
+ *
+ * De proefrit loopt op de sleutel van de eigenaar en is met opzet klein: genoeg
+ * om te voelen wat het model met een foto van je bord doet, niet genoeg om er
+ * maanden op te draaien. Wie verder wil, geeft zijn eigen sleutel op en betaalt
+ * zijn eigen rekening.
+ *
+ * WAT HET SCHERM EERLIJK MOET ZEGGEN
+ *
+ * Dat de sleutel hier wordt bewaard. Niet in je browser, maar in de database
+ * van deze app, versleuteld, en alleen te lezen door de functie die de
+ * herkenning doet. Dat is beter dan een sleutel in een browser en het is geen
+ * garantie, en wie een betaalsleutel afgeeft hoort te weten aan wie.
+ *
+ * Dat hij nooit meer terugkomt. Er is geen knop die hem laat zien, ook niet aan
+ * jou. Je ziet de laatste vier tekens en verder niets. Wie zijn sleutel kwijt
+ * is maakt een nieuwe bij zijn aanbieder.
+ *
+ * En dat hij hier niet uitgeprobeerd wordt. De database belt niet naar buiten,
+ * dus of de sleutel werkt blijkt bij de eerste herkenning. Dat staat erbij,
+ * want anders is "opgeslagen" een belofte die de app niet heeft gedaan.
+ */
+function EigenSleutel({ t, opnieuw }: { t: Toegang; opnieuw: () => void }) {
+  const [open, zetOpen] = useState(false)
+  const [aanbieder, zetAanbieder] = useState<Aanbieder>('anthropic')
+  const [sleutel, zetSleutel] = useState('')
+  const [fout, zetFout] = useState<string | null>(null)
+  const [bezig, zetBezig] = useState(false)
+
+  if (t.status === 'onbekend') return null
+
+  const bewaar = async () => {
+    const tk = sessietoken()
+    if (!tk) return
+    zetBezig(true)
+    zetFout(null)
+    try {
+      const uit = await roep('kal_sleutel_zetten',
+        { p_token: tk, p_aanbieder: aanbieder, p_sleutel: sleutel.trim() })
+      if ('fout' in uit) { zetFout(uit.fout); return }
+      zetSleutel('')
+      zetOpen(false)
+      opnieuw()
+    } catch (e) {
+      zetFout(e instanceof Error ? e.message : String(e))
+    } finally {
+      zetBezig(false)
+    }
+  }
+
+  const haalWeg = async () => {
+    const tk = sessietoken()
+    if (!tk) return
+    zetBezig(true)
+    try {
+      await roep('kal_sleutel_weghalen', { p_token: tk })
+      opnieuw()
+    } catch (e) {
+      zetFout(e instanceof Error ? e.message : String(e))
+    } finally {
+      zetBezig(false)
+    }
+  }
+
+  if (t.eigenSleutel && !open) {
+    return (
+      <div style={{ marginTop: 14 }}>
+        <Kop>Je eigen sleutel</Kop>
+        <p className="mini" style={{ marginTop: 4 }}>
+          De herkenning loopt op je eigen sleutel bij{' '}
+          <b>{t.aanbieder ? AANBIEDERNAAM[t.aanbieder] : 'je aanbieder'}</b>
+          {t.staart && <>, die eindigt op <span className="cijfer">{t.staart}</span></>}. Het
+          maandbudget van de beheerder geldt niet meer voor jou; wat je gebruikt staat op je
+          eigen rekening.
+        </p>
+        <Rij style={{ marginTop: 8 }}>
+          <Knop klein opKlik={() => zetOpen(true)}>andere sleutel</Knop>
+          <Knop klein uit={bezig} opKlik={() => void haalWeg()}>sleutel weghalen</Knop>
+        </Rij>
+        {fout && <p className="mini" style={{ color: 'var(--let)', marginTop: 6 }}>{fout}</p>}
+      </div>
+    )
+  }
+
+  if (!open) {
+    return (
+      <p className="mini" style={{ marginTop: 10 }}>
+        <button type="button" className="alsLink" onClick={() => zetOpen(true)}>
+          Je eigen AI-sleutel gebruiken
+        </button>
+        {' '}, dan geldt het maandbudget niet meer voor jou.
+      </p>
+    )
+  }
+
+  return (
+    <div style={{ marginTop: 14 }}>
+      <Kop>Je eigen sleutel</Kop>
+      <p className="mini" style={{ marginTop: 4 }}>
+        De herkenning van maaltijden loopt nu op de sleutel van de beheerder, en die is
+        begrensd. Geef je je eigen sleutel op, dan loopt hij op jouw rekening en vervalt die
+        grens. De rest van de app verandert er niet van.
+      </p>
+
+      <Rij style={{ marginTop: 10 }}>
+        {(['anthropic', 'openai'] as const).map((a) => (
+          <Keuzechip key={a} aan={aanbieder === a} opKlik={() => zetAanbieder(a)}>
+            {AANBIEDERNAAM[a]}
+          </Keuzechip>
+        ))}
+      </Rij>
+
+      <input type="password" autoComplete="off" spellCheck={false}
+             className="veld" style={{ marginTop: 8, width: '100%' }}
+             placeholder={aanbieder === 'anthropic' ? 'sk-ant-...' : 'sk-...'}
+             aria-label="Je API-sleutel"
+             value={sleutel} onChange={(e) => zetSleutel(e.target.value)} />
+
+      {fout && <p className="mini" style={{ color: 'var(--let)', marginTop: 6 }}>{fout}</p>}
+
+      <Rij style={{ marginTop: 10 }}>
+        <Knop vol uit={bezig || sleutel.trim().length < 30} opKlik={() => void bewaar()}>
+          Bewaren
+        </Knop>
+        <Knop uit={bezig} opKlik={() => { zetOpen(false); zetSleutel(''); zetFout(null) }}>
+          Terug
+        </Knop>
+      </Rij>
+
+      <Uitleg id="sleutel-waar" label="waar je sleutel terechtkomt">
+        <p>
+          Hij gaat versleuteld de database van deze app in, en alleen de functie die de
+          herkenning doet kan hem uitlezen. Er is geen knop die hem laat zien, ook niet aan
+          jou: je ziet straks de laatste vier tekens en verder niets. Dat is beter dan een
+          sleutel in een browser en het is geen garantie, en je hoort te weten aan wie je hem
+          afgeeft.
+        </p>
+        <p>
+          Hij wordt hier niet uitgeprobeerd, want deze database belt niet naar buiten. Of hij
+          werkt blijkt bij je eerste herkenning. Klopt er iets niet, dan zegt je aanbieder dat
+          en komt die zin gewoon op je scherm.
+        </p>
+        <p>
+          Je kunt hem er altijd zelf weer uithalen, en dan val je terug op het budget van de
+          beheerder. Bij je aanbieder kun je een sleutel bovendien op elk moment intrekken;
+          dat is de knop die altijd werkt, ook als je deze app niet vertrouwt.
+        </p>
+      </Uitleg>
+
+      <Uitleg id="sleutel-hoe" label="hoe je er een maakt, en wat het kost">
+        <p>
+          <b>Anthropic.</b> Maak een account op console.anthropic.com, zet er onder Billing een
+          tegoed op (het minimum is vijf dollar) en maak daarna onder API Keys een nieuwe
+          sleutel. Hij begint met sk-ant- en je ziet hem één keer, dus plak hem meteen hier.
+          Dit is de aanbieder waarop de herkenning van deze app gebouwd en getoetst is.
+        </p>
+        <p>
+          <b>OpenAI.</b> Hetzelfde patroon op platform.openai.com: een account, tegoed onder
+          Billing, en dan een sleutel onder API keys. Die begint met sk-. Let op dat een
+          ChatGPT-abonnement hier niet voor telt; dat is een andere dienst dan de API en geeft
+          je geen sleutel.
+        </p>
+        <p>
+          Wat het kost: een herkenning is grofweg een paar dollarcent, dus vijf dollar tegoed
+          is al gauw een paar honderd maaltijden. Je betaalt per gebruik en er loopt niets door
+          als je de app een maand laat liggen. Zet bij je aanbieder een maandlimiet, dan kan
+          het ook niet uit de hand lopen.
+        </p>
+        <p>
+          Welke van de twee: de hele herkenning is op Anthropic gebouwd en daar zijn de
+          gouden waarden van deze app op tot stand gekomen. Het OpenAI-pad is met dezelfde
+          schema's gebouwd maar nog niet tegen een echte sleutel gedraaid. Werkt er iets niet
+          zoals verwacht, meld het dan; in het logboek staat per herkenning welk model hem
+          deed.
+        </p>
+      </Uitleg>
     </div>
   )
 }

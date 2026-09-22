@@ -13,7 +13,8 @@
 -- doen op de Anthropic-sleutel van de eigenaar. Dat is geen theoretisch lek maar
 -- de rekening van één mens.
 --
--- Er komt dus een wachtkamer, en de AI krijgt een budget per persoon.
+-- Er komt dus een wachtkamer, en de AI krijgt een budget per persoon: een
+-- proefrit op de sleutel van de eigenaar, en daarna je eigen sleutel.
 --
 -- WAT DIT BESTAND MET OPZET NIET DOET
 --
@@ -68,7 +69,11 @@ alter table public.kal_gebruikers
   add column if not exists notitie          text;
 
 alter table public.kal_gebruikers alter column status          set default 'wacht';
-alter table public.kal_gebruikers alter column ai_budget_maand set default 100;
+-- Vijfentwintig en niet honderd: dit is een proefrit en geen abonnement. Een
+-- herkenning kost rond de vier dollarcent, dus vijfentwintig is ongeveer een
+-- dollar per tester en genoeg om een paar dagen te ervaren wat het model met
+-- een foto van je bord doet. Wie daarna verder wil, geeft zijn eigen sleutel op.
+alter table public.kal_gebruikers alter column ai_budget_maand set default 25;
 
 do $$
 begin

@@ -449,6 +449,15 @@ export interface RpcKaart {
      staat: geen gewicht, geen bloeddruk, geen labwaarde. Alleen wie er is,
      welke status hij heeft en wat hij deze maand aan AI verbruikt heeft. */
   kal_mijn_toegang: { in: { p_token: string }; uit: Toegang }
+  /* De eigen sleutel, bestand 49. Er is met opzet geen functie die hem
+     teruggeeft: `kal_sleutel_voor` staat alleen open voor de service-role, dus
+     voor de edge function. Wat de app hier terugkrijgt is de aanbieder en de
+     laatste vier tekens, genoeg om te zien welke sleutel erin staat. */
+  kal_sleutel_zetten: {
+    in: { p_token: string; p_aanbieder: string; p_sleutel: string }
+    uit: { aanbieder: string; staart: string } | { fout: string }
+  }
+  kal_sleutel_weghalen: { in: { p_token: string }; uit: { weg: boolean } }
   kal_testers: { in: { p_token: string }; uit: Tester[] | { fout: string } }
   kal_tester_zetten: {
     in: {
@@ -631,6 +640,9 @@ export async function roep<K extends keyof RpcKaart>(
 /** Wat `kal_mijn_toegang` teruggeeft. Zie `src/health/toegang.ts`. */
 export interface Toegang {
   mag?: boolean
+  eigen_sleutel?: boolean
+  aanbieder?: string | null
+  staart?: string | null
   status?: string
   reden?: string
   gebruikt?: number
@@ -643,6 +655,8 @@ export interface Toegang {
 /** Eén regel uit `kal_testers`. Geen enkel gegeven uit de app zelf. */
 export interface Tester {
   account: string
+  aanbieder?: string | null
+  eigen_sleutel?: boolean
   naam: string | null
   status: string
   beheerder: boolean
