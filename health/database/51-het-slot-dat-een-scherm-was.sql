@@ -62,40 +62,44 @@
 -- schermtekst, en `CLAUDE.md` zegt erbij waar dat geldt: niet in de apps, niet
 -- in de edge-functies, niet in de handleidingen.
 --
--- De proef die dat bewaakt leest `src/`. Daar staat het teken dus nergens. Maar
 -- `kal_prikkel_bouwen` draait in de database en schrijft de onderwerpsregel van
--- elke prikkelmail, en daar stond het drie keer:
---
---     'Kalibratie — de weegreeks staat stil'
---     'Kalibratie — nog niet gewogen vanochtend'
---     'Kalibratie — gaten in de registratie'
+-- elke prikkelmail. Daar stond het drie keer, telkens tussen "Kalibratie" en
+-- wat erachter komt: bij de weegreeks die stilstaat, bij nog niet gewogen
+-- vanochtend, en bij gaten in de registratie. (Hier met opzet omschreven en niet
+-- overgetikt; het teken zelf staat in bestand 50, waar het thuishoort.)
 --
 -- Dat is geen codecommentaar maar de eerste regel die een mens in zijn inbox
--- leest. Precies de tekst waar de regel over gaat, op de enige plek die de proef
--- niet zag.
+-- leest. Precies de tekst waar de regel over gaat.
 --
 -- Het worden dubbele punten. Verder verandert er aan die functie niets: dit is
 -- een leesteken en geen gedrag.
 --
--- WAAROM DE PROEF NIET OOK `.sql` GAAT LEZEN
+-- WAT IK HIER EERST FOUT OVER SCHREEF
 --
--- Dat lag voor de hand en het kan niet. Bestand 50 is een verslag: het legt vast
--- wat er in de database stond, inclusief deze drie streepjes. Een proef die dat
--- teken in `.sql` verbiedt, dwingt het verslag om te liegen over wat het
--- aantrof, en dan bewaakt hij niets meer.
+-- In de eerste versie van dit bestand stond dat de proef die dit bewaakt alleen
+-- `src/` leest, en dat de database daarom een blinde vlek was. Dat klopte niet.
+-- `src/gedeeld/schermtekst.proef.ts` heeft twee blokken: het eerste ontleedt de
+-- bestanden in `src/` met de parser van TypeScript, en het tweede loopt met
+-- `git grep` de héle repo af, deze map inbegrepen. Ik had alleen het eerste
+-- gelezen.
 --
--- Dat is dezelfde regel als bij `gereedschap/oud/`: bewijsmateriaal wordt niet
--- aangepast om een proef groen te krijgen.
+-- Die proef viel dan ook meteen om op bestand 50 en op dit bestand, en dat was
+-- precies goed: de blinde vlek zat bij mij en niet in de bewaking.
 --
--- `health/edge/` zou er wél bij horen, want dat is geschreven tekst en geen
--- verslag, en `CLAUDE.md` noemt het met zoveel woorden. Het is vandaag niet
--- gebeurd en dat staat hier als openstaand punt en niet als gedane zaak: de
--- edge-functies bouwen hun schermtekst op met template-literals, en het
--- bereikstreepje staat daar tussen twee bérekende getallen
--- (`${laag}–${hoog}`), niet tussen twee cijfers. De proef in `src/` heeft
--- daar zijn eigen oplossing voor, en die overzetten is meer werk dan een
--- regel. Vandaag zijn die bestanden met de hand nagelopen: nul
--- gedachtestreepjes, en dat ene bereikstreepje is er een dat mag.
+-- Wat er wél aan de hand was, blijft staan: het teken stond in de database en
+-- niemand had het gezien, omdat die functie tot bestand 50 nergens in deze repo
+-- stond. Niet de proef schoot tekort maar het verslag.
+--
+-- WAAROM BESTAND 50 NU EEN UITZONDERING IS
+--
+-- Omdat het bewijsmateriaal is. Het legt vast wat er op 22 september in de
+-- database stond, inclusief deze drie streepjes, en dat moet tot op het teken
+-- kloppen: de md5-controle vergelijkt het met `prosrc`. Een verslag dat het
+-- teken weglaat om een proef groen te krijgen, liegt over wat het aantrof.
+--
+-- Dat is dezelfde regel als bij `gereedschap/oud/`, en om dezelfde reden. Dít
+-- bestand hoeft die uitzondering niet, want het is geen verslag maar een
+-- wijziging, en het noemt het teken hierboven zonder het te zetten.
 -- ===========================================================================
 
 CREATE OR REPLACE FUNCTION public.kal_aanmelden(p_account text, p_ww text)

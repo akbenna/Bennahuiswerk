@@ -93,7 +93,7 @@ with verwacht (functie, uit_bestand, md5_repo) as (
     ('kal_sessie', '50-de-negen-die-er-nog-niet-stonden.sql', 'e78adc608d2ea01fb33d15307b202d3e'),
     ('kal_sleutel_voor', '49-een-eigen-sleutel-in-de-vault.sql', '3a993afae164e7c304604e0cf28fc5a9'),
     ('kal_sleutel_weghalen', '49-een-eigen-sleutel-in-de-vault.sql', '3535d5346fcbeaa6332d465f7be034a9'),
-    ('kal_sleutel_zetten', '49-een-eigen-sleutel-in-de-vault.sql', '7fa613b09ed3cabe4b83e931ea3a1097'),
+    ('kal_sleutel_zetten', '49-een-eigen-sleutel-in-de-vault.sql', 'ab554e9cbac14a5ff830b568c3847918'),
     ('kal_tester_zetten', '51-het-slot-dat-een-scherm-was.sql', 'b5a28467721edc28c1ff65f60507d402'),
     ('kal_testers', '49-een-eigen-sleutel-in-de-vault.sql', '7da0a83caa8adbac866d25a48e81ca0b'),
     ('kal_verzadiging', '37-fijner-dan-een-groep.sql', '06d1cccc04c19755174d281a789020e8'),
