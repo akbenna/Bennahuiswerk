@@ -5,6 +5,9 @@
 -- TOEGEPAST: nog niet. Draai bestand 48 eerst, dit bouwt erop verder. En draai
 -- daarna `node gereedschap/md5-verslag.mjs --schrijf`.
 --
+-- Let op de volgorde: 48, dan dit, dan 51. Bestand 51 vervangt een functie die
+-- uit 48 komt.
+--
 -- WAT HIER BIJ KOMT
 --
 -- Bestand 48 gaf elke tester een proefrit van vijfentwintig herkenningen op de
@@ -61,11 +64,54 @@
 -- vak waar hij hem invult, want wie een sleutel afgeeft hoort te weten aan wie.
 -- ===========================================================================
 
+-- ===========================================================================
+-- WELKE VAULT, EN WAAROM DAT UITMAAKT
+-- ===========================================================================
+--
+-- De eerste versie van dit bestand riep `vault.create_secret()` aan. Dat is de
+-- oude Vault, die op `pgsodium` rust. Supabase heeft die afgeraden en in de
+-- huidige versie bestaat die functie niet meer: het schema is er, de uitbreiding
+-- is geïnstalleerd, en je schrijft gewoon rechtstreeks in `vault.secrets`.
+--
+-- Op dit project gaf de wachter hieronder dus alarm terwijl Vault er wél was.
+-- Dat is precies het soort vals alarm waar een wachter voor deugt: hij hield
+-- het bestand tegen in plaats van halverwege om te vallen.
+--
+-- Wat hij nu controleert is niet één functienaam maar wat dit bestand werkelijk
+-- nodig heeft: de tabel, de ontsleutelde weergave, de kolommen die het gebruikt,
+-- en of deze rol erin mág schrijven. Dat laatste is geen formaliteit: `security
+-- definer` betekent "met de rechten van de eigenaar", en of die eigenaar bij de
+-- vault mag is niets om aan te nemen. Faalt er iets, dan zegt hij wat.
+-- ===========================================================================
+
 do $$
+declare v_mist text := '';
 begin
-  if to_regprocedure('vault.create_secret(text,text,text)') is null then
-    raise exception 'De Vault-uitbreiding staat niet aan. Zet supabase_vault aan '
-      'via Database > Extensions en draai dit bestand opnieuw.';
+  if to_regclass('vault.secrets') is null then
+    v_mist := v_mist || ' de tabel vault.secrets;';
+  end if;
+  if to_regclass('vault.decrypted_secrets') is null then
+    v_mist := v_mist || ' de weergave vault.decrypted_secrets;';
+  end if;
+  if v_mist = '' then
+    if not exists (select 1 from information_schema.columns
+                    where table_schema = 'vault' and table_name = 'secrets'
+                      and column_name in ('secret', 'name', 'description')
+                    group by table_name having count(*) = 3) then
+      v_mist := v_mist || ' de kolommen secret, name en description op vault.secrets;';
+    end if;
+    if not exists (select 1 from information_schema.columns
+                    where table_schema = 'vault' and table_name = 'decrypted_secrets'
+                      and column_name = 'decrypted_secret') then
+      v_mist := v_mist || ' de kolom decrypted_secret op vault.decrypted_secrets;';
+    end if;
+    if not has_table_privilege(current_user, 'vault.secrets', 'insert') then
+      v_mist := v_mist || ' schrijfrecht op vault.secrets voor ' || current_user || ';';
+    end if;
+  end if;
+
+  if v_mist <> '' then
+    raise exception 'Vault is niet bruikbaar voor dit bestand. Wat ontbreekt:%', v_mist;
   end if;
 end $$;
 
@@ -166,8 +212,20 @@ begin
   end if;
 
   select ai_sleutel_id into v_oud from kal_gebruikers where id = v_id;
-  v_nieuw := vault.create_secret(v_s, 'kal_ai_' || v_id::text || '_' ||
-    to_char(now(), 'YYYYMMDDHH24MISS'), 'Eigen AI-sleutel van een BennaHealth-gebruiker');
+
+  /* Rechtstreeks in de tabel en niet via `vault.create_secret()`: die functie
+     hoort bij de oude, op pgsodium gebouwde Vault en bestaat hier niet meer.
+     Het versleutelen gebeurt aan de kant van de vault; wat hier binnengaat is
+     de sleutel zelf en wat erin blijft staan is onleesbaar.
+
+     De naam draagt een tijdstempel, want twee sleutels van dezelfde gebruiker
+     mogen niet op dezelfde naam botsen, ook niet als de oude nog een tel
+     bestaat. */
+  insert into vault.secrets (secret, name, description)
+  values (v_s,
+          'kal_ai_' || v_id::text || '_' || to_char(now(), 'YYYYMMDDHH24MISS'),
+          'Eigen AI-sleutel van een BennaHealth-gebruiker')
+  returning id into v_nieuw;
 
   update kal_gebruikers
      set ai_sleutel_id = v_nieuw,
