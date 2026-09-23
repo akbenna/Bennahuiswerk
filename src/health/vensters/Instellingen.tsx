@@ -10,7 +10,7 @@ import { dec, dz } from '@/gedeeld/getal'
 import type { Fase, Geslacht, IsoDatum, Profiel } from '@/gedeeld/db/tabellen'
 import { isSessie, roep } from '@/gedeeld/db/rpc'
 import type { NieuweDag, NieuweInspanning, NieuweRegel } from '@/gedeeld/db/rpc'
-import { BRONNAAM, geraden, importeer, leesFoto, redenUit } from '../ai'
+import { BRONNAAM, geraden, importeer, leesFoto, redenUit, sleutelOpbergen } from '../ai'
 import { MINIMUM_LENGTE, wachtwoordklacht } from '../wachtwoord'
 import { SOORTEN, equivalent, standaardIntensiteit } from '../inspanning'
 import { GLI_PROGRAMMAS } from '../trap'
@@ -1340,9 +1340,9 @@ function EigenSleutel({ t, opnieuw }: { t: Toegang; opnieuw: () => void }) {
     zetBezig(true)
     zetFout(null)
     try {
-      const uit = await roep('kal_sleutel_zetten',
-        { p_token: tk, p_aanbieder: aanbieder, p_sleutel: sleutel.trim() })
-      if ('fout' in uit) { zetFout(uit.fout); return }
+      /* Langs de edge function en niet langs de database: daar staat de
+         hoofdsleutel waarmee hij versleuteld wordt. Zie bestand 49. */
+      await sleutelOpbergen(tk, aanbieder, sleutel.trim())
       zetSleutel('')
       zetOpen(false)
       opnieuw()

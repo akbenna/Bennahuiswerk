@@ -217,6 +217,26 @@ async function vraag(lichaam: Record<string, unknown>): Promise<unknown> {
   return uit
 }
 
+/**
+ * JE EIGEN SLEUTEL OPBERGEN
+ *
+ * Dit gaat langs de edge function en niet rechtstreeks naar de database, en dat
+ * is het hele punt van het ontwerp: daar staat de hoofdsleutel waarmee hij
+ * versleuteld wordt, en de database krijgt alleen cijfertekst te zien. Zie
+ * `health/database/49`.
+ *
+ * Het gevolg voor dit scherm is dat opbergen kan mislukken om een reden die
+ * niets met de sleutel te maken heeft: de edge function kan eruit liggen. De
+ * melding die dan komt is die van `vraag()` hieronder, en die zegt dat het aan
+ * de verbinding ligt en niet aan wat je intikte.
+ */
+export async function sleutelOpbergen(
+  token: string, aanbieder: string, sleutel: string,
+): Promise<{ aanbieder: string; staart: string }> {
+  return (await vraag({ token, soort: 'sleutel', aanbieder, sleutel })) as
+    { aanbieder: string; staart: string }
+}
+
 export async function herken(
   token: string, soort: 'tekst' | 'foto', tekst: string, fotos: Foto[] = [],
 ): Promise<Herkenning> {
