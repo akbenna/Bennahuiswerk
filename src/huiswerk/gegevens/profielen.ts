@@ -74,6 +74,9 @@ export const ONDERWERPICOON: Record<string, string> = {
   'Geld & rekenen':'💶','Begrippen':'📖','Markt':'📈','Symbolen & atomen':'⚛️','Moleculen':'🧪','Zuur & base':'🧫',
   'Industriële revolutie':'🏭','Wereldoorlogen':'🎖️',
   // exacte fundamenten (Wassima) + bovenbouw (Amaani)
+  // paragraaf 1.5, herleiden van machten
+  'Machten vermenigvuldigen':'✖️','Gelijksoortige termen':'➕','Macht van een macht':'🔼',
+  'Macht van een product':'📦','Machten delen':'➗',
   'Rekenvolgorde':'🧮','Negatieve getallen':'➖','Machten & wortels':'🔢','Verhoudingen & schaal':'📐','Haakjes & herleiden':'🔠',
   'Grootheden & eenheden':'📏','Temperatuur & warmte':'🌡️','Licht':'💡','Magnetisme':'🧲','Elektrische schakelingen':'🔌','Beweging (afstand-tijd)':'🏃',
   'Kwadratische functies':'📈','Vergelijkingen oplossen':'🟰','Machten & exponenten':'🔢','Procentuele groei':'📊','Logaritmen':'🔟','Rijen':'🔢',

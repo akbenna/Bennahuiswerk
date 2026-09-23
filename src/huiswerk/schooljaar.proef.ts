@@ -21,6 +21,9 @@ import { NIEUW2627 } from './gegevens/schooljaar2627'
 import { SEED } from './gegevens/seed'
 import { sjablonen } from './gegevens/sjablonen'
 import { MIN_VOORRAAD, opNiveau } from './leitner'
+import { antwoordKlopt } from './nakijken'
+import { UITLEG } from './gegevens/uitleg'
+import type { Opgave } from './gegevens/soorten'
 import type { Kaart } from './gegevens/soorten'
 
 describe('wie er dit schooljaar in welke klas zit', () => {
@@ -492,7 +495,7 @@ describe('de uitbreiding voor Wassima bij wiskunde en natuurkunde', () => {
       const sleutel = `${e.v} · ${e.t}`
       per.set(sleutel, [...(per.get(sleutel) ?? []), e.lvl ?? 1])
     }
-    expect(per.size).toBe(28)
+    expect(per.size).toBe(33)
     const mager: string[] = []
     for (const [sleutel, lvls] of per) {
       for (const n of [1, 2, 3]) {
@@ -542,8 +545,10 @@ describe('een vast niveau geeft Wassima ook echt dat niveau', () => {
     perOnderwerp.set(sleutel, [...(perOnderwerp.get(sleutel) ?? []), e as Kaart])
   }
 
-  it('heeft achtentwintig onderwerpen bij die twee vakken', () => {
-    expect(perOnderwerp.size).toBe(28)
+  it('heeft drieendertig onderwerpen bij die twee vakken', () => {
+    /* Veertien bij wiskunde, veertien bij natuurkunde, en de vijf regels van
+       paragraaf 1.5 die elk een eigen onderwerp kregen. */
+    expect(perOnderwerp.size).toBe(33)
   })
 
   it('levert bij elk onderwerp op elk niveau alleen sommen van dát niveau', () => {
@@ -576,6 +581,212 @@ describe('een vast niveau geeft Wassima ook echt dat niveau', () => {
       const stapels = [1, 2, 3].map((n) =>
         opNiveau(lijst, n as 1 | 2 | 3).map((k) => k.id).sort().join(','))
       expect(new Set(stapels).size, sleutel).toBe(3)
+    }
+  })
+})
+
+/**
+ * PARAGRAAF 1.5: HERLEIDEN VAN MACHTEN
+ *
+ * Vijf regels uit haar boek, vijf onderwerpen. Twee dingen kunnen hier stil
+ * misgaan, en allebei zijn ze erger dan een opgave die ontbreekt.
+ *
+ * Het eerste is het intypen. Op het scherm staat a5 als a met een klein vijfje,
+ * en dat typt geen kind in. Elke opgave neemt daarom drie schrijfwijzen aan.
+ * Zou er ergens een `alt` ontbreken, dan krijgt ze rood op een goed antwoord en
+ * is dat aan niets te zien: de opgave staat er, hij ziet er goed uit, en hij
+ * keurt af. Vandaar dat deze proef `antwoordKlopt` echt aanroept.
+ *
+ * Het tweede is het rekenwerk in de exponenten. Dat staat hieronder niet
+ * overgetypt maar uitgerekend: 3 + 2 en niet 5.
+ */
+describe('herleiden van machten, paragraaf 1.5', () => {
+  const REGELS = ['Machten vermenigvuldigen', 'Gelijksoortige termen', 'Macht van een macht',
+    'Macht van een product', 'Machten delen']
+  const hare = NIEUW2627.filter((e) => e.p === 'wassima' && REGELS.includes(e.t))
+
+  const zoek = (fragment: string): Opgave => {
+    /* Eerst de hele vraag, dan pas een stuk ervan. Anders vangt "(a2)3" ook
+       "(a2)3 . 2a . a4", en dan toetst de regel iets anders dan er staat. */
+    const heel = hare.filter((x) => x.q === `Herleid: ${fragment}`)
+    if (heel.length === 1) return heel[0] as Opgave
+    const raak = hare.filter((x) => x.q.includes(fragment))
+    if (raak.length !== 1) throw new Error(`${raak.length} treffers voor: ${fragment}`)
+    return raak[0] as Opgave
+  }
+
+  /** De exponenten uit een antwoord, als gewone getallen. */
+  const SUPER = '⁰¹²³⁴⁵⁶⁷⁸⁹'
+  const exponenten = (a: string): number[] => (a.match(new RegExp(`[${SUPER}]+`, 'g')) ?? [])
+    .map((m) => Number([...m].map((c) => SUPER.indexOf(c)).join('')))
+  /** Het getal vooraan, met zijn teken. Staat er niets, dan is het 1. */
+  const getal = (a: string): number => {
+    const m = /^(-?)(\d*)/.exec(a.replace('−', '-'))
+    const teken = m?.[1] === '-' ? -1 : 1
+    return m?.[2] ? teken * Number(m[2]) : teken
+  }
+
+  it('heeft alle vijf de regels als eigen onderwerp, met zes sommen per niveau', () => {
+    for (const regel of REGELS) {
+      for (const n of [1, 2, 3]) {
+        expect(hare.filter((e) => e.t === regel && e.lvl === n).length, `${regel} ${n}`).toBe(6)
+      }
+    }
+  })
+
+  it('neemt een macht in alle drie de schrijfwijzen aan', () => {
+    /* a5 met een klein vijfje, a^5 en a5. Wie op een telefoon werkt typt het
+       laatste; het dakje staat twee toetsen verderop. */
+    const mis: string[] = []
+    for (const e of hare) {
+      const netjes = String(e.a)
+      if (!exponenten(netjes).length) continue
+      const metDakje = [...netjes].map((c) => {
+        const i = SUPER.indexOf(c)
+        return i < 0 ? c : String(i)
+      }).join('').replace(/([a-z])(\d)/g, '$1^$2')
+      const plat = metDakje.replace(/\^/g, '')
+      for (const vorm of [netjes, metDakje, plat]) {
+        if (!antwoordKlopt({ a: netjes, alt: e.alt }, vorm)) mis.push(`${e.id}: ${vorm}`)
+      }
+    }
+    expect(mis).toEqual([])
+  })
+
+  it('rekent de exponenten van het vermenigvuldigen na', () => {
+    const rij: Array<[string, number, number[]]> = [
+      ['a³ · a²', 1, [3 + 2]],
+      ['x⁴ · x³', 1, [4 + 3]],
+      ['p⁵ · p⁵', 1, [5 + 5]],
+      ['a · a⁶', 1, [1 + 6]],
+      ['q² · q² · q²', 1, [2 + 2 + 2]],
+      ['y⁸ · y', 1, [8 + 1]],
+      ['2x³ · 4x²', 2 * 4, [3 + 2]],
+      ['3a⁵ · 4a³', 3 * 4, [5 + 3]],
+      ['7a⁶ · 2a', 7 * 2, [6 + 1]],
+      ['3p⁶ · 4p⁸', 3 * 4, [6 + 8]],
+      ['2x⁵ · 5x²', 2 * 5, [5 + 2]],
+      ['6q⁴ · q³', 6 * 1, [4 + 3]],
+      ['2a⁶ · −3a', 2 * -3, [6 + 1]],
+      ['−5q · 2q²', -5 * 2, [1 + 2]],
+      ['−9p⁵ · −7p³', -9 * -7 * -1, [5 + 3 + 8]],
+      ['10y³ · −2y · y⁵', 10 * -2, [3 + 1 + 5]],
+      /* Ongelijke grondtallen: de exponenten blijven staan waar ze staan. */
+      ['4x³ · −7y²', 4 * -7, [3, 2]],
+      ['2a³ · 5b⁴', 2 * 5, [3, 4]],
+    ]
+    for (const [q, g, exps] of rij) {
+      const a = String(zoek(q).a)
+      expect(getal(a), q).toBe(g)
+      expect(exponenten(a), q).toEqual(exps)
+    }
+  })
+
+  it('rekent de macht van een macht en de macht van een product na', () => {
+    const rij: Array<[string, number, number[]]> = [
+      ['(a²)³', 1, [2 * 3]],
+      ['(a⁵)³', 1, [5 * 3]],
+      ['(p³)³', 1, [3 * 3]],
+      ['(p¹⁰)²', 1, [10 * 2]],
+      ['(x⁴)³', 1, [4 * 3]],
+      ['(q⁶)²', 1, [6 * 2]],
+      ['a² · (a⁷)⁵', 1, [2 + 7 * 5]],
+      ['(p³)⁴ · (p²)⁶', 1, [3 * 4 + 2 * 6]],
+      ['(a⁵)³ · 2a⁶', 2, [5 * 3 + 6]],
+      ['(a²)³ · 2a · a⁴', 2, [2 * 3 + 1 + 4]],
+      ['5x · 3 · (x⁵)⁴', 5 * 3, [1 + 5 * 4]],
+      ['(x²)⁶ + (x³)⁴', 1 + 1, [2 * 6]],
+      ['5(a³)⁶ − 6(a⁹)²', 5 - 6, [3 * 6]],
+      ['5x¹⁸ − 2(x⁶)³', 5 - 2, [6 * 3]],
+      ['(p³)⁴ + 4(p²)⁶', 1 + 4, [3 * 4]],
+      ['−2x⁶ − 3(x³)²', -2 - 3, [3 * 2]],
+      ['3²¹ als macht van 27', 27, [21 / 3]],
+      ['8¹² als macht van 16', 16, [(12 * 3) / 4]],
+      ['(pq)³', 1, [3, 3]],
+      ['(xy)⁷', 1, [7, 7]],
+      ['(abc)⁴', 1, [4, 4, 4]],
+      ['(ab)⁵', 1, [5, 5]],
+      ['(xy)²', 1, [2, 2]],
+      ['(−p)⁶', 1, [6]],
+      ['(5x)³', 5 ** 3, [3]],
+      ['(2ab)³', 2 ** 3, [3, 3]],
+      ['(−10a)²', (-10) ** 2, [2]],
+      ['(−3p)³', (-3) ** 3, [3]],
+      ['(−2q)⁴', (-2) ** 4, [4]],
+      ['(a³b²)⁵', 1, [3 * 5, 2 * 5]],
+      ['(−3x²)⁴', (-3) ** 4, [2 * 4]],
+      ['(−3xy)³', (-3) ** 3, [3, 3]],
+      ['(−5xy²)²', (-5) ** 2, [2, 2 * 2]],
+      /* Het minteken staat buiten de haakjes en doet dus niet mee in de macht. */
+      ['−(ab²)⁴', -1, [4, 2 * 4]],
+      ['(p²q)⁶', 1, [2 * 6, 6]],
+      ['(6pq³)²', 6 ** 2, [2, 3 * 2]],
+    ]
+    for (const [q, g, exps] of rij) {
+      const a = String(zoek(q).a)
+      expect(getal(a), q).toBe(g)
+      expect(exponenten(a), q).toEqual(exps)
+    }
+  })
+
+  it('rekent het optellen en het delen na', () => {
+    const rij: Array<[string, number, number[]]> = [
+      ['2a³ + 4a³', 2 + 4, [3]],
+      ['4p⁶ + 3p⁶', 4 + 3, [6]],
+      ['9a⁵ − 3a⁵', 9 - 3, [5]],
+      ['a⁵ + a⁵', 1 + 1, [5]],
+      ['2a⁵ − a⁵', 2 - 1, [5]],
+      ['5x²y − 3x²y', 5 - 3, [2]],
+      ['3a²b + a²b', 3 + 1, [2]],
+      ['5x²y³ − 6x²y³', 5 - 6, [2, 3]],
+      ['8x⁹ − 3x⁹', 8 - 3, [9]],
+      ['7a⁴ + 6a⁴', 7 + 6, [4]],
+      /* Hier staat keer en geen plus, dus de exponenten gaan juist wel op. */
+      ['4a³ · 5a³', 4 * 5, [3 + 3]],
+      ['5a³b + 2a³b', 5 + 2, [3]],
+      ['a⁵ · a⁵', 1, [5 + 5]],
+      ['a¹² ÷ a⁷', 1, [12 - 7]],
+      ['x⁹ ÷ x⁴', 1, [9 - 4]],
+      ['p⁵ ÷ p', 1, [5 - 1]],
+      ['x¹⁰ ÷ x³', 1, [10 - 3]],
+      ['a⁷ ÷ a³', 1, [7 - 3]],
+      ['q⁸ ÷ q²', 1, [8 - 2]],
+      ['6a⁵ ÷ 2a²', 6 / 2, [5 - 2]],
+      ['9p⁸ ÷ 3p⁶', 9 / 3, [8 - 6]],
+      ['12a¹⁰ ÷ 4a²', 12 / 4, [10 - 2]],
+      ['12p⁶q ÷ 4p⁵q', 12 / 4, []],
+      ['(a³)⁴ ÷ a⁵', 1, [3 * 4 - 5]],
+      ['15a⁶b³ ÷ 3a²b³', 15 / 3, [6 - 2]],
+      ['36y¹² ÷ 9y⁴', 36 / 9, [12 - 4]],
+    ]
+    for (const [q, g, exps] of rij) {
+      const a = String(zoek(q).a)
+      expect(getal(a), q).toBe(g)
+      expect(exponenten(a), q).toEqual(exps)
+    }
+  })
+
+  it('zegt kan niet waar het niet kan, en rekent de kale uitkomsten na', () => {
+    const kaal: Array<[string, string]> = [
+      ['2a⁵ + 3a⁶', 'kan niet'],
+      ['4a³b + 3a²b', 'kan niet'],
+      ['2a³b + 4ab²', 'kan niet'],
+      ['a⁵ − a⁵', '0'],
+      ['6x⁴y² − 6x⁴y²', '0'],
+      ['x⁸ ÷ x⁸', '1'],
+      ['a³ ÷ a³', '1'],
+      ['Wat is a⁰', '1'],
+      ['20x⁷ ÷ 5x⁷', String(20 / 5)],
+      ['(10x)³ ÷ x³', String(10 ** 3)],
+    ]
+    for (const [q, a] of kaal) expect(String(zoek(q).a), q).toBe(a)
+  })
+
+  it('legt bij elk van de vijf uit hoe je een macht intypt', () => {
+    /* Zonder die regel is de proef hierboven een geheim: de app neemt a5 aan,
+       maar niemand die het scherm leest weet dat. */
+    for (const regel of REGELS) {
+      expect(UITLEG[regel]?.tekst, regel).toContain('a^5')
     }
   })
 })
