@@ -44,6 +44,7 @@ import { mmss } from '../datum'
 import { leesVoor, speel } from '../geluid'
 import { Figuur } from '../figuren'
 import { Regels } from '../onderdelen'
+import { Formuleklapper } from './Naslag'
 
 /** Hoeveel vragen een toets telt. */
 const OEFENTOETS = 10
@@ -616,6 +617,11 @@ export function Oefenen(p: OefenenProps): ReactNode {
           </button>
         </div>
       )}
+      {/* De formulekaart, ingeklapt, onderaan de som. Hij stond alleen op het
+          thuisscherm — waar een kind dat via het portaal binnenkomt nooit komt,
+          en waar je midden in een reeks niet heen kunt zonder de som kwijt te
+          raken. Alleen de blokken van dit vak; bij taal of lezen komt er niets. */}
+      <Formuleklapper vak={p.vak} />
       <p className="muted center" style={{ marginTop: 10, fontSize: 13 }}>
         {isExamen
           ? `${isProef ? 'Proeftoets' : 'Oefentoets'}: ${toetsLengte} vragen, gemengd, geen hints. `

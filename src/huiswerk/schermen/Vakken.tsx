@@ -24,6 +24,7 @@ import { berekenBeloning, euro, halfRond, weekVerdiend } from '../beloning'
 import { isBeheerst, kaartStand, sterrenVan, sterrenVanStapel } from '../leitner'
 import { INSIGNES, dagMissie, rangVoor } from '../missie'
 import { Klapkaart } from '../onderdelen'
+import { Formuleklapper } from './Naslag'
 import { Vraagveld } from './Vraagveld'
 import type { Uitslag } from '../vraagbaak'
 
@@ -408,6 +409,10 @@ export function Vakken(p: VakkenProps): ReactNode {
             </button>
             )}
       </div>
+
+      {/* Dezelfde kaart als onderaan het oefenscherm, voor het vak dat hier
+          openstaat. Zo ligt hij er ook vóór en ná een reeks. */}
+      <Formuleklapper vak={p.vak} />
 
       <p className="muted center" style={{ marginTop: 14, fontSize: 13 }}>
         Elke goede beurt is een ster erbij; vanaf vier sterren heet een som <b>beheerst</b>. Foute

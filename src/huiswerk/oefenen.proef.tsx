@@ -16,6 +16,9 @@ import type { ReactNode } from 'react'
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 import { Oefenen } from './schermen/Oefenen'
+import { Vakken } from './schermen/Vakken'
+import { FORMULEBLOKKEN, formulesVoor } from './gegevens/formules'
+import { PROFIELEN } from './gegevens/profielen'
 import { themaVan } from './schermen/Thuis'
 import type { Kaart, Opgave } from './gegevens/soorten'
 import type { Voortgang } from './opslag'
@@ -126,5 +129,109 @@ describe('het oefenscherm', () => {
     act(() => { fireEvent.change(veld, { target: { value: ANTWOORD[vraagNu()] ?? '' } }) })
     act(() => { fireEvent.click(screen.getByText('Nakijken')) })
     expect(screen.getByText('een ster erbij')).toBeTruthy()
+  })
+})
+
+/**
+ * DE FORMULEKAART NAAST DE SOM
+ *
+ * De klacht: de wiskunde- en natuurkunderegels waren bij het oefenen nergens
+ * meer te vinden. Ze stonden er ook echt niet — de kaart hing aan een knop op
+ * het thuisscherm, en wie via het portaal binnenkomt ziet dat scherm nooit.
+ * Een grep op `FORMULEBLOKKEN` had dat niet gevonden: het bestand werd gewoon
+ * geïmporteerd, alleen niet op een plek waar een kind kwam.
+ *
+ * Daarom staat de proef op het scherm en niet op de gegevens: hij vraagt wat
+ * een kind tijdens een som te zien krijgt.
+ */
+const natuurkundeStapel: Opgave[] = [
+  { id: 'n1', p: 'wassima', v: 'natuurkunde', t: 'Elektriciteit', lvl: 1,
+    q: 'U = 12 V en R = 4 Ω. Bereken I.', a: '3' },
+]
+
+const oefenNatuurkunde = (): void => {
+  render(
+    <Oefenen
+      pid="wassima" vak="natuurkunde" onderwerp="Elektriciteit" jaar="nu"
+      alle={natuurkundeStapel as Kaart[]} prog={vers('auto')} thema={themaVan('wassima')}
+      geluid={false} voorlezen={false} toeval={ECHT}
+      terug={() => { /* niet nodig */ }}
+      naarOnderwerp={() => { /* niet nodig */ }}
+      opUitslag={() => { /* niet nodig */ }}
+      opToets={() => { /* niet nodig */ }}
+    />,
+  )
+}
+
+/** De tekst van de ingeklapte formulekaart, of null als hij er niet staat. */
+const formulekaart = (): string | null => {
+  const kaart = [...document.querySelectorAll('details.klapkaart')]
+    .find((d) => (d.querySelector('summary')?.textContent ?? '').includes('Formules'))
+  return kaart ? (kaart.textContent ?? '') : null
+}
+
+describe('de formulekaart bij het oefenen', () => {
+  it('staat onder de som van een vak dat formules heeft', () => {
+    oefenNatuurkunde()
+    const kaart = formulekaart()
+    expect(kaart).not.toBeNull()
+    expect(kaart).toContain('U = I × R')
+    expect(kaart).toContain('v = s / t')
+  })
+
+  it('toont alleen de blokken van dít vak', () => {
+    oefenNatuurkunde()
+    /* Wassima hoort bij natuurkunde geen kansrekening van de bovenbouw te
+       krijgen — dan is het blaadje geen blaadje meer maar een boek. */
+    expect(formulekaart()).not.toContain('Verwachtingswaarde')
+  })
+
+  it('begint dicht, zodat hij de som niet wegdrukt', () => {
+    oefenNatuurkunde()
+    const kaart = document.querySelector('details.klapkaart')
+    expect(kaart?.hasAttribute('open')).toBe(false)
+  })
+
+  it('staat er niet bij een vak zonder formules', () => {
+    /* Rekenen in groep 8: de regel ís de som. Een lege kaart is erger dan
+       geen kaart. */
+    render(<Proefscherm start={vers('auto')} />)
+    expect(formulekaart()).toBeNull()
+  })
+
+  it('staat ook op het vakkenscherm, waar een kind na een reeks terugkomt', () => {
+    render(
+      <Vakken
+        pid="wassima" prog={vers('auto')} alle={natuurkundeStapel as Kaart[]}
+        vak="natuurkunde" thema={themaVan('wassima')} nuMs={Date.now()} weektaak={[]}
+        wedstrijdAan={false} spelNaDoel={false}
+        zetVak={() => { /* niet nodig */ }}
+        terug={() => { /* niet nodig */ }}
+        naarOnderwerp={() => { /* niet nodig */ }}
+        zetDoel={() => { /* niet nodig */ }}
+        zetNiveau={() => { /* niet nodig */ }}
+        naarWedstrijd={() => { /* niet nodig */ }}
+        naarSpellen={() => { /* niet nodig */ }}
+        opVraag={() => { /* niet nodig */ }}
+        naarLeerscan={() => { /* niet nodig */ }}
+      />,
+    )
+    expect(formulekaart()).toContain('U = I × R')
+  })
+
+  it('laat geen blok achter dat bij geen enkel vak hoort', () => {
+    /* Een typefout in een vaknaam laat een blok stilzwijgend verdwijnen van
+       elk oefenscherm — precies de fout die hier hersteld is, maar dan één
+       blok tegelijk en dus minder opvallend. */
+    const vakken = new Set(Object.values(PROFIELEN).flatMap((pr) => pr.vakken))
+    for (const blok of FORMULEBLOKKEN) {
+      expect(blok.vakken.length, blok.kop).toBeGreaterThan(0)
+      for (const v of blok.vakken) expect(vakken.has(v), `${blok.kop} → ${v}`).toBe(true)
+    }
+    /* En elk vak dat blokken claimt, krijgt ze ook echt terug. */
+    for (const v of ['wiskunde', 'wiskundeA', 'natuurkunde']) {
+      expect(formulesVoor(v).length, v).toBeGreaterThan(0)
+    }
+    expect(formulesVoor('lezen')).toEqual([])
   })
 })
