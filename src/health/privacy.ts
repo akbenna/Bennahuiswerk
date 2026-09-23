@@ -42,7 +42,7 @@
  */
 
 /** Wie aanspreekbaar is. Eén regel, en hij staat hier zodat hij op één plek staat. */
-export const CONTACT = 'info@provita-vare.nl'
+export const CONTACT = 'info@provita-care.nl'
 
 /** De dag waarop deze tekst voor het laatst is nagelopen tegen de code. */
 export const NAGEKEKEN = '23 september 2026'

@@ -1,6 +1,6 @@
 # Privacyverklaring BennaHealth
 
-Nagelopen tegen de code op 23 september 2026. Vragen gaan naar info@provita-vare.nl.
+Nagelopen tegen de code op 23 september 2026. Vragen gaan naar info@provita-care.nl.
 
 Deze tekst wordt geschreven uit `src/health/privacy.ts` met
 `node gereedschap/privacy-schrijven.mjs`. Pas hem daar aan en niet hier,
@@ -10,7 +10,7 @@ anders valt `src/health/privacy.proef.ts` om.
 
 BennaHealth is geen dienst maar een besloten test. De app meet je energieverbruik uit je gewichtstrend in plaats van het te schatten uit een formule, en daarvoor heeft hij gegevens van je nodig die als gezondheidsgegevens gelden. Deze tekst zegt welke dat zijn, waar ze heen gaan en wat je ermee kunt.
 
-Verantwoordelijk voor die gegevens is de beheerder van deze test, te bereiken op info@provita-vare.nl. Hij is huisarts, en dat is hier niet van belang: je bent geen patiënt en dit is geen zorg. Wat je hier invult komt niet in een dossier en wordt niet met een zorgverlener gedeeld.
+Verantwoordelijk voor die gegevens is de beheerder van deze test, te bereiken op info@provita-care.nl. Hij is huisarts, en dat is hier niet van belang: je bent geen patiënt en dit is geen zorg. Wat je hier invult komt niet in een dossier en wordt niet met een zorgverlener gedeeld.
 
 ## Wat er van je wordt bewaard
 
@@ -64,7 +64,7 @@ Verwijderen doe je zelf, onder Account. De app laat eerst zien wat er precies we
 
 Eén ding overleeft dat, en dat hoort hier te staan: er blijft een aantekening dat op die dag een account is verwijderd, met de naam van dat account erin. Zonder die aantekening is niet na te gaan dat het gebeurd is, ook niet door jou.
 
-De andere vragen gaan per bericht aan info@provita-vare.nl. Je krijgt binnen een week antwoord en je hoeft geen reden op te geven. Ben je je wachtwoord kwijt en wil je weg, vraag het dan ook zo; de beheerder kan het dan voor je doen.
+De andere vragen gaan per bericht aan info@provita-care.nl. Je krijgt binnen een week antwoord en je hoeft geen reden op te geven. Ben je je wachtwoord kwijt en wil je weg, vraag het dan ook zo; de beheerder kan het dan voor je doen.
 
 Ben je het ergens niet mee eens en komen we er samen niet uit, dan kun je klagen bij de Autoriteit Persoonsgegevens.
 
