@@ -74,6 +74,8 @@ export const ONDERWERPICOON: Record<string, string> = {
   'Geld & rekenen':'💶','Begrippen':'📖','Markt':'📈','Symbolen & atomen':'⚛️','Moleculen':'🧪','Zuur & base':'🧫',
   'Industriële revolutie':'🏭','Wereldoorlogen':'🎖️',
   // exacte fundamenten (Wassima) + bovenbouw (Amaani)
+  // paragraaf 1.4, breuken vermenigvuldigen en delen
+  'Het omgekeerde van een getal':'🔄','Delen door een breuk':'🍰','Breuken met letters':'🧮',
   // paragraaf 1.5, herleiden van machten
   'Machten vermenigvuldigen':'✖️','Gelijksoortige termen':'➕','Macht van een macht':'🔼',
   'Macht van een product':'📦','Machten delen':'➗',

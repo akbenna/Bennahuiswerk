@@ -495,7 +495,7 @@ describe('de uitbreiding voor Wassima bij wiskunde en natuurkunde', () => {
       const sleutel = `${e.v} · ${e.t}`
       per.set(sleutel, [...(per.get(sleutel) ?? []), e.lvl ?? 1])
     }
-    expect(per.size).toBe(33)
+    expect(per.size).toBe(36)
     const mager: string[] = []
     for (const [sleutel, lvls] of per) {
       for (const n of [1, 2, 3]) {
@@ -545,10 +545,10 @@ describe('een vast niveau geeft Wassima ook echt dat niveau', () => {
     perOnderwerp.set(sleutel, [...(perOnderwerp.get(sleutel) ?? []), e as Kaart])
   }
 
-  it('heeft drieendertig onderwerpen bij die twee vakken', () => {
-    /* Veertien bij wiskunde, veertien bij natuurkunde, en de vijf regels van
-       paragraaf 1.5 die elk een eigen onderwerp kregen. */
-    expect(perOnderwerp.size).toBe(33)
+  it('heeft zesendertig onderwerpen bij die twee vakken', () => {
+    /* Veertien bij wiskunde, veertien bij natuurkunde, de vijf regels van
+       paragraaf 1.5 en de drie van paragraaf 1.4, elk een eigen onderwerp. */
+    expect(perOnderwerp.size).toBe(36)
   })
 
   it('levert bij elk onderwerp op elk niveau alleen sommen van dát niveau', () => {
@@ -787,6 +787,181 @@ describe('herleiden van machten, paragraaf 1.5', () => {
        maar niemand die het scherm leest weet dat. */
     for (const regel of REGELS) {
       expect(UITLEG[regel]?.tekst, regel).toContain('a^5')
+    }
+  })
+})
+
+/**
+ * PARAGRAAF 1.4: BREUKEN VERMENIGVULDIGEN EN DELEN
+ *
+ * Drie theorieblokken, drie onderwerpen. Het risico zit hier ergens anders dan
+ * bij 1.5. `antwoordKlopt` vergelijkt een breuk letterlijk en niet als getal,
+ * en dat is met opzet: anders zou "3" goed gerekend worden op een vraag naar
+ * 3/4. Maar het betekent wel dat elke schrijfwijze in `alt` moet staan, en dat
+ * een antwoord met een rekenfout er net zo goed uitziet als een goed antwoord.
+ *
+ * Daarom wordt hier niet de breuk vergeleken maar de wáárde ervan. De letters
+ * krijgen een getal en dan moet er aan allebei de kanten hetzelfde uitkomen.
+ * Een verwisselde teller en noemer valt daarmee door de mand, en een vergeten
+ * vereenvoudiging niet, want die verandert de waarde niet. Dat laatste hoort
+ * ook zo: 3q/9p en q/3p zijn allebei goed gerekend, de eerste is alleen niet
+ * af.
+ */
+describe('breuken vermenigvuldigen en delen, paragraaf 1.4', () => {
+  const REGELS = ['Het omgekeerde van een getal', 'Delen door een breuk', 'Breuken met letters']
+  const hare = NIEUW2627.filter((e) => e.p === 'wassima' && REGELS.includes(e.t))
+
+  const zoek = (fragment: string): Opgave => {
+    const raak = hare.filter((x) => x.q.includes(fragment))
+    if (raak.length !== 1) throw new Error(`${raak.length} treffers voor: ${fragment}`)
+    return raak[0] as Opgave
+  }
+
+  /* Vaste getallen voor de letters. Priemgetallen en 9, zodat een verwisseling
+     of een verkeerde factor niet toevallig hetzelfde uitkomt. */
+  const A = 5, B = 7, C = 11, P = 3, Q = 13, X = 2, Y = 9
+  const LETTER: Record<string, number> = { a: A, b: B, c: C, p: P, q: Q, x: X, y: Y }
+
+  /** Een teller of een noemer uitrekenen: een getal keer nul of meer letters. */
+  const kant = (s: string): number => {
+    const kop = /^(-?)(\d*)/.exec(s)
+    let uit = kop?.[2] ? Number(kop[2]) : 1
+    if (kop?.[1] === '-') uit = -uit
+    for (const m of s.slice(kop?.[0].length ?? 0).matchAll(/([a-z])([²³]?)/g)) {
+      const macht = m[2] === '²' ? 2 : m[2] === '³' ? 3 : 1
+      uit *= (LETTER[m[1] as string] ?? NaN) ** macht
+    }
+    return uit
+  }
+  /** De waarde van een antwoord, met die getallen ingevuld. */
+  const waarde = (a: string): number => {
+    const [t, n] = a.replace('−', '-').split('/')
+    return n === undefined ? kant(t as string) : kant(t as string) / kant(n)
+  }
+
+  it('rekent alle antwoorden na, met getallen op de plaats van de letters', () => {
+    const rij: Array<[string, number]> = [
+      /* Het omgekeerde: het product met het oorspronkelijke getal is 1. */
+      ['omgekeerde op van 3/4', 1 / (3 / 4)],
+      ['omgekeerde op van 13/21', 1 / (13 / 21)],
+      ['omgekeerde op van 5.', 1 / 5],
+      ['omgekeerde op van 8.', 1 / 8],
+      ['omgekeerde op van 1/6', 1 / (1 / 6)],
+      ['omgekeerde op van −4/5', 1 / (-4 / 5)],
+      ['omgekeerde op van −3.', 1 / -3],
+      ['omgekeerde op van 1.', 1 / 1],
+      ['omgekeerde op van 0,5', 1 / 0.5],
+      ['omgekeerde op van 0,25', 1 / 0.25],
+      ['omgekeerde op van 2 1/5', 1 / (11 / 5)],
+      ['omgekeerde op van −3 1/3', 1 / (-10 / 3)],
+      ['omgekeerde op van −2 1/3', 1 / (-7 / 3)],
+      ['omgekeerde neemt van het omgekeerde', 7 / 9],
+      ['zijn eigen omgekeerde', 1 / -1],
+      /* Delen door een breuk. */
+      ['6 : 1/2', 6 / (1 / 2)],
+      ['4 : 1/2', 4 / (1 / 2)],
+      ['3 : 1/4', 3 / (1 / 4)],
+      ['1/2 : 1/4', (1 / 2) / (1 / 4)],
+      ['2/3 : 1/6', (2 / 3) / (1 / 6)],
+      ['1/6 : 2/3', (1 / 6) / (2 / 3)],
+      ['3/5 : 7/11', (3 / 5) / (7 / 11)],
+      ['3/8 : 6', (3 / 8) / 6],
+      ['7/8 : 3', (7 / 8) / 3],
+      ['2/3 : 4', (2 / 3) / 4],
+      ['1 1/5 : 2/5', (6 / 5) / (2 / 5)],
+      ['4/7 ton', 16 / (4 / 7)],
+      ['4 : −2/3', 4 / (-2 / 3)],
+      ['−7/11 : 3/4', (-7 / 11) / (3 / 4)],
+      ['2 1/2 : 1 2/3', (5 / 2) / (5 / 3)],
+      ['−2 1/3 : 6/11', (-7 / 3) / (6 / 11)],
+      ['−3 1/7 : −11', (-22 / 7) / -11],
+      ['pakjes van 2/5 liter', 800 / (2 / 5)],
+      /* Breuken met letters: dezelfde som, maar met getallen ingevuld. */
+      ['3/7 · x/y', (3 / 7) * (X / Y)],
+      ['a/b · 2/c', (A / B) * (2 / C)],
+      ['1/2 · a/3', (1 / 2) * (A / 3)],
+      ['2/x · 3/y', (2 / X) * (3 / Y)],
+      ['5/a · b', (5 / A) * B],
+      ['a/3 · a/b', (A / 3) * (A / B)],
+      ['5/a : 3/b', (5 / A) / (3 / B)],
+      ['3/x · y', (3 / X) * Y],
+      ['3/x : y', (3 / X) / Y],
+      ['a/6 · 4/b', (A / 6) * (4 / B)],
+      ['a/6 : 4/b', (A / 6) / (4 / B)],
+      ['3/p : 9/q', (3 / P) / (9 / Q)],
+      ['a/(6b) · 3/c', (A / (6 * B)) * (3 / C)],
+      ['2 : 6/a', 2 / (6 / A)],
+      ['a/6 · 3b/c', (A / 6) * ((3 * B) / C)],
+      ['a/6 : 3b/c', (A / 6) / ((3 * B) / C)],
+      ['2/x : 4/y', (2 / X) / (4 / Y)],
+      ['5x/(2y) · 6x/y', ((5 * X) / (2 * Y)) * ((6 * X) / Y)],
+    ]
+    for (const [q, verwacht] of rij) {
+      expect(waarde(String(zoek(q).a)), q).toBeCloseTo(verwacht, 10)
+    }
+  })
+
+  it('geeft de antwoorden zo eenvoudig mogelijk waar daarom gevraagd wordt', () => {
+    /* De waardeproef hierboven ziet een vergeten vereenvoudiging niet: 3q/9p
+       en q/3p zijn even groot. Waar de vraag erom vraagt, moet het er dus ook
+       echt staan. */
+    const af: Array<[string, string]> = [
+      ['1/6 : 2/3', '1/4'],
+      ['3/8 : 6', '1/16'],
+      ['2/3 : 4', '1/6'],
+      ['−3 1/7 : −11', '2/7'],
+      ['a/6 · 4/b', '2a/3b'],
+      ['3/p : 9/q', 'q/3p'],
+      ['a/(6b) · 3/c', 'a/2bc'],
+      ['2 : 6/a', 'a/3'],
+      ['a/6 · 3b/c', 'ab/2c'],
+      ['2/x : 4/y', 'y/2x'],
+      ['5x/(2y) · 6x/y', '15x²/y²'],
+    ]
+    for (const [q, a] of af) {
+      const e = zoek(q)
+      expect(String(e.a), q).toBe(a)
+      expect(e.q, q).toContain('zo eenvoudig mogelijk')
+    }
+  })
+
+  it('neemt een noemer met en zonder haakjes aan, en een macht op drie manieren', () => {
+    /* q/3p of q/(3p): allebei schrijft een kind op. Staat er maar een van in
+       `alt`, dan krijgt ze rood op een goed antwoord. */
+    const mis: string[] = []
+    for (const e of hare) {
+      const netjes = String(e.a)
+      const vormen = new Set<string>([netjes])
+      const [t, n] = netjes.split('/')
+      if (n !== undefined && n.length > 1 && /[a-z]/.test(n)) vormen.add(`${t}/(${n})`)
+      for (const v of [...vormen]) {
+        if (!/[²³]/.test(v)) continue
+        vormen.add(v.replace(/²/g, '^2').replace(/³/g, '^3'))
+        vormen.add(v.replace(/²/g, '2').replace(/³/g, '3'))
+      }
+      for (const v of vormen) {
+        if (!antwoordKlopt({ a: netjes, alt: e.alt }, v)) mis.push(`${e.id}: ${v}`)
+      }
+    }
+    expect(mis).toEqual([])
+  })
+
+  it('vraagt nooit om een gemengde breuk als antwoord', () => {
+    /* 1 1/2 wordt bij het nakijken 11/2, en dat is elf halven. De antwoorden
+       zijn daarom onechte breuken, en de uitleg zegt dat er ook bij. */
+    for (const e of hare) {
+      expect(String(e.a), e.id).not.toMatch(/^-?\d+\s+\d+\/\d+$/)
+    }
+    for (const regel of REGELS) {
+      expect(UITLEG[regel]?.tekst, regel).toContain('3/2 en niet 1 1/2')
+    }
+  })
+
+  it('heeft alle drie de regels als eigen onderwerp, met zes sommen per niveau', () => {
+    for (const regel of REGELS) {
+      for (const n of [1, 2, 3]) {
+        expect(hare.filter((e) => e.t === regel && e.lvl === n).length, `${regel} ${n}`).toBe(6)
+      }
     }
   })
 })
