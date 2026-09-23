@@ -630,6 +630,21 @@ async function bedienDb(pagina, dagen, fase) {
               : { fout: 'Een sleutel van Anthropic begint met sk-ant-.' }
           })()
       : fn === 'kal_sleutel_weghalen' ? { weg: true }
+      /* Weghalen, bestand 52. De stub doet wat de database doet: zonder het
+         goede wachtwoord komt er een fout, en zonder `p_echt` verandert er
+         niets en komt er alleen een telling. Beide worden geteld, want het
+         verschil tussen kijken en wissen is hier de hele veiligheid. */
+      : fn === 'kal_account_wissen'
+        ? (() => {
+            const p = JSON.parse(route.request().postData() ?? '{}')
+            ;(pagina.__wissen ??= []).push({ echt: p.p_echt === true, ww: p.p_ww })
+            if (p.p_ww !== 'goedwachtwoord') return { fout: 'Je wachtwoord klopt niet' }
+            return {
+              gewist: p.p_echt === true, account: 'abdelkader', totaal: 149,
+              per_tabel: { kal_dagen: 28, kal_regels: 112, kal_metingen: 6, kal_profiel: 1,
+                           kal_gebruikers: 1, eigen_ai_sleutel: 1 },
+            }
+          })()
       : fn === 'kal_tester_zetten'
         ? (() => {
             const p = JSON.parse(route.request().postData() ?? '{}')
@@ -4636,6 +4651,100 @@ for (const [naam, dagen, patroon, verwacht] of [
 
   console.log(`${'je eigen sleutel'.padEnd(26)} twee uitklappen \u00b7 verkeerd voorvoegsel geweigerd \u00b7 `
     + `aanbieder gaat mee \u00b7 vak leeg na bewaren`)
+}
+
+/* ---------------------------------------------------- je gegevens weghalen ---- */
+/* DE ENIGE ONOMKEERBARE KNOP IN DE APP, BESTAND 52
+   Wat hier bewezen moet worden gaat niet over of het werkt maar over of het
+   moeilijk genoeg is. Drie dingen, en ze zitten er alle drie omdat de vorige
+   niet genoeg was:
+
+     1. De eerste tik verwijdert niets. Hij vraagt wat er zou weggaan.
+     2. Zonder wachtwoord gebeurt er niets, en een verkeerd wachtwoord komt als
+        een zin op het scherm en niet als een stille mislukking.
+     3. En wat er weggaat staat er in gewone taal, met aantallen, vóórdat je
+        bevestigt. Een knop die "alles weg" zegt zonder te zeggen wat alles is,
+        vraagt om een beslissing die niemand kan nemen. */
+{
+  const c = await browser.newContext({
+    viewport: { width: 430, height: 1900 }, deviceScaleFactor: 2,
+    locale: 'nl-NL', timezoneId: 'Europe/Amsterdam',
+  })
+  const p = await c.newPage()
+  await bedienDb(p, 28, 'afvallen')
+  await p.addInitScript(() => {
+    localStorage.setItem('kalibratie.sessie',
+      JSON.stringify({ token: 'proeftoken', account: 'abdelkader' }))
+  })
+  await p.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await p.waitForTimeout(700)
+  await p.getByRole('button', { name: /^Account van/ }).click()
+  await p.waitForTimeout(500)
+
+  await p.getByRole('button', { name: 'Al je gegevens weghalen' }).click()
+  await p.waitForTimeout(300)
+
+  const tekst = () => p.locator('body').innerText()
+  for (const stuk of ['geen prullenbak', 'geen weg terug', 'aantekening']) {
+    if (!(await tekst()).includes(stuk)) {
+      throw new Error(`wissen: "${stuk}" staat niet op het scherm`)
+    }
+  }
+
+  /* Eerst het verkeerde wachtwoord. */
+  await p.getByLabel('Je wachtwoord').fill('fout')
+  await p.getByRole('button', { name: 'Laat zien wat er weggaat' }).click()
+  await p.waitForTimeout(400)
+  if (!(await tekst()).includes('wachtwoord klopt niet')) {
+    throw new Error('wissen: een verkeerd wachtwoord geeft geen zin op het scherm')
+  }
+  if ((p.__wissen ?? []).some((x) => x.echt)) {
+    throw new Error('wissen: er is werkelijk gewist bij een verkeerd wachtwoord')
+  }
+
+  /* En dan het goede. De eerste tik hoort nog steeds niets te wissen. */
+  await p.getByLabel('Je wachtwoord').fill('goedwachtwoord')
+  await p.getByRole('button', { name: 'Laat zien wat er weggaat' }).click()
+  await p.waitForTimeout(400)
+  const na = await tekst()
+  for (const stuk of ['149 in totaal', 'wat je gegeten en gedronken hebt',
+                      'je metingen, waaronder bloeddruk', 'je eigen AI-sleutel']) {
+    if (!na.includes(stuk)) throw new Error(`wissen: "${stuk}" staat niet in het overzicht`)
+  }
+  if (na.includes('kal_regels')) {
+    throw new Error('wissen: er staan tabelnamen op het scherm in plaats van gewone taal')
+  }
+  if ((p.__wissen ?? []).some((x) => x.echt)) {
+    throw new Error('wissen: de eerste tik heeft al gewist')
+  }
+
+  /* De afdruk hoort hier en niet aan het eind: na het wissen ben je afgemeld en
+     staat er een aanmeldscherm, en dat is geen bewijs van wat je te zien kreeg
+     toen je moest beslissen. */
+  await p.screenshot({ path: 'gereedschap/health-wissen.png', fullPage: true })
+
+  /* Pas de tweede knop wist werkelijk, en dan meldt hij je af. */
+  await p.getByRole('button', { name: 'Ja, haal alles weg' }).click()
+  await p.waitForTimeout(600)
+  const echt = (p.__wissen ?? []).filter((x) => x.echt)
+  if (echt.length !== 1) {
+    throw new Error(`wissen: ${echt.length} echte wisverzoeken in plaats van 1`)
+  }
+  if (echt[0].ww !== 'goedwachtwoord') {
+    throw new Error('wissen: het wachtwoord ging niet mee naar de database')
+  }
+
+  /* En afgemeld. Dat is de zichtbare kant van het wissen: blijf je ingelogd
+     op een account dat niet meer bestaat, dan loopt de app daarna tegen fouten
+     aan die niemand kan plaatsen. */
+  await p.waitForTimeout(400)
+  if (await p.getByRole('button', { name: 'Aanmelden', exact: true }).count() !== 1) {
+    throw new Error('wissen: je blijft aangemeld op een account dat weg is')
+  }
+  await c.close()
+
+  console.log(`${'je gegevens weghalen'.padEnd(26)} verkeerd wachtwoord geweigerd \u00b7 `
+    + `eerste tik telt alleen \u00b7 149 in gewone taal \u00b7 pas de tweede wist`)
 }
 
 await browser.close()

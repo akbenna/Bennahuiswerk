@@ -15,8 +15,9 @@ import { MINIMUM_LENGTE, wachtwoordklacht } from '../wachtwoord'
 import { SOORTEN, equivalent, standaardIntensiteit } from '../inspanning'
 import { GLI_PROGRAMMAS } from '../trap'
 import { kortNL, vandaag } from '@/gedeeld/datum'
-import type { Tester } from '@/gedeeld/db/rpc'
+import type { Tester, Wisuitslag } from '@/gedeeld/db/rpc'
 import { AANBIEDERNAAM, ONBEKEND, leesToegang, restZin, uitlegAi } from '../toegang'
+import { PrivacyVenster } from './Privacy'
 import type { Aanbieder, Toegang } from '../toegang'
 import type { ImportDag, Importactiviteit, Importbron } from '../ai'
 
@@ -603,6 +604,7 @@ export function AccountVenster(
   { account, opSluiten, opAfmelden }:
   { account: string; opSluiten: () => void; opAfmelden: () => void },
 ) {
+  const [privacy, zetPrivacy] = useState(false)
   return (
     <Venster titel="Account" opSluiten={opSluiten}>
       {/* Dezelfde onwaarheid als onder het aanmeldscherm stond, en die heb ik
@@ -620,9 +622,16 @@ export function AccountVenster(
       <Herstelcode />
       <BeheerdersHerstelcode />
       <Testerbeheer />
+      <p className="mini" style={{ marginTop: 14 }}>
+        <button type="button" className="alsLink" onClick={() => zetPrivacy(true)}>
+          Wat er van je bewaard wordt
+        </button>
+      </p>
+      <GegevensWeghalen opAfmelden={opAfmelden} />
       <Rij style={{ marginTop: 14 }}>
         <Knop opKlik={opAfmelden}>Afmelden</Knop>
       </Rij>
+      {privacy && <PrivacyVenster opSluiten={() => zetPrivacy(false)} />}
     </Venster>
   )
 }
@@ -969,6 +978,7 @@ export function Aanmelden(
      wie gewoon inlogt hoort er niet over te struikelen, en wie hem nodig heeft
      zoekt ernaar. */
   const [kwijt, zetKwijt] = useState(false)
+  const [privacy, zetPrivacy] = useState(false)
   const [code, zetCode] = useState('')
   /* AANMELDEN EN EEN WACHTWOORD ZETTEN ZIJN TWEE VERSCHILLENDE EISEN
      Wie aanmeldt mag alles intikken: wat hij heeft is wat hij heeft, ook als dat
@@ -1074,6 +1084,19 @@ export function Aanmelden(
             Wachtwoord kwijt?
           </button>
         </p>
+        {/* WAAROM DIT HIER STAAT EN NIET ALLEEN ACHTER DE INLOG
+            Een account maken is hier de toestemming. Wie die geeft hoort te
+            kunnen lezen waarvoor, en wel vóór dat moment. Een verklaring die
+            pas achter de aanmelding staat, vraagt toestemming van iemand die
+            hem nog niet heeft kunnen lezen. */}
+        <p className="mini" style={{ marginTop: 10 }}>
+          Een account maken betekent dat je gezondheidsgegevens invoert.{' '}
+          <button type="button" className="alsLink" onClick={() => zetPrivacy(true)}>
+            Lees eerst wat daarmee gebeurt
+          </button>
+          .
+        </p>
+        {privacy && <PrivacyVenster opSluiten={() => zetPrivacy(false)} />}
       </Kaart>
       {/* Hier stond dat de gegevens in het project van ProVita staan, naast de
           patiëntgegevens. Dat klopte tot 26 augustus 2026 en daarna niet meer:
@@ -1458,4 +1481,134 @@ function EigenSleutel({ t, opnieuw }: { t: Toegang; opnieuw: () => void }) {
       </Uitleg>
     </div>
   )
+}
+
+/**
+ * JE GEGEVENS WEGHALEN
+ *
+ * De privacyverklaring belooft het en dit is waar het gebeurt. Drie stappen, en
+ * elke stap is er omdat de vorige niet genoeg was.
+ *
+ * **Eerst kijken.** De knop verwijdert niets; hij vraagt de database wat er
+ * zou verdwijnen en toont dat, per soort gegeven en met aantallen. Wie op een
+ * knop tikt die zegt "alles weg" weet niet wat alles is, en dat is precies het
+ * moment waarop iemand terugschrikt of juist te makkelijk doorgaat.
+ *
+ * **Dan het wachtwoord.** Een open sessie op een telefoon die even in een
+ * andere hand ligt, is genoeg om te tikken. Hij is niet genoeg om een
+ * wachtwoord te weten. Dat is dezelfde grens als bij het wijzigen ervan, en de
+ * database controleert hem; dit scherm vraagt er alleen naar.
+ *
+ * **En dan pas.** Er is geen prullenbak en dat staat er met zoveel woorden bij.
+ */
+function GegevensWeghalen({ opAfmelden }: { opAfmelden: () => void }) {
+  const [open, zetOpen] = useState(false)
+  const [kijk, zetKijk] = useState<Wisuitslag | null>(null)
+  const [ww, zetWw] = useState('')
+  const [fout, zetFout] = useState<string | null>(null)
+  const [bezig, zetBezig] = useState(false)
+
+  const roepWissen = async (echt: boolean) => {
+    const tk = sessietoken()
+    if (!tk) { zetFout('Je bent niet aangemeld'); return }
+    zetBezig(true)
+    zetFout(null)
+    try {
+      const uit = await roep('kal_account_wissen', { p_token: tk, p_ww: ww, p_echt: echt })
+      if ('fout' in uit) { zetFout(uit.fout); return }
+      if (echt) { opAfmelden(); return }
+      zetKijk(uit)
+    } catch (e) {
+      zetFout(e instanceof Error ? e.message : String(e))
+    } finally {
+      zetBezig(false)
+    }
+  }
+
+  if (!open) {
+    return (
+      <p className="mini" style={{ marginTop: 10 }}>
+        <button type="button" className="alsLink" onClick={() => zetOpen(true)}>
+          Al je gegevens weghalen
+        </button>
+      </p>
+    )
+  }
+
+  return (
+    <div style={{ marginTop: 14 }}>
+      <Kop>Al je gegevens weghalen</Kop>
+      <p className="mini" style={{ marginTop: 4 }}>
+        Je account en alles wat erin staat verdwijnen. Er is geen prullenbak en er is geen weg
+        terug. Vul je wachtwoord in; je ziet dan eerst wat er precies weggaat.
+      </p>
+
+      <input type="password" autoComplete="current-password" className="veld"
+             style={{ marginTop: 8, width: '100%' }} placeholder="je wachtwoord"
+             aria-label="Je wachtwoord" value={ww}
+             onChange={(e) => { zetWw(e.target.value); zetKijk(null) }} />
+
+      {fout && <p className="mini" style={{ color: 'var(--let)', marginTop: 6 }}>{fout}</p>}
+
+      {kijk && (
+        <Kaart plat style={{ marginTop: 10 }}>
+          <p className="mini">
+            Dit gaat weg, {kijk.totaal} in totaal:
+          </p>
+          <div className="lijst" style={{ marginTop: 4 }}>
+            {Object.entries(kijk.per_tabel).map(([tabel, aantal]) => (
+              <div key={tabel}>
+                <span className="mini groei">{NETTE_NAAM[tabel] ?? tabel}</span>
+                <span className="cijfer klein">{aantal}</span>
+              </div>
+            ))}
+          </div>
+        </Kaart>
+      )}
+
+      <Rij style={{ marginTop: 10 }}>
+        {!kijk ? (
+          <Knop vol uit={bezig || ww.length < 1} opKlik={() => void roepWissen(false)}>
+            Laat zien wat er weggaat
+          </Knop>
+        ) : (
+          <Knop vol uit={bezig} opKlik={() => void roepWissen(true)}>
+            Ja, haal alles weg
+          </Knop>
+        )}
+        <Knop uit={bezig} opKlik={() => { zetOpen(false); zetWw(''); zetKijk(null); zetFout(null) }}>
+          Terug
+        </Knop>
+      </Rij>
+
+      <p className="mini" style={{ marginTop: 10 }}>
+        Er blijft één ding staan: een aantekening dat op deze dag een account is verwijderd, met
+        de naam erin. Zonder die aantekening is niet na te gaan dat het gebeurd is, ook niet door
+        jou. Wat er verder van je bewaard wordt staat in de privacyverklaring.
+      </p>
+    </div>
+  )
+}
+
+/* De namen die de database gebruikt, in gewone taal. Wat hier niet in staat
+   komt er als tabelnaam te staan, en dat is lelijker dan het is: een tabel die
+   ik vergeet te benoemen wordt wél gewist, en dat is wat telt. */
+const NETTE_NAAM: Record<string, string> = {
+  kal_gebruikers: 'je account',
+  kal_dagen: 'dagen met een weging, stappen of slaap',
+  kal_regels: 'wat je gegeten en gedronken hebt',
+  kal_profiel: 'je profiel',
+  kal_metingen: 'je metingen, waaronder bloeddruk',
+  kal_labs: 'je labwaarden',
+  kal_vragenlijsten: 'ingevulde vragenlijsten',
+  kal_training: 'je krachttraining',
+  kal_inspanning: 'je inspanning',
+  kal_koppelingen: 'koppelingen met je telefoon',
+  kal_sessies: 'aanmeldingen op je toestellen',
+  kal_ai_log: 'wanneer je iets liet herkennen',
+  kal_prikkel_log: 'verstuurde herinneringen',
+  kal_beweging_peilingen: 'binnengekomen beweegpeilingen',
+  kal_producten: 'je eigen producten',
+  kal_recepten: 'je eigen recepten',
+  eigen_ai_sleutel: 'je eigen AI-sleutel',
 }
