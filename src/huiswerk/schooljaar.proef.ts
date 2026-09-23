@@ -337,3 +337,178 @@ describe('de sommen kloppen nog steeds', () => {
     expect(getal(zoek('1/4 van 20'))).toBe(5)
   })
 })
+
+/**
+ * DE UITBREIDING VAN WASSIMA
+ *
+ * Honderdnegentien opgaven erbij bij wiskunde en natuurkunde. Met zoveel sommen
+ * tegelijk is met het oog nakijken geen controle meer, dus staat elk getal
+ * hieronder los uitgerekend. `zoekUniek` is strenger dan de `zoek` hierboven:
+ * die pakt de eerste treffer, en bij honderd nieuwe vragen is "de eerste" niet
+ * vanzelf "de bedoelde".
+ *
+ * En de reden dát ze erbij kwamen staat er als proef onder: haar niveau klimt
+ * mee met wat ze goed doet, dus elk onderwerp hoort op alle drie de treden iets
+ * te hebben. Dat was bij achttien van de achtentwintig onderwerpen niet zo.
+ */
+describe('de uitbreiding voor Wassima bij wiskunde en natuurkunde', () => {
+  const zoekUniek = (q: string): string => {
+    const raak = NIEUW2627.filter((x) => x.p === 'wassima' && x.q.includes(q))
+    if (raak.length !== 1) throw new Error(`${raak.length} treffers voor: ${q}`)
+    return String(raak[0]?.a)
+  }
+  const getal = (t: string): number => Number(t.replace('−', '-').replace(',', '.'))
+  const g = (q: string): number => getal(zoekUniek(q))
+
+  it('rekent de rekenvolgorde, negatieve getallen en breuken na', () => {
+    expect(g('5 × 3 − 8 ÷ 2')).toBe(5 * 3 - 8 / 2)
+    expect(g('12 ÷ 4 + 2 × 5')).toBe(12 / 4 + 2 * 5)
+    expect(g('2 + 3 × (8 − 5)²')).toBe(2 + 3 * (8 - 5) ** 2)
+    expect(g('(6 + 2) × 3 − 4²')).toBe((6 + 2) * 3 - 4 ** 2)
+    expect(g('40 − (3 + 2) × 2²')).toBe(40 - (3 + 2) * 2 ** 2)
+    expect(g('−7 + 12')).toBe(-7 + 12)
+    expect(g('−3 × (−4) + 5')).toBe(-3 * -4 + 5)
+    expect(g('(−2)³')).toBe((-2) ** 3)
+    expect(g('−15 ÷ 3 − (−4)')).toBe(-15 / 3 - -4)
+    expect(g('2/3 van 27')).toBe(27 / 3 * 2)
+    /* Breuken worden letterlijk nagekeken (`nakijken.ts`), dus hier ook. */
+    expect(zoekUniek('1/2 + 1/3')).toBe('5/6')
+    expect(1 / 2 + 1 / 3).toBeCloseTo(5 / 6, 10)
+    expect(zoekUniek('3/4 × 2/5')).toBe('3/10')
+    expect(3 / 4 * (2 / 5)).toBeCloseTo(3 / 10, 10)
+    expect(g('2/3 ÷ 1/6')).toBe(2 / 3 / (1 / 6))
+  })
+
+  it('rekent de machten, verhoudingen en statistiek na', () => {
+    expect(g('10³')).toBe(10 ** 3)
+    expect(g('3² + 4²')).toBe(3 ** 2 + 4 ** 2)
+    expect(g('√81 − √16')).toBe(Math.sqrt(81) - Math.sqrt(16))
+    expect(g('2⁴ × 2²')).toBe(2 ** 4 * 2 ** 2)
+    expect(g('Vier broodjes')).toBe(6 / 4)
+    expect(g('300 g rijst')).toBe(300 / 4 * 6)
+    expect(g('1 : 50 000')).toBe(6 * 50000 / 100000)
+    expect(g('maquette heeft schaal 1 : 200')).toBe(30 * 100 / 200)
+    expect(g('1 op 15')).toBe(240 / 15)
+    expect(g('per dag zijn geleend')).toBe(3 + 5 + 2 + 6)
+    expect(g('gemiddelde van 4, 6, 7, 7 en 9')).toBeCloseTo((4 + 6 + 7 + 7 + 9) / 5, 10)
+    expect(g('mediaan van 2, 8, 5, 9, 4 en 6')).toBe((5 + 6) / 2)
+    expect(g('gemiddelde van vijf cijfers is 7')).toBe(7 * 5 - (6 + 8 + 5 + 9))
+  })
+
+  it('rekent de procenten, vergelijkingen en formules na', () => {
+    expect(g('250 leerlingen doet 36%')).toBe(250 * 0.36)
+    expect(g('na 30% korting € 63')).toBe(63 / 0.7)
+    expect(g('twee jaar achter elkaar met 10%')).toBeCloseTo((1.1 ** 2 - 1) * 100, 10)
+    expect(g('eerst 20% duurder')).toBeCloseTo(500 * 1.2 * 0.8, 10)
+    expect(g('x − 9 = 4')).toBe(4 + 9)
+    expect(g('x ÷ 3 = 7')).toBe(7 * 3)
+    expect(g('5x − 4 = 3x + 10')).toBe((10 + 4) / (5 - 3))
+    expect(g('7 − 2x = 1')).toBe((7 - 1) / 2)
+    expect(g('3(x − 2) = 12')).toBe(12 / 3 + 2)
+    expect(g('y = −2x + 9')).toBe(-2 * 3 + 9)
+    expect(g('(2, 5) en (6, 17)')).toBe((17 - 5) / (6 - 2))
+    expect(g('y = 4x − 6')).toBe((10 + 6) / 4)
+    expect(g('€ 4 instaptarief')).toBe(4 + 1.5 * 12)
+  })
+
+  it('rekent de meetkunde na', () => {
+    expect(g('12 cm lang en 7 cm breed')).toBe(2 * (12 + 7))
+    expect(g('parallellogram heeft een basis van 9')).toBe(9 * 4)
+    expect(g('straal van 5 cm. Bereken de omtrek')).toBeCloseTo(2 * 3.14 * 5, 10)
+    expect(g('oppervlakte van 64 cm²')).toBe(4 * Math.sqrt(64))
+    expect(g('trapezium')).toBe((6 + 10) / 2 * 4)
+    expect(g('rechthoekszijden van 5 cm en 12 cm')).toBe(Math.sqrt(5 ** 2 + 12 ** 2))
+    expect(g('9 cm lang en 12 cm breed')).toBe(Math.sqrt(9 ** 2 + 12 ** 2))
+    expect(g('schuine zijde van een rechthoekige driehoek is 17'))
+      .toBe(Math.sqrt(17 ** 2 - 8 ** 2))
+    expect(g('vlieger')).toBe(Math.sqrt(25 ** 2 - 20 ** 2))
+    expect(g('twee hoeken 40° en 60°')).toBe(180 - 40 - 60)
+    expect(g('gelijkbenige driehoek zijn allebei 65°')).toBe(180 - 2 * 65)
+    expect(g('Deze hoek is 125°')).toBe(180 - 125)
+    expect(g('75°, 110° en 95°')).toBe(360 - 75 - 110 - 95)
+    expect(g('Z-hoek is 72°')).toBe(180 - 72)
+    expect(g('ribben van 6 cm')).toBe(6 ** 3)
+    expect(g('6 cm bij 5 cm bij 4 cm')).toBe(6 * 5 * 4)
+    expect(g('grondvlak van 20 cm²')).toBe(20 * 7)
+    expect(g('straal van 3 cm en een hoogte van 10 cm')).toBeCloseTo(3.14 * 3 ** 2 * 10, 10)
+    expect(g('inhoud van 240 cm³')).toBe(240 / (8 * 5))
+  })
+
+  it('rekent de beweging en de krachten na', () => {
+    expect(g('Hoeveel gram is 2,5 kg')).toBe(2.5 * 1000)
+    expect(g('cm³ is 1,5 liter')).toBe(1.5 * 1000)
+    expect(g('72 km/u om naar m/s')).toBe(72 / 3.6)
+    expect(g('seconden zijn 2,5 minuten')).toBe(2.5 * 60)
+    expect(g('40 m af in 8 s')).toBe(40 / 8)
+    expect(g('bus rijdt 54 km/u')).toBe(54 / 3.6)
+    expect(g('trein rijdt met 30 m/s')).toBe(4500 / 30)
+    expect(g('12 km in 50 minuten')).toBeCloseTo(12 / (50 / 60), 10)
+    expect(g('grafiek af. Wat is de snelheid')).toBe(20 / 2)
+    expect(g('1,5 km af in 25 minuten')).toBe(1500 / (25 * 60))
+    /* De onderbouw rekent met g = 10 N/kg, zoals in de opgaven die er al
+       stonden — op de formulekaart staat 9,81. */
+    expect(g('fiets van 15 kg')).toBe(15 * 10)
+    expect(g('200 N omlaag en 260 N omhoog')).toBe(260 - 200)
+    expect(g('doos is 450 N')).toBe(450 / 10)
+    expect(g('80 N naar rechts')).toBe(80 - 30)
+    expect(g('C = 50 N/m')).toBeCloseTo(50 * 0.2, 10)
+    expect(g('hang je 3 N')).toBe(6 / 3 * 5)
+    expect(g('0,25 m uit bij een kracht van 20 N')).toBe(20 / 0.25)
+    expect(g('C = 40 N/m')).toBe(2 * 10 / 40 * 100)
+  })
+
+  it('rekent de dichtheid, druk, energie en elektriciteit na', () => {
+    expect(g('100 g en een volume van 50 cm³')).toBe(100 / 50)
+    expect(g('250 cm³ water')).toBe(1 * 250)
+    expect(g('2,7 g/cm³')).toBe(54 / 2.7)
+    expect(g('100 N drukt op een vlak van 2 m²')).toBe(100 / 2)
+    expect(g('2000 Pa')).toBe(2000 * 0.05)
+    expect(g('lamp van 40 W')).toBe(40 * 120)
+    expect(g('90 000 J in 3 minuten')).toBe(90000 / 180)
+    expect(g('krijgt 2000 J')).toBe(1500 / 2000 * 100)
+    expect(g('293 K')).toBe(293 - 273)
+    expect(g('verwarmd tot 80 °C')).toBe(80 - 20)
+    expect(g('0,4 A bij een spanning van 6 V')).toBe(6 / 0.4)
+    expect(g('230 V gebruikt 0,5 A')).toBe(230 * 0.5)
+    expect(g('25 Ω loopt een stroom van 0,8 A')).toBe(0.8 * 25)
+    expect(g('4 Ω en 6 Ω staan in serie')).toBe(4 + 6)
+    expect(g('6 Ω staan parallel')).toBe(1 / (1 / 6 + 1 / 6))
+    expect(g('onder 30° met de normaal')).toBe(30)
+    expect(g('65° met het spiegeloppervlak')).toBe(90 - 65)
+    expect(g('donder 6 s na de bliksem')).toBe(340 * 6)
+    expect(g('echo 0,5 s')).toBe(340 * 0.5 / 2)
+  })
+
+  /* Dít is waar de uitbreiding voor was. `volgendeKaart` pakt de opgave die het
+     dichtst bij het doelniveau ligt; ontbreekt een trede, dan valt hij zwijgend
+     terug op een andere en krijgt ze steeds dezelfde handvol sommen. */
+  it('geeft elk onderwerp van wiskunde en natuurkunde alle drie de treden', () => {
+    const hare = [...SEED, ...NIEUW2627]
+      .filter((e) => e.p === 'wassima' && (e.jaar ?? 'nu') === 'nu')
+      .filter((e) => e.v === 'wiskunde' || e.v === 'natuurkunde')
+    const per = new Map<string, number[]>()
+    for (const e of hare) {
+      const sleutel = `${e.v} · ${e.t}`
+      per.set(sleutel, [...(per.get(sleutel) ?? []), e.lvl ?? 1])
+    }
+    expect(per.size).toBe(28)
+    const mager: string[] = []
+    for (const [sleutel, lvls] of per) {
+      for (const n of [1, 2, 3]) {
+        if (!lvls.includes(n)) mager.push(`${sleutel} mist niveau ${n}`)
+      }
+    }
+    expect(mager).toEqual([])
+  })
+
+  it('heeft haar voorraad bij allebei de vakken meer dan verdubbeld', () => {
+    /* Vóór de uitbreiding stonden er bij wiskunde achtenzestig vaste opgaven en
+       bij natuurkunde vijfenveertig (de sjablonen komen daar nog bovenop). Een
+       getal dat alleen maar groeit zegt weinig; deze grenzen zeggen dat de
+       aanvulling er nog steeds is en niet half is teruggedraaid. */
+    const tel = (vak: string): number => [...SEED, ...NIEUW2627]
+      .filter((e) => e.p === 'wassima' && e.v === vak && (e.jaar ?? 'nu') === 'nu').length
+    expect(tel('wiskunde')).toBeGreaterThanOrEqual(130)
+    expect(tel('natuurkunde')).toBeGreaterThanOrEqual(100)
+  })
+})
