@@ -3354,3 +3354,97 @@ En de proef die er het minst naar uitziet en het meest toe doet: het invoervak
 is leeg na het bewaren, en de sleutel staat nergens meer op het scherm. Een vak
 dat zijn inhoud vasthoudt is een sleutel die de volgende die meekijkt gewoon
 leest.
+
+## 53. De sleutel van een ander, en waar die dan staat
+
+Een tester mag zijn eigen AI-sleutel opgeven, zodat hij zijn eigen rekening
+betaalt en niet die van de eigenaar. Die sleutel moet ergens staan, en waar
+precies bepaalt wat een inbraak oplevert.
+
+### Twee keer Vault, en twee keer een muur
+
+De eerste versie riep `vault.create_secret()` aan. Die functie bestaat op dit
+project niet: dat is de oude Vault die op `pgsodium` rust, en Supabase heeft die
+afgeraden. De wachter erboven sloeg aan, en dat was een vals alarm, want Vault
+zelf was er wel.
+
+De tweede versie schreef rechtstreeks in `vault.secrets`, zoals de huidige Vault
+het wil. Toen kwam de echte muur:
+
+    Vault is niet bruikbaar voor dit bestand. Wat ontbreekt: schrijfrecht op
+    vault.secrets voor postgres;
+
+De rol die deze functies bezit mag daar niet in schrijven, en kan zichzelf dat
+recht niet geven: `pg_has_role(current_user, 'supabase_admin', 'member')` geeft
+`false`. Daar houdt die weg op.
+
+Dat het zo netjes ophield en niet halverwege omviel, is het werk van die tweede
+wachter. De eerste keek naar één functienaam. De tweede kijkt naar wat het
+bestand werkelijk nodig heeft: de tabel, de weergave, de kolommen, en het
+schrijfrecht. Die laatste vond het, vóór er één kolom was toegevoegd.
+
+### Wat ervoor in de plaats kwam is sterker dan Vault zou zijn geweest
+
+De sleutel wordt nu versleuteld in de edge function, met AES-GCM, met een
+hoofdsleutel die in de omgeving van die functie staat naast `ANTHROPIC_API_KEY`.
+Wat er in de database komt is cijfertekst en verder niets.
+
+Bij Vault kan de database zelf ontsleutelen: wie een export in handen krijgt,
+krijgt de sleutels erbij. Hier kan de database er niets mee. Geen functie, geen
+beheerder, geen back-up en geen export komt aan de inhoud, want de hoofdsleutel
+staat ergens anders. Je hebt allebei nodig.
+
+### En waarom dan geen `pgcrypto`, dat al aanstond
+
+Dat was het plan en het is het niet geworden. `pgcrypto` versleutelt ín de
+database, en dan moet de hoofdsleutel dáárheen: over de lijn bij elke aanroep,
+mogelijk in een logregel, en in elk geval binnen bereik van wie de database
+beheert. Precies de winst hierboven valt dan weg.
+
+AES-GCM in de edge function vraagt geen uitbreiding, en de database ziet de
+sleutel nooit, ook niet even. Het gevolg voor de app is dat een sleutel opgeven
+langs de edge function gaat in plaats van rechtstreeks naar de database. Weghalen
+mag wél rechtstreeks, want daar is geen hoofdsleutel voor nodig en het hoort te
+werken ook als die functie er even uit ligt.
+
+### Versleuteling die alleen gelezen is, is niets waard
+
+De edge-functies vallen buiten alle proeven. Voor de meeste code daar is dat te
+dragen; voor dit stuk niet, want de manier waarop versleuteling stukgaat is
+stil. Een beginwaarde die niet verandert, een sleutel die er toch nog in staat,
+twee keer dezelfde uitkomst: dat zie je niet aan de code en je merkt het niet
+aan de app.
+
+`src/health/kluis.proef.ts` knipt het blok uit `kal-ai.ts`, laat esbuild er
+JavaScript van maken, en draait het. Geen kopie dus maar de code zelf. Tien
+proeven, en de drie die er het meest toe doen zijn: de cijfertekst bevat de
+sleutel niet meer (ook niet als base64 verpakt), vijf keer versleutelen geeft
+vijf verschillende uitkomsten, en een andere hoofdsleutel geeft een fout en geen
+halve uitkomst. Dat laatste is de reden dat de app erop kan bouwen: raakt
+`SLEUTELKLUIS` kwijt, dan valt hij niet stilletjes terug op de gedeelde sleutel
+en dus op de rekening van de eigenaar.
+
+Hij draait in de node-omgeving en niet in de browseromgeving die de rest van die
+map gebruikt. Dat is geen voorkeur: esbuild weigert te starten onder een
+`TextEncoder` die jsdom heeft vervangen, met een melding over een invariant die
+niemand zonder die regel zou thuisbrengen.
+
+### Een fout van mij die is toegepast voordat iemand hem zag
+
+In de kop van bestand 52 stond: "Dit bestand staat los van 48 tot en met 51 en
+kan in elke volgorde." Dat was niet waar. `kal_account_wissen` leest
+`ai_sleutel_id`, en die kolom komt uit bestand 49.
+
+Postgres zei daar niets over, en terecht: plpgsql zoekt zijn SQL pas op bij het
+uitvoeren. `create function` controleert de vorm en niet of de kolommen bestaan.
+De functie werd dus netjes aangemaakt en zou pas stukgaan op het moment dat
+iemand op verwijderen tikte.
+
+Bestand 52 is toegepast in die staat. Bestand 53 zet het recht, en de oplossing
+is korter dan het probleem: sinds de sleutel als versleutelde tekst in een kolom
+van `kal_gebruikers` staat, gaat hij vanzelf mee wanneer die rij verdwijnt. Het
+hele blok dat hem apart uit de vault haalde kon eruit.
+
+De les staat in het bestand zelf: de proef is de aanroep en niet het aanmaken.
+Daarom staat er onder elk bestand hier een nakijklijst, en daarom is die van 52
+niet gedraaid geweest voordat hij toegepast werd.

@@ -532,6 +532,116 @@ async function claude(
 // er raar uitziet is naar zijn aanbieder terug te leiden. Dat is het minste wat
 // erbij hoort zolang dit niet uitgeprobeerd is.
 
+// =============================================================================
+// DE SLEUTELKLUIS
+// =============================================================================
+//
+// Een tester mag zijn eigen AI-sleutel opgeven. Die moet ergens staan, en waar
+// precies bepaalt wat een inbraak oplevert.
+//
+// WAAROM NIET IN SUPABASE VAULT
+//
+// Omdat die op dit project niet te gebruiken is: het schema staat er, maar de
+// rol die de functies bezit heeft er geen schrijfrecht op en kan zichzelf dat
+// niet geven. Dat is nagegaan en niet aangenomen; zie bestand 49.
+//
+// WAAROM DIT BETER IS DAN VAULT ZOU ZIJN GEWEEST
+//
+// Bij Vault kan de database zelf ontsleutelen. Wie een export van die database
+// in handen krijgt, krijgt de sleutels erbij.
+//
+// Hier niet. De hoofdsleutel staat in de omgeving van deze functie, naast
+// `ANTHROPIC_API_KEY`, en nergens anders. De database bewaart alleen
+// cijfertekst en kan er niets mee: geen functie, geen beheerder en geen export
+// komt eraan. Je hebt allebei nodig, en die twee staan op verschillende
+// plekken.
+//
+// WAAROM HIER EN NIET MET PGCRYPTO
+//
+// Dat was het plan en het is het niet geworden. `pgcrypto` versleutelt in de
+// database, en dan moet de hoofdsleutel dáárheen: over de lijn bij elke
+// aanroep, mogelijk in een logregel, en in elk geval binnen bereik van wie de
+// database beheert. Dan is de winst van hierboven weg.
+//
+// Versleutelen in deze functie vraagt geen uitbreiding, geen sleutel in de
+// database, en het is dezelfde AES-GCM die overal onder zit. De database ziet
+// de sleutel nooit, ook niet even.
+//
+// WAT DE PRIJS IS
+//
+// Raakt `SLEUTELKLUIS` kwijt, dan is elke opgeslagen sleutel onleesbaar en
+// moeten testers hem opnieuw invullen. Dat is te overzien: een API-sleutel is
+// zo opnieuw gemaakt, en de app zegt het dan ook met zoveel woorden in plaats
+// van stil te vallen.
+//
+// EN WAT HET NIET DOET
+//
+// Het beschermt niet tegen iemand die bij deze omgeving én bij de database kan.
+// Dat kan geen enkel ontwerp waarin één dienst beide nodig heeft om te werken.
+
+const KLUIS_VERSIE = "v1";
+
+/** De hoofdsleutel uit de omgeving: 32 bytes, als base64. */
+let kluisCache: CryptoKey | null = null;
+async function kluissleutel(): Promise<CryptoKey> {
+  if (kluisCache) return kluisCache;
+  const b64 = Deno.env.get("SLEUTELKLUIS");
+  if (!b64) throw new Error("Geen SLEUTELKLUIS ingesteld in de Supabase-secrets");
+  const ruw = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+  if (ruw.length !== 32) {
+    throw new Error(`SLEUTELKLUIS is ${ruw.length} bytes en moet er 32 zijn`);
+  }
+  kluisCache = await crypto.subtle.importKey("raw", ruw, "AES-GCM", false,
+    ["encrypt", "decrypt"]);
+  return kluisCache;
+}
+
+const naarB64 = (b: Uint8Array) => btoa(String.fromCharCode(...b));
+const uitB64 = (s: string) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+
+/* Elke versleuteling krijgt een eigen beginwaarde. Dat is bij AES-GCM geen
+   verfraaiing maar een eis: twee keer dezelfde beginwaarde met dezelfde sleutel
+   maakt de versleuteling onveilig. Hij hoeft niet geheim te zijn en gaat daarom
+   gewoon mee in de opgeslagen tekst.
+
+   Het versienummer ervoor staat er zodat een latere wijziging aan dit recept te
+   herkennen is aan de tekst zelf, in plaats van aan een gok. */
+async function versleutel(tekst: string): Promise<string> {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const uit = await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv }, await kluissleutel(), new TextEncoder().encode(tekst));
+  return [KLUIS_VERSIE, naarB64(iv), naarB64(new Uint8Array(uit))].join(".");
+}
+
+async function ontsleutel(cijfer: string): Promise<string> {
+  const [versie, iv, brok] = cijfer.split(".");
+  if (versie !== KLUIS_VERSIE) {
+    throw new Error(`Onbekende versleuteling (${versie}); deze sleutel is niet te lezen`);
+  }
+  const uit = await crypto.subtle.decrypt(
+    { name: "AES-GCM", iv: uitB64(iv) }, await kluissleutel(), uitB64(brok));
+  return new TextDecoder().decode(uit);
+}
+
+/* De voorwaarden aan een sleutel staan hier én in de database (bestand 49).
+   Dat is met opzet dubbel: deze kant geeft een leesbare melding voordat er iets
+   wordt opgeborgen, en die kant is de grens die geldt ook als er ooit een
+   andere aanroeper komt. */
+function klachtOverSleutel(aanbieder: string, sleutel: string): string | null {
+  if (aanbieder !== "anthropic" && aanbieder !== "openai") return "Onbekende aanbieder";
+  if (!sleutel || sleutel !== sleutel.trim() || /\s/.test(sleutel)) {
+    return "Er zit witruimte in die sleutel. Plak hem nog eens, zonder spatie of regeleinde.";
+  }
+  if (sleutel.length < 30) return "Dat is te kort voor een sleutel";
+  if (aanbieder === "anthropic" && !sleutel.startsWith("sk-ant-")) {
+    return "Een sleutel van Anthropic begint met sk-ant-. Staat er alleen sk-, dan is het er een van OpenAI.";
+  }
+  if (aanbieder === "openai" && (!sleutel.startsWith("sk-") || sleutel.startsWith("sk-ant-"))) {
+    return "Een sleutel van OpenAI begint met sk-, en niet met sk-ant-.";
+  }
+  return null;
+}
+
 const OPENAI = "https://api.openai.com/v1/chat/completions";
 
 /* De inhoudsblokken van Anthropic naar die van OpenAI. Alleen tekst en beeld,
@@ -744,6 +854,34 @@ Deno.serve(async (req) => {
     if (sessieFout || !uid) throw new Error("Niet aangemeld");
     gebruiker = uid as string;
 
+    // ------------------------------------------------- je sleutel opbergen --
+    // Dit staat vóór alles wat met herkennen te maken heeft, en dat is geen
+    // volgorde maar een grens. Een sleutel opgeven is geen AI-aanroep: het
+    // kost niets, het vraagt geen budget, en wie nog in de wachtkamer zit moet
+    // het gewoon kunnen. Stond dit achter de poort, dan kon je je eigen sleutel
+    // pas opgeven nadat je hem niet meer nodig had.
+    if (soort === "sleutel") {
+      if (body.actie === "weghalen") {
+        await db.rpc("kal_sleutel_weg", { p_gebruiker: gebruiker });
+        return json({ weg: true });
+      }
+      const aanbieder = String(body.aanbieder ?? "");
+      const sleutel = String(body.sleutel ?? "");
+      const klacht = klachtOverSleutel(aanbieder, sleutel);
+      if (klacht) return json({ error: klacht }, 400);
+
+      const cijfer = await versleutel(sleutel);
+      /* De laatste vier tekens gaan er los naast, zodat de tester ziet wélke
+         sleutel er staat. De eerste zouden bij OpenAI het projectnummer
+         dragen; zie bestand 49. */
+      const { error } = await db.rpc("kal_sleutel_opbergen", {
+        p_gebruiker: gebruiker, p_aanbieder: aanbieder,
+        p_cijfer: cijfer, p_staart: sleutel.slice(-4),
+      });
+      if (error) throw new Error("Opbergen mislukt: " + error.message);
+      return json({ aanbieder, staart: sleutel.slice(-4) });
+    }
+
     // ------------------------------------------------------ wiens sleutel --
     // Een tester krijgt een proefrit op de gedeelde sleutel en geeft daarna
     // zijn eigen. Welke van de twee het wordt, beslist de database: zie
@@ -755,15 +893,23 @@ Deno.serve(async (req) => {
     let inGebruik = key ?? "";
     const mijn = await db.rpc("kal_sleutel_voor", { p_gebruiker: gebruiker });
     if (!mijn.error && (mijn.data as { eigen?: boolean })?.eigen) {
-      const d = mijn.data as { aanbieder: string; sleutel: string };
-      aanbieder = d.aanbieder;
-      inGebruik = d.sleutel;
-      eigen = true;
+      const d = mijn.data as { aanbieder: string; cijfer: string };
+      /* Hier en nergens anders wordt de sleutel weer leesbaar, en alleen voor
+         de duur van deze aanroep. Lukt dat niet, dan is `SLEUTELKLUIS`
+         veranderd of weg, en dan hoort de tester dat te horen in plaats van
+         stilletjes op de gedeelde sleutel terug te vallen: dat zou de rekening
+         van de eigenaar zijn zonder dat iemand het merkt. */
+      try {
+        inGebruik = await ontsleutel(d.cijfer);
+        aanbieder = d.aanbieder;
+        eigen = true;
+      } catch {
+        throw new Error(
+          "Je eigen sleutel is niet meer te lezen. Zet hem opnieuw onder Account.");
+      }
     }
     if (!inGebruik) {
-      throw new Error(eigen
-        ? "Je eigen sleutel is niet te lezen. Zet hem opnieuw onder Account."
-        : "Geen ANTHROPIC_API_KEY ingesteld in de Supabase-secrets");
+      throw new Error("Geen ANTHROPIC_API_KEY ingesteld in de Supabase-secrets");
     }
 
     const isImport = soort === "import";

@@ -453,10 +453,11 @@ export interface RpcKaart {
      teruggeeft: `kal_sleutel_voor` staat alleen open voor de service-role, dus
      voor de edge function. Wat de app hier terugkrijgt is de aanbieder en de
      laatste vier tekens, genoeg om te zien welke sleutel erin staat. */
-  kal_sleutel_zetten: {
-    in: { p_token: string; p_aanbieder: string; p_sleutel: string }
-    uit: { aanbieder: string; staart: string } | { fout: string }
-  }
+  /* Opbergen staat hier met opzet níet bij. Dat gaat langs de edge function,
+     want alleen die heeft de hoofdsleutel om hem te versleutelen; zie
+     `sleutelOpbergen` in `src/health/ai.ts`. Weghalen mag wél rechtstreeks,
+     want daar is geen hoofdsleutel voor nodig en het hoort te werken ook als
+     de edge function eruit ligt. */
   kal_sleutel_weghalen: { in: { p_token: string }; uit: { weg: boolean } }
   /* Je gegevens weghalen, bestand 52. `p_echt` staat standaard uit: dan telt
      hij alleen en verandert er niets. Dat is geen voorzichtigheid maar het

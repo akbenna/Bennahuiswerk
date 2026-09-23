@@ -587,6 +587,26 @@ const TESTERS = [
 ];
 
 async function bedienDb(pagina, dagen, fase) {
+  /* DE EIGEN SLEUTEL GAAT NIET LANGS DE DATABASE, BESTAND 49
+     Hij gaat naar de edge function, want daar staat de hoofdsleutel waarmee hij
+     versleuteld wordt. Deze stub doet wat die functie doet en niets meer: hij
+     keurt het voorvoegsel en geeft de staart terug. De sleutel zelf komt
+     nergens terug, ook hier niet. */
+  await pagina.route('**/functions/v1/kal-ai', async (route) => {
+    const p = JSON.parse(route.request().postData() ?? '{}')
+    if (p.soort !== 'sleutel') return route.fallback()
+    ;(pagina.__sleutels ??= []).push({ aanbieder: p.aanbieder, lengte: p.sleutel?.length })
+    const goed = p.aanbieder === 'anthropic'
+      ? p.sleutel.startsWith('sk-ant-')
+      : p.sleutel.startsWith('sk-') && !p.sleutel.startsWith('sk-ant-')
+    await route.fulfill({
+      status: goed ? 200 : 400, contentType: 'application/json',
+      body: JSON.stringify(goed
+        ? { aanbieder: p.aanbieder, staart: p.sleutel.slice(-4) }
+        : { error: 'Een sleutel van Anthropic begint met sk-ant-.' }),
+    })
+  })
+
   await pagina.route('**/rest/v1/rpc/**', async (route) => {
     const fn = route.request().url().split('/').pop()
     const lijf = fn === 'kal_ophalen' ? alles(dagen, fase)
@@ -615,20 +635,6 @@ async function bedienDb(pagina, dagen, fase) {
             ...(pagina.__toegang ?? {}) }
       : fn === 'kal_testers'
         ? (pagina.__beheerder === true ? TESTERS : { fout: 'Dat kan niet' })
-      /* De eigen sleutel, bestand 49. De stub doet precies wat de database doet
-         en niets meer: hij keurt het voorvoegsel en geeft de staart terug. De
-         sleutel zelf komt nergens terug, ook hier niet. */
-      : fn === 'kal_sleutel_zetten'
-        ? (() => {
-            const p = JSON.parse(route.request().postData() ?? '{}')
-            ;(pagina.__sleutels ??= []).push({ aanbieder: p.p_aanbieder, lengte: p.p_sleutel.length })
-            const goed = p.p_aanbieder === 'anthropic'
-              ? p.p_sleutel.startsWith('sk-ant-')
-              : p.p_sleutel.startsWith('sk-') && !p.p_sleutel.startsWith('sk-ant-')
-            return goed
-              ? { aanbieder: p.p_aanbieder, staart: p.p_sleutel.slice(-4) }
-              : { fout: 'Een sleutel van Anthropic begint met sk-ant-.' }
-          })()
       : fn === 'kal_sleutel_weghalen' ? { weg: true }
       /* Weghalen, bestand 52. De stub doet wat de database doet: zonder het
          goede wachtwoord komt er een fout, en zonder `p_echt` verandert er
