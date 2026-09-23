@@ -6,27 +6,27 @@
 -- reden dat ze hier bij elkaar staan: het is geen ontwerp achteraf maar een
 -- lijst van dingen die je niet bedenkt.
 --
---   1. `p_dagen_terug` — de datum meesturen vraagt op een iPhone twee extra
+--   1. `p_dagen_terug`: de datum meesturen vraagt op een iPhone twee extra
 --      acties, een aangepaste notatie en een variabele (`Huidige datum`) die
 --      niet eens in de variabelenkiezer staat. Eén getal doet hetzelfde werk:
 --      0 is vandaag, 1 is gisteren.
 --
 --   2. Alle getallen komen binnen als tekst. Een nacht zonder slaapmeting gaf
 --      een lege waarde, PostgREST probeerde die naar numeric te casten, en het
---      hele bericht sneuvelde met 22P02 — inclusief de stappen die wél gemeten
+--      hele bericht sneuvelde met 22P02, inclusief de stappen die wél gemeten
 --      waren. Eén ontbrekende meting hoort de andere niet mee te slepen.
 --      `kal_getal` leest ze zelf: leeg is 'niet meegestuurd', een komma is een
 --      decimaalteken (de telefoon staat op Nederlands), en iets onleesbaars
 --      wordt overgeslagen en gemeld.
 --
---   3. `p_hartslag_rust` — de rustpols bestond al als meting die je met de hand
+--   3. `p_hartslag_rust`: de rustpols bestond al als meting die je met de hand
 --      invulde, maar kwam nergens binnen en werd nergens getoond. Het is het
 --      waardevolste dagcijfer dat een horloge levert: hij daalt als de conditie
 --      verbetert en stijgt bij ziekte, slechte slaap of te zware belasting.
 --
 --   4. Een 0 wordt niet weggeschreven. `Bereken statistiek` geeft over nul
 --      monsters een 0 terug en niet leeg. Op 23 augustus kwam er zo 0 kcal
---      actieve energie binnen naast 1.746 stappen — onmogelijk als meting, en
+--      actieve energie binnen naast 1.746 stappen, onmogelijk als meting, en
 --      niet te onderscheiden van "niets gevonden". Zo'n 0 maakt een dag die
 --      eruitziet als gemeten, en het model rekent er dan mee.
 -- =============================================================================
@@ -127,7 +127,7 @@ begin
 
   /* ---- een 0 die uit een lege zoekactie komt ----------------------------- */
   /* Bereken statistiek geeft over nul monsters een 0 terug en niet leeg. Die 0
-     is dus niet te onderscheiden van "niets gevonden" — en als meting is hij
+     is dus niet te onderscheiden van "niets gevonden", en als meting is hij
      voor elk van deze velden onmogelijk: wie zijn telefoon bij zich draagt komt
      niet op nul stappen of nul actieve energie uit, en nul minuten slaap
      bestaat niet. Wegschrijven levert een dag op die eruitziet als gemeten en

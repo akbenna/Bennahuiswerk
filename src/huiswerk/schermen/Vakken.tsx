@@ -1,18 +1,18 @@
 /**
- * VAKKEN — het scherm van één kind
+ * VAKKEN: het scherm van één kind
  *
  * Alles wat een kind nodig heeft om te kiezen wat het gaat doen. De volgorde is
  * omgedraaid ten opzichte van de eerste opzet, en daar zit de hele gedachte in.
  *
- * Vroeger stond bovenaan wat er al bereikt was — rang, dagmissie, dagdoel,
- * verdiend geld, niveau — en pas na zeven kaarten de vakken. De redenering was
+ * Vroeger stond bovenaan wat er al bereikt was (rang, dagmissie, dagdoel,
+ * verdiend geld, niveau) en pas na zeven kaarten de vakken. De redenering was
  * dat een kind eerst hoort te zien dat het ergens staat. In de praktijk betekende
  * het scrollen: wie kwam oefenen moest eerst langs alles wat leuk is aan
  * oefenen voordat hij kon beginnen.
  *
  * Nu staat het werk vooraan: de weektaak van de ouder, dan de vakken en de
  * onderwerpen. Wat er te halen valt staat eronder in één kaart die dicht begint.
- * Alleen het dagdoel blijft als smalle strook zichtbaar — dat is geen beloning
+ * Alleen het dagdoel blijft als smalle strook zichtbaar, dat is geen beloning
  * maar de opdracht van vandaag.
  */
 import { useMemo, useState } from 'react'
@@ -54,7 +54,7 @@ export interface VakkenProps {
 }
 
 /** Wat elk niveau betekent, in één regel. Zonder dit is "niveau 3" een cijfer
- *  en geen keuze — een ouder kan dan niet zien wat hij aanzet. */
+ *  en geen keuze: een ouder kan dan niet zien wat hij aanzet. */
 const NIVEAUS: Array<[Exclude<Voortgang['niveau'], 'auto'>, string, string]> = [
   [1, '1 · makkelijk', 'Eén stap, met de getallen die er staan.'],
   [2, '2 · middel', 'Twee stappen, of eerst iets omrekenen.'],
@@ -79,7 +79,7 @@ function Niveaukiezer(
         <b>🎚️ Moeilijkheid</b>
         <span className="muted" style={{ fontSize: 13 }}>
           {prog.niveau === 'auto'
-            ? `Automatisch — nu niveau ${prog.autoLvl || 1}`
+            ? `Automatisch, nu niveau ${prog.autoLvl || 1}`
             : `Vast op niveau ${prog.niveau}`}
         </span>
       </div>
@@ -321,7 +321,7 @@ export function Vakken(p: VakkenProps): ReactNode {
 
         <div className="card">
           <div className="row" style={{ justifyContent: 'space-between' }}>
-            <b>⭐ Dagmissie {missie.klaar ? '— gehaald! 🎉' : ''}</b>
+            <b>⭐ Dagmissie {missie.klaar ? '✓  gehaald! 🎉' : ''}</b>
             <span className="muted" style={{ fontSize: 13 }}>
               🔥 missie-streak: {p.prog.missieStreak || 0}
             </span>
@@ -359,7 +359,7 @@ export function Vakken(p: VakkenProps): ReactNode {
                     {' '}→ bonus {euro(b.toetsEuro)}
                   </span>
                   )
-                : <span>💡 Haal een oefentoets voor een bonus — hoe hoger je score, hoe meer.</span>}
+                : <span>💡 Haal een oefentoets voor een bonus: hoe hoger je score, hoe meer.</span>}
             </div>
             <div className="row" style={{ justifyContent: 'space-between', marginTop: 8, fontSize: 12 }}>
               <span className="muted">Deze week verdiend: <b>{euro(wv)}</b> van {euro(b.weekbudget)}</span>
@@ -409,12 +409,12 @@ export function Vakken(p: VakkenProps): ReactNode {
       <div className="center" style={{ marginTop: 14 }}>
         <button
           type="button" className="btn gold" onClick={() => p.naarOnderwerp('__proeftoets__', jaar)}
-        >📝 Proeftoets — 20 vragen, alle vakken door elkaar</button>
+        >📝 Proeftoets: 20 vragen, alle vakken door elkaar</button>
       </div>
 
       <div className="center" style={{ marginTop: 10 }}>
         <button type="button" className="btn ghost" onClick={p.naarLeerscan}>
-          🔎 {p.prog.leerscan ? 'Zo leer jij' : 'Hoe leer jij? — 15 korte vragen'}
+          🔎 {p.prog.leerscan ? 'Zo leer jij' : 'Hoe leer jij?: 15 korte vragen'}
         </button>
       </div>
 
@@ -430,7 +430,7 @@ export function Vakken(p: VakkenProps): ReactNode {
         {spelOpSlot
           ? (
             <button type="button" className="btn ghost" disabled title="Haal eerst je dagdoel">
-              🔒 Spelletjes — haal eerst je dagdoel
+              🔒 Spelletjes: haal eerst je dagdoel
             </button>
             )
           : (

@@ -2,7 +2,7 @@
  * WAT ER BEWAARD WORDT, EN HOE TWEE TOESTELLEN SAMENKOMEN
  *
  * Eén regel: niets gaat weg. Bij lessen telt de béste score en niet de laatste
- * — anders wist een slordige tweede poging een goed resultaat uit, en dat is
+ *, anders wist een slordige tweede poging een goed resultaat uit, en dat is
  * het tegenovergestelde van wat een score hoort te doen.
  *
  * Het saldo is de enige waarde die niet zomaar te vergelijken is: twee

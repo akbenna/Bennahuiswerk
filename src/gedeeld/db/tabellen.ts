@@ -29,13 +29,115 @@ export type RegelBron =
      health/database/19-merkregels.sql voor de bijbehorende constraint. */
   | 'merk'
 
+/**
+ * DE CONDITIE: wat er bij deze gebruiker speelt.
+ *
+ * Deze twee typen staan hier en niet bij de logica in `src/health/conditie.ts`,
+ * omdat ze de vorm van een kolom beschrijven: ze wonen in `instellingen` en
+ * gaan als zodanig over de lijn. De logica die eraan hangt staat wél daar.
+ *
+ * Groepen en geen middelen, en waarom dat zo is, staat in `conditie.ts`.
+ */
+/* `metformine` kwam er later bij, en dat zegt iets over waarvoor deze lijst
+   eerst gemaakt was: de groepen hierboven zijn gekozen op hypo-risico en op
+   nier- en vochtbelasting, en metformine doet geen van beide. Voor de
+   suppletievraag is hij juist de belangrijkste van allemaal, langdurig gebruik
+   verlaagt de B12-opname. Zie `suppletie.ts`. */
+export type Medicatiegroep = 'insuline' | 'su' | 'sglt2' | 'glp1' | 'ras' | 'diureticum'
+  | 'metformine'
+
+export interface Conditie {
+  /** Hoge bloeddruk, of daarvoor behandeld. */
+  hypertensie?: boolean
+  /** Diabetes mellitus type 2. */
+  dm2?: boolean
+  /** Doorgemaakte hart- of vaatziekte. */
+  hvz?: boolean
+  /** Zelfopgave, en dus nadrukkelijk geen medicatieoverzicht. */
+  med?: Medicatiegroep[]
+  /**
+   * TWEE VRAGEN VOOR DE VITAMINE D-REGEL, EN WAAROM ZE GEVRAAGD WORDEN
+   *
+   * De Gezondheidsraad adviseert extra vitamine D onder meer aan mensen met een
+   * getinte of donkere huid en aan mensen die weinig buitenkomen of bedekkende
+   * kleding dragen. Dat is een uitspraak over hoeveel zon er op de huid valt en
+   * hoe goed die er vitamine D van maakt.
+   *
+   * Het profiel kent `etniciteit`, en het zou verleidelijk zijn die te
+   * gebruiken. Dat gebeurt hier met opzet niet: afkomst is geen huidskleur, en
+   * een app die dat gelijkstelt doet een aanname over iemand die hij niet mag
+   * doen, en die hij bovendien niet opschrijft. `etniciteit` gaat in deze app
+   * over de afkapwaarde van de middelomtrek en over niets anders.
+   *
+   * Dus twee eigen vragen. Leeg is hier "niet gevraagd" en geen "nee": zolang
+   * er niets staat, zwijgt de regel over deze twee gronden.
+   */
+  huid_donker?: boolean
+  weinig_zon?: boolean
+}
+
+/**
+ * DE VOORKEUREN: wat iemand wel en niet voorgeschoteld wil krijgen.
+ *
+ * Staat hier om dezelfde reden als `Conditie` hierboven: het is de vorm van wat
+ * er in `instellingen` bewaard wordt en over de lijn gaat. De regels (wat een
+ * eetpatroon voorstelt, hoe hard een uitsluiting is, hoeveel een duwtje mag
+ * verschuiven) staan in `src/health/voorkeuren.ts`, met de proeven erbij.
+ *
+ * De groepen zijn `string` en geen opsomming van de zevenentwintig. Dat is
+ * bewust: wat hier binnenkomt is wat er ooit bewaard is, en een tabel kan
+ * veranderen. Een opgeslagen groep die niet meer bestaat hoort geen typefout te
+ * geven maar gewoon niets uit te sluiten, zie `groepenOver` daar.
+ */
+export type Eetpatroon = 'alles' | 'pescotarisch' | 'vegetarisch' | 'veganistisch'
+
+export interface Voorkeuren {
+  patroon: Eetpatroon
+  /** Groepen die nooit voorgesteld worden. Verwijdert. */
+  nooit: readonly string[]
+  /** Groepen die je liever ziet. Verschuift, begrensd. */
+  liever: readonly string[]
+  /** Groepen die je liever niet ziet. Verschuift, begrensd. */
+  minder: readonly string[]
+  /**
+   * Keukens waaruit geen gerecht voorgesteld wordt. De zes waarden van
+   * `cultural_dishes.cuisine`, niet de tabelgroepen, dit gaat over gerechten.
+   * Ontbreekt het veld, dan staat er niets uit.
+   */
+  keukens?: readonly string[]
+  /**
+   * Losse producten die je nooit meer voorgesteld wilt krijgen, op NEVO-code.
+   *
+   * De zevenentwintig groepen zijn grof: wie geen spruitjes lust moet anders
+   * heel "Groente" uitzetten. Dit is de fijne knop ernaast, en hij wordt niet
+   * ingevuld in een vragenlijst maar op het moment dat het voorstel voor je
+   * neus staat.
+   */
+  nietProduct?: readonly string[]
+}
+
+/**
+ * Of er een gecombineerde leefstijlinterventie loopt, en sinds wanneer.
+ *
+ * Twee velden en geen derde: of je erin zit blijkt uit het programma, en de
+ * einddatum volgt uit de start, een programma duurt twee jaar. Zie `trap.ts`.
+ */
+export interface Glistand {
+  /** Sleutel uit `GLI_PROGRAMMAS`. Leeg = geen GLI opgegeven. */
+  programma?: string
+  begonnen?: IsoDatum
+}
+
 export interface Instellingen {
+  gli?: Glistand
   olie_g?: number
   olie_gewogen?: boolean
   melk_ml?: number
   melk_soort?: 'mager' | 'half' | 'vol'
   melk_gemeten?: boolean
   rookt?: boolean
+  conditie?: Conditie
+  voorkeuren?: Voorkeuren
 }
 
 export interface Profiel {
@@ -123,6 +225,19 @@ export interface Training {
   id: string; datum: IsoDatum; oefening: string; spiergroep: string | null
   sets: number | null; reps: number | null; gewicht_kg: number | null
   rpe: number | null; notitie: string | null
+}
+/**
+ * Eén keer aerobe inspanning: soort, duur en hoe zwaar hij telt.
+ *
+ * `geschat` hoort bij `intensiteit` en niet bij `minuten`: de duur staat er,
+ * de zwaarte is afgeleid uit de soort tenzij iemand hem zelf koos. Zie
+ * `src/health/inspanning.ts` voor waarom dat verschil hier staat en niet in
+ * een opzoektabel.
+ */
+export interface Inspanning {
+  id: string; datum: IsoDatum; soort: string; eigennaam: string | null
+  minuten: number; intensiteit: 'matig' | 'zwaar'; geschat: boolean
+  bron: string; tijd: string | null; notitie: string | null
 }
 export interface Vragenlijst {
   id: string; datum: IsoDatum; soort: string

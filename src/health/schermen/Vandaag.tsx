@@ -1,23 +1,23 @@
 /**
- * VANDAAG — het scherm waar de dag op gebeurt.
+ * VANDAAG: het scherm waar de dag op gebeurt.
  *
  * Dit scherm was een formulier. Drie invulvelden, twee nullen en een leeg
  * tekstvak; alles klopte en niemand had zin om het te openen. Wie de app voor
- * het eerst opende zag "0 van 161 g", "0 kcal" en "nog geen doel" — drie keer
+ * het eerst opende zag "0 van 161 g", "0 kcal" en "nog geen doel", drie keer
  * de mededeling dat er niets is.
  *
  * Wat er nu staat begint bij wat er wél is. Bovenaan één beeld dat de dag
  * samenvat, met een ring die de onzekerheidsband toont in plaats van een harde
  * streep: dat is de stelling van deze app als plaatje in plaats van als
  * voetnoot. Is er nog geen doel, dan telt diezelfde ring af naar de zevende
- * weging — een bereikbaar doel in plaats van een lege mededeling.
+ * weging, een bereikbaar doel in plaats van een lege mededeling.
  *
  * Daaronder vier maaltijdvakken die er altijd staan, ook leeg. Een leeg vak met
  * een naam en een uitnodiging is iets heel anders dan een leeg scherm.
  *
  * En sinds kort zijn die vakken ook de ingang: je tikt op het vak en het
  * invoervel gaat open met dat moment er al in. Het tekstvak dat hier stond is
- * daarheen verhuisd. Het hoorde hier niet — loggen gebeurt op drie manieren
+ * daarheen verhuisd. Het hoorde hier niet: loggen gebeurt op drie manieren
  * (herhalen, zoeken, beschrijven) en die horen bij elkaar te staan, niet één op
  * dit scherm, één op het volgende tabblad en één in een derde venster.
  *
@@ -26,27 +26,31 @@
  * Hero, dan de knop, dan de vier maaltijdvakken, dan wat er nog in past, dan
  * beweging en slaap. De weging sluit de rij. De reden is de gewone reden waarom
  * je de app opent: je wilt iets loggen. Die knop stond drie kaarten naar beneden
- * en dat is drie kaarten te ver — wie komt om te doen moet niet eerst langs wat
+ * en dat is drie kaarten te ver, wie komt om te doen moet niet eerst langs wat
  * er te lezen valt.
  *
  * De vier vakken staan er direct onder omdat ze hetzelfde doen als die knop: ze
  * zijn zelf de ingang, elk met zijn moment er al in. Knop en vakken uit elkaar
  * trekken met een kaart ertussen zet twee helften van één handeling op twee
- * plekken. Daarna pas "Wat er nog in past" — dat is de vraag die je stelt nadat
+ * plekken. Daarna pas "Wat er nog in past", dat is de vraag die je stelt nadat
  * je gelogd hebt, en de coachkaart beantwoordt hem met één tik.
  *
  * De weging is daarmee naar beneden gezakt, en dat is een afweging en geen
- * vergissing: de hero draagt het vlaggetje al ("✓ gewogen" of "— niet
+ * vergissing: de hero draagt het vlaggetje al ("✓ gewogen" of ", niet
  * gewogen") en tijdens de kalibratie telt de ring de wegingen. Wat hier staat
- * is de invoer, en die hoort bij de andere twee metingen — stappen en slaap.
+ * is de invoer, en die hoort bij de andere twee metingen, stappen en slaap.
  */
 import { useEffect, useState } from 'react'
 import { Chip, Kaart, Knop, Kop, Rij, Tussen, Uitklap, Uitleg } from '../onderdelen/basis'
 import { Dagenstrook, Doelring } from '../hero'
+import { Signaalkaarten } from '../signalen'
+import { LeegGeenMaaltijden } from '../leegbeeld'
+import { Sfeervlak } from '../achtergronden'
+import { SFEERFOTO, SFEER_SIZES, sfeerSrcset } from '../sfeerfotos'
 import type { Dagstaaf } from '../hero'
 import { dec, dz } from '@/gedeeld/getal'
 import { kortNL, langNL, plusDagen, stapDag, vandaag } from '@/gedeeld/datum'
-import type { IsoDatum, Moment, Regel } from '@/gedeeld/db/tabellen'
+import type { IsoDatum, Moment, Profiel, Regel } from '@/gedeeld/db/tabellen'
 import { roep } from '@/gedeeld/db/rpc'
 import type { EiwitrijkTreffer, NieuweRegel, VerzadigingTreffer } from '@/gedeeld/db/rpc'
 import { herkomstVan } from '../herkomst'
@@ -55,12 +59,17 @@ import type { Analyse, Dagenkaart, DagMetTotalen } from '../rekenkern'
 import { momentNu } from '../vensters/Portie'
 import { meldenNu, tekort, voorstellen } from '../coach'
 import type { Tekort } from '../coach'
+import { VENSTER_DAGEN, adviezen, nagekeken, teWeinigGelogd } from '../suppletie'
+import { GEEN_VOORKEUR, PATROONNAAM, ietsIngesteld } from '../voorkeuren'
+import type { Voorkeuren } from '../voorkeuren'
 import { herhaalRegel } from '../herhaal'
 import { useDonker } from '../thema'
 import { WegMomenten, WegVerzadiging, WegWeging } from '../tekens'
 
 export interface VandaagEigenschappen {
   a: Analyse
+  /** Voor de signaalkaarten: de conditie en de fase staan erin. */
+  profiel: Profiel
   dag: DagMetTotalen
   regels: Regel[]
   /** De hele geschiedenis, want de coach stelt voor uit wat je zelf eet. */
@@ -75,6 +84,8 @@ export interface VandaagEigenschappen {
   opInvoer: (m: Moment) => void
   /** De dag uitgesplitst, met per regel waar het getal vandaan komt. */
   opOverzicht: () => void
+  /** Het vel waarin je je hele dag vertelt. Zie `vensters/Dagverslag.tsx`. */
+  opVerslag: () => void
   wisRegel: (id: string) => void
   /** Eén tik op een voorstel zet het meteen op de dag. */
   voegToe: (regels: NieuweRegel[]) => void
@@ -82,13 +93,61 @@ export interface VandaagEigenschappen {
   token: string
   /** Het portievenster openen, zodat je de hoeveelheid nog kunt bijstellen. */
   opPortie: (o: Onderwerp) => void
+  /**
+   * "Dit nooit meer voorstellen", op NEVO-code. Schrijft in het profiel; de
+   * naam gaat mee zodat "Wat je lust" hem later kan tonen.
+   */
+  opWeigeren: (code: string, naam: string) => void
+  /** "Wat je lust" openen: de verwijzing bovenaan de hero. */
+  opVoorkeuren: () => void
+}
+
+/**
+ * Wat er onder de hero staat over je voorkeuren.
+ *
+ * Twee standen, en het verschil is de bedoeling. Staat er niets, dan is dit een
+ * uitnodiging: de meeste mensen weten niet dat dit bestaat. Staat er wel iets,
+ * dan is het verantwoording, je ziet in één regel waarom bepaalde dingen niet
+ * tussen de voorstellen staan, en dat is precies wat je anders voor domheid van
+ * de app aanziet.
+ *
+ * Er wordt geteld en niet opgesomd. "Vlees en gevogelte, Vleeswaren, Vis" wordt
+ * op een telefoon afgekapt, en een halve opsomming is misleidender dan een
+ * getal: je denkt dat je de hele lijst leest.
+ */
+/** Enkelvoud bij één, meervoud bij de rest. Nul komt hier niet: een deel dat
+ *  leeg is wordt helemaal niet genoemd. */
+function telwoord(n: number, enkel: string, meer: string): string {
+  return n === 1 ? enkel : meer
+}
+
+export function voorkeurzin(v: Voorkeuren | undefined): string {
+  const x = v ?? GEEN_VOORKEUR
+  if (!ietsIngesteld(x)) {
+    return 'De voorstellen uit de tabel weten nog niet wat je lust.'
+  }
+  const delen: string[] = []
+  if (x.patroon !== 'alles') delen.push(PATROONNAAM[x.patroon].toLowerCase())
+  /* "1 groepen uit" stond er maandenlang, en de proef eronder legde het vast in
+     plaats van het te vangen: er stond `toContain('1 groepen uit')`. Een proef
+     die de fout opschrijft is erger dan geen proef, hij houdt hem tegen. */
+  if (x.nooit.length) delen.push(`${x.nooit.length} ${telwoord(x.nooit.length, 'groep', 'groepen')} uit`)
+  if ((x.keukens ?? []).length) {
+    const n = (x.keukens ?? []).length
+    delen.push(`${n} ${telwoord(n, 'keuken', 'keukens')} uit`)
+  }
+  if ((x.nietProduct ?? []).length) {
+    delen.push(`${(x.nietProduct ?? []).length} weggeklikt`)
+  }
+  if (x.liever.length) delen.push(`${x.liever.length} liever`)
+  return `Voorstellen houden zich aan: ${delen.join(' · ')}.`
 }
 
 /**
  * De vier momenten van de dag, met hun kleur en hun uitnodiging.
  *
  * `kort` is wat er in het vak past als er vier naast elkaar staan. Het volle
- * woord blijft in de titel en in de schermlezer staan — een afgekapt
+ * woord blijft in de titel en in de schermlezer staan, een afgekapt
  * "Tussend…" is minder duidelijk dan een korter woord dat wél af is.
  */
 const MOMENTEN: Array<{ id: Moment; naam: string; kort: string; klas: string; leeg: string }> = [
@@ -101,24 +160,83 @@ const MOMENTEN: Array<{ id: Moment; naam: string; kort: string; klas: string; le
 
 /**
  * Het verloop van de hero volgt het uur: warm bij het begin van de dag, koel
- * aan het eind. Oriëntatie, geen effect — je ziet aan de kleur of je aan het
+ * aan het eind. Oriëntatie, geen effect: je ziet aan de kleur of je aan het
  * begin of aan het eind van je dag staat.
  *
  * Het verloop gaat als inline stijl naar binnen, en inline stijl luistert niet
  * naar een media query. Er moeten dus twee sets zijn en de app moet zelf kijken
  * welke geldt; anders staat er in het donkere thema lichte tekst op een lichte
  * achtergrond, en dat is niet lelijk maar onleesbaar.
+ *
+ * WAAROM ER DRIE LAGEN ZIJN EN GEEN ENKELE LIJN
+ *
+ * Hier stond één lineair verloop met drie stops die nauwelijks van elkaar
+ * verschilden, van #FBEEDA naar #EDD7CE is zes procent helderheid. Over een
+ * hero van driehonderd punten hoog leest zoiets als één vlakke kleur: het
+ * verloop was er wel en je zag het niet.
+ *
+ * Nu drie lagen over elkaar. Onderop dezelfde lijn, maar met meer afstand
+ * tussen de stops. Daarboven twee ronde velden in tegenovergestelde hoeken:
+ * licht linksboven waar de groet staat, en een tweede kleur rechtsonder waar de
+ * ring staat. Die tweede kleur is per dagdeel een andere (perzik, het groen
+ * van de app, indigo) en dat is wat het levendig maakt: twee kleuren die
+ * elkaar in de diagonaal ontmoeten in plaats van één die langzaam vervaagt.
+ *
+ * De kleurkeuze zelf is niet veranderd: warm bij het begin, groen in het
+ * midden, koel aan het eind. Alleen de spanning ertussen.
+ *
+ * Dit is een achtergrond waar donkere tekst op staat, dus het heeft een grens.
+ * De contrastproef in `health-voorbeeld.mjs` leest de werkelijke kleur onder
+ * elk stukje tekst (verlopen meegerekend) en houdt AA aan. Wie hier aan
+ * draait, draait die proef.
  */
+/* DE KLEUREN ZIJN VOLLER GEWORDEN, EN DAT HAD EEN REDEN EN EEN REM
+
+   De reden: ze irriteerden. Wat er stond was crème dat naar perzik kantelde,
+   over driehonderd punten hoogte leest dat als stof, niet als ochtend.
+
+   De rem is de kleine grijze tekst eronder, die op de werkelijke beeldpunten
+   4,5 moet halen. Elke keer dat de kleur voller wordt, zakt die regel. Dat is
+   precies waarom het hier zo bleek stond.
+
+   Wat er nu staat is gemeten en niet gekozen: per dagdeel de volste variant die
+   de contrastproef in `health-voorbeeld.mjs` nog haalt. De avond is met opzet
+   lichter dan de andere twee, violet in de rechteronderhoek landt precies waar
+   de grijze regels staan, en die combinatie zakte als eerste. Wie hier aan
+   draait, draait die proef. */
 const HERO = {
   licht: [
-    ['linear-gradient(155deg,#FBEEDA 0%,#F4E0D2 55%,#EDD7CE 100%)', 'rgba(255,247,235,.75)'],
-    ['linear-gradient(155deg,#EAF1E6 0%,#DFEBE6 55%,#D8E7E4 100%)', 'rgba(255,255,255,.7)'],
-    ['linear-gradient(155deg,#E4E9F1 0%,#DCE2EE 55%,#D6DCEA 100%)', 'rgba(255,255,255,.55)'],
+    [/* ochtend: mango: goud linksboven, warm oranje in de hoek waar de ring staat */
+     'radial-gradient(118% 96% at 6% -8%,#FFFCEB 0%,rgba(255,252,235,0) 54%),'
+     + 'radial-gradient(96% 88% at 96% 96%,rgba(255,164,30,.44) 0%,rgba(255,164,30,0) 64%),'
+     + 'linear-gradient(152deg,#FFF6D6 0%,#FFE9A8 52%,#FFD98A 100%)',
+     'rgba(255,252,236,.8)'],
+    [/* middag, aqua, helder en koel zonder grijs te worden */
+     'radial-gradient(118% 96% at 6% -8%,#EFFDFF 0%,rgba(239,253,255,0) 52%),'
+     + 'radial-gradient(96% 88% at 96% 96%,rgba(0,190,205,.40) 0%,rgba(0,190,205,0) 64%),'
+     + 'linear-gradient(152deg,#E2FAFC 0%,#BFF1F6 52%,#A2E8F0 100%)',
+     'rgba(255,255,255,.78)'],
+    [/* avond, violet, en met opzet lichter dan de andere twee: deze kleur landt
+        in de hoek waar de grijze regels staan, en zakte daar als eerste door de
+        ondergrens. Gemeten en niet geschat. */
+     'radial-gradient(118% 96% at 6% -8%,#FFF8FD 0%,rgba(255,248,253,0) 52%),'
+     + 'radial-gradient(96% 88% at 96% 96%,rgba(206,96,190,.24) 0%,rgba(206,96,190,0) 64%),'
+     + 'linear-gradient(152deg,#FDF3FA 0%,#F6E4F4 52%,#EED6EE 100%)',
+     'rgba(255,255,255,.72)'],
   ],
   donker: [
-    ['linear-gradient(155deg,#2A2118 0%,#251C17 55%,#201A16 100%)', 'rgba(255,214,150,.10)'],
-    ['linear-gradient(155deg,#1A2320 0%,#18211E 55%,#161E1D 100%)', 'rgba(180,255,220,.08)'],
-    ['linear-gradient(155deg,#181C26 0%,#171B24 55%,#151821 100%)', 'rgba(160,190,255,.08)'],
+    ['radial-gradient(118% 96% at 6% -8%,rgba(255,206,110,.15) 0%,rgba(255,206,110,0) 54%),'
+     + 'radial-gradient(96% 88% at 96% 96%,rgba(190,110,20,.26) 0%,rgba(190,110,20,0) 64%),'
+     + 'linear-gradient(152deg,#2F2617 0%,#271F14 52%,#1F1810 100%)',
+     'rgba(255,220,150,.11)'],
+    ['radial-gradient(118% 96% at 6% -8%,rgba(96,226,240,.13) 0%,rgba(96,226,240,0) 52%),'
+     + 'radial-gradient(96% 88% at 96% 96%,rgba(0,130,145,.30) 0%,rgba(0,130,145,0) 64%),'
+     + 'linear-gradient(152deg,#13262A 0%,#112126 52%,#0F1B20 100%)',
+     'rgba(170,240,255,.09)'],
+    ['radial-gradient(118% 96% at 6% -8%,rgba(226,150,220,.12) 0%,rgba(226,150,220,0) 52%),'
+     + 'radial-gradient(96% 88% at 96% 96%,rgba(140,60,130,.26) 0%,rgba(140,60,130,0) 64%),'
+     + 'linear-gradient(152deg,#271A26 0%,#221721 52%,#1C131C 100%)',
+     'rgba(240,180,235,.09)'],
   ],
 } as const
 
@@ -146,7 +264,7 @@ export function Vandaag(p: VandaagEigenschappen) {
   const koolh = regels.reduce((n, r) => n + (r.koolhydraat_g ?? 0), 0)
   const vet = regels.reduce((n, r) => n + (r.vet_g ?? 0), 0)
 
-  /* De strook van veertien dagen. Hij staat er ook — juist — als er weinig in
+  /* De strook van veertien dagen. Hij staat er ook (juist) als er weinig in
      staat: dan laat hij zien dat er iets te beginnen valt. */
   const strook: Dagstaaf[] = Array.from({ length: 14 }, (_, i) => {
     const d = plusDagen(datum, i - 13)
@@ -173,7 +291,7 @@ export function Vandaag(p: VandaagEigenschappen) {
     const doel = a.doel ?? 0
     if (dag._kcal === 0) return { zin: 'Nog niets gelogd vandaag. Eén regel is genoeg om te beginnen.' }
     if (dag._kcal > doel * 1.08) {
-      return { zin: 'Boven de streep van vandaag. Eén dag zegt niets — de weegreeks corrigeert het vanzelf.' }
+      return { zin: 'Boven de streep van vandaag. Eén dag zegt niets: de weegreeks corrigeert het vanzelf.' }
     }
     if (dag._kcal >= doel * 0.9) return { zin: 'Je zit er precies op.' }
     return { zin: `Nog ${dz(Math.max(0, Math.round(doel - dag._kcal)))} kcal te gaan.` }
@@ -206,6 +324,25 @@ export function Vandaag(p: VandaagEigenschappen) {
       <section className="hero"
                style={{ '--herobg': kleur.achtergrond, '--heroglow': kleur.glans } as React.CSSProperties}>
         <div className="heroglans" />
+        {/* DE FOTO STAAT BOVEN DE TEKST EN NIET ERACHTER
+            Dat is geen voorzichtigheid maar wat eruit kwam toen het gemeten
+            werd. Erachter kán: met een waas van 0,76 en het stille grijs één
+            tint donkerder haalt de krapste regel nog 4,74. Maar wat je dan ziet
+            is geen foto meer, bij die dichtheid is de fruitschaal een beige
+            waas, en juist de Vandaag-hero staat zo vol tekst dat er geen open
+            vlak is waar het beeld zichzelf kan zijn.
+
+            Boven de tekst blijft hij een foto, op volle kleur, en kan het
+            verloop eronder tegelijk voller worden. Het is dezelfde band die de
+            vijf andere schermen al dragen, Vandaag was het enige scherm dat uit
+            de toon viel. */}
+        <img className="schermstrook" src={SFEERFOTO.vandaag}
+             srcSet={sfeerSrcset(SFEERFOTO.vandaag)} sizes={SFEER_SIZES}
+             alt="" loading="lazy" aria-hidden="true" />
+        {/* Het blad hoort bij voeding, en de hero gaat over wat je vandaag at.
+            Hij neemt hier de inktkleur; waarom, staat bij `.hero .sfeer` in de
+            stijl. */}
+        <Sfeervlak soort="blad" />
         <div className="heroboven">
           <div>
             <span className="eyebrow">{isVandaag ? kleur.groet : kortNL(datum)}</span>
@@ -217,9 +354,30 @@ export function Vandaag(p: VandaagEigenschappen) {
                 : 'Je dag tot nu toe'}
             </h2>
           </div>
-          <span className={'vlaggetje ' + (gewogen ? 'goed' : 'rust')}>
-            {gewogen ? '✓ gewogen' : '— niet gewogen'}
-          </span>
+          {/* HET WEEGVELD STAAT IN DE HERO EN NIET ONDERAAN
+              Het stond onderaan het dagscherm, achter alles langs. Dat is de
+              verkeerde plek voor de eerste handeling van de dag: je moest langs
+              zes kaarten scrollen om het ene getal in te vullen waar de hele
+              app op rust, en de kop erboven zei ondertussen "stap op de
+              weegschaal".
+
+              Zodra er gewogen is, verdwijnt het veld en staat er wat er staat.
+              De kaart onderaan blijft bestaan om te corrigeren en om uit te
+              leggen waarom dit de kern is; die hoeft niet bovenaan. */}
+          {isVandaag && !gewogen ? (
+            <label className="heroweeg">
+              <span className="wat">weeg je even?</span>
+              <input type="number" step="0.1" inputMode="decimal" placeholder="–"
+                     key={'hero-gw' + datum}
+                     aria-label="Gewicht in kilo"
+                     onBlur={(e) => p.zetDagveld('gewicht_kg', e.target.value || null)} />
+              <span className="eh">kg</span>
+            </label>
+          ) : (
+            <span className={'vlaggetje ' + (gewogen ? 'goed' : 'rust')}>
+              {gewogen ? `✓ ${dec(dag.gewicht_kg, 1)} kg` : '– niet gewogen'}
+            </span>
+          )}
         </div>
 
         <div className="heroring">
@@ -244,7 +402,7 @@ export function Vandaag(p: VandaagEigenschappen) {
             {kalibreert ? (
               <p style={{ fontSize: '.9rem' }}>
                 Nog <b>{nogNodig}</b> ochtendweging{nogNodig === 1 ? '' : 'en'}, dan zegt het model
-                wat jouw lichaam werkelijk verbruikt — gemeten aan jou, niet uit een formule.
+                wat jouw lichaam werkelijk verbruikt, gemeten aan jou en niet uit een formule.
               </p>
             ) : (
               <>
@@ -274,6 +432,28 @@ export function Vandaag(p: VandaagEigenschappen) {
           {reeksNu > 1 && <> · <b>{reeksNu} dagen op rij</b></>}
         </div>
 
+        {/* DAT ER MAATWERK IS, HOORT OP HET STARTSCHERM TE STAAN
+
+            "Wat je lust" zit in Profiel → Instellingen, drie tikken diep. Wie
+            het niet toevallig openslaat weet niet dat het bestaat, en denkt dus
+            dat de app hem paardenrookvlees voorstelt omdat hij dom is.
+
+            Daarom staat het hier, onder de hero, en in twee standen. Heb je nog
+            niets ingesteld, dan nodigt het uit. Heb je wel iets ingesteld, dan
+            zegt het wat er geldt, dat is geen reclame meer maar verantwoording:
+            je ziet waaróm er dingen níet tussen staan.
+
+            Eén regel, geen kaart. Dit is een verwijzing en geen onderwerp; een
+            kaart zou het gewicht geven van de dingen erboven, en die gaan over
+            je dag. */}
+        <Tussen style={{ marginTop: 12 }}>
+          <span className="mini">{voorkeurzin(p.profiel.instellingen.voorkeuren)}</span>
+          <Knop klein titel="Wat je lust instellen" opKlik={p.opVoorkeuren}>
+            {ietsIngesteld(p.profiel.instellingen.voorkeuren ?? GEEN_VOORKEUR)
+              ? 'aanpassen' : 'instellen'}
+          </Knop>
+        </Tussen>
+
         <div className="macros">
           <Macro naam="Eiwit" klas="eiwit" gram={dag._eiwit} doel={a.eiwitDoel}
                  kcalTotaal={dag._kcal} perGram={4} />
@@ -285,14 +465,32 @@ export function Vandaag(p: VandaagEigenschappen) {
       </section>
 
       {/* Eén knop met een vulling op het hele scherm. Wie de app opent om te
-          loggen — en dat is de gewone reden — hoeft niet te zoeken waar dat
+          loggen (en dat is de gewone reden) hoeft niet te zoeken waar dat
           kan. Het moment wordt uit de klok geraden; in het vel kun je het met
           één tik veranderen. */}
-      <button type="button" className="hoofdknop" style={{ marginBottom: 14 }}
+      <button type="button" className="hoofdknop" style={{ marginBottom: 6 }}
               onClick={() => p.opInvoer(momentNu(datum))}>
         <span aria-hidden="true">＋</span>
         <span>Eten toevoegen</span>
       </button>
+
+      {/* DE TWEEDE WEG, EN WAAROM HIJ KLEIN IS
+
+          De knop erboven is voor de maaltijd die je nú logt; dit is voor de
+          avond waarop je bedenkt dat je vandaag nog niets hebt ingevoerd. Die
+          tweede dag komt minder vaak voor, dus hij krijgt minder gewicht, maar
+          hij hoort hier en niet weggestopt onder Meer, want het is precies het
+          moment waarop je de app opendoet en er geen zin in hebt.
+
+          Hij verdwijnt niet als de dag al vol staat. Je kunt best om acht uur
+          drie maaltijden hebben gelogd en alsnog de rest willen vertellen. */}
+      <div style={{ marginBottom: 14, textAlign: 'center' }}>
+        <button type="button" className="alsLink klein" onClick={p.opVerslag}>
+          of vertel je hele dag in één keer
+        </button>
+      </div>
+
+      <Signaalkaarten profiel={p.profiel} />
 
       <Kaart>
         <Tussen>
@@ -302,7 +500,7 @@ export function Vandaag(p: VandaagEigenschappen) {
 
               De titel begint met het woord dat er ook staat. `Knop` maakt van
               `titel` een aria-label, en dat vervángt de zichtbare tekst voor een
-              schermlezer of spraakbediening — "klik details" moet dan wel nog
+              schermlezer of spraakbediening, "klik details" moet dan wel nog
               ergens op slaan. */}
           {regels.length > 0 && (
             <Knop klein opKlik={p.opOverzicht}
@@ -372,16 +570,31 @@ export function Vandaag(p: VandaagEigenschappen) {
           })}
         </div>
         {regels.length === 0 && (
-          <p className="mini" style={{ marginTop: 10 }}>
-            Nog niets gelogd op {kortNL(datum)}. Eén regel is genoeg om te beginnen — het model
-            rekent liever met de helft dan met niets. Tik een vak aan, of gebruik de knop hierboven.
-          </p>
+          /* De tekening maakt de leegte draaglijk; de zin eronder zegt nog steeds
+             wat er aan de hand is en wat je kunt doen. Haal je de tekening weg,
+             dan klopt het scherm nog. */
+          <>
+            <LeegGeenMaaltijden />
+            <p className="mini" style={{ marginTop: 2, textAlign: 'center' }}>
+              Nog niets gelogd op {kortNL(datum)}. Eén regel is genoeg om te beginnen: het model
+              rekent liever met de helft dan met niets. Tik een vak aan, of gebruik de knop hierboven.
+            </p>
+          </>
         )}
       </Kaart>
 
       {isVandaag && <Coachkaart {...p} />}
 
       {isVandaag && a.doel != null && <WatVult {...p} />}
+
+      {/* Dezelfde poort als "Wat vult het best" hierboven, en om dezelfde reden:
+          zonder doel is de gebruiker nog aan het kalibreren en heeft hij geen
+          achtentwintig dagen achter zich. Deze kaart zou dan "0 van de 28 dagen
+          gelogd" melden, en dat is ruis op de dag dat je begint.
+
+          Een bestaande proef ving dit: hij eist dat "Beweging en slaap" direct
+          onder de maaltijdvakken staat zolang er geen doel is. */}
+      {isVandaag && a.doel != null && <Suppletiekaart {...p} />}
 
       <Kaart zij>
         <Kop>Beweging en slaap</Kop>
@@ -413,7 +626,7 @@ export function Vandaag(p: VandaagEigenschappen) {
           </p>
           <p>
             Wat stappen wél doen, doen ze via de weegschaal. Beweeg je structureel meer, dan verschuift
-            de helling, en dat ziet het model vanzelf — zonder dat er iets bij opgeteld hoeft te worden.
+            de helling, en dat ziet het model vanzelf, zonder dat er iets bij opgeteld hoeft te worden.
           </p>
         </Uitleg>
       </Kaart>
@@ -425,7 +638,7 @@ export function Vandaag(p: VandaagEigenschappen) {
           Het eiwitdoel staat op gecorrigeerd gewicht en niet op je werkelijke gewicht: vetmassa
           vraagt nauwelijks eiwit, dus rekenen op {dec(a.gewicht, 0)} kilo geeft een doel dat niemand
           haalt en dat nergens op slaat. De correctie kapt het referentiegewicht af op BMI 30, wat
-          voor jou {dec(a.eiwitRef, 0)} kilo geeft — {dec(p.eiwitPerKg, 1)} g/kg maakt {a.eiwitDoel} g.
+          voor jou {dec(a.eiwitRef, 0)} kilo geeft, en {dec(p.eiwitPerKg, 1)} g/kg maakt {a.eiwitDoel} g.
         </p>
         <p>
           Waarom het hoog staat: bij een tekort is eiwit wat bepaalt of je gewichtsverlies uit vet
@@ -440,7 +653,7 @@ export function Vandaag(p: VandaagEigenschappen) {
  * Eén macro-staafje.
  *
  * Eiwit heeft een doel, dus daar is een vulling zinvol: de balk zegt hoe ver je
- * bent. Koolhydraten en vet hebben er geen — deze app schrijft geen verdeling
+ * bent. Koolhydraten en vet hebben er geen, deze app schrijft geen verdeling
  * voor. Een volle balk zetten omdat er "iets" gelogd is zou precies de
  * schijnprecisie zijn waar de rest van de app zich tegen verzet.
  *
@@ -467,7 +680,7 @@ function Macro(
       <div className="mini" style={{ marginTop: 3 }}>
         {heeftDoel
           ? `${Math.round(deel)}% van je doel`
-          : kcalTotaal > 0 ? `${Math.round(aandeel)}% van de energie` : '—'}
+          : kcalTotaal > 0 ? `${Math.round(aandeel)}% van de energie` : '–'}
       </div>
     </div>
   )
@@ -488,7 +701,7 @@ function Weging(
         {gewogen && <span className="vlaggetje goed">✓ gedaan</span>}
       </Tussen>
       <Rij style={{ marginTop: 8, alignItems: 'center' }}>
-        <input className="smal" type="number" step="0.1" inputMode="decimal" placeholder="—"
+        <input className="smal" type="number" step="0.1" inputMode="decimal" placeholder="–"
                key={'gw' + datum} defaultValue={dag.gewicht_kg ?? ''}
                aria-label="Gewicht in kilo"
                onBlur={(e) => zetDagveld('gewicht_kg', e.target.value || null)}
@@ -509,7 +722,7 @@ function Weging(
           het systeem. Alles wat je eet gaat door een schatting heen; de weegschaal niet.
         </p>
         <p>
-          Nuchter, na het toilet, vóór het eten — steeds op dezelfde manier, want het gaat om het
+          Nuchter, na het toilet, vóór het eten, en steeds op dezelfde manier, want het gaat om het
           verschil tussen dagen en niet om de absolute waarde. Dagelijkse schommelingen van één tot
           twee kilo zijn vocht, glycogeen en darminhoud. Daarom leest het model de helling en niet de
           meting.
@@ -520,7 +733,7 @@ function Weging(
 }
 
 /* ==========================================================================
-   DE COACH — wat er nog in past, en wat dat kan vullen
+   DE COACH, wat er nog in past, en wat dat kan vullen
    ==========================================================================
 
    Het rekenwerk staat in `coach.ts` en is daar bewezen; hier staat alleen hoe
@@ -566,7 +779,7 @@ function Coachkaart(p: VandaagEigenschappen) {
       {t.erover ? (
         <p className="klein" style={{ marginTop: 6 }}>
           Je zit <span className="cijfer">{dz(Math.abs(Math.round(t.kcalOver)))}</span> kcal over je
-          doel. Eén dag is geen trend — de weegreeks van morgen zegt meer dan dit getal.
+          doel. Eén dag is geen trend: de weegreeks van morgen zegt meer dan dit getal.
         </p>
       ) : (
         <p className="klein" style={{ marginTop: 6 }}>
@@ -579,37 +792,73 @@ function Coachkaart(p: VandaagEigenschappen) {
             </span></>
           )}
           {t.eiwitOver > 0
-            ? <> en <span className="cijfer">{Math.round(t.eiwitOver)}</span> g eiwit te gaan
-                — dat vraagt <span className="cijfer">{dec((t.eis ?? 0) * 100, 1)}</span> g eiwit
-                per 100 kcal in alles wat er nog bij komt.</>
+            ? <> en <span className="cijfer">{Math.round(t.eiwitOver)}</span> g eiwit te gaan.</>
             : <>. Je eiwit is binnen.</>}
         </p>
       )}
 
+      {/* DE LAT, EN WAAROM HIJ ZO HEET
+
+          Hier stond "dat vraagt 7,5 g eiwit per 100 kcal in alles wat er nog bij
+          komt", een juiste zin die niemand koppelde aan het vlaggetje "op
+          tempo" bij de voorstellen eronder. Dat vlaggetje stond alleen bij de
+          goede gevallen; bij de rest stond niets, en niets leest als "prima".
+
+          Nu draagt één woord het: de lat. Hij wordt hier uitgelegd door het
+          getal dat ernaast staat, en daarna wijst elke regel zichzelf aan,
+          zakt hij of stijgt hij. Daar is geen woordenlijst voor nodig.
+
+          Niet 'balans': dat woord is in deze app de energiebalans, de kern van
+          het hele model. En niet 'verhouding' of 'ratio': die noemen de
+          grootheid en niet het oordeel, dus je zou nog steeds ergens moeten
+          leren welke waarde goed is. */}
+      {!t.erover && t.eiwitOver > 0 && t.eis != null && (
+        <p className="klein" style={{ marginTop: 4 }}>
+          De lat ligt op <span className="cijfer">{dec(t.eis * 100, 1)}</span> g eiwit
+          per 100 kcal: zoveel moet er nog in alles zitten wat er vandaag bij komt.
+        </p>
+      )}
+
+      {/* `voorstellen` is geen opmaak maar een naam: onder deze kaart hangen twee
+          lijsten, deze, uit je eigen geschiedenis, en "Uit de tabel" eronder.
+          Ze zien er hetzelfde uit en beantwoorden een andere vraag. */}
       {lijst.length > 0 && (
-        <div className="lijst" style={{ marginTop: 10 }}>
+        <div className="lijst voorstellen" style={{ marginTop: 10 }}>
           {lijst.map((v) => (
             <div key={v.herhaling.sleutel}>
               <div className="groei">
-                <div className="knip">
-                  {v.naam}
-                  {v.reden === 'eiwit' && <span className="vlaggetje rust"> op tempo</span>}
-                </div>
+                <div className="knip">{v.naam}</div>
                 {/* Eén getal maakt de vier voorstellen vergelijkbaar: eiwit per
                     100 kcal, dezelfde maat waarin de eis staat. "Helpt je eiwit
                     niet" stond hier eerst, en dat is een oordeel op de plek waar
-                    een getal hoort — 46 gram eiwit helpt natuurlijk wel; wat het
+                    een getal hoort, 46 gram eiwit helpt natuurlijk wel; wat het
                     niet doet is de rést van de dag op tempo houden. */}
                 {/* Vijf getallen op één regel waren er vier te veel. Wat je
                     moet weten is wat het kost, wat het levert, en wat er daarna
                     nog te gaan is. De dichtheid in g/100 kcal is de grootheid
                     waarop gerangschikt wordt en hoort in de uitleg thuis, niet
                     op elke regel. */}
+                {/* Wat het kost, wat het levert, en waar de lat daarna ligt.
+                    Dat laatste stond hier als "daarna nog 2.087 kcal en 136 g
+                    eiwit", de twee getallen waaruit je de lat zelf kon delen.
+                    Dat doet niemand. Nu staat de uitkomst er, met de richting
+                    in woorden: zakt of stijgt. De regel zónder goede uitkomst
+                    zegt daarmee ook iets, en dat was precies wat ontbrak.
+
+                    Er is een derde geval en dat is geen bijzaak: de lat kan
+                    bewegen zonder dat je het ziet. Stond er 7,3 en wordt het
+                    7,34, dan zei het scherm "stijgt naar 7,3", een richting
+                    die de twee getallen tegenspreken. Daarom wordt de richting
+                    bepaald op de getallen zoals ze getoond wórden, niet zoals
+                    ze gerekend zijn, en heet dat geval "blijft op". */}
                 <div className="mini">
                   <span className="cijfer">{dz(v.kcal)}</span> kcal ·{' '}
                   <span className="cijfer">{Math.round(v.eiwit)}</span> g eiwit
-                  {' · daarna nog '}<span className="cijfer">{dz(v.restKcal)}</span> kcal
-                  {v.restEiwit > 0 && <> en <span className="cijfer">{v.restEiwit}</span> g eiwit</>}
+                  {v.eisNa == null
+                    ? <>{' · daarna nog '}<span className="cijfer">{dz(v.restKcal)}</span> kcal</>
+                    : <> · lat {dec(v.eisNa * 100, 1) === dec((t.eis ?? 0) * 100, 1) ? 'blijft op'
+                        : v.eisNa < (t.eis ?? 0) ? 'zakt naar' : 'stijgt naar'}{' '}
+                        <span className="cijfer">{dec(v.eisNa * 100, 1)}</span></>}
                 </div>
               </div>
               <Knop klein opKlik={() => p.voegToe([herhaalRegel(v.herhaling, datum, moment)])}>
@@ -626,11 +875,12 @@ function Coachkaart(p: VandaagEigenschappen) {
         </p>
       )}
 
-      <UitDeTabel token={p.token} t={t} opPortie={p.opPortie} />
+      <UitDeTabel token={p.token} t={t} opPortie={p.opPortie}
+                  opWeigeren={p.opWeigeren} />
 
       <Uitleg id="coach" label="hoe deze lijst tot stand komt">
         <p>
-          De voorstellen komen uit je eigen geschiedenis, met de portie die jij toen at — er wordt
+          De voorstellen komen uit je eigen geschiedenis, met de portie die jij toen at. Er wordt
           niets geschat en niets verzonnen.
         </p>
         {t.eis != null && (
@@ -645,13 +895,13 @@ function Coachkaart(p: VandaagEigenschappen) {
         {t.eis != null && (
           <p>
             Bij elk voorstel is te zien wat het kost en wat het levert. Waarop gerangschikt wordt is
-            het quotiënt daarvan — gram eiwit per honderd kcal — want dat is de grootheid waarin de
+            het quotiënt daarvan, gram eiwit per honderd kcal, want dat is de grootheid waarin de
             eis hierboven staat. Bovenaan staat dus niet de grootste portie maar de zuinigste.
           </p>
         )}
         <p>
           Het bereik tussen haakjes komt van wat je logde: die getallen zijn geschat, dus wat je
-          overhoudt is dat ook. Voorgesteld wordt er alleen binnen de puntschatting — onzekerheid
+          overhoudt is dat ook. Voorgesteld wordt er alleen binnen de puntschatting: onzekerheid
           is geen vergunning om erover te gaan.
         </p>
       </Uitleg>
@@ -660,7 +910,7 @@ function Coachkaart(p: VandaagEigenschappen) {
 }
 
 /* ==========================================================================
-   UIT DE TABEL — de tweede laag, en waarom hij eronder staat
+   UIT DE TABEL, de tweede laag, en waarom hij eronder staat
    ==========================================================================
 
    De coach hierboven stelt voor uit je eigen geschiedenis, en dat is de betere
@@ -677,7 +927,7 @@ function Coachkaart(p: VandaagEigenschappen) {
    Drie dingen zijn ontwerp en geen toeval.
 
    Hij staat eronder en niet erboven. Wat jij zelf eet gaat voor wat een tabel
-   voorstelt — een lijst van optimale producten die je nooit koopt is netjes en
+   voorstelt, een lijst van optimale producten die je nooit koopt is netjes en
    nutteloos.
 
    Hij verschijnt alleen als het eiwit knelt. Is je eiwit rond, dan is er niets te
@@ -685,7 +935,7 @@ function Coachkaart(p: VandaagEigenschappen) {
 
    En hij draagt zijn herkomstteken. Een tabelwaarde is gemeten (◆), een
    merkproduct is een etiketopgave (◈), en dat verschil hoort ook hier zichtbaar
-   te zijn — juist hier, want dit is de lijst waar een eiwitshake van de
+   te zijn, juist hier, want dit is de lijst waar een eiwitshake van de
    supermarkt naast een stuk vis kan staan.
 
    Gaat de aanroep mis, dan verdwijnt de kaart zonder melding. Deze laag is een
@@ -693,8 +943,19 @@ function Coachkaart(p: VandaagEigenschappen) {
    gedraaid is, dan hoort daar geen foutmelding over te komen.
 */
 function UitDeTabel(
-  { token, t, opPortie }:
-  { token: string; t: Tekort; opPortie: (o: Onderwerp) => void },
+  { token, t, opPortie, opWeigeren }:
+  { token: string; t: Tekort; opPortie: (o: Onderwerp) => void
+    /**
+     * "Dit nooit meer." De zevenentwintig groepen zijn grof, wie geen
+     * spruitjes lust zou heel "Groente" moeten uitzetten. Dit is de fijne knop
+     * ernaast, en hij staat hier en niet in een vragenlijst: je weet het op het
+     * moment dat het voorstel voor je neus staat, en niet als iemand het je
+     * vraagt.
+     *
+     * De naam gaat mee, zodat "Wat je lust" hem later kan tonen in plaats van
+     * een kale code.
+     */
+    opWeigeren: (code: string, naam: string) => void },
 ) {
   const [lijst, zetLijst] = useState<EiwitrijkTreffer[]>([])
   const eis = t.eis
@@ -734,7 +995,7 @@ function UitDeTabel(
     <div style={{ marginTop: 14 }}>
       <Kop>Uit de tabel</Kop>
       <p className="mini" style={{ marginTop: 2 }}>
-        Het meeste eiwit per calorie binnen wat er nog past — niet wat je meestal eet.
+        Het meeste eiwit per calorie binnen wat er nog past, niet wat je meestal eet.
       </p>
       <div className="lijst" style={{ marginTop: 6 }}>
         {lijst.map((x) => {
@@ -750,6 +1011,12 @@ function UitDeTabel(
                   <span className="cijfer">{Math.round(x.eiwit_g)}</span> g eiwit
                 </span>
               </span>
+              {/* Alleen bij een tabelproduct: een merkproduct draagt geen
+                  NEVO-code, en zonder code valt er niets te onthouden. */}
+              {x.nevo_code && (
+                <Knop klein titel={`${x.naam} niet meer voorstellen`}
+                      opKlik={() => opWeigeren(x.nevo_code as string, x.naam)}>×</Knop>
+              )}
               <Knop klein titel="Portie kiezen" opKlik={() => void kies(x)}>＋</Knop>
             </div>
           )
@@ -760,13 +1027,13 @@ function UitDeTabel(
 }
 
 /* ==========================================================================
-   WAT VULT HET BEST — de derde laag, en waarom hij dicht begint
+   WAT VULT HET BEST, de derde laag, en waarom hij dicht begint
    ==========================================================================
 
    De coach hierboven beantwoordt "wat past er nog in", en rangschikt op eiwit
    per calorie. Dat is één vraag. Er is een tweede die minstens zo vaak gesteld
    wordt: ik ga zo koken, waar heb ik genoeg aan? Dat is een verzadigingsvraag,
-   en die twee lopen uit elkaar — paardenrookvlees heeft een uitstekende
+   en die twee lopen uit elkaar, paardenrookvlees heeft een uitstekende
    eiwitdichtheid en vult niets, want een plak van vijftien gram is op in twee
    happen.
 
@@ -779,7 +1046,7 @@ function UitDeTabel(
 
    Het kopgetal is niet de score maar het aantal gram dat je voor honderd
    kilocalorieën krijgt. Dat is een deling van twee gemeten waarden uit de tabel
-   en verder niets — geen weging, geen aanname, en het is precies wat de keuze
+   en verder niets, geen weging, geen aanname, en het is precies wat de keuze
    maakt als je voor de koelkast staat.
 
    De score draagt het teken voor "geschat", en dat is geen bescheidenheid maar
@@ -787,6 +1054,118 @@ function UitDeTabel(
    verzadigingsindex. De drie onderdelen staan er los bij in de uitleg, zodat je
    hem kunt narekenen in plaats van te moeten geloven.
 */
+/* ==========================================================================
+   WAT ER ONTBREEKT, en waarom dit de voorzichtigste kaart van de app is
+   ==========================================================================
+
+   Elke andere kaart hier rust op een getal uit de tabel. Deze niet: van de 2.328
+   producten heeft er geen één een micronutrient ingevuld, dus de app kán niet
+   berekenen hoeveel ijzer of B12 er binnenkwam. Wat hier staat rust op twee
+   zwakkere dingen (wat je zelf hebt aangezet, en uit welke hoeken je gelogd
+   hebt) en elke regel zegt op welke van de twee.
+
+   Daarom haalt hij pas iets op als je hem opendoet, net als "Wat vult het best".
+   Wie er niets aan heeft hoort de vraag aan de database niet te betalen, en een
+   kaart die uit zichzelf over vitamines begint is opdringeriger dan deze app
+   hoort te zijn.
+
+   De regels zelf staan in `src/health/suppletie.ts`, met hun proeven.
+*/
+function Suppletiekaart(p: VandaagEigenschappen) {
+  return (
+    <Uitklap id="suppletie" kop="Wat ontbreekt er?" teken={WegVerzadiging}
+             dicht="Wat er volgens je voorkeuren en je log misschien te weinig binnenkomt.">
+      <Suppletielijst token={p.token} profiel={p.profiel} />
+    </Uitklap>
+  )
+}
+
+function Suppletielijst({ token, profiel }: { token: string; profiel: Profiel }) {
+  const [hoeken, zetHoeken] = useState<{ groepen: string[]; dagen: number } | null>(null)
+
+  useEffect(() => {
+    void roep('kal_hoeken', { p_token: token, p_dagen: VENSTER_DAGEN }).then(zetHoeken)
+  }, [token])
+
+  if (!hoeken) return <p className="mini">Even kijken…</p>
+
+  const vraag = {
+    voorkeuren: profiel.instellingen.voorkeuren ?? GEEN_VOORKEUR,
+    gelogdeGroepen: hoeken.groepen,
+    dagenGelogd: hoeken.dagen,
+    /* Vitamine D en B12-bij-metformine hangen niet aan de log maar aan het
+       profiel. Zonder deze drie velden zou de grootste suppletieregel van
+       Nederland nooit kunnen vuren. */
+    leeftijd: profiel.leeftijd_jaar,
+    geslacht: profiel.geslacht,
+    conditie: profiel.instellingen.conditie,
+  }
+  const lijst = adviezen(vraag)
+  /* Staat er altijd als er te weinig gelogd is, ook onder een gevulde lijst.
+     Zie `teWeinigGelogd`: zonder deze regel leest "geen omega-3" als "vis is in
+     orde" terwijl de app het niet kan zien. */
+  const karig = teWeinigGelogd(vraag)
+
+  /* EEN LEGE LIJST MOET ZEGGEN WAT ER NAGEKEKEN IS
+     Anders is "niets gevonden" niet te onderscheiden van "de lijst is stuk",
+     en dat was letterlijk de eerste vraag die erover gesteld werd. */
+  if (!lijst.length) {
+    return (
+      <>
+        <p className="klein">
+          {karig ?? 'Uit je voorkeuren en je log volgt niets wat ontbreekt.'}
+        </p>
+        <div className="lijst" style={{ marginTop: 6 }}>
+          {nagekeken(vraag).map((r) => (
+            <div key={r.wat}>
+              <span className="rijkop groei">{r.wat}</span>
+              <span className="mini" style={{ color: 'var(--dim)' }}>{r.stand}</span>
+            </div>
+          ))}
+        </div>
+        <p className="mini" style={{ marginTop: 8 }}>
+          Dat is geen garantie: de tabel bevat geen vitamines en mineralen, dus de app kan
+          alleen zien welke hoeken je overslaat en niet hoeveel er van iets binnenkomt.
+        </p>
+      </>
+    )
+  }
+
+  return (
+    <>
+      {karig && (
+        <Kaart plat style={{ marginTop: 8 }}>
+          <p className="klein">{karig}</p>
+        </Kaart>
+      )}
+      {lijst.map((a) => (
+        <Kaart plat key={a.id} style={{ marginTop: 8 }}
+               toon={a.zwaarte === 'nodig' ? 'let' : undefined}>
+          <Tussen>
+            <Kop>{a.stof}</Kop>
+            {/* Het verschil tussen nodig en te overwegen hoort te zien te zijn:
+                de gebruiker doet er iets anders mee. B12 bij veganisme naast
+                "kan geen kwaad" zetten maakt van het eerste een suggestie. */}
+            <span className={'vlaggetje ' + (a.zwaarte === 'nodig' ? 'let' : 'rust')}>
+              {a.zwaarte === 'nodig' ? 'nodig' : 'te overwegen'}
+            </span>
+          </Tussen>
+          <p className="klein" style={{ marginTop: 4 }}>{a.reden}</p>
+          {/* De grond staat er apart, want dat is wat je kunt narekenen. */}
+          <p className="mini" style={{ marginTop: 4 }}>{a.grond}</p>
+          <p className="mini" style={{ marginTop: 2, opacity: 0.8 }}>{a.bron}</p>
+        </Kaart>
+      ))}
+      <p className="mini" style={{ marginTop: 10 }}>
+        Dit is geen voorschrift maar wat er uit je eigen antwoorden en je log volgt.
+        De tabel bevat geen vitamines en mineralen, dus de app meet niets. Hij ziet
+        alleen welke hoeken buiten beeld blijven. Overleg met je huisarts of apotheker
+        voordat je iets gaat slikken.
+      </p>
+    </>
+  )
+}
+
 function WatVult(p: VandaagEigenschappen) {
   const { a, dag } = p
   const t = tekort(
@@ -815,7 +1194,7 @@ function WatVultLijst(
     void (async () => {
       try {
         const uit = await roep('kal_verzadiging', {
-          p_token: token, p_max_kcal: ruimte, p_limiet: 5,
+          p_token: token, p_max_kcal: ruimte, p_gerechten: 3, p_producten: 4,
         })
         if (!afgebroken) zetLijst(Array.isArray(uit) ? uit : [])
       } catch {
@@ -840,43 +1219,79 @@ function WatVultLijst(
 
   async function kies(x: VerzadigingTreffer) {
     try {
-      opPortie({
-        soort: 'nevo',
-        product: await roep('kal_portiematen', { p_token: token, p_nevo_code: x.nevo_code }),
-      })
+      if (x.soort === 'gerecht' && x.dish_id) {
+        opPortie({
+          soort: 'gerecht',
+          gerecht: await roep('kal_gerecht', { p_token: token, p_dish_id: x.dish_id }),
+        })
+        return
+      }
+      if (x.nevo_code) {
+        opPortie({
+          soort: 'nevo',
+          product: await roep('kal_portiematen', { p_token: token, p_nevo_code: x.nevo_code }),
+        })
+      }
     } catch { /* het venster gaat dan niet open; een melding hier is erger */ }
   }
 
+  const gerechten = lijst.filter((x) => x.soort === 'gerecht')
+  const producten = lijst.filter((x) => x.soort === 'product')
+
+  const rij = (x: VerzadigingTreffer) => (
+    <div key={x.sleutel}>
+      <span className="groei">
+        <span className="knip" style={{ display: 'block' }}>
+          {x.naam}
+          {x.bekend && (
+            <span className="vlaggetje rust">
+              {x.soort === 'gerecht' ? ' at je al eens' : ' uit je eigen hoek'}
+            </span>
+          )}
+        </span>
+        <span className="mini">
+          <span className="cijfer">{dz(x.gram_per_100kcal)}</span> g voor 100 kcal ·{' '}
+          {x.portie_naam} van <span className="cijfer">{dz(x.portie_gram)}</span> g ·{' '}
+          <span className="cijfer">{dz(x.kcal)}</span> kcal
+        </span>
+      </span>
+      <Knop klein titel={x.soort === 'gerecht' ? 'Gerecht openen' : 'Portie kiezen'}
+            opKlik={() => void kies(x)}>＋</Knop>
+    </div>
+  )
+
   return (
     <>
-      <div className="lijst" style={{ marginTop: 8 }}>
-        {lijst.map((x) => (
-          <div key={x.nevo_code}>
-            <span className="groei">
-              <span className="knip" style={{ display: 'block' }}>
-                {x.naam}
-                {x.bekend && <span className="vlaggetje rust"> uit je eigen hoek</span>}
-              </span>
-              <span className="mini">
-                <span className="cijfer">{dz(x.gram_per_100kcal)}</span> g voor 100 kcal ·{' '}
-                {x.portie_naam} van <span className="cijfer">{dz(x.portie_gram)}</span> g ·{' '}
-                <span className="cijfer">{dz(x.kcal)}</span> kcal
-              </span>
-            </span>
-            <Knop klein titel="Portie kiezen" opKlik={() => void kies(x)}>＋</Knop>
-          </div>
-        ))}
-      </div>
+      {/* TWEE SOORTEN ANTWOORD, EN DUS TWEE LIJSTJES
+          Een gerecht en een opscheplepel champignons zijn niet hetzelfde soort
+          ding. In één ranglijst verdringt de champignon het gerecht, want per
+          honderd kilocalorieën levert hij nu eenmaal meer gram op, en dan
+          krijgt iemand die staat te bedenken wát hij gaat koken een
+          bijgerechtenlijst terug. */}
+      {gerechten.length > 0 && (
+        <>
+          <p className="mini" style={{ marginTop: 10 }}>Om te koken</p>
+          <div className="lijst" style={{ marginTop: 4 }}>{gerechten.map(rij)}</div>
+        </>
+      )}
+      {producten.length > 0 && (
+        <>
+          <p className="mini" style={{ marginTop: gerechten.length ? 14 : 10 }}>
+            {gerechten.length ? 'Of erbij' : 'Om erbij te nemen'}
+          </p>
+          <div className="lijst" style={{ marginTop: 4 }}>{producten.map(rij)}</div>
+        </>
+      )}
       <Uitleg id="verzadiging" label="waar die volgorde vandaan komt">
         <p>
           De volgorde komt uit een score van nul tot honderd, en die score is een <b>schatting uit
-          de samenstelling</b> — geen gemeten verzadigingsindex. Hij telt drie dingen bij elkaar op,
+          de samenstelling</b>, geen gemeten verzadigingsindex. Hij telt drie dingen bij elkaar op,
           in de volgorde waarin ze onderbouwd zijn: hoeveel gram je voor honderd kilocalorieën
           krijgt (45 punten), hoeveel eiwit daarin zit (35) en hoeveel vezel (20).
         </p>
         <p>
           Die volgorde is niet willekeurig. Energiedichtheid is het best onderbouwde gegeven in dit
-          veld — mensen eten grofweg een vast gewicht aan voedsel, niet een vast aantal calorieën.
+          veld: mensen eten grofweg een vast gewicht aan voedsel, niet een vast aantal calorieën.
           Eiwit is de meest verzadigende macronutriënt per calorie. Vezel doet iets, maar bescheiden
           en afhankelijk van het soort. De verhouding 45/35/20 volgt die bewijskracht; dat het
           precies die getallen zijn is een keuze en geen meting.
@@ -885,6 +1300,13 @@ function WatVultLijst(
           Het getal dat vooropstaat is daarom niet de score maar de grammen per honderd
           kilocalorieën. Dat is een deling van twee gemeten waarden uit de voedingsmiddelentabel,
           en dat kun je narekenen.
+        </p>
+        <p>
+          De gerechten staan boven en de losse producten eronder, en die volgorde
+          hangt niet van de score af. Het zijn twee antwoorden op twee vragen: wat
+          zou ik kunnen koken, en wat kan ik erbij nemen. In één ranglijst wint de
+          champignon het altijd van de harira, en dan staat er een bijgerechtenlijst
+          waar een maaltijd hoorde te staan.
         </p>
         <p>
           Dranken staan er niet tussen, en smaakmakers ook niet. Vloeibare calorieën verzadigen

@@ -5,7 +5,7 @@
  *
  * 1. De volgorde. De portie van de fabrikant hoort vooraan, want dat is de maat
  *    waarin het product bedoeld is. Zakt hij naar beneden, dan is "100 g" wat je
- *    krijgt als je niets kiest — en dat is voor een pak koekjes iets anders.
+ *    krijgt als je niets kiest, en dat is voor een pak koekjes iets anders.
  * 2. De band. Een etiket ziet eruit als een exact getal en is het niet.
  *    Verdwijnt die band, dan belooft de app een zekerheid die er niet is.
  * 3. Ontbrekende gegevens. Lang niet elk product heeft een portie of een

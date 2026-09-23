@@ -14,7 +14,7 @@ import { isBeheerst, kaartStand } from './leitner'
 import { leerprofiel, zwakteAnalyse } from './volgsysteem'
 
 export function rapportTekst(stand: Stand, alle: Kaart[]): string {
-  const L = ['Voortgangsrapport — Oefenapp', '==============================', '']
+  const L = ['Voortgangsrapport, Oefenapp', '==============================', '']
   for (const [pid, P] of Object.entries(PROFIELEN)) {
     const prog = schoonVoortgang(stand.prog[pid])
     L.push(P.naam + ' (' + P.niveau + ')')

@@ -2,7 +2,7 @@
  * DE PLANNER BEWEZEN
  *
  * Niet tegen wat ik dacht dat eruit moest komen, maar tegen wat de oude,
- * gedraaide code wérkelijk teruggaf — over dertig planningen, veertig
+ * gedraaide code wérkelijk teruggaf, over dertig planningen, veertig
  * beoordelingen, tien vastzettingen en vijfentwintig samenvoegingen. Zie
  * gereedschap/rasikh-gouden-waarden.mjs.
  *
@@ -27,7 +27,7 @@ describe('de intervallen staan gelijk aan de oude', () => {
   it('REEKS', () => { expect([...REEKS]).toEqual(gouden.reeks) })
 })
 
-describe('plan — dertig standen', () => {
+describe('plan: dertig standen', () => {
   ;(gouden.gevallen as unknown as Array<{
     stand: Stand
     plan: { nieuw: number; reden: string; herhaalTijd: number; budget: number; rest: number; due: string[] }
@@ -59,7 +59,7 @@ describe('plan — dertig standen', () => {
   })
 })
 
-describe('beoordeeld — veertig beoordelingen', () => {
+describe('beoordeeld: veertig beoordelingen', () => {
   ;(gouden.beoordelingen as unknown as Array<{
     voor: AyaStaat | null; cijfer: Cijfer; na: AyaStaat
   }>).forEach((g, i) => {
@@ -106,7 +106,7 @@ describe('beoordeeld — veertig beoordelingen', () => {
   })
 })
 
-describe('vastgezet — tien gevallen', () => {
+describe('vastgezet: tien gevallen', () => {
   ;(gouden.vastzettingen as unknown as Array<{ voor: AyaStaat | null; na: AyaStaat }>)
     .forEach((g, i) => {
       it(`geval ${i}`, () => {
@@ -120,7 +120,7 @@ describe('vastgezet — tien gevallen', () => {
   })
 })
 
-describe('samenvoegen — vijfentwintig gevallen', () => {
+describe('samenvoegen: vijfentwintig gevallen', () => {
   ;(gouden.samenvoegingen as unknown as Array<{ a: Stand; b: Stand; uit: Stand }>)
     .forEach((g, i) => {
       it(`geval ${i}`, () => { expect(samenvoegen(g.a, g.b)).toEqual(g.uit) })

@@ -1,14 +1,14 @@
 # Bouwen
 
 De repo is één Vite-project met negen apps erin. Elke app houdt zijn eigen map en
-dus zijn eigen adres — `/health/`, `/noer/`, `/rasikh/` — want die adressen
+dus zijn eigen adres (`/health/`, `/noer/`, `/rasikh/`) want die adressen
 staan in bladwijzers, in negen service workers en in de tegels op de
 startpagina. Er is geen router en geen enkele app weet van de andere.
 
 ```
 npm install
 npm run dev        de ontwikkelserver
-npm run controle   typen, proeven, bouw en de CSP-proef achter elkaar
+npm run controle   typen, edge, proeven, bouw en de CSP-proef achter elkaar
 ```
 
 ## De losse opdrachten
@@ -16,11 +16,13 @@ npm run controle   typen, proeven, bouw en de CSP-proef achter elkaar
 | | |
 |---|---|
 | `npm run typen` | `tsc --noEmit` over alles in `src/`. Levert niets op, controleert alles. |
+| `npm run edge` | Ontleedt elk bestand in `health/edge/` met de parser van TypeScript. Die map valt buiten `tsc -b` (de functies draaien op Deno en importeren van https-adressen die hier niet te halen zijn) en viel daarmee ook buiten elke andere controle. Geen typecontrole; wel de zekerheid dat Deno het bestand kan inlezen. Hij staat er sinds een uitrol weigerde op een backtick midden in een systeemprompt, die daar drie commits had gestaan. |
 | `npm run proef` | Vitest. Onder meer de gouden waarden van de rekenkern. |
 | `npm run build` | Typen én bouw; het resultaat staat in `dist/`. |
 | `npm run csp` | Zet `dist/` achter een server die de headers uit `vercel.json` meestuurt en laadt elke omgebouwde app in Chromium. Meldt elke CSP-overtreding, en speelt bij Spelletjes een potje, loopt bij Koran uit je hoofd een aya door, bij Geloofsstudie een hele week plus een kaart, bij Computers & Code een Python-les van begin tot eind plus de zandbak, bij Islam leren een profiel met een hele les en de gebedstijden, bij Arabisch een profiel met de eerste oefening, het alfabet en het zoeken, en bij Huiswerk een kind dat inlogt, een som maakt en de ouder-modus opent, om te zien of het ook wérkt. |
-| `node gereedschap/health-voorbeeld.mjs` | Zet `dist/` achter de echte headers, onderschept de databaseaanroepen en vult ze met een verzonnen maar geloofwaardige reeks van achtentwintig dagen. Levert drie foto's van het startscherm van BennaHealth: de eerste dag, na vier weken, en het donkere thema. Het scherm is niet te beoordelen zonder gegevens erin — leeg ziet elk ontwerp er hetzelfde uit. |
-| `npm run gouden-waarden` | Genereert de gouden waarden opnieuw uit de oude code: de rekenkern, de herhalingsplanner, de kaartplanner van Geloofsstudie, de Python-vertaler van Computers & Code, de gebedstijden van Islam leren, de FSRS-planner van Arabisch en het zakgeld, Leitner en de sjablonen van Huiswerk. Alleen nodig als die veranderen, en dat hoort niet te gebeuren. |
+| `node gereedschap/health-voorbeeld.mjs` | Zet `dist/` achter de echte headers, onderschept de databaseaanroepen en vult ze met een verzonnen maar geloofwaardige reeks van achtentwintig dagen, met de klok vastgezet. Het scherm is niet te beoordelen zonder gegevens erin: leeg ziet elk ontwerp er hetzelfde uit. Hij maakt de schermafdrukken én is zelf een proef. Hij valt om bij een lege schermkop, een verkeerd endpoint, een veldnaam die uit de koppelinstructie verdwenen is, maaltijdtegels die niet meebewegen, een sfeerband die wordt opgeblazen of de rand niet haalt, contrast onder 4,5, een kaart die op een breed scherm een gat laat vallen, en een getal van de lezer dat in het naslagvenster opduikt. Hij leest `dist/`, dus **eerst bouwen**. |
+| `node gereedschap/cursus-proef.mjs` | Ook over `dist/`. Gaat over de ingangen van de startpagina: de drie cursussen van de Academie gaan zonder code open, ze hebben elk een eigen tegel, en BennaHealth heeft een eigen ingang die niet langs het gezinsprofiel loopt. Een grep zou hier niet volstaan: het slot was gedrag en geen markering. |
+| `npm run gouden-waarden` | Genereert de gouden waarden opnieuw uit de oude code: de rekenkern, de herhalingsplanner, de kaartplanner van Geloofsstudie, de Python-vertaler van Computers & Code, de gebedstijden van Islam leren, de FSRS-planner van Arabisch en het zakgeld, Leitner en de sjablonen van Huiswerk. Alleen nodig als die veranderen, en dat hoort niet te gebeuren. De vingerafdruk van de schermteksten loopt sinds september over wóórden en niet over tekens (`src/gedeeld/woordgelijk.ts`, met een tweelingbestand voor de generatoren): leestekens rechtzetten mag, een woord of een getal veranderen niet. |
 
 ## De verbouwing is klaar, en dat staat in de code
 
@@ -38,7 +40,7 @@ mee naar `dist/`. Wat in de tweede staat is een echte ingang met React en
 TypeScript. Zo blijft de site werken terwijl er app voor app wordt verbouwd; er
 is geen moment waarop de helft stuk staat.
 
-De eerste lijst is leeg: alle negen apps zijn om. De lijst blijft staan — hij is
+De eerste lijst is leeg: alle negen apps zijn om. De lijst blijft staan: hij is
 de plek waar een nieuwe app die nog niet gebouwd wordt tijdelijk in kan.
 
 Drie losse pagina's onder `huiswerk/` zijn níét omgebouwd en dat is met opzet:
@@ -58,7 +60,7 @@ te krijgen zijn.
 
 **Getypte databasegrens.** Negen apps praten met dertig databasefuncties via
 handgetypte parameternamen. Eén letter mis en PostgREST geeft netjes 200 terug op
-een aanroep die niets doet — het getal blijft dan gewoon weg uit het scherm, en
+een aanroep die niets doet, het getal blijft dan gewoon weg uit het scherm, en
 dat merk je pas als je het mist. In `src/gedeeld/db/rpc.ts` staat elke functie
 één keer, met wat erin gaat en wat eruit komt. Een verkeerde naam is nu een fout
 bij het bouwen.
@@ -70,7 +72,7 @@ voordat er hertekend werd. Dat probleem bestaat in React niet.
 
 **Een strikte Content-Security-Policy.** Die kan alleen als er geen inline script
 en geen inline stijl meer in de pagina staat. Voor de startpagina en
-`/health/` staat hij nu aan — `script-src 'self'`, geen `unsafe-inline` — en
+`/health/` staat hij nu aan (`script-src 'self'`, geen `unsafe-inline`) en
 `npm run csp` laadt beide in een echte Chromium en telt de overtredingen. De
 andere zeven apps hebben nog inline script en vallen daar dus buiten; zodra ze om
 zijn komt hun pad erbij in `vercel.json`.
@@ -81,7 +83,7 @@ uitleg.
 
 ## Wat de apps wél delen
 
-Bijna niets, en dat is de bedoeling — behalve waar zes kopieën van hetzelfde
+Bijna niets, en dat is de bedoeling, behalve waar zes kopieën van hetzelfde
 uit elkaar gaan lopen. Op dit moment is dat drie dingen in `src/gedeeld/`:
 
 | | |
@@ -90,8 +92,8 @@ uit elkaar gaan lopen. Op dit moment is dat drie dingen in `src/gedeeld/`:
 | `wolk.ts` | Aanmelden en bewaren voor de zes apps die dat delen. |
 | `schil.css` | De omlijsting: boven 1000 pixels wordt de tabbalk een zijbalk. |
 
-`schil.css` is stijl en geen component. Vijf apps — Islam leren, Arabisch,
-Computers & Code, Geloofsstudie en Koran uit je hoofd — hadden exact hetzelfde
+`schil.css` is stijl en geen component. Vijf apps (Islam leren, Arabisch,
+Computers & Code, Geloofsstudie en Koran uit je hoofd) hadden exact hetzelfde
 skelet (`header.top` / `nav.tabs` / `main.wrap`) met elk een eigen kopie in hun
 eigen `stijl.css`. Ze zetten nu `schil` op het element dat die drie bij elkaar
 houdt en importeren dat bestand; verder verandert er niets in hun markup en
@@ -99,7 +101,7 @@ houden ze hun eigen kop, hun eigen teller en hun eigen kleuren.
 
 Elke regel in dat bestand staat binnen `@media (min-width:1000px)`. Onder die
 breedte raakt het niets aan: een telefoon krijgt exact de app die hij eerst
-kreeg — nagemeten door de schermafdruk op 420 pixels voor en na te vergelijken,
+kreeg, nagemeten door de schermafdruk op 420 pixels voor en na te vergelijken,
 en die is bij alle vijf byte voor byte gelijk. De kleuren van de zijbalk staan
 in `gedeeld/zijbalk.css`, want de startpagina gebruikt ze ook.
 
@@ -114,5 +116,20 @@ Daarom staat de oude code er nog, in `gereedschap/oud/`, en genereert
 `gereedschap/gouden-waarden-maken.mjs` daaruit de uitkomsten over veertig
 dagenreeksen, dertig SCORE2-gevallen, twintig FIB-4's, vijfentwintig
 STOP-BANG-invullingen en vijftien onderhoudszones. `rekenkern.proef.ts`
-controleert de TypeScript-versie daartegen: 171 vergelijkingen, allemaal tegen
-wat er wérkelijk uit kwam en niet tegen wat ik dacht dat eruit moest komen.
+controleert de TypeScript-versie daartegen: honderddertig gevallen uit het
+archief, allemaal tegen wat er wérkelijk uit kwam en niet tegen wat ik dacht dat
+eruit moest komen.
+
+**Het archief is bewijs.** Toen elf van die vergelijkingen omvielen bij het
+rechtzetten van de leestekens, was `gereedschap/oud/` aanpassen de snelste weg
+naar groen geweest, en precies daarmee was het bewijs weg. De vergelijking is
+toen losser gemaakt (over woorden in plaats van tekens) en die versoepeling is
+zélf getoetst: een verdwenen woord, een veranderd getal of een andere volgorde
+valt nog steeds om. Regel: het archief wordt nooit aangepast om een proef groen
+te krijgen.
+
+Wat er op de reeks bij is gekomen ná de overzetting staat apart, want het staat
+niet in het archief: `afwijkingKg` en `uitbijter` per weging (§27 van de
+verantwoording) en de schaal van de gewichtsfiguur (§31). De gouden vergelijking
+kijkt daarom naar de sleutels die het archief zelf kende, met een extra regel die
+omvalt zodra een van die oude sleutels verdwijnt of hernoemd wordt.

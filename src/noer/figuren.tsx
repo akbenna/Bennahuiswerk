@@ -3,7 +3,7 @@
  *
  * De SVG-fragmenten staan in gegevens/figuren.ts; hier worden ze in een
  * component gezet. Ze gaan via dangerouslySetInnerHTML naar binnen omdat het
- * pad-tekst is die uit de repo komt en nergens anders vandaan — precies zoals
+ * pad-tekst is die uit de repo komt en nergens anders vandaan, precies zoals
  * de leerstof zelf.
  */
 import type { CSSProperties, ReactNode } from 'react'
@@ -52,7 +52,7 @@ export function Tafereel({ id }: { id: string }): ReactNode {
  * Dit is echte JSX en geen tekstfragment, en dat is met opzet: React zet een
  * `style`-object via de CSSOM, terwijl een `style="..."` in een tekstfragment
  * een inline stijl is die de strikte policy tegenhoudt. Het verschil is
- * onzichtbaar in de bron en zichtbaar op het scherm — dan staat de hele
+ * onzichtbaar in de bron en zichtbaar op het scherm, dan staat de hele
  * tekening er ongekleurd bij.
  */
 export function Wudufiguur({ deel }: { deel: string }): ReactNode {

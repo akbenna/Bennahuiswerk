@@ -1,5 +1,5 @@
 /**
- * DE HERO — het eerste wat je ziet
+ * DE HERO: het eerste wat je ziet
  *
  * Elke calorie-app tekent een ring. Die ring liegt: hij zet een streep op
  * 2.100 kcal alsof dat een gemeten grens is, terwijl het een schatting is met
@@ -8,7 +8,7 @@
  *
  * Dus: de ring heeft een bándzone. De lichte boog is het gebied waarbinnen het
  * doel ligt; de volle boog is wat er gelogd is. Zit je in de band, dan zit je
- * goed — er is geen streep om net overheen te gaan. Dat is de hele stelling van
+ * goed, er is geen streep om net overheen te gaan. Dat is de hele stelling van
  * de app, maar dan als plaatje in plaats van als voetnoot.
  *
  * Voordat er zeven wegingen zijn, is er geen doel en dus geen band. De ring
@@ -17,6 +17,7 @@
  * een 0 met "nog geen doel" eronder.
  */
 import type { ReactNode } from 'react'
+import { SFEER_SIZES, sfeerSrcset } from './sfeerfotos'
 
 /* De ring staat rechtop en laat onderaan een opening: een volle cirkel leest
    als "af", een opening leest als "loopt nog". */
@@ -43,7 +44,7 @@ export interface RingEigenschappen {
   /** Wat er gelogd is: het puntgetal. */
   waarde: number
   /** De onder- en bovenkant van wat er gelogd is. Dít is de onzekerheid die de
-   *  band toont — niet die van het doel. Wat je at is geschat; het doel is een
+   *  band toont, niet die van het doel. Wat je at is geschat; het doel is een
    *  streep die de app zelf trekt. */
   laag?: number | null
   hoog?: number | null
@@ -123,7 +124,7 @@ export function Doelring(
 /**
  * Veertien dagen naast elkaar. Eén dag zegt niets; een strook laat zien of er
  * een gewoonte in zit. De hoogte is het aandeel van het doel, de kleur zegt wat
- * er die dag gebeurd is — gewogen, gelogd, of allebei.
+ * er die dag gebeurd is, gewogen, gelogd, of allebei.
  */
 export interface Dagstaaf { d: string; gewogen: boolean; gelogd: boolean; deel: number }
 
@@ -157,13 +158,33 @@ export function Dagenstrook({ dagen, nu }: { dagen: Dagstaaf[]; nu: string }): R
 /** De schil van een schermkop. Eén plek voor het verloop, zodat de vijf
  *  schermen niet uit elkaar lopen zodra er één wordt aangeraakt. */
 export function Schermkop(
-  { toon, bovenschrift, titel, rechts, children }:
+  { toon, bovenschrift, titel, foto, rechts, children }:
   { toon: 'rust' | 'goed' | 'let' | 'fout'; bovenschrift: string; titel: string
+    /**
+     * Een sfeerfoto als band bovenin. Hij staat bóven de titel en niet
+     * erachter: tekst over een foto vraagt om een waas en een waas vraagt om
+     * onderhoud, en dan hangt de leesbaarheid van elk scherm aan een verloop
+     * dat bij de volgende foto weer anders moet.
+     *
+     * Wat hij doet is sfeer en geen informatie. Er staat een fiets bij Beweging
+     * en een bloeddrukmeter bij Gezondheid omdat dat een toon zet, niet omdat
+     * je vandaag gefietst hebt. Daarom draagt hij ook geen `alt`: voor wie
+     * voorleest is hij er niet, en dat klopt.
+     *
+     * Geef het pad van de kleinste maat; `sfeerSrcset` zet de grotere ernaast
+     * en de browser kiest. Waarom dat twee bestanden zijn en geen \u00e9\u00e9n, staat in
+     * `sfeerfotos.ts`.
+     */
+    foto?: string | undefined
     rechts?: ReactNode | undefined; children?: ReactNode | undefined },
 ): ReactNode {
   return (
     <section className={'hero kop-' + toon}>
       <div className="heroglans" />
+      {foto && (
+        <img className="schermstrook" src={foto} srcSet={sfeerSrcset(foto)}
+             sizes={SFEER_SIZES} alt="" loading="lazy" aria-hidden="true" />
+      )}
       <div className="heroboven">
         <div>
           <span className="eyebrow">{bovenschrift}</span>
@@ -179,7 +200,7 @@ export function Schermkop(
 /**
  * Een trapmeter: hoeveel van de treden gehaald zijn.
  *
- * Bedoeld voor dingen die in stappen komen en niet in procenten — de zekerheid
+ * Bedoeld voor dingen die in stappen komen en niet in procenten, de zekerheid
  * van het model, het aantal krachtsessies. Een percentage suggereert daar een
  * precisie die er niet is; vier vakjes waarvan er twee vol staan liegt niet.
  */
@@ -210,7 +231,7 @@ export function Trapmeter(
 /**
  * Een reeks bolletjes: n van m gehaald.
  *
- * Voor kleine, telbare aantallen — drie krachtsessies per week, zeven wegingen.
+ * Voor kleine, telbare aantallen, drie krachtsessies per week, zeven wegingen.
  * Bij zulke getallen is tellen sneller dan lezen, en dat is precies wat een
  * balk je afneemt.
  */
@@ -236,6 +257,45 @@ export function Bolletjes(
  * op vocht alleen, en wie alleen de gladde lijn ziet denkt dat het meten
  * nauwkeuriger is dan het is.
  */
+export const LIJNTJE_BREEDTE = 300
+
+/**
+ * Het pad van één reeks, met gaten die gaten blijven.
+ *
+ * WAAROM EEN LOS PUNT EEN LIJNSTUK NAAR ZICHZELF KRIJGT
+ *
+ * Wie om de drie dagen weegt heeft geen enkel punt met een buurman. Elk punt
+ * werd dan een `M` zonder `L`, en een pad dat alleen uit verplaatsingen bestaat
+ * tekent niets: het scherm toonde "Gewicht, laatste acht weken" met een lege
+ * strook eronder. Dat leest als een kapotte figuur terwijl de reeks gewoon dun
+ * is. Een los punt krijgt daarom een lijnstuk naar zichzelf; met een ronde
+ * streepdop is dat een stip, en dun wegen ziet er dun uit in plaats van kapot.
+ *
+ * Doorverbinden over de gaten heen zou de dagen ertussen verzinnen. Dat doet
+ * deze app niet, dus een gat blijft een gat.
+ */
+export function lijnpad(
+  reeks: Array<number | null>,
+  lo: number, hi: number, hoogte: number, breedte: number = LIJNTJE_BREEDTE,
+): string {
+  const spanne = hi - lo || 1
+  const n = reeks.length
+  const px = (i: number): number => (n <= 1 ? 0 : (i / (n - 1)) * breedte)
+  const py = (v: number): number => hoogte - 4 - ((v - lo) / spanne) * (hoogte - 10)
+  const stukken: string[] = []
+  let open = false
+  reeks.forEach((v, i) => {
+    if (v == null) { open = false; return }
+    const x = px(i).toFixed(1)
+    const y = py(v).toFixed(1)
+    if (open) { stukken.push(`L ${x} ${y}`); return }
+    const alleen = i + 1 >= n || reeks[i + 1] == null
+    stukken.push(alleen ? `M ${x} ${y} L ${x} ${y}` : `M ${x} ${y}`)
+    open = true
+  })
+  return stukken.join(' ')
+}
+
 export function Lijntje(
   { ruw, glad, hoogte = 46, kleur = 'var(--k)' }:
   { ruw: Array<number | null>; glad: Array<number | null>; hoogte?: number; kleur?: string },
@@ -244,30 +304,18 @@ export function Lijntje(
   if (alles.length < 2) return null
   const lo = Math.min(...alles)
   const hi = Math.max(...alles)
-  const spanne = hi - lo || 1
-  const B = 300
-  const px = (i: number, n: number): number => (n <= 1 ? 0 : (i / (n - 1)) * B)
-  const py = (v: number): number => hoogte - 4 - ((v - lo) / spanne) * (hoogte - 10)
-
-  const pad = (reeks: Array<number | null>): string => {
-    const stukken: string[] = []
-    let open = false
-    reeks.forEach((v, i) => {
-      if (v == null) { open = false; return }
-      stukken.push(`${open ? 'L' : 'M'} ${px(i, reeks.length).toFixed(1)} ${py(v).toFixed(1)}`)
-      open = true
-    })
-    return stukken.join(' ')
-  }
 
   return (
-    <svg className="fig" viewBox={`0 0 ${B} ${hoogte}`} preserveAspectRatio="none"
+    <svg className="fig" viewBox={`0 0 ${LIJNTJE_BREEDTE} ${hoogte}`} preserveAspectRatio="none"
          style={{ height: hoogte }} role="img"
          aria-label={`Verloop van ${dec1(lo)} tot ${dec1(hi)}`}>
-      <path d={pad(ruw)} fill="none" stroke={kleur} strokeWidth="1.2" opacity=".3"
-            vectorEffect="non-scaling-stroke" />
-      <path d={pad(glad)} fill="none" stroke={kleur} strokeWidth="2.4" strokeLinecap="round"
-            strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+      {/* De ronde streepdop staat op allebei de paden en niet alleen op de
+          gladde: zonder dop tekent een lijnstuk van nul lengte niets, en dan is
+          een losse weging weer onzichtbaar. */}
+      <path d={lijnpad(ruw, lo, hi, hoogte)} fill="none" stroke={kleur} strokeWidth="1.2"
+            opacity=".3" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+      <path d={lijnpad(glad, lo, hi, hoogte)} fill="none" stroke={kleur} strokeWidth="2.4"
+            strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
     </svg>
   )
 }
@@ -278,7 +326,7 @@ const dec1 = (x: number): string => (Math.round(x * 10) / 10).toString().replace
  * Vier staven naast elkaar: hoeveel eiwit er per maaltijd binnenkwam.
  *
  * Dit stond als vier horizontale balken onderaan het voedingsscherm, en de
- * schaal liep mee met de hoogste maaltijd — waardoor één goede maaltijd de
+ * schaal liep mee met de hoogste maaltijd, waardoor één goede maaltijd de
  * andere drie klein maakte en het er slechter uitzag dan het was. Verticaal
  * naast elkaar met één streep op het richtgetal laat je in één blik zien wat
  * de vraag is: welke maaltijd blijft achter. De kleuren zijn dezelfde als die

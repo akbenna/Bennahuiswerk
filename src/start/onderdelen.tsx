@@ -42,7 +42,7 @@ const groepTeken = (g: Groep) => (g === 'kind' ? <TekenRaster /> : <TekenBoek />
    Eén app per groep staat groot: dat is de app waar je in negen van de tien
    gevallen naartoe gaat, en die hoort niet even breed te zijn als de rest.
 
-   De volgorde in apps.ts bepaalt wie dat is — daar staat het huiswerk bovenaan
+   De volgorde in apps.ts bepaalt wie dat is, daar staat het huiswerk bovenaan
    bij de kinderen en BennaHealth bij de groten. Die lijst ís de volgorde, en dat
    is met opzet: een sorteerfunctie ernaast zou een tweede plek zijn waar de
    volgorde staat, en twee plekken lopen uiteen. Bovendien vraagt zo'n functie om
@@ -93,7 +93,7 @@ export function Tegelkaart({ tegel, stand }: { tegel: AppTegel; stand?: Voortgan
       )}
       <span className="apptrij">
         {/* Waar de app over gaat, tot je hem gebruikt hebt; daarna hoe lang het
-            geleden is — dat is dan het antwoord waar je voor komt kijken. */}
+            geleden is, dat is dan het antwoord waar je voor komt kijken. */}
         {st
           ? <span className={'speld ' + st.klasse}>{st.tekst}</span>
           : <span className="apptzin">{tegel.kort}</span>}
@@ -116,7 +116,7 @@ function Strook({ stand }: { stand: Voortgang }) {
       ))}
       {/* Hier geen gekleurd speldje. De kleuren van `stilte` zijn gemeten tegen
           een lichte kaart; op een vlak dat de kleur van zijn app draagt zijn ze
-          onleesbaar. Wat er staat — "vandaag", "vier dagen geleden" — zegt het
+          onleesbaar. Wat er staat ("vandaag", "vier dagen geleden") zegt het
           zelf al, en dat haalt op elk van de negen vlakken zijn contrast. */}
       <span className="uitlaatst">{wanneer(stand).tekst}</span>
     </div>
@@ -157,15 +157,15 @@ export function Appgroep(
 
    Hij draagt drie dingen tegelijk: het merk, de weg naar de twee groepen, en de
    knoppen die bij jouw account horen. Daarom staat er ook geen aparte balk meer
-   bovenaan het hubscherm — dat was hetzelfde, twee keer.
+   bovenaan het hubscherm, dat was hetzelfde, twee keer.
 
    Wat er in staat, bestaat ook echt. Er is geen "Berichten" en geen "Planning",
    dus er staat er ook geen; een menu-item dat niets doet is erger dan een menu
    dat kort is.
 --------------------------------------------------------------------------- */
 
-/** Welke groep staat er in beeld? De zijbalk licht die op. Zonder waarnemer —
- *  een oude browser, een proef in jsdom — blijft simpelweg 'boven' staan; dat
+/** Welke groep staat er in beeld? De zijbalk licht die op. Zonder waarnemer (
+ *  een oude browser, een proef in jsdom) blijft simpelweg 'boven' staan; dat
  *  is een gemis aan opsmuk en niet aan werking. */
 function useInBeeld(ankers: readonly string[]): string {
   const [aan, zetAan] = useState<string>('boven')
@@ -249,14 +249,14 @@ export function Zijbalk(
 
       <div className="zijvoet">
         <TekenHulp />
-        <p>Loop je vast? Vraag papa of mama — zij komen overal bij.</p>
+        <p>Loop je vast? Vraag papa of mama; zij komen overal bij.</p>
       </div>
     </aside>
   )
 }
 
 /* ---------------------------------------------------------------------------
-   HET ONTHAAL — de begroeting met de klok en jouw kaartje ernaast.
+   HET ONTHAAL, de begroeting met de klok en jouw kaartje ernaast.
 --------------------------------------------------------------------------- */
 
 /** De klok loopt door. Elke halve minuut kijken is genoeg voor een weergave die
@@ -283,7 +283,7 @@ export function Onthaal(
         {/* Een harde spatie voor het zwaaien: anders valt de hand op een smal
             scherm op een eigen regel onder de naam. */}
         <h1>Hallo {hoofd(ik.naam)}!{'\u00A0'}<span className="zwaai" aria-hidden="true">👋</span></h1>
-        <p className="lede">Kies waar je mee verder wilt — alles wat je doet, komt op jouw naam te staan.</p>
+        <p className="lede">Kies waar je mee verder wilt. Alles wat je doet, komt op jouw naam te staan.</p>
       </div>
       <div className="welkomkaarten">
         <div className="mkaart">
@@ -299,7 +299,7 @@ export function Onthaal(
           <span className="mtekst">
             <strong>{hoofd(ik.naam)}</strong>
             <span className="klein">
-              {ouder ? 'Ouder — jij ziet alle apps en alle voortgang' : 'Jouw eigen plek, met jouw eigen code'}
+              {ouder ? 'Ouder: jij ziet alle apps en alle voortgang' : 'Jouw eigen plek, met jouw eigen code'}
             </span>
             <button type="button" className="mlink"
                     onClick={ouder ? naarOverzicht : naarWachtwoord}>
@@ -347,7 +347,7 @@ export function Voet() {
         terug; zonder internet werkt alles gewoon door en wordt er later gelijkgetrokken.
       </p>
       <p>
-        De cijfers op de kaarten komen van dit toestel — van het account dat hier het laatst in die
+        De cijfers op de kaarten komen van dit toestel, van het account dat hier het laatst in die
         app aanstond. Op een ander toestel staat er dus wat daar gedaan is, tot beide bij zijn.
       </p>
       <p className="meta">Gebouwd voor het gezin Benna</p>

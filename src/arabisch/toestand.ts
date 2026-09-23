@@ -6,7 +6,7 @@
  * enkel scherm hoeft te weten waar in de stand dat staat.
  *
  * De datum komt uit één plek. Een telefoon die 's avonds wordt neergelegd en
- * 's ochtends weer opgepakt, staat anders nog op het scherm van gisteren — en
+ * 's ochtends weer opgepakt, staat anders nog op het scherm van gisteren, en
  * dan klopt de wachtrij niet meer.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -46,7 +46,7 @@ export interface Toestand {
   gelijktrekken: () => Promise<boolean>
 }
 
-/* Een profiel-id moet uniek zijn over toestellen heen — twee telefoons die
+/* Een profiel-id moet uniek zijn over toestellen heen, twee telefoons die
    tegelijk een profiel aanmaken mogen elkaar niet overschrijven bij het
    samenvoegen. Vandaar de tijd én toeval. */
 const nieuwId = (): string =>

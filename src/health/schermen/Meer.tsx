@@ -1,21 +1,29 @@
 /**
- * MEER — slaap, de onderhoudsfase en de instellingen.
+ * MEER: slaap, de onderhoudsfase en de instellingen.
  *
  * Overgezet uit vwMeer(). Bij het herontwerp bleek dit scherm twee dingen te
  * doen die niets met elkaar te maken hebben: het toont een variabele die je
  * kunt bijsturen (slaap) en een oordeel over waar je staat (het stoplicht).
- * De kop draagt nu het oordeel als dat er is, en anders de slaap — met veertien
+ * De kop draagt nu het oordeel als dat er is, en anders de slaap, met veertien
  * nachten erbij, want één gemiddelde zegt niet of het beter of slechter gaat.
  */
 import { Kaart, Keuzechip, Knop, Kop, Rij, Tussen, Uitleg } from '../onderdelen/basis'
 import { Lijntje, Schermkop } from '../hero'
 import { dec } from '@/gedeeld/getal'
-import type { Profiel } from '@/gedeeld/db/tabellen'
+import type { Glistand, Profiel } from '@/gedeeld/db/tabellen'
 import type { Dagenkaart, Trendpunt } from '../rekenkern'
 import { onderhoudZone } from '../klinisch'
 import { THEMANAMEN, useThemakeuze, zetThema } from '../thema'
 import type { Onderhoudzone } from '../klinisch'
-import { WegInstellen, WegThema } from '../tekens'
+import { WegInstellen, WegLezen, WegThema } from '../tekens'
+import { SFEERFOTO } from '../sfeerfotos'
+import {
+  COMORBIDITEIT, DREMPELS, GLI_TOTAAL_MAANDEN, MEDICATIE, glivoortgang, medicatiecriteria,
+  programmaVan,
+} from '../trap'
+import { dagvenster } from '../inspanning'
+import { VERDIEPINGEN } from '../verdieping'
+import { vandaag } from '@/gedeeld/datum'
 
 /** De kleur hoort bij het scherm en niet bij de rekenfunctie. Zie klinisch.ts. */
 const ZONEKLEUR: Record<Onderhoudzone, string> = {
@@ -29,10 +37,13 @@ const ZONEWOORD: Record<Onderhoudzone, string> = {
 }
 
 export function Meer(
-  { dagen, reeks, profiel, opVenster }:
+  { dagen, reeks, profiel, opVenster, opVerdiepen }:
   {
     dagen: Dagenkaart; reeks: Trendpunt[]; profiel: Profiel
-    opVenster: (v: 'profiel' | 'import' | 'account' | 'koppelen' | 'hoewerkt') => void
+    opVenster: (v: 'profiel' | 'import' | 'account' | 'koppelen' | 'hoewerkt' | 'verdiepen'
+      | 'leren' | 'voorkeuren') => void
+    /** Het boekje, eventueel meteen op één stuk. Zie `Naslagkaart`. */
+    opVerdiepen: (stuk?: string) => void
   },
 ) {
   const trendNu = [...reeks].reverse().find((x) => x.ema != null)
@@ -40,8 +51,14 @@ export function Meer(
     ? onderhoudZone(trendNu?.ema ?? null, profiel.onderhoud_basis_kg) : null
 
   /* Veertien nachten, met de gaten erin. Een nacht zonder gegevens is geen nacht
-     van nul uur, dus hij hoort een gat te zijn en geen punt op de bodem. */
-  const nachten = Object.keys(dagen).sort().slice(-14)
+     van nul uur, dus hij hoort een gat te zijn en geen punt op de bodem.
+
+     Een kalendervenster en niet de laatste veertien sleutels van de dagenkaart:
+     die kaart kent alleen dagen waarvoor een rij bestaat, dus een nacht waarop
+     er niets binnenkwam viel er stil uit in plaats van een gat te worden, en
+     dan reikten "veertien nachten" ongemerkt verder terug dan veertien dagen.
+     Precies de bewering die de regel hierboven doet. Zie `dagvenster`. */
+  const nachten = dagvenster(vandaag(), 14)
     .map((k) => { const m = dagen[k]?.slaap_min; return m != null ? m / 60 : null })
   const gemeten = nachten.filter((v): v is number => v != null)
   const gemSlaap = gemeten.length
@@ -60,7 +77,7 @@ export function Meer(
     : slaapToon
   const kopTitel = zone
     ? (zone.zone === 'groen' ? 'Je houdt het vast'
-      : zone.zone === 'geel' ? 'Het loopt op — nu bijsturen'
+      : zone.zone === 'geel' ? 'Het loopt op: nu bijsturen'
       : 'Terug naar de actieve fase')
     : gemSlaap == null ? 'Nog geen slaapgegevens'
     : gemSlaap >= 7 ? 'Je slaapt genoeg'
@@ -70,6 +87,7 @@ export function Meer(
   return (
     <>
       <Schermkop toon={kopToon} titel={kopTitel}
+        foto={SFEERFOTO.meer}
                  bovenschrift={zone ? 'Onderhoud' : 'De laatste twee weken'}
                  rechts={zone
                    ? <span className={'vlaggetje ' + kopToon}>
@@ -92,7 +110,7 @@ export function Meer(
           <div>
             <div className="mini">Slaap, gemiddeld per nacht</div>
             <div>
-              <span className="getal">{gemSlaap != null ? dec(gemSlaap, 1) : '—'}</span>
+              <span className="getal">{gemSlaap != null ? dec(gemSlaap, 1) : '–'}</span>
               <span className="klein">
                 {' '}uur over {gemeten.length} nacht{gemeten.length === 1 ? '' : 'en'}
               </span>
@@ -103,24 +121,30 @@ export function Meer(
           <div style={{ marginTop: 10 }}>
             <Lijntje ruw={nachten} glad={glad} hoogte={44} />
             <p className="mini" style={{ marginTop: 2 }}>
-              Per nacht licht, het gemiddelde over drie nachten donker —{' '}
+              Per nacht licht, het gemiddelde over drie nachten donker,{' '}
               {dec(Math.min(...gemeten), 1)} tot {dec(Math.max(...gemeten), 1)} uur.
             </p>
           </div>
         )}
       </Schermkop>
 
+      <Naslagkaart opLeren={() => opVenster('leren')} opVerdiepen={opVerdiepen}
+                   opHoewerkt={() => opVenster('hoewerkt')} />
+
       <Kaart plat>
         <Kop>Waarom slaap hier staat</Kop>
         <p className="mini" style={{ marginTop: 4 }}>
           Te kort slapen verschuift je gewichtsverlies van vet naar spier. Het is hier geen
-          wellness-item maar een variabele in dezelfde vergelijking.
+          wellness-item maar een variabele in dezelfde vergelijking.{' '}
+          <button type="button" className="schakel" onClick={() => opVerdiepen('slaap')}>
+            Lees het hele stuk
+          </button>
         </p>
         <Uitleg id="slaapwaarom" label="de meting erachter">
           <p>
             Bij 5,5 tegenover 8,5 uur slaapgelegenheid daalde in Nedeltcheva 2010 het aandeel
             gewichtsverlies als vet met 55 procent en steeg het verlies van vetvrije massa met 60
-            procent, bij identieke caloriebeperking — met meer honger erbij. Tien deelnemers, dus
+            procent, bij identieke caloriebeperking, met meer honger erbij. Tien deelnemers, dus
             klein, maar het mechanisme is plausibel en de richting eenduidig.
           </p>
         </Uitleg>
@@ -129,7 +153,7 @@ export function Meer(
       {profiel.fase === 'onderhoud' ? (
         <Kaart style={{ borderLeft: `3px solid ${zone ? ZONEKLEUR[zone.zone] : 'var(--lijn)'}` }}>
           <Tussen>
-            <Kop>Onderhoud — stoplicht</Kop>
+            <Kop>Onderhoud: stoplicht</Kop>
             {zone && <span className="stoplicht" style={{ background: ZONEKLEUR[zone.zone] }} />}
           </Tussen>
           {zone ? (
@@ -141,20 +165,20 @@ export function Meer(
                 {zone.zone === 'groen'
                   ? 'Groen: binnen 1,4 kg van je basisgewicht. Doorgaan.'
                   : zone.zone === 'geel'
-                  ? 'Geel: 1,4 tot 2,3 kg erboven. Zoek de oorzaak en stel eten en bewegen bij — dit is het moment, niet volgende maand.'
+                  ? 'Geel: 1,4 tot 2,3 kg erboven. Zoek de oorzaak en stel eten en bewegen bij. Dit is het moment, niet volgende maand.'
                   : 'Rood: 2,3 kg of meer erboven. Herstart de actieve afvalfase.'}
               </p>
             </>
           ) : (
             <p className="klein" style={{ marginTop: 4 }}>
-              Stel eerst een basisgewicht in bij de instellingen — dat is het laagste stabiele gewicht
+              Stel eerst een basisgewicht in bij de instellingen: dat is het laagste stabiele gewicht
               waar je op wilt blijven.
             </p>
           )}
           <p className="mini" style={{ marginTop: 10 }}>
             De drempels komen uit STOP Regain (Wing 2006): in die trial kwam 72 procent van de
             controlegroep 2,3 kg of meer aan tegen 46 procent in de begeleide groep. Twee eerlijke
-            kanttekeningen. De randomisatie betrof het prógramma, niet het wegen zelf — dagelijks wegen
+            kanttekeningen. De randomisatie betrof het prógramma, niet het wegen zelf, en dagelijks wegen
             zonder actieregel heeft veel zwakker bewijs. En de internet-arm presteerde nauwelijks beter
             dan de controlegroep; een app die alleen digitaal is repliceert de zwakste arm. Het
             stoplicht triggert op het voortschrijdend gemiddelde en niet op de dagmeting, anders vuurt
@@ -166,22 +190,37 @@ export function Meer(
           <Kop>Onderhoudsfase</Kop>
           <p className="klein" style={{ marginTop: 4 }}>
             Nog niet actief. Twintig kilo verliezen zonder gedefinieerd onderhoudsprotocol is waar de
-            meeste trajecten stranden — niet in de afvalfase. Zet de fase om zodra je op gewicht bent;
+            meeste trajecten stranden, niet in de afvalfase. Zet de fase om zodra je op gewicht bent;
             dan verschijnt hier het stoplicht met een vaste actieregel per zone.
           </p>
+        </Kaart>
+      )}
+
+      {/* JE TRAJECT: waar je staat in het Nederlandse traject
+          De kaart staat er alleen als er een GLI is opgegeven. Bij wie er geen
+          heeft zou hij een lege doos zijn, en het profielvenster vraagt er al
+          naar. */}
+      {profiel.instellingen.gli?.programma && (
+        <Kaart>
+          <Kop teken={WegInstellen}>Je traject</Kop>
+          <Traject gli={profiel.instellingen.gli} leeftijd={profiel.leeftijd_jaar}
+                   opVerdiepen={opVerdiepen} />
         </Kaart>
       )}
 
       <Kaart>
         <Kop teken={WegInstellen}>Instellingen</Kop>
         <Rij style={{ marginTop: 10 }}>
-          <Knop opKlik={() => opVenster('profiel')}>Profiel en doelen</Knop>
+          <Knop opKlik={() => opVenster('profiel')}>Profiel, doelen en je aandoening</Knop>
+          <Knop opKlik={() => opVenster('voorkeuren')}>Wat je lust</Knop>
           <Knop vol opKlik={() => opVenster('koppelen')}>Horloge en telefoon koppelen</Knop>
           <Knop opKlik={() => opVenster('import')}>Importeren uit een andere app</Knop>
           <Knop opKlik={() => opVenster('account')}>Account</Knop>
         </Rij>
         <p className="mini" style={{ marginTop: 8 }}>
-          Koppelen haalt stappen, slaap en fietsminuten elke ochtend vanzelf uit Apple Gezondheid —
+          "Wat je lust" bepaalt waar de voorstellen uit de tabel vandaan mogen komen, niet wat je
+          mag eten, maar wat de app je aanbiedt.
+          Koppelen haalt stappen, slaap en fietsminuten elke ochtend vanzelf uit Apple Gezondheid:
           en daarmee ook wat je Garmin daarin schrijft. Importeren is voor een eenmalige overstap uit
           een andere app.
         </p>
@@ -196,7 +235,7 @@ export function Meer(
         </p>
         <Uitleg id="waaromgemeten" label="waarom dat beter is dan rekenen">
           <p>
-            Door te meten worden adaptieve thermogenese — je verbranding zakt als je afvalt — en je
+            Door te meten worden adaptieve thermogenese (je verbranding zakt als je afvalt) en je
             persoonlijke activiteitsniveau automatisch meegenomen. Die hoeven niet gemodelleerd te
             worden: ze zitten al in de meting.
           </p>
@@ -224,11 +263,77 @@ export function Meer(
  * en dat is iets anders dan dag of nacht. Met twee standen ben je die koppeling
  * kwijt zodra je hem één keer aanraakt, en kun je er niet meer terug.
  *
- * Het staat hier en niet in het profielvenster. Het profiel gaat over jou —
- * lengte, leeftijd, doel — en dit gaat over het scherm. Bovendien is dit iets
+ * Het staat hier en niet in het profielvenster. Het profiel gaat over jou (
+ * lengte, leeftijd, doel) en dit gaat over het scherm. Bovendien is dit iets
  * wat je 's avonds even omzet, en dan moet het op het scherm staan en niet
  * twee vensters diep.
  */
+/**
+ * HET NASLAGWERK, ZICHTBAAR IN PLAATS VAN ACHTER EEN KNOP
+ *
+ * Het boekje Verdiepen stond als één knop onderaan dit scherm, in een kaart
+ * die over de herkomst van de getallen gaat. Elf stukken met bronnen, en je
+ * moest weten dat ze bestonden om ze te vinden. Dat is dezelfde fout als met de
+ * conditiekaart op Gezondheid, en die staat opgeschreven: een functie die pas
+ * bestaat als je hem al kent, bestaat niet.
+ *
+ * Daarom staat hier nu de inhoudsopgave en niet de doos. Je ziet in één blik
+ * wat erin zit, en je komt binnen op het stuk dat je aanwees. Wat het kost is
+ * elf regels op een scherm dat toch al scrollt; wat het oplevert is dat de elf
+ * stukken bestaan voor wie er niet naar op zoek was.
+ */
+function Naslagkaart(
+  { opLeren, opVerdiepen, opHoewerkt }:
+  { opLeren: () => void; opVerdiepen: (stuk?: string) => void; opHoewerkt: () => void },
+) {
+  return (
+    <Kaart sfeer="golf">
+      <Kop teken={WegLezen}>Kennisbank</Kop>
+      <p style={{ fontSize: '.92rem', marginTop: 6 }}>
+        Wat er bekend is over afvallen, over je aandoening en over de manier waarop deze app
+        rekent. Bij elk stuk staat ook wat we <i>niet</i> weten, en waar het vandaan komt.
+      </p>
+
+      <Tussen style={{ marginTop: 14 }}>
+        <Kop>Afvallen, medicatie en wat je vasthoudt</Kop>
+        <span className="vlaggetje rust">{VERDIEPINGEN.length} stukken</span>
+      </Tussen>
+      <div className="lijst" style={{ marginTop: 4 }}>
+        {VERDIEPINGEN.map((v) => (
+          <button type="button" className="naslagregel" key={v.id}
+                  onClick={() => opVerdiepen(v.id)}>
+            <span className="groei knip" style={{ fontSize: '.88rem' }}>{v.titel}</span>
+            <span className="pijl" aria-hidden="true">›</span>
+          </button>
+        ))}
+      </div>
+
+      <Tussen style={{ marginTop: 16 }}>
+        <Kop>De rest van de kast</Kop>
+      </Tussen>
+      <div className="lijst" style={{ marginTop: 4 }}>
+        <button type="button" className="naslagregel" onClick={opLeren}>
+          <span className="groei knip" style={{ fontSize: '.88rem' }}>
+            Je aandoening: hoge bloeddruk, diabetes, hart en vaten
+          </span>
+          <span className="pijl" aria-hidden="true">›</span>
+        </button>
+        <button type="button" className="naslagregel" onClick={opHoewerkt}>
+          <span className="groei knip" style={{ fontSize: '.88rem' }}>
+            Hoe deze app rekent, en wat hij niet weet
+          </span>
+          <span className="pijl" aria-hidden="true">›</span>
+        </button>
+      </div>
+
+      <p className="mini" style={{ marginTop: 12 }}>
+        Deze stukken zijn voor iedereen hetzelfde: er wordt niets van jouw gegevens in verwerkt en
+        er staat geen advies in. Waar je het in de app terugziet, staat er wel bij.
+      </p>
+    </Kaart>
+  )
+}
+
 function Themakeuzes() {
   const keuze = useThemakeuze()
   return (
@@ -247,5 +352,106 @@ function Themakeuzes() {
         je er overdag ook in. Hier zet je hem vast.
       </p>
     </Kaart>
+  )
+}
+
+/**
+ * JE TRAJECT: de trap, en wat de app ervan beoordeelt
+ *
+ * Twee treden. De GLI vult de app uit je profiel. Van de trede erboven toont hij
+ * de criteria van de NHG-Standaard, en beoordeelt hij er precies twee: het jaar
+ * leefstijlbegeleiding en je leeftijd. Dat zijn feiten uit je eigen dossier. De
+ * andere twee (de BMI-drempel en de comorbiditeit) zijn klinische oordelen en
+ * blijven `niet bekend`; waarom, staat in `trap.ts`.
+ *
+ * DE EIGENSCHAP DIE DIT SCHERM NIET MAG VERLIEZEN
+ *
+ * Er staat hier nooit een totaaloordeel. Geen "je komt in aanmerking", geen
+ * optelsom van vinkjes, geen kleur die groen wordt als er genoeg gehaald is. Dat
+ * is niet uit voorzichtigheid: er is per constructie altijd minstens één
+ * criterium op `niet bekend`, dus élke optelsom zou een gok zijn. De armatuur
+ * leest dit scherm en valt om zodra er een totaaloordeel op verschijnt.
+ */
+function Traject(
+  { gli, leeftijd, opVerdiepen }:
+  { gli: Glistand; leeftijd: number | null; opVerdiepen: (stuk?: string) => void },
+) {
+  const v = glivoortgang(gli.programma, gli.begonnen, vandaag())
+  const p = programmaVan(gli.programma)
+  const criteria = medicatiecriteria({
+    gliProgramma: gli.programma, gliBegonnen: gli.begonnen, leeftijd, vandaag: vandaag(),
+  })
+
+  return (
+    <>
+      <div className="lijst" style={{ marginTop: 6 }}>
+        <div style={{ flexWrap: 'wrap' }}>
+          <span className="rijkop groei">{p?.naam ?? 'Leefstijlprogramma'}</span>
+          <span className="cijfer mini">
+            {v.maanden != null ? `${v.maanden} van de ${GLI_TOTAAL_MAANDEN} mnd` : '–'}
+          </span>
+          <span className="mini" style={{ flexBasis: '100%', color: 'var(--dim)' }}>{v.tekst}</span>
+        </div>
+      </div>
+
+      <Tussen>De trede erboven: gewichtsreducerende medicatie</Tussen>
+      <p className="mini" style={{ marginTop: 2 }}>
+        Wat de NHG-Standaard vraagt, en wat deze app ervan weet. De onderste twee weegt je
+        huisarts. Die staan hier niet leeg maar met de reden erbij.{' '}
+        <button type="button" className="schakel" onClick={() => opVerdiepen('trap')}>
+          Waar medicatie op de trap staat
+        </button>
+      </p>
+      <div className="lijst" style={{ marginTop: 6 }}>
+        {criteria.map((c) => (
+          <div key={c.wat} style={{ flexWrap: 'wrap' }}>
+            <span className="rijkop groei">{c.wat}</span>
+            <span className="cijfer mini"
+                  style={{ color: c.stand === 'gehaald' ? 'var(--goed)' : 'var(--dim)' }}>
+              {c.stand}
+            </span>
+            <span className="mini" style={{ flexBasis: '100%', color: 'var(--dim)' }}>
+              {c.toelichting}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <Uitleg id="traject" label="de drempels die de standaard noemt">
+        {/* DE VONDST. De tweede set ligt ongeveer 2,5 punt lager, en stond in
+            geen enkele samenvatting van deze standaard. Hij staat hier als
+            inhoud en niet als oordeel: deze app vraagt niet naar je
+            migratieachtergrond, dus hij kan en mag niet kiezen welke rij voor
+            jou geldt. Zie de kop van DREMPELS in `trap.ts`. */}
+        <p className="klein">De standaard geeft twee sets BMI-drempels.</p>
+        <div className="lijst" style={{ marginTop: 4 }}>
+          {DREMPELS.map((d) => (
+            <div key={d.naam} style={{ flexWrap: 'wrap' }}>
+              <span className="rijkop groei">{d.naam}</span>
+              <span className="cijfer mini">
+                {dec(d.metComorbiditeit, 1)} mét · {dec(d.zonder, 1)} zonder
+              </span>
+            </div>
+          ))}
+        </div>
+        <p className="klein" style={{ marginTop: 8 }}>
+          "Mét" betekent: met gewichtsgerelateerde comorbiditeit, oftewel {COMORBIDITEIT.join(', ')}.
+        </p>
+        <p className="klein" style={{ marginTop: 8 }}>
+          Welke van de twee rijen voor jou geldt, hangt af van je achtergrond. Deze app vraagt daar
+          niet naar en kiest er dus geen. Zie je een rij die op jou van toepassing zou kunnen zijn,
+          dan is dat een vraag voor je huisarts en geen antwoord van deze app.
+        </p>
+        {MEDICATIE.vast.map((zin, i) => (
+          <p key={i} className="klein" style={{ marginTop: i === 0 ? 10 : 6 }}>{zin}</p>
+        ))}
+        <p className="klein" style={{ marginTop: 8 }}>
+          Deze app zegt niet of je in aanmerking komt. Dat is een oordeel van je huisarts, en de
+          standaard laat die uitdrukkelijk vrij dit aanbod niet te leveren. Meer erover staat onder
+          Verdiepen.
+        </p>
+        <p className="mini" style={{ marginTop: 8 }}>Bron: {MEDICATIE.bron}</p>
+      </Uitleg>
+    </>
   )
 }

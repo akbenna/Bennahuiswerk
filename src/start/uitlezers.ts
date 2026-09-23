@@ -12,7 +12,7 @@
  * losse apps die elk hun eigen vorm mogen veranderen zonder het hier te
  * melden. De oude versie deed `d.profielen.map(...)` met een `try/catch`
  * eromheen, en als een app zijn vorm wijzigde viel de hele tabel stil terug op
- * een lege lijst — zonder dat iemand kon zien waarom.
+ * een lege lijst, zonder dat iemand kon zien waarom.
  *
  * De helpers hieronder lezen elk veld met een expliciete vraag: is dit een
  * lijst, is dit een getal, bestaat deze sleutel. Wat er niet staat wordt niet
@@ -29,7 +29,7 @@ const veld = (v: unknown, sleutel: string): unknown => (isObject(v) ? v[sleutel]
 
 const lijst = (v: unknown): unknown[] => (Array.isArray(v) ? v : [])
 
-/** Een object als lijst van waarden — sommige apps bewaren profielen zo. */
+/** Een object als lijst van waarden, sommige apps bewaren profielen zo. */
 const waarden = (v: unknown): unknown[] => (isObject(v) ? Object.values(v) : [])
 
 const sleutels = (v: unknown): string[] => (isObject(v) ? Object.keys(v) : [])
@@ -60,7 +60,7 @@ export interface Regel {
 
 type Uitlezer = (d: unknown) => Regel[]
 
-const streep = (n: number | null): string | number => n ?? '—'
+const streep = (n: number | null): string | number => n ?? '–'
 
 const euroTekst = (n: number): string =>
   '€ ' + (Math.round(n * 100) / 100).toFixed(2).replace('.', ',')
@@ -68,7 +68,7 @@ const euroTekst = (n: number): string =>
 /* -------------------------------------------------------- per app ---------- */
 
 /** Wat een cursus van de Academie bewaart. `done` is per lesnummer een ja of
- *  nee — een afgevinkte les kan ook weer uitgevinkt worden, dus tellen we de
+ *  nee, een afgevinkte les kan ook weer uitgevinkt worden, dus tellen we de
  *  waarden die waar zijn en niet de sleutels. */
 const cursus: Uitlezer = (d) => {
   const dagen = lijst(veld(d, 'oefdagen')).map(tekst).filter((x): x is string => x != null).sort()
@@ -88,7 +88,7 @@ const cursus: Uitlezer = (d) => {
 export const UITLEZERS: Readonly<Record<string, Uitlezer>> = {
   /* Huiswerk. Deze uitlezer draait op wat er op het toestel zelf staat en niet
      op de centrale opslag: de huiswerkapp heeft nog zijn eigen inlog en zet daar
-     nog niets neer. Zie `voortgang.ts`. Verdiend geld staat er bewust niet in —
+     nog niets neer. Zie `voortgang.ts`. Verdiend geld staat er bewust niet in,
      de app rekent dat uit betalingen en bonussen die hier niet compleet te
      overzien zijn, en een bedrag dat er net naast zit is erger dan geen bedrag. */
   huiswerk(d) {
@@ -110,13 +110,13 @@ export const UITLEZERS: Readonly<Record<string, Uitlezer>> = {
     })
   },
 
-  /* De drie cursussen — Kompas, Verbind en Podium — zijn gebouwd uit hetzelfde
+  /* De drie cursussen (Kompas, Verbind en Podium) zijn gebouwd uit hetzelfde
      sjabloon en bewaren dus hetzelfde: welke lessen af zijn, op welke dagen er
      geoefend is, en hoeveel kaarten er open staan. Eén uitlezer voor alle drie;
      hieronder staat hij drie keer onder de naam van zijn tegel.
 
      Ze kennen geen profielen, dus wat er staat is wat er op dit toestel gedaan
-     is — vandaar 'Iedereen'. */
+     is, vandaar 'Iedereen'. */
   kompas: cursus,
   verbind: cursus,
   podium: cursus,
@@ -144,7 +144,7 @@ export const UITLEZERS: Readonly<Record<string, Uitlezer>> = {
   /* Arabisch: profielen als object, met de sleutel als id. */
   lisan(d) {
     return waarden(veld(d, 'profielen')).map((p): Regel => ({
-      wie: tekst(veld(p, 'naam')) ?? tekst(veld(p, 'id')) ?? '—',
+      wie: tekst(veld(p, 'naam')) ?? tekst(veld(p, 'id')) ?? '–',
       laatst: tekst(veld(p, 'laatst')) ?? tekst(veld(p, 'laatsteDag')),
       euro: null,
       regels: [
@@ -209,7 +209,7 @@ export const UITLEZERS: Readonly<Record<string, Uitlezer>> = {
     }]
   },
 
-  /* BennaHealth. Hier staat bewust géén caloriedoel in het overzicht — dat
+  /* BennaHealth. Hier staat bewust géén caloriedoel in het overzicht, dat
      getal hoort thuis in de app, naast zijn interval, en niet los in een tabel
      waar het als een meting oogt. Wat hier telt is of de reeks doorloopt:
      zonder dagelijkse weging rekent het model niets uit. */
@@ -228,9 +228,9 @@ export const UITLEZERS: Readonly<Record<string, Uitlezer>> = {
       laatst: alles.length ? (alles[alles.length - 1] ?? null) : null,
       euro: null,
       regels: [
-        ['Gewicht', laatsteW == null ? '—' : String(laatsteW).replace('.', ',') + ' kg'],
+        ['Gewicht', laatsteW == null ? '–' : String(laatsteW).replace('.', ',') + ' kg'],
         ['Te gaan', laatsteW == null || doel == null
-          ? '—' : (laatsteW - doel).toFixed(1).replace('.', ',') + ' kg'],
+          ? '–' : (laatsteW - doel).toFixed(1).replace('.', ',') + ' kg'],
         ['Wegingen', wegingen.length],
         ['Dagen gelogd', gelogd.length],
       ],

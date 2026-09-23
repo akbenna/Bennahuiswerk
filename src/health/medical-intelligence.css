@@ -10,7 +10,7 @@
 
    Het brede scherm hád geen eigen indeling. Het was de telefoon, uitgerekt. Elk
    onderdeel is ontworpen op 430 pixels en kreeg er duizend, en dat pakt voor
-   elk onderdeel anders uit — maar nooit goed:
+   elk onderdeel anders uit, maar nooit goed:
 
      * De dagenstrook is veertien blokjes met `flex:1 1 0` en geen maximum. Op
        een telefoon zijn dat chips die samen "veertien dagen" zeggen. Op een
@@ -26,8 +26,8 @@
        schermhoogte.
 
    De regel die eruit volgt: **breedte is geen ruimte om dingen uit te rekken
-   maar om ze naast elkaar te zetten.** De hero is nu zelf twee kolommen — ring
-   en tekst links, de veertien dagen en de macro's rechts — en elk onderdeel
+   maar om ze naast elkaar te zetten.** De hero is nu zelf twee kolommen (ring
+   en tekst links, de veertien dagen en de macro's rechts) en elk onderdeel
    houdt de maat waarop het ontworpen is.
 
    ---------------------------------------------------------------------------
@@ -41,13 +41,13 @@
    verschillende groenen op één scherm.
 
    Ze zijn alle vier weg. Wat overblijft is `--k`, `--let`, `--fout`, `--goed`
-   en de macrokleuren uit `stijl.css` — dezelfde die de telefoon gebruikt. Deze
+   en de macrokleuren uit `stijl.css`, dezelfde die de telefoon gebruikt. Deze
    laag gaat over indeling; kleur hoort op één plek te staan.
 
    ---------------------------------------------------------------------------
    WAAROM DIT ÉÉN BESTAND IS
 
-   Dit waren er twee — `desktop.css` en dit — die allebei geladen werden en voor
+   Dit waren er twee (`desktop.css` en dit) die allebei geladen werden en voor
    negen tiende dezelfde regels bevatten. Welke won hing af van de importvolgorde.
    Eén lila verloop overleefde het opruimen van het violet omdat het maar in één
    van de twee stond. Alles staat nu hier.
@@ -112,7 +112,7 @@
 
   /* --- de hero ---------------------------------------------------------- */
 
-  .hero{border-radius:24px;padding:26px 28px 24px;
+  .hero{--heropad:28px;border-radius:24px;padding:26px var(--heropad) 24px;
     box-shadow:0 18px 46px rgba(20,60,50,.11);
     /* Een dunne rand van binnen: de lichte verlopen zijn zo bleek dat de kaart
        anders in de achtergrond wegvalt. */
@@ -140,51 +140,101 @@
 
    Die grens is gemeten en niet gekozen. Hij stond eerst op 1100, en daar klopte
    de rekensom niet: de rechterkolom eist 380 pixels voor de veertien dagen, en
-   wat er dan links overblijft is 356 — te weinig voor een ring van 130 naast een
+   wat er dan links overblijft is 356, te weinig voor een ring van 130 naast een
    alinea. Het gevolg was tekst die na drie woorden afbreekt, wat erger is dan
    één kolom. Onder deze grens blijft de hero dus één kolom; de strook heeft daar
    de volle breedte en houdt zijn maat via het maximum per blok. */
+/* DEZE TWEE KOLOMMEN ZIJN VAN ÉÉN HERO EN NIET VAN ALLE ZES
+   Dit blok stond op `.hero` en gold dus voor alle zes de schermen, terwijl het
+   voor Vandaag geschreven is: het noemt de ring, de veertien dagen en de
+   macrostaven, en die staan alleen daar. Wat de andere vijf kregen was
+   automatische plaatsing, en dat ging twee keer mis.
+
+   De sfeerband werd een kolom in plaats van een band, 582 breed in een hero
+   van 1076, met een harde rand halverwege. En `.hero>.mini` wijst één cel aan,
+   terwijl een schermkop er twee kan hebben: op Inzicht stonden twee alinea's
+   436 bij 17 punten over elkaar heen. Allebei alleen zichtbaar vanaf 1240
+   punten, en op de telefoon dus nergens aan te zien.
+
+   `:has(> .macros)` wijst de hero van Vandaag aan en verder niets, de
+   macrostaven staan nergens anders. De vijf schermkoppen blijven op een breed
+   scherm dus gewoon een blok, en een blok doet precies wat hier bedoeld was:
+   de band over de volle breedte, de alinea's onder elkaar.
+
+   De proef meet beide gevallen op drie maten; de tegenproef legt de oude
+   plaatsing er weer overheen en kijkt of Vandaag onveranderd blijft. */
 @media (min-width:1240px){
-  .hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(380px,.8fr);
+  .hero:has(> .macros){display:grid;grid-template-columns:minmax(0,1fr) minmax(380px,.8fr);
     column-gap:36px;align-items:start}
-  .heroboven{grid-column:1/-1;margin-bottom:20px}
-  .heroring{grid-column:1;grid-row:2/span 3;align-self:center;margin-top:0}
-  .hero>.strook{grid-column:2;grid-row:2;margin-top:2px}
-  .hero>.mini{grid-column:2;grid-row:3}
-  .hero>.macros{grid-column:2;grid-row:4;align-self:end}
+  /* Rij 1 is voor een sfeerband. Vandaag heeft er geen, en een lege rij kost
+     niets: deze grid heeft `column-gap` en geen `row-gap`, dus hij is nul hoog.
+     De regel staat er voor het geval Vandaag er ooit wel een krijgt. */
+  .hero:has(> .macros)>.schermstrook{grid-column:1/-1;grid-row:1}
+  .hero:has(> .macros)>.heroboven{grid-column:1/-1;grid-row:2;margin-bottom:20px}
+  .hero:has(> .macros)>.heroring{grid-column:1;grid-row:3/span 3;align-self:center;margin-top:0}
+  .hero:has(> .macros)>.strook{grid-column:2;grid-row:3;margin-top:2px}
+  .hero:has(> .macros)>.mini{grid-column:2;grid-row:4}
+  .hero:has(> .macros)>.macros{grid-column:2;grid-row:5;align-self:end}
 }
 
 @media (min-width:1280px){
   .wrap{padding-left:310px;padding-right:54px}
   nav.tabs{width:270px}
 
-  /* Geen `dense`. Dat leek de juiste keuze — het vult de lege rijen die de
-     zijkolom overhoudt — maar het vult ze met de eerstvolgende kaart die past,
-     en dat was de weegkaart, boven de hero uit. Een raster dat achteruit mag
-     zoeken zet de leesvolgorde op zijn kop. De gewone, vooruitlopende plaatsing
-     doet precies wat de bedoeling is: de weging komt naast de coach, de
-     bewegingskaart naast de maaltijdvakken, en een gaatje in de zijkolom is
-     goedkoper dan een kaart die op de verkeerde plek opduikt. */
-  #inhoud{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,.72fr);
-    gap:20px;align-items:start}
+  /* TWEE LAY-OUTS, EN WAAROM DAT GEEN LUIHEID IS
+
+     Een scherm dat zélf zegt wat er terzijde hoort (Vandaag, via `.zijkolom`)
+     krijgt een raster met vaste kolommen: de weging naast de coach, de
+     bewegingskaart naast de maaltijdvakken. Dat is een plaatsing die iets
+     betékent en die hoort niet te verschuiven omdat een kaart een regel langer
+     werd.
+
+     Alle andere schermen (Inzicht, Voeding, Beweging, Gezondheid, Profiel) 
+     hebben zo'n bedoeling niet. Daar stonden de kaarten om en om in datzelfde
+     raster, en dat kostte precies wat een raster kost: elk item krijgt een eigen
+     rij, dus een korte kaart naast een lange laat de hoogte van de lange over
+     als lege lucht. Op Beweging was dat een gat van een halve schermhoogte
+     onder "Over het hele venster", op Inzicht net zo'n gat onder "Te snel".
+
+     Voor die schermen dus geen raster maar kolomstroom: de kaarten lopen door
+     tot de kolom vol is en beginnen dan aan de volgende, zoals tekst in een
+     krant. Een korte kaart laat niets achter. Dat is ook meteen waarom dit niet
+     vóór Vandaag gezet kan worden: kolomstroom kán niet zeggen "deze kaart naar
+     rechts". */
+
+  /* Het raster, voor het scherm met een zijkolom. */
+  #inhoud:has(.zijkolom){display:grid;
+    grid-template-columns:minmax(0,1.6fr) minmax(300px,.72fr);
+    gap:16px;align-items:start}
   /* Rasteritems rekken standaard mee met de hoogte van hun rij. Dat maakte van
      "Eten toevoegen" een groen blok van een halve schermhoogte. */
-  #inhoud>*{align-self:start}
-
-  /* De vaste kolomindeling geldt alleen op een scherm dat zélf zegt wat er
-     terzijde hoort. Zonder deze voorwaarde zou `grid-column:1` ook gelden op
-     Inzicht, Voeding, Beweging, Gezondheid en Profiel — schermen zonder
-     zijkolom — en die zouden dan alles in de linkerkolom stapelen met een lege
-     strook van veertig procent ernaast. Daar blijft de gewone plaatsing staan,
-     die de kaarten om en om verdeelt. */
-  #inhoud:has(.zijkolom)>*{grid-column:1}
-  #inhoud>.hero,#inhoud>.duo,#inhoud>.trio,#inhoud>footer{grid-column:1/-1}
-  #inhoud>.zijkolom{grid-column:2}
+  #inhoud:has(.zijkolom)>*{align-self:start;grid-column:1}
+  #inhoud:has(.zijkolom)>.hero,
+  #inhoud:has(.zijkolom)>.duo,
+  #inhoud:has(.zijkolom)>.trio,
+  #inhoud:has(.zijkolom)>footer{grid-column:1/-1}
+  #inhoud:has(.zijkolom)>.zijkolom{grid-column:2}
   /* Een ::before op een rastercontainer is zélf een rasteritem. Zonder deze
      regel spant de scheidingslijn maar één kolom en houdt hij op halverwege het
-     scherm — een streep die nergens naartoe loopt. */
-  #inhoud:before{grid-column:1/-1}
-  #inhoud>.kaart{margin-bottom:0}
+     scherm, een streep die nergens naartoe loopt. */
+  #inhoud:has(.zijkolom):before{grid-column:1/-1}
+  #inhoud:has(.zijkolom)>.kaart{margin-bottom:0}
+
+  /* De kolomstroom, voor de schermen zonder zijkolom. */
+  #inhoud:not(:has(.zijkolom)){column-count:2;column-gap:16px}
+  /* Een kaart die over de kolomgrens heen breekt is twee halve kaarten met een
+     rand ertussendoor. `break-inside` is hier dus geen verfraaiing. */
+  #inhoud:not(:has(.zijkolom))>*{break-inside:avoid;margin-bottom:16px}
+  /* Wat in het raster over beide kolommen liep, loopt hier over beide kolommen.
+     `column-span:all` breekt de stroom af, zet het element over de volle
+     breedte en begint eronder opnieuw te verdelen, dus de hero blijft boven en
+     de kaarten eronder sluiten weer aan. */
+  #inhoud:not(:has(.zijkolom)):before,
+  #inhoud:not(:has(.zijkolom))>.hero,
+  #inhoud:not(:has(.zijkolom))>.duo,
+  #inhoud:not(:has(.zijkolom))>.trio,
+  #inhoud:not(:has(.zijkolom))>footer{column-span:all}
+
   /* Een knop van zeshonderd pixels breed is geen knop meer maar een balk. */
   #inhoud>.hoofdknop{max-width:340px}
 }

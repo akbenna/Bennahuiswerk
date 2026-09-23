@@ -12,7 +12,7 @@
  * en minder uitleg.
  */
 /*
- * DAG EN NACHT — waarom elk nachtblok hier twee keer staat
+ * DAG EN NACHT: waarom elk nachtblok hier twee keer staat
  *
  * De nachtkleuren stonden in mediaquery's: het toestel besliste en de gebruiker
  * niet. Nu kan hij kiezen, en die keuze staat als `data-thema` op <html> (zie
@@ -21,7 +21,7 @@
  *   @media (prefers-color-scheme:dark){ :root:not([data-thema]) ... }
  *   :root[data-thema="donker"] ...
  *
- * De eerste is de grondstand — geen keuze gemaakt, dus volgt de app het
+ * De eerste is de grondstand: geen keuze gemaakt, dus volgt de app het
  * toestel. De tweede is de gedwongen stand. Staat er `data-thema="licht"`, dan
  * geldt geen van beide en blijft de dagkleur van `:root` staan, ook op een
  * toestel dat op nacht staat.
@@ -32,21 +32,21 @@
  * een half jaar één helft van bijgewerkt wordt en de andere niet.
  *
  * Daarom hangt er een proef aan, in `health-voorbeeld.mjs`. Die laadt de app
- * twee keer — één keer met een toestel op nacht en geen kenmerk, één keer met
- * een toestel op dag en `data-thema="donker"` — en vergelijkt van élk element
+ * twee keer (één keer met een toestel op nacht en geen kenmerk, één keer met
+ * een toestel op dag en `data-thema="donker"`) en vergelijkt van élk element
  * op drie tabbladen zes berekende eigenschappen. Ruim achthonderd elementen, en
  * hij vergelijkt het beeld en niet de tekst van dit bestand: welke regel een
  * verschil veroorzaakt doet er niet toe, dát er verschil is wel.
  *
  * Er hoort een tegenproef bij, en die is niet optioneel. Zou iemand het
  * `:not([data-thema])` hier weghalen, dan zijn de twee nachten nog steeds
- * gelijk — de mediaquery doet dan gewoon alles — en komt zo'n verandering er
+ * gelijk (de mediaquery doet dan gewoon alles) en komt zo'n verandering er
  * ongemerkt doorheen. Wat hem tegenhoudt is de andere helft van de proef: dag
  * afdwingen op een toestel dat op nacht staat moet hetzelfde scherm geven als
  * een toestel dat op dag staat. Beide helften zijn mutatiegetoetst.
  */
 /* ============================================================================
-   KALIBRATIE — persoonlijk energiebalansmodel
+   KALIBRATIE, persoonlijk energiebalansmodel
    Ontwerpprincipe, door de hele app heen: geen enkel getal zonder zijn
    onzekerheid. Wat gemeten is staat groot en zwaar; wat geschat is draagt
    zijn interval en zijn graad; wat ontbreekt wordt benoemd in plaats van
@@ -68,16 +68,18 @@
   --fout:#A32F2A; --foutbg:#FAE6E4;
   --goed:#2F6B1F; --goedbg:#E4EFDD;
   --schaduw:0 1px 2px rgba(12,30,24,.03), 0 10px 26px rgba(12,30,24,.06);
+  /* De dekking van het sfeervlak. Hoger kost contrast; zie achtergronden.tsx. */
+  --sfeer:.45;
   --sans:'SF Pro Text',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   /* Koppen en gemeten getallen stonden in een serif. Die stond voor "dit is
-     gemeten", maar dat zeggen het interval en de graad er al bij — het was dus
+     gemeten", maar dat zeggen het interval en de graad er al bij, het was dus
      een tweede stem voor dezelfde boodschap. Nu één familie, en het verschil
      zit in gewicht en grootte. */
   --kop:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',sans-serif;
   --mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;
 }
 @media (prefers-color-scheme:dark){:root:not([data-thema]){
-  --canvas:#080D0C; --vlak:#121A18; --vlak2:#1B2523;
+  --canvas:#080D0C; --sfeer:.55; --vlak:#121A18; --vlak2:#1B2523;
   --ink:#F1F5F3; --ink2:#DCE4E1; --grijs:#9AA8A2; --dim:#8A9691;
   --lijn:#243230; --lijn2:#354642;
   --k:#4FD2A6; --kfel:#28BE8E; --kbg:#0F2E26;
@@ -88,7 +90,7 @@
   --schaduw:0 1px 2px rgba(0,0,0,.5), 0 10px 26px rgba(0,0,0,.35);
 }}
 :root[data-thema="donker"]{
-  --canvas:#080D0C; --vlak:#121A18; --vlak2:#1B2523;
+  --canvas:#080D0C; --sfeer:.55; --vlak:#121A18; --vlak2:#1B2523;
   --ink:#F1F5F3; --ink2:#DCE4E1; --grijs:#9AA8A2; --dim:#8A9691;
   --lijn:#243230; --lijn2:#354642;
   --k:#4FD2A6; --kfel:#28BE8E; --kbg:#0F2E26;
@@ -111,8 +113,37 @@ a{color:var(--k)}
    dossierkop en niet als een tussenkopje; het trok bovendien meer
    aandacht dan het getal eronder. Nu gewoon een klein vet woord. */
 .eyebrow{font-size:.78rem;font-weight:640;letter-spacing:0;color:var(--grijs)}
+/* DE TITEL VAN EEN KAART LEEST ALS EEN TITEL
+   Alles op een scherm had bijna hetzelfde gewicht: de kop van een kaart stond
+   in .78rem grijs, de regel eronder in .84 en de toelichting in .75. Dat leest
+   als één lange labtekst waarin niets begint of eindigt, en dan motiveert een
+   scherm vol goede informatie niemand om te lezen.
+
+   Alleen de eerste kop van een kaart groeit. Een tussenkop verderop in dezelfde
+   kaart ("Stap 1", "De rest van de kast") blijft klein, en juist daardoor is er
+   nu een rangorde in plaats van één vlak. De vier selectors dekken de twee
+   vormen die `Kaart` oplevert, met en zonder sfeermotief; dat motief zet er een
+   laag tussen. */
+.kaart > .eyebrow:first-child,
+.kaart > .tussen:first-child > .eyebrow,
+.kaart.metsfeer > div > .eyebrow:first-child,
+.kaart.metsfeer > div > .tussen:first-child > .eyebrow{
+  font-size:.97rem;font-weight:700;color:var(--ink);letter-spacing:-.012em}
+.kaart > .eyebrow:first-child,
+.kaart.metsfeer > div > .eyebrow:first-child{margin-bottom:2px}
+/* De wegwijzer hoort bij de titel en krijgt daarom de accentkleur: één blik en
+   je ziet waar een tegel over gaat. Verderop in de kaart blijft hij grijs. */
+.kaart > .eyebrow:first-child > svg,
+.kaart > .tussen:first-child > .eyebrow > svg,
+.kaart.metsfeer > div > .eyebrow:first-child > svg,
+.kaart.metsfeer > div > .tussen:first-child > .eyebrow > svg{color:var(--k)}
+
+/* De titel van een regel in een lijst, met zijn toelichting eronder. Die twee
+   stonden op .84 en .75 en verschilden dus nauwelijks; nu draagt de eerste het
+   gewicht en de tweede niet. */
+.rijkop{font-size:.88rem;font-weight:600;color:var(--ink);line-height:1.4}
 /* De wegwijzer staat in een eigen kolom links van de kop en nooit in de
-   tekststroom — dat is een van de vier dingen die hem van een herkomstteken
+   tekststroom, dat is een van de vier dingen die hem van een herkomstteken
    onderscheiden. Zie `tekens.tsx`. */
 .eyebrow.metteken{display:flex;align-items:center;gap:7px}
 .eyebrow.metteken>svg{color:var(--dim);flex:0 0 auto}
@@ -122,9 +153,14 @@ a{color:var(--k)}
 .getal{font-family:var(--kop);font-variant-numeric:tabular-nums;color:var(--ink);line-height:1;
   font-weight:660;letter-spacing:-.03em}
 button,input,select,textarea{font-family:inherit;font-size:1rem;color:inherit}
-/* De tijdelijke tekst had geen eigen kleur en kreeg dus die van de browser —
+/* De tijdelijke tekst had geen eigen kleur en kreeg dus die van de browser,
    op Safari lichter dan wat hier ook maar ergens staat, en niet te meten. */
 ::placeholder{color:var(--dim);opacity:1}
+/* Een knop die als een verwijzing leest. Het moet een <button> zijn en geen <a>:
+   er wordt niets genavigeerd, er klapt iets open. Een <a href="#"> zou met een
+   schermlezer een link beloven die nergens heen gaat. */
+.alsLink{background:none;border:0;padding:0;font:inherit;color:var(--k);
+  text-decoration:underline;text-underline-offset:2px;cursor:pointer}
 :focus-visible{outline:2px solid var(--k);outline-offset:2px;border-radius:6px}
 
 /* ---------------------------------------------------------------- header -- */
@@ -177,6 +213,13 @@ nav.tabs button[aria-selected="true"]{color:var(--k);background:var(--kbg);font-
   padding:8px 14px;border-radius:10px;font-size:.86rem;cursor:pointer;white-space:nowrap}
 .knop:hover{border-color:var(--lijn2)}
 .knop.vol{background:var(--knopvul);border-color:var(--knopvul);color:var(--canvas);font-weight:600}
+/* De subregel op een gevulde knop erfde de grijstint van `.mini`, en die is
+   gekozen om op wit te lezen. Op de groene vulling gaf dat een contrast van
+   1,15, praktisch onzichtbaar. Het viel in de portiekeuze op: de gram en de
+   kilocalorieën onder de gekozen maat waren weg, precies bij de knop die je net
+   had aangetikt. Kleur meeërven van de knop lost het in één regel op; de
+   dekking blijft eraf, want 80 % haalt 3,81 en dat is opnieuw te weinig. */
+.knop.vol .mini{color:var(--canvas);opacity:1}
 .knop.sm{padding:4px 10px;font-size:.76rem;border-radius:8px}
 .knop:disabled{opacity:.45;cursor:default}
 input,select,textarea{background:var(--vlak);border:1px solid var(--lijn);border-radius:10px;
@@ -200,6 +243,57 @@ label.veld>span{display:block;font-size:.72rem;color:var(--grijs);margin-bottom:
   transition:transform .15s ease;display:inline-block}
 .uitleg[open]>summary::before{transform:rotate(90deg)}
 .uitleg>summary:hover{color:var(--ink)}
+/* HET WEEGVELD IN DE HERO
+   Het stond onderaan het dagscherm, en dat is de verkeerde plek voor de eerste
+   handeling van de dag: je moest langs zes kaarten scrollen om het ene getal in
+   te vullen waar de hele app op rust. Een eigen vlak en geen doorzichtige rand,
+   want hij ligt op een foto: wat je intikt moet leesbaar blijven, welke foto er
+   ook achter staat. */
+.heroweeg{display:inline-flex;align-items:center;gap:4px;flex:0 0 auto;
+  background:var(--vlak);border:1px solid var(--lijn);border-radius:999px;
+  padding:4px 12px 4px 13px;box-shadow:var(--schaduw)}
+.heroweeg>.wat{font-size:.72rem;color:var(--grijs);white-space:nowrap}
+.heroweeg input{width:62px;padding:3px 4px;font-size:1.02rem;text-align:right;
+  border:0;background:none;font-variant-numeric:tabular-nums;color:var(--ink)}
+.heroweeg input:focus{outline:2px solid var(--k);outline-offset:1px;border-radius:7px}
+.heroweeg>.eh{font-size:.78rem;color:var(--grijs)}
+
+/* De schuif van "wat als". Een bereikveld erft anders de rand en de binnenmarge
+   van de gewone invoervelden, en dan staat de knop in een doosje. */
+.schuif{-webkit-appearance:none;appearance:none;background:none;border:0;padding:0;
+  width:100%;height:26px;cursor:pointer}
+.schuif::-webkit-slider-runnable-track{height:8px;border-radius:4px;
+  background:var(--baan,var(--vlak2))}
+.schuif::-moz-range-track{height:8px;border-radius:4px;background:var(--baan,var(--vlak2))}
+.schuif::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;
+  margin-top:-7px;border-radius:50%;background:var(--knopvul);border:2px solid var(--vlak)}
+.schuif::-moz-range-thumb{width:22px;height:22px;border-radius:50%;
+  background:var(--knopvul);border:2px solid var(--vlak)}
+.schuif:focus-visible{outline:2px solid var(--k);outline-offset:3px}
+
+/* De zes meetvakjes op Gezondheid. Een uitrolmenu met één waardeveld ernaast
+   kostte bij een bloeddruk twee keer kiezen, twee keer typen en twee keer
+   opslaan, en een bloeddruk is nu juist twee getallen die bij elkaar horen.
+   Twee kolommen op een telefoon, drie zodra het past. */
+.meetvelden{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 10px;margin-top:8px}
+@media (min-width:560px){.meetvelden{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.meetvelden input{width:100%}
+
+/* Een verwijzing midden in een zin: een knop die eruitziet als tekst, want dat
+   is wat hij is. Dezelfde kleur als een 'waarom', zodat een lezer die kleur één
+   ding leert betekenen: hier staat meer. */
+.schakel{background:none;border:0;padding:0;margin:0;font:inherit;cursor:pointer;
+  color:var(--k);font-weight:600;text-decoration:underline;text-underline-offset:2px}
+.schakel:hover{color:var(--ink)}
+
+/* Een regel in een lijst die je kunt aantikken. De lijst zelf zet de streep en
+   de ruimte; hier gaat alleen de knopvorm eraf. */
+.lijst>button.naslagregel{width:100%;background:none;border-left:0;border-right:0;
+  border-bottom:0;font:inherit;color:var(--ink);text-align:left;cursor:pointer;
+  gap:10px;border-radius:0}
+.lijst>button.naslagregel:hover{color:var(--k)}
+.naslagregel>.pijl{flex:0 0 auto;color:var(--k);font-size:1rem;line-height:1}
+
 .uitleg>.inhoud{color:var(--grijs)}
 .uitleg>.inhoud{margin-top:7px;padding-left:12px;border-left:2px solid var(--vlak2)}
 .uitleg>.inhoud>p{margin:0 0 7px}
@@ -236,7 +330,7 @@ label.veld>span{display:block;font-size:.72rem;color:var(--grijs);margin-bottom:
 
 /* Het sterretje van een eigen maaltijd. Geen knopvorm eromheen: hij staat vóór
    de naam en hoort bij de titel, niet ernaast. De trefzone is wel groter dan de
-   letter — een sterretje van elf pixels is met een duim niet te raken. */
+   letter, een sterretje van elf pixels is met een duim niet te raken. */
 .ster{background:none;border:0;padding:0 6px 0 0;margin:0;cursor:pointer;
   font-size:1rem;line-height:1;color:var(--dim)}
 .ster[aria-pressed=true]{color:var(--kfel)}
@@ -253,7 +347,7 @@ label.veld>span{display:block;font-size:.72rem;color:var(--grijs);margin-bottom:
 .maalopen[aria-expanded=true] .pijl{transform:rotate(90deg)}
 
 /* Een regel in de duiding van een maaltijd: naam links, getal rechts. De naam
-   mag afbreken en wordt niet geknipt — "Tonijn uit blik, uitgelekt verdubbelen"
+   mag afbreken en wordt niet geknipt, "Tonijn uit blik, uitgelekt verdubbelen"
    afkappen tot "Tonijn uit blik, uitge…" maakt van een uitleg een raadsel. Het
    getal blijft op één regel, want dát moet je kunnen vergelijken. */
 .duidingrij{display:flex;justify-content:space-between;gap:12px;align-items:baseline;
@@ -264,7 +358,68 @@ label.veld>span{display:block;font-size:.72rem;color:var(--grijs);margin-bottom:
 /* -------------------------------------------------------------- venster --- */
 .sluier{position:fixed;inset:0;background:rgba(10,12,10,.5);display:flex;z-index:50;
   align-items:flex-start;justify-content:center;padding:14px;overflow-y:auto}
-.venster{background:var(--vlak);border-radius:16px;padding:20px;width:100%;max-width:520px;margin:20px 0}
+.venster{background:var(--vlak);border-radius:16px;padding:20px;width:100%;max-width:520px;margin:20px 0;overflow:hidden}
+
+/* HET NASLAGVENSTER IS BREDER, EN DAT IS GEEN SMAAK
+
+   Vijfhonderdtwintig punten is de maat van een venster waar je iets invult of
+   één ding leest. Verdiepen is iets anders: acht stukken van vier alinea's die
+   je opzoekt en waar je in terugleest. Op een tablet stonden die in een kolom
+   van dezelfde breedte als een invulveld, met regels van veertig aanslagen en
+   een titel in de maat van een onderschrift. Dan lijkt naslagwerk een melding.
+
+   Breder mag niet eindeloos: voorbij ongeveer vijfentachtig aanslagen per regel
+   raakt het oog de volgende regel kwijt. Vandaar 780 en niet meer, en pas vanaf
+   een scherm dat het heeft. */
+@media(min-width:820px){
+  .venster.breed{max-width:780px;padding:30px 34px}
+  .venster.breed .vensterstrook{width:calc(100% + 68px);margin:-30px -34px 18px}
+}
+
+/* De maat binnen het naslagvenster. Alleen daar, want dit is de enige plek in
+   de app waar je langer dan een alinea achter elkaar leest. */
+.naslag p{font-size:.95rem;line-height:1.62}
+.naslag .klein{font-size:.88rem;line-height:1.56}
+.naslag .mini{font-size:.8rem;line-height:1.5}
+/* De titel van een stuk is een titel en geen bovenschrift: in de kleur van de
+   tekst, in de maat van een kop. De `Kop` in het voorbehoud eronder is wél een
+   bovenschrift en blijft dus zoals hij was. */
+.naslag .kaart>.tussen>.eyebrow{font-size:1.04rem;font-weight:680;color:var(--ink)}
+@media(min-width:820px){
+  .naslag p{font-size:1rem;line-height:1.66}
+  .naslag .kaart>.tussen>.eyebrow{font-size:1.12rem}
+}
+
+/* Een hoeveelheid in een lopende tekst. Zie `nadruk.tsx` voor wat er wel en
+   niet onder valt.
+
+   NIET `.cijfer`, EN DAT WAS EEN FOUT DIE ER EERST IN ZAT
+   Die klasse bestaat al en zet mono met tabelcijfers. Dat is goed voor een
+   getal in een vakje, waar cijfers onder elkaar horen te staan, en fout in een
+   lopende zin: dan leest "5,5 uur" als een stuk code midden in de tekst. Een
+   hoeveelheid in proza blijft dus in dezelfde letter en wordt alleen zwaarder. */
+b.hoeveelheid{font-weight:660;color:var(--ink)}
+/* De strook bovenin loopt tot de rand: hij trekt de binnenmarge van het venster
+   terug en de bovenhoeken volgen die van het venster zelf. De `overflow:hidden`
+   hierboven is wat hem daadwerkelijk afknipt. */
+.vensterstrook{display:block;width:calc(100% + 40px);height:118px;object-fit:cover;
+  margin:-20px -20px 14px;border-radius:16px 16px 0 0}
+/* DE SFEERBAND BOVEN EEN SCHERMKOP
+   Zelfde idee als de strook in een venster, maar op de hero: hij trekt de
+   binnenmarge terug en volgt de bovenhoeken. De hero heeft al `overflow:hidden`,
+   dus hij wordt vanzelf afgeknipt.
+   Hij staat boven de titel en niet erachter, waarom, staat bij `Schermkop`. */
+.schermstrook{display:block;height:104px;object-fit:cover;position:relative;z-index:1;
+  width:calc(100% + 2 * var(--heropad));
+  margin:-20px calc(-1 * var(--heropad)) 14px;
+  border-radius:20px 20px 0 0}
+/* DE HOOGTE LOOPT MEE MET DE BREEDTE, EN DAT IS GEEN SMAAK
+   De bron is 1600 bij 600, dus 8 op 3. Blijft de band 104 hoog terwijl hij op
+   een breed scherm 1320 breed wordt, dan is de uitsnede 12,7 op 1, een vijfde
+   van de foto, en de fiets waar het om ging valt erbuiten. Deze twee stappen
+   houden de uitsnede tussen ongeveer 4 op 1 en 8 op 1. */
+@media(min-width:720px){.schermstrook{height:132px}}
+@media(min-width:1240px){.schermstrook{height:168px}}
 .regel{display:flex;align-items:center;justify-content:space-between;gap:12px;
   padding:11px 0;border-bottom:1px solid var(--lijn)}
 .regel input,.regel select{width:auto}
@@ -276,7 +431,7 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
   font-size:.75rem;line-height:1.6;color:var(--dim)}
 
 /* ============================================================================
-   HET STARTSCHERM — kleur, en waarom hij er is
+   HET STARTSCHERM, kleur, en waarom hij er is
 
    De app opende op een formulier: drie invulvelden, twee nullen en een leeg
    tekstvak. Alles klopte en niemand wilde het openen. Wat hieronder staat is
@@ -284,7 +439,7 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
    staat iets is voordat je het gelezen hebt.
 
    Twee regels die we niet loslaten. Kleur draagt nooit informatie in haar
-   eentje — er staat altijd een cijfer, een woord of een vorm naast, want een
+   eentje, er staat altijd een cijfer, een woord of een vorm naast, want een
    op de twaalf mannen ziet rood en groen niet uit elkaar. En een verloop is
    nooit een vlak: hij loopt van licht naar donker in dezelfde tint, zodat de
    tekst erop leesbaar blijft in beide thema's.
@@ -335,12 +490,52 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
 
 /* -------------------------------------------------------------- de hero --- */
 /* Eén blok bovenaan dat de dag samenvat. Het verloop volgt het tijdstip: 's
-   ochtends warm, 's avonds koel. Dat is geen effect maar oriëntatie — je ziet
+   ochtends warm, 's avonds koel. Dat is geen effect maar oriëntatie, je ziet
    aan de kleur of je aan het begin of aan het eind van je dag staat. */
-.hero{position:relative;border-radius:20px;padding:20px 18px 18px;overflow:hidden;
+/* `--heropad` is de zijmarge van de hero, en staat er als variabele omdat de
+   sfeerband hem terug moet trekken om de rand te halen. Stonden die twee als
+   losse getallen, dan liepen ze uiteen zodra er één werd aangeraakt, en dat
+   gebeurde ook: op bureaublad ging de marge naar 28 en bleef de band op 18
+   rekenen, met elf punten kier aan weerszijden. Nu is er één getal. */
+.hero{--heropad:18px;
+  position:relative;border-radius:20px;padding:20px var(--heropad) 18px;overflow:hidden;
   background:var(--herobg,linear-gradient(155deg,#EEF3F1,#E3ECE9));
   border:1px solid var(--lijn);margin-bottom:14px}
-.hero>*{position:relative;z-index:1}
+/* `:not(.sfeer)` want het motief hoort juist ónder de inhoud te liggen; zonder
+   deze uitzondering tilt de z-index hierboven het eroverheen. */
+.hero>*:not(.sfeer){position:relative;z-index:1}
+
+/* `--dim` IN DE DONKERE HERO, EN WAAROM HIJ HIER ANDERS IS
+
+   De hero legt drie verlopen over elkaar. Wat daaruit komt is lichter dan elke
+   kleurstop afzonderlijk, en daar zit een fout die er lang heeft gestaan zonder
+   dat iemand hem zag: `--dim` (de stilste kleur van de app, en juist degene die
+   de onzekerheidsbanden draagt) haalt op die opgetelde ondergrond 4,31 en niet
+   de 5,5 die je uit de stops afleidt. De eis is 4,5.
+
+   De contrastproef las tot nu toe die stops, dus hij meldde groen. Hij leest nu
+   de werkelijke beeldpunten van de hero, met de tekst eraf; zie
+   `health-voorbeeld.mjs`. Zo kwam dit boven water.
+
+   Alleen in de hero, want alleen de hero heeft dit gestapelde verloop. */
+/* EN NOG EEN TINT DONKERDER, TOEN HET VERLOOP VOLLER WERD
+   De hero draagt sinds september een foto boven de tekst en een voller verloop
+   eronder; het aqua van de middag bracht "36% van de energie" op 4,36. Dezelfde
+   hefboom als hierboven, en hij is gemeten: een tint donkerder koopt ongeveer
+   0,6 aan contrast. Dat is geen verlies, juist deze regels dragen de
+   onzekerheidsbanden, en die horen leesbaar te zijn. */
+.hero{--dim:#454D49}
+@media (prefers-color-scheme:dark){:root:not([data-thema]) .hero{--dim:#9EAAA5}}
+:root[data-thema="donker"] .hero{--dim:#9EAAA5}
+/* HET MOTIEF OP DE HERO NEEMT DE INKTKLEUR EN NIET HET ACCENT
+   De hero heeft als enige element een eigen kleur die met het uur meebeweegt:
+   warm 's ochtends, groen overdag, blauwig 's avonds. Een groen motief daarop
+   is op twee van de drie momenten een tweede kleur die met de eerste vecht,
+   naast elkaar gezet was dat meteen te zien. In inkt leest dezelfde vorm als
+   textuur en niet als kleur, en dus klopt hij op alle drie.
+   De factor 0,75 dempt hem verder: op een gekleurde ondergrond komt inkt harder
+   aan dan het accent op een neutrale kaart. */
+.hero .sfeer{color:var(--ink);opacity:calc(var(--sfeer) * .75);z-index:0}
 .hero .heroglans{position:absolute;inset:auto -30% -55% -30%;height:220px;z-index:0;
   background:radial-gradient(50% 60% at 50% 0%,var(--heroglow,rgba(255,255,255,.55)),transparent 70%);
   pointer-events:none}
@@ -380,13 +575,13 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
    naam en een uitnodiging is iets anders dan een leeg scherm. */
 /* Eén kolom tot ver in het tabletgebied. Twee smalle kolommen naast elkaar
    op een telefoon knippen de namen af, en dat was precies wat er misging. */
-/* Eén kolom op een telefoon, twee op een grote telefoon, vier op een tablet —
+/* Eén kolom op een telefoon, twee op een grote telefoon, vier op een tablet,
    zonder dat er drempels in de stijl staan die niet bij een toestel horen.
    auto-fit met een ondergrens doet dat zelf: de kolom wordt nooit smaller dan
    waar 'Tussendoor' in past, en er komt er een bij zodra dat kan. */
 /* 138 is niet willekeurig: het is de smalste kolom waar 'Tussendoor' met zijn
    stip en zijn plus nog in past. Daarmee komen er twee kolommen op de kleinste
-   telefoon die nog verkocht wordt en vier vanaf een tablet — zonder drempels in
+   telefoon die nog verkocht wordt en vier vanaf een tablet, zonder drempels in
    de stijl die bij een toestel horen in plaats van bij de inhoud. */
 .maaltijden{display:grid;gap:10px;margin-top:4px;
   grid-template-columns:repeat(auto-fit,minmax(min(100%,138px),1fr))}
@@ -454,11 +649,37 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
 .vlaggetje.let{background:var(--letbg);color:var(--let)}
 .vlaggetje.rust{background:var(--vlak2);color:var(--grijs)}
 .vlaggetje.fout{background:var(--foutbg);color:var(--fout)}
+/* De voedingsvlaggetjes. Ze kregen geen eigen kleuren maar lenen de drie die er
+   al zijn: het accent voor eiwit, oker voor vezels, groen voor het lage
+   natrium. Vier nieuwe tinten erbij zou de betekenis van de bestaande
+   verwateren, en deze drie moeten het in dag én nacht doen, wat een geleverde
+   PNG met ingebakken kleuren niet kan. */
+.vlaggetje.eiwit{background:var(--kbg);color:var(--k)}
+.vlaggetje.vezel{background:var(--letbg);color:var(--let)}
+.vlaggetje.zout{background:var(--goedbg);color:var(--goed)}
+.vlaggetjes{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+.vlaggetjes>span{font-size:.7rem}
+.vlaggetjes svg{width:12px;height:12px;flex:0 0 auto}
+/* HET SFEERVLAK
+   Een getekend motief achter een kaart, in de accentkleur en op een dekking die
+   je niet los ziet. Waarom het geen foto is en waarom de dekking een grens is en
+   geen smaak, staat in `achtergronden.tsx`. */
+.metsfeer{position:relative;overflow:hidden}
+/* `:not(.sfeer)` is geen sierlijkheid. Beide selectors wegen even zwaar (één
+   klasse) dus zonder die uitzondering wint degene die toevallig het laatst in
+   dit bestand staat, en dan ligt het motief bovenop de tekst zodra iemand de
+   regels herschikt. */
+.metsfeer>*:not(.sfeer){position:relative}
+.sfeer{position:absolute;inset:0;width:100%;height:100%;color:var(--k);
+  opacity:var(--sfeer);pointer-events:none}
+/* De tekening bij een leeg scherm. Gecentreerd, in het accent, en met genoeg
+   lucht eromheen dat de tekst eronder niet vastplakt. */
+.leegbeeld{display:block;margin:2px auto 12px;color:var(--k);opacity:.85;max-width:100%;height:auto}
 
 /* ---------------------------------------------- de koppen van de schermen -- */
 /* Elk scherm opende met een tabel of een invulveld: je moest lezen om te weten
    hoe je ervoor stond. Nu heeft elk scherm dezelfde kop, met een verloop dat
-   de staat draagt. Vier standen, en er staat altijd een woord bij — kleur
+   de staat draagt. Vier standen, en er staat altijd een woord bij, kleur
    alleen is voor niemand genoeg. */
 .hero.kop-rust{--herobg:linear-gradient(155deg,#FFFFFF 0%,#F4F8F7 55%,#EDF3F1 100%);
   --heroglow:rgba(255,255,255,.7)}
@@ -518,6 +739,9 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
 .labrij .waarde{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:600}
 .labrij .waarde.buiten{color:var(--let)}
 .labrij .waarde.binnen{color:var(--goed)}
+/* De tijd tussen twee metingen breekt nooit af: "4 mnd" over twee regels leest
+   als twee dingen. De rest van de regel mag wel krimpen. */
+.labrij .tijd{white-space:nowrap}
 
 /* ----------------------------------------------------- de eiwitstaven ---- */
 /* Vier maaltijden naast elkaar met één streep op het richtgetal. De streep is
@@ -589,7 +813,7 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
 
 /* Eén variant van de hoofdknop draagt twee regels: wat hij doet en wat dat
    oplevert. Die lijnt links uit, want gecentreerde tekst van twee regels leest
-   slecht — de gewone hoofdknop blijft gecentreerd. */
+   slecht, de gewone hoofdknop blijft gecentreerd. */
 .hoofdknop.breed{text-align:left}
 .hoofdknop.breed>span:last-child{flex:1 1 auto}
 /* Niet .klein: dat is grijs, en grijs op donkergroen is niet te lezen. */
@@ -604,6 +828,13 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
   background:var(--vlak2);border:1px solid var(--lijn);border-radius:9px;padding:8px 10px;
   overflow-wrap:anywhere;line-height:1.45;color:var(--ink)}
 .sleutelvak.meer{white-space:pre-wrap;max-height:190px;overflow:auto}
+/* Het vel voor het spreekuur. Dezelfde vorm als een sleutel, want het is
+   hetzelfde soort ding: tekst die je precies zo meeneemt als hij er staat. Hij
+   mag hoger zijn, want dit lees je en een sleutel niet. */
+.spreekuurvel{font-family:var(--mono);font-size:.72rem;line-height:1.5;white-space:pre-wrap;
+  overflow-wrap:anywhere;max-height:420px;overflow:auto;margin:8px 0 0;
+  background:var(--vlak2);border:1px solid var(--lijn);border-radius:9px;padding:10px 12px;
+  color:var(--ink)}
 /* De Engelse menunaam naast de Nederlandse: erbij, niet ervoor. Hij hoort te
    helpen als je hem nodig hebt en weg te vallen als je hem niet nodig hebt. */
 .anderstalig{color:var(--dim);font-size:.92em}
@@ -623,13 +854,13 @@ footer{margin:22px 0 8px;padding-top:13px;border-top:1px solid var(--lijn);
 
 /* De tekenlijst in "Hoe deze app werkt": drie regels, teken links en uitleg
    rechts. Een tabel en geen lijst met opsommingstekens, want de tekens zijn de
-   opsommingstekens — er hoort er geen tweede naast te staan. */
+   opsommingstekens, er hoort er geen tweede naast te staan. */
 .tekenlijst{width:100%;border-collapse:collapse;margin-top:8px}
 .tekenlijst td{padding:5px 0;vertical-align:baseline}
 .tekenlijst td:first-child{width:2.1em;font-size:1.05rem;text-align:center}
 
 /* De legenda onder een figuur: de kleur zelf in plaats van de naam ervan. Een
-   liggend vlakje staat voor een band, een staand streepje voor een lijn —
+   liggend vlakje staat voor een band, een staand streepje voor een lijn,
    dezelfde vorm als in de figuur erboven. */
 .figlegenda{display:flex;flex-wrap:wrap;gap:3px 15px;margin-top:7px}
 .figlegenda span{display:inline-flex;align-items:center;gap:6px}

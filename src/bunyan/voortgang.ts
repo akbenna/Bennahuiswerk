@@ -3,7 +3,7 @@
  *
  * Zelfde gedachte als in de huiswerkapp: geld hoort bij afgemaakt werk, met een
  * hard weekplafond zodat het niet uit de hand loopt. Punten en rangen lopen
- * dóór als het weekbudget op is — anders stopt het leren als het geld stopt, en
+ * dóór als het weekbudget op is, anders stopt het leren als het geld stopt, en
  * dat is precies de verkeerde les.
  *
  * Alles hier is zuiver: er komt een stand in en er komt een nieuwe stand uit.

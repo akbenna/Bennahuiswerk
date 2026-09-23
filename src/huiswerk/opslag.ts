@@ -5,7 +5,7 @@
  * `oefenapp_v1`: wie hem hernoemt zet vier kinderen terug op nul.
  *
  * Het samenvoegen kiest per veld wat het verst is: de hoogste punten, het
- * hoogste Leitner-doosje, de langste reeks. Nooit een som — twee toestellen die
+ * hoogste Leitner-doosje, de langste reeks. Nooit een som: twee toestellen die
  * dezelfde sessie hebben gezien zouden anders alles dubbel tellen.
  */
 import { leesDag, weekNummer } from './datum'
@@ -120,7 +120,7 @@ export interface Vraagregel {
   /** Wat er volgens het model zou moeten komen, als er niets was. */
   gat: string | null
   /** De sleutels die het model aanwees maar die niet bestaan. Staat er iets in,
-   *  dan wees het model wél ergens heen en is dat bij de controle weggegooid —
+   *  dan wees het model wél ergens heen en is dat bij de controle weggegooid,
    *  een heel ander geval dan "hier is niets voor", terwijl het kind allebei
    *  hetzelfde ziet. Zonder dit veld zijn die twee achteraf niet meer uit
    *  elkaar te houden. Ontbreekt bij oudere regels. */
@@ -169,7 +169,7 @@ export function schoonVoortgang(p: Losse | null | undefined): Voortgang {
   if (typeof np.missieStreak !== 'number') np.missieStreak = 0
   if (typeof np.weekPunten !== 'number') np.weekPunten = 0
   /* IJkwaarde voor de weekstand: staat hij er niet in, dan is het huidige
-     totaal de ijkwaarde — de toernooistand begint dan netjes bij 0 in plaats
+     totaal de ijkwaarde, de toernooistand begint dan netjes bij 0 in plaats
      van een oude teller te tonen. */
   np.weekBasis = typeof p?.weekBasis === 'number' ? p.weekBasis : (np.punten || 0)
   if (np.weekBasis > (np.punten || 0)) np.weekBasis = np.punten || 0

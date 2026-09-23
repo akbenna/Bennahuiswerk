@@ -5,7 +5,7 @@
  * overgenomen uit de oude pagina (zie gereedschap/oud/bunyan-index.html) en
  * alleen van een type voorzien. Eén uitzondering die er echt code van maakt:
  * `check` is een functie die de uitslag van het programma van het kind
- * nakijkt. Dat kan geen JSON zijn en hoort dat ook niet te zijn — elke opdracht
+ * nakijkt. Dat kan geen JSON zijn en hoort dat ook niet te zijn, elke opdracht
  * kijkt op zijn eigen manier na, en die manier hoort bij de opdracht.
  */
 import type { Uitslag } from '../minipy'
@@ -80,7 +80,7 @@ export interface Deel {
   watt?: number | undefined
   socket?: string | undefined
   ram?: string | undefined
-  /** Bij geheugen: DDR4 of DDR5 — het bord moet erbij passen. */
+  /** Bij geheugen: DDR4 of DDR5: het bord moet erbij passen. */
   soort?: string | undefined
   duo?: boolean | undefined
   maat?: string | undefined

@@ -1,12 +1,20 @@
 -- =============================================================================
 -- DE SURINAAMSE HOEK VAN DE GERECHTENBIBLIOTHEEK
 --
--- Nog niet toegepast.
+-- Toestand onbekend: de kop zei lang "nog niet toegepast" en dat klopte
+-- vermoedelijk niet meer. Kijk het na voordat je iets doet, het antwoord staat
+-- in de database en niet in dit bestand:
+--
+--   select count(*) from cultural_dishes where slug like 'sur-%';
+--
+-- Staat daar nul, dan is dit bestand nog te draaien. Staat er iets, dan is het
+-- gedraaid en hoort een toevoeging in een nieuw bestand: de terugdraairegel
+-- onderaan raakt alles wat aan dit patroon voldoet.
 --
 -- DE VRAAG
 --
 -- De bibliotheek telt 27 gerechten: 16 Marokkaanse, 10 Turkse en één Nederlands
--- concept. Twee van de zes keukens die het schema toestaat zijn leeg —
+-- concept. Twee van de zes keukens die het schema toestaat zijn leeg,
 -- `syrisch` en `surinaams`. Wie "roti" intikt krijgt uit de bibliotheek niets;
 -- uit NEVO krijgt hij een roti-vél van 307 kcal per 100 gram, wat klopt en niet
 -- is wat er op het bord ligt.
@@ -26,7 +34,7 @@
 --     3072  Gefrituurde peulvruchtensnack Bara Surinaams 284
 --
 -- Dat verandert de zaak. Voor deze zes is de energie per gram een méting van
--- precies dít gerecht — sterker onderbouwd dan de Marokkaanse hoek, waar de
+-- precies dít gerecht: sterker onderbouwd dan de Marokkaanse hoek, waar de
 -- dichtheid uit een optelling van losse ingrediënten komt. Het enige dat ik er
 -- bij verzin is het portiegewicht.
 --
@@ -36,7 +44,7 @@
 --   - de identiteit van elk ingrediënt en zijn NEVO-code, hieronder stuk voor
 --     stuk uit de tabel gehaald en niet uit het hoofd opgeschreven;
 --   - daarmee alle kcal, eiwit, vet, koolhydraten en vezels, want kal_gerecht()
---     rékent ze uit de tabel — hier staat geen enkel voedingsgetal.
+--     rékent ze uit de tabel: hier staat geen enkel voedingsgetal.
 --
 -- Niet onderbouwd:
 --   - de grammen per ingrediënt bij de twee gerechten van BLOK 2;
@@ -50,7 +58,7 @@
 -- tijdelijke slordigheid maar de juiste graad: ze zijn niet nagekeken.
 --
 -- `validation_status` mag pas naar 'validated' als een diëtist de grammen en de
--- porties heeft nagelopen. Het schema dwingt dat ook af — validated zonder
+-- porties heeft nagelopen. Het schema dwingt dat ook af: validated zonder
 -- beoordelaar en datum wordt geweigerd door dish_validated_needs_reviewer.
 --
 -- DE PROEF DIE IK WEL KON DOEN
@@ -63,8 +71,8 @@
 --     heri heri    1735    2229    1,285    136 g    52 g      0
 --
 -- Voor roti komt 2163 g op vier porties uit op 541 g per portie, en de portie
--- "een bord" hieronder staat op 550 g. Die twee zijn los van elkaar gekozen —
--- de eerste uit de pan, de tweede uit wat er op een bord past — en ze komen
+-- "een bord" hieronder staat op 550 g. Die twee zijn los van elkaar gekozen,
+-- de eerste uit de pan, de tweede uit wat er op een bord past, en ze komen
 -- binnen twee procent samen. Dat is geen bewijs, maar het zou een waarschuwing
 -- zijn geweest als ze een factor uit elkaar lagen.
 --
@@ -82,7 +90,7 @@
 BEGIN;
 
 -- ---------------------------------------------------------------------------
--- BLOK 1 — DE ZES DIE NEVO ALS GEHEEL GEMETEN HEEFT
+-- BLOK 1: DE ZES DIE NEVO ALS GEHEEL GEMETEN HEEFT
 -- ---------------------------------------------------------------------------
 --
 -- Eén ingrediëntregel van 1000 gram met de NEVO-code van het gerecht zelf. Dat
@@ -293,11 +301,11 @@ select n.id, p.label, p.maat, p.icoon, p.schat, p.laag, p.hoog, 'estimated', p.s
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 2 — DE TWEE DIE UIT GEMETEN ONDERDELEN ZIJN OPGETELD
+-- BLOK 2: DE TWEE DIE UIT GEMETEN ONDERDELEN ZIJN OPGETELD
 -- ---------------------------------------------------------------------------
 --
 -- Hier kent NEVO de onderdelen wel en het gerecht niet. Elk ingrediënt is een
--- echte tabelregel — de identiteit en de code zijn nagekeken — maar hoevéél
+-- echte tabelregel (de identiteit en de code zijn nagekeken) maar hoevéél
 -- ervan in de pan gaat is mijn schatting. Dat staat per regel in
 -- uncertainty_note, want de app toont die notities in het uitklapje.
 
@@ -342,7 +350,7 @@ with nieuw as (
          'Masala staat niet in NEVO. Kerrie djawa (1223) is de dichtstbijzijnde gedroogde kruidenmix; de samenstelling verschilt, de energie nauwelijks.'),
    (90,  'Zout',          null,         'kruiden',   8,          'g',  '841', 'ingredient',      false, null,       null, null),
    (200, 'Zonnebloemolie', null,        'vet',      40,          'ml', '317', 'preparation_fat', true,  'zonnebloemolie', 1.000,
-         'Alles wat in de pan gaat blijft in het gerecht — er wordt gestoofd, niet gefrituurd. Wie royaler bakt zit hoger.')
+         'Alles wat in de pan gaat blijft in het gerecht, er wordt gestoofd, niet gefrituurd. Wie royaler bakt zit hoger.')
          ) as v(pos, naam, lokaal, cat, gram, eenheid, nevo, rol, vetregel, vetsoort, opname, notitie)
   returning 1
 )
@@ -351,7 +359,7 @@ insert into public.dish_portions
    grams_high, measurement_basis, is_default, sort_order, notes)
 select n.id, p.label, p.maat, p.icoon, p.schat, p.laag, p.hoog, 'estimated', p.std, p.volg, p.notitie
   from nieuw n,
-       (values ('Bord — één roti met kip', 'bord', '🍛', 550::numeric, 450::numeric, 700::numeric, true,  10,
+       (values ('Bord, één roti met kip', 'bord', '🍛', 550::numeric, 450::numeric, 700::numeric, true,  10,
                 'De pan komt op 541 g per portie uit; die twee schattingen zijn los van elkaar gemaakt.'),
                ('Half bord',               'bord', '🍛', 280,          230,          350,          false, 20, null),
                ('Groot bord',              'bord', '🍛', 750,          680,          880,          false, 30, null))
@@ -385,7 +393,7 @@ with nieuw as (
    (30,  'Bakbanaan',       'bakbana',  'fruit',   400,          'g',  '665', 'ingredient',      false, null,       null,
          'NEVO heeft alleen de rauwe rijpe bakbanaan (665). Gekookt neemt hij water op, dus per gram valt de uitkomst hier aan de hoge kant.'),
    (40,  'Bakkeljauw',      'batyaw',   'vis',     300,          'g', '3137', 'ingredient',      false, null,       null,
-         'Geweekt en gekookt gewicht — het zout is er dan grotendeels uit. Droog gewogen zou een factor 2,5 te hoog zijn.'),
+         'Geweekt en gekookt gewicht, het zout is er dan grotendeels uit. Droog gewogen zou een factor 2,5 te hoog zijn.'),
    (50,  'Ei',              null,       'ei',      200,          'g',   '84', 'ingredient',      false, null,       null,
          'Vier gekookte eieren zonder schil.'),
    (60,  'Ui',              null,       'groente', 100,          'g',   '63', 'ingredient',      false, null,       null, null),
@@ -409,7 +417,7 @@ COMMIT;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 3 — NAKIJKEN
+-- BLOK 3: NAKIJKEN
 -- ---------------------------------------------------------------------------
 --
 -- 1. Staat de hoek er, met de juiste merktekens? Acht rijen, alle acht
@@ -445,10 +453,10 @@ COMMIT;
 --     sur-heri-heri            Bord                     450 g    578
 --     sur-moksi-alesi          Bord                     350 g    431
 --     sur-pom                  Stuk                     200 g    238
---     sur-roti-kip             Bord — één roti met kip  550 g    832
+--     sur-roti-kip             Bord: één roti met kip  550 g    832
 --
 -- Wijkt een van deze af, dan is er een code verschoven of een gram verkeerd
--- overgenomen — niet een afronding.
+-- overgenomen, niet een afronding.
 
 -- select d.slug, p.label_nl, p.grams_estimate,
 --        round(sum(i.grams_equivalent
@@ -479,7 +487,7 @@ COMMIT;
 --   from unnest(array['roti','pom','bara','bojo','dahl','moksi','heri heri',
 --                     'bruine bonen','surinaams']) w;
 
--- Terugdraaien — op de slugs van dit bestand en niet op de keuken:
+-- Terugdraaien: op de slugs van dit bestand en niet op de keuken:
 --
 --   delete from cultural_dishes where slug like 'sur-%';
 --

@@ -13,7 +13,7 @@
  * kind van acht iets hoeft te onthouden.
  *
  * Wegschrijven gaat nooit blind. Er wordt eerst opgehaald en samengevoegd, en
- * pas dan teruggeschreven — een toestel dat een dag offline was mag de
+ * pas dan teruggeschreven, een toestel dat een dag offline was mag de
  * centrale stand niet verlagen.
  */
 import { hub } from '@/gedeeld/db/bennahub'
@@ -78,7 +78,7 @@ export async function familieBewaren(s: Stand): Promise<number> {
   return Date.now()
 }
 
-/** Ophalen en samenvoegen zonder in te loggen — voor het stille bijwerken bij
+/** Ophalen en samenvoegen zonder in te loggen, voor het stille bijwerken bij
  *  het openen van de app. Geeft niets terug als er niets te halen viel. */
 export async function familieOphalen(s: Stand, kinderen: string[]): Promise<Stand | null> {
   const c = s.cloud
@@ -114,7 +114,7 @@ export async function kindBewaren(
        lukt dat ook niet, dan blijft de voortgang gewoon op dit toestel. */
     try {
       await maakAan(acc.code, acc.pw, { prog: hier })
-    } catch { /* geen verbinding — lokaal is genoeg */ }
+    } catch { /* geen verbinding, lokaal is genoeg */ }
     return null
   }
 }
@@ -135,7 +135,7 @@ export async function kindOphalen(s: Stand, pid: string): Promise<Voortgang | nu
 
 /**
  * Een kind aanmelden met naam en wachtwoord. Bestaat het account nog niet, dan
- * wordt het aangemaakt met de stand die hier staat — een kind dat voor het
+ * wordt het aangemaakt met de stand die hier staat, een kind dat voor het
  * eerst inlogt hoort zijn punten niet kwijt te raken. Gooit alleen bij een
  * echt verkeerd wachtwoord of geen verbinding.
  */

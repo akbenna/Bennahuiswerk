@@ -2,7 +2,7 @@
  * HET OEFENSCHERM, OP GEDRAG GETOETST
  *
  * De klacht die hier beantwoord wordt: de app bleef dezelfde som stellen, ook
- * als die allang beheerst was. Dat was geen tekst maar gedrag — het scherm zag
+ * als die allang beheerst was. Dat was geen tekst maar gedrag: het scherm zag
  * er goed uit, er kwam alleen niets anders meer uit de voorraad. Een grep zou
  * het dus niet gevonden hebben, en een proef op `kiesVolgende` alleen ook niet:
  * de vernauwing zat in het scherm, dat bij een vast niveau de voorraad eerst
@@ -26,7 +26,7 @@ import { leegVoortgang, schoonVoortgang } from './opslag'
 import { verwerkAntwoord } from './uitslag'
 import { ECHT } from './toeval'
 
-/** Vier sommen in één onderwerp, verdeeld over drie niveaus — de vorm waarin
+/** Vier sommen in één onderwerp, verdeeld over drie niveaus, de vorm waarin
  *  `Delen` bij Amine in de voorraad staat, met kenbare antwoorden. */
 const STAPEL: Opgave[] = [
   { id: 'd1', p: 'amine', v: 'rekenen', t: 'Delen', lvl: 1, q: '6 ÷ 3', a: '2' },
@@ -136,7 +136,7 @@ describe('het oefenscherm', () => {
  * DE FORMULEKAART NAAST DE SOM
  *
  * De klacht: de wiskunde- en natuurkunderegels waren bij het oefenen nergens
- * meer te vinden. Ze stonden er ook echt niet — de kaart hing aan een knop op
+ * meer te vinden. Ze stonden er ook echt niet: de kaart hing aan een knop op
  * het thuisscherm, en wie via het portaal binnenkomt ziet dat scherm nooit.
  * Een grep op `FORMULEBLOKKEN` had dat niet gevonden: het bestand werd gewoon
  * geïmporteerd, alleen niet op een plek waar een kind kwam.
@@ -182,7 +182,7 @@ describe('de formulekaart bij het oefenen', () => {
   it('toont alleen de blokken van dít vak', () => {
     oefenNatuurkunde()
     /* Wassima hoort bij natuurkunde geen kansrekening van de bovenbouw te
-       krijgen — dan is het blaadje geen blaadje meer maar een boek. */
+       krijgen; dan is het blaadje geen blaadje meer maar een boek. */
     expect(formulekaart()).not.toContain('Verwachtingswaarde')
   })
 
@@ -221,7 +221,7 @@ describe('de formulekaart bij het oefenen', () => {
 
   it('laat geen blok achter dat bij geen enkel vak hoort', () => {
     /* Een typefout in een vaknaam laat een blok stilzwijgend verdwijnen van
-       elk oefenscherm — precies de fout die hier hersteld is, maar dan één
+       elk oefenscherm: precies de fout die hier hersteld is, maar dan één
        blok tegelijk en dus minder opvallend. */
     const vakken = new Set(Object.values(PROFIELEN).flatMap((pr) => pr.vakken))
     for (const blok of FORMULEBLOKKEN) {

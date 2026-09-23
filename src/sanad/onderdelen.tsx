@@ -5,14 +5,14 @@
  *
  * De teksten in gegevens/ dragen opmaak: <span class="ar"> om Arabisch,
  * <em> om een transcriptie, <b> om een term. Dat is geen sierlijkheid maar
- * betekenis — Arabisch moet in Amiri en van rechts naar links, en een
+ * betekenis, Arabisch moet in Amiri en van rechts naar links, en een
  * transcriptie moet zich onderscheiden van de vertaling. Die opmaak kan dus
  * niet weg, en zij komt via dangerouslySetInnerHTML op het scherm.
  *
  * Dat mag hier omdat de herkomst vaststaat: deze teksten staan in de repo,
  * gaan langs een review, en komen nergens vandaan waar iemand anders kan
- * schrijven. Alles wat de gebruiker zélf intikt — het logboek, het antwoord
- * van het model — gaat als gewone tekst door React heen en nooit hierlangs.
+ * schrijven. Alles wat de gebruiker zélf intikt (het logboek, het antwoord
+ * van het model) gaat als gewone tekst door React heen en nooit hierlangs.
  */
 import type { ReactNode } from 'react'
 import type { Kleur, Matn } from './gegevens/soorten'

@@ -57,7 +57,7 @@ describe('het kind dat via het portaal binnenkomt', () => {
 
   /* Acht uur is de houdbaarheid van het portaal zelf. Zou deze app een andere
      grens aanhouden, dan komt een kind soms door terwijl het portaal hem al
-     vergeten is — of andersom. */
+     vergeten is, of andersom. */
   it('houdt dezelfde houdbaarheid aan als het portaal', () => {
     meldAan('Amine', 'kind', 7.9 * 3600 * 1000)
     expect(portaalKind(NU)).toBe('amine')

@@ -1,5 +1,5 @@
 /* Amiri staat als bestand in de repo en niet bij Google. De Warsh-druk gebruikt
-   tekens — de kleine hoge nul boven de hamzat wasl voorop — die de meeste
+   tekens (de kleine hoge nul boven de hamzat wasl voorop) die de meeste
    systeemletters niet kennen; die laten dan lege vakken achter midden in een
    woord. Zie fonts/LEESMIJ.md. */
 @font-face{font-family:'Amiri';font-style:normal;font-weight:400;font-display:swap;
@@ -221,7 +221,7 @@ table.tbl tr:last-child td{border-bottom:0}
 
 /* ---------- stickers, insignes ---------- */
 /* Zeven kolommen: één week per rij. Een willekeurig aflopend raster zegt een
-   kind niets; een week wel — je ziet in één oogopslag welke dagen je miste. */
+   kind niets; een week wel, je ziet in één oogopslag welke dagen je miste. */
 .stickers{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}
 .stickers .kop{text-align:center;font-family:var(--mono);font-size:.62rem;letter-spacing:.06em;
   text-transform:uppercase;color:var(--muted);padding-bottom:2px}
@@ -247,7 +247,7 @@ table.tbl tr:last-child td{border-bottom:0}
 
 /* ---------- kleur per module ----------
    Een kind van acht navigeert op kleur en pictogram, niet op een titel. Elke
-   module heeft daarom een eigen kleur uit het vaste palet — dat zijn dezelfde
+   module heeft daarom een eigen kleur uit het vaste palet, dat zijn dezelfde
    waarden die elders in de app gebruikt worden, dus het contrast klopt in licht
    én donker zonder dat er iets nagemeten hoeft te worden. */
 .mod{border-left:4px solid var(--mk)}
@@ -322,7 +322,7 @@ body[data-spoor="1"] .verhaalkaart .vk-tekst b{font-size:1.2rem}
 /* ---------- lijstjes ---------- */
 ul.net{margin:0;padding-left:1.15em}
 ul.net li{margin-bottom:.42em;line-height:1.55}
-/* Genummerd voor waar de volgorde er echt toe doet — bij het feestgebed en het
+/* Genummerd voor waar de volgorde er echt toe doet, bij het feestgebed en het
    gebed voor een overledene is stap drie niet los te lezen van stap twee. */
 ol.genummerd{margin:0;padding-left:1.35em}
 ol.genummerd li{margin-bottom:.5em;line-height:1.55}

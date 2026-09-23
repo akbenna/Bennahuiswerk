@@ -1,5 +1,5 @@
 /**
- * HET GEBED IN STAPPEN — de rij die "bid mee" aflopen moet
+ * HET GEBED IN STAPPEN: de rij die "bid mee" aflopen moet
  *
  * Zuiver: er komt een aantal rak'a en een gebed-id in, en er komt een rij
  * stappen uit. De qunut hoort in deze school alleen bij de Fajr, in de tweede
@@ -7,7 +7,7 @@
  * verplichte gebeden en niet bij een vrijwillig gebed of de witr.
  *
  * De soera na al-Fatiha is een eigen stap en niet een zinnetje eronder. Je
- * leest hem helemaal, en dat duurt langer dan de Fatiha zelf — wie hem alleen
+ * leest hem helemaal, en dat duurt langer dan de Fatiha zelf, wie hem alleen
  * als voetnoot ziet, slaat hem in het echt ook over.
  */
 import { HIFZ } from './gegevens/hifz'

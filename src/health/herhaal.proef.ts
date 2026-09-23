@@ -137,7 +137,7 @@ describe('vaak', () => {
       regel('2026-08-20', 'Havermout', 'ontbijt'), regel('2026-08-21', 'Havermout', 'ontbijt'),
     ]
     const uit = herhalingen(regels, { nu: NU, soort: 'vaak', moment: 'ontbijt' })
-    /* Havermout staat bovenaan ondanks de helft van het aantal — maar Tajine
+    /* Havermout staat bovenaan ondanks de helft van het aantal, maar Tajine
        verdwijnt niet, want een lege lijst helpt niemand. */
     expect(uit.map((h) => h.naam)).toEqual(['Havermout', 'Tajine'])
   })

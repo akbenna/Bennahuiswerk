@@ -1,11 +1,11 @@
 -- =============================================================================
--- TONIJNSALADE LICHT — de twee knoppen, vastgezet
+-- TONIJNSALADE LICHT: de twee knoppen, vastgezet
 --
 -- Toegepast 24 augustus 2026.
 --
 -- De duiding bij de tonijnsalade zet vier uitkomsten naast elkaar en zegt er
--- expres niet bij welke de beste is. Dat blijft zo. Maar de onderste rij —
--- olie halveren én tonijn verdubbelen — is gekozen, en een gekozen variant hoort
+-- expres niet bij welke de beste is. Dat blijft zo. Maar de onderste rij:
+-- olie halveren én tonijn verdubbelen, is gekozen, en een gekozen variant hoort
 -- niet elke keer opnieuw uitgerekend te worden uit een tabel in een uitklapje.
 -- Hij hoort een gerecht te zijn.
 --
@@ -26,7 +26,7 @@
 -- WAT ER ANDERS IS DAN HET ORIGINEEL
 --
 --   Tonijn van één blik naar twee: 100 → 200 gram. Dat is 109 kcal erbij en
---   24,9 gram eiwit erbij — de gunstigste ruil in dit hele gerecht.
+--   24,9 gram eiwit erbij: de gunstigste ruil in dit hele gerecht.
 --   Olijfolie van drie eetlepels naar anderhalve: 40 → 20 gram, 180 kcal eraf.
 --
 -- Samen: 681 kcal voor de schaal tegen 752, en 55,2 gram eiwit tegen 30,3. Per
@@ -41,7 +41,7 @@
 -- waar dit gerecht uit komt schrijft letterlijk dat het net zo goed 40 als 70
 -- gram kan zijn. Dat is een ruwe schatting, en dat is per definitie een D.
 -- Anderhalve gestreken eetlepel is een huishoudmaat met een tabelwaarde, en dat
--- is een C — mits je hem strijkt. Doe je dat niet, dan is het weer een D en
+-- is een C: mits je hem strijkt. Doe je dat niet, dan is het weer een D en
 -- klopt de band niet meer. Die voorwaarde staat daarom in de toelichting van het
 -- gerecht zelf, waar je hem leest op het moment dat je logt.
 --
@@ -75,7 +75,7 @@ nieuw as (
   select id, 'Tonijnsalade licht',
          'Twee porties. Dezelfde salade met twee blikjes tonijn in plaats van één en de helft '
          || 'van de olie: 341 kcal per portie met 27,6 gram eiwit, tegen 376 en 15,2. Dit is '
-         || 'een C en geen D omdat de olie hier wordt afgemeten — anderhalve gestreken '
+         || 'een C en geen D omdat de olie hier wordt afgemeten, anderhalve gestreken '
          || 'eetlepel. Giet je hem vrij, dan klopt de band niet en is het weer een D.',
          2, false, true
     from mij

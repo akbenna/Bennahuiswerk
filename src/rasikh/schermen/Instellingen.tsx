@@ -1,5 +1,5 @@
 /**
- * INSTELLINGEN — tempo, doel, tekst, klank, opslag en gegevens.
+ * INSTELLINGEN: tempo, doel, tekst, klank, opslag en gegevens.
  */
 import { useRef, useState } from 'react'
 import { Kaart, Melding, Tag } from '../onderdelen'
@@ -65,22 +65,22 @@ export function Instellingen(
         <Kaart>
           <h3>Tekst en klank</h3>
           <Keuze label="Lezing" waarde={i.lezing} opZet={(v) => zetInstel({ lezing: v as Lezing })}
-                 opties={[['warsh', 'Warsh — zoals in de Maghreb'],
-                          ['hafs', 'Hafs — de meest verspreide druk']]} />
+                 opties={[['warsh', 'Warsh, zoals in de Maghreb'],
+                          ['hafs', 'Hafs, de meest verspreide druk']]} />
           <Keuze label="Tempo van de recitatie" waarde={i.tempo}
                  opZet={(v) => zetInstel({ tempo: parseFloat(v) })}
                  opties={[[0.75, 'Langzaam'], [1, 'Gewoon'], [1.25, 'Vlot']]} />
           <p className="klein" style={{ marginTop: 12 }}>
             De Warsh-tekst komt van het King Fahd-complex en past bij de Warsh-recitatie die in Islam
             leren staat. Ziet een teken er vreemd uit, dan mist je toestel het juiste lettertype; zet
-            dan Hafs aan — de tekst is dezelfde openbaring, alleen anders overgeleverd.
+            dan Hafs aan. De tekst is dezelfde openbaring, alleen anders overgeleverd.
           </p>
           <p className="klein" style={{ marginTop: 8 }}>
             Recitatie beschikbaar voor <b>{recitatie.aantal}</b> aya's
             {recitatie.bron && ` (${recitatie.bron})`}. Voor de rest van je doel haal je hem op met{' '}
             <span className="meta" style={{ textTransform: 'none' }}>
               node rasikh/audio/haal-audio.mjs
-            </span> — zie LEESMIJ.md in die map.
+            </span>, zie LEESMIJ.md in die map.
           </p>
         </Kaart>
       </div>
@@ -193,11 +193,11 @@ function Wolkkaart(
       <p className="klein" style={{ marginTop: 5 }}>
         Met een account staat je voortgang op elk toestel gelijk: begin op de bank op je telefoon, ga
         verder op de laptop. Zonder internet werkt alles gewoon door; bij de volgende verbinding
-        wordt het samengevoegd — er gaat nooit iets verloren.
+        wordt het samengevoegd; er gaat nooit iets verloren.
       </p>
       <p className="klein" style={{ marginTop: 5 }}>
-        Voor een reeks van jaren is dat geen luxe. Alles wat hier staat — wat vast is, wanneer het
-        terugkomt, waar je haperde — bestaat anders op één toestel.
+        Voor een reeks van jaren is dat geen luxe. Alles wat hier staat (wat vast is, wanneer het
+        terugkomt, waar je haperde) bestaat anders op één toestel.
       </p>
       <p className="klein" style={{ marginTop: 9 }}>
         <Tag toon={wolk.aan ? 'goed' : ''}>

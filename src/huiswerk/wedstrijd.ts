@@ -1,5 +1,5 @@
 /**
- * DE WEDSTRIJD — één vriend uitdagen via een link
+ * DE WEDSTRIJD: één vriend uitdagen via een link
  *
  * Tien vragen uit het eigen niveau van het kind, met de getallen al ingevuld:
  * de vriend moet exact dezelfde sommen krijgen, dus een sjabloon mag daar niet

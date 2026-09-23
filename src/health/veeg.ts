@@ -11,10 +11,10 @@
  * een paar pixels naar links afwijkt, hoort niet ineens op gisteren uit te
  * komen. Vandaar drie voorwaarden, en niet één:
  *
- *   1. minstens 60 px horizontaal — een tik met trillende vinger telt niet;
- *   2. horizontaal minstens twee keer zo veel als verticaal — dan is het echt
+ *   1. minstens 60 px horizontaal: een tik met trillende vinger telt niet;
+ *   2. horizontaal minstens twee keer zo veel als verticaal, dan is het echt
  *      een zijwaartse beweging en geen schuine scroll;
- *   3. binnen 700 ms — een langzaam slepen is meestal iets anders.
+ *   3. binnen 700 ms: een langzaam slepen is meestal iets anders.
  *
  * En het begin telt mee: start de veeg op een invoerveld, een knop of iets wat
  * zelf horizontaal schuift, dan blijven we eraf. Anders kun je geen tekst meer
@@ -22,7 +22,7 @@
  *
  * WAAROM GEEN preventDefault
  *
- * De browser mag zijn eigen werk blijven doen — scrollen, terugvegen in de
+ * De browser mag zijn eigen werk blijven doen, scrollen, terugvegen in de
  * geschiedenis op iOS. We kijken alleen mee en beslissen achteraf. Dat maakt
  * deze haak passief en dus goedkoop; hij kan het scrollen niet stroef maken.
  */
@@ -48,7 +48,7 @@ export interface Veegacties {
  *
  * `links` is de veeg náár links (vinger van rechts naar links), wat in een
  * tijdlijn "verder" betekent; `rechts` is terug. Ontbreekt de handeling, dan
- * gebeurt er niets — zo hoeft de aanroeper niet zelf te bewaken dat morgen niet
+ * gebeurt er niets, zo hoeft de aanroeper niet zelf te bewaken dat morgen niet
  * bestaat.
  *
  * Het element komt binnen als element en niet als ref. Dat is geen smaak: een

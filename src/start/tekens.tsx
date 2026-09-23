@@ -1,8 +1,8 @@
 /**
  * DE TEKENTJES VAN DE ZIJBALK
  *
- * Geen emoji en geen icoonbibliotheek. Emoji tekent elk toestel anders — op de
- * ene telefoon is het huisje plat en grijs, op de andere een gekleurd blokje —
+ * Geen emoji en geen icoonbibliotheek. Emoji tekent elk toestel anders (op de
+ * ene telefoon is het huisje plat en grijs, op de andere een gekleurd blokje) 
  * en een bibliotheek is honderd kilobyte voor acht vormpjes. Dit zijn lijnen
  * die de kleur van hun omgeving overnemen, dus ze kloppen in de donkere zijbalk
  * én op een lichte kaart.

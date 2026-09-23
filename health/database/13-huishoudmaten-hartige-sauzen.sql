@@ -4,7 +4,7 @@
 -- Toegepast 29 augustus 2026.
 --
 -- Er stond al een eetlepel voor deze groep: 15 g, band 10 tot 20, als standaard.
--- Wat ontbrak was de maat eronder en de maat erboven — een theelepel mayonaise
+-- Wat ontbrak was de maat eronder en de maat erboven, een theelepel mayonaise
 -- op een cracker, en een schaaltje saus bij het eten. Zonder die twee is elke
 -- portie een eetlepel of zelf afwegen.
 --
@@ -57,7 +57,7 @@ where not exists (
 -- WAT ER NA AFLOOP STOND
 -- ---------------------------------------------------------------------------
 --
--- INSERT 0 2 — de eetlepel bestond al en werd overgeslagen.
+-- INSERT 0 2: de eetlepel bestond al en werd overgeslagen.
 --
 -- Vier producten in de groep "Hartige sauzen" (Mayonaise en de drie
 -- mayonaiseproducten met yoghurt, 35% olie en olijfolie), elk met drie maten:
@@ -74,6 +74,6 @@ join voeding_portiematen m
 where n.naam_nl ilike '%mayonaise%'
 order by n.naam_nl, m.is_standaard desc, m.volgorde;
 
--- Terugdraaien — alleen wat hier is toegevoegd, niet de bestaande eetlepel:
+-- Terugdraaien: alleen wat hier is toegevoegd, niet de bestaande eetlepel:
 -- delete from voeding_portiematen
 --  where nevo_groep = 'Hartige sauzen' and naam in ('theelepel','schaaltje');

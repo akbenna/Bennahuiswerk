@@ -3,7 +3,7 @@
  *
  * Het onderscheid tussen een gemeten tabelwaarde en een schatting is de kern van
  * deze app: het bepaalt hoeveel een getal waard is. Sinds het een teken is in
- * plaats van een woord is het ook makkelijker om per ongeluk om te draaien —
+ * plaats van een woord is het ook makkelijker om per ongeluk om te draaien,
  * ◆ en ◇ verschillen op het scherm minder dan "NEVO:" en "geen tabelwaarde".
  *
  * Daarom staat hier vast wélk teken bij wat hoort, en dat de volledige woorden
@@ -41,7 +41,7 @@ describe('herkomstVan', () => {
   })
 
   it('de tabel wint van het etiket', () => {
-    /* Kan vandaag niet voorkomen — een merkregel heeft geen tabelnaam — maar de
+    /* Kan vandaag niet voorkomen (een merkregel heeft geen tabelnaam) maar de
        volgorde ligt vast, zodat een meting nooit door een etiket overschreven
        wordt als die twee ooit samenvallen. */
     expect(herkomstVan({ bron: 'merk', nevo_naam: 'Pindakaas' }).teken).toBe('◆')

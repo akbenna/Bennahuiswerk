@@ -1,5 +1,5 @@
 /* De weging gebeurt in de badkamer en juist daar valt het bereik weg. Blijft de
-   app dan hangen, dan mist de reeks een dag — en het model rekent met de reeks,
+   app dan hangen, dan mist de reeks een dag, en het model rekent met de reeks,
    niet met losse getallen. Het schil wordt gecachet; de gegevens gaan altijd
    live naar Supabase en komen nooit uit de cache. */
 const CACHE = 'bennahealth-app-v1';

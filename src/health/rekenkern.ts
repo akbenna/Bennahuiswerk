@@ -5,7 +5,7 @@
  * erbij en zonder één getal te veranderen. Dat is met opzet: elke keuze
  * hieronder is verantwoord in VERANTWOORDING.md tegen literatuur, en de
  * verwijzing staat erbij zodat een getal in het scherm terugvindbaar is. Wat
- * verantwoord is en werkt, herschrijf je niet — dat til je eruit.
+ * verantwoord is en werkt, herschrijf je niet, dat til je eruit.
  *
  * TWEE DINGEN ZIJN WÉL VERANDERD, EN DAAROM STAAN ZE HIER
  *
@@ -20,7 +20,9 @@
 import { dagVerschil, plusDagen, vandaag as vandaagNu } from '@/gedeeld/datum'
 import type { Dag, IsoDatum, Profiel } from '@/gedeeld/db/tabellen'
 
-/** Wichmann's constante: 7.700 kcal per kilo lichaamsweefsel. Zie hoofdstuk 2. */
+/** De vuistregel van Wishnofsky (1958): 7.700 kcal per kilo lichaamsweefsel.
+ *  Hier alleen als omrekenfactor achteraf, nooit als voorspeller, zie
+ *  hoofdstuk 2, dat uitlegt waarom dat onderscheid het hele punt is. */
 export const KCAL_PER_KG = 7700
 
 /** Veelvoud van zeven: anders lekt het weekritme in de helling (Orsama 2014). */
@@ -100,12 +102,69 @@ export interface Trendpunt {
   ema: number | null
   kcal: number | null
   eiwit: number | null
+  /** Hoeveel deze weging afweek van wat de trend verwachtte, in kilo.
+   *  Null op de eerste weging: daar is nog geen verwachting. */
+  afwijkingKg: number | null
+  /** Een weging die niet bij de reeks past. Zie `UITBIJTER_KG`. */
+  uitbijter: boolean
 }
+
+/**
+ * DE ONDERGRENS ONDER DE UITBIJTERGRENS
+ *
+ * Drie standaarddeviaties alleen is hier niet genoeg, en dat is geen detail.
+ *
+ * Wie elke ochtend binnen tweehonderd gram weegt heeft een spreiding van
+ * tweehonderd gram, en dan is drie keer dat zeshonderd gram. Een kilo verschil
+ * na een zoute maaltijd zou dan als uitbijter aangemerkt worden, en dat is
+ * precies wat hoofdstuk 1 níet wil: sprongen van een tot twee kilo zijn
+ * fysiologisch.
+ *
+ * Vandaar een vloer van drie kilo. Zoveel lichaamsweefsel verdwijnt of komt er
+ * niet in één nacht bij; wat er wél kan is vocht, een andere weegschaal, een
+ * ander mens op de weegschaal, of een typefout. De app zegt niet welke van de
+ * vier het is, alleen dat het er één van moet zijn.
+ */
+export const UITBIJTER_KG = 3
+
+/** Hoeveel wegingen er minstens moeten zijn voor een eigen spreiding. */
+export const UITBIJTER_MIN_N = 5
+
+/** Hoeveel buren er aan weerszijden meetellen in de plaatselijke mediaan. */
+const UITBIJTER_BUREN = 3
 
 /**
  * Exponentieel gewogen gemiddelde met halfwaardetijd rond zeven dagen
  * (alfa 0,1). Presteert gelijk aan Kalman-smoothing en is uitlegbaar
  * (Turicchi 2020). Alleen een punt op dagen waarop echt gewogen is.
+ *
+ * DE UITBIJTERMARKERING, EN WAAROM ZE NIET AAN DE EWMA HANGT
+ *
+ * Hoofdstuk 1 van `VERANTWOORDING.md` beloofde deze markering al: een weging
+ * die te ver van de verwachting afwijkt wordt aangemerkt, maar niet
+ * weggegooid. Ze stond er alleen niet; dit bestand kende het woord uitbijter
+ * niet. Dat is rechtgezet.
+ *
+ * De verwachting is niet de EWMA. Dat was de eerste opzet en die maakte van één
+ * fout er drie: de EWMA lóópt naar een uitbijter toe, dus na een weging van 190
+ * in een reeks rond de 118 wijken ook de twee wegingen erná ver van de
+ * verwachting af, en werden die evengoed aangemerkt. Eén verkeerde toets zou
+ * dan drie dagen besmetten.
+ *
+ * Wat er nu staat is de mediaan van de buurwegingen, drie aan elke kant en de
+ * weging zelf niet meegerekend. Een mediaan verschuift niet van één wild getal,
+ * dus de buren blijven schoon en alleen de weging zelf springt eruit.
+ *
+ * De spreiding erover wordt om dezelfde reden als mediane absolute afwijking
+ * gerekend, maal 1,4826 zodat ze bij een normale verdeling hetzelfde getal
+ * oplevert als een standaarddeviatie.
+ *
+ * WAT ER NIET GEBEURT
+ *
+ * De weging blijft in de reeks, telt mee in de EWMA en telt mee in de
+ * regressie. Er wordt niets weggegooid en niets gecorrigeerd. De app zet er een
+ * markering bij en laat het oordeel aan degene die op de weegschaal stond, want
+ * die weet of het een tweede persoon was of een verkeerde toets.
  */
 export function trendReeks(dagen: Dagenkaart): Trendpunt[] {
   const k = Object.keys(dagen).sort()
@@ -122,9 +181,46 @@ export function trendReeks(dagen: Dagenkaart): Trendpunt[] {
       ema: w != null && ema != null ? Math.round(ema * 100) / 100 : null,
       kcal: dag._kcal || null,
       eiwit: dag._eiwit || null,
+      afwijkingKg: null,
+      uitbijter: false,
     })
   }
+  markeer(uit)
   return uit
+}
+
+/** De mediaan van een niet-lege lijst. */
+function mediaan(xs: number[]): number {
+  const s = [...xs].sort((a, b) => a - b)
+  const m = Math.floor(s.length / 2)
+  return s.length % 2 ? s[m]! : (s[m - 1]! + s[m]!) / 2
+}
+
+/**
+ * Vult `afwijkingKg` en `uitbijter` in. Past de punten ter plekke aan, want ze
+ * horen bij elkaar: de afwijking is het getal waarop de markering rust en die
+ * twee mogen niet uit elkaar lopen.
+ */
+function markeer(punten: Trendpunt[]): void {
+  const gewogen = punten.filter((p) => p.w != null)
+  if (gewogen.length < UITBIJTER_MIN_N) return
+
+  for (let i = 0; i < gewogen.length; i++) {
+    const buren = gewogen
+      .slice(Math.max(0, i - UITBIJTER_BUREN), i + UITBIJTER_BUREN + 1)
+      .filter((_, j) => j !== Math.min(i, UITBIJTER_BUREN))
+      .map((p) => p.w!)
+    if (!buren.length) continue
+    gewogen[i]!.afwijkingKg = Math.round((gewogen[i]!.w! - mediaan(buren)) * 100) / 100
+  }
+
+  const afw = gewogen.map((p) => p.afwijkingKg).filter((x): x is number => x != null)
+  if (afw.length < UITBIJTER_MIN_N) return
+  const spreiding = 1.4826 * mediaan(afw.map((x) => Math.abs(x)))
+  const grens = Math.max(3 * spreiding, UITBIJTER_KG)
+  for (const p of gewogen) {
+    if (p.afwijkingKg != null && Math.abs(p.afwijkingKg) > grens) p.uitbijter = true
+  }
 }
 
 export interface Analyse {
@@ -168,7 +264,7 @@ export interface Analyse {
 
 /**
  * Het hart. Leest de weegreeks en de gelogde energie over een venster van
- * achtentwintig dagen en leidt daar een verbruik uit af — met een interval,
+ * achtentwintig dagen en leidt daar een verbruik uit af, met een interval,
  * nooit als punt alleen.
  *
  * `eind` is standaard vandaag. Zie de kop van dit bestand voor waarom dat een
@@ -198,7 +294,12 @@ export function analyse(dagen: Dagenkaart, pf: Profiel, eind: IsoDatum = vandaag
     if (d.stappen != null) stappen.push(+d.stappen)
   }
 
-  const alleW = Object.keys(dagen).filter((k) => dagen[k]?.gewicht_kg != null).sort()
+  /* Ook hier telt `eind` mee. Zonder die grens pakte deze regel de laatste
+     weging uit de hele kaart, dus ook een die ná het venster ligt, en dan
+     rekende een teruggezette analyse zijn rustverbruik op het gewicht van
+     vandaag. Bij de gewone aanroep (eind is vandaag) verandert er niets. */
+  const alleW = Object.keys(dagen)
+    .filter((k) => k <= eind && dagen[k]?.gewicht_kg != null).sort()
   const laatste = alleW.length ? alleW[alleW.length - 1] : undefined
   const gewicht = laatste
     ? +(dagen[laatste]?.gewicht_kg ?? 0)
@@ -250,7 +351,7 @@ export function analyse(dagen: Dagenkaart, pf: Profiel, eind: IsoDatum = vandaag
    *
    * tdee is een energiebalans: gemiddelde inname min de energie die het vet in
    * of uit ging. Die som klopt alleen als de twee invoeren bij elkaar horen.
-   * Doen ze dat niet, dan geeft dezelfde som een onmogelijk antwoord — en hij
+   * Doen ze dat niet, dan geeft dezelfde som een onmogelijk antwoord, en hij
    * geeft het zonder te klagen.
    *
    * Dat gebeurde. Een logboek van 1.461 kcal over twaalf dagen naast een
@@ -262,7 +363,7 @@ export function analyse(dagen: Dagenkaart, pf: Profiel, eind: IsoDatum = vandaag
    * De grenzen zijn fysiologisch en niet gekozen om deze ene zaak op te lossen.
    * Onder: niemand verbruikt minder dan zijn ruststofwisseling. Boven:
    * tweeënhalf keer het rustverbruik is de bovengrens van wat een mens langer
-   * dan een paar dagen volhoudt — de alimentaire limiet uit Thurber 2019, die
+   * dan een paar dagen volhoudt, de alimentaire limiet uit Thurber 2019, die
    * ook voor wielrenners in een grote ronde geldt.
    *
    * WAT HIER MET OPZET NIET GEBEURT
@@ -275,7 +376,7 @@ export function analyse(dagen: Dagenkaart, pf: Profiel, eind: IsoDatum = vandaag
    *
    * De ondergrens van de band wordt wél afgekapt op het rustverbruik. Een
    * interval dat onmogelijke waarden bevat is geen interval; afkappen op een
-   * bekende fysieke grens houdt de informatie die er wél in zit — de bovenkant —
+   * bekende fysieke grens houdt de informatie die er wél in zit (de bovenkant) 
    * overeind. */
   const PAL_PLAFOND = 2.5
   const tdeeOordeel: TdeeOordeel | null =

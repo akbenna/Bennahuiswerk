@@ -17,11 +17,11 @@
  * parameternaam een fout bij het bouwen en niet meer een raadsel in productie.
  *
  * De vormen die de database teruggeeft staan hieronder als `interface`. Dat is
- * een belofte die TypeScript niet kan afdwingen — json is json. Waar het ertoe
+ * een belofte die TypeScript niet kan afdwingen, json is json. Waar het ertoe
  * doet staat er daarom een controle omheen; zie `kal.ts`.
  */
 import type {
-  Dag, EigenProduct, Graad, IsoDatum, Lab, Meting, Moment, Profiel,
+  Dag, EigenProduct, Graad, Inspanning, IsoDatum, Lab, Meting, Moment, Profiel,
   Recept, Regel, RegelBron, Training, Vragenlijst,
 } from './tabellen'
 import { verzoek } from './verbinding'
@@ -35,6 +35,22 @@ export interface Sessie {
   account: string
 }
 
+/**
+ * Wat `kal_aanmelden` teruggeeft: een sessie, of een reden waarom niet.
+ *
+ * Geen exception dus, en dat is met opzet. De functie houdt een teller bij van
+ * mislukte pogingen, en een exception draait de transactie terug, inclusief de
+ * poging die net was vastgelegd. De rem zou daarmee nooit grijpen. Zie
+ * `health/database/32-aanmelden-met-rem.sql`.
+ *
+ * Voor de aanroeper betekent het één ding: kijk of er een token in zit.
+ */
+export type Aanmelduitslag = Sessie | { fout: string }
+
+export function isSessie(x: Aanmelduitslag): x is Sessie {
+  return typeof (x as Sessie).token === 'string' && (x as Sessie).token !== ''
+}
+
 export interface Alles {
   profiel: Profiel | null
   dagen: Dag[]
@@ -45,6 +61,9 @@ export interface Alles {
   labs: Lab[]
   vragenlijsten: Vragenlijst[]
   training: Training[]
+  /* Leeg zolang de database bestand 43 nog niet gedraaid heeft: `kal_ophalen`
+     stuurt de sleutel dan niet mee en `{...LEEG, ...o}` laat hem op []. */
+  inspanning: Inspanning[]
 }
 
 export interface NevoTreffer {
@@ -56,6 +75,13 @@ export interface NevoTreffer {
   vet_g: number | null
   koolhydraat_g: number | null
   vezel_g: number | null
+  /* Natrium in milligram, zoals het in de tabel staat. Het scherm toont zout in
+     gram; die omrekening staat op één plek, in `src/health/zout.ts`.
+
+     Optioneel, want de database geeft hem pas mee vanaf
+     30-natrium-in-het-zoeken.sql. Tot dat bestand gedraaid is komt hij niet mee
+     en toont het scherm een streepje, en dat is iets anders dan nul. */
+  natrium_mg?: number | null
   /* True als dit product niet gevonden maar benaderd is: het woordzoeken gaf
      niets en de terugval op schrijfvarianten heeft het erbij gehaald. "Lesagna"
      komt zo bij Lasagne uit. Het scherm hoort dat te zeggen in plaats van te
@@ -82,7 +108,7 @@ export interface GerechtTreffer {
  * health/database/23-eiwitrijk-uit-de-tabel.sql.
  *
  * `merk` is gevuld als dit een merkproduct is, en dan staat er een volledige
- * MerkTreffer in — genoeg om het portievenster mee te openen zonder nog een
+ * MerkTreffer in, genoeg om het portievenster mee te openen zonder nog een
  * keer de database te hoeven vragen.
  */
 export interface EiwitrijkTreffer {
@@ -99,7 +125,7 @@ export interface EiwitrijkTreffer {
   /** Kilocalorieën en eiwit ván die portie, niet per honderd gram. */
   kcal: number
   eiwit_g: number
-  /** Gram eiwit per kcal — dezelfde maat als de eis van de coach. */
+  /** Gram eiwit per kcal: dezelfde maat als de eis van de coach. */
   dichtheid: number
 }
 
@@ -108,14 +134,20 @@ export interface EiwitrijkTreffer {
  * health/database/28-wat-vult-het-best.sql.
  *
  * `score` is een VOORSPELLING uit de samenstelling en geen gemeten
- * verzadigingsindex — de drie termen komen uit de literatuur, de weging ertussen
+ * verzadigingsindex, de drie termen komen uit de literatuur, de weging ertussen
  * is een keuze. Daarom staan de drie onderdelen er los bij: `gram_per_100kcal`
  * is een deling van twee gemeten waarden uit de tabel en verder niets, en dat is
  * het getal dat op het scherm vooropstaat.
  */
 export interface VerzadigingTreffer {
-  nevo_code: string
+  /** Een gerecht om te koken, of een product om erbij te nemen. */
+  soort: 'gerecht' | 'product'
+  /** Uniek binnen de lijst: het nevo_code of het dish_id. */
+  sleutel: string
+  nevo_code: string | null
+  dish_id: string | null
   naam: string
+  /** De NEVO-groep bij een product, de keuken bij een gerecht. */
   groep: string | null
   portie_naam: string
   portie_gram: number
@@ -344,16 +376,31 @@ export interface Koppeling {
   actief: boolean
 }
 
+export interface NieuweInspanning {
+  datum: IsoDatum
+  soort: string
+  minuten: number
+  intensiteit?: 'matig' | 'zwaar'
+  /** true = afgeleid uit de soort. Ontbreekt hij, dan neemt de database true. */
+  geschat?: boolean
+  eigennaam?: string | null
+  bron?: string
+  tijd?: string | null
+  notitie?: string | null
+}
+
 export interface NieuweDag {
   datum: IsoDatum
   stappen?: number
   actieve_energie_kcal?: number
   gewicht_kg?: number
   bron?: string
-  /* Alleen de koppeling stuurt deze vier mee; de import uit een screenshot
-     komt er niet aan. */
-  slaap_min?: number
+  /* Deze vier stuurt alleen de koppeling. Een work-outlijst uit een import komt
+     hier niet langs maar wordt een rij in `kal_inspanning`, daar past een
+     soort in, en `fiets_min` is één getal per dag zonder soort. Zie
+     health/database/43 en `src/health/inspanning.ts`. */
   fiets_min?: number
+  slaap_min?: number
   bedtijd?: string
   waaktijd?: string
   gewicht_bron?: string
@@ -365,9 +412,10 @@ export interface NieuweDag {
  * `recept` stond hier ook, en dat was een belofte die de database niet doet:
  * kal_rij_toevoegen kent die tak niet en zou 'Onbekende tabel recept' roepen.
  * Eigen maaltijden gaan sinds 24 augustus 2026 via kal_maaltijd_bewaren, dat
- * ook de onderdelen wegschrijft — iets wat één rij nooit had gekund.
+ * ook de onderdelen wegschrijft, iets wat één rij nooit had gekund.
  */
 export type LosseTabel = 'product' | 'training' | 'meting' | 'lab' | 'vragenlijst'
+  | 'inspanning'
 
 /* -------------------------------------------------------------------------- */
 /*  De kaart: functienaam → wat erin gaat, wat eruit komt                      */
@@ -379,7 +427,64 @@ export interface RpcKaart {
      een appnaam is werk met risico en zonder opbrengst: de naam staat in
      achttien functies, vier edge functions en een pg_cron-taak. */
   kal_registreren: { in: { p_account: string; p_ww: string; p_naam: string }; uit: Sessie }
-  kal_aanmelden: { in: { p_account: string; p_ww: string }; uit: Sessie }
+  kal_aanmelden: { in: { p_account: string; p_ww: string }; uit: Aanmelduitslag }
+  /* Wachtwoord kwijt: zie health/database/33-wachtwoord-kwijt.sql. Alle drie
+     geven een uitslag terug en gooien niet, om dezelfde reden als aanmelden. */
+  kal_ww_wijzigen: {
+    in: { p_token: string; p_oud: string; p_nieuw: string }; uit: Aanmelduitslag
+  }
+  kal_herstelcode_maken: {
+    in: { p_token: string; p_ww: string }; uit: { code: string } | { fout: string }
+  }
+  /* De beheerdersweg: zie health/database/40 en 41. `kal_ben_ik_beheerder`
+     bepaalt alleen of de knop er staat; de echte grens ligt in
+     `kal_herstelcode_voor`, die zelf nog eens het wachtwoord vraagt. */
+  kal_ben_ik_beheerder: { in: { p_token: string }; uit: { beheerder: boolean } }
+  /* DE WACHTKAMER EN HET BUDGET: zie health/database/48.
+
+     `kal_mijn_toegang` gaat over jezelf en vraagt geen beheerdersrecht. De twee
+     eronder wel, en net als bij de herstelcode ligt die grens in de database:
+     `kal_testers` geeft `{fout}` terug aan wie hem niet mag zien, en zegt niet
+     waarom. Wat er níet in die lijst staat is even belangrijk als wat er wel in
+     staat: geen gewicht, geen bloeddruk, geen labwaarde. Alleen wie er is,
+     welke status hij heeft en wat hij deze maand aan AI verbruikt heeft. */
+  kal_mijn_toegang: { in: { p_token: string }; uit: Toegang }
+  /* De eigen sleutel, bestand 49. Er is met opzet geen functie die hem
+     teruggeeft: `kal_sleutel_voor` staat alleen open voor de service-role, dus
+     voor de edge function. Wat de app hier terugkrijgt is de aanbieder en de
+     laatste vier tekens, genoeg om te zien welke sleutel erin staat. */
+  /* Opbergen staat hier met opzet níet bij. Dat gaat langs de edge function,
+     want alleen die heeft de hoofdsleutel om hem te versleutelen; zie
+     `sleutelOpbergen` in `src/health/ai.ts`. Weghalen mag wél rechtstreeks,
+     want daar is geen hoofdsleutel voor nodig en het hoort te werken ook als
+     de edge function eruit ligt. */
+  kal_sleutel_weghalen: { in: { p_token: string }; uit: { weg: boolean } }
+  /* Je gegevens weghalen, bestand 52. `p_echt` staat standaard uit: dan telt
+     hij alleen en verandert er niets. Dat is geen voorzichtigheid maar het
+     ontwerp, want er is geen prullenbak. */
+  kal_account_wissen: {
+    in: { p_token: string; p_ww: string; p_echt?: boolean }
+    uit: Wisuitslag | { fout: string }
+  }
+  kal_tester_wissen: {
+    in: { p_token: string; p_ww: string; p_account: string; p_echt?: boolean }
+    uit: Wisuitslag | { fout: string }
+  }
+  kal_testers: { in: { p_token: string }; uit: Tester[] | { fout: string } }
+  kal_tester_zetten: {
+    in: {
+      p_token: string; p_account: string
+      p_status?: string | null; p_budget?: number | null; p_notitie?: string | null
+    }
+    uit: { account: string; status: string; budget: number } | { fout: string }
+  }
+  kal_herstelcode_voor: {
+    in: { p_token: string; p_ww: string; p_account: string }
+    uit: { code: string; account: string } | { fout: string }
+  }
+  kal_ww_herstellen: {
+    in: { p_account: string; p_code: string; p_nieuw: string }; uit: Aanmelduitslag
+  }
   kal_afmelden: { in: { p_token: string }; uit: null }
   kal_ophalen: { in: { p_token: string; p_vanaf?: IsoDatum }; uit: Alles }
   kal_profiel_zetten: { in: { p_token: string; p_patch: Partial<Profiel> }; uit: unknown }
@@ -388,6 +493,13 @@ export interface RpcKaart {
     uit: unknown
   }
   kal_dagen_importeren: { in: { p_token: string; p_dagen: NieuweDag[] }; uit: unknown }
+  /* Een hele lijst inspanningen in één keer, de weg die het importvenster
+     loopt. Een rij die er al staat wordt overgeslagen en geteld; zonder die
+     regel zou twee keer dezelfde afdruk importeren de minuten verdubbelen. */
+  kal_inspanning_toevoegen: {
+    in: { p_token: string; p_rijen: NieuweInspanning[] }
+    uit: { toegevoegd: number; overgeslagen: number }
+  }
   /* De postbus voor de prikkel. De rekenkern draait in de app; de coach die 's
      middags een mail stuurt kan hem niet zelf uitrekenen zonder een tweede
      implementatie van het model, en die zouden uit elkaar gaan lopen. Dus legt
@@ -438,12 +550,19 @@ export interface RpcKaart {
   kal_zoeken: { in: { p_token: string; p_q: string; p_limiet?: number }; uit: Zoekuitslag }
   kal_gerecht: { in: { p_token: string; p_dish_id: string }; uit: Gerecht }
   kal_portiematen: { in: { p_token: string; p_nevo_code: string }; uit: ProductMetMaten }
+  /* Uit welke NEVO-groepen er gelogd is, en op hoeveel dagen. `dagen` is het
+     getal dat telt: zonder dat is een lege groepenlijst niet te lezen. Zie
+     health/database/35-de-voorkeuren-in-de-lijsten.sql. */
+  kal_hoeken: {
+    in: { p_token: string; p_dagen?: number }
+    uit: { groepen: string[]; dagen: number }
+  }
   kal_eiwitrijk: {
     in: { p_token: string; p_eis: number; p_max_kcal: number; p_limiet?: number }
     uit: EiwitrijkTreffer[]
   }
   kal_verzadiging: {
-    in: { p_token: string; p_max_kcal: number; p_limiet?: number }
+    in: { p_token: string; p_max_kcal: number; p_gerechten?: number; p_producten?: number }
     uit: VerzadigingTreffer[]
   }
 
@@ -528,4 +647,47 @@ export async function roep<K extends keyof RpcKaart>(
   argumenten: RpcKaart[K]['in'],
 ): Promise<RpcKaart[K]['uit']> {
   return (await verzoek('/rest/v1/rpc/' + functie, argumenten)) as RpcKaart[K]['uit']
+}
+
+/** Wat `kal_mijn_toegang` teruggeeft. Zie `src/health/toegang.ts`. */
+export interface Toegang {
+  mag?: boolean
+  eigen_sleutel?: boolean
+  aanbieder?: string | null
+  staart?: string | null
+  status?: string
+  reden?: string
+  gebruikt?: number
+  budget?: number
+  uur?: number
+  beheerder?: boolean
+  maand_tot?: string
+}
+
+/** Eén regel uit `kal_testers`. Geen enkel gegeven uit de app zelf. */
+export interface Tester {
+  account: string
+  aanbieder?: string | null
+  eigen_sleutel?: boolean
+  naam: string | null
+  status: string
+  beheerder: boolean
+  budget: number
+  notitie: string | null
+  aangemaakt_op: string
+  beoordeeld_op: string | null
+  maand_aanroepen: number
+  maand_tokens: number
+  /** Gerekend met een vast Sonnet-tarief; zie de kop van bestand 48. */
+  maand_usd: number
+  laatst_actief: string | null
+}
+
+/** Wat er weg zou gaan, of weg is. Zie bestand 52. */
+export interface Wisuitslag {
+  gewist: boolean
+  account: string
+  totaal: number
+  /** Per tabel het aantal rijen. De namen zijn die van de database. */
+  per_tabel: Record<string, number | string>
 }

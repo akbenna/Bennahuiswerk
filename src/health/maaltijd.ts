@@ -1,11 +1,11 @@
 /**
- * EIGEN MAALTIJDEN — één gerecht, zeven producten, één regel
+ * EIGEN MAALTIJDEN: één gerecht, zeven producten, één regel
  *
  * Een tonijnsalade is één ding om te eten en zeven dingen om op te zoeken. Wie
  * hem elke week logt zoekt elke week zeven keer, en krijgt elke week een net
  * iets ander antwoord: dezelfde salade wordt 690 kcal of 810 kcal al naar
  * gelang welke tomaat je aanklikte. Dat verschil is geen echte variatie in wat
- * je at, het is ruis van het invoeren zelf — en die ruis komt daarna in de
+ * je at, het is ruis van het invoeren zelf, en die ruis komt daarna in de
  * helling terecht waar het model op rekent.
  *
  * Je zoekt het dus één keer uit, bewaart het, en logt het daarna als één regel.
@@ -13,7 +13,7 @@
  * DRIE REGELS DIE HIER HARD STAAN
  *
  * 1. De band telt op zoals de onderdelen: laag bij laag, hoog bij hoog. Dat is
- *    de bréédste optelling die er is — hij veronderstelt dat alle fouten
+ *    de bréédste optelling die er is, hij veronderstelt dat alle fouten
  *    dezelfde kant op wijzen. Statistisch mag dat te ruim heten; hier is dat
  *    precies goed. Onzekerheid pleit in deze app nooit in je voordeel, en een
  *    smallere band zou een nauwkeurigheid claimen die uit een optelling van
@@ -21,7 +21,7 @@
  *
  * 2. De graad van de maaltijd is de slechtste graad van zijn onderdelen. Zes
  *    gewogen ingrediënten en één geschat scheutje olie maken samen een
- *    geschatte maaltijd. Het gemiddelde nemen zou het scheutje wegmiddelen —
+ *    geschatte maaltijd. Het gemiddelde nemen zou het scheutje wegmiddelen,
  *    en juist dat scheutje is bij deze gebruiker de grootste post van de dag.
  *
  * 3. Delen door porties kost een trede. Wat je afgewogen in de pan hebt gedaan
@@ -163,7 +163,7 @@ export function aggregaat(m: Maaltijd, aantal: number): Aggregaat {
  * Een maaltijd omzetten in de regel die de dag in gaat.
  *
  * Eén regel en niet zeven. De onderdelen blijven in het recept staan en de
- * regel wijst er met `recept_id` naar terug, dus er gaat niets verloren — maar
+ * regel wijst er met `recept_id` naar terug, dus er gaat niets verloren, maar
  * in het dagoverzicht is een salade één salade, en in de suggestielijst van de
  * coach is hij één voorstel in plaats van zeven losse producten waarvan er één
  * "olijfolie, 40 gram" heet.
@@ -198,7 +198,7 @@ export function maaltijdRegel(
  *
  * Alles wat aan de dag hangt gaat eraf: de datum, het moment, het id. Wat
  * overblijft is de voedingswaarde en waar die vandaan kwam. Een regel die zelf
- * uit een maaltijd komt gaat niet mee — anders bewaar je een maaltijd die naar
+ * uit een maaltijd komt gaat niet mee, anders bewaar je een maaltijd die naar
  * zichzelf verwijst en die bij het tweede keer opslaan verdubbelt.
  */
 export function snapshot(regels: readonly Regel[]): MaaltijdRegel[] {
@@ -241,7 +241,7 @@ export function naamvoorstel(regels: readonly Regel[], moment: Moment): string {
 /*                                                                            */
 /*  Wat er in de schaal zit is één ding; wat het bétekent is een ander. Een    */
 /*  maaltijd van 752 kcal zegt niets zonder te weten waar die kcal vandaan     */
-/*  komen — en bij deze gebruiker is dat de hele vraag. Vandaar drie maten die */
+/*  komen, en bij deze gebruiker is dat de hele vraag. Vandaar drie maten die */
 /*  wél iets zeggen, en twee knoppen om aan te draaien.                        */
 /*                                                                            */
 /*  Alle drie zijn verhoudingen en dus onafhankelijk van hoeveel je opschept.  */
@@ -257,7 +257,7 @@ export interface Duiding {
   dichtheid: number | null
   /** Gram eiwit per 100 kcal. Dít is de maat die telt bij een tekort. */
   eiwitPer100: number | null
-  /** Het aandeel van elke macro in de energie. Telt niet op tot 100 — zie hieronder. */
+  /** Het aandeel van elke macro in de energie. Telt niet op tot 100: zie hieronder. */
   ePct: { eiwit: number | null; vet: number | null; koolhydraat: number | null }
   vezel: number | null
 }
@@ -322,7 +322,7 @@ export interface Hefbomen {
  * Halveren heeft alleen zin bij iets dat groot genoeg is om de uitkomst te
  * veranderen; onder een kwart van de energie is het een gebaar. Verdubbelen
  * heeft alleen zin bij iets dat de eiwitdichtheid ómhoog trekt, en dat is
- * precies wat "boven het gemiddelde van de maaltijd" betekent — reken het na en
+ * precies wat "boven het gemiddelde van de maaltijd" betekent, reken het na en
  * het is een identiteit, geen vuistregel. Ligt het rijkste onderdeel op het
  * gemiddelde, dan is er niets te verdubbelen dat iets oplevert, en dan zegt de
  * app dat door te zwijgen.
@@ -395,7 +395,7 @@ function variant(m: Maaltijd, label: string): Variant {
  * niets te adviseren.
  *
  * Er staat expres geen aanbeveling bij. De tabel zet de vier uitkomsten naast
- * elkaar en jij ziet zelf welke rij je bevalt — dat is een ander soort advies
+ * elkaar en jij ziet zelf welke rij je bevalt, dat is een ander soort advies
  * dan een app die zegt wat je moet doen, en het is het soort dat blijft kloppen
  * als je voorkeuren veranderen.
  */

@@ -1,11 +1,11 @@
 /**
- * HUISWERK — oefenen voor school, voor vier kinderen tegelijk
+ * HUISWERK: oefenen voor school, voor vier kinderen tegelijk
  *
  * Van groep 4 tot 4 vwo in één app. Wat een kind ziet hangt af van zijn
  * profiel: de vakken, het thema (voetbal of niet), en of er zakgeld tegenover
  * staat. Wat ze delen is de motor: Leitner voor het herhalen, een
  * nauwkeurigheidspoort voor de beloning, en een ranglijst waarin punten al
- * meeschalen met moeilijkheid — anders zou vier kinderen naast elkaar zetten
+ * meeschalen met moeilijkheid, anders zou vier kinderen naast elkaar zetten
  * oneerlijk zijn.
  *
  * De scores volgen het kind en niet het toestel. Wie op de telefoon van zijn
@@ -20,7 +20,7 @@
  * De wachtwoorden zelf zijn er nog wél, en dat is geen restant: ze horen bij het
  * kind-account in de cloud, en `useHuiswerk` haalt daar bij het opstarten al
  * stil de voortgang mee op (`haalKinderen`). Het scherm was een poort, geen
- * ophaler — precies zoals bij het doorlopen vanaf het portaal.
+ * ophaler, precies zoals bij het doorlopen vanaf het portaal.
  */
 import { useCallback, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
@@ -50,7 +50,7 @@ type Zicht = 'thuis' | 'vakken' | 'oefenen' | 'ouder' | 'formules' | 'leertips' 
 export function App(): ReactNode {
   const t = useHuiswerk()
   /* Wie op het portaal al zijn eigen profiel koos, hoeft zich hier niet opnieuw
-     voor te stellen — zie `portaal.ts`. Eén keer uitgelezen bij het opstarten en
+     voor te stellen, zie `portaal.ts`. Eén keer uitgelezen bij het opstarten en
      daarna niet meer: klapt de aanmelding halverwege om, dan is dat geen reden
      om een kind midden in een som naar een ander scherm te gooien. */
   const [viaPortaal] = useState<string | null>(() => portaalKind())
@@ -70,7 +70,7 @@ export function App(): ReactNode {
   const openKind = t.openKind
   useEffect(() => { if (viaPortaal) openKind(viaPortaal) }, [viaPortaal, openKind])
 
-  /* Een wedstrijdlink (#w=CODE) opent meteen de uitdaging — de vriend die hem
+  /* Een wedstrijdlink (#w=CODE) opent meteen de uitdaging, de vriend die hem
      krijgt heeft geen profiel in deze app en hoort er ook niet doorheen. */
   useEffect(() => {
     const m = /[#&]w=([a-z0-9]+)/i.exec(location.hash || '')
@@ -128,7 +128,7 @@ export function App(): ReactNode {
       t.zetWolkmelding('Bezig met inloggen…')
       const samen = await familieInloggen(code, wachtwoord, t.stand, KINDEREN)
       t.zet(() => samen)
-      t.zetWolkmelding('Ingelogd — samengevoegd ✓')
+      t.zetWolkmelding('Ingelogd, samengevoegd ✓')
     },
     gelijktrekken: async (): Promise<void> => {
       t.zetWolkmelding('Bezig met samenvoegen…')
@@ -136,7 +136,7 @@ export function App(): ReactNode {
       if (!samen) { t.zetWolkmelding('Koppel eerst een familiecode.'); return }
       t.zet(() => samen)
       await familieBewaren(samen)
-      t.zetWolkmelding('Alles samengevoegd — elk toestel toont nu dezelfde score ✓')
+      t.zetWolkmelding('Alles samengevoegd: elk toestel toont nu dezelfde score ✓')
     },
     uploaden: async (): Promise<void> => {
       await familieBewaren(t.stand)
@@ -228,7 +228,7 @@ export function App(): ReactNode {
         terug={() => {
           /* Terug naar waar je vandaan kwam. Wie via het portaal binnenkwam
              hoort niet op een scherm te belanden met de namen en de standen van
-             zijn broers en zussen — dat is precies wat we hier weghalen. */
+             zijn broers en zussen, dat is precies wat we hier weghalen. */
           if (pid === viaPortaal) { location.href = '/'; return }
           zetPid(null)
           zetZicht('thuis')

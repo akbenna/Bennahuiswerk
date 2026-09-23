@@ -99,7 +99,7 @@ describe('het nakijken van wat het model aanwijst', () => {
     expect(u.routes).toHaveLength(1)
   })
 
-  it('houdt het bij drie — een lijstje van tien is weer een keuze', () => {
+  it('houdt het bij drie: een lijstje van tien is weer een keuze', () => {
     const u = verwerk({
       routes: ['rekenen|Breuken|nu', 'rekenen|Procenten|nu', 'taal|Werkwoordspelling|nu',
         'rekenen|Machten|next'],
@@ -137,7 +137,7 @@ describe('het gat', () => {
 
   /* Dit is het geval waar het scherm op stukliep: geen route, geen gat. Het
      kind zag een alinea en verder niets. `verwerk` hoort hier niets te
-     verzinnen — maar `verzonnen` moet wel blijven staan, want dat is het enige
+     verzinnen, maar `verzonnen` moet wel blijven staan, want dat is het enige
      verschil tussen "hier is niets voor" en "de vraagbaak wees ernaast", en
      `Vraagveld` en het ouderscherm hangen er allebei aan. */
   it('houdt vast wat het model aanwees toen er niets van overbleef', () => {
@@ -175,7 +175,7 @@ describe('rommel uit het antwoord', () => {
  * Het ouderscherm bestaat om te tonen wat de kinderen vroegen. Die lijst stond
  * in de stand, en `voegSamen` nam alleen de stand van dít toestel over. Dus:
  * Amine vraagt iets op de tablet, papa opent de app op zijn telefoon, de
- * samenvoeging gooit de lijst weg — en omdat de uitkomst daarna naar de wolk
+ * samenvoeging gooit de lijst weg, en omdat de uitkomst daarna naar de wolk
  * wordt teruggeschreven (`wolk.ts`), was hij ook daar verdwenen. Het scherm
  * wiste zichzelf dus zodra er een tweede toestel meedeed.
  *

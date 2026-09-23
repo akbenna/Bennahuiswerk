@@ -1,5 +1,5 @@
 /**
- * HET LEERPAD — een vaste reeks blokken, één blok is één sessie
+ * HET LEERPAD: een vaste reeks blokken, één blok is één sessie
  *
  * Er is bewust geen streak en geen achterstand. De kalender wordt bij elke
  * opening opnieuw op vandaag verankerd: het eerstvolgende blok dat je nog niet
@@ -9,7 +9,7 @@
  * verlaagt het vervolggedrag; een schema dat altijd op vandaag staat kan niet
  * breken.)
  *
- * Binnen een blok wordt alleen gemengd wat verward kan worden — ba/ta/tha bij
+ * Binnen een blok wordt alleen gemengd wat verward kan worden, ba/ta/tha bij
  * elkaar, sin/shin bij elkaar. Letters, woordenschat en grammatica zitten
  * nooit in dezelfde sessie; dat is versnippering, geen interleaving.
  */
@@ -25,7 +25,7 @@ import type { Kaartstaat } from './fsrs'
 import { dagVerschil } from './datum'
 
 /** De eerste gok, zolang er nog geen niveaubepaling is gedaan. De ouder kan
- *  hem overschrijven, en de niveaubepaling vervangt hem — zie hieronder. */
+ *  hem overschrijven, en de niveaubepaling vervangt hem, zie hieronder. */
 export function spoorBijLeeftijd(l: number): Spoor {
   if (l <= 9) return 1
   if (l <= 12) return 2
@@ -45,7 +45,7 @@ export function spoorBijLeeftijd(l: number): Spoor {
    én hoe de app met je omgaat. Vanaf spoor 3 beoordeelt iemand zijn eigen
    antwoord (`Vandaag.tsx`) en vallen de punten weg (`Ouder.tsx`), en spoor 4
    heet niet voor niets "het volwassen spoor". Een kind van acht dat vlot leest
-   hoort zwaardere woorden te krijgen — geen zelfbeoordeling, want dat kán het
+   hoort zwaardere woorden te krijgen, geen zelfbeoordeling, want dat kán het
    nog niet betrouwbaar.
 
    Vandaar twee regels in plaats van één: de meting kiest de stof, de leeftijd
@@ -102,19 +102,19 @@ export const SPOORLEEFTIJD: Record<Spoor, string> = {
 /* Verwarparen: letters die op elkaar lijken in vorm of klank staan in dezelfde
    groep, zodat je ze naast elkaar leert onderscheiden. */
 export const LETTERGROEPEN: Array<{ l: string[]; t: string }> = [
-  { l: ['ا', 'ب'], t: 'Alif en ba — de eerste twee' },
-  { l: ['ت', 'ث'], t: 'Ta en tha — twee punten of drie' },
-  { l: ['ج', 'ح', 'خ'], t: 'Jim, ha en kha — één vorm, drie klanken' },
+  { l: ['ا', 'ب'], t: 'Alif en ba: de eerste twee' },
+  { l: ['ت', 'ث'], t: 'Ta en tha: twee punten of drie' },
+  { l: ['ج', 'ح', 'خ'], t: 'Jim, ha en kha: één vorm, drie klanken' },
   { l: ['د', 'ذ'], t: 'Dal en dhal' },
   { l: ['ر', 'ز'], t: 'Ra en zay' },
   { l: ['س', 'ش'], t: 'Sin en shin' },
-  { l: ['ص', 'ض'], t: 'Sad en dad — de zware s en d' },
-  { l: ['ط', 'ظ'], t: 'Ta en za — de zware t en dh' },
-  { l: ['ع', 'غ'], t: 'Ayn en ghayn — de keelletters' },
-  { l: ['ف', 'ق'], t: 'Fa en qaf — één punt of twee' },
+  { l: ['ص', 'ض'], t: 'Sad en dad: de zware s en d' },
+  { l: ['ط', 'ظ'], t: 'Ta en za: de zware t en dh' },
+  { l: ['ع', 'غ'], t: 'Ayn en ghayn: de keelletters' },
+  { l: ['ف', 'ق'], t: 'Fa en qaf: één punt of twee' },
   { l: ['ك', 'ل'], t: 'Kaf en lam' },
   { l: ['م', 'ن'], t: 'Mim en nun' },
-  { l: ['ه', 'و', 'ي'], t: 'Ha, waw en ya — de laatste drie' },
+  { l: ['ه', 'و', 'ي'], t: 'Ha, waw en ya: de laatste drie' },
 ]
 
 function hakInStukken<T>(arr: T[], n: number): T[][] {
@@ -177,7 +177,7 @@ export function bouwPad(spoor: Spoor): Padstap[] {
   if (spoor === 1) {
     const stroomL: Padstap[] = LETTERGROEPEN.map((g) => ({ k: 'letters', titel: g.t, letters: g.l }))
     const stroomTk: Padstap[] = TEKENS.map((t, i) => ({
-      k: 'teken', titel: 'Teken: ' + t.tr + ' — ' + t.n, idx: i,
+      k: 'teken', titel: 'Teken: ' + t.tr + ': ' + t.n, idx: i,
     }))
     return rondgang({ L: stroomL, T: stroomTk, W: stroomW, Z: stroomZ },
       ['L', 'L', 'T', 'W', 'L', 'W', 'Z'])

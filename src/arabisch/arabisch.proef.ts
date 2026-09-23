@@ -2,8 +2,8 @@
  * ARABISCH, BEWEZEN
  *
  * Twee dingen die je niet met het oog controleert, en die daarom het zwaarst
- * getoetst worden: FSRS — de herhalingsplanner met negentien gepubliceerde
- * gewichten — en het nakijken van getypte antwoorden. Alles vergeleken met
+ * getoetst worden: FSRS (de herhalingsplanner met negentien gepubliceerde
+ * gewichten) en het nakijken van getypte antwoorden. Alles vergeleken met
  * src/arabisch/gouden-waarden.json, gedraaid uit de oude pagina zelf.
  */
 import { describe, expect, it } from 'vitest'
@@ -34,9 +34,12 @@ import { schattingMinuten } from './schermen/Vandaag'
 import type { Losse, Profiel, Stand } from './opslag'
 import { dagVerschil, datumNL, plusDagen } from './datum'
 import type { Spoor } from './gegevens/soorten'
+import { woordgelijk } from '@/gedeeld/woordgelijk'
 
+/* De vinger loopt over de wóórden en niet over de leestekens. Waarom,
+   staat in `src/gedeeld/woordgelijk.ts`. */
 const vinger = (x: unknown): string =>
-  createHash('sha256').update(JSON.stringify(x)).digest('hex').slice(0, 16)
+  createHash('sha256').update(JSON.stringify(woordgelijk(x))).digest('hex').slice(0, 16)
 
 /* De spreiding uitgezet: 0.5 laat `1 + (0.5*0.1 - 0.05)` precies op 1
    uitkomen, net als in de opwekker. */
@@ -175,7 +178,7 @@ describe('de vocalisatie', () => {
   })
 
   it('houdt de tekens waar het woord zonder die tekens dubbelzinnig is', () => {
-    /* كتب kan kataba, kutiba, kutub of kutub zijn — daar blijven de tekens. */
+    /* كتب kan kataba, kutiba, kutub of kutub zijn, daar blijven de tekens. */
     expect(AMBIGU.has('كتب')).toBe(true)
     expect(vocaliseer('كَتَبَ', 'selectief')).toBe('كَتَبَ')
     expect(vocaliseer('بَيْت', 'selectief')).toBe('بيت')
@@ -198,10 +201,10 @@ describe('de leerstof', () => {
     zelfde(KORAN100, gouden.stof.koran, 'koran')
     zelfde(JAAR, gouden.stof.jaar, 'jaar')
     zelfde(METING, gouden.stof.meting, 'meting')
-    expect(BLOKKEN).toEqual(gouden.stof.blokken)
-    expect(SESSIE).toEqual(gouden.stof.sessie)
+    expect(woordgelijk(BLOKKEN)).toEqual(woordgelijk(gouden.stof.blokken))
+    expect(woordgelijk(SESSIE)).toEqual(woordgelijk(gouden.stof.sessie))
     expect(SESSIEMINUTEN).toBe(gouden.stof.sessieminuten)
-    expect(METINGNIVEAUS).toEqual(gouden.stof.metingniveaus)
+    expect(woordgelijk(METINGNIVEAUS)).toEqual(woordgelijk(gouden.stof.metingniveaus))
   })
 
   it('telt achtentwintig letters en zesendertig weken', () => {
@@ -241,7 +244,7 @@ describe('het leerpad', () => {
         k: s.k, titel: s.titel,
         n: s.items ? s.items.length : (s.letters ? s.letters.length : 1),
       }))
-      expect(pad, `spoor ${g.spoor}`).toEqual(g.stappen)
+      expect(woordgelijk(pad), `spoor ${g.spoor}`).toEqual(woordgelijk(g.stappen))
     }
   })
 
@@ -296,8 +299,8 @@ describe('het leerpad', () => {
  * HET SPOOR NA DE NIVEAUBEPALING
  *
  * De meting zette tot nu toe alleen de startweek van het jaarplan; het spoor
- * bleef staan op de gok uit de leeftijd. Dat is verkeerd om — hoe ver iemand met
- * Arabisch is heeft niets met zijn leeftijd te maken — maar het is ook niet
+ * bleef staan op de gok uit de leeftijd. Dat is verkeerd om (hoe ver iemand met
+ * Arabisch is heeft niets met zijn leeftijd te maken) maar het is ook niet
  * zomaar om te draaien: het spoor draagt náást de zwaarte van de stof ook hoe de
  * app met je omgaat. Vanaf spoor 3 beoordeelt iemand zijn eigen antwoord en
  * vallen de punten weg; spoor 4 is het volwassen spoor.
@@ -353,7 +356,7 @@ describe('het spoor na de niveaubepaling', () => {
   it('zegt waar het spoor vandaan komt', () => {
     /* Het ouderscherm zet dit erbij; zonder herkomst is "spoor 2" niet na te
        kijken. Een volwassene houdt "op leeftijd", ook met een meting achter de
-       rug — bij hem heeft die er immers niet aan gezeten. */
+       rug, bij hem heeft die er immers niet aan gezeten. */
     expect(spoorHerkomst(true, 8, true)).toBe('hand')
     expect(spoorHerkomst(false, 8, true)).toBe('toets')
     expect(spoorHerkomst(false, 8, false)).toBe('leeftijd')
@@ -375,7 +378,7 @@ describe('samenvoegen tussen toestellen', () => {
     }
   })
 
-  it('houdt de ouderscode vast — de oude versie liet die vallen', () => {
+  it('houdt de ouderscode vast: de oude versie liet die vallen', () => {
     /* De oude samenvoegen bouwde een nieuw object met alleen versie, actief,
        thema en profielen. Wie thuis een code instelde en daarna op een tweede
        toestel gelijktrok, stond de volgende dag weer op 1234 zonder dat er

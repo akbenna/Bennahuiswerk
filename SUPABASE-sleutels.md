@@ -2,7 +2,7 @@
 
 Op 26 augustus 2026 is de `service_role`-sleutel van het gedeelde project in een
 chatgesprek beland. Dat is de sleutel die alle rij-beveiliging omzeilt. Dit
-bestand is het plan om van de oude sleutels af te komen — niet alleen die ene,
+bestand is het plan om van de oude sleutels af te komen, niet alleen die ene,
 maar het hele stelsel eronder.
 
 ## Waarom het niet één knop is
@@ -28,7 +28,7 @@ omgezet worden.
 Drie dingen die de omzetting meer maken dan zoeken-en-vervangen:
 
 1. **De nieuwe sleutels zijn geen JWT.** Ze mogen alleen in de `apikey`-kop, niet
-   in `Authorization: Bearer`. Wie ze daar tóch zet, krijgt `Invalid JWT` terug —
+   in `Authorization: Bearer`. Wie ze daar tóch zet, krijgt `Invalid JWT` terug,
    het platform probeert ze dan als token te lezen. Onze eigen `verzoek()` in
    `src/gedeeld/db/verbinding.ts` zet de sleutel nu in *allebei* de koppen. Die
    `Authorization`-regel moet er dus uit.
@@ -46,7 +46,7 @@ Drie dingen die de omzetting meer maken dan zoeken-en-vervangen:
 **Op `service_role`:**
 
 - Negen cronjobs die een edge function aanroepen. Goed nieuws: ze halen de
-  sleutel uit de Vault, onder de naam `service_role_key` — niet uit een
+  sleutel uit de Vault, onder de naam `service_role_key`, niet uit een
   hardgecodeerde regel. Eén Vault-geheim vervangen raakt ze dus allemaal. Wel
   moet in elke opdracht de kop `Authorization` worden `apikey`.
 - Twintig edge functions, die hem uit `SUPABASE_SERVICE_ROLE_KEY` lezen.
@@ -59,30 +59,30 @@ repo.
 
 ## De volgorde
 
-**Stap 0 — wat vanzelf verdwijnt.** Vier van de negen cronjobs
+**Stap 0: wat vanzelf verdwijnt.** Vier van de negen cronjobs
 (`kalibratie-prikkel`, `kalibratie-coach-12`, `-15`, `-18`) en drie edge
 functions (`kal-ai`, `kal-modellen`, `kal-prikkel`) horen bij BennaHealth en
 verhuizen mee naar de eigen database. Die hoeven in het oude project niet
-omgezet te worden — daar mogen ze weg zodra de verhuizing staat. Dat scheelt een
+omgezet te worden, daar mogen ze weg zodra de verhuizing staat. Dat scheelt een
 derde van het werk. Doe de verhuizing dus eerst.
 
-**Stap 1 — de achterkant, want daar zit het lek.** Zet de secret-sleutel in de
+**Stap 1: de achterkant, want daar zit het lek.** Zet de secret-sleutel in de
 Vault onder `service_role_key`, pas in de negen (straks vijf) cronopdrachten de
 kop aan van `Authorization: Bearer` naar `apikey`, en zet in elke edge function
 die met een sleutel wordt aangeroepen `verify_jwt = false` met een eigen
 controle. Daarna het Roosendael-portaal en wat er in n8n staat.
 
-**Stap 2 — de voorkant.** Vervang in de ProVita-app de anon-sleutel door de
-publishable sleutel, en haal daar — net als hier — de `Authorization`-kop weg
+**Stap 2: de voorkant.** Vervang in de ProVita-app de anon-sleutel door de
+publishable sleutel, en haal daar, net als hier, de `Authorization`-kop weg
 waar de sleutel in stond. In deze repo gebeurt dat vanzelf mee met de verhuizing:
 de nieuwe database krijgt meteen een publishable sleutel en geen
 `Authorization`-kop.
 
-**Stap 3 — nalopen.** Er is geen teller die zegt of een oude sleutel nog gebruikt
+**Stap 3: nalopen.** Er is geen teller die zegt of een oude sleutel nog gebruikt
 wordt; dit is handwerk. Loop alles langs: uitgerolde apps, CI, webhooks,
 integraties, cronjobs.
 
-**Stap 4 — uitzetten.** Project Settings → API Keys → de oude sleutels
+**Stap 4: uitzetten.** Project Settings → API Keys → de oude sleutels
 deactiveren. Blijkt er iets vergeten, dan kunnen ze weer aan.
 
 ## Wat er nu al kan

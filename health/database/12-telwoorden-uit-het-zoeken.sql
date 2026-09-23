@@ -17,7 +17,7 @@
 -- in, plus "wat", "beetje", "stukje" en "paar".
 --
 -- Wat er NIET in ging: "half" en "halve". Die lijken vulwoorden maar zijn het
--- niet — halfvolle melk en halvarine zijn er anders niet meer mee te vinden. Dat
+-- niet: halfvolle melk en halvarine zijn er anders niet meer mee te vinden. Dat
 -- staat als controlegroep onderaan.
 --
 -- De twee functies hieronder zijn niet overgetypt maar met een script uit
@@ -60,7 +60,7 @@ AS $function$
   bron as (
     -- nevo_actief en niet nevo_foods: dit is de licentiepoort. Staat de licentie
     -- van de actieve versie niet op gecontroleerd, dan is deze bron leeg en
-    -- vindt het zoeken niets — precies wat de schakelaar hoort te doen.
+    -- vindt het zoeken niets: precies wat de schakelaar hoort te doen.
     select n.nevo_code, n.naam_nl, n.groep, n.energie_kcal_per_100g,
            n.eiwit_g, n.vet_g, n.koolhydraten_g, n.vezels_g,
            lower(n.naam_nl) as nm,

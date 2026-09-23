@@ -85,7 +85,7 @@ export function Leerscan({ naam, scan, terug, bewaar }: LeerscanProps): ReactNod
 
       {a.sterk && (
         <div className="card" style={{ marginTop: 12, background: '#eaf7e2', borderColor: '#bcd9a6' }}>
-          <b>{a.sterk.kaart.emoji} {a.sterk.kaart.kop} — dit doe je al goed</b>
+          <b>{a.sterk.kaart.emoji} {a.sterk.kaart.kop}: dit doe je al goed</b>
           <p style={{ margin: '6px 0 0', fontSize: 15 }}>{a.sterk.kaart.advies[2]}</p>
         </div>
       )}
@@ -99,7 +99,7 @@ export function Leerscan({ naam, scan, terug, bewaar }: LeerscanProps): ReactNod
       </div>
 
       <p className="muted" style={{ margin: '18px 0 6px', fontSize: 13 }}>
-        Je hele beeld — één ding tegelijk aanpakken werkt het best, dus laat de rest even staan.
+        Je hele beeld: één ding tegelijk aanpakken werkt het best, dus laat de rest even staan.
       </p>
       {lijst.map((u) => (
         <div key={u.dim} className="card" style={{ marginTop: 8 }}>
@@ -127,7 +127,7 @@ export function Leerscan({ naam, scan, terug, bewaar }: LeerscanProps): ReactNod
           Dit is geen test die zegt wat voor type je bent. Het idee dat de één een
           &ldquo;beeldleerder&rdquo; is en de ander een &ldquo;luisteraar&rdquo; klinkt logisch,
           maar het is onderzocht en het klopt niet: je leert niet beter als de uitleg bij je
-          voorkeur past. Wat wél verschil maakt is wát je doet — en dat kun je veranderen.
+          voorkeur past. Wat wél verschil maakt is wát je doet, en dat kun je veranderen.
         </p>
         {DIMENSIES.map((d) => (
           <div key={d.dim} style={{ padding: '8px 0', borderTop: '1px solid var(--line)' }}>

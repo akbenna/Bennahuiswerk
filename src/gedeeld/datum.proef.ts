@@ -2,7 +2,7 @@
  * MORGEN BESTAAT NIET
  *
  * `stapDag` is de enige plek waar staat hoe ver je vooruit mag. Twee dingen
- * gebruiken hem — de pijltjesknop en de veeg — en die horen precies hetzelfde te
+ * gebruiken hem (de pijltjesknop en de veeg) en die horen precies hetzelfde te
  * weigeren. Gaat de grens hier stuk, dan komt er een leeg dagoverzicht van een
  * dag die nog niet geweest is, en dat ziet er niet uit als een fout.
  */

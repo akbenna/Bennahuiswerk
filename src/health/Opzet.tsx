@@ -35,7 +35,7 @@ const DAGEN: ReadonlyArray<readonly [string, number, number]> = [
   ['2026-08-19', 10308, 841],
 ]
 
-/** datum, kcal, koolhydraten g, eiwit g, vet g — uit de macroschermen omgerekend */
+/** datum, kcal, koolhydraten g, eiwit g, vet g, uit de macroschermen omgerekend */
 const ETEN: ReadonlyArray<readonly [string, number, number, number, number]> = [
   ['2026-08-05', 3257, 350, 147, 141], ['2026-08-06', 904, 131, 29, 29],
   ['2026-08-07', 1332, 163, 57, 50], ['2026-08-08', 2386, 227, 89, 125],
@@ -92,8 +92,8 @@ export function Opzet(
       <Kaart>
         <Kop>Klaarzetten</Kop>
         <p style={{ fontSize: '.9rem', marginTop: 6 }}>
-          Ik kan het profiel van Abdelkader invullen — 196 cm, 51 jaar, 120 naar 100 kg, streeftempo
-          0,7 procent per week, eiwit 1,4 g/kg op gecorrigeerd gewicht — en de augustusreeks uit Yazio
+          Ik kan het profiel van Abdelkader invullen: 196 cm, 51 jaar, 120 naar 100 kg, streeftempo
+          0,7 procent per week, eiwit 1,4 g/kg op gecorrigeerd gewicht, en de augustusreeks uit Yazio
           en Apple Gezondheid meteen inladen: zestien dagen stappen en actieve energie, vijftien dagen
           energie met macro's.
         </p>

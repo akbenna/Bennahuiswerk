@@ -1,5 +1,5 @@
 /**
- * UITVOEREN — de boom aflopen
+ * UITVOEREN: de boom aflopen
  *
  * Twee dingen die niet vanzelfsprekend zijn en er met opzet in zitten.
  *
@@ -39,7 +39,7 @@ type Sprong = typeof BREEK | typeof DOOR | Terug | null
 
 /* Sorteren en min/max leunden in de oude vertaler op de < van JavaScript zelf,
    ook bij dingen die Python nooit zou vergelijken. Dat is precies wat een kind
-   te zien krijgt, dus het blijft zo — maar het staat hier één keer opgeschreven
+   te zien krijgt, dus het blijft zo, maar het staat hier één keer opgeschreven
    in plaats van vier keer verstopt in een vergelijkerfunctie. */
 const jsKleiner = (x: Waarde, y: Waarde): boolean =>
   (x as number) < (y as number)
@@ -268,7 +268,7 @@ export class Uitvoerder {
         if (INGEBOUWD.has(e.w)) return { ib: true, naam: e.w }
         if (e.w === 'random') return { mod: 'random' }
         throw fout(e.r, 'de naam "' + e.w + '" kent Python nog niet',
-          'Je gebruikt hem voordat je hem gemaakt hebt — of er zit een typefout in.')
+          'Je gebruikt hem voordat je hem gemaakt hebt, of er zit een typefout in.')
       }
       case 'min': {
         const w = this.ev(e.w, o)

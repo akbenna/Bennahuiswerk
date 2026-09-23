@@ -1,5 +1,5 @@
 /**
- * VANDAAG — de sessie
+ * VANDAAG: de sessie
  *
  * Er is bewust geen streak en geen achterstand. De kalender wordt bij elke
  * opening opnieuw op vandaag verankerd: het eerstvolgende blok dat je nog niet
@@ -7,7 +7,7 @@
  * niets doet vindt dus geen zeven sessies terug maar precies één.
  *
  * De sessie loopt in vier stappen: leren, oefenen, herhalen, klaar. Wie stopt
- * verliest wat er nog aan kwam maar houdt alles wat al beoordeeld is — elke
+ * verliest wat er nog aan kwam maar houdt alles wat al beoordeeld is, elke
  * vraag schrijft meteen weg.
  */
 import { useEffect, useRef, useState } from 'react'
@@ -195,7 +195,7 @@ export function Vandaag(
       </div>
       <p className="klein muted" style={{ marginTop: 12 }}>
         De kalender schuift met je mee. Sla je een paar dagen over, dan staat er geen stapel
-        klaar — het pad begint gewoon weer bij vandaag.
+        klaar: het pad begint gewoon weer bij vandaag.
       </p>
     </div>
   )
@@ -244,7 +244,7 @@ function Sessieloop(
 
   const beoordeeldeKaart = (oef: Oefening, goed: boolean, oordeel: Oordeel, zelf: boolean): void => {
     /* De uitgangsstaat van deze kaart. Bij een zelfoordeel is `p` alweer
-       bijgewerkt door de eerste beoordeling, dus die staat komt uit de ref —
+       bijgewerkt door de eerste beoordeling, dus die staat komt uit de ref,
        anders zou het oordeel bovenop het automatische stapelen in plaats van
        ervoor in de plaats te komen. */
     const basis = zelf ? vorige.current : (oef.id ? p.kaarten[oef.id] ?? null : null)
@@ -364,7 +364,7 @@ function Sessieloop(
         <Statvak n={st.herhaald} wat="herhaald" />
       </div>
       <p className="small muted" style={{ marginTop: 16 }}>
-        Morgen staat de volgende stap klaar. Kom je er niet aan toe, dan schuift alles mee — er
+        Morgen staat de volgende stap klaar. Kom je er niet aan toe, dan schuift alles mee: er
         ontstaat geen achterstand.
       </p>
       <button type="button" className="k vol" style={{ marginTop: 14 }} onClick={stop}>

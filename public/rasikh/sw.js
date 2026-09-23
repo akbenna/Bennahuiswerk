@@ -1,5 +1,5 @@
 /* Rasikh moet zonder internet werken. Memoriseren doe je in de trein, op reis,
-   in de moskee — precies daar waar geen verbinding is. Wat hier gebeurt:
+   in de moskee, precies daar waar geen verbinding is. Wat hier gebeurt:
 
    - de app zelf: eerst het net, dan de kast. Zo komt een nieuwe versie meteen
      binnen, en draait de bewaarde versie door als het net wegvalt;

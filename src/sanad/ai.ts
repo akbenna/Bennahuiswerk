@@ -4,13 +4,13 @@
  * Twee plekken waar het model meedoet: een vervolgvraag bij de week, en een
  * blik over de schouder bij wat je zelf hebt uitgewerkt.
  *
- * WAAR DE SLEUTEL STAAT — en waarom dat hier mag
+ * WAAR DE SLEUTEL STAAT, en waarom dat hier mag
  *
  * De sleutel is die van de gebruiker zelf, staat in de opslag van dít toestel
  * en gaat niet mee naar de centrale kopie: op de laptop vul je hem opnieuw in.
  * Het gesprek loopt daarmee rechtstreeks van de browser naar Anthropic, en dat
  * is precies waarvoor `dangerouslyAllowBrowser` bestaat. Voor een dienst met
- * gebruikers zou dat fout zijn — daar hoort de sleutel op een server, zoals bij
+ * gebruikers zou dat fout zijn, daar hoort de sleutel op een server, zoals bij
  * BennaHealth, waar de edge function hem draagt. Hier is het één persoon met
  * zijn eigen rekening, en de afweging is bewust: geen tussenserver die de
  * vragen zou kunnen meelezen, in ruil voor een sleutel die in een browser

@@ -3,7 +3,7 @@
  *
  * Wie op de startpagina zijn eigen profiel al heeft gekozen, hoort zich hier
  * niet nog een keer voor te stellen. Twee keer dezelfde vraag is niet twee keer
- * zo veilig — het is één keer te veel, en het staat tussen een kind en zijn
+ * zo veilig, het is één keer te veel, en het staat tussen een kind en zijn
  * huiswerk in.
  *
  * Er gaat niets verloren door het inlogscherm over te slaan: `useHuiswerk`
@@ -38,7 +38,7 @@ export function pidVanNaam(naam: string): string | null {
  * Het kind dat via het portaal binnenkwam, of null wanneer er niemand aan
  * staat, de aanmelding verlopen is, een ouder aan de beurt is, of de naam geen
  * profiel in deze app heeft. In al die gevallen begint de app gewoon op het
- * beginscherm — niet met een foutmelding.
+ * beginscherm, niet met een foutmelding.
  */
 export function portaalKind(nuMs: number = Date.now()): string | null {
   const ik = wieBenIk(nuMs)

@@ -3,7 +3,7 @@
  *
  * Een kind opent deze app zelden om te bladeren. Het opent hem omdat er iets in
  * zijn hoofd zit: *ik snap breuken optellen niet*. De app bood daar geen ingang
- * voor — je moest zelf bedenken onder welk vak en welk onderwerp jouw vraag
+ * voor, je moest zelf bedenken onder welk vak en welk onderwerp jouw vraag
  * hoort, en dat is precies het stuk dat je niet weet als je vastzit.
  *
  * Hier staat de brug. De vraag gaat naar de edge function `huiswerk-ai`, samen
@@ -48,7 +48,7 @@ export interface Uitslag {
   /** Wat er volgens het model niet in de app staat, of null. */
   gat: string | null
   /** Sleutels die het model noemde maar die niet bestaan. Alleen voor de proef
-   *  en het ouderscherm — een kind hoeft dit niet te zien. */
+   *  en het ouderscherm, een kind hoeft dit niet te zien. */
   verzonnen: string[]
 }
 
@@ -115,7 +115,7 @@ export function verwerk(ruw: RuwAntwoord, cat: readonly Ingang[]): Uitslag {
   return {
     antwoord: String(ruw.antwoord ?? '').trim(),
     routes,
-    /* Wijst het model wél iets aan, dan is er geen gat — wat het er verder ook
+    /* Wijst het model wél iets aan, dan is er geen gat, wat het er verder ook
        bij schrijft. Anders komt elke vraag in de ouderlijst terecht. */
     gat: routes.length === 0 && gat ? gat : null,
     verzonnen,

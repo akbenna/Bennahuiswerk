@@ -30,7 +30,7 @@ export function Tijden({ t, ga }: { t: Toestand; ga: (v: Tab) => void }): ReactN
   const qh = qiblaHoek(g.lat, g.lon)
 
   /* Het kompas van de telefoon. Op iOS moet er eerst om toestemming gevraagd
-     worden, en dat mag alleen vanuit een aanraking — vandaar de knop. */
+     worden, en dat mag alleen vanuit een aanraking, vandaar de knop. */
   useEffect(() => () => { /* de luisteraar wordt in startKompas opgeruimd */ }, [])
 
   const startKompas = (): void => {
@@ -138,7 +138,7 @@ export function Tijden({ t, ga }: { t: Toestand; ga: (v: Tab) => void }): ReactN
       <div className="card">
         <h2>De qibla</h2>
         <p className="klein" style={{ marginTop: 6 }}>
-          Vanuit {g.plaats} ligt de Ka'ba op <b>{Math.round(qh)}°</b> — dat is zuidoost. Houd je
+          Vanuit {g.plaats} ligt de Ka'ba op <b>{Math.round(qh)}°</b>, dat is zuidoost. Houd je
           telefoon plat; kan hij het kompas lezen, dan draait de wijzer mee.
         </p>
         <div className="kompas" style={{ marginTop: 16 }}>

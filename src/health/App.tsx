@@ -24,10 +24,16 @@ import type { Onderwerp } from './vensters/Portie'
 import { InvoerVenster } from './vensters/Invoer'
 import { KoppelVenster } from './vensters/Koppelen'
 import { DagoverzichtVenster } from './vensters/Dagoverzicht'
+import { DagverslagVenster } from './vensters/Dagverslag'
+import { VoorkeurVenster } from './vensters/Voorkeuren'
+import { GEEN_VOORKEUR, weigerProduct } from './voorkeuren'
 import { HoewerktVenster } from './vensters/Hoewerkt'
 import {
   AccountVenster, Aanmelden, ImportVenster, ProfielVenster,
 } from './vensters/Instellingen'
+import { LerenVenster } from './vensters/Leren'
+import { VerdiepVenster } from './vensters/Verdiepen'
+import { WegingVenster } from './vensters/Wegingen'
 import { Opzet } from './Opzet'
 import { Kaart, Knop, Spin } from './onderdelen/basis'
 import { useVeeg } from './veeg'
@@ -67,7 +73,7 @@ function initialen(account: string): string {
  * Dus legt de app zijn uitkomst neer met een tijdstempel, en zwijgt de coach
  * zodra die ouder is dan twee dagen. De datum zit in de sleutel omdat het
  * tijdstempel anders blijft staan op de dag dat het doel toevallig niet
- * verandert — en dan valt de coach stil terwijl er niets aan de hand is.
+ * verandert, en dan valt de coach stil terwijl er niets aan de hand is.
  *
  * Mislukt het, dan komen er geen prikkels en gebeurt er verder niets. Dat is de
  * veilige kant om op te falen, en het is aan de gebruiker te merken; een
@@ -92,13 +98,28 @@ function Postbus({ token, a }: { token: string; a: Analyse }) {
 }
 
 type Tab = (typeof TABS)[number][0]
-type VensterNaam = 'profiel' | 'import' | 'account' | 'koppelen' | 'overzicht' | 'hoewerkt'
+type VensterNaam = 'profiel' | 'import' | 'account' | 'koppelen' | 'overzicht'
+  | 'hoewerkt' | 'leren' | 'verdiepen' | 'verslag' | 'voorkeuren' | 'wegingen'
 
 export function App() {
   const k = useKalibratie()
   const [tab, zetTab] = useState<Tab>('vandaag')
   const [datum, zetDatum] = useState<IsoDatum>(vandaag())
   const [venster, zetVenster] = useState<VensterNaam | null>(null)
+  /* Welk stuk van het boekje open moet staan als het venster opengaat. Een
+     verwijzing vanaf een kaart komt hier binnen; zonder stuk gaat het boekje
+     gewoon bovenaan open. */
+  const [verdiepStuk, zetVerdiepStuk] = useState<string | null>(null)
+  const opVerdiepen = (stuk?: string): void => {
+    zetVerdiepStuk(stuk ?? null)
+    zetVenster('verdiepen')
+  }
+  /* De namen bij weggeklikte codes, zolang deze sessie duurt. Ze worden niet
+     bewaard: de code in het profiel is de echte verwijzing, en een naam die
+     meereist zou een tweede waarheid zijn die na een NEVO-versie niet meer
+     klopt. Wat de app deze sessie in beeld had, staat met naam; de rest
+     staat als code. */
+  const [weigernamen, zetWeigernamen] = useState<Record<string, string>>({})
   const [portie, zetPortie] = useState<Onderwerp | null>(null)
   /* Het invoervel. Het moment zit in de toestand en niet in het vel zelf, omdat
      het portievenster erbovenop kan komen en daarna terug moet kunnen vallen op
@@ -125,6 +146,17 @@ export function App() {
       }
     : {})
 
+  /* Een dagveld op een dag die je níet aan het bekijken bent. Het venster met
+     je wegingen loopt de hele reeks langs, dus daar is de datum van de regel de
+     datum die telt en niet de dag die bovenaan staat. */
+  const zetDagveldOp = useCallback((
+    d: IsoDatum, veld: string, waarde: string | number | boolean | null,
+  ) => {
+    void k.wijzig((t) => roep('kal_dag_zetten', {
+      p_token: t, p_datum: d, p_patch: { [veld]: waarde },
+    }))
+  }, [k])
+
   const voegRegelsToe = useCallback((regels: NieuweRegel[]) => {
     if (!regels.length) return
     void k.wijzig((t) => roep('kal_regels_toevoegen', { p_token: t, p_regels: regels }))
@@ -133,7 +165,9 @@ export function App() {
   if (!k.sessie) {
     return (
       <div className="wrap">
-        <Aanmelden bezig={k.bezig} fout={k.fout} opAanmelden={(a, w, n) => void k.aanmelden(a, w, n)} />
+        <Aanmelden bezig={k.bezig} fout={k.fout}
+                   opAanmelden={(a, w, n) => void k.aanmelden(a, w, n)}
+                   opHerstellen={(a, c, n) => void k.herstellen(a, c, n)} />
       </div>
     )
   }
@@ -143,7 +177,7 @@ export function App() {
      De sessie komt uit localStorage en is er dus meteen; `alles` komt van de
      server en is er een halve seconde later. In die halve seconde is `profiel`
      nog null, en zonder deze poort las het scherm dat als "deze gebruiker is
-     nieuw" en zette het de opzetpagina neer — die daarna vanzelf weer verdween.
+     nieuw" en zette het de opzetpagina neer, die daarna vanzelf weer verdween.
 
      Dat was niet alleen lelijk. Op die pagina staan twee knoppen die een profiel
      zetten en de augustusreeks kunnen inladen; één tik in dat raampje schreef
@@ -210,7 +244,8 @@ export function App() {
         <div id="inhoud" ref={zetVlak}>
           {tab === 'vandaag' && (
             <Vandaag
-              a={a} dag={dag} regels={regelsVandaag} alleRegels={k.alles.regels}
+              a={a} profiel={profiel}
+              dag={dag} regels={regelsVandaag} alleRegels={k.alles.regels}
               dagen={k.dagenkaart} datum={datum}
               eiwitPerKg={profiel.eiwit_g_per_kg}
               token={k.sessie.token}
@@ -222,19 +257,40 @@ export function App() {
                   p_token: t, p_datum: datum, p_patch: { [veld]: waarde },
                 }))}
               opInvoer={zetInvoer}
+              opVoorkeuren={() => zetVenster('voorkeuren')}
+              /* "Dit nooit meer." Schrijft meteen in het profiel, wachten op
+                 een bewaarknop zou betekenen dat je iets wegklikt en het bij de
+                 volgende hertekening terugziet. De naam gaat naast de code mee,
+                 zodat "Wat je lust" hem kan tonen in plaats van een NEVO-nummer. */
+              opWeigeren={(code, naam) => {
+                zetWeigernamen((n) => ({ ...n, [code]: naam }))
+                const nu = profiel.instellingen.voorkeuren ?? GEEN_VOORKEUR
+                void k.wijzig((t) => roep('kal_profiel_zetten', {
+                  p_token: t,
+                  p_patch: {
+                    instellingen: {
+                      ...profiel.instellingen,
+                      voorkeuren: weigerProduct(nu, code),
+                    },
+                  },
+                }))
+              }}
               opOverzicht={() => zetVenster('overzicht')}
+              opVerslag={() => zetVenster('verslag')}
               wisRegel={(id) =>
                 void k.wijzig((t) => roep('kal_regel_wissen', { p_token: t, p_id: id }))}
             />
           )}
 
           {tab === 'model' && (
-            <Model a={a} dagen={k.dagenkaart} reeks={reeks} profiel={profiel} labs={k.alles.labs} />
+            <Model a={a} dagen={k.dagenkaart} reeks={reeks} profiel={profiel} labs={k.alles.labs}
+                   opWegingen={() => zetVenster('wegingen')} />
           )}
 
           {tab === 'voeding' && (
             <Voeding
               a={a} token={k.sessie.token} producten={k.alles.producten}
+              profiel={profiel}
               regelsVandaag={regelsVandaag}
               opPortie={zetPortie}
               bewaarProduct={(pr) =>
@@ -251,6 +307,21 @@ export function App() {
           {tab === 'beweging' && (
             <Beweging
               a={a} dagen={k.dagenkaart} training={k.alles.training} datum={datum}
+              inspanning={k.alles.inspanning}
+              /* Voor de spierkaart: de stoeltest is een meting, de vijf vragen
+                 zijn een vragenlijst, en het eiwit per maaltijd komt uit de
+                 regels van vandaag. Alle drie bestonden al: deze kaart vraagt
+                 geen enkele databasewijziging. */
+              metingen={k.alles.metingen} vragenlijsten={k.alles.vragenlijsten}
+              regelsVandaag={regelsVandaag}
+              bewaarMeting={(m) => void k.wijzig((t) =>
+                roep('kal_rij_toevoegen', { p_token: t, p_tabel: 'meting', p_rij: m }))}
+              bewaarVragenlijst={(v) => void k.wijzig((t) =>
+                roep('kal_rij_toevoegen', { p_token: t, p_tabel: 'vragenlijst', p_rij: v }))}
+              bewaarInspanning={(r) => void k.wijzig((t) =>
+                roep('kal_rij_toevoegen', { p_token: t, p_tabel: 'inspanning', p_rij: r }))}
+              wisInspanning={(id) => void k.wijzig((t) =>
+                roep('kal_rij_wissen', { p_token: t, p_tabel: 'inspanning', p_id: id }))}
               zetDagveld={(veld, waarde) =>
                 void k.wijzig((t) => roep('kal_dag_zetten', {
                   p_token: t, p_datum: datum, p_patch: { [veld]: waarde },
@@ -265,6 +336,9 @@ export function App() {
           {tab === 'klinisch' && (
             <Klinisch
               a={a} profiel={profiel} labs={k.alles.labs} metingen={k.alles.metingen}
+              reeks={reeks}
+              opProfiel={() => zetVenster('profiel')} opLeren={() => zetVenster('leren')}
+              opVerdiepen={opVerdiepen}
               vragenlijsten={k.alles.vragenlijsten}
               bewaarMeting={(m) =>
                 void k.wijzig((t) => roep('kal_rij_toevoegen', {
@@ -282,12 +356,13 @@ export function App() {
           )}
 
           {tab === 'meer' && (
-            <Meer dagen={k.dagenkaart} reeks={reeks} profiel={profiel} opVenster={zetVenster} />
+            <Meer dagen={k.dagenkaart} reeks={reeks} profiel={profiel} opVenster={zetVenster}
+                  opVerdiepen={opVerdiepen} />
           )}
         </div>
 
         {/* De legenda blijft: die verklaart een teken dat op elk scherm staat.
-            De zin over ruisonderdrukking is weg — die stond onder élk scherm en
+            De zin over ruisonderdrukking is weg, die stond onder élk scherm en
             hoort bij het model, waar hij ook al staat. */}
         <footer>
           <b>A</b> etiket en gewogen · <b>B</b> etiket, portie geschat · <b>C</b> tabelwaarde ·{' '}
@@ -336,6 +411,26 @@ export function App() {
 
       {venster === 'hoewerkt' && <HoewerktVenster opSluiten={() => zetVenster(null)} />}
 
+      {venster === 'verslag' && (
+        <DagverslagVenster
+          token={k.sessie.token} datum={datum}
+          opSluiten={() => zetVenster(null)}
+          opGedaan={voegRegelsToe}
+        />
+      )}
+      {venster === 'leren' && (
+        <LerenVenster profiel={profiel} opSluiten={() => zetVenster(null)} />
+      )}
+
+      {venster === 'verdiepen' && (
+        <VerdiepVenster begin={verdiepStuk} opSluiten={() => zetVenster(null)} />
+      )}
+
+      {venster === 'wegingen' && (
+        <WegingVenster reeks={reeks} opSluiten={() => zetVenster(null)}
+                       zetGewicht={(d, kg) => zetDagveldOp(d, 'gewicht_kg', kg)} />
+      )}
+
       {venster === 'profiel' && (
         <ProfielVenster
           profiel={profiel} opSluiten={() => zetVenster(null)}
@@ -346,14 +441,30 @@ export function App() {
         />
       )}
 
+      {/* Dezelfde weg als het profiel: een patch op `instellingen`, waar de
+          voorkeuren in wonen. Zie `Voorkeuren` in tabellen.ts. */}
+      {venster === 'voorkeuren' && (
+        <VoorkeurVenster
+          profiel={profiel} opSluiten={() => zetVenster(null)} namen={weigernamen}
+          opBewaren={(patch) =>
+            void k.wijzig((t) => roep('kal_profiel_zetten', { p_token: t, p_patch: patch }))}
+        />
+      )}
+
       {venster === 'import' && (
         <ImportVenster
           token={k.sessie.token} opSluiten={() => zetVenster(null)}
-          opOvernemen={(dagen, regels) => {
+          opOvernemen={(dagen, regels, inspanning) => {
             zetVenster(null)
             void k.wijzig(async (t) => {
               if (dagen.length) await roep('kal_dagen_importeren', { p_token: t, p_dagen: dagen })
               if (regels.length) await roep('kal_regels_toevoegen', { p_token: t, p_regels: regels })
+              /* Apart en als laatste: deze aanroep slaat rijen over die er al
+                 staan, zodat twee keer dezelfde afdruk importeren de minuten
+                 niet verdubbelt. Zie health/database/43. */
+              if (inspanning.length) {
+                await roep('kal_inspanning_toevoegen', { p_token: t, p_rijen: inspanning })
+              }
             })
           }}
         />

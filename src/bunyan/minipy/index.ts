@@ -1,5 +1,5 @@
 /**
- * MINIPY — een kleine Python die in de browser draait.
+ * MINIPY: een kleine Python die in de browser draait.
  *
  * Waarom niet Pyodide of een andere kant-en-klare vertaler: die weegt tien
  * megabyte, komt van een adres buiten de deur en werkt dus niet zonder
@@ -10,8 +10,8 @@
  *
  * Wat er wél in zit is precies het eerste jaar Python: getallen, tekst,
  * lijsten, woordenboeken, if, while, for, functies, f-strings en de gewone
- * ingebouwde functies. Wat er niet in zit — klassen, modules, uitzonderingen,
- * generatoren — hoort in dat eerste jaar ook niet.
+ * ingebouwde functies. Wat er niet in zit (klassen, modules, uitzonderingen,
+ * generatoren) hoort in dat eerste jaar ook niet.
  *
  * Deze overzetting naar TypeScript is regel voor regel gecontroleerd tegen de
  * oude vertaler: honderdtweeëndertig programma's, waaronder één per

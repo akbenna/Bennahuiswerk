@@ -1,5 +1,5 @@
 /**
- * LEITNER — slim herhalen
+ * LEITNER: slim herhalen
  *
  * Vijf doosjes met een oplopende wachttijd. Goed beantwoord = een doosje
  * omhoog en dus langer wachten; fout = terug naar voren. Vanaf doosje vier
@@ -67,7 +67,7 @@ export const doelNiveau = (prog: Voortgang): number =>
  *
  * `recent` is de lijst kaarten die net geweest zijn (oud → nieuw). Die worden
  * zo veel mogelijk overgeslagen, en de oudste wordt weer toegelaten zodra er
- * anders niets overblijft — een voorraad van drie kaarten mag niet vastlopen.
+ * anders niets overblijft, een voorraad van drie kaarten mag niet vastlopen.
  */
 export function volgendeKaart(
   pool: readonly Kaart[], prog: Voortgang, recent: readonly string[], nu: number, t: Toeval,
@@ -110,7 +110,7 @@ export const STERREN = 5
 /**
  * Het doosje als sterren. Vier sterren is de grens: daar heet een som
  * beheerst, en daar gaat hij ook van tien naar drie punten. Vijf is de
- * bovenste doos — dezelfde som die na zestien dagen nog goed gaat.
+ * bovenste doos: dezelfde som die na zestien dagen nog goed gaat.
  *
  * Dit is geen tweede waarheid naast `box` maar een weergave ervan. Wie de
  * doosjes verandert, verandert de sterren mee, en dat hoort ook.
@@ -127,7 +127,7 @@ export const sterrenVoor = (prog: Voortgang, id: string): string =>
 /**
  * De sterren van een hele stapel: het gemiddelde doosje, naar beneden
  * afgerond. Naar beneden, want drie sterren horen te betekenen dat het
- * grootste deel er echt in zit — niet dat het er bijna in zit.
+ * grootste deel er echt in zit, niet dat het er bijna in zit.
  *
  * Dit loopt met kleine stapjes mee, en dat is het verschil met tellen hoeveel
  * sommen er beheerst zijn: die sprong komt pas bij doosje vier, en tot dat
@@ -146,7 +146,7 @@ export function sterrenVanStapel(prog: Voortgang, kaarten: readonly Kaart[]): nu
  * hem verder mag inperken.
  *
  * Hier zat de klacht. Een vast niveau sneed de voorraad terug tot precies dát
- * niveau, en bij een onderwerp als `Delen` staan er drie vaste sommen — één
+ * niveau, en bij een onderwerp als `Delen` staan er drie vaste sommen, één
  * per niveau. Vast op drie betekende dus: één som, eindeloos herhaald, ook als
  * hij allang beheerst was.
  */
@@ -155,7 +155,7 @@ export const MIN_VOORRAAD = 6
 /**
  * De voorraad op niveau brengen. Bij `auto` gebeurt er niets; bij een vast
  * niveau komt eerst dát niveau, en pas als er te weinig overblijft schuiven de
- * buurniveaus erbij — het dichtstbijzijnde eerst.
+ * buurniveaus erbij, het dichtstbijzijnde eerst.
  *
  * Het niveau blijft daarmee een voorkeur en geen muur: `volgendeKaart` sorteert
  * nog steeds op de afstand tot het doelniveau, dus wie vast op drie staat
@@ -186,14 +186,14 @@ export interface Beurtkeuze {
   /**
    * En zit alles ook écht vast (doosje vier of hoger)? Dat is iets anders dan
    * rust. Na één goede ronde wacht een som al een dag, maar dan beheers je hem
-   * nog niet — en dat hoort het scherm niet te zeggen.
+   * nog niet, en dat hoort het scherm niet te zeggen.
    */
   allesBeheerst: boolean
   /** Wanneer de eerstvolgende som weer aan de beurt is, in ms. */
   terugOm: number
 }
 
-/** Is deze som nu aan de beurt — nooit gezien, of zijn wachttijd is om? */
+/** Is deze som nu aan de beurt, nooit gezien, of zijn wachttijd is om? */
 const aanDeBeurt = (prog: Voortgang, k: Kaart, nu: number): boolean => {
   const c = kaartStand(prog, k.id)
   return c.box === 0 || nu >= wanneerTerug(c)
@@ -206,13 +206,19 @@ const aanDeBeurt = (prog: Voortgang, k: Kaart, nu: number): boolean => {
  * op de hele voorraad zodra er niets aan de beurt is; dan krijg je een som die
  * je vorige week al vier keer goed had. Hier stopt dat: er komt `rust: true`
  * uit, en het scherm zegt wanneer het onderwerp terugkomt. Met `dwing` gaat het
- * alsnog door — bij een toets, die zijn tien vragen nodig heeft, en bij een
+ * alsnog door, bij een toets, die zijn tien vragen nodig heeft, en bij een
  * kind dat zelf zegt dat het wil doorgaan.
  *
  * **Een sjabloon gaat vóór dezelfde som nóg een keer.** Is alles wat overblijft
  * net geweest, dan wint een sjabloon: die levert verse getallen en dus een
  * vraag die het kind nog niet gezien heeft. Herhalen mag, maar niet als er iets
  * nieuws naast ligt.
+ *
+ * **En een sjabloon houdt de rust tegen zolang de stof nog niet zit.** De klacht
+ * ging over dezelfde vráág, niet over hetzelfde onderwerp. Een sjabloon geeft
+ * nooit dezelfde vraag, dus er is geen reden om te stoppen terwijl het kind de
+ * methode nog aan het leren is. Zodra alles wél beheerst is telt dat niet meer:
+ * dan is doorgaan oefenen wat je al kunt, en daar is het rustscherm voor.
  */
 export function kiesVolgende(
   pool: readonly Kaart[], prog: Voortgang, recent: readonly string[], nu: number, t: Toeval,
@@ -225,7 +231,13 @@ export function kiesVolgende(
     (m, k) => Math.min(m, wanneerTerug(kaartStand(prog, k.id))), Infinity)
   const allesBeheerst = pool.every((k) => isBeheerst(prog, k.id))
   const open = pool.filter((k) => aanDeBeurt(prog, k, nu))
-  if (!open.length && !dwing) return { kaart: null, rust: true, allesBeheerst, terugOm }
+  if (!open.length && !dwing) {
+    const versen = pool.filter(isSjabloon)
+    if (versen.length && !allesBeheerst) {
+      return { kaart: t.pick(versen), rust: false, allesBeheerst, terugOm }
+    }
+    return { kaart: null, rust: true, allesBeheerst, terugOm }
+  }
 
   const bron = open.length ? open : pool
   const gezien = new Set(recent)

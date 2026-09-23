@@ -1,5 +1,5 @@
 /**
- * DE BOUWBANK — een pc samenstellen binnen een budget
+ * DE BOUWBANK: een pc samenstellen binnen een budget
  *
  * Het punt is niet dat er een lijstje onderdelen uitkomt maar dat de vijf
  * controles zichtbaar worden: past het voetje, past het geheugen, past het bord
@@ -66,7 +66,7 @@ export function Bouwbank({
         />
         <Cijfer
           kop="Past het"
-          waarde={hard.length ? `${hard.length} ✕` : compleet ? '✓' : '—'}
+          waarde={hard.length ? `${hard.length} ✕` : compleet ? '✓' : '–'}
           kleur={hard.length ? 'var(--fout)' : compleet ? 'var(--goed)' : 'var(--muted)'}
           onder={hard.length ? 'los dit eerst op' : compleet ? 'alles klopt' : 'nog niet compleet'}
         />
@@ -107,7 +107,7 @@ export function Bouwbank({
                 >
                   <span className="ico">{d.ico}</span>
                   <span className="tt"><b>{d.n}</b><span>{d.d}</span></span>
-                  <span className="prijs">{d.prijs ? euro(d.prijs) : '—'}</span>
+                  <span className="prijs">{d.prijs ? euro(d.prijs) : '–'}</span>
                 </button>
               ))}
             </div>

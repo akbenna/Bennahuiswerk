@@ -63,12 +63,28 @@ export function score2(
   if (u <= 0 || u >= 1) return null
   const risico = (1 - Math.exp(-Math.exp(s1 + s2 * Math.log(-Math.log(1 - u))))) * 100
 
-  // NHG-CVRM, leeftijdsafhankelijk
-  const klasse: Risicoklasse =
-    leeftijd < 50
-      ? risico < 2.5 ? 'laag' : risico < 7.5 ? 'matig' : 'hoog'
-      : risico < 5 ? 'laag' : risico < 10 ? 'matig' : 'hoog'
-  return { risico, klasse }
+  return { risico, klasse: score2Klasse(leeftijd, risico) }
+}
+
+/**
+ * DE TWEE GRENZEN VAN NHG-CVRM, EN WAAROM ZE APART STAAN
+ *
+ * Ze stonden binnen `score2` als twee regels met vier getallen erin. Dat was
+ * genoeg zolang alleen die functie ze nodig had. Sinds de risicoband op het
+ * scherm dezelfde grenzen tekent, staan ze op twee plekken, en twee plekken met
+ * dezelfde getallen lopen uit elkaar zonder dat iemand het ziet: dan kleurt de
+ * band oranje bij een uitkomst die de app "laag" noemt.
+ *
+ * Vandaar één bron. De grenzen zijn leeftijdsafhankelijk, en dat is geen detail:
+ * dezelfde 6 procent heet onder de vijftig matig en daarboven hoog.
+ */
+export function score2Grenzen(leeftijd: number): { matig: number; hoog: number } {
+  return leeftijd < 50 ? { matig: 2.5, hoog: 7.5 } : { matig: 5, hoog: 10 }
+}
+
+export function score2Klasse(leeftijd: number, risico: number): Risicoklasse {
+  const g = score2Grenzen(leeftijd)
+  return risico < g.matig ? 'laag' : risico < g.hoog ? 'matig' : 'hoog'
 }
 
 export interface Fib4Invoer {
@@ -98,7 +114,7 @@ export function fib4(
  * geslachtsspecifieke nekomtrek van 43 en 41 cm.
  */
 export const STOPBANG = [
-  ['snurken', 'Luid snurken — hoorbaar door een gesloten deur'],
+  ['snurken', 'Luid snurken, hoorbaar door een gesloten deur'],
   ['moe', 'Overdag vaak moe of slaperig'],
   ['apneu', 'Waargenomen ademstops, stikken of naar adem happen'],
   ['bloeddruk', 'Hoge bloeddruk, of daarvoor behandeld'],
@@ -111,6 +127,45 @@ export const STOPBANG = [
 export type StopbangSleutel = (typeof STOPBANG)[number][0]
 export type StopbangAntwoorden = Partial<Record<StopbangSleutel, boolean>>
 
+/**
+ * VIER VAN DE ACHT VRAGEN KENT DEZE APP AL
+ *
+ * STOP-BANG vraagt naar vier dingen die niemand hoeft te schatten: geslacht,
+ * leeftijd, BMI en nekomtrek. Die staan alle vier al in deze app, en tot nu toe
+ * stond de nekomtrek er zelfs twee keer: als meting in het lijstje, en als
+ * vinkje dat je zelf moest zetten. Twee plekken voor hetzelfde getal is één
+ * plek waar het fout kan gaan.
+ *
+ * Wat hier terugkomt is alleen wat vaststaat. Een ontbrekende meting geeft
+ * géén sleutel terug en geen `false`: "niet gemeten" is geen "nee", en dat
+ * onderscheid is in deze app de hele tijd hetzelfde onderscheid. Een vinkje dat
+ * uit staat omdat er niets gemeten is, ziet er op het scherm precies zo uit als
+ * een vinkje dat uit staat omdat het antwoord nee is, en juist daarom vertelt
+ * het scherm ernaast wát de app weet en waar het vandaan komt.
+ *
+ * De grenzen zijn die van de officiële vragenlijst en niet die van het gemak:
+ * ouder dan 50 en BMI boven 35 zijn strikt, de nekomtrek is 43 cm of meer bij
+ * mannen en 41 of meer bij vrouwen. Zonder geslacht valt die laatste niet te
+ * beantwoorden, en dan komt hij er dus niet uit.
+ */
+export const NEK_GRENS = { m: 43, v: 41 } as const
+
+export function stopbangUitGegevens(
+  g: {
+    geslacht: 'm' | 'v' | null
+    leeftijdJaar: number | null
+    bmi: number | null
+    nekCm: number | null
+  },
+): StopbangAntwoorden {
+  const uit: StopbangAntwoorden = {}
+  if (g.geslacht != null) uit.man = g.geslacht === 'm'
+  if (g.leeftijdJaar != null) uit.leeftijd = g.leeftijdJaar > 50
+  if (g.bmi != null) uit.bmi = g.bmi > 35
+  if (g.nekCm != null && g.geslacht != null) uit.nek = g.nekCm >= NEK_GRENS[g.geslacht]
+  return uit
+}
+
 export function stopbangScore(a: StopbangAntwoorden): { score: number; klasse: Risicoklasse } {
   const n = STOPBANG.filter(([k]) => a[k]).length
   const stop = (['snurken', 'moe', 'apneu', 'bloeddruk'] as const).filter((k) => a[k]).length
@@ -120,11 +175,57 @@ export function stopbangScore(a: StopbangAntwoorden): { score: number; klasse: R
   return { score: n, klasse }
 }
 
+/**
+ * DE MIDDEL-LENGTEVERHOUDING
+ *
+ * De middelomtrek staat al op het scherm met de afkappunten van 94 en 102 cm.
+ * Die zijn er voor een Europese man van gemiddelde lengte, en dat is precies
+ * hun zwakte: dezelfde 102 cm betekent iets anders bij 1,70 m dan bij 1,96 m.
+ *
+ * De verhouding lost dat op met één deling en zonder tabel. De grens ligt op
+ * 0,5 voor iedereen: je middel hoort minder dan de helft van je lengte te zijn.
+ * Dat is de maat die NICE aanbeveelt naast de BMI, en het is ook wat een
+ * obesitaskliniek in de praktijk werkelijk meet wanneer een MRI-scanner bij 140
+ * kilo ophoudt en DEXA alleen binnen onderzoek mag.
+ *
+ * WAT HIJ WEL EN NIET ZEGT
+ *
+ * Hij zegt iets over waar het vet zit, en dat is de vraag die ertoe doet:
+ * hetzelfde gewicht kan onderhuids zitten (waar het weinig kwaad doet) of om de
+ * organen (waar het insulineresistentie geeft). Hij zegt niets over hóéveel vet
+ * er is, en hij vervangt de BMI niet.
+ *
+ * En hij erft de meetfout van de middelomtrek. Die loopt in de literatuur van
+ * 0,7 tot 15 cm; bij een lengte van 1,90 m is twee centimeter goed voor 0,01 in
+ * de verhouding. Daarom staat er één cijfer achter de komma en niet twee, en
+ * daarom heet de zone rond de grens uitdrukkelijk een zone.
+ */
+export type Middelzone = 'onder' | 'rond' | 'boven'
+
+export function middelLengte(
+  middelCm: number | null, lengteCm: number | null,
+): { ratio: number; zone: Middelzone } | null {
+  /* Eén wacht voor drie gevallen, en dat is geen bezuiniging maar het gevolg
+     van een mutatieproef: met een losse null-controle ervóór bleef een mutant
+     die haar wegnam in leven, want de tweede wacht ving hetzelfde geval al op.
+     Twee regels die hetzelfde bewaken zijn er één te veel. `null` is niet
+     groter dan nul, dus hij valt hier vanzelf onder. */
+  const m = middelCm ?? NaN
+  const l = lengteCm ?? NaN
+  if (!(m > 0) || !(l > 0)) return null
+  const ratio = Math.round((m / l) * 100) / 100
+  /* De grens is 0,5. De band eromheen is de meetfout, niet een tussencategorie:
+     wie op 0,50 uitkomt weet met één lintmeting niet of hij erboven of eronder
+     zit, en dat hoort het scherm te zeggen in plaats van te kiezen. */
+  const zone: Middelzone = ratio < 0.49 ? 'onder' : ratio > 0.51 ? 'boven' : 'rond'
+  return { ratio, zone }
+}
+
 export type Onderhoudzone = 'groen' | 'geel' | 'rood'
 
 /**
  * Onderhoud: het stoplicht uit STOP Regain (Wing 2006). Triggert op het
- * voortschrijdend gemiddelde, niet op de dagmeting — anders vuurt rood op
+ * voortschrijdend gemiddelde, niet op de dagmeting, anders vuurt rood op
  * dagelijkse schommelingen van een tot twee kilo.
  */
 export function onderhoudZone(
@@ -143,7 +244,7 @@ export function onderhoudZone(
    ========================================================================== */
 
 /**
- * De nieuwste van een reeks — en wat er gebeurt bij gelijke datums.
+ * De nieuwste van een reeks, en wat er gebeurt bij gelijke datums.
  *
  * De vergelijking hier was `x.datum < y.datum ? 1 : -1`. Voor twee gelijke
  * datums geeft dat -1 in beide richtingen: a hoort vóór b én b hoort vóór a.
@@ -191,7 +292,7 @@ export interface Rustpols<M> { nu: M; basis: number | null; n: number }
  * De rustpols: de laatste meting, en hoe hij zich verhoudt tot de maand ervoor.
  *
  * Bij deze meting is de verandering het signaal en niet de waarde. Een pols van
- * 58 zegt op zichzelf weinig — bij de een is dat hoog, bij de ander laag. Vier
+ * 58 zegt op zichzelf weinig, bij de een is dat hoog, bij de ander laag. Vier
  * slagen omhoog ten opzichte van je eigen gemiddelde zegt wel iets.
  *
  * De vergelijking gebruikt de dagen ervóór en niet de hele reeks: anders trekt

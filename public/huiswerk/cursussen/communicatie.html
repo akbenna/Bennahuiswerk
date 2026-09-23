@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Verbind · Communicatie & Netwerken</title>
 <meta name="theme-color" content="#4f46e5">
-<meta name="description" content="Verbind — dagelijkse training in communicatie, small talk, charisma en netwerken. 21 lessen, kenniskaarten en een gesprekssimulator.">
+<meta name="description" content="Verbind, dagelijkse training in communicatie, small talk, charisma en netwerken. 21 lessen, kenniskaarten en een gesprekssimulator.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjNmQ1ZmVmIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMjJjNGE2Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiByeD0iMTUiIGZpbGw9InVybCgjZykiLz48cGF0aCBkPSJNMTcgMjBoMjRhNCA0IDAgMCAxIDQgNHYxMGE0IDQgMCAwIDEtNCA0aC02bDAgNi04LTZoLTEwYTQgNCAwIDAgMS00LTR2LTEwYTQgNCAwIDAgMSA0LTR6IiBmaWxsPSIjZmZmIi8+PGNpcmNsZSBjeD0iMjciIGN5PSIyOSIgcj0iMiIgZmlsbD0iIzZkNWZlZiIvPjxjaXJjbGUgY3g9IjM0IiBjeT0iMjkiIHI9IjIiIGZpbGw9IiM2ZDVmZWYiLz48Y2lyY2xlIGN4PSI0MSIgY3k9IjI5IiByPSIyIiBmaWxsPSIjNmQ1ZmVmIi8+PC9zdmc+">
 <style>
   :root{
@@ -119,7 +119,7 @@
 <script>
 "use strict";
 /* ============================================================
-   VERBIND — dagelijkse training in communicatie & netwerken
+   VERBIND, dagelijkse training in communicatie & netwerken
    Zelfstandige, offline werkende app (geen externe afhankelijkheden).
    Voortgang in localStorage. Onderdeel van de Bennaghmouch-cursussen.
    ============================================================ */
@@ -157,13 +157,13 @@ const MOD=Object.fromEntries(MODULES.map(m=>[m.id,m]));
 const LESSONS=[
   {m:'fundament', t:"Zelfvertrouwen & eerste indruk", d:"De eerste zeven seconden bepalen veel. Maak ze warm en zeker.",
    min:10, principe:"Mensen beoordelen je razendsnel op twee assen: warmte (kan ik je vertrouwen?) en competentie (kun je iets?). Straal eerst warmte uit, dan competentie.",
-   waarom:"Onderzoek naar eerste indrukken (o.a. Amy Cuddy, Harvard) laat zien dat we onbewust eerst op warmte scannen — het bepaalt of we iemand als vriend of bedreiging zien. Wie met competentie opent zonder warmte, komt koud of arrogant over.",
+   waarom:"Onderzoek naar eerste indrukken (o.a. Amy Cuddy, Harvard) laat zien dat we onbewust eerst op warmte scannen, het bepaalt of we iemand als vriend of bedreiging zien. Wie met competentie opent zonder warmte, komt koud of arrogant over.",
    tech:[
      ["Power-pose vooraf","Sta twee minuten groot en open vóór een belangrijk moment. Het verlaagt je stresshormoon en zet je in een zelfverzekerde stand."],
      ["Warmte eerst, dan competentie","Glimlach en toon oprechte interesse vóór je laat zien wat je kunt. Andersom kom je arrogant over."],
      ["De ankerzin","Bereid één zin voor die je zelfverzekerd kunt zeggen ('Ik ben [naam], leuk je te ontmoeten'). Een sterke start draagt de rest."]
    ],
-   lines:["Hoi, ik ben [naam] — leuk je te ontmoeten.","Ik heb me hierop verheugd."],
+   lines:["Hoi, ik ben [naam], leuk je te ontmoeten.","Ik heb me hierop verheugd."],
    fout:"Beginnen met je cv of je prestaties. Dat leest als onzekerheid die zich wil bewijzen. Begin klein en warm.",
    oef:"Sta vandaag vóór je belangrijkste afspraak twee minuten in een power-pose en open het gesprek met warmte (een oprechte vraag of compliment).",
    check:{v:"Waarop scannen mensen bij een eerste indruk als eerste?", o:["Je competentie","Je warmte","Je kleding"], a:1, u:"We scannen eerst op warmte (vertrouwen), pas daarna op competentie."}},
@@ -174,12 +174,12 @@ const LESSONS=[
    tech:[
      ["Open houding","Armen los, schouders zakken, torso naar de ander. Gekruiste armen of een weggedraaid lichaam lezen als afstand."],
      ["Oogcontact (50/70-regel)","Kijk ~70% van de tijd terwijl je luistert, ~50% terwijl je praat. Te weinig oogt onzeker, te veel wordt intens."],
-     ["Subtiel spiegelen","Neem tempo en houding van de ander licht over. Het schept onbewust een klik — maar overdrijf niet."]
+     ["Subtiel spiegelen","Neem tempo en houding van de ander licht over. Het schept onbewust een klik, maar overdrijf niet."]
    ],
    lines:[],
    fout:"Je telefoon vasthouden of ernaar kijken. Niets zegt sneller 'je hebt mijn aandacht niet' dan een scherm in je hand.",
    oef:"Let vandaag een half uur bewust op je houding: schouders los, torso naar de ander, glimlach. Merk het verschil in reacties.",
-   check:{v:"Wat geloven mensen bij tegenstrijdigheid tussen je woorden en je lichaamstaal?", o:["De woorden","De lichaamstaal","Geen van beide"], a:1, u:"Bij tegenstrijdigheid wint de non-verbale boodschap — het lichaam."}},
+   check:{v:"Wat geloven mensen bij tegenstrijdigheid tussen je woorden en je lichaamstaal?", o:["De woorden","De lichaamstaal","Geen van beide"], a:1, u:"Bij tegenstrijdigheid wint de non-verbale boodschap, het lichaam."}},
 
   {m:'fundament', t:"Je stem & vertrouwen", d:"Dezelfde woorden klinken totaal anders met de juiste stem.",
    min:11, principe:"Tempo, toon en pauzes bepalen of mensen naar je luisteren en je geloven. Een rustige, lagere, gevarieerde stem straalt vertrouwen uit.",
@@ -194,7 +194,7 @@ const LESSONS=[
    oef:"Neem vandaag 60 seconden van jezelf op (een verhaaltje). Luister terug op tempo, pauzes en toonhoogte. Doe het nog eens, 20% langzamer.",
    check:{v:"Wat straalt het meeste vertrouwen uit?", o:["Snel praten zonder pauzes","Zinnen omhoog laten eindigen","Rustig tempo met bewuste pauzes"], a:2, u:"Rust, een lagere toon en pauzes lezen als zelfvertrouwen."}},
 
-  {m:'fundament', t:"Charisma & warmte", d:"Charisma is geen gave — het is aandacht.",
+  {m:'fundament', t:"Charisma & warmte", d:"Charisma is geen gave, het is aandacht.",
    min:12, principe:"Charismatische mensen laten de ánder stralen: volledig aanwezig, oprecht nieuwsgierig en gul met erkenning.",
    waarom:"We vinden mensen sympathiek die ons het gevoel geven gezien te worden. De spotlight op de ander zetten werkt sterker dan zelf indruk maken.",
    tech:[
@@ -205,19 +205,19 @@ const LESSONS=[
    lines:["Ik moest nog denken aan wat je laatst zei over…","Wat knap dat je dat zo hebt aangepakt.","Dat waardeer ik echt in jou: …"],
    fout:"Wachten tot je zelf weer mag praten in plaats van luisteren. Charisma zit in aandacht geven, niet in aandacht nemen.",
    oef:"Geef vandaag drie specifieke, oprechte complimenten. Let op wat het met de sfeer én met jou doet.",
-   check:{v:"Waar zit charisma vooral in?", o:["Zelf interessant zijn","De ander laten stralen","Veel over jezelf vertellen"], a:1, u:"Charisma is aandacht geven — de spotlight op de ander zetten."}},
+   check:{v:"Waar zit charisma vooral in?", o:["Zelf interessant zijn","De ander laten stralen","Veel over jezelf vertellen"], a:1, u:"Charisma is aandacht geven, de spotlight op de ander zetten."}},
 
   {m:'openen', t:"De perfecte opener", d:"Elk gesprek begint met de eerste seconden. Breek het ijs zonder script.",
    min:12, principe:"Een goede opener is warm, laagdrempelig en nodigt uit om te reageren. Mensen onthouden niet wát je zei, maar hoe je ze liet voelen.",
-   waarom:"De drempel om te beginnen is bijna altijd hoger in je hoofd dan in de realiteit. De meeste mensen vinden een praatje juist prettig — ze durven alleen zelf niet te beginnen.",
+   waarom:"De drempel om te beginnen is bijna altijd hoger in je hoofd dan in de realiteit. De meeste mensen vinden een praatje juist prettig (ze durven alleen zelf niet te beginnen.",
    tech:[
-     ["De 3 soorten openers","Situatie ('Druk hier, hè?'), observatie ('Mooie tas — waar heb je die vandaan?') of oprechte vraag ('Wat brengt jou hier?'). Kies wat past bij de plek."],
+     ["De 3 soorten openers","Situatie ('Druk hier, hè?'), observatie ('Mooie tas) waar heb je die vandaan?') of oprechte vraag ('Wat brengt jou hier?'). Kies wat past bij de plek."],
      ["Warmte vóór inhoud","Glimlach en oogcontact eerst, wóórden daarna. Je eerste indruk is grotendeels non-verbaal."],
      ["Laat een haak achter","Eindig je opener met een open vraag, zodat de ander iets heeft om op te reageren. Nooit een ja/nee-vraag."]
    ],
-   lines:["Ik ken hier bijna niemand — hoe ken jij [de gastheer]?","Jij lijkt iemand die hier vaker komt. Wat is jouw favoriete plek?","Even eerlijk: wat is het leukste dat je vandaag hebt gedaan?"],
+   lines:["Ik ken hier bijna niemand, hoe ken jij [de gastheer]?","Jij lijkt iemand die hier vaker komt. Wat is jouw favoriete plek?","Even eerlijk: wat is het leukste dat je vandaag hebt gedaan?"],
    fout:"Een ja/nee-vraag stellen ('Leuk feestje?'). Dat geeft de ander niets om op door te praten.",
-   oef:"Spreek vandaag één onbekende aan met een situatie-opener (in de rij, lift of koffiehoek). Doel: gewoon dóen — de uitkomst maakt niet uit.",
+   oef:"Spreek vandaag één onbekende aan met een situatie-opener (in de rij, lift of koffiehoek). Doel: gewoon dóen: de uitkomst maakt niet uit.",
    check:{v:"Wat kenmerkt een sterke opener?", o:["Hij eindigt met een ja/nee-vraag","Hij eindigt met een open haak","Hij gaat vooral over jezelf"], a:1, u:"Een open vraag geeft de ander iets om op te reageren."}},
 
   {m:'openen', t:"FORD & doorvragen", d:"De kunst om een gesprek gaande te houden. Nooit meer een pijnlijke stilte.",
@@ -228,20 +228,20 @@ const LESSONS=[
      ["Open vragen (wie/wat/hoe)","Vermijd ja/nee. Vraag 'Hoe ben je daarin gerold?' i.p.v. 'Vind je je werk leuk?'"],
      ["Doorvragen op emotie","Waar iemand enthousiasme toont, graaf: 'Wat maakt dat zo bijzonder voor je?' Daar zit het echte gesprek."]
    ],
-   lines:["Hoe ben je hierin terechtgekomen?","Wat vind je daar het leukste aan?","En wat doe je als je níét aan het werk bent?","Als geld geen rol speelde — wat zou je dan doen?"],
+   lines:["Hoe ben je hierin terechtgekomen?","Wat vind je daar het leukste aan?","En wat doe je als je níét aan het werk bent?","Als geld geen rol speelde, wat zou je dan doen?"],
    fout:"Doorschieten in een verhoor: vraag op vraag zonder zelf iets te delen. Wissel af met een korte eigen reactie.",
    oef:"Voer vandaag één gesprek waarin je drie keer doorvraagt vóórdat je zelf iets over jezelf vertelt. Merk hoe het gesprek vanzelf stroomt.",
-   check:{v:"Waar staat FORD voor?", o:["Feiten, Opinie, Reactie, Data","Family, Occupation, Recreation, Dreams","Focus, Openheid, Rust, Doel"], a:1, u:"Family, Occupation, Recreation, Dreams — vier bronnen voor eindeloze gespreksstof."}},
+   check:{v:"Waar staat FORD voor?", o:["Feiten, Opinie, Reactie, Data","Family, Occupation, Recreation, Dreams","Focus, Openheid, Rust, Doel"], a:1, u:"Family, Occupation, Recreation, Dreams, vier bronnen voor eindeloze gespreksstof."}},
 
   {m:'openen', t:"Van small talk naar diepgang", d:"Oppervlakkig praten is de opwarmer. Brug moeiteloos naar een écht gesprek.",
    min:12, principe:"Small talk bouwt veiligheid; diepgang bouwt band. De brug is een net iets persoonlijkere vraag op het juiste moment.",
    waarom:"Verbondenheid groeit via wederzijdse, geleidelijk toenemende openheid (self-disclosure). Te snel te diep schrikt af; nooit dieper blijft oppervlakkig.",
    tech:[
-     ["Bouw een brug","Pak een woord uit de small talk en verdiep het: 'Je zei net dat je pas verhuisd bent — hoe bevalt het nieuwe leven?'"],
+     ["Bouw een brug","Pak een woord uit de small talk en verdiep het: 'Je zei net dat je pas verhuisd bent, hoe bevalt het nieuwe leven?'"],
      ["Deel eerst zelf iets","Kwetsbaarheid nodigt uit tot kwetsbaarheid. Deel iets kleins en persoonlijks, dan durft de ander ook."],
      ["Vraag naar het waarom","Achter elk feit zit een verhaal. 'Waarom is dat belangrijk voor je?' opent de diepte."]
    ],
-   lines:["Wat je net zei over [X] — hoe kwam je daarbij?","Waar word je de laatste tijd echt blij van?","Wat houdt je op dit moment het meest bezig?"],
+   lines:["Wat je net zei over [X], hoe kwam je daarbij?","Waar word je de laatste tijd echt blij van?","Wat houdt je op dit moment het meest bezig?"],
    fout:"Te snel te diep gaan. Bouw op met een brug-vraag; begin niet meteen met de zwaarste levensvraag.",
    oef:"Breng vandaag één gesprek van small talk naar iets persoonlijkers met een brug-vraag. Deel eerst zelf iets kleins.",
    check:{v:"Hoe bouw je een brug naar diepgang?", o:["Direct een zware vraag stellen","Een woord uit de small talk verdiepen","Over het weer blijven praten"], a:1, u:"Pak iets uit het gesprek en verdiep het geleidelijk; deel eerst zelf iets."}},
@@ -251,24 +251,24 @@ const LESSONS=[
    waarom:"Gehoord worden verlaagt letterlijk stress en verhoogt vertrouwen. Wie zich begrepen voelt, opent zich en onthoudt jou als 'iemand bij wie ik mezelf kan zijn'.",
    tech:[
      ["LSD: Luisteren, Samenvatten, Doorvragen","Vat samen wat je hoort ('Dus als ik je goed begrijp…') vóór je reageert. Het bewijst dat je luisterde."],
-     ["Minimal encouragers","'Mm', knikken, 'en toen?' — kleine signalen die de ander laten doorpraten zonder dat jij het gesprek kaapt."],
+     ["Minimal encouragers","'Mm', knikken, 'en toen?', kleine signalen die de ander laten doorpraten zonder dat jij het gesprek kaapt."],
      ["De 2-seconden pauze","Wacht twee tellen na wat de ander zei vóór je praat. Je onderbreekt minder en de ander voelt zich serieus genomen."]
    ],
    lines:["Dus als ik je goed begrijp, …?","Even checken of ik het snap: je bedoelt…","Ga door, ik luister."],
    fout:"Meteen je eigen, vergelijkbare verhaal vertellen ('Oh, dat had ik ook!'). Dat kaapt de spotlight. Vat eerst samen.",
    oef:"Vat vandaag in één gesprek minstens twee keer samen wat de ander zei vóór je je eigen mening geeft.",
-   check:{v:"Waar staat de S in LSD voor?", o:["Spreken","Samenvatten","Sturen"], a:1, u:"Luisteren, Samenvatten, Doorvragen — samenvatten bewijst dat je luisterde."}},
+   check:{v:"Waar staat de S in LSD voor?", o:["Spreken","Samenvatten","Sturen"], a:1, u:"Luisteren, Samenvatten, Doorvragen, samenvatten bewijst dat je luisterde."}},
 
-  {m:'verbinden', t:"Namen onthouden & gebruiken", d:"'Iemands naam is voor die persoon het mooiste woord in elke taal.' — Dale Carnegie.",
+  {m:'verbinden', t:"Namen onthouden & gebruiken", d:"'Iemands naam is voor die persoon het mooiste woord in elke taal.', Dale Carnegie.",
    min:9, principe:"Namen onthouden is geen talent maar een techniek. Een naam gebruiken schept direct verbondenheid.",
-   waarom:"Een naam gebruiken activeert een gevoel van erkenning. Vergeten leest (onterecht) als desinteresse — dus het is de moeite waard om het te trainen.",
+   waarom:"Een naam gebruiken activeert een gevoel van erkenning. Vergeten leest (onterecht) als desinteresse, dus het is de moeite waard om het te trainen.",
    tech:[
      ["Herhaal meteen","Zeg de naam direct terug: 'Leuk je te ontmoeten, Sara.' Herhaling verankert."],
      ["Associeer & visualiseer","Koppel de naam aan een beeld of iemand die je kent ('Sara zoals mijn buurvrouw')."],
-     ["Gebruik 'm 3×","Nog eens midden in het gesprek en bij het afscheid. Niet vaker — dan wordt het geforceerd."]
+     ["Gebruik 'm 3×","Nog eens midden in het gesprek en bij het afscheid. Niet vaker: dan wordt het geforceerd."]
    ],
-   lines:["Sorry, hoe was je naam ook alweer? Ik wil 'm onthouden.","Fijn met je gesproken te hebben, [naam] — tot snel!"],
-   fout:"Doen alsof je de naam verstond terwijl dat niet zo is. Vraag 'm gewoon nog eens — dat waarderen mensen juist.",
+   lines:["Sorry, hoe was je naam ook alweer? Ik wil 'm onthouden.","Fijn met je gesproken te hebben, [naam], tot snel!"],
+   fout:"Doen alsof je de naam verstond terwijl dat niet zo is. Vraag 'm gewoon nog eens: dat waarderen mensen juist.",
    oef:"Onthoud vandaag de naam van drie nieuwe mensen door ze meteen te herhalen en te visualiseren.",
    check:{v:"Wat is de eerste stap om een naam te onthouden?", o:["Hem opschrijven","Hem meteen hardop herhalen","Er niet naar vragen"], a:1, u:"Direct herhalen verankert de naam het sterkst."}},
 
@@ -277,7 +277,7 @@ const LESSONS=[
    waarom:"Emoties benoemen ('affect labeling') kalmeert het brein van de ander aantoonbaar en bouwt vertrouwen. Het is een van de krachtigste verbindende technieken die er zijn.",
    tech:[
      ["Lees de signalen","Let op toon, tempo en gezicht, niet alleen op de woorden. Wat zegt het lichaam?"],
-     ["Benoem het gevoel","'Het klinkt alsof je daar behoorlijk gefrustreerd van werd.' Zit je ernaast? Dan corrigeert de ander — ook prima, je liet zien dat je meeleeft."],
+     ["Benoem het gevoel","'Het klinkt alsof je daar behoorlijk gefrustreerd van werd.' Zit je ernaast? Dan corrigeert de ander, ook prima, je liet zien dat je meeleeft."],
      ["Valideer vóór je oplost","Erken het gevoel eerst ('Logisch dat dat zwaar is'). Advies pas als erom gevraagd wordt."]
    ],
    lines:["Het klinkt alsof dat je echt raakte.","Logisch dat je daar [gevoel] van werd.","Hoe voelde dat voor je?"],
@@ -285,7 +285,7 @@ const LESSONS=[
    oef:"Benoem vandaag in één gesprek hardop het gevoel dat je bij de ander proeft, vóór je iets oplost of adviseert.",
    check:{v:"Wat doe je het best vóór je advies geeft?", o:["Meteen een oplossing bieden","Het gevoel benoemen en valideren","Het onderwerp veranderen"], a:1, u:"Valideren van de emotie schept vertrouwen; advies komt daarna."}},
 
-  {m:'verbinden', t:"Storytelling", d:"Feiten overtuigen niet — verhalen wel. Leer boeien met een goed verhaal.",
+  {m:'verbinden', t:"Storytelling", d:"Feiten overtuigen niet, verhalen wel. Leer boeien met een goed verhaal.",
    min:13, principe:"Een verhaal maakt je boodschap onthoudbaar en menselijk. Structuur is alles: zonder spanning geen aandacht.",
    waarom:"Een verhaal activeert meer hersengebieden dan losse feiten en synchroniseert zelfs de hersenactiviteit van verteller en luisteraar. Structuur en spanning houden de aandacht vast.",
    tech:[
@@ -293,20 +293,20 @@ const LESSONS=[
      ["Begin met de haak","Open met spanning of een vraag: 'Ik dacht dat ik ontslagen zou worden…'. Nooit met de saaie context vooraf."],
      ["Toon, niet vertel","'Mijn handen trilden' i.p.v. 'ik was nerveus'. Details en emotie laten de ander meebeleven."]
    ],
-   lines:["Ik zal je iets vertellen dat ik nooit meer vergeet…","Even een klein verhaal — dit veranderde hoe ik erover denk…"],
+   lines:["Ik zal je iets vertellen dat ik nooit meer vergeet…","Even een klein verhaal, dit veranderde hoe ik erover denk…"],
    fout:"Te lang uitweiden over de aanloop. Kom snel bij de spanning; schrap alle details die er niet toe doen.",
    oef:"Bereid één anekdote van 60 seconden voor volgens situatie-complicatie-oplossing en vertel 'm vandaag aan iemand.",
-   check:{v:"Waarmee begin je een sterk verhaal?", o:["De achtergrond en context","Een haak met spanning","De conclusie"], a:1, u:"Open met spanning of een vraag — de haak trekt de aandacht."}},
+   check:{v:"Waarmee begin je een sterk verhaal?", o:["De achtergrond en context","Een haak met spanning","De conclusie"], a:1, u:"Open met spanning of een vraag, de haak trekt de aandacht."}},
 
   {m:'verbinden', t:"Humor & speelsheid", d:"Lichtheid maakt je benaderbaar. Leer lachen dat verbindt.",
    min:10, principe:"Humor die verbindt, lacht mét mensen en nooit ten koste van iemand. Zelfspot (mild) maakt je menselijk.",
    waarom:"Samen lachen geeft een gedeeld 'wij'-gevoel en verlaagt spanning. Milde zelfspot maakt je sympathiek; anderen bespotten breekt juist af.",
    tech:[
-     ["Milde zelfspot","Lach om je eigen kleine missers ('Ik ben hopeloos met namen — hou me ten goede'). Dat ontwapent."],
-     ["Speel in op het moment","De grappigste opmerking gaat over wat hier en nu gebeurt — niet over een ingestudeerde grap."],
+     ["Milde zelfspot","Lach om je eigen kleine missers ('Ik ben hopeloos met namen, hou me ten goede'). Dat ontwapent."],
+     ["Speel in op het moment","De grappigste opmerking gaat over wat hier en nu gebeurt, niet over een ingestudeerde grap."],
      ["Callback","Verwijs later terug naar een grapje van eerder in het gesprek. Dat schept een gedeelde 'inside joke'."]
    ],
-   lines:["Ik waarschuw je: ik ben hopeloos met namen.","Zoals we net al vaststelden — experts, wij tweeën.","Dat gaan we straks vast weer 'per ongeluk' doen."],
+   lines:["Ik waarschuw je: ik ben hopeloos met namen.","Zoals we net al vaststelden, experts, wij tweeën.","Dat gaan we straks vast weer 'per ongeluk' doen."],
    fout:"Grappen ten koste van anderen of sarcasme bij een nieuw contact. Risicovol en vaak afstotend.",
    oef:"Maak vandaag één luchtige opmerking of milde zelfspot in een gesprek. Let op hoe het de sfeer opent.",
    check:{v:"Welke humor verbindt het best bij een nieuw contact?", o:["Sarcasme over de ander","Milde zelfspot en inspelen op het moment","Ingestudeerde moppen"], a:1, u:"Mild lachen om jezelf en om het moment ontwapent en verbindt."}},
@@ -319,23 +319,23 @@ const LESSONS=[
      ["Geef een haakje","Eindig met iets dat vragen oproept: '…en het gekke is, de meesten weten niet dat het kan.'"],
      ["Pas 'm aan je publiek aan","Vertel het deel dat voor déze persoon relevant is. Eén pitch past niet iedereen."]
    ],
-   lines:["Ik help [wie] met [waarde] — meestal als [herkenbaar probleem] speelt.","Kort gezegd: ik zorg dat [resultaat]. En jij, waar ben jij mee bezig?"],
+   lines:["Ik help [wie] met [waarde], meestal als [herkenbaar probleem] speelt.","Kort gezegd: ik zorg dat [resultaat]. En jij, waar ben jij mee bezig?"],
    fout:"Een lange monoloog of vakjargon. Houd het onder 20 seconden en eindig met een vraag terug.",
    oef:"Schrijf vandaag je pitch op in de vorm 'Ik help [wie] met [waarde]'. Oefen 'm hardop tot hij natuurlijk klinkt.",
    check:{v:"Hoe eindig je je pitch het best?", o:["Met je volledige cv","Met een haakje en een vraag terug","Met je functietitel"], a:1, u:"Een haakje maakt nieuwsgierig; de vraag terug houdt het een gesprek."}},
 
-  {m:'netwerken', t:"Netwerken met impact", d:"Netwerken is geen visitekaartjes verzamelen — het is relaties bouwen die ertoe doen.",
-   min:14, principe:"Goede netwerkers geven eerst en vragen later. Ze denken in 'hoe kan ik helpen?' — dat maakt hen onvergetelijk en gewild.",
+  {m:'netwerken', t:"Netwerken met impact", d:"Netwerken is geen visitekaartjes verzamelen, het is relaties bouwen die ertoe doen.",
+   min:14, principe:"Goede netwerkers geven eerst en vragen later. Ze denken in 'hoe kan ik helpen?', dat maakt hen onvergetelijk en gewild.",
    waarom:"Wederkerigheid is een sterke sociale kracht: wie eerst waarde geeft, roept de behoefte op om iets terug te doen. 'Hoe kan ik helpen?' maakt je gewild.",
    tech:[
      ["Geef eerst","Bied waarde vóór je iets vraagt: een tip, een introductie, een compliment."],
      ["Bereid je doel voor","Weet vóór een event: wie wil ik spreken en waarom? Twee goede gesprekken zijn meer waard dan twintig handjes schudden."],
      ["Denk in verbindingen","Stel mensen aan elkáár voor. De verbinder wordt van iedereen het meest gewaardeerd."]
    ],
-   lines:["Waar ben je op dit moment het meest mee bezig?","Kan ik je ergens mee helpen of aan iemand voorstellen?","Jij en [naam] zouden elkaar echt moeten kennen — zal ik jullie verbinden?"],
+   lines:["Waar ben je op dit moment het meest mee bezig?","Kan ik je ergens mee helpen of aan iemand voorstellen?","Jij en [naam] zouden elkaar echt moeten kennen, zal ik jullie verbinden?"],
    fout:"Meteen vragen wat de ander voor jóu kan doen. Dat voelt transactioneel en schrikt af.",
    oef:"Bied vandaag één persoon iets aan zonder er iets voor terug te vragen: een tip, een link of een introductie.",
-   check:{v:"Wat doen sterke netwerkers als eerste?", o:["Vragen om een gunst","Waarde geven","Hun kaartje uitdelen"], a:1, u:"Geef eerst — wederkerigheid volgt vanzelf."}},
+   check:{v:"Wat doen sterke netwerkers als eerste?", o:["Vragen om een gunst","Waarde geven","Hun kaartje uitdelen"], a:1, u:"Geef eerst, wederkerigheid volgt vanzelf."}},
 
   {m:'netwerken', t:"Opvolgen & relaties onderhouden", d:"Een contact zonder opvolging verdampt. De echte waarde zit ná het gesprek.",
    min:11, principe:"De echte waarde van netwerken zit in wat er ná het gesprek gebeurt. Eén persoonlijk bericht op tijd maakt het verschil.",
@@ -343,14 +343,14 @@ const LESSONS=[
    tech:[
      ["Opvolgen binnen 48 uur","Stuur een korte, persoonlijke boodschap die refereert aan jullie gesprek."],
      ["Voeg waarde toe, niet alleen 'leuk was het'","Deel de link, het artikel of de introductie die je noemde."],
-     ["Onderhoud met licht contact","Een berichtje bij een mijlpaal of relevant nieuws houdt de band warm — zonder agenda."]
+     ["Onderhoud met licht contact","Een berichtje bij een mijlpaal of relevant nieuws houdt de band warm (zonder agenda."]
    ],
-   lines:["Leuk gesproken over [X] — hier de link die ik beloofde.","Ik moest aan je denken toen ik [dit] zag; leek me iets voor jou.","Hoe ging het uiteindelijk met [wat ze noemden]?"],
+   lines:["Leuk gesproken over [X]) hier de link die ik beloofde.","Ik moest aan je denken toen ik [dit] zag; leek me iets voor jou.","Hoe ging het uiteindelijk met [wat ze noemden]?"],
    fout:"Alleen contact opnemen wanneer je iets nodig hebt. Dat voelt de ander direct aan.",
    oef:"Volg vandaag één contact op met een persoonlijk berichtje dat refereert aan jullie gesprek.",
    check:{v:"Wanneer volg je een nieuw contact het best op?", o:["Binnen 48 uur, persoonlijk","Pas als je iets nodig hebt","Nooit, dat is opdringerig"], a:0, u:"Snel en persoonlijk opvolgen voorkomt dat het contact verdampt."}},
 
-  {m:'netwerken', t:"Online & digitaal netwerken", d:"Dezelfde principes gelden online — wees menselijk, niet generiek.",
+  {m:'netwerken', t:"Online & digitaal netwerken", d:"Dezelfde principes gelden online, wees menselijk, niet generiek.",
    min:11, principe:"Warmte, geven en oprechte interesse werken ook digitaal, maar de signalen lopen anders. Personaliseer altijd.",
    waarom:"Gepersonaliseerd bereik krijgt veel meer respons dan standaardberichten. Op video bepalen kadrering, licht en oogcontact (in de lens) hoe aanwezig je overkomt.",
    tech:[
@@ -358,23 +358,23 @@ const LESSONS=[
      ["Geef ook online eerst","Reageer waarderend op iemands werk vóór je iets vraagt. Zichtbaar zijn = warm binnenkomen."],
      ["Videocall-aanwezigheid","Kijk in de lens (niet naar jezelf), zorg voor licht vóór je en een rustige achtergrond. Glimlach bij binnenkomst."]
    ],
-   lines:["Ik zag je [post/project] over [X] — sterk gedaan. Ik zou je graag toevoegen omdat…","Geen agenda, ik wilde vooral zeggen dat [oprechte waardering].","Leuk je (digitaal) te spreken — waar werk jij nu aan?"],
+   lines:["Ik zag je [post/project] over [X], sterk gedaan. Ik zou je graag toevoegen omdat…","Geen agenda, ik wilde vooral zeggen dat [oprechte waardering].","Leuk je (digitaal) te spreken, waar werk jij nu aan?"],
    fout:"Een standaard connectieverzoek zonder bericht, of meteen iets verkopen. Dat wordt genegeerd.",
-   oef:"Stuur vandaag één gepersonaliseerd online bericht dat verwijst naar iets specifieks van de ander — zonder iets te vragen.",
+   oef:"Stuur vandaag één gepersonaliseerd online bericht dat verwijst naar iets specifieks van de ander, zonder iets te vragen.",
    check:{v:"Wat werkt online het best?", o:["Een generiek massabericht","Een persoonlijk bericht dat naar iets specifieks verwijst","Meteen je aanbod pitchen"], a:1, u:"Personalisatie en eerst waarde geven werken online net zo goed als offline."}},
 
-  {m:'lastig', t:"Nee zeggen & grenzen — en toch aardig blijven", d:"Grenzen stellen zonder de relatie te schaden. Assertief, niet agressief.",
+  {m:'lastig', t:"Nee zeggen & grenzen, en toch aardig blijven", d:"Grenzen stellen zonder de relatie te schaden. Assertief, niet agressief.",
    min:11, principe:"Een duidelijke, warme nee is waardevoller dan een halfslachtige ja. Mensen respecteren wie zijn grenzen kent.",
-   waarom:"Onduidelijke grenzen leiden tot overbelasting en stille wrok. Een warme, heldere nee beschermt de relatie juist — er is geen onuitgesproken 'nee' die later ontploft.",
+   waarom:"Onduidelijke grenzen leiden tot overbelasting en stille wrok. Een warme, heldere nee beschermt de relatie juist, er is geen onuitgesproken 'nee' die later ontploft.",
    tech:[
      ["Waardeer → weiger → alternatief","'Dank dat je aan me denkt (waardeer). Dit past nu niet bij me (weiger). Wat wél kan is… (alternatief).'"],
      ["Kort en zonder overmatig excuus","Eén reden is genoeg. Te veel uitleg klinkt als een opening om te onderhandelen."],
      ["Nee tegen de vraag, ja tegen de persoon","Wijs het verzoek af, niet de mens. Houd je toon warm en je rug recht."]
    ],
-   lines:["Wat fijn dat je aan me denkt — dit lukt me nu even niet.","Ik zeg hier nee tegen, maar laten we snel bijpraten.","Dat past nu niet in mijn planning; volgende maand wel."],
-   fout:"Ja zeggen terwijl je nee bedoelt, om aardig te zijn. Dat kost je later meer — voor jou én de relatie.",
+   lines:["Wat fijn dat je aan me denkt, dit lukt me nu even niet.","Ik zeg hier nee tegen, maar laten we snel bijpraten.","Dat past nu niet in mijn planning; volgende maand wel."],
+   fout:"Ja zeggen terwijl je nee bedoelt, om aardig te zijn. Dat kost je later meer (voor jou én de relatie.",
    oef:"Zeg vandaag één keer bewust en warm 'nee' tegen iets kleins, met de formule waardeer-weiger-alternatief.",
-   check:{v:"Wat is de kern van een goede nee?", o:["Veel excuses aanbieden","Warm maar duidelijk, kort onderbouwd","Vaag blijven zodat niemand teleurgesteld is"], a:1, u:"Waardeer, weiger duidelijk en bied eventueel een alternatief — kort en warm."}},
+   check:{v:"Wat is de kern van een goede nee?", o:["Veel excuses aanbieden","Warm maar duidelijk, kort onderbouwd","Vaag blijven zodat niemand teleurgesteld is"], a:1, u:"Waardeer, weiger duidelijk en bied eventueel een alternatief) kort en warm."}},
 
   {m:'lastig', t:"Feedback geven & ontvangen", d:"Goede feedback gaat over gedrag en effect, niet over de persoon.",
    min:12, principe:"Feedback op gedrag voelt veilig; feedback op karakter zet mensen in de verdediging. Ontvangen begint met luisteren, niet verdedigen.",
@@ -384,7 +384,7 @@ const LESSONS=[
      ["Vraag toestemming","'Mag ik je iets teruggeven?' Feedback landt beter als de ander er even klaar voor is."],
      ["Ontvang met nieuwsgierigheid","Bedank, vraag door ('Kun je een voorbeeld geven?'), en beslis daarna pas wat je ermee doet."]
    ],
-   lines:["Mag ik je iets teruggeven over [situatie]?","Toen [gedrag] gebeurde, merkte ik [effect]. Ik zou graag [wens].","Dank je — kun je me een voorbeeld geven zodat ik het scherp heb?"],
+   lines:["Mag ik je iets teruggeven over [situatie]?","Toen [gedrag] gebeurde, merkte ik [effect]. Ik zou graag [wens].","Dank je: kun je me een voorbeeld geven zodat ik het scherp heb?"],
    fout:"Feedback verpakken als karakteroordeel ('je bent altijd zo…') of hem meteen wegwuiven wanneer je 'm ontvangt.",
    oef:"Geef vandaag één stukje feedback via gedrag-effect-wens, of ontvang feedback door eerst te bedanken en door te vragen.",
    check:{v:"Waarover gaat goede feedback?", o:["Iemands karakter","Concreet gedrag en het effect ervan","Wat anderen ervan vinden"], a:1, u:"Gedrag en effect voelen veilig; een karakteroordeel zet mensen in de verdediging."}},
@@ -397,13 +397,13 @@ const LESSONS=[
      ["NIVEA: Niet Invullen Voor Een Ander","Check aannames met een vraag ('Klopt het dat…?') i.p.v. ze in te vullen. De meeste conflicten zijn misverstanden."],
      ["Feit → gevoel → gevolg → wens","'Toen je [feit], voelde ik [gevoel], waardoor [gevolg]. Ik zou graag [wens].' Geen verwijt, wel duidelijk."]
    ],
-   lines:["Ik merk dat we hier anders in staan — help me jouw kant te begrijpen.","Klopt het dat je bedoelde dat…?","Toen [feit] gebeurde, voelde ik [gevoel]. Ik zou graag [wens]."],
+   lines:["Ik merk dat we hier anders in staan, help me jouw kant te begrijpen.","Klopt het dat je bedoelde dat…?","Toen [feit] gebeurde, voelde ik [gevoel]. Ik zou graag [wens]."],
    fout:"Meteen je gelijk willen halen of terugvechten. Dat escaleert. Verlaag eerst de temperatuur met erkenning.",
    oef:"Formuleer vandaag één irritatie volgens feit-gevoel-gevolg-wens (op papier of hardop). Merk hoe anders dat klinkt dan een verwijt.",
    check:{v:"Wat haalt als eerste spanning uit een conflict?", o:["Je gelijk bewijzen","De ander erkennen","Harder praten"], a:1, u:"Erkenning verlaagt de spanning en maakt ruimte om te luisteren."}},
 
   {m:'lastig', t:"Overtuigen & beïnvloeden (ethisch)", d:"Mensen overtuig je zelden met argumenten alleen.",
-   min:13, principe:"Vertrouwen (ethos), gevoel (pathos) en logica (logos) werken samen — eerlijk ingezet, in het belang van de ander.",
+   min:13, principe:"Vertrouwen (ethos), gevoel (pathos) en logica (logos) werken samen, eerlijk ingezet, in het belang van de ander.",
    waarom:"Cialdini's principes (wederkerigheid, sociale bewijskracht, sympathie, schaarste, autoriteit, consistentie) beschrijven hoe mensen echt beslissen. Ethisch gebruikt helpen ze de ander tot een goede keuze; misbruikt is het manipulatie.",
    tech:[
      ["Bouw eerst vertrouwen","Mensen luisteren pas naar je argument als ze jóu vertrouwen. Warmte en betrouwbaarheid gaan vóór de inhoud."],
@@ -413,18 +413,18 @@ const LESSONS=[
    lines:["Wat zou voor jou een goede uitkomst zijn?","Anderen die hier voor stonden, vonden [X] vaak het meest waardevol.","Zullen we met een kleine stap beginnen en kijken hoe het bevalt?"],
    fout:"Druk, schaarste of schuld gebruiken om iemand iets te laten doen dat niet in zijn belang is. Dat is manipulatie en het keert zich tegen je.",
    oef:"Bereid vandaag één verzoek voor: bouw eerst vertrouwen, benoem waarom het óók de ander helpt, en vraag om een kleine eerste stap.",
-   check:{v:"Wat komt vóór je argument?", o:["Vertrouwen opbouwen","Zo hard mogelijk pushen","Schaarste creëren"], a:0, u:"Zonder vertrouwen (ethos) landt geen enkel argument — dat gaat voorop."}},
+   check:{v:"Wat komt vóór je argument?", o:["Vertrouwen opbouwen","Zo hard mogelijk pushen","Schaarste creëren"], a:0, u:"Zonder vertrouwen (ethos) landt geen enkel argument, dat gaat voorop."}},
 
   {m:'afronden', t:"Een gesprek elegant afsluiten", d:"De laatste indruk telt net zo zwaar als de eerste.",
    min:9, principe:"Sluit warm af en open de deur naar een vervolg. Blijf nooit hangen tot het ongemakkelijk wordt.",
    waarom:"We onthouden vooral het hoogtepunt en het einde van een ervaring (het peak-end-effect). Eindig daarom op een hoogtepunt, niet als het gesprek al doodbloedt.",
    tech:[
-     ["De waarderende exit","Sluit af met wat je waardeerde: 'Wat een leuk gesprek — ik onthoud vooral [X].'"],
+     ["De waarderende exit","Sluit af met wat je waardeerde: 'Wat een leuk gesprek: ik onthoud vooral [X].'"],
      ["Maak het vervolg concreet","'Laten we contact houden' is vaag. 'Ik stuur je maandag die link' is een echte belofte die je opvolgt."],
-     ["Eerlijke reden om te gaan","'Ik ga even rondlopen / iemand gedag zeggen' — kort en warm, zonder smoes. Eindig op een hoogtepunt, niet bij een dip."]
+     ["Eerlijke reden om te gaan","'Ik ga even rondlopen / iemand gedag zeggen', kort en warm, zonder smoes. Eindig op een hoogtepunt, niet bij een dip."]
    ],
-   lines:["Wat een fijn gesprek — leuk je gesproken te hebben, [naam].","Ik ga even verder mingelen, maar laten we contact houden.","Ik stuur je die [tip/link]. Tot snel!"],
-   fout:"Blijven hangen tot het gesprek doodbloedt. Vertrek op een hoogtepunt — dan blijft de goede indruk hangen.",
+   lines:["Wat een fijn gesprek, leuk je gesproken te hebben, [naam].","Ik ga even verder mingelen, maar laten we contact houden.","Ik stuur je die [tip/link]. Tot snel!"],
+   fout:"Blijven hangen tot het gesprek doodbloedt. Vertrek op een hoogtepunt: dan blijft de goede indruk hangen.",
    oef:"Sluit vandaag één gesprek bewust af met een waarderende exit + een concreet vervolg. Volg dat vervolg daadwerkelijk op.",
    check:{v:"Wanneer sluit je een gesprek het best af?", o:["Als het al is doodgebloed","Op een hoogtepunt, warm en met een vervolg","Zonder iets te zeggen"], a:1, u:"Door het peak-end-effect blijft een warm einde op een hoogtepunt het sterkst hangen."}}
 ];
@@ -446,7 +446,7 @@ const DAGUITDAGINGEN=[
   "Benoem vandaag in een gesprek hardop het gevoel dat je bij de ander proeft.",
   "Maak vandaag één luchtige, milde zelfspot-opmerking en let op de sfeer.",
   "Formuleer vandaag je persoonlijke pitch: 'Ik help [wie] met [waarde]'.",
-  "Stel vandaag twee mensen die jij kent aan elkaar voor — met de reden waaróm."
+  "Stel vandaag twee mensen die jij kent aan elkaar voor, met de reden waaróm."
 ];
 const TECHVDDAG=[
   ["FORD","Onthoud: Family, Occupation, Recreation, Dreams. Vier bronnen voor eindeloze gespreksstof."],
@@ -457,19 +457,19 @@ const TECHVDDAG=[
   ["Specifiek compliment","'Slim hoe je dat oploste' raakt; 'goed gedaan' is leeg. Wees concreet."],
   ["De brug","Pak een woord uit de small talk en verdiep het met een vervolgvraag."],
   ["Benoem het gevoel","Zeg wat je bij de ander proeft ('Klinkt frustrerend') vóór je oplost. Dat kalmeert en verbindt."],
-  ["Gedrag, niet karakter","Geef feedback op wat iemand deed en het effect — nooit op wie iemand is."],
+  ["Gedrag, niet karakter","Geef feedback op wat iemand deed en het effect, nooit op wie iemand is."],
   ["Peak-end","We onthouden de piek en het einde. Sluit een gesprek af op een hoogtepunt."],
   ["Milde zelfspot","Lach om je eigen kleine missers. Het ontwapent en maakt je menselijk."]
 ];
 const MATERIAAL={
-  "Openers":["Sorry dat ik je stoor — ik moest even zeggen dat ik je [X] tof vind.","Jij lijkt hier vaker te komen — wat is jouw favoriete plek?","Ik ken hier bijna niemand, hoe ken jij [gastheer]?","Wat is het leukste dat je vandaag hebt gedaan?","Druk hier, hè? Waar kom jij voor?","Mag ik je iets vragen? Je lijkt me iemand die [X] weet."],
+  "Openers":["Sorry dat ik je stoor (ik moest even zeggen dat ik je [X] tof vind.","Jij lijkt hier vaker te komen) wat is jouw favoriete plek?","Ik ken hier bijna niemand, hoe ken jij [gastheer]?","Wat is het leukste dat je vandaag hebt gedaan?","Druk hier, hè? Waar kom jij voor?","Mag ik je iets vragen? Je lijkt me iemand die [X] weet."],
   "Doorvragen (FORD)":["Hoe ben je hierin terechtgekomen?","Wat vind je daar het leukste aan?","Wat doe je als je niet werkt?","Waar word je de laatste tijd blij van?","Als geld geen rol speelde, wat zou je doen?","Wat houdt je op dit moment het meest bezig?"],
-  "Bruggen (naar diepgang)":["Wat je net zei over [X] — hoe kwam je daarbij?","Mag ik je iets persoonlijks vragen?","Waarom is dat belangrijk voor je?","Wat zou je anders doen als je opnieuw kon kiezen?"],
-  "Empathie":["Het klinkt alsof dat je echt raakte.","Logisch dat je daar [gevoel] van werd.","Dat moet zwaar zijn geweest — hoe voelde dat?","Ik hoor je; wil je dat ik meedenk of vooral even luister?"],
-  "Pitch":["Ik help [wie] met [waarde] — meestal als [probleem] speelt.","Kort gezegd: ik zorg dat [resultaat]. En jij?","Ik doe iets met [X], en het gekke is: de meesten weten niet dat het kan."],
-  "Netwerken":["Waar ben je nu het meest mee bezig?","Kan ik je ergens mee helpen of aan iemand voorstellen?","Zullen we contact houden? Ik app je even.","Leuk gesproken — ik stuur je die link die ik noemde.","Jij en [naam] moeten elkaar kennen — zal ik jullie verbinden?"],
-  "Lastig gesprek":["Klopt het dat je bedoelde dat…?","Toen [feit] gebeurde, voelde ik [gevoel]. Ik zou graag [wens].","Ik snap dat dit vervelend is — laten we samen kijken.","Mag ik je iets teruggeven over [situatie]?","Help me jouw kant te begrijpen."],
-  "Afsluiten":["Wat een fijn gesprek — leuk je gesproken te hebben, [naam].","Ik ga even verder mingelen, maar laten we contact houden.","Ik stuur je die [tip]. Tot snel!","Ik onthoud vooral wat je zei over [X]. Bedankt."]
+  "Bruggen (naar diepgang)":["Wat je net zei over [X], hoe kwam je daarbij?","Mag ik je iets persoonlijks vragen?","Waarom is dat belangrijk voor je?","Wat zou je anders doen als je opnieuw kon kiezen?"],
+  "Empathie":["Het klinkt alsof dat je echt raakte.","Logisch dat je daar [gevoel] van werd.","Dat moet zwaar zijn geweest, hoe voelde dat?","Ik hoor je; wil je dat ik meedenk of vooral even luister?"],
+  "Pitch":["Ik help [wie] met [waarde], meestal als [probleem] speelt.","Kort gezegd: ik zorg dat [resultaat]. En jij?","Ik doe iets met [X], en het gekke is: de meesten weten niet dat het kan."],
+  "Netwerken":["Waar ben je nu het meest mee bezig?","Kan ik je ergens mee helpen of aan iemand voorstellen?","Zullen we contact houden? Ik app je even.","Leuk gesproken (ik stuur je die link die ik noemde.","Jij en [naam] moeten elkaar kennen) zal ik jullie verbinden?"],
+  "Lastig gesprek":["Klopt het dat je bedoelde dat…?","Toen [feit] gebeurde, voelde ik [gevoel]. Ik zou graag [wens].","Ik snap dat dit vervelend is (laten we samen kijken.","Mag ik je iets teruggeven over [situatie]?","Help me jouw kant te begrijpen."],
+  "Afsluiten":["Wat een fijn gesprek) leuk je gesproken te hebben, [naam].","Ik ga even verder mingelen, maar laten we contact houden.","Ik stuur je die [tip]. Tot snel!","Ik onthoud vooral wat je zei over [X]. Bedankt."]
 };
 
 /* kenniskaarten (spaced repetition) */
@@ -478,42 +478,42 @@ const KAARTEN=[
   ["Wat is de 50/70-regel voor oogcontact?","~70% kijken terwijl je luistert, ~50% terwijl je praat."],
   ["Hoe klink je zelfverzekerder met je stem?","20% langzamer, bewuste pauzes, en je zinnen omlaag laten eindigen (geen uptalk)."],
   ["Waar zit charisma vooral in?","In aandacht geven: de ander laten stralen en volledig aanwezig zijn."],
-  ["Wat kenmerkt een sterke opener?","Warm, laagdrempelig en eindigend op een open haak — nooit een ja/nee-vraag."],
+  ["Wat kenmerkt een sterke opener?","Warm, laagdrempelig en eindigend op een open haak, nooit een ja/nee-vraag."],
   ["Waar staat FORD voor?","Family, Occupation, Recreation, Dreams."],
   ["Hoe bouw je een brug van small talk naar diepgang?","Pak een woord uit de small talk en verdiep het; deel eerst zelf iets kleins."],
   ["Waar staat LSD voor bij luisteren?","Luisteren, Samenvatten, Doorvragen."],
   ["Wat is de eerste stap om een naam te onthouden?","Hem meteen hardop herhalen ('Leuk je te ontmoeten, Sara')."],
   ["Wat doe je vóór je advies geeft?","Het gevoel van de ander benoemen en valideren."],
-  ["Waarmee open je een sterk verhaal?","Met een haak of spanning — niet met saaie context."],
+  ["Waarmee open je een sterk verhaal?","Met een haak of spanning, niet met saaie context."],
   ["Welke humor verbindt bij een nieuw contact?","Milde zelfspot en inspelen op het moment; nooit ten koste van de ander."],
   ["Hoe eindig je je persoonlijke pitch?","Met een haakje dat nieuwsgierig maakt en een vraag terug."],
   ["Wat doen sterke netwerkers als eerste?","Waarde geven vóór ze iets vragen."],
   ["Wanneer volg je een nieuw contact op?","Binnen 48 uur, met een persoonlijk bericht dat naar jullie gesprek verwijst."],
-  ["Wat werkt het best bij online netwerken?","Een gepersonaliseerd bericht en eerst waarde geven — geen massabericht."],
+  ["Wat werkt het best bij online netwerken?","Een gepersonaliseerd bericht en eerst waarde geven, geen massabericht."],
   ["Wat is de formule voor een warme nee?","Waardeer → weiger (duidelijk) → alternatief."],
-  ["Waarover gaat goede feedback?","Over concreet gedrag en het effect ervan — niet over iemands karakter."],
+  ["Waarover gaat goede feedback?","Over concreet gedrag en het effect ervan, niet over iemands karakter."],
   ["Wat haalt als eerste spanning uit een conflict?","De ander erkennen ('Ik snap dat dit vervelend is')."],
-  ["Waar staat NIVEA voor?","Niet Invullen Voor Een Ander — check aannames met een vraag."],
+  ["Waar staat NIVEA voor?","Niet Invullen Voor Een Ander, check aannames met een vraag."],
   ["Wat komt vóór je argument als je wilt overtuigen?","Vertrouwen opbouwen (ethos)."],
   ["Hoe sluit je een gesprek elegant af?","Op een hoogtepunt, met een waarderende exit en een concreet vervolg (peak-end)."],
-  ["Wat is de 2-seconden pauze?","Twee tellen wachten na wat de ander zei — minder onderbreken, meer verbinding."],
+  ["Wat is de 2-seconden pauze?","Twee tellen wachten na wat de ander zei, minder onderbreken, meer verbinding."],
   ["Feit-gevoel-gevolg-wens: waarvoor?","Om een irritatie of lastig punt te uiten zonder verwijt, maar wel duidelijk."]
 ];
 const KINTERVAL=[0,1,2,4,8,15];
 
-/* gesprekssimulator — situaties met modelaanpak */
+/* gesprekssimulator: situaties met modelaanpak */
 const SIM=[
   {s:"Je staat in de rij voor koffie op een congres. Naast je een onbekende.", aanpak:"Situatie-opener + open vraag.", zin:"Deze rij is de echte netwerkplek, hè? Waar kom jij voor?"},
-  {s:"Je zit aan een netwerkdiner naast iemand die je niet kent. Het is even stil.", aanpak:"FORD-vraag en doorvragen op emotie.", zin:"Waar ben je op dit moment het meest mee bezig — werk of daarbuiten?"},
-  {s:"Je komt een oud-collega tegen die je drie jaar niet zag.", aanpak:"Warmte + refereer aan vroeger + open vraag.", zin:"Wat leuk je te zien! Werk je nog aan [X]? Vertel — wat is er veranderd?"},
+  {s:"Je zit aan een netwerkdiner naast iemand die je niet kent. Het is even stil.", aanpak:"FORD-vraag en doorvragen op emotie.", zin:"Waar ben je op dit moment het meest mee bezig, werk of daarbuiten?"},
+  {s:"Je komt een oud-collega tegen die je drie jaar niet zag.", aanpak:"Warmte + refereer aan vroeger + open vraag.", zin:"Wat leuk je te zien! Werk je nog aan [X]? Vertel: wat is er veranderd?"},
   {s:"Je wilt op een borrel de spreker aanspreken die je bewondert.", aanpak:"Specifiek compliment (met reden) + één vraag.", zin:"Wat je zei over [punt] pakte me. Hoe ben je tot dat inzicht gekomen?"},
-  {s:"Een gesprek loopt dood en je wilt het weer op gang brengen.", aanpak:"Brug naar een nieuw FORD-thema of terug naar iets eerder genoemd.", zin:"Je zei net iets over [X] — daar wil ik nog even op terugkomen…"},
-  {s:"Je wilt een leuk gesprek netjes afsluiten om verder te mingelen.", aanpak:"Waarderende exit + concreet vervolg.", zin:"Wat een fijn gesprek. Ik ga even rondlopen, maar ik stuur je die link — tot snel!"},
-  {s:"Iemand vraagt je iets waar je nee op wilt zeggen, maar aardig blijven.", aanpak:"Waardeer → weiger → alternatief.", zin:"Fijn dat je aan me denkt — dit lukt me nu niet. Volgende maand kijk ik graag mee."},
-  {s:"Je wilt van small talk over het weer naar iets persoonlijkers.", aanpak:"Brug-vraag + deel eerst zelf iets kleins.", zin:"Ik word van dit weer altijd rusteloos — jij ook? Waar krijg jij de laatste tijd energie van?"},
-  {s:"Je wilt twee mensen die jij kent aan elkaar voorstellen.", aanpak:"Noem beiden + waaróm ze elkaar moeten kennen.", zin:"Sara, dit is Tom — jullie zijn allebei met [X] bezig, ik dacht: die moeten elkaar kennen."},
+  {s:"Een gesprek loopt dood en je wilt het weer op gang brengen.", aanpak:"Brug naar een nieuw FORD-thema of terug naar iets eerder genoemd.", zin:"Je zei net iets over [X], daar wil ik nog even op terugkomen…"},
+  {s:"Je wilt een leuk gesprek netjes afsluiten om verder te mingelen.", aanpak:"Waarderende exit + concreet vervolg.", zin:"Wat een fijn gesprek. Ik ga even rondlopen, maar ik stuur je die link (tot snel!"},
+  {s:"Iemand vraagt je iets waar je nee op wilt zeggen, maar aardig blijven.", aanpak:"Waardeer → weiger → alternatief.", zin:"Fijn dat je aan me denkt) dit lukt me nu niet. Volgende maand kijk ik graag mee."},
+  {s:"Je wilt van small talk over het weer naar iets persoonlijkers.", aanpak:"Brug-vraag + deel eerst zelf iets kleins.", zin:"Ik word van dit weer altijd rusteloos, jij ook? Waar krijg jij de laatste tijd energie van?"},
+  {s:"Je wilt twee mensen die jij kent aan elkaar voorstellen.", aanpak:"Noem beiden + waaróm ze elkaar moeten kennen.", zin:"Sara, dit is Tom, jullie zijn allebei met [X] bezig, ik dacht: die moeten elkaar kennen."},
   {s:"Je hebt een videocall met een nieuw contact.", aanpak:"Kijk in de lens, glimlach, open met warmte, dan een open vraag.", zin:"Leuk je (eindelijk) te spreken! Waar werk jij op dit moment aan?"},
-  {s:"Iemand geeft je onverwacht kritiek waar je van schrikt.", aanpak:"Bedank, vraag door, beslis daarna pas.", zin:"Dank dat je dit zegt — kun je me een voorbeeld geven zodat ik het scherp heb?"},
+  {s:"Iemand geeft je onverwacht kritiek waar je van schrikt.", aanpak:"Bedank, vraag door, beslis daarna pas.", zin:"Dank dat je dit zegt, kun je me een voorbeeld geven zodat ik het scherp heb?"},
   {s:"Je collega laat structureel steken vallen en je wilt het bespreken.", aanpak:"Toestemming + gedrag-effect-wens.", zin:"Mag ik je iets teruggeven? Toen [gedrag] gebeurde, merkte ik [effect]. Ik zou graag [wens]."}
 ];
 
@@ -567,16 +567,16 @@ function tabVandaag(){
   <div class="hero">
     <div class="eyebrow">Verbind · Dagtraining</div>
     <h1>Elke dag een beetje beter communiceren</h1>
-    <p>Small talk, charisma & netwerken — één oefening per dag maakt het verschil.</p>
+    <p>Small talk, charisma & netwerken, één oefening per dag maakt het verschil.</p>
     <div class="stats"><span class="chip">🔥 ${s} dag${s===1?'':'en'} streak</span><span class="chip">✅ ${af}/${LESSONS.length} lessen</span><span class="chip">🗓️ ${store.oefdagen.length} oefendagen</span></div>
   </div>
 
   <div class="card">
     <span class="tag">Uitdaging van vandaag</span>
     <h2 style="margin-top:8px">${esc(uit)}</h2>
-    <p class="sub" style="margin-top:6px">Klein en concreet. Doe 'm vandaag en vink af — zo bouw je je streak.</p>
+    <p class="sub" style="margin-top:6px">Klein en concreet. Doe 'm vandaag en vink af: zo bouw je je streak.</p>
     ${gedaan
-      ? `<button class="btn ok block" style="margin-top:12px" disabled>✅ Vandaag gedaan — sterk!</button>`
+      ? `<button class="btn ok block" style="margin-top:12px" disabled>✅ Vandaag gedaan, sterk!</button>`
       : `<button class="btn ok block" data-act="oefdone" style="margin-top:12px">Ik heb 'm gedaan ✅</button>`}
   </div>
 
@@ -600,7 +600,7 @@ function tabVandaag(){
   </div>
 
   <div class="card center">
-    <p class="sub">${due>0?`🎯 ${due} kenniskaart${due===1?'':'en'} klaar om te herhalen.`:'✨ Alle kaarten voor nu herhaald — kom morgen terug.'}</p>
+    <p class="sub">${due>0?`🎯 ${due} kenniskaart${due===1?'':'en'} klaar om te herhalen.`:'✨ Alle kaarten voor nu herhaald, kom morgen terug.'}</p>
     <button class="btn block" data-tab="oefenen" style="margin-top:10px">🎯 Naar oefenen</button>
   </div>`;
 }
@@ -658,7 +658,7 @@ function lesDetail(i){
     <div class="oef"><b>🎯 Oefening van vandaag</b><p style="margin-top:4px">${esc(l.oef)}</p></div>
     ${quizHTML(i)}
     ${done
-      ? `<button class="btn ok block" data-act="undone" data-les="${i}" style="margin-top:16px">✅ Afgerond — tik om te herzien</button>`
+      ? `<button class="btn ok block" data-act="undone" data-les="${i}" style="margin-top:16px">✅ Afgerond, tik om te herzien</button>`
       : `<button class="btn block" data-act="done" data-les="${i}" style="margin-top:16px">Markeer als afgerond</button>`}
   </div>
   ${i<LESSONS.length-1?`<button class="btn ghost block" data-les="${i+1}" style="margin-top:12px">Volgende les › ${esc(LESSONS[i+1].t)}</button>`:`<div class="card center"><b>🎉 Laatste les!</b><p class="sub">Herhaal dagelijks in het tabblad Vandaag en oefen met de kenniskaarten.</p></div>`}`;
@@ -684,7 +684,7 @@ function oefKaarten(){
     return `<div class="card center">
       <p class="big">🧠</p>
       <b>Alles herhaald!</b>
-      <p class="sub" style="margin-top:6px">Je hebt alle kaarten voor nu gehad. Kaarten komen automatisch terug volgens spaced repetition — kom later terug.</p>
+      <p class="sub" style="margin-top:6px">Je hebt alle kaarten voor nu gehad. Kaarten komen automatisch terug volgens spaced repetition, kom later terug.</p>
       <div class="kv" style="margin-top:12px"><span>Beheerst</span><b>${beheerst} / ${KAARTEN.length}</b></div>
     </div>`;
   }
@@ -715,7 +715,7 @@ function oefSimulator(){
       <p class="quote" style="margin-top:12px;text-align:left"><b>Situatie:</b> ${esc(sc.s)}</p>
       <p class="sub" style="margin-top:10px;text-align:left"><b>Aanpak:</b> ${esc(sc.aanpak)}</p>
       ${view.simModel
-        ? `<div class="oef" style="text-align:left"><b>💬 Modelzin</b><p style="margin-top:4px">“${esc(sc.zin)}”</p><p class="sub" style="margin-top:6px">Dit is één manier — jouw eigen woorden werken vaak beter. Zeg 'm hardop.</p></div>`
+        ? `<div class="oef" style="text-align:left"><b>💬 Modelzin</b><p style="margin-top:4px">“${esc(sc.zin)}”</p><p class="sub" style="margin-top:6px">Dit is één manier, jouw eigen woorden werken vaak beter. Zeg 'm hardop.</p></div>`
         : `<button class="btn ghost block" data-act="simmodel" style="margin-top:12px">Toon een modelzin</button>`}
     `:`<p class="quote" style="margin-top:12px">Tik op de knop voor een willekeurige oefensituatie. Bedenk je opener, stel één open vraag en oefen je exit.</p>`}
     <button class="btn block" data-act="sim" style="margin-top:12px">🎲 ${sc?'Nieuwe situatie':'Geef me een oefensituatie'}</button>
@@ -774,7 +774,7 @@ function tabIk(){
   </div>`:''}
   <div class="card center">
     <p class="big">${store.oefdagen.length===0?'💪':'⭐'}</p>
-    <p class="sub">${store.oefdagen.length===0?'Begin vandaag met de uitdaging van de dag — de eerste stap is de belangrijkste.':'Sterk bezig. Kom morgen terug voor je volgende oefening.'}</p>
+    <p class="sub">${store.oefdagen.length===0?'Begin vandaag met de uitdaging van de dag, de eerste stap is de belangrijkste.':'Sterk bezig. Kom morgen terug voor je volgende oefening.'}</p>
   </div>
   <a class="backhome" href="../index.html">‹ Terug naar de Bennaghmouch-cursussen</a>`;
 }
@@ -810,7 +810,7 @@ function quizAnswer(i,opt,btn){
     fb.style.display='block'; fb.className='quizfb goodfb'; fb.innerHTML='✅ Klopt! '+esc(l.check.u);
   } else {
     btn.classList.add('bad'); btn.disabled=true;
-    fb.style.display='block'; fb.className='quizfb badfb'; fb.textContent='Nog niet — probeer een andere.';
+    fb.style.display='block'; fb.className='quizfb badfb'; fb.textContent='Nog niet, probeer een andere.';
   }
 }
 function act(a,ds){
@@ -836,7 +836,7 @@ function act(a,ds){
 }
 /* Deze cursus stond achter een slot met een cijfercode. Dat slot is eraf: het
    is lesstof voor volwassenen en er staat niets in dat afgeschermd hoeft te
-   worden — geen gegevens van een kind, geen account, geen naam. Wat je hier
+   worden, geen gegevens van een kind, geen account, geen naam. Wat je hier
    doet blijft net als eerst in localStorage op dit toestel staan. */
 render();
 </script>

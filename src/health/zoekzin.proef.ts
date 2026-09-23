@@ -2,7 +2,7 @@
  * WANNEER BIEDEN WE HET AAN
  *
  * Twee soorten fout, en ze zijn niet even erg. Bied je het te vaak aan, dan
- * leert iedereen eroverheen kijken en is het aanbod waardeloos geworden — ook op
+ * leert iedereen eroverheen kijken en is het aanbod waardeloos geworden, ook op
  * het moment dat het klopt. Bied je het te weinig aan, dan mist iemand het één
  * keer en typt hij het opnieuw.
  *

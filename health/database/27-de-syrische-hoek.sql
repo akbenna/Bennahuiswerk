@@ -1,7 +1,15 @@
 -- =============================================================================
--- DE SYRISCHE HOEK — de laatste lege keuken
+-- DE SYRISCHE HOEK: de laatste lege keuken
 --
--- Nog niet toegepast.
+-- Toestand onbekend: de kop zei lang "nog niet toegepast" en dat klopte
+-- vermoedelijk niet meer. Kijk het na voordat je iets doet, het antwoord staat
+-- in de database en niet in dit bestand:
+--
+--   select count(*) from cultural_dishes where slug like 'sy-%';
+--
+-- Staat daar nul, dan is dit bestand nog te draaien. Staat er iets, dan is het
+-- gedraaid en hoort een toevoeging in een nieuw bestand: de terugdraairegel
+-- onderaan raakt alles wat aan dit patroon voldoet.
 --
 -- WAT IK VORIGE WEEK OPSCHREEF, EN WAAROM DAT MAAR HALF KLOPTE
 --
@@ -25,13 +33,13 @@
 --
 -- Hummus en baklava zijn daarmee complete gerechten met een gemeten waarde. De
 -- rest is de bouwdoos, en daarmee valt de hoek op te bouwen uit onderdelen die
--- elk apart gemeten zijn — precies de opzet van blok 2 van bestand 24.
+-- elk apart gemeten zijn: precies de opzet van blok 2 van bestand 24.
 --
 -- Dat is de derde keer in dit project dat meten vóór bouwen een aanname omkeert.
 -- De eerste was de drempel van de zoekterugval, de tweede de Surinaamse hoek.
 -- Er zit een patroon in: mijn schattingen van wat er in de tabel staat zijn
 -- systematisch te pessimistisch. Dat is geen toeval en het is goedkoop te
--- verhelpen — één query.
+-- verhelpen: één query.
 --
 -- WAT ONDERBOUWD IS EN WAT NIET
 --
@@ -39,14 +47,14 @@
 -- opgezocht en niet onthouden.
 --
 -- Niet onderbouwd: de grammen, de porties, en één getal dat apart aandacht
--- verdient — de opnamefractie van het frituurvet, hieronder.
+-- verdient: de opnamefractie van het frituurvet, hieronder.
 --
 -- Daarom weer overal `concept`, `ai_voorstel` en `estimated`: graad D.
 --
 -- HET FRITUURVET, EN WAAROM DAT GETAL EERLIJK MOET
 --
 -- Falafel en kibbeh worden gefrituurd. Het schema heeft daar een veld voor:
--- `absorbed_fraction` — hoeveel van het vet dat de pan in gaat in het gerecht
+-- `absorbed_fraction`: hoeveel van het vet dat de pan in gaat in het gerecht
 -- achterblijft. Bij een tajine is dat 1,0, want daar wordt in het vet gestoofd.
 -- Bij frituren is het een fractie, en dat getal is niet te meten in deze tabel.
 --
@@ -54,7 +62,7 @@
 -- hoort er eerlijk bij te staan: 0,12 voor falafel geeft 303 kcal per 100 gram
 -- gefrituurde falafel, en 0,10 voor kibbeh geeft 200. Die eerste ligt midden in
 -- wat er over gefrituurde falafel bekend is. De fractie is dus geen meting maar
--- een ijking — gekozen zodat de uitkomst klopt met wat er over het bereide
+-- een ijking: gekozen zodat de uitkomst klopt met wat er over het bereide
 -- product bekend is. Wie hem verandert verandert de hele hoek mee, en daarom
 -- staat hij per regel in `uncertainty_note` en niet verstopt in een som.
 --
@@ -63,7 +71,7 @@
 -- **Shoarmavlees is varkensvlees.** NEVO 2906 en 3027 zijn de enige
 -- shoarma-regels en allebei van varken. Voor een Syrisch gerecht is dat de
 -- verkeerde regel, en niet een beetje. Het broodje hieronder is daarom met kip
--- gebouwd (NEVO 1635) — kipshoarma bestaat, is gangbaar, en staat gemeten in de
+-- gebouwd (NEVO 1635): kipshoarma bestaat, is gangbaar, en staat gemeten in de
 -- tabel. Wie lamsshoarma eet zit hoger.
 --
 -- **Ful medames staat er niet in.** Ful is de gedroogde bruine tuinboon,
@@ -77,7 +85,7 @@
 -- Bij de twee gerechten van blok 1 is de regel één kilo gerecht en niet een pan,
 -- net als in bestand 25: `default_servings` zegt daar hoeveel standaardporties
 -- er in een kilo gaan en niet wat een recept oplevert. Bij blok 2 is er wél een
--- pan, en staat er wat die pan oplevert — uitgerekend uit de ingrediënten en
+-- pan, en staat er wat die pan oplevert, uitgerekend uit de ingrediënten en
 -- niet ingevuld, zodat de twee niet uit elkaar kunnen lopen.
 --
 -- Draaien mag meer dan eens: wat er al staat wordt overgeslagen.
@@ -86,7 +94,7 @@
 BEGIN;
 
 -- ---------------------------------------------------------------------------
--- BLOK 1 — DE TWEE DIE NEVO ALS GEHEEL GEMETEN HEEFT
+-- BLOK 1: DE TWEE DIE NEVO ALS GEHEEL GEMETEN HEEFT
 -- ---------------------------------------------------------------------------
 
 with portie(slug, label, maat, icoon, schat, laag, hoog, std, volg, notitie) as (values
@@ -137,7 +145,7 @@ select n.id, p.label, p.maat, p.icoon, p.schat, p.laag, p.hoog,
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 2 — DE NEGEN DIE UIT GEMETEN ONDERDELEN ZIJN OPGEBOUWD
+-- BLOK 2: DE NEGEN DIE UIT GEMETEN ONDERDELEN ZIJN OPGEBOUWD
 -- ---------------------------------------------------------------------------
 --
 -- Per gerecht één regel in `gerecht`, zijn ingrediënten in `onderdeel` en zijn
@@ -177,7 +185,7 @@ gerecht(slug, naam, namen, omschrijving, momenten, nevo_dummy) as (values
    array['avondeten','lunch','iftar'],''),
   ('sy-tabouleh','Tabouleh',
    '{"nl":["tabouleh","tabbouleh","peterseliesalade","bulgursalade"],"ar":["تبولة"],"ar_lat":["tabbouleh","tabouli"]}',
-   'Vooral peterselie, met een beetje bulgur, tomaat, citroen en olijfolie. Niet andersom — dat is de Turkse kisir.',
+   'Vooral peterselie, met een beetje bulgur, tomaat, citroen en olijfolie. Niet andersom: dat is de Turkse kisir.',
    array['lunch','avondeten'],''),
   ('sy-fattoush','Fattoush',
    '{"nl":["fattoush","broodsalade","salade met geroosterd brood"],"ar":["فتوش"],"ar_lat":["fattoush","fattush"]}',
@@ -222,7 +230,7 @@ onderdeel(slug, pos, naam, lokaal, cat, gram, eenheid, nevo, rol, vetregel, vets
   ('sy-shorbat-adas',60,'Water',null,'overig',700,'ml','1885','ingredient',false,null,null,'DIT GETAL BEPAALT DE HELE SOEP. Water heeft geen energie maar wel gewicht, dus het staat in de noemer van de dichtheid en verder nergens. Met 700 ml komt de soep op 64 kcal per 100 g; met een liter op 54, en dan is het bouillon met linzen erin en geen shorbat adas. 200 g droge linzen op 700 ml is de verhouding van een gewone huishoudpan.'),
   ('sy-shorbat-adas',200,'Olijfolie','zeit zeitoun','vet',30,'ml','601','preparation_fat',true,'olijfolie',1.000,'De ui wordt erin gefruit en het vet blijft in de soep.'),
   -- tabouleh
-  ('sy-tabouleh',10,'Platte peterselie','baqdounis','kruiden',300,'g','128','ingredient',false,null,null,'Peterselie is de hoofdmoot en niet een garnering — dat is het verschil met de Turkse kisir.'),
+  ('sy-tabouleh',10,'Platte peterselie','baqdounis','kruiden',300,'g','128','ingredient',false,null,null,'Peterselie is de hoofdmoot en niet een garnering, dat is het verschil met de Turkse kisir.'),
   ('sy-tabouleh',20,'Bulgur','burghul','graan',150,'g','3200','ingredient',false,null,null,'Gekookt gewicht; de fijne bulgur wordt geweekt en niet gekookt, wat op hetzelfde neerkomt.'),
   ('sy-tabouleh',30,'Tomaat','banadoura','groente',300,'g','2734','ingredient',false,null,null,null),
   ('sy-tabouleh',40,'Ui',null,'groente',80,'g','63','ingredient',false,null,null,null),
@@ -319,7 +327,7 @@ COMMIT;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 3 — NAKIJKEN
+-- BLOK 3: NAKIJKEN
 -- ---------------------------------------------------------------------------
 --
 -- 1. Wijst elke code naar een bestaande tabelregel? Nul rijen is goed.
@@ -339,7 +347,7 @@ COMMIT;
 --   join dish_portions p on p.dish_id = d.id
 --  where d.cuisine = 'syrisch';
 
--- 3. De ijkpunten. Dit hoort er te staan — gemeten op het echte schema, met
+-- 3. De ijkpunten. Dit hoort er te staan: gemeten op het echte schema, met
 --    kal_gerecht's eigen rekenwijze (bereidingsvet maal zijn opnamefractie):
 --
 --      gerecht             kcal/100 g   standaardportie
@@ -357,7 +365,7 @@ COMMIT;
 --      sy-tabouleh             93       opscheplepel       93
 --
 --    De eerste twee kolommen zijn de proef. Wijkt de dichtheid af, dan is er een
---    code verschoven of een gram verkeerd overgenomen — niet een afronding.
+--    code verschoven of een gram verkeerd overgenomen, niet een afronding.
 --
 --    Twee ervan zijn tijdens het schrijven bijgesteld omdat ze buiten hun
 --    bereik uitkwamen, en dat hoort hier te staan omdat het laat zien waar de
@@ -384,7 +392,7 @@ COMMIT;
 
 -- select cuisine, count(*) from cultural_dishes group by cuisine order by 2 desc;
 
--- Terugdraaien — op de slugs van dit bestand en niet op de keuken:
+-- Terugdraaien: op de slugs van dit bestand en niet op de keuken:
 --
 --   delete from cultural_dishes where slug like 'sy-%';
 --

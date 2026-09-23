@@ -3,7 +3,7 @@
  *
  * Naam, leeftijd, spoor, dagplafond en de afspraak. Het spoor mag handmatig:
  * een kind van zestien dat pas begint hoort niet in het volwassen spoor, en
- * omgekeerd. Wie het handmatig zet, houdt het — de app rekent dan niet meer
+ * omgekeerd. Wie het handmatig zet, houdt het, de app rekent dan niet meer
  * terug op de leeftijd.
  */
 import { useState } from 'react'
@@ -40,7 +40,7 @@ export function Bewerken(
     if (!geldig) return
     const handmatig = spoor !== 'auto'
     /* "Automatisch" betekent: laat de app het bepalen. Is de niveaubepaling
-       gedaan, dan is dát wat de app bepaalt — anders zou de ouder die uitslag
+       gedaan, dan is dát wat de app bepaalt, anders zou de ouder die uitslag
        hier ongemerkt terugdraaien naar een gok op leeftijd. */
     const nieuwSpoor = (handmatig
       ? parseInt(spoor, 10)
@@ -87,7 +87,7 @@ export function Bewerken(
             {' '}(nu spoor {autoSpoor(geldig ? l : p.leeftijd)})
           </option>
           {([1, 2, 3, 4] as Spoor[]).map((s) => (
-            <option value={s} key={s}>Spoor {s} — {SPOORNAAM[s]}</option>
+            <option value={s} key={s}>Spoor {s}: {SPOORNAAM[s]}</option>
           ))}
         </select>
         <p className="klein muted" style={{ margin: '6px 0 0' }}>
@@ -107,7 +107,7 @@ export function Bewerken(
         </p>
       </div>
       <div className="veldje">
-        <label className="lbl" htmlFor="bpIntentie">Afspraak — wanneer en waar</label>
+        <label className="lbl" htmlFor="bpIntentie">Afspraak: wanneer en waar</label>
         <input
           className="veld" id="bpIntentie" maxLength={140} value={intentie}
           onChange={(e) => zetIntentie(e.target.value)}

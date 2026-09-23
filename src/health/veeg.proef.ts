@@ -3,7 +3,7 @@
  *
  * De haak zelf is niet te toetsen zonder aanrakingen na te bootsen, maar de
  * beslissing wel: die staat los in `veegRichting`. En die beslissing is precies
- * het deel dat stilletjes kapot kan — verruim je één drempel, dan wisselt het
+ * het deel dat stilletjes kapot kan, verruim je één drempel, dan wisselt het
  * scherm van dag terwijl iemand alleen naar beneden scrollde, en dat geeft geen
  * foutmelding maar een app die niet meer te vertrouwen is.
  *

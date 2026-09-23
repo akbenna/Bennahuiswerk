@@ -169,13 +169,13 @@ describe('de nieuwe opgaven voor 2026/27', () => {
  *
  * Het niveau van een kind klimt vanzelf: drie keer goed en `autoLvl` gaat een
  * stap omhoog. `volgendeKaart` zoekt dan de opgave die het dichtst bij dat
- * doelniveau ligt — en "het dichtst bij" is geen "precies". Staat er bij een
+ * doelniveau ligt, en "het dichtst bij" is geen "precies". Staat er bij een
  * onderwerp wel iets op 1 en op 3 maar niets op 2, dan valt de app daar
  * zwijgend op terug, en springt het kind van de makkelijkste variant naar de
  * moeilijkste zonder de stap ertussen.
  *
  * Dat gebeurde bij het voltooid deelwoord van Amine: zes opgaven op 1, zeven op
- * 3, niets op 2 — dus van "gewerkt" rechtstreeks naar "verhuisd". En bij de
+ * 3, niets op 2, dus van "gewerkt" rechtstreeks naar "verhuisd". En bij de
  * verwachtingswaarde van Amaani: van een zuivere dobbelsteen rechtstreeks naar
  * een spel met inleg.
  *
@@ -209,7 +209,7 @@ describe('elk onderwerp heeft zijn middelste trede', () => {
     expect(gaten).toEqual([])
   })
 
-  /* De twee die de aanleiding waren, apart vastgelegd — een lege lijst hierboven
+  /* De twee die de aanleiding waren, apart vastgelegd, een lege lijst hierboven
      zegt niet wélke gaten er gedicht zijn. */
   it('heeft het voltooid deelwoord van Amine op alle drie de niveaus', () => {
     const lvls = perOnderwerp.get('amine · taal · Voltooid deelwoord') ?? []
@@ -228,7 +228,7 @@ describe('elk onderwerp heeft zijn middelste trede', () => {
 
 /**
  * De rekenkundige antwoorden opnieuw narekenen. Alleen de sommen waarvan de
- * uitkomst hier los te herleiden is — de taal- en begripsvragen staan er niet
+ * uitkomst hier los te herleiden is, de taal- en begripsvragen staan er niet
  * tussen, en dat hoort ook niet: die zijn met de hand nagelopen.
  */
 describe('de sommen kloppen nog steeds', () => {
@@ -316,7 +316,7 @@ describe('de sommen kloppen nog steeds', () => {
     expect(getal(zoek('prijs stijgt met 10%'))).toBe(-2)
   })
 
-  it('rekent de stof van Wassima na — op 2 havo, niet hoger', () => {
+  it('rekent de stof van Wassima na: op 2 havo, niet hoger', () => {
     expect(getal(zoek('150 exclusief btw'))).toBeCloseTo(150 * 1.21, 10)
     expect(getal(zoek('12 in en verkoopt het voor'))).toBe(8)
     expect(getal(zoek('procent is de brutowinst'))).toBe(40)
@@ -447,7 +447,7 @@ describe('de uitbreiding voor Wassima bij wiskunde en natuurkunde', () => {
     expect(g('grafiek af. Wat is de snelheid')).toBe(20 / 2)
     expect(g('1,5 km af in 25 minuten')).toBe(1500 / (25 * 60))
     /* De onderbouw rekent met g = 10 N/kg, zoals in de opgaven die er al
-       stonden — op de formulekaart staat 9,81. */
+       stonden; op de formulekaart staat 9,81. */
     expect(g('fiets van 15 kg')).toBe(15 * 10)
     expect(g('200 N omlaag en 260 N omhoog')).toBe(260 - 200)
     expect(g('doos is 450 N')).toBe(450 / 10)
@@ -520,7 +520,7 @@ describe('de uitbreiding voor Wassima bij wiskunde en natuurkunde', () => {
  * "Vast op 3" beloofde moeilijker werk en leverde dat niet. `opNiveau` houdt
  * een ondergrens van zes sommen aan (`MIN_VOORRAAD`) en schuift de buurniveaus
  * erbij zodra dat ene niveau er minder heeft. Geen enkel onderwerp van Wassima
- * hád er zes op één niveau, dus die buurniveaus schoven altijd mee — en omdat
+ * hád er zes op één niveau, dus die buurniveaus schoven altijd mee, en omdat
  * er onder niveau 3 alleen makkelijker werk ligt, werd "moeilijk" in de praktijk
  * een stapel waarin niveau 2 in de meerderheid was. Bij Geluid, Druk en
  * Elektrische schakelingen gaven 1, 2 en 3 zelfs exact dezelfde stapel.

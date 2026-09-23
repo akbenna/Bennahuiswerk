@@ -1,9 +1,9 @@
-/* BennaHub — opruimende service worker.
+/* BennaHub: opruimende service worker.
 
    Hier stond tot augustus 2026 de service worker van de oefenapp, met de root
    als bereik. Die app woont nu in /huiswerk/ en heeft daar zijn eigen worker.
    Een eenmaal geregistreerde worker blijft echter actief tot hij zichzelf
-   afmeldt — en omdat de oude cache-eerst deed, zou hij op de startpagina de
+   afmeldt, en omdat de oude cache-eerst deed, zou hij op de startpagina de
    oude oefenapp blijven serveren in plaats van de hub.
 
    Deze worker doet daarom maar één ding: zichzelf opruimen. Zodra de browser

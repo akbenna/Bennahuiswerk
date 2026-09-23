@@ -22,7 +22,7 @@
  *
  * De opgaven in `seed.ts` dragen `jaar: 'next'` voor de klas ná het oude niveau.
  * Voor wie is overgegaan is dat de klas van nu, dus die stof schuift naar
- * `'nu'`. Wat daar al stond — vorig jaar — blijft staan als herhaling, en dat is
+ * `'nu'`. Wat daar al stond (vorig jaar) blijft staan als herhaling, en dat is
  * geen slordigheid: voor de doorstroomtoets en het eindexamen ís de stof van
  * vorig jaar gewoon examenstof.
  *
@@ -66,7 +66,7 @@ export function jaarNu(kaart: MetJaar): 'nu' | 'next' {
 
 /**
  * De hele voorraad omzetten naar het leerjaar van dit schooljaar. Alleen het
- * veld `jaar` verandert — de id's blijven, en daarmee blijft elke Leitner-kaart
+ * veld `jaar` verandert, de id's blijven, en daarmee blijft elke Leitner-kaart
  * aan zijn geschiedenis vastzitten.
  */
 export function naarDitJaar<T extends MetJaar>(alle: readonly T[]): T[] {

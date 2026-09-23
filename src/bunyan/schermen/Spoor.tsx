@@ -1,5 +1,5 @@
 /**
- * EEN SPOOR — de blokken met hun lessen
+ * EEN SPOOR: de blokken met hun lessen
  *
  * Een les gaat pas open als de vorige af is. Dat is geen pesterij: de stof
  * stapelt, en een les overslaan betekent tien minuten later vastlopen op iets

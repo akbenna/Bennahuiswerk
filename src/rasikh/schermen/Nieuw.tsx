@@ -1,5 +1,5 @@
 /**
- * NIEUW — de zes stappen waarmee een aya vastgezet wordt.
+ * NIEUW: de zes stappen waarmee een aya vastgezet wordt.
  *
  * Betekenis staat vóór klank, en dat is een keuze: wie op zijn eenenvijftigste
  * begint heeft geen tekort aan begrip maar aan herhaaltijd. De haak waar de
@@ -17,7 +17,7 @@ import type { Recitatie } from '../audio'
 
 export const STAPPEN = [
   { t: 'Horen', u: 'Luister drie keer mee terwijl je meeleest. Nog niets uit je hoofd.' },
-  { t: 'Begrijpen', u: 'Wat staat er. Betekenis is de haak waar de klank aan blijft hangen — dat is het voordeel dat een volwassene heeft.' },
+  { t: 'Begrijpen', u: 'Wat staat er. Betekenis is de haak waar de klank aan blijft hangen. Dat is het voordeel dat een volwassene heeft.' },
   { t: 'Inprenten', u: 'Vijf keer hardop, mét de tekst voor je.' },
   { t: 'Losmaken', u: 'De tekst verdwijnt in stappen. Tik op een grijs vlak als je vastloopt.' },
   { t: 'Vastzetten', u: 'Uit het hoofd, drie keer vlekkeloos achter elkaar. Eén hapering en de teller gaat terug.' },
@@ -47,7 +47,7 @@ export function Nieuw(
   const p = plan(stand, index, dag)
   /* `volgende` geeft elke keer een nieuw object terug. Dat object rechtstreeks
      in de afhankelijkheden zetten laat het effect bij élke hertekening opnieuw
-     lopen, waarbij het zichzelf opruimt vóórdat de aya binnen is — en dan komt
+     lopen, waarbij het zichzelf opruimt vóórdat de aya binnen is, en dan komt
      er nooit iets op het scherm. Vandaar de sleutel op de waarden. */
   const doel = volgende(stand, index)
   const doelSleutel = doel ? `${doel.nr}:${doel.n}` : null
@@ -112,7 +112,7 @@ export function Nieuw(
 
       <div className="rij">
         <button type="button" className="btn groot" onClick={() => zetBezig(true)}>
-          Begin bij stap 1 — horen
+          Begin bij stap 1: horen
         </button>
       </div>
 
@@ -153,7 +153,7 @@ function Leerflow(
   }, [a, lezing])
 
   /* Welke woorden verborgen zijn hangt af van het niveau; dat wordt één keer
-     per niveau geloot en niet bij elke hertekening opnieuw — anders springt de
+     per niveau geloot en niet bij elke hertekening opnieuw, anders springt de
      tekst onder je handen weg. */
   const niveau = [0, 0.35, 0.7, 1][Math.min(3, v.verberg)] ?? 0
   const woorden = useMemo(() => a.ar.split(' '), [a.ar])
@@ -166,7 +166,7 @@ function Leerflow(
       <Blad opSluiten={opSluiten}>
         <h2>{a.soera.naam} {a.n} staat vast</h2>
         <p style={{ marginTop: 8 }}>
-          Hij komt morgen terug, daarna over twee dagen, vier, acht — steeds verder uit elkaar zolang
+          Hij komt morgen terug, daarna over twee dagen, vier, acht, steeds verder uit elkaar zolang
           het goed gaat. Dat terugkomen is het werk; het leren was het makkelijke deel.
         </p>
         <AyaBlok a={a} />
@@ -212,7 +212,7 @@ function Leerflow(
           ) : (
             <Kader kop="Nog geen recitatie">
               Voor deze aya is nog geen recitatie opgehaald. Lees hem hardop mee met je eigen opname,
-              of haal de recitatie op — zie Instellingen.
+              of haal de recitatie op; zie Instellingen.
             </Kader>
           )}
         </>

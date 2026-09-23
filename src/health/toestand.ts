@@ -13,7 +13,7 @@
  */
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { DatabaseFout } from '@/gedeeld/db/verbinding'
-import { roep } from '@/gedeeld/db/rpc'
+import { isSessie, roep } from '@/gedeeld/db/rpc'
 import type { Alles, Sessie } from '@/gedeeld/db/rpc'
 import { bundelDagen } from './bundel'
 import type { Dagenkaart } from './rekenkern'
@@ -25,7 +25,7 @@ const SLEUTEL_SESSIE = 'kalibratie.sessie'
 
 const LEEG: Alles = {
   profiel: null, dagen: [], regels: [], producten: [],
-  recepten: [], metingen: [], labs: [], vragenlijsten: [], training: [],
+  recepten: [], metingen: [], labs: [], vragenlijsten: [], training: [], inspanning: [],
 }
 
 function leesSessie(): Sessie | null {
@@ -43,8 +43,8 @@ export interface Kalibratie {
   dagenkaart: Dagenkaart
   /* WAAROM DIT ER APART BIJ STAAT
 
-     Zonder deze vlag kent de app twee toestanden — er is een profiel en er is er
-     geen — en niet de derde: ik ben nog aan het ophalen. De sessie komt uit
+     Zonder deze vlag kent de app twee toestanden (er is een profiel en er is er
+     geen) en niet de derde: ik ben nog aan het ophalen. De sessie komt uit
      localStorage en is er dus meteen, terwijl `alles` nog LEEG is. Het scherm
      concludeerde in die halve seconde dat je nieuw bent en zette de
      opzetpagina neer, die daarna vanzelf weer verdween.
@@ -58,6 +58,8 @@ export interface Kalibratie {
   fout: string | null
   wisFout: () => void
   aanmelden: (account: string, ww: string, nieuw: boolean) => Promise<void>
+  /** Met de eenmalige herstelcode een nieuw wachtwoord zetten. */
+  herstellen: (account: string, code: string, nieuw: string) => Promise<void>
   afmelden: () => Promise<void>
   /** Voert een wijziging uit en haalt daarna alles opnieuw op. */
   wijzig: (werk: (token: string) => Promise<unknown>) => Promise<void>
@@ -104,11 +106,46 @@ export function useKalibratie(): Kalibratie {
     zetBezig(true)
     zetFout(null)
     try {
-      const s = nieuw
-        ? await roep('kal_registreren', { p_account: account, p_ww: ww, p_naam: account })
-        : await roep('kal_aanmelden', { p_account: account, p_ww: ww })
-      try { localStorage.setItem(SLEUTEL_SESSIE, JSON.stringify(s)) } catch { /* mag falen */ }
-      zetSessie(s)
+      /* Registreren gooit nog wel bij een fout; aanmelden geeft er een terug.
+         Waarom die twee verschillen staat bij `Aanmelduitslag` in rpc.ts: de
+         rem op het aanmelden houdt een teller bij, en een exception zou de
+         vastgelegde poging mee terugdraaien. */
+      if (nieuw) {
+        const s = await roep('kal_registreren', { p_account: account, p_ww: ww, p_naam: account })
+        try { localStorage.setItem(SLEUTEL_SESSIE, JSON.stringify(s)) } catch { /* mag falen */ }
+        zetSessie(s)
+        return
+      }
+      const uit = await roep('kal_aanmelden', { p_account: account, p_ww: ww })
+      if (!isSessie(uit)) {
+        /* Geen token betekent niet aangemeld, ook al kwam het antwoord met een
+           200 binnen. Zonder deze regel zou een mislukte aanmelding een lege
+           sessie opleveren die er geslaagd uitziet. */
+        zetFout(uit.fout)
+        return
+      }
+      try { localStorage.setItem(SLEUTEL_SESSIE, JSON.stringify(uit)) } catch { /* mag falen */ }
+      zetSessie(uit)
+    } catch (e) {
+      zetFout(e instanceof Error ? e.message : String(e))
+    } finally {
+      zetBezig(false)
+    }
+  }, [])
+
+  /* Herstellen is aanmelden met een code in plaats van een wachtwoord, en geeft
+     net zo goed een uitslag terug in plaats van te gooien. De teller in de
+     database telt beide ingangen bij elkaar op; zou dat niet zo zijn, dan was
+     dit een omweg om de rem heen. */
+  const herstellen = useCallback(async (account: string, code: string, nieuw: string) => {
+    zetBezig(true)
+    zetFout(null)
+    try {
+      const uit = await roep('kal_ww_herstellen',
+        { p_account: account, p_code: code, p_nieuw: nieuw })
+      if (!isSessie(uit)) { zetFout(uit.fout); return }
+      try { localStorage.setItem(SLEUTEL_SESSIE, JSON.stringify(uit)) } catch { /* mag falen */ }
+      zetSessie(uit)
     } catch (e) {
       zetFout(e instanceof Error ? e.message : String(e))
     } finally {
@@ -153,6 +190,6 @@ export function useKalibratie(): Kalibratie {
   return {
     sessie, alles, dagenkaart, geladen, bezig, fout,
     wisFout: useCallback(() => zetFout(null), []),
-    aanmelden, afmelden, wijzig, herlaad,
+    aanmelden, herstellen, afmelden, wijzig, herlaad,
   }
 }

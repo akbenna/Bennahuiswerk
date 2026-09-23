@@ -8,13 +8,13 @@
  * dan komt er niets bij.
  *
  * Alles hier is puur: geen klok, geen opslag, geen scherm. De dag gaat er als
- * argument in. Dat is niet netheid maar noodzaak — een planner die zijn eigen
+ * argument in. Dat is niet netheid maar noodzaak, een planner die zijn eigen
  * datum leest, is niet te testen, en dit is precies de code waar een fout pas
  * over maanden zichtbaar wordt. Zie planning.proef.ts.
  */
 import type { AyaStaat, Cijfer, Instellingen, Stand } from './opslag'
 
-/** De intervallen in dagen. Verdubbelend tot 64, daarna rustiger — voorbij twee
+/** De intervallen in dagen. Verdubbelend tot 64, daarna rustiger, voorbij twee
  *  maanden zegt een verdubbeling niets meer over of iets blijft zitten. */
 export const REEKS = [1, 2, 4, 8, 16, 32, 64, 120, 200] as const
 
@@ -131,7 +131,7 @@ export function plan(stand: Stand, index: readonly SoeraInfo[], dag: number): Da
   } else if (over < SEC_NIEUW) {
     reden = due.length
       ? 'Vandaag geen nieuwe aya: de herhalingen vullen je tijd al. Dat is precies zoals het ' +
-        'hoort — eerst vasthouden, dan uitbreiden.'
+        'hoort: eerst vasthouden, dan uitbreiden.'
       : 'Zet je tijd iets ruimer; onder de zes minuten past er geen nieuwe aya in.'
   } else {
     nieuw = Math.min(i.maxNieuw || 3, Math.floor(over / SEC_NIEUW), rest)
@@ -141,7 +141,7 @@ export function plan(stand: Stand, index: readonly SoeraInfo[], dag: number): Da
 
 /**
  * De volgende aya: binnen het doel, in de gekozen volgorde, en altijd de eerste
- * die nog niet vastligt — zo blijven soera's heel in plaats van los.
+ * die nog niet vastligt, zo blijven soera's heel in plaats van los.
  */
 export function volgende(
   stand: Stand, index: readonly SoeraInfo[],
@@ -162,7 +162,7 @@ export function volgende(
  * procent), en hoeveel dagen hij al over tijd is (aftrek, hooguit 0,4).
  *
  * De aftrek voor te laat is er omdat een aya die drie weken over zijn datum
- * heen staat níét meer is wat zijn laatste beoordeling zei — ook al was die
+ * heen staat níét meer is wat zijn laatste beoordeling zei, ook al was die
  * vlekkeloos.
  */
 export function gezond(t: AyaStaat | undefined, dag: number): number | null {

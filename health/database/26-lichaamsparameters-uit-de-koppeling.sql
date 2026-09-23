@@ -1,7 +1,10 @@
 -- =============================================================================
 -- SATURATIE EN BLOEDDRUK UIT DEZELFDE KOPPELING
 --
--- Nog niet toegepast.
+-- Toestand onbekend: de kop zei lang "nog niet toegepast" en dat klopte
+-- vermoedelijk niet meer. Dit bestand vervangt functies (`create or replace`),
+-- en dat is volgens CLAUDE.md de gewone gang van zaken, opnieuw draaien mag
+-- dus. Kijk wel na of wat er staat is wat je verwacht voordat je het doet.
 --
 -- WAT ER AL AUTOMATISCH BINNENKWAM
 --
@@ -12,7 +15,7 @@
 --     stappen · slaap · actieve energie · fietsminuten · gewicht · rustpols
 --
 -- De rustpols is daarbij het voorbeeld dat de rest volgt: hij woont niet in
--- kal_dagen maar in kal_metingen, en heeft daar zijn eigen regel — wat de
+-- kal_dagen maar in kal_metingen, en heeft daar zijn eigen regel, wat de
 -- koppeling zelf neerzette mag hij bijwerken, wat jíj hebt ingevuld blijft staan.
 --
 -- WAT ER NIET BINNENKWAM
@@ -24,7 +27,7 @@
 -- Bloeddruk komt daarbij níet van een horloge. Garmin-horloges meten hem niet;
 -- wat hem in Apple Gezondheid zet is een bloeddrukmeter met een manchet (de
 -- Garmin Index BPM, of welk ander merk dan ook). Voor de opdracht maakt dat
--- niets uit — die leest Gezondheid en niet het horloge — maar het is het
+-- niets uit (die leest Gezondheid en niet het horloge) maar het is het
 -- verschil tussen een waarde die er elke dag staat en een waarde die er staat op
 -- de dagen dat je hebt gemeten.
 --
@@ -49,7 +52,7 @@
 -- het bereik dat het sensortype zelf aangeeft.
 --
 -- De ondergrenzen doen meer werk dan ze lijken. `Bereken statistiek` in de
--- Opdrachten-app geeft over nul monsters een 0 terug en niet leeg — de fout die
+-- Opdrachten-app geeft over nul monsters een 0 terug en niet leeg, de fout die
 -- bestand 04 voor stappen en energie apart moest afvangen. Voor deze drie velden
 -- is dat niet nodig: een 0 valt hier vanzelf buiten elk bereik en wordt als
 -- onmogelijk gemeld in plaats van als meting weggeschreven.
@@ -70,7 +73,7 @@ BEGIN;
 -- -----------------------------------------------------------------------------
 --
 -- De botsingsregel op één plek. Wat de koppeling gisteren neerzette mag hij
--- vandaag bijwerken — de rustpols van vanochtend is voorlopig, en morgen weet
+-- vandaag bijwerken: de rustpols van vanochtend is voorlopig, en morgen weet
 -- het horloge het beter. Wat jij hebt ingevuld blijft staan, altijd: jij stond
 -- erbij toen die bloeddruk werd gemeten en het horloge niet.
 
@@ -205,7 +208,7 @@ begin
 
   /* ---- een 0 die uit een lege zoekactie komt ----------------------------- */
   /* Bereken statistiek geeft over nul monsters een 0 terug en niet leeg. Die 0
-     is dus niet te onderscheiden van "niets gevonden" — en als meting is hij
+     is dus niet te onderscheiden van "niets gevonden", en als meting is hij
      voor elk van deze velden onmogelijk: wie zijn telefoon bij zich draagt komt
      niet op nul stappen of nul actieve energie uit, en nul minuten slaap
      bestaat niet. Wegschrijven levert een dag op die eruitziet als gemeten en
@@ -217,7 +220,7 @@ begin
      Opdrachten-app. Wie via de lijst-ingang een 0 stuurt, meent hem.
 
      Saturatie, bloeddruk en rustpols staan hier niet bij, en missen niets: hun
-     ondergrens vangt de 0 al af, en met een duidelijker melding — "onmogelijk,
+     ondergrens vangt de 0 al af, en met een duidelijker melding, "onmogelijk,
      genegeerd" in plaats van stilte. */
   if v_stappen = 0 then v_stappen := null; v_nul := array_append(v_nul, 'stappen'); end if;
   if v_energie = 0 then v_energie := null; v_nul := array_append(v_nul, 'actieve_energie_kcal'); end if;

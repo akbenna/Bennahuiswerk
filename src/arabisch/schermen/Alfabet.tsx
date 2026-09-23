@@ -1,5 +1,5 @@
 /**
- * ALFABET — achtentwintig letters, en de tekens die geen letter zijn
+ * ALFABET: achtentwintig letters, en de tekens die geen letter zijn
  *
  * De filters zijn geen versiering: zons- en maansletters bepalen hoe je het
  * lidwoord uitspreekt, en "verbindt niet naar links" verklaart waarom een woord

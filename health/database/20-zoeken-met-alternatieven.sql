@@ -1,5 +1,5 @@
 -- =============================================================================
--- ZOEKEN MET ALTERNATIEVEN — één letter verkeerd mag geen leeg scherm geven
+-- ZOEKEN MET ALTERNATIEVEN: één letter verkeerd mag geen leeg scherm geven
 --
 -- Nog niet toegepast.
 --
@@ -69,7 +69,7 @@
 -- De twee maten falen dus op verschillende plekken, en dat is de reden om ze
 -- allebei te nemen in plaats van de beste te kiezen.
 --
--- WANNEER HIJ DRAAIT — EN WAAROM DAT DE HELE VEILIGHEID IS
+-- WANNEER HIJ DRAAIT, EN WAAROM DAT DE HELE VEILIGHEID IS
 --
 -- Alleen als het gewone woordzoeken niets vond. Een benadering hoort nooit een
 -- echte treffer te verdringen: wie "mayonaise" typt krijgt exact wat hij nu
@@ -95,7 +95,7 @@
 --     sjoarma    -> Shoarma vlees bereid
 --
 -- En wat leeg hoorde te blijven, bleef leeg: xyzzy, qwertyuiop, zzz. Ook "kase"
--- en "ryst" vonden niets — de terugval is geen spellingcorrector en doet niet
+-- en "ryst" vonden niets: de terugval is geen spellingcorrector en doet niet
 -- alsof.
 --
 -- De vier controlewoorden uit bestand 12 zijn ongeschonden: mayonaise,
@@ -122,7 +122,7 @@
 -- rij, zodat de terugval eronder geplakt kan worden zonder dat de volgorde
 -- verloren gaat. Verder is er niets aan veranderd.
 --
--- `kal_zoeken` is om dezelfde reden uit bestand 18 overgenomen — dat is de versie
+-- `kal_zoeken` is om dezelfde reden uit bestand 18 overgenomen, dat is de versie
 -- mét de merkemmer. Er verandert daar twee dingen. De nevo-emmer krijgt de
 -- sleutel `benadering` mee, zodat het scherm kan zeggen dat het een benadering
 -- toont. En de gerechtenemmer krijgt de kolom `names` erbij plus dezelfde
@@ -136,12 +136,12 @@
 -- vond dus niets, terwijl het antwoord in dezelfde rij stond. Op een nagebouwde
 -- bibliotheek vindt "mercimek" nu de Turkse linzensoep, en "hariera",
 -- "msemmene" en "tazjine" komen via de terugval bij Harira, Msemen en de
--- tajine uit — "qqqqqq" bij niets.
+-- tajine uit: "qqqqqq" bij niets.
 -- =============================================================================
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 1 — HET MEDEKLINKERSKELET
+-- BLOK 1: HET MEDEKLINKERSKELET
 -- ---------------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION public.kal_woordskelet(w text)
@@ -170,13 +170,13 @@ comment on function public.kal_woordskelet(text) is
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 2 — HET ZOEKEN, MET DE TERUGVAL ERONDER
+-- BLOK 2: HET ZOEKEN, MET DE TERUGVAL ERONDER
 -- ---------------------------------------------------------------------------
 
 -- De uitvoer krijgt er een kolom bij, en daar is `create or replace` niet genoeg
 -- voor: Postgres laat het type van een teruggegeven tabel niet wijzigen. Dus
 -- eerst weg, dan opnieuw. De rechten komen terug op de standaard (execute voor
--- public), en dat is precies wat hij had — er staat nergens een grant of revoke
+-- public), en dat is precies wat hij had, er staat nergens een grant of revoke
 -- op deze functie.
 drop function if exists public.kal_nevo_zoek(text, integer);
 
@@ -210,7 +210,7 @@ AS $function$
   bron as (
     -- nevo_actief en niet nevo_foods: dit is de licentiepoort. Staat de licentie
     -- van de actieve versie niet op gecontroleerd, dan is deze bron leeg en
-    -- vindt het zoeken niets — precies wat de schakelaar hoort te doen. Dat geldt
+    -- vindt het zoeken niets: precies wat de schakelaar hoort te doen. Dat geldt
     -- ook voor de terugval hieronder: die leest dezelfde bron.
     select n.nevo_code, n.naam_nl, n.groep, n.energie_kcal_per_100g,
            n.eiwit_g, n.vet_g, n.koolhydraten_g, n.vezels_g,
@@ -286,7 +286,7 @@ AS $function$
   -- Woorden korter dan vier letters doen niet mee, aan geen van beide kanten.
   -- Eerlijk gezegd: dat is een voorzorg waar ik geen falend geval bij heb kunnen
   -- vinden. De mutatieproef (deze eis verlaagd naar >= 1) veranderde geen enkele
-  -- uitslag — korte woorden worden hierboven al op woordbegin gezocht, en hun
+  -- uitslag: korte woorden worden hierboven al op woordbegin gezocht, en hun
   -- skelet is te kort voor de lengte-eis van drie. Hij staat er als grens voor
   -- wat er niet doorheen hoort, niet omdat hij nu iets tegenhoudt.
   benadering as (
@@ -330,13 +330,13 @@ $function$
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 3 — DE VLAG DOORGEVEN AAN HET SCHERM
+-- BLOK 3: DE VLAG DOORGEVEN AAN HET SCHERM
 -- ---------------------------------------------------------------------------
 --
 -- `kal_zoeken` bouwt zijn eigen json op en noemt daarin elk veld apart, dus de
 -- nieuwe kolom komt er niet vanzelf doorheen. Eén sleutel erbij, verder niets.
 --
--- Deze tekst is overgenomen uit bestand 18 — dat is de laatste versie, met de
+-- Deze tekst is overgenomen uit bestand 18, dat is de laatste versie, met de
 -- merkemmer erin. Uit `schema-gegenereerd.sql` knippen zou die emmer weggooien.
 
 CREATE OR REPLACE FUNCTION public.kal_zoeken(p_token text, p_q text, p_limiet integer DEFAULT 25)
@@ -394,15 +394,15 @@ begin
     -- DE GERECHTEN, MET TWEE DINGEN ERBIJ
     --
     -- Ten eerste: `names` wordt nu meegezocht. Die kolom staat er vanaf het
-    -- begin — alternatieve namen per taal, met sleutels nl, darija_lat,
-    -- darija_ar, tarifit_lat, ar, tr en srn — en werd door het zoeken
+    -- begin: alternatieve namen per taal, met sleutels nl, darija_lat,
+    -- darija_ar, tarifit_lat, ar, tr en srn, en werd door het zoeken
     -- doodleuk overgeslagen. Wie zijn eten in het Darija of het Turks noemt
     -- vond niets, terwijl het antwoord al in de rij stond. Dat is geen nieuwe
     -- inhoud maar inhoud die er lag en niet bereikbaar was.
     --
     -- Ten tweede: dezelfde terugval als bij NEVO. `jsonb_agg` geeft NULL bij
     -- een lege verzameling, dus een `coalesce` met drie takken doet precies
-    -- wat er nodig is — de tweede tak wordt alleen berekend als de eerste
+    -- wat er nodig is: de tweede tak wordt alleen berekend als de eerste
     -- niets opleverde, en de derde alleen als beide niets gaven.
     'gerechten', coalesce(
       (select jsonb_agg(jsonb_build_object(
@@ -475,7 +475,7 @@ end $function$
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 4 — WAT DE TERUGVAL NIET KAN: EEN ANDERE NAAM VOOR HETZELFDE
+-- BLOK 4: WAT DE TERUGVAL NIET KAN: EEN ANDERE NAAM VOOR HETZELFDE
 -- ---------------------------------------------------------------------------
 --
 -- Een schrijfvariant vangt hij. Een ander wóórd niet: "koeskoes" en "couscous"
@@ -529,7 +529,7 @@ order by vindt_nu, raakt desc, p.woord;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 5 — DE KOPPELING
+-- BLOK 5: DE KOPPELING
 -- ---------------------------------------------------------------------------
 --
 -- Eerst per product verzamelen en dan één keer bijwerken, om dezelfde reden als
@@ -576,7 +576,7 @@ where f.id = nieuw.id;
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 6 — NAKIJKEN
+-- BLOK 6: NAKIJKEN
 -- ---------------------------------------------------------------------------
 
 -- 1. De vier controlewoorden uit bestand 12. Deze horen ongeschonden te zijn:
@@ -586,7 +586,7 @@ union all select 'halfvolle melk', count(*) from kal_nevo_zoek('halfvolle melk',
 union all select 'halvarine',      count(*) from kal_nevo_zoek('halvarine', 20)
 union all select 'tonijn',         count(*) from kal_nevo_zoek('tonijn', 20);
 
--- 2. En dat de telwoorden er nog in staan — anders is bestand 12 teruggedraaid.
+-- 2. En dat de telwoorden er nog in staan, anders is bestand 12 teruggedraaid.
 select (regexp_match(prosrc, 'not in \(([^)]*)\)'))[1] ~ 'twee' as telwoorden_nog_aanwezig
 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
 where n.nspname = 'public' and p.proname = 'kal_nevo_zoek';
@@ -619,7 +619,7 @@ select w as term,
 from unnest(array['mayonaise','tonijn','halvarine','lesagna','spagetti','koeskoes']) w;
 
 -- 7. De gerechtenbibliotheek. Zonder token, want de Supabase-editor kent de
---    psql-notatie `:'token'` niet — dus niet via kal_zoeken maar met dezelfde
+--    psql-notatie `:'token'` niet, dus niet via kal_zoeken maar met dezelfde
 --    twee takken rechtstreeks op de tabel.
 --
 --    `gevonden` is wat het gewone zoeken geeft (tak 1, nu ook op `names`),
@@ -657,6 +657,6 @@ from vraag v
 order by v.w;
 
 -- Terugdraaien: draai `kal_nevo_zoek` uit bestand 12 en `kal_zoeken` uit bestand
--- 18 opnieuw, en laat `kal_woordskelet` staan — die wordt dan door niets meer
+-- 18 opnieuw, en laat `kal_woordskelet` staan, die wordt dan door niets meer
 -- aangeroepen en doet geen kwaad.
 

@@ -6,7 +6,7 @@
  * beveiliging tegen een indringer maar tegen een kind dat nieuwsgierig is; dat
  * is precies wat hier nodig is.
  *
- * Alle bedragen komen uit `beloning.ts` en worden hier alleen getoond — het
+ * Alle bedragen komen uit `beloning.ts` en worden hier alleen getoond, het
  * scherm rekent zelf niets uit. Uitbetalen is één handeling van de ouder: de
  * app houdt bij wat er verdiend is, en wie er wanneer betaalt is mensenwerk.
  */
@@ -160,7 +160,7 @@ function Resetpaneel({ reset }: { reset: () => void }): ReactNode {
         <span>
           🗑️ <b>Alles resetten naar 0</b>
           <div className="muted" style={{ fontSize: 12 }}>
-            Wist alle punten, voortgang, betalingen en spel-records — iedereen begint schoon
+            Wist alle punten, voortgang, betalingen en spel-records: iedereen begint schoon
             (accounts &amp; instellingen blijven).
           </div>
         </span>
@@ -172,7 +172,7 @@ function Resetpaneel({ reset }: { reset: () => void }): ReactNode {
                 onClick={() => {
                   zetVraag(false)
                   reset()
-                  zetMelding('✅ Alles gereset naar 0 — iedereen begint schoon.')
+                  zetMelding('✅ Alles gereset naar 0: iedereen begint schoon.')
                   setTimeout(() => zetMelding(''), 4000)
                 }}
               >Ja, alles naar 0</button>
@@ -217,7 +217,7 @@ function Wolkpaneel({ stand, wolk }: { stand: Stand; wolk: Wolkbediening }): Rea
 
   return (
     <div className="card" style={{ marginBottom: 16, background: '#eef4fb', borderLeftColor: '#3a6ea0' }}>
-      <b>☁️ Online opslag — overal &amp; altijd inzien</b>
+      <b>☁️ Online opslag: overal &amp; altijd inzien</b>
       {gekoppeld
         ? (
           <div style={{ marginTop: 8, fontSize: 13 }}>
@@ -242,7 +242,7 @@ function Wolkpaneel({ stand, wolk }: { stand: Stand; wolk: Wolkbediening }): Rea
               </button>
             </div>
             <p className="muted" style={{ fontSize: 12, marginTop: 6 }}>
-              Tip: doe &ldquo;Samenvoegen &amp; gelijktrekken&rdquo; één keer op élk toestel — dan
+              Tip: doe &ldquo;Samenvoegen &amp; gelijktrekken&rdquo; één keer op élk toestel, dan
               tonen alle toestellen dezelfde (hoogste) score per kind.
             </p>
           </div>
@@ -378,7 +378,7 @@ function Voortgangpaneel({ stand, alle, nuMs, zet, zetKind }: OuderProps): React
               ? (
                 <div style={{ marginTop: 8 }}>
                   <div style={{ fontSize: 13, fontWeight: 600, color: '#a33' }}>
-                    ⚠️ Aandachtspunten — zwakste onderwerpen:
+                    ⚠️ Aandachtspunten: zwakste onderwerpen:
                   </div>
                   {analyse.zwak.map((o, i) => (
                     <div key={i} style={{ marginTop: 4 }}>
@@ -506,7 +506,7 @@ function Voortgangpaneel({ stand, alle, nuMs, zet, zetKind }: OuderProps): React
         <b>moeilijker = meer waard</b> (niveau 1/2/3 → 1/2/3 punten × €{' '}
         {String(BELONING.tariefPunt).replace('.', ',')}). Nauwkeurigheidspoort (≥ 85% vol tarief,
         ≥ 70% half, daaronder niets). Toetsbonus schaalt met de score. Dagplafond{' '}
-        {euro(BELONING.dagMax)} en een <b>hard weekbudget per kind</b> — de app betaalt nooit meer
+        {euro(BELONING.dagMax)} en een <b>hard weekbudget per kind</b>: de app betaalt nooit meer
         uit dan dat.
       </div>
     </div>
@@ -546,7 +546,7 @@ function Opgavenbeheer(
     }
     zet((s) => ({ ...s, custom: [...s.custom, ex] }))
     zetForm({ ...form, q: '', a: '', u: '', h1: '', h2: '', s: '' })
-    zetMelding('✅ Opgave toegevoegd — staat meteen klaar voor ' + (PROFIELEN[form.p]?.naam ?? '') + '.')
+    zetMelding('✅ Opgave toegevoegd: staat meteen klaar voor ' + (PROFIELEN[form.p]?.naam ?? '') + '.')
     setTimeout(() => zetMelding(''), 2500)
   }
 
@@ -680,7 +680,7 @@ function Opgavenbeheer(
           >⬇️ Exporteer naar bestand</button>
         </div>
         <label className="fld" htmlFor="fImp">
-          Importeren — plak hier een eerder geëxporteerde JSON
+          Importeren: plak hier een eerder geëxporteerde JSON
         </label>
         <textarea
           className="f" id="fImp" value={invoer} placeholder='[ {"p":"wassima", ...} ]'
@@ -716,14 +716,14 @@ function Opgavenbeheer(
  * Dit is het enige scherm in de app dat vertelt wat er *ontbreekt*. Een vraag
  * waar niets voor gevonden werd is geen fout van het kind en ook niet van de
  * vraagbaak: het is stof die er nog niet is. Die staan daarom apart en bovenaan
- * — ze zijn de werklijst, opgeschreven door de kinderen zelf.
+ *, ze zijn de werklijst, opgeschreven door de kinderen zelf.
  *
  * Met één uitzondering, en die staat er sinds Amine op "werkwoord vervoeging"
  * zocht en niets terugkreeg terwijl er drieënveertig opgaven werkwoordspelling
  * klaarstaan. "Niets gevonden" dekt namelijk twee heel verschillende dingen:
  * het model wees nergens heen, óf het wees ergens heen en de app gooide dat weg
  * omdat de sleutel niet bestond. Het eerste is een gat in de stof, het tweede is
- * een storing in de vraagbaak zelf — en die twee horen niet onder één noemer.
+ * een storing in de vraagbaak zelf, en die twee horen niet onder één noemer.
  * Staat er iets bij "verzonnen", dan is het het tweede.
  */
 export function Vragenpaneel(
@@ -754,7 +754,7 @@ export function Vragenpaneel(
       {misgelopen.length > 0 && (
         <p className="muted" style={{ fontSize: 13, marginTop: 6 }}>
           Bij <b>{misgelopen.length}</b> {misgelopen.length === 1 ? 'vraag' : 'vragen'} wees de
-          vraagbaak wél iets aan, maar bestond dat onderwerp niet — dat is weggegooid. Geen
+          vraagbaak wél iets aan, maar bestond dat onderwerp niet: dat is weggegooid. Geen
           ontbrekende stof dus maar een storing; de sleutel die niet klopte staat erbij.
         </p>
       )}
@@ -779,14 +779,14 @@ export function Vragenpaneel(
                   : v.verzonnen?.length
                     ? (
                       <span>
-                        <b>weggegooid</b> — de vraagbaak wees naar{' '}
+                        <b>weggegooid</b>: de vraagbaak wees naar{' '}
                         {v.verzonnen.map((x, n) => (
                           <span key={x}>{n > 0 && ', '}<code>{x}</code></span>
                         ))}
                         , en dat bestaat niet
                       </span>
                       )
-                    : <span><b>niets gevonden</b>{v.gat ? ' — ' + v.gat : ''}</span>}
+                    : <span><b>niets gevonden</b>{v.gat ? ': ' + v.gat : ''}</span>}
               </div>
             </div>
           )
@@ -802,7 +802,7 @@ export function Vragenpaneel(
  * De leerscan per kind, voor de ouder.
  *
  * Wat hier bewust níét staat is een cijfer of een type. De scan meet gewoontes,
- * geen aanleg, en het nut zit in het gesprek dat erop volgt — vandaar dat er per
+ * geen aanleg, en het nut zit in het gesprek dat erop volgt, vandaar dat er per
  * kind één ding uitspringt en niet vijf.
  *
  * En de waarschuwing eronder hoort erbij: een kind voelt welk antwoord braaf
@@ -819,7 +819,7 @@ export function Leerscanpaneel({ stand }: { stand: Stand }): ReactNode {
     <div className="card" style={{ marginBottom: 16 }}>
       <b>🔎 Hoe de kinderen leren</b>
       <p className="muted" style={{ fontSize: 13, marginTop: 4 }}>
-        Uit de leerscan in de app. Dit gaat over gewoontes — wat een kind dóét — en niet over
+        Uit de leerscan in de app. Dit gaat over gewoontes (wat een kind dóét) en niet over
         aanleg of een leertype.
       </p>
       {ingevuld.map(({ pid, prof, scan }) => {

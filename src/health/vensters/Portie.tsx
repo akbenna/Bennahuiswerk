@@ -6,8 +6,8 @@
  * komen en niet in wat er daarna gebeurt, dus ze delen dit scherm.
  *
  * Wat hier niet meer staat is prompt('Hoeveel gram?'). Die vraag kan een mens
- * niet beantwoorden — een snee brood is vijfentwintig tot vijfenveertig gram en
- * dat weet niemand uit het hoofd — terwijl "hoeveel sneetjes" wél te
+ * niet beantwoorden (een snee brood is vijfentwintig tot vijfenveertig gram en
+ * dat weet niemand uit het hoofd) terwijl "hoeveel sneetjes" wél te
  * beantwoorden is. De vijfendertig huishoudmaten staan per productgroep in de
  * database en dekken alle zevenentwintig groepen; er is dus geen product zonder
  * maat. En elke maat brengt zijn eigen band mee: het getal dat je vroeger
@@ -20,6 +20,7 @@ import { vandaag } from '@/gedeeld/datum'
 import type { EigenProduct, Graad, IsoDatum, Moment } from '@/gedeeld/db/tabellen'
 import type { Gerecht, MerkTreffer, NieuweRegel, ProductMetMaten } from '@/gedeeld/db/rpc'
 import { Bron } from '../herkomst'
+import { fotoVoor, fotoVoorGerecht } from '../beeld'
 
 /** Waar de portiekeuze op dit moment over gaat. */
 export type Onderwerp =
@@ -124,7 +125,7 @@ export function bouwKeuzes(o: Onderwerp, metOptioneel: boolean, gram: string): K
  * DE PORTIES VAN EEN MERKPRODUCT
  *
  * Drie manieren om te zeggen hoeveel, en ze komen uit drie verschillende
- * bronnen — vandaar dat ze niet dezelfde band krijgen.
+ * bronnen, vandaar dat ze niet dezelfde band krijgen.
  *
  *   100 g            de maat waarin de voedingswaarde op het etiket staat
  *   één portie       wat de fabrikant een portie noemt
@@ -144,7 +145,7 @@ export function bouwKeuzes(o: Onderwerp, metOptioneel: boolean, gram: string): K
  * staan.
  *
  * De portie van de fabrikant krijgt daarbovenop niets extra's. "Eén portie" is
- * hún keuze en niet die van jou — wie een dubbele schep neemt kiest gewoon twee.
+ * hún keuze en niet die van jou, wie een dubbele schep neemt kiest gewoon twee.
  */
 export function keuzesVoorMerk(p: MerkTreffer): Keuze[] {
   const per = (waarde: number | null, gram: number) => ((Number(waarde) || 0) * gram) / 100
@@ -206,7 +207,7 @@ export function bouwOnzekerheid(
   } else if (o.soort === 'nevo') {
     uit.push(k.gewogen
       ? 'gewicht afgewogen; alleen de onzekerheid van de voedingsmiddelentabel resteert'
-      : `huishoudmaat, niet gewogen — ${dz(k.gram_laag)}–${dz(k.gram_hoog)} g per ${k.kaal}`)
+      : `huishoudmaat, niet gewogen: ${dz(k.gram_laag)}–${dz(k.gram_hoog)} g per ${k.kaal}`)
   } else if (o.soort === 'merk') {
     uit.push(`etiketwaarde van ${o.product.merk ?? 'de fabrikant'}, geen tabelwaarde`)
     uit.push('de wettelijke marge op een etiket is voor energie ongeveer tien procent')
@@ -251,6 +252,16 @@ export function PortieVenster(
   // Niet via `g`: de smalspoorcontrole van TypeScript volgt de discriminant en
   // niet een variabele die eruit is afgeleid.
   const titel = onderwerp.soort === 'gerecht' ? onderwerp.gerecht.naam : onderwerp.product.naam
+  /* Twee bronnen, allebei met de hand gekoppeld en allebei mogen ze niets
+     opleveren. Een product uit de voedingsmiddelentabel hangt aan zijn
+     NEVO-code; een gerecht uit de bibliotheek aan zijn naam. Een merkproduct en
+     je eigen product hebben geen van beide, en krijgen dus geen foto.
+
+     De volgorde is geen keuze maar een gevolg: de twee soorten sluiten elkaar
+     uit, dus er kan er hooguit één iets teruggeven. */
+  const foto = onderwerp.soort === 'nevo' ? fotoVoor(onderwerp.product.nevo_code)
+             : onderwerp.soort === 'gerecht' ? fotoVoorGerecht(onderwerp.gerecht.naam)
+             : null
 
   const onzeker = bouwOnzekerheid(onderwerp, k, metOptioneel, aantal)
 
@@ -286,6 +297,9 @@ export function PortieVenster(
   return (
     <Venster
       titel={titel}
+      boven={foto
+        ? <img className="vensterstrook" src={foto} alt="" loading="lazy" aria-hidden="true" />
+        : undefined}
       opSluiten={opSluiten}
       onder={
         g ? (
@@ -301,13 +315,14 @@ export function PortieVenster(
         ) : null
       }
     >
+
       <Kop>Hoeveel</Kop>
       <Rij style={{ marginTop: 6, flexWrap: 'wrap' }}>
         {keuzes.map((keuze, i) => (
           <Knop key={keuze.label + i} vol={i === gekozen} opKlik={() => zetGekozen(i)}
                 style={{ textAlign: 'left', flex: '1 1 140px' }}>
             <span style={{ display: 'block' }}>{keuze.label}</span>
-            <span className="mini" style={{ display: 'block', opacity: 0.8 }}>{keuze.sub}</span>
+            <span className="mini" style={{ display: 'block' }}>{keuze.sub}</span>
           </Knop>
         ))}
       </Rij>

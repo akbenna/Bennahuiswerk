@@ -3,7 +3,7 @@
  *
  * Waarom de sleutel hieronder gewoon in de repo staat en niet in een geheim:
  * dit is de publieke sleutel. Hij hoort in de browser terecht te komen en geeft
- * uit zichzelf geen toegang tot gegevens — geen enkele tabel in deze database is
+ * uit zichzelf geen toegang tot gegevens, geen enkele tabel in deze database is
  * voor de rol `anon` benaderbaar. Alle toegang loopt via SECURITY DEFINER-
  * functies die zelf een sessietoken of een pincode eisen.
  *

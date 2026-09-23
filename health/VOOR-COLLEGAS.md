@@ -23,7 +23,7 @@ en wat haar werkelijke activiteitsniveau is.
 Ze gaat naar huis met een getal dat te precies is om aan te twijfelen. En als er
 niets gebeurt, concludeert ze niet dat het getal fout was. Ze concludeert dat er
 iets mis is met háár. Dat is in mijn ervaring het schadelijkste wat er in een
-leefstijltraject kan gebeuren — en wij hebben het haar zelf aangereikt.
+leefstijltraject kan gebeuren, en wij hebben het haar zelf aangereikt.
 
 ## Er is een alternatief, en het is ouder dan de apps
 
@@ -36,7 +36,7 @@ geen formule meer nodig:
 Drie termen, en achter elk ervan zit literatuur.
 
 De 7.700 kcal per kilo is als vóórspeller aantoonbaar onjuist. De klassieke regel
-— eet vijfhonderd kilocalorieën minder en u verliest blijvend een pond per week —
+(eet vijfhonderd kilocalorieën minder en u verliest blijvend een pond per week)
 overschat het gewichtsverlies in het eerste jaar met ruwweg honderd procent,
 omdat een statisch model negeert dat de ruststofwisseling daalt en de
 energiekost van bewegen met de massa meekrimpt (Hall, *Lancet* 2011). Maar als
@@ -87,7 +87,7 @@ geslacht en BMI.
 
 Dat getal verdient één voetnoot, want wie het opzoekt vindt eerst iets anders.
 Het oorspronkelijke artikel meldde meer dan vijftig procent; dat bleek een
-rekenfout — de voorspelde waarden waren naar kilojoule omgezet maar het
+rekenfout: de voorspelde waarden waren naar kilojoule omgezet maar het
 totale verbruik in kilojoule werd in de verkeerde vergelijking gezet. De
 auteurs hebben het in mei 2025 gecorrigeerd naar 27,4 procent. Wie de eerste
 versie citeert, citeert een getal dat bijna twee keer zo hoog is als wat er
@@ -99,7 +99,7 @@ ook. Het getal is dus geen schatting van de stofwisseling, maar van het verbruik
 zoals het logboek het impliceert. Dat zijn twee verschillende beweringen, en een
 instrument hoort te zeggen welke van de twee het doet.
 
-Dat maakt het niet minder bruikbaar — eerder het omgekeerde. Omdat de afwijking
+Dat maakt het niet minder bruikbaar, eerder het omgekeerde. Omdat de afwijking
 persoonlijk is en betrekkelijk stabiel, voorspelt het getal het gewichtsverloop
 van déze patiënt juist goed. Het is bruikbaar om doelen bij te sturen. Het is
 geen fysiologische maat, en zeker geen bewijs voor of tegen een traag
@@ -109,8 +109,8 @@ maken dan we doen.
 En één beperking die ik er niet uit wil laten, omdat ze mijn eigen betoog
 raakt. Het interval dat de app om het verbruik zet bevat alleen de ruis in de
 weegreeks, niet de onzekerheid in het logboek. Strikt genomen is die band dus te
-smal. Ik heb dat bewust nog niet aangepast — een tweede foutterm erbij optellen
-verbreedt elke band in de app en werkt door tot in het dagdoel — maar wie een
+smal. Ik heb dat bewust nog niet aangepast: een tweede foutterm erbij optellen
+verbreedt elke band in de app en werkt door tot in het dagdoel. Maar wie een
 instrument bouwt dat over eerlijke onzekerheid gaat, hoort te zeggen waar zijn
 eigen onzekerheid nog niet eerlijk genoeg is.
 
@@ -126,13 +126,13 @@ and that's not a harmful simplification, but it's not technically accurate"*, en
 dat ze hem tonen *"for fun and curiosity"*. De gebruiker krijgt één getal als
 antwoord.
 
-Die tussenzin — dat het een onschadelijke vereenvoudiging is — hoort erbij, want
+Die tussenzin, dat het een onschadelijke vereenvoudiging is, hoort erbij, want
 hij laat precies zien waar het verschil zit. Zij vinden het onderscheid tussen
 een band en een betrouwbaarheidsinterval niet de moeite van het uitleggen waard.
 Wij zouden dat van een labuitslag nooit zeggen.
 
 Dat is de sterkste aanwijzing die ik ken dat het tonen van onzekerheid geen
-heruitvinding is maar een keuze die de markt bewust niet maakt — vermoedelijk
+heruitvinding is maar een keuze die de markt bewust niet maakt, vermoedelijk
 omdat een puntschatting makkelijker verkoopt en makkelijker naar te handelen is.
 
 Wij weten beter. Wij zijn het vak dat een referentiewaarde naast een labuitslag
@@ -145,7 +145,7 @@ In het instrument dat ik voor mezelf bouwde draagt daarom elk getal zijn
 interval, draagt elke gelogde regel een graad van A tot D, en draagt elke waarde
 een teken voor waar hij vandaan komt: gemeten uit de voedingsmiddelentabel,
 opgave van een fabrikant, of geschat. Drie tekens, hetzelfde teken in drie
-vullingen — hoe vol de ruit staat zegt hoeveel er werkelijk bekend is. Dat is
+vullingen: hoe vol de ruit staat zegt hoeveel er werkelijk bekend is. Dat is
 geen versiering. Het is de kortste manier om te zeggen: dit weet ik zeker, en
 dit niet.
 
@@ -174,7 +174,7 @@ tweeëntwintighonderdachtentwintig voedingsmiddelen, allemaal ingelezen. En toch
 gaf zoeken op "roti" niets bruikbaars: een roti-vél uit de tabel, wat klopt en
 niet is wat er op het bord ligt.
 
-Wat ontbrak was niet de bron maar de bibliotheek — een naam die je intikt en een
+Wat ontbrak was niet de bron maar de bibliotheek: een naam die je intikt en een
 portie in huishoudmaten. Dat is handwerk, geen import. En het gevolg was scheef
 op een manier die niemand bedacht had: stamppot, hachee, erwtensoep, tosti en
 kroket stonden gewoon in het RIVM-bestand, allemaal als heel gerecht
@@ -184,7 +184,7 @@ had gegeven.
 Ik ging ervan uit dat een Surinaamse hoek verzonnen zou moeten worden:
 ingrediëntenlijsten die niemand heeft nagewogen. Dat bleek maar half te kloppen.
 NEVO heeft een eigen Surinaamse afdeling, en zes gerechten staan er als geheel
-gemeten in — bruine bonen met rijst, pom, moksi alesi, dahl, bojo en bara. Voor
+gemeten in: bruine bonen met rijst, pom, moksi alesi, dahl, bojo en bara. Voor
 die zes is de energie per gram een meting van precies dát gerecht, en dus beter
 onderbouwd dan de Marokkaanse hoek, waar de dichtheid uit een optelling van
 losse ingrediënten komt.
@@ -193,7 +193,7 @@ Het is de tweede keer in dit project dat meten vóór bouwen een aanname van mij
 omkeerde. Dat is inmiddels een werkregel geworden: eerst de tabel bevragen, dan
 pas iets bedenken.
 
-De bibliotheek telt nu honderd gerechten over zes keukens — Marokkaans, Turks,
+De bibliotheek telt nu honderd gerechten over zes keukens: Marokkaans, Turks,
 Surinaams, Syrisch, Nederlands en een restcategorie. Het is het deel van dit
 werk dat rechtstreeks uit de praktijk komt, en het is het deel dat ik als eerste
 zou delen. Een diëtist die een Marokkaans gezin begeleidt heeft hier vandaag al
@@ -226,8 +226,8 @@ Eén afbakening, omdat het de eerste vraag is die elke collega stelt.
 
 Dit is een persoonlijk instrument, geen medisch hulpmiddel. Zodra software een
 tienjaarsrisico berekent en dat aan een arts of patiënt toont om een beslissing
-op te baseren, kom je onder de Medical Device Regulation — naar alle
-waarschijnlijkheid regel 11, klasse IIa — met een aangemelde instantie, een
+op te baseren, kom je onder de Medical Device Regulation (naar alle
+waarschijnlijkheid regel 11, klasse IIa) met een aangemelde instantie, een
 kwaliteitssysteem en een klinische evaluatie. Voor mezelf gebruiken is geen
 enkel probleem. Het aan collega's geven voor hún patiënten is de grens.
 
@@ -235,10 +235,46 @@ Ik noem het niet om te ontmoedigen maar omdat het bepaalt wat dit wel en niet
 kan worden, en omdat een instrument dat zijn eigen beperkingen niet benoemt
 precies dezelfde fout maakt als het getal op dat briefje.
 
+### Die grens is inmiddels dichterbij komen te liggen
+
+Wat hierboven staat schreef ik toen de app alleen over energie en gewicht ging.
+Sindsdien is er een laag bij gekomen die precies tegen die grens aan schuurt, en
+dat hoort hier te staan in plaats van alleen in een technisch bestand.
+
+Je kunt nu opgeven dat je hoge bloeddruk hebt, diabetes, of een hart- of
+vaatziekte hebt gehad, en welke medicatiegroepen je gebruikt. De app gebruikt dat
+voor drie dingen: hij laat bij diabetes de koolhydraten en vezels meelezen op het
+zoekscherm, hij vat zelfgemeten bloeddrukken samen over een week in plaats van
+per meting, en hij wijst je op wat er bij jouw medicatie hoort als je afvalt,
+dat insuline en een SU-derivaat mee omlaag moeten, dat een SGLT2-remmer bij sterk
+minder koolhydraten kan ontregelen zonder dat je het aan je meter ziet, dat een
+kaliumhoudende zoutvervanger naast een RAS-remmer niet vanzelfsprekend is.
+
+Wat hij níet doet is doseren, en dat is geen bescheidenheid maar dezelfde
+grondregel als de rest van deze app. Een insulinedosis kan ik niet met een
+onzekerheidsinterval leveren: ik ken de gevoeligheid niet, de
+koolhydraat-insulineratio niet en de nierfunctie niet. Dus hoort het getal er
+niet te staan. Elk signaal eindigt bij een mens, en er staat een proef op die dat
+vasthoudt: hij leest de tekst van elk signaal en valt om zodra er een cijfer in
+sluipt.
+
+Dat maakt de vraag uit deze paragraaf wel scherper dan hij was. Een app die weet
+dat je insuline gebruikt en daar iets mee doet, is een ander soort ding dan een
+voedingsdagboek, ook als hij niets voorschrijft. Ik heb daarom het beoogd doel
+uitgeschreven in `health/BEOOGD-DOEL.md`, met de vragen erbij die ik zelf niet
+kan beantwoorden, om het te laten toetsen door iemand die dat vak beheerst.
+
+Het zwaarste punt daarin is niet de nieuwe laag maar wat er al stond: SCORE2,
+FIB-4 en STOP-Bang rekenen met wat je zelf invult en tonen jou de uitkomst. Dat
+is precies het geval dat hierboven beschreven staat, en het staat er al een tijd.
+Zolang die toetsing niet gedaan is, blijft gelden wat er in de kop van deze
+paragraaf staat: voor mezelf gebruiken is geen probleem, aan collega's geven voor
+hún patiënten is de grens.
+
 ## Tot slot
 
 Terug naar de vrouw van tweeënvijftig. Wat ik haar zou willen meegeven is niet
-een beter getal. Het is een getal dat toegeeft hoeveel het niet weet — en dat
+een beter getal. Het is een getal dat toegeeft hoeveel het niet weet, en dat
 over vier weken van haar is, en van niemand anders.
 
 ---

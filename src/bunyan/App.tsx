@@ -1,8 +1,8 @@
 /**
- * COMPUTERS & CODE — een pc bouwen en leren programmeren
+ * COMPUTERS & CODE: een pc bouwen en leren programmeren
  *
- * Twee sporen naast elkaar voor een jongen van elf. Het eerste — wat er in een
- * computer zit — is een middag werk; het tweede — hem iets laten doen — een
+ * Twee sporen naast elkaar voor een jongen van elf. Het eerste: wat er in een
+ * computer zit, is een middag werk; het tweede, hem iets laten doen, een
  * paar jaar. Daarom staat er elke dag maar één stap op het scherm.
  */
 import { useState } from 'react'
@@ -168,7 +168,7 @@ export function App(): ReactNode {
         <footer>
           <p>
             Deze app leert twee dingen tegelijk: hoe je een computer in elkaar zet en hoe je hem
-            iets laat doen. Het eerste is een middag werk, het tweede een paar jaar — daarom
+            iets laat doen. Het eerste is een middag werk, het tweede een paar jaar, daarom
             staat hier elke dag maar één stap.
           </p>
           <p>

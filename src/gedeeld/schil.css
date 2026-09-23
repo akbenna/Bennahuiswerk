@@ -1,5 +1,5 @@
 /*
- * DE SCHIL — de tabbalk wordt een zijbalk zodra er ruimte is
+ * DE SCHIL: de tabbalk wordt een zijbalk zodra er ruimte is
  *
  * Vijf apps hadden precies hetzelfde skelet: een plakkende kop, daaronder een
  * plakkende tabbalk met zes tot acht tabs, en daaronder een kolom van hooguit
@@ -14,13 +14,13 @@
  * WAAROM DIT ALLEEN STIJL IS
  *
  * Er staat geen enkele regel buiten de mediaquery. Onder de duizend pixels
- * raakt dit bestand niets aan — een telefoon en een tablet staand krijgen exact
+ * raakt dit bestand niets aan, een telefoon en een tablet staand krijgen exact
  * de app die ze eerst kregen, tot op de pixel. Dat is met opzet: het scherm
  * waarop deze apps het meest gebruikt worden is het scherm waar het minst aan
  * te winnen viel, en dus ook het scherm waar het minst aan stuk mag gaan.
  *
- * "Schil" en niet "werkblad": in Arabisch heet een werkblad al iets anders —
- * het afdrukbare oefenblad — en twee betekenissen voor één woord in één repo
+ * "Schil" en niet "werkblad": in Arabisch heet een werkblad al iets anders (
+ * het afdrukbare oefenblad) en twee betekenissen voor één woord in één repo
  * levert precies de verwarring op die een naam hoort weg te nemen.
  *
  * En het is stijl en geen component, dus de vijf apps houden hun eigen kop met
@@ -46,7 +46,7 @@
        zonder dit staat er onder hem een streep doek. */
     background:linear-gradient(90deg,var(--zij) 0 250px,transparent 250px);
   }
-  /* Wat er verder nog in staat — een blad, een kortje, een overlay — hoort bij
+  /* Wat er verder nog in staat (een blad, een kortje, een overlay) hoort bij
      de inhoud en niet in een eigen rij. Wat zwevend gepositioneerd is telt
      sowieso niet mee als vak in het raster en blijft dus waar het was. */
   .schil > *{grid-area:hoofd;min-width:0}
@@ -65,8 +65,8 @@
     flex-direction:column;gap:3px;overflow:visible;
   }
   /* De tab was een woord met een streepje eronder; hier wordt hij een regel in
-     een menu. Het streepje verdwijnt — een onderrand op een volle breedte leest
-     als een scheiding tussen twee tabs in plaats van als "deze staat aan" — en
+     een menu. Het streepje verdwijnt (een onderrand op een volle breedte leest
+     als een scheiding tussen twee tabs in plaats van als "deze staat aan") en
      wat er aanstaat krijgt een vlak met een balkje ervoor. */
   .schil > nav.tabs .tab{
     width:100%;text-align:left;white-space:normal;
@@ -91,7 +91,7 @@
      twee kolommen kaarten naast elkaar en nog steeds een leesbare alinea. */
   .schil > main{padding-left:30px;padding-right:30px}
   /* Twee vormen, want de ene app zet .wrap op main zelf en de andere op een div
-     erbinnen. Alleen die binnenste mag zijn eigen zijkanten verliezen — main
+     erbinnen. Alleen die binnenste mag zijn eigen zijkanten verliezen, main
      heeft ze dan al, en twee keer aftellen zet de inhoud te ver naar binnen. */
   .schil > main.wrap{max-width:1120px;margin:0}
   .schil > main .wrap{max-width:1120px;margin:0;padding-left:0;padding-right:0}

@@ -24,6 +24,7 @@ process.env.TZ = 'Europe/Amsterdam'
 import fs from 'node:fs'
 import vm from 'node:vm'
 import crypto from 'node:crypto'
+import { woordgelijk } from './woordgelijk.mjs'
 
 const NU = '2026-08-22'
 const KLOK = Date.parse(NU + 'T10:00:00Z')
@@ -79,7 +80,10 @@ vm.createContext(ctx)
 vm.runInContext(js, ctx)
 const O = ctx.__
 
-const vinger = (x) => crypto.createHash('sha256').update(JSON.stringify(x)).digest('hex').slice(0, 16)
+/* De vinger loopt over de wóórden en niet over de leestekens. Waarom,
+   staat in `gereedschap/woordgelijk.mjs`. */
+const vinger = (x) =>
+  crypto.createHash('sha256').update(JSON.stringify(woordgelijk(x))).digest('hex').slice(0, 16)
 
 /* ------------------------------------------------------------------ 1. FSRS */
 const fsrs = []
@@ -230,5 +234,5 @@ const uit = {
   stof, sporen, kaartlijsten, rijen, paden, vocalisaties, samen, datums, verschillen,
 }
 fs.writeFileSync('src/arabisch/gouden-waarden.json', JSON.stringify(uit, null, 1) + '\n')
-console.log(`${fsrs.length} FSRS-reeksen, ${nakijken.length} antwoorden, ${stof.woorden.length} woorden — src/arabisch/gouden-waarden.json`)
+console.log(`${fsrs.length} FSRS-reeksen, ${nakijken.length} antwoorden, ${stof.woorden.length} woorden, src/arabisch/gouden-waarden.json`)
 process.exit(0)

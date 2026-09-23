@@ -7,7 +7,7 @@
  * sunna kunt vergeten en gewoon door kunt gaan.
  *
  * Onderaan staan drie dingen die in deze school niet bij het verplichte gebed
- * horen. Kennen is wel nuttig — je staat vroeg of laat achter een imam die het
+ * horen. Kennen is wel nuttig: je staat vroeg of laat achter een imam die het
  * wél doet.
  */
 import { useEffect, useState } from 'react'
@@ -73,7 +73,7 @@ export function Stappen({ t }: { t: Toestand }): ReactNode {
         <p className="klein" style={{ marginTop: 4 }}>
           <Tag soort="fout">Moet</Tag> is fard: valt dit weg, dan telt je gebed niet en begin je
           opnieuw. <Tag soort="k">Sunna</Tag> is sterk aanbevolen: vergeet je het, dan blijft je
-          gebed geldig — bij twee of meer herstel je het met de knieval van vergetelheid.{' '}
+          gebed geldig; bij twee of meer herstel je het met de knieval van vergetelheid.{' '}
           <Tag>Na het gebed</Tag> hoort er niet meer bij, maar de Profeet ﷺ bleef er wel voor zitten.
         </p>
       </div>
@@ -95,7 +95,7 @@ export function Stappen({ t }: { t: Toestand }): ReactNode {
         <p className="klein" style={{ marginTop: 10 }}>
           De soera na de Fatiha, de takbirs onderweg, de eerste zitting en de tashahhud zijn
           sterk aanbevolen (sunna mu'akkada). Vergeet je er twee of meer, dan herstel je dat met
-          de knieval van vergetelheid — zie <b>Als het misgaat</b>.
+          de knieval van vergetelheid; zie <b>Als het misgaat</b>.
         </p>
       </div>
 

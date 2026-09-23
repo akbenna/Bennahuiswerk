@@ -23,7 +23,7 @@ scherm van zestien pixels breed en ook voor wie nog niet vlot leest.
 
 De laatste drie delen één kleur, en dat is de enige uitzondering op de regel
 hierboven. Het zijn de drie cursussen van de Academie: ze horen bij elkaar en dat
-hoort te zien te zijn. Uit elkaar houden doet de vórm — een kompasroos, twee
+hoort te zien te zijn. Uit elkaar houden doet de vórm, een kompasroos, twee
 tekstballonnen en een microfoon lijken in niets op elkaar, ook niet op zestien
 pixels.
 
@@ -74,7 +74,7 @@ liggen. Dat kost een paar minuten per pictogram.
 
 Twee dingen die daarbij misgingen en het onthouden waard zijn. Een staartje van
 zeven eenheden aan een ballon van zesentwintig hoog leest als een hoekje en niet
-als een punt — de verhouding telt, niet de aanwezigheid. En een letter opbouwen
+als een punt, de verhouding telt, niet de aanwezigheid. En een letter opbouwen
 uit twee losse contouren (buitenkant en binnenkant) gaat mis bij de uiteinden:
 die lopen dan dood. Eén gestreken boog met een vaste lijndikte houdt zijn dikte
 overal, ook bij de tip.

@@ -1,5 +1,5 @@
 /**
- * DE KAARTPLANNER — spreiding, niet herhaling
+ * DE KAARTPLANNER: spreiding, niet herhaling
  *
  * Een variant op SM-2. Elke kaart draagt een interval `i` in dagen en een
  * gemakfactor `e`; bij een goed antwoord wordt het interval met die factor
@@ -59,7 +59,7 @@ export function beoordeel(
   return { i, e: Math.min(MAX_E, Math.max(MIN_E, e + stap)), n, due: plusDagen(nu, i) }
 }
 
-/** "3 d" of "5 mnd" — een maand is hier dertig dagen, want het is een schatting. */
+/** "3 d" of "5 mnd": een maand is hier dertig dagen, want het is een schatting. */
 export const fmt = (d: number): string => (d >= 30 ? `${Math.round(d / 30)} mnd` : `${d} d`)
 
 /** De kaarten die meedoen: alles, of alleen de sporen die opengevallen zijn. */

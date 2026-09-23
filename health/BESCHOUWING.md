@@ -1,6 +1,6 @@
 # Wat deze reeks heeft opgeleverd, en wat er niet aan bleek te kloppen
 
-Dit is geen samenvatting van commits — die staan in `git log`. Het is een
+Dit is geen samenvatting van commits, die staan in `git log`. Het is een
 terugblik op wat er onderweg geleerd is, inclusief de keren dat ik het mis had,
 want dat is het deel dat je anders kwijtraakt.
 
@@ -12,7 +12,7 @@ en geen ervan was wat ik als eerste dacht.
 1. **Telwoorden trokken ruis omhoog.** "twee boterhammen met mayonaise" zette een
    graanreep bovenaan. Niet toevallig: achter een apostrof begint voor Postgres
    een nieuw woord, dus in `b'tween` past `twee` op woordbegin. En omdat "twee"
-   in vrijwel geen productnaam voorkomt woog het zwaar — zeldzame woorden krijgen
+   in vrijwel geen productnaam voorkomt woog het zwaar, zeldzame woorden krijgen
    in deze weging het hoogste gewicht. Het telwoord uit de vraag stond daardoor
    niet onderaan maar vooraan. (`12-telwoorden-uit-het-zoeken.sql`)
 2. **Een huishoudmaat pakte aantoonbaar fout uit.** Cornflakes stonden op 180 g
@@ -37,7 +37,7 @@ omvergeworpen:
 
 - Ik dacht dat het zoeken op mayonaise stuk was. Dat was het niet.
 - Ik dacht dat de eetlepel ontbrak. Die stond er.
-- Ik dacht dat "pasta" macaroni miste. Er ís geen macaroni in NEVO — alles heet
+- Ik dacht dat "pasta" macaroni miste. Er ís geen macaroni in NEVO: alles heet
   "Pasta ...", tot "Manti gevulde pasta gekookt Turks" aan toe. Het gat zat
   andersom: juist "spaghetti", "macaroni" en "penne" vonden niets, en dat zijn de
   woorden die een kind gebruikt.
@@ -46,7 +46,7 @@ omvergeworpen:
 
 Daar kwam de mutatieproef bij: een regel expres kapotmaken en kijken of de proef
 het merkt. Vijftien keer gedaan. Twee keer legde hij niet een fout in de code
-bloot maar in mijn eigen proef — een test die ook slaagde met de regel eruit
+bloot maar in mijn eigen proef, een test die ook slaagde met de regel eruit
 gesloopt. Zo'n test is erger dan geen test, want hij geeft vertrouwen zonder
 grond. Beide zijn herschreven of eerlijk als voorzorg gemarkeerd.
 
@@ -70,13 +70,13 @@ na te gaan door de md5 van `prosrc` te vergelijken.
 | 17 | synoniemen: kipfilet, boterham, patat, spaghetti |
 | 18 | merkproducten uit Open Food Facts, achter een ODbL-poort |
 | 19 | `'merk'` toegestaan als herkomst van een regel |
-| 20 | zoeken met alternatieven — schrijfvarianten en andere namen |
+| 20 | zoeken met alternatieven, schrijfvarianten en andere namen |
 | 21 | de zeef en de volgorde omgedraaid, nadat 20 haring voor harira gaf |
 | 22 | benaderen mag alleen op een naam, niet op een synoniem |
 
 Twee dingen zaten daar structureel in. De **licentiepoort**: net als `nevo_versies`
 heeft `merk_bronnen` een schakelaar, en zonder gecontroleerde licentie én
-bronvermelding is de bron onzichtbaar. Niet als beleefdheid maar als slot — ODbL
+bronvermelding is de bron onzichtbaar. Niet als beleefdheid maar als slot, ODbL
 verplicht bronvermelding, en een voorwaarde die nergens vastligt wordt vergeten.
 
 En de **herkomst van een getal**. Merkgegevens zijn met opzet niet in `nevo_foods`
@@ -103,14 +103,14 @@ gewoonste manier om niets te vinden en op te geven, zeker voor een kind.
 
 `20-zoeken-met-alternatieven.sql` zet daar twee maten naast elkaar, omdat ze op
 verschillende plekken falen. Trigram-gelijkenis per woord vangt weggevallen en
-omgewisselde letters. Het **medeklinkerskelet** — accenten weg, dubbele letters
-samen, verwante medeklinkers gelijk, klinkers en de h eruit — vangt klinkerfouten
+omgewisselde letters. Het **medeklinkerskelet** (accenten weg, dubbele letters
+samen, verwante medeklinkers gelijk, klinkers en de h eruit) vangt klinkerfouten
 en verdubbelingen. `lasagne` en `lesagna` worden allebei `lsgn`; `couscous` en
 `koeskoes` allebei `ksks`.
 
 Hij draait alleen als het gewone zoeken niets vond, en dat is de hele veiligheid:
 een benadering mag nooit een echte treffer verdringen. En als hij draait zegt het
-scherm dat ook — *"Niets met precies die spelling. Dit lijkt erop:"* — want een
+scherm dat ook, *"Niets met precies die spelling. Dit lijkt erop:"*, want een
 benadering stilzwijgend tonen is dezelfde soort leugen als een getal zonder zijn
 onzekerheid.
 
@@ -124,16 +124,16 @@ harira/haring 0,57), dus er ís geen drempel die ze scheidt.
 
 Wat ik verkeerd deed is niet de maat kiezen maar de proef schrijven. Blok 6 van
 bestand 20 telde treffers en keek naar één onzinwoord. Het keek niet naar de
-námen in de rijen — en dat is letterlijk dezelfde fout als waar deze hele reeks
+námen in de rijen, en dat is letterlijk dezelfde fout als waar deze hele reeks
 mee begon, bij "mayonaise". Ik heb hem opnieuw gemaakt.
 
 `21-de-zeef-en-de-volgorde.sql` draait de rollen om: het skelet is de zeef (dat
-zeeft schoon — harira wordt `rr` en valt af op de lengte-eis), en de trigram is
+zeeft schoon, harira wordt `rr` en valt af op de lengte-eis), en de trigram is
 de volgorde binnen wat het skelet doorlaat (want `brt` staat voor brood, bereid,
 bread en broad samen, en zit in 285 producten). Gemeten: "broot" zet
 Glutenvrij brood bovenaan en laat "bereid" wegzakken.
 
-Er bleef er één over: `doner` gaf Pepermunt. Te volgen tot op het veld — NEVO
+Er bleef er één over: `doner` gaf Pepermunt. Te volgen tot op het veld: NEVO
 zet bij Pepermunt "Tic-tac mint, after dinner mints" in `synoniem_nevo`, en het
 skelet van "dinner" is `tnr`, net als dat van "doner". Erger nog: er ís geen
 goed antwoord, want NEVO kent geen döner en geen kebab, alleen twee
@@ -148,7 +148,7 @@ Daar kwam nog iets bij dat ik niet zocht. De gerechtenbibliotheek heeft een kolo
 `names` met alternatieve namen per taal: nl, darija_lat, darija_ar, tarifit_lat,
 ar, tr, srn. Het zoeken sloeg die kolom over. Wie zijn eten in het Darija of het
 Turks noemt vond niets, terwijl het antwoord al in de rij stond. Dat is nu geen
-nieuwe inhoud maar bereikbare inhoud — en het is precies het soort gat dat je
+nieuwe inhoud maar bereikbare inhoud, en het is precies het soort gat dat je
 alleen vindt door in de tabel te kijken in plaats van in de code.
 
 ## Wat er open staat
@@ -175,10 +175,10 @@ eigen Surinaamse afdeling en een reeks Levantijnse producten. Daarmee is er een
 derde mogelijkheid naast "verzinnen" en "niets doen": bóuwen op wat gemeten is,
 en per laag zeggen wat er geschat is.
 
-Dat is bestand 24, 25 en 27 geworden — 73 gerechten in zes keukens, alle 73 met
+Dat is bestand 24, 25 en 27 geworden, 73 gerechten in zes keukens, alle 73 met
 `concept`, `ai_voorstel` en `estimated`, en dus graad D in de app. De zorg
 hierboven staat daarmee niet los: een gerecht met bedachte porties ziet er
-inderdaad precies zo uit als een nagerekend gerecht — tenzij het zelf zegt dat
+inderdaad precies zo uit als een nagerekend gerecht, tenzij het zelf zegt dat
 het dat niet is. Dat is wat die drie merktekens doen.
 
 Zie hoofdstuk 19 en 21 van `VERANTWOORDING.md`.

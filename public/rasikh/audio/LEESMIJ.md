@@ -1,7 +1,7 @@
 # Recitatie voor Rasikh
 
 Rasikh speelt per aya een fragment af. Zonder eigen bestanden valt de app terug
-op de achtenvijftig fragmenten die al in `noer/audio/quran` staan — al-Fatiha en
+op de achtenvijftig fragmenten die al in `noer/audio/quran` staan, al-Fatiha en
 de laatste elf korte soera's. Voor al het andere hoor je niets.
 
 Hier zet je de rest neer.
@@ -27,7 +27,7 @@ ongeveer zestig megabyte, en duurt een paar minuten.
 Bij meer dan vijfhonderd nieuwe fragmenten vraagt het script eerst om `--ja`.
 De hele Koran is ruim zesduizend bestanden en een halve gigabyte.
 
-Het script begint bij Warsh — de lezing van de Maghreb, dezelfde die in de app
+Het script begint bij Warsh: de lezing van de Maghreb, dezelfde die in de app
 standaard aanstaat. Werkt geen van de Warsh-bronnen, dan pakt het een Hafs-lezing
 en zegt het erbij. Zet in dat geval ook de lezing in de app om, anders lees je
 iets anders dan je hoort.
@@ -43,7 +43,7 @@ afbreken en later verdergaan.
     rasikh/audio/lijst.json    wat er ligt, en van wie
 
 De app leest `lijst.json` bij het opstarten en weet daarna welke aya's een stem
-hebben. Bij een aya zonder fragment blijft de luisterknop weg — geen kapotte knop.
+hebben. Bij een aya zonder fragment blijft de luisterknop weg, geen kapotte knop.
 
 ## Twee stemmen door elkaar
 

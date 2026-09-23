@@ -14,13 +14,13 @@
 --
 --   Half stokbrood, 125 gram. "Dat stokbrood" verwijst naar het broodje uit
 --   `08-de-twee-favorieten.sql`, en dat is een half stokbrood. Een heel brood
---   zou 338 kcal extra zijn — een verdubbeling van de grootste post — dus deze
+--   zou 338 kcal extra zijn (een verdubbeling van de grootste post) dus deze
 --   aanname is niet vrijblijvend en staat daarom ook in de toelichting van het
 --   gerecht, waar hij te lezen is op het moment dat je logt.
 --
 --   Tonijn op water. Er is niet bij gezegd welke, en de doorrekening waar deze
 --   gerechten uit voortkomen rekent met water. Op olie is het 97 kcal meer per
---   blik en geen gram extra eiwit — de duurste stille keuze in het schap, en om
+--   blik en geen gram extra eiwit, de duurste stille keuze in het schap, en om
 --   die reden staat hij als onzekerheid bij de regel en niet in een voetnoot.
 --
 -- WAT ER UITKOMT
@@ -37,7 +37,7 @@
 -- En dit gerecht is een C en geen D. De salade is D zolang de olijfolie niet
 -- gewogen is, want daar loopt de schatting van 30 tot 70 gram en dat is 360 kcal.
 -- Hier loopt hij van 3 tot 10 gram, en dat is 63 kcal. Dezelfde onzekerheid over
--- dezelfde handeling, maar een tiende van het gevolg — dat is wat een graad
+-- dezelfde handeling, maar een tiende van het gevolg, dat is wat een graad
 -- hoort uit te drukken.
 --
 -- Het zout staat erin met nul calorieën, om dezelfde reden als de komijn in
@@ -61,7 +61,7 @@ weg as (
 nieuw as (
   insert into public.kal_recepten(gebruiker_id, naam, toelichting, porties, volgt_profiel, favoriet)
   select id, 'Mijn stokbroodtonijn',
-         'Eén portie, op een half stokbrood — een heel brood is 338 kcal meer. Tonijn op '
+         'Eén portie, op een half stokbrood, een heel brood is 338 kcal meer. Tonijn op '
          || 'water; op olie komt er 97 kcal bij en geen gram eiwit. Met 6,9 gram eiwit per '
          || '100 kcal is dit je eiwitrijkste maaltijd: bijna twee keer zo dicht als de '
          || 'tonijnsalade, en het verschil zit vooral in de theelepel olie in plaats van de '

@@ -27,7 +27,7 @@ export const UITLEG: Record<string, Uitlegstuk> = {
   'Druk':{tekst:'Druk is kracht verdeeld over een oppervlak: p = F ÷ A, in pascal (Pa = N/m²). Dezelfde kracht op een klein oppervlak geeft een grote druk (denk aan een scherpe punaise).'},
   'Tijd & eeuwen':{tekst:'Een eeuw is 100 jaar. Om de eeuw te vinden: neem de eerste twee cijfers van het jaartal en tel er 1 bij op. Voorbeeld: 1602 → 16 + 1 = de 17e eeuw. (De jaren 1601–1700 horen bij de 17e eeuw.)'},
   'Opstand tegen Spanje':{tekst:'In 1568 kwamen de Nederlanden in opstand tegen de Spaanse koning. Dit werd de Tachtigjarige Oorlog (1568–1648), met Willem van Oranje als leider. In 1648 (Vrede van Münster) werd de Republiek onafhankelijk.'},
-  'Gouden Eeuw & Republiek':{tekst:'In de 17e eeuw — de Gouden Eeuw — was de Republiek der Zeven Verenigde Nederlanden rijk door handel. De VOC (1602) handelde in Azië, de WIC op Amerika en West-Afrika.'},
+  'Gouden Eeuw & Republiek':{tekst:'In de 17e eeuw (de Gouden Eeuw) was de Republiek der Zeven Verenigde Nederlanden rijk door handel. De VOC (1602) handelde in Azië, de WIC op Amerika en West-Afrika.'},
   'Handel & slavernij':{tekst:'Bij de driehoekshandel voeren schepen van Europa naar Afrika (ruilgoederen), van Afrika naar Amerika (tot slaaf gemaakte mensen) en van Amerika terug naar Europa (suiker, katoen). De WIC speelde hierin een grote rol.'},
   'Verlichting':{tekst:'De Verlichting (18e eeuw) was een stroming waarin denkers het verstand (de rede) centraal stelden. Ze vonden dat niet één koning alle macht moest hebben (geen absolute vorst) en pleitten voor vrijheid en gelijkheid.'},
   'Franse Revolutie':{tekst:'In 1789 kwam het Franse volk in opstand tegen de koning. Met de bestorming van de Bastille begon de Franse Revolutie. De leuze: vrijheid, gelijkheid, broederschap.'},
@@ -54,7 +54,7 @@ export const UITLEG: Record<string, Uitlegstuk> = {
   'Golven & trillingen':{tekst:'Frequentie f (in hertz) is het aantal trillingen per seconde; trillingstijd T is de duur van één trilling: T = 1/f en f = 1/T. Voor een golf geldt v = f × λ (golfsnelheid = frequentie × golflengte).'},
   'Radioactiviteit':{tekst:'Na elke halveringstijd is nog de helft van de radioactieve stof over. Na n halveringstijden is dus (½)ⁿ over. Reken in stappen: elke halveringstijd × ½.'},
   // Amine (groep 7/8)
-  'Tafels & keer':{tekst:'Ken de tafels van 1 t/m 12 uit je hoofd — dat scheelt enorm bij grote sommen. Tip: 12 × 6 = 10 × 6 + 2 × 6 = 60 + 12 = 72.'},
+  'Tafels & keer':{tekst:'Ken de tafels van 1 t/m 12 uit je hoofd: dat scheelt enorm bij grote sommen. Tip: 12 × 6 = 10 × 6 + 2 × 6 = 60 + 12 = 72.'},
   'Meten & maten':{tekst:'Onthoud de "trappetjes": 1 km = 1000 m · 1 m = 100 cm · 1 cm = 10 mm · 1 kg = 1000 g · 1 liter = 1000 ml. Naar een kleinere eenheid → keer; naar een grotere → delen.'},
   'Tijd & klok':{tekst:'1 uur = 60 minuten. Reken duur uit door eerst hele uren te tellen en dan de losse minuten. Een half uur = 30 minuten = 0,5 uur.'},
   'Kommagetallen':{tekst:'Zet bij + en − de komma netjes onder elkaar. Bij × 10 gaat de komma één plaats naar rechts, bij × 100 twee plaatsen. Bij ÷ 10 juist naar links.'},
@@ -79,7 +79,7 @@ export const UITLEG: Record<string, Uitlegstuk> = {
   'Verhoudingstabel':{tekst:'In een verhoudingstabel gaat alles met dezelfde factor mee. Weet je dat 2 stuks € 1 kosten, dan kosten 6 stuks (× 3) → € 3. Zoek eerst de factor tussen de kolommen.'},
   'Tabellen & grafieken':{tekst:'Lees eerst af wat er op de assen of in de kolommen staat. Bij een staafdiagram is de hoogte van de staaf de waarde. Optellen, vergelijken of het grootste zoeken doe je daarna.'},
   'Meten & meetkunde':{tekst:'Reken met de juiste eenheid: 1 m = 100 cm, 1 kg = 1000 g. Oppervlakte = lengte × breedte (in cm²), omtrek = alle zijden samen (in cm).'},
-  'Verbanden':{tekst:'Een verband laat zien hoe twee dingen samenhangen — in een tabel, grafiek of formule. Het gemiddelde reken je uit met som ÷ aantal.'},
+  'Verbanden':{tekst:'Een verband laat zien hoe twee dingen samenhangen: in een tabel, grafiek of formule. Het gemiddelde reken je uit met som ÷ aantal.'},
   // Selma & Amine · taal
   'Werkwoordspelling':{tekst:"Tegenwoordige tijd: ik = de stam (zonder t); hij/zij/het = stam + t. Verleden tijd en voltooid deelwoord: eindigt de stam op een letter uit 't kofschip (t, k, f, s, ch, p)? Dan +te / +t, anders +de / +d."},
   'Niet-werkwoordspelling':{tekst:'Luister goed: lange ij (fiets) of korte ei (eiland)? au (auto) of ou (koud)? Twijfel je over d of t aan het eind, verleng het woord: koud → koude, dus met een d.'},

@@ -4,7 +4,7 @@
  *
  * Overgezet uit `bundelDagen()` in de oude index.html. De `+x || 0` staat er
  * nog steeds, en met reden: de database geeft numeric terug als string, en
- * `null + 0` is niet 0 maar NaN — één NaN in de reeks maakt de hele helling NaN.
+ * `null + 0` is niet 0 maar NaN, één NaN in de reeks maakt de hele helling NaN.
  */
 import type { Dag, Regel } from '@/gedeeld/db/tabellen'
 import type { Dagenkaart, DagMetTotalen } from './rekenkern'

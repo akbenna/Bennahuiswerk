@@ -1,8 +1,8 @@
 /**
- * VANDAAG — waar je staat en wat de eerstvolgende stap is
+ * VANDAAG: waar je staat en wat de eerstvolgende stap is
  *
  * Eén les per dag is genoeg. Wie een uur achter elkaar doet en dan vier dagen
- * niets, onthoudt minder dan wie elke dag tien minuten doet — daarom staan hier
+ * niets, onthoudt minder dan wie elke dag tien minuten doet, daarom staan hier
  * twee knoppen en niet een hele lijst.
  */
 import type { ReactNode } from 'react'
@@ -51,7 +51,7 @@ export function Vandaag(
         />
         <Cijfer
           kop="Vandaag" waarde={vandaag?.lessen ?? 0}
-          onder={vandaag?.lessen ? 'lessen gedaan — mooi' : 'nog niets gedaan'}
+          onder={vandaag?.lessen ? 'lessen gedaan, mooi' : 'nog niets gedaan'}
         />
       </div>
 
@@ -107,7 +107,7 @@ export function Vandaag(
 
       <Kader kop="Hoe dit werkt">
         Elke les heeft uitleg, iets om zelf te doen en een paar vragen. Je krijgt punten voor
-        elke les die je afmaakt en geld voor het werk — tot een vast bedrag per week. Daarna
+        elke les die je afmaakt en geld voor het werk, tot een vast bedrag per week. Daarna
         lopen de punten door, want leren stopt niet als het geld stopt.
       </Kader>
     </>

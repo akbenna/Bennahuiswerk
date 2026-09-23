@@ -1,15 +1,26 @@
 -- =============================================================================
--- EIWITRIJK UIT DE TABEL — de tweede laag onder de coach
+-- EIWITRIJK UIT DE TABEL: de tweede laag onder de coach
 --
--- Nog niet toegepast.
+-- Achterhaald sinds 18 september 2026: bestand 35 heeft `kal_eiwitrijk`
+-- vervangen, zodat de functie ook leest wat er in "Wat je lust" staat. Wat hier
+-- beneden staat is de versie van daarvoor, en dit bestand is vanaf nu alleen
+-- nog de uitleg waarom de functie doet wat hij doet, niet meer de bron.
+--
+-- Draai het dus níet opnieuw: dan zet je de voorkeuren weer uit zonder dat
+-- iemand het merkt. Wat er in de database hoort te staan is de md5 die in de kop
+-- van bestand 35 staat.
+--
+-- Wat hier lang boven stond was "toestand onbekend", en dat is daarmee
+-- beantwoord. Niet door het na te zoeken maar doordat het achterhaald raakte,
+-- de vraag ging weg in plaats van dat hij een antwoord kreeg.
 --
 -- DE VRAAG
 --
 -- De coach op het dagscherm zegt "nog 108 g eiwit te gaan" en stelt daarbij
 -- voor uit je eigen geschiedenis. Dat is met opzet: wat je vorige week at ken
 -- je, je hebt het in huis, en de portie is de jouwe. Maar die geschiedenis
--- loopt leeg — wie drie weken hetzelfde eet krijgt drie weken hetzelfde
--- voorgesteld — en op de vraag "wat kán ik dan nemen" had de app geen antwoord.
+-- loopt leeg: wie drie weken hetzelfde eet krijgt drie weken hetzelfde
+-- voorgesteld, en op de vraag "wat kán ik dan nemen" had de app geen antwoord.
 --
 -- Dit is dat antwoord: producten uit de voedingsmiddelentabel die het meeste
 -- eiwit per calorie leveren, met hun standaardportie erbij, zodat er niet "kwark"
@@ -61,14 +72,14 @@
 --     nevo  Eiwitreep m chocola           stuk 40 g      148 kcal   14,7 g   0,099
 --
 --     Kipfilet rauw          stond in de tabel, valt eruit op "rauw"
---     Kaas strooi- Zwitserse dichtheid 0,241 — de hoogste — maar een plak van
+--     Kaas strooi- Zwitserse dichtheid 0,241 (de hoogste) maar een plak van
 --                            20 g is 11 g eiwit, en dat is onder de twaalf
 --     Paardenrookvlees       dichtheid 0,211, plak van 15 g is 3,3 g eiwit
 --     Tarwebrood, Mayonaise  ook bij een eis van 0,02 niet: te weinig eiwit
 --                            per portie
 --
 -- Een onhaalbare eis (9 g/kcal) geeft [], en bij een budget van 120 kcal
--- blijven kabeljauw, de shake en skyr over — de rollade en de reep zijn dan te
+-- blijven kabeljauw, de shake en skyr over, de rollade en de reep zijn dan te
 -- zwaar. Elk van de vier regels (rauw, twaalf gram, veertig kcal, één per
 -- groep) heeft in deze proef aantoonbaar iets tegengehouden.
 --
@@ -83,7 +94,7 @@
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 1 — DE FUNCTIE
+-- BLOK 1: DE FUNCTIE
 -- ---------------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION public.kal_eiwitrijk(
@@ -195,7 +206,7 @@ comment on function public.kal_eiwitrijk(text, numeric, numeric, integer) is
 
 
 -- ---------------------------------------------------------------------------
--- BLOK 2 — NAKIJKEN
+-- BLOK 2: NAKIJKEN
 -- ---------------------------------------------------------------------------
 --
 -- Deze vraag heeft een sessietoken nodig; plak er een geldig token in. De

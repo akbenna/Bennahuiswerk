@@ -3,7 +3,7 @@
  * GOUDEN WAARDEN UIT DE OUDE ISLAM LEREN
  *
  * Het zwaarste stuk hier zijn de gebedstijden. Die worden uit de stand van de
- * zon berekend — juliaanse dag, declinatie, tijdvereffening, uurhoek — en een
+ * zon berekend (juliaanse dag, declinatie, tijdvereffening, uurhoek) en een
  * fout van een halve graad is een fout van twee minuten die niemand ziet tot
  * iemand te vroeg bidt. Ze zijn dus niet nagerekend maar gedraaid: de oude
  * functies zelf, over honderden combinaties van datum, plaats, methode en
@@ -12,8 +12,8 @@
  * De tijdzone gaat als getal mee in plaats van uit de klok van de machine te
  * komen. De oude code las hem uit `datum.getTimezoneOffset()`; dat maakte de
  * uitkomst afhankelijk van waar het script draait, en dat is precies wat een
- * gouden waarde niet mag zijn. Dit script draait daarom in Amsterdam — de
- * plaats waar de app gebruikt wordt — en legt per geval vast wélke tijdzone
+ * gouden waarde niet mag zijn. Dit script draait daarom in Amsterdam (de
+ * plaats waar de app gebruikt wordt) en legt per geval vast wélke tijdzone
  * eruit kwam, zodat de nieuwe code hem als argument terugkrijgt.
  *
  * Verder gaan het samenvoegen, de kaartplanner, de punten, de insignes, de
@@ -25,6 +25,7 @@ process.env.TZ = 'Europe/Amsterdam'
 import fs from 'node:fs'
 import vm from 'node:vm'
 import crypto from 'node:crypto'
+import { woordgelijk } from './woordgelijk.mjs'
 
 const NU = '2026-08-22'
 const KLOK = Date.parse(NU + 'T10:00:00Z')
@@ -77,7 +78,10 @@ vm.createContext(ctx)
 vm.runInContext(js, ctx)
 const O = ctx.__
 
-const vinger = (x) => crypto.createHash('sha256').update(JSON.stringify(x)).digest('hex').slice(0, 16)
+/* De vinger loopt over de wóórden en niet over de leestekens. Waarom,
+   staat in `gereedschap/woordgelijk.mjs`. */
+const vinger = (x) =>
+  crypto.createHash('sha256').update(JSON.stringify(woordgelijk(x))).digest('hex').slice(0, 16)
 const rond = (x) => (typeof x === 'number' && !Number.isNaN(x) ? Math.round(x * 3600) / 3600 : null)
 
 /* ------------------------------------------------- 1. de gebedstijden ----- */
@@ -210,7 +214,7 @@ const budget = []
 /* Aanvullen tot een volledige momentopname, zoals de app het ook doet: wat er
    van een toestel binnenkomt gaat eerst door leegS() heen. Het gezin en de
    instellingen worden daarbij per veld aangevuld en niet in hun geheel
-   vervangen — anders zou een half gezin uit een oudere versie de plaats
+   vervangen, anders zou een half gezin uit een oudere versie de plaats
    meenemen en de gebedsmethode kwijtraken. */
 const maakStand = (o) => {
   const s = O.leegS()
@@ -243,5 +247,5 @@ const uit = {
 }
 fs.writeFileSync('src/noer/gouden-waarden.json', JSON.stringify(uit, null, 1) + '\n')
 process.exitCode = 0
-console.log(`${tijden.length} gebedstijden, ${kaartIds.length} kaarten, ${stof.modules.length} modules — src/noer/gouden-waarden.json`)
+console.log(`${tijden.length} gebedstijden, ${kaartIds.length} kaarten, ${stof.modules.length} modules, src/noer/gouden-waarden.json`)
 process.exit(0)

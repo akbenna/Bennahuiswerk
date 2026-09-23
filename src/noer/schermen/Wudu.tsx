@@ -1,5 +1,5 @@
 /**
- * DE WASSING — tien stappen, en het examen op volgorde
+ * DE WASSING: tien stappen, en het examen op volgorde
  *
  * Bij elke stap licht het lichaamsdeel op dat aan de beurt is. De kleur zegt
  * of het moet of dat het een gewoonte van de Profeet ﷺ is; dat onderscheid is
@@ -126,7 +126,7 @@ function Wuduloop({ i, t, ga, sluit, naarExamen }: {
       <>
         <h2>De wassing is klaar</h2>
         <p style={{ marginTop: 10 }}>
-          Kijk omhoog en zeg de shahada. Ga daarna meteen bidden — dat is het mooiste moment.
+          Kijk omhoog en zeg de shahada. Ga daarna meteen bidden: dat is het mooiste moment.
         </p>
         <div className="rij" style={{ marginTop: 18 }}>
           <button className="btn" onClick={naarExamen}>Doe het examen</button>

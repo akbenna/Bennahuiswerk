@@ -3,8 +3,8 @@
  *
  * Wat een blok van het leerpad laat zien, en de losse kaarten die daarin
  * terugkomen: een letter met haar vier vormen, een woordregel, een leestekst.
- * Deze stukken staan hier los omdat ze op vier plekken gebruikt worden — in de
- * sessie, in het leerpad, in het alfabet en in de woordenlijst — en drie
+ * Deze stukken staan hier los omdat ze op vier plekken gebruikt worden (in de
+ * sessie, in het leerpad, in het alfabet en in de woordenlijst) en drie
  * kopieën die uiteenlopen is precies wat we hier weg aan het halen zijn.
  */
 import { useState } from 'react'
@@ -118,7 +118,7 @@ export function TekstBlok({ T, vocalisatie }: { T: Tekst | undefined; vocalisati
         </div>
       ))}
       <div style={{ borderTop: '1px solid var(--line)', paddingTop: 12, marginTop: 6 }}>
-        <span className="label">Woorden — tik voor de betekenis</span>
+        <span className="label">Woorden: tik voor de betekenis</span>
         <div className="chips" style={{ marginTop: 8 }}>
           {T.gloss.map((g, i) => (
             <button
@@ -161,7 +161,7 @@ function KoranRij({ k }: { k: Koranwoord }): ReactNode {
         <div className="small">{k.n}</div>
       </div>
       <div style={{ textAlign: 'right', flex: 'none' }}>
-        {k.r !== '—' && <div className="ar klein-ar">{k.r}</div>}
+        {k.r !== '–' && <div className="ar klein-ar">{k.r}</div>}
         <div className="klein muted">± {k.f}×</div>
       </div>
     </div>
@@ -335,7 +335,7 @@ export function Woordblad(
         <div className="kaart dun"><span className="label">Thema</span><div>{w.th}</div></div>
         <div className="kaart dun">
           <span className="label">Geslacht</span>
-          <div>{w.g === 'v' ? 'vrouwelijk' : w.g === 'm' ? 'mannelijk' : '—'}</div>
+          <div>{w.g === 'v' ? 'vrouwelijk' : w.g === 'm' ? 'mannelijk' : '–'}</div>
         </div>
         {w.mv && (
           <div className="kaart dun">
