@@ -17,6 +17,7 @@ import { GLI_PROGRAMMAS } from '../trap'
 import { kortNL, vandaag } from '@/gedeeld/datum'
 import type { Tester } from '@/gedeeld/db/rpc'
 import { AANBIEDERNAAM, ONBEKEND, leesToegang, restZin, uitlegAi } from '../toegang'
+import { PrivacyVenster } from './Privacy'
 import type { Aanbieder, Toegang } from '../toegang'
 import type { ImportDag, Importactiviteit, Importbron } from '../ai'
 
@@ -603,6 +604,7 @@ export function AccountVenster(
   { account, opSluiten, opAfmelden }:
   { account: string; opSluiten: () => void; opAfmelden: () => void },
 ) {
+  const [privacy, zetPrivacy] = useState(false)
   return (
     <Venster titel="Account" opSluiten={opSluiten}>
       {/* Dezelfde onwaarheid als onder het aanmeldscherm stond, en die heb ik
@@ -620,9 +622,15 @@ export function AccountVenster(
       <Herstelcode />
       <BeheerdersHerstelcode />
       <Testerbeheer />
+      <p className="mini" style={{ marginTop: 14 }}>
+        <button type="button" className="alsLink" onClick={() => zetPrivacy(true)}>
+          Wat er van je bewaard wordt
+        </button>
+      </p>
       <Rij style={{ marginTop: 14 }}>
         <Knop opKlik={opAfmelden}>Afmelden</Knop>
       </Rij>
+      {privacy && <PrivacyVenster opSluiten={() => zetPrivacy(false)} />}
     </Venster>
   )
 }
@@ -969,6 +977,7 @@ export function Aanmelden(
      wie gewoon inlogt hoort er niet over te struikelen, en wie hem nodig heeft
      zoekt ernaar. */
   const [kwijt, zetKwijt] = useState(false)
+  const [privacy, zetPrivacy] = useState(false)
   const [code, zetCode] = useState('')
   /* AANMELDEN EN EEN WACHTWOORD ZETTEN ZIJN TWEE VERSCHILLENDE EISEN
      Wie aanmeldt mag alles intikken: wat hij heeft is wat hij heeft, ook als dat
@@ -1074,6 +1083,19 @@ export function Aanmelden(
             Wachtwoord kwijt?
           </button>
         </p>
+        {/* WAAROM DIT HIER STAAT EN NIET ALLEEN ACHTER DE INLOG
+            Een account maken is hier de toestemming. Wie die geeft hoort te
+            kunnen lezen waarvoor, en wel vóór dat moment. Een verklaring die
+            pas achter de aanmelding staat, vraagt toestemming van iemand die
+            hem nog niet heeft kunnen lezen. */}
+        <p className="mini" style={{ marginTop: 10 }}>
+          Een account maken betekent dat je gezondheidsgegevens invoert.{' '}
+          <button type="button" className="alsLink" onClick={() => zetPrivacy(true)}>
+            Lees eerst wat daarmee gebeurt
+          </button>
+          .
+        </p>
+        {privacy && <PrivacyVenster opSluiten={() => zetPrivacy(false)} />}
       </Kaart>
       {/* Hier stond dat de gegevens in het project van ProVita staan, naast de
           patiëntgegevens. Dat klopte tot 26 augustus 2026 en daarna niet meer:
