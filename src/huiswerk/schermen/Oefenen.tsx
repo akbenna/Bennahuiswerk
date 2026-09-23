@@ -222,6 +222,9 @@ export function Oefenen(p: OefenenProps): ReactNode {
       setTimeout(() => zetFeest(false), 1100)
     } else {
       zetStand('fout')
+      /* Naar het voorbeeld wijzen heeft geen zin als de doos dicht staat, dus
+         die gaat open. Alleen bij een fout, en alleen als er iets in staat. */
+      if (uitlegSleutel && UITLEG[uitlegSleutel]?.voorbeeld) zetToonUitleg(true)
       zetFoutTip(diagnoseFout(beurt, val))
       speel('fout', p.geluid)
       p.opUitslag(kaart, beurt, false, false)
@@ -484,6 +487,12 @@ export function Oefenen(p: OefenenProps): ReactNode {
                 <div style={{ textAlign: 'center', marginTop: 8 }}><Figuur ill={uitleg.ill} /></div>
               )}
               <p style={{ marginTop: 8, fontSize: 14 }}>{uitleg.tekst}</p>
+              {uitleg.voorbeeld && (
+                <>
+                  <b style={{ fontSize: 14 }}>Zo doet je boek het</b>
+                  <Regels className="boekvoorbeeld" tekst={uitleg.voorbeeld} />
+                </>
+              )}
             </>
           )}
         </div>
@@ -556,7 +565,10 @@ export function Oefenen(p: OefenenProps): ReactNode {
         )}
         {stand === 'fout' && !isExamen && (
           <div className="feedback no">
-            Nog niet: kijk nog eens, of open een hint. Je kunt het! 💪
+            {uitleg?.voorbeeld
+              ? 'Nog niet. Kijk even hierboven bij Even opfrissen: daar staat dezelfde soort '
+                + 'som uitgewerkt, net als in je boek. Je kunt het! 💪'
+              : 'Nog niet: kijk nog eens, of open een hint. Je kunt het! 💪'}
             {foutTip && <div style={{ marginTop: 8, fontWeight: 600 }}>💡 {foutTip}</div>}
           </div>
         )}

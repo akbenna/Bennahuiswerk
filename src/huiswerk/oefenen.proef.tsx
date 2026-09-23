@@ -24,6 +24,7 @@ import type { Kaart, Opgave } from './gegevens/soorten'
 import type { Voortgang } from './opslag'
 import { leegVoortgang, schoonVoortgang } from './opslag'
 import { verwerkAntwoord } from './uitslag'
+import { UITLEG } from './gegevens/uitleg'
 import { ECHT } from './toeval'
 
 /** Vier sommen in één onderwerp, verdeeld over drie niveaus, de vorm waarin
@@ -313,5 +314,118 @@ describe('de moeilijkheid instellen', () => {
     )
     expect(screen.getByText(/Vast op niveau 3/)).toBeTruthy()
     expect(screen.getByText(/Terugrekenen/)).toBeTruthy()
+  })
+})
+
+/**
+ * HET VERTROUWEN VAN EEN KIND DAT DIT VAK MOEILIJK VINDT
+ *
+ * Wassima doet 2 havo over en is onzeker over rekenen met letters. Twee dingen
+ * in de app werkten daar tegenin, en allebei zijn ze veranderd.
+ *
+ * Het eerste was het niveau. Dat zakte bij de éérste fout een trede. Voor wie
+ * al denkt dit niet te kunnen is dat geen bijsturing maar een bevestiging: je
+ * mist er een, en de app zet je meteen terug. Een losse misser hoort bij
+ * oefenen. Twee op rij is wél een signaal, en dan zakt hij nog steeds.
+ *
+ * Het tweede was dat opzoeken hoe het moet geld kostte. Een hint haalt de
+ * beurt van tien punten naar vijf. Daarom staat de uitgewerkte som uit haar
+ * eigen boek nu gratis in de doos boven de opgave, en wijst het scherm er na
+ * een fout naartoe in plaats van alleen te zeggen dat het niet goed was.
+ */
+describe('een fout mag geen trede kosten', () => {
+  const beurt = (id: string) => ({
+    kaart: { id, p: 'wassima', v: 'wiskunde', t: 'Machten delen', q: 'q', a: 'a' } as Kaart,
+    beurt: { id, p: 'wassima', v: 'wiskunde', t: 'Machten delen', q: 'q', a: 'a' },
+  })
+  const na = (start: Voortgang, uitslagen: boolean[]): Voortgang => {
+    let pr = start
+    uitslagen.forEach((goed, i) => {
+      const b = beurt('k' + i)
+      pr = verwerkAntwoord(pr, { kaart: b.kaart, beurt: b.beurt, goed, hintGebruikt: false },
+        new Date())
+    })
+    return pr
+  }
+  const opTwee = (): Voortgang => ({ ...vers('auto'), autoLvl: 2 })
+
+  it('laat het niveau staan na één fout', () => {
+    expect(na(opTwee(), [false]).autoLvl).toBe(2)
+  })
+
+  it('zakt wel na twee fouten achter elkaar', () => {
+    expect(na(opTwee(), [false, false]).autoLvl).toBe(1)
+  })
+
+  it('telt de fouten niet op als er een goede tussen zit', () => {
+    /* Fout, goed, fout is geen reeks van twee. Anders zou een kind dat om en
+       om werkt alsnog stukje bij beetje worden teruggezet. */
+    expect(na(opTwee(), [false, true, false]).autoLvl).toBe(2)
+  })
+
+  it('klimt nog steeds pas na drie goede antwoorden', () => {
+    expect(na(vers('auto'), [true, true]).autoLvl).toBe(1)
+    expect(na(vers('auto'), [true, true, true]).autoLvl).toBe(2)
+  })
+
+  it('zakt nooit onder niveau 1', () => {
+    expect(na(vers('auto'), [false, false, false, false]).autoLvl).toBe(1)
+  })
+})
+
+describe('de uitgewerkte som uit de methode', () => {
+  const HOOFDSTUK1 = ['Het omgekeerde van een getal', 'Delen door een breuk',
+    'Breuken met letters', 'Machten vermenigvuldigen', 'Gelijksoortige termen',
+    'Macht van een macht', 'Macht van een product', 'Machten delen']
+
+  it('staat bij elk onderwerp van hoofdstuk 1', () => {
+    for (const t of HOOFDSTUK1) {
+      expect(UITLEG[t]?.voorbeeld, t).toBeTruthy()
+      /* Stap voor stap, dus met regels onder elkaar en niet één zin. */
+      expect((UITLEG[t]?.voorbeeld ?? '').split('\n').length, t).toBeGreaterThan(3)
+    }
+  })
+
+  it('staat op het oefenscherm, zonder dat er een hint voor nodig is', () => {
+    render(
+      <Oefenen
+        pid="wassima" vak="wiskunde" onderwerp="Machten delen" jaar="nu"
+        alle={[{ id: 'm1', p: 'wassima', v: 'wiskunde', t: 'Machten delen', lvl: 1,
+          q: 'Herleid: a¹² ÷ a⁷', a: 'a⁵' }] as Kaart[]}
+        prog={vers('auto')} thema={themaVan('wassima')} geluid={false} voorlezen={false}
+        toeval={ECHT}
+        terug={() => { /* niet nodig */ }}
+        naarOnderwerp={() => { /* niet nodig */ }}
+        opUitslag={() => { /* niet nodig */ }}
+        opToets={() => { /* niet nodig */ }}
+      />,
+    )
+    const doos = document.querySelector('.boekvoorbeeld')
+    expect(doos).not.toBeNull()
+    expect(doos?.textContent).toContain('12a')
+    /* En er is niets aangeklikt om hem te zien. */
+    expect(screen.queryByText(/Hint 1:/)).toBeNull()
+  })
+
+  it('wijst er na een fout naartoe in plaats van alleen nee te zeggen', () => {
+    render(
+      <Oefenen
+        pid="wassima" vak="wiskunde" onderwerp="Machten delen" jaar="nu"
+        alle={[{ id: 'm1', p: 'wassima', v: 'wiskunde', t: 'Machten delen', lvl: 1,
+          q: 'Herleid: a¹² ÷ a⁷', a: 'a⁵' }] as Kaart[]}
+        prog={vers('auto')} thema={themaVan('wassima')} geluid={false} voorlezen={false}
+        toeval={ECHT}
+        terug={() => { /* niet nodig */ }}
+        naarOnderwerp={() => { /* niet nodig */ }}
+        opUitslag={() => { /* niet nodig */ }}
+        opToets={() => { /* niet nodig */ }}
+      />,
+    )
+    act(() => { fireEvent.change(screen.getByPlaceholderText('jouw antwoord'),
+      { target: { value: 'a9' } }) })
+    act(() => { fireEvent.click(screen.getByText('Nakijken')) })
+    expect(document.querySelector('.feedback.no')?.textContent).toContain('net als in je boek')
+    /* En de doos staat open, anders is wijzen zinloos. */
+    expect(document.querySelector('.boekvoorbeeld')).not.toBeNull()
   })
 })
