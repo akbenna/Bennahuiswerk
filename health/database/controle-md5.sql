@@ -46,6 +46,7 @@
 with verwacht (functie, uit_bestand, md5_repo) as (
   values
     ('kal_aanmelden'::text, '51-het-slot-dat-een-scherm-was.sql'::text, '8af6dd1104c2269af8cc3ce781e6e9e7'::text),
+    ('kal_account_wissen', '52-je-gegevens-weghalen.sql', '9b19c4828d7cd1bf4db860bbaff78688'),
     ('kal_afmelden', '50-de-negen-die-er-nog-niet-stonden.sql', '18fee428b7eca1cc723cc424d8b44391'),
     ('kal_ai_toegestaan', '49-een-eigen-sleutel-in-de-vault.sql', '755196a65570de752db4cc1f3769beab'),
     ('kal_ben_ik_beheerder', '41-de-beheerder-op-het-scherm.sql', '243c3bb34424abb6433fc8c9d6708465'),
@@ -94,6 +95,7 @@ with verwacht (functie, uit_bestand, md5_repo) as (
     ('kal_sleutel_voor', '49-een-eigen-sleutel-in-de-vault.sql', '3a993afae164e7c304604e0cf28fc5a9'),
     ('kal_sleutel_weghalen', '49-een-eigen-sleutel-in-de-vault.sql', '3535d5346fcbeaa6332d465f7be034a9'),
     ('kal_sleutel_zetten', '49-een-eigen-sleutel-in-de-vault.sql', 'ab554e9cbac14a5ff830b568c3847918'),
+    ('kal_tester_wissen', '52-je-gegevens-weghalen.sql', '93399af7c76a202939727ae146d3a6d5'),
     ('kal_tester_zetten', '51-het-slot-dat-een-scherm-was.sql', 'b5a28467721edc28c1ff65f60507d402'),
     ('kal_testers', '49-een-eigen-sleutel-in-de-vault.sql', '7da0a83caa8adbac866d25a48e81ca0b'),
     ('kal_verzadiging', '37-fijner-dan-een-groep.sql', '06d1cccc04c19755174d281a789020e8'),

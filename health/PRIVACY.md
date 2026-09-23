@@ -1,6 +1,6 @@
 # Privacyverklaring BennaHealth
 
-Nagelopen tegen de code op 23 september 2026. Vragen gaan naar a.benna@outlook.com.
+Nagelopen tegen de code op 23 september 2026. Vragen gaan naar info@provita-vare.nl.
 
 Deze tekst wordt geschreven uit `src/health/privacy.ts` met
 `node gereedschap/privacy-schrijven.mjs`. Pas hem daar aan en niet hier,
@@ -10,7 +10,7 @@ anders valt `src/health/privacy.proef.ts` om.
 
 BennaHealth is geen dienst maar een besloten test. De app meet je energieverbruik uit je gewichtstrend in plaats van het te schatten uit een formule, en daarvoor heeft hij gegevens van je nodig die als gezondheidsgegevens gelden. Deze tekst zegt welke dat zijn, waar ze heen gaan en wat je ermee kunt.
 
-Verantwoordelijk voor die gegevens is de beheerder van deze test, te bereiken op a.benna@outlook.com. Hij is huisarts, en dat is hier niet van belang: je bent geen patiënt en dit is geen zorg. Wat je hier invult komt niet in een dossier en wordt niet met een zorgverlener gedeeld.
+Verantwoordelijk voor die gegevens is de beheerder van deze test, te bereiken op info@provita-vare.nl. Hij is huisarts, en dat is hier niet van belang: je bent geen patiënt en dit is geen zorg. Wat je hier invult komt niet in een dossier en wordt niet met een zorgverlener gedeeld.
 
 ## Wat er van je wordt bewaard
 
@@ -48,17 +48,23 @@ Verder niemand. Er wordt niets verkocht, niets gedeeld met adverteerders, en er 
 
 ## Hoe lang
 
-Zolang je meedoet aan de test. Vraag je erom, dan gaat het eerder weg.
+Zolang je meedoet, en daarna nog drie maanden. Stop je met de test, of stopt de test zelf, dan worden je gegevens uiterlijk drie maanden later verwijderd.
+
+Die drie maanden zijn er zodat je erop terug kunt komen: wie halverwege stopt en na een maand toch verder wil, hoeft niet opnieuw te beginnen. Wil je niet zo lang wachten, dan haal je ze eerder weg; dat kan meteen en het kost je niets.
 
 Je aanmelding op een toestel verloopt na dertig dagen; daarna moet je opnieuw je wachtwoord invullen. Dat is iets anders dan je gegevens, die blijven staan.
 
-Stopt de test, dan worden de gegevens van de testers verwijderd. Wil je ze zelf houden, vraag er dan om voordat dat gebeurt; je krijgt ze dan in een bestand.
+Wil je je gegevens zelf houden, vraag er dan om voordat ze weggaan; je krijgt ze dan in een bestand.
 
 ## Wat je kunt vragen
 
 Inzage in wat er van je bewaard wordt, een kopie ervan in een bestand, correctie van wat niet klopt, en verwijdering van alles. Ook kun je bezwaar maken en je toestemming intrekken.
 
-Dat gaat per bericht aan a.benna@outlook.com en er zit geen knop in de app voor. Dat is geen onwil maar de stand van zaken, en het staat er zo omdat een knop beloven die er niet is erger is dan hem niet hebben. Je krijgt binnen een week antwoord en je hoeft geen reden op te geven.
+Verwijderen doe je zelf, onder Account. De app laat eerst zien wat er precies weg zou gaan, per soort gegeven en met aantallen, en pas daarna verdwijnt het. Je vult je wachtwoord er nog een keer bij in, zodat een telefoon die even in een andere hand ligt niet genoeg is. Er is geen prullenbak: wat weg is, is weg.
+
+Eén ding overleeft dat, en dat hoort hier te staan: er blijft een aantekening dat op die dag een account is verwijderd, met de naam van dat account erin. Zonder die aantekening is niet na te gaan dat het gebeurd is, ook niet door jou.
+
+De andere vragen gaan per bericht aan info@provita-vare.nl. Je krijgt binnen een week antwoord en je hoeft geen reden op te geven. Ben je je wachtwoord kwijt en wil je weg, vraag het dan ook zo; de beheerder kan het dan voor je doen.
 
 Ben je het ergens niet mee eens en komen we er samen niet uit, dan kun je klagen bij de Autoriteit Persoonsgegevens.
 

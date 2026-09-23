@@ -90,13 +90,24 @@ describe('wat er niet in mag staan', () => {
      zin staan die er een suggereert. Valt deze proef om omdat de knop er
      inmiddels wél is, dan hoort de zin hier veranderd te worden en niet de
      proef weggehaald. */
-  it('belooft geen knop die er niet is', () => {
-    const alles = platteTekst().toLowerCase()
-    for (const zin of ['met één knop', 'via de app verwijderen', 'zelf verwijderen',
-                       'knop om je gegevens']) {
-      expect(alles, zin).not.toContain(zin)
-    }
-    expect(alles).toContain('er zit geen knop in de app voor')
+  it('belooft niets over verwijderen wat de app niet doet', () => {
+    const alles = platteTekst()
+
+    /* Deze proef stond er eerst omgekeerd in: toen was er geen knop, en mocht
+       er geen zin staan die er een suggereerde. Bestand 52 maakte de knop, dus
+       draait de proef mee. Wat hetzelfde blijft is wat hij bewaakt: de tekst
+       mag niet meer beloven dan er gebeurt.
+
+       Drie dingen doet de app werkelijk, en alle drie horen er te staan, want
+       ze bepalen of iemand durft te tikken: hij laat eerst zien wat er weggaat,
+       hij vraagt het wachtwoord opnieuw, en er is geen weg terug. */
+    expect(alles).toContain('laat eerst zien wat er precies weg zou gaan')
+    expect(alles).toContain('wachtwoord er nog een keer bij')
+    expect(alles).toContain('geen prullenbak')
+
+    /* En het ene dat níet verdwijnt. Een verklaring die "alles wordt
+       verwijderd" zegt terwijl er een aantekening blijft staan, klopt niet. */
+    expect(alles).toContain('blijft een aantekening')
   })
 
   /* De lijst met testers bevat geen gezondheidsgegeven, en dat staat in de

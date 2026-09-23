@@ -458,6 +458,17 @@ export interface RpcKaart {
     uit: { aanbieder: string; staart: string } | { fout: string }
   }
   kal_sleutel_weghalen: { in: { p_token: string }; uit: { weg: boolean } }
+  /* Je gegevens weghalen, bestand 52. `p_echt` staat standaard uit: dan telt
+     hij alleen en verandert er niets. Dat is geen voorzichtigheid maar het
+     ontwerp, want er is geen prullenbak. */
+  kal_account_wissen: {
+    in: { p_token: string; p_ww: string; p_echt?: boolean }
+    uit: Wisuitslag | { fout: string }
+  }
+  kal_tester_wissen: {
+    in: { p_token: string; p_ww: string; p_account: string; p_echt?: boolean }
+    uit: Wisuitslag | { fout: string }
+  }
   kal_testers: { in: { p_token: string }; uit: Tester[] | { fout: string } }
   kal_tester_zetten: {
     in: {
@@ -669,4 +680,13 @@ export interface Tester {
   /** Gerekend met een vast Sonnet-tarief; zie de kop van bestand 48. */
   maand_usd: number
   laatst_actief: string | null
+}
+
+/** Wat er weg zou gaan, of weg is. Zie bestand 52. */
+export interface Wisuitslag {
+  gewist: boolean
+  account: string
+  totaal: number
+  /** Per tabel het aantal rijen. De namen zijn die van de database. */
+  per_tabel: Record<string, number | string>
 }

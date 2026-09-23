@@ -29,14 +29,20 @@
  *
  * WAT ER MET OPZET NIET IN STAAT
  *
- * Geen enkele zin die de app niet waarmaakt. Er staat dus niet "je kunt je
- * gegevens met één knop verwijderen", want die knop is er niet; er staat hoe
- * het wél gaat. Een privacyverklaring die rechten belooft die je niet kunt
- * uitoefenen is erger dan geen, want hij wekt vertrouwen dat nergens op rust.
+ * Geen enkele zin die de app niet waarmaakt. Een privacyverklaring die rechten
+ * belooft die je niet kunt uitoefenen is erger dan geen, want hij wekt
+ * vertrouwen dat nergens op rust.
+ *
+ * Toen dit bestand geschreven werd, was verwijderen zo'n recht: er was geen
+ * knop, dus stond er dat het per bericht ging. Bestand 52 maakte de knop, en
+ * toen is de tekst meegedraaid, niet andersom. De proef ernaast bewaakt nu de
+ * drie dingen die de knop werkelijk doet (eerst tonen, wachtwoord erbij, geen
+ * weg terug) én het ene dat níet verdwijnt: de aantekening dát er gewist is.
+ * "Alles wordt verwijderd" zou daarmee niet kloppen.
  */
 
 /** Wie aanspreekbaar is. Eén regel, en hij staat hier zodat hij op één plek staat. */
-export const CONTACT = 'a.benna@outlook.com'
+export const CONTACT = 'info@provita-vare.nl'
 
 /** De dag waarop deze tekst voor het laatst is nagelopen tegen de code. */
 export const NAGEKEKEN = '23 september 2026'
@@ -121,11 +127,15 @@ export const PRIVACY: readonly Stuk[] = [
   {
     kop: 'Hoe lang',
     alineas: [
-      'Zolang je meedoet aan de test. Vraag je erom, dan gaat het eerder weg.',
+      'Zolang je meedoet, en daarna nog drie maanden. Stop je met de test, of stopt de '
+      + 'test zelf, dan worden je gegevens uiterlijk drie maanden later verwijderd.',
+      'Die drie maanden zijn er zodat je erop terug kunt komen: wie halverwege stopt en '
+      + 'na een maand toch verder wil, hoeft niet opnieuw te beginnen. Wil je niet zo '
+      + 'lang wachten, dan haal je ze eerder weg; dat kan meteen en het kost je niets.',
       'Je aanmelding op een toestel verloopt na dertig dagen; daarna moet je opnieuw je '
       + 'wachtwoord invullen. Dat is iets anders dan je gegevens, die blijven staan.',
-      'Stopt de test, dan worden de gegevens van de testers verwijderd. Wil je ze zelf '
-      + 'houden, vraag er dan om voordat dat gebeurt; je krijgt ze dan in een bestand.',
+      'Wil je je gegevens zelf houden, vraag er dan om voordat ze weggaan; je krijgt ze '
+      + 'dan in een bestand.',
     ],
   },
   {
@@ -134,10 +144,16 @@ export const PRIVACY: readonly Stuk[] = [
       'Inzage in wat er van je bewaard wordt, een kopie ervan in een bestand, correctie '
       + 'van wat niet klopt, en verwijdering van alles. Ook kun je bezwaar maken en je '
       + 'toestemming intrekken.',
-      'Dat gaat per bericht aan ' + CONTACT + ' en er zit geen knop in de app voor. Dat is '
-      + 'geen onwil maar de stand van zaken, en het staat er zo omdat een knop beloven die '
-      + 'er niet is erger is dan hem niet hebben. Je krijgt binnen een week antwoord en je '
-      + 'hoeft geen reden op te geven.',
+      'Verwijderen doe je zelf, onder Account. De app laat eerst zien wat er precies weg '
+      + 'zou gaan, per soort gegeven en met aantallen, en pas daarna verdwijnt het. Je '
+      + 'vult je wachtwoord er nog een keer bij in, zodat een telefoon die even in een '
+      + 'andere hand ligt niet genoeg is. Er is geen prullenbak: wat weg is, is weg.',
+      'Eén ding overleeft dat, en dat hoort hier te staan: er blijft een aantekening dat '
+      + 'op die dag een account is verwijderd, met de naam van dat account erin. Zonder '
+      + 'die aantekening is niet na te gaan dat het gebeurd is, ook niet door jou.',
+      'De andere vragen gaan per bericht aan ' + CONTACT + '. Je krijgt binnen een week '
+      + 'antwoord en je hoeft geen reden op te geven. Ben je je wachtwoord kwijt en wil '
+      + 'je weg, vraag het dan ook zo; de beheerder kan het dan voor je doen.',
       'Ben je het ergens niet mee eens en komen we er samen niet uit, dan kun je klagen '
       + 'bij de Autoriteit Persoonsgegevens.',
     ],
