@@ -20,6 +20,7 @@ import { KLASSEN, SCHOOLJAAR, jaarNu, naarDitJaar } from './gegevens/schooljaar'
 import { NIEUW2627 } from './gegevens/schooljaar2627'
 import { SEED } from './gegevens/seed'
 import { sjablonen } from './gegevens/sjablonen'
+import { MIN_VOORRAAD, opNiveau } from './leitner'
 import type { Kaart } from './gegevens/soorten'
 
 describe('wie er dit schooljaar in welke klas zit', () => {
@@ -398,7 +399,7 @@ describe('de uitbreiding voor Wassima bij wiskunde en natuurkunde', () => {
   it('rekent de procenten, vergelijkingen en formules na', () => {
     expect(g('250 leerlingen doet 36%')).toBe(250 * 0.36)
     expect(g('na 30% korting € 63')).toBe(63 / 0.7)
-    expect(g('twee jaar achter elkaar met 10%')).toBeCloseTo((1.1 ** 2 - 1) * 100, 10)
+    expect(g('groeit twee jaar achter elkaar met 10%')).toBeCloseTo((1.1 ** 2 - 1) * 100, 10)
     expect(g('eerst 20% duurder')).toBeCloseTo(500 * 1.2 * 0.8, 10)
     expect(g('x − 9 = 4')).toBe(4 + 9)
     expect(g('x ÷ 3 = 7')).toBe(7 * 3)
@@ -472,7 +473,7 @@ describe('de uitbreiding voor Wassima bij wiskunde en natuurkunde', () => {
     expect(g('230 V gebruikt 0,5 A')).toBe(230 * 0.5)
     expect(g('25 Ω loopt een stroom van 0,8 A')).toBe(0.8 * 25)
     expect(g('4 Ω en 6 Ω staan in serie')).toBe(4 + 6)
-    expect(g('6 Ω staan parallel')).toBe(1 / (1 / 6 + 1 / 6))
+    expect(g('van 6 Ω staan parallel')).toBe(1 / (1 / 6 + 1 / 6))
     expect(g('onder 30° met de normaal')).toBe(30)
     expect(g('65° met het spiegeloppervlak')).toBe(90 - 65)
     expect(g('donder 6 s na de bliksem')).toBe(340 * 6)
@@ -502,13 +503,79 @@ describe('de uitbreiding voor Wassima bij wiskunde en natuurkunde', () => {
   })
 
   it('heeft haar voorraad bij allebei de vakken meer dan verdubbeld', () => {
-    /* Vóór de uitbreiding stonden er bij wiskunde achtenzestig vaste opgaven en
-       bij natuurkunde vijfenveertig (de sjablonen komen daar nog bovenop). Een
-       getal dat alleen maar groeit zegt weinig; deze grenzen zeggen dat de
-       aanvulling er nog steeds is en niet half is teruggedraaid. */
+    /* Vóór de eerste uitbreiding stonden er bij wiskunde achtenzestig vaste
+       opgaven en bij natuurkunde vijfenveertig (de sjablonen komen daar nog
+       bovenop). Een getal dat alleen maar groeit zegt weinig; deze grenzen
+       zeggen dat de aanvulling er nog steeds is en niet half is teruggedraaid. */
     const tel = (vak: string): number => [...SEED, ...NIEUW2627]
       .filter((e) => e.p === 'wassima' && e.v === vak && (e.jaar ?? 'nu') === 'nu').length
-    expect(tel('wiskunde')).toBeGreaterThanOrEqual(130)
-    expect(tel('natuurkunde')).toBeGreaterThanOrEqual(100)
+    expect(tel('wiskunde')).toBeGreaterThanOrEqual(230)
+    expect(tel('natuurkunde')).toBeGreaterThanOrEqual(240)
+  })
+})
+
+/**
+ * DE NIVEAUKNOP MOET OOK IETS DÓEN
+ *
+ * "Vast op 3" beloofde moeilijker werk en leverde dat niet. `opNiveau` houdt
+ * een ondergrens van zes sommen aan (`MIN_VOORRAAD`) en schuift de buurniveaus
+ * erbij zodra dat ene niveau er minder heeft. Geen enkel onderwerp van Wassima
+ * hád er zes op één niveau, dus die buurniveaus schoven altijd mee — en omdat
+ * er onder niveau 3 alleen makkelijker werk ligt, werd "moeilijk" in de praktijk
+ * een stapel waarin niveau 2 in de meerderheid was. Bij Geluid, Druk en
+ * Elektrische schakelingen gaven 1, 2 en 3 zelfs exact dezelfde stapel.
+ *
+ * Deze proef staat op de belofte en niet op de aantallen: wat komt er uit
+ * `opNiveau` als je een niveau kiest. Zes per onderwerp per niveau is het
+ * middel, dit is het doel.
+ */
+describe('een vast niveau geeft Wassima ook echt dat niveau', () => {
+  const nep = { ri: (a: number) => a, pick: <T,>(x: readonly T[]) => x[0] as T,
+    shuffle: <T,>(x: readonly T[]) => [...x] }
+  const hare = [...SEED, ...NIEUW2627, ...sjablonen(nep)]
+    .filter((e) => e.p === 'wassima' && (e.jaar ?? 'nu') === 'nu')
+    .filter((e) => e.v === 'wiskunde' || e.v === 'natuurkunde')
+
+  const perOnderwerp = new Map<string, Kaart[]>()
+  for (const e of hare) {
+    const sleutel = `${e.v} · ${e.t}`
+    perOnderwerp.set(sleutel, [...(perOnderwerp.get(sleutel) ?? []), e as Kaart])
+  }
+
+  it('heeft achtentwintig onderwerpen bij die twee vakken', () => {
+    expect(perOnderwerp.size).toBe(28)
+  })
+
+  it('levert bij elk onderwerp op elk niveau alleen sommen van dát niveau', () => {
+    const vies: string[] = []
+    for (const [sleutel, lijst] of perOnderwerp) {
+      for (const n of [1, 2, 3] as const) {
+        const uit = opNiveau(lijst, n)
+        const mis = uit.filter((k) => (k.lvl ?? 1) !== n).length
+        if (mis) vies.push(`${sleutel} · vast op ${n}: ${mis} van de ${uit.length} ernaast`)
+      }
+    }
+    expect(vies).toEqual([])
+  })
+
+  it('houdt op elk niveau genoeg over om een sessie mee te vullen', () => {
+    /* De ondergrens van `opNiveau` zelf. Zakt een onderwerp hieronder, dan
+       schuiven de buurniveaus er weer bij en is de belofte hierboven stil weg. */
+    for (const [sleutel, lijst] of perOnderwerp) {
+      for (const n of [1, 2, 3] as const) {
+        expect(opNiveau(lijst, n).length, `${sleutel} · niveau ${n}`)
+          .toBeGreaterThanOrEqual(MIN_VOORRAAD)
+      }
+    }
+  })
+
+  it('geeft bij drie verschillende niveaus ook drie verschillende stapels', () => {
+    /* Bij Geluid, Druk en Elektrische schakelingen was dat niet zo: daar kwam
+       er bij 1, 2 en 3 dezelfde stapel uit. */
+    for (const [sleutel, lijst] of perOnderwerp) {
+      const stapels = [1, 2, 3].map((n) =>
+        opNiveau(lijst, n as 1 | 2 | 3).map((k) => k.id).sort().join(','))
+      expect(new Set(stapels).size, sleutel).toBe(3)
+    }
   })
 })

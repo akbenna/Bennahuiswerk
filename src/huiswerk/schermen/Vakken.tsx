@@ -53,6 +53,61 @@ export interface VakkenProps {
   naarLeerscan: () => void
 }
 
+/** Wat elk niveau betekent, in één regel. Zonder dit is "niveau 3" een cijfer
+ *  en geen keuze — een ouder kan dan niet zien wat hij aanzet. */
+const NIVEAUS: Array<[Exclude<Voortgang['niveau'], 'auto'>, string, string]> = [
+  [1, '1 · makkelijk', 'Eén stap, met de getallen die er staan.'],
+  [2, '2 · middel', 'Twee stappen, of eerst iets omrekenen.'],
+  [3, '3 · moeilijk', 'Terugrekenen, of een som met een adder onder het gras.'],
+]
+
+/**
+ * DE NIVEAUKNOP, WAAR JE HEM NODIG HEBT
+ *
+ * Hij stond onderin de dichtgeklapte kaart "Mijn voortgang", tussen de rangen
+ * en de badges. Daar hoort hij niet: dit is geen behaalde stand om naar te
+ * kijken maar een knop die bepaalt wát je de komende tien sommen krijgt. Dus
+ * staat hij nu onder de onderwerpen, waar je hem pakt vlak voordat je begint.
+ */
+function Niveaukiezer(
+  { prog, zetNiveau }: { prog: Voortgang; zetNiveau: (n: Voortgang['niveau']) => void },
+): ReactNode {
+  const vast = NIVEAUS.find(([n]) => n === prog.niveau)
+  return (
+    <div className="card" style={{ marginTop: 14 }}>
+      <div className="row" style={{ justifyContent: 'space-between' }}>
+        <b>🎚️ Moeilijkheid</b>
+        <span className="muted" style={{ fontSize: 13 }}>
+          {prog.niveau === 'auto'
+            ? `Automatisch — nu niveau ${prog.autoLvl || 1}`
+            : `Vast op niveau ${prog.niveau}`}
+        </span>
+      </div>
+      <div className="wrap" style={{ marginTop: 10 }}>
+        <button
+          type="button"
+          className={'btn sm ' + (prog.niveau === 'auto' ? '' : 'ghost')}
+          onClick={() => zetNiveau('auto')}
+        >Auto</button>
+        {NIVEAUS.map(([n, label]) => (
+          <button
+            type="button" key={n}
+            className={'btn sm ' + (prog.niveau === n ? '' : 'ghost')}
+            onClick={() => zetNiveau(n)}
+          >{label}</button>
+        ))}
+      </div>
+      <p className="muted" style={{ fontSize: 12, marginTop: 8 }}>
+        {vast
+          ? `${vast[2]} Elk onderwerp heeft zes sommen op dit niveau, dus je krijgt ze ook echt `
+            + 'allemaal van niveau ' + vast[0] + '.'
+          : 'Het gaat vanzelf een tikje omhoog na drie goede antwoorden, en weer omlaag als het '
+            + 'even niet lukt. Wil je zelf kiezen, tik dan op 1, 2 of 3.'}
+      </p>
+    </div>
+  )
+}
+
 export function Vakken(p: VakkenProps): ReactNode {
   const P = PROFIELEN[p.pid]
   const [jaar, zetJaar] = useState('nu')
@@ -246,6 +301,8 @@ export function Vakken(p: VakkenProps): ReactNode {
         )
       })}
 
+      <Niveaukiezer prog={p.prog} zetNiveau={p.zetNiveau} />
+
       <Klapkaart
         titel="📈 Mijn voortgang"
         zij={`${rang.emoji} ${rang.naam}${b && !b.betaald && b.bedrag > 0 ? ' · ' + euro(b.bedrag) + ' vandaag' : ''}`}
@@ -335,33 +392,6 @@ export function Vakken(p: VakkenProps): ReactNode {
               type="button" className="btn ghost sm" onClick={() => p.zetDoel(Math.min(40, doel + 5))}
             >+</button>
           </div>
-        </div>
-
-        <div className="card">
-          <div className="row" style={{ justifyContent: 'space-between' }}>
-            <b>📈 Niveau</b>
-            <span className="muted" style={{ fontSize: 13 }}>
-              {p.prog.niveau === 'auto'
-                ? `Automatisch (nu niveau ${p.prog.autoLvl || 1})`
-                : `Vast op niveau ${p.prog.niveau}`}
-            </span>
-          </div>
-          <div className="wrap" style={{ marginTop: 10 }}>
-            {([['auto', 'Auto'], [1, '1 · makkelijk'], [2, '2 · middel'], [3, '3 · moeilijk']] as
-              Array<[Voortgang['niveau'], string]>).map(([v, label]) => (
-              <button
-                type="button" key={String(v)}
-                className={'btn sm ' + (p.prog.niveau === v ? '' : 'ghost')}
-                onClick={() => p.zetNiveau(v)}
-              >{label}</button>
-            ))}
-          </div>
-          <p className="muted" style={{ fontSize: 12, marginTop: 8 }}>
-            {p.prog.niveau === 'auto'
-              ? 'Bij Auto wordt het vanzelf een tikje moeilijker als het goed gaat, en makkelijker '
-                + 'als het even niet lukt.'
-              : 'Bij een vast niveau krijg je vooral oefeningen van dat niveau.'}
-          </p>
         </div>
 
         <div className="card">

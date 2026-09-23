@@ -235,3 +235,83 @@ describe('de formulekaart bij het oefenen', () => {
     expect(formulesVoor('lezen')).toEqual([])
   })
 })
+
+/**
+ * DE MOEILIJKHEIDSKNOP MOET TE VINDEN ZIJN
+ *
+ * Hij bestond al, maar stond onderin de dichtgeklapte kaart "Mijn voortgang",
+ * tussen de rangen en de badges. Wie hem niet toevallig kende, kwam hem nooit
+ * tegen. Dit is geen behaalde stand maar een knop die bepaalt wát de komende
+ * tien sommen zijn, dus hij hoort bij de onderwerpen te staan.
+ *
+ * Een grep zou dit niet vangen: de knoppen stónden er, alleen achter een
+ * `<details>` die dicht begint.
+ */
+function vakkenscherm(opNiveau: (n: Voortgang['niveau']) => void): void {
+  render(
+    <Vakken
+      pid="wassima" prog={vers('auto')} alle={natuurkundeStapel as Kaart[]}
+      vak="natuurkunde" thema={themaVan('wassima')} nuMs={Date.now()} weektaak={[]}
+      wedstrijdAan={false} spelNaDoel={false}
+      zetVak={() => { /* niet nodig */ }}
+      terug={() => { /* niet nodig */ }}
+      naarOnderwerp={() => { /* niet nodig */ }}
+      zetDoel={() => { /* niet nodig */ }}
+      zetNiveau={opNiveau}
+      naarWedstrijd={() => { /* niet nodig */ }}
+      naarSpellen={() => { /* niet nodig */ }}
+      opVraag={() => { /* niet nodig */ }}
+      naarLeerscan={() => { /* niet nodig */ }}
+    />,
+  )
+}
+
+describe('de moeilijkheid instellen', () => {
+  it('staat op het vakkenscherm zelf, niet achter een dichtgeklapte kaart', () => {
+    vakkenscherm(() => { /* alleen kijken */ })
+    const knop = screen.getByText('3 · moeilijk')
+    expect(knop.closest('details')).toBeNull()
+    /* En de meting zelf klopt: wat wél achter de klapkaart hoort, zit er ook
+       achter. Zonder deze regel zou de proef hierboven ook slagen als er op dit
+       scherm helemaal geen `<details>` meer stond. */
+    expect(screen.getByText('Badges').closest('details')).not.toBeNull()
+  })
+
+  it('biedt auto en alle drie de niveaus', () => {
+    vakkenscherm(() => { /* alleen kijken */ })
+    for (const label of ['Auto', '1 · makkelijk', '2 · middel', '3 · moeilijk']) {
+      expect(screen.getByText(label), label).toBeTruthy()
+    }
+  })
+
+  it('geeft het gekozen niveau door', () => {
+    const gezet: Array<Voortgang['niveau']> = []
+    vakkenscherm((n) => gezet.push(n))
+    act(() => { fireEvent.click(screen.getByText('3 · moeilijk')) })
+    act(() => { fireEvent.click(screen.getByText('Auto')) })
+    expect(gezet).toEqual([3, 'auto'])
+  })
+
+  it('zegt bij elk niveau waar het voor staat', () => {
+    /* "Niveau 3" is een cijfer, geen keuze: zonder uitleg kan een ouder niet
+       zien wat hij aanzet. */
+    render(
+      <Vakken
+        pid="wassima" prog={{ ...vers('auto'), niveau: 3 }} alle={natuurkundeStapel as Kaart[]}
+        vak="natuurkunde" thema={themaVan('wassima')} nuMs={Date.now()} weektaak={[]}
+        wedstrijdAan={false} spelNaDoel={false}
+        zetVak={() => { /* niet nodig */ }}
+        terug={() => { /* niet nodig */ }}
+        naarOnderwerp={() => { /* niet nodig */ }}
+        zetDoel={() => { /* niet nodig */ }}
+        zetNiveau={() => { /* niet nodig */ }}
+        naarWedstrijd={() => { /* niet nodig */ }}
+        naarSpellen={() => { /* niet nodig */ }}
+        opVraag={() => { /* niet nodig */ }}
+        naarLeerscan={() => { /* niet nodig */ }}
+      />,
+    )
+    expect(screen.getByText(/Vast op niveau 3/)).toBeTruthy()
+    expect(screen.getByText(/Terugrekenen/)).toBeTruthy()
+  })
+})
