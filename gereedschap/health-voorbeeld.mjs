@@ -612,7 +612,15 @@ async function bedienDb(pagina, dagen, fase) {
     const lijf = fn === 'kal_ophalen' ? alles(dagen, fase)
       : fn === 'kal_maaltijden' ? MAALTIJDEN
       : fn === 'kal_zoeken'
-        ? {
+        ? (/eiwitpoeder/i.test(route.request().postData() ?? '')
+          /* ALLEEN MERKTREFFERS, EN DAT IS HET GEVAL DAT ERTOE DOET
+             Sportvoeding staat niet in de voedingsmiddelentabel, dus wie een
+             shake of een eiwitreep zoekt krijgt uit de database precies dit
+             terug: vier lege emmers en één volle. Zolang een scherm de merken
+             niet tekende was dit de vraag waarop het "Niets gevonden" zei
+             terwijl het antwoord vol stond. */
+          ? { maaltijden: [], nevo: [], gerechten: [], eigen: [], merk: MERK }
+          : {
             maaltijden: MAALTIJDEN,
             /* De verkeerd gespelde vraag krijgt de benaderde uitslag terug,
                precies zoals de database hem geeft. Zo is te zien of het scherm
@@ -622,7 +630,7 @@ async function bedienDb(pagina, dagen, fase) {
               : NEVO_TONIJN,
             gerechten: /pindakaas/i.test(route.request().postData() ?? '') ? GERECHT_PINDAKAAS : [],
             eigen: [], merk: MERK,
-          }
+          })
       : fn === 'kal_eiwitrijk' ? EIWITRIJK
       : fn === 'kal_verzadiging' ? VERZADIGING
       : fn === 'kal_ben_ik_beheerder' ? { beheerder: pagina.__beheerder === true }
@@ -4751,6 +4759,92 @@ for (const [naam, dagen, patroon, verwacht] of [
 
   console.log(`${'je gegevens weghalen'.padEnd(26)} verkeerd wachtwoord geweigerd \u00b7 `
     + `eerste tik telt alleen \u00b7 149 in gewone taal \u00b7 pas de tweede wist`)
+}
+
+/* ------------------------------------------------ de merken op Voeding ---- */
+/* EEN EMMER DIE OVER DE LIJN KWAM EN NERGENS WERD GETEKEND
+
+   `kal_zoeken` geeft vijf emmers terug. Het invoervenster tekende ze alle vijf,
+   dit scherm vier: `merk` ontbrak. Niets viel om, niets werd rood, en de
+   gebruiker las "Niets gevonden" terwijl de treffers in het antwoord zaten. Dat
+   is de stilste manier waarop een scherm stuk kan zijn.
+
+   `src/health/zoekemmers.proef.ts` houdt tegen dat een emmer ongenoemd
+   wegvalt, maar die leest code en geen scherm. Hij ziet niet of er werkelijk
+   iets verschijnt, of het teken erbij staat, en of het onder de tabel blijft.
+   Dat hoort hier. */
+{
+  const c = await browser.newContext({
+    viewport: { width: 430, height: 2200 }, deviceScaleFactor: 2,
+    locale: 'nl-NL', timezoneId: 'Europe/Amsterdam',
+  })
+  const p = await c.newPage()
+  await bedienDb(p, 28, 'afvallen')
+  await p.addInitScript(() => {
+    localStorage.setItem('kalibratie.sessie',
+      JSON.stringify({ token: 'proeftoken', account: 'abdelkader' }))
+  })
+  await p.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await p.waitForTimeout(700)
+  await naarTab(p, 'Voeding')
+
+  await p.getByLabel('Zoeken in de tabel').fill('pindakaas')
+  await p.waitForTimeout(700)
+
+  const kop = p.getByText('Merkproducten', { exact: true })
+  if (await kop.count() !== 1) {
+    throw new Error('merken op Voeding: het blok met merkproducten staat er niet')
+  }
+
+  /* De regel zelf, en niet alleen de kop: een kop boven een lege lijst is
+     precies zo nutteloos als geen kop. */
+  const rijen = p.locator('.lijst > *')
+  const teksten = await rijen.allTextContents()
+  const iMerk = teksten.findIndex((t) => t.includes('Pindakaas 100%'))
+  if (iMerk < 0) throw new Error('merken op Voeding: het merkproduct staat niet in de lijst')
+
+  /* Onder de tabelwaarde, net als in het invoervenster. Hier gaat dat per blok
+     en niet op naamovereenkomst, want dit scherm toont emmer voor emmer. */
+  const iNevo = teksten.findIndex((t) => t.includes('Hartig broodbeleg'))
+  if (iNevo < 0) throw new Error('merken op Voeding: de tabelwaarde ontbreekt')
+  if (iMerk < iNevo) {
+    throw new Error('merken op Voeding: het merkproduct staat b\u00f3ven de tabelwaarde')
+  }
+
+  const rij = rijen.nth(iMerk)
+  const teken = ((await rij.locator('.herkomst').textContent()) ?? '').trim()
+  if (teken !== '\u25c8') {
+    throw new Error(`merken op Voeding: het herkomstteken is ${JSON.stringify(teken)} en geen \u25c8`)
+  }
+  if ((await rij.locator('.conf').textContent()) !== 'D') {
+    throw new Error('merken op Voeding: een etiketwaarde hoort graad D te krijgen')
+  }
+  if (!(teksten[iMerk] ?? '').includes('pak van 600 g')) {
+    throw new Error('merken op Voeding: het verpakkingsgewicht staat er niet bij')
+  }
+
+  /* EN DE MELDING DIE ER NIET MEER HOORT TE STAAN
+
+     Dit was de kant die de gebruiker zag, en hij is alleen te toetsen met een
+     vraag die n\u00edets anders oplevert. Op 'pindakaas' staat de tabel vol, dus
+     `leeg` is daar sowieso onwaar en zegt deze regel niets. Sportvoeding staat
+     n\u00edet in de tabel: daar hangt de melding werkelijk aan de vraag of de
+     merken meetellen. */
+  await p.getByLabel('Zoeken in de tabel').fill('eiwitpoeder')
+  await p.waitForTimeout(700)
+  const vel = (await p.locator('body').innerText()).replace(/\s+/g, ' ')
+  if (!/Merkproducten/.test(vel)) {
+    throw new Error('merken op Voeding: een vraag met alleen merktreffers toont niets')
+  }
+  if (/Niets gevonden/.test(vel)) {
+    throw new Error('merken op Voeding: er staat "Niets gevonden" terwijl er treffers zijn')
+  }
+
+  await p.screenshot({ path: 'gereedschap/health-merken.png', fullPage: true })
+  await c.close()
+
+  console.log(`${'de merken op Voeding'.padEnd(26)} eigen blok \u00b7 onder de tabel \u00b7 `
+    + `\u25c8 en graad D \u00b7 geen "niets gevonden"`)
 }
 
 await browser.close()
