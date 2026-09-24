@@ -7,7 +7,20 @@
  */
 import type { Illustratie } from './soorten'
 
-export interface Uitlegstuk { ill?: Illustratie; tekst: string }
+export interface Uitlegstuk {
+  ill?: Illustratie
+  tekst: string
+  /**
+   * De uitgewerkte som uit haar eigen boek, stap voor stap, in de bewoording
+   * van de methode. Staat gratis in de doos boven de som.
+   *
+   * Dit is er bijgekomen voor Wassima. Zij doet 2 havo over en is onzeker over
+   * dit vak, en dan is een alinea uitleg te weinig: wat helpt is precies de
+   * som zien die de docent op het bord deed, met dezelfde stappen eronder. Een
+   * hint kost punten, dit niet. Opzoeken hoe het moet hoort geen straf te zijn.
+   */
+  voorbeeld?: string
+}
 
 export const UITLEG: Record<string, Uitlegstuk> = {
   'Oppervlakte & omtrek':{ill:{type:'rechthoek',l:8,b:5}, tekst:'De omtrek is het lint eromheen: tel alle zijden op. De oppervlakte is de ruimte erbinnen. Bij een rechthoek: omtrek = 2 × (lengte + breedte), oppervlakte = lengte × breedte. Let op: omtrek in cm, oppervlakte in cm².'},
@@ -35,6 +48,18 @@ export const UITLEG: Record<string, Uitlegstuk> = {
   'Rekenvolgorde':{tekst:'Volgorde van rekenen: 1) haakjes, 2) machten/wortels, 3) keer en delen, 4) plus en min (van links naar rechts). Ezelsbruggetje: "Meneer Van Dale Wacht Op Antwoord". Dus 3 + 4 × 2 = 3 + 8 = 11, niet 14.'},
   'Negatieve getallen':{ill:{type:'getallenlijn',van:-6,tot:6,punt:0}, tekst:'Gebruik de getallenlijn: plus = naar rechts, min = naar links. Twee keer hetzelfde teken (min × min of min ÷ min) geeft plus; verschillende tekens geven min.'},
   'Breuken':{ill:{type:'breukstrook',delen:4,gevuld:3}, tekst:'Een breuk is een deel van een geheel: bovenaan staat de teller (hoeveel delen), onderaan de noemer (in hoeveel delen verdeeld). "3/4 van een getal" = eerst ÷ 4 (één deel), dan × 3.'},
+  /* Paragraaf 1.4. De tikregel gaat hier over de breuk: een gemengde breuk
+     wordt bij het nakijken onleesbaar, dus die vragen we niet. */
+  'Het omgekeerde van een getal':{tekst:'Twee getallen zijn elkaars omgekeerde als hun product 1 is. Bij een breuk draai je teller en noemer om: het omgekeerde van 3/4 is 4/3. Een heel getal schrijf je eerst als breuk: 5 = 5/1, dus het omgekeerde is 1/5. Het minteken blijft staan, en 0 heeft geen omgekeerde. Typ een breuk met een schuine streep: 3/4. Een onechte breuk laat je staan, dus 3/2 en niet 1 1/2.', voorbeeld:'5/7 · 7/5 = 35/35 = 1\ndaarom heten 5/7 en 7/5 elkaars omgekeerde\n\nhet omgekeerde van 3\n= het omgekeerde van 3/1\n= 1/3\n\nhet omgekeerde van −2 1/3\n= het omgekeerde van −7/3\n= −3/7'},
+  'Delen door een breuk':{tekst:'Delen door een breuk is vermenigvuldigen met het omgekeerde ervan: 6 : 1/2 = 6 · 2 = 12. Draai dus de tweede breuk om en maak er keer van. Een heel getal schrijf je als breuk (3 = 3/1) en een gemengde breuk maak je eerst onecht (2 1/2 = 5/2). Kijk aan het eind of je nog kunt vereenvoudigen. Typ een breuk met een schuine streep: 3/4. Een onechte breuk laat je staan, dus 3/2 en niet 1 1/2.', voorbeeld:'3/5 : 7/11\n= 3/5 · 11/7\n= 33/35\n\n3/8 : 6\n= 3/8 · 1/6\n= 3/48 = 1/16\n\n4 : −2/3\n= 4/1 · −3/2\n= −12/2 = −6\n\n2 1/2 : 1 2/3\n= 5/2 : 5/3\n= 5/2 · 3/5\n= 15/10 = 3/2'},
+  'Breuken met letters':{tekst:'Ook met letters geldt: breuk keer breuk is teller keer teller gedeeld door noemer keer noemer, en delen is keer het omgekeerde. Dus 3/7 · x/y = 3x/7y en 5/a : 3/b = 5/a · b/3 = 5b/3a. Kijk daarna of teller en noemer door hetzelfde getal kunnen: 3q/9p wordt q/3p. Typ een breuk met een schuine streep: 3/4. Een onechte breuk laat je staan, dus 3/2 en niet 1 1/2.', voorbeeld:'a/6b · 3/c\n= 3a/6bc\n= a/2bc\n\n5/a · b\n= 5/a · b/1\n= 5b/a\n\n3/p : 9/q\n= 3/p · q/9\n= 3q/9p\n= q/3p'},
+  /* Paragraaf 1.5 van haar boek, vijf regels, vijf onderwerpen. De tikregel
+     staat er telkens bij: op het scherm staat a⁵, maar dat typt niemand in. */
+  'Machten vermenigvuldigen':{tekst:'Hebben twee machten hetzelfde grondtal, dan tel je bij vermenigvuldigen de exponenten op: a³ · a² = a⁵. Het grondtal blijft staan. Staan er getallen voor, dan gaan die gewoon keer elkaar: 3a⁵ · 4a³ = 12a⁸. Verschillen de grondtallen, dan mag je niets optellen: 2a³ · 5b⁴ = 10a³b⁴. Typ een macht als a5; een dakje mag ook (a^5).', voorbeeld:'2x³ · 4x² = 8x⁵\nwant 2 · 4 = 8 en 3 + 2 = 5\n\n2a⁶ · −3a = −6a⁷\nwant a is a¹, dus 6 + 1 = 7\n\n−9p⁵ · −7p³ · −p⁸ = −63p¹⁶\nwant −9 · −7 · −1 = −63 en 5 + 3 + 8 = 16\n\n7r³ · −q² = −7q²r³\nwant de grondtallen zijn niet hetzelfde'},
+  'Gelijksoortige termen':{tekst:'Twee termen zijn gelijksoortig als ze dezelfde letter met dezelfde exponent hebben. Alleen die mag je samennemen: 2a³ + 4a³ = 6a³. Bij 2a⁵ + 3a⁶ lukt dat niet, want de exponenten verschillen. Let op het verschil met keer: a⁵ + a⁵ = 2a⁵, maar a⁵ · a⁵ = a¹⁰. Typ een macht als a5; een dakje mag ook (a^5).', voorbeeld:'4p⁶ + 3p⁶ = 7p⁶\n9a⁵ − 3a⁵ = 6a⁵\n3a²b + a²b = 4a²b\n5x²y³ − 6x²y³ = −x²y³\n\n2a⁵ + 3a⁶ kan niet\n2a³b + 4ab² kan niet\nde termen zijn niet gelijksoortig\n\nlet op het verschil:\na⁵ + a⁵ = 2a⁵\na⁵ · a⁵ = a¹⁰'},
+  'Macht van een macht':{tekst:'Staat er een macht van een macht, dan vermenigvuldig je de exponenten: (a²)³ = a⁶, want 2 × 3 = 6. Niet optellen. Een getal vóór de haakjes doet niet mee in de macht: 5(a³)⁶ = 5a¹⁸. Typ een macht als a5; een dakje mag ook (a^5).', voorbeeld:'(a⁵)³ · 2a⁶\n= a¹⁵ · 2a⁶\n= 2a²¹\n\n5(a³)⁶ − 6(a⁹)²\n= 5a¹⁸ − 6a¹⁸\n= −a¹⁸\n\n(a²)³ · 2a · a⁴\n= a⁶ · 2a · a⁴\n= 2a¹¹'},
+  'Macht van een product':{tekst:'Bij een macht van een product krijgt elke factor die macht: (ab)⁵ = a⁵b⁵ en (5x)³ = 125x³. Het getal gaat dus mee. Een minteken binnen de haakjes gaat ook mee: (−3p)³ = −27p³, maar (−2q)⁴ = 16q⁴, want een even exponent maakt er een plus van. Staat het minteken buiten de haakjes, dan blijft het buiten. Typ een macht als a5; een dakje mag ook (a^5).', voorbeeld:'(pq)³ = p³q³\n\n(−4p)³\n= (−4)³ · p³\n= −64p³\n\n(a³b²)⁵\n= (a³)⁵ · (b²)⁵\n= a¹⁵b¹⁰'},
+  'Machten delen':{tekst:'Bij delen trek je de exponenten van elkaar af: a¹² ÷ a⁷ = a⁵. De getallen deel je gewoon: 12a¹⁰ ÷ 4a² = 3a⁸. Boven en onder hetzelfde geeft 1, en daarom is a⁰ = 1. Typ een macht als a5; een dakje mag ook (a^5).', voorbeeld:'a¹²/a⁷ = a⁵\np⁵/p = p⁴\nx⁸/x⁸ = 1\n\n12a¹⁰/4a²\n= 12/4 · a¹⁰/a²\n= 3a⁸\n\n6a⁵/2a² = 3a³\n\nen a⁵/a⁵ = a⁰ = 1'},
   'Machten & wortels':{tekst:'Een macht is herhaald vermenigvuldigen: 5² = 5 × 5 = 25 en 2³ = 2 × 2 × 2 = 8. De wortel is het omgekeerde: √49 = 7, want 7 × 7 = 49.'},
   'Verhoudingen & schaal':{tekst:'Bij een verhouding gaat alles met dezelfde factor mee: 2× zoveel appels → 2× de prijs. Een verhoudingstabel helpt. Schaal 1 : 100 000 betekent: 1 cm op de kaart is 100 000 cm (= 1 km) in het echt.'},
   'Statistiek':{tekst:'Gemiddelde = som ÷ aantal. Mediaan = het middelste getal (eerst op volgorde zetten). Modus = het getal dat het vaakst voorkomt.'},

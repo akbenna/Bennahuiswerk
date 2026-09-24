@@ -173,6 +173,15 @@ textarea.f{min-height:70px;resize:vertical;}
 .klapbak{padding:14px 18px 18px;}
 .klapbak>.card{border:none;padding:0;background:none;}
 .klapbak>.card+.card{margin-top:16px;padding-top:16px;border-top:1px solid var(--line);}
+/* Het stappenplan heeft een accentbalk links. In een klapkaart wordt de
+   padding van een kaart weggehaald, en dan plakt de tekst tegen die balk aan. */
+.klapbak>.card.stappen{padding-left:12px;}
+
+/* De uitgewerkte som uit de methode. Een vaste letterbreedte houdt de stappen
+   onder elkaar uitgelijnd, zoals ze in het boek ook onder elkaar staan. */
+.boekvoorbeeld{font-family:'Cambria Math',Georgia,serif;font-size:14px;line-height:1.55;
+  margin-top:6px;padding:10px 12px;background:#fff;border:1px solid var(--line);
+  border-radius:10px;color:var(--primary-dark);}
 
 /* De kop van het beginscherm: een regel in plaats van een banier. Wie hier
    komt heeft het portaal al gezien en hoeft niet nog eens welkom geheten. */

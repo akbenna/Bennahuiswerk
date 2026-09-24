@@ -20,6 +20,10 @@ import { KLASSEN, SCHOOLJAAR, jaarNu, naarDitJaar } from './gegevens/schooljaar'
 import { NIEUW2627 } from './gegevens/schooljaar2627'
 import { SEED } from './gegevens/seed'
 import { sjablonen } from './gegevens/sjablonen'
+import { MIN_VOORRAAD, opNiveau } from './leitner'
+import { antwoordKlopt } from './nakijken'
+import { UITLEG } from './gegevens/uitleg'
+import type { Opgave } from './gegevens/soorten'
 import type { Kaart } from './gegevens/soorten'
 
 describe('wie er dit schooljaar in welke klas zit', () => {
@@ -335,5 +339,629 @@ describe('de sommen kloppen nog steeds', () => {
     expect(getal(zoek('helft van 24'))).toBe(12)
     expect(getal(zoek('€ 5,00 voor iets van € 2,35'))).toBeCloseTo(2.65, 10)
     expect(getal(zoek('1/4 van 20'))).toBe(5)
+  })
+})
+
+/**
+ * DE UITBREIDING VAN WASSIMA
+ *
+ * Honderdnegentien opgaven erbij bij wiskunde en natuurkunde. Met zoveel sommen
+ * tegelijk is met het oog nakijken geen controle meer, dus staat elk getal
+ * hieronder los uitgerekend. `zoekUniek` is strenger dan de `zoek` hierboven:
+ * die pakt de eerste treffer, en bij honderd nieuwe vragen is "de eerste" niet
+ * vanzelf "de bedoelde".
+ *
+ * En de reden dát ze erbij kwamen staat er als proef onder: haar niveau klimt
+ * mee met wat ze goed doet, dus elk onderwerp hoort op alle drie de treden iets
+ * te hebben. Dat was bij achttien van de achtentwintig onderwerpen niet zo.
+ */
+describe('de uitbreiding voor Wassima bij wiskunde en natuurkunde', () => {
+  const zoekUniek = (q: string): string => {
+    const raak = NIEUW2627.filter((x) => x.p === 'wassima' && x.q.includes(q))
+    if (raak.length !== 1) throw new Error(`${raak.length} treffers voor: ${q}`)
+    return String(raak[0]?.a)
+  }
+  const getal = (t: string): number => Number(t.replace('−', '-').replace(',', '.'))
+  const g = (q: string): number => getal(zoekUniek(q))
+
+  it('rekent de rekenvolgorde, negatieve getallen en breuken na', () => {
+    expect(g('5 × 3 − 8 ÷ 2')).toBe(5 * 3 - 8 / 2)
+    expect(g('12 ÷ 4 + 2 × 5')).toBe(12 / 4 + 2 * 5)
+    expect(g('2 + 3 × (8 − 5)²')).toBe(2 + 3 * (8 - 5) ** 2)
+    expect(g('(6 + 2) × 3 − 4²')).toBe((6 + 2) * 3 - 4 ** 2)
+    expect(g('40 − (3 + 2) × 2²')).toBe(40 - (3 + 2) * 2 ** 2)
+    expect(g('−7 + 12')).toBe(-7 + 12)
+    expect(g('−3 × (−4) + 5')).toBe(-3 * -4 + 5)
+    expect(g('(−2)³')).toBe((-2) ** 3)
+    expect(g('−15 ÷ 3 − (−4)')).toBe(-15 / 3 - -4)
+    expect(g('2/3 van 27')).toBe(27 / 3 * 2)
+    /* Breuken worden letterlijk nagekeken (`nakijken.ts`), dus hier ook. */
+    expect(zoekUniek('1/2 + 1/3')).toBe('5/6')
+    expect(1 / 2 + 1 / 3).toBeCloseTo(5 / 6, 10)
+    expect(zoekUniek('3/4 × 2/5')).toBe('3/10')
+    expect(3 / 4 * (2 / 5)).toBeCloseTo(3 / 10, 10)
+    expect(g('2/3 ÷ 1/6')).toBe(2 / 3 / (1 / 6))
+  })
+
+  it('rekent de machten, verhoudingen en statistiek na', () => {
+    expect(g('10³')).toBe(10 ** 3)
+    expect(g('3² + 4²')).toBe(3 ** 2 + 4 ** 2)
+    expect(g('√81 − √16')).toBe(Math.sqrt(81) - Math.sqrt(16))
+    expect(g('2⁴ × 2²')).toBe(2 ** 4 * 2 ** 2)
+    expect(g('Vier broodjes')).toBe(6 / 4)
+    expect(g('300 g rijst')).toBe(300 / 4 * 6)
+    expect(g('1 : 50 000')).toBe(6 * 50000 / 100000)
+    expect(g('maquette heeft schaal 1 : 200')).toBe(30 * 100 / 200)
+    expect(g('1 op 15')).toBe(240 / 15)
+    expect(g('per dag zijn geleend')).toBe(3 + 5 + 2 + 6)
+    expect(g('gemiddelde van 4, 6, 7, 7 en 9')).toBeCloseTo((4 + 6 + 7 + 7 + 9) / 5, 10)
+    expect(g('mediaan van 2, 8, 5, 9, 4 en 6')).toBe((5 + 6) / 2)
+    expect(g('gemiddelde van vijf cijfers is 7')).toBe(7 * 5 - (6 + 8 + 5 + 9))
+  })
+
+  it('rekent de procenten, vergelijkingen en formules na', () => {
+    expect(g('250 leerlingen doet 36%')).toBe(250 * 0.36)
+    expect(g('na 30% korting € 63')).toBe(63 / 0.7)
+    expect(g('groeit twee jaar achter elkaar met 10%')).toBeCloseTo((1.1 ** 2 - 1) * 100, 10)
+    expect(g('eerst 20% duurder')).toBeCloseTo(500 * 1.2 * 0.8, 10)
+    expect(g('x − 9 = 4')).toBe(4 + 9)
+    expect(g('x ÷ 3 = 7')).toBe(7 * 3)
+    expect(g('5x − 4 = 3x + 10')).toBe((10 + 4) / (5 - 3))
+    expect(g('7 − 2x = 1')).toBe((7 - 1) / 2)
+    expect(g('3(x − 2) = 12')).toBe(12 / 3 + 2)
+    expect(g('y = −2x + 9')).toBe(-2 * 3 + 9)
+    expect(g('(2, 5) en (6, 17)')).toBe((17 - 5) / (6 - 2))
+    expect(g('y = 4x − 6')).toBe((10 + 6) / 4)
+    expect(g('€ 4 instaptarief')).toBe(4 + 1.5 * 12)
+  })
+
+  it('rekent de meetkunde na', () => {
+    expect(g('12 cm lang en 7 cm breed')).toBe(2 * (12 + 7))
+    expect(g('parallellogram heeft een basis van 9')).toBe(9 * 4)
+    expect(g('straal van 5 cm. Bereken de omtrek')).toBeCloseTo(2 * 3.14 * 5, 10)
+    expect(g('oppervlakte van 64 cm²')).toBe(4 * Math.sqrt(64))
+    expect(g('trapezium')).toBe((6 + 10) / 2 * 4)
+    expect(g('rechthoekszijden van 5 cm en 12 cm')).toBe(Math.sqrt(5 ** 2 + 12 ** 2))
+    expect(g('9 cm lang en 12 cm breed')).toBe(Math.sqrt(9 ** 2 + 12 ** 2))
+    expect(g('schuine zijde van een rechthoekige driehoek is 17'))
+      .toBe(Math.sqrt(17 ** 2 - 8 ** 2))
+    expect(g('vlieger')).toBe(Math.sqrt(25 ** 2 - 20 ** 2))
+    expect(g('twee hoeken 40° en 60°')).toBe(180 - 40 - 60)
+    expect(g('gelijkbenige driehoek zijn allebei 65°')).toBe(180 - 2 * 65)
+    expect(g('Deze hoek is 125°')).toBe(180 - 125)
+    expect(g('75°, 110° en 95°')).toBe(360 - 75 - 110 - 95)
+    expect(g('Z-hoek is 72°')).toBe(180 - 72)
+    expect(g('ribben van 6 cm')).toBe(6 ** 3)
+    expect(g('6 cm bij 5 cm bij 4 cm')).toBe(6 * 5 * 4)
+    expect(g('grondvlak van 20 cm²')).toBe(20 * 7)
+    expect(g('straal van 3 cm en een hoogte van 10 cm')).toBeCloseTo(3.14 * 3 ** 2 * 10, 10)
+    expect(g('inhoud van 240 cm³')).toBe(240 / (8 * 5))
+  })
+
+  it('rekent de beweging en de krachten na', () => {
+    expect(g('Hoeveel gram is 2,5 kg')).toBe(2.5 * 1000)
+    expect(g('cm³ is 1,5 liter')).toBe(1.5 * 1000)
+    expect(g('72 km/u om naar m/s')).toBe(72 / 3.6)
+    expect(g('seconden zijn 2,5 minuten')).toBe(2.5 * 60)
+    expect(g('40 m af in 8 s')).toBe(40 / 8)
+    expect(g('bus rijdt 54 km/u')).toBe(54 / 3.6)
+    expect(g('trein rijdt met 30 m/s')).toBe(4500 / 30)
+    expect(g('12 km in 50 minuten')).toBeCloseTo(12 / (50 / 60), 10)
+    expect(g('grafiek af. Wat is de snelheid')).toBe(20 / 2)
+    expect(g('1,5 km af in 25 minuten')).toBe(1500 / (25 * 60))
+    /* De onderbouw rekent met g = 10 N/kg, zoals in de opgaven die er al
+       stonden; op de formulekaart staat 9,81. */
+    expect(g('fiets van 15 kg')).toBe(15 * 10)
+    expect(g('200 N omlaag en 260 N omhoog')).toBe(260 - 200)
+    expect(g('doos is 450 N')).toBe(450 / 10)
+    expect(g('80 N naar rechts')).toBe(80 - 30)
+    expect(g('C = 50 N/m')).toBeCloseTo(50 * 0.2, 10)
+    expect(g('hang je 3 N')).toBe(6 / 3 * 5)
+    expect(g('0,25 m uit bij een kracht van 20 N')).toBe(20 / 0.25)
+    expect(g('C = 40 N/m')).toBe(2 * 10 / 40 * 100)
+  })
+
+  it('rekent de dichtheid, druk, energie en elektriciteit na', () => {
+    expect(g('100 g en een volume van 50 cm³')).toBe(100 / 50)
+    expect(g('250 cm³ water')).toBe(1 * 250)
+    expect(g('2,7 g/cm³')).toBe(54 / 2.7)
+    expect(g('100 N drukt op een vlak van 2 m²')).toBe(100 / 2)
+    expect(g('2000 Pa')).toBe(2000 * 0.05)
+    expect(g('lamp van 40 W')).toBe(40 * 120)
+    expect(g('90 000 J in 3 minuten')).toBe(90000 / 180)
+    expect(g('krijgt 2000 J')).toBe(1500 / 2000 * 100)
+    expect(g('293 K')).toBe(293 - 273)
+    expect(g('verwarmd tot 80 °C')).toBe(80 - 20)
+    expect(g('0,4 A bij een spanning van 6 V')).toBe(6 / 0.4)
+    expect(g('230 V gebruikt 0,5 A')).toBe(230 * 0.5)
+    expect(g('25 Ω loopt een stroom van 0,8 A')).toBe(0.8 * 25)
+    expect(g('4 Ω en 6 Ω staan in serie')).toBe(4 + 6)
+    expect(g('van 6 Ω staan parallel')).toBe(1 / (1 / 6 + 1 / 6))
+    expect(g('onder 30° met de normaal')).toBe(30)
+    expect(g('65° met het spiegeloppervlak')).toBe(90 - 65)
+    expect(g('donder 6 s na de bliksem')).toBe(340 * 6)
+    expect(g('echo 0,5 s')).toBe(340 * 0.5 / 2)
+  })
+
+  /* Dít is waar de uitbreiding voor was. `volgendeKaart` pakt de opgave die het
+     dichtst bij het doelniveau ligt; ontbreekt een trede, dan valt hij zwijgend
+     terug op een andere en krijgt ze steeds dezelfde handvol sommen. */
+  it('geeft elk onderwerp van wiskunde en natuurkunde alle drie de treden', () => {
+    const hare = [...SEED, ...NIEUW2627]
+      .filter((e) => e.p === 'wassima' && (e.jaar ?? 'nu') === 'nu')
+      .filter((e) => e.v === 'wiskunde' || e.v === 'natuurkunde')
+    const per = new Map<string, number[]>()
+    for (const e of hare) {
+      const sleutel = `${e.v} · ${e.t}`
+      per.set(sleutel, [...(per.get(sleutel) ?? []), e.lvl ?? 1])
+    }
+    expect(per.size).toBe(36)
+    const mager: string[] = []
+    for (const [sleutel, lvls] of per) {
+      for (const n of [1, 2, 3]) {
+        if (!lvls.includes(n)) mager.push(`${sleutel} mist niveau ${n}`)
+      }
+    }
+    expect(mager).toEqual([])
+  })
+
+  it('heeft haar voorraad bij allebei de vakken meer dan verdubbeld', () => {
+    /* Vóór de eerste uitbreiding stonden er bij wiskunde achtenzestig vaste
+       opgaven en bij natuurkunde vijfenveertig (de sjablonen komen daar nog
+       bovenop). Een getal dat alleen maar groeit zegt weinig; deze grenzen
+       zeggen dat de aanvulling er nog steeds is en niet half is teruggedraaid. */
+    const tel = (vak: string): number => [...SEED, ...NIEUW2627]
+      .filter((e) => e.p === 'wassima' && e.v === vak && (e.jaar ?? 'nu') === 'nu').length
+    expect(tel('wiskunde')).toBeGreaterThanOrEqual(230)
+    expect(tel('natuurkunde')).toBeGreaterThanOrEqual(240)
+  })
+})
+
+/**
+ * DE NIVEAUKNOP MOET OOK IETS DÓEN
+ *
+ * "Vast op 3" beloofde moeilijker werk en leverde dat niet. `opNiveau` houdt
+ * een ondergrens van zes sommen aan (`MIN_VOORRAAD`) en schuift de buurniveaus
+ * erbij zodra dat ene niveau er minder heeft. Geen enkel onderwerp van Wassima
+ * hád er zes op één niveau, dus die buurniveaus schoven altijd mee, en omdat
+ * er onder niveau 3 alleen makkelijker werk ligt, werd "moeilijk" in de praktijk
+ * een stapel waarin niveau 2 in de meerderheid was. Bij Geluid, Druk en
+ * Elektrische schakelingen gaven 1, 2 en 3 zelfs exact dezelfde stapel.
+ *
+ * Deze proef staat op de belofte en niet op de aantallen: wat komt er uit
+ * `opNiveau` als je een niveau kiest. Zes per onderwerp per niveau is het
+ * middel, dit is het doel.
+ */
+describe('een vast niveau geeft Wassima ook echt dat niveau', () => {
+  const nep = { ri: (a: number) => a, pick: <T,>(x: readonly T[]) => x[0] as T,
+    shuffle: <T,>(x: readonly T[]) => [...x] }
+  const hare = [...SEED, ...NIEUW2627, ...sjablonen(nep)]
+    .filter((e) => e.p === 'wassima' && (e.jaar ?? 'nu') === 'nu')
+    .filter((e) => e.v === 'wiskunde' || e.v === 'natuurkunde')
+
+  const perOnderwerp = new Map<string, Kaart[]>()
+  for (const e of hare) {
+    const sleutel = `${e.v} · ${e.t}`
+    perOnderwerp.set(sleutel, [...(perOnderwerp.get(sleutel) ?? []), e as Kaart])
+  }
+
+  it('heeft zesendertig onderwerpen bij die twee vakken', () => {
+    /* Veertien bij wiskunde, veertien bij natuurkunde, de vijf regels van
+       paragraaf 1.5 en de drie van paragraaf 1.4, elk een eigen onderwerp. */
+    expect(perOnderwerp.size).toBe(36)
+  })
+
+  it('levert bij elk onderwerp op elk niveau alleen sommen van dát niveau', () => {
+    const vies: string[] = []
+    for (const [sleutel, lijst] of perOnderwerp) {
+      for (const n of [1, 2, 3] as const) {
+        const uit = opNiveau(lijst, n)
+        const mis = uit.filter((k) => (k.lvl ?? 1) !== n).length
+        if (mis) vies.push(`${sleutel} · vast op ${n}: ${mis} van de ${uit.length} ernaast`)
+      }
+    }
+    expect(vies).toEqual([])
+  })
+
+  it('houdt op elk niveau genoeg over om een sessie mee te vullen', () => {
+    /* De ondergrens van `opNiveau` zelf. Zakt een onderwerp hieronder, dan
+       schuiven de buurniveaus er weer bij en is de belofte hierboven stil weg. */
+    for (const [sleutel, lijst] of perOnderwerp) {
+      for (const n of [1, 2, 3] as const) {
+        expect(opNiveau(lijst, n).length, `${sleutel} · niveau ${n}`)
+          .toBeGreaterThanOrEqual(MIN_VOORRAAD)
+      }
+    }
+  })
+
+  it('geeft bij drie verschillende niveaus ook drie verschillende stapels', () => {
+    /* Bij Geluid, Druk en Elektrische schakelingen was dat niet zo: daar kwam
+       er bij 1, 2 en 3 dezelfde stapel uit. */
+    for (const [sleutel, lijst] of perOnderwerp) {
+      const stapels = [1, 2, 3].map((n) =>
+        opNiveau(lijst, n as 1 | 2 | 3).map((k) => k.id).sort().join(','))
+      expect(new Set(stapels).size, sleutel).toBe(3)
+    }
+  })
+})
+
+/**
+ * PARAGRAAF 1.5: HERLEIDEN VAN MACHTEN
+ *
+ * Vijf regels uit haar boek, vijf onderwerpen. Twee dingen kunnen hier stil
+ * misgaan, en allebei zijn ze erger dan een opgave die ontbreekt.
+ *
+ * Het eerste is het intypen. Op het scherm staat a5 als a met een klein vijfje,
+ * en dat typt geen kind in. Elke opgave neemt daarom drie schrijfwijzen aan.
+ * Zou er ergens een `alt` ontbreken, dan krijgt ze rood op een goed antwoord en
+ * is dat aan niets te zien: de opgave staat er, hij ziet er goed uit, en hij
+ * keurt af. Vandaar dat deze proef `antwoordKlopt` echt aanroept.
+ *
+ * Het tweede is het rekenwerk in de exponenten. Dat staat hieronder niet
+ * overgetypt maar uitgerekend: 3 + 2 en niet 5.
+ */
+describe('herleiden van machten, paragraaf 1.5', () => {
+  const REGELS = ['Machten vermenigvuldigen', 'Gelijksoortige termen', 'Macht van een macht',
+    'Macht van een product', 'Machten delen']
+  const hare = NIEUW2627.filter((e) => e.p === 'wassima' && REGELS.includes(e.t))
+
+  const zoek = (fragment: string): Opgave => {
+    /* Eerst de hele vraag, dan pas een stuk ervan. Anders vangt "(a2)3" ook
+       "(a2)3 . 2a . a4", en dan toetst de regel iets anders dan er staat. */
+    const heel = hare.filter((x) => x.q === `Herleid: ${fragment}`)
+    if (heel.length === 1) return heel[0] as Opgave
+    const raak = hare.filter((x) => x.q.includes(fragment))
+    if (raak.length !== 1) throw new Error(`${raak.length} treffers voor: ${fragment}`)
+    return raak[0] as Opgave
+  }
+
+  /** De exponenten uit een antwoord, als gewone getallen. */
+  const SUPER = '⁰¹²³⁴⁵⁶⁷⁸⁹'
+  const exponenten = (a: string): number[] => (a.match(new RegExp(`[${SUPER}]+`, 'g')) ?? [])
+    .map((m) => Number([...m].map((c) => SUPER.indexOf(c)).join('')))
+  /** Het getal vooraan, met zijn teken. Staat er niets, dan is het 1. */
+  const getal = (a: string): number => {
+    const m = /^(-?)(\d*)/.exec(a.replace('−', '-'))
+    const teken = m?.[1] === '-' ? -1 : 1
+    return m?.[2] ? teken * Number(m[2]) : teken
+  }
+
+  it('heeft alle vijf de regels als eigen onderwerp, met zes sommen per niveau', () => {
+    for (const regel of REGELS) {
+      for (const n of [1, 2, 3]) {
+        expect(hare.filter((e) => e.t === regel && e.lvl === n).length, `${regel} ${n}`).toBe(6)
+      }
+    }
+  })
+
+  it('neemt een macht in alle drie de schrijfwijzen aan', () => {
+    /* a5 met een klein vijfje, a^5 en a5. Wie op een telefoon werkt typt het
+       laatste; het dakje staat twee toetsen verderop. */
+    const mis: string[] = []
+    for (const e of hare) {
+      const netjes = String(e.a)
+      if (!exponenten(netjes).length) continue
+      const metDakje = [...netjes].map((c) => {
+        const i = SUPER.indexOf(c)
+        return i < 0 ? c : String(i)
+      }).join('').replace(/([a-z])(\d)/g, '$1^$2')
+      const plat = metDakje.replace(/\^/g, '')
+      for (const vorm of [netjes, metDakje, plat]) {
+        if (!antwoordKlopt({ a: netjes, alt: e.alt }, vorm)) mis.push(`${e.id}: ${vorm}`)
+      }
+    }
+    expect(mis).toEqual([])
+  })
+
+  it('rekent de exponenten van het vermenigvuldigen na', () => {
+    const rij: Array<[string, number, number[]]> = [
+      ['a³ · a²', 1, [3 + 2]],
+      ['x⁴ · x³', 1, [4 + 3]],
+      ['p⁵ · p⁵', 1, [5 + 5]],
+      ['a · a⁶', 1, [1 + 6]],
+      ['q² · q² · q²', 1, [2 + 2 + 2]],
+      ['y⁸ · y', 1, [8 + 1]],
+      ['2x³ · 4x²', 2 * 4, [3 + 2]],
+      ['3a⁵ · 4a³', 3 * 4, [5 + 3]],
+      ['7a⁶ · 2a', 7 * 2, [6 + 1]],
+      ['3p⁶ · 4p⁸', 3 * 4, [6 + 8]],
+      ['2x⁵ · 5x²', 2 * 5, [5 + 2]],
+      ['6q⁴ · q³', 6 * 1, [4 + 3]],
+      ['2a⁶ · −3a', 2 * -3, [6 + 1]],
+      ['−5q · 2q²', -5 * 2, [1 + 2]],
+      ['−9p⁵ · −7p³', -9 * -7 * -1, [5 + 3 + 8]],
+      ['10y³ · −2y · y⁵', 10 * -2, [3 + 1 + 5]],
+      /* Ongelijke grondtallen: de exponenten blijven staan waar ze staan. */
+      ['4x³ · −7y²', 4 * -7, [3, 2]],
+      ['2a³ · 5b⁴', 2 * 5, [3, 4]],
+    ]
+    for (const [q, g, exps] of rij) {
+      const a = String(zoek(q).a)
+      expect(getal(a), q).toBe(g)
+      expect(exponenten(a), q).toEqual(exps)
+    }
+  })
+
+  it('rekent de macht van een macht en de macht van een product na', () => {
+    const rij: Array<[string, number, number[]]> = [
+      ['(a²)³', 1, [2 * 3]],
+      ['(a⁵)³', 1, [5 * 3]],
+      ['(p³)³', 1, [3 * 3]],
+      ['(p¹⁰)²', 1, [10 * 2]],
+      ['(x⁴)³', 1, [4 * 3]],
+      ['(q⁶)²', 1, [6 * 2]],
+      ['a² · (a⁷)⁵', 1, [2 + 7 * 5]],
+      ['(p³)⁴ · (p²)⁶', 1, [3 * 4 + 2 * 6]],
+      ['(a⁵)³ · 2a⁶', 2, [5 * 3 + 6]],
+      ['(a²)³ · 2a · a⁴', 2, [2 * 3 + 1 + 4]],
+      ['5x · 3 · (x⁵)⁴', 5 * 3, [1 + 5 * 4]],
+      ['(x²)⁶ + (x³)⁴', 1 + 1, [2 * 6]],
+      ['5(a³)⁶ − 6(a⁹)²', 5 - 6, [3 * 6]],
+      ['5x¹⁸ − 2(x⁶)³', 5 - 2, [6 * 3]],
+      ['(p³)⁴ + 4(p²)⁶', 1 + 4, [3 * 4]],
+      ['−2x⁶ − 3(x³)²', -2 - 3, [3 * 2]],
+      ['3²¹ als macht van 27', 27, [21 / 3]],
+      ['8¹² als macht van 16', 16, [(12 * 3) / 4]],
+      ['(pq)³', 1, [3, 3]],
+      ['(xy)⁷', 1, [7, 7]],
+      ['(abc)⁴', 1, [4, 4, 4]],
+      ['(ab)⁵', 1, [5, 5]],
+      ['(xy)²', 1, [2, 2]],
+      ['(−p)⁶', 1, [6]],
+      ['(5x)³', 5 ** 3, [3]],
+      ['(2ab)³', 2 ** 3, [3, 3]],
+      ['(−10a)²', (-10) ** 2, [2]],
+      ['(−3p)³', (-3) ** 3, [3]],
+      ['(−2q)⁴', (-2) ** 4, [4]],
+      ['(a³b²)⁵', 1, [3 * 5, 2 * 5]],
+      ['(−3x²)⁴', (-3) ** 4, [2 * 4]],
+      ['(−3xy)³', (-3) ** 3, [3, 3]],
+      ['(−5xy²)²', (-5) ** 2, [2, 2 * 2]],
+      /* Het minteken staat buiten de haakjes en doet dus niet mee in de macht. */
+      ['−(ab²)⁴', -1, [4, 2 * 4]],
+      ['(p²q)⁶', 1, [2 * 6, 6]],
+      ['(6pq³)²', 6 ** 2, [2, 3 * 2]],
+    ]
+    for (const [q, g, exps] of rij) {
+      const a = String(zoek(q).a)
+      expect(getal(a), q).toBe(g)
+      expect(exponenten(a), q).toEqual(exps)
+    }
+  })
+
+  it('rekent het optellen en het delen na', () => {
+    const rij: Array<[string, number, number[]]> = [
+      ['2a³ + 4a³', 2 + 4, [3]],
+      ['4p⁶ + 3p⁶', 4 + 3, [6]],
+      ['9a⁵ − 3a⁵', 9 - 3, [5]],
+      ['a⁵ + a⁵', 1 + 1, [5]],
+      ['2a⁵ − a⁵', 2 - 1, [5]],
+      ['5x²y − 3x²y', 5 - 3, [2]],
+      ['3a²b + a²b', 3 + 1, [2]],
+      ['5x²y³ − 6x²y³', 5 - 6, [2, 3]],
+      ['8x⁹ − 3x⁹', 8 - 3, [9]],
+      ['7a⁴ + 6a⁴', 7 + 6, [4]],
+      /* Hier staat keer en geen plus, dus de exponenten gaan juist wel op. */
+      ['4a³ · 5a³', 4 * 5, [3 + 3]],
+      ['5a³b + 2a³b', 5 + 2, [3]],
+      ['a⁵ · a⁵', 1, [5 + 5]],
+      ['a¹² ÷ a⁷', 1, [12 - 7]],
+      ['x⁹ ÷ x⁴', 1, [9 - 4]],
+      ['p⁵ ÷ p', 1, [5 - 1]],
+      ['x¹⁰ ÷ x³', 1, [10 - 3]],
+      ['a⁷ ÷ a³', 1, [7 - 3]],
+      ['q⁸ ÷ q²', 1, [8 - 2]],
+      ['6a⁵ ÷ 2a²', 6 / 2, [5 - 2]],
+      ['9p⁸ ÷ 3p⁶', 9 / 3, [8 - 6]],
+      ['12a¹⁰ ÷ 4a²', 12 / 4, [10 - 2]],
+      ['12p⁶q ÷ 4p⁵q', 12 / 4, []],
+      ['(a³)⁴ ÷ a⁵', 1, [3 * 4 - 5]],
+      ['15a⁶b³ ÷ 3a²b³', 15 / 3, [6 - 2]],
+      ['36y¹² ÷ 9y⁴', 36 / 9, [12 - 4]],
+    ]
+    for (const [q, g, exps] of rij) {
+      const a = String(zoek(q).a)
+      expect(getal(a), q).toBe(g)
+      expect(exponenten(a), q).toEqual(exps)
+    }
+  })
+
+  it('zegt kan niet waar het niet kan, en rekent de kale uitkomsten na', () => {
+    const kaal: Array<[string, string]> = [
+      ['2a⁵ + 3a⁶', 'kan niet'],
+      ['4a³b + 3a²b', 'kan niet'],
+      ['2a³b + 4ab²', 'kan niet'],
+      ['a⁵ − a⁵', '0'],
+      ['6x⁴y² − 6x⁴y²', '0'],
+      ['x⁸ ÷ x⁸', '1'],
+      ['a³ ÷ a³', '1'],
+      ['Wat is a⁰', '1'],
+      ['20x⁷ ÷ 5x⁷', String(20 / 5)],
+      ['(10x)³ ÷ x³', String(10 ** 3)],
+    ]
+    for (const [q, a] of kaal) expect(String(zoek(q).a), q).toBe(a)
+  })
+
+  it('legt bij elk van de vijf uit hoe je een macht intypt', () => {
+    /* Zonder die regel is de proef hierboven een geheim: de app neemt a5 aan,
+       maar niemand die het scherm leest weet dat. */
+    for (const regel of REGELS) {
+      expect(UITLEG[regel]?.tekst, regel).toContain('a^5')
+    }
+  })
+})
+
+/**
+ * PARAGRAAF 1.4: BREUKEN VERMENIGVULDIGEN EN DELEN
+ *
+ * Drie theorieblokken, drie onderwerpen. Het risico zit hier ergens anders dan
+ * bij 1.5. `antwoordKlopt` vergelijkt een breuk letterlijk en niet als getal,
+ * en dat is met opzet: anders zou "3" goed gerekend worden op een vraag naar
+ * 3/4. Maar het betekent wel dat elke schrijfwijze in `alt` moet staan, en dat
+ * een antwoord met een rekenfout er net zo goed uitziet als een goed antwoord.
+ *
+ * Daarom wordt hier niet de breuk vergeleken maar de wáárde ervan. De letters
+ * krijgen een getal en dan moet er aan allebei de kanten hetzelfde uitkomen.
+ * Een verwisselde teller en noemer valt daarmee door de mand, en een vergeten
+ * vereenvoudiging niet, want die verandert de waarde niet. Dat laatste hoort
+ * ook zo: 3q/9p en q/3p zijn allebei goed gerekend, de eerste is alleen niet
+ * af.
+ */
+describe('breuken vermenigvuldigen en delen, paragraaf 1.4', () => {
+  const REGELS = ['Het omgekeerde van een getal', 'Delen door een breuk', 'Breuken met letters']
+  const hare = NIEUW2627.filter((e) => e.p === 'wassima' && REGELS.includes(e.t))
+
+  const zoek = (fragment: string): Opgave => {
+    const raak = hare.filter((x) => x.q.includes(fragment))
+    if (raak.length !== 1) throw new Error(`${raak.length} treffers voor: ${fragment}`)
+    return raak[0] as Opgave
+  }
+
+  /* Vaste getallen voor de letters. Priemgetallen en 9, zodat een verwisseling
+     of een verkeerde factor niet toevallig hetzelfde uitkomt. */
+  const A = 5, B = 7, C = 11, P = 3, Q = 13, X = 2, Y = 9
+  const LETTER: Record<string, number> = { a: A, b: B, c: C, p: P, q: Q, x: X, y: Y }
+
+  /** Een teller of een noemer uitrekenen: een getal keer nul of meer letters. */
+  const kant = (s: string): number => {
+    const kop = /^(-?)(\d*)/.exec(s)
+    let uit = kop?.[2] ? Number(kop[2]) : 1
+    if (kop?.[1] === '-') uit = -uit
+    for (const m of s.slice(kop?.[0].length ?? 0).matchAll(/([a-z])([²³]?)/g)) {
+      const macht = m[2] === '²' ? 2 : m[2] === '³' ? 3 : 1
+      uit *= (LETTER[m[1] as string] ?? NaN) ** macht
+    }
+    return uit
+  }
+  /** De waarde van een antwoord, met die getallen ingevuld. */
+  const waarde = (a: string): number => {
+    const [t, n] = a.replace('−', '-').split('/')
+    return n === undefined ? kant(t as string) : kant(t as string) / kant(n)
+  }
+
+  it('rekent alle antwoorden na, met getallen op de plaats van de letters', () => {
+    const rij: Array<[string, number]> = [
+      /* Het omgekeerde: het product met het oorspronkelijke getal is 1. */
+      ['omgekeerde op van 3/4', 1 / (3 / 4)],
+      ['omgekeerde op van 13/21', 1 / (13 / 21)],
+      ['omgekeerde op van 5.', 1 / 5],
+      ['omgekeerde op van 8.', 1 / 8],
+      ['omgekeerde op van 1/6', 1 / (1 / 6)],
+      ['omgekeerde op van −4/5', 1 / (-4 / 5)],
+      ['omgekeerde op van −3.', 1 / -3],
+      ['omgekeerde op van 1.', 1 / 1],
+      ['omgekeerde op van 0,5', 1 / 0.5],
+      ['omgekeerde op van 0,25', 1 / 0.25],
+      ['omgekeerde op van 2 1/5', 1 / (11 / 5)],
+      ['omgekeerde op van −3 1/3', 1 / (-10 / 3)],
+      ['omgekeerde op van −2 1/3', 1 / (-7 / 3)],
+      ['omgekeerde neemt van het omgekeerde', 7 / 9],
+      ['zijn eigen omgekeerde', 1 / -1],
+      /* Delen door een breuk. */
+      ['6 : 1/2', 6 / (1 / 2)],
+      ['4 : 1/2', 4 / (1 / 2)],
+      ['3 : 1/4', 3 / (1 / 4)],
+      ['1/2 : 1/4', (1 / 2) / (1 / 4)],
+      ['2/3 : 1/6', (2 / 3) / (1 / 6)],
+      ['1/6 : 2/3', (1 / 6) / (2 / 3)],
+      ['3/5 : 7/11', (3 / 5) / (7 / 11)],
+      ['3/8 : 6', (3 / 8) / 6],
+      ['7/8 : 3', (7 / 8) / 3],
+      ['2/3 : 4', (2 / 3) / 4],
+      ['1 1/5 : 2/5', (6 / 5) / (2 / 5)],
+      ['4/7 ton', 16 / (4 / 7)],
+      ['4 : −2/3', 4 / (-2 / 3)],
+      ['−7/11 : 3/4', (-7 / 11) / (3 / 4)],
+      ['2 1/2 : 1 2/3', (5 / 2) / (5 / 3)],
+      ['−2 1/3 : 6/11', (-7 / 3) / (6 / 11)],
+      ['−3 1/7 : −11', (-22 / 7) / -11],
+      ['pakjes van 2/5 liter', 800 / (2 / 5)],
+      /* Breuken met letters: dezelfde som, maar met getallen ingevuld. */
+      ['3/7 · x/y', (3 / 7) * (X / Y)],
+      ['a/b · 2/c', (A / B) * (2 / C)],
+      ['1/2 · a/3', (1 / 2) * (A / 3)],
+      ['2/x · 3/y', (2 / X) * (3 / Y)],
+      ['5/a · b', (5 / A) * B],
+      ['a/3 · a/b', (A / 3) * (A / B)],
+      ['5/a : 3/b', (5 / A) / (3 / B)],
+      ['3/x · y', (3 / X) * Y],
+      ['3/x : y', (3 / X) / Y],
+      ['a/6 · 4/b', (A / 6) * (4 / B)],
+      ['a/6 : 4/b', (A / 6) / (4 / B)],
+      ['3/p : 9/q', (3 / P) / (9 / Q)],
+      ['a/(6b) · 3/c', (A / (6 * B)) * (3 / C)],
+      ['2 : 6/a', 2 / (6 / A)],
+      ['a/6 · 3b/c', (A / 6) * ((3 * B) / C)],
+      ['a/6 : 3b/c', (A / 6) / ((3 * B) / C)],
+      ['2/x : 4/y', (2 / X) / (4 / Y)],
+      ['5x/(2y) · 6x/y', ((5 * X) / (2 * Y)) * ((6 * X) / Y)],
+    ]
+    for (const [q, verwacht] of rij) {
+      expect(waarde(String(zoek(q).a)), q).toBeCloseTo(verwacht, 10)
+    }
+  })
+
+  it('geeft de antwoorden zo eenvoudig mogelijk waar daarom gevraagd wordt', () => {
+    /* De waardeproef hierboven ziet een vergeten vereenvoudiging niet: 3q/9p
+       en q/3p zijn even groot. Waar de vraag erom vraagt, moet het er dus ook
+       echt staan. */
+    const af: Array<[string, string]> = [
+      ['1/6 : 2/3', '1/4'],
+      ['3/8 : 6', '1/16'],
+      ['2/3 : 4', '1/6'],
+      ['−3 1/7 : −11', '2/7'],
+      ['a/6 · 4/b', '2a/3b'],
+      ['3/p : 9/q', 'q/3p'],
+      ['a/(6b) · 3/c', 'a/2bc'],
+      ['2 : 6/a', 'a/3'],
+      ['a/6 · 3b/c', 'ab/2c'],
+      ['2/x : 4/y', 'y/2x'],
+      ['5x/(2y) · 6x/y', '15x²/y²'],
+    ]
+    for (const [q, a] of af) {
+      const e = zoek(q)
+      expect(String(e.a), q).toBe(a)
+      expect(e.q, q).toContain('zo eenvoudig mogelijk')
+    }
+  })
+
+  it('neemt een noemer met en zonder haakjes aan, en een macht op drie manieren', () => {
+    /* q/3p of q/(3p): allebei schrijft een kind op. Staat er maar een van in
+       `alt`, dan krijgt ze rood op een goed antwoord. */
+    const mis: string[] = []
+    for (const e of hare) {
+      const netjes = String(e.a)
+      const vormen = new Set<string>([netjes])
+      const [t, n] = netjes.split('/')
+      if (n !== undefined && n.length > 1 && /[a-z]/.test(n)) vormen.add(`${t}/(${n})`)
+      for (const v of [...vormen]) {
+        if (!/[²³]/.test(v)) continue
+        vormen.add(v.replace(/²/g, '^2').replace(/³/g, '^3'))
+        vormen.add(v.replace(/²/g, '2').replace(/³/g, '3'))
+      }
+      for (const v of vormen) {
+        if (!antwoordKlopt({ a: netjes, alt: e.alt }, v)) mis.push(`${e.id}: ${v}`)
+      }
+    }
+    expect(mis).toEqual([])
+  })
+
+  it('vraagt nooit om een gemengde breuk als antwoord', () => {
+    /* 1 1/2 wordt bij het nakijken 11/2, en dat is elf halven. De antwoorden
+       zijn daarom onechte breuken, en de uitleg zegt dat er ook bij. */
+    for (const e of hare) {
+      expect(String(e.a), e.id).not.toMatch(/^-?\d+\s+\d+\/\d+$/)
+    }
+    for (const regel of REGELS) {
+      expect(UITLEG[regel]?.tekst, regel).toContain('3/2 en niet 1 1/2')
+    }
+  })
+
+  it('heeft alle drie de regels als eigen onderwerp, met zes sommen per niveau', () => {
+    for (const regel of REGELS) {
+      for (const n of [1, 2, 3]) {
+        expect(hare.filter((e) => e.t === regel && e.lvl === n).length, `${regel} ${n}`).toBe(6)
+      }
+    }
   })
 })

@@ -46,6 +46,9 @@ export interface Voortgang {
   niveau: 'auto' | 1 | 2 | 3
   autoLvl: number
   correctRun: number
+  /** Hoeveel sommen er achter elkaar fout gingen. Zie `uitslag.ts`: het niveau
+   *  zakt pas bij twee, zodat een losse misser niets kost. */
+  foutRun: number
   dag: Dagstand
   toetsDag: Toetsdag
   betaaldOp: string | null
@@ -136,6 +139,7 @@ export const leegDag = (): Dagstand =>
 export const leegVoortgang = (): Voortgang => ({
   punten: 0, solved: {}, cards: {}, streak: 0, dagstreak: 0, lastDay: null, badges: [],
   goal: 10, todayCount: 0, foutLog: [], niveau: 'auto', autoLvl: 1, correctRun: 0,
+  foutRun: 0,
   dag: leegDag(), toetsDag: { d: null, oefen: 0, proef: 0 }, betaaldOp: null,
   weekbudget: WEEKBUDGET, betalingen: [], verdiend: [], verdiendBij: 0, bonus: 0,
   missieStreak: 0, missieLaatst: null, weekKey: null, weekPunten: 0, weekBasis: 0, historie: [],
@@ -157,6 +161,7 @@ export function schoonVoortgang(p: Losse | null | undefined): Voortgang {
   if (np.niveau !== 'auto' && ![1, 2, 3].includes(np.niveau)) np.niveau = 'auto'
   if (![1, 2, 3].includes(np.autoLvl)) np.autoLvl = 1
   if (typeof np.correctRun !== 'number') np.correctRun = 0
+  if (typeof np.foutRun !== 'number') np.foutRun = 0
   if (!np.dag || typeof np.dag !== 'object') np.dag = leegDag()
   if (!Array.isArray(np.dag.sterkIds)) np.dag.sterkIds = []
   if (typeof np.dag.sterkPunten !== 'number') np.dag.sterkPunten = 0
@@ -358,6 +363,9 @@ export function voegVoortgangSamen(x: Losse | null | undefined, y: Losse | null 
     goal: Math.max(a.goal || 10, b.goal || 10),
     weekbudget: Math.max(a.weekbudget || 0, b.weekbudget || 0),
     autoLvl: Math.max(a.autoLvl || 1, b.autoLvl || 1),
+    /* Bij het samenvoegen wint de zachte kant: het toestel waar het net wel
+       goed ging bepaalt de stand, niet het toestel waar het misging. */
+    foutRun: Math.min(a.foutRun ?? 0, b.foutRun ?? 0),
     /* De instelling volgt de kant die hem bewust gezet heeft. */
     niveau: b.niveau !== 'auto' ? b.niveau : a.niveau,
     cards: voegKaartenSamen(a.cards, b.cards),
