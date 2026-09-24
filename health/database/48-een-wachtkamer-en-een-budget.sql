@@ -2,9 +2,8 @@
 -- 48: EEN WACHTKAMER EN EEN BUDGET
 -- ===========================================================================
 --
--- TOEGEPAST: nog niet. Dit bestand is een verslag vooraf, en pas na het draaien
--- klopt het met de database. Draai daarna `node gereedschap/md5-verslag.mjs
--- --schrijf`, anders valt `src/health/dbverslag.proef.ts` om.
+-- TOEGEPAST: ja, op 23 september 2026. Het was een verslag vooraf; sinds die
+-- dag klopt het met de database, en `controle-md5.sql` bevestigt dat.
 --
 -- WAAROM DIT BESTAND ER IS
 --

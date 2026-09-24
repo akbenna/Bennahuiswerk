@@ -2,8 +2,9 @@
 -- 53: DE VERWIJDERKNOP DIE OP EEN KOLOM WACHTTE
 -- ===========================================================================
 --
--- TOEGEPAST: nog niet. Draai 49 eerst, en dan dit. Daarna
--- `node gereedschap/md5-verslag.mjs --schrijf`.
+-- TOEGEPAST: ja, op 24 september 2026, na 49. Nagekeken met
+-- `controle-md5.sql`: `kal_account_wissen` komt nu uit dit bestand en staat
+-- op *gelijk*.
 --
 -- ===========================================================================
 -- WAT ER FOUT GING, EN WAAROM HET NIET OPVIEL

@@ -2,8 +2,13 @@
 -- 52: JE GEGEVENS WEGHALEN
 -- ===========================================================================
 --
--- TOEGEPAST: nog niet. Dit bestand staat los van 48 tot en met 51 en kan in
--- elke volgorde. Draai daarna `node gereedschap/md5-verslag.mjs --schrijf`.
+-- TOEGEPAST: ja, op 23 september 2026, en `kal_account_wissen` eruit is intussen
+-- vervangen door bestand 53. Wat hier nog in de database staat is
+-- `kal_tester_wissen`; dat bevestigt `controle-md5.sql`.
+--
+-- De regel "kan in elke volgorde" die hier stond was onwaar. Dit bestand hing
+-- af van een kolom uit 49, die functie ging bij de eerste aanroep stuk, en
+-- waarom dat pas dan bleek staat in de kop van 53.
 --
 -- De privacyverklaring belooft dat je je gegevens kunt laten verwijderen. Tot
 -- dit bestand was dat een belofte die met de hand moest worden waargemaakt: de

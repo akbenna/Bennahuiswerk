@@ -2,8 +2,8 @@
 -- 49: EEN EIGEN SLEUTEL, VERSLEUTELD BUITEN DE DATABASE OM
 -- ===========================================================================
 --
--- TOEGEPAST: nog niet. Draai bestand 48 eerst, dit bouwt erop verder, en daarna
--- 51, 52 en 53. Draai dan `node gereedschap/md5-verslag.mjs --schrijf`.
+-- TOEGEPAST: ja, op 24 september 2026. Nagekeken met `controle-md5.sql`: de
+-- zeven functies uit dit bestand staan alle zeven op *gelijk*.
 --
 -- Bestand 48 gaf elke tester een proefrit van vijfentwintig herkenningen op de
 -- sleutel van de eigenaar. Dit bestand geeft hem de weg erna: zijn eigen

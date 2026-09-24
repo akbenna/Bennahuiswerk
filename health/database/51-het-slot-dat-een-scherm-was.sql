@@ -2,8 +2,9 @@
 -- 51: HET SLOT DAT EEN SCHERM WAS
 -- ===========================================================================
 --
--- TOEGEPAST: nog niet. Draai 48 en 49 eerst. En daarna
--- `node gereedschap/md5-verslag.mjs --schrijf`.
+-- TOEGEPAST: ja, op 24 september 2026, na 48 en 49. `kal_aanmelden`,
+-- `kal_tester_zetten` en `kal_prikkel_bouwen` staan in `controle-md5.sql`
+-- alle drie op *gelijk* en wijzen naar dit bestand.
 --
 -- Bestand 48 zette een wachtkamer neer en schreef er meteen een voorbehoud bij:
 --

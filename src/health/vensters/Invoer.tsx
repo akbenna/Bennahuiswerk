@@ -50,6 +50,11 @@ import { Bron } from '../herkomst'
 import type { Herkenning, HerkendeRegel } from '../ai'
 import type { Onderwerp } from './Portie'
 import { ActieBeschrijf, ActieFoto, ActieZoek } from '../tekens'
+import type { Emmer } from '../zoekgrens'
+import { afgekapt, afgekaptZin } from '../zoekgrens'
+
+/** Hoeveel tabelregels dit venster vraagt. Zie de gelijknamige in Voeding.tsx. */
+const LIMIET = 10
 
 /** De vier momenten waar je uit kiest, in de volgorde van de dag. */
 export const MOMENTKEUZE: Array<{ id: Moment; naam: string; klas: string }> = [
@@ -439,7 +444,7 @@ function Zoekvangst(
     const tijd = setTimeout(async () => {
       zetLoopt(true)
       try {
-        const u = await roep('kal_zoeken', { p_token: token, p_q: q, p_limiet: 10 })
+        const u = await roep('kal_zoeken', { p_token: token, p_q: q, p_limiet: LIMIET })
         if (mijn === teller.current) { zetUitslag(u); zetFout(null) }
       } catch (e) {
         if (mijn === teller.current) zetFout(e instanceof Error ? e.message : String(e))
@@ -479,6 +484,20 @@ function Zoekvangst(
     ]
     return rangschik(regels, term)
   }, [uitslag, term])
+
+  /* Welke van de drie getoonde emmers vol zat, en met hoeveel. De eerste die
+     zijn grens haalt is genoeg: de melding zegt hoeveel je er van die bron
+     ziet, en twee volle emmers maken die zin niet waarder. */
+  const volleEmmer = useMemo(() => {
+    if (!uitslag) return null
+    const paren: Array<[Emmer, number]> = [
+      ['gerechten', uitslag.gerechten.length],
+      ['nevo', uitslag.nevo.length],
+      ['merk', uitslag.merk.length],
+    ]
+    const vol = paren.find(([e, n]) => afgekapt(e, n, LIMIET))
+    return vol ? vol[1] : null
+  }, [uitslag])
 
   return (
     <div style={{ marginTop: 10 }}>
@@ -611,6 +630,22 @@ function Zoekvangst(
           {uitslag.nevo.some((n) => n.benadering) && (
             <p className="mini" style={{ padding: '6px 2px 2px' }}>
               Niets met precies die spelling. Dit lijkt erop:
+            </p>
+          )}
+          {/* EN ONDERAAN: DIT WAS NIET ALLES
+
+              Dezelfde gedachte als de regel hierboven. De database kapt elke
+              emmer af, en drie afgekapte emmers door elkaar geschud zien er
+              precies zo uit als een volledige lijst. Hier staat de melding één
+              keer en niet per bron, want dit is één lijst: welke emmer vol zat
+              doet er voor wie zoekt niet toe.
+
+              Het getal is dat van de emmer die vol zit en niet de lengte van de
+              lijst, anders zou er "de eerste 35" staan waar de database er
+              vijftien per bron gaf. Zie `zoekgrens.ts`. */}
+          {volleEmmer !== null && (
+            <p className="mini" style={{ padding: '6px 2px 2px' }}>
+              {afgekaptZin(volleEmmer)}
             </p>
           )}
         </div>

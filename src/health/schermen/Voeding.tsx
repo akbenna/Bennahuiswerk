@@ -27,6 +27,8 @@ import type { Analyse } from '../rekenkern'
 import type { Onderwerp } from '../vensters/Portie'
 import { ActieZoek, WegEigenProduct } from '../tekens'
 import { SFEERFOTO } from '../sfeerfotos'
+import type { Emmer } from '../zoekgrens'
+import { afgekapt, afgekaptZin } from '../zoekgrens'
 
 export interface VoedingEigenschappen {
   a: Analyse
@@ -159,6 +161,25 @@ export function Voeding(p: VoedingEigenschappen) {
  */
 export const ZOEKEMMERS_NIET_GETOOND = ['maaltijden'] as const
 
+/**
+ * Hoeveel tabelregels dit scherm vraagt. Staat hier als naam en niet twee keer
+ * als losse 12: hij gaat naar de database én hij bepaalt wanneer de melding
+ * hieronder komt, en die twee horen niet uit elkaar te kunnen lopen.
+ */
+const LIMIET = 12
+
+/**
+ * De melding onder een emmer die aan zijn grens zit.
+ *
+ * Hij staat onder de lijst en niet erboven: eerst zie je wat er is, dan lees je
+ * dat er meer kan zijn. Andersom lees je een voorbehoud over iets wat je nog
+ * niet gezien hebt.
+ */
+function Vol({ emmer, aantal }: { emmer: Emmer; aantal: number }) {
+  if (!afgekapt(emmer, aantal, LIMIET)) return null
+  return <p className="mini" style={{ marginTop: 6 }}>{afgekaptZin(aantal)}</p>
+}
+
 function Zoeken(
   { token, opPortie, profiel }:
   { token: string; opPortie: (o: Onderwerp) => void; profiel: Profiel },
@@ -182,7 +203,7 @@ function Zoeken(
     const tijd = setTimeout(async () => {
       zetLoopt(true)
       try {
-        const u = await roep('kal_zoeken', { p_token: token, p_q: q, p_limiet: 12 })
+        const u = await roep('kal_zoeken', { p_token: token, p_q: q, p_limiet: LIMIET })
         if (mijn === teller.current) { zetUitslag(u); zetFout(null) }
       } catch (e) {
         if (mijn === teller.current) zetFout(e instanceof Error ? e.message : String(e))
@@ -267,6 +288,7 @@ function Zoeken(
               </div>
             ))}
           </div>
+          <Vol emmer="nevo" aantal={uitslag.nevo.length} />
         </>
       )}
 
@@ -287,6 +309,7 @@ function Zoeken(
               </div>
             ))}
           </div>
+          <Vol emmer="gerechten" aantal={uitslag.gerechten.length} />
         </>
       )}
 
@@ -309,6 +332,7 @@ function Zoeken(
               </div>
             ))}
           </div>
+          <Vol emmer="eigen" aantal={uitslag.eigen.length} />
         </>
       )}
 
@@ -354,6 +378,7 @@ function Zoeken(
               </div>
             ))}
           </div>
+          <Vol emmer="merk" aantal={uitslag.merk.length} />
         </>
       )}
 

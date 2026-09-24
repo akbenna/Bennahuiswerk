@@ -612,7 +612,18 @@ async function bedienDb(pagina, dagen, fase) {
     const lijf = fn === 'kal_ophalen' ? alles(dagen, fase)
       : fn === 'kal_maaltijden' ? MAALTIJDEN
       : fn === 'kal_zoeken'
-        ? (/eiwitpoeder/i.test(route.request().postData() ?? '')
+        ? (/vijftien/i.test(route.request().postData() ?? '')
+          /* EEN VOLLE EMMER, WANT DE STUB GEEFT ER ANDERS EEN
+             De melding "dit zijn de eerste vijftien" komt alleen als de emmer
+             werkelijk vijftien regels telt. Met een enkele merkregel is hij
+             nooit te zien en dus nooit te toetsen, en dan is een melding die
+             altijd wegblijft niet te onderscheiden van een melding die werkt. */
+          ? { maaltijden: [], nevo: [], gerechten: [], eigen: [],
+              merk: Array.from({ length: 15 }, (_, i) => ({
+                ...MERK[0], id: 'v' + i, barcode: '99999' + i,
+                naam: `Eiwitreep nummer ${i + 1}`,
+              })) }
+          : /eiwitpoeder/i.test(route.request().postData() ?? '')
           /* ALLEEN MERKTREFFERS, EN DAT IS HET GEVAL DAT ERTOE DOET
              Sportvoeding staat niet in de voedingsmiddelentabel, dus wie een
              shake of een eiwitreep zoekt krijgt uit de database precies dit
@@ -4840,11 +4851,36 @@ for (const [naam, dagen, patroon, verwacht] of [
     throw new Error('merken op Voeding: er staat "Niets gevonden" terwijl er treffers zijn')
   }
 
+  /* EN DE MELDING DAT DIT NIET ALLES IS
+
+     `kal_zoeken` kapt elke emmer af op vijftien. Een afgekapte lijst die zich
+     voordoet als de hele lijst is in deze app een fout van dezelfde soort als
+     een puntschatting zonder interval: je ziet niet dat je naar een deel kijkt.
+     Wie op een merknaam zoekt heeft er honderden en krijgt er vijftien.
+
+     Twee kanten, want een melding die er altijd staat is net zo fout als een
+     die nooit komt. */
+  await p.getByLabel('Zoeken in de tabel').fill('vijftien')
+  await p.waitForTimeout(700)
+  const vol = (await p.locator('body').innerText()).replace(/\s+/g, ' ')
+  if (!/Dit zijn de eerste 15/.test(vol)) {
+    throw new Error('merken op Voeding: een volle emmer meldt niet dat er meer kunnen zijn')
+  }
+
+  await p.getByLabel('Zoeken in de tabel').fill('pindakaas')
+  await p.waitForTimeout(700)
+  const los = (await p.locator('body').innerText()).replace(/\s+/g, ' ')
+  if (/Dit zijn de eerste/.test(los)) {
+    throw new Error('merken op Voeding: de melding staat er ook bij een lijst die niet afkapt')
+  }
+
+  await p.getByLabel('Zoeken in de tabel').fill('vijftien')
+  await p.waitForTimeout(700)
   await p.screenshot({ path: 'gereedschap/health-merken.png', fullPage: true })
   await c.close()
 
   console.log(`${'de merken op Voeding'.padEnd(26)} eigen blok \u00b7 onder de tabel \u00b7 `
-    + `\u25c8 en graad D \u00b7 geen "niets gevonden"`)
+    + `\u25c8 en graad D \u00b7 geen "niets gevonden" \u00b7 15 meldt dat er meer zijn`)
 }
 
 await browser.close()
