@@ -144,6 +144,21 @@ export function Voeding(p: VoedingEigenschappen) {
  * 0,0 g: dat zou "bevat geen zout" beweren over iets wat dat misschien wel
  * bevat.
  */
+/**
+ * De emmers uit `Zoekuitslag` die dit scherm met opzet niet tekent.
+ *
+ * Je eigen bewaarde maaltijden staan hier niet, en dat is een keuze en geen
+ * vergetelheid: `opPortie` kent vier soorten onderwerpen en een maaltijd hoort
+ * daar niet bij. Die gaat langs het invoervenster, waar hij bovenaan staat.
+ *
+ * Deze lijst staat er omdat een emmer die niemand tekent anders stil verdwijnt.
+ * Dat is precies wat er met `merk` gebeurd is: de database gaf honderden
+ * treffers terug, dit scherm tekende ze niet, en er stond "niets gevonden"
+ * terwijl ze in het antwoord zaten. `zoekemmers.proef.ts` staat die stilte niet
+ * meer toe: elke emmer wordt getekend of hij staat hier, met een reden.
+ */
+export const ZOEKEMMERS_NIET_GETOOND = ['maaltijden'] as const
+
 function Zoeken(
   { token, opPortie, profiel }:
   { token: string; opPortie: (o: Onderwerp) => void; profiel: Profiel },
@@ -178,7 +193,8 @@ function Zoeken(
     return () => clearTimeout(tijd)
   }, [term, token])
 
-  const leeg = uitslag && !uitslag.nevo.length && !uitslag.gerechten.length && !uitslag.eigen.length
+  const leeg = uitslag && !uitslag.nevo.length && !uitslag.gerechten.length
+    && !uitslag.eigen.length && !uitslag.merk.length
 
   async function kiesGerecht(id: string) {
     try {
@@ -195,13 +211,18 @@ function Zoeken(
 
   return (
     <Kaart sfeer="blad">
-      <Kop>Zoeken in de voedingsmiddelentabel en de gerechten</Kop>
+      <Kop>Zoeken in de tabel, de gerechten en de merken</Kop>
       <div className="zoekvak">
         {/* Het laatste emoji dat nog in de app stond. Het invoervel kreeg hier
             al een getekend vergrootglas; dit zoekveld was vergeten, en dan staat
             er op het ene scherm een gekleurd glaasje en op het andere een lijn. */}
         <span aria-hidden="true"><ActieZoek /></span>
+        {/* Een eigen naam en niet "Zoeken", want het invoervenster heeft er ook
+            een. Twee velden met dezelfde naam zijn voor een schermlezer twee
+            keer hetzelfde vak, en voor de proefopstelling niet uit elkaar te
+            houden. */}
         <input placeholder="stamppot, roti, hummus, olijfolie…" autoComplete="off"
+               aria-label="Zoeken in de tabel"
                value={term} onChange={(e) => zetTerm(e.target.value)} />
       </div>
       <p className="mini" style={{ marginTop: 8 }}>
@@ -285,6 +306,51 @@ function Zoeken(
                 </span>
                 <Knop klein titel="Toevoegen"
                       opKlik={() => opPortie({ soort: 'eigen', product: pr })}>+</Knop>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      {uitslag && uitslag.merk.length > 0 && (
+        <>
+          <Kop>Merkproducten</Kop>
+          <div className="lijst">
+            {uitslag.merk.map((m) => (
+              <div key={m.id}>
+                {/* Graad D, net als in het invoervenster. Dat is geen oordeel over
+                    het merk maar over de soort waarde: een etiket is een opgave
+                    van de fabrikant met een wettelijke marge van rond de twintig
+                    procent, geen laboratoriumbepaling. */}
+                <Chip graad="D" />
+                <span className="groei">
+                  <span className="knip" style={{ fontSize: '.86rem', display: 'block' }}>{m.naam}</span>
+                  <span className="mini">
+                    <abbr className="herkomst" title="etiketwaarde van de fabrikant">◈</abbr>{' '}
+                    {m.merk ?? 'merkproduct'} · per 100 g
+                    {m.verpakking_gram != null && <> · pak van {dz(m.verpakking_gram)} g</>}
+                  </span>
+                  {toonKoolhydraten && (
+                    <span className="mini" style={{ display: 'block' }}>
+                      koolhydraten {m.koolhydraat_g == null ? '–' : dec(m.koolhydraat_g, 1) + ' g'}
+                      {' · '}vezel {m.vezel_g == null ? '–' : dec(m.vezel_g, 1) + ' g'}
+                    </span>
+                  )}
+                  {/* Een etiket draagt geen natrium in deze tabel, dus hier staat
+                      altijd een streepje. Dat is met opzet zichtbaar: wie op zout
+                      let hoort te zien dat het onbekend is en niet dat het nul is. */}
+                  {toonZout && (
+                    <span className="mini" style={{ display: 'block' }}>zout –</span>
+                  )}
+                  <Vlaggetjes lijst={claims({
+                    kcal: m.kcal, eiwit_g: m.eiwit_g, vezel_g: m.vezel_g, natrium_mg: null,
+                  })} />
+                </span>
+                <span className="cijfer mini" style={{ textAlign: 'right' }}>
+                  {dz(m.kcal)} kcal<br />{m.eiwit_g == null ? '–' : dec(m.eiwit_g, 1) + ' g'}
+                </span>
+                <Knop klein titel="Portie kiezen"
+                      opKlik={() => opPortie({ soort: 'merk', product: m })}>+</Knop>
               </div>
             ))}
           </div>
