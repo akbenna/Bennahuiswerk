@@ -25,6 +25,7 @@ import type { Voortgang } from './opslag'
 import { leegVoortgang, schoonVoortgang } from './opslag'
 import { verwerkAntwoord } from './uitslag'
 import { UITLEG } from './gegevens/uitleg'
+import { BEHEERST_BOX, isBeheerst } from './leitner'
 import { ECHT } from './toeval'
 
 /** Vier sommen in één onderwerp, verdeeld over drie niveaus, de vorm waarin
@@ -427,5 +428,110 @@ describe('de uitgewerkte som uit de methode', () => {
     expect(document.querySelector('.feedback.no')?.textContent).toContain('net als in je boek')
     /* En de doos staat open, anders is wijzen zinloos. */
     expect(document.querySelector('.boekvoorbeeld')).not.toBeNull()
+  })
+})
+
+/**
+ * WAT ZE NU KAN, IN PLAATS VAN WAT ER NOG MOET
+ *
+ * Het oefenscherm kende twee getallen: hoeveel sommen goed, en hoeveel sterren
+ * erbij. Allebei gaan ze over de beurt en niet over haar. Wat er miste is het
+ * enige objectieve punt in het hele systeem waarop je kunt zeggen dat ze iets
+ * kán: het moment dat een som over de vier sterren gaat. Dat is vier keer
+ * achter elkaar goed, verspreid over dagen, met de wachttijden van Leitner
+ * ertussen. Dat is niet te gokken.
+ *
+ * Voor een kind dat onzeker is over dit vak is dat het verschil tussen een
+ * aanmoediging en een bewijsstuk. De samenvatting zet het daarom bovenaan,
+ * boven het foutenschrift, en niet eronder.
+ */
+describe('de samenvatting benoemt wat er beheerst is geraakt', () => {
+  const SOM: Kaart = { id: 's1', p: 'wassima', v: 'wiskunde', t: 'Machten delen', lvl: 1,
+    q: 'Herleid: a¹² ÷ a⁷', a: 'a⁵' }
+
+  /** Het scherm met een som die op `box` staat, met een meelopende voortgang. */
+  function Reeks({ box, fout }: { box: number; fout?: boolean }): ReactNode {
+    const start = { ...vers('auto'), cards: { s1: { box, ok: box, wrong: 0, last: 0 } } }
+    const [prog, zetProg] = useState<Voortgang>(
+      fout ? { ...start, foutLog: [{ id: 'x', t: 'Breuken', v: 'wiskunde', q: '1/2 + 1/2', a: '1', u: '', when: 0 }] } : start)
+    return (
+      <Oefenen
+        pid="wassima" vak="wiskunde" onderwerp="Machten delen" jaar="nu" alle={[SOM]}
+        prog={prog} thema={themaVan('wassima')} geluid={false} voorlezen={false} toeval={ECHT}
+        terug={() => { /* niet nodig */ }}
+        naarOnderwerp={() => { /* niet nodig */ }}
+        opUitslag={(kaart, beurt, goed, hint) => zetProg((pr) =>
+          verwerkAntwoord(pr, { kaart, beurt, goed, hintGebruikt: hint }, new Date()))}
+        opToets={() => { /* niet nodig */ }}
+      />
+    )
+  }
+
+  /** Goed antwoorden en daarna de samenvatting opvragen. */
+  const totSamenvatting = (): void => {
+    act(() => { fireEvent.change(screen.getByPlaceholderText('jouw antwoord'),
+      { target: { value: 'a⁵' } }) })
+    act(() => { fireEvent.click(screen.getByText('Nakijken')) })
+    act(() => { fireEvent.click(screen.getByText(/Stoppen/)) })
+  }
+
+  it('noemt de som die net over de vier sterren ging', () => {
+    render(<Reeks box={3} />)
+    totSamenvatting()
+    expect(screen.getByText(/Dit beheers je nu \(1\)/)).toBeTruthy()
+    expect(screen.getByText(/a¹²/)).toBeTruthy()
+  })
+
+  it('noemt niets bij een som die pas op één ster staat', () => {
+    render(<Reeks box={0} />)
+    totSamenvatting()
+    expect(screen.queryByText(/Dit beheers je nu/)).toBeNull()
+  })
+
+  it('noemt niets bij een som die al beheerst wás', () => {
+    /* Anders zou dezelfde som elke sessie opnieuw als doorbraak tellen, en dan
+       zegt het woord niets meer. */
+    render(<Reeks box={4} />)
+    totSamenvatting()
+    expect(screen.queryByText(/Dit beheers je nu/)).toBeNull()
+  })
+
+  it('zet het bóven het foutenschrift', () => {
+    render(<Reeks box={3} fout />)
+    totSamenvatting()
+    const tekst = document.body.textContent ?? ''
+    expect(tekst.indexOf('Dit beheers je nu')).toBeGreaterThan(-1)
+    expect(tekst.indexOf('foutenschrift')).toBeGreaterThan(-1)
+    expect(tekst.indexOf('Dit beheers je nu')).toBeLessThan(tekst.indexOf('foutenschrift'))
+  })
+
+  it('zegt niet meer dat het foutenschrift van deze sessie is', () => {
+    /* Er stond "Deze gingen mis" boven een lijst van veertig, ook na een sessie
+       waarin alles goed ging. */
+    render(<Reeks box={3} fout />)
+    totSamenvatting()
+    const kaart = document.body.textContent ?? ''
+    expect(kaart).toContain('van vandaag en van daarvoor')
+    expect(kaart).not.toContain('Deze gingen mis')
+  })
+
+  it('zegt het ook meteen, op dezelfde grens als de app zelf hanteert', () => {
+    /* Het scherm mag geen eigen 4 hebben naast die van `isBeheerst`. Deze proef
+       kijkt naar het gedrag op de trede eronder en erop, en niet naar de waarde
+       van de constante: die twee samen verschuiven zou hem anders ontgaan. */
+    render(<Reeks box={BEHEERST_BOX - 1} />)
+    act(() => { fireEvent.change(screen.getByPlaceholderText('jouw antwoord'),
+      { target: { value: 'a\u2075' } }) })
+    act(() => { fireEvent.click(screen.getByText('Nakijken')) })
+    expect(screen.getByText(/nu beheers je deze som/)).toBeTruthy()
+    expect(isBeheerst({ ...vers('auto'),
+      cards: { s1: { box: BEHEERST_BOX, ok: 4, wrong: 0, last: 0 } } }, 's1')).toBe(true)
+    cleanup()
+
+    render(<Reeks box={BEHEERST_BOX - 2} />)
+    act(() => { fireEvent.change(screen.getByPlaceholderText('jouw antwoord'),
+      { target: { value: 'a\u2075' } }) })
+    act(() => { fireEvent.click(screen.getByText('Nakijken')) })
+    expect(screen.queryByText(/nu beheers je deze som/)).toBeNull()
   })
 })

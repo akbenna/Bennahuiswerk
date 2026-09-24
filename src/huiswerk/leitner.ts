@@ -31,8 +31,13 @@ export const kaartStand = (prog: Voortgang, id: string): Kaartstand =>
 export const wanneerTerug = (c: Kaartstand): number =>
   (c.last || 0) + (BOX_DAGEN[c.box] ?? 0) * 86400000
 
+/** Vanaf dit doosje heet een som beheerst, oftewel vier van de vijf sterren.
+ *  Stond als losse 4 in `isBeheerst`; het scherm moet dezelfde grens gebruiken
+ *  als het zegt dat een som er net overheen is. */
+export const BEHEERST_BOX = 4
+
 export const isBeheerst = (prog: Voortgang, id: string): boolean =>
-  kaartStand(prog, id).box >= 4
+  kaartStand(prog, id).box >= BEHEERST_BOX
 
 export const puntenVoor = (prog: Voortgang, id: string, hintGebruikt: boolean): number =>
   (isBeheerst(prog, id) ? 3 : (hintGebruikt ? 5 : 10))

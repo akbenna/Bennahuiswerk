@@ -36,7 +36,7 @@ import { UITLEG } from '../gegevens/uitleg'
 import type { Kaart, Opgave, Thema, Toeval } from '../gegevens/soorten'
 import type { Voortgang } from '../opslag'
 import {
-  STERREN, beurtVan, kaartStand, kiesVolgende, opNiveau, puntenVoor, sterrenVan,
+  BEHEERST_BOX, STERREN, beurtVan, kaartStand, kiesVolgende, opNiveau, puntenVoor, sterrenVan,
   sterrenVanStapel, sterrenVoor,
 } from '../leitner'
 import { antwoordKlopt, diagnoseFout, norm } from '../nakijken'
@@ -72,6 +72,10 @@ export interface OefenenProps {
 
 interface Toetsfout { t: string; q: string; a: string; u: string }
 
+/** Wat er van een oefenreeks wordt bijgehouden. `nieuw` zijn de sommen die
+ *  tijdens deze reeks de grens van beheerst passeerden. */
+interface Sessiestand { goed: number; fout: number; sterren: number; nieuw: string[] }
+
 /** Hoe lang het nog duurt voordat een onderwerp dat rust terugkomt, in woorden.
  *  Naar boven afgerond: "morgen" is eerlijker dan "vandaag nog" als het pas
  *  vanavond zover is. */
@@ -104,7 +108,7 @@ export function Oefenen(p: OefenenProps): ReactNode {
   const [verdiend, zetVerdiend] = useState(10)
   const [feest, zetFeest] = useState(false)
   const [toonUitleg, zetToonUitleg] = useState(true)
-  const [sessie, zetSessie] = useState({ goed: 0, fout: 0, sterren: 0 })
+  const [sessie, zetSessie] = useState<Sessiestand>({ goed: 0, fout: 0, sterren: 0, nieuw: [] })
   /* Alles in dit onderwerp is net geweest en wacht nog. Dan is doorvragen geen
      oefening maar herhaling van wat er al zit; het scherm zegt dat, en het kind
      kiest zelf of het tóch doorgaat. */
@@ -161,7 +165,7 @@ export function Oefenen(p: OefenenProps): ReactNode {
        bleef er bij een onderwerp als Delen precies één som over. */
     if (!isFout) lijst = opNiveau(lijst, nu.current.niveau)
     zetPool(lijst)
-    zetSessie({ goed: 0, fout: 0, sterren: 0 })
+    zetSessie({ goed: 0, fout: 0, sterren: 0, nieuw: [] })
     zetToets({ n: 0, fout: [] })
     zetKlaar(false)
     zetToonUitleg(true)
@@ -217,7 +221,14 @@ export function Oefenen(p: OefenenProps): ReactNode {
       zetFoutTip(null)
       speel('goed', p.geluid)
       p.opUitslag(kaart, beurt, true, hintN > 0)
-      zetSessie((s) => ({ goed: s.goed + 1, fout: s.fout, sterren: s.sterren + (na - voor) }))
+      /* Net over de grens van beheerst. Dat is geen aanmoediging maar een feit,
+         en juist daarom werkt het bij een kind dat onzeker is over het vak: het
+         is iets wat ze zelf heeft gedaan en wat je kunt nakijken. */
+      const doorbraak = voor < BEHEERST_BOX && na >= BEHEERST_BOX
+      zetSessie((s) => ({
+        goed: s.goed + 1, fout: s.fout, sterren: s.sterren + (na - voor),
+        nieuw: doorbraak ? [...s.nieuw, beurt.q] : s.nieuw,
+      }))
       zetFeest(true)
       setTimeout(() => zetFeest(false), 1100)
     } else {
@@ -228,7 +239,7 @@ export function Oefenen(p: OefenenProps): ReactNode {
       zetFoutTip(diagnoseFout(beurt, val))
       speel('fout', p.geluid)
       p.opUitslag(kaart, beurt, false, false)
-      zetSessie((s) => ({ goed: s.goed, fout: s.fout + 1, sterren: s.sterren }))
+      zetSessie((s) => ({ ...s, fout: s.fout + 1 }))
     }
   }
 
@@ -397,12 +408,31 @@ export function Oefenen(p: OefenenProps): ReactNode {
             {gehaald ? '✓  dagdoel gehaald!' : ''}
           </p>
         </div>
+        {sessie.nieuw.length > 0 && (
+          <div className="card" style={{ marginTop: 12, borderLeft: '4px solid var(--accent)' }}>
+            <b>🏅 Dit beheers je nu ({sessie.nieuw.length})</b>
+            <p className="muted" style={{ fontSize: 13, marginTop: 4 }}>
+              Deze {sessie.nieuw.length === 1 ? 'som ging' : 'sommen gingen'} zojuist over de vier
+              sterren heen. Dat is niet geraden: die {sessie.nieuw.length === 1 ? 'heb' : 'heb'} je
+              vier keer achter elkaar goed gehad.
+            </p>
+            <div style={{ marginTop: 8 }}>
+              {sessie.nieuw.map((q, i) => (
+                <div
+                  key={i}
+                  style={{ padding: '7px 0', borderTop: '1px solid var(--line)', fontSize: 14 }}
+                >⭐ {q.replace(/\n/g, ' ')}</div>
+              ))}
+            </div>
+          </div>
+        )}
         {fouten.length > 0
           ? (
             <div className="card" style={{ marginTop: 12 }}>
-              <b>📕 Nog even herhalen ({fouten.length})</b>
+              <b>📕 Je foutenschrift ({fouten.length})</b>
               <p className="muted" style={{ fontSize: 13, marginTop: 4 }}>
-                Deze gingen mis. Pak ze nog een keer: daar leer je het meest van. 💪
+                Sommen die eerder zijn misgegaan, van vandaag en van daarvoor. Pak er een paar:
+                daar leer je het meest van. 💪
               </p>
               <div style={{ marginTop: 8 }}>
                 {fouten.slice(0, 8).map((f, i) => (
@@ -550,7 +580,7 @@ export function Oefenen(p: OefenenProps): ReactNode {
               <div style={{ fontSize: 15, fontWeight: 600, marginTop: 6 }}>
                 <span className="stars">{sterrenVan(ster.na)}</span>{' '}
                 {ster.na > ster.voor
-                  ? (ster.na === 4 && ster.voor < 4
+                  ? (ster.na >= BEHEERST_BOX && ster.voor < BEHEERST_BOX
                       ? '🏅 nu beheers je deze som!'
                       : ster.na === STERREN ? 'vol! deze zit er stevig in.' : 'een ster erbij')
                   : 'al vol, mooi zo'}
