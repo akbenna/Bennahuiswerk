@@ -61,7 +61,10 @@ let stuk = 0
 const val = (m) => { console.log(`  FOUT, ${m}`); stuk++ }
 
 /* ------------------------------------------------------------------ 1 */
-const CURSUSSEN = [['kompas', 'KOMPAS'], ['communicatie', 'VERBIND'], ['presenteren', 'PODIUM']]
+/* Tape kwam later als vierde. Hij heeft nooit een slot gehad, maar hij hoort
+   onder dezelfde proef: open, met inhoud, en een eigen tegel. Zijn merk staat
+   in de kop in kapitalen door de opmaak; innerText geeft het zo terug. */
+const CURSUSSEN = [['kompas', 'KOMPAS'], ['communicatie', 'VERBIND'], ['presenteren', 'PODIUM'], ['tape', 'TAPE']]
 for (const [bestand, merk] of CURSUSSEN) {
   const pg = await browser.newPage()
   const fouten = []
@@ -112,7 +115,7 @@ for (const [bestand, merk] of CURSUSSEN) {
      verzameltegel die "Kompas, Verbind, Podium" zegt, zegt niet waar er een van
      drieën over gaat, dat was juist de reden om het te veranderen. */
   const namen = await pg.locator('.appt h3').allTextContents()
-  const mist = ['Kompas', 'Verbind', 'Podium'].filter((n) => !namen.some((t) => t.trim() === n))
+  const mist = ['Kompas', 'Verbind', 'Podium', 'Tape'].filter((n) => !namen.some((t) => t.trim() === n))
   const snelbalk = await pg.locator('.snelbalk').count()
 
   if (mist.length) val(`geen eigen tegel voor ${mist.join(', ')}`)
@@ -128,7 +131,7 @@ for (const [bestand, merk] of CURSUSSEN) {
     const waar = new URL(pg.url()).pathname
     if (slot) val('na één tik staat er alsnog een slot')
     else if (!waar.includes('/cursussen/')) val(`één tik komt uit op ${waar}`)
-    else console.log(`drie eigen tegels · geen snelbalk · tik → ${waar}, geen code`)
+    else console.log(`vier eigen tegels · geen snelbalk · tik → ${waar}, geen code`)
   }
   await pg.close()
 }

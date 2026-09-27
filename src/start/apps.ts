@@ -91,6 +91,16 @@ export const APPS: readonly AppTegel[] = [
   zin:'Twintig lessen over voor een groep staan: je zenuwen de baas, een verhaal dat een kop en een staart heeft, en wat je doet als iemand een vraag stelt die je niet had zien aankomen.',
   detail:['Twintig lessen','Presentatiesimulator','Kenniskaarten','Ook voor spreekbeurten']},
 
+ /* Tape staat bij de groten en niet bij de kinderen: hij is voor één
+    volwassene geschreven, over handelen met eigen geld. Hij hoort bij de
+    Academie (zelfde kleur, zelfde opslagvorm), maar zijn vorm, drie
+    kaarsen, houdt hem apart van de andere drie. */
+ {id:'tape', naam:'Tape', href:'huiswerk/cursussen/tape.html', ico:'/iconen/tape.svg',
+  k:'academie', groep:'groot', kort:'Technische analyse, gevorderd',
+  wie:'Abdelkader',
+  zin:'Tweeëntwintig lessen technische analyse voor wie al tradet: structuur, volume en VWAP, het orderboek en de tape, setups en risico, en bij elke techniek wat de wetenschappelijke literatuur erover zegt.',
+  detail:['22 lessen in 7 modules','Setup-trainer','Orderboek-simulator','Bewijs per techniek']},
+
  {id:'sanad', naam:'Geloofsstudie', href:'sanad/', ico:'/iconen/geloofsstudie.svg', k:'geloof', groep:'groot', kort:'Achtentwintig weken fiqh',
   oud:'Sanad', ar:'سند', wie:'Abdelkader',
   zin:'Achtentwintig weken Malikitische fiqh, usul, ‘aqida, bronnenkritiek en medische ethiek, elke week met een fragment uit de oorspronkelijke tekst.',
