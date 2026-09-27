@@ -95,11 +95,11 @@ export const APPS: readonly AppTegel[] = [
     volwassene geschreven, over handelen met eigen geld. Hij hoort bij de
     Academie (zelfde kleur, zelfde opslagvorm), maar zijn vorm, drie
     kaarsen, houdt hem apart van de andere drie. */
- {id:'tape', naam:'Trading', href:'huiswerk/cursussen/tape.html', ico:'/iconen/tape.svg',
+ {id:'trading', naam:'Trading', href:'huiswerk/cursussen/trading.html', ico:'/iconen/trading.svg',
   k:'academie', groep:'groot', kort:'Technische analyse, gevorderd',
   wie:'Abdelkader',
-  zin:'Technische analyse voor wie al tradet, getraind op beslissingen: 24 casussen waarin je kiest of je instapt, wanneer, waar de stop ligt en wat de doorslag geeft. Met lessen over volume, het orderboek, algoritmes en contrarian denken, en bij elke techniek wat het onderzoek erover zegt.',
-  detail:['24 casussen in stappen','28 lessen in punten','Algoritmes herkennen','Bewijs per techniek']},
+  zin:'Technische analyse voor wie al tradet, getraind op beslissingen: 40 casussen waarin je kiest of je instapt, wanneer, waar de stop ligt en wat de doorslag geeft. Met lessen over volume, het orderboek, algoritmes en contrarian denken, en bij elke techniek wat het onderzoek erover zegt.',
+  detail:['40 casussen in stappen','28 lessen in punten','Algoritmes herkennen','Bewijs per techniek']},
 
  {id:'sanad', naam:'Geloofsstudie', href:'sanad/', ico:'/iconen/geloofsstudie.svg', k:'geloof', groep:'groot', kort:'Achtentwintig weken fiqh',
   oud:'Sanad', ar:'سند', wie:'Abdelkader',

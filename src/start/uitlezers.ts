@@ -120,9 +120,9 @@ export const UITLEZERS: Readonly<Record<string, Uitlezer>> = {
   kompas: cursus,
   verbind: cursus,
   podium: cursus,
-  /* Tape is later gebouwd dan de drie, maar bewaart met opzet in dezelfde
+  /* Trading is later gebouwd dan de drie, maar bewaart met opzet in dezelfde
      vorm, zodat hij deze uitlezer kan delen. */
-  tape: cursus,
+  trading: cursus,
 
   /* Islam leren: profielen in een lijst, voortgang per profiel-id. */
   bidaya(d) {
