@@ -98,8 +98,8 @@ export const APPS: readonly AppTegel[] = [
  {id:'tape', naam:'Tape', href:'huiswerk/cursussen/tape.html', ico:'/iconen/tape.svg',
   k:'academie', groep:'groot', kort:'Technische analyse, gevorderd',
   wie:'Abdelkader',
-  zin:'Tweeëntwintig lessen technische analyse voor wie al tradet: structuur, volume en VWAP, het orderboek en de tape, setups en risico, en bij elke techniek wat de wetenschappelijke literatuur erover zegt.',
-  detail:['22 lessen in 7 modules','Setup-trainer','Orderboek-simulator','Bewijs per techniek']},
+  zin:'Technische analyse voor wie al tradet, getraind op beslissingen: 24 casussen waarin je kiest of je instapt, wanneer, waar de stop ligt en wat de doorslag geeft. Met lessen over volume, het orderboek, algoritmes en contrarian denken, en bij elke techniek wat het onderzoek erover zegt.',
+  detail:['24 casussen in stappen','28 lessen in punten','Algoritmes herkennen','Bewijs per techniek']},
 
  {id:'sanad', naam:'Geloofsstudie', href:'sanad/', ico:'/iconen/geloofsstudie.svg', k:'geloof', groep:'groot', kort:'Achtentwintig weken fiqh',
   oud:'Sanad', ar:'سند', wie:'Abdelkader',
