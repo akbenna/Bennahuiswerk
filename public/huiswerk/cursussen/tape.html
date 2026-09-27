@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Tape · Technische analyse voor gevorderden</title>
+<meta name="theme-color" content="#0d1117">
+<meta name="description" content="Tape, een cursus technische analyse voor gevorderde traders: structuur, volume, orderboek en tape, setups, risico en proces. Twintig korte lessen met interactieve grafieken.">
+<link rel="icon" type="image/svg+xml" href="/iconen/tape.svg">
+<link rel="apple-touch-icon" href="/iconen/tape-180.png">
+<style>
+  :root{
+    --bg:#0d1117; --paneel:#151b23; --paneel2:#1b2330; --lijn:#263040; --ink:#e6edf3; --muted:#9aa7b4;
+    --pri:#e9bc55; --pri-bg:#31280f; --up:#26a69a; --dn:#ef5350; --blauw:#5b9cf5; --paars:#b48cf2; --oranje:#f0a04b;
+    --goed:#3fb950; --goed-bg:#12261a; --fout:#f85149; --fout-bg:#2d1418;
+    --radius:14px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.55;}
+  body{max-width:720px;margin:0 auto;padding:0 16px 96px;}
+  h1,h2,h3{line-height:1.25;}
+  button{font:inherit;}
+  .hero{border-radius:var(--radius);margin-top:16px;padding:22px 20px;background:linear-gradient(135deg,#1b2330 0%,#2a2410 100%);border:1px solid var(--lijn);}
+  .hero .merk{font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:800;color:var(--pri);}
+  .hero h1{font-size:25px;font-weight:800;margin:4px 0 6px;}
+  .hero p{color:#c9d3dd;font-size:14.5px;}
+  .chips{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+  .chip{background:rgba(233,188,85,.1);border:1px solid rgba(233,188,85,.3);color:#f3dca3;border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:700;}
+  .kaart{background:var(--paneel);border:1px solid var(--lijn);border-radius:var(--radius);padding:16px;margin-top:14px;}
+  .kaart h2{font-size:17px;font-weight:800;}
+  .kaart h3{font-size:15px;font-weight:800;}
+  .sub{color:var(--muted);font-size:13.5px;}
+  .klein{color:var(--muted);font-size:12.5px;}
+  .balk{height:7px;background:#232c39;border-radius:999px;overflow:hidden;margin-top:8px;}
+  .balk i{display:block;height:100%;background:var(--pri);border-radius:999px;}
+  .knop{font-weight:700;font-size:14px;color:#1a1405;background:var(--pri);border:0;border-radius:10px;padding:11px 15px;cursor:pointer;}
+  .knop:active{transform:scale(.98);}
+  .knop.stil{background:var(--paneel2);color:var(--ink);border:1px solid var(--lijn);}
+  .knop.vol{width:100%;}
+  .knop.klein{font-size:12.5px;padding:7px 11px;border-radius:8px;}
+  .knop.aan{background:var(--pri-bg);color:var(--pri);border:1px solid var(--pri);}
+  .rij{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px;}
+  .label{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--pri);}
+  .label.af{color:var(--goed);}
+  nav.onder{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;justify-content:center;background:rgba(13,17,23,.96);backdrop-filter:blur(8px);border-top:1px solid var(--lijn);}
+  nav.onder .in{display:flex;width:100%;max-width:720px;}
+  nav.onder button{flex:1;background:none;border:0;padding:9px 2px 10px;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;}
+  nav.onder button svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;}
+  nav.onder button.aan{color:var(--pri);}
+  .modkop{display:flex;align-items:center;gap:12px;}
+  .modkop .nr{width:36px;height:36px;flex:none;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;background:var(--pri-bg);color:var(--pri);border:1px solid rgba(233,188,85,.35);}
+  .modkop .groei{flex:1;min-width:0;}
+  .lesrij{display:flex;align-items:center;gap:12px;padding:11px 4px;border-top:1px solid var(--lijn);cursor:pointer;}
+  .lesrij:first-of-type{margin-top:10px;}
+  .lesrij .n{width:30px;height:30px;flex:none;border-radius:8px;background:var(--paneel2);color:var(--muted);font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px;}
+  .lesrij .n.af{background:var(--goed-bg);color:var(--goed);}
+  .lesrij .g{flex:1;min-width:0;}
+  .lesrij .g b{font-size:14.5px;display:block;}
+  .lesrij .g span{font-size:12.5px;color:var(--muted);}
+  .terug{background:var(--paneel2);color:var(--ink);border:1px solid var(--lijn);border-radius:9px;padding:8px 12px;font-weight:700;cursor:pointer;margin-top:16px;}
+  .les h1{font-size:23px;font-weight:800;margin-top:12px;}
+  .les .lead{color:#c9d3dd;font-size:15.5px;margin-top:6px;}
+  .proza p{font-size:15.5px;margin-top:12px;color:#dde4ea;}
+  .proza b{color:#fff;}
+  .ia{background:var(--paneel);border:1px solid var(--lijn);border-radius:var(--radius);padding:14px;margin-top:18px;}
+  .ia .kop{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--pri);}
+  .ia .uitleg{font-size:14px;color:#c9d3dd;margin-top:10px;}
+  .valkuil{background:var(--fout-bg);border:1px solid #5a2328;border-radius:12px;padding:12px 14px;margin-top:16px;font-size:14.5px;}
+  .regel{background:var(--pri-bg);border:1px solid #5b4a1b;border-radius:12px;padding:12px 14px;margin-top:12px;font-size:14.5px;font-weight:600;color:#f3dca3;}
+  .valkuil .label{color:#ff9a94;}
+  .vraag .opt{display:block;width:100%;text-align:left;background:var(--paneel2);color:var(--ink);border:1px solid var(--lijn);border-radius:10px;padding:11px 13px;margin-top:8px;font-size:14.5px;cursor:pointer;}
+  .vraag .opt:hover{border-color:var(--pri);}
+  .vraag .opt.goed{background:var(--goed-bg);border-color:var(--goed);}
+  .vraag .opt.fout{background:var(--fout-bg);border-color:var(--fout);}
+  .terugk{margin-top:10px;font-size:14px;padding:10px 12px;border-radius:10px;}
+  .terugk.goed{background:var(--goed-bg);color:#b7ebc0;}
+  .terugk.fout{background:var(--fout-bg);color:#ffc9c5;}
+  svg.graf{width:100%;height:auto;display:block;margin-top:10px;background:#0b0f14;border-radius:10px;border:1px solid var(--lijn);touch-action:manipulation;}
+  .graf .raster{stroke:#1c2530;stroke-width:1;}
+  .graf .as{fill:#7d8995;font-size:11px;font-family:ui-monospace,Menlo,monospace;}
+  .graf .up{fill:var(--up);} .graf .dn{fill:var(--dn);}
+  .graf .lont-up{stroke:var(--up);stroke-width:1.2;} .graf .lont-dn{stroke:var(--dn);stroke-width:1.2;}
+  .graf .v-up{fill:var(--up);opacity:.45;} .graf .v-dn{fill:var(--dn);opacity:.45;}
+  .graf .v-mk{opacity:.95;}
+  .graf .volgem{stroke:#c9d3dd;stroke-width:1;stroke-dasharray:3 3;fill:none;opacity:.7;}
+  .graf .ema{stroke:var(--oranje);stroke-width:1.6;fill:none;}
+  .graf .vwap{stroke:var(--blauw);stroke-width:1.8;fill:none;}
+  .graf .band{stroke:var(--blauw);stroke-width:1;stroke-dasharray:4 4;fill:none;opacity:.6;}
+  .graf .avwap{stroke:var(--paars);stroke-width:2;fill:none;}
+  .graf .zone{fill:rgba(233,188,85,.12);stroke:rgba(233,188,85,.45);stroke-width:1;}
+  .graf .zone.steun{fill:rgba(38,166,154,.12);stroke:rgba(38,166,154,.5);}
+  .graf .lijn{stroke:var(--pri);stroke-width:1.3;stroke-dasharray:5 4;}
+  .graf .lijn.rood{stroke:var(--dn);} .graf .lijn.groen{stroke:var(--up);} .graf .lijn.blauw{stroke:var(--blauw);} .graf .lijn.wit{stroke:#c9d3dd;}
+  .graf .lijntekst{font-size:11px;font-weight:700;fill:var(--pri);}
+  .graf .lijntekst.rood{fill:#ff8a86;} .graf .lijntekst.groen{fill:#5fd3c7;} .graf .lijntekst.blauw{fill:#8fbaf8;} .graf .lijntekst.wit{fill:#c9d3dd;}
+  .graf .mk{fill:rgba(233,188,85,.14);}
+  .graf .gordijn{fill:rgba(13,17,23,.0);}
+  .graf .beslis{stroke:var(--pri);stroke-width:1;stroke-dasharray:2 3;}
+  .graf .swing{font-size:10.5px;font-weight:800;}
+  .graf .swing.h{fill:#ff9a94;} .graf .swing.l{fill:#6fe0d3;}
+  .graf .noot{font-size:11.5px;font-weight:700;fill:#f3dca3;}
+  .graf .box{fill:rgba(91,156,245,.1);stroke:rgba(91,156,245,.55);stroke-width:1;}
+  .graf .prof{fill:#5a6675;opacity:.55;} .graf .prof.va{fill:#8b98a7;opacity:.7;} .graf .prof.poc{fill:var(--pri);opacity:.95;}
+  .graf .klik{fill:transparent;cursor:pointer;}
+  .graf .klik:hover{fill:rgba(180,140,242,.12);}
+  .graf .pijl{fill:var(--pri);}
+  .graf .lijnplot{fill:none;stroke-width:1.8;}
+  .seg{display:flex;background:var(--paneel2);border:1px solid var(--lijn);border-radius:10px;padding:3px;gap:3px;margin-top:12px;overflow-x:auto;}
+  .seg button{flex:1;white-space:nowrap;border:0;background:none;font-weight:700;font-size:13px;color:var(--muted);padding:8px 10px;border-radius:8px;cursor:pointer;}
+  .seg button.aan{background:var(--pri-bg);color:var(--pri);}
+  .ladder{display:grid;grid-template-columns:1fr 64px 1fr;gap:0;margin-top:10px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;border:1px solid var(--lijn);border-radius:10px;overflow:hidden;}
+  .ladder .c{padding:4px 8px;position:relative;border-top:1px solid #1a212b;min-height:24px;}
+  .ladder .kop{background:var(--paneel2);font-weight:800;color:var(--muted);font-family:system-ui,sans-serif;font-size:11px;letter-spacing:.06em;text-transform:uppercase;}
+  .ladder .p{text-align:center;color:#c9d3dd;background:#10151c;}
+  .ladder .bid{text-align:right;color:#8fe3d9;}
+  .ladder .ask{text-align:left;color:#ffb3b0;}
+  .ladder .bid i,.ladder .ask i{position:absolute;top:3px;bottom:3px;opacity:.22;border-radius:3px;}
+  .ladder .bid i{right:0;background:var(--up);}
+  .ladder .ask i{left:0;background:var(--dn);}
+  .ladder .bid span,.ladder .ask span{position:relative;}
+  .ladder .weg{color:#56606b;text-decoration:line-through;}
+  .ladder .hl{outline:1px solid var(--pri);outline-offset:-1px;}
+  .tape{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;margin-top:10px;background:#0b0f14;border:1px solid var(--lijn);border-radius:10px;padding:8px 10px;max-height:150px;overflow:auto;}
+  .tape div{display:flex;justify-content:space-between;}
+  .tape .k{color:#5fd3c7;} .tape .v{color:#ff8a86;}
+  .veld{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted);font-weight:600;}
+  .veld input{background:#0b0f14;border:1px solid var(--lijn);color:var(--ink);border-radius:8px;padding:9px 10px;font:inherit;font-size:15px;width:100%;}
+  .velden{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+  input[type=range]{width:100%;accent-color:var(--pri);}
+  .uitkomst{margin-top:12px;background:#0b0f14;border:1px solid var(--lijn);border-radius:10px;padding:12px;}
+  .uitkomst .groot{font-size:24px;font-weight:800;}
+  .kv{display:flex;justify-content:space-between;gap:12px;font-size:14px;padding:7px 0;border-bottom:1px solid var(--lijn);}
+  .kv:last-child{border-bottom:0;}
+  .kv b{font-variant-numeric:tabular-nums;}
+  .matrix{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px;}
+  .matrix button{background:var(--paneel2);border:1px solid var(--lijn);color:var(--ink);border-radius:10px;padding:12px;text-align:left;cursor:pointer;font-size:13.5px;}
+  .matrix button b{display:block;font-size:14px;}
+  .matrix button.aan{border-color:var(--pri);background:var(--pri-bg);}
+  .flits{background:linear-gradient(135deg,#1b2330,#2a2410);border:1px solid var(--lijn);border-radius:14px;padding:22px 18px;min-height:160px;display:flex;flex-direction:column;justify-content:center;text-align:center;margin-top:12px;}
+  .flits .v{font-size:17px;font-weight:800;}
+  .flits .a{font-size:15px;margin-top:14px;padding-top:14px;border-top:1px solid var(--lijn);color:#dde4ea;}
+  .stappen{display:flex;gap:6px;margin-top:10px;}
+  .stappen i{flex:1;height:4px;border-radius:4px;background:#232c39;}
+  .stappen i.aan{background:var(--pri);}
+  .check{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--lijn);}
+  .check .t{flex:1;font-size:14px;}
+  .check .t b{display:block;}
+  .drie{display:flex;gap:4px;flex:none;}
+  .drie button{border:1px solid var(--lijn);background:var(--paneel2);color:var(--muted);border-radius:7px;padding:5px 8px;font-size:12px;font-weight:700;cursor:pointer;}
+  .drie button.ja{background:var(--goed-bg);color:var(--goed);border-color:var(--goed);}
+  .drie button.nee{background:var(--fout-bg);color:var(--fout);border-color:var(--fout);}
+  .drie button.nvt{background:var(--paneel2);color:var(--ink);border-color:var(--muted);}
+  .spiek p{font-size:14.5px;margin-top:8px;color:#dde4ea;}
+  .spiek table{width:100%;border-collapse:collapse;margin-top:8px;font-size:13.5px;}
+  .spiek td,.spiek th{border-top:1px solid var(--lijn);padding:7px 6px;text-align:left;vertical-align:top;}
+  .spiek th{color:var(--pri);font-size:12px;text-transform:uppercase;letter-spacing:.05em;}
+  .midden{text-align:center;}
+  @media (max-width:420px){ .velden{grid-template-columns:1fr;} .hero h1{font-size:22px;} .proza p{font-size:15px;} }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<nav class="onder"><div class="in" id="nav"></div></nav>
+<script>
+"use strict";
+/* ============================================================
+   TAPE, technische analyse voor gevorderden
+   Zelfstandig bestand, werkt offline, geen verbinding naar buiten.
+   Voortgang in localStorage, in dezelfde vorm als de andere cursussen
+   van de Academie (done, oefdagen, kaarten), zodat de startpagina hem
+   met dezelfde uitlezer kan lezen.
+
+   Alle grafieken zijn verzonnen. Ze komen uit een generator met een
+   vast zaadje, zodat elke les elke keer hetzelfde laat zien, en ze zijn
+   zo gebouwd dat ze het ene verschijnsel tonen waar de les over gaat.
+   Echte grafieken zijn rommeliger; dat staat er in de lessen ook bij.
+   ============================================================ */
+const KEY='tape_v1';
+const store=(()=>{ let s={};
+  try{ s=JSON.parse(localStorage.getItem(KEY))||{}; }catch(e){ s={}; }
+  s.done=s.done||{}; s.oefdagen=s.oefdagen||[]; s.kaarten=s.kaarten||{};
+  s.trainer=s.trainer||{goed:0,totaal:0}; s.laatsteLes=s.laatsteLes??null;
+  return s; })();
+function bewaar(){ try{ localStorage.setItem(KEY,JSON.stringify(store)); }catch(e){} }
+/* Met voorloopnullen: de startpagina sorteert deze datums als tekst. */
+function vandaag(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function dagIndex(){ return Math.floor(Date.now()/86400000); }
+function oefendag(){ const v=vandaag(); if(!store.oefdagen.includes(v)){ store.oefdagen.push(v); bewaar(); } }
+
+/* ---------------- getallen ---------------- */
+const nl=(x,d=2)=>Number(x).toFixed(d).replace('.',',');
+const nlk=(x)=>Math.round(x).toLocaleString('nl-NL');
+const pct=(x,d=1)=>nl(x*100,d)+'%';
+const R=(x,d=2)=>(x>=0?'+':'')+nl(x,d)+'R';
+
+/* ---------------- toeval met een zaadje ---------------- */
+function rng(seed){ let a=seed>>>0; return ()=>{ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function gauss(r){ let u=0; while(!u) u=r(); const v=r(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+
+/* ---------------- koersreeks ----------------
+   Een reeks bestaat uit stukken. Een stuk {n,to,s,v,v2} loopt in n bars van
+   de huidige koers naar `to`, met ruis s en een volume dat van v naar v2
+   schuift. Omdat elke stap opnieuw naar het doel rekent, trekt de ruis
+   zichzelf recht en eindigt het stuk waar het hoort. Een stuk {bar:{c,h,l,v}}
+   is één met de hand gemaakte bar: c is de verandering, h en l de lonten. */
+function reeks(seed,stukken,start=100,basis=1000){
+  const r=rng(seed); const uit=[]; let c=start;
+  for(const g of stukken){
+    if(g.bar){ const b=g.bar, o=c, cl=c+b.c;
+      uit.push({o, c:cl, h:Math.max(o,cl)+(b.h??0.08), l:Math.min(o,cl)-(b.l??0.08), v:Math.round(basis*(b.v??1)*(0.92+0.16*r()))});
+      c=cl; continue; }
+    const doel=g.to??c, s=g.s??0.4;
+    for(let k=0;k<g.n;k++){
+      const rest=g.n-k, o=c, cl=c+(doel-c)/rest+gauss(r)*s*(rest>1?1:0.15);
+      const h=Math.max(o,cl)+Math.abs(gauss(r))*s*0.55, l=Math.min(o,cl)-Math.abs(gauss(r))*s*0.55;
+      const vm=(g.v??1)+((g.v2??g.v??1)-(g.v??1))*(g.n>1?k/(g.n-1):0);
+      const v=basis*vm*(0.75+0.25*Math.abs(cl-o)/(s||1))*Math.exp(gauss(r)*0.22);
+      uit.push({o,h,l,c:cl,v:Math.round(v)}); c=cl;
+    }
+  }
+  return uit;
+}
+function bundel(d,f){ const uit=[]; for(let i=0;i<d.length;i+=f){ const g=d.slice(i,i+f);
+  uit.push({o:g[0].o, c:g[g.length-1].c, h:Math.max(...g.map(b=>b.h)), l:Math.min(...g.map(b=>b.l)), v:g.reduce((a,b)=>a+b.v,0)}); } return uit; }
+
+/* ---------------- indicatoren ---------------- */
+function ema(d,n){ const k=2/(n+1); const uit=[]; let e=d[0].c; d.forEach((b,i)=>{ e=i? b.c*k+e*(1-k) : b.c; uit.push(i>=n-1?e:null); }); return uit; }
+function sma(a,n){ return a.map((_,i)=> i<n-1?null : a.slice(i-n+1,i+1).reduce((x,y)=>x+y,0)/n); }
+/* VWAP met de typische prijs; de banden zijn de volumegewogen standaardafwijking. */
+function vwap(d,van=0){ let pv=0,vv=0,p2=0; return d.map((b,i)=>{ if(i<van) return null;
+  const tp=(b.h+b.l+b.c)/3; pv+=tp*b.v; vv+=b.v; p2+=tp*tp*b.v; const w=pv/vv; const sd=Math.sqrt(Math.max(0,p2/vv-w*w)); return {w,sd}; }); }
+/* ATR volgens Wilder: true range, glad gestreken met 1/n. */
+function atr(d,n=14){ const uit=[]; let a=null; d.forEach((b,i)=>{ const pc=i?d[i-1].c:b.c; const tr=Math.max(b.h-b.l,Math.abs(b.h-pc),Math.abs(b.l-pc));
+  if(i<n){ a=(a??0)+tr/n; uit.push(i===n-1?a:null); } else { a=(a*(n-1)+tr)/n; uit.push(a); } }); return uit; }
+/* Swingpunten: een top is een bar met de hoogste high van k links en k rechts.
+   Alleen bevestigde punten: wie de rechterrand van de grafiek meetelt, tekent
+   toppen die er op dat moment nog niet waren. */
+function swings(d,k=3){ const p=[];
+  for(let i=k;i<d.length-k;i++){ const r=d.slice(i-k,i+k+1);
+    if(d[i].h===Math.max(...r.map(b=>b.h))) p.push({i,t:'H',p:d[i].h});
+    if(d[i].l===Math.min(...r.map(b=>b.l))) p.push({i,t:'L',p:d[i].l}); }
+  const z=[]; for(const q of p){ const l=z[z.length-1];
+    if(l&&l.t===q.t){ if((q.t==='H'&&q.p>l.p)||(q.t==='L'&&q.p<l.p)) z[z.length-1]=q; } else z.push(q); }
+  let vh=null, vl=null; for(const q of z){ if(q.t==='H'){ q.lab=vh==null?'H':(q.p>vh?'HH':'LH'); vh=q.p; } else { q.lab=vl==null?'L':(q.p>vl?'HL':'LL'); vl=q.p; } }
+  return z; }
+/* Volumeprofiel: het volume van elke bar gelijk verdeeld over zijn bereik.
+   Value area: vanaf de POC steeds de zwaarste buur erbij tot zeventig procent. */
+function profiel(d,lo,hi,bins=28){ const st=(hi-lo)/bins; const v=new Array(bins).fill(0);
+  d.forEach(b=>{ const a=Math.max(0,Math.floor((b.l-lo)/st)), z=Math.min(bins-1,Math.floor((b.h-lo)/st)); const per=b.v/(z-a+1); for(let j=a;j<=z;j++) v[j]+=per; });
+  const tot=v.reduce((x,y)=>x+y,0); let poc=v.indexOf(Math.max(...v)); let a=poc,z=poc,som=v[poc];
+  while(som<0.7*tot && (a>0||z<bins-1)){ const onder=a>0?v[a-1]:-1, boven=z<bins-1?v[z+1]:-1; if(boven>=onder){ z++; som+=v[z]; } else { a--; som+=v[a]; } }
+  return {v,st,lo,poc,a,z,max:Math.max(...v)}; }
+
+/* ---------------- de grafiek ----------------
+   Eén functie voor alle grafieken in de cursus. `toon` knipt de reeks af
+   (voor de trainer: je ziet alleen tot het beslismoment), `plek` houdt de
+   breedte vast zodat de grafiek niet verspringt als de rest verschijnt. */
+function grafiek(d,o={}){
+  const W=640, H=o.h||320, n=o.toon??d.length, plek=o.plek??d.length;
+  const profB=o.profiel?92:0, asB=46, L=4, Rr=W-asB-profB, T=10;
+  const volH=o.geenVol?0:Math.round(H*.2), tus=volH?8:0, PH=H-T-volH-tus-6;
+  const zicht=d.slice(0,n);
+  let lo=Math.min(...zicht.map(b=>b.l)), hi=Math.max(...zicht.map(b=>b.h));
+  (o.zones||[]).forEach(z=>{ lo=Math.min(lo,z.van); hi=Math.max(hi,z.tot); });
+  (o.lijnen||[]).forEach(z=>{ lo=Math.min(lo,z.p); hi=Math.max(hi,z.p); });
+  if(o.bereik){ lo=Math.min(lo,o.bereik[0]); hi=Math.max(hi,o.bereik[1]); }
+  const m=(hi-lo)*.07; lo-=m; hi+=m;
+  const cw=(Rr-L)/plek, x=i=>L+(i+.5)*cw, y=p=>T+(hi-p)/(hi-lo)*PH;
+  const s=[`<svg viewBox="0 0 ${W} ${H}" class="graf" role="img" aria-label="${o.label||'koersgrafiek'}">`];
+  const stap=netteStap((hi-lo)/4);
+  for(let p=Math.ceil(lo/stap)*stap;p<=hi;p+=stap){ s.push(`<line class="raster" x1="0" x2="${W-asB}" y1="${y(p)}" y2="${y(p)}"/><text class="as" x="${W-asB+5}" y="${y(p)+4}">${nl(p,stap<1?2:(stap<10?1:0))}</text>`); }
+  if(o.band) s.push(`<rect class="mk" x="${x(o.band[0])-cw/2}" y="${T}" width="${(o.band[1]-o.band[0]+1)*cw}" height="${PH}"/>`);
+  if(o.markeer!=null && o.markeer<n) s.push(`<rect class="mk" x="${x(o.markeer)-cw/2}" y="${T}" width="${cw}" height="${H-T}"/>`);
+  (o.zones||[]).forEach(z=>{ const x0=z.vanI!=null?x(z.vanI)-cw/2:0; s.push(`<rect class="zone ${z.cls||''}" x="${x0}" y="${y(z.tot)}" width="${Rr-x0}" height="${Math.max(2,y(z.van)-y(z.tot))}"/>`);
+    if(z.label) s.push(`<text class="lijntekst" x="${x0+6}" y="${y(z.tot)-4}">${z.label}</text>`); });
+  if(o.box){ const b=o.box; s.push(`<rect class="box" x="${x(b.van)-cw/2}" y="${y(b.hi)}" width="${(b.tot-b.van+1)*cw}" height="${y(b.lo)-y(b.hi)}"/>`); if(b.label) s.push(`<text class="lijntekst blauw" x="${x(b.van)}" y="${y(b.hi)-4}">${b.label}</text>`); }
+  if(o.profiel){ const pr=profiel(zicht,lo,hi,o.bins||30); const X0=Rr+4, bw=profB-10;
+    pr.v.forEach((v,j)=>{ const y1=y(lo+(j+1)*pr.st), h=Math.max(1,y(lo+j*pr.st)-y1-1); const cls=j===pr.poc?'poc':(j>=pr.a&&j<=pr.z?'va':'');
+      s.push(`<rect class="prof ${cls}" x="${X0}" y="${y1}" width="${Math.max(1,v/pr.max*bw)}" height="${h}"/>`); });
+    if(o.va){ const vah=lo+(pr.z+1)*pr.st, val=lo+pr.a*pr.st, pp=lo+(pr.poc+.5)*pr.st;
+      [[vah,'VAH','wit'],[pp,'POC',''],[val,'VAL','wit']].forEach(([p,t,c])=>s.push(`<line class="lijn ${c}" x1="0" x2="${Rr}" y1="${y(p)}" y2="${y(p)}"/><text class="lijntekst ${c}" x="6" y="${y(p)-4}">${t}</text>`)); }
+  }
+  zicht.forEach((b,i)=>{ const up=b.c>=b.o, bw=Math.max(1,cw*.64), top=y(Math.max(b.o,b.c)), bh=Math.max(1,Math.abs(y(b.o)-y(b.c)));
+    s.push(`<line class="${up?'lont-up':'lont-dn'}" x1="${x(i)}" x2="${x(i)}" y1="${y(b.h)}" y2="${y(b.l)}"/><rect class="${up?'up':'dn'}" x="${x(i)-bw/2}" y="${top}" width="${bw}" height="${bh}"/>`); });
+  const pl=(arr,cls,van=0)=>{ const pts=[]; for(let i=van;i<n;i++){ const v=arr[i]; if(v!=null) pts.push(`${x(i).toFixed(1)},${y(v).toFixed(1)}`); } if(pts.length>1) s.push(`<polyline class="${cls}" points="${pts.join(' ')}"/>`); };
+  (o.ema||[]).forEach(k=>pl(ema(d,k),'ema'));
+  if(o.vwap){ const w=vwap(d,o.vwapVan||0); pl(w.map(q=>q&&q.w),'vwap'); if(o.banden){ pl(w.map(q=>q&&q.w+q.sd),'band'); pl(w.map(q=>q&&q.w-q.sd),'band'); pl(w.map(q=>q&&q.w+2*q.sd),'band'); pl(w.map(q=>q&&q.w-2*q.sd),'band'); } }
+  (o.avwap??[]).forEach(a=>{ const w=vwap(d,a); pl(w.map(q=>q&&q.w),'avwap'); s.push(`<circle cx="${x(a)}" cy="${y((d[a].h+d[a].l)/2)}" r="4" fill="#b48cf2"/>`); });
+  (o.lijnen||[]).forEach(l=>{ const x0=l.vanI!=null?x(l.vanI):0; s.push(`<line class="lijn ${l.cls||''}" x1="${x0}" x2="${Rr}" y1="${y(l.p)}" y2="${y(l.p)}"/>`); if(l.label) s.push(`<text class="lijntekst ${l.cls||''}" x="${l.rechts?Rr-6:x0+6}" y="${y(l.p)-4}" ${l.rechts?'text-anchor="end"':''}>${l.label}</text>`); });
+  if(o.swings){ swings(zicht,o.k||3).forEach(q=>{ const boven=q.t==='H'; s.push(`<text class="swing ${boven?'h':'l'}" x="${x(q.i)}" y="${boven?y(q.p)-6:y(q.p)+14}" text-anchor="middle">${q.lab}</text>`); }); }
+  (o.noten||[]).forEach(t=>{ if(t.i>=n) return; const b=d[t.i]; const boven=t.boven!==false; const py=boven?y(b.h)-10:y(b.l)+18;
+    s.push(`<text class="noot" x="${Math.min(Rr-4,Math.max(4,x(t.i)))}" y="${py}" text-anchor="${x(t.i)>Rr-80?'end':(x(t.i)<80?'start':'middle')}">${t.t}</text>`); });
+  if(o.beslis!=null) s.push(`<line class="beslis" x1="${x(o.beslis)+cw/2}" x2="${x(o.beslis)+cw/2}" y1="${T}" y2="${H}"/>`);
+  if(volH){ const vt=H-volH, vmax=Math.max(...zicht.map(b=>b.v));
+    zicht.forEach((b,i)=>{ const h=b.v/vmax*(volH-4); s.push(`<rect class="${b.c>=b.o?'v-up':'v-dn'} ${o.markeer===i?'v-mk':''}" x="${x(i)-Math.max(1,cw*.64)/2}" y="${H-h}" width="${Math.max(1,cw*.64)}" height="${h}"/>`); });
+    if(o.volGem){ const g=sma(d.map(b=>b.v),20); const pts=[]; for(let i=0;i<n;i++) if(g[i]!=null) pts.push(`${x(i).toFixed(1)},${(H-g[i]/vmax*(volH-4)).toFixed(1)}`); if(pts.length>1) s.push(`<polyline class="volgem" points="${pts.join(' ')}"/>`); }
+    s.push(`<text class="as" x="${W-asB+5}" y="${vt+12}">vol</text>`); }
+  if(o.klik) zicht.forEach((b,i)=>s.push(`<rect class="klik" data-act="${o.klik}" data-i="${i}" x="${x(i)-cw/2}" y="0" width="${cw}" height="${H}"/>`));
+  s.push('</svg>'); return s.join('');
+}
+function netteStap(r){ const e=Math.pow(10,Math.floor(Math.log10(r))); const f=r/e; return (f<1.5?1:f<3?2:f<7?5:10)*e; }
+
+/* Twee lijnen onder elkaar, voor prijs en cumulatieve delta. */
+function lijnenGrafiek(reeksen,o={}){
+  const W=640, H=o.h||300, n=reeksen[0].w.length, L=4, Rr=W-46, gap=10, ph=(H-10-gap*(reeksen.length-1))/reeksen.length;
+  const s=[`<svg viewBox="0 0 ${W} ${H}" class="graf" role="img" aria-label="${o.label||'grafiek'}">`];
+  reeksen.forEach((r,k)=>{ const top=5+k*(ph+gap); let lo=Math.min(...r.w), hi=Math.max(...r.w); const m=(hi-lo)*.12||1; lo-=m; hi+=m;
+    const x=i=>L+i*(Rr-L)/(n-1), y=v=>top+(hi-v)/(hi-lo)*ph;
+    s.push(`<rect x="0" y="${top}" width="${W}" height="${ph}" fill="#0b0f14"/><line class="raster" x1="0" x2="${Rr}" y1="${top+ph}" y2="${top+ph}"/>`);
+    if(r.nul&&lo<0&&hi>0) s.push(`<line class="raster" x1="0" x2="${Rr}" y1="${y(0)}" y2="${y(0)}" stroke-dasharray="3 3"/>`);
+    s.push(`<polyline class="lijnplot" stroke="${r.kleur}" points="${r.w.map((v,i)=>x(i).toFixed(1)+','+y(v).toFixed(1)).join(' ')}"/>`);
+    s.push(`<text class="as" x="${Rr+5}" y="${top+14}">${r.naam}</text>`); });
+  s.push('</svg>'); return s.join(''); }
+
+/* ---------------- MODULES ---------------- */
+const MODULES=[
+  {id:'bewijs',    naam:'Bewijs',     tag:'Wat werkt aantoonbaar, en hoe weet je dat'},
+  {id:'structuur', naam:'Structuur',  tag:'Trend, tijdframes, niveaus'},
+  {id:'volume',    naam:'Volume',     tag:'Inspanning tegen resultaat'},
+  {id:'boek',      naam:'Orderboek',  tag:'Level 2, tape en delta'},
+  {id:'setups',    naam:'Setups',     tag:'Alles samen in één beslissing'},
+  {id:'risico',    naam:'Risico',     tag:'Verwachting met onzekerheid'},
+  {id:'proces',    naam:'Proces',     tag:'Routine en de trader zelf'}
+];
+const MOD=Object.fromEntries(MODULES.map(m=>[m.id,m]));
+
+/* ---------------- LESSEN ----------------
+   Elke les: een lopend verhaal (tekst), één interactief stuk (ia), wat de
+   literatuur erover zegt (bewijs, met een sterkte), de valkuil, een vuistregel
+   en één controlevraag. De controlevragen van een module vormen samen de toets
+   waarmee je hem kunt overslaan. */
+const LESSEN=[
+/* ======================= BEWIJS ======================= */
+{m:'bewijs', t:"Wat werkt, volgens het onderzoek", d:"Technische analyse is vijftig jaar lang onderzocht. Het beeld is niet ‘het werkt’ of ‘het werkt niet’, maar scherper.", min:8,
+ tekst:[
+  "Wie een paar jaar tradet, bouwt een overtuiging op over wat werkt. Die overtuiging is gevormd door een paar honderd trades, een handvol opvallende winnaars en een geheugen dat de pijn van verliezers anders opslaat dan de vreugde van winst. De wetenschappelijke literatuur heeft dat nadeel niet. Ze heeft een ander: wat onderzocht wordt, is wat in regels te vangen is, en de meeste discretionaire technieken zijn dat niet.",
+  "Met dat voorbehoud is het beeld vrij consistent. <b>Trend en momentum</b> zijn het best onderbouwde verschijnsel in de hele financiële literatuur: markten die de afgelopen maanden stegen, blijven gemiddeld iets langer stijgen, in aandelen, obligaties, valuta en grondstoffen, en in reeksen die ruim een eeuw teruggaan. Daar tegenover staat <b>omkering op de korte termijn</b>: over een week tot een maand draaien aandelen gemiddeld een deel van hun beweging terug. Het tijdframe bepaalt dus welk van beide je handelt.",
+  "Voor <b>eenvoudige regels</b> (voortschrijdende gemiddelden, uitbraken uit een bereik) is het beeld dat ze in oude data werkten, in veel markten tot ongeveer het begin van de jaren negentig, en dat er in de grote, liquide markten na correctie voor het testen van veel regels en na kosten weinig van overblijft. <b>Klassieke patronen</b> als hoofd-en-schouders hebben een zwak, niet-nul effect; <b>candlestickpatronen</b> hebben in de beste studies geen waarde op zichzelf. Voor <b>Fibonacci en Elliott-golven</b> is er geen serieus bewijs. En de sterkste bevindingen van de laatste twintig jaar liggen dichter bij het orderboek dan bij de grafiek: <b>orderflow en onbalans</b> verklaren prijsveranderingen op korte termijn beter dan welk patroon ook.",
+  "De interactieve kaart hieronder zet de belangrijkste technieken op een rij, met hoe sterk het bewijs is. Tik er een aan voor de kern van wat er gevonden is. Elke les in deze cursus heeft een blok ‘Wat de literatuur zegt’; dit is het overzicht."
+ ],
+ ia:'bewijskaart',
+ bewijs:{sterkte:3, tekst:"Overzichtsstudies (onder meer Park en Irwin, 2007) vonden in 56 van 95 moderne studies een positief resultaat voor technische regels (20 negatief, 19 gemengd), met winsten in verschillende markten tot ongeveer het begin van de jaren negentig, maar ook dat vrijwel al die studies last hebben van data-snooping, achteraf gekozen regels en onderschatte kosten. Wat na correctie overblijft is vooral trend en momentum over maanden, en orderflow over minuten."},
+ valkuil:"Een techniek afwijzen omdat hij ‘niet bewezen’ is, of aannemen omdat hij ‘in de literatuur staat’. Onderzoek meet een regel, gemiddeld, over duizenden gevallen. Jij handelt een selectie. Het bewijs zegt waar de wind vandaan komt, niet of jouw trade goed is.",
+ regel:"Bouw je aanpak op wat aantoonbaar werkt (trend, locatie, deelname, risico) en behandel de rest als versiering.",
+ check:{v:"Welk verschijnsel heeft in de literatuur het sterkste en breedste bewijs?", o:["Candlestickpatronen","Trend en momentum over maanden","Fibonacci-niveaus"], a:1, u:"Momentum en tijdreeks-trend zijn gevonden in vrijwel elke beleggingscategorie en over meer dan een eeuw aan data. Candlesticks en Fibonacci hebben geen robuust bewijs."}},
+
+{m:'bewijs', t:"Waarom een backtest liegt", d:"Test genoeg regels en er zit altijd een tussen die schitterend lijkt. Dat is geen vondst, dat is rekenkunde.", min:7,
+ tekst:[
+  "Het belangrijkste inzicht uit vijftig jaar onderzoek naar technische analyse gaat niet over een indicator maar over methode. In 1992 publiceerden Brock, Lakonishok en LeBaron een beroemde studie: eenvoudige gemiddelde- en uitbraakregels op de Dow Jones over bijna een eeuw hadden voorspellende waarde. Zeven jaar later testten Sullivan, Timmermann en White hetzelfde universum van regels opnieuw, nu met een correctie voor het aantal geteste regels. In de oorspronkelijke periode hield het beste resultaat stand. In de tien jaar erna was het weg.",
+  "Het mechanisme heet data-snooping, en je kent het uit de geneeskunde als het probleem van de meervoudige toetsing. Test je honderd regels die in werkelijkheid niets doen, dan zijn er gemiddeld vijf ‘significant’ op het vijfprocentsniveau. Kies je daarna de beste, dan heb je per definitie een regel die in het verleden goed was. Of hij in de toekomst iets doet, is een andere vraag, en het antwoord is meestal nee.",
+  "De proef hieronder maakt het tastbaar. Hij genereert een koers die een zuivere toevalswandeling is, zonder enig patroon, en test er tweehonderd regels op van het type ‘long als het gemiddelde van x boven dat van y staat, anders short’. De beste regel in de eerste helft ziet eruit als een vondst. Kijk dan wat hij in de tweede helft doet. Voor een trader is de les direct toepasbaar: elke keer dat je een instelling ‘optimaliseert’ op dezelfde grafiek waar je hem op beoordeelt, doe je precies dit."
+ ],
+ ia:'snoop',
+ bewijs:{sterkte:3, tekst:"Sullivan, Timmermann en White (1999) introduceerden White's Reality Check voor technische regels; Bajgrowicz en Scaillet (2012) herhaalden het met een correctie voor valse ontdekkingen en transactiekosten op de Dow Jones van 1897 tot 2011: de beste regels waren vooraf nooit aan te wijzen, en zelfs binnen de steekproef verdween de winst al bij lage transactiekosten. Harvey, Liu en Zhu (2016) stelden voor om in financieel onderzoek pas bij een t-waarde boven de 3 van een bevinding te spreken, in plaats van 2."},
+ valkuil:"Een strategie die je op dezelfde data hebt bedacht, afgesteld én getest. Houd altijd een deel van de data apart dat je pas aan het eind één keer bekijkt, of beter: test hem vooruit, met kleine posities, in de echte markt.",
+ regel:"Hoe vaker je hebt geschoven aan een instelling, hoe minder het resultaat betekent.",
+ check:{v:"Je test 100 instellingen van een indicator op twee jaar data en de beste haalt een winstkans van 64 procent. Wat is de beste lezing?", o:["Een sterke edge, want 64 procent is ver boven de 50","Bij 100 pogingen is een uitschieter te verwachten; het getal zegt pas iets na een test op nieuwe data","Je moet nog meer instellingen testen"], a:1, u:"De beste van honderd is per constructie een uitschieter. Pas een test op data die niet gebruikt is bij het kiezen, zegt iets over de toekomst."}},
+
+/* ======================= STRUCTUUR ======================= */
+{m:'structuur', t:"Marktstructuur zonder ruis", d:"Een trend is geen lijn maar een reeks swingpunten. Wie de punten goed telt, ziet de omslag eerder.", min:7,
+ tekst:[
+  "Je ziet in één blik welke kant een grafiek op gaat. Dat is waardevol, maar het is een indruk, en een indruk is niet te toetsen. Structuur maakt die indruk expliciet. Een opwaartse trend bestaat zolang elke nieuwe top hoger ligt dan de vorige (HH) en elke terugval stopt boven het vorige dal (HL). Dat klinkt schools, maar het dwingt je om te benoemen welk punt de trend ongeldig maakt, en dat punt wordt later je stop.",
+  "Het onderscheid dat gevorderden maken is dat tussen een <b>break of structure</b> en een <b>change of character</b>. Een break of structure is een nieuwe top in de richting van de trend: bevestiging. Een change of character is de eerste keer dat de trend een punt breekt dat hij had moeten verdedigen, in een opwaartse trend dus het laatste hogere dal. Dat is nog geen omkeer; het is het einde van de zekerheid. Wie daar long blijft, handelt op hoop.",
+  "Welk swingpunt telt, hangt af van de gevoeligheid die je kiest. In de grafieken hieronder is een top een bar waarvan de high hoger is dan die van drie bars links en drie bars rechts. Dat is een keuze, geen wet: met één bar aan elke kant zie je elke rimpeling als structuur, met tien alleen de grote golven. Kies één definitie per tijdframe en houd je eraan, anders past je structuur zich aan je positie aan in plaats van andersom."
+ ],
+ ia:'structuur',
+ bewijs:{sterkte:2, tekst:"Swingstructuur zelf is nauwelijks formeel getoetst, omdat hij moeilijk in één regel te vangen is. Wat er wel achter zit, is getoetst: trendvolgen op basis van de richting over de afgelopen maanden (Moskowitz, Ooi en Pedersen, 2012; Hurst, Ooi en Pedersen, 2017). Structuur is in die zin een manier om trend te meten en, belangrijker, om een ongeldigheidspunt te definiëren."},
+ valkuil:"Swingpunten achteraf tekenen. Een top is pas een top als er drie bars lager zijn afgesloten; aan de rechterrand van je grafiek bestaat hij nog niet. Veel trendlijnen die er op een oude grafiek perfect uitzien, waren op het moment zelf niet te trekken.",
+ regel:"Benoem vóór elke trade het swingpunt dat je idee ongeldig maakt.",
+ check:{v:"Opwaartse trend. De koers breekt onder het laatste hogere dal. Wat is dat?", o:["Een break of structure: bevestiging van de trend","Een change of character: de trend is niet langer zeker","Een koopkans, want het is een pullback"], a:1, u:"Het laatste hogere dal is het punt dat de kopers moesten verdedigen. Breekt het, dan is de structuur niet langer opwaarts. Dat is geen automatische short, wel het einde van de reden om long te zijn."}},
+
+{m:'structuur', t:"Tijdframes: van boven naar beneden", d:"Hetzelfde koersverloop is tegelijk een trend, een correctie en een range. De vraag is welk tijdframe beslist.", min:6,
+ tekst:[
+  "Hetzelfde koersverloop is op het hoge tijdframe een pullback in een stijgende trend, op het middelste een dalende trend en op het lage een range. Alle drie zijn waar. De vraag is welke je laat beslissen.",
+  "De gangbare werkwijze is top-down, met grofweg een factor vier tot zes tussen de tijdframes: dag, vier uur en uur voor een swingtrader; uur, vijftien minuten en twee minuten voor een daytrader. Het hoogste tijdframe bepaalt de richting en de niveaus die ertoe doen, het middelste het scenario, het laagste alleen de timing van de ingang. Het laagste mag het idee van het hoogste nooit overrulen, alleen uitstellen.",
+  "Het voordeel is niet alleen richting. Een ingang op het lage tijdframe geeft bij hetzelfde idee een krappere stop, dus een grotere positie bij hetzelfde risico of een betere verhouding tussen winst en risico. Het nadeel is dat je vaker door ruis wordt uitgestopt. Daarom hoort de stop bij het tijdframe waarop het idee ongeldig wordt, niet bij het tijdframe waarop je instapt. Wissel hieronder tussen de drie."
+ ],
+ ia:'tijdframe',
+ bewijs:{sterkte:2, tekst:"De combinatie die het onderzoek ondersteunt, is precies deze gelaagdheid: trend over maanden (tijdreeksmomentum) en omkering over dagen tot weken (Jegadeesh, 1990; Lehmann, 1990). Een pullback kopen in een trend van het hogere tijdframe is in die termen de korte omkering gebruiken om in te stappen in de lange trend. De factor vier tot zes zelf is een praktijkconventie, geen onderzoeksuitkomst."},
+ valkuil:"Op het lage tijdframe een reden vinden om tegen het hoge in te gaan. Een dalende trend op vijf minuten in een stijgende dagtrend is meestal een ingang voor een long, niet een short.",
+ regel:"Hoog tijdframe: richting en niveaus. Middel: scenario. Laag: alleen timing.",
+ check:{v:"De daggrafiek staat in een opwaartse trend, het uurniveau in een correctie. Hoe gebruik je het uurniveau?", o:["Om short te gaan, want het uurniveau daalt","Om te wachten tot de correctie aantoonbaar stopt en dan long in te stappen","Het uurniveau doet er niet toe"], a:1, u:"Het hoge tijdframe geeft de richting; het lagere bepaalt wanneer. Een correctie op het uurniveau is de wachtkamer voor een long, geen reden om te shorten."}},
+
+{m:'structuur', t:"Niveaus zijn zones met een geheugen", d:"Een niveau werkt niet door de lijn op je scherm, maar door de orders die er liggen.", min:7,
+ tekst:[
+  "Een niveau werkt niet omdat er een lijn op je scherm staat, maar omdat er op die prijs iets gebeurd is dat mensen onthouden: een top waar kopers vastzitten, een dal waar verkopers te laat waren, een opening, een gap. Wie bij de vorige top kocht en sindsdien verlies heeft, verkoopt graag bij break-even. Dat is aanbod, en het staat op een prijs.",
+  "Er is ook een mechanische reden, en die is onderzocht. Carol Osler bekeek de werkelijke orderboeken van een grote valutabank en vond dat winstnemingsorders zich ophopen óp ronde getallen en stop-loss-orders net erachter. Het eerste verklaart waarom de koers vaak op een rond niveau keert; het tweede waarom hij versnelt als het niveau eenmaal gebroken is, want dan gaan de stops af en worden ze marktorders in de richting van de uitbraak.",
+  "Daarom is een niveau een zone en geen streep. De sterkste niveaus zijn zichtbaar op het hogere tijdframe, er is eerder met volume op gereageerd, en ze zijn niet te vaak getest. Dat laatste is contra-intuïtief: elke test haalt orders weg die er lagen, dus een niveau dat vijf keer is aangetikt, is eerder uitgeput dan sterker. En een doorbroken niveau wisselt van rol. Oude weerstand wordt steun, omdat de verkopers die er zaten weg zijn en de kopers die de uitbraak misten er alsnog willen instappen."
+ ],
+ ia:'niveaus',
+ bewijs:{sterkte:2, tekst:"Osler (2000) vond dat steun- en weerstandsniveaus die zes firma's aan klanten doorgaven, intraday vaker een trendonderbreking voorspelden dan willekeurige niveaus, al verschilde de kracht per valuta en per firma. Osler (2003) toonde met echte orderdata dat winstnemingen clusteren op ronde getallen en stop-losses net daarachter, wat zowel het keren óp het niveau als het versnellen erdoorheen verklaart. Het effect is statistisch duidelijk en praktisch bescheiden."},
+ valkuil:"Tien lijnen op een grafiek. Als elk niveau belangrijk is, is geen enkel niveau belangrijk. Houd er per tijdframe twee of drie, en weet van elk waarom het er staat.",
+ regel:"Teken zones, geen strepen, en verwacht de stops net áchter het voor de hand liggende getal.",
+ check:{v:"Een weerstand is vijf keer getest zonder door te breken. Wat is de meest verdedigbare lezing?", o:["Hij wordt steeds sterker","Elke test haalt aanbod weg; de kans op een doorbraak neemt eerder toe","Het aantal tests zegt niets"], a:1, u:"Elke test vult orders die er lagen. Blijft de vraag komen, dan raakt het aanbod op dat niveau op."}},
+
+/* ======================= VOLUME ======================= */
+{m:'volume', t:"Inspanning tegen resultaat", d:"Hoog volume is niet bullish en laag volume niet bearish. De betekenis zit in de verhouding met de prijs.", min:8,
+ tekst:[
+  "Volume is inspanning, de prijsbeweging is het resultaat. Die gedachte, uit het werk van Richard Wyckoff van een eeuw geleden, is nog steeds de bruikbaarste manier om volume te lezen. Je vraagt bij een opvallende bar niet ‘is het volume hoog?’ maar ‘past het resultaat bij de inspanning?’",
+  "Dat geeft vier situaties. <b>Groot volume en een grote bar</b>: inspanning en resultaat in harmonie, de beweging is echt. <b>Groot volume en een kleine bar</b>, of een lange lont: er werd hard geduwd maar de prijs kwam niet vooruit, iemand heeft aan de andere kant alles opgenomen. Dat heet absorptie, en het is vaak het eerste teken van een omslag. <b>Klein volume en een grote beweging</b>: weinig tegenpartij, de prijs glijdt door een leeg gebied. Dat kan doorlopen, maar het is broos. <b>Klein volume en een kleine bar</b>: niemand heeft haast. In een pullback binnen een trend is dat precies wat je wilt zien.",
+  "Volume staat nooit op zichzelf. Het is de verhouding met de prijs, én de plek waar het gebeurt, die de betekenis geeft. Absorptie midden in een range zegt weinig; absorptie precies op een weerstand van het dagniveau zegt veel. In de oefening hieronder zie je steeds een stukje grafiek met de laatste bar gemarkeerd, en de stippellijn in het volumevenster is het gemiddelde van twintig bars. Welke van de vier is het?"
+ ],
+ ia:'kwadrant',
+ bewijs:{sterkte:2, tekst:"De relatie tussen volume en prijs is een van de oudste onderwerpen in de empirische financiering. Campbell, Grossman en Wang (1993) vonden dat koersbewegingen op hoog volume eerder terugdraaien, wat past bij liquiditeitsvraag die door anderen wordt opgevangen. Llorente, Michaely, Saar en Wang (2002) lieten zien dat het omgekeerde geldt voor aandelen waar veel private informatie in omgaat: daar lopen bewegingen op hoog volume juist door. Dat is inspanning tegen resultaat in academische taal: hetzelfde volume betekent iets anders naargelang wie er handelt."},
+ valkuil:"Volume vergelijken met de vorige bar. Volume schommelt sterk per bar. Vergelijk met het gemiddelde van de laatste twintig bars, en intraday met hetzelfde tijdstip op eerdere dagen (volgende les).",
+ regel:"Vraag bij elke opvallende bar: past het resultaat bij de inspanning?",
+ check:{v:"Op een dagweerstand verschijnt een bar met drie keer het normale volume, maar de body is klein en de bovenlont lang. Wat zie je?", o:["Sterke kopers, de uitbraak volgt","Absorptie: kopers duwden, een verkoper nam alles op","Niets bijzonders"], a:1, u:"Veel inspanning, weinig resultaat, op een niveau met een reden: het klassieke beeld van absorptie."}},
+
+{m:'volume', t:"Relatief volume en de klok", d:"Een miljoen aandelen om tien uur is normaal, om één uur uitzonderlijk. Volume zonder klok is appels met peren.", min:6,
+ tekst:[
+  "Handelsvolume heeft door de dag een vaste vorm: hoog bij de opening, laag rond het middaguur, weer hoog naar het slot. Dat U-patroon is in de literatuur sinds de jaren tachtig beschreven en zit in bijna elke markt die opent en sluit. Ruw volume vergelijken zonder rekening te houden met de klok is appels met peren vergelijken.",
+  "Relatief volume (RVOL) lost dat op: het volume van nu gedeeld door het gemiddelde volume op hetzelfde tijdstip over de afgelopen tien of twintig dagen. Een RVOL van 1 is normaal, boven de 2 gebeurt er iets, en een aandeel dat een uur na de opening op 4 of 5 staat, wordt door de markt opgemerkt. Voor een daytrader is het de eerste filter: zonder ongewone deelname is er geen reden dat een patroon anders afloopt dan anders.",
+  "Crypto handelt de klok rond maar kent ook een ritme: de opening van Europa en vooral van de Amerikaanse aandelenmarkt geeft pieken, het weekend is dunner. Dezelfde regel geldt: vergelijk met hetzelfde uur, niet met het vorige uur. Schuif hieronder het tijdstip en het volume en kijk wat de verhouding doet."
+ ],
+ ia:'rvol',
+ bewijs:{sterkte:2, tekst:"Het U-vormige dagpatroon in volume en volatiliteit is breed gedocumenteerd (onder meer Jain en Joh, 1988; Admati en Pfleiderer, 1988, voor de theorie). Dat ongewoon volume informatie draagt, vonden Gervais, Kaniel en Mingelgrin (2001): aandelen met een uitzonderlijk hoog volume over een dag of week presteerden de maand erna beter, de ‘high-volume return premium’, toegeschreven aan extra zichtbaarheid. RVOL als filter voor daytrading is vooral praktijk; zie les 17 voor het onderzoek naar de openingsrange."},
+ valkuil:"Hoog volume bij de opening lezen als bijzondere belangstelling. De eerste vijftien minuten zijn altijd druk; pas de vergelijking met dezelfde vijftien minuten op andere dagen zegt iets.",
+ regel:"Vergelijk volume altijd met hetzelfde moment op andere dagen.",
+ check:{v:"Om 13.00 uur is het volume in een halfuur 400.000, bij een gemiddelde van 150.000. Om 9.30 uur was het 900.000, bij een gemiddelde van 1.000.000. Welk moment is ongewoner?", o:["9.30 uur, want daar is het volume het hoogst","13.00 uur: een RVOL van ongeveer 2,7 tegen 0,9","Ze zijn even ongewoon"], a:1, u:"400.000 gedeeld door 150.000 is ongeveer 2,7; 900.000 gedeeld door 1.000.000 is 0,9. Het drukke moment was eigenlijk een rustige opening."}},
+
+{m:'volume', t:"VWAP en geankerde VWAP", d:"De gemiddelde prijs van iedereen die kocht. Geen indicator, maar een boekhoudkundig feit.", min:8,
+ tekst:[
+  "VWAP is de gemiddelde prijs die vandaag betaald is, gewogen naar volume: de som van prijs maal volume, gedeeld door het totale volume, meestal met de typische prijs per bar (high plus low plus close, gedeeld door drie). Het is geen indicator in de gewone zin maar een boekhoudkundig feit: wie vandaag kocht, zit gemiddeld op die prijs. Grote partijen worden er bovendien op afgerekend; een koopopdracht die onder de VWAP is uitgevoerd, geldt als goed werk.",
+  "Daaruit volgt het gedrag. Boven de VWAP staan de kopers van vandaag gemiddeld op winst en is er weinig haast om te verkopen. Eronder staan ze op verlies, en is elke terugkeer naar de VWAP een kans om er zonder schade uit te gaan. Een koers die de VWAP terugwint en erboven blijft, of er steeds op afketst, vertelt je wie de dag in handen heeft. De banden eromheen zijn een en twee volumegewogen standaardafwijkingen: een maat voor hoe ver de koers van het gemiddelde is afgedwaald.",
+  "De geankerde VWAP (AVWAP) is hetzelfde, maar je kiest zelf het beginpunt: een belangrijk dal, een top, een kwartaalcijfer, een gap. Hij beantwoordt de vraag ‘wat is de gemiddelde prijs van iedereen die sinds dát moment kocht?’ Voor een swingtrader is dat vaak bruikbaarder dan een voortschrijdend gemiddelde, omdat het ankerpunt een reden heeft en de lengte van een gemiddelde niet. <b>Tik hieronder op een bar om daar een AVWAP te ankeren.</b>"
+ ],
+ ia:'vwap',
+ bewijs:{sterkte:1, tekst:"VWAP als maatstaf voor uitvoeringskwaliteit is in de literatuur over handelskosten standaard (Berkowitz, Logue en Noser, 1988, en veel werk daarna), en dat verklaart waarom grote partijen eromheen handelen. Of de koers er als steun of weerstand op reageert, is voor zover bekend niet overtuigend onafhankelijk getoetst. Behandel hem als referentie voor wie er in de winst of het verlies staat, niet als bewezen keerpunt."},
+ valkuil:"De VWAP gebruiken waar hij niets betekent. De dag-VWAP hoort bij intraday; op een weekgrafiek is hij een willekeurige lijn. En omdat crypto geen opening heeft, is de ‘dag’ daar een afspraak, meestal 00.00 uur UTC.",
+ regel:"Anker waar iets gebeurde, niet waar het mooi uitkomt.",
+ check:{v:"Een aandeel staat de hele ochtend onder de VWAP en wordt er drie keer precies op afgewezen. Wat is de meest verdedigbare lezing?", o:["De kopers hebben de dag in handen","De verkopers hebben de dag in handen; kopers van vandaag gebruiken de VWAP om break-even uit te stappen","De VWAP zegt hier niets"], a:1, u:"Onder de VWAP staan de kopers van vandaag op verlies. Elke terugkeer naar hun gemiddelde prijs is voor hen een uitgang: aanbod."}},
+
+{m:'volume', t:"Volumeprofiel: waar is gehandeld", d:"Draai de volume-as een kwartslag en de vraag verandert van ‘wanneer was het druk?’ naar ‘waar vond de markt de prijs eerlijk?’", min:7,
+ tekst:[
+  "Het gewone volume staat onder de grafiek, per tijdseenheid. Het volumeprofiel draait die as een kwartslag: hoeveel is er op elke prijs verhandeld?",
+  "Drie begrippen zijn genoeg. De <b>point of control</b> (POC) is de prijs met het meeste volume, de plek waar kopers en verkopers het het langst eens waren. De <b>value area</b> is de zone rond de POC waar ongeveer zeventig procent van het volume viel, een conventie uit de Market Profile-methode die Peter Steidlmayer in de jaren tachtig aan de beurs van Chicago ontwikkelde. En dan de knopen: gebieden met veel volume (HVN) werken als stroop, de prijs vertraagt en draait er; gebieden met weinig volume (LVN) als ijs, de prijs schiet erdoorheen omdat daar nooit overeenstemming was.",
+  "In de praktijk: een uitbraak uit de value area die niet terugkeert, is acceptatie van een nieuwe prijs. Een uitbraak die snel terugvalt in de value area, heeft een redelijke kans om naar de andere kant ervan te lopen. En een LVN tussen je ingang en je doel is goed nieuws; een HVN ertussen is een obstakel."
+ ],
+ ia:'profiel',
+ bewijs:{sterkte:1, tekst:"Market Profile en het volumeprofiel zijn in de praktijk wijdverbreid, maar academisch nauwelijks getoetst. De onderliggende gedachte dat prijzen waar veel volume is verhandeld als referentiepunt werken, sluit aan bij het werk over ‘anchoring’ en over kostprijseffecten: beleggers gedragen zich anders rond de prijs waarop ze kochten (Grinblatt en Han, 2005). Het is een plausibel en veelgebruikt kader, geen bewezen voorspeller."},
+ valkuil:"Het profiel over een willekeurige periode trekken. Een profiel over zes maanden mengt twee markten als er halverwege een trendbreuk was. Begin een profiel op een punt dat ertoe doet, net als een AVWAP.",
+ regel:"LVN tussen ingang en doel: vrije baan. HVN ertussen: obstakel.",
+ check:{v:"Tussen je ingang en je koersdoel ligt een gebied waar zeer weinig is verhandeld. Wat betekent dat voor de trade?", o:["Een obstakel: de prijs zal er stoppen","De prijs beweegt daar doorgaans snel doorheen","Het maakt niet uit"], a:1, u:"Weinig volume betekent dat daar nooit overeenstemming over de prijs was. De koers glijdt er meestal doorheen."}},
+
+{m:'volume', t:"Climax, droogte en de uitbraak die volume nodig heeft", d:"Het grootste volume van maanden is zelden het begin van een beweging, en vaak het einde.", min:7,
+ tekst:[
+  "Aan het eind van een lange beweging verschijnt vaak één bar met extreem volume: de climax. Bij een daling heet het verkoopclimax: paniek bij de laatste houders, een lange onderlont, het grootste volume van maanden. Het is zelden het exacte dal, maar het is wel het moment waarop wie moest verkopen dat gedaan heeft. Wie dán short gaat, verkoopt aan de partij die al die paniek aan het opkopen is.",
+  "Het tegendeel is droogte. Na een climax volgt vaak een test: de koers zakt terug naar het gebied van de climax, maar nu op een fractie van het volume. Er is geen aanbod meer. Die test op laag volume is de eigenlijke ingang, niet de climax zelf.",
+  "Voor uitbraken geldt het omgekeerde. Een uitbraak uit een compressie op hoog relatief volume heeft meer deelnemers achter zich dan een uitbraak op dun volume; de tweede is vaker een val. Het is geen garantie. Het is een verschuiving van de kansen, en dat is alles wat technische analyse ooit biedt. Loop hieronder stap voor stap door een climax en zijn test."
+ ],
+ ia:'climax',
+ bewijs:{sterkte:1, tekst:"Het bredere verschijnsel is onderzocht: extreme bewegingen op zeer hoog volume draaien op korte termijn gemiddeld deels terug (Campbell, Grossman en Wang, 1993), en Lee en Swaminathan (2000) vonden dat verliezers met een hoog volume later beter presteren dan de momentumlogica zou voorspellen, alsof het volume het einde van de beweging markeert. De specifieke Wyckoff-figuren (climax, test, spring) zijn als regel nauwelijks getoetst."},
+ valkuil:"Volume op een uitbraak beoordelen terwijl de bar nog loopt. Halverwege een bar is het volume per definitie laag. Kijk naar het tempo: ligt het volume na de helft van de tijd al boven het gemiddelde van een hele bar?",
+ regel:"Niet shorten in de climax, wel kopen op de test die geen aanbod meer vindt.",
+ check:{v:"Na een verkoopclimax zakt de koers terug naar het dal, op een derde van het volume. Wat is dat?", o:["Een nieuwe verkoopgolf","Een test zonder aanbod: een mogelijke ingang long","Niets, volume doet er hier niet toe"], a:1, u:"Dezelfde prijs, een fractie van het volume: de verkopers die er waren, zijn weg."}},
+
+/* ======================= ORDERBOEK ======================= */
+{m:'boek', t:"Het orderboek van binnen", d:"Limietorders bieden liquiditeit aan, marktorders nemen haar weg. De prijs beweegt alleen als een niveau leeg is.", min:7,
+ tekst:[
+  "Het orderboek (level 2) toont de limietorders die wachten: kopers op de bid, verkopers op de ask, per prijsniveau de hoeveelheid. Level 1 is alleen de beste bid en ask. Het verschil tussen beide is de spread, en die betaal je elke keer dat je met een marktorder instapt.",
+  "Het belangrijkste mechanisme is dit: een limietorder biedt liquiditeit aan, een marktorder neemt haar weg. De prijs beweegt alleen als marktorders een niveau helemaal opeten. Een koper die met een marktorder meer wil dan er op de beste ask ligt, loopt het boek op en betaalt steeds meer: slippage. Hoe dunner het boek, hoe verder hij loopt.",
+  "Dat verklaart waarom dezelfde order in het ene aandeel geruisloos wordt opgenomen en in het andere de koers een procent verzet, en waarom kleine aandelen zo hard bewegen op nieuws: er ligt weinig in het boek, dus weinig marktorders zijn genoeg om het leeg te trekken. Probeer het hieronder: koop of verkoop met een marktorder en kijk hoe diep je het boek in gaat."
+ ],
+ ia:'boek',
+ bewijs:{sterkte:3, tekst:"Dit is het best onderbouwde deel van de cursus. Cont, Kukanov en Stoikov (2014) lieten bij vijftig Amerikaanse aandelen zien dat de onbalans tussen orders aan de bid- en askkant (order flow imbalance) prijsveranderingen over tien seconden voor gemiddeld zo'n 65 procent verklaart, lineair, en dat de prijsimpact omgekeerd evenredig is met de diepte van het boek. Let op: dat is verklaren van wat er tegelijk gebeurt, geen voorspellen. Chordia en Subrahmanyam (2004) vonden dat de orderonbalans van gisteren samenhangt met het rendement van vandaag. Cao, Hansch en Wang (2009) vonden op de Australische beurs dat het boek voorbij de beste bied- en laatprijs ongeveer 22 procent van de prijsvorming draagt."},
+ valkuil:"Denken dat je met een marktorder ‘de prijs’ krijgt. Je krijgt de prijzen van alle niveaus die je opeet. In een dun boek of een snelle markt: een limietorder, of een order met een prijsgrens.",
+ regel:"Kijk voor je instapt hoeveel er op de eerste drie niveaus ligt, en vergelijk dat met je order.",
+ check:{v:"Beste ask 50,01 met 800 stuks, daarna 50,02 met 1.200. Je koopt 2.000 stuks met een marktorder. Wat is je gemiddelde prijs?", o:["50,01","Ongeveer 50,016","50,02"], a:1, u:"800 × 50,01 plus 1.200 × 50,02, gedeeld door 2.000, is 50,016. Je betaalt voor het deel dat het eerste niveau niet dekte."}},
+
+{m:'boek', t:"Level 2 lezen, en waar het liegt", d:"Het boek toont intentie, de tape toont feiten. Wie ze verwart, laat zich leiden door orders die er zijn om gezien te worden.", min:8,
+ tekst:[
+  "Het boek toont intentie, geen feit. Een limietorder kost niets zolang hij niet wordt uitgevoerd en kan in een milliseconde weg zijn. Wat je ziet is wat partijen willen laten zien, en dat is bij grote partijen zelden alles.",
+  "Twee verschijnselen zijn de moeite van het herkennen waard. Het eerste is de <b>iceberg</b>: een grote order die maar een klein deel toont. Op het scherm staan er 300 stuks op de ask, maar op de tape zie je er tienduizenden op die prijs doorgaan, en het niveau blijft staan en vult zich steeds aan. Dat is een verkoper met geduld en een grote order, en zolang hij er staat komt de koers er niet voorbij. Het tweede is <b>spoofing</b>: een grote order die er staat om gezien te worden en verdwijnt zodra de prijs in de buurt komt. Spoofing is in de VS sinds de Dodd-Frank-wet van 2010 uitdrukkelijk verboden, in Europa via de verordening marktmisbruik, maar het komt voor, en in dunne markten makkelijker dan in dikke.",
+  "Voor Amerikaanse aandelen weegt een structurele beperking extra zwaar. De handel is verdeeld over meer dan tien beurzen, en een groot deel van het volume gaat buiten de openbare boeken om (in 2025 voor het eerst ruim de helft over het hele jaar), via internaliseerders van particuliere orders en dark pools. Je level 2 laat dus een deel van het aanbod zien, niet het geheel. De tape toont wél elke uitvoering. Loop hieronder de twee scenario's door."
+ ],
+ ia:'ijsberg',
+ bewijs:{sterkte:2, tekst:"Dat verborgen orders een wezenlijk deel van het boek uitmaken, is onder meer aangetoond voor Euronext Parijs (Bessembinder, Panayides en Venkataraman, 2009). Dat het zichtbare boek informatie bevat, zie de vorige les. Tegelijk laat onderzoek naar snelle handel zien dat een groot deel van de orders binnen een seconde weer wordt ingetrokken, wat het naïef lezen van ‘muren’ onbetrouwbaar maakt. Het boek is informatief, maar alleen in combinatie met wat er daadwerkelijk wordt uitgevoerd."},
+ valkuil:"Een grote muur op de bid lezen als steun. Een order die er staat om gezien te worden, is er meestal niet om uitgevoerd te worden. Pas als er op die prijs daadwerkelijk wordt gehandeld en het niveau houdt, is het steun.",
+ regel:"Het boek zegt wat er zou kunnen gebeuren. De tape zegt wat er gebeurde.",
+ check:{v:"Op de ask staat steeds 300 stuks op 12,50. Op de tape gaat er in vijf minuten 45.000 stuks op 12,50 doorheen en de prijs komt er niet boven. Wat is er aan de hand?", o:["Er zijn weinig verkopers","Een iceberg: een grote verkoper die maar een fractie laat zien","Een fout in de data"], a:1, u:"Het getoonde volume vult zich steeds aan terwijl er veel meer wordt uitgevoerd. Dat is de definitie van een verborgen restorder."}},
+
+{m:'boek', t:"De tape en delta", d:"Elke transactie heeft een agressor. Wie de spread oversteekt, laat zien wie haast heeft.", min:8,
+ tekst:[
+  "Elke transactie heeft een agressor: de partij die een marktorder gaf en daarmee de spread overstak. Een transactie op de ask is een koper die niet wilde wachten, een transactie op de bid een verkoper die niet wilde wachten. <b>Delta</b> is per bar het volume van de agressieve kopers min dat van de agressieve verkopers; de <b>cumulatieve delta</b> (CVD) telt dat op.",
+  "Delta op zich is weinig waard: agressie beweegt de prijs, dus stijgende koersen gaan meestal samen met positieve delta. De informatie zit in de afwijking. Stijgt de CVD sterk terwijl de prijs niet vooruitkomt, dan kopen agressieve partijen tegen iemand in die passief, met limietorders, alles opneemt. Dat is absorptie, dezelfde die je in de volumeles aan volume en bar zag, nu van dichterbij. Maakt de prijs een nieuwe top terwijl de CVD een lagere top maakt, dan wordt de beweging gedragen door steeds minder agressie: uitputting.",
+  "Twee kanttekeningen. In aandelen wordt de agressorkant geschat, niet gemeten: algoritmes als dat van Lee en Ready wijzen elke transactie toe aan bid of ask en zitten er in een aanzienlijk deel van de gevallen naast. In crypto futures geven de beurzen de agressorkant wel mee, en daar is delta betrouwbaarder. En delta is het verschil van twee getallen die elk veel groter zijn; bij weinig volume is de ruis groot."
+ ],
+ ia:'delta',
+ bewijs:{sterkte:2, tekst:"Orderonbalans op basis van agressorkant voorspelt korte-termijnrendementen (Chordia, Roll en Subrahmanyam, 2002; Chordia en Subrahmanyam, 2004), maar het effect is klein en kortlevend, en na kosten voor een particulier moeilijk te oogsten. De classificatie zelf heeft een foutmarge: Lee en Ready (1991) is de standaard, en latere studies vinden bij snelle handel duidelijk lagere nauwkeurigheid. Delta is dus een lens, geen signaal."},
+ valkuil:"Positieve delta lezen als ‘de kopers winnen’. Tegenover elke agressieve koper staat een passieve verkoper met precies hetzelfde volume. Wie wint, zie je aan de prijs, niet aan de delta.",
+ regel:"Delta en prijs samen: stijgen ze samen, dan is het echt; lopen ze uiteen, dan zit er iemand aan de andere kant.",
+ check:{v:"De prijs staat een half uur stil op een weerstand, de cumulatieve delta stijgt al die tijd sterk. Wat is de meest verdedigbare lezing?", o:["De kopers winnen, de uitbraak komt eraan","Absorptie: een passieve verkoper neemt alle agressieve koop op","Delta en prijs hebben niets met elkaar te maken"], a:1, u:"Veel agressie, geen prijsbeweging: iemand staat aan de andere kant en vult alles. Blijft die verkoper, dan keert de koers als de kopers moe worden."}},
+
+{m:'boek', t:"Crypto: open interest, funding en liquidaties", d:"Drie gegevens die in aandelen ontbreken en die vertellen waar de pijn zit als de beweging stopt.", min:7,
+ tekst:[
+  "In crypto perpetual futures zijn er drie gegevens die in aandelen ontbreken. <b>Open interest</b> (OI) is het aantal openstaande contracten. Stijgt de prijs en stijgt de OI, dan komen er nieuwe posities bij; stijgt de prijs en daalt de OI, dan sluiten shorts, een short squeeze, en dat is brandstof die opraakt. De matrix hieronder zet de vier combinaties op een rij.",
+  "<b>Funding</b> houdt de perpetual bij de spotprijs: staat de future boven spot, dan betalen longs aan shorts, en andersom. De afrekening gaat periodiek: bij veel beurzen standaard elke acht uur, bij een deel van de contracten elke vier uur of vaker, en Kraken Futures rekent voor Europese klanten elk uur af. Sterk positieve funding betekent dat longs bereid zijn te betalen om long te blijven: een drukke kant. Dat is geen timingsignaal, markten kunnen dagen doorlopen met hoge funding, maar het vertelt je aan welke kant de pijn zit als de beweging stopt.",
+  "<b>Liquidaties</b> zijn gedwongen marktorders. Wie met hefboom onder de onderhoudsmarge komt, wordt door de beurs gesloten, tegen de markt in. Dat maakt ze zelfversterkend: een daling liquideert longs, die liquidaties zijn marktverkopen, die duwen de prijs naar de volgende laag liquidaties. De lange lonten in crypto zijn vaak precies dat. Het boek is bovendien versnipperd over tientallen beurzen: wat je op één beurs ziet, is een deel van het geheel."
+ ],
+ ia:'oi',
+ bewijs:{sterkte:2, tekst:"Voor crypto is tijdreeksmomentum sterk gevonden: rendementen van de afgelopen week tot enkele weken voorspellen die van de komende (Liu en Tsyvinski, 2021), en voortschrijdende gemiddelden hebben voorspellende waarde voor bitcoin (Detzel en anderen, 2021). Over funding en open interest als voorspeller is het onderzoek jonger en minder eenduidig; het is vooral bruikbaar als maat voor positionering en dus voor het risico op een squeeze of een liquidatiecascade."},
+ valkuil:"Funding of OI als ingangssignaal gebruiken. Het zijn gegevens over positionering, geen trigger. Ze horen bij de vraag ‘hoe hard kan dit bewegen als ik gelijk heb’, niet bij ‘wanneer stap ik in’.",
+ regel:"OI en funding vertellen wie er klem kan zitten; de grafiek vertelt wanneer.",
+ check:{v:"BTC stijgt 4 procent, de open interest daalt sterk en de funding zakt van hoog positief naar nul. Wat is de beste lezing?", o:["Nieuwe kopers stromen in","Shorts sluiten: een squeeze, en die brandstof raakt op","Longs sluiten"], a:1, u:"Stijgende prijs met dalende OI betekent dat posities gesloten worden, hier de shorts. Een squeeze stopt als er geen shorts meer te sluiten zijn."}},
+
+/* ======================= SETUPS ======================= */
+{m:'setups', t:"Uitbraak of val", d:"Van tevoren zien ze er hetzelfde uit. Het verschil zit in de sluiting en het volume.", min:7,
+ tekst:[
+  "Een goede uitbraak heeft een voorgeschiedenis. De koers heeft een niveau meerdere keren getest, de bars worden krapper (compressie), het volume droogt op terwijl de koers tegen het niveau aan drukt. Dat is een markt waar het aanbod opraakt. De uitbraak zelf komt dan met een wijde bar, een sluiting ruim boven het niveau, en relatief volume dat duidelijk boven het gemiddelde ligt.",
+  "Een val ziet er van tevoren hetzelfde uit en onderscheidt zich pas bij de uitbraak: de koers prikt door het niveau, triggert de stops van de shorts en de kooporders van de uitbrekers, en sluit terug binnen de range. Al die kopers zitten op dat moment vast boven een niveau dat niet hield. Hun stops liggen onder de range, en dat is de brandstof voor de beweging de andere kant op. Een mislukte uitbraak is daarmee zelf een setup, vaak een betere dan de uitbraak.",
+  "De praktische regel: laat de sluiting beslissen, niet de prikker. Een retest van het doorbroken niveau op laag volume die houdt, is voor wie de eerste bar miste de tweede kans, met een scherpere stop. In de trainer hieronder zie je telkens de grafiek tot het beslismoment. Kies, en zie dan hoe het afliep."
+ ],
+ ia:'trainer:uitbraak,dun,val',
+ bewijs:{sterkte:2, tekst:"Brock, Lakonishok en LeBaron (1992) vonden dat uitbraken uit een handelsbereik op de Dow Jones in de twintigste eeuw voorspellende waarde hadden; latere studies met correctie voor data-snooping en kosten vonden het buiten die periode niet meer terug. Wat wel standhoudt, is de koppeling met volume: Osler (2003) verklaart het versnellen na een doorbraak uit de stop-orders erachter. De mislukte uitbraak als setup is praktijkkennis zonder sterke formele toets."},
+ valkuil:"Instappen op de eerste tick boven het niveau. Daar zijn de valse uitbraken het duurst en is de spread vaak het wijdst.",
+ regel:"De sluiting beslist, niet de prikker.",
+ check:{v:"De koers breekt boven een weerstand, prikt 0,8 procent hoger en sluit het uur terug onder het niveau, op hoog volume. Wat is de best onderbouwde reactie?", o:["Long, de uitbraak is begonnen","Een mislukte uitbraak: een short-scenario met de stop boven de prikker","Niets, het is ruis"], a:1, u:"Kopers zitten vast boven een niveau dat niet hield. Hun stops liggen lager: dat is brandstof voor een daling. De top van de prikker is je ongeldigheidspunt."}},
+
+{m:'setups', t:"De pullback in een trend", d:"De goedkoopste ingang in een trend. Het lastige is het verschil met het begin van een omslag.", min:7,
+ tekst:[
+  "In een gezonde trend is de pullback de goedkoopste ingang. De trend is er al; je wacht tot hij even pauzeert en stapt in wanneer hij weer op gang komt, met een stop onder het dal van de pauze. Wat het lastig maakt, is het onderscheid tussen een pullback en het begin van een omslag.",
+  "Drie dingen helpen. Het <b>volume</b>: een gezonde pullback gaat op dalend volume, de verkopers hebben geen haast; een pullback op stijgend volume is verdacht. De <b>plek</b>: de pullback stopt bij iets met een reden, het doorbroken niveau, de geankerde VWAP vanaf de start van de beweging, of een oplopend gemiddelde dat de trend tot nu toe volgde. En de <b>structuur</b>: het vorige hogere dal blijft intact. Gaat dat punt, dan is het geen pullback meer.",
+  "De trigger komt pas daarna: een bar die sluit boven de high van de vorige bar, op oplopend volume. Kopen tijdens de daling omdat ‘het een pullback is’, is raden. Kopen als de daling aantoonbaar gestopt is, kost een fractie van de beweging en scheelt een groot deel van de verliezers."
+ ],
+ ia:'trainer:pullback,omslag,range,avwap',
+ bewijs:{sterkte:3, tekst:"Dit is de setup die het dichtst bij het sterkste bewijs ligt: trend over maanden (Jegadeesh en Titman, 1993; Moskowitz, Ooi en Pedersen, 2012) gecombineerd met omkering over dagen tot weken (Jegadeesh, 1990; Lehmann, 1990). Wie in een trend een korte terugval koopt, handelt twee gedocumenteerde effecten tegelijk. Let wel: momentum kent zeldzame, heftige ‘crashes’, vooral bij een scherpe omslag na een lange daling (Daniel en Moskowitz, 2016)."},
+ valkuil:"Een pullback kopen in een trend die al vier of vijf golven lang is. Hoe later in de trend, hoe groter de kans dat de ‘pullback’ het begin van de correctie is. Tel de golven op het hogere tijdframe.",
+ regel:"Pullback op dalend volume, naar een plek met een reden, met het hogere dal intact. Dan pas een trigger.",
+ check:{v:"Opwaartse trend, pullback naar de geankerde VWAP vanaf het laatste dal. Het volume in de pullback stijgt elke bar. Wat doe je?", o:["Kopen, de AVWAP is steun","Wachten: stijgend volume in een pullback is een waarschuwing","Short gaan"], a:1, u:"De plek klopt, het volume niet. Verkopers met haast in een pullback wijzen op een mogelijke omslag. Wacht tot het volume opdroogt of het hogere dal breekt."}},
+
+{m:'setups', t:"Daytrading: de eerste uren", d:"Intraday heeft een eigen structuur, en die begint bij de opening.", min:7,
+ tekst:[
+  "De eerste vijf tot dertig minuten zetten de openingsrange neer: het hoog en laag van dat eerste stuk. Die range is geen voorspelling, wel een referentie, met de VWAP als tweede. Een uitbraak uit de openingsrange aan de kant waar de koers ten opzichte van de VWAP staat, op hoog relatief volume, is een van de oudste intradaypatronen; Toby Crabel beschreef het al in 1990. Een uitbraak tegen de VWAP in, of een die terugvalt in de range, is vaker een val.",
+  "Daarbij hoort voorbereiding die een swingtrader niet nodig heeft. Vóór de opening: de high en low van gisteren, het slot van gisteren, het premarket-hoog en -laag, en of er nieuws is dat verklaart waarom dít aandeel vandaag anders beweegt. Een aandeel zonder aanleiding en met een RVOL rond 1 doet meestal wat het elke dag doet, binnen een range die je spread en commissie niet waard is.",
+  "Dan de middag. Het volume zakt rond het middaguur, de spreads worden relatief wijder, patronen lopen slordiger. Veel ervaren daytraders handelen alleen het eerste en het laatste uur. Dat is geen luiheid; dat is waar de deelname zit. Zet hieronder de lagen aan en uit."
+ ],
+ ia:'orb',
+ bewijs:{sterkte:2, tekst:"Gao, Han, Li en Zhou (2018) vonden in de S&P 500-tracker SPY (1993 tot 2013) dat het rendement van het eerste halfuur het rendement van het laatste halfuur voorspelt, sterker op dagen met veel volume en volatiliteit. De verklaarde variantie is klein, rond 1,5 procent: een echt maar smal effect. Voor de openingsrange-uitbraak op ‘aandelen in beweging’ met hoog relatief volume rapporteerden Zarattini, Barbon en Aziz (2024) over 2016 tot 2023 zeer sterke resultaten na kosten, maar dat is een backtest in een werkdocument zonder peer review, van auteurs met een commercieel belang in daytrading-educatie en -strategieën. Interessant, niet bewezen. Tegenover al dit werk staat de uitkomst voor daytraders als groep (les 22)."},
+ valkuil:"In de eerste minuten traden omdat het druk is. De spreads zijn dan het wijdst en de richting wisselt het vaakst. Laat de openingsrange zich eerst vormen.",
+ regel:"Geen aanleiding en geen RVOL: geen daytrade.",
+ check:{v:"Een aandeel breekt om 10.05 uur uit boven de openingsrange, maar staat onder de VWAP en de RVOL is 0,9. Wat is de beste lezing?", o:["Een sterke uitbraak, instappen","Een zwakke kandidaat: geen ongewone deelname, en tegen de VWAP in","Short gaan, want hij staat onder de VWAP"], a:1, u:"Zonder ongewoon volume en tegen de VWAP in mist de uitbraak de twee dingen die hem onderscheiden van ruis."}},
+
+/* ======================= RISICO ======================= */
+{m:'risico', t:"Verwachting, met het interval erbij", d:"Een strategie is niet goed omdat ze vaak wint. En twintig trades zeggen bijna niets.", min:8,
+ tekst:[
+  "Een strategie is niet goed omdat ze vaak wint. Ze is goed als de verwachting positief is: winstkans maal gemiddelde winst, min verlieskans maal gemiddeld verlies. Reken in R, veelvouden van je risico per trade; dan maakt de positiegrootte niet uit. Een strategie met 35 procent winnaars van gemiddeld 3R en verliezers van 1R verdient 0,40R per trade. Een met 70 procent winnaars van 0,5R en verliezers van 1,2R verliest licht.",
+  "Wat vrijwel nooit gebeurt, is de volgende stap: hoe zeker ben je van die winstkans? Na twintig trades met twaalf winnaars is je geschatte winstkans 60 procent, maar het 95%-betrouwbaarheidsinterval loopt van ruwweg 39 tot 78 procent. Bij een gemiddelde winst en verlies van 1R betekent dat een verwachting ergens tussen duidelijk verlieslatend en ruim winstgevend. Het is dezelfde les als bij een kleine studie: een getal zonder zijn onzekerheid is misleidend.",
+  "Vul hieronder je eigen cijfers in. Het interval voor de winstkans is het Wilson-interval, dat zich ook bij kleine aantallen goed gedraagt. Het neemt de onzekerheid in de gemiddelde winst en het gemiddelde verlies niet mee, dus het werkelijke interval is nog wijder. Het rekent ook uit hoeveel trades je bij deze cijfers nodig hebt voordat de ondergrens boven nul komt."
+ ],
+ ia:'verwachting',
+ bewijs:{sterkte:3, tekst:"Dit is gewone statistiek en geen marktonderzoek: het Wilson-interval (1927) is in vergelijkende studies een van de betrouwbaarste intervallen voor een proportie bij kleine aantallen (Brown, Cai en DasGupta, 2001). Het principe erachter is hetzelfde als in de rest van deze cursus: wat je niet over genoeg gevallen hebt gemeten, weet je niet."},
+ valkuil:"Na een reeks verliezers de strategie aanpassen. Bij een winstkans van 40 procent is de kans op minstens één reeks van tien verliezers in 200 trades ongeveer een op drie. Het is geen bewijs dat er iets veranderd is.",
+ regel:"Geen winstkans zonder het aantal trades erbij, en geen verwachting zonder interval.",
+ check:{v:"Na 30 trades is je winstkans 50 procent, je gemiddelde winst 1,5R en je gemiddeld verlies 1R. Wat kun je zeggen?", o:["De strategie verdient 0,25R per trade","De geschatte verwachting is +0,25R, maar het interval loopt nog tot onder nul","De strategie werkt niet"], a:1, u:"Het Wilson-interval voor 15 uit 30 loopt van ongeveer 33 tot 67 procent. Aan de onderkant is de verwachting negatief. Veelbelovend, niet bewezen."}},
+
+{m:'risico', t:"Positiegrootte en de wiskunde van verlies", d:"De positie volgt uit de stop, niet andersom. En verlies is asymmetrisch.", min:8,
+ tekst:[
+  "De positiegrootte volgt uit de stop. Je bepaalt eerst waar het idee ongeldig is, dan hoeveel van je rekening je bereid bent te verliezen als dat gebeurt, en pas dan hoeveel stuks je koopt: het risicobedrag gedeeld door de afstand tussen ingang en stop. Wie het andersom doet, eerst een bedrag kiest en dan een stop die ‘past’, legt zijn stop op een plek die niets met de markt te maken heeft.",
+  "Hefboom verandert daar niets aan. Een positie met tien keer hefboom en een stop op één procent riskeert evenveel als een positie zonder hefboom met een stop op tien procent, als het risicobedrag gelijk is. De hefboom bepaalt hoeveel onderpand je vastzet en waar de beurs je liquideert, en die liquidatieprijs moet ruim voorbij je stop liggen, anders is de beurs je stop.",
+  "Dan de asymmetrie. Na 10 procent verlies heb je 11 procent nodig om terug te komen, na 25 procent 33, na 50 procent 100. Bij 1 procent risico per trade kost een reeks van tien verliezers 9,6 procent; bij 5 procent is dat 40 procent. De simulatie hieronder laat zien hoe wijd de uitkomsten van dezelfde strategie uiteenlopen, alleen door de volgorde van winst en verlies."
+ ],
+ ia:'positie',
+ bewijs:{sterkte:3, tekst:"De wiskunde van positiegrootte gaat terug op Kelly (1956): bij een bekende edge maximaliseert een vaste fractie de groei op lange termijn, en een te grote fractie leidt met zekerheid tot ruïne, ook bij een positieve verwachting. Omdat je edge in werkelijkheid onzeker is (vorige les), gebruiken professionele partijen een fractie van Kelly, vaak de helft of minder. Een vast risico van 0,5 tot 1 procent per trade ligt daar voor de meeste particuliere strategieën ruim onder."},
+ valkuil:"Het risico per trade opvoeren na een paar winnaars. Een reeks winst zegt net zo weinig over de volgende trade als een reeks verlies; het enige wat verandert is hoeveel er op het spel staat als het omslaat.",
+ regel:"Eerst de stop, dan het risicobedrag, dan pas het aantal stuks.",
+ check:{v:"Rekening 20.000, risico 1 procent, ingang 50, stop 48. Hoeveel stuks?", o:["40","100","200"], a:1, u:"Risicobedrag 200, afstand 2 per stuk: 100 stuks. De positie is 5.000 waard, een kwart van de rekening, en toch is het risico 1 procent."}},
+
+{m:'risico', t:"Stops en uitstappen", d:"Een stop hoort waar je ongelijk hebt, niet op een rond getal. Met een marge die de ruis kent.", min:7,
+ tekst:[
+  "Een stop hoort op de plek waar je idee aantoonbaar fout is: onder het hogere dal bij een long in een trend, boven de top van een mislukte uitbraak bij een short. Dat is een structurele stop. Hij heeft één zwakte: iedereen ziet hetzelfde dal, dus er liggen daar veel stops, en een snelle prik eronder om ze op te halen is een bekend patroon (les 5, de stops net achter het niveau).",
+  "Daarom leggen gevorderde traders er een marge onder, en de maat voor die marge is de volatiliteit: de <b>Average True Range</b>, de gemiddelde beweging per bar inclusief gaps, zoals Welles Wilder hem in 1978 beschreef. Een stop een halve tot een hele ATR voorbij het structurele punt valt buiten de gewone ruis. Een stop binnen één ATR van je ingang zonder structurele reden wordt door ruis geraakt, niet door ongelijk. Vergelijk hieronder drie stops op dezelfde trade.",
+  "Uitstappen is het moeilijkste deel, omdat het tegen de natuur in gaat: mensen nemen winst te vroeg en laten verlies te lang lopen. Twee werkwijzen houden het mechanisch. Een vast doel op een niveau met een reden, de volgende weerstand of de andere kant van de value area, eventueel met een deel eraf bij 1R. Of een volgstop die met de structuur meeschuift, onder elk nieuw hoger dal. De eerste pakt meer kleine winsten, de tweede laat af en toe een grote lopen. Kies vóór de trade."
+ ],
+ ia:'stops',
+ bewijs:{sterkte:2, tekst:"Osler (2003, 2005) liet met echte orderdata zien dat stop-orders clusteren net voorbij ronde getallen en dat hun uitvoering koersbewegingen versnelt: precies het mechanisme achter de prik onder een voor de hand liggend dal. Over stopregels in trendstrategieën vonden Kaminski en Lo (2014) dat een stop-loss vooral waarde toevoegt als er momentum in de markt zit, en in een markt zonder patroon alleen kost."},
+ valkuil:"De stop verplaatsen als de koers ernaartoe loopt. Een stop die je verlegt is geen stop maar een voornemen. Verleggen mag alleen in de richting van minder risico.",
+ regel:"Stop = structureel punt plus een halve tot een hele ATR.",
+ check:{v:"Long op 100, het laatste hogere dal ligt op 97,40, de ATR is 1,20. Waar leg je de stop het best onderbouwd?", o:["99,00, een procent onder de ingang","Ongeveer 96,80 tot 96,20: onder het dal met een halve tot een hele ATR marge","Precies op 97,40"], a:1, u:"Het dal is het ongeldigheidspunt, de ATR-marge houdt je uit de zone waar de stops van iedereen liggen."}},
+
+/* ======================= PROCES ======================= */
+{m:'proces', t:"Eén leesvolgorde", d:"Wat de lessen los gaven, moet in één beslissing samenkomen. Snel, en elke keer in dezelfde volgorde.", min:6,
+ tekst:[
+  "Wat de vorige lessen als losse onderdelen gaven, moet in de praktijk in één beslissing samenkomen. Dat lukt alleen met een vaste volgorde, zodat je niet bij elke grafiek opnieuw hoeft te bedenken waar je kijkt. De volgorde gaat van groot naar klein, en elke stap kan de trade al afblazen.",
+  "Eén: <b>context</b>. Welke kant op wijst het hogere tijdframe, en hoe oud is de trend? Twee: <b>locatie</b>. Staat de koers bij een niveau dat een reden heeft, of in niemandsland? Drie: <b>volume</b>. Past de inspanning bij het resultaat, en is de deelname ongewoon? Vier: <b>orderflow</b>, als je hem hebt. Wordt er op het niveau echt gehandeld, en houdt het? Vijf: <b>trigger</b>. Welke concrete gebeurtenis zet je in? Zes: <b>risico</b>. Waar is de stop, hoeveel is 1R, en is de afstand tot het doel minstens twee keer zo groot?",
+  "Zeg de antwoorden in één zin hardop of schrijf ze op. Als die zin niet lukt, is er geen trade. Dat klinkt streng, maar het is de enige bescherming tegen de trade die je neemt omdat je al een uur naar het scherm kijkt. Het journaal is hetzelfde, achteraf: dezelfde zes vragen, en een zevende, ‘deed ik wat ik zei’, die belangrijker is dan de uitkomst."
+ ],
+ ia:'checklist',
+ bewijs:{sterkte:2, tekst:"Het bewijs hiervoor komt niet uit de financiering maar uit de geneeskunde en de luchtvaart. De WHO-checklist voor chirurgische veiligheid verminderde in de oorspronkelijke studie de sterfte en complicaties aanzienlijk (Haynes en anderen, 2009), niet door nieuwe kennis maar door bestaande kennis elke keer toe te passen. In trading is het vergelijkbare werk schaars, maar het werk over beslisfouten (volgende les) wijst in dezelfde richting."},
+ valkuil:"Het journaal alleen bijhouden voor verliezers. Winnaars die buiten je plan vielen, zijn gevaarlijker: ze belonen gedrag dat je op termijn geld kost.",
+ regel:"Geen zin, geen trade.",
+ check:{v:"Een grafiek ziet er ‘goed’ uit, maar je kunt geen niveau aanwijzen waar je idee ongeldig is. Wat doe je?", o:["Instappen met een krappe stop","Geen trade","Instappen zonder stop en goed opletten"], a:1, u:"Zonder ongeldigheidspunt is er geen stop, geen 1R en dus geen positiegrootte. Er valt niets te beheersen."}},
+
+{m:'proces', t:"De trader als onzekere factor", d:"De standaarduitkomst van daytrading is verlies. Het verschil zit zelden in de grafiek.", min:7,
+ tekst:[
+  "De eerlijkste gegevens over daytrading komen uit landen waar alle transacties per persoon te volgen zijn. In Taiwan vonden Barber, Lee, Liu en Odean dat minder dan één procent van de daytraders voorspelbaar winstgevend was na kosten. In Brazilië volgden Chague, De-Losso en Giovannetti in een veelgeciteerd werkdocument iedereen die tussen 2013 en 2015 begon met daytraden in minifutures op de index en dat meer dan driehonderd dagen volhield: 97 procent verloor geld, en 1,1 procent verdiende meer dan het minimumloon. Dat is geen reden om het niet te doen. Het is een reden om te weten dat de standaarduitkomst verlies is, en dat het verschil zelden in de grafiek zit.",
+  "Het zit in gedrag. Het <b>dispositie-effect</b>, winnaars te vroeg verkopen en verliezers te lang houden, is door Odean in de rekeningen van tienduizend beleggers aangetoond. <b>Overtrading</b>: in de gegevens van Barber en Odean verdienden de huishoudens die het meest handelden het minst, vooral door kosten. <b>Recency</b>: de laatste drie trades wegen zwaarder dan de laatste driehonderd. En de wraaktrade na een verlies, waarin je niet meer handelt op de grafiek maar op je saldo.",
+  "De tegenmaatregelen zijn saai en ze werken: een maximaal dagverlies waarna je stopt, een maximum aantal trades per dag, en de vaste leesvolgorde vóór elke trade. Als arts ken je het principe: niet de kennis van de richtlijn onderscheidt de goede dokter, maar het volgen ervan om drie uur 's nachts."
+ ],
+ ia:'bias',
+ bewijs:{sterkte:3, tekst:"Barber, Lee, Liu en Odean (2014) en Chague, De-Losso en Giovannetti (2019) gebruikten volledige transactiegegevens van hele markten, geen enquêtes. Odean (1998) vond het dispositie-effect in de rekeningen van tienduizend beleggers bij een Amerikaanse broker; Barber en Odean (2000) vonden in ruim 66.000 huishoudens dat de actiefste handelaren 11,4 procent per jaar haalden, tegen 17,9 procent voor de markt. Samen de robuustste bevindingen in de hele cursus."},
+ valkuil:"Denken dat deze cijfers over anderen gaan. Iedereen in die datasets dacht dat ook.",
+ regel:"Leg dagverlies en maximum aantal trades vast vóór de opening, niet erna.",
+ check:{v:"Na drie verliezers op rij voel je de drang om de volgende trade groter te maken om het terug te verdienen. Wat beschermt het best?", o:["Een kortere stop, zodat de grotere positie hetzelfde risico heeft","Een vooraf vastgelegd dagverlies en een vaste positiegrootte","Doorgaan tot je weer op nul staat"], a:1, u:"De beslissing moet genomen zijn voordat de emotie er is. Achteraf kiezen is precies het gedrag dat de cijfers verklaart."}}
+];
+
+/* ---------------- DE BEWIJSKAART ----------------
+   sterkte: 3 sterk en breed, 2 gemengd of beperkt, 1 zwak of niet getoetst,
+   0 geen bewijs. */
+const BEWIJSKAART=[
+ {n:"Trend en momentum over maanden", s:3, t:"Rendement van de afgelopen drie tot twaalf maanden voorspelt dat van de komende maanden, tussen aandelen (Jegadeesh en Titman, 1993) en in de tijd per markt: 58 termijnmarkten (Moskowitz, Ooi en Pedersen, 2012), en positief in elk decennium sinds 1880 (Hurst, Ooi en Pedersen, 2017). Zwakte: zeldzame, heftige crashes bij scherpe omslagen (Daniel en Moskowitz, 2016)."},
+ {n:"Omkering over dagen tot weken", s:3, t:"Aandelen die de afgelopen week of maand het sterkst stegen, presteren de week of maand erna gemiddeld slechter, en omgekeerd (Jegadeesh, 1990; Lehmann, 1990). Het effect is voor een deel een vergoeding voor het leveren van liquiditeit en is gevoelig voor kosten."},
+ {n:"Orderflow en onbalans", s:3, t:"De onbalans tussen koop- en verkooporders verklaart prijsveranderingen over seconden en minuten grotendeels, met een impact die afneemt naarmate het boek dieper is (Cont, Kukanov en Stoikov, 2014). Orderonbalans voorspelt het rendement van de volgende dag (Chordia en Subrahmanyam, 2004). Sterk bewijs over wat de prijs beweegt; als voorspeller klein en snel weg, en na kosten voor een particulier moeilijk te oogsten."},
+ {n:"Nabijheid van de 52-weekstop", s:3, t:"Aandelen dicht bij hun hoogste koers van het afgelopen jaar presteren daarna beter; dit verklaart een groot deel van het momentumeffect (George en Hwang, 2004). De verklaring is ‘anchoring’: beleggers reageren te traag op nieuws als de koers bij een referentiepunt staat."},
+ {n:"Volume als informatie", s:2, t:"Bewegingen op hoog volume draaien bij grote, liquide aandelen eerder terug en lopen door bij aandelen met veel private informatie (Campbell, Grossman en Wang, 1993; Llorente en anderen, 2002). Ongewoon hoog volume gaat vooraf aan hogere rendementen (Gervais, Kaniel en Mingelgrin, 2001). Volume verandert hoe momentum verloopt (Lee en Swaminathan, 2000)."},
+ {n:"Steun en weerstand, ronde getallen", s:2, t:"Niveaus die banken aan klanten doorgaven, voorspelden intraday vaker een trendonderbreking dan willekeurige niveaus (Osler, 2000), met verschillen per valuta. Winstnemingen clusteren op ronde getallen en stop-losses net erachter (Osler, 2003): keren op het niveau, versnellen erdoorheen."},
+ {n:"Intraday momentum", s:2, t:"Het rendement van het eerste halfuur voorspelt dat van het laatste halfuur van de dag in de S&P 500-tracker (Gao, Han, Li en Zhou, 2018), met een verklaarde variantie rond 1,5 procent. En rendementen herhalen zich in hetzelfde halfuur op volgende dagen, wekenlang (Heston, Korajczyk en Sadka, 2010). Solide gepubliceerd, klein per keer."},
+ {n:"Eenvoudige regels (gemiddelden, uitbraken)", s:2, t:"Voorspellend op de Dow Jones van 1897 tot 1986 (Brock, Lakonishok en LeBaron, 1992), maar na correctie voor het testen van veel regels verdwenen buiten die periode (Sullivan, Timmermann en White, 1999), en na kosten niet winstgevend (Bajgrowicz en Scaillet, 2012). Wel voorspellend voor het marktrendement per maand, als aanvulling op macro-economische variabelen (Neely en anderen, 2014), voor volatiele aandelen (Han, Yang en Zhou, 2013) en voor bitcoin (Detzel en anderen, 2021): steeds waar fundamentele waarde moeilijk te bepalen is."},
+ {n:"Klassieke grafiekpatronen", s:1, t:"Met patroonherkenning door de computer vonden Lo, Mamaysky en Wang (2000) op Amerikaanse aandelen van 1962 tot 1996 dat patronen als hoofd-en-schouders ‘enige extra informatie’ bevatten over de verdeling van rendementen. Informatie over de verdeling is iets anders dan winst na kosten. Recenter vonden Jiang, Kelly en Xiu (2023) dat neurale netwerken op afbeeldingen van koers- en volumegrafieken voorspellende patronen vinden, maar andere dan de klassieke."},
+ {n:"Candlestickpatronen", s:1, t:"In een zorgvuldige toets op de aandelen van de Dow Jones (1992 tot 2002) hadden candlestickpatronen geen waarde (Marshall, Young en Rose, 2006). Caginalp en Laurent (1998) vonden op S&P 500-aandelen wel een klein effect, vóór kosten. Het beeld is op zijn best mager en tegenstrijdig."},
+ {n:"Fibonacci en Elliott-golven", s:0, t:"Geen overtuigend bewijs. De beste toets die er is (Tsinaslanidis en anderen, 2022) vond dat bredere Fibonacci-zones vaker een keerpunt vangen, maar niet dat dat winstgevend is of beter werkt dan willekeurige niveaus in de buurt. Wat er ‘werkt’, is te verklaren doordat veel mensen dezelfde niveaus zien (zelfvervullend rond ronde verhoudingen) en doordat achteraf altijd een verhouding te vinden is die klopt."},
+ {n:"Daytrading als activiteit", s:3, t:"Minder dan één procent van de daytraders in Taiwan was voorspelbaar winstgevend na kosten (Barber, Lee, Liu en Odean, 2014). Van de Braziliaanse daytraders die het meer dan driehonderd dagen volhielden, verloor 97 procent geld (Chague, De-Losso en Giovannetti, 2019). De top verdient wel: de beste vijfhonderd Taiwanese daytraders haalden na kosten gemiddeld 0,38 procent per dag. Sterk bewijs, over een uitkomst die voor bijna iedereen negatief is."}
+];
+
+/* ---------------- KENNISKAARTEN ---------------- */
+const KAARTEN=[
+ ["Wat is het verschil tussen een break of structure en een change of character?","Een break of structure is een nieuwe top of nieuw dal in de richting van de trend (bevestiging). Een change of character is de eerste breuk van het punt dat de trend moest verdedigen, bij een opwaartse trend het laatste hogere dal."],
+ ["Welke taak heeft elk van de drie tijdframes?","Hoog: richting en niveaus. Middel: het scenario. Laag: alleen de timing van de ingang."],
+ ["Waarom wordt een niveau zwakker naarmate het vaker getest is?","Elke test vult orders die er lagen. Blijft de vraag komen, dan raakt het aanbod op."],
+ ["Waar clusteren winstnemingen en stop-losses rond een rond getal (Osler)?","Winstnemingen óp het ronde getal, stop-losses net erachter. Daarom keert de koers er vaak, en versnelt hij als het getal gebroken is."],
+ ["Wat is absorptie in volumetermen?","Veel volume, weinig prijsbeweging: iemand aan de andere kant neemt alles op. Vaak het eerste teken van een omslag, zeker op een niveau."],
+ ["Wat wil je zien in een gezonde pullback?","Dalend volume, een plek met een reden (niveau, AVWAP, gemiddelde) en het vorige hogere dal intact."],
+ ["Hoe bereken je RVOL?","Volume van nu gedeeld door het gemiddelde volume op hetzelfde tijdstip over de afgelopen tien tot twintig dagen."],
+ ["Hoe wordt de VWAP berekend?","Som van (typische prijs × volume) gedeeld door het totale volume, vanaf het begin van de dag. Typische prijs = (high + low + close) / 3."],
+ ["Wat zegt een geankerde VWAP?","De gemiddelde prijs van iedereen die sinds het ankerpunt kocht, dus waar die groep gemiddeld in winst of verlies staat."],
+ ["Wat zijn POC en value area?","POC: de prijs met het meeste volume. Value area: de zone rond de POC met ongeveer zeventig procent van het volume."],
+ ["HVN of LVN tussen ingang en doel: wat betekent het?","HVN: obstakel, de prijs vertraagt. LVN: vrije baan, de prijs glijdt erdoorheen."],
+ ["Waarom short je niet in een verkoopclimax?","Omdat de laatste paniekverkopers daar hun stukken kwijt raken aan kopers die het aanbod opnemen. De ingang is de test op laag volume daarna."],
+ ["Wat is slippage?","Het verschil tussen de verwachte prijs en je gemiddelde uitvoeringsprijs, doordat je marktorder meerdere niveaus van het boek opeet."],
+ ["Wat is een iceberg op level 2?","Een grote order die maar een klein deel laat zien. Herkenbaar doordat er op één prijs veel meer wordt uitgevoerd dan er ooit zichtbaar stond, terwijl het niveau zich aanvult."],
+ ["Wat is spoofing?","Orders plaatsen om gezien te worden en ze weghalen voordat ze worden uitgevoerd. Verboden (Dodd-Frank in de VS, MAR in Europa), maar het komt voor."],
+ ["Wat meet delta?","Het volume van agressieve kopers (op de ask) min dat van agressieve verkopers (op de bid). De cumulatieve delta telt het op."],
+ ["Prijs stijgt niet, cumulatieve delta stijgt sterk. Lezing?","Absorptie: een passieve verkoper neemt alle agressieve koop op."],
+ ["Prijs stijgt, open interest daalt. Wat gebeurt er?","Shorts sluiten: een short squeeze. Brandstof die opraakt."],
+ ["Wat vertelt sterk positieve funding?","Dat longs betalen om long te blijven: de long-kant is druk. Geen timing, wel waar de pijn zit als het draait."],
+ ["Wat onderscheidt een echte uitbraak van een val?","De sluiting ruim voorbij het niveau en hoog relatief volume. Een val prikt erdoor en sluit terug in de range."],
+ ["Formule voor de verwachting per trade?","Winstkans × gemiddelde winst min verlieskans × gemiddeld verlies, in R."],
+ ["Waarom zegt een winstkans na 20 trades weinig?","Het 95%-interval is enorm: bij 12 van 20 ongeveer 39 tot 78 procent."],
+ ["Formule voor de positiegrootte?","Aantal stuks = (rekening × risicopercentage) / (ingang min stop)."],
+ ["Hoeveel winst is nodig na 50 procent verlies?","100 procent. Na 25 procent: 33. Na 10 procent: 11."],
+ ["Waar leg je een stop?","Op het structurele ongeldigheidspunt, plus een halve tot een hele ATR marge."],
+ ["Wat is data-snooping?","Veel regels testen op dezelfde data en de beste kiezen. De beste is dan per constructie een uitschieter; pas een test op nieuwe data zegt iets."],
+ ["Welke technieken hebben het sterkste bewijs?","Trend en momentum over maanden, omkering over dagen tot weken, en orderflow op zeer korte termijn."],
+ ["Welk bewijs is er voor candlestickpatronen en Fibonacci?","Candlesticks: geen waarde in de zorgvuldigste toets op Dow Jones-aandelen. Fibonacci en Elliott: geen serieus bewijs."],
+ ["Wat vonden Chague en collega's bij Braziliaanse daytraders?","Van wie meer dan 300 dagen volhield, verloor 97 procent geld; 1,1 procent verdiende meer dan het minimumloon."],
+ ["De zes stappen van de leesvolgorde?","Context, locatie, volume, orderflow, trigger, risico."]
+];
+
+/* ================================================================
+   INTERACTIEF
+   Elk stuk is een functie die HTML teruggeeft, met zijn toestand in
+   `st`. Een klik op iets met data-act roept ACT aan en tekent daarna
+   alleen dat ene stuk opnieuw, zodat de pagina niet naar boven springt.
+   ================================================================ */
+const st={ vraag:{} };
+const IA={}, ACT={}, INP={};
+function blok(w,titel,inhoud){ return `<div class="ia" id="${iaId(w)}" data-w="${w}"><div class="kop">${titel}</div>${inhoud}</div>`; }
+const iaId=w=>'ia-'+w.replace(/[^a-z0-9]/gi,'_');
+function herteken(w){ const el=document.getElementById(iaId(w)); if(!el) return; const [naam,arg]=w.split(':'); const tmp=document.createElement('div'); tmp.innerHTML=IA[naam](arg,w); el.innerHTML=tmp.firstElementChild.innerHTML; }
+function toonIA(w){ const [naam,arg]=w.split(':'); return IA[naam](arg,w); }
+const knop=(act,tekst,extra='',cls='knop klein stil')=>`<button class="${cls}" data-act="${act}" ${extra}>${tekst}</button>`;
+const seg=(act,opties,huidig)=>`<div class="seg">${opties.map(([v,t])=>`<button data-act="${act}" data-v="${v}" class="${String(v)===String(huidig)?'aan':''}">${t}</button>`).join('')}</div>`;
+
+/* ---------- bewijskaart ---------- */
+st.bk=0;
+const STERKTE=['Geen bewijs','Zwak of niet getoetst','Gemengd of beperkt','Sterk en breed'];
+const punten=s=>'<span style="letter-spacing:2px;color:var(--pri)">'+'●'.repeat(s)+'<span style="color:#3a4553">'+'●'.repeat(3-s)+'</span></span>';
+IA.bewijskaart=(a,w)=>blok(w,'Bewijskaart',
+  `<div class="matrix" style="grid-template-columns:1fr">${BEWIJSKAART.map((b,i)=>`<button data-act="bk" data-v="${i}" class="${st.bk===i?'aan':''}"><b>${b.n}</b>${punten(b.s)} <span class="klein">${STERKTE[b.s]}</span>${st.bk===i?`<div style="margin-top:8px;font-size:14px;color:#dde4ea">${b.t}</div>`:''}</button>`).join('')}</div>`);
+ACT.bk=el=>{ st.bk=+el.dataset.v; };
+
+/* ---------- data-snooping ---------- */
+st.sn={seed:7};
+function snoopRun(seed){
+  const r=rng(seed), N=1000, p=[100]; for(let i=1;i<N;i++) p.push(p[i-1]*Math.exp(gauss(r)*0.012));
+  const cs=[0]; p.forEach((v,i)=>cs.push(cs[i]+v)); const gem=(i,n)=>i<n-1?null:(cs[i+1]-cs[i+1-n])/n;
+  const lr=p.map((v,i)=>i?Math.log(v/p[i-1]):0), half=N/2, regels=[];
+  for(let k=0;k<200;k++){ const f=3+Math.floor(r()*28), s=f+10+Math.floor(r()*170); let a=0,b=0; const eq=[0];
+    const stand=j=>gem(j,s)==null?0:(gem(j,f)>gem(j,s)?1:-1);
+    for(let i=1;i<N;i++){ const pos=stand(i-1); const x=pos*lr[i]-(i>1&&pos!==stand(i-2)?0.0005:0);
+      if(i<half) a+=x; else b+=x; eq.push(eq[i-1]+x); }
+    regels.push({f,s,a,b,eq}); }
+  const best=regels.reduce((m,x)=>x.a>m.a?x:m); const gemB=regels.reduce((t,x)=>t+x.b,0)/regels.length;
+  const markt=p.map(v=>Math.log(v/p[0]));
+  return {best,gemB,markt,half,N,rang:1+regels.filter(x=>x.b>best.b).length};
+}
+IA.snoop=(a,w)=>{ const R0=snoopRun(st.sn.seed), b=R0.best, e=x=>pct(Math.exp(x)-1,0);
+  const W=640,H=230,L=4,Rr=594; const all=[...b.eq,...R0.markt]; const lo=Math.min(...all), hi=Math.max(...all);
+  const x=i=>L+i*(Rr-L)/(R0.N-1), y=v=>8+(hi-v)/(hi-lo||1)*(H-16);
+  const pl=(arr,kl)=>`<polyline class="lijnplot" stroke="${kl}" points="${arr.map((v,i)=>i%2?'':x(i).toFixed(1)+','+y(v).toFixed(1)).filter(Boolean).join(' ')}"/>`;
+  const svg=`<svg viewBox="0 0 ${W} ${H}" class="graf"><rect x="${x(R0.half)}" y="0" width="${Rr-x(R0.half)}" height="${H}" fill="rgba(233,188,85,.06)"/><line class="beslis" x1="${x(R0.half)}" x2="${x(R0.half)}" y1="0" y2="${H}"/>
+    <line class="raster" x1="0" x2="${Rr}" y1="${y(0)}" y2="${y(0)}"/>${pl(R0.markt,'#7d8995')}${pl(b.eq,'#e9bc55')}
+    <text class="noot" x="${x(R0.half)-8}" y="18" text-anchor="end">gekozen</text><text class="noot" x="${x(R0.half)+8}" y="18">getest</text></svg>`;
+  return blok(w,'Proef: tweehonderd regels op toeval', svg+`
+   <div class="uitkomst"><div class="kv"><span>Beste regel (gemiddelde ${b.f} tegen ${b.s}), eerste helft</span><b>${e(b.a)}</b></div>
+   <div class="kv"><span>Dezelfde regel, tweede helft</span><b>${e(b.b)}</b></div>
+   <div class="kv"><span>Alle 200 regels gemiddeld, tweede helft</span><b>${e(R0.gemB)}</b></div>
+   <div class="kv"><span>Plaats van de ‘beste’ regel in de tweede helft</span><b>${R0.rang} van 200</b></div></div>
+   <p class="uitleg">Goud is de beste regel, grijs de koers zelf, een toevalswandeling. Links van de streep is de regel gekozen, rechts wordt hij getest. Er zit geen enkel patroon in deze koers, dus alles wat de beste regel links verdiende, is toeval dat eruitziet als vakmanschap. Druk een paar keer op ‘nieuwe koers’. Links ziet de beste regel er steeds goed uit. Rechts gaan alle regels op en neer met de richting die het toeval die helft kiest, en de plaats van de ‘beste’ regel in die rangorde is willekeurig: soms bovenaan, soms onderaan, gemiddeld in het midden. De transactiekosten zijn hier klein gehouden (vijf honderdste procent per wissel).</p>
+   <div class="rij">${knop('sn','Nieuwe koers')}</div>`); };
+ACT.sn=()=>{ st.sn.seed++; };
+
+/* ---------- structuur ---------- */
+const STRUCT=[
+ {naam:'A', segs:[{n:8,to:104},{n:5,to:102},{n:8,to:107},{n:5,to:104.8},{n:8,to:110},{n:5,to:108},{n:6,to:112}], goed:'op', uitleg:"Elke top hoger (HH), elk dal hoger (HL). Het laatste HL is het punt dat deze trend moet verdedigen; daar hoort een stop voor een long."},
+ {naam:'B', segs:[{n:8,to:96},{n:5,to:98.2},{n:8,to:93},{n:5,to:95.2},{n:8,to:90},{n:5,to:92},{n:6,to:88}], goed:'neer', uitleg:"Lagere toppen (LH) en lagere dalen (LL). De laatste LH is het punt waar een short ongeldig wordt."},
+ {naam:'C', segs:[{n:8,to:104},{n:5,to:102},{n:8,to:107},{n:5,to:104.8},{n:8,to:109},{n:6,to:103.5,v:1.5},{n:4,to:105.6,v:.7},{n:6,to:102.2,v:1.4}], goed:'omslag', uitleg:"Tot de laatste top een nette opwaartse trend. Dan breekt de koers onder het laatste HL, op hoger volume, en de opleving daarna blijft onder de vorige top (LH). Dat is een change of character: nog geen bewezen daling, wel het einde van de reden om long te zijn."}
+];
+st.str={k:0,antw:{}};
+IA.structuur=(a,w)=>{ const s=STRUCT[st.str.k], d=reeks(40+st.str.k,s.segs), an=st.str.antw[st.str.k];
+  return blok(w,'Lees de structuur',
+   seg('strk',STRUCT.map((x,i)=>[i,'Grafiek '+x.naam]),st.str.k)+grafiek(d,{swings:an!=null,k:2,h:280})+
+   (an==null?`<p class="uitleg">Hoe zou je de structuur aan de rechterrand noemen?</p><div class="rij">${[['op','Opwaarts'],['neer','Neerwaarts'],['omslag','Omslag bezig']].map(([v,t])=>knop('stra',t,`data-v="${v}"`)).join('')}</div>`
+   :`<div class="terugk ${an===s.goed?'goed':'fout'}">${an===s.goed?'Goed gelezen.':'Niet helemaal.'} ${s.uitleg}</div>`)); };
+ACT.strk=el=>{ st.str.k=+el.dataset.v; };
+ACT.stra=el=>{ st.str.antw[st.str.k]=el.dataset.v; oefendag(); };
+
+/* ---------- tijdframes ---------- */
+st.tf='hoog';
+const TFBASIS=reeks(11,[{n:240,to:130,s:.35,v:1},{n:110,to:121,s:.3,v:1.15},{n:34,to:121.9,s:.18,v:.55}]);
+IA.tijdframe=(a,w)=>{ const v=st.tf; const d=v==='hoog'?bundel(TFBASIS,16):v==='midden'?bundel(TFBASIS,4).slice(-60):TFBASIS.slice(-72);
+  const tekst={hoog:"Het hoge tijdframe: een ruime opwaartse trend met aan het eind een terugval. De richting is omhoog; de terugval is voorlopig een pullback, zolang het vorige dal niet breekt.",
+    midden:"Het middelste: het einde van de trend en een nette neerwaartse beweging. Dit is het scenario: een correctie in een opwaartse trend, die ergens moet stoppen.",
+    laag:"Het lage: de daling is tot stilstand gekomen in een smalle range op laag volume. Hier zoek je de timing. Een uitbraak naar boven uit deze range is de ingang die de drie tijdframes met elkaar verbindt."}[v];
+  return blok(w,'Drie tijdframes, dezelfde koers', seg('tf',[['hoog','Hoog (×16)'],['midden','Midden (×4)'],['laag','Laag']],v)+grafiek(d,{ema:v==='hoog'?[]:[20],volGem:true,h:280})+`<p class="uitleg">${tekst}</p>`); };
+ACT.tf=el=>{ st.tf=el.dataset.v; };
+
+/* ---------- niveaus ---------- */
+st.niv={zone:false,rol:false};
+const NIV=reeks(21,[{n:12,to:106,s:.5},{n:6,to:102.5},{n:6,to:105.9,s:.3},{n:6,to:102.8},{n:6,to:105.8,s:.3},{n:4,to:104.4},{n:3,to:107,s:.3,v:1.9,v2:2.2},{n:5,to:108.6},{n:5,to:106.4,s:.25,v:.55},{n:10,to:110.6,v:1.2}]);
+IA.niveaus=(a,w)=>{ const z=[]; if(st.niv.zone) z.push({van:105.3,tot:106.2,label:'weerstand, drie keer getest'}); if(st.niv.rol) z.push({van:105.3,tot:106.2,vanI:43,cls:'steun',label:'nu steun'});
+  return blok(w,'Zone en rolwissel', grafiek(NIV,{zones:z,volGem:true,h:280})+`<div class="rij">${knop('niv','Toon zone','data-v="zone"',st.niv.zone?'knop klein aan':'knop klein stil')}${knop('niv','Toon rolwissel','data-v="rol"',st.niv.rol?'knop klein aan':'knop klein stil')}</div>
+  <p class="uitleg">Drie keer liep de koers vast onder dezelfde zone. De vierde keer gaat hij erdoor, op duidelijk hoger volume, en de terugval daarna stopt precies op de oude weerstand, nu op laag volume. De verkopers die er zaten zijn weg; wie de uitbraak miste, koopt hier. Let ook op de toppen: ze liggen niet op één streep, en dat is waarom het een zone is.</p>`); };
+ACT.niv=el=>{ st.niv[el.dataset.v]=!st.niv[el.dataset.v]; };
+
+/* ---------- inspanning tegen resultaat ---------- */
+const KWAD={
+ bev:{n:'Bevestiging',segs:[{n:18,to:106,s:.4}],b:{c:1.6,h:.15,l:.1,v:2.9},u:"Grote bar, groot volume: inspanning en resultaat in harmonie. De beweging heeft deelnemers achter zich."},
+ abs:{n:'Absorptie',segs:[{n:18,to:108,s:.4}],b:{c:.12,h:1.5,l:.1,v:3.1},u:"Drie keer het gemiddelde volume en de koers kwam nauwelijks vooruit: een lange bovenlont, een kleine body. Iemand heeft de koop opgenomen."},
+ dun:{n:'Dunne beweging',segs:[{n:18,to:103,s:.35}],b:{c:1.7,h:.1,l:.1,v:.45},u:"Een grote bar op minder dan de helft van het gemiddelde volume. Weinig tegenpartij: het kan doorlopen, maar er staat weinig achter."},
+ rust:{n:'Rustige pullback',segs:[{n:14,to:108,s:.4,v:1.1},{n:4,to:106.7,s:.2,v:.5}],b:{c:-.22,h:.1,l:.12,v:.32},u:"Kleine bars, dalend en laag volume in een stijgende trend: niemand heeft haast om te verkopen. Dit is de pullback die je in een trend wilt zien."}
+};
+st.kw={seed:1,type:'abs',keuze:null,goed:0,tot:0};
+function kwNieuw(){ const t=Object.keys(KWAD); st.kw.seed++; st.kw.type=t[Math.floor(rng(st.kw.seed*97)()*t.length)]; st.kw.keuze=null; }
+IA.kwadrant=(a,w)=>{ const K=KWAD[st.kw.type], d=reeks(300+st.kw.seed,[...K.segs,{bar:K.b}]), k=st.kw.keuze;
+  return blok(w,`Inspanning tegen resultaat <span class="klein" style="float:right;text-transform:none;letter-spacing:0">${st.kw.goed} van ${st.kw.tot} goed</span>`,
+   grafiek(d,{markeer:d.length-1,volGem:true,h:250})+
+   `<div class="vraag">${Object.entries(KWAD).map(([t,x])=>`<button class="opt ${k!=null?(t===st.kw.type?'goed':(t===k?'fout':'')):''}" data-act="kw" data-v="${t}" ${k!=null?'disabled':''}>${x.n}</button>`).join('')}</div>`+
+   (k!=null?`<div class="terugk ${k===st.kw.type?'goed':'fout'}">${K.u}</div><div class="rij">${knop('kwn','Volgende','', 'knop klein')}</div>`:'')); };
+ACT.kw=el=>{ if(st.kw.keuze!=null) return; st.kw.keuze=el.dataset.v; st.kw.tot++; if(st.kw.keuze===st.kw.type) st.kw.goed++; oefendag(); };
+ACT.kwn=()=>kwNieuw();
+
+/* ---------- RVOL ---------- */
+const UUR=['9:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30'];
+const GEMVOL=[1000,640,480,390,330,280,250,240,260,300,360,470,820];
+st.rv={t:7,v:400};
+IA.rvol=(a,w)=>{ const t=st.rv.t, g=GEMVOL[t], rv=st.rv.v/g, W=640,H=190,bw=W/13;
+  const mx=Math.max(...GEMVOL,st.rv.v); const y=v=>H-18-(v/mx)*(H-30);
+  const bars=GEMVOL.map((v,i)=>`<rect x="${i*bw+4}" y="${y(v)}" width="${bw-8}" height="${H-18-y(v)}" fill="${i===t?'#e9bc55':'#3a4553'}"/><text class="as" x="${i*bw+bw/2}" y="${H-4}" text-anchor="middle">${UUR[i]}</text>`).join('');
+  const nu=`<line x1="${t*bw}" x2="${t*bw+bw}" y1="${y(st.rv.v)}" y2="${y(st.rv.v)}" stroke="#5fd3c7" stroke-width="3"/>`;
+  const oordeel=rv<0.8?'rustiger dan normaal':rv<1.5?'normaal voor dit tijdstip':rv<2.5?'duidelijk verhoogd: er gebeurt iets':'uitzonderlijk: de markt let op dit aandeel';
+  return blok(w,'Relatief volume',`<svg viewBox="0 0 ${W} ${H}" class="graf" data-deel="rs">${bars}${nu}</svg>
+   <div class="velden"><label class="veld"><span data-deel="rl1">Halfuur vanaf ${UUR[t]}</span><input type="range" min="0" max="12" value="${t}" data-inp="rvt"></label>
+   <label class="veld"><span data-deel="rl2">Volume nu: ${nlk(st.rv.v*1000)}</span><input type="range" min="50" max="2500" step="10" value="${st.rv.v}" data-inp="rvv"></label></div>
+   <div class="uitkomst" data-deel="ru"><div class="kv"><span>Gemiddeld volume in dit halfuur</span><b>${nlk(g*1000)}</b></div><div class="kv"><span>RVOL</span><b>${nl(rv,1)}</b></div><p class="sub" style="margin-top:6px">${oordeel}</p></div>
+   <p class="uitleg">Grijs is het gemiddelde volume per halfuur (verzonnen, maar met de vorm van een gewone beursdag), de groene streep het volume van nu. Zet het volume op 800.000 en schuif door de dag: om half tien is dat minder dan normaal, om één uur ruim drie keer zoveel.</p>`); };
+INP.rvt=el=>{ st.rv.t=+el.value; }; INP.rvv=el=>{ st.rv.v=+el.value; };
+
+/* ---------- VWAP ---------- */
+const VW=reeks(31,[{n:12,to:101.6,s:.35,v:2.1,v2:1.2},{n:14,to:99.2,s:.3,v:1.2,v2:.9},{n:10,to:100.3,s:.25,v:.8},{n:10,to:99.5,s:.2,v:.7},{n:24,to:102.6,s:.3,v:.9,v2:1.6}]);
+st.vw={anker:VW.reduce((m,b,i,a)=>b.l<a[m].l?i:m,0),banden:false};
+IA.vwap=(a,w)=>blok(w,'VWAP en geankerde VWAP',grafiek(VW,{vwap:true,banden:st.vw.banden,avwap:[st.vw.anker],klik:'vwk',h:300})+
+  `<div class="rij">${knop('vwb','Banden','',st.vw.banden?'knop klein aan':'knop klein stil')}<span class="klein"><span style="color:#8fbaf8">▬</span> VWAP van de dag &nbsp; <span style="color:#b48cf2">▬</span> AVWAP vanaf bar ${st.vw.anker+1}</span></div>
+  <p class="uitleg">De ochtend opent hoog en zakt onder de VWAP, waar hij twee keer op wordt afgewezen: de kopers van de ochtend stappen uit zodra ze break-even staan. De middag wint de VWAP terug en blijft erboven. Tik op het dal: de AVWAP vanaf daar laat zien waar de kopers van de middag gemiddeld zitten, en de koers blijft er de rest van de dag boven. Tik op de top van de ochtend en je ziet waar het aanbod van die kopers ligt.</p>`);
+ACT.vwk=el=>{ st.vw.anker=+el.dataset.i; }; ACT.vwb=()=>{ st.vw.banden=!st.vw.banden; };
+
+/* ---------- volumeprofiel ---------- */
+st.pf={seed:5,va:true};
+IA.profiel=(a,w)=>{ const d=reeks(st.pf.seed,[{n:15,to:104,s:.5},{n:35,to:103.4,s:.65,v:1.1},{n:6,to:109,s:.4,v:.7},{n:30,to:109.4,s:.55},{n:10,to:107.2,s:.5}]);
+  return blok(w,'Volumeprofiel',grafiek(d,{profiel:true,va:st.pf.va,bins:30,h:300})+`<div class="rij">${knop('pfv','POC en value area','',st.pf.va?'knop klein aan':'knop klein stil')}${knop('pfn','Andere grafiek')}</div>
+  <p class="uitleg">Twee gebieden waar de markt lang handelde, met daartussen een snelle beweging. In het profiel rechts zie je dat als twee bulten met een dal ertussen: de LVN. Komt de koers terug in dat dal, dan verwacht je geen steun maar snelheid, tot hij weer in een bult komt. De goudkleurige balk is de POC.</p>`); };
+ACT.pfv=()=>{ st.pf.va=!st.pf.va; }; ACT.pfn=()=>{ st.pf.seed++; };
+
+/* ---------- climax ---------- */
+const CL=reeks(51,[{n:30,to:88,s:.5,v:1,v2:1.35},{bar:{c:-.3,l:3.1,h:.2,v:5.2}},{n:6,to:91.6,s:.4,v:1.3,v2:1},{n:6,to:86.8,s:.28,v:.45,v2:.3},{bar:{c:1.2,l:.1,v:1.7}},{n:10,to:94,s:.4,v:1.1}]);
+const CLSTAP=[
+ {toon:31,n:[{i:30,t:'climax',boven:false}],t:"Na een lange daling één bar met het grootste volume van de hele reeks en een lange onderlont. Paniek bij de laatste houders, en een koper die alles opneemt. Short gaan is hier de slechtste keuze."},
+ {toon:37,n:[{i:30,t:'climax',boven:false},{i:34,t:'opleving'}],t:"De opleving erna is snel: er is geen aanbod meer om hem tegen te houden. Nog geen ingang; je weet niet of het dal houdt."},
+ {toon:43,n:[{i:30,t:'climax',boven:false},{i:41,t:'test',boven:false}],t:"De test. De koers zakt terug naar het gebied van de climax, maar op een fractie van het volume. Dezelfde prijs, geen verkopers: het aanbod is op."},
+ {toon:54,n:[{i:30,t:'climax',boven:false},{i:41,t:'test',boven:false},{i:43,t:'trigger'}],t:"De trigger: een bar die sluit boven de vorige, op oplopend volume. De stop ligt onder het dal van de test, of met ruimte onder de climax. Dit is de ingang, niet de climax zelf."}
+];
+st.cl=0;
+IA.climax=(a,w)=>{ const s=CLSTAP[st.cl]; return blok(w,'Climax en test, stap voor stap',`<div class="stappen">${CLSTAP.map((_,i)=>`<i class="${i<=st.cl?'aan':''}"></i>`).join('')}</div>`+grafiek(CL,{toon:s.toon,plek:CL.length,noten:s.n,volGem:true,h:280})+`<p class="uitleg">${s.t}</p><div class="rij">${st.cl>0?knop('cl','Vorige','data-v="-1"'):''}${st.cl<CLSTAP.length-1?knop('cl','Volgende','data-v="1"','knop klein'):''}</div>`); };
+ACT.cl=el=>{ st.cl=Math.max(0,Math.min(CLSTAP.length-1,st.cl+(+el.dataset.v))); };
+
+/* ---------- orderboek ---------- */
+function boekStart(){ return { asks:[800,1200,600,2500,900,4000,1500,700,3000,5200].map((q,i)=>({p:50.01+i*0.01,q,o:q})), bids:[900,1500,700,2200,1100,3500,800,1600,2800,4800].map((q,i)=>({p:50.00-i*0.01,q,o:q})), uit:null, tape:[] }; }
+st.bk2=boekStart();
+function marktorder(zijde,n){ const b=st.bk2, kant=zijde==='koop'?b.asks:b.bids; const beste=kant.find(x=>x.q>0)?.p; let rest=n,kost=0,niv=0;
+  for(const l of kant){ if(rest<=0) break; if(l.q<=0) continue; const x=Math.min(rest,l.q); l.q-=x; rest-=x; kost+=x*l.p; niv++; b.tape.unshift([l.p,x,zijde==='koop'?'k':'v']); }
+  const gedaan=n-rest; b.uit={zijde,n,gedaan,gem:gedaan?kost/gedaan:0,beste,niv,rest}; oefendag(); }
+IA.boek=(a,w)=>{ const b=st.bk2, u=b.uit, mx=5200;
+  const rij=(l,kant)=>`<div class="c ${kant} ${l.q===0?'weg':''}"><i style="width:${l.q/mx*100}%"></i><span>${l.q?nlk(l.q):nlk(l.o)}</span></div>`;
+  const rijen=[]; for(let i=9;i>=0;i--) rijen.push(`<div class="c"></div><div class="c p">${nl(b.asks[i].p,2)}</div>${rij(b.asks[i],'ask')}`);
+  for(let i=0;i<10;i++) rijen.push(`${rij(b.bids[i],'bid')}<div class="c p">${nl(b.bids[i].p,2)}</div><div class="c"></div>`);
+  let uit=''; if(u){ const slip=u.zijde==='koop'?u.gem-u.beste:u.beste-u.gem; uit=`<div class="uitkomst"><div class="kv"><span>Markt${u.zijde==='koop'?'koop':'verkoop'} van ${nlk(u.n)} stuks</span><b>${nlk(u.gedaan)} uitgevoerd</b></div>
+    <div class="kv"><span>Beste prijs vooraf</span><b>${nl(u.beste,2)}</b></div><div class="kv"><span>Gemiddelde uitvoering</span><b>${nl(u.gem,4)}</b></div>
+    <div class="kv"><span>Slippage</span><b>${nl(slip*100,2)} cent, ${nl(slip/u.beste*10000,1)} basispunten</b></div><div class="kv"><span>Niveaus opgegeten</span><b>${u.niv}</b></div>${u.rest?`<div class="kv"><span>Niet uitgevoerd, boek leeg</span><b>${nlk(u.rest)}</b></div>`:''}</div>`; }
+  return blok(w,'Orderboek',`<div class="ladder"><div class="c kop" style="text-align:right">Bid</div><div class="c kop p">Prijs</div><div class="c kop">Ask</div>${rijen.join('')}</div>
+   <div class="rij">${[500,3000,10000].map(n=>knop('mo',`Koop ${nlk(n)}`,`data-z="koop" data-n="${n}"`)).join('')}</div>
+   <div class="rij">${[500,3000,10000].map(n=>knop('mo',`Verkoop ${nlk(n)}`,`data-z="verkoop" data-n="${n}"`)).join('')}${knop('mor','Boek herstellen','', 'knop klein')}</div>${uit}
+   <p class="uitleg">Een koop van 500 stuks past op het eerste niveau: geen slippage, alleen de spread. Een koop van 10.000 loopt zes niveaus op. Op een aandeel van 50 euro lijken een paar cent weinig, maar bij een stop van 50 cent is dat een tiende van je risico, verloren bij het instappen. Doe daarna een tweede koop zonder te herstellen: het boek is dunner geworden, en dezelfde order kost meer.</p>`); };
+ACT.mo=el=>marktorder(el.dataset.z,+el.dataset.n); ACT.mor=()=>{ st.bk2=boekStart(); };
+
+/* ---------- iceberg en spoof ---------- */
+const lad=(asks,bids)=>({asks,bids});
+const IJS={
+ ijsberg:[
+  {b:lad([[12.54,2100],[12.53,1400],[12.52,900],[12.51,1200],[12.50,300]],[[12.49,1500],[12.48,2200],[12.47,1800],[12.46,2600],[12.45,3000]]),tape:[],hl:12.50,t:"Een rustig boek. Op 12,50 staan 300 stuks te koop. Wie één blik werpt, ziet een dunne ask: een paar kopers en de koers loopt erdoorheen."},
+  {b:lad([[12.54,2100],[12.53,1400],[12.52,900],[12.51,1200],[12.50,300]],[[12.49,2400],[12.48,2600],[12.47,1800],[12.46,2600],[12.45,3000]]),tape:[[12.50,300,'k'],[12.50,300,'k'],[12.50,500,'k'],[12.50,300,'k'],[12.50,400,'k']],hl:12.50,t:"Er wordt op 12,50 gekocht: 1.800 stuks, terwijl er maar 300 stonden. En het niveau staat er nog, weer met 300. Het vult zich aan."},
+  {b:lad([[12.54,2100],[12.53,1400],[12.52,900],[12.51,1200],[12.50,300]],[[12.49,3100],[12.48,2900],[12.47,2000],[12.46,2600],[12.45,3000]]),tape:[[12.50,2000,'k'],[12.50,1500,'k'],[12.50,3000,'k'],[12.50,2500,'k'],[12.50,1800,'k'],[12.50,4200,'k']],hl:12.50,t:"Vijf minuten later is er op 12,50 ruim 45.000 stuks verhandeld. Op het scherm heeft er nooit meer dan 300 gestaan. De kopers zijn agressief, de delta is sterk positief, en de prijs komt geen cent hoger. Dit is een iceberg."},
+  {b:lad([[12.51,1200],[12.50,300],[12.49,800],[12.48,700],[12.47,500]],[[12.46,900],[12.45,1500],[12.44,2200],[12.43,1600],[12.42,2800]]),tape:[[12.48,1200,'v'],[12.47,2000,'v'],[12.47,900,'v'],[12.46,1500,'v']],hl:12.50,t:"De kopers geven het op. Er komt geen vraag meer op 12,50 en de bids trekken zich terug. Wie long ging ‘omdat de ask dun was’, zit nu vast onder een verkoper die er nog steeds staat."}],
+ spoof:[
+  {b:lad([[50.09,1200],[50.08,900],[50.07,1500],[50.06,800],[50.05,600]],[[50.04,700],[50.03,1100],[50.02,900],[49.95,1400],[49.90,20000]]),tape:[],hl:49.90,t:"Een muur van 20.000 stuks op de bid op 49,90, tien keer zoveel als op elk ander niveau. Dat voelt als steun."},
+  {b:lad([[50.02,1100],[50.01,900],[50.00,800],[49.99,700],[49.98,900]],[[49.97,1600],[49.96,2100],[49.95,2400],[49.92,1800],[49.90,25000]]),tape:[[49.98,400,'v'],[49.97,600,'v'],[49.98,300,'k']],hl:49.90,t:"De koers zakt richting de muur, en de muur groeit naar 25.000. Anderen zien hetzelfde en zetten hun kooporders er net vóór. Er wordt op de muur zelf nog niets verhandeld."},
+  {b:lad([[49.97,900],[49.96,700],[49.95,800],[49.94,600],[49.93,500]],[[49.92,600],[49.91,400],[49.90,0],[49.89,300],[49.88,500]]),tape:[[49.93,800,'v'],[49.92,1200,'v']],hl:49.90,t:"Op 49,93 is de muur ineens weg. Niet opgegeten, want er is op 49,90 niets verhandeld: ingetrokken."},
+  {b:lad([[49.86,1200],[49.85,900],[49.84,700],[49.83,800],[49.82,600]],[[49.81,500],[49.80,700],[49.79,400],[49.78,900],[49.77,600]]),tape:[[49.90,1600,'v'],[49.88,2200,'v'],[49.85,3100,'v'],[49.83,2500,'v'],[49.81,1800,'v']],hl:49.90,t:"Wie op de muur vertrouwde, verkoopt nu tegelijk, en de koers valt er in één beweging doorheen. De muur stond er om gezien te worden. De tape liet de hele tijd zien dat er op 49,90 nooit gekocht werd."}]
+};
+st.ij={s:'ijsberg',k:0};
+IA.ijsberg=(a,w)=>{ const f=IJS[st.ij.s][st.ij.k], mx=Math.max(...f.b.asks.map(x=>x[1]),...f.b.bids.map(x=>x[1]),3000);
+  const cel=(q,kant,p)=>`<div class="c ${kant} ${Math.abs(p-f.hl)<1e-6?'hl':''}"><i style="width:${Math.min(100,q/mx*100)}%"></i><span>${q?nlk(q):''}</span></div>`;
+  const r=[]; f.b.asks.forEach(([p,q])=>r.push(`<div class="c"></div><div class="c p">${nl(p,2)}</div>${cel(q,'ask',p)}`)); f.b.bids.forEach(([p,q])=>r.push(`${cel(q,'bid',p)}<div class="c p">${nl(p,2)}</div><div class="c"></div>`));
+  return blok(w,'Boek tegen tape',seg('ijs',[['ijsberg','Iceberg'],['spoof','Spoofing']],st.ij.s)+`<div class="stappen">${IJS[st.ij.s].map((_,i)=>`<i class="${i<=st.ij.k?'aan':''}"></i>`).join('')}</div>
+   <div class="ladder"><div class="c kop" style="text-align:right">Bid</div><div class="c kop p">Prijs</div><div class="c kop">Ask</div>${r.join('')}</div>
+   <div class="tape">${f.tape.length?f.tape.map(([p,q,z])=>`<div class="${z}"><span>${nl(p,2)}</span><span>${nlk(q)}</span><span>${z==='k'?'op de ask':'op de bid'}</span></div>`).join(''):'<span class="klein">Nog geen transacties</span>'}</div>
+   <p class="uitleg">${f.t}</p><div class="rij">${st.ij.k>0?knop('ijk','Vorige','data-v="-1"'):''}${st.ij.k<IJS[st.ij.s].length-1?knop('ijk','Volgende','data-v="1"','knop klein'):''}</div>`); };
+ACT.ijs=el=>{ st.ij={s:el.dataset.v,k:0}; }; ACT.ijk=el=>{ st.ij.k=Math.max(0,Math.min(IJS[st.ij.s].length-1,st.ij.k+(+el.dataset.v))); if(st.ij.k===IJS[st.ij.s].length-1) oefendag(); };
+
+/* ---------- delta ---------- */
+function stuk(pts,n,r,ruis){ const uit=[]; for(let i=0;i<n;i++){ let k=0; while(k<pts.length-2&&i>pts[k+1][0]) k++; const [a,va]=pts[k],[b,vb]=pts[k+1]; uit.push(va+(vb-va)*(i-a)/(b-a)+gauss(r)*ruis); } return uit; }
+const DELTA={
+ bev:{n:'Scenario 1',p:[[0,100],[59,102]],c:[[0,0],[59,4200]],goed:'bev',u:"Prijs en cumulatieve delta stijgen samen. Agressieve kopers duwen de prijs, en die gaat mee. Niets verdachts: de beweging is echt, en zolang dat zo blijft is er geen reden om tegen te gaan."},
+ abs:{n:'Scenario 2',p:[[0,100],[18,101],[59,101.05]],c:[[0,0],[18,1200],[59,5200]],goed:'abs',u:"De prijs staat na de eerste stijging stil, terwijl de cumulatieve delta hard blijft stijgen: agressieve kopers kopen, en iemand vult alles met limietorders. Absorptie. Als de kopers moe worden, heeft de verkoper nog stukken over, en dan keert de koers."},
+ uit:{n:'Scenario 3',p:[[0,100],[25,102],[36,101.3],[59,102.35]],c:[[0,0],[25,3000],[36,2000],[59,2500]],goed:'uit',u:"De prijs maakt een nieuwe top, de delta niet. De tweede stijging wordt gedragen door minder agressie dan de eerste: uitputting. Geen reden om direct te shorten, wel om een long hier niet meer te beginnen en een bestaande strakker te beschermen."}
+};
+st.dl={s:'bev',antw:{}};
+IA.delta=(a,w)=>{ const D=DELTA[st.dl.s], r=rng(st.dl.s.length*13); const p=stuk(D.p,60,r,.05), c=stuk(D.c,60,r,90); const an=st.dl.antw[st.dl.s];
+  return blok(w,'Prijs tegen cumulatieve delta',seg('dls',Object.entries(DELTA).map(([k,v])=>[k,v.n]),st.dl.s)+lijnenGrafiek([{w:p,naam:'prijs',kleur:'#e6edf3'},{w:c,naam:'CVD',kleur:'#5fd3c7',nul:true}],{h:260})+
+   (an==null?`<p class="uitleg">Wat zie je?</p><div class="vraag">${[['bev','Bevestiging: delta en prijs gaan samen'],['abs','Absorptie: delta stijgt, prijs niet'],['uit','Uitputting: nieuwe top zonder nieuwe delta']].map(([v,t])=>`<button class="opt" data-act="dla" data-v="${v}">${t}</button>`).join('')}</div>`
+   :`<div class="terugk ${an===D.goed?'goed':'fout'}">${an===D.goed?'Goed.':'Niet helemaal.'} ${D.u}</div>`)); };
+ACT.dls=el=>{ st.dl.s=el.dataset.v; }; ACT.dla=el=>{ st.dl.antw[st.dl.s]=el.dataset.v; oefendag(); };
+
+/* ---------- open interest ---------- */
+const OIM=[
+ {k:'Prijs op, OI op',t:"Nieuwe posities, en per saldo agressief long. Er komt geld bij de beweging: de gezondste stijging. Let op funding: hoe hoger, hoe drukker de long-kant."},
+ {k:'Prijs op, OI neer',t:"Shorts sluiten. Een squeeze: vaak snel en fel, maar de brandstof is eindig. Als de OI uitgewrongen is, stopt de beweging vaak abrupt."},
+ {k:'Prijs neer, OI op',t:"Nieuwe shorts, agressief. Geld gaat actief tegen de markt in. Houdt de daling op terwijl de OI blijft stijgen, dan zit er een groeiende groep shorts klem."},
+ {k:'Prijs neer, OI neer',t:"Longs sluiten of worden geliquideerd. Een uitverkoop die zichzelf opruimt; na een scherpe daling met sterk dalende OI is een groot deel van de hefboom eruit."}
+];
+st.oi=null;
+IA.oi=(a,w)=>blok(w,'Prijs en open interest',`<div class="matrix">${OIM.map((m,i)=>`<button data-act="oi" data-v="${i}" class="${st.oi===i?'aan':''}"><b>${m.k}</b></button>`).join('')}</div>${st.oi!=null?`<p class="uitleg">${OIM[st.oi].t}</p>`:'<p class="uitleg">Tik op een combinatie.</p>'}
+ <p class="uitleg">Een vuistregel voor funding: sterk positief en een stijgende OI bij een prijs die niet meer stijgt, is de opstelling voor een liquidatiecascade naar beneden. Het omgekeerde geldt voor sterk negatieve funding.</p>`);
+ACT.oi=el=>{ st.oi=+el.dataset.v; };
+
+/* ---------- de trainer ---------- */
+const RANGE=[{n:25,to:108,s:.5},{n:6,to:111,s:.35,v:1.1},{n:5,to:108.5,s:.3,v:.8},{n:5,to:110.9,s:.3,v:.9},{n:5,to:109.4,s:.25,v:.6},{n:4,to:110.8,s:.2,v:.5}];
+const SCEN={
+ uitbraak:{n:'Uitbraak',pre:[...RANGE,{bar:{c:1.7,h:.15,l:.1,v:3.2}}],post:[{n:4,to:112.6,s:.3,v:1.3},{n:12,to:117,s:.45,v:1.1}],goed:['long'],niv:111,
+  u:"Drie tests van dezelfde weerstand, krapper wordende bars, opdrogend volume, en dan een wijde bar die ver boven het niveau sluit op ruim drie keer het gemiddelde volume. Alles wat een echte uitbraak onderscheidt. Stop onder de low van de uitbraakbar of onder het niveau."},
+ dun:{n:'Uitbraak op dun volume',pre:[...RANGE,{bar:{c:.6,h:.7,l:.1,v:.7}}],post:[{n:3,to:110.2,s:.3,v:.9},{n:10,to:108.3,s:.4,v:1}],goed:['geen'],niv:111,
+  u:"Dezelfde range, maar de ‘uitbraak’ is een kleine bar met een bovenlont op minder dan het gemiddelde volume, en hij sluit nauwelijks boven het niveau. Er staat niemand achter. Wachten kost niets; de sluiting van de volgende bars beslist."},
+ val:{n:'Mislukte uitbraak',pre:[...RANGE,{bar:{c:1.0,h:.2,v:1.6}},{bar:{c:-2.3,h:.8,l:.1,v:2.8}}],post:[{n:10,to:106,s:.4,v:1.2},{n:6,to:105,s:.4,v:1}],goed:['short'],niv:111,
+  u:"De eerste bar sloot boven het niveau, de tweede prikte nog hoger en sloot ruim terug in de range, op hoog volume. Iedereen die de uitbraak kocht, zit vast. Short met een stop boven de top van de prikker; het doel is de onderkant van de range."},
+ pullback:{n:'Pullback in trend',pre:[{n:30,to:115,s:.5,v:1.2},{n:9,to:111.3,s:.3,v:.6,v2:.4},{bar:{c:1.0,l:.35,v:1.3}}],post:[{n:16,to:119.5,s:.5,v:1.1}],goed:['long'],ema:true,
+  u:"Een gezonde trend, een pullback op dalend volume naar het oplopende gemiddelde, en dan een bar die sluit boven de vorige op oplopend volume. Dat is de trigger. Stop onder het dal van de pullback."},
+ omslag:{n:'Omslag',pre:[{n:28,to:115,s:.5,v:1.1},{n:6,to:111.5,s:.4,v:1.4},{n:5,to:113.6,s:.3,v:.7},{n:3,to:112,s:.3,v:1.3},{bar:{c:-1.7,h:.1,v:2.4}}],post:[{n:14,to:105,s:.45,v:1.2}],goed:['short','geen'],ema:true,
+  u:"Een lagere top op dun volume en dan een breuk onder het laatste hogere dal op hoog volume: een change of character. Long is hier de enige verkeerde keuze. Geen trade is verdedigbaar; short ook, met de stop boven de lagere top, maar de betere short komt vaak bij een terugtest van het gebroken dal."},
+ range:{n:'Midden in de range',pre:[{n:8,to:106},{n:8,to:100.6},{n:8,to:105.6},{n:8,to:100.8},{n:5,to:103.2,s:.3}],post:[{n:6,to:105.7,s:.3},{n:8,to:100.9,s:.35}],goed:['geen'],
+  u:"De koers staat precies in het midden van een range van zes procent, zonder niveau, zonder trend en zonder opvallend volume. Elke stop is hier willekeurig en elk doel ligt op de andere kant van een range die je niet kunt voorspellen. Geen trade."},
+ climax:{n:'Na een lange daling',pre:[{n:35,to:86,s:.5,v:1.05,v2:1.4},{bar:{c:-.4,l:3.2,h:.2,v:5.4}}],post:[{n:6,to:89.5,s:.4,v:1.4},{n:6,to:85.9,s:.3,v:.5,v2:.35},{n:10,to:92,s:.4,v:1.1}],goed:['geen'],
+  u:"Het grootste volume van de hele reeks met een lange onderlont na een lange daling: een verkoopclimax. Shorten is hier verkopen aan de partij die de paniek opkoopt. Long kopen in de climax is gokken op het exacte dal. De ingang is de test op laag volume, een paar bars later."},
+ avwap:{n:'Rally naar de AVWAP',pre:[{n:12,to:112,s:.4},{n:20,to:101,s:.5,v:1.25},{n:8,to:105.8,s:.3,v:.55},{bar:{c:-1.2,h:.9,v:1.4}}],post:[{n:14,to:97.5,s:.45,v:1.1}],goed:['short'],avwap:11,
+  u:"De geankerde VWAP vanaf de top is de gemiddelde prijs van iedereen die sinds de top kocht, en die staat op verlies. De rally ernaartoe ging op dun volume, en daar wordt hij met een lange bovenlont afgewezen. Short met de stop boven de lont."}
+};
+function scen(type,seed){ const S=SCEN[type]; const pre=reeks(seed,S.pre); const all=reeks(seed,[...S.pre,...S.post]); return {S,d:all,beslis:pre.length-1}; }
+st.tr={};
+function trInit(w,types){ if(!st.tr[w]) st.tr[w]={types,seed:Math.floor(Math.random()*1000),i:0,keuze:null}; return st.tr[w]; }
+IA.trainer=(arg,w)=>{ const types=(arg||Object.keys(SCEN).join(',')).split(','), t=trInit(w,types), type=types[t.i%types.length], {S,d,beslis}=scen(type,t.seed), k=t.keuze;
+  let hi=0; const volg=d.slice(beslis+1); if(S.niv) hi=S.niv;
+  const lijnen=S.niv?[{p:S.niv,label:'weerstand',cls:'wit'}]:[];
+  const opts={toon:k==null?beslis+1:d.length,plek:d.length,volGem:true,beslis,lijnen,ema:S.ema?[20]:[],avwap:S.avwap!=null?[S.avwap]:[],h:290};
+  let uitkomst=''; if(k!=null){ const e=d[beslis].c, eind=volg[volg.length-1].c; const bew=(eind-e)/e*100; uitkomst=`<div class="terugk ${S.goed.includes(k)?'goed':'fout'}"><b>${S.goed.includes(k)?'Verdedigbaar.':'Niet de beste keuze.'}</b> ${S.u} <span class="klein">(Koers na de beslissing: ${bew>=0?'+':''}${nl(bew,1)}%.)</span></div>`; }
+  return blok(w,`Setup-trainer <span class="klein" style="float:right;text-transform:none;letter-spacing:0">${store.trainer.goed} van ${store.trainer.totaal} verdedigbaar</span>`,
+   `<p class="sub" style="margin-top:6px">${k==null?'Je ziet de grafiek tot de gestippelde lijn. Wat doe je bij de sluiting van deze bar?':S.n}</p>`+grafiek(d,opts)+
+   (k==null?`<div class="rij">${knop('tra','Long','data-v="long"','knop')}${knop('tra','Short','data-v="short"','knop')}${knop('tra','Geen trade','data-v="geen"','knop stil')}</div>`
+   :uitkomst+`<div class="rij">${knop('trn','Volgende grafiek','', 'knop klein')}</div>`)); };
+ACT.tra=el=>{ const w=el.closest('.ia').dataset.w, t=st.tr[w]; if(t.keuze!=null) return; t.keuze=el.dataset.v; const type=t.types[t.i%t.types.length];
+  store.trainer.totaal++; if(SCEN[type].goed.includes(t.keuze)) store.trainer.goed++; bewaar(); oefendag(); };
+ACT.trn=el=>{ const w=el.closest('.ia').dataset.w, t=st.tr[w]; t.i++; t.seed++; t.keuze=null; };
+
+/* ---------- openingsrange ---------- */
+const ORB=reeks(61,[{bar:{c:.7,h:.4,l:.3,v:4.2}},{n:5,to:100.4,s:.35,v:2.6,v2:1.9},{n:2,to:101.2,s:.2,v:1.5},{bar:{c:.9,h:.1,l:.1,v:2.7}},{n:14,to:103.2,s:.25,v:1.2,v2:.8},{n:30,to:102.6,s:.15,v:.5,v2:.45},{n:25,to:104,s:.22,v:.7,v2:1.7}],100,1000);
+st.orb={box:true,vwap:true,gist:true};
+IA.orb=(a,w)=>{ const or=ORB.slice(0,6), hi=Math.max(...or.map(b=>b.h)), lo=Math.min(...or.map(b=>b.l));
+  return blok(w,'De eerste uren (bars van vijf minuten)',grafiek(ORB,{box:st.orb.box?{van:0,tot:5,hi,lo,label:'openingsrange (30 min)'}:null,vwap:st.orb.vwap,lijnen:st.orb.gist?[{p:101.9,label:'high gisteren',cls:'wit',rechts:true}]:[],h:300})+
+   `<div class="rij">${[['box','Openingsrange'],['vwap','VWAP'],['gist','High van gisteren']].map(([k,t])=>knop('orb',t,`data-v="${k}"`,st.orb[k]?'knop klein aan':'knop klein stil')).join('')}</div>
+   <p class="uitleg">De eerste dertig minuten zetten een brede range neer op het hoogste volume van de dag. De koers blijft boven de VWAP, breekt uit boven de openingsrange op hoog volume en daarna ook boven de high van gisteren. Dat zijn drie redenen op één plek. Dan de middag: de beweging stokt, het volume valt weg, de bars worden klein. Pas naar het slot komt de deelname terug.</p>`); };
+ACT.orb=el=>{ st.orb[el.dataset.v]=!st.orb[el.dataset.v]; };
+
+/* ---------- verwachting met interval ---------- */
+function wilson(k,n,z=1.96){ if(!n) return [0,1]; const p=k/n, z2=z*z, dn=1+z2/n, c=(p+z2/(2*n))/dn, m=z*Math.sqrt(p*(1-p)/n+z2/(4*n*n))/dn; return [Math.max(0,c-m),Math.min(1,c+m)]; }
+st.vw2={n:20,k:12,w:1,v:1};
+IA.verwachting=(a,w)=>{ const {n,k,w:aw,v:av}=st.vw2, kk=Math.min(k,n), p=n?kk/n:0, [lo,hi]=wilson(kk,n), E=q=>q*aw-(1-q)*av;
+  let nodig='';
+  if(E(p)<=0) nodig='Nooit: bij deze cijfers is de geschatte verwachting zelf niet positief.';
+  else { let m=n; while(m<20000 && E(wilson(Math.round(p*m),m)[0])<=0) m+=Math.max(1,Math.round(m*0.02)); nodig=m>=20000?'Meer dan 20.000 trades.':`Ongeveer ${nlk(m)} trades bij dezelfde winstkans${m<=n?' (die heb je al)':''}.`; }
+  const x=q=>10+q*600, sc=`<svg viewBox="0 0 620 60" class="graf"><rect x="${x(lo)}" y="20" width="${x(hi)-x(lo)}" height="18" fill="rgba(233,188,85,.3)" stroke="#e9bc55"/><line x1="${x(p)}" x2="${x(p)}" y1="14" y2="44" stroke="#fff" stroke-width="2"/>
+    <line x1="${x(av/(aw+av))}" x2="${x(av/(aw+av))}" y1="8" y2="52" stroke="#ef5350" stroke-dasharray="3 3"/><text class="as" x="${x(av/(aw+av))+4}" y="12">break-even ${pct(av/(aw+av),0)}</text><text class="as" x="10" y="56">0%</text><text class="as" x="600" y="56" text-anchor="end">100%</text></svg>`;
+  return blok(w,'Verwachting met betrouwbaarheidsinterval',`<div class="velden">
+   <label class="veld">Aantal trades<input type="number" min="1" value="${n}" data-inp="vwn"></label><label class="veld">Winnaars<input type="number" min="0" value="${k}" data-inp="vwk"></label>
+   <label class="veld">Gemiddelde winst (R)<input type="number" step="0.1" min="0" value="${aw}" data-inp="vww"></label><label class="veld">Gemiddeld verlies (R)<input type="number" step="0.1" min="0.1" value="${av}" data-inp="vwv"></label></div>
+   <div data-deel="vu">${sc}<div class="uitkomst"><div class="kv"><span>Winstkans</span><b>${pct(p,0)} (95%: ${pct(lo,0)} tot ${pct(hi,0)})</b></div>
+   <div class="kv"><span>Verwachting per trade</span><b>${R(E(p))}</b></div><div class="kv"><span>95%-interval van de verwachting</span><b>${R(E(lo))} tot ${R(E(hi))}</b></div>
+   <div class="kv"><span>Nodig voor een ondergrens boven nul</span><b style="text-align:right">${nodig}</b></div></div></div>
+   <p class="uitleg">De rode stippellijn is de winstkans waarbij je bij deze winst en dit verlies quitte speelt. Zolang die in de gouden balk valt, weet je niet of je strategie geld verdient. Probeer 12 van 20, en dan 120 van 200: dezelfde winstkans, een heel ander verhaal.</p>`); };
+INP.vwn=el=>{ st.vw2.n=Math.max(1,+el.value||1); }; INP.vwk=el=>{ st.vw2.k=Math.max(0,+el.value||0); }; INP.vww=el=>{ st.vw2.w=Math.max(0,+el.value||0); }; INP.vwv=el=>{ st.vw2.v=Math.max(0.1,+el.value||0.1); };
+
+/* ---------- positiegrootte en Monte Carlo ---------- */
+st.ps={rek:20000,risico:1,in:50,stop:48,lev:1,wk:40,rw:2,seed:3};
+function mc(p,rw,risico,seed){ const r=rng(seed), paden=[], dd=[], eind=[];
+  for(let k=0;k<400;k++){ let e=100,top=100,md=0; const pad=[100]; for(let t=0;t<100;t++){ e*= r()<p ? 1+rw*risico : 1-risico; top=Math.max(top,e); md=Math.max(md,1-e/top); pad.push(e); } paden.push(pad); dd.push(md); eind.push(e); }
+  const q=(a,f)=>{ const s=[...a].sort((x,y)=>x-y); return s[Math.floor(f*(s.length-1))]; };
+  return {paden,q,dd,eind}; }
+IA.positie=(a,w)=>{ const s=st.ps, rb=s.rek*s.risico/100, af=Math.abs(s.in-s.stop), stuks=af>0?Math.floor(rb/af):0, waarde=stuks*s.in, onderpand=waarde/Math.max(1,s.lev);
+  const long=s.stop<s.in, liq=s.lev>1?(long?s.in*(1-1/s.lev+0.005):s.in*(1+1/s.lev-0.005)):null, liqGevaar=liq!=null&&(long?liq>=s.stop:liq<=s.stop);
+  const M=mc(s.wk/100,s.rw,s.risico/100,s.seed), W=640,H=220; const allEind=M.paden.slice(0,40).flat(); const lo=Math.min(...allEind), hi=Math.max(...allEind);
+  const x=i=>6+i*(W-52)/100, y=v=>8+(hi-v)/(hi-lo||1)*(H-16);
+  const lijn=(pad,kl,dik)=>`<polyline fill="none" stroke="${kl}" stroke-width="${dik}" points="${pad.map((v,i)=>x(i).toFixed(1)+','+y(v).toFixed(1)).join(' ')}"/>`;
+  const med=[]; for(let i=0;i<=100;i++) med.push(M.q(M.paden.map(p=>p[i]),.5));
+  const svg=`<svg viewBox="0 0 ${W} ${H}" class="graf"><line class="raster" x1="0" x2="${W-46}" y1="${y(100)}" y2="${y(100)}"/>${M.paden.slice(0,40).map(p=>lijn(p,'rgba(154,167,180,.35)',1)).join('')}${lijn(med,'#e9bc55',2.4)}<text class="as" x="${W-42}" y="${y(100)+4}">start</text></svg>`;
+  const E=s.wk/100*s.rw-(1-s.wk/100), tk=v=>(v>=100?'+':'')+nl(v-100,0)+'%';
+  return blok(w,'Positiegrootte',`<div class="velden">
+   <label class="veld">Rekening<input type="number" value="${s.rek}" data-inp="ps" data-k="rek"></label><label class="veld">Risico per trade (%)<input type="number" step="0.1" value="${s.risico}" data-inp="ps" data-k="risico"></label>
+   <label class="veld">Ingang<input type="number" step="0.01" value="${s.in}" data-inp="ps" data-k="in"></label><label class="veld">Stop<input type="number" step="0.01" value="${s.stop}" data-inp="ps" data-k="stop"></label>
+   <label class="veld">Hefboom (1 = geen)<input type="number" min="1" value="${s.lev}" data-inp="ps" data-k="lev"></label></div>
+   <div class="uitkomst" data-deel="p1"><div class="kv"><span>Risicobedrag (1R)</span><b>${nlk(rb)}</b></div><div class="kv"><span>Aantal stuks</span><b>${nlk(stuks)}</b></div>
+   <div class="kv"><span>Positiewaarde</span><b>${nlk(waarde)} (${pct(waarde/s.rek,0)} van de rekening)</b></div>${s.lev>1?`<div class="kv"><span>Onderpand bij ${s.lev}× hefboom</span><b>${nlk(onderpand)}</b></div>
+   <div class="kv"><span>Liquidatie, grofweg</span><b style="color:${liqGevaar?'var(--fout)':'inherit'}">${nl(liq,2)}${liqGevaar?' , vóór je stop!':''}</b></div>`:''}</div>
+   <div data-deel="p1b">${s.lev>1?'<p class="klein" style="margin-top:6px">De liquidatieprijs is een benadering met een onderhoudsmarge van een half procent; de precieze regel verschilt per beurs en per contract.</p>':''}</div>
+   <div class="kop" style="margin-top:18px">Honderd trades, vierhonderd keer</div>
+   <div class="velden"><label class="veld"><span data-deel="pl1">Winstkans: ${s.wk}%</span><input type="range" min="20" max="70" value="${s.wk}" data-inp="ps" data-k="wk"></label><label class="veld"><span data-deel="pl2">Winst per winnaar: ${nl(s.rw,1)}R</span><input type="range" min="0.5" max="4" step="0.1" value="${s.rw}" data-inp="ps" data-k="rw"></label></div>
+   <div data-deel="p2">${svg}<div class="uitkomst"><div class="kv"><span>Verwachting per trade</span><b>${R(E)}</b></div>
+   <div class="kv"><span>Rekening na 100 trades, mediaan</span><b>${tk(M.q(M.eind,.5))}</b></div><div class="kv"><span>Slechtste en beste 5 procent</span><b>${tk(M.q(M.eind,.05))} tot ${tk(M.q(M.eind,.95))}</b></div>
+   <div class="kv"><span>Diepste terugval onderweg, mediaan</span><b>${pct(M.q(M.dd,.5),0)}</b></div><div class="kv"><span>Diepste terugval, slechtste 10 procent</span><b>${pct(M.q(M.dd,.9),0)} of meer</b></div></div></div>
+   <p class="uitleg">Elke grijze lijn is dezelfde strategie met hetzelfde risico, alleen in een andere volgorde. Zet het risico op 1 procent en daarna op 5 procent, en kijk wat de terugval doet. Een strategie met een positieve verwachting kan met te veel risico per trade toch de rekening halveren; dat is de les van Kelly.</p>
+   <div class="rij">${knop('psn','Nieuwe vierhonderd')}</div>`); };
+INP.ps=el=>{ const v=parseFloat(String(el.value).replace(',','.')); if(!isNaN(v)) st.ps[el.dataset.k]=v; };
+ACT.psn=()=>{ st.ps.seed++; };
+
+/* ---------- stops ---------- */
+const STP=(()=>{ const d=reeks(71,[{n:20,to:108,s:.45},{n:6,to:104.8,s:.3,v:.6},{n:5,to:107,s:.3,v:1.1},{n:4,to:105.4,s:.3,v:.8},{bar:{c:-.2,l:.5,v:1.9}},{n:12,to:112,s:.4,v:1.1}]);
+  const hl=Math.min(...d.slice(20,26).map(b=>b.l)), a=atr(d)[30], sw=d[35]; sw.l=hl-0.45*a; return {d,hl,a,in:d[30].c}; })();
+st.sp={k:'dal'};
+IA.stops=(a,w)=>{ const S=STP, stops={krap:{p:S.in-0.7*S.a,n:'Krap: 0,7 ATR onder de ingang'},dal:{p:S.hl,n:'Precies op het hogere dal'},atr:{p:S.hl-0.9*S.a,n:'Onder het dal, plus 0,9 ATR'}}, s=stops[st.sp.k];
+  const geraakt=S.d.slice(31).findIndex(b=>b.l<=s.p);
+  return blok(w,'Drie stops, één trade',seg('sp',[['krap','Krap'],['dal','Op het dal'],['atr','Dal plus ATR']],st.sp.k)+
+   grafiek(S.d,{lijnen:[{p:S.in,label:'ingang',cls:'wit',vanI:30},{p:s.p,label:'stop',cls:'rood',vanI:30},{p:S.hl,label:'hoger dal',cls:'groen',rechts:true}],beslis:30,volGem:true,h:290})+
+   `<div class="terugk ${geraakt<0?'goed':'fout'}">${s.n}: ${geraakt<0?'blijft staan, de trade loopt door naar het doel.':`geraakt ${geraakt+1} bar${geraakt?'s':''} na de ingang, en daarna loopt de koers zonder jou door.`}</div>
+   <p class="uitleg">ATR op het moment van instappen: ${nl(S.a,2)}. De prik onder het dal is geen toeval: daar lagen de stops van iedereen die hetzelfde dal zag, en de uitvoering ervan leverde de verkopers die de prik nodig had. Een stop met een marge van een halve tot een hele ATR valt buiten die zone, en de positie is navenant kleiner.</p>`); };
+ACT.sp=el=>{ st.sp.k=el.dataset.v; };
+
+/* ---------- leesvolgorde ---------- */
+const CHECK=[
+ ['context','Context','Het hogere tijdframe wijst mijn kant op, en de trend is niet oud.',false],
+ ['locatie','Locatie','De koers staat bij een niveau met een reden (zone, AVWAP, value area).',true],
+ ['volume','Volume','De inspanning past bij wat ik verwacht, en de deelname is ongewoon.',false],
+ ['flow','Orderflow','Op het niveau wordt echt gehandeld, en het houdt.',false,true],
+ ['trigger','Trigger','Er is een concrete gebeurtenis die ik inzet, niet een gevoel.',true],
+ ['risico','Risico','Stop op het ongeldigheidspunt, en het doel ligt minstens 2R verder.',true]
+];
+st.ck={};
+IA.checklist=(a,w)=>{ const v=CHECK.map(c=>st.ck[c[0]]), ingevuld=CHECK.every(c=>st.ck[c[0]]);
+  const hard=CHECK.filter(c=>c[3]&&st.ck[c[0]]==='nee'), zacht=CHECK.filter(c=>!c[3]&&st.ck[c[0]]==='nee');
+  let oordeel=''; if(ingevuld){ oordeel= hard.length?`<div class="terugk fout"><b>Geen trade.</b> ${hard.map(c=>c[1]).join(', ')} ontbreekt, en dat is niet te compenseren.</div>`
+    : zacht.length>=2?`<div class="terugk fout"><b>Geen trade.</b> Twee of meer bijkomende redenen ontbreken (${zacht.map(c=>c[1].toLowerCase()).join(', ')}).</div>`
+    : zacht.length===1?`<div class="terugk goed"><b>Toegestaan, kleiner.</b> ${zacht[0][1]} zit niet mee; neem de trade met een halve positie of laat hem.</div>`
+    : `<div class="terugk goed"><b>Trade.</b> Schrijf de zin op: context, locatie, trigger, stop en doel.</div>`; }
+  return blok(w,'Leesvolgorde',CHECK.map(c=>`<div class="check"><div class="t"><b>${c[1]}</b>${c[2]}</div><div class="drie">${['ja','nee'].concat(c[4]?['nvt']:[]).map(x=>`<button data-act="ck" data-k="${c[0]}" data-v="${x}" class="${st.ck[c[0]]===x?x:''}">${x==='nvt'?'n.v.t.':x}</button>`).join('')}</div></div>`).join('')+
+   (oordeel||'<p class="uitleg">Loop de zes stappen door. Locatie, trigger en risico zijn hard: ontbreekt er een, dan is er geen trade.</p>')+`<div class="rij">${knop('ckr','Opnieuw')}</div>`); };
+ACT.ck=el=>{ st.ck[el.dataset.k]=el.dataset.v; if(CHECK.every(c=>st.ck[c[0]])) oefendag(); }; ACT.ckr=()=>{ st.ck={}; };
+
+/* ---------- valkuilen ---------- */
+const BIAS=['Dispositie-effect','Recency en overmoed','Wraaktrade','Overtrading','Bevestigingsbias'];
+const BIASV=[
+ ["Je sluit een winnaar op +0,6R omdat je bang bent dat hij terugvalt, terwijl je verliezer van gisteren nog open staat op -1,8R, ver voorbij de stop die je had gepland.",0,"Winst vroeg nemen en verlies laten lopen: het dispositie-effect van Odean, in één scherm."],
+ ["Na twee winnende uitbraken verdubbel je de positie op de derde, omdat je ‘het nu door hebt’.",1,"Twee trades zeggen niets over de derde. Het risico hoort bij je plan, niet bij je stemming."],
+ ["Vijf minuten na een verlies zie je een nieuwe setup die je normaal zou overslaan, en je neemt hem.",2,"De trade gaat niet over de grafiek maar over het saldo. Een vaste pauze na een verlies werkt beter dan wilskracht."],
+ ["Het is een rustige dag zonder nieuws en je hebt al negen trades gedaan.",3,"Barber en Odean: de actiefste handelaren verdienden het minst, vooral door kosten. Een maximum per dag voorkomt het."],
+ ["Na je instap lees je vooral berichten en grafieken die bevestigen dat je gelijk hebt.",4,"Zoek na je instap bewust naar het argument tegen: wat moet er gebeuren om je ongelijk te geven? Dat is je stop."]
+];
+st.bs={i:0,antw:{}};
+IA.bias=(a,w)=>{ const [t,g,u]=BIASV[st.bs.i], an=st.bs.antw[st.bs.i];
+  return blok(w,`Herken de valkuil (${st.bs.i+1} van ${BIASV.length})`,`<p class="uitleg" style="font-size:15px;color:var(--ink)">${t}</p><div class="vraag">${BIAS.map((b,i)=>`<button class="opt ${an!=null?(i===g?'goed':(i===an?'fout':'')):''}" data-act="bs" data-v="${i}" ${an!=null?'disabled':''}>${b}</button>`).join('')}</div>`+
+   (an!=null?`<div class="terugk ${an===g?'goed':'fout'}">${u}</div>`:'')+`<div class="rij">${st.bs.i>0?knop('bsn','Vorige','data-v="-1"'):''}${st.bs.i<BIASV.length-1&&an!=null?knop('bsn','Volgende','data-v="1"','knop klein'):''}</div>`); };
+ACT.bs=el=>{ st.bs.antw[st.bs.i]=+el.dataset.v; oefendag(); }; ACT.bsn=el=>{ st.bs.i=Math.max(0,Math.min(BIASV.length-1,st.bs.i+(+el.dataset.v))); };
+
+/* ================================================================
+   SCHERMEN
+   ================================================================ */
+let view={tab:'vandaag', les:null, toets:null, sub:{trainer:'setups', gereedschap:'positie'}};
+const app=document.getElementById('app');
+const afgerond=()=>LESSEN.filter((_,i)=>store.done[i]).length;
+const modLessen=id=>LESSEN.map((l,i)=>[l,i]).filter(([l])=>l.m===id).map(([,i])=>i);
+const volgende=()=>{ const i=LESSEN.findIndex((_,j)=>!store.done[j]); return i<0?null:i; };
+function kaartenKlaar(){ const d=dagIndex(); return KAARTEN.map((k,i)=>({i,k,s:store.kaarten[i]})).filter(x=>!x.s||(x.s.due||0)<=d); }
+function reeksDagen(){ const dagen=new Set(store.oefdagen); let n=0; const d=new Date(); const f=x=>x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');
+  if(!dagen.has(f(d))){ d.setDate(d.getDate()-1); if(!dagen.has(f(d))) return 0; } while(dagen.has(f(d))){ n++; d.setDate(d.getDate()-1); } return n; }
+
+function render(boven=true){
+  if(boven) window.scrollTo(0,0);
+  if(view.les!==null) app.innerHTML=lesScherm(view.les);
+  else if(view.toets) app.innerHTML=toetsScherm(view.toets);
+  else app.innerHTML={vandaag:tabVandaag,lessen:tabLessen,trainer:tabTrainer,gereedschap:tabGereedschap,ik:tabIk}[view.tab]();
+  renderNav();
+}
+const ICO={
+ vandaag:'<svg viewBox="0 0 24 24"><path d="M3 17l5-6 4 4 8-9"/><path d="M15 6h5v5"/></svg>',
+ lessen:'<svg viewBox="0 0 24 24"><path d="M4 5h7v14H4zM13 5h7v14h-7z"/></svg>',
+ trainer:'<svg viewBox="0 0 24 24"><path d="M7 4v16M7 8h0M12 7v10M17 5v14"/><rect x="5.5" y="8" width="3" height="7"/><rect x="10.5" y="9" width="3" height="5"/><rect x="15.5" y="7" width="3" height="8"/></svg>',
+ gereedschap:'<svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h2M12 11h2M16 11h0M8 15h2M12 15h2M8 18h2M12 18h2"/></svg>',
+ ik:'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>'
+};
+function renderNav(){ const items=[['vandaag','Vandaag'],['lessen','Lessen'],['trainer','Trainer'],['gereedschap','Gereedschap'],['ik','Voortgang']];
+  document.getElementById('nav').innerHTML=items.map(([id,l])=>`<button data-tab="${id}" class="${view.les===null&&!view.toets&&view.tab===id?'aan':''}">${ICO[id]}${l}</button>`).join(''); }
+
+function tabVandaag(){
+  const v=volgende(), klaar=kaartenKlaar().length, d=dagIndex(), regelLes=LESSEN[d%LESSEN.length];
+  return `<div class="hero"><div class="merk">Tape</div><h1>Technische analyse, gestructureerd</h1>
+   <p>Structuur, volume, orderboek en tape, samengebracht in één leesvolgorde. Voor wie de richting van een grafiek al ziet, en wil weten waarom, hoe zeker, en wat de literatuur erover zegt.</p>
+   <div class="chips"><span class="chip">${afgerond()} van ${LESSEN.length} lessen</span><span class="chip">${store.trainer.goed} van ${store.trainer.totaal} setups</span><span class="chip">${reeksDagen()} dag${reeksDagen()===1?'':'en'} op rij</span></div></div>
+   ${v!=null?`<div class="kaart"><span class="label">Verder</span><h2 style="margin-top:4px">${LESSEN[v].t}</h2><p class="sub" style="margin-top:4px">${MOD[LESSEN[v].m].naam} · ongeveer ${LESSEN[v].min} minuten</p><p style="margin-top:8px;font-size:14.5px">${LESSEN[v].d}</p><div class="rij"><button class="knop" data-les="${v}">Open les</button></div></div>`
+    :`<div class="kaart"><span class="label af">Alle lessen af</span><p style="margin-top:6px">Houd het bij met de trainer en de kaarten. Tien grafieken per week is genoeg om de leesvolgorde automatisch te maken.</p></div>`}
+   <div class="kaart"><span class="label">Vijf minuten</span><div class="rij"><button class="knop stil" data-gaan="trainer:setups">Setup-trainer</button><button class="knop stil" data-gaan="trainer:volume">Volume lezen</button><button class="knop stil" data-gaan="trainer:kaarten">Kaarten${klaar?` (${klaar})`:''}</button></div></div>
+   <div class="kaart"><span class="label">Vuistregel</span><p style="margin-top:6px;font-size:15.5px;font-weight:600">${regelLes.regel}</p><p class="klein" style="margin-top:4px">Uit: ${regelLes.t}</p></div>
+   <div class="kaart"><span class="label">Hoe deze cursus werkt</span><p style="margin-top:6px;font-size:14.5px">Zeven modules, tweeëntwintig lessen van zes tot acht minuten. Elke les heeft één interactief stuk en een blok ‘wat de literatuur zegt’ met de sterkte van het bewijs. Weet je een module al, doe dan de toets bovenaan: drie of vier vragen, allemaal goed en de module staat op af.</p></div>`;
+}
+
+function tabLessen(){
+  return `<div class="hero"><div class="merk">Lessen</div><h1>Zeven modules</h1><p>Van wat aantoonbaar werkt, via structuur, volume en het orderboek, naar setups, risico en de trader zelf.</p></div>`+
+   MODULES.map((m,mi)=>{ const idx=modLessen(m.id), af=idx.filter(i=>store.done[i]).length;
+    return `<div class="kaart"><div class="modkop"><div class="nr">${mi+1}</div><div class="groei"><h2>${m.naam}</h2><p class="sub">${m.tag}</p></div><span class="klein">${af}/${idx.length}</span></div>
+     <div class="balk"><i style="width:${af/idx.length*100}%"></i></div>
+     ${idx.map(i=>`<div class="lesrij" data-les="${i}"><div class="n ${store.done[i]?'af':''}">${store.done[i]?'✓':i+1}</div><div class="g"><b>${LESSEN[i].t}</b><span>${LESSEN[i].min} min · bewijs ${punten(LESSEN[i].bewijs.sterkte)}</span></div></div>`).join('')}
+     ${af<idx.length?`<div class="rij"><button class="knop klein stil" data-toets="${m.id}">Ken ik al: toets ${idx.length} vragen</button></div>`:''}</div>`; }).join('');
+}
+
+function vraagBlok(sleutel,c){ const k=st.vraag[sleutel];
+  return `<div class="vraag"><p style="font-weight:700;font-size:15px">${c.v}</p>${c.o.map((o,j)=>`<button class="opt ${k!=null?(j===c.a?'goed':(j===k?'fout':'')):''}" data-vraag="${sleutel}" data-j="${j}" ${k!=null?'disabled':''}>${o}</button>`).join('')}
+   ${k!=null?`<div class="terugk ${k===c.a?'goed':'fout'}">${k===c.a?'Goed. ':'Niet goed. '}${c.u}</div>`:''}</div>`; }
+
+function lesScherm(i){
+  const l=LESSEN[i], m=MOD[l.m], idx=modLessen(l.m), pos=idx.indexOf(i)+1;
+  store.laatsteLes=i; bewaar();
+  return `<button class="terug" data-tab="lessen">‹ Lessen</button><div class="les">
+   <p class="klein" style="margin-top:14px">${m.naam} · les ${pos} van ${idx.length} · ongeveer ${l.min} minuten</p><h1>${l.t}</h1><p class="lead">${l.d}</p>
+   <div class="proza">${l.tekst.map(p=>`<p>${p}</p>`).join('')}</div>
+   ${toonIA(l.ia)}
+   <div class="kaart"><span class="label">Wat de literatuur zegt</span><div style="margin-top:4px">${punten(l.bewijs.sterkte)} <span class="klein">${STERKTE[l.bewijs.sterkte]}</span></div><p style="margin-top:8px;font-size:14.5px;color:#dde4ea">${l.bewijs.tekst}</p></div>
+   <div class="valkuil"><span class="label">Waar het misgaat</span><p style="margin-top:4px">${l.valkuil}</p></div>
+   <div class="regel">${l.regel}</div>
+   <div class="kaart"><span class="label">Controle</span><div style="margin-top:8px">${vraagBlok('les'+i,l.check)}</div></div>
+   <div class="rij" style="margin-top:16px">${store.done[i]?`<span class="label af">Les afgerond</span>`:`<button class="knop" data-af="${i}">Les afronden</button>`}</div>
+   <div class="rij" style="margin-top:14px">${i>0?`<button class="knop stil" data-les="${i-1}">‹ Vorige</button>`:''}${i<LESSEN.length-1?`<button class="knop stil" data-les="${i+1}">Volgende: ${LESSEN[i+1].t} ›</button>`:''}</div></div>`;
+}
+
+function toetsScherm(mid){
+  const idx=modLessen(mid), m=MOD[mid], antw=idx.map(i=>st.vraag['toets'+i]), klaar=antw.every(a=>a!=null), fout=idx.filter(i=>st.vraag['toets'+i]!==LESSEN[i].check.a);
+  if(klaar&&!fout.length&&!idx.every(i=>store.done[i])){ idx.forEach(i=>store.done[i]=true); oefendag(); bewaar(); }
+  return `<button class="terug" data-tab="lessen">‹ Lessen</button><div class="les"><h1>Toets: ${m.naam}</h1><p class="lead">Alle vragen goed en de module staat op af. Een fout wijst de les aan die je beter wel even doet.</p>
+   ${idx.map(i=>`<div class="kaart">${vraagBlok('toets'+i,LESSEN[i].check)}</div>`).join('')}
+   ${klaar?(fout.length?`<div class="kaart"><span class="label">Nog doen</span>${fout.map(i=>`<div class="lesrij" data-les="${i}"><div class="n">${i+1}</div><div class="g"><b>${LESSEN[i].t}</b><span>${LESSEN[i].min} min</span></div></div>`).join('')}<p class="sub" style="margin-top:8px">De andere lessen van deze module zijn niet op af gezet; doe de toets opnieuw na deze les of vink ze in de les zelf af.</p><div class="rij"><button class="knop klein stil" data-toetsopnieuw="${mid}">Toets opnieuw</button></div></div>`
+     :`<div class="kaart"><span class="label af">Module afgerond</span><p style="margin-top:6px">Alles goed. De lessen staan op af; de interactieve stukken blijven bruikbaar via de lessenlijst en het gereedschap.</p></div>`):''}</div>`;
+}
+
+function tabTrainer(){ const s=view.sub.trainer;
+  const inhoud= s==='setups'?toonIA('trainer') : s==='volume'?toonIA('kwadrant')+toonIA('delta') : kaartScherm();
+  return `<div class="hero"><div class="merk">Trainer</div><h1>Lezen, beslissen, terugkijken</h1><p>Grafieken tot het beslismoment, bars om in te delen en kaarten die terugkomen op het moment dat je ze bijna vergeten bent.</p></div>`+
+   seg('subtr',[['setups','Setups'],['volume','Volume en delta'],['kaarten','Kaarten']],s)+inhoud; }
+ACT.subtr=el=>{ view.sub.trainer=el.dataset.v; render(false); return 'klaar'; };
+
+st.kt={toon:false};
+function kaartScherm(){ const klaar=kaartenKlaar();
+  if(!klaar.length) return `<div class="kaart midden"><p style="font-size:30px">✓</p><p>Alle kaarten zijn voor nu herhaald. Ze komen terug op het moment dat ze het meest opleveren.</p></div>`;
+  const {i,k}=klaar[0];
+  return `<p class="sub" style="margin-top:12px">${klaar.length} kaart${klaar.length===1?'':'en'} klaar</p><div class="flits"><div class="v">${k[0]}</div>${st.kt.toon?`<div class="a">${k[1]}</div>`:''}</div>
+   <div class="rij">${st.kt.toon?`<button class="knop stil" data-kaart="${i}" data-v="0" style="flex:1">Nog niet</button><button class="knop" data-kaart="${i}" data-v="1" style="flex:1">Wist ik</button>`:`<button class="knop vol" data-kaartdraai="1">Toon antwoord</button>`}</div>`; }
+const INTERVAL=[0,1,2,4,8,16,32];
+
+function tabGereedschap(){ const s=view.sub.gereedschap;
+  const inhoud= s==='positie'?toonIA('positie') : s==='verwachting'?toonIA('verwachting') : s==='checklist'?toonIA('checklist') : s==='bewijs'?toonIA('bewijskaart') : spiek();
+  return `<div class="hero"><div class="merk">Gereedschap</div><h1>Voor naast de grafiek</h1><p>Rekenhulp, de leesvolgorde, de bewijskaart en een spiekbrief.</p></div>`+
+   seg('subgr',[['positie','Positie'],['verwachting','Verwachting'],['checklist','Leesvolgorde'],['bewijs','Bewijs'],['spiek','Spiekbrief']],s)+inhoud; }
+ACT.subgr=el=>{ view.sub.gereedschap=el.dataset.v; render(false); return 'klaar'; };
+
+function spiek(){ return `<div class="kaart spiek"><h3>Inspanning tegen resultaat</h3><table><tr><th></th><th>Grote bar</th><th>Kleine bar</th></tr>
+  <tr><td><b>Hoog volume</b></td><td>Bevestiging</td><td>Absorptie, let op omslag</td></tr><tr><td><b>Laag volume</b></td><td>Dun, broos</td><td>Rust; in een pullback gezond</td></tr></table></div>
+ <div class="kaart spiek"><h3>Prijs en open interest</h3><table><tr><th></th><th>OI op</th><th>OI neer</th></tr><tr><td><b>Prijs op</b></td><td>Nieuwe longs</td><td>Short squeeze</td></tr><tr><td><b>Prijs neer</b></td><td>Nieuwe shorts</td><td>Longs eruit, liquidaties</td></tr></table></div>
+ <div class="kaart spiek"><h3>Delta en prijs</h3><p>Samen omhoog: echt. Delta op, prijs vlak: absorptie. Nieuwe top zonder nieuwe delta: uitputting.</p></div>
+ <div class="kaart spiek"><h3>Rekenen</h3><p>Stuks = rekening × risico% / (ingang − stop).</p><p>Verwachting = W × gem. winst − (1 − W) × gem. verlies, in R.</p><p>Herstel na verlies x: x / (1 − x). 10% → 11%, 25% → 33%, 50% → 100%.</p><p>Stop = structureel punt ± 0,5 tot 1 ATR.</p></div>
+ <div class="kaart spiek"><h3>De leesvolgorde</h3><p><b>Context</b> · <b>Locatie</b> · <b>Volume</b> · <b>Orderflow</b> · <b>Trigger</b> · <b>Risico</b>. Locatie, trigger en risico zijn hard. Geen zin, geen trade.</p></div>
+ <div class="kaart spiek"><h3>Het bewijs in één regel</h3><p>Sterk: trend over maanden, omkering over dagen tot weken, orderflow over minuten, en de wiskunde van risico. Zwak: klassieke patronen, candlesticks. Geen: Fibonacci, Elliott.</p></div>`; }
+
+function tabIk(){ const beheerst=Object.values(store.kaarten).filter(k=>k&&k.box>=4).length;
+  return `<div class="hero"><div class="merk">Voortgang</div><h1>Wat er staat</h1><p>Alles wordt alleen op dit toestel bewaard.</p></div>
+   <div class="kaart"><div class="kv"><span>Lessen af</span><b>${afgerond()} van ${LESSEN.length}</b></div><div class="kv"><span>Setups verdedigbaar</span><b>${store.trainer.goed} van ${store.trainer.totaal}</b></div>
+   <div class="kv"><span>Kaarten beheerst</span><b>${beheerst} van ${KAARTEN.length}</b></div><div class="kv"><span>Oefendagen</span><b>${store.oefdagen.length}</b></div><div class="kv"><span>Dagen op rij</span><b>${reeksDagen()}</b></div></div>
+   ${store.trainer.totaal>=10?`<div class="kaart"><span class="label">Je trainerscore, eerlijk</span><p style="margin-top:6px;font-size:14.5px">${(()=>{ const [lo,hi]=wilson(store.trainer.goed,store.trainer.totaal); return `${pct(store.trainer.goed/store.trainer.totaal,0)} verdedigbaar, met een 95%-interval van ${pct(lo,0)} tot ${pct(hi,0)}. Hetzelfde principe als in de les over verwachting: pas na een paar honderd grafieken zegt dit getal veel.`; })()}</p></div>`:''}
+   ${MODULES.map(m=>{ const idx=modLessen(m.id), af=idx.filter(i=>store.done[i]).length; return `<div class="kaart"><div class="kv" style="border:0"><span>${m.naam}</span><b>${af}/${idx.length}</b></div><div class="balk"><i style="width:${af/idx.length*100}%"></i></div></div>`; }).join('')}
+   <div class="rij" style="margin-top:18px"><button class="knop klein stil" data-wis="1">Alles wissen</button></div>`; }
+
+/* ================================================================
+   GEBEURTENISSEN
+   ================================================================ */
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-tab],[data-les],[data-af],[data-toets],[data-toetsopnieuw],[data-vraag],[data-gaan],[data-kaart],[data-kaartdraai],[data-wis],[data-act]');
+  if(!t) return;
+  const ds=t.dataset;
+  if(ds.act){ const r=ACT[ds.act]&&ACT[ds.act](t); if(r!=='klaar'){ const w=t.closest('.ia')?.dataset.w; if(w) herteken(w); } return; }
+  if(ds.tab){ view={...view,tab:ds.tab,les:null,toets:null}; render(); return; }
+  if(ds.les!=null){ view.les=+ds.les; view.toets=null; render(); return; }
+  if(ds.af!=null){ store.done[+ds.af]=true; oefendag(); bewaar(); render(false); return; }
+  if(ds.toets){ view.toets=ds.toets; view.les=null; render(); return; }
+  if(ds.toetsopnieuw){ modLessen(ds.toetsopnieuw).forEach(i=>delete st.vraag['toets'+i]); render(); return; }
+  if(ds.vraag){ if(st.vraag[ds.vraag]==null){ st.vraag[ds.vraag]=+ds.j; oefendag(); } render(false); return; }
+  if(ds.gaan){ const [tab,sub]=ds.gaan.split(':'); view.tab=tab; view.les=null; view.toets=null; view.sub[tab]=sub; render(); return; }
+  if(ds.kaartdraai){ st.kt.toon=true; render(false); return; }
+  if(ds.kaart!=null){ const i=+ds.kaart, s=store.kaarten[i]||{box:0,due:0};
+    if(ds.v==='1'){ s.box=Math.min(INTERVAL.length-1,s.box+1); s.due=dagIndex()+INTERVAL[s.box]; } else { s.box=1; s.due=dagIndex(); }
+    store.kaarten[i]=s; st.kt.toon=false; oefendag(); bewaar(); render(false); return; }
+  if(ds.wis){ if(confirm('Alle voortgang van Tape op dit toestel wissen?')){ store.done={}; store.oefdagen=[]; store.kaarten={}; store.trainer={goed:0,totaal:0}; bewaar(); render(); } return; }
+});
+/* Invoervelden: alleen de uitkomsten worden opnieuw getekend, niet het veld
+   zelf, anders verlies je bij elke toets de cursor en bij een schuif de greep. */
+document.addEventListener('input',e=>{ const el=e.target.closest('[data-inp]'); if(!el) return; INP[el.dataset.inp](el); const w=el.closest('.ia')?.dataset.w; if(w) vervangDelen(w); });
+function vervangDelen(w){ const el=document.getElementById(iaId(w)); if(!el) return; const [naam,arg]=w.split(':'); const tmp=document.createElement('div'); tmp.innerHTML=IA[naam](arg,w);
+  tmp.querySelectorAll('[data-deel]').forEach(n=>{ const oud=el.querySelector(`[data-deel="${n.dataset.deel}"]`); if(oud) oud.outerHTML=n.outerHTML; }); }
+
+render();
+</script>
+</body>
+</html>
