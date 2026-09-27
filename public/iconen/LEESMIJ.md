@@ -20,7 +20,7 @@ scherm van zestien pixels breed en ook voor wie nog niet vlot leest.
 | `kompas.svg` | Kompas | oker | een kompasroos met een tweekleurige naald |
 | `verbind.svg` | Verbind | oker | twee tekstballonnen die elkaar overlappen |
 | `podium.svg` | Podium | oker | een microfoon op een standaard |
-| `tape.svg` | Trading | oker | drie kaarsen van een koersgrafiek, de middelste goud |
+| `trading.svg` | Trading | oker | drie kaarsen van een koersgrafiek, de middelste goud |
 
 De laatste vier delen één kleur, en dat is de enige uitzondering op de regel
 hierboven. Het zijn de vier cursussen van de Academie: ze horen bij elkaar en dat

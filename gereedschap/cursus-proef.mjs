@@ -61,11 +61,10 @@ let stuk = 0
 const val = (m) => { console.log(`  FOUT, ${m}`); stuk++ }
 
 /* ------------------------------------------------------------------ 1 */
-/* Trading kwam later als vierde (bestand en opslag heten nog tape, zodat de
-   voortgang bleef staan toen de naam veranderde). Hij heeft nooit een slot gehad, maar hij hoort
+/* Trading kwam later als vierde. Hij heeft nooit een slot gehad, maar hij hoort
    onder dezelfde proef: open, met inhoud, en een eigen tegel. Zijn merk staat
    in de kop in kapitalen door de opmaak; innerText geeft het zo terug. */
-const CURSUSSEN = [['kompas', 'KOMPAS'], ['communicatie', 'VERBIND'], ['presenteren', 'PODIUM'], ['tape', 'TRADING']]
+const CURSUSSEN = [['kompas', 'KOMPAS'], ['communicatie', 'VERBIND'], ['presenteren', 'PODIUM'], ['trading', 'TRADING']]
 for (const [bestand, merk] of CURSUSSEN) {
   const pg = await browser.newPage()
   const fouten = []

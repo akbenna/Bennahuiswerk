@@ -47,7 +47,7 @@ const SLEUTELS: Readonly<Record<string, string>> = {
   kompas: 'kompas_v1',
   verbind: 'verbind_v2',
   podium: 'podium_v1',
-  tape: 'tape_v1',
+  trading: 'trading_v1',
 }
 
 export interface Voortgang {

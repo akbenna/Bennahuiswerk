@@ -114,9 +114,9 @@ describe('de drie cursussen van de Academie', () => {
     expect(v!.laatst).toBe('2026-08-24')
   })
 
-  it('leest Tape met dezelfde uitlezer', () => {
-    zet('tape_v1', { done: { 0: true, 3: true }, oefdagen: ['2026-09-26', '2026-09-27'], kaarten: { 0: { box: 2, due: 1 } } })
-    const t = voortgangVan('tape', PAPA)
+  it('leest Trading met dezelfde uitlezer', () => {
+    zet('trading_v1', { done: { 0: true, 3: true }, oefdagen: ['2026-09-26', '2026-09-27'], kaarten: { 0: { box: 2, due: 1 } } })
+    const t = voortgangVan('trading', PAPA)
     expect(cel(t!.cellen, 'Lessen af')).toBe(2)
     expect(cel(t!.cellen, 'Kaarten')).toBe(1)
     expect(t!.laatst).toBe('2026-09-27')

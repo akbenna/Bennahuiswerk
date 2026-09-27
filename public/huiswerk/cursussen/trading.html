@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Trading · Technische analyse voor gevorderden</title>
 <meta name="theme-color" content="#0d1117">
-<meta name="description" content="Trading, een cursus technische analyse voor gevorderde traders: structuur, volume, orderboek en tape, algoritmes, contrarian, setups, risico en proces, met een beslistrainer in stappen.">
-<link rel="icon" type="image/svg+xml" href="/iconen/tape.svg">
-<link rel="apple-touch-icon" href="/iconen/tape-180.png">
+<meta name="description" content="Trading, een cursus technische analyse voor gevorderde traders: structuur, volume, orderboek en time & sales, algoritmes, contrarian, setups, risico en proces, met een beslistrainer in stappen.">
+<link rel="icon" type="image/svg+xml" href="/iconen/trading.svg">
+<link rel="apple-touch-icon" href="/iconen/trading-180.png">
 <style>
   :root{
     --bg:#0d1117; --paneel:#151b23; --paneel2:#1b2330; --lijn:#263040; --ink:#e6edf3; --muted:#9aa7b4;
@@ -120,9 +120,9 @@
   .ladder .bid span,.ladder .ask span{position:relative;}
   .ladder .weg{color:#56606b;text-decoration:line-through;}
   .ladder .hl{outline:1px solid var(--pri);outline-offset:-1px;}
-  .tape{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;margin-top:10px;background:#0b0f14;border:1px solid var(--lijn);border-radius:10px;padding:8px 10px;max-height:150px;overflow:auto;}
-  .tape div{display:flex;justify-content:space-between;}
-  .tape .k{color:#5fd3c7;} .tape .v{color:#ff8a86;}
+  .prints{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;margin-top:10px;background:#0b0f14;border:1px solid var(--lijn);border-radius:10px;padding:8px 10px;max-height:150px;overflow:auto;}
+  .prints div{display:flex;justify-content:space-between;}
+  .prints .k{color:#5fd3c7;} .prints .v{color:#ff8a86;}
   .veld{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted);font-weight:600;}
   .veld input{background:#0b0f14;border:1px solid var(--lijn);color:var(--ink);border-radius:8px;padding:9px 10px;font:inherit;font-size:15px;width:100%;}
   .velden{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
@@ -191,7 +191,11 @@
    zo gebouwd dat ze het ene verschijnsel tonen waar de les over gaat.
    Echte grafieken zijn rommeliger; dat staat er in de lessen ook bij.
    ============================================================ */
-const KEY='tape_v1';
+const KEY='trading_v1';
+/* De cursus heette eerst Tape en bewaarde onder tape_v1. Eén keer
+   overnemen, dan de oude sleutel weg, zodat er geen twee standen naast
+   elkaar blijven bestaan. */
+try{ const oud=localStorage.getItem('tape_v1'); if(oud&&!localStorage.getItem(KEY)) localStorage.setItem(KEY,oud); if(oud) localStorage.removeItem('tape_v1'); }catch(e){}
 const store=(()=>{ let s={};
   try{ s=JSON.parse(localStorage.getItem(KEY))||{}; }catch(e){ s={}; }
   s.done=s.done||{}; s.oefdagen=s.oefdagen||[]; s.kaarten=s.kaarten||{};
@@ -333,7 +337,7 @@ const MODULES=[
   {id:'bewijs',    naam:'Bewijs',     tag:'Wat werkt aantoonbaar, en hoe weet je dat'},
   {id:'structuur', naam:'Structuur',  tag:'Trend, tijdframes, niveaus'},
   {id:'volume',    naam:'Volume',     tag:'Inspanning tegen resultaat'},
-  {id:'boek',      naam:'Orderboek',  tag:'Level 2, tape en delta'},
+  {id:'boek',      naam:'Orderboek',  tag:'Level 2, time & sales en delta'},
   {id:'setups',    naam:'Setups',     tag:'Alles samen in één beslissing'},
   {id:'risico',    naam:'Risico',     tag:'Verwachting met onzekerheid'},
   {id:'proces',    naam:'Proces',     tag:'Routine en de trader zelf'}
@@ -483,19 +487,19 @@ const LESSEN=[
  regel:"Kijk voor je instapt hoeveel er op de eerste drie niveaus ligt, en vergelijk dat met je order.",
  check:{v:"Beste ask 50,01 met 800 stuks, daarna 50,02 met 1.200. Je koopt 2.000 stuks met een marktorder. Wat is je gemiddelde prijs?", o:["50,01","Ongeveer 50,016","50,02"], a:1, u:"800 × 50,01 plus 1.200 × 50,02, gedeeld door 2.000, is 50,016. Je betaalt voor het deel dat het eerste niveau niet dekte."}},
 
-{m:'boek', t:"Level 2 lezen, en waar het liegt", d:"Het boek toont intentie, de tape toont feiten. Wie ze verwart, laat zich leiden door orders die er zijn om gezien te worden.", min:8,
+{m:'boek', t:"Level 2 lezen, en waar het liegt", d:"Het boek toont intentie, time & sales toont feiten. Wie ze verwart, laat zich leiden door orders die er zijn om gezien te worden.", min:8,
  tekst:[
   "Het boek toont intentie, geen feit. Een limietorder kost niets zolang hij niet wordt uitgevoerd en kan in een milliseconde weg zijn. Wat je ziet is wat partijen willen laten zien, en dat is bij grote partijen zelden alles.",
-  "Twee verschijnselen zijn de moeite van het herkennen waard. Het eerste is de <b>iceberg</b>: een grote order die maar een klein deel toont. Op het scherm staan er 300 stuks op de ask, maar op de tape zie je er tienduizenden op die prijs doorgaan, en het niveau blijft staan en vult zich steeds aan. Dat is een verkoper met geduld en een grote order, en zolang hij er staat komt de koers er niet voorbij. Het tweede is <b>spoofing</b>: een grote order die er staat om gezien te worden en verdwijnt zodra de prijs in de buurt komt. Spoofing is in de VS sinds de Dodd-Frank-wet van 2010 uitdrukkelijk verboden, in Europa via de verordening marktmisbruik, maar het komt voor, en in dunne markten makkelijker dan in dikke.",
-  "Voor Amerikaanse aandelen weegt een structurele beperking extra zwaar. De handel is verdeeld over meer dan tien beurzen, en een groot deel van het volume gaat buiten de openbare boeken om (in 2025 voor het eerst ruim de helft over het hele jaar), via internaliseerders van particuliere orders en dark pools. Je level 2 laat dus een deel van het aanbod zien, niet het geheel. De tape toont wél elke uitvoering. Loop hieronder de twee scenario's door."
+  "Twee verschijnselen zijn de moeite van het herkennen waard. Het eerste is de <b>iceberg</b>: een grote order die maar een klein deel toont. Op het scherm staan er 300 stuks op de ask, maar in time & sales zie je er tienduizenden op die prijs doorgaan, en het niveau blijft staan en vult zich steeds aan. Dat is een verkoper met geduld en een grote order, en zolang hij er staat komt de koers er niet voorbij. Het tweede is <b>spoofing</b>: een grote order die er staat om gezien te worden en verdwijnt zodra de prijs in de buurt komt. Spoofing is in de VS sinds de Dodd-Frank-wet van 2010 uitdrukkelijk verboden, in Europa via de verordening marktmisbruik, maar het komt voor, en in dunne markten makkelijker dan in dikke.",
+  "Voor Amerikaanse aandelen weegt een structurele beperking extra zwaar. De handel is verdeeld over meer dan tien beurzen, en een groot deel van het volume gaat buiten de openbare boeken om (in 2025 voor het eerst ruim de helft over het hele jaar), via internaliseerders van particuliere orders en dark pools. Je level 2 laat dus een deel van het aanbod zien, niet het geheel. Time & sales toont wél elke uitvoering. Loop hieronder de twee scenario's door."
  ],
  ia:'ijsberg',
  bewijs:{sterkte:2, tekst:"Dat verborgen orders een wezenlijk deel van het boek uitmaken, is onder meer aangetoond voor Euronext Parijs (Bessembinder, Panayides en Venkataraman, 2009). Dat het zichtbare boek informatie bevat, zie de vorige les. Tegelijk laat onderzoek naar snelle handel zien dat een groot deel van de orders binnen een seconde weer wordt ingetrokken, wat het naïef lezen van ‘muren’ onbetrouwbaar maakt. Het boek is informatief, maar alleen in combinatie met wat er daadwerkelijk wordt uitgevoerd."},
  valkuil:"Een grote muur op de bid lezen als steun. Een order die er staat om gezien te worden, is er meestal niet om uitgevoerd te worden. Pas als er op die prijs daadwerkelijk wordt gehandeld en het niveau houdt, is het steun.",
- regel:"Het boek zegt wat er zou kunnen gebeuren. De tape zegt wat er gebeurde.",
- check:{v:"Op de ask staat steeds 300 stuks op 12,50. Op de tape gaat er in vijf minuten 45.000 stuks op 12,50 doorheen en de prijs komt er niet boven. Wat is er aan de hand?", o:["Er zijn weinig verkopers","Een iceberg: een grote verkoper die maar een fractie laat zien","Een fout in de data"], a:1, u:"Het getoonde volume vult zich steeds aan terwijl er veel meer wordt uitgevoerd. Dat is de definitie van een verborgen restorder."}},
+ regel:"Het boek zegt wat er zou kunnen gebeuren. Time & sales zegt wat er gebeurde.",
+ check:{v:"Op de ask staat steeds 300 stuks op 12,50. In time & sales gaat er in vijf minuten 45.000 stuks op 12,50 doorheen en de prijs komt er niet boven. Wat is er aan de hand?", o:["Er zijn weinig verkopers","Een iceberg: een grote verkoper die maar een fractie laat zien","Een fout in de data"], a:1, u:"Het getoonde volume vult zich steeds aan terwijl er veel meer wordt uitgevoerd. Dat is de definitie van een verborgen restorder."}},
 
-{m:'boek', t:"De tape en delta", d:"Elke transactie heeft een agressor. Wie de spread oversteekt, laat zien wie haast heeft.", min:8,
+{m:'boek', t:"Time & sales en delta", d:"Elke transactie heeft een agressor. Wie de spread oversteekt, laat zien wie haast heeft.", min:8,
  tekst:[
   "Elke transactie heeft een agressor: de partij die een marktorder gaf en daarmee de spread overstak. Een transactie op de ask is een koper die niet wilde wachten, een transactie op de bid een verkoper die niet wilde wachten. <b>Delta</b> is per bar het volume van de agressieve kopers min dat van de agressieve verkopers; de <b>cumulatieve delta</b> (CVD) telt dat op.",
   "Delta op zich is weinig waard: agressie beweegt de prijs, dus stijgende koersen gaan meestal samen met positieve delta. De informatie zit in de afwijking. Stijgt de CVD sterk terwijl de prijs niet vooruitkomt, dan kopen agressieve partijen tegen iemand in die passief, met limietorders, alles opneemt. Dat is absorptie, dezelfde die je in de volumeles aan volume en bar zag, nu van dichterbij. Maakt de prijs een nieuwe top terwijl de CVD een lagere top maakt, dan wordt de beweging gedragen door steeds minder agressie: uitputting.",
@@ -707,12 +711,13 @@ const PUNTEN={
   "Dun boek: weinig orders verzetten de koers veel.",
   "Vergelijk vóór je instapt je order met wat er op de <b>eerste drie niveaus</b> ligt."],
  level2:[
-  "Het boek toont <b>intentie</b>, de tape toont <b>feiten</b>.",
+  "Het boek toont <b>intentie</b>, time & sales toont <b>feiten</b>.",
   "<b>Iceberg</b>: veel meer verhandeld dan er ooit zichtbaar stond, en het niveau vult zich aan.",
   "<b>Spoofing</b>: grote orders om gezien te worden, weg zodra de prijs nadert. Verboden (Dodd-Frank, MAR), maar het gebeurt.",
   "VS-aandelen: in 2025 ging voor het eerst <b>ruim de helft</b> van het volume buiten de openbare boeken om.",
   "Een muur is pas steun als er <b>op gehandeld wordt</b> en het niveau houdt."],
  delta:[
+  "<b>Time & sales</b>: de lijst van alle uitgevoerde transacties, met tijd, prijs, grootte en kant.",
   "<b>Agressor</b>: wie de spread oversteekt. Op de ask = agressieve koper, op de bid = agressieve verkoper.",
   "<b>Delta</b> = agressieve koop min agressieve verkoop per bar; <b>CVD</b> telt het op.",
   "Samen omhoog met de prijs: <b>echt</b>.",
@@ -804,12 +809,12 @@ LESSEN.push(
 {id:'uitvoering',m:'algo',t:"Uitvoeringsalgoritmes herkennen",d:"Grote partijen kopen niet in één keer. Ze laten een algoritme knippen, en dat laat een spoor na.",min:5,
  punten:[
   "Grote orders worden <b>opgeknipt</b>: VWAP (volgt het volumepatroon van de dag), TWAP (gelijk over de tijd) of een vast percentage van het volume.",
-  "<b>Op de tape</b>: prints van vergelijkbare grootte, op regelmatige momenten, steeds aan dezelfde kant.",
+  "<b>In time & sales</b>: prints van vergelijkbare grootte, op regelmatige momenten, steeds aan dezelfde kant.",
   "<b>Op de grafiek</b>: een gestage klim of daling zonder nieuws, met ondiepe terugvallen.",
   "<b>Iceberg-algoritmes</b> vullen een zichtbaar niveau steeds opnieuw aan.",
   "<b>Het slot</b> is het populairste eindpunt: in 2024 ging 9 tot 10% van het Amerikaanse volume door de slotveiling.",
   "<b>Wat je ermee doet</b>: niet tegen een actieve opdracht in; meegaan op ondiepe pullbacks; opletten wanneer het ritme stopt, dan valt de steun weg."],
- ia:'algotape',
+ ia:'algoprints',
  bewijs:{sterkte:2,tekst:"Dat HFT's rond grote institutionele orders eerst tegenwicht bieden en daarna meegaan, is aangetoond met Zweedse orderdata (van Kervel en Menkveld, 2019). Het aandeel van de slotveiling komt uit gegevens van de NYSE (tweede kwartaal 2024, 9,44% van de verhandelde waarde). Dat je een algoritme aan zijn prints kunt herkennen, is praktijkkennis: de algoritmes zijn juist ontworpen om dat moeilijk te maken."},
  valkuil:"Een gestage klim zonder nieuws shorten omdat hij ‘te ver’ is gegaan. Een opdracht heeft geen mening over ver.",
  regel:"Ritmische prints en weinig terugval: er wordt een opdracht uitgevoerd. Ga niet in de weg staan.",
@@ -1079,10 +1084,10 @@ IA.climax=(a,w)=>{ const s=CLSTAP[st.cl]; return blok(w,'Climax en test, stap vo
 ACT.cl=el=>{ st.cl=Math.max(0,Math.min(CLSTAP.length-1,st.cl+(+el.dataset.v))); };
 
 /* ---------- orderboek ---------- */
-function boekStart(){ return { asks:[800,1200,600,2500,900,4000,1500,700,3000,5200].map((q,i)=>({p:50.01+i*0.01,q,o:q})), bids:[900,1500,700,2200,1100,3500,800,1600,2800,4800].map((q,i)=>({p:50.00-i*0.01,q,o:q})), uit:null, tape:[] }; }
+function boekStart(){ return { asks:[800,1200,600,2500,900,4000,1500,700,3000,5200].map((q,i)=>({p:50.01+i*0.01,q,o:q})), bids:[900,1500,700,2200,1100,3500,800,1600,2800,4800].map((q,i)=>({p:50.00-i*0.01,q,o:q})), uit:null, prints:[] }; }
 st.bk2=boekStart();
 function marktorder(zijde,n){ const b=st.bk2, kant=zijde==='koop'?b.asks:b.bids; const beste=kant.find(x=>x.q>0)?.p; let rest=n,kost=0,niv=0;
-  for(const l of kant){ if(rest<=0) break; if(l.q<=0) continue; const x=Math.min(rest,l.q); l.q-=x; rest-=x; kost+=x*l.p; niv++; b.tape.unshift([l.p,x,zijde==='koop'?'k':'v']); }
+  for(const l of kant){ if(rest<=0) break; if(l.q<=0) continue; const x=Math.min(rest,l.q); l.q-=x; rest-=x; kost+=x*l.p; niv++; b.prints.unshift([l.p,x,zijde==='koop'?'k':'v']); }
   const gedaan=n-rest; b.uit={zijde,n,gedaan,gem:gedaan?kost/gedaan:0,beste,niv,rest}; oefendag(); }
 IA.boek=(a,w)=>{ const b=st.bk2, u=b.uit, mx=5200;
   const rij=(l,kant)=>`<div class="c ${kant} ${l.q===0?'weg':''}"><i style="width:${l.q/mx*100}%"></i><span>${l.q?nlk(l.q):nlk(l.o)}</span></div>`;
@@ -1101,23 +1106,23 @@ ACT.mo=el=>marktorder(el.dataset.z,+el.dataset.n); ACT.mor=()=>{ st.bk2=boekStar
 const lad=(asks,bids)=>({asks,bids});
 const IJS={
  ijsberg:[
-  {b:lad([[12.54,2100],[12.53,1400],[12.52,900],[12.51,1200],[12.50,300]],[[12.49,1500],[12.48,2200],[12.47,1800],[12.46,2600],[12.45,3000]]),tape:[],hl:12.50,t:"Een rustig boek. Op 12,50 staan 300 stuks te koop. Wie één blik werpt, ziet een dunne ask: een paar kopers en de koers loopt erdoorheen."},
-  {b:lad([[12.54,2100],[12.53,1400],[12.52,900],[12.51,1200],[12.50,300]],[[12.49,2400],[12.48,2600],[12.47,1800],[12.46,2600],[12.45,3000]]),tape:[[12.50,300,'k'],[12.50,300,'k'],[12.50,500,'k'],[12.50,300,'k'],[12.50,400,'k']],hl:12.50,t:"Er wordt op 12,50 gekocht: 1.800 stuks, terwijl er maar 300 stonden. En het niveau staat er nog, weer met 300. Het vult zich aan."},
-  {b:lad([[12.54,2100],[12.53,1400],[12.52,900],[12.51,1200],[12.50,300]],[[12.49,3100],[12.48,2900],[12.47,2000],[12.46,2600],[12.45,3000]]),tape:[[12.50,2000,'k'],[12.50,1500,'k'],[12.50,3000,'k'],[12.50,2500,'k'],[12.50,1800,'k'],[12.50,4200,'k']],hl:12.50,t:"Vijf minuten later is er op 12,50 ruim 45.000 stuks verhandeld. Op het scherm heeft er nooit meer dan 300 gestaan. De kopers zijn agressief, de delta is sterk positief, en de prijs komt geen cent hoger. Dit is een iceberg."},
-  {b:lad([[12.51,1200],[12.50,300],[12.49,800],[12.48,700],[12.47,500]],[[12.46,900],[12.45,1500],[12.44,2200],[12.43,1600],[12.42,2800]]),tape:[[12.48,1200,'v'],[12.47,2000,'v'],[12.47,900,'v'],[12.46,1500,'v']],hl:12.50,t:"De kopers geven het op. Er komt geen vraag meer op 12,50 en de bids trekken zich terug. Wie long ging ‘omdat de ask dun was’, zit nu vast onder een verkoper die er nog steeds staat."}],
+  {b:lad([[12.54,2100],[12.53,1400],[12.52,900],[12.51,1200],[12.50,300]],[[12.49,1500],[12.48,2200],[12.47,1800],[12.46,2600],[12.45,3000]]),prints:[],hl:12.50,t:"Een rustig boek. Op 12,50 staan 300 stuks te koop. Wie één blik werpt, ziet een dunne ask: een paar kopers en de koers loopt erdoorheen."},
+  {b:lad([[12.54,2100],[12.53,1400],[12.52,900],[12.51,1200],[12.50,300]],[[12.49,2400],[12.48,2600],[12.47,1800],[12.46,2600],[12.45,3000]]),prints:[[12.50,300,'k'],[12.50,300,'k'],[12.50,500,'k'],[12.50,300,'k'],[12.50,400,'k']],hl:12.50,t:"Er wordt op 12,50 gekocht: 1.800 stuks, terwijl er maar 300 stonden. En het niveau staat er nog, weer met 300. Het vult zich aan."},
+  {b:lad([[12.54,2100],[12.53,1400],[12.52,900],[12.51,1200],[12.50,300]],[[12.49,3100],[12.48,2900],[12.47,2000],[12.46,2600],[12.45,3000]]),prints:[[12.50,2000,'k'],[12.50,1500,'k'],[12.50,3000,'k'],[12.50,2500,'k'],[12.50,1800,'k'],[12.50,4200,'k']],hl:12.50,t:"Vijf minuten later is er op 12,50 ruim 45.000 stuks verhandeld. Op het scherm heeft er nooit meer dan 300 gestaan. De kopers zijn agressief, de delta is sterk positief, en de prijs komt geen cent hoger. Dit is een iceberg."},
+  {b:lad([[12.51,1200],[12.50,300],[12.49,800],[12.48,700],[12.47,500]],[[12.46,900],[12.45,1500],[12.44,2200],[12.43,1600],[12.42,2800]]),prints:[[12.48,1200,'v'],[12.47,2000,'v'],[12.47,900,'v'],[12.46,1500,'v']],hl:12.50,t:"De kopers geven het op. Er komt geen vraag meer op 12,50 en de bids trekken zich terug. Wie long ging ‘omdat de ask dun was’, zit nu vast onder een verkoper die er nog steeds staat."}],
  spoof:[
-  {b:lad([[50.09,1200],[50.08,900],[50.07,1500],[50.06,800],[50.05,600]],[[50.04,700],[50.03,1100],[50.02,900],[49.95,1400],[49.90,20000]]),tape:[],hl:49.90,t:"Een muur van 20.000 stuks op de bid op 49,90, tien keer zoveel als op elk ander niveau. Dat voelt als steun."},
-  {b:lad([[50.02,1100],[50.01,900],[50.00,800],[49.99,700],[49.98,900]],[[49.97,1600],[49.96,2100],[49.95,2400],[49.92,1800],[49.90,25000]]),tape:[[49.98,400,'v'],[49.97,600,'v'],[49.98,300,'k']],hl:49.90,t:"De koers zakt richting de muur, en de muur groeit naar 25.000. Anderen zien hetzelfde en zetten hun kooporders er net vóór. Er wordt op de muur zelf nog niets verhandeld."},
-  {b:lad([[49.97,900],[49.96,700],[49.95,800],[49.94,600],[49.93,500]],[[49.92,600],[49.91,400],[49.90,0],[49.89,300],[49.88,500]]),tape:[[49.93,800,'v'],[49.92,1200,'v']],hl:49.90,t:"Op 49,93 is de muur ineens weg. Niet opgegeten, want er is op 49,90 niets verhandeld: ingetrokken."},
-  {b:lad([[49.86,1200],[49.85,900],[49.84,700],[49.83,800],[49.82,600]],[[49.81,500],[49.80,700],[49.79,400],[49.78,900],[49.77,600]]),tape:[[49.90,1600,'v'],[49.88,2200,'v'],[49.85,3100,'v'],[49.83,2500,'v'],[49.81,1800,'v']],hl:49.90,t:"Wie op de muur vertrouwde, verkoopt nu tegelijk, en de koers valt er in één beweging doorheen. De muur stond er om gezien te worden. De tape liet de hele tijd zien dat er op 49,90 nooit gekocht werd."}]
+  {b:lad([[50.09,1200],[50.08,900],[50.07,1500],[50.06,800],[50.05,600]],[[50.04,700],[50.03,1100],[50.02,900],[49.95,1400],[49.90,20000]]),prints:[],hl:49.90,t:"Een muur van 20.000 stuks op de bid op 49,90, tien keer zoveel als op elk ander niveau. Dat voelt als steun."},
+  {b:lad([[50.02,1100],[50.01,900],[50.00,800],[49.99,700],[49.98,900]],[[49.97,1600],[49.96,2100],[49.95,2400],[49.92,1800],[49.90,25000]]),prints:[[49.98,400,'v'],[49.97,600,'v'],[49.98,300,'k']],hl:49.90,t:"De koers zakt richting de muur, en de muur groeit naar 25.000. Anderen zien hetzelfde en zetten hun kooporders er net vóór. Er wordt op de muur zelf nog niets verhandeld."},
+  {b:lad([[49.97,900],[49.96,700],[49.95,800],[49.94,600],[49.93,500]],[[49.92,600],[49.91,400],[49.90,0],[49.89,300],[49.88,500]]),prints:[[49.93,800,'v'],[49.92,1200,'v']],hl:49.90,t:"Op 49,93 is de muur ineens weg. Niet opgegeten, want er is op 49,90 niets verhandeld: ingetrokken."},
+  {b:lad([[49.86,1200],[49.85,900],[49.84,700],[49.83,800],[49.82,600]],[[49.81,500],[49.80,700],[49.79,400],[49.78,900],[49.77,600]]),prints:[[49.90,1600,'v'],[49.88,2200,'v'],[49.85,3100,'v'],[49.83,2500,'v'],[49.81,1800,'v']],hl:49.90,t:"Wie op de muur vertrouwde, verkoopt nu tegelijk, en de koers valt er in één beweging doorheen. De muur stond er om gezien te worden. Time & sales liet de hele tijd zien dat er op 49,90 nooit gekocht werd."}]
 };
 st.ij={s:'ijsberg',k:0};
 IA.ijsberg=(a,w)=>{ const f=IJS[st.ij.s][st.ij.k], mx=Math.max(...f.b.asks.map(x=>x[1]),...f.b.bids.map(x=>x[1]),3000);
   const cel=(q,kant,p)=>`<div class="c ${kant} ${Math.abs(p-f.hl)<1e-6?'hl':''}"><i style="width:${Math.min(100,q/mx*100)}%"></i><span>${q?nlk(q):''}</span></div>`;
   const r=[]; f.b.asks.forEach(([p,q])=>r.push(`<div class="c"></div><div class="c p">${nl(p,2)}</div>${cel(q,'ask',p)}`)); f.b.bids.forEach(([p,q])=>r.push(`${cel(q,'bid',p)}<div class="c p">${nl(p,2)}</div><div class="c"></div>`));
-  return blok(w,'Boek tegen tape',seg('ijs',[['ijsberg','Iceberg'],['spoof','Spoofing']],st.ij.s)+`<div class="stappen">${IJS[st.ij.s].map((_,i)=>`<i class="${i<=st.ij.k?'aan':''}"></i>`).join('')}</div>
+  return blok(w,'Boek tegen time & sales',seg('ijs',[['ijsberg','Iceberg'],['spoof','Spoofing']],st.ij.s)+`<div class="stappen">${IJS[st.ij.s].map((_,i)=>`<i class="${i<=st.ij.k?'aan':''}"></i>`).join('')}</div>
    <div class="ladder"><div class="c kop" style="text-align:right">Bid</div><div class="c kop p">Prijs</div><div class="c kop">Ask</div>${r.join('')}</div>
-   <div class="tape">${f.tape.length?f.tape.map(([p,q,z])=>`<div class="${z}"><span>${nl(p,2)}</span><span>${nlk(q)}</span><span>${z==='k'?'op de ask':'op de bid'}</span></div>`).join(''):'<span class="klein">Nog geen transacties</span>'}</div>
+   <div class="prints">${f.prints.length?f.prints.map(([p,q,z])=>`<div class="${z}"><span>${nl(p,2)}</span><span>${nlk(q)}</span><span>${z==='k'?'op de ask':'op de bid'}</span></div>`).join(''):'<span class="klein">Nog geen transacties</span>'}</div>
    <p class="uitleg">${f.t}</p><div class="rij">${st.ij.k>0?knop('ijk','Vorige','data-v="-1"'):''}${st.ij.k<IJS[st.ij.s].length-1?knop('ijk','Volgende','data-v="1"','knop klein'):''}</div>`); };
 ACT.ijs=el=>{ st.ij={s:el.dataset.v,k:0}; }; ACT.ijk=el=>{ st.ij.k=Math.max(0,Math.min(IJS[st.ij.s].length-1,st.ij.k+(+el.dataset.v))); if(st.ij.k===IJS[st.ij.s].length-1) oefendag(); };
 
@@ -1209,7 +1214,7 @@ const CASES=[
   {v:"Wat doe je?",o:["Long","Short","Geen trade"],g:[2],u:"Zelfde compressie, maar tegen de dagtrend in, zonder deelname, midden op de dag en met een verkoper die zichzelf aanvult op het niveau."},
   {v:"Wat zou de beslissing doen omslaan naar long?",o:["Een sluiting boven 111 op RVOL boven 2, buiten de middag","Een tweede test van 111","Een groene dag in de index"],g:[0],u:"De iceberg moet op zijn, en dat zie je aan acceptatie boven het niveau met echte deelname."},
   {v:"Wat weegt het zwaarst?",o:["De middag","De iceberg op een niveau van het hogere tijdframe, zonder deelname","De ontbrekende katalysator"],g:[1],u:"Een weerstand van de dag met een zichtbare verkoper erop, en geen ongewone vraag om hem op te eten."}],
- kern:"Hetzelfde patroon is geen dezelfde trade. Context en tape beslissen."},
+ kern:"Hetzelfde patroon is geen dezelfde trade. Context en time & sales beslissen."},
 {id:'c1',tags:['Crypto'],t:"De uitbraak die vastzette",markt:"BTC perpetual, 1 uur (geïndexeerd)",seed:202,
  pre:[...RANGE2,{bar:{c:1.0,h:.2,v:1.6}},{bar:{c:-2.3,h:.8,l:.1,v:2.8}}],post:[{n:10,to:106,s:.4,v:1.2},{n:6,to:105,s:.4,v:1}],ov:{niv:[[111,'range-top']]},
  ctx:[["Funding","+0,045% per 8 uur, stijgend"],["Open interest","+6% tijdens de uitbraak"],["Hoger tijdframe","range op 4 uur"],["Liquidaties","short-liquidaties in de prikker"]],
@@ -1266,7 +1271,7 @@ const CASES=[
  kern:"Contrarian op zijn best: niet in de paniek, maar in de stilte erna."},
 {id:'ab1',tags:['Dag','Algo'],t:"Kopers die niet vooruitkomen",markt:"Aandeel, 5 minuten",seed:208,
  pre:[{n:12,to:101,s:.3,v:1.3},{n:14,to:100.88,s:.07,v:1.6}],post:[{n:3,to:100.5,s:.1,v:1.4},{n:12,to:99,s:.25,v:1.3}],ov:{niv:[[101,'101,00']]},
- ctx:[["Tape","op 101,00 in 40 minuten 180.000 stuks, de ask toont steeds 500"],["CVD","sterk stijgend"],["Prijs","vlak onder 101"],["Dag","boven de VWAP"]],
+ ctx:[["Time & sales","op 101,00 in 40 minuten 180.000 stuks, de ask toont steeds 500"],["CVD","sterk stijgend"],["Prijs","vlak onder 101"],["Dag","boven de VWAP"]],
  stap:[
   {v:"Wat doe je?",o:["Long, de kopers zijn agressief","Geen long; een short-scenario voorbereiden","Long bij een uitbraak boven 101"],g:[1],u:"Veel agressie, geen resultaat. Een verborgen verkoper vult alles op 101."},
   {v:"Wanneer wordt short concreet?",o:["Nu, vóór de breuk","Bij een breuk onder de onderkant van de vlakke zone, op volume","Pas als de dag rood staat"],g:[1],u:"Zolang de kopers blijven komen, kan het nog alle kanten op. De breuk is het moment dat ze opgeven."},
@@ -1291,11 +1296,11 @@ const CASES=[
  kern:"Lees de OI mee: een squeeze is spectaculair maar eindig."},
 {id:'t1',tags:['Algo','Dag'],t:"De trage, gestage klim",markt:"Aandeel, 5 minuten",seed:211,
  pre:[{n:40,to:103,s:.12,v:1,v2:1}],post:[{n:25,to:104.8,s:.12,v:1}],ov:{vwap:true,ema:[9]},
- ctx:[["Tape","elke 30 seconden prints van 300 tot 400 stuks op de ask"],["Pullbacks","nooit meer dan 0,3%"],["Nieuws","geen"],["Boek","bids schuiven mee omhoog"]],
+ ctx:[["Time & sales","elke 30 seconden prints van 300 tot 400 stuks op de ask"],["Pullbacks","nooit meer dan 0,3%"],["Nieuws","geen"],["Boek","bids schuiven mee omhoog"]],
  stap:[
   {v:"Wie zit hier waarschijnlijk achter?",o:["Een uitvoeringsalgoritme dat een grote koop verdeelt","Particulieren in paniek","Een spoofer"],g:[0],u:"Gelijkmatige prints op vaste tijden, weinig impact per stap, en een koers die niet terugzakt: het vingerafdruk van TWAP of VWAP."},
   {v:"Wat doe je?",o:["Short, dit is overbought","Long bij een ondiepe pullback naar de VWAP of het korte gemiddelde","Geen trade"],g:[1,2],u:"Tegen een algoritme met een opdracht in staan is duur. Meegaan is verdedigbaar; niets doen ook."},
-  {v:"Wanneer stopt dit meestal?",o:["Als de opdracht klaar is: vaak richting het slot, of abrupt als de prints ophouden","Bij RSI 80","Bij een rond getal"],g:[0],u:"Let op de tape: als het ritme van de prints stopt, stopt de steun onder de koers."}],
+  {v:"Wanneer stopt dit meestal?",o:["Als de opdracht klaar is: vaak richting het slot, of abrupt als de prints ophouden","Bij RSI 80","Bij een rond getal"],g:[0],u:"Kijk in time & sales: als het ritme van de prints stopt, stopt de steun onder de koers."}],
  kern:"Een klim zonder nieuws, zonder terugval en met ritmische prints is een opdracht die wordt uitgevoerd. Niet fade'n."},
 {id:'g1',tags:['Algo'],t:"Vastgepind op de strike",markt:"Index-ETF, 5 minuten, derde vrijdag",seed:212,
  pre:[{n:8,to:100.6,s:.15},{n:8,to:99.5,s:.15},{n:8,to:100.5,s:.15},{n:8,to:99.6,s:.15},{n:6,to:100.35,s:.12}],post:[{n:8,to:99.8,s:.12},{n:10,to:100.1,s:.1}],ov:{niv:[[100,'strike, grote open interest']]},
@@ -1314,7 +1319,7 @@ const CASES=[
  kern:"Short gamma versterkt bewegingen. Niet de held zijn in het laatste uur."},
 {id:'s1',tags:['Algo','Swing','Contrarian'],t:"Onder het dubbele dal",markt:"Aandeel, 15 minuten",seed:214,
  pre:[{n:10,to:103},{n:8,to:98.6},{n:8,to:102.5},{n:8,to:98.7},{n:5,to:100,s:.3},{bar:{c:-.2,l:1.6,h:.2,v:3}},{bar:{c:1.2,v:2.1}}],post:[{n:12,to:103.5,s:.35,v:1.1}],ov:{niv:[[98.6,'dubbel dal']]},
- ctx:[["Niveau","dubbel dal op 98,6, voor iedereen zichtbaar"],["Tape","40.000 stuks op de bid in 20 seconden onder 98,5, daarna niets"],["Nieuws","geen"],["Boek","bids keren terug zodra 98,6 herwonnen is"]],
+ ctx:[["Niveau","dubbel dal op 98,6, voor iedereen zichtbaar"],["Time & sales","40.000 stuks op de bid in 20 seconden onder 98,5, daarna niets"],["Nieuws","geen"],["Boek","bids keren terug zodra 98,6 herwonnen is"]],
  stap:[
   {v:"Wat gebeurde er in de lont?",o:["De stops onder het dubbele dal werden opgehaald","Echte verkopers stapten uit","Een datafout"],g:[0],u:"Een snelle burst op de bid precies onder een voor de hand liggend niveau, zonder vervolg: een stop run."},
   {v:"Wat doe je?",o:["Short, het dal is gebroken","Long na de terugkeer boven 98,6","Geen trade"],g:[1],u:"Het dal brak en hield toch. Wie op de breuk verkocht, zit vast."},
@@ -1322,7 +1327,7 @@ const CASES=[
  kern:"Algoritmes weten waar de stops liggen. Een sweep met terugkeer is het spoor dat ze achterlaten."},
 {id:'m1',tags:['Algo','Dag'],t:"Een sprint zonder reden",markt:"Klein aandeel, 1 minuut",seed:215,
  pre:[{n:20,to:100.3,s:.1,v:.6},{n:3,to:104,s:.3,v:4,v2:5}],post:[{n:3,to:102.5,s:.3,v:2},{n:10,to:100.6,s:.2,v:.8}],ov:{},
- ctx:[["Nieuws","geen"],["Boek","dun: 200 tot 500 stuks per niveau"],["Tape","honderden prints van 100 stuks in twee minuten"],["Sociale media","ticker trending"]],
+ ctx:[["Nieuws","geen"],["Boek","dun: 200 tot 500 stuks per niveau"],["Time & sales","honderden prints van 100 stuks in twee minuten"],["Sociale media","ticker trending"]],
  stap:[
   {v:"Wat doe je?",o:["Long, er breekt iets los","Niet achterna gaan","Short nu"],g:[1],u:"Geen reden, dun boek en een burst van kleine prints. Short in een dun boek is net zo gevaarlijk."},
   {v:"Wat is het waarschijnlijkst?",o:["Momentum ignition: een burst om anderen en hun algoritmes mee te krijgen","Een overname","Institutionele accumulatie"],g:[0],u:"Accumulatie is stil en traag. Dit is luid en snel, en het doel is dat jij volgt."},
@@ -1375,12 +1380,12 @@ const CASES=[
  kern:"Overbought is een toestand, geen signaal. Contrarian zonder mislukte beweging is gokken tegen de trend."},
 {id:'sp1',tags:['Algo','Dag'],t:"De muur op de bid",markt:"Aandeel, 1 minuut",seed:222,
  pre:[{n:20,to:50.2,s:.05},{n:6,to:49.98,s:.04}],post:[{n:3,to:49.85,s:.04,v:1.8},{n:8,to:49.7,s:.05}],ov:{niv:[[49.9,'muur 25.000']]},
- ctx:[["Boek","25.000 op de bid op 49,90, tien keer elk ander niveau"],["Tape","op 49,90 nog niets verhandeld"],["Gedrag","de muur is twee keer meegeschoven, steeds 8 tot 10 cent onder de koers"]],
+ ctx:[["Boek","25.000 op de bid op 49,90, tien keer elk ander niveau"],["Time & sales","op 49,90 nog niets verhandeld"],["Gedrag","de muur is twee keer meegeschoven, steeds 8 tot 10 cent onder de koers"]],
  stap:[
   {v:"Wat doe je?",o:["Long, er zit een grote koper","Geen long op basis van de muur","Short"],g:[1],u:"Een order die er staat om gezien te worden, is er zelden om uitgevoerd te worden. Short op basis van een vermoeden is net zo zwak."},
   {v:"Wat maakt de muur verdacht?",o:["Hij beweegt mee met de koers en er wordt niet op gehandeld","Hij is groot","Hij staat op een rond getal"],g:[0],u:"Echte vraag laat zich vullen. Een muur die op afstand blijft, wil dat niet."},
-  {v:"Wanneer zou het wél steun zijn?",o:["Als er op 49,90 fors wordt verhandeld en het niveau houdt","Als hij nog groter wordt","Als hij er vijf minuten staat"],g:[0],u:"De tape bewijst het, niet het boek."}],
- kern:"Het boek zegt wat er zou kunnen. De tape zegt wat er is."},
+  {v:"Wanneer zou het wél steun zijn?",o:["Als er op 49,90 fors wordt verhandeld en het niveau houdt","Als hij nog groter wordt","Als hij er vijf minuten staat"],g:[0],u:"Time & sales bewijst het, niet het boek."}],
+ kern:"Het boek zegt wat er zou kunnen. Time & sales zegt wat er is."},
 {id:'e1',tags:['Swing','Dag'],t:"Terug naar de AVWAP na slechte cijfers",markt:"Aandeel, 1 uur",seed:223,
  pre:[{n:15,to:104},{bar:{c:-7,h:.3,l:.6,v:6}},{n:6,to:95.5,s:.4,v:2},{n:6,to:97.8,s:.3,v:.7,v2:.5},{bar:{c:-.4,h:.7,v:1.2}}],post:[{n:12,to:92.5,s:.4,v:1.2}],ov:{avwap:15},
  ctx:[["Gap","-7% op cijfers en een verlaagde prognose"],["AVWAP cijferdag","direct boven de koers"],["Rally","op 60% van gemiddeld volume"],["Analisten","verlagen koersdoelen"]],
@@ -1390,6 +1395,141 @@ const CASES=[
   {v:"Waar ligt de stop?",o:["Boven de lont van de afwijzingsbar","Boven de top van vóór de cijfers","Een procent boven de ingang"],g:[0],u:"Boven de lont is de afwijzing mislukt. De top van vóór de cijfers is zo ver dat de positie betekenisloos wordt."}],
  kern:"Na slechte cijfers is de AVWAP van de cijferdag de plek waar de eerste kopers eruit willen."}
 ];
+
+/* Tweede reeks casussen: meer beheer van een lopende trade, meer
+   gebeurtenissen (cijfers, pauzes, slotveiling, indexopname) en meer
+   situaties waarin het juiste antwoord ‘kleiner’ of ‘later’ is. */
+CASES.push(
+{id:'fl1',tags:['Swing'],t:"Een mooie vlag, en morgen cijfers",markt:"Aandeel, dag",seed:231,
+ pre:[{n:20,to:112,s:.6,v:1.3},{n:7,to:109.5,s:.35,v:.55,v2:.4},{bar:{c:1.3,v:1.4}}],post:[{bar:{c:-6,h:.3,l:.6,v:4}},{n:10,to:100,s:.5,v:1.4}],ov:{ema:[20]},
+ ctx:[["Vlag","netjes, op dalend volume"],["Cijfers","morgen voorbeurs"],["Opties","impliciete beweging rond de cijfers ±7%"],["Stop","onder de vlag, 3,5% onder de ingang"]],
+ stap:[
+  {v:"Wat doe je?",o:["Long, volle positie","Kleiner, zodat een gap van 7% hooguit 1R kost, of wachten tot na de cijfers","Short"],g:[1],u:"De setup is goed, het moment niet. Je stop ligt op 3,5%, de markt verwacht een beweging van 7%."},
+  {v:"Waarom beschermt de stop je hier niet?",o:["Een koers kan over je stop heen gappen; je wordt uitgevoerd op de opening, niet op je stop","Omdat de stop te krap is","Omdat vlaggen niet werken"],g:[0],u:"Een stop is een order die pas afgaat als er gehandeld wordt. Tussen slot en opening wordt er niet gehandeld."},
+  {v:"Wat bepaalt de positiegrootte hier?",o:["De afstand tot de stop","De verwachte beweging rond de cijfers","Je gevoel"],g:[1],u:"Over een gebeurtenis heen is de impliciete beweging je echte risico per stuk."}],
+ kern:"Rond cijfers bepaalt de verwachte beweging je risico, niet je stop."},
+{id:'rs1',tags:['Dag'],t:"Groen op een rode dag",markt:"Aandeel, 5 minuten",seed:232,
+ pre:[{n:10,to:100.8,s:.15,v:1.4},{n:14,to:100.5,s:.12,v:.8},{n:8,to:100.9,s:.12,v:.9},{bar:{c:.35,v:1.6}}],post:[{n:16,to:102.4,s:.18,v:1.2}],ov:{vwap:true},
+ ctx:[["Index","-0,8%, nieuwe low van de dag"],["Aandeel","+0,6%, hogere dalen, steeds boven de VWAP"],["Sector","de enige groene sector"],["Tijd","11:10 ET"]],
+ stap:[
+  {v:"Wat zegt dit?",o:["Relatieve sterkte: er zit een koper die zich niet laat wegduwen","Het aandeel loopt achter en haalt de daling nog in","Niets"],g:[0],u:"Als de markt verkoopt en dit aandeel niet, dan neemt iemand het aanbod op."},
+  {v:"Wat doe je?",o:["Long bij een uitbraak boven de high van de dag, liefst als de index keert","Short, want de index daalt","Geen trade"],g:[0,2],u:"Relatieve sterkte is het beste aandeel voor het moment dat de markt keert. Wachten mag ook."},
+  {v:"Wat is het grootste risico?",o:["Een scherpe marktbrede daling trekt ook sterke aandelen mee","De VWAP","Niets"],g:[0],u:"In een uitverkoop gaat alles mee. Houd de index in de gaten als tweede stop."}],
+ kern:"Wat niet daalt als alles daalt, stijgt vaak het eerst als het draait."},
+{id:'ib1',tags:['Swing'],t:"Drie kleine dagen op rij",markt:"Aandeel, dag",seed:233,
+ pre:[{n:20,to:108,s:.6},{n:6,to:106.5,s:.4},{n:5,to:107.3,s:.16,v:.55,v2:.4}],post:[{bar:{c:1.4,v:2}},{n:10,to:112,s:.5}],ov:{ema:[20]},
+ ctx:[["Bereik","kleinste dagbereik van zeven dagen, derde op rij"],["Trend","op"],["Volume","laagste van de maand"],["Nieuws","geen"]],
+ stap:[
+  {v:"Wat doe je?",o:["Nu long, in de compressie","Een koopstop boven de high van de compressie, met de stop onder de low","Geen trade"],g:[1,0],u:"De compressie geeft een krappe stop. Een koopstop laat de markt eerst de richting bewijzen."},
+  {v:"Waarom werkt compressie?",o:["Beweeglijkheid wisselt af: na rust volgt vaak beweging, de richting is open","Omdat de koers moet stijgen","Omdat het volume laag is"],g:[0],u:"Volatiliteit clustert en keert terug naar haar gemiddelde. Wat compressie niet zegt, is welke kant op."},
+  {v:"Welke richting kies je?",o:["Met de trend, maar laat de uitbraak het bewijzen","Altijd omhoog","Omlaag"],g:[0],u:"De trend geeft een voorkeur, de uitbraak het bewijs."}],
+ kern:"Compressie geeft een krappe stop en een beweging die komt. De markt kiest de richting."},
+{id:'vp1',tags:['Dag'],t:"Buiten de value area, en weer terug",markt:"Aandeel, 5 minuten",seed:234,
+ pre:[{bar:{c:.4,h:.3,v:3}},{n:4,to:101.5,s:.2,v:2},{n:4,to:100.5,s:.2,v:1.6},{bar:{c:-.5,v:1.8}}],post:[{n:15,to:98.6,s:.2,v:1}],ov:{niv:[[100.2,'VAH gisteren'],[99.2,'POC gisteren'],[98.4,'VAL gisteren']]},
+ ctx:[["Opening","boven de value area van gisteren"],["Nu","twee bars terug binnen de value area"],["RVOL","1,3"],["Nieuws","geen"]],
+ stap:[
+  {v:"Wat doe je?",o:["Long, de opening was sterk","Short, richting de POC en daarna de VAL","Geen trade"],g:[1],u:"De markt probeerde een hogere prijs en die werd niet geaccepteerd. Terug in de value area is de markt van gisteren weer de referentie."},
+  {v:"Welk doel?",o:["De POC van gisteren, de rest naar de VAL","Een nieuwe low van de week","Break-even"],g:[0],u:"De POC is de eerste magneet, de VAL de andere kant van de value area."},
+  {v:"Waar ligt de stop?",o:["Terug boven de VAH, met marge","Boven de high van de dag","Een procent boven de ingang"],g:[0,1],u:"Boven de VAH is de afwijzing mislukt; boven de high van de dag is ruimer maar ook verdedigbaar."}],
+ kern:"Afgewezen buiten de value area betekent: terug naar de markt van gisteren."},
+{id:'lv1',tags:['Swing'],t:"Uit de knoop, het gat in",markt:"Aandeel, 4 uur",seed:235,
+ pre:[{n:30,to:100,s:.5,v:1.1},{n:3,to:101.5,s:.3,v:1.6},{bar:{c:1.1,v:2}}],post:[{n:4,to:106,s:.3,v:.9},{n:14,to:106.5,s:.5,v:1}],ov:{profiel:true},
+ ctx:[["Profiel","grote HVN rond 100; daarboven tot 106 nauwelijks verhandeld (LVN)"],["Volgende HVN","rond 106"],["RVOL","2,0"],["Trend","dag vlak, week op"]],
+ stap:[
+  {v:"Wat doe je?",o:["Long, met 106 als doel","Wachten op een retest van 100","Short, de koers loopt tegen weerstand"],g:[0,1],u:"Uit de HVN het lege gebied in, op volume: daar verwacht je snelheid. Een retest is verdedigbaar, maar komt in een LVN vaak niet."},
+  {v:"Waarom is 106 een logisch doel?",o:["Daar begint de volgende HVN, en daar vertraagt de koers","Het is een rond getal","Het is de helft van de beweging"],g:[0],u:"Een LVN is een snelweg, een HVN een rotonde."},
+  {v:"Waar ligt de stop?",o:["Terug in de HVN, onder de uitbraakbar","Onder 95","Geen stop"],g:[0],u:"Terug in de knoop is de uitbraak mislukt."}],
+ kern:"Een LVN tussen ingang en doel is vrije baan. Het doel ligt waar de volgende knoop begint."},
+{id:'wk1',tags:['Crypto'],t:"Uitbraak op zaterdagnacht",markt:"BTC perpetual, 1 uur (geïndexeerd)",seed:236,
+ pre:[{n:30,to:100.3,s:.15,v:.5},{bar:{c:1.4,v:.9}}],post:[{n:3,to:100.9,s:.2,v:.6},{n:12,to:99.4,s:.2,v:.6}],ov:{},
+ ctx:[["Moment","zaterdag 03:00 UTC"],["Volume","minder dan de helft van een doordeweekse dag"],["Spot","nauwelijks mee"],["Funding","neutraal"]],
+ stap:[
+  {v:"Wat doe je?",o:["Long, uitbraak","Geen trade, of kleiner en wachten op bevestiging bij meer volume","Short"],g:[1],u:"Een uitbraak in het dunste uur van de week zegt weinig over de week."},
+  {v:"Waarom wantrouw je dit?",o:["Dun boek: weinig geld verzet de prijs, zonder dat het iets zegt over de richting","Het is nacht","Funding"],g:[0],u:"In een dun boek beweegt de prijs door het gebrek aan tegenpartij, niet door overtuiging."},
+  {v:"Wanneer krijgt deze uitbraak betekenis?",o:["Als hij standhoudt tot de opening van Europa en de VS, op normaal volume","Na nog 1%","Nooit"],g:[0],u:"Acceptatie door de partijen die ertoe doen, op het moment dat ze er zijn."}],
+ kern:"Een beweging in een dunne markt is een vraag, geen antwoord."},
+{id:'sl1',tags:['Crypto'],t:"Gedragen door spot",markt:"ETH perpetual, 1 uur (geïndexeerd)",seed:237,
+ pre:[{n:10,to:100},{n:14,to:104,s:.3,v:1.3},{n:4,to:103.4,s:.2,v:.6}],post:[{n:14,to:108,s:.35,v:1.1}],ov:{ema:[20]},
+ ctx:[["Spot","spotvolume +80%, spot boven de future op de grote beurzen"],["Open interest","vlak"],["Funding","licht positief, niet extreem"],["Pullback","ondiep, op laag volume"]],
+ stap:[
+  {v:"Wat doe je?",o:["Long op de pullback","Short, het is te ver","Geen trade"],g:[0],u:"Een stijging die door spot gedragen wordt, met een ondiepe pullback op laag volume: de gezondste vorm."},
+  {v:"Waarom is dit gezonder dan een squeeze?",o:["Spotkopers kopen munten; hefboom die er later weer uit moet, doet hier weinig mee","Omdat funding positief is","Omdat de OI vlak is"],g:[0],u:"Wat met eigen geld gekocht is, hoeft niet gedwongen verkocht te worden."},
+  {v:"Wat zou je aan het twijfelen brengen?",o:["OI en funding die hard oplopen terwijl spot afhaakt","Een rode bar","Het weekend"],g:[0],u:"Dan verschuift de beweging van spot naar hefboom, en wordt ze broos."}],
+ kern:"Kijk wie er koopt: spot draagt, hefboom leent."},
+{id:'pd1',tags:['Dag'],t:"De tweede poging",markt:"Aandeel, 5 minuten",seed:238,
+ pre:[{bar:{c:.8,h:.3,l:.3,v:4}},{n:5,to:101.6,s:.3,v:2.4},{n:8,to:100.8,s:.2,v:1.1,v2:.8},{n:3,to:101.5,s:.2,v:1.2},{bar:{c:.5,v:2.2}}],post:[{n:14,to:103.6,s:.22,v:1.1}],ov:{vwap:true,niv:[[101.9,'top ochtend']]},
+ ctx:[["Katalysator","upgrade door een analist, voorbeurs"],["RVOL","3,0"],["Pullback","hield boven de VWAP, op dalend volume"],["Tijd","10:55 ET"]],
+ stap:[
+  {v:"Wat doe je?",o:["Long boven de ochtendtop","Geen trade: de eerste beweging is voorbij","Short op de dubbele top"],g:[0],u:"Een katalysator, een pullback die de VWAP respecteerde, en nu een tweede aanval op hoog volume."},
+  {v:"Waar ligt de stop?",o:["Onder de low van de pullback of de VWAP","Onder de openingsprijs","Een halve procent onder de ingang"],g:[0],u:"De pullback is het hogere dal dat je trade draagt."},
+  {v:"Wat maakt dit beter dan de eerste uitbraak?",o:["De pullback liet zien dat kopers de VWAP verdedigen: een hoger dal met een reden","Hij is later","Hij is groter"],g:[0],u:"De eerste uitbraak was hoop, de tweede heeft bewijs onder zich."}],
+ kern:"De beste daytrade is vaak de tweede poging, na een pullback die iets bewees."},
+{id:'mc1',tags:['Algo','Dag'],t:"Tien minuten voor het slot",markt:"Aandeel, 5 minuten",seed:239,
+ pre:[{n:40,to:99.4,s:.15,v:1},{n:4,to:99.2,s:.1,v:1.2}],post:[{n:4,to:100.1,s:.15,v:2.5,v2:3}],ov:{},
+ ctx:[["Tijd","15:50 ET"],["Slotveiling","gepubliceerde koop-onbalans van 1,2 miljoen stuks"],["Dag","-0,9%"],["Gebeurtenis","indexherweging vandaag"]],
+ stap:[
+  {v:"Wat doe je?",o:["Short, de dag is zwak","Geen short; eventueel mee met de onbalans","Niets, het is bijna dicht"],g:[1,2],u:"Een grote onbalans voor het slot is een order die hoe dan ook uitgevoerd wordt."},
+  {v:"Waarom stijgt de koers waarschijnlijk?",o:["Een grote koop moet in de veiling uitgevoerd worden; de prijs moet stijgen om verkopers te vinden","De dag was zwak","Het volume"],g:[0],u:"Mechanische vraag, los van informatie over het bedrijf."},
+  {v:"Wat gebeurt er vaak de volgende ochtend?",o:["Een deel van de slotbeweging draait terug, want het was mechanisch, geen nieuws","Hij loopt altijd door","Niets"],g:[0],u:"Wat door een verplichting is geduwd, heeft geen reden om te blijven."}],
+ kern:"Een onbalans voor het slot is geen mening, het is een verplichting. Sta er niet voor."},
+{id:'dd1',tags:['Swing'],t:"Een goed aandeel in een slechte markt",markt:"Aandeel, dag",seed:240,
+ pre:[{n:30,to:118,s:.5,v:1.1},{n:3,to:115,s:.3,v:.55,v2:.45},{bar:{c:.2,l:.5,v:.5}}],post:[{bar:{c:.9,v:1}},{n:5,to:117.5,v:.9},{n:6,to:113,v:1.3}],ov:{ema:[20]},
+ ctx:[["Pullback","drie rode dagen op laag volume naar het 20-daags"],["Markt","breedte zwak: minder dan 40% van de aandelen boven hun 50-daags"],["Sector","sterk"],["Aandeel","trend intact"]],
+ stap:[
+  {v:"Wat doe je?",o:["Volle positie long","Halve positie, met strakke regels","Geen trade"],g:[1,2],u:"Het aandeel is goed, de markt eronder niet."},
+  {v:"Waarom niet vol?",o:["Ook sterke aandelen gaan mee als de markt valt","Pullbacks werken niet","Drie dagen is te kort"],g:[0],u:"De meeste aandelen bewegen voor een groot deel met de markt mee. Een setup op zich weegt minder dan de stroming eronder."},
+  {v:"Wat maakt er weer een volle positie van?",o:["Breedte die herstelt en een index die boven zijn eigen niveau sluit","Een vierde rode dag","Niets"],g:[0],u:"Wind mee maakt een goede setup beter; wind tegen maakt hem kleiner."}],
+ kern:"Positiegrootte is ook een mening over de markt, niet alleen over de grafiek."},
+{id:'ht1',tags:['Swing','Dag'],t:"Te weinig ruimte",markt:"Aandeel, 1 uur",seed:241,
+ pre:[{n:25,to:104,s:.4},{n:6,to:102.5,s:.3,v:.7},{bar:{c:1.4,v:2.2}}],post:[{n:4,to:106,s:.3},{n:8,to:103,s:.4}],ov:{niv:[[106.2,'weekweerstand']]},
+ ctx:[["Uitbraak","op het uurniveau, sterk volume"],["Hoger tijdframe","weekweerstand op 106,2, drie keer afgewezen"],["Stop","onder de uitbraakbar, 2,1 onder de ingang"],["Ruimte","tot de weekweerstand 1,9"]],
+ stap:[
+  {v:"Wat doe je?",o:["Long","Geen trade: de ruimte tot de weekweerstand is minder dan 1R","Short"],g:[1],u:"Een goede uitbraak met een slecht risico-rendement is een slechte trade."},
+  {v:"Wanneer wel?",o:["Na een weekslot boven 106,2, of met een scherpere ingang op een retest","Nu, met een krappere stop","Nooit"],g:[0],u:"Een krappere stop zonder reden maakt de rekensom kloppend en de trade slechter."},
+  {v:"Wat weegt het zwaarst?",o:["De afstand tot het niveau van het hogere tijdframe, gemeten in R","Het volume","De trend"],g:[0],u:"Eerst de ruimte, dan de reden."}],
+ kern:"Meet de afstand tot het volgende niveau van het hogere tijdframe in R. Onder 2R: laten."},
+{id:'st2',tags:['Swing'],t:"In de winst, en het uurniveau draait",markt:"Aandeel, 1 uur",seed:242,
+ pre:[{n:20,to:104},{n:6,to:102.2,v:.6},{n:14,to:110,s:.4,v:1.2},{n:4,to:108.3,v:1.4},{bar:{c:-.8,v:1.6}}],post:[{n:4,to:109.5,s:.3},{n:10,to:113,s:.4}],ov:{ema:[20]},
+ ctx:[["Positie","long vanaf 102,5, nu +3R"],["Uurgrafiek","breuk onder het laatste hogere dal"],["Daggrafiek","trend intact, ruim boven het dagdal"],["Plan","volgstop onder de dagdalen"]],
+ stap:[
+  {v:"Wat doe je?",o:["Alles verkopen","Een deel nemen, de rest volgens plan","Niets: het plan zegt dagdalen"],g:[1,2],u:"Het plan is gemaakt op de daggrafiek. Een deel nemen is verdedigbaar, het plan volgen ook."},
+  {v:"Welk tijdframe bepaalt je stop?",o:["Het tijdframe waarop je de trade hebt opgezet","Het laagste","Het hoogste"],g:[0],u:"Anders word je uit een dagtrade gezet door uurruis."},
+  {v:"Wat is hier de grootste fout?",o:["Midden in de trade van regels wisselen omdat de winst voelbaar is","Een deel nemen","Een volgstop gebruiken"],g:[0],u:"Het dispositie-effect in actie: winst voelt kwetsbaar, dus wil je hem vastpakken."}],
+ kern:"Beheer een trade op het tijdframe waarop hij is opgezet. Winst is geen reden om van regels te wisselen."},
+{id:'lq2',tags:['Crypto','Algo','Contrarian'],t:"Boven de gelijke toppen",markt:"SOL perpetual, 1 uur (geïndexeerd)",seed:243,
+ pre:[{n:10,to:104},{n:6,to:101},{n:6,to:104.05,s:.2},{n:6,to:101.5},{n:6,to:104,s:.2},{n:3,to:103.2},{bar:{c:1.6,h:.3,v:3.2}},{bar:{c:-1.9,h:.4,v:2.8}}],post:[{n:12,to:100.2,s:.35,v:1.2}],ov:{niv:[[104.05,'gelijke toppen']]},
+ ctx:[["Liquidatiekaart","grote cluster short-liquidaties boven 104"],["Open interest","daalt in de prik: shorts gesloten"],["Funding","licht positief"],["Na de prik","sluiting terug onder 104, hoog volume"]],
+ stap:[
+  {v:"Wat gebeurde er?",o:["De stops en liquidaties boven de gelijke toppen werden opgehaald","Een echte uitbraak","Ruis"],g:[0],u:"Gelijke toppen zijn een uithangbord voor stops. De prik haalde ze op, de sluiting liet zien dat er geen vervolg was."},
+  {v:"Wat doe je?",o:["Long, uitbraak","Short na de terugkeer onder 104","Geen trade"],g:[1,2],u:"Short met de stop boven de prik is de setup; niets doen is verdedigbaar."},
+  {v:"Waarom is de brandstof omhoog nu weg?",o:["De shorts die moesten kopen, zijn uitgekocht in de prik","Funding","Het is weekend"],g:[0],u:"Wat een squeeze voedt, is eindig. De OI-daling liet zien dat het op was."}],
+ kern:"Gelijke toppen zijn een magneet voor stops. Handel wat er na de prik gebeurt."},
+{id:'hf1',tags:['Dag','Algo'],t:"Handelspauze",markt:"Aandeel, 1 minuut",seed:244,
+ pre:[{n:15,to:100.5,s:.15},{n:3,to:109,s:.5,v:5}],post:[{bar:{c:-2.5,h:1.5,l:1.2,v:6}},{n:10,to:104,s:.5,v:2}],ov:{},
+ ctx:[["Gebeurtenis","handelspauze na +8% in twee minuten, heropent over één minuut"],["Nieuws","onbevestigd overnamegerucht"],["Veiling","onbalans wisselt van kant"],["Spread","extreem"]],
+ stap:[
+  {v:"Wat doe je?",o:["Long vóór de heropening, op het gerucht","Niets tot na de heropening en een eerste bereik","Short, het is maar een gerucht"],g:[1],u:"De heropeningsprijs is onvoorspelbaar en er is niets bevestigd."},
+  {v:"Waarom niet vóór de heropening?",o:["De heropeningsprijs kan ver van de laatste prijs liggen, en een stop werkt niet in een pauze","Geruchten kloppen nooit","Het is te laat"],g:[0],u:"Je risico is tijdens een pauze onbegrensd, wat je stop ook zegt."},
+  {v:"Wanneer eventueel wel?",o:["Na bevestiging van het nieuws en een hoger dal na de heropening","Direct bij de heropening","Nooit"],g:[0],u:"Eerst een feit, dan een structuur."}],
+ kern:"Een pauze is een gat in de tijd. Geen positie innemen die je niet kunt beheren."},
+{id:'ab2',tags:['Dag','Algo'],t:"Verkopers die niet doorkomen",markt:"Aandeel, 5 minuten",seed:245,
+ pre:[{n:12,to:99,s:.3,v:1.3},{n:14,to:99.12,s:.07,v:1.6}],post:[{n:3,to:99.5,s:.1,v:1.4},{n:12,to:101,s:.25,v:1.2}],ov:{niv:[[99,'steun 99,00']]},
+ ctx:[["Time & sales","op 99,00 in 40 minuten 150.000 stuks verkocht, de bid toont steeds 400"],["CVD","sterk dalend"],["Prijs","vlak boven 99"],["Dag","onder de VWAP"]],
+ stap:[
+  {v:"Wat doe je?",o:["Short, de verkopers zijn agressief","Geen short; een long-scenario voorbereiden","Short bij een breuk onder 99"],g:[1],u:"Veel agressieve verkoop, geen resultaat: een verborgen koper vult alles op 99."},
+  {v:"Wanneer wordt long concreet?",o:["Bij een uitbraak boven de bovenkant van de vlakke zone, op volume","Nu","Als de dag groen staat"],g:[0],u:"De verkopers moeten eerst opgeven."},
+  {v:"Wat zet de lezing ongedaan?",o:["99,00 wordt opgegeten en de koers blijft eronder","Een rode bar","De CVD daalt verder"],g:[0],u:"Dan was de koper op."}],
+ kern:"Absorptie werkt twee kanten op: een verborgen koper op steun is het spiegelbeeld van een verborgen verkoper op weerstand."},
+{id:'rb1',tags:['Algo','Contrarian'],t:"De dag van de indexopname",markt:"Aandeel, dag",seed:246,
+ pre:[{n:15,to:100.5,s:.4},{bar:{c:6,v:5}},{n:6,to:112,s:.4,v:2,v2:3.5}],post:[{bar:{c:-3.5,v:3}},{n:8,to:104,s:.5}],ov:{},
+ ctx:[["Gebeurtenis","opname in een grote index, ingang vandaag bij het slot"],["Aankondiging","zeven handelsdagen geleden, +12% sindsdien"],["Slotveiling","recordvolume verwacht"],["Positionering","veel handelaren kochten vooruit om aan de indexfondsen te verkopen"]],
+ stap:[
+  {v:"Je bent long sinds de aankondiging. Wat doe je?",o:["Verkopen in de slotveiling, aan de indexfondsen die moeten kopen","Houden, de index koopt nog jaren","Bijkopen"],g:[0],u:"De indexfondsen kopen één keer, bij het slot. Dat is je koper."},
+  {v:"Een nieuwe long na het slot?",o:["Nee: de gedwongen vraag is op","Ja, momentum","Ja, de index steunt"],g:[0],u:"Wat vooruit gekocht is om aan de index te verkopen, is verkocht."},
+  {v:"Wat vond het onderzoek over dit effect?",o:["Het effect van opname is in de loop van de decennia veel kleiner geworden, en een deel draait na de ingang terug","Het is altijd +10%","Er is geen onderzoek"],g:[0],u:"Het ‘indexeffect’ was vroeger groot en is sterk afgenomen, onder meer doordat handelaren het vooruit verhandelen."}],
+ kern:"Verkoop aan wie móét kopen, en koop niet mee als de verplichting voorbij is."}
+);
+
 const CASETAGS=['Alles','Swing','Dag','Crypto','Algo','Contrarian'];
 
 /* ---------- de beslisser ---------- */
@@ -1404,6 +1544,7 @@ function beslisBlok(w,vast){
   const S=bslState(w,vast), C=CASES.find(c=>c.id===S.id), {d,beslis}=caseData(C), klaar=S.stap>=C.stap.length;
   const ov=C.ov||{}, opts={toon:klaar?d.length:beslis+1,plek:d.length,volGem:true,beslis,h:330,
     lijnen:(ov.niv||[]).map(([p,l])=>({p,label:l,cls:'wit',rechts:true})),ema:ov.ema||[],vwap:!!ov.vwap,avwap:ov.avwap!=null?[ov.avwap]:[]};
+  if(ov.profiel){ opts.profiel=true; opts.va=true; }
   if(ov.orb){ const g=d.slice(0,ov.orb); opts.box={van:0,tot:ov.orb-1,hi:Math.max(...g.map(b=>b.h)),lo:Math.min(...g.map(b=>b.l)),label:'openingsrange'}; }
   const goedAantal=S.antw.filter((a,k)=>C.stap[k].g.includes(a)).length;
   const stappen=C.stap.map((s,k)=>{ if(k>S.stap) return ''; const a=S.antw[k];
@@ -1442,8 +1583,8 @@ IA.liqverdwijnt=(a,w)=>{ const asks=liqBoek(st.lq), mx=5200, uit=Object.keys(LIQ
    <p class="uitleg">${LIQ[st.lq].t}</p>`); };
 ACT.lq=el=>{ st.lq=el.dataset.v; };
 
-/* ---------- algoritmes herkennen aan de tape ---------- */
-const ALGOTAPE=[
+/* ---------- algoritmes herkennen aan de prints ---------- */
+const ALGOPRINTS=[
  {g:0,prints:(()=>{ const o=[]; for(let i=0;i<14;i++) o.push([`10:${String(2+Math.floor(i*30/60)).padStart(2,'0')}:${String((i*30)%60).padStart(2,'0')}`,350+(i%3)*20,'k',nl(100.02+i*.01,2)]); return o; })(),u:"Elke dertig seconden 350 tot 390 stuks op de ask, en de prijs schuift langzaam op: een opgeknipte koop op de klok, een TWAP."},
  {g:1,prints:[['11:14:02',500,'k','24,80'],['11:14:02',500,'k','24,80'],['11:14:03',500,'k','24,80'],['11:14:05',2000,'k','24,80'],['11:14:05',500,'k','24,80'],['11:14:07',1500,'k','24,80'],['11:14:08',500,'k','24,80'],['11:14:09',3000,'k','24,80'],['11:14:11',500,'k','24,80'],['11:14:12',800,'v','24,79']],u:"Alles op één prijs, 24,80, veel meer dan er zichtbaar stond, en de prijs komt er niet voorbij: een iceberg die zichzelf aanvult."},
  {g:2,prints:[['14:31:00',100,'k','3,41'],['14:31:00',100,'k','3,42'],['14:31:01',100,'k','3,43'],['14:31:01',200,'k','3,45'],['14:31:01',100,'k','3,46'],['14:31:02',100,'k','3,48'],['14:31:02',100,'k','3,50'],['14:31:02',100,'k','3,52'],['14:31:03',300,'k','3,55'],['14:31:03',100,'k','3,57']],u:"Een burst van kleine prints die de ask oplopen in een dun aandeel, zonder nieuws: een poging om andere algoritmes mee te krijgen."},
@@ -1451,11 +1592,11 @@ const ALGOTAPE=[
 ];
 const ALGOTYPE=['Uitvoeringsalgoritme (TWAP)','Iceberg','Momentum ignition','Gewone handel'];
 st.at={i:0,antw:{}};
-IA.algotape=(a,w)=>{ const S=ALGOTAPE[st.at.i], an=st.at.antw[st.at.i];
-  return blok(w,`Wie print hier? (${st.at.i+1} van ${ALGOTAPE.length})`,`<div class="tape" style="max-height:none">${S.prints.map(([t,q,z,p])=>`<div class="${z}"><span>${t}</span><span>${p}</span><span>${nlk(q)}</span><span>${z==='k'?'ask':'bid'}</span></div>`).join('')}</div>
+IA.algoprints=(a,w)=>{ const S=ALGOPRINTS[st.at.i], an=st.at.antw[st.at.i];
+  return blok(w,`Wie print hier? (${st.at.i+1} van ${ALGOPRINTS.length})`,`<div class="prints" style="max-height:none">${S.prints.map(([t,q,z,p])=>`<div class="${z}"><span>${t}</span><span>${p}</span><span>${nlk(q)}</span><span>${z==='k'?'ask':'bid'}</span></div>`).join('')}</div>
    <div class="vraag">${ALGOTYPE.map((x,j)=>`<button class="opt ${an!=null?(j===S.g?'goed':(j===an?'fout':'')):''}" data-act="ata" data-v="${j}" ${an!=null?'disabled':''}>${x}</button>`).join('')}</div>
-   ${an!=null?`<div class="terugk ${an===S.g?'goed':'fout'}">${S.u}</div>`:''}<div class="rij">${st.at.i>0?knop('atn','Vorige','data-v="-1"'):''}${st.at.i<ALGOTAPE.length-1&&an!=null?knop('atn','Volgende','data-v="1"','knop klein'):''}</div>`); };
-ACT.ata=el=>{ st.at.antw[st.at.i]=+el.dataset.v; oefendag(); }; ACT.atn=el=>{ st.at.i=Math.max(0,Math.min(ALGOTAPE.length-1,st.at.i+(+el.dataset.v))); };
+   ${an!=null?`<div class="terugk ${an===S.g?'goed':'fout'}">${S.u}</div>`:''}<div class="rij">${st.at.i>0?knop('atn','Vorige','data-v="-1"'):''}${st.at.i<ALGOPRINTS.length-1&&an!=null?knop('atn','Volgende','data-v="1"','knop klein'):''}</div>`); };
+ACT.ata=el=>{ st.at.antw[st.at.i]=+el.dataset.v; oefendag(); }; ACT.atn=el=>{ st.at.i=Math.max(0,Math.min(ALGOPRINTS.length-1,st.at.i+(+el.dataset.v))); };
 
 /* ---------- long tegen short gamma ----------
    Dezelfde schokken, twee soorten hedgers. Bij long gamma trekt het hedgen
@@ -1666,7 +1807,7 @@ function toetsScherm(mid){
 
 function tabTrainer(){ const s=view.sub.trainer;
   const inhoud= s==='beslis'?seg('bzt',CASETAGS.map(t=>[t,t]),st.bslTag)+toonIA('beslis')+beslisLijst()
-    : s==='snel'?toonIA('trainer') : s==='volume'?toonIA('kwadrant')+toonIA('delta')+toonIA('algotape') : kaartScherm();
+    : s==='snel'?toonIA('trainer') : s==='volume'?toonIA('kwadrant')+toonIA('delta')+toonIA('algoprints') : kaartScherm();
   return `<div class="hero"><div class="merk">Trainer</div><h1>Beslissen onder onzekerheid</h1><p>De grafiek tot het beslismoment, de context ernaast, en daarna in stappen: of, wanneer, waar de stop, en wat de doorslag gaf.</p></div>`+
    seg('subtr',[['beslis','Beslisser'],['snel','Snel'],['volume','Lezen'],['kaarten','Kaarten']],s)+inhoud; }
 ACT.subtr=el=>{ view.sub.trainer=el.dataset.v; render(false); return 'klaar'; };
