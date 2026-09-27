@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Tape · Technische analyse voor gevorderden</title>
+<title>Trading · Technische analyse voor gevorderden</title>
 <meta name="theme-color" content="#0d1117">
-<meta name="description" content="Tape, een cursus technische analyse voor gevorderde traders: structuur, volume, orderboek en tape, algoritmes, contrarian, setups, risico en proces, met een beslistrainer in stappen.">
+<meta name="description" content="Trading, een cursus technische analyse voor gevorderde traders: structuur, volume, orderboek en tape, algoritmes, contrarian, setups, risico en proces, met een beslistrainer in stappen.">
 <link rel="icon" type="image/svg+xml" href="/iconen/tape.svg">
 <link rel="apple-touch-icon" href="/iconen/tape-180.png">
 <style>
@@ -180,7 +180,7 @@
 <script>
 "use strict";
 /* ============================================================
-   TAPE, technische analyse voor gevorderden
+   TRADING, technische analyse voor gevorderden
    Zelfstandig bestand, werkt offline, geen verbinding naar buiten.
    Voortgang in localStorage, in dezelfde vorm als de andere cursussen
    van de Academie (done, oefdagen, kaarten), zodat de startpagina hem
@@ -1618,7 +1618,7 @@ function renderNav(){ const items=[['vandaag','Vandaag'],['trainer','Trainer'],[
 
 function tabVandaag(){
   const v=volgende(), klaar=kaartenKlaar().length, d=dagIndex(), regelLes=LESSEN[d%LESSEN.length], cs=casusScore();
-  return `<div class="hero"><div class="merk">Tape</div><h1>Technische analyse, getraind op beslissingen</h1>
+  return `<div class="hero"><div class="merk">Trading</div><h1>Technische analyse, getraind op beslissingen</h1>
    <p>Structuur, volume, orderboek, algoritmes en contrarian denken, samengebracht in één leesvolgorde, en getoetst in scenario's met meerdere stappen.</p>
    <div class="chips"><span class="chip">${cs.gespeeld} van ${CASES.length} casussen</span><span class="chip">${afgerond()} van ${LESSEN.length} lessen</span><span class="chip">${reeksDagen()} dag${reeksDagen()===1?'':'en'} op rij</span></div></div>
    <div class="kaart"><span class="label">Trainen</span><p style="margin-top:6px;font-size:14.5px">Grafiek tot het beslismoment, met de context erbij. Beslis of je instapt, wanneer, waar de stop ligt en wat de doorslag geeft.</p><div class="rij"><button class="knop" data-gaan="trainer:beslis">Beslisser</button><button class="knop stil" data-gaan="trainer:volume">Volume en delta</button><button class="knop stil" data-gaan="trainer:kaarten">Kaarten${klaar?` (${klaar})`:''}</button></div></div>
@@ -1721,7 +1721,7 @@ document.addEventListener('click',e=>{
   if(ds.kaart!=null){ const i=+ds.kaart, s=store.kaarten[i]||{box:0,due:0};
     if(ds.v==='1'){ s.box=Math.min(INTERVAL.length-1,s.box+1); s.due=dagIndex()+INTERVAL[s.box]; } else { s.box=1; s.due=dagIndex(); }
     store.kaarten[i]=s; st.kt.toon=false; oefendag(); bewaar(); render(false); return; }
-  if(ds.wis){ if(confirm('Alle voortgang van Tape op dit toestel wissen?')){ store.done={}; store.oefdagen=[]; store.kaarten={}; store.trainer={goed:0,totaal:0}; store.beslis={}; bewaar(); render(); } return; }
+  if(ds.wis){ if(confirm('Alle voortgang van Trading op dit toestel wissen?')){ store.done={}; store.oefdagen=[]; store.kaarten={}; store.trainer={goed:0,totaal:0}; store.beslis={}; bewaar(); render(); } return; }
 });
 /* Invoervelden: alleen de uitkomsten worden opnieuw getekend, niet het veld
    zelf, anders verlies je bij elke toets de cursor en bij een schuif de greep. */
