@@ -84,12 +84,22 @@ export const VERDIEPINGEN: readonly Verdieping[] = [
   {
     id: 'glp1',
     titel: 'Wat GLP-1 doet, en wat je ervan merkt',
-    kort: 'Een hormoon dat je verzadiging nabootst, met een opbouwschema en een paar signalen die tellen.',
+    kort: 'Je valt af doordat je minder eet, en dat regelt het middel in je hoofd. Met een opbouwschema.',
     weten: [
-      'GLP-1 is een hormoon dat je darm zelf maakt na het eten. Het remt je eetlust en vertraagt '
-        + 'de maaglediging, waardoor je eerder vol zit en dat langer blijft. Middelen als '
-        + 'semaglutide en liraglutide bootsen dat hormoon na; tirzepatide werkt op twee '
-        + 'hormoonroutes tegelijk.',
+      'GLP-1 is een hormoon dat je darm zelf maakt na het eten. Middelen als semaglutide en '
+        + 'liraglutide bootsen dat hormoon na; tirzepatide werkt op twee hormoonroutes tegelijk.',
+      'Het gewichtsverlies komt vrijwel helemaal doordat je minder eet. In twee onderzoeken '
+        + 'waarin deelnemers zoveel mochten eten als ze wilden, aten ze op semaglutide ongeveer '
+        + 'een kwart minder bij de diabetesdosering en ruim een derde minder bij de dosering voor '
+        + 'afvallen. Ze hadden minder honger, minder trek in vet en energierijk eten, en meer '
+        + 'greep op wat ze aten. Een hoger energieverbruik werd niet gevonden: de verbranding in '
+        + 'rust daalde precies zoveel als bij het lagere gewicht en de kleinere spiermassa hoort.',
+      'Dat gebeurt vooral in je hersenen. Het middel bereikt de gebieden onderin je hersenen '
+        + 'die honger en verzadiging regelen, en dempt ook hoe aantrekkelijk eten lijkt. Daarom '
+        + 'zeggen veel gebruikers dat de food noise stiller wordt. De tragere maaglediging, die '
+        + 'vaak als verklaring wordt genoemd, speelt vooral in de eerste weken en neemt daarna '
+        + 'grotendeels af. Het is dus geen gedrag dat je aanleert: het middel verschuift de drang '
+        + 'zelf, en alleen zolang je het gebruikt.',
       'De dosis wordt in stappen opgebouwd over meerdere maanden. Dat is niet om te rekken maar '
         + 'om de bijwerkingen draaglijk te houden: misselijkheid, een vol gevoel, boeren, lichte '
         + 'diarree of juist obstipatie, hoofdpijn. Die nemen bij de meeste mensen af naarmate het '
@@ -103,6 +113,10 @@ export const VERDIEPINGEN: readonly Verdieping[] = [
         + 'meer dan de helft van de deelnemers minstens 20 procent verloor. In SURMOUNT-5 zijn de '
         + 'twee rechtstreeks vergeleken en kwam tirzepatide er beter uit. De tablet met '
         + 'semaglutide haalt 5 tot 10 procent; de NHG-Standaard raadt die niet aan.',
+      'Er is één effect dat niet over gewicht gaat. In SELECT, bij mensen met overgewicht en al '
+        + 'bestaande hart- en vaatziekte maar zonder diabetes, gaf semaglutide ongeveer 20 procent '
+        + 'minder hartinfarcten, beroertes en sterfte door hart- en vaatziekte. Dat voordeel '
+        + 'kwam vroeg en leek grotendeels los te staan van hoeveel iemand afviel.',
       'En wat het kost, want dat hoort erbij. Bij obesitas zonder diabetes type 2 worden deze '
         + 'middelen in Nederland niet vergoed: je betaalt ze zelf, in de orde van honderdvijftig '
         + 'tot driehonderdvijftig euro per maand. Het Zorginstituut adviseerde in juli 2024 tegen '
@@ -118,10 +132,19 @@ export const VERDIEPINGEN: readonly Verdieping[] = [
       'Wat langdurig gebruik over tien of twintig jaar doet, is onbekend: de middelen bestaan '
         + 'daar nog niet lang genoeg voor. Het Zorginstituut noemde dit als een van de redenen om '
         + 'ze niet in het basispakket op te nemen.',
+      'Dat je minder eet staat vast. Welk deel daarvan uit het beloningssysteem komt en welk '
+        + 'deel uit de verzadiging, niet: dat onderscheid steunt vooral op dierproeven en kleine '
+        + 'scanstudies. Ook de proeven waarin een hoger verbruik wél werd gezien, waren '
+        + 'dierproeven; bij mensen is het niet teruggevonden.',
+      'Hoe het hartvoordeel ontstaat, is niet opgehelderd. Dat het los van het gewicht zou '
+        + 'staan, komt uit analyses die achteraf zijn gedaan.',
     ],
     inDeApp: 'De app schrijft niets voor en beoordeelt geen dosering. Wat hij wel doet is bijhouden '
       + 'wat er gebeurt: je gewichtstrend op Inzicht, en op Beweging wat je spieren vasthoudt.',
-    bron: 'EMA-productinformatie; STEP- en SURMOUNT-onderzoeken; Zorginstituut Nederland.',
+    bron: 'EMA-productinformatie; STEP- en SURMOUNT-onderzoeken; Zorginstituut Nederland; '
+      + 'Blundell e.a., Diabetes Obesity and Metabolism, 2017, en Friedrichsen e.a., idem, 2021, '
+      + 'over inname en verbruik; Gabery e.a., JCI Insight, 2020, over de hersengebieden; '
+      + 'Lincoff e.a., SELECT, New England Journal of Medicine, 2023.',
   },
   {
     id: 'stoppen',
@@ -135,18 +158,45 @@ export const VERDIEPINGEN: readonly Verdieping[] = [
         + 'deelnemers hield ongeveer 48 procent minstens 5 procent verlies vast. Een deel zat weer '
         + 'op of boven het startgewicht.',
       'De verbeteringen in bloeddruk, vetten en bloedsuiker liepen mee terug.',
-      'Wat dat zegt is niet dat het middel niet werkt. Het zegt dat het de aandoening niet '
-        + 'oplost maar openhoudt, en dat alles afhangt van wat er tijdens en ná de behandeling '
-        + 'gebeurt.',
+      'Dat het aan het stoppen ligt en niet aan toeval, laat een onderzoek met loting zien. In '
+        + 'STEP-4 gebruikte iedereen eerst twintig weken semaglutide. Daarna kreeg de helft, '
+        + 'zonder het te weten, een nepmiddel. In de 48 weken die volgden viel wie doorging nog '
+        + '7,9 procent af, en kwam wie was overgestapt 6,9 procent aan. Bij tirzepatide ging het '
+        + 'in SURMOUNT-4 net zo: na overstappen op een nepmiddel 14 procent erbij in een jaar.',
+      'De verklaring is biologisch. Na afvallen blijft het hongerhormoon ghreline verhoogd en '
+        + 'blijven de hormonen die verzadiging melden verlaagd. Een jaar later is de honger nog '
+        + 'groter dan vóór het afvallen. Het lichaam verdedigt zijn oude gewicht. Het middel houdt '
+        + 'die drang onder zolang je het gebruikt. Na stoppen komt hij terug, en dan op een lager '
+        + 'gewicht, waar de tegenwerking het sterkst is.',
+      'Wat wel verschil maakt, is bewegen. In het Deense S-LiTE-onderzoek vielen deelnemers '
+        + 'eerst af met een streng dieet en kregen ze daarna een jaar lang liraglutide, training, '
+        + 'allebei, of een nepmiddel. De combinatie hield het meeste vast. Een jaar nadat alles '
+        + 'was gestopt, hadden de groepen die hadden getraind minder teruggewonnen dan de groep '
+        + 'die alleen het middel kreeg. Bewegen voorkomt terugval niet, maar remt hem af.',
+      'Wat dat alles zegt, is niet dat het middel niet werkt. Het zegt dat het de aandoening '
+        + 'niet oplost maar in toom houdt, zoals een bloeddrukpil de bloeddruk. Wie stopt, moet '
+        + 'er bij de meeste mensen op rekenen dat het gewicht terugkomt.',
     ],
     nietWeten: [
       'Hoe je verantwoord afbouwt is niet onderzocht. Het Zorginstituut noemde dat met zoveel '
-        + 'woorden: er zijn geen studies naar afbouwen als het gewicht voldoende is gedaald.',
-      'Waaróm de ene persoon vasthoudt en de andere niet, is grotendeels onbekend.',
+        + 'woorden: er zijn geen studies naar afbouwen als het gewicht voldoende is gedaald. Over '
+        + 'een lagere onderhoudsdosis bestaan alleen waarnemingen uit de praktijk, geen onderzoek '
+        + 'met loting.',
+      'In de STEP-1-vervolgstudie stopte de begeleiding tegelijk met het middel. Of begeleiding '
+        + 'die doorloopt het terugkomen had afgeremd, zegt die studie dus niet.',
+      'Het beweegonderzoek is klein, begon met afvallen door een dieet en niet door een middel, '
+        + 'en gebruikte liraglutide. Hoe goed het overdraagt op semaglutide of tirzepatide, is '
+        + 'niet onderzocht.',
+      'Achter de gemiddelden zit een grote spreiding. Een minderheid houdt het gewicht wel '
+        + 'vast, maar waaróm de ene persoon vasthoudt en de andere niet, is grotendeels onbekend. '
+        + 'Vooraf voorspellen wie dat zal zijn, kan niemand.',
     ],
     inDeApp: 'Je gewichtstrend op Inzicht loopt door zolang je weegt, ook als een behandeling '
       + 'stopt. Dat is precies de periode waarin een trend het meest zegt.',
-    bron: 'Wilding e.a., STEP-1-vervolgstudie, Diabetes Obesity and Metabolism, 2022 (n=327).',
+    bron: 'Wilding e.a., STEP-1-vervolgstudie, Diabetes Obesity and Metabolism, 2022 (n=327); '
+      + 'Rubino e.a., STEP-4, JAMA, 2021; Aronne e.a., SURMOUNT-4, JAMA, 2024; Sumithran e.a., '
+      + 'New England Journal of Medicine, 2011; Lundgren e.a., S-LiTE, New England Journal of '
+      + 'Medicine, 2021, en Jensen e.a., eClinicalMedicine, 2024, over het jaar na stoppen.',
   },
   {
     id: 'eiwit',
