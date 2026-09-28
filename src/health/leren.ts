@@ -140,6 +140,29 @@ export const BLADZIJDEN: readonly Bladzijde[] = [
     bron: 'NHG-Standaard Diabetes mellitus type 2',
     bij: (c) => heeftMed(c, 'sglt2'),
   },
+  {
+    id: 'prik-en-stoppen',
+    titel: 'De prik voor je suiker of je gewicht, en wat er gebeurt als je stopt',
+    tekst: [
+      'Middelen als semaglutide, liraglutide en tirzepatide werken vooral in je hersenen. Je '
+        + 'krijgt minder honger, bent sneller verzadigd en eten trekt minder. Je valt af doordat '
+        + 'je minder eet, niet doordat je lichaam meer verbrandt.',
+      'Dat effect duurt zolang je het middel gebruikt. Na afvallen maakt je lichaam meer '
+        + 'hongerhormoon en minder verzadigingshormoon, en dat blijft zo. De prik houdt die drang '
+        + 'onder. Stop je, dan komt hij terug. In het onderzoek kwam binnen een jaar na stoppen bij '
+        + 'de meeste mensen ongeveer twee derde van het verloren gewicht terug, ook bij wie de '
+        + 'hele tijd begeleiding had gehad.',
+      'Dat is geen falen van jou. Het lijkt op een bloeddrukpil: die werkt ook alleen zolang je '
+        + 'hem neemt. Wat het terugkomen wel afremt, is bewegen, en dan vooral je spieren '
+        + 'gebruiken. Voorkomen doet het niet.',
+      'Overweeg je te stoppen, bespreek het dan eerst met je huisarts of praktijkondersteuner. '
+        + 'Dan kun je samen afspreken hoe je het gewicht volgt en op welk moment je weer '
+        + 'overlegt. Bij diabetes kan stoppen ook je bloedsuiker laten stijgen.',
+    ],
+    bron: 'Wilding e.a., STEP-1-vervolgstudie, 2022; Rubino e.a., STEP-4, JAMA, 2021; '
+      + 'Sumithran e.a., New England Journal of Medicine, 2011; Friedrichsen e.a., 2021',
+    bij: (c) => heeftMed(c, 'glp1'),
+  },
 ]
 
 /**

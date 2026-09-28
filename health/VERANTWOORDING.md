@@ -3477,3 +3477,9 @@ zonder middel zinloos is. Dat staat nu als `nietWeten` in het stuk.
 Een tweede: dat spierbehoud het mechanisme is achter het betere behoud na
 training in S-LiTE. Dat is plausibel maar in die studie niet aangetoond, en het
 boekje zegt het daarom niet. Zie `ONDERZOEK-MEDISCH-AFVALLEN.md` §3 en §4.
+
+Wie op Profiel de GLP-1-prik aanvinkt, kreeg bij Leren geen bladzijde die erover
+ging: de bladzijden bij insuline, SU en SGLT2 bestonden wel. `leren.ts` heeft er
+nu een, `prik-en-stoppen`, die bij die conditie bovenaan komt. Het is vaste
+tekst, net als de rest: de conditie bepaalt de volgorde, niet de inhoud. De proef
+op die volgorde is gemuteerd (de koppeling aan `glp1` weggehaald) en viel om.
