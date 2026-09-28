@@ -3448,3 +3448,38 @@ hele blok dat hem apart uit de vault haalde kon eruit.
 De les staat in het bestand zelf: de proef is de aanroep en niet het aanmaken.
 Daarom staat er onder elk bestand hier een nakijklijst, en daarom is die van 52
 niet gedraaid geweest voordat hij toegepast werd.
+
+## 54. Het boekje zei dat GLP-1 werkt via de maag, en dat klopt maar half
+
+Het GLP-1-stuk in `verdieping.ts` gaf als verklaring dat het middel de
+maaglediging vertraagt, "waardoor je eerder vol zit en dat langer blijft". Die
+verklaring staat in veel voorlichting, maar de energiebalansstudies wijzen ergens
+anders heen. De inname daalt met een kwart tot ruim een derde (Blundell 2017,
+Friedrichsen 2021), het rustmetabolisme daalt gewoon mee met het gewicht, en de
+vertraagde maaglediging is na twintig weken grotendeels verdwenen. Het werk
+gebeurt in de hypothalamus en de hersenstam. Het stuk zegt dat nu, en noemt in
+`nietWeten` wat daarbij zacht is: het aandeel van het beloningssysteem steunt
+vooral op dierproeven en kleine scanstudies.
+
+Het stuk over stoppen had één studie, de STEP-1-vervolgstudie, en die is niet
+gerandomiseerd na het staken. Er staan nu twee gerandomiseerde studies naast
+(STEP-4 en SURMOUNT-4), de fysiologie die het verklaart (Sumithran 2011), en
+S-LiTE als het enige gecontroleerde bewijs dat iets het terugkomen afremt.
+
+Bij het redigeren viel één bewering af die in de aangeleverde tekst stond: dat
+de STEP-1-deelnemers "intensieve" leefstijlbegeleiding hadden gehad en dat de
+aangeleerde structuur er dus was. De begeleiding in STEP-1 was counseling om de
+vier weken; intensieve gedragstherapie zat in STEP-3. En in de vervolgstudie
+stopte die begeleiding tegelijk met het middel. Wat de studie laat zien is dat
+het gewicht terugkomt als beide wegvallen, niet dat doorlopende begeleiding
+zonder middel zinloos is. Dat staat nu als `nietWeten` in het stuk.
+
+Een tweede: dat spierbehoud het mechanisme is achter het betere behoud na
+training in S-LiTE. Dat is plausibel maar in die studie niet aangetoond, en het
+boekje zegt het daarom niet. Zie `ONDERZOEK-MEDISCH-AFVALLEN.md` §3 en §4.
+
+Wie op Profiel de GLP-1-prik aanvinkt, kreeg bij Leren geen bladzijde die erover
+ging: de bladzijden bij insuline, SU en SGLT2 bestonden wel. `leren.ts` heeft er
+nu een, `prik-en-stoppen`, die bij die conditie bovenaan komt. Het is vaste
+tekst, net als de rest: de conditie bepaalt de volgorde, niet de inhoud. De proef
+op die volgorde is gemuteerd (de koppeling aan `glp1` weggehaald) en viel om.
