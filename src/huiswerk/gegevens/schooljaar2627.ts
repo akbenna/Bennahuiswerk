@@ -43,6 +43,7 @@
  * en `schooljaar.proef.ts` rekent ze bij elke proefdraai opnieuw na.
  */
 import type { Opgave } from './soorten'
+import { FRANS_5VWO } from './frans5vwo'
 
 const RUW: Omit<Opgave, 'id'>[] = [
   {p:'amine',v:'taal',t:'Voltooid deelwoord',lvl:1,q:'Vul in: hij heeft gisteren hard ... (werken)',a:'gewerkt',h:['Kijk naar de laatste letter van de stam.','Zit die in ’t kofschip? Dan een t.'],s:'De stam van "werken" eindigt op een letter die je toetst aan ’t kofschip.\nk zit in ’t kofschip → t.\nDus: gewerkt.'},
@@ -902,5 +903,7 @@ const RUW: Omit<Opgave, 'id'>[] = [
   {p:'wassima',v:'wiskunde',t:'Breuken met letters',lvl:3,q:'Herleid: 5x/(2y) · 6x/y Schrijf je antwoord zo eenvoudig mogelijk.',a:'15x²/y²',alt:['15x²/(y²)','15x^2/y^2','15x^2/(y^2)','15x2/y2','15x2/(y2)'],h:['breuk keer breuk = teller keer teller, gedeeld door noemer keer noemer.','x keer x is x², en y keer y is y².','Deel teller en noemer daarna door 2.'],s:'Teller: 5x · 6x = 30x².\nNoemer: 2y · y = 2y².\n30x²/2y², teller en noemer door 2: 15x²/y².'},
 ]
 
-/** De aanvulling, elk met de id die hij in de opslag heeft. */
-export const NIEUW2627: Opgave[] = RUW.map((e, i) => ({ ...e, id: 'nw26_' + i }))
+/** De aanvulling, elk met de id die hij in de opslag heeft. Wat later bijkomt
+ *  staat áchter `RUW`, zodat de nummering van wat er al was niet verschuift en
+ *  geen Leitner-kaart losraakt van zijn geschiedenis. */
+export const NIEUW2627: Opgave[] = [...RUW, ...FRANS_5VWO].map((e, i) => ({ ...e, id: 'nw26_' + i }))
