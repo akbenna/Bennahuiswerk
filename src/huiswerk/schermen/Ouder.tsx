@@ -25,8 +25,8 @@ import { isBeheerst } from '../leitner'
 import { zwakteAnalyse } from '../volgsysteem'
 import { bewaarAls, leerprofielData, rapportTekst } from '../rapport'
 import { advies, bandNaam, isAf } from '../leerscan'
-import { MIN_PAREN, isoVan, schatting, toetsStand, weekUren } from '../planbord'
-import { dagLabel } from './Planbord'
+import { MIN_PAREN, actueel, isoVan, schatting, toetsStand, weekUren } from '../planbord'
+import { STATUSKLEUR, dagLabel } from './Planbord'
 import {
   KindAccounts, Kindwachtwoorden, Leerlijnpaneel, Leerprofielpaneel, Weektaakbeheer, Zomerpaneel,
 } from './Panelen'
@@ -857,10 +857,6 @@ export function Leerscanpaneel({ stand }: { stand: Stand }): ReactNode {
  * schema, en zo nee, voor welk vak niet. Geen puntentelling, geen lijstje met
  * wat er allemaal niet gedaan is.
  */
-const STATUSKLEUR: Record<string, string> = {
-  'klaar': '#6b7163', 'nog niet begonnen': '#3a6ea0', 'op schema': '#48792c', 'loopt achter': '#C23728',
-}
-
 export function Planpaneel({ stand, nuMs }: { stand: Stand; nuMs: number }): ReactNode {
   const vandaag = isoVan(new Date(nuMs))
   const rijen = Object.entries(PROFIELEN)
@@ -877,11 +873,19 @@ export function Planpaneel({ stand, nuMs }: { stand: Stand; nuMs: number }): Rea
         is tot de toets.
       </p>
       {rijen.map(({ pid, prof, plan }) => {
-        const pl = plan as NonNullable<typeof plan>
+        /* Zoals het bord er vandaag uitziet, ook als zij het sinds gisteren
+           niet geopend heeft. Alleen om te tonen; bewaren doet haar scherm. */
+        const pl = actueel(plan as NonNullable<typeof plan>, vandaag)
         const standen = toetsStand(pl, vandaag).filter((s) => s.dagen >= -7)
         const week = weekUren(pl, vandaag)
         const s = schatting(pl.blokken)
-        const vorigeWeek = pl.blokken.filter((b) => b.datum < vandaag && b.datum >= isoVan(new Date(nuMs - 7 * 86400000)))
+        /* Gemeten op de dag waarop een blok éérst gepland stond: een blok dat
+           steeds een dag opschuift telt dus gewoon mee als niet gedaan. */
+        const weekGeleden = isoVan(new Date(nuMs - 7 * 86400000))
+        const vorigeWeek = pl.blokken.filter((b) => {
+          const d = b.eerst ?? b.datum
+          return d < vandaag && d >= weekGeleden
+        })
         const af = vorigeWeek.filter((b) => b.gedaan).length
         return (
           <div key={pid} style={{ padding: '10px 0', borderTop: '1px solid var(--line)' }}>
@@ -895,11 +899,11 @@ export function Planpaneel({ stand, nuMs }: { stand: Stand; nuMs: number }): Rea
             {standen.map((st) => (
               <div key={st.toets.id} className="row" style={{ justifyContent: 'space-between', fontSize: 14, marginTop: 4, gap: 8 }}>
                 <span>
-                  {VAKNAAM[st.toets.vak] ?? st.toets.vak} · {st.toets.titel}{' '}
+                  {st.toets.opdracht ? '📎 ' : ''}{VAKNAAM[st.toets.vak] ?? st.toets.vak} · {st.toets.titel}{' '}
                   <span className="muted">({dagLabel(st.toets.datum, vandaag)}, {st.gedaan}/{st.totaal})</span>
                   {st.krap && st.dagen > 0 && <span style={{ color: 'var(--accent)' }}> · krap</span>}
                 </span>
-                <span className="tag" style={{ color: '#fff', background: STATUSKLEUR[st.status] ?? '#6b7163', whiteSpace: 'nowrap' }}>
+                <span className="tag" style={{ color: '#fff', background: STATUSKLEUR[st.status], whiteSpace: 'nowrap' }}>
                   {st.status}
                 </span>
               </div>

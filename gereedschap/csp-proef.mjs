@@ -438,7 +438,7 @@ const PAGINAS = [
       if (!/Planbord van Amaani/.test(bordkop ?? '')) {
         return `#planbord opende het bord niet: ${bordkop}`
       }
-      await pagina.getByRole('button', { name: /Toets erbij/ }).first().click()
+      await pagina.getByRole('button', { name: /Toets of opdracht/ }).first().click()
       const overEenWeek = await pagina.evaluate(() => {
         const d = new Date(Date.now() + 7 * 86400000)
         const t = (n) => String(n).padStart(2, '0')
@@ -458,6 +458,17 @@ const PAGINAS = [
       if (!(await vandaagKaart.getByText(/geschat \d+/).count())) {
         return 'de echte tijd werd niet vastgelegd'
       }
+      /* Zelf bijsturen: een open blok naar een andere dag zetten. Daarna hoort
+         het als "zelf gezet" te staan, anders is de knop alleen versiering. */
+      const open = pagina.getByRole('button', { name: 'aanpassen', exact: true }).first()
+      if (!(await open.count())) return 'er staat geen knop om een blok aan te passen'
+      await open.click()
+      const dagkeuze = pagina.locator('label', { hasText: /^Dag/ }).locator('select').first()
+      if (!(await dagkeuze.count())) return 'aanpassen gaf geen keuze voor de dag'
+      const opties = await dagkeuze.locator('option').evaluateAll((os) => os.map((o) => o.value))
+      if (opties.length < 2) return `een blok kon niet naar een andere dag (${opties.length} keuzes)`
+      await dagkeuze.selectOption(opties[opties.length - 1])
+      if (!(await pagina.getByText(/zelf gezet/).count())) return 'een verplaatst blok stond niet vast'
       await pagina.screenshot({ path: 'gereedschap/pagina-huiswerk-planbord.png' })
       await pagina.locator('button.back').first().click()
       if (!(await pagina.locator('.card', { hasText: 'Vandaag op je planbord' }).count())) {

@@ -9,8 +9,8 @@
  */
 import { describe, expect, it } from 'vitest'
 import {
-  capaciteit, dagenTussen, herplan, knipOnderdelen, leegPlan, schatting, schuif, toetsStand,
-  vinkAf, voegPlanSamen, weekUren, zetEcht, zetToets,
+  actueel, capaciteit, dagenTussen, herplan, knipOnderdelen, leegPlan, maakLos, schatting, schuif,
+  toetsStand, verplaats, vinkAf, voegPlanSamen, weekUren, zetDagtijd, zetEcht, zetEigen, zetToets,
 } from './planbord'
 import type { Blok, Planstand, Toets } from './planbord'
 
@@ -38,7 +38,7 @@ describe('de dagen', () => {
 
   it('houdt tachtig procent van een dag aan', () => {
     /* 1 oktober 2026 is een donderdag: 120 minuten, dus 96 te plannen. */
-    expect(capaciteit([150, 90, 120, 120, 120, 120, 180], VANDAAG)).toBe(96)
+    expect(capaciteit({ perDag: [150, 90, 120, 120, 120, 120, 180] }, VANDAAG)).toBe(96)
   })
 })
 
@@ -73,6 +73,25 @@ describe('de terugplanning', () => {
     expect(p.blokken).toHaveLength(0)
   })
 
+  it('zet niets op een dag die op nul staat, ook niet als het nergens past', () => {
+    /* Dinsdag is sportdag. Tien uur stof met de toets donderdag past niet, maar
+       de overloop hoort op de dagen die er wél zijn, niet op dinsdag. */
+    let p = leegPlan()
+    p = { ...p, perDag: [150, 90, 0, 120, 120, 120, 180] }
+    p = zetToets(p, toets({
+      id: 'x', datum: '2026-10-08', perOnderdeel: 60,
+      onderdelen: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+    }))
+    p = herplan(p, VANDAAG, 1)
+    expect(p.blokken.some((b) => b.vol)).toBe(true)
+    for (const b of p.blokken) expect(b.datum, b.id).not.toBe('2026-10-06')
+  })
+
+  it('maakt geen blok voor een toets van vandaag', () => {
+    const p = plan(toets({ id: 'nu', datum: VANDAAG }))
+    expect(p.blokken).toHaveLength(0)
+  })
+
   it('laat een dag nooit over de capaciteit lopen zolang er elders ruimte is', () => {
     const p = plan(
       toets({ id: 'w', datum: '2026-10-07' }),
@@ -83,7 +102,7 @@ describe('de terugplanning', () => {
     for (const b of p.blokken) perDag.set(b.datum, (perDag.get(b.datum) ?? 0) + b.geschat)
     for (const [dag, min] of perDag) {
       const vol = p.blokken.some((b) => b.datum === dag && b.vol)
-      if (!vol) expect(min, dag).toBeLessThanOrEqual(capaciteit(p.perDag, dag))
+      if (!vol) expect(min, dag).toBeLessThanOrEqual(capaciteit(p, dag))
     }
   })
 
@@ -118,6 +137,26 @@ describe('de terugplanning', () => {
     expect(stand?.krap).toBe(true)
   })
 
+  it('noemt elke toets krap die een blok op een overvolle dag heeft', () => {
+    /* Drie toetsen die elk afzonderlijk zouden passen, maar samen niet. */
+    const p = plan(
+      toets({ id: 'a', datum: '2026-10-05', onderdelen: ['1', '2', '3'], perOnderdeel: 60 }),
+      toets({ id: 'b', datum: '2026-10-05', vak: 'natuurkunde', onderdelen: ['1', '2', '3'], perOnderdeel: 60 }),
+      toets({ id: 'c', datum: '2026-10-05', vak: 'frans', onderdelen: ['1', '2', '3'], perOnderdeel: 60 }),
+    )
+    const krap = toetsStand(p, VANDAAG).filter((s) => s.krap).map((s) => s.toets.id)
+    for (const id of new Set(p.blokken.filter((b) => b.vol).map((b) => b.toets))) {
+      expect(krap, id).toContain(id)
+    }
+    expect(krap.length).toBeGreaterThan(0)
+  })
+
+  it('geeft een opdracht met deadline geen herhaal- of overhoorblok', () => {
+    const p = plan(toets({ id: 'oo', datum: '2026-10-09', vak: 'oeno', opdracht: true, onderdelen: ['Onderzoek', 'Schrijven'] }))
+    expect(p.blokken.map((b) => b.soort)).toEqual(['eerste', 'eerste'])
+    for (const b of p.blokken) expect(b.datum < '2026-10-09', b.id).toBe(true)
+  })
+
   it('geeft elk blok een vast id dat een tweede planning herkent', () => {
     const a = plan(toets({ id: 'w', datum: '2026-10-07' }))
     const b = herplan(a, '2026-10-02', 2000)
@@ -145,6 +184,12 @@ describe('herplannen zonder verwijt', () => {
     expect(toetsStand(p, VANDAAG)[0]?.status).toBe('nog niet begonnen')
     /* Niets gedaan, drie dagen verder: achter. */
     expect(toetsStand(p, '2026-10-04')[0]?.status).toBe('loopt achter')
+    /* Ook nadat het bord op die dag opnieuw gepland heeft: herplannen schuift de
+       blokken naar voren maar wist de achterstand niet uit. Dit is precies wat
+       er gebeurt als ze het bord opent. */
+    const herpland = herplan(p, '2026-10-04', 9000)
+    for (const b of herpland.blokken) expect(b.datum >= '2026-10-04', b.id).toBe(true)
+    expect(toetsStand(herpland, '2026-10-04')[0]?.status).toBe('loopt achter')
     /* Alles van de eerste dagen af: op schema. */
     let q = p
     for (const b of p.blokken.filter((x) => x.datum < '2026-10-04')) q = vinkAf(q, b.id, true, 9)
@@ -152,6 +197,76 @@ describe('herplannen zonder verwijt', () => {
     let r = q
     for (const b of p.blokken) r = vinkAf(r, b.id, true, 9)
     expect(toetsStand(r, '2026-10-04')[0]?.status).toBe('klaar')
+  })
+})
+
+describe('zelf bijsturen', () => {
+  it('laat een blok dat ze zelf verplaatst staan bij het herplannen', () => {
+    let p = plan(toets({ id: 'w', datum: '2026-10-07' }))
+    const b = p.blokken.find((x) => x.soort === 'eerste') as Blok
+    p = verplaats(p, b.id, '2026-10-05')
+    const later = herplan(p, '2026-10-02', 2)
+    expect(later.blokken.find((x) => x.id === b.id)?.datum).toBe('2026-10-05')
+    expect(later.blokken.find((x) => x.id === b.id)?.vast).toBe(true)
+    /* En los gemaakt mag het bord hem weer neerzetten waar het wil. */
+    const los = herplan(maakLos(later, b.id), '2026-10-02', 3)
+    expect(los.blokken.find((x) => x.id === b.id)?.vast).toBeUndefined()
+  })
+
+  it('plant een vastgezet blok opnieuw als de dag voorbij is en het niet af is', () => {
+    let p = plan(toets({ id: 'w', datum: '2026-10-07' }))
+    const b = p.blokken.find((x) => x.soort === 'eerste') as Blok
+    p = verplaats(p, b.id, '2026-10-02')
+    const later = herplan(p, '2026-10-03', 2)
+    const nu = later.blokken.find((x) => x.id === b.id) as Blok
+    expect(nu.datum >= '2026-10-03').toBe(true)
+    expect(nu.vast).toBeUndefined()
+  })
+
+  it('houdt haar eigen minuten aan, ook als het bord iets anders zou rekenen', () => {
+    let p = plan(toets({ id: 'w', datum: '2026-10-07', onderdelen: ['A', 'B', 'C', 'D', 'E', 'F'], perOnderdeel: 40 }))
+    /* Drie metingen die een factor twee geven. */
+    for (const b of p.blokken.filter((x) => x.soort === 'eerste').slice(0, 3)) {
+      p = vinkAf(p, b.id, true, 2); p = zetEcht(p, b.id, 80)
+    }
+    const open = p.blokken.filter((x) => x.soort === 'eerste' && !x.gedaan)
+    p = zetEigen(p, (open[0] as Blok).id, 25)
+    const q = herplan(p, '2026-10-02', 4)
+    expect(q.blokken.find((x) => x.id === (open[0] as Blok).id)?.geschat).toBe(25)
+    expect(q.blokken.find((x) => x.id === (open[1] as Blok).id)?.geschat).toBe(80)
+  })
+
+  it('plant minder op een dag waar ze minder tijd heeft', () => {
+    let p = plan(toets({ id: 'w', datum: '2026-10-07' }))
+    p = zetDagtijd(p, '2026-10-03', 0)
+    p = herplan(p, VANDAAG, 5)
+    expect(p.blokken.filter((b) => b.datum === '2026-10-03')).toHaveLength(0)
+    expect(capaciteit(p, '2026-10-03')).toBe(0)
+    expect(capaciteit(zetDagtijd(p, '2026-10-03', null), '2026-10-03')).toBe(144)
+  })
+
+  it('bewaart wat af, vast of zelf geschat is als ze de stof aanpast', () => {
+    let p = plan(toets({ id: 'w', datum: '2026-10-07', onderdelen: ['A', 'B', 'C'] }))
+    const [a, b2] = p.blokken.filter((x) => x.soort === 'eerste') as [Blok, Blok]
+    p = vinkAf(p, a.id, true, 1)
+    p = zetEigen(p, b2.id, 15)
+    p = zetToets(p, toets({ id: 'w', datum: '2026-10-07', onderdelen: ['A', 'B nieuw'], bijgewerkt: 2 }))
+    p = herplan(p, VANDAAG, 6)
+    expect(p.blokken.find((x) => x.id === a.id)?.gedaan).toBe(true)
+    const nb = p.blokken.find((x) => x.id === b2.id) as Blok
+    expect(nb.taak).toBe('B nieuw')
+    expect(nb.geschat).toBe(15)
+    expect(p.blokken.some((x) => x.id === 'w|eerste|2')).toBe(false)
+  })
+})
+
+describe('actueel', () => {
+  it('plant een bord van gisteren opnieuw, zodat elk scherm vandaag hetzelfde ziet', () => {
+    const p = plan(toets({ id: 'w', datum: '2026-10-07' }))
+    expect(actueel(p, VANDAAG)).toBe(p)
+    const morgen = actueel(p, '2026-10-02')
+    expect(morgen.geplandVoor).toBe('2026-10-02')
+    for (const b of morgen.blokken) expect(b.datum >= '2026-10-02', b.id).toBe(true)
   })
 })
 
@@ -203,6 +318,18 @@ describe('samenvoegen', () => {
     expect(samen.blokken.find((b) => b.id === b2.id)?.gedaan).toBe(true)
     expect(samen.geplandVoor).toBe('2026-10-02')
     expect(new Set(samen.blokken.map((b) => b.id)).size).toBe(samen.blokken.length)
+  })
+
+  it('laat een weggehaald vinkje weg, ook als het andere toestel het nog heeft', () => {
+    const basis = plan(toets({ id: 'w', datum: '2026-10-07' }))
+    const b1 = basis.blokken[0] as Blok
+    const telefoon = vinkAf(basis, b1.id, true, 10)
+    const tablet = vinkAf(telefoon, b1.id, false, 20)
+    expect(voegPlanSamen(telefoon, tablet).blokken.find((b) => b.id === b1.id)?.gedaan).toBe(false)
+    expect(voegPlanSamen(tablet, telefoon).blokken.find((b) => b.id === b1.id)?.gedaan).toBe(false)
+    /* En wie daarna opnieuw aanvinkt, wint weer. */
+    const weer = vinkAf(tablet, b1.id, true, 30)
+    expect(voegPlanSamen(telefoon, weer).blokken.find((b) => b.id === b1.id)?.gedaan).toBe(true)
   })
 
   it('laat een weggehaalde toets weg blijven', () => {

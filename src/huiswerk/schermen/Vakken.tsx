@@ -26,7 +26,7 @@ import { INSIGNES, dagMissie, rangVoor } from '../missie'
 import { Klapkaart } from '../onderdelen'
 import { Vraagveld } from './Vraagveld'
 import type { Uitslag } from '../vraagbaak'
-import { blokkenOp, isoVan, toetsStand } from '../planbord'
+import { actueel, blokkenOp, isoVan, toetsStand } from '../planbord'
 import type { Planstand } from '../planbord'
 import { Blokregel, dagLabel } from './Planbord'
 
@@ -435,11 +435,15 @@ export function Vakken(p: VakkenProps): ReactNode {
  * vandaag af moet. Zonder planbord blijft het een knop, en alleen in de
  * bovenbouw, want een kind in groep 5 heeft geen toetsrooster.
  */
-function Planstrook({ plan, nuMs, bewaar, open, bovenbouw }: {
+function Planstrook({ plan: opgeslagen, nuMs, bewaar, open, bovenbouw }: {
   plan: Planstand | undefined; nuMs: number; bewaar: (p: Planstand) => void
   open: () => void; bovenbouw: boolean
 }): ReactNode {
   const vandaag = isoVan(new Date(nuMs))
+  /* Zoals het bord er vandaag uitziet, ook als het sinds gisteren niet meer
+     geopend is: anders staat hier "niets gepland" terwijl er werk ligt. */
+  const plan = opgeslagen ? actueel(opgeslagen, vandaag) : undefined
+  const herplan = (q: Planstand): void => bewaar(actueel({ ...q, geplandVoor: null }, vandaag))
   const toetsen = plan ? toetsStand(plan, vandaag).filter((s) => s.dagen >= 0) : []
   if (!plan || toetsen.length === 0) {
     if (!bovenbouw) return null
@@ -460,7 +464,7 @@ function Planstrook({ plan, nuMs, bewaar, open, bovenbouw }: {
       </div>
       {eerst && (
         <div className="muted" style={{ fontSize: 13, marginTop: 2 }}>
-          Eerstvolgende toets: {VAKNAAM[eerst.toets.vak] ?? eerst.toets.vak},{' '}
+          Eerstvolgende {eerst.toets.opdracht ? 'deadline' : 'toets'}: {VAKNAAM[eerst.toets.vak] ?? eerst.toets.vak},{' '}
           {dagLabel(eerst.toets.datum, vandaag)}
           {toetsen.length > 1 && ` · daarna nog ${toetsen.length - 1}`}
         </div>
@@ -468,7 +472,9 @@ function Planstrook({ plan, nuMs, bewaar, open, bovenbouw }: {
       {vandaagBlokken.length === 0 && (
         <p className="muted" style={{ fontSize: 14, margin: '8px 0 0' }}>Vandaag niets gepland. 🎉</p>
       )}
-      {vandaagBlokken.map((b) => <Blokregel key={b.id} blok={b} plan={plan} vandaag={vandaag} bewaar={bewaar} />)}
+      {vandaagBlokken.map((b) => (
+        <Blokregel key={b.id} blok={b} plan={plan} vandaag={vandaag} bewaar={bewaar} herplan={herplan} />
+      ))}
       <div className="wrap" style={{ marginTop: 10 }}>
         <button type="button" className="btn sm" onClick={open}>Hele planning →</button>
       </div>
