@@ -109,6 +109,8 @@ export const ONDERWERPICOON: Record<string, string> = {
   'Korte en lange klank':'🔤','ei of ij':'✏️','au of ou':'✏️','Verkleinwoorden':'🧸','Hakwoorden & klankgroepen':'🔨','d of t aan het eind':'📝','Meervoud':'🔁','Werkwoorden (nu)':'🏃','Wie, wat, waar, waarom':'❓','Volgorde':'🔢',
   'Leesteksten':'📚','ng of nk':'🔤','cht-woorden':'📝','Samenstellingen':'🔗','Verhoudingstabellen':'⚖️',
   'Molverhoudingen':'🧮',
+  // Amaani, 5 vwo (zie gegevens/exact5vwo.ts)
+  'Redox':'🔋','Evenwicht':'🔁','Krachten ontbinden':'📐','Cirkelbeweging & gravitatie':'🪐',
   // Wassima · zaakvakken & talen verdieping
   'Vertering':'🍎','Ademhaling':'🫁','Bloedsomloop':'❤️','Fotosynthese':'🌱',
   'Klimaatzones':'🌍','Kaartvaardigheden':'🧭','Bevolking':'👥','Endogeen & exogeen':'🌋','Tenses':'⏱️',

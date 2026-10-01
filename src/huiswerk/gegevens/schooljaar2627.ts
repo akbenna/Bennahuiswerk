@@ -44,6 +44,7 @@
  */
 import type { Opgave } from './soorten'
 import { FRANS_5VWO } from './frans5vwo'
+import { EXACT_5VWO } from './exact5vwo'
 
 const RUW: Omit<Opgave, 'id'>[] = [
   {p:'amine',v:'taal',t:'Voltooid deelwoord',lvl:1,q:'Vul in: hij heeft gisteren hard ... (werken)',a:'gewerkt',h:['Kijk naar de laatste letter van de stam.','Zit die in ’t kofschip? Dan een t.'],s:'De stam van "werken" eindigt op een letter die je toetst aan ’t kofschip.\nk zit in ’t kofschip → t.\nDus: gewerkt.'},
@@ -906,4 +907,4 @@ const RUW: Omit<Opgave, 'id'>[] = [
 /** De aanvulling, elk met de id die hij in de opslag heeft. Wat later bijkomt
  *  staat áchter `RUW`, zodat de nummering van wat er al was niet verschuift en
  *  geen Leitner-kaart losraakt van zijn geschiedenis. */
-export const NIEUW2627: Opgave[] = [...RUW, ...FRANS_5VWO].map((e, i) => ({ ...e, id: 'nw26_' + i }))
+export const NIEUW2627: Opgave[] = [...RUW, ...FRANS_5VWO, ...EXACT_5VWO].map((e, i) => ({ ...e, id: 'nw26_' + i }))
