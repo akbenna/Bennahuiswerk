@@ -76,16 +76,33 @@ const cors = {
 
 const ANTHROPIC = "https://api.anthropic.com/v1/messages";
 const MODEL_TERUGVAL = "claude-sonnet-5";
+/* Namen van OpenAI-modellen verlopen net zo goed, en dit is een terugval en
+   geen keuze: de echte naam hoort in `kal_config` te staan onder
+   `model_herkenning_openai`. Klopt hij niet, dan zegt OpenAI dat zelf en komt
+   die zin via de foutmelding in de app terecht, mét de naam erin. */
+const MODEL_TERUGVAL_OPENAI = "gpt-4o";
 
 /* De modelnaam staat in kal_config en niet hier. Namen verlopen: die van
    ProVita's chat-ai bestaat niet meer op deze sleutel, en dan valt een functie
-   stil zonder dat iemand het merkt. Eén regel in de database wisselt hem. */
-let modelCache: { naam: string; tot: number } | null = null;
-async function modelNaam(db: ReturnType<typeof createClient>, sleutel: string) {
-  if (modelCache && modelCache.tot > Date.now()) return modelCache.naam;
+   stil zonder dat iemand het merkt. Eén regel in de database wisselt hem.
+
+   DE CACHE HAD EEN SLEUF EN TWEE GEBRUIKERS
+
+   Er werd gevraagd naar `model_herkenning` en naar `model_import`, en beide
+   antwoorden gingen in dezelfde `modelCache`. Wie als eerste vroeg, bepaalde
+   dus vijf minuten lang wat de ander kreeg: een import die met het
+   herkenningsmodel draaide, of andersom, zonder dat iets dat meldde. Met een
+   derde en vierde sleutel erbij (de OpenAI-namen) zou dat alleen maar vaker
+   misgaan. De cache staat nu per naam. */
+const modelCache = new Map<string, { naam: string; tot: number }>();
+async function modelNaam(
+  db: ReturnType<typeof createClient>, sleutel: string, terugval = MODEL_TERUGVAL,
+) {
+  const staat = modelCache.get(sleutel);
+  if (staat && staat.tot > Date.now()) return staat.naam;
   const { data } = await db.from("kal_config").select("waarde").eq("sleutel", sleutel).maybeSingle();
-  const naam = (data?.waarde as string) || MODEL_TERUGVAL;
-  modelCache = { naam, tot: Date.now() + 300_000 };
+  const naam = (data?.waarde as string) || terugval;
+  modelCache.set(sleutel, { naam, tot: Date.now() + 300_000 });
   return naam;
 }
 
@@ -490,6 +507,222 @@ async function claude(
   return { data: blok.input, in: d.usage?.input_tokens ?? 0, uit: d.usage?.output_tokens ?? 0 };
 }
 
+// =============================================================================
+// TWEE AANBIEDERS, EEN PIJPLIJN
+// =============================================================================
+//
+// De herkenning blijft precies zoals hij was: het model benoemt en kiest, de
+// server zoekt in NEVO en rekent. Alleen wie er aan de andere kant van de lijn
+// zit kan nu verschillen, want een tester mag zijn eigen sleutel geven.
+//
+// Beide aanbieders kunnen hetzelfde: een schema meegeven en het antwoord
+// gestructureerd terugkrijgen. Bij Anthropic heet dat een tool met
+// `input_schema`, bij OpenAI een function met `parameters`. De vorm verschilt,
+// de belofte niet, en `vraagModel` is de enige plek waar dat verschil staat.
+//
+// WAT ER ONGETOETST IS, EN DAT HOORT HIER TE STAAN
+//
+// Het OpenAI-pad is nooit tegen een echte sleutel gedraaid. De vorm van het
+// verzoek en het uitpakken van het antwoord staan hieronder en zijn na te
+// lezen, maar of GPT bij een foto van een Nederlands bord even bruikbare
+// porties geeft als Claude, is een vraag die alleen een echte aanroep
+// beantwoordt. De gouden waarden van deze app zijn op Claude tot stand gekomen.
+//
+// `kal_ai_log` bewaart per aanroep welk model het deed, dus een herkenning die
+// er raar uitziet is naar zijn aanbieder terug te leiden. Dat is het minste wat
+// erbij hoort zolang dit niet uitgeprobeerd is.
+
+// =============================================================================
+// DE SLEUTELKLUIS
+// =============================================================================
+//
+// Een tester mag zijn eigen AI-sleutel opgeven. Die moet ergens staan, en waar
+// precies bepaalt wat een inbraak oplevert.
+//
+// WAAROM NIET IN SUPABASE VAULT
+//
+// Omdat die op dit project niet te gebruiken is: het schema staat er, maar de
+// rol die de functies bezit heeft er geen schrijfrecht op en kan zichzelf dat
+// niet geven. Dat is nagegaan en niet aangenomen; zie bestand 49.
+//
+// WAAROM DIT BETER IS DAN VAULT ZOU ZIJN GEWEEST
+//
+// Bij Vault kan de database zelf ontsleutelen. Wie een export van die database
+// in handen krijgt, krijgt de sleutels erbij.
+//
+// Hier niet. De hoofdsleutel staat in de omgeving van deze functie, naast
+// `ANTHROPIC_API_KEY`, en nergens anders. De database bewaart alleen
+// cijfertekst en kan er niets mee: geen functie, geen beheerder en geen export
+// komt eraan. Je hebt allebei nodig, en die twee staan op verschillende
+// plekken.
+//
+// WAAROM HIER EN NIET MET PGCRYPTO
+//
+// Dat was het plan en het is het niet geworden. `pgcrypto` versleutelt in de
+// database, en dan moet de hoofdsleutel dáárheen: over de lijn bij elke
+// aanroep, mogelijk in een logregel, en in elk geval binnen bereik van wie de
+// database beheert. Dan is de winst van hierboven weg.
+//
+// Versleutelen in deze functie vraagt geen uitbreiding, geen sleutel in de
+// database, en het is dezelfde AES-GCM die overal onder zit. De database ziet
+// de sleutel nooit, ook niet even.
+//
+// WAT DE PRIJS IS
+//
+// Raakt `SLEUTELKLUIS` kwijt, dan is elke opgeslagen sleutel onleesbaar en
+// moeten testers hem opnieuw invullen. Dat is te overzien: een API-sleutel is
+// zo opnieuw gemaakt, en de app zegt het dan ook met zoveel woorden in plaats
+// van stil te vallen.
+//
+// EN WAT HET NIET DOET
+//
+// Het beschermt niet tegen iemand die bij deze omgeving én bij de database kan.
+// Dat kan geen enkel ontwerp waarin één dienst beide nodig heeft om te werken.
+
+const KLUIS_VERSIE = "v1";
+
+/** De hoofdsleutel uit de omgeving: 32 bytes, als base64. */
+let kluisCache: CryptoKey | null = null;
+async function kluissleutel(): Promise<CryptoKey> {
+  if (kluisCache) return kluisCache;
+  const b64 = Deno.env.get("SLEUTELKLUIS");
+  if (!b64) throw new Error("Geen SLEUTELKLUIS ingesteld in de Supabase-secrets");
+  const ruw = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+  if (ruw.length !== 32) {
+    throw new Error(`SLEUTELKLUIS is ${ruw.length} bytes en moet er 32 zijn`);
+  }
+  kluisCache = await crypto.subtle.importKey("raw", ruw, "AES-GCM", false,
+    ["encrypt", "decrypt"]);
+  return kluisCache;
+}
+
+const naarB64 = (b: Uint8Array) => btoa(String.fromCharCode(...b));
+const uitB64 = (s: string) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+
+/* Elke versleuteling krijgt een eigen beginwaarde. Dat is bij AES-GCM geen
+   verfraaiing maar een eis: twee keer dezelfde beginwaarde met dezelfde sleutel
+   maakt de versleuteling onveilig. Hij hoeft niet geheim te zijn en gaat daarom
+   gewoon mee in de opgeslagen tekst.
+
+   Het versienummer ervoor staat er zodat een latere wijziging aan dit recept te
+   herkennen is aan de tekst zelf, in plaats van aan een gok. */
+async function versleutel(tekst: string): Promise<string> {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const uit = await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv }, await kluissleutel(), new TextEncoder().encode(tekst));
+  return [KLUIS_VERSIE, naarB64(iv), naarB64(new Uint8Array(uit))].join(".");
+}
+
+async function ontsleutel(cijfer: string): Promise<string> {
+  const [versie, iv, brok] = cijfer.split(".");
+  if (versie !== KLUIS_VERSIE) {
+    throw new Error(`Onbekende versleuteling (${versie}); deze sleutel is niet te lezen`);
+  }
+  const uit = await crypto.subtle.decrypt(
+    { name: "AES-GCM", iv: uitB64(iv) }, await kluissleutel(), uitB64(brok));
+  return new TextDecoder().decode(uit);
+}
+
+/* De voorwaarden aan een sleutel staan hier én in de database (bestand 49).
+   Dat is met opzet dubbel: deze kant geeft een leesbare melding voordat er iets
+   wordt opgeborgen, en die kant is de grens die geldt ook als er ooit een
+   andere aanroeper komt. */
+function klachtOverSleutel(aanbieder: string, sleutel: string): string | null {
+  if (aanbieder !== "anthropic" && aanbieder !== "openai") return "Onbekende aanbieder";
+  if (!sleutel || sleutel !== sleutel.trim() || /\s/.test(sleutel)) {
+    return "Er zit witruimte in die sleutel. Plak hem nog eens, zonder spatie of regeleinde.";
+  }
+  if (sleutel.length < 30) return "Dat is te kort voor een sleutel";
+  if (aanbieder === "anthropic" && !sleutel.startsWith("sk-ant-")) {
+    return "Een sleutel van Anthropic begint met sk-ant-. Staat er alleen sk-, dan is het er een van OpenAI.";
+  }
+  if (aanbieder === "openai" && (!sleutel.startsWith("sk-") || sleutel.startsWith("sk-ant-"))) {
+    return "Een sleutel van OpenAI begint met sk-, en niet met sk-ant-.";
+  }
+  return null;
+}
+
+const OPENAI = "https://api.openai.com/v1/chat/completions";
+
+/* De inhoudsblokken van Anthropic naar die van OpenAI. Alleen tekst en beeld,
+   want meer stuurt deze functie niet. */
+function naarOpenai(blok: unknown): unknown {
+  const b = blok as { type?: string; text?: string; source?: { media_type?: string; data?: string } };
+  if (b.type === "image" && b.source) {
+    return {
+      type: "image_url",
+      image_url: { url: `data:${b.source.media_type ?? "image/jpeg"};base64,${b.source.data}` },
+    };
+  }
+  return { type: "text", text: b.text ?? "" };
+}
+
+async function gpt(
+  key: string,
+  MODEL: string,
+  systeem: string,
+  inhoud: unknown[],
+  schema: Record<string, unknown>,
+  naam: string,
+  maxTokens = 6000,
+) {
+  const r = await fetch(OPENAI, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+    body: JSON.stringify({
+      model: MODEL,
+      max_completion_tokens: maxTokens,
+      messages: [
+        { role: "system", content: systeem },
+        { role: "user", content: inhoud.map(naarOpenai) },
+      ],
+      tools: [{
+        type: "function",
+        function: {
+          name: naam,
+          description: "Geef het resultaat gestructureerd terug.",
+          parameters: schema,
+        },
+      }],
+      tool_choice: { type: "function", function: { name: naam } },
+    }),
+  });
+  if (!r.ok) throw new Error("OpenAI: " + (await r.text()).slice(0, 400));
+  const d = await r.json();
+  const oproep = d.choices?.[0]?.message?.tool_calls?.[0];
+  if (!oproep) throw new Error("Geen gestructureerd antwoord ontvangen");
+  /* De argumenten komen als tekst binnen en niet als object, anders dan bij
+     Anthropic. Breekt het antwoord halverwege af, dan valt het hier om met een
+     zin die zegt wat er aan de hand is, en niet verderop met een lege lijst. */
+  let data: unknown;
+  try {
+    data = JSON.parse(oproep.function.arguments);
+  } catch {
+    throw new Error("Het antwoord kwam onvolledig terug; probeer het nog eens");
+  }
+  return {
+    data,
+    in: d.usage?.prompt_tokens ?? 0,
+    uit: d.usage?.completion_tokens ?? 0,
+  };
+}
+
+/** De enige plek waar het uitmaakt bij wie de sleutel hoort. */
+function vraagModel(
+  aanbieder: string,
+  key: string,
+  MODEL: string,
+  systeem: string,
+  inhoud: unknown[],
+  schema: Record<string, unknown>,
+  naam: string,
+  maxTokens = 6000,
+) {
+  return aanbieder === "openai"
+    ? gpt(key, MODEL, systeem, inhoud, schema, naam, maxTokens)
+    : claude(key, MODEL, systeem, inhoud, schema, naam, maxTokens);
+}
+
 /* Het rangschikken staat in de database, in kal_nevo_zoek, dezelfde functie die
    het zoekveld van de app gebruikt. Dat is geen netheid maar noodzaak: zolang
    die twee los van elkaar stonden, kon de gebruiker een product opzoeken dat de
@@ -621,14 +854,112 @@ Deno.serve(async (req) => {
     if (sessieFout || !uid) throw new Error("Niet aangemeld");
     gebruiker = uid as string;
 
-    if (!key) throw new Error("Geen ANTHROPIC_API_KEY ingesteld in de Supabase-secrets");
-    const MODEL = await modelNaam(db, soort === "import" ? "model_import" : "model_herkenning");
+    // ------------------------------------------------- je sleutel opbergen --
+    // Dit staat vóór alles wat met herkennen te maken heeft, en dat is geen
+    // volgorde maar een grens. Een sleutel opgeven is geen AI-aanroep: het
+    // kost niets, het vraagt geen budget, en wie nog in de wachtkamer zit moet
+    // het gewoon kunnen. Stond dit achter de poort, dan kon je je eigen sleutel
+    // pas opgeven nadat je hem niet meer nodig had.
+    if (soort === "sleutel") {
+      if (body.actie === "weghalen") {
+        await db.rpc("kal_sleutel_weg", { p_gebruiker: gebruiker });
+        return json({ weg: true });
+      }
+      const aanbieder = String(body.aanbieder ?? "");
+      const sleutel = String(body.sleutel ?? "");
+      const klacht = klachtOverSleutel(aanbieder, sleutel);
+      if (klacht) return json({ error: klacht }, 400);
 
-    // Eenvoudige begrenzing: dertig aanroepen per uur per gebruiker.
-    const sinds = new Date(Date.now() - 3600_000).toISOString();
-    const { count } = await db.from("kal_ai_log").select("id", { count: "exact", head: true })
-      .eq("gebruiker_id", gebruiker).gte("created_at", sinds);
-    if ((count ?? 0) >= 30) throw new Error("Maximum van dertig herkenningen per uur bereikt");
+      const cijfer = await versleutel(sleutel);
+      /* De laatste vier tekens gaan er los naast, zodat de tester ziet wélke
+         sleutel er staat. De eerste zouden bij OpenAI het projectnummer
+         dragen; zie bestand 49. */
+      const { error } = await db.rpc("kal_sleutel_opbergen", {
+        p_gebruiker: gebruiker, p_aanbieder: aanbieder,
+        p_cijfer: cijfer, p_staart: sleutel.slice(-4),
+      });
+      if (error) throw new Error("Opbergen mislukt: " + error.message);
+      return json({ aanbieder, staart: sleutel.slice(-4) });
+    }
+
+    // ------------------------------------------------------ wiens sleutel --
+    // Een tester krijgt een proefrit op de gedeelde sleutel en geeft daarna
+    // zijn eigen. Welke van de twee het wordt, beslist de database: zie
+    // `kal_sleutel_voor` in bestand 49. Die functie staat alleen open voor de
+    // service-role, dus deze regel is de enige weg naar een sleutel van een
+    // ander, en hij loopt maar één kant op.
+    let aanbieder = "anthropic";
+    let eigen = false;
+    let inGebruik = key ?? "";
+    const mijn = await db.rpc("kal_sleutel_voor", { p_gebruiker: gebruiker });
+    if (!mijn.error && (mijn.data as { eigen?: boolean })?.eigen) {
+      const d = mijn.data as { aanbieder: string; cijfer: string };
+      /* Hier en nergens anders wordt de sleutel weer leesbaar, en alleen voor
+         de duur van deze aanroep. Lukt dat niet, dan is `SLEUTELKLUIS`
+         veranderd of weg, en dan hoort de tester dat te horen in plaats van
+         stilletjes op de gedeelde sleutel terug te vallen: dat zou de rekening
+         van de eigenaar zijn zonder dat iemand het merkt. */
+      try {
+        inGebruik = await ontsleutel(d.cijfer);
+        aanbieder = d.aanbieder;
+        eigen = true;
+      } catch {
+        throw new Error(
+          "Je eigen sleutel is niet meer te lezen. Zet hem opnieuw onder Account.");
+      }
+    }
+    if (!inGebruik) {
+      throw new Error("Geen ANTHROPIC_API_KEY ingesteld in de Supabase-secrets");
+    }
+
+    const isImport = soort === "import";
+    const MODEL = aanbieder === "openai"
+      ? await modelNaam(db, isImport ? "model_import_openai" : "model_herkenning_openai",
+                        MODEL_TERUGVAL_OPENAI)
+      : await modelNaam(db, isImport ? "model_import" : "model_herkenning");
+
+    // ------------------------------------------------------------- de poort --
+    // De begrenzing zat hier als één regel: dertig aanroepen per uur, voor
+    // iedereen hetzelfde. Zolang de app van één mens was klopte dat. Met
+    // testers erop is het de verkeerde vraag: wie mag hier eigenlijk iets, en
+    // hoeveel mag hij deze maand.
+    //
+    // Dat antwoord komt nu uit `kal_ai_toegestaan` (bestand 48). Daar staat het
+    // ene oordeel, en het staat in de database en niet hier: de app kan het
+    // niet omzeilen en een tweede aanroeper zou dezelfde grens krijgen.
+    //
+    // DE TERUGVAL, EN WANNEER HIJ WEG MAG
+    //
+    // Zolang bestand 48 niet gedraaid is bestaat die functie niet. Dan valt
+    // deze code terug op de oude telling, want een uitrol die vóór de SQL
+    // aankomt hoort de herkenning niet stil te zetten. Zodra 48 in de database
+    // staat is deze terugval dood hout en mag het blok weg.
+    const grens = await db.rpc("kal_ai_toegestaan", { p_gebruiker: gebruiker });
+    if (grens.error) {
+      console.warn("kal_ai_toegestaan ontbreekt, terugval op de oude telling", grens.error.message);
+      const sinds = new Date(Date.now() - 3600_000).toISOString();
+      const { count } = await db.from("kal_ai_log").select("id", { count: "exact", head: true })
+        .eq("gebruiker_id", gebruiker).gte("created_at", sinds);
+      if ((count ?? 0) >= 30) throw new Error("Maximum van dertig herkenningen per uur bereikt");
+    } else {
+      const g = grens.data as {
+        mag: boolean; reden: string; gebruikt: number; budget: number;
+      };
+      // Eén reden per geval, in gewone taal, want dit is wat de gebruiker leest.
+      if (!g.mag) {
+        throw new Error(
+          g.reden === "wacht"
+            ? "Je aanmelding wacht nog op toelating. Zodra de beheerder je toelaat werkt de herkenning; de rest van de app kun je nu al gebruiken."
+            : g.reden === "afgewezen"
+            ? "Dit account is niet toegelaten tot de test."
+            : g.reden === "maand-op"
+            ? `Je hebt je ${g.budget} herkenningen van deze maand gebruikt. Op de eerste van de volgende maand springt de teller terug.`
+            : g.reden === "uur-vol"
+            ? "Maximum van dertig herkenningen per uur bereikt"
+            : "Deze herkenning is niet toegestaan",
+        );
+      }
+    }
 
     let tokensIn = 0, tokensUit = 0;
 
@@ -645,9 +976,10 @@ Deno.serve(async (req) => {
          is. De tweede zin is er niet om iets nieuws te zeggen (dat staat in
          SYS_IMPORT) maar om de eerste niet als uitsluiting te laten lezen. */
       inhoud.push({ type: "text", text: "Zet dit om in een reeks dagen. Staat er een work-outlijst bij, zet die rijen in `activiteiten`; de rest gaat gewoon in `dagen`." });
-      const r = await claude(key, MODEL, SYS_IMPORT, inhoud, SCHEMA_IMPORT, "reeks", 10000);
+      const r = await vraagModel(aanbieder, inGebruik, MODEL, SYS_IMPORT, inhoud,
+                                 SCHEMA_IMPORT, "reeks", 10000);
       tokensIn = r.in; tokensUit = r.uit;
-      await log(db, gebruiker, soort, MODEL, tokensIn, tokensUit, true, null);
+      await log(db, gebruiker, soort, MODEL, tokensIn, tokensUit, true, null, eigen);
       return json({ ...r.data, model: MODEL, ms: Date.now() - t0 });
     }
 
@@ -667,7 +999,7 @@ Deno.serve(async (req) => {
     } else {
       inhoud.push({ type: "text", text: String(body.tekst ?? "") });
     }
-    const r1 = await claude(key, MODEL, systeem, inhoud, schema, "onderdelen",
+    const r1 = await vraagModel(aanbieder, inGebruik, MODEL, systeem, inhoud, schema, "onderdelen",
                             soort === "dag" ? 12000 : 6000);
     tokensIn += r1.in; tokensUit += r1.uit;
     const onderdelen: Onderdeel[] = (r1.data as { onderdelen: Onderdeel[] }).onderdelen ?? [];
@@ -690,8 +1022,8 @@ Deno.serve(async (req) => {
         `${i}. ${o.naam} (${o.hoeveelheid ?? 1} ${o.eenheid})\n` +
         k.map((c) => `   - ${c.nevo_code}: ${c.naam_nl}: ${c.energie_kcal_per_100g} kcal, ${c.eiwit_g} g eiwit per 100 g`).join("\n")
       ).join("\n\n");
-      const r2 = await claude(
-        key,
+      const r2 = await vraagModel(
+        aanbieder, inGebruik,
         MODEL,
         `Je koppelt herkende voedingsonderdelen aan het Nederlands Voedingsstoffenbestand.
 
@@ -814,7 +1146,7 @@ Past geen enkele kandidaat werkelijk, kies dan null. Een verkeerde koppeling is 
       };
     });
 
-    await log(db, gebruiker, soort, MODEL, tokensIn, tokensUit, true, null);
+    await log(db, gebruiker, soort, MODEL, tokensIn, tokensUit, true, null, eigen);
     return json({
       regels,
       /* Ongemoeid doorgegeven: de server heeft hier niets te rekenen of op te
@@ -859,8 +1191,12 @@ async function log(
   tuit: number,
   gelukt: boolean,
   fout: string | null,
+  eigen = false,
 ) {
-  // Sonnet-tarief; klopt zolang MODEL een Sonnet is.
+  /* Sonnet-tarief; klopt zolang MODEL een Sonnet is. Bij een eigen sleutel
+     klopt het al helemaal niet, want dan kan het een model van OpenAI zijn en
+     is het bovendien niet de rekening van de eigenaar. Daarom gaat `eigen`
+     mee: `kal_testers` telt alleen de aanroepen op de gedeelde sleutel op. */
   const kosten = (tin / 1_000_000) * 3 + (tuit / 1_000_000) * 15;
   await db.from("kal_ai_log").insert({
     gebruiker_id: gebruiker,
@@ -869,6 +1205,7 @@ async function log(
     input_tokens: tin,
     output_tokens: tuit,
     kosten_usd: Math.round(kosten * 1e6) / 1e6,
+    eigen_sleutel: eigen,
     gelukt,
     fout,
   });

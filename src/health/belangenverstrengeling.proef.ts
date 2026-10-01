@@ -26,6 +26,7 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { VERDIEPINGEN } from './verdieping'
 
 /** De merken uit bestand 45. Upfront is die van de eigenaar; de andere drie
  *  staan er even hard in, want een regel die alleen voor het eigen merk geldt
@@ -73,5 +74,45 @@ describe('geen merk in de code', () => {
   it('en de merken staan wél in het invoerbestand, anders toetst dit niets', () => {
     const sql = readFileSync(join('health/database', INVOERBESTAND), 'utf8')
     for (const merk of MERKEN) expect(sql).toContain(merk)
+  })
+})
+
+/**
+ * EN EEN BRON MET EEN BELANG ZEGT DAT ZELF
+ *
+ * Bovenstaande gaat over een merk in de voedingslijst. Dit gaat over hetzelfde
+ * probleem aan de leeskant van de app.
+ *
+ * Het boekje in `verdieping.ts` leunt op bronnen, en niet elke bron is
+ * belangeloos. Eén stuk komt uit een nascholing die betaald werd door een
+ * bedrijf dat een van de besproken middelen verkoopt, waar alle drie de
+ * sprekers langs een eigen route bij dat middel uitkwamen. Dat is geen reden om
+ * de inhoud weg te laten, wél om hem niet als vaststaand te brengen.
+ *
+ * De regel hieronder is de minimale vorm daarvan en hij is te toetsen: noemt de
+ * bron van een stuk een sponsor, dan staat het belang in datzelfde stuk onder
+ * "wat we niet weten", waar de lezer het ziet. In een voetnoot verstoppen is
+ * precies de vorm die dit boekje niet wil zijn.
+ */
+describe('een bron met een belang zegt dat zelf', () => {
+  /** Partijen waarvan bekend is dat ze een commercieel belang hebben bij wat er
+   *  in een stuk staat. Groeit deze lijst, dan groeit de eis mee. */
+  const SPONSORS = ['Good Life Pharma']
+
+  it('noemt het belang in het stuk zelf en niet alleen in de bron', () => {
+    for (const v of VERDIEPINGEN) {
+      const sponsor = SPONSORS.find((naam) => v.bron.includes(naam))
+      if (!sponsor) continue
+      const voorbehoud = v.nietWeten.join(' ')
+      expect(voorbehoud, `${v.id} noemt ${sponsor} als bron`).toMatch(/betaald|gesponsord|belang/i)
+      expect(voorbehoud, `${v.id} zegt niet wat het belang is`).toMatch(/verkoopt|fabrikant|middel/i)
+    }
+  })
+
+  /* Deze proef kan alleen groen zijn omdat hij iets te toetsen heeft. Verdwijnt
+     het stuk, dan verdwijnt de eis geruisloos mee, en dan bewaakt hij niets. */
+  it('en er is ten minste één stuk waarop die eis slaat', () => {
+    const met = VERDIEPINGEN.filter((v) => SPONSORS.some((naam) => v.bron.includes(naam)))
+    expect(met.length).toBeGreaterThan(0)
   })
 })

@@ -192,16 +192,25 @@ export function Uitleg(
  * hetzelfde soort geheugen en twee sleutels voor één ding lopen uit elkaar.
  */
 export function Uitklap(
-  { id, kop, teken, dicht, children }:
+  { id, kop, teken, dicht, beginOpen, children }:
   {
     id: string; kop: string; teken?: (() => ReactNode) | undefined
     /** De regel onder de kop als hij dicht is: waarom zou je hem openen? */
     dicht?: string | undefined
+    /**
+     * Open bij het openen van het venster, wat er ook onthouden is.
+     *
+     * Dat "wat er ook onthouden is" is het punt: wie hier via een verwijzing
+     * binnenkomt, komt voor dít stuk. Een eerder dichtgeklapte stand hoort die
+     * bedoeling niet te overrulen, want dan klik je op een verwijzing en
+     * gebeurt er zichtbaar niets.
+     */
+    beginOpen?: boolean | undefined
     children: ReactNode
   },
 ) {
   const [open, zetOpen] = useState(false)
-  useEffect(() => { zetOpen(leesStand()[id] ?? false) }, [id])
+  useEffect(() => { zetOpen(beginOpen ? true : leesStand()[id] ?? false) }, [id, beginOpen])
 
   const wissel = useCallback(() => {
     zetOpen((was) => {
@@ -227,7 +236,7 @@ export function Uitklap(
 
 /** Een venster met sluier. Klikken naast het venster sluit het. */
 export function Venster(
-  { titel, boven, onder, opSluiten, children }:
+  { titel, boven, onder, breed, opSluiten, children }:
   {
     titel: string
     /**
@@ -239,6 +248,11 @@ export function Venster(
      */
     boven?: ReactNode | undefined
     onder?: ReactNode | undefined
+    /**
+     * Voor een venster waar je in leest in plaats van iets invult: breder, met
+     * meer lucht. Waarom dat geen smaak is, staat bij `.venster.breed`.
+     */
+    breed?: boolean | undefined
     opSluiten: () => void
     children: ReactNode
   },
@@ -251,10 +265,11 @@ export function Venster(
 
   return (
     <div className="sluier" onClick={(e) => { if (e.target === e.currentTarget) opSluiten() }}>
-      <div className="venster" role="dialog" aria-modal="true" aria-label={titel}>
+      <div className={'venster' + (breed ? ' breed' : '')} role="dialog" aria-modal="true"
+           aria-label={titel}>
         {boven}
         <div className="tussen">
-          <h2 style={{ fontSize: '1.2rem', lineHeight: 1.25 }}>{titel}</h2>
+          <h2 style={{ fontSize: breed ? '1.4rem' : '1.2rem', lineHeight: 1.25 }}>{titel}</h2>
           <Knop klein opKlik={opSluiten} titel="Sluiten">×</Knop>
         </div>
         {onder}

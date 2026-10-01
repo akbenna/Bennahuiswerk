@@ -149,6 +149,17 @@ describe('nergens anders in de repo', () => {
     'gouden-waarden.json',
     'src/gedeeld/schermtekst.proef.ts',
     'src/gedeeld/woordgelijk.proef.ts',
+    /* Bestand 50 is een verslag: het legt vast wat er op 22 september 2026 in
+       de database stond, en `kal_prikkel_bouwen` zette daar een streepje in de
+       onderwerpsregel van elke prikkelmail. Die tekst moet tot op het teken
+       kloppen, want de md5-controle vergelijkt hem met `prosrc`.
+
+       Dus dezelfde regel als bij het archief hierboven, en om dezelfde reden:
+       bewijsmateriaal wordt niet aangepast om een proef groen te krijgen. De
+       fout zelf is rechtgezet in bestand 51, dat dubbele punten zet en het
+       teken alleen omschrijft. Deze proef viel op allebei die bestanden om en
+       deed daarmee precies wat hij moet doen. */
+    'health/database/50-de-negen-die-er-nog-niet-stonden.sql',
   ]
 
   /* Twee plekken hébben het teken nodig en staan er tóch niet bij: de reguliere

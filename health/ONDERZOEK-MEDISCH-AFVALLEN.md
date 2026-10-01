@@ -164,6 +164,46 @@ ze lager uit; hoeveel lager is niet goed bekend.
 SURMOUNT-5 vergeleek tirzepatide rechtstreeks met semaglutide en vond tirzepatide
 superieur.
 
+### Hoe het werkt: minder eten, en verder vrijwel niets
+
+*Toegevoegd 28 september 2026.*
+
+Het gewichtsverlies van semaglutide loopt vrijwel volledig via een lagere
+energie-inname. De twee sleutelstudies zijn gecontroleerde energiebalansstudies,
+beide gefinancierd door de fabrikant. Blundell e.a. (2017) vonden met
+semaglutide 1,0 mg na twaalf weken een daling van de ad-libitum-inname van
+ongeveer 24 %; Friedrichsen e.a. (2021) met 2,4 mg na twintig weken ongeveer
+35 %. Beide zagen minder honger en minder trek, betere controle over het eten en
+een geringere voorkeur voor vette, energiedichte voeding.
+
+Een verborgen metabool effect is er niet gevonden. Het rustmetabolisme daalde
+evenredig met het gewichtsverlies en was na correctie voor vetvrije massa niet
+anders dan bij placebo. De thermogenese die bij knaagdieren wordt gezien, is bij
+mensen niet teruggevonden. De vertraagde maaglediging speelt vooral in de eerste
+weken: Friedrichsen vond na twintig weken geen klinisch relevante vertraging
+meer.
+
+Het anatomische substraat is goed beschreven. Semaglutide bereikt via de
+circumventriculaire organen de hypothalamus (nucleus arcuatus) en de hersenstam
+(area postrema, NTS) (Gabery e.a., 2020). Daarnaast dempt GLP-1 de
+beloningsrespons op voedsel via mesolimbische routes, wat past bij wat
+gebruikers "minder food noise" noemen. Dat laatste deel steunt vooral op
+dierexperimenteel werk en kleine fMRI-studies, en voor een deel op andere
+GLP-1-agonisten dan semaglutide. De richting staat vast, het aandeel van dit
+circuit in het totale effect niet.
+
+De consequentie voor het gesprek met een patiënt: het middel is geen aangeleerd
+gedrag maar een farmacologische verschuiving van honger en verzadiging, en die
+verschuiving bestaat alleen zolang het middel wordt gebruikt.
+
+**Wat niet over gewicht gaat.** In SELECT (Lincoff e.a., 2023; mensen met BMI ≥ 27
+en bestaande hart- en vaatziekte, zonder diabetes) daalde het risico op grote
+cardiovasculaire events met ongeveer 20 % (HR 0,80). Secundaire analyses laten
+zien dat het voordeel vroeg optreedt en grotendeels losstaat van de mate van
+gewichtsverlies, wat wijst op directe vasculaire, ontstekingsremmende of renale
+effecten. Die analyses zijn post hoc. Voor het afvallen zelf is er geen bewijs
+voor een route buiten de energie-inname om.
+
 **Vergoeding in Nederland (stand 2026).** Het Zorginstituut adviseerde in juli
 2024 tégen opname van semaglutide (Wegovy) in het basispakket; de minister van
 VWS nam dat advies over. Het instituut noemt het middel *bewezen effectief voor
@@ -187,10 +227,62 @@ deelnemers, één jaar na staken):
 
 - Deelnemers wonnen **tweederde van het verloren gewicht terug**.
 - Netto van start tot week 120: **−5,6 %** (was −17,3 % op week 68).
-- Van de deelnemers hield **~43 %** nog ≥ 5 % verlies vast, **~24 %** nog ≥ 10 %.
+- Van de deelnemers hield **48,2 %** op week 120 nog ≥ 5 % verlies vast.
 - **17,7 %** zat op of boven het startgewicht.
 
+> Hier stond eerst ~43 % voor de ≥ 5 %-groep, en ~24 % voor ≥ 10 %. Bij de naloop van
+> 20 september 2026 bleek de extensie zelf 48,2 % te geven; dat is rechtgezet in het
+> boekje en hier. Het getal voor ≥ 10 % is bij die naloop niet opnieuw tegen de bron
+> gelegd en staat daarom niet meer in de app. Zie `VERANTWOORDING.md` §25.
+
 Cardiometabole verbeteringen liepen mee terug.
+
+Eén kanttekening die bij dit getal hoort en vaak wegvalt: in de extensie stopte
+de leefstijlbegeleiding tegelijk met het middel. In STEP-1 zelf bestond die uit
+counseling om de vier weken, een tekort van 500 kcal per dag en 150 minuten
+bewegen per week; dat is begeleiding, geen intensieve gedragstherapie (die zat in
+STEP-3). De extensie laat dus zien dat een jaar structuur het gewicht niet vasthoudt
+zodra middel en begeleiding samen wegvallen. Of doorlopende begeleiding zonder
+middel het had geremd, zegt ze niet.
+
+**STEP-4** (Rubino e.a., *JAMA* 2021) bevestigt het gerandomiseerd en dubbelblind:
+na twintig weken semaglutide voor iedereen (−10,6 %) gaf doorgaan in de 48 weken
+daarna nog −7,9 %, overstappen op placebo +6,9 %. **SURMOUNT-4** (Aronne e.a.,
+*JAMA* 2024) laat bij tirzepatide hetzelfde patroon zien: na 36 weken open
+behandeling (−20,9 %) gaf placebo +14,0 % in 52 weken, doorgaan nog −5,5 %.
+
+**Waarom.** Sumithran e.a. (*NEJM* 2011) volgden mensen een jaar na een
+dieetgeïnduceerd gewichtsverlies. Ghreline bleef verhoogd, leptine, PYY en
+cholecystokinine bleven verlaagd, en de subjectieve honger lag na een jaar nog
+boven het uitgangsniveau. Het lichaam verdedigt zijn eerdere gewicht. Een
+GLP-1-agonist onderdrukt die drang zolang hij wordt gebruikt; na staken komt ze
+terug, op een lager gewicht waar de tegenregulatie het sterkst is.
+
+**Wat wél helpt.** Het beste gecontroleerde bewijs dat iets na stoppen verschil
+maakt, komt uit S-LiTE (Lundgren e.a., *NEJM* 2021). Na een laagcaloriedieet van
+acht weken werden 195 deelnemers een jaar gerandomiseerd naar liraglutide 3 mg,
+inspanningstraining, de combinatie of placebo; de combinatie hield het meeste
+gewichtsverlies en het meeste vetverlies vast. In de follow-up een jaar na
+staken (Jensen e.a., *eClinicalMedicine* 2024) hadden de groepen die hadden
+getraind minder teruggewonnen dan de groep met alleen liraglutide. Beweging is
+daarmee de best onderbouwde beschermende factor, maar voorkomt terugval niet.
+
+Drie beperkingen: het ging om behoud ná een dieet en niet ná medicamenteus
+verlies, het middel was liraglutide en niet semaglutide of tirzepatide, en de
+groepen waren klein. Dat spierbehoud het werkzame bestanddeel is, is plausibel
+maar in deze studie niet aangetoond; er verbeterde ook conditie en vetverdeling.
+
+Over afbouwen of een lagere onderhoudsdosis bestaan alleen observationele
+gegevens. Dat is een eerlijk open punt, en het is hetzelfde punt dat het
+Zorginstituut in 2024 noemde.
+
+**Samengevat voor de spreekkamer.** Semaglutide werkt via minder eten. Leefstijl
+is een voorwaarde voor een blijvend resultaat maar vervangt het middel niet.
+Obesitas gedraagt zich als een chronische aandoening, vergelijkbaar met
+hypertensie: bij de meeste mensen komt het gewicht na stoppen terug. Kiest iemand
+toch voor stoppen, dan liefst geleidelijk en gemonitord, met krachttraining als
+kern en een vooraf afgesproken moment om te herbeginnen. Dat laatste is een
+praktijkadvies, geen uitkomst van onderzoek.
 
 Dit is het belangrijkste getal in dit hele bestand. Het zegt dat de medicatie
 niet het probleem oplost maar het openhoudt, en dat álles afhangt van wat er
@@ -544,6 +636,19 @@ opening.
 - [RIVM: GLI-programma's](https://www.rivm.nl/gecombineerde-leefstijlinterventie/programmas)
 - [Wilding e.a., STEP-1-extensie, *Diabetes Obes Metab* 2022](https://dom-pubs.onlinelibrary.wiley.com/doi/10.1111/dom.14725)
 - [SURMOUNT-1 (NEJM)](https://www.nejm.org/doi/full/10.1056/NEJMoa2410819)
+- Blundell J e.a. *Diabetes Obes Metab* 2017;19:1242–51 (energie-inname, semaglutide 1,0 mg)
+- Friedrichsen M e.a. *Diabetes Obes Metab* 2021;23:754–62 (energie-inname en rustmetabolisme, 2,4 mg)
+- Gabery S e.a. *JCI Insight* 2020;5:e133429 (hersengebieden)
+- Sumithran P e.a. *N Engl J Med* 2011;365:1597–604 (hormonale tegenregulatie na afvallen)
+- Rubino D e.a. (STEP-4) *JAMA* 2021;325:1414–25
+- Aronne LJ e.a. (SURMOUNT-4) *JAMA* 2024;331:38–48
+- Lincoff AM e.a. (SELECT) *N Engl J Med* 2023;389:2221–32
+- Lundgren JR e.a. (S-LiTE) *N Engl J Med* 2021;384:1719–30
+- Jensen SBK e.a. *eClinicalMedicine* 2024;69:102475 (S-LiTE, een jaar na staken)
+
+De paginanummers hierboven zijn bij het invoegen op 28 september 2026 uit het
+hoofd gecontroleerd, niet tegen de bron gelegd. Ze horen nagelopen te worden
+voordat ze in een brief of publicatie worden overgenomen.
 - [Lancet Commission: Redefining obesity (jan 2025)](https://www.thelancet.com/journals/landia/article/PIIS2213-8587(25)00004-X/fulltext)
 - [Lean mass preservation bij GLP-1, *Metabolites* 2025](https://www.mdpi.com/2218-1989/16/6/364)
 - [Casusreeks behoud vetvrije massa, PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC12536186/)

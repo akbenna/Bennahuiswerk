@@ -39,7 +39,7 @@ bouwen**. Verandert er iets aan een scherm van BennaHealth, dan hoort hij mee te
 draaien en horen de afdrukken mee de commit in.
 
 `node gereedschap/cursus-proef.mjs` staat er net zo naast, en leest ook `dist/`.
-Hij gaat over de ingangen van de startpagina: dat de drie cursussen van de
+Hij gaat over de ingangen van de startpagina: dat de vier cursussen van de
 Academie zonder code opengaan, dat ze elk een eigen tegel hebben, en dat
 BennaHealth een eigen ingang op de poort heeft die niet langs het gezinsprofiel
 gaat. Een grep zou hier niet volstaan: het slot was gedrag, geen
@@ -70,6 +70,22 @@ zijn een verslag, geen migratiesysteem: ze horen te kloppen met wat er in de
 database staat. Dat is te controleren zonder te vertrouwen op je geheugen,
 vergelijk de md5 van `prosrc` met die van het bestand, met commentaar en witruimte
 eruit gestript.
+
+Die vergelijking staat kant en klaar in `health/database/controle-md5.sql`. Dat
+bestand heeft geen nummer, want het is geen verslag maar een vraag: het verandert
+niets, je plakt het in de SQL-editor en er komt één tabel uit met per functie
+*gelijk*, *VERSCHILT*, *STAAT NIET IN DE DATABASE* of *STAAT NIET IN DE REPO*.
+
+De verwachte waarden erin worden uitgerekend, niet ingetikt:
+
+```
+node gereedschap/md5-verslag.mjs --schrijf
+```
+
+Verandert er een functie, dan hoort dat te draaien, en `src/health/dbverslag.proef.ts`
+valt om zolang het niet gedraaid is. Meldt de controle daarna *VERSCHILT* of
+*STAAT NIET IN DE REPO*, dan haalt `health/database/uitlezen-functies.sql` de
+tekst op zoals de database hem kent.
 
 ## Nooit wegschrijven wat er al staat
 
@@ -120,6 +136,39 @@ sluipen er via bibliotheken in, en daar houdt het op. Commentaar legt uit
 BennaHealth heeft één stelregel die alles eronder bepaalt: **geen enkel getal
 zonder zijn onzekerheid.** Een puntschatting zonder interval is in dit ontwerp
 een fout, geen vereenvoudiging. Wat overgenomen of geschat is, zegt dat zelf.
+
+**Geen gedachtestreepjes in schermtekst.** Niet in de apps, niet in de
+edge-functies, niet in de handleidingen. Een `\u2014` of `\u2013` midden in een
+zin is het duidelijkste spoor dat een tekst niet met de hand geschreven is, en
+dit zijn teksten die een huisarts aan patiënten en collega's laat zien. Gebruik
+een komma, een dubbele punt, een punt of haakjes. Wat blijft is het bereikstreepje
+tussen twee getallen (`2.903–3.514 kcal`) en de `–` waar een waarde ontbreekt:
+dat is typografie en geen spoor.
+
+De regel wordt repo-breed getoetst door `src/gedeeld/schermtekst.proef.ts`, met
+de parser van TypeScript zelf, zodat een apostrof in JSX geen fantoomstring
+opent. Op drie plekken staat het teken er wél: in `gereedschap/oud/` (dat is
+archief), in de gouden waarden, en in de twee proeven die het teken bij naam
+noemen. Moet een regel code het teken kennen, zoals de regexp die minustekens
+gelijkschakelt, schrijf het dan als `\u2014`: hetzelfde teken bij het draaien,
+afwezig in de bytes, dus geen uitzondering nodig.
+
+## Bewijs, en wat je er niet mee doet
+
+**Het archief in `gereedschap/oud/` wordt nooit aangepast om een proef groen te
+krijgen.** Die bestanden zijn de oude apps, en de gouden waarden bewijzen dat de
+overzetting naar TypeScript woordgetrouw was. Een proef die omvalt is dan een
+vraag over de nieuwe code, niet een reden om het bewijsstuk bij te werken. Valt
+een vergelijking om op iets wat er niet toe doet (leestekens bijvoorbeeld), maak
+de vergelijking dan losser en toets die versoepeling zelf: `woordgelijk` laat
+leestekens vallen en houdt woorden, getallen en volgorde vast.
+
+**Elke bewering krijgt een mutant.** Een proef die groen blijft terwijl je de
+regel die hij zou bewaken kapot maakt, bewaakt niets. Een overlevende mutant is
+een vraag en geen ergernis: meestal betekent hij dat het geval dat ertoe doet
+niet in de proef staat. Voorbeelden die dat opleverden staan in
+`health/VERANTWOORDING.md` §27 (de uitbijter die zichzelf gelijk gaf), §29 (de
+nadrukregel die een letter opat) en §31 (de figuur die de weging verzweeg).
 
 ## Git
 

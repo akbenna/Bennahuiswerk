@@ -3,18 +3,22 @@
  * Overgezet uit vensterProfiel(), vensterImport() en vensterAccount().
  */
 import { useEffect, useState } from 'react'
-import { Kaart, Keuzechip, Knop, Kop, Rij, Spin, Venster } from '../onderdelen/basis'
+import { Kaart, Keuzechip, Knop, Kop, Rij, Spin, Tussen, Uitleg, Venster } from '../onderdelen/basis'
 import { MEDICATIEGROEPEN } from '../conditie'
 import type { Conditie, Medicatiegroep } from '../conditie'
 import { dec, dz } from '@/gedeeld/getal'
 import type { Fase, Geslacht, IsoDatum, Profiel } from '@/gedeeld/db/tabellen'
 import { isSessie, roep } from '@/gedeeld/db/rpc'
 import type { NieuweDag, NieuweInspanning, NieuweRegel } from '@/gedeeld/db/rpc'
-import { BRONNAAM, geraden, importeer, leesFoto, redenUit } from '../ai'
+import { BRONNAAM, geraden, importeer, leesFoto, redenUit, sleutelOpbergen } from '../ai'
 import { MINIMUM_LENGTE, wachtwoordklacht } from '../wachtwoord'
 import { SOORTEN, equivalent, standaardIntensiteit } from '../inspanning'
 import { GLI_PROGRAMMAS } from '../trap'
-import { vandaag } from '@/gedeeld/datum'
+import { kortNL, vandaag } from '@/gedeeld/datum'
+import type { Tester, Wisuitslag } from '@/gedeeld/db/rpc'
+import { AANBIEDERNAAM, ONBEKEND, leesToegang, restZin, uitlegAi } from '../toegang'
+import { PrivacyVenster } from './Privacy'
+import type { Aanbieder, Toegang } from '../toegang'
 import type { ImportDag, Importactiviteit, Importbron } from '../ai'
 
 
@@ -600,6 +604,7 @@ export function AccountVenster(
   { account, opSluiten, opAfmelden }:
   { account: string; opSluiten: () => void; opAfmelden: () => void },
 ) {
+  const [privacy, zetPrivacy] = useState(false)
   return (
     <Venster titel="Account" opSluiten={opSluiten}>
       {/* Dezelfde onwaarheid als onder het aanmeldscherm stond, en die heb ik
@@ -612,12 +617,21 @@ export function AccountVenster(
         eigen database van BennaHub, los van de zorggegevens van de praktijk, en zijn alleen via
         beveiligde databasefuncties met dit wachtwoord bereikbaar.
       </p>
+      <JouwToegang />
       <WachtwoordWijzigen />
       <Herstelcode />
       <BeheerdersHerstelcode />
+      <Testerbeheer />
+      <p className="mini" style={{ marginTop: 14 }}>
+        <button type="button" className="alsLink" onClick={() => zetPrivacy(true)}>
+          Wat er van je bewaard wordt
+        </button>
+      </p>
+      <GegevensWeghalen opAfmelden={opAfmelden} />
       <Rij style={{ marginTop: 14 }}>
         <Knop opKlik={opAfmelden}>Afmelden</Knop>
       </Rij>
+      {privacy && <PrivacyVenster opSluiten={() => zetPrivacy(false)} />}
     </Venster>
   )
 }
@@ -644,6 +658,16 @@ export function AccountVenster(
  * in zijn browser vervalst krijgt een formulier te zien dat bij het indrukken
  * alsnog geweigerd wordt, de grens ligt in de database en niet hier.
  */
+/* Het sessietoken uit de opslag. Drie blokken hieronder hebben het nodig en
+   stonden elk op het punt hun eigen kopie te maken. */
+function sessietoken(): string | null {
+  try {
+    const s = JSON.parse(localStorage.getItem('kalibratie.sessie') ?? 'null') as
+      { token?: string } | null
+    return s?.token ?? null
+  } catch { return null }
+}
+
 function BeheerdersHerstelcode() {
   const [mag, zetMag] = useState(false)
   const [open, zetOpen] = useState(false)
@@ -653,18 +677,10 @@ function BeheerdersHerstelcode() {
   const [fout, zetFout] = useState<string | null>(null)
   const [bezig, zetBezig] = useState(false)
 
-  const token = () => {
-    try {
-      const s = JSON.parse(localStorage.getItem('kalibratie.sessie') ?? 'null') as
-        { token?: string } | null
-      return s?.token ?? null
-    } catch { return null }
-  }
-
   useEffect(() => {
     let afgebroken = false
     void (async () => {
-      const t = token()
+      const t = sessietoken()
       if (!t) return
       try {
         const uit = await roep('kal_ben_ik_beheerder', { p_token: t })
@@ -678,7 +694,7 @@ function BeheerdersHerstelcode() {
     zetBezig(true)
     zetFout(null)
     try {
-      const t = token()
+      const t = sessietoken()
       if (!t) { zetFout('Je bent niet aangemeld'); return }
       const uit = await roep('kal_herstelcode_voor',
         { p_token: t, p_ww: ww, p_account: voor.trim().toLowerCase() })
@@ -962,6 +978,7 @@ export function Aanmelden(
      wie gewoon inlogt hoort er niet over te struikelen, en wie hem nodig heeft
      zoekt ernaar. */
   const [kwijt, zetKwijt] = useState(false)
+  const [privacy, zetPrivacy] = useState(false)
   const [code, zetCode] = useState('')
   /* AANMELDEN EN EEN WACHTWOORD ZETTEN ZIJN TWEE VERSCHILLENDE EISEN
      Wie aanmeldt mag alles intikken: wat hij heeft is wat hij heeft, ook als dat
@@ -1067,6 +1084,19 @@ export function Aanmelden(
             Wachtwoord kwijt?
           </button>
         </p>
+        {/* WAAROM DIT HIER STAAT EN NIET ALLEEN ACHTER DE INLOG
+            Een account maken is hier de toestemming. Wie die geeft hoort te
+            kunnen lezen waarvoor, en wel vóór dat moment. Een verklaring die
+            pas achter de aanmelding staat, vraagt toestemming van iemand die
+            hem nog niet heeft kunnen lezen. */}
+        <p className="mini" style={{ marginTop: 10 }}>
+          Een account maken betekent dat je gezondheidsgegevens invoert.{' '}
+          <button type="button" className="alsLink" onClick={() => zetPrivacy(true)}>
+            Lees eerst wat daarmee gebeurt
+          </button>
+          .
+        </p>
+        {privacy && <PrivacyVenster opSluiten={() => zetPrivacy(false)} />}
       </Kaart>
       {/* Hier stond dat de gegevens in het project van ProVita staan, naast de
           patiëntgegevens. Dat klopte tot 26 augustus 2026 en daarna niet meer:
@@ -1082,4 +1112,503 @@ export function Aanmelden(
       </p>
     </>
   )
+}
+
+/**
+ * WAT JE ZELF MAG
+ *
+ * Eén regel in het accountvenster, en hij staat er voor iedereen: de eigenaar
+ * leest er "toegelaten" en verder niets, een tester leest waar hij aan toe is.
+ *
+ * Hij staat hier en niet op het hoofdscherm omdat het geen dagelijks gegeven
+ * is. Wie wacht, merkt dat vanzelf op het moment dat hij iets wil laten
+ * herkennen, en dáár staat dezelfde uitleg.
+ */
+function JouwToegang() {
+  const [t, zetT] = useState<Toegang>(ONBEKEND)
+  /* Een teller die na het bewaren van een sleutel blijft staan zoals hij was,
+     leest als een sleutel die niet is aangekomen. */
+  const [ronde, zetRonde] = useState(0)
+
+  useEffect(() => {
+    let afgebroken = false
+    void (async () => {
+      const tk = sessietoken()
+      if (!tk) return
+      try {
+        const uit = await roep('kal_mijn_toegang', { p_token: tk })
+        if (!afgebroken) zetT(leesToegang(uit))
+      } catch { /* zie de kop van toegang.ts: geen antwoord is geen afwijzing */ }
+    })()
+    return () => { afgebroken = true }
+  }, [ronde])
+
+  if (t.status === 'onbekend') return null
+  const rest = restZin(t)
+  const uitleg = uitlegAi(t)
+
+  return (
+    <>
+      <p className="mini" style={{ marginTop: 10 }}>
+      <b>
+        {t.status === 'toegelaten' ? 'Toegelaten tot de test'
+         : t.status === 'wacht' ? 'Je aanmelding wacht op toelating'
+         : 'Niet toegelaten'}
+      </b>
+      {rest && <>. {rest}</>}
+      {uitleg && <>. {uitleg}</>}
+      </p>
+      <EigenSleutel t={t} opnieuw={() => zetRonde((x) => x + 1)} />
+    </>
+  )
+}
+
+/**
+ * DE TESTERS
+ *
+ * Wie zich heeft aangemeld, wie er in mag, en wat het kost.
+ *
+ * WAT HIER NIET STAAT
+ *
+ * Geen gewicht, geen bloeddruk, geen labwaarde, geen maaltijd. `kal_testers`
+ * geeft dat niet terug en dat is geen zuinigheid: het is de medische informatie
+ * van iemand anders, en een beheerder die wil weten of zijn app gebruikt wordt
+ * heeft er niets van nodig. Wat er wél staat is wanneer iemand voor het laatst
+ * iets liet herkennen, en daarmee is de vraag "doet hij nog mee" te
+ * beantwoorden zonder over zijn schouder mee te kijken.
+ *
+ * WAAROM HET BUDGET IN AANROEPEN STAAT EN NIET IN EURO
+ *
+ * Het bedrag in deze lijst wordt in de edge function uitgerekend met een vast
+ * Sonnet-tarief. Draait er een ander model, dan klopt het niet meer, en dat
+ * staat erbij. Het aantal aanroepen klopt altijd, dus dáár ligt de grens.
+ *
+ * DE KNOPPEN ZIJN GEEN SLOT
+ *
+ * Net als bij de herstelcode hierboven: dit blok verschijnt op grond van een
+ * antwoord uit de database, en wie dat antwoord in zijn browser vervalst krijgt
+ * een lijst te zien die leeg blijft en knoppen die weigeren. De grens ligt in
+ * `kal_testers` en `kal_tester_zetten`.
+ */
+function Testerbeheer() {
+  const [lijst, zetLijst] = useState<Tester[] | null>(null)
+  const [bezig, zetBezig] = useState<string | null>(null)
+  const [fout, zetFout] = useState<string | null>(null)
+
+  const haal = async () => {
+    const tk = sessietoken()
+    if (!tk) return
+    try {
+      const uit = await roep('kal_testers', { p_token: tk })
+      zetLijst(Array.isArray(uit) ? uit : null)
+    } catch { /* geen beheerder, of bestand 48 is nog niet gedraaid */ }
+  }
+
+  useEffect(() => { void haal() }, [])
+
+  const zet = async (account: string, velden: {
+    p_status?: string; p_budget?: number
+  }) => {
+    const tk = sessietoken()
+    if (!tk) return
+    zetBezig(account)
+    zetFout(null)
+    try {
+      const uit = await roep('kal_tester_zetten', { p_token: tk, p_account: account, ...velden })
+      if (uit && 'fout' in uit) { zetFout(uit.fout); return }
+      await haal()
+    } catch (e) {
+      zetFout(e instanceof Error ? e.message : String(e))
+    } finally {
+      zetBezig(null)
+    }
+  }
+
+  if (!lijst) return null
+
+  /* Wie wacht staat bovenaan, want dat is het enige waar iets van jou moet
+     gebeuren. De rest op naam, zodat de lijst niet danst bij elke wijziging. */
+  const orde = { wacht: 0, toegelaten: 1, afgewezen: 2 } as Record<string, number>
+  const op = [...lijst].sort((a, b) =>
+    (orde[a.status] ?? 3) - (orde[b.status] ?? 3) || a.account.localeCompare(b.account))
+  const wachtend = op.filter((x) => x.status === 'wacht').length
+  const usd = op.reduce((s, x) => s + (Number(x.maand_usd) || 0), 0)
+
+  return (
+    <div style={{ marginTop: 18 }}>
+      <Tussen>
+        <Kop>Testers</Kop>
+        <span className="eyebrow" style={{ color: wachtend ? 'var(--let)' : 'var(--grijs)' }}>
+          {wachtend === 0 ? 'niemand wacht'
+           : wachtend === 1 ? '1 wacht op je' : `${wachtend} wachten op je`}
+        </span>
+      </Tussen>
+      <p className="mini" style={{ marginTop: 4 }}>
+        Wie wacht kan de app al gebruiken: wegen, loggen en alle figuren. Alleen het herkennen van
+        maaltijden uit tekst of foto loopt op jouw sleutel, en dat is wat je hier toelaat. Het
+        budget is een aantal herkenningen per kalendermaand.
+      </p>
+
+      {fout && <p className="mini" style={{ color: 'var(--let)', marginTop: 6 }}>{fout}</p>}
+
+      <Kaart plat style={{ marginTop: 8 }}>
+        <div className="lijst">
+          {op.map((x) => (
+            <div key={x.account} style={{ flexWrap: 'wrap', gap: 6 }}>
+              <span className="klein" style={{ flex: '0 0 96px', fontWeight: 600 }}>
+                {x.account}
+              </span>
+              <span className={'vlaggetje ' + (x.status === 'toegelaten' ? 'goed'
+                : x.status === 'wacht' ? 'let' : 'rust')}>
+                {x.status}
+              </span>
+              <span className="mini groei">
+                {x.maand_aanroepen} van {x.budget} deze maand
+                {x.laatst_actief && <> · laatst {kortNL(x.laatst_actief.slice(0, 10) as IsoDatum)}</>}
+              </span>
+              {x.status !== 'toegelaten' && (
+                <Knop klein uit={bezig === x.account}
+                      opKlik={() => void zet(x.account, { p_status: 'toegelaten' })}>
+                  toelaten
+                </Knop>
+              )}
+              {x.status !== 'afgewezen' && !x.beheerder && (
+                <Knop klein uit={bezig === x.account}
+                      opKlik={() => void zet(x.account, { p_status: 'afgewezen' })}>
+                  afwijzen
+                </Knop>
+              )}
+              {/* Breder dan `.smal`, want de eigenaar staat op honderdduizend en
+                  dat past niet in een vak dat voor kilo's gemaakt is. */}
+              <input type="number" step="10" min="0" className="smal" defaultValue={x.budget}
+                     style={{ width: 88 }} aria-label={`budget van ${x.account}`}
+                     onBlur={(e) => {
+                       const n = Number(e.target.value)
+                       if (Number.isFinite(n) && n >= 0 && n !== x.budget) {
+                         void zet(x.account, { p_budget: n })
+                       }
+                     }} />
+            </div>
+          ))}
+        </div>
+      </Kaart>
+
+      <p className="mini" style={{ marginTop: 8 }}>
+        Deze maand ging er ${usd.toFixed(2)} doorheen over alle accounts samen. Dat bedrag rekent
+        met een vast Sonnet-tarief; draait er een ander model, dan is het een onderschatting. Het
+        aantal herkenningen klopt wel altijd, en daarom staat het budget daarin.
+      </p>
+    </div>
+  )
+}
+
+/**
+ * JE EIGEN SLEUTEL
+ *
+ * De proefrit loopt op de sleutel van de eigenaar en is met opzet klein: genoeg
+ * om te voelen wat het model met een foto van je bord doet, niet genoeg om er
+ * maanden op te draaien. Wie verder wil, geeft zijn eigen sleutel op en betaalt
+ * zijn eigen rekening.
+ *
+ * WAT HET SCHERM EERLIJK MOET ZEGGEN
+ *
+ * Dat de sleutel hier wordt bewaard. Niet in je browser, maar in de database
+ * van deze app, versleuteld, en alleen te lezen door de functie die de
+ * herkenning doet. Dat is beter dan een sleutel in een browser en het is geen
+ * garantie, en wie een betaalsleutel afgeeft hoort te weten aan wie.
+ *
+ * Dat hij nooit meer terugkomt. Er is geen knop die hem laat zien, ook niet aan
+ * jou. Je ziet de laatste vier tekens en verder niets. Wie zijn sleutel kwijt
+ * is maakt een nieuwe bij zijn aanbieder.
+ *
+ * En dat hij hier niet uitgeprobeerd wordt. De database belt niet naar buiten,
+ * dus of de sleutel werkt blijkt bij de eerste herkenning. Dat staat erbij,
+ * want anders is "opgeslagen" een belofte die de app niet heeft gedaan.
+ */
+function EigenSleutel({ t, opnieuw }: { t: Toegang; opnieuw: () => void }) {
+  const [open, zetOpen] = useState(false)
+  const [aanbieder, zetAanbieder] = useState<Aanbieder>('anthropic')
+  const [sleutel, zetSleutel] = useState('')
+  const [fout, zetFout] = useState<string | null>(null)
+  const [bezig, zetBezig] = useState(false)
+
+  if (t.status === 'onbekend') return null
+
+  const bewaar = async () => {
+    const tk = sessietoken()
+    if (!tk) return
+    zetBezig(true)
+    zetFout(null)
+    try {
+      /* Langs de edge function en niet langs de database: daar staat de
+         hoofdsleutel waarmee hij versleuteld wordt. Zie bestand 49. */
+      await sleutelOpbergen(tk, aanbieder, sleutel.trim())
+      zetSleutel('')
+      zetOpen(false)
+      opnieuw()
+    } catch (e) {
+      zetFout(e instanceof Error ? e.message : String(e))
+    } finally {
+      zetBezig(false)
+    }
+  }
+
+  const haalWeg = async () => {
+    const tk = sessietoken()
+    if (!tk) return
+    zetBezig(true)
+    try {
+      await roep('kal_sleutel_weghalen', { p_token: tk })
+      opnieuw()
+    } catch (e) {
+      zetFout(e instanceof Error ? e.message : String(e))
+    } finally {
+      zetBezig(false)
+    }
+  }
+
+  if (t.eigenSleutel && !open) {
+    return (
+      <div style={{ marginTop: 14 }}>
+        <Kop>Je eigen sleutel</Kop>
+        <p className="mini" style={{ marginTop: 4 }}>
+          De herkenning loopt op je eigen sleutel bij{' '}
+          <b>{t.aanbieder ? AANBIEDERNAAM[t.aanbieder] : 'je aanbieder'}</b>
+          {t.staart && <>, die eindigt op <span className="cijfer">{t.staart}</span></>}. Het
+          maandbudget van de beheerder geldt niet meer voor jou; wat je gebruikt staat op je
+          eigen rekening.
+        </p>
+        <Rij style={{ marginTop: 8 }}>
+          <Knop klein opKlik={() => zetOpen(true)}>andere sleutel</Knop>
+          <Knop klein uit={bezig} opKlik={() => void haalWeg()}>sleutel weghalen</Knop>
+        </Rij>
+        {fout && <p className="mini" style={{ color: 'var(--let)', marginTop: 6 }}>{fout}</p>}
+      </div>
+    )
+  }
+
+  if (!open) {
+    return (
+      <p className="mini" style={{ marginTop: 10 }}>
+        <button type="button" className="alsLink" onClick={() => zetOpen(true)}>
+          Je eigen AI-sleutel gebruiken
+        </button>
+        {' '}, dan geldt het maandbudget niet meer voor jou.
+      </p>
+    )
+  }
+
+  return (
+    <div style={{ marginTop: 14 }}>
+      <Kop>Je eigen sleutel</Kop>
+      <p className="mini" style={{ marginTop: 4 }}>
+        De herkenning van maaltijden loopt nu op de sleutel van de beheerder, en die is
+        begrensd. Geef je je eigen sleutel op, dan loopt hij op jouw rekening en vervalt die
+        grens. De rest van de app verandert er niet van.
+      </p>
+
+      <Rij style={{ marginTop: 10 }}>
+        {(['anthropic', 'openai'] as const).map((a) => (
+          <Keuzechip key={a} aan={aanbieder === a} opKlik={() => zetAanbieder(a)}>
+            {AANBIEDERNAAM[a]}
+          </Keuzechip>
+        ))}
+      </Rij>
+
+      <input type="password" autoComplete="off" spellCheck={false}
+             className="veld" style={{ marginTop: 8, width: '100%' }}
+             placeholder={aanbieder === 'anthropic' ? 'sk-ant-...' : 'sk-...'}
+             aria-label="Je API-sleutel"
+             value={sleutel} onChange={(e) => zetSleutel(e.target.value)} />
+
+      {fout && <p className="mini" style={{ color: 'var(--let)', marginTop: 6 }}>{fout}</p>}
+
+      <Rij style={{ marginTop: 10 }}>
+        <Knop vol uit={bezig || sleutel.trim().length < 30} opKlik={() => void bewaar()}>
+          Bewaren
+        </Knop>
+        <Knop uit={bezig} opKlik={() => { zetOpen(false); zetSleutel(''); zetFout(null) }}>
+          Terug
+        </Knop>
+      </Rij>
+
+      <Uitleg id="sleutel-waar" label="waar je sleutel terechtkomt">
+        <p>
+          Hij gaat versleuteld de database van deze app in, en alleen de functie die de
+          herkenning doet kan hem uitlezen. Er is geen knop die hem laat zien, ook niet aan
+          jou: je ziet straks de laatste vier tekens en verder niets. Dat is beter dan een
+          sleutel in een browser en het is geen garantie, en je hoort te weten aan wie je hem
+          afgeeft.
+        </p>
+        <p>
+          Hij wordt hier niet uitgeprobeerd, want deze database belt niet naar buiten. Of hij
+          werkt blijkt bij je eerste herkenning. Klopt er iets niet, dan zegt je aanbieder dat
+          en komt die zin gewoon op je scherm.
+        </p>
+        <p>
+          Je kunt hem er altijd zelf weer uithalen, en dan val je terug op het budget van de
+          beheerder. Bij je aanbieder kun je een sleutel bovendien op elk moment intrekken;
+          dat is de knop die altijd werkt, ook als je deze app niet vertrouwt.
+        </p>
+      </Uitleg>
+
+      <Uitleg id="sleutel-hoe" label="hoe je er een maakt, en wat het kost">
+        <p>
+          <b>Anthropic.</b> Maak een account op console.anthropic.com, zet er onder Billing een
+          tegoed op (het minimum is vijf dollar) en maak daarna onder API Keys een nieuwe
+          sleutel. Hij begint met sk-ant- en je ziet hem één keer, dus plak hem meteen hier.
+          Dit is de aanbieder waarop de herkenning van deze app gebouwd en getoetst is.
+        </p>
+        <p>
+          <b>OpenAI.</b> Hetzelfde patroon op platform.openai.com: een account, tegoed onder
+          Billing, en dan een sleutel onder API keys. Die begint met sk-. Let op dat een
+          ChatGPT-abonnement hier niet voor telt; dat is een andere dienst dan de API en geeft
+          je geen sleutel.
+        </p>
+        <p>
+          Wat het kost: een herkenning is grofweg een paar dollarcent, dus vijf dollar tegoed
+          is al gauw een paar honderd maaltijden. Je betaalt per gebruik en er loopt niets door
+          als je de app een maand laat liggen. Zet bij je aanbieder een maandlimiet, dan kan
+          het ook niet uit de hand lopen.
+        </p>
+        <p>
+          Welke van de twee: de hele herkenning is op Anthropic gebouwd en daar zijn de
+          gouden waarden van deze app op tot stand gekomen. Het OpenAI-pad is met dezelfde
+          schema's gebouwd maar nog niet tegen een echte sleutel gedraaid. Werkt er iets niet
+          zoals verwacht, meld het dan; in het logboek staat per herkenning welk model hem
+          deed.
+        </p>
+      </Uitleg>
+    </div>
+  )
+}
+
+/**
+ * JE GEGEVENS WEGHALEN
+ *
+ * De privacyverklaring belooft het en dit is waar het gebeurt. Drie stappen, en
+ * elke stap is er omdat de vorige niet genoeg was.
+ *
+ * **Eerst kijken.** De knop verwijdert niets; hij vraagt de database wat er
+ * zou verdwijnen en toont dat, per soort gegeven en met aantallen. Wie op een
+ * knop tikt die zegt "alles weg" weet niet wat alles is, en dat is precies het
+ * moment waarop iemand terugschrikt of juist te makkelijk doorgaat.
+ *
+ * **Dan het wachtwoord.** Een open sessie op een telefoon die even in een
+ * andere hand ligt, is genoeg om te tikken. Hij is niet genoeg om een
+ * wachtwoord te weten. Dat is dezelfde grens als bij het wijzigen ervan, en de
+ * database controleert hem; dit scherm vraagt er alleen naar.
+ *
+ * **En dan pas.** Er is geen prullenbak en dat staat er met zoveel woorden bij.
+ */
+function GegevensWeghalen({ opAfmelden }: { opAfmelden: () => void }) {
+  const [open, zetOpen] = useState(false)
+  const [kijk, zetKijk] = useState<Wisuitslag | null>(null)
+  const [ww, zetWw] = useState('')
+  const [fout, zetFout] = useState<string | null>(null)
+  const [bezig, zetBezig] = useState(false)
+
+  const roepWissen = async (echt: boolean) => {
+    const tk = sessietoken()
+    if (!tk) { zetFout('Je bent niet aangemeld'); return }
+    zetBezig(true)
+    zetFout(null)
+    try {
+      const uit = await roep('kal_account_wissen', { p_token: tk, p_ww: ww, p_echt: echt })
+      if ('fout' in uit) { zetFout(uit.fout); return }
+      if (echt) { opAfmelden(); return }
+      zetKijk(uit)
+    } catch (e) {
+      zetFout(e instanceof Error ? e.message : String(e))
+    } finally {
+      zetBezig(false)
+    }
+  }
+
+  if (!open) {
+    return (
+      <p className="mini" style={{ marginTop: 10 }}>
+        <button type="button" className="alsLink" onClick={() => zetOpen(true)}>
+          Al je gegevens weghalen
+        </button>
+      </p>
+    )
+  }
+
+  return (
+    <div style={{ marginTop: 14 }}>
+      <Kop>Al je gegevens weghalen</Kop>
+      <p className="mini" style={{ marginTop: 4 }}>
+        Je account en alles wat erin staat verdwijnen. Er is geen prullenbak en er is geen weg
+        terug. Vul je wachtwoord in; je ziet dan eerst wat er precies weggaat.
+      </p>
+
+      <input type="password" autoComplete="current-password" className="veld"
+             style={{ marginTop: 8, width: '100%' }} placeholder="je wachtwoord"
+             aria-label="Je wachtwoord" value={ww}
+             onChange={(e) => { zetWw(e.target.value); zetKijk(null) }} />
+
+      {fout && <p className="mini" style={{ color: 'var(--let)', marginTop: 6 }}>{fout}</p>}
+
+      {kijk && (
+        <Kaart plat style={{ marginTop: 10 }}>
+          <p className="mini">
+            Dit gaat weg, {kijk.totaal} in totaal:
+          </p>
+          <div className="lijst" style={{ marginTop: 4 }}>
+            {Object.entries(kijk.per_tabel).map(([tabel, aantal]) => (
+              <div key={tabel}>
+                <span className="mini groei">{NETTE_NAAM[tabel] ?? tabel}</span>
+                <span className="cijfer klein">{aantal}</span>
+              </div>
+            ))}
+          </div>
+        </Kaart>
+      )}
+
+      <Rij style={{ marginTop: 10 }}>
+        {!kijk ? (
+          <Knop vol uit={bezig || ww.length < 1} opKlik={() => void roepWissen(false)}>
+            Laat zien wat er weggaat
+          </Knop>
+        ) : (
+          <Knop vol uit={bezig} opKlik={() => void roepWissen(true)}>
+            Ja, haal alles weg
+          </Knop>
+        )}
+        <Knop uit={bezig} opKlik={() => { zetOpen(false); zetWw(''); zetKijk(null); zetFout(null) }}>
+          Terug
+        </Knop>
+      </Rij>
+
+      <p className="mini" style={{ marginTop: 10 }}>
+        Er blijft één ding staan: een aantekening dat op deze dag een account is verwijderd, met
+        de naam erin. Zonder die aantekening is niet na te gaan dat het gebeurd is, ook niet door
+        jou. Wat er verder van je bewaard wordt staat in de privacyverklaring.
+      </p>
+    </div>
+  )
+}
+
+/* De namen die de database gebruikt, in gewone taal. Wat hier niet in staat
+   komt er als tabelnaam te staan, en dat is lelijker dan het is: een tabel die
+   ik vergeet te benoemen wordt wél gewist, en dat is wat telt. */
+const NETTE_NAAM: Record<string, string> = {
+  kal_gebruikers: 'je account',
+  kal_dagen: 'dagen met een weging, stappen of slaap',
+  kal_regels: 'wat je gegeten en gedronken hebt',
+  kal_profiel: 'je profiel',
+  kal_metingen: 'je metingen, waaronder bloeddruk',
+  kal_labs: 'je labwaarden',
+  kal_vragenlijsten: 'ingevulde vragenlijsten',
+  kal_training: 'je krachttraining',
+  kal_inspanning: 'je inspanning',
+  kal_koppelingen: 'koppelingen met je telefoon',
+  kal_sessies: 'aanmeldingen op je toestellen',
+  kal_ai_log: 'wanneer je iets liet herkennen',
+  kal_prikkel_log: 'verstuurde herinneringen',
+  kal_beweging_peilingen: 'binnengekomen beweegpeilingen',
+  kal_producten: 'je eigen producten',
+  kal_recepten: 'je eigen recepten',
+  eigen_ai_sleutel: 'je eigen AI-sleutel',
 }

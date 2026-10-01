@@ -14,9 +14,11 @@
  * Vm = 24,5 dm³/mol bij 298 K en p = p0, c = 3,00·10⁸ m/s, Kw = 1,0·10⁻¹⁴
  * bij 298 K.
  */
-import type { Formuleblok } from './formules'
+/** Een blok van de bovenbouwkaart: kop en regels. Bij welk vak het hoort zit
+ *  in het vak eromheen, niet in het blok. */
+export interface Bovenbouwblok { kop: string; items: Array<[string, string]> }
 
-export interface Bovenbouwvak { vak: string; kop: string; emoji: string; blokken: Formuleblok[] }
+export interface Bovenbouwvak { vak: string; kop: string; emoji: string; blokken: Bovenbouwblok[] }
 
 export const BOVENBOUW: Bovenbouwvak[] = [
   { vak: 'basis', kop: 'Rekenen dat je nodig hebt bij alle exacte vakken', emoji: '🧮', blokken: [
@@ -235,3 +237,17 @@ export const BOVENBOUW: Bovenbouwvak[] = [
     ]},
   ]},
 ]
+
+/** De exacte vakken waarbij het rekenblok van de bovenbouw hoort. */
+const MET_BASIS = new Set(['scheikunde', 'natuurkunde', 'wiskundeA', 'wiskundeB', 'biologie'])
+
+/**
+ * De bovenbouwblokken naast een som van dit vak: eerst de eigen blokken van
+ * het vak, dan het rekenblok dat bij alle exacte vakken hoort. Een vak zonder
+ * bovenbouwkaart geeft een lege lijst.
+ */
+export function bovenbouwVoor(vak: string): Bovenbouwblok[] {
+  const eigen = BOVENBOUW.find((b) => b.vak === vak)?.blokken ?? []
+  const basis = MET_BASIS.has(vak) ? (BOVENBOUW.find((b) => b.vak === 'basis')?.blokken ?? []) : []
+  return [...eigen, ...basis]
+}

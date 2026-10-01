@@ -58,7 +58,7 @@ Een rekensom met Hall's eigen parameters (mijn afleiding, geen gepubliceerd resu
 
 Tien imputatiestrategieën en meerdere berekeningsmethoden zijn vergeleken bij vijftig deelnemers met slimme weegschalen. De winnaars waren structural modeling met Kalman-smoothing en het exponentieel gewogen voortschrijdend gemiddelde, met een fout van 0,62 tot 0,64 procent, praktisch gelijk (Turicchi J et al., *JMIR Mhealth Uhealth* 2020;8:e17977, doi:10.2196/17977). Nevenbevinding: ontbrekende dagen kun je beter overslaan dan imputeren; de schatters blijven redelijk tot tachtig procent ontbrekende data.
 
-**Wat de app doet.** Een EWMA met een halfwaardetijd van ongeveer zeven tot tien dagen (α ≈ 0,1) voor de getoonde trendlijn, en een gewone kleinste-kwadratenregressie over het venster voor de hélling, die laatste omdat je daar direct een standaardfout uit krijgt, en die standaardfout is precies wat het betrouwbaarheidsinterval op de TDEE voedt. Metingen die meer dan drie standaarddeviaties van de verwachte EWMA afwijken worden aangemerkt als mogelijke uitbijter, maar niet automatisch verwijderd: bij snelle koolhydraatwisselingen zijn sprongen van een tot twee kilo fysiologisch.
+**Wat de app doet.** Een EWMA met een halfwaardetijd van ongeveer zeven tot tien dagen (α ≈ 0,1) voor de getoonde trendlijn, en een gewone kleinste-kwadratenregressie over het venster voor de hélling, die laatste omdat je daar direct een standaardfout uit krijgt, en die standaardfout is precies wat het betrouwbaarheidsinterval op de TDEE voedt. Een weging die te ver van de verwachting ligt wordt aangemerkt als mogelijke uitbijter, maar niet verwijderd: bij snelle koolhydraatwisselingen zijn sprongen van een tot twee kilo fysiologisch. Hoe die markering werkt staat in §27.
 
 Een filter met een halfwaardetijd van zeven tot tien dagen loopt inherent anderhalve week achter op de werkelijkheid. Dat is de prijs van ruisonderdrukking, het is onvermijdelijk, en het staat in de app: wie gisteren streng is gaan diëten mag vandaag geen reactie verwachten.
 
@@ -1939,3 +1939,1547 @@ gedachtestreepjes te gebruiken in de zinnen die het zelf schrijft. Zonder die
 regel zou de app ze bij elke herkenning opnieuw op het scherm zetten, en geen
 enkele statische proef zou dat zien.
 
+---
+
+## 27. De uitbijter die beloofd was en er niet stond
+
+Hoofdstuk 1 zei dat een weging die te ver van de verwachting ligt wordt
+aangemerkt. Dat stond er sinds de eerste versie, en het klopte niet: het woord
+uitbijter kwam in de hele code niet voor. `trendReeks` rekende de EWMA en verder
+niets.
+
+Dat is precies het soort gat waar een naloop voor is. De aanleiding was een
+schermafdruk waarop de y-as van de gewichtsgrafiek tot 191 liep terwijl de
+gebruiker rond de 118 weegt: één weging van 190,2 in een reeks van achtentwintig
+dagen. Zo'n getal trekt de trend, het verbruik, de BMI en het eiwitdoel scheef,
+en dan staat er op vier schermen een uitkomst waar niemand iets aan heeft.
+
+### Wat er nu gebeurt
+
+Elke weging krijgt een `afwijkingKg`: het verschil met de mediaan van de
+buurwegingen, drie aan elke kant, zichzelf niet meegerekend. Ligt die afwijking
+boven de grens, dan is `uitbijter` waar. De grens is drie keer de eigen
+spreiding, met een vloer van drie kilo.
+
+Drie getallen, en alle drie om een reden.
+
+**De mediaan van de buren, en niet de EWMA.** Dat was de eerste opzet en die
+maakte van één fout er drie. Een EWMA lóópt naar een uitbijter toe, dus na die
+190,2 weken ook de twee wegingen erná ver van de verwachting af en werden ze
+evengoed aangemerkt. Eén verkeerde toets besmette drie dagen. Een mediaan
+verschuift niet van één wild getal, dus de buren blijven schoon.
+
+**De spreiding als mediane absolute afwijking.** Met een gewone
+standaarddeviatie verstopt een grove uitbijter zich achter zijn eigen invloed:
+die 190,2 tilt de spreiding zó ver op dat hij er zelf binnen drie ervan valt. De
+proef rekent dat na en laat zien dat de gewone standaarddeviatie hem inderdaad
+mist.
+
+**De vloer van drie kilo.** Wie elke ochtend binnen tweehonderd gram weegt heeft
+een spreiding van tweehonderd gram, en drie keer dat is zeshonderd. Een kilo na
+een zoute maaltijd zou dan een uitbijter zijn, en dat is precies wat hoofdstuk 1
+fysiologisch noemt. Drie kilo lichaamsweefsel komt er in één nacht niet bij; wat
+er wél kan is vocht, een andere weegschaal, een ander mens erop, of een
+verkeerde toets.
+
+### Wat er niet gebeurt
+
+De weging blijft staan, telt mee in de EWMA en telt mee in de regressie. Er
+wordt niets weggegooid en niets gecorrigeerd. Wie op de weegschaal stond weet of
+het een tweede persoon was of een verkeerde toets; de app weet dat niet en zegt
+het dus ook niet.
+
+Op Inzicht staat onder de grafiek welke weging het is, hoeveel hij afwijkt, en
+dat hij gewoon meetelt. Een markering die de gebruiker niet ziet is geen
+markering.
+
+### De regel die een mutant afdwong
+
+Vier mutanten werden gedood: de mediane absolute afwijking vervangen door een
+gewone standaarddeviatie, de vloer van drie kilo weghalen, de drempel van vijf
+wegingen op één zetten, en de verwachting terugzetten op de EWMA.
+
+Eén overleefde: de weging meelaten tellen in zijn eigen verwachting. Dat is
+logisch, want bij een mediaan verschuift één waarde er nauwelijks iets, en de
+meeste reeksen geven hetzelfde antwoord met of zonder die uitzondering. Er is nu
+een reeks die het wél laat zien: zes buren die zich splitsen in drie van 100 en
+drie van 110, dus mediaan 105 en afwijking vijf. Telt de weging zelf mee, dan
+zijn het zeven waarden, ligt de mediaan op 110 en is de afwijking nul, een
+weging die zichzelf gelijk geeft.
+
+En de belangrijkste regel van het blok gaat niet over uitbijters maar over de
+gewone gang van zaken: achtentwintig dagen op streeftempo, met dagelijkse ruis,
+levert geen enkele markering op. Deze app is er voor iemand die afvalt, en een
+waarschuwing over precies dat gedrag zou het scherm met ruis vullen.
+
+### Wat hier openstond, en hoe het is opgelost
+
+De grafiek schaalde mee met de uitbijter: de y-as liep tot 191 en de echte reeks
+werd een streepje. Dat is opgelost zoals hieronder in §31 staat: de as kijkt
+naar de reeks, de weging staat op de rand.
+
+
+## 28. De sparkline die niets tekende
+
+In de kop van het inzichtscherm staat een strookje van acht weken gewicht: de
+ruwe wegingen licht, de gladde lijn erover. Op de schermafdruk van 20 september
+stond daar het kopje "Gewicht, laatste acht weken" met daaronder een paar losse
+streepjes in een verder lege strook. Dat las als een kapotte figuur.
+
+### Wat er misging
+
+Het pad werd opgebouwd als `M` voor het eerste punt van een stuk en `L` voor
+elk volgend punt, en bij een ontbrekende dag begon er een nieuw stuk. Een reeks
+waarin geen twee wegingen naast elkaar liggen levert dan een pad op dat
+uitsluitend uit verplaatsingen bestaat, en zo'n pad heeft geen lengte: er wordt
+niets getekend. Gemeten in een echte Chromium, met een reeks die om de drie
+dagen een weging heeft:
+
+```
+paden: [{ M: 10, L: 0, lengte: 0.0 }, { M: 10, L: 0, lengte: 0.0 }]
+```
+
+Tien wegingen, twee paden, nul beeldpunten. Bij zestien wegingen in
+achtentwintig dagen (de toestand van de schermafdruk) valt het deels wél uit
+elkaar en deels niet, en dat geeft de losse streepjes.
+
+Het is geen rekenfout: het getal klopte, de figuur eronder toonde het niet. Maar
+een lege strook onder een kopje zegt de gebruiker iets anders dan "je weegt
+dun", namelijk "hier is iets stuk".
+
+### Wat eraan gedaan is
+
+Een punt dat helemaal alleen staat krijgt een lijnstuk naar zichzelf. Met een
+ronde streepdop is dat een stip. De dop staat nu op allebei de paden en niet
+alleen op de gladde; zonder dop tekent een lijnstuk van nul lengte namelijk
+evenmin iets, en dan was een losse weging weer onzichtbaar geweest.
+
+Wat er uitdrukkelijk **niet** gebeurd is: doortrekken over de gaten heen. Dat
+zou de figuur een verloop laten tonen over dagen waarop niet gewogen is, en dat
+is een meting verzinnen. Een gat blijft een gat, en dun wegen ziet er nu dun
+uit in plaats van kapot.
+
+### De proef
+
+`src/health/lijntje.proef.ts`, tien gevallen. De twee eisen wijzen tegen elkaar
+in en staan er allebei: elke waarde wordt getekend, ook een losse, én er wordt
+nooit doorgetrokken over een gat. De eerste zonder de tweede geeft een vloeiende
+lijn die niet gemeten is; de tweede zonder de eerste geeft de lege strook terug.
+
+Drie mutanten, alle drie gedood: het lijnstuk naar zichzelf weghalen (drie
+gevallen vallen om), het gat niet meer als gat behandelen (drie), en élk punt een
+stip geven in plaats van alleen het losse (vier).
+
+## 29. Het naslagvenster: breder, en met de getallen eruit
+
+Verdiepen is het enige venster van deze app waar je in leest in plaats van iets
+invult. Het had wel de vorm van alle andere: een kolom van 520 punten, titels in
+de maat van een onderschrift, en alinea's in de maat van een bijschrift. Op een
+tablet stonden daar regels van veertig aanslagen in, met de getallen middenin
+weggezakt. Zo leest naslagwerk als een melding.
+
+Drie dingen veranderd, en ze hangen samen.
+
+**Breder, maar niet eindeloos.** Het venster kent nu een stand `breed`: 780
+punten vanaf een scherm van 820. De bovengrens is geen smaak. Voorbij ongeveer
+vijfentachtig aanslagen per regel raakt het oog bij de terugsprong de volgende
+regel kwijt, en dat is precies wat je bij naslagwerk niet wilt. Alle andere
+vensters blijven zoals ze waren: daar vul je iets in, en daar is smal juist
+goed.
+
+**Een titel is een titel.** De kop van een stuk stond in `eyebrow`, grijs en op
+0,78 rem, dezelfde stijl als het bovenschrift "Wat we niet weten" eronder. Nu
+staat hij in de kleur van de tekst op 1,12 rem. Het bovenschrift in het
+voorbehoud blijft wat het was, want dat ís een bovenschrift.
+
+**De hoeveelheden springen eruit.** Wie opzoekt hoeveel er na een jaar
+terugkwam, hoort dat getal te zien voordat hij de zin eromheen leest. Dat
+gebeurt bij het tekenen en niet met de hand in de tekst, want teksten worden
+bijgewerkt en dan staat de nadruk op het vorige getal.
+
+### Waarom dat laatste een eigen bestand en een eigen proef kreeg
+
+Een cijfer is niet hetzelfde als een getal. In deze teksten staan `STEP-1`,
+`GLP-1`, `Keer Diabetes2 Om` en `augustus 2026`, en geen van vieren is een
+hoeveelheid. Vet gezet zouden ze de aandacht trekken van precies de getallen
+waar het om gaat. Vandaar drie voorwaarden: geen letter, cijfer of koppelteken
+tegen het getal aan (dat haalt `STEP-1` en `Diabetes2` eruit), de eenheid hoort
+bij het getal (anders staat "40" dik en "procent" dun), en een kaal jaartal telt
+niet mee. Een getal van vier cijfers mét eenheid wel, want 2000 kcal is geen
+jaar.
+
+Eén ding ging bij het bouwen mis en is het vermelden waard. De nadruk kreeg
+eerst de klasse `cijfer`, die al bestond: mono met tabelcijfers, precies goed
+voor een getal in een vakje waar cijfers onder elkaar horen te staan. In een
+lopende zin leest datzelfde als een stuk code midden in de tekst. Een
+hoeveelheid in proza blijft dus in dezelfde letter en wordt alleen zwaarder.
+
+De eigenschap die er het meest toe doet is een andere: **de tekst blijft
+letterlijk dezelfde.** Wat erin gaat komt eruit, alleen in stukken geknipt. Een
+nadrukregel die onderweg een spatie of een woord opeet is in een medische tekst
+erger dan geen nadruk, en op het scherm is dat bijna niet te zien: er staat
+gewoon een zin, en er ontbreekt iets. Die eigenschap staat als eerste proef in
+`src/health/nadruk.proef.ts`.
+
+Vier mutanten, alle vier gedood: de jaartalwacht weghalen, de terugblik in de
+uitdrukking weghalen (dan wordt `STEP-1` dik), de eenheid niet meenemen, en één
+teken te weinig afknippen (dan verdwijnt er stilletjes een letter uit de tekst).
+
+## 30. Wat er aan het boekje bij is gekomen
+
+Het was acht stukken en het zijn er negen. Wat er bij kwam en wat er aangevuld
+is, staat hieronder; de bronnen staan bij de stukken zelf.
+
+**Slaap, en waar je gewichtsverlies vandaan komt.** Dit ontbrak, en het is een
+van de weinige dingen in dit dossier waar het bewijs scherp is en de uitkomst
+onverwacht. Dezelfde mensen, twee keer veertien dagen hetzelfde caloriearme
+dieet, één keer met 8,5 uur slaapgelegenheid en één keer met 5,5 uur: even veel
+gewicht eraf, maar bij de korte nachten daalde het aandeel vet in dat verlies
+met 55 procent en steeg het verlies aan vetvrije massa met 60 procent
+(Nedeltcheva e.a., 2010). Het voorbehoud hoort er even hard bij: tien mensen, in
+een laboratorium, opgelegd slaaptekort.
+
+Daar hoort de apneukant naast, omdat de richting van dat bewijs tegen de
+intuïtie in gaat. Afvallen helpt tegen slaapapneu (tien kilo eraf gaf bijna tien
+ademstops per uur minder), maar CPAP helpt niet tegen het gewicht: twee
+meta-analyses vinden een kleine toename. Vandaar de volgorde in het stuk:
+behandel de apneu om de apneu, en het gewicht daarnaast.
+
+**Wat GLP-1 doet** stond er met één samengevat bereik ("15 tot ruim 20
+procent"). Dat is nu per middel, met de studie erbij, en er staat bij wat het
+kost: bij obesitas zonder diabetes type 2 wordt er in Nederland niets vergoed.
+Dat is voor de lezer geen bijzaak.
+
+**Wat je verliest naast vet** had de casusreeksen wel en het hardere bewijs
+niet. Krachttraining hield in een samenvatting van zes gelote onderzoeken 93,5
+procent tegen van het verlies aan vetvrije massa dat door de caloriebeperking
+kwam, bij drie keer per week gedurende twaalf tot vierentwintig weken. En
+andersom: zonder beweging erbij verloor 81 procent van de groepen meer dan een
+zesde van het gewichtsverlies als vetvrije massa, tegen 39 procent met beweging.
+
+**Waarom eiwit nu zwaarder telt** noemde een drempel zonder te zeggen hoe je
+die haalt. Er staan nu porties bij (honderd gram bereide kipfilet rond de 30
+gram, een schep wei-eiwit van dertig gram rond de 27, drie eieren rond de 19),
+en het gewicht waarop het doel per kilo slaat: gemaximeerd op wat bij een BMI
+van 30 hoort, zoals de app zelf rekent. Bij het voorbehoud zijn twee dingen
+gekomen die in de reclame voor eiwit nooit staan: de leucinedrempel is een
+werkhypothese waarvoor geen afkappunt is vast te stellen, en er bestaat geen
+enkel onderzoek dat de eiwitbehoefte bij obesitas rechtstreeks heeft bepaald.
+
+### Eén getal rechtgezet in het onderzoeksdossier
+
+`ONDERZOEK-MEDISCH-AFVALLEN.md` gaf voor de STEP-1-extensie nog ~43 procent voor
+de groep die minstens 5 procent verlies vasthield. Bij de naloop van 20
+september bleek de extensie zelf 48,2 procent te geven; dat was toen in het
+boekje rechtgezet maar niet in het dossier, dus daar stonden twee getallen in
+één repo. Nu gelijkgetrokken, met de reden erbij.
+
+
+## 31. De as kijkt naar de reeks, de weging staat op de rand
+
+De uitbijter uit §27 werd wél aangewezen in de tekst, maar de figuur eronder
+bleef onleesbaar: één weging van 190,2 in een reeks rond de 118 liet de as van
+107 tot 191 lopen, en tweeëntwintig echte wegingen werden daardoor een streepje
+van een paar punten hoog. Letterlijk waar, en precies daardoor nutteloos: je zag
+alleen nog de fout.
+
+Dat stond hier als ontwerpkeuze open. Hij is nu gemaakt, en het is niet de keuze
+tussen eerlijk en leesbaar geworden maar allebei.
+
+**De as kijkt naar de reeks.** Een weging die als uitschieter is aangemerkt
+bepaalt de uitsnede niet meer.
+
+**De weging verdwijnt niet.** Hij staat op de rand van de figuur, met een ring
+eromheen zodat hij niet voor een gewone meting wordt aangezien, met een gestreept
+streepje dat naar buiten wijst, en met zijn eigen getal ernaast. Zonder dat getal
+zou de rand suggereren dat hij er net buiten ligt. Deze app gooit geen metingen
+weg, ook niet uit een plaatje.
+
+**Het voortschrijdend gemiddelde telt wél mee voor de as.** Dat is de uitkomst
+van het model en niet de meting. Bij alfa 0,1 loopt de lijn na zo'n weging een
+paar kilo mee omhoog en zakt daarna terug; dat hóórt zichtbaar te zijn, anders
+lijkt de trend kalmer dan hij is en verbergt de figuur juist de fout die de tekst
+eronder benoemt. Gemeten in de proefreeks: de as loopt nu van 115 tot 127 in
+plaats van 107 tot 191, met de piek van het gemiddelde erin.
+
+**En een gemarkeerde weging die gewoon binnen de uitsnede valt, blijft op zijn
+plek staan.** Op de rand zetten wat er niet buiten ligt zou liegen over waar het
+ligt. Een weging van 119 in een reeks rond de 118 kan aangemerkt zijn zonder ver
+weg te liggen.
+
+**Blijft er te weinig over om op te schalen, dan gebeurt er niets bijzonders.**
+Twee wegingen waarvan er één afwijkt hebben geen "rest" om je op te richten, en
+een as op één punt is geen as. Dan schaalt de figuur op alles, zoals altijd.
+
+De schaal zit in `gewichtSchaal()` en niet in de tekening, zodat hij te toetsen
+is zonder een browser. Zeven gevallen, vijf mutanten gedood: de uitbijter toch
+mee laten tellen voor de as, `buitenBeeld` altijd leeg maken, het gemiddelde
+níét meerekenen, de terugval weghalen, en élke uitbijter op de rand zetten in
+plaats van alleen die erbuiten valt.
+
+### Twee dingen die bij dezelfde figuur opvielen
+
+De regel "doel 100 kg ligt onder deze uitsnede" stond rechtsboven en zei altijd
+"onder", ook wanneer het doel er juist bóven zou liggen. Hij staat nu onder de
+as, naast de datumregel (daar ligt het doel immers ook: buiten beeld), en hij
+zegt welke kant het op is. Rechtsboven botste hij bovendien letterlijk met het
+getal van een weging op de rand.
+
+## 32. Wat er uit een nascholing van september 2026 is overgenomen, en wat niet
+
+Een avond met drie sprekers over de behandeling van obesitas: Blüher (Leipzig)
+over heterogeniteit, Vangoitsenhoven (UZ Leuven) over dopamine, Acosta (Mayo
+Clinic) over fenotypering. Veel van wat daar langskwam is het opschrijven waard.
+Eén ding staat daarom bovenaan en niet onderaan: **de avond werd betaald door
+Good Life Pharma, en alle drie de sprekers kwamen langs een eigen route uit bij
+naltrexon-bupropion, precies het middel dat die organisator in de Benelux
+voert.** Dat maakt de inhoud niet onwaar; het bepaalt wel hoe hard je hem mag
+brengen.
+
+### Wat er in de app is gekomen
+
+**Eén maat erbij, en het is de maat die de sprekers zelf meten.** De
+middelomtrek stond er al met de afkappunten van 94 en 102 cm. Die zijn
+centimeters voor iedereen, en dat is hun zwakte: 102 cm bij 1,70 m is iets
+anders dan bij 1,96 m. De verhouding met de lengte lost dat op met één deling
+en kent één grens voor iedereen, 0,5. NICE beveelt hem naast de BMI aan, en in
+de kliniek is hij vaak het enige wat er werkelijk gemeten wordt: DEXA mag daar
+alleen binnen onderzoek, en een MRI-scanner houdt rond de 140 kilo op, precies
+bij de patiënten waar het om gaat.
+
+De grens is een zone en geen streep. De meetfout van het lint loopt in de
+literatuur van 0,7 tot 15 cm; bij een lengte van 1,90 m is twee centimeter al
+0,01 in de verhouding. Wie op 0,50 uitkomt weet met één meting niet aan welke
+kant hij staat, en dat zegt het scherm in plaats van te kiezen. Dat is dezelfde
+regel als overal: geen getal zonder zijn onzekerheid.
+
+Een overlevende mutant heeft hier iets opgeleverd. De functie had eerst een
+losse null-controle vóór de controle op groter dan nul, en een mutant die de
+eerste wegnam bleef leven: de tweede wacht ving hetzelfde geval al op. Twee
+regels die hetzelfde bewaken zijn er één te veel; het is nu één wacht.
+
+**Twee stukken erbij in het boekje.** Het eerste gaat over waarom dezelfde
+behandeling bij de een wel werkt en bij de ander niet: de non-responscijfers
+(ongeveer 13 procent van de volwassenen op semaglutide, ongeveer 27 procent van
+de jongeren, minder dan 10 procent op de hoogste dosering tirzepatide, samen 15
+tot 20 procent), de vijf weefselgroepen uit Leipzig, en de vier eetprofielen.
+Het tweede gaat over food noise: het homeostatische systeem naast het
+hedonische, de verschuiving van de beloning naar het signaal dat haar
+aankondigt, de acht weken waarin een vet en zoet tussendoortje de voorkeur voor
+vetarm eten verlaagde, en het metabole-afdelingsonderzoek waarin twintig mensen
+op bewerkt eten ongeveer 508 kcal per dag meer aten.
+
+**En het mechanisme dat "Meer dan een BMI" miste.** Waarom hetzelfde gewicht bij
+de een wel en bij de ander geen schade geeft, gaat over opslagcapaciteit:
+onderhuids vet dat meegroeit door nieuwe cellen tegenover vetcellen die uitzetten
+tot ze zuurstof tekortkomen, ontstekingscellen aantrekken, en het overschot
+doorsturen naar buikholte, lever, spier en alvleesklier. De gematchte paren met
+dezelfde BMI, leeftijd, sekse en vetmassa, waarvan de een niets mankeerde en de
+ander diabetes en hypertensie had, maken dat concreet: het verschil zat in vet
+in de buikholte en in het weefsel zelf.
+
+### Wat er niet in is gekomen, en waarom
+
+**De naam van het middel.** Het mechanistische verhaal eromheen is fraai (een
+POMC-neuron dat zichzelf via β-endorfine afremt, een blokkade die die rem
+weghaalt) en het klinische signaal is interessant: angst en depressie vóór start
+voorspelden wél de respons op dat middel en niet op de incretines. Maar een
+boekje voor een patiënt dat een middel bij naam aanprijst op grond van een
+gesponsorde avond is een advertentie, hoe goed het mechanisme ook klinkt. Het
+stuk beschrijft daarom wél dat er verschillende motoren onder obesitas zitten en
+dat dezelfde marker voor twee middelen tegengesteld kan voorspellen, en noemt
+geen merk. Wil de eigenaar het er alsnog in, dan is dat een bewuste keuze en
+geen omissie.
+
+**Geen vragenlijst voor angst en depressie.** Acosta triageert met de PHQ-2 en
+meet met de GAD-7 en de PHQ-9. Dat zijn bruikbare, vrij beschikbare instrumenten
+en het zou technisch een halve dag werk zijn. Het is niet gedaan omdat vraag 9
+van de PHQ-9 over suïcidale gedachten gaat. Een app die die vraag stelt moet een
+route hebben voor het antwoord, en die route is geen tekstje maar een afspraak
+met een mens. Zolang die er niet is, hoort de vraag er niet te staan.
+
+**Geen fenotype-indeling.** De vier eetprofielen zijn aantrekkelijk en de
+gegevens erachter zijn dun: kleine trials, uitsplitsing achteraf, en de
+genetische score die ze schaalbaar zou maken is binnen één groep ontwikkeld en
+gevalideerd. Een app die je op grond daarvan een etiket geeft, doet precies wat
+deze app nergens doet: een oordeel vellen dat de gegevens niet dragen.
+
+### De regel die daaruit volgt, en die nu getoetst wordt
+
+Noemt de bron van een stuk een sponsor, dan staat het belang in datzelfde stuk
+onder "wat we niet weten", waar de lezer het ziet. Niet in een voetnoot, niet in
+de bronvermelding alleen. Dat staat als proef in
+`src/health/belangenverstrengeling.proef.ts`, naast de regel over merken in de
+voedingslijst, met een tweede regel die omvalt zodra er geen stuk meer is waarop
+de eis slaat: een eis die geruisloos verdwijnt bewaakt niets.
+
+## 33. Het bloeddrukprotocol nagelopen, en wat het wel en niet bevestigt
+
+Er lag een vraag open sinds de medische naloop: de thuisbloeddrukregel in deze
+app (zeven dagen, twee metingen 's ochtends en twee 's avonds, eerste dag eraf,
+grens 135/85) kwam uit drie onafhankelijke weergaven en niet uit het protocol
+zelf, want nhg.org is vanaf deze machine niet te bereiken.
+
+Er is nu een protocol op tafel gekomen: **NHG, Protocol bloeddruk meten, 2022,
+versie 1.1.** Dat is een ander document dan waar de vraag over ging. Het gaat
+over de méting in de spreekkamer en niet over de week thuis, en het bevestigt de
+7-2-2-opzet, de gewenningsdag en de 135/85 dus niet. Die drie staan nog steeds
+als "uit secundaire bronnen" in de kop van `bloeddruk.ts`. Dat is de eerlijke
+uitkomst en niet de gewenste.
+
+### Wat het wél bevestigt, en wat daarvan in de app is gekomen
+
+Het document geeft de meetregels zelf, en die zijn in deze app niets waard als
+ze in een boekje blijven staan. Ze staan nu bij het invoerveld, want daar wordt
+bepaald hoe goed het getal wordt dat je intikt: vijf minuten rustig zitten, niet
+praten, voeten naast elkaar, de manchet ter hoogte van het midden van het
+borstbeen, en twee metingen met een of twee minuten ertussen waarbij de manchet
+helemaal leeg moet. Wat je noteert is het gemiddelde van de laatste twee.
+Verschillen die twee meer dan 10 mmHg systolisch of 5 diastolisch, dan meet je
+door tot twee opeenvolgende metingen dichter bij elkaar liggen.
+
+En het geeft het sterkste argument voor de kaart die er al stond. Bij 15 tot 20
+procent van de mensen is de bloeddruk alleen in de spreekkamer verhoogd, en bij
+10 tot 15 procent juist alleen daarbuiten. Dat is precies waarom een week thuis
+iets zegt wat de spreekkamer niet zegt, en het staat nu in de app met de bron
+erbij. De spreekkamergrens (gemiddelde van de geregistreerde bovendrukken over
+drie momenten, 140 mmHg of hoger) staat er ook, met de opmerking dat thuis een
+lagere grens geldt die deze app met opzet niet neerzet.
+
+### Eén verschil dat daardoor zichtbaar werd
+
+Het spreekkamerprotocol zegt: noteer het gemiddelde van de láátste twee
+metingen. `thuisbloeddruk` middelt alles wat er op een dag staat. Dat verschil
+is blijven staan, en met reden: die rekenregel overnemen op gezag van een
+document dat niet over de thuismeting gaat, zou precies de fout zijn die dit
+hoofdstuk rechtzet. Het verschil staat nu in de kop van `bloeddruk.ts` én in een
+proef (een dag met drie metingen geeft 137/88 en niet 130/85), zodat het niet
+stilletjes kan verschuiven.
+
+### De stand van de andere open punten
+
+Bestand 44 is toegepast. Module D blijft rusten. De twee fixes in de
+ProVita-repo vervallen: `Bennahuiswerk` is de repo die telt. "Wat ontbreekt er"
+op Vandaag blijft zoals het is, over voedingsstoffen en niet over producten.
+
+Eén punt is níet opgelost, ondanks dat het geregeld leek: toegang tot de
+database van BennaHealth. De Supabase-koppeling van deze sessie ziet twee
+projecten, en `huiuvnjrvvoybbzwfrfp` zit er niet bij; een leesvraag erop komt
+terug met "You do not have permission to perform this action". Daardoor is de
+md5-controle uit `CLAUDE.md` (de `prosrc` van elke functie tegen het genummerde
+bestand) nog steeds niet zelf te draaien. Tot dat lukt geldt voor elk genummerd
+bestand: toegepast is wat de eigenaar zegt, niet wat deze sessie heeft gezien.
+
+## 34. Twee dingen die de app al wist maar niet gebruikte
+
+Beide komen uit de lijst die na de nascholing van september is opgeschreven, en
+beide gebruiken uitsluitend gegevens die er al stonden.
+
+### Vier van de acht STOP-BANG-vragen
+
+De vragenlijst vraagt naar geslacht, leeftijd, BMI en nekomtrek. Die vier staan
+al in deze app, en de nekomtrek stond er zelfs twee keer: als meting in het
+lijstje, en als vinkje dat je zelf moest zetten. Twee plekken voor hetzelfde
+getal is één plek waar het fout kan gaan, en in een score waar drie punten al
+"matig risico" heet telt één verkeerd vinkje mee.
+
+De app vult die vier nu in, maar alleen de eerste keer. Wie de lijst al eens
+bewaard heeft, heeft antwoorden gegeven, en die overschrijven met een berekening
+zou zijn oordeel weggooien. Onder elk van de vier staat waar het antwoord
+vandaan komt (*uit je profiel*, *uit je geboortedatum*, *uit je lengte en je
+laatste weging*, *uit je laatste nekomtrek*), en zet je het vinkje anders dan de
+gegevens zeggen, dan zegt het scherm dat de twee uit elkaar lopen zonder je
+tegen te spreken.
+
+**Niet gemeten is geen nee.** Een ontbrekende waarde levert géén sleutel op en
+zeker geen `false`. Op het scherm zien die twee er hetzelfde uit, een vinkje dat
+uit staat, en juist daarom moet het verschil in de gegevens wél bestaan. Zonder
+geslacht valt de nekvraag niet te beantwoorden (de grens is 43 cm bij mannen en
+41 bij vrouwen) en dan komt hij er dus niet uit.
+
+De grenzen zijn die van de officiële vragenlijst en niet die van het gemak:
+ouder dan 50 en BMI boven 35 zijn strikt. Vier mutanten gedood, waaronder de
+twee die ertoe doen: een ontbrekende waarde als nee behandelen, en de nekgrens
+voor iedereen op 43 zetten.
+
+### Wat er veranderd is sinds je begon
+
+Dit is de kaart die de app het langst miste. Elk scherm toonde een
+momentopname, terwijl de vraag die ertoe doet is of er iets beter van geworden
+is. Het slotwoord van de nascholing ging daarover: beoordeel respons niet op de
+weegschaal maar op de comorbiditeit. De gegevens daarvoor stonden er al, met
+datum en al.
+
+De kaart zet per maat de eerste meting naast de laatste: gewicht, middelomtrek,
+boven- en onderdruk, en zes labwaarden. Drie regels, en ze volgen alle drie uit
+de rest van deze app.
+
+**Twee metingen op verschillende dagen, of de maat komt er niet in.** Eén
+waarde is geen beloop, en twee waarden op dezelfde dag zijn één meetmoment. Een
+verschil van nul tonen omdat er maar één moment is, suggereert dat er niets
+veranderd is terwijl er niets gemeten is.
+
+**Het gewicht komt uit de gladde lijn en niet van de weegschaal.** Het verschil
+tussen twee losse wegingen is voor een flink deel vocht. De proef zet dat vast
+met een reeks waarin de eerste en de laatste weging toevallig gelijk zijn
+terwijl de trend wél daalt: wie de ruwe waarden pakt komt op nul uit.
+
+**Er staat een verschil en geen oordeel.** Geen kleur, geen pijl die "goed"
+betekent. Of een daling van 0,3 in het HbA1c iets betekent hangt af van dingen
+die deze app niet weet.
+
+Vijf mutanten gedood, waaronder twee die op het scherm niet op zouden vallen:
+niet op datum sorteren (de database geeft rijen in de volgorde die hij toevallig
+heeft) en het verschil de verkeerde kant op berekenen.
+
+De proefgegevens hebben er een tweede, oudere meetdag bij gekregen. Zonder die
+dag heeft de kaart niets te vergelijken en zou de schermproef een kaart tonen
+die op de telefoon van de gebruiker vol staat en hier altijd leeg blijft. De
+proef kijkt nu of alle vier de maten er staan en of de verschillen kloppen: 114
+naar 108 is zes centimeter eraf, 146 naar 128 is achttien punten.
+
+## 35. De middelomtrek als reeks
+
+De app bewaarde elke middelomtrek met een datum en toonde er één: de nieuwste.
+Daarmee is de vraag die ertoe doet niet te beantwoorden. Niet "hoeveel is het",
+maar "gaat het de goede kant op, en gaat het mee met het gewicht".
+
+Dat laatste is het punt. Valt het gewicht terwijl de omtrek gelijk blijft, dan
+gaat er iets anders weg dan buikvet. Valt de omtrek terwijl de weegschaal
+stilstaat, dan gebeurt er juist wél iets. Die twee naast elkaar zeggen samen
+meer dan allebei apart, en beide getallen stonden er al.
+
+Onder de laatste waarde staat nu de reeks: per meetdag de datum, de waarde en
+het verschil met de vorige, en daaronder het geheel in één zin. Staat het
+gewicht van beide dagen bekend, dan staat de gewichtstrend van diezelfde twee
+dagen erachter.
+
+### Vier keuzes, en ze volgen uit de rest van deze app
+
+**Geen lijntje.** Een sparkline zet zijn punten even ver uit elkaar, en
+middelomtrekmetingen liggen dat nooit: twee in mei en één in september zouden er
+uitzien als een gelijkmatig verloop. Bij een handvol metingen is de datum erbij
+zetten eerlijker dan een lijn die de tijd ertussen platslaat.
+
+**Geen trendlijn met een helling.** Bij vier metingen over een half jaar is een
+helling met standaardfout schijnnauwkeurigheid. Er staat wat er staat.
+
+**Een verschil onder de meetfout heet geen verandering.** De fout van het lint
+loopt in de literatuur van 0,7 tot 15 cm. Onder de twee centimeter zegt de app
+dat er nog niets uit af te lezen valt, in plaats van een daling van één
+centimeter als vooruitgang te presenteren.
+
+**Het gewicht ernaast komt uit de gladde lijn, en van de juiste dag.** Niet de
+weging van die ochtend, want dat is voor een deel vocht, en niet de nieuwste
+waarde uit de hele reeks, want dan vergelijk je een omtrek van april met een
+gewicht van september. Het is het voortschrijdend gemiddelde op of vóór de dag
+van die meting, en is er op dat moment nog niet gewogen, dan komt die zin er
+niet.
+
+Zes mutanten gedood. Twee ervan zijn het vermelden waard: vooruitkijken in de
+gewichtsreeks (dan hangt er een gewicht naast een omtrek die maanden ouder is)
+en twee metingen op één dag als twee punten tellen (dan telt een dag waarop je
+twee keer mat dubbel mee in het beeld).
+
+## 36. Een verschil zonder tijd erbij is niet te lezen
+
+De kaart "Wat er veranderd is" zette twee momenten naast elkaar en noemde het
+verschil: `114 → 108 cm`, `-6`. Wat er niet bij stond is hoe lang daar over
+gedaan is, en dat is precies het getal dat bepaalt wat je van de zes vindt. Zes
+centimeter eraf in vier maanden is een beloop; zes centimeter eraf in drie jaar
+is ruis met een lange aanloop. Het verschil op het scherm is in beide gevallen
+hetzelfde.
+
+De datums stonden er al. `Verandering` droeg `vanDatum` en `totDatum` vanaf het
+begin, want de kaart heeft ze nodig om te weten of er wel twee meetdagen zijn.
+Ze stonden alleen niet op het scherm. Er is dus niets bij gemeten en niets bij
+geschat: er staat nu `118,9 → 117,3 kg · 4 wk` waar eerst alleen het eerste deel
+stond.
+
+### De eenheid wisselt mee, en waarom daar grenzen bij horen
+
+Onder de twee weken staan er dagen, daarboven weken, vanaf tien weken maanden en
+vanaf twee jaar jaren. Twee keuzes daarin zijn geen afronding maar een oordeel.
+
+**Boven de twee weken geen dagen meer.** "Zeventien dagen" klinkt preciezer dan
+het is. De meetmomenten zelf liggen niet op een vaste dag; je meet je middel
+wanneer je eraan denkt. De dag erbij zetten suggereert een nauwkeurigheid die in
+de meting niet zit.
+
+**Onder de twee jaar geen jaren.** Anderhalf jaar leest als `18 mnd` en niet als
+`2 jr`. Daar is de maand nog de eenheid die het verschil draagt, en afronden naar
+hele jaren gooit een half jaar weg.
+
+Hoe lang een maand of een jaar precies duurt doet hier niet toe. Op hele maanden
+afgerond geeft 30, 30,44 of 31 dagen hetzelfde antwoord, en dat is ook wat de
+mutatieproef laat zien: de maand van 30,44 naar 30 zetten doodt geen enkele
+proef, en dat is terecht. Wat wél omvalt zijn de grenzen (veertien, zeventig,
+zevenhonderddertig) en de deler die van de ene eenheid naar de andere springt.
+Zes mutanten gedood, één overlevende die na onderzoek een equivalente bleek: het
+jaar stond als tweede constante in de code en is nu `MAAND * 12`, zodat de vraag
+zich niet nog eens stelt.
+
+## 37. De controle op de database controleerde zichzelf niet
+
+`controle-md5.sql` vergelijkt elke functie in de database met het genummerde
+bestand dat haar het laatst neerzet. Onder in dat bestand stond een belofte:
+"verandert er een functie, dan hoort dit bestand opnieuw gemaakt te worden." Er
+was niets dat dat deed, en niets dat het controleerde. De verwachte waarden
+waren met de hand uitgerekend.
+
+Dat is een controle die na de eerste de beste wijziging het verkeerde antwoord
+geeft, en nog het gevaarlijkste soort ook: hij zou *VERSCHILT* melden op een
+functie die in de database volkomen in orde is, en dan ga je in de database
+zoeken naar een verschil dat aan deze kant zit.
+
+Nu rekent `gereedschap/db-md5.mjs` de waarden uit, schrijft
+`gereedschap/md5-verslag.mjs --schrijf` ze weg, en houdt
+`src/health/dbverslag.proef.ts` bij elke poort vast dat ze nog kloppen met de
+bestanden. De proef kan de database niet zien, en zegt dat ook: hij bewaakt de
+helft die hier ligt.
+
+### Twee dingen waar deze code over kon struikelen, en allebei stil
+
+**Niet trimmen.** Postgres bewaart in `prosrc` wat er tussen de dollartekens
+stond, inclusief de regelovergang meteen na `$$`. De SQL-kant trekt witruimte
+samen tot één spatie en haalt hem dus niet weg. Wie aan deze kant trimt krijgt
+op élke functie *VERSCHILT* te zien.
+
+**Op nummer sorteren en niet op naam.** Een functie mag in meer dan één bestand
+staan, want `create or replace function` is de gewone gang van zaken. Wat er
+draait is wat er het laatst is neergezet. Alfabetisch komt bestand 9 ná 10, en
+dan wijst de controle het verkeerde bestand aan zodra er een tiende bijkomt.
+
+Beide staan als proef vast, en beide doden een mutant.
+
+### Wat de eerste echte uitslag liet zien
+
+Zeven functies verschillen van hun bestand, en tien draaien er zonder dat er
+ergens een bestand over gaat: `kal_sessie`, `kal_afmelden`, `kal_profiel_zetten`,
+`kal_dagstand`, `kal_dag_zetten`, `kal_regels_toevoegen`, `kal_regel_wissen`,
+`kal_weekcijfers`, `kal_prikkel_bouwen` en `kal_prikkel_gelogd`. Dat zijn de
+sessie, het profiel en het wegschrijven van een dag: de bodem van de app.
+
+Die tien zijn van hieruit niet te schrijven, want hun tekst staat alleen in de
+database. `health/database/uitlezen-functies.sql` haalt hem op. Wat er niet
+gebeurt is ze uit het hoofd reconstrueren: een verslag dat lijkt op wat er
+draait is erger dan geen verslag, want het wordt geloofd.
+
+## 38. Wat de richtlijnmodule bevestigde, en het getal dat daardoor fout stond
+
+Bij §33 is het protocol bloeddruk meten nagelopen en stond eronder wat er niet
+mee bevestigd was: de 7-2-2-opzet, het vervallen van de eerste dag, en de grens
+van 135/85. Die drie hingen aan weergaven van derden.
+
+De richtlijnmodule Bloeddrukmeting bij CVRM (NHG en NIV, 17 oktober 2018,
+geldigheid beoordeeld 1 juni 2021) gaat wél over de ambulante metingen, en
+bevestigt er twee van:
+
+- **De opzet.** "Een week lang volgens protocol 2x per dag." Zeven dagen en twee
+  meetmomenten per dag staan daarmee vast.
+- **De grens.** Tabel 1 zet een spreekkamermeting van 140 mmHg naast een
+  geprotocolleerde thuismeting van 135, en 180 naast 170.
+
+Wat er níet in staat, en dus tweedehands blijft: de twee metingen per
+meetmoment, de gewenningsdag, en de 85 diastolisch. Tabel 1 gaat alleen over de
+bovendruk.
+
+### Het getal dat daardoor fout stond
+
+Diezelfde module zegt iets wat deze app negeerde: ambulante metingen kunnen niet
+rechtstreeks in de risicotabel, want het uitgangspunt van die tabel zijn
+gestandaardiseerde spreekkamermetingen. Wie er een thuiswaarde in stopt, krijgt
+een risico dat te laag uitvalt.
+
+En dat deed de app. SCORE2 rekende met `nieuwste('bloeddruk_sys')`: de laatste
+losse meting, thuis gedaan. Twee fouten in één getal. Eén meting is geen
+bloeddruk, en dat weet deze app als geen ander, want de kaart eronder rekent al
+over een week. En een thuiswaarde valt lager uit dan de spreekkamerwaarde waar
+de tabel op rust.
+
+Nu gaat het weekgemiddelde erin, omgerekend met tabel 1. Wat erin ging staat op
+het scherm, met het risico zonder die stap ernaast, zodat te zien is hoeveel de
+correctie uitmaakt. Er is geen tweede getal bijgekomen: er staat één risico, en
+eronder waar het op rust.
+
+### Waarom de schatting nooit onder de thuiswaarde zakt
+
+De lijn door de twee ijkpunten snijdt de diagonaal rond de 100 mmHg. Daaronder
+zou hij een spreekkamerwaarde geven die láger is dan wat er thuis gemeten is, en
+dat is een uitloper van de rekensom en geen bevinding. Daar houdt de schatting
+op bij de thuiswaarde zelf. Zes proeven, waarvan twee op de ijkpunten: verandert
+daar iets, dan verandert er iets aan de bron en niet aan de code.
+
+En één ding dat de module toevoegt en dat nu op het scherm staat: een
+24-uursmeting heeft de voorkeur boven de week thuis, omdat de nachtelijke
+bloeddruk een sterkere voorspeller is dan die overdag. Deze app meet thuis. Dat
+is de tweede keus, en dat hoort er te staan.
+
+## 39. Het overzicht dat je meeneemt naar het spreekuur
+
+Een consult duurt tien minuten. Alles wat in deze app staat, staat er dan niet:
+voorlezen van een telefoon kost meer tijd dan er is, en de helft komt er
+verkeerd uit. Op Gezondheid staat nu één knop die er één tekst van maakt, om te
+plakken in een mail of een bericht aan de praktijk.
+
+Platte tekst en geen bestand: tekst overleeft elke overdracht en een PDF niet.
+
+### Vijf regels, en ze volgen alle vijf uit de rest van deze app
+
+**Er wordt niets nieuws uitgerekend.** Elk getal in het vel staat al op het
+scherm en wordt aangereikt, niet opnieuw berekend. Anders konden het scherm en
+het briefje verschillende dingen zeggen over dezelfde dag.
+
+**De voorbehouden reizen mee.** Een SCORE2 van 6,4 procent zonder de
+onderschatting van 1,3 en zonder de C-index is in de inbox van een huisarts een
+ander getal. Wat op het scherm onder het getal staat, staat in het vel onder het
+getal. Vijf mutanten gedood, en ze gingen alle vijf over weglaten: het voorbehoud
+bij SCORE2, dat bij FIB-4, de datum bij een labwaarde, de bloeddruk waarmee
+gerekend is, en een maat die ontbreekt.
+
+**Er staat waar het vandaan komt.** Bovenaan staat dat het zelfgemeten en zelf
+ingevoerde waarden zijn. In platte tekst ziet een overgetikt getal er precies
+hetzelfde uit als een labuitslag.
+
+**Wat ontbreekt krijgt een regel.** Onderaan staat wat er niet in staat en
+waarom: welke labwaarden leeg zijn, dat FIB-4 zonder ASAT niet te berekenen is,
+dat de vragenlijst niet is ingevuld. Leeg betekent in deze app niet gemeten, en
+dat is iets anders dan goed.
+
+**Er staat geen oordeel in.** De proef op de gerenderde pagina zoekt naar "te
+hoog", "te laag" en "goed bezig" en valt om als ze er staan.
+
+### Twee dingen aan de vorm
+
+**Het vel is zichtbaar vóór je het kopieert.** Wat je verstuurt, hoor je gelezen
+te hebben. Een knop die stilletjes iets over je gezondheid op je klembord zet, en
+daarmee op de volgende plek waar je plakt, is hier de verkeerde vorm.
+
+**Een kop komt alleen als er iets onder staat.** Een kop boven niets leest als
+een gegeven dat is weggevallen, en dat is erger dan de regel onderaan waar hij
+dan wél staat.
+
+## 40. Elf stukken die je moest kennen om ze te vinden
+
+Het boekje Verdiepen stond als één knop onderaan Profiel, in een kaart die over
+de herkomst van de getallen gaat. Elf stukken met bronnen, en je moest weten dat
+ze bestonden om ze te vinden.
+
+Dat is dezelfde fout als met de conditiekaart, en die staat in dit bestand al
+opgeschreven: een functie die pas bestaat als je hem al kent, bestaat niet.
+
+Nu staat de inhoudsopgave op het scherm en niet de doos. Elf titels, aan te
+tikken, en je komt binnen op het stuk dat je aanwees. Wat het kost is elf regels
+op een scherm dat toch al scrollt; wat het oplevert is dat die stukken bestaan
+voor wie er niet naar op zoek was.
+
+Daarnaast staan er nu verwijzingen op de plek waar de vraag opkomt: bij de
+slaapkaart naar het stuk over slaap, bij je traject naar het stuk over de trap,
+en op Gezondheid, waar iemand met een aandoening binnenkomt, naast "Leren over
+je aandoening".
+
+### Eén regel code die het verschil maakt tussen werken en niet werken
+
+Een uitklapper onthoudt per blok of jij hem open of dicht zette. Wie een stuk
+ooit dichtklapte en daarna op een verwijzing ernaartoe tikt, zou het boekje open
+krijgen met dat ene stuk dicht: je klikt, en er gebeurt zichtbaar niets. Een
+verwijzing wint daarom van de onthouden stand, en alleen die kant op. De proef
+op de gerenderde pagina zet die stand met opzet op dicht voordat hij klikt.
+
+## 41. Dezelfde fout, een kaart lager
+
+Bij §38 stond de fout in SCORE2: die rekende met één losse thuismeting, terwijl
+de kaart eronder met zoveel woorden uitlegt dat één meting geen bloeddruk is. Bij
+het rechtzetten daarvan bleek de kaart "Wat er veranderd is" hetzelfde te doen.
+Die zette de eerste bloeddrukmeting naast de laatste en noemde het verschil.
+
+Nu staat aan elk uiteinde het gemiddelde van de meetdagen binnen een week van
+dat uiteinde. Dezelfde week als bij de thuisbloeddruk, en om dezelfde reden.
+
+### Drie regels, en twee ervan zijn alleen op papier te zien
+
+**Twee metingen op één dag zijn één dag.** Anders weegt een dag waarop je twee
+keer mat dubbel mee. Dat gold al voor de middelomtrek en geldt nu voor alles.
+
+**De twee vensters delen nooit een dag.** Bij een reeks die korter is dan twee
+weken zou dezelfde dag aan beide kanten meetellen, en dan vergelijkt het
+verschil een getal met zichzelf. Elke dag hoort bij het uiteinde waar hij het
+dichtst bij ligt.
+
+**Een dag die er precies tussenin ligt telt nergens mee.** Hij zegt over geen
+van beide kanten iets. Hem bij één kant leggen zou die kant een halve reeks
+geven.
+
+**De labwaarden houden hun eigen regel.** Daar blijft het de eerste uitslag
+tegen de laatste: twee bloedafnames van weken uit elkaar middelen zou twee
+metingen op één hoop gooien die niets met elkaar te maken hebben.
+
+Vier mutanten gedood, en de proef op de gerenderde pagina heeft er een meetdag
+bij gekregen zodat de twee antwoorden uit elkaar liggen: met het venster staat
+er -20, zonder -18. Was die dag er niet, dan zou de proef groen blijven met de
+oude rekenwijze.
+
+## 42. Wat de eerste md5-uitslag werkelijk was
+
+De controle meldde zeven keer VERSCHILT. Drie daarvan zijn gedrag, vier alleen
+commentaar, en dat onderscheid vertelt hoe het scheefgroeide.
+
+**Twee keer een gedachtestreepje dat nooit is toegepast.** `kal_ww_klacht` zegt
+in de database nog "Je accountnaam staat erin - dat raadt iemand meteen", met
+het teken dat in september uit de hele repo is gehaald. Datzelfde geldt voor de
+drie e-mailonderwerpen in `kal_coach_bouwen`. De opruiming liep over de
+bestanden en niet over de database, en daar stond het dus nog op het scherm van
+wie zich aanmeldt en in de post die de app verstuurt.
+
+**Eén keer een bestand dat geschreven is en nooit gedraaid.** Bestand 42 voegt
+`fiets_min` toe aan `kal_dagen_importeren`. De database kent dat veld daar niet,
+dus een import uit een schermafdruk liet de fietsminuten vallen zonder iets te
+zeggen.
+
+**Vier keer alleen commentaar.** `kal_nevo_zoek`, `kal_zoeken`,
+`kal_proef_koppeling` en `kal_gerecht` dragen in hun toelichting nog
+gedachtestreepjes. Het gedrag is gelijk.
+
+### En één verschil de andere kant op
+
+`kal_gerecht` leest in de database `nevo_actief` en in bestand 01 `nevo_foods`.
+Dat is de licentiepoort, en de database heeft gelijk: valt de licentie weg, dan
+hoort niet het gerecht te verdwijnen maar de voedingswaarde erachter. Die regel
+staat in vier andere bestanden opgeschreven en bij kal_gerecht in geen enkel.
+
+`46-zeven-functies-gelijktrekken.sql` zet alle zeven op de tekst die in deze map
+staat, met bij kal_gerecht de poort erin. Het bestand is niet overgetikt maar
+uit de bestanden geknipt, en dat is te zien: van de zeven veranderde er maar één
+md5, die van kal_gerecht. De andere zes zijn byte voor byte wat er al stond.
+
+### Gedraaid op 21 september 2026
+
+De controle meldt sindsdien **44 keer gelijk** en geen enkele keer VERSCHILT.
+Daarmee is de belofte onder in `controle-md5.sql` voor het eerst waar: de
+genummerde bestanden in deze map beschrijven wat er draait.
+
+Wat er nog openstaat zijn de tien functies die in geen enkel bestand beschreven
+zijn: `kal_sessie`, `kal_afmelden`, `kal_profiel_zetten`, `kal_dagstand`,
+`kal_dag_zetten`, `kal_regels_toevoegen`, `kal_regel_wissen`, `kal_weekcijfers`,
+`kal_prikkel_bouwen` en `kal_prikkel_gelogd`. Dat zijn de sessie, het profiel en
+het wegschrijven van een dag: de bodem waar de hele app op staat. Ze zijn van
+hieruit niet te schrijven, want hun tekst staat alleen in de database, en ze uit
+het hoofd reconstrueren gebeurt niet: een verslag dat lijkt op wat er draait is
+erger dan geen verslag, want het wordt geloofd.
+
+## 43. De tweede helft van een belofte die maar half bestond
+
+De app merkt een weging aan die niet bij de reeks past en gooit hem niet weg.
+Dat is hoofdstuk 1 en het klopt: de app kan niet weten of er een tweede persoon
+op de weegschaal stond of dat er een toets misging. Maar eronder stond "klopt
+het niet, zet hem dan recht op de dag zelf", en dat betekende: zoek zelf uit
+welke dag het was, blader erheen, typ het over.
+
+Voor één weging gaat dat. Wie eerst een maand met de app heeft zitten spelen
+voordat hij hem echt ging gebruiken, heeft er tien, en dan blijft er een reeks
+staan met een 190 erin die de trend, het verbruik, de BMI en het eiwitdoel
+scheeftrekt.
+
+Het venster "Je wegingen" zet ze op een rij: elke dag waarop gewogen is, met de
+opvallende bovenaan, elk getal in een vakje dat je kunt overschrijven, en een
+knop om de weging weg te halen.
+
+### Wat hier met opzet niet in zit
+
+**Geen grens waarbuiten een weging vanzelf weggaat.** De verleiding is groot en
+hij is verkeerd. Wie weet dat hij rond de 119 weegt kan zeggen "alles buiten 117
+tot 121 is fout", en voor de reeks van vandaag klopt dat. Maar dit is een app om
+af te vallen. Wie tien kilo kwijtraakt weegt straks 109, en dan gooit die grens
+precies het resultaat weg dat de app moet meten. Een vaste band is hetzelfde als
+het model vertellen wat eruit moet komen.
+
+**Geen scherm dat doet alsof.** Na het weghalen blijft de regel staan tot de
+database hem werkelijk kwijt is. Een scherm dat de regel meteen doorstreept
+liegt op de dag dat het verzoek niet aankomt, en dan denkt iemand dat zijn 190
+weg is terwijl hij in de trend blijft staan.
+
+**Wel een weg terug.** Zolang het venster openstaat is een weggehaalde weging
+met één tik terug te zetten, met de waarde die erin stond. Zonder dat is één
+misgetikte rij een getal dat je nooit meer terugvindt.
+
+De proef op de gerenderde pagina leest mee wat er naar de database gaat: dat
+weghalen `gewicht_kg: null` stuurt, en op de dag van díe weging en niet op de
+dag die bovenaan het scherm staat.
+
+## 44. Zes vakjes in plaats van een uitrolmenu
+
+De metingen op Gezondheid gingen via een uitrolmenu met één waardeveld ernaast.
+Voor het geval waar het hier het vaakst om gaat is dat de verkeerde vorm: een
+bloeddruk is twee getallen die bij elkaar horen, en die kostte zo twee keer
+kiezen, twee keer typen en twee keer opslaan.
+
+Nu staan er zes open vakjes met de naam erboven, in twee kolommen op een
+telefoon en drie zodra het past. Eén knop bewaart alles wat je hebt ingevuld, en
+hij zegt hoeveel dat er zijn. De datum staat ernaast en is te veranderen, want
+een meting van gisteren invoeren was tot nu toe niet mogelijk.
+
+Eén ding dat het scherm erbij zegt: vul je maar één van de twee bloeddrukken in,
+dan telt die dag niet mee in het weekgemiddelde. Dat is geen blokkade maar een
+mededeling; wie werkelijk maar één getal heeft mag het bewaren.
+
+## 45. De kennisbank, en waarom hij niet Academie heet
+
+De elf stukken stonden onderaan Profiel in een kaart over de herkomst van de
+getallen. Ze staan nu bovenaan, als eerste kaart onder de schermkop, met de
+inhoudsopgave zichtbaar en twee planken ernaast: je aandoening, en hoe deze app
+rekent. Dertien regels, allemaal aan te tikken, en je komt binnen op het stuk
+dat je aanwees.
+
+De naam is Kennisbank en niet Academie, en dat is een keuze. Academie betekent
+op dit portaal al iets: de drie cursussen van BennaHuiswerk, met hun eigen
+tegels en hun eigen proef. Twee dingen op één portaal die allebei Academie heten
+is een verwarring die je later niet meer uit de teksten krijgt.
+
+## 46. Wat als: van kilo's naar een risico, en waarom dat twee stappen zijn
+
+De vraag is oud en goed: wat levert het op als ik tien kilo kwijtraak. Het
+eerlijke antwoord begint bij wat er niet kan.
+
+**SCORE2 kent geen gewicht.** De invoer is leeftijd, geslacht, roken,
+systolische bloeddruk, totaal cholesterol en HDL. Meer niet. "Wat wordt mijn
+SCORE2 als ik afval" is dus niet rechtstreeks te berekenen, en een app die het
+tóch in één getal geeft, verzint de weg ertussen.
+
+Daarom staat die weg hier in twee stappen, en staan ze allebei op het scherm:
+
+1. **Van kilo's naar je waarden.** Wat doet gewichtsverlies gemiddeld met je
+   bloeddruk en je lipiden? Dat is gemeten, in meta-analyses.
+2. **Van je waarden naar het risico.** Die geschatte waarden gaan door hetzelfde
+   SCORE2 dat op het scherm staat, mét de omrekening van thuis naar spreekkamer
+   uit §38.
+
+Wie de eerste stap niet gelooft, ziet meteen waar hij niet in meegaat. Eén pijl
+van kilo's naar een percentage zou verbergen dat er een aanname tussen zit.
+
+### De effectmaten, en wat eraan mankeert
+
+**Bloeddruk: ongeveer 1 mmHg systolisch per kilo.** Neter en anderen,
+Hypertension 2003, vijfentwintig trials.
+
+**Lipiden: per kilo ongeveer 0,05 mmol/L totaal cholesterol eraf en 0,009 mmol/L
+HDL erbij.** Dattilo en Kris-Etherton, Am J Clin Nutr 1992. Die HDL-stijging
+geldt bij een stabiel gewicht; tijdens het afvallen zelf daalt HDL in die
+analyse juist licht, en dat staat op het scherm, want wie halverwege meet ziet
+anders iets wat hij niet verwacht.
+
+Geen van beide is tegen het artikel zelf nagelopen. Ze komen uit weergaven van
+derden, net als de 7-2-2 bij de thuisbloeddruk voordat die werd nagelopen, en
+dat staat er met zoveel woorden bij. De banden zijn daarom ruim genomen (0,5 tot
+1,5 mmHg per kilo) en heten geen betrouwbaarheidsinterval, want dat zijn ze
+niet.
+
+### Drie dingen die deze motor begrenzen
+
+**Elke uitkomst draagt zijn band.** Het risico wordt drie keer gerekend: met het
+zwakste effect, het middelste en het sterkste. Daarbij wisselen de randen van
+plaats, want het sterkste effect op de bloeddruk geeft het láágste risico. Wie
+die twee verwisselt toont een band die de verkeerde kant op staat, en dat ziet
+er precies zo geloofwaardig uit. Er staat een proef op.
+
+**Geen gewonnen levensjaren.** Die stap vraagt aannames die veel verder gaan dan
+waar deze app zich aan houdt. Wat er staat is wat SCORE2 leest, en dat gaat over
+tien jaar en over hart en vaten.
+
+**Het is een gemiddelde en geen voorspelling.** De helft van de mensen wijkt er
+fors van af. Dat staat op de kaart, met een verwijzing naar het stuk over
+responders in de kennisbank.
+
+### De hartleeftijd
+
+De leeftijd waarop iemand met ideale waarden hetzelfde tienjaarsrisico heeft als
+jij. Meer is het niet: er hangt geen behandelgrens aan en het is geen
+biologische leeftijd. Het is een manier om een percentage te zeggen waar mensen
+wel iets bij voelen.
+
+Wat hier ideaal heet is een keuze en staat erbij: niet roken, geen diabetes,
+bovendruk 120, totaal cholesterol 5,0 en HDL 1,4. Die set komt uit de
+Framingham-traditie van de heart age en niet uit de SCORE2-publicatie, die het
+begrip niet kent. Een andere ideale set geeft een andere hartleeftijd.
+
+Buiten 40 tot 69 zegt de app dat het ophoudt in plaats van de lijn door te
+trekken. Daar geeft SCORE2 zelf niets meer terug, en een hartleeftijd van 78 zou
+precies het getal zijn dat in een spreekkamer blijft hangen.
+
+Zeven mutanten gedood. De sterkste proef is de omkering: wie precies de ideale
+waarden heeft, krijgt zijn eigen leeftijd terug. Die gebruikt dezelfde functie in
+twee richtingen en valt om zodra er aan één kant iets schuift.
+
+## 47. Kleur die iets betekent
+
+De wat-als-kaart stond er in cijfers: 1,9 procent nu, 1,1 procent straks, band
+0,9 tot 1,4. Alles klopte en niemand zag het. Een percentage zegt weinig zonder
+zijn grenzen, en juist die grenzen sturen een gesprek: dezelfde 6 procent heet
+onder de vijftig matig en daarboven hoog.
+
+Er staat nu een band onder. Drie zones in hun kleur, de twee grenzen met hun
+getal, een open stip waar je nu staat en een dichte waar het scenario je brengt,
+met de weg ertussen gestippeld en de marge als een lichtere balk eromheen.
+
+### Drie regels, en ze zijn alle drie het verschil met een gekleurd plaatje
+
+**De kleur is die van de richtlijn en niet die van deze app.** Groen, oranje en
+rood staan voor laag, matig en hoog zoals NHG-CVRM ze noemt. De app kleurt niets
+op eigen gezag; hij tekent de zones die de richtlijn al heeft.
+
+**De grenzen komen uit één bron.** Ze stonden als vier getallen binnen `score2`,
+en de band zou ze een tweede keer hebben gehad. Twee plekken met dezelfde
+getallen lopen uit elkaar zonder dat iemand het ziet, en dan kleurt de band
+oranje bij een uitkomst die de app "laag" noemt. Nu staat er één
+`score2Grenzen(leeftijd)`, en een proef rekent een echte SCORE2 uit en houdt
+zijn klasse ernaast.
+
+**De schuif draagt de BMI-grenzen.** De baan loopt van je gewicht van nu naar
+het uiterste, en de kleur zegt waar 30 en 25 liggen. Zonder lengte is er geen
+BMI en blijft de baan grijs: een gekleurde baan zonder betekenis is erger dan
+een grijze.
+
+### Twee getallen die elkaar overschrijven zijn één onleesbaar getal
+
+Bij een klein verschil staan de twee stippen vlak bij elkaar en schoven hun
+percentages over elkaar heen. De stippen blijven staan waar ze horen, want die
+dragen de betekenis; alleen de bijschriften wijken, elk de kant op waar hij toch
+al stond, en geen van beide loopt de figuur uit.
+
+Zes mutanten gedood, waaronder de twee die er het geloofwaardigst uitzien: een
+grens die een punt verschuift, en twee bijschriften die allebei dezelfde kant op
+wijken.
+
+### Wat er uit de ProVita-simulator niet is overgenomen
+
+Die kaart rekent met een eigen risicoscore van nul tot honderd, met punten per
+factor. Hier ligt een echte SCORE2 met gepubliceerde coëfficiënten; een tweede,
+eenvoudiger score ernaast zou twee antwoorden op dezelfde vraag geven. En de
+uitroep ("word je vier jaar jonger!") blijft weg: er staat wat er staat, en of
+dat goed nieuws is hoor je van je huisarts.
+
+## 48. Het weegveld stond onderaan, en drie tekstniveaus die er twee bleken
+
+Twee dingen die op dezelfde dag opvielen en allebei over leesbaarheid gaan.
+
+### Het ene getal waar de app op rust, stond achter zes kaarten
+
+De ochtendweging is de eerste handeling van de dag en het enige signaal in deze
+app dat niet te schatten valt. Het invoervak stond onderaan het dagscherm, terwijl
+de kop bovenaan "Stap op de weegschaal" zei. Je moest dus langs alles heen
+scrollen om te doen wat er boven aan het scherm van je gevraagd werd.
+
+Het veld staat nu in de hero, op de plek van het vlaggetje, als een witte pil
+met een eigen vlak: hij ligt op een foto, en wat je intikt hoort leesbaar te
+blijven welke foto er ook achter staat. Zodra er gewogen is verdwijnt het veld en
+staat het getal er in plaats van het woord: `✓ 116,6 kg` en niet `✓ gewogen`.
+
+De kaart onderaan blijft bestaan, om te corrigeren en om uit te leggen waarom dit
+de kern is. Dat hoeft niet bovenaan.
+
+**Er was geen enkel proefgeval waarin vandaag nog niet gewogen was.** Elke vorm
+in de proefopstelling had die dag al een weging, dus de kop "Stap op de
+weegschaal" en alles eromheen stonden in geen enkele afdruk. Dat geval heet nu
+`niet-gewogen` en staat in de rij, en de proef houdt vast dat kop en handeling
+bij elkaar staan: zegt de hero dat je moet wegen, dan staat het veld er ook, en
+zegt hij dat niet, dan staat het er niet.
+
+### Drie tekstniveaus die er in de praktijk twee waren
+
+Een kaartkop stond in 0,78 rem grijs, de regel eronder in 0,84 en de toelichting
+in 0,75. Op papier drie niveaus, op het scherm één lange labtekst waarin niets
+begint of eindigt. Een scherm vol goede informatie motiveert dan niemand om te
+lezen.
+
+Wat er veranderd is:
+
+**Alleen de eerste kop van een kaart groeit**, naar 0,97 rem, vet, in inktkleur,
+met de wegwijzer ernaast in de accentkleur. Een tussenkop verderop in dezelfde
+kaart ("Stap 1", "De rest van de kast") blijft klein, en juist daardoor is er nu
+een rangorde in plaats van één vlak. De vier selectors dekken de twee vormen die
+`Kaart` oplevert, met en zonder sfeermotief.
+
+**Een regel in een lijst krijgt een echte titel.** `.rijkop` is 0,88 rem en
+halfvet in inktkleur; de toelichting eronder blijft 0,75 in grijs. Die twee
+stonden eerst op 0,84 en 0,75 en verschilden dus nauwelijks.
+
+De contrastproef loopt nu over 1408 stukken tekst in zes tabbladen en twee
+thema's, en alles haalt nog steeds 4,5.
+
+
+## 49. De editor toont alleen de laatste vraag
+
+Twee keer kwam er een andere tabel terug dan ik verwachtte, en twee keer heb ik
+dat aan het plakken geweten. Het lag aan het bestand.
+
+De SQL-editor van Supabase toont het resultaat van de **laatste** opdracht in
+het venster. `uitlezen-functies.sql` had er twee, dus kwam alleen de tweede
+terug en verdween de eerste zonder melding. De versie erna had tien losse
+selects, en leverde alleen de tiende op.
+
+Dat is precies het soort fout waar deze hele controle over gaat: niet iets dat
+kapot is, maar iets dat stil weggelaten wordt. Beide bestanden zeggen het nu,
+en `uitlezen-tien.sql` staat met opzet in één opdracht die tien rijen geeft.
+
+### En de eerste van de tien staat op papier
+
+`47-de-bodem-op-papier.sql` bevat `kal_prikkel_gelogd`, letterlijk zoals de
+database hem kent. Dat het letterlijk is, is geen belofte maar een meting: de
+md5 die uit dit bestand rolt is `713ef4d7`, en dat is exact wat de controle uit
+`pg_proc` las. Eén afwijkende spatie in een regelcommentaar zou een ander getal
+geven.
+
+De negen die nog ontbreken staan in de kop van dat bestand, en de controle
+blijft ze melden tot ze er zijn. Het gat is pas dicht als het dicht is.
+
+## 50. Is je verbruik meegezakt?
+
+Deze app zegt op elk scherm dat hij het verbruik **meet** en niet schat. Dat is
+waar, en tot vandaag deed hij er niet het enige mee waar meten voor nodig is.
+
+Een formule kent alleen lengte, gewicht, leeftijd en geslacht. Die zegt dus per
+definitie dat je verbruik precies zoveel gezakt is als je lichter bent geworden.
+De vraag of er méér gezakt is dan je gewicht verklaart, de vraag waar iedereen
+die een plateau meemaakt mee zit, is met een formule niet te stellen. Met twee
+metingen wel.
+
+De rekenkern nam al een venster van achtentwintig dagen, en `eind` was er al een
+argument. Er was dus niets nieuws nodig om hem een tweede keer te laten rekenen,
+op het vroegste venster dat de reeks toelaat. Het verschil tussen die twee is
+wat er nu op het Inzicht-scherm staat.
+
+### Waarom een verschil schoner is dan de twee getallen zelf
+
+Het gemeten verbruik is inname min de energie die het vet in of uit ging. De
+inname komt uit een logboek, en een logboek zit ernaast: onderrapportage is de
+regel en niet de uitzondering, en de app rekent dat verschil zelfs uit. Elk
+niveau dat hier op het scherm staat draagt die fout mee.
+
+In een verschil valt hij weg, zolang hij dezelfde blijft. Wie zijn boterham al
+een jaar tweehonderd kcal te licht opschrijft, doet dat in beide vensters, en
+tweehonderd min tweehonderd is nul. Dat is een prettige eigenschap en hij gaat
+tegen de intuïtie in: het afgeleide getal is hier betrouwbaarder dan de twee
+getallen waar het uit komt.
+
+Precies nul is het alleen onder het model dat optelt. Onder het model dat
+vermenigvuldigt blijft er een restje staan ter grootte van de fout maal het
+stukje dat je lichter bent, bij driehonderd kcal en acht kilo eraf zo'n acht
+kcal. Dat staat zo in de proef, met een grens erop, in plaats van dat ik de
+bewering rond maak.
+
+Wat er niet uit wegvalt is een fout die verándert. Wie sinds juni nauwkeuriger
+weegt en logt, ziet zijn gemeten verbruik stijgen zonder dat er aan hem iets
+veranderd is. Dat is de enige manier waarop dit getal er flink naast kan zitten
+zonder dat iets het verraadt, en het staat daarom in de uitklap met de datum van
+het vroege venster erbij: ben je sinds die dag anders gaan loggen, lees dit getal
+dan niet.
+
+### Twee verwachtingen, omdat er twee antwoorden zijn
+
+Om te zeggen dat er méér gezakt is dan het gewicht verklaart, moet er staan wat
+het gewicht dan verklaart. Daar bestaan twee verdedigbare antwoorden:
+
+**Alles zakt mee.** Een lichter lichaam verbruikt minder in rust én minder bij
+elke stap, want er is minder te dragen. Het hele verbruik schaalt dan met het
+rustverbruik.
+
+**Alleen de rust zakt.** Het rustverbruik daalt met de massa, maar wat je aan
+beweging kwijt bent blijft in absolute zin gelijk.
+
+Welke klopt is met de gegevens die deze app heeft niet uit te maken. De verleiding
+is om er één te kiezen en het niet te noemen; dan staat er één getal en klinkt het
+alsof de keuze niet bestaat. Nu staan ze er allebei, het scherm toont het bereik
+ertussen, en een uitspraak komt er alleen als die onder béide modellen overeind
+blijft.
+
+### Wat de mutatieproef hierover leerde
+
+Die strengheid leek eerst niets te doen. De versie die alleen naar het ene model
+keek overleefde elke proef, en de reden bleek wiskundig: bij afvallen staan de
+twee modellen altijd in dezelfde volgorde, dus is "de strengste van de twee"
+vanzelf dat ene model. De mutant was niet fout, het geval dat hem zou betrappen
+ontbrak.
+
+Bij aankomen wisselen ze van plaats, en dan doet het er wel toe. Een reeks met
+ruim acht kilo erbij in twaalf weken zet de afwijking onder het ene model net
+buiten de band (−157 bij een band van 143) en onder het andere net erbinnen
+(−136). Eén model kiezen levert daar "je verbruik is lager" op, en dat berust
+dan op de modelkeuze en niet op de meting. Er staan nu twee proeven, één voor
+elke kant, want de code toetst de twee kanten met twee verschillende velden en
+een versie die er maar één goed doet kwam anders langs de ene proef heen.
+
+### Een grens die `eind` al had moeten hebben
+
+`analyse(dagen, profiel, eind)` knipte het venster af op `eind`, maar zocht het
+referentiegewicht in de hele dagenkaart. Bij de gewone aanroep valt dat niet op,
+want dan houdt de kaart bij vandaag op, en de veertig gouden waarden merkten er
+dus niets van. Zodra er een venster van vroeger wordt nagerekend, rekende de
+analyse van april zijn rustverbruik op de weging van augustus, en dat is precies
+het verschil dat hier gemeten wordt.
+
+De grens staat er nu, de gouden waarden bleven ongemoeid, en er staat een proef
+bij die omvalt zodra hij weggaat. Die proef bewijst allebei de kanten: dat het
+rustverbruik niet meeschuift met een latere weging, én dat de twee uitkomsten
+werkelijk verschillen, zodat de eerste bewering ergens over gaat.
+
+### Wat er met opzet niet staat
+
+**Niet "metabole adaptatie".** Dat is één verklaring voor een verbruik dat verder
+zakt dan het gewicht verklaart, en de app kan hem niet onderscheiden van minder
+zijn gaan bewegen zonder het te merken, of van anders zijn gaan loggen. Het
+bestand heet daarom `aanpassing.ts` en niet `adaptatie.ts`, en de uitklap noemt
+de andere verklaringen bij naam.
+
+**Geen kleur die zegt of het goed nieuws is.** Een lager verbruik is lastig voor
+wie afvalt en gunstig voor wie wil aankomen, en de app weet niet aan welke kant
+de lezer staat. De kleur zegt alleen of er iets staat: grijs zolang de nul in de
+band valt, geaccentueerd zodra hij eruit ligt. Dat is een eigenschap van de
+meting en geen oordeel over de lezer.
+
+**Geen uitkomst uit één venster.** Twee vensters die elkaar raken zouden dezelfde
+dagen aan beide kanten van het minteken zetten. Vandaar de eis van ruim vier
+maanden reeks, en vandaar dat de kaart tot die tijd alleen zegt vanaf wanneer hij
+iets te melden heeft. Dat is hier geen vormfout maar de hele zaak: leeg betekent
+in deze app niet gemeten, en dat is iets anders dan niets aan de hand.
+
+De maat om dit tegenaan te leggen staat in §2: in de Biggest Loser-follow-up
+−275 ± 207 kcal per dag op week 30 en −499 ± 207 na zes jaar. Dat is een uiterste,
+bij een extreem tempo en veertien deelnemers, en het staat hier als ordegrootte
+en niet als verwachting. Bij de marges die een reeks van vier maanden oplevert,
+rond de honderdvijftig tot tweehonderd kcal, is een verschil van die omvang
+zichtbaar en een verschil van vijftig kcal niet. Dat is geen tekortkoming van de
+meting maar de meting zelf, en het scherm zegt het met zoveel woorden: een
+langere reeks maakt de marge smaller, een kortere nooit.
+
+## 51. De app gaat naar testers, en daarmee verandert er iets aan wat hij is
+
+Tot vandaag was dit een app van één mens met een gezin erbij. Wat er nu bij komt
+is niet een functie maar een positie: er komen mensen in die ik niet ken, met
+hun eigen gewicht, hun eigen bloeddruk en hun eigen labwaarden.
+
+### De audit, en wat er werkelijk fout aan stond
+
+Wat al goed stond: geen sleutel in de repo (ik heb erop gescand, en wat op een
+sleutel lijkt zijn voorbeeldpatronen plus publieke anon-sleutels van het oude
+project in het archief), bcrypt op kostenfactor 10 met een rem op het raden,
+alle toegang via `SECURITY DEFINER` met een vastgezet `search_path`, een edge
+function die zijn eigen sessietoken controleert in plaats van de client te
+geloven, en per gebruiker een logboek met tokens en kosten.
+
+Wat er fout aan stond was één ding, en het was groot: **`kal_registreren` stond
+wagenwijd open.** Wie de URL had maakte een account en mocht meteen dertig
+AI-aanroepen per uur doen op de Anthropic-sleutel van de eigenaar. Dat is geen
+theoretisch lek maar de rekening van één mens.
+
+Daarnaast: geen beheerscherm (de vlag bestond, de lijst niet), en geen
+`robots.txt`, dus een besloten test die een zoekmachine kon indexeren.
+
+### Waarom het budget in aanroepen staat en niet in euro
+
+`kal_ai_log` heeft een kolom `kosten_usd`, dus een budget in euro lag voor de
+hand. Maar die kolom wordt in de edge function uitgerekend met een vast
+Sonnet-tarief, terwijl het model uit een instelling komt en dus een ander kan
+zijn. Een grens leggen op een getal dat stilletjes de verkeerde prijs gebruikt,
+is een grens die pas op de rekening zichtbaar wordt.
+
+Aanroepen tellen klopt altijd. Het bedrag staat er wel bij op het beheerscherm,
+met het voorbehoud erbij, en de proefopstelling toetst dat dat voorbehoud er
+staat.
+
+### Twee remmen, en waarom niet één
+
+De maand begrenst wat het kost. Het uur begrenst wat een lek kan aanrichten
+voordat iemand het merkt. Eén rem van duizend per maand laat een losgeslagen
+script op één avond duizend aanroepen doen: binnen budget en toch fout.
+
+Alleen geslaagde aanroepen tellen mee voor de maand. Wie zijn budget kwijtraakt
+aan storingen aan mijn kant krijgt een rekening voor mijn fout. Voor de rem per
+uur tellen ze wél mee, want daar gaat het niet om kosten maar om een hollende
+aanroeper.
+
+### Wat een slot is en wat een scherm is
+
+Dit onderscheid staat in drie bestanden en het hoort er te staan.
+
+De AI-poort is een slot. Hij ligt in `kal_ai_toegestaan`, de edge function roept
+hem aan met de service-role-sleutel, en daar komt niemand omheen. Dat is de
+poort die geld kost.
+
+De afwijzing is een scherm. Wie is afgewezen krijgt in de app een bericht in
+plaats van de app, maar wie de RPC's rechtstreeks aanroept komt nog steeds bij
+zijn eigen gegevens. Dat is te verdedigen, want het zijn zijn eigen gegevens en
+niet die van een ander, maar het is geen slot en het staat nergens als slot
+beschreven. Een echt slot vraagt een regel in `kal_sessie`, en die functie is
+één van de negen waarvan de brontekst nog niet in deze repo staat. Een functie
+vervangen die je niet kunt nalezen, is hem overschrijven met een gok.
+
+`robots.txt` is ook een scherm en zegt dat zelf.
+
+### De truc met de standaardwaarde
+
+Een kolom toevoegen vult alle bestaande rijen met de standaard. Zou die meteen
+op `wacht` staan, dan stond het gezin buiten zijn eigen app; zou het budget
+meteen op honderd staan, dan had de eigenaar sinds vandaag een limiet die hij
+nooit gekozen heeft. Dus: erin met de ruime waarde, en daarna de standaard
+verschuiven voor wie nog komt. Twee regels, en ze horen in deze volgorde.
+
+### Geen antwoord is geen afwijzing
+
+De app roept `kal_mijn_toegang` aan, en die functie bestaat pas nadat bestand 48
+gedraaid is. Wie in de trein zit krijgt helemaal niets terug.
+
+In allebei die gevallen blijft de app open. Een app die zichzelf dichtzet omdat
+een RPC ontbreekt, zet zich dicht bij precies degene die er het minste aan kan
+doen, en de echte grens staat toch in de edge function.
+
+Maar een status die er wél is en die deze versie niet kent, telt níet als goed.
+Dat lijkt hetzelfde en het is het tegenovergestelde: dat is geen ruis maar een
+nieuwere database, en zo'n waarde stilletjes als toegelaten lezen is opnieuw de
+fout die pas op de rekening zichtbaar wordt. Beide staan in
+`src/health/toegang.proef.ts` en allebei met een mutant erop.
+
+### Twee proeven die vacuüm langsgingen
+
+Dit hoort erbij omdat het twee keer gebeurde in één dag.
+
+De eerste: een mutant op `aanpassing.ts` gaf "overleeft" terwijl de bouw op die
+mutant stilletjes was omgevallen. De proef draaide op de vorige `dist/`. Een
+mutant die niet compileert is geen overlevende mutant maar een mislukte meting.
+
+De tweede: de proefopstelling zocht de testerslijst met
+`getByRole('heading', { name: 'Testers' })`, en `Kop` rendert een `div`. Nul
+treffers bij de gewone gebruiker las daardoor als een geslaagde afwezigheid,
+terwijl er in het geheel niets gezocht werd. Die proef bewees niets en zag er
+groen uit, precies de soort proef waar hoofdstuk 26 van dit document over gaat.
+
+### Wat er nog niet staat
+
+Er is geen privacyverklaring in de app en geen weg om je gegevens te
+verwijderen. Zolang het om de eigenaar en zijn gezin ging was dat te dragen;
+bij testers die hun bloeddruk invoeren is het dat niet. De DPIA die er ligt is
+geschreven voor één gebruiker. Dat is de volgende stap en het is er geen die je
+in code oplost.
+
+## 52. Een proefrit, en daarna je eigen sleutel
+
+Hoofdstuk 51 zette de wachtkamer neer met een budget van honderd herkenningen.
+Dit hoofdstuk maakt er vijfentwintig van en geeft er een vervolg aan.
+
+Vijfentwintig is geen zuinigheid maar een bedoeling: het is een proefrit. Genoeg
+om te voelen wat het model met een foto van je bord doet, niet genoeg om er
+maanden op te draaien. Wie verder wil geeft zijn eigen sleutel op, en dan
+vervalt het budget van de eigenaar, want dat budget beschermt een portemonnee
+die dan niet meer meedoet.
+
+### De sleutel staat in de vault en nergens anders
+
+Een API-sleutel in een gewone kolom is leesbaar voor iedereen die bij de tabel
+kan: een back-up, een export, een kwartier in de SQL-editor. `CLAUDE.md` had er
+al een regel over, en die geldt hier onverkort. In `kal_gebruikers` staat dus
+niet de sleutel maar zijn nummer in de vault, plus de laatste vier tekens.
+
+De laatste vier en niet de eerste, want de tester moet kunnen zien wélke sleutel
+erin staat en de eerste tekens van een OpenAI-projectsleutel dragen het
+projectnummer.
+
+Er is geen functie die de sleutel teruggeeft aan de gebruiker. Niet aan de
+gebruiker zelf, niet aan de beheerder. `kal_sleutel_voor` is de enige weg naar
+buiten en staat alleen open voor de service-role. Wie zijn sleutel kwijt is
+maakt een nieuwe bij zijn aanbieder, en dat is het juiste ongemak: een app die
+je sleutel kan laten zien, kan hem ook aan iemand anders laten zien.
+
+En dit hoort hardop gezegd, want het is de keerzijde van de hele opzet: vanaf nu
+bewaart deze database de betaalsleutels van andere mensen. Daar staan drie
+dingen tegenover en meer niet, en die staan alle drie op het scherm bij het vak
+waar de tester hem invult.
+
+### Twee aanbieders, één pijplijn, en één ervan is ongetoetst
+
+Anthropic en OpenAI kunnen allebei hetzelfde: een schema meegeven en het
+antwoord gestructureerd terugkrijgen. Bij Anthropic heet dat een tool met
+`input_schema`, bij OpenAI een function met `parameters`. `vraagModel` is de
+enige plek waar dat verschil staat; de hele herkenning eromheen blijft zoals hij
+was, met de twee rondes langs NEVO.
+
+Het OpenAI-pad is nooit tegen een echte sleutel gedraaid. De vorm van het
+verzoek en het uitpakken van het antwoord zijn na te lezen, maar of GPT bij een
+foto van een Nederlands bord even bruikbare porties geeft als Claude is een
+vraag die alleen een echte aanroep beantwoordt, en de gouden waarden van deze
+app zijn op Claude tot stand gekomen. Dat staat in de kop van de edge function
+én op het scherm bij de keuze, en `kal_ai_log` bewaart per aanroep welk model
+hem deed, zodat een rare uitkomst naar zijn aanbieder terug te leiden is.
+
+### De poort die alleen kon lezen
+
+`npm run edge` ontleedde de twee edge-functies met de parser van TypeScript,
+zonder typen, en de reden daarvoor stond in de kop en klopte: de imports wijzen
+naar https-adressen die van hier niet te halen zijn.
+
+Maar dat geldt voor de imports en niet voor de rest. Toen `claude(key, MODEL,
+...)` een `vraagModel(aanbieder, sleutel, MODEL, ...)` werd, bleef de oude `key`
+op de tweede ronde staan. Het bestand bleef leesbaar, de poort bleef groen, en
+het model zou de sleutel als systeemprompt hebben gekregen.
+
+Een eigen compilerhost die elk https-adres beantwoordt met een stuk stub lost
+dat op: wat van buiten komt heet `any`, wat in het bestand zelf staat wordt
+nagekeken. Wat daarmee genegeerd blijft is alles over de buitenwereld
+(onbekende modules, namen die de module niet kent, `Deno`, impliciet `any`), en
+wat overblijft zijn de fouten die binnen het bestand te zien zijn. Dat is minder
+dan een echte typecontrole en veel meer dan niets.
+
+De poort is getoetst op de fout waarvoor hij gebouwd is: met het argument terug
+meldt hij "Expected 7-8 arguments, but got 9", en met een verschreven naam
+meldt hij die.
+
+### En een cache met één sleuf en twee gebruikers
+
+Onderweg gevonden, en het stond er al langer. `modelNaam` werd aangeroepen met
+`model_herkenning` en met `model_import`, en beide antwoorden gingen in dezelfde
+`modelCache`. Wie als eerste vroeg bepaalde dus vijf minuten lang wat de ander
+kreeg: een import die met het herkenningsmodel draaide, of andersom, zonder dat
+iets dat meldde. Met de OpenAI-namen erbij zouden het er vier zijn geweest. De
+cache staat nu per naam.
+
+### Wat het scherm belooft en wat het niet belooft
+
+Het vak zegt waar de sleutel heen gaat, dat hij nooit terugkomt, en dat hij hier
+niet uitgeprobeerd wordt: deze database belt niet naar buiten, dus of de sleutel
+werkt blijkt bij de eerste herkenning. Zonder die laatste zin is "opgeslagen"
+een belofte die de app niet gedaan heeft.
+
+De handleiding staat ernaast, voor beide aanbieders, met de val erin die de
+meeste mensen maken: een ChatGPT-abonnement is geen API-toegang en geeft geen
+sleutel.
+
+En de proef die er het minst naar uitziet en het meest toe doet: het invoervak
+is leeg na het bewaren, en de sleutel staat nergens meer op het scherm. Een vak
+dat zijn inhoud vasthoudt is een sleutel die de volgende die meekijkt gewoon
+leest.
+
+## 53. De sleutel van een ander, en waar die dan staat
+
+Een tester mag zijn eigen AI-sleutel opgeven, zodat hij zijn eigen rekening
+betaalt en niet die van de eigenaar. Die sleutel moet ergens staan, en waar
+precies bepaalt wat een inbraak oplevert.
+
+### Twee keer Vault, en twee keer een muur
+
+De eerste versie riep `vault.create_secret()` aan. Die functie bestaat op dit
+project niet: dat is de oude Vault die op `pgsodium` rust, en Supabase heeft die
+afgeraden. De wachter erboven sloeg aan, en dat was een vals alarm, want Vault
+zelf was er wel.
+
+De tweede versie schreef rechtstreeks in `vault.secrets`, zoals de huidige Vault
+het wil. Toen kwam de echte muur:
+
+    Vault is niet bruikbaar voor dit bestand. Wat ontbreekt: schrijfrecht op
+    vault.secrets voor postgres;
+
+De rol die deze functies bezit mag daar niet in schrijven, en kan zichzelf dat
+recht niet geven: `pg_has_role(current_user, 'supabase_admin', 'member')` geeft
+`false`. Daar houdt die weg op.
+
+Dat het zo netjes ophield en niet halverwege omviel, is het werk van die tweede
+wachter. De eerste keek naar één functienaam. De tweede kijkt naar wat het
+bestand werkelijk nodig heeft: de tabel, de weergave, de kolommen, en het
+schrijfrecht. Die laatste vond het, vóór er één kolom was toegevoegd.
+
+### Wat ervoor in de plaats kwam is sterker dan Vault zou zijn geweest
+
+De sleutel wordt nu versleuteld in de edge function, met AES-GCM, met een
+hoofdsleutel die in de omgeving van die functie staat naast `ANTHROPIC_API_KEY`.
+Wat er in de database komt is cijfertekst en verder niets.
+
+Bij Vault kan de database zelf ontsleutelen: wie een export in handen krijgt,
+krijgt de sleutels erbij. Hier kan de database er niets mee. Geen functie, geen
+beheerder, geen back-up en geen export komt aan de inhoud, want de hoofdsleutel
+staat ergens anders. Je hebt allebei nodig.
+
+### En waarom dan geen `pgcrypto`, dat al aanstond
+
+Dat was het plan en het is het niet geworden. `pgcrypto` versleutelt ín de
+database, en dan moet de hoofdsleutel dáárheen: over de lijn bij elke aanroep,
+mogelijk in een logregel, en in elk geval binnen bereik van wie de database
+beheert. Precies de winst hierboven valt dan weg.
+
+AES-GCM in de edge function vraagt geen uitbreiding, en de database ziet de
+sleutel nooit, ook niet even. Het gevolg voor de app is dat een sleutel opgeven
+langs de edge function gaat in plaats van rechtstreeks naar de database. Weghalen
+mag wél rechtstreeks, want daar is geen hoofdsleutel voor nodig en het hoort te
+werken ook als die functie er even uit ligt.
+
+### Versleuteling die alleen gelezen is, is niets waard
+
+De edge-functies vallen buiten alle proeven. Voor de meeste code daar is dat te
+dragen; voor dit stuk niet, want de manier waarop versleuteling stukgaat is
+stil. Een beginwaarde die niet verandert, een sleutel die er toch nog in staat,
+twee keer dezelfde uitkomst: dat zie je niet aan de code en je merkt het niet
+aan de app.
+
+`src/health/kluis.proef.ts` knipt het blok uit `kal-ai.ts`, laat esbuild er
+JavaScript van maken, en draait het. Geen kopie dus maar de code zelf. Tien
+proeven, en de drie die er het meest toe doen zijn: de cijfertekst bevat de
+sleutel niet meer (ook niet als base64 verpakt), vijf keer versleutelen geeft
+vijf verschillende uitkomsten, en een andere hoofdsleutel geeft een fout en geen
+halve uitkomst. Dat laatste is de reden dat de app erop kan bouwen: raakt
+`SLEUTELKLUIS` kwijt, dan valt hij niet stilletjes terug op de gedeelde sleutel
+en dus op de rekening van de eigenaar.
+
+Hij draait in de node-omgeving en niet in de browseromgeving die de rest van die
+map gebruikt. Dat is geen voorkeur: esbuild weigert te starten onder een
+`TextEncoder` die jsdom heeft vervangen, met een melding over een invariant die
+niemand zonder die regel zou thuisbrengen.
+
+### Een fout van mij die is toegepast voordat iemand hem zag
+
+In de kop van bestand 52 stond: "Dit bestand staat los van 48 tot en met 51 en
+kan in elke volgorde." Dat was niet waar. `kal_account_wissen` leest
+`ai_sleutel_id`, en die kolom komt uit bestand 49.
+
+Postgres zei daar niets over, en terecht: plpgsql zoekt zijn SQL pas op bij het
+uitvoeren. `create function` controleert de vorm en niet of de kolommen bestaan.
+De functie werd dus netjes aangemaakt en zou pas stukgaan op het moment dat
+iemand op verwijderen tikte.
+
+Bestand 52 is toegepast in die staat. Bestand 53 zet het recht, en de oplossing
+is korter dan het probleem: sinds de sleutel als versleutelde tekst in een kolom
+van `kal_gebruikers` staat, gaat hij vanzelf mee wanneer die rij verdwijnt. Het
+hele blok dat hem apart uit de vault haalde kon eruit.
+
+De les staat in het bestand zelf: de proef is de aanroep en niet het aanmaken.
+Daarom staat er onder elk bestand hier een nakijklijst, en daarom is die van 52
+niet gedraaid geweest voordat hij toegepast werd.
+
+## 54. Het boekje zei dat GLP-1 werkt via de maag, en dat klopt maar half
+
+Het GLP-1-stuk in `verdieping.ts` gaf als verklaring dat het middel de
+maaglediging vertraagt, "waardoor je eerder vol zit en dat langer blijft". Die
+verklaring staat in veel voorlichting, maar de energiebalansstudies wijzen ergens
+anders heen. De inname daalt met een kwart tot ruim een derde (Blundell 2017,
+Friedrichsen 2021), het rustmetabolisme daalt gewoon mee met het gewicht, en de
+vertraagde maaglediging is na twintig weken grotendeels verdwenen. Het werk
+gebeurt in de hypothalamus en de hersenstam. Het stuk zegt dat nu, en noemt in
+`nietWeten` wat daarbij zacht is: het aandeel van het beloningssysteem steunt
+vooral op dierproeven en kleine scanstudies.
+
+Het stuk over stoppen had één studie, de STEP-1-vervolgstudie, en die is niet
+gerandomiseerd na het staken. Er staan nu twee gerandomiseerde studies naast
+(STEP-4 en SURMOUNT-4), de fysiologie die het verklaart (Sumithran 2011), en
+S-LiTE als het enige gecontroleerde bewijs dat iets het terugkomen afremt.
+
+Bij het redigeren viel één bewering af die in de aangeleverde tekst stond: dat
+de STEP-1-deelnemers "intensieve" leefstijlbegeleiding hadden gehad en dat de
+aangeleerde structuur er dus was. De begeleiding in STEP-1 was counseling om de
+vier weken; intensieve gedragstherapie zat in STEP-3. En in de vervolgstudie
+stopte die begeleiding tegelijk met het middel. Wat de studie laat zien is dat
+het gewicht terugkomt als beide wegvallen, niet dat doorlopende begeleiding
+zonder middel zinloos is. Dat staat nu als `nietWeten` in het stuk.
+
+Een tweede: dat spierbehoud het mechanisme is achter het betere behoud na
+training in S-LiTE. Dat is plausibel maar in die studie niet aangetoond, en het
+boekje zegt het daarom niet. Zie `ONDERZOEK-MEDISCH-AFVALLEN.md` §3 en §4.
+
+Wie op Profiel de GLP-1-prik aanvinkt, kreeg bij Leren geen bladzijde die erover
+ging: de bladzijden bij insuline, SU en SGLT2 bestonden wel. `leren.ts` heeft er
+nu een, `prik-en-stoppen`, die bij die conditie bovenaan komt. Het is vaste
+tekst, net als de rest: de conditie bepaalt de volgorde, niet de inhoud. De proef
+op die volgorde is gemuteerd (de koppeling aan `glp1` weggehaald) en viel om.

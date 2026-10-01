@@ -33,6 +33,7 @@ import {
 } from './vensters/Instellingen'
 import { LerenVenster } from './vensters/Leren'
 import { VerdiepVenster } from './vensters/Verdiepen'
+import { WegingVenster } from './vensters/Wegingen'
 import { Opzet } from './Opzet'
 import { Kaart, Knop, Spin } from './onderdelen/basis'
 import { useVeeg } from './veeg'
@@ -98,13 +99,21 @@ function Postbus({ token, a }: { token: string; a: Analyse }) {
 
 type Tab = (typeof TABS)[number][0]
 type VensterNaam = 'profiel' | 'import' | 'account' | 'koppelen' | 'overzicht'
-  | 'hoewerkt' | 'leren' | 'verdiepen' | 'verslag' | 'voorkeuren'
+  | 'hoewerkt' | 'leren' | 'verdiepen' | 'verslag' | 'voorkeuren' | 'wegingen'
 
 export function App() {
   const k = useKalibratie()
   const [tab, zetTab] = useState<Tab>('vandaag')
   const [datum, zetDatum] = useState<IsoDatum>(vandaag())
   const [venster, zetVenster] = useState<VensterNaam | null>(null)
+  /* Welk stuk van het boekje open moet staan als het venster opengaat. Een
+     verwijzing vanaf een kaart komt hier binnen; zonder stuk gaat het boekje
+     gewoon bovenaan open. */
+  const [verdiepStuk, zetVerdiepStuk] = useState<string | null>(null)
+  const opVerdiepen = (stuk?: string): void => {
+    zetVerdiepStuk(stuk ?? null)
+    zetVenster('verdiepen')
+  }
   /* De namen bij weggeklikte codes, zolang deze sessie duurt. Ze worden niet
      bewaard: de code in het profiel is de echte verwijzing, en een naam die
      meereist zou een tweede waarheid zijn die na een NEVO-versie niet meer
@@ -136,6 +145,17 @@ export function App() {
         rechts: () => zetDatum(plusDagen(datum, -1)),
       }
     : {})
+
+  /* Een dagveld op een dag die je níet aan het bekijken bent. Het venster met
+     je wegingen loopt de hele reeks langs, dus daar is de datum van de regel de
+     datum die telt en niet de dag die bovenaan staat. */
+  const zetDagveldOp = useCallback((
+    d: IsoDatum, veld: string, waarde: string | number | boolean | null,
+  ) => {
+    void k.wijzig((t) => roep('kal_dag_zetten', {
+      p_token: t, p_datum: d, p_patch: { [veld]: waarde },
+    }))
+  }, [k])
 
   const voegRegelsToe = useCallback((regels: NieuweRegel[]) => {
     if (!regels.length) return
@@ -263,7 +283,8 @@ export function App() {
           )}
 
           {tab === 'model' && (
-            <Model a={a} dagen={k.dagenkaart} reeks={reeks} profiel={profiel} labs={k.alles.labs} />
+            <Model a={a} dagen={k.dagenkaart} reeks={reeks} profiel={profiel} labs={k.alles.labs}
+                   opWegingen={() => zetVenster('wegingen')} />
           )}
 
           {tab === 'voeding' && (
@@ -315,7 +336,9 @@ export function App() {
           {tab === 'klinisch' && (
             <Klinisch
               a={a} profiel={profiel} labs={k.alles.labs} metingen={k.alles.metingen}
+              reeks={reeks}
               opProfiel={() => zetVenster('profiel')} opLeren={() => zetVenster('leren')}
+              opVerdiepen={opVerdiepen}
               vragenlijsten={k.alles.vragenlijsten}
               bewaarMeting={(m) =>
                 void k.wijzig((t) => roep('kal_rij_toevoegen', {
@@ -333,7 +356,8 @@ export function App() {
           )}
 
           {tab === 'meer' && (
-            <Meer dagen={k.dagenkaart} reeks={reeks} profiel={profiel} opVenster={zetVenster} />
+            <Meer dagen={k.dagenkaart} reeks={reeks} profiel={profiel} opVenster={zetVenster}
+                  opVerdiepen={opVerdiepen} />
           )}
         </div>
 
@@ -399,7 +423,12 @@ export function App() {
       )}
 
       {venster === 'verdiepen' && (
-        <VerdiepVenster opSluiten={() => zetVenster(null)} />
+        <VerdiepVenster begin={verdiepStuk} opSluiten={() => zetVenster(null)} />
+      )}
+
+      {venster === 'wegingen' && (
+        <WegingVenster reeks={reeks} opSluiten={() => zetVenster(null)}
+                       zetGewicht={(d, kg) => zetDagveldOp(d, 'gewicht_kg', kg)} />
       )}
 
       {venster === 'profiel' && (

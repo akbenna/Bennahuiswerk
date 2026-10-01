@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Trading">
+  <title>Trading</title>
+  <rect width="64" height="64" rx="14" fill="#7E5300"/>
+  <path d="M20 15v31M32 12v28M44 20v32" stroke="#FFF8EE" stroke-width="2.6" stroke-linecap="round"/>
+  <rect x="15.5" y="22" width="9" height="16" rx="1.5" fill="#FFF8EE"/>
+  <rect x="27.5" y="17" width="9" height="15" rx="1.5" fill="#E2A93C"/>
+  <rect x="39.5" y="27" width="9" height="18" rx="1.5" fill="#FFF8EE"/>
+</svg>

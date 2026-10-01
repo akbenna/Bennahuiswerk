@@ -91,6 +91,16 @@ export const APPS: readonly AppTegel[] = [
   zin:'Twintig lessen over voor een groep staan: je zenuwen de baas, een verhaal dat een kop en een staart heeft, en wat je doet als iemand een vraag stelt die je niet had zien aankomen.',
   detail:['Twintig lessen','Presentatiesimulator','Kenniskaarten','Ook voor spreekbeurten']},
 
+ /* Trading staat bij de groten en niet bij de kinderen: hij is voor één
+    volwassene geschreven, over handelen met eigen geld. Hij hoort bij de
+    Academie (zelfde kleur, zelfde opslagvorm), maar zijn vorm, drie
+    kaarsen, houdt hem apart van de andere drie. */
+ {id:'trading', naam:'Trading', href:'huiswerk/cursussen/trading.html', ico:'/iconen/trading.svg',
+  k:'academie', groep:'groot', kort:'Technische analyse, gevorderd',
+  wie:'Abdelkader',
+  zin:'Technische analyse voor wie al tradet, getraind op beslissingen: 40 casussen waarin je kiest of je instapt, wanneer, waar de stop ligt en wat de doorslag geeft. Met lessen over volume, het orderboek, algoritmes en contrarian denken, en bij elke techniek wat het onderzoek erover zegt.',
+  detail:['40 casussen in stappen','28 lessen in punten','Algoritmes herkennen','Bewijs per techniek']},
+
  {id:'sanad', naam:'Geloofsstudie', href:'sanad/', ico:'/iconen/geloofsstudie.svg', k:'geloof', groep:'groot', kort:'Achtentwintig weken fiqh',
   oud:'Sanad', ar:'سند', wie:'Abdelkader',
   zin:'Achtentwintig weken Malikitische fiqh, usul, ‘aqida, bronnenkritiek en medische ethiek, elke week met een fragment uit de oorspronkelijke tekst.',

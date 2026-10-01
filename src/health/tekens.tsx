@@ -190,6 +190,13 @@ export const WegTraject = () => wegwijzer(
   <><path d="M5.6 21V3.4" /><path d="M5.6 4.6h12.8l-2.6 4.2 2.6 4.2H5.6" /></>,
 )
 
+/** Een opengeslagen boek: de kennisbank. */
+export const WegLezen = () => wegwijzer(
+  <><path d="M12 6.6v13" />
+    <path d="M12 6.6C10.4 5.2 8.4 4.6 4.6 4.6v12.2c3.8 0 5.8.6 7.4 2" />
+    <path d="M12 6.6c1.6-1.4 3.6-2 7.4-2v12.2c-3.8 0-5.8.6-7.4 2" /></>,
+)
+
 /** Staafjes: wat je per dag gelogd hebt. */
 export const WegPerDag = () => wegwijzer(
   <><path d="M4.4 20.4V13" /><path d="M9.4 20.4V6.6" />

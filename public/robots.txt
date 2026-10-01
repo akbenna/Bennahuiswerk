@@ -1,0 +1,9 @@
+# BennaHealth is geen openbare dienst maar een besloten test met een
+# uitnodiging. Een zoekmachine die hem indexeert levert bezoekers op die zich
+# aanmelden zonder te weten waarvoor, en elke aanmelding is werk voor de
+# beheerder. De andere apps op dit adres blijven gewoon vindbaar.
+#
+# Dit is een verzoek en geen slot: een robot die zich er niets van aantrekt komt
+# er langs. Het slot op wat geld kost zit in de edge function, niet hier.
+User-agent: *
+Disallow: /health/

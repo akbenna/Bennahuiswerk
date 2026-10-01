@@ -95,22 +95,32 @@ export function verwerkAntwoord(vorig: Voortgang, a: Antwoord, nu: Date): Voortg
     foutLog = [regel, ...foutLog.filter((f) => f.id !== a.kaart.id)].slice(0, 40)
   }
 
-  /* Automatisch niveau: drie goed op rij is een tikje moeilijker, één fout is
-     een tikje makkelijker. Sneller omhoog dan omlaag zou een kind vastzetten op
-     stof die het net niet aankan. */
+  /* Automatisch niveau: drie goed op rij is een tikje moeilijker.
+     Omlaag gaat het pas na twéé fout achter elkaar, en dat is met opzet
+     veranderd. Het stond op één, en voor een kind dat onzeker is over een vak
+     is dat de verkeerde kant op: een losse misser hoort bij oefenen, maar als
+     de app er meteen een trede afhaalt bevestigt hij wat zo een kind toch al
+     denkt, namelijk dat het dit niet kan. Twee op rij is wél een signaal; dan
+     is de stof op dit moment te zwaar en helpt een trede terug echt.
+
+     Omhoog blijft op drie staan, dus omlaag gaat nog steeds sneller dan
+     omhoog. Dat was de oorspronkelijke gedachte en die klopt nog. */
   let correctRun = pr.correctRun || 0
+  let foutRun = pr.foutRun || 0
   let autoLvl = pr.autoLvl || 1
   if (a.goed) {
     correctRun++
+    foutRun = 0
     if (correctRun >= 3 && autoLvl < 3) { autoLvl++; correctRun = 0 }
   } else {
     correctRun = 0
-    if (autoLvl > 1) autoLvl--
+    foutRun++
+    if (foutRun >= 2 && autoLvl > 1) { autoLvl--; foutRun = 0 }
   }
 
   c.last = nuMs
   cards[a.kaart.id] = c
-  pr = { ...pr, cards, solved, foutLog, dag, correctRun, autoLvl }
+  pr = { ...pr, cards, solved, foutLog, dag, correctRun, foutRun, autoLvl }
 
   pr = verzilverMissie(pr, nu) ?? pr
 

@@ -1,7 +1,7 @@
 /**
  * VERDIEPEN: het boekje over afvallen, medicatie en wat je vasthoudt
  *
- * Acht stukken, en ze staan er voor iedereen hetzelfde. Net als `leren.ts` is
+ * Elf stukken, en ze staan er voor iedereen hetzelfde. Net als `leren.ts` is
  * dit een boek en geen behandeling: er wordt niets van de gebruiker gelezen,
  * niets uitgerekend, en niets aangepast aan wie je bent.
  *
@@ -84,12 +84,22 @@ export const VERDIEPINGEN: readonly Verdieping[] = [
   {
     id: 'glp1',
     titel: 'Wat GLP-1 doet, en wat je ervan merkt',
-    kort: 'Een hormoon dat je verzadiging nabootst, met een opbouwschema en een paar signalen die tellen.',
+    kort: 'Je valt af doordat je minder eet, en dat regelt het middel in je hoofd. Met een opbouwschema.',
     weten: [
-      'GLP-1 is een hormoon dat je darm zelf maakt na het eten. Het remt je eetlust en vertraagt '
-        + 'de maaglediging, waardoor je eerder vol zit en dat langer blijft. Middelen als '
-        + 'semaglutide en liraglutide bootsen dat hormoon na; tirzepatide werkt op twee '
-        + 'hormoonroutes tegelijk.',
+      'GLP-1 is een hormoon dat je darm zelf maakt na het eten. Middelen als semaglutide en '
+        + 'liraglutide bootsen dat hormoon na; tirzepatide werkt op twee hormoonroutes tegelijk.',
+      'Het gewichtsverlies komt vrijwel helemaal doordat je minder eet. In twee onderzoeken '
+        + 'waarin deelnemers zoveel mochten eten als ze wilden, aten ze op semaglutide ongeveer '
+        + 'een kwart minder bij de diabetesdosering en ruim een derde minder bij de dosering voor '
+        + 'afvallen. Ze hadden minder honger, minder trek in vet en energierijk eten, en meer '
+        + 'greep op wat ze aten. Een hoger energieverbruik werd niet gevonden: de verbranding in '
+        + 'rust daalde precies zoveel als bij het lagere gewicht en de kleinere spiermassa hoort.',
+      'Dat gebeurt vooral in je hersenen. Het middel bereikt de gebieden onderin je hersenen '
+        + 'die honger en verzadiging regelen, en dempt ook hoe aantrekkelijk eten lijkt. Daarom '
+        + 'zeggen veel gebruikers dat de food noise stiller wordt. De tragere maaglediging, die '
+        + 'vaak als verklaring wordt genoemd, speelt vooral in de eerste weken en neemt daarna '
+        + 'grotendeels af. Het is dus geen gedrag dat je aanleert: het middel verschuift de drang '
+        + 'zelf, en alleen zolang je het gebruikt.',
       'De dosis wordt in stappen opgebouwd over meerdere maanden. Dat is niet om te rekken maar '
         + 'om de bijwerkingen draaglijk te houden: misselijkheid, een vol gevoel, boeren, lichte '
         + 'diarree of juist obstipatie, hoofdpijn. Die nemen bij de meeste mensen af naarmate het '
@@ -97,9 +107,23 @@ export const VERDIEPINGEN: readonly Verdieping[] = [
       'Een paar signalen zijn geen gewenning en horen dezelfde dag bij je arts te komen: hevige '
         + 'buikpijn die naar je rug uitstraalt, aanhoudend braken, geel worden van je huid of '
         + 'oogwit, of tekenen van uitdroging.',
-      'Bij de erkende middelen voor gewichtsbehandeling is in onderzoek gemiddeld 15 tot ruim 20 '
-        + 'procent gewichtsverlies gezien over ruim een jaar (68 tot 72 weken), met '
-        + 'leefstijlbegeleiding erbij.',
+      'De getallen uit het onderzoek, alle met leefstijlbegeleiding erbij. Semaglutide gaf in '
+        + 'STEP-1 gemiddeld 17,3 procent gewichtsverlies over 68 weken. Tirzepatide, dat op twee '
+        + 'hormoonroutes werkt, gaf in SURMOUNT-1 ongeveer 22,5 procent over 72 weken, waarbij '
+        + 'meer dan de helft van de deelnemers minstens 20 procent verloor. In SURMOUNT-5 zijn de '
+        + 'twee rechtstreeks vergeleken en kwam tirzepatide er beter uit. De tablet met '
+        + 'semaglutide haalt 5 tot 10 procent; de NHG-Standaard raadt die niet aan.',
+      'Er is één effect dat niet over gewicht gaat. In SELECT, bij mensen met overgewicht en al '
+        + 'bestaande hart- en vaatziekte maar zonder diabetes, gaf semaglutide ongeveer 20 procent '
+        + 'minder hartinfarcten, beroertes en sterfte door hart- en vaatziekte. Dat voordeel '
+        + 'kwam vroeg en leek grotendeels los te staan van hoeveel iemand afviel.',
+      'En wat het kost, want dat hoort erbij. Bij obesitas zonder diabetes type 2 worden deze '
+        + 'middelen in Nederland niet vergoed: je betaalt ze zelf, in de orde van honderdvijftig '
+        + 'tot driehonderdvijftig euro per maand. Het Zorginstituut adviseerde in juli 2024 tegen '
+        + 'opname in het basispakket en de minister nam dat over. Niet omdat het middel niet '
+        + 'werkt, dat noemde het instituut bewezen, maar omdat niet vast te stellen is bij wie het '
+        + 'de meeste gezondheidswinst geeft, er geen onderzoek is naar verantwoord afbouwen, en '
+        + 'het onbekend is of langdurig gebruik blijvend helpt.',
     ],
     nietWeten: [
       'Die percentages komen uit onderzoek bij geselecteerde deelnemers die allemaal ook '
@@ -108,10 +132,19 @@ export const VERDIEPINGEN: readonly Verdieping[] = [
       'Wat langdurig gebruik over tien of twintig jaar doet, is onbekend: de middelen bestaan '
         + 'daar nog niet lang genoeg voor. Het Zorginstituut noemde dit als een van de redenen om '
         + 'ze niet in het basispakket op te nemen.',
+      'Dat je minder eet staat vast. Welk deel daarvan uit het beloningssysteem komt en welk '
+        + 'deel uit de verzadiging, niet: dat onderscheid steunt vooral op dierproeven en kleine '
+        + 'scanstudies. Ook de proeven waarin een hoger verbruik wél werd gezien, waren '
+        + 'dierproeven; bij mensen is het niet teruggevonden.',
+      'Hoe het hartvoordeel ontstaat, is niet opgehelderd. Dat het los van het gewicht zou '
+        + 'staan, komt uit analyses die achteraf zijn gedaan.',
     ],
     inDeApp: 'De app schrijft niets voor en beoordeelt geen dosering. Wat hij wel doet is bijhouden '
       + 'wat er gebeurt: je gewichtstrend op Inzicht, en op Beweging wat je spieren vasthoudt.',
-    bron: 'EMA-productinformatie; STEP- en SURMOUNT-onderzoeken; Zorginstituut Nederland.',
+    bron: 'EMA-productinformatie; STEP- en SURMOUNT-onderzoeken; Zorginstituut Nederland; '
+      + 'Blundell e.a., Diabetes Obesity and Metabolism, 2017, en Friedrichsen e.a., idem, 2021, '
+      + 'over inname en verbruik; Gabery e.a., JCI Insight, 2020, over de hersengebieden; '
+      + 'Lincoff e.a., SELECT, New England Journal of Medicine, 2023.',
   },
   {
     id: 'stoppen',
@@ -125,18 +158,45 @@ export const VERDIEPINGEN: readonly Verdieping[] = [
         + 'deelnemers hield ongeveer 48 procent minstens 5 procent verlies vast. Een deel zat weer '
         + 'op of boven het startgewicht.',
       'De verbeteringen in bloeddruk, vetten en bloedsuiker liepen mee terug.',
-      'Wat dat zegt is niet dat het middel niet werkt. Het zegt dat het de aandoening niet '
-        + 'oplost maar openhoudt, en dat alles afhangt van wat er tijdens en ná de behandeling '
-        + 'gebeurt.',
+      'Dat het aan het stoppen ligt en niet aan toeval, laat een onderzoek met loting zien. In '
+        + 'STEP-4 gebruikte iedereen eerst twintig weken semaglutide. Daarna kreeg de helft, '
+        + 'zonder het te weten, een nepmiddel. In de 48 weken die volgden viel wie doorging nog '
+        + '7,9 procent af, en kwam wie was overgestapt 6,9 procent aan. Bij tirzepatide ging het '
+        + 'in SURMOUNT-4 net zo: na overstappen op een nepmiddel 14 procent erbij in een jaar.',
+      'De verklaring is biologisch. Na afvallen blijft het hongerhormoon ghreline verhoogd en '
+        + 'blijven de hormonen die verzadiging melden verlaagd. Een jaar later is de honger nog '
+        + 'groter dan vóór het afvallen. Het lichaam verdedigt zijn oude gewicht. Het middel houdt '
+        + 'die drang onder zolang je het gebruikt. Na stoppen komt hij terug, en dan op een lager '
+        + 'gewicht, waar de tegenwerking het sterkst is.',
+      'Wat wel verschil maakt, is bewegen. In het Deense S-LiTE-onderzoek vielen deelnemers '
+        + 'eerst af met een streng dieet en kregen ze daarna een jaar lang liraglutide, training, '
+        + 'allebei, of een nepmiddel. De combinatie hield het meeste vast. Een jaar nadat alles '
+        + 'was gestopt, hadden de groepen die hadden getraind minder teruggewonnen dan de groep '
+        + 'die alleen het middel kreeg. Bewegen voorkomt terugval niet, maar remt hem af.',
+      'Wat dat alles zegt, is niet dat het middel niet werkt. Het zegt dat het de aandoening '
+        + 'niet oplost maar in toom houdt, zoals een bloeddrukpil de bloeddruk. Wie stopt, moet '
+        + 'er bij de meeste mensen op rekenen dat het gewicht terugkomt.',
     ],
     nietWeten: [
       'Hoe je verantwoord afbouwt is niet onderzocht. Het Zorginstituut noemde dat met zoveel '
-        + 'woorden: er zijn geen studies naar afbouwen als het gewicht voldoende is gedaald.',
-      'Waaróm de ene persoon vasthoudt en de andere niet, is grotendeels onbekend.',
+        + 'woorden: er zijn geen studies naar afbouwen als het gewicht voldoende is gedaald. Over '
+        + 'een lagere onderhoudsdosis bestaan alleen waarnemingen uit de praktijk, geen onderzoek '
+        + 'met loting.',
+      'In de STEP-1-vervolgstudie stopte de begeleiding tegelijk met het middel. Of begeleiding '
+        + 'die doorloopt het terugkomen had afgeremd, zegt die studie dus niet.',
+      'Het beweegonderzoek is klein, begon met afvallen door een dieet en niet door een middel, '
+        + 'en gebruikte liraglutide. Hoe goed het overdraagt op semaglutide of tirzepatide, is '
+        + 'niet onderzocht.',
+      'Achter de gemiddelden zit een grote spreiding. Een minderheid houdt het gewicht wel '
+        + 'vast, maar waaróm de ene persoon vasthoudt en de andere niet, is grotendeels onbekend. '
+        + 'Vooraf voorspellen wie dat zal zijn, kan niemand.',
     ],
     inDeApp: 'Je gewichtstrend op Inzicht loopt door zolang je weegt, ook als een behandeling '
       + 'stopt. Dat is precies de periode waarin een trend het meest zegt.',
-    bron: 'Wilding e.a., STEP-1-vervolgstudie, Diabetes Obesity and Metabolism, 2022 (n=327).',
+    bron: 'Wilding e.a., STEP-1-vervolgstudie, Diabetes Obesity and Metabolism, 2022 (n=327); '
+      + 'Rubino e.a., STEP-4, JAMA, 2021; Aronne e.a., SURMOUNT-4, JAMA, 2024; Sumithran e.a., '
+      + 'New England Journal of Medicine, 2011; Lundgren e.a., S-LiTE, New England Journal of '
+      + 'Medicine, 2021, en Jensen e.a., eClinicalMedicine, 2024, over het jaar na stoppen.',
   },
   {
     id: 'eiwit',
@@ -152,7 +212,15 @@ export const VERDIEPINGEN: readonly Verdieping[] = [
       'Voor de dag als geheel wordt tijdens afvallen 1,2 tot 1,6 gram eiwit per kilo lichaams'
         + 'gewicht genoemd, en bij actief spierbehoud soms meer.',
       'Praktisch: liever twee of drie maaltijden die de drempel ruim halen dan vier die er net '
-        + 'onder blijven.',
+        + 'onder blijven. Wat er ongeveer in zit: honderd gram bereide kipfilet komt rond de 30 '
+        + 'gram uit, honderd gram kabeljauw rond de 24, een schep wei-eiwit van dertig gram rond '
+        + 'de 27, een schaaltje magere kwark van 250 gram rond de 25, drie eieren rond de 19, en '
+        + 'een schaaltje Griekse yoghurt van 150 gram rond de 12. Eén bron haalt de drempel dus '
+        + 'lang niet altijd alleen.',
+      'Waar dat per kilo op slaat, maakt uit. Bij obesitas rekenen met je actuele gewicht geeft '
+        + 'een doel dat te hoog is; de Amsterdamse groep die hier onderzoek naar doet houdt aan '
+        + 'dat je het gewicht maximeert op wat bij een BMI van 30 hoort. Deze app rekent zo, en '
+        + 'op Profiel staat welke uitkomst dat voor jou geeft.',
     ],
     nietWeten: [
       'De richting van dit advies is goed onderbouwd, de grootte niet. In een overzicht van '
@@ -162,11 +230,18 @@ export const VERDIEPINGEN: readonly Verdieping[] = [
         + 'overtuigend aangetoond.',
       'En waar de drempel precies ligt, verschilt per persoon en per eiwitbron. Dertig gram is '
         + 'een richtgetal en geen schakelaar.',
+      'De verklaring die je overal leest, dat het om de hoeveelheid leucine in een maaltijd '
+        + 'gaat, is een werkhypothese. Een systematisch overzicht vond wel verband tussen '
+        + 'leucine en spieraanmaak bij ouderen, maar kon geen enkele drempelwaarde vaststellen en '
+        + 'geen maat in het bloed die voorspelt wie reageert.',
+      'Er bestaat trouwens geen enkel onderzoek dat de eiwitbehoefte bij obesitas rechtstreeks '
+        + 'heeft bepaald. Alles wat hierboven staat is afgeleid uit ander bewijs.',
     ],
     inDeApp: 'Op Beweging, bij "Wat je spieren vasthoudt", staat per maaltijd of je erboven '
       + 'uitkwam. Ligt je dagdoel gedeeld door drie onder de drempel, dan zegt de app dat erbij.',
-    bron: 'Onderzoek naar eiwitverdeling en lichaamssamenstelling (Frontiers in Nutrition, 2024) '
-      + 'en naar eiwit en vetvrije massa bij gewichtsverlies.',
+    bron: 'Onderzoek naar eiwitverdeling en lichaamssamenstelling (Frontiers in Nutrition, 2024); '
+      + 'Weijs, Current Opinion in Clinical Nutrition and Metabolic Care, 2025; Wilkinson e.a., '
+      + 'Physiological Reports, 2023, over de leucinedrempel.',
   },
   {
     id: 'spier',
@@ -185,6 +260,15 @@ export const VERDIEPINGEN: readonly Verdieping[] = [
         + 'houden. In kleine reeksen bij mensen die drie tot vijf keer per week krachttraining '
         + 'deden en op hun eiwit letten, bleef de vetvrije massa vrijwel gelijk of nam zelfs toe, '
         + 'bij een gewichtsverlies van 13 tot 33 procent.',
+      'Voor krachttraining is het bewijs harder dan voor de rest. In een samenvatting van zes '
+        + 'gelote onderzoeken hield krachttraining 93,5 procent tegen van het verlies aan '
+        + 'vetvrije massa dat door de caloriebeperking kwam, zonder dat het vetverlies eronder '
+        + 'leed. Het schema in alle zes was hetzelfde: drie keer per week, twaalf tot '
+        + 'vierentwintig weken.',
+      'En andersom: zonder beweging erbij verloor 81 procent van de onderzochte groepen meer dan '
+        + 'een zesde van het gewichtsverlies als vetvrije massa, tegen 39 procent van de groepen '
+        + 'die wél bewogen. Het gaat dus niet om hoe snel je afvalt alleen, maar om wat je '
+        + 'ondertussen van je lichaam vraagt.',
     ],
     nietWeten: [
       'Die reeksen zijn klein en niet geloot: mensen die uit zichzelf drie keer per week trainen '
@@ -195,7 +279,45 @@ export const VERDIEPINGEN: readonly Verdieping[] = [
     ],
     inDeApp: 'Op Beweging staat "Wat je spieren vasthoudt": eiwit per maaltijd, krachtsessies, en '
       + 'een test waarbij je vijf keer uit een stoel opstaat.',
-    bron: 'Substudies van STEP-1 en SURMOUNT-1; casusreeksen over behoud van vetvrije massa (2025).',
+    bron: 'Substudies van STEP-1 en SURMOUNT-1; casusreeksen over behoud van vetvrije massa '
+      + '(2025); Sardeli e.a., Nutrients, 2018 (zes gelote onderzoeken); Weinheimer e.a., '
+      + 'Nutrition Reviews, 2010.',
+  },
+  {
+    id: 'slaap',
+    titel: 'Slaap, en waar je gewichtsverlies vandaan komt',
+    kort: 'Bij te weinig slaap verschuift het verlies van vet naar spier, bij precies hetzelfde eten.',
+    weten: [
+      'Slaap staat niet naast het afvallen maar erin. In een onderzoek volgden dezelfde mensen '
+        + 'twee keer veertien dagen hetzelfde caloriearme dieet: één keer met 8,5 uur '
+        + 'slaapgelegenheid per nacht, één keer met 5,5 uur. Ze verloren allebei de keren '
+        + 'evenveel gewicht.',
+      'Alleen kwam dat gewicht ergens anders vandaan. Bij de korte nachten daalde het aandeel '
+        + 'vet in het verlies met 55 procent en steeg het verlies aan vetvrije massa met 60 '
+        + 'procent. Dezelfde kilo’s op de weegschaal, een andere uitkomst in je lichaam. De '
+        + 'deelnemers hadden bij de korte nachten ook meer honger.',
+      'Snurken en slaapapneu zijn een apart verhaal, en daar wijst het bewijs de andere kant op '
+        + 'dan vaak gedacht wordt. Afvallen helpt tegen apneu: bij ongeveer tien kilo '
+        + 'gewichtsverlies daalde het aantal ademstops met bijna tien per uur. Andersom werkt '
+        + 'het niet. Twee samenvattingen van onderzoek vinden dat mensen die met CPAP beginnen '
+        + 'gemiddeld iets aankomen in plaats van af te vallen.',
+      'Daaruit volgt een volgorde: behandel de apneu om de apneu, en het gewicht daarnaast. Niet '
+        + 'het een in de verwachting dat het ander vanzelf meekomt.',
+    ],
+    nietWeten: [
+      'Dat slaaponderzoek ging over tien mensen, in een laboratorium, veertien dagen per keer. '
+        + 'Strak opgezet, en een heel kleine groep. Of thuis een uur langer slapen hetzelfde doet, '
+        + 'is er niet mee aangetoond.',
+      'Het was bovendien opgelegd slaaptekort. Of iemand die uit zichzelf kort slaapt dezelfde '
+        + 'verschuiving laat zien, en of die terugdraait zodra hij meer gaat slapen, is niet '
+        + 'onderzocht.',
+    ],
+    inDeApp: 'Op Gezondheid staat de STOP-BANG-vragenlijst voor slaapapneu, met wat de uitslag '
+      + 'wel en niet betekent. Je slaapuren vul je in op Vandaag; ze staan naast je stappen op '
+      + 'Beweging.',
+    bron: 'Nedeltcheva e.a., Annals of Internal Medicine, 2010 (n=10); Foster e.a., Sleep AHEAD, '
+      + 'Archives of Internal Medicine, 2009; meta-analyses over CPAP en gewicht (Thorax, 2015; '
+      + 'Annals of the American Thoracic Society, 2021).',
   },
   {
     id: 'bot',
@@ -242,6 +364,21 @@ export const VERDIEPINGEN: readonly Verdieping[] = [
         + 'functioneren beperkt is. Preklinische obesitas is overmaat vet zonder die schade, wel '
         + 'met een verhoogd risico voor later.',
       'De bedoeling is behandeling te richten op wie er nú last van heeft, en niet op een getal.',
+      'Waaróm hetzelfde gewicht bij de een wel en bij de ander geen schade geeft, gaat over de '
+        + 'opslag. Onderhuids vetweefsel kan meegroeien door nieuwe vetcellen aan te maken of door '
+        + 'de bestaande te laten uitzetten. Die tweede weg loopt vast: uitgezette vetcellen komen '
+        + 'zuurstof tekort, trekken ontstekingscellen aan, en zodra de opslag vol is stroomt het '
+        + 'overschot door naar de buikholte, de lever, de spier en de alvleesklier. Daar geeft het '
+        + 'wél insulineresistentie. Metabool gezonde obesitas is in dit beeld niets anders dan '
+        + 'opslagcapaciteit die nog niet op is.',
+      'Dat is geen theorie op papier. Bij paren met dezelfde BMI, dezelfde leeftijd, hetzelfde '
+        + 'geslacht en dezelfde totale vetmassa, waarvan de een niets mankeerde en de ander '
+        + 'diabetes, te hoge triglyceriden en hoge bloeddruk had, zat het verschil in twee dingen: '
+        + 'vet in de buikholte op de MRI, en uitgezette vetcellen met ontstekingsmarkers in het '
+        + 'weefsel zelf.',
+      'Praktisch kun je daar één ding van meten zonder scanner: waar je omvang zit. De '
+        + 'middelomtrek gedeeld door je lengte heeft één grens voor iedereen, 0,5, en is daarmee '
+        + 'eerlijker dan een afkapwaarde in centimeters die voor elke lengte hetzelfde is.',
     ],
     nietWeten: [
       'Deze definitie is nieuw en nog niet overal overgenomen. De Nederlandse richtlijnen en de '
@@ -250,9 +387,108 @@ export const VERDIEPINGEN: readonly Verdieping[] = [
         + 'moet zich nog bewijzen.',
     ],
     inDeApp: 'Op Gezondheid staan je middelomtrek en bloeddruk naast je BMI, met de grenzen die '
-      + 'daarbij horen. Meer maten naast elkaar is precies waar deze definitie om vraagt.',
+      + 'daarbij horen, en sinds kort ook je middel gedeeld door je lengte. Meer maten naast '
+      + 'elkaar is precies waar deze definitie om vraagt.',
     bron: 'Lancet Diabetes & Endocrinology Commission, Definition and diagnostic criteria of '
       + 'clinical obesity, januari 2025.',
+  },
+  {
+    id: 'heterogeen',
+    titel: 'Waarom dezelfde behandeling bij de een wel werkt en bij de ander niet',
+    kort: 'Obesitas is niet één ziekte. Bij elke behandeling bestaan superresponders en non-responders.',
+    weten: [
+      'Bij elke vorm van behandeling, van leefstijl tot medicatie tot chirurgie, zijn er mensen '
+        + 'bij wie het uitzonderlijk goed werkt en mensen bij wie er vrijwel niets gebeurt. Voor '
+        + 'de incretines wordt non-respons meestal gelegd bij minder dan 5 procent '
+        + 'gewichtsverlies. In een overzicht dat in september 2026 op een nascholing werd '
+        + 'gepresenteerd ging het om ongeveer 13 procent van de volwassenen op semaglutide, '
+        + 'ongeveer 27 procent van de jongeren, minder dan 10 procent bij de hoogste dosering '
+        + 'tirzepatide, en over alles samen 15 tot 20 procent.',
+      'De verklaring die daarvoor gezocht wordt is dat er niet één obesitas is maar een handvol '
+        + 'verschillende, met een verschillende motor eronder. In Leipzig werd bij ongeveer 1.500 '
+        + 'mensen weefsel uit de buikholte en van onder de huid onderzocht, en liet men de computer '
+        + 'zonder vooraf opgelegde indeling groepen zoeken. Er kwamen er vijf uit: een kleine '
+        + 'groep die metabool niets mankeerde, een grote groep waar alles tegelijk misging, en drie '
+        + 'die niemand had voorspeld. Bij één daarvan bleef het cortisol de hele dag hoog in plaats '
+        + 'van te dalen; bij een andere was een te hoog nuchter insuline het eerste dat afweek.',
+      'Van een andere kant benaderd komen er vier eetprofielen uit, gemeten met een ochtend vol '
+        + 'testmaaltijden en scans. Een hongerig brein: pas na veel calorieën vol raken. Een '
+        + 'hongerige darm: normaal vol na een normale portie, maar binnen een uur of twee weer '
+        + 'honger omdat de maag snel leegt. Emotionele honger: eten bij spanning en verlangen, niet '
+        + 'bij honger. En een trage verbranding: weinig spiermassa en een laag verbruik.',
+      'Het aantrekkelijke van die indeling is dat er per profiel een andere behandeling bij hoort, '
+        + 'en dat sommige gegevens die kant op wijzen. Hetzelfde kenmerk voorspelde bij twee '
+        + 'middelen met een verschillend aangrijpingspunt de respons in tégengestelde richting. Dat '
+        + 'is precies wat je van een mechanistische voorspeller verwacht en het is moeilijk toeval '
+        + 'te noemen.',
+    ],
+    nietWeten: [
+      'Bijna alles hierboven is samenhang en groepsindeling, geen bewezen oorzaak. De vijf '
+        + 'weefselgroepen zijn nog niet gepubliceerd, en één ervan kon zelfs niet geduid worden. Of '
+        + 'een te hoog nuchter insuline de motor is of het gevolg, is met die gegevens niet uit te '
+        + 'maken; de onderzoeker noemt het zelf een hypothese.',
+      'De trials achter de eetprofielen zijn klein, en de uitsplitsing naar profiel is meestal '
+        + 'achteraf gedaan binnen een studie van enkele tientallen mensen. Dat is een aanwijzing '
+        + 'waarop je een volgende studie bouwt, geen grond om nu een middel te kiezen.',
+      'En dan de herkomst. Die nascholing werd betaald door een bedrijf dat een van de besproken '
+        + 'middelen in de Benelux verkoopt, en alle drie de sprekers kwamen langs een eigen route '
+        + 'bij dat middel uit. Dat maakt het niet onwaar. Het betekent dat je op herhaling door een '
+        + 'groep zonder dat belang wacht voordat je het als vaststaand aanneemt.',
+    ],
+    inDeApp: 'Nergens, en dat is met opzet. Deze app kent jouw profiel niet en gaat er ook niet '
+      + 'naar raden. Wat er wel staat is wat er werkelijk te meten valt: je middelomtrek en de '
+      + 'verhouding met je lengte op Gezondheid, en je eigen trend op Inzicht.',
+    bron: 'Nascholing over de behandeling van obesitas, september 2026, georganiseerd door Good '
+      + 'Life Pharma, met M. Blüher (Universiteit Leipzig), R. Vangoitsenhoven (UZ Leuven) en '
+      + 'A. Acosta (Mayo Clinic); Acosta e.a. over appetijtfenotypes.',
+  },
+  {
+    id: 'foodnoise',
+    titel: 'Food noise: waarom honger niet hetzelfde is als behoefte',
+    kort: 'Er gaan twee systemen over eten, en het ene kan het andere overstemmen.',
+    weten: [
+      'Het eerste systeem houdt je energie in balans. Ghreline uit een lege maag meldt honger, '
+        + 'leptine uit je vetweefsel meldt hoeveel voorraad er is, en in een kern onderin je '
+        + 'hersenen sturen die twee een rem en een gaspedaal aan. Dat systeem past bij het beeld '
+        + 'van calorieën erin en calorieën eruit.',
+      'Het tweede gaat over beloning en loopt op dopamine. Dat het bestaat merk je met kerst: '
+        + 'twee dagen achter elkaar vier gangen heeft niets met energiebehoefte te maken, en als '
+        + 'niemand nog een hap kan komen de zelfgebakken koekjes en eten we door. Het tweede '
+        + 'systeem kan het eerste overstemmen, en dat is de kern van wat food noise heet.',
+      'Beloning werkt bovendien vooruit. Na een paar herhalingen verschuift de dopaminereactie van '
+        + 'het eten zelf naar het signaal dat het aankondigt, en blijft de beloning dan uit, dan '
+        + 'zakt dopamine juist onder de rustwaarde. Dat negatieve signaal is krachtig, en het is de '
+        + 'reden dat "gewoon nee zeggen" iets anders is dan het lijkt.',
+      'En je voorkeur is niet vast. In een onderzoek kregen mensen acht weken lang dagelijks een '
+        + 'tussendoortje. Bij een vetarm tussendoortje bleef hun waardering van vetarm eten gelijk; '
+        + 'bij een vet en zoet tussendoortje gingen ze vetarm eten mínder lekker vinden. De '
+        + 'omgeving verandert dus niet alleen hoeveel je eet maar ook wat je lekker vindt.',
+      'Dat het ook in calorieën doortelt, liet een onderzoek op een afdeling zien waar alles '
+        + 'gewogen werd. Twintig mensen kregen in wisselende volgorde twee weken bewerkt en twee '
+        + 'weken onbewerkt eten, gelijkgemaakt op aangeboden calorieën, energiedichtheid, '
+        + 'macronutriënten, suiker, vezels en zout, en ze mochten eten wat ze wilden. Op het '
+        + 'bewerkte eten aten ze ongeveer 508 kcal per dag meer, kwamen ze 0,9 kg aan, en op het '
+        + 'onbewerkte vielen ze 0,9 kg af.',
+    ],
+    nietWeten: [
+      'Waar je dit zou moeten meten, weet niemand. Een PET-scan is duur, en bij de gebruikte '
+        + 'tracers meet hij hoeveel receptoren er vrij zijn en niet hoeveel dopamine er vrijkomt: '
+        + 'een lager signaal kan betekenen dat er minder receptoren zijn óf dat er meer eigen '
+        + 'dopamine op zit. Die dubbelzinnigheid verklaart een flink deel van de literatuur die '
+        + 'elkaar tegenspreekt.',
+      'In bloed of urine meten helpt niet. Het dopamine dat je daar vindt komt grotendeels uit de '
+        + 'nieren en de darm, en dopamine komt de bloed-hersenbarrière niet over. Een perifere '
+        + 'maat meet vrijwel zeker iets anders dan het systeem waar het om gaat.',
+      'De beeldvormende studies bij mensen zijn oud en klein, en de twee onderzoeken hierboven '
+        + 'gaan over twintig mensen gedurende vier weken en enkele tientallen gedurende acht. De '
+        + 'richting is consistent, de grootte van het effect staat niet vast.',
+    ],
+    inDeApp: 'Op Vandaag leg je vast wát je at, niet waaróm. Deze app vraagt niet of je uit honger '
+      + 'of uit spanning at: dat is een oordeel dat een scherm niet kan maken. Wat hij wel laat '
+      + 'zien is de verdeling over de dag en wat er nog in past.',
+    bron: 'Onderzoek naar dopamine bij inname (Cell Metabolism, 2019) en naar voorkeur na acht '
+      + 'weken (Cell Metabolism, 2023); Hall e.a. over bewerkt voedsel (Cell Metabolism, 2019, '
+      + 'n=20); nascholing september 2026.',
   },
   {
     id: 'volhouden',

@@ -69,8 +69,31 @@ function reeks(aantalDagen, vorm = 'gewoon') {
          drie dagen gewogen. Dat is de toestand van het schermbeeld waar deze
          proef uit voortkomt: een trend die niet vastligt naast een halfgevuld
          logboek. */
-      gewicht_kg: vorm === 'tegenspraak'
+      /* De uitbijtervorm is de gewone reeks met één weging van 190,2 erin, op
+         de veertiende dag. Dat is het geval uit het echte logboek: een reeks
+         rond de 118 met daartussen één getal dat er niet kan staan. */
+      /* En de vorm zonder weging van vandaag: de ochtend waarop je de app
+         opent en nog op de weegschaal moet. Elke andere vorm heeft die dag al
+         gewogen, dus de kop "Stap op de weegschaal" en het weegveld in de hero
+         kwamen in de hele proefopstelling niet voor. */
+      /* De vorm waarin het afvallen stilvalt zonder dat het logboek verandert:
+         eerst ruim negen weken vlot eraf, daarna bijna stil. Niet helemaal
+         stil, want met het logboek van deze proefpersoon zou een echt plateau
+         een verbruik onder het rustverbruik betekenen, en dat weigert de
+         rekenkern terecht. Dit is de enige vorm die lang genoeg is voor twee
+         vensters, en dus de enige waarin de kaart over het verbruiksbeloop
+         iets te zeggen heeft. */
+      gewicht_kg: vorm === 'gezakt'
+        ? Math.round((124
+            - 0.10 * Math.min(aantalDagen - 1 - i, 64)
+            - 0.03 * Math.max(aantalDagen - 1 - i - 64, 0)
+            + ruis * 0.9) * 10) / 10
+        : vorm === 'niet-gewogen' && i === 0
+        ? null
+        : vorm === 'tegenspraak'
         ? (i % 3 === 0 ? Math.round((116.0 + t * 4.6 + ruis) * 10) / 10 : null)
+        : vorm === 'uitbijter' && i === 14
+        ? 190.2
         : Math.round((119.4 - t * 3.1 + ruis) * 10) / 10,
       gewicht_bron: 'handmatig', stappen: 4200 + Math.round(Math.abs(Math.sin(i)) * 5200),
       /* Om de dag drie kwartier op de hometrainer. Dat is bewust: zonder
@@ -177,16 +200,33 @@ function labs(aantalDagen) {
 function metingen(aantalDagen) {
   if (aantalDagen < 7) return []
   const d = iso(NU - 9 * DAG)
+  /* Een tweede, oudere meetdag. Zonder die dag heeft de kaart "Wat er veranderd
+     is" niets te vergelijken, en dan zou de proef een kaart tonen die op de
+     telefoon van de gebruiker wél vol staat en hier altijd leeg blijft. */
+  const toen = iso(NU - 120 * DAG)
+  /* Een tweede dag binnen dezelfde week als `toen`. Zonder die dag rust het
+     begin van de bloeddrukreeks op één meting, en dan is op het scherm niet te
+     zien of de kaart het weekgemiddelde neemt of de eerste de beste waarde. Met
+     deze dag erbij zijn de twee antwoorden verschillend: 146 tegen 148. */
+  const toenOok = iso(NU - 118 * DAG)
   return [
     { id: 'm1', datum: d, soort: 'bloeddruk_sys', waarde: 128, eenheid: 'mmHg', notitie: null },
     { id: 'm2', datum: d, soort: 'bloeddruk_dia', waarde: 82, eenheid: 'mmHg', notitie: null },
     { id: 'm3', datum: d, soort: 'middelomtrek', waarde: 108, eenheid: 'cm', notitie: null },
+    { id: 'm4', datum: toen, soort: 'bloeddruk_sys', waarde: 146, eenheid: 'mmHg', notitie: null },
+    { id: 'm5', datum: toen, soort: 'bloeddruk_dia', waarde: 92, eenheid: 'mmHg', notitie: null },
+    { id: 'm6', datum: toen, soort: 'middelomtrek', waarde: 114, eenheid: 'cm', notitie: null },
+    { id: 'm7', datum: toenOok, soort: 'bloeddruk_sys', waarde: 150, eenheid: 'mmHg', notitie: null },
+    { id: 'm8', datum: toenOok, soort: 'bloeddruk_dia', waarde: 94, eenheid: 'mmHg', notitie: null },
   ]
 }
 
 function alles(aantalDagen, fase = 'afvallen') {
   const vorm = fase === 'tegenspraak' ? 'tegenspraak'
-    : fase === 'leeg-vandaag' ? 'leeg-vandaag' : 'gewoon'
+    : fase === 'uitbijter' ? 'uitbijter'
+    : fase === 'leeg-vandaag' ? 'leeg-vandaag'
+    : fase === 'niet-gewogen' ? 'niet-gewogen'
+    : fase === 'gezakt' ? 'gezakt' : 'gewoon'
   const { dagen, regels } = aantalDagen > 0
     ? reeks(aantalDagen, vorm) : { dagen: [], regels: [] }
   /* De GLI staat in de instellingen en niet in een eigen kolom: het is een
@@ -241,6 +281,10 @@ const gevallen = [
   ['tegenspraak', 28, 'light', 'tegenspraak', ['Inzicht']],
   /* De ochtend waarop er nog niets in staat. */
   ['leeg-vandaag', 28, 'light', 'leeg-vandaag', ['Vandaag']],
+  /* En de ochtend waarop er nog niet gewogen is. Zie de kop van dit bestand:
+     elk ander geval heeft vandaag al gewogen, dus het weegveld in de hero stond
+     in geen enkele afdruk. */
+  ['niet-gewogen', 28, 'light', 'niet-gewogen', ['Vandaag']],
 ]
 
 /** Een tabblad openen en wachten tot de kop er echt staat. */
@@ -523,13 +567,60 @@ const NEVO_BENADERD = [
 ]
 
 /** De databaseaanroepen onderscheppen voor één pagina. */
+/* Drie testers, en de volgorde in dit blok is met opzet niet de volgorde die
+   het scherm hoort te tonen: wie wacht hoort bovenaan te komen, en dat is
+   precies wat er te bewijzen valt. Er staat geen enkel gegeven uit de app zelf
+   in, want `kal_testers` geeft dat niet terug; zie de kop van bestand 48. */
+const TESTERS = [
+  { account: 'abdelkader', naam: 'Abdelkader', status: 'toegelaten', beheerder: true,
+    budget: 100000, notitie: null, aangemaakt_op: '2026-06-01T09:00:00Z',
+    beoordeeld_op: null, maand_aanroepen: 212, maand_tokens: 980000, maand_usd: 4.21,
+    laatst_actief: '2026-08-22T08:10:00Z' },
+  { account: 'zineb', naam: 'Zineb', status: 'toegelaten', beheerder: false,
+    budget: 100, notitie: null, aangemaakt_op: '2026-08-02T09:00:00Z',
+    beoordeeld_op: '2026-08-02T10:00:00Z', maand_aanroepen: 31, maand_tokens: 120000,
+    maand_usd: 0.52, laatst_actief: '2026-08-21T19:30:00Z' },
+  { account: 'karim', naam: 'Karim', status: 'wacht', beheerder: false,
+    budget: 100, notitie: null, aangemaakt_op: '2026-08-20T09:00:00Z',
+    beoordeeld_op: null, maand_aanroepen: 0, maand_tokens: 0, maand_usd: 0,
+    laatst_actief: null },
+];
+
 async function bedienDb(pagina, dagen, fase) {
+  /* DE EIGEN SLEUTEL GAAT NIET LANGS DE DATABASE, BESTAND 49
+     Hij gaat naar de edge function, want daar staat de hoofdsleutel waarmee hij
+     versleuteld wordt. Deze stub doet wat die functie doet en niets meer: hij
+     keurt het voorvoegsel en geeft de staart terug. De sleutel zelf komt
+     nergens terug, ook hier niet. */
+  await pagina.route('**/functions/v1/kal-ai', async (route) => {
+    const p = JSON.parse(route.request().postData() ?? '{}')
+    if (p.soort !== 'sleutel') return route.fallback()
+    ;(pagina.__sleutels ??= []).push({ aanbieder: p.aanbieder, lengte: p.sleutel?.length })
+    const goed = p.aanbieder === 'anthropic'
+      ? p.sleutel.startsWith('sk-ant-')
+      : p.sleutel.startsWith('sk-') && !p.sleutel.startsWith('sk-ant-')
+    await route.fulfill({
+      status: goed ? 200 : 400, contentType: 'application/json',
+      body: JSON.stringify(goed
+        ? { aanbieder: p.aanbieder, staart: p.sleutel.slice(-4) }
+        : { error: 'Een sleutel van Anthropic begint met sk-ant-.' }),
+    })
+  })
+
   await pagina.route('**/rest/v1/rpc/**', async (route) => {
     const fn = route.request().url().split('/').pop()
     const lijf = fn === 'kal_ophalen' ? alles(dagen, fase)
       : fn === 'kal_maaltijden' ? MAALTIJDEN
       : fn === 'kal_zoeken'
-        ? {
+        ? (/eiwitpoeder/i.test(route.request().postData() ?? '')
+          /* ALLEEN MERKTREFFERS, EN DAT IS HET GEVAL DAT ERTOE DOET
+             Sportvoeding staat niet in de voedingsmiddelentabel, dus wie een
+             shake of een eiwitreep zoekt krijgt uit de database precies dit
+             terug: vier lege emmers en één volle. Zolang een scherm de merken
+             niet tekende was dit de vraag waarop het "Niets gevonden" zei
+             terwijl het antwoord vol stond. */
+          ? { maaltijden: [], nevo: [], gerechten: [], eigen: [], merk: MERK }
+          : {
             maaltijden: MAALTIJDEN,
             /* De verkeerd gespelde vraag krijgt de benaderde uitslag terug,
                precies zoals de database hem geeft. Zo is te zien of het scherm
@@ -539,10 +630,41 @@ async function bedienDb(pagina, dagen, fase) {
               : NEVO_TONIJN,
             gerechten: /pindakaas/i.test(route.request().postData() ?? '') ? GERECHT_PINDAKAAS : [],
             eigen: [], merk: MERK,
-          }
+          })
       : fn === 'kal_eiwitrijk' ? EIWITRIJK
       : fn === 'kal_verzadiging' ? VERZADIGING
       : fn === 'kal_ben_ik_beheerder' ? { beheerder: pagina.__beheerder === true }
+      /* De wachtkamer en het budget, bestand 48. `__toegang` staat standaard op
+         toegelaten, want elk ander geval in deze opstelling gaat over iets
+         anders en hoort niet ineens achter een wachtscherm te komen. */
+      : fn === 'kal_mijn_toegang'
+        ? { mag: true, status: 'toegelaten', reden: 'goed', gebruikt: 12, budget: 100,
+            uur: 0, beheerder: pagina.__beheerder === true, maand_tot: '2026-09-01',
+            ...(pagina.__toegang ?? {}) }
+      : fn === 'kal_testers'
+        ? (pagina.__beheerder === true ? TESTERS : { fout: 'Dat kan niet' })
+      : fn === 'kal_sleutel_weghalen' ? { weg: true }
+      /* Weghalen, bestand 52. De stub doet wat de database doet: zonder het
+         goede wachtwoord komt er een fout, en zonder `p_echt` verandert er
+         niets en komt er alleen een telling. Beide worden geteld, want het
+         verschil tussen kijken en wissen is hier de hele veiligheid. */
+      : fn === 'kal_account_wissen'
+        ? (() => {
+            const p = JSON.parse(route.request().postData() ?? '{}')
+            ;(pagina.__wissen ??= []).push({ echt: p.p_echt === true, ww: p.p_ww })
+            if (p.p_ww !== 'goedwachtwoord') return { fout: 'Je wachtwoord klopt niet' }
+            return {
+              gewist: p.p_echt === true, account: 'abdelkader', totaal: 149,
+              per_tabel: { kal_dagen: 28, kal_regels: 112, kal_metingen: 6, kal_profiel: 1,
+                           kal_gebruikers: 1, eigen_ai_sleutel: 1 },
+            }
+          })()
+      : fn === 'kal_tester_zetten'
+        ? (() => {
+            const p = JSON.parse(route.request().postData() ?? '{}')
+            ;(pagina.__gezet ??= []).push(p)
+            return { account: p.p_account, status: p.p_status ?? 'wacht', budget: p.p_budget ?? 100 }
+          })()
       : fn === 'kal_herstelcode_voor'
         ? { code: 'QQQQQ-WWWWW-EEEEE-RRRRR', account: 'fatima' }
       : fn === 'kal_koppelingen_lijst' ? KOPPELINGEN
@@ -658,6 +780,26 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
                         JSON.stringify(rij))
       }
       console.log(`${''.padEnd(26)} volgorde: ${rij.slice(0, 6).join(' → ')}`)
+
+      /* HET WEEGVELD STAAT IN DE HERO
+         Het stond onderaan, achter zes kaarten langs, terwijl de kop erboven
+         "Stap op de weegschaal" zei. Deze proef houdt vast dat kop en handeling
+         bij elkaar staan: zegt de hero dat je moet wegen, dan staat het veld er
+         ook. En zodra er gewogen is verdwijnt het en staat het getal er. */
+      const heroTekst = (await pagina.locator('.hero').first().innerText()).replace(/\s+/g, ' ')
+      const veld = await pagina.locator('.hero .heroweeg input').count()
+      if (/Stap op de weegschaal/.test(heroTekst)) {
+        if (veld !== 1) {
+          throw new Error(`${stam}: de hero vraagt om een weging en heeft geen weegveld`)
+        }
+        const laag = await pagina.locator('.kaart').filter({ hasText: 'Ochtendweging' }).count()
+        if (laag !== 1) throw new Error(`${stam}: de weegkaart eronder is verdwenen`)
+        console.log(`${''.padEnd(26)} weegveld in de hero, en de kaart eronder blijft`)
+      } else if (veld !== 0) {
+        throw new Error(`${stam}: er staat een weegveld in de hero terwijl er al gewogen is`)
+      } else if (!/kg/.test(heroTekst)) {
+        throw new Error(`${stam}: het vlaggetje noemt het gewicht niet\n  ${heroTekst.slice(0, 160)}`)
+      }
     }
 
     /* WAT JE KOMT HALEN STAAT BOVEN WAT JE KOMT DOEN
@@ -673,21 +815,168 @@ for (const [naam, dagen, thema, fase, tabs] of gevallen) {
          waar het woord "metingen" in valt, en die heeft geen formulier. Zonder
          de `has` pakte `.first()` die kaart en viel de proef om op een kaart die
          hij nooit bedoeld heeft. De strengheid blijft gelijk: binnen de
-         invoerkaart moeten de waarden nog steeds boven het veld staan. */
+         invoerkaart moeten de waarden nog steeds boven de velden staan.
+
+         Het formulier was een uitrolmenu met één waardeveld; nu zijn het zes
+         open vakjes, want een bloeddruk is twee getallen die bij elkaar horen
+         en die kostten zo twee keer kiezen en twee keer opslaan. */
       const kaart = pagina.locator('.kaart')
         .filter({ hasText: 'Metingen' })
-        .filter({ has: pagina.locator('select') })
+        .filter({ has: pagina.locator('.meetvelden') })
         .first()
       const volgorde = await kaart.evaluate((el) => {
         const waarden = el.querySelector('.trio')
-        const veld = el.querySelector('select')
+        const veld = el.querySelector('.meetvelden')
         if (!waarden || !veld) return null
         return waarden.compareDocumentPosition(veld) & Node.DOCUMENT_POSITION_FOLLOWING ? 'goed' : 'fout'
       })
       if (volgorde !== 'goed') {
-        throw new Error(`${stam}: het invoerveld staat boven de waarden (${volgorde})`)
+        throw new Error(`${stam}: de invoervelden staan boven de waarden (${volgorde})`)
       }
-      console.log(`${''.padEnd(26)} metingen: waarden boven het formulier`)
+      /* Zes vakjes, met boven elk wat erin hoort. Een vakje zonder eigen naam
+         is een vakje waar je in gokt. */
+      const vakjes = await kaart.locator('.meetvelden label').count()
+      if (vakjes !== 6) throw new Error(`${stam}: ${vakjes} meetvakjes in plaats van 6`)
+      const namen = (await kaart.locator('.meetvelden').innerText()).replace(/\s+/g, ' ')
+      for (const naam of ['Bovendruk', 'Onderdruk', 'Rustpols', 'Middelomtrek',
+                          'Nekomtrek', 'Saturatie']) {
+        if (!namen.includes(naam)) {
+          throw new Error(`${stam}: "${naam}" staat niet boven een vakje\n  ${namen}`)
+        }
+      }
+      /* DE MIDDELOMTREK ALS REEKS
+         De app toonde alleen de nieuwste waarde. Met twee meetdagen hoort de
+         reeks eronder te staan, met per stap het verschil, en met het verschil
+         over het geheel in gewone taal eronder. */
+      const platMeting = (await kaart.innerText()).replace(/\s+/g, ' ')
+      for (const stuk of ['Je metingen', '114 cm', '108 cm', 'Van 114 naar 108 cm']) {
+        if (!platMeting.includes(stuk)) {
+          throw new Error(`${stam}: "${stuk}" ontbreekt in de reeks van de middelomtrek`
+            + `\n  ${platMeting.slice(0, 300)}`)
+        }
+      }
+      console.log(`${''.padEnd(26)} metingen: waarden boven het formulier, reeks van 2 dagen eronder`)
+
+      /* WAT ER VERANDERD IS
+         De enige kaart op dit scherm die twee momenten naast elkaar zet. Hij
+         hoort er alleen te staan als er werkelijk twee meetdagen zijn, en het
+         gewicht hoort uit de gladde lijn te komen en niet van de weegschaal. */
+      const verandering = pagina.locator('.kaart').filter({ hasText: 'Wat er veranderd is' })
+      if (!(await verandering.count())) {
+        throw new Error(`${stam}: de kaart met wat er veranderd is ontbreekt`)
+      }
+      const platte = (await verandering.first().innerText()).replace(/\s+/g, ' ')
+      for (const maat of ['Gewicht (trend)', 'Middelomtrek', 'Bovendruk', 'Onderdruk']) {
+        if (!platte.includes(maat)) {
+          throw new Error(`${stam}: "${maat}" staat niet in wat er veranderd is\n  ${platte}`)
+        }
+      }
+      /* 114 naar 108 is zes centimeter eraf. En de bloeddruk begint op het
+         gemiddelde van twee meetdagen, 146 en 150, dus op 148: dat is twintig
+         punten eraf en niet achttien. Staat er -18, dan pakt de kaart de eerste
+         de beste meting in plaats van de week eromheen. */
+      for (const verwacht of ['-6', '-20', '-11']) {
+        if (!platte.includes(verwacht)) {
+          throw new Error(`${stam}: ${verwacht} ontbreekt in wat er veranderd is\n  ${platte}`)
+        }
+      }
+      /* En hoe lang erover gedaan is. Het gewicht komt uit de reeks van
+         achtentwintig dagen en de metingen liggen honderdelf dagen uit elkaar,
+         dus deze kaart hoort twee verschillende eenheden te tonen. Staat er
+         overal dezelfde, dan volgt de eenheid de tijd niet. */
+      if (!/gemiddelde van de meetdagen/.test(platte)) {
+        throw new Error(`${stam}: de kaart zegt niet dat de bloeddruk uit meetdagen komt`
+          + `\n  ${platte}`)
+      }
+      for (const spanne of ['· 4 wk', '· 4 mnd']) {
+        if (!platte.includes(spanne)) {
+          throw new Error(`${stam}: "${spanne}" ontbreekt in wat er veranderd is\n  ${platte}`)
+        }
+      }
+      console.log(`${''.padEnd(26)} veranderd: ${platte.slice(0, 110)}`)
+
+      /* WAT ALS
+         De rekensom staat in `watals.ts` en is daar ook geproefd. Wat hier te
+         bewijzen valt is dat de schuif het scherm werkelijk beweegt, en in de
+         goede richting: kilo's eraf hoort het risico omlaag te brengen en niet
+         omhoog. En dat nul kilo hetzelfde getal geeft als de kaart erboven,
+         want dat is de enige plek waar de twee elkaar kunnen tegenspreken. */
+      const watals = pagina.locator('.kaart').filter({ hasText: 'Wat als' }).first()
+      if (!(await watals.count())) throw new Error(`${stam}: de wat-als-kaart ontbreekt`)
+      const schuif = watals.locator('input[type=range]')
+      const risico = async () => {
+        const t = (await watals.innerText()).replace(/\s+/g, ' ')
+        const m = /([\d,]+)% nu, ([\d,]+)% met dit scenario/.exec(t)
+        if (!m) throw new Error(`${stam}: geen risico in de wat-als-kaart\n  ${t.slice(0, 300)}`)
+        return { nu: Number(m[1].replace(',', '.')), straks: Number(m[2].replace(',', '.')) }
+      }
+      /* DE BAND MET DE GRENZEN VAN DE RICHTLIJN
+         Een percentage zegt weinig zonder zijn grenzen, en die verschuiven met
+         de leeftijd. De figuur hoort ze allebei te tekenen; staat er maar één
+         getal onder de band, dan is er een zone weggevallen. */
+      const bandtekst = await watals.locator('svg.fig').first()
+        .evaluate((el) => [...el.querySelectorAll('text')].map((t) => t.textContent).join(' '))
+      const grenzen = bandtekst.split(' ').filter((x) => /^\d+,\d%$/.test(x))
+      if (grenzen.length < 4) {
+        throw new Error(`${stam}: de risicoband mist een grens of een stip (${bandtekst})`)
+      }
+      await schuif.fill('0')
+      await pagina.waitForTimeout(150)
+      const opNul = await risico()
+      if (opNul.straks !== opNul.nu) {
+        throw new Error(`${stam}: op nul kilo staat er ${opNul.straks} tegen ${opNul.nu}`)
+      }
+      await schuif.fill('10')
+      await pagina.waitForTimeout(150)
+      const opTien = await risico()
+      if (!(opTien.straks < opNul.nu)) {
+        throw new Error(`${stam}: tien kilo eraf verlaagt het risico niet `
+          + `(${opTien.straks} tegen ${opNul.nu})`)
+      }
+      const watalsTekst = (await watals.innerText()).replace(/\s+/g, ' ')
+      for (const stuk of ['Stap 1', 'Stap 2', 'Hartleeftijd', 'marge',
+                          'geen voorspelling voor jou', 'NHG-CVRM']) {
+        if (!watalsTekst.includes(stuk)) {
+          throw new Error(`${stam}: "${stuk}" ontbreekt in de wat-als-kaart\n  ${watalsTekst.slice(0, 300)}`)
+        }
+      }
+      console.log(`${''.padEnd(26)} wat als: 10 kg -> ${opTien.straks}% van ${opNul.nu}%, `
+        + 'beide stappen in beeld')
+
+      /* MEE NAAR HET SPREEKUUR
+         Dit is de enige tekst in deze app die het scherm verlaat. Wat er
+         weggelaten wordt is weg: de lezer kan niet doorklikken en heeft de app
+         niet. De voorbehouden horen dus mee te reizen, en of ze dat doen is
+         alleen op het echte scherm te zien, want de kaart stelt het vel samen
+         uit wat hierboven berekend is. */
+      const vel = pagina.locator('.kaart').filter({ hasText: 'Mee naar het spreekuur' })
+      if (!(await vel.count())) throw new Error(`${stam}: de spreekuurkaart ontbreekt`)
+      await vel.first().getByText('lees eerst wat erin staat').click()
+      await pagina.waitForTimeout(200)
+      const tekst = await pagina.locator('#spreekuurvel').innerText()
+      for (const stuk of [
+        'zelf gemeten en zelf ingevoerd',    // waar het vandaan komt
+        'niet de weging van vandaag',        // het gewicht is de gladde lijn
+        'factor 1,3',                        // het voorbehoud bij SCORE2
+        'C-index is 0,65 tot 0,72',
+        'gerekend met',                      // met wélke bloeddruk
+        'WAT HIER NIET IN STAAT',            // wat ontbreekt, ontbreekt niet stil
+      ]) {
+        if (!tekst.includes(stuk)) {
+          throw new Error(`${stam}: "${stuk}" ontbreekt in het spreekuurvel`
+            + `\n  ${tekst.replace(/\s+/g, ' ').slice(0, 400)}`)
+        }
+      }
+      /* En er staat geen oordeel in. Deze app zegt nergens of een getal goed is,
+         en juist in een tekst die naar een mailbox gaat is dat het verschil
+         tussen informeren en behandelen. */
+      for (const oordeel of ['te hoog', 'te laag', 'goed bezig', 'ongezond', 'gezond gewicht']) {
+        if (tekst.toLowerCase().includes(oordeel)) {
+          throw new Error(`${stam}: "${oordeel}" staat in het spreekuurvel`)
+        }
+      }
+      console.log(`${''.padEnd(26)} spreekuurvel: ${tekst.split('\n').length} regels, `
+        + 'voorbehouden mee, geen oordeel')
     }
 
     /* DE VOLGORDE VAN HET INZICHTSCHERM
@@ -3747,19 +4036,44 @@ for (const [naam, dagen, patroon, verwacht] of [
   await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
   await pagina.waitForSelector('.hero', { timeout: 5000 })
   await naarTab(pagina, 'Profiel')
-  await pagina.getByRole('button', { name: 'Verdiepen: afvallen en medicatie' }).click()
+
+  /* 0. DE INHOUDSOPGAVE STAAT OP HET SCHERM, EN NIET ALLEEN IN DE DOOS
+        Het boekje stond als één knop onderaan een kaart over de herkomst van
+        de getallen: elf stukken die je moest kénnen om ze te vinden. Nu staan
+        de titels er. Deze proef telt ze, want een lijst die stilletjes leeg
+        raakt ziet er in de code prima uit. */
+  const kast = pagina.locator('.kaart').filter({ hasText: 'Kennisbank' })
+  const index = kast.locator('button.naslagregel')
+  /* Elf stukken plus twee planken ernaast: je aandoening en hoe de app rekent. */
+  const titels = await index.count()
+  if (titels !== 13) throw new Error(`verdiepen: ${titels} regels in de kast in plaats van 13`)
+  const eersteTitel = (await index.first().innerText()).replace(/\s+/g, ' ').trim()
+  if (!eersteTitel.startsWith('De Nederlandse trap')) {
+    throw new Error(`verdiepen: de eerste titel is "${eersteTitel}"`)
+  }
+
+  await index.first().click()
 
   const venster = pagina.locator('.venster')
   await venster.waitFor({ timeout: 5000 })
 
   process.stdout.write('verdiepen                  ')
 
-  /* 1. Acht stukken, en ze staan dicht: wie hier komt kiest wat hij leest.
-        De knop heet "open" en niet zoals het stuk, `Uitklap` zet de kop in een
-        `Kop` en de schakelaar ernaast. */
+  /* 1. Elf stukken. Er staat er één open, want er is op een titel getikt, en
+        dat hoort precies dát stuk te openen. De rest staat dicht: wie hier komt
+        kiest wat hij leest. De knop heet "open" en niet zoals het stuk,
+        `Uitklap` zet de kop in een `Kop` en de schakelaar ernaast. */
   const dichte = venster.getByRole('button', { name: 'open', exact: true })
-  const aantal = await dichte.count()
-  if (aantal !== 8) throw new Error(`verdiepen: ${aantal} stukken in plaats van 8`)
+  const open = venster.getByRole('button', { name: 'dicht', exact: true })
+  const aantal = await dichte.count() + await open.count()
+  if (aantal !== 11) throw new Error(`verdiepen: ${aantal} stukken in plaats van 11`)
+  if (await open.count() !== 1) {
+    throw new Error(`verdiepen: ${await open.count()} stukken open na een tik op een titel`)
+  }
+  const geopend = (await venster.locator('#stuk-trap').innerText()).replace(/\s+/g, ' ')
+  if (!/trap|GLI|leefstijlinterventie/i.test(geopend)) {
+    throw new Error(`verdiepen: de aangetikte titel opent het verkeerde stuk\n  ${geopend.slice(0, 160)}`)
+  }
 
   /* 2. Eén openen, en dan moeten alle vier de delen er staan. */
   await venster.locator('.kaart').filter({ hasText: 'Wat er gebeurt als je stopt' })
@@ -3784,7 +4098,7 @@ for (const [naam, dagen, patroon, verwacht] of [
         staat. De proefreeks heeft een gewicht rond de 116-119 kg, een eiwitdoel
         van 161 g en een dagdoel van 3.690 kcal; geen van die getallen hoort hier
         voor te komen. */
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 14; i++) {
     const nog = venster.getByRole('button', { name: 'open', exact: true })
     if (!(await nog.count())) break
     await nog.first().click()
@@ -3805,6 +4119,25 @@ for (const [naam, dagen, patroon, verwacht] of [
   }
 
   await pagina.screenshot({ path: 'gereedschap/health-verdiepen.png', fullPage: true })
+
+  /* 6. DE VERWIJZING VANAF EEN KAART KOMT BINNEN OP HÉT STUK
+        Een verwijzing die het boekje bovenaan opent, is een verwijzing die niet
+        werkt: je staat dan in een boekje van elf stukken zonder te weten welk
+        stuk bedoeld was. Erger nog, wie dat stuk ooit dichtklapte krijgt een
+        onthouden stand terug en ziet niets gebeuren. Vandaar hier, met een
+        stand die met opzet dicht is gezet. */
+  await pagina.keyboard.press('Escape')
+  await pagina.waitForTimeout(200)
+  await pagina.evaluate(() => {
+    localStorage.setItem('kalibratie.uitleg', JSON.stringify({ 'verdiep-slaap': false }))
+  })
+  await pagina.getByRole('button', { name: 'Lees het hele stuk' }).click()
+  await pagina.waitForTimeout(400)
+  const slaapstuk = (await pagina.locator('#stuk-slaap').innerText()).replace(/\s+/g, ' ')
+  if (!/Nedeltcheva|veertien nachten|vetvrije massa/.test(slaapstuk)) {
+    throw new Error(`verdiepen: de verwijzing opent het slaapstuk niet\n  ${slaapstuk.slice(0, 200)}`)
+  }
+  console.log(`${''.padEnd(26)} inhoudsopgave: ${titels} titels · verwijzing opent het stuk zelf`)
   console.log(`${aantal} stukken · vier delen per stuk · geen enkel getal van de lezer erin`)
   await pagina.close()
 }
@@ -3959,6 +4292,559 @@ for (const [naam, dagen, patroon, verwacht] of [
   await leeg.close()
 
   console.log('CooL 14/24 mnd · 2 beoordeeld, 2 open · drempels 35/40 en 32,5/37,5 · geen optelsom')
+}
+
+/**
+ * DE WEGING DIE ER NIET KAN STAAN
+ *
+ * Hoofdstuk 1 van VERANTWOORDING.md beloofde deze markering al terwijl ze
+ * nergens stond. Nu ze er is, hoort ze ook op het scherm te komen, want een
+ * markering die de gebruiker niet ziet is geen markering.
+ *
+ * Twee kanten, en de tweede is de belangrijkste. Bij een reeks met een weging
+ * van 190,2 hoort de zin er te staan, mét de datum en het verschil. Bij een
+ * gewone reeks hoort hij er niet te staan: deze app is er voor iemand die
+ * afvalt, en een waarschuwing over precies dat gedrag zou het scherm vullen
+ * met ruis.
+ */
+{
+  const ctx = await browser.newContext({
+    viewport: { width: 430, height: 1180 }, deviceScaleFactor: 2,
+    locale: 'nl-NL', timezoneId: 'Europe/Amsterdam',
+  })
+  await ctx.addInitScript(`{
+    const echt = Date; const vast = ${NU};
+    class V extends echt {
+      constructor(...a){ super(...(a.length ? a : [vast])) }
+      static now(){ return vast }
+    }
+    window.Date = V;
+    localStorage.setItem('kalibratie.sessie',
+      JSON.stringify({ token: 'proef', account: 'abdelkader' }));
+  }`)
+
+  const pagina = await ctx.newPage()
+  await pagina.emulateMedia({ colorScheme: 'light' })
+  await bedienDb(pagina, 28, 'uitbijter')
+  await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await pagina.waitForSelector('.hero', { timeout: 5000 })
+  await naarTab(pagina, 'Inzicht')
+  await pagina.waitForTimeout(600)
+
+  const kaart = pagina.locator('.kaart').filter({ hasText: 'Gewicht en voortschrijdend' }).first()
+  if (!(await kaart.count())) throw new Error('uitbijter: de weegkaart staat er niet')
+  const tekst = (await kaart.innerText()).replace(/\s+/g, ' ')
+
+  if (!/past niet bij de rest van je reeks/.test(tekst)) {
+    throw new Error(`uitbijter: de markering staat er niet\n  ${tekst}`)
+  }
+  /* Het verschil hoort erbij te staan en niet alleen de mededeling. Zonder
+     getal is het een waarschuwing waar je niets mee kunt. */
+  const verschil = /(\d+[,.]\d) kg (boven|onder)/.exec(tekst)
+  if (!verschil) throw new Error(`uitbijter: het verschil staat er niet bij\n  ${tekst}`)
+  if (Number(verschil[1].replace(',', '.')) < 60) {
+    throw new Error(`uitbijter: het verschil is ${verschil[1]} kg, dat kan niet kloppen`)
+  }
+  /* En de belofte dat er niets weggegooid wordt. Die staat niet voor de sier:
+     hij is de reden dat de markering geen ingreep is. */
+  if (!/gooit geen metingen weg/.test(tekst)) {
+    throw new Error(`uitbijter: de app belooft niet dat hij de meting laat staan\n  ${tekst}`)
+  }
+
+  await pagina.screenshot({ path: 'gereedschap/health-uitbijter.png', fullPage: true })
+
+  /* EN WAT JE ERMEE KUNT
+     De markering is de helft van de belofte; de andere helft is dat jij hem
+     kunt rechtzetten. Die helft bestond niet: "zet hem recht op de dag zelf"
+     betekende zelf uitzoeken welke dag het was en erheen bladeren.
+
+     Deze proef leest mee wat er naar de database gaat. Dat is het enige wat
+     hier te bewijzen valt: het scherm kan niet laten zien dat een weging weg
+     is, want de proefgegevens komen bij elke ophaalslag weer terug. */
+  const gezet = []
+  await pagina.route('**/rest/v1/rpc/kal_dag_zetten', async (route) => {
+    gezet.push(JSON.parse(route.request().postData() ?? '{}'))
+    await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' })
+  })
+
+  await pagina.getByRole('button', { name: /wegingen/i }).first().click()
+  const wegvenster = pagina.locator('.venster').filter({ hasText: 'Je wegingen' })
+  await wegvenster.waitFor({ timeout: 5000 })
+
+  /* Hij opent op de opvallende wegingen, want daarvoor kom je hier. */
+  const opvallend = (await wegvenster.innerText()).replace(/\s+/g, ' ')
+  if (!/om na te lopen/.test(opvallend)) {
+    throw new Error(`wegingen: het venster opent niet op de opvallende\n  ${opvallend.slice(0, 200)}`)
+  }
+  if (!/190/.test(opvallend)) {
+    throw new Error(`wegingen: de uitbijter staat niet in de lijst\n  ${opvallend.slice(0, 200)}`)
+  }
+
+  await wegvenster.getByRole('button', { name: /weghalen/ }).first().click()
+  await pagina.waitForTimeout(200)
+  const weg = gezet[gezet.length - 1]
+  if (!weg || weg.p_patch?.gewicht_kg !== null) {
+    throw new Error(`wegingen: weghalen stuurt geen lege weging\n  ${JSON.stringify(gezet)}`)
+  }
+  /* En op de dag van die weging, niet op de dag die bovenaan het scherm staat. */
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(weg.p_datum ?? '')) {
+    throw new Error(`wegingen: weghalen stuurt geen datum\n  ${JSON.stringify(weg)}`)
+  }
+
+  /* Wat hier NIET te proeven valt, en waarom dat goed is.
+
+     Na het weghalen staat de regel er weer, met zijn oude waarde. Dat komt
+     doordat deze proef een database naspeelt die altijd hetzelfde antwoordt:
+     het scherm leest de reeks opnieuw en krijgt de weging terug. Het venster
+     toont dus wat de database zegt en niet wat het zelf verstuurde.
+
+     Dat is met opzet zo gebouwd. Een scherm dat de regel meteen als weggehaald
+     toont, liegt op de dag dat de database het verzoek niet uitvoert, en dan
+     denkt iemand dat zijn 190 weg is terwijl hij in de trend blijft staan. Het
+     terugzetknopje is daarom pas te zien als er werkelijk iets weg is. */
+  await pagina.screenshot({ path: 'gereedschap/health-wegingen.png', fullPage: true })
+  console.log(`${'je wegingen nalopen'.padEnd(26)} weghalen -> ${weg.p_datum} gewicht_kg=null, `
+    + `en de regel blijft staan zolang de database hem teruggeeft`)
+  await pagina.close()
+
+  /* De andere kant: bij een gewone reeks staat er niets. */
+  const gewoon = await ctx.newPage()
+  await gewoon.emulateMedia({ colorScheme: 'light' })
+  await bedienDb(gewoon, 28, 'afvallen')
+  await gewoon.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await gewoon.waitForSelector('.hero', { timeout: 5000 })
+  await naarTab(gewoon, 'Inzicht')
+  await gewoon.waitForTimeout(600)
+  const schoon = (await gewoon.locator('.kaart')
+    .filter({ hasText: 'Gewicht en voortschrijdend' }).first().innerText()).replace(/\s+/g, ' ')
+  if (/past niet bij de rest/.test(schoon)) {
+    throw new Error(`uitbijter: de markering gaat af op een gewone daling\n  ${schoon}`)
+  }
+  await gewoon.close()
+  await ctx.close()
+
+  console.log(`${'de weging die niet past'.padEnd(26)} 190,2 aangewezen, `
+    + `${verschil[1]} kg ${verschil[2]}, en stil bij een gewone reeks`)
+}
+
+/* IS JE VERBRUIK MEEGEZAKT?
+   De enige kaart die twee vensters nodig heeft, dus de enige die in een
+   proefopstelling van achtentwintig dagen nooit te zien is. Zonder dit blok
+   stond hij in geen enkele afdruk en had hij ook stuk kunnen zijn.
+
+   Er worden twee reeksen bekeken en de tweede doet het echte werk: bij een
+   gewone gestage daling hoort hier niets te staan. Een kaart die altijd iets
+   beweert is geen meting. */
+{
+  const ctx = await browser.newContext({
+    viewport: { width: 430, height: 2600 }, deviceScaleFactor: 2,
+    locale: 'nl-NL', timezoneId: 'Europe/Amsterdam',
+  })
+  await ctx.addInitScript(`{
+    const echt = Date; const vast = ${NU};
+    class Vast extends echt {
+      constructor(...a) { if (a.length === 0) super(vast); else super(...a) }
+      static now() { return vast }
+    }
+    globalThis.Date = Vast;
+    localStorage.setItem('kalibratie.sessie', JSON.stringify({ token: 'proef', account: 'abdelkader' }));
+  }`)
+
+  async function kaartTekst(fase) {
+    const p = await ctx.newPage()
+    await p.emulateMedia({ colorScheme: 'light' })
+    await bedienDb(p, 120, fase)
+    await p.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+    await p.waitForSelector('.hero', { timeout: 5000 })
+    await naarTab(p, 'Inzicht')
+    const kaart = p.locator('.kaart').filter({ hasText: 'Is je verbruik meegezakt' }).first()
+    if (!(await kaart.count())) throw new Error(`verbruiksbeloop: de kaart staat er niet bij ${fase}`)
+    for (const knop of await kaart.locator('summary').all()) await knop.click()
+    const tekst = (await kaart.innerText()).replace(/\s+/g, ' ')
+    return { p, kaart, tekst }
+  }
+
+  const gezakt = await kaartTekst('gezakt')
+  if (!/verder gezakt dan je gewicht verklaart/.test(gezakt.tekst)) {
+    throw new Error(`verbruiksbeloop: geen uitspraak bij een reeks die stilvalt\n  ${gezakt.tekst}`)
+  }
+  /* Nooit één getal. Twee verwachtingen, een verschil als bereik, en de marge
+     erbij: dat is de hele belofte van deze kaart en het is in platte tekst na
+     te lezen. */
+  const bereik = /Het verschil is (-?\d[\d.]*) tot (-?\d[\d.]*) kcal per dag, en dat is meer dan de marge van ([\d.]*\d)/
+    .exec(gezakt.tekst)
+  if (!bereik) throw new Error(`verbruiksbeloop: geen verschil met marge\n  ${gezakt.tekst}`)
+  const getal = (x) => Number(x.replace(/\./g, ''))
+  if (!(getal(bereik[1]) < 0 && getal(bereik[2]) < 0)) {
+    throw new Error(`verbruiksbeloop: het bereik wijst niet omlaag: ${bereik[1]} tot ${bereik[2]}`)
+  }
+  if (!(Math.abs(getal(bereik[2])) > getal(bereik[3]))) {
+    throw new Error(`verbruiksbeloop: de marge is groter dan het verschil en er staat toch iets`)
+  }
+  /* En de voorbehouden reizen mee. Ze staan in de uitklap, en een uitklap die
+     dichtgaat is hier hetzelfde als een voorbehoud dat verdwijnt. */
+  for (const stuk of ['logboek zit er altijd naast', 'een fout die verandert',
+                      'twee verdedigbare antwoorden', 'metabole adaptatie']) {
+    if (!gezakt.tekst.includes(stuk)) {
+      throw new Error(`verbruiksbeloop: "${stuk}" staat niet in de kaart\n  ${gezakt.tekst}`)
+    }
+  }
+  await gezakt.p.screenshot({ path: 'gereedschap/health-verbruiksbeloop.png', fullPage: true })
+  await gezakt.p.close()
+
+  const stil = await kaartTekst('afvallen')
+  if (!/Geen verschil dat uit de ruis komt/.test(stil.tekst)) {
+    throw new Error(`verbruiksbeloop: een gestage daling levert toch een uitspraak op\n  ${stil.tekst}`)
+  }
+  await stil.p.close()
+  await ctx.close()
+
+  console.log(`${'is je verbruik meegezakt'.padEnd(26)} ${bereik[1]} tot ${bereik[2]} kcal `
+    + `bij een marge van ${bereik[3]}, en stil bij een gestage daling`)
+}
+
+/* ------------------------------------------------------- de testerslijst ---- */
+/* DE WACHTKAMER, BESTAND 48
+   Twee dingen tegelijk, en het tweede weegt het zwaarst: de lijst staat er voor
+   een beheerder, én hij staat er niet voor een ander. Een proef die alleen het
+   eerste doet gaat groen bij een lijst die bij iedereen staat, en die lijst
+   bevat de namen van alle testers.
+
+   Wat er verder in moet: wie wacht hoort bovenaan, want dat is het enige waar
+   iets van de beheerder moet gebeuren, en "toelaten" moet werkelijk naar de
+   database gaan en niet alleen het scherm verzetten. */
+{
+  const kijk = async (beheerder) => {
+    const c = await browser.newContext({
+      viewport: { width: 430, height: 1600 }, deviceScaleFactor: 2,
+      locale: 'nl-NL', timezoneId: 'Europe/Amsterdam',
+    })
+    const pagina = await c.newPage()
+    pagina.__beheerder = beheerder
+    await bedienDb(pagina, 28, 'afvallen')
+    await pagina.addInitScript(() => {
+      localStorage.setItem('kalibratie.sessie',
+        JSON.stringify({ token: 'proeftoken', account: 'abdelkader' }))
+    })
+    await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+    await pagina.waitForTimeout(700)
+    await pagina.getByRole('button', { name: /^Account van/ }).click()
+    await pagina.waitForTimeout(500)
+    return { pagina, c }
+  }
+
+  const gewoon = await kijk(false)
+  /* `Kop` rendert een div en geen heading. Deze proef stond er eerst met
+     getByRole('heading') en ging daarmee aan bêide kanten vacuüm langs: nul
+     treffers bij de gewone gebruiker leek een geslaagde afwezigheid. */
+  if (await gewoon.pagina.getByText('Testers', { exact: true }).count() !== 0) {
+    throw new Error('testers: de lijst staat er voor wie geen beheerder is')
+  }
+  await gewoon.c.close()
+
+  const baas = await kijk(true)
+  const p = baas.pagina
+  if (await p.getByText('Testers', { exact: true }).count() !== 1) {
+    throw new Error('testers: de lijst ontbreekt voor een beheerder')
+  }
+
+  /* Wie wacht staat bovenaan. De stub geeft ze in een andere volgorde terug,
+     dus dit gaat over het sorteren en niet over het doorgeven. */
+  const velden = p.locator('input[aria-label^="budget van "]')
+  const drie = []
+  for (let i = 0; i < await velden.count(); i++) {
+    drie.push((await velden.nth(i).getAttribute('aria-label')).replace('budget van ', ''))
+  }
+  if (drie.length !== 3) throw new Error(`testers: ${drie.length} regels in plaats van 3`)
+  if (drie[0] !== 'karim') {
+    throw new Error(`testers: wie wacht staat niet bovenaan, de volgorde is ${drie.join(', ')}`)
+  }
+
+  /* Er hoort te staan hoeveel er wachten, want dat is waar de beheerder voor
+     kijkt. En de lijst mag geen enkel gegeven uit de app zelf tonen. */
+  const blok = (await p.locator('.venster, .scherm, body').first().innerText()).replace(/\s+/g, ' ')
+  if (!/1 wacht op je/.test(blok)) throw new Error('testers: het aantal wachtenden staat er niet')
+  if (!/Sonnet-tarief/.test(blok)) {
+    throw new Error('testers: het voorbehoud bij het bedrag staat er niet')
+  }
+
+  /* En toelaten gaat werkelijk naar de database. Zonder deze regel zou een knop
+     die alleen het scherm verzet er precies hetzelfde uitzien. */
+  await p.getByRole('button', { name: 'toelaten', exact: true }).first().click()
+  await p.waitForTimeout(400)
+  const uit = baas.pagina.__gezet ?? []
+  if (!uit.some((x) => x.p_account === 'karim' && x.p_status === 'toegelaten')) {
+    throw new Error(`testers: "toelaten" bereikte de database niet, verstuurd: ${JSON.stringify(uit)}`)
+  }
+
+  await p.screenshot({ path: 'gereedschap/health-testers.png', fullPage: true })
+  await baas.c.close()
+
+  console.log(`${'de testers'.padEnd(26)} lijst alleen voor de beheerder · `
+    + `karim bovenaan · toelaten -> kal_tester_zetten`)
+}
+
+/* ------------------------------------------------------- de eigen sleutel ---- */
+/* DE PROEFRIT HEEFT EEN VERVOLG, BESTAND 49
+   Wat hier bewezen moet worden is niet dat er een vak staat. Het is dat het vak
+   zegt waar de sleutel terechtkomt, dat hij er ook werkelijk heen gaat met de
+   aanbieder erbij, en dat een sleutel die bij de verkeerde aanbieder hoort
+   geweigerd wordt zonder dat de app hem toch doorzet.
+
+   En het belangrijkste: dat de sleutel nergens op het scherm terugkomt. Een
+   invoervak dat zijn inhoud vasthoudt is een sleutel die de volgende die op die
+   telefoon kijkt gewoon kan lezen. */
+{
+  const c = await browser.newContext({
+    viewport: { width: 430, height: 1900 }, deviceScaleFactor: 2,
+    locale: 'nl-NL', timezoneId: 'Europe/Amsterdam',
+  })
+  const p = await c.newPage()
+  await bedienDb(p, 28, 'afvallen')
+  await p.addInitScript(() => {
+    localStorage.setItem('kalibratie.sessie',
+      JSON.stringify({ token: 'proeftoken', account: 'abdelkader' }))
+  })
+  await p.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await p.waitForTimeout(700)
+  await p.getByRole('button', { name: /^Account van/ }).click()
+  await p.waitForTimeout(500)
+
+  await p.getByRole('button', { name: 'Je eigen AI-sleutel gebruiken' }).click()
+  await p.waitForTimeout(300)
+
+  /* De twee uitklappen horen erbij te staan: waar hij terechtkomt, en hoe je er
+     een maakt. Zonder de eerste vraag je iemand een betaalsleutel af zonder te
+     zeggen waar hij heen gaat. */
+  /* Op naam en niet op `summary`: het scherm eronder heeft er ook, en die zijn
+     niet zichtbaar zolang het accountvenster openstaat. */
+  for (const naam of ['waar je sleutel terechtkomt', 'hoe je er een maakt, en wat het kost']) {
+    await p.getByText(naam, { exact: true }).click()
+  }
+  await p.waitForTimeout(200)
+  const tekst = (await p.locator('body').innerText()).replace(/\s+/g, ' ')
+  for (const stuk of ['versleuteld de database', 'geen knop die hem laat zien',
+                      'console.anthropic.com', 'platform.openai.com',
+                      'ChatGPT-abonnement hier niet voor telt', 'maandlimiet']) {
+    if (!tekst.includes(stuk)) throw new Error(`sleutel: "${stuk}" staat niet op het scherm`)
+  }
+
+  const vak = p.getByLabel('Je API-sleutel')
+
+  /* Eerst de verkeerde: een OpenAI-sleutel terwijl Anthropic aanstaat. */
+  await vak.fill('sk-proj-' + 'q'.repeat(40))
+  await p.getByRole('button', { name: 'Bewaren', exact: true }).click()
+  await p.waitForTimeout(400)
+  if (!(await p.locator('body').innerText()).includes('begint met sk-ant-')) {
+    throw new Error('sleutel: de weigering van de database komt niet op het scherm')
+  }
+
+  /* En dan de goede, bij de andere aanbieder. */
+  await p.getByRole('button', { name: 'OpenAI', exact: true }).click()
+  await vak.fill('sk-proj-' + 'q'.repeat(40))
+  await p.getByRole('button', { name: 'Bewaren', exact: true }).click()
+  await p.waitForTimeout(500)
+
+  const heen = p.__sleutels ?? []
+  if (heen.length !== 2) throw new Error(`sleutel: ${heen.length} verzoeken in plaats van 2`)
+  if (heen[0].aanbieder !== 'anthropic' || heen[1].aanbieder !== 'openai') {
+    throw new Error(`sleutel: de aanbieder gaat niet mee: ${JSON.stringify(heen)}`)
+  }
+
+  /* En het vak is leeg. Dit is de proef die er het meest toe doet en het minst
+     naar uitziet: een sleutel die in het invoervak blijft staan is een sleutel
+     die de volgende die meekijkt gewoon leest. */
+  if (await vak.count() && (await vak.inputValue()) !== '') {
+    throw new Error('sleutel: het invoervak houdt de sleutel vast')
+  }
+  const na = (await p.locator('body').innerText())
+  if (na.includes('qqqq')) throw new Error('sleutel: de sleutel staat op het scherm')
+
+  await p.screenshot({ path: 'gereedschap/health-sleutel.png', fullPage: true })
+  await c.close()
+
+  console.log(`${'je eigen sleutel'.padEnd(26)} twee uitklappen \u00b7 verkeerd voorvoegsel geweigerd \u00b7 `
+    + `aanbieder gaat mee \u00b7 vak leeg na bewaren`)
+}
+
+/* ---------------------------------------------------- je gegevens weghalen ---- */
+/* DE ENIGE ONOMKEERBARE KNOP IN DE APP, BESTAND 52
+   Wat hier bewezen moet worden gaat niet over of het werkt maar over of het
+   moeilijk genoeg is. Drie dingen, en ze zitten er alle drie omdat de vorige
+   niet genoeg was:
+
+     1. De eerste tik verwijdert niets. Hij vraagt wat er zou weggaan.
+     2. Zonder wachtwoord gebeurt er niets, en een verkeerd wachtwoord komt als
+        een zin op het scherm en niet als een stille mislukking.
+     3. En wat er weggaat staat er in gewone taal, met aantallen, vóórdat je
+        bevestigt. Een knop die "alles weg" zegt zonder te zeggen wat alles is,
+        vraagt om een beslissing die niemand kan nemen. */
+{
+  const c = await browser.newContext({
+    viewport: { width: 430, height: 1900 }, deviceScaleFactor: 2,
+    locale: 'nl-NL', timezoneId: 'Europe/Amsterdam',
+  })
+  const p = await c.newPage()
+  await bedienDb(p, 28, 'afvallen')
+  await p.addInitScript(() => {
+    localStorage.setItem('kalibratie.sessie',
+      JSON.stringify({ token: 'proeftoken', account: 'abdelkader' }))
+  })
+  await p.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await p.waitForTimeout(700)
+  await p.getByRole('button', { name: /^Account van/ }).click()
+  await p.waitForTimeout(500)
+
+  await p.getByRole('button', { name: 'Al je gegevens weghalen' }).click()
+  await p.waitForTimeout(300)
+
+  const tekst = () => p.locator('body').innerText()
+  for (const stuk of ['geen prullenbak', 'geen weg terug', 'aantekening']) {
+    if (!(await tekst()).includes(stuk)) {
+      throw new Error(`wissen: "${stuk}" staat niet op het scherm`)
+    }
+  }
+
+  /* Eerst het verkeerde wachtwoord. */
+  await p.getByLabel('Je wachtwoord').fill('fout')
+  await p.getByRole('button', { name: 'Laat zien wat er weggaat' }).click()
+  await p.waitForTimeout(400)
+  if (!(await tekst()).includes('wachtwoord klopt niet')) {
+    throw new Error('wissen: een verkeerd wachtwoord geeft geen zin op het scherm')
+  }
+  if ((p.__wissen ?? []).some((x) => x.echt)) {
+    throw new Error('wissen: er is werkelijk gewist bij een verkeerd wachtwoord')
+  }
+
+  /* En dan het goede. De eerste tik hoort nog steeds niets te wissen. */
+  await p.getByLabel('Je wachtwoord').fill('goedwachtwoord')
+  await p.getByRole('button', { name: 'Laat zien wat er weggaat' }).click()
+  await p.waitForTimeout(400)
+  const na = await tekst()
+  for (const stuk of ['149 in totaal', 'wat je gegeten en gedronken hebt',
+                      'je metingen, waaronder bloeddruk', 'je eigen AI-sleutel']) {
+    if (!na.includes(stuk)) throw new Error(`wissen: "${stuk}" staat niet in het overzicht`)
+  }
+  if (na.includes('kal_regels')) {
+    throw new Error('wissen: er staan tabelnamen op het scherm in plaats van gewone taal')
+  }
+  if ((p.__wissen ?? []).some((x) => x.echt)) {
+    throw new Error('wissen: de eerste tik heeft al gewist')
+  }
+
+  /* De afdruk hoort hier en niet aan het eind: na het wissen ben je afgemeld en
+     staat er een aanmeldscherm, en dat is geen bewijs van wat je te zien kreeg
+     toen je moest beslissen. */
+  await p.screenshot({ path: 'gereedschap/health-wissen.png', fullPage: true })
+
+  /* Pas de tweede knop wist werkelijk, en dan meldt hij je af. */
+  await p.getByRole('button', { name: 'Ja, haal alles weg' }).click()
+  await p.waitForTimeout(600)
+  const echt = (p.__wissen ?? []).filter((x) => x.echt)
+  if (echt.length !== 1) {
+    throw new Error(`wissen: ${echt.length} echte wisverzoeken in plaats van 1`)
+  }
+  if (echt[0].ww !== 'goedwachtwoord') {
+    throw new Error('wissen: het wachtwoord ging niet mee naar de database')
+  }
+
+  /* En afgemeld. Dat is de zichtbare kant van het wissen: blijf je ingelogd
+     op een account dat niet meer bestaat, dan loopt de app daarna tegen fouten
+     aan die niemand kan plaatsen. */
+  await p.waitForTimeout(400)
+  if (await p.getByRole('button', { name: 'Aanmelden', exact: true }).count() !== 1) {
+    throw new Error('wissen: je blijft aangemeld op een account dat weg is')
+  }
+  await c.close()
+
+  console.log(`${'je gegevens weghalen'.padEnd(26)} verkeerd wachtwoord geweigerd \u00b7 `
+    + `eerste tik telt alleen \u00b7 149 in gewone taal \u00b7 pas de tweede wist`)
+}
+
+/* ------------------------------------------------ de merken op Voeding ---- */
+/* EEN EMMER DIE OVER DE LIJN KWAM EN NERGENS WERD GETEKEND
+
+   `kal_zoeken` geeft vijf emmers terug. Het invoervenster tekende ze alle vijf,
+   dit scherm vier: `merk` ontbrak. Niets viel om, niets werd rood, en de
+   gebruiker las "Niets gevonden" terwijl de treffers in het antwoord zaten. Dat
+   is de stilste manier waarop een scherm stuk kan zijn.
+
+   `src/health/zoekemmers.proef.ts` houdt tegen dat een emmer ongenoemd
+   wegvalt, maar die leest code en geen scherm. Hij ziet niet of er werkelijk
+   iets verschijnt, of het teken erbij staat, en of het onder de tabel blijft.
+   Dat hoort hier. */
+{
+  const c = await browser.newContext({
+    viewport: { width: 430, height: 2200 }, deviceScaleFactor: 2,
+    locale: 'nl-NL', timezoneId: 'Europe/Amsterdam',
+  })
+  const p = await c.newPage()
+  await bedienDb(p, 28, 'afvallen')
+  await p.addInitScript(() => {
+    localStorage.setItem('kalibratie.sessie',
+      JSON.stringify({ token: 'proeftoken', account: 'abdelkader' }))
+  })
+  await p.goto(`http://localhost:${poort}/health/`, { waitUntil: 'networkidle' })
+  await p.waitForTimeout(700)
+  await naarTab(p, 'Voeding')
+
+  await p.getByLabel('Zoeken in de tabel').fill('pindakaas')
+  await p.waitForTimeout(700)
+
+  const kop = p.getByText('Merkproducten', { exact: true })
+  if (await kop.count() !== 1) {
+    throw new Error('merken op Voeding: het blok met merkproducten staat er niet')
+  }
+
+  /* De regel zelf, en niet alleen de kop: een kop boven een lege lijst is
+     precies zo nutteloos als geen kop. */
+  const rijen = p.locator('.lijst > *')
+  const teksten = await rijen.allTextContents()
+  const iMerk = teksten.findIndex((t) => t.includes('Pindakaas 100%'))
+  if (iMerk < 0) throw new Error('merken op Voeding: het merkproduct staat niet in de lijst')
+
+  /* Onder de tabelwaarde, net als in het invoervenster. Hier gaat dat per blok
+     en niet op naamovereenkomst, want dit scherm toont emmer voor emmer. */
+  const iNevo = teksten.findIndex((t) => t.includes('Hartig broodbeleg'))
+  if (iNevo < 0) throw new Error('merken op Voeding: de tabelwaarde ontbreekt')
+  if (iMerk < iNevo) {
+    throw new Error('merken op Voeding: het merkproduct staat b\u00f3ven de tabelwaarde')
+  }
+
+  const rij = rijen.nth(iMerk)
+  const teken = ((await rij.locator('.herkomst').textContent()) ?? '').trim()
+  if (teken !== '\u25c8') {
+    throw new Error(`merken op Voeding: het herkomstteken is ${JSON.stringify(teken)} en geen \u25c8`)
+  }
+  if ((await rij.locator('.conf').textContent()) !== 'D') {
+    throw new Error('merken op Voeding: een etiketwaarde hoort graad D te krijgen')
+  }
+  if (!(teksten[iMerk] ?? '').includes('pak van 600 g')) {
+    throw new Error('merken op Voeding: het verpakkingsgewicht staat er niet bij')
+  }
+
+  /* EN DE MELDING DIE ER NIET MEER HOORT TE STAAN
+
+     Dit was de kant die de gebruiker zag, en hij is alleen te toetsen met een
+     vraag die n\u00edets anders oplevert. Op 'pindakaas' staat de tabel vol, dus
+     `leeg` is daar sowieso onwaar en zegt deze regel niets. Sportvoeding staat
+     n\u00edet in de tabel: daar hangt de melding werkelijk aan de vraag of de
+     merken meetellen. */
+  await p.getByLabel('Zoeken in de tabel').fill('eiwitpoeder')
+  await p.waitForTimeout(700)
+  const vel = (await p.locator('body').innerText()).replace(/\s+/g, ' ')
+  if (!/Merkproducten/.test(vel)) {
+    throw new Error('merken op Voeding: een vraag met alleen merktreffers toont niets')
+  }
+  if (/Niets gevonden/.test(vel)) {
+    throw new Error('merken op Voeding: er staat "Niets gevonden" terwijl er treffers zijn')
+  }
+
+  await p.screenshot({ path: 'gereedschap/health-merken.png', fullPage: true })
+  await c.close()
+
+  console.log(`${'de merken op Voeding'.padEnd(26)} eigen blok \u00b7 onder de tabel \u00b7 `
+    + `\u25c8 en graad D \u00b7 geen "niets gevonden"`)
 }
 
 await browser.close()

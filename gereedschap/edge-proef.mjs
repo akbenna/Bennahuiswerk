@@ -67,4 +67,87 @@ if (fout) {
   console.error(`\n${fout} leesfout${fout === 1 ? '' : 'en'}. Deno weigert dit bestand bij het uitrollen.`)
   process.exit(1)
 }
-console.log(`${bestanden.length} edge-functies, alle leesbaar.`)
+/**
+ * EN DE TWEEDE HELFT: KLOPPEN DE AANROEPEN
+ *
+ * Ontleden vangt een backtick die te vroeg sluit. Het vangt niet een aanroep
+ * met een argument te veel, en dat is precies wat hier gebeurde op de dag dat
+ * `claude(key, MODEL, ...)` een `vraagModel(aanbieder, sleutel, MODEL, ...)`
+ * werd: de oude `key` bleef staan, het bestand bleef leesbaar, de poort bleef
+ * groen, en het model zou de sleutel als systeemprompt hebben gekregen.
+ *
+ * WAAROM DIT EERST NIET KON, EN NU WEL
+ *
+ * De reden om het niet te doen stond in de kop hierboven en klopte: de imports
+ * wijzen naar https-adressen die van hier niet te halen zijn, dus `tsc` kan het
+ * bestand niet oplossen en weigert.
+ *
+ * Maar dat geldt voor de ímports, niet voor de rest. Een eigen compilerhost die
+ * elk https-adres beantwoordt met een stuk `declare module` lost dat op: alles
+ * wat van buiten komt heet dan `any`, en alles wat in dit bestand zelf staat
+ * wordt gewoon nagekeken. Dat is minder dan een echte typecontrole en het is
+ * veel meer dan niets.
+ *
+ * WAT ER DAAROM WORDT GENEGEERD
+ *
+ * Alles wat over de buitenwereld gaat: onbekende modules (2307), Deno dat deze
+ * tsconfig niet kent (2304 op `Deno`), en `any` dat impliciet rondgaat. Wat
+ * overblijft zijn de fouten die binnen het bestand zelf te zien zijn, en dat is
+ * de soort die hier stond.
+ */
+const NEGEER = new Set([
+  2307, // kan de module niet vinden: dat is het hele punt van de stub
+  2305, // de module kent die naam niet: de stub kent geen enkele naam
+  2304, // onbekende naam: Deno
+  7016, 7006, 7031, 7034, 7005, // impliciet any, onvermijdelijk zonder echte typen
+  2339, // eigenschap bestaat niet op any-achtige vorm
+])
+
+const STUB = 'declare const x: any; export = x;'
+
+function controleerTypen(paden) {
+  const opties = {
+    target: ts.ScriptTarget.ES2022,
+    module: ts.ModuleKind.ESNext,
+    moduleResolution: ts.ModuleResolutionKind.Bundler,
+    noEmit: true,
+    allowJs: false,
+    skipLibCheck: true,
+    strict: false,
+    noImplicitAny: false,
+  }
+  const gewoon = ts.createCompilerHost(opties)
+  const host = {
+    ...gewoon,
+    fileExists: (f) => (f.startsWith('https:') ? true : gewoon.fileExists(f)),
+    readFile: (f) => (f.startsWith('https:') ? STUB : gewoon.readFile(f)),
+    getSourceFile: (f, taal) =>
+      f.startsWith('https:')
+        ? ts.createSourceFile(f, STUB, taal, true, ts.ScriptKind.TS)
+        : gewoon.getSourceFile(f, taal),
+    resolveModuleNameLiterals: (namen, bevat) =>
+      namen.map((n) =>
+        n.text.startsWith('https:')
+          ? { resolvedModule: { resolvedFileName: n.text, extension: '.ts' } }
+          : ts.resolveModuleName(n.text, bevat, opties, gewoon)),
+  }
+  const programma = ts.createProgram(paden, opties, host)
+  return ts.getPreEmitDiagnostics(programma)
+    .filter((d) => !NEGEER.has(d.code))
+    .filter((d) => d.file && !d.file.fileName.startsWith('https:'))
+}
+
+const klachten = controleerTypen(bestanden.map((n) => join(MAP, n)))
+if (klachten.length) {
+  for (const k of klachten.slice(0, 8)) {
+    const vel = k.file
+    const { line, character } = vel.getLineAndCharacterOfPosition(k.start ?? 0)
+    console.error(`${vel.fileName}:${line + 1}:${character + 1}  `
+      + ts.flattenDiagnosticMessageText(k.messageText, ' '))
+  }
+  if (klachten.length > 8) console.error(`    … en nog ${klachten.length - 8}`)
+  console.error(`\n${klachten.length} typefout${klachten.length === 1 ? '' : 'en'} in de edge-functies.`)
+  process.exit(1)
+}
+console.log(`${bestanden.length} edge-functies, alle leesbaar en de aanroepen kloppen.`)
+

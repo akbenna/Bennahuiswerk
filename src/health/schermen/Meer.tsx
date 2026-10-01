@@ -15,13 +15,14 @@ import type { Dagenkaart, Trendpunt } from '../rekenkern'
 import { onderhoudZone } from '../klinisch'
 import { THEMANAMEN, useThemakeuze, zetThema } from '../thema'
 import type { Onderhoudzone } from '../klinisch'
-import { WegInstellen, WegThema } from '../tekens'
+import { WegInstellen, WegLezen, WegThema } from '../tekens'
 import { SFEERFOTO } from '../sfeerfotos'
 import {
   COMORBIDITEIT, DREMPELS, GLI_TOTAAL_MAANDEN, MEDICATIE, glivoortgang, medicatiecriteria,
   programmaVan,
 } from '../trap'
 import { dagvenster } from '../inspanning'
+import { VERDIEPINGEN } from '../verdieping'
 import { vandaag } from '@/gedeeld/datum'
 
 /** De kleur hoort bij het scherm en niet bij de rekenfunctie. Zie klinisch.ts. */
@@ -36,11 +37,13 @@ const ZONEWOORD: Record<Onderhoudzone, string> = {
 }
 
 export function Meer(
-  { dagen, reeks, profiel, opVenster }:
+  { dagen, reeks, profiel, opVenster, opVerdiepen }:
   {
     dagen: Dagenkaart; reeks: Trendpunt[]; profiel: Profiel
     opVenster: (v: 'profiel' | 'import' | 'account' | 'koppelen' | 'hoewerkt' | 'verdiepen'
       | 'leren' | 'voorkeuren') => void
+    /** Het boekje, eventueel meteen op één stuk. Zie `Naslagkaart`. */
+    opVerdiepen: (stuk?: string) => void
   },
 ) {
   const trendNu = [...reeks].reverse().find((x) => x.ema != null)
@@ -125,11 +128,17 @@ export function Meer(
         )}
       </Schermkop>
 
+      <Naslagkaart opLeren={() => opVenster('leren')} opVerdiepen={opVerdiepen}
+                   opHoewerkt={() => opVenster('hoewerkt')} />
+
       <Kaart plat>
         <Kop>Waarom slaap hier staat</Kop>
         <p className="mini" style={{ marginTop: 4 }}>
           Te kort slapen verschuift je gewichtsverlies van vet naar spier. Het is hier geen
-          wellness-item maar een variabele in dezelfde vergelijking.
+          wellness-item maar een variabele in dezelfde vergelijking.{' '}
+          <button type="button" className="schakel" onClick={() => opVerdiepen('slaap')}>
+            Lees het hele stuk
+          </button>
         </p>
         <Uitleg id="slaapwaarom" label="de meting erachter">
           <p>
@@ -194,7 +203,8 @@ export function Meer(
       {profiel.instellingen.gli?.programma && (
         <Kaart>
           <Kop teken={WegInstellen}>Je traject</Kop>
-          <Traject gli={profiel.instellingen.gli} leeftijd={profiel.leeftijd_jaar} />
+          <Traject gli={profiel.instellingen.gli} leeftijd={profiel.leeftijd_jaar}
+                   opVerdiepen={opVerdiepen} />
         </Kaart>
       )}
 
@@ -238,8 +248,6 @@ export function Meer(
             nutteloos voor ieder ander. De uitleg zelf hoort ook hier te staan,
             achter één tik. */}
         <Rij>
-          <Knop opKlik={() => opVenster('leren')}>Leren over je aandoening</Knop>
-          <Knop opKlik={() => opVenster('verdiepen')}>Verdiepen: afvallen en medicatie</Knop>
           <Knop opKlik={() => opVenster('hoewerkt')}>Hoe deze app werkt</Knop>
         </Rij>
       </Kaart>
@@ -260,6 +268,72 @@ export function Meer(
  * wat je 's avonds even omzet, en dan moet het op het scherm staan en niet
  * twee vensters diep.
  */
+/**
+ * HET NASLAGWERK, ZICHTBAAR IN PLAATS VAN ACHTER EEN KNOP
+ *
+ * Het boekje Verdiepen stond als één knop onderaan dit scherm, in een kaart
+ * die over de herkomst van de getallen gaat. Elf stukken met bronnen, en je
+ * moest weten dat ze bestonden om ze te vinden. Dat is dezelfde fout als met de
+ * conditiekaart op Gezondheid, en die staat opgeschreven: een functie die pas
+ * bestaat als je hem al kent, bestaat niet.
+ *
+ * Daarom staat hier nu de inhoudsopgave en niet de doos. Je ziet in één blik
+ * wat erin zit, en je komt binnen op het stuk dat je aanwees. Wat het kost is
+ * elf regels op een scherm dat toch al scrollt; wat het oplevert is dat de elf
+ * stukken bestaan voor wie er niet naar op zoek was.
+ */
+function Naslagkaart(
+  { opLeren, opVerdiepen, opHoewerkt }:
+  { opLeren: () => void; opVerdiepen: (stuk?: string) => void; opHoewerkt: () => void },
+) {
+  return (
+    <Kaart sfeer="golf">
+      <Kop teken={WegLezen}>Kennisbank</Kop>
+      <p style={{ fontSize: '.92rem', marginTop: 6 }}>
+        Wat er bekend is over afvallen, over je aandoening en over de manier waarop deze app
+        rekent. Bij elk stuk staat ook wat we <i>niet</i> weten, en waar het vandaan komt.
+      </p>
+
+      <Tussen style={{ marginTop: 14 }}>
+        <Kop>Afvallen, medicatie en wat je vasthoudt</Kop>
+        <span className="vlaggetje rust">{VERDIEPINGEN.length} stukken</span>
+      </Tussen>
+      <div className="lijst" style={{ marginTop: 4 }}>
+        {VERDIEPINGEN.map((v) => (
+          <button type="button" className="naslagregel" key={v.id}
+                  onClick={() => opVerdiepen(v.id)}>
+            <span className="groei knip" style={{ fontSize: '.88rem' }}>{v.titel}</span>
+            <span className="pijl" aria-hidden="true">›</span>
+          </button>
+        ))}
+      </div>
+
+      <Tussen style={{ marginTop: 16 }}>
+        <Kop>De rest van de kast</Kop>
+      </Tussen>
+      <div className="lijst" style={{ marginTop: 4 }}>
+        <button type="button" className="naslagregel" onClick={opLeren}>
+          <span className="groei knip" style={{ fontSize: '.88rem' }}>
+            Je aandoening: hoge bloeddruk, diabetes, hart en vaten
+          </span>
+          <span className="pijl" aria-hidden="true">›</span>
+        </button>
+        <button type="button" className="naslagregel" onClick={opHoewerkt}>
+          <span className="groei knip" style={{ fontSize: '.88rem' }}>
+            Hoe deze app rekent, en wat hij niet weet
+          </span>
+          <span className="pijl" aria-hidden="true">›</span>
+        </button>
+      </div>
+
+      <p className="mini" style={{ marginTop: 12 }}>
+        Deze stukken zijn voor iedereen hetzelfde: er wordt niets van jouw gegevens in verwerkt en
+        er staat geen advies in. Waar je het in de app terugziet, staat er wel bij.
+      </p>
+    </Kaart>
+  )
+}
+
 function Themakeuzes() {
   const keuze = useThemakeuze()
   return (
@@ -298,7 +372,10 @@ function Themakeuzes() {
  * criterium op `niet bekend`, dus élke optelsom zou een gok zijn. De armatuur
  * leest dit scherm en valt om zodra er een totaaloordeel op verschijnt.
  */
-function Traject({ gli, leeftijd }: { gli: Glistand; leeftijd: number | null }) {
+function Traject(
+  { gli, leeftijd, opVerdiepen }:
+  { gli: Glistand; leeftijd: number | null; opVerdiepen: (stuk?: string) => void },
+) {
   const v = glivoortgang(gli.programma, gli.begonnen, vandaag())
   const p = programmaVan(gli.programma)
   const criteria = medicatiecriteria({
@@ -309,7 +386,7 @@ function Traject({ gli, leeftijd }: { gli: Glistand; leeftijd: number | null }) 
     <>
       <div className="lijst" style={{ marginTop: 6 }}>
         <div style={{ flexWrap: 'wrap' }}>
-          <span className="klein groei"><b>{p?.naam ?? 'Leefstijlprogramma'}</b></span>
+          <span className="rijkop groei">{p?.naam ?? 'Leefstijlprogramma'}</span>
           <span className="cijfer mini">
             {v.maanden != null ? `${v.maanden} van de ${GLI_TOTAAL_MAANDEN} mnd` : '–'}
           </span>
@@ -320,12 +397,15 @@ function Traject({ gli, leeftijd }: { gli: Glistand; leeftijd: number | null }) 
       <Tussen>De trede erboven: gewichtsreducerende medicatie</Tussen>
       <p className="mini" style={{ marginTop: 2 }}>
         Wat de NHG-Standaard vraagt, en wat deze app ervan weet. De onderste twee weegt je
-        huisarts. Die staan hier niet leeg maar met de reden erbij.
+        huisarts. Die staan hier niet leeg maar met de reden erbij.{' '}
+        <button type="button" className="schakel" onClick={() => opVerdiepen('trap')}>
+          Waar medicatie op de trap staat
+        </button>
       </p>
       <div className="lijst" style={{ marginTop: 6 }}>
         {criteria.map((c) => (
           <div key={c.wat} style={{ flexWrap: 'wrap' }}>
-            <span className="klein groei">{c.wat}</span>
+            <span className="rijkop groei">{c.wat}</span>
             <span className="cijfer mini"
                   style={{ color: c.stand === 'gehaald' ? 'var(--goed)' : 'var(--dim)' }}>
               {c.stand}
@@ -347,7 +427,7 @@ function Traject({ gli, leeftijd }: { gli: Glistand; leeftijd: number | null }) 
         <div className="lijst" style={{ marginTop: 4 }}>
           {DREMPELS.map((d) => (
             <div key={d.naam} style={{ flexWrap: 'wrap' }}>
-              <span className="klein groei">{d.naam}</span>
+              <span className="rijkop groei">{d.naam}</span>
               <span className="cijfer mini">
                 {dec(d.metComorbiditeit, 1)} mét · {dec(d.zonder, 1)} zonder
               </span>

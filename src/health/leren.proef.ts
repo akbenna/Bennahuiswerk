@@ -41,6 +41,10 @@ describe('de volgorde', () => {
     expect(bladzijden({ dm2: true, med: ['insuline'] })[0]?.id).toBe('hypo')
   })
 
+  it('zet bij de GLP-1-prik de bladzijde over stoppen bovenaan', () => {
+    expect(bladzijden({ med: ['glp1'] })[0]?.id).toBe('prik-en-stoppen')
+  })
+
   it('zet bij hoge bloeddruk een bloeddrukbladzijde bovenaan', () => {
     expect(['zout', 'thuis-meten']).toContain(bladzijden({ hypertensie: true })[0]?.id)
   })
