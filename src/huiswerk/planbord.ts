@@ -255,6 +255,13 @@ interface Wens { blok: Blok; ideaal: string; vroegst: string; laatst: string }
 
 const VOLGORDE: Record<Soort, number> = { eerste: 0, herhaal: 1, overhoor: 2 }
 
+/* De avond vóór een toets gaat het andersom. Past dan niet alles, dan moet het
+   teruglezen afvallen en niet het overhoren: jezelf toetsen levert per minuut
+   het meest op, teruglezen het minst (Dunlosky e.a. 2013, Roediger en Karpicke
+   2006). Met de gewone volgorde zette het bord de samenvatting erop en kreeg
+   het overhoren "past niet". */
+const OP_DE_AVOND: Record<Soort, number> = { overhoor: 0, herhaal: 1, eerste: 2 }
+
 /** Wat er voor één toets nog te doen is, en op welke dag dat het liefst valt.
  *  Blokken die al af zijn of door het kind zijn vastgezet slaat hij over. */
 function wensen(t: Toets, vandaag: string, overslaan: Set<string>, f: number): Wens[] {
@@ -339,10 +346,13 @@ export function herplan(p: Planstand, vandaag: string, nu = Date.now()): Plansta
   for (const t of [...levend].sort((a, b) => a.datum.localeCompare(b.datum))) {
     alle.push(...wensen(t, vandaag, overslaan, f))
   }
+  const voorrang = (w: Wens): number =>
+    w.ideaal === schuif(datumVanToets.get(w.blok.toets) ?? w.ideaal, -1)
+      ? OP_DE_AVOND[w.blok.soort] : VOLGORDE[w.blok.soort]
   alle.sort((a, b) =>
     a.ideaal.localeCompare(b.ideaal)
     || a.blok.toets.localeCompare(b.blok.toets)
-    || VOLGORDE[a.blok.soort] - VOLGORDE[b.blok.soort])
+    || voorrang(a) - voorrang(b))
 
   /* Wat er per dag al bezet is: afgevinkt werk van vandaag of later, en wat het
      kind zelf heeft vastgezet. */
@@ -401,8 +411,11 @@ export function herplan(p: Planstand, vandaag: string, nu = Date.now()): Plansta
 
   return {
     ...p,
+    /* Wat past bovenaan, zodat wie van boven naar beneden werkt eerst doet wat
+       erin past. */
     blokken: [...gedaan, ...vast, ...nieuw].sort((a, b) =>
-      a.datum.localeCompare(b.datum) || VOLGORDE[a.soort] - VOLGORDE[b.soort]),
+      a.datum.localeCompare(b.datum) || Number(!!a.vol) - Number(!!b.vol)
+      || VOLGORDE[a.soort] - VOLGORDE[b.soort]),
     geplandVoor: vandaag,
     geplandOp: nu,
   }
@@ -456,6 +469,9 @@ export function toetsStand(p: Planstand, vandaag: string): Toetsstand[] {
 }
 
 /** De uren van de komende zeven dagen, als interval. */
+/** Een half uur als 11,5 en niet als 11.5. */
+export const uurgetal = (n: number): string => String(n).replace('.', ',')
+
 export function weekUren(p: Planstand, vandaag: string): { laag: number; hoog: number; midden: number } {
   const s = schatting(p.blokken)
   const eind = schuif(vandaag, 7)

@@ -25,7 +25,7 @@ import { STARTTOETSEN } from '../gegevens/toetsen-start'
 import {
   MIN_PAREN, actueel, blokkenOp, capaciteit, dagenTussen, datumVan, geplandOp, haalToetsWeg,
   isoVan, knipOnderdelen, leegPlan, maakLos, minutenOp, nieuwId, rond5, schatting, schuif,
-  toetsStand, verplaats, vinkAf, weekUren, zetDagtijd, zetEcht, zetEigen, zetToets,
+  toetsStand, uurgetal, verplaats, vinkAf, weekUren, zetDagtijd, zetEcht, zetEigen, zetToets,
 } from '../planbord'
 import type { Blok, Planstand, Toets, Toetsstatus } from '../planbord'
 import type { Ingang } from '../vraagbaak'
@@ -132,7 +132,7 @@ export function Planbord(p: PlanbordProps): ReactNode {
 
       {levend.length > 0 && (
         <p className="muted" style={{ marginTop: 4, fontSize: 14 }}>
-          Komende week: <b>{week.laag === week.hoog ? `${week.laag} uur` : `${week.laag} tot ${week.hoog} uur`}</b>.
+          Komende week: <b>{week.laag === week.hoog ? `${uurgetal(week.laag)} uur` : `${uurgetal(week.laag)} tot ${uurgetal(week.hoog)} uur`}</b>.
           {' '}{s.n >= MIN_PAREN
             ? (s.factor > 1.15
                 ? `Je schat meestal te laag (×${s.factor.toFixed(1)}), het bord rekent dat al mee.`
