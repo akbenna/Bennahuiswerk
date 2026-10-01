@@ -32,12 +32,17 @@ export const PROFIELEN_OUD: Record<string, Profielkaart> = {
 
 /**
  * De profielen zoals ze dit schooljaar gelden: hetzelfde als hierboven, maar met
- * de klas van nu erin. Dit is wat de app overal gebruikt.
+ * de klas van nu erin, en waar het schooljaar een ander vakkenpakket noemt
+ * ook dat. Dit is wat de app overal gebruikt.
  */
 export const PROFIELEN: Record<string, Profielkaart> = Object.fromEntries(
   Object.entries(PROFIELEN_OUD).map(([pid, prof]) => {
     const klas = KLASSEN[pid]
-    return [pid, klas ? { ...prof, niveau: klas.niveau, volgend: klas.volgend } : prof]
+    if (!klas) return [pid, prof]
+    return [pid, {
+      ...prof, niveau: klas.niveau, volgend: klas.volgend,
+      ...(klas.vakken ? { vakken: klas.vakken } : {}),
+    }]
   }),
 )
 
@@ -48,10 +53,14 @@ export const THEMAS: Record<string, Thema> = {
     rangen:[[0,'Pupil','⚽'],[100,'Talent','🌟'],[250,'Basisspeler','👕'],[500,'Uitblinker','⭐'],[900,'Aanvoerder','🎽'],[1400,'Topscorer','🥅'],[2000,'Kampioen','🏆'],[3000,'Legende','👑']] },
 };
 
-export const VAKNAAM: Record<string, string> = {wiskunde:'Wiskunde', natuurkunde:'Natuurkunde', wiskundeA:'Wiskunde A', geschiedenis:'Geschiedenis',
+/** De vaknamen zoals ze uit de oude pagina komen; het migratiebewijs zit hierop. */
+export const VAKNAAM_OUD: Record<string, string> = {wiskunde:'Wiskunde', natuurkunde:'Natuurkunde', wiskundeA:'Wiskunde A', geschiedenis:'Geschiedenis',
   nederlands:'Nederlands', engels:'Engels', frans:'Frans', duits:'Duits', biologie:'Biologie',
   aardrijkskunde:'Aardrijkskunde', economie:'Economie', scheikunde:'Scheikunde',
   rekenen:'Rekenen', taal:'Taal', lezen:'Begrijpend lezen', studievaardigheden:'Studievaardigheden'};
+
+/** Dezelfde lijst, plus de vakken die er sindsdien bij zijn gekomen. */
+export const VAKNAAM: Record<string, string> = { ...VAKNAAM_OUD, oeno: 'O&O' };
 
 /* Onderwerp → teken. Zeven onderwerpen stonden hier twee keer in, elke keer met
    hetzelfde teken; JavaScript hield stilzwijgend de laatste aan. TypeScript

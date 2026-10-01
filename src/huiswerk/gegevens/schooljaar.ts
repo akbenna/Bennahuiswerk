@@ -43,12 +43,22 @@ export interface Klas {
   volgend: string
   /** Is het kind afgelopen zomer overgegaan? */
   overgegaan: boolean
+  /** Het vakkenpakket van dit jaar, als dat afwijkt van de vaste lijst in
+   *  `profielen.ts`. In de bovenbouw valt er een deel van de vakken af en komt
+   *  er een profielvak bij; de opgaven voor de afgevallen vakken blijven in de
+   *  voorraad staan maar komen niet meer op het scherm. */
+  vakken?: string[]
 }
 
 export const KLASSEN: Record<string, Klas> = {
   /* Blijven zitten: 2 havo nog een heel jaar. Zie de kop. */
   wassima: { niveau: '2 havo', volgend: '3 havo', overgegaan: false },
-  amaani: { niveau: '5 vwo', volgend: '6 vwo', overgegaan: true },
+  /* Natuur & gezondheid met wiskunde A, en O&O (Technasium), zoals het op haar
+     rooster staat. Aardrijkskunde, geschiedenis en economie zijn afgevallen. */
+  amaani: {
+    niveau: '5 vwo', volgend: '6 vwo', overgegaan: true,
+    vakken: ['wiskundeA', 'natuurkunde', 'scheikunde', 'biologie', 'nederlands', 'engels', 'frans', 'oeno'],
+  },
   amine: { niveau: 'groep 8', volgend: 'brugklas', overgegaan: true },
   selma: { niveau: 'groep 5', volgend: 'groep 6', overgegaan: true },
 }

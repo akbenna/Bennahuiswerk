@@ -15,7 +15,7 @@
  * cijfer in verandert.
  */
 import { describe, expect, it } from 'vitest'
-import { PROFIELEN, PROFIELEN_OUD } from './gegevens/profielen'
+import { PROFIELEN, PROFIELEN_OUD, VAKNAAM } from './gegevens/profielen'
 import { KLASSEN, SCHOOLJAAR, jaarNu, naarDitJaar } from './gegevens/schooljaar'
 import { NIEUW2627 } from './gegevens/schooljaar2627'
 import { SEED } from './gegevens/seed'
@@ -57,9 +57,22 @@ describe('wie er dit schooljaar in welke klas zit', () => {
       const nu = PROFIELEN[pid]
       expect(nu?.naam, pid).toBe(oud.naam)
       expect(nu?.emoji, pid).toBe(oud.emoji)
-      expect(nu?.vakken, pid).toEqual(oud.vakken)
+      expect(nu?.vakken, pid).toEqual(KLASSEN[pid]?.vakken ?? oud.vakken)
       expect(nu?.beloning, pid).toBe(oud.beloning)
     }
+  })
+
+  /* Het vakkenpakket van de bovenbouw: wat op het rooster staat, en niets wat
+     er niet op staat. Elk vak heeft een naam, anders komt er een sleutel op
+     het scherm. */
+  it('geeft Amaani het pakket van haar rooster', () => {
+    const vakken = PROFIELEN.amaani?.vakken ?? []
+    expect(vakken).toContain('oeno')
+    expect(vakken).toContain('wiskundeA')
+    expect(vakken).not.toContain('aardrijkskunde')
+    expect(vakken).not.toContain('economie')
+    expect(vakken).not.toContain('geschiedenis')
+    for (const v of vakken) expect(VAKNAAM[v], v).toBeTruthy()
   })
 })
 

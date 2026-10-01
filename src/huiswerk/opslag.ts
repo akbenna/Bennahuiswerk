@@ -9,6 +9,8 @@
  * dezelfde sessie hebben gezien zouden anders alles dubbel tellen.
  */
 import { leesDag, weekNummer } from './datum'
+import { schoonPlan, voegPlanSamen } from './planbord'
+import type { Planstand } from './planbord'
 
 /** Eén Leitner-kaart: in welk doosje hij zit, hoe vaak goed en fout, en wanneer
  *  hij voor het laatst gezien is. */
@@ -65,6 +67,9 @@ export interface Voortgang {
   historie: Weekstuk[]
   /** De leerscan van dit kind, als hij hem ingevuld heeft. */
   leerscan?: Leerscanstand
+  /** Het planbord: toetsen en de dagplanning eromheen. Optioneel, want de
+   *  meeste kinderen hebben er geen, en een oude opslag blijft leesbaar. */
+  plan?: Planstand
 }
 
 export interface Zomer {
@@ -174,6 +179,7 @@ export function schoonVoortgang(p: Losse | null | undefined): Voortgang {
   np.weekBasis = typeof p?.weekBasis === 'number' ? p.weekBasis : (np.punten || 0)
   if (np.weekBasis > (np.punten || 0)) np.weekBasis = np.punten || 0
   if (!np.toetsDag || typeof np.toetsDag !== 'object') np.toetsDag = { d: null, oefen: 0, proef: 0 }
+  if (p?.plan) np.plan = schoonPlan(p.plan)
   /* Eenmalige overzetting: de oude `solved` wordt een Leitner-kaart. */
   if (Object.keys(np.cards).length === 0 && Object.keys(np.solved).length > 0) {
     for (const id of Object.keys(np.solved)) {
@@ -369,6 +375,10 @@ export function voegVoortgangSamen(x: Losse | null | undefined, y: Losse | null 
     lastDay: nieuwste(a.lastDay, b.lastDay),
     betaaldOp: nieuwste(a.betaaldOp, b.betaaldOp),
     toetsDag: leesDag(a.toetsDag.d) >= leesDag(b.toetsDag.d) ? a.toetsDag : b.toetsDag,
+    /* Het planbord komt van beide kanten: wat op de tablet is afgevinkt mag
+       de telefoon niet vergeten. Heeft geen van beide er een, dan blijft het
+       veld weg. */
+    ...(a.plan || b.plan ? { plan: voegPlanSamen(a.plan, b.plan) } : {}),
   }
 }
 

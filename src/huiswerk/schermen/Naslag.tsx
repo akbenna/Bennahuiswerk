@@ -7,7 +7,32 @@
  */
 import type { ReactNode } from 'react'
 import { FORMULEBLOKKEN } from '../gegevens/formules'
+import type { Formuleblok } from '../gegevens/formules'
+import { BOVENBOUW } from '../gegevens/bovenbouw'
 import { TIPS_CATS } from '../gegevens/leertips'
+import { Klapkaart } from '../onderdelen'
+
+function Blok({ blok }: { blok: Formuleblok }): ReactNode {
+  return (
+    <div className="card" style={{ marginTop: 12 }}>
+      <b>{blok.kop}</b>
+      <div style={{ marginTop: 8 }}>
+        {blok.items.map(([naam, f]) => (
+          <div
+            key={naam}
+            style={{
+              display: 'flex', gap: 10, alignItems: 'baseline', padding: '5px 0',
+              borderTop: '1px solid var(--line)',
+            }}
+          >
+            <div style={{ flex: '0 0 38%', fontWeight: 600, fontSize: 14 }}>{naam}</div>
+            <div className="formule" style={{ flex: 1, fontSize: 14 }}>{f}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 export function Formules({ terug }: { terug: () => void }): ReactNode {
   return (
@@ -29,23 +54,18 @@ export function Formules({ terug }: { terug: () => void }): ReactNode {
         </div>
       </div>
 
-      {FORMULEBLOKKEN.map((blok) => (
-        <div key={blok.kop} className="card" style={{ marginTop: 12 }}>
-          <b>{blok.kop}</b>
-          <div style={{ marginTop: 8 }}>
-            {blok.items.map(([naam, f]) => (
-              <div
-                key={naam}
-                style={{
-                  display: 'flex', gap: 10, alignItems: 'baseline', padding: '5px 0',
-                  borderTop: '1px solid var(--line)',
-                }}
-              >
-                <div style={{ flex: '0 0 38%', fontWeight: 600, fontSize: 14 }}>{naam}</div>
-                <div className="formule" style={{ flex: 1, fontSize: 14 }}>{f}</div>
-              </div>
-            ))}
-          </div>
+      {FORMULEBLOKKEN.map((blok) => <Blok key={blok.kop} blok={blok} />)}
+
+      <h2 style={{ fontSize: 20, marginTop: 24 }}>🎓 Bovenbouw (havo/vwo 4–6)</h2>
+      <p className="muted" style={{ marginTop: 2, fontSize: 14 }}>
+        Wat je in 5 vwo geacht wordt nog te weten uit 3 en 4, en wat er nieuw bij komt. Dicht
+        per vak; open wat je nodig hebt.
+      </p>
+      {BOVENBOUW.map((vak) => (
+        <div key={vak.vak} style={{ marginTop: 12 }}>
+          <Klapkaart titel={`${vak.emoji} ${vak.kop}`} zij={`${vak.blokken.length} blokken`}>
+            {vak.blokken.map((blok) => <Blok key={blok.kop} blok={blok} />)}
+          </Klapkaart>
         </div>
       ))}
 

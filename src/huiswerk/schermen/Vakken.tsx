@@ -26,6 +26,9 @@ import { INSIGNES, dagMissie, rangVoor } from '../missie'
 import { Klapkaart } from '../onderdelen'
 import { Vraagveld } from './Vraagveld'
 import type { Uitslag } from '../vraagbaak'
+import { blokkenOp, isoVan, toetsStand } from '../planbord'
+import type { Planstand } from '../planbord'
+import { Blokregel, dagLabel } from './Planbord'
 
 export interface VakkenProps {
   pid: string
@@ -50,6 +53,10 @@ export interface VakkenProps {
   /** Wat een kind aan de vraagbaak vroeg, voor het ouderscherm. */
   opVraag: (vraag: string, uitslag: Uitslag) => void
   naarLeerscan: () => void
+  /** Het planbord van dit kind, als het er een heeft. */
+  plan?: Planstand | undefined
+  bewaarPlan: (p: Planstand) => void
+  naarPlanbord: () => void
 }
 
 export function Vakken(p: VakkenProps): ReactNode {
@@ -126,6 +133,11 @@ export function Vakken(p: VakkenProps): ReactNode {
           {doelGehaald ? 'gehaald! 🎉' : p.thema.doel}
         </span>
       </div>
+
+      <Planstrook
+        plan={p.plan} nuMs={p.nuMs} bewaar={p.bewaarPlan} open={p.naarPlanbord}
+        bovenbouw={/vwo|havo/.test(P.niveau)}
+      />
 
       <Vraagveld
         pid={p.pid} alle={p.alle} prog={p.prog} opVraag={p.opVraag}
@@ -413,6 +425,53 @@ export function Vakken(p: VakkenProps): ReactNode {
         Elke goede beurt is een ster erbij; vanaf vier sterren heet een som <b>beheerst</b>. Foute
         sommen komen vaker terug, beheerste sommen pas na een paar dagen. 🌱
       </p>
+    </div>
+  )
+}
+
+/**
+ * Wat er vandaag op het planbord staat, bovenaan het scherm van het kind. Het
+ * werk vooraan, net als de weektaak: wie komt oefenen ziet eerst wat er
+ * vandaag af moet. Zonder planbord blijft het een knop, en alleen in de
+ * bovenbouw, want een kind in groep 5 heeft geen toetsrooster.
+ */
+function Planstrook({ plan, nuMs, bewaar, open, bovenbouw }: {
+  plan: Planstand | undefined; nuMs: number; bewaar: (p: Planstand) => void
+  open: () => void; bovenbouw: boolean
+}): ReactNode {
+  const vandaag = isoVan(new Date(nuMs))
+  const toetsen = plan ? toetsStand(plan, vandaag).filter((s) => s.dagen >= 0) : []
+  if (!plan || toetsen.length === 0) {
+    if (!bovenbouw) return null
+    return (
+      <div className="wrap" style={{ marginTop: 12 }}>
+        <button type="button" className="btn ghost sm" onClick={open}>📅 Planbord: zet je toetsen erop</button>
+      </div>
+    )
+  }
+  const vandaagBlokken = blokkenOp(plan, vandaag)
+  const af = vandaagBlokken.filter((b) => b.gedaan).length
+  const eerst = toetsen[0]
+  return (
+    <div className="card" style={{ marginTop: 12, background: '#eef6ff', borderLeft: '4px solid #3a6ea0' }}>
+      <div className="row" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+        <b>📅 Vandaag op je planbord</b>
+        <span className="muted" style={{ fontSize: 13 }}>{af}/{vandaagBlokken.length} af</span>
+      </div>
+      {eerst && (
+        <div className="muted" style={{ fontSize: 13, marginTop: 2 }}>
+          Eerstvolgende toets: {VAKNAAM[eerst.toets.vak] ?? eerst.toets.vak},{' '}
+          {dagLabel(eerst.toets.datum, vandaag)}
+          {toetsen.length > 1 && ` · daarna nog ${toetsen.length - 1}`}
+        </div>
+      )}
+      {vandaagBlokken.length === 0 && (
+        <p className="muted" style={{ fontSize: 14, margin: '8px 0 0' }}>Vandaag niets gepland. 🎉</p>
+      )}
+      {vandaagBlokken.map((b) => <Blokregel key={b.id} blok={b} plan={plan} vandaag={vandaag} bewaar={bewaar} />)}
+      <div className="wrap" style={{ marginTop: 10 }}>
+        <button type="button" className="btn sm" onClick={open}>Hele planning →</button>
+      </div>
     </div>
   )
 }

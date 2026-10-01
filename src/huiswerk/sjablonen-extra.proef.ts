@@ -21,7 +21,7 @@ import { LIJSTEN, extraSjablonen } from './gegevens/sjablonen-extra'
 import { sjablonen } from './gegevens/sjablonen'
 import { SEED } from './gegevens/seed'
 import { NIEUW2627 } from './gegevens/schooljaar2627'
-import { PROFIELEN } from './gegevens/profielen'
+import { PROFIELEN_OUD } from './gegevens/profielen'
 import type { Opgaveinhoud } from './gegevens/soorten'
 import { ECHT, toevalUit } from './toeval'
 import { antwoordKlopt } from './nakijken'
@@ -172,7 +172,9 @@ describe('de tweede voorraad sjablonen', () => {
 
   it('hoort bij een bestaand kind, een vak van dat kind en bij dit schooljaar', () => {
     for (const t of EXTRA) {
-      const prof = PROFIELEN[t.p]
+      /* Op de vaste lijst: een vak dat in de bovenbouw is afgevallen houdt
+         zijn sjablonen, ze komen alleen niet meer op het scherm. */
+      const prof = PROFIELEN_OUD[t.p]
       expect(prof, t.id).toBeTruthy()
       expect(prof?.vakken, `${t.id} · ${t.v}`).toContain(t.v)
       expect([1, 2, 3], t.id).toContain(t.lvl)

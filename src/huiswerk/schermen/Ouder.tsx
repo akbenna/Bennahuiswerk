@@ -25,6 +25,8 @@ import { isBeheerst } from '../leitner'
 import { zwakteAnalyse } from '../volgsysteem'
 import { bewaarAls, leerprofielData, rapportTekst } from '../rapport'
 import { advies, bandNaam, isAf } from '../leerscan'
+import { MIN_PAREN, isoVan, schatting, toetsStand, weekUren } from '../planbord'
+import { dagLabel } from './Planbord'
 import {
   KindAccounts, Kindwachtwoorden, Leerlijnpaneel, Leerprofielpaneel, Weektaakbeheer, Zomerpaneel,
 } from './Panelen'
@@ -98,6 +100,7 @@ function OuderOpen(p: OuderProps): ReactNode {
         <button type="button" className="back" onClick={p.terug}>← terug</button>
         <span className="pill">Ouder-modus</span>
       </div>
+      <Planpaneel stand={p.stand} nuMs={p.nuMs} />
       <Leerscanpaneel stand={p.stand} />
       <Vragenpaneel stand={p.stand} zet={p.zet} />
       <KindAccounts stand={p.stand} alleOnline={p.alleOnline} ververs={p.ververs} />
@@ -843,6 +846,75 @@ export function Leerscanpaneel({ stand }: { stand: Stand }): ReactNode {
       <p className="muted" style={{ fontSize: 12, marginTop: 10, fontStyle: 'italic' }}>
         Een kind voelt welk antwoord braaf klinkt, dus lees dit als wat het zegt te doen. Het is
         een goede opening voor een gesprek, geen meting.
+      </p>
+    </div>
+  )
+}
+
+/**
+ * Hoe het planbord van elk kind ervoor staat. Dit is de vraag die je als ouder
+ * wilt stellen, liefst twee weken voor de toets en niet twee dagen: ligt ze op
+ * schema, en zo nee, voor welk vak niet. Geen puntentelling, geen lijstje met
+ * wat er allemaal niet gedaan is.
+ */
+const STATUSKLEUR: Record<string, string> = {
+  'klaar': '#6b7163', 'nog niet begonnen': '#3a6ea0', 'op schema': '#48792c', 'loopt achter': '#C23728',
+}
+
+export function Planpaneel({ stand, nuMs }: { stand: Stand; nuMs: number }): ReactNode {
+  const vandaag = isoVan(new Date(nuMs))
+  const rijen = Object.entries(PROFIELEN)
+    .map(([pid, prof]) => ({ pid, prof, plan: schoonVoortgang(stand.prog[pid]).plan }))
+    .filter((r) => r.plan && r.plan.toetsen.some((t) => !t.weg))
+  if (!rijen.length) return null
+
+  return (
+    <div className="card" style={{ marginBottom: 16, background: '#eef6ff', borderLeftColor: '#3a6ea0' }}>
+      <b>📅 Planbord per kind</b>
+      <p className="muted" style={{ fontSize: 13, marginTop: 4 }}>
+        &ldquo;Op schema&rdquo; betekent: van wat vóór vandaag had moeten gebeuren is minstens
+        tachtig procent af. &ldquo;Krap&rdquo; staat er los van: er staat meer open dan er tijd
+        is tot de toets.
+      </p>
+      {rijen.map(({ pid, prof, plan }) => {
+        const pl = plan as NonNullable<typeof plan>
+        const standen = toetsStand(pl, vandaag).filter((s) => s.dagen >= -7)
+        const week = weekUren(pl, vandaag)
+        const s = schatting(pl.blokken)
+        const vorigeWeek = pl.blokken.filter((b) => b.datum < vandaag && b.datum >= isoVan(new Date(nuMs - 7 * 86400000)))
+        const af = vorigeWeek.filter((b) => b.gedaan).length
+        return (
+          <div key={pid} style={{ padding: '10px 0', borderTop: '1px solid var(--line)' }}>
+            <div className="row" style={{ justifyContent: 'space-between', flexWrap: 'wrap', gap: 6 }}>
+              <div style={{ fontWeight: 700 }}>{prof.emoji} {prof.naam}</div>
+              <span className="muted" style={{ fontSize: 13 }}>
+                komende week {week.laag === week.hoog ? `${week.laag} u` : `${week.laag}–${week.hoog} u`}
+                {vorigeWeek.length > 0 && ` · afgelopen 7 dagen ${af}/${vorigeWeek.length} blokken af`}
+              </span>
+            </div>
+            {standen.map((st) => (
+              <div key={st.toets.id} className="row" style={{ justifyContent: 'space-between', fontSize: 14, marginTop: 4, gap: 8 }}>
+                <span>
+                  {VAKNAAM[st.toets.vak] ?? st.toets.vak} · {st.toets.titel}{' '}
+                  <span className="muted">({dagLabel(st.toets.datum, vandaag)}, {st.gedaan}/{st.totaal})</span>
+                  {st.krap && st.dagen > 0 && <span style={{ color: 'var(--accent)' }}> · krap</span>}
+                </span>
+                <span className="tag" style={{ color: '#fff', background: STATUSKLEUR[st.status] ?? '#6b7163', whiteSpace: 'nowrap' }}>
+                  {st.status}
+                </span>
+              </div>
+            ))}
+            <div className="muted" style={{ fontSize: 12, marginTop: 4 }}>
+              {s.n >= MIN_PAREN
+                ? `Schat ${s.factor > 1.15 ? 'te laag' : s.factor < 0.85 ? 'te ruim' : 'aardig goed'} (echt ÷ geschat: ${s.laag.toFixed(1)}–${s.hoog.toFixed(1)}, over ${s.n} blokken).`
+                : `Nog ${MIN_PAREN - s.n} ${MIN_PAREN - s.n === 1 ? 'meting' : 'metingen'} nodig voordat het bord haar schattingen kan corrigeren.`}
+            </div>
+          </div>
+        )
+      })}
+      <p className="muted" style={{ fontSize: 12, marginTop: 10, fontStyle: 'italic' }}>
+        Het kind ziet zijn bord op de startpagina na aanmelden, of rechtstreeks via{' '}
+        <code>/huiswerk/#planbord</code>.
       </p>
     </div>
   )

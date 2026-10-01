@@ -12,7 +12,7 @@
 import { describe, expect, it } from 'vitest'
 import { createHash } from 'node:crypto'
 import gouden from './gouden-waarden.json'
-import { PROFIELEN, PROFIELEN_OUD, THEMAS, VAKNAAM } from './gegevens/profielen'
+import { PROFIELEN_OUD, THEMAS, VAKNAAM_OUD } from './gegevens/profielen'
 import { SEED } from './gegevens/seed'
 import { sjablonen } from './gegevens/sjablonen'
 import type { Kaart } from './gegevens/soorten'
@@ -59,7 +59,7 @@ describe('de leerstof', () => {
     expect(vinger(SEED)).toBe(gouden.stof.vingerSeed)
     expect(SEED[0]?.id).toBe(gouden.stof.eersteId)
     expect(SEED[SEED.length - 1]?.id).toBe(gouden.stof.laatsteId)
-    expect(vinger(VAKNAAM)).toBe(gouden.stof.vingerVaknaam)
+    expect(vinger(VAKNAAM_OUD)).toBe(gouden.stof.vingerVaknaam)
     for (const [pid, n] of Object.entries(gouden.stof.perKind)) {
       expect(SEED.filter((e) => e.p === pid).length, pid).toBe(n)
     }
@@ -427,7 +427,9 @@ describe('het volgsysteem', () => {
       })
       pr.punten = 340
       pr.dagstreak = 4
-      const lp = leerprofiel(pr, alle, g.pid, PROFIELEN[g.pid])
+      /* Op de vaste lijst, net als het migratiebewijs hierboven: het
+         vakkenpakket van dit schooljaar heeft een eigen proef. */
+      const lp = leerprofiel(pr, alle, g.pid, PROFIELEN_OUD[g.pid])
       expect(lp, g.pid).toBeTruthy()
       if (!lp) continue
       expect(lp.totaal, g.pid).toBe(g.profiel.totaal)

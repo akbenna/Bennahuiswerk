@@ -421,6 +421,50 @@ const PAGINAS = [
       await pagina.screenshot({ path: 'gereedschap/pagina-huiswerk-leerscan.png' })
       await pagina.locator('button.back').first().click()
 
+      /* Het planbord, als kind uit de bovenbouw. `#planbord` hoort het bord
+         meteen te openen (dat is de link die op haar telefoon staat), een toets
+         erop zetten hoort vandaag al een blok op te leveren, en afvinken hoort
+         de vraag te stellen hoe lang het echt duurde: zonder dat antwoord kan
+         het bord niets corrigeren. */
+      await pagina.evaluate(() => {
+        localStorage.setItem('bennahub.wie', JSON.stringify({
+          gezin: 'benna', naam: 'Amaani', rol: 'kind', emoji: '🚀',
+          kleur: '#3a6ea0', apps: [], tijd: Date.now(),
+        }))
+      })
+      await pagina.goto(pagina.url().split('#')[0] + '#planbord', { waitUntil: 'networkidle' })
+      await pagina.reload({ waitUntil: 'networkidle' })
+      const bordkop = await pagina.locator('h1').first().textContent()
+      if (!/Planbord van Amaani/.test(bordkop ?? '')) {
+        return `#planbord opende het bord niet: ${bordkop}`
+      }
+      await pagina.getByRole('button', { name: /Toets erbij/ }).first().click()
+      const overEenWeek = await pagina.evaluate(() => {
+        const d = new Date(Date.now() + 7 * 86400000)
+        const t = (n) => String(n).padStart(2, '0')
+        return `${d.getFullYear()}-${t(d.getMonth() + 1)}-${t(d.getDate())}`
+      })
+      await pagina.fill('input[type=date]', overEenWeek)
+      await pagina.fill('input[placeholder^="bijv."]', 'H3 Krachten')
+      await pagina.fill('textarea', '§3.1 Krachten tekenen\n§3.2 Krachten ontbinden\n§3.3 Evenwicht')
+      await pagina.getByRole('button', { name: 'Op het bord' }).click()
+      const vandaagKaart = pagina.locator('.card', { hasText: 'Vandaag' }).first()
+      const vinkjes = vandaagKaart.locator('input[type=checkbox]')
+      if (!(await vinkjes.count())) return 'de toets leverde vandaag geen blok op'
+      await vinkjes.first().check()
+      const echt = vandaagKaart.getByRole('button', { name: /^\d+ min$/ })
+      if (!(await echt.count())) return 'na het afvinken werd niet gevraagd hoe lang het echt duurde'
+      await echt.nth(1).click()
+      if (!(await vandaagKaart.getByText(/geschat \d+/).count())) {
+        return 'de echte tijd werd niet vastgelegd'
+      }
+      await pagina.screenshot({ path: 'gereedschap/pagina-huiswerk-planbord.png' })
+      await pagina.locator('button.back').first().click()
+      if (!(await pagina.locator('.card', { hasText: 'Vandaag op je planbord' }).count())) {
+        return 'het blok van vandaag staat niet bovenaan haar eigen scherm'
+      }
+      await pagina.evaluate(() => localStorage.removeItem('oefenapp_v1'))
+
       /* En een ouder is geen kind: die hoort gewoon op het beginscherm uit te
          komen, met de vier namen. */
       await pagina.evaluate(() => {
