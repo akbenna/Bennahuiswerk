@@ -72,6 +72,9 @@ export interface Toets {
   /** Een opdracht met een deadline in plaats van een toets: geen herhaal- en
    *  overhoorblok. Ontbreekt bij oudere toetsen en betekent dan: toets. */
   opdracht?: boolean
+  /** Onderwerpen in de app die bij deze stof horen (`vak|onderwerp|jaar`),
+   *  door de planlezer aangewezen en door de app nagekeken. */
+  oefenen?: string[]
   /** Weggehaald. Blijft staan als grafsteen, anders zet een ander toestel hem
    *  bij het samenvoegen gewoon terug. */
   weg?: boolean

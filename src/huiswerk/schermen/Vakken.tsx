@@ -26,10 +26,12 @@ import { INSIGNES, dagMissie, rangVoor } from '../missie'
 import { Klapkaart } from '../onderdelen'
 import { Formuleklapper } from './Naslag'
 import { Vraagveld } from './Vraagveld'
-import type { Uitslag } from '../vraagbaak'
-import { actueel, blokkenOp, isoVan, toetsStand } from '../planbord'
-import type { Planstand } from '../planbord'
-import { Blokregel, dagLabel } from './Planbord'
+import { catalogus } from '../vraagbaak'
+import type { Ingang, Uitslag } from '../vraagbaak'
+import { actueel, blokkenOp, isoVan, leegPlan, toetsStand, weekUren, zetToets } from '../planbord'
+import type { Planstand, Toets } from '../planbord'
+import { Blokregel, STATUSKLEUR, dagLabel, oefenroute } from './Planbord'
+import { STARTTOETSEN } from '../gegevens/toetsen-start'
 
 export interface VakkenProps {
   pid: string
@@ -161,6 +163,23 @@ export function Vakken(p: VakkenProps): ReactNode {
   const weekB = weekrijen.reduce((s, r) => s + r.beheerst, 0)
   const weekT = weekrijen.reduce((s, r) => s + r.total, 0)
   const b = P.beloning ? berekenBeloning(p.prog, p.nuMs) : null
+  /* In de bovenbouw is het planbord het eerste wat er op het scherm staat,
+     nog vóór het dagdoel: wie toetsen heeft, begint bij wat er vandaag af moet
+     en niet bij tien sommen. In de onderbouw blijft het eronder, en verschijnt
+     het alleen als er toetsen op staan. */
+  const bovenbouw = /[456] (havo|vwo)/.test(P.niveau)
+  const planstrook = p.bewaarPlan && p.naarPlanbord
+    ? (
+      <Planstrook
+        pid={p.pid} plan={p.plan} nuMs={p.nuMs} bewaar={p.bewaarPlan} open={p.naarPlanbord}
+        bovenbouw={bovenbouw} catalogus={catalogus(p.alle, p.pid, p.prog)}
+        oefen={(v, onderw, jr) => {
+          p.zetVak(v)
+          if (onderw) p.naarOnderwerp(onderw, jr ?? 'nu')
+        }}
+      />
+      )
+    : null
   const wv = P.beloning ? weekVerdiend(p.prog, p.nuMs) : 0
 
   return (
@@ -182,6 +201,8 @@ export function Vakken(p: VakkenProps): ReactNode {
         <span className="muted" style={{ marginLeft: 'auto', fontSize: 13 }}>{P.niveau}</span>
       </div>
 
+      {bovenbouw && planstrook}
+
       <div className={'doelstrook' + (doelGehaald ? ' klaar' : '')}>
         <span className="tel">
           🎯 {p.prog.todayCount || 0} / {doel}
@@ -192,12 +213,7 @@ export function Vakken(p: VakkenProps): ReactNode {
         </span>
       </div>
 
-      {p.bewaarPlan && p.naarPlanbord && (
-        <Planstrook
-          plan={p.plan} nuMs={p.nuMs} bewaar={p.bewaarPlan} open={p.naarPlanbord}
-          bovenbouw={/[456] (havo|vwo)/.test(P.niveau)}
-        />
-      )}
+      {!bovenbouw && planstrook}
 
       <Vraagveld
         pid={p.pid} alle={p.alle} prog={p.prog} opVraag={p.opVraag}
@@ -469,53 +485,98 @@ export function Vakken(p: VakkenProps): ReactNode {
 }
 
 /**
- * Wat er vandaag op het planbord staat, bovenaan het scherm van het kind. Het
- * werk vooraan, net als de weektaak: wie komt oefenen ziet eerst wat er
- * vandaag af moet. Zonder planbord blijft het een knop, en alleen in de
- * bovenbouw, want een kind in groep 5 heeft geen toetsrooster.
+ * Wat er vandaag op het planbord staat, bovenaan het scherm van het kind.
+ *
+ * Groot, en met één knop die doet wat je wilt: het bord openen. Een kleine
+ * knop tussen de rest werd niet gezien, en een planbord dat je niet ziet
+ * gebruik je niet. Staan er nog geen toetsen op, dan is er één tik om de
+ * toetsen van deze week erop te zetten: een leeg bord is een drempel.
  */
-function Planstrook({ plan: opgeslagen, nuMs, bewaar, open, bovenbouw }: {
-  plan: Planstand | undefined; nuMs: number; bewaar: (p: Planstand) => void
+function Planstrook({ pid, plan: opgeslagen, nuMs, bewaar, open, bovenbouw, catalogus: cat, oefen: naar }: {
+  pid: string; plan: Planstand | undefined; nuMs: number; bewaar: (p: Planstand) => void
   open: () => void; bovenbouw: boolean
+  catalogus: readonly Ingang[]; oefen: (vak: string, onderwerp?: string, jaar?: string) => void
 }): ReactNode {
+  const oefen = (t: Toets): void => {
+    const r = oefenroute(t, cat)[0]
+    if (r) naar(r.vak, r.onderwerp, r.jaar)
+  }
+  const kanOefenen = (t: Toets): boolean => oefenroute(t, cat).length > 0
   const vandaag = isoVan(new Date(nuMs))
   /* Zoals het bord er vandaag uitziet, ook als het sinds gisteren niet meer
      geopend is: anders staat hier "niets gepland" terwijl er werk ligt. */
   const plan = opgeslagen ? actueel(opgeslagen, vandaag) : undefined
   const herplan = (q: Planstand): void => bewaar(actueel({ ...q, geplandVoor: null }, vandaag))
   const toetsen = plan ? toetsStand(plan, vandaag).filter((s) => s.dagen >= 0) : []
+  const kader = { marginTop: 14, background: '#eef6ff', border: '2px solid #3a6ea0', borderRadius: 18 }
+
   if (!plan || toetsen.length === 0) {
     if (!bovenbouw) return null
+    const start = (STARTTOETSEN[pid] ?? []).filter((t) => t.datum > vandaag)
     return (
-      <div className="wrap" style={{ marginTop: 12 }}>
-        <button type="button" className="btn ghost sm" onClick={open}>📅 Planbord: zet je toetsen erop</button>
+      <div className="card" style={kader}>
+        <div style={{ fontSize: 20, fontWeight: 800 }}>📅 Jouw planbord</div>
+        <p style={{ margin: '6px 0 0', fontSize: 15 }}>
+          Maak een schermafdruk van je rooster, je studiewijzer of de hoofdstukken die je moet
+          leren. Het bord haalt er je toetsen uit, rekent terug vanaf de toetsdag en zegt elke
+          dag wat je doet. Bij elke toets staat wat je in deze app kunt oefenen.
+        </p>
+        <div className="wrap" style={{ marginTop: 12 }}>
+          {start.length > 0 && (
+            <button
+              type="button" className="btn gold"
+              onClick={() => {
+                let q = plan ?? leegPlan()
+                for (const t of start) q = zetToets(q, { ...t, bijgewerkt: Date.now() })
+                herplan(q)
+              }}
+            >⚡ Zet de toetsen van deze week erop ({start.length})</button>
+          )}
+          <button type="button" className="btn" onClick={open}>📸 Uit een foto van je rooster →</button>
+        </div>
       </div>
     )
   }
+
   const vandaagBlokken = blokkenOp(plan, vandaag)
   const af = vandaagBlokken.filter((b) => b.gedaan).length
-  const eerst = toetsen[0]
+  const minuten = vandaagBlokken.filter((b) => !b.gedaan).reduce((m, b) => m + b.geschat, 0)
+  const pct = vandaagBlokken.length ? Math.round(af / vandaagBlokken.length * 100) : 100
+  const week = weekUren(plan, vandaag)
   return (
-    <div className="card" style={{ marginTop: 12, background: '#eef6ff', borderLeft: '4px solid #3a6ea0' }}>
-      <div className="row" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-        <b>📅 Vandaag op je planbord</b>
-        <span className="muted" style={{ fontSize: 13 }}>{af}/{vandaagBlokken.length} af</span>
+    <div className="card" style={kader}>
+      <div className="row" style={{ justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 6 }}>
+        <div style={{ fontSize: 20, fontWeight: 800 }}>📅 Vandaag op je planbord</div>
+        <span className="muted" style={{ fontSize: 13 }}>
+          {af}/{vandaagBlokken.length} af{minuten > 0 ? ` · nog ± ${minuten} min` : ''}
+        </span>
       </div>
-      {eerst && (
-        <div className="muted" style={{ fontSize: 13, marginTop: 2 }}>
-          Eerstvolgende {eerst.toets.opdracht ? 'deadline' : 'toets'}: {VAKNAAM[eerst.toets.vak] ?? eerst.toets.vak},{' '}
-          {dagLabel(eerst.toets.datum, vandaag)}
-          {toetsen.length > 1 && ` · daarna nog ${toetsen.length - 1}`}
-        </div>
-      )}
+      <div className="pbar" style={{ marginTop: 8 }}><i style={{ width: pct + '%' }} /></div>
+
+      <div className="wrap" style={{ marginTop: 10, gap: 6 }}>
+        {toetsen.slice(0, 3).map((st) => (
+          <span key={st.toets.id} className="badge" style={{ fontSize: 12 }}>
+            <span style={{ width: 8, height: 8, borderRadius: 4, background: STATUSKLEUR[st.status], display: 'inline-block' }} />
+            {st.toets.opdracht ? '📎 ' : ''}{VAKNAAM[st.toets.vak] ?? st.toets.vak} · {dagLabel(st.toets.datum, vandaag)}
+          </span>
+        ))}
+        {toetsen.length > 3 && <span className="muted" style={{ fontSize: 12, alignSelf: 'center' }}>+{toetsen.length - 3}</span>}
+      </div>
+
       {vandaagBlokken.length === 0 && (
-        <p className="muted" style={{ fontSize: 14, margin: '8px 0 0' }}>Vandaag niets gepland. 🎉</p>
+        <p className="muted" style={{ fontSize: 14, margin: '10px 0 0' }}>Vandaag niets gepland. 🎉</p>
       )}
       {vandaagBlokken.map((b) => (
-        <Blokregel key={b.id} blok={b} plan={plan} vandaag={vandaag} bewaar={bewaar} herplan={herplan} />
+        <Blokregel
+          key={b.id} blok={b} plan={plan} vandaag={vandaag} bewaar={bewaar} herplan={herplan}
+          oefen={oefen} kanOefenen={kanOefenen}
+        />
       ))}
-      <div className="wrap" style={{ marginTop: 10 }}>
-        <button type="button" className="btn sm" onClick={open}>Hele planning →</button>
+      <div className="row" style={{ marginTop: 12, justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+        <button type="button" className="btn" onClick={open}>Hele planning →</button>
+        <span className="muted" style={{ fontSize: 13 }}>
+          komende week {week.laag === week.hoog ? `${week.laag} uur` : `${week.laag} tot ${week.hoog} uur`}
+        </span>
       </div>
     </div>
   )

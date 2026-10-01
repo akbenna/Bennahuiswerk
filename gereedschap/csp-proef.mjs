@@ -445,8 +445,9 @@ const PAGINAS = [
         return `${d.getFullYear()}-${t(d.getMonth() + 1)}-${t(d.getDate())}`
       })
       await pagina.fill('input[type=date]', overEenWeek)
-      await pagina.fill('input[placeholder^="bijv."]', 'H3 Krachten')
-      await pagina.fill('textarea', '§3.1 Krachten tekenen\n§3.2 Krachten ontbinden\n§3.3 Evenwicht')
+      await pagina.fill('input[placeholder^="bijv. H3"]', 'H3 Krachten')
+      /* Het tekstvak van het formulier, niet dat van de fotolezer erboven. */
+      await pagina.fill('textarea[placeholder^="§3.1"]', '§3.1 Krachten tekenen\n§3.2 Krachten ontbinden\n§3.3 Evenwicht')
       await pagina.getByRole('button', { name: 'Op het bord' }).click()
       const vandaagKaart = pagina.locator('.card', { hasText: 'Vandaag' }).first()
       const vinkjes = vandaagKaart.locator('input[type=checkbox]')

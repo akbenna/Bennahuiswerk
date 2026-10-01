@@ -35,6 +35,7 @@ import {
   familieAanmaken, familieBewaren, familieInloggen, familieOphalen, kindBewaren,
 } from './wolk'
 import { portaalKind } from './portaal'
+import { catalogus } from './vraagbaak'
 import type { Uitslag } from './vraagbaak'
 import { themaVan, Thuis } from './schermen/Thuis'
 import { Vakken } from './schermen/Vakken'
@@ -195,10 +196,21 @@ export function App(): ReactNode {
   if (zicht === 'planbord' && pid && prog) {
     return (
       <Planbord
-        pid={pid} naam={PROFIELEN[pid]?.naam ?? ''} vakken={PROFIELEN[pid]?.vakken ?? []}
+        pid={pid} naam={PROFIELEN[pid]?.naam ?? ''} niveau={PROFIELEN[pid]?.niveau ?? ''}
+        vakken={PROFIELEN[pid]?.vakken ?? []}
         plan={prog.plan} nuMs={Date.now()}
         terug={() => zetZicht('vakken')}
         bewaar={(pl) => t.zetKind(pid, (pr) => ({ ...pr, plan: pl }))}
+        catalogus={catalogus(t.alle, pid, prog)}
+        naarOefenen={(v, onderw, jr) => {
+          zetVak(v)
+          if (onderw) naarOnderwerp(onderw, jr ?? 'nu')
+          else { zetZicht('vakken'); scrollTo({ top: 0 }) }
+        }}
+        meldGat={(vraag, gat) => t.zet((s) => ({
+          ...s,
+          vragen: [{ tijd: Date.now(), pid, vraag, raak: [], gat }, ...(s.vragen ?? [])].slice(0, 100),
+        }))}
       />
     )
   }

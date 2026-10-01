@@ -28,6 +28,8 @@ import {
   toetsStand, verplaats, vinkAf, weekUren, zetDagtijd, zetEcht, zetEigen, zetToets,
 } from '../planbord'
 import type { Blok, Planstand, Toets, Toetsstatus } from '../planbord'
+import type { Ingang } from '../vraagbaak'
+import { Fotolezer } from './Fotolezer'
 
 const WEEKDAG = ['zo', 'ma', 'di', 'wo', 'do', 'vr', 'za']
 const MAAND = ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec']
@@ -54,11 +56,37 @@ export const STATUSKLEUR: Record<Toetsstatus, string> = {
 export interface PlanbordProps {
   pid: string
   naam: string
+  niveau: string
   vakken: string[]
   plan: Planstand | undefined
   nuMs: number
   terug: () => void
   bewaar: (p: Planstand) => void
+  /** De onderwerpen die de app voor dit kind heeft. */
+  catalogus: readonly Ingang[]
+  /** Naar de oefenstof: een onderwerp, of zonder onderwerp het hele vak. */
+  naarOefenen: (vak: string, onderwerp?: string, jaar?: string) => void
+  /** Stof die de app nog niet heeft, voor de lijst op het ouderscherm. */
+  meldGat: (vraag: string, gat: string) => void
+}
+
+/**
+ * Waar je voor deze toets in de app kunt oefenen: de onderwerpen die de
+ * planlezer aanwees, en anders het vak zelf als daar iets in staat. Een vak
+ * zonder opgaven geeft niets: een knop naar een leeg scherm is erger dan geen
+ * knop.
+ */
+export function oefenroute(
+  t: Toets, cat: readonly Ingang[],
+): Array<{ label: string; vak: string; onderwerp?: string; jaar?: string }> {
+  const kaart = new Map(cat.map((i) => [i.s, i]))
+  const eigen = (t.oefenen ?? []).flatMap((s) => {
+    const i = kaart.get(s)
+    return i ? [{ label: i.onderwerp, vak: i.vakSleutel, onderwerp: i.onderwerp, jaar: i.jaar }] : []
+  })
+  if (eigen.length) return eigen
+  if (cat.some((i) => i.vakSleutel === t.vak)) return [{ label: `${VAKNAAM[t.vak] ?? t.vak} oefenen`, vak: t.vak }]
+  return []
 }
 
 export function Planbord(p: PlanbordProps): ReactNode {
@@ -87,7 +115,12 @@ export function Planbord(p: PlanbordProps): ReactNode {
   const laatste = levend.reduce((m, t) => (t.datum > m ? t.datum : m), vandaag)
   const dagen: string[] = []
   for (let d = schuif(vandaag, 1); d <= laatste && dagen.length < 28; d = schuif(d, 1)) dagen.push(d)
-  const dagProps = { vandaag, plan, bewaar, herplan: herplanEnBewaar }
+  const oefen = (t: Toets): void => {
+    const r = oefenroute(t, p.catalogus)[0]
+    if (r) p.naarOefenen(r.vak, r.onderwerp, r.jaar)
+  }
+  const kanOefenen = (t: Toets): boolean => oefenroute(t, p.catalogus).length > 0
+  const dagProps = { vandaag, plan, bewaar, herplan: herplanEnBewaar, oefen, kanOefenen }
 
   return (
     <div>
@@ -110,6 +143,19 @@ export function Planbord(p: PlanbordProps): ReactNode {
           {' '}Klopt iets niet? Tik op <b>aanpassen</b> bij een blok.
         </p>
       )}
+
+      <Fotolezer
+        naam={p.naam} niveau={p.niveau} vakken={p.vakken} catalogus={p.catalogus} vandaag={vandaag}
+        open={levend.length === 0}
+        opBord={(gekozen) => {
+          let q = plan
+          for (const v of gekozen) {
+            q = zetToets(q, v.toets)
+            if (v.gat) p.meldGat(`Planbord: ${VAKNAAM[v.toets.vak] ?? v.toets.vak}, ${v.toets.titel}`, v.gat)
+          }
+          herplanEnBewaar(q)
+        }}
+      />
 
       {levend.length === 0 && (
         <div className="card center" style={{ marginTop: 14 }}>
@@ -177,6 +223,17 @@ export function Planbord(p: PlanbordProps): ReactNode {
                   meer tijd per dag (onderaan), of kies bewust wat minder aandacht krijgt.
                 </div>
               )}
+              {oefenroute(st.toets, p.catalogus).length > 0 && st.dagen > 0 && (
+                <div className="wrap" style={{ marginTop: 6, alignItems: 'center' }}>
+                  <span className="muted" style={{ fontSize: 13 }}>Oefenen in de app:</span>
+                  {oefenroute(st.toets, p.catalogus).map((r) => (
+                    <button
+                      type="button" key={r.label} className="btn sm"
+                      onClick={() => p.naarOefenen(r.vak, r.onderwerp, r.jaar)}
+                    >▶ {r.label}</button>
+                  ))}
+                </div>
+              )}
               <div className="wrap" style={{ marginTop: 6 }}>
                 <button type="button" className="btn ghost sm" onClick={() => zetBewerk(st.toets)}>✏️ Aanpassen</button>
                 <button
@@ -240,9 +297,10 @@ export function Planbord(p: PlanbordProps): ReactNode {
 interface DagProps {
   titel: string; iso: string; vandaag: string; blokken: Blok[]; plan: Planstand
   open?: boolean; bewaar: (p: Planstand) => void; herplan: (p: Planstand) => void
+  oefen: (t: Toets) => void; kanOefenen: (t: Toets) => boolean
 }
 
-function Dagkaart({ titel, iso, vandaag, blokken, plan, open, bewaar, herplan }: DagProps): ReactNode {
+function Dagkaart({ titel, iso, vandaag, blokken, plan, open, bewaar, herplan, oefen, kanOefenen }: DagProps): ReactNode {
   const cap = capaciteit(plan, iso)
   const gepland = geplandOp(plan, iso)
   const af = blokken.filter((b) => b.gedaan).length
@@ -296,15 +354,20 @@ function Dagkaart({ titel, iso, vandaag, blokken, plan, open, bewaar, herplan }:
         <p className="muted" style={{ fontSize: 14, margin: '8px 0 0' }}>Niets gepland. 🎉</p>
       )}
       {blokken.map((b) => (
-        <Blokregel key={b.id} blok={b} plan={plan} vandaag={vandaag} bewaar={bewaar} herplan={herplan} />
+        <Blokregel
+          key={b.id} blok={b} plan={plan} vandaag={vandaag} bewaar={bewaar} herplan={herplan}
+          oefen={oefen} kanOefenen={kanOefenen}
+        />
       ))}
     </div>
   )
 }
 
-export function Blokregel({ blok: b, plan, vandaag, bewaar, herplan }: {
+export function Blokregel({ blok: b, plan, vandaag, bewaar, herplan, oefen, kanOefenen }: {
   blok: Blok; plan: Planstand; vandaag: string
   bewaar: (p: Planstand) => void; herplan: (p: Planstand) => void
+  /** Naar de oefenstof in de app die bij de toets van dit blok hoort. */
+  oefen?: (t: Toets) => void; kanOefenen?: (t: Toets) => boolean
 }): ReactNode {
   const [aanpassen, zetAanpassen] = useState(false)
   const toets = plan.toetsen.find((t) => t.id === b.toets)
@@ -334,10 +397,19 @@ export function Blokregel({ blok: b, plan, vandaag, bewaar, herplan }: {
           </div>
         </label>
         {!b.gedaan && (
-          <button
-            type="button" className="back" style={{ fontSize: 13, padding: '2px 4px', whiteSpace: 'nowrap' }}
-            aria-expanded={aanpassen} onClick={() => zetAanpassen(!aanpassen)}
-          >{aanpassen ? 'klaar' : 'aanpassen'}</button>
+          <span className="row" style={{ gap: 2, flexDirection: 'column', alignItems: 'flex-end' }}>
+            {toets && oefen && kanOefenen?.(toets) && !toets.opdracht && (
+              <button
+                type="button" className="back"
+                style={{ fontSize: 13, padding: '2px 4px', whiteSpace: 'nowrap', color: 'var(--blue)' }}
+                onClick={() => oefen(toets)}
+              >▶ oefen</button>
+            )}
+            <button
+              type="button" className="back" style={{ fontSize: 13, padding: '2px 4px', whiteSpace: 'nowrap' }}
+              aria-expanded={aanpassen} onClick={() => zetAanpassen(!aanpassen)}
+            >{aanpassen ? 'klaar' : 'aanpassen'}</button>
+          </span>
         )}
       </div>
       {aanpassen && !b.gedaan && (
@@ -410,10 +482,13 @@ function Toetsformulier({ vakken, vandaag, toets, sluit, bewaar }: {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(datum)) { zetFout('Kies een datum.'); return }
     if (datum <= vandaag) { zetFout('Kies een dag na vandaag: voor vandaag valt er niets meer te plannen.'); return }
     if (onderdelen.length === 0) { zetFout('Zet er minstens één stuk in, bijvoorbeeld "§3.1".'); return }
+    /* Wat de planlezer aanwees blijft staan zolang het vak niet verandert. */
+    const oefenen = toets && toets.vak === vak ? toets.oefenen : undefined
     bewaar({
       id: toets?.id ?? nieuwId(), vak, datum, titel: titel.trim() || (opdracht ? 'Opdracht' : 'Toets'),
       onderdelen, perOnderdeel: Math.max(10, Math.min(180, Math.round(per) || 45)), bijgewerkt: Date.now(),
       ...(opdracht ? { opdracht: true } : {}),
+      ...(oefenen?.length ? { oefenen } : {}),
     })
   }
 
