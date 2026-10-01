@@ -111,6 +111,8 @@ export const ONDERWERPICOON: Record<string, string> = {
   'Molverhoudingen':'🧮',
   // Amaani, 5 vwo (zie gegevens/exact5vwo.ts)
   'Redox':'🔋','Evenwicht':'🔁','Krachten ontbinden':'📐','Cirkelbeweging & gravitatie':'🪐',
+  'Regeling':'🧠',
+  'Verwachtingswaarde':'🎯',
   // Wassima · zaakvakken & talen verdieping
   'Vertering':'🍎','Ademhaling':'🫁','Bloedsomloop':'❤️','Fotosynthese':'🌱',
   'Klimaatzones':'🌍','Kaartvaardigheden':'🧭','Bevolking':'👥','Endogeen & exogeen':'🌋','Tenses':'⏱️',
