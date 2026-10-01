@@ -116,6 +116,7 @@ export const ONDERWERPICOON: Record<string, string> = {
   'Drogredenen':'🎣','Formuleren':'✍️','Conditionals':'🔀','Linking words':'🔗',
   'Onderzoeken':'🔬','Ontwerpen':'🛠️','Projectwerk':'📅',
   'Voortplanting':'🌸',
+  'Sortir & partir':'🚪','Landnamen':'🗺️','Pronouns':'👤','Wh-questions':'❓','Comparisons':'⚖️','Present simple':'🔂',
   // Wassima · zaakvakken & talen verdieping
   'Vertering':'🍎','Ademhaling':'🫁','Bloedsomloop':'❤️','Fotosynthese':'🌱',
   'Klimaatzones':'🌍','Kaartvaardigheden':'🧭','Bevolking':'👥','Endogeen & exogeen':'🌋','Tenses':'⏱️',

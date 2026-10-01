@@ -42,6 +42,10 @@ describe('het oude bord rechtzetten', () => {
     expect(toets(q, 'start-nat-2026-10-08')?.datum).toBe('2026-10-12')
     expect(toets(q, 'start-fatl-2026-10-09')?.datum).toBe('2026-10-14')
     expect(toets(q, 'start-ned-2026-10-09')?.datum).toBe('2026-10-09')
+    expect(toets(q, 'start-fra-so-2026-10-05')?.datum).toBe('2026-10-05')
+    expect(toets(q, 'start-eng-idiom-2026-10-05')?.datum).toBe('2026-10-05')
+    expect(toets(q, 'start-eng-gram-2026-10-08')?.datum).toBe('2026-10-08')
+    expect(toets(q, 'start-ned-2026-10-08')?.datum).toBe('2026-10-08')
     /* Wiskunde A is niet nagekeken en blijft zoals hij was. */
     expect(toets(q, 'start-wisa-2026-10-07')?.datum).toBe('2026-10-07')
   })
@@ -119,7 +123,7 @@ describe('de stof voor het biologieproefwerk', () => {
     const elders = new Set([...SEED, ...NIEUW2627.filter((e) => !nieuw.has(e.q))].map((e) => e.q.trim()))
     for (const e of VOORTPLANTING_5VWO) expect(elders.has(e.q.trim()), e.q).toBe(false)
     expect(NIEUW2627.find((e) => e.id === 'nw26_1197')?.q).toBe(VOORTPLANTING_5VWO[0]?.q)
-    expect(NIEUW2627).toHaveLength(1215)
+    expect(NIEUW2627.find((e) => e.id === 'nw26_1214')?.q).toBe(VOORTPLANTING_5VWO[17]?.q)
   })
 
   it('wijst het bord naar onderwerpen die bestaan', () => {

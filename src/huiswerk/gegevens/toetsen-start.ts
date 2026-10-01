@@ -35,11 +35,34 @@ const NAT: Starttoets = {
 const FRA: Starttoets = {
   id: 'start-fatl-2026-10-09', vak: 'frans', datum: '2026-10-14', titel: 'PW Unité 1',
   onderdelen: ['Apprendre 1 tot en met 5', 'Apprendre 6 tot en met 10', 'Alles door elkaar overhoren'],
-  perOnderdeel: 30,
+  perOnderdeel: 30, oefenen: ['frans|Sortir & partir|nu', 'frans|Landnamen|nu', 'frans|Passé composé|nu'],
 }
 const NED: Starttoets = {
   id: 'start-ned-2026-10-09', vak: 'nederlands', datum: '2026-10-09', titel: 'SO schrijven deel 2',
   onderdelen: ['Aantekeningen en de schrijfopdracht van deel 2 doorlezen', 'Formuleren en signaalwoorden oefenen', 'Een stuk schrijven op tijd'],
+  perOnderdeel: 30, oefenen: ['nederlands|Formuleren|nu', 'nederlands|Tekstverbanden|nu'],
+}
+
+/* Uit de schoolapp, later op 1 oktober. */
+const FRA_SO: Starttoets = {
+  id: 'start-fra-so-2026-10-05', vak: 'frans', datum: '2026-10-05', titel: 'SO Unité 1',
+  onderdelen: ['Apprendre 1 tot en met 7', 'Sortir en partir, ook in de passé composé met être', 'In en naar bij landnamen'],
+  perOnderdeel: 25, oefenen: ['frans|Sortir & partir|nu', 'frans|Landnamen|nu', 'frans|Passé composé|nu'],
+}
+const ENG_IDIOM: Starttoets = {
+  id: 'start-eng-idiom-2026-10-05', vak: 'engels', datum: '2026-10-05', titel: 'PW idiom unit 1',
+  onderdelen: ['Blz. 99 tot en met 101: woorden van Nederlands naar Engels', 'Woorden van Engels naar Nederlands', 'De zinnen, in beide richtingen', 'Alles door elkaar overhoren'],
+  perOnderdeel: 25,
+}
+const ENG_GRAM: Starttoets = {
+  id: 'start-eng-gram-2026-10-08', vak: 'engels', datum: '2026-10-08', titel: 'PW grammar unit 1',
+  onderdelen: ['Pronouns: object, possessive determiners en possessive pronouns', 'Wh-questions', 'Comparisons', 'Present simple', 'Blz. 92 tot en met 98 door elkaar'],
+  perOnderdeel: 25,
+  oefenen: ['engels|Pronouns|nu', 'engels|Wh-questions|nu', 'engels|Comparisons|nu', 'engels|Present simple|nu'],
+}
+const NED_1: Starttoets = {
+  id: 'start-ned-2026-10-08', vak: 'nederlands', datum: '2026-10-08', titel: 'SO schrijven deel 1',
+  onderdelen: ['Aantekeningen en de schrijfopdracht van deel 1 doorlezen', 'Formuleren en signaalwoorden oefenen', 'Een stuk schrijven op tijd'],
   perOnderdeel: 30, oefenen: ['nederlands|Formuleren|nu', 'nederlands|Tekstverbanden|nu'],
 }
 
@@ -51,7 +74,7 @@ export const STARTTOETSEN: Record<string, Starttoets[]> = {
       onderdelen: ['Theorie en voorbeelden, opschrijven wat je niet snapt', 'Opgaven maken', 'Oefentoets op tijd'],
       perOnderdeel: 45,
     },
-    NAT, FRA, NED,
+    NAT, FRA, NED, FRA_SO, ENG_IDIOM, ENG_GRAM, NED_1,
   ],
 }
 
@@ -72,7 +95,7 @@ const VERSIE_1: Record<string, Pick<Toets, 'datum' | 'onderdelen'>> = {
 
 /** Toetsen die er in de eerste versie niet bij zaten en die een al gevuld bord
  *  erbij krijgt, tenzij het kind ze er zelf af heeft gehaald. */
-const ERBIJ: Record<string, Starttoets[]> = { amaani: [NED] }
+const ERBIJ: Record<string, Starttoets[]> = { amaani: [NED, FRA_SO, ENG_IDIOM, ENG_GRAM, NED_1] }
 
 const gelijk = (a: readonly string[], b: readonly string[]): boolean =>
   a.length === b.length && a.every((x, i) => x === b[i])

@@ -48,6 +48,7 @@ import { EXACT_5VWO } from './exact5vwo'
 import { WISKUNDEA_5VWO } from './wiskundea5vwo'
 import { BIOLOGIE_5VWO, VOORTPLANTING_5VWO } from './biologie5vwo'
 import { TALEN_5VWO } from './talen5vwo'
+import { ENGELS_UNIT1, FRANS_UNITE1 } from './unit1'
 import { OENO_5VWO } from './oeno5vwo'
 
 const RUW: Omit<Opgave, 'id'>[] = [
@@ -911,4 +912,4 @@ const RUW: Omit<Opgave, 'id'>[] = [
 /** De aanvulling, elk met de id die hij in de opslag heeft. Wat later bijkomt
  *  staat áchter `RUW`, zodat de nummering van wat er al was niet verschuift en
  *  geen Leitner-kaart losraakt van zijn geschiedenis. */
-export const NIEUW2627: Opgave[] = [...RUW, ...FRANS_5VWO, ...EXACT_5VWO, ...WISKUNDEA_5VWO, ...BIOLOGIE_5VWO, ...TALEN_5VWO, ...OENO_5VWO, ...VOORTPLANTING_5VWO].map((e, i) => ({ ...e, id: 'nw26_' + i }))
+export const NIEUW2627: Opgave[] = [...RUW, ...FRANS_5VWO, ...EXACT_5VWO, ...WISKUNDEA_5VWO, ...BIOLOGIE_5VWO, ...TALEN_5VWO, ...OENO_5VWO, ...VOORTPLANTING_5VWO, ...FRANS_UNITE1, ...ENGELS_UNIT1].map((e, i) => ({ ...e, id: 'nw26_' + i }))
