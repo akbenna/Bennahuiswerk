@@ -15,7 +15,11 @@
  * cijfer in verandert.
  */
 import { describe, expect, it } from 'vitest'
-import { PROFIELEN, PROFIELEN_OUD } from './gegevens/profielen'
+import { PROFIELEN, PROFIELEN_OUD, VAKNAAM } from './gegevens/profielen'
+import { leegStand, leegVoortgang, schoonVoortgang } from './opslag'
+import { leerprofiel } from './volgsysteem'
+import { rapportTekst } from './rapport'
+import { ECHT } from './toeval'
 import { KLASSEN, SCHOOLJAAR, jaarNu, naarDitJaar } from './gegevens/schooljaar'
 import { NIEUW2627 } from './gegevens/schooljaar2627'
 import { SEED } from './gegevens/seed'
@@ -61,9 +65,43 @@ describe('wie er dit schooljaar in welke klas zit', () => {
       const nu = PROFIELEN[pid]
       expect(nu?.naam, pid).toBe(oud.naam)
       expect(nu?.emoji, pid).toBe(oud.emoji)
-      expect(nu?.vakken, pid).toEqual(oud.vakken)
+      expect(nu?.vakken, pid).toEqual(KLASSEN[pid]?.vakken ?? oud.vakken)
       expect(nu?.beloning, pid).toBe(oud.beloning)
     }
+  })
+
+  /* Het vakkenpakket van de bovenbouw: wat op het rooster staat, en niets wat
+     er niet op staat. Elk vak heeft een naam, anders komt er een sleutel op
+     het scherm. */
+  it('geeft Amaani het pakket van haar rooster', () => {
+    const vakken = PROFIELEN.amaani?.vakken ?? []
+    expect(vakken).toContain('oeno')
+    expect(vakken).toContain('wiskundeA')
+    expect(vakken).not.toContain('aardrijkskunde')
+    expect(vakken).not.toContain('economie')
+    expect(vakken).not.toContain('geschiedenis')
+    for (const v of vakken) expect(VAKNAAM[v], v).toBeTruthy()
+  })
+
+  /* Het leerprofiel en het rapport lezen het pakket van nu, niet de vaste
+     lijst. O&O heeft nog geen opgaven: dat mag niets omgooien, en een vak dat
+     is afgevallen hoort er niet meer in te staan. */
+  it('bouwt het leerprofiel en het rapport op het pakket van nu', () => {
+    const alle: Kaart[] = [...SEED, ...sjablonen(ECHT)]
+    const pr = schoonVoortgang(leegVoortgang())
+    for (const e of SEED.filter((x) => x.p === 'amaani').slice(0, 30)) {
+      pr.cards[e.id] = { box: 4, ok: 4, wrong: 0, last: 1 }
+    }
+    const lp = leerprofiel(pr, alle, 'amaani', PROFIELEN.amaani)
+    expect(lp).toBeTruthy()
+    const vakken = (lp?.vakken ?? []).map((v) => v.v)
+    expect(vakken).not.toContain('aardrijkskunde')
+    expect(vakken).not.toContain('economie')
+    for (const v of lp?.vakken ?? []) {
+      expect(Number.isFinite(v.pct), v.v).toBe(true)
+    }
+    const stand = { ...leegStand(), prog: { amaani: pr } }
+    expect(() => rapportTekst(stand, alle)).not.toThrow()
   })
 })
 

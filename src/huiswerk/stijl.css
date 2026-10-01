@@ -24,6 +24,9 @@ body{
   background:rgba(255,255,255,.92);border:1px solid #e6eade;border-radius:999px;
   padding:6px 12px;font:500 13px/1 'DM Sans',sans-serif;color:#6b7163;
   box-shadow:0 1px 4px rgba(0,0,0,.06);}
+/* Op een telefoon ligt die knop precies over de terugknop van elk scherm heen;
+   op een breed scherm staat hij in de marge. Dus alleen smal wat ruimte erboven. */
+@media (max-width:900px){#root{padding-top:48px;}}
 h1,h2,h3{font-family:'Playfair Display',Georgia,serif;margin:0;}
 button{font-family:inherit;cursor:pointer;border:none;}
 /* Twee dingen die vroeger een <div> of een <span> met onClick waren en nu een

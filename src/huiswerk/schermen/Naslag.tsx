@@ -20,6 +20,7 @@
 import type { ReactNode } from 'react'
 import { FORMULEBLOKKEN, formulesVoor } from '../gegevens/formules'
 import type { Formuleblok } from '../gegevens/formules'
+import { BOVENBOUW, bovenbouwVoor } from '../gegevens/bovenbouw'
 import { TIPS_CATS } from '../gegevens/leertips'
 import { VAKNAAM } from '../gegevens/profielen'
 import { Klapkaart } from '../onderdelen'
@@ -38,7 +39,7 @@ const Stappenplan = (): ReactNode => (
   </div>
 )
 
-const Blok = ({ blok }: { blok: Formuleblok }): ReactNode => (
+const Blok = ({ blok }: { blok: Pick<Formuleblok, 'kop' | 'items'> }): ReactNode => (
   <div className="card" style={{ marginTop: 12 }}>
     <b>{blok.kop}</b>
     <div style={{ marginTop: 8 }}>
@@ -66,8 +67,12 @@ const Blok = ({ blok }: { blok: Formuleblok }): ReactNode => (
  * Hij staat er ook tijdens een toets. Een formulekaart is geen hint: op school
  * ligt hij er bij het proefwerk net zo goed naast.
  */
-export function Formuleklapper({ vak }: { vak: string }): ReactNode {
-  const blokken = formulesVoor(vak)
+export function Formuleklapper({ vak, bovenbouw = false }: { vak: string; bovenbouw?: boolean }): ReactNode {
+  /* In de bovenbouw komen de blokken van de bovenbouw erbij: voor scheikunde
+     zijn dat de enige, want daar had de oude kaart niets. In de onderbouw niet;
+     een redoxtabel naast een som uit 2 havo is geen hulp maar ruis. */
+  const blokken: Array<Pick<Formuleblok, 'kop' | 'items'>> =
+    [...formulesVoor(vak), ...(bovenbouw ? bovenbouwVoor(vak) : [])]
   if (!blokken.length) return null
   return (
     <div style={{ marginTop: 14 }}>
@@ -91,6 +96,19 @@ export function Formules({ terug }: { terug: () => void }): ReactNode {
       <Stappenplan />
 
       {FORMULEBLOKKEN.map((blok) => <Blok key={blok.kop} blok={blok} />)}
+
+      <h2 style={{ fontSize: 20, marginTop: 24 }}>🎓 Bovenbouw (havo/vwo 4–6)</h2>
+      <p className="muted" style={{ marginTop: 2, fontSize: 14 }}>
+        Wat je in 5 vwo geacht wordt nog te weten uit 3 en 4, en wat er nieuw bij komt. Dicht
+        per vak; open wat je nodig hebt.
+      </p>
+      {BOVENBOUW.map((vak) => (
+        <div key={vak.vak} style={{ marginTop: 12 }}>
+          <Klapkaart titel={`${vak.emoji} ${vak.kop}`} zij={`${vak.blokken.length} blokken`}>
+            {vak.blokken.map((blok) => <Blok key={blok.kop} blok={blok} />)}
+          </Klapkaart>
+        </div>
+      ))}
 
       <p className="muted center" style={{ marginTop: 16, fontSize: 13 }}>
         Tip: leer formules niet uit je hoofd door staren: schrijf ze één keer over en hoor jezelf

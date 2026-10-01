@@ -42,10 +42,11 @@ import { Oefenen } from './schermen/Oefenen'
 import { Ouder } from './schermen/Ouder'
 import { Formules, Leertips } from './schermen/Naslag'
 import { Leerscan } from './schermen/Leerscan'
+import { Planbord } from './schermen/Planbord'
 import { WedstrijdMaken, WedstrijdSpelen } from './schermen/Wedstrijd'
 
 type Zicht = 'thuis' | 'vakken' | 'oefenen' | 'ouder' | 'formules' | 'leertips' | 'leerscan'
-  | 'wedstrijd-maken' | 'wedstrijd-spelen'
+  | 'planbord' | 'wedstrijd-maken' | 'wedstrijd-spelen'
 
 export function App(): ReactNode {
   const t = useHuiswerk()
@@ -54,7 +55,12 @@ export function App(): ReactNode {
      daarna niet meer: klapt de aanmelding halverwege om, dan is dat geen reden
      om een kind midden in een som naar een ander scherm te gooien. */
   const [viaPortaal] = useState<string | null>(() => portaalKind())
-  const [zicht, zetZicht] = useState<Zicht>(viaPortaal ? 'vakken' : 'thuis')
+  /* `/huiswerk/#planbord` opent voor wie via het portaal binnenkomt meteen het
+     planbord: dat is de link die op een telefoon op het beginscherm staat. */
+  const [zicht, zetZicht] = useState<Zicht>(() => {
+    if (!viaPortaal) return 'thuis'
+    return /planbord/.test(location.hash || '') ? 'planbord' : 'vakken'
+  })
   const [pid, zetPid] = useState<string | null>(viaPortaal)
   const [vak, zetVak] = useState(
     () => (viaPortaal ? PROFIELEN[viaPortaal]?.vakken[0] ?? '' : ''))
@@ -186,6 +192,17 @@ export function App(): ReactNode {
     )
   }
 
+  if (zicht === 'planbord' && pid && prog) {
+    return (
+      <Planbord
+        pid={pid} naam={PROFIELEN[pid]?.naam ?? ''} vakken={PROFIELEN[pid]?.vakken ?? []}
+        plan={prog.plan} nuMs={Date.now()}
+        terug={() => zetZicht('vakken')}
+        bewaar={(pl) => t.zetKind(pid, (pr) => ({ ...pr, plan: pl }))}
+      />
+    )
+  }
+
   if (zicht === 'formules') return <Formules terug={() => zetZicht('thuis')} />
   if (zicht === 'leertips') return <Leertips terug={() => zetZicht('thuis')} />
 
@@ -240,6 +257,9 @@ export function App(): ReactNode {
         naarSpellen={() => { location.href = '/spellen/' }}
         opVraag={(vraag, u) => onthoudVraag(pid, vraag, u)}
         naarLeerscan={() => { zetZicht('leerscan'); scrollTo({ top: 0 }) }}
+        plan={prog.plan}
+        bewaarPlan={(pl) => t.zetKind(pid, (pr) => ({ ...pr, plan: pl }))}
+        naarPlanbord={() => { zetZicht('planbord'); scrollTo({ top: 0 }) }}
       />
     )
   }

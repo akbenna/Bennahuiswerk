@@ -633,7 +633,7 @@ export function Oefenen(p: OefenenProps): ReactNode {
           thuisscherm, waar een kind dat via het portaal binnenkomt nooit komt,
           en waar je midden in een reeks niet heen kunt zonder de som kwijt te
           raken. Alleen de blokken van dit vak; bij taal of lezen komt er niets. */}
-      <Formuleklapper vak={p.vak} />
+      <Formuleklapper vak={p.vak} bovenbouw={/[456] (havo|vwo)/.test(PROFIELEN[p.pid]?.niveau ?? '')} />
       <p className="muted center" style={{ marginTop: 10, fontSize: 13 }}>
         {isExamen
           ? `${isProef ? 'Proeftoets' : 'Oefentoets'}: ${toetsLengte} vragen, gemengd, geen hints. `

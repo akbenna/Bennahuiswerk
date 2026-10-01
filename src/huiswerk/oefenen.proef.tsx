@@ -18,6 +18,8 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { Oefenen } from './schermen/Oefenen'
 import { Vakken } from './schermen/Vakken'
 import { FORMULEBLOKKEN, formulesVoor } from './gegevens/formules'
+import { bovenbouwVoor } from './gegevens/bovenbouw'
+import { Formuleklapper } from './schermen/Naslag'
 import { PROFIELEN } from './gegevens/profielen'
 import { themaVan } from './schermen/Thuis'
 import type { Kaart, Opgave } from './gegevens/soorten'
@@ -234,6 +236,20 @@ describe('de formulekaart bij het oefenen', () => {
       expect(formulesVoor(v).length, v).toBeGreaterThan(0)
     }
     expect(formulesVoor('lezen')).toEqual([])
+  })
+
+  /* In de bovenbouw komt er per vak de bovenbouwkaart bij, en voor scheikunde
+     is dat de enige kaart. In de onderbouw blijft het zoals het was. */
+  it('geeft de bovenbouw zijn eigen blokken, en de onderbouw niet', () => {
+    expect(bovenbouwVoor('scheikunde').map((b) => b.kop)).toContain('Rekenen aan reacties (mol)')
+    expect(bovenbouwVoor('natuurkunde').map((b) => b.kop))
+      .toContain('Goniometrie voor natuurkunde (zit niet in wiskunde A)')
+    expect(bovenbouwVoor('frans')).toEqual([])
+    render(<Formuleklapper vak="scheikunde" bovenbouw />)
+    expect(screen.getByText('Rekenen aan reacties (mol)')).toBeTruthy()
+    cleanup()
+    const { container } = render(<Formuleklapper vak="scheikunde" />)
+    expect(container.textContent).toBe('')
   })
 })
 

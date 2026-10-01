@@ -10,7 +10,7 @@ _Bijgewerkt: september 2026, schooljaar **2026/27**. Vier profielen op de klas w
 - **Selma** (groep 5): Rekenen, Taal, Begrijpend lezen.
 - **Amine** (groep 8): Rekenen, Taal, Begrijpend lezen, Studievaardigheden, Engels.
 - **Wassima** (2 havo, doet over): 10 vakken, exact ruim; Engels/Biologie/Aardrijkskunde verdiept.
-- **Amaani** (5 vwo): 10 vakken, exact ruim; Engels/Biologie/Aardrijkskunde verdiept.
+- **Amaani** (5 vwo): het pakket van haar rooster (`gegevens/schooljaar.ts`): wiskunde A, natuurkunde, scheikunde, biologie, Nederlands, Engels, Frans en O&O. Aardrijkskunde, geschiedenis en economie zijn afgevallen; de opgaven ervoor blijven in de voorraad maar komen niet meer op haar scherm.
 
 ## Grove dekkingsschatting (toetsbaar, kort-antwoord deel)
 - **Amine: doorstroomtoets:** rekenen ± 70 %, taal ± 65 %, lezen/studievaardigheden ± 55 % (nu ook langere leesteksten met feit/mening, samenvatten, conclusie en woordbetekenis in context). Samen ± **55–60 %**.
@@ -83,3 +83,6 @@ Elk kind heeft ruim voldoende oefenmateriaal, met spreiding over moeilijkheid (L
 - **Wassima (2 → 3 havo):** 388, alle 10 vakken gevuld; exact ruim, talen/zaakvakken degelijk.
 - **Amaani (4 → 5 vwo):** 387: alle 10 vakken gevuld; exact zeer ruim.
 Geen enkel vak-vak-combinatie meer leeg. Aandachtspunt (niet urgent): de "volgend jaar"-vooruitblik van talen/zaakvakken is bewust dun.
+
+## Het planbord (oktober 2026)
+Voor de bovenbouw, waar de toetsen het hele jaar doorlopen en niemand meer per les zegt wat er af moet. Toetsen erop, een dagplanning eruit: terugplannen vanaf de toets (eerste ronde per onderdeel, herhalen twee dagen ervoor, de laatste dag alleen overhoren), nooit meer dan tachtig procent van een dag vol, en bij elk afgevinkt blok de vraag hoe lang het écht duurde. Na drie van zulke paren corrigeert het bord de schattingen, als interval en niet als punt. Wat blijft liggen wordt niet rood maar morgen opnieuw ingepland. De ouder ziet per toets of het kind op schema ligt en of het krap wordt, liefst twee weken voor de toets. Rekenwerk in `planbord.ts` (met proeven), scherm in `schermen/Planbord.tsx`, rechtstreeks te openen via `/huiswerk/#planbord`. Daarnaast een naslagblok voor de bovenbouw (`gegevens/bovenbouw.ts`): molrekenen, zuur-base, redox, kinematica, krachten ontbinden met de goniometrie die wiskunde A niet geeft, kansrekening en de GR-functies.
