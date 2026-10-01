@@ -59,9 +59,13 @@ describe('de passé composé', () => {
     }
   })
 
-  it('staat achter de rest, zodat geen bestaande id verschuift', () => {
-    const eerste = NIEUW2627.length - FRANS_5VWO.length
-    expect(NIEUW2627[eerste]?.q).toBe(FRANS_5VWO[0]?.q)
-    expect(NIEUW2627[eerste - 1]?.p).not.toBe('amaani')
+  /* De id's staan sinds de eerste uitrol in de opslag van het kind, met een
+     Leitner-stand eraan. Ze zijn hier vastgepind: komt er later stof bij, dan
+     hoort die áchter deze reeks te komen en blijven deze nummers wat ze zijn. */
+  it('houdt de id’s die al in de opslag staan', () => {
+    const op = (id: string) => NIEUW2627.find((e) => e.id === id)?.q
+    expect(op('nw26_756')).toBe(FRANS_5VWO[0]?.q)
+    expect(op('nw26_782')).toBe(FRANS_5VWO[FRANS_5VWO.length - 1]?.q)
+    expect(FRANS_5VWO).toHaveLength(27)
   })
 })
