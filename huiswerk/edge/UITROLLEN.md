@@ -79,6 +79,14 @@ zegt nu dat het nog niet uitgerold is, en dat klopt dan niet meer.
 
 ## De planlezer (`huiswerk-plan`)
 
+**Uitgerold op 1 oktober 2026**, versie 1, op `huiuvnjrvvoybbzwfrfp`, met
+`verify_jwt` uit. Wat er draait is byte voor byte dit bestand uit de repo
+(nagekeken met `get_edge_function`). Nagekeken met een tekstverzoek vanuit de
+database zelf (`net.http_post`, omdat de ontwikkelomgeving supabase.co niet
+mag bereiken): drie toetsen terug met de juiste datums, de oefenonderwerpen
+precies uit de meegestuurde lijst, en voor Frans, waar de app nog niets voor
+heeft, een gat. De procedure hieronder blijft staan voor als het opnieuw moet.
+
 Sinds oktober 2026 staat er een tweede function naast de vraagbaak: de
 planlezer, die van een schermafdruk van het rooster of de studiewijzer toetsen
 voor het planbord maakt. Hij gebruikt dezelfde sleutel; het uitrollen is
@@ -89,9 +97,10 @@ dezelfde procedure met een andere naam.
 2. `verify_jwt` uit, om dezelfde reden als bij de vraagbaak.
 3. `ANTHROPIC_API_KEY` staat al in de secrets; niets te doen.
 
-Zolang hij niet draait krijgt het kind bij "Lees en maak een planning" de
-melding dat de fotolezer nog niet aanstaat, en kan het de toets gewoon zelf
-intypen. Er gaat dus niets stuk, er ontbreekt alleen een knop die werkt.
+Draait hij niet (een ander project, een verkeerde naam), dan krijgt het kind
+bij "Lees en maak een planning" de melding dat de fotolezer nog niet aanstaat,
+en kan het de toets gewoon zelf intypen. Er gaat dan niets stuk, er ontbreekt
+alleen een knop die werkt.
 
 Nakijken, met een tekst in plaats van een afbeelding:
 
