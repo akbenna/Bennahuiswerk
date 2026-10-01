@@ -25,7 +25,8 @@ import { isBeheerst } from '../leitner'
 import { zwakteAnalyse } from '../volgsysteem'
 import { bewaarAls, leerprofielData, rapportTekst } from '../rapport'
 import { advies, bandNaam, isAf } from '../leerscan'
-import { MIN_PAREN, actueel, isoVan, schatting, toetsStand, weekUren } from '../planbord'
+import { herstelStart } from '../gegevens/toetsen-start'
+import { MIN_PAREN, actueel, isoVan, schatting, toetsStand, uurgetal, weekUren } from '../planbord'
 import { STATUSKLEUR, dagLabel } from './Planbord'
 import {
   KindAccounts, Kindwachtwoorden, Leerlijnpaneel, Leerprofielpaneel, Weektaakbeheer, Zomerpaneel,
@@ -860,7 +861,7 @@ export function Leerscanpaneel({ stand }: { stand: Stand }): ReactNode {
 export function Planpaneel({ stand, nuMs }: { stand: Stand; nuMs: number }): ReactNode {
   const vandaag = isoVan(new Date(nuMs))
   const rijen = Object.entries(PROFIELEN)
-    .map(([pid, prof]) => ({ pid, prof, plan: schoonVoortgang(stand.prog[pid]).plan }))
+    .map(([pid, prof]) => ({ pid, prof, plan: herstelStart(schoonVoortgang(stand.prog[pid]).plan, pid) }))
     .filter((r) => r.plan && r.plan.toetsen.some((t) => !t.weg))
   if (!rijen.length) return null
 
@@ -892,7 +893,7 @@ export function Planpaneel({ stand, nuMs }: { stand: Stand; nuMs: number }): Rea
             <div className="row" style={{ justifyContent: 'space-between', flexWrap: 'wrap', gap: 6 }}>
               <div style={{ fontWeight: 700 }}>{prof.emoji} {prof.naam}</div>
               <span className="muted" style={{ fontSize: 13 }}>
-                komende week {week.laag === week.hoog ? `${week.laag} u` : `${week.laag}–${week.hoog} u`}
+                komende week {week.laag === week.hoog ? `${uurgetal(week.laag)} u` : `${uurgetal(week.laag)}–${uurgetal(week.hoog)} u`}
                 {vorigeWeek.length > 0 && ` · afgelopen 7 dagen ${af}/${vorigeWeek.length} blokken af`}
               </span>
             </div>

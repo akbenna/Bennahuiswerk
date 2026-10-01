@@ -28,7 +28,7 @@ import { Formuleklapper } from './Naslag'
 import { Vraagveld } from './Vraagveld'
 import { catalogus } from '../vraagbaak'
 import type { Ingang, Uitslag } from '../vraagbaak'
-import { actueel, blokkenOp, isoVan, leegPlan, toetsStand, weekUren, zetToets } from '../planbord'
+import { actueel, blokkenOp, isoVan, leegPlan, toetsStand, uurgetal, weekUren, zetToets } from '../planbord'
 import type { Planstand, Toets } from '../planbord'
 import { Blokregel, STATUSKLEUR, dagLabel, oefenroute } from './Planbord'
 import { STARTTOETSEN } from '../gegevens/toetsen-start'
@@ -575,7 +575,7 @@ function Planstrook({ pid, plan: opgeslagen, nuMs, bewaar, open, bovenbouw, cata
       <div className="row" style={{ marginTop: 12, justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
         <button type="button" className="btn" onClick={open}>Hele planning →</button>
         <span className="muted" style={{ fontSize: 13 }}>
-          komende week {week.laag === week.hoog ? `${week.laag} uur` : `${week.laag} tot ${week.hoog} uur`}
+          komende week {week.laag === week.hoog ? `${uurgetal(week.laag)} uur` : `${uurgetal(week.laag)} tot ${uurgetal(week.hoog)} uur`}
         </span>
       </div>
     </div>

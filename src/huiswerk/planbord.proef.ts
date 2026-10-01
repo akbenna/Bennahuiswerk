@@ -10,7 +10,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   actueel, capaciteit, dagenTussen, herplan, knipOnderdelen, leegPlan, maakLos, schatting, schuif,
-  toetsStand, verplaats, vinkAf, voegPlanSamen, weekUren, zetDagtijd, zetEcht, zetEigen, zetToets,
+  toetsStand, uurgetal, verplaats, vinkAf, voegPlanSamen, weekUren, zetDagtijd, zetEcht, zetEigen, zetToets,
 } from './planbord'
 import type { Blok, Planstand, Toets } from './planbord'
 
@@ -66,6 +66,29 @@ describe('de terugplanning', () => {
     const p = plan(toets({ id: 'b', datum: '2026-10-02', vak: 'biologie' }))
     expect(p.blokken.length).toBe(5)
     for (const b of p.blokken) expect(b.datum).toBe(VANDAAG)
+  })
+
+  it('laat de avond ervoor het teruglezen vallen en niet het overhoren', () => {
+    /* Zoals op het scherm van 1 oktober: biologie morgen, twee onderdelen van
+       40 minuten, herhalen en overhoren van 30. Samen 140 minuten op een
+       donderdag van 96. */
+    const p = plan(toets({
+      id: 'b', datum: '2026-10-02', vak: 'biologie',
+      onderdelen: ['Samenvatting doorlezen', 'Begrippen overhoren'], perOnderdeel: 40,
+    }))
+    const soort = (s: string) => p.blokken.filter((b) => b.soort === s)
+    expect(soort('overhoor')[0]?.vol).toBeFalsy()
+    expect(soort('herhaal')[0]?.vol).toBeFalsy()
+    expect(soort('eerste').some((b) => b.vol)).toBe(true)
+    /* Wat past staat bovenaan. */
+    const vol = p.blokken.map((b) => !!b.vol)
+    expect(vol).toEqual([...vol].sort((a, b) => Number(a) - Number(b)))
+  })
+
+  it('houdt de gewone volgorde als alles past', () => {
+    const p = plan(toets({ id: 'b', datum: '2026-10-02', vak: 'biologie', onderdelen: ['A'], perOnderdeel: 20 }))
+    expect(p.blokken.map((b) => b.soort)).toEqual(['eerste', 'herhaal', 'overhoor'])
+    expect(p.blokken.some((b) => b.vol)).toBe(false)
   })
 
   it('plant niets voor een toets die al geweest is', () => {
@@ -297,6 +320,11 @@ describe('schatten en meten', () => {
     const open = q.blokken.find((b) => b.soort === 'eerste' && !b.gedaan) as Blok
     expect(open.basis).toBe(40)
     expect(open.geschat).toBe(80)
+  })
+
+  it('schrijft een half uur met een komma', () => {
+    expect(uurgetal(11.5)).toBe('11,5')
+    expect(uurgetal(12)).toBe('12')
   })
 
   it('geeft de week als interval, nooit als één getal', () => {
