@@ -25,6 +25,7 @@ import { isBeheerst } from '../leitner'
 import { zwakteAnalyse } from '../volgsysteem'
 import { bewaarAls, leerprofielData, rapportTekst } from '../rapport'
 import { advies, bandNaam, isAf } from '../leerscan'
+import { herstelStart } from '../gegevens/toetsen-start'
 import { MIN_PAREN, actueel, isoVan, schatting, toetsStand, uurgetal, weekUren } from '../planbord'
 import { STATUSKLEUR, dagLabel } from './Planbord'
 import {
@@ -860,7 +861,7 @@ export function Leerscanpaneel({ stand }: { stand: Stand }): ReactNode {
 export function Planpaneel({ stand, nuMs }: { stand: Stand; nuMs: number }): ReactNode {
   const vandaag = isoVan(new Date(nuMs))
   const rijen = Object.entries(PROFIELEN)
-    .map(([pid, prof]) => ({ pid, prof, plan: schoonVoortgang(stand.prog[pid]).plan }))
+    .map(([pid, prof]) => ({ pid, prof, plan: herstelStart(schoonVoortgang(stand.prog[pid]).plan, pid) }))
     .filter((r) => r.plan && r.plan.toetsen.some((t) => !t.weg))
   if (!rijen.length) return null
 

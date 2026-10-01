@@ -45,6 +45,7 @@ import { Formules, Leertips } from './schermen/Naslag'
 import { Leerscan } from './schermen/Leerscan'
 import { Planbord } from './schermen/Planbord'
 import { WedstrijdMaken, WedstrijdSpelen } from './schermen/Wedstrijd'
+import { herstelStart } from './gegevens/toetsen-start'
 
 type Zicht = 'thuis' | 'vakken' | 'oefenen' | 'ouder' | 'formules' | 'leertips' | 'leerscan'
   | 'planbord' | 'wedstrijd-maken' | 'wedstrijd-spelen'
@@ -198,7 +199,7 @@ export function App(): ReactNode {
       <Planbord
         pid={pid} naam={PROFIELEN[pid]?.naam ?? ''} niveau={PROFIELEN[pid]?.niveau ?? ''}
         vakken={PROFIELEN[pid]?.vakken ?? []}
-        plan={prog.plan} nuMs={Date.now()}
+        plan={herstelStart(prog.plan, pid)} nuMs={Date.now()}
         terug={() => zetZicht('vakken')}
         bewaar={(pl) => t.zetKind(pid, (pr) => ({ ...pr, plan: pl }))}
         catalogus={catalogus(t.alle, pid, prog)}
@@ -269,7 +270,7 @@ export function App(): ReactNode {
         naarSpellen={() => { location.href = '/spellen/' }}
         opVraag={(vraag, u) => onthoudVraag(pid, vraag, u)}
         naarLeerscan={() => { zetZicht('leerscan'); scrollTo({ top: 0 }) }}
-        plan={prog.plan}
+        plan={herstelStart(prog.plan, pid)}
         bewaarPlan={(pl) => t.zetKind(pid, (pr) => ({ ...pr, plan: pl }))}
         naarPlanbord={() => { zetZicht('planbord'); scrollTo({ top: 0 }) }}
       />

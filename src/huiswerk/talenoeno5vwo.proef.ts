@@ -141,6 +141,6 @@ describe('de opgaven zelf', () => {
     expect(NIEUW2627.find((e) => e.id === 'nw26_963')?.q).toBe(BIOLOGIE_5VWO[0]?.q)
     expect(NIEUW2627.find((e) => e.id === 'nw26_1035')?.q).toBe(TALEN_5VWO[0]?.q)
     expect(NIEUW2627.find((e) => e.id === 'nw26_1143')?.q).toBe(OENO_5VWO[0]?.q)
-    expect(NIEUW2627).toHaveLength(1197)
+    expect(NIEUW2627.find((e) => e.id === 'nw26_1196')?.q).toBe(OENO_5VWO[OENO_5VWO.length - 1]?.q)
   })
 })
