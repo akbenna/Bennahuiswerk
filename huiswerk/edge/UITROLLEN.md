@@ -76,3 +76,34 @@ van de twee je aan het bijwerken bent.
 
 En dan hoort de waarschuwing bovenaan `huiswerk/edge/huiswerk-ai.ts` eruit, die
 zegt nu dat het nog niet uitgerold is, en dat klopt dan niet meer.
+
+## De planlezer (`huiswerk-plan`)
+
+Sinds oktober 2026 staat er een tweede function naast de vraagbaak: de
+planlezer, die van een schermafdruk van het rooster of de studiewijzer toetsen
+voor het planbord maakt. Hij gebruikt dezelfde sleutel; het uitrollen is
+dezelfde procedure met een andere naam.
+
+1. Edge Functions → Deploy a new function, naam **exact** `huiswerk-plan`,
+   inhoud `huiswerk/edge/huiswerk-plan.ts` uit deze repo, ongewijzigd.
+2. `verify_jwt` uit, om dezelfde reden als bij de vraagbaak.
+3. `ANTHROPIC_API_KEY` staat al in de secrets; niets te doen.
+
+Zolang hij niet draait krijgt het kind bij "Lees en maak een planning" de
+melding dat de fotolezer nog niet aanstaat, en kan het de toets gewoon zelf
+intypen. Er gaat dus niets stuk, er ontbreekt alleen een knop die werkt.
+
+Nakijken, met een tekst in plaats van een afbeelding:
+
+```
+curl -sS -X POST 'https://huiuvnjrvvoybbzwfrfp.supabase.co/functions/v1/huiswerk-plan' \
+  -H 'Content-Type: application/json' \
+  -d '{"tekst":"wo 7 okt toets wiskunde A H3 par 3.1 t/m 3.4",
+       "vandaag":"2026-10-01","kind":{"naam":"Amaani","niveau":"5 vwo"},
+       "vakken":[{"sleutel":"wiskundeA","naam":"Wiskunde A"}],
+       "catalogus":[{"s":"wiskundeA|Kansrekening|nu","vak":"Wiskunde A","onderwerp":"Kansrekening","n":12}]}'
+```
+
+Een 200 met `toetsen` erin is goed. De foutcodes betekenen hetzelfde als bij de
+vraagbaak hierboven, plus een 422 als het model de afbeelding niet kon of wilde
+lezen.

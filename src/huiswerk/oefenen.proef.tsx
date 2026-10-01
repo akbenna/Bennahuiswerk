@@ -24,6 +24,7 @@ import { PROFIELEN } from './gegevens/profielen'
 import { themaVan } from './schermen/Thuis'
 import type { Kaart, Opgave } from './gegevens/soorten'
 import type { Voortgang } from './opslag'
+import type { Planstand } from './planbord'
 import { leegVoortgang, schoonVoortgang } from './opslag'
 import { verwerkAntwoord } from './uitslag'
 import { UITLEG } from './gegevens/uitleg'
@@ -443,5 +444,61 @@ describe('de uitgewerkte som uit de methode', () => {
     expect(document.querySelector('.feedback.no')?.textContent).toContain('net als in je boek')
     /* En de doos staat open, anders is wijzen zinloos. */
     expect(document.querySelector('.boekvoorbeeld')).not.toBeNull()
+  })
+})
+
+/**
+ * HET PLANBORD STAAT BOVENAAN, IN DE BOVENBOUW
+ *
+ * Voor Amaani is het planbord de reden om de app te openen, niet het dagdoel
+ * van tien sommen. Dus hoort het het eerste te zijn wat ze ziet. Een grep zou
+ * dit niet vangen: de strook stónd er al, alleen onder de rest. Wat hier
+ * getoetst wordt is de volgorde op het scherm, en dat Wassima in 2 havo er
+ * niets van merkt.
+ */
+describe('het planbord op het eigen scherm', () => {
+  const scherm = (pid: string, plan?: Planstand): { bewaard: Planstand[] } => {
+    const bewaard: Planstand[] = []
+    render(
+      <Vakken
+        pid={pid} prog={vers('auto')} alle={natuurkundeStapel as Kaart[]}
+        vak="natuurkunde" thema={themaVan(pid)} nuMs={new Date(2026, 9, 1, 15).getTime()} weektaak={[]}
+        wedstrijdAan={false} spelNaDoel={false}
+        zetVak={() => { /* niet nodig */ }}
+        terug={() => { /* niet nodig */ }}
+        naarOnderwerp={() => { /* niet nodig */ }}
+        zetDoel={() => { /* niet nodig */ }}
+        zetNiveau={() => { /* niet nodig */ }}
+        naarWedstrijd={() => { /* niet nodig */ }}
+        naarSpellen={() => { /* niet nodig */ }}
+        opVraag={() => { /* niet nodig */ }}
+        naarLeerscan={() => { /* niet nodig */ }}
+        plan={plan}
+        bewaarPlan={(q) => { bewaard.push(q) }}
+        naarPlanbord={() => { /* niet nodig */ }}
+      />,
+    )
+    return { bewaard }
+  }
+
+  it('staat bij Amaani boven het dagdoel, ook als het nog leeg is', () => {
+    const { container } = { container: document.body }
+    scherm('amaani')
+    const tekst = container.textContent ?? ''
+    expect(tekst).toContain('Jouw planbord')
+    expect(tekst.indexOf('Jouw planbord')).toBeLessThan(tekst.indexOf('🎯'))
+  })
+
+  it('zet met één tik de toetsen van deze week erop', () => {
+    const { bewaard } = scherm('amaani')
+    fireEvent.click(screen.getByRole('button', { name: /Zet de toetsen van deze week erop/ }))
+    const laatste = bewaard[bewaard.length - 1]
+    expect(laatste?.toetsen.length).toBeGreaterThan(0)
+    expect(laatste?.blokken.length).toBeGreaterThan(0)
+  })
+
+  it('laat Wassima in 2 havo zonder toetsen ongemoeid', () => {
+    scherm('wassima')
+    expect(document.body.textContent).not.toContain('planbord')
   })
 })

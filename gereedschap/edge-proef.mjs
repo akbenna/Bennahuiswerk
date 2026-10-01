@@ -34,16 +34,18 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import ts from 'typescript'
 
-const MAP = 'health/edge'
-const bestanden = readdirSync(MAP).filter((n) => n.endsWith('.ts'))
+/* Twee mappen: BennaHealth en het huiswerk. De tweede stond hier eerst niet
+   bij, zodat de vraagbaak en de planlezer langs elke controle gingen, precies
+   het gat waar deze proef voor bestaat. */
+const MAPPEN = ['health/edge', 'huiswerk/edge']
+const bestanden = MAPPEN.flatMap((m) => readdirSync(m).filter((n) => n.endsWith('.ts')).map((n) => join(m, n)))
 if (!bestanden.length) {
-  console.error('edge-proef: geen enkel bestand gevonden in ' + MAP)
+  console.error('edge-proef: geen enkel bestand gevonden in ' + MAPPEN.join(', '))
   process.exit(1)
 }
 
 let fout = 0
-for (const naam of bestanden) {
-  const pad = join(MAP, naam)
+for (const pad of bestanden) {
   const bron = readFileSync(pad, 'utf8')
   const vel = ts.createSourceFile(pad, bron, ts.ScriptTarget.ES2022, true, ts.ScriptKind.TS)
   /* `parseDiagnostics` staat niet in de publieke typen maar is wat de parser
@@ -137,7 +139,7 @@ function controleerTypen(paden) {
     .filter((d) => d.file && !d.file.fileName.startsWith('https:'))
 }
 
-const klachten = controleerTypen(bestanden.map((n) => join(MAP, n)))
+const klachten = controleerTypen(bestanden)
 if (klachten.length) {
   for (const k of klachten.slice(0, 8)) {
     const vel = k.file
