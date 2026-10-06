@@ -627,6 +627,7 @@ export function AccountVenster(
           Wat er van je bewaard wordt
         </button>
       </p>
+      <GegevensMeenemen />
       <GegevensWeghalen opAfmelden={opAfmelden} />
       <Rij style={{ marginTop: 14 }}>
         <Knop opKlik={opAfmelden}>Afmelden</Knop>
@@ -1480,6 +1481,57 @@ function EigenSleutel({ t, opnieuw }: { t: Toegang; opnieuw: () => void }) {
         </p>
       </Uitleg>
     </div>
+  )
+}
+
+/**
+ * JE GEGEVENS MEENEMEN
+ *
+ * Eén bestand met alles wat je zelf hebt vastgelegd, in een vorm die een ander
+ * programma kan lezen. Dat is het recht op overdraagbaarheid, en het is de weg
+ * naar een programma bij de praktijk: daar lees je dit bestand zelf in. Er is
+ * geen koppeling tussen de twee; zie `health/database/55-je-gegevens-meenemen.sql`
+ * voor waarom niet, en voor wat er bewust niet in het bestand staat.
+ *
+ * Het bestand wordt in de browser gemaakt en meteen aangeboden. Het gaat
+ * nergens anders heen.
+ */
+function GegevensMeenemen() {
+  const [fout, zetFout] = useState<string | null>(null)
+  const [bezig, zetBezig] = useState(false)
+
+  const download = async () => {
+    const tk = sessietoken()
+    if (!tk) { zetFout('Je bent niet aangemeld'); return }
+    zetBezig(true)
+    zetFout(null)
+    try {
+      const uit = await roep('kal_exporteren', { p_token: tk })
+      const blob = new Blob([JSON.stringify(uit, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `bennahealth-${vandaag()}.json`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      URL.revokeObjectURL(url)
+    } catch (e) {
+      zetFout(e instanceof Error ? e.message : String(e))
+    } finally {
+      zetBezig(false)
+    }
+  }
+
+  return (
+    <p className="mini" style={{ marginTop: 10 }}>
+      <button type="button" className="alsLink" disabled={bezig} onClick={() => void download()}>
+        {bezig ? 'Bezig met je bestand' : 'Je gegevens downloaden'}
+      </button>
+      {' '}Alles wat je hebt vastgelegd, als één bestand. Zo kun je het bewaren of meenemen
+      naar een programma bij je praktijk.
+      {fout && <span style={{ display: 'block', color: 'var(--let)', marginTop: 4 }}>{fout}</span>}
+    </p>
   )
 }
 

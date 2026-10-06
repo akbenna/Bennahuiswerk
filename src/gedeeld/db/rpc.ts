@@ -462,6 +462,9 @@ export interface RpcKaart {
   /* Je gegevens weghalen, bestand 52. `p_echt` staat standaard uit: dan telt
      hij alleen en verandert er niets. Dat is geen voorzichtigheid maar het
      ontwerp, want er is geen prullenbak. */
+  /* Je gegevens meenemen, bestand 55. Eén JSON met alles wat de gebruiker
+     zelf heeft vastgelegd; zie de kop van dat bestand voor wat er niet in zit. */
+  kal_exporteren: { in: { p_token: string }; uit: Export }
   kal_account_wissen: {
     in: { p_token: string; p_ww: string; p_echt?: boolean }
     uit: Wisuitslag | { fout: string }
@@ -684,6 +687,16 @@ export interface Tester {
 }
 
 /** Wat er weg zou gaan, of weg is. Zie bestand 52. */
+/** De uitvoer van kal_exporteren. Ongetypt per tabel met opzet: het bestand
+ *  gaat de deur uit zoals de database het levert, en wie het inleest (ProVita,
+ *  src/lib/bennahealthImport.js) toetst zelf formaat en versie. */
+export interface Export {
+  formaat: 'bennahealth-export'
+  versie: number
+  gemaakt_op: string
+  [onderdeel: string]: unknown
+}
+
 export interface Wisuitslag {
   gewist: boolean
   account: string
