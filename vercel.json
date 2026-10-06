@@ -168,6 +168,11 @@
       "permanent": true
     },
     {
+      "source": "/kalibratie/",
+      "destination": "/health/",
+      "permanent": true
+    },
+    {
       "source": "/kalibratie/:pad*",
       "destination": "/health/:pad*",
       "permanent": true
