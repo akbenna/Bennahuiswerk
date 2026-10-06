@@ -2,7 +2,10 @@
 -- 54: DE BIBLIOTHEEK VAN PROVITA, ÉÉN KANT OP
 -- ===========================================================================
 --
--- TOEGEPAST: zie de regel onderaan dit bestand.
+-- TOEGEPAST: 6 oktober 2026, op huiuvnjrvvoybbzwfrfp, en dicht: er staat nog
+-- geen bibliotheek_geheim_sha256 in kal_config, dus de functie antwoordt "De
+-- ontvangst van de bibliotheek is niet ingericht". Openzetten gaat zoals
+-- hieronder beschreven. controle-md5.sql: gelijk.
 --
 -- WAAROM
 --
@@ -160,8 +163,8 @@ comment on function public.kal_bibliotheek_ontvangen(text, jsonb) is
 --     -> {"fout": "De ontvangst van de bibliotheek is niet ingericht"}  (zonder hash)
 --     -> {"fout": "Geen toegang"}                                         (met hash)
 --
--- En de eigen proef, in een transactie die zichzelf terugdraait: zie de regel
--- TOEGEPAST hieronder voor wat er op de echte database gedraaid is.
+-- Op de echte database is op 6 oktober 2026 alleen het eerste geval nagekeken
+-- (zonder hash); zie TOEGEPAST bovenaan.
 --
 -- TERUGDRAAIEN, ALLEEN WAT DEZE ROUTE NEERZETTE
 --

@@ -2,9 +2,11 @@
 -- 55: JE GEGEVENS MEENEMEN
 -- ===========================================================================
 --
--- TOEGEPAST: nog niet. Na het toepassen:
---   node gereedschap/md5-verslag.mjs --schrijf
--- en de nakijklijst onderaan.
+-- TOEGEPAST: 6 oktober 2026, op huiuvnjrvvoybbzwfrfp. Nagekeken: de functie
+-- is security definer, uitvoerbaar voor anon en authenticated en niet voor
+-- public, en zonder geldige sessie weigert kal_sessie ("Sessie verlopen of
+-- onbekend"). De export van het echte account bevat geen sleutel_hash,
+-- ww_hash, token of kosten_usd. controle-md5.sql: gelijk.
 --
 -- WAAROM
 --
