@@ -34,6 +34,7 @@ import {
 import { LerenVenster } from './vensters/Leren'
 import { VerdiepVenster } from './vensters/Verdiepen'
 import { WegingVenster } from './vensters/Wegingen'
+import { NaarProvita } from './vensters/NaarProvita'
 import { Opzet } from './Opzet'
 import { Kaart, Knop, Spin } from './onderdelen/basis'
 import { useVeeg } from './veeg'
@@ -240,6 +241,7 @@ export function App() {
         )}
 
         <Postbus token={k.sessie.token} a={a} />
+        <NaarProvita token={k.sessie.token} />
 
         <div id="inhoud" ref={zetVlak}>
           {tab === 'vandaag' && (
