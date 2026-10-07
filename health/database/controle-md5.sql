@@ -54,6 +54,7 @@ with verwacht (functie, uit_bestand, md5_repo) as (
     ('kal_beweging_gewoonte', '05-peilingen-van-de-dag.sql', '50b1ce06ac9d8ce23d7f6c2978a162aa'),
     ('kal_beweging_ontvangen', '02-koppelingen-voor-beweging.sql', '89014c215dc107b9d7ddad125ebfc169'),
     ('kal_bibliotheek_ontvangen', '54-de-bibliotheek-van-provita.sql', 'b41f6ce1c88b4cafe92148fa3d3b4f6c'),
+    ('kal_bibliotheek_vervangen', '56-vervangen-op-verzoek.sql', '6a5e4057b64f415432560f0ea2a9ff7d'),
     ('kal_coach_bouwen', '46-zeven-functies-gelijktrekken.sql', 'b497686b36de46b6ed512355f776d9b5'),
     ('kal_coach_stand', '06-de-coach-prikkelt.sql', '9bd4b0e1cf8950cb392ed9fae0ceabe7'),
     ('kal_dag_zetten', '50-de-negen-die-er-nog-niet-stonden.sql', '41afba38f12840b2af5dfc6d43aad327'),
