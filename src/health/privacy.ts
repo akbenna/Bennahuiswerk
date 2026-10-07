@@ -45,7 +45,7 @@
 export const CONTACT = 'info@provita-care.nl'
 
 /** De dag waarop deze tekst voor het laatst is nagelopen tegen de code. */
-export const NAGEKEKEN = '23 september 2026'
+export const NAGEKEKEN = '7 oktober 2026'
 
 export interface Stuk {
   kop: string
@@ -60,10 +60,11 @@ export const PRIVACY: readonly Stuk[] = [
       + 'uit je gewichtstrend in plaats van het te schatten uit een formule, en daarvoor '
       + 'heeft hij gegevens van je nodig die als gezondheidsgegevens gelden. Deze tekst '
       + 'zegt welke dat zijn, waar ze heen gaan en wat je ermee kunt.',
-      'Verantwoordelijk voor die gegevens is de beheerder van deze test, te bereiken op '
-      + CONTACT + '. Hij is huisarts, en dat is hier niet van belang: je bent geen '
-      + 'patiënt en dit is geen zorg. Wat je hier invult komt niet in een dossier en '
-      + 'wordt niet met een zorgverlener gedeeld.',
+      'Verantwoordelijk voor die gegevens is ProVita Care, te bereiken op ' + CONTACT
+      + '. ProVita Care biedt ook leefstijlprogramma\'s met een behandelaar aan, maar '
+      + 'BennaHealth hoort daar niet bij: je bent hier geen patiënt en dit is geen zorg. '
+      + 'Wat je hier invult komt niet in een dossier en een behandelaar ziet het niet, '
+      + 'tenzij je het zelf overzet. Hoe dat gaat staat hieronder.',
     ],
   },
   {
@@ -121,7 +122,12 @@ export const PRIVACY: readonly Stuk[] = [
       + 'browser praat rechtstreeks met de database en Vercel levert alleen de bestanden '
       + 'van de app.',
       'Verder niemand. Er wordt niets verkocht, niets gedeeld met adverteerders, en er '
-      + 'gaat niets naar een verzekeraar, een werkgever of een zorgverlener.',
+      + 'gaat niets naar een verzekeraar of een werkgever.',
+      'Naar een zorgverlener gaat alleen wat je zelf stuurt. Zit je in een programma van '
+      + 'ProVita Care, dan kun je vanuit dat programma vragen om wat je hier hebt '
+      + 'vastgelegd over te zetten. Je zegt hier eerst ja, ziet daar wat er meekomt, en '
+      + 'beslist dan nog een keer. Wat je niet overzet, ziet je behandelaar niet. De twee '
+      + 'apps delen geen database en geen account.',
     ],
   },
   {

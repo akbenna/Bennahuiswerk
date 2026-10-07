@@ -1,6 +1,6 @@
 # DPIA BennaHealth: gegevensbeschermingseffectbeoordeling
 
-Concept van 15 september 2026. Een DPIA is een proces en geen formulier: dit
+Concept van 15 september 2026, bijgewerkt op 7 oktober 2026. Een DPIA is een proces en geen formulier: dit
 stuk beschrijft wat er nu werkelijk gebeurt met welke gegevens, en het benoemt
 de besluiten die nog niet genomen zijn. Die staan als open punt en niet als
 aanname.
@@ -8,25 +8,34 @@ aanname.
 Een DPIA is hier verplicht en niet optioneel. De AVG schrijft er een voor bij
 grootschalige verwerking van bijzondere persoonsgegevens, en ook zonder die
 drempel geldt dat gezondheidsgegevens plus geautomatiseerde verwerking plus een
-nieuwe technologie samen ruim boven de criteria van de EDPB uitkomen. Blijft de
-app beperkt tot de maker zelf, dan is hij er niet toe verplicht, maar dan is
-dit stuk de voorbereiding op het moment dat dat verandert, en dat moment is de
-reden dat het er nu ligt.
+nieuwe technologie samen ruim boven de criteria van de EDPB uitkomen. Zolang
+alleen de maker de app gebruikte, was dit stuk een voorbereiding. Sinds
+BennaHealth vanuit ProVita aan patiënten wordt aangeboden, is het een
+verplichting.
 
 ## Het besluit dat vooropgaat
 
-**Wie is verwerkingsverantwoordelijke?** Dat is de eerste vraag en hij is nog
-niet beantwoord. Er zijn twee antwoorden en ze sluiten elkaar uit.
+**Wie is verwerkingsverantwoordelijke?** ProVita Care. Besloten door de eigenaar
+op 7 oktober 2026.
 
-Gebruikt alleen de maker de app voor zichzelf, dan is er geen verwerking in de
-zin van de AVG die buiten de huishoudelijke uitzondering valt en houdt het hier
-op. Gebruiken patiënten van Huisartsenpraktijk Het Roosendael hem, dan is de
-praktijk verwerkingsverantwoordelijke, met alles wat daaraan hangt: een
-grondslag, een verwerkersovereenkomst per dienstverlener, een bewaartermijn, een
-plek in het verwerkingsregister, en een route voor de rechten van betrokkenen.
+Tot die dag stonden hier twee antwoorden die elkaar uitsluiten: eigen gebruik
+door de maker, waarvoor de huishoudelijke uitzondering geldt, of gebruik door
+patiënten van de praktijk, en dan de praktijk als verantwoordelijke. Het eerste
+viel af toen BennaHealth vanuit ProVita aan patiënten werd aangeboden. Het
+tweede is het niet geworden: niet de huisartsenpraktijk maar ProVita Care is
+verantwoordelijk, dezelfde partij die de programma's levert.
 
-Alles hieronder is geschreven voor het tweede geval, want dat is het geval waar
-het fout kan gaan.
+Dat maakt BennaHealth en het programma twee diensten van één verantwoordelijke,
+met twee doelen en twee grondslagen. BennaHealth draait op uitdrukkelijke
+toestemming (art. 9 lid 2 onder a), want het is geen zorg en geen onderdeel van
+een behandeling. Het programma valt onder de uitzondering voor zorgverlening
+(onder h). De knip tussen die twee is het overzetten: gegevens gaan alleen van
+de app naar het programma als de gebruiker dat zelf doet, met twee keer ja, via
+zijn eigen browser (`src/health/naarprovita.ts`). Er is geen gedeelde database
+en geen gedeeld account. Die knip hoort er te blijven, want zonder haar zou wat
+iemand op toestemming invult stil onder een andere grondslag gaan vallen.
+
+Alles hieronder is geschreven voor dit geval.
 
 ## Wat er verwerkt wordt
 
@@ -117,26 +126,32 @@ grondslag onder hoofdstuk V AVG.
 maar wel een risico voor de gebruiker.
 *Open punt: wat is het herstelbeleid van dit Supabase-project?*
 
-## Wat er nog beslist moet worden
+## Wat er nog beslist of geregeld moet worden
 
-Wie verwerkingsverantwoordelijke is, en dus of dit stuk een voorbereiding is of
-een verplichting.
+Stand op 7 oktober 2026.
 
-De grondslag. Bij een app die patiënten vrijwillig gebruiken ligt uitdrukkelijke
-toestemming (art. 9 lid 2 onder a) meer voor de hand dan de uitzondering voor
-zorgverlening (onder h), omdat de app geen onderdeel is van de behandeling. Die
-keuze bepaalt hoe de tekst bij het aanmelden moet luiden.
+**Beslist.** De verantwoordelijke (hierboven). De grondslag: uitdrukkelijke
+toestemming, zoals `PRIVACY.md` al zei. De bewaartermijn: zolang iemand
+meedoet en daarna drie maanden. Verwijderen kan de gebruiker zelf (bestand 52),
+exporteren ook (bestand 55).
 
-De bewaartermijn, en wat er gebeurt als iemand stopt. Nu is er geen termijn en
-geen opzegroute.
+**Te regelen door ProVita Care, vóór de eerste patiënt wordt toegelaten.**
 
-Een verwerkersovereenkomst met Supabase, Vercel en Anthropic, en opname in het
-verwerkingsregister van de praktijk.
-
-Hoe iemand zijn gegevens inziet, corrigeert en meeneemt. De app kan importeren;
-exporteren en wissen zijn de tegenhangers die er nog niet zijn.
-
-De regio van het Supabase-project, vastgesteld en niet aangenomen.
+- Een verwerkersovereenkomst met Supabase en met Anthropic, afgesloten door of
+  overgezet naar ProVita Care, met een geldige grondslag voor doorgifte naar de
+  VS. De herkenning draait op de sleutel van ProVita Care (25 per maand per
+  gebruiker), dus Anthropic verwerkt hier in opdracht van ProVita Care en niet
+  van de gebruiker. Vercel ziet geen gegevens (zie `PRIVACY.md`) en is daarom
+  geen verwerker van gezondheidsgegevens; een gebruiker met een eigen sleutel
+  van OpenAI of Anthropic verwerkt via zijn eigen afspraak.
+- Opname van BennaHealth in het verwerkingsregister van ProVita Care, als
+  verwerking los van de programma's.
+- De regio van het Supabase-project, vastgesteld en niet aangenomen, en het
+  herstelbeleid.
+- Een melding vóór het maken van een foto dat die naar een verwerker buiten de
+  EU gaat.
+- Een toets van dit stuk door een functionaris voor gegevensbescherming of een
+  jurist. Het is nog steeds een beschrijving door de bouwer.
 
 ---
 

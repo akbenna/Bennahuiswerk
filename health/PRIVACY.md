@@ -1,6 +1,6 @@
 # Privacyverklaring BennaHealth
 
-Nagelopen tegen de code op 23 september 2026. Vragen gaan naar info@provita-care.nl.
+Nagelopen tegen de code op 7 oktober 2026. Vragen gaan naar info@provita-care.nl.
 
 Deze tekst wordt geschreven uit `src/health/privacy.ts` met
 `node gereedschap/privacy-schrijven.mjs`. Pas hem daar aan en niet hier,
@@ -10,7 +10,7 @@ anders valt `src/health/privacy.proef.ts` om.
 
 BennaHealth is geen dienst maar een besloten test. De app meet je energieverbruik uit je gewichtstrend in plaats van het te schatten uit een formule, en daarvoor heeft hij gegevens van je nodig die als gezondheidsgegevens gelden. Deze tekst zegt welke dat zijn, waar ze heen gaan en wat je ermee kunt.
 
-Verantwoordelijk voor die gegevens is de beheerder van deze test, te bereiken op info@provita-care.nl. Hij is huisarts, en dat is hier niet van belang: je bent geen patiënt en dit is geen zorg. Wat je hier invult komt niet in een dossier en wordt niet met een zorgverlener gedeeld.
+Verantwoordelijk voor die gegevens is ProVita Care, te bereiken op info@provita-care.nl. ProVita Care biedt ook leefstijlprogramma's met een behandelaar aan, maar BennaHealth hoort daar niet bij: je bent hier geen patiënt en dit is geen zorg. Wat je hier invult komt niet in een dossier en een behandelaar ziet het niet, tenzij je het zelf overzet. Hoe dat gaat staat hieronder.
 
 ## Wat er van je wordt bewaard
 
@@ -44,7 +44,9 @@ Laat je een maaltijd herkennen uit tekst of een foto, dan gaat die tekst of die 
 
 De app zelf wordt geleverd via Vercel. Die ziet geen enkel gegeven van je: je browser praat rechtstreeks met de database en Vercel levert alleen de bestanden van de app.
 
-Verder niemand. Er wordt niets verkocht, niets gedeeld met adverteerders, en er gaat niets naar een verzekeraar, een werkgever of een zorgverlener.
+Verder niemand. Er wordt niets verkocht, niets gedeeld met adverteerders, en er gaat niets naar een verzekeraar of een werkgever.
+
+Naar een zorgverlener gaat alleen wat je zelf stuurt. Zit je in een programma van ProVita Care, dan kun je vanuit dat programma vragen om wat je hier hebt vastgelegd over te zetten. Je zegt hier eerst ja, ziet daar wat er meekomt, en beslist dan nog een keer. Wat je niet overzet, ziet je behandelaar niet. De twee apps delen geen database en geen account.
 
 ## Hoe lang
 

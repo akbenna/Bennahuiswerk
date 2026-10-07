@@ -100,9 +100,10 @@ tussen de app zoals hij nu is en een app zonder de drie risicomodules?
 ## Wat er verder nog moet
 
 Een DPIA. Het conditieprofiel maakt expliciet wat de app impliciet al verwerkte:
-gegevens over gezondheid, en dus bijzondere persoonsgegevens. De grondslag, de
-bewaartermijn en de rol van de praktijk moeten vastliggen voordat dit bij
-patiënten komt.
+gegevens over gezondheid, en dus bijzondere persoonsgegevens. De grondslag en
+de bewaartermijn liggen vast, en sinds 7 oktober 2026 ook de verantwoordelijke:
+ProVita Care. Wat er nog geregeld moet worden voordat dit bij patiënten komt,
+staat in `DPIA.md`.
 
 Een besluit over het geplande overzicht voor de praktijkondersteuner. Dat is een
 ander product met een andere gebruiker, en het hoort in ProVita Care en niet

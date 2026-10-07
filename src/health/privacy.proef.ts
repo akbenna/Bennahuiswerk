@@ -58,6 +58,15 @@ describe('wat er in moet staan', () => {
     }
   })
 
+  // Besluit van 7 oktober 2026: ProVita Care is verwerkingsverantwoordelijke.
+  // Een verklaring die een ander noemt, of die de weg naar een behandelaar
+  // verzwijgt terwijl NaarProvita.tsx hem biedt, is onjuist.
+  it('noemt de verantwoordelijke en de enige weg naar een behandelaar', () => {
+    expect(alles).toContain('Verantwoordelijk voor die gegevens is ProVita Care')
+    expect(alles).toContain('Naar een zorgverlener gaat alleen wat je zelf stuurt')
+    expect(alles).toContain('Wat je niet overzet, ziet je behandelaar niet')
+  })
+
   it('noemt de grondslag en de toezichthouder', () => {
     expect(alles).toContain('toestemming')
     expect(alles).toContain('artikel 9')

@@ -35,14 +35,14 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const RESEND = "https://api.resend.com/emails";
-/* De afzender. Deze mail komt van BennaHealth, de losse app, en niet van een
-   behandeling bij ProVita; de naam ProVita erboven wekt de verwachting dat de
-   praktijk meeleest, en dat is niet zo (BEOOGD-DOEL.md). Welke naam het wordt
-   hangt aan een besluit dat nog open staat: wie is verwerkingsverantwoordelijke
-   voor de losse app (DPIA.md). Tot dat besluit er is, blijft de oude afzender de
-   standaard, want een domein dat niet bij Resend is geverifieerd laat elke mail
-   weigeren. Na het besluit: PRIKKEL_AFZENDER in de omgeving van deze functie. */
-const VAN = Deno.env.get("PRIKKEL_AFZENDER") || "ProVita Care <info@provita-care.nl>";
+/* De afzender. Sinds 7 oktober 2026 is ProVita Care verwerkingsverantwoordelijke
+   voor BennaHealth (DPIA.md), dus die naam hoort erbij. Alleen "ProVita Care"
+   wekt wel de verwachting dat een behandelaar meeleest, en dat is niet zo
+   (BEOOGD-DOEL.md). Daarom staat de app voorop en de verantwoordelijke tussen
+   haakjes. Het adres blijft hetzelfde: alleen dat domein is bij Resend
+   geverifieerd, en een ander laat elke mail weigeren. PRIKKEL_AFZENDER in de
+   omgeving van deze functie gaat voor. */
+const VAN = Deno.env.get("PRIKKEL_AFZENDER") || "BennaHealth (ProVita Care) <info@provita-care.nl>";
 
 /** Wat het model mag doen, en vooral wat niet. */
 const OPDRACHT = `Je helpt iemand die zijn voeding bijhoudt in een app die één regel volgt:
