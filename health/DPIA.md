@@ -1,6 +1,12 @@
 # DPIA BennaHealth: gegevensbeschermingseffectbeoordeling
 
-Concept van 15 september 2026. Een DPIA is een proces en geen formulier: dit
+Concept van 15 september 2026. Op 7 oktober 2026 is dit concept op een aantal
+punten achterhaald door de code (export en wissen bestaan, bewaartermijn van
+drie maanden in de privacyverklaring, Resend en de weektaak als verwerkingen).
+De herziening staat als stap BH5 in `docs/wetgeving/STAPPENPLAN.md`, naast het
+gedeelde leveranciersdossier in `docs/wetgeving/leveranciers/`.
+
+Een DPIA is een proces en geen formulier: dit
 stuk beschrijft wat er nu werkelijk gebeurt met welke gegevens, en het benoemt
 de besluiten die nog niet genomen zijn. Die staan als open punt en niet als
 aanname.
