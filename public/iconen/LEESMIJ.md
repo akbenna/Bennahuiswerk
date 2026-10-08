@@ -21,6 +21,7 @@ scherm van zestien pixels breed en ook voor wie nog niet vlot leest.
 | `verbind.svg` | Verbind | oker | twee tekstballonnen die elkaar overlappen |
 | `podium.svg` | Podium | oker | een microfoon op een standaard |
 | `trading.svg` | Trading | oker | drie kaarsen van een koersgrafiek, de middelste goud |
+| `notities.svg` | Notities | inkt | een rode opnamelamp in een ring: de enige knop van de app |
 
 De laatste vier delen één kleur, en dat is de enige uitzondering op de regel
 hierboven. Het zijn de vier cursussen van de Academie: ze horen bij elkaar en dat

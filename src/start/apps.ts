@@ -106,6 +106,15 @@ export const APPS: readonly AppTegel[] = [
   zin:'Achtentwintig weken Malikitische fiqh, usul, ‘aqida, bronnenkritiek en medische ethiek, elke week met een fragment uit de oorspronkelijke tekst.',
   detail:['Eén week per week','Arabisch met vertaling','Kaarten voor herhaling']},
 
+ /* Notities is een onderdeel van BennaAssistent en woont daar: actiepunten
+    uit een vergadering worden er taakvoorstellen, de projecten zijn er de
+    indeling en de Google-koppeling ligt er al. Deze tegel is alleen de
+    ingang; de assistent heeft zijn eigen aanmelding. */
+ {id:'notities', naam:'Notities', href:'https://benna-assistent.vercel.app/notities', ico:'/iconen/notities.svg', k:'notities', groep:'groot', kort:'Vergaderingen vastleggen',
+  wie:'Abdelkader',
+  zin:'Eén knop om een vergadering, overleg of telefoongesprek op te nemen, in BennaAssistent. Daarna uitgeschreven en samengevat, met jouw actiepunten als taakvoorstel en vervolgafspraken met één tik in de agenda. Niet voor consulten.',
+  detail:['Bestuur, kader en zakelijk','Actiepunten worden taken','Google Drive en Agenda','Geen patiëntgegevens']},
+
  {id:'rasikh', naam:'Koran uit je hoofd', href:'rasikh/', ico:'/iconen/koran.svg', k:'koran', groep:'groot', kort:'Memoriseren en herhalen',
   oud:'Rasikh', ar:'رَاسِخ', wie:'Abdelkader',
   zin:'De Koran uit je hoofd leren en, dat is het moeilijke deel, vasthouden. Zes stappen per aya, en een systeem dat pas nieuwe stof geeft als de herhalingen bij zijn.',
