@@ -493,23 +493,6 @@ const PAGINAS = [
       return null
     },
   },
-  {
-    pad: '/notities/', kop: 'Notities', minKnoppen: 0, plaat: 'notities',
-    /* Zonder gekoppeld project toont de app alleen dat hij nog niet gekoppeld
-       is, dus knoppen zijn hier geen maat. Wat wél telt: de enige app die de
-       microfoon nodig heeft krijgt hem, en de rest van de hub nog steeds niet.
-       Dat hangt aan één regex in vercel.json, en die is precies het soort
-       regel dat bij een volgende wijziging ongemerkt omvalt. */
-    async doe(pagina) {
-      const mag = () => document.featurePolicy?.allowsFeature('microphone') ?? null
-      if (await pagina.evaluate(mag) !== true) return 'de microfoon is op /notities/ niet toegestaan'
-      await pagina.goto(`http://localhost:${poort}/health/`, { waitUntil: 'domcontentloaded' })
-      const elders = await pagina.evaluate(mag)
-      await pagina.goto(`http://localhost:${poort}/notities/`, { waitUntil: 'networkidle' })
-      if (elders !== false) return 'de microfoon staat ook buiten /notities/ open'
-      return null
-    },
-  },
 ]
 
 let mis = 0

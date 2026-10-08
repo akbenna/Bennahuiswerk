@@ -35,11 +35,6 @@ health/             BennaHealth, verbruik gemeten uit de gewichtstrend (volwasse
   VERANTWOORDING.md   elke rekenregel met zijn bron en zijn beperking
   AUTOMATISERING.md   wat er vanzelf draait: de ochtendprikkel en het opruimen
   database/           de SQL die naast de app hoort, in volgorde genummerd
-notities/           Notities, vergaderingen opnemen en samenvatten (eigen database)
-  index.html          de Vite-ingang; de app zelf staat in src/notities/
-  README.md           de installatie: Supabase, OpenAI, Google, Railway
-  database/           het schema van het eigen Supabase-project
-  worker/             de verwerking op Railway: ffmpeg, transcriptie, Drive
 src/
   gedeeld/db/         de getypte databasegrens: dertig functies, één keer
   start/              de startpagina: de poort, de tegels, het ouderoverzicht

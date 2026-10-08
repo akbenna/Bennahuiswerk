@@ -29,7 +29,7 @@ const NOG_NIET_OMGEBOUWD: string[] = []
 
 /** Omgebouwd, en dus een echte ingang in de bouw. */
 const OMGEBOUWD = [
-  'start', 'health', 'spellen', 'rasikh', 'sanad', 'bunyan', 'noer', 'arabisch', 'huiswerk', 'notities',
+  'start', 'health', 'spellen', 'rasikh', 'sanad', 'bunyan', 'noer', 'arabisch', 'huiswerk',
 ]
 
 
