@@ -1,6 +1,6 @@
-# Resend (e-mail: BennaHealth prikkel- en coachmail, mogelijk ProVita)
+# Resend (BennaHealth: prikkel- en coachmail)
 
-Stand 7 oktober 2026. Niet geverifieerd tegen de site van Resend.
+Stand 8 oktober 2026. Niet geverifieerd tegen de site van Resend.
 
 ## Wat de code doet
 
