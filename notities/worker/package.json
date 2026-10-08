@@ -1,0 +1,17 @@
+{
+  "name": "notities-worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Verwerkt opnames: transcriptie (OpenAI, uitval Mistral), samenvatting (OpenAI, uitval Claude), Google Drive en Agenda",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "google-auth": "node scripts/google-auth.js",
+    "test": "node scripts/selftest.js"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0"
+  }
+}

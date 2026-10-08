@@ -106,6 +106,14 @@ export const APPS: readonly AppTegel[] = [
   zin:'Achtentwintig weken Malikitische fiqh, usul, ‘aqida, bronnenkritiek en medische ethiek, elke week met een fragment uit de oorspronkelijke tekst.',
   detail:['Eén week per week','Arabisch met vertaling','Kaarten voor herhaling']},
 
+ /* Notities staat los van de rest: een eigen database en een eigen
+    aanmelding, want er staan vergaderingen in en geen huiswerk. De tegel is
+    alleen de ingang. */
+ {id:'notities', naam:'Notities', href:'notities/', ico:'/iconen/notities.svg', k:'notities', groep:'groot', kort:'Vergaderingen vastleggen',
+  wie:'Abdelkader',
+  zin:'Eén knop om een vergadering, overleg of telefoongesprek op te nemen. Daarna uitgeschreven, samengevat met besluiten en actiepunten, en als Google Doc in de juiste map van Drive gezet. Niet voor consulten.',
+  detail:['Bestuur, kader en zakelijk','Besluiten en actiepunten','Google Drive en Agenda','Geen patiëntgegevens']},
+
  {id:'rasikh', naam:'Koran uit je hoofd', href:'rasikh/', ico:'/iconen/koran.svg', k:'koran', groep:'groot', kort:'Memoriseren en herhalen',
   oud:'Rasikh', ar:'رَاسِخ', wie:'Abdelkader',
   zin:'De Koran uit je hoofd leren en, dat is het moeilijke deel, vasthouden. Zes stappen per aya, en een systeem dat pas nieuwe stof geeft als de herhalingen bij zijn.',
